@@ -1,0 +1,133 @@
+{
+  "1.50.0": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "29f4469ca8bd6b7c801c65d8c972660d3b0b573d",
+        "type": "FEATURE",
+        "text": " Table: RadioButton visualization in single selection mode",
+        "references": []
+      },
+      {
+        "id": "d0d3be3ee8333d38aac6a7b43b8ba6df4e9d32c8",
+        "type": "FIX",
+        "text": " AnalyticalTable: Consider groups on initial numberOfExpandedLevels",
+        "references": []
+      },
+      {
+        "id": "5e09d128a3515b8bda6a56b4079fe1074ec0b1dd",
+        "type": "FIX",
+        "text": " AnalyticalTable: Ungrouping via the group header menu",
+        "references": []
+      },
+      {
+        "id": "35847319218700ad82e5eef6de42d22474685df9",
+        "type": "FIX",
+        "text": " Corrected shared-config.js path",
+        "references": []
+      },
+      {
+        "id": "02b4d11996e038ca3da78557f5721b19f65d4696",
+        "type": "FIX",
+        "text": " Table: Avoid null pointer exception when last row was removed",
+        "references": []
+      },
+      {
+        "id": "e9cbd34909caf84dcd917fbef67928126a604220",
+        "type": "FIX",
+        "text": " Table: Column parameter of the ColumnSelect event",
+        "references": []
+      },
+      {
+        "id": "ad2464e623ccf2464b854e0afd3a549d3626b737",
+        "type": "FIX",
+        "text": " Table: Correctly initialize the keyboard navigation",
+        "references": []
+      },
+      {
+        "id": "a08208926ab379551b2ef110471d9f4842a02cf1",
+        "type": "FIX",
+        "text": " Table: Do not overwrite binding event listeners of other parties",
+        "references": []
+      },
+      {
+        "id": "0a55de3c9d1836ac0b99c19b7332d0b60cf97506",
+        "type": "FIX",
+        "text": " Table: Management of the column template clone stack",
+        "references": []
+      },
+      {
+        "id": "67c841e54ef72122b6032d314ea0bdce373ec842",
+        "type": "FIX",
+        "text": " Table: No more infinite re-renderings if zoomed in Chrome",
+        "references": []
+      },
+      {
+        "id": "97d00dfc4ce591d6d5ba2792ddcec5bfc434040a",
+        "type": "FIX",
+        "text": " Table: Select text of input fields in edit mode navigation",
+        "references": []
+      },
+      {
+        "id": "b878b43b33c2b5affda7a98a1b3f6ed27a24137d",
+        "type": "FIX",
+        "text": " Table: Tooltip of SelectAll cell when manually selecting all rows",
+        "references": []
+      },
+      {
+        "id": "0a1d85cf1bafe00189e6bf7ac7467d91476902f9",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Fire selectionChange event when collapsing",
+        "references": []
+      },
+      {
+        "id": "f111251ba060b423982d121f53b81e4d83a80a5d",
+        "type": "FIX",
+        "text": " TreeTable: Expand/Collapse with OData v1 models",
+        "references": []
+      },
+      {
+        "id": "682eb375891431148a9369d488d4d330cf36bd76",
+        "type": "FIX",
+        "text": " sap.ui.table.*: ACC - Selection mode announcement",
+        "references": []
+      },
+      {
+        "id": "22860621fbc36eeec3ffa2d58682aa0bbfda1fe0",
+        "type": "FIX",
+        "text": " sap.ui.table.*: ACC Announcement of Selection on RowHeaders",
+        "references": []
+      },
+      {
+        "id": "6ac2da16ed2d300736a80585cebe28431747de8f",
+        "type": "FIX",
+        "text": " sap.ui.table.*: Screenreader Support Adaptations",
+        "references": []
+      },
+      {
+        "id": "ca8569ab2f4a28fdd5da8ccd3c1eb25d82fd5607",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - infinite rerendering",
+        "references": []
+      },
+      {
+        "id": "8f8474a78378e8310959b4cc226df43c9329ea9c",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Ensure visible scrollbars on Safari / iOS",
+        "references": []
+      },
+      {
+        "id": "2006c08c513494d468d69032b4a142b010ff6c9a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: rendering issue with invisible fixed columns",
+        "references": []
+      },
+      {
+        "id": "3eca5dcd91fe11964d2b5a00d3234fa594f950bf",
+        "type": "FIX",
+        "text": " Table: Text will be properly deselected in edit mode navigation",
+        "references": []
+      }
+    ]
+  }
+}

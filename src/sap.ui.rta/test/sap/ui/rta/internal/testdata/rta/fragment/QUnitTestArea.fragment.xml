@@ -1,0 +1,154 @@
+<core:FragmentDefinition xmlns:core="sap.ui.core" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc"
+		   xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+		   xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+		   xmlns:form="sap.ui.layout.form" xmlns:smartTable="sap.ui.comp.smarttable"
+		   xmlns:smartLink="sap.ui.comp.navpopover"
+		   xmlns:html="http://www.w3.org/1999/xhtml"
+		   xmlns:sap.ui.layout="sap.ui.layout"
+		   xmlns:sap.ui.rta="sap.ui.rta"
+		   xmlns:sap.ui.dt="sap.ui.dt"
+		   xmlns:sap.ui.fl="sap.ui.fl"
+		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+	<smartForm:SmartForm id="MainForm" title="Information" editable="true" entityType="Header" ignoredFields="TransactionCode">
+		<smartForm:Group id="GeneralLedgerDocument" label="General Ledger Document">
+			<smartForm:GroupElement id="GeneralLedgerDocument.Name">
+				<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocument}" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement id="GeneralLedgerDocument.CompanyCode">
+				<smartField:SmartField value="{CompanyCode}" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="Ship-to-Adress" id="GeneralLedgerDocument.CompanyAdress">
+				<smartField:SmartField value="{CompanyAdress}">
+				</smartField:SmartField>
+			</smartForm:GroupElement>
+			<smartForm:GroupElement id="GeneralLedgerDocument.TextArea">
+				<TextArea value="{CreatedByUserName}" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement id="GeneralLedgerDocument.Mandatory">
+				<smartField:SmartField value="Some Value" mandatory="true"></smartField:SmartField>
+			</smartForm:GroupElement>
+			<smartForm:GroupElement id="GeneralLedgerDocument.I18NTest">
+				<smartForm:label>
+					<Label text="Hello"></Label>
+				</smartForm:label>
+				<smartField:SmartField value="{i18n>groupElementLabelText}"></smartField:SmartField>
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="SmartLink" id="GeneralLedgerDocument.SmartLink">
+				<smartLink:SmartLink id="Smartlink" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="One-Bound-Field" id="GeneralLedgerDocument.BoundButton">
+				<Button text="{i18n>buttonText}"></Button>
+				<TextArea value="{CreatedByUser}"></TextArea>
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="No-Bound-Field" id="GeneralLedgerDocument.BoundButton34">
+				<Button text="{i18n>buttonText}"></Button>
+				<TextArea value="Some Text"></TextArea>
+			</smartForm:GroupElement>
+			<smartForm:GroupElement id="GeneralLedgerDocument.UnboundButton">
+				<Button text="No Binding"></Button>
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="Expiry Date" id="GeneralLedgerDocument.ExpirationDate">
+				<smartField:SmartField value="{ExpirationDate}" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement id="GeneralLedgerDocument.ValidityFrom">
+				<smartField:SmartField value="{ValidityFrom}" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement id="GeneralLedgerDocument.ValidityTo">
+				<smartField:SmartField editable="true" contextEditable="true" value="{ValidityTo}" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement id="GeneralLedgerDocument.RequestedDeliveryDate">
+				<smartField:SmartField value="{RequestedDeliveryDate}" />
+			</smartForm:GroupElement>
+		</smartForm:Group>
+		<smartForm:Group label="Dates" id="Dates">
+			<smartForm:GroupElement label="Belegdatum" id="Dates.DocumentDate">
+				<smartField:SmartField value="{DocumentDate}" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="Two-Bound-Fields" id="GeneralLedgerDocument.BoundButton35">
+				<Button text="{PostingDate}"></Button>
+				<TextArea value="{CreationDate}"></TextArea>
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="With/without stable ID" id="Dates.StableIDField">
+				<Input value="I have an ID" id="InputFieldWithID" />
+				<Input value="I have no ID" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="With horizontal layout inside" id="Dates.HorizontalLayoutInside">
+				<sap.ui.layout:HorizontalLayout id="GroupElementHorizontalLayout">
+					<smartLink:SmartLink id="SmartlinkInHorizontalLayout" text="Supplier" fieldName="SupplierId" semanticObject="semanticObjectSupplierId" contactAnnotationPath="to_Supplier" />
+					<Input value="I am near the smartlink" id="FieldInGroupWithHorizontalLayout" />
+				</sap.ui.layout:HorizontalLayout>
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="With specific flexibility definition" id="Dates.SpecificFlexibility" sap.ui.fl:flexibility="sap/ui/rta/test/GroupElementTest.flexibility" sap.ui.dt:designtime="sap/ui/rta/test/InstanceSpecificScopedGroupElement.designtime">
+				<Input value="My label can only be renamed to capital letters" id="InputSpecificFlexibility" />
+			</smartForm:GroupElement>
+		</smartForm:Group>
+		<smartForm:Group label="Reversal" id="Reversal">
+			<smartForm:GroupElement label="Storniert mit" id="Reversal.ReversalDocument">
+				<smartField:SmartField value="{ReverseDocument}" />
+			</smartForm:GroupElement>
+			<smartForm:GroupElement label="Text" id="Reversal.ReversalReasonName">
+				<smartField:SmartField value="{ReversalReasonName}" />
+			</smartForm:GroupElement>
+		</smartForm:Group>
+		<smartForm:Group label="Group without stable Id">
+			<smartForm:GroupElement id="FieldInGroupWithoutStableId">
+				<smartField:SmartField value="{FiscalYear}" />
+			</smartForm:GroupElement>
+		</smartForm:Group>
+	</smartForm:SmartForm>
+	<form:SimpleForm title="SimpleForm with titles" id="SimpleForm"
+								 maxContainerCols="3"
+								 editable="true"
+								 layout="ResponsiveGridLayout"
+								 labelSpanXL="4"
+								 labelSpanL="4"
+								 labelSpanM="4"
+								 emptySpanXL="0"
+								 emptySpanL="0"
+								 emptySpanM="0"
+								 columnsXL="3"
+								 columnsL="2"
+								 columnsM="2"
+								 class="editableForm">
+					<form:content>
+						<core:Title id="Title0" text="Office" />
+						<Label id="Label0" text="Name" />
+						<Input id="Input0" value="Some Supplier" />
+						<Label id="Label1" text="Street/No." />
+						<Input id="Input1" value="Home Street">
+						</Input>
+						<Input id="Input2" value="6">
+							<layoutData>
+								<sap.ui.layout:GridData span="L3 M3 S4" />
+							</layoutData>
+						</Input>
+						<Label id="Label2" text="ZIP Code/City" />
+						<Input id="Input3" value="2345">
+							<layoutData>
+								<sap.ui.layout:GridData span="L3 M3 S4" />
+							</layoutData>
+						</Input>
+						<Input id="Input4" value="Walldorf" />
+						<Label id="Label3" text="Country" />
+						<Select id="Select0" width="100%">
+							<items>
+								<core:Item text="Germany" />
+								<core:Item text="USA" />
+								<core:Item text="England" />
+							</items>
+						</Select>
+						<core:Title id="Title1" text="Online" />
+						<Label id="Label4" text="Web" />
+						<Input id="Input5" value="www.sap.com" />
+						<Label id="Label5" text="Twitter" />
+						<Input id="Input6" value="@me" />
+						<core:Title id="Title2" text="Contact data" />
+						<Label id="Label6" text="Email" />
+						<Input id="Input7" value="foo@bar.com" type="Email" />
+						<Label id="Label7" text="Tel." />
+						<Input id="Input8" value="234123423" type="Tel" />
+						<Label id="Label8" text="SMS" />
+						<Input id="Input9" value="234424333" type="Tel" />
+					</form:content>
+				</form:SimpleForm>
+</core:FragmentDefinition>

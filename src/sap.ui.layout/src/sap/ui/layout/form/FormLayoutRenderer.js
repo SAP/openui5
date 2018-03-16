@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/layout/library", "sap/ui/core/library", "sap/ui/core/theming/Parameters", "sap/ui/layout/form/Form"],
+	function(library, coreLibrary, themingParameters, Form) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
+
+	// shortcut for sap.ui.layout.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
 
 	/**
 	 * FormLayout renderer.
@@ -24,7 +30,7 @@ sap.ui.define(['jquery.sap.global'],
 		var rm = oRenderManager;
 
 		var oForm = oLayout.getParent();
-		if (oForm && oForm instanceof sap.ui.layout.form.Form) {
+		if (oForm && oForm instanceof Form) {
 			this.renderForm(rm, oLayout, oForm);
 		}
 
@@ -52,12 +58,11 @@ sap.ui.define(['jquery.sap.global'],
 		rm.write(">");
 
 		// Form header
-		if (oToolbar) {
-			rm.renderControl(oToolbar);
-		} else {
-			var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
-			this.renderTitle(rm, oForm.getTitle(), undefined, false, sSize, oForm.getId());
+		var sSize;
+		if (!oToolbar) {
+			sSize = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
 		}
+		this.renderHeader(rm, oToolbar, oForm.getTitle(), undefined, false, sSize, oForm.getId());
 
 		this.renderContainers(rm, oLayout, oForm);
 
@@ -71,7 +76,7 @@ sap.ui.define(['jquery.sap.global'],
 	FormLayoutRenderer.addBackgroundClass = function(rm, oLayout){
 
 		var sBackgroundDesign = oLayout.getBackgroundDesign();
-		if (sBackgroundDesign != sap.ui.layout.BackgroundDesign.Transparent) {
+		if (sBackgroundDesign != BackgroundDesign.Transparent) {
 			rm.addClass("sapUiFormBackgr" + sBackgroundDesign);
 		}
 
@@ -79,12 +84,10 @@ sap.ui.define(['jquery.sap.global'],
 
 	FormLayoutRenderer.renderContainers = function(rm, oLayout, oForm){
 
-		var aContainers = oForm.getFormContainers();
+		var aContainers = oForm.getVisibleFormContainers();
 		for (var i = 0, il = aContainers.length; i < il; i++) {
 			var oContainer = aContainers[i];
-			if (oContainer.getVisible()) {
-				this.renderContainer(rm, oLayout, oContainer);
-			}
+			this.renderContainer(rm, oLayout, oContainer);
 		}
 
 	};
@@ -114,11 +117,7 @@ sap.ui.define(['jquery.sap.global'],
 
 		rm.write(">");
 
-		if (oToolbar) {
-			rm.renderControl(oToolbar);
-		} else {
-			this.renderTitle(rm, oTitle, oContainer._oExpandButton, bExpandable, sap.ui.core.TitleLevel.H4, oContainer.getId());
-		}
+		this.renderHeader(rm, oToolbar, oTitle, oContainer._oExpandButton, bExpandable, TitleLevel.H4, oContainer.getId());
 
 		if (bExpandable) {
 			rm.write("<div id='" + oContainer.getId() + "-content'");
@@ -129,16 +128,12 @@ sap.ui.define(['jquery.sap.global'],
 			rm.write(">");
 		}
 
-		var aElements = oContainer.getFormElements();
+		var aElements = oContainer.getVisibleFormElements();
 		for (var j = 0, jl = aElements.length; j < jl; j++) {
-
 			var oElement = aElements[j];
-
-			if (oElement.getVisible()) {
-				this.renderElement(rm, oLayout, oElement);
-			}
-
+			this.renderElement(rm, oLayout, oElement);
 		}
+
 		if (bExpandable) {
 			rm.write("</div>");
 		}
@@ -182,11 +177,11 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (oTitle) {
 			//determine title level -> if not set use H4 as default
-			var sLevel = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize');
+			var sLevel = themingParameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormSubTitleSize');
 			if (sLevelDefault) {
 				sLevel = sLevelDefault;
 			}
-			if (typeof oTitle !== "string" && oTitle.getLevel() != sap.ui.core.TitleLevel.Auto) {
+			if (typeof oTitle !== "string" && oTitle.getLevel() != TitleLevel.Auto) {
 				sLevel = oTitle.getLevel();
 			}
 
@@ -237,17 +232,31 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	/*
+	 * Renders the header, containing Toolbar or Title, for a Form or a FormContainer
+	 * If this function is overwritten in a Layout please use the right IDs to be sure aria-describedby works fine
+	 */
+	FormLayoutRenderer.renderHeader = function(rm, oToolbar, oTitle, oExpandButton, bExpander, sLevelDefault, sContentId){
+
+		if (oToolbar) {
+			rm.renderControl(oToolbar);
+		} else {
+			this.renderTitle(rm, oTitle, oExpandButton, bExpander, sLevelDefault, sContentId);
+		}
+
+	};
+
+	/*
 	 * Writes the accessibility attributes for FormContainers
 	 */
 	FormLayoutRenderer.writeAccessibilityStateContainer = function(rm, oContainer){
 
-		var mAriaProps = {role: "form"};
+		var mAriaProps = {};
 		var oTitle = oContainer.getTitle();
 		var oToolbar = oContainer.getToolbar();
 		if (oToolbar) {
 			if (!oContainer.getAriaLabelledBy() || oContainer.getAriaLabelledBy().length == 0) {
 				// no aria-label -> use complete Toolbar as fallback
-				mAriaProps["labelledby"] = oToolbar.getId();
+				mAriaProps["labelledby"] = {value: oToolbar.getId(), append: true};
 			}
 		} else if (oTitle) {
 			var sId = "";
@@ -256,7 +265,12 @@ sap.ui.define(['jquery.sap.global'],
 			} else {
 				sId = oTitle.getId();
 			}
-			mAriaProps["labelledby"] = sId;
+			mAriaProps["labelledby"] = {value: sId, append: true};
+		}
+
+		if (mAriaProps["labelledby"] || oContainer.getAriaLabelledBy().length > 0) {
+			// if no title or label do not set role because of JAWS 18 issues
+			mAriaProps["role"] = "form";
 		}
 
 		rm.writeAccessibilityState(oContainer, mAriaProps);

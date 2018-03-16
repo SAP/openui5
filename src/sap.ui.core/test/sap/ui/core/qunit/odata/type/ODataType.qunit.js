@@ -6,18 +6,15 @@ sap.ui.require([
 	"sap/ui/model/SimpleType",
 	"sap/ui/model/odata/type/ODataType"
 ], function (jQuery, SimpleType, ODataType) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.ODataType", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 

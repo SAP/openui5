@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (Controller, History, MessageToast, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.wt.controller.Detail", {
+	return Controller.extend("sap.ui.demo.walkthrough.controller.Detail", {
 
 		onInit: function () {
 			var oViewModel = new JSONModel({
@@ -19,6 +19,7 @@ sap.ui.define([
 		},
 
 		_onObjectMatched: function (oEvent) {
+			this.byId("rating").reset();
 			this.getView().bindElement({
 				path: "/" + oEvent.getParameter("arguments").invoicePath,
 				model: "invoice"

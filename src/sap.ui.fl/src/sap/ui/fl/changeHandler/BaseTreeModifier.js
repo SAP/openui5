@@ -2,7 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, ManagedObject) {
+sap.ui.define([
+	"sap/ui/fl/Utils",
+	"sap/ui/base/ManagedObject"
+], function(
+	Utils, ManagedObject
+) {
 
 	"use strict";
 
@@ -15,8 +20,8 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 		* @param {boolean} oSelector.isLocalId - true if the id within the selector is a local id or a global id
 		* @param {sap.ui.core.UIComponent} oAppComponent
 		* @param {object} mAdditionalSelectorInformation additional mapped data which is added to the selector
-		* @param {Node} oView - only for xml processing: the xml node of the view
-		* @returns {sap.ui.core.Control} - control targeted within the selector
+		* @param {Element} oView - For XML processing only: XML node of the view
+		* @returns {sap.ui.core.Control|Element} - Control targeted within the selector
 		* @throws {Exception} oException - in case no control could be determined an error is thrown
 		* @public
 		*/
@@ -28,11 +33,11 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 		/** Function determining the control id from selector.
 		* The function differs between local ids generated starting with 1.40 and the global ids generated in previous versions.
 		*
-		* @param {object} oSelector - Target of a flexiblity change
-		* @param {string} oSelector.id - id of the control targeted by the change
-		* @param {boolean} oSelector.isLocalId - true if the id within the selector is a local id or a global id
-		* @param {sap.ui.core.UIComponent} oAppComponent
-		* @returns {sap.ui.core.Control} - control targeted within the selector
+		* @param {object} oSelector Target of a flexiblity change
+		* @param {string} oSelector.id Id of the control targeted by the change
+		* @param {boolean} oSelector.isLocalId True if the id within the selector is a local id or a global id
+		* @param {sap.ui.core.UIComponent} oAppComponent Application Component
+		* @returns {string} Returns the ID of the control
 		* @throws {Exception} oException - in case no control could be determined an error is thrown
 		* @public
 		*/
@@ -123,6 +128,52 @@ sap.ui.define(["sap/ui/fl/Utils", "sap/ui/base/ManagedObject"], function(Utils, 
 			}
 
 			return oSelector;
+		},
+
+		/**
+		 * This function takes the fragment, goes through all the children and adds a prefix to the control's ID.
+		 * Can also handle 'FragmentDefinition' as root node, then all the children's IDs are prefixed.
+		 * Adds a '.' at the end of the prefix to separate it from the original ID.
+		 * Throws an error if any one of the controls in the fragment have no ID specified.
+		 * Aggregations will be ignored and don't need an ID.
+		 *
+		 * @param {Node} oFragment the fragment in XML
+		 * @param {string} sIdPrefix string which will be used to prefix the IDs
+		 * @returns {Node} Returns the original fragment in XML with updated IDs.
+		 */
+		checkAndPrefixIdsInFragment: function(oFragment, sIdPrefix) {
+			if (oFragment.parseError.errorCode !== 0) {
+				throw new Error(oFragment.parseError.reason);
+			}
+
+			var oControlNodes = oFragment.documentElement;
+
+			var aRootChildren = [], aChildren = [];
+			if (oControlNodes.localName === "FragmentDefinition") {
+				aRootChildren = Utils.getElementNodeChildren(oControlNodes);
+			} else {
+				aRootChildren = [oControlNodes];
+			}
+			aChildren = [].concat(aRootChildren);
+
+			// get all children and their children
+			function oCallback(oChild) {
+				aChildren.push(oChild);
+			}
+			for (var i = 0, n = aRootChildren.length; i < n; i++) {
+				Utils.traverseXmlTree(oCallback, aRootChildren[i]);
+			}
+
+			for (var j = 0, m = aChildren.length; j < m; j++) {
+				// aChildren[j].id is not available in IE11, therefore using .getAttribute/.setAttribute
+				if (aChildren[j].getAttribute("id")) {
+					aChildren[j].setAttribute("id", sIdPrefix + "." + aChildren[j].getAttribute("id"));
+				} else {
+					throw new Error("At least one control does not have a stable ID");
+				}
+			}
+
+			return oControlNodes;
 		}
 	};
 });

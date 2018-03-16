@@ -18,5 +18,17 @@
 }
 
 .sapMActionSelectPicker .sapMBtnInner {
- 	border: 1px solid @sapUiButtonActionSelectBorderColor;
+	border: 1px solid @sapUiButtonActionSelectBorderColor;
+}
+
+.sapMActionSelectPicker .sapMSelectListItemBaseSelected.sapMActionSelectItemWithoutFocus {
+	outline: none;
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+
+	.sapMActionSelectPicker .sapMSelectListItemBaseSelected.sapMActionSelectItemWithoutFocus:not(.sapMSelectListRow)::before {
+		display: none;
+	}
 }

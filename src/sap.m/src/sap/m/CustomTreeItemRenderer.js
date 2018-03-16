@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global', './TreeItemBaseRenderer', 'sap/ui/core/Renderer'
-], function(jQuery, TreeItemBaseRenderer, Renderer) {
+	'./TreeItemBaseRenderer', 'sap/ui/core/Renderer'
+], function(TreeItemBaseRenderer, Renderer) {
 	"use strict";
 
 	/**

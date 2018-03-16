@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
-	function(jQuery, Device) {
+sap.ui.define(['sap/ui/Device', 'sap/ui/core/InvisibleText'],
+	function(Device, InvisibleText) {
 	"use strict";
 
 
@@ -53,13 +53,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 		//ARIA attributes
 		oAccAttributes.labelledby = {
-			value: oControl._sAriaTokenizerLabelId,
+			value: InvisibleText.getStaticId("sap.m", "TOKENIZER_ARIA_LABEL"),
 			append: true
 		};
 
 		oRm.writeAccessibilityState(oControl, oAccAttributes);
 
 		oRm.write(">"); // div element
+		oRm.renderControl(oControl.getAggregation("_tokensInfo"));
 
 		oControl._bCopyToClipboardSupport = false;
 

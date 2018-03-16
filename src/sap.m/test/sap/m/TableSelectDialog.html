@@ -63,7 +63,7 @@
 				}
 			} else {
 				// filter with empty array to reset filters
-				itemsBinding.filter(aFilters);
+				itemsBinding.filter(aFilters, "Application");
 			}
 		};
 
@@ -88,7 +88,7 @@
 			var aFilters = fnCreatePrefilter(sSearchValue),
 				itemsBinding = oTableSelectDialog1.getBinding("items");
 
-			itemsBinding.filter(aFilters);
+			itemsBinding.filter(aFilters, "Application");
 		};
 
 		/* dialog data */
@@ -521,20 +521,54 @@
 		});
 
 		var fnCreateColumsForDialog5 = function () {
-			var aColumns = fnCreateSimpleDialogColumns();
-			var oColumn = new sap.m.Column({
-				hAlign: "Center",
-				width: "150px",
-				popinDisplay: "Inline",
-				header: new sap.m.Label({
-					text: "Back Order"
+			return [
+				new sap.m.Column({
+					width : "150px",
+					hAlign : "Begin",
+					header : new sap.m.Label({
+						text : "Name"
+					})
 				}),
-				minScreenWidth: "Tablet",
-				demandPopin: true
-			});
-
-			aColumns.splice(3, 0, oColumn);
-			return aColumns;
+				new sap.m.Column({
+					hAlign : "Center",
+					width : "90px",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "Quantity"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "End",
+					width : "100px",
+					header : new sap.m.Label({
+						text : "Value"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "Center",
+					width : "150px",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "Back Order"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				}),
+				new sap.m.Column({
+					hAlign : "End",
+					width : "150px",
+					popinDisplay : "Inline",
+					header : new sap.m.Label({
+						text : "Price"
+					}),
+					minScreenWidth : "Tablet",
+					demandPopin : true
+				})
+			];
 		};
 
 		/* 5) multi select table dialog with large binding */

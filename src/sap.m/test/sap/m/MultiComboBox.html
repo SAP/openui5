@@ -21,20 +21,25 @@
 		"items" : [{
 			"key" : "DZ",
 			"text" : "Algeria"
-		}, {
+		},
+
+		{
 			"key" : "AR",
 			"text" : "Argentina"
-		}, {
-			"key" : "AR1",
-			"text" : "Argentina"
-		}, {
+		},
+
+		{
 			"key" : "AU",
 			"text" : "Australia"
-		}, {
+		},
+
+		{
 			"key" : "DI",
 			"text" : "Disabled",
 			"enabled" : false
-		}, {
+		},
+
+		{
 			"key" : "AT",
 			"text" : "Austria"
 		},
@@ -379,8 +384,9 @@
 		enabled : "{enabled}"
 	});
 
-	function createComboForDialog(){
+	function createComboForDialog(sId){
 		return new sap.m.MultiComboBox({
+			id: sId,
 			placeholder : "Choose your country",
 			items : {
 				path : "/items",
@@ -405,26 +411,25 @@
 		});
 	}
 
+	function createLabelForComboBox(sId) {
+		return new sap.m.Label({
+			labelFor: sId,
+			text: "Label for MultiComboBox " + sId
+		});
+	}
+
+	var aDialogContent = [];
+	for (var index = 0; index < 10; index++) {
+		var i = index + 1;
+		aDialogContent.push(createLabelForComboBox("mcb" + i));
+		aDialogContent.push(createComboForDialog("mcb" + i));
+	}
+
 	var oDialog = new sap.m.Dialog("dialog", {
 		title: "Multi Inputs",
 		contentWidth: "420px",
 		horizontalScrolling: false,
-		content: [
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog(),
-					createComboForDialog()
-				],
+		content: aDialogContent,
 		beginButton:
 			new sap.m.Button({
 				text: "OK",
@@ -825,28 +830,28 @@
 	var oToolbar = new sap.m.Toolbar({
 		active : false,
 		design : sap.m.ToolbarDesign.Solid,
-		tooltip : "This is a Toolbar",
 		content : [
-				new sap.m.MultiComboBox({
-					id : "MultiComboBoxToolbar",
-					width : "300px",
-					items : [new sap.ui.core.Item({
-						text : "item 0"
-					}), new sap.ui.core.Item({
-						text : "item 1"
-					})],
-					change : function(oControlEvent) {
-						jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value")
-								+ " on " + this);
-					},
-					selectionChange : function(oControlEvent) {
-						jQuery.sap.log.info('Event fired: "selectionChange" value property to '
-								+ oControlEvent.getParameter("changedItem") + " on " + this);
-					}
-				}),
-				new sap.m.ToolbarSpacer(),
-				new sap.m.Button({text: "Open Popup", press: openDialog})
-				]
+			new sap.m.Label({labelFor:"MultiComboBoxToolbar", text:"MultiComboBox in toolbar:"}),
+			new sap.m.MultiComboBox({
+				id : "MultiComboBoxToolbar",
+				width : "300px",
+				items : [new sap.ui.core.Item({
+					text : "item 0"
+				}), new sap.ui.core.Item({
+					text : "item 1"
+				})],
+				change : function(oControlEvent) {
+					jQuery.sap.log.info('Event fired: "change" value property to ' + oControlEvent.getParameter("value")
+							+ " on " + this);
+				},
+				selectionChange : function(oControlEvent) {
+					jQuery.sap.log.info('Event fired: "selectionChange" value property to '
+							+ oControlEvent.getParameter("changedItem") + " on " + this);
+				}
+			}),
+			new sap.m.ToolbarSpacer(),
+			new sap.m.Button({text: "Open Popup", press: openDialog})
+		]
 	});
 
 	var oApp = new sap.m.App("myApp", {

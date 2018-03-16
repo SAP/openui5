@@ -8,7 +8,7 @@ You want to contribute to OpenUI5? Welcome! Please read this document to underst
 
 ## Help Others
 
-You can help OpenUI5 by helping others who use UI5 and need support. You will find them e.g. on [StackOverflow](http://stackoverflow.com/questions/tagged/sapui5) or in the [SAP Community Network forum](http://scn.sap.com/community/developer-center/front-end/content).
+You can help OpenUI5 by helping others who use UI5 and need support. You will find them e.g. on [StackOverflow](http://stackoverflow.com/questions/tagged/sapui5) or in the [SAP.com UI5 Community](https://www.sap.com/community/topic/ui5/all-content.html).
 
 ## Analyze Issues
 
@@ -80,7 +80,7 @@ An issue that is about a real bug is closed as soon as the fix is committed. The
 If you find a security issue, please act responsibly and report it not in the public issue tracker, but directly to us, so we can fix it before it can be exploited:
  * SAP Customers: if the found security issue is not covered by a published security note, please report it by creating a customer message at https://service.sap.com/message.
  * Researchers/non-Customers: please send the related information to secure@sap.com using [PGP for e-mail encryption](http://global.sap.com/pc/security/keyblock.txt).
-Also refer to the general [SAP security information page](http://www54.sap.com/pc/tech/application-foundation-security/software/security-at-sap/report.html).
+Also refer to the general [SAP security information page](https://www.sap.com/corporate/en/company/security.html).
 
 
 ### Usage of Labels
@@ -137,7 +137,7 @@ which can be [found here](https://gist.github.com/CLAassistant/bd1ea8ec8aa035741
 If employees of a company contribute code, in **addition** to the individual agreement above, there needs to be one company agreement submitted. This is mainly for the protection of the contributing employees.
 
 A company representative authorized to do so needs to download, fill, and print
-the [Corporate Contributor License Agreement](https://github.com/SAP/openui5/blob/master/docs/SAP Corporate Contributor License Agreement.pdf) form. Then either:
+the [Corporate Contributor License Agreement](/docs/SAP%20Corporate%20Contributor%20License%20Agreement.pdf) form. Then either:
 
 -   Scan it and e-mail it to [opensource@sap.com](mailto:opensource@sap.com) and [openui5@sap.com](mailto:openui5@sap.com)
 -   Fax it to: +49 6227 78-45813

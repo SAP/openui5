@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/Device", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
-	function(jQuery, Device, coreLibrary, URI, MessageParser, Message) {
+sap.ui.define(["jquery.sap.global", "sap/ui/model/odata/ODataUtils", "sap/ui/core/library", "sap/ui/thirdparty/URI", "sap/ui/core/message/MessageParser", "sap/ui/core/message/Message"],
+	function(jQuery, ODataUtils, coreLibrary, URI, MessageParser, Message) {
 	"use strict";
 
 // shortcuts for enums
@@ -340,7 +340,7 @@ ODataMessageParser.prototype._createMessage = function(oMessageObject, mRequestI
 		code:      sCode,
 		message:   sText,
 		descriptionUrl: sDescriptionUrl,
-		target:    sTarget,
+		target:    ODataUtils._normalizeKey(sTarget),
 		processor: this._processor,
 		technical: bIsTechnical,
 		persistent: bPersistent
@@ -364,7 +364,7 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 
 	var i;
 
-	// In case of a function import the location header may point to the corrrect entry in the service.
+	// In case of a function import the location header may point to the correct entry in the service.
 	// This should be the case for writing/changing operations using POST
 	if (mRequestInfo.response && mRequestInfo.response.headers && mRequestInfo.response.headers["location"]) {
 		sTarget = mRequestInfo.response.headers["location"];
@@ -394,37 +394,38 @@ ODataMessageParser.prototype._getFunctionTarget = function(mFunctionInfo, mReque
 		} else if (mFunctionInfo.returnType) {
 			mEntityType = this._metadata._getEntityTypeByName(mFunctionInfo.returnType);
 		}
+		if (mEntityType){
+			var mEntitySet = this._metadata._getEntitySetByType(mEntityType);
 
-		var mEntitySet = this._metadata._getEntitySetByType(mEntityType);
+			if (mEntitySet && mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
 
-		if (mEntitySet && mEntityType && mEntityType.key && mEntityType.key.propertyRef) {
+				var sId = "";
+				var sParam;
 
-			var sId = "";
-			var sParam;
-
-			if (mEntityType.key.propertyRef.length === 1) {
-				// Just the ID in brackets
-				sParam = mEntityType.key.propertyRef[0].name;
-				if (mUrlData.parameters[sParam]) {
-					sId = mUrlData.parameters[sParam];
-				}
-			} else {
-				// Build ID string from keys
-				var aKeys = [];
-				for (i = 0; i < mEntityType.key.propertyRef.length; ++i) {
-					sParam = mEntityType.key.propertyRef[i].name;
+				if (mEntityType.key.propertyRef.length === 1) {
+					// Just the ID in brackets
+					sParam = mEntityType.key.propertyRef[0].name;
 					if (mUrlData.parameters[sParam]) {
-						aKeys.push(sParam + "=" + mUrlData.parameters[sParam]);
+						sId = mUrlData.parameters[sParam];
 					}
+				} else {
+					// Build ID string from keys
+					var aKeys = [];
+					for (i = 0; i < mEntityType.key.propertyRef.length; ++i) {
+						sParam = mEntityType.key.propertyRef[i].name;
+						if (mUrlData.parameters[sParam]) {
+							aKeys.push(sParam + "=" + mUrlData.parameters[sParam]);
+						}
+					}
+					sId = aKeys.join(",");
 				}
-				sId = aKeys.join(",");
-			}
 
-			sTarget = "/" + mEntitySet.name + "(" + sId + ")";
-		} else if (!mEntitySet) {
-			jQuery.sap.log.error("Could not determine path of EntitySet for function call: " + mUrlData.url);
-		} else {
-			jQuery.sap.log.error("Could not determine keys of EntityType for function call: " + mUrlData.url);
+				sTarget = "/" + mEntitySet.name + "(" + sId + ")";
+			} else if (!mEntitySet) {
+				jQuery.sap.log.error("Could not determine path of EntitySet for function call: " + mUrlData.url);
+			} else {
+				jQuery.sap.log.error("Could not determine keys of EntityType for function call: " + mUrlData.url);
+			}
 		}
 	}
 
@@ -448,7 +449,27 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 	if (sTarget.substr(0, 1) !== "/") {
 		var sRequestTarget = "";
 
-		var mUrlData = this._parseUrl(mRequestInfo.url);
+		// special case for 201 POST requests which create a resource
+		// The target is a relative resource path segment that can be appended to the Location response header (for POST requests that create a new entity)
+		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
+		var bRequestCreatePost = (sMethod === "POST"
+			&& mRequestInfo.response
+			&& mRequestInfo.response.statusCode == 201
+			&& mRequestInfo.response.headers
+			&& mRequestInfo.response.headers["location"]);
+
+		var sUrlForTargetCalculation;
+		if (bRequestCreatePost) {
+			sUrlForTargetCalculation = mRequestInfo.response.headers["location"];
+		} else if (mRequestInfo.request && mRequestInfo.request.key && mRequestInfo.request.created && mRequestInfo.response && mRequestInfo.response.statusCode >= 400) {
+			// If a create request returns an error the target should be set to the internal entity key
+			sUrlForTargetCalculation = mRequestInfo.request.key;
+		} else {
+			sUrlForTargetCalculation = mRequestInfo.url;
+		}
+
+		//parsing
+		var mUrlData = this._parseUrl(sUrlForTargetCalculation);
 		var sUrl = mUrlData.url;
 
 		var iPos = sUrl.lastIndexOf(this._serviceUrl);
@@ -458,33 +479,35 @@ ODataMessageParser.prototype._createTarget = function(oMessageObject, mRequestIn
 			sRequestTarget = sUrl;
 		}
 
-		var sMethod = (mRequestInfo.request && mRequestInfo.request.method) ? mRequestInfo.request.method : "GET";
-		var mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget, sMethod);
+		// function import case
+		if (!bRequestCreatePost) {
+			var mFunctionInfo = this._metadata._getFunctionImportMetadata(sRequestTarget, sMethod);
 
-		if (mFunctionInfo) {
-			sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
+			if (mFunctionInfo) {
+				sRequestTarget = this._getFunctionTarget(mFunctionInfo, mRequestInfo, mUrlData);
 
-			if (sTarget) {
-				sTarget = sRequestTarget + "/" + sTarget;
-			} else {
-				sTarget = sRequestTarget;
+				if (sTarget) {
+					sTarget = sRequestTarget + "/" + sTarget;
+				} else {
+					sTarget = sRequestTarget;
+				}
+				return sTarget;
 			}
+		}
 
+		sRequestTarget = "/" + sRequestTarget;
+
+		// If sRequestTarget is a collection, we have to add the target without a "/". In this case
+		// a target would start with the specific product (like "(23)"), but the request itself
+		// would not have the brackets
+		var iSlashPos = sRequestTarget.lastIndexOf("/");
+		var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
+		if (sRequestTargetName.indexOf("(") > -1) {
+			// It is an entity
+			sTarget = sRequestTarget + "/" + sTarget;
 		} else {
-			sRequestTarget = "/" + sRequestTarget;
-
-			// If sRequestTarget is a collection, we have to add the target without a "/". In this case
-			// a target would start with the specific product (like "(23)"), but the request itself
-			// would not have the brackets
-			var iSlashPos = sRequestTarget.lastIndexOf("/");
-			var sRequestTargetName = iSlashPos > -1 ? sRequestTarget.substr(iSlashPos) : sRequestTarget;
-			if (sRequestTargetName.indexOf("(") > -1) {
-				// It is an entity
-				sTarget = sRequestTarget + "/" + sTarget;
-			} else {
-				// It's a collection
-				sTarget = sRequestTarget + sTarget;
-			}
+			// It's a collection
+			sTarget = sRequestTarget + sTarget;
 		}
 
 
@@ -563,11 +586,11 @@ ODataMessageParser.prototype._parseBody = function(/* ref: */ aMessages, oRespon
 	// Messages from an error response should contain duplicate messages - the main error should be the
 	// same as the first errordetail error. If this is the case, remove the first one.
 	if (aMessages.length > 1) {
-		if (
-			aMessages[0].getCode()    == aMessages[1].getCode()    &&
-			aMessages[0].getMessage() == aMessages[1].getMessage()
-		) {
-			aMessages.shift();
+		for (var iIndex = 1; iIndex < aMessages.length; iIndex++) {
+			if (aMessages[0].getCode() == aMessages[iIndex].getCode() && aMessages[0].getMessage() == aMessages[iIndex].getMessage()) {
+				aMessages.shift(); // Remove outer error, since inner error is more detailed
+				break;
+			}
 		}
 	}
 };

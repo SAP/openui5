@@ -7,10 +7,9 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/fl/support/apps/contentbrowser/utils/HtmlEscapeUtils",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils"
-], function (Controller, UIComponent, Filter, FilterOperator, HtmlEscapeUtils, LRepConnector, DataUtils) {
+], function (Controller, UIComponent, Filter, FilterOperator, LRepConnector, DataUtils) {
 	"use strict";
 
 	/**
@@ -50,9 +49,9 @@ sap.ui.define([
 			this.sLayer = mRouteArguments.layer;
 			this.sNamespace = mRouteArguments.namespace || "";
 			var oPage = this.getView().getContent()[0];
-			oPage.setTitle(this._shortenNamespace());
 			oPage.setBusy(true);
-			that.sNamespace = HtmlEscapeUtils.unescapeSlashes(that.sNamespace);
+			that.sNamespace = decodeURIComponent(that.sNamespace);
+			oPage.setTitle(this._shortenNamespace());
 
 			LRepConnector.getContent(that.sLayer, that.sNamespace).then(
 				that._onContentReceived.bind(that, oPage),
@@ -67,7 +66,7 @@ sap.ui.define([
 		 * Handler if content data was received;
 		 * Sets the received data to the current content model.
 		 * @param {Object} oPage
-		 * @param {Object} oData - data which is received from <code>LRepConnector<code> "getContent" promise
+		 * @param {Object} oData - data which is received from <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
 		_onContentReceived: function (oPage, oData) {
@@ -75,7 +74,7 @@ sap.ui.define([
 			oContentModel.setData(oData);
 			oPage.setBusy(false);
 			this.filterListByQuery("");
-			this.getView().byId("search").setValue("");
+			this.byId("search").setValue("");
 		},
 
 		/**
@@ -108,7 +107,7 @@ sap.ui.define([
 			}
 
 			// update list binding
-			var oList = this.getView().byId("masterComponentsList");
+			var oList = this.byId("masterComponentsList");
 			var oBinding = oList.getBinding("items");
 			oBinding.filter(aFilters, "content");
 		},
@@ -120,30 +119,29 @@ sap.ui.define([
 		 * @public
 		 */
 		onContentSelected: function (oEvent) {
-			var that = this;
 			var sSource = oEvent.getSource();
 			var sContentBindingPath = sSource.getBindingContextPath().substring(1);
-			var sContentModelData = that.getView().getModel("content").getData();
+			var sContentModelData = this.getView().getModel("content").getData();
 			var sContent = sContentModelData[sContentBindingPath];
 			var sContentName = sContent.name;
 			var sContentFileType = sContentModelData[sContentBindingPath].fileType;
 			var oRouter = UIComponent.getRouterFor(this);
 
-				that.sNamespace = HtmlEscapeUtils.escapeSlashes(that.sNamespace);
+			this.sNamespace = (this.sNamespace ? this.sNamespace : '/');
 
 				if (sContentFileType) {
 					// show details to a file
 					var mRouteParameters = {
-						"layer": that.sLayer,
-						"namespace": that.sNamespace || HtmlEscapeUtils.sEscapedSlash,
+						"layer": this.sLayer,
+						"namespace": encodeURIComponent(this.sNamespace),
 						"fileName": sContentName,
 						"fileType": sContentFileType
 					};
 					oRouter.navTo("ContentDetails", mRouteParameters);
 				} else {
 					// navigation to a namespace
-					var sTargetNamespace = (that.sNamespace ? that.sNamespace : HtmlEscapeUtils.sEscapedSlash) + sContentName + HtmlEscapeUtils.sEscapedSlash;
-					oRouter.navTo("LayerContentMaster", {"layer": that.sLayer, "namespace": sTargetNamespace});
+					this.sNamespace += sContentName + '/';
+					oRouter.navTo("LayerContentMaster", {"layer": this.sLayer, "namespace": encodeURIComponent(this.sNamespace)});
 				}
 		},
 
@@ -154,13 +152,13 @@ sap.ui.define([
 		 */
 		navBack: function () {
 			var oRouter = UIComponent.getRouterFor(this);
-			if (!this.sNamespace || this.sNamespace === HtmlEscapeUtils.sEscapedSlash || this.sNamespace === "/") {
+			if (!this.sNamespace || this.sNamespace === "/") {
 				oRouter.navTo("Layers");
 			} else {
 				var sSplittedNamespace = this.sNamespace.split("/");
 				sSplittedNamespace.splice(-2, 1);
-				var sTargetNamespace = sSplittedNamespace.join(HtmlEscapeUtils.sEscapedSlash);
-				oRouter.navTo("LayerContentMaster", {"layer": this.sLayer, "namespace": sTargetNamespace}, true);
+				var sTargetNamespace = sSplittedNamespace.join("/");
+				oRouter.navTo("LayerContentMaster", {"layer": this.sLayer, "namespace": encodeURIComponent(sTargetNamespace)}, true);
 			}
 		},
 
@@ -171,11 +169,11 @@ sap.ui.define([
 		 * @private
 		 */
 		_shortenNamespace: function () {
-			if (!this.sNamespace || this.sNamespace === HtmlEscapeUtils.sEscapedSlash) {
+			if (!this.sNamespace || this.sNamespace === '/') {
 				return "[" + this.sLayer + "] /";
 			}
 
-			var aSplittedNamespace = this.sNamespace.split(HtmlEscapeUtils.sEscapedSlash);
+			var aSplittedNamespace = this.sNamespace.split('/');
 			var sNamespaceDepth = aSplittedNamespace.length;
 			if (sNamespaceDepth > 2) {
 				return "[" + this.sLayer + "] .../" + aSplittedNamespace[sNamespaceDepth - 2];

@@ -81,22 +81,22 @@ sap.ui.define([
 				MessageToast.show("selectionMode:All is deprecated. Please select another one.");
 				return;
 			}
-			var oTable = this.getView().byId("table1");
+			var oTable = this.byId("table1");
 			oTable.setSelectionMode(oEvent.getParameter("selectedItem").getKey());
 		},
 
 		onBehaviourModeChange: function(oEvent) {
-			var oTable = this.getView().byId("table1");
+			var oTable = this.byId("table1");
 			oTable.setSelectionBehavior(oEvent.getParameter("selectedItem").getKey());
 		},
 
 		onSwitchChange: function(oEvent) {
-			var oTable = this.getView().byId("table1");
+			var oTable = this.byId("table1");
 			oTable.setEnableSelectAll(oEvent.getParameter("state"));
 		},
 
 		getSelectedIndices: function (evt) {
-			var aIndices = this.getView().byId("table1").getSelectedIndices();
+			var aIndices = this.byId("table1").getSelectedIndices();
 			var sMsg;
 			if (aIndices.length < 1) {
 				sMsg = "no item selected";
@@ -107,7 +107,7 @@ sap.ui.define([
 		},
 
 		getContextByIndex: function (evt) {
-			var oTable = this.getView().byId("table1");
+			var oTable = this.byId("table1");
 			var iIndex = oTable.getSelectedIndex();
 			var sMsg;
 			if (iIndex < 0) {
@@ -119,7 +119,7 @@ sap.ui.define([
 		},
 
 		clearSelection: function (evt) {
-			this.getView().byId("table1").clearSelection();
+			this.byId("table1").clearSelection();
 		},
 
 		formatAvailableToObjectState : function (bAvailable) {

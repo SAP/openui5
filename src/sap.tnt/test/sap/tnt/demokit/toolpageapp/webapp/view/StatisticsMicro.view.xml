@@ -3,7 +3,6 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:mc="sap.suite.ui.microchart">
-
 	<l:BlockLayout
 		id="statisticsBlockLayout"
 		busy="false"
@@ -13,10 +12,12 @@
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>sysResUsage}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>orderStatusDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 					<mc:ComparisonMicroChart
@@ -50,16 +51,16 @@
 									value="18" />
 						</mc:data>
 					</mc:ComparisonMicroChart>
-
 			</l:BlockLayoutCell>
-
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>ovSysUptime}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>customerRatingDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 					<mc:ColumnMicroChart
@@ -78,14 +79,15 @@
 						</mc:columns>
 					</mc:ColumnMicroChart>
 			</l:BlockLayoutCell>
-
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>memTrendTitle}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>salesTrendDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<mc:AreaMicroChart
@@ -98,25 +100,21 @@
 							label="{i18n>salesTrendLabelXStart}"
 							color="Error" />
 					</mc:firstXLabel>
-
 					<mc:lastXLabel>
 						<mc:AreaMicroChartLabel
 							label="{i18n>salesTrendLabelXEnd}"
 							color="Good" />
 					</mc:lastXLabel>
-
 					<mc:firstYLabel>
 						<mc:AreaMicroChartLabel
 							label="{i18n>salesTrendLabelYStart}"
 							color="Error" />
 					</mc:firstYLabel>
-
 					<mc:lastYLabel>
 						<mc:AreaMicroChartLabel
 							label="{i18n>salesTrendLabelYEnd}"
 							color="Good"/>
 					</mc:lastYLabel>
-
 					<mc:chart>
 						<mc:AreaMicroChartItem>
 							<mc:points>
@@ -160,20 +158,21 @@
 						</mc:AreaMicroChartItem>
 					</mc:minThreshold>
 				</mc:AreaMicroChart>
-
 			</l:BlockLayoutCell>
-
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>maintCompl}"
+					text="{i18n>maintenanceCompletion}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>canceledOrdersDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<FlexBox
 					height="8rem"
+					renderType="Bare"
 					width="12rem">
 					<items>
 						<mc:RadialMicroChart
@@ -182,26 +181,26 @@
 					</items>
 				</FlexBox>
 			</l:BlockLayoutCell>
-
 		</l:BlockLayoutRow>
-
 		<l:BlockLayoutRow
 			rowColorSet="ColorSet1">
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>costUpgStor}"
+					text="{i18n>systemProcessor}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>netPromoterDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<FlexBox
 					height="8rem"
 					width="12rem"
 					direction="Column"
+					renderType="Bare"
 					alignItems="Center">
-
 					<mc:BulletMicroChart
 						targetValue="100">
 						<mc:actual>
@@ -225,7 +224,6 @@
 							<mc:BulletMicroChartData value="75" color="Good" />
 						</mc:thresholds>
 					</mc:BulletMicroChart>
-
 					<mc:BulletMicroChart
 						targetValue="100">
 						<mc:actual>
@@ -256,18 +254,20 @@
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>databaseUsage}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>revenueDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<FlexBox
 					alignItems="Center"
 					width="12rem"
 					height="8rem"
+					renderType="Bare"
 					direction="Column">
-
 					<mc:HarveyBallMicroChart
 						total="100"
 						totalScale="Hz"
@@ -282,43 +282,45 @@
 					</mc:HarveyBallMicroChart>
 				</FlexBox>
 			</l:BlockLayoutCell>
-
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>impCostCenter}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>goalProgressDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<FlexBox
 					width="12rem"
-					height="8rem">
+					height="8rem"
+					renderType="Bare">
 					<items>
 						<mc:RadialMicroChart
 							percentage="78"
 							valueColor="Good"/>
 					</items>
 				</FlexBox>
-
 			</l:BlockLayoutCell>
-
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>costUpgStor}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>profitMarginDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<FlexBox
 					width="20rem"
 					height="8rem"
 					alignItems="Center"
+					renderType="Bare"
 					direction="Column">
-
 					<mc:DeltaMicroChart
 						value1="60"
 						value2="87"
@@ -330,7 +332,6 @@
 						isResponsive="true"/>
 				</FlexBox>
 			</l:BlockLayoutCell>
-
 		</l:BlockLayoutRow>
 	</l:BlockLayout>
 </mvc:View>

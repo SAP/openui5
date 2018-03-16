@@ -24,7 +24,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 				changeType: "filterVariant",
 				reference: "smartFilterBar",
 				componentName: "smartFilterBar",
-				selector: {"persistenceKey": "control1"},
+				selector: {"id": "control1"},
 				conditions: {},
 				context: [],
 				content: {something: "createNewVariant"},
@@ -83,6 +83,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oInstance.getChangeType(), "filterVariant");
 	});
 
+	QUnit.test("Change.getFileType", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getFileType(), "variant");
+	});
+
 	QUnit.test("Change.getPackage", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.getPackage(), "$TMP");
@@ -91,6 +96,18 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 	QUnit.test("getNamespace should return the namespace of the defintion", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.strictEqual(oInstance.getNamespace(), "apps/smartFilterBar/changes/");
+	});
+
+	QUnit.test("setNamespace should set the namespace of the definition", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		oInstance.setNamespace("apps/ReferenceAppId/changes/");
+		assert.strictEqual(oInstance.getNamespace(), "apps/ReferenceAppId/changes/");
+	});
+
+	QUnit.test("setComponent should set the reference of the definition", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		oInstance.setComponent("AppVariantId");
+		assert.strictEqual(oInstance.getComponent(), "AppVariantId");
 	});
 
 	QUnit.test("Change.getId", function(assert) {
@@ -103,11 +120,38 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.ok(oInstance.getContent());
 	});
 
+	QUnit.test("Change.setState with an incorrect value", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState("anInvalidState");
+		assert.equal(oInstance.getPendingAction(), "NEW");
+	});
+
+	QUnit.test("Change.setState to DIRTY when current state is NEW", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.DIRTY);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+	});
+
+	QUnit.test("Change.setState to DIRTY when current state is PERSISTED", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.PERSISTED);
+		oInstance.setState(Change.states.DIRTY);
+		assert.equal(oInstance.getPendingAction(), "UPDATE");
+	});
+
 	QUnit.test("Change.setContent", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.getPendingAction(), "NEW");
 		oInstance.setContent({something: "nix"});
 		assert.deepEqual(oInstance.getContent(), {something: "nix"});
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.PERSISTED);
+		oInstance.setContent({something: "updated"});
+		assert.deepEqual(oInstance.getContent(), {something: "updated"});
+		assert.equal(oInstance.getPendingAction(), "UPDATE");
 	});
 
 	QUnit.test("Change.getContext", function(assert) {
@@ -124,7 +168,10 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		var oInstance = new Change(this.oChangeDef);
 		oInstance.setText('variantName', 'newText');
 		assert.equal(oInstance.getText('variantName'), 'newText');
+		assert.equal(oInstance.getPendingAction(), "NEW");
+		oInstance.setState(Change.states.PERSISTED);
 		oInstance.setText('variantName', 'myVariantName');
+		assert.equal(oInstance.getState(), Change.states.DIRTY);
 	});
 
 	QUnit.test("Change._isReadOnlyDueToLayer", function(assert) {
@@ -142,16 +189,6 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		var oInstance = new Change(this.oChangeDef);
 		oInstance.markForDeletion();
 		assert.equal(oInstance.getPendingAction(), "DELETE");
-	});
-
-	QUnit.test("Change._isDirty", function(assert) {
-		var oInstance = new Change(this.oChangeDef);
-		assert.equal(oInstance._isDirty(), false);
-		oInstance.setText('addText', 'changed');
-		var oContent = oInstance.getContent();
-		oContent.fields = {first: "addedField"};
-
-		assert.equal(oInstance._isDirty(), true);
 	});
 
 	QUnit.test("Change.set/get-Request", function(assert) {
@@ -180,13 +217,14 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 
 	QUnit.test("Change.getPendingChanges", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
-		assert.equal(oInstance.getPendingAction(), "NEW");
+		assert.equal(oInstance.getPendingAction(), Change.states.NEW);
+		oInstance.setState(Change.states.PERSISTED);
 
 		oInstance.setContent({});
-		assert.equal(oInstance.getPendingAction(), "NEW");
+		assert.equal(oInstance.getPendingAction(), Change.states.DIRTY);
 
 		oInstance.markForDeletion();
-		assert.equal(oInstance.getPendingAction(), "DELETE");
+		assert.equal(oInstance.getPendingAction(), Change.states.DELETED);
 	});
 
 	QUnit.test("Change.getDefinition", function(assert) {
@@ -210,7 +248,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			isVariant: true,
 			packageName: "/UIF/LREP",
 			namespace: "apps/smartFilterBar/adapt/oil/changes/",
-			selector: {"persistenceKey": "control1"},
+			selector: {"id": "control1"},
 			id: "0815_1",
 			dependentSelector: {
 				source: {
@@ -237,11 +275,38 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oCreatedFile.fileType, "variant");
 		assert.equal(oCreatedFile.namespace, "apps/smartFilterBar/adapt/oil/changes/");
 		assert.equal(oCreatedFile.packageName, "/UIF/LREP");
+		assert.equal(oCreatedFile.support.generator, "Change.createInitialFileContent");
 		assert.deepEqual(oCreatedFile.content, {something: "createNewVariant"});
 		assert.deepEqual(oCreatedFile.texts, {variantName: {value: "myVariantName", type: "myTextType"}});
-		assert.deepEqual(oCreatedFile.selector, {"persistenceKey": "control1"});
+		assert.deepEqual(oCreatedFile.selector, {"id": "control1"});
 		assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
 		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
+	});
+
+	QUnit.test("createInitialFileContent when generator is pre-set", function(assert) {
+		var oInfo = {
+			changeType: "filterVariant",
+			content: {},
+			namespace: "apps/smartFilterBar/adapt/oil/changes/",
+			generator: "RTA"
+		};
+
+		var oCreatedFile = Change.createInitialFileContent(oInfo);
+
+		assert.equal(oCreatedFile.support.generator, "RTA");
+	});
+
+	QUnit.test("createInitialFileContent when fileType is pre-set", function(assert) {
+		var oInfo = {
+			changeType: "filterVariant",
+			content: {},
+			namespace: "apps/smartFilterBar/adapt/oil/changes/",
+			fileType: "newFileType"
+		};
+
+		var oCreatedFile = Change.createInitialFileContent(oInfo);
+
+		assert.equal(oCreatedFile.fileType, "newFileType");
 	});
 
 	QUnit.test("_isReadOnlyDueToOriginalLanguage shall compare the original language with the current language", function(assert) {
@@ -263,7 +328,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			changeType: "filterVariant",
 			component: "smartFilterBar",
 			content: {something: "createNewVariant"},
-			selector: {"persistenceKey": "control1"},
+			selector: {"id": "control1"},
 			layer: "VENDOR",
 			texts: {
 				variantName: {
@@ -283,14 +348,14 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 
 		var oChange = new Change(this.oChangeDef);
 		assert.ok(!oChange._oDefinition.creation);
-		assert.equal(oChange._isDirty(), false);
+		assert.equal(oChange.getState(), Change.states.NEW);
 
 		//Act
 		oChange.setResponse(sampleResponse);
 
 		//Assert
 		assert.ok(oChange._oDefinition.creation, "2014-10-30T13:52:40.4754350Z");
-		assert.equal(oChange._isDirty(), false);
+		assert.equal(oChange.getState(), Change.states.PERSISTED);
 	});
 
 	QUnit.test("_isReadOnlyDueToOriginalLanguage shall be true if the original language is initial", function(assert) {
@@ -420,7 +485,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			new sap.ui.core.Control("control4Id"),
 			new sap.ui.core.Control("control5Id")
 		];
-		var aControlId = ["control6Id", "control7Id", "control1Id"]; //Control 1 duplicate. Should not be included.
+		var aControlId = ["control6Id", "control7Id", "undefined", "control1Id"]; //Control 1 duplicate. Should not be included.
 		var sId;
 
 		var oJsControlTreeModifierGetSelectorStub = this.stub(JsControlTreeModifier, "getSelector");
@@ -459,7 +524,9 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			idIsLocal: true
 		});
 
-		oJsControlTreeModifierGetSelectorStub.onCall(7).returns({
+		oJsControlTreeModifierGetSelectorStub.onCall(7).returns({});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(8).returns({
 			id: "control1",
 			idIsLocal: true
 		});
@@ -486,6 +553,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			createId: function (sId) {return sId + "---local";}
 		};
 		var aDependentIdList = oInstance.getDependentIdList(oAppComponent);
+		assert.equal(aDependentIdList.length, 10);
+		var aDependentIdList = oInstance.getDependentControlIdList(oAppComponent);
 		assert.equal(aDependentIdList.length, 9);
 	});
 
@@ -500,7 +569,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			new sap.ui.core.Control("control4IdB"),
 			new sap.ui.core.Control("control5IdB")
 		];
-		var aControlId = ["control6IdB", "control7IdB"];
+		var aControlId = ["control6IdB", "undefined", "control7IdB"];
 		var sId;
 
 		var oJsControlTreeModifierGetSelectorStub = this.stub(JsControlTreeModifier, "getSelector");
@@ -534,7 +603,9 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			idIsLocal: true
 		});
 
-		oJsControlTreeModifierGetSelectorStub.onCall(6).returns({
+		oJsControlTreeModifierGetSelectorStub.onCall(6).returns({});
+
+		oJsControlTreeModifierGetSelectorStub.onCall(7).returns({
 			id: "control7",
 			idIsLocal: true
 		});
@@ -549,6 +620,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(oDependentControl, undefined);
 
 		var aDependentIdList = oInstance.getDependentIdList({});
+		assert.equal(aDependentIdList.length, 1);
+		var aDependentIdList = oInstance.getDependentControlIdList({});
 		assert.equal(aDependentIdList.length, 0);
 
 		oInstance.addDependentControl(sControlId, "element", {modifier: JsControlTreeModifier});
@@ -567,6 +640,8 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			createId: function (sId) {return sId + "---local";}
 		};
 		aDependentIdList = oInstance.getDependentIdList(oAppComponent);
+		assert.equal(aDependentIdList.length, 8);
+		aDependentIdList = oInstance.getDependentControlIdList(oAppComponent);
 		assert.equal(aDependentIdList.length, 7);
 	});
 

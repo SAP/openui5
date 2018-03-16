@@ -1,6 +1,7 @@
 <mvc:View
 	controllerName="sap.m.sample.Table.Table"
 	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
 	<Table id="idProductsTable"
 		inset="false"
@@ -12,7 +13,25 @@
 		}">
 		<headerToolbar>
 			<Toolbar>
-				<Title text="Products" level="H2"/>
+				<content>
+					<Title text="Products" level="H2"/>
+					<ToolbarSpacer />
+					<ToggleButton id="stickyColHdr"
+						text="Sticky Column Headers"
+						press="onToggleStickyColHdr" />
+					<ComboBox id="idPopinLayout"
+						placeholder="Popin layout options"
+						change="onPopinLayoutChanged">
+						<items>
+							<core:Item  text="Block"
+								key="Block"/>
+							<core:Item  text="Grid Large"
+								key="GridLarge"/>
+							<core:Item  text="Grid Small"
+								key="GridSmall"/>
+						</items>
+					</ComboBox>
+				</content>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
@@ -26,13 +45,13 @@
 				<Text text="Supplier" />
 			</Column>
 			<Column
-				minScreenWidth="Tablet"
+				minScreenWidth="Desktop"
 				demandPopin="true"
 				hAlign="End">
 				<Text text="Dimensions" />
 			</Column>
 			<Column
-				minScreenWidth="Tablet"
+				minScreenWidth="Desktop"
 				demandPopin="true"
 				hAlign="Center">
 				<Text text="Weight" />

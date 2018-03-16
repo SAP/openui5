@@ -3,9 +3,31 @@
  */
 
 // Provides control sap.m.ProgressIndicator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, library, Control, ValueStateSupport) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/ValueStateSupport',
+	'sap/ui/core/library',
+	'./ProgressIndicatorRenderer'
+],
+	function(
+	jQuery,
+	library,
+	Control,
+	ValueStateSupport,
+	coreLibrary,
+	ProgressIndicatorRenderer
+	) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 
@@ -31,6 +53,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	var ProgressIndicator = Control.extend("sap.m.ProgressIndicator", /** @lends sap.m.ProgressIndicator.prototype */ { metadata : {
 
+		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.m",
 		properties : {
 			/**
@@ -41,7 +64,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			/**
 			 * Specifies the state of the bar. Enumeration sap.ui.core.ValueState provides Error (red), Warning (yellow), Success (green), None (blue) (default value).
 			 */
-			state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : sap.ui.core.ValueState.None},
+			state : {type : "sap.ui.core.ValueState", group : "Appearance", defaultValue : ValueState.None},
 
 			/**
 			 * Specifies the text value to be displayed in the bar.
@@ -50,6 +73,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			/**
 			 * Specifies the numerical value in percent for the length of the progress bar.
+			 *
+			 * <b>Note:</b> If a value greater than 100 is provided, the <code>percentValue</code> is set to 100.
+			 * In other cases of invalid value, <code>percentValue</code> is set to its default of 0.
 			 */
 			percentValue : {type : "float", group : "Data", defaultValue : 0},
 
@@ -73,8 +99,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Specifies the element's text directionality with enumerated options (RTL or LTR). By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
-		}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
+
+			/**
+			 * Determines whether the control is in display-only state where the control has different visualization and cannot be focused.
+			 * @since 1.50
+			 */
+			displayOnly : {type : "boolean", group : "Behavior", defaultValue : false}
+		},
+		designtime: "sap/m/designtime/ProgressIndicator.designtime"
 	}});
 
 	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation();
@@ -84,11 +117,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			$progressBar,
 			fPercentDiff,
 			$progressIndicator = this.$(),
-			fAnimationDuration;
+			fAnimationDuration,
+			fNotValidValue;
+
+		fPercentValue = this.validateProperty("percentValue", fPercentValue);
 
 		if (!isValidPercentValue(fPercentValue)) {
-			fPercentValue = 0;
-			jQuery.sap.log.warning(this + ": percentValue (" + fPercentValue + ") is not correct! Setting the default percentValue:0.");
+			fNotValidValue = fPercentValue;
+			fPercentValue = fPercentValue > 100 ? 100 : 0;
+			jQuery.sap.log.warning(this + ": percentValue (" + fNotValidValue + ") is not correct! Setting the percentValue to " + fPercentValue);
 		}
 
 		if (this.getPercentValue() !== fPercentValue) {
@@ -110,6 +147,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			fAnimationDuration = bUseAnimations ? Math.abs(fPercentDiff) * 20 : 0;
 			$progressBar = this.$("bar");
+			// Stop currently running animation and start new one.
+			// In case of multiple setPercentValue calls all animations will run and it will take some time until the last value is animated,
+			// which is the one, actually valuable.
+			$progressBar.stop();
 			$progressBar.animate({
 				"flex-basis" : fPercentValue + "%"
 			}, fAnimationDuration, "linear", function() {
@@ -135,6 +176,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		$textRight.text(sDisplayValue);
 		this.$().attr("aria-valuetext", this._getAriaValueText({sText: sDisplayValue}));
 
+		return this;
+	};
+
+	ProgressIndicator.prototype.setDisplayOnly = function(bDisplayOnly) {
+		// change of value without re-rendering
+		this.setProperty("displayOnly", bDisplayOnly, true);
+		if (this.getDomRef()) {
+			this.$().toggleClass("sapMPIDisplayOnly", bDisplayOnly);
+		}
 		return this;
 	};
 
@@ -180,8 +230,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Returns the <code>sap.m.ProgressIndicator</code>  accessibility information.
+	 *
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
+	 * @returns {object} The <code>sap.m.ProgressIndicator</code> accessibility information
 	 */
 	ProgressIndicator.prototype.getAccessibilityInfo = function() {
 		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
@@ -195,9 +248,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	function isValidPercentValue(value) {
-		return (typeof (value) === 'number') && !isNaN(value) && value >= 0 && value <= 100;
+		return value >= 0 && value <= 100;
 	}
 
 	return ProgressIndicator;
 
-}, /* bExport= */ true);
+});

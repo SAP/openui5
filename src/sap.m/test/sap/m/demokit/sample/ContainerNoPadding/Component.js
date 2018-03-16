@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ContainerNoPadding.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.ContainerNoPadding.Page",
+			rootView : {
+				"viewName": "sap.m.sample.ContainerNoPadding.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"

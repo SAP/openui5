@@ -2,9 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate'],
-	function(jQuery, CalendarUtils, CalendarDate) {
-	"use strict";
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate',
+		'sap/ui/unified/CalendarLegendRenderer', 'sap/ui/unified/library'],
+	function (jQuery, CalendarUtils, CalendarDate, CalendarLegendRenderer, library) {
+		"use strict";
+
+
+	// shortcut for sap.ui.unified.CalendarDayType
+	var CalendarDayType = library.CalendarDayType;
 
 
 	/**
@@ -66,7 +71,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	/**
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.unified.calendar.MonthsRow} oMonthsRow An object representation of the control that should be rendered
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The first date of the month
 	 */
 	MonthsRowRenderer.renderRow = function(oRm, oMonthsRow, oDate){
 
@@ -85,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	/**
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.unified.calendar.MonthsRow} oMonthsRow An object representation of the control that should be rendered
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The first date of the month
 	 */
 	MonthsRowRenderer.renderHeader = function(oRm, oMonthsRow, oDate){
 		CalendarUtils._checkCalendarDate(oDate);
@@ -106,7 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.unified.calendar.MonthsRow} oMonthsRow An object representation of the control that should be rendered
 	 * @param {sap.ui.core.LocaleData} oLocalDate
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The first date of the month
 	 */
 	MonthsRowRenderer.renderHeaderLine = function(oRm, oMonthsRow, oLocaleData, oDate){
 		CalendarUtils._checkCalendarDate(oDate);
@@ -142,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	/**
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.unified.calendar.MonthsRow} oMonthsRow An object representation of the control that should be rendered
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The first date of the month
 	 */
 	MonthsRowRenderer.renderMonths = function(oRm, oMonthsRow, oDate){
 
@@ -161,7 +166,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 	/**
 	 * @param {sap.ui.unified.calendar.MonthsRow} oMonthsRow An object representation of the control that should be rendered
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The first date of the month
+	 * @returns {Object} A helper object, containing months props
 	 */
 	MonthsRowRenderer.getHelper = function(oMonthsRow, oDate){
 		CalendarUtils._checkCalendarDate(oDate);
@@ -189,12 +195,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				if (!(oLegend instanceof sap.ui.unified.CalendarLegend)) {
 					throw new Error(oLegend + " is not an sap.ui.unified.CalendarLegend. " + oMonthsRow);
 				}
-				oHelper.aTypes = oLegend.getItems();
+				oHelper.oLegend = oLegend;
 			} else {
 				jQuery.sap.log.warning("CalendarLegend " + sLegendId + " does not exist!", oMonthsRow);
 			}
-		} else {
-			oHelper.aTypes = [];
 		}
 
 		return oHelper;
@@ -204,9 +208,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 	/**
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.unified.calendar.MonthsRow} oMonthsRow An object representation of the control that should be rendered
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
-	 * @param {object} helper class
-	 * @param {string} width
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The first date of the month
+	 * @param {Object} oHelper A helper object, containing months props
+	 * @param {string} sWidth The width of the month
 	 */
 	MonthsRowRenderer.renderMonth = function(oRm, oMonthsRow, oDate, oHelper, sWidth){
 		CalendarUtils._checkCalendarDate(oDate);
@@ -258,7 +262,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			mAccProps["describedby"] = mAccProps["describedby"] + " " + oHelper.sId + "-End";
 		}
 
-		if (oType && oType.type != sap.ui.unified.CalendarDayType.None) {
+		if (oType && oType.type != CalendarDayType.None) {
 			oRm.addClass("sapUiCalItem" + oType.type);
 			if (oType.tooltip) {
 				oRm.writeAttributeEscaped('title', oType.tooltip);
@@ -274,15 +278,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		oRm.writeAttribute("data-sap-month", sYyyymm);
 		mAccProps["label"] = mAccProps["label"] + oHelper.oFormatLong.format(oDate.toUTCJSDate(), true);
 
-		if (oType && oType.type != sap.ui.unified.CalendarDayType.None) {
-			// as legend must not be rendered add text of type
-			for (var i = 0; i < oHelper.aTypes.length; i++) {
-				var oLegendType = oHelper.aTypes[i];
-				if (oLegendType.getType() == oType.type) {
-					mAccProps["label"] = mAccProps["label"] + "; " + oLegendType.getText();
-					break;
-				}
-			}
+		if (oType && oType.type != CalendarDayType.None) {
+			CalendarLegendRenderer.addCalendarTypeAccInfo(mAccProps, oType.type, oHelper.oLegend);
 		}
 
 		oRm.writeAccessibilityState(null, mAccProps);

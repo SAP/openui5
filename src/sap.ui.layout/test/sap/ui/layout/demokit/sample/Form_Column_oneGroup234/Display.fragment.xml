@@ -1,0 +1,87 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<VBox class="sapUiSmallMargin">
+		<f:Form id="FormDisplayColumn_oneGroup234"
+			editable="false">
+			<f:title>
+				<core:Title text="Address" />
+			</f:title>
+			<f:layout>
+				<f:ColumnLayout 
+					columnsM="2"
+					columnsL="3"
+					columnsXL="4"
+				/>
+			</f:layout>
+			<f:formContainers>
+				<f:FormContainer>
+					<f:formElements>
+						<f:FormElement label="Name">
+							<f:fields>
+								<Text text="{SupplierName}" id="nameText"  />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Street">
+							<f:fields>
+								<Text text="{Street} {HouseNumber}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="ZIP Code/City">
+							<f:fields>
+								<Text text="{ZIPCode} {City}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Country">
+							<f:fields>
+								<Text text="{Country}" id="countryText" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Web">
+							<f:fields>
+								<Link text="Url" href="{Url}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Twitter">
+							<f:fields>
+								<Text text="{Twitter}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Email">
+							<f:fields>
+								<Text text="{Email}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Tel.">
+							<f:fields>
+								<Text text="{Tel}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="SMS">
+							<f:fields>
+								<Text text="{Sms}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Mobile">
+							<f:fields>
+								<Text text="{Mobile}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Pager">
+							<f:fields>
+								<Text text="{Pager}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Fax">
+							<f:fields>
+								<Text text="{Fax}" />
+							</f:fields>
+						</f:FormElement>
+					</f:formElements>
+				</f:FormContainer>
+			</f:formContainers>
+		</f:Form>
+	</VBox>
+</core:FragmentDefinition>

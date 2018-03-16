@@ -1,0 +1,164 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "17d6cf1ec475a2690bea79096a17e3cc649130eb",
+        "type": "FIX",
+        "text": "Combine on the wrong element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492991"
+          }
+        ]
+      },
+      {
+        "id": "8af2e0de0482b5dea85dcff6db03c5d982096b40",
+        "type": "FIX",
+        "text": "sap.ui.dt: added missing parentheses for ElementUtil.isVisible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770506683"
+          }
+        ]
+      },
+      {
+        "id": "d121eb64e1e4326218fb5fd89e0f4c5d2b3278cb",
+        "type": "FIX",
+        "text": "sap.ui.dt: fixed Plugin test failing on firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770512923"
+          }
+        ]
+      },
+      {
+        "id": "42fa4bd1e74d0e01302fc53e846feafe88da014c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Settings dialog don’t open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770516043"
+          }
+        ]
+      },
+      {
+        "id": "9154b3be81771e137fbfcc3493da332056a5f7be",
+        "type": "FEATURE",
+        "text": "sap.ui.dt Instance specific design time metadata",
+        "references": []
+      },
+      {
+        "id": "d25e53c559708b3bd83b1010482c9f0a598bd0da",
+        "type": "FIX",
+        "text": "Deactivate instanceof check in dt LibraryTest",
+        "references": []
+      },
+      {
+        "id": "4c991ef2f08a8f78d692efb3b1064e346d86eae1",
+        "type": "FIX",
+        "text": "sap.ui.dt: TablesInDesignTime Qunit firefox fix",
+        "references": []
+      },
+      {
+        "id": "a02a75d0e36c66b795e3a6073c9d611492dae8c9",
+        "type": "FIX",
+        "text": "Fix control variant issues",
+        "references": []
+      },
+      {
+        "id": "e0b6ecf78a6b7190d89cd339d6648f30d3cbc94d",
+        "type": "FIX",
+        "text": "sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492781"
+          }
+        ]
+      },
+      {
+        "id": "e9f576ebdf6e28af067c89313a2703139b95013e",
+        "type": "FIX",
+        "text": "sap.ui.dt: Fix for Drag&Drop cursor in EDGE Browser",
+        "references": []
+      },
+      {
+        "id": "d06d24845a1e4ee6ae2c2ce55dbd95f397baeaa7",
+        "type": "FIX",
+        "text": "sap.ui.dt: QUnit test fix - CSS filter not supported by IE",
+        "references": []
+      },
+      {
+        "id": "f6d2fbc4cf74df840157743e6b780ce9bf9d61df",
+        "type": "FIX",
+        "text": "sap.ui.rta: DT Metadata ignore() called for destroyed element",
+        "references": []
+      },
+      {
+        "id": "99356a6c7776acd40b85bab61d202efe8479f1d5",
+        "type": "FIX",
+        "text": "MiniMenu not longer overwriting Popover style",
+        "references": []
+      },
+      {
+        "id": "1faa460cb7a9fae125f52c634cba63826e01da60",
+        "type": "FIX",
+        "text": "sap.ui.dt: MiniMenu sometimes not opening",
+        "references": []
+      },
+      {
+        "id": "5325a53ccfb208609ffc53982488f9d5ce89ed6f",
+        "type": "FIX",
+        "text": "Stabilize test case by rounding numbers",
+        "references": []
+      },
+      {
+        "id": "d05dc051b7c2b87ea17cf72330c07312a05c1dce",
+        "type": "FEATURE",
+        "text": "Adding new group \"DIALOG\" to designtime metadata tests",
+        "references": []
+      },
+      {
+        "id": "8506ead7fda26a47539883ec96d4a2a3ef36fa60",
+        "type": "FIX",
+        "text": "sap.ui.dt - Mutation Observer QUnit test reformulation",
+        "references": []
+      },
+      {
+        "id": "f02530fb1e8cfc4076d1cbf838bea861a03a4570",
+        "type": "FIX",
+        "text": "sap.ui.dt - Test fixes after DT refactoring",
+        "references": []
+      },
+      {
+        "id": "08b7249b3cb7297bda020e8be418c826cf5b9842",
+        "type": "FIX",
+        "text": "sap.ui.dt - Visibility check of Overlay",
+        "references": []
+      },
+      {
+        "id": "6d5cd2af90f83af669a07d34c2fe694938d7c245",
+        "type": "FIX",
+        "text": "sap.ui.rta - contextMenu voter problem",
+        "references": []
+      },
+      {
+        "id": "3e4fc2be35157cb9e30ae7b7f5d5b051d7f9d54f",
+        "type": "FIX",
+        "text": ": DT - New Selection API",
+        "references": []
+      },
+      {
+        "id": "03928b0dc95e0ac26812ceff48ad1ffa26efbdfd",
+        "type": "FIX",
+        "text": "sap.ui.dt - ElementOverlayRTL test fix for IE + Edge",
+        "references": []
+      }
+    ]
+  }
+}

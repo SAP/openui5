@@ -3,7 +3,15 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
-	<Page id="masterSettingsPage" showHeader="false">
+	<Page id="masterSettingsPage"
+		showHeader="false">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Master_rootLabel}"
+				contentRole="Navigation"
+				contentLabel="{i18n>Master_contentLabel}"/>
+		</landmarkInfo>
 		<List
 			id="masterSettingsList"
 			items="{side>/masterSettings}"
@@ -12,7 +20,7 @@
 			<StandardListItem
 				title="{side>title}"
 				type="Navigation"
-				selected="{side>selected}"/>
+				selected="{= ${device>/system/phone} ? false : ${side>selected}}"/>
 		</List>
 	</Page>
 </mvc:View>

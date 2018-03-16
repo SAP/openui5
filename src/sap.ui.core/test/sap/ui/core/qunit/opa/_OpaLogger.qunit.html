@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>QUnit Page for sap.ui.test._OpaLogger</title>
+
+	<script src="../../shared-config.js"></script>
+	<script
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-logLevel="ERROR">
+	</script>
+	<script src="../_includeQUnit.js"></script>
+
+	<script>
+		jQuery.sap.require("sap/ui/qunit/qunit-junit");
+		jQuery.sap.require("sap/ui/qunit/qunit-coverage");
+		jQuery.sap.require("sap/ui/thirdparty/sinon");
+		jQuery.sap.require("sap/ui/thirdparty/sinon-qunit");
+		jQuery.sap.require("sap/ui/thirdparty/sinon-ie");
+
+		QUnit.config.autostart = false;
+
+		sap.ui.require([
+			"sap/ui/test/_OpaLogger",
+			"jquery.sap.global"
+		], function (_OpaLogger, $) {
+			"use strict";
+
+			QUnit.module("OpaLogger", {
+				beforeEach: function () {
+					this.fnGetLoggerSpy = sinon.spy($.sap.log, "getLogger");
+					this.fnSetLevelSpy = sinon.spy($.sap.log, "setLevel");
+				},
+				afterEach: function () {
+					this.fnGetLoggerSpy.restore();
+					this.fnSetLevelSpy.restore();
+				}
+			});
+
+			QUnit.test("Should get logger for component", function (assert) {
+				var oOpaLogger = _OpaLogger.getLogger("testComponent");
+				assert.ok(this.fnGetLoggerSpy.calledOnce, "Should call original getLogger");
+				sinon.assert.calledWith(this.fnGetLoggerSpy, "testComponent", $.sap.log.Level.DEBUG);
+				assert.strictEqual(oOpaLogger.getLevel(), $.sap.log.Level.DEBUG);
+			});
+
+			QUnit.test("Should set correct level", function (assert) {
+				_OpaLogger.setLevel("trace");
+				var oOpaLogger = _OpaLogger.getLogger("testComponent");
+				assert.ok(this.fnGetLoggerSpy.calledOnce, "Should call original getLogger");
+				sinon.assert.calledWith(this.fnGetLoggerSpy, "testComponent", $.sap.log.Level.TRACE);
+				assert.strictEqual(oOpaLogger.getLevel(), $.sap.log.Level.TRACE);
+				_OpaLogger.setLevel("debug");
+			});
+
+			QUnit.test("Should change level of existing loggers", function (assert) {
+				var oOpaLoggers = [_OpaLogger.getLogger("testComponent1"), _OpaLogger.getLogger("testComponent2")];
+				_OpaLogger.setLevel("info");
+				sinon.assert.calledWith(this.fnSetLevelSpy, $.sap.log.Level.INFO, "testComponent1");
+				sinon.assert.calledWith(this.fnSetLevelSpy, $.sap.log.Level.INFO, "testComponent2");
+				assert.strictEqual(oOpaLoggers[0].getLevel(), $.sap.log.Level.INFO);
+				assert.strictEqual(oOpaLoggers[0].getLevel(), $.sap.log.Level.INFO);
+				_OpaLogger.setLevel("debug");
+			});
+
+			QUnit.start();
+
+		});
+	</script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+</body>
+</html>

@@ -28,12 +28,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @param {object} oData parameters used to initialize the ResourceModel; at least either bundleUrl or bundleName must be set on this object; if both are set, bundleName wins
+	 * @param {object} oData parameters used to initialize the ResourceModel; at least either bundle, bundleName or bundleUrl must be set on this object; if more than one is set, they will be used in the mentioned order
 	 * @param {string} [oData.bundleUrl] the URL to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
 	 * @param {string} [oData.bundleName] the UI5 module name of the .properties file; this name will be resolved to a path like the paths of normal UI5 modules and ".properties" will then be appended (e.g. a name like "myBundle" can be given)
 	 * @param {string} [oData.bundleLocale] an optional locale; when not given, the default is the active locale from the UI5 configuration
+	 * @param {string} [oData.bundle] an optional resource bundle; when given, the ResourceModel uses this bundle instead of creating another bundle using the provided bundleUrl, bundleName and bundleLocale.
+	 *                                To support reloading the bundle when the locale changes it is required to also provide the corresponding bundleName or bundleUrl. Otherwise the bundle isn't updated if only the bundle option is given.
 	 * @param {boolean} [oData.async=false] whether the language bundle should be loaded asynchronously
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.resource.ResourceModel
 	 */
@@ -62,8 +63,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 
 			this.oData = oData;
 
-			// load resource bundle
-			_load(this, true);
+			if (oData && oData.bundle) {
+				this._oResourceBundle = oData.bundle;
+			} else if (oData && (oData.bundleUrl || oData.bundleName)) {
+				_load(this);
+			} else {
+				throw new Error("At least bundle, bundleName or bundleUrl must be provided!");
+			}
+
 		},
 
 		metadata : {
@@ -76,10 +83,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	 * Returns the resource bundle
 	 *
 	 * @param {object} oData
+	 * @param {object} bAsync whether the resource bundle should be loaded asynchronously
 	 * @returns {jQuery.sap.util.ResourceBundle|Promise} loaded resource bundle or Promise in async case
+	 * @sap-restricted sap.ui.core.Component
 	 * @private
 	 */
-	ResourceModel.prototype.loadResourceBundle = function(oData) {
+	ResourceModel.loadResourceBundle = function(oData, bAsync) {
 		var oConfiguration = sap.ui.getCore().getConfiguration(),
 			oRb, sUrl, sLocale, bIncludeInfo;
 		sLocale = oData.bundleLocale;
@@ -88,7 +97,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		}
 		bIncludeInfo = oConfiguration.getOriginInfo();
 		sUrl = _getUrl(oData.bundleUrl, oData.bundleName);
-		oRb = jQuery.sap.resources({url: sUrl, locale: sLocale, includeInfo: bIncludeInfo, async: !!oData.async});
+		oRb = jQuery.sap.resources({url: sUrl, locale: sLocale, includeInfo: bIncludeInfo, async: bAsync});
 		return oRb;
 	};
 
@@ -121,8 +130,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 					fResolve(true);
 				}
 			} else {
-				oData.async = that.bAsync;
-				var bundle = that.loadResourceBundle(oData);
+				var bundle = ResourceModel.loadResourceBundle(oData, that.bAsync);
+
 				if (bundle instanceof Promise) {
 					bundle.then(function(customBundle){
 						that._oResourceBundle._enhance(customBundle);
@@ -194,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 	};
 
 	ResourceModel.prototype._handleLocalizationChange = function() {
-		_load(this, false);
+		_load(this);
 	};
 
 	/**
@@ -209,11 +218,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 		this.bReenhance = false;
 	};
 
-	function _load(oModel, bThrowError){
+	function _load(oModel) {
 		var oData = oModel.oData;
 
 		if (oData && (oData.bundleUrl || oData.bundleName)) {
-			var res = oModel.loadResourceBundle(oData);
+			var res = ResourceModel.loadResourceBundle(oData, oData.async);
 			if (res instanceof Promise) {
 				var oEventParam = {url: _getUrl(oData.bundleUrl, oData.bundleName), async: true};
 				oModel.fireRequestSent(oEventParam);
@@ -230,8 +239,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Mo
 				oModel._reenhance();
 				oModel.checkUpdate(true);
 			}
-		} else if (bThrowError) {
-			throw new Error("Neither bundleUrl nor bundleName are given. One of these is mandatory.");
 		}
 	}
 

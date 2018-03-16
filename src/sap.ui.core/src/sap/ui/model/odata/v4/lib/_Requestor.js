@@ -5,25 +5,15 @@
 //Provides class sap.ui.model.odata.v4.lib.Requestor
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"./_Batch",
-	"./_Helper"
-], function (jQuery, _Batch, _Helper) {
+	"./_Helper",
+	"./_V2Requestor"
+], function (jQuery, SyncPromise, _Batch, _Helper, asV2Requestor) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
 			"Accept" : "multipart/mixed"
-		},
-		mFinalHeaders = { // final (cannot be overridden) request headers for OData V4
-			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-		},
-		mPredefinedPartHeaders = { // predefined request headers in $batch parts
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
-		},
-		mPredefinedRequestHeaders = { // predefined request headers for all requests
-			"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
-			"OData-MaxVersion" : "4.0",
-			"OData-Version" : "4.0",
-			"X-CSRF-Token" : "Fetch"
 		},
 		_Requestor;
 
@@ -62,32 +52,68 @@ sap.ui.define([
 	}
 
 	/**
-	 * Constructor for a new <code>_Requestor<code> instance for the given service URL and default
+	 * Constructor for a new <code>_Requestor</code> instance for the given service URL and default
 	 * headers.
 	 *
 	 * @param {string} sServiceUrl
 	 *   URL of the service document to request the CSRF token from; also used to resolve
 	 *   relative resource paths (see {@link #request})
-	 * @param {object} mHeaders
+	 * @param {object} [mHeaders={}]
 	 *   Map of default headers; may be overridden with request-specific headers; certain
 	 *   predefined OData V4 headers are added by default, but may be overridden
-	 * @param {object} mQueryParams
-	 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
-	 *   request the CSRF token
-	 * @param {function (string)} [fnOnCreateGroup]
+	 * @param {object} [mQueryParams={}]
+	 *   A map of query parameters as described in
+	 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF token
+	 * @param {object} oModelInterface
+	 *   A interface allowing to call back to the owning model
+	 * @param {function} oModelInterface.fnFetchEntityContainer
+	 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
+	 *   container is fully available, or rejected with an error.
+	 * @param {function} oModelInterface.fnFetchMetadata
+	 *   A function that returns a SyncPromise which resolves with the metadata instance for a
+	 *   given meta path
+	 * @param {function} oModelInterface.fnGetGroupProperty
+	 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
+	 *   returning the property value in question. Only 'submit' is supported for <code>
+	 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
+	 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
 	 *   A callback function that is called with the group name as parameter when the first
 	 *   request is added to a group
 	 * @private
 	 */
-	function Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup) {
+	function Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface) {
 		this.mBatchQueue = {};
 		this.mHeaders = mHeaders || {};
-		this.fnOnCreateGroup = fnOnCreateGroup;
+		this.oModelInterface = oModelInterface;
 		this.sQueryParams = _Helper.buildQuery(mQueryParams); // Used for $batch and CSRF token only
 		this.mRunningChangeRequests = {};
 		this.oSecurityTokenPromise = null; // be nice to Chrome v8
 		this.sServiceUrl = sServiceUrl;
 	}
+
+	/**
+	 * Final (cannot be overridden) request headers for OData V4.
+	 */
+	Requestor.prototype.mFinalHeaders = {
+		"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
+	};
+
+	/**
+	 * Predefined request headers in $batch parts for OData V4.
+	 */
+	Requestor.prototype.mPredefinedPartHeaders = {
+		"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true"
+	};
+
+	/**
+	 * Predefined request headers for all requests for OData V4.
+	 */
+	Requestor.prototype.mPredefinedRequestHeaders = {
+		"Accept" : "application/json;odata.metadata=minimal;IEEE754Compatible=true",
+		"OData-MaxVersion" : "4.0",
+		"OData-Version" : "4.0",
+		"X-CSRF-Token" : "Fetch"
+	};
 
 	/**
 	 * Called when a batch request has been sent to count the number of running change requests.
@@ -127,6 +153,71 @@ sap.ui.define([
 	};
 
 	/**
+	 * Builds a query string from the parameter map. Converts the known OData system query
+	 * options, all other OData system query options are rejected; with
+	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
+	 *
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
+	 * @param {object} mQueryOptions
+	 *   A map of key-value pairs representing the query string
+	 * @param {boolean} [bDropSystemQueryOptions=false]
+	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the query string
+	 * @returns {string}
+	 *   The query string; it is empty if there are no options; it starts with "?" otherwise
+	 * @example
+	 * {
+	 *		$expand : {
+	 *			"SO_2_BP" : true,
+	 *			"SO_2_SOITEM" : {
+	 *				"$expand" : {
+	 *					"SOITEM_2_PRODUCT" : {
+	 *						"$apply" : "filter(Price gt 100)",
+	 *						"$expand" : {
+	 *							"PRODUCT_2_BP" : null,
+	 *						},
+	 *						"$select" : "CurrencyCode"
+	 *					},
+	 *					"SOITEM_2_SO" : null
+	 *				}
+	 *			}
+	 *		},
+	 *		"sap-client" : "003"
+	 *	}
+	 */
+	Requestor.prototype.buildQueryString = function (sMetaPath, mQueryOptions,
+			bDropSystemQueryOptions, bSortExpandSelect) {
+		return _Helper.buildQuery(
+			this.convertQueryOptions(sMetaPath, mQueryOptions, bDropSystemQueryOptions,
+				bSortExpandSelect));
+	};
+
+	/**
+	 * Cancels all change requests for a given group. All pending change requests that have a
+	 * <code>$cancel</code> callback are rejected with an error with property
+	 * <code>canceled = true</code>. They are canceled in reverse order to properly undo stacked
+	 * changes (like multiple PATCHes for the same property).
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID to be canceled
+	 * @throws {Error}
+	 *   If change requests for the given group ID are running
+	 *
+	 * @private
+	 */
+	Requestor.prototype.cancelChanges = function (sGroupId) {
+		if (this.mRunningChangeRequests[sGroupId]) {
+			throw new Error("Cannot cancel the changes for group '" + sGroupId
+				+ "', the batch request is running");
+		}
+		this.cancelChangesByFilter(function () {
+			return true;
+		}, sGroupId);
+	};
+
+	/**
 	 * Cancels all change requests for which the <code>$cancel</code> callback is defined and the
 	 * given filter function returns <code>true</code>. For these requests the callback is called
 	 * and the related promises are rejected with an error having property
@@ -143,7 +234,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Requestor.prototype.cancelChangeRequests = function (fnFilter, sGroupId) {
+	Requestor.prototype.cancelChangesByFilter = function (fnFilter, sGroupId) {
 		var bCanceled = false,
 			that = this;
 
@@ -184,26 +275,292 @@ sap.ui.define([
 	};
 
 	/**
-	 * Cancels change requests for a given group. All pending change requests that have a
-	 * <code>$cancel</code> callback are rejected with an error with property
-	 * <code>canceled = true</code>. They are canceled in reverse order to properly undo stacked
-	 * changes (like multiple PATCHes for the same property).
+	 * Converts the value for a "$expand" in mQueryParams.
+	 *
+	 * @param {object} mExpandItems The expand items, a map from path to options
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the query string
+	 * @returns {string} The resulting value for the query string
+	 * @throws {Error} If the expand items are not an object
+	 */
+	Requestor.prototype.convertExpand = function (mExpandItems, bSortExpandSelect) {
+		var aKeys,
+			aResult = [],
+			that = this;
+
+		if (!mExpandItems || typeof mExpandItems !== "object") {
+			throw new Error("$expand must be a valid object");
+		}
+
+		aKeys = Object.keys(mExpandItems);
+		if (bSortExpandSelect) {
+			aKeys = aKeys.sort();
+		}
+		aKeys.forEach(function (sExpandPath) {
+			var vExpandOptions = mExpandItems[sExpandPath];
+
+			if (vExpandOptions && typeof vExpandOptions === "object") {
+				aResult.push(that.convertExpandOptions(sExpandPath, vExpandOptions,
+					bSortExpandSelect));
+			} else {
+				aResult.push(sExpandPath);
+			}
+		});
+
+		return aResult.join(",");
+	};
+
+	/**
+	 * Converts the expand options.
+	 *
+	 * @param {string} sExpandPath The expand path
+	 * @param {boolean|object} vExpandOptions
+	 *   The options; either a map or simply <code>true</code>
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the query string
+	 * @returns {string} The resulting string for the OData query in the form "path" (if no
+	 *   options) or "path($option1=foo;$option2=bar)"
+	 */
+	Requestor.prototype.convertExpandOptions = function (sExpandPath, vExpandOptions,
+			bSortExpandSelect) {
+		var aExpandOptions = [];
+
+		// We do not pass a resource path, but within V4 this doesn't matter
+		this.doConvertSystemQueryOptions(undefined, vExpandOptions,
+			function (sOptionName, vOptionValue) {
+				aExpandOptions.push(sOptionName + '=' + vOptionValue);
+			},
+			undefined, bSortExpandSelect);
+		return aExpandOptions.length ? sExpandPath + "(" + aExpandOptions.join(";") + ")"
+			: sExpandPath;
+	};
+
+	/**
+	 * Converts the query options. All known OData system query options are converted to
+	 * strings, so that the result can be used for _Helper.buildQuery; with
+	 * <code>bDropSystemQueryOptions</code> they are dropped altogether.
+	 *
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
+	 * @param {object} mQueryOptions The query options
+	 * @param {boolean} [bDropSystemQueryOptions=false]
+	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the query string
+	 * @returns {object} The converted query options
+	 */
+	Requestor.prototype.convertQueryOptions = function (sMetaPath, mQueryOptions,
+			bDropSystemQueryOptions, bSortExpandSelect) {
+		var mConvertedQueryOptions = {};
+
+		if (!mQueryOptions) {
+			return undefined;
+		}
+		this.doConvertSystemQueryOptions(sMetaPath, mQueryOptions, function (sKey, vValue) {
+			mConvertedQueryOptions[sKey] = vValue;
+		}, bDropSystemQueryOptions, bSortExpandSelect);
+		return mConvertedQueryOptions;
+	};
+
+	/**
+	 * Converts the resource path if needed. For OData V4 requests no conversion is done.
+	 * May be overwritten for other OData service versions.
+	 *
+	 * @param {string} sResourcePath The V4 resource path
+	 * @returns {string} The resource path as required for the server
+	 */
+	Requestor.prototype.convertResourcePath = function (sResourcePath) {
+		return sResourcePath;
+	};
+
+	/**
+	 * Checks whether the "OData-Version" header is set to "4.0" otherwise an error is thrown.
+	 *
+	 * @param {function} fnGetHeader
+	 *   A callback function to get a header attribute for a given header name with case-insensitive
+	 *   search by header name
+	 * @param {string} sResourcePath
+	 *   The resource path of the request
+	 * @param {boolean} [bVersionOptional=false]
+	 *   Indicates whether the OData service version is optional, which is the case for responses
+	 *   contained in a response for a $batch request
+	 * @throws {Error} If the "OData-Version" header is not "4.0"
+	 */
+	Requestor.prototype.doCheckVersionHeader = function (fnGetHeader, sResourcePath,
+			bVersionOptional) {
+		var sODataVersion = fnGetHeader("OData-Version"),
+			vDataServiceVersion = !sODataVersion && fnGetHeader("DataServiceVersion");
+
+		if (vDataServiceVersion) {
+			throw new Error("Expected 'OData-Version' header with value '4.0' but received"
+				+ " 'DataServiceVersion' header with value '" + vDataServiceVersion
+				+ "' in response for " + this.sServiceUrl + sResourcePath);
+		}
+		if (sODataVersion === "4.0" || !sODataVersion && bVersionOptional) {
+			return;
+		}
+		throw new Error("Expected 'OData-Version' header with value '4.0' but received value '"
+			+ sODataVersion + "' in response for " + this.sServiceUrl + sResourcePath);
+	};
+
+	/**
+	 * Converts the known OData system query options from map or array notation to a string. All
+	 * other parameters are simply passed through.
+	 * May be overwritten for other OData service versions.
+	 *
+	 * @param {string} sMetaPath
+	 *   The meta path corresponding to the resource path
+	 * @param {object} mQueryOptions The query options
+	 * @param {function(string,any)} fnResultHandler
+	 *   The function to process the converted options getting the name and the value
+	 * @param {boolean} [bDropSystemQueryOptions=false]
+	 *   Whether all system query options are dropped (useful for non-GET requests)
+	 * @param {boolean} [bSortExpandSelect=false]
+	 *   Whether the paths in $expand and $select shall be sorted in the query string
+	 */
+	Requestor.prototype.doConvertSystemQueryOptions = function (sMetaPath, mQueryOptions,
+			fnResultHandler, bDropSystemQueryOptions, bSortExpandSelect) {
+		var that = this;
+
+		Object.keys(mQueryOptions).forEach(function (sKey) {
+			var vValue = mQueryOptions[sKey];
+
+			if (bDropSystemQueryOptions && sKey[0] === '$') {
+				return;
+			}
+
+			switch (sKey) {
+				case "$expand":
+					vValue = that.convertExpand(vValue, bSortExpandSelect);
+					break;
+				case "$select":
+					if (Array.isArray(vValue)) {
+						vValue = bSortExpandSelect ? vValue.sort().join(",") : vValue.join(",");
+					}
+					break;
+				default:
+				// nothing to do
+			}
+			fnResultHandler(sKey, vValue);
+		});
+	};
+
+	/**
+	 * Converts an OData response payload if needed. For OData V4 payloads no conversion is done.
+	 * May be overwritten for other OData service versions. The resulting payload has to
+	 * be an OData V4 payload.
+	 *
+	 * @param {object} oResponsePayload
+	 *   The OData response payload
+	 * @param {string} [sMetaPath]
+	 *   The meta path corresponding to the resource path; needed in case V2 response does not
+	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
+	 *   Request"
+	 * @returns {object}
+	 *   The OData V4 response payload
+	 */
+	Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
+		return oResponsePayload;
+	};
+
+	/**
+	 * Fetches the type of the given meta path from the metadata.
+	 *
+	 * @param {string} sMetaPath
+	 *   The meta path, e.g. SalesOrderList/SO_2_BP
+	 * @param {boolean} [bAsName]
+	 *   If <code>true</code>, the name of the type is delivered instead of the type itself. This
+	 *   must be used when asking for a property type to avoid that the function logs an error
+	 *   because there are no objects for primitive types like "Edm.Stream".
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise that is resolved with the type at the given path or its name.
+	 */
+	Requestor.prototype.fetchTypeForPath = function (sMetaPath, bAsName) {
+		return this.oModelInterface.fnFetchMetadata(sMetaPath + (bAsName ? "/$Type" : "/"));
+	};
+
+	/**
+	 * Formats a given internal value into a literal suitable for usage in URLs.
+	 *
+	 * @param {any} vValue
+	 *   The value according to "OData JSON Format Version 4.0" section "7.1 Primitive Value"
+	 * @param {object} oProperty
+	 *   The OData property
+	 * @returns {string}
+	 *   The literal according to "OData Version 4.0 Part 2: URL Conventions" section
+	 *   "5.1.1.6.1 Primitive Literals"
+	 * @throws {Error}
+	 *   If the value is undefined or the type is not supported
+	 */
+	Requestor.prototype.formatPropertyAsLiteral = function (vValue, oProperty) {
+		return _Helper.formatLiteral(vValue, oProperty.$Type);
+	};
+
+	/**
+	 * Returns the submit mode for the given group Id.
 	 *
 	 * @param {string} sGroupId
-	 *   The group ID to be canceled
-	 * @throws {Error}
-	 *   If change requests for the given group ID are running.
+	 *   The group Id
+	 * @returns {string} 'API'|'Auto'|'Direct'
 	 *
 	 * @private
 	 */
-	Requestor.prototype.cancelChanges = function (sGroupId) {
-		if (this.mRunningChangeRequests[sGroupId]) {
-			throw new Error("Cannot cancel the changes for group '" + sGroupId
-				+ "', the batch request is running");
+	Requestor.prototype.getGroupSubmitMode = function (sGroupId) {
+		return this.oModelInterface.fnGetGroupProperty(sGroupId, "submit");
+	};
+
+	/**
+	 * Returns the resource path relative to the service URL, including function arguments.
+	 *
+	 * @param {string} sPath
+	 *   The absolute binding path to the bound operation or operation import, e.g.
+	 *   "/Entity('0815')/bound.Operation(...)" or "/OperationImport(...)"
+	 * @param {object} oOperationMetadata
+	 *   The operation's metadata
+	 * @param {object} mParameters
+	 *   A copy of the map of key-values pairs representing the operation's actual parameters;
+	 *   invalid keys are removed for actions
+	 * @returns {string}
+	 *   The new path without leading slash and ellipsis
+	 * @throws {Error}
+	 *   If a collection-valued operation parameter is encountered
+	 *
+	 * @private
+	 */
+	Requestor.prototype.getPathAndAddQueryOptions = function (sPath, oOperationMetadata,
+		mParameters) {
+		var aArguments = [],
+			sName,
+			mName2Parameter = {}, // maps valid names to parameter metadata
+			oParameter,
+			that = this;
+
+		sPath = sPath.slice(1, -5);
+		if (oOperationMetadata.$Parameter) {
+			oOperationMetadata.$Parameter.forEach(function (oParameter) {
+				mName2Parameter[oParameter.$Name] = oParameter;
+			});
 		}
-		this.cancelChangeRequests(function () {
-			return true;
-		}, sGroupId);
+		if (oOperationMetadata.$kind === "Function") {
+			for (sName in mParameters) {
+				oParameter = mName2Parameter[sName];
+				if (oParameter) {
+					if (oParameter.$IsCollection) {
+						throw new Error("Unsupported collection-valued parameter: " + sName);
+					}
+					aArguments.push(encodeURIComponent(sName) + "=" + encodeURIComponent(
+						that.formatPropertyAsLiteral(mParameters[sName], oParameter)));
+				}
+			}
+			sPath += "(" + aArguments.join(",") + ")";
+		} else { // Action
+			for (sName in mParameters) {
+				if (!(sName in mName2Parameter)) {
+					delete mParameters[sName]; // remove invalid parameter
+				}
+			}
+		}
+		return sPath;
 	};
 
 	/**
@@ -236,19 +593,60 @@ sap.ui.define([
 	};
 
 	/**
+	 * Tells whether an empty object in the request body is optional for parameterless actions.
+	 * For OData V4, this is false, but for 4.01 it will become true.
+	 *
+	 * @returns {boolean} <code>false</code>
+	 *
+	 * @private
+	 */
+	Requestor.prototype.isActionBodyOptional = function () {
+		return false;
+	};
+
+	/**
+	 * Tells whether change sets are optional. For OData V4, this is true.
+	 *
+	 * @returns {boolean} <code>true</code>
+	 *
+	 * @private
+	 */
+	Requestor.prototype.isChangeSetOptional = function () {
+		return true;
+	};
+
+	/**
+	 * Returns a sync promise that is resolved when the requestor is ready to be used. The V4
+	 * requestor is ready immediately. Subclasses may behave differently.
+	 *
+	 * @returns {sap.ui.base.SyncPromise} A sync promise that is resolved immediately with no result
+	 */
+	Requestor.prototype.ready = function () {
+		return SyncPromise.resolve();
+	};
+
+	/**
 	 * Returns a promise that will be resolved once the CSRF token has been refreshed, or rejected
 	 * if that fails. Makes sure that only one HEAD request is underway at any given time and
 	 * shares the promise accordingly.
 	 *
+	 * @param {string} [sOldSecurityToken]
+	 *   Security token that caused a 403. A new token is only fetched if the old one is still
+	 *   current.
 	 * @returns {Promise}
 	 *   A promise that will be resolved (with no result) once the CSRF token has been refreshed.
 	 *
 	 * @private
 	 */
-	Requestor.prototype.refreshSecurityToken = function () {
+	Requestor.prototype.refreshSecurityToken = function (sOldSecurityToken) {
 		var that = this;
 
 		if (!this.oSecurityTokenPromise) {
+			// do not refresh security token again if a new token is already available in between
+			if (sOldSecurityToken !== this.mHeaders["X-CSRF-Token"]) {
+				return Promise.resolve();
+			}
+
 			this.oSecurityTokenPromise = new Promise(function (fnResolve, fnReject) {
 				jQuery.ajax(that.sServiceUrl + that.sQueryParams, {
 					method : "HEAD",
@@ -274,15 +672,15 @@ sap.ui.define([
 	 * which the <code>$cancel</code> callback is defined are removed.
 	 *
 	 * @param {Promise} oPromise
-	 *   A promise that has been returned for a PATCH request. It will be rejected with an error
-	 *   with property <code>canceled = true</code>.
+	 *   A promise that has been returned for a PATCH request. That request will be rejected with
+	 *   an error with property <code>canceled = true</code>.
 	 * @throws {Error}
 	 *   If the request is not in the queue, assuming that it has been submitted already
 	 *
 	 * @private
 	 */
 	Requestor.prototype.removePatch = function (oPromise) {
-		var bCanceled = this.cancelChangeRequests(function (oChangeRequest) {
+		var bCanceled = this.cancelChangesByFilter(function (oChangeRequest) {
 				return oChangeRequest.$promise === oPromise;
 			});
 		if (!bCanceled) {
@@ -304,7 +702,7 @@ sap.ui.define([
 	 *   If the request is not in the queue, assuming that it has been submitted already
 	 */
 	Requestor.prototype.removePost = function (sGroupId, oBody) {
-		var bCanceled = this.cancelChangeRequests(function (oChangeRequest) {
+		var bCanceled = this.cancelChangesByFilter(function (oChangeRequest) {
 			return oChangeRequest.body === oBody;
 		}, sGroupId);
 		if (!bCanceled) {
@@ -342,6 +740,10 @@ sap.ui.define([
 	 *   A function that is called for clean-up if the request is canceled while waiting in a batch
 	 *   queue, ignored for GET requests; {@link #cancelChanges} cancels this request only if this
 	 *   callback is given
+	 * @param {string} [sMetaPath]
+	 *   The meta path corresponding to the resource path; needed in case V2 response does not
+	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
+	 *   Request"
 	 * @param {boolean} [bIsFreshToken=false]
 	 *   Whether the CSRF token has already been refreshed and thus should not be refreshed
 	 *   again
@@ -353,13 +755,64 @@ sap.ui.define([
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-			fnSubmit, fnCancel, bIsFreshToken) {
-		var that = this,
-			oBatchRequest,
+			fnSubmit, fnCancel, sMetaPath, bIsFreshToken) {
+		var oBatchRequest,
 			bIsBatch = sResourcePath === "$batch",
 			sPayload,
 			oPromise,
-			oRequest;
+			oRequest,
+			that = this;
+
+		function executeRequest() {
+			return new Promise(function (fnResolve, fnReject) {
+				var sCurrentCSRFToken = that.mHeaders["X-CSRF-Token"];
+				// Adding query parameters could have been the responsibility of submitBatch,
+				// but doing it here makes the $batch recognition easier.
+				jQuery.ajax(that.sServiceUrl + that.convertResourcePath(sResourcePath)
+						+ (bIsBatch ? that.sQueryParams : ""), {
+					data : sPayload,
+					headers : jQuery.extend({},
+						that.mPredefinedRequestHeaders,
+						that.mHeaders,
+						mHeaders,
+						bIsBatch ? oBatchRequest.headers : that.mFinalHeaders),
+					method : sMethod
+				}).then(function (oPayload, sTextStatus, jqXHR) {
+					try {
+						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
+					} catch (oError) {
+						fnReject(oError);
+						return;
+					}
+					that.mHeaders["X-CSRF-Token"]
+						= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
+					if (bIsBatch) {
+						fnResolve(_Batch.deserializeBatchResponse(
+							jqXHR.getResponseHeader("Content-Type"), oPayload));
+					} else {
+						try {
+							fnResolve(that.doConvertResponse(oPayload, sMetaPath));
+						} catch (oError) {
+							fnReject(oError);
+						}
+					}
+				}, function (jqXHR, sTextStatus, sErrorMessage) {
+					var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
+					if (!bIsFreshToken && jqXHR.status === 403
+							&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
+						// refresh CSRF token and repeat original request
+						that.refreshSecurityToken(sCurrentCSRFToken).then(function () {
+							// no fnSubmit, it has been called already
+							// no fnCancel, it is only relevant while the request is in the queue
+							fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders,
+								oPayload, undefined, undefined, sMetaPath, true));
+						}, fnReject);
+					} else {
+						fnReject(_Helper.createError(jqXHR));
+					}
+				});
+			});
+		}
 
 		if (sGroupId === "$cached") {
 			throw new Error("Unexpected request: " + sMethod + " " + sResourcePath);
@@ -370,23 +823,27 @@ sap.ui.define([
 			oBatchRequest = _Batch.serializeBatchRequest(_Requestor.cleanBatch(oPayload));
 			sPayload = oBatchRequest.body;
 		} else {
-			if (sGroupId !== "$direct") {
+			if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
 				oPromise = new Promise(function (fnResolve, fnReject) {
 					var aRequests = that.mBatchQueue[sGroupId];
 
 					if (!aRequests) {
 						aRequests = that.mBatchQueue[sGroupId] = [[/*empty change set*/]];
-						if (that.fnOnCreateGroup) {
-							that.fnOnCreateGroup(sGroupId);
+						if (that.oModelInterface.fnOnCreateGroup) {
+							that.oModelInterface.fnOnCreateGroup(sGroupId);
 						}
 					}
 					oRequest = {
 						method : sMethod,
-						url : sResourcePath,
-						headers : jQuery.extend({}, mPredefinedPartHeaders, that.mHeaders, mHeaders,
-							mFinalHeaders),
+						url : that.convertResourcePath(sResourcePath),
+						headers : jQuery.extend({},
+							that.mPredefinedPartHeaders,
+							that.mHeaders,
+							mHeaders,
+							that.mFinalHeaders),
 						body : oPayload,
 						$cancel : fnCancel,
+						$metaPath : sMetaPath,
 						$reject : fnReject,
 						$resolve : fnResolve,
 						$submit : fnSubmit
@@ -407,38 +864,10 @@ sap.ui.define([
 			}
 		}
 
-		return new Promise(function (fnResolve, fnReject) {
-			// Adding query parameters could have been the responsibility of submitBatch, but doing
-			// it here makes the $batch recognition easier.
-			jQuery.ajax(that.sServiceUrl + sResourcePath + (bIsBatch ? that.sQueryParams : ""), {
-				data : sPayload,
-				headers : jQuery.extend({}, mPredefinedRequestHeaders, that.mHeaders, mHeaders,
-					bIsBatch ? oBatchRequest.headers : mFinalHeaders),
-				method : sMethod
-			}).then(function (oPayload, sTextStatus, jqXHR) {
-				that.mHeaders["X-CSRF-Token"]
-					= jqXHR.getResponseHeader("X-CSRF-Token") || that.mHeaders["X-CSRF-Token"];
-				if (bIsBatch) {
-					oPayload = _Batch.deserializeBatchResponse(
-						jqXHR.getResponseHeader("Content-Type"), oPayload);
-				}
-				fnResolve(oPayload);
-			}, function (jqXHR, sTextStatus, sErrorMessage) {
-				var sCsrfToken = jqXHR.getResponseHeader("X-CSRF-Token");
-				if (!bIsFreshToken && jqXHR.status === 403
-						&& sCsrfToken && sCsrfToken.toLowerCase() === "required") {
-					// refresh CSRF token and repeat original request
-					that.refreshSecurityToken().then(function () {
-						// no fnSubmit, it has been called already
-						// no fnCancel, it is only relevant while the request is in the queue
-						fnResolve(that.request(sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
-							undefined, undefined, true));
-					}, fnReject);
-				} else {
-					fnReject(_Helper.createError(jqXHR));
-				}
-			});
-		});
+		if (this.oSecurityTokenPromise && sMethod !== "GET") {
+			return this.oSecurityTokenPromise.then(executeRequest);
+		}
+		return executeRequest();
 	};
 
 	/**
@@ -530,6 +959,7 @@ sap.ui.define([
 
 			aRequests.forEach(function (vRequest, index) {
 				var oError,
+					oResponse,
 					vResponse = aResponses[index];
 
 				if (Array.isArray(vResponse)) {
@@ -544,7 +974,14 @@ sap.ui.define([
 					oCause = _Helper.createError(vResponse);
 					reject(oCause, vRequest);
 				} else if (vResponse.responseText) {
-					vRequest.$resolve(JSON.parse(vResponse.responseText));
+					oResponse = JSON.parse(vResponse.responseText);
+					try {
+						that.doCheckVersionHeader(getResponseHeader.bind(vResponse), vRequest.url,
+							true);
+						vRequest.$resolve(that.doConvertResponse(oResponse, vRequest.$metaPath));
+					} catch (oErr) {
+						vRequest.$reject(oErr);
+					}
 				} else {
 					vRequest.$resolve();
 				}
@@ -600,7 +1037,7 @@ sap.ui.define([
 
 		if (aChangeSet.length === 0) {
 			aRequests.splice(0, 1); // delete empty change set
-		} else if (aChangeSet.length === 1) {
+		} else if (aChangeSet.length === 1 && this.isChangeSetOptional()) {
 			aRequests[0] = aChangeSet[0]; // unwrap change set
 		} else {
 			aRequests[0] = aChangeSet;
@@ -640,7 +1077,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * The <code>_Requestor<code> module which offers a factory method.
+	 * The <code>_Requestor</code> module which offers a factory method.
 	 *
 	 * @private
 	 */
@@ -694,13 +1131,28 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a new <code>_Requestor<code> instance for the given service URL and default
+		 * Creates a new <code>_Requestor</code> instance for the given service URL and default
 		 * headers.
 		 *
 		 * @param {string} sServiceUrl
 		 *   URL of the service document to request the CSRF token from; also used to resolve
 		 *   relative resource paths (see {@link #request})
-		 * @param {object} mHeaders
+		 * @param {object} oModelInterface
+		 *   An interface allowing to call back to the owning model
+		 * @param {function} oModelInterface.fnFetchEntityContainer
+		 *   A promise which is resolved with the $metadata "JSON" object as soon as the entity
+		 *   container is fully available, or rejected with an error.
+		 * @param {function} oModelInterface.fnFetchMetadata
+		 *   A function that returns a SyncPromise which resolves with the metadata instance for a
+		 *   given meta path
+		 * @param {function} oModelInterface.fnGetGroupProperty
+		 *   A function called with parameters <code>sGroupId</code> and <code>sPropertyName</code>
+		 *   returning the property value in question. Only 'submit' is supported for <code>
+		 *   sPropertyName</code>. Supported property values are: 'API', 'Auto' and 'Direct'.
+		 * @param {function (string)} [oModelInterface.fnOnCreateGroup]
+		 *   A callback function that is called with the group name as parameter when the first
+		 *   request is added to a group
+		 * @param {object} [mHeaders={}]
 		 *   Map of default headers; may be overridden with request-specific headers; certain
 		 *   OData V4 headers are predefined, but may be overridden by the default or
 		 *   request-specific headers:
@@ -710,19 +1162,26 @@ sap.ui.define([
 		 *     "OData-Version" : "4.0"
 		 *   }</pre>
 		 *   The map of the default headers must not contain "X-CSRF-Token" header. The created
-		 *   <code>_Requestor<code> always sets the "Content-Type" header to
-		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" value.
-		 * @param {object} mQueryParams
-		 *   A map of query parameters as described in {@link _Helper.buildQuery}; used only to
-		 *   request the CSRF token
-		 * @param {function (string)} [fnOnCreateGroup]
-		 *   A callback function that is called with the group name as parameter when the first
-		 *   request is added to a group
+		 *   <code>_Requestor</code> always sets the "Content-Type" header value to
+		 *   "application/json;charset=UTF-8;IEEE754Compatible=true" for OData V4 or
+		 *   "application/json;charset=UTF-8" for OData V2.
+		 * @param {object} [mQueryParams={}]
+		 *   A map of query parameters as described in
+		 *   {@link sap.ui.model.odata.v4.lib._Helper.buildQuery}; used only to request the CSRF
+		 *   token
+		 * @param {string} [sODataVersion="4.0"]
+		 *   The version of the OData service. Supported values are "2.0" and "4.0".
 		 * @returns {object}
-		 *   A new <code>_Requestor<code> instance
+		 *   A new <code>_Requestor</code> instance
 		 */
-		create : function (sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup) {
-			return new Requestor(sServiceUrl, mHeaders, mQueryParams, fnOnCreateGroup);
+		create : function (sServiceUrl, oModelInterface, mHeaders, mQueryParams, sODataVersion) {
+			var oRequestor = new Requestor(sServiceUrl, mHeaders, mQueryParams, oModelInterface);
+
+			if (sODataVersion === "2.0") {
+				asV2Requestor(oRequestor);
+			}
+
+			return oRequestor;
 		}
 	};
 

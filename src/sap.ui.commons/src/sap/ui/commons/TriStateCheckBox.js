@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.TriStateCheckBox.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    "./TriStateCheckBoxRenderer"
+],
+	function(jQuery, library, Control, TriStateCheckBoxRenderer) {
 	"use strict";
 
 	/**

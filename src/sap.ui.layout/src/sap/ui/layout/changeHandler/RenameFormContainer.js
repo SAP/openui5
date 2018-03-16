@@ -5,8 +5,8 @@
 /*global sap */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/JsControlTreeModifier", "sap/ui/fl/Utils"
-], function(jQuery, BaseChangeHandler, JsControlTreeModifier, Utils) {
+	"sap/ui/fl/changeHandler/Base", "sap/ui/fl/Utils"
+], function(BaseChangeHandler, Utils) {
 	"use strict";
 
 	/**
@@ -34,7 +34,6 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
 	 *                                sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
 	 * @private
-	 * @name sap.ui.layout.changeHandler.RenameFormControl#applyChange
 	 */
 	RenameFormContainer.applyChange = function(oChangeWrapper, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier,
@@ -47,7 +46,7 @@ sap.ui.define([
 			var sValue = oChangeDefinition.texts.formText.value;
 
 			if (typeof oTitle === "string") {
-				oModifier.insertAggregation(oRenamedElement, "title", sValue);
+				oModifier.setProperty(oRenamedElement, "title", sValue);
 			} else {
 				oModifier.setProperty(oTitle, "text", sValue);
 			}

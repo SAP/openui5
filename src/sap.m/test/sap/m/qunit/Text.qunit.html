@@ -157,9 +157,19 @@
 			assert.strictEqual(t4.$().css("word-wrap"), "normal", "Text has correct word-wrap style for non-wrapping");
 		});
 
+		if (t5.canUseNativeLineClamp()) {
+			test("native max lines", function() {
+				strictEqual(t5.$("inner").hasClass("sapMTextLineClamp"), true, "Text has correct class for native MaxLine");
+				equals(t5.$("inner").css("-webkit-line-clamp"), t5.getMaxLines(), "Text has correct line clamp value in CSS");
+				strictEqual(t5.hasOwnProperty("_sResizeListenerId"), false, "Text does not have resize handler");
+			});
+		}
+
 		QUnit.test("non-native max lines", function(assert) {
 			var done = assert.async();
-
+			t5.canUseNativeLineClamp = function() {
+				return false;
+			};
 			t5.addEventDelegate({
 				onAfterRendering : function() {
 					t5.clampText();
@@ -234,6 +244,25 @@
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), true, "Text has a class for break word");
 			t6.setText("LongTextWith Spaces");
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
+		});
+
+		QUnit.test("setting renderWhitespace property", function(assert) {
+			var oText = new sap.m.Text("Text7", {text:"This text is not wrapping.\t\t Line   breaks cannot make it wrap"}).placeAt("qunit-fixture");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), false, "Text does not have a class for render whitespace characters");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), false, "Text does not have a class for render whitespace characters with wrapping");
+			oText.setRenderWhitespace(true);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), true, "Text should have sapMTextRenderWhitespaceWrap when wrapping is true ");
+
+			oText.setWrapping(false);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), true, "Text should have sapMTextRenderWhitespace when wrapping is false ");
+
+			oText.setRenderWhitespace(false);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespace"), false, "Text should not have a class sapMTextRenderWhitespace");
+			assert.strictEqual(oText.$().hasClass("sapMTextRenderWhitespaceWrap"), false, "Text should not have a class sapMTextRenderWhitespaceWrap");
+			oText.destroy();
 		});
 
 		QUnit.module("Accessibility");

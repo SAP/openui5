@@ -25,7 +25,6 @@ sap.ui.define(['./Element', './library'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.core.Title

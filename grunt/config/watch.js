@@ -7,13 +7,13 @@ module.exports = function(grunt, config) {
 
 		styles: {
 			files: config.libraries.map(function(library) {
-				return library.path + '/src/**/themes/*/*.less';
+				return library.src + '/**/themes/*/*.less';
 			})
 		},
 
 		js: {
 			files: config.libraries.map(function(library) {
-				return library.path + '/src/**/*.js';
+				return library.src + '/**/*.js';
 			})
 		}
 

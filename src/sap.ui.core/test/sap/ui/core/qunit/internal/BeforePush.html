@@ -15,12 +15,17 @@
 				sTestPrefix = "test-resources/sap/ui/core/",
 				// The URLs are relative to sTestPrefix
 				aTests = [
+					'qunit/analytics/testsuite4analytics.qunit.html',
+					'qunit/internal/AnnotationParser.qunit.html',
 					'qunit/internal/1Ring.qunit.html?sap-ui-debug=true&hidepassed&coverage&sap-ui-logLevel=ERROR&realOData=true',
 					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html',
 					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true',
 					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html',
 					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true',
 					'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html',
+					'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html?realOData=true',
+					'demokit/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit.html',
+					'demokit/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit.html',
 					'demokit/sample/ViewTemplate/scenario/Opa.qunit.html',
 					'demokit/sample/ViewTemplate/types/Opa.qunit.html',
 					'demokit/sample/ViewTemplate/types/Opa.qunit.html?realOData=true'
@@ -54,8 +59,8 @@
 				// send a request to the service document from the v4 sample service to ensure that
 				// the credentials are known before running the test suite.
 				oLoginRequest.open("GET", sBase + "proxy/sap/opu/odata4/sap/zui5_testv4/default/"
-					+ "sap/zui5_epm_sample/0001/");
-				oLoginRequest.addEventListener("load", function (oEvent) {
+					+ "sap/zui5_epm_sample/0002/");
+				oLoginRequest.addEventListener("load", function () {
 					if (oLoginRequest.status === 200) {
 						addScript();
 					} else {
@@ -64,16 +69,14 @@
 					}
 				});
 				oLoginRequest.send();
-			}
+			};
 
 			// For the button "w/o realOData"
 			window.runWithoutRealOData = function () {
 				// inform the framed page that realOData tests are not wanted
 				location.href = location.href + "#noRealOData";
 				addScript();
-			}
-
-			window.addEventListener("load", runTests);
+			};
 
 			// Called from the Testrunner
 			window.suite = function () {
@@ -85,6 +88,17 @@
 				});
 				return oSuite;
 			};
+
+			if (/integrationTestsOnly/i.test(location.href)) {
+				aTests[0] =
+					aTests[0].replace("/internal/1Ring.", "/odata/v4/ODataModel.integration.");
+				aTests.forEach(function (sUrl, i) {
+					if (sUrl.indexOf("coverage") < 0) {
+						aTests[i] = sUrl + (sUrl.indexOf("?") < 0 ? "?" : "&") + "coverage";
+					}
+				});
+			}
+			window.addEventListener("load", runTests);
 		}());
 		</script>
 	</head>

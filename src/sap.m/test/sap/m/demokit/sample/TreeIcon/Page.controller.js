@@ -1,5 +1,5 @@
-sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel', 'sap/m/Menu', 'sap/m/MenuItem'],
+	function(Controller, JSONModel, Menu, MenuItem) {
 	"use strict";
 
 	var PageController = Controller.extend("sap.m.sample.TreeIcon.Page", {
@@ -7,6 +7,18 @@ sap.ui.define(['sap/ui/core/mvc/Controller', 'sap/ui/model/json/JSONModel'],
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.m.sample.TreeIcon", "/Tree.json"));
 			this.getView().setModel(oModel);
+		},
+
+		onToggleContextMenu: function(oEvent) {
+			if (oEvent.getParameter("pressed")) {
+				this.byId("Tree").setContextMenu(new Menu({
+					items: [
+						new MenuItem({text: "{text}"})
+					]
+				}));
+			} else {
+				this.byId("Tree").destroyContextMenu();
+			}
 		}
 	});
 

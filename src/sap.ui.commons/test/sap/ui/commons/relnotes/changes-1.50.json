@@ -1,0 +1,19 @@
+{
+  "1.50.0": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "fbc843d4633527acf5807f862883bc0fe2277096",
+        "type": "FIX",
+        "text": "local less parameter names",
+        "references": []
+      },
+      {
+        "id": "ed84e9d9b8622c175131451ce37aaa65e10af1d1",
+        "type": "FIX",
+        "text": "sap.ui.commons.RichTooltip: Remove randomly failing qunit test.",
+        "references": []
+      }
+    ]
+  }
+}

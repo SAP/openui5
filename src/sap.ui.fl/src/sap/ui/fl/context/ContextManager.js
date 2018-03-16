@@ -222,6 +222,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/
 		 * @param {String} oPropertyBag.validAppVersions.creation - Original application version
 		 * @param {String} oPropertyBag.validAppVersions.from - Minimum application version
 		 * @param {String} oPropertyBag.validAppVersions.to - Maximum application version
+		 * @param {String} [oPropertyBag.generator] - Tool which is used to generate the context file
 		 */
 		createOrUpdateContextObject: function (oPropertyBag) {
 			if (!oPropertyBag.reference) {
@@ -248,7 +249,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/
 				creation: oPropertyBag.creation || "",
 				originalLanguage: oPropertyBag.originalLanguage || Utils.getCurrentLanguage(),
 				support: oPropertyBag.support || {
-					generator: "",
+					generator: oPropertyBag.generator || "",
 					service: "",
 					user: ""
 				},

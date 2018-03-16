@@ -20,7 +20,7 @@ sap.ui.define([
 			});
 			oComp.setModel(this.getView().getModel());
 			this._oTable = oComp.getTable();
-			this.getView().byId("idIconTabBar").insertContent(this._oTable);
+			this.byId("idIconTabBar").insertContent(this._oTable);
 
 			// update table
 			this._oTable.setHeaderText(null);

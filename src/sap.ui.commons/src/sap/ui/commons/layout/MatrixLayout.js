@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.ui.commons.layout.MatrixLayout.
-sap.ui.define(['jquery.sap.global', './MatrixLayoutCell', './MatrixLayoutRow', 'sap/ui/commons/library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator'],
-	function(jQuery, MatrixLayoutCell, MatrixLayoutRow, library, Control, EnabledPropagator) {
+sap.ui.define([
+    'jquery.sap.global',
+    './MatrixLayoutCell',
+    './MatrixLayoutRow',
+    'sap/ui/commons/library',
+    'sap/ui/core/Control',
+    'sap/ui/core/EnabledPropagator',
+    "./MatrixLayoutRenderer"
+],
+	function(
+	    jQuery,
+		MatrixLayoutCell,
+		MatrixLayoutRow,
+		library,
+		Control,
+		EnabledPropagator,
+		MatrixLayoutRenderer
+	) {
 	"use strict";
 
 	/**

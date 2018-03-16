@@ -1,0 +1,7 @@
+<core:FragmentDefinition xmlns:m="sap.m" xmlns:core="sap.ui.core" type="XML">
+	<m:Select id="select" width="100%" items="{$this>items}" change="_handleSelectionChange">
+		<m:items>
+			<core:Item text="{$this>text}" key="{$this>key}" id="itemTemplate" />
+		</m:items>
+	</m:Select>
+</core:FragmentDefinition>

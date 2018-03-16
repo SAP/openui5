@@ -1,0 +1,213 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>sap.m.DateTimeField</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.ui.layout,sap.m">
+</script>
+
+<script>
+	var oApp = new sap.m.App;
+
+	var aTextAligns = Object.keys(sap.ui.core.TextAlign).map(function(sTextAlign) {
+		return new sap.ui.core.Item({
+			key: sTextAlign,
+			text: sTextAlign
+		});
+	});
+
+	var aTextDirections = Object.keys(sap.ui.core.TextDirection).map(function(sTextDirection) {
+		return new sap.ui.core.Item({
+			key: sTextDirection,
+			text: sTextDirection
+		});
+	});
+
+	var aValueStates = Object.keys(sap.ui.core.ValueState).map(function(sValueState) {
+		return new sap.ui.core.Item({
+			key: sValueState,
+			text: sValueState
+		});
+	});
+
+	var oProperties = {
+		value: "Value",
+		name: "Name",
+		placeholder: "Placeholder",
+		width: "100%",
+		enabled: true,
+		editable: true,
+		valueState: sap.ui.core.ValueState.None,
+		valueStateText: "",
+		showValueStateMessage: true,
+		textAlign: sap.ui.core.TextAlign.Initial,
+		textDirection: sap.ui.core.TextDirection.Inherit,
+		tooltip: "Tooltip",
+		visible: true,
+		required: true,
+		busy: false
+	};
+
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData(oProperties);
+	sap.ui.getCore().setModel(oModel);
+
+	var oInput = new sap.m.DateTimeField({
+		value: "{/value}",
+		name: "{/name}",
+		placeholder: "{/placeholder}",
+		width: "{/width}",
+		enabled: "{/enabled}",
+		editable: "{/editable}",
+		valueState: "{/valueState}",
+		valueStateText: "{/valueStateText}",
+		showValueStateMessage: "{/showValueStateMessage}",
+		textAlign: "{/textAlign}",
+		textDirection: "{/textDirection}",
+		tooltip: "{/tooltip}",
+		visible: "{/visible}",
+		busy: "{/busy}"
+	});
+
+	var oToolbar = new sap.m.Toolbar({
+		content: [
+			oInput
+		]
+	});
+
+	var oReferenceForm = new sap.ui.layout.form.SimpleForm({
+		editable: true,
+		content: [
+			new sap.ui.core.Title({
+				text: "DateTimeField in Form"
+			}),
+			new sap.m.Label({
+				text: "Reference field",
+				required: "{/required}"
+			}),
+			oInput.clone()
+		]
+	});
+
+	var oConfigForm = new sap.ui.layout.form.SimpleForm({
+		editable: true,
+		content: [
+			new sap.ui.core.Title({
+				text:"Own Properties"
+			}),
+			new sap.m.Label({
+				text: "Value"
+			}),
+			new sap.m.Input({
+				value: "{/value}",
+				valueLiveUpdate: true
+			}),
+			new sap.m.Label({
+				text: "Name"
+			}),
+			new sap.m.Input({
+				value: "{/name}",
+				valueLiveUpdate: true
+			}),
+			new sap.m.Label({
+				text: "Placeholder"
+			}),
+			new sap.m.Input({
+				value: "{/placeholder}",
+				valueLiveUpdate: true
+			}),
+			new sap.m.Label({
+				text: "Width"
+			}),
+			new sap.m.Input({
+				value: "{/width}",
+				valueLiveUpdate: true
+			}),
+			new sap.m.Label({
+				text: "Enabled"
+			}),
+			new sap.m.Switch({
+				state: "{/enabled}"
+			}),
+			new sap.m.Label({
+				text: "Editable"
+			}),
+			new sap.m.Switch({
+				state: "{/editable}"
+			}),
+			new sap.m.Label({
+				text: "ValueState"
+			}),
+			new sap.m.Select({
+				items: aValueStates,
+				selectedKey: "{/valueState}"
+			}),
+			new sap.m.Label({
+				text: "ValueState Text"
+			}),
+			new sap.m.Input({
+				value: "{/valueStateText}",
+				valueLiveUpdate: true
+			}),
+			new sap.m.Label({
+				text: "Text Align"
+			}),
+			new sap.m.Select({
+				items: aTextAligns,
+				selectedKey: "{/textAlign}"
+			}),
+			new sap.m.Label({
+				text: "Text Direction"
+			}),
+			new sap.m.Select({
+				items: aTextDirections,
+				selectedKey: "{/textDirection}"
+			}),
+			new sap.ui.core.Title({
+				text:"Inherited Properties"
+			}),
+			new sap.m.Label({
+				text: "Tooltip"
+			}),
+			new sap.m.Input({
+				value: "{/tooltip}",
+				valueLiveUpdate: true
+			}),
+			new sap.m.Label({
+				text: "Visible"
+			}),
+			new sap.m.Switch({
+				state: "{/visible}"
+			}),
+			new sap.m.Label({
+				text: "Required"
+			}),
+			new sap.m.Switch({
+				state: "{/required}"
+			}),
+			new sap.m.Label({
+				text: "Busy"
+			}),
+			new sap.m.Switch({
+				state: "{/busy}"
+			})
+		]
+	});
+
+	var oPage = new sap.m.Page({
+		title: "DateTimeField Test Page",
+		enableScrolling: true,
+		subHeader: [oToolbar],
+		footer: [oToolbar.clone()],
+		content: [oReferenceForm, oConfigForm]
+	});
+
+	oApp.addPage(oPage).placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

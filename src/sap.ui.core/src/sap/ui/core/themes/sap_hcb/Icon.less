@@ -1,12 +1,15 @@
-.sapUiIcon:focus {
-	outline: 1px dashed @sapHCStandardFG;
+/* ================================= */
+/* CSS for control sap.ui.core/Icon  */
+/* High Contrast Black theme         */
+/* ================================= */
+
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiIcon:focus {
+	outline-color: @sapHCStandardFG;
 }
 
-/* focus outline in a table cell */
-html[data-sap-ui-browser^="ed"].sap-desktop .sapUiIcon:focus,
-html[data-sap-ui-browser^="ie"].sap-desktop .sapUiIcon:focus {
-	outline: none;
-	border: 1px dashed @sapHCStandardFG;
+html[data-sap-ui-browser^="ie"] .sapUiIcon:focus::after,
+html[data-sap-ui-browser^="ed"] .sapUiIcon:focus::after {
+	border-color: @sapHCStandardFG;
 }
 
 .sapUiIconColorNeutral {

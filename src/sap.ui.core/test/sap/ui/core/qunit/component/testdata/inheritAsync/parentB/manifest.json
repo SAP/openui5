@@ -1,0 +1,22 @@
+{
+	"name": "sap.ui.test.inheritAsync.parentB.Component",
+
+	"sap.app": {
+		"id": "sap.ui.test.inheritAsync.parentB",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+
+	"sap.ui5": {
+		"config": {
+			"anyB": {
+				"entryB": "testB"
+			}
+		},
+
+		"extends": {
+			"component": "sap.ui.test.inheritAsync.parentA"
+		}
+	}
+}

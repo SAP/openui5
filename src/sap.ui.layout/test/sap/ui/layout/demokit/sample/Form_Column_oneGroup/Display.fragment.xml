@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:f="sap.ui.layout.form"
+	xmlns:core="sap.ui.core">
+	<VBox class="sapUiSmallMargin">
+		<f:Form id="FormDisplayColumn_oneGroup"
+			editable="false">
+			<f:title>
+				<core:Title text="Address" />
+			</f:title>
+			<f:layout>
+				<f:ColumnLayout />
+			</f:layout>
+			<f:formContainers>
+				<f:FormContainer>
+					<f:formElements>
+						<f:FormElement label="Name">
+							<f:fields>
+								<Text text="{SupplierName}" id="nameText"  />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Street">
+							<f:fields>
+								<Text text="{Street} {HouseNumber}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="ZIP Code/City">
+							<f:fields>
+								<Text text="{ZIPCode} {City}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Country">
+							<f:fields>
+								<Text text="{Country}" id="countryText" />
+							</f:fields>
+						</f:FormElement>
+					</f:formElements>
+				</f:FormContainer>
+			</f:formContainers>
+		</f:Form>
+	</VBox>
+</core:FragmentDefinition>

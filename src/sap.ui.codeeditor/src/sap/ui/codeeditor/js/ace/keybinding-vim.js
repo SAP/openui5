@@ -1729,7 +1729,9 @@ dom.importCssString(".normal-mode .ace_cursor{\
           }
         }
         if (bestMatch.keys.slice(-11) == '<character>') {
-          inputState.selectedCharacter = lastChar(keys);
+          var character = lastChar(keys);
+          if (/<C-.>/.test(character)) return {type: 'none'};
+          inputState.selectedCharacter = character;
         }
         return {type: 'full', command: bestMatch};
       },
@@ -4987,6 +4989,8 @@ dom.importCssString(".normal-mode .ace_cursor{\
       cm.setCursor(cm.getCursor().line, cm.getCursor().ch-1);
       cm.setOption('keyMap', 'vim');
       cm.setOption('disableInput', true);
+      
+      lastChange.overwrite = cm.state.overwrite;
       cm.toggleOverwrite(false); // exit replace mode if we were in it.
       insertModeChangeRegister.setText(lastChange.changes.join(''));
       CodeMirror.signal(cm, "vim-mode-change", {mode: "normal"});
@@ -5197,7 +5201,7 @@ dom.importCssString(".normal-mode .ace_cursor{\
         if (macroModeState.lastInsertModeChanges.changes.length > 0) {
           repeat = !vim.lastEditActionCommand ? 1 : repeat;
           var changeObject = macroModeState.lastInsertModeChanges;
-          repeatInsertModeChanges(cm, changeObject.changes, repeat);
+          repeatInsertModeChanges(cm, changeObject.changes, repeat, changeObject.overwrite);
         }
       }
       vim.inputState = vim.lastEditInputState;
@@ -5219,7 +5223,7 @@ dom.importCssString(".normal-mode .ace_cursor{\
       macroModeState.isPlaying = false;
     }
 
-    function repeatInsertModeChanges(cm, changes, repeat) {
+    function repeatInsertModeChanges(cm, changes, repeat, overwrite) {
       function keyHandler(binding) {
         if (typeof binding == 'string') {
           CodeMirror.commands[binding](cm);
@@ -5248,7 +5252,11 @@ dom.importCssString(".normal-mode .ace_cursor{\
             CodeMirror.lookupKey(change.keyName, 'vim-insert', keyHandler);
           } else {
             var cur = cm.getCursor();
-            cm.replaceRange(change, cur, cur);
+            var end = cur;
+            if (overwrite && !/\n/.test(change)) {
+              end = offsetCursor(cur, 0, change.length);
+            }
+            cm.replaceRange(change, cur, end);
           }
         }
       }

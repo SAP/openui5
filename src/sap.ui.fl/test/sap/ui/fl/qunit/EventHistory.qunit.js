@@ -15,6 +15,8 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 		afterEach: function() {
 			sap.ui.getCore().getEventBus().subscribe.restore();
 			sap.ui.getCore().getEventBus().unsubscribe.restore();
+			EventHistory._oHistory = {};
+			EventHistory._aUnsubscribedEventIds = [];
 		}
 	});
 
@@ -29,6 +31,20 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 		assert.equal(oHistory.length, 0);
 	});
 
+	QUnit.test("start subscribes to all events in the array and initializes the history object, but skips it if method getHistoryAndStop was already called", function(assert) {
+		var sEventId = EventHistory._aEventIds[0];
+		var aItems = EventHistory.getHistoryAndStop(sEventId);
+
+		EventHistory.start();
+
+		assert.equal(EventHistory._aEventIds.length, 1);
+		assert.equal(oSubscribeStub.callCount, 0, "subscribe method was not called");
+
+		var oHistory = EventHistory._oHistory[sEventId];
+		assert.equal(oHistory, undefined);
+		assert.equal(Array.isArray(aItems), true);
+		assert.equal(aItems.length, 0);
+	});
 
 	QUnit.test("saveEvent saves the event in the history object and ignores events that are not registered", function(assert) {
 		var sChannelId = "sap.ui";
@@ -100,7 +116,8 @@ jQuery.sap.require("sap.ui.fl.EventHistory");
 		assert.equal(aItems.length, 2);
 		assert.deepEqual(aItems[0], oExpectedEvent1);
 		assert.deepEqual(aItems[1], oExpectedEvent2);
-		assert.equal(aItemsAnother, undefined);
+		assert.equal(Array.isArray(aItemsAnother), true);
+		assert.equal(aItemsAnother.length, 0);
 		assert.equal(oUnsubscribeStub.callCount, 2);
 	});
 }(QUnit, sinon, sap.ui.fl.EventHistory));

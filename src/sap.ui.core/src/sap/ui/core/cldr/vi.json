@@ -8,8 +8,7 @@
 		"ada": "Tiếng Adangme",
 		"ady": "Tiếng Adyghe",
 		"ae": "Tiếng Avestan",
-		"aeb": "aeb",
-		"af": "Tiếng Nam Phi",
+		"af": "Tiếng Afrikaans",
 		"afh": "Tiếng Afrihili",
 		"agq": "Tiếng Aghem",
 		"ain": "Tiếng Ainu",
@@ -26,19 +25,17 @@
 		"ar": "Tiếng Ả Rập",
 		"ar_001": "Tiếng Ả Rập Hiện đại",
 		"arc": "Tiếng Aramaic",
-		"arn": "Tiếng Araucanian",
+		"arn": "Tiếng Mapuche",
 		"aro": "Tiếng Araona",
 		"arp": "Tiếng Arapaho",
 		"arq": "Tiếng Ả Rập Algeria",
 		"arw": "Tiếng Arawak",
-		"ary": "ary",
 		"arz": "Tiếng Ả Rập Ai Cập",
 		"as": "Tiếng Assam",
 		"asa": "Tiếng Asu",
 		"ase": "Ngôn ngữ Ký hiệu Mỹ",
 		"ast": "Tiếng Asturias",
 		"av": "Tiếng Avaric",
-		"avk": "avk",
 		"awa": "Tiếng Awadhi",
 		"ay": "Tiếng Aymara",
 		"az": "Tiếng Azerbaijan",
@@ -68,7 +65,7 @@
 		"bkm": "Tiếng Kom",
 		"bla": "Tiếng Siksika",
 		"bm": "Tiếng Bambara",
-		"bn": "Tiếng Bengali",
+		"bn": "Tiếng Bangla",
 		"bo": "Tiếng Tây Tạng",
 		"bpy": "Tiếng Bishnupriya",
 		"bqi": "Tiếng Bakhtiari",
@@ -76,7 +73,7 @@
 		"bra": "Tiếng Braj",
 		"brh": "Tiếng Brahui",
 		"brx": "Tiếng Bodo",
-		"bs": "Tiếng Nam Tư",
+		"bs": "Tiếng Bosnia",
 		"bss": "Tiếng Akoose",
 		"bua": "Tiếng Buriat",
 		"bug": "Tiếng Bugin",
@@ -107,6 +104,7 @@
 		"cps": "Tiếng Capiznon",
 		"cr": "Tiếng Cree",
 		"crh": "Tiếng Thổ Nhĩ Kỳ Crimean",
+		"crs": "Tiếng Pháp Seselwa Creole",
 		"cs": "Tiếng Séc",
 		"csb": "Tiếng Kashubia",
 		"cu": "Tiếng Slavơ Nhà thờ",
@@ -143,7 +141,7 @@
 		"el": "Tiếng Hy Lạp",
 		"elx": "Tiếng Elamite",
 		"en": "Tiếng Anh",
-		"en_AU": "Tiếng Anh (Úc)",
+		"en_AU": "Tiếng Anh (Australia)",
 		"en_CA": "Tiếng Anh (Canada)",
 		"en_GB": "Tiếng Anh (Anh)",
 		"en_GB-alt-short": "Tiếng Anh (Anh)",
@@ -165,10 +163,9 @@
 		"fat": "Tiếng Fanti",
 		"ff": "Tiếng Fulah",
 		"fi": "Tiếng Phần Lan",
-		"fil": "Tiếng Philipin",
-		"fit": "fit",
+		"fil": "Tiếng Philippines",
 		"fj": "Tiếng Fiji",
-		"fo": "Tiếng Faore",
+		"fo": "Tiếng Faroe",
 		"fon": "Tiếng Fon",
 		"fr": "Tiếng Pháp",
 		"fr_CA": "Tiếng Pháp (Canada)",
@@ -177,18 +174,17 @@
 		"frm": "Tiếng Pháp Trung cổ",
 		"fro": "Tiếng Pháp cổ",
 		"frp": "Tiếng Arpitan",
-		"frr": "Tiếng Frisian Miền Bắc",
+		"frr": "Tiếng Frisia Miền Bắc",
 		"frs": "Tiếng Frisian Miền Đông",
 		"fur": "Tiếng Friulian",
 		"fy": "Tiếng Frisia",
-		"ga": "Tiếng Ai-len",
+		"ga": "Tiếng Ireland",
 		"gaa": "Tiếng Ga",
 		"gag": "Tiếng Gagauz",
-		"gan": "gan",
+		"gan": "Tiếng Cám",
 		"gay": "Tiếng Gayo",
 		"gba": "Tiếng Gbaya",
-		"gbz": "gbz",
-		"gd": "Tiếng Xentơ (Xcốt len)",
+		"gd": "Tiếng Gael Scotland",
 		"gez": "Tiếng Geez",
 		"gil": "Tiếng Gilbert",
 		"gl": "Tiếng Galician",
@@ -204,14 +200,13 @@
 		"grc": "Tiếng Hy Lạp cổ",
 		"gsw": "Tiếng Đức (Thụy Sĩ)",
 		"gu": "Tiếng Gujarati",
-		"guc": "guc",
 		"gur": "Tiếng Frafra",
 		"guz": "Tiếng Gusii",
 		"gv": "Tiếng Manx",
 		"gwi": "Tiếng Gwichʼin",
 		"ha": "Tiếng Hausa",
 		"hai": "Tiếng Haida",
-		"hak": "Tiếng Trung Hakka",
+		"hak": "Tiếng Khách Gia",
 		"haw": "Tiếng Hawaii",
 		"he": "Tiếng Do Thái",
 		"hi": "Tiếng Hindi",
@@ -222,7 +217,7 @@
 		"ho": "Tiếng Hiri Motu",
 		"hr": "Tiếng Croatia",
 		"hsb": "Tiếng Thượng Sorbia",
-		"hsn": "hsn",
+		"hsn": "Tiếng Tương",
 		"ht": "Tiếng Haiti",
 		"hu": "Tiếng Hungary",
 		"hup": "Tiếng Hupa",
@@ -240,7 +235,7 @@
 		"inh": "Tiếng Ingush",
 		"io": "Tiếng Ido",
 		"is": "Tiếng Iceland",
-		"it": "Tiếng Ý",
+		"it": "Tiếng Italy",
 		"iu": "Tiếng Inuktitut",
 		"izh": "Tiếng Ingria",
 		"ja": "Tiếng Nhật",
@@ -252,7 +247,7 @@
 		"jrb": "Tiếng Judeo-Ả Rập",
 		"jut": "Tiếng Jutish",
 		"jv": "Tiếng Java",
-		"ka": "Tiếng Gruzia",
+		"ka": "Tiếng Georgia",
 		"kaa": "Tiếng Kara-Kalpak",
 		"kab": "Tiếng Kabyle",
 		"kac": "Tiếng Kachin",
@@ -264,22 +259,18 @@
 		"kcg": "Tiếng Tyap",
 		"kde": "Tiếng Makonde",
 		"kea": "Tiếng Kabuverdianu",
-		"ken": "ken",
 		"kfo": "Tiếng Koro",
 		"kg": "Tiếng Kongo",
-		"kgp": "kgp",
 		"kha": "Tiếng Khasi",
 		"kho": "Tiếng Khotan",
 		"khq": "Tiếng Koyra Chiini",
-		"khw": "khw",
 		"ki": "Tiếng Kikuyu",
-		"kiu": "kiu",
 		"kj": "Tiếng Kuanyama",
 		"kk": "Tiếng Kazakh",
 		"kkj": "Tiếng Kako",
 		"kl": "Tiếng Kalaallisut",
 		"kln": "Tiếng Kalenjin",
-		"km": "Tiếng Khơ-me",
+		"km": "Tiếng Khmer",
 		"kmb": "Tiếng Kimbundu",
 		"kn": "Tiếng Kannada",
 		"ko": "Tiếng Hàn",
@@ -289,11 +280,9 @@
 		"kpe": "Tiếng Kpelle",
 		"kr": "Tiếng Kanuri",
 		"krc": "Tiếng Karachay-Balkar",
-		"kri": "kri",
-		"krj": "krj",
 		"krl": "Tiếng Karelian",
 		"kru": "Tiếng Kurukh",
-		"ks": "Tiếng Kashmiri",
+		"ks": "Tiếng Kashmir",
 		"ksb": "Tiếng Shambala",
 		"ksf": "Tiếng Bafia",
 		"ksh": "Tiếng Cologne",
@@ -310,20 +299,16 @@
 		"lam": "Tiếng Lamba",
 		"lb": "Tiếng Luxembourg",
 		"lez": "Tiếng Lezghian",
-		"lfn": "lfn",
 		"lg": "Tiếng Ganda",
 		"li": "Tiếng Limburg",
-		"lij": "lij",
-		"liv": "liv",
 		"lkt": "Tiếng Lakota",
-		"lmo": "lmo",
 		"ln": "Tiếng Lingala",
 		"lo": "Tiếng Lào",
 		"lol": "Tiếng Mongo",
+		"lou": "Tiếng Creole Louisiana",
 		"loz": "Tiếng Lozi",
 		"lrc": "Tiếng Bắc Luri",
-		"lt": "Tiếng Lít-va",
-		"ltg": "ltg",
+		"lt": "Tiếng Litva",
 		"lu": "Tiếng Luba-Katanga",
 		"lua": "Tiếng Luba-Lulua",
 		"lui": "Tiếng Luiseno",
@@ -332,8 +317,6 @@
 		"lus": "Tiếng Lushai",
 		"luy": "Tiếng Luyia",
 		"lv": "Tiếng Latvia",
-		"lzh": "lzh",
-		"lzz": "lzz",
 		"mad": "Tiếng Madura",
 		"maf": "Tiếng Mafa",
 		"mag": "Tiếng Magahi",
@@ -343,7 +326,6 @@
 		"mas": "Tiếng Masai",
 		"mde": "Tiếng Maba",
 		"mdf": "Tiếng Moksha",
-		"mdh": "mdh",
 		"mdr": "Tiếng Mandar",
 		"men": "Tiếng Mende",
 		"mer": "Tiếng Meru",
@@ -356,30 +338,27 @@
 		"mi": "Tiếng Maori",
 		"mic": "Tiếng Micmac",
 		"min": "Tiếng Minangkabau",
-		"mis": "mis",
 		"mk": "Tiếng Macedonia",
 		"ml": "Tiếng Malayalam",
 		"mn": "Tiếng Mông Cổ",
-		"mnc": "Tiếng Manchu",
+		"mnc": "Tiếng Mãn Châu",
 		"mni": "Tiếng Manipuri",
 		"moh": "Tiếng Mohawk",
 		"mos": "Tiếng Mossi",
 		"mr": "Tiếng Marathi",
-		"mrj": "mrj",
-		"ms": "Tiếng Malaysia",
-		"mt": "Tiếng Malt",
+		"ms": "Tiếng Mã Lai",
+		"mt": "Tiếng Malta",
 		"mua": "Tiếng Mundang",
 		"mul": "Nhiều Ngôn ngữ",
 		"mus": "Tiếng Creek",
 		"mwl": "Tiếng Miranda",
 		"mwr": "Tiếng Marwari",
-		"mwv": "mwv",
 		"my": "Tiếng Miến Điện",
 		"mye": "Tiếng Myene",
 		"myv": "Tiếng Erzya",
 		"mzn": "Tiếng Mazanderani",
 		"na": "Tiếng Nauru",
-		"nan": "nan",
+		"nan": "Tiếng Mân Nam",
 		"nap": "Tiếng Napoli",
 		"naq": "Tiếng Nama",
 		"nb": "Tiếng Na Uy (Bokmål)",
@@ -400,13 +379,12 @@
 		"no": "Tiếng Na Uy",
 		"nog": "Tiếng Nogai",
 		"non": "Tiếng Na Uy cổ",
-		"nov": "nov",
 		"nqo": "Tiếng N’Ko",
 		"nr": "Tiếng Ndebele Miền Nam",
-		"nso": "Bắc Sotho",
+		"nso": "Tiếng Sotho Miền Bắc",
 		"nus": "Tiếng Nuer",
 		"nv": "Tiếng Navajo",
-		"nwc": "Tiếng Newari Cổ điển",
+		"nwc": "Tiếng Newari cổ",
 		"ny": "Tiếng Nyanja",
 		"nym": "Tiếng Nyamwezi",
 		"nyn": "Tiếng Nyankole",
@@ -415,7 +393,7 @@
 		"oc": "Tiếng Occitan",
 		"oj": "Tiếng Ojibwa",
 		"om": "Tiếng Oromo",
-		"or": "Tiếng Oriya",
+		"or": "Tiếng Odia",
 		"os": "Tiếng Ossetic",
 		"osa": "Tiếng Osage",
 		"ota": "Tiếng Thổ Nhĩ Kỳ Ottoman",
@@ -425,23 +403,18 @@
 		"pam": "Tiếng Pampanga",
 		"pap": "Tiếng Papiamento",
 		"pau": "Tiếng Palauan",
-		"pcd": "pcd",
-		"pdc": "pdc",
-		"pdt": "pdt",
+		"pcm": "Tiếng Nigeria Pidgin",
 		"peo": "Tiếng Ba Tư cổ",
-		"pfl": "pfl",
 		"phn": "Tiếng Phoenicia",
 		"pi": "Tiếng Pali",
 		"pl": "Tiếng Ba Lan",
-		"pms": "pms",
-		"pnt": "pnt",
 		"pon": "Tiếng Pohnpeian",
-		"prg": "prg",
+		"prg": "Tiếng Prussia",
 		"pro": "Tiếng Provençal cổ",
 		"ps": "Tiếng Pashto",
 		"ps_alt-variant": "Tiếng Pushto",
 		"pt": "Tiếng Bồ Đào Nha",
-		"pt_BR": "Tiếng Bồ Đào Nha (Braxin)",
+		"pt_BR": "Tiếng Bồ Đào Nha (Brazil)",
 		"pt_PT": "Tiếng Bồ Đào Nha (Châu Âu)",
 		"qu": "Tiếng Quechua",
 		"quc": "Tiếng Kʼicheʼ",
@@ -449,19 +422,14 @@
 		"raj": "Tiếng Rajasthani",
 		"rap": "Tiếng Rapanui",
 		"rar": "Tiếng Rarotongan",
-		"rgn": "rgn",
-		"rif": "rif",
 		"rm": "Tiếng Romansh",
 		"rn": "Tiếng Rundi",
-		"ro": "Tiếng Rumani",
+		"ro": "Tiếng Romania",
 		"ro_MD": "Tiếng Moldova",
 		"rof": "Tiếng Rombo",
 		"rom": "Tiếng Romany",
 		"root": "Tiếng Root",
-		"rtm": "rtm",
 		"ru": "Tiếng Nga",
-		"rue": "rue",
-		"rug": "rug",
 		"rup": "Tiếng Aromania",
 		"rw": "Tiếng Kinyarwanda",
 		"rwk": "Tiếng Rwa",
@@ -472,25 +440,21 @@
 		"saq": "Tiếng Samburu",
 		"sas": "Tiếng Sasak",
 		"sat": "Tiếng Santali",
-		"saz": "saz",
 		"sba": "Tiếng Ngambay",
 		"sbp": "Tiếng Sangu",
 		"sc": "Tiếng Sardinia",
 		"scn": "Tiếng Sicilia",
 		"sco": "Tiếng Scots",
 		"sd": "Tiếng Sindhi",
-		"sdc": "sdc",
 		"sdh": "Tiếng Kurd Miền Nam",
 		"se": "Tiếng Sami Miền Bắc",
 		"see": "Tiếng Seneca",
 		"seh": "Tiếng Sena",
-		"sei": "sei",
 		"sel": "Tiếng Selkup",
 		"ses": "Tiếng Koyraboro Senni",
 		"sg": "Tiếng Sango",
 		"sga": "Tiếng Ai-len cổ",
-		"sgs": "sgs",
-		"sh": "Tiếng Xéc bi - Croatia",
+		"sh": "Tiếng Serbo-Croatia",
 		"shi": "Tiếng Tachelhit",
 		"shn": "Tiếng Shan",
 		"shu": "Tiếng Ả-Rập Chad",
@@ -498,10 +462,8 @@
 		"sid": "Tiếng Sidamo",
 		"sk": "Tiếng Slovak",
 		"sl": "Tiếng Slovenia",
-		"sli": "sli",
-		"sly": "sly",
 		"sm": "Tiếng Samoa",
-		"sma": "TIếng Sami Miền Nam",
+		"sma": "Tiếng Sami Miền Nam",
 		"smj": "Tiếng Lule Sami",
 		"smn": "Tiếng Inari Sami",
 		"sms": "Tiếng Skolt Sami",
@@ -509,14 +471,13 @@
 		"snk": "Tiếng Soninke",
 		"so": "Tiếng Somali",
 		"sog": "Tiếng Sogdien",
-		"sq": "Tiếng An-ba-ni",
+		"sq": "Tiếng Albania",
 		"sr": "Tiếng Serbia",
 		"srn": "Tiếng Sranan Tongo",
 		"srr": "Tiếng Serer",
 		"ss": "Tiếng Swati",
 		"ssy": "Tiếng Saho",
-		"st": "Tiếng Sesotho",
-		"stq": "stq",
+		"st": "Tiếng Sotho Miền Nam",
 		"su": "Tiếng Sunda",
 		"suk": "Tiếng Sukuma",
 		"sus": "Tiếng Susu",
@@ -525,41 +486,34 @@
 		"sw": "Tiếng Swahili",
 		"sw_CD": "Tiếng Swahili Congo",
 		"swb": "Tiếng Cômo",
-		"syc": "Tiếng Syria Cổ điển",
+		"syc": "Tiếng Syriac cổ",
 		"syr": "Tiếng Syriac",
-		"szl": "szl",
 		"ta": "Tiếng Tamil",
-		"tcy": "tcy",
 		"te": "Tiếng Telugu",
 		"tem": "Tiếng Timne",
 		"teo": "Tiếng Teso",
 		"ter": "Tiếng Tereno",
-		"tet": "Tetum",
+		"tet": "Tiếng Tetum",
 		"tg": "Tiếng Tajik",
 		"th": "Tiếng Thái",
-		"ti": "Tiếng Tigrigya",
+		"ti": "Tiếng Tigrinya",
 		"tig": "Tiếng Tigre",
 		"tiv": "Tiếng Tiv",
-		"tk": "Tiếng Turk",
+		"tk": "Tiếng Turkmen",
 		"tkl": "Tiếng Tokelau",
-		"tkr": "tkr",
 		"tl": "Tiếng Tagalog",
 		"tlh": "Tiếng Klingon",
 		"tli": "Tiếng Tlingit",
-		"tly": "tly",
 		"tmh": "Tiếng Tamashek",
 		"tn": "Tiếng Tswana",
 		"to": "Tiếng Tonga",
 		"tog": "Tiếng Nyasa Tonga",
 		"tpi": "Tiếng Tok Pisin",
 		"tr": "Tiếng Thổ Nhĩ Kỳ",
-		"tru": "tru",
 		"trv": "Tiếng Taroko",
 		"ts": "Tiếng Tsonga",
-		"tsd": "tsd",
 		"tsi": "Tiếng Tsimshian",
 		"tt": "Tiếng Tatar",
-		"ttt": "ttt",
 		"tum": "Tiếng Tumbuka",
 		"tvl": "Tiếng Tuvalu",
 		"tw": "Tiếng Twi",
@@ -573,18 +527,13 @@
 		"uk": "Tiếng Ucraina",
 		"umb": "Tiếng Umbundu",
 		"und": "Ngôn ngữ không xác định",
-		"ur": "Tiếng Uđu",
+		"ur": "Tiếng Urdu",
 		"uz": "Tiếng Uzbek",
 		"vai": "Tiếng Vai",
 		"ve": "Tiếng Venda",
-		"vec": "vec",
-		"vep": "vep",
 		"vi": "Tiếng Việt",
-		"vls": "vls",
-		"vmf": "vmf",
 		"vo": "Tiếng Volapük",
 		"vot": "Tiếng Votic",
-		"vro": "vro",
 		"vun": "Tiếng Vunjo",
 		"wa": "Tiếng Walloon",
 		"wae": "Tiếng Walser",
@@ -593,23 +542,20 @@
 		"was": "Tiếng Washo",
 		"wbp": "Tiếng Warlpiri",
 		"wo": "Tiếng Wolof",
-		"wuu": "wuu",
+		"wuu": "Tiếng Ngô",
 		"xal": "Tiếng Kalmyk",
 		"xh": "Tiếng Xhosa",
-		"xmf": "xmf",
 		"xog": "Tiếng Soga",
 		"yao": "Tiếng Yao",
 		"yap": "Tiếng Yap",
 		"yav": "Tiếng Yangben",
 		"ybb": "Tiếng Yemba",
-		"yi": "Tiếng Y-đit",
+		"yi": "Tiếng Yiddish",
 		"yo": "Tiếng Yoruba",
-		"yrl": "yrl",
 		"yue": "Tiếng Quảng Đông",
-		"za": "Tiếng Zhuang",
+		"za": "Tiếng Choang",
 		"zap": "Tiếng Zapotec",
 		"zbl": "Ký hiệu Blissymbols",
-		"zea": "zea",
 		"zen": "Tiếng Zenaga",
 		"zgh": "Tiếng Tamazight Chuẩn của Ma-rốc",
 		"zh": "Tiếng Trung",
@@ -634,7 +580,7 @@
 		"Bamu": "Chữ Bamum",
 		"Bass": "Chữ Bassa Vah",
 		"Batk": "Chữ Batak",
-		"Beng": "Chữ Bengali",
+		"Beng": "Chữ Bangladesh",
 		"Bhks": "Bhks",
 		"Blis": "Chữ Blissymbols",
 		"Bopo": "Chữ Bopomofo",
@@ -663,12 +609,13 @@
 		"Geok": "Chữ Khutsuri Georgia",
 		"Geor": "Chữ Gruzia",
 		"Glag": "Chữ Glagolitic",
+		"Gonm": "Gonm",
 		"Goth": "Chữ Gô-tích",
 		"Gran": "Chữ Grantha",
 		"Grek": "Chữ Hy Lạp",
 		"Gujr": "Chữ Gujarati",
 		"Guru": "Chữ Gurmukhi",
-		"Hanb": "Hanb",
+		"Hanb": "Chữ Hanb",
 		"Hang": "Chữ Hangul",
 		"Hani": "Chữ Hán",
 		"Hano": "Chữ Hanunoo",
@@ -685,7 +632,7 @@
 		"Hung": "Chữ Hungary cổ",
 		"Inds": "Chữ Indus",
 		"Ital": "Chữ Italic cổ",
-		"Jamo": "Jamo",
+		"Jamo": "Chữ Jamo",
 		"Java": "Chữ Java",
 		"Jpan": "Chữ Nhật Bản",
 		"Jurc": "Chữ Jurchen",
@@ -726,7 +673,7 @@
 		"Mroo": "Chữ Mro",
 		"Mtei": "Chữ Meitei Mayek",
 		"Mult": "Mult",
-		"Mymr": "Myanma",
+		"Mymr": "Chữ Myanmar",
 		"Narb": "Chữ Bắc Ả Rập cổ",
 		"Nbat": "Chữ Nabataean",
 		"Newa": "Newa",
@@ -736,7 +683,7 @@
 		"Ogam": "Chữ Ogham",
 		"Olck": "Chữ Ol Chiki",
 		"Orkh": "Chữ Orkhon",
-		"Orya": "Chữ Oriya",
+		"Orya": "Chữ Odia",
 		"Osge": "Osge",
 		"Osma": "Chữ Osmanya",
 		"Palm": "Chữ Palmyrene",
@@ -749,55 +696,6 @@
 		"Phnx": "Chữ Phoenicia",
 		"Plrd": "Ngữ âm Pollard",
 		"Prti": "Chữ Parthia Văn bia",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "Chữ Rejang",
 		"Roro": "Chữ Rongorongo",
 		"Runr": "Chữ Runic",
@@ -812,6 +710,7 @@
 		"Sind": "Chữ Khudawadi",
 		"Sinh": "Chữ Sinhala",
 		"Sora": "Chữ Sora Sompeng",
+		"Soyo": "Soyo",
 		"Sund": "Chữ Xu-đăng",
 		"Sylo": "Chữ Syloti Nagri",
 		"Syrc": "Chữ Syria",
@@ -841,9 +740,10 @@
 		"Xpeo": "Chữ Ba Tư cổ",
 		"Xsux": "Chữ hình nêm Sumero-Akkadian",
 		"Yiii": "Chữ Di",
+		"Zanb": "Zanb",
 		"Zinh": "Chữ Kế thừa",
 		"Zmth": "Ký hiệu Toán học",
-		"Zsye": "Zsye",
+		"Zsye": "Biểu tượng",
 		"Zsym": "Ký hiệu",
 		"Zxxx": "Chưa có chữ viết",
 		"Zyyy": "Chung",
@@ -857,6 +757,7 @@
 		"151": "Đông Âu",
 		"154": "Bắc Âu",
 		"155": "Tây Âu",
+		"202": "202",
 		"419": "Châu Mỹ La-tinh",
 		"001": "Thế giới",
 		"002": "Châu Phi",
@@ -882,18 +783,18 @@
 		"061": "Polynesia",
 		"AC": "Đảo Ascension",
 		"AD": "Andorra",
-		"AE": "Các Tiểu V.quốc Ả Rập T.nhất",
+		"AE": "Các Tiểu Vương quốc Ả Rập Thống nhất",
 		"AF": "Afghanistan",
 		"AG": "Antigua và Barbuda",
 		"AI": "Anguilla",
-		"AL": "Albani",
+		"AL": "Albania",
 		"AM": "Armenia",
 		"AO": "Angola",
 		"AQ": "Nam Cực",
 		"AR": "Argentina",
 		"AS": "Đảo Somoa thuộc Mỹ",
 		"AT": "Áo",
-		"AU": "Úc",
+		"AU": "Australia",
 		"AW": "Aruba",
 		"AX": "Quần đảo Åland",
 		"AZ": "Azerbaijan",
@@ -902,7 +803,7 @@
 		"BD": "Bangladesh",
 		"BE": "Bỉ",
 		"BF": "Burkina Faso",
-		"BG": "Bungari",
+		"BG": "Bulgaria",
 		"BH": "Bahrain",
 		"BI": "Burundi",
 		"BJ": "Benin",
@@ -926,8 +827,8 @@
 		"CG": "Congo - Brazzaville",
 		"CG-alt-variant": "Cộng hòa Congo",
 		"CH": "Thụy Sĩ",
-		"CI": "Bờ Biển Ngà",
-		"CI-alt-variant": "CI",
+		"CI": "Côte d’Ivoire",
+		"CI-alt-variant": "Bờ Biển Ngà",
 		"CK": "Quần đảo Cook",
 		"CL": "Chile",
 		"CM": "Cameroon",
@@ -940,7 +841,8 @@
 		"CW": "Curaçao",
 		"CX": "Đảo Giáng Sinh",
 		"CY": "Síp",
-		"CZ": "Cộng hòa Séc",
+		"CZ": "Séc",
+		"CZ-alt-variant": "Cộng hòa Séc",
 		"DE": "Đức",
 		"DG": "Diego Garcia",
 		"DJ": "Djibouti",
@@ -957,6 +859,7 @@
 		"ES": "Tây Ban Nha",
 		"ET": "Ethiopia",
 		"EU": "Liên Minh Châu Âu",
+		"EZ": "Khu vực đồng Euro",
 		"FI": "Phần Lan",
 		"FJ": "Fiji",
 		"FK": "Quần đảo Falkland",
@@ -968,7 +871,7 @@
 		"GB": "Vương quốc Anh",
 		"GB-alt-short": "Vương quốc Anh",
 		"GD": "Grenada",
-		"GE": "Georgia",
+		"GE": "Gruzia",
 		"GF": "Guiana thuộc Pháp",
 		"GG": "Guernsey",
 		"GH": "Ghana",
@@ -979,7 +882,7 @@
 		"GP": "Guadeloupe",
 		"GQ": "Guinea Xích Đạo",
 		"GR": "Hy Lạp",
-		"GS": "Quần đảo Nam Georgia và Nam Sandwich",
+		"GS": "Nam Georgia & Quần đảo Nam Sandwich",
 		"GT": "Guatemala",
 		"GU": "Guam",
 		"GW": "Guinea-Bissau",
@@ -990,18 +893,18 @@
 		"HN": "Honduras",
 		"HR": "Croatia",
 		"HT": "Haiti",
-		"HU": "Hungari",
+		"HU": "Hungary",
 		"IC": "Quần đảo Canary",
 		"ID": "Indonesia",
-		"IE": "Ai-len",
+		"IE": "Ireland",
 		"IL": "Israel",
 		"IM": "Đảo Man",
 		"IN": "Ấn Độ",
-		"IO": "Thuộc địa Anh tại Ấn Độ Dương",
-		"IQ": "I-rắc",
+		"IO": "Lãnh thổ Ấn độ dương thuộc Anh",
+		"IQ": "Iraq",
 		"IR": "Iran",
 		"IS": "Iceland",
-		"IT": "Ý",
+		"IT": "Italy",
 		"JE": "Jersey",
 		"JM": "Jamaica",
 		"JO": "Jordan",
@@ -1014,7 +917,7 @@
 		"KN": "St. Kitts và Nevis",
 		"KP": "Triều Tiên",
 		"KR": "Hàn Quốc",
-		"KW": "Cô-oét",
+		"KW": "Kuwait",
 		"KY": "Quần đảo Cayman",
 		"KZ": "Kazakhstan",
 		"LA": "Lào",
@@ -1024,10 +927,10 @@
 		"LK": "Sri Lanka",
 		"LR": "Liberia",
 		"LS": "Lesotho",
-		"LT": "Lít-va",
+		"LT": "Litva",
 		"LU": "Luxembourg",
 		"LV": "Latvia",
-		"LY": "Li-bi",
+		"LY": "Libya",
 		"MA": "Ma-rốc",
 		"MC": "Monaco",
 		"MD": "Moldova",
@@ -1070,7 +973,7 @@
 		"PE": "Peru",
 		"PF": "Polynesia thuộc Pháp",
 		"PG": "Papua New Guinea",
-		"PH": "Philippin",
+		"PH": "Philippines",
 		"PK": "Pakistan",
 		"PL": "Ba Lan",
 		"PM": "Saint Pierre và Miquelon",
@@ -1101,7 +1004,7 @@
 		"SL": "Sierra Leone",
 		"SM": "San Marino",
 		"SN": "Senegal",
-		"SO": "Somali",
+		"SO": "Somalia",
 		"SR": "Suriname",
 		"SS": "Nam Sudan",
 		"ST": "São Tomé và Príncipe",
@@ -1110,15 +1013,15 @@
 		"SY": "Syria",
 		"SZ": "Swaziland",
 		"TA": "Tristan da Cunha",
-		"TC": "Quần đảo Turk và Caicos",
+		"TC": "Quần đảo Turks và Caicos",
 		"TD": "Chad",
-		"TF": "Lãnh thổ miền nam nước Pháp",
+		"TF": "Lãnh thổ phía Nam Thuộc Pháp",
 		"TG": "Togo",
 		"TH": "Thái Lan",
 		"TJ": "Tajikistan",
 		"TK": "Tokelau",
-		"TL": "Đông Timor",
-		"TL-alt-variant": "TL",
+		"TL": "Timor-Leste",
+		"TL-alt-variant": "Đông Timor",
 		"TM": "Turkmenistan",
 		"TN": "Tunisia",
 		"TO": "Tonga",
@@ -1129,7 +1032,9 @@
 		"TZ": "Tanzania",
 		"UA": "Ukraina",
 		"UG": "Uganda",
-		"UM": "Các đảo nhỏ xa t.tâm thuộc Mỹ",
+		"UM": "Các tiểu đảo xa của Hoa Kỳ",
+		"UN": "Liên hiệp quốc",
+		"UN-alt-short": "Liên hiệp quốc",
 		"US": "Hoa Kỳ",
 		"US-alt-short": "Hoa Kỳ",
 		"UY": "Uruguay",
@@ -1154,8 +1059,8 @@
 	"orientation": "left-to-right",
 	"ca-gregorian": {
 		"dateFormats": {
-			"full": "EEEE, 'ngày' dd MMMM 'năm' y",
-			"long": "'Ngày' dd 'tháng' MM 'năm' y",
+			"full": "EEEE, d MMMM, y",
+			"long": "d MMMM, y",
 			"medium": "d MMM, y",
 			"short": "dd/MM/y"
 		},
@@ -1171,8 +1076,13 @@
 			"medium": "{0}, {1}",
 			"short": "{0}, {1}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, 'ngày' d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1181,7 +1091,7 @@
 				"Gy": "y G",
 				"GyMMM": "MMM y G",
 				"GyMMMd": "dd MMM, y G",
-				"GyMMMEd": "E, d MMM, y G",
+				"GyMMMEd": "E, dd/MM/y G",
 				"h": "h a",
 				"H": "HH",
 				"hm": "h:mm a",
@@ -1213,7 +1123,9 @@
 				"yMMMEd": "E, d MMM, y",
 				"yMMMM": "MMMM 'năm' y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ 'năm' y"
+				"yQQQQ": "QQQQ 'năm' y",
+				"MMMMW": "'tuần' W 'của' 'tháng' M",
+				"yw": "'tuần' w 'của' 'năm' Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1565,11 +1477,11 @@
 			}
 		},
 		"era-wide": {
-			"0": "tr. CN",
+			"0": "Trước CN",
 			"1": "sau CN"
 		},
 		"era-abbreviated": {
-			"0": "tr. CN",
+			"0": "Trước CN",
 			"1": "sau CN"
 		},
 		"era-narrow": {
@@ -1596,8 +1508,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "'Ngày' dd",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, dd",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1614,8 +1531,8 @@
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "dd-M",
-				"MEd": "E, dd-M",
+				"Md": "dd/M",
+				"MEd": "E, dd/M",
 				"MMdd": "dd-MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -1627,7 +1544,7 @@
 				"yyyy": "y G",
 				"yyyyM": "M/y G",
 				"yyyyMd": "d/M/y G",
-				"yyyyMEd": "E, dd-M-y G",
+				"yyyyMEd": "E, d/M/y GGGGG",
 				"yyyyMM": "MM-y G",
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM, y G",
@@ -2014,8 +1931,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "'Ngày' dd",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, dd",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2032,8 +1954,8 @@
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "dd-M",
-				"MEd": "E, dd-M",
+				"Md": "dd/M",
+				"MEd": "E, dd/M",
 				"MMdd": "dd-MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -2045,7 +1967,7 @@
 				"yyyy": "y G",
 				"yyyyM": "M/y G",
 				"yyyyMd": "d/M/y G",
-				"yyyyMEd": "E, dd-M-y G",
+				"yyyyMEd": "E, d/M/y GGGGG",
 				"yyyyMM": "MM-y G",
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM, y G",
@@ -2441,8 +2363,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "'Ngày' dd",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E, dd",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2459,8 +2386,8 @@
 				"hms": "h:mm:ss a",
 				"Hms": "HH:mm:ss",
 				"M": "L",
-				"Md": "dd-M",
-				"MEd": "E, dd-M",
+				"Md": "dd/M",
+				"MEd": "E, dd/M",
 				"MMdd": "dd-MM",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
@@ -2472,7 +2399,7 @@
 				"yyyy": "y G",
 				"yyyyM": "M/y G",
 				"yyyyMd": "d/M/y G",
-				"yyyyMEd": "E, dd-M-y G",
+				"yyyyMEd": "E, d/M/y GGGGG",
 				"yyyyMM": "MM-y G",
 				"yyyyMMM": "MMM y G",
 				"yyyyMMMd": "d MMM, y G",
@@ -2842,7 +2769,7 @@
 	},
 	"dateFields": {
 		"era": {
-			"displayName": "Thời đại"
+			"displayName": "thời đại"
 		},
 		"year-wide": {
 			"displayName": "Năm",
@@ -2962,7 +2889,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} tuần trước"
-			}
+			},
+			"relativePeriod": "tuần {0}"
 		},
 		"week-short": {
 			"displayName": "Tuần",
@@ -2974,7 +2902,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} tuần trước"
-			}
+			},
+			"relativePeriod": "tuần {0}"
 		},
 		"week-narrow": {
 			"displayName": "Tuần",
@@ -2986,7 +2915,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} tuần trước"
-			}
+			},
+			"relativePeriod": "tuần {0}"
 		},
 		"day-wide": {
 			"displayName": "Ngày",
@@ -3031,10 +2961,11 @@
 			}
 		},
 		"weekday": {
-			"displayName": "Ngày trong tuần"
+			"displayName": "ngày trong tuần"
 		},
 		"hour-wide": {
 			"displayName": "Giờ",
+			"relative-type-0": "giờ này",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} giờ nữa"
 			},
@@ -3044,6 +2975,7 @@
 		},
 		"hour-short": {
 			"displayName": "Giờ",
+			"relative-type-0": "giờ này",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} giờ nữa"
 			},
@@ -3053,6 +2985,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "Giờ",
+			"relative-type-0": "giờ này",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} giờ nữa"
 			},
@@ -3062,6 +2995,7 @@
 		},
 		"minute-wide": {
 			"displayName": "Phút",
+			"relative-type-0": "phút này",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} phút nữa"
 			},
@@ -3071,6 +3005,7 @@
 		},
 		"minute-short": {
 			"displayName": "Phút",
+			"relative-type-0": "phút này",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} phút nữa"
 			},
@@ -3080,6 +3015,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "Phút",
+			"relative-type-0": "phút này",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "sau {0} phút nữa"
 			},
@@ -3159,7 +3095,7 @@
 		"standard": "#,##0%"
 	},
 	"currencyFormat": {
-		"standard": "¤ #,##0.00",
+		"standard": "#,##0.00 ¤",
 		"accounting": "#,##0.00 ¤",
 		"currencySpacing": {
 			"beforeCurrency": {
@@ -3173,6 +3109,20 @@
 				"insertBetween": " "
 			}
 		}
+	},
+	"currencyFormat-short": {
+		"1000-other": "0 N ¤",
+		"10000-other": "00 N ¤",
+		"100000-other": "000 N ¤",
+		"1000000-other": "0 Tr ¤",
+		"10000000-other": "00 Tr ¤",
+		"100000000-other": "000 Tr ¤",
+		"1000000000-other": "0 T ¤",
+		"10000000000-other": "00 T ¤",
+		"100000000000-other": "000 T ¤",
+		"1000000000000-other": "0 NT ¤",
+		"10000000000000-other": "00 NT ¤",
+		"100000000000000-other": "000 NT ¤"
 	},
 	"symbols-latn-decimal": ",",
 	"symbols-latn-group": ".",
@@ -3209,6 +3159,610 @@
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
+	"rtl": false,
+	"listPattern-standard-wide": {
+		"2": "{0} và {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} và {1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} hoặc {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} hoặc {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} hoặc {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} hoặc {1}"
+	},
+	"listPattern-standard-short": {
+		"2": "{0} và {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} và {1}"
+	},
+	"units": {
+		"short": {
+			"per": {
+				"compoundUnitPattern": "{0}/{1}"
+			},
+			"acceleration-g-force": {
+				"displayName": "lực g",
+				"unitPattern-count-other": "{0} G"
+			},
+			"acceleration-meter-per-second-squared": {
+				"displayName": "m/s²",
+				"unitPattern-count-other": "{0} m/s²"
+			},
+			"angle-revolution": {
+				"displayName": "rev",
+				"unitPattern-count-other": "{0} rev"
+			},
+			"angle-radian": {
+				"displayName": "rad",
+				"unitPattern-count-other": "{0} rad"
+			},
+			"angle-degree": {
+				"displayName": "độ",
+				"unitPattern-count-other": "{0}°"
+			},
+			"angle-arc-minute": {
+				"displayName": "phút",
+				"unitPattern-count-other": "{0}′"
+			},
+			"angle-arc-second": {
+				"displayName": "giây",
+				"unitPattern-count-other": "{0}″"
+			},
+			"area-square-kilometer": {
+				"displayName": "km²",
+				"unitPattern-count-other": "{0} km²",
+				"perUnitPattern": "{0}/km²"
+			},
+			"area-hectare": {
+				"displayName": "ha",
+				"unitPattern-count-other": "{0} ha"
+			},
+			"area-square-meter": {
+				"displayName": "m²",
+				"unitPattern-count-other": "{0} m²",
+				"perUnitPattern": "{0}/m²"
+			},
+			"area-square-centimeter": {
+				"displayName": "cm²",
+				"unitPattern-count-other": "{0} cm²",
+				"perUnitPattern": "{0}/cm²"
+			},
+			"area-square-mile": {
+				"displayName": "mi²",
+				"unitPattern-count-other": "{0} mi²",
+				"perUnitPattern": "{0}/mi²"
+			},
+			"area-acre": {
+				"displayName": "mẫu",
+				"unitPattern-count-other": "{0} mẫu"
+			},
+			"area-square-yard": {
+				"displayName": "yd²",
+				"unitPattern-count-other": "{0} yd²"
+			},
+			"area-square-foot": {
+				"displayName": "ft²",
+				"unitPattern-count-other": "{0} ft²"
+			},
+			"area-square-inch": {
+				"displayName": "in²",
+				"unitPattern-count-other": "{0} in²",
+				"perUnitPattern": "{0}/in²"
+			},
+			"concentr-karat": {
+				"displayName": "kt",
+				"unitPattern-count-other": "{0} kt"
+			},
+			"concentr-milligram-per-deciliter": {
+				"displayName": "mg/dL",
+				"unitPattern-count-other": "{0} mg/dL"
+			},
+			"concentr-millimole-per-liter": {
+				"displayName": "mmol/L",
+				"unitPattern-count-other": "{0} mmol/L"
+			},
+			"concentr-part-per-million": {
+				"displayName": "ppm",
+				"unitPattern-count-other": "{0} ppm"
+			},
+			"consumption-liter-per-kilometer": {
+				"displayName": "l/km",
+				"unitPattern-count-other": "{0} l/km"
+			},
+			"consumption-liter-per-100kilometers": {
+				"displayName": "L/100km",
+				"unitPattern-count-other": "{0} L/100km"
+			},
+			"consumption-mile-per-gallon": {
+				"displayName": "mpg",
+				"unitPattern-count-other": "{0} mpg"
+			},
+			"consumption-mile-per-gallon-imperial": {
+				"displayName": "mpg Imp.",
+				"unitPattern-count-other": "{0} mpg Imp."
+			},
+			"digital-terabyte": {
+				"displayName": "TB",
+				"unitPattern-count-other": "{0} TB"
+			},
+			"digital-terabit": {
+				"displayName": "Tb",
+				"unitPattern-count-other": "{0} Tb"
+			},
+			"digital-gigabyte": {
+				"displayName": "GB",
+				"unitPattern-count-other": "{0} GB"
+			},
+			"digital-gigabit": {
+				"displayName": "Gb",
+				"unitPattern-count-other": "{0} Gb"
+			},
+			"digital-megabyte": {
+				"displayName": "MB",
+				"unitPattern-count-other": "{0} MB"
+			},
+			"digital-megabit": {
+				"displayName": "Mb",
+				"unitPattern-count-other": "{0} Mb"
+			},
+			"digital-kilobyte": {
+				"displayName": "kB",
+				"unitPattern-count-other": "{0} kB"
+			},
+			"digital-kilobit": {
+				"displayName": "kb",
+				"unitPattern-count-other": "{0} kb"
+			},
+			"digital-byte": {
+				"displayName": "byte",
+				"unitPattern-count-other": "{0} byte"
+			},
+			"digital-bit": {
+				"displayName": "bit",
+				"unitPattern-count-other": "{0} bit"
+			},
+			"duration-century": {
+				"displayName": "thế kỷ",
+				"unitPattern-count-other": "{0} thế kỷ"
+			},
+			"duration-year": {
+				"displayName": "năm",
+				"unitPattern-count-other": "{0} năm",
+				"perUnitPattern": "{0}/năm"
+			},
+			"duration-month": {
+				"displayName": "tháng",
+				"unitPattern-count-other": "{0} tháng",
+				"perUnitPattern": "{0}/tháng"
+			},
+			"duration-week": {
+				"displayName": "tuần",
+				"unitPattern-count-other": "{0} tuần",
+				"perUnitPattern": "{0}/tuần"
+			},
+			"duration-day": {
+				"displayName": "ngày",
+				"unitPattern-count-other": "{0} ngày",
+				"perUnitPattern": "{0}/ngày"
+			},
+			"duration-hour": {
+				"displayName": "giờ",
+				"unitPattern-count-other": "{0} giờ",
+				"perUnitPattern": "{0}/giờ"
+			},
+			"duration-minute": {
+				"displayName": "phút",
+				"unitPattern-count-other": "{0} phút",
+				"perUnitPattern": "{0}/phút"
+			},
+			"duration-second": {
+				"displayName": "giây",
+				"unitPattern-count-other": "{0} giây",
+				"perUnitPattern": "{0}/giây"
+			},
+			"duration-millisecond": {
+				"displayName": "mili giây",
+				"unitPattern-count-other": "{0} mili giây"
+			},
+			"duration-microsecond": {
+				"displayName": "μs",
+				"unitPattern-count-other": "{0} μs"
+			},
+			"duration-nanosecond": {
+				"displayName": "nano giây",
+				"unitPattern-count-other": "{0} nano giây"
+			},
+			"electric-ampere": {
+				"displayName": "A",
+				"unitPattern-count-other": "{0} A"
+			},
+			"electric-milliampere": {
+				"displayName": "mA",
+				"unitPattern-count-other": "{0} mA"
+			},
+			"electric-ohm": {
+				"displayName": "Ω",
+				"unitPattern-count-other": "{0} Ω"
+			},
+			"electric-volt": {
+				"displayName": "v",
+				"unitPattern-count-other": "{0} V"
+			},
+			"energy-kilocalorie": {
+				"displayName": "kcal",
+				"unitPattern-count-other": "{0} kcal"
+			},
+			"energy-calorie": {
+				"displayName": "cal",
+				"unitPattern-count-other": "{0} cal"
+			},
+			"energy-foodcalorie": {
+				"displayName": "Cal",
+				"unitPattern-count-other": "{0} Cal"
+			},
+			"energy-kilojoule": {
+				"displayName": "kJ",
+				"unitPattern-count-other": "{0} kJ"
+			},
+			"energy-joule": {
+				"displayName": "J",
+				"unitPattern-count-other": "{0} J"
+			},
+			"energy-kilowatt-hour": {
+				"displayName": "kWh",
+				"unitPattern-count-other": "{0} kWh"
+			},
+			"frequency-gigahertz": {
+				"displayName": "GHz",
+				"unitPattern-count-other": "{0} GHz"
+			},
+			"frequency-megahertz": {
+				"displayName": "MHz",
+				"unitPattern-count-other": "{0} MHz"
+			},
+			"frequency-kilohertz": {
+				"displayName": "kHz",
+				"unitPattern-count-other": "{0} kHz"
+			},
+			"frequency-hertz": {
+				"displayName": "Hz",
+				"unitPattern-count-other": "{0} Hz"
+			},
+			"length-kilometer": {
+				"displayName": "km",
+				"unitPattern-count-other": "{0} km",
+				"perUnitPattern": "{0}/km"
+			},
+			"length-meter": {
+				"displayName": "m",
+				"unitPattern-count-other": "{0} m",
+				"perUnitPattern": "{0}/m"
+			},
+			"length-decimeter": {
+				"displayName": "dm",
+				"unitPattern-count-other": "{0} dm"
+			},
+			"length-centimeter": {
+				"displayName": "cm",
+				"unitPattern-count-other": "{0} cm",
+				"perUnitPattern": "{0}/cm"
+			},
+			"length-millimeter": {
+				"displayName": "mm",
+				"unitPattern-count-other": "{0} mm"
+			},
+			"length-micrometer": {
+				"displayName": "µm",
+				"unitPattern-count-other": "{0} µm"
+			},
+			"length-nanometer": {
+				"displayName": "nm",
+				"unitPattern-count-other": "{0} nm"
+			},
+			"length-picometer": {
+				"displayName": "pm",
+				"unitPattern-count-other": "{0} pm"
+			},
+			"length-mile": {
+				"displayName": "dặm",
+				"unitPattern-count-other": "{0} dặm"
+			},
+			"length-yard": {
+				"displayName": "yd",
+				"unitPattern-count-other": "{0} yd"
+			},
+			"length-foot": {
+				"displayName": "ft",
+				"unitPattern-count-other": "{0} ft",
+				"perUnitPattern": "{0}/ft"
+			},
+			"length-inch": {
+				"displayName": "inch",
+				"unitPattern-count-other": "{0} inch",
+				"perUnitPattern": "{0}/in"
+			},
+			"length-parsec": {
+				"displayName": "pc",
+				"unitPattern-count-other": "{0} pc"
+			},
+			"length-light-year": {
+				"displayName": "ly",
+				"unitPattern-count-other": "{0} ly"
+			},
+			"length-astronomical-unit": {
+				"displayName": "au",
+				"unitPattern-count-other": "{0} au"
+			},
+			"length-furlong": {
+				"displayName": "fur",
+				"unitPattern-count-other": "{0} fur"
+			},
+			"length-fathom": {
+				"displayName": "fm",
+				"unitPattern-count-other": "{0} fm"
+			},
+			"length-nautical-mile": {
+				"displayName": "nmi",
+				"unitPattern-count-other": "{0} nmi"
+			},
+			"length-mile-scandinavian": {
+				"displayName": "smi",
+				"unitPattern-count-other": "{0} smi"
+			},
+			"length-point": {
+				"displayName": "đ",
+				"unitPattern-count-other": "{0} đ"
+			},
+			"light-lux": {
+				"displayName": "lx",
+				"unitPattern-count-other": "{0} lx"
+			},
+			"mass-metric-ton": {
+				"displayName": "t",
+				"unitPattern-count-other": "{0} t"
+			},
+			"mass-kilogram": {
+				"displayName": "kg",
+				"unitPattern-count-other": "{0} kg",
+				"perUnitPattern": "{0}/kg"
+			},
+			"mass-gram": {
+				"displayName": "g",
+				"unitPattern-count-other": "{0} g",
+				"perUnitPattern": "{0}/g"
+			},
+			"mass-milligram": {
+				"displayName": "mg",
+				"unitPattern-count-other": "{0} mg"
+			},
+			"mass-microgram": {
+				"displayName": "µg",
+				"unitPattern-count-other": "{0} µg"
+			},
+			"mass-ton": {
+				"displayName": "tn",
+				"unitPattern-count-other": "{0} tn"
+			},
+			"mass-stone": {
+				"displayName": "st",
+				"unitPattern-count-other": "{0} st"
+			},
+			"mass-pound": {
+				"displayName": "pao",
+				"unitPattern-count-other": "{0} lb",
+				"perUnitPattern": "{0}/lb"
+			},
+			"mass-ounce": {
+				"displayName": "oz",
+				"unitPattern-count-other": "{0} oz",
+				"perUnitPattern": "{0}/oz"
+			},
+			"mass-ounce-troy": {
+				"displayName": "oz t",
+				"unitPattern-count-other": "{0} oz t"
+			},
+			"mass-carat": {
+				"displayName": "CD",
+				"unitPattern-count-other": "{0} CD"
+			},
+			"power-gigawatt": {
+				"displayName": "GW",
+				"unitPattern-count-other": "{0} GW"
+			},
+			"power-megawatt": {
+				"displayName": "MW",
+				"unitPattern-count-other": "{0} MW"
+			},
+			"power-kilowatt": {
+				"displayName": "kW",
+				"unitPattern-count-other": "{0} kW"
+			},
+			"power-watt": {
+				"displayName": "W",
+				"unitPattern-count-other": "{0} W"
+			},
+			"power-milliwatt": {
+				"displayName": "mW",
+				"unitPattern-count-other": "{0} mW"
+			},
+			"power-horsepower": {
+				"displayName": "hp",
+				"unitPattern-count-other": "{0} hp"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-other": "{0} hPa"
+			},
+			"pressure-millimeter-of-mercury": {
+				"displayName": "mm Hg",
+				"unitPattern-count-other": "{0} mm Hg"
+			},
+			"pressure-pound-per-square-inch": {
+				"displayName": "psi",
+				"unitPattern-count-other": "{0} psi"
+			},
+			"pressure-inch-hg": {
+				"displayName": "inHg",
+				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-millibar": {
+				"displayName": "mbar",
+				"unitPattern-count-other": "{0} mbar"
+			},
+			"speed-kilometer-per-hour": {
+				"displayName": "km/h",
+				"unitPattern-count-other": "{0} km/h"
+			},
+			"speed-meter-per-second": {
+				"displayName": "m/s",
+				"unitPattern-count-other": "{0} m/s"
+			},
+			"speed-mile-per-hour": {
+				"displayName": "mi/h",
+				"unitPattern-count-other": "{0} mi/h"
+			},
+			"speed-knot": {
+				"displayName": "kn",
+				"unitPattern-count-other": "{0} kn"
+			},
+			"temperature-generic": {
+				"displayName": "°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"temperature-celsius": {
+				"displayName": "°C",
+				"unitPattern-count-other": "{0}°C"
+			},
+			"temperature-fahrenheit": {
+				"displayName": "°F",
+				"unitPattern-count-other": "{0}°F"
+			},
+			"temperature-kelvin": {
+				"displayName": "K",
+				"unitPattern-count-other": "{0} K"
+			},
+			"volume-cubic-kilometer": {
+				"displayName": "km³",
+				"unitPattern-count-other": "{0} km³"
+			},
+			"volume-cubic-meter": {
+				"displayName": "m³",
+				"unitPattern-count-other": "{0} m³",
+				"perUnitPattern": "{0}/m³"
+			},
+			"volume-cubic-centimeter": {
+				"displayName": "cm³",
+				"unitPattern-count-other": "{0} cm³",
+				"perUnitPattern": "{0}/cm³"
+			},
+			"volume-cubic-mile": {
+				"displayName": "mi³",
+				"unitPattern-count-other": "{0} mi³"
+			},
+			"volume-cubic-yard": {
+				"displayName": "yd³",
+				"unitPattern-count-other": "{0} yd³"
+			},
+			"volume-cubic-foot": {
+				"displayName": "ft³",
+				"unitPattern-count-other": "{0} ft³"
+			},
+			"volume-cubic-inch": {
+				"displayName": "in³",
+				"unitPattern-count-other": "{0} in³"
+			},
+			"volume-megaliter": {
+				"displayName": "ML",
+				"unitPattern-count-other": "{0} ML"
+			},
+			"volume-hectoliter": {
+				"displayName": "hL",
+				"unitPattern-count-other": "{0} hL"
+			},
+			"volume-liter": {
+				"displayName": "l",
+				"unitPattern-count-other": "{0} L",
+				"perUnitPattern": "{0}/l"
+			},
+			"volume-deciliter": {
+				"displayName": "dL",
+				"unitPattern-count-other": "{0} dL"
+			},
+			"volume-centiliter": {
+				"displayName": "cL",
+				"unitPattern-count-other": "{0} cL"
+			},
+			"volume-milliliter": {
+				"displayName": "mL",
+				"unitPattern-count-other": "{0} mL"
+			},
+			"volume-pint-metric": {
+				"displayName": "mpt",
+				"unitPattern-count-other": "{0} mpt"
+			},
+			"volume-cup-metric": {
+				"displayName": "mcup",
+				"unitPattern-count-other": "{0} mc"
+			},
+			"volume-acre-foot": {
+				"displayName": "ac ft",
+				"unitPattern-count-other": "{0} ac ft"
+			},
+			"volume-bushel": {
+				"displayName": "bu",
+				"unitPattern-count-other": "{0} bu"
+			},
+			"volume-gallon": {
+				"displayName": "gal",
+				"unitPattern-count-other": "{0} gal",
+				"perUnitPattern": "{0}/gal"
+			},
+			"volume-gallon-imperial": {
+				"displayName": "gal Anh",
+				"unitPattern-count-other": "{0} gal Anh",
+				"perUnitPattern": "{0}/gal Anh"
+			},
+			"volume-quart": {
+				"displayName": "qt",
+				"unitPattern-count-other": "{0} qt"
+			},
+			"volume-pint": {
+				"displayName": "pt",
+				"unitPattern-count-other": "{0} pt"
+			},
+			"volume-cup": {
+				"displayName": "c",
+				"unitPattern-count-other": "{0} c"
+			},
+			"volume-fluid-ounce": {
+				"displayName": "fl oz",
+				"unitPattern-count-other": "{0} fl oz"
+			},
+			"volume-tablespoon": {
+				"displayName": "tbsp",
+				"unitPattern-count-other": "{0} tbsp"
+			},
+			"volume-teaspoon": {
+				"displayName": "tsp",
+				"unitPattern-count-other": "{0} tsp"
+			},
+			"coordinateUnit": {
+				"east": "{0}Đ",
+				"north": "{0}B",
+				"south": "{0}N",
+				"west": "{0}T"
+			}
+		}
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
@@ -3217,13 +3771,9 @@
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
-		"CAD": 2,
-		"CHF": 2,
 		"CLF": 4,
 		"CLP": 0,
 		"COP": 0,
-		"CRC": 0,
-		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
@@ -3277,6 +3827,7 @@
 		"ZMK": 0,
 		"ZWD": 0
 	},
+	"plurals": {},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 1,
 	"weekData-weekendStart": 6,

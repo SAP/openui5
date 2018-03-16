@@ -1,0 +1,715 @@
+{
+  "1.50.0": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "6fde0d6e041bee1e27de6cb5e3fe4f8aac0cb12b",
+        "type": "FEATURE",
+        "text": "AppCacheBuster: support for async Component preload",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1368"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500001492642017"
+          }
+        ]
+      },
+      {
+        "id": "b3408349af4105cb1337ceff5217894f8396b0c4",
+        "type": "FEATURE",
+        "text": "Component: manifest property replaces manifest(First|Url)",
+        "references": []
+      },
+      {
+        "id": "d9d8bc5e3f5dae62b808ed13708ee35ff880d8d7",
+        "type": "FEATURE",
+        "text": "Filter: Support for Any and All",
+        "references": []
+      },
+      {
+        "id": "b0fd891d0e36a241156b3b58ab383d7ec43a7d7c",
+        "type": "FEATURE",
+        "text": "Infra: removal of deprecated sap_goldreflection theme",
+        "references": []
+      },
+      {
+        "id": "9302684ec7eff355afc9f8647871625bf0662d29",
+        "type": "FEATURE",
+        "text": "KlayJS: Added version 0.4.1 to third-party libraries",
+        "references": []
+      },
+      {
+        "id": "5ae6a1df1de967f3524945e4dba23d6b2e0572a7",
+        "type": "FEATURE",
+        "text": "Opa: improve queue error handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780065667"
+          }
+        ]
+      },
+      {
+        "id": "f5d8be25e25a3fd65b2cda2ffd630220ca6931e0",
+        "type": "FEATURE",
+        "text": "Opa: provide public functions for checking if teardown is needed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780065663"
+          }
+        ]
+      },
+      {
+        "id": "33c3583ad869ab3ad7925fd05ab0a3e98b16ec1a",
+        "type": "FEATURE",
+        "text": "QUnit 2.x: add version 2.3.2 as qunit-2, adapt test tooling",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1359"
+          }
+        ]
+      },
+      {
+        "id": "9ca3b88f90b55ffb2ddc1cccf15041c938089f3e",
+        "type": "FEATURE",
+        "text": "SAP Icons v3.9 update",
+        "references": []
+      },
+      {
+        "id": "fa979b269bb26a3238f58dd25f1c29acb330726f",
+        "type": "FEATURE",
+        "text": "Updated theming explored sample",
+        "references": []
+      },
+      {
+        "id": "c770112e53c50bd1370fe67c36978922b623f706",
+        "type": "FEATURE",
+        "text": "core.format.DateFormat: Parse Interval",
+        "references": []
+      },
+      {
+        "id": "ff77ad49560da1d62373518750e3137d94795c84",
+        "type": "FEATURE",
+        "text": "core.support.TechnicalInfo - New implementation for the Technical Info Dialog",
+        "references": []
+      },
+      {
+        "id": "f8e22e9a864b506ba01083167e5eafece9a4cd6d",
+        "type": "FEATURE",
+        "text": "model.type: Add date interval types",
+        "references": []
+      },
+      {
+        "id": "4cd02e64ed04c0950f9fddc6645a5dc418a3deaa",
+        "type": "FEATURE",
+        "text": "sap.m.PlanningCalendar: Ability to display a subset of the default built-in views added.",
+        "references": []
+      },
+      {
+        "id": "57d8c5079fa8a071911d55bdd86dac03310f4b23",
+        "type": "FEATURE",
+        "text": "sap.m.RatingIndicator: Density mode implementation",
+        "references": []
+      },
+      {
+        "id": "2d732593f45b9d92f8972a89edce4768e2435610",
+        "type": "FEATURE",
+        "text": "sap.m.RatingIndicator: Display mode is added",
+        "references": []
+      },
+      {
+        "id": "d13407639413b8f4f0db0fab15b48f59b47a80cc",
+        "type": "FEATURE",
+        "text": "sap.ui.core.mimes.logo: New logo has been added.",
+        "references": []
+      },
+      {
+        "id": "e7857ca15e08bc86dcf4a4441db5c77f80f8eafb",
+        "type": "FEATURE",
+        "text": "sap.ui.debug.TechnicalInfo - Select Debug Packages Redesign",
+        "references": []
+      },
+      {
+        "id": "d94fb048893ab0e0434d73183baf9c403e35b069",
+        "type": "FEATURE",
+        "text": "sap.ui.support: OPA test example added",
+        "references": []
+      },
+      {
+        "id": "52f1d317d87053be5ce16307b0d012631cf857e0",
+        "type": "FEATURE",
+        "text": "troubleshooting tutorial demo app",
+        "references": []
+      },
+      {
+        "id": "bfab3ff28c31e2e8066b4ebf6f9c38f671681ac9",
+        "type": "FEATURE",
+        "text": "troubleshooting tutorial demo app; step 3 support assistant",
+        "references": []
+      },
+      {
+        "id": "d47048247f49988c9a2cba21894f1f7a19982903",
+        "type": "FEATURE",
+        "text": "[FIX] core.cldr: updating cldr to version 31.0.1",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670447086"
+          }
+        ]
+      },
+      {
+        "id": "43120d7f42e55e7a89def26c0bc0a6e23550428a",
+        "type": "FEATURE",
+        "text": "[TEST] Opa: add test lib config support",
+        "references": []
+      },
+      {
+        "id": "605e502f9ceb0fd2c24699c16d3dac89decddb8b",
+        "type": "FIX",
+        "text": "AnalyticalTreeBindingAdapter: selectionChange when collapsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770240093"
+          }
+        ]
+      },
+      {
+        "id": "103ae5f9350cfb36e2cbf57fedc0a58b0d57fe01",
+        "type": "FIX",
+        "text": "ComponentContainer: Model propagation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770295602"
+          }
+        ]
+      },
+      {
+        "id": "228daa73405f455121d1512a56d0e9d6b51a328c",
+        "type": "FIX",
+        "text": "Diagnostics Tool: Missing scrollbar in applications using ushell fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780279392"
+          }
+        ]
+      },
+      {
+        "id": "a40f4106f1993e28cc354e5881e7495cf086144a",
+        "type": "FIX",
+        "text": "ExtensionPoint: allow specifying the ID of a View replacement",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770244349"
+          }
+        ]
+      },
+      {
+        "id": "2bbce41965d169009e28906be7563c5301022f0a",
+        "type": "FIX",
+        "text": "Gherkin now gives access to local QUnit assert via this.assert",
+        "references": []
+      },
+      {
+        "id": "22fb4e55f5711d47942d360281326a88f9dedd02",
+        "type": "FIX",
+        "text": "Heap of Shards - Step 3: Support Assistant - use another rule",
+        "references": []
+      },
+      {
+        "id": "a64bd61ef1829a2efe9c28f6f3630f71a4792f30",
+        "type": "FIX",
+        "text": "Improve JSONModel JSDoc",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1201"
+          }
+        ]
+      },
+      {
+        "id": "55688b1d9ac33e884b0ee6e2c08b2d9f1ccd7128",
+        "type": "FIX",
+        "text": "JSDoc: fix copy & paste errors in event listener methods",
+        "references": []
+      },
+      {
+        "id": "0ecad6080a8fa943dfc1f1e76cecd942dbddf95f",
+        "type": "FIX",
+        "text": "LocalBusyIndicator: Control still blocked when busy set to \"false\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770239984"
+          }
+        ]
+      },
+      {
+        "id": "6cbb3f1da823ddbdffb589025a94d66326f9f1b8",
+        "type": "FIX",
+        "text": "ManagedObjectModel: update property of parent only if changed",
+        "references": []
+      },
+      {
+        "id": "20d2edf5532d3762c5a5de5d2b6826acc418f41e",
+        "type": "FIX",
+        "text": "ManagedObjectObserver: Initial observing of attributes",
+        "references": []
+      },
+      {
+        "id": "0b6e06ac0ea1e41c241e8c00e939e91dada5b807",
+        "type": "FIX",
+        "text": "Message: Allow Change of MessageProcessor",
+        "references": []
+      },
+      {
+        "id": "f40bf7df606297a3cdad10b6dc8f9d4d597f13eb",
+        "type": "FIX",
+        "text": "Message: fix JSDoc to make functions public",
+        "references": []
+      },
+      {
+        "id": "c23d2e452cd2d833dcad8d670bb91cc5ee08c955",
+        "type": "FIX",
+        "text": "Messaging: normalization of message targets",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770263702"
+          }
+        ]
+      },
+      {
+        "id": "edd35f36b02238c79144003b5ca3570a9ab6c8c1",
+        "type": "FIX",
+        "text": "NumberFormat: Improve plural rule support",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780246560"
+          }
+        ]
+      },
+      {
+        "id": "f062c49dedd95a233b09d8df0014a3ebde47dd26",
+        "type": "FIX",
+        "text": "ODataModelV2: Adapt annotationsLoaded JS Doc",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780050929"
+          }
+        ]
+      },
+      {
+        "id": "4a109d39e7169fc646919b3639c95566f8fd8425",
+        "type": "FIX",
+        "text": "ODataUtils: Path Segment Parameter Handling",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770295131"
+          }
+        ]
+      },
+      {
+        "id": "eb98383fb85b3eeac7fd0223828c5c4dc9598e6d",
+        "type": "FIX",
+        "text": "Opa: extension api jsdoc",
+        "references": []
+      },
+      {
+        "id": "6cbc917b9c6d808d398e3ed280b6f451739d60fd",
+        "type": "FIX",
+        "text": "ScrollEnablement: inform growing when scrollTo method is called.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770280760"
+          }
+        ]
+      },
+      {
+        "id": "0a1d85cf1bafe00189e6bf7ac7467d91476902f9",
+        "type": "FIX",
+        "text": "TreeBindingAdapter: Fire selectionChange event when collapsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770240093"
+          }
+        ]
+      },
+      {
+        "id": "e46ec4587b41f3551112be0fcc8da9ec9ac1a0ba",
+        "type": "FIX",
+        "text": "core.DateFormat: make format capable of parsing AM/PM variants",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770134162"
+          }
+        ]
+      },
+      {
+        "id": "7b6f48666a5e36c96793514b16c2b9550bffe26b",
+        "type": "FIX",
+        "text": "core.Icon: avoid the same aria label read twice",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770084503"
+          }
+        ]
+      },
+      {
+        "id": "1aa41ce6ebdc91afb2b28ff2e40a25797ccc2224",
+        "type": "FIX",
+        "text": "core.Icon: make the focus outline stay within the DOM area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780089678"
+          }
+        ]
+      },
+      {
+        "id": "6cf30867a85a1959ff1e53ab12ed211f064a4d0a",
+        "type": "FIX",
+        "text": "core.Icon: mark the tap/click event when icon has a press handler",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780146079"
+          }
+        ]
+      },
+      {
+        "id": "e890612f66b7236d7cf490a104c150fb9d05c98d",
+        "type": "FIX",
+        "text": "core.Icon: simulate focus outline with negative offset for IE and Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780147610"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780280317"
+          }
+        ]
+      },
+      {
+        "id": "5d1a07cd73bd364ed422fa52ad6b991e0edaafeb",
+        "type": "FIX",
+        "text": "core.IconPool: Use local SAP-icons font as fallback only",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1508"
+          }
+        ]
+      },
+      {
+        "id": "b0efef71702a5594cedc14383a44585e6b0e4b45",
+        "type": "FIX",
+        "text": "core.routing: execute view processing within 0 timeout for IE/Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012005040900000159982017"
+          }
+        ]
+      },
+      {
+        "id": "762420229450dcc4b2e531aec129d606a8da6342",
+        "type": "FIX",
+        "text": "handlebars: ensure proper context stacking in compat mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770235263"
+          }
+        ]
+      },
+      {
+        "id": "78bb3ca0802974db7839845fadad6a02260fcb60",
+        "type": "FIX",
+        "text": "jQuery.sap.dom: Horizontal scroll functions for RTL in Safari 10+",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770250343"
+          }
+        ]
+      },
+      {
+        "id": "5d2b1180178753ed0c898a49908d258b22c6e6ee",
+        "type": "FIX",
+        "text": "jQuery.sap.includeStyleSheet: ignore id=null parameter",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780174777"
+          }
+        ]
+      },
+      {
+        "id": "630852996ad18cd7ffba412a829aca5102dc1ade",
+        "type": "FIX",
+        "text": "jquery.sap.dom: jQuery.sap.denormalizeScrollLeft in MS Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770179079"
+          }
+        ]
+      },
+      {
+        "id": "1fbe7e363bf63312aa5aa9b1f1ee0c98055e4ffb",
+        "type": "FIX",
+        "text": "jquery.sap.trace: FESR - new field for app_id in optional header",
+        "references": []
+      },
+      {
+        "id": "4549b0507d18f98b5d1567ab559b6e60bb386a8b",
+        "type": "FIX",
+        "text": "jquery.sap.trace: send correct event in FESR",
+        "references": []
+      },
+      {
+        "id": "11f98ca4780cfe77489eab1d327613d6275ad6c9",
+        "type": "FIX",
+        "text": "jquery: prevent auto-detection of content type",
+        "references": []
+      },
+      {
+        "id": "f48487cd11786650f2cfe0de10aaf62161277230",
+        "type": "FIX",
+        "text": "local less parameter names for sap.ui.core",
+        "references": []
+      },
+      {
+        "id": "65e0db74f31524873cde6cf5d52d25fb701130ba",
+        "type": "FIX",
+        "text": "odata.v4.SalesOrders sample: Fix errors on (relative) create",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770284831"
+          }
+        ]
+      },
+      {
+        "id": "c06ff37c65ae066db021d4569ddd9526983c0a19",
+        "type": "FIX",
+        "text": "odata.v4.lib._Cache: no $count when empty read behind known range",
+        "references": []
+      },
+      {
+        "id": "c4625c8ee50992aa4a37c21365a26f00f086d099",
+        "type": "FIX",
+        "text": "odata4analytics: allow $orderby for a property which is not included in $select",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770209376"
+          }
+        ]
+      },
+      {
+        "id": "fd1ef3d96e26484acc5ec92a87327a4d2fcd79b4",
+        "type": "FIX",
+        "text": "odata4analytics: allow $orderby for a property which is not included in $select",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780177409"
+          }
+        ]
+      },
+      {
+        "id": "0b0e6461e6c58eba79426a69f8933080445bb20a",
+        "type": "FIX",
+        "text": "only one troubleshooting app: heap of shards",
+        "references": []
+      },
+      {
+        "id": "100b43cb64f1f9d2d6c5927de0288ab77092864b",
+        "type": "FIX",
+        "text": "sap.m.Carousel: Touch events inside the control are now propagated correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500001876952017"
+          }
+        ]
+      },
+      {
+        "id": "12002b947b12e5e817ab17ed58ae55bae0b782af",
+        "type": "FIX",
+        "text": "sap.m.Label: For attribute for links corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770049251"
+          }
+        ]
+      },
+      {
+        "id": "209a4e6c34c34b48d08868681c4e9f7714dc667f",
+        "type": "FIX",
+        "text": "sap.ui.core.demokit.sample.odata.v4.SalesOrdersTemplate: avoid more button in currency value help",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770305436"
+          }
+        ]
+      },
+      {
+        "id": "0637f6b29da4c5aac583fd824ec0de2ea0af69ae",
+        "type": "FIX",
+        "text": "sap.ui.core.support.Support: Diagnostics tool loading in IE fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780258083"
+          }
+        ]
+      },
+      {
+        "id": "76362b362921cb92948732c584707327a3b2b88f",
+        "type": "FIX",
+        "text": "sap.ui.core.support.TechnicalInfo: Generating default bootstrap url problem fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780175014"
+          }
+        ]
+      },
+      {
+        "id": "fb1eced3b776c19cf880b002651f4b065483bde8",
+        "type": "FIX",
+        "text": "sap.ui.core.util.File.save JSDoc: Update browser limitations (Safari)",
+        "references": []
+      },
+      {
+        "id": "b0849276ff1d44dc30c4089d101eec2b1de8af8a",
+        "type": "FIX",
+        "text": "sap.ui.define: clarify differences to standard AMD",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1253"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770165093"
+          }
+        ]
+      },
+      {
+        "id": "9c81a42360e5959ec4b31c1526207008e4e01dd2",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.ODataMetaModel#getODataEntityContainer: support simple case w/o IsDefaultEntityContainer flag",
+        "references": []
+      },
+      {
+        "id": "6055907ce0d059e29704d12487cba4bbbb45ca4f",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.v4.ODataParentBinding#changeParameters: Send correct ChangeReason",
+        "references": []
+      },
+      {
+        "id": "e12f31aff20e63cb95db4879d99bf356213ca1ab",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.v4.lib._Helper: Handle empty PATCH response (204: No Content)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780189278"
+          }
+        ]
+      },
+      {
+        "id": "e0ef35776df9bc5140f4a70391dac8a62276194d",
+        "type": "FIX",
+        "text": "test.sap.ui.core.demokit.sample.ViewTemplate.scenario.Main.view.xml: Provided labels for Entity Set and Entity selection",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770253326"
+          }
+        ]
+      },
+      {
+        "id": "fac8787ae3675e86f9883ca14c68bc6a3ec68194",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Check for expanded data in checkUpdate",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780081156"
+          }
+        ]
+      },
+      {
+        "id": "d42d8e38a1059bb15d8330e0346e4c0afc044460",
+        "type": "FIX",
+        "text": "v2.ODataListBinding: Server operation for expanded collections",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770152832"
+          }
+        ]
+      },
+      {
+        "id": "5edb99bfc7faa0b1a407168d408dc84c9f19bdab",
+        "type": "FIX",
+        "text": "v2.ODataTreeBinding: Handle group IDs",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770284414"
+          }
+        ]
+      },
+      {
+        "id": "f2f6ddef22b1b8a2f4be390bbc1131e8d890f96b",
+        "type": "FEATURE",
+        "text": "ComponentContainer: introduce event for component creation",
+        "references": []
+      },
+      {
+        "id": "7666c69d9487dd0b70a1129bcf38bcb59273f5a4",
+        "type": "FEATURE",
+        "text": "Configuration: Technical switch for multiple animation modes",
+        "references": []
+      },
+      {
+        "id": "83a95226bcf59f7d3bf310d30dd6fcf0a3fd4c31",
+        "type": "FEATURE",
+        "text": "Support for defaultValue and appData in special settings",
+        "references": []
+      },
+      {
+        "id": "aebe165a56dfc906a5f6b192a00a5de105fcd3f0",
+        "type": "FIX",
+        "text": "core.DateFormat: Handling of Quarter and WeekNumber in Interval Formatting",
+        "references": []
+      }
+    ]
+  }
+}

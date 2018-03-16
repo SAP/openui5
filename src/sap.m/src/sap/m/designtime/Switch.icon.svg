@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
+	 height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g id="Icons">
+	<g>
+		<defs>
+			<rect id="SVGID_7_" y="-0.012" width="24" height="24"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_7_"  overflow="visible"/>
+		</clipPath>
+		<path clip-path="url(#SVGID_2_)" fill="#4A4A4A" d="M17.995,7.999c2.206,0,4,1.795,4,4c0,2.206-1.795,4-4,4H6.005
+			c-2.206,0-4-1.795-4-4s1.795-4,4-4H17.995 M17.995,6.999H6.005c-2.75,0-5,2.25-5,5v0c0,2.75,2.25,5,5,5h11.991c2.75,0,5-2.25,5-5
+			v0C22.996,9.25,20.745,6.999,17.995,6.999L17.995,6.999z"/>
+		<circle clip-path="url(#SVGID_2_)" fill="#4A4A4A" cx="17.991" cy="11.994" r="2.994"/>
+	</g>
+</g>
+<g id="LABELS">
+</g>
+</svg>

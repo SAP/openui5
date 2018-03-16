@@ -1,0 +1,199 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "575330a7789489107d5a3448cb58ab18c2580cba",
+        "type": "FEATURE",
+        "text": " sap.ui.rta: Dynamic plugin registration on context menu",
+        "references": []
+      },
+      {
+        "id": "02dfb09a169364c4ad679c1a22967faf82bf3937",
+        "type": "FEATURE",
+        "text": "sap.ui.fl : Flex Changes can be relevant only for runtime",
+        "references": []
+      },
+      {
+        "id": "98aa762a0b4fdca09081356feff7f89fa2093916",
+        "type": "FEATURE",
+        "text": "sap.ui.rta: Support app descriptor changes in Settings",
+        "references": []
+      },
+      {
+        "id": "362f18583fa1fa447d474e52e8a659bc7adc5309",
+        "type": "FEATURE",
+        "text": "sap.ui.rta: Support for multiple actions on Settings plugin",
+        "references": []
+      },
+      {
+        "id": "c654422d572174a1193e4d4cb2c7c12e7d85ebe1",
+        "type": "FIX",
+        "text": " Cut \u0026 paste to new group causes error",
+        "references": []
+      },
+      {
+        "id": "11a92101ee16425ee24b14b4632fe279e2afe829",
+        "type": "FIX",
+        "text": " Embedded components with owner component",
+        "references": []
+      },
+      {
+        "id": "fe3486a46717bb329fd48e1e007a15f42390c74c",
+        "type": "FIX",
+        "text": " Fix minor issues for Control Variant Plugin support",
+        "references": []
+      },
+      {
+        "id": "f1983ab0756c6b98b898c1c8fba8fe269da3ed03",
+        "type": "FIX",
+        "text": " Reveal doesn\u0027t work in ObjectPage Header",
+        "references": []
+      },
+      {
+        "id": "504569d21ec96f625a54f8725380573f1ae6b2fb",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      },
+      {
+        "id": "94935713437c6960c6c8da30b67bd2937d6e4a3a",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly mark change as being applied changeHandler for xml views",
+        "references": []
+      },
+      {
+        "id": "f17f387c7080a8d2a5593c4c7af6e50c57fe7554",
+        "type": "FIX",
+        "text": " sap.ui.rta - First rename with double-click not working",
+        "references": []
+      },
+      {
+        "id": "3337f07716d4e6f2c177592c8a4ea9516a01db27",
+        "type": "FIX",
+        "text": " sap.ui.rta - Fix simpleform reveal",
+        "references": []
+      },
+      {
+        "id": "db31999bc1cfa343f1811924e987e1eaca8913cc",
+        "type": "FIX",
+        "text": " sap.ui.rta - Fix unit test problem on firefox",
+        "references": []
+      },
+      {
+        "id": "ded0200946b8224accd6befde9b31a02b7cfd8df",
+        "type": "FIX",
+        "text": " sap.ui.rta - call for action without element as parameter",
+        "references": []
+      },
+      {
+        "id": "73a33c997d3026773204035e268078a8b97c274a",
+        "type": "FIX",
+        "text": " sap.ui.rta - fixed voter failure",
+        "references": []
+      },
+      {
+        "id": "7beae3746faefef48fbba4495e46b2753a1997ab",
+        "type": "FIX",
+        "text": " sap.ui.rta: AddElements dialog search field border visibility",
+        "references": []
+      },
+      {
+        "id": "00aefb3213484be15d75da8971843b754fa65031",
+        "type": "FIX",
+        "text": " sap.ui.rta: Create Container + automatic rename activation",
+        "references": []
+      },
+      {
+        "id": "634092051e4aca1ce9003afc8a9032fde57c5141",
+        "type": "FIX",
+        "text": " sap.ui.rta: Get VariantManagement reference for stashed control from AdditonalElementsPlugin",
+        "references": []
+      },
+      {
+        "id": "eae4d3bb1adb24bc0265a4178c148c627de59f80",
+        "type": "FIX",
+        "text": " sap.ui.rta: Handle popovers and dialogs RTA in the explored app and small improvements",
+        "references": []
+      },
+      {
+        "id": "28b5cb88ac61881a25d7d547c330768f5efc9e7c",
+        "type": "FIX",
+        "text": " sap.ui.rta: Personalization reload not part of navigation history",
+        "references": []
+      },
+      {
+        "id": "b0a65978d503ea454dedf60842d8c7f2befe02fd",
+        "type": "FIX",
+        "text": " sap.ui.rta: Test fixes for Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "32ef1f9d4c73acdbc6ac1312013260f7b4f9f00d",
+        "type": "FIX",
+        "text": " sap.ui.rta: disable macintosh hotkeys in RtaIntegrationScenario",
+        "references": []
+      },
+      {
+        "id": "db1d1b1e4373ff57e0b0027b69b7f374781c52e5",
+        "type": "FIX",
+        "text": " sap.ui.rta: do not show OData fields from another context",
+        "references": []
+      },
+      {
+        "id": "b2f95f93829afdbd207af9087cffaf7b4c67f795",
+        "type": "FIX",
+        "text": " sap.ui.rta: fixed index in EasyAdd Plugin",
+        "references": []
+      },
+      {
+        "id": "b6185cf9af8d2699772c231e4963efda25a49cd5",
+        "type": "FIX",
+        "text": " sap.ui.rta: fixed reveal for elements that are not Controls",
+        "references": []
+      },
+      {
+        "id": "93a80cb9f3e331a70db7916165c17e7359d703f8",
+        "type": "FIX",
+        "text": " sap.ui.rta: prevent attempt to close toolbar when there is none",
+        "references": []
+      },
+      {
+        "id": "894007b038ecde7b8dbe33ee1b75793acdfd2c24",
+        "type": "FIX",
+        "text": " sap.ui.rta: prevent remove action when pressing DELETE button if it\u0027s unavailable",
+        "references": []
+      },
+      {
+        "id": "2b315981008b7fc61dc44c8b0ab8686f15e11203",
+        "type": "FIX",
+        "text": " sap.ui.rta: remove \"bindable\u003dfalse\" from property (default\u003dfalse)",
+        "references": []
+      },
+      {
+        "id": "a8c026d3169c49c8e5740930705c2c2a999e9326",
+        "type": "FIX",
+        "text": " sap.ui.rta: support \"redo\" for OSX - CMD+SHIFT+Z",
+        "references": []
+      },
+      {
+        "id": "2954668e54e84143f6763a94b78de84e4d8b5d38",
+        "type": "FIX",
+        "text": " sap.ui.rta: switch command order move/reveal when adding fields",
+        "references": []
+      },
+      {
+        "id": "640eb5672948c20b9ef12cd657db2a427acddb86",
+        "type": "FIX",
+        "text": ": RTA combine qunit test corrections",
+        "references": []
+      },
+      {
+        "id": "c73b54e406abb0cd98ece89bf007da59ec003402",
+        "type": "FIX",
+        "text": "Remove test dependencies to sap.ui.comp",
+        "references": []
+      }
+    ]
+  }
+}

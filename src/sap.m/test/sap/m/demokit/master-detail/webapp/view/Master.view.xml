@@ -37,7 +37,7 @@
 					sorter: {
 						path: 'Name',
 						descending: false
-						},
+					},
 					groupHeaderFactory: '.createGroupHeader'
 				}"
 				busyIndicatorDelay="{masterView>/delay}"

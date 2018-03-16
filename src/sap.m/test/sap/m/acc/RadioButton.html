@@ -17,11 +17,11 @@
 
 		var oLayout = new sap.m.VBox({
 			items: [
-					new sap.m.Title({ text: "Choose what is your favorite fruit" }),
-					new sap.m.RadioButton({ text: "Apple", groupName: "fruit" }),
-					new sap.m.RadioButton({ text: "Peach", groupName: "fruit" }),
-					new sap.m.RadioButton({ text: "Banana", groupName: "fruit" }),
-					new sap.m.RadioButton({ text: "Orange", groupName: "fruit" })
+					new sap.m.Title("radioTitle", { text: "Choose what is your favorite fruit" }),
+					new sap.m.RadioButton({ text: "Apple", groupName: "fruit", ariaLabelledBy: "radioTitle"}),
+					new sap.m.RadioButton({ text: "Peach", groupName: "fruit", ariaLabelledBy: "radioTitle"}),
+					new sap.m.RadioButton({ text: "Banana", groupName: "fruit", ariaLabelledBy: "radioTitle"}),
+					new sap.m.RadioButton({ text: "Orange", groupName: "fruit", ariaLabelledBy: "radioTitle"})
 			]
 		});
 

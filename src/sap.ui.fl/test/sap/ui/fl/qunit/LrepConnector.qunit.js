@@ -100,9 +100,9 @@
 		var firstTry = {
 			async: true,
 			type: "GET",
-			contentType: "text/html",
+			contentType: "text/html; charset=ascii",
 			headers: {
-				"Content-Type": "text/html",
+				"Content-Type": "text/html; charset=ascii",
 				"X-CSRF-Token": "ABCDEFGHIJKLMN123456789"
 			},
 			processData: false
@@ -114,9 +114,9 @@
 		var secondTry = {
 			async: true,
 			type: "POST",
-			contentType: "text/plain",
+			contentType: "text/plain; charset=utf-8",
 			headers: {
-				"Content-Type": "text/plain",
+				"Content-Type": "text/plain; charset=utf-8",
 				"X-CSRF-Token": "ABCDEFGHIJKLMN123456789"
 			},
 			processData: false
@@ -128,9 +128,9 @@
 		var thirdTry = {
 			async: true,
 			type: "PUT",
-			contentType: "application/json",
+			contentType: "application/json; charset=utf-8",
 			headers: {
-				"Content-Type": "application/json",
+				"Content-Type": "application/json; charset=utf-8",
 				"X-CSRF-Token": "ABCDEFGHIJKLMN123456789"
 			},
 			processData: false
@@ -140,7 +140,7 @@
 		};
 
 		//Act & Assert
-		assert.deepEqual(this.oLrepConnector._getDefaultOptions("GET", "text/html", null), firstTry);
+		assert.deepEqual(this.oLrepConnector._getDefaultOptions("GET", "text/html; charset=ascii", null), firstTry);
 		assert.deepEqual(this.oLrepConnector._getDefaultOptions("POST", "text/plain"), secondTry);
 		assert.deepEqual(this.oLrepConnector._getDefaultOptions("PUT"), thirdTry);
 	});
@@ -528,20 +528,54 @@
 		});
 	});
 
-	QUnit.test("_loadChangesBasedOnOldRoute", function(assert) {
-		//Arrange
-		sandbox.stub(sap.ui.fl.Utils, "getComponentClassName").returns("MyComponentClassName");
-		sandbox.stub(jQuery.sap, "getResourceName");
-		sandbox.stub(jQuery.sap, "loadResource").returns(Promise.resolve({changes: [{selector: 1}, {selector: 2}, {selector: 3}]}));
-		var expectedResult = {
-			changes: {changes: [{selector: 1}, {selector: 2}, {selector: 3}]},
-			componentClassName: "MyComponentClassName"
+	QUnit.test("loadChanges returns an error when appVersion is an expression binding with no value", function(assert) {
+		var sComponentClassName = "smartFilterBar.Component";
+		var sAppVersion = "${project.appVersion}";
+
+		var oSendStub = this.stub(this.oLrepConnector, "send");
+
+		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).
+			then(
+				function() {},
+				function(oError) {
+					assert.equal(oSendStub.callCount, 0, "the back-end request was not triggered");
+					assert.strictEqual(oError.message, "Component appVersion is invalid", "then the correct error message was returned");
+				});
+	});
+
+	QUnit.test("loadChanges returns an error when component name is an expression binding with no value", function(assert) {
+		var sComponentClassName = "${project.appVersion}.Component";
+		var sAppVersion = "1.2.3";
+
+		var oSendStub = this.stub(this.oLrepConnector, "send");
+
+		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion}).
+		then(
+			function() {},
+			function(oError) {
+				assert.equal(oSendStub.callCount, 0, "the back-end request was not triggered");
+				assert.strictEqual(oError.message, "Component name not specified", "then the correct error message was returned");
+			});
+	});
+
+	QUnit.test("loadChanges uses a passed url if provided", function(assert) {
+		var sComponentClassName = "smartFilterBar.Component";
+		var sAppVersion = sap.ui.fl.Utils.DEFAULT_APP_VERSION;
+
+		var sExpectedCallUrl = "/a/complete/different/url/abc";
+
+		var oFakeResponse = {
+			response: {}
 		};
 
-		//Act
-		return this.oLrepConnector._loadChangesBasedOnOldRoute("MyComponentClassName").then(function(result) {
-			//Assert
-			assert.deepEqual(result, expectedResult);
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.resolve(oFakeResponse));
+
+		return this.oLrepConnector.loadChanges({name: sComponentClassName, appVersion : sAppVersion},{url: sExpectedCallUrl}).then(function() {
+			assert.equal(oSendStub.callCount, 1, "the back-end request was triggered");
+
+			var oCall = oSendStub.getCall(0);
+			var aCallArguments = oCall.args;
+			assert.equal(aCallArguments[0], sExpectedCallUrl, "the request URL was correctly built and the appVersion parameter was not included");
 		});
 	});
 
@@ -984,7 +1018,7 @@
 		assert.equal(sPrefix, "/sap/bc/lrep/changes/");
 	});
 
-	QUnit.test("_sendAjaxRequest - refetch XSRF Token in case of http 403 (not authorised)", function(assert) {
+	QUnit.test("_sendAjaxRequest - refetch XSRF Token in case of http 403 (not authorised) and reuse of previous XSRF token", function(assert) {
 		var requestCount = 0;
 		var bValidRequestReceived = false;
 		var bValidFetchXSRFReceived = false;
@@ -1002,7 +1036,11 @@
 				}
 				request.respond(200, {"X-CSRF-Token": "123"}); // valid token
 			} else if (request.requestHeaders["X-CSRF-Token"] === "123") {  //valid request
-				request.respond(200);
+				if (request.method === "DELETE") {
+					request.respond(204);
+				} else {
+					request.respond(200);
+				}
 				bValidRequestReceived = true;
 			} else { //XSRF Token is invalid --> 403 (not authorised)
 				request.respond(403);
@@ -1022,7 +1060,25 @@
 			assert.equal(requestCount, 3, "There shall be 3 roundtrips: 1) Failed due to missing XSFR token. 2) Fetch XSRF Token. 3) Repeat first roundtrip.");
 			assert.ok(bValidRequestReceived, "The XSRF Token shall be fetched and the origin request shall be resent");
 			assert.ok(bValidFetchXSRFReceived, "The XSRF Token shall be fetched with a dedicated GET request");
-		});
+			mSampleOptions.type = "POST";
+			bValidRequestReceived = false;
+			return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+				assert.equal(requestCount, 4, "Next POST request will re use previous valid XSRF Token");
+				assert.ok(bValidRequestReceived, "and send the correct request");
+				mSampleOptions.type = "PUT";
+				bValidRequestReceived = false;
+				return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+					assert.equal(requestCount, 5, "Next PUT request will re use previous valid XSRF Token");
+					assert.ok(bValidRequestReceived, "and send the correct request");
+					mSampleOptions.type = "DELETE";
+					bValidRequestReceived = false;
+					return this.oLrepConnector._sendAjaxRequest(sSampleUri, mSampleOptions).then(function() {
+						assert.equal(requestCount, 6, "Next DELETE request will re use previous valid XSRF Token");
+						assert.ok(bValidRequestReceived, "and send the correct request");
+					});
+				}.bind(this));
+			}.bind(this));
+		}.bind(this));
 	});
 
 	QUnit.test("_sendAjaxRequest - shall reject Promise when backend returns error", function(assert) {

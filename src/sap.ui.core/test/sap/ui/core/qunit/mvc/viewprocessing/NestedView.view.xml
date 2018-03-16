@@ -1,0 +1,16 @@
+<mvc:View
+        xmlns:core="sap.ui.core"
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns="sap.m">
+    <Panel id="Panel">
+        <VBox>
+            <Label text="Everything is Awesome!"></Label>
+            <HBox>
+                <Button text="Once upon a midnight dreary,"/>
+                <Button text="while I pondered, weak and weary."/>
+            </HBox>
+
+            <core:Icon src="sap-icon://open" size="7em"/>
+        </VBox>
+    </Panel>
+</mvc:View>

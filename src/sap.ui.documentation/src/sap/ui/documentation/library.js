@@ -5,11 +5,28 @@
 /**
  * Initialization Code and shared classes of library sap.ui.documentation.
  */
-sap.ui.define(['jquery.sap.global',
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo',
 	'sap/ui/core/library', 'sap/m/library'], // library dependency
-	function(jQuery) {
+	function(jQuery, LibraryInfo) {
 
 	'use strict';
+
+	// delegate further initialization of this library to the Core
+	sap.ui.getCore().initLibrary({
+		name : 'sap.ui.documentation',
+		version: '${version}',
+		dependencies : ['sap.ui.core','sap.m'],
+		types: [],
+		interfaces: [],
+		controls: [
+			"sap.ui.documentation.sdk.controls.Search",
+			"sap.ui.documentation.sdk.controls.ObjectPageSubSection",
+			"sap.ui.documentation.sdk.controls.LightTable",
+			"sap.ui.documentation.sdk.controls.Row"
+		],
+		elements: [],
+		noLibraryCSS: true
+	});
 
 	/**
 	 * SAPUI5 library with controls specialized for administrative applications.
@@ -20,21 +37,18 @@ sap.ui.define(['jquery.sap.global',
 	 * @version ${version}
 	 * @public
 	 */
-
-	// delegate further initialization of this library to the Core
-	sap.ui.getCore().initLibrary({
-		name : 'sap.ui.documentation',
-		version: '${version}',
-		dependencies : ['sap.ui.core','sap.m'],
-		types: [],
-		interfaces: [],
-		controls: [
-			"sap.ui.documentation.sdk.controls.Search"
-		],
-		elements: []
-	});
-
 	var thisLibrary = sap.ui.documentation;
+
+	var _libraryInfoSingleton;
+
+	thisLibrary._getLicense = function () {
+		var sUrl = "./LICENSE.txt";
+
+		return jQuery.ajax({
+			url: sUrl,
+			dataType: "text"
+		});
+	};
 
 	thisLibrary._getAppInfo = function(fnCallback) {
 		var sUrl = sap.ui.resource("", "sap-ui-version.json");
@@ -58,6 +72,20 @@ sap.ui.define(['jquery.sap.global',
 		});
 	};
 
+	/**
+	 * Ensures that only one instance of LibraryInfo will be used across the app.
+	 * This is important, because the LibraryInfo object stores internally the content of already loaded .library files
+	 * @returns {*}
+	 * @private
+	 */
+	thisLibrary._getLibraryInfoSingleton = function () {
+		if (!_libraryInfoSingleton) {
+			_libraryInfoSingleton = new LibraryInfo();
+		}
+
+		return _libraryInfoSingleton;
+	};
+
 	thisLibrary._loadAllLibInfo = function(sAppRoot, sInfoType, sReqVersion, fnCallback) {
 
 		// parameter fallback for compatibility: if the version is a function
@@ -67,9 +95,7 @@ sap.ui.define(['jquery.sap.global',
 			sReqVersion = undefined;
 		}
 
-		jQuery.sap.require("sap.ui.core.util.LibraryInfo");
-		var LibraryInfo = sap.ui.require("sap/ui/core/util/LibraryInfo");
-		var libInfo = new LibraryInfo();
+		var libInfo = thisLibrary._getLibraryInfoSingleton();
 
 		// special case: fetching library info and release notes in one cycle
 		// this will use the _getLibraryInfo functionality and

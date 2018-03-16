@@ -1,18 +1,18 @@
 sap.ui.define([
-		"sap/ui/base/Object"
-	], function (BaseObject) {
+		"sap/ui/base/Object",
+		"sap/m/GroupHeaderListItem"
+	], function (BaseObject, GroupHeaderListItem) {
 		"use strict";
 
-		return BaseObject.extend("sap.ui.demo.masterdetail.model.ListSelector", {
+		return BaseObject.extend("sap.ui.demo.masterdetail.controller.ListSelector", {
 
 			/**
 			 * Provides a convenience API for selecting list items. All the functions will wait until the initial load of the a List passed to the instance by the setBoundMasterList
 			 * function.
 			 * @class
 			 * @public
-			 * @alias sap.ui.demo.masterdetail.model.ListSelector
+			 * @alias sap.ui.demo.masterdetail.controller.ListSelector
 			 */
-
 			constructor : function () {
 				this._oWhenListHasBeenSet = new Promise(function (fnResolveListHasBeenSet) {
 					this._fnResolveListHasBeenSet = fnResolveListHasBeenSet;
@@ -31,7 +31,7 @@ sap.ui.define([
 											error : true
 										});
 									}
-									var oFirstListItem = oList.getItems()[0];
+									var oFirstListItem = this.getFirstListItem();
 									if (oFirstListItem) {
 										// Have to make sure that first list Item is selected
 										// and a select event is triggered. Like that, the corresponding
@@ -47,9 +47,9 @@ sap.ui.define([
 											error : false
 										});
 									}
-								}
+								}.bind(this)
 							);
-						});
+						}.bind(this));
 				}.bind(this));
 			},
 
@@ -64,6 +64,21 @@ sap.ui.define([
 				this._fnResolveListHasBeenSet(oList);
 			},
 
+			/**
+			 * Finds the first list item
+			 * @return {sap.m.ListItem|null} The first item that is not a group header
+			 * @public
+			 */
+			getFirstListItem : function () {
+				var aItems = this._oList.getItems();
+
+				for (var i = 0; i < aItems.length; i++) {
+					if (!(aItems[i] instanceof GroupHeaderListItem)) {
+						return aItems[i];
+					}
+				}
+				return null;
+			},
 
 			/**
 			 * Tries to select and scroll to a list item with a matching binding context. If there are no items matching the binding context or the ListMode is none,

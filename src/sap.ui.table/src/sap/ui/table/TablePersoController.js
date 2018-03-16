@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	/**
 	 * Refresh the personalizations (reloads data from service).
 	 *
-	 * @return {jQuery.Promise} <code>jQuery Promise</code> which is resolved once the refresh is finished
+	 * @returns {jQuery.Promise} <code>jQuery Promise</code> which is resolved once the refresh is finished
 	 * @public
 	 */
 	TablePersoController.prototype.refresh = function() {
@@ -247,7 +247,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	/**
 	 * Saves the current personalization state.
 	 *
-	 * @return {jQuery.Promise} <code>jQuery Promise</code> which is resolved once the save is finished
+	 * @returns {jQuery.Promise} <code>jQuery Promise</code> which is resolved once the save is finished
 	 * @public
 	 */
 	TablePersoController.prototype.savePersonalizations = function() {
@@ -394,39 +394,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @experimental since 1.21.2 - API might change / feature requires the sap.m library!
 	 */
 	TablePersoController.prototype.openDialog = function(mSettings) {
-
-		// include the mobile library to re-use the sap.m.TablePersoDialog
-		sap.ui.getCore().loadLibrary("sap.m");
-		//TBD: Use async APIs instead (should be possible because open the dialog could be delayed)
-		var TablePersoDialog = sap.ui.requireSync("sap/m/TablePersoDialog");
-
-		// create and open the dialog
 		if (!this._oDialog) {
 			var that = this;
-			this._oDialog = new TablePersoDialog({
-				persoService: this.getPersoService(),
-				showSelectAll: true,
-				showResetAll: true,
-				grouping: false,
-				contentWidth: mSettings && mSettings.contentWidth,
-				contentHeight: mSettings && mSettings.contentHeight || "20rem",
-				initialColumnState: this._oInitialPersoData.aColumns,
-				columnInfoCallback: function(oTable, mPersoMap, oPersoService) {
-					return that._getCurrentTablePersoData(true).aColumns;
-				},
-				confirm : function() {
-					that._adjustTable(this.retrievePersonalizations());
-					if (that.getAutoSave()) {
-						that.savePersonalizations();
-					}
-				}
+
+			// include the mobile library to re-use the sap.m.TablePersoDialog
+			sap.ui.getCore().loadLibrary("sap.m", {async: true}).then(function() {
+				sap.ui.require("sap/m/TablePersoDialog", function(TablePersoDialog) {
+					// create and open the dialog
+					that._oDialog = new TablePersoDialog({
+						persoService: this.getPersoService(),
+						showSelectAll: true,
+						showResetAll: true,
+						grouping: false,
+						contentWidth: mSettings && mSettings.contentWidth,
+						contentHeight: mSettings && mSettings.contentHeight || "20rem",
+						initialColumnState: this._oInitialPersoData.aColumns,
+						columnInfoCallback: function(oTable, mPersoMap, oPersoService) {
+							return that._getCurrentTablePersoData(true).aColumns;
+						},
+						confirm: function() {
+							that._adjustTable(this.retrievePersonalizations());
+							if (that.getAutoSave()) {
+								that.savePersonalizations();
+							}
+						}
+					});
+					that._oDialog._oDialog.removeStyleClass("sapUiPopupWithPadding"); // otherwise height calculation doesn't work properly!
+					jQuery.sap.syncStyleClass("sapUiSizeCompact", this._getTable(), this._oDialog._oDialog);
+
+					that._oDialog.open();
+				});
 			});
-			this._oDialog._oDialog.removeStyleClass("sapUiPopupWithPadding"); // otherwise height calculation doesn't work properly!
-			jQuery.sap.syncStyleClass("sapUiSizeCompact", this._getTable(), this._oDialog._oDialog);
 		}
-
-		this._oDialog.open();
-
 	};
 
 

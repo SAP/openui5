@@ -123,20 +123,34 @@
 			assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
 		});
 
+		/**
+		 *
+		 * Tests that <code>sap.ui.getCore().notifiyContentDensityChanged()</code> calls each control's #onThemeChanged method
+		 */
+		QUnit.test("test #notifiyContentDensityChanged", function(assert) {
+			assert.expect(4);
+
+			var oBtn = new sap.ui.testlib.TestButton("testMyButton", {text:"Hallo JSUnit"});
+			oBtn.onThemeChanged = function(oCtrlEvent) {
+				assert.ok(oCtrlEvent, "TestButton#onThemeChanged is called");
+				assert.equal(oCtrlEvent.theme, sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along control event");
+			};
+
+			sap.ui.getCore().attachThemeChanged(function(oEvent) {
+				assert.ok(oEvent, "attachThemeChanged is called");
+				assert.equal(oEvent.getParameter("theme"), sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along Core event");
+			});
+
+			//call to #notifyContentDensityChanged
+			sap.ui.getCore().notifyContentDensityChanged();
+		});
+
 		QUnit.test("testGetControl", function(assert) {
 			var oButton = new sap.ui.testlib.TestButton("test4Button", {text:"Hallo JSUnit"});
 			sap.ui.getCore().setRoot("uiArea4", oButton);
 			var oButtonCheck = sap.ui.getCore().getControl("test4Button");
 			assert.ok(oButtonCheck, "Button must be returned");
 			assert.equalControls(oButtonCheck, oButton, "Returned Button must be the same as the one created before");
-		});
-
-		QUnit.test("testGetLibraryResourceBundle", function(assert) {
-			assert.equal(typeof sap.ui.getCore().getLibraryResourceBundle, "function", "Core has method getLibraryResourceBundle");
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "de");
-			assert.ok(oBundle, "bundle could be retrieved");
-			assert.equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
-			assert.equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
 		});
 
 		QUnit.test("testSetThemeRoot", function(assert) {
@@ -290,6 +304,234 @@
 			assert.ok(!bCalled2, "not called synchronously");
 		});
 
+
+		QUnit.module('getLibraryResourceBundle');
+
+		QUnit.test("sync: testGetLibraryResourceBundle", function(assert) {
+			assert.equal(typeof sap.ui.getCore().getLibraryResourceBundle, "function", "Core has method getLibraryResourceBundle");
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "de");
+			assert.ok(oBundle, "bundle could be retrieved");
+			assert.equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
+			assert.equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
+		});
+
+		QUnit.test("async: testGetLibraryResourceBundle with already loaded bundle", function(assert) {
+			var oSpy = sinon.spy(jQuery.sap, 'resources'),
+				pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "de", true);
+
+			assert.ok(pBundle instanceof Promise, "a promise should be returned");
+
+			return pBundle.then(function(oBundle) {
+				assert.ok(oSpy.notCalled, "jQuery.sap.resources is not called");
+				assert.ok(oBundle, "bundle could be retrieved");
+				assert.equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
+				assert.equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
+
+				oSpy.restore();
+			});
+		});
+
+		QUnit.test("async: testGetLibraryResourceBundle", function(assert) {
+			var oSpy = sinon.spy(jQuery.sap, 'resources'),
+				pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core", "en", true);
+
+			assert.ok(pBundle instanceof Promise, "a promise should be returned");
+
+			return pBundle.then(function(oBundle) {
+				assert.equal(oSpy.callCount, 1, "jQuery.sap.resources is called");
+				assert.ok(oBundle, "bundle could be retrieved");
+				assert.equal(oBundle.getText("SAPUI5_FRIDAY"), "Friday", "bundle can resolve texts");
+				assert.equal(oBundle.getText("SAPUI5_GM_ZSTEP"), "Zoom step {0}", "bundle can resolve texts");
+
+				oSpy.restore();
+			});
+		});
+
+		QUnit.test("sync: testGetLibraryResourceBundle with i18n set to false in manifest.json", function(assert) {
+			var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+					return true;
+				}),
+
+				oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function() {
+					return {
+						"_version": "1.9.0",
+						"sap.ui5": {
+							"library": {
+								"i18n": false
+							}
+						}
+					};
+				}),
+
+				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de");
+
+			assert.notOk(oBundle, "No Bundle is returned");
+		});
+
+		QUnit.test("async: testGetLibraryResourceBundle with i18n set to false in manifest.json", function(assert) {
+			var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+					return true;
+				}),
+				oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function() {
+					return {
+						"_version": "1.9.0",
+						"sap.ui5": {
+							"library": {
+								"i18n": false
+							}
+						}
+					};
+				}),
+				pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de", true);
+
+			assert.ok(pBundle instanceof Promise, "a promise should be returned");
+
+			return pBundle.then(function(oBundle) {
+				assert.notOk(oBundle, "no bundle is loaded");
+			});
+		});
+
+		QUnit.test("async: testGetLibraryResourceBundle with i18n set to true in manifest.json", function(assert) {
+			var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+					return true;
+				}),
+				fnOrigLoadResource = jQuery.sap.loadResource,
+				oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function(sURL) {
+					if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
+						return {
+							"_version": "1.9.0",
+							"sap.ui5": {
+								"library": {
+									"i18n": true
+								}
+							}
+						};
+					} else {
+						fnOrigLoadResource.apply(this, arguments);
+					}
+
+				}),
+				oSpySapUiResource = this.spy(sap.ui, 'resource'),
+				pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "de", true),
+				oSpyCall;
+
+			assert.ok(pBundle instanceof Promise, "a promise should be returned");
+			assert.equal(oSpySapUiResource.callCount, 1, "sap.ui.resource is called");
+
+			oSpyCall = oSpySapUiResource.getCall(0);
+
+			assert.equal(oSpyCall.args[1], 'messagebundle.properties', 'sap.ui.resource is called with the given message bundle name');
+
+			return pBundle.then(function(oBundle) {
+				assert.ok(oBundle, "Bundle should be loaded");
+			});
+		});
+
+		QUnit.test("async: testGetLibraryResourceBundle with i18n missing in manifest.json", function(assert) {
+			var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+					return true;
+				}),
+				// no i18n property in manifest
+				oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function() {
+					return undefined;
+				}),
+				oSpySapUiResource = this.spy(sap.ui, 'resource'),
+				pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "fr", true),
+				oSpyCall;
+
+			assert.ok(pBundle instanceof Promise, "a promise should be returned");
+			assert.equal(oSpySapUiResource.callCount, 1, "sap.ui.resource is called");
+
+			oSpyCall = oSpySapUiResource.getCall(0);
+
+			assert.equal(oSpyCall.args[1], 'messagebundle.properties', 'sap.ui.resource is called with default message bundle name');
+
+			return pBundle;
+		});
+
+		QUnit.test("async: testGetLibraryResourceBundle with a given i18n in manifest.json", function(assert) {
+			var oStubIsResourceLoaded = this.stub(jQuery.sap, 'isResourceLoaded', function() {
+					return true;
+				}),
+				fnOrigLoadResource = jQuery.sap.loadResource,
+				oStubLoadResource = this.stub(jQuery.sap, 'loadResource', function(sURL) {
+					if (typeof sURL === "string" && sURL.indexOf("manifest.json") !== -1) {
+						return {
+							"_version": "1.9.0",
+							"sap.ui5": {
+								"library": {
+									"i18n": "i18n.properties"
+								}
+							}
+						};
+					} else {
+						fnOrigLoadResource.apply(this, arguments);
+					}
+
+				}),
+				oSpySapUiResource = this.spy(sap.ui, 'resource'),
+				pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test1", "en", true),
+				oSpyCall;
+
+			assert.ok(pBundle instanceof Promise, "a promise should be returned");
+			assert.equal(oSpySapUiResource.callCount, 1, "sap.ui.resource is called");
+
+			oSpyCall = oSpySapUiResource.getCall(0);
+
+			assert.equal(oSpyCall.args[1], 'i18n.properties', 'sap.ui.resource is called with the given message bundle name');
+
+			return pBundle;
+		});
+
+		QUnit.test("testGetLibraryResourceBundle: Called with async first and then with sync before the async is resolved", function(assert) {
+			var fnResolve,
+				oStubJqueryResource = this.stub(jQuery.sap, 'resources', function(options) {
+					if (options.async) {
+						return new Promise(function(resolve, reject) {
+							fnResolve = resolve;
+						});
+					} else {
+						return {};
+					}
+				}),
+				pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test2", "en", true),
+				oBundle;
+
+			assert.ok(pBundle instanceof Promise, "a promise should be returned");
+
+			// load resource bundle sync
+			oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test2", "en", false);
+			assert.ok(oBundle, "a Bundle is returned");
+			assert.notOk(oBundle instanceof Promise, "a Bundle object should be returned, not a promise");
+
+			fnResolve({});
+
+			return pBundle;
+		});
+
+		QUnit.test("testGetLibraryResourceBundle: Called with sync first and then with async", function(assert) {
+			var iCounter = 0,
+				oStubJqueryResource = this.stub(jQuery.sap, 'resources', function(options) {
+					iCounter++;
+					if (options.async) {
+						assert.ok(false, "no Promise should be returned");
+					} else {
+						return {};
+					}
+				}),
+				pBundle,
+				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test3", "en", false);
+
+			assert.ok(oBundle, "a promise should be returned");
+			assert.notOk(oBundle instanceof Promise, "a Bundle object should be returned, not a promise");
+
+			assert.equal(iCounter, 1, "jQuery.sap.resources is called once");
+			pBundle = sap.ui.getCore().getLibraryResourceBundle("sap.test3", "en", true);
+			assert.ok(pBundle instanceof Promise, "a promise should be returned");
+			assert.equal(iCounter, 1, "jQuery.sap.resources is still called once");
+
+			return pBundle;
+		});
 
 
 		// ---------------------------------------------------------------------------
@@ -489,7 +731,7 @@
 		 *      -> lib4 pending (async)
 		 *      -> lib5 already loaded
 		 */
-		QUnit.test("library with deeper dependecy tree + conflicting sync request", function(assert) {
+		QUnit.test("library with deeper dependency tree + conflicting sync request", function(assert) {
 
 			this.spy(jQuery.sap.log, 'warning');
 

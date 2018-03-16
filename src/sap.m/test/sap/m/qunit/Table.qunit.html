@@ -14,8 +14,10 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/m/Table"></script>
 
 		<script>
 
@@ -82,21 +84,32 @@
 			//Check if table has been added to dom tree
 			assert.ok(sut.$().length > 0, "Table in DOM tree");
 
+			assert.ok(sut.$().find("th").hasClass("sapMTableTH"), ".sapMTableTH added to 'th' elements");
+
+			assert.ok(!sut.$().children().hasClass("sapMTableOverlay"), "Table overlay is not rendered as showOverlay=false");
+			sut.setShowOverlay(true);
+			sap.ui.getCore().applyChanges();
+			assert.ok(sut.$().children().hasClass("sapMTableOverlay"), "Table overlay is rendered as showOverlay=true");
+
 			sut.setVisible(false);
 			sap.ui.getCore().applyChanges();
-			assert.ok(sut.$().length === 0, "Table has been removed from DOM")
+			assert.ok(sut.$().length === 0, "Table has been removed from DOM");
+
+			assert.equal(sut.getItemsContainerDomRef(), sut.$("tblBody")[0]);
 
 			//clean up
 			sut.destroy()
 		});
 
 		QUnit.test("Column Display", function(assert) {
-			var sut = createSUT('idColumnDisplayTable', true);
+			var sut = createSUT('idColumnDisplayTable', true),
+				labelFilter = 'th>.sapMLabel',
+				aLabels;
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			//Check table columns (should be three)
-			var aLabels = sut.$().find('th>label');
+			aLabels = sut.$().find(labelFilter);
 			assert.ok(aLabels.length === 3, "Table has three columns rendered");
 			assert.ok(aLabels[0].textContent == "Name", "First column named 'Name'");
 			assert.ok(aLabels[1].textContent == "Color", "First column named 'Color'");
@@ -107,7 +120,8 @@
 			sap.ui.getCore().applyChanges();
 
 			//Check table columns (should be two)
-			aLabels = sut.$().find('th>label');
+			aLabels = sut.$().find(labelFilter);
+
 			assert.ok(aLabels.length === 2, "Table has three columns" );
 
 			//Insert column again
@@ -115,7 +129,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//Check table columns and their positions
-			aLabels = sut.$().find('th>label');
+			aLabels = sut.$().find(labelFilter);
 			assert.ok(aLabels.length === 3, "Table has three columns rendered");
 			assert.ok(aLabels[1].textContent == "Name", "First column named 'Name'");
 			assert.ok(aLabels[0].textContent == "Color", "First column named 'Color'");
@@ -124,7 +138,7 @@
 			//remove all columns
 			sut.removeAllColumns();
 			sap.ui.getCore().applyChanges();
-			aLabels = sut.$().find('th>label');
+			aLabels = sut.$().find(labelFilter);
 			assert.ok(aLabels.length === 0, "Table has no more columns rendered");
 
 			//clean up
@@ -162,7 +176,7 @@
 
 			var aNoDataRow = sut.$().find("#" + sut.getId() + "-nodata");
 
-			assert.ok(aNoDataRow.length === 1, "Table displays 'No Data'")
+			assert.ok(aNoDataRow.length === 1, "Table displays 'No Data'");
 
 			//clean up
 			sut.destroy();
@@ -188,12 +202,17 @@
 
 		QUnit.test("MultiSelect", function(assert) {
 			var sut = createSUT('idMultiSelectTable', true, true, "MultiSelect");
+            var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			//Check if multiselct checkboxes are visible
+			//Check if multiselect checkboxes are visible
 			var aSelectionChecks = sut.$().find(".sapMCb");
 			assert.ok(aSelectionChecks.length === 4, "Table displays selection checkboxes");
+
+			// Check if select all checkbox has aria-label attribute
+            var $selectAllCheckBox = sut.$().find(".sapMListTblHeader .sapMCb").first();
+            assert.strictEqual($selectAllCheckBox.attr('aria-label'), oBundle.getText("TABLE_CHECKBOX_SELECT_ALL"), "The select all checkbox has an aria-label assigned");
 
 			//Check if checkboxes are initially not selected
 			var aSelectionChecksMarked = sut.$().find(".sapMCbMarkChecked");
@@ -299,6 +318,475 @@
 			oTable.destroy();
 		});
 
+		QUnit.module("Event");
+
+		QUnit.test("SelectAll in selectionChange event", function(assert) {
+			var sut = createSUT('idMultiSelectTable', true, true, "MultiSelect");
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			sut.attachEventOnce("selectionChange", function(e) {
+				assert.ok(e.getParameter("selectAll"), "selectAll parameter is true when the 'selectAll' checkbox is pressed");
+			});
+			var $SelectAllCheckbox = sut.$().find(".sapMCb").first().trigger("tap");
+
+			sut.attachEventOnce("selectionChange", function(e) {
+				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 'selectAll' checkbox is unpressed");
+			});
+			$SelectAllCheckbox.trigger("tap");
+
+			//clean up
+			sut.destroy();
+		});
+
+		QUnit.module("Functionalities");
+
+		QUnit.test("Test for removeAllItems", function(assert) {
+			var sut = createSUT("idTableRemoveAllItems", true, true);
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.getItems().length > 0, "Table contains items");
+			sut.removeAllItems();
+			assert.ok(sut.getItems().length === 0, "Items are removed from the Table");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Test for destroyItems", function(assert) {
+			var sut = createSUT("idTableDestroyItems", true, true);
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.getItems().length > 0, "Table contains items");
+			sut.destroyItems();
+			assert.ok(sut.getItems().length === 0, "Items are removed from the Table");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Test for onColumnResize", function(assert) {
+			this.clock = sinon.useFakeTimers();
+			var oColumn = new sap.m.Column({
+				minScreenWidth : "tablet",
+				demandPopin: true
+			}),
+			sut = new sap.m.Table({
+				columns : oColumn
+			}),
+			tableResizeSpy = sinon.spy(sut, "onColumnResize");
+
+			// The table needs to be rendered for the column media object to be initialized
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oColumn._notifyResize({from: 600}); // this is the default value for minScreenWidth="phone"
+			this.clock.tick(1);
+
+			assert.ok(!tableResizeSpy.called, "Table resize not called, if media is the same");
+
+			oColumn._notifyResize({from: 240});
+			this.clock.tick(1);
+
+			assert.ok(tableResizeSpy.called, "Table resize called, if media is different");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Test for onItemSelectedChange", function(assert) {
+			var sut = createSUT("idTableSelectedChange", true, false, "MultiSelect");
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var fnOnItemSelectedChange = sinon.spy(sut, "onItemSelectedChange");
+
+			var oItem = sut.getItems()[0];
+			oItem.setSelected(true);
+			assert.ok(fnOnItemSelectedChange.called, "function called as the selection changed");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Test for accessibility content", function(assert) {
+			var sut = createSUT("idTableAcc", true, false);
+			var oColumn = sut.getColumns()[0];
+			var oBinding = sut.getBinding("items");
+			oColumn.setFooter(new sap.m.Label({text: "Greetings"}));
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// accessibility role
+			assert.equal(sut.getAccessibilityType(), "Table", "Accessilitiy role correctly set");
+
+			// _setHeaderAnnouncement() test
+			var $tblHeader = sut.$("tblHeader").focus();
+			sap.ui.getCore().applyChanges();
+			var $invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
+			assert.equal($invisibleText.innerHTML, "Header Row Name Color Number", "Text correctly assigned for screen reader announcement");
+
+			// _setFooterAnnouncment() test
+			var $tblFooter = sut.$("tblFooter").focus();
+			sap.ui.getCore().applyChanges();
+			$invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
+			assert.equal($invisibleText.innerHTML, "Footer Row Name Greetings", "Text correctly assigned for screen reader announcement");
+
+			// noDataText test
+			oBinding.filter([new sap.ui.model.Filter("name", "Contains", "xxx")]);
+			sap.ui.getCore().applyChanges();
+			var $noData = sut.$("nodata").focus();
+			$invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
+			assert.equal($invisibleText.innerHTML, "No data", "Text correctly assinged for screen reader announcement");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Test for isHeaderRowEvent and isFooterRowEvent using saptabnext", function(assert) {
+			var sut = createSUT("idHeaderFooterEvents", true);
+			var oColumn = sut.getColumns()[0];
+			var fnIsHeaderRowEvent = sinon.spy(sut, "isHeaderRowEvent");
+			var fnIsFooterRowEvent = sinon.spy(sut, "isFooterRowEvent");
+			oColumn.setFooter(new sap.m.Label({text: "Greetings"}));
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// saptabnext event on tblHeader
+			var $tblHeader = sut.$("tblHeader").focus();
+			qutils.triggerKeydown($tblHeader, jQuery.sap.KeyCodes.TAB);
+			assert.ok(fnIsHeaderRowEvent.called, "Event was triggered on the header");
+
+			// saptabnext on tblFooter
+			var $tblFooter = sut.$("tblFooter").focus();
+			qutils.triggerKeydown($tblFooter, jQuery.sap.KeyCodes.TAB);
+			assert.ok(fnIsFooterRowEvent.called, "Event was triggered on the footer");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Test for onsaptabprevious", function(assert) {
+			var sut = createSUT("idTableKeyboardNavigation", true, false, "MultiSelect");
+			sut.setGrowing(true);
+			sut.setGrowingThreshold(5);
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var $tblHeader = sut.$("tblHeader").focus();
+			// shift-tab on header row
+			qutils.triggerKeyboardEvent($tblHeader, jQuery.sap.KeyCodes.TAB, true, false, false);
+			assert.equal(document.activeElement, sut.$("before")[0]);
+
+			// trigger onsaptabnext
+			qutils.triggerKeydown($tblHeader, jQuery.sap.KeyCodes.TAB);
+			assert.equal(document.activeElement, sut.$("after")[0]);
+
+			var $trigger = sut.$("trigger").first();
+			assert.ok(!sut.bAnnounceDetails, "Focus is not in the table");
+
+			// shift-tab on from the trigger button
+			qutils.triggerKeyboardEvent($trigger, jQuery.sap.KeyCodes.TAB, true, false, false);
+			window.setTimeout(function() {
+				assert.ok(sut.bAnnounceDetails, "Focus in back in the table");
+				assert.equal(document.activeElement, $tblHeader[0]);
+
+				sut.destroy();
+			}, 0);
+		});
+
+		QUnit.test("Test for checkGrowingFromScratch", function(assert) {
+			var oData = {
+				items: [
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "David", color: "green", number: 0 },
+					{ name: "David", color: "green", number: 0 },
+					{ name: "David", color: "green", number: 0 },
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "David", color: "green", number: 0 },
+					{ name: "David", color: "green", number: 0 },
+					{ name: "David", color: "green", number: 0 },
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Michelle", color: "orange", number: 3.14 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "Joseph", color: "blue", number: 1.618 },
+					{ name: "David", color: "green", number: 0 },
+					{ name: "David", color: "green", number: 0 },
+					{ name: "David", color: "green", number: 0 }
+				],
+				cols: ["Name", "Color", "Number"]
+			};
+
+			var sut = new sap.m.Table("idTblGrowing", {
+				growing: true,
+				growingThreshold: 5
+			});
+
+			var aColumns = oData.cols.map(function (colname) {
+				if (colname === "Name") {
+					return new sap.m.Column({ header: new sap.m.Label({ text: colname }), mergeDuplicates: true});
+				}
+				return new sap.m.Column({ header: new sap.m.Label({ text: colname })});
+			}),
+			i = aColumns.length;
+			while(i--){
+				sut.addColumn(aColumns[aColumns.length - i - 1]);
+			}
+
+			sut.setModel(new sap.ui.model.json.JSONModel(oData));
+			sut.bindAggregation("items", "/items", new sap.m.ColumnListItem({
+				cells: oData.cols.map(function (colname) {
+					return new sap.m.Label({ text: "{" + colname.toLowerCase() + "}" })
+				})
+			}));
+
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var fnCheckGrowingFromScratch = sinon.spy(sut, "checkGrowingFromScratch");
+
+			var iItemsLength = sut.getItems().length;
+			assert.equal(iItemsLength, 5, "5 items are shown in the table, growing is not triggered");
+
+			var $trigger = sut.$("trigger").focus();
+			qutils.triggerKeydown($trigger, jQuery.sap.KeyCodes.SPACE);
+			assert.ok(iItemsLength < sut.getItems().length, "Growing triggered via onsapspace event");
+			assert.ok(fnCheckGrowingFromScratch.called, "checkGrowingFromScratch called in order to recalculate merging cells");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Test onsapspace on SelectAll checkbox", function(assert) {
+			var sut = createSUT("idTblSelectAllEvents", true, false, "MultiSelect");
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var $tblHeader = sut.$('tblHeader').focus();
+
+			assert.ok(!sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is not selected");
+			qutils.triggerKeydown($tblHeader, jQuery.sap.KeyCodes.SPACE);
+			assert.ok(sut._selectAllCheckBox.getSelected(), "SelectAll checkbox is selected, relevant event for updating the checkboxes was triggered");
+			sut.getItems().map(function(oItem) {
+				assert.ok(oItem.getSelected());
+			});
+
+			sut.destroy();
+		});
+
+		QUnit.test("Alternate row colors", function(assert) {
+			var sut = createSUT("idAlternateRowColors", true);
+			sut.setAlternateRowColors(true);
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$("tblBody").hasClass("sapMListTblAlternateRowColors"), "Alternate row color class added to tbody element of the table");
+
+			var oItem1 = sut.getItems()[0];
+			var oItem2 = sut.getItems()[1];
+			assert.ok(sut.getAlternateRowColors(), "alternateRowColors = true");
+			assert.ok(oItem1.$().hasClass("sapMListTblRowAlternate"), "Alternating class added");
+			assert.ok(!oItem2.$().hasClass("sapMListTblRowAlternate"), "Alternating class not added");
+
+			// alternateRowColors in popin
+			var oColumn = sut.getColumns()[1];
+			oColumn.setDemandPopin(true);
+			oColumn.setMinScreenWidth("480000px");
+			sap.ui.getCore().applyChanges();
+			assert.ok(sut.$("tblBody").hasClass("sapMListTblAlternateRowColorsPopin"), "Popin class for alternate row colors added to tbody element of table")
+
+			// alternate row colors when grouping is enabled
+			var oGrouping = new sap.ui.model.Sorter("name", false, function() {
+				return {
+					key: "name",
+					text: "name"
+				};
+			});
+			sut.getBinding("items").sort(oGrouping);
+			sap.ui.getCore().applyChanges();
+			assert.ok(sut.$("tblBody").hasClass("sapMListTblAlternateRowColorsGrouped"), "Grouping class for alternate row colors added to tbody element of table");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Popin Layout Grid", function(assert) {
+			// stub for non-mircosft browsers
+			this.stub(sap.ui.Device, "browser", {"msie": false, "edge": false});
+			var sut = createSUT("idPopinLayoutGrid", true);
+			var oColumn = sut.getColumns()[2];
+			sut.setPopinLayout(sap.m.PopinLayout.GridSmall);
+			oColumn.setDemandPopin(true);
+			oColumn.setMinScreenWidth("400000px");
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sut.getPopinLayout(), "GridSmall", "popinLayout=GridSmall, property is set correctly");
+			assert.ok(jQuery(".sapMListTblSubCntGridSmall").length > 0, "DOM classes updated correctly");
+
+			sut.setPopinLayout(sap.m.PopinLayout.GridLarge);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sut.getPopinLayout(), "GridLarge", "popinLayout=GridLarge, property is set correctly");
+			assert.ok(jQuery(".sapMListTblSubCntGridLarge").length > 0, "DOM classes updated correctly");
+
+			sut.setPopinLayout(sap.m.PopinLayout.Block);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sut.getPopinLayout(), "Block", "popinLayout=Block, property is set correctly");
+			assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, "Grid style class not added");
+			assert.equal(jQuery(".sapMListTblSubCntGridLarge").length, 0, "Grid style class not added");
+
+			sut.destroy();
+
+			// stub for msie and edge
+			this.stub(sap.ui.Device, "browser", {"msie": true, "edge": true});
+			var sut1 = createSUT("idPopinLayoutMSbrowsers", true);
+			var oColumn1 = sut1.getColumns()[2];
+			oColumn1.setDemandPopin(true);
+			oColumn1.setMinScreenWidth("400000px");
+			sut1.placeAt("qunit-fixture");
+
+			sut1.setPopinLayout(sap.m.PopinLayout.GridSmall);
+			sap.ui.getCore().applyChanges();
+			assert.ok(jQuery(".sapMListTblSubCntBlock").length > 0, "GridSmall style class not added");
+
+			sut1.setPopinLayout(sap.m.PopinLayout.GridLarge);
+			sap.ui.getCore().applyChanges();
+			assert.ok(jQuery(".sapMListTblSubCntBlock").length > 0, "GridLarge style class not added");
+
+			sut1.destroy();
+		});
+
+		QUnit.test("Sticky Column Headers property check", function(assert) {
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(sut.getSticky(), "None", "Default value set correctly");
+			assert.equal(sut.$().find(".sapMTableStickyColHdrTR").length, 0, "Sticky column header style class not rendered");
+			assert.equal(sut.$().find(".sapMTableStickyColHdrTH").length, 0, "Sticky column header style class not rendered");
+
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+			assert.equal(sut.getSticky(), "ColumnHeaders", "Property set to ColumnHeaders correctly");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Sticky Column Headers in Chrome browser", function(assert) {
+			// stub for chrome and edge browsers, sticky support on TH element
+			this.stub(sap.ui.Device, "browser", {"chrome": true});
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$().find(".sapMTableStickyColHdrTH").length > 0, "Sticky column header style class added for th element");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Sticky Column Headers in Edge browser", function(assert) {
+			// stub for chrome and edge browsers, sticky support on TH element
+			this.stub(sap.ui.Device, "browser", {"edge": true, "version": 16});
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$().find(".sapMTableStickyColHdrTH").length > 0, "Sticky column header style class added for th element");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Sticky Column Headers in Safari browser", function(assert) {
+			// stub for chrome and edge browsers, sticky support on TH element
+			this.stub(sap.ui.Device, "browser", {"safari": true});
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$().find(".sapMTableStickyColHdrTR").length > 0, "Sticky column header style class added for th element");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Sticky Column Headers in Firefox browser", function(assert) {
+			// stub for chrome and edge browsers, sticky support on TH element
+			this.stub(sap.ui.Device, "browser", {"firefox": true, "version": 59});
+			var sut = createSUT("idStickyColHdr", true);
+			sut.placeAt("qunit-fixture");
+			sut.setSticky("ColumnHeaders");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(sut.$().find(".sapMTableStickyColHdrTR").length > 0, "Sticky column header style class added for th element");
+
+			sut.destroy();
+		});
+
+		QUnit.test("Focus and scroll handling with sticky column headers", function(assert) {
+			this.stub(sap.ui.Device.system, "desktop", false);
+			this.stub(sap.ui.Device, "browser", {"chrome": true});
+			this.clock = sinon.useFakeTimers();
+
+			var sut = createSUT("idStickyColHdr", true);
+			var oScrollContainer = new sap.m.ScrollContainer({
+				vertical: true,
+				content: sut
+			});
+			sut.setSticky("ColumnHeaders");
+			oScrollContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var fnGetDomRef = sut.getDomRef;
+			this.stub(sut, "getDomRef", function() {
+				return {
+					parentElement : {
+						getBoundingClientRect : function() {
+							return {
+								top: 10
+							}
+						}
+					},
+					firstChild: {
+						getBoundingClientRect : function() {
+							return {
+								top: 20,
+								height: 48,
+								bottom: 68
+							}
+						}
+					}
+				}
+			});
+
+			var oFocusedItem = sut.getItems()[2];
+			var oFocusedItemDomRef = oFocusedItem.getDomRef();
+			var fnScrollToElementSpy = sinon.spy(sap.ui.core.delegate.ScrollEnablement.prototype, "scrollToElement");
+
+			this.stub(window, "requestAnimationFrame", window.setTimeout);
+			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+				return {
+					top: 50
+				}
+			});
+
+			oFocusedItemDomRef.focus();
+			this.clock.tick(0);
+			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
+
+			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
+			sut.getDomRef = fnGetDomRef;
+
+			oScrollContainer.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

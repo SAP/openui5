@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ViewSettingsItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
-	function(jQuery, library, Item) {
+sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/ui/base/ManagedObject'],
+	function(library, Item, ManagedObject) {
 	"use strict";
 
 
@@ -73,11 +73,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 	 *
 	 * @override
 	 * @param {string} sName The name of the property
-	 * @param {string} sValue The value of the property
-	 * @param {boolean} bSupressInvalidation
+	 * @param {string} vValue The value of the property
+	 * @param {boolean} bSupressInvalidation Whether there mus be supress invalidation
+	 * @param {boolean} bFireEvent Whether the event must be fired
 	 */
 	ViewSettingsItem.prototype.setProperty = function (sName, vValue, bSupressInvalidation, bFireEvent) {
-		sap.ui.base.ManagedObject.prototype.setProperty.apply(this, arguments);
+		ManagedObject.prototype.setProperty.apply(this, arguments);
 
 		bFireEvent = bFireEvent === undefined ? true : bFireEvent;
 
@@ -92,4 +93,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 
 	return ViewSettingsItem;
 
-}, /* bExport= */ true);
+});

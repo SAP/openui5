@@ -1663,7 +1663,7 @@
 				new sap.m.ToolbarSpacer(),
 				new sap.m.Button({
 					icon: "sap-icon://drop-down-list",
-					text: "1",
+					tooltip: "Drop down list",
 					press : function () {
 						sap.m.MessageToast.show("Example 1: sort/group/filter with custom data meta");
 						vsd1.open();
@@ -1671,7 +1671,6 @@
 				}),
 				new sap.m.Button({
 					icon: "sap-icon://action-settings",
-					text: "2",
 					press : function () {
 						sap.m.MessageToast.show("Example 2: sort/group/filter by evaluating the item keys manually");
 						vsd2.open();
@@ -1679,7 +1678,7 @@
 				}),
 				new sap.m.Button({
 					icon: "sap-icon://electrocardiogram",
-					text: "3",
+					tooltip: "Sort group filter without applying settings to the table",
 					press : function () {
 						sap.m.MessageToast.show("Example 3: sort/group/filter without applying settings to the table");
 						vsd3.open();
@@ -1687,7 +1686,6 @@
 				}),
 				new sap.m.Button({
 					icon: "sap-icon://sort",
-					text: "4",
 					press : function () {
 						sap.m.MessageToast.show("Example 4: sort with custom data meta");
 						vsd4.open();
@@ -1695,7 +1693,6 @@
 				}),
 				new sap.m.Button({
 					icon: "sap-icon://group-2",
-					text: "5",
 					press : function () {
 						sap.m.MessageToast.show("Example 5: group with custom data meta");
 						vsd5.open();
@@ -1703,7 +1700,6 @@
 				}),
 				new sap.m.Button({
 					icon: "sap-icon://filter",
-					text: "6",
 					press : function () {
 						sap.m.MessageToast.show("Example 6: preset filters with custom data meta");
 						vsd6.open();
@@ -1711,7 +1707,6 @@
 				}),
 				new sap.m.Button({
 					icon: "sap-icon://add-filter",
-					text: "7",
 					press : function () {
 						sap.m.MessageToast.show("Example 7: standard & custom filters with custom data meta");
 						vsd7.open();

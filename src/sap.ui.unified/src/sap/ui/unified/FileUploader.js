@@ -3,22 +3,49 @@
  */
 
 // Provides control sap.ui.unified.FileUploader.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, Control, library, LabelEnablement) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'./library',
+	'sap/ui/core/LabelEnablement',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	"./FileUploaderRenderer",
+	'jquery.sap.keycodes'
+], function(
+	jQuery,
+	Control,
+	library,
+	LabelEnablement,
+	coreLibrary,
+	Device,
+	FileUploaderRenderer
+) {
 	"use strict";
 
 
 
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+
+
 	/**
-	 * Constructor for a new FileUploader.
+	 * Constructor for a new <code>FileUploader</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The framework generates an input field and a button with text "Browse ...". The API supports features such as on change uploads (the upload starts immediately after a file has been selected), file uploads with explicit calls, adjustable control sizes, text display after uploads, or tooltips containing complete file paths.
+	 * The framework generates an input field and a button with text "Browse ...".
+	 * The API supports features such as on change uploads (the upload starts immediately after
+	 * a file has been selected), file uploads with explicit calls, adjustable control sizes,
+	 * text display after uploads, or tooltips containing complete file paths.
+	 *
+	 * @see {@link https://experience.sap.com/fiori-design-web/upload-collection/ Upload Collection}
+	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.unified.IProcessableBlobs
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -30,8 +57,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	 */
 	var FileUploader = Control.extend("sap.ui.unified.FileUploader", /** @lends sap.ui.unified.FileUploader.prototype */ { metadata : {
 
-		interfaces : ["sap.ui.core.IFormContent"],
+		interfaces : ["sap.ui.core.IFormContent", "sap.ui.unified.IProcessableBlobs"],
 		library : "sap.ui.unified",
+		designtime: "sap/ui/unified/designtime/FileUploader.designtime",
 		properties : {
 
 			/**
@@ -136,7 +164,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			 * Visualizes warnings or errors related to the text field. Possible values: Warning, Error, Success, None.
 			 * @since 1.24.0
 			 */
-			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : sap.ui.core.ValueState.None},
+			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},
+
+			/**
+			 * Custom text for the value state message pop-up.
+			 *
+			 * <b>Note:</b> If not specified, a default text, based on the value state type, will be used instead.
+			 * @since 1.52
+			 */
+			valueStateText : {type : "string", group : "Misc", defaultValue : null},
 
 			/**
 			 * Icon to be displayed as graphical element within the button.
@@ -182,7 +218,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			/**
 			 * The header parameters for the FileUploader which are only submitted with XHR requests. Header parameters are not supported by Internet Explorer 9.
 			 */
-			headerParameters : {type : "sap.ui.unified.FileUploaderParameter", multiple : true, singularName : "headerParameter"}
+			headerParameters : {type : "sap.ui.unified.FileUploaderParameter", multiple : true, singularName : "headerParameter"},
+
+			/**
+			 * Settings for the <code>XMLHttpRequest</code> object.
+			 * <b>Note:</b> This aggregation is only used when the <code>sendXHR</code> property is set to <code>true</code>.
+			 * @since 1.52
+			 */
+			xhrSettings : {type : "sap.ui.unified.FileUploaderXHRSettings", multiple : false}
 		},
 		events : {
 
@@ -402,8 +445,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	FileUploader.prototype.init = function(){
 
 		// load the respective UI-Elements from the FileUploaderHelper
-		this.oFilePath = sap.ui.unified.FileUploaderHelper.createTextField(this.getId() + "-fu_input");
-		this.oBrowse = sap.ui.unified.FileUploaderHelper.createButton();
+		this.oFilePath = library.FileUploaderHelper.createTextField(this.getId() + "-fu_input");
+		this.oBrowse = library.FileUploaderHelper.createButton();
 		this.oFilePath.setParent(this);
 		this.oBrowse.setParent(this);
 
@@ -502,14 +545,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	};
 
 	FileUploader.prototype.setTooltip = function(oTooltip) {
+		var sTooltip,
+			sapUiFupInputMaskDOM;
+
 		this._refreshTooltipBaseDelegate(oTooltip);
 		this.setAggregation("tooltip", oTooltip, true);
+
 		if (this.oFileUpload) {
 			if (typeof oTooltip  === "string") {
-				jQuery(this.oFileUpload).attr("title", jQuery.sap.encodeHTML(oTooltip));
-				this.$().find(".sapUiFupInputMask").attr("title", jQuery.sap.encodeHTML(oTooltip));
+				sTooltip = this.getTooltip_AsString();
+				sapUiFupInputMaskDOM = this.$().find(".sapUiFupInputMask")[0];
+
+				if (sTooltip) {
+					this.oFileUpload.setAttribute("title", sTooltip);
+					sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.setAttribute("title", sTooltip);
+				} else {
+					this.oFileUpload.removeAttribute("title");
+					sapUiFupInputMaskDOM && sapUiFupInputMaskDOM.removeAttribute("title");
+				}
 			}
 		}
+		return this;
+	};
+
+	FileUploader.prototype.setXhrSettings = function (oXhrSettings) {
+		this.setAggregation("xhrSettings", oXhrSettings, true);
+
 		return this;
 	};
 
@@ -523,7 +584,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			if (vTypes === "") {
 				return [];
 			} else {
-				return vTypes.split(",");
+				return vTypes.split(",").map(function (sType) {
+					return sType.trim();
+				});
 			}
 		}
 		return vTypes;
@@ -585,7 +648,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}
 		// in case of IE9 we prevent the browse button from being focused because the
 		// native file uploader requires the focus for catching the keyboard events
-		if ((!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9)) {
+		if ((!!Device.browser.internet_explorer && Device.browser.version == 9)) {
 			this.oBrowse.$().attr("tabindex", "-1");
 		}
 
@@ -597,7 +660,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 		this.oFilePath.$().find('input').removeAttr("role").attr("aria-live", "polite");
 
-		if (this.getValueState() == sap.ui.core.ValueState.Error) {
+		if (this.getValueState() == ValueState.Error) {
 			this.oBrowse.$().attr("aria-invalid", "true");
 		}
 
@@ -639,7 +702,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	};
 
 	/**
-	 * Returns the DOM element that should be focused when focus is set onto the control.
+	 * Returns the DOM element that should be focused, when the focus is set onto the control.
+	 * @returns {Element} The DOM element that should be focused
 	 */
 	FileUploader.prototype.getFocusDomRef = function() {
 		return this.$("fu").get(0);
@@ -673,7 +737,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				var _newWidth = $fp.outerWidth() - _buttonWidth;
 				if (_newWidth < 0) {
 					this.oFilePath.getDomRef().style.width = "0px";
-					if (!sap.ui.Device.browser.internet_explorer) {
+					if (!Device.browser.internet_explorer) {
 						this.oFileUpload.style.width = $b.outerWidth(true);
 					}
 				} else {
@@ -709,10 +773,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		//as of 1.23.1 oFilePath can be an sap.ui.commons.TextField or an sap.m.Input, which both have a valueState
 		if (this.oFilePath.setValueState) {
 			this.oFilePath.setValueState(sValueState);
+		} else {
+			jQuery.sap.log.warning("Setting the valueState property with the combination of libraries used is not supported.", this);
 		}
 
 		if (this.oBrowse.getDomRef()) {
-			if (sValueState == sap.ui.core.ValueState.Error) {
+			if (sValueState == ValueState.Error) {
 				this.oBrowse.$().attr("aria-invalid", "true");
 			}else {
 				this.oBrowse.$().removeAttr("aria-invalid");
@@ -721,9 +787,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 		if (jQuery.sap.containsOrEquals(this.getDomRef(), document.activeElement)) {
 			switch (sValueState) {
-				case sap.ui.core.ValueState.Error:
-				case sap.ui.core.ValueState.Warning:
-				case sap.ui.core.ValueState.Success:
+				case ValueState.Error:
+				case ValueState.Warning:
+				case ValueState.Success:
 					this.openValueStateMessage();
 					break;
 				default:
@@ -733,6 +799,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 		return this;
 
+	};
+
+	FileUploader.prototype.setValueStateText = function(sValueStateText) {
+		if (this.oFilePath.setValueStateText) {
+			this.oFilePath.setValueStateText(sValueStateText);
+		} else {
+			jQuery.sap.log.warning("Setting the valueStateText property with the combination of libraries used is not supported.", this);
+		}
+
+		return this.setProperty("valueStateText", sValueStateText, true);
 	};
 
 	FileUploader.prototype.setUploadUrl = function(sValue, bFireEvent) {
@@ -821,12 +897,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 
 	/**
-	 * Clears the content of the FileUploader. The attached additional data however is retained.
+	 * Clears the content of the <code>FileUploader</code>.
 	 *
-	 * @type void
+	 * <b>Note:</b> The attached additional data however is retained.
+	 *
 	 * @public
 	 * @since 1.25.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @returns {sap.ui.unified.FileUploader} The <code>sap.ui.unified.FileUploader</code> instance
 	 */
 	FileUploader.prototype.clear = function () {
 		var uploadForm = this.getDomRef("fu_form");
@@ -835,12 +913,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		}
 		//clear the value, don't fire change event, and suppress the refocusing of the file input field
 		return this.setValue("", false, true);
-	};
-
-	FileUploader.prototype.ontap = function () {
-		if (this.getEnabled() && this.getVisible()) {
-			this.FUEl.click();
-		}
 	};
 
 	FileUploader.prototype.onmousedown = function(oEvent) {
@@ -901,7 +973,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		var oXhr = aXhr[iIndex];
 		var sFilename = oXhr.file.name ? oXhr.file.name : "MultipartFile";
 
-		if ((sap.ui.Device.browser.edge || sap.ui.Device.browser.internet_explorer) && oXhr.file.type && oXhr.xhr.readyState == 1) {
+		if ((Device.browser.edge || Device.browser.internet_explorer) && oXhr.file.type && oXhr.xhr.readyState == 1) {
 			var sContentType = oXhr.file.type;
 			oXhr.xhr.setRequestHeader("Content-Type", sContentType);
 			oXhr.requestHeaders.push({name: "Content-Type", value: sContentType});
@@ -982,13 +1054,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 
 
 	/**
-	 * Starts the upload (as defined by uploadUrl)
+	 * Starts the upload (as defined by uploadUrl).
+	 *
+	 * @param {boolean} [bPreProcessFiles] Set to <code>true</code> to allow pre-processing of the files before sending the request.
+	 * As a result, the <code>upload</code> method becomes asynchronous. See {@link sap.ui.unified.IProcessableBlobs} for more information.
+	 * <b>Note:</b> This parameter is only taken into account when <code>sendXHR</code> is set to <code>true</code>.
 	 *
 	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FileUploader.prototype.upload = function() {
+	FileUploader.prototype.upload = function(bPreProcessFiles) {
 		//supress Upload if the FileUploader is not enabled
 		if (!this.getEnabled()) {
 			return;
@@ -998,8 +1074,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			this._bUploading = true;
 			if (this.getSendXHR() && window.File) {
 				var aFiles = this.FUEl.files;
-
-				this._sendFilesWithXHR(aFiles);
+				if (bPreProcessFiles) {
+					this._sendProcessedFilesWithXHR(aFiles);
+				} else {
+					this._sendFilesWithXHR(aFiles);
+				}
 			} else if (uploadForm) {
 				uploadForm.submit();
 				this._resetValueAfterUploadStart();
@@ -1012,20 +1091,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	/**
 	 * Aborts the currently running upload.
 	 *
-	 * @type void
+	 * @param {string} sHeaderParameterName
+	 *                 The name of the parameter within the <code>headerParameters</code> aggregation to be checked.
+	 *
+	 *                 <b>Note:</b> aborts the request, sent with a header parameter with the provided name.
+	 *                 The parameter is taken into account if the sHeaderParameterValue parameter is provided too.
+	 *
+	 * @param {string} sHeaderParameterValue
+	 *                 The value of the parameter within the <code>headerParameters</code> aggregation to be checked.
+	 *
+	 *                 <b>Note:</b> aborts the request, sent with a header parameter with the provided value.
+	 *                 The parameter is taken into account if the sHeaderParameterName parameter is provided too.
 	 * @public
 	 * @since 1.24.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FileUploader.prototype.abort = function(sHeaderCheck, sValueCheck) {
+	FileUploader.prototype.abort = function(sHeaderParameterName, sHeaderParameterValue) {
 		if (!this.getUseMultipart()) {
 			var iStart = this._aXhr.length - 1;
 			for (var i = iStart; i > -1 ; i--) {
-				if (sHeaderCheck && sValueCheck) {
+				if (sHeaderParameterName && sHeaderParameterValue) {
 					for (var j = 0; j < this._aXhr[i].requestHeaders.length; j++) {
 						var sHeader = this._aXhr[i].requestHeaders[j].name;
 						var sValue = this._aXhr[i].requestHeaders[j].value;
-						if (sHeader == sHeaderCheck && sValue == sValueCheck) {
+						if (sHeader == sHeaderParameterName && sValue == sHeaderParameterValue) {
 							this._aXhr[i].xhr.abort();
 							this.fireUploadAborted({
 								"fileName": this._aXhr[i].fileName,
@@ -1093,7 +1182,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			// this does not work for IE9 and downwards! TODO: check with IE10/11
 			// consider to always put the focus on the hidden file uploader
 			// and let the fileuploader manager the keyboard interaction
-			if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9) && this.oFileUpload) {
+			if (!(!!Device.browser.internet_explorer && Device.browser.version <= 9) && this.oFileUpload) {
 				this.oFileUpload.click();
 				oEvent.preventDefault();
 				oEvent.stopPropagation();
@@ -1196,13 +1285,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			}
 			if (this.getMultiple()) {
 				//multiple is not supported in IE <= 9
-				if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+				if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
 					sValue = sFileString;
 				}
 			}
 
 			//sValue has to be filled to avoid clearing the FilePath by pressing cancel
-			if (sValue || sap.ui.Device.browser.chrome) { // in Chrome the file path has to be cleared as the upload will be avoided
+			if (sValue || Device.browser.chrome) { // in Chrome the file path has to be cleared as the upload will be avoided
 				this.setValue(sValue, true);
 			}
 		}
@@ -1219,7 +1308,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 	* @private
 	*/
 	FileUploader.prototype._sendFilesWithXHR = function (aFiles) {
-		var iFiles, sHeader, sValue, oXhrEntry;
+		var iFiles,
+			sHeader,
+			sValue,
+			oXhrEntry,
+			oXHRSettings = this.getXhrSettings();
 
 		if (aFiles.length > 0) {
 			if (this.getUseMultipart()) {
@@ -1234,12 +1327,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			for (var j = 0; j < iFiles; j++) {
 				//keep a reference on the current upload xhr
 				this._uploadXHR = new window.XMLHttpRequest();
+
 				oXhrEntry = {
 					xhr: this._uploadXHR,
 					requestHeaders: []
 				};
 				this._aXhr.push(oXhrEntry);
 				oXhrEntry.xhr.open("POST", this.getUploadUrl(), true);
+				if (oXHRSettings) {
+					oXhrEntry.xhr.withCredentials = oXHRSettings.getWithCredentials();
+				}
 				if (this.getHeaderParameters()) {
 					var aHeaderParams = this.getHeaderParameters();
 					for (var i = 0; i < aHeaderParams.length; i++) {
@@ -1273,7 +1370,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				var formData = new window.FormData();
 				var name = this.FUEl.name;
 				for (var l = 0; l < aFiles.length; l++) {
-					formData.append(name, aFiles[l]);
+					this._appendFileToFormData(formData, name, aFiles[l]);
 				}
 				formData.append("_charset_", "UTF-8");
 				var data = this.FUDataEl.name;
@@ -1300,6 +1397,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			this._resetValueAfterUploadStart();
 		}
 
+		return this;
+	};
+
+	/**
+	 * Append a file to passed FormData object handling special case where there is a Blob or window.File with a name
+	 * parameter passed.
+	 * @param {object} oFormData receiving FormData object
+	 * @param {string} sFieldName name of the form field
+	 * @param {object} oFile object to be appended
+	 * @private
+	 */
+	FileUploader.prototype._appendFileToFormData = function (oFormData, sFieldName, oFile) {
+		// BCP: 1770523801 We pass third parameter 'name' only for instance of 'Blob' that has a 'name'
+		// parameter to prevent the append method failing on Safari browser.
+		if (oFile instanceof window.Blob && oFile.name) {
+			oFormData.append(sFieldName, oFile, oFile.name);
+		} else {
+			oFormData.append(sFieldName, oFile);
+		}
+	};
+
+	/*
+	* Processes the passed files and sends them afterwards via XHR request.
+	* @param {array} [aFiles] list of files from type window.File
+	* @returns this
+	* @private
+	*/
+	FileUploader.prototype._sendProcessedFilesWithXHR = function (aFiles) {
+		this.getProcessedBlobsFromArray(aFiles).then(function(aBlobs){
+			this._sendFilesWithXHR(aBlobs);
+		}.bind(this)).catch(function(oResult){
+			jQuery.sap.log.error("File upload failed: " + oResult && oResult.message ? oResult.message : "no details available");
+		});
 		return this;
 	};
 
@@ -1394,7 +1524,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		if (this._areFilesAllowed(aFiles)) {
 			this._sendFilesWithXHR(aFiles);
 		}
-
 		return this;
 	};
 
@@ -1455,7 +1584,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			if (this.getName()) {
 				if (this.getMultiple()) {
 					//multiple is not supported in IE <= 9
-					if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+					if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
 						aFileUpload.push('name="' + this.getName() + '[]" ');
 					}
 				} else {
@@ -1464,7 +1593,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			} else {
 				if (this.getMultiple()) {
 					//multiple is not supported in IE <= 9
-					if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+					if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
 						aFileUpload.push('name="' + this.getId() + '[]" ');
 					}
 				} else {
@@ -1472,7 +1601,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 				}
 			}
 			aFileUpload.push('id="' + this.getId() + '-fu" ');
-			if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9)) {
+			if (!(!!Device.browser.internet_explorer && Device.browser.version == 9)) {
 				// for IE9 the file uploader itself gets the focus to make sure that the
 				// keyboard interaction works and there is no security issue - unfortunately
 				// this has the negative side effect that 2 tabs are required.
@@ -1492,7 +1621,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 			}
 			if (this.getMultiple()) {
 				//multiple is not supported in IE <= 9
-				if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version <= 9)) {
+				if (!(Device.browser.internet_explorer && Device.browser.version <= 9)) {
 					aFileUpload.push('multiple ');
 				}
 			}
@@ -1580,11 +1709,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		if (this.oBrowse &&  this.oBrowse.$().length) {
 			$browse = this.oBrowse.$();
 			$browse.attr("type', 'button"); // The default type of button is submit that's why on click of label there are submit of the form. This way we are avoiding the submit of form.
-			$browse.click(this.ontap.bind(this)); // The default behaviour on click on label is to open "open file" dialog. The only way to attach click event that is transferred from the label to the button is this way. AttachPress and attachTap don't work in this case.
+			$browse.click(function(e) {
+				e.preventDefault();
+				this.FUEl.click(); // The default behaviour on click on label is to open "open file" dialog. The only way to attach click event that is transferred from the label to the button is this way. AttachPress and attachTap don't work in this case.
+			}.bind(this));
 		}
+	};
+
+	/**
+	 * Allows to process Blobs before they get uploaded. This API can be used to create custom Blobs
+	 * and upload these custom Blobs instead of the received/initials Blobs in the parameter <code>aBlobs</code>.
+	 * One use case could be to create and upload zip archives based on the passed Blobs.
+	 * The default implementation of this API should simply resolve with the received Blobs (parameter <code>aBlobs</code>).
+	 *
+	 * This API is only supported in case <code>sendXHR</code> is <code>true</code>. This means only IE10+ is supported, while IE9 and below is not.
+	 *
+	 * This is a default implementation of the interface <code>sap.ui.unified.IProcessableBlobs</code>.
+	 *
+         * @public
+         * @since 1.52
+	 * @param {Blob[]} aBlobs The initial Blobs which can be used to determine/calculate a new array of Blobs for further processing.
+	 * @return {Promise} A Promise that resolves with an array of Blobs which is used for the final uploading.
+	 */
+	FileUploader.prototype.getProcessedBlobsFromArray = function (aBlobs){
+		return new Promise(function(resolve){
+			resolve(aBlobs);
+		});
 	};
 
 
 	return FileUploader;
 
-}, /* bExport= */ true);
+});

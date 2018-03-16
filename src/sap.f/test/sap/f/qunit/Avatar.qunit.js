@@ -298,4 +298,50 @@
 		oDetachPressSpy.restore();
 	});
 
+	QUnit.test("cloning of press event handler", function (assert) {
+		// Arrange
+		var oLightBox = new sap.m.LightBox(),
+			oAvatarClone;
+
+		this.oAvatar.setDetailBox(oLightBox);
+
+		// Act - clone the Avatar
+		oAvatarClone = this.oAvatar.clone();
+
+		// Assert
+		assert.strictEqual(oAvatarClone.hasListeners("press"), true, "Press event listener is cloned");
+		assert.notStrictEqual(this.oAvatar.mEventRegistry.press[0].oListener,
+			oAvatarClone.mEventRegistry.press[0].oListener,
+			"Press listener should not be a reference to the original listener");
+	});
+
+	QUnit.module("Functionality", {
+		beforeEach: function () {
+			this.oAvatar = createAvatar({ src: "/you/must/escape/single'quotes" });
+			this.oAvatar.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: teardownFunction
+	});
+
+	QUnit.test("URL escaping", function (assert) {
+		var $oAvatar = this.oAvatar.$();
+		// If src is not escaped, the css value would be invalid and jQuery would return 'none'
+		assert.notStrictEqual($oAvatar.css("background-image"), "none", "src is properly escaped");
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function () {
+			this.oAvatar = createAvatar({ tooltip: "sampleTooltip" });
+			this.oAvatar.placeAt("qunit-fixture");
+			oCore.applyChanges();
+		},
+		afterEach: teardownFunction
+	});
+
+	QUnit.test("Check if tooltip is present", function (assert) {
+		var $oAvatar = this.oAvatar.$();
+		assert.strictEqual($oAvatar.prop("title"), "sampleTooltip", "Tooltip is present");
+	});
+
 })();

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.CheckBox.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define([
+ 'jquery.sap.global',
+ './library',
+ 'sap/ui/core/Control',
+ "./CheckBoxRenderer"
+],
+	function(jQuery, library, Control, CheckBoxRenderer) {
 	"use strict";
 
 

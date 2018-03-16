@@ -262,6 +262,22 @@
 
 				});
 
+				QUnit.test("setSideContentVisibility functionality",function(assert) {
+					this._oDSC._currentBreakpoint = L;
+
+					// assert if both "contents" are visible on L size
+					assert.strictEqual(this._oDSC._MCVisible, true, "'showMainContent' property is 'true'");
+					assert.strictEqual(this._oDSC._SCVisible, true, "'showSideContent' property is 'true'");
+
+					// set property sideContetnVisibility to "neverShow"
+					this._oDSC.setSideContentVisibility("NeverShow");
+
+					// assert that only the main content is visible on L size
+					assert.strictEqual(this._oDSC._MCVisible, true, "'showMainContent' property is 'true'");
+					assert.strictEqual(this._oDSC._SCVisible, false, "'showSideContent' property is 'false'");
+
+				});
+
 				QUnit.module("Helper functionality", {
 					beforeEach : function () {
 						// Replacing jQuery width method to report stable browser screen resolution for the test

@@ -71,8 +71,14 @@
 </script>
 
 <script>
-
+	var codeEditor;
 	sap.ui.getCore().attachInit(function() {
+		codeEditor = new sap.ui.codeeditor.CodeEditor({
+			type: "html",
+			value: jQuery("#code").html().trim().replace(/&sol;/g, "/"), // Handling escaped closing script tag sol
+			height: "auto",
+			maxLines: 70
+		});
 
 		new sap.m.App({
 			pages: [
@@ -80,17 +86,62 @@
 					title: "Code Editor",
 					content: [
 						new sap.m.Label({text: "Hello World App"}),
-						new sap.ui.codeeditor.CodeEditor({
-							type: "html",
-							value: jQuery("#code").html().trim().replace(/&sol;/g, "/"), // Handling escaped closing script tag sol
-							height: "auto",
-							maxLines: 70
-						}),
+						codeEditor,
 						new sap.m.Button({text: "Save"})
 					]
 				})
 			]
 		}).placeAt("content");
+
+		codeEditor.addCustomCompleter({
+			getCompletions: function (callback, context) {
+				// callback is provided to us by ACE so we can execute it in a way like
+				// below in order to display suggestions to the user
+
+				// ideally, the array argument, provided to the following method call,
+				// will be dynamically generated based on the content of the context
+				// object
+
+				// let's assume the context contained an sPrefix equal to 'read', which
+				// means the cursor in ACE is at the end of a 'read' word
+
+				// by executing the following call, we can show a list of suggestions
+				// like that: readFile, readStream, readResponse 
+				callback(null, [
+					{
+						// name is not displayed on the screen
+						name: "readFile",
+						// value is displayed on the screen
+						value: "readFile()",
+						// score determines which suggestion goes first
+						score: "1",
+						// meta is short info displayed on the right of value
+						meta: "function"
+					},
+					{
+						// name is not displayed on the screen
+						name: "readStream",
+						// value is displayed on the screen
+						value: "readStream(input)",
+						// score determines which suggestion goes first
+						score: "3",
+						// meta is short info displayed on the right of value
+						meta: "params: input"
+					},
+					{
+						// name is not displayed on the screen
+						name: "readStream",
+						// value is displayed on the screen
+						value: "readStream(input, encoding)",
+						// score determines which suggestion goes first
+						score: "2",
+						// meta is short info displayed on the right of value
+						meta: "params: input, encoding"
+					}
+				])
+
+			}
+		});
 
 	});
 

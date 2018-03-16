@@ -1,6 +1,6 @@
 <mvc:View
 	height="100%"
-	icontrollerName="sap.m.sample.TableEditable.Table"
+	controllerName="sap.m.sample.TableEditable.Table"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 

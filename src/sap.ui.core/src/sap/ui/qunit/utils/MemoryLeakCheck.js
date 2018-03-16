@@ -18,8 +18,9 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 
 
 	/**
-	 * @namespace
 	 * <code>sap.ui.qunit.utils.MemoryLeakCheck</code> is a utility for finding controls that leak references to other controls. See the <code>checkControl</code> method for usage instructions.
+	 *
+	 * @namespace
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -70,10 +71,11 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 
 	// Creates and renders two instances of the given control and asserts that the second instance does not leak any controls after destruction.
 	// Has some special logic to ignore or work around problems where certain controls do not work standalone.
-	var _checkControl = function(fnControlFactory, fnSomeAdditionalFunction, bControlCannotRender) {
-		var oControl1 = fnControlFactory();
+	var _checkControl = function(sControlName, fnControlFactory, fnSomeAdditionalFunction, bControlCannotRender) {
 
-		QUnit.test("Check control " + oControl1.getMetadata().getName() + " for memory leaks", function(assert) {
+		QUnit.test("Control " + sControlName + " should not have any memory leaks", function(assert) {
+			var oControl1 = fnControlFactory();
+
 			assert.ok(oControl1, "calling fnControlFactory() should return something (a control)");
 			assert.ok(oControl1 instanceof Control, "calling fnControlFactory() should return something that is really instanceof sap.ui.core.Control");
 
@@ -183,13 +185,22 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 	 * );
 	 * </code>
 	 *
+	 * @param {string} sControlName the name of the control to test, or whatever should be displayed as test name
 	 * @param {function} fnControlFactory a function that returns a control instance which should be checked for leaking controls; this function will be called at least twice and needs to return a new control instance every time
 	 * @param {function} [fnSomeAdditionalFunction] a function that should be called after the control has been rendered; any memory leaks caused within this function will be also detected
 	 * @param {boolean} [bControlCannotRender] should only be set if for some reason the tested control cannot be rendered and this fact is accepted. The test will then only instantiate the control.
 	 *
 	 * @public
 	 */
-	MemoryLeakCheck.checkControl = function(fnControlFactory, fnSomeAdditionalFunction, bControlCannotRender) {
+	MemoryLeakCheck.checkControl = function(sControlName, fnControlFactory, fnSomeAdditionalFunction, bControlCannotRender) {
+		// sControlName could be derived from the control instance later, but we want to use the control name for module setup BEFORE the control factory is called, so we need it separately
+
+		if (typeof sControlName !== "string") { // sControlName parameter was added to the API later, so inofficially it is optional for compatibility reasons -> shift parameters
+			bControlCannotRender = fnSomeAdditionalFunction;
+			fnSomeAdditionalFunction = fnControlFactory;
+			fnControlFactory = sControlName;
+			sControlName = "[some control, id: " + Math.random() + " - please update your test to also pass the control name]";
+		}
 
 		if (fnSomeAdditionalFunction === true || fnSomeAdditionalFunction === false) { // no additional function given - shift parameters
 			bControlCannotRender = fnSomeAdditionalFunction;
@@ -199,7 +210,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		// QUnit Setup
 
 		var mOriginalElements;
-		QUnit.module("MemoryLeakCheck.checkControl", {
+		QUnit.module("MemoryLeakCheck.checkControl: " + sControlName, {
 			beforeEach: function() { // not needed before EACH, because there is only one test creating controls right now, but 1.) "before" is never called and 2.) there might be more later.
 				mOriginalElements = getAllAliveControls();
 			},
@@ -219,7 +230,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 			assert.ok(document.getElementById("qunit-fixture"), "the test page HTML should contain an element with ID 'qunit-fixture'");
 		});
 
-		_checkControl(fnControlFactory, fnSomeAdditionalFunction, bControlCannotRender);
+		_checkControl(sControlName, fnControlFactory, fnSomeAdditionalFunction, bControlCannotRender);
 	};
 
 	return MemoryLeakCheck;

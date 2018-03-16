@@ -2,7 +2,7 @@
 Developing UI5
 ==============
 
-This page explains the initial setup, development roundtrip, and how tests are executed.
+This page explains the initial setup, development workflow, and how tests are executed.
 
 Setting up the UI5 development environment
 ------------------------------------------
@@ -49,7 +49,7 @@ Just modify any source file and reload your browser. Now that's simple, no?
 
 This build-free development process does not deliver optimized runtime performance (e.g. there are many small requests, which would not be acceptable for remote connections), but is the most convenient way to modify the UI5 sources. Under the hood there are mainly two mechanisms applied that adapt the sources:
 
- * The Git repository path contains a folder named like the respective control library (e.g. "sap.ui.commons"), which is omitted at runtime. The node.js-based server is configured to map the locations.
+ * The Git repository path contains a folder named like the respective control library (e.g. "sap.m"), which is omitted at runtime. The node.js-based server is configured to map the locations.
  * The CSS files are transformed (server-side) by the LESS pre-processor during the first request after a CSS file has been modified. This includes mirroring for right-to-left support. This first request to the respective library.css file after a CSS modification will take some hundred milliseconds, depending on the amount of CSS. This is the LESS processing time.
 
 ### Building UI5
@@ -63,15 +63,13 @@ grunt build
 
 Optionally, only selected libraries can be built or the copy of the test-resources folder can be skipped, see [the documentation](tools.md) for details.
 
-**IMPORTANT:** as we are still migrating our build infrastructure from the old Maven-based one, this new Grunt build does not yet have all desired capabilities. Bear with us as we are adding them. This means that currently the build result is not completely optimized for size and performance! When you intend to use UI5 for productive purposes, you should use the runtime binaries provided at <http://openui5.org>.
-
 The build is responsible for the following tasks:
 
  * Creation of the bundled library.css and library-RTL.css file for all available themes
  * Minification of CSS
- * Minification of JavaScript (for library-preload.json files)
- * Combination of JavaScript control files into a single library-preload.json file
- * Combination of the most important UI5 core files into sap-ui-core.js (not yet optimized; minification missing)
+ * Minification of JavaScript
+ * Merging the JavaScript modules of the libraries into a single library-preload.js file
+ * Merging of the most important UI5 Core modules into sap-ui-core.js
 
 #### Troubleshooting
 

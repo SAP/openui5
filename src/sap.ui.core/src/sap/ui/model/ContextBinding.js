@@ -15,10 +15,10 @@ sap.ui.define(['./Binding'],
 	 * The ContextBinding is a specific binding for a setting context for the model
 	 *
 	 * @param {sap.ui.model.Model} oModel
-	 * @param {String} sPath
-	 * @param {Object} oContext
-	 * @param {Object} [mParameters]
-	 * @param {Object} [oEvents] object defining event handlers
+	 * @param {string} sPath
+	 * @param {sap.ui.model.Context} oContext
+	 * @param {object} [mParameters]
+	 * @param {object} [oEvents] object defining event handlers
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.ContextBinding
@@ -60,9 +60,12 @@ sap.ui.define(['./Binding'],
 	 */
 
 	/**
-	 * Return the bound context
+	 * Return the bound context.
+	 *
+	 * @returns {sap.ui.model.Context} Context object used by this context binding or <code>null</code>
+	 * @public
 	 */
-	ContextBinding.prototype.getBoundContext = function(oContext) {
+	ContextBinding.prototype.getBoundContext = function() {
 		return this.oElementContext;
 	};
 

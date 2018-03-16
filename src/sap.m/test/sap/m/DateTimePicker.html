@@ -131,6 +131,8 @@
 			content : [
 				new sap.m.Label({text: "initial DateTimePicker", labelFor: "DTP1"}),
 				new sap.m.DateTimePicker("DTP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
+				new sap.m.Label({text: "initial DateTimePicker initialFocusedDateValue new Date(2017, 5, 13, 11, 12, 13)", labelFor: "DTP1_v0"}),
+				new sap.m.DateTimePicker("DTP1_v0", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation, initialFocusedDateValue: new Date(2017, 5, 13, 11, 12, 13) }),
 				new sap.m.Label({text: "DateTimePicker with given Value and Formatter", labelFor: "DTP2"}),
 				new sap.m.DateTimePicker("DTP2", { value: "2016-02-16,12-50-30", valueFormat: "yyyy-MM-dd,HH-mm-ss", displayFormat: "long/short", fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),

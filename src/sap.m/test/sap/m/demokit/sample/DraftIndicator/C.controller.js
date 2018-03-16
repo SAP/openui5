@@ -10,17 +10,17 @@ sap.ui.define([
 	var CController = Controller.extend("sap.m.sample.DraftIndicator.C", {
 
 		handleSetSavingDraftPress: function (oEvent) {
-			var oDraftIndi = this.getView().byId("draftIndi");
+			var oDraftIndi = this.byId("draftIndi");
 			oDraftIndi.showDraftSaving();
 		},
 
 		handleShowDraftSavedPress: function (oEvent) {
-			var oDraftIndi = this.getView().byId("draftIndi");
+			var oDraftIndi = this.byId("draftIndi");
 			oDraftIndi.showDraftSaved();
 		},
 
 		handleClearDraftStatePress: function (oEvent) {
-			var oDraftIndi = this.getView().byId("draftIndi");
+			var oDraftIndi = this.byId("draftIndi");
 			oDraftIndi.clearDraftState();
 		}
 

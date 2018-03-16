@@ -2,12 +2,20 @@
  * ${copyright}
  */
 
-// Provides control sap.m.FeedInput.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/HTML', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, HTML, IconPool) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/IconPool",
+	"sap/m/TextArea",
+	"sap/m/Button",
+	"./FeedInputRenderer"
+],
+	function(jQuery, library, Control, IconPool, TextArea, Button, FeedInputRenderer) {
 	"use strict";
 
-
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new FeedInput.
@@ -31,6 +39,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	var FeedInput = Control.extend("sap.m.FeedInput", /** @lends sap.m.FeedInput.prototype */ { metadata : {
 
 		library : "sap.m",
+		designtime: "sap/m/designtime/FeedInput.designtime",
 		properties : {
 
 			/**
@@ -139,7 +148,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	FeedInput.prototype.setIconDensityAware = function (iIconDensityAware) {
 		this.setProperty("iconDensityAware", iIconDensityAware, true);
-		if (this._getImageControl() instanceof sap.m.Image) {
+		var fnClass = sap.ui.require("sap/m/Image");
+		if (this._getImageControl() instanceof fnClass) {
 			this._getImageControl().setDensityAware(iIconDensityAware);
 		}
 		return this;
@@ -181,10 +191,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Access and initialization for the text area
+	 * @returns {sap.m.TextArea} The text area
 	 */
 	FeedInput.prototype._getTextArea = function () {
 		if (!this._oTextArea) {
-			this._oTextArea = new sap.m.TextArea(this.getId() + "-textArea", {
+			this._oTextArea = new TextArea(this.getId() + "-textArea", {
 				rows : 3,
 				value : null,
 				maxLength : this.getMaxLength(),
@@ -203,15 +214,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Access and initialization for the button
+	 * @returns {sap.m.Button} The button
 	 */
 	FeedInput.prototype._getPostButton = function () {
 		if (!this._oButton) {
-			this._oButton = new sap.m.Button(this.getId() + "-button", {
+			this._oButton = new Button(this.getId() + "-button", {
 				enabled : false,
-				type : sap.m.ButtonType.Default,
+				type : ButtonType.Default,
 				icon : "sap-icon://feeder-arrow",
 				tooltip : this.getButtonTooltip(),
-				press : jQuery.proxy(function (oEvt) {
+				press : jQuery.proxy(function () {
 					this._oTextArea.focus();
 					this.firePost({
 						value : this.getValue()
@@ -235,6 +247,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	/**
 	 * Verifies if the control is enabled or not
+	 * @returns {boolean} True if control is enabled
 	 */
 	FeedInput.prototype._isControlEnabled = function() {
 		var sValue = this.getValue();
@@ -245,6 +258,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Lazy load feed icon image.
 	 *
 	 * @private
+	 * @returns {sap.m.Image} The image control
 	 */
 	FeedInput.prototype._getImageControl = function() {
 
@@ -259,11 +273,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			},
 			aCssClasses = ['sapMFeedInImage'];
 
-		this._oImageControl = sap.m.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
+		this._oImageControl = library.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
 
 		return this._oImageControl;
 	};
 
 	return FeedInput;
 
-}, /* bExport= */ true);
+});

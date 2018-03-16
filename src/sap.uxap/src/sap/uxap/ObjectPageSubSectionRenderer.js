@@ -12,7 +12,7 @@ sap.ui.define(function () {
 	var ObjectPageSubSectionRenderer = {};
 
 	ObjectPageSubSectionRenderer.render = function (oRm, oControl) {
-		var aActions, bHasTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft;
+		var aActions, bHasTitle, bHasTitleLine, bHasActions, bUseTitleOnTheLeft, bHasVisibleActions;
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
 			return;
@@ -22,6 +22,7 @@ sap.ui.define(function () {
 		bHasActions = aActions.length > 0;
 		bHasTitle = (oControl._getInternalTitleVisible() && (oControl.getTitle().trim() !== ""));
 		bHasTitleLine = bHasTitle || bHasActions;
+		bHasVisibleActions = oControl._hasVisibleActions();
 
 		oRm.write("<div ");
 		oRm.writeAttribute("role", "region");
@@ -35,6 +36,10 @@ sap.ui.define(function () {
 		if (bHasTitleLine) {
 			oRm.write("<div");
 			oRm.addClass("sapUxAPObjectPageSubSectionHeader");
+
+			if (!bHasTitle && !bHasVisibleActions) {
+				oRm.addClass("sapUiHidden");
+			}
 
 			bUseTitleOnTheLeft = oControl._getUseTitleOnTheLeft();
 			if (bUseTitleOnTheLeft && oControl._onDesktopMediaRange()) {
@@ -78,6 +83,7 @@ sap.ui.define(function () {
 		oRm.write("<div");
 		oRm.addClass("ui-helper-clearfix");
 		oRm.addClass("sapUxAPBlockContainer");
+		oRm.addClass("sapUxAPBlockContainer" + oControl._getMediaString());
 		oRm.writeClasses();
 		if (oControl._isHidden){
 			oRm.addStyle("display", "none");

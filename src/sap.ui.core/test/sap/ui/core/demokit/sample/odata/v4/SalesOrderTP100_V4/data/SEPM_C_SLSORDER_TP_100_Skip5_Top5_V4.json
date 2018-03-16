@@ -1,0 +1,225 @@
+{
+	"@odata.context" : "$metadata#SEPM_C_SLSORDER_TP_100(Customer,OverallStatus,SalesOrder,SalesOrderUUID,_Item(GrossAmount,Product,SalesOrder,SalesOrderItem,SalesOrderItemUUID,SalesOrderUUID))",
+	"@odata.metadataEtag" : "W/\"20170704153235\"",
+	"@odata.count" : "10",
+	"value" : [{
+		"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+		"SalesOrder" : "500000005",
+		"Customer" : "100000008",
+		"OverallStatus" : "N",
+		"_Item" : [{
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706606433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+			"SalesOrder" : "500000005",
+			"SalesOrderItem" : "60",
+			"Product" : "HT-1112",
+			"GrossAmount" : "92.82"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa7065fe433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+			"SalesOrder" : "500000005",
+			"SalesOrderItem" : "20",
+			"Product" : "HT-1501",
+			"GrossAmount" : "3570000"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706600433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+			"SalesOrder" : "500000005",
+			"SalesOrderItem" : "30",
+			"Product" : "HT-1502",
+			"GrossAmount" : "59500.00"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa7065fc433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+			"SalesOrder" : "500000005",
+			"SalesOrderItem" : "10",
+			"Product" : "HT-1500",
+			"GrossAmount" : "5950.00"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706602433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+			"SalesOrder" : "500000005",
+			"SalesOrderItem" : "40",
+			"Product" : "HT-1110",
+			"GrossAmount" : "31.77"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706604433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+			"SalesOrder" : "500000005",
+			"SalesOrderItem" : "50",
+			"Product" : "HT-1111",
+			"GrossAmount" : "16.42"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706608433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+			"SalesOrder" : "500000005",
+			"SalesOrderItem" : "70",
+			"Product" : "HT-1113",
+			"GrossAmount" : "8.21"
+		}]
+	}, {
+		"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a0433",
+		"SalesOrder" : "500000006",
+		"Customer" : "100000003",
+		"OverallStatus" : "N",
+		"_Item" : [{
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70660e433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a0433",
+			"SalesOrder" : "500000006",
+			"SalesOrderItem" : "30",
+			"Product" : "HT-1107",
+			"GrossAmount" : "106.74"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70660a433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a0433",
+			"SalesOrder" : "500000006",
+			"SalesOrderItem" : "10",
+			"Product" : "HT-1105",
+			"GrossAmount" : "103.53"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70660c433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a0433",
+			"SalesOrder" : "500000006",
+			"SalesOrderItem" : "20",
+			"Product" : "HT-1106",
+			"GrossAmount" : "40.46"
+		}]
+	}, {
+		"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+		"SalesOrder" : "500000007",
+		"Customer" : "100000004",
+		"OverallStatus" : "N",
+		"_Item" : [{
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706614433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+			"SalesOrder" : "500000007",
+			"SalesOrderItem" : "30",
+			"Product" : "HT-1032",
+			"GrossAmount" : "410.55"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706610433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+			"SalesOrder" : "500000007",
+			"SalesOrderItem" : "10",
+			"Product" : "HT-1030",
+			"GrossAmount" : "547.40"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706612433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+			"SalesOrder" : "500000007",
+			"SalesOrderItem" : "20",
+			"Product" : "HT-1031",
+			"GrossAmount" : "1017.45"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706616433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+			"SalesOrder" : "500000007",
+			"SalesOrderItem" : "40",
+			"Product" : "HT-1035",
+			"GrossAmount" : "949.62"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706618433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+			"SalesOrder" : "500000007",
+			"SalesOrderItem" : "50",
+			"Product" : "HT-1036",
+			"GrossAmount" : "1023.40"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70661a433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+			"SalesOrder" : "500000007",
+			"SalesOrderItem" : "60",
+			"Product" : "HT-1037",
+			"GrossAmount" : "1463.70"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70661c433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+			"SalesOrder" : "500000007",
+			"SalesOrderItem" : "70",
+			"Product" : "HT-1000",
+			"GrossAmount" : "3412.92"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70661e433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+			"SalesOrder" : "500000007",
+			"SalesOrderItem" : "80",
+			"Product" : "HT-1001",
+			"GrossAmount" : "1486.31"
+		}]
+	}, {
+		"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+		"SalesOrder" : "500000008",
+		"Customer" : "100000009",
+		"OverallStatus" : "N",
+		"_Item" : [{
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706622433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+			"SalesOrder" : "500000008",
+			"SalesOrderItem" : "20",
+			"Product" : "HT-1061",
+			"GrossAmount" : "16.66"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706624433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+			"SalesOrder" : "500000008",
+			"SalesOrderItem" : "30",
+			"Product" : "HT-1062",
+			"GrossAmount" : "26.18"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706620433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+			"SalesOrder" : "500000008",
+			"SalesOrderItem" : "10",
+			"Product" : "HT-1060",
+			"GrossAmount" : "21.42"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706626433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+			"SalesOrder" : "500000008",
+			"SalesOrderItem" : "40",
+			"Product" : "HT-1063",
+			"GrossAmount" : "49.98"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706628433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+			"SalesOrder" : "500000008",
+			"SalesOrderItem" : "50",
+			"Product" : "HT-1064",
+			"GrossAmount" : "19.04"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70662a433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+			"SalesOrder" : "500000008",
+			"SalesOrderItem" : "60",
+			"Product" : "HT-1065",
+			"GrossAmount" : "61.88"
+		}]
+	}, {
+		"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a6433",
+		"SalesOrder" : "500000009",
+		"Customer" : "100000000",
+		"OverallStatus" : "N",
+		"_Item" : [{
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706630433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a6433",
+			"SalesOrder" : "500000009",
+			"SalesOrderItem" : "30",
+			"Product" : "HT-1042",
+			"GrossAmount" : "830.62"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70662c433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a6433",
+			"SalesOrder" : "500000009",
+			"SalesOrderItem" : "10",
+			"Product" : "HT-1040",
+			"GrossAmount" : "1975.40"
+		}, {
+			"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70662e433",
+			"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a6433",
+			"SalesOrder" : "500000009",
+			"SalesOrderItem" : "20",
+			"Product" : "HT-1041",
+			"GrossAmount" : "1166.20"
+		}]
+	}]
+}

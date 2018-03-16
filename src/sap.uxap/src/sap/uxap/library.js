@@ -5,7 +5,19 @@
 /**
  * Initialization Code and shared classes of library sap.uxap.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "sap/m/library", "sap/ui/layout/library"], function (jQuery, Core, library) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/core/Core",
+	"sap/ui/base/DataType",
+	"sap/ui/Device",
+	"sap/m/library",
+	"sap/ui/layout/library"
+], function(
+	jQuery,
+	Core,
+	DataType,
+	Device
+) {
 	"use strict";
 
 	/**
@@ -20,6 +32,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	sap.ui.getCore().initLibrary({
 		name: "sap.uxap",
 		dependencies: ["sap.ui.core", "sap.m", "sap.ui.layout"],
+		designtime: "sap/uxap/designtime/library.designtime",
 		types: [
 			"sap.uxap.BlockBaseColumnLayout",
 			"sap.uxap.ObjectPageConfigurationMode",
@@ -28,13 +41,18 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 			"sap.uxap.ObjectPageSubSectionLayout",
 			"sap.uxap.ObjectPageSubSectionMode"
 		],
-		interfaces: [],
+		interfaces: [
+			"sap.uxap.IHeaderTitle",
+			"sap.uxap.IHeaderContent"
+		],
 		controls: [
 			"sap.uxap.AnchorBar",
 			"sap.uxap.BlockBase",
 			"sap.uxap.BreadCrumbs",
 			"sap.uxap.HierarchicalSelect",
 			"sap.uxap.ObjectPageHeader",
+			"sap.uxap.ObjectPageDynamicHeaderTitle",
+			"sap.uxap.ObjectPageDynamicHeaderContent",
 			"sap.uxap.ObjectPageHeaderActionButton",
 			"sap.uxap.ObjectPageHeaderContent",
 			"sap.uxap.ObjectPageLayout",
@@ -49,41 +67,12 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 		version: "${version}",
 		extensions: {
 			flChangeHandlers: {
-				"sap.uxap.ObjectPageLayout": {
-					"moveControls": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
-						}
-					}
-				},
-				"sap.uxap.ObjectPageSection": {
-					"hideControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
-						}
-					},
-					"unhideControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
-						}
-					},
-					"stashControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
-						}
-					},
-					"unstashControl": {
-						"changeHandler": "default",
-						"layers": {
-							"USER": true
-						}
-					}
-				},
-				"sap.ui.core._StashedControl" : {
+				"sap.uxap.ObjectPageHeader": "sap/uxap/flexibility/ObjectPageHeader",
+				"sap.uxap.ObjectPageLayout": "sap/uxap/flexibility/ObjectPageLayout",
+				"sap.uxap.ObjectPageSection": "sap/uxap/flexibility/ObjectPageSection",
+				"sap.uxap.ObjectPageSubSection": "sap/uxap/flexibility/ObjectPageSubSection",
+				"sap.uxap.ObjectPageDynamicHeaderTitle": "sap/uxap/flexibility/ObjectPageDynamicHeaderTitle",
+				"sap.ui.core._StashedControl": {
 					"unstashControl": {
 						"changeHandler": "default",
 						"layers": {
@@ -91,30 +80,34 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 						}
 					}
 				}
+			},
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				publicRules:true
 			}
 		}
 	});
 
 	/**
-	 * @class Used by the BlockBase control to define how many columns should it be assigned by the objectPageSubSection.
+	 * @class Used by the <code>BlockBase</code> control to define how many columns should it be assigned by the <code>objectPageSubSection</code>.
 	 *     The allowed values can be auto (subsection assigned a number of columns based on the parent objectPageLayout subsectionLayout property), 1, 2 or 3
-	 *     (This may not be a valid value for some subSectionLayout, for example asking for 3 columns in a 2 column layout would raise warnings).
+	 *     (This may not be a valid value for some <code>subSectionLayout</code>, for example, asking for 3 columns in a 2 column layout would raise warnings).
 	 *
 	 * @static
 	 * @public
 	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.uxap.BlockBaseColumnLayout = sap.ui.base.DataType.createType('sap.uxap.BlockBaseColumnLayout', {
+	sap.uxap.BlockBaseColumnLayout = DataType.createType('sap.uxap.BlockBaseColumnLayout', {
 			isValid: function (vValue) {
 				return /^(auto|[1-4]{1})$/.test(vValue);
 			}
 
 		},
-		sap.ui.base.DataType.getType('string')
+		DataType.getType('string')
 	);
 
 	/**
-	 * Used by the BlockBase control to define if it should do automatic adjustment of its nested forms.
+	 * Used by the <code>BlockBase</code> control to define if it should do automatic adjustment of its nested forms.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -142,7 +135,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	};
 
 	/**
-	 * Used by the sap.uxap.component.Component how to initialize the ObjectPageLayout sections and subsections.
+	 * Used by the <code>sap.uxap.component.Component</code> how to initialize the <code>ObjectPageLayout</code> sections and subsections.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -152,20 +145,20 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	sap.uxap.ObjectPageConfigurationMode = {
 
 		/**
-		 * Determines the JSON url
+		 * Determines the JSON URL.
 		 * @public
 		 */
 		JsonURL: "JsonURL",
 
 		/**
-		 * Determines the JSON model
+		 * Determines the JSON model.
 		 * @public
 		 */
 		JsonModel: "JsonModel"
 
 	};
 	/**
-	 * Used by the ObjectPageHeader control to define which design to use.
+	 * Used by the <code>ObjectPageHeader</code> control to define which design to use.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -175,20 +168,20 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	sap.uxap.ObjectPageHeaderDesign = {
 
 		/**
-		 * Light theme for the ObjectPageHeader.
+		 * Light theme for the <code>ObjectPageHeader</code>.
 		 * @public
 		 */
 		Light: "Light",
 
 		/**
-		 * Dark theme for the ObjectPageHeader.
+		 * Dark theme for the <code>ObjectPageHeader</code>.
 		 * @public
 		 */
 		Dark: "Dark"
 
 	};
 	/**
-	 * Used by the ObjectPageHeader control to define which shape to use for the image.
+	 * Used by the <code>ObjectPageHeader</code> control to define which shape to use for the image.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -198,20 +191,20 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	sap.uxap.ObjectPageHeaderPictureShape = {
 
 		/**
-		 * Circle shape for the images in the ObjectPageHeader.
+		 * Circle shape for the images in the <code>ObjectPageHeader</code>.
 		 * @public
 		 */
 		Circle: "Circle",
 
 		/**
-		 * Square shape for the images in the ObjectPageHeader.
+		 * Square shape for the images in the <code>ObjectPageHeader</code>.
 		 * @public
 		 */
 		Square: "Square"
 
 	};
 	/**
-	 * Used by the ObjectPagSubSection control to define which layout to apply.
+	 * Used by the <code>ObjectPagSubSection</code> control to define which layout to apply.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -221,20 +214,20 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	sap.uxap.ObjectPageSubSectionLayout = {
 
 		/**
-		 * TitleOnTop: title and actions on top of the block area.
+		 * Title and actions on top of the block area.
 		 * @public
 		 */
 		TitleOnTop: "TitleOnTop",
 
 		/**
-		 * TitleOnLeft: title and actions on the left, inside the block area.
+		 * Title and actions on the left, inside the block area.
 		 * @public
 		 */
 		TitleOnLeft: "TitleOnLeft"
 
 	};
 	/**
-	 * Used by the ObjectPageLayout control to define which layout to use (either Collapsed or Expanded).
+	 * Used by the <code>ObjectPageLayout</code> control to define which layout to use (either Collapsed or Expanded).
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -244,13 +237,13 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	sap.uxap.ObjectPageSubSectionMode = {
 
 		/**
-		 * Collapsed mode of display of the ObjectPageLayout.
+		 * Collapsed mode of display of the <code>ObjectPageLayout</code>.
 		 * @public
 		 */
 		Collapsed: "Collapsed",
 
 		/**
-		 * Expanded mode of displaying the ObjectPageLayout.
+		 * Expanded mode of displaying the <code>ObjectPageLayout</code>.
 		 * @public
 		 */
 		Expanded: "Expanded"
@@ -258,7 +251,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	};
 
 	/**
-	 * Used by the ObjectSectionBase control to define the importance of the content contained in it.
+	 * Used by the <code>ObjectSectionBase</code> control to define the importance of the content contained in it.
 	 *
 	 * @author SAP SE
 	 * @enum {string}
@@ -269,19 +262,19 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	sap.uxap.Importance = {
 
 		/**
-		 * Low importance of the content
+		 * Low importance of the content.
 		 * @public
 		 */
 		Low: "Low",
 
 		/**
-		 * Medium importance of the content
+		 * Medium importance of the content.
 		 * @public
 		 */
 		Medium: "Medium",
 
 		/**
-		 * High importance of the content
+		 * High importance of the content.
 		 * @public
 		 */
 		High: "High"
@@ -300,7 +293,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 	sap.uxap.Utilities = {
 
 		/**
-		 * Returns the reference to the ObjectPageLayout for a given control
+		 * Returns the reference to the <code>ObjectPageLayout</code> for a given control.
 		 * @static
 		 * @param {sap.ui.core.Control} oControl - the control to find ObjectPageLayout for
 		 * @private
@@ -315,7 +308,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 			return oControl;
 		},
 		isPhoneScenario: function (oRange) {
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				return true;
 			}
 
@@ -329,6 +322,56 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Core", "sap/ui/core/library", "
 		}
 	};
 
+	/**
+	 *
+	 * Interface for controls that are eligible for the <code>headerTitle</code> aggregation
+	 * of the <code>{@link sap.uxap.ObjectPageLayout}</code>.
+	 *
+	 * Controls that implement this interface:
+	 * <ul>
+	 * <li><code>{@link sap.uxap.ObjectPageHeader}</code> - <code>ObjectPageLayout</code>'s classic header</code></li>
+	 * <li><code>{@link sap.uxap.ObjectPageDynamicHeaderTitle}</code> - <code>ObjectPageLayout</code>'s dynamic header</code></li>
+	 * </ul>
+	 *
+	 * For more information on the types of header available for the <code>{@link sap.uxap.ObjectPageLayout ObjectPageLayout}</code>,
+	 * see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}.
+	 *
+	 * For details regarding the differences and similarities between the available headers,
+	 * see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}.
+	 *
+	 * @since 1.52
+	 * @name sap.uxap.IHeaderTitle
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
+	 */
+
+	/**
+	 *
+	 * Interface for controls that are eligible for the <code>headerContent</code> aggregation
+	 * of the <code>{@link sap.uxap.ObjectPageLayout}</code>.
+	 *
+	 * Controls that implement this interface:
+	 * <ul>
+	 * <li><code>{@link sap.uxap.ObjectPageHeaderContent}</code> - <code>ObjectPageLayout</code>'s classic header content</code></li>
+	 * <li><code>{@link sap.uxap.ObjectPageDynamicHeaderContent}</code> - <code>ObjectPageLayout</code>'s dynamic header content</code></li>
+	 * </ul>
+	 *
+	 * For more information on the types of header available for the <code>{@link sap.uxap.ObjectPageLayout ObjectPageLayout}</code>,
+	 * see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}.
+	 *
+	 * For details regarding the differences and similarities between the available headers,
+	 * see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}.
+	 *
+	 * @since 1.52
+	 * @name sap.uxap.IHeaderContent
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
+	 */
+
 	return sap.uxap;
 
-}, /* bExport= */ true);
+});

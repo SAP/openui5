@@ -4,7 +4,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller'],
 
 	var CController = Controller.extend("sap.m.sample.BusyDialogLight.C", {
 		handlePress: function (oEvent) {
-			var oDialog = this.getView().byId("BusyDialog");
+			var oDialog = this.byId("BusyDialog");
 			oDialog.open();
 
 			jQuery.sap.delayedCall(3000, this, function () {

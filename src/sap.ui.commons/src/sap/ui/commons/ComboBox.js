@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.ComboBox.
-sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Popup', 'jquery.sap.strings'],
-	function(jQuery, TextField, library, Popup/* , jQuerySap */) {
+sap.ui.define([
+    'jquery.sap.global',
+    './TextField',
+    './library',
+    'sap/ui/core/Popup',
+    "./ComboBoxRenderer",
+    'jquery.sap.strings'
+],
+	function(jQuery, TextField, library, Popup, ComboBoxRenderer /*, jQuerySap */) {
 	"use strict";
 
 
@@ -26,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/Pop
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.ComboBox</code> control.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.ComboBox}
 	 * @alias sap.ui.commons.ComboBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

@@ -1,7 +1,6 @@
 {
-	"_version": "1.1.0",
+	"_version": "1.8.0",
 	"sap.app": {
-		"_version": "1.1.0",
 		"id": "sap.ui.demo.nav",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
@@ -23,18 +22,20 @@
 		}
 	},
 	"sap.ui": {
-		"_version": "1.1.0",
 		"technology": "UI5",
 		"deviceTypes": {
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": ["sap_belize"]
+		}
   	},
 	"sap.ui5": {
-		"_version": "1.1.0",
-		"rootView": "sap.ui.demo.nav.view.App",
+		"rootView": {
+			"viewName": "sap.ui.demo.nav.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
 		"dependencies": {
 			"minUI5Version": "1.30",
 			"libs": {
@@ -62,7 +63,8 @@
 				"transition": "slide",
 				"bypassed": {
 					"target": "notFound"
-				}
+				},
+				"async": true
 			},
 			"routes": [{
 				"pattern": "",
@@ -83,37 +85,43 @@
 			}],
 			"targets": {
 				"home": {
+					"viewId": "home",
 					"viewName": "Home",
 					"viewLevel" : 1
 				},
 				"notFound": {
+					"viewId": "notFound",
 					"viewName": "NotFound",
 					"transition": "show"
 				},
 				"employees": {
+					"viewId": "employeeList",
 					"viewPath": "sap.ui.demo.nav.view.employee",
 					"viewName": "EmployeeList",
 					"viewLevel" : 2
 				},
 				"employee": {
+					"viewId": "employee",
 					"viewName": "employee.Employee",
 					"viewLevel" : 3
 				},
 				"employeeResume": {
+					"viewId": "resume",
 					"viewName": "employee.Resume",
 					"viewLevel" : 4,
 					"transition": "flip"
 				},
 				"resumeTabHobbies": {
 					"parent": "employeeResume",
+					"viewId": "resumeHobbies",
 					"viewPath": "sap.ui.demo.nav.view.employee",
 					"viewName": "ResumeHobbies",
-					"viewId": "thisIsMyCustomIdToBeUsedForResumeHobbies",
 					"controlId": "hobbiesTab",
 					"controlAggregation": "content"
 				},
 				"resumeTabNotes": {
 					"parent": "employeeResume",
+					"viewId": "resumeNotes",
 					"viewPath": "sap.ui.demo.nav.view.employee",
 					"viewName": "ResumeNotes",
 					"controlId": "notesTab",

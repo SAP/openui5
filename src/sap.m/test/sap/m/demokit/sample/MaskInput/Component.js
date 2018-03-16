@@ -4,7 +4,11 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 
 		return UIComponent.extend("sap.m.sample.MaskInput.Component", {
 			metadata : {
-				rootView : "sap.m.sample.MaskInput.Page",
+				rootView : {
+					"viewName": "sap.m.sample.MaskInput.Page",
+					"type": "XML",
+					"async": true
+				},
 				dependencies : {
 					libs : [
 						"sap.m"

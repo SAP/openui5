@@ -5,196 +5,187 @@
 /*global performance */
 
 /**
- * Creates an Analyser that async runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.
- * THe analyser can be used to update the UI while a task is running with the current progress
+ * Creates an Analyzer that asynchronously runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.
+ * runs tasks added by addTask function. Analysis can be started, stopped, restarted, paused and continued.
+ * The analyzer can be used to update the UI with the current progress of a task while it's running.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/base/Object"],
-	function (jQuery, BaseObject) {
+sap.ui.define(["jquery.sap.global", "sap/ui/support/supportRules/IssueManager","sap/ui/support/supportRules/Constants"],
+	function (jQuery, IssueManager, Constants) {
 		"use strict";
 
 		/**
+		 * @classdesc
+		 * <h3>Overview</h3>
 		 * Analyzer class that runs tasks. A Task runs a function for every entry in its object array.
 		 * The Analyzer counts the task objects and calculates the percentages.
+		 * <h3>Usage</h3>
 		 * With the start, restart, stop and pause methods the analyzer can be controlled.
-		 * While started it walks async through the list of object for each task and completes them.
-		 *
-		 *
+		 * While running it asynchronously, it selects objects from the list of each task and completes them.
 		 * @private
+		 * @class sap.ui.support.Analyzer
 		 */
 		var Analyzer = function () {
+			this.dStartedAt = null;
+			this.dFinishedAt = null;
+			this.iElapsedTime = 0;
+			this._iAllowedTimeout = 10000; //ms
 			this.reset();
 		};
 
 		/**
-		 * Returns the total progress for all tasks with all their objects.
-		 * @returns {int} total progress for all tasks with all their objects.
+		 * Resets the analyzer and clears all tasks.
 		 *
 		 * @private
-		 * @experimental
-		 */
-		Analyzer.prototype.getProgress = function () {
-			return this._iTotalProgress;
-		};
-
-		/**
-		 * Adds a task to with a name to the analyzer.
-		 * The fnTaskProcessor function is called if the task is run for every object in aObjects.
-		 *
-		 * @param sTaskName
-		 * @param fnTaskProcessor
-		 * @param aObjects
-		 */
-		Analyzer.prototype.addTask = function (sTaskName, fnTaskProcessor, aObjects) {
-			var oTask = {
-				name: sTaskName,
-				handler: fnTaskProcessor,
-				objects: jQuery.extend(true, {arr: aObjects},{}).arr,
-				progress: 0
-			};
-			this._aTasks.push(oTask);
-			this._iTotalSteps = this._iTotalSteps + oTask.objects.length;
-		};
-
-		/**
-		 * Resets the analyzer and clears all tasks
-		 * @private
+		 * @returns {void}
 		 */
 		Analyzer.prototype.reset = function () {
 			this._iTotalProgress = 0;
-			this._iTotalCompletedSteps = 0;
-			this._iTotalSteps = 0;
-			this._aTasks = [];
-			this._oCurrent = {};
+			this._iCompletedRules = 0;
+			this._iTotalRules = 0;
 			this._bRunning = false;
-			this._iStartTS = 0;
-			this.startedAt = null;
-			this.finishedAt = null;
-			this.elapsedTime = null;
+			this._aRulePromices = [];
 		};
 
 		/**
-		 * Returns whether the Analyzer is currently running
-		 * @returns
+		 * Returns whether the Analyzer is currently running.
+		 *
+		 * @public
+		 * @returns {boolean} Check if the Analyzer is still running
 		 */
 		Analyzer.prototype.running = function () {
 			return this._bRunning;
 		};
 
 		/**
-		 * Starts the analyzer to run all tasks
-		 * @private
+		 * Starts the analyzer to run all rules.
+		 *
+		 * @public
+		 * @param {array} aRules Selected rules for execution
+		 * @param {object} oCoreFacade Metadata, Models, UI areas and Components of the Core object
+		 * @param {object} oExecutionScope selected execution scope from user in UI
+		 * @returns {Promise} When all rules are analyzed
 		 */
-		Analyzer.prototype.start = function (resolveFn) {
-			var that = this;
-			// resolve() is called when the analyzer finishes all tasks.
-			// It is called inside _done function.
-			that.resolve = resolveFn;
-			that.startedAt = new Date();
-			var progressPromise = new Promise(
-				function (resolve, reject) {
-					that._iStartTS = performance.now();
-					that._start(undefined, resolve);
-				}
-			);
+		Analyzer.prototype.start = function (aRules, oCoreFacade, oExecutionScope) {
+			var oIssueManagerFacade,
+				that = this;
 
-			return progressPromise;
+			this.dStartedAt = new Date();
+			this._iTotalRules = aRules.length;
+			this._bRunning = true;
+
+			aRules.forEach(function (oRule) {
+				that._aRulePromices.push(new Promise(function (fnResolve) {
+					try {
+						oIssueManagerFacade = IssueManager.createIssueManagerFacade(oRule);
+						if (oRule.async) {
+							that._runAsyncRule(oIssueManagerFacade, oCoreFacade, oExecutionScope, oRule, fnResolve);
+						} else {
+							oRule.check(oIssueManagerFacade, oCoreFacade, oExecutionScope);
+							fnResolve();
+							that._updateProgress();
+						}
+
+					} catch (eRuleExecException) {
+						that._handleException(eRuleExecException, oRule.id, fnResolve);
+					}
+				}));
+			});
+
+			return Promise.all(this._aRulePromices).then(function () {
+				that.reset();
+				that.dFinishedAt = new Date();
+				that.iElapsedTime = that.dFinishedAt.getTime() - that.dStartedAt.getTime(); // In milliseconds
+			});
 		};
 
 		/**
-		 * Internal method to start the next run on the next object.
-		 * @param {boolean} bContinue true if called via timer
-		 * @param {function} fnResolve resolve function
+		 * Handles exceptions in async/sync rule executions.
 		 *
 		 * @private
-		 * @experimental
+		 * @param {(object|string)} eRuleException The exception object
+		 * @param {string} sRuleId The ID of the rule
+		 * @param {function} fnResolve the resolve function of the promise
 		 */
-		Analyzer.prototype._start = function (bContinue, fnResolve) {
-			if (this._bRunning && !bContinue) {
-				return;
-			}
+		Analyzer.prototype._handleException = function (eRuleException, sRuleId, fnResolve) {
+			var sText = eRuleException.message || eRuleException;
+			var sMessage = "[" + Constants.SUPPORT_ASSISTANT_NAME + "] Error while execution rule \"" + sRuleId +
+				"\": " + sText;
+			jQuery.sap.log.error(sMessage);
+			fnResolve();
+			this._updateProgress();
+		};
 
-			if (this._oCurrent.task) {
-				if (bContinue) {
-					this._next(fnResolve);
-				}
+		/**
+		 * Updates ProgressBar in Main panel of Support Assistant.
+		 *
+		 * @private
+		 */
+		Analyzer.prototype._updateProgress = function () {
+			this._iCompletedRules++;
+			this._iTotalProgress = Math.ceil( this._iCompletedRules / this._iTotalRules * 100 );
 
-				return;
-			}
-
-			for (var i = 0; i < this._aTasks.length; i++) {
-				if (this._aTasks[i].progress < 100) {
-					this._oCurrent = {
-						task: this._aTasks[i],
-						index: -1
-					};
-
-					this._bRunning = true;
-					jQuery.sap.delayedCall(1, this, "_next", [fnResolve]);
-					break;
-				} else {
-					this._bRunning = false;
-				}
+			if (this.onNotifyProgress) {
+				this.onNotifyProgress(this._iTotalProgress);
 			}
 		};
 
 		/**
-		 * Processes the next object in the current task
+		 * Analyzes async rules.
 		 *
-		 * @param {function} fnResolve resolves promise to notify of finished state
+		 * @param {object} oIssueManagerFacade instance of the IssueManagerFacade
+		 * @param {object} oCoreFacade Metadata, Models, UI areas and Components of the Core object
+		 * @param {object} oExecutionScope selected execution scope from user in UI
+		 * @param {object} oRule support rule to be analyzed
+		 * @param {object} fnResolve inner resolve for async rules
+		 * @private
 		 */
-		Analyzer.prototype._next = function (fnResolve) {
-			if (!this._bRunning) {
-				return;
-			}
+		Analyzer.prototype._runAsyncRule = function (oIssueManagerFacade, oCoreFacade, oExecutionScope, oRule, fnResolve) {
+			var that = this,
+				bTimedOut = false;
 
-			var oCurrent = this._oCurrent;
+			var iTimeout = setTimeout(function () {
+				bTimedOut = true;
+				that._handleException("Check function timed out", oRule.id, fnResolve);
+			}, this._iAllowedTimeout);
 
-			if (oCurrent.task) {
-
-				oCurrent.index++;
-				if (oCurrent.task.objects[oCurrent.index]) {
-					this._iTotalCompletedSteps++;
-					this._iTotalProgress = Math.min(Math.ceil((this._iTotalCompletedSteps / this._iTotalSteps) * 100), 100);
-					oCurrent.task.handler(oCurrent.task.objects[oCurrent.index]);
-					oCurrent.task.progress = Math.min(Math.ceil((oCurrent.index / oCurrent.task.objects.length) * 100), 100);
-				} else {
-					//finished
-					oCurrent.task.progress = 100;
-					this._iTotalCompletedSteps = this._iTotalCompletedSteps + (oCurrent.task.objects.length - oCurrent.index);
-					this._iTotalProgress = Math.min(Math.ceil((this._iTotalCompletedSteps / this._iTotalSteps) * 100), 100);
-					this._oCurrent = {};
-					this.finishedAt = new Date();
-					this.elapsedTime = this.finishedAt.getTime() - this.startedAt.getTime(); // In milliseconds
-					// _bRunning needs to be set to false in order to have
-					// results ready for reading in promise of fnResolve
-					this._bRunning = false;
+			new Promise(function (fnRuleResolve) {
+				oRule.check(oIssueManagerFacade, oCoreFacade, oExecutionScope, fnRuleResolve);
+			}).then(function () {
+				if (!bTimedOut) {
+					clearTimeout(iTimeout);
 					fnResolve();
+					that._updateProgress();
 				}
-				if (performance.now() - this._iStartTS  > 100) {
-					jQuery.sap.delayedCall(5, this, "_start", [true, fnResolve]);
-					this._iStartTS = performance.now();
-				} else {
-					jQuery.sap.delayedCall(0, this, "_start", [true, fnResolve]);
+			}).catch(function (eRuleExecException) {
+				if (!bTimedOut) {
+					clearTimeout(iTimeout);
+					that._handleException(eRuleExecException, oRule.id, fnResolve);
 				}
-			}
+			});
 		};
 
+		/**
+		 * Get the elapsed time in the form of a string.
+		 *
+		 * @public
+		 * @returns {string} Returns the total elapsed time since the Analyzer has started
+		 */
 		Analyzer.prototype.getElapsedTimeString = function () {
-			if (!this.elapsedTime) {
-				return;
+			if (!this.iElapsedTime) {
+				return "";
 			}
 
 			var oDate = new Date(null);
 			oDate.setHours(0, 0, 0, 0);
-			oDate.setMilliseconds(this.elapsedTime);
-			var oBuffer = [
+			oDate.setMilliseconds(this.iElapsedTime);
+			var aBuffer = [
 				(oDate.getHours() < 10 ? "0" : "") + oDate.getHours(),
 				(oDate.getMinutes() < 10 ? "0" : "") + oDate.getMinutes(),
 				(oDate.getSeconds() < 10 ? "0" : "") + oDate.getSeconds(),
 				oDate.getMilliseconds()
 			];
 
-			return oBuffer.join(":");
+			return aBuffer.join(":");
 		};
 
 		return Analyzer;

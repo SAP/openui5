@@ -1,0 +1,12 @@
+<mvc:View
+	controllerName="sap.m.sample.TreeJSONLazyLoading.Page"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	 	<Tree
+		    id="Tree"
+		    items="{path: '/'}"
+			busyIndicatorDelay="0"
+			toggleOpenState="onToggleOpenState">
+			<StandardTreeItem title="{text}"/>
+		</Tree>
+</mvc:View>

@@ -31,6 +31,7 @@
 							</m:items>
 						</m:Select>
 						<m:ToggleButton text="Toggle Highlights" pressed="true" press="onHighlightToggle"/>
+						<m:ToggleButton text="Toggle Alternate Row Colors" press="onAlternateToggle"/>
 					</m:Toolbar>
 				</toolbar>
 				<rowSettingsTemplate>

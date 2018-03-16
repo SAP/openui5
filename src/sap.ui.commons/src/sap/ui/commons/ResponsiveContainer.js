@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.ResponsiveContainer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, library, Control, ResizeHandler) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/ResizeHandler',
+    "./ResponsiveContainerRenderer"
+],
+	function(jQuery, library, Control, ResizeHandler, ResponsiveContainerRenderer) {
 	"use strict";
 
 
@@ -24,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated as of version 1.38. Use a container by choice from the {@link sap.m} library, instead.
 	 * @alias sap.ui.commons.ResponsiveContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -128,7 +134,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
-	 * Resize handling
+	 * Resize handling.
+	 * @param {jQuery.Event} oEvent The fired event
 	 */
 	ResponsiveContainer.prototype.onresize = function(oEvent) {
 		var oRange = this.findMatchingRange(),

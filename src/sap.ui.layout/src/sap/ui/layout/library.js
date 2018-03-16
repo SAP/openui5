@@ -5,9 +5,10 @@
 /**
  * Initialization Code and shared classes of library sap.ui.layout.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
+sap.ui.define([
+	'sap/ui/base/DataType',
 	'sap/ui/core/library'], // library dependency
-	function(jQuery, DataType) {
+	function(DataType) {
 
 	"use strict";
 
@@ -25,7 +26,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.layout",
 		version: "${version}",
-		dependencies : ["sap.ui.core"],
+		dependencies: ["sap.ui.core"],
+		designtime: "sap/ui/layout/designtime/library.designtime",
 		types: [
 			"sap.ui.layout.BackgroundDesign",
 			"sap.ui.layout.GridIndent",
@@ -33,7 +35,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			"sap.ui.layout.GridSpan",
 			"sap.ui.layout.BlockBackgroundType",
 			"sap.ui.layout.form.GridElementCells",
-			"sap.ui.layout.form.SimpleFormLayout"
+			"sap.ui.layout.form.SimpleFormLayout",
+			"sap.ui.layout.form.ColumnsXL",
+			"sap.ui.layout.form.ColumnsL",
+			"sap.ui.layout.form.ColumnsM",
+			"sap.ui.layout.form.ColumnCells",
+			"sap.ui.layout.form.EmptyCells"
 		],
 		interfaces: [],
 		controls: [
@@ -53,6 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			"sap.ui.layout.form.Form",
 			"sap.ui.layout.form.FormLayout",
 			"sap.ui.layout.form.GridLayout",
+			"sap.ui.layout.form.ColumnLayout",
 			"sap.ui.layout.form.ResponsiveGridLayout",
 			"sap.ui.layout.form.ResponsiveLayout",
 			"sap.ui.layout.form.SimpleForm"
@@ -66,12 +74,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 			"sap.ui.layout.form.GridContainerData",
 			"sap.ui.layout.PaneContainer",
 			"sap.ui.layout.SplitPane",
-			"sap.ui.layout.form.GridElementData"
+			"sap.ui.layout.form.GridElementData",
+			"sap.ui.layout.form.ColumnElementData",
+			"sap.ui.layout.form.ColumnContainerData"
 		],
 		extensions: {
 			flChangeHandlers: {
+				"sap.ui.layout.BlockLayout": {
+					"moveControls": "default"
+				},
+				"sap.ui.layout.BlockLayoutRow": {
+					"moveControls": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.ui.layout.BlockLayoutCell": "sap/ui/layout/flexibility/BlockLayoutCell",
+				"sap.ui.layout.DynamicSideContent": {
+					"moveControls": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.ui.layout.form.SimpleForm": "sap/ui/layout/flexibility/SimpleForm",
 				"sap.ui.layout.Grid": {
+					"moveControls": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
+				"sap.ui.layout.FixFlex": {
 					"moveControls": "default",
 					"hideControl": "default",
 					"unhideControl": "default"
@@ -84,11 +113,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 					"hideControl": "default",
 					"unhideControl": "default"
 				},
+				"sap.ui.layout.Splitter": {
+					"moveControls": "default",
+					"hideControl": "default",
+					"unhideControl": "default"
+				},
 				"sap.ui.layout.VerticalLayout": {
 					"moveControls": "default",
 					"hideControl": "default",
 					"unhideControl": "default"
 				}
+			},
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				publicRules:true,
+				internalRules:true
 			}
 		}
 	});
@@ -207,6 +246,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		Light: "Light",
 		/**
 		 * Background with bright and dark background colors
+		 * @deprecated since 1.50
 		 * @public
 		 */
 		Mixed: "Mixed",
@@ -270,6 +310,120 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	};
 
 
+	/**
+	 * A string type that is used inside the BlockLayoutCell to set a predefined set of colors for the cells.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.48
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.BlockLayoutCellColorSet = {
+		/**
+		 * Color Set 1
+		 *
+		 * @public
+		 */
+		ColorSet1: "ColorSet1",
+		/**
+		 * Color Set 2
+		 *
+		 * @public
+		 */
+		ColorSet2: "ColorSet2",
+		/**
+		 * Color Set 3
+		 *
+		 * @public
+		 */
+		ColorSet3: "ColorSet3",
+		/**
+		 * Color Set 4
+		 *
+		 * @public
+		 */
+		ColorSet4: "ColorSet4",
+		/**
+		 * Color Set 5
+		 *
+		 * @public
+		 */
+		ColorSet5: "ColorSet5",
+		/**
+		 * Color Set 6
+		 *
+		 * @public
+		 */
+		ColorSet6: "ColorSet6",
+		/**
+		 * Color Set 7
+		 *
+		 * @public
+		 */
+		ColorSet7: "ColorSet7",
+		/**
+		 * Color Set 8
+		 *
+		 * @public
+		 */
+		ColorSet8: "ColorSet8",
+		/**
+		 * Color Set 9
+		 *
+		 * @public
+		 */
+		ColorSet9: "ColorSet9",
+		/**
+		 * Color Set 10
+		 *
+		 * @public
+		 */
+		ColorSet10: "ColorSet10",
+		/**
+		 * Color Set 11
+		 *
+		 * @public
+		 */
+		ColorSet11: "ColorSet11"
+	};
+
+		/**
+		 * A string type that is used inside the BlockLayoutCell to set a predefined set of color shades for the cells.
+		 * The colors are defined with sap.ui.layout.BlockLayoutCellColorSet. And this is for the shades only.
+		 *
+		 * @enum {string}
+		 * @public
+		 * @since 1.48
+		 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+		 */
+		sap.ui.layout.BlockLayoutCellColorShade = {
+			/**
+			 * Shade A
+			 *
+			 * @public
+			 */
+			ShadeA: "ShadeA",
+			/**
+			 * Shade B
+			 *
+			 * @public
+			 */
+			ShadeB: "ShadeB",
+			/**
+			 * Shade C
+			 *
+			 * @public
+			 */
+			ShadeC: "ShadeC",
+			/**
+			 * Shade D
+			 *
+			 * @public
+			 */
+			ShadeD: "ShadeD"
+		};
+
+
 	sap.ui.layout.form = sap.ui.layout.form || {};
 
 	/**
@@ -302,23 +456,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 	sap.ui.layout.form.SimpleFormLayout = {
 
 		/**
-		 * Uses the <code>ResponsiveLayout</code> to render the <code>SimpleForm</code>
+		 * Uses the <code>ResponsiveLayout</code> layout to render the <code>SimpleForm</code> control
 		 * @public
 		 */
 		ResponsiveLayout : "ResponsiveLayout",
 
 		/**
-		 * Uses the <code>GridLayout</code> to render the <code>SimpleForm</code>
+		 * Uses the <code>GridLayout</code> layout to render the <code>SimpleForm</code> control
 		 * @public
 		 */
 		GridLayout : "GridLayout",
 
 		/**
-		 * Uses the <code>ResponsiveGridLayout</code> to render the <code>SimpleForm</code>
+		 * Uses the <code>ResponsiveGridLayout</code> layout to render the <code>SimpleForm</code> control
 		 * @public
 		 * @since 1.16.0
 		 */
-		ResponsiveGridLayout : "ResponsiveGridLayout"
+		ResponsiveGridLayout : "ResponsiveGridLayout",
+
+		/**
+		 * Uses the <code>ColumnLayout</code> layout to render the <code>SimpleForm</code> control
+		 * @public
+		 * @since 1.56.0
+		 */
+		ColumnLayout : "ColumnLayout"
 
 	};
 
@@ -409,6 +570,132 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType',
 		 */
 		Begin : "Begin"
 	};
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many columns a <code>Form</code> control using
+	 * the <code>ColumnLayout</code> as layout can have if it has extra-large size
+	 *
+	 * Allowed values are numbers from 1 to 4.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.ColumnsXL = DataType.createType('sap.ui.layout.form.ColumnsXL', {
+		isValid : function(vValue) {
+			if (vValue > 0 && vValue <= 4) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many columns a <code>Form</code> control using
+	 * the <code>ColumnLayout</code> as layout can have if it has large size
+	 *
+	 * Allowed values are numbers from 1 to 3.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.ColumnsL = DataType.createType('sap.ui.layout.form.ColumnsL', {
+		isValid : function(vValue) {
+			if (vValue > 0 && vValue <= 3) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many columns a <code>Form</code> control using
+	 * the <code>ColumnLayout</code> as layout can have if it has medium size
+	 *
+	 * Allowed values are numbers from 1 to 2.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.ColumnsM = DataType.createType('sap.ui.layout.form.ColumnsM', {
+		isValid : function(vValue) {
+			if (vValue > 0 && vValue <= 2) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many cells a control inside of a column
+	 * of a <code>Form</code> control using the <code>ColumnLayout</code> control as layout can use.
+	 *
+	 * Allowed values are numbers from 1 to 12.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.ColumnCells = DataType.createType('sap.ui.layout.form.ColumnCells', {
+		isValid : function(vValue) {
+			if (vValue > 0 && vValue <= 12) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
+
+	/**
+	 * @classdesc An <code>int</code> type that defines how many cells beside the controls
+	 * inside of a column of a <code>Form</code> control using the <code>ColumnLayout</code> control as layout
+	 * are empty.
+	 *
+	 * Allowed values are numbers from 0 to 11.
+	 *
+	 * @final
+	 * @namespace
+	 * @public
+	 * @since 1.56.0
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.ui.layout.form.EmptyCells = DataType.createType('sap.ui.layout.form.EmptyCells', {
+		isValid : function(vValue) {
+			if (vValue >= 0 && vValue < 12) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	},
+	DataType.getType('int')
+	);
 
 	// factory for Form to create labels and buttons to be overwritten by commons and mobile library
 	if (!sap.ui.layout.form.FormHelper) {

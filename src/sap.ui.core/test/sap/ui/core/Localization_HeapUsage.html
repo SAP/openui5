@@ -4,10 +4,11 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta charset="utf-8">
 		<title>Heap Consumption of Resource Bundles</title>
-		<script src="../../../../resources/sap/ui/thirdparty/jquery.js"></script>
-		<script src="../../../../resources/sap/ui/thirdparty/URI.js"></script>
-		<script src="../../../../resources/sap/ui/Device.js"></script>
-		<script src="../../../../resources/jquery.sap.global.js" id="sap-ui-bootstrap"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/baseuri.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
+		<script src="../../../../resources/ui5loader.js"></script>
+		<script src="../../../../resources/ui5loader-autoconfig.js" id="sap-ui-bootstrap"></script>
 	</head>
 	<body id="content" class="sapUiBody">
 		<p>Each time the following button is pressed, a set of 9 message bundles will be loaded for the current locale.<p>
@@ -15,44 +16,48 @@
 		  in processing *.properties files</p>
 		<button id="readall">Read Bundles</button>
 		<script>
-		var data = [];
-		jQuery.sap.require("jquery.sap.script");
-		jQuery.sap.require("jquery.sap.properties");
-		jQuery.sap.require("jquery.sap.resources");
-		var sLocale = jQuery.sap.getUriParameters().get("sap-ui-language") || "";
+		sap.ui.require([
+			"jquery.sap.global",
+			"jquery.sap.script",
+			"jquery.sap.properties",
+			"jquery.sap.resources"
+		], function(jQuery) {
+			var data = [];
+			var sLocale = jQuery.sap.getUriParameters().get("sap-ui-language") || "";
 
-		function loadi18n(lib) {
-			var sUri = jQuery.sap.getModulePath(lib + '.messagebundle', '.properties');
-			return jQuery.sap.resources({
-				url: sUri,
-				locale: sLocale
+			function loadi18n(lib) {
+				var sUri = jQuery.sap.getModulePath(lib + '.messagebundle', '.properties');
+				return jQuery.sap.resources({
+					url: sUri,
+					locale: sLocale
+				});
+			}
+
+			// try to enforce code compilation
+			for ( var i = 0; i < 10; i++ ) {
+				loadi18n('sap.ui.commons');
+			}
+
+			jQuery('#readall').click(function() {
+
+				// the following libs represents a typical set of libraries used in a Fiori environment
+
+				// ---- openui5
+				data.push( loadi18n('sap.ui.core') ) ;
+				data.push( loadi18n('sap.ui.layout') ) ;
+				data.push( loadi18n('sap.ui.unified') ) ;
+				//data.push( loadi18n('sap.f') ) ; // no texts currently
+				data.push( loadi18n('sap.m') ) ;
+				data.push( loadi18n('sap.ui.table') ) ;
+				data.push( loadi18n('sap.uxap') ) ;
+
+				// ---- outside openui5 ---
+				data.push( loadi18n('sap.ui.comp') ) ;
+				data.push( loadi18n('sap.suite.ui.microchart') ) ;
+				data.push( loadi18n('sap.ui.generic.app') ) ;
+				//data.push( loadi18n('sap.ui.generic.template') ) ; // no texts currently
+
 			});
-		}
-
-		// try to enforce code compilation
-		for ( var i = 0; i < 10; i++ ) {
-			loadi18n('sap.ui.commons');
-		}
-
-		jQuery('#readall').click(function() {
-
-			// the following libs represents a typical set of libraries used in a Fiori environment
-
-			// ---- openui5
-			data.push( loadi18n('sap.ui.core') ) ;
-			data.push( loadi18n('sap.ui.layout') ) ;
-			data.push( loadi18n('sap.ui.unified') ) ;
-			//data.push( loadi18n('sap.f') ) ; // no texts currently
-			data.push( loadi18n('sap.m') ) ;
-			data.push( loadi18n('sap.ui.table') ) ;
-			data.push( loadi18n('sap.uxap') ) ;
-
-			// ---- outside openui5 ---
-			data.push( loadi18n('sap.ui.comp') ) ;
-			data.push( loadi18n('sap.suite.ui.microchart') ) ;
-			data.push( loadi18n('sap.ui.generic.app') ) ;
-			//data.push( loadi18n('sap.ui.generic.template') ) ; // no texts currently
-
 		});
 		</script>
 	</body>

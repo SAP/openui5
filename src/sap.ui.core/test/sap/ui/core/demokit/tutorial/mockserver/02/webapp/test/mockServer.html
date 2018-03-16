@@ -23,7 +23,10 @@
 					new Shell({
 						app: new sap.ui.core.ComponentContainer({
 							height : "100%",
-							name : "sap.ui.demo.MockServer"
+							name : "sap.ui.demo.MockServer",
+							settings : {
+								id : "MockServer"
+							}
 						})
 					}).placeAt("content");
 				});

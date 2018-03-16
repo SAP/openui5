@@ -1,0 +1,48 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested function: sap.m.getScrollDelegate
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>QUnit test: sap.m.getScrollDelegate</title>
+		<script src="../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-language="en"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-resourceroots='{
+					"local": "./",
+					"samples.scrollcomp": "./scrollcomp"
+				}'>
+		</script>
+		<link  href="../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen" >
+		<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<!--[if IE]>
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+		<![endif]-->
+		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script>
+			sinon.config.useFakeTimers = false;
+			QUnit.config.autostart = false;
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require(["local/LibraryGetScrollDelegate.qunit"], function() {
+					QUnit.start();
+				});
+			});
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<br>
+		<div id="area" style="height:500px;"></div>
+	</body>
+</html>

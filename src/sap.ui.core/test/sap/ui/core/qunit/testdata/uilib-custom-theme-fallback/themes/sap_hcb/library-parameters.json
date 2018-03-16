@@ -1,0 +1,13 @@
+{
+	"default": {
+		"sapUiTestLibTextColor": "#000000"
+	},
+	"scopes": {
+		"sapTestScope": {
+			"sapUiText": "#ffffff"
+		},
+		"sapTestScopePlus": {
+			"sapUiText": "#444444"
+		}
+	}
+}

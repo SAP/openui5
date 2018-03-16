@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'jquery.sap.trace'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.trace'],
+	function(jQuery, Device) {
 		"use strict";
 
 		/*global alert, confirm, performance */
@@ -270,15 +270,15 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.trace'],
 					jQuery.sap.log.info(tstmp, "", "E2ETraceLibIE");
 					return tstmp;
 				};
-				//check if browser supports PerfomanceTiming
+				//check if browser supports PerformanceTiming
 				if (window.performance && performance.timing && performance.timing.navigationStart) {
 					// handle browser dependencies in (hires) time stamps
-					if (sap.ui.Device.browser.chrome && sap.ui.Device.browser.version >= 49) {
+					if (Device.browser.chrome && Device.browser.version >= 49) {
 						getTstmp = function(tstmp) {
 							jQuery.sap.log.info(tstmp, "", "E2ETraceLibCR");
 							return performance.timing.navigationStart + tstmp;
 						};
-					} else if (sap.ui.Device.browser.firefox && sap.ui.Device.browser.version >= 48) {
+					} else if (Device.browser.firefox && Device.browser.version >= 48) {
 						getTstmp = function(tstmp) {
 							jQuery.sap.log.info(tstmp, "", "E2ETraceLibFF");
 							return performance.timing.navigationStart + tstmp;

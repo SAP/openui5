@@ -2,13 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 		"use strict";
 
 		/**
-		 * @class QuickViewPage renderer.
-		 * @static
+		 * QuickViewPage renderer.
+		 * @namespace
 		 */
 		var QuickViewPageRenderer = {};
 

@@ -1,0 +1,38 @@
+<mvc:View height="100%"
+	controllerName="sap.ui.fl.sample.variantmanagement.VariantManagement"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout" xmlns:m="sap.m"
+	xmlns="sap.ui.fl.variants">
+	<l:VerticalLayout>
+		<m:VBox fitContainer="true">
+			<m:HBox fitContainer="true">
+				<m:Button id="idModelChangeBtn" text="Toggle Context"
+					press="onVMIdChange" />
+				<m:Button id="idCallManageDialogBtn" text="open manage dialog"
+					press="onOpenMamageDialogBtn" />
+			</m:HBox>
+			<m:HBox fitContainer="true">
+				<m:Button id="idDestroyBtn" text="destroy VM" press="onDestroyVMBtn" />
+				<m:Button id="idMarkAsChangedBtn" text="Mark as Changed"
+					press="onMarkAsChanged" />
+				<m:Button id="idToggleErrorStateBtn" text="toggle error state"
+					press="onToggleErrorState" />					
+			</m:HBox>
+			<m:HBox fitContainer="true">			
+				<m:Button id="idToggleEditableVariantsBtn" text="toggle editable Variants via model"
+					press="onToggleEditableVariantsBtn" />
+				<m:Button id="idToggleEditableBtn" text="toggle editable Variants via Ctrl properties"
+					press="onToggleEditableBtn" />					
+				<m:Button id="idToggleFavoritesBtn" text="toggle show Favorites"
+					press="onToggleFavoritesBtn" />
+				<m:Button id="idToggleShowAsDefaultBtn" text="toggle show Default"
+					press="onToggleShowAsDefaultBtn" />
+				<m:Button id="idToggleShowExeSelBtn" text="toggle show ExeSel"
+					press="onToggleShowExeOnSeltBtn" />				
+			</m:HBox>
+		</m:VBox>
+		<m:Label text="Variants" />
+		<VariantManagement id="idVariantManagementCtrl"
+			for="idModelChangeBtn" save="onSave" manage="onManage"
+			showExecuteOnSelection="true" />
+	</l:VerticalLayout>
+</mvc:View>

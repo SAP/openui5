@@ -1,0 +1,160 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="UTF-8">
+
+    <title>CompositeSample - sap.ui.core</title>
+
+    <script id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_belize" data-sap-ui-bindingSyntax="complex"
+        src="../../../../../../../../../resources/sap-ui-core.js" data-sap-ui-resourceroots='{"composites": "./composites"}'>
+        </script>
+
+    <script>
+        jQuery.sap.require("sap.ui.core.XMLComposite");
+        jQuery.sap.require("composites.ForwardText");
+        jQuery.sap.require("composites.ForwardForwardText");
+
+        //add a ForwardText with single aggregation
+        var oForwardText1 = new composites.ForwardText({
+            text: new sap.m.Text({
+                text: "Text added to text aggregation"
+            })
+        });
+        oForwardText1.placeAt("forwardText1");
+
+        //add another ForwardText with single aggregation set after timeout and change it
+        var oForwardText2 = new composites.ForwardText();
+        setTimeout(function () {
+            oForwardText2.setText(new sap.m.Text({
+                text: "Text added to text aggregation after timeout"
+            }));
+        }, 2000);
+        setTimeout(function () {
+            oForwardText2.getText().setText("Text of text aggregation changed via timeout");
+        }, 4000);
+        oForwardText2.placeAt("forwardText1");
+
+
+        //add a ForwardText with list of texts
+        var oForwardText10 = new composites.ForwardText({
+            textItems: [
+                new sap.m.Text({
+                    text: "Text added to textItems aggregation 1"
+                }),
+                new sap.m.Text({
+                    text: "Text added to textItems aggregation 2"
+                })
+            ]
+        });
+        oForwardText10.placeAt("forwardText10");
+
+        //add another ForwardText with list of texts adding and removing items with timeouts
+        var oForwardText11 = new composites.ForwardText({
+            textItems: [
+                new sap.m.Text({
+                    text: "Text added to textItems aggregation 1"
+                }),
+                new sap.m.Text({
+                    text: "Text added to textItems aggregation 2"
+                })
+            ]
+        });
+        setTimeout(function () {
+            oForwardText11.setText(new sap.m.Text({
+                text: "Text added to text aggregation after timeout 1"
+            }));
+            oForwardText11.addTextItem(new sap.m.Text({
+                text: "Text added to textItems aggregation after timeout 1"
+            }));
+        }, 1000);
+        setTimeout(function () {
+            oForwardText11.addTextItem(new sap.m.Text({
+                text: "Text added to textItems aggregation after timeout 2"
+            }));
+        }, 2000);
+        setTimeout(function () {
+            oForwardText11.getText().setText("Text of text aggregation changed after timeout 3");
+            oForwardText11.addTextItem(new sap.m.Text({
+                text: "Text added to textItems aggregation after timeout 3"
+            }));
+            oForwardText11.addTextItem(new sap.m.Text({
+                text: "Text added to textItems aggregation after timeout 3"
+            }));
+            oForwardText11.addTextItem(new sap.m.Text({
+                text: "Text added to textItems aggregation after timeout 3"
+            }));
+        }, 3000);
+        setTimeout(function () {
+            oForwardText11.getText().setText("Text of text aggregation changed after timeout 4");
+            oForwardText11.addTextItem(new sap.m.Text({
+                text: "Text added to textItems aggregation after timeout 4"
+            }));
+            oForwardText11.addTextItem(new sap.m.Text({
+                text: "Text added to textItems aggregation after timeout 4"
+            }));
+            oForwardText11.addTextItem(new sap.m.Text({
+                text: "Text added to textItems aggregation after timeout 4"
+            }));
+        }, 4000);
+        oForwardText11.placeAt("forwardText10");
+
+        //add another ForwardText with list of texts adding and removing items with timeouts
+        var oForwardForwardText20 = new composites.ForwardForwardText({
+            items: [
+                new composites.ForwardText({
+                    textItems: [
+                        new sap.m.Text({
+                            text: "Double Forwarding 1 Text added to textItems aggregation 1"
+                        }),
+                        new sap.m.Text({
+                            text: "Double Forwarding 1 Text added to textItems aggregation 2"
+                        })
+                    ]
+                }),
+                new composites.ForwardText({
+                    textItems: [
+                        new sap.m.Text("test", {
+                            text: "Double Forwarding 2 Text added to textItems aggregation 1"
+                        }),
+                        new sap.m.Text({
+                            text: "Double Forwarding 2 Text added to textItems aggregation 2"
+                        })
+                    ]
+                })
+            ],
+            items2: [
+                new composites.ForwardText({
+                    textItems: [
+                        new sap.m.Text({
+                            text: "Forwarding internally1"
+                        }),
+                        new sap.m.Text({
+                            text: "Forwarding internally2"
+                        })
+                    ]
+                }),
+                new composites.ForwardText({
+                    textItems: [
+                        new sap.m.Text({
+                            text: "Forwarding internally1"
+                        })
+                    ]
+                })
+            ]
+        });
+        oForwardForwardText20.placeAt("forwardText20");
+    </script>
+</head>
+
+<body id="body" class="sapUiBody" style="margin-left:10px">
+    <h1>Forward Single Text</h1>
+    <div id="forwardText1"></div>
+    <h1>Forward Text List</h1>
+    <div id="forwardText10"></div>
+    <h1>Double Forward Text List</h1>
+    <div id="forwardText20"></div>
+</body>
+
+</html>

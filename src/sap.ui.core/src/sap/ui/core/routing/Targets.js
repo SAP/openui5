@@ -330,7 +330,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			 *
 			 * @param {string|string[]} vTargets the key of the target as specified in the {@link #constructor}. To display multiple targets you may also pass an array of keys.
 			 * @param {object} [oData] an object that will be passed to the display event in the data property. If the target has parents, the data will also be passed to them.
-			 * @param {string} [sTitleTarget] the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged|titleChanged} event
+			 * @param {string} [sTitleTarget] the name of the target from which the title option is taken for firing the {@link sap.ui.core.routing.Targets#event:titleChanged titleChanged} event
 			 * @public
 			 * @returns {sap.ui.core.routing.Targets|Promise} this pointer for chaining or a Promise
 			 * @name sap.ui.core.routing.Targets#display
@@ -574,13 +574,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			/**
 			 * hook to distinguish between the router and an application calling this
 			 * @private
+			 * @param {any} [vData] an object that will be passed to the display event in the data property.
 			 * @name sap.ui.core.routing.Targets#_display
 			 */
 
 			/**
 			 *
-			 * @param sName name of the single target
-			 * @param vData event data
+			 * @param {string} sName name of the single target
+			 * @param {any} [vData] an object that will be passed to the display event in the data property.
 			 * @private
 			 * @name sap.ui.core.routing.Targets.#_displaySingleTarget
 			 */
@@ -588,7 +589,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Target', './
 			/**
 			 * Called by the UIComponent since the rootView id is not known in the constructor
 			 *
-			 * @param sId
+			 * @param {string} sId
 			 * @private
 			 */
 			_setRootViewId: function (sId) {

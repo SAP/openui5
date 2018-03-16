@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<title>RuntimeAuthoring - sap.ui.rta</title>
+
+
+	<script>
+		document.write('\
+		<script \
+			id="sap-ui-bootstrap" \
+			data-sap-ui-theme="sap_belize" \
+			data-sap-ui-language="en" \
+			data-sap-ui-noConflict="true" \
+			data-sap-ui-resourceroots=\'{"sap.ui.rta.test.variantManagement": "../"}\'\
+			data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta" \
+			data-sap-ui-xx-bindingSyntax="complex" \
+			src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+		><' + '/script>'
+		);
+	</script>
+
+	<script type="text/javascript">
+
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/m/Shell",
+				"sap/ui/core/ComponentContainer"
+			], function (Shell, ComponentContainer) {
+
+				// initialize the UI component
+				new Shell({
+					app: new ComponentContainer({
+						height : "100%",
+						component : sap.ui.component({
+							name: "sap.ui.rta.test.variantManagement"
+						})
+					})
+				}).placeAt("content");
+			});
+		});
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<div id="content"></div>
+</body>
+
+</html>

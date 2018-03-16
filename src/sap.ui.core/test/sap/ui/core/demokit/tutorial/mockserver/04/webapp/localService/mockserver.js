@@ -1,6 +1,7 @@
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/core/util/MockServer"
-], function(MockServer) {
+], function(jQuery, MockServer) {
 	"use strict";
 
 	return {
@@ -32,10 +33,14 @@ sap.ui.define([
 					today.setHours(0); // or today.toUTCString(0) due to timezone differences
 					today.setMinutes(0);
 					today.setSeconds(0);
-					var oResponse = jQuery.sap.sjax({
-						url: "/Meetups?$filter=EventDate ge " + "/Date(" + today.getTime() + ")/"
+					jQuery.ajax({
+						url: "/Meetups?$filter=EventDate ge " + "/Date(" + today.getTime() + ")/",
+						dataType : 'json',
+						async: false,
+						success : function(oData) {
+							oXhr.respondJSON(200, {}, JSON.stringify(oData));
+						}
 					});
-					oXhr.respondJSON(200, {}, JSON.stringify(oResponse.data));
 					return true;
 				}
 			});

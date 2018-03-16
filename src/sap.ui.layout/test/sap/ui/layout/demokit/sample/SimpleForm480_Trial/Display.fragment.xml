@@ -36,13 +36,17 @@
 				<Text text="{Url}" />
 				<Label text="Twitter" />
 				<Text text="{Twitter}" />
-				<core:Title text="Contact data" />
 				<Label text="Email" />
-				<Text text="{EMail}" />
+				<Text text="{Email}" />
 				<Label text="Tel." />
 				<Text text="{Tel}" />
 				<Label text="SMS" />
 				<Text text="{Sms}" />
+				<core:Title text="Other" />
+				<Label text="Rating" />
+				<RatingIndicator value="{Rating}" displayOnly="true" />
+				<Label text="Disposable" />
+				<ProgressIndicator percentValue="{Disposable}" displayOnly="true" />
 			</f:content>
 		</f:SimpleForm>
 	</VBox>

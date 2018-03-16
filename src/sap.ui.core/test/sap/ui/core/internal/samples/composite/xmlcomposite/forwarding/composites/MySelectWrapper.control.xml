@@ -1,0 +1,6 @@
+<core:FragmentDefinition 
+	xmlns="sap.m" 
+	xmlns:core="sap.ui.core" 
+	xmlns:comp="composites">
+	<comp:MySelect id="mySelect"/>
+</core:FragmentDefinition>

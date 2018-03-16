@@ -1,39 +1,97 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
-	"sap/ui/base/EventProvider", "sap/ui/fl/Utils", "sap/ui/fl/registry/Settings"
-], function (EventProvider, Utils, Settings) {
+	"jquery.sap.global",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/Settings"
+], function (
+	jQuery,
+	ManagedObject,
+	Utils,
+	Settings
+) {
 
 	"use strict";
 
 	/**
-	 * A change object based on the json data with dirty handling.
-	 * @constructor
-	 * @alias sap.ui.fl.Change
+	 * Flexibility change class. Stores change content and related information.
+	 *
 	 * @param {object} oFile - file content and admin data
-	 * @experimental Since 1.25.0
+	 *
+	 * @class Change class.
+	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
+	 * @alias sap.ui.fl.Change
+	 * @experimental Since 1.25.0
 	 */
-	var Change = function (oFile) {
-		EventProvider.apply(this);
-		if (typeof (oFile) !== "object") {
-			Utils.log.error("Constructor : sap.ui.fl.Change : oFile is not defined");
+	var Change = ManagedObject.extend("sap.ui.fl.Change", /** @lends sap.ui.fl.Change.prototype */
+	{
+		constructor : function(oFile){
+			ManagedObject.apply(this);
+
+			if (!jQuery.isPlainObject(oFile)) {
+				Utils.log.error("Constructor : sap.ui.fl.Change : oFile is not defined");
+			}
+
+			this._oDefinition = oFile;
+			this._sRequest = '';
+			this._bUserDependent = (oFile.layer === "USER");
+			this._vRevertData = null;
+			this.setState(Change.states.NEW);
+		},
+		metadata : {
+			properties : {
+				state : {
+					type: "string"
+				}
+			}
 		}
+	});
 
-		this._oDefinition = oFile;
-		this._oOriginDefinition = JSON.parse(JSON.stringify(oFile));
-		this._sRequest = '';
-		this._bIsDeleted = false;
-		this._bUserDependent = (oFile.layer === "USER");
+	Change.states = {
+		NEW: "NEW",
+		PERSISTED : "NONE",
+		DELETED: "DELETE",
+		DIRTY: "UPDATE"
 	};
 
-	Change.events = {
-		markForDeletion: "markForDeletion"
+	Change.prototype.setState = function(sState) {
+		if (this._isValidState(sState)) {
+			this.setProperty("state", sState);
+		}
+		return this;
 	};
 
-	Change.prototype = jQuery.sap.newObject(EventProvider.prototype);
+	/**
+	 * Validates if the new state of change has a valid value
+	 * The new state value has to be in the <code>Change.states</code> list
+	 * Moving of state directly from <code>Change.states.NEW</code> to <code>Change.states.DIRTY</code> is not allowed.
+	 * @param {string} sState - value of target state
+	 * @returns {boolean} - new state is valid
+	 * @private
+	 */
+	Change.prototype._isValidState = function(sState) {
+		//new state have to be in the Change.states value list
+		var bStateFound = false;
+		Object.keys(Change.states).some(function(sKey){
+			if (Change.states[sKey] === sState) {
+				bStateFound = true;
+			}
+			return bStateFound;
+		});
+		if (!bStateFound) {
+			return false;
+		}
+		//change' state can not move from NEW to DIRTY directly
+		if ((this.getState() === Change.states.NEW) && (sState === Change.states.DIRTY)) {
+			return false;
+		}
+		return true;
+	};
 
 	/**
 	 * Returns if the change protocol is valid
@@ -85,6 +143,18 @@ sap.ui.define([
 	Change.prototype.getChangeType = function () {
 		if (this._oDefinition) {
 			return this._oDefinition.changeType;
+		}
+	};
+
+	/**
+	 * Returns the file type
+	 *
+	 * @returns {String} fileType of the file
+	 * @public
+	 */
+	Change.prototype.getFileType = function () {
+		if (this._oDefinition) {
+			return this._oDefinition.fileType;
 		}
 	};
 
@@ -142,6 +212,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the namespace.
+	 *
+	 * @param {string} sNamespace Namespace of the change document
+	 *
+	 * @public
+	 */
+	Change.prototype.setNamespace = function (sNamespace) {
+		this._oDefinition.namespace = sNamespace;
+	};
+
+	/**
 	 * Returns the id of the change
 	 * @returns {string} Id of the change document
 	 *
@@ -170,6 +251,29 @@ sap.ui.define([
 	 */
 	Change.prototype.setContent = function (oContent) {
 		this._oDefinition.content = oContent;
+		this.setState(Change.states.DIRTY);
+	};
+
+	/**
+	 * Returns the variant reference of the change
+	 * @returns {string} variant reference of the change.
+	 *
+	 * @public
+	 */
+	Change.prototype.getVariantReference = function () {
+		return this._oDefinition.variantReference || "";
+	};
+
+	/**
+	 * Sets the variant reference of the change
+	 *
+	 * @param {object} sVariantReference The variant reference of the change.
+	 *
+	 * @public
+	 */
+	Change.prototype.setVariantReference = function (sVariantReference) {
+		this._oDefinition.variantReference = sVariantReference;
+		this.setState(Change.states.DIRTY);
 	};
 
 	/**
@@ -230,6 +334,7 @@ sap.ui.define([
 		if (this._oDefinition.texts) {
 			if (this._oDefinition.texts[sTextId]) {
 				this._oDefinition.texts[sTextId].value = sNewText;
+				this.setState(Change.states.DIRTY);
 			}
 		}
 	};
@@ -319,24 +424,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Mark the current change to be deleted persistently
+	 * Marks the current change to be deleted persistently
 	 *
 	 * @public
 	 */
 	Change.prototype.markForDeletion = function () {
-		this._bIsDeleted = true;
-	};
-
-	/**
-	 * Determines whether the change has to be updated on the back end
-	 * @returns {boolean} content of the change document has changed (change is in dirty state)
-	 * @private
-	 */
-	Change.prototype._isDirty = function () {
-		var sCurrentDefinition = JSON.stringify(this._oDefinition);
-		var sOriginDefinition = JSON.stringify(this._oOriginDefinition);
-
-		return (sCurrentDefinition !== sOriginDefinition);
+		this.setState(Change.states.DELETED);
 	};
 
 	/**
@@ -384,6 +477,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets the component.
+	 *
+	 * @param {string} sComponent ID of the app or app variant
+	 *
+	 * @public
+	 */
+	Change.prototype.setComponent = function (sComponent) {
+		this._oDefinition.reference = sComponent;
+	};
+
+	/**
 	 * Gets the creation timestamp
 	 *
 	 * @returns {String} creation timestamp
@@ -411,14 +515,7 @@ sap.ui.define([
 	 * @public
 	 */
 	Change.prototype.getPendingAction = function () {
-		if (this._bIsDeleted) {
-			return "DELETE";
-		} else if (!this._oDefinition.creation) {
-			return "NEW";
-		} else if (this._isDirty() === true) {
-			return "UPDATE";
-		}
-		return "NONE";
+		return this.getState();
 	};
 
 	/**
@@ -441,7 +538,7 @@ sap.ui.define([
 		var sResponse = JSON.stringify(oResponse);
 		if (sResponse) {
 			this._oDefinition = JSON.parse(sResponse);
-			this._oOriginDefinition = JSON.parse(sResponse);
+			this.setState(Change.states.PERSISTED);
 		}
 	};
 
@@ -546,7 +643,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns all dependent global IDs.
+	 * Returns all dependent global IDs, including the ID from the selector of the change.
 	 *
 	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to translate the local ID into a global ID
 	 *
@@ -557,44 +654,86 @@ sap.ui.define([
 	Change.prototype.getDependentIdList = function (oAppComponent) {
 		var that = this;
 		var sId;
-		var aDependentSelectors = [];
+		var aDependentSelectors = [this.getSelector()];
 		var aDependentIds = [];
 
 		if (!this._aDependentIdList) {
-			if (!this._oDefinition.dependentSelector) {
-				this._aDependentIdList = [];
-			} else {
-				Object.keys(this._oDefinition.dependentSelector).forEach(function (sPropertyName) {
-					aDependentSelectors.push(that._oDefinition.dependentSelector[sPropertyName]);
-				});
-
-				aDependentSelectors = [].concat.apply([], aDependentSelectors);
-
-				aDependentSelectors.forEach(function (oDependentSelector) {
-					sId = oDependentSelector.id;
-					if (oDependentSelector.idIsLocal) {
-						sId = oAppComponent.createId(oDependentSelector.id);
-					}
-					if (aDependentIds.indexOf(sId) === -1) {
-						aDependentIds.push(sId);
-					}
-				});
-
-				this._aDependentIdList = aDependentIds;
+			if (this._oDefinition.dependentSelector){
+				aDependentSelectors = Object.keys(this._oDefinition.dependentSelector).reduce(function(aDependentSelectors, sAlias){
+					return aDependentSelectors.concat(that._oDefinition.dependentSelector[sAlias]);
+				}, aDependentSelectors);
 			}
+
+			aDependentSelectors.forEach(function (oDependentSelector) {
+				sId = oDependentSelector.id;
+				if (oDependentSelector.idIsLocal) {
+					sId = oAppComponent.createId(oDependentSelector.id);
+				}
+				if (sId && aDependentIds.indexOf(sId) === -1) {
+					aDependentIds.push(sId);
+				}
+			});
+
+			this._aDependentIdList = aDependentIds;
 		}
 
 		return this._aDependentIdList;
 	};
 
 	/**
-	 * Returns the change key
+	 * Returns list of IDs of controls which the change depends on, excluding the ID from the selector of the change.
 	 *
-	 * @returns {String} Change key of the file which is a unique concatenation of fileName, layer and namespace
+	 * @param {sap.ui.core.Component} oAppComponent - Application component, needed to create a global ID from the local ID
+	 *
+	 * @returns {array} List of control IDs which the change depends on
+	 *
 	 * @public
 	 */
-	Change.prototype.getKey = function () {
-		return this._oDefinition.fileName + this._oDefinition.layer + this._oDefinition.namespace;
+	Change.prototype.getDependentControlIdList = function (oAppComponent) {
+		var sId;
+		var aDependentIds = this.getDependentIdList().concat();
+
+		if (aDependentIds.length > 0) {
+			var oSelector = this.getSelector();
+			sId = oSelector.id;
+			if (oSelector.idIsLocal) {
+				sId = oAppComponent.createId(oSelector.id);
+			}
+			var iIndex = aDependentIds.indexOf(sId);
+			if (iIndex > -1) {
+				aDependentIds.splice(iIndex, 1);
+			}
+		}
+
+		return aDependentIds;
+	};
+
+	/**
+	 * Returns the revert specific data
+	 *
+	 * @returns {*} revert specific data
+	 * @public
+	 */
+	Change.prototype.getRevertData = function() {
+		return this._vRevertData;
+	};
+
+	/**
+	 * Sets the revert specific data
+	 *
+	 * @param {*} vData revert specific data
+	 * @public
+	 */
+	Change.prototype.setRevertData = function(vData) {
+		this._vRevertData = vData;
+	};
+
+	/**
+	 * Reset the revert specific data
+	 * @public
+	 */
+	Change.prototype.resetRevertData = function() {
+		this.setRevertData(null);
 	};
 
 	/**
@@ -617,6 +756,7 @@ sap.ui.define([
 	 * @param {Object}  [oPropertyBag.validAppVersions] Application versions where the change is active
 	 * @param {String}  [oPropertyBag.reference] Application component name
 	 * @param {String}  [oPropertyBag.namespace] The namespace of the change file
+	 * @param {String}  [oPropertyBag.generator] The tool which is used to generate the change file
 	 *
 	 * @returns {Object} The content of the change file
 	 *
@@ -628,13 +768,21 @@ sap.ui.define([
 			oPropertyBag = {};
 		}
 
+		var sFileType;
+		if (oPropertyBag.fileType) {
+			sFileType = oPropertyBag.fileType;
+		} else {
+			sFileType = oPropertyBag.isVariant ? "variant" : "change";
+		}
+
 		var oNewFile = {
 			fileName: oPropertyBag.id || Utils.createDefaultFileName(oPropertyBag.changeType),
-			fileType: (oPropertyBag.isVariant) ? "variant" : "change",
+			fileType: sFileType,
 			changeType: oPropertyBag.changeType || "",
 			reference: oPropertyBag.reference || "",
 			packageName: oPropertyBag.packageName || "",
 			content: oPropertyBag.content || {},
+			// TODO: Is an empty selector allowed?
 			selector: oPropertyBag.selector || {},
 			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
@@ -644,7 +792,7 @@ sap.ui.define([
 			conditions: {},
 			context: oPropertyBag.context || "",
 			support: {
-				generator: "Change.createInitialFileContent",
+				generator: oPropertyBag.generator || "Change.createInitialFileContent",
 				service: oPropertyBag.service || "",
 				user: "",
 				sapui5Version: sap.ui.version

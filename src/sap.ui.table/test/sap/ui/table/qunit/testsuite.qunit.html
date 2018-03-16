@@ -30,6 +30,7 @@
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableColumnUtils.qunit.html");
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableMenuUtils.qunit.html");
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableGrouping.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableBindingUtils.qunit.html");
 
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableExtension.qunit.html");
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableAccExtension.qunit.html");
@@ -38,10 +39,20 @@
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableKeyboardDelegate-RTL.qunit.html");
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TablePointerExtension.qunit.html");
 	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableScrollExtension.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableDragAndDropExtension.qunit.html");
 
     suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/TableColumnHeaders.qunit.html");
 
     suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/ControlsUsedInTable.qunit.html");
+
+	// --------------------------
+	// Design Time & RTA Enabling
+	// --------------------------
+	//complete libraries dt files general json data
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/table/qunit/designtime/Library.qunit.html");
+	//individual controls
+	//ADD HERE
+
 	return suite;
   }
 

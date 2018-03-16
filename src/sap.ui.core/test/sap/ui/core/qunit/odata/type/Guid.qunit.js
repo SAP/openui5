@@ -11,19 +11,16 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, FormatException, ParseException, ValidateException, Guid, ODataType,
 		TestUtils) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	/*eslint max-nested-callbacks: 0*/
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Guid", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -35,7 +32,17 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is an ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Guid", "type name");
 		assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.deepEqual(oType.oConstraints, undefined, "default constraints");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new Guid(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************

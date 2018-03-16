@@ -352,9 +352,13 @@
 
 
 	var fnTestAnnotations = function(oModel, assert, done) {
-		assert.expect(12);
+		assert.expect(15);
 		var oMetadata = oModel.oMetadata;
+		var oServiceMetadata = oModel.getServiceMetadata();
 
+		assert.equal(oServiceMetadata.dataServices.schema[0].annotations.length, 1,
+			"exactly one annotation for the schema should exist"
+		);
 		assert.equal(
 			oMetadata._getAnnotation("/FlightCollection(1)/AirLineID/#@sap:label"),
 			"Airline",
@@ -369,6 +373,16 @@
 			oMetadata._getAnnotation("/FlightCollection(1)/FlightConnectionID/#@maxLength"),
 			"4",
 			"Flight Connection ID MaxLength attribute correctly read"
+		);
+		assert.equal(
+			oMetadata._getAnnotation("/FlightCollection(1)/FlightCarrier/CurrencyCode/#@sap:label"),
+			"Airline Currency",
+			"Label annotation correctly read via navigation property path"
+		);
+		assert.equal(
+			oMetadata._getAnnotation("/FlightCollection(1)/FlightCarrier/Unknown/#@sap:label"),
+			null,
+			"No annotation for unknown property name"
 		);
 
 		assert.equal(

@@ -1,0 +1,55 @@
+{
+  "1.50.0": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "d017482f59e8454de0a5e4445ef53d068c39dace",
+        "type": "FEATURE",
+        "text": " VariantManagement control",
+        "references": []
+      },
+      {
+        "id": "2a296ecfa2c3f6b09e9f386ff739196bef9cc9c3",
+        "type": "FIX",
+        "text": " App Descriptor changes are not removed from local storage",
+        "references": []
+      },
+      {
+        "id": "407b94ad3547b5fc7b7469262624220c2ae96d44",
+        "type": "FIX",
+        "text": " FlexController",
+        "references": []
+      },
+      {
+        "id": "0d59187786d33e86a9dd8b1c5420104f83e68002",
+        "type": "FIX",
+        "text": " Selector not set for FlexCommand \u0026 destroyed element change save problem",
+        "references": []
+      },
+      {
+        "id": "c8660e4d76f02d867a753a95b5a0bed48f14adf8",
+        "type": "FIX",
+        "text": " VariantManagement: typpo in method name",
+        "references": []
+      },
+      {
+        "id": "433f2a1bcb675f3bbe02ff06eb72259c7ae9e172",
+        "type": "FIX",
+        "text": " sap.ui.fl changeHandler needs to store dependencies",
+        "references": []
+      },
+      {
+        "id": "2d1e61fb3b0dc683bdc008a6b5838f239a1f8b99",
+        "type": "FIX",
+        "text": ": RTA - moving controls in ObjectHeader",
+        "references": []
+      },
+      {
+        "id": "d5b7d8532e33d8b6910200326e7a1046730c5b5f",
+        "type": "FIX",
+        "text": " sap.ui.fl: fixed Promised when applying a change",
+        "references": []
+      }
+    ]
+  }
+}

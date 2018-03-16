@@ -103,6 +103,7 @@ sap.ui.define([
 			}
 
 			return sap.ui.view({
+				async : true,
 				type : ViewType.XML,
 				viewName : "sap.ui.core.sample.odata.v4.ListBinding.Main",
 				models : {

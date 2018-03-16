@@ -11,10 +11,16 @@ sap.ui.define([
 		},
 
 		onCollapseExpandPress: function () {
-			var oNavigationList = this.getView().byId('navigationList');
+			var oNavigationList = this.byId('navigationList');
 			var bExpanded = oNavigationList.getExpanded();
 
 			oNavigationList.setExpanded(!bExpanded);
+		},
+
+		onHideShowSubItemPress: function () {
+			var navListItem = this.byId('subItemThree');
+
+			navListItem.setVisible(!navListItem.getVisible());
 		}
 	});
 

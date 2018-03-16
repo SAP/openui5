@@ -314,6 +314,31 @@
 		}
 	});
 
+	QUnit.test("Tapping on action sheet on mobile should fire stepChanged", function(assert) {
+
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		var stepChangedSpy = sinon.spy(),
+			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");
+		this.oProgressNavigator.attachStepChanged(stepChangedSpy);
+
+		// navigate to next wizard steps
+		this.oProgressNavigator.nextStep().nextStep().nextStep();
+		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 4, "currentStep should change");
+
+		// open action sheet
+		this.oProgressNavigator._showActionSheet($anchors[0]);
+
+		this.oProgressNavigator._actionSheet.getButtons()[0].firePress();
+
+		assert.strictEqual(stepChangedSpy.callCount, 1, "stepChanged event should be fired");
+		assert.strictEqual(this.oProgressNavigator.getCurrentStep(), 1, "currentStep should change after interaction with the progress navigator");
+	});
+
 	QUnit.test("Tapping on NON ACTIVE step", function(assert) {
 		var stepChangedSpy = sinon.spy(),
 			$anchors = this.oProgressNavigator.$().find(".sapMWizardProgressNavAnchor");

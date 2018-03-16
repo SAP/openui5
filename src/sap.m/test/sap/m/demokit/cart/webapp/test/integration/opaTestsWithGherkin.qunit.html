@@ -26,15 +26,20 @@
 
 		sap.ui.require([
 			"sap/ui/test/gherkin/opa5TestHarness",
+			"sap/ui/demo/cart/test/StepsIFrame",
 			"sap/ui/demo/cart/test/configureOpa"
-		], function (testHarness) {
+		], function (testHarness, Steps) {
 			"use strict";
 
-				testHarness.test({featurePath: "sap/ui/demo/cart/test/DeleteProduct", generateMissingSteps : true});
-				testHarness.test({featurePath: "sap/ui/demo/cart/test/BuyProduct", generateMissingSteps : true});
-				testHarness.test({featurePath: "sap/ui/demo/cart/test/SaveForLater", generateMissingSteps : true});
-				testHarness.test({featurePath: "sap/ui/demo/cart/test/LightBox", generateMissingSteps : true});
-				testHarness.test({featurePath: "sap/ui/demo/cart/test/AvailabilityFilter", generateMissingSteps : true});
+			testHarness.test({featurePath: "sap/ui/demo/cart/test/DeleteProduct", generateMissingSteps : true});
+			testHarness.test({
+				featurePath: "sap/ui/demo/cart/test/BuyProduct",
+				generateMissingSteps : true,
+				steps: Steps
+			});
+			testHarness.test({featurePath: "sap/ui/demo/cart/test/SaveForLater", generateMissingSteps : true});
+			testHarness.test({featurePath: "sap/ui/demo/cart/test/LightBox", generateMissingSteps : true});
+			testHarness.test({featurePath: "sap/ui/demo/cart/test/ProductsFilter", generateMissingSteps : true});
 
 			QUnit.start();
 		});
@@ -43,7 +48,7 @@
 </head>
 
 <body>
-	<div id="qunit"></div>
-	<div id="qunit-fixture"></div>
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
 </body>
 </html>

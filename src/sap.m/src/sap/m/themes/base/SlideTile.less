@@ -100,7 +100,7 @@
 html.sap-desktop .sapMSTWrapper>.sapMGT:hover,
 html.sap-phone .sapMGTHvrOutln:active,
 html.sap-tablet .sapMGTHvrOutln:active {
-	box-shadow: none;
+	box-shadow: none !important;
 }
 
 .sapMST.OneByOne {
@@ -114,7 +114,7 @@ html.sap-tablet .sapMGTHvrOutln:active {
 }
 
 .sapMST .sapMGT {
-	border: none;
+	border: 0.125rem;
 }
 
 .sapMSTFocusDiv {
@@ -185,15 +185,10 @@ html.sap-desktop .sapMST.sapMSTIconPressed .sapMSTIconClickTapArea:hover ~.sapMS
 	height: 2rem;
 	z-index: 1;
 	position: absolute;
-	outline: none;
 
 	.sapUiIcon {
 		width: 2rem;
 	}
-}
-
-.sapMSTIconNestedArea :active {
-	outline: none;
 }
 
 html.sap-phone .sapMST .sapMSTIconClickTapArea,
@@ -210,19 +205,18 @@ html.sap-desktop .sapMST:not(:hover).sapMST:not(:focus) .sapMSTBulleted {
 	visibility: hidden;
 }
 
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
-	.sapMST.OneByOne {
+.sapMTileSmallPhone {
+	&.sapMST.OneByOne {
 		width: 9.25rem;
 		height: 9.25rem;
 	}
 
-	.sapMST.TwoByOne {
+	&.sapMST.TwoByOne {
 		width: 19rem;
 		height: 9.25rem;
 	}
 
-	.sapMSTBulleted {
+	&.sapMSTBulleted {
 		bottom: 0.188rem;
 	}
 }

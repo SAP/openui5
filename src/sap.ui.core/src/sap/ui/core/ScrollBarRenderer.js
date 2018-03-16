@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 
 
 	/**
-	 * @class ScrollBar renderer.
-	 * @static
+	 * ScrollBar renderer.
+	 * @namespace
 	 * @alias sap.ui.core.ScrollBarRenderer
 	 */
 	var ScrollBarRenderer = {
@@ -73,10 +73,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 			rm.writeAttribute( "id", oScrollBar.getId() + "-sb");
 			rm.write(" style=\"width:" + sWidth * 2 + "px;height:100%;overflow-y:scroll;overflow-x:hidden");
 			if (bRTL) {
-				//right to left mode. Special handling for mozilla 3.6 and safari - do not render right margin
-				if ((!(Device.browser.firefox && Device.browser.version == 3.6)) && (!Device.browser.safari)) {
-					rm.write(";margin-right:-" + sWidth + "px");
-				}
+				rm.write(";margin-right:-" + sWidth + "px");
 			} else {
 				rm.write(";margin-left:-" + sWidth + "px;");
 			}

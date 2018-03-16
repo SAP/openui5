@@ -1,0 +1,79 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "b2a0f67e56bee1409f70b41ac139d8773d68202c",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.BlockLayout - new property keepFontSize",
+        "references": []
+      },
+      {
+        "id": "653a13d20d9e59262e403382cf0836fbcd835663",
+        "type": "FIX",
+        "text": " Form: Toolbar wrong aligned",
+        "references": []
+      },
+      {
+        "id": "f3042223230a125b3ebc18d5d639b210e426be3b",
+        "type": "FIX",
+        "text": " Form: icons inside of content controls not shown",
+        "references": []
+      },
+      {
+        "id": "f555dcb8331a5ea6d9fd2f8633b6f5e5c8c6a2f7",
+        "type": "FIX",
+        "text": " sap.ui.layout - preload sap.ui.core.theming.Parameter",
+        "references": []
+      },
+      {
+        "id": "df49d919902cd253484f3d99e3e4f79f8ce3cf3d",
+        "type": "FIX",
+        "text": " sap.ui.layout.Grid: Margin for hidden elements removed",
+        "references": []
+      },
+      {
+        "id": "65858d853d7c0673ba4af4d3abf7097ba5d8afbf",
+        "type": "FIX",
+        "text": " sap.ui.layoyut.Grid: Added min-height for wrappers",
+        "references": []
+      },
+      {
+        "id": "d5aad968217824668d92a96fc29081cfc434aabb",
+        "type": "FIX",
+        "text": " Form* tests: fix race condition in integration tests",
+        "references": []
+      },
+      {
+        "id": "e0b6ecf78a6b7190d89cd339d6648f30d3cbc94d",
+        "type": "FIX",
+        "text": " sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": []
+      },
+      {
+        "id": "26b49541287511ac7e14bb5b7705eeec1fb38f06",
+        "type": "FIX",
+        "text": " SimpleForm: resize handler active after changing layout",
+        "references": []
+      },
+      {
+        "id": "f7c3df91f1f941db317ccf207314db1cd05b8abe",
+        "type": "FIX",
+        "text": " Form: using ResponsiveLayout text too much padding",
+        "references": []
+      },
+      {
+        "id": "c06fc10f7ad1ead80392635b3a8e7e1ca1ccedf5",
+        "type": "FIX",
+        "text": "sap.ui.layout: Wrong i18n reference in SimpleForm DT Metadata",
+        "references": []
+      },
+      {
+        "id": "75b6b7b99024549f601219d3474f051c77d6f128",
+        "type": "FEATURE",
+        "text": " Form: activate wrapping of Labels as default",
+        "references": []
+      }
+    ]
+  }
+}

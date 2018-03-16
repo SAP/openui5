@@ -29,6 +29,10 @@ table.sapUiTable tr:hover {
 .Medium {
         color: #e78c07;
 }
+.Low {
+        color:#5e696e;
+}
+
 .bottom-margin-small {
         margin-bottom: 10px;
 }

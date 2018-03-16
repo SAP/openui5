@@ -58,7 +58,7 @@ function checkLibrary(sLibraryName, bExpectLazyStubs, assert) {
 
 	// skip the bootstrap library checks 
 	if (/[?&]sap-ui-skip(B|-b)ootstrap(T|-t)ests=(true|x|X)/.test(top.location.search)) {
-		assert.ok(true, "Skipped checkLibrary(\"" + sLibraryName + "\", " + bExpectLazyStubs + ") due to avilability of URL parameter!");
+		assert.ok(true, "Skipped checkLibrary(\"" + sLibraryName + "\", " + bExpectLazyStubs + ") due to availability of URL parameter!");
 		return;
 	}
 

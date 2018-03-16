@@ -11,18 +11,18 @@ Common Compact/Cozy
 
 .sapUxAPAnchorBar {
 	height: 3rem;
-	margin-bottom: 0.125rem;
 }
 
 .sapUxAPAnchorBar.sapMTB {
 	padding-left: 0;
-	box-shadow: @sapUiShadowHeader;
+	box-shadow: inset 0 -0.125rem @sapUiObjectHeaderBorderColor;
 }
 
 /* M, L or splitview paddings */
 .sapUiMedia-Std-Tablet .sapUxAPAnchorBar.sapMTB,
 .sapUiMedia-Std-Desktop .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB,
 html .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB,
+html.sapUiMedia-Std-Desktop .sapUiContainer-Medium .sapUxAPAnchorBar.sapMTB,
 html .sapUiContainer-Wide .sapMSplitContainerDetail .sapUxAPAnchorBar.sapMTB {
 	padding-left: 1rem;
 }
@@ -276,6 +276,10 @@ html .sapUiContainer-Medium .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchor
 	text-shadow: none;
 	text-align: left;
 	overflow: visible;
+}
+
+html[dir=rtl] .sapMPopover.sapUxAPAnchorBarPopover button.sapMBtn > .sapMBtnInner > .sapMBtnContent {
+	text-align: right;
 }
 
 /**********************************

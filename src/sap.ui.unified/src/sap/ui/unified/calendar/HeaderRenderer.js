@@ -7,6 +7,8 @@ sap.ui.define(['jquery.sap.global'],
 	"use strict";
 
 
+	var MAX_HEADER_BUTTONS = 5;
+
 	/**
 	 * Header renderer.
 	 * @namespace
@@ -61,8 +63,8 @@ sap.ui.define(['jquery.sap.global'],
 		var iLast = -1;
 		var i = 0;
 		var iBtn;
-		for (i = 0; i < 3; i++) {
-			if (oHead["getVisibleButton" + i]()) {
+		for (i = 0; i < MAX_HEADER_BUTTONS; i++) {
+			if (this.getVisibleButton(oHead, i)) {
 				if (iFirst < 0) {
 					iFirst = i;
 				}
@@ -70,10 +72,10 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		}
 
-		for (i = 0; i < 3; i++) {
+		for (i = 0; i < MAX_HEADER_BUTTONS; i++) {
 			// for Chinese and Japanese the date should be displayed in year, month, day order
 			if (sLanguage.toLowerCase() === "ja" || sLanguage.toLowerCase() === "zh") {
-				iBtn = 2 - i;
+				iBtn = MAX_HEADER_BUTTONS - 1 - i;
 			} else {
 				iBtn = i;
 			}
@@ -101,7 +103,7 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	HeaderRenderer.renderCalendarButtons = function (oRm, oHead, sId, iFirst, iLast, mAccProps, i) {
-		if (oHead["getVisibleButton" + i]()) {
+		if (this.getVisibleButton(oHead, i)) {
 			oRm.write("<button");
 			oRm.writeAttributeEscaped('id', sId + '-B' + i);
 			oRm.addClass("sapUiCalHeadB");
@@ -114,14 +116,14 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			oRm.writeAttribute('tabindex', "-1");
 			oRm.writeClasses();
-			if (oHead["getAriaLabelButton" + i]()) {
-				mAccProps["label"] = jQuery.sap.encodeHTML(oHead["getAriaLabelButton" + i]());
+			if (this.getAriaLabelButton(oHead, i)) {
+				mAccProps["label"] = jQuery.sap.encodeHTML(this.getAriaLabelButton(oHead, i));
 			}
 			oRm.writeAccessibilityState(null, mAccProps);
 			mAccProps = {};
 			oRm.write(">"); // button element
-			var sText = oHead["getTextButton" + i]() || "";
-			var sAddText = oHead["getAdditionalTextButton" + i]() || "";
+			var sText = this.getTextButton(oHead, i) || "";
+			var sAddText = this.getAdditionalTextButton(oHead, i) || "";
 			if (sAddText) {
 				oRm.write("<span");
 				oRm.writeAttributeEscaped('id', sId + '-B' + i + "-Text");
@@ -143,6 +145,54 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			oRm.write("</button>");
 		}
+	};
+
+	HeaderRenderer.getVisibleButton = function (oHead, iButton) {
+		var bVisible = false;
+
+		if (oHead["getVisibleButton" + iButton]) {
+			bVisible = oHead["getVisibleButton" + iButton]();
+		} else if (oHead["_getVisibleButton" + iButton]) {
+			bVisible = oHead["_getVisibleButton" + iButton]();
+		}
+
+		return bVisible;
+	};
+
+	HeaderRenderer.getAriaLabelButton = function (oHead, iButton) {
+		var sAriaLabel;
+
+		if (oHead["getAriaLabelButton" + iButton]) {
+			sAriaLabel = oHead["getAriaLabelButton" + iButton]();
+		} else if (oHead["_getAriaLabelButton" + iButton]) {
+			sAriaLabel = oHead["_getAriaLabelButton" + iButton]();
+		}
+
+		return sAriaLabel;
+	};
+
+	HeaderRenderer.getTextButton = function (oHead, iButton) {
+		var sText;
+
+		if (oHead["getTextButton" + iButton]) {
+			sText = oHead["getTextButton" + iButton]();
+		} else if (oHead["_getTextButton" + iButton]) {
+			sText = oHead["_getTextButton" + iButton]();
+		}
+
+		return sText;
+	};
+
+	HeaderRenderer.getAdditionalTextButton = function (oHead, iButton) {
+		var sText;
+
+		if (oHead["getAdditionalTextButton" + iButton]) {
+			sText = oHead["getAdditionalTextButton" + iButton]();
+		} else if (oHead["_getAdditionalTextButton" + iButton]) {
+			sText = oHead["_getAdditionalTextButton" + iButton]();
+		}
+
+		return sText;
 	};
 
 	return HeaderRenderer;

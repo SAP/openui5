@@ -3,10 +3,36 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation',
-               'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/UniversalDate', 'sap/ui/unified/library'],
-               function(jQuery, Control, ItemNavigation, Date1, CalendarUtils, CalendarDate, UniversalDate, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/core/date/UniversalDate',
+	'sap/ui/unified/library',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/library',
+	"./YearPickerRenderer",
+	'jquery.sap.keycodes'
+], function(
+	jQuery,
+	Control,
+	Device,
+	ItemNavigation,
+	CalendarUtils,
+	CalendarDate,
+	UniversalDate,
+	library,
+	DateFormat,
+	coreLibrary,
+	YearPickerRenderer
+) {
 	"use strict";
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = coreLibrary.CalendarType;
 
 	/*
 	* Inside the YearPicker CalendarDate objects are used. But in the API JS dates are used.
@@ -39,7 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 			/**
 			 * The year is initial focused and selected
 			 * The value must be between 0 and 9999
-			 * @deprecated Since version 1.34.0 Use <code>date</code> instead
+			 * @deprecated as of version 1.34.0, replaced by <code>date</code> property
 			 */
 			year : {type : "int", group : "Data", defaultValue : 2000},
 
@@ -94,8 +120,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		this.setProperty("primaryCalendarType", sCalendarType);
 
 		// to format year with era in Japanese
-		this._oYearFormat = sap.ui.core.format.DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
-		this._oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
+		this._oYearFormat = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
+		this._oFormatYyyymmdd = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
 
 		this._oMinDate = CalendarUtils._minDate(this.getPrimaryCalendarType());
 		this._oMaxDate = CalendarUtils._maxDate(this.getPrimaryCalendarType());
@@ -124,7 +150,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 		return this;
 
 	};
-	/**
+	/*
 	 * Sets a date.
 	 * @param {Date} oDate a JavaScript date
 	 * @return {sap.ui.unified.YearPicker} <code>this</code> for method chaining
@@ -159,7 +185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 
 	/**
-	* @return {sap.ui.unified.calendar.CalendarDate}
+	* @return {sap.ui.unified.calendar.CalendarDate} The date, representing the year
 	* @private
 	*/
 	YearPicker.prototype._getDate = function(){
@@ -177,7 +203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 		this.setProperty("primaryCalendarType", sCalendarType);
 
-		this._oYearFormat = sap.ui.core.format.DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
+		this._oYearFormat = DateFormat.getDateInstance({format: "y", calendarType: sCalendarType});
 
 		if (this._oDate) {
 			this._oDate = new CalendarDate(this._oDate, sCalendarType);
@@ -240,12 +266,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	};
 
+	YearPicker.prototype.onmousedown = function (oEvent) {
+		this._oMousedownPosition = {
+			clientX: oEvent.clientX,
+			clientY: oEvent.clientY
+		};
+	};
+
 	YearPicker.prototype.onmouseup = function(oEvent){
 
 		// fire select event on mouseup to prevent closing MonthPicker during click
 
 		if (this._bMousedownChange) {
 			this._bMousedownChange = false;
+			this.fireSelect();
+		} else if (Device.support.touch
+			&& this._isValueInThreshold(this._oMousedownPosition.clientX, oEvent.clientX, 10)
+			&& this._isValueInThreshold(this._oMousedownPosition.clientY, oEvent.clientY, 10)
+		) {
+			var iIndex = this._oItemNavigation.getFocusedIndex();
+			_selectYear.call(this, iIndex);
 			this.fireSelect();
 		}
 
@@ -274,8 +314,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 
 	/**
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
-	* @return {sap.ui.unified.calendar.CalendarDate}
+	 * Returns if value is in predefined threshold.
+	 *
+	 * @private
+	 */
+	YearPicker.prototype._isValueInThreshold = function (iReference, iValue, iThreshold) {
+		var iLowerThreshold = iReference - iThreshold,
+			iUpperThreshold = iReference + iThreshold;
+
+		return iValue >= iLowerThreshold && iValue <= iUpperThreshold;
+	};
+
+	/**
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be checked whether it is outside min and max date
+	* @return {sap.ui.unified.calendar.CalendarDate} The checked date or min or max date if the checked one is outside
 	* @private
 	*/
 	YearPicker.prototype._checkFirstDate = function(oDate){
@@ -299,7 +351,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 
 	/**
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate The date do be checked
+	* @returns {boolean} Whether the date is enabled
 	* @private
 	*/
 	YearPicker.prototype._checkDateEnabled = function(oDate){
@@ -388,8 +441,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	function _handleMousedown(oEvent, iIndex){
 
-		if (oEvent.button) {
-			// only use left mouse button
+		if (oEvent.button || Device.support.touch) {
+			// only use left mouse button or not touch
 			return;
 		}
 
@@ -590,4 +643,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 
 	return YearPicker;
 
-}, /* bExport= */ true);
+});

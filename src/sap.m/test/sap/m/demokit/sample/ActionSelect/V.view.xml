@@ -1,17 +1,21 @@
 <mvc:View
 	controllerName="sap.m.sample.ActionSelect.C"
+	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
 	xmlns="sap.m">
-
-	<ActionSelect
-		id="select"
-		items="{
-			path: '/ProductCollection',
-			sorter: { path: 'Name' }
-		}">
-		<items>
-			<core:Item key="{ProductId}" text="{Name}" />
-		</items>
-	</ActionSelect>
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<ActionSelect
+			id="select"
+			items="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}">
+			<items>
+				<core:Item key="{ProductId}" text="{Name}" />
+			</items>
+		</ActionSelect>
+	</l:VerticalLayout>
 </mvc:View>

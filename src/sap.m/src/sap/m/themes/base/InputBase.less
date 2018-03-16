@@ -43,7 +43,6 @@
 }
 
 .sapMInputBase,
-.sapMInputDivWrapper,
 .sapMInputBasePlaceholder {
 	box-sizing: border-box;
 	line-height: 0;
@@ -171,10 +170,6 @@
 	background: transparent;
 }
 
-html[dir=rtl] .sapMInputBase .sapMInputValHelp {
-	transform: translateZ(0);
-}
-
 .sapMILI-CTX .sapMInputBasePlaceholder {
 	text-align: right;
 }
@@ -192,7 +187,6 @@ html[dir=rtl] .sapMInputBase .sapMInputValHelp {
 .sapUiSizeCompact {
 
 	.sapMInputBase,
-	.sapMInputDivWrapper,
 	.sapMInputBasePlaceholder {
 		line-height: 1rem;
 	}
@@ -267,6 +261,12 @@ html[data-sap-ui-browser^="sf"],
 html[data-sap-ui-browser^="cr"] {
 	.sapMInputBaseInner::selection {
 		background: fade(@sapUiSelected, 99);
+	}
+}
+
+html[data-sap-ui-browser^="ed"] {
+	.sapMInputBaseInner {
+		line-height: 0;
 	}
 }
 

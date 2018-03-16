@@ -2,8 +2,17 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Image', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, Image, IconPool) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/m/Image',
+	'sap/ui/core/IconPool',
+	'sap/ui/Device',
+	'./ImageContentRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, Image, IconPool, Device, ImageContentRenderer) {
 	"use strict";
 
 	/**
@@ -12,7 +21,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @class This control can be displayed as image content in a tile.
+	 * @class This control can be used to display image content in a GenericTile.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -102,7 +111,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 	 * @param {sap.ui.base.Event} oEvent which was triggered
 	 */
 	ImageContent.prototype.ontap = function(oEvent) {
-		if (sap.ui.Device.browser.msie) {
+		if (Device.browser.msie) {
 			this.$().focus();
 		}
 		this.firePress();
@@ -121,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 	};
 
 	ImageContent.prototype.attachEvent = function(eventId, data, functionToCall, listener) {
-		sap.ui.core.Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
+		Control.prototype.attachEvent.call(this, eventId, data, functionToCall, listener);
 		if (this.hasListeners("press")) {
 			this.$().attr("tabindex", 0).addClass("sapMPointer");
 			this._setPointerOnImage();
@@ -130,7 +139,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/I
 	};
 
 	ImageContent.prototype.detachEvent = function(eventId, functionToCall, listener) {
-		sap.ui.core.Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
+		Control.prototype.detachEvent.call(this, eventId, functionToCall, listener);
 		if (!this.hasListeners("press")) {
 			this.$().removeAttr("tabindex").removeClass("sapMPointer");
 			this._setPointerOnImage();

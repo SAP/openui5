@@ -1,149 +1,149 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <title>Test Page for sap.m.Menu</title>
-    <script src="../shared-config.js"></script>
-    <script id="sap-ui-bootstrap"
-            data-sap-ui-noConflict="true"
-            data-sap-ui-language="en-US"
-            data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
-    </script>
+	<title>Test Page for sap.m.Menu</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-language="en-US"
+			data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
+	</script>
 
-    <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-    <script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-    <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-    <script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
-    <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-    <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-    <script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-    <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-    <script>
-        sinon.config.useFakeTimers = true;
-    </script>
+	<script>
+		sinon.config.useFakeTimers = true;
+	</script>
 
-    <script>
-        var oCore = sap.ui.getCore();
+	<script>
+		var oCore = sap.ui.getCore();
 
-        function prepareMobilePlatform() {
-            var oSystem = {
-                desktop : false,
-                phone : true,
-                tablet : false
-            };
+		function prepareMobilePlatform() {
+			var oSystem = {
+				desktop : false,
+				phone : true,
+				tablet : false
+			};
 
-            this.sandbox = sinon.sandbox;
-            this.sandbox.stub(sap.ui.Device, "system", oSystem);
-            this.sandbox.stub(jQuery.device, "is", oSystem);
+			this.sandbox = sinon.sandbox;
+			this.sandbox.stub(sap.ui.Device, "system", oSystem);
+			this.sandbox.stub(jQuery.device, "is", oSystem);
 
-            jQuery('#qunit-fixture').addClass('sap-phone');
-            jQuery('body').addClass('sap-phone');
-        }
+			jQuery('#qunit-fixture').addClass('sap-phone');
+			jQuery('body').addClass('sap-phone');
+		}
 
-        function initMenu() {
-            this.sut = new sap.m.Menu({
-                title: "Initial page"
-            });
+		function initMenu() {
+			this.sut = new sap.m.Menu({
+				title: "Initial page"
+			});
 
-            this.sut.addItem(new sap.m.MenuItem({
-                text: "fridge",
-                icon: "sap-icon://fridge",
-                tooltip: "it's cold in here",
-                items: [
-                    new sap.m.MenuItem({
-                        text: "accidental leave",
-                        icon: "sap-icon://accidental-leave",
-                        items: [
-                            new sap.m.MenuItem({
-                                icon: "sap-icon://factory",
-                                text: "factory"
-                            })
-                        ]
-                    }),
-                    new sap.m.MenuItem({
-                        text: "accidental leave",
-                        icon: "sap-icon://accidental-leave"
-                    })
-                ]
-            }));
+			this.sut.addItem(new sap.m.MenuItem({
+				text: "fridge",
+				icon: "sap-icon://fridge",
+				tooltip: "it's cold in here",
+				items: [
+					new sap.m.MenuItem({
+						text: "accidental leave",
+						icon: "sap-icon://accidental-leave",
+						items: [
+							new sap.m.MenuItem({
+								icon: "sap-icon://factory",
+								text: "factory"
+							})
+						]
+					}),
+					new sap.m.MenuItem({
+						text: "accidental leave",
+						icon: "sap-icon://accidental-leave"
+					})
+				]
+			}));
 
-            this.sut.addItem(new sap.m.MenuItem({
-                text: "iphone",
-                icon: "sap-icon://iphone"
-            }));
-        }
+			this.sut.addItem(new sap.m.MenuItem({
+				text: "iphone",
+				icon: "sap-icon://iphone"
+			}));
+		}
 
-        function destroyMenu() {
-            this.sut.destroy();
-            this.sut = null;
-        }
+		function destroyMenu() {
+			this.sut.destroy();
+			this.sut = null;
+		}
 
-        function pressListItemAtIndex(iIndex) {
-            var oList = this.sut._getNavContainer().getCurrentPage().getContent()[0],
-                oItem = oList.getItems()[iIndex];
-            oList.fireItemPress({ listItem: oItem });
-        }
+		function pressListItemAtIndex(iIndex) {
+			var oList = this.sut._getNavContainer().getCurrentPage().getContent()[0],
+				oItem = oList.getItems()[iIndex];
+			oList.fireItemPress({ listItem: oItem });
+		}
 
-        function getFirstModelData() {
-            return {
-                items: [
-                    {
-                        text: "item1",
-                        icon: "sap-icon://accidental-leave"
-                    },
-                    {
-                        text : "item2",
-                        icon: "sap-icon://accidental-leave",
-                        items: [
-                            {
-                                text : "sub-item1",
-                                icon: "sap-icon://accidental-leave",
-                                items: [
-                                    {
-                                        text : "sub-sub-item1",
-                                        icon: "sap-icon://accidental-leave"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            };
-        }
+		function getFirstModelData() {
+			return {
+				items: [
+					{
+						text: "item1",
+						icon: "sap-icon://accidental-leave"
+					},
+					{
+						text : "item2",
+						icon: "sap-icon://accidental-leave",
+						items: [
+							{
+								text : "sub-item1",
+								icon: "sap-icon://accidental-leave",
+								items: [
+									{
+										text : "sub-sub-item1",
+										icon: "sap-icon://accidental-leave"
+									}
+								]
+							}
+						]
+					}
+				]
+			};
+		}
 
-        function getSecondModelData() {
-            return{
-                items: [
-                    {
-                        text: "second-item1",
-                        icon: "sap-icon://accidental-leave"
-                    },
-                    {
-                        text : "second-item2",
-                        icon: "sap-icon://accidental-leave",
-                        items: [
-                            {
-                                text : "second-sub-item1",
-                                icon: "sap-icon://accidental-leave",
-                                items: [
-                                    {
-                                        text : "second-sub-sub-item1",
-                                        icon: "sap-icon://accidental-leave"
-                                    },
-                                    {
-                                        text : "second-sub-sub-item2",
-                                        icon: "sap-icon://accidental-leave"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        }
+		function getSecondModelData() {
+			return{
+				items: [
+					{
+						text: "second-item1",
+						icon: "sap-icon://accidental-leave"
+					},
+					{
+						text : "second-item2",
+						icon: "sap-icon://accidental-leave",
+						items: [
+							{
+								text : "second-sub-item1",
+								icon: "sap-icon://accidental-leave",
+								items: [
+									{
+										text : "second-sub-sub-item1",
+										icon: "sap-icon://accidental-leave"
+									},
+									{
+										text : "second-sub-sub-item2",
+										icon: "sap-icon://accidental-leave"
+									}
+								]
+							}
+						]
+					}
+				]
+			}
+		}
 
 		function getThirdModelData() {
 			return{
@@ -157,73 +157,73 @@
 			}
 		}
 
-        function bindAggregations(oControl) {
-            var template = new sap.m.MenuItem({
-                text: "{text}",
-                icon: "{icon}",
-                items: {
-                    path: 'items',
-                    template: new sap.m.MenuItem({
-                        text: "{text}",
-                        icon: "{icon}",
-                        items: {
-                            path: 'items',
-                            template: new sap.m.MenuItem({
-                                text: "{text}",
-                                icon: "{icon}"
-                            }),
-                            templateShareable: true
-                        }
-                    }),
-                    templateShareable: true
-                }
-            });
+		function bindAggregations(oControl) {
+			var template = new sap.m.MenuItem({
+				text: "{text}",
+				icon: "{icon}",
+				items: {
+					path: 'items',
+					template: new sap.m.MenuItem({
+						text: "{text}",
+						icon: "{icon}",
+						items: {
+							path: 'items',
+							template: new sap.m.MenuItem({
+								text: "{text}",
+								icon: "{icon}"
+							}),
+							templateShareable: true
+						}
+					}),
+					templateShareable: true
+				}
+			});
 
-            var oModel = new sap.ui.model.json.JSONModel();
-            oModel.setData(this.getFirstModelData());
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(this.getFirstModelData());
 
-            oControl.setModel(oModel);
-            oControl.bindAggregation("items", "/items", template);
-        }
+			oControl.setModel(oModel);
+			oControl.bindAggregation("items", "/items", template);
+		}
 
-        QUnit.module('[PHONE] Basics', {
-            beforeEach: function () {
-                prepareMobilePlatform.call(this);
-                initMenu.call(this);
-            },
-            afterEach : function () {
-                destroyMenu.call(this);
+		QUnit.module('[PHONE] Basics', {
+			beforeEach: function () {
+				prepareMobilePlatform.call(this);
+				initMenu.call(this);
+			},
+			afterEach : function () {
+				destroyMenu.call(this);
 
-                jQuery('#qunit-fixture').removeClass('sap-phone');
-                jQuery('body').removeClass('sap-phone');
+				jQuery('#qunit-fixture').removeClass('sap-phone');
+				jQuery('body').removeClass('sap-phone');
 
-                this.sandbox.restore();
-                this.sandbox = null;
-            }
-        });
+				this.sandbox.restore();
+				this.sandbox = null;
+			}
+		});
 
-        QUnit.test('Opening/closing/reopening', function (assert) {
-            //Assert
-            assert.strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
+		QUnit.test('Opening/closing/reopening', function (assert) {
+			//Assert
+			assert.strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
 
-            this.sut.openBy();
-            this.clock.tick(1000);
+			this.sut.openBy();
+			this.clock.tick(1000);
 
-            //Assert
-            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
+			//Assert
+			assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
 
-            this.sut.close();
-            this.clock.tick(1000);
+			this.sut.close();
+			this.clock.tick(1000);
 
-            //Assert
-            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "close"');
+			//Assert
+			assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "close"');
 
-            this.sut.openBy();
-            this.clock.tick(1000);
+			this.sut.openBy();
+			this.clock.tick(1000);
 
-            //Assert
-            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
-        });
+			//Assert
+			assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
+		});
 
 		QUnit.test("visible", function(assert) {
 			//Act
@@ -235,322 +235,406 @@
 			assert.equal(oItemFridge.getVisible(), false, "menu item is not visible");
 		});
 
-        QUnit.test('ARIA attributes', function (assert) {
-            var fnSetBackButtonTooltipForPageWithParentSpy = sinon.spy(this.sut, "_setBackButtonTooltipForPageWithParent");
-            this.sut.openBy();
-            pressListItemAtIndex.call(this, 0);
-            this.clock.tick(1000);
-            assert.strictEqual(fnSetBackButtonTooltipForPageWithParentSpy.called, true, "Back button tooltip must be set.");
-            fnSetBackButtonTooltipForPageWithParentSpy.restore();
-        });
-
-        QUnit.module('Basics', {
-            beforeEach: function () {
-                initMenu.call(this);
-            },
-            afterEach : function () {
-                destroyMenu.call(this);
-            }
-        });
-
-        QUnit.test("tooltip", function(assert) {
-            this.sut.openBy();
-            var oItemFridge = this.sut._getMenu().getItems()[0];
-
-            //Assert
-            assert.equal(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
-        });
-
-        QUnit.test("visible", function(assert) {
-            //Act
-            this.sut.getItems()[0].setVisible(false);
-            this.sut.openBy();
-            var oItemFridge = this.sut._getMenu().getItems()[0];
-
-            //Assert
-            assert.equal(oItemFridge.getVisible(), false, "menu item is not visible");
-        });
-
-        QUnit.test("enabled", function(assert) {
-            //Act
-            this.sut.getItems()[0].setEnabled(false);
-            this.sut.openBy();
-            var oItemFridge = this.sut._getMenu().getItems()[0];
-
-            //Assert
-            assert.equal(oItemFridge.getEnabled(), false, "menu item is not enabled");
-        });
-
-        QUnit.test('Opening/closing/reopening', function (assert) {
-            //Assert
-            assert.strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
-
-            this.sut.openBy();
-            this.clock.tick(1000);
-
-            //Assert
-            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
-
-            this.sut.close();
-            this.clock.tick(1000);
-
-            //Assert
-            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "focus" is changed');
-
-            this.sut.openBy();
-            this.clock.tick(1000);
-
-            //Assert
-            assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
-        });
-
-        QUnit.test('Item selection event', function (assert) {
-            var fnFireItemSelectedSpy = sinon.spy(this.sut, "fireItemSelected");
-
-            this.sut.openBy();
-            this.clock.tick(1000);
-            this.sut._getVisualParent().getItems()[0].$().click();
-            this.clock.tick(1000);
-
-            //Assert
-            assert.strictEqual(this.sut.getItems()[0].getItems().length, 2, 'The item has sub items');
-            assert.strictEqual(fnFireItemSelectedSpy.calledOnce, false, "Item selected event is not fired when item is clicked");
-
-            this.sut._getVisualParent().getItems()[1].$().click();
-            this.clock.tick(1000);
-
-            //Assert
-            assert.strictEqual(this.sut.getItems()[1].getItems().length, 0, 'The item does not have sub items');
-            assert.strictEqual(fnFireItemSelectedSpy.calledOnce, true, "Item selected event is fired when item is clicked.");
-
-            fnFireItemSelectedSpy.restore();
-        });
-
-        QUnit.module("[PHONE] Custom mutators", {
-            beforeEach: function() {
-                prepareMobilePlatform.call(this);
-                initMenu.call(this)
-            },
-            afterEach: function() {
-                destroyMenu.call(this);
-
-                jQuery('#qunit-fixture').removeClass('sap-phone');
-                jQuery('body').removeClass('sap-phone');
-
-                this.sandbox.restore();
-                this.sandbox = null;
-            },
-            openMenu: function() {
-                this.sut.openBy();
-            },
-            newMenuItem: function() {
-                return new sap.m.MenuItem({
-                    icon: "sap-icon://loan",
-                    text: "loan"
-                })
-            },
-            getPages: function() {
-                var oNavContainer = this.sut._getNavContainer(),
-                    aPages = [];
-
-                if(oNavContainer) {
-                    aPages = oNavContainer.getPages();
-                }
-
-                return aPages;
-            },
-            getCurrentPage: function() {
-                return this.sut._getNavContainer().getCurrentPage();
-            },
-            getLastPage: function() {
-                var aPages = this.getPages();
-                return aPages[aPages.length - 1];
-            },
-            getListItemAtIndex: function(iIndex) {
-                return this.getCurrentPage().getContent()[0].getItems()[iIndex];
-            },
-            pressListItemAtIndex: function(iIndex) {
-                var oList = this.getCurrentPage().getContent()[0],
-                    oItem = oList.getItems()[iIndex];
-                oList.fireItemPress({ listItem: oItem });
-            }
-        });
-
-        QUnit.test("Menu's addItem adds list item to the correct list", function(assert) {
-            var oItem,
-                sutListItem;
-
-            this.openMenu();
-            oItem = this.newMenuItem();
-            this.sut.addAggregation("items", oItem);
-
-            //Assert
-            assert.equal(this.getPages().length, 3, "The menu still has 3 pages.");
-
-            sutListItem = this.getListItemAtIndex(2);
-
-            //Assert
-            assert.ok(!!sutListItem, "There is a new ui item at the right place");
-            assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
-        });
-
-        QUnit.test("MenuItem's addItem adds list item to the correct list", function(assert) {
-            var oItem,
-                sutListItem;
-            this.openMenu();
-            oItem = this.newMenuItem();
-            this.sut.getItems()[0].addAggregation("items", oItem);
-
-            //Assert
-            assert.equal(this.getPages().length, 3, "The menu still has 3 pages.");
-
-            this.pressListItemAtIndex(0); //page title: item 1
-            sutListItem = this.getListItemAtIndex(2);
-
-            //Assert
-            assert.ok(!!sutListItem, "There is a new ui item at the right place");
-            assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
-        });
-
-        QUnit.test("MenuItem with no items: addItem to it adds a new page", function(assert) {
-            var oItem,
-                oAddedPage,
-                sutListItem;
-
-            assert.equal(this.getPages().length, 0, "The menu has no pages");
-
-            this.openMenu();
-            oItem = this.newMenuItem();
-            this.sut.getItems()[1].addAggregation("items", oItem);
-
-            //Assert
-            assert.equal(this.getPages().length, 4, "The menu has a new page");
-
-            oAddedPage = this.getLastPage();
-
-            //Assert
-            assert.equal(oAddedPage.getTitle(), this.sut.getItems()[1].getText(), "Title of the new page is alright");
-
-            this.pressListItemAtIndex(1); //page title: item 2
-
-            //Assert
-            assert.equal(this.getCurrentPage().getId(), oAddedPage.getId(), "The press event on the parent item leads to the new page");
-
-            sutListItem = this.getListItemAtIndex(0);
-
-            //Assert
-            assert.ok(!!sutListItem, "There is a new ui item at the right place");
-            assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
-        });
-
-        QUnit.test("Menu with no items: addItem to it adds an item to the empty page", function(assert) {
-            //we need an empty menu
-            var sut = new sap.m.Menu({
-                    title: "Initial page"
-                }),
-                oItem,
-                oSutListItem,
-                oNavContainer,
-                aPages;
-
-            sut.openBy();
-            oItem = this.newMenuItem();
-            sut.addAggregation("items", oItem);
-
-            oNavContainer = sut._getNavContainer();
-            aPages = oNavContainer.getPages();
-            oSutListItem = sut._getNavContainer().getCurrentPage().getContent()[0].getItems()[0];
-
-            //Assert
-            assert.equal(aPages.length, 1, "The menu has 1 page");
-            assert.ok(!!oSutListItem, "There is a new ui item at the right place");
-            assert.equal(oSutListItem.getTitle(), oItem.getText(), "UI item has the right text");
-
-            sut.destroy();
-            sut = null;
-        });
-
-        QUnit.module("Data binding", {
-            beforeEach : function () {
-                this.sut = new sap.m.Menu();
-                this.oButton = new sap.m.Button();
-                this.oButton.placeAt('qunit-fixture');
-                sap.ui.getCore().applyChanges();
-
-            },
-            afterEach : function () {
-                this.oButton.destroy();
-                this.oButton = null;
-                destroyMenu.call(this);
-            },
-            getFirstModelData: getFirstModelData,
-            getSecondModelData: getSecondModelData,
-            getThirdModelData: getThirdModelData,
-            bindAggregations: function() {
-                bindAggregations(this.sut);
-            }
-        });
-
-        QUnit.test("Binding items", function (assert) {
-            var aItems,
-                oItem,
-                sTitleSelector,
-                oSecondData,
-                sSecondItemId,
-                oFirstLevelItem,
-                oSecondLevelItem,
-                sFirstSubItemId,
-                sFirstSubSubItemId;
-
-            this.bindAggregations();
-            this.sut.openBy(this.oButton);
-
-            aItems = this.sut._getVisualParent().getItems();
-            oItem = aItems[0];
-            sTitleSelector = "#" + this.sut._getVisualParent().getId() + " .sapUiMnuItmTxt";
-
-            //Assert
-            assert.strictEqual(oItem.getText(), this.getFirstModelData()['items'][0]['text'], 'Correct item is being asserted.');
-            assert.strictEqual(jQuery("#"+oItem.getId()).length, 1, 'First item is rendered before model property change.');
-
-            oSecondData = this.getSecondModelData()['items'];
-
-            this.sut.getModel().setProperty('/items', oSecondData);
-
-            aItems = this.sut._getVisualParent().getItems();
-            oItem = aItems[0];
-            sSecondItemId = oItem.getId();
-
-            //Assert
-            assert.strictEqual(oItem.getText(), oSecondData[0]['text'], 'Correct item is being asserted.');
-            assert.strictEqual(jQuery("#"+sSecondItemId).length, 1, 'Second item is rendered after model property change.');
-            assert.strictEqual(jQuery(sTitleSelector).length, 2, 'Starting with two items.');
-
-            oFirstLevelItem = this.sut._getVisualParent().getItems()[1];
-            oSecondLevelItem = oFirstLevelItem.getAggregation('submenu').getItems()[0];
-
-            this.sut._getMenu().setHoveredItem(oFirstLevelItem);
-            this.sut._getMenu().openSubmenu(oFirstLevelItem);
-
-            oFirstLevelItem.getAggregation('submenu').setHoveredItem(oSecondLevelItem);
-            oFirstLevelItem.getAggregation('submenu').openSubmenu(oSecondLevelItem);
-
-            aItems = this.sut._getVisualParent().getItems()[1].getSubmenu().getItems();
-            oItem = aItems[0];
-            sFirstSubItemId = oItem.getId();
-
-            //Assert
-            assert.strictEqual(oItem.getText(), oSecondData[1]['items'][0]['text'], 'Correct item is being asserted.');
-            assert.strictEqual(jQuery("#"+sFirstSubItemId).length, 1, 'First sub item is changed in DOM after model property change.');
-
-            aItems = this.sut._getVisualParent().getItems()[1].getSubmenu().getItems()[0].getSubmenu().getItems();
-            oItem = aItems[0];
-            sFirstSubSubItemId = oItem.getId();
-
-            //Assert
-            assert.strictEqual(oItem.getText(), oSecondData[1]['items'][0]['items'][0]['text'], 'Correct item is being asserted.');
-            assert.strictEqual(jQuery("#"+sFirstSubSubItemId).length, 1, 'First sub sub item is changed in DOM after model property change.');
-        });
+		QUnit.test('ARIA attributes', function (assert) {
+			var fnSetBackButtonTooltipForPageWithParentSpy = sinon.spy(this.sut, "_setBackButtonTooltipForPageWithParent");
+			this.sut.openBy();
+			pressListItemAtIndex.call(this, 0);
+			this.clock.tick(1000);
+			assert.strictEqual(fnSetBackButtonTooltipForPageWithParentSpy.called, true, "Back button tooltip must be set.");
+			fnSetBackButtonTooltipForPageWithParentSpy.restore();
+		});
+
+		QUnit.module('Basics', {
+			beforeEach: function () {
+				initMenu.call(this);
+			},
+			afterEach : function () {
+				destroyMenu.call(this);
+			}
+		});
+
+		QUnit.test("tooltip", function(assert) {
+			this.sut.openBy();
+			var oItemFridge = this.sut._getMenu().getItems()[0];
+
+			//Assert
+			assert.equal(oItemFridge.getTooltip(), "it's cold in here", "item has a tooltip");
+		});
+
+		QUnit.test("visible", function(assert) {
+			//Act
+			this.sut.getItems()[0].setVisible(false);
+			this.sut.openBy();
+			var oItemFridge = this.sut._getMenu().getItems()[0];
+
+			//Assert
+			assert.equal(oItemFridge.getVisible(), false, "menu item is not visible");
+		});
+
+		QUnit.test("enabled", function(assert) {
+			//Act
+			this.sut.getItems()[0].setEnabled(false);
+			this.sut.openBy();
+			var oItemFridge = this.sut._getMenu().getItems()[0];
+
+			//Assert
+			assert.equal(oItemFridge.getEnabled(), false, "menu item is not enabled");
+		});
+
+		QUnit.test('Opening/closing/reopening', function (assert) {
+			//Assert
+			assert.strictEqual(this.sut._getVisualParent(), null, 'The menu is not initially rendered');
+
+			this.sut.openBy();
+			this.clock.tick(1000);
+
+			//Assert
+			assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
+
+			this.sut.close();
+			this.clock.tick(1000);
+
+			//Assert
+			assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 0, 'The menu is not rendered after "focus" is changed');
+
+			this.sut.openBy();
+			this.clock.tick(1000);
+
+			//Assert
+			assert.strictEqual(jQuery('#' + this.sut._getVisualParent().getId()).length, 1, 'The menu is rendered on "openBy"');
+		});
+
+		QUnit.test('Item selection event', function (assert) {
+			var fnFireItemSelectedSpy = sinon.spy(this.sut, "fireItemSelected");
+
+			this.sut.openBy();
+			this.clock.tick(1000);
+			this.sut._getVisualParent().getItems()[0].$().click();
+			this.clock.tick(1000);
+
+			//Assert
+			assert.strictEqual(this.sut.getItems()[0].getItems().length, 2, 'The item has sub items');
+			assert.strictEqual(fnFireItemSelectedSpy.calledOnce, false, "Item selected event is not fired when item is clicked");
+
+			this.sut._getVisualParent().getItems()[1].$().click();
+			this.clock.tick(1000);
+
+			//Assert
+			assert.strictEqual(this.sut.getItems()[1].getItems().length, 0, 'The item does not have sub items');
+			assert.strictEqual(fnFireItemSelectedSpy.calledOnce, true, "Item selected event is fired when item is clicked.");
+
+			fnFireItemSelectedSpy.restore();
+		});
+
+		QUnit.test('MenuItem press event', function (assert) {
+			//prepare
+			var oMenu = this.sut; //storing the Menu object in a variable in order to interact with it inside the press event
+
+			//act
+			this.sut.addItem(new sap.m.MenuItem({
+				text: "iphone",
+				icon: "sap-icon://iphone",
+				press: function(){
+					oMenu.addItem(new sap.m.MenuItem({
+						text: " another iphone"
+					}))
+				}
+			}));
+			this.sut.openBy();
+			this.clock.tick(1000);
+			this.sut._getVisualParent().getItems()[2].$().click();
+			this.clock.tick(1000);
+
+			//assert
+			assert.strictEqual(this.sut.getItems().length, 4, "MenuItem's press event is now handled");
+		});
+
+		QUnit.module("[PHONE] Custom mutators", {
+			beforeEach: function() {
+				prepareMobilePlatform.call(this);
+				initMenu.call(this)
+			},
+			afterEach: function() {
+				destroyMenu.call(this);
+
+				jQuery('#qunit-fixture').removeClass('sap-phone');
+				jQuery('body').removeClass('sap-phone');
+
+				this.sandbox.restore();
+				this.sandbox = null;
+			},
+			openMenu: function() {
+				this.sut.openBy();
+			},
+			newMenuItem: function() {
+				return new sap.m.MenuItem({
+					icon: "sap-icon://loan",
+					text: "loan"
+				})
+			},
+			getPages: function() {
+				var oNavContainer = this.sut._getNavContainer(),
+					aPages = [];
+
+				if(oNavContainer) {
+					aPages = oNavContainer.getPages();
+				}
+
+				return aPages;
+			},
+			getCurrentPage: function() {
+				return this.sut._getNavContainer().getCurrentPage();
+			},
+			getLastPage: function() {
+				var aPages = this.getPages();
+				return aPages[aPages.length - 1];
+			},
+			getListItemAtIndex: function(iIndex) {
+				return this.getCurrentPage().getContent()[0].getItems()[iIndex];
+			},
+			pressListItemAtIndex: function(iIndex) {
+				var oList = this.getCurrentPage().getContent()[0],
+					oItem = oList.getItems()[iIndex];
+				oList.fireItemPress({ listItem: oItem });
+			}
+		});
+
+		QUnit.test("Menu's addItem adds list item to the correct list", function(assert) {
+			var oItem,
+				sutListItem;
+
+			this.openMenu();
+			oItem = this.newMenuItem();
+			this.sut.addAggregation("items", oItem);
+
+			//Assert
+			assert.equal(this.getPages().length, 3, "The menu still has 3 pages.");
+
+			sutListItem = this.getListItemAtIndex(2);
+
+			//Assert
+			assert.ok(!!sutListItem, "There is a new ui item at the right place");
+			assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+		});
+
+		QUnit.test("MenuItem's addItem adds list item to the correct list", function(assert) {
+			var oItem,
+				sutListItem;
+			this.openMenu();
+			oItem = this.newMenuItem();
+			this.sut.getItems()[0].addAggregation("items", oItem);
+
+			//Assert
+			assert.equal(this.getPages().length, 3, "The menu still has 3 pages.");
+
+			this.pressListItemAtIndex(0); //page title: item 1
+			sutListItem = this.getListItemAtIndex(2);
+
+			//Assert
+			assert.ok(!!sutListItem, "There is a new ui item at the right place");
+			assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+		});
+
+		QUnit.test("MenuItem with no items: addItem to it adds a new page", function(assert) {
+			var oItem,
+				oAddedPage,
+				sutListItem;
+
+			assert.equal(this.getPages().length, 0, "The menu has no pages");
+
+			this.openMenu();
+			oItem = this.newMenuItem();
+			this.sut.getItems()[1].addAggregation("items", oItem);
+
+			//Assert
+			assert.equal(this.getPages().length, 4, "The menu has a new page");
+
+			oAddedPage = this.getLastPage();
+
+			//Assert
+			assert.equal(oAddedPage.getTitle(), this.sut.getItems()[1].getText(), "Title of the new page is alright");
+
+			this.pressListItemAtIndex(1); //page title: item 2
+
+			//Assert
+			assert.equal(this.getCurrentPage().getId(), oAddedPage.getId(), "The press event on the parent item leads to the new page");
+
+			sutListItem = this.getListItemAtIndex(0);
+
+			//Assert
+			assert.ok(!!sutListItem, "There is a new ui item at the right place");
+			assert.equal(sutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+		});
+
+		QUnit.test("Menu with no items: addItem to it adds an item to the empty page", function(assert) {
+			//we need an empty menu
+			var sut = new sap.m.Menu({
+					title: "Initial page"
+				}),
+				oItem,
+				oSutListItem,
+				oNavContainer,
+				aPages;
+
+			sut.openBy();
+			oItem = this.newMenuItem();
+			sut.addAggregation("items", oItem);
+
+			oNavContainer = sut._getNavContainer();
+			aPages = oNavContainer.getPages();
+			oSutListItem = sut._getNavContainer().getCurrentPage().getContent()[0].getItems()[0];
+
+			//Assert
+			assert.equal(aPages.length, 1, "The menu has 1 page");
+			assert.ok(!!oSutListItem, "There is a new ui item at the right place");
+			assert.equal(oSutListItem.getTitle(), oItem.getText(), "UI item has the right text");
+
+			sut.destroy();
+			sut = null;
+		});
+
+		// BCP: 0020751294 0000616398 2017
+		QUnit.test("Menu with item: removeItem for last item and add new item should recreate the first page", function (assert) {
+			// prepare
+			var oItem = this.newMenuItem(),
+				sut = new sap.m.Menu({ title: "Initial page", items: [oItem] });
+
+			// act
+			sut.openBy();
+			sut.removeItem(oItem);
+			sut.addAggregation("items", this.newMenuItem());
+			sut.openBy();
+
+			// assert
+			assert.equal(sut._getNavContainer().getPages().length, 1, "The menu has 1 page");
+
+			// cleanup
+			sut.destroy();
+		});
+
+		// BCP: 0020751294 0000616398 2017
+		QUnit.test("Menu with items: removeAllItems and add them again should recreate the first page", function (assert) {
+			// prepare
+			var sut = new sap.m.Menu({ title: "Initial page", items: [this.newMenuItem()] });
+
+			// act
+			sut.openBy();
+			sut.removeAllItems();
+			sut.addAggregation("items", this.newMenuItem());
+			sut.openBy();
+
+			// assert
+			assert.equal(sut._getNavContainer().getPages().length, 1, "The menu has 1 page");
+
+			// cleanup
+			sut.destroy();
+		});
+
+		// BCP: 0020751294 0000616398 2017
+		QUnit.test("Menu with items and child items: removeAllItems and add them again should recreate the needed pages", function (assert) {
+			// prepare
+			function createItems() {
+				return new sap.m.MenuItem({
+					text: "Parent item",
+					items: [new sap.m.MenuItem({ text: "Child Item" })]
+				});
+			}
+			var sut = new sap.m.Menu({ title: "Initial page", items: createItems() });
+
+			// act
+			sut.openBy();
+			sut.removeAllItems();
+			sut.addAggregation("items", createItems());
+			sut.openBy();
+
+			// assert
+			assert.equal(sut._getNavContainer().getPages().length, 2, "The menu has 2 pages");
+
+			// cleanup
+			sut.destroy();
+		});
+
+		QUnit.module("Data binding", {
+			beforeEach : function () {
+				this.sut = new sap.m.Menu();
+				this.oButton = new sap.m.Button();
+				this.oButton.placeAt('qunit-fixture');
+				sap.ui.getCore().applyChanges();
+
+			},
+			afterEach : function () {
+				this.oButton.destroy();
+				this.oButton = null;
+				destroyMenu.call(this);
+			},
+			getFirstModelData: getFirstModelData,
+			getSecondModelData: getSecondModelData,
+			getThirdModelData: getThirdModelData,
+			bindAggregations: function() {
+				bindAggregations(this.sut);
+			}
+		});
+
+		QUnit.test("Binding items", function (assert) {
+			var aItems,
+				oItem,
+				sTitleSelector,
+				oSecondData,
+				sSecondItemId,
+				oFirstLevelItem,
+				oSecondLevelItem,
+				sFirstSubItemId,
+				sFirstSubSubItemId;
+
+			this.bindAggregations();
+			this.sut.openBy(this.oButton);
+
+			aItems = this.sut._getVisualParent().getItems();
+			oItem = aItems[0];
+			sTitleSelector = "#" + this.sut._getVisualParent().getId() + " .sapUiMnuItmTxt";
+
+			//Assert
+			assert.strictEqual(oItem.getText(), this.getFirstModelData()['items'][0]['text'], 'Correct item is being asserted.');
+			assert.strictEqual(jQuery("#"+oItem.getId()).length, 1, 'First item is rendered before model property change.');
+
+			oSecondData = this.getSecondModelData()['items'];
+
+			this.sut.getModel().setProperty('/items', oSecondData);
+
+			aItems = this.sut._getVisualParent().getItems();
+			oItem = aItems[0];
+			sSecondItemId = oItem.getId();
+
+			//Assert
+			assert.strictEqual(oItem.getText(), oSecondData[0]['text'], 'Correct item is being asserted.');
+			assert.strictEqual(jQuery("#"+sSecondItemId).length, 1, 'Second item is rendered after model property change.');
+			assert.strictEqual(jQuery(sTitleSelector).length, 2, 'Starting with two items.');
+
+			oFirstLevelItem = this.sut._getVisualParent().getItems()[1];
+			oSecondLevelItem = oFirstLevelItem.getAggregation('submenu').getItems()[0];
+
+			this.sut._getMenu().setHoveredItem(oFirstLevelItem);
+			this.sut._getMenu().openSubmenu(oFirstLevelItem);
+
+			oFirstLevelItem.getAggregation('submenu').setHoveredItem(oSecondLevelItem);
+			oFirstLevelItem.getAggregation('submenu').openSubmenu(oSecondLevelItem);
+
+			aItems = this.sut._getVisualParent().getItems()[1].getSubmenu().getItems();
+			oItem = aItems[0];
+			sFirstSubItemId = oItem.getId();
+
+			//Assert
+			assert.strictEqual(oItem.getText(), oSecondData[1]['items'][0]['text'], 'Correct item is being asserted.');
+			assert.strictEqual(jQuery("#"+sFirstSubItemId).length, 1, 'First sub item is changed in DOM after model property change.');
+
+			aItems = this.sut._getVisualParent().getItems()[1].getSubmenu().getItems()[0].getSubmenu().getItems();
+			oItem = aItems[0];
+			sFirstSubSubItemId = oItem.getId();
+
+			//Assert
+			assert.strictEqual(oItem.getText(), oSecondData[1]['items'][0]['items'][0]['text'], 'Correct item is being asserted.');
+			assert.strictEqual(jQuery("#"+sFirstSubSubItemId).length, 1, 'First sub sub item is changed in DOM after model property change.');
+		});
 
 		QUnit.test("filtering", function(assert) {
 			var aItems,
@@ -576,286 +660,336 @@
 			assert.ok(!sap.ui.getCore().byId(oItemId), 'The item that does not fit in the filter is destroyed');
 		});
 
-        QUnit.module("[PHONE] Data binding", {
-            beforeEach : function () {
-                prepareMobilePlatform.call(this);
+		QUnit.module("[PHONE] Data binding", {
+			beforeEach : function () {
+				prepareMobilePlatform.call(this);
 
-                this.sut = new sap.m.Menu();
-                this.oButton = new sap.m.Button();
-                this.oButton.placeAt('qunit-fixture');
-                sap.ui.getCore().applyChanges();
+				this.sut = new sap.m.Menu();
+				this.oButton = new sap.m.Button();
+				this.oButton.placeAt('qunit-fixture');
+				sap.ui.getCore().applyChanges();
 
-            },
-            afterEach : function () {
-                this.oButton.destroy();
-                this.oButton = null;
-                destroyMenu.call(this);
+			},
+			afterEach : function () {
+				this.oButton.destroy();
+				this.oButton = null;
+				destroyMenu.call(this);
 
-                jQuery('#qunit-fixture').removeClass('sap-phone');
-                jQuery('body').removeClass('sap-phone');
+				jQuery('#qunit-fixture').removeClass('sap-phone');
+				jQuery('body').removeClass('sap-phone');
 
-                this.sandbox.restore();
-                this.sandbox = null;
-            },
-            getFirstModelData: getFirstModelData,
-            getSecondModelData: getSecondModelData,
-            bindAggregations: function() {
-                bindAggregations(this.sut);
-            }
-        });
+				this.sandbox.restore();
+				this.sandbox = null;
+			},
+			getFirstModelData: getFirstModelData,
+			getSecondModelData: getSecondModelData,
+			bindAggregations: function() {
+				bindAggregations(this.sut);
+			}
+		});
 
-        QUnit.test("Change items in the model", function (assert) {
-            var aItems,
-                oItem,
-                sTitleSelector,
-                oSecondData,
-                sSecondItemId;
+		QUnit.test("Change items in the model", function (assert) {
+			var aItems,
+				oItem,
+				sTitleSelector,
+				oSecondData,
+				sSecondItemId;
 
-            this.bindAggregations();
-            this.sut.openBy(this.oButton);
+			this.bindAggregations();
+			this.sut.openBy(this.oButton);
 
-            aItems = this.sut._getVisualParent().getContent()[0].getItems();
-            oItem = aItems[0];
-            sTitleSelector = "#" + this.sut._getVisualParent().getId() + " .sapMSLITitleOnly";
+			aItems = this.sut._getVisualParent().getContent()[0].getItems();
+			oItem = aItems[0];
+			sTitleSelector = "#" + this.sut._getVisualParent().getId() + " .sapMSLITitleOnly";
 
-            //Assert
-            assert.strictEqual(oItem.getTitle(), this.getFirstModelData()['items'][0]['text'], 'Correct item is being asserted.');
-            assert.strictEqual(jQuery("#"+oItem.getId()).length, 1, 'First item is rendered before model property change.');
+			//Assert
+			assert.strictEqual(oItem.getTitle(), this.getFirstModelData()['items'][0]['text'], 'Correct item is being asserted.');
+			assert.strictEqual(jQuery("#"+oItem.getId()).length, 1, 'First item is rendered before model property change.');
 
-            oSecondData = this.getSecondModelData()['items'];
+			oSecondData = this.getSecondModelData()['items'];
 
-            this.sut.getModel().setProperty('/items', oSecondData);
+			this.sut.getModel().setProperty('/items', oSecondData);
 
-            aItems = this.sut._getVisualParent().getContent()[0].getItems();
-            oItem = aItems[0];
-            sSecondItemId = oItem.getId();
+			aItems = this.sut._getVisualParent().getContent()[0].getItems();
+			oItem = aItems[0];
+			sSecondItemId = oItem.getId();
 
-            //Assert
-            assert.strictEqual(oItem.getTitle(), oSecondData[0]['text'], 'Correct item is being asserted.');
-            assert.strictEqual(jQuery("#"+sSecondItemId).length, 1, 'Second item is rendered after model property change.');
-            assert.strictEqual(jQuery(sTitleSelector).length, 2, 'Starting with two items.');
+			//Assert
+			assert.strictEqual(oItem.getTitle(), oSecondData[0]['text'], 'Correct item is being asserted.');
+			assert.strictEqual(jQuery("#"+sSecondItemId).length, 1, 'Second item is rendered after model property change.');
+			assert.strictEqual(jQuery(sTitleSelector).length, 2, 'Starting with two items.');
 
-            oSecondData.push({
-                text: 'second-item3',
-                icon: 'sap-icon://accidental-leave'
-            });
-            this.sut.getModel().setProperty('/items', oSecondData);
+			oSecondData.push({
+				text: 'second-item3',
+				icon: 'sap-icon://accidental-leave'
+			});
+			this.sut.getModel().setProperty('/items', oSecondData);
 
-            //Assert
-            assert.strictEqual(jQuery(sTitleSelector).length, 3, 'Item was successfully added.');
-        });
+			//Assert
+			assert.strictEqual(jQuery(sTitleSelector).length, 3, 'Item was successfully added.');
+		});
 
-        QUnit.module('MenuItem', {
-            beforeEach: function () {
-                this.sut = new sap.m.MenuItem({
-                    text: "mi",
-                    icon: 'sap-icon://accidental-leave',
-                    items: [
-                        new sap.m.MenuItem({
-                            text: "sub_mi_1",
-                            icon: 'sap-icon://accidental-leave'
-                        }),
-                        new sap.m.MenuItem({
-                            text: "sub_mi_2",
-                            icon: 'sap-icon://accidental-leave'
-                        })
-                    ]
-                });
-            },
-            afterEach : function () {
-                this.sut.destroy();
-                this.sut = null;
-            }
-        });
+		QUnit.module('MenuItem(inside Menu)', {
+			beforeEach: function () {
+				this.sut = new sap.m.MenuItem({
+					text: "mi",
+					icon: 'sap-icon://accidental-leave',
+					items: [
+						new sap.m.MenuItem({
+							text: "sub_mi_1",
+							icon: 'sap-icon://accidental-leave'
+						}),
+						new sap.m.MenuItem({
+							text: "sub_mi_2",
+							icon: 'sap-icon://accidental-leave'
+						})
+					]
+				});
+				// Make sure sap.m.Menu code related to sap.m.MenuItem is considered
+				this.sutRootMenu = new sap.m.Menu({items: this.sut});
+				this.oLabel = new sap.m.Label(); //.openBy needs a reference
+				this.sutRootMenu.openBy(this.oLabel);
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach : function () {
+				this.sutRootMenu.close();
+				this.sut.destroy();
+				this.sutRootMenu.destroy();
+				this.oLabel.destroy();
 
-        QUnit.test("exit", function(assert) {
-            this.sut._setVisualChild("a");
-            this.sut._setVisualControl("b");
-            this.sut._setVisualParent("c");
+				this.sut = null;
+				this.sutRootMenu = null;
+				this.oLabel = null;
 
-            //Act
-            this.sut.exit();
+			}
+		});
 
-            //Assert
-            assert.strictEqual(this.sut._getVisualChild(), null, "no visual child");
-            assert.strictEqual(this.sut._getVisualControl(), null, "no visual control");
-            assert.strictEqual(this.sut._getVisualParent(), null, "no visual parent");
-        });
+		QUnit.test("exit", function(assert) {
+			this.sut._setVisualChild("a");
+			this.sut._setVisualControl("b");
+			this.sut._setVisualParent("c");
 
-        QUnit.test("_setVisualChild _getVisualChild", function(assert) {
-            //Act
-            this.sut._setVisualChild("a");
+			//Act
+			this.sut.exit();
 
-            //Assert
-            assert.strictEqual(this.sut._getVisualChild(), "a", "right visual child");
-        });
+			//Assert
+			assert.strictEqual(this.sut._getVisualChild(), null, "no visual child");
+			assert.strictEqual(this.sut._getVisualControl(), null, "no visual control");
+			assert.strictEqual(this.sut._getVisualParent(), null, "no visual parent");
+		});
 
-        QUnit.test("_setVisualControl _getVisualControl", function(assert) {
-            //Act
-            this.sut._setVisualControl("b");
+		QUnit.test("_setVisualChild _getVisualChild", function(assert) {
+			//Act
+			this.sut._setVisualChild("a");
 
-            //Assert
-            assert.strictEqual(this.sut._getVisualControl(), "b", "right visual control");
-        });
+			//Assert
+			assert.strictEqual(this.sut._getVisualChild(), "a", "right visual child");
+		});
 
-        QUnit.test("_setVisualParent _getVisualParent", function(assert) {
-            //Act
-            this.sut._setVisualParent("c");
+		QUnit.test("_setVisualControl _getVisualControl", function(assert) {
+			//Act
+			this.sut._setVisualControl("b");
 
-            //Assert
-            assert.strictEqual(this.sut._getVisualParent(), "c", "right visual parent");
-        });
+			//Assert
+			assert.strictEqual(this.sut._getVisualControl(), "b", "right visual control");
+		});
 
-        QUnit.test("setProperty", function(assert) {
-            var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
-                sPropertyKey = "text",
-                sPropertyValue = "new_mi_text";
+		QUnit.test("_setVisualParent _getVisualParent", function(assert) {
+			//Act
+			this.sut._setVisualParent("c");
 
-            //Act
-            this.sut.setProperty(sPropertyKey, sPropertyValue);
+			//Assert
+			assert.strictEqual(this.sut._getVisualParent(), "c", "right visual parent");
+		});
 
-            //Assert
-            assert.strictEqual(this.sut.getText(), sPropertyValue, "setProperty sets");
-            assert.ok(oSpyFireEvent.calledWith("propertyChanged"), "propertyChanged fired");
-        });
+		QUnit.test("setProperty for property that exists at the internal menu item", function(assert) {
+			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
+				sPropertyKey = "text",
+				sPropertyValue = "new_mi_text";
 
-        QUnit.test("addAggregation", function(assert) {
-            var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
-                oNewMenuItem = new sap.m.MenuItem({ text: "new item " }),
-                sNewItemId = oNewMenuItem.getId();
+			//Act
+			this.sut.setProperty(sPropertyKey, sPropertyValue);
 
-            //just in this test - verify initial items length
-            assert.strictEqual(this.sut.getItems().length, 2, "initial items");
+			//Assert
+			assert.strictEqual(this.sut.getText(), sPropertyValue, "setProperty sets");
+			assert.ok(oSpyFireEvent.calledWith("propertyChanged"), "propertyChanged fired");
+		});
 
-            //Act
-            this.sut.addAggregation("items", oNewMenuItem, true);
+		QUnit.test("setProperty for property that does not exist at the internal menu item", function(assert) {
+			//Prepare
+			var sPropertyKey = "key" /*sap.ui.core.Item has it*/,
+				sPropertyValue = "new_mi_key_value",
+				oSpyCoreItemSetProperty = this.spy(sap.ui.core.Item.prototype, "setProperty");
 
-            //Assert
-            assert.strictEqual(this.sut.getItems().length, 3, "more items");
-            assert.strictEqual(this.sut.getItems()[2].getId(), sNewItemId, "item added");
-            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
-        });
+			//Act
+			this.sut.setProperty(sPropertyKey, sPropertyValue);
 
-        QUnit.test("insertAggregation", function(assert) {
-            var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
-                oNewMenuItem = new sap.m.MenuItem({ text: "new item " }),
-                sNewItemId = oNewMenuItem.getId();
+			//Assert
+			assert.ok(true, "does not throw an exception");
+			assert.equal(oSpyCoreItemSetProperty.callCount, 1, " calls sap.ui.core.Items.prototype.setProperty once..");
+			assert.equal(oSpyCoreItemSetProperty.getCall(0).args[0], sPropertyKey, "...and with correct parameter 'propertyName'");
+		});
 
-            //Act
-            this.sut.insertAggregation("items", oNewMenuItem, 1, true);
+		QUnit.test("addAggregation 'items'", function(assert) {
+			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
+				oNewMenuItem = new sap.m.MenuItem({ text: "new item " }),
+				sNewItemId = oNewMenuItem.getId();
 
-            //Assert
-            assert.strictEqual(this.sut.getItems().length, 3, "more items");
-            assert.strictEqual(this.sut.getItems()[1].getId(), sNewItemId, "item inserted");
-            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
-        });
+			//just in this test - verify initial items length
+			assert.strictEqual(this.sut.getItems().length, 2, "initial items");
 
-        QUnit.test("removeAggregation", function(assert) {
-            var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
-                sSecondItemId = this.sut.getItems()[1].getId();
+			//Act
+			this.sut.addAggregation("items", oNewMenuItem, true);
 
-            //Act
-            this.sut.removeAggregation("items", 0, true);
+			//Assert
+			assert.strictEqual(this.sut.getItems().length, 3, "more items");
+			assert.strictEqual(this.sut.getItems()[2].getId(), sNewItemId, "item added");
+			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+		});
 
-            //Assert
-            assert.strictEqual(this.sut.getItems().length, 1, "less items");
-            assert.strictEqual(this.sut.getItems()[0].getId(), sSecondItemId, "item removed");
-            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
-        });
+		QUnit.test("insertAggregation 'items'", function(assert) {
+			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
+				oNewMenuItem = new sap.m.MenuItem({ text: "new item " }),
+				sNewItemId = oNewMenuItem.getId();
 
-        QUnit.test("removeAllAggregation", function(assert) {
-            var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
-                aItems = this.sut.getItems(),
-                aResult;
+			//Act
+			this.sut.insertAggregation("items", oNewMenuItem, 1, true);
 
-            //Act
-            aResult = this.sut.removeAllAggregation("items", true);
+			//Assert
+			assert.strictEqual(this.sut.getItems().length, 3, "more items");
+			assert.strictEqual(this.sut.getItems()[1].getId(), sNewItemId, "item inserted");
+			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+		});
 
-            //Assert
-            assert.strictEqual(aResult[0].getId(), aItems[0].getId(), "the items are not destroyed and are returned");
-            assert.strictEqual(this.sut.getItems().length, 0, "no items");
-            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
-        });
+		QUnit.test("removeAggregation 'items'", function(assert) {
+			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
+				sSecondItemId = this.sut.getItems()[1].getId(),
+				sFirstUnfItemId = this.sut.getItems()[0]._getVisualControl();
 
-        QUnit.test("destroyAggregation", function(assert) {
-            var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
-                oFirstItem = this.sut.getItems()[0];
+			//Act
+			this.sut.removeAggregation("items", 0, true);
 
-            //Act
-            this.sut.destroyAggregation("items", true);
+			//Assert
+			assert.strictEqual(this.sut.getItems().length, 1, "less items");
+			assert.strictEqual(this.sut.getItems()[0].getId(), sSecondItemId, "item removed");
+			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+			assert.ok(sap.ui.getCore().byId(sFirstUnfItemId), "should not destroy the connected sap.ui.unified.MenuItem");
+		});
 
-            //Assert
-            assert.ok(!sap.ui.getCore().byId(oFirstItem.getId()), "the items are destroyed");
-            assert.strictEqual(this.sut.getItems().length, 0, "no items");
-            assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
-        });
+		QUnit.test("removeAllAggregation 'items'", function(assert) {
+			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
+				aItems = this.sut.getItems(),
+				sFirstUnfItemId = aItems[0]._getVisualControl(),
+				aResult;
 
-        QUnit.module('MenuListItem', {
-            beforeEach: function () {
-                this.menuItem = new sap.m.MenuItem({
-                    text: "mi",
-                    icon: 'sap-icon://accidental-leave',
-                    items: [
-                        new sap.m.MenuItem({
-                            text: "sub_mi_1",
-                            icon: 'sap-icon://accidental-leave'
-                        }),
-                        new sap.m.MenuItem({
-                            text: "sub_mi_2",
-                            icon: 'sap-icon://accidental-leave'
-                        })
-                    ]
-                });
-                this.sut = new sap.m.MenuListItem({
-                    title: "mi",
-                    icon: 'sap-icon://accidental-leave',
-                    menuItem: this.menuItem.getId()
-                });
-            },
-            afterEach : function () {
-                this.sut.destroy();
-                this.menuItem.destroy();
-                this.sut = null;
-                this.menuItem = null;
-            }
-        });
+			//Act
+			aResult = this.sut.removeAllAggregation("items", true);
 
-        QUnit.test("_getImage ", function(assert) {
-            var sImageStyleClass = "sapMMenuLIImgThumb",
-                oImage = this.sut._getImage(this.sut.getId() + "-img", sImageStyleClass, this.sut.getIcon(), this.sut.getIconDensityAware());
+			//Assert
+			assert.strictEqual(aResult[0].getId(), aItems[0].getId(), "the items are not destroyed and are returned");
+			assert.strictEqual(this.sut.getItems().length, 0, "no items");
+			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+			assert.ok(sap.ui.getCore().byId(sFirstUnfItemId), "should not destroy the connected sap.ui.unified.MenuItem");
+		});
 
-            //Assert
-            assert.ok(oImage, "image exists");
-            assert.ok(this.sut._image, "image is cached");
-            assert.strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
-        });
+		QUnit.test("destroyAggregation 'items'", function(assert) {
+			var oSpyFireEvent = this.spy(this.sut, "fireEvent"),
+				oFirstItem = this.sut.getItems()[0],
+				sFirstUnfItemId = oFirstItem._getVisualControl();
 
-        QUnit.test("_getIconArrowRight", function(assert) {
-            var oImage = this.sut._getIconArrowRight();
+			//Act
+			this.sut.destroyAggregation("items", true);
 
-            //Assert
-            assert.ok(oImage, "arrow image exists");
-            assert.ok(this.sut._imageRightArrow, "arrow image is cached");
-            assert.strictEqual(oImage.getSrc(), "sap-icon://slim-arrow-right", "image has right font symbol");
-            assert.strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
-        });
+			//Assert
+			assert.ok(!sap.ui.getCore().byId(oFirstItem.getId()), "the items are destroyed");
+			assert.strictEqual(this.sut.getItems().length, 0, "no items");
+			assert.ok(oSpyFireEvent.calledWith("aggregationChanged"), "aggregationChanged fired");
+			assert.equal(sap.ui.getCore().byId(sFirstUnfItemId), null, "should destroy the connected sap.ui.unified.MenuItem");
+		});
 
-        QUnit.test("_hasSubItems", function(assert) {
-            //Assert
-            assert.strictEqual(this.sut._hasSubItems(), true, "true when its associated MenuItem has sub-items");
+		QUnit.test("removeItem and add it later", function() {
+			//Prepare
+			var aItems = this.sut.getItems(),
+				oRemoveItem = aItems[0],
+				sRemoveUnfItemId = oRemoveItem._getVisualControl();
 
-            //Act
-            this.menuItem.destroyItems();
+			//Act
+			this.sut.removeItem(oRemoveItem);
+			this.sut.addItem(oRemoveItem);
 
-            //Assert
-            assert.strictEqual(this.sut._hasSubItems(), false, "false when its associated MenuItem has no sub-items");
+			//Assert
+			assert.equal(oRemoveItem._getVisualControl(), sRemoveUnfItemId,
+					"should keep sap.m.MenuItem & sap.ui.unified.MenuItem connected");
+			assert.ok(sap.ui.getCore().byId(sRemoveUnfItemId), "should reuse the existing sap.ui.unified.MenuItem connected" +
+				" to the given sap.m.MenuItem");
+		});
 
-            //Act
-            this.sut.setMenuItem(null);
+		QUnit.module('MenuListItem', {
+			beforeEach: function () {
+				this.menuItem = new sap.m.MenuItem({
+					text: "mi",
+					icon: 'sap-icon://accidental-leave',
+					items: [
+						new sap.m.MenuItem({
+							text: "sub_mi_1",
+							icon: 'sap-icon://accidental-leave'
+						}),
+						new sap.m.MenuItem({
+							text: "sub_mi_2",
+							icon: 'sap-icon://accidental-leave'
+						})
+					]
+				});
+				this.sut = new sap.m.MenuListItem({
+					title: "mi",
+					icon: 'sap-icon://accidental-leave',
+					menuItem: this.menuItem.getId()
+				});
+			},
+			afterEach : function () {
+				this.sut.destroy();
+				this.menuItem.destroy();
+				this.sut = null;
+				this.menuItem = null;
+			}
+		});
 
-            //Assert
-            assert.strictEqual(this.sut._hasSubItems(), false, "false when it has no associated MenuItem");
-        });
+		QUnit.test("_getImage ", function(assert) {
+			var sImageStyleClass = "sapMMenuLIImgThumb",
+				oImage = this.sut._getImage(this.sut.getId() + "-img", sImageStyleClass, this.sut.getIcon(), this.sut.getIconDensityAware());
+
+			//Assert
+			assert.ok(oImage, "image exists");
+			assert.ok(this.sut._image, "image is cached");
+			assert.strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
+		});
+
+		QUnit.test("_getIconArrowRight", function(assert) {
+			var oImage = this.sut._getIconArrowRight();
+
+			//Assert
+			assert.ok(oImage, "arrow image exists");
+			assert.ok(this.sut._imageRightArrow, "arrow image is cached");
+			assert.strictEqual(oImage.getSrc(), "sap-icon://slim-arrow-right", "image has right font symbol");
+			assert.strictEqual(oImage.getUseIconTooltip(), false, "arrow image has no tooltip");
+		});
+
+		QUnit.test("_hasSubItems", function(assert) {
+			//Assert
+			assert.strictEqual(this.sut._hasSubItems(), true, "true when its associated MenuItem has sub-items");
+
+			//Act
+			this.menuItem.destroyItems();
+
+			//Assert
+			assert.strictEqual(this.sut._hasSubItems(), false, "false when its associated MenuItem has no sub-items");
+
+			//Act
+			this.sut.setMenuItem(null);
+
+			//Assert
+			assert.strictEqual(this.sut._hasSubItems(), false, "false when it has no associated MenuItem");
+		});
 
 		QUnit.module("Custom style class support", {
 			beforeEach: function () {
@@ -992,7 +1126,7 @@
 			}
 		});
 
-    </script>
+	</script>
 
 </head>
 <body>

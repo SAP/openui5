@@ -7,7 +7,7 @@
 		"ach": "阿僑利文",
 		"ada": "阿當莫文",
 		"ady": "阿迪各文",
-		"ae": "阿緯斯陀文",
+		"ae": "阿維斯塔文",
 		"aeb": "突尼斯阿拉伯文",
 		"af": "南非荷蘭文",
 		"afh": "阿弗里希利文",
@@ -43,7 +43,7 @@
 		"ay": "艾馬拉文",
 		"az": "亞塞拜然文",
 		"az_alt-short": "亞塞拜然文",
-		"ba": "巴什客爾文",
+		"ba": "巴什喀爾文",
 		"bal": "俾路支文",
 		"ban": "峇里文",
 		"bar": "巴伐利亞文",
@@ -83,7 +83,7 @@
 		"bum": "布魯文",
 		"byn": "比林文",
 		"byv": "梅敦巴文",
-		"ca": "加泰羅尼亞文",
+		"ca": "加泰蘭文",
 		"cad": "卡多文",
 		"car": "加勒比文",
 		"cay": "卡尤加文",
@@ -101,12 +101,13 @@
 		"chp": "奇佩瓦揚文",
 		"chr": "柴羅基文",
 		"chy": "沙伊安文",
-		"ckb": "索拉尼庫爾德文",
+		"ckb": "中庫德文",
 		"co": "科西嘉文",
 		"cop": "科普特文",
 		"cps": "卡皮茲文",
-		"cr": "克裡文",
-		"crh": "克里米亞半島的土耳其文；克里米亞半島的塔塔爾文",
+		"cr": "克里文",
+		"crh": "土耳其文（克里米亞半島）",
+		"crs": "塞席爾克里奧爾法文",
 		"cs": "捷克文",
 		"csb": "卡舒布文",
 		"cu": "宗教斯拉夫文",
@@ -195,7 +196,7 @@
 		"glk": "吉拉基文",
 		"gmh": "中古高地德文",
 		"gn": "瓜拉尼文",
-		"goh": "古高地日耳曼文",
+		"goh": "古高地德文",
 		"gom": "孔卡尼文",
 		"gon": "岡德文",
 		"gor": "科隆達羅文",
@@ -214,7 +215,7 @@
 		"hak": "客家話",
 		"haw": "夏威夷文",
 		"he": "希伯來文",
-		"hi": "北印度文",
+		"hi": "印地文",
 		"hif": "斐濟印地文",
 		"hil": "希利蓋農文",
 		"hit": "赫梯文",
@@ -242,9 +243,9 @@
 		"is": "冰島文",
 		"it": "義大利文",
 		"iu": "因紐特文",
-		"izh": "英格裏亞文",
+		"izh": "英格里亞文",
 		"ja": "日文",
-		"jam": "牙買加克裏奧爾英文",
+		"jam": "牙買加克里奧爾英文",
 		"jbo": "邏輯文",
 		"jgo": "恩格姆巴文",
 		"jmc": "馬恰美文",
@@ -287,7 +288,7 @@
 		"kok": "貢根文",
 		"kos": "科斯雷恩文",
 		"kpe": "克佩列文",
-		"kr": "卡努裡文",
+		"kr": "卡努里文",
 		"krc": "卡拉柴-包爾卡爾文",
 		"kri": "塞拉利昂克裏奧爾文",
 		"krj": "基那來阿文",
@@ -297,7 +298,7 @@
 		"ksb": "尚巴拉文",
 		"ksf": "巴菲亞文",
 		"ksh": "科隆文",
-		"ku": "庫爾德文",
+		"ku": "庫德文",
 		"kum": "庫密克文",
 		"kut": "庫特奈文",
 		"kv": "科米文",
@@ -320,6 +321,7 @@
 		"ln": "林加拉文",
 		"lo": "寮文",
 		"lol": "芒戈文",
+		"lou": "路易斯安那克里奧爾文",
 		"loz": "洛齊文",
 		"lrc": "北盧爾文",
 		"lt": "立陶宛文",
@@ -329,7 +331,7 @@
 		"lui": "路易塞諾文",
 		"lun": "盧恩達文",
 		"luo": "盧奧文",
-		"lus": "盧晒文",
+		"lus": "米佐文",
 		"luy": "盧雅文",
 		"lv": "拉脫維亞文",
 		"lzh": "文言文",
@@ -343,12 +345,11 @@
 		"mas": "馬賽文",
 		"mde": "馬巴文",
 		"mdf": "莫克沙文",
-		"mdh": "mdh",
 		"mdr": "曼達文",
 		"men": "門德文",
 		"mer": "梅魯文",
 		"mfe": "克里奧文（模里西斯）",
-		"mg": "馬拉加什文",
+		"mg": "馬達加斯加文",
 		"mga": "中古愛爾蘭文",
 		"mgh": "馬夸文",
 		"mgo": "美塔文",
@@ -356,23 +357,22 @@
 		"mi": "毛利文",
 		"mic": "米克馬克文",
 		"min": "米南卡堡文",
-		"mis": "mis",
 		"mk": "馬其頓文",
 		"ml": "馬來亞拉姆文",
 		"mn": "蒙古文",
 		"mnc": "滿族文",
-		"mni": "曼尼普裡文",
+		"mni": "曼尼普爾文",
 		"moh": "莫霍克文",
 		"mos": "莫西文",
 		"mr": "馬拉地文",
-		"mrj": "馬里",
+		"mrj": "西馬里文",
 		"ms": "馬來文",
 		"mt": "馬爾他文",
 		"mua": "蒙當文",
 		"mul": "多種語言",
 		"mus": "克里克文",
 		"mwl": "米蘭德斯文",
-		"mwr": "馬爾尼裡文",
+		"mwr": "馬瓦里文",
 		"mwv": "明打威文",
 		"my": "緬甸文",
 		"mye": "姆耶內文",
@@ -415,7 +415,7 @@
 		"oc": "奧克西坦文",
 		"oj": "奧杰布瓦文",
 		"om": "奧羅莫文",
-		"or": "歐利亞文",
+		"or": "歐迪亞文",
 		"os": "奧塞提文",
 		"osa": "歐塞奇文",
 		"ota": "鄂圖曼土耳其文",
@@ -426,6 +426,7 @@
 		"pap": "帕皮阿門托文",
 		"pau": "帛琉文",
 		"pcd": "庇卡底文",
+		"pcm": "奈及利亞皮欽文",
 		"pdc": "賓夕法尼亞德文",
 		"pdt": "門諾低地德文",
 		"peo": "古波斯文",
@@ -470,7 +471,7 @@
 		"sam": "薩瑪利亞阿拉姆文",
 		"saq": "薩布魯文",
 		"sas": "撒撒克文",
-		"sat": "散塔利文",
+		"sat": "桑塔利文",
 		"saz": "索拉什特拉文",
 		"sba": "甘拜文",
 		"sbp": "桑古文",
@@ -479,12 +480,12 @@
 		"sco": "蘇格蘭文",
 		"sd": "信德文",
 		"sdc": "薩丁尼亞-薩薩里文",
-		"sdh": "南庫爾德文",
-		"se": "北方薩米文",
+		"sdh": "南庫德文",
+		"se": "北薩米文",
 		"see": "塞訥卡文",
 		"seh": "賽納文",
 		"sei": "瑟里文",
-		"sel": "瑟爾卡普文",
+		"sel": "塞爾庫普文",
 		"ses": "東桑海文",
 		"sg": "桑戈文",
 		"sga": "古愛爾蘭文",
@@ -502,7 +503,7 @@
 		"sm": "薩摩亞文",
 		"sma": "南薩米文",
 		"smj": "魯勒薩米文",
-		"smn": "伊納裡薩米文",
+		"smn": "伊納里薩米文",
 		"sms": "斯科特薩米文",
 		"sn": "紹納文",
 		"snk": "索尼基文",
@@ -547,7 +548,7 @@
 		"tli": "特林基特文",
 		"tly": "塔里什文",
 		"tmh": "塔馬奇克文",
-		"tn": "札那文",
+		"tn": "塞茲瓦納文",
 		"to": "東加文",
 		"tog": "東加文（尼亞薩）",
 		"tpi": "托比辛文",
@@ -564,9 +565,9 @@
 		"tw": "特威文",
 		"twq": "北桑海文",
 		"ty": "大溪地文",
-		"tyv": "土凡文",
-		"tzm": "塔馬齊格特文",
-		"udm": "沃蒂艾克文",
+		"tyv": "圖瓦文",
+		"tzm": "中阿特拉斯塔馬塞特文",
+		"udm": "烏德穆爾特文",
 		"ug": "維吾爾文",
 		"uga": "烏加列文",
 		"uk": "烏克蘭文",
@@ -586,7 +587,7 @@
 		"vro": "佛羅文",
 		"vun": "溫舊文",
 		"wa": "瓦隆文",
-		"wae": "瓦瑟文",
+		"wae": "瓦爾瑟文",
 		"wal": "瓦拉莫文",
 		"war": "瓦瑞文",
 		"was": "瓦紹文",
@@ -620,10 +621,10 @@
 		"zza": "扎扎文"
 	},
 	"scripts": {
-		"Adlm": "Adlm",
+		"Adlm": "富拉文",
 		"Afak": "阿法卡文字",
 		"Aghb": "高加索阿爾巴尼亞文",
-		"Ahom": "Ahom",
+		"Ahom": "阿洪姆文",
 		"Arab": "阿拉伯文",
 		"Arab-alt-variant": "波斯阿拉伯文字",
 		"Armi": "皇室亞美尼亞文",
@@ -634,7 +635,7 @@
 		"Bass": "巴薩文",
 		"Batk": "巴塔克文",
 		"Beng": "孟加拉文",
-		"Bhks": "Bhks",
+		"Bhks": "梵文",
 		"Blis": "布列斯文",
 		"Bopo": "注音符號",
 		"Brah": "婆羅米文",
@@ -662,20 +663,21 @@
 		"Geok": "喬治亞語系（阿索他路里和努斯克胡里文）",
 		"Geor": "喬治亞文",
 		"Glag": "格拉哥里文",
+		"Gonm": "岡德文",
 		"Goth": "歌德文",
 		"Gran": "格蘭他文字",
 		"Grek": "希臘文",
 		"Gujr": "古吉拉特文",
 		"Guru": "古魯穆奇文",
-		"Hanb": "Hanb",
+		"Hanb": "標上注音符號的漢字",
 		"Hang": "韓文字",
-		"Hani": "漢語",
+		"Hani": "漢字",
 		"Hano": "哈努諾文",
 		"Hans": "簡體",
 		"Hans-alt-stand-alone": "簡體中文",
 		"Hant": "繁體",
 		"Hant-alt-stand-alone": "繁體中文",
-		"Hatr": "Hatr",
+		"Hatr": "哈特拉文",
 		"Hebr": "希伯來文",
 		"Hira": "平假名",
 		"Hluw": "安那托利亞象形文字",
@@ -684,7 +686,7 @@
 		"Hung": "古匈牙利文",
 		"Inds": "印度河流域（哈拉帕文）",
 		"Ital": "古意大利文",
-		"Jamo": "Jamo",
+		"Jamo": "韓文字母",
 		"Java": "爪哇文",
 		"Jpan": "日文",
 		"Jurc": "女真文字",
@@ -710,25 +712,25 @@
 		"Loma": "洛馬文",
 		"Lyci": "呂西亞語",
 		"Lydi": "里底亞語",
-		"Mahj": "Mahj",
+		"Mahj": "印地文",
 		"Mand": "曼底安文",
 		"Mani": "摩尼教文",
-		"Marc": "Marc",
+		"Marc": "藏文",
 		"Maya": "瑪雅象形文字",
 		"Mend": "門德文",
 		"Merc": "麥羅埃文（曲線字體）",
 		"Mero": "麥羅埃文",
 		"Mlym": "馬來亞拉姆文",
-		"Modi": "Modi",
+		"Modi": "馬拉地文",
 		"Mong": "蒙古文",
 		"Moon": "蒙氏點字",
 		"Mroo": "謬文",
 		"Mtei": "曼尼普爾文",
-		"Mult": "Mult",
+		"Mult": "木爾坦文",
 		"Mymr": "緬甸文",
 		"Narb": "古北阿拉伯文",
 		"Nbat": "納巴泰文字",
-		"Newa": "Newa",
+		"Newa": "Vote 尼瓦爾文",
 		"Nkgb": "納西格巴文",
 		"Nkoo": "西非書面語言 (N’Ko)",
 		"Nshu": "女書文字",
@@ -736,10 +738,10 @@
 		"Olck": "桑塔利文",
 		"Orkh": "鄂爾渾文",
 		"Orya": "歐利亞文",
-		"Osge": "Osge",
+		"Osge": "歐塞奇文",
 		"Osma": "歐斯曼亞文",
 		"Palm": "帕米瑞拉文字",
-		"Pauc": "Pauc",
+		"Pauc": "鮑欽豪文",
 		"Perm": "古彼爾姆諸文",
 		"Phag": "八思巴文",
 		"Phli": "巴列維文（碑銘體）",
@@ -748,55 +750,6 @@
 		"Phnx": "腓尼基文",
 		"Plrd": "柏格理拼音符",
 		"Prti": "帕提亞文（碑銘體）",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "拉讓文",
 		"Roro": "朗格朗格象形文",
 		"Runr": "古北歐文字",
@@ -811,6 +764,7 @@
 		"Sind": "信德文",
 		"Sinh": "錫蘭文",
 		"Sora": "索朗桑朋文字",
+		"Soyo": "索永布文字",
 		"Sund": "巽他文",
 		"Sylo": "希洛弟納格里文",
 		"Syrc": "敍利亞文",
@@ -840,9 +794,10 @@
 		"Xpeo": "古波斯文",
 		"Xsux": "蘇米魯亞甲文楔形文字",
 		"Yiii": "彞文",
+		"Zanb": "札那巴札爾文字",
 		"Zinh": "繼承文字（Unicode）",
 		"Zmth": "數學符號",
-		"Zsye": "Zsye",
+		"Zsye": "表情符號",
 		"Zsym": "符號",
 		"Zxxx": "非書寫語言",
 		"Zyyy": "一般文字",
@@ -856,6 +811,7 @@
 		"151": "東歐",
 		"154": "北歐",
 		"155": "西歐",
+		"202": "202",
 		"419": "拉丁美洲",
 		"001": "世界",
 		"002": "非洲",
@@ -877,14 +833,14 @@
 		"039": "南歐",
 		"053": "澳洲與紐西蘭",
 		"054": "美拉尼西亞",
-		"057": "密克羅尼西亞",
+		"057": "密克羅尼西亞群島",
 		"061": "玻里尼西亞",
 		"AC": "阿森松島",
 		"AD": "安道爾",
 		"AE": "阿拉伯聯合大公國",
 		"AF": "阿富汗",
 		"AG": "安地卡及巴布達",
-		"AI": "安圭拉",
+		"AI": "安奎拉",
 		"AL": "阿爾巴尼亞",
 		"AM": "亞美尼亞",
 		"AO": "安哥拉",
@@ -918,7 +874,7 @@
 		"BY": "白俄羅斯",
 		"BZ": "貝里斯",
 		"CA": "加拿大",
-		"CC": "科科斯（基林）群島",
+		"CC": "科克斯（基靈）群島",
 		"CD": "剛果（金夏沙）",
 		"CD-alt-variant": "剛果民主共和國",
 		"CF": "中非共和國",
@@ -930,7 +886,7 @@
 		"CK": "庫克群島",
 		"CL": "智利",
 		"CM": "喀麥隆",
-		"CN": "中華人民共和國",
+		"CN": "中國",
 		"CO": "哥倫比亞",
 		"CP": "克里派頓島",
 		"CR": "哥斯大黎加",
@@ -939,7 +895,8 @@
 		"CW": "庫拉索",
 		"CX": "聖誕島",
 		"CY": "賽普勒斯",
-		"CZ": "捷克共和國",
+		"CZ": "捷克",
+		"CZ-alt-variant": "捷克共和國",
 		"DE": "德國",
 		"DG": "迪亞哥加西亞島",
 		"DJ": "吉布地",
@@ -956,20 +913,21 @@
 		"ES": "西班牙",
 		"ET": "衣索比亞",
 		"EU": "歐盟",
+		"EZ": "歐元區",
 		"FI": "芬蘭",
 		"FJ": "斐濟",
 		"FK": "福克蘭群島",
 		"FK-alt-variant": "福克蘭群島（馬爾維納斯群島）",
-		"FM": "密克羅尼西亞群島",
+		"FM": "密克羅尼西亞",
 		"FO": "法羅群島",
 		"FR": "法國",
 		"GA": "加彭",
 		"GB": "英國",
 		"GB-alt-short": "英國",
 		"GD": "格瑞那達",
-		"GE": "喬治亞共和國",
+		"GE": "喬治亞",
 		"GF": "法屬圭亞那",
-		"GG": "根西島",
+		"GG": "根息",
 		"GH": "迦納",
 		"GI": "直布羅陀",
 		"GL": "格陵蘭",
@@ -983,9 +941,9 @@
 		"GU": "關島",
 		"GW": "幾內亞比索",
 		"GY": "蓋亞那",
-		"HK": "中華人民共和國香港特別行政區",
+		"HK": "中國香港特別行政區",
 		"HK-alt-short": "香港",
-		"HM": "赫德島和麥克唐納群島",
+		"HM": "赫德島及麥唐納群島",
 		"HN": "宏都拉斯",
 		"HR": "克羅埃西亞",
 		"HT": "海地",
@@ -1039,10 +997,10 @@
 		"ML": "馬利",
 		"MM": "緬甸",
 		"MN": "蒙古",
-		"MO": "中華人民共和國澳門特別行政區",
+		"MO": "中國澳門特別行政區",
 		"MO-alt-short": "澳門",
-		"MP": "北馬里亞納群島",
-		"MQ": "馬丁尼克島",
+		"MP": "北馬利安納群島",
+		"MQ": "馬丁尼克",
 		"MR": "茅利塔尼亞",
 		"MS": "蒙哲臘",
 		"MT": "馬爾他",
@@ -1064,7 +1022,7 @@
 		"NR": "諾魯",
 		"NU": "紐埃島",
 		"NZ": "紐西蘭",
-		"OM": "阿曼王國",
+		"OM": "阿曼",
 		"PA": "巴拿馬",
 		"PE": "秘魯",
 		"PF": "法屬玻里尼西亞",
@@ -1072,7 +1030,7 @@
 		"PH": "菲律賓",
 		"PK": "巴基斯坦",
 		"PL": "波蘭",
-		"PM": "聖皮埃爾和密克隆群島",
+		"PM": "聖皮埃與密克隆群島",
 		"PN": "皮特肯群島",
 		"PR": "波多黎各",
 		"PS": "巴勒斯坦自治區",
@@ -1095,7 +1053,7 @@
 		"SG": "新加坡",
 		"SH": "聖赫勒拿島",
 		"SI": "斯洛維尼亞",
-		"SJ": "冷岸及央麥恩群島",
+		"SJ": "挪威屬斯瓦巴及尖棉",
 		"SK": "斯洛伐克",
 		"SL": "獅子山",
 		"SM": "聖馬利諾",
@@ -1111,7 +1069,7 @@
 		"TA": "特里斯坦達庫尼亞群島",
 		"TC": "土克斯及開科斯群島",
 		"TD": "查德",
-		"TF": "法屬南方屬地",
+		"TF": "法屬南部屬地",
 		"TG": "多哥",
 		"TH": "泰國",
 		"TJ": "塔吉克",
@@ -1129,6 +1087,8 @@
 		"UA": "烏克蘭",
 		"UG": "烏干達",
 		"UM": "美國本土外小島嶼",
+		"UN": "聯合國",
+		"UN-alt-short": "聯合國",
 		"US": "美國",
 		"US-alt-short": "美國",
 		"UY": "烏拉圭",
@@ -1140,11 +1100,11 @@
 		"VI": "美屬維京群島",
 		"VN": "越南",
 		"VU": "萬那杜",
-		"WF": "瓦利斯和富圖納群島",
+		"WF": "瓦利斯群島和富圖那群島",
 		"WS": "薩摩亞",
 		"XK": "科索沃",
 		"YE": "葉門",
-		"YT": "馬約特",
+		"YT": "馬約特島",
 		"ZA": "南非",
 		"ZM": "尚比亞",
 		"ZW": "辛巴威",
@@ -1170,8 +1130,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "Bh時",
+				"Bhm": "Bh:mm",
+				"Bhms": "Bh:mm:ss",
 				"d": "d日",
 				"E": "ccc",
+				"EBhm": "E Bh:mm",
+				"EBhms": "E Bh:mm:ss",
 				"Ed": "d E",
 				"Ehm": "E ah:mm",
 				"EHm": "E HH:mm",
@@ -1210,7 +1175,9 @@
 				"yMMMEd": "y年M月d日 E",
 				"yMMMM": "y年M月",
 				"yQQQ": "y年QQQ",
-				"yQQQQ": "y年QQQQ"
+				"yQQQQ": "y年QQQQ",
+				"MMMMW": "MMM的第W週",
+				"yw": "Y年的第w週"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1226,7 +1193,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0}至{1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d日至d日"
 				},
@@ -1235,7 +1202,7 @@
 					"h": "ah時至h時"
 				},
 				"H": {
-					"H": "HH–HH"
+					"H": "HH – HH"
 				},
 				"hm": {
 					"a": "ah:mm至ah:mm",
@@ -1243,8 +1210,8 @@
 					"m": "ah:mm至h:mm"
 				},
 				"Hm": {
-					"H": "HH:mm–HH:mm",
-					"m": "HH:mm至HH:mm"
+					"H": "HH:mm – HH:mm",
+					"m": "HH:mm – HH:mm"
 				},
 				"hmv": {
 					"a": "ah:mm至ah:mm [v]",
@@ -1252,15 +1219,15 @@
 					"m": "ah:mm至h:mm [v]"
 				},
 				"Hmv": {
-					"H": "HH:mm–HH:mm [v]",
-					"m": "HH:mm–HH:mm [v]"
+					"H": "HH:mm – HH:mm [v]",
+					"m": "HH:mm – HH:mm [v]"
 				},
 				"hv": {
 					"a": "ah時至ah時 [v]",
 					"h": "ah時至h時 [v]"
 				},
 				"Hv": {
-					"H": "HH–HH [v]"
+					"H": "HH – HH [v]"
 				},
 				"M": {
 					"M": "M月至M月"
@@ -1314,7 +1281,7 @@
 					"y": "y年M月d日至y年M月d日"
 				},
 				"yMMMEd": {
-					"d": "y年M月d日E至d日E",
+					"d": "y年M月d日E至M月d日E",
 					"M": "y年M月d日E至M月d日E",
 					"y": "y年M月d日E至y年M月d日E"
 				},
@@ -1495,10 +1462,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"1季",
-					"2季",
-					"3季",
-					"4季"
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
 				],
 				"narrow": [
 					"1",
@@ -1515,10 +1482,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"1季",
-					"2季",
-					"3季",
-					"4季"
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
 				],
 				"narrow": [
 					"1",
@@ -1596,12 +1563,17 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "Bh時",
+				"Bhm": "Bh:mm",
+				"Bhms": "Bh:mm:ss",
 				"d": "d日",
 				"E": "ccc",
+				"EBhm": "E Bh:mm",
+				"EBhms": "E Bh:mm:ss",
 				"Ed": "d日（E）",
-				"Ehm": "E h:mm a",
+				"Ehm": "E ah:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
+				"Ehms": "E ah:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "Gy年",
 				"GyMMM": "Gy年M月",
@@ -1647,7 +1619,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0}至{1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d日至d日"
 				},
@@ -1916,10 +1888,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"1季",
-					"2季",
-					"3季",
-					"4季"
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
 				],
 				"narrow": [
 					"1",
@@ -1936,10 +1908,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"1季",
-					"2季",
-					"3季",
-					"4季"
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
 				],
 				"narrow": [
 					"1",
@@ -2014,12 +1986,17 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "Bh時",
+				"Bhm": "Bh:mm",
+				"Bhms": "Bh:mm:ss",
 				"d": "d日",
 				"E": "ccc",
+				"EBhm": "E Bh:mm",
+				"EBhms": "E Bh:mm:ss",
 				"Ed": "d日（E）",
-				"Ehm": "E h:mm a",
+				"Ehm": "E ah:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
+				"Ehms": "E ah:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "Gy年",
 				"GyMMM": "Gy年M月",
@@ -2065,7 +2042,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0}至{1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d日至d日"
 				},
@@ -2334,10 +2311,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"1季",
-					"2季",
-					"3季",
-					"4季"
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
 				],
 				"narrow": [
 					"1",
@@ -2354,10 +2331,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"1季",
-					"2季",
-					"3季",
-					"4季"
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
 				],
 				"narrow": [
 					"1",
@@ -2416,10 +2393,10 @@
 			"235": "平成"
 		},
 		"era-narrow": {
-			"232": "M",
-			"233": "T",
-			"234": "S",
-			"235": "H"
+			"232": "明治",
+			"233": "大正",
+			"234": "昭和",
+			"235": "平成"
 		}
 	},
 	"ca-persian": {
@@ -2441,12 +2418,17 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "Bh時",
+				"Bhm": "Bh:mm",
+				"Bhms": "Bh:mm:ss",
 				"d": "d日",
 				"E": "ccc",
+				"EBhm": "E Bh:mm",
+				"EBhms": "E Bh:mm:ss",
 				"Ed": "d E",
-				"Ehm": "E h:mm a",
+				"Ehm": "E ah:mm",
 				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
+				"Ehms": "E ah:mm:ss",
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y年",
 				"GyMMM": "G y年M月",
@@ -2492,7 +2474,7 @@
 				"Year": "{1} {0}"
 			},
 			"intervalFormats": {
-				"intervalFormatFallback": "{0}至{1}",
+				"intervalFormatFallback": "{0} – {1}",
 				"d": {
 					"d": "d日至d日"
 				},
@@ -2761,10 +2743,10 @@
 		"quarters": {
 			"format": {
 				"abbreviated": [
-					"1季",
-					"2季",
-					"3季",
-					"4季"
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
 				],
 				"narrow": [
 					"1",
@@ -2781,10 +2763,10 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"1季",
-					"2季",
-					"3季",
-					"4季"
+					"第1季",
+					"第2季",
+					"第3季",
+					"第4季"
 				],
 				"narrow": [
 					"1",
@@ -2962,7 +2944,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} 週前"
-			}
+			},
+			"relativePeriod": "{0} 當週"
 		},
 		"week-short": {
 			"displayName": "週",
@@ -2974,7 +2957,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} 週前"
-			}
+			},
+			"relativePeriod": "{0} 當週"
 		},
 		"week-narrow": {
 			"displayName": "週",
@@ -2986,7 +2970,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} 週前"
-			}
+			},
+			"relativePeriod": "{0} 當週"
 		},
 		"day-wide": {
 			"displayName": "日",
@@ -3035,6 +3020,7 @@
 		},
 		"hour-wide": {
 			"displayName": "小時",
+			"relative-type-0": "這一小時",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 小時後"
 			},
@@ -3044,6 +3030,7 @@
 		},
 		"hour-short": {
 			"displayName": "小時",
+			"relative-type-0": "這一小時",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 小時後"
 			},
@@ -3053,6 +3040,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "小時",
+			"relative-type-0": "這一小時",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 小時後"
 			},
@@ -3062,6 +3050,7 @@
 		},
 		"minute-wide": {
 			"displayName": "分鐘",
+			"relative-type-0": "這一分鐘",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 分鐘後"
 			},
@@ -3071,6 +3060,7 @@
 		},
 		"minute-short": {
 			"displayName": "分鐘",
+			"relative-type-0": "這一分鐘",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 分鐘後"
 			},
@@ -3080,6 +3070,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "分鐘",
+			"relative-type-0": "這一分鐘",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "{0} 分鐘後"
 			},
@@ -3174,6 +3165,20 @@
 			}
 		}
 	},
+	"currencyFormat-short": {
+		"1000-other": "0",
+		"10000-other": "¤0萬",
+		"100000-other": "¤00萬",
+		"1000000-other": "¤000萬",
+		"10000000-other": "¤0000萬",
+		"100000000-other": "¤0億",
+		"1000000000-other": "¤00億",
+		"10000000000-other": "¤000億",
+		"100000000000-other": "¤0000億",
+		"1000000000000-other": "¤0兆",
+		"10000000000000-other": "¤00兆",
+		"100000000000000-other": "¤000兆"
+	},
 	"symbols-latn-decimal": ".",
 	"symbols-latn-group": ",",
 	"symbols-latn-list": ";",
@@ -3208,6 +3213,610 @@
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
+	"rtl": false,
+	"listPattern-standard-wide": {
+		"2": "{0}和{1}",
+		"start": "{0}、{1}",
+		"middle": "{0}、{1}",
+		"end": "{0}和{1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0}或{1}",
+		"start": "{0}、{1}",
+		"middle": "{0}、{1}",
+		"end": "{0}或{1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0}或{1}",
+		"start": "{0}、{1}",
+		"middle": "{0}、{1}",
+		"end": "{0}或{1}"
+	},
+	"listPattern-standard-short": {
+		"2": "{0}和{1}",
+		"start": "{0}、{1}",
+		"middle": "{0}、{1}",
+		"end": "{0}和{1}"
+	},
+	"units": {
+		"short": {
+			"per": {
+				"compoundUnitPattern": "{0}/{1}"
+			},
+			"acceleration-g-force": {
+				"displayName": "G 力",
+				"unitPattern-count-other": "{0} G 力"
+			},
+			"acceleration-meter-per-second-squared": {
+				"displayName": "公尺/平方秒",
+				"unitPattern-count-other": "{0} 公尺/平方秒"
+			},
+			"angle-revolution": {
+				"displayName": "圈數",
+				"unitPattern-count-other": "{0} 圈"
+			},
+			"angle-radian": {
+				"displayName": "弧度",
+				"unitPattern-count-other": "{0} 弧度"
+			},
+			"angle-degree": {
+				"displayName": "角度",
+				"unitPattern-count-other": "{0} 度"
+			},
+			"angle-arc-minute": {
+				"displayName": "角分",
+				"unitPattern-count-other": "{0} 角分"
+			},
+			"angle-arc-second": {
+				"displayName": "角秒",
+				"unitPattern-count-other": "{0} 角秒"
+			},
+			"area-square-kilometer": {
+				"displayName": "平方公里",
+				"unitPattern-count-other": "{0} 平方公里",
+				"perUnitPattern": "{0}/平方公里"
+			},
+			"area-hectare": {
+				"displayName": "公頃",
+				"unitPattern-count-other": "{0} 公頃"
+			},
+			"area-square-meter": {
+				"displayName": "平方公尺",
+				"unitPattern-count-other": "{0} 平方公尺",
+				"perUnitPattern": "{0}/平方公尺"
+			},
+			"area-square-centimeter": {
+				"displayName": "平方公分",
+				"unitPattern-count-other": "{0} 平方公分",
+				"perUnitPattern": "{0}/平分公分"
+			},
+			"area-square-mile": {
+				"displayName": "平方英里",
+				"unitPattern-count-other": "{0} 平方英里",
+				"perUnitPattern": "{0}/平方英里"
+			},
+			"area-acre": {
+				"displayName": "英畝",
+				"unitPattern-count-other": "{0} 英畝"
+			},
+			"area-square-yard": {
+				"displayName": "平方碼",
+				"unitPattern-count-other": "{0} 平方碼"
+			},
+			"area-square-foot": {
+				"displayName": "平方英尺",
+				"unitPattern-count-other": "{0} 平方英尺"
+			},
+			"area-square-inch": {
+				"displayName": "平方英寸",
+				"unitPattern-count-other": "{0} 平方英寸",
+				"perUnitPattern": "{0}/平方英寸"
+			},
+			"concentr-karat": {
+				"displayName": "克拉",
+				"unitPattern-count-other": "{0} 克拉"
+			},
+			"concentr-milligram-per-deciliter": {
+				"displayName": "毫克/分升",
+				"unitPattern-count-other": "{0} 毫克/分升"
+			},
+			"concentr-millimole-per-liter": {
+				"displayName": "毫莫耳/公升",
+				"unitPattern-count-other": "{0} 毫莫耳/公升"
+			},
+			"concentr-part-per-million": {
+				"displayName": "百萬分率",
+				"unitPattern-count-other": "{0} 百萬分率"
+			},
+			"consumption-liter-per-kilometer": {
+				"displayName": "公升/公里",
+				"unitPattern-count-other": "{0} 升/公里"
+			},
+			"consumption-liter-per-100kilometers": {
+				"displayName": "升/100 公里",
+				"unitPattern-count-other": "{0} 升/100 公里"
+			},
+			"consumption-mile-per-gallon": {
+				"displayName": "英里/加侖",
+				"unitPattern-count-other": "{0} 英里/加侖"
+			},
+			"consumption-mile-per-gallon-imperial": {
+				"displayName": "英里/英制加侖",
+				"unitPattern-count-other": "{0} 英里/英制加侖"
+			},
+			"digital-terabyte": {
+				"displayName": "TB",
+				"unitPattern-count-other": "{0} TB"
+			},
+			"digital-terabit": {
+				"displayName": "Tb",
+				"unitPattern-count-other": "{0} Tb"
+			},
+			"digital-gigabyte": {
+				"displayName": "GB",
+				"unitPattern-count-other": "{0} GB"
+			},
+			"digital-gigabit": {
+				"displayName": "Gb",
+				"unitPattern-count-other": "{0} Gb"
+			},
+			"digital-megabyte": {
+				"displayName": "MB",
+				"unitPattern-count-other": "{0} MB"
+			},
+			"digital-megabit": {
+				"displayName": "Mb",
+				"unitPattern-count-other": "{0} Mb"
+			},
+			"digital-kilobyte": {
+				"displayName": "kB",
+				"unitPattern-count-other": "{0} kB"
+			},
+			"digital-kilobit": {
+				"displayName": "kb",
+				"unitPattern-count-other": "{0} kb"
+			},
+			"digital-byte": {
+				"displayName": "byte",
+				"unitPattern-count-other": "{0} byte"
+			},
+			"digital-bit": {
+				"displayName": "bit",
+				"unitPattern-count-other": "{0} bit"
+			},
+			"duration-century": {
+				"displayName": "世紀",
+				"unitPattern-count-other": "{0} 世紀"
+			},
+			"duration-year": {
+				"displayName": "年",
+				"unitPattern-count-other": "{0} 年",
+				"perUnitPattern": "{0}/年"
+			},
+			"duration-month": {
+				"displayName": "月",
+				"unitPattern-count-other": "{0} 個月",
+				"perUnitPattern": "{0}/月"
+			},
+			"duration-week": {
+				"displayName": "週",
+				"unitPattern-count-other": "{0} 週",
+				"perUnitPattern": "{0}/週"
+			},
+			"duration-day": {
+				"displayName": "天",
+				"unitPattern-count-other": "{0} 天",
+				"perUnitPattern": "{0}/天"
+			},
+			"duration-hour": {
+				"displayName": "小時",
+				"unitPattern-count-other": "{0} 小時",
+				"perUnitPattern": "{0}/小時"
+			},
+			"duration-minute": {
+				"displayName": "分鐘",
+				"unitPattern-count-other": "{0} 分鐘",
+				"perUnitPattern": "{0}/分鐘"
+			},
+			"duration-second": {
+				"displayName": "秒",
+				"unitPattern-count-other": "{0} 秒",
+				"perUnitPattern": "{0}/秒"
+			},
+			"duration-millisecond": {
+				"displayName": "毫秒",
+				"unitPattern-count-other": "{0} 毫秒"
+			},
+			"duration-microsecond": {
+				"displayName": "微秒",
+				"unitPattern-count-other": "{0} 微秒"
+			},
+			"duration-nanosecond": {
+				"displayName": "奈秒",
+				"unitPattern-count-other": "{0} 奈秒"
+			},
+			"electric-ampere": {
+				"displayName": "安培",
+				"unitPattern-count-other": "{0} 安培"
+			},
+			"electric-milliampere": {
+				"displayName": "毫安培",
+				"unitPattern-count-other": "{0} 毫安培"
+			},
+			"electric-ohm": {
+				"displayName": "歐姆",
+				"unitPattern-count-other": "{0} 歐姆"
+			},
+			"electric-volt": {
+				"displayName": "伏特",
+				"unitPattern-count-other": "{0} 伏特"
+			},
+			"energy-kilocalorie": {
+				"displayName": "千卡",
+				"unitPattern-count-other": "{0} 千卡"
+			},
+			"energy-calorie": {
+				"displayName": "卡路里",
+				"unitPattern-count-other": "{0} 卡"
+			},
+			"energy-foodcalorie": {
+				"displayName": "大卡",
+				"unitPattern-count-other": "{0} 大卡"
+			},
+			"energy-kilojoule": {
+				"displayName": "千焦耳",
+				"unitPattern-count-other": "{0} 千焦"
+			},
+			"energy-joule": {
+				"displayName": "焦耳",
+				"unitPattern-count-other": "{0} 焦"
+			},
+			"energy-kilowatt-hour": {
+				"displayName": "千瓦小時",
+				"unitPattern-count-other": "{0} 千瓦小時"
+			},
+			"frequency-gigahertz": {
+				"displayName": "吉赫",
+				"unitPattern-count-other": "{0} 吉赫"
+			},
+			"frequency-megahertz": {
+				"displayName": "兆赫",
+				"unitPattern-count-other": "{0} 兆赫"
+			},
+			"frequency-kilohertz": {
+				"displayName": "千赫",
+				"unitPattern-count-other": "{0} 千赫"
+			},
+			"frequency-hertz": {
+				"displayName": "赫茲",
+				"unitPattern-count-other": "{0} 赫茲"
+			},
+			"length-kilometer": {
+				"displayName": "公里",
+				"unitPattern-count-other": "{0} 公里",
+				"perUnitPattern": "{0}/公里"
+			},
+			"length-meter": {
+				"displayName": "公尺",
+				"unitPattern-count-other": "{0} 公尺",
+				"perUnitPattern": "{0}/公尺"
+			},
+			"length-decimeter": {
+				"displayName": "公寸",
+				"unitPattern-count-other": "{0} 公寸"
+			},
+			"length-centimeter": {
+				"displayName": "公分",
+				"unitPattern-count-other": "{0} 公分",
+				"perUnitPattern": "{0}/公分"
+			},
+			"length-millimeter": {
+				"displayName": "公釐",
+				"unitPattern-count-other": "{0} 公釐"
+			},
+			"length-micrometer": {
+				"displayName": "微米",
+				"unitPattern-count-other": "{0} 微米"
+			},
+			"length-nanometer": {
+				"displayName": "奈米",
+				"unitPattern-count-other": "{0} 奈米"
+			},
+			"length-picometer": {
+				"displayName": "皮米",
+				"unitPattern-count-other": "{0} 皮米"
+			},
+			"length-mile": {
+				"displayName": "英里",
+				"unitPattern-count-other": "{0} 英里"
+			},
+			"length-yard": {
+				"displayName": "碼",
+				"unitPattern-count-other": "{0} 碼"
+			},
+			"length-foot": {
+				"displayName": "英尺",
+				"unitPattern-count-other": "{0} 呎",
+				"perUnitPattern": "{0}/呎"
+			},
+			"length-inch": {
+				"displayName": "英寸",
+				"unitPattern-count-other": "{0} 吋",
+				"perUnitPattern": "{0}/吋"
+			},
+			"length-parsec": {
+				"displayName": "秒差距",
+				"unitPattern-count-other": "{0} 秒差距"
+			},
+			"length-light-year": {
+				"displayName": "光年",
+				"unitPattern-count-other": "{0} 光年"
+			},
+			"length-astronomical-unit": {
+				"displayName": "天文單位",
+				"unitPattern-count-other": "{0} 天文單位"
+			},
+			"length-furlong": {
+				"displayName": "化朗",
+				"unitPattern-count-other": "{0} 化朗"
+			},
+			"length-fathom": {
+				"displayName": "fm",
+				"unitPattern-count-other": "{0} 英尋"
+			},
+			"length-nautical-mile": {
+				"displayName": "海里",
+				"unitPattern-count-other": "{0} 海里"
+			},
+			"length-mile-scandinavian": {
+				"displayName": "斯堪地那維亞英里",
+				"unitPattern-count-other": "{0} 斯堪地那維亞英里"
+			},
+			"length-point": {
+				"displayName": "點",
+				"unitPattern-count-other": "{0} 點"
+			},
+			"light-lux": {
+				"displayName": "勒克斯",
+				"unitPattern-count-other": "{0} 勒克斯"
+			},
+			"mass-metric-ton": {
+				"displayName": "公噸",
+				"unitPattern-count-other": "{0} 公噸"
+			},
+			"mass-kilogram": {
+				"displayName": "公斤",
+				"unitPattern-count-other": "{0} 公斤",
+				"perUnitPattern": "{0}/公斤"
+			},
+			"mass-gram": {
+				"displayName": "克",
+				"unitPattern-count-other": "{0} 克",
+				"perUnitPattern": "{0}/克"
+			},
+			"mass-milligram": {
+				"displayName": "毫克",
+				"unitPattern-count-other": "{0} 毫克"
+			},
+			"mass-microgram": {
+				"displayName": "微克",
+				"unitPattern-count-other": "{0} 微克"
+			},
+			"mass-ton": {
+				"displayName": "英噸",
+				"unitPattern-count-other": "{0} 英噸"
+			},
+			"mass-stone": {
+				"displayName": "st",
+				"unitPattern-count-other": "{0} 英石"
+			},
+			"mass-pound": {
+				"displayName": "磅",
+				"unitPattern-count-other": "{0} 磅",
+				"perUnitPattern": "{0}/磅"
+			},
+			"mass-ounce": {
+				"displayName": "盎司",
+				"unitPattern-count-other": "{0} 盎司",
+				"perUnitPattern": "{0}/盎司"
+			},
+			"mass-ounce-troy": {
+				"displayName": "金衡盎司",
+				"unitPattern-count-other": "{0} 金衡盎司"
+			},
+			"mass-carat": {
+				"displayName": "克拉",
+				"unitPattern-count-other": "{0} 克拉"
+			},
+			"power-gigawatt": {
+				"displayName": "吉瓦",
+				"unitPattern-count-other": "{0} 吉瓦"
+			},
+			"power-megawatt": {
+				"displayName": "百萬瓦",
+				"unitPattern-count-other": "{0} 百萬瓦"
+			},
+			"power-kilowatt": {
+				"displayName": "千瓦",
+				"unitPattern-count-other": "{0} 千瓦"
+			},
+			"power-watt": {
+				"displayName": "瓦特",
+				"unitPattern-count-other": "{0} 瓦"
+			},
+			"power-milliwatt": {
+				"displayName": "毫瓦",
+				"unitPattern-count-other": "{0} 毫瓦"
+			},
+			"power-horsepower": {
+				"displayName": "匹",
+				"unitPattern-count-other": "{0} 匹"
+			},
+			"pressure-hectopascal": {
+				"displayName": "百帕",
+				"unitPattern-count-other": "{0} 百帕"
+			},
+			"pressure-millimeter-of-mercury": {
+				"displayName": "毫米汞柱",
+				"unitPattern-count-other": "{0} 毫米汞柱"
+			},
+			"pressure-pound-per-square-inch": {
+				"displayName": "磅力/平方英寸",
+				"unitPattern-count-other": "{0} 磅力/平方英寸"
+			},
+			"pressure-inch-hg": {
+				"displayName": "英寸汞柱",
+				"unitPattern-count-other": "{0} 英寸汞柱"
+			},
+			"pressure-millibar": {
+				"displayName": "毫巴",
+				"unitPattern-count-other": "{0} 毫巴"
+			},
+			"speed-kilometer-per-hour": {
+				"displayName": "公里/小時",
+				"unitPattern-count-other": "{0} 公里/小時"
+			},
+			"speed-meter-per-second": {
+				"displayName": "公尺/秒",
+				"unitPattern-count-other": "{0} 公尺/秒"
+			},
+			"speed-mile-per-hour": {
+				"displayName": "英里/小時",
+				"unitPattern-count-other": "{0} 英里/小時"
+			},
+			"speed-knot": {
+				"displayName": "節",
+				"unitPattern-count-other": "{0} 節"
+			},
+			"temperature-generic": {
+				"displayName": "°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"temperature-celsius": {
+				"displayName": "攝氏",
+				"unitPattern-count-other": "{0}°C"
+			},
+			"temperature-fahrenheit": {
+				"displayName": "華氏",
+				"unitPattern-count-other": "{0}°F"
+			},
+			"temperature-kelvin": {
+				"displayName": "K",
+				"unitPattern-count-other": "{0} K"
+			},
+			"volume-cubic-kilometer": {
+				"displayName": "立方公里",
+				"unitPattern-count-other": "{0} 立方公里"
+			},
+			"volume-cubic-meter": {
+				"displayName": "立方公尺",
+				"unitPattern-count-other": "{0} 立方公尺",
+				"perUnitPattern": "{0}/立方公尺"
+			},
+			"volume-cubic-centimeter": {
+				"displayName": "立方公分",
+				"unitPattern-count-other": "{0} 立方公分",
+				"perUnitPattern": "{0}/立方公分"
+			},
+			"volume-cubic-mile": {
+				"displayName": "立方英里",
+				"unitPattern-count-other": "{0} 立方英里"
+			},
+			"volume-cubic-yard": {
+				"displayName": "立方碼",
+				"unitPattern-count-other": "{0} 立方碼"
+			},
+			"volume-cubic-foot": {
+				"displayName": "立方英尺",
+				"unitPattern-count-other": "{0} 立方英尺"
+			},
+			"volume-cubic-inch": {
+				"displayName": "立方英寸",
+				"unitPattern-count-other": "{0} 立方英寸"
+			},
+			"volume-megaliter": {
+				"displayName": "兆升",
+				"unitPattern-count-other": "{0} 兆升"
+			},
+			"volume-hectoliter": {
+				"displayName": "公石",
+				"unitPattern-count-other": "{0} 公石"
+			},
+			"volume-liter": {
+				"displayName": "公升",
+				"unitPattern-count-other": "{0} 升",
+				"perUnitPattern": "{0}/升"
+			},
+			"volume-deciliter": {
+				"displayName": "公合",
+				"unitPattern-count-other": "{0} 公合"
+			},
+			"volume-centiliter": {
+				"displayName": "釐升",
+				"unitPattern-count-other": "{0} 釐升"
+			},
+			"volume-milliliter": {
+				"displayName": "毫升",
+				"unitPattern-count-other": "{0} 毫升"
+			},
+			"volume-pint-metric": {
+				"displayName": "公制品脫",
+				"unitPattern-count-other": "{0} 公制品脫"
+			},
+			"volume-cup-metric": {
+				"displayName": "公制量杯",
+				"unitPattern-count-other": "{0} 公制杯"
+			},
+			"volume-acre-foot": {
+				"displayName": "英畝英尺",
+				"unitPattern-count-other": "{0} 英畝英尺"
+			},
+			"volume-bushel": {
+				"displayName": "bu",
+				"unitPattern-count-other": "{0} 蒲式耳"
+			},
+			"volume-gallon": {
+				"displayName": "加侖",
+				"unitPattern-count-other": "{0} 加侖",
+				"perUnitPattern": "{0}/加侖"
+			},
+			"volume-gallon-imperial": {
+				"displayName": "英制加侖",
+				"unitPattern-count-other": "{0} 英制加侖",
+				"perUnitPattern": "{0}/英制加侖"
+			},
+			"volume-quart": {
+				"displayName": "夸脫",
+				"unitPattern-count-other": "{0} 夸脫"
+			},
+			"volume-pint": {
+				"displayName": "品脫",
+				"unitPattern-count-other": "{0} 品脫"
+			},
+			"volume-cup": {
+				"displayName": "量杯",
+				"unitPattern-count-other": "{0} 杯"
+			},
+			"volume-fluid-ounce": {
+				"displayName": "液盎司",
+				"unitPattern-count-other": "{0} 液盎司"
+			},
+			"volume-tablespoon": {
+				"displayName": "湯匙",
+				"unitPattern-count-other": "{0} 湯匙"
+			},
+			"volume-teaspoon": {
+				"displayName": "茶匙",
+				"unitPattern-count-other": "{0} 茶匙"
+			},
+			"coordinateUnit": {
+				"east": "東經{0}",
+				"north": "北緯{0}",
+				"south": "南緯{0}",
+				"west": "西經{0}"
+			}
+		}
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
@@ -3216,13 +3825,9 @@
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
-		"CAD": 2,
-		"CHF": 2,
 		"CLF": 4,
 		"CLP": 0,
 		"COP": 0,
-		"CRC": 0,
-		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
@@ -3276,6 +3881,7 @@
 		"ZMK": 0,
 		"ZWD": 0
 	},
+	"plurals": {},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 6,

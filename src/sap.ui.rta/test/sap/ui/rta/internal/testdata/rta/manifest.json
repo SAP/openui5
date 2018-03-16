@@ -1,0 +1,76 @@
+{
+	"_version": "1.8.0",
+
+	"sap.app": {
+		"id": "sap.ui.rta.test",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-FL-RTA",
+		"dataSources": {
+			"mainService": {
+				"uri": "/destinations/E91/sap/opu/odata/SAP/FAC_FINANCIAL_DOCUMENT_SRV_01/?sap-documentation=all",
+				"type": "OData",
+				"settings": {
+					"localUri": "/../mockserver/metadata.xml"
+				}
+			},
+			"smartFilterService": {
+				"uri": "/foo/",
+				"type": "OData",
+				"settings": {
+					"aEntitySetsNames": [
+						"LineItemsSet",
+						"VL_SH_H_T001"
+					],
+					"localUri": "/../mockserver/smartfilter/metadata.xml"
+				}
+			}
+		}
+	},
+
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": false
+		}
+	},
+
+	"sap.ui5": {
+		"dependencies": {
+			"minUI5Version": "${project.version}",
+			"libs": {
+				"sap.ui.core": {
+					"minVersion": "${project.version}"
+				},
+				"sap.m": {
+					"minVersion": "${project.version}"
+				},
+				"sap.ui.dt": {
+					"minVersion": "${project.version}"
+				},
+				"sap.ui.rta": {
+					"minVersion": "${project.version}"
+				}
+			}
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.rta.test.i18n.i18n"
+				}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": false
+		}
+	}
+}

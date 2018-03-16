@@ -1,0 +1,1785 @@
+{
+	"$Version" : "4.0",
+	"GWSAMPLE_BASIC." : {
+		"$kind" : "Schema",
+		"@Org.Odata.Core.V1.SchemaVersion" : "0000",
+		"$Annotations" : {
+			"GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Bus. Part. ID",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/CompanyName" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Company Name"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/WebAddress" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Web Address",
+				"@Org.OData.Core.V1.IsURL" : true
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/EmailAddress" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "E-Mail Address",
+				"@com.sap.vocabularies.Communication.v1.IsEmailAddress" : true
+			},
+			"GWSAMPLE_BASIC.BusinessPartner" : {
+				"@com.sap.vocabularies.Communication.v1.Contact" : {
+					"address" : [{
+						"uri" : {
+							"$Path" : "EmailAddress"
+						}
+					}],
+					"tel" : [{
+						"uri" : {
+							"$Path" : "PhoneNumber"
+						}
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/PhoneNumber" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Phone No.",
+				"@com.sap.vocabularies.Communication.v1.IsPhoneNumber" : true
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/FaxNumber" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Fax Number"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/LegalForm" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Legal Form"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/CurrencyCode" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Currency"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerRole" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Bus. Part. Role"
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/CreatedAt" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Time Stamp",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.BusinessPartner/ChangedAt" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Time Stamp",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.Product/ProductID" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Product ID",
+				"@Org.OData.Core.V1.Immutable" : true
+			},
+			"GWSAMPLE_BASIC.Product/TypeCode" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Prod. Type Code"
+			},
+			"GWSAMPLE_BASIC.Product/Category" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Prod. Cat."
+			},
+			"GWSAMPLE_BASIC.Product/Name" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Product Name"
+			},
+			"GWSAMPLE_BASIC.Product/NameLanguage" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Language",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.Product/Description" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Prod.Descrip."
+			},
+			"GWSAMPLE_BASIC.Product/DescriptionLanguage" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Language",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.Product/SupplierID" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Bus. Part. ID"
+			},
+			"GWSAMPLE_BASIC.Product/SupplierName" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Company Name",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.Product/TaxTarifCode" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Prod. Tax Code"
+			},
+			"GWSAMPLE_BASIC.Product/MeasureUnit" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Qty. Unit"
+			},
+			"GWSAMPLE_BASIC.Product/WeightMeasure" : {
+				"@Org.OData.Measures.V1.Unit" : {
+					"$Path" : "WeightUnit"
+				},
+				"@com.sap.vocabularies.Common.v1.Label" : "Wt. Measure"
+			},
+			"GWSAMPLE_BASIC.Product/WeightUnit" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Qty. Unit"
+			},
+			"GWSAMPLE_BASIC.Product/CurrencyCode" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Currency"
+			},
+			"GWSAMPLE_BASIC.Product/Price" : {
+				"@Org.OData.Measures.V1.ISOCurrency" : {
+					"$Path" : "CurrencyCode"
+				},
+				"@com.sap.vocabularies.Common.v1.Label" : "Unit Price"
+			},
+			"GWSAMPLE_BASIC.Product/Width" : {
+				"@Org.OData.Measures.V1.Unit" : {
+					"$Path" : "DimUnit"
+				},
+				"@com.sap.vocabularies.Common.v1.Label" : "Dimensions"
+			},
+			"GWSAMPLE_BASIC.Product/Depth" : {
+				"@Org.OData.Measures.V1.Unit" : {
+					"$Path" : "DimUnit"
+				},
+				"@com.sap.vocabularies.Common.v1.Label" : "Dimensions"
+			},
+			"GWSAMPLE_BASIC.Product/Height" : {
+				 "@Org.OData.Measures.V1.Unit" : {
+					"$Path" : "DimUnit"
+				},
+				"@com.sap.vocabularies.Common.v1.Label" : "Dimensions"
+			},
+			"GWSAMPLE_BASIC.Product/DimUnit" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Dim. Unit"
+			},
+			"GWSAMPLE_BASIC.Product/CreatedAt" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Time Stamp",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.Product/ChangedAt" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Time Stamp",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/SalesOrderID" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Sa. Ord. ID",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/Note" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Description",
+				"@Org.OData.Core.V1.Immutable" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/NoteLanguage" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Language",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/CustomerID" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Bus. Part. ID",
+				"@Org.OData.Core.V1.Immutable" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/CustomerName" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Company Name",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/CurrencyCode" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Currency",
+				"@Org.OData.Core.V1.Immutable" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/GrossAmount" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Gross Amt.",
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency" : {
+					"$Path" : "CurrencyCode"
+				}
+			},
+			"GWSAMPLE_BASIC.SalesOrder/NetAmount" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Net Amt.",
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency" : {
+					"$Path" : "CurrencyCode"
+				}
+			},
+			"GWSAMPLE_BASIC.SalesOrder/TaxAmount" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Tax Amt.",
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency" : {
+					"$Path" : "CurrencyCode"
+				}
+			},
+			"GWSAMPLE_BASIC.SalesOrder/LifecycleStatus" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "PO Lifecycle",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/LifecycleStatusDescription" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Lifecycle Descript.",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/BillingStatus" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "PO Confirmation",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/BillingStatusDescription" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Billing Description",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/DeliveryStatus" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "PO Ordering",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/DeliveryStatusDescription" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Delivery Description",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/CreatedAt" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Time Stamp",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrder/ChangedAt" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Time Stamp",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/SalesOrderID" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Sa. Ord. ID",
+				"@Org.OData.Core.V1.Immutable" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/ItemPosition" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "PO Item Pos",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/ProductID" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Product ID"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/Note" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Description"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/NoteLanguage" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Language",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/CurrencyCode" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Currency",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/GrossAmount" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Gross Amt.",
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency" : {
+					"$Path" : "CurrencyCode"
+				}
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/NetAmount" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Net Amt.",
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency" : {
+					"$Path" : "CurrencyCode"
+				}
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/TaxAmount" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Tax Amt.",
+				"@Org.OData.Core.V1.Computed" : true,
+				"@Org.OData.Measures.V1.ISOCurrency" : {
+					"$Path" : "CurrencyCode"
+				}
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/DeliveryDate" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Time Stamp"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/Quantity" : {
+				"@Org.OData.Measures.V1.Unit" : {
+					"$Path" : "QuantityUnit"
+				},
+				"@com.sap.vocabularies.Common.v1.Label" : "Quantity"
+			},
+			"GWSAMPLE_BASIC.SalesOrderLineItem/QuantityUnit" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Qty. Unit",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.Contact/ContactGuid" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Contact GUID",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.Contact/BusinessPartnerID" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Bus. Part. ID",
+				"@Org.OData.Core.V1.Immutable" : true
+			},
+			"GWSAMPLE_BASIC.Contact/Title" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Title"
+			},
+			"GWSAMPLE_BASIC.Contact/FirstName" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "First Name"
+			},
+			"GWSAMPLE_BASIC.Contact" : {
+				"@com.sap.vocabularies.Communication.v1.Contact" : {
+					"n" : {
+						"given" : {
+							"$Path" : "FirstName"
+						},
+						"additional" : {
+							"$Path" : "MiddleName"
+						},
+						"surname" : {
+							"$Path" : "LastName"
+						}
+					},
+					"nickname" : {
+						"$Path" : "Nickname"
+					},
+					"tel" : [{
+						"uri" : {
+							"$Path" : "PhoneNumber"
+						}
+					}],
+					"address" : [{
+						"uri" : {
+							"$Path" : "EmailAddress"
+						}
+					}],
+					"bday" : {
+						"$Path" : "DateOfBirth"
+					}
+				}
+			},
+			"GWSAMPLE_BASIC.Contact/MiddleName" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Middle Name"
+			},
+			"GWSAMPLE_BASIC.Contact/LastName" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Last Name"
+			},
+			"GWSAMPLE_BASIC.Contact/Nickname" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Nickname"
+			},
+			"GWSAMPLE_BASIC.Contact/Initials" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Initials"
+			},
+			"GWSAMPLE_BASIC.Contact/Sex" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Sex"
+			},
+			"GWSAMPLE_BASIC.Contact/PhoneNumber" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Phone No.",
+				"@com.sap.vocabularies.Communication.v1.IsPhoneNumber" : true
+			},
+			"GWSAMPLE_BASIC.Contact/FaxNumber" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Fax Number"
+			},
+			"GWSAMPLE_BASIC.Contact/EmailAddress" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "E-Mail Address",
+				"@com.sap.vocabularies.Communication.v1.IsEmailAddress" : true
+			},
+			"GWSAMPLE_BASIC.Contact/Language" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Language Key"
+			},
+			"GWSAMPLE_BASIC.Contact/DateOfBirth" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Date of Birth"
+			},
+			"GWSAMPLE_BASIC.VH_Sex/Sex" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Sex",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_Sex/Shorttext" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Short Descript.",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_Country/Land1" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Country",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_Country/Landx" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Name",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_Country/Natio" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Nationality",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_AddressType/AddressType" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Address Type",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_AddressType/Shorttext" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Short Descript.",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_Category/Category" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Prod. Cat.",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_Currency/Waers" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Currency",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_Currency/Ltext" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Long Text",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_UnitQuantity/Msehi" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Int. meas. unit",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_UnitQuantity/Msehl" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Unit text",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_UnitWeight/Msehi" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Int. meas. unit",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_UnitWeight/Msehl" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Unit text",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_UnitLength/Msehi" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Int. meas. unit",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_UnitLength/Msehl" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Unit text",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_ProductTypeCode/TypeCode" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Prod. Type Code",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_ProductTypeCode/Shorttext" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Short Descript.",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_BPRole/BpRole" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Bus. Part. Role",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_BPRole/Shorttext" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Short Descript.",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_Language/Spras" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Language",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.VH_Language/Sptxt" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Name",
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.CT_Address/City" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "City"
+			},
+			"GWSAMPLE_BASIC.CT_Address" : {
+				"@com.sap.vocabularies.Communication.v1.Contact" : {
+					"adr" : {
+						"locality" : {
+							"$Path" : "City"
+						},
+						"code" : {
+							"$Path" : "PostalCode"
+						},
+						"street" : {
+							"$Path" : "Street"
+						},
+						"country" : {
+							"$Path" : "Country"
+						}
+					}
+				}
+			},
+			"GWSAMPLE_BASIC.CT_Address/PostalCode" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Postal Code"
+			},
+			"GWSAMPLE_BASIC.CT_Address/Street" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Street"
+			},
+			"GWSAMPLE_BASIC.CT_Address/Building" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Building"
+			},
+			"GWSAMPLE_BASIC.CT_Address/Country" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Country"
+			},
+			"GWSAMPLE_BASIC.CT_Address/AddressType" : {
+				"@com.sap.vocabularies.Common.v1.Label" : "Address Type"
+			},
+			"GWSAMPLE_BASIC.CT_String/String" : {
+				"@Org.OData.Core.V1.Computed" : true
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/BusinessPartnerSet" : {
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "WebAddress"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "WebAddress"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/ProductSet" : {
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Name"
+					}, {
+						"$PropertyPath" : "NameLanguage"
+					}, {
+						"$PropertyPath" : "Description"
+					}, {
+						"$PropertyPath" : "DescriptionLanguage"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Name"
+					}, {
+						"$PropertyPath" : "NameLanguage"
+					}, {
+						"$PropertyPath" : "Description"
+					}, {
+						"$PropertyPath" : "DescriptionLanguage"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrderSet" : {
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Note"
+					}, {
+						"$PropertyPath" : "NoteLanguage"
+					}, {
+						"$PropertyPath" : "LifecycleStatusDescription"
+					}, {
+						"$PropertyPath" : "BillingStatusDescription"
+					}, {
+						"$PropertyPath" : "DeliveryStatusDescription"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Note"
+					}, {
+						"$PropertyPath" : "NoteLanguage"
+					}, {
+						"$PropertyPath" : "LifecycleStatusDescription"
+					}, {
+						"$PropertyPath" : "BillingStatusDescription"
+					}, {
+						"$PropertyPath" : "DeliveryStatusDescription"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/SalesOrderLineItemSet" : {
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Note"
+					}, {
+						"$PropertyPath" : "NoteLanguage"
+					}, {
+						"$PropertyPath" : "DeliveryDate"
+					}, {
+						"$PropertyPath" : "Quantity"
+					}, {
+						"$PropertyPath" : "QuantityUnit"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Note"
+					}, {
+						"$PropertyPath" : "NoteLanguage"
+					}, {
+						"$PropertyPath" : "DeliveryDate"
+					}, {
+						"$PropertyPath" : "Quantity"
+					}, {
+						"$PropertyPath" : "QuantityUnit"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/ContactSet" : {
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_SexSet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Sex"
+					}, {
+						"$PropertyPath" : "Shorttext"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Sex"
+					}, {
+						"$PropertyPath" : "Shorttext"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_CountrySet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Land1"
+					}, {
+						"$PropertyPath" : "Landx"
+					}, {
+						"$PropertyPath" : "Natio"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Land1"
+					}, {
+						"$PropertyPath" : "Landx"
+					}, {
+						"$PropertyPath" : "Natio"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_AddressTypeSet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "AddressType"
+					}, {
+						"$PropertyPath" : "Shorttext"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "AddressType"
+					}, {
+						"$PropertyPath" : "Shorttext"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_CategorySet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Category"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Category"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_CurrencySet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Waers"
+					}, {
+						"$PropertyPath" : "Ltext"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Waers"
+					}, {
+						"$PropertyPath" : "Ltext"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_UnitQuantitySet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Msehi"
+					}, {
+						"$PropertyPath" : "Msehl"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Msehi"
+					}, {
+						"$PropertyPath" : "Msehl"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_UnitWeightSet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Msehi"
+					}, {
+						"$PropertyPath" : "Msehl"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Msehi"
+					}, {
+						"$PropertyPath" : "Msehl"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_UnitLengthSet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Msehi"
+					}, {
+						"$PropertyPath" : "Msehl"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Msehi"
+					}, {
+						"$PropertyPath" : "Msehl"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_ProductTypeCodeSet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "TypeCode"
+					}, {
+						"$PropertyPath" : "Shorttext"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "TypeCode"
+					}, {
+						"$PropertyPath" : "Shorttext"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_BPRoleSet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "BpRole"
+					}, {
+						"$PropertyPath" : "Shorttext"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "BpRole"
+					}, {
+						"$PropertyPath" : "Shorttext"
+					}]
+				}
+			},
+			"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities/VH_LanguageSet" : {
+				"@Org.OData.Capabilities.V1.InsertRestrictions" : {
+					"Insertable" : false
+				},
+				"@Org.OData.Capabilities.V1.UpdateRestrictions" : {
+					"Updatable" : false
+				},
+				"@Org.OData.Capabilities.V1.DeleteRestrictions" : {
+					"Deletable" : false
+				},
+				"@Org.OData.Capabilities.V1.SkipSupported" : false,
+				"@Org.OData.Capabilities.V1.TopSupported" : false,
+				"@Org.OData.Capabilities.V1.SearchRestrictions" : {
+					"Searchable" : false
+				},
+				"@Org.OData.Capabilities.V1.FilterRestrictions" : {
+					"NonFilterableProperties" : [{
+						"$PropertyPath" : "Spras"
+					}, {
+						"$PropertyPath" : "Sptxt"
+					}]
+				},
+				"@Org.OData.Capabilities.V1.SortRestrictions" : {
+					"NonSortableProperties" : [{
+						"$PropertyPath" : "Spras"
+					}, {
+						"$PropertyPath" : "Sptxt"
+					}]
+				}
+			}
+		}
+	},
+	"GWSAMPLE_BASIC.BusinessPartner" : {
+		"$kind" : "EntityType",
+		"$Key" : ["BusinessPartnerID"],
+		"Address" : {
+			"$kind" : "Property",
+			"$Nullable" : false,
+			"$Type" : "GWSAMPLE_BASIC.CT_Address"
+		},
+		"BusinessPartnerID" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"CompanyName" : {
+			"$kind" : "Property",
+			"$MaxLength" : 80,
+			"$Type" : "Edm.String"
+		},
+		"WebAddress" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.String"
+		},
+		"EmailAddress" : {
+			"$kind" : "Property",
+			"$MaxLength" : 255,
+			"$Type" : "Edm.String"
+		},
+		"PhoneNumber" : {
+			"$kind" : "Property",
+			"$MaxLength" : 30,
+			"$Type" : "Edm.String"
+		},
+		"FaxNumber" : {
+			"$kind" : "Property",
+			"$MaxLength" : 30,
+			"$Type" : "Edm.String"
+		},
+		"LegalForm" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Type" : "Edm.String"
+		},
+		"CurrencyCode" : {
+			"$kind" : "Property",
+			"$MaxLength" : 5,
+			"$Type" : "Edm.String"
+		},
+		"BusinessPartnerRole" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Type" : "Edm.String"
+		},
+		"CreatedAt" : {
+			"$kind" : "Property",
+			"$Precision" : 7,
+			"$v2Type" : "Edm.DateTime",
+			"$Type" : "Edm.DateTimeOffset"
+		},
+		"ChangedAt" : {
+			"$kind" : "Property",
+			"$Precision" : 7,
+			"$v2Type" : "Edm.DateTime",
+			"$Type" : "Edm.DateTimeOffset"
+		},
+		"ToSalesOrders" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.SalesOrder",
+			"$isCollection" : true
+		},
+		"ToContacts" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.Contact",
+			"$isCollection" : true
+		},
+		"ToProducts" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.Product",
+			"$isCollection" : true
+		}
+	},
+	"GWSAMPLE_BASIC.Product" : {
+		"$kind" : "EntityType",
+		"$Key" : ["ProductID"],
+		"ProductID" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"TypeCode" : {
+			"$kind" : "Property",
+			"$MaxLength" : 2,
+			"$Type" : "Edm.String"
+		},
+		"Category" : {
+			"$kind" : "Property",
+			"$MaxLength" : 40,
+			"$Type" : "Edm.String"
+		},
+		"Name" : {
+			"$kind" : "Property",
+			"$MaxLength" : 255,
+			"$Type" : "Edm.String"
+		},
+		"NameLanguage" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Type" : "Edm.String"
+		},
+		"Description" : {
+			"$kind" : "Property",
+			"$MaxLength" : 255,
+			"$Type" : "Edm.String"
+		},
+		"DescriptionLanguage" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Type" : "Edm.String"
+		},
+		"SupplierID" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Type" : "Edm.String"
+		},
+		"SupplierName" : {
+			"$kind" : "Property",
+			"$MaxLength" : 80,
+			"$Type" : "Edm.String"
+		},
+		"TaxTarifCode" : {
+			"$kind" : "Property",
+			"$Type" : "Edm.Byte"
+		},
+		"MeasureUnit" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Type" : "Edm.String"
+		},
+		"WeightMeasure" : {
+			"$kind" : "Property",
+			"$Precision" : 13,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"WeightUnit" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Type" : "Edm.String"
+		},
+		"CurrencyCode" : {
+			"$kind" : "Property",
+			"$MaxLength" : 5,
+			"$Type" : "Edm.String"
+		},
+		"Price" : {
+			"$kind" : "Property",
+			"$Precision" : 16,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"Width" : {
+			"$kind" : "Property",
+			"$Precision" : 13,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"Depth" : {
+			"$kind" : "Property",
+			"$Precision" : 13,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"Height" : {
+			"$kind" : "Property",
+			"$Precision" : 13,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"DimUnit" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Type" : "Edm.String"
+		},
+		"CreatedAt" : {
+			"$kind" : "Property",
+			"$Precision" : 7,
+			"$v2Type" : "Edm.DateTime",
+			"$Type" : "Edm.DateTimeOffset"
+		},
+		"ChangedAt" : {
+			"$kind" : "Property",
+			"$Precision" : 7,
+			"$v2Type" : "Edm.DateTime",
+			"$Type" : "Edm.DateTimeOffset"
+		},
+		"ToSalesOrderLineItems" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.SalesOrderLineItem",
+			"$isCollection" : true
+		},
+		"ToSupplier" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.BusinessPartner",
+			"$Nullable" : false,
+			"$ReferentialConstraint" : {
+				"SupplierID" : "BusinessPartnerID"
+			}
+		}
+	},
+	"GWSAMPLE_BASIC.SalesOrder" : {
+		"$kind" : "EntityType",
+		"$Key" : ["SalesOrderID"],
+		"SalesOrderID" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Note" : {
+			"$kind" : "Property",
+			"$MaxLength" : 255,
+			"$Type" : "Edm.String"
+		},
+		"NoteLanguage" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Type" : "Edm.String"
+		},
+		"CustomerID" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Type" : "Edm.String"
+		},
+		"CustomerName" : {
+			"$kind" : "Property",
+			"$MaxLength" : 80,
+			"$Type" : "Edm.String"
+		},
+		"CurrencyCode" : {
+			"$kind" : "Property",
+			"$MaxLength" : 5,
+			"$Type" : "Edm.String"
+		},
+		"GrossAmount" : {
+			"$kind" : "Property",
+			"$Precision" : 16,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"NetAmount" : {
+			"$kind" : "Property",
+			"$Precision" : 16,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"TaxAmount" : {
+			"$kind" : "Property",
+			"$Precision" : 16,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"LifecycleStatus" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Type" : "Edm.String"
+		},
+		"LifecycleStatusDescription" : {
+			"$kind" : "Property",
+			"$MaxLength" : 60,
+			"$Type" : "Edm.String"
+		},
+		"BillingStatus" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Type" : "Edm.String"
+		},
+		"BillingStatusDescription" : {
+			"$kind" : "Property",
+			"$MaxLength" : 60,
+			"$Type" : "Edm.String"
+		},
+		"DeliveryStatus" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Type" : "Edm.String"
+		},
+		"DeliveryStatusDescription" : {
+			"$kind" : "Property",
+			"$MaxLength" : 60,
+			"$Type" : "Edm.String"
+		},
+		"CreatedAt" : {
+			"$kind" : "Property",
+			"$Precision" : 7,
+			"$v2Type" : "Edm.DateTime",
+			"$Type" : "Edm.DateTimeOffset"
+		},
+		"ChangedAt" : {
+			"$kind" : "Property",
+			"$Precision" : 7,
+			"$v2Type" : "Edm.DateTime",
+			"$Type" : "Edm.DateTimeOffset"
+		},
+		"ToBusinessPartner" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.BusinessPartner",
+			"$Nullable" : false,
+			"$ReferentialConstraint" : {
+				"CustomerID" : "BusinessPartnerID"
+			}
+		},
+		"ToLineItems" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.SalesOrderLineItem",
+			"$isCollection" : true
+		}
+	},
+	"GWSAMPLE_BASIC.SalesOrderLineItem" : {
+		"$kind" : "EntityType",
+		"$Key" : ["SalesOrderID", "ItemPosition"],
+		"SalesOrderID" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"ItemPosition" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"ProductID" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Type" : "Edm.String"
+		},
+		"Note" : {
+			"$kind" : "Property",
+			"$MaxLength" : 255,
+			"$Type" : "Edm.String"
+		},
+		"NoteLanguage" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Type" : "Edm.String"
+		},
+		"CurrencyCode" : {
+			"$kind" : "Property",
+			"$MaxLength" : 5,
+			"$Type" : "Edm.String"
+		},
+		"GrossAmount" : {
+			"$kind" : "Property",
+			"$Precision" : 16,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"NetAmount" : {
+			"$kind" : "Property",
+			"$Precision" : 16,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"TaxAmount" : {
+			"$kind" : "Property",
+			"$Precision" : 16,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"DeliveryDate" : {
+			"$kind" : "Property",
+			"$v2Type" : "Edm.DateTime",
+			"$Type" : "Edm.Date"
+		},
+		"Quantity" : {
+			"$kind" : "Property",
+			"$Precision" : 13,
+			"$Scale" : 3,
+			"$Type" : "Edm.Decimal"
+		},
+		"QuantityUnit" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Type" : "Edm.String"
+		},
+		"ToHeader" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.SalesOrder",
+			"$Nullable" : false,
+			"$ReferentialConstraint" : {
+				"SalesOrderID" : "SalesOrderID"
+			}
+		},
+		"ToProduct" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.Product",
+			"$Nullable" : false,
+			"$ReferentialConstraint" : {
+				"ProductID" : "ProductID"
+			}
+		}
+	},
+	"GWSAMPLE_BASIC.Contact" : {
+		"$kind" : "EntityType",
+		"$Key" : ["ContactGuid"],
+		"Address" : {
+			"$kind" : "Property",
+			"$Nullable" : false,
+			"$Type" : "GWSAMPLE_BASIC.CT_Address"
+		},
+		"ContactGuid" : {
+			"$kind" : "Property",
+			"$Nullable" : false,
+			"$Type" : "Edm.Guid"
+		},
+		"BusinessPartnerID" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Title" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Type" : "Edm.String"
+		},
+		"FirstName" : {
+			"$kind" : "Property",
+			"$MaxLength" : 40,
+			"$Type" : "Edm.String"
+		},
+		"MiddleName" : {
+			"$kind" : "Property",
+			"$MaxLength" : 40,
+			"$Type" : "Edm.String"
+		},
+		"LastName" : {
+			"$kind" : "Property",
+			"$MaxLength" : 40,
+			"$Type" : "Edm.String"
+		},
+		"Nickname" : {
+			"$kind" : "Property",
+			"$MaxLength" : 40,
+			"$Type" : "Edm.String"
+		},
+		"Initials" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Type" : "Edm.String"
+		},
+		"Sex" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Type" : "Edm.String"
+		},
+		"PhoneNumber" : {
+			"$kind" : "Property",
+			"$MaxLength" : 30,
+			"$Type" : "Edm.String"
+		},
+		"FaxNumber" : {
+			"$kind" : "Property",
+			"$MaxLength" : 30,
+			"$Type" : "Edm.String"
+		},
+		"EmailAddress" : {
+			"$kind" : "Property",
+			"$MaxLength" : 255,
+			"$Type" : "Edm.String"
+		},
+		"Language" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Type" : "Edm.String"
+		},
+		"DateOfBirth" : {
+			"$kind" : "Property",
+			"$Precision" : 7,
+			"$v2Type" : "Edm.DateTime",
+			"$Type" : "Edm.DateTimeOffset"
+		},
+		"ToBusinessPartner" : {
+			"$kind" : "NavigationProperty",
+			"$Type" : "GWSAMPLE_BASIC.BusinessPartner",
+			"$Nullable" : false,
+			"$ReferentialConstraint" : {
+				"BusinessPartnerID" : "BusinessPartnerID"
+			}
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Sex" : {
+		"$kind" : "EntityType",
+		"$Key" : ["Sex"],
+		"Sex" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Shorttext" : {
+			"$kind" : "Property",
+			"$MaxLength" : 60,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Country" : {
+		"$kind" : "EntityType",
+		"$Key" : ["Land1"],
+		"Land1" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Landx" : {
+			"$kind" : "Property",
+			"$MaxLength" : 15,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Natio" : {
+			"$kind" : "Property",
+			"$MaxLength" : 15,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.SalesOrder_Cancel": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.SalesOrder_Confirm": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.SalesOrder_GoodsIssueCreated": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.SalesOrder_InvoiceCreated": [{
+		"$IsBound": true,
+		"$Parameter": [{
+			"$Name": null,
+			"$Nullable": false,
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		}],
+		"$ReturnType": {
+			"$Type": "GWSAMPLE_BASIC.SalesOrder"
+		},
+		"$kind": "Action"
+	}],
+	"GWSAMPLE_BASIC.VH_AddressType" : {
+		"$kind" : "EntityType",
+		"$Key" : ["AddressType"],
+		"AddressType" : {
+			"$kind" : "Property",
+			"$MaxLength" : 2,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Shorttext" : {
+			"$kind" : "Property",
+			"$MaxLength" : 60,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Category" : {
+		"$kind" : "EntityType",
+		"$Key" : ["Category"],
+		"Category" : {
+			"$kind" : "Property",
+			"$MaxLength" : 40,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Currency" : {
+		"$kind" : "EntityType",
+		"$Key" : ["Waers"],
+		"Waers" : {
+			"$kind" : "Property",
+			"$MaxLength" : 5,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Ltext" : {
+			"$kind" : "Property",
+			"$MaxLength" : 40,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_UnitQuantity" : {
+		"$kind" : "EntityType",
+		"$Key" : ["Msehi"],
+		"Msehi" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Msehl" : {
+			"$kind" : "Property",
+			"$MaxLength" : 30,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_UnitWeight" : {
+		"$kind" : "EntityType",
+		"$Key" : ["Msehi"],
+		"Msehi" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Msehl" : {
+			"$kind" : "Property",
+			"$MaxLength" : 30,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_UnitLength" : {
+		"$kind" : "EntityType",
+		"$Key" : ["Msehi"],
+		"Msehi" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Msehl" : {
+			"$kind" : "Property",
+			"$MaxLength" : 30,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_ProductTypeCode" : {
+		"$kind" : "EntityType",
+		"$Key" : ["TypeCode"],
+		"TypeCode" : {
+			"$kind" : "Property",
+			"$MaxLength" : 2,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Shorttext" : {
+			"$kind" : "Property",
+			"$MaxLength" : 60,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_BPRole" : {
+		"$kind" : "EntityType",
+		"$Key" : ["BpRole"],
+		"BpRole" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Shorttext" : {
+			"$kind" : "Property",
+			"$MaxLength" : 60,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.VH_Language" : {
+		"$kind" : "EntityType",
+		"$Key" : ["Spras"],
+		"Spras" : {
+			"$kind" : "Property",
+			"$MaxLength" : 1,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		},
+		"Sptxt" : {
+			"$kind" : "Property",
+			"$MaxLength" : 16,
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.CT_Address" : {
+		"$kind" : "ComplexType",
+		"City" : {
+			"$kind" : "Property",
+			"$MaxLength" : 40,
+			"$Type" : "Edm.String"
+		},
+		"PostalCode" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Type" : "Edm.String"
+		},
+		"Street" : {
+			"$kind" : "Property",
+			"$MaxLength" : 60,
+			"$Type" : "Edm.String"
+		},
+		"Building" : {
+			"$kind" : "Property",
+			"$MaxLength" : 10,
+			"$Type" : "Edm.String"
+		},
+		"Country" : {
+			"$kind" : "Property",
+			"$MaxLength" : 3,
+			"$Type" : "Edm.String"
+		},
+		"AddressType" : {
+			"$kind" : "Property",
+			"$MaxLength" : 2,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.CT_String" : {
+		"$kind" : "ComplexType",
+		"String" : {
+			"$kind" : "Property",
+			"$Nullable" : false,
+			"$Type" : "Edm.String"
+		}
+	},
+	"GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities" : {
+		"$kind" : "EntityContainer",
+		"BusinessPartnerSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.BusinessPartner",
+			"$NavigationPropertyBinding" : {
+				"ToProducts" : "ProductSet",
+				"ToSalesOrders" : "SalesOrderSet",
+				"ToContacts" : "ContactSet"
+			}
+		},
+		"ProductSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.Product",
+			"$NavigationPropertyBinding" : {
+				"ToSalesOrderLineItems" : "SalesOrderLineItemSet",
+				"ToSupplier" : "BusinessPartnerSet"
+			}
+		},
+		"SalesOrderSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.SalesOrder",
+			"$NavigationPropertyBinding" : {
+				"ToLineItems" : "SalesOrderLineItemSet",
+				"ToBusinessPartner" : "BusinessPartnerSet"
+			}
+		},
+		"SalesOrderLineItemSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.SalesOrderLineItem",
+			"$NavigationPropertyBinding" : {
+				"ToProduct" : "ProductSet",
+				"ToHeader" : "SalesOrderSet"
+			}
+		},
+		"ContactSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.Contact",
+			"$NavigationPropertyBinding" : {
+				"ToBusinessPartner" : "BusinessPartnerSet"
+			}
+		},
+		"VH_SexSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_Sex"
+		},
+		"VH_CountrySet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_Country"
+		},
+		"VH_AddressTypeSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_AddressType"
+		},
+		"VH_CategorySet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_Category"
+		},
+		"VH_CurrencySet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_Currency"
+		},
+		"VH_UnitQuantitySet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_UnitQuantity"
+		},
+		"VH_UnitWeightSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_UnitWeight"
+		},
+		"VH_UnitLengthSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_UnitLength"
+		},
+		"VH_ProductTypeCodeSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_ProductTypeCode"
+		},
+		"VH_BPRoleSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_BPRole"
+		},
+		"VH_LanguageSet" : {
+			"$kind" : "EntitySet",
+			"$Type" : "GWSAMPLE_BASIC.VH_Language"
+		},
+		"RegenerateAllData" : {
+			"$kind" : "ActionImport",
+			"$Action" : "GWSAMPLE_BASIC.RegenerateAllData"
+		}
+	},
+	"GWSAMPLE_BASIC.RegenerateAllData" : [{
+		"$kind" : "Action",
+		"$ReturnType" : {
+			"$Type" : "GWSAMPLE_BASIC.CT_String"
+		},
+		"$Parameter" : [{
+			"$Name" : "NoOfSalesOrders",
+			"$Type" : "Edm.Int32"
+		}]
+	}],
+	"$EntityContainer" : "GWSAMPLE_BASIC.GWSAMPLE_BASIC_Entities"
+}

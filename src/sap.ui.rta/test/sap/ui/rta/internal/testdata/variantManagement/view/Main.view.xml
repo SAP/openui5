@@ -1,0 +1,133 @@
+<mvc:View
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:uxap="sap.uxap"
+	xmlns:vm="sap.ui.fl.variants"
+	xmlns:l="sap.ui.layout"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	controllerName="sap.ui.rta.test.variantManagement.controller.Main">
+	<!--The view is is bound to EntityType01 in the controller -->
+	<Page title="{i18n>appTitleMain}" id="page" enableScrolling="false">
+		<headerContent>
+				<Button visible = "{app>/showAdaptButton}" text="{= ${app>/showAdaptButton} ? ${i18n>btnAdapt} : ${i18n>btnNonAdapt} }"  press=".switchToAdaptionMode" />
+		</headerContent>
+		<content>
+
+			<uxap:ObjectPageLayout id="ObjectPageLayout">
+				<uxap:headerTitle>
+					<uxap:ObjectPageHeader
+							id="obheader0"
+							objectTitle="{VMTitle}"
+							objectSubtitle="{VMSubtitle}"
+							objectImageURI="">
+						<uxap:navigationBar>
+							<Bar>
+								<contentLeft>
+									<Button text="Personalization Changes" press=".createChanges" ariaDescribedBy="defaultButtonDescription genericButtonDescription"></Button>
+								</contentLeft>
+								<contentRight>
+									<vm:VariantManagement id="variantManagementOrdersTable" for="ObjectPageLayout" updateVariantInURL="true"></vm:VariantManagement>
+								</contentRight>
+							</Bar>
+						</uxap:navigationBar>
+					</uxap:ObjectPageHeader>
+
+				</uxap:headerTitle>
+				<uxap:sections>
+					<uxap:ObjectPageSection id="ObjectPageSectionWithForm">
+						<uxap:ObjectPageSubSection  id="ObjectPageSubSectionWithForm" title="{SubSectionTitle1}">
+							<form:SimpleForm class="sapUiSmallMargin"
+											 title="Simple Form bound to EntityType02" id="MainForm"
+											 maxContainerCols="3"
+											 editable="true"
+											 adjustLabelSpan="false"
+											 layout="ResponsiveGridLayout"
+											 labelSpanXL="4"
+											 labelSpanL="4"
+											 labelSpanM="4"
+											 emptySpanXL="0"
+											 emptySpanL="0"
+											 emptySpanM="0"
+											 columnsXL="3"
+											 columnsL="2"
+											 columnsM="2"
+											 singleContainerFullSize="false">
+								<form:content>
+									<core:Title id="EntityType02.Title1" text="EntityType02 Title 1" />
+									<Label id="EntityType02.Label1" text="{/#EntityType02/EntityType02_Property01/@sap:label}" />
+									<Text id="EntityType02.Text1" text="{EntityType02_Property01}" />
+									<Label id="EntityType02.Label2" text="{/#EntityType02/EntityType02_Property02/@sap:label}" />
+									<Text id="EntityType02.Text2" text="{EntityType02_Property02}" />
+
+									<core:Title id="EntityType02.Title2" text="EntityType02 Title 2 Complex" />
+									<Label id="EntityType02.Label3" text="{/#EntityType02/EntityType02_Complex/ComplexProperty01/@sap:label}" />
+									<Text id="EntityType02.Text3" text="{EntityType02_Complex/ComplexProperty01}" />
+									<Label id="EntityType02.Label4" text="{/#EntityType02/EntityType02_Complex/ComplexProperty02/@sap:label}" />
+									<Text id="EntityType02.Text4" text="{EntityType02_Complex/ComplexProperty02}" />
+								</form:content>
+							</form:SimpleForm>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="{SectionTitle2}" class="sapUiNoMargin">
+						<uxap:ObjectPageSubSection>
+							<form:SimpleForm class="sapUiNoMargin"
+											 title="Simple Form bound to EntityTypeNav using navigation" id="NavPropertyForm"
+											 maxContainerCols="3"
+											 editable="true"
+											 adjustLabelSpan="false"
+											 layout="ResponsiveGridLayout"
+											 labelSpanXL="4"
+											 labelSpanL="4"
+											 labelSpanM="4"
+											 emptySpanXL="0"
+											 emptySpanL="0"
+											 emptySpanM="0"
+											 columnsXL="3"
+											 columnsL="2"
+											 columnsM="2"
+											 singleContainerFullSize="false">
+								<form:content>
+									<core:Title id="NavTitle1" text="Navigation Title 1" />
+									<Label id="NavProperty.Label1" text="{/#EntityTypeNav/NavProperty/@sap:label}" />
+									<Text id="NavProperty.Text1" text="{to_EntityType01Nav/NavProperty}" />
+									<Label id="NavProperty.Label2" text="{/#EntityTypeNav/EntityTypeNav_Property01/@sap:label}" />
+									<Text id="NavProperty.Text2" text="{to_EntityType01Nav/EntityTypeNav_Property01}" />
+
+									<core:Title id="NavTitle2" text="Navigation Title 2" />
+									<Label id="NavProperty.Label3" text="{/#EntityType01/Property01/@sap:label}" />
+									<Text id="NavProperty.Text3" text="{Property01}" />
+									<Label id="NavProperty.Label4" text="{/#EntityType01/Property02/@sap:label}" />
+									<Text id="NavProperty.Text4" text="{Property02}" />
+								</form:content>
+							</form:SimpleForm>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSectionWithVM" title="{SectionTitle3}" class="sapUiNoMargin">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSectionWithVM">
+							<l:Grid
+									class="sapUiNoMargin"
+									hSpacing="0"
+									defaultSpan="L12 M12 S12">
+								<Bar>
+									<contentRight>
+										<vm:VariantManagement id="variantManagementContained" for="ObjectPageSubSectionWithVM" updateVariantInURL="true"></vm:VariantManagement>
+									</contentRight>
+								</Bar>
+								<html:div style="height:auto;min-height:4em;min-width:100%;background-color:#A9EAFF;line-height:2em;display:inline-grid">
+									<Title id = "TitleForVM1" text="{to_EntityType01Nav/NavTitle01}"></Title>
+									<Title id = "TitleForVM2" text="{to_EntityType01Nav/NavTitle02}"></Title>
+								</html:div>
+							</l:Grid>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+				</uxap:sections>
+			</uxap:ObjectPageLayout>
+
+		</content>
+	</Page>
+</mvc:View>

@@ -55,7 +55,22 @@
 	line-height: 1.1875rem;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
+}
+
+.sapMTileCntFooterTextColorNeutral {
 	color: @sapUiTileTextColor;
+}
+
+.sapMTileCntFooterTextColorGood {
+	color: @sapUiPositiveText;
+}
+
+.sapMTileCntFooterTextColorError {
+	color: @sapUiNegativeText;
+}
+
+.sapMTileCntFooterTextColorCritical {
+	color: @sapUiCriticalText;
 }
 
 html[dir=rtl] .sapMTileCntFtrTxt {
@@ -112,8 +127,7 @@ html[dir=rtl] .sapMTileCntFtrTxt {
 	}
 }
 
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
+.sapMTileSmallPhone {
 	.sapMTileCnt {
 		height: 5.5rem;
 

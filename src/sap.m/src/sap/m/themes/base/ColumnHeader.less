@@ -1,0 +1,66 @@
+/* =================================== */
+/* CSS for control sap.m/ColumnHeader  */
+/* Base theme                          */
+/* =================================== */
+.sapMColumnHeader {
+	display: flex;
+	flex: 1 1 auto;
+	font-size: @sapMFontMediumSize;
+	font-weight: normal;
+	padding: .875rem .5rem 1rem;
+
+	&.sapMColumnHeaderActive:hover {
+		background-color: contrast(@sapUiListHeaderBackground, darken(@sapUiListHeaderBackground, 6), lighten(@sapUiListHeaderBackground, 6));
+	}
+
+	&.sapMColumnHeaderActive:active {
+		color: @sapUiListActiveTextColor;
+		background-color: @sapUiListActiveBackground;
+	}
+}
+
+.sapMColumnHeaderText {
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sapMColumnHeaderFocusable:focus {
+	outline: 1px dotted @sapUiContentFocusColor;
+	outline-offset: -1px;
+}
+
+.sapMColumnHeaderIcons {
+	white-space: nowrap;
+}
+
+.sapMColumnHeaderIcons > .sapUiIcon {
+	padding-left: 0.375rem;
+}
+
+/* padding for sap.m.ColumnHeader */
+.sapMListTblHighlightCol + .sapMListTblCell.sapMListTblCellCH {
+	padding-left: .5rem;
+}
+
+.sapMListTblCell.sapMListTblCellCH {
+	padding: 0;
+}
+
+/* =================================== */
+/*           Compact Design            */
+/* =================================== */
+.sapUiSizeCompact .sapMColumnHeader {
+	padding-top: .5rem;
+	padding-bottom: .5rem;
+}
+
+/* padding for sap.m.ColumnHeader */
+.sapUiSizeCompact .sapMListTblCell.sapMListTblCellCH {
+	padding: 0;
+}
+
+.sapUiSizeCompact .sapMListTblHighlightCol + .sapMListTblCell.sapMListTblCellCH {
+	padding-left: .5rem;
+}

@@ -13,6 +13,18 @@
 	jQuery.sap.require("sap.uxap.ObjectPageSection");
 	jQuery.sap.require("sap.uxap.ObjectPageHeader");
 
+	var BREAK_POINTS = {
+		TABLET: 1024,
+		PHONE: 600,
+		DESKTOP: 2000
+	};
+
+	var MEDIA = {
+		PHONE: "sapFDynamicPage-Std-Phone",
+		TABLET: "sapFDynamicPage-Std-Tablet",
+		DESKTOP: "sapFDynamicPage-Std-Desktop"
+	};
+
 	QUnit.module("aat_UxAP-ManageDisplay", {
 		beforeEach: function () {
 			//aat_UxAP-331_ObjectPageRules1
@@ -100,9 +112,28 @@
 		var objectPageToBar331 = $("#UxAP-331_ObjectPageRules2--objectPage2").find(".sapUxAPAnchorBar").is(":visible");
 		assert.strictEqual(objectPageToBar331, false, "ObjectPageLayout 2 No AnchorBar is display");
 	});
-	QUnit.test("ObjectPageId 2: 1st Title Section is visible", function (assert) {
-		var objectPageTitle331 = $("#UxAP-331_ObjectPageRules2--ObjectPageSectionNoAnchorBar331").find(".sapUxAPObjectPageSectionHeader").is(":visible");
-		assert.strictEqual(objectPageTitle331, true, "1st Title is visible");
+
+	QUnit.test("ObjectPage _updateMedia: correct media class is applied", function (assert) {
+		assert.expect(9);
+
+		var oObjectPage = this.referencedObjectPage2,
+			fnCheckMediaClasses = function(oAssert, sMediaClass) {
+				Object.keys(MEDIA).forEach(function (sMedia) {
+					var sCurrentMediaClass = MEDIA[sMedia],
+						bMediaShouldBeApplied = sMediaClass === sCurrentMediaClass;
+
+					oAssert.strictEqual(oObjectPage.hasStyleClass(sCurrentMediaClass), bMediaShouldBeApplied, sCurrentMediaClass + " is applied: " + bMediaShouldBeApplied);
+				}, this);
+			};
+
+		oObjectPage._updateMedia(BREAK_POINTS.PHONE);
+		fnCheckMediaClasses(assert, MEDIA.PHONE);
+
+		oObjectPage._updateMedia(BREAK_POINTS.TABLET);
+		fnCheckMediaClasses(assert, MEDIA.TABLET);
+
+		oObjectPage._updateMedia(BREAK_POINTS.DESKTOP);
+		fnCheckMediaClasses(assert, MEDIA.DESKTOP);
 	});
 
 }(jQuery, QUnit));

@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.PopoverNavCon.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.PopoverNavCon.V",
+			rootView : {
+				"viewName": "sap.m.sample.PopoverNavCon.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

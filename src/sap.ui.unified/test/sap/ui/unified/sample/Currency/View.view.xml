@@ -26,5 +26,9 @@
 		<u:Currency value="38" currency="JPY" useSymbol="true" maxPrecision="0" />
 		<u:Currency value="1928472" currency="JPY" useSymbol="true" maxPrecision="0" />
 		<u:Currency value="233" currency="JPY" useSymbol="true" maxPrecision="0" />
+
+		<Text text="Currency with really big numbers" />
+		<u:Currency stringValue="12345678901234567890123" currency="USD" useSymbol="true" />
+		<u:Currency stringValue="123456789012345678901.23" currency="USD" useSymbol="true" />
 	</l:VerticalLayout>
 </mvc:View>

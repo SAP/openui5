@@ -30,14 +30,27 @@
 
 		function createView (aContent, sId, bAsync) {
 			var sXmlViewContent = aContent.join(''),
-					oViewOptions = {
-						id : sId,
-						viewContent: sXmlViewContent,
-						type: "XML",
-						async: !!bAsync
-					};
+				oViewOptions = {
+					id : sId,
+					viewContent: sXmlViewContent,
+					type: "XML",
+					async: !!bAsync
+				};
 
-			return sap.ui.view(oViewOptions);
+			if (bAsync instanceof Promise) {
+				var pLoaded = bAsync;
+				pLoaded = pLoaded.then(function() {
+					return sap.ui.view(oViewOptions);
+				});
+
+				return {
+					loaded: function() {
+						return pLoaded;
+					}
+				};
+			} else {
+				return sap.ui.view(oViewOptions);
+			}
 		}
 
 		QUnit.module("views - creation", {
@@ -373,6 +386,66 @@
 				assert.strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
 				assert.strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
 			}.bind(this));
+		});
+
+		QUnit.test("Should wait for the root view to be loaded before target is displayed", function (assert) {
+			assert.expect(3);
+
+			var fnResolve,
+				pLoaded = new Promise(function(resolve, reject) {
+					fnResolve = resolve;
+				}),
+				oRootViewStub = createView(
+					['<View xmlns="sap.ui.core" xmlns:ux3="sap.ui.ux3">',
+						'<ux3:Shell id="myShell">',
+						'</ux3:Shell>',
+					'</View>'], "rootView", pLoaded),
+				oRootView;
+
+			// Arrange
+			this.oTarget._oOptions.rootView = "rootView";
+
+			// Act
+			var oDisplayed = this.oTarget.display();
+
+			oRootViewStub.loaded().then(function(oView) {
+				oRootView = oView;
+
+				oRootView.loaded().then(function() {
+					var oShell = oRootView.byId("myShell");
+					// Assert
+					assert.equal(oShell.getContent().length, 0, "the target view isn't added as content yet");
+				});
+			});
+
+			fnResolve();
+
+			return oDisplayed.then(function() {
+				var oShell = oRootView.byId("myShell");
+
+				// Assert
+				assert.strictEqual(oShell.getContent().length, 1, "something was placed inside the shell");
+				assert.strictEqual(oShell.getContent()[0], this.oChildView, "it is the child view");
+			}.bind(this));
+		});
+
+		QUnit.test("Show return object which contains the correct error message when the root view loading fails", function (assert) {
+			// Arrange
+			var pRefusedLoading = Promise.reject();
+
+			this.oParentView.loaded = function() {
+				return pRefusedLoading;
+			};
+
+			this.oTarget._oOptions.rootView = "parent";
+
+			// Act
+			var oDisplayed = this.oTarget.display();
+
+			return oDisplayed.then(function(oRes) {
+				// Assert
+				assert.equal(oRes.error, "Something went wrong during loading the root view with id parent", "error message exists");
+			});
 		});
 
 		QUnit.test("Should display a child target", function (assert) {

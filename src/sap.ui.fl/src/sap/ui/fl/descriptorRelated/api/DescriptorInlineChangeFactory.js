@@ -55,15 +55,15 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	var DescriptorInlineChangeFactory = {};
 
 	DescriptorInlineChangeFactory.getDescriptorChangeTypes = function(){
-		return ["appdescr_ovp_addNewCard","appdescr_ovp_removeCard",
-		        "appdescr_app_addNewInbound", "appdescr_app_changeInbound", "appdescr_app_removeInbound",
+		return ["appdescr_ovp_addNewCard","appdescr_ovp_removeCard","appdescr_ovp_changeCard",
+		        "appdescr_app_addNewInbound", "appdescr_app_changeInbound", "appdescr_app_removeInbound", "appdescr_app_removeAllInboundsExceptOne",
 		        "appdescr_app_addNewOutbound", "appdescr_app_changeOutbound", "appdescr_app_removeOutbound",
 		        "appdescr_app_addNewDataSource", "appdescr_app_changeDataSource", "appdescr_app_removeDataSource",
 		        "appdescr_app_addAnnotationsToOData", "appdescr_app_addTechnicalAttributes", "appdescr_app_removeTechnicalAttributes",
-		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription",
-		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_ui5_addNewModel", "appdescr_ui5_replaceComponentUsage",
-		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon",
-		        "appdescr_ui5_addLibraries"];
+		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription", "appdescr_app_setInfo",
+		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_ui5_addNewModel", "appdescr_ui5_replaceComponentUsage",
+		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon", "appdescr_ui_setDeviceTypes",
+		        "appdescr_ui5_addLibraries", "appdescr_url_setUri"];
 	};
 
 	DescriptorInlineChangeFactory.createNew = function(sChangeType,mParameters,mTexts) {
@@ -152,7 +152,30 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 
 	};
 
-	/**
+    /**
+     * Creates an inline change of change type appdescr_ovp_changeCard
+     *
+     * @param {object} mParameters parameters of the change type
+     * @param {string} mParameters.cardId the id of the card to be changed
+     * @param {object|array} mParameters.entityPropertyChange - the entity property change or an array of multiple changes
+     * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the card (Eg. '/settings/title').
+     * @param {object} mParameters.entityPropertyChange.operation - the operation (INSERT, UPDATE, UPSERT, DELETE)
+     * @param {object} mParameters.entityPropertyChange.propertyValue - the new property value
+     * @param {object} [mTexts] texts for the inline change
+     *
+     * @return {Promise} resolving when creating the descriptor inline change was successful
+     *
+     * @private
+     * @sap-restricted
+     */
+    DescriptorInlineChangeFactory.create_ovp_changeCard = function(mParameters,mTexts) {
+        Utils.checkParameterAndType(mParameters, "cardId", "string");
+        Utils.checkEntityPropertyChange(mParameters);
+        return this._createDescriptorInlineChange('appdescr_ovp_changeCard', mParameters, mTexts);
+
+    };
+
+    /**
 	 * Creates an inline change of change type appdescr_app_addNewInbound
 	 *
 	 * @param {object} mParameters parameters of the change type
@@ -188,12 +211,29 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	};
 
 	/**
+	 * Creates an inline change of change type appdescr_app_removeAllInboundsExceptOne
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {string} mParameters.inboundId the id of the inbound that should be preserved
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "inboundId", "string");
+		return this._createDescriptorInlineChange('appdescr_app_removeAllInboundsExceptOne', mParameters);
+	};
+
+	/**
 	 * Creates an inline change of change type appdescr_app_changeInbound
 	 *
 	 * @param {object} mParameters parameters of the change type
 	 * @param {string} mParameters.inboundId the id of the inbound to be changed
-	 * @param {object} mParameters.entityPropertyChange
-	 * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the inbound
+	 * @param {object|array} mParameters.entityPropertyChange - the entity property change or an array of multiple changes
+	 * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the inbound.
+	 *        If the propertyPath contains a parameter id with slash(es), each slash of the parameter id has to be escaped by exactly 2 backslashes.
 	 * @param {object} mParameters.entityPropertyChange.operation - the operation (INSERT, UPDATE, UPSERT, DELETE)
 	 * @param {object} mParameters.entityPropertyChange.propertyValue - the new property value
 	 * @param {object} [mTexts] texts for the inline change
@@ -249,8 +289,9 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 *
 	 * @param {object} mParameters parameters of the change type
 	 * @param {string} mParameters.outboundId the id of the outbound to be changed
-	 * @param {object} mParameters.entityPropertyChange
-	 * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the outbound
+	 * @param {object|array} mParameters.entityPropertyChange - the entity property change or an array of multiple changes
+	 * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the outbound.
+	 *        If the propertyPath contains a parameter id with slash(es), each slash of the parameter id has to be escaped by exactly 2 backslashes.
 	 * @param {object} mParameters.entityPropertyChange.operation - the operation (INSERT, UPDATE, UPSERT, DELETE)
 	 * @param {object} mParameters.entityPropertyChange.propertyValue - the new property value
 	 *
@@ -305,7 +346,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 *
 	 * @param {object} mParameters parameters of the change type
 	 * @param {string} mParameters.dataSourceId the id of the data source to be changed
-	 * @param {object} mParameters.entityPropertyChange
+	 * @param {object|array} mParameters.entityPropertyChange - the entity property change or an array of multiple changes
 	 * @param {object} mParameters.entityPropertyChange.propertyPath - the property path inside the data source
 	 * @param {object} mParameters.entityPropertyChange.operation - the operation (INSERT, UPDATE, UPSERT, DELETE)
 	 * @param {object} mParameters.entityPropertyChange.propertyValue - the new property value
@@ -451,7 +492,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	};
 
 	/**
-	 * Creates an inline change of change type appdescr_app_description
+	 * Creates an inline change of change type appdescr_app_setDescription
 	 *
 	 * @param {object} mParameters map of text properties
 	 * @param {object} mParameters.maxLength max length of description
@@ -483,6 +524,57 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 				resolve(oDescriptorInlineChange);
 			});
 		});
+	};
+
+	/**
+	 * Creates an inline change of change type appdescr_app_setInfo
+	 *
+	 * @param {object} mParameters map of text properties
+	 * @param {object} mParameters.maxLength max length of info
+	 * @param {object} [mParameters.type='XTIT'] type of info
+	 * @param {object} [mParameters.comment] comment for additional information
+	 * @param {object} [mParameters.value] map of locale and text, "" represents the default info
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_app_setInfo = function(mParameters) {
+
+		var mTexts = {
+					"" : mParameters //property name = text key set when adding to descriptor variant
+		};
+
+		return this._createDescriptorInlineChange('appdescr_app_setInfo', {}, mTexts).then(function(oDescriptorInlineChange){
+
+			//TODO check how this can be done nicer, e.g. by sub classing
+			return new Promise(function(resolve){
+				oDescriptorInlineChange["setHostingIdForTextKey"] = function(sHostingId){
+					var that = oDescriptorInlineChange;
+					var sTextKey = sHostingId + "_sap.app.info";
+					that._mParameters.texts[sTextKey] = that._mParameters.texts[""];
+					delete that._mParameters.texts[""];
+				};
+				resolve(oDescriptorInlineChange);
+			});
+		});
+	};
+
+	/**
+	 * Creates an inline change of change type appdescr_app_setAch
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {object} mParameters.ach the ACH component
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_app_setAch = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "ach", "string");
+		return this._createDescriptorInlineChange('appdescr_app_setAch', mParameters);
 	};
 
 
@@ -668,6 +760,37 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		return this._createDescriptorInlineChange('appdescr_ui_setIcon', mParameters);
 	};
 
+	/**
+	 * Creates an inline change of change type appdescr_ui_setDeviceTypes
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {object} mParameters.deviceTypes the device types
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_ui_setDeviceTypes = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "deviceTypes", "object");
+		return this._createDescriptorInlineChange('appdescr_ui_setDeviceTypes', mParameters);
+	};
+
+	/**
+	 * Creates an inline change of change type appdescr_url_setUri
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {object} mParameters.uri the uri string
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_url_setUri = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "uri", "string");
+		return this._createDescriptorInlineChange('appdescr_url_setUri', mParameters);
+	};
 
 	return DescriptorInlineChangeFactory;
 

@@ -1,0 +1,362 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "0162e96c5452e5045751e400739f7a07d96c7732",
+        "type": "FEATURE",
+        "text": "Core: DragInfo/DropInfo are added to configure drag-and-drop",
+        "references": []
+      },
+      {
+        "id": "7465b51ae0d71c11ff59a383ef788fc4aa4e4680",
+        "type": "FEATURE",
+        "text": "ListBinding: Make extended change detection available",
+        "references": []
+      },
+      {
+        "id": "bed304c442fd10307a87c17e3f8083272007b953",
+        "type": "FIX",
+        "text": "Binding: Forward bForceUpdate when _refresh is called",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880135170"
+          }
+        ]
+      },
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": "QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "9ee29d3c39ef4992fbf6f620b6b3ada647b2c4f6",
+        "type": "FIX",
+        "text": "ThemeCheck: Fix Cross-Origin issues in theme fallback",
+        "references": []
+      },
+      {
+        "id": "67cbdec51c0cc4877eec49f2c3bfd96937da3f6b",
+        "type": "FIX",
+        "text": "Types: Improve validation message",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770386137"
+          }
+        ]
+      },
+      {
+        "id": "607d3d28d71afe3ba32c2e47184f027de06cf73f",
+        "type": "FEATURE",
+        "text": "sap.ui.core: support for <base> tag",
+        "references": []
+      },
+      {
+        "id": "8266819817e5f732a8607734c8eed9163868c64f",
+        "type": "FIX",
+        "text": "core.IconPool: register lazy stub for IconPool methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880129607"
+          }
+        ]
+      },
+      {
+        "id": "ca3ed47295a98f61bc9275d6a3538edb5dd48edd",
+        "type": "FIX",
+        "text": "core/XMLTemplateProcessor: pass correct container to ExtensionPoint",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000619502018"
+          }
+        ]
+      },
+      {
+        "id": "d95671162c8ad20b92c02bfb84d67950f13d0a41",
+        "type": "FIX",
+        "text": "format.DateFormat: Make relative work with date before year 100",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1200"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670529554"
+          }
+        ]
+      },
+      {
+        "id": "f1a0eaeada5e5f09a09ddc223f2dd3da082e7759",
+        "type": "FIX",
+        "text": "jquery.sap.global: configure ui5loader for debug mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880151185"
+          }
+        ]
+      },
+      {
+        "id": "ce7eb1e0820a447e1d0dc6a6813eb6d1fe4f2dee",
+        "type": "FIX",
+        "text": "sap.ui.model.odata.v4.ODataModel: support bound action overloads",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880129867"
+          }
+        ]
+      },
+      {
+        "id": "6692bfd3d18fefb3715f5e5001f186c161415794",
+        "type": "FIX",
+        "text": "v2.oDataContextBinding: Null check for empty context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880145828"
+          }
+        ]
+      },
+      {
+        "id": "c50ec335908a24349c14a66f57effc4c1edda41c",
+        "type": "FEATURE",
+        "text": "XMLComposite: Aggregation Fragments",
+        "references": []
+      },
+      {
+        "id": "3f1a5739f506e490cc55250fdd1efa08add113c6",
+        "type": "FIX",
+        "text": "odata.v2.ODataContextBinding: Add Null Check for Preliminary Context",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880186163"
+          }
+        ]
+      },
+      {
+        "id": "036d1de741e569cdc390f738fb63605958b584d2",
+        "type": "FIX",
+        "text": "performance/Interaction: do not count cached requests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880170185"
+          }
+        ]
+      },
+      {
+        "id": "3cb809dee7d7bf654d5e6d838e1ac5e2b20d24d0",
+        "type": "FIX",
+        "text": "performance/Interaction: unsafe access to interaction",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880187469"
+          }
+        ]
+      },
+      {
+        "id": "3d25a861e0f7fbd16f8223370efc076112d348aa",
+        "type": "FIX",
+        "text": "performance/Measurement: do not log for undefined measurements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880140389"
+          }
+        ]
+      },
+      {
+        "id": "19611dee3768208c07758c19afee3a83731cb7af",
+        "type": "FIX",
+        "text": "sap.ui.core.cache.CacheManager: IE in privacy mode is disabled.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880137917"
+          }
+        ]
+      },
+      {
+        "id": "075d8de223afe82d2de55a23a6d0f46fe6b3e6ee",
+        "type": "FEATURE",
+        "text": "Mockserver: Allow usage of inline metadata documents",
+        "references": []
+      },
+      {
+        "id": "9b8fe26a68873554cf0cf838a1fdb007e1ba8a57",
+        "type": "FIX",
+        "text": "base/log: fix logging of LogLevel change",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880228840"
+          }
+        ]
+      },
+      {
+        "id": "9a7b30f8486e4f388742253130a5872a27160508",
+        "type": "FIX",
+        "text": "core.Element: fix bindElement documentation",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1891"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880199520"
+          }
+        ]
+      },
+      {
+        "id": "79d88b58429d4f2ecc25188cb501a2f2231ddf66",
+        "type": "FIX",
+        "text": "sap.ui.base.BindingParser: String part in expression binding",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880187556"
+          }
+        ]
+      },
+      {
+        "id": "b611460d06de2ff45701d91771fba5bf7d30a077",
+        "type": "FEATURE",
+        "text": "NumberFormat: UOM CurrencyDigits",
+        "references": []
+      },
+      {
+        "id": "348455173c873f5c2b8ad586989ac4189b9204db",
+        "type": "FEATURE",
+        "text": "XMLView, JSONView: new event handler parameter syntax",
+        "references": []
+      },
+      {
+        "id": "775f407ce0388b5871e14516a8271eac83bef15a",
+        "type": "FEATURE",
+        "text": "sap.m.Table: Enhancing the stickiness of the column headers",
+        "references": []
+      },
+      {
+        "id": "3dbe98bb7516e7e0c47619414fcde47a98b85778",
+        "type": "FIX",
+        "text": "Controller: extend lifecycle methods:",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870011621"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870014465"
+          }
+        ]
+      },
+      {
+        "id": "f485fe683c4f7e2df260d3ed2cc69fd6f1ea77dd",
+        "type": "FIX",
+        "text": "Controller: wrong error log",
+        "references": []
+      },
+      {
+        "id": "3abec537ac87c4ed072934d9178f6277cd37be32",
+        "type": "FIX",
+        "text": "ODataModel(V2) docs: add since information for invalidate* methods",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880242511"
+          }
+        ]
+      },
+      {
+        "id": "39ae08cfe6a97b6a9796f932e1f351b31f9da833",
+        "type": "FIX",
+        "text": "Opa: make polling consistent when using execution delay",
+        "references": []
+      },
+      {
+        "id": "097a3d28d348f131cfe5ec97b150ef9dc16a781d",
+        "type": "FIX",
+        "text": "Usage of different jQuery version (sap-ui-core-nojQuery.js)",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880243449"
+          }
+        ]
+      },
+      {
+        "id": "cfc51c70cdddebe567ac7dda21a92ab739e6733e",
+        "type": "FIX",
+        "text": "core/AppCacheBuster: cache buster token for XHR",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870010326"
+          }
+        ]
+      },
+      {
+        "id": "147c9af76db1ebab1f1652803df5833409507b53",
+        "type": "FIX",
+        "text": "crossroads.js: correctly handle the parse of skipped optional param",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006225322017"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400000588072018"
+          }
+        ]
+      },
+      {
+        "id": "b6384ad6ee704b90c66362d7435e381de067ff26",
+        "type": "FIX",
+        "text": "mvc/XMLView: expose errors from template parsing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880161277"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880141990"
+          },
+          {
+            "type": "BCP",
+            "reference": "002028376600002293832018"
+          }
+        ]
+      },
+      {
+        "id": "d78c6c9e305d92573b1b1a22a298f79d9d2d69b5",
+        "type": "FIX",
+        "text": "sap.ui.core.TechnicalInfo: Destroy dialog after it has been closed",
+        "references": []
+      },
+      {
+        "id": "eaa187aaa7f97b2a9abeb39af83cc09fe7918907",
+        "type": "FIX",
+        "text": "v2.ODataContextBinding: Preliminary check for Propagated Contexts",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880186163"
+          }
+        ]
+      }
+    ]
+  }
+}

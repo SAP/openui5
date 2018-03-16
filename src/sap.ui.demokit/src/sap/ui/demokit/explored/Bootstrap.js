@@ -309,7 +309,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ComponentContainer', 'sap/m/She
 				title : "SAPUI5 Explored",
 				showLogout : false,
 				app : new ComponentContainer({
-					name : 'sap.ui.demokit.explored'
+					name : 'sap.ui.demokit.explored',
+					settings : {
+						id : "explored"
+					}
 				}),
 				homeIcon : {
 					'phone' : sPath + '/img/57_iPhone_Desktop_Launch.png',

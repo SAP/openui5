@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+	<title>Layout examples - sap.ui.core</title>
+	<base href="../../../../../../../../..">
+	<script id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_bluecrystal" data-sap-ui-bindingSyntax="complex"
+	 src="resources/sap-ui-core.js" data-sap-ui-resourceroots='{"xml": "./test-resources/sap/ui/core/internal/samples/composite/xmlcomposite/misc/xml"}'>
+
+	</script>
+
+	<style type="text/css">
+		.heigth100percent {
+			height: 100%;
+		}
+	</style>
+
+	<script>
+		jQuery.sap.require("sap.ui.core.XMLComposite");
+		jQuery.sap.require("xml.WrapperLayouter");
+
+		var Wrapper = sap.ui.core.XMLComposite.extend("Wrapper", {
+			constructor: function (sId, mSettings) {
+				sap.ui.core.XMLComposite.apply(this, arguments);
+			},
+			fragment: "xml.wrapper",
+			renderer: "sap.ui.core.XMLCompositeRenderer"
+		});
+		var oWrapper = new Wrapper("layout");
+		//	oWrapper.addStyleClass("heigth100percent");
+		oWrapper.setHeight("100%");
+		oWrapper.placeAt("body");
+
+		// two inline-block
+		var oWrapper2 = new Wrapper("layout2");
+		oWrapper2.setWidth("200px");
+		oWrapper2.setDisplayBlock(false);
+
+		var oWrapper3 = new Wrapper("layout3");
+		oWrapper3.setWidth("200px");
+		oWrapper3.setDisplayBlock(false);
+
+		// the next two will be block elements
+		var oWrapper4 = new Wrapper("layout4");
+		oWrapper4.setWidth("200px");
+	
+		var oWrapper5 = new Wrapper("layout5");
+		oWrapper5.setWidth("200px");
+
+		var oo = new xml.WrapperLayouter();
+		oo.addItem(oWrapper2).addItem(oWrapper3).addItem(oWrapper4).addItem(oWrapper5);
+		oo.placeAt("body");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody" style='height: 500px'>
+</body>
+
+</html>

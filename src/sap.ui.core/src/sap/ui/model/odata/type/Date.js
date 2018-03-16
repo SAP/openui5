@@ -69,13 +69,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 *   constraints, see {@link #constructor}
 	 */
 	function setConstraints(oType, oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
+		var vNullable;
 
 		oType.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			oType.oConstraints = {nullable : false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		if (oConstraints) {
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
+				oType.oConstraints = {nullable : false};
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+			}
 		}
 	}
 
@@ -158,6 +161,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	};
 
 	/**
+	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
+	 * methods: <code>format</code> takes a Date and returns a date as a String in the format
+	 * expected by the model, <code>parse</code> converts from the String to a Date.
+	 *
+	 * @returns {sap.ui.core.format.DateFormat}
+	 *   The formatter
+	 *
+	 * @override
+	 * @protected
+	 */
+	EdmDate.prototype.getModelFormat = function() {
+		return getModelFormatter();
+	};
+
+	/**
 	 * Returns the type's name.
 	 *
 	 * @returns {string}
@@ -217,7 +235,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 			if (this.oConstraints && this.oConstraints.nullable === false) {
 				throw new ValidateException(getErrorMessage(this));
 			}
-			return;
 		} else if (typeof sValue !== "string" || !rDate.test(sValue)) {
 			throw new ValidateException("Illegal " + this.getName() + " value: " + sValue);
 		}

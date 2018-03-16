@@ -1,0 +1,34 @@
+/**
+	This class is being assigned to the original Fiori Header Toolbar when RTA Toolbar shows
+ */
+.sapUiRtaFioriHeaderInvisible {
+	visibility: hidden;
+	}
+
+
+
+/* type: fiori */
+.sapUiRtaToolbar.type_fiori {
+	transition: opacity 0.25s ease-out;
+	opacity: 0;
+	}
+	.sapUiRtaToolbar.type_fiori.is_visible {
+		opacity: 1;
+		}
+
+/* color: default */
+.sapUiRtaToolbar.type_fiori.color_default {
+	}
+
+/* color: contrast */
+.sapUiRtaToolbar.type_fiori.color_contrast {
+	}
+	.sapUiRtaToolbar.type_fiori.color_contrast .sapMBtn .sapMBtnContent,
+	.sapUiRtaToolbar.type_fiori.color_contrast .sapMBtn .sapMBtnIcon {
+		text-shadow: none; /* Override shadow of `.sapMBtnInner` in sap.m */
+		color: #fff;
+		}
+		.sapUiRtaToolbar.type_fiori.color_contrast .sapMBtn.sapMBtnDisabled,
+		.sapUiRtaToolbar.type_fiori.color_contrast .sapMBtn.sapMBtnDisabled {
+			opacity: 0.3;
+			}

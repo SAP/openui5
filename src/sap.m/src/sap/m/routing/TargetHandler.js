@@ -3,8 +3,8 @@
  */
 
  /*global Promise*/
-sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/core/routing/Router'],
-	function($, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Router) {
+sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer', 'sap/m/SplitContainer', 'sap/ui/base/Object', 'sap/ui/core/routing/History', 'sap/ui/Device'],
+	function($, InstanceManager, NavContainer, SplitContainer, BaseObject, History, Device) {
 		"use strict";
 
 
@@ -172,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 					}
 
 					//Always override the navigation when its a navContainer, and if its a splitContainer - in the mobile case it behaves like a nav container
-					if (bIsNavContainer || sap.ui.Device.system.phone) {
+					if (bIsNavContainer || Device.system.phone) {
 						aResults.splice(i, 1);
 						aResults.push(oCurrentNavigation);
 						bFoundTheCurrentNavigation = true;
@@ -194,7 +194,7 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 					}
 				}
 
-				if (oCurrentContainer instanceof SplitContainer && !sap.ui.Device.system.phone) {
+				if (oCurrentContainer instanceof SplitContainer && !Device.system.phone) {
 					//We have a desktop SplitContainer and need to add to transitions if necessary
 					oCurrentNavigation.bIsMasterPage = !!oCurrentContainer.getMasterPage(oView.getId());
 				}
@@ -298,4 +298,4 @@ sap.ui.define(['jquery.sap.global', 'sap/m/InstanceManager', 'sap/m/NavContainer
 
 		return TargetHandler;
 
-	}, /* bExport= */ true);
+	});

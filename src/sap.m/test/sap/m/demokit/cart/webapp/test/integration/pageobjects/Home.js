@@ -4,14 +4,19 @@ sap.ui.define([
 	'sap/ui/test/matchers/Properties',
 	'sap/ui/test/matchers/AggregationFilled',
 	'sap/ui/test/actions/Press'
-], function (Opa5, BindingPath, Properties, AggregationFilled, Press) {
+], function (
+	Opa5,
+	BindingPath,
+	Properties,
+	AggregationFilled,
+	Press) {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onHome : {
 			viewName : "Home",
 			actions : {
-				iPressOnTheSecondCategory : function () {
+				iPressOnTheFlatScreensCategory : function () {
 					return this.waitFor({
 						controlType : "sap.m.StandardListItem",
 						matchers : new BindingPath({path : "/ProductCategories('FS')"}),
@@ -20,15 +25,25 @@ sap.ui.define([
 					});
 				},
 
+				iPressOnTheSpeakerCategory : function () {
+					return this.waitFor({
+						controlType : "sap.m.StandardListItem",
+						matchers : new Properties({title : "Speakers"}),
+						actions : new Press(),
+						errorMessage : "The category list does not contain required selection"
+					});
+				},
+
 				iGoToTheCartPage : function () {
 					return this.waitFor({
 						controlType : "sap.m.Button",
-						matchers : new Properties({ icon : "sap-icon://cart"}),
+						matchers : new Properties({icon : "sap-icon://cart"}),
 						actions : new Press(),
 						errorMessage : "The cart button was not found and could not be pressed"
 					});
 				}
 			},
+
 			assertions: {
 				iShouldSeeTheCategoryList : function () {
 					return this.waitFor({
@@ -39,10 +54,10 @@ sap.ui.define([
 					});
 				},
 
-				theCategoryListShouldHaveSomeEntries : function () {
+				iShouldSeeSomeEntriesInTheCategoryList : function () {
 					return this.waitFor({
 						id : "categoryList",
-						matchers: new AggregationFilled({ name : "items" }),
+						matchers: new AggregationFilled({name : "items"}),
 						success : function () {
 							Opa5.assert.ok(true, "CategoryList did contain entries");
 						},

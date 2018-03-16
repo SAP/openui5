@@ -31,11 +31,25 @@
 		<script>
 
 			jQuery.sap.require("sap.ui.model.type.Date");
+			jQuery.sap.require("sap.ui.unified.CalendarLegend");
+			jQuery.sap.require("sap.ui.unified.CalendarLegendRenderer");
+			jQuery.sap.require("sap.ui.unified.CalendarRowRenderer");
+			jQuery.sap.require("sap.ui.unified.CalendarLegendItem");
+			jQuery.sap.require("sap.ui.core.InvisibleText");
+
+			var CalendarLegend = sap.ui.unified.CalendarLegend,
+				CalendarLegendRenderer = sap.ui.unified.CalendarLegendRenderer,
+				CalendarLegendItem = sap.ui.unified.CalendarLegendItem,
+				CalendarDayType = sap.ui.unified.CalendarDayType,
+				CalendarRowRenderer = sap.ui.unified.CalendarRowRenderer,
+				InvisibleText = sap.ui.core.InvisibleText;
+
 			var oFormatYyyyMMddHHmm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMddHHmm", calendarType: sap.ui.core.CalendarType.Gregorian});
 
 			var sSelectedAppointmentId = "";
 			var iSelectedGroupAppointments = 0;
-			var bMultiSelect = false;
+			var bMultiSelect = false,
+				sDomRefId;
 			var handleSelect = function(oEvent){
 				sSelectedAppointmentId = "";
 				iSelectedGroupAppointments = 0;
@@ -47,6 +61,7 @@
 					iSelectedGroupAppointments = aAppointments.length;
 				}
 				bMultiSelect = oEvent.getParameter("multiSelect");
+				sDomRefId = oEvent.getParameter("domRefId");
 			};
 
 			var oIntervalStartDate;
@@ -313,12 +328,11 @@
 			QUnit.test("Row", function(assert) {
 				assert.ok(!jQuery("#Row1").attr("style"), "Row1: no width and heigh set");
 				assert.ok(!jQuery("#Row1").attr("title"), "Row1: no tooltip set");
-				assert.equal(jQuery("#Row1").attr("tabindex"), "-1", "Row1: tabindex set");
+				assert.equal(jQuery("#Row1").attr("tabindex"), undefined, "Row1: no tab index should be set");
 
 				assert.equal(jQuery("#Row2").css("width"), "500px", "Row2: width set");
 				assert.equal(jQuery("#Row2").css("height"), "100px", "Row2: height set");
 				assert.equal(jQuery("#Row2").attr("title"), "Row tooltip", "Row2: tooltip set");
-				assert.equal(jQuery("#Row2").attr("tabindex"), "0", "Row2: tabindex set");
 			});
 
 			QUnit.test("Appointments row", function(assert) {
@@ -869,10 +883,11 @@
 				assert.ok(sap.ui.getCore().byId("App4").getSelected(), "Appointment1: selected property set");
 				assert.ok(sap.ui.getCore().byId("App5").getSelected(), "Appointment1: selected property set");
 				assert.ok(sap.ui.getCore().byId("App6").getSelected(), "Appointment1: selected property set");
+				assert.equal(sDomRefId, "Row1-Group0", "sDomRefId returns the right ID of the group appointment");
 			});
 
 			QUnit.test("click on appointment", function(assert) {
-				var sSelectedTextId = sap.ui.unified.CalendarRow._oStaticSelectedText.getId();
+				var sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 				var sAriaLabel1, sAriaLabel2, sAriaLabel3;
 				// initialize Row1
 				initializeRow1();
@@ -884,6 +899,7 @@
 				assert.ok(jQuery("#App1").hasClass("sapUiCalendarAppSel"), "Appointment1: selected rendered");
 				sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
 				assert.ok(sAriaLabel1.indexOf(sSelectedTextId) > -1, "Appointment1: selected ARIA text is rendered");
+				assert.equal(sDomRefId, "App1", "sDomRefId returns the right ID of the appointment");
 
 				qutils.triggerEvent("tap", "App2-Title");
 				assert.ok(!sap.ui.getCore().byId("App1").getSelected(), "Appointment1: selected property not longer set");
@@ -896,6 +912,7 @@
 				assert.ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is rendered");
 				sAriaLabel1 = jQuery("#App1").attr("aria-labelledby");
 				assert.ok(sAriaLabel1.indexOf(sSelectedTextId) == -1, "Appointment1: selected ARIA text is removed");
+				assert.equal(sDomRefId, "App2", "sDomRefId returns the right ID of the appointment");
 
 				qutils.triggerEvent("tap", "App3-Text", {ctrlKey: true});
 				assert.ok(sap.ui.getCore().byId("App2").getSelected(), "Appointment2: selected still property set");
@@ -908,6 +925,7 @@
 				assert.ok(sAriaLabel3.indexOf(sSelectedTextId) > -1, "Appointment3: selected ARIA text is rendered");
 				sAriaLabel2 = jQuery("#App2").attr("aria-labelledby");
 				assert.ok(sAriaLabel2.indexOf(sSelectedTextId) > -1, "Appointment2: selected ARIA text is still rendered");
+				assert.equal(sDomRefId, "App3", "sDomRefId returns the right ID of the appointment");
 			});
 
 			QUnit.test("click on interval", function(assert) {
@@ -1114,6 +1132,38 @@
 				assert.equal(oRow2._getVisibleAppointments().length, 1, "The number of visible appointments is as expected");
 			});
 
+			QUnit.test("_setCustomAppointmentsSorterCallback after initial rendering", function (assert) {
+				//arrange and act
+				var $Appointment1 = jQuery("#App1");
+
+				oRow1._setCustomAppointmentsSorterCallback(function(oApp1, oApp2) {
+					if (oApp1.getType() > oApp2.getType()) {
+						return 1;
+					}
+					if (oApp1.getType() < oApp2.getType()) {
+						return -1;
+					}
+					return 0;
+				});
+				sap.ui.getCore().applyChanges();
+				assert.equal(oRow1._aVisibleAppointments[0].level, "0", "Appointment1 now has level 0");
+
+			});
+
+			QUnit.test("_setCustomAppointmentsSorterCallback", function (assert) {
+				//arrange and act
+				var fnCustom = this.spy();
+				oRow1._setCustomAppointmentsSorterCallback(fnCustom);
+				oRow1.placeAt('uiArea3');
+				sap.ui.getCore().applyChanges();
+
+				//assert
+				assert.equal(oRow1._fnCustomSortedAppointments, fnCustom,
+						"_setCustomAppointmentsSorterCallback sets a function to the _fnCustomSortedAppointments");
+				assert.ok(fnCustom.callCount > 0,
+						"_setCustomAppointmentsSorterCallback calls the custom sort function");
+			});
+
 		QUnit.module("RTL", {
 				beforeEach: function () {
 					//Arrange
@@ -1189,6 +1239,110 @@
 			assert.ok(jQuery("#RowRTL-Now").css("right"), "Now indicatior is displayed on the right");
 		});
 
+		QUnit.module("Accessibility", {
+			beforeEach: function () {
+				this.sut = new sap.ui.unified.CalendarRow({
+					startDate: new Date(2017, 3, 1, 12, 0, 0, 0),
+					width: "100%",
+					appointments: [
+						new sap.ui.unified.CalendarAppointment({
+							startDate: new Date(2017, 3, 1, 13, 0, 0, 0),
+							endDate: new Date(2017, 3, 1, 18, 30, 0, 0),
+							type: sap.ui.unified.CalendarDayType.None,
+							title: "Appointment 0",
+							tooltip: "Tooltip 0",
+							text: "Appointment in the past",
+							key: "app-0"
+						}),
+						new sap.ui.unified.CalendarAppointment({
+							startDate: new Date(2017, 3, 1, 9, 15, 0, 0),
+							endDate: new Date(2017, 3, 1, 19, 45, 0, 0),
+							type: sap.ui.unified.CalendarDayType.Type01,
+							title: "Appointment 1",
+							tooltip: "Tooltip 1",
+							text: "Appointment of 2 hours, 1 hour in future",
+							icon: "sap-icon://call",
+							key: "app-1"
+						}),
+						new sap.ui.unified.CalendarAppointment({
+							startDate: new Date(2017, 3, 1, 14, 0, 0, 0),
+							endDate: new Date(2017, 3, 1, 16, 0, 0, 0),
+							type: sap.ui.unified.CalendarDayType.Type02,
+							tentative: true,
+							title: "Appointment 2",
+							tooltip: "Tooltip 2",
+							text: "Appointment of 2 hour, 30 minutes in past",
+							key: "app-2"
+						})
+					]
+				}).placeAt('uiArea5');
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.sut.destroy();
+				this.sut = undefined;
+			}
+		});
+
+		QUnit.test("CalendarRow '_oFormatAria' formatter", function (assert) {
+			var that = this,
+				fnGetAriaDescriptionText = function (oAppointment) {
+					if (!(oAppointment && oAppointment instanceof sap.ui.unified.CalendarAppointment)) {
+						return;
+					}
+					var sLocalizedStart = that.sut._oRb.getText("CALENDAR_START_TIME"),
+						sFormattedStartDate = that.sut._oFormatAria.format(oAppointment.getStartDate()),
+						sLocalizedEnd = that.sut._oRb.getText("CALENDAR_END_TIME"),
+						sFormattedEndDate = that.sut._oFormatAria.format(oAppointment.getEndDate()),
+						sTooltip = oAppointment.getTooltip() || "";
+						sType = oAppointment.getType() !== CalendarDayType.None ? "; " + CalendarLegendRenderer.getTypeAriaText(oAppointment.getType()).getText() : "";
+
+					return sLocalizedStart + ": " + sFormattedStartDate + "; " + sLocalizedEnd + ": " + sFormattedEndDate + "; " + sTooltip + sType;
+				},
+				aAppointments = this.sut.getAppointments();
+
+			assert.ok(this.sut._oFormatAria, "Formatter has been initialized");
+			assert.ok(this.sut._oFormatAria instanceof sap.ui.core.format.DateFormat, "Formatter is of a correct type");
+			assert.ok(this.sut._oFormatAria.oFormatOptions.pattern.indexOf("E") > -1, "Formatted date/datetime string includes weekday");
+			aAppointments.forEach(function (oAppointment, iIndex) {
+				var sExpectedDescription = fnGetAriaDescriptionText(oAppointment),
+					oAppointmentDescElement = oAppointment.$("Descr");
+
+				if (oAppointmentDescElement.length) {
+					assert.strictEqual(oAppointmentDescElement.text(), sExpectedDescription, "The text node of the appointment " + iIndex + " 'aria-describedby' element has correct value");
+				} else {
+					assert.ok(true, "The appointment " + iIndex + " is not displayed in the current viewport");
+				}
+			});
+		});
+
+		QUnit.module("Pure unit testing");
+			QUnit.test("CalendarRowRender.getAriaTextForType", function () {
+				//Prepare
+				var aLegendItems1to2 =
+						[
+							new CalendarLegendItem({type: CalendarDayType.Type01, text: "Day off"}),
+							new CalendarLegendItem({type: CalendarDayType.Type02, text: "On Duty"})
+						],
+					sResult1,
+					sResult2,
+					sResult3;
+
+				//Act
+				sResult1 = CalendarRowRenderer.getAriaTextForType(CalendarDayType.Type01, aLegendItems1to2);
+				sResult2 = CalendarRowRenderer.getAriaTextForType(CalendarDayType.Type03, aLegendItems1to2);
+				sResult3 = CalendarRowRenderer.getAriaTextForType(CalendarDayType.Type03);
+
+				//Assert
+				assert.equal(sResult1, "Day off", "When the given type  matches legend item's type");
+				assert.equal(sResult2, CalendarLegendRenderer.typeARIATexts[CalendarDayType.Type03].getText(),
+					"When the given type does not match legend item's type");
+				assert.equal(sResult2, CalendarLegendRenderer.typeARIATexts[CalendarDayType.Type03].getText(),
+					"When the legendItems is not given");
+
+				//Cleanup - nothing to lean
+			});
+
 	</script>
 
 	</head>
@@ -1208,5 +1362,7 @@
 		<div id="uiArea3"></div>
 		<br>
 		<div id="uiArea4"></div>
+		<br>
+		<div id="uiArea5"></div>
 	</body>
 </html>

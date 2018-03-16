@@ -176,6 +176,24 @@ html.sap-desktop .sapMITBItem:focus.sapMITBAll {
 		pointer-events: none;
 	}
 }
+
+html.sap-desktop .sapMITBItem:focus.sapMITBAll {
+	&::after {
+		bottom: 1.75rem;
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll{
+	&::after {
+		border: 1px dashed @sapUiContentFocusColor;
+	}
+}
+
 /* container background design */
 .sapMITBBackgroundDesignTranslucent > .sapMITBContainerContent > .sapMITBContent {
 	background-color: fade(@sapUiGroupContentBackground, 60);

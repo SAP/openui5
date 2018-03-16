@@ -21,7 +21,7 @@
 
 	// for behaviour testing
 	if (oUriParameters.get("oldFlex")) {
-		sap.m.Toolbar.hasNewFlexBoxSupport = false;
+		sap.m.ToolbarRenderer.hasNewFlexBoxSupport = false;
 	}
 
 	var oApp = new sap.m.App();
@@ -32,6 +32,10 @@
 			new sap.m.Button({text : "Button"}),
 			new sap.m.ToolbarSeparator(),
 			new sap.m.Button({text : "Test"}),
+			new sap.m.Label({
+				text: "Choose:",
+				labelFor: sSelId
+			}),
 			new sap.m.Select(sSelId, {
 				autoAdjustWidth: true,
 				items : [
@@ -92,7 +96,11 @@
 			new sap.m.ToolbarSpacer(),
 			new sap.m.Label({ text : sText }),
 			new sap.m.ToolbarSpacer(),
-			new sap.m.Select({
+			new sap.m.Label({
+				text: "Choose:",
+				labelFor: sSelId + 'innerSelect'
+			}),
+			new sap.m.Select(sSelId + 'innerSelect', {
 				items : [
 					new sap.ui.core.Item({
 						key: "0",
@@ -114,7 +122,7 @@
 			}),
 			new sap.m.ToolbarSpacer(),
 			new sap.m.ToggleButton({
-				text: "ToggleButton"
+				text: "Press to toggle"
 			}),
 			new sap.m.Input({
 				placeholder: "Input",
@@ -122,7 +130,7 @@
 			}),
 			new sap.m.DateTimePicker({
 				placeholder: "DateTimePicker",
-				width: "150px"
+				width: "250px"
 			}),
 			new sap.m.CheckBox({
 				text : "Checkbox"
@@ -139,17 +147,14 @@
 	}
 
 	TBHeader = new sap.m.Toolbar({
-        active: true,
 		content : getToolbarContent("This is a Header", "selH")
 	});
 
 	TBSubHeader = new sap.m.Toolbar({
-        active: true,
 		content : getToolbarContent("This is a SubHeader", "selSubH")
 	});
 
 	TBFooter = new sap.m.Toolbar({
-        active: true,
 		content : getToolbarContent("This is a Footer", "selF")
 	});
 
@@ -212,17 +217,14 @@
 					new sap.m.Label({text: "Text"}),
 					new sap.m.Label({text: "Text"}),
 					new sap.ui.core.Icon({
-						src : "sap-icon://undo",
-						width : "2rem",
-						press : function (evt) {
-							jQuery.sap.require("sap.m.MessageToast");
-							sap.m.MessageToast.show("Icon is pressed");
-						}
+						src : "sap-icon://collaborate",
+						width : "2rem"
 					})
 				]
+			}).attachPress(function(oEvent) {
+				sap.m.MessageToast.show("InfoBar Pressed! Sorce: " + oEvent.getParameter("srcControl").getId());
 			}),
 			new sap.m.Toolbar({
-				active : true,
 				design : sap.m.ToolbarDesign.Solid,
 				height : "auto",
 				content : [
@@ -247,17 +249,17 @@
 						}
 					})
 				]
-			}).attachPress(function(oEvent) {
-				sap.m.MessageToast.show("InfoBar Pressed! Sorce: " + oEvent.getParameter("srcControl").getId());
 			}),
 			new sap.m.Toolbar({
 				height: "auto",
 				content : [
 					new sap.m.Label({
-						text : "Percent Width Controls"
+						text : "Percent Width Controls",
+						labelFor: "searchField",
+						width: "15%"
 					}),
 					new sap.m.ToolbarSpacer(),
-					new sap.m.SearchField({
+					new sap.m.SearchField("searchField", {
 						placeholder : "This has 100% width by default"
 					})
 				]
@@ -391,7 +393,7 @@
 		text : "Change page size",
 		press : function() { jQuery("#toolbar-page").width("300px"); }
 	});
-	
+
 	oB.placeAt("body");
 </script>
 </head>

@@ -3,12 +3,26 @@
  */
 
 // Provides control sap.ui.commons.TabStrip.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
-		'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/Icon',
-		'sap/ui/core/delegate/ScrollEnablement', 'sap/ui/Device'],
-	function(jQuery, library, Control,
-	         ItemNavigation, Icon,
-	         ScrollEnablement, Device) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/delegate/ItemNavigation',
+    'sap/ui/core/Icon',
+    'sap/ui/core/delegate/ScrollEnablement',
+    'sap/ui/Device',
+    "./TabStripRenderer"
+],
+	function(
+	    jQuery,
+		library,
+		Control,
+		ItemNavigation,
+		Icon,
+		ScrollEnablement,
+		Device,
+		TabStripRenderer
+	) {
 	"use strict";
 
 

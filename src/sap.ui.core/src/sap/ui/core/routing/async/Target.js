@@ -62,7 +62,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 
 			var oOptions = this._oOptions,
 				that = this,
-				oView, oControl, oViewContainingTheControl, sViewName, oViewOptions, vValid, sErrorMessage;
+				oView, sViewName, oViewOptions, sErrorMessage;
 
 			if (oOptions.viewName) {
 				// when view information is given
@@ -103,82 +103,100 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 							});
 				}).then(function(oViewInfo) {
 					// loaded and do placement
-					vValid = this._isValid(oViewInfo.parentInfo);
+					var vValid = that._isValid(oViewInfo.parentInfo);
 
 					// validate config and log errors if necessary
 					if (vValid !== true) {
 						sErrorMessage = vValid;
-						return this._refuseInvalidTarget(oOptions.name, sErrorMessage);
+						return that._refuseInvalidTarget(oOptions.name, sErrorMessage);
 					}
 
-					oViewContainingTheControl = oViewInfo.parentInfo.view;
-					oControl = oViewInfo.parentInfo.control;
+					var oViewContainingTheControl = oViewInfo.parentInfo.view,
+						oControl = oViewInfo.parentInfo.control,
+						pContainerControl = Promise.resolve(oControl);
+
 					oView = oViewInfo.view;
+
 					//no parent view - see if there is a targetParent in the config
 					if (!oViewContainingTheControl && oOptions.rootView) {
 						oViewContainingTheControl = sap.ui.getCore().byId(oOptions.rootView);
 
 						if (!oViewContainingTheControl) {
 							sErrorMessage = "Did not find the root view with the id " + oOptions.rootView;
-							return this._refuseInvalidTarget(oOptions.name, sErrorMessage);
+							return that._refuseInvalidTarget(oOptions.name, sErrorMessage);
 						}
 					}
 
 					// Find the control in the parent
 					if (oOptions.controlId) {
-
 						if (oViewContainingTheControl) {
-							//controlId was specified - ask the parents view for it
-							oControl = oViewContainingTheControl.byId(oOptions.controlId);
+							// controlId was specified - ask the parents view for it
+							// wait for the parent view to be loaded in case it's loaded async
+							pContainerControl = oViewContainingTheControl.loaded().then(function(oContainerView) {
+								return oContainerView.byId(oOptions.controlId);
+							});
 						}
 
-						if (!oControl) {
-							//Test if control exists in core (without prefix) since it was not found in the parent or root view
-							oControl =  sap.ui.getCore().byId(oOptions.controlId);
-						}
+						pContainerControl = pContainerControl.then(function(oContainerControl) {
+							if (!oContainerControl) {
+								//Test if control exists in core (without prefix) since it was not found in the parent or root view
+								oContainerControl =  sap.ui.getCore().byId(oOptions.controlId);
+							}
 
-						if (!oControl) {
-							sErrorMessage = "Control with ID " + oOptions.controlId + " could not be found";
-							return this._refuseInvalidTarget(oOptions.name, sErrorMessage);
-						}
-
+							if (!oContainerControl) {
+								sErrorMessage = "Control with ID " + oOptions.controlId + " could not be found";
+								return that._refuseInvalidTarget(oOptions.name, sErrorMessage);
+							} else {
+								return oContainerControl;
+							}
+						}).catch(function() {
+							sErrorMessage = "Something went wrong during loading the root view with id " + oOptions.rootView;
+							return that._refuseInvalidTarget(oOptions.name, sErrorMessage);
+						});
 					}
 
-					// adapt the container before placing the view into it to make the rendering occur together with the next
-					// aggregation modification.
-					this._beforePlacingViewIntoContainer({
-						container: oControl,
-						view: oView,
-						data: vData
+					return pContainerControl.then(function(oContainerControl) {
+						// if error already occured, forward the error
+						if (oContainerControl.error) {
+							return oContainerControl;
+						}
+
+						// adapt the container before placing the view into it to make the rendering occur together with the next
+						// aggregation modification.
+						that._beforePlacingViewIntoContainer({
+							container: oContainerControl,
+							view: oView,
+							data: vData
+						});
+
+						var oAggregationInfo = oContainerControl.getMetadata().getJSONKeys()[oOptions.controlAggregation];
+
+						if (!oAggregationInfo) {
+							sErrorMessage = "Control " + oOptions.controlId + " does not have an aggregation called " + oOptions.controlAggregation;
+							return that._refuseInvalidTarget(oOptions.name, sErrorMessage);
+						}
+
+						if (oOptions.clearControlAggregation === true) {
+							oContainerControl[oAggregationInfo._sRemoveAllMutator]();
+						}
+
+						jQuery.sap.log.info("Did place the view '" + sViewName + "' with the id '" + oView.getId() + "' into the aggregation '" + oOptions.controlAggregation + "' of a control with the id '" + oContainerControl.getId() + "'", that);
+						oContainerControl[oAggregationInfo._sMutator](oView);
+
+						that.fireDisplay({
+							view : oView,
+							control : oContainerControl,
+							config : that._oOptions,
+							data: vData
+						});
+
+						return {
+							name: oOptions.name,
+							view: oView,
+							control: oContainerControl
+						};
 					});
-
-					var oAggregationInfo = oControl.getMetadata().getJSONKeys()[oOptions.controlAggregation];
-
-					if (!oAggregationInfo) {
-						sErrorMessage = "Control " + oOptions.controlId + " does not have an aggregation called " + oOptions.controlAggregation;
-						return this._refuseInvalidTarget(oOptions.name, sErrorMessage);
-					}
-
-					if (oOptions.clearControlAggregation === true) {
-						oControl[oAggregationInfo._sRemoveAllMutator]();
-					}
-
-					jQuery.sap.log.info("Did place the view '" + sViewName + "' with the id '" + oView.getId() + "' into the aggregation '" + oOptions.controlAggregation + "' of a control with the id '" + oControl.getId() + "'", this);
-					oControl[oAggregationInfo._sMutator](oView);
-
-					this.fireDisplay({
-						view : oView,
-						control : oControl,
-						config : this._oOptions,
-						data: vData
-					});
-
-					return {
-						name: oOptions.name,
-						view: oView,
-						control: oControl
-					};
-				}.bind(this));
+				});
 			} else {
 				oSequencePromise = oSequencePromise.then(function() {
 					return {

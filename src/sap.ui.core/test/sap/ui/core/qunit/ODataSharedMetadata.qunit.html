@@ -39,11 +39,6 @@
 	sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
 	var oLabel = new sap.ui.commons.Label("myLabel");
 	oLabel.placeAt("target1");
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	}
-	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
 
 	function initModel(sURI, bJSON){
 		var oModel = new sap.ui.model.odata.ODataModel(sURI, bJSON);

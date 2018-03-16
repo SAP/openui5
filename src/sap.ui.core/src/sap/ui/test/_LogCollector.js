@@ -1,16 +1,20 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, $) {
+sap.ui.define([
+	"sap/ui/base/Object",
+	"jquery.sap.global",
+	"sap/ui/test/_OpaLogger"
+], function (UI5Object, $, _OpaLogger) {
 	"use strict";
 	var oSingleton;
 	var sModuleName = "sap.ui.test._LogCollector";
-	var iDefaultLogLevel = $.sap.log.Level.DEBUG;
-	var _oLogger = $.sap.log.getLogger(sModuleName, iDefaultLogLevel);
+	var _oLogger = _OpaLogger.getLogger(sModuleName);
 
 	/**
 	 * @class A central place to collect all the logs during an OPA test
 	 * listens to $.sap.log.* to collect the logs
+	 * collects only OPA component logs
 	 *
 	 * @private
 	 * @alias sap.ui.test._LogCollector
@@ -26,13 +30,11 @@ sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, 
 						return;
 					}
 					var sLogText = oLogEntry.message + " - " + oLogEntry.details + " " + oLogEntry.component;
-					var aLogs = this._aLogs;
+					this._aLogs.push(sLogText);
 
-					aLogs.push(sLogText);
-
-					// guard against memory leaking - if OPA is required the logCollector will be instanciated.
-					if (aLogs.length > 500) {
-						aLogs.length = 0;
+					// guard against memory leaking - if OPA is required the logCollector will be instantiated.
+					if (this._aLogs.length > 500) {
+						this._aLogs.length = 0;
 						_oLogger.error("Opa has received 500 logs without a consumer - " +
 							"maybe you loaded Opa.js inside of an IFrame? " +
 							"The logs are now cleared to prevent memory leaking");
@@ -60,9 +62,6 @@ sap.ui.define(["sap/ui/base/Object", "jquery.sap.global"], function (UI5Object, 
 		return oSingleton;
 	};
 
-	// Even if you set the log level of the UI5 core to Error opa will log everything down to the debug level
-	// and it will be collected by instances of the LogCollector.
-	_LogCollector.DEFAULT_LEVEL_FOR_OPA_LOGGERS = iDefaultLogLevel;
-
 	return _LogCollector;
-}, true /* export */);
+
+}, true);

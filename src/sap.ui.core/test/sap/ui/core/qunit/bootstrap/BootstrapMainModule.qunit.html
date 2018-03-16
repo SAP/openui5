@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<!--
+  Tests the bootstrap variant with the attribute data-sap-ui-main specifying the main module
+
+  @author Peter Muessig
+  -->
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Test Page for Bootstrap within Head</title>
+
+		<!-- Initialization -->
+		<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-oninit="module:sap/ui/test/BootstrapMainModule"
+				data-sap-ui-resourceroots='{"sap.ui.test": "./"}'
+				>
+		</script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
+		<script>
+			QUnit.test("Check Main Module Functionality", function(assert) {
+				var done = assert.async();
+				sap.ui.getCore().attachInit(function() {
+					assert.ok(window["sap-ui-main"], "Main module has been loaded and executed.");
+					done();
+				});
+			});
+		</script>
+
+	</head>
+
+	<body class="sapUiBody" role="application">
+		<div id="qunit"></div>
+	</body>
+</html>

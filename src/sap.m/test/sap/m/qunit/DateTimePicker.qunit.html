@@ -132,7 +132,7 @@
 
 				oDTP._createPopup();
 				oDTP._createPopupContent();
-				var oSpyUpdateSlidersFn = sinon.spy(oDTP._oPopup.getContent()[0].getTimeSliders(), "updateSlidersValues");
+				var oSpyUpdateSlidersFn = sinon.spy(oDTP._oPopup.getContent()[0].getTimeSliders(), "_updateSlidersValues");
 
 				//Act
 				oDTP._openPopup();
@@ -172,6 +172,88 @@
 
 				//clean
 				oDateTimePicker.destroy();
+			});
+
+			QUnit.module("initialFocusedDate property", {
+				beforeEach: function () {
+					this.oDTp = new sap.m.DateTimePicker();
+					this.oDTp.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+
+				afterEach: function () {
+					this.oDTp.destroy();
+					this.oDTp = null;
+				}
+			});
+
+			QUnit.test("_fillDateRange should call Calendar's focusDate method and sliders _setTimeValues with initialFocusedDateValue if no value is set", function (assert) {
+				// prepare
+				var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
+				this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+				this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
+				this.oDTp._oSliders = new sap.m.TimePickerSliders(this.oDTp.getId() + "-Sliders", {
+					displayFormat: "hh:mm:ss"
+				});
+				var oSetTimeValuesSpy = this.spy(this.oDTp._oSliders, "_setTimeValues");
+
+				// act
+				this.oDTp.setInitialFocusedDateValue(oExpectedDateValue);
+				this.oDTp._fillDateRange();
+
+				// assert
+				assert.ok(this.oDTp._oCalendar.focusDate.calledWith(oExpectedDateValue), "focusDate should be called with initialFocusedDateValue");
+				assert.equal(this.oDTp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+				assert.ok(oSetTimeValuesSpy.calledWith(oExpectedDateValue), "_setTimeValues should be called with initialFocusedDateValue");
+
+				// cleanup
+				oSetTimeValuesSpy.restore();
+			});
+
+			QUnit.test("_fillDateRange should call Calendar's focusDate method and sliders _setTimeValues with currentDate if initialFocusedDateValue and value are not set", function (assert) {
+				// prepare
+				var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
+				this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+				this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
+				this.oDTp._oSliders = new sap.m.TimePickerSliders(this.oDTp.getId() + "-Sliders", {
+					displayFormat: "hh:mm:ss"
+				});
+				var oSetTimeValuesSpy = this.spy(this.oDTp._oSliders, "_setTimeValues");
+
+				// act
+				this.oDTp._fillDateRange();
+
+				// assert
+				assert.equal(this.oDTp._oCalendar.focusDate.calledWith(oExpectedDateValue), false, "focusDate should not be called with initialFocusedDateValue");
+				assert.notEqual(this.oDTp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+				assert.equal(oSetTimeValuesSpy.calledWith(oExpectedDateValue), false, "_setTimeValues should not be called with initialFocusedDateValue");
+
+				// cleanup
+				oSetTimeValuesSpy.restore();
+			});
+
+			QUnit.test("_fillDateRange should call Calendar's focusDate method and sliders _setTimeValues with valueDate", function (assert) {
+				// prepare
+				var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8),
+					oGetDateValue = this.stub(this.oDTp, "getDateValue", function () { return oExpectedDateValue; });
+				this.oDTp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+				this.oDTp._oDateRange = { getStartDate: function () {}, setStartDate: function () {} };
+				this.oDTp._oSliders = new sap.m.TimePickerSliders(this.oDTp.getId() + "-Sliders", {
+					displayFormat: "hh:mm:ss"
+				});
+				var oSetTimeValuesSpy = this.spy(this.oDTp._oSliders, "_setTimeValues");
+
+				// act
+				this.oDTp._fillDateRange();
+
+				// assert
+				assert.ok(this.oDTp._oCalendar.focusDate.calledWith(oExpectedDateValue), "focusDate should be called with valueDate");
+				assert.equal(this.oDTp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+				assert.ok(oSetTimeValuesSpy.calledWith(oExpectedDateValue), "_setTimeValues should be called with valueDate");
+
+				// cleanup
+				oGetDateValue.restore();
+				oSetTimeValuesSpy.restore();
 			});
 
 			QUnit.module("interaction");
@@ -246,8 +328,10 @@
 							break;
 						}
 					}
-					aHours[iIndex].focus();
-					qutils.triggerKeyboardEvent(aHours[iIndex], jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+
+					oDTP3._oSliders.getAggregation("_columns")[0].focus();
+					qutils.triggerKeyboardEvent(oDTP3._oSliders.getAggregation("_columns")[0].getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+
 					done();
 				}, 400);
 			});
@@ -292,7 +376,7 @@
 
 					oDTP.destroy();
 					done();
-				}, 400);
+				}, 600);
 			});
 
 			QUnit.test("getAccessibilityInfo", function(assert) {
@@ -351,6 +435,122 @@
 				oDTP.destroy();
 			});
 
+			QUnit.test("Open picker on small screen", function(assert) {
+				//Prepare
+				jQuery("html").removeClass("sapUiMedia-Std-Desktop");
+				jQuery("html").addClass("sapUiMedia-Std-Phone");
+
+				var oDTP5 = new sap.m.DateTimePicker("DTP5", {
+								dateValue: new Date()
+							}).placeAt("uiArea5");
+				sap.ui.getCore().applyChanges();
+
+				var done = assert.async();
+
+				oDTP5.focus();
+				qutils.triggerEvent("click", "DTP5-icon");
+				sap.ui.getCore().applyChanges();
+				setTimeout(function(){
+					assert.ok(jQuery("#DTP5-RP-popover")[0], "popover is rendered");
+					assert.ok(jQuery("#DTP5-RP-popover").is(":visible"), "popover is visible");
+					oDTP5.destroy();
+					jQuery("html").addClass("sapUiMedia-Std-Desktop");
+					jQuery("html").removeClass("sapUiMedia-Std-Phone");
+					done();
+				}, 400);
+			});
+
+			QUnit.module("Private");
+
+			QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {
+				var done = assert.async(),
+						oStub = this.stub(sap.ui.Device, "browser", {msie: true});
+
+				this.clock = sinon.useFakeTimers();
+				var oDTP = new sap.m.DateTimePicker("DTP6", {
+					dateValue: new Date()
+				}).placeAt("uiArea5");
+				sap.ui.getCore().applyChanges();
+
+				oDTP._$input.get(0).selectionStart = 3;
+				oDTP._$input.get(0).selectionEnd = 3;
+
+				oDTP.$().find(".sapUiIcon").click(); //simulate opening
+				this.clock.tick(100);
+
+				//Assert
+				assert.equal(oDTP._$input.get(0).selectionStart, 0, "selection start should be 0");
+				assert.equal(oDTP._$input.get(0).selectionEnd, 0, "selection end should be 0");
+
+				//Act
+				sap.ui.getCore().byId("DTP6-OK").firePress();
+
+				setTimeout(function(){
+					//Assert
+					assert.equal(oDTP._$input.get(0).selectionStart, 3, "selection start must be restored");
+					assert.equal(oDTP._$input.get(0).selectionEnd, 3, "selection end must be restored");
+
+					//Cleanup
+					oStub.restore();
+					this.clock.restore();
+					done();
+				}.bind(this), 1000);
+
+				this.clock.tick(1000);//"waits" for close popup animation to complete
+			});
+
+			QUnit.test("_getInitialFocusedDateValue should return the initialFocusedDateValue property if it is set", function (assert) {
+				// arrange
+				var oExpectedDate = new Date(2017, 5, 15),
+					oDateTimePicker = new sap.m.DateTimePicker(),
+					oGetInitialFocusedDateValueStub = this.stub(oDateTimePicker, "getInitialFocusedDateValue", function () {
+						return oExpectedDate;
+					});
+
+				// act && assert
+				assert.equal(oDateTimePicker._getInitialFocusedDateValue(), oExpectedDate, "should return the value of the property initialFocusedDateValue");
+
+				// cleanup
+				oGetInitialFocusedDateValueStub.restore();
+				oDateTimePicker.destroy();
+			});
+
+			QUnit.test("_getInitialFocusedDateValue should return the current Date if initialFocusedDateValue proeprty is not set", function (assert) {
+				// arrange
+				var oExpectedDate = new Date(),
+					oDateTimePicker = new sap.m.DateTimePicker(),
+					oInitialFocusedDateValue = oDateTimePicker._getInitialFocusedDateValue();
+
+				// act && assert
+				assert.equal(oInitialFocusedDateValue.getYear(), oExpectedDate.getYear(), "year should be the current year");
+				assert.equal(oInitialFocusedDateValue.getMonth(), oExpectedDate.getMonth(), "month should be the current month");
+				assert.equal(oInitialFocusedDateValue.getDay(), oExpectedDate.getDay(), "day should be the current day");
+
+				// cleanup
+				oDateTimePicker.destroy();
+			});
+
+			QUnit.test("_selectFocusedDateValue should remove all selectedDates from the calendar and select the focused date", function (assert) {
+				// arrange
+				var oExpectedDate = new sap.ui.unified.DateRange().setStartDate(new Date(2017, 5, 15)),
+					oDateTimePicker = new sap.m.DateTimePicker(),
+					oCalendar = oDateTimePicker._oCalendar = {
+						destroy: function () {},
+						removeAllSelectedDates: this.spy(),
+						addSelectedDate: this.spy()
+					};
+
+				// act
+				oDateTimePicker._selectFocusedDateValue(oExpectedDate);
+
+				// assert
+				assert.ok(oCalendar.removeAllSelectedDates.calledOnce, "removeAllSelectedDates should be called once");
+				assert.ok(oCalendar.addSelectedDate.calledWith(oExpectedDate), "addSelectedDate should be called with: " + oExpectedDate);
+
+				// cleanup
+				oDateTimePicker.destroy();
+			});
+
 		</script>
 
 	</head>
@@ -369,9 +569,7 @@
 		<br>
 		<div id="uiArea4"></div>
 		<br>
-		<div id="uiArea5"></div>
-		<br>
-		<div id="uiArea6"></div>
+		<div id="uiArea5" style="width:200px;"></div>
 		<br>
 		<div id="uiArea7"></div>
 		<br>

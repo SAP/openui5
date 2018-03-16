@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @class
 	 * The ControlMessageProcessor implementation.
 	 * This MessageProcessor is able to handle Messages with the following target syntax:
-	 * 		'ControlID/PropertyName'
+	 * 		'ControlID/PropertyName'.
 	 * Creating an instance of this class using the "new" keyword always results in the same instance (Singleton).
 	 *
 	 * @extends sap.ui.core.message.MessageProcessor
@@ -29,7 +29,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.message.ControlMessageProcessor
 	 */
@@ -80,8 +79,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/message/MessageProcessor'],
 		//check messages
 		jQuery.each(mMessages, function(sTarget) {
 			var oBinding,
-				aParts = sTarget.split('/'),
-				oControl = sap.ui.getCore().byId(aParts[0]);
+				oControl,
+				aParts = sTarget.split('/');
+
+			// when target starts with a slash we shift the array
+			if (!aParts[0]) {
+				aParts.shift();
+			}
+			oControl = sap.ui.getCore().byId(aParts[0]);
 
 			//if control does not exist: nothing to do
 			if  (!oControl) {

@@ -1,9 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/m/library"],
+	function(library) {
 	"use strict";
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
 
 	/**
 	 * Panel renderer
@@ -30,7 +33,7 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	PanelRenderer.startPanel = function (oRm, oControl) {
-		oRm.write("<section");
+		oRm.write("<div");
 		oRm.writeControlData(oControl);
 		oRm.addClass("sapMPanel");
 		oRm.writeClasses();
@@ -82,7 +85,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sHeaderText = oControl.getHeaderText();
 
 		if (oHeaderTBar) {
-			oHeaderTBar.setDesign(sap.m.ToolbarDesign.Transparent, true);
+			oHeaderTBar.setDesign(ToolbarDesign.Transparent, true);
 			oHeaderTBar.addStyleClass("sapMPanelHeaderTB");
 			oRm.renderControl(oHeaderTBar);
 
@@ -109,7 +112,7 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			// render infoBar
-			oInfoTBar.setDesign(sap.m.ToolbarDesign.Info, true);
+			oInfoTBar.setDesign(ToolbarDesign.Info, true);
 			oInfoTBar.addStyleClass("sapMPanelInfoTB");
 			oRm.renderControl(oInfoTBar);
 		}
@@ -134,6 +137,9 @@ sap.ui.define(['jquery.sap.global'],
 		}
 
 		oRm.writeClasses();
+		// ensure that the content is not included in the tab chain
+		// this happens in FF, when we have a scrollable content
+		oRm.writeAttribute('tabindex', '-1');
 		oRm.write(">");
 	};
 
@@ -146,7 +152,7 @@ sap.ui.define(['jquery.sap.global'],
 	};
 
 	PanelRenderer.endPanel = function (oRm) {
-		oRm.write("</section>");
+		oRm.write("</div>");
 	};
 
 	return PanelRenderer;

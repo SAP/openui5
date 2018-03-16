@@ -207,13 +207,14 @@
 		QUnit.test("'keyboard handling'", function(assert) {
 			//setup RadioButtonGroups
 			var iRadiosCount = 4;
-			var columnsCount = 2
+			var columnsCount = 2,
+            	fnFireSelectSpyRB0, fnFireSelectSpyRB1, fnFireSelectSpyRB2, fnFireSelectSpyRB3;
 			var oRBGroup = new sap.m.RadioButtonGroup("RBG1", {
 				columns : columnsCount
 			});
 
-			for(var i = 0; i < iRadiosCount; i++) {
-				var oRadioButton = new sap.m.RadioButton("option1-" + i);
+			for (var i = 0; i < iRadiosCount; i++) {
+				oRadioButton = new sap.m.RadioButton("option1-" + i);
 				oRadioButton.setText("Option " + i);
 				oRadioButton.setTooltip("Tooltip " + i);
 				oRBGroup.addButton(oRadioButton);
@@ -226,23 +227,32 @@
 			qutils.triggerMouseEvent("RBG1-0", "click");
 			sap.ui.getCore().applyChanges();
 
+			fnFireSelectSpyRB0 = this.spy(oRBGroup.aRBs[0], "fireSelect");
+			fnFireSelectSpyRB1 = this.spy(oRBGroup.aRBs[1], "fireSelect");
+			fnFireSelectSpyRB2 = this.spy(oRBGroup.aRBs[2], "fireSelect");
+			fnFireSelectSpyRB3 = this.spy(oRBGroup.aRBs[3], "fireSelect");
+
 			assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 			// Test arrow pressing
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_RIGHT");
 			sap.ui.getCore().applyChanges();
+			assert.strictEqual(fnFireSelectSpyRB1.callCount, 1, "The selection change event should be fired");
 			assert.equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_DOWN");
 			sap.ui.getCore().applyChanges();
+			assert.strictEqual(fnFireSelectSpyRB3.callCount, 1, "The selection change event should be fired");
 			assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
 			sap.ui.getCore().applyChanges();
+			assert.strictEqual(fnFireSelectSpyRB2.callCount, 1, "The selection change event should be fired");
 			assert.equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_UP");
 			sap.ui.getCore().applyChanges();
+			assert.strictEqual(fnFireSelectSpyRB0.callCount, 1, "The selection change event should be fired");
 			assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 			qutils.triggerKeyboardEvent("RBG1", "END");
@@ -311,10 +321,10 @@
 		QUnit.module("Setters", {
 			beforeEach : function() {
 				this.rbg = new sap.m.RadioButtonGroup({
-					buttons : [
-						new sap.m.RadioButton({enabled : false, text : "Option 1"}),
-						new sap.m.RadioButton({editable : false, text : "Option 2"}),
-						new sap.m.RadioButton({text : "Option 3"}),
+					buttons: [
+						new sap.m.RadioButton({enabled: false, text: "Option 1"}),
+						new sap.m.RadioButton({editable: false, text: "Option 2"}),
+						new sap.m.RadioButton({text: "Option 3"}),
 					]
 				});
 
@@ -367,6 +377,39 @@
 			assert.equal(aButtons[1].getEditable(), false, "Second RadioButton is read only");
 			assert.equal(aButtons[2].getEditable(), true, "Third RadioButton is editable");
 		});
+
+		QUnit.module("Methods", {
+			beforeEach: function() {
+				this.rbg = new sap.m.RadioButtonGroup({
+					buttons: [
+						new sap.m.RadioButton({enabled: false, text: "Option 1"})
+					]
+				});
+
+				this.rbg.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.rbg.destroy();
+			}
+		});
+
+		QUnit.test("InsertRadioButton", function(assert) {
+
+			// insert a button at out of bounds indexes
+
+			var oNewButton = new sap.m.RadioButton({text: 'radio200'});
+			this.rbg.insertButton(oNewButton, 200);
+
+			oNewButton = new sap.m.RadioButton({text: 'radio-200'});
+			this.rbg.insertButton(oNewButton, -200);
+
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.equal(this.rbg.$().find('.sapMRb').length, 3, "Buttons are rendered correctly");
+		});
+
 		</script>
 	</head>
 	<body id="body">

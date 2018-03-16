@@ -3,9 +3,14 @@
  */
 
 // Provides control sap.m.IconTabSeparator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
-	function(jQuery, library, Element) {
+sap.ui.define(['./library', 'sap/ui/core/Element', 'sap/ui/core/Item'],
+	function(library, Element, Item) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ImageHelper
+	var ImageHelper = library.ImageHelper;
 
 
 
@@ -35,6 +40,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			"sap.m.IconTab"
 		],
 		library : "sap.m",
+		designtime: "sap/m/designtime/IconTabSeparator.designtime",
 		properties : {
 
 			/**
@@ -72,7 +78,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			useIconTooltip : false
 		};
 
-		this._oImageControl = sap.m.ImageHelper.getImageControl(this.getId() + "-icon", this._oImageControl, oParent, mProperties, aCssClasses);
+		this._oImageControl = ImageHelper.getImageControl(this.getId() + "-icon", this._oImageControl, oParent, mProperties, aCssClasses);
 
 		return this._oImageControl;
 	};
@@ -88,8 +94,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 			this._oImageControl.destroy();
 		}
 
-		if (sap.ui.core.Item.prototype.exit) {
-			sap.ui.core.Item.prototype.exit.call(this, oEvent);
+		if (Item.prototype.exit) {
+			Item.prototype.exit.call(this, oEvent);
 		}
 	};
 
@@ -146,4 +152,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element'],
 
 	return IconTabSeparator;
 
-}, /* bExport= */ true);
+});

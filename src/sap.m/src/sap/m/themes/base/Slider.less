@@ -24,6 +24,7 @@
 
 .sapMSliderInner {
 	width: 100%;
+	z-index: 1;
 	position: relative;
 	background-repeat: no-repeat;
 }
@@ -52,7 +53,7 @@
 	padding: 0;
 	list-style: none;
 	position: absolute;
-	z-index: -1;
+	z-index: 0;
 	top: 0.625rem;
 	left: 1.0625rem;
 	right: 1.0625rem;;
@@ -92,6 +93,7 @@
 	position: absolute;
 	top: 1.75rem;
 	left: -2.5rem;
+	direction: ltr;
 }
 
 /* slider progress bar */
@@ -115,6 +117,7 @@
 	top: -0.91rem;
 	height: 1.75rem;
 	width: 1.75rem;
+	direction: ltr;
 
 	/* some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
 	but does support the long-hand properties for each corner like "border-top-left-radius" */
@@ -127,28 +130,11 @@
 		content: '';
 		position: absolute;
 		width: 100%;
-		height: 150%;
 		left: 50%;
 		top: 40%;
 		transform: translate(-50%, -50%);
 		cursor: pointer;
 	}
-}
-
-.sapMSliderHandle:hover ~ .sapMSliderTooltipContainer{
-	visibility: visible;
-}
-
-.sapMSliderHandleTooltip:hover{
-	visibility: visible;
-}
-
-.sapMInputBaseWidthPadding:hover{
-	visibility: visible;
-}
-
-.sapMSliderProgress:hover ~ .sapMSliderTooltipContainer {
-	visibility: visible;
 }
 
 /* ============ */

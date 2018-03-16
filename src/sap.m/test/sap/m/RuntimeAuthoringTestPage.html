@@ -17,18 +17,9 @@
 		jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
 
 		// Create the FakeLrep with localStorage
-		(function _createFakeLrep() {
-			sap.ui.require(["sap/ui/fl/FakeLrepConnector", "sap/ui/rta/util/FakeLrepConnectorLocalStorage"], function (FakeLrepConnector, FakeLrepConnectorLocalStorage) {
-				if (/[&?](sap-rta-clear-cache-lrep=(true|x)[&#]?)+/i.test(window.location.search)) {
-
-					jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
-					FakeLrepConnector.deleteChanges();
-				}
-
-				jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
-				FakeLrepConnector.enableFakeConnector(jQuery.sap.getModulePath("sap.m.test.rta.mockdata.FakeLrepConnector") + ".json");
-			});
-		}());
+		sap.ui.require(["sap/ui/fl/FakeLrepConnectorLocalStorage"], function (FakeLrepConnectorLocalStorage) {
+		    FakeLrepConnectorLocalStorage.enableFakeConnector();
+		});
 
 		var MyComponent = sap.ui.core.UIComponent.extend("MyComponent", {
 			createContent: function () {
@@ -310,6 +301,9 @@
 												var oRta = new sap.ui.rta.RuntimeAuthoring({
 													rootControl: sap.ui.getCore().byId("idMain1")
 												});
+												oRta.attachStop(function() {
+													oRta.destroy();
+												})
 												oRta.start();
 											}
 										}),

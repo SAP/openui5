@@ -4,9 +4,27 @@
 
 // Provides control sap.m.P13nColumnsPanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/core/Control'
-], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, Control) {
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nColumnsItem', './SearchField', './Table', './library', 'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/IconPool', 'sap/m/ScrollContainer'
+], function(jQuery, ColumnListItem, P13nPanel, P13nColumnsItem, SearchField, Table, library, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, IconPool, ScrollContainer) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
+
+	// shortcut for sap.m.P13nPanelType
+	var P13nPanelType = library.P13nPanelType;
 
 	/**
 	 * Constructor for a new P13nColumnsPanel.
@@ -78,7 +96,7 @@ sap.ui.define([
 
 				/**
 				 * Event raised when a <code>columnsItem</code> is added.
-				 *
+				 * @deprecated As of version 1.50, replaced by extended event {@link sap.m.P13nColumnsPanel.html#changeColumnsItems}
 				 * @since 1.26.0
 				 */
 				addColumnsItem: {
@@ -100,22 +118,43 @@ sap.ui.define([
 					parameters: {
 						/**
 						 * Contains <code>columnsItems</code> that needs to be created in the model.
+						 * Deprecated as of version 1.50, replaced by new parameter <code>items</code>.
+						 * @deprecated As of version 1.50, replaced by new parameter <code>items</code>.
 						 */
 						newItems: {
 							type: "sap.m.P13nColumnsItem[]"
 						},
 						/**
 						 * Contains <code>columnsItems</code> that needs to be changed in the model.
+						 * Deprecated as of version 1.50, replaced by new parameter <code>items</code>.
+						 * @deprecated As of version 1.50, replaced by new parameter <code>items</code>.
 						 */
 						existingItems: {
 							type: "sap.m.P13nColumnsItem[]"
+						},
+						// Using both events 'addColumnsItem' and 'changeColumnsItems' instead of only one 'changeColumnsItems' event the implicit item order is getting lost.
+						// Example:
+						// Given transient items ^A, ^B, C, D (note that transient item contains 'visible' property) and persistent columnsItem B3.
+						// Open: ^A, ^B, C, D; Change to: A, ^B, C, D
+						// -> changeColumnsItems contains {A false}, {C false}, {D false} as newItems and {B true index=0} as existingItems. So the ColumnsController processes
+						// first newItems and then existingItems with result:
+						// columnsItems: ^B3, A, C, D. Due to aggregation update the order of table items in P13nColumnsPanel changes to ^B, A, C, D instead of keeping the order as it is A, ^B, C, D.
+						//
+						// 'index': {undefined, 0, 1,...}. Undefined means that initially consumer does not have defined via aggregation and later on the position of the 'column' has not been changed.
+						// 'visible': {undefined, false, true}. Undefined means that initially consumer does not have defined via aggregations and later on the visibility of the 'column' has not been changed.
+						/**
+						 * Array contains an object for each item in <code>items</code> aggregation enriched with index and visibility information. The item order reflects the current order of columns in the panel.
+						 * @since 1.50.0
+						 */
+						items: {
+							type: "object[]"
 						}
 					}
 				},
 				/**
 				 * Event raised if <code>setData</code> is called in model. The event serves the purpose of minimizing such calls since they can
 				 * take up a lot of performance.
-				 *
+				 * @deprecated As of version 1.50, the event <code>setData</code> is obsolete.
 				 * @since 1.26.7
 				 */
 				setData: {}
@@ -126,7 +165,7 @@ sap.ui.define([
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapMP13nColumnsPanel");
 			oRm.writeClasses();
-			oRm.write(">"); // div element
+			oRm.write(">");
 
 			var aContent = oControl.getAggregation("content");
 			if (aContent) {
@@ -134,1466 +173,64 @@ sap.ui.define([
 					oRm.renderControl(oContent);
 				});
 			}
-
 			oRm.write("</div>");
 		}
 	});
 
-	/* =========================================================== */
-	/* Private methods and properties */
-	/* =========================================================== */
-
-	/**
-	 * Move selected item to begin of the item list
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._ItemMoveToTop = function() {
-		var iOldIndex = -1, iNewIndex = -1, sItemKey = null, aTableItems = null;
-
-		if (this._oSelectedItem) {
-			aTableItems = this._oTable.getItems();
-
-			// Determine new and old item index
-			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
-
-			// calculate new item index
-			iNewIndex = iOldIndex;
-			if (iOldIndex > 0) {
-				iNewIndex = 0;
-			}
-
-			// apply new item index
-			if (iNewIndex != -1 && iOldIndex != -1 && iOldIndex != iNewIndex) {
-				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
-				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
-				this._afterMoveItem();
-			}
-
-			if (this._oMoveToTopButton.getEnabled()) {
-				this._oMoveToTopButton.focus();
-			} else {
-				this._oSelectedItem.focus();
-			}
-		}
-	};
-
-	/**
-	 * Move selected item one position up
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._ItemMoveUp = function() {
-		var iOldIndex = -1, iNewIndex = -1, sItemKey = null, aTableItems = null;
-
-		if (this._oSelectedItem) {
-			aTableItems = this._oTable.getItems();
-
-			// Determine new and old item index
-			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
-
-			// calculate new item index
-			iNewIndex = iOldIndex;
-			if (iOldIndex > 0) {
-				iNewIndex = this._getPreviousItemIndex(iOldIndex);
-			}
-
-			// apply new item index
-			if (iNewIndex != -1 && iOldIndex != -1 && iOldIndex != iNewIndex) {
-				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
-				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
-				this._afterMoveItem();
-			}
-
-			if (this._oMoveUpButton.getEnabled()) {
-				this._oMoveUpButton.focus();
-			} else {
-				this._oSelectedItem.focus();
-			}
-		}
-	};
-
-	/**
-	 * Move selected item one position down
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._ItemMoveDown = function() {
-		var iOldIndex = -1, iNewIndex = -1, sItemKey = null, aTableItems = null;
-		var iTableMaxIndex = null;
-
-		if (this._oSelectedItem) {
-			aTableItems = this._oTable.getItems();
-			iTableMaxIndex = aTableItems.length;
-
-			// Determine new and old item index
-			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
-
-			// calculate new item index
-			iNewIndex = iOldIndex;
-			if (iOldIndex < iTableMaxIndex - 1) {
-				iNewIndex = this._getNextItemIndex(iOldIndex);
-			}
-
-			// apply new item index
-			if (iNewIndex != -1 && iOldIndex != -1 && iOldIndex != iNewIndex) {
-				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
-				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
-				this._afterMoveItem();
-			}
-
-			if (this._oMoveDownButton.getEnabled()) {
-				this._oMoveDownButton.focus();
-			} else {
-				this._oSelectedItem.focus();
-			}
-		}
-	};
-
-	/**
-	 * Move selected item to end of the item list
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._ItemMoveToBottom = function() {
-		var iOldIndex = -1, iNewIndex = -1, sItemKey = null, aTableItems = null;
-		var iTableMaxIndex = null;
-
-		if (this._oSelectedItem) {
-			aTableItems = this._oTable.getItems();
-			iTableMaxIndex = aTableItems.length;
-
-			// Determine new and old item index
-			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-			iOldIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
-
-			// calculate new item index
-			iNewIndex = iOldIndex;
-			if (iOldIndex < iTableMaxIndex - 1) {
-				iNewIndex = iTableMaxIndex - 1;
-			}
-
-			// apply new item index
-			if (iNewIndex != -1 && iOldIndex != -1 && iOldIndex != iNewIndex) {
-				this._handleItemIndexChanged(this._oSelectedItem, iNewIndex);
-				this._changeColumnsItemsIndexes(iOldIndex, iNewIndex);
-				this._afterMoveItem();
-			}
-
-			if (this._oMoveToBottomButton.getEnabled()) {
-				this._oMoveToBottomButton.focus();
-			} else {
-				this._oSelectedItem.focus();
-			}
-		}
-	};
-
-	/**
-	 * This method determines all columnsItems that have an index property, which are not undefined and fit into index range of iOldIndex & iNewIndex.
-	 * If such columnsItems are found take the index property and change it to a value according to the move direction.
-	 *
-	 * @private
-	 * @param {int} iOldIndex is the index from where the correction shall start in columnsItems
-	 * @param {int} iNewIndex is the index to where the correction shall run in columnsItems
-	 */
-	P13nColumnsPanel.prototype._changeColumnsItemsIndexes = function(iOldIndex, iNewIndex) {
-		var iMinIndex = null, iMaxIndex = null, sSelectedItemColumnKey = null, iMaxTableIndex = null;
-		var aColumnsItems = null, iColumnsItemIndex = null, sColumnKey = null;
-
-		if (iOldIndex !== null && iOldIndex !== undefined && iOldIndex > -1 && iNewIndex !== null && iNewIndex !== undefined && iNewIndex > -1 && iOldIndex !== iNewIndex) {
-
-			iMinIndex = Math.min(iOldIndex, iNewIndex);
-			iMaxIndex = Math.max(iOldIndex, iNewIndex);
-			iMaxTableIndex = this._oTable.getItems().length - 1;
-
-			aColumnsItems = this.getColumnsItems();
-			sSelectedItemColumnKey = this._oSelectedItem.data('P13nColumnKey');
-			aColumnsItems.forEach(function(oColumnsItem) {
-
-				// Exclude columnKey for selectedItem as this one is already set right
-				sColumnKey = oColumnsItem.getColumnKey();
-				if (sColumnKey !== undefined && sColumnKey === sSelectedItemColumnKey) {
-					return;
-				}
-
-				iColumnsItemIndex = oColumnsItem.getIndex();
-				// identify columnsItems that does not fit into index range --> exclude them
-				if (iColumnsItemIndex === undefined || iColumnsItemIndex < 0 || iColumnsItemIndex < iMinIndex || iColumnsItemIndex > iMaxIndex) {
-					return;
-				}
-
-				// For all remain columnsItems change the index property according to the move action
-				if (iOldIndex > iNewIndex) {
-					// Action: column moved UP
-					if (iColumnsItemIndex < iMaxTableIndex) {
-						iColumnsItemIndex += 1;
-					}
-				} else {
-					// Action: column moved DOWN
-					if (iColumnsItemIndex > 0) {
-						iColumnsItemIndex -= 1;
-					}
-				}
-				oColumnsItem.setIndex(iColumnsItemIndex);
-			});
-		}
-	};
-
-	/**
-	 * After an items was moved renewal selected items instance and it's selection
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._afterMoveItem = function() {
-		this._scrollToSelectedItem(this._oSelectedItem);
-		this._calculateMoveButtonAppearance();
-	};
-
-	/**
-	 * Swop "Show Selected" button to "Show All"
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._swopShowSelectedButton = function() {
-		var sNewButtonText;
-
-		// Swop the button text
-		this._bShowSelected = !this._bShowSelected;
-		if (this._bShowSelected) {
-			sNewButtonText = this._oRb.getText('COLUMNSPANEL_SHOW_ALL');
-		} else {
-			sNewButtonText = this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
-		}
-		this._oShowSelectedButton.setText(sNewButtonText);
-		this._changeEnableProperty4SelectAll();
-
-		this._filterItems();
-		if (this._oSelectedItem && this._oSelectedItem.getVisible() !== true) {
-			this._deactivateSelectedItem();
-		}
-
-		this._scrollToSelectedItem(this._oSelectedItem);
-		this._calculateMoveButtonAppearance();
-		this._fnHandleResize();
-	};
-
-	/**
-	 * Escapes special characters
-	 *
-	 * @private
-	 * @param {string} sToEscape contains the content that shall be escaped
-	 */
-	P13nColumnsPanel.prototype._escapeRegExp = function(sToEscape) {
-		if (sToEscape) {
-			return sToEscape.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-		}
-	};
-
-	/**
-	 * Filters items by its selection status
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._filterItems = function() {
-		var aSelectedItems = null, aTableItems = null;
-		var iLength = 0, jLength = 0, i = 0, j = 0;
-		var oItem = null, oItemTemplate = null;
-		var bItemVisibleBySearchText, bItemVisibleBySelection;
-		var sItemText = null, sSearchText = null, regExp = null;
-
-		// Get table items according "Show Selected" button status
-		if (this._bShowSelected) {
-			aSelectedItems = this._oTable.getSelectedItems();
-		} else {
-			aSelectedItems = this._oTable.getItems();
-		}
-
-		// Get search filter value
-		if (this._bSearchFilterActive) {
-			sSearchText = this._oSearchField.getValue();
-
-			// replace white-spaces at BEGIN & END of the searchText, NOT IN BETWEEN!!
-			if (sSearchText) {
-				sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
-			}
-			// create RegEx for search only if a searchText exist!!
-			if (sSearchText !== null && sSearchText !== undefined) {// " " is a VALID value!!!
-				sSearchText = this._escapeRegExp(sSearchText); // escape user input
-				sSearchText = regExp = new RegExp(sSearchText, 'igm'); // i = ignore case; g = global; m = multiline
-
-			}
-		}
-
-		aTableItems = this._oTable.getItems();
-		iLength = aTableItems.length;
-		for (i = 0; i < iLength; i++) {
-			oItem = aTableItems[i];
-			bItemVisibleBySearchText = true;
-			bItemVisibleBySelection = false;
-
-			// Is filtering via search text active
-			if (this._bSearchFilterActive) {
-				bItemVisibleBySearchText = false;
-
-				// search in item text
-				sItemText = oItem.getCells()[0].getText();
-				if (sItemText && regExp !== null && sItemText.match(regExp) !== null) {
-					bItemVisibleBySearchText = true;
-				}
-
-				// search in tooltip text of actual item
-				if (bItemVisibleBySearchText !== true && oItem.getTooltip_Text) {
-					sItemText = (oItem.getTooltip() instanceof sap.ui.core.TooltipBase ? oItem.getTooltip().getTooltip_Text() : oItem.getTooltip_Text());
-					if (sItemText && regExp !== null && sItemText.match(regExp) !== null) {
-						bItemVisibleBySearchText = true;
-					}
-				}
-			}
-			// Is filtering via selection active
-			jLength = aSelectedItems.length;
-			for (j = 0; j < jLength; j++) {
-				oItemTemplate = aSelectedItems[j];
-				if (oItemTemplate) {
-					if (oItemTemplate.getId() == oItem.getId()) {
-						bItemVisibleBySelection = true;
-						break;
-					}
-				}
-			}
-			oItem.setVisible(bItemVisibleBySelection && bItemVisibleBySearchText);
-		}
-	};
-
-	/**
-	 * Execute search by filtering columns list based on the given sValue
-	 *
-	 * @private
-	 * @param {boolean} bStatus is OPTIONAL and determines whether the SelectAll check-box is enabled = true||false
-	 */
-	P13nColumnsPanel.prototype._changeEnableProperty4SelectAll = function(bStatus) {
-		var oTableCB = sap.ui.getCore().byId(this._oTable.getId() + '-sa');
-
-		if (oTableCB) {
-			oTableCB.setEnabled(!this._bSearchFilterActive && !this._bShowSelected);
-		}
-	};
-
-	/**
-	 * Execute search by filtering columns list based on the given sValue
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._executeSearch = function() {
-		var sValue = this._oSearchField.getValue();
-		var iLength = sValue.length || 0;
-
-		// change search filter status
-		if (iLength > 0) {
-			this._bSearchFilterActive = true;
-		} else {
-			this._bSearchFilterActive = false;
-		}
-
-		// De-Activate table header checkBox
-		this._changeEnableProperty4SelectAll();
-
-		// filter table items based on user selections
-		this._filterItems();
-
-		// check, whether actual selected item is still visible after filterItems -> if not -> deactivate selected
-		// item
-		if (this._oSelectedItem && this._oSelectedItem.getVisible() !== true) {
-			this._deactivateSelectedItem();
-		}
-
-		this._calculateMoveButtonAppearance();
-		this._scrollToSelectedItem(this._oSelectedItem);
-	};
-
-	/**
-	 * Determine the previous table item index starting from position, which comes via iStartIndex
-	 *
-	 * @private
-	 * @param {inteter} iStartIndex is the table index from where the search start
-	 * @returns {int} is the index of a previous items; if no item is found it will be returned -1
-	 */
-	P13nColumnsPanel.prototype._getPreviousItemIndex = function(iStartIndex) {
-		var iResult = -1, i = 0;
-		var aTableItems = null, oTableItem = null;
-
-		if (iStartIndex !== null && iStartIndex !== undefined && iStartIndex > 0) {
-			if (this._bShowSelected === true) {
-				aTableItems = this._oTable.getItems();
-				if (aTableItems && aTableItems.length > 0) {
-					for (i = iStartIndex - 1; i >= 0; i--) {
-						oTableItem = aTableItems[i];
-						if (oTableItem && oTableItem.getSelected() === true) {
-							iResult = i;
-							break;
-						}
-					}
-				}
-			} else {
-				iResult = iStartIndex - 1;
-			}
-		}
-
-		return iResult;
-	};
-
-	/**
-	 * Determine the next table item index to that position, which comes via iStartIndex
-	 *
-	 * @private
-	 * @param {inteter} iStartIndex is the table index from where the search start
-	 * @returns {int} is the index of the next item; if no item is found it will be returned -1
-	 */
-	P13nColumnsPanel.prototype._getNextItemIndex = function(iStartIndex) {
-		var iResult = -1, i = 0, iLength = null;
-		var aTableItems = null, oTableItem = null;
-
-		if (iStartIndex !== null && iStartIndex !== undefined && iStartIndex > -1) {
-			aTableItems = this._oTable.getItems();
-			if (aTableItems && aTableItems.length > 0) {
-				iLength = aTableItems.length;
-			}
-
-			if (iStartIndex >= 0 && iStartIndex < iLength - 1) {
-				if (this._bShowSelected === true) {
-					for (i = iStartIndex + 1; i < iLength; i++) {
-						oTableItem = aTableItems[i];
-						if (oTableItem && oTableItem.getSelected() === true) {
-							iResult = i;
-							break;
-						}
-					}
-				} else {
-					iResult = iStartIndex + 1;
-				}
-			}
-		}
-
-		return iResult;
-	};
-
-	/**
-	 * Update Select All column count information
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._updateSelectAllDescription = function(oEvent) {
-		var iTableItems = this._oTable.getItems().length;
-		var iSelectedItems = this._oTable.getSelectedItems().length;
-		var sSelectAllText = null;
-
-		// update the selection label
-		var oColumn = this._oTable.getColumns()[0];
-		if (oColumn) {
-			sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL');
-			if (iSelectedItems !== null && iSelectedItems !== undefined && iSelectedItems >= 0) {
-				sSelectAllText = this._oRb.getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [
-					iSelectedItems, iTableItems
-				]);
-			}
-			oColumn.getHeader().setText(sSelectAllText);
-		}
-
-		if (this._bShowSelected) {
-			this._filterItems();
-		}
-	};
-
-	/**
-	 * Change the selected item instance to the new given one
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._changeSelectedItem = function(oItem) {
-		var oNewSelectedItem = null;
-
-		// Remove highlighting from previous item
-		if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
-			this._removeHighLightingFromItem(this._oSelectedItem);
-		}
-
-		// Set highlighting to just selected item (only in case it is not already selected -> then do nothing)
-		oNewSelectedItem = oItem;
-		if (oNewSelectedItem != this._oSelectedItem) {
-			this._oSelectedItem = oNewSelectedItem;
-			this._setHighLightingToItem(this._oSelectedItem);
-		} else {
-			this._oSelectedItem = null;
-		}
-
-		// Calculate move button appearance
-		this._calculateMoveButtonAppearance();
-	};
-
-	/**
-	 * Item press behavior is called as soon as a table item is selected
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._itemPressed = function(oEvent) {
-		var oNewSelectedItem = null;
-		// Change selected items
-		oNewSelectedItem = oEvent.getParameter('listItem');
-		this._changeSelectedItem(oNewSelectedItem);
-	};
-
-	/**
-	 * Calculates the Appearance of the move button depending of selected item instance
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._calculateMoveButtonAppearance = function() {
-		var sItemKey = null, aTableItems = null;
-		var iLength = -1, iItemIndex = -1;
-		var bMoveUp = false, bMoveDown = false;
-
-		/*
-		 * Calculate MOVE buttons appearance
-		 */
-
-		// if search field is filled -> disable move buttons
-		if (this._bSearchFilterActive === true) {
-			bMoveUp = bMoveDown = false;
-		} else if (this._oSelectedItem !== null && this._oSelectedItem !== undefined) {
-			sItemKey = this._oSelectedItem.data('P13nColumnKey');
-
-			// Determine displayed table items dependent of "Show Selected" filter status
-			if (this._bShowSelected === true) {
-				aTableItems = this._oTable.getSelectedItems();
-			} else {
-				aTableItems = this._oTable.getItems();
-			}
-			iItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
-
-			if (iItemIndex !== -1) {
-				if (aTableItems && aTableItems.length) {
-					iLength = aTableItems.length;
-				}
-
-				// Minimum border
-				if (iItemIndex === 0) {
-					bMoveDown = true;
-				} else if (iItemIndex === iLength - 1) {
-					// Maximum border
-					bMoveUp = true;
-				} else if (iItemIndex > 0 && iItemIndex < iLength - 1) {
-					bMoveDown = true;
-					bMoveUp = true;
-				}
-			}
-		} else {
-			bMoveUp = bMoveDown = false;
-		}
-
-		/*
-		 * Now change real appearance of the buttons
-		 */
-		if (this._oMoveToTopButton.getEnabled() !== bMoveUp) {
-			this._oMoveToTopButton.setEnabled(bMoveUp);
-		}
-		if (this._oMoveUpButton.getEnabled() !== bMoveUp) {
-			this._oMoveUpButton.setEnabled(bMoveUp);
-		}
-		if (this._oMoveDownButton.getEnabled() !== bMoveDown) {
-			this._oMoveDownButton.setEnabled(bMoveDown);
-		}
-		if (this._oMoveToBottomButton.getEnabled() !== bMoveDown) {
-			this._oMoveToBottomButton.setEnabled(bMoveDown);
-		}
-	};
-
-	/**
-	 * Set highlighting to an item
-	 *
-	 * @private
-	 * @param {object} oItem is that item that shall be highlighted
-	 */
-	P13nColumnsPanel.prototype._setHighLightingToItem = function(oItem) {
-		if (oItem !== null && oItem !== undefined && oItem.addStyleClass) {
-			oItem.addStyleClass("sapMP13nColumnsPanelItemSelected");
-		}
-	};
-
-	/**
-	 * Remove highlighting from an item
-	 *
-	 * @private
-	 * @param {object} oItem is that item that where highlighting shall be removed from
-	 */
-	P13nColumnsPanel.prototype._removeHighLightingFromItem = function(oItem) {
-		if (oItem !== null && oItem !== undefined && oItem.removeStyleClass) {
-			oItem.removeStyleClass("sapMP13nColumnsPanelItemSelected");
-		}
-	};
-
-	/**
-	 * Deactivate selected items for any movements & all move buttons
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._deactivateSelectedItem = function() {
-		if (this._oSelectedItem) {
-			this._removeHighLightingFromItem(this._oSelectedItem);
-			this._oSelectedItem = null;
-			this._calculateMoveButtonAppearance();
-		}
-	};
-
-	/**
-	 * Delivers the index of an item in the given array identified by its key
-	 *
-	 * @private
-	 * @param {string} sItemKey is the key for that item for that the index shall be found in the array
-	 * @param {array} aItems is the array in that the item will be searched
-	 * @returns {int} is the index of the identified item
-	 */
-	P13nColumnsPanel.prototype._getArrayIndexByItemKey = function(sItemKey, aItems) {
-		var iResult = -1;
-		var iLength = 0, i = 0;
-		var oItem = null, sItemKeyTemp = null;
-
-		if (sItemKey !== null && sItemKey !== undefined && sItemKey !== "") {
-			if (aItems && aItems.length > 0) {
-				iLength = aItems.length;
-				for (i = 0; i < iLength; i++) {
-					sItemKeyTemp = null;
-					oItem = aItems[i];
-					if (oItem) {
-
-						if (oItem.getColumnKey) {
-							sItemKeyTemp = oItem.getColumnKey();
-						} else if (oItem.columnKey) {
-							sItemKeyTemp = oItem.columnKey;
-						} else {
-							sItemKeyTemp = oItem.data('P13nColumnKey');
-						}
-
-						if (sItemKeyTemp !== null && sItemKeyTemp !== undefined && sItemKeyTemp !== "") {
-							if (sItemKeyTemp === sItemKey) {
-								iResult = i;
-								break;
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return iResult;
-	};
-
-	/**
-	 * Scroll table content to given item
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._scrollToSelectedItem = function(oItem) {
-		var oFocusedElement = null;
-		if (oItem) {
-			sap.ui.getCore().applyChanges();
-			// oItem needs to be rendered, otherwise the necessary scroll calculations cannot be performed
-			if (!!oItem.getDomRef()) {
-				// get just focused DOM element
-				oFocusedElement = document.activeElement;
-
-				// focus actual item to get it into the scroll container viewport
-				oItem.focus();
-
-				// reset focus to previous DOM element
-				if (oFocusedElement && oFocusedElement.focus) {
-					oFocusedElement.focus();
-				}
-			}
-		}
-	};
-
-	/**
-	 * This method extracts all information from given columnsItems array into a JSON based list
-	 *
-	 * @private
-	 * @param {array} aColumnsItems list of columnsItems
-	 * @returns {array} aExtractionResult is a JSON based array with main information about the given columnsItems array
-	 */
-	P13nColumnsPanel.prototype._extractExistingColumnsItems = function(aColumnsItems) {
-		var aExtractionResult = null, oExtractedObject = null;
-
-		if (aColumnsItems && aColumnsItems.length > 0) {
-			aExtractionResult = [];
-			aColumnsItems.forEach(function(oColumnsItem) {
-				oExtractedObject = {
-					columnKey: oColumnsItem.getColumnKey(),
-					index: oColumnsItem.getIndex(),
-					visible: oColumnsItem.getVisible(),
-					width: oColumnsItem.getWidth()
-				};
-				aExtractionResult.push(oExtractedObject);
-			});
-		}
-
-		return aExtractionResult;
-	};
-
-	/**
-	 * This method extracts all information from existing table items into a JSON based list
-	 *
-	 * @private
-	 * @returns {array} aExtractionResult is a JSON based array with main information about table items
-	 */
-	P13nColumnsPanel.prototype._extractExistingTableItems = function() {
-		var aExtractionResult = null, oExtractedObject = null;
-		var aTableItems = this._oTable.getItems();
-
-		if (aTableItems && aTableItems.length > 0) {
-			aExtractionResult = [];
-			aTableItems.forEach(function(oTableItem, iIndex) {
-				oExtractedObject = {
-					columnKey: oTableItem.data('P13nColumnKey'),
-					index: iIndex,
-					visible: oTableItem.getSelected(),
-					width: oTableItem.data('P13nColumnWidth')
-				};
-				aExtractionResult.push(oExtractedObject);
-			});
-		}
-
-		return aExtractionResult;
-	};
-
-	/**
-	 * react on item visibility changes
-	 *
-	 * @private
-	 * @param {sap.m.ColumnListItem} oItem is the table item for that the index was changed
-	 * @param {int} iNewIndex is the item index where the item shall be inserted
-	 */
-	P13nColumnsPanel.prototype._handleItemIndexChanged = function(oItem, iNewIndex) {
-		var sItemKey = null, iColumnsItemIndex = null;
-		var aExistingColumnsItems = [], oColumnsItem = null;
-		var aNewColumnsItems = [], aColumnsItems = null;
-		var that = this;
-
-		if (oItem && iNewIndex !== null && iNewIndex !== undefined && iNewIndex > -1) {
-			sItemKey = oItem.data('P13nColumnKey');
-			aColumnsItems = this.getColumnsItems();
-			this._aExistingColumnsItems = this._extractExistingColumnsItems(aColumnsItems);
-
-			iColumnsItemIndex = this._getArrayIndexByItemKey(sItemKey, aColumnsItems);
-			if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
-				oColumnsItem = aColumnsItems[iColumnsItemIndex];
-			}
-
-			// check, whether a columnsItems does exist for actual table item
-			if (oColumnsItem === null) {
-				oColumnsItem = this._createNewColumnsItem(sItemKey);
-				oColumnsItem.setIndex(iNewIndex);
-				aNewColumnsItems.push(oColumnsItem);
-
-				this.fireAddColumnsItem({
-					newItem: oColumnsItem
-				});
-				this._notifyChange();
-			} else {
-				oColumnsItem.setIndex(iNewIndex);
-				aExistingColumnsItems.push(oColumnsItem);
-			}
-
-			// fire consolidated model change event for all collected model changes
-			if (aNewColumnsItems.length > 0 || aExistingColumnsItems.length > 0) {
-				this.aOwnHandledColumnsItems = aNewColumnsItems;
-				this.fireChangeColumnsItems({
-					newItems: aNewColumnsItems,
-					existingItems: aExistingColumnsItems
-				});
-				this._notifyChange();
-			}
-
-			// fire event for setting of changed data into model
-			this.fireSetData();
-
-			// react on model changes
-			if (aExistingColumnsItems && aExistingColumnsItems.length > 0) {
-				aExistingColumnsItems.forEach(function(oItem) {
-					that._updateTableItems(oItem);
-				});
-				this._oTableItemsOrdering.fCheckReOrdering();
-			}
-
-		}
-	};
-
-	/**
-	 * react on item visibility changes
-	 *
-	 * @private
-	 * @param {array} aItems is an array of JSON objects that represents content of involved sap.m.ColumnListItem
-	 */
-	P13nColumnsPanel.prototype._handleItemVisibilityChanged = function(aItems) {
-		var that = this;
-		var sItemKey = null, iColumnsItemIndex = null;
-		var aExistingColumnsItems = [], oColumnsItem = null;
-		var aNewColumnsItems = [], aColumnsItems = null;
-
-		if (aItems && aItems.length > 0) {
-			aColumnsItems = this.getColumnsItems();
-			this._aExistingColumnsItems = this._extractExistingColumnsItems(aColumnsItems);
-
-			aItems.forEach(function(oItem) {
-				oColumnsItem = iColumnsItemIndex = null;
-
-				sItemKey = oItem.columnKey;
-
-				// check, whether a columnsItems does exist for actual table item
-				iColumnsItemIndex = that._getArrayIndexByItemKey(sItemKey, aColumnsItems);
-				if (iColumnsItemIndex !== null && iColumnsItemIndex !== undefined && iColumnsItemIndex !== -1) {
-					oColumnsItem = aColumnsItems[iColumnsItemIndex];
-				}
-
-				if (oColumnsItem === null) {
-					oColumnsItem = that._createNewColumnsItem(sItemKey);
-					oColumnsItem.setVisible(oItem.visible);
-					aNewColumnsItems.push(oColumnsItem);
-
-					that.fireAddColumnsItem({
-						newItem: oColumnsItem
-					});
-					that._notifyChange();
-				} else {
-					oColumnsItem.setVisible(oItem.visible);
-					// in case a column will be made invisible -> remove the index property
-					if (oColumnsItem.getVisible() === false) {
-						oColumnsItem.setIndex(undefined);
-					}
-					aExistingColumnsItems.push(oColumnsItem);
-				}
-
-			});
-
-			// fire consolidated model change event for all collected model changes
-			if (aNewColumnsItems.length > 0 || aExistingColumnsItems.length > 0) {
-				this.aOwnHandledColumnsItems = aNewColumnsItems;
-				this.fireChangeColumnsItems({
-					newItems: aNewColumnsItems,
-					existingItems: aExistingColumnsItems
-				});
-				this._notifyChange();
-			}
-
-			// fire event for setting of changed data into model
-			this.fireSetData();
-
-			// react on model changes
-			if (aExistingColumnsItems && aExistingColumnsItems.length > 0) {
-				aExistingColumnsItems.forEach(function(oItem) {
-					that._updateTableItems(oItem);
-				});
-				this._oTableItemsOrdering.fCheckReOrdering();
-			}
-		}
-	};
-
-	/**
-	 * Create ColumnsItem by a given ColumnsKey
-	 *
-	 * @private
-	 * @param {string} sItemKey is the columns key with that a ColumnsItem can be identified
-	 * @param {boolean} bCreateIfNotFound determines whether a ColumnsItems will be created if no ColumnsItem was found by the given key
-	 * @returns {object} ColumnsItem that was found by the key or created if required
-	 */
-	P13nColumnsPanel.prototype._createNewColumnsItem = function(sItemKey) {
-		var oNewColumnsItem = new sap.m.P13nColumnsItem({
-			"columnKey": sItemKey
-		});
-		return oNewColumnsItem;
-	};
-
-	/**
-	 * get ColumnsItem by a given ColumnsKey
-	 *
-	 * @private
-	 * @param {string} sItemKey is the columns key with that a ColumnsItem can be identified
-	 * @returns {object} ColumnsItem that was found by the key or created if required
-	 */
-	P13nColumnsPanel.prototype._getColumnsItemByKey = function(sItemKey) {
-		var aColumnsItems = null;
-		var iColumnsItemIndex = -1, oColumnsItem = null;
-
-		if (sItemKey !== null && sItemKey !== undefined && sItemKey !== "") {
-			aColumnsItems = this.getColumnsItems();
-			iColumnsItemIndex = this._getArrayIndexByItemKey(sItemKey, aColumnsItems);
-
-			if (iColumnsItemIndex !== null && iColumnsItemIndex > -1) {
-				oColumnsItem = aColumnsItems[iColumnsItemIndex];
-			}
-		}
-
-		return oColumnsItem;
-	};
-
-	/**
-	 * Updates table items based on content of ColumnsItem(s)
-	 *
-	 * @private
-	 * @param {object} oColumnsItem is an item from columnsItems aggregation
-	 */
-	P13nColumnsPanel.prototype._updateTableItems = function(oColumnsItem) {
-		var aTableItems = null, iTableItemIndex, oTableItem = null;
-		var aColumnsItems = null, sColumnsKey = null;
-
-		/*
-		 * If no direct ColumnsItem is passed in take all existing ColumnsItems for update
-		 */
-		if (oColumnsItem) {
-			aColumnsItems = [];
-			aColumnsItems.push(oColumnsItem);
-		} else {
-			aColumnsItems = this.getColumnsItems();
-		}
-
-		// determine existing table items to that ColumnsItems can be applied
-		aTableItems = this._oTable.getItems();
-		if (aTableItems && aTableItems.length > 0) {
-			aColumnsItems.forEach(function(oColumnsItem) {
-				sColumnsKey = oColumnsItem.getColumnKey();
-				iTableItemIndex = this._getArrayIndexByItemKey(sColumnsKey, aTableItems);
-				if (iTableItemIndex !== -1) {
-					oTableItem = aTableItems[iTableItemIndex];
-					this._applyColumnsItem2TableItem(oColumnsItem, oTableItem);
-				}
-			}, this);
-		}
-
-	};
-
-	/**
-	 * This method shall reorder all existing table items. First all selected, and then the unselected items in an alphabetical order
-	 *
-	 * @private
-	 */
-	P13nColumnsPanel.prototype._reOrderExistingTableItems = function() {
-		var aExistingTableItems = null, aExistingSelectedTableItems = null;
-		var iExistingSelectedTableItemIndex = -1, sLanguage = null;
-		var that = this;
-
-		// get list of table items and list of selected items
-		aExistingTableItems = this._oTable.getItems();
-		aExistingSelectedTableItems = this._oTable.getSelectedItems();
-
-		// Calculate list of unselected table Items
-		if (aExistingSelectedTableItems && aExistingSelectedTableItems.length > 0) {
-			aExistingSelectedTableItems.forEach(function(oExistingSelectedTableItem) {
-				iExistingSelectedTableItemIndex = aExistingTableItems.indexOf(oExistingSelectedTableItem);
-				if (iExistingSelectedTableItemIndex > -1) {
-					aExistingTableItems.splice(iExistingSelectedTableItemIndex, 1);
-				}
-			});
-		}
-
-		// Sort array of unselected table items by it's column name
-		if (aExistingTableItems && aExistingTableItems.length > 0) {
-			try {
-				sLanguage = sap.ui.getCore().getConfiguration().getLocale().toString();
-			} catch (exception) {
-				// this exception can happen if the configured language is not convertible to BCP47 -> getLocale will deliver an exception
-				jQuery.sap.log.error("sap.m.P13nColumnsPanel : no available Language/Locale to sort table items");
-				sLanguage = null;
-			}
-
-			if (sLanguage) {
-				aExistingTableItems.sort(function(a, b) {
-					var sTextA = a.getCells()[0].getText();
-					var sTextB = b.getCells()[0].getText();
-					return sTextA.localeCompare(sTextB, sLanguage, {
-						numeric: true
-					});
-				});
-			}
-		}
-
-		// remove all table items and refill items: 1. all selected, 2. all unselected, but sorted items
-		this._oTable.removeAllItems();
-		aExistingSelectedTableItems.forEach(function(oItem) {
-			that._oTable.addItem(oItem);
-		});
-		aExistingTableItems.forEach(function(oItem) {
-			that._oTable.addItem(oItem);
-		});
-
-	};
-
-	/**
-	 * Add a new table item based on the given P13nItem content
-	 *
-	 * @private
-	 * @param {sap.m.P13nItem} oItem is used to create and added a new table item
-	 */
-	P13nColumnsPanel.prototype._addTableItem = function(oItem) {
-		var oColumnsItem = null;
-		var oNewTableItem = null, sColumnKeys = null;
-
-		if (oItem) {
-			sColumnKeys = oItem.getColumnKey();
-			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
-			oNewTableItem = this._createNewTableItemBasedOnP13nItem(oItem);
-
-			// columnsItem was found -> take over included data
-			if (oColumnsItem) {
-				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem
-				// information
-				if (oColumnsItem.getVisible() !== undefined) {
-					oNewTableItem.setSelected(oColumnsItem.getVisible());
-				}
-
-				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
-				if (oColumnsItem.getWidth() !== undefined) {
-					oNewTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
-				}
-			}
-
-			// Calculate index where the new table item shall be placed
-			if (oColumnsItem && oColumnsItem.getIndex() !== undefined) {
-				// columnsItems with valid index property found -> take this index property
-				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
-			} else {
-				// No columnsItems exist Or found columnsItem does not contains index property
-				this._oTable.addItem(oNewTableItem);
-			}
-		}
-	};
-
-	/**
-	 * Inserts a new table item based on the given P13nItem content
-	 *
-	 * @private
-	 * @param {int} iIndex is the index where the new item shall be inserted
-	 * @param {sap.m.P13nItem} oItem is used to create and insert a new table item
-	 */
-	P13nColumnsPanel.prototype._insertTableItem = function(iIndex, oItem) {
-		var oColumnsItem = null, oNewTableItem = null, sColumnKeys = null;
-
-		if (oItem) {
-			sColumnKeys = oItem.getColumnKey();
-			oColumnsItem = this._getColumnsItemByKey(sColumnKeys);
-			oNewTableItem = this._createNewTableItemBasedOnP13nItem(oItem);
-
-			// columnsItem was found -> take over included data
-			if (oColumnsItem) {
-				// columnsItems exist for current oItem -> insert the new oItem according to found columnsItem
-				// information
-				if (oColumnsItem.getVisible() !== undefined) {
-					oNewTableItem.setSelected(oColumnsItem.getVisible());
-				}
-
-				// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
-				if (oColumnsItem.getWidth() !== undefined) {
-					oNewTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
-				}
-			}
-
-			// Insert new table item to table
-			if (oColumnsItem && oColumnsItem.getIndex() !== undefined) {
-				// columnsItems with valid index property found -> INSERT the new item at the index
-				this._oTable.insertItem(oNewTableItem, oColumnsItem.getIndex());
-			} else {
-				// No columnsItems exist for current item -> INSERT the new item at iIndex
-				this._oTable.insertItem(oNewTableItem, iIndex);
-			}
-		}
-	};
-
-	/**
-	 * Inserts a new table item based on the given P13nItem content
-	 *
-	 * @private
-	 * @param {sap.m.P13nItem} oItem is the information template to create a new table item
-	 * @returns {sap.m.ColumnListItem} oNewTableItem is the new created table item or null
-	 */
-	P13nColumnsPanel.prototype._createNewTableItemBasedOnP13nItem = function(oItem) {
-		if (!oItem) {
-			return null;
-		}
-		var sColumnKeys = oItem.getColumnKey();
-		// Note: for 'i18n' resource model the item text is not set yet. So set the copy of "text" binding info into table item.
-		var oNewTableItem = new sap.m.ColumnListItem({
-			cells: [
-				new sap.m.Text({
-					text: oItem.getText() ? oItem.getText() : jQuery.extend(true, {}, oItem.getBindingInfo("text"))
-				})
-			],
-			visible: true,
-			selected: oItem.getVisible(),
-			tooltip: oItem.getTooltip(),
-			type: sap.m.ListType.Active
-		});
-
-		oNewTableItem.data('P13nColumnKey', sColumnKeys);
-
-		// As long as the ColumnListItem does not reflect the width property -> just store it as customer data
-		oNewTableItem.data('P13nColumnWidth', oItem.getWidth());
-
-		return oNewTableItem;
-	};
-
-	/**
-	 * Apply all ColumnsItem changes (that are stored in its properties) to the proper table item (if it already exist)
-	 *
-	 * @private
-	 * @param {object} oColumnsItem is an item from columnsItems aggregation
-	 * @param {object} oTableItem is that item (in this._oTable) where all ColumnsItem changes will be applied to
-	 */
-	P13nColumnsPanel.prototype._applyColumnsItem2TableItem = function(oColumnsItem, oTableItem) {
-		var aTableItems = this._oTable.getItems();
-		var iMaxTableIndex = 0, oRemovedItem = null, iTableItemIndex;
-		var sColumnKey = null, iColumnsItemIndex = null, oExistingColumnsItem = null, bIndexPropertyAlreadyKnown = false;
-
-		if (oColumnsItem && oTableItem && aTableItems && aTableItems.length > 0) {
-			sColumnKey = oColumnsItem.getColumnKey();
-
-			// Check for special case that columnsItem is already known -> don't apply it again! That can happen if we create a new
-			// columnsItems. The binding will remove at first all existing columnsItems and will refill the whole aggregation. Known
-			// columnsItems does not need to be applied again!!
-			if (this._aExistingColumnsItems && this._aExistingColumnsItems.length > 0) {
-				iColumnsItemIndex = this._getArrayIndexByItemKey(sColumnKey, this._aExistingColumnsItems);
-				if (iColumnsItemIndex !== -1) {
-					oExistingColumnsItem = this._aExistingColumnsItems[iColumnsItemIndex];
-
-					if (oExistingColumnsItem && oExistingColumnsItem.index !== undefined && oExistingColumnsItem.index === oColumnsItem.getIndex()) {
-						bIndexPropertyAlreadyKnown = true;
-					}
-				}
-			}
-
-			// apply index property
-			if (oColumnsItem.getIndex() !== undefined && !bIndexPropertyAlreadyKnown) {
-				iMaxTableIndex = aTableItems.length;
-				iTableItemIndex = aTableItems.indexOf(oTableItem);
-				if (iTableItemIndex !== oColumnsItem.getIndex() && oColumnsItem.getIndex() <= iMaxTableIndex) {
-					oRemovedItem = this._oTable.removeItem(oTableItem);
-					this._oTable.insertItem(oRemovedItem, oColumnsItem.getIndex());
-				}
-			}
-
-			// apply visible property
-			if (oColumnsItem.getVisible() !== undefined && oTableItem.getSelected() !== oColumnsItem.getVisible()) {
-				oTableItem.setSelected(oColumnsItem.getVisible());
-			}
-
-			// apply width property
-			if (oColumnsItem.getWidth() !== undefined && oTableItem.data('P13nColumnWidth') !== oColumnsItem.getWidth()) {
-				oTableItem.data('P13nColumnWidth', oColumnsItem.getWidth());
-			}
-
-		}
-	};
-
-	/**
-	 * This method returns a boolean based status, whether the panel has been changed
-	 *
-	 * @private
-	 * @returns {Boolean} bTableItemsChangeStatus that returns true if something was changed and otherwise false
-	 */
-	P13nColumnsPanel.prototype._getTableItemsChangeStatus = function() {
-		var bTableItemsChangeStatus = false, oTableItemNow = null;
-		var aTableItemsNow = this._extractExistingTableItems();
-
-		if (this._aExistingTableItems && !aTableItemsNow) {
-			bTableItemsChangeStatus = true;
-		} else if (aTableItemsNow && !this._aExistingTableItems) {
-			bTableItemsChangeStatus = true;
-		} else if (this._aExistingTableItems && aTableItemsNow) {
-			// Compare existing table items saved from first OnAfterRendering with table items now
-			this._aExistingTableItems.forEach(function(oExistingTableItem, iExistingTableItemIndex) {
-				oTableItemNow = null;
-				if (iExistingTableItemIndex < aTableItemsNow.length) {
-					oTableItemNow = aTableItemsNow[iExistingTableItemIndex];
-				}
-
-				// Comparison
-				if (oTableItemNow) {
-					if (oExistingTableItem.columnKey !== oTableItemNow.columnKey) {
-						bTableItemsChangeStatus = true;
-					}
-					if (oExistingTableItem.index !== oTableItemNow.index) {
-						bTableItemsChangeStatus = true;
-					}
-					if (oExistingTableItem.visible !== oTableItemNow.visible) {
-						bTableItemsChangeStatus = true;
-					}
-					if (oExistingTableItem.width !== oTableItemNow.width) {
-						bTableItemsChangeStatus = true;
-					}
-
-				} else {
-					bTableItemsChangeStatus = true;
-				}
-
-				// Stop comparison at first difference
-				if (bTableItemsChangeStatus) {
-					return;
-				}
-			});
-		}
-
-		return bTableItemsChangeStatus;
-	};
-
-	/* =========================================================== */
-	/* Lifecycle methods */
-	/* =========================================================== */
-
 	P13nColumnsPanel.prototype.init = function() {
-		var that = this;
+		// The panel is using internal JSON model which is bound to internal sap.m.Table.
+		// When a table item is selected it reflects in the JSON model. When a table item is moved,
+		// we bring the JSON items in the right order and it reflects in the sap.m.Table.
+		// The JSON model is filled based on 'items' aggregation and is updated afterwards
+		// with information like selection and position of an item based on 'columnsItem' aggregation
+		// (the information is taken from the model of aggregation binding. See _updateInternalModel() for more details).
+		//
+		// This update should be done:
+		//  * before the panel is rendered first time (onBeforeRendering) - with item sorting
+		//
+		//  * after the 'columnsItem' or 'items' aggregation has been changed (via API e.g. addColumnsItem or via binding e.g. updateColumnsItems) - with item sorting
+		//    Note: the JSON model should not be updated during the 'changeColumnsItems' and 'setData' event is fired.
+		//
+		//  * before getOKPayload is called. getOKPayload is called when the user opens the dialog were other panel is
+		//    initially visible and P13nColumnsPanel has not yet rendered. For validation the JSON model should be updated - with item sorting
+		//
+		// General note: it is not supposed that control keeps the 'columnsItems' aggregation up-to-date.
+		//  * The usual SAPUI5 wide approach is that the control fires an event (here 'changeColumnsItems' and 'setData')
+		//    and the consumer has to update the model data of the aggregation binding. This is the case where user's interaction,
+		//    like set selection or move items, ends up in model data.
+		//  * The case where the consumer pushes changes into model data, like e.g. Restore, is done also via binding update.
+
 		this._iLiveChangeTimer = 0;
 		this._iSearchTimer = 0;
-		this._bOnBeforeRenderingFirstTimeExecuted = false;
-		this._bOnAfterRenderingFirstTimeExecuted = false;
-		this._aExistingColumnsItems = null;
-		this._aExistingTableItems = null;
 
-		this.setType(sap.m.P13nPanelType.columns);
+		this._bIgnoreUpdateInternalModel = false;
+		this._bUpdateInternalModel = true;
+
+		// Due to backwards compatibility
+		this._bTableItemsChanged = false;
+		this._bOnAfterRenderingFirstTimeExecuted = false;
+
+		var oModel = new JSONModel({
+			items: [],
+			columnKeyOfMarkedItem: undefined,
+			isMoveDownButtonEnabled: undefined,
+			isMoveUpButtonEnabled: undefined,
+			showOnlySelectedItems: undefined,
+			countOfSelectedItems: 0,
+			countOfItems: 0
+		});
+		oModel.setDefaultBindingMode(BindingMode.TwoWay);
+		oModel.setSizeLimit(1000);
+		this.setModel(oModel, "$sapmP13nColumnsPanel");
+
+		this.setType(P13nPanelType.columns);
 		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COLUMSPANEL_TITLE"));
 
-		// ---------------------------------------------------------------
-		// Following object _oTableItemsOrdering handles the table behavior for sorting of included items
-		// - _bShallBeOrderedOnlyFirstTime = true means that the table items will ONLY be sorted during the very
-		// first OnAfterRendering execution
-		// - _bShallBeOrdered = true means that the table items will ALWAYS be resorted if a change will be done
-		// - _bAreOrdered = true means that the table items are already order and does not need to
-		// be reOrder during the next OnAfterRendering execution
-		// ---------------------------------------------------------------
-		this._oTableItemsOrdering = {
-			"_bShallBeOrdered": true,
-			"_bShallBeOrderedOnlyFirstTime": true,
-			"_bAreOrdered": false,
-			"fIsOrderingToBeDoneOnlyFirstTime": function() {
-				return this._bShallBeOrderedOnlyFirstTime;
-			},
-			"fOrderOnlyFirstTime": function() {
-				this._bShallBeOrdered = true;
-			},
-			"fIsOrderingToBeDone": function(bShallBeOrdered) {
-				if (bShallBeOrdered !== undefined && bShallBeOrdered !== null) {
-					this._bShallBeOrdered = bShallBeOrdered;
-				}
-				return this._bShallBeOrdered;
-			},
-			"fIsOrderingDone": function(bAreOrdered) {
-				if (bAreOrdered !== undefined && bAreOrdered !== null) {
-					this._bAreOrdered = bAreOrdered;
-				}
-				return this._bAreOrdered;
-			},
-			"fCheckReOrdering": function() {
-				if (this.fIsOrderingToBeDone()) {
-					this._bAreOrdered = false; // real ReOrdring will be dine in OnAfterRendering
-				}
-			}
-		};
-		// ---------------------------------------------------------------
+		this._createTable();
+		this._createToolbar();
 
 		this.setVerticalScrolling(false);
-
-		// Call-back for handling of resizing
-		// TODO: make sure we optimize calculation and respect margins and borders, use e.g.
-		// jQuery.outerHeight(true)
-		this._fnHandleResize = function() {
-			var bChangeResult = false, iScrollContainerHeightOld, iScrollContainerHeightNew;
-			if (that.getParent) {
-				var oParent = null, $dialogCont = null, iContentHeight, iHeaderHeight;
-				oParent = that.getParent();
-				if (oParent) {
-					$dialogCont = jQuery("#" + oParent.getId() + "-cont");
-					if ($dialogCont.children().length > 0 && that._oToolbar.$().length > 0) {
-						iScrollContainerHeightOld = that._oScrollContainer.$()[0].clientHeight;
-
-						iContentHeight = $dialogCont.children()[0].clientHeight;
-						iHeaderHeight = that._oToolbar ? that._oToolbar.$()[0].clientHeight : 0;
-
-						iScrollContainerHeightNew = iContentHeight - iHeaderHeight;
-
-						if (iScrollContainerHeightOld !== iScrollContainerHeightNew) {
-							that._oScrollContainer.setHeight(iScrollContainerHeightNew + 'px');
-							bChangeResult = true;
-						}
-					}
-				}
-			}
-			return bChangeResult;
-		};
-
-		// Resource bundle, for texts
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-		this._oMoveToTopButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("collapse-group"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
-			type: sap.m.ButtonType.Transparent,
-			press: function() {
-				that._ItemMoveToTop();
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.Low,
-				group: 2
-			})
-		});
-
-		this._oMoveUpButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-up"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
-			type: sap.m.ButtonType.Transparent,
-			press: function() {
-				that._ItemMoveUp();
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.High,
-				group: 1
-			})
-		});
-
-		this._oMoveDownButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
-			type: sap.m.ButtonType.Transparent,
-			press: function() {
-				that._ItemMoveDown();
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.High,
-				group: 1
-			})
-		});
-
-		this._oMoveToBottomButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("expand-group"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
-			type: sap.m.ButtonType.Transparent,
-			press: function() {
-				that._ItemMoveToBottom();
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.Low,
-				group: 2
-			})
-		});
-
-		this._oShowSelectedButton = new sap.m.Button({
-			text: this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_SHOW_SELECTED'),
-			type: sap.m.ButtonType.Transparent,
-			press: function() {
-				that._swopShowSelectedButton();
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.High
-			})
-		});
-		this._bShowSelected = false;
-		this._bSearchFilterActive = false;
-
-		this._oSearchField = new SearchField(this.getId() + "-searchField", {
-			liveChange: function(oEvent) {
-				var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
-
-				// execute search after user stops typing for 300ms
-				window.clearTimeout(that._iSearchTimer);
-				if (iDelay) {
-					that._iSearchTimer = window.setTimeout(function() {
-						that._executeSearch();
-					}, iDelay);
-				} else {
-					that._executeSearch();
-				}
-			},
-			// execute the standard search
-			search: function(oEvent) {
-				that._executeSearch();
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				"minWidth": "12.5rem",
-				"maxWidth": "23.077rem",
-				"shrinkable": true,
-				"moveToOverflow": false,
-				"stayInOverflow": false
-
-			})
-		});
-
-		this._oToolbarSpacer = new sap.m.ToolbarSpacer();
-
-		this._oToolbar = new sap.m.OverflowToolbar({
-			design: sap.m.ToolbarDesign.Auto,
-			content: [
-				this._oToolbarSpacer, this._oSearchField, this._oShowSelectedButton, this._oMoveToTopButton, this._oMoveUpButton, this._oMoveDownButton, this._oMoveToBottomButton
-			]
-		});
-
-		// this._oToolbar.setParent(this);
-		this.addAggregation("content", this._oToolbar);
-
-		this._oTable = new Table({
-			mode: sap.m.ListMode.MultiSelect,
-			rememberSelections: false,
-			itemPress: function(oEvent) {
-				that._itemPressed(oEvent);
-			},
-			selectionChange: function(oEvent) {
-				that._updateSelectAllDescription(oEvent);
-
-				// set all provided items to the new selection status
-				var bSelected = oEvent.getParameter('selected');
-				var aTableItems = oEvent.getParameter('listItems');
-				var aTableItemsVisibilityChange = [], oTableItemVisibilityChange = null;
-
-				aTableItems.forEach(function(oTableItem) {
-					oTableItem.setSelected(bSelected);
-
-					oTableItemVisibilityChange = {
-						"columnKey": oTableItem.data('P13nColumnKey'),
-						"visible": oTableItem.getSelected()
-					};
-					aTableItemsVisibilityChange.push(oTableItemVisibilityChange);
-
-				});
-				that._handleItemVisibilityChanged(aTableItemsVisibilityChange);
-
-				var fValidate = that.getValidationExecutor();
-				if (fValidate) {
-					fValidate();
-				}
-
-				// Special logic to change _oSelectedItem ALSO then if ONLY the "selection" status has been changed from
-				// false to true
-				if (aTableItems.length === 1 && bSelected === true) {
-					if (aTableItems[0] !== that._oSelectedItem) {
-						that._changeSelectedItem(aTableItems[0]);
-					}
-				}
-			},
-			columns: [
-				new sap.m.Column({
-					header: new sap.m.Text({
-						text: this._oRb.getText('COLUMNSPANEL_SELECT_ALL')
-					})
-				})
-			]
-		});
-
-		this._oScrollContainer = new sap.m.ScrollContainer({
+		var oScrollContainer = new ScrollContainer({
 			horizontal: false,
 			vertical: true,
 			content: [
@@ -1602,10 +239,37 @@ sap.ui.define([
 			width: '100%',
 			height: '100%'
 		});
+		this.addAggregation("content", oScrollContainer);
 
-		this.addAggregation("content", this._oScrollContainer);
+		// Call-back for handling of resizing
+		// jQuery.outerHeight(true)
+		var that = this;
+		this._fnHandleResize = function() {
+			var bChangeResult = false, iScrollContainerHeightOld, iScrollContainerHeightNew;
+			if (that.getParent) {
+				var $dialogCont = null, iContentHeight, iHeaderHeight;
+				var oParent = that.getParent();
+				var oToolbar = that._getToolbar();
+				if (oParent && oParent.$) {
+					$dialogCont = oParent.$("cont");
+					if ($dialogCont.children().length > 0 && oToolbar.$().length > 0) {
+						iScrollContainerHeightOld = oScrollContainer.$()[0].clientHeight;
 
-		this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(this._oScrollContainer, this._fnHandleResize);
+						iContentHeight = $dialogCont.children()[0].clientHeight;
+						iHeaderHeight = oToolbar ? oToolbar.$()[0].clientHeight : 0;
+
+						iScrollContainerHeightNew = iContentHeight - iHeaderHeight;
+
+						if (iScrollContainerHeightOld !== iScrollContainerHeightNew) {
+							oScrollContainer.setHeight(iScrollContainerHeightNew + 'px');
+							bChangeResult = true;
+						}
+					}
+				}
+			}
+			return bChangeResult;
+		};
+		this._sContainerResizeListener = ResizeHandler.register(oScrollContainer, this._fnHandleResize);
 	};
 
 	/**
@@ -1615,55 +279,29 @@ sap.ui.define([
 	 * @since 1.28
 	 */
 	P13nColumnsPanel.prototype.reInitialize = function() {
-
-		// Reactivate one time sorting
-		this._oTableItemsOrdering.fOrderOnlyFirstTime();
-		this._oTableItemsOrdering.fCheckReOrdering();
 	};
 
 	P13nColumnsPanel.prototype.onBeforeRendering = function() {
+		this._updateInternalModel();
 
-		// Execute following lines only if this control is started the first time!
-		if (!this._bOnBeforeRenderingFirstTimeExecuted) {
-			this._bOnBeforeRenderingFirstTimeExecuted = true;
-
-			// check, whether table items shall be order ONLY very first time
-			if (this._oTableItemsOrdering.fIsOrderingToBeDoneOnlyFirstTime()) {
-				this._oTableItemsOrdering.fOrderOnlyFirstTime();
-			}
+		// Set marked item initially to the first table item
+		if (!this._getInternalModel().getProperty("/columnKeyOfMarkedItem")) {
+			this._setColumnKeyOfMarkedItem(this._getColumnKeyByTableItem(this._getVisibleTableItems()[0]));
 		}
-
-		// If table items are NOT ordered, but shall be ordered -> do it now
-		if (!this._oTableItemsOrdering.fIsOrderingDone() && this._oTableItemsOrdering.fIsOrderingToBeDone()) {
-			this._updateTableItems();
-			this._reOrderExistingTableItems();
-			this._oTableItemsOrdering.fIsOrderingDone(true);
-
-			// if the reOrder was only done during the very first time -> switch reOrdering now to OFF
-			if (this._oTableItemsOrdering.fIsOrderingToBeDoneOnlyFirstTime()) {
-				this._oTableItemsOrdering.fIsOrderingToBeDone(false);
-			}
-		}
-
-		// Save existing table items to be able to calculate changes
-		if (this._aExistingTableItems === null || this._aExistingTableItems === undefined) {
-			this._aExistingTableItems = this._extractExistingTableItems();
-		}
-
-		this._updateSelectAllDescription();
-		this._calculateMoveButtonAppearance();
+		// After each re-render the 'markedTableItem' is re-created. So we have to set the new table item as marked.
+		this._switchMarkedTableItemTo(this._getTableItemByColumnKey(this._getInternalModel().getProperty("/columnKeyOfMarkedItem")));
+		this._updateControlLogic();
 	};
 
 	P13nColumnsPanel.prototype.onAfterRendering = function() {
-		var that = this;
-
 		// adapt scroll-container very first time to the right size of the browser
 		if (!this._bOnAfterRenderingFirstTimeExecuted) {
 			this._bOnAfterRenderingFirstTimeExecuted = true;
+
 			window.clearTimeout(this._iLiveChangeTimer);
+			var that = this;
 			this._iLiveChangeTimer = window.setTimeout(function() {
-				// following line is needed to get layout of OverflowToolbar rearranged IF it is used in a dialog
-				that._oToolbar._resetAndInvalidateToolbar();
+				that._fnHandleResize();
 			}, 0);
 		}
 	};
@@ -1676,30 +314,27 @@ sap.ui.define([
 	 * @returns {object} oPayload, which contains useful information
 	 */
 	P13nColumnsPanel.prototype.getOkPayload = function() {
-		var oPayload = null, aSelectedItems = [], oSelectedItem = null;
-		var aTableItems = this._extractExistingTableItems();
+		this._updateInternalModel();
 
-		if (aTableItems && aTableItems.length > 0) {
-			oPayload = {
-				"tableItems": aTableItems,
-				"tableItemsChanged": false,
-				"selectedItems": aSelectedItems
-
-			};
-
-			aTableItems.forEach(function(oTableItem) {
-				if (oTableItem && oTableItem.visible && oTableItem.visible === true) {
-					oSelectedItem = {
-						"columnKey": oTableItem.columnKey
-					};
-					aSelectedItems.push(oSelectedItem);
-				}
-			});
-
-			oPayload.tableItemsChanged = this._getTableItemsChangeStatus();
-		}
-
-		return oPayload;
+		var aMItems = this._getInternalModel().getProperty("/items");
+		return {
+			tableItems: aMItems.map(function(oMItem) {
+				return {
+					columnKey: oMItem.columnKey,
+					index: oMItem.persistentIndex === -1 ? undefined : oMItem.persistentIndex,
+					visible: oMItem.persistentSelected,
+					width: oMItem.width
+				};
+			}),
+			tableItemsChanged: this._bTableItemsChanged,
+			selectedItems: aMItems.filter(function(oMItem) {
+				return oMItem.persistentSelected;
+			}).map(function(oMItem) {
+				return {
+					columnKey: oMItem.columnKey
+				};
+			})
+		};
 	};
 
 	/**
@@ -1710,156 +345,764 @@ sap.ui.define([
 	 * @returns {object} oPayload, which contains useful information
 	 */
 	P13nColumnsPanel.prototype.getResetPayload = function() {
-		var oPayload = null;
-
-		oPayload = {
-			"oPanel": this
+		return {
+			oPanel: this
 		};
-
-		return oPayload;
 	};
 
 	P13nColumnsPanel.prototype.exit = function() {
-
-		sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
+		ResizeHandler.deregister(this._sContainerResizeListener);
 		this._sContainerResizeListener = null;
 
-		this._oMoveToTopButton.destroy();
-		this._oMoveToTopButton = null;
-
-		this._oMoveDownButton.destroy();
-		this._oMoveDownButton = null;
-
-		this._oMoveUpButton.destroy();
-		this._oMoveUpButton = null;
-
-		this._oMoveToBottomButton.destroy();
-		this._oMoveToBottomButton = null;
-
-		this._oSearchField.destroy();
-		this._oSearchField = null;
-
-		this._oToolbar.destroy();
-		this._oToolbar = null;
+		this._getToolbar().destroy();
 
 		this._oTable.destroy();
 		this._oTable = null;
+
+		// destroy model and its data
+		if (this._getInternalModel()) {
+			this._getInternalModel().destroy();
+		}
 
 		window.clearTimeout(this._iLiveChangeTimer);
 		window.clearTimeout(this._iSearchTimer);
 	};
 
 	P13nColumnsPanel.prototype.addItem = function(oItem) {
-		P13nPanel.prototype.addItem.apply(this, arguments);
-
-		this._addTableItem(oItem);
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		this.addAggregation("items", oItem);
 		return this;
 	};
 
-	P13nColumnsPanel.prototype.insertItem = function(iIndex, oItem) {
-		P13nPanel.prototype.insertItem.apply(this, arguments);
-
-		this._insertTableItem(iIndex, oItem);
+	P13nColumnsPanel.prototype.insertItem = function(oItem, iIndex) {
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		this.insertAggregation("items", oItem, iIndex);
 		return this;
 	};
 
 	P13nColumnsPanel.prototype.removeItem = function(oItem) {
-		var oTableItemToBeRemoved = null, iItemIndex = null, aTableItems = null, sItemKey = null;
-
-		oItem = P13nPanel.prototype.removeItem.apply(this, arguments);
-
-		if (oItem) {
-			sItemKey = oItem.getColumnKey();
-			aTableItems = this._oTable.getItems();
-
-			if (aTableItems && aTableItems.length > 0 && sItemKey !== null && sItemKey !== "") {
-				iItemIndex = this._getArrayIndexByItemKey(sItemKey, aTableItems);
-				if (iItemIndex !== null && iItemIndex !== -1) {
-					oTableItemToBeRemoved = aTableItems[iItemIndex];
-					if (oTableItemToBeRemoved) {
-						this._oTable.removeItem(oTableItemToBeRemoved);
-					}
-				}
-			}
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
 		}
-
-		// return the removed item or null
+		oItem = this.removeAggregation("items", oItem);
 		return oItem;
 	};
 
 	P13nColumnsPanel.prototype.removeAllItems = function() {
-		var aItems = P13nPanel.prototype.removeAllItems.apply(this, arguments);
-		if (this._oTable) {
-			this._oTable.removeAllItems();
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
 		}
-		return aItems;
+		return this.removeAllAggregation("items");
 	};
 
 	P13nColumnsPanel.prototype.destroyItems = function() {
-		P13nPanel.prototype.destroyItems.apply(this, arguments);
-
-		if (this._oTable) {
-			this._oTable.destroyItems();
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
 		}
+		this.destroyAggregation("items");
 		return this;
 	};
 
 	P13nColumnsPanel.prototype.addColumnsItem = function(oColumnsItem) {
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
 		this.addAggregation("columnsItems", oColumnsItem);
-
-		this._updateTableItems(oColumnsItem);
-		this._oTableItemsOrdering.fCheckReOrdering();
-
 		return this;
 	};
 
-	P13nColumnsPanel.prototype.insertColumnsItem = function(iIndex, oColumnsItem) {
+	P13nColumnsPanel.prototype.insertColumnsItem = function(oColumnsItem, iIndex) {
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
 		this.insertAggregation("columnsItems", oColumnsItem, iIndex);
-
-		this._updateTableItems(oColumnsItem);
-		this._oTableItemsOrdering.fCheckReOrdering();
-
 		return this;
+	};
+
+	P13nColumnsPanel.prototype.updateColumnsItems = function(sReason) {
+		this.updateAggregation("columnsItems");
+
+		if (sReason === ChangeReason.Change && !this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
 	};
 
 	P13nColumnsPanel.prototype.removeColumnsItem = function(oColumnsItem) {
-		oColumnsItem = this.removeAggregation("columnsItems", oColumnsItem);
-
-		this._updateTableItems(oColumnsItem);
-		this._oTableItemsOrdering.fCheckReOrdering();
-
-		return oColumnsItem;
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		return this.removeAggregation("columnsItems", oColumnsItem);
 	};
 
 	P13nColumnsPanel.prototype.removeAllColumnsItems = function() {
-		var aColumnsItems = this.removeAllAggregation("columnsItems");
-
-		this._oTableItemsOrdering.fCheckReOrdering();
-
-		return aColumnsItems;
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		return this.removeAllAggregation("columnsItems");
 	};
 
 	P13nColumnsPanel.prototype.destroyColumnsItems = function() {
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
 		this.destroyAggregation("columnsItems");
-
-		this._oTableItemsOrdering.fCheckReOrdering();
-
 		return this;
 	};
 
 	P13nColumnsPanel.prototype.onBeforeNavigationFrom = function() {
-		var aSelectedItems = this._oTable.getSelectedItems();
+		var aMItems = this._getSelectedModelItems();
 		var iVisibleItemsThreshold = this.getVisibleItemsThreshold();
-		return !(aSelectedItems && iVisibleItemsThreshold !== -1 && aSelectedItems.length > iVisibleItemsThreshold);
+		return !(aMItems && iVisibleItemsThreshold !== -1 && aMItems.length > iVisibleItemsThreshold);
 	};
 
 	P13nColumnsPanel.prototype._notifyChange = function() {
+		this._bTableItemsChanged = true;
+
 		var fListener = this.getChangeNotifier();
 		if (fListener) {
 			fListener(this);
 		}
 	};
 
+	P13nColumnsPanel.prototype._scrollToSelectedItem = function(oItem) {
+		if (!oItem) {
+			return;
+		}
+		sap.ui.getCore().applyChanges();
+		if (!!oItem.getDomRef()) {
+			oItem.focus();
+		}
+	};
+
+	// -------------------------- new --------------------------------------------
+	P13nColumnsPanel.prototype._getInternalModel = function() {
+		return this.getModel("$sapmP13nColumnsPanel");
+	};
+
+	P13nColumnsPanel.prototype._createTable = function() {
+		this._oTable = new Table({
+			mode: ListMode.MultiSelect,
+			rememberSelections: false,
+			itemPress: jQuery.proxy(this._onItemPressed, this),
+			selectionChange: jQuery.proxy(this._onSelectionChange, this),
+			columns: [
+				new sap.m.Column({
+					vAlign: CoreLibrary.VerticalAlign.Middle,
+					header: new sap.m.Text({
+						text: {
+							parts: [
+								{
+									path: '/countOfSelectedItems'
+								}, {
+									path: '/countOfItems'
+								}
+							],
+							formatter: function(iCountOfSelectedItems, iCountOfItems) {
+								return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [
+									iCountOfSelectedItems, iCountOfItems
+								]);
+							}
+						}
+					})
+				})
+			],
+			items: {
+				path: "/items",
+				templateShareable: false,
+				template: new ColumnListItem({
+					cells: [
+						new sap.m.Text({
+							text: "{text}"
+						})
+					],
+					visible: "{visible}",
+					selected: "{persistentSelected}",
+					tooltip: "{tooltip}",
+					type: ListType.Active
+				})
+			}
+		});
+		this._oTable.setModel(this._getInternalModel());
+	};
+
+	P13nColumnsPanel.prototype._createToolbar = function() {
+		var that = this;
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
+			design: ToolbarDesign.Auto,
+			content: [
+				new sap.m.ToolbarSpacer(), new SearchField(this.getId() + "-searchField", {
+					liveChange: function(oEvent) {
+						var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
+
+						// execute search after user stops typing for 300ms
+						window.clearTimeout(that._iSearchTimer);
+						if (iDelay) {
+							that._iSearchTimer = window.setTimeout(function() {
+								that._onExecuteSearch();
+							}, iDelay);
+						} else {
+							that._onExecuteSearch();
+						}
+					},
+					// execute the standard search
+					search: jQuery.proxy(this._onExecuteSearch, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						minWidth: "12.5rem",
+						maxWidth: "23.077rem",
+						shrinkable: true,
+						moveToOverflow: false,
+						stayInOverflow: false
+					})
+				}), new sap.m.Button({
+					text: {
+						path: '/showOnlySelectedItems',
+						formatter: function(bShowOnlySelectedItems) {
+							return bShowOnlySelectedItems ? oRb.getText('COLUMNSPANEL_SHOW_ALL') : oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
+						}
+					},
+					tooltip: {
+						path: '/showOnlySelectedItems',
+						formatter: function(bShowOnlySelectedItems) {
+							return bShowOnlySelectedItems ? oRb.getText('COLUMNSPANEL_SHOW_ALL') : oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
+						}
+					},
+					type: ButtonType.Transparent,
+					press: jQuery.proxy(this._onSwitchButtonShowSelected, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.High
+					})
+				}), new sap.m.OverflowToolbarButton({
+					icon: IconPool.getIconURI("collapse-group"),
+					text: oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
+					tooltip: oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
+					type: ButtonType.Transparent,
+					enabled: {
+						path: '/isMoveUpButtonEnabled'
+					},
+					press: jQuery.proxy(this.onPressButtonMoveToTop, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.Low,
+						group: 2
+					})
+				}), new sap.m.OverflowToolbarButton({
+					icon: IconPool.getIconURI("slim-arrow-up"),
+					text: oRb.getText('COLUMNSPANEL_MOVE_UP'),
+					tooltip: oRb.getText('COLUMNSPANEL_MOVE_UP'),
+					type: ButtonType.Transparent,
+					enabled: {
+						path: '/isMoveUpButtonEnabled'
+					},
+					press: jQuery.proxy(this.onPressButtonMoveUp, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.High,
+						group: 1
+					})
+				}), new sap.m.OverflowToolbarButton({
+					icon: IconPool.getIconURI("slim-arrow-down"),
+					text: oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
+					tooltip: oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
+					type: ButtonType.Transparent,
+					enabled: {
+						path: '/isMoveDownButtonEnabled'
+					},
+					press: jQuery.proxy(this.onPressButtonMoveDown, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.High,
+						group: 1
+					})
+				}), new sap.m.OverflowToolbarButton({
+					icon: IconPool.getIconURI("expand-group"),
+					text: oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+					tooltip: oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+					type: ButtonType.Transparent,
+					enabled: {
+						path: '/isMoveDownButtonEnabled'
+					},
+					press: jQuery.proxy(this.onPressButtonMoveToBottom, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.Low,
+						group: 2
+					})
+				})
+			]
+		});
+		oToolbar.setModel(this._getInternalModel());
+		this.addAggregation("content", oToolbar);
+	};
+
+	P13nColumnsPanel.prototype.onPressButtonMoveToTop = function() {
+		this._moveMarkedTableItem(this._getMarkedTableItem(), this._getVisibleTableItems()[0]);
+	};
+	P13nColumnsPanel.prototype.onPressButtonMoveUp = function() {
+		var aVisibleTableItems = this._getVisibleTableItems();
+		this._moveMarkedTableItem(this._getMarkedTableItem(), aVisibleTableItems[aVisibleTableItems.indexOf(this._getMarkedTableItem()) - 1]);
+	};
+	P13nColumnsPanel.prototype.onPressButtonMoveDown = function() {
+		var aVisibleTableItems = this._getVisibleTableItems();
+		this._moveMarkedTableItem(this._getMarkedTableItem(), aVisibleTableItems[aVisibleTableItems.indexOf(this._getMarkedTableItem()) + 1]);
+	};
+	P13nColumnsPanel.prototype.onPressButtonMoveToBottom = function() {
+		var aVisibleTableItems = this._getVisibleTableItems();
+		this._moveMarkedTableItem(this._getMarkedTableItem(), aVisibleTableItems[aVisibleTableItems.length - 1]);
+	};
+	P13nColumnsPanel.prototype._onSwitchButtonShowSelected = function() {
+		this._getInternalModel().setProperty("/showOnlySelectedItems", !this._getInternalModel().getProperty("/showOnlySelectedItems"));
+
+		this._switchVisibilityOfUnselectedModelItems();
+		this._filterModelItemsBySearchText();
+
+		this._scrollToSelectedItem(this._getMarkedTableItem());
+
+		this._updateControlLogic();
+
+		this._fnHandleResize();
+	};
+	P13nColumnsPanel.prototype._onExecuteSearch = function() {
+		this._switchVisibilityOfUnselectedModelItems();
+		this._filterModelItemsBySearchText();
+		this._updateControlLogic();
+	};
+	P13nColumnsPanel.prototype._switchVisibilityOfUnselectedModelItems = function() {
+		var bShowOnlySelectedItems = this._isFilteredByShowSelected();
+		var aMItems = this._getInternalModel().getProperty("/items");
+		aMItems.forEach(function(oMItem) {
+			if (oMItem.persistentSelected) {
+				oMItem.visible = true;
+				return;
+			}
+			oMItem.visible = !bShowOnlySelectedItems;
+		});
+		this._getInternalModel().setProperty("/items", aMItems);
+	};
+
+	P13nColumnsPanel.prototype._getVisibleModelItems = function() {
+		return this._getInternalModel().getProperty("/items").filter(function(oMItem) {
+			return !!oMItem.visible;
+		});
+	};
+
+	P13nColumnsPanel.prototype._moveMarkedTableItem = function(oTableItemFrom, oTableItemTo) {
+		var oMItemFrom = this._getModelItemByColumnKey(this._getColumnKeyByTableItem(oTableItemFrom));
+		var oMItemTo = this._getModelItemByColumnKey(this._getColumnKeyByTableItem(oTableItemTo));
+		var iIndexFrom = this._getModelItemIndexByColumnKey(oMItemFrom.columnKey);
+		var iIndexTo = this._getModelItemIndexByColumnKey(oMItemTo.columnKey);
+
+		this._moveModelItems(iIndexFrom, iIndexTo);
+
+		this._scrollToSelectedItem(this._getMarkedTableItem());
+		this._updateControlLogic();
+		this._fireChangeColumnsItems();
+		this._fireSetData();
+		this._notifyChange();
+	};
+
+	/**
+	 * Moves model item from <code>iIndexFrom</code> to <code>iIndexTo</code>.
+	 *
+	 * @param {int} iIndexFrom Model item at this index will be removed. Range: {0, length-1}
+	 * @param {int} iIndexTo Model item at this index will be inserted. Range: {0, length-1}
+	 * @return {boolean} <code>true</code> if table item has been moved, else <code>false</code>
+	 * @private
+	 */
+	P13nColumnsPanel.prototype._moveModelItems = function(iIndexFrom, iIndexTo) {
+		var aMItems = this._getInternalModel().getProperty("/items");
+		if (iIndexFrom < 0 || iIndexTo < 0 || iIndexFrom > aMItems.length - 1 || iIndexTo > aMItems.length - 1) {
+			return false;
+		}
+		// Remove the marking style before table items are updated
+		this._removeStyleOfMarkedTableItem();
+
+		// Move items
+		var aModelItems = aMItems.splice(iIndexFrom, 1);
+		aMItems.splice(iIndexTo, 0, aModelItems[0]);
+
+		// Do not sort after user action as the table should not be sorted once selected items has been rendered
+
+		// Re-Index the persistentIndex
+		this._updateModelItemsPersistentIndex(aMItems);
+		this._updateCounts(aMItems);
+		this._getInternalModel().setProperty("/items", aMItems);
+
+		// Set the marking style again after table items are updated
+		this._switchMarkedTableItemTo(this._getMarkedTableItem());
+		return true;
+	};
+
+	P13nColumnsPanel.prototype._getModelItemByColumnKey = function(sColumnKey) {
+		var aMItems = this._getInternalModel().getProperty("/items").filter(function(oMItem) {
+			return oMItem.columnKey === sColumnKey;
+		});
+		return aMItems[0];
+	};
+
+	P13nColumnsPanel.prototype._updateCounts = function(aMItems) {
+		var iCountOfItems = 0;
+		var iCountOfSelectedItems = 0;
+		aMItems.forEach(function(oMItem) {
+			iCountOfItems++;
+			if (oMItem.persistentSelected) {
+				iCountOfSelectedItems++;
+			}
+		});
+		this._getInternalModel().setProperty("/countOfItems", iCountOfItems);
+		this._getInternalModel().setProperty("/countOfSelectedItems", iCountOfSelectedItems);
+	};
+
+	P13nColumnsPanel.prototype._sortModelItemsByPersistentIndex = function(aModelItems) {
+		aModelItems.sort(function(a, b) {
+			if (a.persistentSelected === true && (b.persistentSelected === false || b.persistentSelected === undefined)) {
+				return -1;
+			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && b.persistentSelected === true) {
+				return 1;
+			} else if (a.persistentSelected === true && b.persistentSelected === true) {
+				if (a.persistentIndex > -1 && a.persistentIndex < b.persistentIndex) {
+					return -1;
+				} else if (b.persistentIndex > -1 && a.persistentIndex > b.persistentIndex) {
+					return 1;
+				} else {
+					return 0;
+				}
+			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && (b.persistentSelected === false || b.persistentSelected === undefined)) {
+				if (a.text < b.text) {
+					return -1;
+				} else if (a.text > b.text) {
+					return 1;
+				} else {
+					return 0;
+				}
+			}
+		});
+	};
+
+	P13nColumnsPanel.prototype._getColumnKeyByTableItem = function(oTableItem) {
+		var iIndex = this._oTable.indexOfItem(oTableItem);
+		if (iIndex < 0) {
+			return null;
+		}
+		return this._oTable.getBinding("items").getContexts()[iIndex].getObject().columnKey;
+	};
+
+	P13nColumnsPanel.prototype._getModelItemIndexByColumnKey = function(sColumnKey) {
+		var iIndex = -1;
+		this._getInternalModel().getProperty("/items").some(function(oMItem, iIndex_) {
+			if (oMItem.columnKey === sColumnKey) {
+				iIndex = iIndex_;
+				return true;
+			}
+
+		});
+		return iIndex;
+	};
+
+	P13nColumnsPanel.prototype._getSelectedModelItems = function() {
+		return this._getInternalModel().getProperty("/items").filter(function(oMItem) {
+			return oMItem.persistentSelected;
+		});
+	};
+
+	P13nColumnsPanel.prototype._getVisibleTableItems = function() {
+		return this._oTable.getItems().filter(function(oTableItem) {
+			return oTableItem.getVisible();
+		});
+	};
+
+	P13nColumnsPanel.prototype._getTableItemByColumnKey = function(sColumnKey) {
+		var aContext = this._oTable.getBinding("items").getContexts();
+		var aTableItems = this._oTable.getItems().filter(function(oTableItem, iIndex) {
+			return aContext[iIndex].getObject().columnKey === sColumnKey;
+		});
+		return aTableItems[0];
+	};
+
+	P13nColumnsPanel.prototype._getToolbar = function() {
+		return sap.ui.getCore().byId(this.getId() + "-toolbar") || null;
+	};
+	P13nColumnsPanel.prototype._getSearchField = function() {
+		return sap.ui.getCore().byId(this.getId() + "-searchField") || null;
+	};
+	P13nColumnsPanel.prototype._getSearchText = function() {
+		var oSearchField = this._getSearchField();
+		return oSearchField ? oSearchField.getValue() : "";
+	};
+	P13nColumnsPanel.prototype._isFilteredBySearchText = function() {
+		return !!this._getSearchText().length;
+	};
+	P13nColumnsPanel.prototype._isFilteredByShowSelected = function() {
+		return this._getInternalModel().getData().showOnlySelectedItems;
+	};
+	P13nColumnsPanel.prototype._updateControlLogic = function() {
+		var bIsSearchActive = this._isFilteredBySearchText();
+		var bShowOnlySelectedItems = this._isFilteredByShowSelected();
+		var aVisibleTableItems = this._getVisibleTableItems();
+
+		// Value in search field has been changed...
+		this._getInternalModel().setProperty("/isMoveUpButtonEnabled", aVisibleTableItems.indexOf(this._getMarkedTableItem()) > 0);
+		this._getInternalModel().setProperty("/isMoveDownButtonEnabled", aVisibleTableItems.indexOf(this._getMarkedTableItem()) > -1 && aVisibleTableItems.indexOf(this._getMarkedTableItem()) < aVisibleTableItems.length - 1);
+
+		// Switch off the "Select all (n/m)" checkbox if search
+		var oTableCB = sap.ui.getCore().byId(this._oTable.getId() + '-sa');
+		if (oTableCB) {
+			oTableCB.setEnabled(!bIsSearchActive && !bShowOnlySelectedItems);
+		}
+	};
+
+	P13nColumnsPanel.prototype._updateModelItemsPersistentIndex = function(aMItems) {
+		var iPersistentIndex = -1;
+		aMItems.forEach(function(oMItem) {
+			oMItem.persistentIndex = -1;
+			if (oMItem.persistentSelected) {
+				iPersistentIndex++;
+				oMItem.persistentIndex = iPersistentIndex;
+			}
+		});
+	};
+
+	P13nColumnsPanel.prototype._fireSetData = function() {
+		this._bIgnoreUpdateInternalModel = true;
+		this.fireSetData();
+		this._bIgnoreUpdateInternalModel = false;
+	};
+
+	P13nColumnsPanel.prototype._fireChangeColumnsItems = function() {
+		this._bIgnoreUpdateInternalModel = true;
+
+		var aMItems = this._getInternalModel().getProperty("/items");
+		var oEventParameter = {
+			newItems: [],
+			existingItems: [],
+			items: aMItems.map(function(oMItem) {
+				return {
+					columnKey: oMItem.columnKey,
+					visible: oMItem.persistentSelected,
+					index: oMItem.persistentIndex === -1 ? undefined : oMItem.persistentIndex,
+					width: oMItem.width,
+					total: oMItem.total
+				};
+			})
+		};
+		// Due to backwards compatibility we have to support "newItems" and "existingItems" parameters
+		aMItems.forEach(function(oMItem) {
+			var oColumnsItem = this._getColumnsItemByColumnKey(oMItem.columnKey);
+			if (oColumnsItem) {
+				oColumnsItem.setVisible(oMItem.persistentSelected);
+				oColumnsItem.setIndex(oMItem.persistentIndex === -1 ? undefined : oMItem.persistentIndex);
+				if (oMItem.width !== undefined) {
+					oColumnsItem.setWidth(oMItem.width);
+				}
+				if (oMItem.total !== undefined) {
+					oColumnsItem.setTotal(oMItem.total);
+				}
+				oEventParameter.existingItems.push(oColumnsItem);
+			} else {
+				oEventParameter.newItems.push(new P13nColumnsItem({
+					columnKey: oMItem.columnKey,
+					visible: oMItem.persistentSelected,
+					index: oMItem.persistentIndex === -1 ? undefined : oMItem.persistentIndex,
+					width: oMItem.width,
+					total: oMItem.total
+				}));
+			}
+		}, this);
+
+		this.fireChangeColumnsItems(oEventParameter);
+
+		this._bIgnoreUpdateInternalModel = false;
+	};
+
+	P13nColumnsPanel.prototype._getColumnsItemByColumnKey = function(sColumnKey) {
+		var aColumnsItems = this.getColumnsItems().filter(function(oColumnsItem) {
+			return oColumnsItem.getColumnKey() === sColumnKey;
+		});
+		return aColumnsItems[0];
+	};
+
+	P13nColumnsPanel.prototype._getMarkedTableItem = function() {
+		return this._getTableItemByColumnKey(this._getInternalModel().getProperty("/columnKeyOfMarkedItem"));
+	};
+
+	P13nColumnsPanel.prototype._setColumnKeyOfMarkedItem = function(sColumnKey) {
+		this._getInternalModel().setProperty("/columnKeyOfMarkedItem", sColumnKey);
+	};
+
+	/**
+	 * Item press behavior is called as soon as a table item is selected
+	 *
+	 * @private
+	 */
+	P13nColumnsPanel.prototype._onItemPressed = function(oEvent) {
+		this._switchMarkedTableItemTo(oEvent.getParameter('listItem'));
+		this._updateControlLogic();
+	};
+
+	P13nColumnsPanel.prototype._onSelectionChange = function(oEvent) {
+		if (!oEvent.getParameter("selectAll") && oEvent.getParameter("listItems").length === 1) {
+			this._switchMarkedTableItemTo(oEvent.getParameter("listItem"));
+		}
+		this._selectTableItem();
+	};
+
+	P13nColumnsPanel.prototype._selectTableItem = function() {
+		this._updateControlLogic();
+
+		// No update of model items is needed as it is already up-to-date due to binding
+
+		// Do not sort after user interaction as the table should not be sorted once selected items has been rendered
+
+		// Re-Index only the persistentIndex after user interaction
+		var aMItems = this._getInternalModel().getProperty("/items");
+		this._updateModelItemsPersistentIndex(aMItems);
+		this._updateCounts(aMItems);
+		this._getInternalModel().setProperty("/items", aMItems);
+
+		this._fireChangeColumnsItems();
+		this._fireSetData();
+
+		this._notifyChange();
+
+		var fValidate = this.getValidationExecutor();
+		if (fValidate) {
+			fValidate();
+		}
+	};
+
+	/**
+	 * Change the selected item instance to the new given one
+	 *
+	 * @private
+	 */
+	P13nColumnsPanel.prototype._switchMarkedTableItemTo = function(oTableItem) {
+		this._removeStyleOfMarkedTableItem();
+
+		// When filter is set, the table items are reduced so marked table item can disappear.
+		var sColumnKey = this._getColumnKeyByTableItem(oTableItem);
+		if (sColumnKey) {
+			this._setColumnKeyOfMarkedItem(sColumnKey);
+			oTableItem.addStyleClass("sapMP13nColumnsPanelItemSelected");
+		}
+	};
+
+	/**
+	 * Remove highlighting from the current marked table item
+	 *
+	 * @private
+	 */
+	P13nColumnsPanel.prototype._removeStyleOfMarkedTableItem = function() {
+		if (this._getMarkedTableItem()) {
+			this._getMarkedTableItem().removeStyleClass("sapMP13nColumnsPanelItemSelected");
+		}
+	};
+
+	/**
+	 * Filters items by its selection status
+	 *
+	 * @private
+	 */
+	P13nColumnsPanel.prototype._filterModelItemsBySearchText = function() {
+		var sSearchText = this._getSearchText();
+		// Replace white spaces at begin and end of the searchText. Leave white spaces in between.
+		sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
+		// Escape special characters entered by user
+		sSearchText = sSearchText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+		// i = ignore case; g = global; m = multiline
+		var oRegExp = new RegExp(sSearchText, 'igm');
+		if (!oRegExp) {
+			return;
+		}
+
+		this._getVisibleModelItems().forEach(function(oMItem) {
+			oMItem.visible = false;
+			// Search in item text
+			if (typeof oMItem.text === "string" && oMItem.text.match(oRegExp)) {
+				oMItem.visible = true;
+			}
+			// Search in tooltip
+			if (typeof oMItem.tooltip === "string" && oMItem.tooltip.match(oRegExp)) {
+				oMItem.visible = true;
+			}
+		});
+		this._getInternalModel().refresh();
+	};
+
+	/**
+	 * Synchronize <code>columnsItems</code> and <code>items</code> aggregations with the internal JSON model
+	 * and take over data from the model of aggregation binding.
+	 * @private
+	 */
+	P13nColumnsPanel.prototype._updateInternalModel = function() {
+		if (!this._bUpdateInternalModel) {
+			return;
+		}
+		this._bUpdateInternalModel = false;
+
+		// Remove the marking style before table items are updated
+		this._removeStyleOfMarkedTableItem();
+
+		var aMItemsOld = this._getInternalModel().getProperty("/items");
+		this._getInternalModel().setProperty("/items", this.getItems().map(function(oItem) {
+			return {
+				columnKey: oItem.getColumnKey(),
+				visible: true,
+				text: oItem.getText(),
+				tooltip: oItem.getTooltip(),
+				// default value
+				persistentIndex: -1,
+				persistentSelected: oItem.getVisible(),
+				width: undefined,
+				total: undefined
+			};
+		}, this));
+
+		this.getColumnsItems().forEach(function(oColumnsItem) {
+			var oMItem = this._getModelItemByColumnKey(oColumnsItem.getColumnKey());
+			if (!oMItem) {
+				return;
+			}
+			if (oColumnsItem.getIndex() !== undefined) {
+				oMItem.persistentIndex = oColumnsItem.getIndex();
+			}
+			if (oColumnsItem.getVisible() !== undefined) {
+				oMItem.persistentSelected = oColumnsItem.getVisible();
+			}
+			if (oColumnsItem.getWidth() !== undefined) {
+				oMItem.width = oColumnsItem.getWidth();
+			}
+			if (oColumnsItem.getTotal() !== undefined) {
+				oMItem.total = oColumnsItem.getTotal();
+			}
+		}, this);
+
+		this._switchVisibilityOfUnselectedModelItems();
+		this._filterModelItemsBySearchText();
+
+		var aMItems = this._getInternalModel().getProperty("/items");
+		// Sort the table items only by persistentIndex
+		this._sortModelItemsByPersistentIndex(aMItems);
+		this._updateCounts(aMItems);
+		this._getInternalModel().setProperty("/items", aMItems);
+
+		// Set the marking style again after table items are updated
+		this._switchMarkedTableItemTo(this._getMarkedTableItem());
+
+		// Due to backward compatibility we have to determine if some items have been changed in order to set OK payload parameter 'tableItemsChanged'.
+		// Use-case: 1. the model data bound to 'items' or 'columnsItems' are changed via API. Due to aggregation update the sync between
+		// aggregation and internal model is set to true.
+		// 2. Click 'OK'. At this point in time getOKPayload is called and _updateInternalModel is forced. The consumer (e.g. ColumnsController evaluates
+		// 'tableItemsChanged'. See unittest Controller.qunit.html 'Freeze (UITable): move selected item out of frozen zone'.
+		if (jQuery(aMItems).not(aMItemsOld).length !== 0 || jQuery(aMItemsOld).not(aMItems).length !== 0) {
+			this._bTableItemsChanged = true;
+		}
+	};
+
 	return P13nColumnsPanel;
 
-}, /* bExport= */true);
+});

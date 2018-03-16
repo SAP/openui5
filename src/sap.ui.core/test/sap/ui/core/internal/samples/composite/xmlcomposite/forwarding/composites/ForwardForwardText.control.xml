@@ -1,0 +1,9 @@
+<core:FragmentDefinition 
+	xmlns="sap.m" 
+	xmlns:core="sap.ui.core" 
+	xmlns:tf="composites">
+	<VBox>
+		<VBox id="VBox"/>
+		<tf:ForwardText id="ForwardText"/>
+	</VBox>
+</core:FragmentDefinition>

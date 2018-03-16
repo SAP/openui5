@@ -4,55 +4,20 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
-<Table id="idProductsTable"
-	items="{
-		path:'/params',
-		sorter:
-		[{
-			path: 'usage',
-			descending: false,
-			group: true
-		},{
-			path: 'name',
-			descending: false
-		}]
-		}">
-	<headerToolbar>
-		<Toolbar>
-			<Label text="Basic Theme Parameters. Available in 'High Contrast Black' and 'Bluecrystal'"></Label>
-		</Toolbar>
-	</headerToolbar>
-	<columns>
-		<Column mergeDuplicates="true"
-			minScreenWidth="tablet"
-			width="5em">
-		</Column>
-		<Column
-			demandPopin="true">
-			<Text text="Parameter Name" />
-		</Column>
-		<Column
-			minScreenWidth="Tablet"
-			width="5em">
-			<Text text="Available since:"/>
-		</Column>
-		<Column>
-			<Text text="Sample Display"/>
-		</Column>
-		<Column
-			minScreenWidth="Tablet"
-			width="5em">
-		</Column>
-	</columns>
-	<items>
-		<ColumnListItem>
-			<cells>
-				<Text text="" />
-				<Text text="{path:'name', formatter:'.paramFormatter'}" />
-				<Text text="{since}" class="ParamValue" />
-				<Text text="{value}" class="ParamSample" width="100%"/>
-			</cells>
-		</ColumnListItem>
-	</items>
-</Table>
+<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+			<MessageStrip
+				text="This sample is replaced with the Theme Parameter Toolbox. You can easily search, preview, and filter semantic theme parameters."
+				type="Information"
+				showIcon="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+			<Link
+			text="Click here to open the Theme Parameter Toolbox "
+			target="_blank"
+			href="test-resources/sap/m/demokit/theming/webapp/index.html" />
+		</l:content>
+	</l:VerticalLayout>
 </mvc:View>

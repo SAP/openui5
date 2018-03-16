@@ -84,9 +84,9 @@
 
 		try {
 			oHeader.setObjectSubtitle("Updated");
-			ok(true, "no error upon update");
+			assert.ok(true, "no error upon update");
 		} catch (e) {
-			ok(false, "Expected to succeed");
+			assert.ok(false, "Expected to succeed");
 		}
 
 		//restore
@@ -154,13 +154,13 @@
 		 assert.notEqual(oPlaceholder1.id, oPlaceholder2.id, "two different placeholders in DOM");
 	});
 
-	QUnit.module("Breadcrumb links API", {
+	QUnit.module("Breadcrumbs API", {
 		beforeEach: function () {
 			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
 		}
 	});
 
-	QUnit.test("The Breadcrumb trail of links in the ObjectPageHeader should dynamically update", function (assert) {
+	QUnit.test("Legacy breadCrumbsLinks: Trail of links in the ObjectPageHeader should dynamically update", function (assert) {
 		var iInitialLinksCount = this._oHeader.getBreadCrumbsLinks().length,
 			oNewLink = oFactory.getLink();
 
@@ -224,6 +224,84 @@
 		oObjectPageWithHeaderOnly.destroy();
 	});
 
+	QUnit.module("Private API", {
+		beforeEach: function() {
+			var sViewXML = '<core:View xmlns:core="sap.ui.core" xmlns="sap.uxap" xmlns:layout="sap.ui.layout" xmlns:m="sap.m" height="100%">' +
+							'<m:App>' +
+								'<ObjectPageLayout id="objectPageLayout" subSectionLayout="TitleOnLeft">' +
+									'<headerTitle>' +
+										'<ObjectPageHeader id = "applicationHeader" objectTitle="My Pastube">' +
+											'<actions>' +
+												'<m:CheckBox id="testCheckBox" text="Test"/>' +
+												'<ObjectPageHeaderActionButton id="installButton" text="Install" hideIcon="true" hideText="false" type="Emphasized"/>' +
+											'</actions>' +
+										'</ObjectPageHeader>' +
+									'</headerTitle>' +
+								'</ObjectPageLayout>' +
+							'</m:App>' +
+							'</core:View>';
+
+			this.myView = sap.ui.xmlview({ viewContent: sViewXML });
+			this.myView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.myView.destroy();
+		}
+	});
+
+	QUnit.test("_adaptActions", function (assert) {
+		var oHeader = core.byId("UxAP-ObjectPageHeader--header"),
+			$overflowButton = oHeader._oOverflowButton.$();
+
+		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden");
+
+		oHeader._adaptActions(1000);
+
+		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden");
+	});
+
+	QUnit.test("_adaptLayoutForDomElement", function (assert) {
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		this.stub(sap.ui.Device, "orientation", {
+			portrait: true,
+			landscape: false
+		});
+
+		// assert
+		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "visible", "Button is visible");
+
+		this.myView.byId("applicationHeader")._adaptLayoutForDomElement();
+
+		// assert
+		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "visible", "Button is visible");
+	});
+
+	QUnit.test("_getActionsWidth", function (assert) {
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		this.stub(sap.ui.Device, "orientation", {
+			portrait: true,
+			landscape: false
+		});
+
+		// act
+		this.myView.byId("applicationHeader")._getActionsWidth();
+
+		// assert
+		assert.strictEqual(this.myView.byId("testCheckBox").$().css("visibility"), "visible", "sap.m.CheckBox is visible");
+		assert.strictEqual(this.myView.byId("installButton").$().css("visibility"), "hidden", "ObjectPageHeaderActionButton is hidden");
+	});
+
 	QUnit.module("Action buttons", {
 		beforeEach: function () {
 			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
@@ -247,6 +325,87 @@
 
 		assert.strictEqual(oActionButton.getType(), "Transparent",
 			"The button is transparent");
+	});
+
+	QUnit.test("Setting visibility to action buttons", function (assert) {
+		var oButton = new sap.m.Button({
+			text : "Some button",
+			visible: false
+		});
+
+		this._oHeader.addAction(oButton);
+
+		sap.ui.getCore().applyChanges();
+
+		oButton.setVisible(true);
+
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oButton._getInternalVisible(), true, "The button is visible");
+		assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
+
+		oButton.setVisible(false);
+
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oButton._getInternalVisible(), false, "The button is invisible");
+		assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
+
+	});
+
+	QUnit.module("Breadcrumbs rendering", {
+		beforeEach: function () {
+			this._oHeader = core.byId("UxAP-ObjectPageHeader--header");
+			this._oHeader.destroyBreadCrumbsLinks();
+			this._oHeader.destroyBreadcrumbs();
+			core.applyChanges();
+		}
+	});
+
+	QUnit.test("There should be no BreadCrumbs rendered", function (assert) {
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 0, "There are No instances of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+	});
+
+	QUnit.test("After inserting a link in Legacy breadCrumnsLinks aggregation, the Legacy breadCrumbsLinks aggregation should be rendered", function (assert) {
+		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadCrumbsLinks()[0].$().length > 0, "Legacy breadCrumbsLinks is rendered");
+	});
+
+	QUnit.test("After setting the New breadcrumbs aggregation, the New breadcrumbs aggregation should be rendered", function (assert) {
+		this._oHeader.setBreadcrumbs(new sap.m.Breadcrumbs());
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation is rendered");
+	});
+
+	QUnit.test("Having both New breadcrumbs and Legacy breadCrumbsLinks, the New breadcrumbs aggregation should be rendered", function (assert) {
+		this._oHeader.setBreadcrumbs(new sap.m.Breadcrumbs());
+		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation is rendered");
+		assert.strictEqual(this._oHeader.getBreadCrumbsLinks()[0].$().length, 0, "Legacy breadCrumbsLinks is Not rendered");
+	});
+
+	QUnit.test("Having both New breadcrumbs and Legacy breadCrumbsLinks. After destroying the New breadcrumbs, Legacy breadCrumbsLinks should be rendered", function (assert) {
+		this._oHeader.setBreadcrumbs(new sap.m.Breadcrumbs());
+		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
+		core.applyChanges();
+		this._oHeader.destroyBreadcrumbs();
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadCrumbsLinks()[0].$().length > 0, "Legacy breadCrumbsLinks is rendered");
+	});
+
+	QUnit.test("Having the New breadcrumbs aggregation. After adding the Legacy breadCrumbsLinks, New  breadcrumbs should remain rendered", function (assert) {
+		this._oHeader.setBreadcrumbs(new sap.m.Breadcrumbs());
+		core.applyChanges();
+		this._oHeader.insertBreadCrumbLink(oFactory.getLink());
+		core.applyChanges();
+		assert.strictEqual(oHeaderView.$().find(".sapMBreadcrumbs").length, 1, "There is one instance of sap.m.Breadcrumbs rendered in ObjectPageHeader");
+		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation should be rendered");
 	});
 
 }(jQuery, QUnit));

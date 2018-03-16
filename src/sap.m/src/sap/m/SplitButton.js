@@ -3,9 +3,37 @@
  */
 
 // Provides control sap.m.SplitButton.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Button', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, Button, EnabledPropagator, IconPool) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'./Button',
+	'./ButtonRenderer',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/library',
+	'sap/ui/Device',
+	'sap/ui/core/InvisibleText',
+	'./SplitButtonRenderer'
+],
+function(
+	library,
+	Control,
+	Button,
+	ButtonRenderer,
+	EnabledPropagator,
+	IconPool,
+	coreLibrary,
+	Device,
+	InvisibleText,
+	SplitButtonRenderer
+	) {
 		"use strict";
+
+		// shortcut for sap.ui.core.TextDirection
+		var TextDirection = coreLibrary.TextDirection;
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
 
 		/**
 		 * Constructor for a new <code>SplitButton</code>.
@@ -21,12 +49,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 		 * @version ${version}
 		 *
 		 * @constructor
+		 * @sap-restricted sap.m.MenuButton,sap.ui.richtextEditor.ToolbarWrapper
 		 * @private
 		 * @alias sap.m.SplitButton
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var SplitButton = Control.extend("sap.m.SplitButton", /** @lends sap.m.SplitButton.prototype */ { metadata : {
 
+			interfaces : [
+				"sap.m.IOverflowToolbarContent"
+			],
 			library : "sap.m",
 			properties : {
 
@@ -39,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				 * Defines the type of the button (for example, Default, Accept, Reject, Transparent).
 				 * Values <code>Back</code>, <code>Up</code> and <code>Unstyled</code> are ignored.
 				 */
-				type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : sap.m.ButtonType.Default},
+				type : {type : "sap.m.ButtonType", group : "Appearance", defaultValue : ButtonType.Default},
 
 				/**
 				 * Defines the width of the button.
@@ -77,7 +109,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 				 * This property specifies the element's text directionality with enumerated options.
 				 * By default, the control inherits text direction from the DOM.
 				 */
-				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+				textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 			},
 			aggregations: {
 				_textButton: { type: "sap.m.Button", multiple: false, visibility: "hidden" },
@@ -169,7 +201,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 					press: this._handleAction.bind(this, false)
 				}).addStyleClass('sapMSBText');
 
-				if (sap.ui.Device.browser.msie) {
+				if (Device.browser.msie) {
 					oCtrl.addStyleClass('sapMSBTextIE');
 				}
 				this.setAggregation("_textButton", oCtrl);
@@ -211,9 +243,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 
 		SplitButton.prototype.setProperty = function(sPropertyName, oValue, bSuppressInvalidate) {
 			if (sPropertyName === "type"
-				&& (oValue === sap.m.ButtonType.Up
-				|| oValue === sap.m.ButtonType.Back
-				|| oValue === sap.m.ButtonType.Unstyled)) {
+				&& (oValue === ButtonType.Up
+				|| oValue === ButtonType.Back
+				|| oValue === ButtonType.Unstyled)) {
 				return this;
 			}
 
@@ -272,58 +304,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 			oEvent.preventDefault();
 		};
 
-		SplitButton.prototype.getSplitButtonAriaLabel = function() {
-			var oRb, sText;
-
-			if (!sap.m.SplitButton._oStaticSplitButtonAriaLabel) {
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-				sText = oRb.getText("SPLIT_BUTTON_DESCRIPTION");
-				SplitButton._oStaticSplitButtonAriaLabel = new sap.ui.core.InvisibleText({text: sText});
-				SplitButton._oStaticSplitButtonAriaLabel.toStatic();
-			}
-
-			return sap.m.SplitButton._oStaticSplitButtonAriaLabel;
-		};
-
-		SplitButton.prototype.getKeyboardDescriptionAriaLabel = function() {
-			var oRb, sText;
-
-			if (!sap.m.SplitButton._oStaticSplitButtonDescription) {
-				oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-				sText = oRb.getText("SPLIT_BUTTON_KEYBOARD_HINT");
-				SplitButton._oStaticSplitButtonDescription = new sap.ui.core.InvisibleText({text: sText});
-				SplitButton._oStaticSplitButtonDescription.toStatic();
-			}
-
-			return sap.m.SplitButton._oStaticSplitButtonDescription;
-		};
-
 		/**
 		 * @private
 		 * @returns {*}
 		 */
-		SplitButton.prototype.getButtonTypeAriaLabel = function() {
-			var oTypeLabel,
-				sButtonType = this._getTextButton().getType();
-
-			switch (sButtonType) {
-				case sap.m.ButtonType.Accept:
-					oTypeLabel = sap.m.Button._oStaticAcceptText;
-					break;
-				case sap.m.ButtonType.Reject:
-					oTypeLabel = sap.m.Button._oStaticRejectText;
-					break;
-				case sap.m.ButtonType.Emphasized:
-					oTypeLabel = sap.m.Button._oStaticEmphasizedText;
-					break;
-			}
-
-			return oTypeLabel;
+		SplitButton.prototype.getButtonTypeAriaLabelId = function() {
+			var sButtonType = this._getTextButton().getType();
+			return ButtonRenderer.getButtonTypeAriaLabelId(sButtonType);
 		};
 
 		SplitButton.prototype.getTooltipInfoLabel = function(sTooltip) {
 			if (!this._oInvisibleTooltipInfoLabel) {
-				this._oInvisibleTooltipInfoLabel = new sap.ui.core.InvisibleText();
+				this._oInvisibleTooltipInfoLabel = new InvisibleText();
 				this._oInvisibleTooltipInfoLabel.toStatic();
 			}
 
@@ -344,6 +336,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Butto
 			return sResult;
 		};
 
-		return SplitButton;
+		/**
+		 * Required by the {@link sap.m.IOverflowToolbarContent} interface.
+		 */
+		SplitButton.prototype.getOverflowToolbarConfig = function() {
+			var oConfig = {
+				canOverflow: true,
+				propsUnrelatedToSize: ["enabled", "type", "icon", "activeIcon"],
+				autoCloseEvents: ["press"]
+			};
 
-	}, /* bExport= */ false);
+
+			return oConfig;
+		};
+
+		return SplitButton;
+	});

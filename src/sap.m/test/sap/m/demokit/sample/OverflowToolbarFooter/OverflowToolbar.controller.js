@@ -3,8 +3,9 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
 		'sap/ui/model/Sorter',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, Controller, Filter, Sorter, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/MessageToast'
+	], function(jQuery, Controller, Filter, Sorter, JSONModel, MessageToast) {
 	"use strict";
 
 	var OverflowToolbarController = Controller.extend("sap.m.sample.OverflowToolbarFooter.OverflowToolbar", {
@@ -20,8 +21,8 @@ sap.ui.define([
 
 		onSliderMoved: function (oEvent) {
 			var iValue = oEvent.getParameter("value");
-			this.getView().byId("otbSubheader").setWidth(iValue + "%");
-			this.getView().byId("otbFooter").setWidth(iValue + "%");
+			this.byId("otbSubheader").setWidth(iValue + "%");
+			this.byId("otbFooter").setWidth(iValue + "%");
 		},
 
 		_fnGroup : function (oContext){
@@ -55,6 +56,14 @@ sap.ui.define([
 		onFilter: function (oEvent) {
 			this.sSearchQuery = oEvent.getSource().getValue();
 			this.fnApplyFiltersAndOrdering();
+		},
+
+		onTogglePress: function(oEvent) {
+			var oButton = oEvent.getSource(),
+				bPressedState = oButton.getPressed(),
+				sStateToDisplay = bPressedState ? "Pressed" : "Unpressed";
+
+			MessageToast.show(oButton.getId() + " " + sStateToDisplay);
 		},
 
 		fnApplyFiltersAndOrdering: function (oEvent){

@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TreeIcon.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TreeIcon.Page",
+			rootView : {
+				"viewName": "sap.m.sample.TreeIcon.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

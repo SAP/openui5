@@ -28,39 +28,48 @@
 
 			QUnit.module('Creating Default BusyDialog.', {
 				beforeEach: function () {
-					this.busyDialog = new sap.m.BusyDialog();
-					this.id = '#' + this.busyDialog.sId;
-					this.busyDialog.open();
+					this.oBusyDialog = new sap.m.BusyDialog();
+					this.sId = '#' + this.oBusyDialog.sId;
+					this.oBusyDialog.open();
 				},
 				afterEach: function () {
-					this.busyDialog.close();
-					this.busyDialog.destroy();
-					this.busyDialog = null;
-					this.id = null;
+					this.oBusyDialog.close();
+					this.oBusyDialog.destroy();
+					this.oBusyDialog = null;
+					this.sId = null;
 				}
 			});
 
 			QUnit.test('Default busyDialog', function (assert) {
-				assert.equal(jQuery(this.id + '-Dialog').length, 1, 'should  rendered after it\'s opened.');
-				assert.equal( Math.ceil(jQuery(this.id + '-Dialog').width()), 300, 'should have width of 300px.');
+				var sBusyDialogPadding = jQuery(this.sId + '-Dialog-scrollCont').css('padding') || '0px';
+
+				//check if exists
+				assert.strictEqual(jQuery(this.sId + '-Dialog').length, 1, 'BusyDialog should exist and should be open.');
+
+				//check the width
+				assert.equal(jQuery(this.sId + '-Dialog').width(), 300, 'BusyDialog should have width of 300px.');
 
 				//check header existence and content
-				assert.equal(jQuery(this.id + '-Dialog-header').length, 0, 'should not have rendered header.');
+				assert.strictEqual(jQuery(this.sId + '-Dialog-header').length, 0, 'BusyDialog should not have a header rendered.');
 
 				//check if there is a padding leaking from the dialog styles
 				//FF and IE returns '' for padding, chrome returns '0px'
-				var padding = jQuery(this.id + '-Dialog-scrollCont').css('padding') || '0px';
-				assert.equal(padding, '0px', 'should not have extra padding.');
+				assert.equal(sBusyDialogPadding, '0px', 'The content area should not have extra padding.');
 
 				//check the text label
-				assert.equal(jQuery(this.id + '-TextLabel').length, 0, 'should not have rendered text.');
+				assert.strictEqual(jQuery(this.sId + '-TextLabel').length, 0, 'BusyDialog should not have text rendered.');
 
 				//check the busy indicator
-				assert.equal(jQuery(this.id + '-busyInd').length, 1, 'should have busyIndicator rendered.');
+				assert.strictEqual(jQuery(this.sId + '-busyInd').length, 1, 'Should have busyIndicator rendered.');
 
 				//check the footer
-				assert.equal(jQuery(this.id + '-Dialog-footer').length, 0, 'should not have toolbar/footer rendered.');
-				assert.equal(jQuery(this.id + '-busyDialogCloseBtn').length, 0, 'should not have cancelButton rendered.');
+				assert.strictEqual(jQuery(this.sId + '-Dialog-footer').length, 0, 'BusyDialog should not have toolbar/footer rendered.');
+
+				//check for close button
+				assert.strictEqual(jQuery(this.sId + '-busyDialogCloseBtn').length, 0, 'BusyDialog should not have cancelButton rendered.');
+
+				//remove variable
+				delete sBusyDialogPadding;
 			});
 
 			// =========================================================================================================
@@ -69,7 +78,8 @@
 
 			QUnit.module('Creating BusyDialog with all available properties.', {
 				beforeEach: function () {
-					this.busyDialog = new sap.m.BusyDialog({
+					this.bIE_Edge = sap.ui.Device.browser.msie || sap.ui.Device.browser.edge;
+					this.oBusyDialog = new sap.m.BusyDialog({
 						text: 'I am a busy screen with text and a cancel button.',
 						title: 'Loading ...',
 						showCancelButton: true,
@@ -79,38 +89,50 @@
 						}
 					});
 
-					this.id = '#' + this.busyDialog.sId;
-					this.busyDialog.open();
+					this.sId = '#' + this.oBusyDialog.sId;
+					this.oBusyDialog.open();
 				},
 				afterEach: function () {
-					this.busyDialog.close();
-					this.busyDialog.destroy();
-					this.busyDialog = null;
-					this.id = null;
+					this.oBusyDialog.close();
+					this.oBusyDialog.destroy();
+					this.oBusyDialog = null;
+					this.sId = null;
 				}
 			});
 
-			QUnit.test('DOM elements, size, padding, content', function (assert) {
-				assert.equal(jQuery(this.id + '-Dialog').length, 1, 'should render after open.');
+
+			QUnit.test('BusyDialog content', function (assert) {
+				//check if BusyDialog exists and is open
+				assert.strictEqual(jQuery(this.sId + '-Dialog').length, 1, 'BusyDialog should exist and should be open.');
 
 				//check header existence and content
-				assert.equal(jQuery(this.id + '-Dialog-header').length, 1, 'should have header rendered.');
-				assert.equal(jQuery(this.id + '-Dialog-title > span').html(), 'Loading ...', 'should have text set properly.');
+				assert.equal(jQuery(this.sId + '-Dialog-header').length, 1, 'should have header rendered.');
+				assert.equal(jQuery(this.sId + '-Dialog-title > span').text(), 'Loading ...', 'should have text set properly.');
+			});
+
+			QUnit.test('BusyDialog DOM elements', function (assert) {
+				//check if BusyDialog exists and is open
+				assert.strictEqual(jQuery(this.sId + '-Dialog').length, 1, 'BusyDialog should exist and should be open.');
 
 				//check the text label
-				assert.equal(jQuery(this.id + '-TextLabel').length, 1, 'should have text rendered.');
-				assert.equal(jQuery(this.id + '-TextLabel').html(), 'I am a busy screen with text and a cancel button.', 'should have text changed properly.');
+				assert.equal(jQuery(this.sId + '-TextLabel').length, 1, 'should have text rendered.');
+				assert.equal(jQuery(this.sId + '-TextLabel').text(), 'I am a busy screen with text and a cancel button.', 'should have text changed properly.');
 
 				//check the busy indicator
-				assert.equal(jQuery(this.id + '-busyInd').length, 1, 'should have busyIndicator rendered.');
+				assert.equal(jQuery(this.sId + '-busyInd').length, 1, 'BusyDialog should have busyIndicator rendered.');
 
 				//check the footer
-				assert.equal(jQuery(this.id + '-Dialog-footer').length, 1, 'should have Toolbar/footer rendered.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have CancelButton button rendered.');
+				assert.equal(jQuery(this.sId + '-Dialog-footer').length, 1, 'BusyDialog should have Toolbar/footer rendered.');
+				assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 1, 'BusyDialog should have CancelButton button rendered.');
 
 				//test the close button text
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'Abort', 'should have CancelButton text set properly.');
-			});
+				//IE and Edge do not support BDI tag so it is not rendered
+				if(!this.bIE_Edge) {
+					assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'Abort', 'BusyDialog should have CancelButton text set properly.');
+				} else {
+					assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtnContent').html(), 'Abort', 'BusyDialog should have CancelButton text set properly.');
+				}
+			})
 
 			// =========================================================================================================
 			// Testing setters
@@ -118,127 +140,157 @@
 
 			QUnit.module('Creating Default BusyDialog.', {
 				beforeEach: function () {
-					this.busyDialog = new sap.m.BusyDialog();
-					this.id = '#' + this.busyDialog.sId;
-					this.busyDialog.open();
+					this.bIE_Edge = sap.ui.Device.browser.msie || sap.ui.Device.browser.edge;
+					this.oBusyDialog = new sap.m.BusyDialog();
+					this.sId = '#' + this.oBusyDialog.sId;
+					this.oBusyDialog.open();
 
-					this.busyIndicator = this.busyDialog._busyIndicator;
+					this.oBusyIndicator = this.oBusyDialog._busyIndicator;
 				},
 				afterEach: function () {
-					this.busyDialog.close();
-					this.busyDialog.destroy();
-					this.busyDialog = null;
+					this.oBusyDialog.close();
+					this.oBusyDialog.destroy();
+					this.oBusyDialog = null;
 				}
 			});
 
 			QUnit.test('Setting title property', function (assert) {
-				assert.equal(jQuery(this.id + '-Dialog-header').length, 0, 'should not render before being set.');
-				assert.equal(jQuery(this.id + '-Dialog-title > span').html(), undefined, 'should have no title text before it is set.');
+				//check if header exists & has a title set
+				assert.equal(jQuery(this.sId + '-Dialog-header').length, 0, 'Header should not render before being set.');
+				assert.equal(jQuery(this.sId + '-Dialog-title > span').text(), '', 'Title should have no title text before it is set.');
 
-				this.busyDialog.setTitle('test');
+				//set title for BusyDialog
+				this.oBusyDialog.setTitle('test');
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-Dialog-header').length, 1, 'should have rendered header when the title is set.');
-				assert.equal(jQuery(this.id + '-Dialog-title > span').html(), 'test', 'should have the corrected string set as title.');
+				//check if header exists & has a title set
+				assert.equal(jQuery(this.sId + '-Dialog-header').length, 1, 'BusyDialog should have rendered header when the title is set.');
+				assert.equal(jQuery(this.sId + '-Dialog-title > span').text(), 'test', 'BusyDialog should have the corrected string set as title.');
 
-				this.busyDialog.setTitle('test2');
+				this.oBusyDialog.setTitle('test2');
 				sap.ui.getCore().applyChanges();
 
+				//check if header exists & has a title set
+				assert.equal(jQuery(this.sId + '-Dialog-header').length, 1, 'BusyDialog should have rendered header.');
+				assert.equal(jQuery(this.sId + '-Dialog-title > span').text(), 'test2', 'Title should have the correct string after changing the title.');
 
-				assert.equal(jQuery(this.id + '-Dialog-title > span').html(), 'test2', 'should have the correct string after changing the title.');
-
-
-				this.busyDialog.setTitle('');
+				this.oBusyDialog.setTitle('');
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-Dialog-header').length, 0, 'should not have a header when the title is set to an empty string.');
+				//check if header exists & has a title set
+				assert.equal(jQuery(this.sId + '-Dialog-header').length, 0, 'BusyDialog should not have a header when the title is set to an empty string.');
+				assert.equal(jQuery(this.sId + '-Dialog-title > span').text(), '', 'Title should have the corrected string set as title.');
 			});
 
 			QUnit.test('Setting the text property', function (assert) {
-				assert.equal(jQuery(this.id + '-TextLabel').length, 0, 'should not render before being set.');
-				assert.equal(jQuery(this.id + '-TextLabel').html(), undefined, 'should be undefined before being set.');
 
-				this.busyDialog.setText('SetText');
+				//check if text is set & exists
+				assert.equal(jQuery(this.sId + '-TextLabel').length, 0, 'Text should not render before being set.');
+				assert.equal(jQuery(this.sId + '-TextLabel').text(), '', 'Text should be undefined before being set.');
+
+				this.oBusyDialog.setText('SetText');
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-TextLabel').length, 1, 'should be rendered after set.');
-				assert.equal(jQuery(this.id + '-TextLabel').html(), 'SetText', 'should be as it is set.');
+				//check if text is set & exists
+				assert.equal(jQuery(this.sId + '-TextLabel').length, 1, 'Text should be rendered after set.');
+				assert.equal(jQuery(this.sId + '-TextLabel').text(), 'SetText', 'Text should be as it is set.');
 
-				this.busyDialog.setText('SetText2');
+				this.oBusyDialog.setText('SetText2');
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-TextLabel').html(), 'SetText2', 'should be as it is reset.');
+				//check if text is set & exists
+				assert.equal(jQuery(this.sId + '-TextLabel').length, 1, 'Text should be rendered after set.');
+				assert.equal(jQuery(this.sId + '-TextLabel').text(), 'SetText2', 'Text should be as it is reset.');
 
-				this.busyDialog.setText('');
+				this.oBusyDialog.setText('');
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-TextLabel').length, 0, 'should not be rendered after setting it to an empty string.');
+				//check if text is set to '' & exists
+				assert.equal(jQuery(this.sId + '-TextLabel').length, 0, 'Text should not be rendered after setting it to an empty string.');
+				assert.equal(jQuery(this.sId + '-TextLabel').text(), '', 'Text should be as it is reset.');
 			});
 
 			QUnit.test('Setting setShowCancelButton and CancelButton', function (assert) {
-				assert.equal(jQuery(this.id + '-Dialog-footer').length, 0, 'should not be rendered before being set.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 0, 'should not render CancelButton before being set.');
 
-				this.busyDialog.setCancelButtonText('test');
-				this.busyDialog.setShowCancelButton(false);
+				//check if footer exists & has cancel button
+				assert.equal(jQuery(this.sId + '-Dialog-footer').length, 0, 'Footer should not be rendered before being set.');
+				assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 0, 'Footer should not render CancelButton before being set.');
+
+				this.oBusyDialog.setCancelButtonText('test');
+				this.oBusyDialog.setShowCancelButton(false);
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-Dialog-footer').length, 0, 'should not render footer before it is set to true.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 0, 'should not render the set button if the setShowCancelButton is not set to true.');
+				//check if footer exists & has cancel button
+				assert.equal(jQuery(this.sId + '-Dialog-footer').length, 0, 'BusyDialog should not render footer before it is set to true.');
+				assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 0, 'Should not render the set button if the setShowCancelButton is not set to true.');
 
-				this.busyDialog.setShowCancelButton(true);
+				this.oBusyDialog.setShowCancelButton(true);
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-Dialog-footer').length, 1, 'should have footer after being set.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have CancelButton after setShowCancelButton being set.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test', 'should have a button with string that is previously set.');
+				//check if footer exists & has cancel button
+				assert.equal(jQuery(this.sId + '-Dialog-footer').length, 1, 'BusyDialog should have footer after being set.');
+				assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 1, 'BusyDialog should have CancelButton after setShowCancelButton being set.');
 
+				//IE and Edge do not support BDI tag so it is not rendered
+				if (!this.bIE_Edge) {
+					assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test', 'Footer should have a button with string that is previously set.');
+				} else {
+					assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtnContent').html(), 'test', 'BusyDialog should have a button with string that is previously set.');
+				}
 
-				this.busyDialog.setCancelButtonText('');
+				this.oBusyDialog.setCancelButtonText('');
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-Dialog-footer').length, 0, 'should not have rendered footer if the CancelButton text is set to an empty string.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 0, 'should not have rendered button if the CancelButton text is set to an empty string.');
+				//check if footer exists & has cancel button
+				assert.equal(jQuery(this.sId + '-Dialog-footer').length, 0, 'BusyDialog should not have rendered footer if the CancelButton text is set to an empty string.');
+				assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 0, 'BusyDialog should not have rendered button if the CancelButton text is set to an empty string.');
 
-				this.busyDialog.setCancelButtonText('test2');
+				this.oBusyDialog.setCancelButtonText('test2');
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-Dialog-footer').length, 1, 'should render the footer if the CancelButtonText is changed from an empty string.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtn').length, 1, 'should have rendered CancelButton.');
-				assert.equal(jQuery(this.id + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test2', 'should have rendered CancelButton with the new text value.');
+				//check if footer exists & has cancel button
+				assert.equal(jQuery(this.sId + '-Dialog-footer').length, 1, 'BusyDialog should render the footer if the CancelButtonText is changed from an empty string.');
+				assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtn').length, 1, 'BusyDialog should have rendered CancelButton.');
+
+				//IE and Edge do not support BDI tag so it is not rendered
+				if (!this.bIE_Edge) {
+					assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtnContent > bdi').html(), 'test2', 'should have rendered CancelButton with the new text value.');
+				} else {
+					assert.equal(jQuery(this.sId + '-Dialog-footer').find('.sapMBtnContent').html(), 'test2', 'should have rendered CancelButton with the new text value.');
+				}
 			});
 
 			QUnit.test('Setting BusyIndicator properties', function (assert) {
-				var setCustomIconSpy = sinon.spy(this.busyIndicator, 'setCustomIcon');
-				this.busyDialog.setCustomIcon('url');
+				var setCustomIconSpy = sinon.spy(this.oBusyIndicator, 'setCustomIcon');
+				this.oBusyDialog.setCustomIcon('url');
 				assert.equal(setCustomIconSpy.callCount, 1, 'should be able to call setCustomIcon in the busyIndicator.');
 				assert.equal(setCustomIconSpy.withArgs('url').callCount, 1, 'should forward the params correctly.');
 
 				//======================================================================================================
 
-				var setCustomIconRotationSpeedSpy = sinon.spy(this.busyIndicator, 'setCustomIconRotationSpeed');
-				this.busyDialog.setCustomIconRotationSpeed(2000);
+				var setCustomIconRotationSpeedSpy = sinon.spy(this.oBusyIndicator, 'setCustomIconRotationSpeed');
+				this.oBusyDialog.setCustomIconRotationSpeed(2000);
 				assert.equal(setCustomIconRotationSpeedSpy.callCount, 1, 'should be able to call setCustomIcon in the busyIndicator.');
 				assert.equal(setCustomIconRotationSpeedSpy.withArgs(2000).callCount, 1, 'should forward the params correctly.');
 
 				//======================================================================================================
 
-				var setCustomIconDensityAwareSpy = sinon.spy(this.busyIndicator, 'setCustomIconDensityAware');
-				this.busyDialog.setCustomIconDensityAware(true);
+				var setCustomIconDensityAwareSpy = sinon.spy(this.oBusyIndicator, 'setCustomIconDensityAware');
+				this.oBusyDialog.setCustomIconDensityAware(true);
 				assert.equal(setCustomIconDensityAwareSpy.callCount, 1, 'should be able to call setCustomIconDensityAware in the busyIndicator.');
 				assert.equal(setCustomIconDensityAwareSpy.withArgs(true).callCount, 1, 'should forward the params correctly.');
 
 				//======================================================================================================
 
-				var setCustomIconWidthSpy = sinon.spy(this.busyIndicator, 'setCustomIconWidth');
-				this.busyDialog.setCustomIconWidth('50px');
+				var setCustomIconWidthSpy = sinon.spy(this.oBusyIndicator, 'setCustomIconWidth');
+				this.oBusyDialog.setCustomIconWidth('50px');
 				assert.equal(setCustomIconWidthSpy.callCount, 1, 'should be able to call setCustomIconWidth in the busyIndicator.');
 				assert.equal(setCustomIconWidthSpy.withArgs('50px').callCount, 1, 'should forward the params correctly.');
 
 				//======================================================================================================
 
-				var setCustomIconHeightSpy = sinon.spy(this.busyIndicator, 'setCustomIconHeight');
-				this.busyDialog.setCustomIconHeight('50px');
+				var setCustomIconHeightSpy = sinon.spy(this.oBusyIndicator, 'setCustomIconHeight');
+				this.oBusyDialog.setCustomIconHeight('50px');
 				assert.equal(setCustomIconHeightSpy.callCount, 1, 'should be able to call setCustomIconHeight in the busyIndicator.');
 				assert.equal(setCustomIconHeightSpy.withArgs('50px').callCount, 1, 'should forward the params correctly.');
 			});
@@ -250,15 +302,16 @@
 				});
 
 				//create close button so we can press it an emulate user action
-				this.busyDialog.setShowCancelButton(true);
+				this.oBusyDialog.setShowCancelButton(true);
 
-				this.busyDialog.attachClose(fnEventSpy);
-				this.busyDialog.close();
+				this.oBusyDialog.attachClose(fnEventSpy);
+				this.oBusyDialog.close();
 
 				assert.strictEqual(fnEventSpy.callCount, 1, 'should fire on calling the close() method.');
 				assert.strictEqual(isClosedByUser, false, 'should pass cancelPressed: false on closing by calling the close() method.');
 
-				this.busyDialog._getCancelButton().firePress();
+				this.oBusyDialog._getCancelButton().firePress();
+				this.clock.tick(500);
 				assert.strictEqual(fnEventSpy.callCount, 2, 'should fire close event after pressing the CancelButton.');
 				assert.strictEqual(isClosedByUser, true, 'should pass cancelPressed: true on closing by pressing the CancelButton.');
 
@@ -285,25 +338,25 @@
 					this.model = new sap.ui.model.json.JSONModel();
 					this.model.setData(data);
 
-					this.busyDialog = new sap.m.BusyDialog({
+					this.oBusyDialog = new sap.m.BusyDialog({
 						text: '{/text}',
 						title: '{/title}'
 					}).setModel(this.model);
 
 					//end setting up the BusyDialog
-					this.id = '#' + this.busyDialog.sId;
-					this.busyDialog.open();
+					this.sId = '#' + this.oBusyDialog.sId;
+					this.oBusyDialog.open();
 				},
 				afterEach: function () {
-					this.busyDialog.close();
-					this.busyDialog.destroy();
-					this.busyDialog = null;
+					this.oBusyDialog.close();
+					this.oBusyDialog.destroy();
+					this.oBusyDialog = null;
 				}
 			});
 
 			QUnit.test('Closing the BusyDialog event', function (assert) {
-				assert.equal(jQuery(this.id + '-TextLabel').text(), 'Initial text', 'should have initial text from the binding.');
-				assert.equal(jQuery(this.id + '-Dialog-title').text(), 'Initial title', 'should have initial title from the binding.');
+				assert.equal(jQuery(this.sId + '-TextLabel').text(), 'Initial text', 'should have initial text from the binding.');
+				assert.equal(jQuery(this.sId + '-Dialog-title').text(), 'Initial title', 'should have initial title from the binding.');
 
 				this.model.setData({
 					text: 'Updated text',
@@ -311,8 +364,8 @@
 				});
 				sap.ui.getCore().applyChanges();
 
-				assert.equal(jQuery(this.id + '-TextLabel').text(), 'Updated text', 'should have updated text from the binding.');
-				assert.equal(jQuery(this.id + '-Dialog-title').text(), 'Updated title', 'should have updated title from the binding.');
+				assert.equal(jQuery(this.sId + '-TextLabel').text(), 'Updated text', 'should have updated text from the binding.');
+				assert.equal(jQuery(this.sId + '-Dialog-title').text(), 'Updated title', 'should have updated title from the binding.');
 			});
 
 			// =========================================================================================================
@@ -355,38 +408,76 @@
 
 			QUnit.module('Aria', {
 				beforeEach: function () {
-					this.busyDialog = new sap.m.BusyDialog('busyAria', {
+					this.oBusyDialog = new sap.m.BusyDialog('busyAria', {
 					});
 
 				},
 				afterEach: function () {
-					this.busyDialog.close();
-					this.busyDialog.destroy();
-					this.busyDialog = null;
+					this.oBusyDialog.close();
+					this.oBusyDialog.destroy();
+					this.oBusyDialog = null;
 				}
 			});
 
 			QUnit.test('Setting the ariaLabelledBy association', function (assert) {
 				var invText = new sap.ui.core.InvisibleText('hiddenTxt', {text: 'Aria labelled by test'}).placeAt('content');
-				this.busyDialog.addAriaLabelledBy('hiddenTxt');
+				this.oBusyDialog.addAriaLabelledBy('hiddenTxt');
 
-				this.busyDialog.open();
+				this.oBusyDialog.open();
 
-				assert.strictEqual(this.busyDialog._oDialog.getAriaLabelledBy()[0], invText.getId(), 'Should be the same as ariaLabelledBy in the dialog.');
+				assert.strictEqual(this.oBusyDialog._oDialog.getAriaLabelledBy()[0], invText.getId(), 'Should be the same as ariaLabelledBy in the dialog.');
 			});
 
 			QUnit.test('Setting the Text property', function (assert) {
-				this.busyDialog.setText('Loading...');
-				this.busyDialog.open();
+				this.oBusyDialog.setText('Loading...');
+				this.oBusyDialog.open();
 
-				assert.strictEqual(this.busyDialog._oDialog.getAriaLabelledBy()[0], this.busyDialog._oLabel.getId(), 'Should be the same as ariaLabelledBy in the dialog.');
+				assert.strictEqual(this.oBusyDialog._oDialog.getAriaLabelledBy()[0], this.oBusyDialog._oLabel.getId(), 'Should be the same as ariaLabelledBy in the dialog.');
 			});
 
 			QUnit.test('Checking role property', function (assert) {
-				this.busyDialog.setText('Loading...');
-				this.busyDialog.open();
+				this.oBusyDialog.setText('Loading...');
+				this.oBusyDialog.open();
 				this.clock.tick(500);
-				assert.strictEqual(this.busyDialog._oDialog._$content.attr('role'), 'application', 'Should be application.');
+				assert.strictEqual(this.oBusyDialog._oDialog._$content.attr('role'), 'application', 'Should be application.');
+			});
+
+			QUnit.module('Style Class Methods', {
+				beforeEach: function () {
+					this.oBusyDialog = new sap.m.BusyDialog({
+					});
+
+				},
+				afterEach: function () {
+					this.oBusyDialog.close();
+					this.oBusyDialog.destroy();
+					this.oBusyDialog = null;
+				}
+			});
+			// =========================================================================================================
+			// Testing StyleClass methods
+			// =========================================================================================================
+
+			QUnit.test("Check style classes of internal Dialog", function (assert) {
+				//Arrange
+				var oDialogAddStyleClassStub = this.stub(this.oBusyDialog._oDialog, "addStyleClass"),
+					oDialogHasStyleClassStub = this.stub(this.oBusyDialog._oDialog, "hasStyleClass"),
+					oDialogToggleStyleClassStub = this.stub(this.oBusyDialog._oDialog, "toggleStyleClass"),
+					oDialogRemoveStyleClassStub = this.stub(this.oBusyDialog._oDialog, "removeStyleClass"),
+					sMyStyleClass = "myStyleClass";
+
+				//Act
+				this.oBusyDialog.addStyleClass(sMyStyleClass);
+				this.oBusyDialog.hasStyleClass(sMyStyleClass);
+				this.oBusyDialog.toggleStyleClass(sMyStyleClass);
+				this.oBusyDialog.removeStyleClass(sMyStyleClass);
+
+				//Assert
+				assert.ok(oDialogAddStyleClassStub.called, "The Dialog addStyleClass has been called");
+				assert.equal(oDialogAddStyleClassStub.calledWith(sMyStyleClass), true, "Style class has been handed from BusyDialog to the Dialog successfully");
+				assert.ok(oDialogHasStyleClassStub.called, "The Dialog hasStyleClass has been called");
+				assert.ok(oDialogRemoveStyleClassStub.called, "The Dialog removeStyleClass has been called");
+				assert.ok(oDialogToggleStyleClassStub.called, "The Dialog toggleStyleClass has been called");
 			});
 
 		</script>

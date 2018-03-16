@@ -14,13 +14,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.ODataUtils", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 

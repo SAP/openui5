@@ -2,47 +2,46 @@
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core">
-	<l:VerticalLayout width="100%">
-	<Panel
+	<List
 		id="results"
 		width="auto"
-		class="sapUiTinyMargin sapUiNoContentPadding"
-		content="{
+		class="sapUiTinyMargin sapUiNoContentPadding wrappingList"
+		items="{
 			path: '/groups/0/icons',
-			length: '50',
+			length: '200',
 			sorter: {
 				path: 'name',
 				descending: false
-			},
-			events: {
-				change: '.onUpdateFinished'
 			}
-		}">
-		<l:VerticalLayout
-			width="130px"
-			class="sapThemeBaseBG-asBackgroundColor sapUiTinyMargin visualLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
-			<core:Icon size="1rem" src="sap-icon://{name}" color="Default"/>
-			<core:Icon size="1.25rem" src="sap-icon://{name}" color="Default"/>
-			<core:Icon size="1.375rem" src="sap-icon://{name}" color="Default"/>
-			<core:Icon size="1.5rem" src="sap-icon://{name}" color="Default"/>
-			<core:Icon size="2rem" src="sap-icon://{name}" color="Default"/>
-			<core:Icon size="2.5rem" src="sap-icon://{name}" color="Default"/>
-			<core:Icon size="3rem" src="sap-icon://{name}" color="Default"/>
-			<Label design="Bold" text="{name}" textAlign="center" class="sapUiTinyMarginTopBottom"/>
-			<ToggleButton
-				icon="sap-icon://favorite"
-				press="onToggleFavorite"
-				pressed="{
-					path: 'name',
-					formatter: '.formatter.isFavorite'
-				}"/>
-		</l:VerticalLayout>
-	</Panel>
-	<Label
-		width="100%"
-		textAlign="Center"
-		class="sapUiSmallMarginTop"
-		text="{view>/overviewNoDataText}"
-		visible="{= ${view>/iconFilterCount} === 0 }"/>
-	</l:VerticalLayout>
+		}"
+		noDataText="{view>/overviewNoDataText}"
+		growing="true"
+		growingScrollToLoad="true"
+		growingThreshold="{view>/growingThreshold}"
+		updateFinished="onUpdateFinished">
+
+		<CustomListItem class="wrappingListItem sapUiTinyMargin">
+			<l:VerticalLayout
+				width="130px"
+				class="sapThemeBaseBG-asBackgroundColor visualLayoutCell sapMLIB sapMLIBFocusable sapMFocusable">
+				<core:Icon size="1rem" src="sap-icon://{name}" color="Default"/>
+				<core:Icon size="1.25rem" src="sap-icon://{name}" color="Default"/>
+				<core:Icon size="1.375rem" src="sap-icon://{name}" color="Default"/>
+				<core:Icon size="1.5rem" src="sap-icon://{name}" color="Default"/>
+				<core:Icon size="2rem" src="sap-icon://{name}" color="Default"/>
+				<core:Icon size="2.5rem" src="sap-icon://{name}" color="Default"/>
+				<core:Icon size="3rem" src="sap-icon://{name}" color="Default"/>
+				<Label text="{name}" textAlign="center" class="sapUiTinyMarginTopBottom"/>
+				<RatingIndicator
+					iconUnselected="sap-icon://unfavorite"
+					value="{
+						path: 'name',
+						formatter: '.formatter.favoriteRating'
+					}"
+					maxValue="1"
+					change="onToggleFavorite"/>
+			</l:VerticalLayout>
+		</CustomListItem>
+
+	</List>
 </core:FragmentDefinition>

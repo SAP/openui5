@@ -23,9 +23,9 @@
 			singleContainerFullSize="false" >
 			<f:content>
 				<core:Title text="Office" />
-				<Label text="Name" />
+				<Label text="Full name of the contact" />
 				<Input id="name" value="{SupplierName}" />
-				<Label text="Street/No." />
+				<Label text="Street and number where the contact is located" />
 				<Input value="{Street}">
 				</Input>
 				<Input value="{HouseNumber}">
@@ -33,14 +33,14 @@
 						<l:GridData span="XL2 L1 M3 S4" />
 					</layoutData>
 				</Input>
-				<Label text="ZIP Code/City" />
+				<Label text="ZIP Code and City" />
 				<Input value="{ZIPCode}">
 					<layoutData>
 						<l:GridData span="XL2 L1 M3 S4" />
 					</layoutData>
 				</Input>
 				<Input value="{City}" />
-				<Label text="Country" />
+				<Label text="Country where the contact is located" />
 				<Select id="country" selectedKey="{Country}">
 					<items>
 						<core:Item text="England" key="England"/>
@@ -49,9 +49,9 @@
 					</items>
 				</Select>
 				<core:Title text="Online" />
-				<Label text="Web" />
+				<Label text="Web page of the contact" />
 				<Input value="{Url}" />
-				<Label text="Twitter" />
+				<Label text="Twitter account of the contact" />
 				<Input value="{Twitter}" />
 			</f:content>
 		</f:SimpleForm>

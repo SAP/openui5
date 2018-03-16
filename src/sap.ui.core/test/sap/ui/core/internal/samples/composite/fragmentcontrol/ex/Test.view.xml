@@ -1,8 +1,0 @@
-<mvc:View height="100%"
-				controllerName="sap.ui.core.internal.samples.composite.fragmentcontrol.ex.Test"
-				xmlns:mvc="sap.ui.core.mvc"
-		  xmlns:mm="sap.m"
-				xmlns:fc="sap.ui.core.internal.samples.composite.fragmentcontrol.ex.comp">
-	<fc:field text="{/text}"
-					value="{/value}"></fc:field>
-</mvc:View>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta charset="utf-8">
+		<title>Test Page for sap.ui.rta.toolbar.Base</title>
+		<script src="../shared-config.js"></script>
+		<script>
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta/toolbar]');
+
+			jQuery.sap.includeScript('./Base.qunit.js');
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

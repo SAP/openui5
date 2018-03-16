@@ -81,7 +81,10 @@ sap.ui.define([
 								// promise gets resolved in error case since Promise.all will not wait for all fails
 								aFails.push(oContent.errorMessage);
 							} else {
-								oZipFile.file(sFilePath, oContent);
+								// exclude relative paths outside of the app root (e.g. commong helpers, images, ...)
+								if (!sFilePath.startsWith("../")) {
+									oZipFile.file(sFilePath, oContent, {base64: false, binary: true});
+								}
 							}
 						});
 						aPromises.push(oPromise);
@@ -125,14 +128,14 @@ sap.ui.define([
 			if (!oBindingContext.getObject().categoryId) { // demo app tile
 				if (oBindingContext.getObject().teaser) { // teaser cell (loads fragment from demo app)
 					try {
-						jQuery.sap.registerResourcePath("test-resources","test-resources");
-						var sRelativePath = jQuery.sap.getResourcePath(oBindingContext.getObject().teaser);
+						$.sap.registerResourcePath("test-resources","test-resources");
+						var sRelativePath = $.sap.getResourcePath(oBindingContext.getObject().teaser);
 						var oTeaser = sap.ui.xmlfragment(sId, sRelativePath);
 						oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.demokit.demoapps.view.BlockLayoutTeaserCell", this);
 						oBlockLayoutCell.getContent()[0].addContent(oTeaser);
-						jQuery.sap.registerResourcePath("test-resources",null);
+						$.sap.registerResourcePath("test-resources",null);
 					} catch (oException) {
-						jQuery.sap.log.warning("Teaser for demo app \"" + oBindingContext.getObject().name + "\" could not be loaded: " + oException);
+						$.sap.log.warning("Teaser for demo app \"" + oBindingContext.getObject().name + "\" could not be loaded: " + oException);
 						oBlockLayoutCell = sap.ui.xmlfragment(sId, "sap.ui.demokit.demoapps.view.BlockLayoutCell", this);
 					}
 				} else { // normal cell

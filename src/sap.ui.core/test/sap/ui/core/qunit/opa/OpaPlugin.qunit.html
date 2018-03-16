@@ -30,7 +30,7 @@ sap.ui.require([
 	"sap/ui/test/OpaPlugin",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Visible",
-	'sap/ui/test/_autoWaiter',
+	'sap/ui/test/autowaiter/_autoWaiter',
 	"sap/ui/commons/Button",
 	"sap/ui/commons/CheckBox",
 	"sap/m/Button",
@@ -92,7 +92,7 @@ sap.ui.require([
 
 			// Assert
 			assert.strictEqual(oResult, null);
-			sinon.assert.calledWith(this.fnLogSpy, "Found no control with the global id: 'nonexistingId'");
+			sinon.assert.calledWith(this.fnLogSpy, "Found no control with the global ID 'nonexistingId'");
 		});
 	});
 
@@ -277,9 +277,8 @@ sap.ui.require([
 		});
 
 		assert.strictEqual(oCheckBox, null, "got null");
-		sinon.assert.calledWithExactly(this.fnLogErrorSpy, "An id: 'my_id3' was passed together with the controlType " +
-				"'sap.ui.commons.Button' but the type does not match the control retrieved: " +
-				"'Element sap.ui.commons.CheckBox#my_id3' - null is returned");
+		sinon.assert.calledWithExactly(this.fnLogErrorSpy, "A control with global ID 'my_id3' is found but does not have required controlType " +
+			"'sap.ui.commons.Button'. Found control is 'Element sap.ui.commons.CheckBox#my_id3' but null is returned instead");
 	});
 
 	QUnit.test("Should log an error if the controlType does not match and a string id is given", function (assert) {
@@ -484,7 +483,7 @@ sap.ui.require([
 
 		// Assert
 		assert.strictEqual(oResult, null, "returned null");
-		sinon.assert.calledWith(this.fnLogSpy, "Found no control with the id: 'notexistingcontrol' in the view: 'bar'");
+		sinon.assert.calledWith(this.fnLogSpy, "Found no control with ID 'notexistingcontrol' in view 'bar'");
 	});
 
 	QUnit.test("Should get multiple controls of a view", function(assert) {
@@ -563,15 +562,6 @@ sap.ui.require([
 			this.oPlugin.destroy();
 			this.fnLoggerSpy.restore();
 		}
-	});
-
-	QUnit.test("Should have the correct log prefix", function (assert) {
-		sinon.assert.calledWith(this.fnLoggerSpy, "sap.ui.test.OpaPlugin");
-
-		var sLogComponent = "a different log component";
-		new OpaPlugin(sLogComponent).destroy();
-
-		sinon.assert.calledWith(this.fnLoggerSpy, sLogComponent);
 	});
 
 	QUnit.test("Should not throw an exception if the core is not defined", function(assert) {
@@ -673,31 +663,16 @@ sap.ui.require([
 
 	QUnit.test("Should invoke the interactable matcher if interactable is true", function(assert) {
 		// Arrange
-		var fnInteractableSpy = this.spy(Interactable.prototype, "isMatching"),
-			fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
+		var fnInteractableSpy = this.spy(Interactable.prototype, "isMatching");
 
 		// Act
-		this.oPlugin.getFilterdControls({
+		this.oPlugin.getMatchingControls({
 			id: "foo",
 			interactable: true
 		});
 
 		// Assert
 		sinon.assert.calledOnce(fnInteractableSpy);
-		sinon.assert.calledOnce(fnWaitSpy);
-	});
-
-	QUnit.test("Should invoke the autowaiter when autowait is true", function (assert) {
-		// Arrange
-		var fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
-
-		// Act
-		this.oPlugin.getFilterdControls({
-			autoWait: true
-		});
-
-		// Assert
-		sinon.assert.calledOnce(fnWaitSpy);
 	});
 
 	QUnit.test("Should not call the autoWaiter or interactable if visible is false", function (assert) {
@@ -706,7 +681,7 @@ sap.ui.require([
 			fnWaitSpy = this.spy(_autoWaiter, "hasToWait");
 
 		// Act
-		var oResult = this.oPlugin.getFilterdControls({
+		var oResult = this.oPlugin._getFilteredControls({
 			autoWait: true,
 			visible: false,
 			id: this.oButton.getId()

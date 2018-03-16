@@ -3,15 +3,15 @@
 /* BlueCrystal theme                            */
 /* ============================================ */
 
-@_sap_ui_unified_ShellLayout_lHeadBGStartColor: lighten(@sapUiShellBackground,2);
-@_sap_ui_unified_ShellLayout_HeadBGEndColor: darken(@sapUiShellBackground,2);
+@_sap_ui_unified_ShellOverlay_HeadBGStartColor: lighten(@sapUiShellBackground,2);
+@_sap_ui_unified_ShellOverlay_HeadBGEndColor: darken(@sapUiShellBackground,2);
 
 .sapUiUfdShellOvrlyHeadCntnt {
 	background-color: @sapUiShellBackground;
-	background: -ms-linear-gradient(top,@_sap_ui_unified_ShellLayout_HeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@_sap_ui_unified_ShellLayout_HeadBGEndColor 100%);
-	background: -webkit-gradient(linear,left top,left bottom,color-stop(0,@_sap_ui_unified_ShellLayout_HeadBGStartColor),color-stop(0.33,@sapUiShellBackground),color-stop(0.75,@sapUiShellBackground),color-stop(1,@_sap_ui_unified_ShellLayout_HeadBGEndColor));
-	background-image: -webkit-linear-gradient(top,@_sap_ui_unified_ShellLayout_HeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@_sap_ui_unified_ShellLayout_HeadBGEndColor 100%);
-	background: linear-gradient(top,@_sap_ui_unified_ShellLayout_HeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@_sap_ui_unified_ShellLayout_HeadBGEndColor 100%);
+	background: -ms-linear-gradient(top,@_sap_ui_unified_ShellOverlay_HeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@_sap_ui_unified_ShellOverlay_HeadBGEndColor 100%);
+	background: -webkit-gradient(linear,left top,left bottom,color-stop(0,@_sap_ui_unified_ShellOverlay_HeadBGStartColor),color-stop(0.33,@sapUiShellBackground),color-stop(0.75,@sapUiShellBackground),color-stop(1,@_sap_ui_unified_ShellOverlay_HeadBGEndColor));
+	background-image: -webkit-linear-gradient(top,@_sap_ui_unified_ShellOverlay_HeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@_sap_ui_unified_ShellOverlay_HeadBGEndColor 100%);
+	background: linear-gradient(top,@_sap_ui_unified_ShellOverlay_HeadBGStartColor 0,@sapUiShellBackground 33%,@sapUiShellBackground 75%,@_sap_ui_unified_ShellOverlay_HeadBGEndColor 100%);
 	box-shadow: inset 0 -0.0625em @sapUiShellBorderColor;
 }
 

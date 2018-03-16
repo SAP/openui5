@@ -9,62 +9,65 @@
 <!-- UI5 Bootstrap -->
 <script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
-	data-sap-ui-libs="sap.ui.layout, sap.m"></script>
+        data-sap-ui-libs="sap.ui.layout, sap.m"></script>
 
 <script>
 	jQuery.sap.initMobile();
 	var oConfData = {
-		scale : "MM",
-		unit : "EUR",
-		state : sap.m.LoadState.Loaded,
-		valueColor : sap.m.ValueColor.Error,
-		indicator : sap.m.DeviationIndicator.None,
-		value : "2435",
-		footer : "Current Quarter",
-		jc : {
-			contentText : "@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London",
-			subheader : "about 1 minute ago in Computer Market",
-			value : "9"
+		scale: "MM",
+		unit: "EUR",
+		state: sap.m.LoadState.Loaded,
+		indicator: sap.m.DeviationIndicator.None,
+		value: "2435",
+		footer: "Current Quarter",
+		footerColor: sap.m.ValueColor.Neutral,
+		jc: {
+			contentText: "@@notify Great outcome of the Presentation today. The new functionality and the design was well received. Berlin, Tokyo, Rome, Budapest, New York, Munich, London",
+			subheader: "about 1 minute ago in Computer Market",
+			value: "9"
 		},
-		nc : {
-			contentText : "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
-			subheader : "SAP News"
+		nc: {
+			contentText: "SAP Unveils Powerful New Player Comparison Tool Exclusively on NFL.com",
+			subheader: "SAP News"
 		}
 	};
 
 	var oNewsTileContent = new sap.m.TileContent({
-		footer : "{/footer}",
-		unit : "{/unit}",
-		content : new sap.m.NewsContent({
-			contentText : "{/nc/contentText}",
-			subheader : "{/nc/subheader}"
+		footer: "{/footer}",
+		footerColor: "{/footerColor}",
+		unit: "{/unit}",
+		content: new sap.m.NewsContent({
+			contentText: "{/nc/contentText}",
+			subheader: "{/nc/subheader}"
 		})
 	});
 	oNewsTileContent.addStyleClass("sapUiSmallMargin");
 
 	var oFeedTileContent = new sap.m.TileContent({
-		footer : "{/footer}",
-		unit : "{/unit}",
-		content : new sap.m.FeedContent({
-			contentText : "{/jc/contentText}",
-			subheader : "{/jc/subheader}",
-			value : "{/jc/value}"
+		footer: "{/footer}",
+		footerColor: "{/footerColor}",
+		unit: "{/unit}",
+		content: new sap.m.FeedContent({
+			contentText: "{/jc/contentText}",
+			subheader: "{/jc/subheader}",
+			value: "{/jc/value}"
 		})
 	});
 	oFeedTileContent.addStyleClass("sapUiSmallMargin");
 
 	var oNVConfContS = new sap.m.NumericContent("configurable-tile-cont-S", {
-		value : "{/value}",
-		scale : "{/scale}",
-		indicator : "{/indicator}",
-		formatterValue : "{/isFormatterValue}",
-		truncateValueTo : "{/truncateValueTo}"
+		value: "{/value}",
+		scale: "{/scale}",
+		indicator: "{/indicator}",
+		formatterValue: "{/isFormatterValue}",
+		truncateValueTo: "{/truncateValueTo}"
 	});
 
 	var oNVConfS = new sap.m.TileContent("configurable-tile-num-cont-S", {
-		unit : "{/unit}",
-		footer : "{/footer}",
-		content : oNVConfContS
+		unit: "{/unit}",
+		footer: "{/footer}",
+		footerColor: "{/footerColor}",
+		content: oNVConfContS
 	});
 	oNVConfS.addStyleClass("sapUiSmallMargin");
 
@@ -72,34 +75,65 @@
 	oConfModel.setData(oConfData);
 
 	var oUnitLbl = new sap.m.Label({
-		text : "Unit",
-		labelFor : "unit-value"
+		text: "Unit",
+		labelFor: "unit-value"
 	});
 	var oUnitInput = new sap.m.Input("unit-value", {
-		type : sap.m.InputType.Text,
-		placeholder : 'Enter unit ...'
+		type: sap.m.InputType.Text,
+		placeholder: "Enter unit ..."
 	});
 	oUnitInput.bindValue("/unit");
 
 	var oFooterLbl = new sap.m.Label({
-		text : "Footer",
-		labelFor : "footer-value"
+		text: "Footer",
+		labelFor: "footer-value"
 	});
 
 	var oFooterInput = new sap.m.Input("footer-value", {
-		type : sap.m.InputType.Text,
-		placeholder : 'Enter footer ...'
+		type: sap.m.InputType.Text,
+		placeholder: "Enter footer ..."
 	});
 	oFooterInput.bindValue("/footer");
 
-	var oSizeLbl = new sap.m.Label({
-		text : "Size",
-		labelFor : "size-button"
+	var oValueColorLabel = new sap.m.Label({
+		text: "Value Color",
+		labelFor: "value-color-change"
+	});
+	var oValueColorSelect = new sap.m.Select("value-color-change", {
+		change: function(event) {
+			var sSelectedItem = event.getParameter("selectedItem").getKey();
+			oConfData.footerColor = sSelectedItem;
+			oConfModel.checkUpdate();
+		},
+		items: [
+			new sap.ui.core.Item({
+				key: sap.m.ValueColor.Neutral,
+				text: sap.m.ValueColor.Neutral
+			}),
+			new sap.ui.core.Item({
+				key: sap.m.ValueColor.Good,
+				text: sap.m.ValueColor.Good
+			}),
+			new sap.ui.core.Item({
+				key: sap.m.ValueColor.Critical,
+				text: sap.m.ValueColor.Critical
+			}),
+			new sap.ui.core.Item({
+				key: sap.m.ValueColor.Error,
+				text: sap.m.ValueColor.Error
+			})
+		],
+		selectedKey: sap.m.ValueColor.Neutral
 	});
 
-	var bBtnEnabled = (window.innerWidth < 375) ? false: true;
+	var oSizeLbl = new sap.m.Label({
+		text: "Size",
+		labelFor: "size-button"
+	});
+
+	var bBtnEnabled = (window.innerWidth < 375) ? false : true;
 	var oSizeBtn = new sap.m.Button("size-button", {
-		press : function(oEvent) {
+		press: function(oEvent) {
 			var sTheme = sap.ui.getCore().getConfiguration().getTheme();
 			sap.ui.getCore().applyTheme(sTheme);
 			var url = window.location.href;
@@ -111,14 +145,14 @@
 	});
 
 	var oRenderFooterLbl = new sap.m.Label({
-		text : "Render Footer",
-		labelFor : "footer-rendering-button"
+		text: "Render Footer",
+		labelFor: "footer-rendering-button"
 	});
 
 	var oRenderFooterSwitch = new sap.m.Switch({
-		id : "footer-rendering-button",
-		state : true,
-		change : function(oEvent) {
+		id: "footer-rendering-button",
+		state: true,
+		change: function(oEvent) {
 			var bState = oEvent.getParameter("state");
 			oNewsTileContent.setRenderFooter(bState);
 			oNewsTileContent.invalidate();
@@ -130,42 +164,44 @@
 	});
 
 	var editableSimpleForm = new sap.ui.layout.form.SimpleForm("controls", {
-		maxContainerCols : 2,
-		editable : true,
-		content : [new sap.ui.core.Title({ // this starts a new group
-			text : "Modify Tiles"
-		}), oUnitLbl, oUnitInput, oFooterLbl, oFooterInput,
-			oRenderFooterLbl, oRenderFooterSwitch, oSizeLbl, oSizeBtn]
+		maxContainerCols: 2,
+		editable: true,
+		content: [
+			new sap.ui.core.Title({ // this starts a new group
+				text: "Modify Tiles"
+			}), oUnitLbl, oUnitInput, oFooterLbl, oFooterInput, oValueColorLabel, oValueColorSelect,
+			oRenderFooterLbl, oRenderFooterSwitch, oSizeLbl, oSizeBtn
+		]
 	});
 
 	var buildTC = function(oContent) {
 		return new sap.m.FlexBox({
-			items : [ oContent ],
-			layoutData : new sap.ui.layout.ResponsiveFlowLayoutData({
-				minWidth : 400
+			items: [oContent],
+			layoutData: new sap.ui.layout.ResponsiveFlowLayoutData({
+				minWidth: 400
 			}),
-			height : "150px"
+			height: "150px"
 		});
 	};
 
 	var oControlForm = new sap.ui.layout.form.SimpleForm("tile-content-form", {
-		content : [buildTC(oNVConfS), buildTC(oFeedTileContent), buildTC(oNewsTileContent)]
+		content: [buildTC(oNVConfS), buildTC(oFeedTileContent), buildTC(oNewsTileContent)]
 	});
 
 	var oPage = new sap.m.Page("initial-page", {
-		showHeader : false,
-		content : [oControlForm, editableSimpleForm]
+		showHeader: false,
+		content: [oControlForm, editableSimpleForm]
 	});
 	oPage.setModel(oConfModel);
 
 	//create a mobile App embedding the page and place the App into the HTML document
 	var app = new sap.m.App("myApp", {
-		pages : [oPage]
+		pages: [oPage]
 	}).placeAt("content");
 </script>
 </head>
 
 <body id="body" class="sapUiBody">
-	<div id="content"></div>
+<div id="content"></div>
 </body>
 </html>

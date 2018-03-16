@@ -4,9 +4,12 @@
 
 // Provides control sap.m.P13nGroupPanel.
 sap.ui.define([
-	'jquery.sap.global', './P13nConditionPanel', './P13nPanel', './library', 'sap/ui/core/Control'
-], function(jQuery, P13nConditionPanel, P13nPanel, library, Control) {
+	'jquery.sap.global', './P13nConditionPanel', './P13nPanel', './library'
+], function(jQuery, P13nConditionPanel, P13nPanel, library) {
 	"use strict";
+
+	// shortcut for sap.m.P13nPanelType
+	var P13nPanelType = library.P13nPanelType;
 
 	/**
 	 * Constructor for a new P13nGroupPanel.
@@ -210,13 +213,10 @@ sap.ui.define([
 	};
 
 	P13nGroupPanel.prototype.init = function() {
-		this.setType(sap.m.P13nPanelType.group);
+		this.setType(P13nPanelType.group);
 		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("GROUPPANEL_TITLE"));
 
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
-		jQuery.sap.require("sap.ui.layout.Grid");
-
-		sap.ui.layout.Grid.prototype.init.apply(this);
 
 		this._aKeyFields = [];
 		this.addStyleClass("sapMGroupPanel");
@@ -362,9 +362,10 @@ sap.ui.define([
 	P13nGroupPanel.prototype.updateGroupItems = function(sReason) {
 		this.updateAggregation("groupItems");
 
-		if (sReason == "change" && !this._bIgnoreBindCalls) {
-			this._bUpdateRequired = true;
-		}
+        if (sReason === "change" && !this._bIgnoreBindCalls) {
+            this._bUpdateRequired = true;
+            this.invalidate();
+        }
 	};
 
 	P13nGroupPanel.prototype.removeGroupItem = function(oGroupItem) {
@@ -506,4 +507,4 @@ sap.ui.define([
 
 	return P13nGroupPanel;
 
-}, /* bExport= */true);
+});

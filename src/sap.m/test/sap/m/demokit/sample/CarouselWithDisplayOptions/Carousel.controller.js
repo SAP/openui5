@@ -24,7 +24,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 			this._setNumberOfImagesInCarousel(3);
 		},
 		onArrowsPlacementSelect: function (oEvent) {
-			var oCarousel = this.getView().byId("carouselSample");
+			var oCarousel = this.byId("carouselSample");
 			var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
 			if (sSelectedValue === "Content") {
 				oCarousel.setArrowsPlacement(sap.m.CarouselArrowsPlacement.Content);
@@ -33,7 +33,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 			}
 		},
 		onPageIndicatorPlacementSelect: function (oEvent) {
-			var oCarousel = this.getView().byId("carouselSample");
+			var oCarousel = this.byId("carouselSample");
 			var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
 			if (sSelectedValue === "Bottom") {
 				oCarousel.setPageIndicatorPlacement(sap.m.PlacementType.Bottom);
@@ -42,7 +42,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 			}
 		},
 		onShowPageIndicatorSelect: function (oEvent) {
-			var oCarousel = this.getView().byId("carouselSample");
+			var oCarousel = this.byId("carouselSample");
 			var sSelectedValue = oEvent.getSource().getSelectedButton().getText();
 			if (sSelectedValue === "Yes") {
 				oCarousel.setShowPageIndicator(true);
@@ -56,7 +56,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 			var screenSizesJSON = this.getView().getModel("ScreenSizesModel").getData();
 			var iValue = oEvent.getParameter("value");
 			var screenWidth = screenSizesJSON.screenSizes[Number(iValue) - 1];
-			var oCarouselContainer = this.getView().byId("carouselContainer");
+			var oCarouselContainer = this.byId("carouselContainer");
 			oCarouselContainer.setWidth(screenWidth);
 			var screenHeight = origingalHeight * parseFloat(screenWidth) / 1000;
 			oCarouselContainer.setHeight(screenHeight + 'px');
@@ -70,7 +70,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 				return;
 			}
 
-			var oCarousel = this.getView().byId("carouselSample");
+			var oCarousel = this.byId("carouselSample");
 			oCarousel.destroyPages();
 
 			for (var i = 0; i < numberOfImages; i++) {

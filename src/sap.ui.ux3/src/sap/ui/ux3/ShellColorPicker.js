@@ -105,7 +105,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/commons
 
 	/**
 	 * Returns the oColor object (hsl-based) for the given CSS string that is built like this: "rgb(127,0,1)"
-	 * @param sRgbString
+	 * @param {string} sRgbString
 	 */
 	ShellColorPicker.parseCssRgbString = function(sRgbString) {
 		sRgbString = jQuery.trim(sRgbString.replace(/rgb\(/, "").replace(/\)/, ""));

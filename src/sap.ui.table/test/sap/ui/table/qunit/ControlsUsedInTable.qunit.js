@@ -1,3 +1,5 @@
+/*global QUnit */
+
 sap.ui.require([
 	"sap/ui/table/TableUtils",
 	"sap/ui/model/json/JSONModel",
@@ -6,8 +8,6 @@ sap.ui.require([
 	"use strict";
 
 	var bExecuteAllTests = jQuery.sap.getUriParameters().get("sap-ui-xx-table-testall") === "true";
-
-	var QUnit = window.QUnit;
 	var oTable;
 	var oTreeTable;
 	var sSomeVeryLargeTextWhichMightCauseWrapping = "Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test Test";
@@ -118,8 +118,8 @@ sap.ui.require([
 		oTable.setModel(oModel);
 		oTreeTable.setModel(oModel);
 
-		oTable.placeAt("content");
-		oTreeTable.placeAt("content");
+		oTable.placeAt("qunit-fixture");
+		oTreeTable.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 	}
 
@@ -278,7 +278,7 @@ sap.ui.require([
 							iPhantomJSRowHeight = 39;
 							break;
 						case "sap.m.HBox[sap.m.Link,sap.m.Text]":
-							iPhantomJSRowHeight = 41;
+							iPhantomJSRowHeight = 44;
 							break;
 						case "sap.m.ProgressIndicator":
 						case "sap.m.HBox[sap.m.Button,sap.m.Button]":
@@ -327,7 +327,7 @@ sap.ui.require([
 
 			var sTestParameters = "Density: " + sContentDensity + ", Control: " + sControlName;
 			var sPhantomJSInfo = "Please run these tests in all supported browsers to verify."
-								   + " In case the tests fail only in PhantomJS please contact the sap.ui.table responsibles.";
+								 + " In case the tests fail only in PhantomJS please contact the sap.ui.table responsibles.";
 
 			if (sContentDensity != null) {
 				if (iPhantomJSRowHeight === null) {

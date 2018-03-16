@@ -9,7 +9,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		'sap/ui/core/support/controls/TimelineOverview',
 		'sap/m/MessageToast',
 		'sap/ui/thirdparty/jszip',
-		'sap/ui/core/util/File'
+		'sap/ui/core/util/File',
+		'jquery.sap.trace'
 	],
 	function(jQuery, Plugin, InteractionSlider, InteractionTree, TimelineOverview, MessageToast, JSZip, File) {
 		"use strict";
@@ -20,10 +21,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 		 *
 		 * With this plugIn the performance measurements are displayed
 		 *
-		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
 		 * @version ${version}
-		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.Interaction
 		 */
@@ -95,12 +94,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/Plugin',
 			rm.write("<div class='sapUiSupportIntFupInputMask'>");
 			rm.write("<input id=\"" + this.getId() + "-fileImport\" tabindex='-1' size='1' accept='application/zip' type='file'/>");
 			rm.write("</div>");
-			rm.write("<button id=\"" + this.getId() + "-import\" class=\"sapUiSupportBtn sapUiSupportIntImportExportBtn sapUiSupportIntImportBtn \">Import</button>");
-			rm.write("<button id=\"" + this.getId() + "-export\" class=\"sapUiSupportBtn sapUiSupportIntImportExportBtn sapUiSupportIntExportBtn sapUiSupportIntHidden\">Export</button>");
+			rm.write("<button id=\"" + this.getId() + "-import\" class=\"sapUiSupportIntImportExportBtn sapUiSupportIntImportBtn sapUiSupportRoundedButton \">Import</button>");
+			rm.write("<button id=\"" + this.getId() + "-export\" class=\"sapUiSupportIntImportExportBtn sapUiSupportIntExportBtn sapUiSupportRoundedButton sapUiSupportIntHidden \">Export</button>");
 			rm.write("<span id=\"" + this.getId() + "-info\" class=\"sapUiSupportIntRecordingInfo\"></span>");
 			rm.write("</div><div class=\"sapUiSupportInteractionCntnt\">");
 			rm.write("</div>");
-
 
 			rm.write('<div class="sapUiPerformanceStatsDiv sapUiSupportIntHidden">');
 			rm.write('<div class="sapUiPerformanceTimeline" style="height: 50px;"></div>');

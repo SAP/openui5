@@ -3,29 +3,34 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
-	function(jQuery, Binding, Filter, Sorter) {
+sap.ui.define(['./Binding', './Filter', './Sorter'],
+	function(Binding, Filter, Sorter) {
 	"use strict";
 
 
 	/**
-	 * Constructor for TreeBinding
+	 * Constructor for TreeBinding.
 	 *
+	 * This constructor should only be called by subclasses or model implementations, not by application or control code.
+	 * Such code should use {@link sap.ui.model.Model#bindTree Model#bindTree} on the corresponding model instead.
+	 *
+	 * @abstract
 	 * @class
 	 * The TreeBinding is a specific binding for trees in the model, which can be used
 	 * to populate Trees.
 	 *
-	 * @param {sap.ui.model.Model} oModel
+	 * @param {sap.ui.model.Model}
+	 *         oModel Model instance that this binding is created for and that it belongs to
 	 * @param {string}
-	 *         sPath the path pointing to the tree / array that should be bound
+	 *         sPath Path pointing to the tree / array that should be bound
 	 * @param {object}
-	 *         [oContext=null] the context object for this databinding (optional)
-	 * @param {array}
-	 *         [aFilters=null] predefined filter/s contained in an array (optional)
-	 * @param {object}
-	 *         [mParameters=null] additional model specific parameters (optional)
-	 * @param {array}
-	 *         [aSorters=null] predefined sap.ui.model.sorter/s contained in an array (optional)
+	 *         [oContext=null] Context object for this binding (optional)
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]}
+	 *         [aFilters=null] Predefined filter or an array of filters (optional)
+	 * @param {string}
+	 *         [mParameters=null] Additional model specific parameters (optional)
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter}
+	 *         [aSorters=null] Predefined sorter or an array of sorters (optional)
 	 * @public
 	 * @alias sap.ui.model.TreeBinding
 	 * @extends sap.ui.model.Binding

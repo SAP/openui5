@@ -1,0 +1,25 @@
+{
+  "1.50.0": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "bf6f94834cd17dd45f38bde03adc4483db5b112b",
+        "type": "FIX",
+        "text": " command move test bug",
+        "references": []
+      },
+      {
+        "id": "88d68c7de02ee9700c726435b443ebb3acf62a76",
+        "type": "FIX",
+        "text": " sap.ui.fl: Correct reference for AddLibrary app descriptor change",
+        "references": []
+      },
+      {
+        "id": "402697b5397859ef23eefdc9158890b5d8a6bed9",
+        "type": "FIX",
+        "text": " sap.ui.rta: fixed Utils.getIndex for singular aggregations",
+        "references": []
+      }
+    ]
+  }
+}

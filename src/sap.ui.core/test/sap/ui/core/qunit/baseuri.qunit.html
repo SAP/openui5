@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8" >
+		<title>baseuri (polyfill)</title>
+		<base href="../../../../../" >
+		
+		<script src="test-resources/sap/ui/core/shared-config.js"></script>
+
+		<!-- minimal bootstrap code starts here -->
+		<script src="resources/sap/ui/thirdparty/baseuri.js"></script>
+		<script src="resources/sap/ui/thirdparty/es6-string-methods.js"></script>
+		<script src="resources/ui5loader.js"></script>
+		<script src="resources/ui5loader-autoconfig.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-compatversion="edge">
+		</script>
+		<!-- end of minimal bootstrap code -->
+
+		<link  href="resources/sap/ui/thirdparty/qunit.css" rel="stylesheet" media="screen" />
+		<script src="resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="resources/sap/ui/qunit/qunit-coverage.js"
+			data-cover-flags="branchTracking">
+		</script>
+		<script>
+
+			QUnit.test("After loading the minimal bootstrap code...", function(assert) {
+				assert.ok('baseURI' in document, "...should the document have a property baseURI");
+				assert.equal(typeof document.baseURI, 'string', "..should read access to document.baseURI return a string");
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

@@ -11,7 +11,7 @@ sap.ui.define([
 		onInit: function (oEvent) {
 
 			// set explored app's demo model on this sample
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/supplier.json"));
+			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.layout.sample", "/supplier.json"));
 			this.getView().setModel(oModel);
 
 			this.getView().bindElement("/SupplierCollection/0");
@@ -86,7 +86,7 @@ sap.ui.define([
 		},
 
 		_showFormFragment : function (sFragmentName) {
-			var oPage = this.getView().byId("page");
+			var oPage = this.byId("page");
 
 			oPage.removeAllContent();
 			oPage.insertContent(this._getFormFragment(sFragmentName));

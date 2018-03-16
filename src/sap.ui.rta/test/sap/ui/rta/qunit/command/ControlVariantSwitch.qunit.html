@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Test Page for ControlVariantSwitch Command</title>
+
+<style>
+html, body, #qunit-tests {
+	height: 100%;
+}
+
+.sapUiView {
+	height: 100%;
+}
+
+</style>
+
+<script src="../shared-config.js"></script>
+<script>
+	document.write('\
+		<script \
+			id="sap-ui-bootstrap" \
+			data-sap-ui-theme="sap_belize" \
+			data-sap-ui-noConflict="true" \
+			data-sap-ui-xx-designMode="true" \
+			data-sap-ui-xx-suppressDeactivationOfControllerCode="true" \
+			data-sap-ui-xx-bindingSyntax="complex" \
+			data-sap-ui-libs="sap.ui.dt, sap.ui.fl, sap.ui.rta" \
+			src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+		><' + '/script>'
+	);
+</script>
+<script>
+	jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
+	jQuery.sap.require('sap.ui.thirdparty.qunit');
+	jQuery.sap.require('sap.ui.qunit.qunit-junit');
+	jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+	jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+	if (window.blanket){
+		window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
+	}
+	jQuery.sap.includeScript('./ControlVariantSwitch.qunit.js');
+</script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit page for ControlVariantSwitch Command</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
+</body>
+
+</html>

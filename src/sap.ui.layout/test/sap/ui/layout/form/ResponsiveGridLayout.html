@@ -188,7 +188,7 @@
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Image",
-								fields: [new sap.m.Image({src: "../../commons/images/SAPLogo.gif", width: "73px"})]
+								fields: [new sap.m.Image({src: "../../commons/images/SAPLogo.gif", width: "73px", densityAware: false})]
 							})
 						],
 					layoutData: new sap.ui.layout.GridData({linebreak: true, span: "L12 M12 S12"})
@@ -219,8 +219,7 @@
 													new sap.ui.core.ListItem({text: "England"})]
 								})]
 							})
-						],
-					layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
+						]
 					}),
 					new sap.ui.layout.form.FormContainer("C6",{
 						title: new sap.ui.core.Title({text: "Education", icon: "sap-icon://education", level: sap.ui.core.TitleLevel.H5}),

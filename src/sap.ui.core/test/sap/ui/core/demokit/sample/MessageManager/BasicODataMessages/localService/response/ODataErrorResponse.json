@@ -1,0 +1,55 @@
+{
+    "error":{
+        "code":"ErrorCode-0",
+        "message":{
+            "lang":"en",
+            "value":"Leading Message - Exception raised without specific error"
+        },
+        "innererror":{
+            "transactionid":"566E06A5AC200A50E10080000A0F87DB",
+            "timestamp":"20160310120625.4547750",
+            "Error_Resolution":{
+                "SAP_Transaction":"Run transaction /IWFND/ERROR_LOG on SAP NW Gateway hub system and search for entries with the timestamp above for more details",
+                "SAP_Note":"See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)",
+                "Batch_SAP_Note":"See SAP Note 1869434 for details about working with $batch (https://service.sap.com/sap/support/notes/1869434)"
+            },
+            "errordetails":[
+                {
+                    "code":"ErrorCode-1",
+                    "message":"Exception raised without specific error 1",
+                    "propertyref":"",
+                    "severity":"error",
+                    "target":""
+                },
+                {
+                    "code":"ErrorCode-2",
+                    "message":"Server does not like this zip code",
+                    "propertyref":"/Employees(1)/PostalCode",
+                    "severity":"error",
+                    "target":""
+                },
+                {
+                    "code":"SuccessCode-1",
+                    "message":"My success message for first name",
+                    "propertyref":"",
+                    "severity":"success",
+                    "target":"/Employees(1)/FirstName"
+                },
+                {
+                    "code":"WarningCode-1",
+                    "message":"My warning message for last name",
+                    "propertyref":"LastName",
+                    "severity":"warning",
+                    "target":"/Employees(1)"
+                },
+                {
+                    "code":"InfoCode-1",
+                    "message":"My information message",
+                    "propertyref":"",
+                    "severity":"info",
+                    "target":""
+                }
+            ]
+        }
+    }
+}

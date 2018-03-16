@@ -95,10 +95,16 @@
 			});
 
 			QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
+				var fnDone = assert.async();
 				this.oButton = new sap.m.Button("button1", {text : "Button"});
 				this.oSimpleForm.addContent(this.oButton);
-				var oOverlayForButton = OverlayRegistry.getOverlay(this.oButton);
-				assert.ok(oOverlayForButton, "overlay for button exists");
+
+				this.oDesignTime.attachEventOnce("synced", function() {
+					var oOverlayForButton = OverlayRegistry.getOverlay(this.oButton);
+					assert.ok(oOverlayForButton, "overlay for button exists");
+					fnDone();
+				}, this);
+
 			});
 
 			// __bSapUiDtSupressOverlayDestroy test
@@ -127,6 +133,7 @@
 				var oFormOverlay = OverlayRegistry.getOverlay(oForm);
 				var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation('formContainers').getIndex;
 				oForm.getFormContainers()[0].removeAllFormElements();
+				this.oSimpleForm.removeContent(oForm.getAggregation("formContainers")[0].getTitle())
 				assert.equal(fnGetIndex(oForm), 0, "then the new index should be 0");
 			});
 
@@ -143,7 +150,7 @@
 				var oFormContainerOverlay = OverlayRegistry.getOverlay(oFirstFormContainer);
 				var fnRemove = oFormContainerOverlay.getDesignTimeMetadata().getData().actions.remove;
 				this.oSimpleForm.removeContent(oFirstFormContainer.getTitle());
-				assert.equal(fnRemove(oFirstFormContainer).isEnabled, true, "then the rename should not be enabled");
+				assert.equal(fnRemove(oFirstFormContainer).isEnabled, false, "then the remove should not be enabled");
 			});
 
 			</script>

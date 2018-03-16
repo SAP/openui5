@@ -39,8 +39,13 @@ html.sap-desktop .sapMIBar.sapMFooter-CTX {
 	border-top: 1px solid @sapUiPageFooterBorderColor;
 }
 
+.sapMIBar-CTX.sapMFooter-CTX.sapMTBClear,
+html.sap-desktop .sapContrast.sapMIBar.sapMFooter-CTX.sapMTBClear {
+	border-top: none;
+}
+
 /* footer separator inside of a SplitContainer control */
-.sapMSplitContainerMaster .sapMFooter-CTX {
+.sapMSplitContainerMaster .sapMFooter-CTX:not(.sapMIBar) {
 	border-right: 1px solid @sapUiPageFooterBorderColor;
 }
 

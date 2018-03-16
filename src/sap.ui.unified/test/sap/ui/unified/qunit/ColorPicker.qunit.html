@@ -394,13 +394,41 @@
 
 					// Assert
 					oAssert.strictEqual(oSpy.callCount, 1, "Method should be called only once");
-					oAssert.strictEqual(oGrid._iBreakPointTablet, 314, "The breakpoint for tablet should be changed");
+					oAssert.strictEqual(oGrid._iBreakPointTablet, 400, "The breakpoint for tablet should be changed");
 					oAssert.ok(oGrid.hasStyleClass(CONSTANTS.CPResponsiveClass), "Responsive CSS class is applied to the Grid");
 					oAssert.strictEqual(this.oCP._adaptControlToLibrary, jQuery.noop,
 						"The method can't be called more than once on this instance");
 
 					// Cleanup
 					oSpy.restore();
+				});
+
+				QUnit.test("_adaptControlToLibrary for phone sizes", function (oAssert) {
+					// Arrange
+					this.oDeviceStub = sinon.sandbox;
+					this.oDeviceStub.stub(sap.ui.Device, "system", {
+						desktop : false,
+						phone : true,
+						tablet : false
+					});
+					var oSpy = sinon.spy(this.oCP, "_adaptControlToLibrary"),
+						oGrid;
+
+					// Act
+					this.oCP._createLayout(); // Force creation of inner controls
+					oGrid = this.oCP.getAggregation("_grid");
+
+					// Assert
+					oAssert.strictEqual(oSpy.callCount, 1, "Method should be called only once");
+					oAssert.notEqual(oGrid._iBreakPointTablet, 400, "The breakpoint for tablet shouldn't be applyed");
+					oAssert.ok(oGrid.hasStyleClass(CONSTANTS.CPResponsiveClass), "Responsive CSS class is applied to the Grid");
+					oAssert.strictEqual(this.oCP._adaptControlToLibrary, jQuery.noop,
+						"The method can't be called more than once on this instance");
+
+					// Cleanup
+					oSpy.restore();
+					this.oDeviceStub.restore();
+					this.oDeviceStub = null;
 				});
 
 				QUnit.test("_createLayout", function (oAssert) {
@@ -541,6 +569,31 @@
 
 					oAssert.strictEqual(this.oCP._parseHSL("hsl(-360, -255, -255)", true), false,
 						"The passed string is not a valid HSL CSS Color string");
+				});
+
+				QUnit.test("_processRGBChanges - does not reset the HUE slide if pure white color is used", function (oAssert) {
+					// Arrange
+					var iHueValue = 30, // Arbitrary number different than 0
+						oCalculateHSVSpy,
+						oHueFieldSetterSpy;
+
+					this.oCP.setColorString("white");
+					this.oCP.placeAt("qunit-fixture");
+
+					applyChanges();
+
+					oCalculateHSVSpy = sinon.spy(this.oCP, "_calculateHSV");
+					oHueFieldSetterSpy = sinon.spy(this.oCP.oHueField, "setValue");
+
+					// Act
+					this.oCP.Color.h = iHueValue;
+					this.oCP._processRGBChanges();
+
+					// Assert
+					oAssert.strictEqual(this.oCP.Color.h, iHueValue,
+						"Internal HUE value should not be reset nor changed");
+					oAssert.strictEqual(oCalculateHSVSpy.callCount, 0, "_calculateHSV should not be called");
+					oAssert.strictEqual(oHueFieldSetterSpy.callCount, 0, "HUE field 'setValue' should not be called");
 				});
 
 				QUnit.module("sap.ui.unified._ColorPickerBox", {

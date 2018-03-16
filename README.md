@@ -13,8 +13,8 @@ And... it's free and open source: OpenUI5 is licensed under the Apache License, 
 
 Try it!
 -------
-Check out our [interactive control playground](https://openui5.hana.ondemand.com/#content/Controls/index.html)
-as well as a number of [sample applications](https://openui5.hana.ondemand.com/#demoapps.html).
+Check out our [interactive control playground](https://openui5.hana.ondemand.com/#/controls)
+as well as a number of [sample applications](https://openui5.hana.ondemand.com/#/demoapps).
 
 Get it!
 -------

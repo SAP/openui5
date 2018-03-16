@@ -79,7 +79,7 @@
 				"name" : "View",
 				"category" : "Display",
 				"formFactors" : "-",
-				"since" : "\"The Elders may know...\"",
+				"since" : "1.30",
 				"samples" : [
 					"sap.ui.core.sample.View.async",
 					"sap.ui.core.sample.View.preprocessor"
@@ -117,7 +117,12 @@
 					"sap.ui.core.sample.gherkin.GherkinWithUIComponent",
 					"sap.ui.comp.sample.smartfilterbartest",
 					"sap.ui.core.sample.OpaURLParameters.iStartMyUIComponentWithURLParameters",
-					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters"
+					"sap.ui.core.sample.OpaURLParameters.iStartMyAppInAFrameWithURLParameters",
+					"sap.ui.core.sample.OpaWithSupportAssistant",
+					"sap.ui.core.sample.OpaTestLibrary",
+					"sap.ui.core.sample.OpaMessageToast",
+					"sap.ui.core.sample.OpaAutoWaitParams",
+					"sap.ushell.sample.OpaFLPSandbox"
 				]
 			},
 			{
@@ -130,6 +135,17 @@
 					"sap.ui.core.sample.matcher.I18NText",
 					"sap.ui.core.sample.matcher.LabelFor",
 					"sap.ui.core.sample.OpaMatchers"
+				]
+			},
+			{
+				"id": "sap.ui.core.message.MessageManager",
+				"name": "Message Manager",
+				"category": "Display",
+				"since": "1.30",
+				"samples": [
+					"sap.ui.core.sample.MessageManager.BasicMessages",
+					"sap.ui.core.sample.MessageManager.BasicODataMessages",
+					"sap.ui.core.sample.MessageManager.ODataBackendMessagesComp"
 				]
 			},
 			{
@@ -188,9 +204,12 @@
 				"category" : "Data Binding",
 				"since" : "1.38",
 				"samples" : [
+					"sap.ui.core.sample.odata.v4.ConsumeV2Service",
 					"sap.ui.core.sample.odata.v4.ListBinding",
 					"sap.ui.core.sample.odata.v4.SalesOrders",
-					"sap.ui.core.sample.odata.v4.SalesOrdersTemplate"
+					"sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
+					"sap.ui.core.sample.odata.v4.SalesOrderTP100_V4",
+					"sap.ui.core.sample.odata.v4.SalesOrderTP100_V2"
 				]
 			},
 			{
@@ -278,11 +297,11 @@
 			},
 			{
 				"id": "sap.ui.core.tutorial.navigation",
-				"name": "Navigation",
+				"name": "Navigation and Routing",
 				"category": "Tutorial",
 				"since": "1.30",
 				"formFactors": "-",
-				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps",
+				"description": "This tutorial illustrates the major features of navigation and routing inside SAPUI5 apps.",
 				"docuLink": "#docs/guide/1b6dcd39a6a74f528b27ddb22f15af0d.html",
 				"samplesAsSteps": [
 					"Set Up the Initial App",
@@ -300,8 +319,20 @@
 					"Make Table Sorting Bookmarkable",
 					"Make Dialogs Bookmarkable",
 					"Reuse an Existing Route",
-					"Handlle Invalid Hashes by Listening to Bypassed Events",
+					"Handle Invalid Hashes by Listening to Bypassed Events",
 					"Listen to Matched Events of Any Route"
+				]
+			},
+			{
+				"id": "sap.ui.core.tutorial.troubleshooting",
+				"name": "Troubleshooting",
+				"category": "Tutorial",
+				"since": "1.48",
+				"formFactors": "-",
+				"description": "In this tutorial, we will show you some tools that will help you when you run into problems with your SAPUI5 app.",
+				"docuLink": "#docs/guide/5661952e72df471b932eddc10350c081.html",
+				"samplesAsSteps": [
+					"Heap of Shards"
 				]
 			},
 			{
@@ -310,7 +341,7 @@
 				"category": "Tutorial",
 				"since": "1.30",
 				"formFactors": "-",
-				"description": "In this tutorial, we will explain the concepts of data binding in SAPUI5",
+				"description": "In this tutorial, we will explain the concepts of data binding in SAPUI5.",
 				"docuLink": "#docs/guide/e5310932a71f42daa41f3a6143efca9c.html",
 				"samplesAsSteps": [
 					"No Data Binding",
@@ -344,7 +375,26 @@
 				  "Handling Custom URL Parameters",
 				  "Calling a Function Import"
 				]
-		    }
+		    },
+			{
+				"id": "sap.ui.core.tutorial.odatav4",
+				"name": "OData V4",
+				"category": "Tutorial",
+				"since": "1.54",
+				"formFactors": "-",
+				"description": "In this tutorial, we will show you how to build a simple application using an OData V4 service.",
+				"docuLink": "#docs/guide/bcdbde6911bd4fc68fd435cf8e306ed0.html",
+				"samplesAsSteps": [
+					"Set Up the Initial App",
+					"Data Access and Client-Server Communication",
+					"Automatic Type Detection",
+					"Filtering, Sorting, and Counting",
+					"Batch Groups",
+					"Create and Edit",
+					"Delete",
+					"OData Operations"
+				]
+			}
 		],
 		"samples" : [
 			{
@@ -453,6 +503,11 @@
 				"description": "A small example for View Preprocessor usage with XMLViews."
 			},
 			{
+				"id": "sap.ui.core.sample.odata.v4.ConsumeV2Service",
+				"name": "OData V2 Service Consumption",
+				"description": "Example for OData V2 service consumption with an OData V4 model"
+			},
+			{
 				"id": "sap.ui.core.sample.odata.v4.ListBinding",
 				"name": "Operation Binding",
 				"description": "OData V4 model operation bindings example; refer to the Sales Orders example to understand other OData V4 model features"
@@ -466,6 +521,16 @@
 				"id": "sap.ui.core.sample.odata.v4.SalesOrdersTemplate",
 				"name": "Sales Orders Template",
 				"description": "Example for OData V4 EPM Sales Orders using XML Templating"
+			},
+			{
+				"id": "sap.ui.core.sample.odata.v4.SalesOrderTP100_V4",
+				"name": "Sales Orders TP100",
+				"description": "Example for consuming an OData V4 Service"
+			},
+			{
+				"id": "sap.ui.core.sample.odata.v4.SalesOrderTP100_V2",
+				"name": "Sales Orders TP100 via OData V2 Service",
+				"description": "Example for consuming an OData V2 Service via an OData V4 Model"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
@@ -534,13 +599,13 @@
 			},
 			{
 				"id" : "sap.ui.core.sample.ThemeCustomClasses",
-				"name" : "Theme-dependent CSS-classes",
-				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-dependent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements."
+				"name" : "Theme-independent CSS-classes",
+				"description" : "Sample display of 'sapTheme'-prefixed CSS classes for theme-independent styling of custom HTML/Controls. The set displayed is to be used to style static HTML elements."
 			},
 			{
 				"id" : "sap.ui.core.sample.BasicThemeParameters",
 				"name" : "Basic Theme Parameters",
-				"description" : "This sample displays a set of basic theme parameters. Available in the predefined themes 'Blue Crystal' and 'High Contrast Black'. They can be used for custom HTML or custom controls to ensure theme-dependent styling. Please ensure a semantic correct usage."
+				"description" : "Sample provides a link to the Theme Parameter Toolbox. There you can easily search, preview, and filter semantic theme parameters."
 			},
 			{
 				"id" : "sap.ui.core.sample.PatternMatching",
@@ -578,6 +643,21 @@
 				"description": "The LabelFor matcher searches for given control associated with labelFor property."
 			},
 			{
+				"id": "sap.ui.core.sample.MessageManager.BasicMessages",
+				"name": "Basic Messages",
+				"description": "Shows how to create messages on the frontend and display them afterwards. This can be used for form validation on the frontend."
+			},
+			{
+				"id": "sap.ui.core.sample.MessageManager.BasicODataMessages",
+				"name": "Basic OData Messages",
+				"description": "Uses the MockServer to simulate an OData response containing different types of server side messages (error, warning, info, success)."
+			},
+			{
+				"id": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp",
+				"name": "OData Messages Component",
+				"description": "Shows how to handle OData responses containing server side messages in component based apps. Also illustrates how the sap-message header works."
+			},
+			{
 				"id": "sap.ui.core.sample.OpaStartup.iStartMyUIComponent",
 				"name": "Starting a UIComponent",
 				"description": "Use this function if you would like to run OPA tests for a single UIComponent (a component which creates entries in the DOM tree)"
@@ -606,6 +686,26 @@
 				"id": "sap.ui.core.sample.OpaGetStarted",
 				"name": "Simulating a simple backend request with OPA5",
 				"description": "This example is complementary to the OPA get started section in the developer guide. It shows how to simulate a simple backend server request with OPA5 and Sinon.JS"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaWithSupportAssistant",
+				"name": "Running OPA tests with Support Assistant checks",
+				"description": "This sample demonstrates how to extend existing OPA test/journey by plugging calls to Support Assistant extension assertions, with different severity and check scope parameters"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaTestLibrary",
+				"name": "Creating and using OPA5 test libraries",
+				"description": "This sample demonstrates how to create and use a simple OPA5 test library"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaMessageToast",
+				"name": "Retrieving message toast elements with OPA5",
+				"description": "This sample demonstrates how to locate message toast elements with OPA5"
+			},
+			{
+				"id": "sap.ui.core.sample.OpaAutoWaitParams",
+				"name": "OPA5 autoWait parameters",
+				"description": "This sample demonstrates how to take advantage of OPA5 autoWait parameters"
 			}
 		]
 	}

@@ -14,6 +14,7 @@
     flex-direction: column;
 	isolation: isolate;
 	z-index: 0;
+	white-space: normal; // BCP: 1780382804
 }
 
 body > .sapUxAPObjectPageLayout,
@@ -50,7 +51,7 @@ body > .sapUxAPObjectPageLayout,
 	position: relative;
 }
 
-.sapUxAPObjectPageContainerNoBar > .sapUxAPObjectPageSection:first-child {
+.sapUxAPObjectPageContainerNoBar > .sapUxAPObjectPageSection:first-child:not(.sapUxAPObjectPageSectionNoTitle) {
 	margin-top:  2rem;
 }
 
@@ -107,6 +108,48 @@ body > .sapUxAPObjectPageLayout,
 	background: @sapUiObjectHeaderBorderColor;
 }
 
+// title hover
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
+  .sapFDynamicPageTitle:hover,
+  &.sapUxAPObjectPageTitleForceHovered .sapFDynamicPageTitle {
+    cursor: pointer;
+  }
+}
+
+/* ============================== */
+/* Toggle Header Visual Indicator */
+/* ============================== */
+.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
+  position: absolute;
+  left: 50%;
+  padding: 0;
+
+  .sapMBtnInner {
+    position: absolute !important;
+    bottom: 0;
+    border-radius: 0 0 0.1875rem 0.1875rem;
+  }
+}
+
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutWithNavigation .sapFDynamicPageToggleHeaderIndicator {
+  bottom: -4.5rem; // -1.5 by default and -3 the height of the AnchorBar
+}
+
+/* Phone */
+.sap-phone {
+  .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutWithNavigation .sapFDynamicPageToggleHeaderIndicator {
+    bottom: -4.25rem; // -1.25 by default and -3 the height of the AnchorBar
+  }
+}
+
+/* Compact */
+.sapUiSizeCompact {
+  .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutWithNavigation .sapFDynamicPageToggleHeaderIndicator {
+    bottom: -3rem; // -1 by default and -2 the height of the AnchorBar
+  }
+}
+
+// footer
 .sapUxAPObjectPageLayout {
 	.sapUxAPObjectPageFooter {
 		position: absolute;
@@ -154,7 +197,6 @@ html[data-sap-ui-animation='on'] .sapUxAPObjectPageLayout {
 	}
 	@keyframes bounceShow {
 		0% {
-			-webkit-transform: translateY(100%);
 			transform: translateY(100%);
 			opacity: 0;
 		}
@@ -176,12 +218,10 @@ html[data-sap-ui-animation='on'] .sapUxAPObjectPageLayout {
 	}
 	@keyframes bounceHide {
 		0% {
-			-webkit-transform: translateY(-5%);
 			transform: translateY(-5%);
 			opacity: 1;
 		}
 		100% {
-			-webkit-transform: translateY(100%);
 			transform: translateY(100%);
 			opacity: 0;
 		}

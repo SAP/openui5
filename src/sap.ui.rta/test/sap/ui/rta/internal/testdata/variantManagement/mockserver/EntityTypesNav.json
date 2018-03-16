@@ -1,0 +1,25 @@
+
+{
+  "d" : {
+    "results": [
+		{
+			"__metadata": {
+				"type": "AdditionalElementsTest.EntityTypeNav"
+			},
+
+			"EntityTypeNav_Property01": "EntityType02Property01Value",
+			"NavProperty" : "Navigated Property-from entity2"
+		},
+		{
+			"__metadata": {
+			  "type": "AdditionalElementsTest.EntityTypeNav"
+			},
+
+			"EntityTypeNav_Property01": "propValue04",
+			"NavProperty" : "Navigated Property-from entity1",
+			"NavTitle01" : "First Title for contained Variant Management",
+			"NavTitle02" : "Second Title for contained Variant Management"
+      	}
+    ]
+  }
+}

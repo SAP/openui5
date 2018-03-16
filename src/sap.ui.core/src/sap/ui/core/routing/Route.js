@@ -32,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 		 * rest as string parameters: "pattern" : ":all*:" - this pattern will define an optional variable that will pass the whole hash as string to the routing events. It may be used to define a catchall route, e. g. the following hashes would match: foo, product/5/3, product/5/detail/3/foo. You can also combine it with the other variables but make sure a variable with a * is the last one.</br>
 		 * </ul>
 		 * @param {boolean} [oConfig.greedy] @since 1.27: default: false - By default only the first route matching the hash, will fire events. If greedy is turned on for a route its events will be fired even if another route has already matched.
-		 * @param {String} [oConfig.parent] @since 1.32 This property contains the information about the route which nests this route in the form: "[componentName:]routeName". The nesting routes pattern will be prefixed to this routes pattern and hence the nesting route also matches if this one matches.
+		 * @param {string} [oConfig.parent] @since 1.32 This property contains the information about the route which nests this route in the form: "[componentName:]routeName". The nesting routes pattern will be prefixed to this routes pattern and hence the nesting route also matches if this one matches.
 		 * @param {string|string[]} [oConfig.target] one or multiple name of targets {@link sap.ui.core.routing.Targets}. As soon as the route matches, the target will be displayed. All the deprecated parameters are ignored, if a target is used.
 		 * @param {string} [oConfig.view] @deprecated since 1.28 - use target.viewName. The name of a view that will be created, the first time this route will be matched. To place the view into a Control use the targetAggregation and targetControl. Views will only be created once per Router.</li>
 		 * @param {string} [oConfig.viewType] @deprecated since 1.28 - use target.viewType. The type of the view that is going to be created. eg: "XML", "JS"</li>
@@ -199,7 +199,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 *  c. the pattern of its nested route. When this occurs, the 'nestedRoute' parameter is set with the instance of nested route.
 			 * </pre>
 			 *
-			 * Please refer to event {@link sap.ui.core.routing.Route#event:patternMatched|patternMatched} for getting notified only when its own pattern is matched with the URL hash not its sub-routes or nested route.
+			 * Please refer to event {@link sap.ui.core.routing.Route#event:patternMatched patternMatched} for getting notified only when its own pattern is matched with the URL hash not its sub-routes or nested route.
 			 *
 			 * @name sap.ui.core.routing.Route#matched
 			 * @event
@@ -224,7 +224,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 			 *            oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
+			 * @param {object} [oListener] Object on which to call the given function. If empty, this route is used.
 			 *
 			 * @return {sap.ui.core.routing.Route} <code>this</code> to allow method chaining
 			 * @public
@@ -281,7 +281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 			 *            oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
+			 * @param {object} [oListener] Object on which to call the given function. If empty, this route is used.
 			 *
 			 * @return {sap.ui.core.routing.Route} <code>this</code> to allow method chaining
 			 * @public
@@ -342,7 +342,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/core/ro
 			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 			 *            oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
+			 * @param {object} [oListener] Object on which to call the given function. If empty, this route is used.
 			 *
 			 * @return {sap.ui.core.routing.Route} <code>this</code> to allow method chaining
 			 * @public

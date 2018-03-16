@@ -69,7 +69,7 @@ sap.ui.require([
 			QUnit.test(sTitle + " : " + oFixture.expression + " --> " + oFixture.result,
 				function (assert) {
 					if (fnInit) {
-						fnInit(this); //call initializer with sandbox
+						fnInit.call(this);
 					}
 					check(assert, oFixture.expression, oFixture.result);
 				}
@@ -80,12 +80,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.base.ExpressionParser", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-		afterEach : function () {
-			this.oLogMock.verify();
 		},
 		/**
 		 * Checks that the code throws an expected error.
@@ -147,6 +144,25 @@ sap.ui.require([
 		assert.strictEqual(oExpression.result, undefined, "no formatter for constant expression");
 		assert.strictEqual(oExpression.constant, 42);
 		assert.strictEqual(oExpression.at, 2);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Parsing a full string with embedded binding", function (assert) {
+		var oExpression;
+
+		function resolveBinding(sInput, iStart) {
+			assert.strictEqual(sInput, " ${A} ");
+			assert.strictEqual(iStart, 2);
+			return {
+				result: {/*bindingInfo*/},
+				at : 5
+			};
+		}
+
+		// code under test
+		oExpression = ExpressionParser.parse(resolveBinding, " ${A} ");
+
+		assert.strictEqual(oExpression.at, 6);
 	});
 
 	//*********************************************************************************************
@@ -264,7 +280,7 @@ sap.ui.require([
 				"odata.fillUriTemplate('http://foo/{t},{m}', {t: ${/mail}, 'm': ${/tel}})",
 				result: "http://foo/mail,tel" }
 		],
-		function (oSandbox) {
+		function () {
 			var mGlobals = {
 					odata: {
 						fillUriTemplate: function (sTemplate, mParameters) {
@@ -290,7 +306,7 @@ sap.ui.require([
 				fnOriginalParse = ExpressionParser.parse;
 
 			//use test globals in expression parser
-			oSandbox.stub(ExpressionParser, "parse",
+			this.mock(ExpressionParser).expects("parse").callsFake(
 				function (fnResolveBinding, sInput, iStart) {
 					return fnOriginalParse.call(null, fnResolveBinding, sInput, iStart, mGlobals);
 				}
@@ -379,6 +395,9 @@ sap.ui.require([
 	checkFixtures("odata fillUriTemplate", [{
 		expression: "{=odata.fillUriTemplate('http://foo.com/{p1,p2}', {'p1': 'v1', 'p2': 'v2'})}",
 		result: "http://foo.com/v1,v2"
+	}, {
+		expression: "{=odata.fillUriTemplate('http://foo.com/p1,p2')}",
+		result: "http://foo.com/p1,p2"
 	}]);
 
 	//*********************************************************************************************

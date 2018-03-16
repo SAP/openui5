@@ -213,6 +213,35 @@
 			});
 
 
+			QUnit.test("ignore null parameters", function(assert) {
+				try {
+					jQuery.sap.includeScript("testdata/dummy.js", null);
+					assert.ok(true, "No exception occurs when using null as parameter.");
+				} catch (ex) {
+					assert.ok(false, "No exception must occur when using null as parameter!");
+				}
+			});
+
+
+			QUnit.test("custom attributes (immutable)", function(assert) {
+
+				var done = assert.async();
+				var mAttributes = {
+					"data-sap-ui-attr": "attrval"
+				};
+
+				jQuery.sap.includeScript({
+					url: "testdata/dummy.js",
+					id : "myscript-immutable",
+					attributes: mAttributes
+				}).then(function() {
+					assert.notOk(mAttributes.id, "attributes should not be modified");
+					done();
+				});
+
+			});
+
+
 			//****************************************************
 			// includeStylesheet tests
 			//****************************************************
@@ -416,6 +445,106 @@
 					done();
 				}).catch(function(ex) {
 					assert.ok(false, "includeStyleSheet must not fail here: " + ex);
+					done();
+				});
+
+			});
+
+
+			QUnit.test("ignore null parameters", function(assert) {
+				try {
+					jQuery.sap.includeStyleSheet("testdata/testEmpty.css", null);
+					assert.ok(true, "No exception occurs when using null as parameter.");
+				} catch (ex) {
+					assert.ok(false, "No exception must occur when using null as parameter!");
+				}
+			});
+
+
+			QUnit.test("FOUC marker", function(assert) {
+				function getHrefForUrl(sUrl) {
+					return new URI(sUrl).absoluteTo(document.location).query("").toString();
+				}
+				var done = assert.async();
+				jQuery.sap.includeStyleSheet({
+					url: "testdata/testA.css",
+					id: "mylink-fouc",
+					attributes: {
+						"data-sap-ui-foucmarker": "mylink-fouc"
+					}
+				}).then(function() {
+					return jQuery.sap.includeStyleSheet({
+						url: "testdata/testB.css",
+						id: "mylink-fouc"
+					});
+				}).then(function() {
+					// due to the FOUC marker the old stylesheet should still be in the head
+					// and the the new link should be added before the old link
+					var oLinkA = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']")[0];
+					assert.notOk(oLinkA.hasAttribute("id"), "The id attribute has been removed from the old link.");
+					assert.equal(oLinkA.parentNode, document.head, "Old link is still in the head.");
+					assert.equal(oLinkA.href, getHrefForUrl("testdata/testA.css"), "Href of old link is correct.");
+					var oLinkB = document.getElementById("mylink-fouc");
+					assert.equal(oLinkB.parentNode, document.head, "New link has been added into the head.");
+					assert.equal(oLinkB.href, getHrefForUrl("testdata/testB.css"), "Href of new link is correct.");
+					assert.equal(oLinkA.previousSibling, oLinkB, "New link has been added before the old link.");
+					oLinkA.parentNode.removeChild(oLinkA);
+					return jQuery.sap.includeStyleSheet({
+						url: "testdata/testA.css",
+						id: "mylink-fouc"
+					});
+				}).then(function() {
+					// Counter check to validate the proper removal of the old link without the marker
+					var oLinkA = document.getElementById("mylink-fouc");
+					assert.equal(oLinkA.parentNode, document.head, "New link has been added into the head.");
+					assert.equal(oLinkA.href, getHrefForUrl("testdata/testA.css"), "Href of new link is correct.");
+					var oLinkB = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']")[0];
+					assert.notOk(oLinkB, "Old link has been removed.");
+					oLinkA.parentNode.removeChild(oLinkA);
+					done();
+				});
+			});
+
+
+			QUnit.test("FOUC marker (same URL)", function(assert) {
+				function getHrefForUrl(sUrl) {
+					return new URI(sUrl).absoluteTo(document.location).query("").toString();
+				}
+				var done = assert.async();
+				jQuery.sap.includeStyleSheet({
+					url: "testdata/testA.css",
+					id: "mylink-fouc",
+					attributes: {
+						"data-sap-ui-foucmarker": "mylink-fouc"
+					}
+				}).then(function() {
+					jQuery.sap.includeStyleSheet("testdata/testA.css", "mylink-fouc");
+				}).then(function() {
+					// ensure to not mark the link with the foucmarker if not a new link is added
+					var aFOUCLinks = document.querySelectorAll("link[data-sap-ui-foucmarker='mylink-fouc']");
+					assert.equal(aFOUCLinks.length, 0, "The FOUC marker should have been removed from the link.");
+					var oLink = document.getElementById("mylink-fouc");
+					assert.equal(oLink.parentNode, document.head, "Link is still included in the head.");
+					assert.equal(oLink.href, getHrefForUrl("testdata/testA.css"), "Href of link is correct.");
+					oLink.parentNode.removeChild(oLink);
+					done();
+				});
+			});
+
+
+			QUnit.test("custom attributes (immutable)", function(assert) {
+
+				var done = assert.async();
+				var mAttributes = {
+					"data-sap-ui-attr": "attrval"
+				};
+
+				jQuery.sap.includeStyleSheet({
+					url: "testdata/testA.css",
+					id : "mylink-immutable",
+					attributes: mAttributes
+				}).then(function() {
+					assert.notOk(mAttributes.id, "attributes should not be modified");
 					done();
 				});
 

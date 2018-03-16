@@ -298,7 +298,14 @@
 
 		app.addPage(page).placeAt("content");
 
-		QUnit.module("Initial Check");
+		QUnit.module("Initial Check", {
+			beforeEach : function () {
+				sinon.config.useFakeTimers = true;
+			},
+			afterEach : function () {
+				sinon.config.useFakeTimers = false;
+			}
+		});
 
 		QUnit.test("Initialization", function(assert) {
 			assert.ok(!jQuery.sap.domById("oTableSelectDialog"), "TableSelectDialog is not rendered before it's ever opened.");
@@ -322,7 +329,36 @@
 
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(oTableSelectDialog._oTable.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
+			assert.strictEqual(oTableSelectDialog._oDialog.getBusyIndicatorDelay(), iDelay, 'The delay value of dialog should be ' + iDelay);
 			assert.strictEqual(oTableSelectDialog.getBusyIndicatorDelay(), iDelay, 'The delay value should be ' + iDelay);
+		});
+
+		QUnit.test("setBusy propagation test", function(assert) {
+			var iDelay = 10;
+			oTableSelectDialog.setBusyIndicatorDelay(iDelay);
+			oTableSelectDialog.open();
+			oTableSelectDialog.setBusy(true);
+
+			this.clock.tick(50);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(oTableSelectDialog.getBusy(), true, 'The Dialog should be in busy state');
+
+			this.clock.tick(1000);
+			oTableSelectDialog.setBusy(false);
+			assert.strictEqual(oTableSelectDialog.getBusy(), false, 'The Dialog should not be in busy state');
+		});
+
+		QUnit.test("setBusy should disable the SearchField", function(assert) {
+			oTableSelectDialog.open();
+			oTableSelectDialog.setBusy(true);
+			sap.ui.getCore().applyChanges();
+
+			var searchFieldEnabled = oTableSelectDialog._oSearchField.getEnabled();
+			assert.strictEqual(searchFieldEnabled, false, 'The SearchField should be disabled');
+
+			oTableSelectDialog.setBusy(false);
+			searchFieldEnabled = oTableSelectDialog._oSearchField.getEnabled();
+			assert.strictEqual(searchFieldEnabled, true, 'The SearchField should be enabled');
 		});
 
 		QUnit.module("Bindings Check");
@@ -498,11 +534,11 @@
 			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
 			var aItems = oTable.getItems();
 			aItems[2].setSelected(true);
-			assert.equal(aItems[0].getModeControl().getSelected(), false, "SingleSelection: Item 0 should not be selected");
-			assert.equal(aItems[1].getModeControl().getSelected(), false, "SingleSelection: Item 1 should not be selected");
-			assert.equal(aItems[2].getModeControl().getSelected(), true, "SingleSelection: Item 2 should be selected");
-			assert.equal(aItems[3].getModeControl().getSelected(), false, "SingleSelection: Item 3 should not be selected");
-			assert.equal(aItems[4].getModeControl().getSelected(), false, "SingleSelection: Item 4 should not be selected");
+			assert.equal(aItems[0].getSelected(), false, "SingleSelection: Item 0 should not be selected");
+			assert.equal(aItems[1].getSelected(), false, "SingleSelection: Item 1 should not be selected");
+			assert.equal(aItems[2].getSelected(), true, "SingleSelection: Item 2 should be selected");
+			assert.equal(aItems[3].getSelected(), false, "SingleSelection: Item 3 should not be selected");
+			assert.equal(aItems[4].getSelected(), false, "SingleSelection: Item 4 should not be selected");
 			oTable.fireSelect({ listItem : aItems[2] });
 		});
 
@@ -670,6 +706,65 @@
 			oButton1.firePress();
 			assert.equal(oTableSelectDialog1._oTable.getInfoToolbar().$().attr("aria-live"), "polite", "The aria-live attribute is set to polite");
 			oTableSelectDialog1._oCancelButton.firePress()
+		});
+
+		/********************************************************************************/
+		QUnit.module("oData v4 support");
+		/********************************************************************************/
+
+		QUnit.test("GetSelectedContexts", function(assert) {
+			oTableSelectDialog1.open();
+			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+
+			var fnTableGetSelectedContexts = sinon.spy(oTable, "getSelectedContexts");
+
+			oTableSelectDialog1._fireConfirmAndUpdateSelection();
+			assert.ok(!fnTableGetSelectedContexts.called, "getSelectedContexts() is no longer called by _fireConfirmAndUpdateSelection()");
+
+			oTableSelectDialog1._oDialog.close();
+
+			oTableSelectDialog1._fireConfirmAndUpdateSelection();
+			assert.ok(!fnTableGetSelectedContexts.called, "getSelectedContexts() is no longer called by _fireConfirmAndUpdateSelection()");
+		});
+
+
+		QUnit.module("OpenClose", {
+			beforeEach : function () {
+				sinon.config.useFakeTimers = true;
+			},
+			afterEach : function () {
+				sinon.config.useFakeTimers = false;
+			}
+		});
+
+		QUnit.test("LiveSearchUpdates", function(assert) {
+			oTableSelectDialog1.open();
+
+			var searchField = oTableSelectDialog1._oSearchField;
+			searchField.setValue('m');
+			searchField.fireLiveChange({newValue: "m"});
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			var oTable = sap.ui.getCore().byId("oTableSelectDialog1-table");
+
+			assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
+
+			oTableSelectDialog1._fireConfirmAndUpdateSelection();
+			oTableSelectDialog1._oDialog.close();
+
+			oTableSelectDialog1.open();
+			searchField.fireLiveChange({newValue: ""});
+			searchField.fireLiveChange({newValue: "m"});
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.equal(oTable.getItems().length, 3, 'filtered items are ok');
+
+			oTableSelectDialog1._oDialog.close();
+			oTableSelectDialog1._fireConfirmAndUpdateSelection();
 		});
 
 	</script>

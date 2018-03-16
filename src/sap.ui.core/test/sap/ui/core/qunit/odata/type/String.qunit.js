@@ -11,19 +11,16 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, FormatException, ParseException, ValidateException, ODataType, StringType,
 		TestUtils) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0*/
+	/*global QUnit */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.String", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -34,7 +31,17 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is an ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.String", "type name");
 		assert.strictEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "default constraints");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new StringType(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
@@ -61,7 +68,7 @@ sap.ui.require([
 		{maxLength : 0, warning : "Illegal maxLength: 0"}
 	].forEach(function (oFixture, i) {
 		QUnit.test("constraints error #" + i, function (assert) {
-			var oType = new StringType();
+			var oType;
 
 			this.oLogMock.expects("warning")
 				.withExactArgs(oFixture.warning, null, "sap.ui.model.odata.type.String");
@@ -144,6 +151,13 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("validate without length", function (assert) {
+		var oType = new StringType({}, {});
+
+		oType.validateValue("ABC");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("nullable", function (assert) {
 		var that = this;
 
@@ -182,7 +196,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setConstraints w/ strings", function (assert) {
-		var oType = new StringType();
+		var oType;
 
 		oType = new StringType({}, {nullable : "true", maxLength : "10"});
 		assert.deepEqual(oType.oConstraints, {maxLength : 10});
@@ -209,7 +223,7 @@ sap.ui.require([
 				: {maxLength : 7}, "constructor test with maxLength #" + i);
 		});
 		// check invalid values for isDigitSequence constraint
-		["foo", 1, 0, null].forEach(function (vIsDigitSequence, i) {
+		["foo", 1, 0, null].forEach(function (vIsDigitSequence) {
 			that.oLogMock.expects("warning").withExactArgs("Illegal isDigitSequence: "
 				+ vIsDigitSequence, null, "sap.ui.model.odata.type.String");
 			oType = new StringType({}, {isDigitSequence : vIsDigitSequence});

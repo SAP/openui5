@@ -7,6 +7,9 @@ sap.ui.define(['sap/ui/commons/Button', 'sap/ui/commons/TextView', 'sap/ui/core/
 		getControllerName : function(){
 			return "samples.components.ext.sap.Sub4";
 		},
+
+		async: true,
+
 		createContent : function(oController) {
 			var that = this;
 			var ext1, ext2, ext3, ext4, ext5;

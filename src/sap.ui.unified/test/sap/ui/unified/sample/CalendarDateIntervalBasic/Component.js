@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.unified.sample.CalendarDateIntervalBasic.Component", {
 
 		metadata : {
-			rootView : "sap.ui.unified.sample.CalendarDateIntervalBasic.CalendarDateIntervalBasic",
+			rootView : {
+				"viewName": "sap.ui.unified.sample.CalendarDateIntervalBasic.CalendarDateIntervalBasic",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.ui.unified",

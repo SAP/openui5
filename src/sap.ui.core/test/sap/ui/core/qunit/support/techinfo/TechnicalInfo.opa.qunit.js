@@ -16,12 +16,13 @@ sap.ui.require([
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/matchers/PropertyStrictEquals",
 	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/test/matchers/I18NText"
-], function (Device, Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText) {
+	"sap/ui/test/matchers/I18NText",
+	"sap/ui/model/resource/ResourceModel"
+], function (Device, Opa5, opaTest, Press, EnterText, PropertyStrictEquals, Ancestor, I18NText, ResourceModel) {
 	"use strict";
 
-	var sTestPageURL = "TechnicalInfoTestbench.html";
-	var sOpenUI5BetaKey = "https://openui5beta.hana.ondemand.com/resources/sap/ui/support/";
+	var sTestPageURL = "TechnicalInfoTestbench.html",
+		sOpenUI5BetaKey = "https://openui5beta.hana.ondemand.com/resources/sap/ui/support/";
 
 	Opa5.extendConfig({
 		autoWait : true
@@ -227,6 +228,20 @@ sap.ui.require([
 						}
 					});
 				},
+				iPressStartSupportAssistantButton : function () {
+					return this.waitFor({
+						id : "technicalInfoDialog--Dialog",
+						success : function () {
+							return this.waitFor({
+								id : "technicalInfoDialog--startSupportAssistantButton",
+								actions : new Press(),
+								success : function () {
+									Opa5.assert.ok(true, "Pressed the support assistant start button");
+								}
+							});
+						}
+					});
+				},
 				iOpenSupportAssistantSettings: function () {
 					return this.waitFor({
 						id : "technicalInfoDialog--Dialog",
@@ -293,7 +308,11 @@ sap.ui.require([
 							return this.waitFor({
 								controlType : "sap.m.Link",
 								matchers: [
-									new Ancestor(oDialog)
+									new Ancestor(oDialog),
+									new I18NText({
+										propertyName : "text",
+										key: "TechInfo.DebugSourcesModules.Link"
+									})
 								],
 								actions : new Press(),
 								success : function () {
@@ -377,6 +396,28 @@ sap.ui.require([
 							});
 						}
 					});
+				},
+				iEnterCustomBootstrapUrl: function (sValue) {
+					return this.waitFor({
+						id : "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						actions : new EnterText({
+							text: sValue
+						}),
+						success : function () {
+							Opa5.assert.ok(true, "Entered the custom debug value " + sValue);
+						}
+					});
+				},
+				iCloseThePopup: function () {
+					return this.waitFor({
+						id : "technicalInfoDialogAssistantPopover--Popover",
+						actions : function (oPopover) {
+							oPopover.close();
+						},
+						success : function () {
+							Opa5.assert.ok(true, "Popopver is closed.");
+						}
+					});
 				}
 			},
 			assertions: {
@@ -396,6 +437,39 @@ sap.ui.require([
 						matchers: new PropertyStrictEquals({name: "selectedKey", value: sKey}),
 						success: function () {
 							Opa5.assert.ok(true, "Item with key is selected: " + sKey);
+						}
+					});
+				},
+				theCustomBootstrapOptionIsInState: function (sState) {
+					return this.waitFor({
+						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						autoWait: false,
+						matchers: new PropertyStrictEquals({name: "valueState", value: sState}),
+						success: function () {
+							Opa5.assert.ok(true, "The bootstrap option is in " + sState);
+						}
+					});
+				},
+				theErrorMessageIsCorrect: function () {
+					return this.waitFor({
+						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						autoWait: false,
+						matchers: new I18NText({
+							propertyName : "valueStateText",
+							key: "TechInfo.SupportAssistantConfigPopup.URLValidationMessage"
+						}),
+						success: function () {
+							Opa5.assert.ok(true, "The bootstrap option has correct value state message");
+						}
+					});
+				},
+				theMessageIs: function (sMessage) {
+					return this.waitFor({
+						id: "technicalInfoDialogAssistantPopover--customBootstrapURL",
+						autoWait: false,
+						matchers: new PropertyStrictEquals({name: "valueStateText", value: sMessage}),
+						success: function () {
+							Opa5.assert.ok(true, "The message is correct");
 						}
 					});
 				}
@@ -432,6 +506,7 @@ sap.ui.require([
 					return this.waitFor({
 						id : "TechnicalInfoDialogDebugModules--tree",
 						actions : function(oTree) {
+							oTree.expandToLevel(3);
 							var aNodePaths = sWhich.split("/"),
 								oRootContext = oTree.getItems()[0].getItemNodeContext(),
 								oSubContext = oRootContext,
@@ -539,9 +614,16 @@ sap.ui.require([
 				theCustomDebugValueShouldBe: function (sValue) {
 					return this.waitFor({
 						id : "TechnicalInfoDialogDebugModules--customDebugValue",
-						matchers: new PropertyStrictEquals({name: "value", value: sValue}),
-						success : function () {
-							Opa5.assert.ok(true, "The custom debug value is: " + sValue);
+						success : function (sCustomDebugValue) {
+							if (sCustomDebugValue) {
+								var modules = sValue.split(",");
+								for (var i = 0; i < modules.length; i++) {
+									var bFound = sCustomDebugValue.getValue().indexOf(modules[i]) !== -1;
+									Opa5.assert.ok(bFound, "The custom debug value contains: " + modules[i]);
+								}
+							} else {
+								Opa5.assert.ok(false, "customDebugValue is empty");
+							}
 						}
 					});
 				},
@@ -664,23 +746,60 @@ sap.ui.require([
 
 		// Assert
 		Then.onTheConfigDialog.theStandardBootstrapOptionIsSelected(sOpenUI5BetaKey);
+		Then.iTeardownMyAppFrame();
 	});
 
-	opaTest("Should keep the standard option if custom option is set without custom url", function(Given, When, Then) {
-		// Act
-		When.onTheConfigDialog.iSelectBootstrapOption("custom");
-
+	opaTest("Should open the support assistant setting when a invalid custom url is entered.", function(Given, When, Then) {
 		// Arrange
-		Then.iTeardownMyAppFrame();
-		Then.iStartMyAppInAFrame(sTestPageURL);
+		When.iStartMyAppInAFrame(sTestPageURL);
 		When.anywhere.iPressCtrlAltShiftP();
 		Then.anywhere.iShouldSeeTheTechnicalInformationDialog();
 		When.onTheDialog.iOpenSupportAssistantSettings();
 		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
+		When.onTheConfigDialog.iSelectBootstrapOption("custom").
+		and.iEnterCustomBootstrapUrl("invalidCustomUrl");
+		// Assert
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("Error").
+		and.theErrorMessageIsCorrect();
+		When.onTheDialog.iPressTheCloseButton();
+		When.anywhere.iPressCtrlAltShiftP();
+		Then.anywhere.iShouldSeeTheTechnicalInformationDialog();
+
+		// Act
+		When.onTheDialog.iPressStartSupportAssistantButton();
 
 		// Assert
-		Then.onTheConfigDialog.theBootstrapOptionIsInTheRightState("custom", false).
-		and.theBootstrapOptionIsInTheRightState("standard", true);
+		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("Error").
+		and.theErrorMessageIsCorrect();
+	});
+
+	opaTest("Should show error when a valid syntax's is provided", function(Given, When, Then) {
+		// Act
+		When.onTheConfigDialog.iEnterCustomBootstrapUrl(sOpenUI5BetaKey);
+
+		//Assert
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("None");
+	});
+
+	opaTest("Should show error when trying to start support assistant with empty custom bootstrap URL", function(Given, When, Then) {
+		var oI18nModel = new ResourceModel({
+			bundleName: "sap.ui.core.messagebundle"
+		});
+		var sErrorForResourceNotFound = oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.SupportAssistantNotFound") +
+			oI18nModel.getProperty("TechInfo.SupportAssistantConfigPopup.ErrorNotFound");
+
+		// Arrange
+		When.onTheConfigDialog.iEnterCustomBootstrapUrl("").iCloseThePopup();
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("None");
+
+		// Act
+		When.onTheDialog.iPressStartSupportAssistantButton();
+
+		// Assert
+		Then.onTheDialog.iShouldSeeTheSupportAssistantConfigurationDialog();
+		Then.onTheConfigDialog.theCustomBootstrapOptionIsInState("Error").
+		and.theMessageIs(sErrorForResourceNotFound);
 	});
 
 	QUnit.module("Debug Modules Configuration");
@@ -698,8 +817,8 @@ sap.ui.require([
 
 		// Assert
 		Then.onTheModuleDialog.theCustomDebugValueShouldBe(bDebug.toString()).
-			and.theTreeNodeIsSelected("All", bDebug).
-			and.theSelectedModulesShouldBe(bDebug ? 1 : 0);
+		and.theTreeNodeIsSelected("All", bDebug).
+		and.theSelectedModulesShouldBe(bDebug ? 1 : 0);
 	});
 
 	opaTest("Should apply a custom debug configuration selected in the tree", function(Given, When, Then) {
@@ -712,12 +831,11 @@ sap.ui.require([
 
 		// Act
 		When.onTheModuleDialog.iSelectATreeNode("sap/ui").
-			and.iSelectATreeNode("sap/m/Button.js").
-			and.iSelectATreeNode("sap/m/Text.js");
+		and.iSelectATreeNode("sap/m/Button.js");
 
 		// Assert
-		Then.onTheModuleDialog.theCustomDebugValueShouldBe("sap/ui/,sap/m/Button.js,sap/m/Text.js").
-			and.theSelectedModulesShouldBe(3);
+		Then.onTheModuleDialog.theCustomDebugValueShouldBe("sap/ui/,sap/m/Button.js").
+		and.theSelectedModulesShouldBe(2);
 	});
 
 	opaTest("Should apply a custom string debug configuration entered in the input field", function(Given, When, Then) {
@@ -736,8 +854,8 @@ sap.ui.require([
 
 		// Assert
 		Then.onTheModuleDialog.theCustomDebugValueShouldBe("false").
-			and.theTreeNodeIsSelected("All", false).
-			and.theSelectedModulesShouldBe(0);
+		and.theTreeNodeIsSelected("All", false).
+		and.theSelectedModulesShouldBe(0);
 	});
 
 	opaTest("Should apply a custom boolean debug configuration entered in the input field", function(Given, When, Then) {
@@ -771,7 +889,7 @@ sap.ui.require([
 
 		// Assert
 		Then.anywhere.iShouldSeeTheTechnicalInformationDialog().
-			and.iTeardownMyAppFrame();
+		and.iTeardownMyAppFrame();
 	});
 
 	QUnit.start();

@@ -3,9 +3,17 @@
  */
 
 // Provides class sap.ui.dt.plugin.ElementMover.
-sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/OverlayUtil',
-		'sap/ui/dt/OverlayRegistry'], function(ManagedObject, ElementUtil, OverlayUtil,
-		OverlayRegistry) {
+sap.ui.define([
+	'sap/ui/base/ManagedObject',
+	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/OverlayUtil',
+	'sap/ui/dt/OverlayRegistry'
+], function
+(	ManagedObject,
+	ElementUtil,
+	OverlayUtil,
+	OverlayRegistry
+) {
 	"use strict";
 
 	/**
@@ -121,12 +129,23 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 	/**
 	 * @protected
 	 */
-	ElementMover.prototype.checkTargetZone = function(oAggregationOverlay) {
-		if (!oAggregationOverlay.$().is(":visible")) {
+	ElementMover.prototype.checkTargetZone = function(oAggregationOverlay, oOverlay, bOverlayNotInDom) {
+		var oMovedOverlay = oOverlay ? oOverlay : this.getMovedOverlay();
+		var oGeometry = oAggregationOverlay.getGeometry();
+		var bGeometryVisible = oGeometry && oGeometry.size.height > 0 && oGeometry.size.width > 0;
+
+		// this function can get called on overlay registration, when there are no overlays in dom yet. In this case, $().is(":visible") is always false.
+		if ((bOverlayNotInDom && !bGeometryVisible)
+			|| !bOverlayNotInDom && !oAggregationOverlay.$().is(":visible")
+			|| !(oAggregationOverlay.getElement().getVisible && oAggregationOverlay.getElement().getVisible())) {
 			return false;
 		}
-		var oParentElement = oAggregationOverlay.getElementInstance();
-		var oMovedElement = this.getMovedOverlay().getElementInstance();
+		var oParentElement = oAggregationOverlay.getElement();
+		// an aggregation can still have visible = true even if it has been removed from its parent
+		if (!oParentElement.getParent()){
+			return false;
+		}
+		var oMovedElement = oMovedOverlay.getElement();
 		var sAggregationName = oAggregationOverlay.getAggregationName();
 
 		if (ElementUtil.isValidForAggregation(oParentElement, sAggregationName, oMovedElement)) {
@@ -194,7 +213,7 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 	 * @param  {sap.ui.dt.Overlay} oTargetElementOverlay The overlay of the target element for the move
 	 */
 	ElementMover.prototype.repositionOn = function(oMovedOverlay, oTargetElementOverlay) {
-		var oMovedElement = oMovedOverlay.getElementInstance();
+		var oMovedElement = oMovedOverlay.getElement();
 		var oTargetParentInformation = OverlayUtil.getParentInformation(oTargetElementOverlay);
 		var oAggregationDesignTimeMetadata;
 
@@ -228,8 +247,8 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 	 * @param  {sap.ui.dt.Overlay} oTargetAggregationOverlay The overlay of the target aggregation for the move
 	 */
 	ElementMover.prototype.insertInto = function(oMovedOverlay, oTargetAggregationOverlay) {
-		var oMovedElement = oMovedOverlay.getElementInstance();
-		var oTargetParentElement = oTargetAggregationOverlay.getElementInstance();
+		var oMovedElement = oMovedOverlay.getElement();
+		var oTargetParentElement = oTargetAggregationOverlay.getElement();
 		var oAggregationDesignTimeMetadata;
 
 		var oParentAggregationOverlay = oMovedOverlay.getParentAggregationOverlay();
@@ -241,8 +260,10 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 			oAggregationDesignTimeMetadata = oParentElementOverlay.getDesignTimeMetadata().getAggregation(sAggregationName);
 		}
 
-		var oSourceAggregationOverlay = oMovedOverlay.getParent();
-		if (oTargetAggregationOverlay !== oSourceAggregationOverlay) {
+		var aTargetAggregationItems = ElementUtil.getAggregation(oTargetAggregationOverlay.getElement(), oTargetAggregationOverlay.getAggregationName());
+		var iIndex = aTargetAggregationItems.indexOf(oMovedElement);
+		// Don't do anything when the element is already in the aggregation and is the last element
+		if (!(iIndex > -1 && iIndex === aTargetAggregationItems.length - 1)) {
 			if (oAggregationDesignTimeMetadata && oAggregationDesignTimeMetadata.beforeMove){
 				oAggregationDesignTimeMetadata.beforeMove(oRelevantContainerElement, oMovedElement);
 			}

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ViewSettingsCustomItem.
-sap.ui.define(['jquery.sap.global', './ViewSettingsItem', 'sap/ui/base/ManagedObject', './library'],
-	function(jQuery, ViewSettingsItem, ManagedObject, library) {
+sap.ui.define(['./ViewSettingsItem', 'sap/ui/base/ManagedObject', './library'],
+	function(ViewSettingsItem, ManagedObject, library) {
 	"use strict";
 
 
@@ -126,4 +126,4 @@ sap.ui.define(['jquery.sap.global', './ViewSettingsItem', 'sap/ui/base/ManagedOb
 
 	return ViewSettingsCustomItem;
 
-}, /* bExport= */ true);
+});

@@ -1,22 +1,16 @@
-/*global QUnit*/
+/*global QUnit */
 
-(function () {
+sap.ui.require([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/TableUtils",
+	"sap/ui/model/json/JSONModel"
+], function(qutils, TableUtils, JSONModel) {
 	"use strict";
 
 	var TABLESETTINGS = window.TABLESETTINGS;
-
-	//************************************************************************
-	// Test Code
-	//************************************************************************
-
-	sap.ui.test.qunit.delayTestStart(500);
-
 	var oTable;
-	var oModel = new sap.ui.model.json.JSONModel();
+	var oModel = new JSONModel();
 	oModel.setData({modelData: TABLESETTINGS.listTestData});
-
-	jQuery.sap.require("sap.ui.table.TableUtils");
-	var TableUtils = sap.ui.table.TableUtils;
 
 	function createTable() {
 		function createColumns(oTable) {
@@ -124,36 +118,36 @@
 	}
 
 	QUnit.module("Rendering", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTable();
 		},
-		afterEach: function () {
+		afterEach: function() {
 		}
 	});
 
 	function checkSpan(iCol, iRow, assert, span) {
 		var oColumn = oTable.getColumns()[iCol];
-		var colSpan = parseInt(oTable.$().find('td[data-sap-ui-colindex="' + oColumn.getIndex() + '"]')[iRow].getAttribute("colspan") || 1, 10);
+		var colSpan = parseInt(oTable.$().find("td[data-sap-ui-colindex=\"" + oColumn.getIndex() + "\"]")[iRow].getAttribute("colspan") || 1, 10);
 		span = span || TableUtils.Column.getHeaderSpan(oColumn, iRow);
 		assert.strictEqual(colSpan, span, "Col:" + iCol + ", Row: " + iRow + " - Header has correct span");
 	}
 
-	QUnit.test("Check column spans", function (assert) {
-		oTable.getColumns().forEach(function (oColumn, iCol) {
-			[0, 1].forEach(function (iRow) {
+	QUnit.test("Check column spans", function(assert) {
+		oTable.getColumns().forEach(function(oColumn, iCol) {
+			[0, 1].forEach(function(iRow) {
 				checkSpan(iCol, iRow, assert);
 			});
 		});
 	});
 
 	QUnit.module("Hidden columns with span", {
-		beforeEach: function () {
+		beforeEach: function() {
 			var aCols = oTable.getColumns();
 			aCols[2].setVisible(false);
 			aCols[4].setVisible(false);
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			var aCols = oTable.getColumns();
 			aCols[2].setVisible(true);
 			aCols[4].setVisible(true);
@@ -161,39 +155,38 @@
 		}
 	});
 
-	QUnit.test("Column spans over hidden columns", function (assert) {
+	QUnit.test("Column spans over hidden columns", function(assert) {
 		checkSpan(0, 0, assert, 2);
 		checkSpan(0, 1, assert, 1);
 		checkSpan(1, 1, assert, 1);
 		checkSpan(3, 0, assert, 1);
 	});
 
-
 	QUnit.module("Fixed columns", {
-		beforeEach: function () {
+		beforeEach: function() {
 			oTable.setFixedColumnCount(1);
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 		}
 	});
 
-	QUnit.test("Fixed column count with multiheaders", function (assert) {
+	QUnit.test("Fixed column count with multiheaders", function(assert) {
 		assert.strictEqual(oTable.getFixedColumnCount(), 3, "Multi headers influence fixed column count");
 	});
 
-	QUnit.test("Fixed column count with multiheaders and hidden columns", function (assert) {
+	QUnit.test("Fixed column count with multiheaders and hidden columns", function(assert) {
 		oTable.getColumns()[1].setVisible(false);
 		sap.ui.getCore().applyChanges();
 		assert.strictEqual(oTable.getFixedColumnCount(), 3, "Hidden columns do not influence fixed column count");
 	});
 
-	QUnit.test("Unfreeze menu with multiheaders", function (assert) {
+	QUnit.test("Unfreeze menu with multiheaders", function(assert) {
 		function hasFreezeMenuItem(iCol, unfreeze) {
 			var menu = oTable.getColumns()[iCol].getMenu();
 			menu.destroyAggregation("items", true);
 			menu._addFreezeMenuItem();
-			return menu.getItems()[0].getText() == menu._oResBundle.getText(unfreeze ? "TBL_UNFREEZE" : "TBL_FREEZE");
+			return menu.getItems()[0].getText() == TableUtils.getResourceBundle().getText(unfreeze ? "TBL_UNFREEZE" : "TBL_FREEZE");
 		}
 
 		assert.ok(hasFreezeMenuItem(0, true), "Column 0 has Unfreeze menu");
@@ -207,5 +200,4 @@
 		assert.ok(hasFreezeMenuItem(0, false), "Column 0 has Freeze menu");
 		assert.ok(hasFreezeMenuItem(5, true), "Column 5 has Unfreeze menu");
 	});
-
-}());
+});

@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.ux3.QuickView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/CalloutBase', 'sap/ui/core/delegate/ItemNavigation', './ActionBar', './library'],
-	function(jQuery, CalloutBase, ItemNavigation, ActionBar, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/commons/CalloutBase',
+    'sap/ui/core/delegate/ItemNavigation',
+    './ActionBar',
+    './library',
+    "./QuickViewRenderer"
+],
+	function(jQuery, CalloutBase, ItemNavigation, ActionBar, library, QuickViewRenderer) {
 	"use strict";
 
 

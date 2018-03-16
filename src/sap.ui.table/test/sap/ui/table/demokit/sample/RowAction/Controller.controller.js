@@ -106,7 +106,7 @@ sap.ui.define([
 		},
 
 		switchState : function (sKey) {
-			var oTable = this.getView().byId("table");
+			var oTable = this.byId("table");
 			var iCount = 0;
 			var oTemplate = oTable.getRowActionTemplate();
 			if (oTemplate) {

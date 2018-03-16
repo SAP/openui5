@@ -116,7 +116,7 @@ var AnnotationParser =  {
 	 * @private
 	 */
 	_mergeAnnotation: function(sName, mAnnotations, mTarget) {
-		// Everythin in here must be on Term level, so we overwrite the target with the data from the source
+		// Everything in here must be on Term level, so we overwrite the target with the data from the source
 
 		if (Array.isArray(mAnnotations[sName])) {
 			// This is a collection - make sure it stays one
@@ -139,11 +139,12 @@ var AnnotationParser =  {
 	 *
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata The metadata to be used for interpreting the annotation document
 	 * @param {document} oXMLDoc The annotation document
+	 * @param {string} [sSourceUrl="metadata document"] The source URL
 	 * @returns {object} The parsed annotation object
 	 * @static
 	 * @protected
 	 */
-	parse: function(oMetadata, oXMLDoc) {
+	parse: function(oMetadata, oXMLDoc, sSourceUrl) {
 		var mappingList = {}, schemaNodes, schemaNode,
 		termNodes, oTerms, termNode, sTermType, annotationNodes, annotationNode,
 		annotationTarget, annotationNamespace, annotation, propertyAnnotation, propertyAnnotationNodes,
@@ -158,6 +159,7 @@ var AnnotationParser =  {
 		AnnotationParser._parserData.xmlDocument = AnnotationParser._oXPath.setNameSpace(oXMLDoc);
 		AnnotationParser._parserData.schema = {};
 		AnnotationParser._parserData.aliases = {};
+		AnnotationParser._parserData.url = sSourceUrl ? sSourceUrl : "metadata document";
 
 		// Schema Alias
 		schemaNodes = AnnotationParser._oXPath.selectNodes("//d:Schema", AnnotationParser._parserData.xmlDocument);
@@ -258,8 +260,13 @@ var AnnotationParser =  {
 					}
 
 					if (propertyAnnotationNode.hasChildNodes() === false) {
-						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] =
-							AnnotationParser.enrichFromPropertyValueAttributes({}, propertyAnnotationNode);
+						var o = {};
+						AnnotationParser.enrichFromPropertyValueAttributes(o, propertyAnnotationNode);
+						if (jQuery.isEmptyObject(o)) {
+							// assume DefaultValue="true" for annotation term w/o reading vocabulary
+							o.Bool = "true";
+						}
+						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = o;
 					} else {
 						mappingList.propertyAnnotations[annotation][propertyAnnotation][sTermValue] = AnnotationParser.getPropertyValue(propertyAnnotationNode);
 					}
@@ -466,40 +473,48 @@ var AnnotationParser =  {
 				sNamespace = oMetadataSchema.namespace;
 				aEntityTypes = oMetadataSchema.entityType;
 				aComplexTypes = oMetadataSchema.complexType;
-				for (var j in aEntityTypes) {
+				for (var j = 0; j < aEntityTypes.length; j += 1) {
 					oEntityType = aEntityTypes[j];
 					oExtensions = {};
 					oProperties = {};
-					for (var k in oEntityType.property) {
-						oProperty = oEntityType.property[k];
-						if (oProperty.type.substring(0, sNamespace.length) === sNamespace) {
-							for (var l in aComplexTypes) {
-								if (aComplexTypes[l].name === oProperty.type.substring(sNamespace.length + 1)) {
-									for (k in aComplexTypes[l].property) {
-										oComplexTypeProp = aComplexTypes[l].property[k];
-										oProperties[aComplexTypes[l].name + "/" + oComplexTypeProp.name] = oComplexTypeProp.type;
+					if (oEntityType.property) {
+						for (var k = 0; k < oEntityType.property.length; k += 1) {
+							oProperty = oEntityType.property[k];
+							if (oProperty.type.substring(0, sNamespace.length) === sNamespace) {
+								if (aComplexTypes) {
+									for (var l = 0; l < aComplexTypes.length; l += 1) {
+										if (aComplexTypes[l].name === oProperty.type.substring(sNamespace.length + 1)) {
+											if (aComplexTypes[l].property) {
+												for (var m = 0; m < aComplexTypes[l].property.length; m += 1) {
+													oComplexTypeProp = aComplexTypes[l].property[m];
+													oProperties[aComplexTypes[l].name + "/" + oComplexTypeProp.name] = oComplexTypeProp.type;
+												}
+											}
+										}
 									}
 								}
-							}
-						} else {
-							sPropertyName = oProperty.name;
-							sType = oProperty.type;
-							for (var p in oProperty.extensions) {
-								oPropExtension = oProperty.extensions[p];
-								if ((oPropExtension.name === "display-format") && (oPropExtension.value === "Date")) {
-									sType = "Edm.Date";
-								} else {
-									bExtensions = true;
-									if (!oExtensions[sPropertyName]) {
-										oExtensions[sPropertyName] = {};
+							} else {
+								sPropertyName = oProperty.name;
+								sType = oProperty.type;
+								if (oProperty.extensions) {
+									for (var p = 0; p < oProperty.extensions.length; p += 1) {
+										oPropExtension = oProperty.extensions[p];
+										if ((oPropExtension.name === "display-format") && (oPropExtension.value === "Date")) {
+											sType = "Edm.Date";
+										} else {
+											bExtensions = true;
+											if (!oExtensions[sPropertyName]) {
+												oExtensions[sPropertyName] = {};
+											}
+											if (oPropExtension.namespace && !oExtensions[sPropertyName][oPropExtension.namespace]) {
+												oExtensions[sPropertyName][oPropExtension.namespace] = {};
+											}
+											oExtensions[sPropertyName][oPropExtension.namespace][oPropExtension.name] = oPropExtension.value;
+										}
 									}
-									if (oPropExtension.namespace && !oExtensions[sPropertyName][oPropExtension.namespace]) {
-										oExtensions[sPropertyName][oPropExtension.namespace] = {};
-									}
-									oExtensions[sPropertyName][oPropExtension.namespace][oPropExtension.name] = oPropExtension.value;
 								}
+								oProperties[sPropertyName] = sType;
 							}
-							oProperties[sPropertyName] = sType;
 						}
 					}
 					if (!oPropertyTypes[sNamespace + "." + oEntityType.name]) {
@@ -529,51 +544,52 @@ var AnnotationParser =  {
 	 * @static
 	 * @private
 	 */
-	setEdmTypes: function(aPropertyValues, oProperties, sTarget, oSchema) {
-		var oPropertyValue, sEdmType = '';
-		for (var pValueIndex in aPropertyValues) {
-			if (aPropertyValues[pValueIndex]) {
-				oPropertyValue = aPropertyValues[pValueIndex];
+	setEdmTypes: function(vPropertyValues, oProperties, sTarget, oSchema) {
+
+		function setEdmType(vValueIndex) {
+			var oPropertyValue, sEdmType = '';
+
+			if (vPropertyValues[vValueIndex]) {
+				oPropertyValue = vPropertyValues[vValueIndex];
 				if (oPropertyValue.Value && oPropertyValue.Value.Path) {
 					sEdmType = AnnotationParser.getEdmType(oPropertyValue.Value.Path, oProperties, sTarget, oSchema);
 					if (sEdmType) {
-						aPropertyValues[pValueIndex].EdmType = sEdmType;
+						vPropertyValues[vValueIndex].EdmType = sEdmType;
 					}
-					continue;
-				}
-				if (oPropertyValue.Path) {
+				} else if (oPropertyValue.Path) {
 					sEdmType = AnnotationParser.getEdmType(oPropertyValue.Path, oProperties, sTarget, oSchema);
 					if (sEdmType) {
-						aPropertyValues[pValueIndex].EdmType = sEdmType;
+						vPropertyValues[vValueIndex].EdmType = sEdmType;
 					}
-					continue;
-				}
-				if (oPropertyValue.Facets) {
-					aPropertyValues[pValueIndex].Facets = AnnotationParser.setEdmTypes(oPropertyValue.Facets, oProperties, sTarget, oSchema);
-					continue;
-				}
-				if (oPropertyValue.Data) {
-					aPropertyValues[pValueIndex].Data = AnnotationParser.setEdmTypes(oPropertyValue.Data, oProperties, sTarget, oSchema);
-					continue;
-				}
-				if (pValueIndex === "Data") {
-					aPropertyValues.Data = AnnotationParser.setEdmTypes(oPropertyValue, oProperties, sTarget, oSchema);
-					continue;
-				}
-				if (oPropertyValue.Value && oPropertyValue.Value.Apply) {
-					aPropertyValues[pValueIndex].Value.Apply.Parameters = AnnotationParser.setEdmTypes(oPropertyValue.Value.Apply.Parameters,
+				} else if (oPropertyValue.Facets) {
+					vPropertyValues[vValueIndex].Facets = AnnotationParser.setEdmTypes(oPropertyValue.Facets, oProperties, sTarget, oSchema);
+				} else if (oPropertyValue.Data) {
+					vPropertyValues[vValueIndex].Data = AnnotationParser.setEdmTypes(oPropertyValue.Data, oProperties, sTarget, oSchema);
+				} else if (vValueIndex === "Data") {
+					vPropertyValues.Data = AnnotationParser.setEdmTypes(oPropertyValue, oProperties, sTarget, oSchema);
+				} else if (oPropertyValue.Value && oPropertyValue.Value.Apply) {
+					vPropertyValues[vValueIndex].Value.Apply.Parameters = AnnotationParser.setEdmTypes(oPropertyValue.Value.Apply.Parameters,
 							oProperties, sTarget, oSchema);
-					continue;
-				}
-				if (oPropertyValue.Value && oPropertyValue.Type && (oPropertyValue.Type === "Path")) {
+				} else if (oPropertyValue.Value && oPropertyValue.Type && (oPropertyValue.Type === "Path")) {
 					sEdmType = AnnotationParser.getEdmType(oPropertyValue.Value, oProperties, sTarget, oSchema);
 					if (sEdmType) {
-						aPropertyValues[pValueIndex].EdmType = sEdmType;
+						vPropertyValues[vValueIndex].EdmType = sEdmType;
 					}
 				}
 			}
 		}
-		return aPropertyValues;
+
+		if (Array.isArray(vPropertyValues)) {
+			for (var iValueIndex = 0; iValueIndex < vPropertyValues.length; iValueIndex += 1) {
+				setEdmType(iValueIndex);
+			}
+		} else {
+			for (var sValueIndex in vPropertyValues) {
+				setEdmType(sValueIndex);
+			}
+		}
+
+		return vPropertyValues;
 	},
 
 	/**
@@ -625,11 +641,16 @@ var AnnotationParser =  {
 	 * @private
 	 */
 	enrichFromPropertyValueAttributes: function(mAttributes, oNode) {
-		var mIgnoredAttributes = { "Property" : true, "Term": true, "Qualifier": true };
+		var mIgnoredAttributes = {
+				"Property" : true,
+				"Qualifier": true,
+				"Term": true,
+				"xmlns" : true
+			};
 
 		for (var i = 0; i < oNode.attributes.length; i += 1) {
-			if (!mIgnoredAttributes[oNode.attributes[i].name]) {
-				var sName = oNode.attributes[i].name;
+			var sName = oNode.attributes[i].name;
+			if (!mIgnoredAttributes[sName] && (sName.indexOf("xmlns:") !== 0)) {
 				var sValue = oNode.attributes[i].value;
 
 				// Special case: EnumMember can contain a space separated list of properties that must all have their
@@ -755,7 +776,7 @@ var AnnotationParser =  {
 					vPropertyValue = aPropertyValues;
 				}
 			} else {
-				var oCollectionNodes = xPath.selectNodes("./d:Collection/d:AnnotationPath | ./d:Collection/d:PropertyPath", oDocumentNode);
+				var oCollectionNodes = xPath.selectNodes("./d:Collection/d:AnnotationPath | ./d:Collection/d:NavigationPropertyPath | ./d:Collection/d:PropertyPath", oDocumentNode);
 
 				if (oCollectionNodes.length > 0) {
 					vPropertyValue = AnnotationParser._getTextValues(oCollectionNodes);
@@ -800,11 +821,13 @@ var AnnotationParser =  {
 								vPropertyValue[sNodeName] = vValue;
 							}
 						}
-					} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
-						vPropertyValue = AnnotationParser._getTextValue(oDocumentNode);
-					}
 
-					AnnotationParser.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode);
+						AnnotationParser.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode);
+					} else if (oDocumentNode.nodeName in mTextNodeWhitelist) {
+						vPropertyValue = AnnotationParser._getTextValue(oDocumentNode); // string
+					} else { // e.g. <Term Name="..." Type="...">
+						AnnotationParser.enrichFromPropertyValueAttributes(vPropertyValue, oDocumentNode);
+					}
 				}
 			}
 
@@ -835,7 +858,7 @@ var AnnotationParser =  {
 	 *
 	 * @param {Document} oXmlDocument - The document to use for the node search
 	 * @param {Element} oParentElement - The parent element in which to search
-	 * @param {map} mAlias - The alias map used in {@link ODataAnnotations#replaceWithAlias}
+	 * @param {map} mAlias - The alias map used in {@link #replaceWithAlias}
 	 * @returns {map} The collection of record values and annotations as a map
 	 * @static
 	 * @private
@@ -847,6 +870,20 @@ var AnnotationParser =  {
 		var oAnnotationNodes = xPath.selectNodes("./d:Annotation", oParentElement);
 		var oPropertyValueNodes = xPath.selectNodes("./d:PropertyValue", oParentElement);
 
+		function getAssertText(oParentElement, sWhat, sName) {
+			var oAnnotationTarget,
+				oAnnotationTerm = oParentElement;
+
+			while (oAnnotationTerm.nodeName !== "Annotation") {
+				oAnnotationTerm = oAnnotationTerm.parentNode;
+			}
+			oAnnotationTarget = oAnnotationTerm.parentNode;
+
+			return (sWhat + " '" + sName + "' is defined twice; "
+				+ "Source = " + AnnotationParser._parserData.url
+				+ ", Annotation Target = " + oAnnotationTarget.getAttribute("Target")
+				+ ", Term = " + oAnnotationTerm.getAttribute("Term"));
+		}
 
 		if (oAnnotationNodes.length === 0 && oPropertyValueNodes.length === 0) {
 			mProperties = AnnotationParser.getPropertyValue(oParentElement);
@@ -858,10 +895,7 @@ var AnnotationParser =  {
 				// The following function definition inside the loop will be removed in non-debug builds.
 				/* eslint-disable no-loop-func */
 				jQuery.sap.assert(!mProperties[sTerm], function () {
-					return (
-						"Record contains values that overwrite previous ones; this is not allowed." +
-						" Element: " + xPath.getPath(oParentElement)
-					);
+					return getAssertText(oParentElement, "Annotation", sTerm);
 				});
 				/* eslint-enable no-loop-func */
 
@@ -875,10 +909,7 @@ var AnnotationParser =  {
 				// The following function definition inside the loop will be removed in non-debug builds.
 				/* eslint-disable no-loop-func */
 				jQuery.sap.assert(!mProperties[sPropertyName], function () {
-					return (
-						"Record contains values that overwrite previous ones; this is not allowed." +
-						" Element: " + xPath.getPath(oParentElement)
-					);
+					return getAssertText(oParentElement, "Property", sPropertyName);
 				});
 				/* eslint-enable no-loop-func */
 
@@ -983,7 +1014,6 @@ var AnnotationParser =  {
 		if (iReplacements === undefined) {
 			iReplacements = 1;
 		}
-
 		for (var sAlias in AnnotationParser._parserData.aliases) {
 			if (sValue.indexOf(sAlias + ".") >= 0 && sValue.indexOf("." + sAlias + ".") < 0) {
 				sValue = sValue.replace(sAlias + ".", AnnotationParser._parserData.aliases[sAlias] + ".");

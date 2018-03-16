@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.HorizontalLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['sap/ui/core/Control', './library', "./HorizontalLayoutRenderer"],
+	function(Control, library, HorizontalLayoutRenderer) {
 	"use strict";
 
 
@@ -46,11 +46,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"}
 		},
-		designTime: true
+		designtime: "sap/ui/layout/designtime/HorizontalLayout.designtime"
 	}});
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {object} Current accessibility state of the control
 	 * @protected
 	 */
 	HorizontalLayout.prototype.getAccessibilityInfo = function() {
@@ -60,4 +61,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 
 	return HorizontalLayout;
 
-}, /* bExport= */ true);
+});

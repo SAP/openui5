@@ -116,7 +116,7 @@
 				<subSections>
 					<ObjectPageSubSection id="single-sub-section" title="Goal 1">
 						<actions>
-							<m:Button icon="sap-icon://pull-down" text="show section"/>
+							<m:Button id="single-subsection-show-section" icon="sap-icon://pull-down" text="show section"/>
 							<m:Link text="denise-smith"/>
 						</actions>
 						<blocks>

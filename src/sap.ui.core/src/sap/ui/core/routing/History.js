@@ -114,8 +114,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './HashChanger'],
 		/**
 		 * Determines what the navigation direction for a newly given hash would be
 		 * @param {string} sNewHash the new hash
-		 * @param bHistoryLengthIncreased if the history length has increased compared with the last check
-		 * @param bCheckHashChangerEvents Checks if the hash was set or replaced by the hashchanger. When getDirection is called by an app this has to be false.
+		 * @param {boolean} bHistoryLengthIncreased if the history length has increased compared with the last check
+		 * @param {boolean} bCheckHashChangerEvents Checks if the hash was set or replaced by the hashchanger. When getDirection is called by an app this has to be false.
 		 * @returns {sap.ui.core.routing.HistoryDirection}
 		 * @private
 		 */

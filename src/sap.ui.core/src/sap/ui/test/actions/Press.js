@@ -133,4 +133,4 @@ sap.ui.define(['jquery.sap.global', './Action'], function ($, Action) {
 
 	return Press;
 
-}, /* bExport= */ true);
+});

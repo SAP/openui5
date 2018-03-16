@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.CustomTile.
-sap.ui.define(['jquery.sap.global', './Tile', './library'],
-	function(jQuery, Tile, library) {
+sap.ui.define(['./Tile', './library', './CustomTileRenderer'],
+	function(Tile, library, CustomTileRenderer) {
 	"use strict";
 
 
@@ -24,12 +24,14 @@ sap.ui.define(['jquery.sap.global', './Tile', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.12
+	 * @deprecated As of version 1.50, use {@link sap.m.GenericTile} instead
 	 * @alias sap.m.CustomTile
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var CustomTile = Tile.extend("sap.m.CustomTile", /** @lends sap.m.CustomTile.prototype */ { metadata : {
 
 		library : "sap.m",
+		designtime: "sap/m/designtime/CustomTile.designtime",
 		defaultAggregation : "content",
 		aggregations : {
 
@@ -37,8 +39,7 @@ sap.ui.define(['jquery.sap.global', './Tile', './library'],
 			 * Defines the content of the CustomTile.
 			 */
 			content : {type : "sap.ui.core.Control", multiple : false}
-		},
-		designTime: true
+		}
 	}});
 
 
@@ -46,4 +47,4 @@ sap.ui.define(['jquery.sap.global', './Tile', './library'],
 
 	return CustomTile;
 
-}, /* bExport= */ true);
+});

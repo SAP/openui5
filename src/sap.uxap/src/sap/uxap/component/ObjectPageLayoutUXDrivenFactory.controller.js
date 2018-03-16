@@ -3,14 +3,12 @@
  */
 
 sap.ui.define([
-	"sap/ui/layout/GridData",
+	"jquery.sap.global",
 	"sap/ui/model/BindingMode",
-	"sap/uxap/BlockBase",
-	"sap/uxap/ModelMapping",
 	"sap/ui/model/Context",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/core/mvc/Controller"
-], function (GridData, BindingMode, BlockBase, ModelMapping, Context, ManagedObject, Controller) {
+], function (jQuery, BindingMode, Context, ManagedObject, Controller) {
 	"use strict";
 
 	return Controller.extend("sap.uxap.component.ObjectPageLayoutUXDrivenFactory", {

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.TextArea.
-sap.ui.define(['jquery.sap.global', './TextField', './library'],
-	function(jQuery, TextField, library) {
+sap.ui.define(['jquery.sap.global', './TextField', './library', "./TextAreaRenderer"],
+	function(jQuery, TextField, library, TextAreaRenderer) {
 	"use strict";
 
 	/**

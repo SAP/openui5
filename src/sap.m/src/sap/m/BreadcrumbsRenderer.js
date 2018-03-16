@@ -3,7 +3,7 @@
  */
 
 // Provides default renderer for control sap.m.Breadcrumbs
-sap.ui.define(["sap/m/Breadcrumbs", "sap/m/Text"], function (Class, Text) {
+sap.ui.define(["sap/m/Text"], function (Text) {
 	"use strict";
 
 	/**
@@ -16,7 +16,7 @@ sap.ui.define(["sap/m/Breadcrumbs", "sap/m/Text"], function (Class, Text) {
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
+	 * @param {sap.m.Breadcrumbs} oControl An object representation of the control that should be rendered
 	 */
 	BreadcrumbsRenderer.render = function (oRm, oControl) {
 		var aControls = oControl._getControlsForBreadcrumbTrail(),
@@ -27,7 +27,7 @@ sap.ui.define(["sap/m/Breadcrumbs", "sap/m/Text"], function (Class, Text) {
 		oRm.addClass("sapMBreadcrumbs");
 		oRm.writeClasses();
 		oRm.writeAttribute("role", "navigation");
-		oRm.writeAttributeEscaped("aria-label", Class._getResourceBundle().getText("BREADCRUMB_LABEL"));
+		oRm.writeAttributeEscaped("aria-label", BreadcrumbsRenderer._getResourceBundleText("BREADCRUMB_LABEL"));
 		oRm.write(">");
 
 		if (oSelect.getVisible()) {
@@ -57,6 +57,10 @@ sap.ui.define(["sap/m/Breadcrumbs", "sap/m/Text"], function (Class, Text) {
 			oRm.write(">/</span>");
 		}
 		oRm.write("</li>");
+	};
+
+	BreadcrumbsRenderer._getResourceBundleText = function (sText) {
+		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(sText);
 	};
 
 	return BreadcrumbsRenderer;

@@ -6,8 +6,6 @@
 	xmlns:core="sap.ui.core">
 	<VBox>
 		<f:SimpleForm id="SimpleFormProcessorInfo"
-			minWidth="1024"
-			maxContainerCols="2"
 			editable="false"
 			layout="ResponsiveGridLayout"
 			title="{i18n>detailProcessorTitle}"

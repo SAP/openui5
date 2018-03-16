@@ -19,7 +19,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] Formatting options. For a list of all available options, see {@link sap.ui.core.format.DateFormat.getDateInstance DateFormat}.
 	 * @param {object} [oFormatOptions.source] Additional set of options used to create a second <code>DateFormat</code> object for conversions between
@@ -43,32 +42,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 	});
 
 	Date1.prototype.formatValue = function(oValue, sInternalType) {
+		var oFormat;
+
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 			case "any":
 				if (oValue == null) {
 					return "";
 				}
-				if (this.oInputFormat) {
-					if (this.oFormatOptions.source.pattern == "timestamp") {
-						if (typeof (oValue) != "number") {
-							if (isNaN(oValue)) {
-								throw new FormatException("Cannot format date: " + oValue + " is not a valid Timestamp");
-							} else {
-								oValue = parseInt(oValue, 10);
-							}
-						}
-						oValue = new Date(oValue);
-					} else {
-						if (oValue == "") {
-							return "";
-						}
-						oValue = this.oInputFormat.parse(oValue);
-						if (oValue == null) {
-							throw new FormatException("Cannot format date: " + oValue + " has the wrong format");
-						}
-					}
+
+				if (this.oFormatOptions.source && this.oFormatOptions.source.pattern !== "timestamp" && oValue === "") {
+					return "";
 				}
+
+				oFormat = this.getModelFormat();
+				oValue = oFormat.parse(oValue);
+
 				return this.oOutputFormat.format(oValue);
 			default:
 				throw new FormatException("Don't know how to format Date to " + sInternalType);
@@ -132,11 +121,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat', 'sap/ui/mod
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(this.combineMessages(aMessages), aViolatedConstraints);
 			}
 		}
 	};
 
+	var oTimestampInputFormat = {
+		format: function(oValue) {
+			if (oValue instanceof Date) {
+				return oValue.getTime();
+			}
+			return null;
+		},
+		parse: function(oValue) {
+			if (typeof (oValue) != "number") {
+				if (isNaN(oValue)) {
+					throw new FormatException("Cannot format date: " + oValue + " is not a valid Timestamp");
+				} else {
+					oValue = parseInt(oValue, 10);
+				}
+			}
+			oValue = new Date(oValue);
+			return oValue;
+		}
+	};
+
+	Date1.prototype.getModelFormat = function() {
+		if (this.oInputFormat) {
+			if (this.oFormatOptions.source.pattern == "timestamp") {
+				return oTimestampInputFormat;
+			} else {
+				return this.oInputFormat;
+			}
+		} else {
+			return SimpleType.prototype.getModelFormat.call(this);
+		}
+	};
 	Date1.prototype.setFormatOptions = function(oFormatOptions) {
 		this.oFormatOptions = oFormatOptions;
 		this._createFormats();

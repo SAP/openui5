@@ -1,9 +1,9 @@
 <!DOCTYPE HTML>
-<html>
+<html style="overflow: auto;">
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
-	<title>SAPUI5 Diagnostics</title>
+	<title>UI5 Diagnostics</title>
 	<script>
 	// set bootstrap config which will be used by the script below and the fallback script
 	window["sap-ui-config"] = {
@@ -20,12 +20,16 @@
 	<script src="bootstrapFallback.js"></script>
 </head>
 <body class="sapUiSupportBody">
-<h1 class="sapUiSupportHdr">
-	<img alt="SAPUI5 Logo" src="../mimes/logo/icotxt_white_220x72_blue.png">
-	<div>Diagnostics</div>
-</h1>
-<div class="sapUiSupportCntnt">
-
+<div class="sapUiButtonsContainer sapUiSupportHdr">
+	<div class="title">Diagnostics</div>
+	<button
+		type="button"
+		class="sapUiSupportHelpButton"
+		title="Documentation"
+		onclick="window.open('https://openui5.hana.ondemand.com/#docs/guide/6ec18e80b0ce47f290bc2645b0cc86e6.html', '_blank');" >
+		&#xe1c4;
+	</button>
 </div>
+<div class="sapUiSupportCntnt"></div>
 </body>
 </html>

@@ -3,8 +3,8 @@
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/">
-		<edmx:Include Namespace="com.sap.gateway.default.sap.zui5_epm_sample.v0001" Alias="zui5_epm_sample"/>
+	<edmx:Reference Uri="/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/">
+		<edmx:Include Namespace="com.sap.gateway.default.sap.zui5_epm_sample.v0002" Alias="zui5_epm_sample"/>
 	</edmx:Reference>
 	<edmx:DataServices>
 		<Schema Namespace="com.sap.gateway.f4.h_epm_pd_cats-sh.v0001" Alias="SAP__self">

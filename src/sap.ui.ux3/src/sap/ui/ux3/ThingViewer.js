@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.ux3.ThingViewer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
-	function(jQuery, Control) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    "./ThingViewerRenderer",
+    './library'
+],
+	function(jQuery, Control, ThingViewerRenderer) {
 	"use strict";
 
 
@@ -24,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.9.1
-	 * @deprecated Since version 1.38.
+	 * @deprecated as of version 1.38. There is not an exact replacement.
 	 * @alias sap.ui.ux3.ThingViewer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

@@ -78,7 +78,7 @@
 						</buttons>
 					</RadioButtonGroup>
 
-					<Label text="Number of images to display (Can be a number between 1 and 9)" />
+					<Label text="Number of images to display (In this example up to 9)" />
 					<Input type="Number" value="3" liveChange="onNumberOfImagesChange" width="320px" />
 				</f:content>
 			</f:SimpleForm>

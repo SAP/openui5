@@ -9,7 +9,7 @@ sap.ui.define([
 
 			// create
 			var oMockServer = new MockServer({
-				rootUri: "/destinations/northwind/V2/Northwind/Northwind.svc/"
+				rootUri: "https://services.odata.org/V2/Northwind/Northwind.svc/"
 			});
 
 			var oUriParameters = jQuery.sap.getUriParameters();
@@ -21,7 +21,7 @@ sap.ui.define([
 			});
 
 			// simulate
-			var sPath = jQuery.sap.getModulePath("sap.ui.demo.wt.localService");
+			var sPath = jQuery.sap.getModulePath("sap.ui.demo.walkthrough.localService");
 			oMockServer.simulate(sPath + "/metadata.xml", sPath + "/mockdata");
 
 			// start

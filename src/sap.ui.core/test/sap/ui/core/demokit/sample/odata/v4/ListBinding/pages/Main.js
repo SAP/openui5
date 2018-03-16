@@ -4,9 +4,10 @@
 sap.ui.require([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties"
 ],
-function (Helper, Opa5, Properties) {
+function (Helper, Opa5, Press, Properties) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.ListBinding.Main";
 
@@ -15,6 +16,14 @@ function (Helper, Opa5, Properties) {
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {
+				refreshEmployees : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "refreshEmployees",
+						viewName : sViewName
+					});
+				},
 				selectFirstEmployee : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
@@ -36,7 +45,7 @@ function (Helper, Opa5, Properties) {
 						success : function (oEmployeeEquipments) {
 							var oRow = oEmployeeEquipments.getItems()[iRow];
 							Opa5.assert.strictEqual(
-									oRow.getCells()[1].getValue(),
+									oRow.getCells()[2].getValue(),
 									sEquipmentName,
 									"Equipment name of row " + iRow + " as expected \""
 									+ sEquipmentName + "\"");
@@ -51,7 +60,7 @@ function (Helper, Opa5, Properties) {
 						success : function (oEmployees) {
 							var oRow = oEmployees.getItems()[iRow];
 							Opa5.assert.strictEqual(
-								oRow.getCells()[0].getValue(),
+								oRow && oRow.getCells()[0].getValue(),
 								sEmployeeName,
 								"Name of row " + iRow + " as expected \""
 									+ sEmployeeName + "\"");
@@ -59,22 +68,21 @@ function (Helper, Opa5, Properties) {
 						viewName : sViewName
 					});
 				},
-				checkLog : function () {
-					return this.waitFor({
-						success : function (oControl) {
-							jQuery.sap.log.getLogEntries()
-								.forEach(function (oLog) {
-									var sComponent = oLog.component || "";
-
-									if (Helper.isRelevantLog(oLog)) {
-										Opa5.assert.ok(false,
-											"Unexpected warning or error found: " + sComponent
-											+ " Level: " + oLog.level
-											+ " Message: " + oLog.message );
-									}
-								});
-							Opa5.assert.ok(true, "Log checked");
-						}
+				checkProductImageInRow : function (iRow, sUrl) {
+					var that = this;
+					return that.waitFor({
+						controlType : "sap.m.Table",
+						id : "EmployeeEquipments",
+						success : function (oEmployeeEquipments) {
+							var oRow = oEmployeeEquipments.getItems()[iRow],
+								oImage = oRow.getCells()[1];
+							Opa5.assert.strictEqual(
+								oImage.getSrc(),
+								oImage.getBinding("src").getModel().sServiceUrl + sUrl,
+								"URL of equipment image in row " + iRow + " as expected \""
+								+ sUrl + "\"");
+						},
+						viewName : sViewName
 					});
 				},
 				checkTeamIDInForm : function (sTeamID) {

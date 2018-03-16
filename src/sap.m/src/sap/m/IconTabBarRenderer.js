@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
-	function(jQuery, IconPool) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 /**

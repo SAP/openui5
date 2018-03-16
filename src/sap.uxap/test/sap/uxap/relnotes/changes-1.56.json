@@ -1,0 +1,52 @@
+{
+  "1.56.0": {
+    "data": "undefined NaN",
+    "notes": [
+      {
+        "id": "6d0cb905e31859353f65052e67965cdbf3faa194",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Fixed JS error in removeAggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780191583"
+          }
+        ]
+      },
+      {
+        "id": "a995a9b6f67b31423b2e59a05fb510cfc0cb0cd4",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Select icon aligned with visual design",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880193567"
+          }
+        ]
+      },
+      {
+        "id": "ce322d086b774416f38ca94cf2f1451843e92445",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Inactive focusable header title fixed",
+        "references": []
+      },
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": "QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "6ae6de9d7dbb9817dcc83cc96b44e9f031bc701c",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Flickering issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880028962"
+          }
+        ]
+      }
+    ]
+  }
+}

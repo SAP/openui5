@@ -302,8 +302,8 @@
 
 		this.stub(sap.m.InputBase.prototype, "bShowLabelAsPlaceholder", true);
 		oInput.rerender();
-		oInput.$().find("label").css("display","block");
-		assert.strictEqual(oInput.$().find("label").css("padding-right"), "12px", "Placeholder label has right padding of 12px when value help icon is enabled");
+		oInput.$().find("span").css("display","block");
+		assert.strictEqual(oInput.$().find("span").css("padding-right"), "12px", "Placeholder label has right padding of 12px when value help icon is enabled");
 
 		// event check
 		oInput.getAggregation("_valueHelpIcon").firePress();
@@ -423,6 +423,7 @@
 		assert.ok(oInputVHO.$().hasClass("sapMInputVHO") === true, "Outer div has additional CSS class\"sapMInputVHO\"");
 
 		// Value help event check
+
 		oInputVHO._$input.focus().trigger("tap");
 		this.clock.tick(500);
         assert.strictEqual(spy.callCount, 1, "Value Help Request has been fired and received successfully");
@@ -752,6 +753,7 @@
 
 		var oInput = new sap.m.Input({
 			showSuggestion: true,
+			enabled: true,
 			change: fnCallback
 		});
 
@@ -1663,6 +1665,166 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Tabular Suggestions Show More Button", function(assert) {
+		var oSuggestionData = {
+			tabularSuggestionItems: [
+				{
+					id: "1",
+					name: "Auch ein gutes Ding",
+					qty: "3 EA",
+					limit: "99.00 EUR",
+					price: "17.00 EUR"
+				}, {
+					id: "2",
+					name: "Besser ist das",
+					qty: "1 EA",
+					limit: "20.00 EUR",
+					price: "13.00 EUR"
+				}, {
+					id: "3",
+					name: "Holter-di-polter",
+					qty: "10 EA",
+					limit: "15.00 EUR",
+					price: "12.00 EUR"
+				}, {
+					id: "4",
+					name: "Ha so was",
+					qty: "10 EA",
+					limit: "5.00 EUR",
+					price: "3.00 EUR"
+				}, {
+					id: "5",
+					name: "Hurra ein Produkt",
+					qty: "8 EA",
+					limit: "60.00 EUR",
+					price: "45.00 EUR"
+				}, {
+					id: "6",
+					name: "Hallo du tolles Ding",
+					qty: "2 EA",
+					limit: "40.00 EUR",
+					price: "15.00 EUR"
+				}, {
+					id: "7",
+					name: "Hier sollte ich zuschlagen",
+					qty: "10 EA",
+					limit: "90.00 EUR",
+					price: "55.00 EUR"
+				}, {
+					id: "8",
+					name: "Hohoho",
+					qty: "18 EA",
+					limit: "29.00 EUR",
+					price: "7.00 EUR"
+				}, {
+					id: "9",
+					name: "Holla die Waldfee",
+					qty: "3 EA",
+					limit: "55.00 EUR",
+					price: "30.00 EUR"
+				}, {
+					id: "10",
+					name: "Hau Ruck",
+					qty: "5 EA",
+					limit: "2.00 EUR",
+					price: "1.00 EUR"
+				}]
+		};
+		var tableModel = new sap.ui.model.json.JSONModel();
+		tableModel.setData(oSuggestionData);
+
+		var oTableItemTemplate = new sap.m.ColumnListItem({
+			type: "Active",
+			vAlign: "Middle",
+			cells: [
+				new sap.m.Label({
+					text: "{name}"
+				}),
+				new sap.m.Label({
+					text: "{qty}"
+				}), new sap.m.Label({
+					text: "{limit}"
+				}), new sap.m.Label({
+					text: "{price}"
+				}),
+				new sap.m.Label({
+					text: "{id}"
+				})
+			]
+		});
+
+		var oInput = new sap.m.Input({
+			showSuggestion: true,
+			showTableSuggestionValueHelp: false,
+			suggestionRows: {
+				path: '/tabularSuggestionItems',
+				template: oTableItemTemplate
+			},
+			suggestionColumns: [
+				new sap.m.Column({
+					styleClass: "name",
+					hAlign: "Begin",
+					header: new sap.m.Label({
+						text: "{Name}"
+					})
+				}),
+				new sap.m.Column({
+					hAlign: "Center",
+					styleClass: "qty",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "{Qty}"
+					}),
+					minScreenWidth: "Tablet",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "Center",
+					styleClass: "limit",
+					width: "30%",
+					header: new sap.m.Label({
+						text: "{Value}"
+					}),
+					minScreenWidth: "XXSmall",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					hAlign: "End",
+					styleClass: "price",
+					width: "30%",
+					popinDisplay: "Inline",
+					header: new sap.m.Label({
+						text: "{Price}"
+					}),
+					minScreenWidth: "400px",
+					demandPopin: true
+				}),
+				new sap.m.Column({
+					styleClass: "name",
+					hAlign: "Begin",
+					visible: false,
+					header: new sap.m.Label({
+						text: "{id}"
+					})
+				})
+			]
+		});
+
+		oInput.setModel(tableModel);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.focus().val("Prod").trigger("input");
+
+		this.clock.tick(300);
+
+		assert.ok(!oInput._oSuggestionPopup.getFooter(), "Suggestion Popup doesn't have Toolbar footer");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Tabular Suggestion on Phone", function(assert){
 
 		if (sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 11) {
@@ -1792,6 +1954,9 @@
 			}
 		});
 
+		// set up a spy on the dialog's renderer
+		oDialogRendererSpy = sinon.spy(sap.m.DialogRenderer, "render");
+
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput._$input.focus().trigger("click");
 		this.clock.tick(300);
@@ -1799,10 +1964,6 @@
 		oPopup = oInput._oSuggestionPopup;
 		assert.ok(oPopup instanceof sap.m.Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
-
-
-		// set up a spy on the dialog's renderer
-		oDialogRendererSpy = sinon.spy(sap.m.DialogRenderer, "render");
 
 		oInput._oPopupInput._$input.focus().val("Product").trigger("input");
 		this.clock.tick(400);
@@ -1992,7 +2153,7 @@
 		if (!sap.ui.Device.browser.phantomJS) {
 			assert.strictEqual(oPopup.getContent()[0].$().find("tbody").children(":visible").length, 1, "Suggestions are filtered");
 		}
-		assert.strictEqual(oPopup.getContent()[0].$().find("tbody").find(".name").find("label").html(), oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
+		assert.strictEqual(oPopup.getContent()[0].$().find("tbody").find("tr>td>span" || "tr>td>label")[0].textContent, oSuggestionData.tabularSuggestionItems[1].name, "Product 2 is filtered");
 
 		// TODO: trigger selection with pseudo-events here
 		//oPopup.getContent()[0].getItems()[1].$().trigger("click");
@@ -2379,6 +2540,78 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Selected item from value help is set to the input", function(assert) {
+
+		var oInput = createInputWithSuggestions();
+		oInput.setShowValueHelp(true);
+		oInput.setType("Text");
+		oInput.setTextFormatMode("KeyValue");
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._bUseDialog = true;
+		oInput.setSelectedKey("2");
+		assert.equal(oInput.getDOMValue(), "(2) Item 2", "Selected input value is " + oInput.getDOMValue());
+
+		oInput._bUseDialog = false;
+		oInput.setSelectedKey("3");
+		assert.equal(oInput.getDOMValue(), "(3) Item 3", "Selected input value is " + oInput.getDOMValue());
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Update selected key after bind data is changed", function(assert) {
+		var oModelData = new sap.ui.model.json.JSONModel([{text: "a1"}, {text: "a2"}]),
+			oInput = new sap.m.Input({
+				showSuggestion: true,
+				selectedKey: 'a1',
+				suggestionItems: {
+					path: '/',
+					template: new sap.ui.core.Item({
+						text: '{text}',
+						key: '{text}'
+					})
+				}
+			});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oInput.getValue(), "", "Initially when the input has selected key but no suggestion items it's value has to be empty");
+
+		oInput.setModel(oModelData);
+		assert.equal(oInput.getValue(), "a1", "After a json model is set and one of the items has key that item has to be selected");
+
+		oInput.setSelectedKey("a3");
+		assert.equal(oInput.getValue(), "a1", "After setting new selected key which is not in the list items the value shouldn't change");
+
+		oInput.setValue('');
+		oInput.addSuggestionItem(new sap.ui.core.Item({text: "a3", key: "a3"}));
+
+		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
+
+		oInput.removeAllSuggestionItems();
+		assert.equal(oInput.getValue(), "a3", "The value must be cleared after removing all items");
+
+		oInput.addSuggestionItem(new sap.ui.core.Item({text: "a3", key: "a3"}));
+		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
+
+		oInput.destroySuggestionItems();
+		assert.equal(oInput.getValue(), "a3", "The value must be cleared after destroying all items");
+
+		var oItem = new sap.ui.core.Item({text: "a3", key: "a3"});
+		oInput.addSuggestionItem(oItem);
+		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
+
+		oInput.removeSuggestionItem(oItem);
+		assert.equal(oInput.getValue(), "a3", "The value must be cleared after removing item");
+
+		oItem.destroy();
+		oInput.destroy();
+
+	});
+
 	QUnit.test("Set selection via API", function(assert) {
 		var oInput = createInputWithSuggestions(),
 				fnCallback = this.spy();
@@ -2394,6 +2627,53 @@
 
 		assert.equal(fnCallback.callCount, 0, "change event is not fired");
 		assert.equal(oInput.getSelectedKey(), "2", "selected key is correct");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Set selection before suggestionItems", function(assert) {
+
+		var aSuggestionItems = [
+			new sap.ui.core.ListItem({
+				key: '1',
+				text: '1 Item 1',
+				additionalText: 'Desc 1'
+			}),
+			new sap.ui.core.ListItem({
+				key: '2',
+				text: 'Item 2',
+				additionalText: 'Desc 2'
+			}),
+			new sap.ui.core.ListItem({
+				key: '3',
+				text: 'Item 3',
+				additionalText: 'Desc 3'
+			}),
+			new sap.ui.core.ListItem({
+				key: '4',
+				text: 'Item 4',
+				additionalText: 'Desc 4'
+			}),
+			new sap.ui.core.ListItem({
+				key: '5',
+				text: 'Item 5',
+				additionalText: 'Desc 5'
+			})
+		],
+		oInput = new sap.m.Input({
+			showSuggestion: true,
+			selectedKey: "5",
+			suggestionItems: aSuggestionItems
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		this.clock.tick(50);
+
+		assert.equal(oInput.getSelectedKey(), "5", "selected key is correct");
+
+		assert.equal(oInput.getValue(), "Item 5", "selected key is correct in dom");
 
 		oInput.destroy();
 	});
@@ -2601,6 +2881,70 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Tabular Suggestions - Set selection via keyboard", function(assert) {
+		var oInput = createInputWithTabularSuggestions(),
+				fnChangeCallback = this.spy(),
+				fnSuggestionItemSelectedCallback = this.spy();
+
+		oInput.attachChange(fnChangeCallback);
+		oInput.attachSuggestionItemSelected(fnSuggestionItemSelectedCallback);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._$input.focus().val("Au").trigger("input");
+		this.clock.tick(300);
+
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, "ENTER");
+
+		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
+		assert.equal(fnSuggestionItemSelectedCallback.callCount, 1, "suggestionItemSelected event is fired once");
+		assert.equal(fnChangeCallback.calledAfter(fnSuggestionItemSelectedCallback), true, "change event is called after suggestionItemSelected event");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Tabular Suggestions - Set selection on focus out", function(assert) {
+		var oInput = createInputWithTabularSuggestions(),
+				fnChangeCallback = this.spy(),
+				fnSuggestionItemSelectedCallback = this.spy();
+
+		oInput.attachChange(fnChangeCallback);
+		oInput.attachSuggestionItemSelected(fnSuggestionItemSelectedCallback);
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInput._$input.focus().val("Au").trigger("input");
+		this.clock.tick(300);
+
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, "40"); // bottom (arrow)
+
+		// simulate focus out
+		oInput._oSuggestionPopup.close();
+
+		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
+		assert.equal(fnSuggestionItemSelectedCallback.callCount, 1, "suggestionItemSelected event is fired once");
+		assert.equal(fnChangeCallback.calledAfter(fnSuggestionItemSelectedCallback), true, "change event is called after suggestionItemSelected event");
+
+		oInput.destroy();
+	});
+
+	QUnit.test("Tabular Suggestions - Set selected row filter function", function(assert) {
+		var oInput = createInputWithTabularSuggestions();
+		// Remove the SuggestionRowValidator function for the test.
+		oInput.setSuggestionRowValidator(null);
+		oInput.setSelectedRow(oInput.getSuggestionRows()[0]);
+		oInput.setRowResultFunction(function (oColumnListItem) {
+			return "You chose: " + oColumnListItem.getCells()[0].getText();
+		});
+
+		assert.equal(oInput.getValue(), "You chose: Auch ein gutes Ding", "value should be updated after setting the row result function");
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Tabular Suggestions - Display text formatting", function(assert) {
 		var oInput = createInputWithTabularSuggestions();
 
@@ -2636,6 +2980,8 @@
   		oInputWithDes.setFieldWidth("100px");
   		sap.ui.getCore().applyChanges();
   		assert.equal(oInputWithDes.$().find("input").outerWidth(), "100", "input field has 100px width");
+
+		assert.equal(oInputWithDes.$('Descr').text(), "EUR", "Description ID is set to the correct span");
 
   		oInputWithDes.destroy();
 	});
@@ -2690,6 +3036,93 @@
 		oInput.destroy();
 
 	});
+
+	QUnit.module("Input clone", {
+		beforeEach: function () {
+			this.oTabularInputToClone = createInputWithTabularSuggestions();
+			// Remove the SuggestionRowValidator function for the cloning tests.
+			this.oTabularInputToClone.setSuggestionRowValidator(null);
+			this.oInputToClone = new sap.m.Input("inp2", {
+				showSuggestion: true,
+				suggestionItems: [
+					new sap.ui.core.Item({ text: "Test 1" }),
+					new sap.ui.core.Item({ text: "Test 2" }),
+					new sap.ui.core.Item({ text: "Test 3" })
+				]
+			});
+		},
+		afterEach: function () {
+			this.oTabularInputToClone.destroy();
+			this.oInputToClone.destroy();
+		}
+	});
+
+	QUnit.test("List Suggestions - cloning", function (assert) {
+		var oInputClone  = this.oInputToClone.clone();
+		assert.equal(oInputClone.getSuggestionItems().length, 3, "Should have 3 suggestion items");
+	});
+
+	QUnit.test("Tabular Suggestions - cloning", function (assert) {
+		var oInputClone  = this.oTabularInputToClone.clone();
+
+		assert.equal(oInputClone.getSuggestionRows().length, 10, "Should have 3 suggestion rows");
+		assert.equal(oInputClone.getSuggestionColumns().length, 5, "Should have 4 suggestion columns");
+	});
+
+	QUnit.test("Tabular Suggestions - fnRowResultFilter cloning", function (assert) {
+		var fnCallback = sinon.spy();
+		this.oTabularInputToClone.setRowResultFunction(fnCallback);
+		var oInputClone  = this.oTabularInputToClone.clone();
+
+		assert.equal(fnCallback, oInputClone._fnRowResultFilter, "_fnRowResultFilter should be cloned");
+	});
+
+	QUnit.test("Tabular Suggestions - selectedRow cloning", function (assert) {
+		var fnRowResultFilter = function (oColumnListItem) {
+			return "The selected item: " + oColumnListItem.getCells()[0].getText();
+		};
+		this.oTabularInputToClone.setRowResultFunction(fnRowResultFilter);
+		this.oTabularInputToClone.setSelectedRow(this.oTabularInputToClone.getSuggestionRows()[0]);
+
+		var oInputClone  = this.oTabularInputToClone.clone();
+
+		assert.equal(oInputClone.getValue(), "The selected item: Auch ein gutes Ding", "The selectedRow association should be cloned");
+	});
+
+	QUnit.module("Focus");
+
+	QUnit.test("Value Help Only 'tap' on Phone", function(assert) {
+		var bIsPhone = sap.ui.Device.system.phone;
+		sap.ui.Device.system.phone = true;
+		var dialog = new sap.m.Dialog({
+		});
+
+		var oInputValueHelpOnly = new sap.m.Input({
+			showValueHelp: true,
+			valueHelpOnly:  true,
+			valueHelpRequest: function (oEvent) {
+				dialog.open();
+			}
+		});
+
+		oInputValueHelpOnly.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		oInputValueHelpOnly.ontap();
+		this.clock.tick(1000);
+		sap.ui.getCore().applyChanges();
+
+		dialog.close();
+		this.clock.tick(1000);
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(document.activeElement.id, oInputValueHelpOnly._$input[0].id, 'active element is the input');
+
+		dialog.destroy();
+		oInputValueHelpOnly.destroy();
+		sap.ui.Device.system.phone = bIsPhone;
+	});
+
 </script>
 
 </head>

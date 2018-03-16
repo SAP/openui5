@@ -62,6 +62,7 @@
 			oPDFViewer.setHeight(oHeightInput.getValue());
 			oPDFViewer.setWidth(oWidthInput.getValue());
 			oPDFViewer.setErrorPlaceholderMessage(oErrorMessageInput.getValue());
+			oPDFViewer.setShowDownloadButton(oShowDownloadButtonCheckBox.getSelected());
 		}
 
 		function handleEvent(sKey, sEventType) {
@@ -155,6 +156,9 @@
 			oErrorMessageInput = new sap.m.Input({
 				placeholder: "Custom Error Message"
 			}),
+			oShowDownloadButtonCheckBox = new sap.m.CheckBox({
+				selected: true
+			}),
 			oLoadedEventSelect = new sap.m.Select({
 				items: {
 					path: "settingsData>/EventReactionsCollection",
@@ -209,6 +213,10 @@
 					new sap.m.InputListItem({
 						label: "Custom error Message",
 						content: oErrorMessageInput
+					}),
+					new sap.m.InputListItem({
+						label: "Show download button",
+						content: oShowDownloadButtonCheckBox
 					}),
 					new sap.m.InputListItem({
 						label: "Events"

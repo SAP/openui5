@@ -3,8 +3,25 @@
  */
 
 // Provides control sap.ui.core.Icon.
-sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './InvisibleText', './library'],
-	function(jQuery, Device, Control, IconPool, InvisibleText, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    '../Device',
+    './Control',
+    './IconPool',
+    './InvisibleText',
+    './library',
+    "./IconRenderer",
+    'jquery.sap.keycodes'
+],
+	function(
+	    jQuery,
+		Device,
+		Control,
+		IconPool,
+		InvisibleText,
+		library /* ,jQuerySapKeycodes */,
+		IconRenderer
+	) {
 	"use strict";
 
 	// shortcut
@@ -26,7 +43,6 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.11.1
 	 * @alias sap.ui.core.Icon
@@ -36,6 +52,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 
 		interfaces : ["sap.ui.core.IFormContent"],
 		library : "sap.ui.core",
+		designtime: "sap/ui/core/designtime/Icon.designtime",
 		properties : {
 
 			/**
@@ -147,8 +164,7 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	 * @private
 	 */
 	Icon.prototype[Device.support.touch ? "ontouchstart" : "onmousedown"] = function(oEvent) {
-		if (this.hasListeners("press") || this.hasListeners("tap")) {
-
+		if (this.hasListeners("press")) {
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 		}
@@ -225,7 +241,12 @@ sap.ui.define(['jquery.sap.global', '../Device', './Control', './IconPool', './I
 	 *
 	 * @private
 	 */
-	Icon.prototype[Device.support.touch && !Device.system.desktop ? "ontap" : "onclick"] = function() {
+	Icon.prototype[Device.support.touch && !Device.system.desktop ? "ontap" : "onclick"] = function(oEvent) {
+		if (this.hasListeners("press")) {
+			// mark the event for components that needs to know if the event was handled
+			oEvent.setMarked();
+		}
+
 		this.firePress({/* no parameters */});
 	};
 

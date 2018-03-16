@@ -22,7 +22,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 
 		handleCalendarSelect: function(oEvent) {
 			var oCalendar = oEvent.oSource;
-			var oText = this.getView().byId("selectedDate");
+			var oText = this.byId("selectedDate");
 			var aSelectedDates = oCalendar.getSelectedDates();
 			var oDate;
 			if (aSelectedDates.length > 0 ) {
@@ -34,7 +34,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 		},
 
 		handleShowWeekNumbers: function(oEvent) {
-			var oCalendar = this.getView().byId('calendar');
+			var oCalendar = this.byId('calendar');
 			var bShowWeekNumbers = oEvent.getParameter("state");
 
 			oCalendar.setShowWeekNumbers(bShowWeekNumbers);

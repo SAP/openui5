@@ -15,6 +15,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
+	 * @abstract
 	 * @class
 	 * A layout data base type.
 	 * @extends sap.ui.core.Element
@@ -22,7 +23,6 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.LayoutData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

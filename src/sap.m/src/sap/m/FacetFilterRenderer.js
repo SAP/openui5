@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/InvisibleText"],
+	function(library, Device, InvisibleText) {
 	"use strict";
+
+
+	// shortcut for sap.m.FacetFilterType
+	var FacetFilterType = library.FacetFilterType;
 
 
 	/**
@@ -13,8 +17,6 @@ sap.ui.define(['jquery.sap.global'],
 	 */
 	var FacetFilterRenderer = {
 	};
-	// create ARIA announcements
-	var mAriaAnnouncements = {};
 
 
 	/**
@@ -26,11 +28,11 @@ sap.ui.define(['jquery.sap.global'],
 	FacetFilterRenderer.render = function(oRm, oControl){
 		switch (oControl.getType()) {
 
-		case sap.m.FacetFilterType.Simple:
+		case FacetFilterType.Simple:
 			FacetFilterRenderer.renderSimpleFlow(oRm, oControl);
 			break;
 
-		case sap.m.FacetFilterType.Light:
+		case FacetFilterType.Light:
 			FacetFilterRenderer.renderSummaryBar(oRm, oControl);
 			break;
 		}
@@ -70,7 +72,7 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write(">");
 
 
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 				oRm.renderControl(oControl._getScrollingArrow("left"));
 			}
 			// Render the div for the carousel
@@ -86,7 +88,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.renderControl(oControl.getAggregation("addFacetButton"));
 			}
 			oRm.write("</div>"); // Close carousel div
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 				oRm.renderControl(oControl._getScrollingArrow("right"));
 			}
 
@@ -119,21 +121,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapMFF");
 		oRm.writeClasses();
 		oRm.write(">");
-		var oSummaryBar = oControl.getAggregation("summaryBar");
-
-		// Overrides the Toolbar's method in order to change the role to "button" when the FacetFilter is in "light" mode
-		// and adds "labelledby" info
-		oSummaryBar._writeLandmarkInfo = function (oRm, oCtrl) {
-			var sFacetFilterText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTER_ARIA_FACET_FILTER"),
-				sInvisibleLabelId = new sap.ui.core.InvisibleText({text: sFacetFilterText}).toStatic().getId();
-			oControl._aOwnedLabels.push(sInvisibleLabelId);
-			oRm.writeAccessibilityState(oCtrl, {
-				role: "button",
-				labelledby: sInvisibleLabelId
-			});
-		};
-
-		oRm.renderControl(oSummaryBar);
+		oRm.renderControl(oControl.getAggregation("summaryBar"));
 		oRm.write("</div>");
 	};
 
@@ -150,16 +138,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @protected
 	 */
 	FacetFilterRenderer.getAriaAnnouncement = function(sKey, sBundleText) {
-		if (mAriaAnnouncements[sKey]) {
-			return mAriaAnnouncements[sKey];
-		}
-
-		sBundleText = sBundleText || "FACETFILTER_" + sKey.toUpperCase();
-		mAriaAnnouncements[sKey] = new sap.ui.core.InvisibleText({
-			text : sap.ui.getCore().getLibraryResourceBundle("sap.m").getText(sBundleText)
-		}).toStatic().getId();
-
-		return mAriaAnnouncements[sKey];
+		return InvisibleText.getStaticId("sap.m", sBundleText || "FACETFILTER_" + sKey.toUpperCase());
 	};
 
 
@@ -167,8 +146,8 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Returns the inner aria describedby IDs for the accessibility.
 	 *
-	 * @param {sap.ui.core.Control} oLI an object representation of the control
-	 * @returns {String|undefined}
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {String|undefined} The aria of the inner aria describedby IDs
 	 * @protected
 	 */
 	FacetFilterRenderer.getAriaDescribedBy = function(oControl) {
@@ -186,7 +165,8 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Returns the accessibility state of the control.
 	 *
-	 * @param {sap.ui.core.Control} oLI an object representation of the control
+	 * @param {sap.ui.core.Control} oControl an object representation of the control
+	 * @returns {object} The accessibility state of the control
 	 * @protected
 	 */
 	FacetFilterRenderer.getAccessibilityState = function(oControl) {
@@ -216,7 +196,7 @@ sap.ui.define(['jquery.sap.global'],
 
 			//get current position
 			sPosition = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FACETFILTERLIST_ARIA_POSITION", [(i + 1), iLength]);
-			oAccText = new sap.ui.core.InvisibleText( {text: sFacetFilterText + " " + sPosition}).toStatic();
+			oAccText = new InvisibleText( {text: sFacetFilterText + " " + sPosition}).toStatic();
 			oControl._aOwnedLabels.push(oAccText.getId());
 			oButton.addAriaDescribedBy(oAccText);
 			aNewAriaDescribedBy.push(oAccText.getId());

@@ -1,0 +1,97 @@
+<mvc:View
+		class="sapUiSizeCompact"
+		controllerName="sap.ui.core.sample.odata.v4.ConsumeV2Service.Main"
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:form="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc">
+	<VBox>
+		<form:SimpleForm binding="{/EdmTypesCollection('1')}" layout="ResponsiveGridLayout">
+			<form:title>
+				<core:Title text="Single Entity"/>
+			</form:title>
+			<Button binding="{com.sap.ui5.OData.ResetEdmTypes(...)}" icon="sap-icon://sys-cancel"
+				id="resetEntityButton" press="onResetEntity" text="Reset Entity"
+				tooltip="Reset Entity"/>
+			<Label labelFor="binary" text="Binary"/>
+			<Text id="binary" text="{path : 'Binary', type : 'sap.ui.model.odata.type.String'}"/>
+			<Label labelFor="boolean" text="Boolean"/>
+			<Text id="boolean" text="{Boolean}"/>
+			<Label labelFor="byte" text="Byte"/>
+			<Text id="byte" text="{Byte}"/>
+			<Label labelFor="date" text="Date"/>
+			<Text id="date" text="{Date}"/>
+			<Label labelFor="dateTime" text="DateTime"/>
+			<Text id="dateTime" text="{DateTime}"/>
+			<Label labelFor="dateTimeOffset" text="DateTimeOffset"/>
+			<Text id="dateTimeOffset" text="{DateTimeOffset}"/>
+			<Label labelFor="decimal" text="Decimal"/>
+			<Text id="decimal" text="{Decimal}"/>
+			<Label labelFor="double" text="Double"/>
+			<!-- expected tooltip has no leading 0; typeof Double is "number" -->
+			<Text id="double" text="{Double}"
+				tooltip="{= String(0 + %{Double})}"/>
+			<Label labelFor="float" text="Float"/>
+			<!-- expected tooltip has no leading 0; typeof Float is "number" -->
+			<Text id="float" text="{Float}"
+				tooltip="{= String(0 + %{Float})}"/>
+			<Label labelFor="guid" text="Guid"/>
+			<Text id="guid" text="{GlobalUID}"/>
+			<Label labelFor="int16" text="Int16"/>
+			<Text id="int16" text="{Int16}"/>
+			<Label labelFor="int32" text="Int32"/>
+			<Text id="int32" text="{Int32}"/>
+			<Label labelFor="int64" text="Int64"/>
+			<Text id="int64" text="{Int64}"/>
+			<Label labelFor="sbyte" text="SByte"/>
+			<Text id="sbyte" text="{SByte}"/>
+			<Label labelFor="single" text="Single"/>
+			<!-- expected tooltip has no leading 0; typeof Single is "number" -->
+			<Text id="single" text="{Single}"
+				tooltip="{= String(0 + %{Single})}"/>
+			<Label labelFor="string" text="String"/>
+			<Text id="string" text="{String}"/>
+			<Label labelFor="time" text="Time"/>
+			<Text id="time" text="{Time}"/>
+		</form:SimpleForm>
+		<Table class="sapUiLargeMarginBottom" headerText="Multiple Entities"
+			items="{path : '/EdmTypesCollection', templateShareable : false}">
+			<columns>
+				<Column>
+					<Text text="ID"/>
+				</Column>
+				<Column>
+					<Text text="Boolean"/>
+				</Column>
+				<Column>
+					<Text text="Byte"/>
+				</Column>
+				<Column>
+					<Text text="Guid"/>
+				</Column>
+				<Column>
+					<Text text="Int16"/>
+				</Column>
+				<Column>
+					<Text text="Int32"/>
+				</Column>
+				<Column>
+					<Text text="SByte"/>
+				</Column>
+				<Column>
+					<Text text="String"/>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<Text text="{ID}"/>
+				<Text text="{Boolean}"/>
+				<Text text="{Byte}"/>
+				<Text text="{GlobalUID}"/>
+				<Text text="{Int16}"/>
+				<Text text="{Int32}"/>
+				<Text text="{SByte}"/>
+				<Text text="{String}"/>
+			</ColumnListItem>
+		</Table>
+	</VBox>
+</mvc:View>

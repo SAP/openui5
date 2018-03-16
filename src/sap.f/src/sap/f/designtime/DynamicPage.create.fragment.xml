@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+        xmlns="sap.f"
+        xmlns:m="sap.m"
+        xmlns:core="sap.ui.core">
+
+    <DynamicPage showFooter="true">
+        <title>
+            <DynamicPageTitle>
+                <heading>
+                    <m:Title text="Header Title"/>
+                </heading>
+            </DynamicPageTitle>
+        </title>
+
+        <header>
+            <DynamicPageHeader pinnable="true">
+                <content>
+                    <m:Text text="Header Content"/>
+                </content>
+            </DynamicPageHeader>
+        </header>
+
+        <content>
+            <m:Text text="Dynamic Page Content"/>
+        </content>
+
+        <footer>
+            <m:OverflowToolbar>
+                <m:ToolbarSpacer/>
+                <m:Button text="Button"/>
+            </m:OverflowToolbar>
+        </footer>
+    </DynamicPage>
+
+</core:FragmentDefinition>

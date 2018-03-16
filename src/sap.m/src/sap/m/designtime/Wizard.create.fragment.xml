@@ -1,0 +1,13 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Wizard>
+		<WizardStep title="Step 1" validated="true">
+			<Text class="sapUiSmallMarginBottom" text="This is the first step."/>
+		</WizardStep>
+		<WizardStep title="Step 2" validated="true">
+			<Text class="sapUiSmallMarginBottom" text="This is the second step."/>
+		</WizardStep>
+		<WizardStep title="Step 3" validated="true">
+			<Text class="sapUiSmallMarginBottom" text="This is the last step."/>
+		</WizardStep>
+	</Wizard>
+</core:FragmentDefinition>

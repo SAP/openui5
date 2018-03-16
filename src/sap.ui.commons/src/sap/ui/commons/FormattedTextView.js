@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.FormattedTextView.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function (jQuery, library, Control) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    "./FormattedTextViewRenderer"
+],
+	function(jQuery, library, Control, FormattedTextViewRenderer) {
 		"use strict";
 
 

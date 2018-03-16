@@ -868,7 +868,8 @@
 			});
 
 			QUnit.test("Grouping items selection", function (assert) {
-				var clock = sinon.useFakeTimers(),
+				var sSelectedGroupItem,
+					clock = sinon.useFakeTimers(),
 					fnOnConfirmObject = sinon.spy(function (oEvent) {
 						assert.ok(typeof oEvent.getParameter("groupItem") == "object", "Group Item is an object");
 					}),
@@ -891,13 +892,33 @@
 				this.oVSD.detachConfirm(fnOnConfirmObject);
 				this.oVSD.attachConfirm(fnOnConfirmUndefined);
 				this.oVSD.open("group");
-				this.oVSD.setSelectedGroupItem(this.oVSD._oGroupingNoneItem);
+				this.oVSD.setSelectedGroupItem();
 				this.oVSD._getDialog().getBeginButton().firePress();
 				sap.ui.getCore().applyChanges();
 				clock.tick(1000);
 
 				//Check
 				assert.ok(fnOnConfirmUndefined.calledOnce, "Event handler is being called");
+				sSelectedGroupItem = this.oVSD.getSelectedGroupItem();
+				assert.equal(sap.ui.getCore().byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called without params");
+
+				clock.restore();
+			});
+
+			QUnit.test("Selectting Grouping None item by empty string", function (assert) {
+				var sSelectedGroupItem,
+					clock = sinon.useFakeTimers();
+
+				//Act
+				this.oVSD.open("group");
+				this.oVSD.setSelectedGroupItem("");
+				this.oVSD._getDialog().getBeginButton().firePress();
+				sap.ui.getCore().applyChanges();
+				clock.tick(1000);
+
+				//Check
+				sSelectedGroupItem = this.oVSD.getSelectedGroupItem();
+				assert.equal(sap.ui.getCore().byId(sSelectedGroupItem), this.oVSD._oGroupingNoneItem, "GroupingNoneItem is selected when setSelectedGroupItem is called with empty string param");
 
 				clock.restore();
 			});
@@ -2064,6 +2085,120 @@
 			}, delay);
 		});
 
+		QUnit.test("Reopening filter detail page after cancel button click", function (assert) {
+			var that = this,
+				done = assert.async(),
+				filter = new sap.m.ViewSettingsFilterItem({
+					multiSelect: true,
+					key: "STATUS",
+					text: "STATUS",
+					items: [
+						new sap.m.ViewSettingsItem({
+							text: "Text 1",
+							selected: false
+						}),
+						new sap.m.ViewSettingsItem({
+							text: "Text 2",
+							selected: true
+						})
+					]
+				});
+
+			that.oVSD.addFilterItem(filter);
+
+			// Step 1
+			// Open ViewSettingsDialog
+			that.oVSD.open();
+			this.oVSD._dialog.attachAfterOpen(afterFirstOpen);
+
+			function afterFirstOpen() {
+				// Step 2
+				// Simulate navigation to filter details page of STATUS filter item
+				var vsdFilterItem = that.oVSD.getFilterItems()[0];
+				that.oVSD._switchToPage(3, vsdFilterItem);
+
+				// Assert selected items
+				var aFilterItems = that.oVSD._filterDetailList.getItems();
+				assert.strictEqual(aFilterItems[0].getSelected(), false, "First item initially should be not selected");
+				assert.strictEqual(aFilterItems[1].getSelected(), true, "Second item initially should be selected");
+
+				// Simulate confirm button click
+				that.oVSD._onConfirm();
+				that.oVSD._dialog.detachAfterOpen(afterFirstOpen);
+
+				// Open ViewSettingsDialog
+				that.oVSD.open();
+				that.oVSD._dialog.attachAfterOpen(afterSecondOpen);
+			}
+
+			function afterSecondOpen() {
+				// Step 3
+				// Simulate cancel button click
+				that.oVSD._onCancel();
+
+				that.oVSD._dialog.detachAfterOpen(afterSecondOpen);
+				that.oVSD._dialog.attachAfterClose(afterClose);
+			}
+
+			function afterClose() {
+				// Step 4
+				// Assert selected items
+				var aFilterItems = that.oVSD._filterDetailList.getItems();
+				assert.strictEqual(aFilterItems[0].getSelected(), false, "First item should be not selected after cancel button click");
+				assert.strictEqual(aFilterItems[1].getSelected(), true, "Second item should should be selected after cancel button click");
+
+				that.oVSD._dialog.detachAfterClose(afterClose);
+
+				done();
+			}
+		});
+
+		QUnit.test("_oPreviousState.contentItem is properly cloned when it is bound to a model", function (assert) {
+			var that = this,
+				done = assert.async(),
+				modelData = this.getFirstModelData(),
+				oModel = new sap.ui.model.json.JSONModel();
+
+			oModel.setData(modelData);
+			this.oVSD.setModel(oModel);
+			this.bindAggregations(this.oVSD);
+
+			// Step 1
+			// Open ViewSettingsDialog
+			this.oVSD.open();
+			this.oVSD._dialog.attachAfterOpen(afterFirstOpen);
+
+			function afterFirstOpen() {
+				// Step 2
+				// Simulate navigation to filter details page of STATUS filter item
+				var vsdFilterItem = that.oVSD.getFilterItems()[0];
+				that.oVSD._switchToPage(3, vsdFilterItem);
+
+				// Assert items text
+				var aFilterItems = that.oVSD._filterDetailList.getItems();
+				assert.strictEqual(aFilterItems[0].getTitle(), "item2", "Text of the item is properly set");
+
+				// Simulate confirm button click
+				that.oVSD._onConfirm();
+				that.oVSD._dialog.detachAfterOpen(afterFirstOpen);
+
+				// Open ViewSettingsDialog
+				that.oVSD.open();
+				that.oVSD._dialog.attachAfterOpen(afterSecondOpen);
+			}
+
+			function afterSecondOpen() {
+				// Step 3
+				// Assert
+				var aFilterItems = that.oVSD._oPreviousState.contentItem.getItems();
+				assert.strictEqual(aFilterItems[0].getText(), "item2", "Text of the previous state content item is properly set");
+
+				that.oVSD._dialog.detachAfterOpen(afterSecondOpen);
+
+				done();
+			}
+		});
+
 		QUnit.test("Reset Button is available on second open of the ViewSettinsDialog", function (assert) {
 			var modelData = this.getFirstModelData();
 			var modelData2 = this.getSecondModelData();
@@ -2227,7 +2362,8 @@
 						path: 'myItems',
 						template: new sap.m.ViewSettingsItem({
 							key: "{myKey}",
-							text: "{myText}"
+							text: "{myText}",
+							selected: "{selected}"
 						}),
 						templateShareable: true
 					}
@@ -2403,7 +2539,35 @@
 			}.bind(this), 1000);
 		});
 
+		QUnit.test("Change filter detail items in the model when user is at filter page", function (assert) {
+			//Prepare
+			var oClock = sinon.useFakeTimers(),
+				$Counter;
 
+			this.oVSD.open("filter");
+			oClock.tick(100);
+			$Counter = this.oVSD.$().find(".sapMLIBCounter");
+			assert.equal($Counter.length, 0, "No Facet Filter Item counter, as there is no selected subitems yet");
+
+			//Act
+			setTimeout(function() {
+				this.oVSD.getModel().setProperty('/filterData/0/myItems', [
+					{myKey: "k1", myText: "Filter subitem 1, selected", selected: true },
+					{myKey: "k2", myText: "Filter subitem 2, selected", selected: true }
+				]);
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				$Counter = this.oVSD.$().find(".sapMLIBCounter");
+				assert.equal($Counter.length, 1, "There should be a Facet Filter Item counter");
+				assert.equal($Counter.text(), "2", "The counter should display '2' as there are 2 sub-items selected");
+
+				//Cleanup
+				oClock.restore();
+			}.bind(this), 10);
+
+			oClock.tick(15);
+		});
 		QUnit.test("Change group items in the model", function (assert) {
 			var done = assert.async();
 
@@ -2478,8 +2642,193 @@
 			assert.equal(oVSD._getDialog().getModel().oData["data"], sData, "the model is propagated to the dialog");
 		});
 
+		// BCP: 1770477750
+		QUnit.test("Navigating between custom tabs works as expected", function (assert) {
+			var done = assert.async(),
+				oCustomTab1Content = new sap.m.Button("button1", { text: "Custom Tab 1" }),
+				oCustomTab2Content = new sap.m.Button("button2", { text: "Custom Tab 2" }),
+				oViewSettingsDialog = new sap.m.ViewSettingsDialog({
+					customTabs: [
+						new sap.m.ViewSettingsCustomTab({icon:"sap-icon://action-settings", content: oCustomTab1Content }),
+						new sap.m.ViewSettingsCustomTab({icon:"sap-icon://settings", content: oCustomTab2Content })
+					]
+				});
+
+			oViewSettingsDialog.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oViewSettingsDialog.open();
+
+			oViewSettingsDialog._dialog.attachAfterOpen(function () {
+				assert.equal(oViewSettingsDialog._vContentPage, "__tab0", "First Custom tab is opened");
+				assert.equal(oViewSettingsDialog._getPage1().getContent()[0].getId(), "button1", "content of the page is the same as the first tab's content");
+
+				// act: change custom tab to the second tab
+				oViewSettingsDialog._getSegmentedButton().getButtons()[1].firePress();
+
+				assert.equal(oViewSettingsDialog._vContentPage, "__tab1", "Second Custo tab is opened");
+				assert.equal(oViewSettingsDialog._getPage1().getContent()[0].getId(), "button2", "content of the page is the same as the second tab's content");
+
+				oViewSettingsDialog.destroy();
+				oViewSettingsDialog = null;
+				done();
+			});
+		});
+
+		QUnit.test("none preset filter item has unique id", function(assert) {
+			//arrange
+			var oVSD1 = new sap.m.ViewSettingsDialog(),
+				aVSD1Items;
+
+			oVsdConfig.addPresetFilterItems(oVSD1);
+
+			//act
+			oVSD1.open();
+			aVSD1Items = oVSD1._presetFilterList.getItems();
+
+			//assert
+			assert.ok(aVSD1Items[aVSD1Items.length - 1].getId(), oVSD1._presetFilterList.getId() + "-none-list-item", "none preset filter item has correct id");
+
+			//clean
+			oVSD1.destroy();
+		});
+
+		QUnit.test("Item selection does not trigger re-rendering", function (assert) {
+			//arrange
+			var oSetPropertySpy = sinon.spy(sap.ui.base.ManagedObject.prototype, "setProperty"),
+				oItem = new sap.m.ViewSettingsItem({
+					key: "test",
+					text: "2",
+					selected: false
+				});
+
+			oSetPropertySpy.reset();
+
+			//act
+			oItem.setSelected(true);
+
+			//assert
+			assert.ok(oSetPropertySpy.calledOnce, "called once");
+			assert.strictEqual(oSetPropertySpy.thisValues[0], oItem, "called on the right item");
+			assert.strictEqual(oSetPropertySpy.args[0][0], "selected", "called with the right property name");
+			assert.strictEqual(oSetPropertySpy.args[0][2], true, "called with suppressinvalidate");
+
+			//clean
+			oItem.destroy();
+		});
+
+		QUnit.test("ViewSettingsDialog opens every time after destroy", function (assert) {
+			//arrange
+			var oVSD,
+				fnCreateDialog = function() {
+					oVSD = new sap.m.ViewSettingsDialog("testVsd", {
+						title: "View Setting Dialog"
+					});
+					oVSD.open();
+				};
+
+			//act
+			fnCreateDialog();
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.equal(jQuery(sap.ui.getCore().getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered first time");
+
+			//act
+			oVSD._dialog.getEndButton().firePress();
+			sap.ui.getCore().applyChanges();
+			oVSD.destroy();
+			fnCreateDialog();
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.equal(jQuery(sap.ui.getCore().getStaticAreaRef()).find(".sapMVSD").length, 1, "ViewSettingsDialog is rendered second time");
+
+			//clean
+			oVSD.destroy();
+		});
+
+		QUnit.test("ViewSettingsDialog escapes Filter items on creation", function (assert) {
+			//arrange
+			var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+				filterItems = [
+					new sap.m.ViewSettingsFilterItem({
+					text : "aaa { bbb"
+					})
+				],
+				oVSD = new sap.m.ViewSettingsDialog("testVsd", {
+							title: "View Setting Dialog",
+							filterItems : filterItems
+						});
+
+			//act
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Filter Item");
+
+			//clean
+			oVSD.destroy();
+		});
+
+		QUnit.test("ViewSettingsDialog escapes Filter Detail items on creation", function (assert) {
+			//arrange
+			var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+				filterItems = [
+					new sap.m.ViewSettingsFilterItem({
+					text : "filter item",
+					items : [
+							new sap.m.ViewSettingsItem({
+								text : "aaa { bbb"
+							})
+						]
+					})
+				],
+				oVSD = new sap.m.ViewSettingsDialog("testVsd", {
+							title: "View Setting Dialog",
+							filterItems : filterItems
+						});
+
+			//act
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Filter Detail Item");
+
+			//clean
+			oVSD.destroy();
+		});
+
+		QUnit.test("ViewSettingsDialog escapes Group items on creation", function (assert) {
+			//arrange
+			var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+				groupItems = [
+					new sap.m.ViewSettingsItem({
+							text : "aaa { bbb"
+					})
+				],
+				oVSD = new sap.m.ViewSettingsDialog("testVsd", {
+							title: "View Setting Dialog",
+							groupItems : groupItems
+						});
+
+			//act
+			oVSD.open();
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.strictEqual(oEscapeSpy.callCount, 1, "escape was called once for the setted Group Item");
+
+			//clean
+			oVSD.destroy();
+		});
+
 		QUnit.module("Accessibility", {
 			beforeEach : function () {
+				this.oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 				this.oVSD = new sap.m.ViewSettingsDialog();
 				this.bindAggregations(this.oVSD);
 
@@ -2600,49 +2949,12 @@
 			}.bind(this), 500);
 		});
 
-		QUnit.module("misc");
-
-		QUnit.test("none preset filter item has unique id", function(assert) {
-			//arrange
-			var oVSD1 = new sap.m.ViewSettingsDialog(),
-				aVSD1Items;
-
-			oVsdConfig.addPresetFilterItems(oVSD1);
-
-			//act
-			oVSD1.open();
-			aVSD1Items = oVSD1._presetFilterList.getItems();
-
-			//assert
-			assert.ok(aVSD1Items[aVSD1Items.length - 1].getId(), oVSD1._presetFilterList.getId() + "-none-list-item", "none preset filter item has correct id");
-
-			//clean
-			oVSD1.destroy();
+		QUnit.test("ViewSettingsDialog sets ariaLabeldBy of the Dialog to the title id", function (assert) {
+			var sExpectedId = this.oVSD._sTitleLabelId;
+			assert.strictEqual(this.oVSD._getTitleLabel().getId(), sExpectedId, "id of the Dialog title is equal to the 'dialogId + -title' suffix");
+			assert.strictEqual(this.oVSD._getDialog().getAriaLabelledBy()[0], sExpectedId, "ariaLabeledBy attribute of the Dialog is equal to the Dialog title id");
 		});
 
-		QUnit.test("Item selection does not trigger re-rendering", function (assert) {
-			//arrange
-			var oSetPropertySpy = sinon.spy(sap.ui.base.ManagedObject.prototype, "setProperty"),
-				oItem = new sap.m.ViewSettingsItem({
-					key: "test",
-					text: "2",
-					selected: false
-				});
-
-			oSetPropertySpy.reset();
-
-			//act
-			oItem.setSelected(true);
-
-			//assert
-			assert.ok(oSetPropertySpy.calledOnce, "called once");
-			assert.strictEqual(oSetPropertySpy.thisValues[0], oItem, "called on the right item");
-			assert.strictEqual(oSetPropertySpy.args[0][0], "selected", "called with the right property name");
-			assert.strictEqual(oSetPropertySpy.args[0][2], true, "called with suppressinvalidate");
-
-			//clean
-			oItem.destroy();
-		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ObjectStatus.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.ObjectStatus.V",
+			rootView : {
+				"viewName": "sap.m.sample.ObjectStatus.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",
@@ -15,7 +19,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			config : {
 				sample : {
 					files : [
-						"V.view.xml"
+						"V.view.xml", "C.controller.js"
 					]
 				}
 			}

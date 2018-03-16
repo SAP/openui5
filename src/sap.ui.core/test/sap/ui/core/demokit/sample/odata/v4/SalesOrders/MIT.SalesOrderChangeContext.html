@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Create Sales Order Line Items (create on relative binding)
+		</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Change Context and check resetChanges</h1>
+		<h2>DESCRIPTION</h2>
+		Test that resetChanges/hasPendingChanges also work if parent context is changed.
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are no errors and warnings.
+		<h3>Testing with mock data</h3>
+		Start the Sales Orders application with following URL (adjust host and port if necessary):
+		<ul>
+			<li> as explored application: http://&lt;host>:&lt;port>/sapui5-sdk-dist/explored.html#/sample/sap.ui.core.sample.odata.v4.SalesOrders/preview</li>
+			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
+		</ul>
+		<h2>REALIZE and CHECK</h2>
+		<ol>
+			<li>Change the note of a Sales Order Line Item</li>
+			<li>Change the context of the Sales Order Line Items table by selecting a different
+			Sales Order</li>
+			<li>Press the <code>Refresh</code> button for the Sales Order List</li>
+			<li><b>Check:</b> You get a warning about pending changes.</li>
+			<li>Cancel the warning</li>
+			<li>Press the <code>Refresh All</code> button in the toolbar</li>
+			<li><b>Check:</b> You get a warning about pending changes.</li>
+			<li>Confirm the warning by pressing the <code>Ok</code> button.</li>
+			<li><b>Check:</b> The note of the Sales Order Line Item is reset to the value before.
+			<p><b>Note:</b>
+			Pressing <code>Cancel changes</code> for the Sales Order List table does
+			not reset the changes in Sales Order Line Items, because the group for Sales Order List
+			and Sales Order Details are different and <code>Cancel changes</code> resets changes
+			for a certain group (via the model).</p>
+			</li>
+		</ol>
+	</body>
+</html>

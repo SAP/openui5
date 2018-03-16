@@ -1,5 +1,4 @@
 <mvc:View
-		controllerName="sap.m.sample.LightBox.C"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
 	<Text text="Click on the images below. This will open the images in their real size if the image size is not bigger than the window size." width="100%"/>

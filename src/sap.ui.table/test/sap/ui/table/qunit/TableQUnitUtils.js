@@ -12,9 +12,10 @@
 				"src": "sap.ui.core.URI",
 				"alt": "string",
 				"visible": "boolean",
+				"focusable": "boolean",
 				"tabbable": "boolean",
-				"index": "int", //Results in different behavior of the control in different columns
-				"width": "sap.ui.core.CSSSize" // Table sets "width" for the title text
+				"index": "int", // Results in different behavior of the control in different columns.
+				"width": "sap.ui.core.CSSSize" // Table sets "width" for the title text.
 			},
 			associations: {
 				"ariaLabelledBy": {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"}
@@ -27,6 +28,8 @@
 			oRm.writeClasses();
 			if (oControl.getTabbable()) {
 				oRm.writeAttribute("tabindex", "0");
+			} else if (oControl.getFocusable()) {
+				oRm.writeAttribute("tabindex", "-1");
 			}
 			oRm.write(">");
 			oRm.writeEscaped(oControl.getText() || oControl.getAlt() || "");
@@ -40,18 +43,19 @@
 				"text": "string",
 				"visible": "boolean",
 				"tabbable": "boolean",
-				"index": "int" //Results in different behavior of the control in different columns
+				"index": "int", // Results in different behavior of the control in different columns.
+				"type": "string"
 			}
 		},
 
 		renderer: function (oRm, oControl) {
 			oRm.write("<input");
 			oRm.writeControlData(oControl);
-			oRm.writeAttribute("type", "text");
-			oRm.writeAttribute("value", oControl.getText());
+			oRm.writeAttribute("type", oControl.getType() || "text");
+			oRm.writeAttribute("value", oControl.getText() || "");
 			oRm.writeClasses();
-			if (!oControl.getTabbable()) {
-				oRm.writeAttribute("tabindex", "-1");
+			if (oControl.getTabbable()) {
+				oRm.writeAttribute("tabindex", "0");
 			}
 			oRm.write(">");
 		}
@@ -149,8 +153,8 @@
 		oTable.setSelectedIndex(0);
 		oTreeTable.setModel(oModel);
 		if (!bSkipPlaceAt) {
-			oTable.placeAt("content");
-			oTreeTable.placeAt("content");
+			oTable.placeAt("qunit-fixture");
+			oTreeTable.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		}
 	};
@@ -271,16 +275,19 @@
 		return jQuery(oOuterElement);
 	};
 
-	window.checkFocus = function(oCell, assert, bInside) {
-		var activeElement = document.activeElement || document;
-		var cell = oCell.get && oCell.get(0) || oCell;
-		if (bInside) {
-			assert.ok(cell !== activeElement && cell.contains(activeElement),
-				"Focus is inside of the expected cell: " + cell.id + " is parent of " + activeElement.id);
-		} else {
-			assert.ok(cell === activeElement, "Focus is on the expected position: " + cell.id + " == " + activeElement.id);
-		}
-		return jQuery(activeElement);
+	/**
+	 * Check whether an element is focused.
+	 * @param {jQuery|HTMLElement} oElement The element to check.
+	 * @param {Object} assert QUnit assert object.
+	 * @returns {jQuery} A jQuery object containing the active element.
+	 */
+	window.checkFocus = function(oElement, assert) {
+		var $ActiveElement = jQuery(document.activeElement);
+		var $Element = jQuery(oElement);
+
+		assert.ok($Element[0] === document.activeElement, "Focus is on: " + $ActiveElement.attr("id") + ", should be on: " + $Element.attr("id"));
+
+		return $ActiveElement;
 	};
 
 	window.fakeGroupRow = function(iRow) {

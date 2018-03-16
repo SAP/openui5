@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.Item.
-sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/Control'],
-	function(Element, Control) {
+sap.ui.define(['sap/ui/core/Element'],
+	function(Element) {
 		"use strict";
 
 		/**

@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -38,6 +38,9 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapUiCalIntHead");
 		}
 
+		if (oCal.getPickerPopup()) {
+			oRm.addClass("sapUiCalIntLarge");
+		}
 		// This makes the calendar focusable and therefore
 		// the white empty areas can be clicked without closing the calendar
 		// by accident.
@@ -69,7 +72,6 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("<div id=\"" + sId + "-content\" class=\"sapUiCalContent\">");
 		oRm.renderControl(oTimesRow);
 
-		oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
 		oRm.write("</div>");
 
 		oRm.write("<button id=\"" + sId + "-cancel\" class=\"sapUiCalCancel\" tabindex=\"-1\">");
@@ -78,6 +80,10 @@ sap.ui.define(['jquery.sap.global'],
 
 		// dummy element to catch tabbing in from next element
 		oRm.write("<div id=\"" + sId + "-end\" tabindex=\"0\" style=\"width:0;height:0;position:absolute;right:0;bottom:0;\"></div>");
+
+		if (oCal.getPickerPopup()) {
+			oRm.write("<div id=\"" + sId + "-contentOver\" class=\"sapUiCalContentOver\" style=\"display:none;\"></div>");
+		}
 
 		oRm.write("</div>");
 

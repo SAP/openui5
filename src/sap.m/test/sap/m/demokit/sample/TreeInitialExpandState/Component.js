@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TreeInitialExpandState.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TreeInitialExpandState.Page",
+			rootView : {
+				"viewName": "sap.m.sample.TreeInitialExpandState.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

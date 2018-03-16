@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-		'sap/ui/fl/Utils', 'jquery.sap.global', 'sap/ui/fl/changeHandler/Base', "sap/ui/fl/changeHandler/JsControlTreeModifier"
-	], function (Utils, jQuery, Base, JsControlTreeModifier) {
+		'sap/ui/fl/Utils', 'sap/ui/fl/changeHandler/Base', 'sap/ui/fl/changeHandler/JsControlTreeModifier'
+	], function (Utils, Base, JsControlTreeModifier) {
 		"use strict";
 
 		/*
@@ -22,7 +22,7 @@ sap.ui.define([
 			for (var i = 0; i < aContent.length; i++) {
 				var sType = oModifier.getControlType(aContent[i]);
 				if (aStopToken.indexOf(sType) === -1) {
-					if (aContent[i].getVisible()) {
+					if (oModifier.getVisible(aContent[i])) {
 						return true;
 					}
 				} else {
@@ -62,14 +62,14 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.fl.Change} oChangeWrapper change wrapper object with instructions to be applied on the control map
 		 * @param {sap.ui.layout.SimpleForm} oForm smart form control that matches the change selector for applying the change
-         * @param {object} mPropertyBag
-         * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent component in which the change should be applied
+		 * @param {object} mPropertyBag
+		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent component in which the change should be applied
 		 * @public
 		 */
 		AddSimpleFormGroup.applyChange = function (oChangeWrapper, oForm, mPropertyBag) {
 			var oModifier = mPropertyBag.modifier;
 			var oView = mPropertyBag.view;
-            var oAppComponent = mPropertyBag.appComponent;
+			var oAppComponent = mPropertyBag.appComponent;
 
 			var oChange = oChangeWrapper.getDefinition();
 			if (oChange.texts && oChange.texts.groupLabel && oChange.texts.groupLabel.value &&
@@ -121,8 +121,8 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.fl.Change} oChangeWrapper change wrapper object to be completed
 		 * @param {object} oSpecificChangeInfo with attributes "groupLabel", the group label to be included in the change and "newControlId", the control ID for the control to be added
-         * @param {object} mPropertyBag
-         * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent component in which the change should be applied
+		 * @param {object} mPropertyBag
+		 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent component in which the change should be applied
 		 * @public
 		 */
 		AddSimpleFormGroup.completeChangeContent = function (oChangeWrapper, oSpecificChangeInfo, mPropertyBag) {

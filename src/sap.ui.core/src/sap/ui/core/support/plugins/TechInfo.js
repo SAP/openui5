@@ -12,10 +12,8 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 		 * Creates an instance of sap.ui.core.support.plugins.TechInfo.
 		 * @class This class represents the technical info plugin for the support tool functionality of UI5. This class is internal and all its functions must not be used by an application.
 		 *
-		 * @abstract
 		 * @extends sap.ui.core.support.Plugin
 		 * @version ${version}
-		 * @constructor
 		 * @private
 		 * @alias sap.ui.core.support.plugins.TechInfo
 		 */
@@ -53,9 +51,9 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 			oData.modules.sort();
 			this.e2eTraceStarted = oData["e2e-trace"].isStarted;
 			var html = ["<div class='sapUiSupportToolbar'>",
-						"<a href='#' id='", that.getId(), "-Refresh' class='sapUiSupportLink'>Refresh</a>",
+						"<button id='", that.getId(), "-Refresh' class='sapUiSupportRoundedButton'>Refresh</button>",
 						"<div><div class='sapUiSupportTechInfoCntnt'>",
-						"<table border='0' cellpadding='3'>"];
+						"<table border='0' cellpadding='3' class='infoTable'>"];
 
 			// version information
 			function formatBuildInfo(timestamp, scmRevision) {
@@ -78,7 +76,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 				var oVersionInfo = sap.ui.getVersionInfo();
 				sProductName = oVersionInfo.name;
 				sVersionInfoEncoded =
-					"<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' title='Open Version Info'>" + encode(oVersionInfo.version) + "</a>" +
+					"<a href='" + sap.ui.resource("", "sap-ui-version.json") + "' target='_blank' class='sapUiSupportLink' title='Open Version Info'>" + encode(oVersionInfo.version) + "</a>" +
 					formatBuildInfo(oVersionInfo.buildTimestamp, oVersionInfo.scmRevision);
 			} catch (ex) {
 				// ignore
@@ -121,13 +119,13 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 
 			line(html, true, true, "E2E Trace", function(buffer) {
 				buffer.push("<label class='sapUiSupportLabel'>Trace Level:</label>",
-					"<select id='", that.getId(), "-logLevelE2ETrace' class='sapUiSupportTxtFld' style='margin-left:10px'>",
+					"<select id='", that.getId(), "-logLevelE2ETrace' class='sapUiSupportTxtFld sapUiSupportSelect'>",
 						"<option value='low'" + (that.e2eLogLevel === 'low' ? " selected" : "") + ">LOW</option>",
 						"<option value='medium'" + (that.e2eLogLevel === 'medium' ? " selected" : "") + ">MEDIUM</option>",
 						"<option value='high'" + (that.e2eLogLevel === 'hight' ? " selected" : "") + ">HIGH</option>",
 					"</select>"
 				);
-				buffer.push("<button id='" + that.getId() + "-startE2ETrace' class='sapUiSupportBtn " +
+				buffer.push("<button id='" + that.getId() + "-startE2ETrace' class='sapUiSupportRoundedButton " +
 						(oData["e2e-trace"].isStarted ? " active" : "") + "' style='margin-left: 10px;'>" + (oData["e2e-trace"].isStarted ? "Running..." : "Start") + "</button>");
 				buffer.push("<div style='margin-top:5px'>");
 				buffer.push("<label class='sapUiSupportLabel'>XML Output:</label>");
@@ -164,7 +162,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 				}
 			});
 
-			document.title = "SAPUI5 Diagnostics - " + oData.title;
+			document.title = "UI5 Diagnostics - " + oData.title;
 		};
 
 
@@ -302,7 +300,7 @@ sap.ui.define(['jquery.sap.global', '../Plugin', '../Support', '../ToolsAPI', 'j
 
 		function multiline(buffer, right, border, label, content){
 			line(buffer, right, border, label, function(buffer){
-				buffer.push("<table border='0' cellspacing='0' cellpadding='3'>");
+				buffer.push("<table border='0' cellspacing='0' cellpadding='3' style='width: 100%'>");
 				jQuery.each(content, function(i,v){
 					var val = "";
 					if (v) {

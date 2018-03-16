@@ -260,8 +260,16 @@
 			assert.strictEqual(oList.getSelectedContextPaths().length, vSelectedItemsNumber, 'The internal selection array has length of' + vSelectedItemsNumber +' on ' + oList);
 			assert.strictEqual(oList.getSelectedItems().length, vSelectedItemsNumber, 'The selection contains' + vSelectedItemsNumber + 'items ' + oList);
 
-			oList.setRememberSelections(false).removeSelections(true);
+			oList.setRememberSelections(false);
+			if (vSelectionMode == "MultiSelect") {
+				assert.strictEqual(oList.getRememberSelections(), false, 'rememberSelections is set to false on ' + oList);
+				assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'Empty array returned as bAll is undefined on ' + oList);
+				assert.strictEqual(oList.getSelectedContextPaths(true).length, 3, 'Selected context paths return via binding context paths as bAll=true on ' + oList);
+			}
+
+			oList.removeSelections(true);
 			assert.strictEqual(oList.getSelectedContextPaths().length, 0, 'The internal selection array is empty on ' + oList);
+			assert.strictEqual(oList.getSelectedContextPaths(true).length, 0, 'Empty array returned via binding context on ' + oList);
 
 			// sort descending
 			oList.getBinding("items").sort([new sap.ui.model.Sorter("Title", true, oSorterDesc) ] );
@@ -344,6 +352,7 @@
 		QUnit.test("Events", function(assert) {
 			var oList = new sap.m.List({}),
 				oEvents = oList.getMetadata().getAllEvents();
+			bindListData(oList, data2, "/items", createTemplateListItem());
 
 			assert.ok(oEvents.select, 'Event "select" exists');
 			assert.ok(oEvents.selectionChange, 'Event "selectionChange" exists');
@@ -353,6 +362,39 @@
 			assert.ok(oEvents.growingFinished, 'Event "growingFinished" exists');
 			assert.ok(oEvents.updateStarted, 'Event "updateStarted" exists');
 			assert.ok(oEvents.updateFinished, 'Event "updateFinished" exists');
+			assert.ok(oEvents.beforeOpenContextMenu, 'Event "beforeOpenContextMenu" exists');
+
+			oList.setMode("MultiSelect");
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oList.getItems().length, 3, "List has exactly 3 items");
+
+			oList.attachEventOnce("selectionChange", function(e) {
+				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 1st item is selected");
+			});
+			oList.getItems()[0].getModeControl().$().trigger("tap");
+
+			oList.attachEventOnce("selectionChange", function(e) {
+				assert.ok(e.getParameter("selectAll"), "selectAll parameter is true when the 'ctrl+A' is pressed");
+			});
+			oList.getItems()[0].focus();
+			sap.ui.test.qunit.triggerKeydown(oList.getItems()[0].$(), jQuery.sap.KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+
+			oList.attachEventOnce("selectionChange", function(e) {
+				assert.ok(!e.getParameter("selectAll"), "selectAll parameter is false when the 'ctrl+A' is pressed again");
+			});
+			oList.getItems()[0].focus();
+			sap.ui.test.qunit.triggerKeydown(oList.getItems()[0].$(), jQuery.sap.KeyCodes.A, /*Shift*/false, /*Alt*/false, /*Ctrl*/true);
+
+			var oSelectionChangeSpy = this.spy();
+			oList.attachSelectionChange(oSelectionChangeSpy);
+			oList.selectAll();
+			assert.strictEqual(oSelectionChangeSpy.callCount, 0, "selectAll is not fired via public API call");
+
+			oList.removeSelections();
+			oList.selectAll(true);
+			assert.strictEqual(oSelectionChangeSpy.callCount, 1, "selectAll is fired via true parameter call");
 
 			// cleanup
 			oList.destroy();
@@ -366,6 +408,7 @@
 			assert.ok(oAggregations.swipeContent, 'Aggregation "swipeContent" exists');
 			assert.ok(oAggregations.headerToolbar, 'Aggregation "headerToolbar" exists');
 			assert.ok(oAggregations.infoToolbar, 'Aggregation "infoToolbar" exists');
+			assert.ok(oAggregations.contextMenu, 'Aggregation "contextMenu" exists');
 
 			// cleanup
 			oList.destroy();
@@ -507,6 +550,24 @@
 			assert.ok($listUl.hasClass("sapMListShowSeparatorsAll"), 'The HTML ul element has class "sapMListShowSeparatorsAll" on ' + oList);
 			assert.ok($listLi.hasClass("sapMLIB"), 'The HTML no data li element has class "sapMLIB" on ' + oList);
 			assert.ok($listLi.hasClass("sapMListNoData"), 'The HTML no data li element has class "sapMListNoData" on ' + oList);
+
+			// cleanup
+			oPage.removeAllContent();
+			oList.destroy();
+		});
+
+		QUnit.test("Toolbar has style classes sapMTBHeader-CTX and sapMListHdrTBar", function(assert) {
+			var oToolbar = new sap.m.Toolbar();
+			var oList = new sap.m.List({
+				headerToolbar: oToolbar
+			});
+
+			// add item to page & render
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oToolbar.hasStyleClass("sapMTBHeader-CTX"), "Toolbar has style class sapMTBHeader-CTX");
+			assert.ok(oToolbar.hasStyleClass("sapMListHdrTBar"), "Toolbar has style class sapMListHdrTBar");
 
 			// cleanup
 			oPage.removeAllContent();
@@ -995,6 +1056,9 @@
 				oSelectionItem,
 				bIncludeItemInSelection;
 
+			// let the item navigation run for testing
+			this.stub(sap.ui.Device.system, "desktop", true);
+
 			bindListData(oList, data3, "/items", createTemplateListItem());
 
 			// add item to page & render
@@ -1007,7 +1071,7 @@
 			assert.strictEqual(oList.setIncludeItemInSelection(bIncludeItemInSelection).getIncludeItemInSelection(), bIncludeItemInSelection, 'The control property "includeItemInSelection" is "' + bIncludeItemInSelection + '" on ' + oList);
 			sap.ui.getCore().applyChanges();
 			oList.getItems().forEach(function (oItem) {
-				assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), true, 'Each item has css class "sapMLIBCursor" on ' + oList);
+				assert.strictEqual(oItem.$().hasClass("sapMLIBActionable"), true, 'Each item has css class "sapMLIBActionable" on ' + oList);
 			});
 
 			// simulate tap & check result
@@ -1173,21 +1237,6 @@
 		QUnit.module("Internal methods");
 		/********************************************************************************/
 
-		QUnit.test("_isColumnsIncompatible", function(assert) {
-			var oList = new sap.m.List();
-
-			// add item to page & render
-			oPage.addContent(oList);
-			sap.ui.getCore().applyChanges();
-
-			// call method & do tests
-			assert.strictEqual(oList._isColumnsIncompatible(), false, "method returns false for any version larger than 1.14");
-
-			// cleanup
-			oPage.removeAllContent();
-			oList.destroy();
-		});
-
 		QUnit.module("KeyboardHandling");
 		QUnit.test("Basics", function (assert) {
 			var fnDetailPressSpy = this.spy(),
@@ -1211,6 +1260,9 @@
 					itemPress: fnItemPressSpy,
 					selectionChange: fnSelectionChangeSpy
 				}).addItem(oListItem1).addItem(oListItem2);
+
+			// let the item navigation run for testing
+			this.stub(sap.ui.Device.system, "desktop", true);
 
 			oList.placeAt("content");
 			sap.ui.getCore().applyChanges();
@@ -1359,6 +1411,9 @@
 				items : [oListItem0, oListItem1, oListItem2]
 			});
 
+			// let the item navigation run for testing
+			this.stub(sap.ui.Device.system, "desktop", true);
+
 			oList.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
@@ -1425,6 +1480,9 @@
 
 			oList.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+
+			// let the item navigation run for testing
+			this.stub(sap.ui.Device.system, "desktop", true);
 
 			var fnRenderSpy = this.spy(oList.getRenderer(), "render");
 
@@ -1621,6 +1679,9 @@
 			sap.ui.getCore().applyChanges();
 			assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlight"), true, "Highlight is rendered");
 			assert.ok(oLI.getDomRef().firstChild.classList.contains("sapMLIBHighlightError"), true, "Error Highlight is rendered");
+
+			// clean up
+			oLI.destroy();
 		});
 
 		QUnit.test("List should respect highlight changes", function (assert) {
@@ -1693,6 +1754,161 @@
 			oList.destroy();
 			oText1.destroy();
 			oText2.destroy();
+		});
+
+		QUnit.test("group headers info of the item", function(assert) {
+			var oGroupHeader1 = new sap.m.GroupHeaderListItem({
+					title: "Group Header 1"
+				}),
+				oListItem1 = new sap.m.StandardListItem({
+					title: "List Item 1"
+				}),
+				oGroupHeader2 = new sap.m.GroupHeaderListItem({
+					title: "Group Header 2"
+				}),
+				oListItem2 = new sap.m.StandardListItem({
+					title: "List Item 2"
+				}),
+				oList = new sap.m.List({
+					items: [oGroupHeader1, oListItem1, oGroupHeader2, oListItem2]
+				}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			oListItem1.focus();
+			assert.ok(oListItem1.getAccessibilityInfo().description.indexOf(oGroupHeader1.getTitle()) > -1, "group headers info exist in the accessibility info of the item");
+
+			oListItem2.focus();
+			assert.ok(oListItem2.getAccessibilityInfo().description.indexOf(oGroupHeader2.getTitle()) > -1, "group headers info of the item matches with the correct group header");
+
+			oList.destroy();
+		});
+
+		QUnit.module("Context Menu");
+
+		QUnit.test("Context Menu", function(assert) {
+			var oList = new sap.m.List();
+
+			var fnInvalidate = this.spy(oList, "invalidate");
+
+			// list should not be invalidated for setContextMenu
+			fnInvalidate.reset();
+			oList.setContextMenu(new sap.m.Menu({
+			items: [
+				new sap.m.MenuItem({text: "{Title}"})
+			]}));
+			assert.ok(!fnInvalidate.called, "List is not invalidated when the contextMenu aggregation is set");
+
+			var oMenu = oList.getContextMenu();
+			var fnOpenAsContextMenu = this.spy(oMenu, "openAsContextMenu");
+
+
+			bindListData(oList, data4, "/items", createTemplateListItem());
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+			assert.ok(oList.getContextMenu(), "ContextMenu was set correctly");
+
+			var oItem = oList.getItems()[0];
+			oItem.focus();
+			oItem.$().trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 1, "Menu#OpenAsContextMenu is called");
+			oMenu.close();
+
+			// list should not be invalidated for destroyContextmenu
+			fnInvalidate.reset();
+			oList.destroyContextMenu();
+			assert.ok(!fnInvalidate.called, "List is not invalidated when the contextMenu aggregation is destroyed");
+
+			//clean up
+			oMenu.destroy();
+			oList.destroy();
+		});
+
+		QUnit.test("Test context menu on interactive control", function(assert) {
+			var oInput = new sap.m.Input();
+			var oListItem = new sap.m.InputListItem({
+				label: "Input",
+				content : oInput,
+				type: "Navigation"
+			});
+			var oList = new sap.m.List({
+				mode: "MultiSelect",
+				items : [oListItem],
+				contextMenu : new sap.m.Menu({
+					items: [
+						new sap.m.MenuItem({text: "ContextMenu"})
+					]
+				})
+			});
+
+			var oMenu = oList.getContextMenu();
+			var fnOpenAsContextMenu = this.spy(oMenu, "openAsContextMenu");
+
+			oPage.addContent(oList);
+			sap.ui.getCore().applyChanges();
+
+			var $input = oInput.$("inner").focus();
+			$input.trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 0, "Menu#OpenAsContextMenu is not called");
+
+			oListItem.getMultiSelectControl().focus();
+			oListItem.getMultiSelectControl().$().trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 1, "Menu#OpenAsContextMenu is called");
+			oMenu.close();
+
+			oList.setMode("SingleSelectLeft");
+			sap.ui.getCore().applyChanges();
+
+			oListItem.getSingleSelectControl().focus();
+			oListItem.getSingleSelectControl().$().trigger("contextmenu");
+			assert.equal(fnOpenAsContextMenu.callCount, 2, "Menu#OpenAsContextMenu is called again");
+			oMenu.close();
+
+			// clean up
+			oMenu.destroy();
+			oList.destroy();
+		});
+
+		QUnit.module("Text Selection");
+
+		QUnit.test("No press event on text selection", function(assert) {
+			var oList = new sap.m.List();
+			var oListItem = new sap.m.StandardListItem({
+				type: "Active",
+				title: "Hello World",
+				press: function(e) {
+					sap.m.MessageToast.show("Item Pressed");
+				}
+			});
+
+			oList.addItem(oListItem);
+			oList.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			var fnPress = this.spy(oListItem, "firePress");
+			oListItem.focus();
+			var bHasSelection;
+			this.stub(window, "getSelection", function() {
+				return {
+					toString: function() {
+						return bHasSelection ? "Hello World" : "";
+					}
+				}
+			});
+
+			bHasSelection = true;
+			assert.equal(window.getSelection().toString(), "Hello World");
+			oListItem.$().trigger("tap");
+			assert.ok(!fnPress.called, "Press event not fired");
+
+			bHasSelection = false;
+			assert.equal(window.getSelection().toString(), "");
+			oListItem.$().trigger("tap");
+			this.clock.tick(0);
+			assert.ok(fnPress.called, "Press event not fired");
+
+			// clean up
+			oList.destroy();
 		});
 </script>
 

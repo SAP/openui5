@@ -1,0 +1,55 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+		<title>Designtime</title>
+
+		<script src="../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+		</script>
+		<script src="ControlLibrary.js"></script>
+		
+		<style>
+			html,body{
+				height:100%;
+			}
+			
+			body{
+				margin:0;
+				padding:0;
+			}
+			.valid {
+				float: right;
+				color: green;
+			}
+			.invalid {
+				float: right;
+				color: red;
+			}
+			.unchecked {
+				float: right;
+				color: #f3af0a;
+			}
+			
+		</style>
+	</head>
+	<body id="body" class="sapUiBody sapUiSizeCompact">
+		<table style="height:100%; width: 100%">
+			<tr>
+				<td style="width:350px; vertical-align:top;padding:0px;">
+					<div id="list" style="width:100%; height:100%; overflow:auto;border:1px solid #e5e5e5">
+					</div>
+				</td>
+				<td>
+					<div id="details" style="width:100%; height:50%; overflow:auto;border:1px solid #e5e5e5">
+					</div>
+					<div id="code" style="width:100%; height:50%; border:1px solid #e5e5e5">
+					</div>
+				</td>
+			</tr>	
+		</table>
+	</body>
+</html>

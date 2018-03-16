@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.ui.ux3.ExactBrowser.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Menu', 'sap/ui/core/Control', './ExactAttribute', './ExactList', './library'],
-	function(jQuery, Button, Menu, Control, ExactAttribute, ExactList, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/commons/Button',
+    'sap/ui/commons/Menu',
+    'sap/ui/core/Control',
+    './ExactAttribute',
+    './ExactList',
+    './library',
+    "./ExactBrowserRenderer"
+],
+	function(
+	    jQuery,
+		Button,
+		Menu,
+		Control,
+		ExactAttribute,
+		ExactList,
+		library,
+		ExactBrowserRenderer
+	) {
 	"use strict";
 
 
@@ -96,7 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 			/**
 			 * The attributes which shall be available.
 			 */
-			attributes : {type : "sap.ui.ux3.ExactAttribute", multiple : true, singularName : "attribute"},
+			attributes : {type : "sap.ui.ux3.ExactAttribute", multiple : true, singularName : "attribute", forwarding: {idSuffix: "-rootAttribute", aggregation: "attributes"}},
 
 			/**
 			 * Menu with options. The menu can not used when the property showTopList is set to false.
@@ -165,7 +183,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 			this._rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.ux3");
 
 			//Create a root node for the attributes tree
-			this._attributeRoot = new ExactAttribute();
+			this._attributeRoot = new ExactAttribute(this.getId() + "-rootAttribute");
 			this.setAggregation("rootAttribute",this._attributeRoot);
 			//Init the used subcontrols
 			this._rootList = new ExactList(this.getId() + "-rootlist");
@@ -283,44 +301,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/commons/Men
 
 		ExactBrowser.prototype.setListHeight = function(iListHeight) {
 			this._rootList.setTopHeight(iListHeight);
-			return this;
-		};
-
-
-		ExactBrowser.prototype.getAttributes = function() {
-			return this._attributeRoot.getAttributesInternal();
-		};
-
-
-		ExactBrowser.prototype.insertAttribute = function(oAttribute, iIndex) {
-			this._attributeRoot.insertAttribute(oAttribute, iIndex);
-			return this;
-		};
-
-
-		ExactBrowser.prototype.addAttribute = function(oAttribute) {
-			this._attributeRoot.addAttribute(oAttribute);
-			return this;
-		};
-
-
-		ExactBrowser.prototype.removeAttribute = function(vElement) {
-			return this._attributeRoot.removeAttribute(vElement);
-		};
-
-
-		ExactBrowser.prototype.removeAllAttributes = function() {
-			return this._attributeRoot.removeAllAttributes();
-		};
-
-
-		ExactBrowser.prototype.indexOfAttribute = function(oAttribute) {
-			return this._attributeRoot.indexOfAttribute(oAttribute);
-		};
-
-
-		ExactBrowser.prototype.destroyAttributes = function() {
-			this._attributeRoot.destroyAttributes();
 			return this;
 		};
 

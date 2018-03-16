@@ -1,0 +1,23 @@
+{
+  "cwd": "test-resources/sap/m/demokit/basicTemplate/webapp/",
+  "files" : [
+    "Component.js",
+    "controller/App.controller.js",
+    "i18n/i18n.properties",
+    "index.html",
+    "manifest.json",
+    "model/models.js",
+    "model/formatter.js",
+    "view/App.view.xml",
+    "css/style.css",
+    "test/integration/pages/App.js",
+    "test/integration/pages/Common.js",
+    "test/integration/AllJourneys.js",
+    "test/integration/navigationJourney.js",
+    "test/integration/opaTests.qunit.html",
+    "test/unit/controller/App.controller.js",
+    "test/unit/model/formatter.js",
+    "test/unit/allTests.js",
+    "test/unit/unitTests.qunit.html"
+  ]
+}

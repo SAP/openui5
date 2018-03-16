@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './SelectRenderer'],
-	function(jQuery, Renderer, SelectRenderer) {
+sap.ui.define(['sap/ui/core/Renderer', './SelectRenderer'],
+	function(Renderer, SelectRenderer) {
 		"use strict";
 
 		var ActionSelectRenderer = Renderer.extend(SelectRenderer);

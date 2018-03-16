@@ -9,13 +9,15 @@ sap.ui.define(['jquery.sap.global', './Object'],
 
 
 	/**
+	 *
 	 * Creates an event with the given <code>sId</code>, linked to the provided <code>oSource</code> and enriched with the <code>mParameters</code>.
+	 * @class An Event object consisting of an ID, a source and a map of parameters.
+	 * Implements {@link sap.ui.base.Poolable} and therefore an event object in the event handler will be reset by {@link sap.ui.base.ObjectPool} after the event handler is done.
 	 *
 	 * @param {string} sId The id of the event
 	 * @param {sap.ui.base.EventProvider} oSource The source of the event
 	 * @param {object} mParameters A map of parameters for this event
 	 *
-	 * @class An Event object consisting of an id, a source and a map of parameters
 	 * @extends sap.ui.base.Object
 	 * @implements sap.ui.base.Poolable
 	 * @author SAP SE

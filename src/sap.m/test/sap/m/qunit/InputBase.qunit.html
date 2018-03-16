@@ -1202,21 +1202,6 @@
 			QUnit.test("it should update the value state message accordingly", function(assert) {
 				var oCoreRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core"),
 						oMobileRB = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
-						_fnGetDivText = function(objDiv) {
-							if (!objDiv) {
-								return '';
-							}
-							if (sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge) {
-								return jQuery(objDiv)
-										.clone()
-										.children()
-										.remove()
-										.end()
-										.text();
-							} else {
-								return objDiv.innerText;
-							}
-						},
 						oValueStateInput = new sap.m.Input("vsinput", {
 							placeholder: "value state changes while you are typing",
 							liveChange: function() {
@@ -1251,7 +1236,7 @@
 				this.clock.tick(1000);
 				assert.strictEqual(oValueStateInput.getValueState(), "Warning");
 				assert.ok(jQuery.sap.domById("vsinput-message"), "warning message popup is open");
-				assert.strictEqual(_fnGetDivText(jQuery.sap.byId("vsinput-message")[0]), oCoreRB.getText("VALUE_STATE_WARNING"));
+				assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_WARNING"));
 				assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_WARNING") + oCoreRB.getText("VALUE_STATE_WARNING"));
 
 				// success state
@@ -1270,7 +1255,7 @@
 				oValueStateInput.getValueState();
 				assert.strictEqual(oValueStateInput.getValueState(), "Error");
 				assert.ok(jQuery.sap.domById("vsinput-message"), "error message popup is open");
-				assert.strictEqual(_fnGetDivText(jQuery.sap.byId("vsinput-message")[0]), oCoreRB.getText("VALUE_STATE_ERROR"));
+				assert.strictEqual(jQuery.sap.byId("vsinput-message-text").text(), oCoreRB.getText("VALUE_STATE_ERROR"));
 				assert.strictEqual(jQuery.sap.byId("vsinput-message").text(), oMobileRB.getText("INPUTBASE_VALUE_STATE_ERROR") + oCoreRB.getText("VALUE_STATE_ERROR"));
 
 				// none state
@@ -1888,13 +1873,16 @@
 			});
 
 			QUnit.test("Placeholder should be in labelledby", function(assert) {
+				var $HiddenLabel;
 				var sPlaceholder = "placeholder";
 				var oInput = new sap.m.InputBase({
 					placeholder: sPlaceholder
 				}).placeAt("content");
 				sap.ui.getCore().applyChanges();
+				$HiddenLabel = oInput.$("labelledby");
 
 				var $Input = jQuery(oInput.getFocusDomRef());
+				assert.ok($HiddenLabel.is("span"), "The hidden reference element is of a correct type");
 				var $Reference = jQuery.sap.byId($Input.attr("aria-labelledby"));
 				assert.strictEqual($Reference.text(), sPlaceholder, "Placeholder is added into aria-labelledby");
 

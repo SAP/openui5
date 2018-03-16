@@ -186,7 +186,7 @@ html.sap-phone .sapMTC .sapMTCScroller {
 	box-shadow: @sapUiShadowLevel0;
 }
 
-.sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
+.sapMTC.sapMTCEditable .sapMTCRemove {
 	position: absolute;
 	display: block;
 	height: 2rem;
@@ -230,4 +230,39 @@ html[data-sap-ui-browser^="ff"] .sapMTC.sapMTCEditable .sapMTile .sapMTCRemove {
 
 .sapMTC.sapMTCEditable .sapMTCRemove::before {
 	content: "\e03e";
+}
+
+/* use dir-specific rules to prevent mirroring in dir=rtl mode */
+.sapMTC .sapMTCEdgeRight,
+html[dir=rtl] .sapMTC .sapMTCEdgeLeft {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 2.5rem;
+	height: 100%;
+	border-right: 0.125rem solid fade(lighten(@sapUiHighlight,20),60);
+	opacity: 0.01;
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,0)), color-stop(76%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,1))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 76%,rgba(255,255,255,1) 100%); /* Chrome10+,Safari5.1+ */
+	background: linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 76%,rgba(255,255,255,1) 100%); /* W3C */
+}
+
+/* use dir-specific rules to prevent mirroring in dir=rtl mode */
+.sapMTC .sapMTCEdgeLeft,
+html[dir=rtl] .sapMTC .sapMTCEdgeRight {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 2.5rem;
+	height: 100%;
+	border-left: 0.125rem solid fade(lighten(@sapUiHighlight,20),60);
+	opacity: 0.01;
+	background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(255,255,255,1)), color-stop(24%,rgba(255,255,255,1)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(left, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 24%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+	background: linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 24%,rgba(255,255,255,0) 100%); /* W3C */
+}
+
+html.sap-phone .sapMTC .sapMTCEdgeLeft,
+html.sap-phone .sapMTC .sapMTCEdgeRight {
+	width: 1.25rem;
 }

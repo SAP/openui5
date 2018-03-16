@@ -3,8 +3,13 @@
 /* Belize theme                      */
 /* ================================= */
 
-.sapUiIcon:focus {
-	outline: 1px dashed @sapUiContentFocusColor;
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiIcon:focus {
+	outline-color: @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiIcon:focus::after,
+html[data-sap-ui-browser^="ed"] .sapUiIcon:focus::after {
+	border-color: @sapUiContentFocusColor;
 }
 
 .sapMTB-Info-CTX > .sapUiIcon {

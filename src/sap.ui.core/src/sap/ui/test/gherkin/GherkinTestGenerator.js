@@ -190,12 +190,13 @@ sap.ui.define([
      *                                      true)
      * @param {any[]} [oTestStep.parameters] - the parameters to pass to "oTestStep.func" during its execution
      *                                         (ignored if "oTestStep.skip" is true)
+     * @param {object} [assert] - (optional) the QUnit local assert object for this test
      * @returns {boolean} true if the test step was executed, otherwise false
      * @throws {Error} if you attempt to call this method before calling "generate" or after calling "tearDown", or if
      *                 oTestStep is an invalid TestStep object
      * @public
      */
-    execute: function(oTestStep) {
+    execute: function(oTestStep, assert) {
       if (!this._oStepDefs) {
         throw new Error("Run 'generate' before calling 'execute'");
       }
@@ -207,6 +208,7 @@ sap.ui.define([
       // If this test step should not be skipped
       if (!oTestStep.skip) {
         // then execute the test step in the Step Definitions shared context
+        this._oStepDefs.assert = assert;
         oTestStep.func.apply(this._oStepDefs, oTestStep.parameters);
         this._oStepDefs._needsTearDown = true;
       }
@@ -426,4 +428,4 @@ sap.ui.define([
   });
 
   return GherkinTestGenerator;
-}, /* bExport= */ true);
+});

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.Row.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context'],
-	function(jQuery, Element, Context) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context', './TableUtils'],
+	function(jQuery, Element, Context, TableUtils) {
 	"use strict";
 
 
@@ -79,6 +79,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 	/**
 	 * @private
 	 */
+	Row.prototype.addStyleClass = function(sStyleClass) {
+		jQuery(this.getDomRefs(false, true)).addClass(sStyleClass);
+	};
+
+	/**
+	 * @private
+	 */
+	Row.prototype.removeStyleClass = function(sStyleClass) {
+		jQuery(this.getDomRefs(false, true)).removeClass(sStyleClass);
+	};
+
+	/**
+	 * @private
+	 */
 	Row.prototype.initDomRefs = function() {
 		this._mDomRefs = {};
 	};
@@ -88,7 +102,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 	 * function considers the scroll position of the table and also takes fixed rows and
 	 * fixed bottom rows into account.
 	 *
-	 * @return {int} index of the row (considers scroll position and fixed rows)
+	 * @returns {int} index of the row (considers scroll position and fixed rows)
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -108,81 +122,90 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 			var iNumberOfFixedBottomRows = oTable.getFixedBottomRowCount();
 			var iVisibleRowCount = oTable.getVisibleRowCount();
 			if (iNumberOfFixedBottomRows > 0 && iRowIndex >= iVisibleRowCount - iNumberOfFixedBottomRows) {
-				var oBinding = oTable.getBinding("rows");
-				if (oBinding && oBinding.getLength() >= iVisibleRowCount) {
-					return oBinding.getLength() - (iVisibleRowCount - iRowIndex);
+				var iTotalRowCount = oTable._getTotalRowCount();
+				if (iTotalRowCount >= iVisibleRowCount) {
+					return iTotalRowCount - (iVisibleRowCount - iRowIndex);
 				} else {
 					return iRowIndex;
 				}
 			}
 
-			var iFirstRow = oTable.getFirstVisibleRow();
-			return iFirstRow + iRowIndex;
+			return oTable._getFirstRenderedRowIndex() + iRowIndex;
 		}
 		return -1;
 	};
 
 	/**
+	 * The basic {@link sap.ui.core.Element#getDomRef} only returns the main DOM reference. A row consists of multiple DOM elements, which are
+	 * returned by this function, either as native DOM references or as jQuery objects. The first time this function is called the references are
+	 * cached, and in subsequent calls retrieved from the cache. In case the DOM has changed, the cache has to be invalidated manually with
+	 * {@link sap.ui.table.Row#initDomRefs}.
 	 *
-	 * @param bJQuery Set to true to get jQuery object instead of DomRef
-	 * @returns {object} contains DomRefs or jQuery objects of the row
+	 * @param {boolean} [bJQuery=false] If set to <code>true</code>, jQuery objects are returned, otherwise native DOM references.
+	 * @param {boolean} [bCollection=false] If set to <code>true</code>, the DOM references will be returned as an array, otherwise as an object.
+	 * @returns {Object|Array} An object (or array, if <code>bCollection</code> is true) containing jQuery objects, or native references to the DOM
+	 *                         elements of the row.
+	 * @see sap.ui.core.Element#getDomRef
+	 * @see sap.ui.table.Row#initDomRefs
+	 * @private
 	 */
-	Row.prototype.getDomRefs = function (bJQuery) {
-		var fnAccess;
-		var sKey;
-		if (bJQuery === true) {
-			fnAccess = jQuery.sap.byId;
-			sKey = "jQuery";
-		} else {
-			fnAccess = jQuery.sap.domById;
-			sKey = "dom";
-		}
+	Row.prototype.getDomRefs = function (bJQuery, bCollection) {
+		var sKey = (bJQuery === true) ? "jQuery" : "dom",
+			fnAccess = (bJQuery === true) ? jQuery.sap.byId : jQuery.sap.domById,
+			mDomRefs = this._mDomRefs;
 
-		if (!this._mDomRefs[sKey]) {
-			this._mDomRefs[sKey] = {};
+		if (!mDomRefs[sKey]) {
+			mDomRefs[sKey] = {};
 			var oTable = this.getParent();
 			if (oTable) {
 				var iRowIndex = oTable.indexOfRow(this);
 				// row selector domRef
-				this._mDomRefs[sKey].rowSelector = fnAccess(oTable.getId() + "-rowsel" + iRowIndex);
+				mDomRefs[sKey].rowSelector = fnAccess(oTable.getId() + "-rowsel" + iRowIndex);
 				// row action domRef
-				this._mDomRefs[sKey].rowAction = fnAccess(oTable.getId() + "-rowact" + iRowIndex);
+				mDomRefs[sKey].rowAction = fnAccess(oTable.getId() + "-rowact" + iRowIndex);
 			}
 
 			// row domRef
-			this._mDomRefs[sKey].rowScrollPart = fnAccess(this.getId());
+			mDomRefs[sKey].rowScrollPart = fnAccess(this.getId());
 			// row domRef (the fixed part)
-			this._mDomRefs[sKey].rowFixedPart = fnAccess(this.getId() + "-fixed");
+			mDomRefs[sKey].rowFixedPart = fnAccess(this.getId() + "-fixed");
 			// row selector domRef
-			this._mDomRefs[sKey].rowSelectorText = fnAccess(this.getId() + "-rowselecttext");
+			mDomRefs[sKey].rowSelectorText = fnAccess(this.getId() + "-rowselecttext");
 
 			if (bJQuery === true) {
-				this._mDomRefs[sKey].row = this._mDomRefs[sKey].rowScrollPart;
+				mDomRefs[sKey].row = mDomRefs[sKey].rowScrollPart;
 
-				if (this._mDomRefs[sKey].rowFixedPart.length > 0) {
-					this._mDomRefs[sKey].row = this._mDomRefs[sKey].row.add(this._mDomRefs[sKey].rowFixedPart);
+				if (mDomRefs[sKey].rowFixedPart.length > 0) {
+					mDomRefs[sKey].row = mDomRefs[sKey].row.add(mDomRefs[sKey].rowFixedPart);
 				} else {
 					// since this won't be undefined in jQuery case
-					this._mDomRefs[sKey].rowFixedPart = undefined;
+					mDomRefs[sKey].rowFixedPart = undefined;
 				}
 
-				if (this._mDomRefs[sKey].rowSelector && this._mDomRefs[sKey].rowSelector.length > 0) {
-					this._mDomRefs[sKey].row = this._mDomRefs[sKey].row.add(this._mDomRefs[sKey].rowSelector);
+				if (mDomRefs[sKey].rowSelector && mDomRefs[sKey].rowSelector.length > 0) {
+					mDomRefs[sKey].row = mDomRefs[sKey].row.add(mDomRefs[sKey].rowSelector);
 				} else {
 					// since this won't be undefined in jQuery case
-					this._mDomRefs[sKey].rowSelector = undefined;
+					mDomRefs[sKey].rowSelector = undefined;
 				}
 
-				if (this._mDomRefs[sKey].rowAction && this._mDomRefs[sKey].rowAction.length > 0) {
-					this._mDomRefs[sKey].row = this._mDomRefs[sKey].row.add(this._mDomRefs[sKey].rowAction);
+				if (mDomRefs[sKey].rowAction && mDomRefs[sKey].rowAction.length > 0) {
+					mDomRefs[sKey].row = mDomRefs[sKey].row.add(mDomRefs[sKey].rowAction);
 				} else {
 					// since this won't be undefined in jQuery case
-					this._mDomRefs[sKey].rowAction = undefined;
+					mDomRefs[sKey].rowAction = undefined;
 				}
 			}
 		}
 
-		return this._mDomRefs[sKey];
+		var mKeyDomRefs = mDomRefs[sKey];
+		if (bCollection) {
+			return Object.keys(mKeyDomRefs).map(function (sKey) {
+				return mKeyDomRefs[sKey];
+			}).filter(Boolean);
+		}
+
+		return mKeyDomRefs;
 	};
 
 	/**
@@ -210,12 +233,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 
 		// update tooltips
 		if ($DomRefs.rowSelector) {
-			$DomRefs.rowSelector.attr("title", mTooltipTexts.mouse[sSelectReference]);
+			$DomRefs.rowSelector.attr("title", !this._bHidden ? mTooltipTexts.mouse[sSelectReference] : "");
 		}
 
 		if ($DomRefs.rowSelectorText) {
 			var sText = "";
-			if (!(this._oNodeState && this._oNodeState.sum) && !this._bHasChildren) {
+			if (!this._bHidden && !TableUtils.Grouping.isInSumRow($DomRefs.rowSelector) && !TableUtils.Grouping.isInGroupingRow($DomRefs.rowSelector)) {
 				sText = mTooltipTexts.keyboard[sSelectReference];
 			}
 			$DomRefs.rowSelectorText.text(sText);
@@ -226,7 +249,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 			$Row = $Row.add($DomRefs.rowFixedPart);
 		}
 
-		if (bSelectOnCellsAllowed) {
+		if (bSelectOnCellsAllowed && !this._bHidden) {
 			// the row requires a tooltip for selection if the cell selection is allowed
 			$Row.attr("title", mTooltipTexts.mouse[sSelectReference]);
 		} else {
@@ -338,6 +361,111 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Context
 		return Element.prototype.destroy.apply(this, arguments);
 	};
 
-	return Row;
+	/**
+	 * Creates a ghost of the row which will be used during drag and drop actions.
+	 *
+	 * @return {HTMLElement} The HTML element representing the drag ghost of the row.
+	 * @private
+	 */
+	Row.prototype.getDragGhost = function() {
+		var oTable = this.getParent();
+		var oTableElement = oTable.getDomRef();
+		var mRowAreas = this.getDomRefs();
+		var oGhostElement;
+		var oGhostAreaElement;
+		var oRowElementClone;
+		var iSelectedRowCount = oTable._getSelectedIndicesCount();
 
+		function removeForbiddenAttributes(oElement) {
+			oElement.removeAttribute("id");
+			oElement.removeAttribute("data-sap-ui");
+			oElement.removeAttribute("data-sap-ui-related");
+
+			var iChildCount = oElement.children.length;
+			for (var i = 0; i < iChildCount; i++) {
+				removeForbiddenAttributes(oElement.children[i]);
+			}
+		}
+
+		function cloneTableAndRow(oTableElement, oRowElement) {
+			var oTableClone = oTableElement.cloneNode();
+			var oTableHeadClone = oTableElement.querySelector("thead").cloneNode(true);
+			var oTableBodyClone = oTableElement.querySelector("tbody").cloneNode();
+			var oRowClone = oRowElement.cloneNode(true);
+
+			oTableBodyClone.appendChild(oRowClone);
+			oTableClone.appendChild(oTableHeadClone);
+			oTableClone.appendChild(oTableBodyClone);
+
+			return oTableClone;
+		}
+
+		oGhostElement = oTableElement.cloneNode();
+		oGhostElement.classList.add("sapUiTableRowGhost");
+		oGhostElement.classList.remove("sapUiTableVScr");
+		oGhostElement.classList.remove("sapUiTableHScr");
+		oGhostElement.style.width = oTableElement.getBoundingClientRect().width + "px";
+
+		if (mRowAreas.rowSelector != null) {
+			oGhostAreaElement = oTable.getDomRef("sapUiTableRowHdrScr").cloneNode();
+			oRowElementClone = mRowAreas.rowSelector.cloneNode(true);
+
+			oGhostAreaElement.appendChild(oRowElementClone);
+			oGhostElement.appendChild(oGhostAreaElement);
+		}
+
+		if (mRowAreas.rowFixedPart != null) {
+			oGhostAreaElement = oTable.getDomRef("sapUiTableCtrlScrFixed").cloneNode();
+			oRowElementClone = cloneTableAndRow(oTable.getDomRef("table-fixed"), mRowAreas.rowFixedPart);
+
+			oGhostAreaElement.appendChild(oRowElementClone);
+			oGhostElement.appendChild(oGhostAreaElement);
+		}
+
+		if (mRowAreas.rowScrollPart != null) {
+			var oScrollableColumnsContainer = oTable.getDomRef("sapUiTableCtrlScr");
+
+			oGhostAreaElement = oScrollableColumnsContainer.cloneNode();
+			oRowElementClone = cloneTableAndRow(oTable.getDomRef("table"), mRowAreas.rowScrollPart);
+
+			oGhostAreaElement.appendChild(oTable.getDomRef("tableCtrlCnt").cloneNode());
+			oGhostAreaElement.firstChild.appendChild(oRowElementClone);
+			oGhostElement.appendChild(oGhostAreaElement);
+
+			// Copying the scroll position currently does not work.
+			// The browser seems to "shift" the whole ghost to the right by the amount of pixels that is set for "scrollLeft".
+			// Could work, if custom ghost handling is implemented in D&D.
+			/*Promise.resolve().then(function(oGhostAreaElement, iScrollLeft) {
+				// Needs to be done asynchronously, because the browser first needs to include this element into the layout.
+				if (oGhostAreaElement != null) {
+					oGhostAreaElement.scrollLeft = iScrollLeft;
+				}
+			}.bind(this, oGhostAreaElement, oScrollableColumnsContainer.scrollLeft));*/
+		}
+
+		if (mRowAreas.rowAction != null) {
+			oGhostAreaElement = oTable.getDomRef("sapUiTableRowActionScr").cloneNode();
+			oRowElementClone = mRowAreas.rowAction.cloneNode(true);
+
+			oGhostAreaElement.appendChild(oRowElementClone);
+			oGhostElement.appendChild(oGhostAreaElement);
+		}
+
+		if (iSelectedRowCount > 1) {
+			oGhostAreaElement = document.createElement("div");
+			oGhostAreaElement.classList.add("sapUiTableRowGhostCount");
+
+			var oCountElement = document.createElement("div");
+			oCountElement.textContent = iSelectedRowCount;
+
+			oGhostAreaElement.appendChild(oCountElement);
+			oGhostElement.appendChild(oGhostAreaElement);
+		}
+
+		removeForbiddenAttributes(oGhostElement);
+
+		return oGhostElement;
+	};
+
+	return Row;
 });

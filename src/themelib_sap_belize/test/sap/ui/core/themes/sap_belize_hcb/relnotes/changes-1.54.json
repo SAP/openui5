@@ -1,0 +1,157 @@
+{
+  "1.54.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "569e5989980029c24980665cd9b0f78297f5cc16",
+        "type": "FEATURE",
+        "text": " sap.m.Button: Add Ghost Button type",
+        "references": []
+      },
+      {
+        "id": "3839cc2d07d1e5d26df58658cdd361afc4d7b0f9",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now the week number in 1 Month view is not missing in IE when 1st week day is selected",
+        "references": []
+      },
+      {
+        "id": "c4cdd058286b717439ac4790f2496369028f0d04",
+        "type": "FEATURE",
+        "text": " sap.m.CheckBox: Added property displayOnly",
+        "references": []
+      },
+      {
+        "id": "2482a259b10c6136bc6d59df65bdea0b7e7c3d5d",
+        "type": "FEATURE",
+        "text": " sap.m.TimePickerSliders: New control implemented",
+        "references": []
+      },
+      {
+        "id": "507f7e29118139b0bb9a57fdeb30af11274ae8b6",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Contrast ratio on focus is now correct",
+        "references": []
+      },
+      {
+        "id": "23a88f99d5bfd03d62a6b6db001b93b3451e1664",
+        "type": "FEATURE",
+        "text": " Add \u002772\u0027 font and use as default in all Belize themes",
+        "references": []
+      },
+      {
+        "id": "469a2111baa7bbdd036152fe381c02a1c8a394b3",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPageTitle: Added new property areaShrinkRatio",
+        "references": []
+      },
+      {
+        "id": "ec66d8e2d246f807e5b259ccb75159943e184a9f",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectStatus: Active state is now supported",
+        "references": []
+      },
+      {
+        "id": "d439391fa30921cfc6859c8d7ccf1c7d2e92f930",
+        "type": "FIX",
+        "text": " sap.m.CheckBox: Focus outline fixed in grid and form",
+        "references": []
+      },
+      {
+        "id": "ea796c83a9b921f2d33c201a1195aa55082d1ea1",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: Vertically aligned correctly alongside other controls",
+        "references": []
+      },
+      {
+        "id": "aa5e44497461093e3a17b04277f93341dcc24e6a",
+        "type": "FIX",
+        "text": " sap.m.Slider/RangeSlider: Tooltips moved to the static area",
+        "references": []
+      },
+      {
+        "id": "7b81ef78c54b5bee9ef2d49fe512bf8a1c53e6f8",
+        "type": "FEATURE",
+        "text": " sap.m.MessagePage: Added new property and aggregation",
+        "references": []
+      },
+      {
+        "id": "82984b41bc5e18d70ce8733711179039b91f6f55",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: focus fixed for HCB",
+        "references": []
+      },
+      {
+        "id": "0e1cdb11481e9f67ecf3b6aa8f64e9f95b07f535",
+        "type": "FIX",
+        "text": " sap.m.Tile: Focus is cleared indicated in HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "88b5e1a7dbbb3e646587544dbbaba324f3547b4f",
+        "type": "FEATURE",
+        "text": " sap.m.TimePicker: 24:00 value is now supported",
+        "references": []
+      },
+      {
+        "id": "2c5182ae242c6ae4384131ac224fa9ce28ceec00",
+        "type": "FEATURE",
+        "text": " sap.m.WizardStep: Optional step property added",
+        "references": []
+      },
+      {
+        "id": "94b2acc2137b52f7ca885388734a92f57ff22557",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Unselected icons used to have a wrong border color in contrast themes",
+        "references": []
+      },
+      {
+        "id": "9af9d4d8a6188b25876c657e14e8928131ee484b",
+        "type": "FEATURE",
+        "text": " sap.m.ColorPalette: new control implemented.",
+        "references": []
+      },
+      {
+        "id": "f35a6b9088079a65b7cb5c4efd55dd4237d8c4da",
+        "type": "FIX",
+        "text": " Table: Selected checkbox not visible properly",
+        "references": []
+      },
+      {
+        "id": "eaf3bce54050da573d6427e2aa75a3e995ddccc8",
+        "type": "FIX",
+        "text": " sap.m.Dialog: correct header, subheader and footer DOM structure",
+        "references": []
+      },
+      {
+        "id": "7fad9ea75573d19669e244a7fd41a7946ab405ca",
+        "type": "FEATURE",
+        "text": " sap.m.Toolbar: Added \"style\" property",
+        "references": []
+      },
+      {
+        "id": "cf137de19a839e809bf656d6fcf51af6355cce88",
+        "type": "FEATURE",
+        "text": " sap.tnt.InfoLabel: control implemented",
+        "references": []
+      },
+      {
+        "id": "5dc083b470b04cc5ac75dda3652f8aab5137f195",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct font color when select appointments",
+        "references": []
+      },
+      {
+        "id": "e799159db6a73916fda16412f11039428b06c87d",
+        "type": "FIX",
+        "text": " sap.ui.unified.Currency: align currency labels properly",
+        "references": []
+      },
+      {
+        "id": "6aae96fe4fb2e3153790141326c3cc9f182d3520",
+        "type": "FIX",
+        "text": " uxap.ObjectPageHeader: Title Selection Icon aligned with VD",
+        "references": []
+      }
+    ]
+  }
+}

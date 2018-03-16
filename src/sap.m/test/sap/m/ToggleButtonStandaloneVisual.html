@@ -1,0 +1,576 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>sap.m.Button and sap.m.ToggleButton Test</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+
+</script>
+
+<style type="text/css">
+.ButtonSpace {
+	display: inline;
+	position: relative;
+}
+</style>
+
+<script>
+	jQuery.sap.require("sap.ui.core.HTML");
+	jQuery.sap.require("sap.ui.core.IconPool");
+
+	new sap.ui.core.HTML({content: "<span id='buttons3'>Default type ToggleButtons</span></br></br>"}).placeAt("standAloneBtn");
+	////////////////////////// DEFAULT //////////////////////////////////
+	var oToggleButton1 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton2 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Default,
+		text: "ToggleButton Type Default",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton3 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Default",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton4 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton5 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Default,
+		text: "ToggleButton Type Default",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton6 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Default",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton3p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Default",
+		enabled: true,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton4p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Default",
+		enabled: false,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "</br></br>Transparent type ToggleButtons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// TRANSPARENT //////////////////////////////////
+	var oToggleButton7 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton8 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Transparent,
+		text: "ToggleButton Type Transparent",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton9 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Transparent",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton10 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton11 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Transparent,
+		text: "ToggleButton Type Transparent",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton12 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Transparent",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton9p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Transparent",
+		enabled: true,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton10p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Transparent",
+		enabled: false,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "</br></br>Reject type ToggleButtons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Reject //////////////////////////////////
+	var oToggleButton13 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Reject,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton14 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Reject,
+		text: "ToggleButton Type Reject",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton15 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Reject,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Reject",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton16 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Reject,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton17 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Reject,
+		text: "ToggleButton Type Reject",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton18 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Reject,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Reject",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton14p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Reject,
+		text: "ToggleButton Type Reject",
+		enabled: true,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton15p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Reject,
+		text: "ToggleButton Type Reject",
+		enabled: false,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "</br></br>Accept type ToggleButtons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Accept //////////////////////////////////
+	var oToggleButton19 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton20 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Accept,
+		text: "ToggleButton Type Accept",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton21 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Accept",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton22 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton23 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Accept,
+		text: "ToggleButton Type Accept",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton24 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Accept",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton21p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Accept",
+		enabled: true,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton22p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Accept",
+		enabled: false,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<span id='buttons4'>Emphasized type ToggleButtons</span></br></br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Emphasized //////////////////////////////////
+	var oToggleButton25 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton26 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Emphasized,
+		text: "ToggleButton Type Emphasized",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton27 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Emphasized",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton28 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton29 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Emphasized,
+		text: "ToggleButton Type Emphasized",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton30 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Emphasized",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton27p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		text: "ToggleButton Emphasized pressed",
+		enabled: true,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton28p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		text: "ToggleButton Emphasized pressed",
+		enabled: false,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "</br></br>Back type ToggleButtons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Back //////////////////////////////////
+	var oToggleButton31 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton32 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Back,
+		text: "ToggleButton Type Back",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton33 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Back",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton34 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton35 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Back,
+		text: "ToggleButton Type Back",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton36 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Back",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton33p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Back",
+		enabled: true,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton34p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Back",
+		enabled: false,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "</br></br>UP type ToggleButtons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Up //////////////////////////////////
+	var oToggleButton37 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton38 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Up,
+		text: "ToggleButton Type Up",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton39 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Up",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton40 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton41 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Up,
+		text: "ToggleButton Type Up",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton42 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Up",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton41p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Up",
+		enabled: true,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton42p = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Up",
+		enabled: false,
+		pressed: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "</br></br>Unstyled type ToggleButtons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Unstyled //////////////////////////////////
+	var oToggleButton43 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Unstyled,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton44 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Unstyled,
+		text: "ToggleButton Type Unstyled",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton45 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Unstyled,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Unstyled",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton46 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Unstyled,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton47 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Unstyled,
+		text: "ToggleButton Type Up",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oToggleButton48 = new sap.m.ToggleButton({
+		type: sap.m.ButtonType.Unstyled,
+		icon: "sap-icon://home",
+		text: "ToggleButton Type Unstyled",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+<div id="standAloneBtn"></div>
+</body>
+</html>

@@ -1,5 +1,11 @@
 <!DOCTYPE html>
+
+<!--
+  Tested class: sap.ui.table.RowSettings
+-->
+
 <html>
+
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
@@ -9,28 +15,27 @@
 	<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.ui.table, sap.m">
+			data-sap-ui-libs="sap.ui.table,sap.m">
 	</script>
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-sap-ui-cover-only="sap/ui/table">
+	</script>
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
+	<link rel="stylesheet" href="shared-qunit.css">
 	<script src="TableQUnitUtils.js"></script>
 	<script src="RowSettings.qunit.js"></script>
-
 </head>
-<body id="body" class="sapUiBody sapUiSizeCozy">
-<h1 id="qunit-header">QUnit Page for sap.ui.table.RowSettings</h1>
-<h2 id="qunit-banner"></h2>
-<h2 id="qunit-userAgent"></h2>
-<div id="qunit-testrunner-toolbar"></div>
-<ol id="qunit-tests"></ol>
-<div id="content"></div>
-<div id="outerelement" tabindex="0"></div>
+
+<body class="sapUiBody sapUiSizeCozy">
+<div id="qunit"></div>
+<div id="qunit-fixture" class="visible"></div>
+<div id="content"></div> <!-- The content, which should exist throughout the entire test run. -->
 </body>
+
 </html>

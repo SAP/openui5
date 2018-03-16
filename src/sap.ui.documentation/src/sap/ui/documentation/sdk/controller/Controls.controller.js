@@ -4,9 +4,10 @@
 
 /*global history */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/Device"
-	], function (BaseController, Device) {
+	], function (jQuery, BaseController, Device) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Controls", {
@@ -16,6 +17,8 @@ sap.ui.define([
 			 * @public
 			 */
 			onInit: function () {
+				BaseController.prototype.onInit.call(this);
+
 				// manually call the handler once at startup as device API won't do this for us
 				this._onOrientationChange({
 					landscape: Device.orientation.landscape
@@ -48,22 +51,19 @@ sap.ui.define([
 
 			/**
 			 * Filter for controls in the master search field when the title of a control section was pressed
- 			 */
+			 */
 			onPress: function(oEvent) {
-				var sFilter = oEvent.oSource.getFilter();
-				var oSearchField = this.getSplitApp().getMasterPages()[0].byId("searchField");
-				oSearchField.setValue(sFilter);
-				oSearchField.fireLiveChange({
+				var sFilter = oEvent.oSource.getFilter(),
+					oSearchField = this.getOwnerComponent().byId("controlsMaster").byId("searchField");
+
+				// Apply the value and fire a live change event so the list will be filtered
+				oSearchField.setValue(sFilter).fireLiveChange({
 					newValue: sFilter
 				});
-				// tablet or small screen devices: show master page
-				setTimeout(function () {
+				// Show master page: this call will show the master page only on small screen sizes but not on phone
+				jQuery.sap.delayedCall(0, this, function () {
 					this.getSplitApp().showMaster();
-				}.bind(this), 0);
-				// phone: navigate to master list
-				if (Device.system.phone) {
-					this.getRouter().navTo("controlsMaster", {});
-				}
+				});
 			}
 		});
 	}

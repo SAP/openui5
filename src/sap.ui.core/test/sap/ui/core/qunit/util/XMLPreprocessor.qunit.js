@@ -130,9 +130,15 @@ sap.ui.require([
 			// Note: browsers differ in whitespace for empty HTML(!) tags
 			.replace(/ \/>/g, '/>');
 		if (Device.browser.msie || Device.browser.edge) {
-			// Microsoft shuffles attribute order
-			// remove helper, type, value and var, then no tag should have more that one attribute
-			sXml = sXml.replace(/ (helper|type|value|var)=".*?"/g, "");
+			// Microsoft shuffles attribute order; sort multiple attributes alphabetically:
+			// - no escaped quotes in attribute values!
+			// - e.g. <In a="..." b="..."/> or <template:repeat a="..." b="...">
+			sXml = sXml.replace(/<[\w:]+( \w+="[^"]*"){2,}(?=\/?>)/g, function (sMatch) {
+				var aParts = sMatch.split(" ");
+				// aParts[0] e.g. "<In" or "<template:repeat"
+				// sMatch does not contain "/>" or ">" at end!
+				return aParts[0] + " " + aParts.slice(1).sort().join(" ");
+			});
 		}
 		return sXml;
 	}
@@ -148,24 +154,21 @@ sap.ui.require([
 	 */
 	function _withBalancedBindAggregation(that, assert, fnCodeUnderTest) {
 		var fnBindAggregation = ManagedObject.prototype.bindAggregation,
-			fnUnbindAggregation;
+			oBindAggregationExpectation,
+			fnUnbindAggregation = ManagedObject.prototype.unbindAggregation,
+			oUnbindAggregationExpectation;
 
-		that.stub(ManagedObject.prototype, "bindAggregation",
-			function (sName, oBindingInfo) {
-				assert.strictEqual(sName, "list");
-				assert.strictEqual(oBindingInfo.mode, BindingMode.OneTime);
-				fnBindAggregation.apply(this, arguments);
-			});
-		fnUnbindAggregation = that.spy(ManagedObject.prototype, "unbindAggregation");
+		oBindAggregationExpectation = that.mock(ManagedObject.prototype).expects("bindAggregation")
+			.atLeast(0).withExactArgs("list", sinon.match({mode : BindingMode.OneTime}))
+			.callsFake(fnBindAggregation);
+		oUnbindAggregationExpectation = that.mock(ManagedObject.prototype)
+			.expects("unbindAggregation").atLeast(0).withExactArgs("list", true)
+			.callsFake(fnUnbindAggregation);
 
 		fnCodeUnderTest();
 
-		assert.strictEqual(fnUnbindAggregation.callCount,
-			ManagedObject.prototype.bindAggregation.callCount,
-			"balance of bind and unbind");
-		if (fnUnbindAggregation.callCount) {
-			assert.ok(fnUnbindAggregation.alwaysCalledWith("list", true));
-		}
+		assert.strictEqual(oUnbindAggregationExpectation.callCount,
+			oBindAggregationExpectation.callCount, "balance of bind and unbind");
 	}
 	//TODO test with exception during bindAggregation, e.g. via sorter
 
@@ -179,39 +182,41 @@ sap.ui.require([
 	 *   code under test
 	 */
 	function _withBalancedBindProperty(that, assert, fnCodeUnderTest) {
-		var fnBindProperty = ManagedObject.prototype.bindProperty;
+		var fnBindProperty = ManagedObject.prototype.bindProperty,
+			oBindPropertyExpectation,
+			fnUnbindProperty = ManagedObject.prototype.unbindProperty,
+			oUnbindPropertyExpectation;
 
-		that.stub(ManagedObject.prototype, "bindProperty",
-			function (sName, oBindingInfo) {
-				var aParts = oBindingInfo.parts;
+		function checkBindingMode(oBindingInfo) {
+			var aParts = oBindingInfo.parts;
 
-				assert.strictEqual(sName, "any");
-				assert.strictEqual(oBindingInfo.mode, BindingMode.OneTime);
-				if (aParts) {
-					aParts.forEach(function (oInfoPart) {
-						assert.strictEqual(oInfoPart.mode, BindingMode.OneTime);
-					});
-				}
-				fnBindProperty.apply(this, arguments);
-			});
-		that.spy(ManagedObject.prototype, "unbindProperty");
+			if (oBindingInfo.mode !== BindingMode.OneTime) {
+				return false;
+			}
+			if (aParts) {
+				return aParts.every(function (oInfoPart) {
+					return oInfoPart.mode === BindingMode.OneTime;
+				});
+			}
+			return true;
+		}
+
+		oBindPropertyExpectation = that.mock(ManagedObject.prototype).expects("bindProperty")
+			.atLeast(0).withExactArgs("any", sinon.match(checkBindingMode))
+			.callsFake(fnBindProperty);
+		oUnbindPropertyExpectation = that.mock(ManagedObject.prototype).expects("unbindProperty")
+			.atLeast(0).withExactArgs("any", true).callsFake(fnUnbindProperty);
 
 		fnCodeUnderTest();
 
-		assert.strictEqual(ManagedObject.prototype.unbindProperty.callCount,
-			ManagedObject.prototype.bindProperty.callCount,
+		assert.strictEqual(oUnbindPropertyExpectation.callCount, oBindPropertyExpectation.callCount,
 			"balance of bind and unbind");
-		if (ManagedObject.prototype.unbindProperty.callCount) {
-			assert.ok(ManagedObject.prototype.unbindProperty.alwaysCalledWith("any", true));
-		}
 	}
 
 	//*********************************************************************************************
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.util.XMLPreprocessor", {
 		afterEach : function () {
-			this.oLogMock.verify();
-
 			sap.ui.core.CustomizingConfiguration = this.oCustomizingConfiguration;
 			jQuery.sap.log.setLevel(iOldLogLevel, sComponent);
 			delete window.foo;
@@ -222,7 +227,7 @@ sap.ui.require([
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG, sComponent);
 
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			this.oLogMock.expects("debug").atLeast(0); // do not flood the console ;-)
@@ -285,9 +290,8 @@ sap.ui.require([
 			// assertions
 			sActual = _normalizeXml(jQuery.sap.serializeXML(oViewContent));
 			if (Array.isArray(vExpected)) {
-				sExpected = vExpected.join("");
-				assert.strictEqual(sActual, _normalizeXml(sExpected),
-						"XML looks as expected: " + sExpected);
+				sExpected = _normalizeXml(vExpected.join(""));
+				assert.strictEqual(sActual, sExpected, "XML looks as expected: " + sExpected);
 			} else {
 				assert.ok(vExpected.test(sActual), "XML: " + sActual + " matches " + vExpected);
 			}
@@ -1043,11 +1047,12 @@ sap.ui.require([
 					}
 				}
 			})
-		}, [ // Note: XML serializer outputs &gt; encoding...
+		}, [
 			'<!-- some comment node -->',
 			'<Label text="Customer"/>',
 			'<Text text="{CustomerName}"/>', // "maxLines" has been removed
 			'<Label text="A \\{ is a special character"/>',
+			// Note: XML serializer outputs &gt; encoding...
 			'<Text text="{unrelated&gt;/some/path}"/>',
 			'<Text text="' + "{path:'/some/path',formatter:'.someMethod'}" + '"/>',
 			// TODO is this the expected behaviour? And what about text nodes?
@@ -1057,7 +1062,62 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bDebug) {
-		QUnit.test("binding resolution: interface to formatter, debug = " + bDebug, function (assert) {
+		var sTitle = "binding resolution: ignore [object Object], debug = " + bDebug;
+
+		QUnit.test(sTitle, function (assert) {
+			this.checkTracing(assert, bDebug, [
+				{m : "[ 0] Start processing qux"},
+				{m : "[ 0] text = [object Object]", d : 1},
+				{m : "[ 0] Ignoring [object Array] value for attribute text", d : 3},
+				{m : "[ 0] Ignoring [object Date] value for attribute text", d : 4},
+				{m : "[ 0] Ignoring [object Object] value for attribute text", d : 5},
+				{m : "[ 0] Finished processing qux"}
+			], [
+				mvcView().replace(">", ' xmlns:html="http://www.w3.org/1999/xhtml">'),
+				// don't get fooled here
+				'<Text text="{/string}"/>',
+				'<Text text="[object Object]"/>',
+				// do not replace by "[object Object]" etc.
+				'<Text text="{/Array}"/>',
+				'<Text text="{/Date}"/>',
+				'<Text text="{/Object}"/>',
+				'</mvc:View>'
+			], {
+				models: new JSONModel({
+					"string" : "[object Object]",
+					"Array" : [],
+					"Date" : new Date(),
+					"Object" : {}
+				})
+			}, [
+				'<Text text="[object Object]"/>',
+				'<Text text="[object Object]"/>',
+				'<Text text="{/Array}"/>',
+				'<Text text="{/Date}"/>',
+				'<Text text="{/Object}"/>'
+			]);
+		});
+	});
+	/*
+	 * @see http://www.ecma-international.org/ecma-262/5.1/#sec-8.6.2, [[Class]]
+	 *
+	 * "Arguments" : arguments, // [object Arguments]
+	 * //[object Boolean]: http://eslint.org/docs/rules/no-new-wrappers
+	 * "Error" : new Error(), // [object Error]
+	 * "Function" : String, // [object Function]
+	 * "JSON" : JSON, // [object JSON]
+	 * "Math" : Math, // [object Math]
+	 * //[object Null]: ManagedObject#validateProperty maps null to default value (undefined)
+	 * //[object Number]: http://eslint.org/docs/rules/no-new-wrappers
+	 * "RegExp" : /./ // [object RegExp]
+	 * //[object String]: ManagedObject#getProperty unwraps String values
+	 */
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bDebug) {
+		var sTitle = "binding resolution: interface to formatter, debug = " + bDebug;
+
+		QUnit.test(sTitle, function (assert) {
 			var oModel = new JSONModel({
 					"somewhere" : {
 						"com.sap.vocabularies.UI.v1.HeaderInfo" : {
@@ -1133,9 +1193,10 @@ sap.ui.require([
 			 * @param {number} i
 			 */
 			function checkInterfaceForPart(oInterface, i) {
-				var fnCreateBindingContext,
+				var oCreateBindingContextExpectation,
 					oInterface2Part,
-					oModel = oInterface.getModel(i);
+					oModel = oInterface.getModel(i),
+					fnCreateBindingContext = oModel.createBindingContext;
 
 				// interface to ith part
 				oInterface2Part = oInterface.getInterface(i);
@@ -1183,7 +1244,8 @@ sap.ui.require([
 				assert.strictEqual(oInterface2Part.getSetting("bindTexts"), true, "settings");
 
 				try {
-					fnCreateBindingContext = that.spy(oModel, "createBindingContext");
+					oCreateBindingContextExpectation = that.mock(oModel)
+						.expects("createBindingContext").callsFake(fnCreateBindingContext);
 
 					// "drill-down" into ith part with absolute path
 					oInterface2Part = oInterface.getInterface(i, "/absolute/path");
@@ -1191,15 +1253,14 @@ sap.ui.require([
 					assert.strictEqual(oInterface2Part.getModel(), oModel);
 					assert.strictEqual(oInterface2Part.getPath(), "/absolute/path");
 					assert.strictEqual(oInterface2Part.getSetting("bindTexts"), true, "settings");
-					assert.strictEqual(fnCreateBindingContext.callCount, 1,
-						fnCreateBindingContext.printf("%C"));
 				} finally {
-					fnCreateBindingContext.restore();
+					oCreateBindingContextExpectation.restore();
 				}
 
 				try {
 					// simulate a model which creates the context asynchronously
-					fnCreateBindingContext = that.stub(oModel, "createBindingContext");
+					oCreateBindingContextExpectation = that.mock(oModel)
+						.expects("createBindingContext").twice();
 
 					oInterface2Part = oInterface.getInterface(i, "String");
 
@@ -1208,7 +1269,7 @@ sap.ui.require([
 					assert.strictEqual(e.message,
 						"Model could not create binding context synchronously: " + oModel);
 				} finally {
-					fnCreateBindingContext.restore();
+					oCreateBindingContextExpectation.restore();
 				}
 			}
 
@@ -1330,6 +1391,7 @@ sap.ui.require([
 				'<Text text="Customer"/>',
 				'<Text text="Value: {CustomerName}"/>',
 				'<Text text="Customer: {CustomerName}"/>',
+				// Note: XML serializer outputs &gt; encoding...
 				'<Text text="{unrelated&gt;/some/path}"/>',
 				'<Text text="[Customer] {CustomerName}"/>',
 				'<Text text="[Customer]"/>'
@@ -1341,7 +1403,9 @@ sap.ui.require([
 	[false, true].forEach(function (bDebug) {
 		QUnit.test("binding resolution, exception in formatter, debug = " + bDebug,
 			function (assert) {
-				var oError = new Error("deliberate failure");
+				var oError = new Error("deliberate failure"),
+					rMessage = new RegExp("\\[ 0\\] Error in formatter of attribute text "
+						+ oError);
 
 				window.foo = {
 						Helper : {
@@ -1353,9 +1417,9 @@ sap.ui.require([
 
 				this.checkTracing(assert, bDebug, [
 					{m : "[ 0] Start processing qux"},
-					{m : sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/),
+					{m : sinon.match(rMessage),
 						d : 1},
-					{m : sinon.match(/\[ 0\] Error in formatter: Error: deliberate failure/),
+					{m : sinon.match(rMessage),
 						d : 2},
 					{m : "[ 0] Finished processing qux"}
 				], [
@@ -2283,7 +2347,8 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("template:alias", function (assert) {
 		var fnComplexParser = BindingParser.complexParser,
-			fnGetObject = jQuery.sap.getObject;
+			fnGetObject = jQuery.sap.getObject,
+			jQuerySapMock = this.mock(jQuery.sap);
 
 		window.foo = {
 			Helper : {
@@ -2310,18 +2375,16 @@ sap.ui.require([
 			}
 		};
 
-		this.stub(jQuery.sap, "getObject", function (sName, iNoCreates, oContext) {
-			// make sure we do not create namespaces!
-			assert.strictEqual(iNoCreates, undefined, sName);
-			return fnGetObject.apply(this, arguments);
-		});
-		this.stub(BindingParser, "complexParser",
-			function (s, o, b1, bTolerateFunctionsNotFound, bStaticContext) {
-				assert.strictEqual(bTolerateFunctionsNotFound, true, JSON.stringify(arguments));
-				assert.strictEqual(bStaticContext, true, JSON.stringify(arguments));
-				return fnComplexParser.apply(this, arguments);
-			}
-		);
+		// make sure we do not create namespaces!
+		jQuerySapMock.expects("getObject").atLeast(1).withExactArgs(sinon.match.string)
+			.callsFake(fnGetObject);
+		jQuerySapMock.expects("getObject").atLeast(1)
+			.withExactArgs(sinon.match.string, /*iNoCreates*/undefined, sinon.match.object)
+			.callsFake(fnGetObject);
+		this.mock(BindingParser).expects("complexParser").atLeast(1)
+			.withExactArgs(sinon.match.string, sinon.match.object, sinon.match.bool,
+				/*bTolerateFunctionsNotFound*/true, /*bStaticContext*/true)
+			.callsFake(fnComplexParser);
 
 		// Note: <Label text="..."> remains unresolved, <Text text="..."> MUST be resolved
 		this.check(assert, [
@@ -2360,7 +2423,7 @@ sap.ui.require([
 			'</mvc:View>'
 		], {
 			models : new JSONModel({/*don't care*/})
-		}, [ // Note: XML serializer outputs &gt; encoding...
+		}, [
 			"<Label text=\"{formatter: '.bar', path: '/'}\"/>",
 			"<Label text=\"{formatter: '.foo', path: '/'}\"/>",
 				'<Text text="/bar"/>',
@@ -2587,6 +2650,7 @@ sap.ui.require([
 					getSettings : sinon.match.func,
 					getViewInfo : sinon.match.func,
 					insertFragment : sinon.match.func,
+					visitAttribute : sinon.match.func,
 					visitAttributes : sinon.match.func,
 					visitChildNodes : sinon.match.func,
 					visitNode : sinon.match.func,
@@ -2739,23 +2803,27 @@ sap.ui.require([
 				oInterface.visitNode(oChildNodes.item(2));
 				// this is initially returned as old visitor, see above
 				XMLPreprocessor.visitNodeWrapper(oChildNodes.item(3), oInterface);
+				// Note: there is also getAttributeNode()...
+				oInterface.visitAttribute(oChildNodes.item(4),
+					oChildNodes.item(4).getAttributeNodeNS("", "text"));
 			}, "foo", "Bar");
 
 			this.check(assert, [
 				mvcView(),
 				'<f:Bar xmlns:f="foo">',
 				'<In id="visitAttributes: {/answer}">',
-				'<Out id="no visitAttributes: {/answer}"/>',
+					'<Out id="no visitAttributes: {/answer}"/>',
 				'</In>',
 				'<Out id="no visitChildNodes: {/answer}">',
-				'<In id="visitChildNodes: {/answer}"/>',
+					'<In id="visitChildNodes: {/answer}"/>',
 				'</Out>',
 				'<In id="visitNode: {/answer}">',
-				'<In id="visitNode: {/pi}"/>',
+					'<In id="visitNode: {/pi}"/>',
 				'</In>',
 				'<In id="visitNodeWrapper: {/answer}">',
-				'<In id="visitNodeWrapper: {/pi}"/>',
+					'<In id="visitNodeWrapper: {/pi}"/>',
 				'</In>',
+				'<In id="visitAttribute" src="{/answer}" text="{/answer}"/>',
 				'</f:Bar>',
 				'</mvc:View>'
 			], {
@@ -2763,17 +2831,18 @@ sap.ui.require([
 			}, [
 				'<f:Bar xmlns:f="foo">',
 				'<In id="visitAttributes: 42">',
-				'<Out id="no visitAttributes: {/answer}"/>',
+					'<Out id="no visitAttributes: {/answer}"/>',
 				'</In>',
 				'<Out id="no visitChildNodes: {/answer}">',
-				'<In id="visitChildNodes: 42"/>',
+					'<In id="visitChildNodes: 42"/>',
 				'</Out>',
 				'<In id="visitNode: 42">',
-				'<In id="visitNode: 3.14"/>',
+					'<In id="visitNode: 3.14"/>',
 				'</In>',
 				'<In id="visitNodeWrapper: 42">',
-				'<In id="visitNodeWrapper: 3.14"/>',
+					'<In id="visitNodeWrapper: 3.14"/>',
 				'</In>',
+				'<In id="visitAttribute" src="{/answer}" text="42"/>',
 				'</f:Bar>'
 			]);
 		} finally {

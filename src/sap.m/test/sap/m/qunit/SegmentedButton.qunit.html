@@ -538,7 +538,7 @@
 		assert.strictEqual(Math.floor(iButton3Width), Math.floor(iButton1Width), 'Third button width should be equal to the ' +
 				'first button width');
 
-		assert.strictEqual(iControlWidth, Math.round(iButton1Width + iButton2Width + iButton3Width), "The sum of all buttons width " +
+		assert.strictEqual(Math.round(iControlWidth), Math.round(iButton1Width + iButton2Width + iButton3Width), "The sum of all buttons width " +
 				"should be the same as the control width");
 
 		// Cleanup
@@ -952,21 +952,21 @@
 				items: [
 					new sap.m.SegmentedButtonItem({
 						key: 'KEY1',
-						text: 'First'
-						,
+						text: 'First',
 						press: fnOnPress
 					}),
 					new sap.m.SegmentedButtonItem({
 						key: 'KEY2',
-						text: 'Second'
-						,
+						text: 'Second',
 						press: fnOnPress
 					})
 				]
 			}).placeAt('qunit-fixture'),
 			sSelectedKeyInsidePressHandler,
-			bFired;
+			bFired,
+			fnFireSelectionChangeSpy;
 
+		fnFireSelectionChangeSpy = this.spy(oSB, "fireSelectionChange");
 		sap.ui.getCore().applyChanges();
 
 		//act
@@ -975,6 +975,9 @@
 		//assert
 		ok(bFired, 'item fires press when a button is pressed');
 		equal(sSelectedKeyInsidePressHandler, "KEY1", 'item fires press before the selected key changes');
+		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, "SelectionChange is fired");
+		assert.strictEqual(fnFireSelectionChangeSpy.args[0][0].item, oSB.getItems()[1],
+				"SelectionChange is returning the right reference to the selected item");
 
 		//clean
 		oSB.destroy();
@@ -1091,6 +1094,81 @@
 
 		// Assert
 		assert.strictEqual(oSegmentedButton.getSelectedButton(), "mumpitz", "selectedButton association contains \"mumpitz\"");
+		assert.ok(!oButton3.$().hasClass("sapMSegBBtnSel"),
+				"the third button's DOM element does not have style class \"sapMSegBBtnSel\" anymore");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	QUnit.test("SegmentedButton setSelectedItem API call", function(assert) {
+
+		// Arrange
+		var oButton1 = new sap.m.SegmentedButtonItem({text : "first button"}),
+			oButton2 = new sap.m.SegmentedButtonItem({text : "second button"}),
+			oButton3 = new sap.m.SegmentedButtonItem({text : "third button"}),
+			oThisForChaining,
+			oLabel = new sap.m.Label("label", {});
+
+		// System under test
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items : [oButton1, oButton2, oButton3]
+		});
+
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton1.getId(),
+				"initially the first button is selected");
+		assert.ok(oButton1.$().hasClass("sapMSegBBtnSel"),
+				"the first button's DOM element initially has style class \"sapMSegBBtnSel\"");
+
+		// Act
+		oThisForChaining = oSegmentedButton.setSelectedItem(oButton2);
+
+		// Assert
+		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton2.getId(), "now the second button is selected");
+		assert.ok(oButton2.$().hasClass("sapMSegBBtnSel"), "the second button's DOM element has style class \"sapMSegBBtnSel\"");
+		assert.ok(oThisForChaining instanceof sap.m.SegmentedButton, "the setter should return 'this' instance of the control itself to enable chaining");
+
+		// Act
+		oSegmentedButton.setSelectedItem("label");
+
+		// Assert
+		assert.strictEqual(oSegmentedButton.getSelectedItem(), "label",
+				"selectedItem association contains an existing id from another control and this does not break the control, only removes the selection style");
+		assert.ok(!oButton2.$().hasClass("sapMSegBBtnSel"),
+				"the last button's DOM element does not have style class \"sapMSegBBtnSel\" anymore");
+
+		// Act
+		oSegmentedButton.setSelectedItem(oLabel);
+
+		// Assert
+		assert.strictEqual(oSegmentedButton.getSelectedItem(), oLabel.getId(),
+				"selectedItem association contains an existing another control, not SegmentedButtonItem and this does not break the control, only removes the selection style");
+
+		// Act
+		oSegmentedButton.setSelectedItem(undefined);
+
+		// Assert
+		assert.strictEqual(oSegmentedButton.getSelectedItem(), oSegmentedButton.getItems()[0].getId(),
+				"When selectedItem is set to undefined, the selection goes to the first item");
+		assert.ok(oButton1.$().hasClass("sapMSegBBtnSel"),
+				"the first button does have the coresponding selected style class");
+
+		// Act
+		oSegmentedButton.setSelectedItem(oButton3.getId());
+
+		// Assert
+		assert.strictEqual(oSegmentedButton.getSelectedItem(), oButton3.getId(), "now the third button is selected");
+		assert.ok(oButton3.$().hasClass("sapMSegBBtnSel"), "the third button's DOM element has style class \"sapMSegBBtnSel\"");
+
+		// Act
+		oSegmentedButton.setSelectedItem("mumpitz");
+
+		// Assert
+		assert.strictEqual(oSegmentedButton.getSelectedItem(), "mumpitz", "selectedItem association contains \"mumpitz\"");
 		assert.ok(!oButton3.$().hasClass("sapMSegBBtnSel"),
 				"the third button's DOM element does not have style class \"sapMSegBBtnSel\" anymore");
 
@@ -1271,6 +1349,26 @@
 		oSegmentedButton.destroy();
 	});
 
+	// BCP: 1880235141
+	QUnit.test("remove button returns the removed button", function (assert) {
+		// Arrange
+		var oResult,
+			oButton1 = new sap.m.Button("button1"),
+			oButton2 = new sap.m.Button("button2"),
+			oSegmentedButton = new sap.m.SegmentedButton({ buttons: [oButton1, oButton2] });
+
+		// Act
+		oResult = oSegmentedButton.removeButton(oButton1);
+
+		// Assert
+		assert.equal(oResult.getId(), oButton1.getId(), "removeButton should return the removed button");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+		oButton1.destroy();
+		oButton2.destroy();
+	});
+
 	/* ------------------------------ */
 	/* removeAllButtons()             */
 	/* ------------------------------ */
@@ -1303,6 +1401,28 @@
 
 		// Cleanup
 		oSegmentedButton.destroy();
+	});
+
+	// BCP: 1880235141
+	QUnit.test("remove all buttons returns the removed buttons", function (assert) {
+		assert.expect(2);
+		// Arrange
+		var aResult,
+			aButtons = [new sap.m.Button("button1"), new sap.m.Button("button2")],
+			oSegmentedButton = new sap.m.SegmentedButton({ buttons: aButtons });
+
+		// Act
+		aResult = oSegmentedButton.removeAllButtons();
+
+		// Assert
+		aResult.forEach(function (oRemovedButton, index) {
+			assert.equal(oRemovedButton.getId(), aButtons[index].getId(), "removeAllButtons should remove button " + oRemovedButton.getId());
+		});
+
+		// Cleanup
+		oSegmentedButton.destroy();
+		aButtons[0].destroy();
+		aButtons[1].destroy();
 	});
 
 	/* ------------------------------ */
@@ -1628,6 +1748,26 @@
 		assert.strictEqual(this.oSB.getSelectedKey(), "b4", "Button with key 'b4' is selected");
 	});
 
+	// BCP: 1880235141
+	QUnit.test("remove item returns the removed item", function (assert) {
+		// Arrange
+		var oResult,
+			oSegmentedButtonItem1 = new sap.m.SegmentedButtonItem("item1"),
+			oSegmentedButtonItem2 = new sap.m.SegmentedButtonItem("item2"),
+			oSegmentedButton = new sap.m.SegmentedButton({ items: [oSegmentedButtonItem1, oSegmentedButtonItem2] });
+
+		// Act
+		oResult = oSegmentedButton.removeItem(oSegmentedButtonItem1);
+
+		// Assert
+		assert.equal(oResult.getId(), oSegmentedButtonItem1.getId(), "removeItem should return the removed item");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+		oSegmentedButtonItem1.destroy();
+		oSegmentedButtonItem2.destroy();
+	});
+
 	QUnit.test("insertItem", function (assert) {
 		// Arrange
 		this.oSB.addItem(new sap.m.SegmentedButtonItem({text: "Button 1"}));
@@ -1662,6 +1802,28 @@
 		assert.strictEqual(this.oSB.getSelectedKey(), "", "There is no selected key");
 		assert.strictEqual(this.oSB.getSelectedButton(), null, "There is no selected button");
 		assert.strictEqual(this.oSB.$().find("li").length, 0, "There are 0 buttons rendered");
+	});
+
+	// BCP: 1880235141
+	QUnit.test("remove all items returns the removed items", function (assert) {
+		assert.expect(2);
+		// Arrange
+		var aResult,
+			aItems = [new sap.m.SegmentedButtonItem("item1"), new sap.m.SegmentedButtonItem("item2")],
+			oSegmentedButton = new sap.m.SegmentedButton({ items: aItems });
+
+		// Act
+		aResult = oSegmentedButton.removeAllItems();
+
+		// Assert
+		aResult.forEach(function (oRemovedItem, index) {
+			assert.equal(oRemovedItem.getId(), aItems[index].getId(), "removeAllItems should remove item " + oRemovedItem.getId());
+		});
+
+		// Cleanup
+		oSegmentedButton.destroy();
+		aItems[0].destroy();
+		aItems[1].destroy();
 	});
 
 
@@ -1743,9 +1905,9 @@
 
 		oSB = new sap.m.SegmentedButton({
 			buttons: [
-				new sap.m.Button({text: "Btn 1", width: "100px"}),
-				new sap.m.Button({text: "Btn 2 long", width: "100px"}),
-				new sap.m.Button({text: "Btn 3 again longer", width: "100px"})
+				new sap.m.Button({text: "Btn 1", width: "99.5px"}),
+				new sap.m.Button({text: "Btn 2 long", width: "99.5px"}),
+				new sap.m.Button({text: "Btn 3 again longer", width: "99.5px"})
 			]
 		});
 		aButtons = oSB.getButtons();
@@ -1759,7 +1921,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.deepEqual(oSB._getRenderedButtonWidths(aButtons), [100,100,100], "Returned array of widths " +
+		assert.deepEqual(oSB._getRenderedButtonWidths(aButtons), [99.5,99.5,99.5], "Returned array of widths " +
 				"equals to predefined widths of the buttons");
 
 		// Cleanup
@@ -2734,81 +2896,147 @@
 		oSegmentedButton.destroy();
 	});
 
-    QUnit.test("Can work with special characters in the ID", function(assert) {
+	QUnit.test("Can work with special characters in the ID", function(assert) {
 
-        // Arrange
-        var oSegmentedButton = new sap.m.SegmentedButton({
-            items: [
-                new sap.m.SegmentedButtonItem({
-                    id: "contains::colon",
-                    text: "Button 1"
-                }),
-                new sap.m.SegmentedButtonItem({
-                    text: "Button 2"
-                }),
-                new sap.m.SegmentedButtonItem({
-                    text: "Button 3"
-                })
-            ]
-        });
+		// Arrange
+		var oSegmentedButton = new sap.m.SegmentedButton({
+			items: [
+				new sap.m.SegmentedButtonItem({
+					id: "contains::colon",
+					text: "Button 1"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 2"
+				}),
+				new sap.m.SegmentedButtonItem({
+					text: "Button 3"
+				})
+			]
+		});
 
-        // System under Test
-        oSegmentedButton.placeAt("qunit-fixture");
-        sap.ui.getCore().applyChanges();
+		// System under Test
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-        assert.ok(oSegmentedButton.getDomRef(), "SegmentedButton should be rendered");
+		assert.ok(oSegmentedButton.getDomRef(), "SegmentedButton should be rendered");
 
-        oSegmentedButton.destroy();
-    });
+		oSegmentedButton.destroy();
+	});
 
-    QUnit.module("SegmentedButton in communicates changes in its aggregated items/buttons");
+	QUnit.module("SegmentedButton in communicates changes in its aggregated items/buttons");
 
-    QUnit.test("Changing the text property aggregated buttons", function (assert) {
-        // Arrange
-        var oTestItem = new sap.m.Button({text: "Button 1"}),
-            oSegmentedButton = new sap.m.SegmentedButton({buttons: [oTestItem]}),
-            sNewText = "new Text",
-            bChangedHandlerCalled = false;
+	QUnit.test("Changing the text property aggregated buttons", function (assert) {
+		// Arrange
+		var oTestButton = new sap.m.Button({text: "Button 1"}),
+			oSegmentedButton = new sap.m.SegmentedButton({buttons: [oTestButton]}),
+			sNewText = "new Text",
+			fnChangHandler = this.spy();
 
-        oSegmentedButton.placeAt("qunit-fixture");
+		oSegmentedButton.placeAt("qunit-fixture");
 
-        oSegmentedButton.attachEvent("_change", function () {
-            bChangedHandlerCalled = true;
-        });
+		oSegmentedButton.attachEvent("_change", fnChangHandler);
 
-        // Assert
-        assert.ok(!bChangedHandlerCalled, "Initially the change event hasn't been fired");
-        oTestItem.setText(sNewText);
-        assert.strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
-        assert.ok(bChangedHandlerCalled, "The change event has been fired after the button's property has changed");
+		// Assert
+		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
 
-        // Cleanup
-        oSegmentedButton.destroy();
-    });
+		//Act
+		oTestButton.setText(sNewText);
+
+		//Assert
+		assert.strictEqual(oTestButton.getText(), sNewText, "The internal button has changed its text");
+		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after the button's property has changed");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
 
 
-    QUnit.test("Changing the text property aggregated items", function (assert) {
-        // Arrange
-        var oTestItem = new sap.m.SegmentedButtonItem({text: "Button 1"}),
-            oSegmentedButton = new sap.m.SegmentedButton({items: [oTestItem]}),
-            sNewText = "new Text",
-            bChangedHandlerCalled = false;
+	QUnit.test("Changing the text property aggregated items", function (assert) {
+		// Arrange
+		var oTestItem = new sap.m.SegmentedButtonItem({text: "Button 1"}),
+			oSegmentedButton = new sap.m.SegmentedButton({items: [oTestItem]}),
+			sNewText = "new Text",
+			fnChangHandler = this.spy();
 
-        oSegmentedButton.placeAt("qunit-fixture");
-        sap.ui.getCore().applyChanges();
-        oSegmentedButton.attachEvent("_change", function () {
-            bChangedHandlerCalled = true;
-        });
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		oSegmentedButton.attachEvent("_change", fnChangHandler);
 
-        // Assert
-        assert.ok(!bChangedHandlerCalled, "Initially the change event hasn't been fired");
-        oTestItem.setText(sNewText);
-        assert.strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
-        assert.ok(bChangedHandlerCalled, "The change event has been fired after the button's property has changed");
+		// Assert
+		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
 
-        // Cleanup
-        oSegmentedButton.destroy();
-    });
+		//Act
+		oTestItem.setText(sNewText);
+
+		//Assert
+		assert.strictEqual(oTestItem.getText(), sNewText, "The internal button has changed its text");
+		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after the SegmentedButtonItem's property has changed");
+
+		// Cleanup
+		oSegmentedButton.destroy();
+	});
+
+	QUnit.test("Adding items (XML view with binding)", function(assert) {
+		// Arrange
+		var fnChangHandler = this.spy(),
+			oView = sap.ui.view({
+				viewContent:  '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">'
+							+ '  <SegmentedButton id="SB" items="{/}">'
+							+ '    <items>'
+							+ '      <SegmentedButtonItem text="{text}"/>'
+							+ '    </items>'
+							+ '  </SegmentedButton>'
+							+ '</core:FragmentDefinition>',
+				type:sap.ui.core.mvc.ViewType.XML
+			});
+
+		oView.setModel(new sap.ui.model.json.JSONModel());
+
+		oView.byId("SB").attachEvent("_change", fnChangHandler);
+
+		// Assert
+		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
+
+		// Act
+		oView.getModel().setData([{text: "Test"}]);
+
+		// Assert
+		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after new item is added");
+
+		// Cleanup
+		oView.destroy();
+	});
+
+	QUnit.test("Removing items (XML view with binding)", function(assert) {
+		// Arrange
+		var fnChangHandler = this.spy(),
+			oView = sap.ui.view({
+				viewContent:  '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">'
+				+ '  <SegmentedButton id="SB" items="{/}">'
+				+ '    <items>'
+				+ '      <SegmentedButtonItem text="{text}"/>'
+				+ '    </items>'
+				+ '  </SegmentedButton>'
+				+ '</core:FragmentDefinition>',
+				type:sap.ui.core.mvc.ViewType.XML
+			});
+
+		oView.setModel(new sap.ui.model.json.JSONModel([{text: "Test"}]));
+
+		oView.byId("SB").attachEvent("_change", fnChangHandler);
+
+		// Assert
+		assert.equal(fnChangHandler.callCount, 0, "Initially the change event hasn't been fired");
+
+		// Act
+		oView.getModel().setData([]);
+
+		// Assert
+		assert.equal(fnChangHandler.callCount, 1, "The change event has been fired after new item is added");
+
+		// Cleanup
+		oView.destroy();
+	});
 
 	QUnit.module("SegmentedButtonItem", {
 		beforeEach: function () {

@@ -78,7 +78,8 @@
 				"sap.zen.crosstab",
 				"sap.zen.dsh",
 				"sap.zen.commons",
-				"sap.fe"
+				"sap.fe",
+				"sap.fileviewer"
 			];
 
 			oLibraries = getLibraries(aExcludedLibraries);
@@ -106,8 +107,8 @@
 
 			/**
 			 * Creates assertions for all setters from classes provided with the <code>aClasses</code> array
-			 * @param aClasses list of classes to be tested
-			 * @param fnAssert QUnit assert
+			 * @param {array} aClasses list of classes to be tested
+			 * @param {function} fnAssert QUnit assert
 			 */
 			function assertAllSettersFromList (aClasses, fnAssert) {
 				var iLength = aClasses.length,

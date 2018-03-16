@@ -222,6 +222,59 @@
 		//Cleanup
 		oAttr.destroy();
 	});
+
+	QUnit.test("Title of the active ObjectAttribute with customContent should be rendered along with the custom link omitting the active property", function(assert) {
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute("attr", {
+			title: "Test",
+			active: true,
+			customContent: new sap.m.Link("alink", {text: "LinkText"})
+		}),
+		sExpected = "Test: LinkText";
+
+		oAttr.placeAt("objectAttributesWrap");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.equal(oAttr.$().text(), sExpected, "Title and text of the ObjectAttribute are rendered as one element");
+		assert.ok(!oAttr.$("title").length, "No title span is rendered.");
+		assert.ok(!oAttr.$("colon").length, "No colon span is rendered.");
+		assert.ok(!oAttr.$("text").length, "No text span is rendered.");
+
+		// arrange
+		oAttr.setActive(false);
+
+		// assertions
+		assert.equal(oAttr.$().text(), sExpected, "Title and text of the ObjectAttribute are rendered as one element");
+		assert.ok(!oAttr.$("title").length, "No title span is rendered.");
+		assert.ok(!oAttr.$("colon").length, "No colon span is rendered.");
+		assert.ok(!oAttr.$("text").length, "No text span is rendered.");
+
+		//Cleanup
+		oAttr.destroy();
+	});
+
+	//BCP: 1780440634
+	QUnit.test("ObjectAttribute does not append the title multiple times when customControl aggregation and title are used and reredering of the ObjectAttribute occurs", function (assert) {
+		// arrange
+		var oAttr = new sap.m.ObjectAttribute({
+			title: "AttributeTitle",
+			customContent: new sap.m.Link({ text: "LinkText" })
+		}),
+			sExpected = "AttributeTitle: LinkText";
+		oAttr.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// action
+		oAttr.invalidate();
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.equal(oAttr.getAggregation('customContent').getText(), sExpected, "Text of the ObjectAttribute should be " + sExpected);
+
+		// cleanup
+		oAttr.destroy();
+	});
 	/******************************************************************/
 
 	QUnit.module("Internal API");

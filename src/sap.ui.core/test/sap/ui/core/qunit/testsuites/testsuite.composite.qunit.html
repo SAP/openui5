@@ -11,8 +11,8 @@
         function suite() {
             var suite = new parent.jsUnitTestSuite();
             var contextPath = "/" + window.location.pathname.split("/")[1];
-            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/composite/FragmentControl.qunit.html");
-            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/composite/FragmentControlMemoryLeak.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/composite/XMLComposite.qunit.html");
+            suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/composite/XMLCompositeMemoryLeak.qunit.html");
 
             return suite;
         }

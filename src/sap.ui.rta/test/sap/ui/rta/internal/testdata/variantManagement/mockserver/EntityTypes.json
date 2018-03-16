@@ -1,0 +1,33 @@
+
+{
+  "d" : {
+    "results": [
+      {
+        "__metadata": {
+          "type": "VariantManagement.EntityType01"
+        },
+		"VMTitle": "Object Page Title",
+	  	"VMSubtitle": "Object Page Subtitle",
+	  	"SubSectionTitle1": "Object page sub section with form",
+	  	"SectionTitle2":  "Object page section navproperty",
+  		"SectionTitle3": "Object page section with variant management inside",
+        "Property01": "propValue01",
+        "AccountingDocumentKeyComplex" : {
+        	"ComplexProperty01" : "some complex Type data"
+        },
+        "Property02": "propValue02",
+        "Property03": "propValue03",
+        "Property04": "propValue04",
+        "Property05": "propValue05",
+        "Property08": "PropertyWithoutLabel",
+        "PropertyNav" : "EntityType02Property01Value",
+        "EntityType01_Complex": {
+          "__metadata": {
+            "type": "VariantManagement.ComplexType03"
+          },
+          "ComplexProperty031" : "ComplexProperty031Value"
+        }
+      }
+    ]
+  }
+}

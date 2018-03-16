@@ -1,0 +1,44 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ComboBoxValueState.Page"
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<Page showHeader="false" class="sapUiContentPadding">
+		<content>
+			<l:VerticalLayout>
+				<Label text="ComboBox in a Warning state"></Label>
+				<ComboBox valueState="Warning"
+					items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+					loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+				</ComboBox>
+				<Label text="ComboBox in an Error state"></Label>
+				<ComboBox valueState="Error"
+						  items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+						  loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+				</ComboBox>
+				<Label text="ComboBox in a Success state"></Label>
+				<ComboBox valueState="Success"
+						  items="{
+						path: '/CountriesCollection',
+						sorter: { path: 'text' },
+						suspended: true
+					}"
+						  loadItems="handleLoadItems">
+					<core:ListItem key="{key}" text="{text}"/>
+				</ComboBox>
+			</l:VerticalLayout>
+		</content>
+	</Page>
+</mvc:View>

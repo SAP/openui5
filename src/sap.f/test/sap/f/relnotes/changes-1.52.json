@@ -1,0 +1,85 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "cfe110ccb1fe54f48c93b6d37316e3b7a9c7ab1d",
+        "type": "FEATURE",
+        "text": "f.SemanticPage: new aggregation and property introduced.",
+        "references": []
+      },
+      {
+        "id": "0d9fbe1ed8db027bb5c49d94d00451d870c5afe8",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPage: Visual indicator for expand/collapse added",
+        "references": []
+      },
+      {
+        "id": "21def4ea80c5b014b2ff4b57ec9afda7aa10da36",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPageTitle: New aggregation navigationActions introduced",
+        "references": []
+      },
+      {
+        "id": "3384a42df7e24643fa3ccc4bd25b81b531205314",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPageTitle: New breadcrumbs aggregation added",
+        "references": []
+      },
+      {
+        "id": "ccf5dac1741b6d3544468d9fb10a7dea29737c72",
+        "type": "FEATURE",
+        "text": "sap.f.semantic.SemanticPage: titleBreadcrumbs aggregation introduced",
+        "references": []
+      },
+      {
+        "id": "a49e9769aaa6510372b30f5b27402f4256b9ca32",
+        "type": "FIX",
+        "text": "f.DynamicPage: Expand/Collapse header button tooltips added",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770417082"
+          }
+        ]
+      },
+      {
+        "id": "df9e6107fdac0409dd18abff3c2f2f080c514c4f",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: corrected width of the footer with custom sap.m.Bar",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1596"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780292951"
+          }
+        ]
+      },
+      {
+        "id": "cc418b79917f88b637532eb468ccdf3556f1373f",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Focus is now reapplied",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770323645"
+          }
+        ]
+      },
+      {
+        "id": "8ba48d84d51c9c0af9945b0fbf303d75a5922a82",
+        "type": "FIX",
+        "text": "sap.f.dynamicPage: fixed ScrollContainer in Designtime",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780353682"
+          }
+        ]
+      }
+    ]
+  }
+}

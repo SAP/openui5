@@ -1,0 +1,52 @@
+{
+  "1.50.0": {
+    "data": "July 2017",
+    "notes": [
+      {
+        "id": "852e6945efaababb88e85c34abb7f608b19e4d84",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPage: Added new aggregation breadcrumbs.",
+        "references": []
+      },
+      {
+        "id": "35847319218700ad82e5eef6de42d22474685df9",
+        "type": "FIX",
+        "text": "Corrected shared-config.js path",
+        "references": []
+      },
+      {
+        "id": "99ee5e3665d7bdc4d56a7686baab7c46052715f7",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Fixed scrolling on load",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780173652"
+          }
+        ]
+      },
+      {
+        "id": "2c9843ed3cc57e5c6e8c4181fdae3ea7d57cbace",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Fixed issue with AnchorBar mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780203111"
+          }
+        ]
+      },
+      {
+        "id": "102b84d275d3fc28b0e885b069d094d5139f1340",
+        "type": "FIX",
+        "text": "sap.m.ObjectAttribute: Goes on more lines when inside ObjectPage content",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770272728"
+          }
+        ]
+      }
+    ]
+  }
+}

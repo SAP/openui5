@@ -127,15 +127,6 @@ function(
 		assert.equal(ElementUtil.getClosestElementOfType(this.oHorizontalLayoutChild, "sap.ui.layout.HorizontalLayout"), this.oHorizontalLayoutChild, 'closest element to vertical of type vertical layout -> same element');
 	});
 
-	QUnit.test("when the DesingTime Metadata are loaded", function(assert) {
-		var done = assert.async();
-		ElementUtil.loadDesignTimeMetadata(this.oVerticalLayout).then(function(mDesignTimeMetadata) {
-			assert.equal(!!mDesignTimeMetadata, true, 'then the static method "loadDesignTimeMetadata" returns the metadata...');
-			assert.equal(!!mDesignTimeMetadata.aggregations.content, true, "... with the right values");
-			done();
-		});
-	});
-
 	QUnit.test("when it is rendered and the DOM reference is available", function(assert) {
 		var oDomRef = this.oVerticalLayout.getDomRef();
 		var oDomRefTest = ElementUtil.getDomRef(this.oVerticalLayout);
@@ -302,7 +293,7 @@ function(
 		ElementUtil.executeActions(aActions);
 		assert.equal(ElementUtil.hasAncestor(this.oButton, this.oHorizontalLayoutChild), false, 'then afterwards the button is no longer an ancestor of the horizontal layout');
 		assert.equal(ElementUtil.hasAncestor(this.oButton, this.oVerticalLayout), true, 'and the button is still an ancestor of the vertical layout');
-		var aChildren = ElementUtil.getAggregation(this.oVerticalLayout, "content");
+		aChildren = ElementUtil.getAggregation(this.oVerticalLayout, "content");
 		assert.equal(aChildren.length, 6, 'then the vertical layout has now 6 children');
 	});
 
@@ -313,11 +304,37 @@ function(
 			'then the static method "isValidForAggregation" returns false');
 	});
 
+	QUnit.test("when a control has non-multiple aggregations without an existing item", function(assert) {
+		var oFormElement = new FormElement();
+		var oLabel = new Label();
+		assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), true,
+			'then the static method "isValidForAggregation" returns true');
+	});
+
 	QUnit.test("when insertAggregation method is called to insert existing button into horizontalLayout", function(assert) {
 		var oRemoveSpy = sinon.spy(this.oHorizontalLayoutChild, "removeContent");
 		var oInsertSpy = sinon.spy(this.oHorizontalLayoutChild, "insertContent");
 		ElementUtil.insertAggregation(this.oHorizontalLayoutChild, "content", this.oButton, 1);
 		assert.strictEqual(oRemoveSpy.callCount, 1, "then 'removeContent' method should be called once on horizontalLayout");
 		assert.strictEqual(oInsertSpy.callCount, 1, "then 'insertContent' method should be called once on horizontalLayout");
+	});
+
+
+	QUnit.test("when calling 'isVisible'", function(assert) {
+		var oButtons = this.oVerticalLayout.getContent();
+
+		// modify first 3 buttons to be invisible;
+		oButtons[0].getDomRef().style.visibility = "hidden";
+		oButtons[1].getDomRef().style.opacity = 0;
+		oButtons[2].getDomRef().style.filter = "blur(5px) opacity(0) grayscale(100%)";
+
+		assert.notOk(ElementUtil.isVisible(jQuery(oButtons[0].getDomRef())), "the first button is not visible due to 'visibility hidden'");
+		assert.notOk(ElementUtil.isVisible(jQuery(oButtons[1].getDomRef())), "the second button is not visible due to 'opacity 0'");
+		// css property filter not supported by phantomJS & Internet Explorer!
+		if (!sap.ui.Device.browser.phantomJS && !sap.ui.Device.browser.msie) {
+			assert.notOk(ElementUtil.isVisible(jQuery(oButtons[2].getDomRef())), "the third button is not visible due to 'filter opacity(0)'");
+		}
+		assert.ok(ElementUtil.isVisible(jQuery(oButtons[3].getDomRef())), "the fourth button is visible");
+		assert.ok(ElementUtil.isVisible(jQuery('button')), "at least one of the buttons is visible");
 	});
 });

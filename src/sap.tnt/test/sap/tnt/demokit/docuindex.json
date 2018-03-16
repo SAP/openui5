@@ -26,6 +26,17 @@
 		},
 		"entities": [
 			{
+				"id": "sap.tnt.InfoLabel",
+				"name": "Info Label",
+				"category": "Action",
+				"since": "1.54",
+				"samples": [
+					"sap.tnt.sample.InfoLabel",
+					"sap.tnt.sample.InfoLabelInTable",
+					"sap.tnt.sample.InfoLabelInDynamicPage"
+				]
+			},
+			{
 				"id": "sap.tnt.NavigationList",
 				"name": "Navigation List",
 				"category": "Action",
@@ -65,6 +76,21 @@
 			}
 		],
 		"samples": [
+			{
+				"id": "sap.tnt.sample.InfoLabel",
+				"name": "InfoLabel in non-editable Form",
+				"description": "<code>InfoLabel</code> used in non-editable <code>Form</code>. Property <code>displayOnly</code> of the Control must be set to true"
+			},
+			{
+				"id": "sap.tnt.sample.InfoLabelInTable",
+				"name": "InfoLabel in Table",
+				"description": "<code>InfoLabel</code> used in content of <code>Table</code>"
+			},
+			{
+				"id": "sap.tnt.sample.InfoLabelInDynamicPage",
+				"name": "InfoLabel in DynamicPage",
+				"description": "<code>InfoLabel</code> used as subheader in <code>DynamicPage</code>"
+			},
 			{
 				"id": "sap.tnt.sample.NavigationList",
 				"name": "Navigation List",

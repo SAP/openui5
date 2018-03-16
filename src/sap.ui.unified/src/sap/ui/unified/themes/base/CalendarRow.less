@@ -67,7 +67,7 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps{
 
 .sapUiCalendarRowAppsIntHead{
 	height: 1.5rem;
-	line-height: 1.5rem;
+	line-height: 1.3rem;
 	width: 100%;
 	box-sizing: border-box;
 	overflow: hidden;
@@ -75,7 +75,6 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps{
 	text-overflow: ellipsis;
 	margin-bottom: 0.25rem;
 	cursor: default;
-	background-color: @sapUiListBackground;
 }
 
 .sapUiCalendarIntervalHeaderCont {
@@ -89,6 +88,7 @@ html.sapUiMedia-Std-Phone .sapUiCalendarRowWithHead > .sapUiCalendarRowApps{
 }
 
 .sapUiCalendarRowAppsIntHeadFirst{
+	border: 0.0625rem solid @sapUiContentForegroundBorderColor;
 	border-left: 0.25rem solid darken(@sapUiListBorderColor, 15);
 }
 
@@ -302,6 +302,10 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 .sapUiCalendarMonthRowAppsS.sapUiCalendarRowAppsInt {
 	border: 0;
   	background-color: transparent;
+
+	.sapUiCalendarRowNow {
+		border-color: transparent;
+	}
 }
 
 .sapMPlanCal .sapUiCalMonthView {
@@ -314,4 +318,27 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
   text-align: center;
   vertical-align: middle;
   border-top: 0.0625rem solid @sapUiListBorderColor;
+}
+
+.sapUiCalendarRowAppsPlaceholder {
+	min-height: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	float: left;
+	cursor: default;
+	z-index: 100;
+}
+
+.sapUiCalendarAppDragging {
+	z-index: 2;
+}
+
+.sapUiCalendarRowAppsOverlay {
+	position: absolute;
+	height: 100%;
+	width: 100%
+}
+
+.sapUiCalendarRowAppsOverlayDragging {
+	z-index: 1;
 }

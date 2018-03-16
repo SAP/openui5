@@ -223,7 +223,8 @@
 		});
 
 		QUnit.test("Background color on blur is restored", function(assert) {
-			oSF.onBlur();
+			var oMockEvent = {type: "blur"};
+			oSF.onBlur(oMockEvent);
 			this.clock.tick(1000);
 
 			assert.strictEqual(oSF.$().hasClass( "sapMFocus"), false, "Blur event processing restores the previous background color");
@@ -282,8 +283,10 @@
 		QUnit.test("Search value is bold in suggestions", function(assert) {
 
 			// set value and open suggestions
-			oSF.setValue("003");
 			oSF.suggest();
+			oSF.setValue("003");
+			oSF._oSuggest.update();
+
 			this.clock.tick(1000);
 
 			// check highlights
@@ -306,7 +309,6 @@
 			this.clock.tick(1000);
 			assert.ok(!oSF.getDomRef(), "The search field is removed");
 		});
-
 	</script>
 	</head>
 	<body id="body" class="sapUiBody">

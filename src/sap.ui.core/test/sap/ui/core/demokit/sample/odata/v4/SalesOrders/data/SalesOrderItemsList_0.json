@@ -14,10 +14,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "1",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1000",
-				"ProductName" : "Notebook Basic 15"
-			},
+			"ProductID" : "HT-1000",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1000",
 				"TypeCode" : "PR",
@@ -76,10 +73,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1001",
-				"ProductName" : "modified by QUnit test"
-			},
+			"ProductID" : "HT-1001",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1001",
 				"TypeCode" : "PR",
@@ -128,7 +122,7 @@
 						"FirstName" : "Foo",
 						"LastName" : "Bar",
 						"PhoneNumber" : "123456",
-						"ContactGUID" : "005056ba-526b-1ee6-a6b8-90f8ab933b14"
+						"ContactGUID" : "005056ba-526b-1ee6-a6b8-343959048528"
 					}]
 				}
 			}
@@ -145,10 +139,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1002",
-				"ProductName" : "Notebook Basic 18"
-			},
+			"ProductID" : "HT-1002",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1002",
 				"TypeCode" : "PR",
@@ -193,10 +184,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1003",
-				"ProductName" : "Notebook Basic 19"
-			},
+			"ProductID" : "HT-1003",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1003",
 				"TypeCode" : "PR",
@@ -241,10 +229,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "3",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1007",
-				"ProductName" : "ITelO Vault"
-			},
+			"ProductID" : "HT-1007",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1007",
 				"TypeCode" : "PR",
@@ -289,10 +274,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1010",
-				"ProductName" : "Notebook Professional 15"
-			},
+			"ProductID" : "HT-1010",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1010",
 				"TypeCode" : "PR",
@@ -337,10 +319,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1011",
-				"ProductName" : "Notebook Professional 17"
-			},
+			"ProductID" : "HT-1011",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1011",
 				"TypeCode" : "PR",
@@ -385,10 +364,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1030",
-				"ProductName" : "Ergo Screen E-I"
-			},
+			"ProductID" : "HT-1030",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1030",
 				"TypeCode" : "PR",
@@ -433,10 +409,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "3",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1031",
-				"ProductName" : "Ergo Screen E-II"
-			},
+			"ProductID" : "HT-1031",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1031",
 				"TypeCode" : "PR",
@@ -481,10 +454,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "3",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1032",
-				"ProductName" : "Ergo Screen E-III"
-			},
+			"ProductID" : "HT-1032",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1032",
 				"TypeCode" : "PR",

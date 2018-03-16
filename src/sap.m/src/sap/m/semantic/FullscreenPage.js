@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer", "sap/m/PagingButton"], function(ShareMenuPage, SemanticConfiguration, SemanticPageRenderer, PagingButton) {
+sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer"], function(ShareMenuPage, SemanticConfiguration, SemanticPageRenderer) {
 	"use strict";
 
 	/**
@@ -262,4 +262,4 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	};
 
 	return FullscreenPage;
-}, /* bExport= */ true);
+});

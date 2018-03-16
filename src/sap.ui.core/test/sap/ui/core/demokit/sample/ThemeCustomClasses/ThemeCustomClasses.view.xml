@@ -4,13 +4,14 @@
   xmlns:mvc="sap.ui.core.mvc"
   xmlns="sap.m"
   xmlns:core="sap.ui.core">
-<Table id="idProductsTable"
-    items="{/Styles}">
-    <headerToolbar>
-      <Toolbar>
-        <Label text="These are all CSS-classes that can be used for Theme-dependent styling"></Label>
-      </Toolbar>
-    </headerToolbar>
+  	<MessageStrip
+		text="These css classes are only a subset of the less theming parameters. Be aware that they can not be applied to all use cases. If possible make use of the less theming parameters. "
+		type="Warning"
+		showIcon="true"
+		class="sapUiMediumMarginBottom">
+	</MessageStrip>
+	<Table id="idProductsTable"
+		items="{/Styles}">
       <columns>
       	<Column
         	width="22em"
@@ -38,6 +39,5 @@
 		</cells>
 		</ColumnListItem>
 	</items>
-
    </Table>
 </mvc:View>

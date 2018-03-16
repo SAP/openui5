@@ -23,7 +23,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 				sMessageId = this.mMessageMapping[aFieldGroup[0]].id;
 
 			//display a sample message
-			this.getView().byId(sMessageId).setType(sType).setText(sMessage + sType).setVisible(true);
+			this.byId(sMessageId).setType(sType).setText(sMessage + sType).setVisible(true);
 			//deliver toast
 			MessageToast.show("Validation of field group '" + aFieldGroup[0] + "' triggered.",{duration:500});
 		},
@@ -48,7 +48,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller','sap/ui/model/
 		},
 		hideMessages : function() {
 			for (var n in this.mMessageMapping) {
-				this.getView().byId(this.mMessageMapping[n].id).setVisible(false);
+				this.byId(this.mMessageMapping[n].id).setVisible(false);
 			}
 		}
 	});

@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/core/library"],
+	function(coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Segmented renderer.
@@ -120,7 +123,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRM.writeAttribute("tabindex", oButton.getEnabled() ? "0" : "-1");
 
 				sButtonTextDirection = oButton.getTextDirection();
-				if (sButtonTextDirection !== sap.ui.core.TextDirection.Inherit) {
+				if (sButtonTextDirection !== TextDirection.Inherit) {
 					oRM.writeAttribute("dir", sButtonTextDirection.toLowerCase());
 				}
 

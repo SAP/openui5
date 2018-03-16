@@ -1,0 +1,40 @@
+/* ================================= */
+/* CSS for control sap.tnt/InfoLabel */
+/* Belize theme                      */
+/* ================================= */
+
+/* ==========================================================================
+   Variables and mixins
+   ========================================================================== */
+
+
+   @sapTntInfoLabelColorsArray:
+   @sapTntInfoLabelBackgroundColor1,
+   @sapTntInfoLabelBackgroundColor2,
+   @sapTntInfoLabelBackgroundColor3,
+   @sapTntInfoLabelBackgroundColor4,
+   @sapTntInfoLabelBackgroundColor5,
+   @sapTntInfoLabelBackgroundColor6,
+   @sapTntInfoLabelBackgroundColor7,
+   @sapTntInfoLabelBackgroundColor8,
+   @sapTntInfoLabelBackgroundColor9;
+
+   .create-classes-for-background-color(backgroundColor, @sapTntInfoLabelColorsArray);
+
+   /*Iterate over the InfoLabel ColorsArray and create separate class for each
+   color named with the passed prefix and the number of the color*/
+
+   .create-classes-for-background-color(@prefix, @list) {
+	   .iter(length(@list));
+	   .iter(@i) when (@i > 0) {
+		   .iter(@i - 1);
+		   @value:  extract(@list, @i);
+		   .@{prefix}@{i} {
+			   background-color: @value;
+			   .sapTntInfoLabelInner {
+				   color: contrast(@value, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
+			   }
+		   }
+
+	   }
+   }

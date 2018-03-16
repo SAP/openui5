@@ -1,9 +1,8 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(BuyerName,CurrencyCode,GrossAmount,Note,SalesOrderID)",
+	"@odata.context" : "$metadata#SalesOrderList(CurrencyCode,GrossAmount,Note,SalesOrderID)",
 	"@odata.count" : 10,
 	"value" : [{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "SAP",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "25867.03",
@@ -39,7 +38,6 @@
 		}
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "TECUM",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "5631.08",
@@ -75,7 +73,6 @@
 		}
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "Talpa",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "250.73",
@@ -111,7 +108,6 @@
 		}
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "10311.35",
@@ -122,7 +118,6 @@
 		"SO_2_BP" : null
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "Telecomunicaciones Star",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "195.16",
@@ -159,7 +154,6 @@
 	},
 	{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "SAP",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "25867.03",
@@ -195,7 +189,6 @@
 		}
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "TECUM",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "5631.08",
@@ -231,7 +224,6 @@
 		}
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "Talpa",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "250.73",
@@ -267,7 +259,6 @@
 		}
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "Panorama Studios",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "10311.35",
@@ -303,7 +294,6 @@
 		}
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
-		"BuyerName" : "Telecomunicaciones Star",
 		"ChangedAt" : "2016-06-13T06:53:13.000000Z",
 		"CurrencyCode" : "EUR",
 		"GrossAmount" : "195.16",

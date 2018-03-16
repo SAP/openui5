@@ -4,8 +4,7 @@
 sap.ui.require([
 	'sap/ui/model/odata/ODataUtils'
 ], function(ODataUtils) {
-	/*global deepEqual, equal, expect, module, notDeepEqual, notEqual, notPropEqual,
-	notStrictEqual, ok, propEqual, sinon, strictEqual, test, throws,
+	/*global QUnit
 	*/
 	"use strict";
 
@@ -34,6 +33,7 @@ sap.ui.require([
 			{t: "Edm.Time", v: "PT13H47M26S", r: "time'PT13H47M26S'", d: "time as string"},
 			{t: "Edm.Time", v: oTime, r: "time'PT13H47M26S'", d: "time as object"},
 			{t: "Edm.DateTime", v: "May 30, 2015 1:47:26 PM UTC", r: "datetime'2015-05-30T13:47:26'", d: "datetime as string"},
+			{t: "Edm.DateTime", v: "2015-05-30T13:47:26.253Z", r: "datetime'2015-05-30T13:47:26.253'", d: "datetime as string including milliseconds"},
 			{t: "Edm.DateTime", v: oDateTime, r: "datetime'2015-05-30T13:47:26'", d: "datetime as object"},
 			{t: "Edm.DateTimeOffset", v: "May 30, 2015 1:47:26 PM UTC", r: "datetimeoffset'2015-05-30T13:47:26Z'", d: "datetime as string"},
 			{t: "Edm.DateTimeOffset", v: oDateTime, r: "datetimeoffset'2015-05-30T13:47:26Z'", d: "datetime as object"},
@@ -288,7 +288,24 @@ sap.ui.require([
 			client: 567,
 			force: true
 		}), "/sap/opu/odata/IWBEP;o=CANT_TOUCH_THIS/TEA_TEST_APPLICATION;o=sid(DingDong.567)/?sap-client=400&myParam=abc");
-	});
+
+		//force on URLs with ending non origin segment
+		assert.equal(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=sid(TH.123)/test;x=123;o=TEST;v=2", {
+			alias: "DingDong",
+			force: true
+		}), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=sid(TH.123)/test;x=123;o=DingDong;v=2");
+
+		// force, non-origin params & url params
+		assert.equal(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=TEST;v=2/?foo=10&bar=20", {
+			alias: "DingDong",
+			force: true
+		}), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=DingDong;v=2/?foo=10&bar=20");
+
+		// no force
+		assert.equal(ODataUtils.setOrigin("/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=TEST;v=2/?foo=10&bar=20", {
+			alias: "DingDong"
+		}), "/sap/opu/odata/IWBEP/TEA_TEST_APPLICATION;o=TEST;v=2/?foo=10&bar=20");
+});
 
 	QUnit.test("setAnnotationOrigin", function(assert) {
 
@@ -344,9 +361,21 @@ sap.ui.require([
 		}), "/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;v=2;o=Foo123/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value");
 
 		// $value without Annotations
-		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;v=2/Annotation(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value", {
+		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;v=2/MissingAnnotation(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value", {
 			alias: "Foo123"
-		}), "/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;v=2/Annotation(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value");
+		}), "/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;v=2/MissingAnnotation(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value");
+
+		// force with existing path parameter
+		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;o=CM.123;v=2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value", {
+			alias: "Foo123",
+			force: true
+		}), "/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;o=Foo123;v=2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value");
+
+		// force with existing path parameters
+		assert.equal(ODataUtils.setAnnotationOrigin("/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;x=123;o=CM.123;v=2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value", {
+			alias: "Foo123",
+			force: true
+		}), "/sap/opu;o=CANT_TOUCH_THIS/odata/IWFND/CATALOGSERVICE;x=123;o=Foo123;v=2/Annotations(TechnicalName='%2FIWBEP%2FTEA_TEST_ANNOTATION_FILE',Version='0001')/$value");
 
 	});
 });

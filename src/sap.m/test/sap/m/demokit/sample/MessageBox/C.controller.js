@@ -2,8 +2,9 @@ sap.ui.define([
 		'sap/m/MessageBox',
 		'sap/ui/core/Fragment',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(MessageBox, Fragment, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/MessageToast'
+	], function(MessageBox, Fragment, Controller, JSONModel, MessageToast) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.MessageBox.C", {
@@ -76,7 +77,36 @@ sap.ui.define([
 					styleClass: bCompact ? "sapUiSizeCompact" : ""
 				}
 			);
+		},
+
+		handleError2MessageBoxPress: function(oEvent) {
+			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
+			MessageBox.error(
+				"Product A does not exist.",
+				{
+					actions: ["Manage Products", sap.m.MessageBox.Action.CLOSE],
+					styleClass: bCompact ? "sapUiSizeCompact" : "",
+					onClose: function(sAction) {
+						MessageToast.show("Action selected: " + sAction);
+					}
+				}
+			);
+		},
+
+		handleWarning2MessageBoxPress: function(oEvent) {
+			var bCompact = !!this.getView().$().closest(".sapUiSizeCompact").length;
+			MessageBox.warning(
+				"The quantity you have reported exceeds the quantity planned.",
+				{
+					actions: [sap.m.MessageBox.Action.OK, sap.m.MessageBox.Action.CANCEL],
+					styleClass: bCompact ? "sapUiSizeCompact" : "",
+					onClose: function(sAction) {
+						MessageToast.show("Action selected: " + sAction);
+					}
+				}
+			);
 		}
+
 	});
 
 

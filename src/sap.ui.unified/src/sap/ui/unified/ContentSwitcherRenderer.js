@@ -1,9 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/library'],
+	function(jQuery, library) {
 	"use strict";
+
+
+	// shortcut for sap.ui.unified.ContentSwitcherAnimation
+	var ContentSwitcherAnimation = library.ContentSwitcherAnimation;
 
 
 	/**
@@ -25,7 +29,7 @@ sap.ui.define(['jquery.sap.global'],
 		var sId            = oControl.getId();
 		var sAnimation     = oControl.getAnimation();
 		if (!sap.ui.getCore().getConfiguration().getAnimation()) {
-			sAnimation = sap.ui.unified.ContentSwitcherAnimation.None;
+			sAnimation = ContentSwitcherAnimation.None;
 		}
 
 		var iActiveContent = oControl.getActiveContent();

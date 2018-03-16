@@ -3,9 +3,12 @@
  */
 
 // Provides control sap.m.OverflowToolbarLayoutData.
-sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/OverflowToolbarPriority'],
-	function(ToolbarLayoutData, OverflowToolbarPriority) {
+sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/library', 'jquery.sap.global'],
+	function(ToolbarLayoutData, library, jQuery) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 	/**
 	 * Constructor for a new <code>OverflowToolbarLayoutData</code>.
@@ -49,7 +52,7 @@ sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/OverflowToolbarPriority'],
 			 * @public
 			 * @since 1.32
 			 */
-			priority: {type: "sap.m.OverflowToolbarPriority", group: "Behavior", defaultValue: sap.m.OverflowToolbarPriority.High},
+			priority: {type: "sap.m.OverflowToolbarPriority", group: "Behavior", defaultValue: OverflowToolbarPriority.High},
 
 			/**
 			 * Defines OverflowToolbar items group number.
@@ -90,4 +93,4 @@ sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/OverflowToolbarPriority'],
 
 	return OverflowToolbarLayoutData;
 
-}, /* bExport= */ true);
+});

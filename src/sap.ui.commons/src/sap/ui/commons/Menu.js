@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.Menu.
-sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unified/Menu'],
-	function(jQuery, MenuItemBase, library, Menu1) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./MenuItemBase',
+	'./library',
+	'sap/ui/unified/Menu',
+	"./MenuRenderer"
+],
+	function(jQuery, MenuItemBase, library, Menu1, MenuRenderer) {
 	"use strict";
 
 
@@ -26,8 +32,7 @@ sap.ui.define(['jquery.sap.global', './MenuItemBase', './library', 'sap/ui/unifi
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.21.0.
-	 * Please use the control sap.ui.unified.Menu of the library sap.ui.unified instead.
+	 * @deprecated as of version 1.21.0, replaced by {@link sap.ui.unified.Menu}
 	 * @alias sap.ui.commons.Menu
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) design time meta model
 	 */

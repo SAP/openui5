@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+  <edmx:DataServices m:DataServiceVersion="2.0">
+    <Schema Namespace="FAC_FINANCIAL_DOCUMENT_SRV_01" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+
+ 	<EntityType Name="Tax" sap:content-version="1">
+        <Key>
+          <PropertyRef Name="AccountingDocument222222" />
+          <PropertyRef Name="CompanyCode222222" />
+          <PropertyRef Name="FiscalYear222222" />
+        </Key>
+        <Property Name="AccountingDocument222222" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Document Number" sap:heading="Doc. No." sap:quickinfo="Accounting Document Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="AccountingDocumentStatus222222" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Document Status" sap:heading="Doc. No." sap:quickinfo="Accounting Document Status" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="AccountingDocumentCategory222222" Type="Edm.String" Nullable="false" MaxLength="1" sap:display-format="UpperCase" sap:text="AccountingDocumentCategoryName" sap:label="Document Status" sap:heading="S" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="AccountingDocumentCategoryName222222" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="Document Cat Name" sap:quickinfo="Document Status Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+        <Property Name="AccountingDocumentHeaderText222222" Type="Edm.String" Nullable="false" MaxLength="25" sap:field-control="UxFcAccountingDocumentHeaderText" sap:label="Header Text" sap:quickinfo="Document Header Text" sap:creatable="false" sap:sortable="false" />
+        <Property Name="CoCodeCurrency222222" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Local Currency" sap:heading="LCurr" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:semantics="currency-code" />
+        <Property Name="CompanyCode222222" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:field-control="UxFcCompanyCode" sap:text="CompanyCodeName" sap:label="Company Code" sap:heading="CoCd" sap:creatable="false" sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>The company code is an organizational unit within financial accounting.</Summary>
+            <LongDescription />
+          </Documentation>
+        </Property>
+        <Property Name="CompanyCodeName222222" Type="Edm.String" Nullable="false" MaxLength="54" sap:label="Company Code Name" sap:field-control="UxFcCompanyCode" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+        <Property Name="CompanyAdress222222" Type="Edm.String" Nullable="false" MaxLength="54" sap:label="Company Adress" sap:field-control="UxFcCompanyCode" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+        <Property Name="CreatedByUser222222" Type="Edm.String" Nullable="false" MaxLength="1{CompanyCode}2" sap:display-format="UpperCase" sap:text="CreatedByUserName" sap:label="User Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="CreatedByUserName222222" Type="Edm.String" Nullable="false" MaxLength="80" sap:label="Complete name" sap:heading="Full Name" sap:quickinfo="Full Name of Person" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>This field contains the complete personal name. It is usually generated from the various name components (without title).</Summary>
+            <LongDescription>There are two exceptions:
+The field contents were combined from the previous fields for title text and name during a data conversion (from the previous Release). This is because the title text could not be assigned to a title key automatically. In this case the field CONVERTED
+("Status of the field NAME_TEXT") contains the value 'X'.
+The field contents were maintained with an additional function in dialog, for example because the complete name cannot be separated into the specified name parts. In this case the field CONVERTED ("Status of the field NAME_TEXT") contains the value 'M'.
+The field CONVERTED ("Status of the field NAME_TEXT") contains the value SPACE when neither of the two exceptions applies.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="ValidityFrom222222" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Valid from" sap:quickinfo="Accounting Document Entry Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="ValidityTo222222" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Valid to" sap:quickinfo="Accounting Document Entry Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="CreationDate222222" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Entered On" sap:quickinfo="Accounting Document Entry Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="ExpirationDate222222" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Expiry Date" sap:quickinfo="Accounting Document Expiration Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="RequestedDeliveryDate222222" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Requested Delivery Date" sap:quickinfo="Accounting Document Expiration Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="CreationTime222222" Type="Edm.Time" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Entered At" sap:quickinfo="Time at Which Accounting Document Was Entered" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+        <Property Name="DocumentDate222222" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Document Date" sap:heading="Doc. Date" sap:quickinfo="Document Date in Document" sap:creatable="false" sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>The document date is the date on which the original document was issued.</Summary>
+            <LongDescription />
+          </Documentation>
+        </Property>
+        <Property Name="ExchangeRateType222222" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Exchange Rate Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="FiscalPeriod222222" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:label="Period" sap:heading="Pd" sap:quickinfo="Fiscal Period" sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+        <Property Name="FiscalYear222222" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Fiscal Year" sap:heading="Year" sap:creatable="false" sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>Period, 12 months as a rule, for which the company is to create its inventory and balance sheet. The fiscal year can be the same as the calendar year, but does not have to be.</Summary>
+            <LongDescription />
+          </Documentation>
+        </Property>
+      </EntityType>
+      <EntityType Name="Header" sap:content-version="1">
+        <Key>
+          <PropertyRef Name="AccountingDocument"/>
+          <PropertyRef Name="CompanyCode"/>
+          <PropertyRef Name="FiscalYear"/>
+        </Key>
+        <Property Name="AccountingDocument" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Document Number" sap:heading="Doc. No." sap:quickinfo="Accounting Document Number" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="uxfcsomeFieldControl" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="this property should not be listed" sap:field-control="UxFcAccountingDocumentHeaderText" sap:heading="Doc. No." sap:quickinfo="Accounting Document Number" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="AccountingDocumentKeyComplex" Type="FAC_FINANCIAL_DOCUMENT_SRV_01.ComplexType" Nullable="false" />
+        <Property Name="AccountingDocumentStatus" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Document Status" sap:heading="Doc. No." sap:quickinfo="Accounting Document Status" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="AccountingDocumentCategory" Type="Edm.String" Nullable="false" MaxLength="1" sap:display-format="UpperCase" sap:text="AccountingDocumentCategoryName" sap:label="Document Status" sap:heading="S" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="AccountingDocumentCategoryName" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="Document Status Name" sap:quickinfo="Document Status Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AccountingDocumentHeaderText" Type="Edm.String" Nullable="false" MaxLength="25" sap:field-control="UxFcAccountingDocumentHeaderText" sap:label="Header Text" sap:quickinfo="Document Header Text" sap:creatable="false" sap:sortable="false"/>
+        <Property Name="AccountingDocumentType" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:text="AccountingDocumentTypeName" sap:label="Document Type" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="AccountingDocumentTypeName" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Long Text" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>A text that describes the object to which it refers in greater detail.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="AdditionalCrcy1" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Local Currency 2" sap:heading="LCur2" sap:quickinfo="Currency Key of Second Local Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="currency-code"/>
+        <Property Name="AdditionalCrcy1ExchangeRate" Type="Edm.Decimal" Nullable="false" Precision="9" Scale="5" sap:display-format="UpperCase" sap:label="Exchange rate 2" sap:heading="Ex.rate 2" sap:quickinfo="Exchange Rate for the Second Local Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AdditionalCrcy1Name" Type="Edm.String" Nullable="false" MaxLength="15" sap:label="Local Currency Name" sap:quickinfo="Name for the amount in second local currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AdditionalCrcy1Role" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:text="AdditionalCrcy1RoleName" sap:label="LC2 curr.type" sap:heading="CT" sap:quickinfo="Currency Type of Second Local  Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AdditionalCrcy1RoleName" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="LC2 curr.name" sap:quickinfo="Currency Type Name of Second Local Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AdditionalCrcy2" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Local Currency 3" sap:heading="LCur3" sap:quickinfo="Currency Key of Third Local Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="currency-code"/>
+        <Property Name="AdditionalCrcy2ExchangeRate" Type="Edm.Decimal" Nullable="false" Precision="9" Scale="5" sap:display-format="UpperCase" sap:label="Exchange rate 3" sap:heading="Ex.rate 3" sap:quickinfo="Exchange Rate for the Third Local Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AdditionalCrcy2Name" Type="Edm.String" Nullable="false" MaxLength="15" sap:label="Exchange name 3" sap:quickinfo="Name for the amount in third local currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AdditionalCrcy2Role" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:text="AdditionalCrcy2RoleName" sap:label="LC3 curr.type" sap:heading="CT" sap:quickinfo="Currency Type of Third Local Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AdditionalCrcy2RoleName" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="LC3 curr.name 2" sap:quickinfo="Currency Type Name of Third Local Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AlternativeReferenceDocument" Type="Edm.String" Nullable="false" MaxLength="26" sap:display-format="UpperCase" sap:label="Alt Refer" sap:heading="Alt Refer Number" sap:quickinfo="Alternative Reference Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>Specifies the alternative reference document number for tax reporting, for example.</Summary>
+            <LongDescription>When used with Italian company codes, this field contains the official document number, which is automatically assigned to the document when you post it. According to Italian requirements, this official document number must be within a year-dependent number range, based on a calendar year, and it has to be consecutive without gaps.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="RejectionStatus" Type="Edm.String" Nullable="false" MaxLength="20" sap:display-format="UpperCase" sap:label="Rejection Status" sap:heading="Rej. Key" sap:creatable="false" sap:updatable="false" sap:sortable="false"></Property>
+        <Property Name="ReferenceStatus" Type="Edm.String" Nullable="false" MaxLength="20" sap:display-format="UpperCase" sap:label="Reference Status" sap:heading="Ref. Key" sap:creatable="false" sap:updatable="false" sap:sortable="false"></Property>
+        <Property Name="OverallDiscount" Type="Edm.String" Nullable="false" MaxLength="20" sap:display-format="UpperCase" sap:label="Reference Key" sap:heading="Ref. Key" sap:creatable="false" sap:updatable="false" sap:sortable="false"></Property>
+        <Property Name="OverallDiscountAmount" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="2" sap:display-format="UpperCase" sap:unit="CoCodeCurrency" sap:label="Local Currency Amt" sap:heading="Local Currency Amount" sap:quickinfo="Local Currency Amount" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AmountInCoCodeCrcy" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="2" sap:display-format="UpperCase" sap:unit="CoCodeCurrency" sap:label="Local Currency Amt" sap:heading="Local Currency Amount" sap:quickinfo="Local Currency Amount" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="AmountInTransactionCrcy" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="2" sap:display-format="UpperCase" sap:unit="GroupCurrency" sap:label="Amount" sap:quickinfo="Amount in Document Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>Line item amount in document currency.</Summary>
+            <LongDescription>During document entry, enter the amount manually. In the last line item, you can enter a "*" - the amount of the final line item is then the balance of all the line items previously entered. Amounts you enter may be changed automatically by the system if the following postings are made: Tax adjustments Cash discount adjustments during net postings.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="Summary" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="2" sap:display-format="UpperCase" sap:unit="GroupCurrency" sap:label="Summary" sap:quickinfo="Summary Amount in Document Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>Line item amount in document currency.</Summary>
+            <LongDescription>During document entry, enter the amount manually. In the last line item, you can enter a "*" - the amount of the final line item is then the balance of all the line items previously entered. Amounts you enter may be changed automatically by the system if the following postings are made: Tax adjustments Cash discount adjustments during net postings.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="CoCodeCurrency" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Local Currency" sap:heading="LCurr" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:semantics="currency-code"/>
+        <Property Name="CompanyCode" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:field-control="UxFcCompanyCode" sap:text="CompanyCodeName" sap:label="Company Code" sap:heading="CoCd" sap:creatable="false" sap:updatable="true" sap:sortable="false">
+          <Documentation>
+            <Summary>The company code is an organizational unit within financial accounting.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="CompanyCodeName" Type="Edm.String" Nullable="false" MaxLength="54" sap:label="Company Code Name" sap:field-control="UxFcCompanyCode" sap:creatable="false" sap:updatable="true" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="CompanyAdress" Type="Edm.String" Nullable="false" MaxLength="54" sap:label="Company Adress" sap:field-control="UxFcCompanyCode" sap:creatable="false" sap:updatable="true" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="CreatedByUser" Type="Edm.String" Nullable="false" MaxLength="12" sap:display-format="UpperCase" sap:text="CreatedByUserName" sap:label="User Name" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="CreatedByUserName" Type="Edm.String" Nullable="false" MaxLength="80" sap:label="Complete name" sap:heading="Full Name" sap:quickinfo="Full Name of Person" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false">
+          <Documentation>
+            <Summary>This field contains the complete personal name. It is usually generated from the various name components (without title).</Summary>
+            <LongDescription>There are two exceptions:
+The field contents were combined from the previous fields for title text and name during a data conversion (from the previous Release). This is because the title text could not be assigned to a title key automatically. In this case the field CONVERTED
+("Status of the field NAME_TEXT") contains the value 'X'.
+The field contents were maintained with an additional function in dialog, for example because the complete name cannot be separated into the specified name parts. In this case the field CONVERTED ("Status of the field NAME_TEXT") contains the value 'M'.
+The field CONVERTED ("Status of the field NAME_TEXT") contains the value SPACE when neither of the two exceptions applies.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="ValidityFrom" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Valid from" sap:quickinfo="Accounting Document Entry Date" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="ValidityTo" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Valid to" sap:quickinfo="Accounting Document Entry Date" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="CreationDate" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Entered On" sap:quickinfo="Accounting Document Entry Date" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="ExpirationDate" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Expiry Date" sap:quickinfo="Accounting Document Expiration Date" sap:creatable="false" sap:updatable="true" sap:sortable="false"/>
+        <Property Name="RequestedDeliveryDate" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Requested Delivery Date" sap:quickinfo="Accounting Document Expiration Date" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="CreationTime" Type="Edm.Time" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Entered At" sap:quickinfo="Time at Which Accounting Document Was Entered" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="DocumentDate" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Document Date" sap:heading="Doc. Date" sap:quickinfo="Document Date in Document" sap:creatable="false" sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>The document date is the date on which the original document was issued.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="DocumentReferenceID" Type="Edm.String" Nullable="false" MaxLength="16" sap:display-format="UpperCase" sap:field-control="UxFcDocumentReferenceID" sap:label="Reference" sap:quickinfo="Reference Document Number" sap:creatable="false"
+sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>The reference document number can contain the document number of the customer/vendor. However it may contain a different value.</Summary>
+            <LongDescription>The reference document number is used as a search criterion when displaying or changing documents. In correspondence, the reference document number is sometimes printed in place of the document number.
+Enter the number specified by the business partner. If the document was created in-house and you do not know the business partner document number, you can copy the document number into the reference number field by entering "*".</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="ExchangeRate" Type="Edm.String" Nullable="false" MaxLength="12" sap:display-format="UpperCase" sap:label="Exchange Rate" sap:quickinfo="OData: Exchange rate" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <Property Name="ExchangeRateDate" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:field-control="UxFcExchangeRateDate" sap:filter-restriction="interval" sap:label="Translation Date" sap:quickinfo="Currency Translation Date"
+sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="ExchangeRateForTaxes" Type="Edm.Decimal" Nullable="false" Precision="9" Scale="5" sap:display-format="UpperCase" sap:label="Rate for taxes" sap:quickinfo="Exchange Rate for Taxes" sap:creatable="false" sap:updatable="false"
+sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>The exchange rate used for translating the tax amounts is stored here. It is only filled if the option of making a direct entry was specified within company code customizing or the posting date or document date is used for the
+translation. The exchange rate can currently only be entered on the separate tax screen.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="ExchangeRateType" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Exchange Rate Type" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="FiscalPeriod" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:label="Period" sap:heading="Pd" sap:quickinfo="Fiscal Period" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="FiscalYear" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Fiscal Year" sap:heading="Year" sap:creatable="false" sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>Period, 12 months as a rule, for which the company is to create its inventory and balance sheet. The fiscal year can be the same as the calendar year, but does not have to be.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="GroupCurrency" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Group curr." sap:heading="GrpCy" sap:quickinfo="Currency Key for the Group Currency" sap:creatable="false"
+sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="currency-code">
+          <Documentation>
+            <Summary>Currency key which is specified for the corporate group at client level.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="IntercompanyTransaction" Type="Edm.String" Nullable="false" MaxLength="16" sap:display-format="UpperCase" sap:field-control="UxFcIntercompanyTransaction" sap:label="Intercompany Transac" sap:heading="Intercompany Transaction"
+sap:quickinfo="Intercompany Transaction Number" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="LastChangeDate" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Changed on" sap:heading="Chngd on" sap:quickinfo="Changed On" sap:creatable="false" sap:updatable="false"
+sap:sortable="false"/>
+        <Property Name="Ledger" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:label="Ledger" sap:heading="Ld" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>The unique identification of a special ledger.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="LedgerGroup" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:field-control="UxFcLedgerGroup" sap:filter-restriction="multi-value" sap:text="LedgerGroupName" sap:label="Ledger Group"
+sap:creatable="false" sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>Uniquely identifies a ledger group.</Summary>
+            <LongDescription>If you do not specify a ledger group, the function (such as posting) is executed for all ledgers, that is, for the leading ledger and all ledgers assigned in the company code.
+The initial (empty) ledger group is a special ledger group that contains all ledgers that were defined within the same company code. The balance of the accounts within this ledger group is always the same as the balance of the open items.
+If you specify a ledger group here, the function is only executed for the ledgers belonging to this ledger group.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="LedgerGroupName" Type="Edm.String" Nullable="false" MaxLength="35" sap:field-control="UxFcLedgerGroup" sap:label="Last name" sap:quickinfo="Employee's last name" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false">
+          <Documentation>
+            <Summary>Last name of the employee who performed the operation.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="OriginalReferenceDocument" Type="Edm.String" Nullable="false" MaxLength="20" sap:display-format="UpperCase" sap:label="Reference Key" sap:heading="Ref. Key" sap:creatable="false" sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>If an accounting document is posted via the interface in Accounting, the sending application transfers a unique reference. It consists of object key and object type. The object key consists of a reference document number and a reference organizational unit.</Summary>
+            <LongDescription>Example:  1000007899  00011996    Reference  Reference organizational unit    document no. client and fiscal year The object type contains a note on storing the original document.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="ParkedByUser" Type="Edm.String" Nullable="false" MaxLength="12" sap:display-format="UpperCase" sap:text="ParkedByUserName" sap:label="Parked by" sap:quickinfo="Name of User Who Parked this Document" sap:creatable="false"
+sap:updatable="false" sap:sortable="false"/>
+        <Property Name="ParkedByUserName" Type="Edm.String" Nullable="false" MaxLength="80" sap:label="Parked by User" sap:heading="Full Name" sap:quickinfo="Full Name of Person" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false">
+          <Documentation>
+            <Summary>This field contains the complete personal name. It is usually generated from the various name components (without title).</Summary>
+            <LongDescription>There are two exceptions:
+The field contents were combined from the previous fields for title text and name during a data conversion (from the previous Release). This is because the title text could not be assigned to a title key automatically. In this case the field CONVERTED
+("Status of the field NAME_TEXT") contains the value 'X'.
+The field contents were maintained with an additional function in dialog, for example because the complete name cannot be separated into the specified name parts. In this case the field CONVERTED ("Status of the field NAME_TEXT") contains the value 'M'.
+The field CONVERTED ("Status of the field NAME_TEXT") contains the value SPACE when neither of the two exceptions applies.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="PostingDate" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Posting Date" sap:heading="Pstng Date" sap:quickinfo="Posting Date in the Document" sap:creatable="false"
+sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>Date which is used when entering the document in Financial Accounting or Controlling.</Summary>
+            <LongDescription>The fiscal year and the period for which an update of the accounts specified in the document or cost elements is made, are derived from the posting date.
+When entering documents, the system checks whether the posting date entered is allowed by means of the posting period permitted.
+The posting date can differ from both the entry date (day of entry into the system) and the document date (day of creation of the original document).</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="RecurringAccountingDocument" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Rec.entry doc." sap:heading="RecEnt doc" sap:quickinfo="Recurring Entry Document Number" sap:creatable="false"
+sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>The original document for the recurring entry was entered under this document number.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="Reference1InDocumentHeader" Type="Edm.String" Nullable="false" MaxLength="20" sap:display-format="UpperCase" sap:field-control="UxFcReference1InDocumentHeader" sap:label="Ref. Key 1 (Header)" sap:heading="Reference Key 1 (Header)"
+sap:quickinfo="Reference Key 1 Internal for Document Header" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="Reference2InDocumentHeader" Type="Edm.String" Nullable="false" MaxLength="20" sap:display-format="UpperCase" sap:field-control="UxFcReference2InDocumentHeader" sap:label="Ref. Key 2 (Header)" sap:heading="Reference Key 2 (Header)"
+sap:quickinfo="Reference Key 2 Internal for Document Header" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="ReferenceDocumentType" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:text="ReferenceDocumentTypeName" sap:label="Ref. Transaction" sap:heading="Reference Transaction" sap:quickinfo="Reference
+Transaction" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="ReferenceDocumentTypeName" Type="Edm.String" Nullable="false" MaxLength="25" sap:label="Object type" sap:heading="Object type text" sap:quickinfo="Object Type Text" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false">
+          <Documentation>
+            <Summary>This field contains the name of an object type.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="ReverseDocument" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Reversed with" sap:heading="Rev. with" sap:quickinfo="Reverse Document Number" sap:creatable="false" sap:updatable="false"
+sap:sortable="false">
+          <Documentation>
+            <Summary>Contains the document number of the document with which the currently displayed document was reversed. The field is filled by the system during reversal.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="ReversalFunction" Type="Edm.String" Nullable="false" MaxLength="1" sap:display-format="UpperCase" sap:text="ReversalFunctionName" sap:label="Reversal Type" sap:quickinfo="Whether Reversal Document or Reversed Document"
+sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+        <Property Name="ReversalFunctionName" Type="Edm.String" Nullable="false" MaxLength="60" sap:label="Short text" sap:quickinfo="Explanatory short text" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>This text is displayed when you generate reports or call documentation, for example.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="ReversalReason" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:text="ReversalReasonName" sap:label="Reversal Reason" sap:heading="Reason" sap:quickinfo="Reason for Reversal"
+ sap:creatable="false"
+sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>Reason for reversing a document.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="ReversalReasonName" Type="Edm.String" Nullable="false" MaxLength="40" sap:label="Text" sap:quickinfo="Text, length 40" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+        <Property Name="TaxBaseAmountIsNetEntry" Type="Edm.Boolean" Nullable="false" sap:display-format="UpperCase" sap:label="Net entry" sap:quickinfo="G/L account amounts entered exclude tax" sap:creatable="false" sap:updatable="false"
+sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>If the tax amounts are to be calculated, you can specify here that the G/L account amounts are to be entered net (i.e. excluding tax). If not, the system assumes that the G/L account amounts entered are gross and not net of
+ tax.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="TaxIsCalculatedAutomatically" Type="Edm.Boolean" Nullable="false" sap:display-format="UpperCase" sap:label="Calculate tax" sap:quickinfo="Calculate tax automatically" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false">
+          <Documentation>
+            <Summary>If you select this field, the system calculates the taxes automatically during simulation or posting.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="TaxReportingDate" Type="Edm.DateTime" Precision="0" sap:display-format="UpperCase" sap:filter-restriction="interval" sap:label="Tax Report Date" sap:heading="Rep. Date" sap:quickinfo="Tax Reporting Date" sap:creatable="false"
+sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>Date on which the tax on sales and purchases is due, or the date on which that tax must be reported to the tax authority.</Summary>
+            <LongDescription>The tax reporting date can be identical to the posting date or the document date; you also can define your own rules to determine the date.
+Tax Reporting
+The tax reporting date is used in tax reporting primarily as a selection criterion, in addition to the posting date or document date.
+The tax reporting date is contained as a selection criterion in the logical database BRF.
+The field is available by default in the selection screens of several programs (for example, RFUMSV00, RFUMSV10, RDASLM00 , RFASLD02, RFASLD20). In the other report programs based on logical database BRF, the selection screens do not contain the field
+by default, but you can choose it from the custom selections.
+Exchange Rate Determination in Currency Translation of the Tax Amount
+You also can use the tax reporting date to determine the exchange rate when performing currency translation of the tax amount. To do this, in Customizing for Tax on Sales/Purchases under Change Foreign Currency Translation choose the option Determine
+exchange rate based on tax reporting date. Even if you have selected this option, you can change the reporting date in the document for reporting purposes at a later date. The tax amount is not recalculated again if you do this.
+More Information
+For more information, see SAP Note 1232484 and the related notes.
+The tax reporting date is a field in the document header (table BKPF) and therefore applies to the entire document.
+To be able to use the field in documents, you need to activate the function Inventory-managing Customizing of Global Parameters for the company code. To do this, go to Enter Global Parameters and set Tax Reporting Date Active.
+If you have not selected Tax Reporting Date Active or the document is not tax relevant (does not contain a tax code), the system stores the tax reporting date with an initialized value.
+When entering documents, you can enter the tax reporting date in the dialog box for taxes. The BAdI Define and Check Tax Reporting Date (VATDATE_VALUES) proposes a value for this date. In the standard implementation, this is the posting date or,
+alternatively, the document date. You can change this date in the transaction for changing documents (FB02). But first you need to allow for the date to be changed in Customizing for Document Change Rules under Document Change Rules, Document Header.
+You can use the BAdI VATDATE_VALUES to verify the changes to the tax reporting date in the document.
+You can use the BAdI Determine Exchange Rate for Tax Items (BADI_TAX_EXCHANGE_RATE) to determine which exchange rate is relevant for tax line items in documents.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="TransactionCode" Type="Edm.String" Nullable="false" MaxLength="20" sap:display-format="UpperCase" sap:label="Transaction Code" sap:heading="TCode" sap:creatable="false" sap:updatable="false" sap:sortable="false">
+          <Documentation>
+            <Summary>A combination of alphabetical and numerical characters forming a code for a business task.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="TransactionCurrency" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="Transaction Currency" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:semantics="currency-code"/>
+        <Property Name="UxFcAccountingDocumentHeaderText" Type="Edm.Byte" sap:visible="false" Nullable="false" sap:label="UI Field Control" sap:quickinfo="UI Field Control Byte (Should be defined centrally)" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <Property Name="UxFcCompanyCode" Type="Edm.Byte" Nullable="false" sap:visible="false" sap:label="UI Field Control" sap:quickinfo="UI Field Control Byte (Should be defined centrally)" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <Property Name="UxFcDocumentReferenceID" Type="Edm.Byte" sap:visible="false" Nullable="false" sap:label="UI Field Control" sap:quickinfo="UI Field Control Byte (Should be defined centrally)" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <Property Name="UxFcExchangeRate" Type="Edm.Byte" sap:visible="false" Nullable="false" sap:label="UI Field Control" sap:quickinfo="UI Field Control Byte (Should be defined centrally)" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <Property Name="UxFcExchangeRateDate" Type="Edm.Byte" sap:visible="false" Nullable="false" sap:label="UI Field Control" sap:quickinfo="UI Field Control Byte (Should be defined centrally)" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <Property Name="UxFcIntercompanyTransaction" Type="Edm.Byte" sap:visible="false" Nullable="false" sap:label="UI Field Control" sap:quickinfo="UI Field Control Byte (Should be defined centrally)" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <Property Name="UxFcLedgerGroup" Type="Edm.Byte" sap:visible="false" Nullable="false" sap:label="UI Field Control" sap:quickinfo="UI Field Control Byte (Should be defined centrally)" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <Property Name="UxFcReference1InDocumentHeader" Type="Edm.Byte" sap:visible="false" Nullable="false" sap:label="UI Field Control" sap:quickinfo="UI Field Control Byte (Should be defined centrally)" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <Property Name="UxFcReference2InDocumentHeader" Type="Edm.Byte" sap:visible="false" Nullable="false" sap:label="UI Field Control" sap:quickinfo="UI Field Control Byte (Should be defined centrally)" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false"/>
+        <NavigationProperty Name="Taxes" Relationship="FAC_FINANCIAL_DOCUMENT_SRV_01.HeaderTaxes" FromRole="FromRole_HeaderTaxes" ToRole="ToRole_HeaderTaxes"/>
+        <NavigationProperty Name="Items" Relationship="FAC_FINANCIAL_DOCUMENT_SRV_01.HeaderItems" FromRole="FromRole_HeaderItems" ToRole="ToRole_HeaderItems"/>
+        <NavigationProperty Name="Attachments" Relationship="FAC_FINANCIAL_DOCUMENT_SRV_01.HeaderAttachments" FromRole="FromRole_HeaderAttachments" ToRole="ToRole_HeaderAttachments"/>
+        <NavigationProperty Name="Notes" Relationship="FAC_FINANCIAL_DOCUMENT_SRV_01.HeaderNotes" FromRole="FromRole_HeaderNotes" ToRole="ToRole_HeaderNotes"/>
+        <NavigationProperty Name="RelatedDocuments" Relationship="FAC_FINANCIAL_DOCUMENT_SRV_01.HeaderRelatedDocuments" FromRole="FromRole_HeaderRelatedDocuments" ToRole="ToRole_HeaderRelatedDocuments"/>
+        <NavigationProperty Name="DocumentViews" Relationship="FAC_FINANCIAL_DOCUMENT_SRV_01.HeaderDocumentViews" FromRole="FromRole_HeaderDocumentViews" ToRole="ToRole_HeaderDocumentViews"/>
+      </EntityType>
+
+
+
+
+
+
+
+	 <ComplexType Name="ComplexType">
+        <Property Name="ComplexProperty01" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="ComplexProperty 01" sap:heading="Doc. No." sap:quickinfo="Accounting Document Number" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false">
+          <Documentation>
+            <Summary>The document number is the key the system uses to access the accounting document.</Summary>
+            <LongDescription>The document number is unique per company code and fiscal year. When entering an accounting document, you can specify the number manually or it can be determined by the system from a pre-defined area (number range).
+The relevant area of the document numbers (number range) is determined in each company code per document type.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="ComplexProperty02" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="ComplexProperty 02" sap:heading="CoCd" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>The company code is an organizational unit within financial accounting.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="ComplexProperty03" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="ComplexProperty 03" sap:heading="Year" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>Period, 12 months as a rule, for which the company is to create its inventory and balance sheet. The fiscal year can be the same as the calendar year, but does not have to be.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+      </ComplexType>
+
+      <ComplexType Name="AccountingDocumentKey">
+        <Property Name="AccountingDocument" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Document Number" sap:heading="Doc. No." sap:quickinfo="Accounting Document Number" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+sap:filterable="false">
+          <Documentation>
+            <Summary>The document number is the key the system uses to access the accounting document.</Summary>
+            <LongDescription>The document number is unique per company code and fiscal year. When entering an accounting document, you can specify the number manually or it can be determined by the system from a pre-defined area (number range).
+The relevant area of the document numbers (number range) is determined in each company code per document type.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="CompanyCode" Type="Edm.String" Nullable="false" MaxLength="4" sap:name="BLAAAAAAAA" sap:label="Company Code" sap:heading="CoCd" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>The company code is an organizational unit within financial accounting.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="FiscalYear" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Fiscal Year" sap:heading="Year" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>Period, 12 months as a rule, for which the company is to create its inventory and balance sheet. The fiscal year can be the same as the calendar year, but does not have to be.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+      </ComplexType>
+      <ComplexType Name="ReversalResult">
+        <Property Name="OriginalAccountingDocument" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Document Number" sap:heading="Doc. No." sap:quickinfo="Accounting Document Number" sap:creatable="false" sap:updatable="false"
+sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>The document number is the key the system uses to access the accounting document.</Summary>
+            <LongDescription>The document number is unique per company code and fiscal year. When entering an accounting document, you can specify the number manually or it can be determined by the system from a pre-defined area (number range).
+The relevant area of the document numbers (number range) is determined in each company code per document type.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="OriginalCompanyCode" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Company Code" sap:heading="CoCd" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>The company code is an organizational unit within financial accounting.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="OriginalFiscalYear" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Fiscal Year" sap:heading="Year" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>Period, 12 months as a rule, for which the company is to create its inventory and balance sheet. The fiscal year can be the same as the calendar year, but does not have to be.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="ReversalAccountingDocument" Type="Edm.String" Nullable="false" MaxLength="10" sap:label="Document Number" sap:heading="Doc. No." sap:quickinfo="Accounting Document Number" sap:creatable="false" sap:updatable="false"
+sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>The document number is the key the system uses to access the accounting document.</Summary>
+            <LongDescription>The document number is unique per company code and fiscal year. When entering an accounting document, you can specify the number manually or it can be determined by the system from a pre-defined area (number range).
+The relevant area of the document numbers (number range) is determined in each company code per document type.</LongDescription>
+          </Documentation>
+        </Property>
+        <Property Name="ReversalCompanyCode" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Company Code" sap:heading="CoCd" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>The company code is an organizational unit within financial accounting.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="ReversalFiscalYear" Type="Edm.String" Nullable="false" MaxLength="4" sap:label="Fiscal Year" sap:heading="Year" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false">
+          <Documentation>
+            <Summary>Period, 12 months as a rule, for which the company is to create its inventory and balance sheet. The fiscal year can be the same as the calendar year, but does not have to be.</Summary>
+            <LongDescription/>
+          </Documentation>
+        </Property>
+        <Property Name="ErrorIndicator" Type="Edm.Boolean" Nullable="false" sap:label="TRUE" sap:quickinfo="Data element for domain BOOLE: TRUE (='X') and FALSE (=' ')" sap:creatable="false" sap:updatable="false" sap:sortable="false"
+ sap:filterable="false"/>
+        <Property Name="MessageText" Type="Edm.String" Nullable="false" MaxLength="255" sap:label="Char255" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+      </ComplexType>
+      <EntityContainer Name="FAC_FINANCIAL_DOCUMENT_SRV_01_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+        <EntitySet Name="Headers" EntityType="FAC_FINANCIAL_DOCUMENT_SRV_01.Header" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+      </EntityContainer>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/AccountingDocumentCategory" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Document Status"/>
+            <PropertyValue Property="CollectionPath" String="VL_FV_BSTAT"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="AccountingDocumentCategory"/>
+                  <PropertyValue Property="ValueListProperty" String="Code"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="Text"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/AccountingDocumentType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Help View for Document Types"/>
+            <PropertyValue Property="CollectionPath" String="VL_SH_H_T003"/>
+            <PropertyValue Property="SearchSupported" Bool="true"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="AccountingDocumentType"/>
+                  <PropertyValue Property="ValueListProperty" String="BLART"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="LTEXT"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/CoCodeCurrency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Search help for currency"/>
+            <PropertyValue Property="CollectionPath" String="VL_SH_SH_TCURC"/>
+            <PropertyValue Property="SearchSupported" Bool="true"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="CoCodeCurrency"/>
+                  <PropertyValue Property="ValueListProperty" String="WAERS"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="AccountingDocumentTypeName"/>
+                  <PropertyValue Property="ValueListProperty" String="LTEXT"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/CompanyCode" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Company Codes"/>
+            <PropertyValue Property="CollectionPath" String="VL_SH_H_T001"/>
+            <PropertyValue Property="SearchSupported" Bool="true"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="CompanyCode"/>
+                  <PropertyValue Property="ValueListProperty" String="BUKRS"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="BUTXT"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="ORT01"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="WAERS"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/ExchangeRateType" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Search help for exchange rate type"/>
+            <PropertyValue Property="CollectionPath" String="VL_SH_FAC_EXCHANGE_RATE_TYPE"/>
+            <PropertyValue Property="SearchSupported" Bool="true"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="ExchangeRateType"/>
+                  <PropertyValue Property="ValueListProperty" String="KURST"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="ReversalReasonName"/>
+                  <PropertyValue Property="ValueListProperty" String="CURVW"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/LedgerGroup" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Ledger Groups in General Ledger"/>
+            <PropertyValue Property="CollectionPath" String="VL_SH_FAGL_LEDGERGROUP"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="LedgerGroup"/>
+                  <PropertyValue Property="ValueListProperty" String="LDGRP"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="LEDGERNAME"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="NAME"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/ReversalFunction" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Whether Reversal Document or Reversed Document"/>
+            <PropertyValue Property="CollectionPath" String="VL_FV_XREVERSAL"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="ReversalFunction"/>
+                  <PropertyValue Property="ValueListProperty" String="Code"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="Text"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/ReversalReason" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Search help for reversal reason"/>
+            <PropertyValue Property="CollectionPath" String="VL_SH_FAC_REVERSAL_REASON"/>
+            <PropertyValue Property="SearchSupported" Bool="true"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="ReversalReason"/>
+                  <PropertyValue Property="ValueListProperty" String="STGRD"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="ReversalReasonName"/>
+                  <PropertyValue Property="ValueListProperty" String="TXT40"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/TransactionCurrency" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Search help for currency"/>
+            <PropertyValue Property="CollectionPath" String="VL_SH_SH_TCURC"/>
+            <PropertyValue Property="SearchSupported" Bool="true"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="TransactionCurrency"/>
+                  <PropertyValue Property="ValueListProperty" String="WAERS"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="LTEXT"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="FAC_FINANCIAL_DOCUMENT_SRV_01.Header/CheckVoidReason" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="com.sap.vocabularies.Common.v1.ValueList">
+          <Record>
+            <PropertyValue Property="Label" String="Void Reason Code Help View"/>
+            <PropertyValue Property="CollectionPath" String="VL_SH_H_TVOID"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterInOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="CheckVoidReason"/>
+                  <PropertyValue Property="ValueListProperty" String="VOIDR"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="VOIDT"/>
+                </Record>
+                <Record Type="com.sap.vocabularies.Common.v1.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="XMANE"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

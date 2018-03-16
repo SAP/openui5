@@ -292,7 +292,7 @@ sap.ui.define([
 
 			/**
 			 * Sets the item count on the master list header
-			 * @param {integer} iTotalItems the total number of items in the list
+			 * @param {int} iTotalItems the total number of items in the list
 			 * @private
 			 */
 			_updateListItemCount : function (iTotalItems) {

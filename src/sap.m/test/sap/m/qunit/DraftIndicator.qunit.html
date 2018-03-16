@@ -64,17 +64,16 @@
 		// Act
 		oDraftIndi.showDraftSaving();
 		// Assert
-		assert.strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Saving draft is shown");
+		assert.strictEqual(oDraftIndi._getLabel().getText(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Saving draft is shown");
 
 		this.clock.tick(3000);
 
 		// Act
 		oDraftIndi.clearDraftState();
 		// Assert
-		assert.strictEqual(oDraftIndi.$("label").html(), "", "Draft saved is cleared");
+		assert.strictEqual(oDraftIndi._getLabel().getText(), "", "Draft saved is cleared");
 
 		// Clean up
-		oDraftIndi._resetDraftTimer();
 		oDraftIndi.destroy();
 	});
 
@@ -90,14 +89,13 @@
 		oDraftIndi.showDraftSaved();
 
 		// Assert
-		assert.strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_DRAFT_SAVED"), "Draft saved is shown");
+		assert.strictEqual(oDraftIndi.$("label").text(), oBundle.getText("DRAFT_INDICATOR_DRAFT_SAVED"), "Draft saved is shown");
 		this.clock.tick(1500);
 
 		// Assert
-		assert.ok(oDraftIndi.$("label").html()!="", "Draft saved state is not cleared after default timeout");
+		assert.ok(oDraftIndi.$("label").text()!="", "Draft saved state is not cleared after default timeout");
 
 		// Clean up
-		oDraftIndi._resetDraftTimer();
 		oDraftIndi.destroy();
 	});
 
@@ -113,14 +111,29 @@
 		oDraftIndi.showDraftSaving();
 
 		// Assert
-		assert.strictEqual(oDraftIndi.$("label").html(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Draft saved is shown");
+		assert.strictEqual(oDraftIndi.$("label").text(), oBundle.getText("DRAFT_INDICATOR_SAVING_DRAFT"), "Draft saved is shown");
 		this.clock.tick(1500);
 
 		// Assert
-		assert.strictEqual(oDraftIndi.$("label").html(), "", "Draft saving state is cleared after default timeout");
+		assert.strictEqual(oDraftIndi.$("label").text(), "", "Draft saving state is cleared after default timeout");
 
 		// Clean up
-		oDraftIndi._resetDraftTimer();
+		oDraftIndi.destroy();
+	});
+
+	QUnit.test("the control doesn't recreate the label upon destruction", function (assert) {
+		// Arrange
+		var oDraftIndi = new sap.m.DraftIndicator();
+
+		// Act
+		oDraftIndi.showDraftSaving();
+		oDraftIndi.destroy();
+		this.clock.tick(1500);
+
+		// Assert
+		assert.strictEqual(oDraftIndi.getAggregation("_label"), null, "The label was not recreated");
+
+		// Clean up
 		oDraftIndi.destroy();
 	});
 

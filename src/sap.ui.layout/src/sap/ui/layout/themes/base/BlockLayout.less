@@ -2,72 +2,21 @@
 /* CSS for control sap.ui.layout/BlockLayout  */
 /* Base theme                                 */
 /* ========================================== */
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType1A: darken(@sapUiAccent1,14);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType1B: darken(@sapUiAccent1,18);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType1C: darken(@sapUiAccent1,22);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType1D: darken(@sapUiAccent1,26);
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType2A: darken(@sapUiAccent2,12);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType2B: darken(@sapUiAccent2,16);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType2C: darken(@sapUiAccent2,20);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType2D: darken(@sapUiAccent2,24);
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType3A: darken(@sapUiAccent3,14);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType3B: darken(@sapUiAccent3,18);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType3C: darken(@sapUiAccent3,22);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType3D: darken(@sapUiAccent3,26);
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType4A: darken(@sapUiAccent4,5);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType4B: darken(@sapUiAccent4,10);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType4C: darken(@sapUiAccent4,15);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType4D: darken(@sapUiAccent4,20);
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType5A: darken(@sapUiAccent5,8);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType5B: darken(@sapUiAccent5,13);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType5C: darken(@sapUiAccent5,16);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType5D: darken(@sapUiAccent5,20);
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType6A: darken(@sapUiAccent6,6);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType6B: darken(@sapUiAccent6,10);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType6C: darken(@sapUiAccent6,14);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType6D: darken(@sapUiAccent6,16);
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType7A: darken(@sapUiAccent7,5);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType7B: darken(@sapUiAccent7,9);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType7C: darken(@sapUiAccent7,12);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType7D: darken(@sapUiAccent7,16);
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType8A: darken(@sapUiAccent8,8);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType8B: darken(@sapUiAccent8,12);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType8C: darken(@sapUiAccent8,16);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType8D: darken(@sapUiAccent8,20);
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType9A: @sapUiGroupContentBackground;
-@_sap_ui_layout_BlockLayout_BlockColorAccentType9B: darken(@sapUiGroupContentBackground,2);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType9C: darken(@sapUiGroupContentBackground,4);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType9D: darken(@sapUiGroupContentBackground,6);
-
-@_sap_ui_layout_BlockLayout_BlockColorAccentType10A: darken(@sapUiGroupContentBackground,8);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType10B: darken(@sapUiGroupContentBackground,10);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType10C: darken(@sapUiGroupContentBackground,12);
-@_sap_ui_layout_BlockLayout_BlockColorAccentType10D: darken(@sapUiGroupContentBackground,14);
-
-.sapUiBlockLayout {
-	.sapUiFormResLayout > div {
-		background-color: inherit;
-	}
-}
-
 .setCellsColorDoubles (@evenCell, @oddCell) {
 	// Match every even cell
-	.sapUiBlockLayoutCell:nth-child(2n) {
+	.sapUiBlockLayoutEvenCell {
 		background-color: @evenCell;
 	}
 
 	// Match every odd cell
-	.sapUiBlockLayoutCell:nth-child(2n+1) {
+	.sapUiBlockLayoutOddCell {
 		background-color: @oddCell;
+	}
+}
+
+.sapUiBlockLayout {
+	.sapUiFormResLayout > div {
+		background-color: inherit;
 	}
 }
 
@@ -92,7 +41,10 @@
 }
 
 // Styles & Sizes for Tablet
-.sapUiBlockLayoutSizeM {
+.sapUiBlockLayoutSizeM:not(.sapUiBlockLayoutKeepFontSize) {
+	.sapUiNoContentPadding .sapUiBlockCellContent {
+		padding: 0;
+	}
 	.sapUiBlockCellContent {
 		padding: 1rem 2rem;
 		font-size: @sapMFontMediumSize;
@@ -108,7 +60,10 @@
 }
 
 // Styles & Sizes for Desktop
-.sapUiBlockLayoutSizeL {
+.sapUiBlockLayoutSizeL:not(.sapUiBlockLayoutKeepFontSize) {
+	.sapUiNoContentPadding .sapUiBlockCellContent {
+		padding: 0;
+	}
 	.sapUiBlockCellContent {
 		padding: 2rem 3rem;
 		font-size: @sapMFontLargeSize;
@@ -128,7 +83,10 @@
 }
 
 // Styles & Sizes for LargeDesktop
-.sapUiBlockLayoutSizeXL {
+.sapUiBlockLayoutSizeXL:not(.sapUiBlockLayoutKeepFontSize) {
+	.sapUiNoContentPadding .sapUiBlockCellContent {
+		padding: 0;
+	}
 	.sapUiBlockCellContent {
 		padding: 2rem 3rem;
 		font-size: @sapMFontLargeSize;

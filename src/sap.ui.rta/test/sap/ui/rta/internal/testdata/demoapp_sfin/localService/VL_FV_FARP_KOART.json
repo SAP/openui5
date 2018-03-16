@@ -1,0 +1,31 @@
+[{
+  "__metadata": {
+    "type": "FAC_FINANCIALS_POSTING_SRV.VL_FV_FARP_KOART"
+  },
+  "Code": "A",
+  "Text": "Assets"
+}, {
+  "__metadata": {
+    "type": "FAC_FINANCIALS_POSTING_SRV.VL_FV_FARP_KOART"
+  },
+  "Code": "D",
+  "Text": "Customers"
+}, {
+  "__metadata": {
+    "type": "FAC_FINANCIALS_POSTING_SRV.VL_FV_FARP_KOART"
+  },
+  "Code": "K",
+  "Text": "Suppliers"
+}, {
+  "__metadata": {
+    "type": "FAC_FINANCIALS_POSTING_SRV.VL_FV_FARP_KOART"
+  },
+  "Code": "M",
+  "Text": "Material"
+}, {
+  "__metadata": {
+    "type": "FAC_FINANCIALS_POSTING_SRV.VL_FV_FARP_KOART"
+  },
+  "Code": "S",
+  "Text": "G/L accounts"
+}]

@@ -2,8 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define(["sap/ui/core/library"], function(coreLibrary) {
 	'use strict';
+
+	// shortcut for sap.ui.core.Priority
+	var Priority = coreLibrary.Priority;
 
 	/**
 	 * NotificationListItemGroup renderer.
@@ -55,7 +58,7 @@ sap.ui.define([], function () {
 			}
 
 			if (visibleItemsCount == 0) {
-			    oRm.addClass(classNoNotifications);
+				oRm.addClass(classNoNotifications);
 			}
 
 			oRm.writeClasses();
@@ -225,13 +228,13 @@ sap.ui.define([], function () {
 		var controlPriority = oControl.getPriority();
 
 		switch (controlPriority) {
-			case (sap.ui.core.Priority.Low):
+			case (Priority.Low):
 				classPriority = 'sapMNLB-Low';
 				break;
-			case (sap.ui.core.Priority.Medium):
+			case (Priority.Medium):
 				classPriority = 'sapMNLB-Medium';
 				break;
-			case (sap.ui.core.Priority.High):
+			case (Priority.High):
 				classPriority = 'sapMNLB-High';
 				break;
 			default:
@@ -285,7 +288,7 @@ sap.ui.define([], function () {
 
 		this.renderNotifications(oRm, oControl);
 		if (oControl._maxNumberReached) {
-		    this.renderMaxNumberReachedMessage(oRm, oControl);
+			this.renderMaxNumberReachedMessage(oRm, oControl);
 		}
 
 		oRm.write('</ul>');

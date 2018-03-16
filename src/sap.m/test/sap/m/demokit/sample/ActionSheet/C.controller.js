@@ -1,5 +1,5 @@
-sap.ui.define(['sap/ui/core/Fragment','sap/ui/core/mvc/Controller'],
-	function(Fragment, Controller) {
+sap.ui.define(['sap/ui/core/Fragment','sap/ui/core/mvc/Controller', 'sap/m/MessageToast'],
+	function(Fragment, Controller, MessageToast) {
 	"use strict";
 
 	var CController = Controller.extend("sap.m.sample.ActionSheet.C", {
@@ -16,6 +16,10 @@ sap.ui.define(['sap/ui/core/Fragment','sap/ui/core/mvc/Controller'],
 			}
 
 			this._actionSheet.openBy(oButton);
+		},
+
+		actionSelected : function(oEvent){
+			MessageToast.show("Selected action is '" + oEvent.getSource().getText() + "'");
 		}
 	});
 

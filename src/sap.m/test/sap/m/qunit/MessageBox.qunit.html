@@ -9,7 +9,9 @@
 	<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-compatVersion="edge"
+			data-sap-ui-xx-bindingSyntax='complex'>
 	</script>
 
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -84,6 +86,132 @@
 			sap.ui.getCore().applyChanges();
 			var oMessageBox = sap.ui.getCore().byId(jQuery(".sapMMessageDialog")[0].getAttribute("id"));
 			assert.ok(oMessageBox, "Dialog should be created");
+			oMessageBox.destroy();
+		});
+
+		QUnit.test("Reference call of MessageBox.show method", function(assert) {
+			var mSettings = {
+				details: "Some details",
+				id: "messagebox1_1"
+			};
+
+			// arrange
+			var fnShowSpy = sinon.spy(sap.m.MessageBox.show);
+
+			// act
+			fnShowSpy.call(fnShowSpy, "Message box reference call.", mSettings);
+
+			// assert
+			var oMessageBox = sap.ui.getCore().byId("messagebox1_1");
+			assert.ok(oMessageBox, "The message box was shown");
+			assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
+			assert.strictEqual(fnShowSpy.args[0][0], "Message box reference call.", "The correct text was displayed.");
+
+			oMessageBox.destroy();
+		});
+
+		QUnit.test("Reference call of MessageBox.confirm method", function(assert) {
+			var mSettings = {
+					id: "messagebox1_2"
+				},
+				sText = "MessageBox.confirm reference call.";
+
+			// arrange
+			var fnShowSpy = sinon.spy(sap.m.MessageBox.confirm);
+
+			// act
+			fnShowSpy.call(fnShowSpy, sText, mSettings);
+
+			// assert
+			var oMessageBox = sap.ui.getCore().byId("messagebox1_2");
+			assert.ok(oMessageBox, "The message box was shown");
+			assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
+			assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
+
+			oMessageBox.destroy();
+		});
+
+		QUnit.test("Reference call of MessageBox.error method", function(assert) {
+			var mSettings = {
+					id: "messagebox1_3"
+				},
+				sText = "MessageBox.error reference call.";
+
+			// arrange
+			var fnShowSpy = sinon.spy(sap.m.MessageBox.error);
+
+			// act
+			fnShowSpy.call(fnShowSpy, sText, mSettings);
+
+			// assert
+			var oMessageBox = sap.ui.getCore().byId("messagebox1_3");
+			assert.ok(oMessageBox, "The message box was shown");
+			assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
+			assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
+
+			oMessageBox.destroy();
+		});
+
+		QUnit.test("Reference call of MessageBox.information method", function(assert) {
+			var mSettings = {
+					id: "messagebox1_4"
+				},
+				sText = "MessageBox.infromation reference call.";
+
+			// arrange
+			var fnShowSpy = sinon.spy(sap.m.MessageBox.information);
+
+			// act
+			fnShowSpy.call(fnShowSpy, sText, mSettings);
+
+			// assert
+			var oMessageBox = sap.ui.getCore().byId("messagebox1_4");
+			assert.ok(oMessageBox, "The message box was shown");
+			assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
+			assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
+
+			oMessageBox.destroy();
+		});
+
+		QUnit.test("Reference call of MessageBox.warning method", function(assert) {
+			var mSettings = {
+					id: "messagebox1_5"
+				},
+				sText = "MessageBox.warning reference call.";
+
+			// arrange
+			var fnShowSpy = sinon.spy(sap.m.MessageBox.warning);
+
+			// act
+			fnShowSpy.call(fnShowSpy, sText, mSettings);
+
+			// assert
+			var oMessageBox = sap.ui.getCore().byId("messagebox1_5");
+			assert.ok(oMessageBox, "The message box was shown");
+			assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
+			assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
+
+			oMessageBox.destroy();
+		});
+
+		QUnit.test("Reference call of MessageBox.success method", function(assert) {
+			var mSettings = {
+					id: "messagebox1_6"
+				},
+				sText = "MessageBox.success reference call.";
+
+			// arrange
+			var fnShowSpy = sinon.spy(sap.m.MessageBox.success);
+
+			// act
+			fnShowSpy.call(fnShowSpy, sText, mSettings);
+
+			// assert
+			var oMessageBox = sap.ui.getCore().byId("messagebox1_6");
+			assert.ok(oMessageBox, "The message box was shown");
+			assert.strictEqual(fnShowSpy.callCount, 1, "The spy was called exactly 1 time.");
+			assert.strictEqual(fnShowSpy.args[0][0], sText, "The correct text was displayed.");
+
 			oMessageBox.destroy();
 		});
 
@@ -244,6 +372,33 @@
 			assert.equal(oMessageBox.getTitle(), sMessageTitle, "Title is assigned");
 			assert.equal(oMessageBox.getInitialFocus(), oButton.sId, "InitialFocus is set correctly");
 			assert.ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		QUnit.test("initial focus to control with details", function (assert) {
+			var oMessageBox, oShowMoreLink,
+				oButton = new sap.m.Button({
+					text: 'Do something'
+				});
+
+			sap.m.MessageBox.show(sMessageText, {
+				title: sMessageTitle,
+				actions: [sap.m.MessageBox.Action.OK, oButton],
+				details: "Lorem ipsum",
+				id: "messageboxWithDetails",
+				styleClass: sClassName,
+				initialFocus: oButton
+			});
+			sap.ui.getCore().applyChanges();
+
+			oMessageBox = sap.ui.getCore().byId("messageboxWithDetails");
+			oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
+
+			//act
+			oShowMoreLink.firePress();
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(document.activeElement.id, oMessageBox.getInitialFocus(), "Focus is set correctly after details are shown");
 			oMessageBox.destroy();
 		});
 
@@ -488,6 +643,33 @@
 			assert.ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
 		});
+
+		QUnit.test("details announcement", function (assert) {
+			var sDetails = "Lorem ipsum dolor sit amet.";
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialog1",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: sDetails,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+
+			sap.ui.getCore().applyChanges();
+			var oMessageBox = sap.ui.getCore().byId("messagedialog1"),
+				oShowMoreLink = oMessageBox.getContent()[0].getItems()[1];
+
+			assert.strictEqual(oMessageBox.getAriaLabelledBy().length, 2, "MessageBox has 2 ARIA labels before 'Show more' press");
+
+			oShowMoreLink.firePress();
+			sap.ui.getCore().applyChanges();
+
+			var oDialogAriaLabelDetails = sap.ui.getCore().byId(oMessageBox.getAriaLabelledBy()[2]).getHtmlText();
+			assert.strictEqual(oMessageBox.getAriaLabelledBy().length, 3, "MessageBox has 3 ARIA labels after 'Show more' press");
+			assert.strictEqual(oDialogAriaLabelDetails, sDetails, "MessageBox details are set as ARIA label for the dialog");
+			oMessageBox.destroy();
+		});
+
 		jQuery.sap.require("sap.ui.layout.VerticalLayout");
 
 		QUnit.test("add details within control content", function (assert) {
@@ -557,6 +739,32 @@
 			//the { bracket in JSON is escaped with \ becaouse of the binding - when set to complex binding the "\" is not displayed
 			assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), JSON.stringify(oJSON, null,'\t').replace(/{/gi, "\\{"));
 			assert.ok(oMessageBox.$().hasClass(sClassName));
+			oMessageBox.destroy();
+		});
+
+		QUnit.test("pass text with special characters in details", function (assert) {
+			var deploymentErrorDetails = "sequenceflow4 : Error in element 'SequenceFlow4' field 'Condition': Dynamically evaluated expression is expected, e.g. {context.variableOfInterest == 'value of interest'} servicetask1 : Flow element 'ServiceTask1' is not properly connected to other flow elements";
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialogdetails",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: deploymentErrorDetails,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+			this.clock.tick(500);
+			var oMessageBox = sap.ui.getCore().byId("messagedialogdetails");
+			assert.ok(oMessageBox, "Dialog should be created");
+			var sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
+			if (sap.ui.Device.support.touch) {
+				sLinkText.tap();
+			} else {
+				sLinkText.click();
+			}
+
+			sap.ui.getCore().applyChanges();
+			assert.ok(oMessageBox.$().find('.sapMMessageBoxDetails').length != 0, "MessageBox has formatted link text");
+			assert.deepEqual(oMessageBox.$().find(".sapMFT").text(), deploymentErrorDetails);
 			oMessageBox.destroy();
 		});
 

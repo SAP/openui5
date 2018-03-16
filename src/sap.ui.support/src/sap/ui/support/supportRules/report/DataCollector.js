@@ -5,7 +5,7 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI', 'sap/ui/thirdparty/URI'],
+sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
 	function (jQuery, ToolsAPI, URI) {
 	"use strict";
 
@@ -14,6 +14,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI', 'sap/ui/thir
 	 */
 	var DataCollector = function(oCore) {
 		this._oCore = oCore;
+
+		// Set default
+		this._oSupportAssistantInfo = {
+			location: "",
+			version: {},
+			versionAsString: ""
+		};
+	};
+
+	/**
+	 * Setter for Support Assistant location
+	 *
+	 * @public
+	 * @param {string} sLocation the location the Support Assistant is loaded from
+	 */
+	DataCollector.prototype.setSupportAssistantLocation = function (sLocation) {
+		this._oSupportAssistantInfo.location = sLocation;
+	};
+
+	/**
+	 * Setter for Support Assistant version
+	 *
+	 * @public
+	 * @param {Object} oVersion version of the Support Assistant
+	 */
+	DataCollector.prototype.setSupportAssistantVersion = function (oVersion) {
+		this._oSupportAssistantInfo.version = oVersion;
+		this._oSupportAssistantInfo.versionAsString = "not available";
+
+		if (oVersion) {
+			this._oSupportAssistantInfo.versionAsString = jQuery.sap.escapeHTML(oVersion.version || "");
+			this._oSupportAssistantInfo.versionAsString += " (built at " + jQuery.sap.escapeHTML(oVersion.buildTimestamp || "");
+			this._oSupportAssistantInfo.versionAsString += ", last change " + jQuery.sap.escapeHTML(oVersion.scmRevision || "") + ")";
+		}
+	};
+
+	/**
+	 * Getter for Support Assistant information
+	 *
+	 * @public
+	 * @returns {Object} Information about the Support Assistant
+	 */
+	DataCollector.prototype.getSupportAssistantInfo = function() {
+		return this._oSupportAssistantInfo;
 	};
 
 	/**
@@ -56,7 +100,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/support/ToolsAPI', 'sap/ui/thir
 			resourcePaths: [],
 			themePaths : [],
 			locationsearch: document.location.search,
-			locationhash: document.location.hash
+			locationhash: document.location.hash,
+			supportAssistant: this._oSupportAssistantInfo
 		};
 
 		//add absolute paths for resources

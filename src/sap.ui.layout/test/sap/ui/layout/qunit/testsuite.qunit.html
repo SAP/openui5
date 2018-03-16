@@ -18,11 +18,15 @@
 
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/AlignedFlowLayout.qunit.html?sap-ui-rtl=true");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/AssociativeSplitter.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/BlockLayout.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/DynamicSideContent.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/ExploredSamples.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/FixFlex.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/FormElement.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/FormContainer.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/Form.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ColumnLayout.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/GridLayout.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ResponsiveGridLayout.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/ResponsiveLayout.qunit.html");
@@ -42,20 +46,35 @@
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/demokit/sample/SimpleForm354wide/test/FormSampleJourney.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/demokit/sample/SimpleForm354wideDual/test/FormSampleJourney.qunit.html");
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/demokit/sample/SimpleForm471/test/FormSampleJourney.qunit.html");
-				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/demokit/sample/SimpleForm480/test/FormSampleJourney.qunit.html");
 
+				// --------------------------
 				// Design Time & RTA Enabling
+				// --------------------------
+				//complete libraries dt files general json data
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/Library.qunit.html");
+
+				//individual controls
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/DynamicSideContent.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/Grid.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/FixFlex.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/HorizontalLayout.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/VerticalLayout.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/Form.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/FormContainer.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/FormElement.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/SimpleForm.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/BlockLayout.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/BlockLayoutCell.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/BlockLayoutRow.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/Splitter.qunit.html");
+
+				// Dependency to sap.ui.comp
 				try {
-					sap.ui.getCore().loadLibrary("sap.ui.rta");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/dt/Grid.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/dt/HorizontalLayout.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/dt/VerticalLayout.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/dt/form/Form.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/dt/form/FormContainer.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/dt/form/FormElement.qunit.html");
-					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/dt/form/SimpleForm.qunit.html");
+					sap.ui.getCore().loadLibrary("sap.ui.comp");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/form/changes/AddSimpleFormField.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/layout/qunit/designtime/form/AddODataFormField.qunit.html");
 				} catch (e) {
-					jQuery.sap.log.info("sap.ui.rta not available", "enabling tests are skipped, ensure sap.ui.rta from sapui5.runtime is loaded to execute them");
+					jQuery.sap.log.info("sap.ui.comp not available", "some tests are skipped, ensure sap.ui.comp from sapui5.runtime is loaded to execute them");
 				}
 
 				return suite;

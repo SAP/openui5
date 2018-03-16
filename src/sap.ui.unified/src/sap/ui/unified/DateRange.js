@@ -3,8 +3,8 @@
  */
 
 //Provides control sap.ui.unified.DateRange.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library', 'sap/ui/unified/calendar/CalendarUtils'],
-		function(jQuery, Element, library, CalendarUtils) {
+sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/calendar/CalendarUtils'],
+	function(Element, library, CalendarUtils) {
 	"use strict";
 
 
@@ -79,4 +79,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library', 'sap/ui/
 
 	return DateRange;
 
-}, /* bExport= */ true);
+});

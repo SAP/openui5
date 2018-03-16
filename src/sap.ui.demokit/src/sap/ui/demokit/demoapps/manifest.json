@@ -1,5 +1,5 @@
 {
-	"_version": "1.4.0",
+	"_version": "1.8.0",
 	"sap.app": {
 		"id": "sap.ui.demokit.demoapps",
 		"type": "application",
@@ -24,16 +24,13 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_hcb",
-			"sap_belize"
-		]
+		}
 	},
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demokit.demoapps.view.App",
 			"type": "XML",
+			"async": true,
 			"id": "app"
 		},
 		"resources": {

@@ -3,9 +3,34 @@
  */
 
 //Provides control sap.m.DateTimePicker.
-sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', './library'],
-		function(jQuery, DatePicker, Date1, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./DatePicker',
+	'sap/ui/model/type/Date',
+	'sap/ui/unified/DateRange',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/LocaleData',
+	'./DateTimePickerRenderer',
+	'jquery.sap.keycodes'
+], function(
+	jQuery,
+	DatePicker,
+	Date1,
+	DateRange,
+	library,
+	Control,
+	Device,
+	DateFormat,
+	LocaleData,
+	DateTimePickerRenderer
+	) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 	/**
 	 * Constructor for a new <code>DateTimePicker</code>.
@@ -91,6 +116,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 	 * @public
 	 * @since 1.38.0
 	 * @alias sap.m.DateTimePicker
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/datetime-picker/ Date/Time Picker}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DateTimePicker = DatePicker.extend("sap.m.DateTimePicker", /** @lends sap.m.DateTimePicker.prototype */ { metadata : {
@@ -102,11 +128,11 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			 * Internal aggregation that contains the inner _picker pop-up.
 			 */
 			_popup: { type: "sap.m.ResponsivePopover", multiple: false, visibility: "hidden" }
-		}
-
+		},
+		designtime: "sap/m/designtime/DateTimePicker.designtime"
 	}});
 
-	var PopupContent = sap.ui.core.Control.extend("DateTimePickerPopup", {
+	var PopupContent = Control.extend("DateTimePickerPopup", {
 
 		metadata: {
 			aggregations: {
@@ -162,7 +188,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 			var oSwitcher = this.getAggregation("_switcher");
 
-			if (sap.ui.Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 				if (!oSwitcher) {
 					var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 					var sDateText = oResourceBundle.getText("DATETIMEPICKER_DATE");
@@ -172,7 +198,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 					oSwitcher = new sap.m.SegmentedButton(this.getId() + "-Switch", {
 						selectedKey: "Cal",
 						items: [ new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Cal", {key: "Cal", text: sDateText}),
-						         new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Sli", {key: "Sli", text: sTimeText})
+								 new sap.m.SegmentedButtonItem(this.getId() + "-Switch-Sli", {key: "Sli", text: sTimeText})
 						]
 					});
 					oSwitcher.attachSelect(this._handleSelect, this);
@@ -190,11 +216,11 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		onAfterRendering: function() {
 
-			if (sap.ui.Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+			if (Device.system.phone || jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
 				var oSwitcher = this.getAggregation("_switcher");
 				var sKey = oSwitcher.getSelectedKey();
 				this._switchVisibility(sKey);
-				if (sap.ui.Device.system.phone) {
+				if (Device.system.phone) {
 					this._adjustTimePickerHeightOnPhone();
 				}
 			}
@@ -230,13 +256,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			if (sKey == "Cal") {
 				oCalendar.$().css("display", "");
 				oSliders.$().css("display", "none");
-				oCalendar.focus();
 			} else {
 				oCalendar.$().css("display", "none");
 				oSliders.$().css("display", "");
-				oSliders.updateSlidersValues();
+				oSliders._updateSlidersValues();
 				oSliders._onOrientationChanged();
-				oSliders._initFocus();
+				oSliders.openFirstSlider();
 			}
 
 		},
@@ -285,7 +310,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		DatePicker.prototype.setDisplayFormat.apply(this, arguments);
 
 		if (this._oSliders) {
-			this._oSliders.setFormat(_getTimePattern.call(this));
+			this._oSliders.setDisplayFormat(_getTimePattern.call(this));
 		}
 
 		return this;
@@ -311,10 +336,10 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 				oDateArguments.style = oDateArguments.style.substr(0, iSlashIndex);
 			}
 
-			this._oDisplayFormatDate = sap.ui.core.format.DateFormat.getInstance(oDateArguments);
+			this._oDisplayFormatDate = DateFormat.getInstance(oDateArguments);
 		}
 
-		return sap.ui.core.format.DateFormat.getDateTimeInstance(oMyArguments);
+		return DateFormat.getDateTimeInstance(oMyArguments);
 
 	};
 
@@ -376,9 +401,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	};
 
-	DateTimePicker.prototype._getPlaceholderPattern = function(oLocaleData, sPlaceholder) {
+	DateTimePicker.prototype._getLocaleBasedPattern = function(sPlaceholder) {
+		var oLocaleData = LocaleData.getInstance(
+				sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+			),
+			iSlashIndex = sPlaceholder.indexOf("/");
 
-		var iSlashIndex = sPlaceholder.indexOf("/");
 		if (iSlashIndex > 0) {
 			return oLocaleData.getCombinedDateTimePattern(sPlaceholder.substr(0, iSlashIndex), sPlaceholder.substr(iSlashIndex + 1));
 		} else {
@@ -400,7 +428,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			this._oPopup = new sap.m.ResponsivePopover(this.getId() + "-RP", {
 				showCloseButton: false,
 				showHeader: false,
-				placement: sap.m.PlacementType.VerticalPreferedBottom,
+				placement: PlacementType.VerticalPreferedBottom,
 				beginButton: new sap.m.Button(this.getId() + "-OK", { text: sOKButtonText, press: jQuery.proxy(_handleOkPress, this) }),
 				endButton: new sap.m.Button(this.getId() + "-Cancel", { text: sCancelButtonText, press: jQuery.proxy(_handleCancelPress, this) }),
 				content: this._oPopupContent
@@ -418,7 +446,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			this._oPopup.attachAfterOpen(_handleAfterOpen, this);
 			this._oPopup.attachAfterClose(_handleAfterClose, this);
 
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 				this._oPopoverKeydownEventDelegate = {
 						onkeydown: function(oEvent) {
 							var oKC = jQuery.sap.KeyCodes,
@@ -458,7 +486,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		var oSliders = this._oPopup.getContent()[0] && this._oPopup.getContent()[0].getTimeSliders();
 		if (oSliders) {//Sliders values need to be updated after a popup is (especially sliders) is really visible
-			jQuery.sap.delayedCall(0, oSliders, oSliders.updateSlidersValues);
+			jQuery.sap.delayedCall(0, oSliders, oSliders._updateSlidersValues);
 		}
 	};
 
@@ -471,17 +499,48 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		if (bNoCalendar) {
 			this._oPopupContent.setCalendar(this._oCalendar);
 			this._oCalendar.attachSelect(_selectDate, this);
+
+			var that = this,
+				oHideMonthPicker = this._oCalendar._hideMonthPicker,
+				oHideYearPicker = this._oCalendar._hideYearPicker;
+
+			this._oCalendar._hideMonthPicker = function (bSkipFocus) {
+				oHideMonthPicker.apply(this, arguments);
+
+				if (!bSkipFocus) {
+					that._selectFocusedDateValue(new DateRange().setStartDate(this._getFocusedDate().toLocalJSDate()));
+
+				}
+			};
+
+			this._oCalendar._hideYearPicker = function (bSkipFocus) {
+				oHideYearPicker.apply(this, arguments);
+
+				if (!bSkipFocus) {
+					that._selectFocusedDateValue(new DateRange().setStartDate(this._getFocusedDate().toLocalJSDate()));
+
+				}
+			};
 		}
 
 		if (!this._oSliders) {
 			jQuery.sap.require("sap.m.TimePickerSliders");
 			this._oSliders = new sap.m.TimePickerSliders(this.getId() + "-Sliders", {
-				format: _getTimePattern.call(this),
-				invokedBy: this.getId()
-			});
+				displayFormat: _getTimePattern.call(this),
+				localeId: this.getLocaleId()
+			})._setShouldOpenSliderAfterRendering(true);
 			this._oPopupContent.setTimeSliders(this._oSliders);
 		}
 
+	};
+
+	DateTimePicker.prototype._selectFocusedDateValue = function (oDateRange) {
+		var oCalendar = this._oCalendar;
+
+		oCalendar.removeAllSelectedDates();
+		oCalendar.addSelectedDate(oDateRange);
+
+		return this;
 	};
 
 	DateTimePicker.prototype._fillDateRange = function(){
@@ -491,7 +550,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		if (oDate) {
 			oDate = new Date(oDate.getTime());
 		} else {
-			oDate = new Date();
+			oDate = this._getInitialFocusedDateValue();
 			var iMaxTimeMillis = this._oMaxDate.getTime() + 86400000 /* one day in milliseconds */;
 
 			if (oDate.getTime() < this._oMinDate.getTime() || oDate.getTime() > iMaxTimeMillis) {
@@ -504,7 +563,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 			this._oDateRange.setStartDate(oDate);
 		}
 
-		this._oSliders.setTimeValues(oDate);
+		this._oSliders._setTimeValues(oDate);
 
 	};
 
@@ -514,7 +573,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		if (oDate) {
 			var oDateTime = this._oSliders.getTimeValues();
-			var sPattern = this._oSliders.getFormat();
+			var sPattern = this._oSliders._getDisplayFormatPattern();
 			if (sPattern.search("h") >= 0 || sPattern.search("H") >= 0) {
 				oDate.setHours(oDateTime.getHours());
 			}
@@ -536,6 +595,10 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	};
 
+	DateTimePicker.prototype._getInitialFocusedDateValue = function () {
+		return this.getInitialFocusedDateValue() || new Date();
+	};
+
 	DateTimePicker.prototype.getLocaleId = function(){
 
 		return sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale().toString();
@@ -544,6 +607,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {Object} Current accessibility state of the control
 	 * @protected
 	 */
 	DateTimePicker.prototype.getAccessibilityInfo = function() {
@@ -562,10 +626,12 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		this.onsaphide(oEvent);
 
+		this._oCalendar.removeAllSelectedDates();
+		this._oCalendar.addSelectedDate(new DateRange().setStartDate(this._getInitialFocusedDateValue()));
 	}
 
-	function _handleBeforeOpen(oEvent){
-
+	function _handleBeforeOpen(){
+		this._storeInputSelection(this._$input.get(0));
 	}
 
 	function _handleAfterOpen(oEvent){
@@ -575,8 +641,10 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	}
 
-	function _handleAfterClose(oEvent){
+	function _handleAfterClose(){
 		this.$("inner").attr("aria-expanded", false);
+
+		this._restoreInputSelection(this._$input.get(0));
 	}
 
 	function _getTimePattern(){
@@ -587,6 +655,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		if (oBinding && oBinding.oType && (oBinding.oType instanceof Date1)) {
 			sDisplayFormat = oBinding.oType.getOutputPattern();
+		} else if (oBinding && oBinding.oType && oBinding.oType.oFormat) {
+			sDisplayFormat = oBinding.oType.oFormat.oFormatOptions.pattern;
 		} else {
 			sDisplayFormat = this.getDisplayFormat();
 		}
@@ -602,7 +672,7 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		if (sDisplayFormat == "short" || sDisplayFormat == "medium" || sDisplayFormat == "long" || sDisplayFormat == "full") {
 			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
-			var oLocaleData = sap.ui.core.LocaleData.getInstance(oLocale);
+			var oLocaleData = LocaleData.getInstance(oLocale);
 			sTimePattern = oLocaleData.getTimePattern(sDisplayFormat);
 		} else {
 			sTimePattern = sDisplayFormat;
@@ -620,4 +690,4 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 	return DateTimePicker;
 
-}, /* bExport= */ true);
+});

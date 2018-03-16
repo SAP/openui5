@@ -11,40 +11,40 @@
 	<title>One Ring To Rule Them All</title>
 
 	<script src="../../shared-config.js"></script>
+	<link href="../../../../../../resources/sap/ui/thirdparty/qunit-2.css" media="screen"
+		rel="stylesheet">
+	<script src="../../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-4.js"></script>
 	<!-- minimal bootstrap code starts here -->
 	<!-- @see sap-ui-core.js, @see BootstrapMinimal.qunit.html -->
-	<script src="../../../../../../resources/sap/ui/thirdparty/jquery.js"></script>
-	<script src="../../../../../../resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"></script>
-	<script src="../../../../../../resources/sap/ui/Device.js"></script>
-	<script src="../../../../../../resources/sap/ui/thirdparty/URI.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/baseuri.js"></script>
 	<script src="../../../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
+	<script src="../../../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
+	<script src="../../../../../../resources/ui5loader.js"></script>
+	<script src="../../../../../../resources/ui5loader-autoconfig.js"
+		id="sap-ui-bootstrap"
+		data-sap-ui-compatversion="edge">
+	</script>
 	<script>
-		if (!/sVersion/.test(sap.ui.Device._checkAPIVersion.toString()) ) {
+		if (!/aDependencies/.test(sap.ui.define.toString()) ) {
 			// only if we run with minified sources, it makes a difference to load debug sources
 			window["sap-ui-optimized"] = true;
 		}
 	</script>
-	<script src="../../../../../../resources/jquery.sap.global.js"
-		id="sap-ui-bootstrap"
-		data-sap-ui-compatversion="edge">
-	</script>
 	<!-- end of minimal bootstrap code -->
-	<link href="../../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen"
-		rel="stylesheet">
-	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-	<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
 	<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
 		data-cover-flags="branchTracking"
 		data-sap-ui-cover-never="[.qunit.js]"
-		data-sap-ui-cover-only="[/odata/type/,/odata/v4/,AnnotationHelper,BindingParser,ExpressionParser,ODataMetaModel,XMLPreprocessor]"
+		data-sap-ui-cover-only="[/odata/type/,/odata/v4/,AnnotationHelper,BindingParser,ExpressionParser,ODataMetaModel,SyncPromise,XMLPreprocessor]"
 		></script>
+	<script src="../../../../../../resources/sap/ui/test/BranchTracking.js"
+		data-threshold="100"></script>
 	<script>
 		// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included!
-		jQuery.sap.require("sap.ui.core.Core");
+		sap.ui.requireSync("sap/ui/core/Core");
 		// needed for bootstrap properties like data-sap-ui-libs
 		sap.ui.getCore().boot && sap.ui.getCore().boot();
 	</script>
@@ -52,6 +52,7 @@
 	<script src="ODataV4.qunit.js"></script>
 	<script src="../BindingParser.qunit.js"></script>
 	<script src="../ExpressionParser.qunit.js"></script>
+	<script src="../SyncPromise.qunit.js"></script>
 	<script src="../odata/_AnnotationHelperBasics.qunit.js"></script>
 	<script src="../odata/_AnnotationHelperExpression.qunit.js"></script>
 	<script src="../odata/_ODataMetaModelUtils.qunit.js"></script>
@@ -68,12 +69,16 @@
 	<script src="../odata/type/ODataType.qunit.js"></script>
 	<script src="../odata/type/Raw.qunit.js"></script>
 	<script src="../odata/type/Single.qunit.js"></script>
+	<script src="../odata/type/Stream.qunit.js"></script>
 	<script src="../odata/type/String.qunit.js"></script>
 	<script src="../odata/type/Time.qunit.js"></script>
 	<script src="../odata/type/TimeOfDay.qunit.js"></script>
 	<script src="../util/XMLPreprocessor.qunit.js"></script>
+	<script src="../../../test/qunit/TestUtils.qunit.js"></script>
+
 	</head>
 	<body>
 		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
 	</body>
 </html>

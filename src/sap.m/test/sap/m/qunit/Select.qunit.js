@@ -396,6 +396,15 @@
 		return oMockServer;
 	};
 
+	var fnToMobileMode = function () {
+		jQuery("html").removeClass("sapUiMedia-Std-Desktop")
+			.removeClass("sapUiMedia-Std-Tablet")
+			.addClass("sapUiMedia-Std-Phone");
+		sap.ui.Device.system.desktop = false;
+		sap.ui.Device.system.tablet = false;
+		sap.ui.Device.system.phone = true;
+	};
+
 	QUnit.test("default values", function (assert) {
 
 		// system under test
@@ -3343,6 +3352,62 @@
 		oModel.destroy();
 	});
 
+	// BCP 1780153332
+	QUnit.test("it should not fire the select event after losing focus, when the selection was changed while the select was focused", function (assert) {
+
+		// system under test
+		var oItemTemplate = new sap.ui.core.Item({
+			key: "{key}",
+			text: "{text}"
+		});
+
+		var oSelect = new sap.m.Select({
+			selectedKey: {
+				path: "/selected"
+			},
+			items: {
+				path: "/items",
+				template: oItemTemplate
+			}
+		});
+
+		var fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+		// arrange
+		var oModel = new sap.ui.model.json.JSONModel();
+		var mData = {
+			"items": [
+				{
+					"key": "DZ",
+					"text": "Algeria"
+				},
+
+				{
+					"key": "AR",
+					"text": "Argentina"
+				}
+			],
+			"selected": "AR"
+		};
+
+		oModel.setData(mData);
+		sap.ui.getCore().setModel(oModel);
+		oSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// act - focus, change the selection while focused, then blur
+		oSelect.focus();
+		oSelect.setSelectedKey("DZ");
+		oSelect.getFocusDomRef().blur();
+
+		// assert
+		assert.strictEqual(fnFireChangeSpy.callCount, 0);
+
+		// cleanup
+		oSelect.destroy();
+		oModel.destroy();
+	});
+
 	QUnit.module("value state");
 
 	QUnit.test("it should add the value state CSS classes (initial rendering)", function (assert) {
@@ -3893,7 +3958,6 @@
 		// assert
 		assert.ok(oSelect.isOpen(), "Select is open");
 		assert.ok(oSelect.hasStyleClass(sap.m.SelectRenderer.CSS_CLASS + "Pressed"));
-		assert.strictEqual(oSelect.getPicker().$().width(), jQuery(window).width(), "The width of the popup is strictEqual to the width of the browser view port");
 
 		// cleanup
 		oSelect.destroy();
@@ -4016,6 +4080,66 @@
 
 		// cleanup
 		oSelect.destroy();
+	});
+
+	QUnit.module("close()");
+
+	QUnit.test("close() on phone restores focus to the select", function (assert) {
+
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// system under test
+		var oSelect = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			]
+		});
+
+		var fnFocusSpy = this.spy(oSelect, "focus");
+
+		// arrange
+		oSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
+
+		// act
+		sap.ui.test.qunit.triggerTouchEvent("tap", oSelect.getDomRef(), {
+			srcControl: oSelect
+		});
+		this.clock.tick(1000);
+
+		// assert
+		assert.ok(oSelect.isOpen(), "Select is open");
+
+		assert.equal(fnFocusSpy.callCount, 1, "Focus was called");
+
+		// act
+		oSelect.close();
+		this.clock.tick(1000);
+
+		// assert
+		assert.strictEqual(document.activeElement, oSelect.getDomRef(), "Focus was successfully restored to the Select");
+
+		// cleanup
+		oSelect.destroy();
+		document.documentElement.style.overflow = ""; // restore scrollbar after test
 	});
 
 	QUnit.module("findFirstEnabledItem()");
@@ -5856,6 +5980,8 @@
 
 		var aSelects = [oSelect1, oSelect2, oSelect3, oSelect4, oSelect5, oSelect6, oSelect7, oSelect8];
 
+		var SelectType = sap.m.SelectType;
+
 		// arrange
 		oSelect1.placeAt("content");
 		oSelect2.placeAt("content");
@@ -5875,7 +6001,7 @@
 				return;
 			}
 
-			if (oSelect.getType() === sap.m.SelectType.Default) {
+			if (oSelect.getType() === SelectType.Default) {
 				assert.ok(oSelect.$().length, "The HTML div container html element exists");
 				assert.ok(oSelect.$("label").length, "The HTML label first-child element exists");
 				assert.ok(oSelect.$("arrow").length, "The HTML span element for the arrow exists");
@@ -5891,26 +6017,79 @@
 				assert.strictEqual(oShadowListDomRef.firstElementChild.id, "", "it should not render the IDs of the items in the shadow list");
 			}
 
-			if (oSelect.getType() === sap.m.SelectType.Default) {
+			if (oSelect.getType() === SelectType.Default) {
 				assert.ok(oSelect.$().hasClass(CSS_CLASS), 'The select container html element "must have" the CSS class "' + CSS_CLASS + '"');
 				assert.ok(oSelect.$("label").hasClass(CSS_CLASS + "Label"), 'The select first-child html label element "must have" the CSS class "' + CSS_CLASS + 'Label"');
 				assert.ok(oSelect.$("arrow").hasClass(CSS_CLASS + "Arrow"), 'The select html span element "must have" the CSS class "' + CSS_CLASS + 'Arrow"');
-			} else if (oSelect.getType() === sap.m.SelectType.IconOnly) {
+
+			} else if (oSelect.getType() === SelectType.IconOnly) {
+				assert.equal(oSelect.$().hasClass(CSS_CLASS + "MinWidth"), false, 'The select has not min-width when it`s of IconOnly type');
 				assert.ok(oSelect.$("icon").hasClass(CSS_CLASS + "Icon"), 'The select html span element must have the CSS class "' + CSS_CLASS + 'Icon"');
 			}
 
-			if (oSelect.getType() === sap.m.SelectType.Default) {
+			if (oSelect.getType() === SelectType.Default) {
 				assert.strictEqual(oSelect.getDomRef().getAttribute("role"), "combobox");
-			} else if (oSelect.getType() === sap.m.SelectType.IconOnly) {
+			} else if (oSelect.getType() === SelectType.IconOnly) {
 				assert.strictEqual(oSelect.getDomRef().getAttribute("role"), "button");
 			}
 
 			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-expanded"), "false");
-			assert.strictEqual(oSelect.getDomRef().getAttribute("aria-live"), "polite");
+			assert.strictEqual(oSelect.$("label").attr("aria-live"), "polite");
 
 			// cleanup
 			oSelect.destroy();
 		});
+	});
+
+	QUnit.module("Rendering - min width");
+
+	QUnit.test("min-width added/removed", function (assert) {
+		var oSel1 = new sap.m.Select({
+			width: "10%"
+		}),
+		oSel2 = new sap.m.Select({
+			width: "auto"
+		}),
+		oSel3 = new sap.m.Select({
+			autoAdjustWidth: true
+		}),
+		oSel4 = new sap.m.Select({
+				width: "10rem"
+		}),
+		oSel5 = new sap.m.Select({
+			width: "2px"
+		}),
+		oSel6 = new sap.m.Select({
+			width: "4rem",
+			autoAdjustWidth: true
+		});
+
+		// Arrange
+		oSel1.placeAt("content");
+		oSel2.placeAt("content");
+		oSel3.placeAt("content");
+		oSel4.placeAt("content");
+		oSel5.placeAt("content");
+		oSel6.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.equal(oSel1.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+		assert.equal(oSel2.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+		assert.equal(oSel3.$().hasClass("sapMSltMinWidth"), true, 'The select has min-width');
+
+		assert.equal(oSel4.$().hasClass("sapMSltMinWidth"), false, 'The select has no min-width');
+		assert.equal(oSel5.$().hasClass("sapMSltMinWidth"), false, 'The select has no min-width');
+		assert.equal(oSel6.$().hasClass("sapMSltMinWidth"), true,
+			'The select has min-width, the width is ignored if autoAdjustWidth is enabled');
+
+		// Clean up
+		oSel1.destroy();
+		oSel2.destroy();
+		oSel3.destroy();
+		oSel4.destroy();
+		oSel5.destroy();
+		oSel6.destroy();
 	});
 
 	QUnit.module("touchstart");
@@ -6122,6 +6301,32 @@
 		// cleanup
 		oSelect.destroy();
 	});
+
+	QUnit.test("tap on pre-selected item with keyboard keys should fire change event", function (assert) {
+		var oItem2 = new sap.ui.core.Item({text : "2"}),
+			oSelect = new sap.m.Select({
+				items: [new sap.ui.core.Item({text : "1"}), oItem2]
+			}),
+			fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+		// arrange
+		oSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oSelect.focus();
+		oSelect.open();
+
+		// act
+		// move to the second item with ARROW_DOWN (pre-select item) and execute tap.
+		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ARROW_DOWN);
+		sap.ui.test.qunit.triggerEvent("tap", oItem2.getDomRef());
+
+		// assert
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired once");
+
+		// cleanup
+		oSelect.destroy();
+	});
+
 
 	QUnit.module("onkeypress");
 
@@ -6909,8 +7114,8 @@
 		sap.ui.test.qunit.triggerKeydown(oSelect.getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 
 		// assert
-		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired");
-
+		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired as escape reverts any changes");
+		assert.strictEqual(oSelect.getSelectedKey(), "GER", "The selection is reverted on escape");
 		// cleanup
 		oSelect.destroy();
 	});
@@ -8024,9 +8229,11 @@
 	QUnit.test("onAfterClose", function (assert) {
 
 		// system under test
+		var item2 = new sap.ui.core.Item({text : "2"});
 		var oSelect = new sap.m.Select({
 			items: [
-				new sap.ui.core.Item()
+				new sap.ui.core.Item({text : "1"}),
+				item2
 			]
 		});
 
@@ -8036,8 +8243,13 @@
 		oSelect.focus();
 		oSelect.open();
 
-		// act
-		oSelect.close();
+		if (jQuery.support.cssAnimations) {	// no animation on ie9
+			this.clock.tick(1000);
+		}
+
+        // act
+		sap.ui.test.qunit.triggerEvent("tap", item2.getDomRef());
+
 		if (jQuery.support.cssAnimations) {	// no animation on ie9
 			this.clock.tick(1000);
 		}
@@ -8047,6 +8259,52 @@
 		assert.strictEqual(jQuery(oSelect.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is set when the active descendant is rendered and visible');
 
 		// cleanup
+		oSelect.destroy();
+	});
+
+	QUnit.module("Events");
+
+	QUnit.test("change of selected item onChange should not re-trigger change event", function (assert) {
+		var oItem1 =  new sap.ui.core.Item({key: "1", text : "1"}),
+			oItem2 = new sap.ui.core.Item({key: "2", text : "2"}),
+			oSelect = new sap.m.Select({
+				items: [oItem1, oItem2],
+				change: function () {
+					oSelect.setSelectedKey("1");
+				}
+			}),
+			fnFireChangeSpy = this.spy(oSelect, "fireChange");
+
+		// arrange
+		oSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		oSelect.focus();
+		oSelect.open();
+
+		// act
+		// select the second item
+		sap.ui.test.qunit.triggerEvent("tap", oItem2.getDomRef());
+
+		// assert
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event is fired once");
+		assert.strictEqual(oSelect.getSelectedItem(), oItem1, "The selected item is correct");
+
+		// cleanup
+		oSelect.destroy();
+	});
+
+
+	QUnit.test("Tab handling shouldn't mark the event", function(assert) {
+		var oSelect = new sap.m.Select(),
+			$oTabNextEvent = jQuery.Event("tabNextTestEvent"),
+			$oTabPreviousEvent = jQuery.Event("tabPreviousTestEvent");
+
+		oSelect.onsaptabnext($oTabNextEvent);
+		assert.notOk($oTabNextEvent.isMarked(), "The event isn't marked by the onsaptabnext method");
+
+		oSelect.onsaptabprevious($oTabPreviousEvent);
+		assert.notOk($oTabPreviousEvent.isMarked(), "The event isn't marked by the onsaptabprevious method");
+
 		oSelect.destroy();
 	});
 
@@ -8167,7 +8425,34 @@
 		oSelect.destroy();
 	});
 
-	QUnit.module("getAccessibilityInfo");
+	QUnit.module("Accessibility");
+
+	QUnit.test("Label for IconOnly Select", function (assert) {
+		var aItems = [
+			new sap.ui.core.Item({key: "Item1", text: "Item1"}),
+			new sap.ui.core.Item({key: "Item2", text: "Item2"})
+		];
+
+		var oIconOnlySelect = new sap.m.Select("iconOnlySelect", {
+			icon: "sap-icon//search",
+			type: "IconOnly",
+			items: aItems
+		});
+
+		var oStandardSelect = new sap.m.Select("standardSelect", {
+			items: aItems
+		});
+
+		oIconOnlySelect.placeAt("content");
+		oStandardSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(document.getElementById("iconOnlySelect-label").innerHTML, "", "No label text is rendered for IconOnly select");
+		assert.notStrictEqual(document.getElementById("standardSelect-label").innerHTML, "", "Label text is rendered for standard select");
+
+		oIconOnlySelect.destroy();
+		oStandardSelect.destroy();
+	});
 
 	QUnit.test("getAccessibilityInfo", function (assert) {
 		var oSelect = new sap.m.Select({
@@ -8407,5 +8692,60 @@
 
 		// cleanup
 		oSelect.destroy();
+	});
+
+	QUnit.module("Picker's header", {
+		beforeEach: function () {
+			fnToMobileMode(); // Enter mobile mode
+
+			this.oLabel = new sap.m.Label({
+				text: "Label's text",
+				labelFor: "theSelect"
+			}).placeAt("content");
+
+			this.oSelect = new sap.m.Select("theSelect", {
+				items: [
+					new sap.ui.core.Item({
+						key: "0",
+						text: "item 0"
+					}),
+
+					new sap.ui.core.Item({
+						key: "1",
+						text: "item 1"
+					}),
+
+					new sap.ui.core.Item({
+						key: "2",
+						text: "item 2"
+					})
+				]
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oSelect.destroy();
+			this.oLabel.destroy();
+		}
+	});
+
+	QUnit.test("Text of the picker's title", 2, function(assert) {
+
+		var fnDone = assert.async(),
+			oDialog = this.oSelect.getAggregation("picker");
+
+		oDialog.attachBeforeOpen(function () {
+			// Checks the picker title after opening the dialog, since the title is updated in beforeOpen
+			assert.strictEqual(this.oSelect._getPickerTitle().getText(), this.oLabel.getText(), "The title of the picker is the same as the label referencing the Select");
+
+			fnDone();
+		}.bind(this));
+
+		// Checks the picker title before opening (the default one)
+		assert.strictEqual(this.oSelect._getPickerTitle().getText(), 'Select', "The default value of the picker's title");
+
+		// Open the Select, in order for the title to be updated.
+		this.oSelect.open();
 	});
 }());

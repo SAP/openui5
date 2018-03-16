@@ -32,24 +32,102 @@
 		// load required modules
 		jQuery.sap.require("sap.ui.core.LocalBusyIndicatorSupport");
 
+		// Checks whether the given DomRef is contained or equals (in) one of the given container
+		function isContained(aContainers, oRef) {
+			for (var i = 0; i < aContainers.length; i++) {
+				if (aContainers[i] === oRef || jQuery.contains(aContainers[i], oRef)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		// Returns a jQuery object which contains all next/previous (bNext) tabbable DOM elements of the given starting point (oRef) within the given scopes (DOMRefs)
+		function findTabbables(oRef, aScopes, bNext) {
+			var $Ref = jQuery(oRef),
+				$All, $Tabbables;
+
+			if (bNext) {
+				$All = jQuery.merge($Ref.find("*"), jQuery.merge($Ref.nextAll(), $Ref.parents().nextAll()));
+				$Tabbables = $All.find(':sapTabbable').addBack(':sapTabbable');
+			} else {
+				$All = jQuery.merge($Ref.prevAll(), $Ref.parents().prevAll());
+				$Tabbables = jQuery.merge($Ref.parents(':sapTabbable'), $All.find(':sapTabbable').addBack(':sapTabbable'));
+			}
+
+			$Tabbables = jQuery.unique($Tabbables);
+			return $Tabbables.filter(function() {
+				return isContained(aScopes, this);
+			});
+		}
+
+		function simulateTabEvent(oTarget, bBackward) {
+			var oParams = {};
+			oParams.keyCode = jQuery.sap.KeyCodes.TAB;
+			oParams.which = oParams.keyCode;
+			oParams.shiftKey = !!bBackward;
+			oParams.altKey = false;
+			oParams.metaKey = false;
+			oParams.ctrlKey = false;
+
+			if (typeof (oTarget) == "string") {
+				oTarget = jQuery.sap.domById(oTarget);
+			}
+
+			var oEvent = jQuery.Event({type: "keydown"});
+			for (var x in oParams) {
+				oEvent[x] = oParams[x];
+				oEvent.originalEvent[x] = oParams[x];
+			}
+
+			jQuery(oTarget).trigger(oEvent);
+
+			if (oEvent.isDefaultPrevented()) {
+				return;
+			}
+
+			var $Tabbables = findTabbables(document.activeElement, [jQuery.sap.domById("target1")], !bBackward);
+			if ($Tabbables.length) {
+				$Tabbables.get(bBackward ? $Tabbables.length - 1 : 0).focus();
+			}
+		}
+
+		/**
+		 * Check whether an element is focused.
+		 * @param {jQuery|HTMLElement} oElement The element to check.
+		 * @param {Object} assert QUnit assert object.
+		 * @returns {jQuery} A jQuery object containing the active element.
+		 */
+		checkFocus = function(oElement, assert) {
+			var $ActiveElement = jQuery(document.activeElement);
+			var $Element = jQuery(oElement);
+
+			assert.ok($Element[0] === document.activeElement, "Focus is on: " + $ActiveElement.attr("id") + ", should be on: " + $Element.attr("id"));
+
+			return $ActiveElement;
+		};
+
 		QUnit.module("Basic", {
 			beforeEach : function() {
-				this.oListBox = new sap.ui.commons.ListBox({
+				this.oFocusBefore = new sap.m.Button("FocusBefore").placeAt("target1");
+				this.oListBox = new sap.m.List({
 					tooltip : "Country",
 					editable : false,
 					width : "200px",
 					height : "200px",
-					items : [ new sap.ui.core.ListItem({
-						text : "I'm an item, and you?"
+					items : [ new sap.m.StandardListItem({
+						title : "I'm an item, and you?"
 					}) ]
 				}).placeAt("target1");
-
+				this.oFocusAfter = new sap.m.Button("FocusAfter").placeAt("target1");
 				this.oSlider = new sap.ui.commons.Slider().placeAt("target2");
 
 				sap.ui.getCore().applyChanges();
 			},
 
 			afterEach : function() {
+				this.oFocusBefore.destroy();
+				this.oFocusAfter.destroy();
 				this.oListBox.destroy();
 				this.oSlider.destroy();
 			}
@@ -64,15 +142,65 @@
 		QUnit.test("Accessibility", function(assert) {
 			var done = assert.async();
 			this.oListBox.setBusy(true);
-			$LB = this.oListBox.$();
+			var $LB = this.oListBox.$();
+			var iChildren = $LB.children().length;
 
 			setTimeout(function() {
-				assert.equal($LB.children().length, 2, 'Busy Indicator added to DOM tree');
+				assert.equal($LB.children().length, iChildren + 1, 'Busy Indicator added to DOM tree');
 				assert.ok($LB[0].hasAttribute("aria-busy", true), 'ARIA busy is set to Control');
 				assert.ok($LB.children('.sapUiLocalBusyIndicator')[0].hasAttribute("role", "progressbar"),
 					'ARIA role "progressbar" is set to busy indicator');
 				done();
 			}, 1200);
+		});
+
+		QUnit.test("tab chain - busy delay 0", function(assert) {
+			var done = assert.async(),
+				oElem;
+			this.oFocusBefore.getDomRef().focus();
+			this.oListBox.setBusyIndicatorDelay(0);
+			this.oListBox.setBusy(true);
+			simulateTabEvent(this.oFocusBefore.getDomRef());
+			oElem = jQuery.sap.domById(this.oListBox.getId() + "-busyIndicator");
+			checkFocus(oElem, assert);
+			simulateTabEvent(oElem);
+			checkFocus(this.oFocusAfter.getDomRef(), assert);
+			simulateTabEvent(this.oFocusAfter.getDomRef(), true);
+			checkFocus(oElem, assert);
+			simulateTabEvent(oElem, true);
+			checkFocus(this.oFocusBefore.getDomRef(), assert);
+			done();
+		});
+
+		QUnit.test("tab chain - normal delay", function(assert) {
+			var done = assert.async(),
+				oElem;
+			this.oFocusBefore.getDomRef().focus();
+			this.oListBox.setBusy(true);
+
+			simulateTabEvent(this.oFocusBefore.getDomRef());
+			oElem = jQuery.sap.domById(this.oListBox.getItems()[0].getId());
+			checkFocus(oElem, assert);
+			simulateTabEvent(oElem);
+			checkFocus(this.oFocusAfter.getDomRef(), assert);
+			simulateTabEvent(this.oFocusAfter.getDomRef(), true);
+			checkFocus(oElem, assert);
+			simulateTabEvent(oElem, true);
+			checkFocus(this.oFocusBefore.getDomRef(), assert);
+
+			setTimeout(function() {
+				simulateTabEvent(this.oFocusBefore.getDomRef());
+				oElem = jQuery.sap.domById(this.oListBox.getId() + "-busyIndicator");
+				checkFocus(oElem, assert);
+				simulateTabEvent(oElem);
+				checkFocus(this.oFocusAfter.getDomRef(), assert);
+				simulateTabEvent(this.oFocusAfter.getDomRef(), true);
+				oElem = jQuery.sap.domById(this.oListBox.getId() + "-busyIndicator");
+				checkFocus(oElem, assert);
+				simulateTabEvent(oElem, true);
+				checkFocus(this.oFocusBefore.getDomRef(), assert);
+				done();
+			}.bind(this), 1200);
 		});
 
 		QUnit.test("Check suppressed events", function(assert) {
@@ -150,13 +278,13 @@
 
 		QUnit.module("Open and Close", {
 			beforeEach : function() {
-				this.oListBox = new sap.ui.commons.ListBox({
+				this.oListBox = new sap.m.List({
 					tooltip : "Country",
 					editable : false,
 					width : "200px",
 					height : "200px",
-					items : [ new sap.ui.core.ListItem({
-						text : "I'm an item, and you?"
+					items : [ new sap.m.StandardListItem({
+						title : "I'm an item, and you?"
 					}) ]
 				}).placeAt("target1");
 
@@ -187,11 +315,13 @@
 
 		QUnit.test("Close Busy Indicator", function(assert) {
 			var done = assert.async();
+			assert.expect(7);
 			var that = this;
 			this.oListBox.setBusy(true);
 
 			assert.equal(this.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator not yet added to DOM');
 			assert.equal(this.oListBox.getBusy(), true, 'ListBox is busy');
+			assert.equal(this.oListBox.getDomRef().parentElement.children.length, 1, 'No additional elements in dom');
 
 			setTimeout(function() {
 				assert.equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 1, 'Busy Indicator is part of the DOM');
@@ -201,6 +331,7 @@
 				setTimeout(function() {
 					assert.equal(that.oListBox.$().children('.sapUiLocalBusyIndicator').length, 0, 'Busy Indicator was romoved from DOM');
 					assert.equal(that.oListBox.getBusy(), false, 'ListBox is not busy anymore');
+					assert.equal(that.oListBox.getDomRef().parentElement.children.length, 1, 'No additional elements in dom');
 					done();
 				}, 250);
 			}, 1200);
@@ -270,6 +401,27 @@
 			}, 50);
 		});
 
+		QUnit.test("span elements for tab chain", function() {
+			this.oListBox.setBusyIndicatorDelay(0);
+			var oBusySection = jQuery(this.oListBox.getDomRef(this.oListBox._sBusySection));
+			var aChildrenBefore = oBusySection.parent()[0].childNodes;
+
+			assert.equal(aChildrenBefore.length, 1, 'No busy spans inserted');
+			this.oListBox.setBusy(true);
+			assert.equal(this.oListBox.getBusy(), true, 'ListBox is busy');
+			assert.equal(aChildrenBefore.length, 3, 'busy spans inserted');
+			this.oListBox.setBusy(true);
+			assert.equal(aChildrenBefore.length, 3, 'busy spans inserted only once');
+			this.oListBox.setBusy(false);
+			assert.equal(aChildrenBefore.length, 1, 'No busy spans inserted');
+			this.oListBox.setBusy(false);
+			this.oListBox.setBusy(false);
+			assert.equal(aChildrenBefore.length, 1, 'No busy spans inserted');
+			this.oListBox.setBusy(true);
+			assert.equal(aChildrenBefore.length, 3, 'busy spans inserted only once');
+			this.oListBox.setBusy(false);
+		});
+
 		QUnit.module("Delay", {
 			beforeEach : function() {
 				this.iDelay = 500;
@@ -284,6 +436,51 @@
 				delete this.iDelay;
 				this.oButton.destroy();
 			}
+		});
+
+		QUnit.test("OnBeforeRendering", function(assert) {
+			var done = assert.async(),
+				oControl, oBusyIndicator;
+
+			this.oButton.setBusyIndicatorDelay(0);
+
+			this.oButton.placeAt("target1");
+			this.oButton.setBusy(true);
+
+			sap.ui.getCore().applyChanges();
+
+			this.oButton.addDelegate({
+				onBeforeRendering: function() {
+					oControl = this.getDomRef();
+					oBusyIndicator = this.getDomRef("busyIndicator");
+
+					assert.equal(oControl.previousElementSibling.nodeName.toLowerCase(), "span", "<span> before is available.");
+					assert.equal(oControl.previousElementSibling.getAttribute("tabindex"), 0, "Previous <span> has tabindex 0.")
+					assert.ok(oBusyIndicator, "BusyIndicator DOM is still available.");
+					assert.equal(oControl.nextElementSibling.nodeName.toLowerCase(), "span", "<span> after is available.");
+					assert.equal(oControl.previousElementSibling.getAttribute("tabindex"), 0, "Next <span> has tabindex 0.")
+				}
+			}, true, this.oButton);
+
+			this.oButton.addDelegate({
+				onBeforeRendering: function() {
+					oControl = this.getDomRef();
+					oBusyIndicator = this.getDomRef("busyIndicator");
+
+					// check if prev & next sibilings are either not existant or not a <span tabindex='0'> element
+					oTabSpan = oControl.previousElementSibling;
+					assert.ok(oTabSpan === null || (oTabSpan.getAttribute("tabindex") !== "0" && oTabSpan.nodeName !== "SPAN"), "Previous tabbable span shouldn't be available.")
+
+					assert.notOk(oBusyIndicator, "BusyIndicator DOM is now removed");
+
+					oTabSpan = oControl.nextElementSibling;
+					assert.ok(oTabSpan === null || (oTabSpan.getAttribute("tabindex") !== "0" && oTabSpan.nodeName !== "SPAN"), "Previous tabbable span shouldn't be available.")
+
+					done();
+				}
+			}, false, this.oButton);
+
+			this.oButton.rerender();
 		});
 
 		QUnit.test("OnAfterRendering", function(assert) {
@@ -356,6 +553,43 @@
 			this.oBtn = new sap.ui.commons.Button({
 				text : "Blub",
 				width : "45px",
+				busyIndicatorSize : 'Small',
+				busy : true,
+				busyIndicatorDelay : 0
+			}).placeAt("target1");
+
+			this.oDelegate = {
+				onAfterRendering : function(oEvent) {}
+			}
+			this.oBtn.addDelegate(this.oDelegate);
+			this.oSpy = sinon.spy(this.oDelegate, "onAfterRendering");
+
+			sap.ui.getCore().applyChanges();
+
+			setTimeout(function() {
+				var $Animation = jQuery(".sapUiLocalBusyIndicatorAnimation");
+				assert.ok($Animation.length, "Animation exists");
+				assert.ok($Animation.hasClass("sapUiLocalBusyIndicatorAnimSmall"), "Correct CSS class set to DOM");
+
+				assert.equal(this.oSpy.callCount, 1, "Icon should be rendered once");
+
+				this.oSpy.restore();
+				delete this.oSpy;
+				this.oBtn.removeDelegate(this.oDelegate);
+				delete this.oDelegate;
+				this.oBtn.destroy();
+
+				done();
+			}.bind(this), 50);
+		});
+
+		QUnit.test("Check if small Animation is used", function(assert) {
+			var done = assert.async();
+
+			this.oBtn = new sap.ui.commons.Button({
+				text : "Blub",
+				width : "45px",
+				busyIndicatorSize : 'Auto',
 				busy : true,
 				busyIndicatorDelay : 0
 			}).placeAt("target1");

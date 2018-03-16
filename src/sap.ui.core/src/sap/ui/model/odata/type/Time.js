@@ -11,6 +11,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	var oDemoTime = {
 			__edmType : "Edm.Time",
 			ms : 49646000 // "13:47:26"
+		},
+		// a "formatter" like DateFormat, see getModelFormat
+		oModelFormat = {
+			format: toModel,
+			parse: toDate
 		};
 
 	/**
@@ -63,18 +68,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 *   the <code>Time</code> instance
 	 * @param {object} [oConstraints]
 	 *   constraints
-	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> is accepted; note that
-	 *   {@link #parseValue} maps <code>""</code> to <code>null</code>
 	 */
 	function setConstraints(oType, oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
+		var vNullable;
 
 		oType.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			oType.oConstraints = {nullable : false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		if (oConstraints) {
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
+				oType.oConstraints = {nullable : false};
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+			}
 		}
 	}
 
@@ -150,7 +155,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 *   constraints; {@link #validateValue validateValue} throws an error if any constraint is
 	 *   violated
 	 * @param {boolean|string} [oConstraints.nullable=true]
-	 *   if <code>true</code>, the value <code>null</code> is accepted
+	 *   if <code>true</code>, the value <code>null</code> is accepted; note that
+	 *   {@link #parseValue} maps <code>""</code> to <code>null</code>
 	 * @public
 	 * @since 1.27.0
 	 */
@@ -195,6 +201,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
 		}
+	};
+
+	/**
+	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
+	 * methods: <code>format</code> takes a Date and returns an object as described in
+	 * {@link sap.ui.model.odata.type.Time}, <code>parse</code> converts from the object to a Date.
+	 *
+	 * @returns {sap.ui.core.format.DateFormat}
+	 *   The formatter
+	 *
+	 * @override
+	 * @protected
+	 */
+	Time.prototype.getModelFormat = function() {
+		return oModelFormat;
 	};
 
 	/**

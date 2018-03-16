@@ -11,62 +11,65 @@
    * Please order alphabetically
    */
   function suite() {
-    var suite = new parent.jsUnitTestSuite();
-    var contextPath = "/" + window.location.pathname.split("/")[1];
+	var suite = new parent.jsUnitTestSuite();
+	var contextPath = "/" + window.location.pathname.split("/")[1];
 
-    // DesignTime Metadata (wrapper classes)
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTimeMetadata.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementDesignTimeMetadata.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/AggregationDesignTimeMetadata.qunit.html");
+	// DesignTime Metadata (wrapper classes)
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTimeMetadata.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementDesignTimeMetadata.qunit.html");
 
-    // Main classes
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/OverlayRegistry.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementOverlay.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/HandleDtPropagation.qunit.html");
+	// Main classes
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/OverlayRegistry.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementOverlay.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/MetadataPropagationUtil.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementOverlayRTL.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/AggregationOverlay.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTime.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/AggregationOverlay.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DesignTime.qunit.html");
 
-    // Observers
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ManagedObjectObserver.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ControlObserver.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/MutationObserver.qunit.html");
+	// Observers
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ManagedObjectObserver.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ControlObserver.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/MutationObserver.qunit.html");
 
-    // Utils
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/OverlayUtil.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DOMUtil.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementUtil.qunit.html");
+	// Utils
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Util.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/OverlayUtil.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/DOMUtil.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ElementUtil.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ScrollbarSynchronizer.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/TaskManager.qunit.html");
 
-    // Plugins
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Plugin.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Selection.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/DragDrop.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/ControlMovement.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/ContextMenu.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/CutPaste.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/TabHandling.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/ElementMover.qunit.html");
+	// Plugins
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/Plugin.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/SelectionManager.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/DragDrop.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/ControlMovement.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/ContextMenu.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/CutPaste.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/TabHandling.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/ElementMover.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/plugin/MiniMenu.qunit.html");
 
-    // DT with edge cases
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/InvisibleControls.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ComponentContainerInDesignTime.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/FormInDesignTime.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/SimpleFormInDesignTime.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/SimpleForm.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/IconTabBarInDesignTime.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/TablesInDesignTime.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ObjectPage.qunit.html");
+	// DT with edge cases
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/InvisibleControls.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ComponentContainerInDesignTime.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/FormInDesignTime.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/SimpleFormInDesignTime.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/SimpleForm.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/IconTabBarInDesignTime.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/TablesInDesignTime.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/ObjectPage.qunit.html");
 
-    // Tests & Reports
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/Element.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/ElementEnablementTest.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/LibraryEnablementTest.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/LibraryEnablementTest2.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/report/Table.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/report/QUnit.qunit.html");
-    suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/report/Statistic.qunit.html");
+	// Tests & Reports
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/Element.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/ElementEnablementTest.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/LibraryEnablementTest.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/LibraryEnablementTest2.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/report/Table.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/report/QUnit.qunit.html");
+	suite.addTestPage(contextPath + "/test-resources/sap/ui/dt/qunit/test/report/Statistic.qunit.html");
 
-    return suite;
+	return suite;
   }
 
 </script>

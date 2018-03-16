@@ -4,8 +4,11 @@ sap.ui.define([
 	"sap/ui/unified/Menu",
 	"sap/ui/unified/MenuItem",
 	"sap/m/MessageToast",
-	"sap/ui/core/format/DateFormat"
-], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/m/Menu",
+	"sap/m/MenuItem",
+	"sap/ui/table/sample/TableExampleUtils"
+], function(Controller, JSONModel, Menu, MenuItem, MessageToast, DateFormat, MenuM, MenuItemM, TableExampleUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Menus.Controller", {
@@ -67,7 +70,7 @@ sap.ui.define([
 
 		onColumnSelect : function (oEvent) {
 			var oCurrentColumn = oEvent.getParameter("column");
-			var oImageColumn = this.getView().byId("image");
+			var oImageColumn = this.byId("image");
 			if (oCurrentColumn === oImageColumn) {
 				MessageToast.show("Column header " + oCurrentColumn.getLabel().getText() + " pressed.");
 			}
@@ -75,7 +78,7 @@ sap.ui.define([
 
 		onColumnMenuOpen: function (oEvent) {
 			var oCurrentColumn = oEvent.getSource();
-			var oImageColumn = this.getView().byId("image");
+			var oImageColumn = this.byId("image");
 			if (oCurrentColumn != oImageColumn) {
 				return;
 			}
@@ -122,18 +125,26 @@ sap.ui.define([
 
 		onQuantitySort : function(oEvent) {
 			var bAdd = oEvent.getParameter("ctrlKey") === true;
-			var oColumn = this.getView().byId("quantity");
+			var oColumn = this.byId("quantity");
 			var sOrder = oColumn.getSortOrder() == "Ascending" ? "Descending" : "Ascending";
 
-			this.getView().byId("table").sort(oColumn, sOrder, bAdd);
+			this.byId("table").sort(oColumn, sOrder, bAdd);
 		},
 
 		showInfo : function(oEvent) {
-			try {
-				jQuery.sap.require("sap.ui.table.sample.TableExampleUtils");
-				sap.ui.table.sample.TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Menus", "/info.json"), oEvent.getSource());
-			} catch (e) {
-				// nothing
+			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Menus", "/info.json"), oEvent.getSource());
+		},
+
+		onToggleContextMenu : function(oEvent) {
+			if (oEvent.getParameter("pressed")) {
+				this.byId("table").setContextMenu(new MenuM({
+					items: [
+						new MenuItemM({text: "{Name}"}),
+						new MenuItemM({text: "{ProductId}"})
+					]
+				}));
+			} else {
+				this.byId("table").destroyContextMenu();
 			}
 		}
 

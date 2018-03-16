@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.Slider.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, library, Control, EnabledPropagator, ResizeHandler) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/EnabledPropagator',
+    'sap/ui/core/ResizeHandler',
+    "./SliderRenderer"
+],
+	function(jQuery, library, Control, EnabledPropagator, ResizeHandler, SliderRenderer) {
 	"use strict";
 
 
@@ -26,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Slider</code> control.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.Slider}
 	 * @alias sap.ui.commons.Slider
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1269,7 +1276,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the enabled state
 	 *
-	 * @param bEnabled Whether the Slider should be ednabled, or not (disabled)
+	 * @param {boolean} bEnabled Whether the Slider should be ednabled, or not (disabled)
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -1310,7 +1317,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/* Overwrite of generated function - no new JS-doc.
 	 * Property setter for the totalUnits state
 	 *
-	 * @param iTotalUnits Number of the units (tick-spaces)
+	 * @param {int} iTotalUnits Number of the units (tick-spaces)
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -1328,7 +1335,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Property setter for the value
 	 * A new rendering is not necessary, only the grip must be moved.
 	 *
-	 * @param fValue
+	 * @param {float} fValue
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -1371,7 +1378,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/*
 	 * fires the change event. The liveChange event must be fired too if the change event is fired.
 	 *
-	 * @param bNoLiveChange fire no LiveChange event
+	 * @param {boolean} bNoLiveChange fire no LiveChange event
 	 * @private
 	 */
 	Slider.prototype.handleFireChange = function(bNoLiveChange) {

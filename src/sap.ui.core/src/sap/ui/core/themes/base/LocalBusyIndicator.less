@@ -1,28 +1,43 @@
-@sapUiLocalBusyIndicatorBG: fade(@sapBackgroundColor, 72%);
-@sapUiLocalBusyIndicatorBG_IE: @sapBackgroundColor;
+/* =============================================== */
+/* CSS for control sap.ui.core/LocalBusyIndicator  */
+/* Base theme                                      */
+/* =============================================== */
 
-@sapUiLocalBusyIndicatorColor: @sapBrandColor;
+@_sap_ui_core_LocalBusyIndicator_Background: fade(@sapBackgroundColor, 72%);
+@_sap_ui_core_LocalBusyIndicator_BackgroundIE: @sapBackgroundColor;
 
-@sapUiLocalBusyIndicatorBorderRadius: 100%;
+@_sap_ui_core_LocalBusyIndicator_Color: @sapBrandColor;
 
-@sapUiLocalBusyIndicatorSizeMedium: 1rem;
-@sapUiLocalBusyIndicatorSizeBig: 2rem;
+@_sap_ui_core_LocalBusyIndicator_BorderRadius: 100%;
 
-.sapUiLocalBusyIndicator {
-	background-color: @sapUiLocalBusyIndicatorBG;
+@_sap_ui_core_LocalBusyIndicator_SizeMedium: 1rem;
+@_sap_ui_core_LocalBusyIndicator_SizeBig: 2rem;
+
+.sapUiBlockLayer, .sapUiLocalBusyIndicator {
+	background-color: @_sap_ui_core_LocalBusyIndicator_Background;
 	position: absolute;
 	top: 0;
 	left: 0;
 	bottom: 0;
 	right: 0;
+}
 
+.sapUiLocalBusyIndicator {
 	opacity: 0;
 	transition: opacity 0.3s ease-in;
 	-webkit-transition: opacity 0.3s ease-in;
 }
 
-/* Make sure busy indicators are not "nested", and the animations do not overlay each other */
-.sapUiLocalBusy .sapUiLocalBusy .sapUiLocalBusyIndicator {
+.sapUiBlockLayer:not(:last-child) {
+	display: none;
+}
+
+//  Make sure blocked layers are not "nested", and in case of busy indicators the animations do not overlay each other
+.sapUiLocalBusy .sapUiLocalBusy .sapUiBlockLayer {
+	display: none;
+}
+
+.sapUiHiddenBusyIndicatorAnimation .sapUiLocalBusyIndicatorAnimation {
 	display: none;
 }
 
@@ -32,12 +47,12 @@
 
 /* Class for medium sized indicator in control overlay */
 .sapUiLocalBusyIndicatorSizeMedium {
-	font-size: @sapUiLocalBusyIndicatorSizeMedium;
+	font-size: @_sap_ui_core_LocalBusyIndicator_SizeMedium;
 }
 
 /* Class for fullscreen block overlay */
 .sapUiLocalBusyIndicatorSizeBig {
-	font-size: @sapUiLocalBusyIndicatorSizeBig;
+	font-size: @_sap_ui_core_LocalBusyIndicator_SizeBig;
 	background-color: transparent;
 
 }
@@ -54,7 +69,7 @@
 .sapUiLocalBusyIndicatorAnimation > div {
 	width: 1em;
 	height: 1em;
-	border-radius: @sapUiLocalBusyIndicatorBorderRadius;
+	border-radius: @_sap_ui_core_LocalBusyIndicator_BorderRadius;
 	display: block;
 	float: left;
 	margin: 0px;
@@ -75,17 +90,17 @@
 	left: 0;
 	width: 100%;
 	height: 100%;
-	border-radius: @sapUiLocalBusyIndicatorBorderRadius;
+	border-radius: @_sap_ui_core_LocalBusyIndicator_BorderRadius;
 }
 
 /* Background animation element */
 .sapUiLocalBusyIndicatorAnimation > div::before {
-	background: fade(@sapUiLocalBusyIndicatorColor, 100%);
+	background: fade(@_sap_ui_core_LocalBusyIndicator_Color, 100%);
 }
 
 /* Shadow animation element */
 .sapUiLocalBusyIndicatorAnimation > div::after {
-	box-shadow: inset 0px 0px 2px 1px fade(@sapUiLocalBusyIndicatorColor, 80%);
+	box-shadow: inset 0px 0px 2px 1px fade(@_sap_ui_core_LocalBusyIndicator_Color, 80%);
 }
 
 /* Animations Starting Classes */

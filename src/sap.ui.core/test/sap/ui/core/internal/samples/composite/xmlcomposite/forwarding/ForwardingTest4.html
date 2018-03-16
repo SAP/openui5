@@ -1,0 +1,69 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="UTF-8">
+
+    <title>CompositeSample - sap.ui.core</title>
+
+    <script id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_belize" data-sap-ui-bindingSyntax="complex"
+        src="../../../../../../../../../resources/sap-ui-core.js" data-sap-ui-resourceroots='{"composites": "./composites"}'>
+
+        </script>
+
+    <script>
+        //	jQuery.sap.require("sap.ui.mdc.model.GenericType");
+        jQuery.sap.require("sap.ui.core.XMLComposite");
+        jQuery.sap.require("composites.ForwardText");
+        jQuery.sap.require("composites.FfText");
+        jQuery.sap.require("sap.m.Text");
+
+        var data = {
+            names: [
+                { firstName: "Christian", lastName: "Mueller" },
+                { firstName: "Petra", lastName: "Maier" },
+                { firstName: "Thomas", lastName: "Smith" },
+                { firstName: "John", lastName: "Williams" },
+                { firstName: "Maria", lastName: "Jones" }
+            ]
+        };
+        var model = new sap.ui.model.json.JSONModel();
+        model.setData(data);
+        sap.ui.getCore().setModel(model);
+
+        var oForwardForwardText = new composites.FfText({
+            items: [
+                new composites.ForwardText({
+                    textItems: {
+                        path: "/names",
+                        template: new sap.m.Text({
+                            text: "{lastName}"
+                        })
+                    }
+                })
+            ]
+        });
+        var oPanelForwardForwardText = new sap.m.Panel({ expandable: true, expanded: false, content: oForwardForwardText, headerText: "Ex A." });
+
+        var oForwardForwardText2 = new composites.FfText({
+            items: {
+                path: "/names",
+                template: new sap.m.Text({
+                    text: "{lastName}"
+                })
+            }
+        });
+        var oPanelForwardForwardText2 = new sap.m.Panel({ expandable: true, expanded: false, content: oForwardForwardText2, headerText: "Ex B." });
+
+        oPanelForwardForwardText.placeAt("forwardText");
+        oPanelForwardForwardText2.placeAt("forwardText");
+    </script>
+</head>
+
+<body id="body" class="sapUiBody" style="margin-left:10px">
+    <h1>Double Forward Text List</h1>
+    <div id="forwardText"></div>
+</body>
+
+</html>

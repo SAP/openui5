@@ -6,17 +6,16 @@
 * Provides a private class <code>sap.f.semantic.SemanticFooter</code>.
 */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/m/ToolbarSpacer",
-	"sap/m/ButtonType",
-	"./SemanticConfiguration",
+	"sap/m/library",
 	"./SemanticContainer"
-], function(jQuery,
-			ToolBarSpacer,
-			ButtonType,
-			SemanticConfiguration,
+], function(ToolBarSpacer,
+			mobileLibrary,
 			SemanticContainer) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
 	* Constructor for a <code>sap.f.semantic.SemanticFooter</code>.
@@ -145,7 +144,7 @@ sap.ui.define([
 		this._oSpacer = null;
 
 		return SemanticContainer.prototype.destroy.call(this);
-};
+	};
 
 	/*
 	* Inserts the <code>sap.f.semantic.SemanticControl</code> in the <code>footerLeft</code> area.
@@ -161,7 +160,6 @@ sap.ui.define([
 		this._callContainerAggregationMethod("insertContent", oControl, iIndexToInsert);
 		this._iSemanticLeftContentCount ++;
 		this._aSemanticLeftContent.push(oSemanticControl);
-		this._preProcessControl(oControl);
 
 		return this;
 	};
@@ -177,6 +175,9 @@ sap.ui.define([
 
 		this._aSemanticRightContent.push(oSemanticControl);
 		this._callContainerAggregationMethod("insertContent",  oControl, this._getSemanticRightContentInsertIndex(oSemanticControl));
+		if (this._shouldBePreprocessed(oSemanticControl)) {
+			this._preProcessControl(oControl);
+		}
 
 		return this;
 	};
@@ -193,7 +194,6 @@ sap.ui.define([
 		this._callContainerAggregationMethod("removeContent", oControl);
 		this._iSemanticLeftContentCount --;
 		this._aSemanticLeftContent.splice(this._aSemanticLeftContent.indexOf(oControl), 1);
-		this._postProcessControl(oControl);
 		return oSemanticControl;
 	};
 
@@ -208,6 +208,7 @@ sap.ui.define([
 
 		this._callContainerAggregationMethod("removeContent", oControl);
 		this._aSemanticRightContent.splice(this._aSemanticRightContent.indexOf(oSemanticControl), 1);
+		this._postProcessControl(oControl);
 
 		return oSemanticControl;
 	};
@@ -244,7 +245,7 @@ sap.ui.define([
 	};
 
 	/*
-	* Inserts a <code>sap.m.ToolbarSpacer<code>
+	* Inserts a <code>sap.m.ToolbarSpacer</code>
 	* between the <code>footerLeft</code> and <code>footerRight</code> areas.
 	*
 	* @returns {sap.f.semantic.SemanticFooter}
@@ -255,7 +256,7 @@ sap.ui.define([
 	};
 
 	/*
-	* Returns lazily a <code>sap.m.ToolbarSpacer<code> instance.
+	* Returns lazily a <code>sap.m.ToolbarSpacer</code> instance.
 	*
 	* @returns {sap.m.ToolbarSpacer}
 	*/
@@ -299,4 +300,4 @@ sap.ui.define([
 
 	return SemanticFooter;
 
-}, /* bExport= */ false);
+});

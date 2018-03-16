@@ -1,0 +1,16 @@
+<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:layout="sap.ui.layout" displayBlock="true" controllerName="flexiblecolumnlayout.DetailEmpty"
+        height="100%">
+
+    <m:Page title="Empty page">
+        <m:headerContent>
+            <m:Button icon="sap-icon://full-screen" press="handleFullScreen" tooltip="Enter Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/fullScreen} !== null }"></m:Button>
+            <m:Button icon="sap-icon://exit-full-screen" press="handleExitFullScreen" tooltip="Exit Full Screen Mode" visible="{= ${/actionButtonsInfo/midColumn/exitFullScreen} !== null }"></m:Button>
+            <m:Button icon="sap-icon://decline" press="handleClose" tooltip="Close column" visible="{= ${/actionButtonsInfo/midColumn/closeColumn} !== null }"></m:Button>
+        </m:headerContent>
+        <m:content>
+            <m:Text text="Empty detail page"/>
+        </m:content>
+    </m:Page>
+
+
+</m:View>

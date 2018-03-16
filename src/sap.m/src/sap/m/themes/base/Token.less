@@ -4,7 +4,9 @@
 /* ============================ */
 
 @_sap_m_Token_TokenPadding: 0.5rem;
+@_sap_m_Token_TokenCompactPadding: 0.25rem;
 @_sap_m_Token_TokenSize: @sapMFontLargeSize + (2 * @_sap_m_Token_TokenPadding);
+@_sap_m_Token_TokenCompactSize: @sapMFontLargeSize  + @_sap_m_Token_TokenCompactPadding;
 
 .sapMToken {
 	display: inline-block;
@@ -69,7 +71,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 }
 
 .sapUiSizeCompact .sapMTokenText {
-	max-width: calc(~"100% - 1.125rem");
+	max-width: calc(~"100%  - " @_sap_m_Token_TokenCompactSize);
 }
 
 .sapMTokenReadOnly .sapMTokenText,
@@ -140,4 +142,19 @@ html.sap-desktop .sapMToken.sapMTokenSelected:hover {
 
 .sapUiSizeCompact .sapMListTbl .sapMToken .sapUiIcon:not(.sapMLIBImgNav) {
 	font-size: 0.75rem;
+}
+
+html[data-sap-ui-browser*="sf"] {
+	.sapMTokenText {
+		max-width: calc(~"100% + 1px - " @_sap_m_Token_TokenSize);
+	}
+
+	.sapUiSizeCompact .sapMTokenText {
+		max-width: calc(~"100% + 1px - " @_sap_m_Token_TokenCompactSize);
+	}
+
+	.sapMTokenReadOnly .sapMTokenText,
+	.sapUiSizeCompact .sapMTokenReadOnly .sapMTokenText {
+		max-width: 100%;
+	}
 }

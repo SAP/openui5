@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.Panel.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, IconPool) {
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'./PanelRenderer'
+],
+	function(library, Control, IconPool, PanelRenderer) {
 	"use strict";
+
+	// shortcut for sap.m.PanelAccessibleRole
+	var PanelAccessibleRole = library.PanelAccessibleRole;
+
+	// shortcut for sap.m.BackgroundDesign
+	var BackgroundDesign = library.BackgroundDesign;
 
 	/**
 	 * Constructor for a new Panel.
@@ -54,6 +65,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 * @since 1.16
 	 * @alias sap.m.Panel
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/panel/ Panel}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Panel = Control.extend("sap.m.Panel", /** @lends sap.m.Panel.prototype */ { metadata: {
@@ -105,14 +117,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Depending on the theme you can change the state of the background from "Solid" over "Translucent" to "Transparent".
 			 * @since 1.30
 			 */
-			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: sap.m.BackgroundDesign.Translucent},
+			backgroundDesign: {type: "sap.m.BackgroundDesign", group: "Appearance", defaultValue: BackgroundDesign.Translucent},
 
 			/**
 			 * This property is used to set the accessible aria role of the Panel.
 			 * Depending on the usage you can change the role from the default <code>Form</code> to <code>Region</code> or <code>Complementary</code>.
 			 * @since 1.46
 			 */
-			accessibleRole: {type: "sap.m.PanelAccessibleRole", group: "Accessibility", defaultValue: sap.m.PanelAccessibleRole.Form}
+			accessibleRole: {type: "sap.m.PanelAccessibleRole", group: "Accessibility", defaultValue: PanelAccessibleRole.Form}
 
 		},
 		defaultAggregation: "content",
@@ -154,14 +166,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					 * If the panel will expand, this is true.
 					 * If the panel will collapse, this is false.
 					 */
-					expand: {type : "boolean"}
+					expand: {type : "boolean"},
+
+					/**
+					 * Identifies whether the event is triggered by an user interaction or by calling setExpanded.
+					 * @since 1.50
+					 */
+					triggeredByInteraction: {type: "boolean"}
 				}
 			}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Panel.designtime"
 	}});
 
 	Panel.prototype.init = function () {
+
+		// identifies whether the last expand action is triggered by a user interaction or by calling setExpanded setter
+		this._bInteractiveExpand = false;
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 	};
 
@@ -230,6 +251,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	Panel.prototype.setExpanded = function (bExpanded) {
+
 		if (bExpanded === this.getExpanded()) {
 			return this;
 		}
@@ -245,7 +267,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		this._toggleExpandCollapse();
 		this._toggleCssClasses();
-		this.fireExpand({ expand : bExpanded });
+		this.fireExpand({ expand: bExpanded, triggeredByInteraction: this._bInteractiveExpand });
+		this._bInteractiveExpand = false;
 
 		return this;
 	};
@@ -303,16 +326,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	Panel.prototype._createIcon = function () {
 		var that = this,
-			sCollapsedIconURI = IconPool.getIconURI("navigation-right-arrow");
+			sCollapsedIconURI = IconPool.getIconURI("navigation-right-arrow"),
+			sTooltipBundleText = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("PANEL_ICON");
 
 		return IconPool.createControlByURI({
 			id: that.getId() + "-CollapsedImg",
 			src: sCollapsedIconURI,
 			decorative: false,
-			useIconTooltip: false,
 			press: function () {
+				that._bInteractiveExpand = true;
 				that.setExpanded(!that.getExpanded());
-			}
+			},
+			tooltip: sTooltipBundleText
 		}).addStyleClass("sapMPanelExpandableIcon");
 	};
 
@@ -321,7 +346,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	Panel.prototype._setContentHeight = function () {
-		var iAdjustedContentHeight,
+		var sAdjustedContentHeight,
 		thisDomRef = this.getDomRef(),
 		oPanelContent = thisDomRef && thisDomRef.querySelector(".sapMPanelContent");
 
@@ -331,8 +356,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// 'offsetTop' measures the vertical space occupied by siblings before this one
 		// Earlier each previous sibling's height was calculated separately and then all height values were summed up
-		iAdjustedContentHeight = thisDomRef.clientHeight - oPanelContent.offsetTop;
-		oPanelContent.style.height = iAdjustedContentHeight + 'px';
+		sAdjustedContentHeight =  'calc(' + this.getHeight() + ' - ' + oPanelContent.offsetTop + 'px)';
+		oPanelContent.style.height = sAdjustedContentHeight;
 	};
 
 	Panel.prototype._toggleExpandCollapse = function () {
@@ -385,4 +410,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return Panel;
 
-}, /* bExport= */ true);
+});

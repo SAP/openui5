@@ -22,10 +22,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		 * @param {sap.ui.core.Control} control An object representation of the control that should be rendered
 		 */
 		NavigationListRenderer.render = function (rm, control) {
-			var group,
-				role,
+			var role,
+				visibleGroupsCount,
 				groups = control.getItems(),
-				expanded = control.getExpanded();
+				expanded = control.getExpanded(),
+				visibleGroups = [];
 
 			rm.write("<ul");
 			rm.writeControlData(control);
@@ -51,10 +52,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 			rm.write(">");
 
-			for (var i = 0; i < groups.length; i++) {
-				group = groups[i];
-				group.render(rm, control);
-			}
+			//Checking which groups should render
+			groups.forEach(function(group) {
+				if (group.getVisible()) {
+					visibleGroups.push(group);
+				}
+			});
+
+			// Rendering the visible groups
+			visibleGroups.forEach(function(group, index) {
+				group.render(rm, control, index, visibleGroupsCount);
+			});
 
 			rm.write("</ul>");
 		};

@@ -5,8 +5,8 @@
 
 
 // Provides class sap.ui.model.odata.ODataMetadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs'],
-	function(jQuery, EventProvider, OData) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs', 'sap/ui/core/cache/CacheManager'],
+	function(jQuery, EventProvider, OData, CacheManager) {
 	"use strict";
 
 	/**
@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * @param {string} [mParams.user] user for the service,
 	 * @param {string} [mParams.password] password for service
 	 * @param {object} [mParams.headers] (optional) map of custom headers which should be set with the request.
+	 * @param {string} [mParams.cacheKey] (optional) A valid cache key
 	 *
 	 * @class
 	 * Implementation to access oData metadata
@@ -25,7 +26,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.odata.ODataMetadata
 	 * @extends sap.ui.base.EventProvider
@@ -45,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			this.bWithCredentials = mParams.withCredentials;
 			this.sPassword = mParams.password;
 			this.mHeaders = mParams.headers;
+			this.sCacheKey = mParams.cacheKey;
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
 			this.oMetadata = null;
@@ -60,11 +61,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					that.fnResolve = resolve;
 			});
 
-			this._loadMetadata()
-				.catch(function() {
-					// Ignored for initial metadata loading. Error handling is done inside _loadMetadata
-					jQuery.sap.log.error("[ODataMetadata] initial loading of metadata failed");
-				});
+			function writeCache(mParams) {
+				CacheManager.set(that.sCacheKey, JSON.stringify({
+					metadata: that.oMetadata,
+					params: mParams
+				}));
+			}
+
+			function logError() {
+				jQuery.sap.log.error("[ODataMetadata] initial loading of metadata failed");
+			}
+
+			//check cache
+			if (this.sCacheKey) {
+				CacheManager.get(this.sCacheKey)
+					.then(function(sMetadata) {
+						if (sMetadata) {
+							var oCacheMetadata = JSON.parse(sMetadata);
+							this.oMetadata = oCacheMetadata.metadata;
+							this._handleLoaded(this.oMetadata, oCacheMetadata.params, false);
+						} else {
+							this._loadMetadata()
+								.then(writeCache)
+								.catch(logError);
+						}
+					}.bind(this))
+					.catch(logError);
+			} else {
+				this._loadMetadata()
+					.catch(logError);
+			}
 		},
 
 		metadata : {
@@ -76,6 +102,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	ODataMetadata.prototype._setNamespaces = function(mNamespaces) {
 		this.mNamespaces = mNamespaces;
 	};
+
+	/*
+	 * Handle Promise resolving/eventing when metadata is loaded
+	 *
+	 */
+	ODataMetadata.prototype._handleLoaded = function(oMetadata, mParams, bSuppressEvents) {
+		var aEntitySets = [];
+
+		this.oMetadata = this.oMetadata ? this.merge(this.oMetadata, oMetadata, aEntitySets) : oMetadata;
+		this.oRequestHandle = null;
+
+		mParams.entitySets = aEntitySets;
+
+		// resolve global promise
+		this.fnResolve(mParams);
+
+		if (this.bAsync && !bSuppressEvents) {
+			this.fireLoaded(this);
+		} else if (!this.bAsync && !bSuppressEvents){
+			//delay the event so anyone can attach to this _before_ it is fired, but make
+			//sure that bLoaded is already set properly
+			this.bLoaded = true;
+			this.bFailed = false;
+			this.oLoadEvent = jQuery.sap.delayedCall(0, this, this.fireLoaded, [ mParams ]);
+		}
+	};
+
 	/**
 	 * Loads the metadata for the service
 	 *
@@ -92,7 +145,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		var oRequest = this._createRequest(sUrl);
 
 		return new Promise(function(resolve, reject) {
-			var oRequestHandle, aEntitySets = [];
+			var oRequestHandle;
+
 			function _handleSuccess(oMetadata, oResponse) {
 				if (!oMetadata || !oMetadata.dataServices) {
 					var mParameters = {
@@ -105,33 +159,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				}
 
 				that.sMetadataBody = oResponse.body;
-				that.oMetadata = that.oMetadata ? that.merge(that.oMetadata, oMetadata, aEntitySets) : oMetadata;
 				that.oRequestHandle = null;
 
 				var mParams = {
-					metadataString: that.sMetadataBody,
-					entitySets: aEntitySets
+					metadataString: that.sMetadataBody
 				};
 
 				var sLastModified = oResponse.headers["Last-Modified"];
 				if (sLastModified) {
 					mParams.lastModified = sLastModified;
 				}
-
-				// resolve global promise
-				that.fnResolve(mParams);
-				// resolve this promise
+				that._handleLoaded(oMetadata, mParams, bSuppressEvents);
 				resolve(mParams);
-
-				if (that.bAsync && !bSuppressEvents) {
-					that.fireLoaded(that);
-				} else if (!that.bAsync && !bSuppressEvents){
-					//delay the event so anyone can attach to this _before_ it is fired, but make
-					//sure that bLoaded is already set properly
-					that.bLoaded = true;
-					that.bFailed = false;
-					that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [ mParams ]);
-				}
 			}
 
 			function _handleError(oError) {
@@ -518,8 +557,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 			//extract property
 			sPath = aParts[0].replace(/^\/|\/$/g, "");
-			sPropertyPath = sPath.substr(sPath.indexOf('/') + 1);
-			oProperty = this._getPropertyMetadata(oEntityType,sPropertyPath);
+			sPropertyPath = sPath;
+			while (!oProperty && sPropertyPath.indexOf("/") > 0) {
+				sPropertyPath = sPropertyPath.substr(sPropertyPath.indexOf('/') + 1);
+				oProperty = this._getPropertyMetadata(oEntityType, sPropertyPath);
+			}
 
 			jQuery.sap.assert(oProperty, sPropertyPath + " is not a valid property path");
 			if (!oProperty) {
@@ -845,7 +887,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 
 		// remove starting/trailing /
 		sProperty = sProperty.replace(/^\/|\/$/g, "");
-		var aParts = sProperty.split("/"); // path could point to a complex type
+		var aParts = sProperty.split("/"); // path could point to a complex type or nav property
 
 		jQuery.each(oEntityType.property, function(k, oProperty) {
 			if (oProperty.name === aParts[0]) {
@@ -854,17 +896,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			}
 		});
 
-		// check if complex type
-		if (oPropertyMetadata && aParts.length > 1 && !jQuery.sap.startsWith(oPropertyMetadata.type.toLowerCase(), "edm.")) {
-			var aName = this._splitName(oPropertyMetadata.type);
-			oPropertyMetadata = this._getPropertyMetadata(this._getObjectMetadata("complexType", aName[0], aName[1]), aParts[1]);
-		}
-
-		// check if navigation property
-		if (!oPropertyMetadata && aParts.length > 1) {
-			var oParentEntityType = this._getEntityTypeByNavProperty(oEntityType, aParts[0]);
-			if (oParentEntityType) {
-				oPropertyMetadata = that._getPropertyMetadata(oParentEntityType, aParts[1]);
+		if (aParts.length > 1) {
+			// check for navigation property and complex type
+			if (!oPropertyMetadata) {
+				while (oEntityType && aParts.length > 1) {
+					oEntityType = this._getEntityTypeByNavProperty(oEntityType, aParts[0]);
+					aParts.shift();
+				}
+				if (oEntityType) {
+					oPropertyMetadata = that._getPropertyMetadata(oEntityType, aParts[0]);
+				}
+			} else if (!jQuery.sap.startsWith(oPropertyMetadata.type.toLowerCase(), "edm.")) {
+				var aName = this._splitName(oPropertyMetadata.type);
+				oPropertyMetadata = this._getPropertyMetadata(this._getObjectMetadata("complexType", aName[0], aName[1]), aParts[1]);
 			}
 		}
 

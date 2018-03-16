@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function(jQuery, Device) {
+sap.ui.define(['sap/ui/Device'], function(Device) {
 	"use strict";
 
 	/*global ES6Promise */
@@ -15,7 +15,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device'], function(jQuery, Device) {
 	}
 
 	if (!window.Promise) {
-		jQuery.sap.require("sap.ui.thirdparty.es6-promise");
+		sap.ui.requireSync("sap/ui/thirdparty/es6-promise");
 		ES6Promise.polyfill();
 	}
 

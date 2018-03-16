@@ -13,6 +13,9 @@ module.exports = function(grunt, config) {
 
 			contextpath: config.testsuite.name,
 			proxypath: 'proxy',
+			proxyOptions: {
+				secure: false
+			},
 			cors: {
 				origin: "*"
 			}
@@ -26,11 +29,11 @@ module.exports = function(grunt, config) {
 				appresources: config.testsuite.path + '/src/main/webapp',
 
 				resources: aLibraries.map(function(lib) {
-					return lib.path + '/src';
+					return lib.src;
 				}),
 
 				testresources: aLibraries.map(function(lib) {
-					return lib.path + '/test';
+					return lib.test;
 				})
 
 			}

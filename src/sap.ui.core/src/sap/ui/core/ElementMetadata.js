@@ -5,8 +5,8 @@
 /*global Promise */
 
 // Provides class sap.ui.core.ElementMetadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
-	function(jQuery, ManagedObjectMetadata) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui/core/Renderer'],
+	function(jQuery, ManagedObjectMetadata, Renderer) {
 	"use strict";
 
 
@@ -108,8 +108,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata'],
 			if ( oParent instanceof ElementMetadata ) {
 				oBaseRenderer = oParent.getRenderer();
 			}
-			if ( !oBaseRenderer ) {
-				oBaseRenderer = sap.ui.requireSync('sap/ui/core/Renderer');
+			if (!oBaseRenderer) {
+				oBaseRenderer = Renderer;
 			}
 			var oRenderer = Object.create(oBaseRenderer);
 			jQuery.extend(oRenderer, vRenderer);

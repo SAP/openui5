@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.RangeSlider.
-sap.ui.define(['jquery.sap.global', './Slider', './library'],
-	function(jQuery, Slider, library) {
+sap.ui.define(['jquery.sap.global', './Slider', './library', "./RangeSliderRenderer"],
+	function(jQuery, Slider, library, RangeSliderRenderer) {
 	"use strict";
 
 
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * @constructor
 	 * @public
 	 * @since 1.8.0
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.RangeSlider</code> control.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.RangeSlider}
 	 * @alias sap.ui.commons.RangeSlider
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -275,7 +275,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * Overwrite of generated function - no new JS-doc. Property setter for the
 	 * value A new rendering is not necessary, only the grip must be moved.
 	 *
-	 * @param fValue
+	 * @param {float} fValue
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -331,7 +331,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * Overwrite of generated function - no new JS-doc. Property setter for the
 	 * value A new rendering is not necessary, only the grip must be moved.
 	 *
-	 * @param fValue
+	 * @param {float} fValue
 	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -528,7 +528,7 @@ sap.ui.define(['jquery.sap.global', './Slider', './library'],
 	 * fires the change event. The liveChange event must be fired too if the change
 	 * event is fired.
 	 *
-	 * @param bNoLiveChange fire no LiveChange event
+	 * @param {boolean} bNoLiveChange fire no LiveChange event
 	 * @private
 	 */
 	RangeSlider.prototype.handleFireChange = function(bNoLiveChange) {

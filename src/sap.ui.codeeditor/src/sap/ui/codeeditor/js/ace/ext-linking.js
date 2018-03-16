@@ -17,6 +17,8 @@ require("../config").defineOptions(Editor.prototype, "editor", {
     }
 })
 
+exports.previousLinkingHover = false;
+
 function onMouseMove(e) {
     var editor = e.editor;
     var ctrl = e.getAccelKey();
@@ -27,7 +29,14 @@ function onMouseMove(e) {
         var session = editor.session;
         var token = session.getTokenAt(docPos.row, docPos.column);
 
+        if (exports.previousLinkingHover && exports.previousLinkingHover != token) {
+            editor._emit("linkHoverOut");
+        }
         editor._emit("linkHover", {position: docPos, token: token});
+        exports.previousLinkingHover = token;
+    } else if (exports.previousLinkingHover) {
+        editor._emit("linkHoverOut");
+        exports.previousLinkingHover = false;
     }
 }
 

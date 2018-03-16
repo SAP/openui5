@@ -28,6 +28,7 @@
 <script>
 	QUnit.config.autostart = false;
 	sap.ui.test.qunit.delayTestStart();
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	// =========================================================== //
 	// Check UX requirements on                                    //
@@ -2961,11 +2962,12 @@
 		oMultiComboBox.getFocusDomRef().focus();
 		sap.ui.test.qunit.triggerCharacterInput(oMultiComboBox.getFocusDomRef(), oItem.getText());
 		oMultiComboBox.getFocusDomRef().blur();
+		this.clock.tick(500);
 
 		// assertions
 		var aSelectedItems = oMultiComboBox.getSelectedItems();
 		assert.strictEqual(aSelectedItems.length, 0, "No token was selected on Focus Out");
-		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event was not fired");
+		assert.strictEqual(fnFireChangeSpy.callCount, 1, "The change event was not fired");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 0, "The selection change event was not fired");
 		assert.strictEqual(fnFireSelectionFinishSpy.callCount, 0, "The selection finish event was not fired");
 
@@ -4080,6 +4082,7 @@
 		// act
 		var oDomListItem = oMultiComboBox.getListItem(oMultiComboBox.getFirstItem()).getDomRef();
 		var oListItem = sap.ui.getCore().byId(oDomListItem.id);
+		oListItem.focus();
 		sap.ui.test.qunit.triggerTouchEvent("tap", oDomListItem, {
 			srcControl : oListItem
 		});
@@ -4676,6 +4679,37 @@
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Change event should be called on focusleave", function (assert) {
+		var oMultiComboBox = new sap.m.MultiComboBox({ value: "A" }).placeAt("MultiComboBox-content"),
+			oStub = this.stub(oMultiComboBox, "fireChangeEvent"),
+			oFakeEvent = {};
+
+		// act
+		oMultiComboBox.onsapfocusleave(oFakeEvent);
+
+		// assert
+		assert.ok(oStub.called, "change should be called");
+		assert.ok(oStub.calledWith("", { value: "A" }), "change should be called with empty values");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.test("Change event should not be called if the old value does not differ from the current one", function (assert) {
+		var oMultiComboBox = new sap.m.MultiComboBox().placeAt("MultiComboBox-content"),
+			oStub = this.stub(oMultiComboBox, "fireChangeEvent"),
+			oFakeEvent = {};
+
+		// act
+		oMultiComboBox.onsapfocusleave(oFakeEvent);
+
+		// assert
+		assert.notOk(oStub.called, "change should be called");
+
+		// cleanup
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.test('Endless focus loop should not be triggered when Dialog is opened on mobile', function(assert) {
 		// system under test
 		this.stub(sap.ui.Device, "system", {
@@ -4848,6 +4882,41 @@
 		oComboBox.destroy();
 	});
 
+	QUnit.test("Tokens information should be read out", function(assert) {
+		var oItem1 = new sap.ui.core.Item({key: "Item1", text: "Item1"}),
+			oItem2 = new sap.ui.core.Item({key: "Item2", text: "Item2"}),
+			oMultiComboBox = new sap.m.MultiComboBox({
+				items: [oItem1, oItem2]
+			}),
+			sInvisibleTextId = oMultiComboBox._oTokenizer.getTokensInfoId(),
+			oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+
+		// assert
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_TOKEN"), "'MultiComboBox may contain tokens' text is set.");
+
+		// act
+		oMultiComboBox.setSelectedKeys(["Item1"]);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_ONE_TOKEN"), "'MultiComboBox contains 1 token' text is set.");
+
+		// act
+		oMultiComboBox.setSelectedKeys(["Item1", "Item2"]);
+
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", 2), "'MultiComboBox contains N tokens' text is set.");
+
+		// destroy
+		oItem1.destroy();
+		oItem2.destroy();
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Keyboard handling", {
 		beforeEach: function(){
 			this.oFirstItem = new sap.ui.core.Item({key: "Item1", text: "Item1"});
@@ -4918,6 +4987,43 @@
 	});
 
 	QUnit.module("Mobile mode (dialog)");
+
+	QUnit.test("Prevent endless focus loop on mobile", function(assert) {
+		//arrange
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+		var oMultiComboBox = new sap.m.MultiComboBox( "multi", {
+				items: [
+					new sap.ui.core.Item({
+						text: "Example"
+					})
+				]
+			}).placeAt("MultiComboBox-content"),
+			oFakeEvent = new sap.ui.base.Event,
+			oHandleFocusleaveStub = sinon.stub(sap.ui.base.Event.prototype, "getParameter"),
+			fnTapSpy = sinon.spy(oMultiComboBox, "onfocusin");
+
+		oFakeEvent.relatedControlId = oMultiComboBox.getPicker().getId();
+		sap.ui.getCore().applyChanges();
+
+		//act
+		sap.ui.test.qunit.triggerTouchEvent("tap", oMultiComboBox.getFocusDomRef(), {
+			srcControl: oMultiComboBox,
+			target: oMultiComboBox.getFocusDomRef()
+		});
+		this.clock.tick(500);
+		oMultiComboBox.onsapfocusleave(oFakeEvent);
+
+		//assert
+		assert.strictEqual(fnTapSpy.callCount, 0 , "onsapfocusleave should not trigger onfocusin on mobile");
+
+		//clean up
+		oMultiComboBox.destroy();
+	});
+
 
 	QUnit.test("_getFilterSelectedButton()", function(assert) {
 		this.stub(sap.ui.Device, "system", {
@@ -5000,12 +5106,12 @@
 				items: [
 					oItem
 				]
-		}), oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("COMBOBOX_AVAILABLE_OPTIONS");
+		}), oResourceBundleOptions = oResourceBundle.getText("COMBOBOX_AVAILABLE_OPTIONS");
 
 		oMultiComboBox.placeAt("MultiComboBox-content");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(sap.ui.getCore().byId(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundle, 'popup ariaLabelledBy is set');
+		assert.equal(sap.ui.getCore().byId(oMultiComboBox.getPickerInvisibleTextId()).getText(), oResourceBundleOptions, 'popup ariaLabelledBy is set');
 		oMultiComboBox.destroy();
 	});
 
@@ -5146,6 +5252,34 @@
 		oMultiComboBox.destroy();
 		oModel.destroy();
 	});
+
+	QUnit.module("Tablet focus handling");
+
+	QUnit.test("it should not set the focus to the input", function(assert) {
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			tablet: true,
+			phone: false
+		});
+
+		var oMultiComboBox = new sap.m.MultiComboBox(),
+				oMultiComboBoxPicker = oMultiComboBox.getPicker(),
+				oFakeEvent = null,
+				oFocusinStub = this.stub(oMultiComboBox, "focus");
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		oFakeEvent = { target: oMultiComboBox.getDomRef("arrow") };
+
+		oMultiComboBox.onfocusin(oFakeEvent);
+
+		assert.strictEqual(oFocusinStub.callCount, 0, "Focus should not be called");
+
+		oMultiComboBox.destroy();
+	});
+
+
 </script>
 </head>
 <body id="body" class="sapUiBody">

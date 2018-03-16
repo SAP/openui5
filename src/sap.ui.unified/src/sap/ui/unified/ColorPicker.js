@@ -3,12 +3,49 @@
  */
 
 // Provides control sap.ui.unified.ColorPicker.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/HTML', "sap/ui/core/ResizeHandler",
-	"sap/ui/layout/Grid", "sap/ui/layout/GridData", "sap/ui/layout/VerticalLayout", "sap/ui/layout/HorizontalLayout",
-	"sap/ui/core/Icon", "sap/ui/core/theming/Parameters", "sap/ui/core/InvisibleText"],
-	function(jQuery, Library, Control, HTML, ResizeHandler, Grid, GridData, VLayout, HLayout, Icon, Parameters,
-		InvisibleText) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/HTML",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/layout/Grid",
+	"sap/ui/layout/GridData",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/core/Icon",
+	"sap/ui/core/theming/Parameters",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/Device",
+	"sap/ui/core/library",
+	"./ColorPickerRenderer",
+	"sap/ui/Global"
+], function(
+	jQuery,
+	Library,
+	Control,
+	HTML,
+	ResizeHandler,
+	Grid,
+	GridData,
+	VLayout,
+	HLayout,
+	Icon,
+	Parameters,
+	InvisibleText,
+	Device,
+	coreLibrary,
+	ColorPickerRenderer
+) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.unified.ColorPickerMode
+	var ColorPickerMode = Library.ColorPickerMode;
 
 
 
@@ -58,7 +95,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Determines the color mode of the <code>ColorPicker</code>.
 			 * @since 1.48.0
 			 */
-			mode : {type : "sap.ui.unified.ColorPickerMode", group : "Appearance", defaultValue : sap.ui.unified.ColorPickerMode.HSV}
+			mode : {type : "sap.ui.unified.ColorPickerMode", group : "Appearance", defaultValue : ColorPickerMode.HSV}
 		},
 		aggregations: {
 			/**
@@ -193,8 +230,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	}});
 
-		// variable that will be used for browser specific prefix of the slider background gradient
-		// it is set in the init function and is used inside _updateAlphaBackground() function
+	// variable that will be used for browser specific prefix of the slider background gradient
+	// it is set in the init function and is used inside _updateAlphaBackground() function
 	var sBrowserPrefix = "",
 		// get the background image of the slider
 		sBgSrc = sap.ui.resource('sap.ui.unified', 'img/ColorPicker/Alphaslider_BG.png'),
@@ -388,11 +425,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	ColorPicker.prototype.init = function() {
 		// set gradient prefix depending of the browser
-		if (sap.ui.Device.browser.firefox) {
+		if (Device.browser.firefox) {
 			sBrowserPrefix = "-moz-linear-gradient";
-		} else if (sap.ui.Device.browser.msie) {
+		} else if (Device.browser.msie) {
 			sBrowserPrefix = "-ms-linear-gradient";
-		} else if (sap.ui.Device.browser.webkit) {
+		} else if (Device.browser.webkit) {
 			sBrowserPrefix = "-webkit-linear-gradient";
 		} else {
 			sBrowserPrefix = "linear-gradient";
@@ -428,7 +465,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this.bResponsive = oHelper.isResponsive();
 
 		// Color picker cursor size in px obtained from less parameter. Keep in mind width and height are the same.
-		this._iCPCursorSize = parseInt(Parameters.get("_sap_ui_unified_ColorPickerCircleSize"), 10);
+		this._iCPCursorSize = parseInt(Parameters.get("_sap_ui_unified_ColorPicker_CircleSize"), 10);
 
 		// Init _processChanges and _bHSLMode according to default control mode
 		this._processChanges = this._processHSVChanges;
@@ -442,7 +479,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		metadata: {
 			events: {
 				/**
-				 * Fired on interaction with the <code>ColorPickerBox<code>.
+				 * Fired on interaction with the <code>ColorPickerBox</code>.
 				 */
 				select: {
 					parameters: {
@@ -451,7 +488,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					}
 				},
 				/**
-				 * Fired on size change of the <code>ColorPickerBox<code>.
+				 * Fired on size change of the <code>ColorPickerBox</code>.
 				 */
 				resize: {
 					parameters: {
@@ -961,9 +998,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (this.bResponsive) {
 			// If library is not commons switch the control to responsive mode
-			// Changing tablet breakpoint to 314px is a magic number enabling the best adaptive behavior of the control
-			// which apply's best to control specific look and feel.
-			oGrid._setBreakPointTablet(314);
+			if (!Device.system.phone && !jQuery('html').hasClass("sapUiMedia-Std-Phone")) {
+				// Changing tablet breakpoint to 400px is a magic number enabling the best adaptive behavior of the control
+				// mainly on Desktop which apply's best to control specific look and feel.
+				// Consider rewriting the renderer to take advantage on responsive grid behavior and to use it's private methods.
+				oGrid._setBreakPointTablet(400);
+			}
 			oGrid.addStyleClass(CONSTANTS.CPResponsiveClass);
 		} else {
 			oGrid.setProperty("hSpacing", 0, true);
@@ -1398,7 +1438,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// calculate and set HEX-value from the RGB-values
 		var redValue   = Math.round(parseInt(this.oRedField.getValue(),10)),
 			greenValue = Math.round(parseInt(this.oGreenField.getValue(),10)),
-			blueValue  = Math.round(parseInt(this.oBlueField.getValue(),10));
+			blueValue  = Math.round(parseInt(this.oBlueField.getValue(),10)),
+			// 765 is the sum of red, green and blue values if they are all equal to 255 which in combination gives pure white
+			bPureWhite = (redValue + greenValue + blueValue) === 765;
 
 		this._calculateHEX(redValue, greenValue, blueValue);
 		this.oHexField.setValue(this.sHexString);
@@ -1407,12 +1449,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._calculateHSL(redValue, greenValue, blueValue);
 			this.oLitField.setValue(this.Color.l);
 		} else {
-			this._calculateHSV(redValue, greenValue, blueValue);
+			// Special case if the currently selected color is pure white we should not reset the HUE slider
+			// as it has no effect for the color but only a visual representation for the user.
+			if (!bPureWhite) {
+				this._calculateHSV(redValue, greenValue, blueValue);
+			}
 			this.oValField.setValue(this.Color.v);
 		}
 
 		// calculate and set HSV-values from the RGB-values
-		this.oHueField.setValue(this.Color.h);
+		if (!bPureWhite) {
+			this.oHueField.setValue(this.Color.h);
+		}
 		this.oSatField.setValue(this.Color.s);
 
 		// update slider value
@@ -1453,7 +1501,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		re = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
 		if (re.test(sHexValue) === false) {
-			this.oHexField.setValueState(sap.ui.core.ValueState.Error);
+			this.oHexField.setValueState(ValueState.Error);
 			this.oSlider.setEnabled(false);
 			this.oAlphaSlider.setEnabled(false);
 			this.oHueField.setEnabled(false);
@@ -1469,8 +1517,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				this.oValField.setEnabled(false);
 			}
 			return;
-		} else if (this.oHexField.getValueState() === sap.ui.core.ValueState.Error) {
-			this.oHexField.setValueState(sap.ui.core.ValueState.None);
+		} else if (this.oHexField.getValueState() === ValueState.Error) {
+			this.oHexField.setValueState(ValueState.None);
 			this.oSlider.setEnabled(true);
 			this.oAlphaSlider.setEnabled(true);
 			this.oHueField.setEnabled(true);
@@ -2251,4 +2299,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return ColorPicker;
 
-}, /* bExport= */ true);
+});

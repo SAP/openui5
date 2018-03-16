@@ -20,6 +20,30 @@
 	}
 }
 
+.sapUiForm .sapMCb {
+	display: table-cell;
+}
+
+.sapMCb.sapMCbWrapped.sapMCbHasLabel {
+	height: auto;
+	> .sapMLabel.sapMLabelWrapped {
+		margin: 0.875rem 0;
+		line-height: 1.4rem;
+	}
+}
+
+.sapMCb.sapMCbDisplayOnly:not(.sapMCbBgDis) {
+	padding-left: 2.375rem;
+}
+
+.sapUiFormEdit-CTX .sapMCb.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
+	margin: 0.75rem 0;
+}
+
+html[dir="rtl"] .sapMCb {
+	text-align: right;
+}
+
 .sapMCb .sapMLabel {
 	cursor: default;
 
@@ -106,6 +130,26 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 	color: @sapUiContentNonInteractiveIconColor;
 }
 
+/* Display only */
+.sapMCbDisplayOnly {
+	font-family: "SAP-icons";
+
+	.sapMCbBg {
+		background-color: initial;
+		border: none;
+		margin: 0.125rem;
+
+		&:before {
+			content: "\e19a";
+		}
+
+		&.sapMCbMarkChecked:before {
+			color: @sapUiBaseText;
+			content: "\e03f";
+		}
+	}
+}
+
 /* Compact size */
 .sapUiSizeCompact {
 
@@ -113,6 +157,17 @@ html[data-sap-ui-browser^=ff] .sapMCbBg > input {
 		height: 2rem;
 		line-height: 2rem;
 		padding-left: 2rem;
+	}
+
+	.sapMCb.sapMCbWrapped.sapMCbHasLabel {
+		height: auto;
+		> .sapMLabel.sapMLabelWrapped {
+			margin: 0.3rem 0;
+		}
+	}
+
+	.sapUiFormEdit-CTX .sapMCb.sapMCbWrapped.sapMCbHasLabel > .sapMLabel.sapMLabelWrapped {
+		margin: 0.25rem 0;
 	}
 
 	.sapMCbBg { /* check box itself */

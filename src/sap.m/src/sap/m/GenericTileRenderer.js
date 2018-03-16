@@ -2,9 +2,18 @@
  * ${copyright}
  */
 
-sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
-	function(LoadState, GenericTileScope) {
+sap.ui.define(["sap/m/library", "jquery.sap.global"],
+	function(library, jQuery) {
 	"use strict";
+
+	// shortcut for sap.m.GenericTileMode
+	var GenericTileMode = library.GenericTileMode;
+
+	// shortcut for sap.m.GenericTileScope
+	var GenericTileScope = library.GenericTileScope;
+
+	// shortcut for sap.m.LoadState
+	var LoadState = library.LoadState;
 
 	/**
 	 * GenericTile renderer.
@@ -58,7 +67,7 @@ sap.ui.define([ "sap/m/LoadState", "sap/m/GenericTileScope" ],
 			oRm.write(");'");
 			oRm.addClass("sapMGTBackgroundImage");
 		}
-		if (oControl.getMode() === sap.m.GenericTileMode.HeaderMode) {
+		if (oControl.getMode() === GenericTileMode.HeaderMode) {
 			oRm.addClass("sapMGTHeaderMode");
 		}
 		oRm.writeClasses();

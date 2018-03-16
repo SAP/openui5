@@ -20,7 +20,6 @@ sap.ui.define(['sap/ui/base/Object'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.Type
 	 */
@@ -45,11 +44,22 @@ sap.ui.define(['sap/ui/base/Object'],
 	/**
 	 * Returns the name of this type.
 	 *
-	 * @return {String} the name of this type
+	 * @return {string} the name of this type
 	 * @public
 	 */
 	Type.prototype.getName = function() {
 		return this.sName;
+	};
+
+	/**
+	 * Returns a simple string representation of this type.
+	 *
+	 * Mainly useful for tracing purposes.
+	 * @public
+	 * @return {string} a string description of this type
+	 */
+	Type.prototype.toString = function() {
+		return "Type " + this.getMetadata().getName();
 	};
 
 	return Type;

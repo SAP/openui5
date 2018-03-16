@@ -74,6 +74,23 @@ html.sap-desktop .sapMITBItem:focus.sapMITBAll {
 	}
 }
 
+html.sap-desktop .sapMITBItem:focus.sapMITBAll {
+	&::after {
+		bottom: 1.75rem;
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus.sapMITBAll,
+html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus.sapMITBAll{
+	&::after {
+		border: 0.125rem dashed @sapUiContentFocusColor;
+	}
+}
+
 /* HCB Additional Styles */
 
 .sapMITBFilterPositive .sapMITBText:before,

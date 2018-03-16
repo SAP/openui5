@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './Matcher', './AggregationLengthEquals'], function ($, Matcher, AggregationLengthEquals) {
+sap.ui.define(['./Matcher', './AggregationLengthEquals'], function(Matcher, AggregationLengthEquals) {
 	"use strict";
 
 	var oAggregationLengthMatcher = new AggregationLengthEquals({

@@ -21,7 +21,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 *
 	 * @param {int} iSelectionMode <code>sap.ui.model.SelectionModel.SINGLE_SELECTION</code> or <code>sap.ui.model.SelectionModel.MULTI_SELECTION</code>
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.SelectionModel
 	 */

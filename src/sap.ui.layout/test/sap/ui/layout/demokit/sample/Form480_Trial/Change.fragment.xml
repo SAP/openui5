@@ -7,7 +7,7 @@
 		<f:Form id="FormChange480_Trial"
 			editable="true">
 			<f:title>
-				<core:Title text="Address" />
+				<core:Title text="Supplier" />
 			</f:title>
 			<f:layout>
 				<f:ResponsiveGridLayout
@@ -26,7 +26,7 @@
 					singleContainerFullSize="false" />
 			</f:layout>
 			<f:formContainers>
-				<f:FormContainer title="Office">
+				<f:FormContainer title="Address">
 					<f:formElements>
 						<f:FormElement label="Name">
 							<f:fields>
@@ -66,11 +66,11 @@
 						</f:FormElement>
 					</f:formElements>
 				</f:FormContainer>
-				<f:FormContainer title="Online">
+				<f:FormContainer title="Contact">
 					<f:formElements>
 						<f:FormElement label="Web">
 							<f:fields>
-								<Input value="{Url}" />
+								<Input value="{Url}" type="Url"/>
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Twitter">
@@ -78,23 +78,33 @@
 								<Input value="{Twitter}" />
 							</f:fields>
 						</f:FormElement>
-					</f:formElements>
-				</f:FormContainer>
-				<f:FormContainer title="Contact data">
-					<f:formElements>
 						<f:FormElement label="Email">
 							<f:fields>
-								<Input value="{EMail}" />
+								<Input value="{Email}" type="Email"/>
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="Tel.">
 							<f:fields>
-								<Input value="{Tel}" />
+								<Input value="{Tel}" type="Tel"/>
 							</f:fields>
 						</f:FormElement>
 						<f:FormElement label="SMS">
 							<f:fields>
-								<Input value="{Sms}" />
+								<Input value="{Sms}" type="Tel"/>
+							</f:fields>
+						</f:FormElement>
+					</f:formElements>
+				</f:FormContainer>
+				<f:FormContainer title="Other">
+					<f:formElements>
+						<f:FormElement label="Rating">
+							<f:fields>
+								<RatingIndicator value="{Rating}" />
+							</f:fields>
+						</f:FormElement>
+						<f:FormElement label="Disposable">
+							<f:fields>
+								<ProgressIndicator percentValue="{Disposable}" />
 							</f:fields>
 						</f:FormElement>
 					</f:formElements>

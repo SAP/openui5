@@ -264,8 +264,8 @@ sap.ui.define(['jquery.sap.global', './LRUPersistentCache', './CacheManagerNOP',
 			},
 			/**
 			 * Forwards method's call to the underlying implementation
-			 * @param sMethodName the name of the method to forwarrd
-			 * @param aArgs array of arguments
+			 * @param {string} sMethodName the name of the method to forward
+			 * @param {any[]} aArgs array of arguments
 			 * @returns {Promise}
 			 * @private
 			 */
@@ -311,7 +311,7 @@ sap.ui.define(['jquery.sap.global', './LRUPersistentCache', './CacheManagerNOP',
 							bSupportedBrowserName = oSuppportedEnv.browserName === Device.browser.name,
 							bSupportedBrowserVersion = Device.browser.version >= oSuppportedEnv.browserVersion;
 
-						return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion;
+						return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion && window.indexedDB;
 					});
 				}
 				return this._bSupportedEnvironment;

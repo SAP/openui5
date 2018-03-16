@@ -16,6 +16,10 @@
 			showEmptyIntervalHeaders="false">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
+				<ToolbarSpacer/>
+				<ToggleButton icon="sap-icon://decrease-line-height"
+							  tooltip="Toggle Day Names Line"
+							  press="toggleDayNamesLine"/>
 			</toolbarContent>
 			<rows>
 				<PlanningCalendarRow

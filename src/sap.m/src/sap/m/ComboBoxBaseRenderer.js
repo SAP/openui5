@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ComboBoxTextFieldRenderer, Renderer) {
+sap.ui.define(['./ComboBoxTextFieldRenderer', 'sap/ui/core/Renderer'],
+	function (ComboBoxTextFieldRenderer, Renderer) {
 		"use strict";
 
 		/**
@@ -25,8 +25,9 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextFieldRenderer', 'sap/ui/core/
 		 * To be overwritten by subclasses.
 		 *
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @returns {object} The accessibility state of the control
 		 */
-		ComboBoxBaseRenderer.getAccessibilityState = function(oControl) {
+		ComboBoxBaseRenderer.getAccessibilityState = function (oControl) {
 			var mAccessibilityState = ComboBoxTextFieldRenderer.getAccessibilityState.call(this, oControl);
 			mAccessibilityState.expanded = oControl.isOpen();
 			return mAccessibilityState;
@@ -38,7 +39,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextFieldRenderer', 'sap/ui/core/
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
-		ComboBoxBaseRenderer.addOuterClasses = function(oRm, oControl) {
+		ComboBoxBaseRenderer.addOuterClasses = function (oRm, oControl) {
 			ComboBoxTextFieldRenderer.addOuterClasses.apply(this, arguments);
 
 			var CSS_CLASS = ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE;
@@ -60,7 +61,7 @@ sap.ui.define(['jquery.sap.global', './ComboBoxTextFieldRenderer', 'sap/ui/core/
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
-		ComboBoxBaseRenderer.addButtonClasses = function(oRm, oControl) {
+		ComboBoxBaseRenderer.addButtonClasses = function (oRm, oControl) {
 			ComboBoxTextFieldRenderer.addButtonClasses.apply(this, arguments);
 			oRm.addClass(ComboBoxBaseRenderer.CSS_CLASS_COMBOBOXBASE + "Arrow");
 		};

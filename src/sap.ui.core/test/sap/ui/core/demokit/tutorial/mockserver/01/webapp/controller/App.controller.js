@@ -10,7 +10,7 @@ sap.ui.define([
 		 * We pass a custom URL parameter "first=3" (assuming our OData BE knows how to process it).
 		 */
 		onPressAction: function() {
-			var oList = this.getView().byId("list");
+			var oList = this.byId("list");
 			oList.bindItems({
 				path: "/Meetups",
 				parameters: {

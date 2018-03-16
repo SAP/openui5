@@ -1,0 +1,62 @@
+/* ================================== */
+/* CSS for control sap.f/DynamicPage  */
+/* Belize Plus theme                  */
+/* ================================== */
+
+// Note:
+// The following structure, selectors and parameters are the same as the ones, defined in belize theme.
+// But, we still need to repeat the styles here in belize_plus, because of a limitation of the belize_plus generation build.
+// We have '.sapContrast' on Title and Header level, because they are the contrast areas by design,
+// but their appearance depends on classes, added to a parent element (.sapFDynamicPage).
+// As the generated css would be '.sapContrast.sapFDynamicPageTitle', it will never match '.sapFDynamicPage.sapFDynamicPageTitleClickEnabled .sapFDynamicPageTitle'
+
+.sapFDynamicPage {
+	// DynamicPageTitle and Toggle Header Visual Indicator hover state
+	&.sapFDynamicPageTitleClickEnabled:not(.sapFDynamicPageHeaderPinned) {
+		.sapFDynamicPageTitle:hover,
+		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+			background-color: darken(@sapUiObjectHeaderBackground, 3);
+		}
+
+		&.sapFDynamicPageTitleForceHovered {
+			.sapFDynamicPageToggleHeaderIndicator {
+				.sapMBtnInner {
+					background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+				}
+			}
+		}
+	}
+
+	// Toggle Header Visual Indicator
+	.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
+
+		// normal state
+		& > .sapMBtnInner {
+			border: none;
+			background-color: @sapUiObjectHeaderBorderColor;
+		}
+
+		// hover state
+		&:hover > .sapMBtnInner.sapMBtnHoverable {
+			background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+		}
+
+		// active state
+		&:focus > .sapMBtnInner.sapMFocusable.sapMBtnActive {
+			background: @sapUiSelected;
+			color: @sapUiButtonActiveBackground;
+		}
+	}
+}
+
+.sapUshellShell {
+	.sapFDynamicPage {
+		// DynamicPageTitle and Toggle Header Visual Indicator hover state
+		&.sapFDynamicPageTitleClickEnabled:not(.sapFDynamicPageHeaderPinned) {
+			.sapFDynamicPageTitle:hover,
+			&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+				background-color: fade(@sapUiObjectHeaderBackground, 75%);
+			}
+		}
+	}
+}

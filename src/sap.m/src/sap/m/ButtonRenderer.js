@@ -2,10 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/core/InvisibleText'],
 
-	function(jQuery) {
+	function(jQuery, Device, coreLibrary, IconPool, library, InvisibleText) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Button renderer.
@@ -32,12 +38,12 @@ sap.ui.define(['jquery.sap.global'],
 		var sTooltip = oButton._getTooltip();
 		var sText = oButton._getText();
 		var sTextDir = oButton.getTextDirection();
-		var bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge;
+		var bIE_Edge = Device.browser.internet_explorer || Device.browser.edge;
 		// render bdi tag only if the browser is different from IE and Edge since it is not supported there
-		var bRenderBDI = (sTextDir === sap.ui.core.TextDirection.Inherit) && !bIE_Edge;
+		var bRenderBDI = (sTextDir === TextDirection.Inherit) && !bIE_Edge;
 
 		// get icon from icon pool
-		var sBackURI = sap.ui.core.IconPool.getIconURI("nav-back");
+		var sBackURI = IconPool.getIconURI("nav-back");
 
 		// start button tag
 		oRm.write("<button");
@@ -49,34 +55,23 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.addClass("sapMBtn");
 
 			// extend  minimum button size if icon is set without text for button types back and up
-			if ((sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) && oButton.getIcon() && !sText) {
+			if ((sType === ButtonType.Back || sType === ButtonType.Up) && oButton.getIcon() && !sText) {
 				oRm.addClass("sapMBtnBack");
 			}
 		}
 
 		//ARIA attributes
 		var mAccProps = {};
-		var sTextId = "";
 
-		switch (sType) {
-		case sap.m.ButtonType.Accept:
-			sTextId = sap.m.Button._oStaticAcceptText.getId();
-			break;
-		case sap.m.ButtonType.Reject:
-			sTextId = sap.m.Button._oStaticRejectText.getId();
-			break;
-		case sap.m.ButtonType.Emphasized:
-			sTextId = sap.m.Button._oStaticEmphasizedText.getId();
-			break;
-		default: // No need to do anything for other button types
-			break;
-		}
+		var sTextId = ButtonRenderer.getButtonTypeAriaLabelId(sType);
 		if (sTextId) {
 			mAccProps["describedby"] = {value: sTextId, append: true};
 		}
 
-		if (oButton.getAriaLabelledBy() && oButton.getAriaLabelledBy().length > 0) {
-			mAccProps["labelledby"] = {value: oButton.getId(), append: true };
+		// add reference only to the text content of the button
+		// so it can be read otherwise it causes the issue reported in BCP: 1680223321
+		if (sText && oButton.getAriaLabelledBy() && oButton.getAriaLabelledBy().length > 0) {
+			mAccProps["labelledby"] = {value: oButton.getId() + "-content", append: true };
 		}
 
 		//descendants (e.g. ToggleButton) callback
@@ -93,9 +88,9 @@ sap.ui.define(['jquery.sap.global'],
 			}
 		} else {
 			switch (sType) {
-			case sap.m.ButtonType.Accept:
-			case sap.m.ButtonType.Reject:
-			case sap.m.ButtonType.Emphasized:
+			case ButtonType.Accept:
+			case ButtonType.Reject:
+			case ButtonType.Emphasized:
 				oRm.addClass("sapMBtnInverted");
 				break;
 			default: // No need to do anything for other button types
@@ -147,7 +142,7 @@ sap.ui.define(['jquery.sap.global'],
 			if (sText) {
 				oRm.addClass("sapMBtnText");
 			}
-			if (sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) {
+			if (sType === ButtonType.Back || sType === ButtonType.Up) {
 				oRm.addClass("sapMBtnBack");
 			}
 			if (oButton.getIcon()) {
@@ -180,7 +175,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write(">");
 
 		// set image for internal image control (back)
-		if (sType === sap.m.ButtonType.Back || sType === sap.m.ButtonType.Up) {
+		if (sType === ButtonType.Back || sType === ButtonType.Up) {
 			this.writeInternalIconPoolHtml(oRm, oButton, sBackURI);
 		}
 
@@ -191,10 +186,10 @@ sap.ui.define(['jquery.sap.global'],
 
 		// write button text
 		if (sText) {
-			oRm.write("<span");
+			oRm.write("<span ");
 			oRm.addClass("sapMBtnContent");
 			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
-			if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+			if (sTextDir !== TextDirection.Inherit) {
 				oRm.writeAttribute("dir", sTextDir.toLowerCase());
 			}
 			oRm.writeClasses();
@@ -253,14 +248,24 @@ sap.ui.define(['jquery.sap.global'],
 
 	/**
 	 * Renders tabindex with value of "-1" if required by  <code>_bExcludeFromTabChain</code> property.
-	 * @param oButton
-	 * @param oRm
+	 * @param {sap.m.Button} oButton The sap.m.Button to be rendered
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer
 	 */
 	function renderTabIndex(oButton, oRm){
 		if (oButton._bExcludeFromTabChain) {
 			oRm.writeAttribute("tabindex", -1);
 		}
 	}
+
+	var mARIATextKeys = {
+		Accept: "BUTTON_ARIA_TYPE_ACCEPT",
+		Reject: "BUTTON_ARIA_TYPE_REJECT",
+		Emphasized: "BUTTON_ARIA_TYPE_EMPHASIZED"
+	};
+
+	ButtonRenderer.getButtonTypeAriaLabelId = function(sType) {
+		return InvisibleText.getStaticId("sap.m", mARIATextKeys[sType]);
+	};
 
 	return ButtonRenderer;
 

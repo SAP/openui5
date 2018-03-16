@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/HTML',
 	'sap/ui/core/UIComponent',
-	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/routing/History',
 	'sap/ui/model/json/JSONModel',
 	'sap/m/library',
@@ -17,10 +16,10 @@ sap.ui.define([
 	'../util/ToggleFullScreenHandler',
 	'../data',
 	'sap/ui/demokit/explored/view/base.controller',
-	"sap/ui/fl/FakeLrepConnectorLocalStorage",
-	"sap/ui/fl/Utils"
+	'sap/ui/fl/FakeLrepConnectorLocalStorage',
+	'sap/ui/fl/Utils'
 ],
-function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Controller, History, JSONModel, mobileLibrary, Text, ToggleFullScreenHandler, data, Base, FakeLrepConnectorLocalStorage, Utils) {
+function(jQuery, Device, Component, ComponentContainer, HTML, UIComponent, History, JSONModel, mobileLibrary, Text, ToggleFullScreenHandler, data, Base, FakeLrepConnectorLocalStorage, Utils) {
 	"use strict";
 
 	var SampleController = Base.extend("sap.ui.demokit.explored.view.sample", {
@@ -43,7 +42,8 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 		onRouteMatched : function (oEvt) {
 
 			if (this._oRTA) {
-				this._oRTA.stop(true);
+				this._oRTA.destroy();
+				this._oRTA = null;
 			}
 
 			if (oEvt.getParameter("name") !== "sample") {
@@ -61,7 +61,7 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 			}
 
 			// set nav button visibility
-			var oPage = this.getView().byId("page");
+			var oPage = this.byId("page");
 			var oHistory = History.getInstance();
 			var oPrevHash = oHistory.getPreviousHash();
 			oModelData.showNavButton = Device.system.phone || !!oPrevHash;
@@ -149,6 +149,11 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 					oHtmlControl.$().on("load", function () {
 						var oSampleFrame = oHtmlControl.$()[0].contentWindow;
 
+						// Some samples don't have the framework loaded (f.e. hello world)
+						if (!oSampleFrame.sap) {
+							return;
+						}
+
 						oSampleFrame.sap.ui.getCore().attachInit(function() {
 							var oSampleFrame = oHtmlControl.$()[0].contentWindow;
 							oSampleFrame.sap.ui.getCore().applyTheme(sap.ui.getCore().getConfiguration().getTheme());
@@ -206,8 +211,6 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 			};
 
 			FakeLrepConnectorLocalStorage.enableFakeConnector({
-				"isKeyUser": true,
-				"isAtoAvailable": false,
 				"isProductiveSystem": true
 			});
 		},
@@ -217,11 +220,8 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 		*/
 		_loadRuntimeAuthoring : function() {
 			try {
-				sap.ui.require([
-					"sap/ui/rta/RuntimeAuthoring"],
-				function (RuntimeAuthoring) {
-					this._oRTA = new RuntimeAuthoring();
-					this.getView().byId("toggleRTA").setVisible(true);
+				sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function (RuntimeAuthoring) {
+					this.byId("toggleRTA").setVisible(true);
 				}.bind(this));
 			} catch (oException) {
 				jQuery.sap.log.info("sap.ui.rta.RuntimeAuthoring could not be loaded, UI adaptation mode is disabled");
@@ -229,11 +229,23 @@ function (jQuery, Device, Component, ComponentContainer, HTML, UIComponent, Cont
 		},
 
 		onAdaptUI : function(oEvent) {
-			var oRTA = this._oRTA;
-			if (oRTA) {
-				oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
-				oRTA.start();
-			}
+			sap.ui.require([
+				"sap/ui/rta/RuntimeAuthoring"
+			], function (
+				RuntimeAuthoring
+			) {
+				if (!this._oRTA) {
+					// default developerMode for CUSTOMER-layer is 'true'
+					this._oRTA = new RuntimeAuthoring({flexSettings: {
+						developerMode: false
+					}});
+					this._oRTA.setRootControl(this.byId("page").getContent()[0]);
+					this._oRTA.attachStop(function() {
+						this._oRTA.destroy();
+					}.bind(this));
+					this._oRTA.start();
+				}
+			}.bind(this));
 		}
 	});
 

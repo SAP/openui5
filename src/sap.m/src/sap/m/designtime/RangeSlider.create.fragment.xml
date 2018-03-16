@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<RangeSlider showAdvancedTooltip="true" range="25,75"/>
+</core:FragmentDefinition>

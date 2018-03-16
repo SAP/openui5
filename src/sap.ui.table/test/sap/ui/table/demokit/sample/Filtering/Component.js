@@ -5,7 +5,11 @@ sap.ui.define([
 
 	return UIComponent.extend("sap.ui.table.sample.Filtering.Component", {
 		metadata : {
-			rootView : "sap.ui.table.sample.Filtering.View",
+			rootView : {
+				"viewName": "sap.ui.table.sample.Filtering.View",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.ui.table",

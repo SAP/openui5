@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:DataServices>
+		<Schema Namespace="special.cases">
+			<EntityType Name="EntityWithComplexKey">
+				<Key>
+					<PropertyRef Name="Key/P1" Alias="Key1"/>
+					<PropertyRef Name="Key/P2" Alias="Key2"/>
+				</Key>
+				<Property Name="Key" Type="special.cases.ComplexKey"/>
+				<Property Name="Value" Type="Edm.String"/>
+			</EntityType>
+			<ComplexType Name="ComplexKey">
+				<Property Name="P1" Type="Edm.String"/>
+				<Property Name="P2" Type="Edm.Int32"/>
+			</ComplexType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="EntitiesWithComplexKey" EntityType="special.cases.EntityWithComplexKey"/>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

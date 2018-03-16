@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ListItemBaseRenderer, Renderer) {
+sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRenderer"],
+	function(coreLibrary, Renderer, ListItemBaseRenderer) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 	/**
@@ -12,14 +16,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 	 * @namespace
 	 */
 	var GroupHeaderListItemRenderer = Renderer.extend(ListItemBaseRenderer);
-
-	GroupHeaderListItemRenderer.openItemTag = function(rm, oLI) {
-		rm.write(oLI.getTable() ? "<tr" : "<li");
-	};
-
-	GroupHeaderListItemRenderer.closeItemTag = function(rm, oLI) {
-		rm.write(oLI.getTable() ? "</tr>" : "</li>");
-	};
 
 	GroupHeaderListItemRenderer.renderType = function(rm, oLI) {
 		var oTable = oLI.getTable();
@@ -83,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		var sTextDir = oLI.getTitleTextDirection();
 		rm.write("<span class='sapMGHLITitle'");
 
-		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+		if (sTextDir != TextDirection.Inherit) {
 			rm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 
@@ -103,6 +99,14 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		if (!oLI.getTable()) {
 			ListItemBaseRenderer.addLegacyOutlineClass.apply(this, arguments);
 		}
+	};
+
+	GroupHeaderListItemRenderer.getAriaRole = function(oLI) {
+		if (oLI.getTable()) {
+			return "row";
+		}
+
+		return ListItemBaseRenderer.getAriaRole.apply(this, arguments);
 	};
 
 	return GroupHeaderListItemRenderer;

@@ -12,7 +12,7 @@
  * @public
  */
 
-sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType', 'jquery.sap.script'],
+sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType', 'jquery.sap.script', 'jquery.sap.keycodes'],
 	function(jQuery, Device, DataType /*, jQuerySap1 */) {
 	"use strict";
 
@@ -65,20 +65,6 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 
 	}
 
-	// PhantomJS patch for Focus detection via jQuery:
-	// ==> https://code.google.com/p/phantomjs/issues/detail?id=427
-	//     ==> https://github.com/ariya/phantomjs/issues/10427
-	if (Device.browser.phantomJS) {
-		// workaround copied from above bug report
-		var $is = jQuery.fn.is;
-		jQuery.fn.is = function(sSelector) {
-			if (sSelector === ":focus") {
-				return this.get(0) === document.activeElement;
-			}
-			return $is.apply(this, arguments);
-		};
-	}
-
 	// Re-implement jQuery.now to always delegate to Date.now.
 	//
 	// Otherwise, fake timers that are installed after jQuery don't work with jQuery animations
@@ -88,9 +74,22 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 		return Date.now();
 	};
 
-	// PhantomJS fix for invalid date handling:
-	// ==> https://github.com/ariya/phantomjs/issues/11151
+	// PhantomJS fixes
 	if (Device.browser.phantomJS) {
+
+		// 1.) PhantomJS patch for Focus detection via jQuery:
+		// ==> https://code.google.com/p/phantomjs/issues/detail?id=427
+		//     ==> https://github.com/ariya/phantomjs/issues/10427
+		var $is = jQuery.fn.is;
+		jQuery.fn.is = function(sSelector) {
+			if (sSelector === ":focus") {
+				return this.get(0) === document.activeElement;
+			}
+			return $is.apply(this, arguments);
+		};
+
+		// 2.) PhantomJS fix for invalid date handling:
+		// ==> https://github.com/ariya/phantomjs/issues/11151
 
 		/*eslint-disable */
 		var NativeDate = Date,
@@ -158,6 +157,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 			}
 		});
 		/*eslint-enable */
+
 	}
 
 	/**

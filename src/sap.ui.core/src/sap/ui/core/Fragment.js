@@ -141,7 +141,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 	/**
 	 * Returns the name of the fragment.
 	 *
-	 * @returns {String} the fragment name
+	 * @returns {string} the fragment name
 	 * @private
 	 */
 	Fragment.prototype.getFragmentName = function() { // required for the parser to lookup customizing configuration

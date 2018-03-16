@@ -1,0 +1,63 @@
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.ApiDetailDeprecatedExperimental"
+          xmlns="sap.uxap"
+          xmlns:m="sap.m"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns:layout="sap.ui.layout"
+          xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+
+    <m:Page id="deprecatedAPIsPage"
+            showHeader="false"
+            showSubHeader="false"
+            showFooter="false">
+        <m:content>
+            <ObjectPageLayout enableLazyLoading="false"
+                              showAnchorBarPopover="true"
+                              upperCaseAnchorBar="false"
+                              sections="{path : 'deprecatedAPIs>/',
+                                         sorter : {path : 'name',
+                                                   comparator : '.compareVersions'} }">
+                <headerTitle>
+                    <ObjectPageHeader id="title" objectTitle="Index of Deprecated APIs"/>
+                </headerTitle>
+                <headerContent>
+                    <layout:VerticalLayout id="deprecatedAPIStripContainer">
+                        <m:MessageStrip
+                                text="For general information about Deprecated features, please check the Compatibility Rules."
+                                type="Error"
+                                showIcon="true"/>
+                    </layout:VerticalLayout>
+                </headerContent>
+                <sections>
+                    <ObjectPageSection
+                            titleUppercase="false"
+                            title="{parts : [{ path : 'deprecatedAPIs>name'}],
+                                               formatter : '.formatTitle' }">
+                        <subSections>
+                            <ObjectPageSubSection>
+                                <blocks>
+                                    <m:List
+											id="deprecatedList"
+                                            items="{ path : 'deprecatedAPIs>apis', templateShareable: 'false'}"
+                                            showSeparators="Inner">
+                                        <m:items>
+                                            <m:FeedListItem
+                                                    showIcon="false"
+                                                    sender="{parts : [{path : 'deprecatedAPIs>control'}, {path : 'deprecatedAPIs>entityName'}, {path: 'deprecatedAPIs>type'}],
+                                                              formatter : '.formatSenderLink'}"
+                                                    text="{parts : [{path : 'deprecatedAPIs>text'}, {path : 'deprecatedAPIs>since'}],
+                                                           formatter: '.formatDescription'}"
+                                                    app:control="{deprecatedAPIs>control}"
+                                                    app:entity="{deprecatedAPIs>entityName}"
+                                                    app:type="{deprecatedAPIs>type}"
+                                                    app:static="{deprecatedAPIs>static}"/>
+                                        </m:items>
+                                    </m:List>
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+                </sections>
+            </ObjectPageLayout>
+        </m:content>
+    </m:Page>
+</mvc:View>

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
+sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConnector, Utils) {
 	"use strict";
 
 	/**
@@ -23,6 +23,8 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	Cache._entries = {};
 
 	Cache._switches = {};
+
+	Cache._oFlexDataPromise = undefined;
 
 	/**
 	 * Get the list of the switched-on business functions from the flex response
@@ -58,6 +60,17 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	};
 
 	/**
+	 * Returns the last cached flex data request promise
+	 *
+	 * @returns {Promise} Promise of a flex data request
+	 *
+	 * @protected
+	 */
+	Cache.getFlexDataPromise = function () {
+		return Cache._oFlexDataPromise;
+	};
+
+	/**
 	 * Returns the entries stored in the cache.
 	 *
 	 * @return {object} _entries - a map of flexibility references and server responses for the given entry
@@ -82,7 +95,7 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * Returns the entry stored in the cache and creates an entry if needed.
 	 *
 	 * @param {string} sComponentName - Name of the application component
-	 * @param {string} sAppVersion - Current running version of application
+	 * @param {string} sAppVersion - Currently running version of application
 	 * @return {object} Cache entry of specific application component and application version
 	 *
 	 * @protected
@@ -96,7 +109,9 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 				file: {
 					changes: {
 						changes: [],
-						contexts: []
+						contexts: [],
+						variantSection: {},
+						ui2personalization: {}
 					}
 				}
 			};
@@ -149,44 +164,81 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 	 * loadChanges method of the given LrepConnector.
 	 *
 	 * @param {sap.ui.fl.LrepConnector} oLrepConnector - LrepConnector instance to retrieve the changes with
-	 * @param {object} oComponent - Contains component data needed for reading changes
-	 * @param {string} oComponent.name - Name of the component
-	 * @param {string} oComponent.appVersion - Current running version of application
+	 * @param {map} mComponent - Contains component data needed for reading changes
+	 * @param {string} mComponent.name - Name of the component
+	 * @param {string} mComponent.appVersion - Current running version of application
 	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
 	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to actual component
-	 * @param {string} [mPropertyBag.siteId] - <code>sideId<code> that belongs to actual component
+	 * @param {string} [mPropertyBag.siteId] - <code>sideId</code> that belongs to actual component
+	 * @param {string} [mPropertyBag.cacheKey] - key to validate the client side stored cache entry
+	 * @param {string} [mPropertyBag.url] - address to which the request for change should be sent in case the data is not cached
+	 * @param {string} [mPropertyBag.appName] - name where bundled changes from the application development are stored
 	 * @returns {Promise} resolves with the change file for the given component, either from cache or back end
 	 *
 	 * @public
 	 */
-	Cache.getChangesFillingCache = function (oLrepConnector, oComponent, mPropertyBag) {
+	Cache.getChangesFillingCache = function (oLrepConnector, mComponent, mPropertyBag) {
 		if (!this.isActive()) {
-			return oLrepConnector.loadChanges(oComponent, mPropertyBag);
+			return oLrepConnector.loadChanges(mComponent, mPropertyBag);
 		}
-		var sComponentName = oComponent.name;
-		// in case of no changes present according to async hints
-		if (mPropertyBag && mPropertyBag.cacheKey === "<NO CHANGES>") {
-			return Promise.resolve({
-				changes: {
-					changes : [],
-					contexts : []
-				},
-				componentClassName: sComponentName
-			});
-		}
-
-		var sAppVersion = oComponent.appVersion || Utils.DEFAULT_APP_VERSION;
+		var sComponentName = mComponent.name;
+		var sAppVersion = mComponent.appVersion || Utils.DEFAULT_APP_VERSION;
 		var oCacheEntry = Cache.getEntry(sComponentName, sAppVersion);
 
 		if (oCacheEntry.promise) {
 			return oCacheEntry.promise;
 		}
 
-		var currentLoadChanges = oLrepConnector.loadChanges(oComponent, mPropertyBag).then(function (mChanges) {
-			if (mChanges && mChanges.changes && mChanges.changes.settings && mChanges.changes.settings.switchedOnBusinessFunctions) {
-				mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function(sValue) {
-				Cache._switches[sValue] = true;
-				});
+		var oChangesBundleLoadingPromise = Cache._getChangesFromBundle(mPropertyBag);
+
+		// in case of no changes present according to async hints
+		if (mPropertyBag && mPropertyBag.cacheKey === "<NO CHANGES>") {
+			var currentLoadChanges = oChangesBundleLoadingPromise.then(function (aChanges) {
+				oCacheEntry.file = {
+					changes: {
+						changes : aChanges,
+						contexts : [],
+						variantSection : {},
+						ui2personalization : {}
+					},
+					componentClassName: sComponentName
+				};
+				return oCacheEntry.file;
+			});
+			oCacheEntry.promise = currentLoadChanges;
+			return currentLoadChanges;
+		}
+
+		var oFlexDataPromise = oLrepConnector.loadChanges(mComponent, mPropertyBag);
+		var oChangesLoadingPromise = oFlexDataPromise.then(function (oResult) {
+			return oResult;
+		}, function (oError) {
+			// if the back end is not reachable we still cache the results in a valid way because the url request is
+			// cached by the browser in its negative cache anyway.
+			var sErrorMessage = jQuery.sap.formatMessage("flexibility service is not available:\nError message: {0}", oError.status);
+			jQuery.sap.log.error(sErrorMessage);
+			return Promise.resolve({
+				changes: {
+					changes: [],
+					contexts: [],
+					variantSection: {},
+					ui2personalization: {}
+				}
+			});
+		});
+
+		var currentLoadChanges = Promise.all([oChangesBundleLoadingPromise, oChangesLoadingPromise]).then(function (aValues) {
+			var aChangesFromBundle = aValues[0];
+			var mChanges = aValues[1];
+
+			if (mChanges && mChanges.changes) {
+				if (mChanges.changes.settings && mChanges.changes.settings.switchedOnBusinessFunctions) {
+					mChanges.changes.settings.switchedOnBusinessFunctions.forEach(function (sValue) {
+						Cache._switches[sValue] = true;
+					});
+				}
+
+				mChanges.changes.changes = aChangesFromBundle.concat(mChanges.changes.changes);
 			}
 			oCacheEntry.file = mChanges;
 			return oCacheEntry.file;
@@ -196,8 +248,75 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 		});
 
 		oCacheEntry.promise = currentLoadChanges;
+		Cache._oFlexDataPromise = oFlexDataPromise;
 
 		return currentLoadChanges;
+	};
+
+	/**
+	 * Function to get the changes-bundle.json file stored in the application sources.
+	 * This data is returned only in case it is part of the application preload or in debug mode.
+	 * In case no debugging takes place and the file is not loaded an empty list is returned.
+	 *
+	 * @param {map} mPropertyBag
+	 * @param {string} mPropertyBag.appName Fully qualified name of the application
+	 * @return {Promise} Promise resolving with an array of changes stored in the application source code
+	 *
+	 * @private
+	 */
+	Cache._getChangesFromBundle = function (mPropertyBag) {
+		var bChangesBundleDeterminable = mPropertyBag && mPropertyBag.appName;
+
+		if (!bChangesBundleDeterminable) {
+			return Promise.resolve([]);
+		}
+
+		var sResourcePath = jQuery.sap.getResourceName(mPropertyBag.appName, "/changes/changes-bundle.json");
+		var bChangesBundleLoaded = jQuery.sap.isResourceLoaded(sResourcePath);
+		if (bChangesBundleLoaded) {
+			return Promise.resolve(jQuery.sap.loadResource(sResourcePath));
+		} else {
+			if (!sap.ui.getCore().getConfiguration().getDebug()) {
+				return Promise.resolve([]);
+			}
+
+			// try to load the source in case a debugging takes place and the component could have no Component-preload
+			try {
+				return Promise.resolve(jQuery.sap.loadResource(sResourcePath));
+			} catch (e) {
+				jQuery.sap.log.warning("flexibility did not find a changesBundle.json  for the application");
+				return Promise.resolve([]);
+			}
+		}
+	};
+
+
+	Cache.NOTAG = "<NoTag>";
+
+	/**
+	 * Function to retrieve the cache key of the SAPUI5 flexibility request of a given application
+	 *
+	 * @param {map} mComponent
+	 * @param {string} mComponent.name Name of the application component
+	 * @param {string} mComponent.appVersion Version of the application component
+	 * @return {Promise} Returns the promise resolved with the determined cache key
+	 *
+	 * @private
+	 * @restricted sap.ui.fl
+	 *
+	 */
+	Cache.getCacheKey = function (mComponent) {
+		if (!mComponent || !mComponent.name || !mComponent.appVersion) {
+			jQuery.sap.log.warning("Not all parameters were passed to determine a flexibility cache key.");
+			return Promise.resolve(Cache.NOTAG);
+		}
+		return this.getChangesFillingCache(new LrepConnector(), mComponent).then(function (oWrappedChangeFileContent) {
+			if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
+				return oWrappedChangeFileContent.etag;
+			} else {
+				return Cache.NOTAG;
+			}
+		});
 	};
 
 	/**
@@ -280,6 +399,116 @@ sap.ui.define(["sap/ui/fl/Utils"], function (Utils) {
 			}
 		}
 	};
+
+
+
+	/**
+	 * Retrievea a personalization object stored for an application under a given container ID and item name;
+	 * in case no itemName is given all items for the given container key are returned.
+	 *
+	 * @param {string} sReference The reference of the application for which the personalization should be retrieved
+	 * @param {string} sAppVersion Currently running version of the application
+	 * @param {string} sContainerKey The key of the container in which the personalization was stored
+	 * @param {string} [sItemName] The item name under which the personalization was stored
+	 * @returns {Promise} Promise resolving with the object stored under the passed container key and item name,
+	 * or undefined in case no entry was stored for these;
+	 * in case no sItemName was passed all entries known for the container key
+	 */
+	Cache.getPersonalization = function (sReference, sAppVersion, sContainerKey, sItemName) {
+		var mComponent = {
+			name: sReference,
+			appVersion: sAppVersion
+		};
+		return this.getChangesFillingCache(LrepConnector.createConnector(), mComponent).then(function (oResponse) {
+			if (!oResponse || !oResponse.changes || !oResponse.changes.ui2personalization ||
+				!oResponse.changes.ui2personalization[sContainerKey]) {
+				// return undefined in case there is no personalization for the item or an empty array if a list was requested
+				return sItemName ? undefined : [];
+			}
+
+			if (!sItemName) {
+				return oResponse.changes.ui2personalization[sContainerKey] || [];
+			}
+
+			return oResponse.changes.ui2personalization[sContainerKey].filter(function (oEntry) {
+				return oEntry.itemName === sItemName;
+			})[0];
+		});
+	};
+
+	/**
+	 * Stores a personalization object for an application under a given key pair.
+	 *
+	 * @param {map} mPersonalization
+	 * @param {string} mPersonalization.reference The reference of the application for which the personalization should be stored
+	 * @param {string} mPersonalization.containerKey The key of the container in which the personalization should stored
+	 * @param {string} mPersonalization.itemName The name under which the personalization should be stored
+	 * @param {string} mPersonalization.content The personalization content to be stored
+	 * @returns {Promise} Promise resolving with the object stored under the passed container key and item name,
+	 * or undefined in case no entry was stored for these
+	 */
+	Cache.setPersonalization = function (mPersonalization) {
+		if (!mPersonalization || !mPersonalization.reference ||
+			!mPersonalization.containerKey || !mPersonalization.itemName || !mPersonalization.content) {
+			return Promise.reject("not all mandatory properties were provided for the storage of the personalization");
+		}
+
+		return LrepConnector.createConnector().send("/sap/bc/lrep/ui2personalization/", "PUT", mPersonalization, {})
+			.then(this._addPersonalizationToEntries.bind(this, mPersonalization));
+	};
+
+	Cache._addPersonalizationToEntries = function (mPersonalization) {
+		Object.keys(this._entries[mPersonalization.reference]).forEach(function (sVersion) {
+			var oEntry = this._entries[mPersonalization.reference][sVersion];
+			var oPersonalizationSubsection = oEntry.file.changes.ui2personalization;
+			if (!oPersonalizationSubsection[mPersonalization.containerKey]) {
+				oPersonalizationSubsection[mPersonalization.containerKey] = [];
+			}
+
+			oPersonalizationSubsection[mPersonalization.containerKey].push(mPersonalization);
+		}.bind(this));
+	};
+
+	/**
+	 * Deletes the personalization for a given reference
+	 *
+	 * @param {string} sReference The reference of the application for which the personalization should be deleted
+	 * @param {string} sContainerKey The key of the container for which the personalization should be deleted
+	 * @param {string} sItemName The name under which the personalization should be deleted
+	 * @returns {Promise} Promise resolving in case the deletion request was successful
+	 */
+	Cache.deletePersonalization = function(sReference, sContainerKey, sItemName) {
+		if (!sReference || !sContainerKey || !sItemName) {
+			return Promise.reject("not all mandatory properties were provided for the storage of the personalization");
+		}
+
+		var sUrl = "/sap/bc/lrep/ui2personalization/?reference=";
+		sUrl += sReference + "&containerkey=" + sContainerKey + "&itemname=" + sItemName;
+
+		return LrepConnector.createConnector().send(sUrl, "DELETE", {})
+			.then(this._removePersonalizationFromEntries.bind(this, sReference, sContainerKey, sItemName));
+	};
+
+	Cache._removePersonalizationFromEntries = function (sReference, sContainerKey, sItemName) {
+		var aDeletionPromises = [];
+
+		Object.keys(this._entries[sReference]).forEach(function (sAppVersion) {
+			var oGetAllItemsPromise = this.getPersonalization(sReference, sAppVersion, sContainerKey);
+			var oGetItemPromise = this.getPersonalization(sReference, sAppVersion, sContainerKey, sItemName);
+
+			var oDeletionPromise = Promise.all([oGetAllItemsPromise, oGetItemPromise]).then(function (aParams) {
+				var aItems = aParams[0];
+				var oToBeDeletedItem = aParams[1];
+				var nIndexOfItem = aItems.indexOf(oToBeDeletedItem);
+				aItems.splice(nIndexOfItem, 1);
+			});
+
+			aDeletionPromises.push(oDeletionPromise);
+		}.bind(this));
+
+		return Promise.all(aDeletionPromises);
+	};
+
 
 	return Cache;
 }, /* bExport= */true);

@@ -14,8 +14,7 @@
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-preload="async"
 			data-sap-ui-resourceroots='{"sap.ui.demo.iconexplorer": "."}'
-			data-sap-ui-frameOptions="trusted"
-			data-sap-ui-preload="async">
+			data-sap-ui-frameOptions="trusted">
 	</script>
 	<script>
 		sap.ui.getCore().attachInit(function () {
@@ -24,11 +23,12 @@
 				"sap/ui/core/ComponentContainer"
 			], function (Shell, ComponentContainer) {
 				// initialize the UI component
-				new Shell({
-					app: new ComponentContainer({
-						height : "100%",
-						name : "sap.ui.demo.iconexplorer"
-					})
+				new ComponentContainer({
+					height : "100%",
+					name : "sap.ui.demo.iconexplorer",
+					settings : {
+						id : "iconexplorer"
+					}
 				}).placeAt("content");
 			});
 		});

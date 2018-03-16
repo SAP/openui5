@@ -1,0 +1,22 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.MultiInputValueHelp.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<Label text="Enter a search term, e.g. “Notebook”, and add matching products as tokens" width="100%" labelFor="multiInput"/>
+		<MultiInput width="500px"
+			id="multiInput"
+			suggestionItems="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}"
+			showValueHelp="true" valueHelpRequest="handleValueHelp">
+			<core:Item key="{ProductId}" text="{Name}" />
+		</MultiInput>
+	</l:VerticalLayout>
+</mvc:View>

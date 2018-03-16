@@ -3,8 +3,9 @@
 sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/m/PDFViewer",
-	"sap/ui/model/json/JSONModel"
-], function (TestUtils, PDFViewer, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/m/PDFViewerRenderer"
+], function (TestUtils, PDFViewer, JSONModel, PDFViewerRenderer) {
 	"use strict";
 
 	var oPdfViewer = null;
@@ -16,7 +17,7 @@ sap.ui.define([
 	});
 
 	// if the environment does not have pdf plugin, then it is not possible to run standard test suite
-	if (!PDFViewer._isPdfPluginEnabled()) {
+	if (!PDFViewerRenderer._isPdfPluginEnabled()) {
 		return;
 	}
 

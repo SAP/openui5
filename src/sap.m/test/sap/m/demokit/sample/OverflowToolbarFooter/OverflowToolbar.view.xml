@@ -65,16 +65,17 @@
 			<OverflowToolbar id="otbFooter">
 				<ToolbarSpacer/>
 				<Button type="Accept" text="Accept">
-					<layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
+					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" /></layoutData>
 				</Button>
 				<Button type="Reject" text="Reject">
-					<layoutData><OverflowToolbarLayoutData moveToOverflow="false" /></layoutData>
+					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" /></layoutData>
 				</Button>
 				<OverflowToolbarButton text="Delete" icon="sap-icon://delete"/>
 				<OverflowToolbarButton text="Edit" icon="sap-icon://edit"/>
 				<OverflowToolbarButton text="Add" icon="sap-icon://add"/>
 				<OverflowToolbarButton text="Favorite" icon="sap-icon://favorite"/>
 				<OverflowToolbarButton text="Flag" icon="sap-icon://flag"/>
+				<OverflowToolbarToggleButton text="Toggle" icon="sap-icon://action" press="onTogglePress"/>
 
 			</OverflowToolbar>
 		</footer>

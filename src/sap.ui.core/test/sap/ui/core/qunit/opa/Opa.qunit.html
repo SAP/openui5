@@ -26,10 +26,10 @@ QUnit.config.reorder = false;
 
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/thirdparty/URI",
 	"unitTests/utils/loggerInterceptor",
-	"sap/ui/Device",
-	"sap/ui/thirdparty/URI"
-], function ($, loggerInterceptor, Device,URI) {
+	"unitTests/utils/browser",
+], function ($, URI, loggerInterceptor, browser) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -38,7 +38,7 @@ sap.ui.require([
 
 	// loadAndIntercept also loads the module.
 	// I cannot load it with the require above because i need to spy during the loading
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa");
+	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa")[1];
 	var Opa = sap.ui.test.Opa;
 
 	// save default execution delay for this specific browser
@@ -283,27 +283,23 @@ sap.ui.require([
 
 	QUnit.module("Exception Handling");
 
-	QUnit.test("Should throw an Exception and reject the emptyQueue promise if there is an error in the check or success", function(assert) {
+	QUnit.test("Should reject the emptyQueue promise if there is an error in the check or success", function(assert) {
 
 		var oError = new Error("OpaError"),
 			fnFaultyFunction = function() {
 				throw oError;
 			},
-			fnClockTick = function() {
-				this.clock.tick(100);
-			}.bind(this),
 			oOpa = new Opa(),
 			oOpa1 = new Opa(),
 			fnSpy = this.spy();
 
 		oOpa.waitFor({check : fnFaultyFunction}).emptyQueue().fail(fnSpy);
-		assert.throws(fnClockTick, oError, "Exception thrown for check");
-
 		this.clock.tick(100);
-
 		oOpa1.waitFor({success : fnFaultyFunction}).emptyQueue().fail(fnSpy);
-		assert.throws(fnClockTick, oError, "Exception thrown for success");
-		assert.strictEqual(fnSpy.callCount, 2, "Promise rejected in both cases")
+		this.clock.tick(100);
+		assert.strictEqual(fnSpy.callCount, 2, "Promise rejected in both cases");
+		assert.ok(fnSpy.args[0][0].errorMessage.match("^Failure in Opa check function\n"), "Unexpected error message");
+		assert.ok(fnSpy.args[1][0].errorMessage.match("^Failure in Opa success function\n"), "Unexpected error message");
 	});
 
 
@@ -313,14 +309,11 @@ sap.ui.require([
 			fnFaultyFunction = function() {
 				throw oError;
 			},
-			fnClockTick = function() {
-				this.clock.tick(100);
-			}.bind(this),
 			oOpa = new Opa(),
 			fnCheck = this.spy( function() {
 				return false;
 			}),
-			fnSuccess = this.spy();
+			fnFail = this.spy();
 
 		oOpa.waitFor({
 			check : fnFaultyFunction
@@ -329,17 +322,51 @@ sap.ui.require([
 			check : fnCheck
 		});
 
-		oOpa.emptyQueue();
-
-		assert.throws(fnClockTick, oError, "Exception thrown for check");
-		oOpa.emptyQueue().done(fnSuccess);
-
+		oOpa.emptyQueue().fail(fnFail);
 		this.clock.tick(100);
-		assert.strictEqual(fnSuccess.callCount, 1, "Called success");
+		var errorMessage = fnFail.args[0][0].errorMessage;
+		assert.strictEqual(fnFail.callCount, 1, "Called error handler");
+		assert.ok(errorMessage.match("^Failure in Opa check function\n"), "Unexpected error message");
+		assert.ok(errorMessage.match("Exception thrown by the testcode"), "Unexpected error message");
+		assert.ok(errorMessage.match("Error: OpaError"), "Unexpected error message");
 		assert.strictEqual(fnCheck.callCount, 0, "Never called check since the previous wait for threw an exception");
 
 	});
 
+	QUnit.test("Should be able to handle a waitFor error and reject the empty queue", function (assert) {
+		var oOpa = new Opa(),
+			fnSuccess = this.spy(),
+			fnEmptyQueueFail = this.spy(),
+			fnWaitForFail = this.spy(),
+			// enqueue the waitFors first
+			oFailingWaitFor = oOpa.waitFor({
+				success: function() {
+					throw new Error("OpaError");
+				}
+			});
+
+		oOpa.waitFor({
+			success: fnSuccess
+		});
+
+		// then attach a handler to one of the waitFors.
+		// the handler works ok if it is attached before another waitFor is enqueued, but we need to be able to attach it at any point
+		oFailingWaitFor.fail(fnWaitForFail);
+
+		oOpa.emptyQueue().fail(fnEmptyQueueFail);
+		this.clock.tick(100);
+		assert.strictEqual(fnWaitForFail.callCount, 1, "Should call waitFor error handler");
+		assert.strictEqual(fnEmptyQueueFail.callCount, 1, "Should call emptyQueue error handler");
+		assert.ok(fnWaitForFail.calledBefore(fnEmptyQueueFail), "Should call waitFor error handler before emptyQueue error handler");
+
+		[fnWaitForFail, fnEmptyQueueFail].forEach(function (fnSpy) {
+			var errorMessage = fnSpy.args[0][0].errorMessage;
+			assert.ok(errorMessage.match("^Failure in Opa success function\n"), "Unexpected error message");
+			assert.ok(errorMessage.match("Exception thrown by the testcode"), "Unexpected error message");
+			assert.ok(errorMessage.match("Error: OpaError"), "Unexpected error message");
+		});
+		assert.strictEqual(fnSuccess.callCount, 0, "Should never call the second success since the previous waitFor threw an exception");
+	});
 
 	QUnit.module("StopQueue", {
 		beforeEach : function () {
@@ -408,43 +435,71 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("Should stop running tests and fail the promise if 'stopQueue' is called", function(assert) {
-		// System under Test
+	QUnit.test("Should stop running tests and fail the promise if 'stopQueue' is called", function (assert) {
 		var oOpa = new Opa(),
 			fnDone = assert.async(),
 			fnShouldNotBeCalled = sinon.spy();
 
 		function callingFunction () {
 			Opa.stopQueue();
-			// stop during check should not trigger success
+			// stop during check should prevent success from running
 			return true;
 		}
 
-		// Act
 		oOpa.waitFor({
-			check : function () {
-				// special named function for stacks
-				callingFunction();
+			check: function () {
+				// use named function for stack validation
+				return callingFunction();
 			},
-			success : fnShouldNotBeCalled
+			success: fnShouldNotBeCalled
 		});
 
 		oOpa.emptyQueue().fail(function () {
+			sinon.assert.calledOnce(this.fnErrorLogStub);
+
 			oOpa.waitFor({success: fnShouldNotBeCalled});
 
 			Opa.emptyQueue().fail(function () {
 				sinon.assert.notCalled(fnShouldNotBeCalled);
 				sinon.assert.calledTwice(this.fnErrorLogStub);
-				if (theCurrentBrowserSupportsStacktraces()) {
-					sinon.assert.calledWith(this.fnErrorLogStub, sinon.match(/callingFunction/), "Opa");
+				if (browser.supportsStacktraces()) {
+					sinon.assert.alwaysCalledWithMatch(this.fnErrorLogStub, "callingFunction", "Opa");
 				}
-				sinon.assert.alwaysCalledWith(this.fnErrorLogStub, sinon.match(/Queue was stopped manually/) ,"Opa");
+				sinon.assert.alwaysCalledWithMatch(this.fnErrorLogStub, "Queue was stopped manually","Opa");
 				fnDone();
 			}.bind(this));
 
-			// stop twice to see if state is deleted correctly
+			// stop again outside check/success to validate state is deleted correctly
 			callingFunction();
 		}.bind(this));
+	});
+
+	QUnit.test("Should show info about last executed check on QUnit timeout", function callingFunction (assert) {
+		var oOpa = new Opa(),
+			fnCheckStub = sinon.stub(),
+			fnDone = assert.async();
+
+		fnCheckStub.returns(false);
+
+		oOpa.waitFor({
+			check: fnCheckStub,
+			success: function () {}
+		});
+
+		oOpa.emptyQueue().fail(function () {
+			sinon.assert.calledOnce(this.fnErrorLogStub);
+			if (browser.supportsStacktraces()) {
+				sinon.assert.calledWithMatch(this.fnErrorLogStub, "callingFunction", "Opa");
+			}
+			sinon.assert.calledWithMatch(this.fnErrorLogStub, "QUnit timeout", "Opa");
+			fnDone();
+		}.bind(this));
+
+		setTimeout(function () {
+			// _stopQueue on QUnit timeout is called outside the queue
+			// put this in a timeout to ensure the queue is started
+			Opa._stopQueue({qunitTimeout: 30000});
+		}, 50);
 	});
 
 	QUnit.module("Timeouts", {
@@ -492,27 +547,6 @@ sap.ui.require([
 
 	});
 
-	function theCurrentBrowserSupportsStacktraces () {
-		if (Device.browser.phantomJS) {
-			return false;
-		}
-
-		//Incident 1580223677: IOS does not support stacktraces
-		if (Device.os.ios) {
-			return false;
-		}
-
-		if(Device.browser.safari) {
-			return false;
-		}
-
-		if (navigator.userAgent.indexOf("SAPFioriClient") !== -1) {
-			return false;
-		}
-
-		return true;
-	}
-
 	QUnit.test("Should reject the promise if no error handler is defined", function thisIsTheCallingFunction (assert) {
 		// System under Test
 		var oOpa = new Opa();
@@ -532,7 +566,7 @@ sap.ui.require([
 			assert.ok(oOptions, "Options are passed");
 			assert.ok(oOptions.errorMessage, "Error message is there");
 
-			if (theCurrentBrowserSupportsStacktraces()) {
+			if (browser.supportsStacktraces()) {
 				assert.ok(oOptions.errorMessage.indexOf("thisIsTheCallingFunction") > -1, "Error message contains calling function");
 			}
 
@@ -574,7 +608,7 @@ sap.ui.require([
 			assert.ok(oOptions, "Options are passed");
 			assert.ok(oOptions.errorMessage, "Error message is there");
 
-			if (theCurrentBrowserSupportsStacktraces()) {
+			if (browser.supportsStacktraces()) {
 				assert.ok(oOptions.errorMessage.indexOf("thisIsTheMainTest") > -1, "Error message contains calling main function");
 				assert.ok(oOptions.errorMessage.indexOf("thisIsTheSuccessHandler") > -1, "Error message contains calling internal function");
 			}
@@ -707,13 +741,17 @@ sap.ui.require([
 
 	QUnit.test("Should read an opa config value from URL parameter", function (assert) {
 		var fnDone = assert.async();
-		var oStub = sinon.stub(URI.prototype, "search", function () {
-			return {
-				"opaKey": "value",			// should parse prefixed params
-				"opaExecutionDelay": "2000",// should override default value params
-				"another": "value",			// should not parse unprefixed params
-				"opaOverride": "value"		// should override already set params
-			};
+		var fnOrig = URI.prototype.search;
+		var oStub = sinon.stub(URI.prototype, "search", function (query) {
+			if ( query === true ) {
+				return {
+					"opaKey": "value",			// should parse prefixed params
+					"opaExecutionDelay": "2000",// should override default value params
+					"another": "value",			// should not parse unprefixed params
+					"opaOverride": "value"		// should override already set params
+				};
+			}
+			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
 		});
 		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
 
@@ -739,6 +777,30 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.test("Should configure the max log level", function (assert) {
+		var fnDone = assert.async();
+		var fnLogLevelSpy = sinon.spy(sap.ui.test._OpaLogger, "setLevel");
+		var fnOrig = URI.prototype.search;
+		var oStub = sinon.stub(URI.prototype, "search", function (query) {
+			if ( query === true ) {
+				return {
+					opaLogLevel: "trace"
+				};
+			}
+			return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
+		});
+
+		$.sap.unloadResources("sap/ui/test/Opa.js", false, true, true);
+		sap.ui.require(["sap/ui/test/Opa"], function (Opa) {
+			assert.strictEqual(Opa.config.logLevel, "trace");
+			assert.ok(fnLogLevelSpy.calledOnce, "Log level was changed");
+			sinon.assert.calledWith(fnLogLevelSpy, "trace");
+			oStub.restore();
+			fnLogLevelSpy.restore();
+			fnDone();
+		});
+	});
+
 	QUnit.module("Opa Empty queue", {
 		beforeEach: function () {
 			sinon.config.useFakeTimers = false;
@@ -748,8 +810,7 @@ sap.ui.require([
 		}
 	});
 
-	QUnit.test("Should throw an exception if EmptyQueue function is called twice", function(assert) {
-		// System under Test
+	QUnit.test("Should throw an exception if emptyQueue is called twice", function (assert) {
 		var oOpa = new Opa();
 
 		oOpa.waitFor({});
@@ -757,16 +818,16 @@ sap.ui.require([
 		oOpa.waitFor({});
 
 		assert.throws(
-				function() {
-					Opa.emptyQueue();
-				},
-				new Error("Opa is emptying its queue. Calling Opa.emptyQueue() is not supported at this time.")
+			function() {
+				Opa.emptyQueue();
+			},
+			new Error("Opa is emptying its queue. Calling Opa.emptyQueue() is not supported at this time.")
 		);
 
 		// cleanup the OPA queue to avoid side effects on following tests
 		Opa.stopQueue();
 
-		// make sure no exception is thrown now
+		// no exception should be thrown now after the queue is stopped
 		Opa.emptyQueue();
 	});
 

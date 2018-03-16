@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'/>
+
+		<script src="../../../../../../resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-resourceroots='{"sap.ui.rta.test.Demo": "./"}'
+				data-sap-ui-theme="sap_belize">
+		</script>
+
+	</head>
+	<body class="sapUiBody" role="application">
+		<h1>Extensibility Tool</h1>
+		<div>Here would be the extensibility tool UI prefilled with the following parameters:</div>
+		<div id="content"></div>
+		<button onclick="markInvalid()">Simulate Custom Field Generation</button>
+		<script>
+			document.getElementById("content").textContent  = decodeURIComponent(window.location.search.substring(1));
+
+			function markInvalid(){
+				jQuery.sap.require("sap.ui.fl.fieldExt.Access");
+				sap.ushell = jQuery.extend(sap.ushell, {
+					Container : {
+						getLogonSystem : function(){
+							return {
+								getName: function() {
+									return "ABC";
+								},
+								getClient: function() {
+									return "123";
+								}
+							};
+						}
+					}
+				});
+				sap.ui.fl.fieldExt.Access.setServiceInvalid("/here/goes/your/serviceurl/");
+			}
+		</script>
+	</body>
+</html>

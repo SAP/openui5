@@ -1,0 +1,8 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<VBox>
+		<Text text="Text 1" />
+		<Text text="Text 2" />
+		<Text text="Text 3" />
+	</VBox>
+</core:FragmentDefinition>

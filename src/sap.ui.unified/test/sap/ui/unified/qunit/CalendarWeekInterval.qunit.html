@@ -29,6 +29,9 @@
 			var CalendarUtils = sap.ui.unified.calendar.CalendarUtils,
 				CalendarDate = sap.ui.unified.calendar.CalendarDate;
 
+			// set language to en-US, since we have specific language strings tested
+			sap.ui.getCore().getConfiguration().setLanguage("en_US");
+
 			QUnit.module("Events", {
 				beforeEach: function () {
 					this.oPC = new sap.m.PlanningCalendar('pc1', {
@@ -158,7 +161,7 @@
 				}
 			});
 
-			QUnit.test("'_handleFocus()' has correct output", function (assert) {
+			QUnit.test("'_handleFocus()' has correct output when datesRow is is focused in visible area", function (assert) {
 				//prepare
 				var _handleFocusCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_handleFocus"),
 					_focusDateExtendCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_focusDateExtend"),
@@ -174,16 +177,25 @@
 				assert.strictEqual(_handleFocusCalendarDateSpy.callCount, 1, "CalendarDateInterval '_handleFocus()' was called for first time");
 				assert.strictEqual(_focusDateExtendCalendarDateSpy.callCount, 1, "CalendarDateInterval '_focusDateExtend()' was called for first time");
 				assert.strictEqual(_focusDateExtendWeekDateSpy.callCount, 1, "CalendarWeekInterval '_focusDateExtend()' was called for first time");
+			});
+
+			QUnit.test("'_handleFocus()' has correct output when datesRow is is focused outside visible area (border reached)", function (assert) {
+				//prepare
+				var _handleFocusCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_handleFocus"),
+						_focusDateExtendCalendarDateSpy = this.spy(sap.ui.unified.CalendarDateInterval.prototype, "_focusDateExtend"),
+						_focusDateExtendWeekDateSpy = this.spy(this.sut, "_focusDateExtend"),
+						oDate = new Date(2015, 0, 2, 19, 15, 0);
 				//act
 				this.sutMonth.fireFocus({
-					date : new Date(2015, 0, 2, 19, 15, 0),
+					date : oDate,
 					otherMonth : false,
 					restoreOldDate : false,
 					_outsideBorder: true
 				});
-				assert.strictEqual(_handleFocusCalendarDateSpy.callCount, 2, "CalendarDateInterval '_handleFocus()' was called for second time");
-				assert.strictEqual(_focusDateExtendCalendarDateSpy.callCount, 1, "CalendarDateInterval '_focusDateExtend()' was called for first time");
-				assert.strictEqual(_focusDateExtendWeekDateSpy.callCount, 2, "CalendarWeekInterval '_focusDateExtend()' was not called");
+				//assert
+				assert.strictEqual(_handleFocusCalendarDateSpy.callCount, 1, "CalendarDateInterval '_handleFocus()' was called");
+				assert.strictEqual(_focusDateExtendCalendarDateSpy.callCount, 0, "CalendarDateInterval '_focusDateExtend()' should not be called");
+				assert.strictEqual(_focusDateExtendWeekDateSpy.callCount, 1, "CalendarWeekInterval '_focusDateExtend()' was called");
 			});
 
 			QUnit.test("'_focusDateExtend()' has correct output", function (assert) {
@@ -203,164 +215,272 @@
 				assert.ok(_focusDateExtendSpy.calledWith(oExpectedDate, true, false), "'_focusDateExtend()' was called with the correct parameters");
 			});
 
-			QUnit.test("'_adjustFocusedDateUponYearChange()' has correct output", function (assert) {
-				/**
-				 * These are some corner case dates for week number calculation (based on first day of week)
-				 * =============================================================================================
-				 * |   year   |   week number   |   week day index (ISO8601)  |   Expected first date of week  |
-				 * =============================================================================================
-				 * |                                    Locale en-GB                                           |
-				 * =============================================================================================
-				 * |   2007   |       52        |             1               |        24 December 2007        |
-				 * |   2006   |       52        |             1               |        25 December 2006        |
-				 * |   2010   |       52        |             1               |        27 December 2010        |
-				 * |   2008   |       52        |             1               |        22 December 2008        |
-				 * |   2007   |       52        |             1               |        24 December 2007        |
-				 * |   2015   |       53        |             1               |        28 December 2015        |
-				 * |   2009   |       53        |             1               |        28 December 2009        |
-				 * |   2004   |       53        |             1               |        27 December 2004        |
-				 * |   1999   |       52        |             1               |        27 December 1999        |
-				 * =============================================================================================
-				 * |                                    Locale en-US                                           |
-				 * =============================================================================================
-				 * |   2008   |       52        |             1               |        21 December 2008        |
-				 * |   2006   |       52        |             1               |        24 December 2006        |
-				 * |   2011   |       52        |             1               |        18 December 2011        |
-				 * |   2007   |       52        |             1               |        23 December 2007        |
-				 * |   2011   |       53        |             1               |        25 December 2011        |
-				 * |   2005   |       53        |             1               |        25 December 2005        |
-				 * |   2000   |       53        |             1               |        24 December 2000        |
-				 * |   2002   |       52        |             1               |        22 December 2002        |
-				 */
-				//prepare
-				var oTestData = {
-						"en-US": {
-							"oTestDate":  CalendarDate.fromLocalJSDate(new Date(2011, 11, 28)),
-							"o53to53Test": [
-								{
-									oTargetYear: 2005,
-									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2005, 11, 25))
-								},
-								{
-									oTargetYear: 2000,
-									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2000, 11, 24))
-								}
-							],
-							"o53to52Test": [
-								{
-									oTargetYear: 2000,
-									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2000, 11, 24))
-								}
-							],
-							"o52to52Test": [
-								{
-									oTargetYear: 2002,
-									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2002, 11, 22))
-								},
-								{
-									oTargetYear: 2008,
-									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2008, 11, 21))
-								},
-								{
-									oTargetYear: 2006,
-									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2006, 11, 24))
-								},
-								{
-									oTargetYear: 2011,
-									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2011, 11, 18))
-								},
-								{
-									oTargetYear: 2007,
-									oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2007, 11, 23))
-								}
-							]
-						},
-						"en-GB": {
-							"oTestDate":  CalendarDate.fromLocalJSDate(new Date(2015, 11, 30)),
-							"o53to53Test": [
-								{ oTargetYear: 2009, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2009, 11, 28)) },
-								{ oTargetYear: 2004, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2004, 11, 27)) }
-							],
-							"o53to52Test": [
-								{ oTargetYear: 1999, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(1999, 11, 27)) }
-							],
-							"o52to52Test": [
-								{ oTargetYear: 2007, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2007, 11, 24)) },
-								{ oTargetYear: 2006, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2006, 11, 25)) },
-								{ oTargetYear: 2010, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2010, 11, 27)) },
-								{ oTargetYear: 2008, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2008, 11, 22)) },
-								{ oTargetYear: 2007, oExpectedFirstDate: CalendarDate.fromLocalJSDate(new Date(2007, 11, 24)) }
-							]
-						}
-					},
-					iIndex,
-					oTestDate,
-					oTestFocusedDateFullYear,
-					oTargetYear,
-					oExpectedFirstDate,
-					fnRestartTestEnv = function () {
-						iIndex = null;
-						oTestDate = null;
-						oTestFocusedDateFullYear = null;
-						oTargetYear = null;
-						oExpectedFirstDate = null;
-					},
-					fnPerformTestCase = function (sLocaleId, sTestName) {
-						for (var iIndex = 0; iIndex < oTestData[sLocaleId][sTestName].length; iIndex++) {
-							oTestDate = oTestData[sLocaleId]["oTestDate"];
-							oTestFocusedDateFullYear = oTestDate.getYear();
-							oTargetYear = oTestData[sLocaleId][sTestName][iIndex]["oTargetYear"];
-							oExpectedFirstDate = oTestData[sLocaleId][sTestName][iIndex]["oExpectedFirstDate"];
+			QUnit.module("Calendar Picker");
+			QUnit.test("If choosed date from the Calendar picker is in the 'selected' week the startDate should stay the same", function(assert) {
+				// arrange
+				var $Date,
+					oCalP = new sap.ui.unified.CalendarWeekInterval("CalP",{
+								startDate: new Date("2015", "7", "9"),
+								pickerPopup: true
+							}).placeAt("qunit-fixture");
 
-							this.sut._adjustFocusedDateUponYearChange(oTestDate, oTargetYear);
-							//assert
-							assert.strictEqual(oTestDate.toString(), oExpectedFirstDate.toString(),
-								sTestName + ": '_adjustFocusedDateUponMonthChange()' calculated correctly oFocusedDate when trying to navigate from " + oTestFocusedDateFullYear + " to " + oTargetYear + " for en-US locale");
-						}
-						fnRestartTestEnv();
-					}.bind(this);
-
-				/* en-US locale */
-
-				/* Case 1: When going from CW53 to CW53 weeks in it the focused date is the first day of the target's CW#53 */
-				//act
-				this.sutMonth.fireFocus({
-					date : oTestData["en-US"].oTestDate.toLocalJSDate(),
-					otherMonth : false,
-					restoreOldDate : false,
-					_outsideBorder: true
-				});
-				fnPerformTestCase("en-US", "o53to53Test");
-				/* Case 2: When going from CW53 to a year that don't have 53 weeks in it the focused date is the first day of the target's CW#52 */
-				//act
-				fnPerformTestCase("en-US", "o53to52Test");
-				//assert
-				/* Case 3: When going from any week (except the 53rd) to other year the focused date is the first day of the same week */
-				//act
-				fnPerformTestCase("en-US", "o52to52Test");
-
-				/* en-GB locale */
-
-				/* Case 1: When going from CW53 to CW53 weeks in it the focused date is the first day of the target's CW#53 */
-				//act
-				sap.ui.getCore().getConfiguration().setFormatLocale("en-GB");
-				this.sutMonth.fireFocus({
-					date : oTestData["en-GB"].oTestDate.toLocalJSDate(),
-					otherMonth : false,
-					restoreOldDate : false,
-					_outsideBorder: true
-				});
-				fnPerformTestCase("en-GB", "o53to53Test");
-				/* Case 2: When going from CW53 to a year that don't have 53 weeks in it the focused date is the first day of the target's CW#52 */
-				//act
-				fnPerformTestCase("en-GB", "o53to52Test");
-				//assert
-				/* Case 3: When going from any week (except the 53rd) to other year the focused date is the first day of the same week */
-				//act
-				fnPerformTestCase("en-GB", "o52to52Test");
-				//restore locale to en-US
-				sap.ui.getCore().getConfiguration().setFormatLocale("en-US");
 				sap.ui.getCore().applyChanges();
+
+				assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar3: Calendar picker not initial rendered");
+				qutils.triggerEvent("click", "CalP--Head-B1");
+				assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker rendered");
+				assert.equal(jQuery("#CalP--Cal").parent().attr("id"), "sap-ui-static", "Calendar picker rendered in static area");
+				assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
+
+				// select 14.08.2015
+				$Date = jQuery("#CalP--Cal--Month0-20150814");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+				assert.equal(sap.ui.getCore().byId("CalP").getStartDate().getDate(), 9, "start date is set correctly");
+
+				assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker still rendered after closing");
+				assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
+
+				// clean
+				oCalP.destroy();
+			});
+
+			QUnit.test("If choosed date from the Calendar picker is NOT in the 'selected' week the startDate should be changed to the start date of the week in which is the selected date", function(assert) {
+				// arrange
+				var $Date,
+					oCalP = new sap.ui.unified.CalendarWeekInterval("CalP",{
+								startDate: new Date("2015", "7", "9"),
+								pickerPopup: true
+							}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar3: Calendar picker not initial rendered");
+				qutils.triggerEvent("click", "CalP--Head-B1");
+				assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker rendered");
+				assert.equal(jQuery("#CalP--Cal").parent().attr("id"), "sap-ui-static", "Calendar picker rendered in static area");
+				assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
+
+				// select 14.08.2015
+				$Date = jQuery("#CalP--Cal--Month0-20150805");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+				assert.equal(sap.ui.getCore().byId("CalP").getStartDate().getDate(), 2, "start date is set correctly");
+
+				assert.ok(jQuery("#CalP--Cal").get(0), "Calendar picker still rendered after closing");
+				assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
+
+				// clean
+				oCalP.destroy();
+			});
+
+			QUnit.test("fireStartDateChange", function(assert) {
+				// arrange
+				var $Date, oCalStartDate,
+					oSpyFireDateChange = this.spy(sap.ui.unified.CalendarWeekInterval.prototype, "fireStartDateChange"),
+					oCalP = new sap.ui.unified.CalendarWeekInterval("CalP",{
+								startDate: new Date("2015", "7", "9"),
+								pickerPopup: true
+							}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				assert.ok(!jQuery("#CalP--Cal").get(0), "Calendar picker not initial rendered");
+				qutils.triggerEvent("click", "CalP--Head-B1");
+
+				// click on Month button inside calendar picker
+				qutils.triggerEvent("click", "CalP--Cal--Head-B1");
+				// click on September
+				$Date = jQuery("#CalP--Cal--MP-m8");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+				// click on Year button inside calendar picker
+				qutils.triggerEvent("click", "CalP--Cal--Head-B2");
+				// click on 2016
+				$Date = jQuery("#CalP--Cal--YP-y20160101");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+				// click on 17 of September 2016
+				$Date = jQuery("#CalP--Cal--Month0-20160917");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+				oCalStartDate = sap.ui.getCore().byId("CalP").getStartDate();
+
+				assert.equal(oCalStartDate.getDate(), 11, "start date, date is set correctly");
+				assert.equal(oCalStartDate.getMonth(), 8, "start date, month is set correctly");
+				assert.equal(oCalStartDate.getFullYear(), 2016, "start date, year is set correctly");
+				assert.strictEqual(oSpyFireDateChange.callCount, 1, "CalendarWeekInterval 'fireStartDateChange' was called once after selecting month, year and date");
+
+				// clean
+				oCalP.destroy();
+			});
+
+			QUnit.test("User opens the picker but escapes it - click outside for desktop or click cancel button", function(assert) {
+				// arrange
+				var oSpyCancel = this.spy(sap.ui.unified.CalendarWeekInterval.prototype, "fireCancel");
+				var oCalP = new sap.ui.unified.CalendarWeekInterval("CalP",{
+					pickerPopup: true
+					}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				qutils.triggerEvent("click", "CalP--Head-B1");
+				assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
+
+				sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				assert.ok(!jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker not visible after closing");
+				assert.strictEqual(oSpyCancel.callCount, 1, "CalendarWeekInterval 'fireCancel' was called once");
+
+				// clean
+				oCalP.destroy();
+			});
+
+			QUnit.test("User opens date picker from the button and sees a predefined range of days marked in the date picker.", function(assert) {
+				// arrange
+				var oCalPicker,
+					oCalP = new sap.ui.unified.CalendarWeekInterval("CalP",{
+								startDate: new Date("2017", "7", "6"),
+								pickerPopup: true
+							}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				qutils.triggerEvent("click", "CalP--Head-B1");
+				assert.ok(jQuery(jQuery("#CalP--Cal").get(0)).is(":visible"), "Calendar picker visible");
+
+				oCalPicker = oCalP.getAggregation("calendarPicker");
+
+				// check for selected date range
+				assert.strictEqual(oCalPicker.getSelectedDates()[0].getStartDate().getDate(), 6, "start date is 6");
+				assert.strictEqual(oCalPicker.getSelectedDates()[0].getEndDate().getDate(), 12, "end date is 12");
+
+				// click on 17 of August 2017
+				$Date = jQuery("#CalP--Cal--Month0-20170817");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+				// open again the CalendarPicker
+				qutils.triggerEvent("click", "CalP--Head-B1");
+
+				// check for the selected date range
+				assert.strictEqual(oCalPicker.getSelectedDates()[0].getStartDate().getDate(), 13, "start date is 13");
+				assert.strictEqual(oCalPicker.getSelectedDates()[0].getEndDate().getDate(), 19, "end date is 19");
+
+				sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+
+				// clean
+				oCalP.destroy();
+			});
+
+			QUnit.test("Text of the direct navigation button is correct", function(assert) {
+				// arrange
+				var $Date,
+					oCalP = new sap.ui.unified.CalendarWeekInterval("CalP",{
+								startDate: new Date("2017", "4", "11"),
+								pickerPopup: true
+							}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				qutils.triggerEvent("click", "CalP--Head-B1");
+
+				// click on Month button inside calendar picker
+				qutils.triggerEvent("click", "CalP--Cal--Head-B1");
+				// click on December
+				$Date = jQuery("#CalP--Cal--MP-m11");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+				// click on 11 of December
+				$Date = jQuery("#CalP--Cal--Month0-20171211");
+				$Date.focus();
+				qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+
+				oCalStartDate = sap.ui.getCore().byId("CalP").getStartDate();
+
+				assert.strictEqual(jQuery("#CalP--Head-B1").text(), "December 2017", "button text is correct");
+
+				// clean
+				oCalP.destroy();
+			});
+
+			QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside yearPicker aggregation", function(assert) {
+				// arrange
+				var oCalP = new sap.ui.unified.CalendarWeekInterval("CalP",{
+					pickerPopup: false
+					}),
+					oYearPicker = oCalP.getAggregation("yearPicker");
+
+				// initialy the yearPicker has default values for min and max year
+				assert.strictEqual(oYearPicker._oMinDate.getYear(), 1, "min year is set to 1");
+				assert.strictEqual(oYearPicker._oMaxDate.getYear(), 9999, "max year is set to 9999");
+
+				// change the pickerPopup to true, this will destroy the yearPicker aggregation
+				oCalP.setPickerPopup(true);
+				// set new min and max dates
+				oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
+				oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+
+				// return pickrPopup property to true, this will create the yearPicker aggregation
+				oCalP.setPickerPopup(false);
+				oYearPicker = oCalP.getAggregation("yearPicker");
+
+				// check if the yearPicker has the newly setted min and max date of the Interval control
+				assert.strictEqual(oYearPicker._oMinDate.getYear(), 2015, "min year is set to 2015");
+				assert.strictEqual(oYearPicker._oMaxDate.getYear(), 2017, "max year is set to 2017");
+
+				// clean
+				oCalP.destroy();
+			});
+
+			QUnit.test("Changing of the pickerPopup mode doesn't break min and max date inside calendarPicker aggregation", function(assert) {
+				// arrange
+				var oCalPicker,
+					oCalP = new sap.ui.unified.CalendarWeekInterval("CalP",{
+						pickerPopup: true
+					}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				// open calendarPicker
+				qutils.triggerEvent("click", "CalP--Head-B1");
+
+				oCalPicker = oCalP.getAggregation("calendarPicker");
+
+				// initialy the yearPicker has default values for min and max year
+				assert.strictEqual(oCalPicker._oMinDate.getYear(), 1, "min year is set to 1");
+				assert.strictEqual(oCalPicker._oMaxDate.getYear(), 9999, "max year is set to 9999");
+
+				// close calendarPicker
+				sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				sap.ui.getCore().applyChanges();
+
+				// change the pickerPopup to false
+				oCalP.setPickerPopup(false);
+				// set new min and max dates
+				oCalP.setMinDate(new Date("2015", "7", "13", "8", "0", "0"));
+				oCalP.setMaxDate(new Date("2017", "7", "13", "8", "0", "0"));
+
+				// return pickerPopup property to true, this will create the calendarPicker aggregation
+				oCalP.setPickerPopup(true);
+
+				// open calendarPicker
+				qutils.triggerEvent("click", "CalP--Head-B1");
+
+				oCalPicker = oCalP.getAggregation("calendarPicker");
+
+				// check if the yearPicker has the newly setted min and max date of the Interval control
+				assert.strictEqual(oCalPicker._oMinDate.getYear(), 2015, "min year is set to 2015");
+				assert.strictEqual(oCalPicker._oMaxDate.getYear(), 2017, "max year is set to 2017");
+
+				sap.ui.test.qunit.triggerKeydown(sap.ui.getCore().byId("CalP").getFocusDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+				// clean
+				oCalP.destroy();
 			});
 
 		</script>
@@ -370,6 +490,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
+		<div id="qunit-fixture"></div>
 		<ol id="qunit-tests"></ol>
 		<br>
 		<div id="uiArea1"></div>

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>MessagePage ACC Test - sap.m</title>
+
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m"
+			src="../../../../resources/sap-ui-core.js">
+	</script>
+	<script>
+		var oApp = new sap.m.App("myApp"),
+			oMessagePage = new sap.m.MessagePage({
+				showHeader: false
+			});
+
+		oApp.addPage(oMessagePage);
+		oApp.placeAt('content');
+	</script>
+</head>
+
+<body class="sapUiBody" role="application">
+<div id="content" class="sapUiBody"></div>
+</body>
+</html>

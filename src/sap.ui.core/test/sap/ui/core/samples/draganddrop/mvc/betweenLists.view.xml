@@ -1,0 +1,35 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:dnd="sap.ui.core.dnd" controllerName="mvc.betweenLists" displayBlock="true">
+	<App>
+		<Page title="Drag And Drop Between Lists">
+
+			<List items="{/names}">
+				<headerToolbar>
+					<Toolbar>
+						<Title text="Available Developers (drag from here)" />
+					</Toolbar>
+				</headerToolbar>
+				<dragDropConfig>
+					<dnd:DragInfo
+						sourceAggregation="items"
+						groupName="sap"/>
+				</dragDropConfig>
+
+				<StandardListItem title="{lastName}" description="{firstName}"/>
+			</List>
+
+			<List id="targetList" items="{/selectedNames}" headerText="Selected Developers (drop here)">
+				<dragDropConfig>
+					<dnd:DropInfo
+						targetAggregation="items"
+						groupName="sap"
+						drop="handleDrop"
+						dragEnter="handleDragEnter"
+						dropPosition="On"
+						dropEffect="Copy"/>
+				</dragDropConfig>
+				<StandardListItem title="{lastName}" description="{firstName}"/>
+			</List>
+
+		</Page>
+	</App>
+</mvc:View>

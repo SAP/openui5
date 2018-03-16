@@ -10,15 +10,14 @@
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m,sap.ui.unified,sap.ui.core,sap.ui.layout,sap.ui.commons"
 			data-sap-ui-theme="sap_belize"
-			data-sap-ui-xx-bindingSyntax="complex"
 			data-sap-ui-compatVersion="edge"
+			data-sap-ui-preload="async"
 			data-sap-ui-resourceroots='{"sap.ui.demo.theming": "."}'
 			data-sap-ui-frameOptions="trusted">
 	</script>
 
 	<script>
 		sap.ui.getCore().attachInit(function () {
-
 			sap.ui.require([
 				"sap/m/Shell",
 				"sap/ui/core/ComponentContainer"
@@ -26,7 +25,10 @@
 				// initialize the UI component
 				new ComponentContainer({
 						height : "100%",
-						name : "sap.ui.demo.theming"
+						name : "sap.ui.demo.theming",
+						settings : {
+							id : "theming"
+						}
 					})
 				.placeAt("content");
 			});

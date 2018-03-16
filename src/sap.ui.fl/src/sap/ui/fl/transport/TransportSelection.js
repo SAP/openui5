@@ -2,7 +2,19 @@
  * ${copyright}
  */
 
-sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Transports", "sap/ui/fl/transport/TransportDialog", "sap/ui/fl/registry/Settings" ], function(jQuery, Utils, Transports, TransportDialog, FlexSettings) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/transport/Transports",
+	"sap/ui/fl/transport/TransportDialog",
+	"sap/ui/fl/registry/Settings"
+], function(
+	jQuery,
+	Utils,
+	Transports,
+	TransportDialog,
+	FlexSettings
+) {
 	"use strict";
 	/**
 	 * @public
@@ -42,7 +54,7 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 	 * @param {object} oControl Control instance
 	 * @public
 	 */
-	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl) {
+	TransportSelection.prototype.selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, oControl, sStyleClass) {
 		var that = this;
 
 		if (oObjectInfo) {
@@ -60,12 +72,12 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 						fOkay(that._createEventObject(oObjectInfo, oTransport));
 						//ATO is not enabled, use CTS instead
 					} else {
-						that._selectTransport(oObjectInfo, fOkay, fError, bCompactMode);
+						that._selectTransport(oObjectInfo, fOkay, fError, bCompactMode, sStyleClass);
 					}
 				});
 			// do not have the required info to check for ATO or not CUSTOMER layer - use CTS
 			} else {
-				that._selectTransport(oObjectInfo, fOkay, fError, bCompactMode);
+				that._selectTransport(oObjectInfo, fOkay, fError, bCompactMode, sStyleClass);
 			}
 		}
 	};
@@ -82,7 +94,7 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 	 * @param {boolean} bCompactMode flag indicating whether the transport dialog should be opened in compact mode.
 	 * @private
 	 */
-	TransportSelection.prototype._selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode) {
+	TransportSelection.prototype._selectTransport = function(oObjectInfo, fOkay, fError, bCompactMode, sStyleClass) {
 		var that = this;
 
 		if (oObjectInfo) {
@@ -95,7 +107,7 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 						pkg: oObjectInfo.package,
 						transports: oGetTransportsResult.transports,
 						lrepObject: that._toLREPObject(oObjectInfo)
-					}, fOkay, fError, bCompactMode);
+					}, fOkay, fError, bCompactMode, sStyleClass);
 				} else {
 					oTransport = that._getTransport(oGetTransportsResult);
 					fOkay(that._createEventObject(oObjectInfo, oTransport));
@@ -165,10 +177,11 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 	 * @returns {sap.ui.fl.transport.TransportDialog} the dialog.
 	 * @private
 	 */
-	TransportSelection.prototype._openDialog = function(oConfig, fOkay, fError, bCompactMode) {
+	TransportSelection.prototype._openDialog = function(oConfig, fOkay, fError, bCompactMode, sStyleClass) {
 		var oDialog = new TransportDialog(oConfig);
 		oDialog.attachOk(fOkay);
 		oDialog.attachCancel(fError);
+		oDialog.addStyleClass(sStyleClass);
 
 		// toggle compact style.
 		if (bCompactMode) {
@@ -309,7 +322,7 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 	 * @returns {Promise} promise that resolves
 	 * @public
 	 */
-	TransportSelection.prototype.openTransportSelection = function(oChange, oControl) {
+	TransportSelection.prototype.openTransportSelection = function(oChange, oControl, sStyleClass) {
 
 		var that = this;
 
@@ -344,8 +357,57 @@ sap.ui.define([	"jquery.sap.global", "sap/ui/fl/Utils", "sap/ui/fl/transport/Tra
 				oObject.type = oChange.getDefinition().fileType;
 			}
 
-			that.selectTransport(oObject, fnOkay, fnError, false, oControl);
+			that.selectTransport(oObject, fnOkay, fnError, false, oControl, sStyleClass);
 		});
+	};
+
+	/**
+	 * Checks transport info object
+	 *
+	 * @param {Object} [oTransportInfo] - transport info object
+	 * @returns {boolean} returns true if transport info is complete
+	 * @public
+	 */
+	TransportSelection.prototype.checkTransportInfo = function(oTransportInfo) {
+		return oTransportInfo && oTransportInfo.transport && oTransportInfo.packageName !== "$TMP";
+	};
+
+	/**
+	 * Prepare all changes and assign them to an existing transport.
+	 *
+	 * @public
+	 * @param {Object} oTransportInfo - object containing the package name and the transport
+	 * @param {string} oTransportInfo.packageName - name of the package
+	 * @param {string} oTransportInfo.transport - ID of the transport
+	 * @param {Array} aAllLocalChanges - array that includes all local changes
+	 * @returns {Promise} Returns a Promise which resolves without parameters
+	 */
+	TransportSelection.prototype._prepareChangesForTransport = function(oTransportInfo, aAllLocalChanges) {
+		if (aAllLocalChanges.length > 0) {
+			// Pass list of changes to be transported with transport request to backend
+			var oTransports = new Transports();
+			var aTransportData = oTransports._convertToChangeTransportData(aAllLocalChanges);
+			var oTransportParams = {};
+			//packageName is '' in CUSTOMER layer (no package input field in transport dialog)
+			oTransportParams.package = oTransportInfo.packageName;
+			oTransportParams.transportId = oTransportInfo.transport;
+			oTransportParams.changeIds = aTransportData;
+
+			return oTransports.makeChangesTransportable(oTransportParams).then(function() {
+
+				// remove the $TMP package from all changes; has been done on the server as well,
+				// but is not reflected in the client cache until the application is reloaded
+				aAllLocalChanges.forEach(function(oChange) {
+
+					if (oChange.getPackage() === '$TMP') {
+						var oDefinition = oChange.getDefinition();
+						oDefinition.packageName = oTransportInfo.packageName;
+						oChange.setResponse(oDefinition);
+					}
+				});
+				return Promise.resolve();
+			});
+		}
 	};
 
 	return TransportSelection;

@@ -6,15 +6,21 @@
 sap.ui.define([
 		'jquery.sap.global', 'sap/ui/Device',
 		'sap/ui/base/ManagedObject', 'sap/ui/base/Object', 'sap/ui/base/ObjectPool',
-		'./Control', './IntervalTrigger', './RenderManager', './Element', './ResizeHandler',
-		'jquery.sap.script'
+		'./Control', './IntervalTrigger', './RenderManager', './Element', './ResizeHandler', './library',
+		'jquery.sap.script', 'jquery.sap.dom'
 	], function(
 		jQuery, Device,
 		ManagedObject, BaseObject, ObjectPool,
-		Control, IntervalTrigger, RenderManager, Element, ResizeHandler
-		/* , jQuerySap */) {
-
+		Control, IntervalTrigger, RenderManager, Element, ResizeHandler, library
+		/* , jQuerySapScript, jQuerySapDom */) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.CSSSize
+	var CSSSize = library.CSSSize;
+
+	// shortcut for sap.ui.core.OpenState
+	var OpenState = library.OpenState;
 
 
 	/**
@@ -55,7 +61,6 @@ sap.ui.define([
 	 * @param {boolean} [bShadow=true] whether the popup should be have a visual shadow underneath (shadow appearance depends on active theme and browser support)
 	 * @param {boolean} [bAutoClose=false] whether the popup should automatically close when the focus moves out of the popup
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.Popup
 	 * @extends sap.ui.base.ManagedObject
@@ -72,7 +77,7 @@ sap.ui.define([
 			this._popupUID = jQuery.sap.uid(); // internal ID to make event handlers unique
 
 			this.bOpen = false; // true exactly if the Popup is opening, open, or closing
-			this.eOpenState = sap.ui.core.OpenState.CLOSED;
+			this.eOpenState = OpenState.CLOSED;
 
 			this._mEvents = {};
 			this._mEvents["sap.ui.core.Popup.addFocusableContent-" + this._popupUID] = this._addFocusableArea;
@@ -117,7 +122,7 @@ sap.ui.define([
 					}
 					// call the close handler only when it's fully opened
 					// this also prevents calling close while closing
-					if (this.eOpenState === sap.ui.core.OpenState.CLOSING || this.eOpenState === sap.ui.core.OpenState.CLOSED) {
+					if (this.eOpenState === OpenState.CLOSING || this.eOpenState === OpenState.CLOSED) {
 						return;
 					}
 
@@ -571,11 +576,11 @@ sap.ui.define([
 		jQuery.sap.assert(this.oContent, "Popup content must have been set by now");
 		// other asserts follow after parameter shifting
 
-		if (this.eOpenState != sap.ui.core.OpenState.CLOSED) {
+		if (this.eOpenState != OpenState.CLOSED) {
 			return;
 		}
 
-		this.eOpenState = sap.ui.core.OpenState.OPENING;
+		this.eOpenState = OpenState.OPENING;
 
 		var oStatic;
 		try {
@@ -739,7 +744,7 @@ sap.ui.define([
 		// If the popup's state is changed again after 'open' function is called,
 		// for example, the 'close' is called before the opening animation finishes,
 		// it's needed to immediately return from this function.
-		if (this.eOpenState !== sap.ui.core.OpenState.OPENING) {
+		if (this.eOpenState !== OpenState.OPENING) {
 			return;
 		}
 
@@ -778,7 +783,7 @@ sap.ui.define([
 			}
 		}
 
-		this.eOpenState = sap.ui.core.OpenState.OPEN;
+		this.eOpenState = OpenState.OPEN;
 
 		// set and register listener of 'followOf' (given via Popup.open()) only when
 		// the popup has been opened already. Otherwise checking the opener's positio
@@ -840,28 +845,13 @@ sap.ui.define([
 
 		this.bOpen = true;
 
-		if (this._bModal || this._bAutoClose) { // initialize focus handling
-			this._addFocusEventListeners();
-		}
+		this._activateFocusHandle();
 
 		this._$(false, true).on("keydown", jQuery.proxy(this._F6NavigationHandler, this));
-
-		//autoclose implementation for mobile or desktop browser in touch mode
-		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
-			jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
-		}
 
 		//  register resize handler for blindlayer resizing
 		if (this._oBlindLayer) {
 			this._resizeListenerId = ResizeHandler.register(this._$().get(0), jQuery.proxy(this.onresize, this));
-		}
-
-		// preventScroll no matter what the property is set to in the jQuery.sap.initMobile()
-		// preventScroll can be set to false in jQuery.sap.initMobile(),
-		// then the scrolling for popups content in iOS is also scrolling the page content
-		// issue reported in Incident ID: 1472005153
-		if (Device.os.ios && Device.support.touch) {
-			jQuery(document).on("touchmove", this._fnPreventScroll);
 		}
 	};
 
@@ -942,18 +932,22 @@ sap.ui.define([
 						// if in desktop browser or the DOM node which has the focus is input outside the popup,
 						// focus on the last blurred element
 						if (Device.system.desktop || jQuery(oEvent.target).is(":input")) {
-							// The focus should be set after the current call stack is finished
-							// because the existing timer for autoclose popup is cancelled by
-							// setting the focus here.
-							//
-							// Suppose an autoclose popup is opened within a modal popup. Clicking
-							// on the blocklayer should wait the autoclose popup to first close then
-							// set the focus back to the lasted blurred element.
-							jQuery.sap.delayedCall(0, this, function() {
-								// set the focus back to the last focused element inside the popup or at least to the popup root
-								var oDomRefToFocus = this.oLastBlurredElement ? this.oLastBlurredElement : oDomRef;
-								jQuery.sap.focus(oDomRefToFocus);
-							});
+							if (this.oLastBlurredElement) {
+								// If a DOM element inside the popup was blurred, the focus should be set
+								// after the current call stack is finished because the existing timer for
+								// autoclose popup is cancelled by setting the focus here.
+								//
+								// Suppose an autoclose popup is opened within a modal popup. Clicking
+								// on the blocklayer should wait the autoclose popup to first close then
+								// set the focus back to the lasted blurred element.
+								jQuery.sap.delayedCall(0, this, function() {
+									jQuery.sap.focus(this.oLastBlurredElement);
+								});
+							} else {
+								// If the focus is set to somewhere else without a blurred element in popup,
+								// the focus is set to the root DOM element of the popup
+								jQuery.sap.focus(oDomRef);
+							}
 						}
 					}
 				} else if (this._bAutoClose && bContains && this._sTimeoutId) { // case: autoclose popup and focus has returned into the popup immediately
@@ -1048,7 +1042,7 @@ sap.ui.define([
 
 		jQuery.sap.assert(iDuration === undefined || (typeof iDuration === "number" && (iDuration % 1 == 0)), "iDuration must be empty or an integer");
 
-		if (this.eOpenState == sap.ui.core.OpenState.CLOSED || this.eOpenState == sap.ui.core.OpenState.CLOSING) {
+		if (this.eOpenState == OpenState.CLOSED || this.eOpenState == OpenState.CLOSING) {
 			return;
 		} // also close when OPENING
 		// the above will queue the animations (close only after opening), but may lead to the CLOSED event happening before the OPENED event
@@ -1062,7 +1056,7 @@ sap.ui.define([
 
 		//if(this.eOpenState != sap.ui.core.OpenState.OPEN) return; // this is the more conservative approach: to only close when the Popup is OPEN
 
-		this.eOpenState = sap.ui.core.OpenState.CLOSING;
+		this.eOpenState = OpenState.CLOSING;
 
 		if (this.getFollowOf()) {
 			Popup.DockTrigger.removeListener(Popup.checkDocking, this);
@@ -1083,23 +1077,9 @@ sap.ui.define([
 
 		this._sTimeoutId = null;
 
-		if (this.fEventHandler) { // remove focus handling
-			this._removeFocusEventListeners();
-		}
+		this._deactivateFocusHandle();
 
 		this._$(false, true).off("keydown", this._F6NavigationHandler);
-
-		//deregister the autoclose handler for mobile
-		if (this.touchEnabled) {
-			if (!this._bModal && this._bAutoClose) {
-				jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
-			}
-		}
-
-		//stop listening for touchmove on the window for preventing the scroll
-		if (Device.os.ios && Device.support.touch) {
-			jQuery(document).off("touchmove", this._fnPreventScroll);
-		}
 
 		if (this.oContent instanceof Element) {
 			this.oContent.removeDelegate(this);
@@ -1230,7 +1210,7 @@ sap.ui.define([
 		}
 
 		this.bOpen = false;
-		this.eOpenState = sap.ui.core.OpenState.CLOSED;
+		this.eOpenState = OpenState.CLOSED;
 
 		var aChildPopups = this.getChildPopups();
 		for (var j = 0, l = aChildPopups.length; j < l; j++) {
@@ -1386,7 +1366,7 @@ sap.ui.define([
 
 		this._oPosition = this._createPosition(my, at, of, offset, collision);
 
-		if (this.eOpenState != sap.ui.core.OpenState.CLOSED) {
+		if (this.eOpenState != OpenState.CLOSED) {
 			this._applyPosition(this._oPosition);
 			this._oBlindLayer && this._oBlindLayer.update(this._$());
 		}
@@ -1524,12 +1504,12 @@ sap.ui.define([
 				oDomRef.style.right = "";
 				$Ref.position(this._resolveReference(this._convertPositionRTL(oPosition, bRtl))); // must be visible, so browsers can calculate its offset!
 				this._fixPositioning(oPosition, bRtl);
-			} else if (sap.ui.core.CSSSize.isValid(oAt.left) && sap.ui.core.CSSSize.isValid(oAt.top)) {
+			} else if (CSSSize.isValid(oAt.left) && CSSSize.isValid(oAt.top)) {
 				$Ref.css({
 					"left" : oAt.left,
 					"top" : oAt.top
 				});
-			} else if (sap.ui.core.CSSSize.isValid(oAt.right) && sap.ui.core.CSSSize.isValid(oAt.top)) {
+			} else if (CSSSize.isValid(oAt.right) && CSSSize.isValid(oAt.top)) {
 				$Ref.css({
 					"right" : oAt.right,
 					"top" : oAt.top
@@ -1574,7 +1554,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get the DOM reference of the given parameter. The "of" parameter can be different types. This methods returns the refered DOM reference base on the given parameter. If Event or jQuery.Event type parameter is given, null is returned.
+	 * Get the DOM reference of the given parameter. The "of" parameter can be different types. This methods returns the referred DOM reference based on the given parameter. If Event or jQuery.Event type parameter is given, null is returned.
 	 *
 	 * @param {String| DomNode | jQuery |sap.ui.core.Element | Event | jQuery.Event} oOf the DOM Element, UI Element instance on which the calculation is done
 	 * @returns {DomNode} the DOM reference calculated based on the given parameter. If Event, or jQuery Event type parameter is given, null is returned.
@@ -1736,7 +1716,7 @@ sap.ui.define([
 	Popup.prototype.setShadow = function(bShowShadow) {
 		jQuery.sap.assert(typeof bShowShadow === "boolean", "bShowShadow must be boolean");
 		this._bShadow = bShowShadow;
-		if (this.eOpenState != sap.ui.core.OpenState.CLOSED) {
+		if (this.eOpenState != OpenState.CLOSED) {
 			this._$().toggleClass("sapUiShd", bShowShadow);
 		}
 
@@ -1858,49 +1838,68 @@ sap.ui.define([
 		//TODO: also handle the case when 'aAutoCloseAreas' is set with null
 		jQuery.sap.assert(Array.isArray(aAutoCloseAreas), "aAutoCloseAreas must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
 
-		this._aAutoCloseAreas = [];
+		if (!this._aAutoCloseAreas) {
+			this._aAutoCloseAreas = [];
+		}
 
 		var createDelegate = function (oAutoCloseArea) {
 			return {
 				onBeforeRendering: function() {
 					var oDomRef = oAutocloseArea.getDomRef();
 					if (oDomRef && this.isOpen()) {
-						oDomRef.removeEventListener("blur", this.fEventHandler, true);
+						if (Device.browser.msie) {
+							jQuery(oDomRef).unbind("deactivate." + this._popupUID, this.fEventHandler);
+						} else {
+							oDomRef.removeEventListener("blur", this.fEventHandler, true);
+						}
 					}
 				},
 				onAfterRendering: function() {
 					var oDomRef = oAutocloseArea.getDomRef();
 					if (oDomRef && this.isOpen()) {
-						oDomRef.addEventListener("blur", this.fEventHandler, true);
+						if (Device.browser.msie) {
+							// 'deactivate' needs to be used for msie to achieve event handling in capturing phase
+							jQuery(oDomRef).bind("deactivate." + this._popupUID, this.fEventHandler);
+						} else {
+							oDomRef.addEventListener("blur", this.fEventHandler, true);
+						}
 					}
 				}
 			};
 		};
 
-		for (var i = 0, l = aAutoCloseAreas.length; i < l; i++) {
-			var sId = "",
-				oAutocloseArea = aAutoCloseAreas[i],
-				oDelegate,
-				oAreaRef = {};
+		var sId,
+			oAutocloseArea,
+			oDelegate,
+			oAreaRef;
 
+		for (var i = 0, l = aAutoCloseAreas.length; i < l; i++) {
+			oAutocloseArea = aAutoCloseAreas[i];
 
 			if (oAutocloseArea instanceof Element) {
-				oDelegate = createDelegate(oAutocloseArea);
-				oAutocloseArea.addEventDelegate(oDelegate, this);
 				sId = oAutocloseArea.getId();
-
-				oAreaRef.delegate = oDelegate;
 			} else if (typeof oAutocloseArea === "object") {
 				sId = oAutocloseArea.id;
 			} else if (typeof oAutocloseArea === "string") {
 				sId = oAutocloseArea;
 			}
 
-			oAreaRef.id = sId;
-			this._aAutoCloseAreas.push(oAreaRef);
-
 			if (this.getChildPopups().indexOf(sId) === -1) {
+				// when the autoclose area isn't registered, add it as a child popup and
+				// also to _aAutoCloseAreas
 				this.addChildPopup(sId);
+
+				oAreaRef = {
+					id: sId
+				};
+
+				if (oAutocloseArea instanceof Element) {
+					oDelegate = createDelegate(oAutocloseArea);
+					oAutocloseArea.addEventDelegate(oDelegate, this);
+					oAreaRef.delegate = oDelegate;
+				}
+
+				this._aAutoCloseAreas.push(oAreaRef);
 			}
 		}
 
@@ -1960,12 +1959,6 @@ sap.ui.define([
 		return this;
 	};
 
-	Popup.prototype._fnPreventScroll = function(oEvent) {
-		if (!oEvent.isMarked()) {
-			oEvent.preventDefault(); // prevent the rubber-band effect
-		}
-	};
-
 	Popup.CLOSE_ON_SCROLL = "close_Popup_if_of_is_moved";
 	/**
 	 * @private
@@ -2011,7 +2004,7 @@ sap.ui.define([
 			this._oLastOfRect = this._calcOfRect(this._oLastPosition.of);
 		}
 
-		if (this._bFollowOf && this.getOpenState() === sap.ui.core.OpenState.OPEN) {
+		if (this._bFollowOf && this.getOpenState() === OpenState.OPEN) {
 			Popup.DockTrigger.addListener(Popup.checkDocking, this);
 		}
 	};
@@ -2208,6 +2201,34 @@ sap.ui.define([
 			}
 		}
 		this.fEventHandler = null;
+	};
+
+	/**
+	 * Registers the focus event listeners for autoclose and modal popup for both mobile and desktop devices.
+	 */
+	Popup.prototype._activateFocusHandle = function() {
+		if (this._bModal || this._bAutoClose) { // initialize focus handling
+			this._addFocusEventListeners();
+		}
+
+		//autoclose implementation for mobile or desktop browser in touch mode
+		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
+			jQuery(document).on("touchstart mousedown", jQuery.proxy(this._fAutoCloseHandler, this));
+		}
+	};
+
+	/**
+	 * Deregisters the focus event listeners for autoclose and modal popup for both mobile and desktop devices.
+	 */
+	Popup.prototype._deactivateFocusHandle = function() {
+		if (this.fEventHandler) { // remove focus handling
+			this._removeFocusEventListeners();
+		}
+
+		//deregister the autoclose handler for mobile
+		if (this.touchEnabled && !this._bModal && this._bAutoClose) {
+			jQuery(document).off("touchstart mousedown", this._fAutoCloseHandler);
+		}
 	};
 
 	/**
@@ -2417,7 +2438,7 @@ sap.ui.define([
 	Popup.DockTrigger = new IntervalTrigger(200);
 
 	Popup.checkDocking = function(){
-		if (this.getOpenState() === sap.ui.core.OpenState.OPEN) {
+		if (this.getOpenState() === OpenState.OPEN) {
 			var oCurrentOfRef = this._getOfDom(this._oLastPosition.of),
 				oCurrentOfRect = jQuery(oCurrentOfRef).rect();
 
@@ -2639,7 +2660,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Popup.prototype.onresize = function(oEvent) {
-		if (this.eOpenState != sap.ui.core.OpenState.CLOSED && this._oBlindLayer) {
+		if (this.eOpenState != OpenState.CLOSED && this._oBlindLayer) {
 			var that = this;
 			setTimeout(function(){
 				that._updateBlindLayer();
@@ -2648,7 +2669,7 @@ sap.ui.define([
 	};
 
 	Popup.prototype._updateBlindLayer = function() {
-		if (this.eOpenState != sap.ui.core.OpenState.CLOSED && this._oBlindLayer) {
+		if (this.eOpenState != OpenState.CLOSED && this._oBlindLayer) {
 			this._oBlindLayer.update(this._$(/*forceRerender*/ false, /*getOnly*/ true));
 		}
 	};
@@ -2854,5 +2875,4 @@ sap.ui.define([
 	};
 
 	return Popup;
-
 });

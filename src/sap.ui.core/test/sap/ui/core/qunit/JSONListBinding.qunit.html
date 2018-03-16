@@ -51,6 +51,13 @@
 				{form:"NFKC", string:"ṩ", representation:"\\u1E69"},
 				{form:"NFKD", string:"ṩ", representation:"\\u0073\\u0323\\u0307"},
 			],
+			dataWithNullValues:[
+				{value: 4},
+				{value: 2},
+				{value: null},
+				{value: 1},
+				{value: 3}
+			],
 			sortData:[
 				{word: "Fuß"},
 				{word: "Füssen"},
@@ -90,7 +97,9 @@
 				first : {lastName : "Dente", name : "Al", checked : true, linkText : "www.sap.com", href : "http://www.sap.com", rating : 4},
 				second : {lastName : "Friese", name : "Andy", checked : true, linkText : "www.spiegel.de", href : "http://www.spiegel.de", rating : 2},
 				third : {lastName : "Mann", name : "Anita", checked : false, linkText : "www.kicker.de", href : "http://www.kicker.de", rating : 3}
-			}
+			},
+			changeTestProperty: "SAPUI5",
+			changingArray: [1, 2, "hi", "b"]
 		};
 		oModel = new sap.ui.model.json.JSONModel();
 		oModel.setData(testData);
@@ -357,6 +366,36 @@
 		var listBinding = bindings[0];
 		listBinding.sort();
 		assert.expect(0);
+	});
+
+	QUnit.test("null values", function(assert) {
+		createListBinding("/dataWithNullValues");
+		var listBinding = bindings[0], sortedContexts, sorted;
+		listBinding.sort(new sap.ui.model.Sorter("value"));
+		sortedContexts = listBinding.getContexts();
+		sorted = [];
+		jQuery(sortedContexts).each(function(i, context){
+			sorted[i] = oModel.getProperty(context.getPath());
+		});
+		assert.equal(sorted.length, 5, "ListBinding sorted length");
+		assert.equal(sorted[0].value, 1, "ListBinding sort value");
+		assert.equal(sorted[1].value, 2, "ListBinding sort value");
+		assert.equal(sorted[2].value, 3, "ListBinding sort value");
+		assert.equal(sorted[3].value, 4, "ListBinding sort value");
+		assert.equal(sorted[4].value, null, "ListBinding sort value");
+
+		listBinding.sort(new sap.ui.model.Sorter("value", true));
+		sortedContexts = listBinding.getContexts();
+		sorted = [];
+		jQuery(sortedContexts).each(function(i, context){
+			sorted[i] = oModel.getProperty(context.getPath());
+		});
+		assert.equal(sorted.length, 5, "ListBinding sorted length");
+		assert.equal(sorted[0].value, null, "ListBinding sort value");
+		assert.equal(sorted[1].value, 4, "ListBinding sort value");
+		assert.equal(sorted[2].value, 3, "ListBinding sort value");
+		assert.equal(sorted[3].value, 2, "ListBinding sort value");
+		assert.equal(sorted[4].value, 1, "ListBinding sort value");
 	});
 
 	// should also work with other ListBinding implementations
@@ -631,6 +670,33 @@
 
 	});
 
+	QUnit.test("null values", function(assert) {
+		createListBinding("/dataWithNullValues");
+		var listBinding = bindings[0], filteredContexts, filtered;
+		listBinding.sort(new sap.ui.model.Sorter("value"));
+
+		listBinding.filter([new sap.ui.model.Filter("value", "GT", 2)]);
+		filteredContexts = listBinding.getContexts();
+		filtered = [];
+		jQuery(filteredContexts).each(function(i, context){
+			filtered[i] = oModel.getProperty(context.getPath());
+		});
+		assert.equal(filtered.length, 2, "ListBinding filtered length");
+		assert.equal(filtered[0].value, 3, "ListBinding filter value");
+		assert.equal(filtered[1].value, 4, "ListBinding filter value");
+
+		listBinding.filter([new sap.ui.model.Filter("value", "LT", 3)]);
+		filteredContexts = listBinding.getContexts();
+		filtered = [];
+		jQuery(filteredContexts).each(function(i, context){
+			filtered[i] = oModel.getProperty(context.getPath());
+		});
+		assert.equal(filtered.length, 2, "ListBinding filtered length");
+		assert.equal(filtered[0].value, 1, "ListBinding filter value");
+		assert.equal(filtered[1].value, 2, "ListBinding filter value");
+
+	});
+
 	QUnit.test("invalid binding", function(assert) {
 		createListBinding("/unknown");
 
@@ -786,7 +852,8 @@
 
 			mFilters["NFC"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u1E9B\u0323");
 			mFilters["NFD"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u017F\u0323\u0307");
-			// "NFKC" and "NFKD" are not supported for filter
+			mFilters["NFKC"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u1E69");
+			mFilters["NFKD"] = new sap.ui.model.Filter("string", sap.ui.model.FilterOperator.EQ, "\u0073\u0323\u0307");
 
 			function fnTest(sProp, sVal) {
 				listBinding.filter(sVal);
@@ -795,7 +862,7 @@
 				jQuery(filteredContexts).each(function(i, context){
 					filtered[i] = oModel.getProperty(context.getPath());
 				});
-				assert.equal(filtered.length, 3, "Filter working for " + sProp);
+				assert.equal(filtered.length, 5, "Filter working for " + sProp);
 			}
 
 			jQuery.each(mFilters, fnTest);
@@ -958,6 +1025,7 @@
 		}
 	});
 
+
 	QUnit.test("with map, not array", function(assert) {
 		var aKeysInMap = ["first", "second", "third"];
 		createListBinding("/map");
@@ -1089,6 +1157,31 @@
 			]
 		};
 		listBinding.getModel().setData(newData, false);
+	});
+
+	QUnit.test("No wrong 'Change' event after unrelated property change", function (assert) {
+		createListBinding("/unknown", "");
+
+		var oListBinding = bindings[0];
+		oListBinding.attachChange(function () {
+			throw new Error("wrongfully called fired change event");
+		});
+
+		// Changing an unrelated property on the model should not trigger the
+		// ListBinding to fire a change event.
+		oModel.setProperty("/changeTestProperty", "OpenUI5");
+		assert.ok(true, "no 'change' event was fired for unrelated property change");
+	});
+
+	QUnit.test("'Change' event is fired if list content changes, but length does not", function (assert) {
+		createListBinding("/changingArray", "");
+
+		var oListBinding = bindings[0];
+		oListBinding.attachChange(function () {
+			assert.ok(true, "'change' event was fired after list content change (no length change)");
+		});
+
+		oModel.setProperty("/changingArray", [1, 2, 3, 4]);
 	});
 
 	QUnit.module("Listbinding diff calculation", {

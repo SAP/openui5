@@ -1,0 +1,16 @@
+<mvc:View
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:vp="sap.ui.core.qunit.mvc.viewprocessing"
+        xmlns="sap.m">
+
+    <vp:SimpleAggregationsControl id="mySimpleAggregationsControl">
+    </vp:SimpleAggregationsControl>
+
+
+    <vp:SimpleAggregationsControl id="mySimpleAggregationsControl2">
+        <vp:alternativeContent>
+            <Button id="InnerButton122" text="A" />
+        </vp:alternativeContent>
+    </vp:SimpleAggregationsControl>
+
+</mvc:View>

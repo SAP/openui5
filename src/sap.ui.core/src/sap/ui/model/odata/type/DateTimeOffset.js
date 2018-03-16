@@ -87,7 +87,8 @@ sap.ui.define([
 			}
 			oType.oModelFormat = DateFormat.getDateInstance({
 				pattern : sPattern + "X",
-				strictParsing : true
+				strictParsing : true,
+				UTC : oType.oFormatOptions && oType.oFormatOptions.UTC
 			});
 		}
 		return oType.oModelFormat;
@@ -124,6 +125,28 @@ sap.ui.define([
 			vValue = oDateValue;
 		}
 		return DateTimeBase.prototype.formatValue.call(this, vValue, sTargetType);
+	};
+
+	/**
+	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
+	 * methods: <code>format</code> and <code>parse</code>.
+	 *
+	 * If the type is in V4 semantics, <code>format</code> takes a Date and returns a date as a
+	 * String in the format expected by the model, <code>parse</code> converts from the String to a
+	 * Date. Otherwise the methods simply pass through, since the model already contains a Date in
+	 * V2.
+	 *
+	 * @returns {sap.ui.core.format.DateFormat}
+	 *   The formatter
+	 *
+	 * @override
+	 * @protected
+	 */
+	DateTimeOffset.prototype.getModelFormat = function() {
+		if (this.bV4) {
+			return getModelFormat(this);
+		}
+		return DateTimeBase.prototype.getModelFormat.call(this);
 	};
 
 	/**

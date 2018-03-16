@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ProgressIndicator.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.ProgressIndicator.V",
+			rootView : {
+				"viewName": "sap.m.sample.ProgressIndicator.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

@@ -39,10 +39,13 @@
 				this.logSpy = sinon.spy(jQuery.sap.log, "error");
 
 				this.BlockLayoutConstants = sap.ui.layout.BlockLayout.CONSTANTS;
-				this.BlockLayoutRowConstants =  sap.ui.layout.BlockLayoutRow.CONSTANTS;
+				this.BlockLayoutRowConstants = sap.ui.layout.BlockLayoutRow.CONSTANTS;
 
 				this.BlockLayout.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
+				this.clock = sinon.useFakeTimers();
+
+				this._fixtureWidth = $("#qunit-fixture").width();
 			},
 			afterEach: function () {
 				this.BlockLayout.destroy();
@@ -54,65 +57,64 @@
 				this.BlockLayoutRowConstants = null;
 				this.BlockLayoutRow = null;
 				this.BlockLayout = null;
+				this.clock.restore();
+				$("#qunit-fixture").width(this._fixtureWidth);
 			}
 		});
 
 		QUnit.test("BlockLayout Default values", function (assert) {
 			assert.strictEqual(this.BlockLayout.getBackground(), "Default", "Background's default value should be equal to Default");
-			assert.strictEqual(this.BlockLayoutConstants.breakPointM, 600, "Break point M should be equal to 600");
-			assert.strictEqual(this.BlockLayoutConstants.breakPointL, 1024, "Break point M should be equal to 1024");
+			assert.strictEqual(this.BlockLayout.getKeepFontSize(), false, "KeepFontSize's default value should be equal to Default");
+			assert.strictEqual(this.BlockLayoutConstants.SIZES.S, 600, "Break point M should be equal to 600");
+			assert.strictEqual(this.BlockLayoutConstants.SIZES.M, 1024, "Break point M should be equal to 1024");
 		});
 
 		QUnit.test("BlockLayoutRow Default values", function (assert) {
 			assert.strictEqual(this.BlockLayoutRow.getScrollable(), false, "Default rendering should be horizontal.");
-			assert.strictEqual(this.BlockLayoutRowConstants.maxScrollableCellsPerRow, 10, "Max scrollable cells should be 10");
-			assert.strictEqual(this.BlockLayoutRowConstants.minScrollableCellsPerRow, 3, "Min scrollable cells should be 3");
 		});
 
 		QUnit.test("BlockLayoutCell Default values", function (assert) {
-			var newCell = new sap.ui.layout.BlockLayoutCell();
-			assert.strictEqual(newCell.getTitleAlignment(), "Begin", "Title Alignment should be Begin by default");
-			assert.strictEqual(newCell.getWidth(), 0, "Should be equal to 0 by default");
-			assert.strictEqual(newCell.getTitleLevel(), "Auto", "Should be equal to Auto by default");
-			assert.strictEqual(newCell.getBackgroundColorSet(), 0, "The default bg color set should be 0");
-			assert.strictEqual(newCell.getBackgroundColorIndex(), 0, "The dafault bg color index shoudl be 0");
+			var oCell = new sap.ui.layout.BlockLayoutCell().setLayoutData(new sap.ui.layout.BlockLayoutCellData());
+			assert.strictEqual(oCell.getTitleAlignment(), "Begin", "Title Alignment should be Begin by default");
+			assert.strictEqual(oCell.getWidth(), 0, "Should be equal to 0 by default");
+			assert.strictEqual(oCell.getTitleLevel(), "Auto", "Should be equal to Auto by default");
+			assert.strictEqual(oCell.getBackgroundColorSet(), undefined, "The default bg color set should be 0");
+			assert.strictEqual(oCell.getBackgroundColorShade(), undefined, "The dafault bg color index shoudl be 0");
+			assert.strictEqual(oCell.getLayoutData()['breakRowOnSSize'], true, "Has to break on S size");
+			assert.strictEqual(oCell.getLayoutData()['breakRowOnMSize'], false, "Doesn't have to break on M size");
+
+			//Cleanup
+			delete oCell;
 		});
 
-		QUnit.test("Error logging", function (assert) {
-			this.BlockLayoutRow.addContent(new sap.ui.layout.BlockLayoutCell());
+		QUnit.test("S Breakpoint case", function (assert) {
+			$("#qunit-fixture").width(500);
+			this.BlockLayout._onParentResize();
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(this.logSpy.calledOnce, true, "The log spy should be called");
-		});
 
-		QUnit.test("SBreakpoint case", function (assert) {
-			this.cells.forEach(function (cell) {
-				assert.strictEqual(cell._getDifferentSBreakpointSize(), true, "The cell should have different representation in S breakpoint");
-				assert.strictEqual(cell._getWidthToRowWidthRatio(), 0.25, "The cell ratio should be 0.25");
+            assert.expect(9);
+			assert.strictEqual(this.BlockLayoutRow._arrangements["S"].length, 4, "The arrangment should contain 4 rows");
+			this.BlockLayoutRow._arrangements["S"].forEach(function (aRow) {
+				assert.strictEqual(aRow.length, 1, "Each row should contain 1 arrays with the width of cells inside");
+				aRow.forEach(function (iCellWidth) {
+					assert.strictEqual(iCellWidth, 1, "The cell should be with width of 1 (flex) ");
+				})
 			});
 		});
 
-		QUnit.test("Adding new cell should invalidate the guidelines", function (assert) {
-			this.BlockLayoutRow.addContent(new sap.ui.layout.BlockLayoutCell());
+		QUnit.test("M Breakpoint case", function (assert) {
+			$("#qunit-fixture").width(1000);
+			this.BlockLayout._onParentResize();
 			sap.ui.getCore().applyChanges();
-			this.cells.forEach(function (cell) {
-				assert.strictEqual(cell._getDifferentSBreakpointSize(), false, "The cell should have different representation in S breakpoint");
-			});
-		});
 
-		QUnit.test("Width property change invalidates the guidelines", function (assert) {
-			this.cells[1].setWidth(3);
-			this.cells.forEach(function (cell) {
-				assert.strictEqual(cell._getDifferentSBreakpointSize(), false, "The cell should use the 100% width fallback.");
+            assert.expect(7);
+			assert.strictEqual(this.BlockLayoutRow._arrangements["M"].length, 2, "The arrangment should contain 2 rows");
+			this.BlockLayoutRow._arrangements["M"].forEach(function (aRow) {
+				assert.strictEqual(aRow.length, 2, "Each row should contain 2 arrays with the width of cells inside");
+				aRow.forEach(function (iCellWidth) {
+					assert.strictEqual(iCellWidth, 1, "The cell should be with width of 1 (flex) ");
+				})
 			});
-		});
-
-		QUnit.test("Scrollable behaviour", function (assert) {
-			this.BlockLayoutRow.setScrollable(true);
-			assert.strictEqual(this.logSpy.called, false, "Error should not be logged with 4 cells in scrollable row");
-			this.BlockLayoutRow.removeContent(0);
-			this.BlockLayoutRow.removeContent(0);
-			sap.ui.getCore().applyChanges();
-			assert.strictEqual(this.logSpy.called, true, "Error should be logged called with 2 cells in scrollable row");
 		});
 
 		QUnit.module("Background types");
@@ -159,8 +161,8 @@
 		});
 
 		QUnit.test("BlockLayoutRow predefined Color Set", function (assert) {
-			var sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet2;
-			var oBlockRow = new sap.ui.layout.BlockLayoutRow({rowColorSet: sColorSet});
+			var sColorSet = sap.ui.layout.BlockRowColorSets.ColorSet2,
+					oBlockRow = new sap.ui.layout.BlockLayoutRow({rowColorSet: sColorSet});
 			sap.ui.getCore().applyChanges();
 
 			// Assert
@@ -257,6 +259,7 @@
 		});
 
 		QUnit.test("Mixed BlockLayout with an accent cell", function (assert) {
+			$("#qunit-fixture").width(1200);
 			var oCell1 = new sap.ui.layout.BlockLayoutCell({width: 1}),
 					oCell2 = new sap.ui.layout.BlockLayoutCell({width: 1}),
 					oRow = new sap.ui.layout.BlockLayoutRow({
@@ -270,11 +273,11 @@
 
 			var oSpy = sinon.spy(oRow, "_processMixedCellStyles");
 
-			oBlockLayout.addStyleClass("sapUiBlockLayoutSizeL"); //Mock the screen size
+
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			assert.ok(oSpy.calledOnce, "Mixed layout cell processor has been called");
+			assert.ok(oSpy.called, "Mixed layout cell processor has been called");
 			assert.strictEqual(oRow.getAccentCells()[0], oCell1.getId(), "Should have set Cell1 as an accent cell");
 			assert.ok(oCell1.hasStyleClass("sapContrast"), "Should have set proper CSS classes");
 			assert.ok(oCell1.hasStyleClass("sapContrastPlus"), "Should have set proper CSS classes");
@@ -316,7 +319,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// Assert
-			assert.ok(oSpy.calledOnce, "Accent layout cell processor has been called");
+			assert.ok(oSpy.called, "Accent layout cell processor has been called");
 			assert.strictEqual(oRow.getAccentCells()[0], oCell1.getId(), "Should have set Cell1 as an accent cell");
 			assert.ok(oCell1.hasStyleClass("sapUiBlockLayoutBackgroundColorSetGray2"), "Should have set proper CSS classes");
 
@@ -339,9 +342,9 @@
 		QUnit.test("Blocklayout cell margins with and without content", function (assert) {
 			// System under test
 			var oContainer = new sap.ui.layout.BlockLayoutCell({
-					title: "Dummy"
-				}),
-				$cell;
+						title: "Dummy"
+					}),
+					$cell;
 
 			// Act
 			oContainer.placeAt("qunit-fixture");
@@ -397,12 +400,32 @@
 
 			// Assert
 			assert.strictEqual($containerContent.css("padding-left"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " left content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
-			assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+			assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]), "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 			assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 			assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 
 			// Cleanup
 			oContainer.destroy();
+		});
+
+		QUnit.test("Should not add the font modifying stlye classes if keepFontSize is off", function (assert) {
+			// System under test
+			var blockLayout = new sap.ui.layout.BlockLayout({
+				keepFontSize: true
+			});
+
+			// Act
+			blockLayout.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+
+			assert.ok(blockLayout.$().hasClass("sapUiBlockLayoutKeepFontSize"), "style class is added");
+
+			// Act part 2 - change the property - style class should be gone
+			blockLayout.setKeepFontSize(false);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(!blockLayout.$().hasClass("sapUiBlockLayoutKeepFontSize"), "no style class is added");
 		});
 
 	</script>

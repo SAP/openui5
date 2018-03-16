@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.BusyDialogLight.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.BusyDialogLight.V",
+			rootView : {
+				"viewName": "sap.m.sample.BusyDialogLight.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

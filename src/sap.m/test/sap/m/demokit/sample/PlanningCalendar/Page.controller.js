@@ -454,14 +454,21 @@ sap.ui.define([
 			},
 
 			handleAppointmentSelect: function (oEvent) {
-				var oAppointment = oEvent.getParameter("appointment");
+				var oAppointment = oEvent.getParameter("appointment"),
+					sSelected;
 				if (oAppointment) {
-					MessageBox.show("Appointment selected: " + oAppointment.getTitle());
+					sSelected = oAppointment.getSelected() ? "selected" : "deselected";
+					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + this.byId("PC1").getSelectedAppointments().length);
 				} else {
 					var aAppointments = oEvent.getParameter("appointments");
 					var sValue = aAppointments.length + " Appointments selected";
 					MessageBox.show(sValue);
 				}
+			},
+
+			handleSelectionFinish: function(oEvent) {
+				var aSelectedKeys = oEvent.getSource().getSelectedKeys();
+				this.byId("PC1").setBuiltInViews(aSelectedKeys);
 			}
 
 		});

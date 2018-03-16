@@ -3,7 +3,7 @@
  */
 
 
-sap.ui.define("sap/m/semantic/SemanticPageRenderer", [], function() {
+sap.ui.define([], function() {
 	"use strict";
 
 	var SemanticPageRenderer = {};

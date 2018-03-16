@@ -4,19 +4,23 @@
 
 /*global location */
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
+		"sap/ui/core/Component",
 		"sap/ui/core/ComponentContainer",
 		"sap/ui/documentation/sdk/controller/util/ControlsInfo",
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
-		"sap/ui/fl/FakeLrepConnectorLocalStorage",
-		"sap/ui/fl/Utils",
 		"sap/m/Text",
 		"sap/ui/core/HTML",
 		"sap/ui/Device",
-		"sap/ui/core/routing/History"
-	], function (BaseController, JSONModel, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, FakeLrepConnectorLocalStorage, Utils, Text, HTML, Device, History) {
+		"sap/ui/core/routing/History",
+		"sap/m/library"
+	], function (jQuery, BaseController, JSONModel, Component, ComponentContainer, ControlsInfo, ToggleFullScreenHandler, Text, HTML, Device, History, mobileLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.URLHelper
+		var URLHelper = mobileLibrary.URLHelper;
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Sample", {
 
@@ -32,16 +36,13 @@ sap.ui.define([
 					showNewTab: false
 				});
 
-				this._initFakeLREP();
-				this._loadRuntimeAuthoring();
+				// Load runtime authoring asynchronously
+				Promise.all([
+					sap.ui.getCore().loadLibrary("sap.ui.fl", {async: true}),
+					sap.ui.getCore().loadLibrary("sap.ui.rta", {async: true})
+				]).then(this._loadRTA.bind(this));
 
 				this.getView().setModel(this._viewModel);
-
-				var that = this;
-
-				ControlsInfo.listeners.push(function () {
-					that._loadSample();
-				});
 			},
 
 			/* =========================================================== */
@@ -49,46 +50,59 @@ sap.ui.define([
 			/* =========================================================== */
 
 			_onSampleMatched: function (event) {
+
+				this.getModel("headerView").setProperty("/bShowSubHeader", false);
+
+				var oPage = this.byId("page");
+
+				oPage.setBusy(true);
+
 				this._sId = event.getParameter("arguments").id;
 
-				if (this._oRTA && jQuery.sap.byId("RTA-Toolbar")[0]) {
-					this._oRTA.stop(true);
-				}
-
-				this._loadSample();
+				ControlsInfo.loadData().then(function (oData) {
+					this._loadSample(oData);
+				}.bind(this));
 			},
 
-			_loadSample: function() {
-				var oModelData = this._viewModel.getData();
+			_loadSample: function(oData) {
+				var oPage = this.byId("page"),
+					oHistory = History.getInstance(),
+					oPrevHash = oHistory.getPreviousHash(),
+					oModelData = this._viewModel.getData(),
+					oSample = oData.samples[this._sId],
+					oContent;
 
-				if (!ControlsInfo.data) {
-					return;
-				}
-
-				// retrieve sample object
-				var oSample = ControlsInfo.data.samples[this._sId];
 				if (!oSample) {
+					jQuery.sap.delayedCall(0, this, function () {
+						oPage.setBusy(false);
+					});
+					this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
 					return;
 				}
 
 				// set nav button visibility
-				var oPage = this.getView().byId("page");
-				var oHistory = History.getInstance();
-				var oPrevHash = oHistory.getPreviousHash();
 				oModelData.showNavButton = Device.system.phone || !!oPrevHash;
 				oModelData.previousSampleId = oSample.previousSampleId;
 				oModelData.nextSampleId = oSample.nextSampleId;
+				// we need this property to navigate to API reference
+				this.entityId = oSample.entityId;
 
 				// set page title
-				oPage.setTitle("Sample: " + oSample.name);
+				oModelData.title = "Sample: " + oSample.name;
 
 				try {
-					var oContent = this._createComponent();
+					oContent = this._createComponent();
 				} catch (ex) {
 					oPage.removeAllContent();
 					oPage.addContent(new Text({ text : "Error while loading the sample: " + ex }));
+					jQuery.sap.delayedCall(0, this, function () {
+						oPage.setBusy(false);
+					});
 					return;
 				}
+
+				// Store a reference to the currently opened sample on the application component
+				this.getOwnerComponent()._oCurrentOpenedSample = oContent ? oContent : undefined;
 
 				//get config
 				var oConfig = (this._oComp.getMetadata()) ? this._oComp.getMetadata().getConfig() : null;
@@ -116,12 +130,25 @@ sap.ui.define([
 
 				// scroll to top of page
 				oPage.scrollTo(0);
+
+				this.getAPIReferenceCheckPromise(oSample.entityId).then(function (bHasAPIReference) {
+					this.getView().byId("apiRefButton").setVisible(bHasAPIReference);
+				}.bind(this));
+
 				this._viewModel.setData(oModelData);
+
+				jQuery.sap.delayedCall(0, this, function () {
+					oPage.setBusy(false);
+				});
+
 			},
 
+			onAPIRefPress: function () {
+				this.getRouter().navTo("apiId", {id: this.entityId});
+			},
 
 			onNewTab : function () {
-				sap.m.URLHelper.redirect(this.sIFrameUrl, true);
+				URLHelper.redirect(this.sIFrameUrl, true);
 			},
 
 			onPreviousSample: function (oEvent) {
@@ -136,8 +163,33 @@ sap.ui.define([
 				}, true);
 			},
 
+			/**
+			 * Extends the sSampleId with the relative path defined in sIframePath and returns the resulting path.
+			 * @param {string} sSampleId
+			 * @param {string} sIframe
+			 * @returns {string}
+			 * @private
+			 */
+			_resolveIframePath: function (sSampleId, sIframePath) {
+				var aIFramePathParts = sIframePath.split("/"),
+					i;
+
+				for (i = 0; i < aIFramePathParts.length - 1; i++) {
+					if (aIFramePathParts[i] == "..") {
+						// iframe path has parts pointing one folder up so remove last part of the sSampleId
+						sSampleId = sSampleId.substring(0, sSampleId.lastIndexOf("."));
+					} else {
+						// append the part of the iframe path to the sample's id
+						sSampleId += "." + aIFramePathParts[i];
+					}
+				}
+
+				return sSampleId;
+			},
+
 			_createIframe : function (oIframeContent, vIframe) {
 				var sSampleId = this._sId,
+					sIframePath = "",
 					rExtractFilename = /\/([^\/]*)$/,// extracts everything after the last slash (e.g. some/path/index.html -> index.html)
 					rStripUI5Ending = /\..+$/,// removes everything after the first dot in the filename (e.g. someFile.qunit.html -> .qunit.html)
 					aFileNameMatches,
@@ -145,14 +197,16 @@ sap.ui.define([
 					sFileEnding;
 
 				if (typeof vIframe === "string") {
+					sIframePath = this._resolveIframePath(sSampleId, vIframe);
+
 					// strip the file extension to be able to use jQuery.sap.getModulePath
 					aFileNameMatches = rExtractFilename.exec(vIframe);
 					sFileName = (aFileNameMatches && aFileNameMatches.length > 1 ? aFileNameMatches[1] : vIframe);
 					sFileEnding = rStripUI5Ending.exec(sFileName)[0];
-					var sIframeWithoutUI5Ending = vIframe.replace(rStripUI5Ending, "");
+					var sIframeWithoutUI5Ending = sFileName.replace(rStripUI5Ending, "");
 
 					// combine namespace with the file name again
-					this.sIFrameUrl = jQuery.sap.getModulePath(sSampleId + "." + sIframeWithoutUI5Ending, sFileEnding || ".html");
+					this.sIFrameUrl = jQuery.sap.getModulePath(sIframePath + "/" + sIframeWithoutUI5Ending, sFileEnding || ".html");
 				} else {
 					jQuery.sap.log.error("no iframe source was provided");
 					return;
@@ -168,16 +222,21 @@ sap.ui.define([
 							// Do not attach on "load" event on every onAfterRendering of the HTML control
 							if (!this._oHtmlControl._jQueryHTMLControlLoadEventAttached) {
 								this._oHtmlControl.$().on("load", function () {
-									var oSampleFrame = this._oHtmlControl.$()[0].contentWindow;
+									var oSampleFrame = this._oHtmlControl.$()[0].contentWindow,
+										oSampleFrameCore = oSampleFrame.sap.ui.getCore();
 
 									// Apply theme settings to iframe sample
 									oSampleFrame.sap.ui.getCore().attachInit(function () {
-										var bCompact = this.getRootView().hasStyleClass("sapUiSizeCompact");
+										var bCompact = jQuery(document.body).hasClass("sapUiSizeCompact");
 
-										oSampleFrame.sap.ui.getCore().applyTheme(this._oCore.getConfiguration().getTheme());
+										oSampleFrameCore.applyTheme(this._oCore.getConfiguration().getTheme());
+										oSampleFrameCore.getConfiguration().setRTL(this._oCore.getConfiguration().getRTL());
 										oSampleFrame.jQuery('body')
 											.toggleClass("sapUiSizeCompact", bCompact)
-											.toggleClass("sapUiSizeCozy", bCompact);
+											.toggleClass("sapUiSizeCozy", !bCompact);
+
+										// Notify Core for content density change
+										oSampleFrameCore.notifyContentDensityChanged();
 									}.bind(this));
 								}.bind(this));
 
@@ -186,6 +245,9 @@ sap.ui.define([
 
 						}.bind(this)
 					});
+				} else {
+					// If we already have the control just navigate to the new URL
+					this._oHtmlControl.getDomRef().src = this.sIFrameUrl;
 				}
 
 				return this._oHtmlControl;
@@ -196,6 +258,7 @@ sap.ui.define([
 				// create component only once
 				var sCompId = 'sampleComp-' + this._sId;
 				var sCompName = this._sId;
+				var oMainComponent = this.getOwnerComponent();
 
 				this._oComp = sap.ui.component(sCompId);
 
@@ -203,18 +266,21 @@ sap.ui.define([
 					this._oComp.destroy();
 				}
 
-				this._oComp = sap.ui.getCore().createComponent({
-					id : sCompId,
-					name : sCompName
-				});
-				// create component container
-				return new ComponentContainer({
-					component: this._oComp
-				});
+				return oMainComponent.runAsOwner(function() {
+					this._oComp = sap.ui.getCore().createComponent({
+						id: sCompId,
+						name: sCompName
+					});
+
+					// create component container
+					return new ComponentContainer({
+						component: this._oComp
+					});
+				}.bind(this));
 			},
 
 			onNavBack : function (oEvt) {
-				this.getRouter().myNavBack("home", {});
+				this.getRouter().navTo("entity", { id : this.entityId }, true);
 			},
 
 			onNavToCode : function (evt) {
@@ -226,43 +292,56 @@ sap.ui.define([
 			onToggleFullScreen : function (oEvt) {
 				ToggleFullScreenHandler.updateMode(oEvt, this.getView(), this);
 			},
+
 			_oRTA : null,
-			_initFakeLREP : function(){
-				// fake stable IDs
-				Utils.checkControlId = function() {
-					return true;
-				};
 
-				FakeLrepConnectorLocalStorage.enableFakeConnector({
-					"isKeyUser": true,
-					"isAtoAvailable": false,
-					"isProductiveSystem": true
-				});
-			},
+			_loadRTA: function () {
+				sap.ui.require([
+					"sap/ui/fl/Utils",
+					"sap/ui/fl/FakeLrepConnectorLocalStorage"
+				], function (
+					Utils,
+					FakeLrepConnectorLocalStorage
+				) {
 
-			/*
-			* Loades runtime authoring asynchronously (will fail if the rta library is not loaded)
-			*/
-			_loadRuntimeAuthoring : function() {
-				try {
-					sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function (RuntimeAuthoring) {
-						this._oRTA = new RuntimeAuthoring();
-						this.getView().byId("toggleRTA").setVisible(true);
-					}.bind(this));
-				} catch (oException) {
-					jQuery.sap.log.info("sap.ui.rta.RuntimeAuthoring could not be loaded, UI adaptation mode is disabled");
-				}
+					// fake stable IDs
+					Utils.checkControlId = function() {
+						return true;
+					};
+
+					FakeLrepConnectorLocalStorage.enableFakeConnector({
+						"isProductiveSystem": true
+					});
+					this.byId("toggleRTA").setVisible(true);
+
+					this.getRouter().attachRouteMatched(function () {
+						if (this._oRTA) {
+							this._oRTA.destroy();
+							this._oRTA = null;
+						}
+					}, this);
+				}.bind(this));
 			},
 
 			onToggleAdaptationMode : function (oEvt) {
-				var oRTA = this._oRTA;
-				if (oRTA) {
-					oRTA.setRootControl(this.getView().byId("page").getContent()[0]);
-					oRTA.start();
-					setTimeout(function() {
-						oRTA._oToolsMenu._oButtonPublish.setVisible(false);
-					}, 0);
-				}
+				sap.ui.require([
+					"sap/ui/rta/RuntimeAuthoring"
+				], function (
+					RuntimeAuthoring
+				) {
+					if (!this._oRTA) {
+						// default developerMode for CUSTOMER-layer is 'true'
+						this._oRTA = new RuntimeAuthoring({flexSettings: {
+							developerMode: false
+						}});
+						this._oRTA.setRootControl(this.byId("page").getContent()[0]);
+						this._oRTA.attachStop(function () {
+							this._oRTA.destroy();
+							delete this._oRTA;
+						}.bind(this));
+						this._oRTA.start();
+					}
+				}.bind(this));
 			}
 		});
 	}

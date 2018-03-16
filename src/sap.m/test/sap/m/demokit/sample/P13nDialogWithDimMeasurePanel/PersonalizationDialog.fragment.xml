@@ -1,57 +1,22 @@
-<core:FragmentDefinition
-	xmlns="sap.m"
-	xmlns:core="sap.ui.core">
-	<P13nDialog ok="handleOK" cancel="handleCancel" showReset="true"
-		reset="handleReset" initialVisiblePanelType="dimeasure">
-		<panels>
-			<P13nDimMeasurePanel title="{i18n>Title}"
-				visible="true" chartTypeKey="bar"
-				items="{
-					path: '/ColumnCollection'
-				}"
-				dimMeasureItems="{
-					path: '/ColumnsItems'
-				}"
-				availableChartTypes="{ path: '/ChartTypes'}">
-				<items>
-					<P13nItem columnKey="{path}" text="{text}"
-						aggregationRole="{type}" />
-				</items>
-				<dimMeasureItems>
-					<P13nDimMeasureItem columnKey="{columnKey}"
-						index="{index}" visible="{visible}" />
-				</dimMeasureItems>
-				<availableChartTypes>
-					<core:Item key="{key}" text="{text}" />
-				</availableChartTypes>
-			</P13nDimMeasurePanel>
-			<P13nSortPanel visible="false" type="sort"
-				containerQuery="true"
-				items="{
-					path: '/ColumnCollection'
-				}"
-				sortItems="{
-					path: '/SortItems'
-				}">
-				<P13nItem columnKey="{path}" text="{text}" />
-				<sortItems>
-					<P13nSortItem columnKey="{columnKey}" operation="{operation}" />
-				</sortItems>
-			</P13nSortPanel>
-			<P13nFilterPanel title="{/FilterTitle}" visible="true"
-				type="filter" containerQuery="true"
-				items="{
-					path: '/ColumnCollection'
-				}"
-				filterItems="{
-					path: '/FilterItems'
-				}">
-				<P13nItem columnKey="{path}" text="{text}" />
-				<filterItems>
-					<P13nFilterItem columnKey="{columnKey}" operation="{operation}"
-						value1="{value1}" />
-				</filterItems>
-			</P13nFilterPanel>
-		</panels>
-	</P13nDialog>
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+    <P13nDialog showReset="true" showResetEnabled="{path: '/ShowResetEnabled'}" ok="onOK" cancel="onCancel"
+                reset="onReset" class="sapUiSizeCompact">
+        <panels>
+            <P13nDimMeasurePanel chartTypeKey="{path: '/SelectedChartType'}"
+                                 changeDimMeasureItems="onChangeDimMeasureItems" changeChartType="onChangeChartType"
+                                 items="{path: '/DimMeasureCollection'}"
+                                 dimMeasureItems="{path: '/DimMeasureItems'}"
+                                 availableChartTypes="{path: '/ChartTypes'}">
+                <items>
+                    <P13nItem columnKey="{columnKey}" text="{text}" aggregationRole="{aggregationRole}"/>
+                </items>
+                <dimMeasureItems>
+                    <P13nDimMeasureItem columnKey="{columnKey}" index="{index}" visible="{visible}" role="{role}"/>
+                </dimMeasureItems>
+                <availableChartTypes>
+                    <core:Item key="{key}" text="{text}"/>
+                </availableChartTypes>
+            </P13nDimMeasurePanel>
+        </panels>
+    </P13nDialog>
 </core:FragmentDefinition>

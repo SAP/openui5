@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 		var Component = UIComponent.extend("sap.ui.layout.sample.ResponsiveSplitter.Component", {
 
 			metadata: {
-				rootView: "sap.ui.layout.sample.ResponsiveSplitter.V",
+				rootView: {
+					"viewName": "sap.ui.layout.sample.ResponsiveSplitter.V",
+					"type": "XML",
+					"async": true
+				},
 				dependencies: {
 					libs: [
 						"sap.ui.layout"

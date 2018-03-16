@@ -3,9 +3,44 @@
  */
 
 // Provides control sap.m.SelectDialog.
-sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchField', './library', 'sap/ui/core/Control'],
-	function(jQuery, Button, Dialog, List, SearchField, library, Control) {
+sap.ui.define([
+	'./Button',
+	'./Dialog',
+	'./List',
+	'./SearchField',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/base/ManagedObject',
+	'sap/m/Toolbar',
+	'sap/m/Label',
+	'sap/m/BusyIndicator',
+	'sap/m/Bar',
+	'sap/ui/core/theming/Parameters',
+	'./SelectDialogRenderer'
+],
+function(
+	Button,
+	Dialog,
+	List,
+	SearchField,
+	library,
+	Control,
+	Device,
+	ManagedObject,
+	Toolbar,
+	Label,
+	BusyIndicator,
+	Bar,
+	Parameters,
+	SelectDialogRenderer
+	) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
 
 
 
@@ -36,7 +71,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * where a filter function can be applied to the list binding. </li>
 	 * <li> The growing functionality of the list does not support two-way Binding, so if you use this control with a JSON model
 	 * make sure the binding mode is set to <code>OneWay</code> and that you update the selection model manually with
-	 * the items passed in the <code>confirm<code> event. </li>
+	 * the items passed in the <code>confirm</code> event. </li>
 	 * <li> In the multi-select mode of the select dialog, checkboxes are provided for choosing multiple entries. </li>
 	 * <li> You can set <code>rememberSelections</code> to true to store the current selection and load this state
 	 * when the dialog is opened again. </li>
@@ -68,6 +103,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @constructor
 	 * @public
 	 * @alias sap.m.SelectDialog
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/select-dialog/ Select Dialog}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var SelectDialog = Control.extend("sap.m.SelectDialog", /** @lends sap.m.SelectDialog.prototype */ { metadata : {
@@ -103,6 +139,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 
 			/**
 			 * This flag controls whether the dialog clears the selection after the confirm event has been fired. If the dialog needs to be opened multiple times in the same context to allow for corrections of previous user inputs, set this flag to "true".
+			 *
+			 * <b>Note:</b> The sap.m.SelectDialog uses {@link sap.m.ListBase#rememberSelections this} property of the ListBase and therefore its limitations also apply here.
 			 * @since 1.18
 			 */
 			rememberSelections : {type : "boolean", group : "Behavior", defaultValue : false},
@@ -118,7 +156,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 			/**
 			 * The items of the list shown in the search dialog. It is recommended to use a StandardListItem for the dialog but other combinations are also possible.
 			 */
-			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item"},
+			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item", forwarding: {idSuffix: "-list", aggregation: "items", forwardBinding: true}},
 
 			/**
 			 * The internal dialog that will be shown when method open is called
@@ -227,12 +265,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		this._oList = new List(this.getId() + "-list", {
 			growing: true,
 			growingScrollToLoad: true,
-			mode: sap.m.ListMode.SingleSelectMaster,
-			infoToolbar: new sap.m.Toolbar({
+			mode: ListMode.SingleSelectMaster,
+			infoToolbar: new Toolbar({
 				visible: false,
 				active: false,
 				content: [
-					new sap.m.Label({
+					new Label({
 						text: this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [0])
 					})
 				]
@@ -263,7 +301,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		this._oList.attachUpdateFinished(this._updateFinished, this);
 
 		// store a reference to the busyIndicator to display when data is currently loaded by a service
-		this._oBusyIndicator = new sap.m.BusyIndicator(this.getId() + "-busyIndicator").addStyleClass("sapMSelectDialogBusyIndicator", true);
+		this._oBusyIndicator = new BusyIndicator(this.getId() + "-busyIndicator").addStyleClass("sapMSelectDialogBusyIndicator", true);
 
 		// store a reference to the searchField for filtering
 		this._oSearchField = new SearchField(this.getId() + "-searchField", {
@@ -290,7 +328,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		this._searchField = this._oSearchField; // for downward compatibility
 
 		// store a reference to the subheader for hiding it when data loads
-		this._oSubHeader = new sap.m.Bar(this.getId() + "-subHeader", {
+		this._oSubHeader = new Bar(this.getId() + "-subHeader", {
 			contentMiddle: [
 				this._oSearchField
 			]
@@ -299,12 +337,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
 			title: this.getTitle(),
-			stretch: sap.ui.Device.system.phone,
+			stretch: Device.system.phone,
 			contentHeight: "2000px",
 			subHeader: this._oSubHeader,
 			content: [this._oBusyIndicator, this._oList],
 			leftButton: this._getCancelButton(),
-			initialFocus: (sap.ui.Device.system.desktop ? this._oSearchField : null)
+			initialFocus: (Device.system.desktop ? this._oSearchField : null)
 		}).addStyleClass("sapMSelectDialog", true);
 		// for downward compatibility reasons
 		this._dialog = this._oDialog;
@@ -323,7 +361,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 
 		// internally set top and bottom margin of the dialog to 4rem respectively
 		// CSN# 333642/2014: in base theme the parameter sapUiFontSize is "medium", implement a fallback
-		this._oDialog._iVMargin = 8 * (parseInt(sap.ui.core.theming.Parameters.get("sapUiFontSize"), 10) || 16); // 128
+		this._oDialog._iVMargin = 8 * (parseInt(Parameters.get("sapUiFontSize"), 10) || 16); // 128
 
 		// helper variables for search update behaviour
 		this._sSearchFieldValue = "";
@@ -392,11 +430,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		this._dialog = null;
 	};
 
-	/*
+	/**
 	* Is called after renderer is finished to show the busy state
 	* @override
 	* @protected
-	* @returns {sap.m.SelectDialog} this pointer for chaining
+	* @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	*/
 	SelectDialog.prototype.onAfterRendering = function () {
 		if (this._bInitBusy && this._bFirstRender) {
@@ -407,11 +445,11 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		return this;
 	};
 
-	/*
+	/**
 	* Invalidates the dialog instead of this control (we don't have a renderer)
 	* @override
 	* @protected
-	* @returns {sap.m.SelectDialog} this pointer for chaining
+	* @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	*/
 	SelectDialog.prototype.invalidate = function () {
 		// CSN #80686/2014: only invalidate inner dialog if call does not come from inside
@@ -427,11 +465,8 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	/**
 	 * Opens the internal dialog with a searchfield and a list.
 	 *
-	 * @name sap.m.SelectDialog#open
-	 * @function
-	 * @param {string} sSearchValue
-	 *         A value for the search can be passed to match with the filter applied to the list binding.
-	 * @type sap.m.SelectDialog
+	 * @param {string} sSearchValue  A value for the search can be passed to match with the filter applied to the list binding.
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -474,7 +509,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	* Sets the growing threshold to the internal list
 	* @public
 	* @param {int} iValue Value for the list's growing threshold.
-	* @returns {sap.m.SelectDialog} this pointer for chaining
+	* @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	*/
 	SelectDialog.prototype.setGrowingThreshold = function (iValue) {
 		this._oList.setGrowingThreshold(iValue);
@@ -488,17 +523,17 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @override
 	 * @public
 	 * @param {boolean} bMulti Flag for multi selection mode
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setMultiSelect = function (bMulti) {
 		this.setProperty("multiSelect", bMulti, true);
 		if (bMulti) {
-			this._oList.setMode(sap.m.ListMode.MultiSelect);
+			this._oList.setMode(ListMode.MultiSelect);
 			this._oList.setIncludeItemInSelection(true);
 			this._oDialog.setEndButton(this._getCancelButton());
 			this._oDialog.setBeginButton(this._getOkButton());
 		} else {
-			this._oList.setMode(sap.m.ListMode.SingleSelectMaster);
+			this._oList.setMode(ListMode.SingleSelectMaster);
 			this._oDialog.setBeginButton(this._getCancelButton());
 		}
 
@@ -510,7 +545,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @override
 	 * @public
 	 * @param {string} sTitle The title text for the dialog
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setTitle = function (sTitle) {
 		this._oDialog.setTitle(sTitle);
@@ -524,7 +559,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @override
 	 * @public
 	 * @param {string} sNoDataText The no data text for the list
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setNoDataText = function (sNoDataText) {
 		this._oList.setNoDataText(sNoDataText);
@@ -557,7 +592,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @param {sap.ui.core.CSSSize} sWidth The new content width value for the dialog
 	 * @public
 	 * @override
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code>s pointer for chaining
 	 */
 	SelectDialog.prototype.setContentWidth = function (sWidth) {
 		this._oDialog.setContentWidth(sWidth);
@@ -580,7 +615,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * @param {sap.ui.core.CSSSize} sHeight The new content width value for the dialog
 	 * @public
 	 * @override
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setContentHeight = function (sHeight) {
 		this._oDialog.setContentHeight(sHeight);
@@ -593,7 +628,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Forward method to the inner dialog: addStyleClass
 	 * @public
 	 * @override
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.addStyleClass = function () {
 		this._oDialog.addStyleClass.apply(this._oDialog, arguments);
@@ -604,7 +639,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Forward method to the inner dialog: removeStyleClass
 	 * @public
 	 * @override
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.removeStyleClass = function () {
 		this._oDialog.removeStyleClass.apply(this._oDialog, arguments);
@@ -615,7 +650,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	 * Forward method to the inner dialog: toggleStyleClass
 	 * @public
 	 * @override
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.toggleStyleClass = function () {
 		this._oDialog.toggleStyleClass.apply(this._oDialog, arguments);
@@ -650,14 +685,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	/*           begin: forward aggregation  methods to List       */
 	/* =========================================================== */
 
-	/*
+	/**
 	 * Set the model for the internal list AND the current control so that
 	 * both controls can be used with data binding
 	 * @override
 	 * @public
 	 * @param {sap.ui.Model} oModel the model that holds the data for the list
 	 * @param {string} sModelName the optional model name
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype._setModel = SelectDialog.prototype.setModel;
 	SelectDialog.prototype.setModel = function (oModel, sModelName) {
@@ -680,107 +715,14 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		return this;
 	};
 
-	/*
-	 * Forwards a function call to a managed object based on the aggregation name.
-	 * If the name is items, it will be forwarded to the list, otherwise called locally
-	 * @private
-	 * @param {string} sFunctionName The name of the function to be called
-	 * @param {string} sAggregationName The name of the aggregation asociated
-	 * @returns {any} The return type of the called function
-	 */
-	SelectDialog.prototype._callMethodInManagedObject = function (sFunctionName, sAggregationName) {
-		var aArgs = Array.prototype.slice.call(arguments);
-
-		if (sAggregationName === "items") {
-			// apply to the internal list
-			return this._oList[sFunctionName].apply(this._oList, aArgs.slice(1));
-		} else {
-			// apply to this control
-			return sap.ui.base.ManagedObject.prototype[sFunctionName].apply(this, aArgs.slice(1));
-		}
-	};
-
 	/**
-	 * Forwards aggregations with the name of items to the internal list.
-	 * @override
-	 * @protected
-	 * @param {string} sAggregationName The name for the binding
-	 * @param {object} oBindingInfo The configuration parameters for the binding
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
-	 */
-	SelectDialog.prototype.bindAggregation = function () {
-		var args = Array.prototype.slice.call(arguments);
-
-		// propagate the bind aggregation function to list
-		this._callMethodInManagedObject.apply(this, ["bindAggregation"].concat(args));
-		return this;
-	};
-
-	SelectDialog.prototype.validateAggregation = function (sAggregationName, oObject, bMultiple) {
-		return this._callMethodInManagedObject("validateAggregation", sAggregationName, oObject, bMultiple);
-	};
-
-	SelectDialog.prototype.setAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		this._callMethodInManagedObject("setAggregation", sAggregationName, oObject, bSuppressInvalidate);
-		return this;
-	};
-
-	SelectDialog.prototype.getAggregation = function (sAggregationName, oDefaultForCreation) {
-		return this._callMethodInManagedObject("getAggregation", sAggregationName, oDefaultForCreation);
-	};
-
-	SelectDialog.prototype.indexOfAggregation = function (sAggregationName, oObject) {
-		return this._callMethodInManagedObject("indexOfAggregation", sAggregationName, oObject);
-	};
-
-	SelectDialog.prototype.insertAggregation = function (sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-		this._callMethodInManagedObject("insertAggregation", sAggregationName, oObject, iIndex, bSuppressInvalidate);
-		return this;
-	};
-
-	SelectDialog.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		this._callMethodInManagedObject("addAggregation", sAggregationName, oObject, bSuppressInvalidate);
-		return this;
-	};
-
-	SelectDialog.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		return this._callMethodInManagedObject("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
-	};
-
-	SelectDialog.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
-		return this._callMethodInManagedObject("removeAllAggregation", sAggregationName, bSuppressInvalidate);
-	};
-
-	SelectDialog.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-		this._callMethodInManagedObject("destroyAggregation", sAggregationName, bSuppressInvalidate);
-		return this;
-	};
-
-	SelectDialog.prototype.getBinding = function (sAggregationName) {
-		return this._callMethodInManagedObject("getBinding", sAggregationName);
-	};
-
-
-	SelectDialog.prototype.getBindingInfo = function (sAggregationName) {
-		return this._callMethodInManagedObject("getBindingInfo", sAggregationName);
-	};
-
-	SelectDialog.prototype.getBindingPath = function (sAggregationName) {
-		return this._callMethodInManagedObject("getBindingPath", sAggregationName);
-	};
-
-	SelectDialog.prototype.getBindingContext = function (sModelName) {
-		return this._oList && this._oList.getBindingContext(sModelName);
-	};
-
-	/*
 	 * Set the binding context for the internal list AND the current control so that
 	 * both controls can be used with the context
 	 * @override
 	 * @public
 	 * @param {sap.ui.model.Context} oContext The new context
 	 * @param {string} sModelName The optional model name
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 
 	SelectDialog.prototype._setBindingContext = SelectDialog.prototype.setBindingContext;
@@ -802,12 +744,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	/*           begin: internal methods and properties            */
 	/* =========================================================== */
 
-	/*
+	/**
 	 * Fires the search event. This function is called whenever a search related parameter or the value in the search field is changed
 	 * @private
 	 * @param {string} sValue The new filter value or undefined if called by management functions
 	 * @param {string} sEventType The search field event type that has been called (liveChange / search)
-	 * @returns {sap.m.SelectDialog} this pointer for chaining
+	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype._executeSearch = function (sValue, sEventType) {
 
@@ -853,7 +795,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		return this;
 	};
 
-	/*
+	/**
 	 * Internal function that shows/hides a local busy indicator and hides/shows the list
 	 * based on the parameter flag. For the first request, the search field is also hidden.
 	 * @private
@@ -871,7 +813,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		}
 	};
 
-	/*
+	/**
 	 * Event function that is called when the model sent a request to update the data.
 	 * It shows a busy indicator and hides searchField and list in the dialog.
 	 * @private
@@ -880,7 +822,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	SelectDialog.prototype._updateStarted = function (oEvent) {
 		if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
 			if (this._oDialog.isOpen() && this._iListUpdateRequested) {
-				// only set busy mode when we have an oData model
+				// only set busy mode when we have an OData model
 				this._setBusy(true);
 			} else {
 				this._bInitBusy = true;
@@ -888,20 +830,20 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		}
 	};
 
-	/*
+	/**
 	 * Event function that is called when the model request is finished.
 	 * It hides the busy indicator and shows searchField and list in the dialog.
 	 * @private
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	SelectDialog.prototype._updateFinished = function (oEvent) {
-	// only reset busy mode when we have an oData model
+	// only reset busy mode when we have an OData model
 	this._updateSelectionIndicator();
 	if (this.getModel() && this.getModel() instanceof sap.ui.model.odata.ODataModel) {
 		this._setBusy(false);
 		this._bInitBusy = false;
 	}
-	if (sap.ui.Device.system.desktop) {
+	if (Device.system.desktop) {
 
 		if (this._oList.getItems()[0]) {
 			this._oDialog.setInitialFocus(this._oList.getItems()[0]);
@@ -928,7 +870,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 	this._iListUpdateRequested = 0;
 	};
 
-	/*
+	/**
 	 * Lazy load the ok button if needed for MultiSelect mode
 	 * @private
 	 * @returns {sap.m.Button} the button
@@ -958,7 +900,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		return this._oOkButton;
 	};
 
-	/*
+	/**
 	 * Lazy load the cancel button
 	 * @private
 	 * @returns {sap.m.Button} the button
@@ -977,8 +919,9 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		return this._oCancelButton;
 	};
 
-	/*
+	/**
 	 * Internal event handler for the cancel button and ESC key
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	SelectDialog.prototype._onCancel = function (oEvent) {
@@ -1007,12 +950,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		this._oDialog.close();
 	};
 
-	/*
+	/**
 	 * Internal function to update the selection indicator bar
 	 * @private
 	 */
 	SelectDialog.prototype._updateSelectionIndicator = function () {
-		var iSelectedContexts = this._oList.getSelectedContexts(true).length,
+		var iSelectedContexts = this._oList.getSelectedContextPaths(true).length,
 			oInfoBar = this._oList.getInfoToolbar();
 
 		// update the selection label
@@ -1020,22 +963,27 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
 	};
 
-	/*
+	/**
 	 * Internal function to fire the confirm event and to update the selection of the list.
 	 * The function is called on pressing ok and on close in single select mode
 	 * @private
 	 */
 	SelectDialog.prototype._fireConfirmAndUpdateSelection = function () {
 		// fire confirm event with current selection
-		this.fireConfirm({
+		var mParams = {
 			selectedItem: this._oSelectedItem,
-			selectedItems: this._aSelectedItems,
-			selectedContexts: this._oList.getSelectedContexts(true)
+			selectedItems: this._aSelectedItems
+		};
+		// retrieve the value for 'selectedContexts' only lazily as it might fail for some models
+		Object.defineProperty(mParams, "selectedContexts", {
+			get: this._oList.getSelectedContexts.bind(this._oList, true)
 		});
+
+		this.fireConfirm(mParams);
 		this._updateSelection();
 	};
 
-	/*
+	/**
 	 * Internal function to remove/keep the list selection based on property "rememberSelection"
 	 * @private
 	 */
@@ -1049,7 +997,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 		}
 	};
 
-	/*
+	/**
 	 * Internal function to reset the selection to the items that were selected when the dialog was opened
 	 * @private
 	 */
@@ -1077,4 +1025,4 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './List', './SearchF
 
 	return SelectDialog;
 
-}, /* bExport= */ true);
+});

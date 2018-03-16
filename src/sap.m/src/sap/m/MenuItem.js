@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.MenuItem.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
-	function(jQuery, library, Item) {
+sap.ui.define(['./library', 'sap/ui/core/Item'],
+	function(library, Item) {
 		"use strict";
 
 
@@ -161,6 +161,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 			return Item.prototype.destroyAggregation.apply(this, arguments);
 		};
 
+		MenuItem.prototype.destroy = function() {
+			var oVisualControl = sap.ui.getCore().byId(this._getVisualControl());
+
+			if (oVisualControl) {
+				oVisualControl.destroy();
+			}
+
+			return Item.prototype.destroy.apply(this, arguments);
+		};
+
 		//Internal methods used to identify the item in the Menu's hierarchy.
 
 		/**
@@ -221,4 +231,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Item'],
 
 		return MenuItem;
 
-	}, /* bExport= */ true);
+	});

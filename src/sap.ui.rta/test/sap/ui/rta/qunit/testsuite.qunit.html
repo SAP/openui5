@@ -1,0 +1,90 @@
+<html>
+	<head>
+		<title>QUnit TestSuite for sap.ui.rta</title>
+		<script id="sap-ui-bootstrap" src='../../../../../resources/sap-ui-core.js'> </script>
+		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+	</head>
+	<body>
+		<script>
+
+			/**
+			 * Add test pages to this test suite function.
+			 * Please order alphabetically
+			 */
+			function suite() {
+				var suite = new parent.jsUnitTestSuite();
+				var contextPath = "/" + window.location.pathname.split("/")[1];
+
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/AppVariantDialog.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/AppVariantManager.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/AppVariantOverviewDialog.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/AppVariantUtils.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/Feature.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/ManageAppsController.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/ManageAppsUtils.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/appVariant/S4HanaCloudBackend.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/appDescriptor/AddLibrary.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/AddODataProperty.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/AddXML.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/AppDescriptorCommand.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Combine.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/ControlVariantConfigure.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/ControlVariantDuplicate.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/ControlVariantSetTitle.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/ControlVariantSwitch.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/CreateContainer.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Move.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Remove.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Rename.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Settings.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/command/Split.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/additionalElements/AddElementsDialog.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/additionalElements/AdditionalElementsPlugin.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Combine.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/ControlVariant.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/CreateContainer.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/CutPaste.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/EasyAdd.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/EasyRemove.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Plugin.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Remove.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Rename.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Selection.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Settings.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Split.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/Stack.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/toolbar/Base.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/toolbar/Fiori.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/AggregationBinding.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/Command.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/ControlTreeModifier.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/LREPSerializer.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/PopupManager.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/RestartRTA.qunit.html");
+				suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/RTAControlEnabling.qunit.html");
+
+				// these qunit tests require comp library
+				try {
+					sap.ui.getCore().loadLibrary("sap.ui.comp");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/additionalElements/AdditionalElementsAnalyzer.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/additionalElements/AdditionalElementsAnalyzerOData.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/plugin/RTAElementMover.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/BindingsExtractor.qunit.html");
+					// will be replaced soon with change: 3088467
+					// suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/ContextMenu.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/EndToEnd.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/RtaIntegrationScenario.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/RuntimeAuthoring.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/RuntimeAuthoring-2.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/SimpleFormRemove.qunit.html");
+					suite.addTestPage(contextPath + "/test-resources/sap/ui/rta/qunit/Utils.qunit.html");
+				} catch (e) {
+					jQuery.sap.log.info("sap.ui.comp not available", "enabling tests are skipped, ensure sap.ui.comp from sapui5.runtime is loaded to execute them");
+				}
+
+				return suite;
+			}
+
+			</script>
+	</body>
+</html>

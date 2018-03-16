@@ -1,9 +1,15 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './BarRenderer'],
-	function (jQuery, BarRenderer) {
+sap.ui.define(["sap/m/library", "sap/ui/Device", "sap/ui/core/library"],
+	function(library, Device, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.m.DialogType
+		var DialogType = library.DialogType;
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * Dialog renderer.
@@ -11,6 +17,13 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 		 * @namespace
 		 */
 		var DialogRenderer = {};
+
+		// Mapping of ValueState to style class
+		DialogRenderer._mStateClasses = {};
+		DialogRenderer._mStateClasses[ValueState.None] = "";
+		DialogRenderer._mStateClasses[ValueState.Success] = "sapMDialogSuccess";
+		DialogRenderer._mStateClasses[ValueState.Warning] = "sapMDialogWarning";
+		DialogRenderer._mStateClasses[ValueState.Error] = "sapMDialogError";
 
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -23,25 +36,17 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				sType = oControl.getType(),
 				oHeader = oControl._getAnyHeader(),
 				oSubHeader = oControl.getSubHeader(),
-				bMessage = (sType === sap.m.DialogType.Message),
+				bMessage = (sType === DialogType.Message),
 				oLeftButton = oControl.getBeginButton(),
 				oRightButton = oControl.getEndButton(),
 				bHorizontalScrolling = oControl.getHorizontalScrolling(),
 				bVerticalScrolling = oControl.getVerticalScrolling(),
 				sState = oControl.getState(),
 				bStretch = oControl.getStretch(),
-				bStretchOnPhone = oControl.getStretchOnPhone() && sap.ui.Device.system.phone,
+				bStretchOnPhone = oControl.getStretchOnPhone() && Device.system.phone,
 				bResizable = oControl.getResizable(),
 				bDraggable = oControl.getDraggable(),
 				oValueStateText = oControl.getAggregation("_valueState");
-
-			if (oHeader) {
-				oHeader.applyTagAndContextClassFor("header");
-			}
-
-			if (oSubHeader) {
-				oSubHeader.applyTagAndContextClassFor("subheader");
-			}
 
 			// write the HTML into the render manager
 			// the initial size of the dialog have to be 0, because if there is a large dialog content the initial size can be larger than the html's height (scroller)
@@ -72,7 +77,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				oRm.addClass("sapMDialogStretched");
 			}
 
-			oRm.addClass(sap.m.Dialog._mStateClasses[sState]);
+			oRm.addClass(DialogRenderer._mStateClasses[sState]);
 
 			// No Footer
 			var noToolbarAndNobuttons = !oControl._oToolbar && !oLeftButton && !oRightButton;
@@ -116,7 +121,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 				oRm.addClass("sapMDialogHorScrollDisabled");
 			}
 
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				oRm.addClass("sapMDialogPhone");
 			}
 
@@ -125,7 +130,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			}
 
 			// test dialog with sap-ui-xx-formfactor=compact
-			if (sap.m._bSizeCompact) {
+			if (library._bSizeCompact) {
 				oRm.addClass("sapUiSizeCompact");
 			}
 
@@ -141,7 +146,7 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 
 			oRm.write(">");
 
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 
 				if (bResizable && !bStretch) {
 					oRm.writeIcon("sap-icon://resize-corner", ["sapMDialogResizeHandler"], { "title" : ""});
@@ -154,12 +159,23 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			}
 
 			if (oHeader) {
+				oHeader._applyContextClassFor("header");
+				oRm.write("<header");
+				oRm.addClass("sapMDialogTitle");
+				oRm.writeClasses();
+				oRm.write(">");
 				oRm.renderControl(oHeader);
+				oRm.write("</header>");
 			}
 
 			if (oSubHeader) {
-				oSubHeader.addStyleClass("sapMDialogSubHeader");
+				oSubHeader._applyContextClassFor("subheader");
+				oRm.write("<header");
+				oRm.addClass("sapMDialogSubHeader");
+				oRm.writeClasses();
+				oRm.write(">");
 				oRm.renderControl(oSubHeader);
+				oRm.write("</header>");
 			}
 
 			if (oValueStateText) {
@@ -187,10 +203,16 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 			oRm.write("</section>");
 
 			if (!(noToolbarAndNobuttons || emptyToolbarAndNoButtons)) {
+				oRm.write("<footer");
+				oRm.addClass("sapMDialogFooter");
+				oRm.writeClasses();
+				oRm.write(">");
+				oControl._oToolbar._applyContextClassFor("footer");
 				oRm.renderControl(oControl._oToolbar);
+				oRm.write("</footer>");
 			}
 
-			if (sap.ui.Device.system.desktop) {
+			if (Device.system.desktop) {
 				// Invisible element which is used to determine when desktop keyboard navigation
 				// has reached the last focusable element of a dialog and went beyond. In that case, the controller
 				// will focus the first focusable element.
@@ -201,5 +223,4 @@ sap.ui.define(['jquery.sap.global', './BarRenderer'],
 		};
 
 		return DialogRenderer;
-
 	}, /* bExport= */ true);

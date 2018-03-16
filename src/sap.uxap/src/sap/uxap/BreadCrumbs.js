@@ -4,32 +4,52 @@
 
 // Provides control sap.uxap.BreadCrumbs.
 sap.ui.define([
-	"sap/m/Link",
-	"sap/m/Select",
-	"sap/m/Text",
-	"sap/ui/core/Control",
-	"sap/ui/core/ResizeHandler",
-	"sap/ui/core/delegate/ItemNavigation",
-	"sap/ui/core/Item",
-	"sap/ui/core/Icon",
-	"sap/ui/Device",
-	"./library"
-], function (Link, Select, Text, Control, ResizeHandler, ItemNavigation, Item, Icon, Device, library) {
+    "sap/m/Link",
+    "sap/m/Select",
+    "sap/ui/core/Control",
+    "sap/ui/core/ResizeHandler",
+    "sap/ui/core/delegate/ItemNavigation",
+    "sap/ui/core/Item",
+    "sap/ui/core/Icon",
+    "sap/ui/Device",
+    "./library",
+    "sap/ui/core/InvisibleText",
+    "./BreadCrumbsRenderer"
+], function(
+    Link,
+	Select,
+	Control,
+	ResizeHandler,
+	ItemNavigation,
+	Item,
+	Icon,
+	Device,
+	library,
+	InvisibleText,
+	BreadCrumbsRenderer
+) {
 	"use strict";
 
 	/**
-	 * Constructor for a new BreadCrumbs.
+	 * Constructor for a new <code>BreadCrumbs</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
+	 * Represents the navigation steps up to the current location in the app.
 	 *
-	 * The BreadCrumbs control represents the navigation steps up to the current location in the application and allows
-	 * the user to quickly navigate to a previous location on the path that got him to the current location.
-	 * It has two main modes of operation. One is a trail of links followed by separators (when there's enough space
-	 * for the control to fit on one line), and the other is a dropdown list with the links (when the trail of links
-	 * wouldn't fit on one line).
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>BreadCrumbs</code> control allows the users to quickly navigate to a previous
+	 * location on the path that got them to the current location by choosing the displayed
+	 * navigation steps.
+	 *
+	 * It has two main modes of operation:
+	 * <ul>
+	 * <li>A trail of links followed by separators, when there's enough space for the control to fit on one line.</li>
+	 * <li>A dropdown list with the links, when the trail of links wouldn't fit on one line.</li>
+	 * </ul>
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -374,7 +394,7 @@ sap.ui.define([
 	 */
 	BreadCrumbs.prototype._getAriaLabelledBy = function () {
 		if (!this._oAriaLabelledBy) {
-			BreadCrumbs.prototype._oAriaLabelledBy = new sap.ui.core.InvisibleText({
+			BreadCrumbs.prototype._oAriaLabelledBy = new InvisibleText({
 				text: library.i18nModel.getResourceBundle().getText("BREADCRUMB_TRAIL_LABEL")
 			}).toStatic();
 		}

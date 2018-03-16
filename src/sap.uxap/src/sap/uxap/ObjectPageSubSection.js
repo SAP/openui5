@@ -4,46 +4,63 @@
 
 // Provides control sap.uxap.ObjectPageSubSection.
 sap.ui.define([
-	"jquery.sap.global",
-	"sap/ui/core/CustomData",
-	"sap/ui/layout/Grid",
-	"sap/ui/layout/GridData",
-	"./ObjectPageSectionBase",
-	"./ObjectPageSubSectionLayout",
-	"./ObjectPageSubSectionMode",
-	"./ObjectPageLazyLoader",
-	"./BlockBase",
-	"sap/m/Button",
-	"sap/ui/Device",
-	"sap/ui/core/StashedControlSupport",
-	"./library"
-], function (jQuery,
-			 CustomData,
-			 Grid,
-			 GridData,
-			 ObjectPageSectionBase,
-			 ObjectPageSubSectionLayout,
-			 ObjectPageSubSectionMode,
-			 ObjectPageLazyLoader,
-			 BlockBase,
-			 Button,
-			 Device,
-			 StashedControlSupport,
-			 library) {
+    "jquery.sap.global",
+    "sap/ui/layout/Grid",
+    "sap/ui/layout/GridData",
+    "./ObjectPageSectionBase",
+    "./ObjectPageLazyLoader",
+    "./BlockBase",
+    "sap/m/Button",
+    "sap/ui/Device",
+    "sap/ui/core/StashedControlSupport",
+    "sap/ui/base/ManagedObjectObserver",
+    "./library",
+    "sap/m/library",
+    "./ObjectPageSubSectionRenderer",
+    "jquery.sap.keycodes"
+], function(
+    jQuery,
+	Grid,
+	GridData,
+	ObjectPageSectionBase,
+	ObjectPageLazyLoader,
+	BlockBase,
+	Button,
+	Device,
+	StashedControlSupport,
+	ManagedObjectObserver,
+	library,
+	mobileLibrary,
+	ObjectPageSubSectionRenderer
+) {
 	"use strict";
 
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
+
+	// shortcut for sap.uxap.ObjectPageSubSectionMode
+	var ObjectPageSubSectionMode = library.ObjectPageSubSectionMode;
+
+	// shortcut for sap.uxap.ObjectPageSubSectionLayout
+	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
+
 	/**
-	 * Constructor for a new ObjectPageSubSection.
+	 * Constructor for a new <code>ObjectPageSubSection</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
+	 * Second-level information container of an {@link sap.uxap.ObjectPageLayout}.
 	 *
-	 * An ObjectPageSubSection is the second-level information container of an Object page and may only be used within an Object page section.
-	 * Subsections may display primary information in the so called blocks aggregation (always visible)
-	 * and not-so-important information in the moreBlocks aggregation, whose content is initially hidden, but may be accessed via a See more (...) button.
-	 * Disclaimer: This control is intended to be used only as part of the Object page layout
+	 * An <code>ObjectPageSubSection</code> may only be used within sections in the
+	 * <code>ObjectPageLayout</code>. Subsections are used to display primary information in
+	 * the <code>blocks</code> aggregation (always visible) and not-so-important information in
+	 * the <code>moreBlocks</code> aggregation. The content in the <code>moreBlocks</code>
+	 * aggregation is initially hidden, but may be accessed with a "See more" (...) button.
+	 *
+	 * <b>Note:</b> This control is intended to be used only as part of the <code>ObjectPageLayout</code>.
+	 *
 	 * @extends sap.uxap.ObjectPageSectionBase
 	 *
 	 * @constructor
@@ -94,7 +111,8 @@ sap.ui.define([
 				 * Actions available for this Subsection
 				 */
 				actions: {type: "sap.ui.core.Control", multiple: true, singularName: "action"}
-			}
+			},
+			designtime: "sap/uxap/designtime/ObjectPageSubSection.designtime"
 		}
 	});
 
@@ -114,6 +132,13 @@ sap.ui.define([
 		this._$spacer = [];
 		this._sContainerSelector = ".sapUxAPBlockContainer";
 
+		this._oObserver = new ManagedObjectObserver(ObjectPageSubSection.prototype._observeChanges.bind(this));
+		this._oObserver.observe(this, {
+			aggregations: [
+				"actions"
+			]
+		});
+		this._attachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
 
 		//switch logic for the default mode
 		this._switchSubSectionMode(this.getMode());
@@ -139,6 +164,69 @@ sap.ui.define([
 		}
 
 		return this.getAggregation("_grid");
+	};
+
+	ObjectPageSubSection.prototype._hasVisibleActions = function () {
+		var aActions = this.getActions() || [];
+
+		if (aActions.length === 0) {
+		 return false;
+		}
+		return aActions.filter(function(oAction) {
+		   return oAction.getVisible();
+		}).length > 0;
+	};
+
+	/**
+	 * Called whenever the actions aggregation is mutated.
+	 * @param oChanges
+	 * @private
+	 */
+	ObjectPageSubSection.prototype._observeChanges = function (oChanges) {
+		var oObject = oChanges.object,
+			sChangeName = oChanges.name,
+			sMutationName = oChanges.mutation,
+			oChild = oChanges.child,
+			bHasTitle;
+
+		if (oObject === this) {// changes on SubSection level
+
+			if (sChangeName === "actions") { // change of the actions aggregation
+				if (sMutationName === "insert") {
+					this._observeAction(oChild);
+				} else if (sMutationName === "remove") {
+					this._unobserveAction(oChild);
+				}
+			}
+
+		} else if (sChangeName === "visible") { // change of the actions elements` visibility
+			bHasTitle = this._getInternalTitleVisible() && this.getTitle().trim() !== "";
+			if (!bHasTitle) {
+				this.$("header").toggleClass("sapUiHidden", !this._hasVisibleActions());
+			}
+		}
+	};
+
+	/**
+	 * Starts observing the <code>visible</code> property.
+	 * @param {sap.ui.core.Control} oControl
+	 * @private
+	 */
+	ObjectPageSubSection.prototype._observeAction = function(oControl) {
+		this._oObserver.observe(oControl, {
+			properties: ["visible"]
+		});
+	};
+
+	/**
+	 * Stops observing the <code>visible</code> property.
+	 * @param {sap.ui.core.Control} oControl
+	 * @private
+	 */
+	ObjectPageSubSection.prototype._unobserveAction = function(oControl) {
+		this._oObserver.unobserve(oControl, {
+			properties: ["visible"]
+		});
 	};
 
 	ObjectPageSubSection.prototype._unStashControls = function () {
@@ -201,7 +289,7 @@ sap.ui.define([
 			}
 
 		}, this);
-		return sap.ui.core.Control.prototype.clone.apply(this, arguments);
+		return ObjectPageSectionBase.prototype.clone.apply(this, arguments);
 	};
 
 	ObjectPageSubSection.prototype._cleanProxiedAggregations = function () {
@@ -239,22 +327,23 @@ sap.ui.define([
 			return;
 		}
 
-		this._synchronizeBlockLayouts();
-		this._attachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
-
 		this._$spacer = jQuery.sap.byId(oObjectPageLayout.getId() + "-spacer");
 	};
 
 	ObjectPageSubSection.prototype.onBeforeRendering = function () {
+		var oObjectPageLayout = this._getObjectPageLayout();
+
+		if (!oObjectPageLayout) {
+			return;
+		}
+
 		if (ObjectPageSectionBase.prototype.onBeforeRendering) {
 			ObjectPageSectionBase.prototype.onBeforeRendering.call(this);
 		}
 
-		this._detachMediaContainerWidthChange(this._synchronizeBlockLayouts, this);
-
 		this._setAggregationProxy();
 		this._getGrid().removeAllContent();
-		this._applyLayout(this._getObjectPageLayout());
+		this._applyLayout(oObjectPageLayout);
 		this.refreshSeeMoreVisibility();
 	};
 
@@ -544,6 +633,16 @@ sap.ui.define([
 		this.$().find(".sapUxAPBlockContainer").toggleClass("sapUxAPBlockContainerPhone", this._onPhoneMediaRange(oCurrentMedia));
 	};
 
+	ObjectPageSubSection.prototype._getMediaString = function (oCurrentMedia) {
+		if (this._onPhoneMediaRange(oCurrentMedia)) {
+			return "Phone";
+		}
+		if (this._onTabletMediaRange(oCurrentMedia)) {
+			return "Tablet";
+		}
+		return "Desktop";
+	};
+
 
 	/*************************************************************************************
 	 *  blocks & moreBlocks aggregation proxy
@@ -610,9 +709,15 @@ sap.ui.define([
 	};
 
 	/**
-	* The <code>insertBlock</code> method is not supported by design.
+	* Adds an <code>sap.uxap.BlockBase</code> instance to the <code>blocks</code> aggregation.
+	*
+	* <b>Note:</b> The <code>insertBlock</code> method is not supported by design.
 	* If used, it works as an <code>addBlock</code>,
-	* adding a single block to the end of blocks aggregations.
+	* adding a single block to the end of the <code>blocks</code> aggregation.
+	* @param {sap.uxap.BlockBase} oObject The <code>sap.uxap.BlockBase</code> instance
+	* @param {int} iIndex The insertion index
+	* @returns {sap.uxap.ObjectPageSubSection} The <code>sap.uxap.ObjectPageSubSection</code> instance
+	* @public
 	*/
 	ObjectPageSubSection.prototype.insertBlock = function (oObject, iIndex) {
 		jQuery.sap.log.warning("ObjectPageSubSection :: usage of insertBlock is not supported - addBlock is performed instead.");
@@ -620,10 +725,16 @@ sap.ui.define([
 	};
 
 	/**
-	* The <code>insertMoreBlock</code> method is not supported by design.
-	* If used, it works as an <code>addMoreBlock</code>,
-	* adding a single block to the end of moreBlocks aggregations.
-	*/
+	 * Adds an <code>sap.uxap.BlockBase</code> instance to the <code>moreBlocks</code> aggregation.
+	 *
+	 * <b>Note:</b> The <code>insertMoreBlock</code> method is not supported by design.
+	 * If used, it works as an <code>addMoreBlock</code>,
+	 * adding a single block to the end of the <code>moreBlocks</code> aggregation.
+	 * @param {sap.uxap.BlockBase} oObject The <code>sap.uxap.BlockBase</code> instance
+	 * @param {int} iIndex The insertion index
+	 * @returns {sap.uxap.ObjectPageSubSection} The <code>sap.uxap.ObjectPageSubSection</code> instance
+	 * @public
+	 */
 	ObjectPageSubSection.prototype.insertMoreBlock = function (oObject, iIndex) {
 		jQuery.sap.log.warning("ObjectPageSubSection :: usage of insertMoreBlock is not supported - addMoreBlock is performed instead.");
 		return this.addAggregation("moreBlocks", oObject);
@@ -649,7 +760,7 @@ sap.ui.define([
 			aInternalAggregation.forEach(function (oObjectCandidate, iIndex) {
 				if (oObjectCandidate.getId() === oObject.getId()) {
 					aInternalAggregation.splice(iIndex, 1);
-					this._setAggregation(aInternalAggregation);
+					this._setAggregation(sAggregationName, aInternalAggregation);
 					bRemoved = true;
 				}
 				return !bRemoved;
@@ -711,7 +822,7 @@ sap.ui.define([
 	ObjectPageSubSection.prototype._getSeeMoreButton = function () {
 		if (!this._oSeeMoreButton) {
 			this._oSeeMoreButton = new Button(this.getId() + "--seeMore", {
-				type: sap.m.ButtonType.Transparent,
+				type: ButtonType.Transparent,
 				iconFirst: false
 			}).addStyleClass("sapUxAPSubSectionSeeMoreButton").attachPress(this._seeMoreLessControlPressHandler, this);
 		}
@@ -756,7 +867,7 @@ sap.ui.define([
 
 	/**
 	 * switch the state for the subsection
-	 * @param sSwitchToMode
+	 * @param {sap.uxap.ObjectPageSubSectionMode} sSwitchToMode
 	 * @private
 	 */
 	ObjectPageSubSection.prototype._switchSubSectionMode = function (sSwitchToMode) {
@@ -774,7 +885,7 @@ sap.ui.define([
 	/**
 	 * set the mode on a control if there is such mode property
 	 * @param oBlock
-	 * @param sMode
+	 * @param {string} sMode
 	 * @private
 	 */
 	ObjectPageSubSection.prototype._setBlockMode = function (oBlock, sMode) {
@@ -802,7 +913,7 @@ sap.ui.define([
 	ObjectPageSubSection.prototype._getUseTitleOnTheLeft = function () {
 		var oObjectPageLayout = this._getObjectPageLayout();
 
-		return oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft;
+		return oObjectPageLayout && (oObjectPageLayout.getSubSectionLayout() === ObjectPageSubSectionLayout.TitleOnLeft);
 	};
 
 	/**

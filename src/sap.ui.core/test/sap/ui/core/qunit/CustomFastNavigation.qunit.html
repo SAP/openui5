@@ -1,159 +1,168 @@
 <!DOCTYPE HTML>
 
 <html>
+
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<script src="../shared-config.js"></script>
-	<script id="sap-ui-bootstrap"
-		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-noConflict="true">
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-noConflict="true">
+
 	</script>
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<style>
-		.TestControl, .TestControl > div {
+		.TestControl,
+		.TestControl>div {
 			border: 1px solid black;
 			padding: 5px;
 		}
-
-		.TestControl > div {
+		
+		.TestControl>div {
 			border-color: green;
 		}
 	</style>
 
 	<script>
-	var _FocusedId = null;
+		sap.ui.require(['sap/ui/events/F6Navigation', 'sap/base/events/KeyCodes', 'jquery.sap.strings'], function(F6Navigation, KeyCodes) {
 
-	// Enhance the focus function to directly get feedback about what was focused
-	jQuery.sap.orig_focus = jQuery.sap.focus;
-	jQuery.sap.focus = function focus(oDomRef) {
-		_FocusedId = null;
-		var res = jQuery.sap.orig_focus(oDomRef);
-		if(res){
-			_FocusedId = oDomRef.id ? oDomRef.id : null;
-		}
-		return res;
-	};
+        // Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM) and the target of the event instead of the activeElement
+        // to be more focus independent (-> More test stability)
+        F6Navigation.handleF6GroupNavigation_orig = F6Navigation.handleF6GroupNavigation;
 
-	// Enhance the Navigation Handler to use the test scope only (not the QUnit related DOM) and the target of the event instead of the activeElement
-	// to be more focus independent (-> More test stability)
-	jQuery.sap.handleF6GroupNavigation_orig = jQuery.sap.handleF6GroupNavigation;
-	jQuery.sap.handleF6GroupNavigation = function(oEvent, oSettings){
-		oSettings = oSettings ? oSettings : {};
-		if(!oSettings.scope){
-			oSettings.scope = jQuery.sap.domById("scope");
-		}
-		if(!oSettings.target){
-			oSettings.target = oEvent.target;
-		}
-		jQuery.sap.handleF6GroupNavigation_orig(oEvent, oSettings);
-	};
+        jQuery.sap.handleF6GroupNavigation = F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
+            oSettings = oSettings ? oSettings : {};
+            if (!oSettings.scope) {
+                oSettings.scope = jQuery.sap.domById("scope");
+            }
+            if (!oSettings.target) {
+                oSettings.target = oEvent.target;
+            }
+            F6Navigation.handleF6GroupNavigation_orig(oEvent, oSettings);
+        };
 
-	function triggerTestEvent(sTarget, bForward){
-		sap.ui.test.qunit.triggerKeydown(sTarget, jQuery.sap.KeyCodes.F6, !bForward, false, false);
-	}
+        function triggerTestEvent(sTarget, bForward) {
+            sap.ui.test.qunit.triggerKeydown(sTarget, KeyCodes.F6, !bForward, false, false);
+        }
 
-	jQuery.sap.require("jquery.sap.strings");
+        var CustomAreaTestControl = sap.ui.core.Control.extend("my.CustomAreaTestControl", {
 
-	var CustomAreaTestControl = sap.ui.core.Control.extend("my.CustomAreaTestControl", {
+            metadata: {},
 
-		metadata: {},
+            renderer: {
+                render: function(rm, oCtrl) {
+                    var id = oCtrl.getId();
 
-		renderer: {
-			render: function(rm, oCtrl){
-				var id = oCtrl.getId();
+                    rm.write("<div");
+                    rm.writeControlData(oCtrl);
+                    rm.writeAttribute("data-sap-ui-customfastnavgroup", "true");
+                    rm.writeAttribute("class", "TestControl");
+                    rm.write(">");
 
-				rm.write("<div");
-				rm.writeControlData(oCtrl);
-				rm.writeAttribute("data-sap-ui-customfastnavgroup", "true");
-				rm.writeAttribute("class", "TestControl");
-				rm.write(">");
+                    rm.write("<div><input value='2' id='", id, "-input-2'><input id='", id, "-input-2a'></div>");
+                    rm.write("<div><input value='1' id='", id, "-input-1'><input id='", id, "-input-1a'></div>");
+                    rm.write("<div><input value='3' id='", id, "-input-3'><input id='", id, "-input-3a'></div>");
 
-				rm.write("<div><input value='2' id='", id, "-input-2'><input id='", id, "-input-2a'></div>");
-				rm.write("<div><input value='1' id='", id, "-input-1'><input id='", id, "-input-1a'></div>");
-				rm.write("<div><input value='3' id='", id, "-input-3'><input id='", id, "-input-3a'></div>");
+                    rm.write("</div>");
+                }
+            },
 
-				rm.write("</div>");
-			}
-		},
+            onsapskipforward: function(oEvent) {
+                var sTarget;
+                if (jQuery.sap.startsWith(oEvent.target.id, this.getId() + "-input-1")) {
+                    sTarget = this.getId() + "-input-2";
+                } else if (jQuery.sap.startsWith(oEvent.target.id, this.getId() + "-input-2")) {
+                    sTarget = this.getId() + "-input-3";
+                }
 
-		onsapskipforward: function(oEvent){
-			var sTarget;
-			if(jQuery.sap.startsWith(oEvent.target.id, this.getId()+"-input-1")){
-				sTarget = this.getId()+"-input-2";
-			}else if(jQuery.sap.startsWith(oEvent.target.id, this.getId()+"-input-2")){
-				sTarget = this.getId()+"-input-3";
-			}
+                if (sTarget) {
+                    jQuery.sap.focus(jQuery.sap.domById(sTarget));
+                    oEvent.preventDefault();
+                }
+            },
 
-			if(sTarget){
-				jQuery.sap.focus(jQuery.sap.domById(sTarget));
-				oEvent.preventDefault();
-			}
-		},
+            onsapskipback: function(oEvent) {
+                var sTarget;
+                if (jQuery.sap.startsWith(oEvent.target.id, this.getId() + "-input-2")) {
+                    sTarget = this.getId() + "-input-1";
+                } else if (jQuery.sap.startsWith(oEvent.target.id, this.getId() + "-input-3")) {
+                    sTarget = this.getId() + "-input-2";
+                }
 
-		onsapskipback: function(oEvent){
-			var sTarget;
-			if(jQuery.sap.startsWith(oEvent.target.id, this.getId()+"-input-2")){
-				sTarget = this.getId()+"-input-1";
-			}else if(jQuery.sap.startsWith(oEvent.target.id, this.getId()+"-input-3")){
-				sTarget = this.getId()+"-input-2";
-			}
+                if (sTarget) {
+                    jQuery.sap.focus(jQuery.sap.domById(sTarget));
+                    oEvent.preventDefault();
+                }
+            },
 
-			if(sTarget){
-				jQuery.sap.focus(jQuery.sap.domById(sTarget));
-				oEvent.preventDefault();
-			}
-		},
+            onBeforeFastNavigationFocus: function(oEvent) {
+                if (jQuery.contains(this.getDomRef(), oEvent.source)) {
+                    return;
+                }
+                var oNewDomRef = oEvent.forward ? jQuery.sap.domById(this.getId() + "-input-1") : jQuery.sap.domById(this.getId() + "-input-3");
+                if (oNewDomRef) {
+                    jQuery.sap.focus(oNewDomRef);
+                    oEvent.preventDefault();
+                }
+            }
 
-		onBeforeFastNavigationFocus: function(oEvent){
-			if (jQuery.contains(this.getDomRef(), oEvent.source)) {
-				return;
-			}
-			var oNewDomRef = oEvent.forward ? jQuery.sap.domById(this.getId()+"-input-1") : jQuery.sap.domById(this.getId()+"-input-3");
-			if (oNewDomRef) {
-				jQuery.sap.focus(oNewDomRef);
-				oEvent.preventDefault();
-			}
-		}
+        });
 
-	});
+        var testControlId = "test";
 
-	var testControlId = "test";
+        var oCustomArea = new CustomAreaTestControl(testControlId).placeAt("content");
 
-	(new CustomAreaTestControl(testControlId)).placeAt("content");
+        oCustomArea.onAfterRendering = function() {
 
-	sap.ui.getCore().attachInitEvent(function(){
+            QUnit.test("Forward Navigation", function(assert) {
+                var aFields = ["before", testControlId + "-input-1", testControlId + "-input-2", testControlId + "-input-3", "after", "before"];
 
-		QUnit.test("Forward Navigation", function(assert) {
-			var aFields = ["before", testControlId+"-input-1", testControlId+"-input-2", testControlId+"-input-3", "after", "before"];
+                var mFocusSpy = {};
+                for (var i = 0; i < aFields.length - 1; i++) {
+                    if(!mFocusSpy[aFields[i]]) {
+                        var oElement = document.getElementById(aFields[i]);
+                        var focusSpy = this.spy(oElement, "focus");
+                        mFocusSpy[aFields[i]] = focusSpy;
+                    }
+                }
 
-			for(var i=0; i<aFields.length-1; i++){
-				triggerTestEvent(aFields[i], true);
-				assert.equal(_FocusedId, aFields[i+1], "Step "+(i+1)+": "+aFields[i]+"->"+aFields[i+1]);
-			}
-		});
+                for (var i = 0; i < aFields.length - 1; i++) {
+                    triggerTestEvent(aFields[i], true);
+                    assert.equal(mFocusSpy[aFields[i + 1]].firstCall.thisValue.id, aFields[i + 1], "Step " + (i + 1) + ": " + aFields[i] + "->" + aFields[i + 1]);
+                }
+            });
 
-		QUnit.test("Backward Navigation", function(assert) {
-			var aFields = ["before", "after", testControlId+"-input-3", testControlId+"-input-2", testControlId+"-input-1", "before"];
+            QUnit.test("Backward Navigation", function(assert) {
+                var aFields = ["before", "after", testControlId + "-input-3", testControlId + "-input-2", testControlId + "-input-1", "before"];
 
-			for(var i=0; i<aFields.length-1; i++){
-				triggerTestEvent(aFields[i], false);
-				assert.equal(_FocusedId, aFields[i+1], "Step "+(i+1)+": "+aFields[i]+"->"+aFields[i+1]);
-			}
-		});
 
-	});
+                var mFocusSpy = {};
+                for (var i = 0; i < aFields.length - 1; i++) {
+                    if(!mFocusSpy[aFields[i]]) {
+                        var oElement = document.getElementById(aFields[i]);
+                        var focusSpy = this.spy(oElement, "focus");
+                        mFocusSpy[aFields[i]] = focusSpy;
+                    }
+                }
+
+                for (var i = 0; i < aFields.length - 1; i++) {
+                    triggerTestEvent(aFields[i], false);
+                    assert.equal(mFocusSpy[aFields[i + 1]].firstCall.thisValue.id, aFields[i + 1], "Step " + (i + 1) + ": " + aFields[i] + "->" + aFields[i + 1]);
+                }
+            });
+        };
+    });
 	</script>
 
 </head>
 <body class="sapUiBody">
 	<h1 id="qunit-header">QUnit tests: Fast Keyboard Navigation (F6) - Custom Handling</h1>
 	<h2 id="qunit-banner"></h2>
- 	<h2 id="qunit-userAgent"></h2>
+	<h2 id="qunit-userAgent"></h2>
 	<div id="qunit-testrunner-toolbar"></div>
 	<ol id="qunit-tests"></ol>
 
@@ -163,4 +172,5 @@
 		<input value='4' id="after">
 	</div>
 </body>
+
 </html>

@@ -262,7 +262,21 @@ UI5 Control Development Guidelines
     -   Use parameters like `@sapUiTextInverted` for bright-on-dark scenarios
     -   If no suitable parameter exists, derive the color by calculation from a suitable parameter
 -   Do not add parameters to the public API (using annotations) without sufficient clarification with designers and Product Owners
--   You can (but do not need to) create your own internal control-specific parameters. If you do, also prefix their name with your control name (e.g. `@sapUiBtnDisabledText`).
+-   If you create your own local parameters, you must ensure that the names you define are unique by using name(space) prefixes.
+    -   For **control-specific** parameters in ```*.less``` files, use a combination of the library name and the ```*.less``` file name for the prefix. Start with an underscore. Separate each part of the library namespace and the file name from each other using underscores as well.
+    -   **Tip**
+    -   For example, you can define the following prefix:
+    -   **Library:** ```sap.ui.core```
+    -   **File:** ```sap/ui/core/themes/base/MyControl.less```
+    -   **Prefix:** ```@_sap_ui_core_MyControl_```
+    -   For **library-specific** parameters in ```library.source.less``` files, use the library name for the prefix. Start with an underscore. Separate each part of the library namespace from each other using underscores.
+    -   **Tip**
+    -   For example, you can define the following prefix:
+    -   **Library:** ```sap.ui.core```
+    -   **File:** ```sap/ui/core/themes/base/library.source.less```
+    -   **Prefix:** ```@_sap_ui_core_```
+    -   **Caution**
+    -   Local parameters themselves must **not** contain underscores. For example, do not write ```@_sap_ui_core_MyControl_Some_Color```, but write ```@_sap_ui_core_MyControl_SomeColor``` instead.
 -   When defining URLs as parameters use the proper `url()` format: ```@sapUiMyUrl: url(./path/to/img.png)```
     -   Do **NOT** use escaped strings (`~`): ~~@sapUiMyUrl: ~"path/to/img.png"~~
     -   Do **NOT** use absolute urls: ~~@sapUiMyUrl: url(/absolute/path/to/img.png)~~
@@ -308,10 +322,10 @@ Some of the target platforms of UI5 impose technical restrictions on the naming 
 # Git Guidelines
 --------------
 
-##Settings
+## Settings
 Set the Git `core.autocrlf` configuration property to "false" (and make sure to use Unix-style linebreaks (LF-only))
 
-##Commit Message
+## Commit Message
 The commit message consists of two or three parts, separated by empty lines.
 
 ### Commit Summary
@@ -328,7 +342,7 @@ Describe the effect that this change has from a user's point of view. App crashe
 
 After that, describe the technical details of what you changed. It is important to describe the change in a most understandable way so the reviewer is able to verify that the code is behaving as you intend it to.
 
-###Data Section
+### Data Section
 The data section consists of name-value pairs
 -   `Fixes: https://github.com/SAP/openui5/issues/(issueNumber)` if the change fixes a GitHub-reported bug
 -   `Closes: https://github.com/SAP/openui5/pull/(pullRequestNumber)` if the change comes from a pull request. This is usually added by the OpenUI5 committer handling the pull request

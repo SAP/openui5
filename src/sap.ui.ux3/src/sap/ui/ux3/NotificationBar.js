@@ -3,8 +3,22 @@
  */
 
 // Provides control sap.ui.ux3.NotificationBar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters', './library'],
-	function(jQuery, Control, ItemNavigation, Parameters, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/delegate/ItemNavigation',
+    'sap/ui/core/theming/Parameters',
+    './library',
+    "./NotificationBarRenderer"
+],
+	function(
+	    jQuery,
+		Control,
+		ItemNavigation,
+		Parameters,
+		library,
+		NotificationBarRenderer
+	) {
 	"use strict";
 
 

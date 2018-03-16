@@ -47,6 +47,12 @@ describe("sap.m.CheckBox", function() {
 		expect(takeScreenshot(element(by.id('cb_not_editable')))).toLookAs('not_editable_after_click');
 	});
 
+	// verify checkBox is display only
+	it('should click on the display only checkbox', function() {
+		expect(takeScreenshot(element(by.id('cb_display_only')))).toLookAs('cb_display_only');
+		expect(takeScreenshot(element(by.id('cb_display_only_checked')))).toLookAs('cb_display_only_checked');
+	});
+
 	// verify warning checkBox is not selected and editable
 	it('should click on the editable warning checkbox', function() {
 		expect(takeScreenshot(element(by.id('cb_warning_deselected')))).toLookAs('warning_editable_before_click');

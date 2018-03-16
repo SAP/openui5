@@ -1,7 +1,6 @@
 {
-	"_version": "1.1.0",
+	"_version": "1.8.0",
 	"sap.app": {
-		"_version": "1.1.0",
 		"id": "sap.ui.fl.support.apps.contentbrowser.app",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
@@ -14,24 +13,24 @@
 		"resources": "resources.json"
 	},
 	"sap.ui": {
-		"_version": "1.1.0",
 		"technology": "UI5",
 		"deviceTypes": {
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_bluecrystal"
-		]
+		}
 	},
 	"sap.ui5": {
-		"_version": "1.1.0",
-		"rootView": "sap.ui.fl.support.apps.contentbrowser.view.MainView",
+		"rootView": {
+			"viewName": "sap.ui.fl.support.apps.contentbrowser.view.MainView",
+			"type": "XML",
+			"async": true
+		},
 		"dependencies": {
 			"minUI5Version": "1.45",
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.ui.layout": {}
 			}
 		},
 		"models": {
@@ -54,7 +53,8 @@
 				"viewType": "XML",
 				"viewPath": "sap.ui.fl.support.apps.contentbrowser.view",
 				"controlId": "sap.ui.fl.support.apps.contentbrowser.App",
-				"controlAggregation": "masterPages"
+				"controlAggregation": "masterPages",
+				"async": true
 			},
 			"routes": [
 				{

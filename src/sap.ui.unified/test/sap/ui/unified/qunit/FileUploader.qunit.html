@@ -45,23 +45,29 @@
 			maximumFileSize: mProps.maximumFileSize || 2,
 			uploadOnChange: mProps.uploadOnChange || false,
 			buttonText: mProps.buttonText || "Choose!",
+			buttonOnly: mProps.buttonOnly || false,
 			additionalData: mProps.additionalData ||"abc=123&test=456"
 		});
 	};
 
 	/**
 	 * Helper function to create a fake file object, which has the same properties
-	 * as a real native File-Object
+	 * as a real native File-Object.
+	 * If the browser is Firefox we need to wrap the file object in a Blob.
+	 * @param {Object} mProps
+	 * @param {Boolean} bIsFirefox
 	 */
-	var createFakeFile = function (mProps) {
-		mProps = mProps || {};
-		return {
-			"webkitRelativePath": mProps.webkitRelativePath || "",
-			"lastModifiedDate": mProps.lastModifiedDate || "2014-08-14T09:42:09.000Z",
-			"name": mProps.name || "FileUploader.js",
-			"type": mProps.type || "application/javascript",
-			"size": mProps.size || 401599
+	var createFakeFile = function (mProps, bIsFirefox) {
+		var mProps = mProps || {},
+			oFileObject = {
+				"webkitRelativePath": mProps.webkitRelativePath || "",
+				"lastModifiedDate": mProps.lastModifiedDate || "2014-08-14T09:42:09.000Z",
+				"name": mProps.name || "FileUploader.js",
+				"type": mProps.type || "application/javascript",
+				"size": mProps.size || 401599
 		};
+
+		return bIsFirefox ? new Blob([oFileObject]) : oFileObject;
 	};
 
 	/**
@@ -95,6 +101,36 @@
 		oFileUploader.setEnabled(true);
 		// assert
 		fnTestDisabledClass($fileUploader, false);
+
+		//cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Test buttonOnly property - setter/getter", function (assert) {
+		var oFileUploader = createFileUploader({
+				buttonOnly: true
+			}),
+			$fileUploader
+			sButtonOnlyClassName = "sapUiFupButtonOnly",
+			fnTestButtonOnlyClass = function(fileUploader, bExpected) {
+				assert.equal(fileUploader.hasClass(sButtonOnlyClassName), bExpected,
+					"The FUploader should " + (bExpected ? "" : "not") + " have the " + sButtonOnlyClassName + " class.");
+			};
+
+		//Set up
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$fileUploader = oFileUploader.$();
+
+		// assert default
+		fnTestButtonOnlyClass($fileUploader, true);
+
+		// act
+		oFileUploader.setButtonOnly(false);
+		sap.ui.getCore().applyChanges();
+		$fileUploader = oFileUploader.$();
+		// assert
+		fnTestButtonOnlyClass($fileUploader, false);
 
 		//cleanup
 		oFileUploader.destroy();
@@ -205,6 +241,78 @@
 		assert.equal(oFileUploader.getMimeType(), undefined, "setMimeType() --> getMimeType() should return undefined");
 
 		//cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Test valueStateText property - setter/getter", function (assert) {
+		var oFileUploader = createFileUploader(),
+			VALUE_STATE_TEXT = "Test";
+
+		//Set up
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert default
+		assert.equal(oFileUploader.getValueStateText(), "", "setValueStateText() --> getValueStateText() should return an empty string by default");
+
+		// act
+		oFileUploader.setValueStateText(VALUE_STATE_TEXT);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oFileUploader.getValueStateText(), VALUE_STATE_TEXT, "setValueStateText() --> getValueStateText() should return '" + VALUE_STATE_TEXT + "'");
+		assert.equal(oFileUploader.oFilePath.getValueStateText(), VALUE_STATE_TEXT, "Child input setValueStateText() --> getValueStateText() should return '" + VALUE_STATE_TEXT + "'");
+
+		//cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Test setTooltip", function (assert) {
+		//Set up
+		var sTooltip = "this is \"the\" file uploader";
+		var oFileUploader = createFileUploader({
+			tooltip: "MyFileUploader"
+		});
+
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oFileUploader.setTooltip(sTooltip);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), sTooltip, "FileUploader tooltip is correct");
+		assert.equal(oFileUploader.$().find(".sapUiFupInputMask")[0].getAttribute("title"), sTooltip, "FileUploader mask tooltip is correct");
+
+		// cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("Test associated label interaction", function (assert) {
+		//Set up
+		var oFileUploader = createFileUploader({}),
+			oSpy,
+			FUEl;
+
+		// override onclick handler to prevent file dialog opening, causing the test execution to stop
+		oFileUploader.onclick = function (oEvent) {
+			oEvent.preventDefault();
+		};
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//act
+		FUEl = oFileUploader.getDomRef("fu");
+		oSpy = this.spy(FUEl, "click");
+		qutils.triggerEvent("click", oFileUploader.oBrowse.getId());
+
+		// assert
+		assert.strictEqual(oSpy.callCount, 1, "Clicking on browse button should trigger click on the input");
+
+		// cleanup
 		oFileUploader.destroy();
 	});
 
@@ -357,17 +465,18 @@
 	QUnit.module("private functions");
 	QUnit.test("Testing sending passed files with XHR", function (assert) {
 		var oFileUploader = createFileUploader(),
+			bIsExecutedInFireFox = sap.ui.Device.browser.firefox,
 			aFiles = {
 				"0": createFakeFile({
 					name:"FileUploader.qunit.html",
 					type:"text/html",
 					size:404450
-				}),
+				}, bIsExecutedInFireFox),
 				"1": createFakeFile({
 					name:"FileUploader2.qunit.html",
 					type:"text/html",
 					size:404450
-				}),
+				}, bIsExecutedInFireFox),
 				"length" : 2
 			},
 			oSpy = this.spy(window.XMLHttpRequest.prototype, "send");
@@ -380,6 +489,73 @@
 		assert.ok(oSpy.called, "XHR request is made");
 
 		//cleanup
+		oFileUploader.destroy();
+	});
+
+	QUnit.test("BCP: 1770523801 - FormData.append called with third argument fails under Safari browser if passed file " +
+			"is not a Blob", function (assert) {
+		// Arrange
+		var oFileUploader = createFileUploader(),
+			sExpectedFileName = "FileUploader.qunit.html",
+			oFormData = new window.FormData(),
+			oBlob,
+			oMSBlobBuilder,
+			aFiles,
+			oFile = createFakeFile({
+				name: "FileUploader.qunit.html",
+				type: "text/html",
+				size: 404450
+			}, false /* In this test we always pass a Blob object */),
+			oAppendFileSpy = this.spy(oFileUploader, "_appendFileToFormData"),
+			oAppendSpy = this.spy(oFormData, "append");
+
+		// NOTE: To create a Blob in Internet Explorer we have to use MSBlobBuilder when available because
+		// normal window.Blob constructor will fail.
+		if (window.MSBlobBuilder) {
+			oMSBlobBuilder = new window.MSBlobBuilder();
+			oMSBlobBuilder.append(oFile);
+			oBlob = oMSBlobBuilder.getBlob();
+		} else {
+			oBlob = new window.Blob([oFile]);
+		}
+
+		// Mock array like object with file as a Blob
+		aFiles = {
+			"0": oBlob,
+			"length" : 1
+		};
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Act - send files to make sure _appendFileToFormData method is used
+		oFileUploader._sendFilesWithXHR(aFiles);
+
+		// Assert
+		assert.strictEqual(oAppendFileSpy.callCount, 1, "_sendFilesWithXHR calls internally _appendFileToFormData.");
+
+		// Act - Send a Blob object without a name
+		oFileUploader._appendFileToFormData(oFormData, 'test', oBlob);
+
+		// Assert
+		assert.strictEqual(oAppendSpy.getCall(0).args.length, 2,
+				"FormData.append method is called with only two parameters when the Blob object has no 'name' property");
+
+		// Act - add name property to the oBlob object
+		oAppendSpy.reset();
+		oBlob.name = sExpectedFileName;
+		oFileUploader._appendFileToFormData(oFormData, 'test', oBlob);
+
+		// Assert
+		assert.strictEqual(oAppendSpy.getCall(0).args.length, 3,
+				"FormData.append method is called with three parameters");
+
+		assert.strictEqual(oAppendSpy.getCall(0).args[2], sExpectedFileName,
+				"The third parameter passed to FormData.append equals the expected file name.");
+
+		// Cleanup
+		oAppendFileSpy.restore();
+		oAppendSpy.restore();
 		oFileUploader.destroy();
 	});
 

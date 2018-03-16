@@ -2,9 +2,12 @@
 <html>
 <head>
 
-	<title>OpenUI5 Explored</title>
+	<title>OpenUI5 SDK - Demo Kit v2.0</title>
 	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 	<meta charset="utf-8">
+	<link type="image/x-icon" href="resources/sap/ui/core/mimes/logo/txtonly_16x16.ico" rel="shortcut icon" >
+	<link type="image/x-icon" href="resources/sap/ui/core/mimes/logo/txtonly_16x16.ico" rel="icon" >
+	<link rel="stylesheet" href="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.css">
 
 	<script src="documentation-config.js"></script>
 	<script
@@ -17,9 +20,11 @@
 			data-sap-ui-xx-waitForTheme="true"
 			data-sap-ui-compatVersion="1.16"
 			data-sap-ui-resourceroots='{
-			"sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/"
+			"sap.ui.demo.mock": "test-resources/sap/ui/documentation/sdk/"
 		}' >
 	</script>
+	<script src="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/prettify.js"></script>
+	<script src="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/lang-css.js"></script>
 
 	<script>
 		sap.ui.getCore().attachInit(function () {
@@ -35,6 +40,7 @@
 				});
 			} else {
 				jQuery.sap.log.info("No local documentation configuration found");
+				window['sap-ui-documentation-hideEmptySections'] = true;
 			}
 
 			sap.ui.require([
@@ -43,10 +49,13 @@
 			], function (Page, ComponentContainer) {
 				// initialize the UI component
 				new Page({
-					showHeader: false,
-					content: new ComponentContainer({
-						height: "100%",
-						name: "sap.ui.documentation.sdk"
+					showHeader : false,
+					content : new ComponentContainer({
+						height : "100%",
+						name : "sap.ui.documentation.sdk",
+						settings : {
+							id : "sdk"
+						}
 					})
 				}).placeAt("content");
 			});

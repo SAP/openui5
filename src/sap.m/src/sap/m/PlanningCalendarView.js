@@ -3,9 +3,12 @@
  */
 
 //Provides control sap.m.PlanningCalendarView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem', './StandardListItemRenderer', 'sap/ui/core/Renderer', './library', 'sap/ui/unified/library'],
-		function(jQuery, Element, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary) {
+sap.ui.define(['sap/ui/core/Element', './library', 'sap/ui/unified/library'],
+		function(Element, library, unifiedLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.unified.CalendarIntervalType
+	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 
 	/**
 	 * Constructor for a new <code>PlanningCalendarView</code>.
@@ -44,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 			 * <b>Note:</b> Not all predefined interval types are supported for this property. For more information, see the
 			 * descriptions in the {@link sap.ui.unified.CalendarIntervalType CalendarIntervalType} enumeration.
 			 */
-			intervalType : {type : "sap.ui.unified.CalendarIntervalType", group : "Appearance", defaultValue : sap.ui.unified.CalendarIntervalType.Hour},
+			intervalType : {type : "sap.ui.unified.CalendarIntervalType", group : "Appearance", defaultValue : CalendarIntervalType.Hour},
 
 			/**
 			 * Defines the description of the <code>PlanningCalendarView</code>.
@@ -82,4 +85,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './StandardListItem',
 
 	return PlanningCalendarView;
 
-}, /* bExport= */ true);
+});

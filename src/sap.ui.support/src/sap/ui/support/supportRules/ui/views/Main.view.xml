@@ -19,7 +19,7 @@
 				<Bar class="sapContrast" design="SubHeader">
 					<contentLeft>
 						<!--<c:Icon src="sap-icon://sap-ui5" />-->
-						<Image src="../ui/images/icon_white_19x15_blue.png"></Image>
+						<Image src="../ui/images/Logo_O_22x22.png" densityAware="false"></Image>
 						<Text text="{/constants/SUPPORT_ASSISTANT_NAME}" class="STCustomHeaderInfo" />
 					</contentLeft>
 
@@ -56,27 +56,31 @@
 					</contentMiddle>
 
 					<contentRight>
-						<Button text="{path: '/libraries', formatter: '.setRulesLabel'}" press="goToAnalysis"/>
-						<Button text="{= 'Issues (' + ${/issues}.length + ')' }" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
+					<Toolbar
+							id="navToolbar">
+							<Button id="issuesBtn" text="{= 'Issues (' + ${/issuesCount} + ')' }" enabled="{= ${/analyzedFinish} === true}" press="goToIssues"/>
 
-						<c:Icon src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon"/>
+							<Button id="analysisBtn" text="{path: '/libraries', formatter: '.setRulesLabel'}" press="goToAnalysis" type="Emphasized"/>
 
-						<c:Icon src="sap-icon://sys-help" press="goToWiki" class="STCustomHeaderInfo STHelpIcon" tooltip="Open Documentation" />
+							<c:Icon width="100%" src="sap-icon://settings" press="onSettings" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin"/>
 
-						<c:Icon src="sap-icon://minimize" press="toggleHide" class="STCustomHeaderInfo" visible="{/hasNoOpener}"/>
+							<c:Icon width="100%"  src="sap-icon://sys-help" press="goToWiki" class="STCustomHeaderInfo STHelpIcon sapUiTinyMargin" tooltip="Open Documentation" />
 
-						<Button icon="sap-icon://down" press="resizeDown"  visible="{/hasNoOpener}"/>
-						<Button icon="sap-icon://up" press="resizeUp"  visible="{/hasNoOpener}"/>
+							<c:Icon width="100%" src="sap-icon://minimize" press="toggleHide" class="STCustomHeaderInfo sapUiTinyMargin" visible="{/hasNoOpener}"/>
+
+							<Button icon="sap-icon://down" press="resizeDown"  visible="{/hasNoOpener}"/>
+
+							<Button icon="sap-icon://up" press="resizeUp"  visible="{/hasNoOpener}"/>
+						</Toolbar>
 					</contentRight>
 				</Bar>
 			</l:fixContent>
 
 			<l:flexContent>
 				<NavContainer
-					id="navCon"
-					afterNavigate="onNavConAfterNavigate">
-					<mvc:XMLView id="analysis" viewName="sap.ui.support.supportRules.ui.views.Analysis"></mvc:XMLView>
-					<mvc:XMLView id="issues"  viewName="sap.ui.support.supportRules.ui.views.Issues"></mvc:XMLView>
+					id="navCon">
+					<mvc:XMLView id="analysis" viewName="sap.ui.support.supportRules.ui.views.Analysis" async="true"></mvc:XMLView>
+					<!-- <mvc:XMLView id="issues"  viewName="sap.ui.support.supportRules.ui.views.Issues" async="true"></mvc:XMLView> -->
 				</NavContainer>
 			</l:flexContent>
 		</l:FixFlex>

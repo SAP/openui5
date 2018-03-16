@@ -1,0 +1,15 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Panel width="auto" expandable="true" expanded="true">
+		<headerToolbar>
+			<Toolbar>
+				<Title text="Header"/>
+				<ToolbarSpacer />
+				<Button icon="sap-icon://settings" />
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<Text text="Panel Content" />
+		</content>
+	</Panel>
+</core:FragmentDefinition>

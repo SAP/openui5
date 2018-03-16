@@ -19,7 +19,6 @@ sap.ui.define(['sap/ui/model/SimpleType', 'sap/ui/model/FormatException', 'sap/u
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. Boolean doesn't support any specific format options
 	 * @param {object} [oConstraints] value constraints. Boolean doesn't support additional constraints

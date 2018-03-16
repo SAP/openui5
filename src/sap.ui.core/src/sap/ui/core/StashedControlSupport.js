@@ -3,8 +3,8 @@
  */
 
 // Provides inactive support for controls
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'],
-	function(jQuery, Element, Control) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element'],
+	function(jQuery, Element) {
 		"use strict";
 
 		/**
@@ -114,7 +114,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Control'
 		 * @private
 		 */
 		StashedControlSupport.mixInto = function(fnClass, bDefaultValue /*=true*/) {
-			jQuery.sap.assert(!fnClass.getMetadata().hasProperty("stashed"), "StashedControlSupport: fnClass already has property 'active', sideeffects possible", fnClass.getMetadata().getName());
+			jQuery.sap.assert(!fnClass.getMetadata().hasProperty("stashed"), "StashedControlSupport: fnClass already has property 'stashed', sideeffects possible", fnClass.getMetadata().getName());
 			jQuery.sap.assert(!fnClass.prototype.setStashed, "StashedControlSupport: fnClass already has method 'setStashed', sideeffects possible", fnClass.getMetadata().getName());
 			mixInto(fnClass, bDefaultValue);
 		};

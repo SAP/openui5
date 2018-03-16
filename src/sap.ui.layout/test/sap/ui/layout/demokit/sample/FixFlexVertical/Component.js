@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.layout.sample.FixFlexVertical.Component", {
 
 		metadata : {
-			rootView : "sap.ui.layout.sample.FixFlexVertical.V",
+			rootView : {
+				"viewName": "sap.ui.layout.sample.FixFlexVertical.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 				    "sap.ui.layout",
@@ -18,6 +22,7 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					stretch : true,
 					files : [
 						"V.view.xml",
+						"C.controller.js",
 						"style.css"
 					]
 				}

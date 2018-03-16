@@ -8,10 +8,8 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/Metadata",
-	"sap/ui/core/CustomData",
-	"sap/m/ToolbarSpacer",
 	"./SemanticConfiguration"
-], function(jQuery, Metadata, CustomData, ToolBarSpacer, SemanticConfiguration) {
+], function(jQuery, Metadata, SemanticConfiguration) {
 	"use strict";
 
 	/**
@@ -52,6 +50,19 @@ sap.ui.define([
 	 */
 	SemanticContainer.prototype._getParent = function() {
 		return this._oParent;
+	};
+
+	/**
+	 * Returns the shouldBePreprocessed state of a <code>SemanticControl</code>,
+	 * defined in <code>sap.f.semantic.SemanticConfiguration</code>.
+	 *
+	 * @param {sap.f.semantic.SemanticControl} oControl
+	 * @returns {Boolean}
+	 */
+	SemanticContainer.prototype._shouldBePreprocessed = function(oControl) {
+		var sType = (oControl._getType && oControl._getType()) || oControl.getMetadata().getName();
+
+		return SemanticConfiguration.shouldBePreprocessed(sType);
 	};
 
 	/**

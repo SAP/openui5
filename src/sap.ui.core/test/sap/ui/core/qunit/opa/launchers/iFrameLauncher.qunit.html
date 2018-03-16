@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>QUnit Page for sap.ui.test.launchers.iFrameLaunched</title>
+
+		<script src="../../../shared-config.js"></script>
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{
+			"samples" : "../../../samples"
+			}'>
+		</script>
+		<script src="../../_includeQUnit.js"></script>
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			jQuery.sap.require("sap.ui.thirdparty.sinon");
+			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+			QUnit.config.autostart = false;
+
+			sap.ui.require([
+					'sap/ui/test/launchers/iFrameLauncher'
+				], function (iFrameLauncher) {
+					QUnit.module("iFrameLauncher");
+
+					QUnit.test("Should launch and teardown the iFrame", function (assert) {
+						iFrameLauncher.launch({source: "../testdata/emptySite.html"});
+						QUnit.assert.ok(document.getElementsByClassName("opaFrame").length, "Loaded iFrame");
+
+						iFrameLauncher.teardown();
+						QUnit.assert.ok(!document.getElementsByClassName("opaFrame").length, "Removed iFrame");
+					});
+
+					QUnit.test("Should throw an exception when start is called twice", function (assert) {
+						iFrameLauncher.launch({source: "../testdata/emptySite.html"});
+
+						assert.throws(function () {
+							iFrameLauncher.launch({source: "../testdata/emptySite.html"});
+						}, function (oError) {
+							return oError instanceof Error && oError.message === "sap.ui.test.launchers.iFrameLauncher: " +
+								"Launch was called twice without teardown. Only one iFrame may be loaded at a time.";
+						});
+
+						iFrameLauncher.teardown();
+					});
+
+					QUnit.test("Should throw an exception when teardown is called before launch", function (assert) {
+						assert.throws(function () {
+							iFrameLauncher.teardown();
+						}, function (oError) {
+							return oError instanceof Error && oError.message === "sap.ui.test.launchers.iFrameLauncher: " +
+								"Teardown was called before launch. No iFrame was loaded.";
+						});
+					});
+
+					QUnit.start();
+
+				});
+		</script>
+	</head>
+
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+
+</html>

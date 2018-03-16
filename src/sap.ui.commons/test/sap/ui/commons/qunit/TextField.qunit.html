@@ -3,42 +3,44 @@
  -->
 
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-		<title>Test Page for sap.ui.commons.TextField</title>
-		<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.TextField.gif">
-		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="base"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-libs="sap.ui.commons"
-				src="../../../../../resources/sap-ui-core.js">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<title>Test Page for sap.ui.commons.TextField</title>
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.TextField.gif">
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="base"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.commons"
+			src="../../../../../resources/sap-ui-core.js">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script>
 
 		var sValue = "Hello",
-			sTooltip = "abc",
-			oTextDirection = sap.ui.core.TextDirection.RTL,
-			bEnabled = true,
-			bEditable = true,
-			bVisible = true,
-			bRequired = false,
-			sWidth = "111px",
-			iMaxLength = 15,
-			oValueState = sap.ui.core.ValueState.Success,
-			oTextAlign = sap.ui.core.TextAlign.End,
-			oImeMode = sap.ui.core.ImeMode.Disabled,
-			sHelpId = "12345",
-			oAccessibleRole = sap.ui.core.AccessibleRole.Textbox,
-			aAriaDescribedBy = new Array("D1","D2"),
-			aAriaLabelledBy = new Array("L1","L2"),
-			sChangeMessage = "ruckzuck";
+				sTooltip = "abc",
+				oTextDirection = sap.ui.core.TextDirection.RTL,
+				bEnabled = true,
+				bEditable = true,
+				bVisible = true,
+				bRequired = false,
+				sWidth = "111px",
+				iMaxLength = 15,
+				oValueState = sap.ui.core.ValueState.Success,
+				oTextAlign = sap.ui.core.TextAlign.End,
+				oImeMode = sap.ui.core.ImeMode.Disabled,
+				sHelpId = "12345",
+				oAccessibleRole = sap.ui.core.AccessibleRole.Textbox,
+				aAriaDescribedBy = new Array("D1", "D2"),
+				aAriaLabelledBy = new Array("L1", "L2"),
+				sChangeMessage = "ruckzuck";
 
 		function changeEventHandler() {
 			throw sChangeMessage;
@@ -63,23 +65,23 @@
 		oTextField1.placeAt("uiArea1");
 
 		var oTextField2 = new sap.ui.commons.TextField("t2", {
-			value : sValue,
-			textDirection : oTextDirection,
-			tooltip : sTooltip,
-			enabled : bEnabled,
-			editable : bEditable,
-			visible : bVisible,
-			required : !bRequired,
-			width : sWidth,
-			maxLength : iMaxLength,
-			valueState : sap.ui.core.ValueState.Error,
-			textAlign : oTextAlign,
-			imeMode : oImeMode,
-			helpId : sHelpId,
-			accessibleRole : oAccessibleRole,
-			ariaDescribedBy : aAriaDescribedBy,
-			ariaLabelledBy : aAriaLabelledBy,
-			change : changeEventHandler,
+			value: sValue,
+			textDirection: oTextDirection,
+			tooltip: sTooltip,
+			enabled: bEnabled,
+			editable: bEditable,
+			visible: bVisible,
+			required: !bRequired,
+			width: sWidth,
+			maxLength: iMaxLength,
+			valueState: sap.ui.core.ValueState.Error,
+			textAlign: oTextAlign,
+			imeMode: oImeMode,
+			helpId: sHelpId,
+			accessibleRole: oAccessibleRole,
+			ariaDescribedBy: aAriaDescribedBy,
+			ariaLabelledBy: aAriaLabelledBy,
+			change: changeEventHandler,
 			placeholder: "Hello"
 		}).placeAt("uiArea2");
 
@@ -88,7 +90,7 @@
 		var t1, t2;
 
 		QUnit.module("Basic", {
-			beforeEach: function() {
+			beforeEach: function () {
 				t1 = sap.ui.getCore().getControl("t1");
 				t2 = sap.ui.getCore().getControl("t2");
 
@@ -99,7 +101,7 @@
 				assert.ok(t1, "t1 should not be null");
 				assert.ok(t2, "t2 should not be null");
 			},
-			afterEach: function() {
+			afterEach: function () {
 				t1 = null;
 				t2 = null;
 			}
@@ -107,82 +109,82 @@
 
 		// test property accessor methods
 
-		QUnit.test("ValueOk", function(assert) {
+		QUnit.test("ValueOk", function (assert) {
 			assert.strictEqual(t1.getValue(), sValue, "t1.getValue()");
 			assert.strictEqual(t2.getValue(), sValue, "t2.getValue()");
 		});
 
-		QUnit.test("TextDirectionOk", function(assert) {
+		QUnit.test("TextDirectionOk", function (assert) {
 			assert.strictEqual(t1.getTextDirection(), oTextDirection, "t1.getTextDirection()");
 			assert.strictEqual(t2.getTextDirection(), oTextDirection, "t2.getTextDirection()");
 		});
 
-		QUnit.test("TooltipOk", function(assert) {
+		QUnit.test("TooltipOk", function (assert) {
 			assert.strictEqual(t1.getTooltip(), sTooltip, "t1.getTooltip()");
 			assert.strictEqual(t2.getTooltip(), sTooltip, "t2.getTooltip()");
 		});
 
-		QUnit.test("EnabledOk", function(assert) {
+		QUnit.test("EnabledOk", function (assert) {
 			assert.strictEqual(t1.getEnabled(), bEnabled, "t1.getEnabled()");
 			assert.strictEqual(t2.getEnabled(), bEnabled, "t2.getEnabled()");
 		});
 
-		QUnit.test("EditableOk", function(assert) {
+		QUnit.test("EditableOk", function (assert) {
 			assert.strictEqual(t1.getEditable(), bEditable, "t1.getEditable()");
 			assert.strictEqual(t2.getEditable(), bEditable, "t2.getEditable()");
 		});
 
-		QUnit.test("VisibleOk", function(assert) {
+		QUnit.test("VisibleOk", function (assert) {
 			assert.strictEqual(t1.getVisible(), bVisible, "t1.getVisible()");
 			assert.strictEqual(t2.getVisible(), bVisible, "t2.getVisible()");
 		});
 
-		QUnit.test("RequiredOk", function(assert) {
+		QUnit.test("RequiredOk", function (assert) {
 			assert.strictEqual(t1.getRequired(), bRequired, "t1.getRequired()");
 			assert.strictEqual(t2.getRequired(), !bRequired, "t2.getRequired()");
 		});
 
-		QUnit.test("WidthOk", function(assert) {
+		QUnit.test("WidthOk", function (assert) {
 			assert.strictEqual(t1.getWidth(), sWidth, "t1.getWidth()");
 			assert.strictEqual(t2.getWidth(), sWidth, "t2.getWidth()");
 		});
 
-		QUnit.test("MaxLengthOk", function(assert) {
+		QUnit.test("MaxLengthOk", function (assert) {
 			assert.strictEqual(t1.getMaxLength(), iMaxLength, "t1.getMaxLength()");
 			assert.strictEqual(t2.getMaxLength(), iMaxLength, "t2.getMaxLength()");
 		});
 
-		QUnit.test("ValueStateOk", function(assert) {
+		QUnit.test("ValueStateOk", function (assert) {
 			assert.strictEqual(t1.getValueState(), oValueState, "t1.getValueState()");
 			assert.strictEqual(t2.getValueState(), sap.ui.core.ValueState.Error, "t2.getValueState()");
 		});
 
-		QUnit.test("TextAlignOk", function(assert) {
+		QUnit.test("TextAlignOk", function (assert) {
 			assert.strictEqual(t1.getTextAlign(), oTextAlign, "t1.getTextAlign()");
 			assert.strictEqual(t2.getTextAlign(), oTextAlign, "t2.getTextAlign()");
 		});
 
-		QUnit.test("ImeModeOk", function(assert) {
+		QUnit.test("ImeModeOk", function (assert) {
 			assert.strictEqual(t1.getImeMode(), oImeMode, "t1.getImeMode()");
 			assert.strictEqual(t2.getImeMode(), oImeMode, "t2.getImeMode()");
 		});
 
-		QUnit.test("HelpIdOk", function(assert) {
+		QUnit.test("HelpIdOk", function (assert) {
 			assert.strictEqual(t1.getHelpId(), sHelpId, "t1.getHelpId()");
 			assert.strictEqual(t2.getHelpId(), sHelpId, "t2.getHelpId()");
 		});
 
-		QUnit.test("AccessibleRoleOk", function(assert) {
+		QUnit.test("AccessibleRoleOk", function (assert) {
 			assert.strictEqual(t1.getAccessibleRole(), oAccessibleRole, "t1.getAccessibleRole()");
 			assert.strictEqual(t2.getAccessibleRole(), oAccessibleRole, "t2.getAccessibleRole()");
 		});
 
-		QUnit.test("ariaDescribedBy", function(assert) {
+		QUnit.test("ariaDescribedBy", function (assert) {
 			assert.ok(isEmpty(t1.getAriaDescribedBy()), "t1.getAriaDescribedBy()");
 			assert.deepEqual(t2.getAriaDescribedBy(), aAriaDescribedBy, "t2.getAriaDescribedBy()");
 		});
 
-		QUnit.test("ariaLabelledBy", function(assert) {
+		QUnit.test("ariaLabelledBy", function (assert) {
 			assert.ok(isEmpty(t1.getAriaLabelledBy()), "t1.getAriaLabelledBy()");
 			assert.deepEqual(t2.getAriaLabelledBy(), aAriaLabelledBy, "t2.getAriaLabelledBy()");
 		});
@@ -191,7 +193,7 @@
 
 		// TODO: event handler using Event parameters
 
-		QUnit.test("ChangeOk", function(assert) {
+		QUnit.test("ChangeOk", function (assert) {
 			try {
 				t1.fireChange();
 				fail("exception should have been thrown!");
@@ -207,13 +209,13 @@
 			}
 		});
 
-		QUnit.test("DetachChangeOk", function(assert) {
+		QUnit.test("DetachChangeOk", function (assert) {
 			t1.detachChange(changeEventHandler);
 			try {
 				t1.fireChange();
 				assert.ok(true, "No event and thus no exception should be triggered!");
 			} catch (e) {
- 				fail("should not occur");
+				fail("should not occur");
 			}
 			// cleanup in order to be independent from order of execution of test-functions (e.g. in FF3 there was an issue)
 			t1.attachChange(changeEventHandler);
@@ -228,11 +230,13 @@
 		// test misc (control interaction, metadata, styles, etc.)
 
 		function isEmpty(oObject) {
-			for(var i in oObject){ return false;}
+			for (var i in oObject) {
+				return false;
+			}
 			return true;
 		}
 
-		QUnit.test("MetadataOk", function(assert) {
+		QUnit.test("MetadataOk", function (assert) {
 			var oMetadata = t1.getMetadata();
 			assert.ok(oMetadata, "t1.getMetadata() should not be null");
 			assert.ok(oMetadata.getParent(), "t1.getMetadata().getParent() should not be null");
@@ -246,7 +250,7 @@
 			assert.ok(oAssociations["ariaLabelledBy"]["multiple"], "ariaLabelledBy multiple");
 		});
 
-		QUnit.test("OffsetWidthOk", function(assert) {
+		QUnit.test("OffsetWidthOk", function (assert) {
 			//test the pixel perfect width of the control
 			var oDomRef = window.document.getElementById("t1");
 			assert.strictEqual(oDomRef.offsetWidth, parseInt(t1.getWidth()), "t1.offsetWidth == parseInt(t1.getWidth())");
@@ -256,7 +260,7 @@
 			assert.strictEqual(oDomRef.offsetWidth, 500, "b2.offsetWidth == 500");
 		});
 
-		QUnit.test("ARIA", function(assert) {
+		QUnit.test("ARIA", function (assert) {
 			var oT1 = jQuery.sap.byId("t1");
 			var oT2 = jQuery.sap.byId("t2");
 			assert.equal(oT2.attr("role"), oAccessibleRole.toLowerCase(), "Role");
@@ -270,13 +274,13 @@
 			assert.equal(oT2.attr("aria-required"), "true", "aria-required");
 		});
 
-		QUnit.test("DomRef test", function(assert) {
-			assert.equal( oTextField1.getFocusDomRef().id, "t1", "FocusDomRef OK" );
-			assert.equal( oTextField1.getInputDomRef().id, "t1", "InputDomRef OK" );
-			assert.equal( oTextField1.getIdForLabel(), "t1", "Label ID OK" );
+		QUnit.test("DomRef test", function (assert) {
+			assert.equal(oTextField1.getFocusDomRef().id, "t1", "FocusDomRef OK");
+			assert.equal(oTextField1.getInputDomRef().id, "t1", "InputDomRef OK");
+			assert.equal(oTextField1.getIdForLabel(), "t1", "Label ID OK");
 		});
 
-		QUnit.test("Placeholder", function(assert) {
+		QUnit.test("Placeholder", function (assert) {
 			var oT1 = jQuery.sap.byId("t1");
 			var oT2 = jQuery.sap.byId("t2");
 			var oT3 = jQuery.sap.byId("t3");
@@ -296,7 +300,7 @@
 				assert.equal(oT3.attr("placeholder"), "Hello", "Placeholder set");
 				assert.equal(oT3.val(), "", "no placeholder value set on HTML element");
 				assert.ok(!oT3.hasClass("sapUiTfPlace"), "placeholder class not set");
-			}else{
+			} else {
 				assert.ok(!oT3.attr("placeholder"), "placeholder not set");
 				assert.equal(oT3.val(), "Hello", "placeholder value set on HTML element");
 				assert.ok(oT3.hasClass("sapUiTfPlace"), "placeholder class set");
@@ -315,22 +319,62 @@
 			}
 
 		});
+		if (sap.ui.Device.browser.internet_explorer) {
+			QUnit.test("Paste for IE", function () {
+				//Arrange
+				var oT1 = sap.ui.getCore().byId("t1"),
+					sStringWithLineEndings = "A\r\nB\r\nC\r",
+					sStringWithoutLineEndings = "DE F",
+					oEvent = {
+						clipboardData: {
+							getData: function () {
+								return sStringWithLineEndings;
+							},
+							setData: function () {}
+						}
+					},
+					oSetDataSpy = sinon.spy(oEvent.clipboardData, "setData");
 
-		</script>
-	</head>
-	<body>
-		<h1 id="qunit-header">QUnit page for sap.ui.commons.TextField</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="uiArea1"></div>
-		<div id="uiArea2"></div>
-		<span id="D1">Hello</span>
-		<span id="D2">World</span>
-		<span id="L1">Label1</span>
-		<span id="L2">Label2</span>
-		<div id="uiArea3"></div>
-	</body>
+				//Act
+				oT1.onpaste(oEvent);
+				//Assert
+				assert.deepEqual(oSetDataSpy.getCall(0).args, ["Text", "A B C"], "onpaste handler should remove all line" +
+						" endings from the pasted string");
+
+				//Arrange
+				oEvent.clipboardData.getData = function () {
+					return sStringWithoutLineEndings;
+				};
+				oSetDataSpy.reset();
+
+				//Act
+				oT1.onpaste(oEvent);
+
+				//Assert
+				assert.deepEqual(oSetDataSpy.getCall(0).args, ["Text", sStringWithoutLineEndings], "onpaste handler " +
+						"should not modify the pasted string if it does not contain line endings");
+			});
+		} else {
+			QUnit.test("Paste for browsers different than IE", function () {
+				assert.ok(!sap.ui.getCore().byId('t1').onpaste, "There should not be any paste handler for non IE browsers.")
+			});
+		}
+
+	</script>
+</head>
+<body>
+<h1 id="qunit-header">QUnit page for sap.ui.commons.TextField</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<div id="uiArea1"></div>
+<div id="uiArea2"></div>
+<span id="D1">Hello</span>
+<span id="D2">World</span>
+<span id="L1">Label1</span>
+<span id="L2">Label2</span>
+<div id="uiArea3"></div>
+</body>
 </html>
 

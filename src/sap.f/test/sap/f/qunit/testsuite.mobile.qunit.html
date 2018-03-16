@@ -24,6 +24,18 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/SemanticPage.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/SemanticContainer.qunit.html");
 
+			// --------------------------
+			// Design Time & RTA Enabling
+			// --------------------------
+			//complete libraries dt files general json data
+			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/designtime/Library.qunit.html");
+			//individual controls
+			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/designtime/DynamicPage.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/designtime/DynamicPageHeader.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/designtime/DynamicPageTitle.qunit.html");
+
+			suite.addTestPage(contextPath + "/test-resources/sap/f/qunit/designtime/SemanticPage.qunit.html");
+
 			return suite;
 		}
 	</script>

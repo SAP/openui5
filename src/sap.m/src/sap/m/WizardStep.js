@@ -2,8 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(["./library", "sap/ui/core/Control"],
-	function (library, Control) {
+sap.ui.define([
+	"./library",
+	"sap/ui/core/Control",
+	"jquery.sap.global",
+	"./WizardStepRenderer"
+],
+	function(library, Control, jQuery, WizardStepRenderer) {
 
 	"use strict";
 
@@ -52,8 +57,15 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 				/**
 				 * Indicates whether or not the step is validated.
 				 * When a step is validated a Next button is visualized in the Wizard control.
+				 * @since 1.32
 				 */
-				validated: {type: "boolean", group: "Behavior", defaultValue: true}
+				validated: {type: "boolean", group: "Behavior", defaultValue: true},
+				/**
+				 * Indicates whether or not the step is optional.
+				 * When a step is optional an "(Optional)" label is displayed under the step's title.
+				 * @since 1.54
+				 */
+				optional: {type: "boolean", group: "Appearance", defaultValue: false}
 			},
 			events: {
 				/**
@@ -82,11 +94,13 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 				 * This association is used only when the <code>enableBranching</code> property of the Wizard is set to true.
 				 * Use the association to store the next steps that are about to come after the current.
 				 * If this is going to be a final step - leave this association empty.
+				 * @since 1.32
 				 */
 				subsequentSteps : {type : "sap.m.WizardStep", multiple : true, singularName : "subsequentStep"},
 				/**
 				 * The next step to be taken after the step is completed.
 				 * Set this association value in the complete event of the current WizardStep.
+				 * @since 1.32
 				 */
 				nextStep : {type: "sap.m.WizardStep", multiple: false}
 			}
@@ -122,11 +136,11 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 
 		return this;
 	};
-
 	/**
 	 * setVisible shouldn't be used on wizard steps.
 	 * If you need to show/hide steps based on some condition - use the branching property instead
-	 * @returns {WizardStep}
+	 * @param {boolean} visible Whether the step should be visible
+	 * @returns {sap.m.WizardStep} this instance for method chaining
 	 */
 	WizardStep.prototype.setVisible = function (visible) {
 		this.setProperty("visible", visible, true);
@@ -152,7 +166,7 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 		}
 
 		if (this.getSubsequentSteps().length === 1) {
-			return sap.ui.getCore().byId(this.getSubsequentSteps[0]);
+			return sap.ui.getCore().byId(this.getSubsequentSteps()[0]);
 		}
 
 		return null;
@@ -204,4 +218,4 @@ sap.ui.define(["./library", "sap/ui/core/Control"],
 
 	return WizardStep;
 
-}, /* bExport= */ true);
+});

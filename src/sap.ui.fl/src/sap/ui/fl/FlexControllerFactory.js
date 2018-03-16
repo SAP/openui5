@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/fl/FlexController", "sap/ui/fl/Utils", "sap/ui/fl/ChangePersistenceFactory"
-], function(jQuery, FlexController, Utils, ChangePersistenceFactory) {
+	"jquery.sap.global", "sap/ui/fl/FlexController", "sap/ui/fl/Utils", "sap/ui/fl/ChangePersistenceFactory", "sap/ui/fl/variants/VariantModel"
+], function(jQuery, FlexController, Utils, ChangePersistenceFactory, VariantModel) {
 	"use strict";
 
 	/**
@@ -73,10 +73,11 @@ sap.ui.define([
 		if (Utils.isApplication(oManifest)) {
 			var oFlexController = FlexControllerFactory.createForControl(oComponent, oManifest);
 			ChangePersistenceFactory._getChangesForComponentAfterInstantiation(vConfig, oManifest, oComponent)
-				.then(function (fnGetChangesMap) {
-						oComponent.addPropagationListener(oFlexController.applyChangesOnControl.bind(oFlexController, fnGetChangesMap, oComponent));
-					}
-				);
+			.then(function (fnGetChangesMap) {
+				oComponent.addPropagationListener(oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, oComponent));
+				var oData = oFlexController.getVariantModelData() || {};
+				oComponent.setModel(new VariantModel(oData, oFlexController, oComponent), "$FlexVariants");
+			});
 		}
 	};
 

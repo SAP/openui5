@@ -1,0 +1,8 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<VBox>
+		<Text text="{$this>text}"/>
+		<VBox id="innerVBox"/>
+	</VBox>
+</core:FragmentDefinition>

@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.FlexBoxRenderType.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.FlexBoxRenderType.V",
+			rootView : {
+				"viewName": "sap.m.sample.FlexBoxRenderType.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

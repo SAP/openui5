@@ -1849,7 +1849,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
 
       case 126: // ~
         if (61 === next) return scanPunctuator('~=');
-        return raise({}, errors.expected, '=', '~');
+        return scanPunctuator('~');
 
       case 58: // :
         if (58 === next) return scanPunctuator('::');
@@ -2205,7 +2205,7 @@ ace.define("ace/mode/lua/luaparse",["require","exports","module"], function(requ
   }
 
   function isUnary(token) {
-    if (Punctuator === token.type) return '#-'.indexOf(token.value) >= 0;
+    if (Punctuator === token.type) return '#-~'.indexOf(token.value) >= 0;
     if (Keyword === token.type) return 'not' === token.value;
     return false;
   }

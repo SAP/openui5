@@ -1,9 +1,6 @@
 {
 	"@odata.context" : "$metadata#H_TCURC_SH_Set",
 	"value" : [{
-		"WAERS" : "ADP",
-		"LTEXT" : "Andorran Peseta --> (Old --> EUR)"
-	}, {
 		"WAERS" : "AED",
 		"LTEXT" : "United Arab Emirates Dirham"
 	}, {

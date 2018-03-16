@@ -121,6 +121,7 @@ sap.ui.define([
 							fileName : "fileName",
 							fileType : "fileType",
 							namespace : "namespace",
+							layer : "All",
 							metadata : [{
 								name : "layer",
 								value : "VENDOR"
@@ -143,7 +144,7 @@ sap.ui.define([
 			assert.equal(oStubbedLrepConDeleteFile.getCall(0).args[3], "fileType", "with correct fileType");
 			assert.ok(oStubbedNavTo.calledOnce, "then navigation is triggered");
 			assert.equal(oStubbedNavTo.getCall(0).args[0], "LayerContentMaster", "with correct target");
-			assert.equal(oStubbedNavTo.getCall(0).args[1].layer, "VENDOR", "with correct layer");
+			assert.equal(oStubbedNavTo.getCall(0).args[1].layer, "All", "with correct layer");
 			assert.equal(oStubbedNavTo.getCall(0).args[1].namespace, "namespace", "with correct namespace");
 		});
 	});

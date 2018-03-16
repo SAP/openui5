@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
+	 height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g id="Icons">
+	<g>
+		<defs>
+			<rect id="SVGID_133_" width="24" height="24"/>
+		</defs>
+		<clipPath id="SVGID_2_">
+			<use xlink:href="#SVGID_133_"  overflow="visible"/>
+		</clipPath>
+		<g clip-path="url(#SVGID_2_)">
+			<rect x="1" y="16.002" fill="none" width="7" height="3"/>
+			<rect x="9" y="20.002" fill="none" width="6" height="3"/>
+			<rect x="1" y="7.002" fill="none" width="7" height="4"/>
+			<path fill="none" d="M1,22.502c0,0.275,0.225,0.5,0.5,0.5H8v-3H1V22.502z"/>
+			<rect x="1" y="12.002" fill="none" width="7" height="3"/>
+			<path fill="none" d="M22.5,1.002h-21c-0.275,0-0.5,0.225-0.5,0.5v4.5h22v-4.5C23,1.227,22.775,1.002,22.5,1.002z"/>
+			<rect x="9" y="7.002" fill="none" width="6" height="4"/>
+			<rect x="16" y="7.002" fill="none" width="7" height="4"/>
+			<path fill="none" d="M16,23.002h6.5c0.275,0,0.5-0.225,0.5-0.5v-2.5h-7V23.002z"/>
+			<path fill="#4A4A4A" d="M22.5,0.002h-21c-0.827,0-1.5,0.673-1.5,1.5v21c0,0.827,0.673,1.5,1.5,1.5h21c0.827,0,1.5-0.673,1.5-1.5
+				v-21C24,0.675,23.327,0.002,22.5,0.002z M8,23.002H1.5c-0.275,0-0.5-0.225-0.5-0.5v-2.5h7V23.002z M8,19.002H1v-3h7V19.002z
+				 M8,15.002H1v-3h7V15.002z M8,11.002H1v-4h7V11.002z M15,23.002H9v-3h6V23.002z M15,11.002H9v-4h6V11.002z M23,22.502
+				c0,0.275-0.225,0.5-0.5,0.5H16v-3h7V22.502z M23,11.002h-7v-4h7V11.002z M23,6.002H1v-4.5c0-0.275,0.225-0.5,0.5-0.5h21
+				c0.275,0,0.5,0.225,0.5,0.5V6.002z"/>
+		</g>
+	</g>
+</g>
+<g id="LABELS">
+</g>
+</svg>

@@ -3,9 +3,12 @@
  */
 
 // Provides control sap.ui.unified.CalendarLegendItem.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
-	function(jQuery, Element, library) {
+sap.ui.define(['sap/ui/core/Element', './library'],
+	function(Element, library) {
 	"use strict";
+
+	// shortcut for sap.ui.unified.CalendarDayType
+	var CalendarDayType = library.CalendarDayType;
 
 	/**
 	 * Constructor for a new CalendarLegendItem.
@@ -39,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 			 * If not set the type is automatically determined from the order of the items in the CalendarLegend.
 			 * @since 1.28.9
 			 */
-			type : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : sap.ui.unified.CalendarDayType.None},
+			type : {type : "sap.ui.unified.CalendarDayType", group : "Appearance", defaultValue : CalendarDayType.None},
 
 			/**
 			 * Overrides the color derived from the <code>type</code> property.
@@ -59,4 +62,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './library'],
 
 	return CalendarLegendItem;
 
-}, /* bExport= */ true);
+});

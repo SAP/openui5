@@ -1,0 +1,80 @@
+{
+	"@odata.context" : "$metadata#SalesOrderList(BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
+	"@odata.count" : "10",
+	"value" : [{
+		"@odata.etag" : "W/\"20170620220000.0000000\"",
+		"SalesOrderID" : "0500000000",
+		"Note" : "",
+		"BuyerID" : "0100000000",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "25867.03",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "Neu",
+		"ChangedAt" : "2017-06-20T22:00:00Z",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20170705084647.7342190\"",
+			"BusinessPartnerID" : "0100000000",
+			"CompanyName" : "SAP"
+		}
+	}, {
+		"@odata.etag" : "W/\"20170620220000.0000000\"",
+		"SalesOrderID" : "0500000002",
+		"Note" : "",
+		"BuyerID" : "0100000005",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "5631.08",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "Neu",
+		"ChangedAt" : "2017-06-20T22:00:00Z",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20170530142955.0000000\"",
+			"BusinessPartnerID" : "0100000005",
+			"CompanyName" : "TECUM"
+		}
+	}, {
+		"@odata.etag" : "W/\"20170621144510.8770460\"",
+		"SalesOrderID" : "0500000006",
+		"Note" : "",
+		"BuyerID" : "0100000003",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "1388.37",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "Neu",
+		"ChangedAt" : "2017-06-21T14:45:10.877046Z",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20170530142955.0000000\"",
+			"BusinessPartnerID" : "0100000003",
+			"CompanyName" : "Talpa"
+		}
+	}, {
+		"@odata.etag" : "W/\"20170620220000.0000000\"",
+		"SalesOrderID" : "0500000007",
+		"Note" : "",
+		"BuyerID" : "0100000004",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "10311.35",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "Neu",
+		"ChangedAt" : "2017-06-20T22:00:00Z",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20170530142955.0000000\"",
+			"BusinessPartnerID" : "0100000004",
+			"CompanyName" : "Panorama Studios"
+		}
+	}, {
+		"@odata.etag" : "W/\"20170620220000.0000000\"",
+		"SalesOrderID" : "0500000008",
+		"Note" : "",
+		"BuyerID" : "0100000009",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "195.16",
+		"LifecycleStatus" : "N",
+		"LifecycleStatusDesc" : "Neu",
+		"ChangedAt" : "2017-06-20T22:00:00Z",
+		"SO_2_BP" : {
+			"@odata.etag" : "W/\"20170530142955.0000000\"",
+			"BusinessPartnerID" : "0100000009",
+			"CompanyName" : "Telecomunicaciones Star"
+		}
+	}]
+}

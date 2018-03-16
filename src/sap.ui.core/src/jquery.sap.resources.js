@@ -3,13 +3,32 @@
  */
 
 // Provides access to Java-like resource bundles in properties file format
-sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings'],
-	function(jQuery/* , jQuerySap1, jQuerySap2 */) {
+sap.ui.define([
+	'sap/ui/Resources',
+	'jquery.sap.global'
+], function(Resources, jQuery) {
 	"use strict";
 
-	/*global Promise*/
+	/**
+	 * Creates and returns a new instance of {@link jQuery.sap.util.ResourceBundle}
+	 * using the given URL and locale to determine what to load.
+	 *
+	 * @public
+	 * @function
+	 * @name jQuery.sap.resources
+	 * @param {object} [mParams] Parameters used to initialize the resource bundle
+	 * @param {string} [mParams.url=''] URL pointing to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
+	 * @param {string} [mParams.locale] Optional language (aka 'locale') to load the texts for.
+	 *     Can either be a BCP47 language tag or a JDK compatible locale string (e.g. "en-GB", "en_GB" or "fr");
+	 *     Defaults to the current session locale if <code>sap.ui.getCore</code> is available, otherwise to 'en'
+	 * @param {boolean} [mParams.includeInfo=false] Whether to include origin information into the returned property values
+	 * @param {boolean} [mParams.async=false] Whether the first bundle should be loaded asynchronously
+	 *     Note: Fallback bundles loaded by {@link #getText} are always loaded synchronously.
+	 * @returns {jQuery.sap.util.ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
+	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
+	 */
+	jQuery.sap.resources = Resources;
 
-	// Javadoc for private inner class "Bundle" - this list of comments is intentional!
 	/**
 	 * @interface  Contains locale-specific texts.
 	 *
@@ -67,7 +86,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 * @returns {string} The value belonging to the key, if found; otherwise the key itself.
 	 *
 	 * @function
-	 * @name jQuery.sap.util.ResourceBundle.prototype.getText
+	 * @name jQuery.sap.util.ResourceBundle#getText
 	 * @public
 	 */
 
@@ -86,438 +105,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 * @returns {boolean} true if the text has been found in the concrete bundle
 	 *
 	 * @function
-	 * @name jQuery.sap.util.ResourceBundle.prototype.hasText
+	 * @name jQuery.sap.util.ResourceBundle#hasText
 	 * @public
 	 */
-
-	/**
-	 * Enhances the resource bundle with a custom resource bundle. The bundle
-	 * can be enhanced with multiple resource bundles. The last enhanced resource
-	 * bundle wins against the previous ones and the original ones. This function
-	 * can be called several times.
-	 *
-	 * @param {jQuery.sap.util.ResourceBundle} oBundle an instance of a <code>jQuery.sap.util.ResourceBundle</code>
-	 * @since 1.16.5
-	 * @private
-	 *
-	 * @function
-	 * @name jQuery.sap.util.ResourceBundle.prototype._enhance
-	 */
-
-	/**
-	 * A regular expression that describes language tags according to BCP-47.
-	 * @see BCP47 "Tags for Identifying Languages" (http://www.ietf.org/rfc/bcp/bcp47.txt)
-	 *
-	 * The matching groups are
-	 *  0=all
-	 *  1=language (shortest ISO639 code + ext. language sub tags | 4digits (reserved) | registered language sub tags)
-	 *  2=script (4 letters)
-	 *  3=region (2letter language or 3 digits)
-	 *  4=variants (separated by '-', Note: capturing group contains leading '-' to shorten the regex!)
-	 *  5=extensions (including leading singleton, multiple extensions separated by '-')
-	 *  6=private use section (including leading 'x', multiple sections separated by '-')
-	 *
-	 *              [-------------------- language ----------------------][--- script ---][------- region --------][------------- variants --------------][----------- extensions ------------][------ private use -------]
-	 */
-	var rLocale = /^((?:[A-Z]{2,3}(?:-[A-Z]{3}){0,3})|[A-Z]{4}|[A-Z]{5,8})(?:-([A-Z]{4}))?(?:-([A-Z]{2}|[0-9]{3}))?((?:-[0-9A-Z]{5,8}|-[0-9][0-9A-Z]{3})*)((?:-[0-9A-WYZ](?:-[0-9A-Z]{2,8})+)*)(?:-(X(?:-[0-9A-Z]{1,8})+))?$/i;
-
-	/**
-	 * Resource bundles are stored according to the Java Development Kit conventions.
-	 * JDK uses old language names for a few ISO639 codes ("iw" for "he", "ji" for "yi", "in" for "id" and "sh" for "sr").
-	 * Make sure to convert newer codes to older ones before creating file names.
-	 * @const
-	 * @private
-	 */
-	var M_ISO639_NEW_TO_OLD = {
-		"he" : "iw",
-		"yi" : "ji",
-		"id" : "in",
-		"sr" : "sh"
-	};
-
-	/**
-	 * Inverse of M_ISO639_NEW_TO_OLD.
-	 * @const
-	 * @private
-	 */
-	var M_ISO639_OLD_TO_NEW = {
-		"iw" : "he",
-		"ji" : "yi",
-		"in" : "id",
-		"sn" : "sr"
-	};
-
-	/**
-	 * HANA XS Engine can't handle private extensions in BCP47 language tags.
-	 * Therefore, the agreed BCP47 codes for the technical languages 1Q and 2Q
-	 * don't work as Accept-Header and need to be send as URL parameters as well.
-	 * @const
-	 * @private
-	 */
-	var M_SUPPORTABILITY_TO_XS = {
-		"en_US_saptrc" : "1Q",
-		"en_US_sappsd" : "2Q"
-	};
-
-	var rSAPSupportabilityLocales = /(?:^|-)(saptrc|sappsd)(?:-|$)/i;
-
-	/**
-	 * Helper to normalize the given locale (in BCP-47 syntax) to the java.util.Locale format.
-	 * @param {string} sLocale locale to normalize
-	 * @returns {string} Normalized locale or undefined if the locale can't be normalized
-	 */
-	function normalize(sLocale) {
-		var m;
-		if ( typeof sLocale === 'string' && (m = rLocale.exec(sLocale.replace(/_/g, '-'))) ) {
-			var sLanguage = m[1].toLowerCase();
-			sLanguage = M_ISO639_NEW_TO_OLD[sLanguage] || sLanguage;
-			var sScript = m[2] ? m[2].toLowerCase() : undefined;
-			var sRegion = m[3] ? m[3].toUpperCase() : undefined;
-			var sVariants = m[4] ? m[4].slice(1) : undefined;
-			var sPrivate = m[6];
-			// recognize and convert special SAP supportability locales (overwrites m[]!)
-			if ( (sPrivate && (m = rSAPSupportabilityLocales.exec(sPrivate)))
-					 || (sVariants && (m = rSAPSupportabilityLocales.exec(sVariants))) ) {
-				return "en_US_" + m[1].toLowerCase(); // for now enforce en_US (agreed with SAP SLS)
-			}
-			// Chinese: when no region but a script is specified, use default region for each script
-			if ( sLanguage === "zh" && !sRegion ) {
-				if ( sScript === "hans" ) {
-					sRegion = "CN";
-				} else if ( sScript === "hant" ) {
-					sRegion = "TW";
-				}
-			}
-			return sLanguage + (sRegion ? "_" + sRegion + (sVariants ? "_" + sVariants.replace("-","_") : "") : "");
-		}
-	}
-
-	/**
-	 * Returns the default locale (the locale defined in UI5 configuration if available, else "en")
-	 * @returns {string} The default locale
-	 */
-	function defaultLocale() {
-		var sLocale;
-		// use the current session locale, if available
-		if (window.sap && window.sap.ui && sap.ui.getCore) {
-			sLocale = sap.ui.getCore().getConfiguration().getLanguage();
-			sLocale = normalize(sLocale);
-		}
-		// last fallback is english if no or no valid locale is given
-		return sLocale || "en";
-	}
-
-	/**
-	 * Calculate the next fallback locale for the given locale.
-	 *
-	 * Note: always keep this in sync with the fallback mechanism in Java, ABAP (MIME & BSP)
-	 * resource handler (Java: Peter M., MIME: Sebastian A., BSP: Silke A.)
-	 * @param {string} sLocale Locale string in Java format (underscores) or null
-	 * @returns {string} Next fallback Locale or null if there is no more fallback
-	 * @private
-	 */
-	function nextFallbackLocale(sLocale) {
-
-		// there is no fallback for the 'raw' locale or for null/undefined
-		if ( !sLocale ) {
-			return null;
-		}
-
-		// special (legacy) handling for zh_HK: try zh_TW (for Traditional Chinese) first before falling back to 'zh'
-		if ( sLocale === "zh_HK" ) {
-			return "zh_TW";
-		}
-
-		// if there are multiple segments (separated by underscores), remove the last one
-		var p = sLocale.lastIndexOf('_');
-		if ( p >= 0 ) {
-			return sLocale.slice(0,p);
-		}
-		// invariant: only a single segment, must be a language
-
-		// for any language but 'en', fallback to 'en' first before falling back to the 'raw' language (empty string)
-		return sLocale !== 'en' ? 'en' : '';
-	}
-
-	/**
-	 * Helper to normalize the given locale (java.util.Locale format) to the BCP-47 syntax.
-	 * @param {string} sLocale locale to convert
-	 * @returns {string} Normalized locale or undefined if the locale can't be normalized
-	 */
-	function convertLocaleToBCP47(sLocale) {
-		var m;
-		if ( typeof sLocale === 'string' && (m = rLocale.exec(sLocale.replace(/_/g, '-'))) ) {
-			var sLanguage = m[1].toLowerCase();
-			sLanguage = M_ISO639_OLD_TO_NEW[sLanguage] || sLanguage;
-			return sLanguage + (m[3] ? "-" + m[3].toUpperCase() + (m[4] ? "-" + m[4].slice(1).replace("_","-") : "") : "");
-		}
-	}
-
-	/**
-	 * A regular expression to split a URL into
-	 * <ol>
-	 * <li>a part before the file extension
-	 * <li>the file extension itself
-	 * <li>any remaining part after the file extension (query, hash - optional)
-	 * </ol>.
-	 *
-	 * Won't match for URLs without a file extension.
-	 *
-	 *           [------- prefix ------][----ext----][-------suffix--------]
-	 *                                               ?[--query--]#[--hash--]
-	 */
-	var rUrl = /^((?:[^?#]*\/)?[^\/?#]*)(\.[^.\/?#]+)((?:\?([^#]*))?(?:#(.*))?)$/;
-
-	/**
-	 * List of supported file extensions.
-	 *
-	 * Could be enriched in future or even could be made
-	 * extensible to support other formats as well.
-	 * @const
-	 * @private
-	 */
-	var A_VALID_FILE_TYPES = [ ".properties", ".hdbtextbundle" ];
-
-	/**
-	 * Helper to split a URL with the above regex.
-	 * Either returns an object with the parts or undefined.
-	 * @param {string} sUrl URL to analyze / split into pieces.
-	 * @returns {object} an object with properties for the individual URL parts
-	 */
-	function splitUrl(sUrl) {
-		var m = rUrl.exec(sUrl);
-		if ( !m || A_VALID_FILE_TYPES.indexOf( m[2] ) < 0 ) {
-			throw new Error("resource URL '" + sUrl + "' has unknown type (should be one of " + A_VALID_FILE_TYPES.join(",") + ")");
-		}
-		return { url : sUrl, prefix : m[1], ext : m[2], query: m[4], hash: (m[5] || ""), suffix : m[2] + (m[3] || "") };
-	}
-
-	/*
-	 * Implements jQuery.sap.util.ResourceBundle
-	 */
-	function Bundle(sUrl, sLocale, bIncludeInfo, bAsync){
-		this.sLocale = this._sNextLocale = normalize(sLocale) || defaultLocale();
-		this.oUrlInfo = splitUrl(sUrl);
-		this.bIncludeInfo = bIncludeInfo;
-		// list of custom bundles
-		this.aCustomBundles = [];
-		// declare list of property files that are loaded
-		this.aPropertyFiles = [];
-		this.aLocales = [];
-		// load the most specific, existing properties file
-		if (bAsync) {
-			var resolveWithThis = function() { return this; }.bind(this);
-			return loadNextPropertiesAsync(this).then(resolveWithThis, resolveWithThis);
-		}
-		loadNextPropertiesSync(this);
-	}
-
-	/*
-	 * Implements jQuery.sap.util.ResourceBundle.prototype._enhance
-	 */
-	Bundle.prototype._enhance = function(oCustomBundle) {
-		if (oCustomBundle instanceof Bundle) {
-			this.aCustomBundles.push(oCustomBundle);
-		} else {
-			// we report the error but do not break the execution
-			jQuery.sap.log.error("Custom ResourceBundle is either undefined or not an instanceof jQuery.sap.util.ResourceBundle. Therefore this custom ResourceBundle will be ignored!");
-		}
-	};
-
-	/*
-	 * Implements jQuery.sap.util.ResourceBundle.prototype.getText
-	 */
-	Bundle.prototype.getText = function(sKey, aArgs, bCustomBundle){
-		var sValue = null,
-			i;
-
-		// loop over the custom bundles before resolving this one
-		// lookup the custom resource bundles (last one first!)
-		for (i = this.aCustomBundles.length - 1; i >= 0; i--) {
-			sValue = this.aCustomBundles[i].getText(sKey, aArgs, true /* bCustomBundle */);
-			// value found - so return it!
-			if (sValue != null) {
-				return sValue; // found!
-			}
-		}
-
-		// loop over all loaded property files and return the value for the key if any
-		for (i = 0; i < this.aPropertyFiles.length; i++) {
-			sValue = this.aPropertyFiles[i].getProperty(sKey);
-			if (typeof sValue === "string") {
-				break;
-			}
-		}
-
-		// value for this key was not found in the currently loaded property files,
-		// load the fallback locales
-		while ( typeof sValue !== "string" && this._sNextLocale != null ) {
-
-			var oProperties = loadNextPropertiesSync(this);
-
-			// check whether the key is included in the newly loaded property file
-			if ( oProperties ) {
-				sValue = oProperties.getProperty(sKey);
-			}
-
-		}
-
-		if (!bCustomBundle && typeof sValue !== "string") {
-			jQuery.sap.assert(false, "could not find any translatable text for key '" + sKey + "' in bundle '" + this.oUrlInfo.url + "'");
-			sValue = sKey;
-		}
-
-		if (typeof sValue === "string") {
-			if (aArgs) {
-				sValue = jQuery.sap.formatMessage(sValue, aArgs);
-			}
-
-			if (this.bIncludeInfo) {
-				/* eslint-disable no-new-wrappers */
-				sValue = new String(sValue);
-				/* eslint-enable no-new-wrappers */
-				sValue.originInfo = {
-					source: "Resource Bundle",
-					url: this.oUrlInfo.url,
-					locale: this.sLocale,
-					key: sKey
-				};
-			}
-		}
-
-		return sValue;
-	};
-
-	// checks the existence of the text in the concrete properties file
-	Bundle.prototype.hasText = function(sKey) {
-		return this.aPropertyFiles.length > 0 && typeof this.aPropertyFiles[0].getProperty(sKey) === "string";
-	};
-
-	/*
-	 * Tries to load properties files asynchronously until one could be loaded
-	 * successfully or until there are no more fallback locales.
-	 */
-	function loadNextPropertiesAsync(oBundle) {
-		if ( oBundle._sNextLocale != null ) {
-			return tryToLoadNextProperties(oBundle, true).then(function(oProps) {
-				// if props could not be loaded, try next fallback locale
-				return oProps || loadNextPropertiesAsync(oBundle);
-			});
-		}
-		// no more fallback locales: give up
-		return Promise.resolve(null);
-	}
-
-	/*
-	 * Tries to load properties files synchronously until one could be loaded
-	 * successfully or until there are no more fallback locales.
-	 */
-	function loadNextPropertiesSync(oBundle) {
-		while ( oBundle._sNextLocale != null ) {
-			var oProps = tryToLoadNextProperties(oBundle, false);
-			if ( oProps ) {
-				return oProps;
-			}
-		}
-		return null;
-	}
-
-	/*
-	 * Checks whether the given locale is supported by checking it
-	 * against an array of supported locales.
-	 * If the array is not given or is empty, any locale is supported.
-	 */
-	function isSupported(sLocale, aSupportedLocales) {
-		return !aSupportedLocales || aSupportedLocales.length === 0 || aSupportedLocales.indexOf(sLocale) >= 0;
-	}
-
-	/*
-	 * Tries to load the properties file for the next fallback locale.
-	 *
-	 * If there is no further fallback locale or when requests for the next fallback locale are
-	 * suppressed by configuration or when the file cannot be loaded, <code>null</code> is returned.
-	 *
-	 * @param {Bundle} oBundle Resource bundle to extend
-	 * @param {boolean} [bAsync=false] Whether the resource should be loaded asynchronously
-	 * @returns The newly loaded properties (sync mode) or a Promise on the properties (async mode);
-	 *         value / Promise fulfillment will be <code>null</code> when the properties for the
-	 *         next fallback locale should not be loaded or when loading failed or when there
-	 *         was no more fallback locale
-	 * @private
-	 */
-	function tryToLoadNextProperties(oBundle, bAsync) {
-
-		// get the next fallback locale and calculate the next but one locale
-		var sLocale = oBundle._sNextLocale;
-		oBundle._sNextLocale = nextFallbackLocale(sLocale);
-
-		var aSupportedLanguages = window.sap && window.sap.ui && sap.ui.getCore && sap.ui.getCore().getConfiguration().getSupportedLanguages();
-
-		if ( sLocale != null && isSupported(sLocale, aSupportedLanguages) ) {
-
-			var oUrl = oBundle.oUrlInfo,
-				sUrl, mHeaders;
-
-			if ( oUrl.ext === '.hdbtextbundle' ) {
-				if ( M_SUPPORTABILITY_TO_XS[sLocale] ) {
-					// Add technical support languages also as URL parameter (as XS engine can't handle private extensions in Accept-Language header)
-					sUrl = oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "sap-language=" + M_SUPPORTABILITY_TO_XS[sLocale] + (oUrl.hash ? "#" + oUrl.hash : "");
-				} else {
-					sUrl = oUrl.url;
-				}
-				// Alternative: add locale as query:
-				// url: oUrl.prefix + oUrl.suffix + '?' + (oUrl.query ? oUrl.query + "&" : "") + "locale=" + sLocale + (oUrl.hash ? "#" + oUrl.hash : ""),
-				mHeaders = {
-					"Accept-Language": convertLocaleToBCP47(sLocale) || ""
-				};
-			} else {
-				sUrl = oUrl.prefix + (sLocale ? "_" + sLocale : "") + oUrl.suffix;
-			}
-
-			var vProperties = jQuery.sap.properties({
-				url: sUrl,
-				headers: mHeaders,
-				async: !!bAsync,
-				returnNullIfMissing: true
-			});
-
-			var addProperties = function(oProps) {
-				if ( oProps ) {
-					oBundle.aPropertyFiles.push(oProps);
-					oBundle.aLocales.push(sLocale);
-				}
-				return oProps;
-			};
-
-			return bAsync ? vProperties.then( addProperties ) : addProperties( vProperties );
-
-		}
-
-		return bAsync ? Promise.resolve(null) : null;
-
-	}
-
-	/**
-	 * Creates and returns a new instance of {@link jQuery.sap.util.ResourceBundle}
-	 * using the given URL and locale to determine what to load.
-	 *
-	 * @public
-	 * @param {object} [mParams] Parameters used to initialize the resource bundle
-	 * @param {string} [mParams.url=''] URL pointing to the base .properties file of a bundle (.properties file without any locale information, e.g. "mybundle.properties")
-	 * @param {string} [mParams.locale] Optional language (aka 'locale') to load the texts for.
-	 *     Can either be a BCP47 language tag or a JDK compatible locale string (e.g. "en-GB", "en_GB" or "fr");
-	 *     Defaults to the current session locale if <code>sap.ui.getCore</code> is available, otherwise to 'en'
-	 * @param {boolean} [mParams.includeInfo=false] Whether to include origin information into the returned property values
-	 * @param {boolean} [mParams.async=false] Whether the first bundle should be loaded asynchronously
-	 *     Note: Fallback bundles loaded by {@link #getText} are always loaded synchronously.
-	 * @returns {jQuery.sap.util.ResourceBundle|Promise} A new resource bundle or a Promise on that bundle (in asynchronous case)
-	 * @SecSink {0|PATH} Parameter is used for future HTTP requests
-	 */
-	jQuery.sap.resources = function resources(mParams) {
-		mParams = jQuery.extend({url: "", locale: undefined, includeInfo: false}, mParams);
-		// Note: Bundle constructor returns a Promise in async mode!
-		return new Bundle(mParams.url, mParams.locale, mParams.includeInfo, !!mParams.async);
-	};
 
 	/**
 	 * Checks if the given object is an instance of {@link jQuery.sap.util.ResourceBundle}
@@ -525,25 +115,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.properties', 'jquery.sap.strings
 	 * @param {jQuery.sap.util.ResourceBundle} oBundle object to check
 	 * @returns {boolean} true, if the object is a {@link jQuery.sap.util.ResourceBundle}
 	 * @public
+	 * @function
+	 * @name jQuery.sap.resources.isBundle
 	 */
-	jQuery.sap.resources.isBundle = function(oBundle) {
-		return oBundle instanceof Bundle;
-	};
-
-	jQuery.sap.resources._getFallbackLocales = function(sLocale, aSupportedLocales) {
-		var sTempLocale = normalize(sLocale),
-			aLocales = [];
-
-		while ( sTempLocale != null ) {
-			if ( isSupported(sTempLocale, aSupportedLocales) ) {
-				aLocales.push(sTempLocale);
-			}
-			sTempLocale = nextFallbackLocale(sTempLocale);
-		}
-
-		return aLocales;
-	};
 
 	return jQuery;
-
 });

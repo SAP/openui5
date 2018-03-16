@@ -1,5 +1,5 @@
 {
-	"_version": "1.4.0",
+	"_version": "1.8.0",
 
 	"sap.app": {
 		"id": "sap.ui.demo.masterdetail",
@@ -17,7 +17,7 @@
 				"type": "OData",
 				"settings": {
 					"odataVersion": "2.0",
-					"localUri" : "localService/metadata.xml"
+					"localUri": "localService/metadata.xml"
 				}
 			}
 		}
@@ -37,17 +37,14 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_hcb",
-			"sap_belize"
-		]
+		}
 	},
 
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.masterdetail.view.App",
 			"type": "XML",
+			"async": true,
 			"id": "app"
 		},
 
@@ -75,7 +72,7 @@
 					"bundleName": "sap.ui.demo.masterdetail.i18n.i18n"
 				}
 			},
-			"" : {
+			"": {
 				"dataSource": "mainService",
 				"preload": true
 			}
@@ -89,7 +86,10 @@
 				"controlId": "idAppControl",
 				"controlAggregation": "detailPages",
 				"bypassed": {
-					"target": ["master", "notFound"]
+					"target": [
+						"master",
+						"notFound"
+					]
 				},
 				"async": true
 			},
@@ -98,12 +98,18 @@
 				{
 					"pattern": "",
 					"name": "master",
-					"target": ["object", "master"]
+					"target": [
+						"object",
+						"master"
+					]
 				},
 				{
 					"pattern": "Objects/{objectId}",
 					"name": "object",
-					"target": ["master", "object"]
+					"target": [
+						"master",
+						"object"
+					]
 				}
 			],
 

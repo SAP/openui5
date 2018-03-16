@@ -47,10 +47,8 @@ function(Plugin) {
 	 * @private
 	 */
 	MouseSelection.prototype.init = function() {
+		// TODO: check if somebody is inherited from this plugin, if not then we can remove this init() function
 		Plugin.prototype.init.apply(this, arguments);
-		this._mEventDelegate = {
-			"onclick" : this._onClick
-		};
 	};
 
 	/*
@@ -58,14 +56,12 @@ function(Plugin) {
 	 */
 	MouseSelection.prototype.registerElementOverlay = function(oOverlay) {
 		oOverlay.setSelectable(true);
-		oOverlay.addEventDelegate(this._mEventDelegate, oOverlay);
+		oOverlay.attachBrowserEvent('click', this._onClick, oOverlay);
 	};
 
-
-	//  * @override
-
+	// * @override
 	MouseSelection.prototype.deregisterElementOverlay = function(oOverlay) {
-		oOverlay.removeEventDelegate(this._mEventDelegate, oOverlay);
+		oOverlay.detachBrowserEvent('click', this._onClick, oOverlay);
 	};
 
 	/*

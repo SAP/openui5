@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.BusyIndicator.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, Parameters) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/library',
+	"./BusyIndicatorRenderer"
+],
+	function(jQuery, library, Control, coreLibrary, BusyIndicatorRenderer) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 
@@ -29,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * <h4>When not to use</h4>
 	 * <ul>
 	 * <li>The operation takes less than one second.</li>
-	 * <li>You need to block the screen and prevent the user from starting another activity. In this case, use the {@link sap.m.BusyDialog busy dialog}.
+	 * <li>You need to block the screen and prevent the user from starting another activity. In this case, use the {@link sap.m.BusyDialog busy dialog}.</li>
 	 * <li>Do not change the mouse cursor to indicate the ongoing operation.</li>
 	 * <li>Do not show multiple busy indicators at once</li>
 	 * </ul>
@@ -41,6 +52,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @alias sap.m.BusyIndicator
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/busy-indicator/ Busy Indicator}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var BusyIndicator = Control.extend("sap.m.BusyIndicator", /** @lends sap.m.BusyIndicator.prototype */ { metadata : {
@@ -58,7 +70,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			 * Options for the text direction are RTL and LTR.
 			 * Alternatively, the control can inherit the text direction from its parent container.
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit},
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Icon URL if an icon is used as the busy indicator.
@@ -301,4 +313,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return BusyIndicator;
 
-}, /* bExport= */ true);
+});

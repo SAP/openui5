@@ -3,21 +3,21 @@
  */
 
 // Provides control sap.m.ToolbarSpacer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['./library', 'sap/ui/core/Control', './ToolbarSpacerRenderer'],
+	function(library, Control, ToolbarSpacerRenderer) {
 	"use strict";
 
-
-
 	/**
-	 * Constructor for a new ToolbarSpacer.
+	 * Constructor for a new <code>ToolbarSpacer</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This control can be used to add horizontal space between toolbar items.
-	 * Note: ToolbarLayoutData should not be used with this control.
+	 * Adds horizontal space between the items used within a {@link sap.m.Toolbar}.
+	 *
+	 * <b>Note:</b> <code>ToolbarSpacer</code> should not be used together with {@link sap.m.ToolbarLayoutData}.
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -43,12 +43,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	}});
 
-	/**
-	 * Flexible Spacer Class Name
-	 * @protected
-	 */
-	ToolbarSpacer.flexClass = "sapMTBSpacerFlex";
-
 	return ToolbarSpacer;
 
-}, /* bExport= */ true);
+});

@@ -1,0 +1,31 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested class: sap.ui.core.mvc.Controller
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-resourceroots='{"test": "../../../../../../test-resources/"}'>
+	></script>
+	<link  href="../../../../../../resources/sap/ui/thirdparty/qunit.css" rel="stylesheet" media="screen" />
+	<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script>
+		QUnit.config.autostart = false;
+		sap.ui.require(['test/sap/ui/core/qunit/mvc/Controller.qunit'], function() {
+			QUnit.start();
+		});
+	</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

@@ -3,10 +3,11 @@ sap.ui.define([
 	'sap/ui/demo/cart/model/formatter',
 	'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator'
-], function (BaseController,
-			 formatter,
-			 Filter,
-			 FilterOperator) {
+], function (
+	BaseController,
+	formatter,
+	Filter,
+	FilterOperator) {
 	"use strict";
 
 	return BaseController.extend("sap.ui.demo.cart.controller.Home", {
@@ -25,10 +26,10 @@ sap.ui.define([
 
 		onRefresh: function () {
 			// trigger search again and hide pullToRefresh when data ready
-			var oProductList = this.getView().byId("productList");
+			var oProductList = this.byId("productList");
 			var oBinding = oProductList.getBinding("items");
 			var fnHandler = function () {
-				this.getView().byId("pullToRefresh").hide();
+				this.byId("pullToRefresh").hide();
 				oBinding.detachDataReceived(fnHandler);
 			}.bind(this);
 			oBinding.attachDataReceived(fnHandler);

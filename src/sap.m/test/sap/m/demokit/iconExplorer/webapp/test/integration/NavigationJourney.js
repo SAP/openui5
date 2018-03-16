@@ -8,15 +8,18 @@ sap.ui.define([
 	QUnit.module("Navigation");
 
 	opaTest("Should see the busy indicator on app view while icon metadata is loaded", function (Given, When, Then) {
+
 		// Arrangements
-		Given.iStartMyApp();
+		Given.iStartMyApp({
+			delay: 10000 // to really see the busy indicator
+		});
 
 		//Actions
 		When.onTheOverviewPage.iLookAtTheScreen();
 
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp().
-			and.iTeardownMyAppFrame();
+			and.iTeardownMyApp();
 	});
 
 	opaTest("Should see the busy indicator on overview table after metadata is loaded", function (Given, When, Then) {
@@ -27,8 +30,7 @@ sap.ui.define([
 		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheResultsTableBusyIndicatorOrItemsLoaded().
-			and.iTeardownMyAppFrame();
+		Then.onTheOverviewPage.iShouldSeeTheResultsTableBusyIndicatorOrItemsLoaded();
 	});
 
 });

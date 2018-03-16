@@ -3,7 +3,11 @@ jQuery.sap.declare("sap.m.sample.DynamicMessageStripGenerator.Component");
 sap.ui.core.UIComponent.extend("sap.m.sample.DynamicMessageStripGenerator.Component", {
 
 	metadata : {
-		rootView : "sap.m.sample.DynamicMessageStripGenerator.V",
+		rootView : {
+			"viewName": "sap.m.sample.DynamicMessageStripGenerator.V",
+			"type": "XML",
+			"async": true
+		},
 		dependencies : {
 			libs : [
 				"sap.m"

@@ -61,7 +61,7 @@
 
 					// Assert
 					assert.ok(!bResult, "Did not match because there was no item");
-					sinon.assert.calledWith(oDebugSpy, "Control 'Element sap.m.ComboBox#myCB' has an empty aggregation 'items'");
+					sinon.assert.calledWith(oDebugSpy, "Control 'Element sap.m.ComboBox#myCB' aggregation 'items' is empty");
 				});
 
 				QUnit.test("Should complain if control does not have an aggregation", function(assert) {

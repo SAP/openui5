@@ -1,0 +1,13 @@
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.License"
+          id="license"
+          height="100%"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns="sap.m">
+    <Page height="100%"
+          showHeader="false"
+          showSubHeader="false">
+        <Text id="licenseText"
+              renderWhitespace="true"
+              class="sapUiTinyMarginBegin"/>
+    </Page>
+</mvc:View>

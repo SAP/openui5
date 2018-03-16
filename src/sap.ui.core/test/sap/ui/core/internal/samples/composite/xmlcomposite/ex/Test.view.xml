@@ -1,0 +1,6 @@
+<mvc:View height="100%" controllerName="sap.ui.core.internal.samples.composite.xmlcomposite.ex.Test" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:mm="sap.m" 
+	xmlns:fc="sap.ui.core.internal.samples.composite.xmlcomposite.ex.comp">
+	<fc:field text="{/text}" value="{/value}" class="heigth100percent"></fc:field>
+</mvc:View>

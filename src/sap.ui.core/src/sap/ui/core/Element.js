@@ -31,13 +31,13 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * <b>Valid Values:</b>
 	 *
 	 * <ul>
-	 * <li>for normal properties, the value has to be of the correct simple type (no type conversion occurs)
-	 * <li>for 0..1 aggregations, the value has to be an instance of the aggregated control or element type
-	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type
-	 * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted
-	 * <li>0..n associations are not supported yet
+	 * <li>for normal properties, the value has to be of the correct simple type (no type conversion occurs)</li>
+	 * <li>for 0..1 aggregations, the value has to be an instance of the aggregated control or element type</li>
+	 * <li>for 0..n aggregations, the value has to be an array of instances of the aggregated type</li>
+	 * <li>for 0..1 associations, an instance of the associated type or an id (string) is accepted</li>
+	 * <li>0..n associations are not supported yet</li>
 	 * <li>for events either a function (event handler) is accepted or an array of length 2
-	 *     where the first element is a function and the 2nd element is an object to invoke the method on.
+	 *     where the first element is a function and the 2nd element is an object to invoke the method on.</li>
 	 * </ul>
 	 *
 	 * Special aggregation <code>dependents</code> is connected to the lifecycle management and databinding,
@@ -49,6 +49,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *      Note: this can be omitted, no matter whether <code>mSettings</code> will be given or not!
 	 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new element
 	 *
+	 * @abstract
 	 * @class Base Class for Elements.
 	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
@@ -197,11 +198,12 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * Subclasses of Element should override this hook to implement any necessary initialization.
 	 *
-	 * @function
-	 * @name sap.ui.core.Element.prototype.init
 	 * @protected
 	 */
-	//sap.ui.core.Element.prototype.init = function() {};
+	Element.prototype.init = function() {
+		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
+		// Therefore, many subclasses will not call this method at all.
+	};
 
 	/**
 	 * Cleans up the element instance before destruction.
@@ -211,11 +213,12 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * Subclasses of Element should override this hook to implement any necessary cleanup.
 	 *
-	 * @function
-	 * @name sap.ui.core.Element.prototype.exit
 	 * @protected
 	 */
-	//sap.ui.core.Element.prototype.exit = function() {};
+	Element.prototype.exit = function() {
+		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
+		// Therefore, many subclasses will not call this method at all.
+	};
 
 	/**
 	 * Creates a new Element from the given data.
@@ -347,8 +350,10 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 
 	/**
-	 * This triggers immediate rerendering of its parent and thus of itself and its children.<br/> As <code>sap.ui.core.Element</code> "bubbles up" the
-	 * rerender, changes to child-<code>Elements</code> will also result in immediate rerendering of the whole sub tree.
+	 * This triggers immediate rerendering of its parent and thus of itself and its children.
+	 *
+	 * As <code>sap.ui.core.Element</code> "bubbles up" the rerender, changes to
+	 * child-<code>Elements</code> will also result in immediate rerendering of the whole sub tree.
 	 * @protected
 	 */
 	Element.prototype.rerender = function() {
@@ -842,11 +847,11 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	/**
 	 * Create a clone of this Element.
 	 *
-	 * Calls <code>ManagedObject#clone</code> and additionally clones event delegates.
+	 * Calls {@link sap.ui.base.ManagedObject#clone} and additionally clones event delegates.
 	 *
 	 * @param {string} [sIdSuffix] Suffix to be appended to the cloned element ID
 	 * @param {string[]} [aLocalIds] Array of local IDs within the cloned hierarchy (internally used)
-	 * @return {sap.ui.base.ManagedObject} reference to the newly created clone
+	 * @return {sap.ui.core.Element} reference to the newly created clone
 	 * @protected
 	 */
 	Element.prototype.clone = function(sIdSuffix, aLocalIds){
@@ -885,21 +890,36 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 */
 	Element.prototype.findElements = ManagedObject.prototype.findAggregatedObjects;
 
+
+	function fireLayoutDataChange(oElement) {
+		var oLayout = oElement.getParent();
+		if (oLayout) {
+			var oEvent = jQuery.Event("LayoutDataChange");
+			oEvent.srcControl = oElement;
+			oLayout._handleEvent(oEvent);
+		}
+	}
+
 	/**
 	 * Sets the {@link sap.ui.core.LayoutData} defining the layout constraints
 	 * for this control when it is used inside a layout.
 	 *
-	 * @param {sap.ui.core.LayoutData} oLayoutData
+	 * @param {sap.ui.core.LayoutData} oLayoutData which should be set
+	 * @return {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Element.prototype.setLayoutData = function(oLayoutData) {
 		this.setAggregation("layoutData", oLayoutData, true); // No invalidate because layout data changes does not affect the control / element itself
-		var oLayout = this.getParent();
-		if (oLayout) {
-			var oEvent = jQuery.Event("LayoutDataChange");
-			oEvent.srcControl = this;
-			oLayout._handleEvent(oEvent);
-		}
+		fireLayoutDataChange(this);
+		return this;
+	};
+
+	/*
+	 * The LayoutDataChange event needs to be propagated on destruction of the aggregation.
+	 */
+	Element.prototype.destroyLayoutData = function() {
+		this.destroyAggregation("layoutData", true);
+		fireLayoutDataChange(this);
 		return this;
 	};
 
@@ -929,7 +949,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @param {object} [vPath.parameters] map of additional parameters for this binding
 	 * @param {string} [vPath.model] name of the model
 	 * @param {object} [vPath.events] map of event listeners for the binding events
-	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string in that case the properties described for vPath above are valid here).
+	 * @param {object} [mParameters] map of additional parameters for this binding (only taken into account when vPath is a string in that case it corresponds to vPath.parameters).
 	 * The supported parameters are listed in the corresponding model-specific implementation of <code>sap.ui.model.ContextBinding</code>.
 	 *
 	 * @return {sap.ui.core.Element} reference to the instance itself
@@ -950,10 +970,19 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	Element.prototype.unbindElement = ManagedObject.prototype.unbindObject;
 
 	/**
-	 * Get the element binding object for a specific model
+	 * Get the context binding object for a specific model name.
 	 *
-	 * @param {string} sModelName the name of the model
-	 * @return {sap.ui.model.Binding} the element binding for the given model name
+	 * <b>Note:</b> to be compatible with future versions of this API, you must not use the following model names:
+	 * <ul>
+	 * <li><code>null</code></li>
+	 * <li>empty string <code>""</code></li>
+	 * <li>string literals <code>"null"</code> or <code>"undefined"</code></li>
+	 * </ul>
+	 * Omitting the model name (or using the value <code>undefined</code>) is explicitly allowed and
+	 * refers to the default model.
+	 *
+	 * @param {string} [sModelName=undefined] Name of the model or <code>undefined</code>
+	 * @return {sap.ui.model.ContextBinding} Context binding for the given model name or <code>undefined</code>
 	 * @public
 	 * @function
 	 */
@@ -980,6 +1009,45 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 	};
 
+	/**
+	 * Returns a DOM Element representing the given property or aggregation of this <code>Element</code>.
+	 *
+	 * Check the documentation for the <code>selector</code> metadata setting in {@link sap.ui.base.ManagedObject.extend}
+	 * for details about its syntax or its expected result.
+	 *
+	 * The default implementation of this method will return <code>null</code> in any of the following cases:
+	 * <ul>
+	 * <li>no setting (property or aggregation) with the given name exists in the class of this <code>Element</code></li>
+	 * <li>the setting has no selector defined in its metadata</li>
+	 * <li>{@link #getDomRef this.getDomRef()} returns no DOM Element for this <code>Element</code>
+	 *     or the returned DOM Element has no parentNode</li>
+	 * <li>the selector does not match anything in the context of <code>this.getDomRef().parentNode</code></li>
+	 * </ul>
+	 * If more than one DOM Element within the element matches the selector, the first occurrence is returned.
+	 *
+	 * Subclasses can override this method to handle more complex cases which can't be described by a CSS selector.
+	 *
+	 * @param {string} sSettingsName Name of the property or aggregation
+	 * @returns {Element} The first matching DOM Element for the setting or <code>null</code>
+	 * @throws {SyntaxError} When the selector string in the metadata is not a valid CSS selector group
+	 * @private
+	 * @sap-restricted internal usage for drag and drop and sap.ui.dt
+	 */
+	Element.prototype.getDomRefForSetting = function (sSettingsName) {
+		var oSetting = this.getMetadata().getAllSettings()[sSettingsName];
+		if (oSetting && oSetting.selector) {
+			var oDomRef = this.getDomRef();
+			if (oDomRef) {
+				oDomRef = oDomRef.parentNode;
+				if (oDomRef && oDomRef.querySelector ) {
+					var sSelector = oSetting.selector.replace(/\{id\}/g, this.getId().replace(/(:|\.)/g,'\\$1'));
+					return oDomRef.querySelector(sSelector);
+				}
+			}
+		}
+		return null;
+	};
+
 	//*************** MEDIA REPLACEMENT ***********************//
 
 	/**
@@ -999,7 +1067,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	/**
 	 * Returns the current media range of the Device or the closest media container
 	 *
-	 * @param sName
+	 * @param {string} sName
 	 * @returns {map}
 	 * @private
 	 * @sap-restricted
@@ -1019,7 +1087,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	Element.prototype._onContextualSettingsChanged = function () {
 		var iWidth = this._getMediaContainerWidth(),
 			bShouldUseContextualWidth = iWidth !== undefined,
-			bProviderChanged = bShouldUseContextualWidth ^ !!this._bUsingContextualWidth,// true, false or false, true (convert to bool in case of default undefined)
+			bProviderChanged = bShouldUseContextualWidth ^ !!this._bUsingContextualWidth,// true, false or false, true (convert to boolean in case of default undefined)
 			aListeners = this._aContextualWidthListeners || [];
 
 		if (bProviderChanged) {
@@ -1052,9 +1120,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	/**
 	 * Registers the given event handler to change events of the screen width/closest media container width, based on the range set with the specified name.
 	 *
-	 * @param fnFunction
-	 * @param oListener
-	 * @param sName
+	 * @param {function} fnFunction
+	 * @param {object} oListener
+	 * @param {string} sName
 	 * @private
 	 * @sap-restricted
 	 */
@@ -1078,9 +1146,9 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 
 	/**
 	 * Removes a previously attached event handler from the change events of the screen width/closest media container width.
-	 * @param fnFunction
-	 * @param oListener
-	 * @param sName
+	 * @param {function} fnFunction
+	 * @param {object} oListener
+	 * @param {string} sName
 	 * @private
 	 * @sap-restricted
 	 */

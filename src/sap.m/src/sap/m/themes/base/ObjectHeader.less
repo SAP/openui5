@@ -14,9 +14,19 @@
 }
 
 .sapMOH {
-	padding: 2rem;
+	padding: 3rem;
 }
 
+.sapMOH .sapMOHTitleActive:focus {
+	outline: none;
+}
+
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOH,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOH {
+	padding: 2rem;
+}
+html .sapUiContainer-Narrow .sapMOH,
+html.sap-desktop.sapUiMedia-Std-Phone .sapMOH,
 html.sap-phone .sapMOH {
 	padding: 2rem 1rem;
 }
@@ -26,6 +36,11 @@ html.sap-phone .sapMOH {
 }
 
 .sapMOH.sapMOHC {
+	margin: 0;
+	padding: 1.125rem 3rem 1rem 3rem;
+}
+
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOH.sapMOHC {
 	margin: 0;
 	padding: 1.125rem 2rem 1rem 2rem;
 }
@@ -114,6 +129,14 @@ html.sap-phone .sapMOHTitleDiv.sapMOHNumberWrap {
 	margin-top: 0.375rem;
 	display: inline-block;
 	position: relative;
+}
+
+html.sap-phone .sapMOHTitle .sapMText,
+.sapUiMedia-Std-Phone .sapMOHTitle .sapMText,
+html .sapUiContainer-Narrow .sapMOHTitle .sapMText {
+	display: table-cell;
+	word-wrap: break-word;
+	word-break: break-all;
 }
 
 .sapMText.sapMOHTitle {
@@ -408,18 +431,34 @@ html[data-sap-ui-browser^=ie] .sapMOH .sapMObjectAttributeActive {
 .sapMOHR {
 	width: 100%;
 	height: 100%;
-	padding: 1.1rem 2rem 0 2rem;
+	padding: 1.1rem 3rem 0 3rem;
 	box-sizing: border-box;
+}
+
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHR,
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHR,
+html .sapUiContainer-Medium .sapMOHR,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHR {
+	padding-top: 1.1rem;
+	padding-left: 2rem;
+	padding-right: 2rem;
+}
+
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHR,
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHR,
+html .sapUiContainer-Medium .sapMOHR,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) :not(div[class*='sapMOHRBg']:only-child) .sapMOHR {
+	padding-bottom: 0;
+}
+
+div[class*='sapMOHRBg']:only-child {
+	padding-bottom: 1.5rem;
 }
 
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHR,
 html.sap-phone .sapMOHR,
 html .sapUiContainer-Narrow .sapMOHR {
 	padding: 0.625rem 1rem 0 1rem;
-}
-
-div[class*='sapMOHRBg']:only-child {
-	padding-bottom: 1.5rem;
 }
 
 html.sap-desktop.sapUiMedia-Std-Phone div[class*='sapMOHRBg']:only-child,
@@ -487,6 +526,14 @@ html[data-sap-ui-browser ^= "ie"] {
 
 .sapMOHRTitleTextWrappable {
 	white-space: normal;
+}
+
+html.sap-phone .sapMOHRTitleTextWrappable,
+.sapUiMedia-Std-Phone .sapMOHRTitleTextWrappable,
+html .sapUiContainer-Narrow .sapMOHRTitleTextWrappable {
+	display: table-cell;
+	word-wrap: break-word;
+	word-break: break-all;
 }
 
 .sapMOHRTitleText {
@@ -770,8 +817,18 @@ div[class*='sapMOHRStatesCont'] > div:last-child {
 	padding-bottom: 0;
 }
 
+/* styles for the IconTabBar when inside ObjectHeader */
+
 .sapMOHR .sapMITH {
 	position: relative;
+	margin-left: -3rem;
+	margin-right: -3rem;
+}
+
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITH,
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITH,
+html .sapUiContainer-Medium .sapMOHRTabs .sapMITH,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITH {
 	margin-left: -2rem;
 	margin-right: -2rem;
 }
@@ -779,7 +836,6 @@ div[class*='sapMOHRStatesCont'] > div:last-child {
 html.sap-phone .sapMOHRTabs .sapMITH,
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITH,
 html .sapUiContainer-Narrow .sapMOHRTabs .sapMITH {
-	position: relative;
 	margin-left: -1rem;
 	margin-right: -1rem;
 }
@@ -789,10 +845,31 @@ html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBHead {
 	margin: 1rem 0 0;
 }
 
+.sapMOHRTabs .sapMITBScrollContainer {
+	margin: 0 2.75rem;
+}
+
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBScrollContainer,
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBScrollContainer,
+html .sapUiContainer-Medium .sapMOHRTabs .sapMITBScrollContainer,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBScrollContainer {
+	margin: 0 1.75rem;
+}
+
 html.sap-phone .sapMOHRTabs .sapMITBScrollContainer,
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBScrollContainer,
 html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBScrollContainer {
 	margin: 0 1rem;
+}
+
+.sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer {
+	margin: 0 5rem 0 2.75rem;
+}
+
+html.sap-tablet.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer,
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer,
+html .sapUiContainer-Medium .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer {
+	margin: 0 4.25rem 0 1.75rem;
 }
 
 html.sap-phone .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollContainer,
@@ -801,10 +878,34 @@ html .sapUiContainer-Narrow .sapMOHRTabs .sapMITHOverflowList .sapMITBScrollCont
 	margin: 0 4rem 0 1rem;
 }
 
+.sapMOHRTabs .sapMITBArrowScrollLeft {
+	left: 1.25rem;
+	padding: 1rem 0;
+}
+
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBArrowScrollLeft,
+html .sapUiContainer-Medium .sapMOHRTabs .sapMITBArrowScrollLeft,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBArrowScrollLeft {
+	left: 0.25rem;
+	padding: 1rem 0.4rem;
+}
+
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeft,
 html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBArrowScrollLeft {
 	left: 0.25rem;
 	padding: 1rem 0;
+}
+
+.sapMOHRTabs .sapMITBArrowScrollRight {
+	padding: 1rem 0;
+	right: 1.25rem;
+}
+
+html.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBArrowScrollRight,
+html .sapUiContainer-Medium .sapMOHRTabs .sapMITBArrowScrollRight,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBArrowScrollRight {
+	padding: 1rem 0.4rem;
+	right: 0.25rem;
 }
 
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRight,
@@ -813,9 +914,31 @@ html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBArrowScrollRight {
 	right: 0.25rem;
 }
 
+.sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight {
+	right: 3.25rem;
+}
+
+html.sap-desktop.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight,
+html .sapUiContainer-Medium .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMITHOverflowList .sapMITBArrowScrollRight {
+	right: 2.75rem;
+}
+
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight,
 html .sapUiContainer-Narrow .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRight {
 	right: 3.25rem;
+}
+
+.sapMOHRTabs .sapMITBArrowScrollLeftTextOnly {
+	left: 1.25rem;
+	padding: 0.75rem 0;
+}
+
+html.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly,
+html .sapUiContainer-Medium .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly {
+	left: 0.25rem;
+	padding: 1.0625rem 0.4rem;
 }
 
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly,
@@ -824,10 +947,32 @@ html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBArrowScrollLeftTextOnly {
 	padding: 1.25rem 0 0.75rem;
 }
 
+.sapMOHRTabs .sapMITBArrowScrollRightTextOnly {
+	padding: 0.75rem 0;
+	right: 1.25rem;
+}
+
+html.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITBArrowScrollRightTextOnly,
+html .sapUiContainer-Medium .sapMOHRTabs .sapMITBArrowScrollRightTextOnly,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITBArrowScrollRightTextOnly {
+	padding: 1.0625rem 0.4rem;
+	right: 0.25rem;
+}
+
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITBArrowScrollRightTextOnly,
 html .sapUiContainer-Narrow .sapMOHRTabs .sapMITBArrowScrollRightTextOnly {
 	padding: 1.25rem 0 0.75rem;
 	right: 0.25rem;
+}
+
+.sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly {
+	right: 3.50rem;
+}
+
+html.sapUiMedia-Std-Tablet .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly,
+html .sapUiContainer-Medium .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly,
+html:not(.sapUiMedia-Std-Phone) .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly {
+	right: 2.75rem;
 }
 
 html.sap-desktop.sapUiMedia-Std-Phone .sapMOHRTabs .sapMITHOverflowList .sapMITBArrowScrollRightTextOnly,
@@ -866,6 +1011,8 @@ html.sap-phone .sapMOHRTabs .sapMITBTextOnly > .sapMITBFilter > .sapMITBText + .
 html.sap-phone .sapMOHR .sapMITBHead {
 	margin: 1rem 0 0;
 }
+
+/* end styles for the IconTabBar when inside ObjectHeader */
 
 .sapMOHR .sapMPI {
 	margin: 0;

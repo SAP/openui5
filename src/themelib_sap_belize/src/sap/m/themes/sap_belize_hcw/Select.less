@@ -13,7 +13,7 @@
 
 /* hover and focus */
 
-.sapMSlt:focus:not(.sapMSltPressed):not(.sapMSltIconOnly) {
+.sapMSlt:focus:not(.sapMSltPressed):not(.sapMSltIconOnly):not(.sapMSltPressed) {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.1875rem;
 }
@@ -66,12 +66,12 @@ html[data-sap-ui-browser^="ff"] .sapMBar .sapMSlt:focus {
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 
-	.sapMSlt:focus.sapMSltIconOnly {
+	.sapMSlt:focus.sapMSltIconOnly:not(.sapMSltExpanded) {
 		outline:          none;
 		position:         relative;
 	}
 
-	.sapMSlt:focus.sapMSltIconOnly:before {
+	.sapMSlt:focus.sapMSltIconOnly:not(.sapMSltExpanded):before {
 		content: "";
 		box-sizing:       border-box;
 		width:            100%;
@@ -148,8 +148,8 @@ html.sap-desktop .sapMSltPressed.sapMSltIconOnly:not(.sapMSltDisabled) {
 
 /* focus: Select IconOnly in all contexts get dotted outline */
 
-html.sap-desktop .sapMBar-CTX .sapMSltIconOnly:focus,
-html.sap-desktop .sapMSltIconOnly:focus {
+html.sap-desktop .sapMBar-CTX .sapMSltIconOnly:focus:not(.sapMSltPressed):not(.sapMSltExpanded),
+html.sap-desktop .sapMSltIconOnly:focus:not(.sapMSltPressed):not(.sapMSltExpanded) {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 	border-color: transparent;

@@ -1,0 +1,277 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>sap.uxap.ObjectPage</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-xx-waitForTheme="true"
+            data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout">
+    </script>
+    <script id="view1" type="sapui5/xmlview">
+		<m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:l="sap.ui.layout" displayBlock="true" height="100%">
+
+            <ObjectPageLayout id="ObjectPageLayout"
+                              showTitleInHeaderContent="true"
+                              alwaysShowContentHeader="false"
+                              isChildPage="true">
+                <headerTitle>
+                    <ObjectPageHeader id="headerForTest"
+                                      headerDesign="Light"
+                                      objectTitle="Denise Smith"
+                                      showTitleSelector="true"
+                                      showMarkers="true"
+                                      markFavorite="true"
+                                      markFlagged="true"
+                                      markChanges="true"
+                                      markChangesPress="handleMarkChangesPress"
+                                      objectSubtitle="Senior Developer"
+                                      objectImageURI="../../sap/f/images/Woman_avatar_02.png"
+                                      objectImageShape="Circle"
+                                      isObjectIconAlwaysVisible="false"
+                                      isObjectTitleAlwaysVisible="false"
+                                      isObjectSubtitleAlwaysVisible="false"
+                                      isActionAreaAlwaysVisible="true"
+                                      showPlaceholder="true">
+                        <breadcrumbs>
+                            <m:Breadcrumbs currentLocationText="My Profile">
+                                <m:Link text='My Company' />
+                                <m:Link text='My Department' />
+                                <m:Link text='Employees' />
+                            </m:Breadcrumbs>
+                        </breadcrumbs>
+                        <actions>
+                            <ObjectPageHeaderActionButton icon="sap-icon://copy"/>
+							<ObjectPageHeaderActionButton icon="sap-icon://delete"/>
+							<ObjectPageHeaderActionButton icon="sap-icon://add"/>
+                            <ObjectPageHeaderActionButton icon="sap-icon://paste"/>
+                            <ObjectPageHeaderActionButton icon="sap-icon://full-screen" tooltip="Enter Full Screen Mode"/>
+                            <ObjectPageHeaderActionButton icon="sap-icon://decline" tooltip="Close column"/>
+                        </actions>
+                    </ObjectPageHeader>
+                </headerTitle>
+                <headerContent>
+                    <l:VerticalLayout>
+                        <m:Link text="+33 6 4512 5158"/>
+                        <m:Link text="DeniseSmith@sap.com"/>
+                    </l:VerticalLayout>
+
+                    <l:VerticalLayout>
+                        <m:Label text="Hello! I am Denise and I use Object Page"/>
+                        <m:VBox height="63px">
+                            <m:Label text="Achieved goals"/>
+                            <m:ProgressIndicator
+                                    percentValue="30"
+                                    displayValue="30%"
+                                    showValue="true"
+                                    state="None"/>
+                        </m:VBox>
+                    </l:VerticalLayout>
+        
+                    <l:VerticalLayout>
+                        <m:Label text="San Jose, USA"/>
+                    </l:VerticalLayout>
+                </headerContent>
+                <sections>
+                    <ObjectPageSection title="2014 Goals Plan">
+                        <subSections>
+                            <ObjectPageSubSection title=" ">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Personal">
+                        <subSections>
+                            <ObjectPageSubSection title="Connect">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+
+                            <ObjectPageSubSection id="paymentSubSection" title="Payment information">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                                <moreBlocks>
+                                    <m:Text text="Content" />
+                                </moreBlocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section3">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection3.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection3.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section4">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection4.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection4.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section5">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection5.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection5.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section6">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection6.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection6.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section7">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection7.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection7.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section8">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection8.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection8.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section9">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection9.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection9.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section10">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection10.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection10.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section11">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection11.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection11.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section12">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection12.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection12.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                </sections>
+            </ObjectPageLayout>
+        </m:View>
+	</script>
+</head>
+<body id="body" class="sapUiBody">
+<script>
+	(function (jQuery, App, Page) {
+		sap.ui.getCore().attachInit(function() {
+			var oApp = new App(),
+				myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
+
+			oApp.addPage(new Page({
+				title: "Old Header",
+				content: [myView]
+			})).placeAt("content");
+		});
+	}(jQuery, sap.m.App, sap.m.Page));
+</script>
+<div id="content"></div>
+</body>
+</html>

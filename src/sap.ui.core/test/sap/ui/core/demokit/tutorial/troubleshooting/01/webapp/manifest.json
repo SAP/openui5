@@ -1,5 +1,5 @@
 {
-	"_version": "1.5.0",
+	"_version": "1.8.0",
 	"sap.app": {
 		"id": "sap.ui.demo.HeapOfShards",
 		"type": "application",
@@ -31,18 +31,15 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_hcb",
-			"sap_belize"
-
-		]
+		}
 	},
 
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.HeapOfShards.view.App",
-			"type": "XML"
+			"type": "XML",
+			"async": true,
+			"id": "app"
 		},
 		"dependencies": {
 			"minUI5Version": "1.30.0",

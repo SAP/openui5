@@ -69,6 +69,8 @@
 						"<nodes1>subitem3</nodes1>" +
 					"</nodes0>" +
 				"</root>" +
+				"<changeTestProperty>SAPUI5</changeTestProperty>" +
+				"<changingArray><entry>1</entry><entry>2</entry><entry>3</entry><entry>4</entry></changingArray>" +
 			"</root>";
 
 		oModel = new sap.ui.model.xml.XMLModel();
@@ -936,7 +938,36 @@
 		assert.deepEqual(aContexts.diff, [], "Nothing changed");
 	});
 
+	QUnit.test("No wrong 'Change' event after unrelated property change", function (assert) {
+		createListBinding("/unknown", "");
 
+		var oListBinding = bindings[0];
+		oListBinding.attachChange(function () {
+			throw new Error("wrongfully called fired change event");
+		});
+
+		// Changing an unrelated property on the model should not trigger the
+		// ListBinding to fire a change event.
+		oModel.setProperty("/changeTestProperty", "OpenUI5");
+
+		assert.ok("no 'change' event was fired for unrelated property change");
+	});
+
+	/*
+
+	//Test fails because jQuery.sap.equal does not work correctly for XML DOM nodes
+
+	QUnit.test("'Change' event is fired if list content changes, but length does not", function (assert) {
+		createListBinding("/changingArray", "");
+
+		var oListBinding = bindings[0];
+		oListBinding.attachChange(function () {
+			assert.ok(true, "'change' event was fired after list content change (no length change)");
+		});
+
+		oModel.setProperty("/changingArray", [1, 2, 3, 4]);
+	});
+	*/
 	</script>
 
 </head>

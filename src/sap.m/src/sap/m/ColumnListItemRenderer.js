@@ -2,24 +2,32 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ListItemBaseRenderer, ListRenderer, Renderer) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/core/Renderer",
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"./library",
+	"./ListItemBaseRenderer",
+	"./Label"
+],
+	function(jQuery, Renderer, coreLibrary, Device, library, ListItemBaseRenderer, Label) {
 	"use strict";
+
+	// shortcut for sap.m.PopinDisplay
+	var PopinDisplay = library.PopinDisplay;
+
+	// shortcut for sap.ui.core.VerticalAlign
+	var VerticalAlign = coreLibrary.VerticalAlign;
+
+	// shortcut for sap.m.PopinLayout
+	var PopinLayout = library.PopinLayout;
 
 	/**
 	 * ColumnListItem renderer.
 	 * @namespace
 	 */
 	var ColumnListItemRenderer = Renderer.extend(ListItemBaseRenderer);
-
-	// determines whether given control is a textual control or not
-	// TODO: Change with a better way (e.g. Text Marker Interface)
-	ColumnListItemRenderer.isTextualControl = function(oControl) {
-		var mConstructors = [sap.m.Text, sap.m.Label, sap.m.Link, sap.m.Title];
-		return mConstructors.some(function(fnConstructor) {
-			return fnConstructor && oControl instanceof fnConstructor;
-		});
-	};
 
 	ColumnListItemRenderer.render = function(rm, oLI) {
 		var oTable = oLI.getTable();
@@ -32,14 +40,6 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		if (oLI.getVisible() && oTable.hasPopin()) {
 			this.renderPopin(rm, oLI, oTable);
 		}
-	};
-
-	ColumnListItemRenderer.openItemTag = function(rm, oLI) {
-		rm.write("<tr");
-	};
-
-	ColumnListItemRenderer.closeItemTag = function(rm, oLI) {
-		rm.write("</tr>");
 	};
 
 	// render type highlight always within a cell
@@ -95,8 +95,16 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 	ColumnListItemRenderer.renderLIAttributes = function(rm, oLI) {
 		rm.addClass("sapMListTblRow");
 		var vAlign = oLI.getVAlign();
-		if (vAlign != sap.ui.core.VerticalAlign.Inherit) {
+		if (vAlign != VerticalAlign.Inherit) {
 			rm.addClass("sapMListTblRow" + vAlign);
+		}
+
+		var oTable = oLI.getTable();
+		if (oTable && oTable.getAlternateRowColors()) {
+			var iPos = oTable.indexOfItem(oLI);
+			if (iPos % 2 == 0) {
+				rm.addClass("sapMListTblRowAlternate");
+			}
 		}
 	};
 
@@ -136,6 +144,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			rm.write("<td");
 			rm.addClass("sapMListTblCell");
 			rm.writeAttribute("id", oLI.getId() + "_cell" + i);
+			rm.writeAttribute("data-sap-ui-column", oColumn.getId());
 
 			// check column properties
 			if (oColumn) {
@@ -200,9 +209,11 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		}
 
 		/* add the header as an aria-labelled by association for the cells */
+		/* only set the header text to the aria-labelled association if the header is a textual control and is visible */
 		if (oHeader &&
+			oHeader.getText &&
 			oCell.getAriaLabelledBy &&
-			this.isTextualControl(oHeader)) {
+			oHeader.getVisible()) {
 
 			// suppress the invalidation during the rendering
 			oCell.addAssociation("ariaLabelledBy", oHeader, true);
@@ -242,7 +253,17 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 		rm.write("<td");
 		rm.writeAttribute("id", oLI.getId() + "-subcell");
 		rm.writeAttribute("colspan", oTable.getColSpan());
-		rm.write("><div class='sapMListTblSubCnt'>");
+
+		var sPopinLayout = oTable.getPopinLayout();
+		// overwrite sPopinLayout=Block to avoid additional margin-top in IE and Edge
+		if (Device.browser.msie || Device.browser.edge) {
+			sPopinLayout = PopinLayout.Block;
+		}
+		rm.write("><div");
+		rm.addClass("sapMListTblSubCnt");
+		rm.addClass("sapMListTblSubCnt" + sPopinLayout);
+		rm.writeClasses();
+		rm.write(">");
 
 		var aCells = oLI.getCells(),
 			aColumns = oTable.getColumns(true);
@@ -270,12 +291,20 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', './ListRenderer', 
 			rm.write(">");
 
 			/* header cell */
-			if (oHeader && sPopinDisplay != sap.m.PopinDisplay.WithoutHeader) {
+			if (oHeader && sPopinDisplay != PopinDisplay.WithoutHeader) {
 				rm.write("<div");
 				rm.addClass("sapMListTblSubCntHdr");
 				rm.writeClasses();
 				rm.write(">");
-				oHeader = oHeader.clone();
+
+				var fnColumnHeaderClass = sap.ui.require("sap/m/ColumnHeader");
+				if (typeof fnColumnHeaderClass == "function" && oHeader instanceof fnColumnHeaderClass) {
+					var sColumnHeaderTitle = oHeader.getText();
+					oHeader = new Label({text: sColumnHeaderTitle});
+				} else {
+					oHeader = oHeader.clone();
+				}
+
 				oColumn.addDependent(oHeader);
 				oLI._addClonedHeader(oHeader);
 				oColumn.applyAlignTo(oHeader, "Begin");

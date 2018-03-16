@@ -3,7 +3,7 @@
  */
 
 // Provides reuse functionality for reading documentation from api.json files (as created by the UI5 JSDoc3 template/plugin)
-sap.ui.define(['jquery.sap.strings'], function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'jquery.sap.strings'], function(jQuery) {
 
 	"use strict";
 

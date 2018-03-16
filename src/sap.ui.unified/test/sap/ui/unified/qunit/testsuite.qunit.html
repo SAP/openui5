@@ -11,6 +11,7 @@
   function suite() {
     var suite = new parent.jsUnitTestSuite();
     var contextPath = "/" + window.location.pathname.split("/")[1];
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/Header.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/Calendar.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/CalendarDate.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/Calendar_Islamic.qunit.html");
@@ -30,10 +31,17 @@
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/Menu.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/Month.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/MonthPicker.qunit.html");
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/YearPicker.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/Shell.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/ShellLayout.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/ShellOverlay.qunit.html");
     suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/SplitContainer.qunit.html");
+
+    // --------------------------
+    // Design Time & RTA Enabling
+    // --------------------------
+    //complete libraries dt files general json data
+    suite.addTestPage(contextPath + "/test-resources/sap/ui/unified/qunit/designtime/Library.qunit.html");
 
     return suite;
   }

@@ -12,21 +12,27 @@
 	height: 100%;
 }
 
-.sapMQuickViewPage.sapMNavItem {
-	vertical-align: top;
-	display: inline-block;
+.sapMQuickViewPage {
+	.sapUiHLayout.sapUiHLayoutNoWrap .sapUiHLayoutChildWrapper {
+		max-width: 100%;
+	}
+
+	&.sapMNavItem {
+		vertical-align: top;
+		display: inline-block;
+
+		&.sapMNavItemHidden {
+			display: none;
+		}
+
+		&.sapMNavItemOffset {
+			left: -100%;
+		}
+	}
 }
 
 .sapMQuickViewCard .sapMQuickViewPage.sapMNavItem {
 	width: 100% !important;
-}
-
-.sapMQuickViewPage.sapMNavItem.sapMNavItemHidden {
-	display: none;
-}
-
-.sapMQuickViewPage.sapMNavItem.sapMNavItemOffset {
-	left: -100%;
 }
 
 html.sap-desktop .sapMQuickViewPage .sapUiFormResGrid > div,
@@ -41,6 +47,13 @@ html.sap-tablet .sapMQuickViewPage .sapUiFormResGrid > div {
 	height: 100%;
 	box-sizing: border-box;
 	padding-top: 3rem;
+}
+
+.sapMQuickView.sapMPopover .sapMQuickViewPage.sapMScrollContScroll,
+.sapMQuickView.sapMPopover .sapMQuickViewPage.sapMPage.sapMQuickViewPageWithoutHeader,
+.sapUiSizeCompact .sapMQuickView.sapMPopover .sapMQuickViewPage.sapMScrollContScroll,
+.sapUiSizeCompact .sapMQuickView.sapMPopover .sapMQuickViewPage.sapMPage.sapMQuickViewPageWithoutHeader {
+	padding-top: 0;
 }
 
 .sapUiSizeCompact .sapMQuickView.sapMPopover .sapMQuickViewPage.sapMScrollContScroll,

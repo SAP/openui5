@@ -1,9 +1,11 @@
 /*!
  * ${copyright}
  */
-// Provides sap.m.UploadCollectionToolbarPlaceholder.
-sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control' ],
-	function(jQuery, library, Control) {
+
+sap.ui.define([
+	'./library',
+	'sap/ui/core/Control'
+], function(library, Control) {
 	"use strict";
 
 	/**
@@ -13,8 +15,8 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control' ],
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
 	 * @class
-	 * This control needs to be used when you would like to create a customizable toolbar for the UploadCollection. Always a FileUploader instance is
-	 * required in the toolbar, the FileUploader will be placed in the position defined by the application.
+	 * Used to create a customizable toolbar for the UploadCollection.
+	 * A FileUploader instance is required in the toolbar and will be placed by the application.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -22,15 +24,17 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control' ],
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.34
+	 * @since 1.34.0
 	 * @alias sap.m.UploadCollectionToolbarPlaceholder
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
-	var UploadCollectionToolbarPlaceholder = Control.extend("sap.m.UploadCollectionToolbarPlaceholder", { metadata : {
-		library : "sap.m",
-		properties : {}
-	}});
+	var UploadCollectionToolbarPlaceholder = Control.extend("sap.m.UploadCollectionToolbarPlaceholder", {
+		metadata: {
+			library: "sap.m",
+			properties: {}
+		}
+	});
 
 	return UploadCollectionToolbarPlaceholder;
 

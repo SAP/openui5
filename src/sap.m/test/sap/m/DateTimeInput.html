@@ -11,6 +11,7 @@
 
 <script>
 	var nNow = new Date().getTime(),
+		list, oListWithTypes,
 		oModel = new sap.ui.model.json.JSONModel();
 
 	oModel.setData({
@@ -74,44 +75,46 @@
 		title : "DateTimeInput Controls",
 		enableScrolling : true,
 		content : [
-			list = new sap.m.List({
-				inset : false,
-				width : "100%",
-				items : [
-					new sap.m.InputListItem({
-						label : "Christmas",
-						content : oDTI1 = new sap.m.DateTimeInput("DTI1", {
-							placeholder : "Date Picker",
-							change : function(e) {
-								var oDate = e.getParameters().newDateValue;
-								if (oDate && oDate.getMonth() == 11 && oDate.getDate() == 25) {
-									oDTI1.setValueState("None");
-								} else {
-									oDTI1.setValueState("Error");
-								}
-							}
-						})
-					}), new sap.m.InputListItem({
-						label : "Duration",
-						content : oDTI2 = new sap.m.DateTimeInput("DTI2", {
-							placeholder : "Time Picker",
-							type : "Time",
-							valueFormat : "HH:mm",
-							value : "11:23",
-							displayFormat : "H'h' m'm'",
-							change : handleChange
-						})
-					}), new sap.m.InputListItem({
-						label : "DateTime",
-						content : oDTI3 = new sap.m.DateTimeInput("DTI3", {
-							placeholder : "DateTime",
-							type : "DateTime",
-							change : handleChange
-						})
-					})
-				]
+			oLabel = new sap.m.Label({
+				text: "Christmas:",
+				labelFor: "oDTI1"
 			}),
-
+			oDTI1 = new sap.m.DateTimeInput("DTI1", {
+				placeholder : "Date Picker",
+				change : function(e) {
+					var oDate = e.getParameters().newDateValue;
+					if (oDate && oDate.getMonth() == 11 && oDate.getDate() == 25) {
+						oDTI1.setValueState("None");
+					} else {
+						oDTI1.setValueState("Error");
+					}
+				}
+			}),
+			oLabel2 = new sap.m.Label({
+				text: "Duration:",
+				labelFor: "oDTI2"
+			}),
+			oDTI2 = new sap.m.DateTimeInput("DTI2", {
+				placeholder : "Time Picker",
+				type : "Time",
+				valueFormat : "HH:mm",
+				value : "11:23",
+				displayFormat : "H'h' m'm'",
+				change : handleChange
+			}),
+			oLabel3 = new sap.m.Label({
+				text: "DateTime:",
+				labelFor: "oDTI3"
+			}),
+			oDTI3 = new sap.m.DateTimeInput("DTI3", {
+				placeholder : "DateTime",
+				type : "DateTime",
+				change : handleChange
+			}),
+			oLabel4 = new sap.m.Label({
+				text: "Free style date value assingment according to valueFormat:",
+				labelFor: "oDTI4"
+			}),
 			// free style date value assingment according to valueFormat
 			oDTI4 = new sap.m.DateTimeInput("DTI4", {
 				value : "29-05, 2012",
@@ -120,7 +123,10 @@
 				width : "20%",
 				change : handleChange
 			}),
-
+			oLabel5 = new sap.m.Label({
+				text: "Formats which includes zones 'Z' can be used for local date time:",
+				labelFor: "oDTI4"
+			}),
 			// formats which includes zones "Z" can be used for local date time
 			oDTI5 = new sap.m.DateTimeInput("DTI5", {
 				width : "99%",
@@ -131,6 +137,9 @@
 				change : handleChange
 			}),
 
+			oTitle = new sap.m.Title({
+				text: "Data binding usage"
+			}),
 			// data binding usage
 			oDTI6 = new sap.m.DateTimeInput("DTI6", {
 				value : {
@@ -175,6 +184,67 @@
 				}
 			}),
 			new sap.m.Input("I2", {value: "Content of events DateTimeInput", editable: false}),
+			/*Table examinating different combination beetween DateTimeInput's type property and binding pattern of 'value'*/
+			oListWithTypes = new sap.m.Table({
+				inset: true,
+				headerText: "Databinding type vs DateTypeInput type",
+				columns: [
+					new sap.m.Column({
+						header: new sap.m.Label({text: "'type' property"})
+					}),
+					new sap.m.Column({
+						header: new sap.m.Label({text: "Supported bindings"})
+					}),
+					new sap.m.Column({
+						header: new sap.m.Label({text: "DateTimeInput"})
+					}),
+					new sap.m.Column({
+						header: new sap.m.Label({text: "Input bound to the same model property, without binding type"})
+					})
+				],
+				items : [
+					new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Select({
+								items: [
+									new sap.ui.core.Item({text: "sap.m.DateTimeInputType.Date", key: sap.m.DateTimeInputType.Date}),
+									new sap.ui.core.Item({text: "sap.m.DateTimeInputType.Time", key: sap.m.DateTimeInputType.Time}),
+									new sap.ui.core.Item({text: "sap.m.DateTimeInputType.DateTime", key: sap.m.DateTimeInputType.DateTime})
+								],
+								selectedKey: sap.m.DateTimeInputType.Date,
+								change: function(oEvent) {
+									var oSelectedItem = oEvent.getParameter("selectedItem"),
+										oDateTimeInput = oEvent.getSource().getParent().getCells()[2];
+									oDateTimeInput.setType(oSelectedItem.getKey(), "string");
+								}
+							}),
+							new sap.m.Select({
+								items: [
+									new sap.ui.core.Item({text: "sap.ui.model.type.Date", key: "sap/ui/model/type/Date"}),
+									new sap.ui.core.Item({text: "sap.ui.model.type.Time", key: "sap/ui/model/type/Time"}),
+									new sap.ui.core.Item({text: "sap.ui.model.type.DateTime", key: "sap/ui/model/type/DateTime"}),
+									new sap.ui.core.Item({text: "sap.ui.model.odata.type.DateTimeOffset", key: "sap/ui/model/odata/type/DateTimeOffset"}),
+								],
+								selectedKey: "sap/ui/model/type/Date",
+								change: function(oEvent) {
+									var oSelectedItem = oEvent.getParameter("selectedItem"),
+											oDateTimeInput = oEvent.getSource().getParent().getCells()[2],
+											oBI = oDateTimeInput.getBinding("value"),
+											fnClass = sap.ui.requireSync(oSelectedItem.getKey()),
+											oClass = new fnClass();
+									oBI.setType(oClass, "string");
+									oDateTimeInput.rerender();
+								}
+							}),
+							new sap.m.DateTimeInput("DTIBinding",{
+								type: sap.m.DateTimeInputType.Date,
+								value: {path: "/dateVal1", type: new sap.ui.model.type.Date()}
+							}).setModel(oModel),
+							new sap.m.Input({value:{path: "/dateVal1"}}).setModel(oModel)
+						],
+					})
+				]
+			})
 		]
 	});
 

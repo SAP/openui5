@@ -13,7 +13,8 @@ sap.ui.define(['jquery.sap.global', 'samples/components/routing/RouterExtension'
 		metadata : {
 			routing : {
 				config : {
-					targetsClass : "sap.m.routing.Targets"
+					targetsClass : "sap.m.routing.Targets",
+					async: true
 				},
 				targets: {
 					myTarget: {

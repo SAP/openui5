@@ -2,31 +2,105 @@
 <html>
 <head>
 
-	<title>OpenUI5 Explored</title>
+	<title>OpenUI5 SDK - Demo Kit v2.0</title>
 	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 	<meta charset="utf-8">
+	<link type="image/x-icon" href="resources/sap/ui/core/mimes/logo/txtonly_16x16.ico" rel="shortcut icon" >
+	<link type="image/x-icon" href="resources/sap/ui/core/mimes/logo/txtonly_16x16.ico" rel="icon" >
 
+	<script>
+		(function() {
+			"use strict";
+
+			// Redirect by default
+			var bRedirect = true;
+
+			function redirect() {
+				var sPathname = window.location.pathname,
+						sBasePath = sPathname.substr(0, sPathname.lastIndexOf('/')) + "/documentation.html",
+						sHash = window.location.hash;
+
+				if (!sHash) {
+					sHash = "#/controls";
+				}
+				window.location.href = window.location.origin + sBasePath + window.location.search + sHash;
+			}
+
+			try {
+				if (window.parent !== window && window.parent.sap && window.parent.sap.ui && window.parent.sap.ui.themedesigner) {
+					// we're in an iframe, loaded by theme designer - avoid redirect (bootstrap app from this index)
+					bRedirect = false;
+				}
+			} catch (err) {
+				// we're inside an iframe from another domain - redirect
+			}
+
+			if (bRedirect) {
+				redirect();
+			}
+		})();
+
+	</script>
+
+	<script src="documentation-config.js"></script>
 	<script
-		id='sap-ui-bootstrap'
-		src='resources/sap-ui-core.js'
-		data-sap-ui-theme='sap_belize'
-		data-sap-ui-libs='sap.ui.layout, sap.ui.demokit, sap.m'
-		data-sap-ui-compatVersion="edge"
-		data-sap-ui-resourceroots='{
-			"sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/"
-		}' >
+			id='sap-ui-bootstrap'
+			src='resources/sap-ui-core.js'
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.ui.documentation, sap.ui.layout, sap.m, sap.ui.unified, sap.tnt'
+			data-sap-ui-preload="async"
+			data-sap-ui-xx-waitForTheme="true"
+			data-sap-ui-compatVersion="1.16"
+			data-sap-ui-resourceroots='{
+				"sap.ui.demo.mock": "test-resources/sap/ui/demokit/explored/"
+			}' >
 	</script>
 
 	<script>
-		<!-- do not add code or style here the html is replicated in multiple projects -->
-		sap.ui.getCore().attachInit( function () {
-			jQuery.sap.require("sap.ui.demokit.explored.Bootstrap");
-			sap.ui.demokit.explored.Bootstrap.run();
-		});
-	</script>
+		(function() {
+			"use strict";
 
+			sap.ui.getCore().attachInit(function () {
+
+				if (typeof window['sap-ui-documentation-config'] === "object") {
+					sap.ui.require(['sap/ui/documentation/sdk/controller/util/APIInfo'], function (APIInfo) {
+						APIInfo._setRoot(window['sap-ui-documentation-config'].apiInfoRoot);
+					});
+
+					sap.ui.require(['sap/ui/documentation/sdk/Component'], function (Comp) {
+						Comp.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = window['sap-ui-documentation-config'].docuPath;
+					});
+				} else {
+					jQuery.sap.log.info("No local documentation configuration found");
+					window['sap-ui-documentation-hideEmptySections'] = true;
+				}
+
+				sap.ui.require([
+					"sap/m/Page",
+					"sap/ui/core/ComponentContainer"
+				], function (Page, ComponentContainer) {
+					// initialize the UI component
+					new Page({
+						showHeader : false,
+						content : new ComponentContainer({
+							height : "100%",
+							name : "sap.ui.documentation.sdk",
+							settings : {
+								id : "sdk"
+							}
+						})
+					}).placeAt("content");
+				});
+
+				if (!window.location.hash) {
+					window.location.hash = "#/controls";
+				}
+
+			});
+		})();
+	</script>
 </head>
-<body class='sapUiBody sapUiRootBackground' id='content'>
-	<div id="busyIndicator">Loading ...</div>
+<body class='sapUiBody' id='content' role="application">
 </body>
 </html>

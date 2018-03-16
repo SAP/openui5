@@ -4,7 +4,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 	var Component = UIComponent.extend("sap.m.sample.Select2Columns.Component", {
 		metadata: {
-			rootView: "sap.m.sample.Select2Columns.Page",
+			rootView: {
+				"viewName": "sap.m.sample.Select2Columns.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

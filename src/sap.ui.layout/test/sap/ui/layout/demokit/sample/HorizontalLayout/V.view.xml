@@ -3,21 +3,18 @@
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<l:HorizontalLayout class="sapUiSmallMargin" >
+	<l:HorizontalLayout class="sapUiContentPadding" >
 		<Image
-			class="sapUiSmallMarginEnd"
 			src="{img>/products/pic1}"
 			densityAware="true"
 			width="{/widthS}">
 		</Image>
 		<Image
-			class="sapUiSmallMarginEnd"
 			src="{img>/products/pic1}"
 			densityAware="true"
 			width="{/widthM}">
 		</Image>
 		<Image
-			class="sapUiSmallMarginEnd"
 			src="{img>/products/pic1}"
 			densityAware="true"
 			width="{/widthL}">

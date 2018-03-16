@@ -1,0 +1,97 @@
+{
+  "1.38.0": {
+    "data": "April 2016",
+    "notes": [
+      {
+        "id": "ccd012e1f3ea146f894dab0f1138186551bb6964",
+        "type": "FIX",
+        "text": "ObjectPage spacer was incorrectly calculated when no headerContent",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670156474"
+          }
+        ]
+      },
+      {
+        "id": "db7b5263e9967fddb2bc171116702cf561cd70ac",
+        "type": "FEATURE",
+        "text": "Enable stashing - lazy load support for ObjectPage",
+        "references": []
+      },
+      {
+        "id": "058de184f158c23757184c96f439d85333df9f22",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageHeader: sideContentButton aggregation added",
+        "references": []
+      },
+      {
+        "id": "ef8e0ea9e16e228140713498960fc922e64708c3",
+        "type": "FIX",
+        "text": "Sections didn't get focus after selection with anchorBar with the keyboard",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670152079"
+          }
+        ]
+      },
+      {
+        "id": "1f6a56a0f59036ccc21c6907f9e091a2557ae026",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageHeader - gap in the header removed",
+        "references": []
+      },
+      {
+        "id": "16ddd3e3fb098c4feb405d44f9afb6d60c0f1608",
+        "type": "FIX",
+        "text": "setting a customAnchorButton didn't update the AnchorBar",
+        "references": []
+      },
+      {
+        "id": "8db223d5350a0eb16a83e18112d7abb5097c4beb",
+        "type": "FIX",
+        "text": "[INTERNAL] fixed failing test caused by error in scrolling logic",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680001942"
+          }
+        ]
+      },
+      {
+        "id": "6695e40449db9cad7f26377c39caf82ab55e7b98",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.uxap.ObjectPageSubSection: added doc for insertAggregation method",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670069414"
+          }
+        ]
+      },
+      {
+        "id": "f3ec2eb638c6059ce44e2f8bb32c0d38b7a8abb5",
+        "type": "FIX",
+        "text": "ObjectPageLayout would incorrectly modify its parent height",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670054830"
+          }
+        ]
+      },
+      {
+        "id": "9af9f6804422732f2aa712befaa18bd1d092609a",
+        "type": "FIX",
+        "text": "onBefore rendering logic was causing an error when the objectPage isn't visible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670049967"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -5,7 +5,6 @@
 	<script src="../../shared-config.js"></script>
 	<script src="../../../../../resources/sap-ui-core.js"></script>
 	<script>
-
 		/**
 		 * Add test pages to this test suite function.
 		 * Please order alphabetically
@@ -14,6 +13,8 @@
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 
+			// ODataV4 Tutorial
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/demokit/tutorial/odatav4/08/webapp/test/integration/opaTests.qunit.html");
 			// Cart Application
 			suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/cart/webapp/test/unit/unitTests.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/m/demokit/cart/webapp/test/integration/opaTestsWithIFrame.qunit.html");
@@ -67,7 +68,6 @@
 
 			return suite;
 		}
-
 	</script>
 </head>
 <body>

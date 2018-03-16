@@ -44,8 +44,16 @@
 	font-size: @sapMFontMediumSize;
 }
 
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
+.sapMNwCCTxt .sapMText {
+	font-size: @sapMFontMediumSize;
+	color: @sapUiContentContrastTextColor;
+}
+
+.sapMNwC:focus:not([tabindex]) {
+	outline: none;
+}
+
+.sapMTileSmallPhone {
 	.sapMNwC {
 		width: 17.75rem;
 		height: 3.188rem;
@@ -63,18 +71,7 @@
 		max-width: 17.75rem;
 		line-height: 1.063rem;
 	}
-}
 
-.sapMNwCCTxt .sapMText {
-	font-size: @sapMFontMediumSize;
-	color: @sapUiContentContrastTextColor;
-}
-
-.sapMNwC:focus:not([tabindex]) {
-	outline: none;
-}
-
-@media screen and (max-width: 374px) {
 	.sapMNwCCTxt .sapMText, .sapMNwCSbh {
 		font-size: @sapMFontSmallSize;
 	}

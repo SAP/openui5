@@ -1,261 +1,493 @@
 <!DOCTYPE HTML>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <title>sap.m.MessagePopover Testpage</title>
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<head>
+	<meta charset="utf-8">
+	<title>sap.m.MessagView Testpage</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-        <script src="shared-config.js"></script>
-        <script id="sap-ui-bootstrap"
-                data-sap-ui-libs="sap.m, sap.ui.layout"
-                src="../../../resources/sap-ui-core.js"
-                data-sap-ui-compatVersion="1.16">
-        </script>
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			src="../../../resources/sap-ui-core.js"
+			data-sap-ui-compatVersion="1.16">
+	</script>
 
-        <script>
+	<script>
 
-            var core = sap.ui.getCore();
+		var core = sap.ui.getCore();
 
-            var mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
-                    "<p>Paragraph. At vero eos et accusamus et iusto odio dignissimos ducimus qui ...</p>" +
-                    "<ul>" +
-                    "	<li>Unordered list item 1 <a href=\"http://sap.com/some/url\">Absolute URL</a></li>" +
-                    "	<li>Unordered list item 2</li>" +
-                    "</ul>" +
-                    "<ol>" +
-                    "	<li>Ordered list item 1 <a href=\"/testsuite/test-resources/sap/m/MessageView.html?this_should_be_opened_in_new_page\">Relative URL</a></li>" +
-                    "	<li>Ordered list item 2</li>" +
-                    "</ol>";
+		var mockMarkupDescription = "<h2>Heading h2</h2><script>alert('this JS will be sanitized')<\/script>" +
+				"<p>Paragraph. At vero eos et accusamus et iusto odio dignissimos ducimus qui ...</p>" +
+				"<ul>" +
+				"	<li>Unordered list item 1 <a href=\"http://sap.com/some/url\">Absolute URL</a></li>" +
+				"	<li>Unordered list item 2</li>" +
+				"</ul>" +
+				"<ol>" +
+				"	<li>Ordered list item 1 <a href=\"/testsuite/test-resources/sap/m/MessageView.html?this_should_be_opened_in_new_page\">Relative URL</a></li>" +
+				"	<li>Ordered list item 2</li>" +
+				"</ol>";
 
-            var aMockMessages = {
-                count: 5,
-                messages: [{
-                    type: "Error",
-                    title: "Error message",
-                    description: "First Error message description"
-                }, {
-                    type: "Warning",
-                    title: "Warning without description",
-                    description: ""
-                }, {
-                    type: "Success",
-                    title: "Success message",
-                    description: "First Success message description"
-                }, {
-                    type: "Error",
-                    title: "Error",
-                    description: "Second Error message description"
-                }, {
-                    type: "Information",
-                    title: "Information message (Long)",
-                    description: mockMarkupDescription,
-                    markupDescription: true
-                }, {
-                    type: "Information",
-                    title: "Information message (Long) 2",
-                    description: "Just some text description",
-                    longtextUrl: "./SampleHTML.html"
-                }]
-            };
+		var aMockMessages = {
+			count: 5,
+			messages: [{
+				type: "Error",
+				title: "Error message",
+				description: "First Error message description"
+			}, {
+				type: "Warning",
+				title: "Warning without description",
+				description: ""
+			}, {
+				type: "Success",
+				title: "Success message",
+				description: "First Success message description"
+			}, {
+				type: "Error",
+				title: "Error",
+				description: "Second Error message description"
+			}, {
+				type: "Information",
+				title: "Information message (Long)",
+				description: mockMarkupDescription,
+				markupDescription: true
+			}, {
+				type: "Information",
+				title: "Information message (Long) 2",
+				description: "Just some text description",
+				longtextUrl: "./SampleHTML.html"
+			}],
+			reducedSet: [{
+				type: "Error",
+				title: "Error message",
+				description: "First Error message description"
+			}],
+			singleTypeSet: [{
+				type: "Error",
+				title: "Error Message 1",
+				description: "First Error message description"
 
-            var oModel = new sap.ui.model.json.JSONModel();
-            oModel.setData(aMockMessages);
+			}, {
+				type: "Error",
+				title: "Error Message 2",
+				description: "Second Error message description"
+			}, {
+				type: "Error",
+				title: "Error Message 3",
+				description: "Third Error message description"
+			}]
+		};
 
-            var oMessageTemplate = new sap.m.MessagePopoverItem({
-                type: "{type}",
-                title: "{title}",
-                description: "{description}",
-                longtextUrl: "{longtextUrl}",
-                markupDescription: "{markupDescription}"
-            });
+		var oModel = new sap.ui.model.json.JSONModel();
+		oModel.setData(aMockMessages);
 
-            var oMessageViewDialog = new sap.m.MessageView("mMView1", {
-                items: {
-                    path: "/messages",
-                    template: oMessageTemplate
-                },
-                asyncURLHandler: function (config) {
-                    // put async validation here
-                    setTimeout(function () {
-                        console.log('validate this url', config.url);
+		var oMessageTemplate = new sap.m.MessagePopoverItem({
+			type: "{type}",
+			title: "{title}",
+			description: "{description}",
+			longtextUrl: "{longtextUrl}",
+			markupDescription: "{markupDescription}"
+		});
 
-                        // simulated answer from whitelist service: relative URLs are fine
-                        var allowed = config.url.lastIndexOf("http", 0) < 0;
+		var oMessageViewDialog = new sap.m.MessageView("mMView1", {
+			items: {
+				path: "/messages",
+				template: oMessageTemplate
+			},
+			asyncURLHandler: function (config) {
+				// put async validation here
+				setTimeout(function () {
+					console.log('validate this url', config.url);
 
-                        config.promise.resolve({
-                            allowed: allowed,
-                            id: config.id
-                        });
+					// simulated answer from whitelist service: relative URLs are fine
+					var allowed = config.url.lastIndexOf("http", 0) < 0;
 
-                    }, 1000 + 4000 * Math.random());
-                }
-            });
+					config.promise.resolve({
+						allowed: allowed,
+						id: config.id
+					});
 
-            var oMessageViewPage = new sap.m.MessageView("mMView2", {
-                items: {
-                    path: "/messages",
-                    template: oMessageTemplate
-                },
-                asyncURLHandler: function (config) {
-                    // put async validation here
-                    setTimeout(function () {
-                        console.log('validate this url', config.url);
+				}, 1000 + 4000 * Math.random());
+			}
+		});
 
-                        // simulated answer from whitelist service: relative URLs are fine
-                        var allowed = config.url.lastIndexOf("http", 0) < 0;
+		var oMessageViewPage = new sap.m.MessageView("mMView2", {
+			items: {
+				path: "/messages",
+				template: oMessageTemplate
+			},
+			asyncURLHandler: function (config) {
+				// put async validation here
+				setTimeout(function () {
+					console.log('validate this url', config.url);
 
-                        config.promise.resolve({
-                            allowed: allowed,
-                            id: config.id
-                        });
+					// simulated answer from whitelist service: relative URLs are fine
+					var allowed = config.url.lastIndexOf("http", 0) < 0;
 
-                    }, 1000 + 4000 * Math.random());
-                }
-            });
+					config.promise.resolve({
+						allowed: allowed,
+						id: config.id
+					});
 
-            var oMessageViewPopover = new sap.m.MessageView("mMView3", {
-                items: {
-                    path: "/messages",
-                    template: oMessageTemplate
-                },
-                asyncURLHandler: function (config) {
-                    // put async validation here
-                    setTimeout(function () {
-                        console.log('validate this url', config.url);
+				}, 1000 + 4000 * Math.random());
+			}
+		});
 
-                        // simulated answer from whitelist service: relative URLs are fine
-                        var allowed = config.url.lastIndexOf("http", 0) < 0;
+		var oMessageViewPopover = new sap.m.MessageView("mMView3", {
+			items: {
+				path: "/messages",
+				template: oMessageTemplate
+			},
+			asyncURLHandler: function (config) {
+				// put async validation here
+				setTimeout(function () {
+					console.log('validate this url', config.url);
 
-                        config.promise.resolve({
-                            allowed: allowed,
-                            id: config.id
-                        });
+					// simulated answer from whitelist service: relative URLs are fine
+					var allowed = config.url.lastIndexOf("http", 0) < 0;
 
-                    }, 1000 + 4000 * Math.random());
-                }
-            });
+					config.promise.resolve({
+						allowed: allowed,
+						id: config.id
+					});
 
-            // Dialog will have no padding because of compatVersion setting on main script
-            var oDialog1 = new sap.m.Dialog({
+				}, 1000 + 4000 * Math.random());
+			}
+		});
+
+		var oMessageViewPopoverWithOneItem = new sap.m.MessageView("mMView4", {
+			items: {
+				path: "/reducedSet",
+				template: oMessageTemplate
+			}
+		});
+
+		var oMessageViewDialogWithOneHeader = new sap.m.MessageView("mMView5", {
+			showDetailsPageHeader: false,
+			itemSelect: function () {
+				_oBackButton.setVisible(true);
+			},
+			items: [
+				new sap.m.MessagePopoverItem("mv-item1", {
+					type: "Error",
+					title: "Error message",
+					description: "First Error message description"
+				})]
+		});
+
+		var oMessageViewPopoverWithOneItemType = new sap.m.MessageView("mMView6", {
+			items: {
+				path: "/singleTypeSet",
+				template: oMessageTemplate
+			}
+		});
+
+		var _oBackButton = new sap.m.Button("mMView5-back", {
+			icon: sap.ui.core.IconPool.getIconURI("nav-back"),
+			visible: false,
+			press: function () {
+				oMessageViewDialogWithOneHeader.navigateBack();
+				this.setVisible(false);
+			}
+		});
+
+		var oMessageViewWithHeader = new sap.m.MessageView("mMView7", {
+			items: {
+				path: "/singleTypeSet",
+				template: oMessageTemplate
+			},
+			headerButton: new sap.m.Button("CloseButton2", {
+
+				text: "Close"
+			}),
+		});
+
+		// Dialog will have no padding because of compatVersion setting on main script
+		var oDialog1 = new sap.m.Dialog({
 //                title: "Dialog with MessageView",
-                content: oMessageViewDialog,
-                showHeader: false,
-                beginButton: new sap.m.Button("dialogCloseButton", {
-                    press: function () {
-                        oDialog1.close();
-                    },
-                    text: "Close"
-                }),
-                contentHeight: "440px",
-                contentWidth: "640px",
-                verticalScrolling: false
-            });
+			content: oMessageViewDialog,
+			showHeader: false,
+			beginButton: new sap.m.Button("dialogCloseButton", {
+				press: function () {
+					oDialog1.close();
+				},
+				text: "Close"
+			}),
+			contentHeight: "440px",
+			contentWidth: "640px",
+			verticalScrolling: false
+		});
 
-            var page1 = new sap.m.Page("page1", {
-                content: [
-                    new sap.m.Button('mView-in-dialog-btn', {
-                        text: "MessageView in Dialog",
-                        press: function () {
-                            oDialog1.open();
-                        }
-                    })
-                ]
-            });
+		var page1 = new sap.m.Page("page1", {
+			content: [
+				new sap.m.Button('mView-in-dialog-btn', {
+					text: "MessageView in Dialog",
+					press: function () {
+						oDialog1.open();
+					}
+				}),
+				new sap.m.Button('mView-in-dialog-btn-2', {
+					text: "MV in Dialog with hidden details header",
+					press: function () {
+						oDialogWithOneHeader.open();
+					}
+				}),
 
-            var headerButton = new sap.m.Button({text: "Clear"});
+				new sap.m.Button("mViewButton4", {
+					icon: sap.ui.core.IconPool.getIconURI("add"),
+					text: "Add Warning",
+					type: sap.m.ButtonType.Emphasized,
+					press: function () {
+						var oWarn = new sap.m.MessageItem("mi-item1", {
+							type: "Warning",
+							title: "Warning message",
+							description: "Added Warning message description"
+						});
+						oMessageViewPopoverWithOneItemType.addItem(oWarn);
+					}
+				}),
 
-            //list.bindAggregation("items", "/", oMessageTemplate);
-            var oMessagePopover = new sap.m.MessagePopover("mPopover", {
-                items: {
-                    path: "/messages",
-                    template: oMessageTemplate
-                },
-                headerButton: headerButton,
-                asyncURLHandler: function (config) {
-                    // put async validation here
-                    setTimeout(function () {
-                        console.log('validate this url', config.url);
+				new sap.m.Button("mViewButton5", {
+					icon: sap.ui.core.IconPool.getIconURI("delete"),
+					text: " Remove Close button",
+					type: sap.m.ButtonType.Emphasized,
+					press: function () {
+						oMessageViewWithHeader.destroyHeaderButton();
+					}
+				})
 
-                        // simulated answer from whitelist service: relative URLs are fine
-                        var allowed = config.url.lastIndexOf("http", 0) < 0;
 
-                        config.promise.resolve({
-                            allowed: allowed,
-                            id: config.id
-                        });
+			]
+		});
 
-                    }, 1000 + 4000 * Math.random());
-                }
-            });
+		var headerButton = new sap.m.Button({text: "Clear"});
 
-            var oPopover = new sap.m.Popover("pop1", {
-                placement: sap.m.PlacementType.Top,
-                title: "Popover with MessageView",
-                showHeader: true,
-                contentWidth: "440px",
-                contentHeight: "440px",
-                verticalScrolling: false,
-                content: [
-                    oMessageViewPopover
-                ]
-            });
+		//list.bindAggregation("items", "/", oMessageTemplate);
+		var oMessagePopover = new sap.m.MessagePopover("mPopover", {
+			items: {
+				path: "/messages",
+				template: oMessageTemplate
+			},
+			headerButton: headerButton,
+			asyncURLHandler: function (config) {
+				// put async validation here
+				setTimeout(function () {
+					console.log('validate this url', config.url);
 
-            var oMessagePopoverButton = new sap.m.Button("mPopoverButton", {
-                icon: sap.ui.core.IconPool.getIconURI("message-popup"),
-                text: "Standard MessagePopover",
-                type: sap.m.ButtonType.Emphasized,
-                press: function () {
-                    oMessagePopover.toggle(this);
-                }
-            });
+					// simulated answer from whitelist service: relative URLs are fine
+					var allowed = config.url.lastIndexOf("http", 0) < 0;
 
-            var oMessageViewPopoverButton = new sap.m.Button("mViewButton", {
-                icon: sap.ui.core.IconPool.getIconURI("message-popup"),
-                text: "MessageView in standard Popover",
-                type: sap.m.ButtonType.Emphasized,
-                press: function () {
-                    oPopover.openBy(this);
-                }
-            });
+					config.promise.resolve({
+						allowed: allowed,
+						id: config.id
+					});
 
-            oMessagePopoverButton.addDependent(oMessagePopover);
+				}, 1000 + 4000 * Math.random());
+			}
+		});
 
-            var page2 = new sap.m.Page("page2", {
-                content: [
-                    oMessageViewPage
-                ],
-                footer: new sap.m.Toolbar({
-                    content: [
-                        new sap.m.ToolbarSpacer(),
-                        oMessagePopoverButton,
-                        oMessageViewPopoverButton,
-                        sap.m.CheckBox("compactMode", {
-                            selected: false,
-                            text: "Compact mode",
-                            select: function () {
-                                jQuery("body").toggleClass("sapUiSizeCompact");
-                            }
-                        }),
-                        new sap.m.ToolbarSpacer()
-                    ]
-                })
-            });
+		var oPopover = new sap.m.Popover("pop1", {
+			placement: sap.m.PlacementType.Top,
+			title: "Popover with MessageView",
+			showHeader: true,
+			contentWidth: "440px",
+			contentHeight: "440px",
+			verticalScrolling: false,
+			content: [
+				oMessageViewPopover
+			]
+		});
 
-            var oSplitApp = new sap.m.SplitApp({
-                masterPages: [page1],
-                initialMaster: "page1",
+		var oPopoverWithOneItem = new sap.m.Popover("pop2", {
+			placement: sap.m.PlacementType.Top,
+			title: "Popover with MessageView",
+			showHeader: true,
+			endButton: new sap.m.Button("closeBtn", {
+				text: "Close",
+				press: function () {
+					oPopoverWithOneItem.close();
+				}
+			}),
+			modal: true,
+			contentWidth: "440px",
+			contentHeight: "440px",
+			verticalScrolling: false,
+			content: [
+				oMessageViewPopoverWithOneItem
+			]
+		});
 
-                detailPages: [page2],
-                initialDetail: "page2"
-            });
+		var oPopoverWithOneItemType = new sap.m.Popover("pop3", {
+			placement: sap.m.PlacementType.Top,
+			title: "Popover with MessageView",
+			showHeader: true,
+			endButton: new sap.m.Button("customClose", {
+				text: "Close",
+				press: function () {
+					oPopoverWithOneItemType.close();
+				}
+			}),
+			modal: false,
+			contentWidth: "440px",
+			contentHeight: "440px",
+			verticalScrolling: false,
+			content: [
+				oMessageViewPopoverWithOneItemType
+			]
+		});
 
-            core.setModel(oModel);
+		var oPopoverWithHeader = new sap.m.Popover("pop4", {
+			placement: sap.m.PlacementType.Top,
+			title: "Popover with MessageView",
+			showHeader: true,
+			modal: false,
+			contentWidth: "440px",
+			contentHeight: "440px",
+			verticalScrolling: false,
+			content: [
+				oMessageViewWithHeader
+			]
+		});
 
-            oSplitApp.placeAt("content");
-        </script>
-    </head>
-    <body class="sapUiBody" role="application">
-        <div id="content">
-        </div>
-    </body>
+		var oCollapsedPopover = new sap.m.MessagePopover("mPop", {
+			initiallyExpanded: false,
+			items: [{
+				type: "Error",
+				title: "Error Message 1",
+				description: "First Error message description"
+
+			}, {
+				type: "Error",
+				title: "Error Message 2",
+				description: "Second Error message description"
+			}, {
+				type: "Error",
+				title: "Error Message 3",
+				description: "Third Error message description"
+			}]
+		});
+
+		var oDialogWithOneHeader = new sap.m.Dialog("dialog2", {
+			title: "Dialog with MessageView",
+			content: oMessageViewDialogWithOneHeader,
+			resizable: true,
+			state: 'Error',
+			beginButton: new sap.m.Button("dialogWOneHeader-close-btn", {
+				press: function () {
+					oDialogWithOneHeader.close();
+				},
+				text: "Close"
+			}),
+			customHeader: new sap.m.Bar({
+				contentMiddle: [
+					new sap.m.Text({text: "Error"})
+				],
+				contentLeft: [_oBackButton]
+			}),
+			contentHeight: "300px",
+			contentWidth: "500px",
+			verticalScrolling: false
+		});
+
+		var oMessagePopoverButton = new sap.m.Button("mPopoverButton", {
+			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
+			text: "Standard MessagePopover",
+			type: sap.m.ButtonType.Emphasized,
+			press: function () {
+				oMessagePopover.toggle(this);
+			}
+		});
+
+		var oMessageViewPopoverButton = new sap.m.Button("mViewButton", {
+			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
+			text: "MessageView in standard Popover",
+			type: sap.m.ButtonType.Emphasized,
+			press: function () {
+				oPopover.openBy(this);
+			}
+		});
+
+		var oMessageViewPopoverButton2 = new sap.m.Button("mViewButton2", {
+			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
+			text: "MessageView with one item",
+			type: sap.m.ButtonType.Emphasized,
+			press: function () {
+				oPopoverWithOneItem.openBy(this);
+			}
+		});
+
+		var oMessageViewPopoverButton3 = new sap.m.Button("mViewButton3", {
+			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
+			text: "MessageView - one type",
+			type: sap.m.ButtonType.Emphasized,
+			press: function () {
+				oPopoverWithOneItemType.openBy(this);
+			}
+		});
+
+		var oMessageViewPopoverButton4 = new sap.m.Button("mViewButton6", {
+			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
+			text: "MessageView w custom button",
+			type: sap.m.ButtonType.Emphasized,
+			press: function () {
+				oPopoverWithHeader.openBy(this);
+			}
+		});
+
+		var oMessageViewPopoverButton5 = new sap.m.Button("mViewButton7", {
+			icon: sap.ui.core.IconPool.getIconURI("message-popup"),
+			text: "Collapsed MP",
+			type: sap.m.ButtonType.Emphasized,
+			press: function () {
+				oCollapsedPopover.openBy(this);
+			}
+		});
+
+
+		oMessagePopoverButton.addDependent(oMessagePopover);
+		oMessageViewPopoverButton2.addDependent(oPopoverWithOneItem);
+		oMessageViewPopoverButton3.addDependent(oPopoverWithOneItemType);
+
+
+		var page2 = new sap.m.Page("page2", {
+			content: [
+				oMessageViewPage
+			],
+			footer: new sap.m.Toolbar({
+				content: [
+					new sap.m.ToolbarSpacer(),
+					oMessagePopoverButton,
+					oMessageViewPopoverButton,
+					oMessageViewPopoverButton2,
+					oMessageViewPopoverButton3,
+					oMessageViewPopoverButton4,
+					oMessageViewPopoverButton5,
+					new sap.m.CheckBox("compactMode", {
+						selected: false,
+						text: "Compact mode",
+						select: function () {
+							jQuery("body").toggleClass("sapUiSizeCompact");
+						}
+					}),
+					new sap.m.ToolbarSpacer()
+				]
+			})
+		});
+
+		var oSplitApp = new sap.m.SplitApp({
+			masterPages: [page1],
+			initialMaster: "page1",
+
+			detailPages: [page2],
+			initialDetail: "page2"
+		});
+
+		core.setModel(oModel);
+
+		oSplitApp.placeAt("content");
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<div id="content">
+</div>
+</body>
 </html>

@@ -11,8 +11,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataUtils
-sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/model/Filter', 'sap/ui/core/format/DateFormat'],
-	function(jQuery, ODataFilter, Sorter, Filter, DateFormat) {
+sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/core/format/DateFormat'],
+	function(jQuery, ODataFilter, Sorter, DateFormat) {
 	"use strict";
 
 	var rDecimal = /^([-+]?)0*(\d+)(\.\d+|)$/,
@@ -214,6 +214,9 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 	 * setOrigin("/backend/service/url;o=OTHERSYS8?myUrlParam=true&x=4", {alias: "DEMO_123", force: true});
 	 * - result /backend/service/url;o=DEMO_123?myUrlParam=true&x=4
 	 *
+	 * setOrigin("/backend/service;o=NOT_TOUCHED/url;v=2;o=OTHERSYS8;srv=XVC", {alias: "DEMO_123", force: true});
+	 * - result /backend/service;o=NOT_TOUCHED/url;v=2;o=DEMO_123;srv=XVC
+	 *
 	 * setOrigin("/backend/service/url/", {system: "DEMO", client: 134});
 	 * - result /backend/service/url;o=sid(DEMO.134)/
 	 *
@@ -262,7 +265,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 
 		//trim trailing "/" from url if present
 		var sTrailingSlash = "";
-		if (jQuery.sap.endsWith(sBaseURL, "/")) {
+		if (sBaseURL[sBaseURL.length - 1] === "/") {
 			sBaseURL = sBaseURL.substring(0, sBaseURL.length - 1);
 			sTrailingSlash = "/"; // append the trailing slash later if necessary
 		}
@@ -270,12 +273,21 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		// origin already included
 		// regex will only match ";o=" occurrences which do not end in a slash "/" at the end of the string.
 		// The last ";o=" occurrence at the end of the baseURL is the only origin that can match.
-		var rOriginCheck = /(;o=[^/]+)$/;
-		if (sBaseURL.match(rOriginCheck) != null) {
+		var rSegmentCheck = /(\/[^\/]+)$/g;
+		var rOriginCheck = /(;o=[^\/;]+)/g;
+
+		var sLastSegment = sBaseURL.match(rSegmentCheck)[0];
+		var aLastOrigin = sLastSegment.match(rOriginCheck);
+		var sFoundOrigin = aLastOrigin ? aLastOrigin[0] : null;
+
+		if (sFoundOrigin) {
 			// enforce new origin
 			if (vParameters.force) {
 				// same regex as above
-				sBaseURL = sBaseURL.replace(rOriginCheck, ";o=" + sOrigin);
+
+				var sChangedLastSegment = sLastSegment.replace(sFoundOrigin, ";o=" + sOrigin);
+				sBaseURL = sBaseURL.replace(sLastSegment, sChangedLastSegment);
+
 				return sBaseURL + sTrailingSlash + sURLParams;
 			}
 			//return the URL as it was
@@ -435,6 +447,9 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 			this.oDateTimeFormat = DateFormat.getDateInstance({
 				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss''"
 			});
+			this.oDateTimeFormatMs = DateFormat.getDateInstance({
+				pattern: "'datetime'''yyyy-MM-dd'T'HH:mm:ss.SSS''"
+			});
 			this.oDateTimeOffsetFormat = DateFormat.getDateInstance({
 				pattern: "'datetimeoffset'''yyyy-MM-dd'T'HH:mm:ss'Z'''"
 			});
@@ -463,10 +478,17 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 				}
 				break;
 			case "Edm.DateTime":
-				sValue = this.oDateTimeFormat.format(new Date(vValue), true);
+				var oDate = new Date(vValue);
+
+				if (oDate.getMilliseconds() > 0) {
+					sValue = this.oDateTimeFormatMs.format(oDate, true);
+				} else {
+					sValue = this.oDateTimeFormat.format(oDate, true);
+				}
 				break;
 			case "Edm.DateTimeOffset":
-				sValue = this.oDateTimeOffsetFormat.format(new Date(vValue), true);
+				var oDate = new Date(vValue);
+				sValue = this.oDateTimeOffsetFormat.format(oDate, true);
 				break;
 			case "Edm.Guid":
 				sValue = "guid'" + vValue + "'";
@@ -578,14 +600,21 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 		return oDecimal1.sign * iResult;
 	}
 
+	var rTime = /^PT(\d\d)H(\d\d)M(\d\d)S$/;
+
 	/**
-	 * Extracts the milliseconds if the value is a date/time instance.
+	 * Extracts the milliseconds if the value is a date/time instance or formatted string.
 	 * @param {any} vValue
 	 *   the value (may be <code>undefined</code> or <code>null</code>)
 	 * @returns {any}
 	 *   the number of milliseconds or the value itself
 	 */
 	function extractMilliseconds(vValue) {
+		if (typeof vValue === "string" && rTime.test(vValue)) {
+			vValue = parseInt(RegExp.$1, 10) * 3600000 +
+				parseInt(RegExp.$2, 10) * 60000 +
+				parseInt(RegExp.$3, 10) * 1000;
+		}
 		if (vValue instanceof Date) {
 			return vValue.getTime();
 		}
@@ -646,6 +675,35 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/m
 			default:
 				return simpleCompare;
 		}
+	};
+
+	/**
+	 * Normalizes the given canonical key.
+	 *
+	 * Although keys contained in OData response must be canonical, there are
+	 * minor differences (like capitalization of suffixes for Decimal, Double,
+	 * Float) which can differ and cause equality checks to fail.
+	 *
+	 * @param {string} sKey The canonical key of an entity
+	 * @returns {string} Normalized key of the entry
+	 * @protected
+	 */
+	// Define regular expression and function outside function to avoid instatiation on every call
+	var rNormalizeString = /([(=,])('.*?')([,)])/g,
+		rNormalizeCase = /[MLDF](?=[,)](?:[^']*'[^']*')*[^']*$)/g,
+		rNormalizeBinary = /([(=,])(X')/g,
+		fnNormalizeString = function(value, p1, p2, p3) {
+			return p1 + encodeURIComponent(decodeURIComponent(p2)) + p3;
+		},
+		fnNormalizeCase = function(value) {
+			return value.toLowerCase();
+		},
+		fnNormalizeBinary = function(value, p1) {
+			return p1 + "binary'";
+		};
+
+	ODataUtils._normalizeKey = function(sKey) {
+		return sKey.replace(rNormalizeString, fnNormalizeString).replace(rNormalizeCase, fnNormalizeCase).replace(rNormalizeBinary, fnNormalizeBinary);
 	};
 
 	return ODataUtils;

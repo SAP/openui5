@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.demokit.TagCloud.
-sap.ui.define(['sap/ui/core/Control', './library'],
-	function(Control, library) {
+sap.ui.define(['sap/ui/core/Control', './library', "./TagCloudRenderer"],
+	function(Control, library, TagCloudRenderer) {
 	"use strict";
 
 

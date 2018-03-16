@@ -5,10 +5,10 @@
 /**
  * Initialization Code and shared classes of library sap.ui.table.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
+sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 	'sap/ui/core/library', // library dependency
 	'sap/ui/unified/library'], // library dependency
-	function(jQuery, Core, TreeAutoExpandMode) {
+	function(Core, TreeAutoExpandMode) {
 
 	"use strict";
 
@@ -17,6 +17,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 		name : "sap.ui.table",
 		version: "${version}",
 		dependencies : ["sap.ui.core","sap.ui.unified"],
+		designtime: "sap/ui/table/designtime/library.designtime",
 		types: [
 			"sap.ui.table.NavigationMode",
 			"sap.ui.table.RowActionType",
@@ -54,6 +55,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/model/TreeAutoEx
 				"sap.ui.table.AnalyticalTable" : {
 					"moveElements": "default"
 				}
+			},
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				publicRules:true
 			}
 		}
 	});

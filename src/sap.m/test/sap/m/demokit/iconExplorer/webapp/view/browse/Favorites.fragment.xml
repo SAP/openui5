@@ -54,13 +54,14 @@
 						editable="false">
 						<Token text="{fav>name}" select="onTagSelect"/>
 					</Tokenizer>
-					<ToggleButton
-						icon="sap-icon://favorite"
-						press="onToggleFavorite"
-						pressed="{
+					<RatingIndicator
+						iconUnselected="sap-icon://unfavorite"
+						value="{
 							path: 'fav>name',
-							formatter: '.formatter.isFavorite'
-						}"/>
+							formatter: '.formatter.favoriteRating'
+						}"
+						maxValue="1"
+						change="onToggleFavorite"/>
 				</cells>
 			</ColumnListItem>
 		</items>

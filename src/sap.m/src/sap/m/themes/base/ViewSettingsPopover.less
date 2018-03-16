@@ -39,6 +39,21 @@ html.sap-desktop .sapMVSPopover {
 	background: @sapUiGroupContentBackground;
 }
 
+.sapMVSPopover {
+	.sapMLabel, .sapMSLIDiv, .sapMSLITitleOnly {
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontLargeSize;
+		font-weight: normal;
+		color: @sapUiListTextColor;
+	}
+}
+
+.sapUiSizeCompact .sapMVSPopover {
+	.sapMLabel, .sapMSLIDiv, .sapMSLITitleOnly {
+		font-size: @sapMFontMediumSize;
+	}
+}
+
 html.sap-phone,
 html.sap-tablet:not(.sap-desktop) {
   .sapMVSPopover {

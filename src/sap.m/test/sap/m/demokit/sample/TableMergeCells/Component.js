@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TableMergeCells.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TableMergeCells.Table",
+			rootView : {
+				"viewName": "sap.m.sample.TableMergeCells.Table",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

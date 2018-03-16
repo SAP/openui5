@@ -5,6 +5,7 @@
 
 /* styles for popup */
 .sapMDateTimePopupCont {
+	display: flex;
 	height: 25.25rem;
 	min-width: 40.0625rem;
 }
@@ -16,6 +17,10 @@ html[data-sap-ui-browser^=ie]:not(.sapUiMedia-Std-Phone) .sapMDateTimePopupCont 
 .sapMDateTimePopupCont > .sapUiCal,
 .sapMDateTimePopupCont > .sapMTimePickerContainer {
 	float: left;
+}
+
+.sapMDateTimePopupCont > .sapMTimePickerContainer {
+	width: auto;
 }
 
 .sapMTimePickerSwitch {

@@ -20,8 +20,9 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheObjectPage.iShouldSeeTheObjectViewsBusyIndicator().
-		and.theObjectViewsBusyIndicatorDelayIsRestored().
-		and.iShouldSeeTheRememberedObject().and.iTeardownMyAppFrame();
+			and.theObjectViewsBusyIndicatorDelayIsRestored().
+			and.iShouldSeeTheRememberedObject().
+			and.iTeardownMyAppFrame();
 	});
 
 });

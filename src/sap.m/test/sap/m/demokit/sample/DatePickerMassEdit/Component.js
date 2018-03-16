@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 		var Component = UIComponent.extend("sap.m.sample.DatePickerMassEdit.Component", {
 
 			metadata: {
-				rootView: "sap.m.sample.DatePickerMassEdit.Page",
+				rootView: {
+					"viewName": "sap.m.sample.DatePickerMassEdit.Page",
+					"type": "XML",
+					"async": true
+				},
 				dependencies: {
 					libs: [
 						"sap.m",

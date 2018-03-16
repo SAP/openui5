@@ -243,7 +243,7 @@ sap.ui.define([
 		},
 
 		onAfterRendering: function () {
-			var oButton = this.getView().byId('quickViewBtn');
+			var oButton = this.byId('quickViewBtn');
 			oButton.$().attr('aria-haspopup', true);
 		},
 

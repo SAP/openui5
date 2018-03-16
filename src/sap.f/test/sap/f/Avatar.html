@@ -10,6 +10,10 @@
 			data-sap-ui-theme="sap_belize">
 	</script>
 	<script>
+		function onAvatarPress (oEvent) {
+			sap.m.MessageToast.show(oEvent.getSource().getId() + " pressed");
+		}
+
 		var oPage = new sap.m.Page({
 			title: "sap.f.Avatar",
 			content: [
@@ -32,19 +36,19 @@
 
 				}),
 				new sap.f.Avatar("imageXLSquareCover", {
-					src: "images/Car_avatar_01.jpg",
+					src: "images/Screw_avatar_01.jpg",
 					displaySize: "XL",
 					displayShape: "Square",
 					imageFitType: "Cover",
-					press: function() {}
+					press: onAvatarPress
 
 				}),
 				new sap.f.Avatar("imageXLSquareContain", {
-					src: "images/Car_avatar_01.jpg",
+					src: "images/Lamp_avatar_01.jpg",
 					displaySize: "XL",
 					displayShape: "Square",
 					imageFitType: "Contain",
-					press: function() {}
+					press: onAvatarPress
 
 				}),
 				new sap.f.Avatar("initialsCustomAvatar", {
@@ -58,7 +62,8 @@
 					displaySize: "M",
 					detailBox: new sap.m.LightBox({
 						imageContent: sap.m.LightBoxItem({
-							imageSrc: "images/Woman_avatar_01.png"
+							imageSrc: "images/Woman_avatar_01.png",
+							title: "LightBox example"
 						})
 					})
 				})

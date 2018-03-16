@@ -2,7 +2,11 @@ sap.ui.define(["sap/ui/core/UIComponent"], function (UIComponent) {
 	"use strict";
 	var Component = UIComponent.extend("sap.uxap.sample.ObjectPageSelectedSection.Component", {
 		metadata: {
-			rootView: "sap.uxap.sample.ObjectPageSelectedSection.ObjectPageSelectedSection",
+			rootView: {
+				"viewName": "sap.uxap.sample.ObjectPageSelectedSection.ObjectPageSelectedSection",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m"

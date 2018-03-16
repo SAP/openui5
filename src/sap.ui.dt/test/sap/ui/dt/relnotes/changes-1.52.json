@@ -1,0 +1,101 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "575330a7789489107d5a3448cb58ab18c2580cba",
+        "type": "FEATURE",
+        "text": "sap.ui.rta: Dynamic plugin registration on context menu",
+        "references": []
+      },
+      {
+        "id": "362f18583fa1fa447d474e52e8a659bc7adc5309",
+        "type": "FEATURE",
+        "text": "sap.ui.rta: Support for multiple actions on Settings plugin",
+        "references": []
+      },
+      {
+        "id": "884552f9d7d1e44281247bbfeb9661ba103b710f",
+        "type": "FIX",
+        "text": "- performance test - applyChange",
+        "references": []
+      },
+      {
+        "id": "eeb7419409f0b42c7b7e922a13b394cbd06f5c9a",
+        "type": "FIX",
+        "text": "sap.ui.dt - fixed exception for empty aggregations in DT Metadata",
+        "references": []
+      },
+      {
+        "id": "c758bfff0c138c0305ad152c0ff97915a3b90454",
+        "type": "FIX",
+        "text": "sap.ui.dt: IE doesn't support document.contains()",
+        "references": []
+      },
+      {
+        "id": "3a4e90828231fbe874a67fd142f08a68f1a55871",
+        "type": "FIX",
+        "text": "sap.ui.dt: remove \"enabled\" property from sap.ui.dt.Overlay",
+        "references": []
+      },
+      {
+        "id": "f17f387c7080a8d2a5593c4c7af6e50c57fe7554",
+        "type": "FIX",
+        "text": "sap.ui.rta - First rename with double-click not working",
+        "references": []
+      },
+      {
+        "id": "3337f07716d4e6f2c177592c8a4ea9516a01db27",
+        "type": "FIX",
+        "text": "sap.ui.rta - Fix simpleform reveal",
+        "references": []
+      },
+      {
+        "id": "0e268ced8ad40868702ca1dac74be86d133e90d5",
+        "type": "FIX",
+        "text": "sap.ui.rta: Paste without cut doesn't cause an error anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780353206"
+          }
+        ]
+      },
+      {
+        "id": "b0a65978d503ea454dedf60842d8c7f2befe02fd",
+        "type": "FIX",
+        "text": "sap.ui.rta: Test fixes for Internet Explorer",
+        "references": []
+      },
+      {
+        "id": "b6185cf9af8d2699772c231e4963efda25a49cd5",
+        "type": "FIX",
+        "text": "sap.ui.rta: fixed reveal for elements that are not Controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770469740"
+          }
+        ]
+      },
+      {
+        "id": "894007b038ecde7b8dbe33ee1b75793acdfd2c24",
+        "type": "FIX",
+        "text": "sap.ui.rta: prevent remove action when pressing DELETE button if it's unavailable",
+        "references": []
+      },
+      {
+        "id": "c73b54e406abb0cd98ece89bf007da59ec003402",
+        "type": "FIX",
+        "text": "Remove test dependencies to sap.ui.comp",
+        "references": []
+      },
+      {
+        "id": "bb0ad931dfbc8ebb004d57749bd68841ffdc7b1e",
+        "type": "FIX",
+        "text": "sap.ui.rta: isEditable check only for Overlays with DT Metadata",
+        "references": []
+      }
+    ]
+  }
+}

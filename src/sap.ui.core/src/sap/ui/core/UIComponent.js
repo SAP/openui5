@@ -12,11 +12,6 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 
 
 	/**
-	 * Base Class for UIComponent.
-	 *
-	 * If you are extending a UIComponent make sure you read the {@link #.extend} documentation since the metadata is special.
-	 *
-	 * @class
 	 * Creates and initializes a new UIComponent with the given <code>sId</code> and
 	 * settings.
 	 *
@@ -26,13 +21,17 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 	 *
 	 * @param {string}
 	 *            [sId] Optional ID for the new control; generated automatically if
-	 *            no non-empty ID is given Note: this can be omitted, no matter
-	 *            whether <code>mSettings</code> will be given or not!
+	 *            no non-empty ID is given; Note: this can be omitted, no matter
+	 *            whether <code>mSettings</code> will be given or not
 	 * @param {object}
-	 *            [mSettings] optional map/JSON-object with initial settings for the
+	 *            [mSettings] Optional map/JSON-object with initial settings for the
 	 *            new component instance
-	 * @public
 	 *
+	 * @class Base Class for UIComponent.
+	 *
+	 * If you are extending a UIComponent make sure you read the {@link #.extend} documentation since the metadata is special.
+	 *
+	 * @public
 	 * @extends sap.ui.core.Component
 	 * @abstract
 	 * @author SAP SE
@@ -70,6 +69,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Component', './l
 				 */
 				"rootControl": { type: "sap.ui.core.Control", multiple: false, visibility: "hidden" }
 			},
+			designtime: "sap/ui/core/designtime/UIComponent.designtime",
 			routing: {
 			}
 			//autoDestroy: false // TODO: destroy component when view should be destroyed (not implemented yet!)

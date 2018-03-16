@@ -1,0 +1,37 @@
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+
+    <title>Test Page for the getComputedStyle polyfill functionality</title>
+
+    <script id="sap-ui-bootstrap"
+            src="../../../../../../resources/sap-ui-core.js">
+    </script>
+    <script>
+
+        window.onerror = function()
+        {
+            if (parent.onerror)
+            {
+                // Forward the call to the parent frame
+                return parent.onerror.apply(parent, arguments);
+            }
+            else
+                return false;
+        };
+
+        window.onload = function(){
+            var oComputedStyle = window.getComputedStyle(document.body);
+            var sTestProperty = oComputedStyle.width;
+            var sTestFunction = oComputedStyle.getPropertyValue('width');
+        };
+
+    </script>
+
+
+</head>
+<body>
+
+</body>
+</html>

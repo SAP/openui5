@@ -39,8 +39,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 
 		originalSAPAction: function() {
 			alert("This is an original SAP Action");
-		}
+		},
 
+		formatNumber: function(iNumber) {
+			return "000" + iNumber;
+		},
+
+		api : {
+			showToast: function() {
+				var that = this;
+				this.getView().setBusy(true);
+				sap.ui.require(["sap/m/MessageToast"], function(T) {
+					var oData = that.getView().getModelProperty({path:'/number', formatter: that.formatNumber});
+					oData = that.formatNumber(that.getView().getModel().getProperty("/number"));
+					T.show("Hello " + oData);
+					that.getView().setBusy(false);
+				});
+			}
+		}
 	});
 
 	return Sub2Controller;

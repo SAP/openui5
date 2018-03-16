@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer', './ColumnListItemRenderer'],
-	function(jQuery, Renderer, ListBaseRenderer, ColumnListItemRenderer) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer', './ColumnListItemRenderer', './ColumnHeader', 'sap/m/library'],
+	function(jQuery, Renderer, ListBaseRenderer, ColumnListItemRenderer, ColumnHeader, library) {
 	"use strict";
+
+
+	// shortcut for sap.m.ListKeyboardMode
+	var ListKeyboardMode = library.ListKeyboardMode;
 
 
 	/**
@@ -50,6 +54,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 			createBlankCell = function(cls, id, bAriaHidden) {
 				rm.write("<");
 				rm.write(cellTag);
+				if (cellTag === "th") {
+					rm.addClass("sapMTableTH");
+				}
 				bAriaHidden && rm.writeAttribute("aria-hidden", "true");
 				id && rm.writeAttribute("id", idPrefix + id);
 				rm.addClass(clsPrefix + cls);
@@ -62,6 +69,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 
 		rm.write("<" + groupTag + ">");
 		rm.write("<tr");
+
 		rm.writeAttribute("tabindex", -1);
 		rm.writeAttribute("id", oTable.addNavSection(idPrefix + type + "er" ));
 
@@ -79,7 +87,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 
 		if (iModeOrder == -1) {
 			if (mode == "MultiSelect" && type == "Head" && !isHeaderHidden) {
-				rm.write("<th class='" + clsPrefix + "SelCol'>");
+				rm.write("<th");
+				rm.addClass("sapMTableTH");
+				rm.writeAttribute("aria-hidden", "true");
+				rm.addClass(clsPrefix + "SelCol");
+				rm.writeClasses();
+				rm.write(">");
 				rm.renderControl(oTable._getSelectAllCheckbox());
 				rm.write("</th>");
 				index++;
@@ -115,6 +128,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 
 			if (type === "Head") {
 				rm.writeElementData(oColumn);
+				rm.addClass("sapMTableTH");
+				// adding ColumnHeader specific class in order to overwrite the padding of the cell
+				if (control instanceof ColumnHeader) {
+					rm.addClass(clsPrefix + "CellCH");
+				}
 			}
 
 			rm.addClass(clsPrefix + "Cell");
@@ -169,6 +187,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	TableRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.write("<table");
 		rm.addClass("sapMListTbl");
+		rm.addClass(oControl.getStickyStyleClass());
 		if (oControl.getFixedLayout() === false) {
 			rm.addStyle("table-layout", "auto");
 		}
@@ -193,6 +212,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		this.renderColumns(rm, oControl, "Head");
 		rm.write("<tbody");
 		rm.writeAttribute("id", oControl.addNavSection(oControl.getId("tblBody")));
+		if (oControl.getAlternateRowColors()) {
+			rm.addClass(oControl._getAlternateRowColorsClass());
+			rm.writeClasses();
+		}
 		rm.write(">");
 	};
 
@@ -210,7 +233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	 */
 	TableRenderer.renderNoData = function(rm, oControl) {
 		rm.write("<tr");
-		rm.writeAttribute("tabindex", oControl.getKeyboardMode() == sap.m.ListKeyboardMode.Navigation ? -1 : 0);
+		rm.writeAttribute("tabindex", oControl.getKeyboardMode() == ListKeyboardMode.Navigation ? -1 : 0);
 		rm.writeAttribute("id", oControl.getId("nodata"));
 		rm.addClass("sapMLIB sapMListTblRow sapMLIBTypeInactive");
 		ColumnListItemRenderer.addFocusableClasses.call(ColumnListItemRenderer, rm);

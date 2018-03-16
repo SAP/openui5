@@ -2,38 +2,43 @@
 <html>
 <head>
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
-<title>QUnit - sap.ui.fl.registry.ChangeRegistry</title>
+	<title>QUnit - sap.ui.fl.registry.ChangeRegistry</title>
 
-<script src="../../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-		src="../../../../../../resources/sap-ui-core.js"
-		data-sap-ui-noconflict="true"
-		data-sap-ui-libs="sap.ui.fl"
-		data-sap-ui-resourceroots='{"sap.ui.fl.test.registry": "./"}'>
-</script>
+	<script src="../../shared-config.js"></script>
+	<script>
+		window['sap-ui-config'].id = 'sap-ui-bootstrap';
+		window['sap-ui-config'].noconflict = 'true';
+		window['sap-ui-config'].libs = 'sap.ui.fl';
+		window['sap-ui-config'].resourceroots = {
+			"sap.ui.fl.test.registry": "./"
+		};
+		document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+	</script>
 
+	<script>
+		jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit-2') + '.css');
+		jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+		jQuery.sap.require('sap.ui.qunit.qunit-junit');
+		jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+		jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+		jQuery.sap.require('sap.ui.thirdparty.sinon');
+		jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
 
-<link rel="stylesheet" href="../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
-<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		// code coverage report only for sap.ui.rta/sap.ui.dt namespace (change if necessary)
+		window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/fl]');
 
-<script src="ChangeRegistry.qunit.js">
+		//Replace with your qunit path
+		jQuery.sap.includeScript('./ChangeRegistry.qunit.js');
+	</script>
 
-</script>
 </head>
 <body id="body" class="sapUiBody">
-<h1 id="qunit-header">QUnit Page for sap.ui.fl.registry.ChangeRegistry</h1>
-
-<h2 id="qunit-banner"></h2>
-
-<h2 id="qunit-userAgent"></h2>
-<ol id="qunit-tests"></ol>
-<div id="content"></div>
+	<h1 id="qunit-header">QUnit Page for sap.ui.fl.registry.ChangeRegistry</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<ol id="qunit-tests"></ol>
+	<div id="content"></div>
 </body>
 </html>

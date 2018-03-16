@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Gregorian
-sap.ui.define(['jquery.sap.global', './UniversalDate', 'sap/ui/core/Locale', 'sap/ui/core/LocaleData'],
-	function(jQuery, UniversalDate, Locale, LocaleData) {
+sap.ui.define(['jquery.sap.global', './UniversalDate'],
+	function(jQuery, UniversalDate) {
 	"use strict";
 
 

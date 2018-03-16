@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataTreeBindingAdapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/model/TreeBindingAdapter' ,'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils', './OperationMode'],
-	function(jQuery, TreeBinding, ODataTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason, TreeBindingUtils, OperationMode) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeBinding', 'sap/ui/model/TreeBindingAdapter', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', './OperationMode'],
+	function(jQuery, TreeBinding, ODataTreeBinding, TreeBindingAdapter, TreeAutoExpandMode, ChangeReason, OperationMode) {
 	"use strict";
 
 	/**
@@ -93,6 +93,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 
 		var sGroupIDBase = "";
 		var sGroupIDSuffix = "";
+		var sEncodedValue;
 
 		//artificial root has always "/" as groupID
 		if (oNode.context === null) {
@@ -104,7 +105,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			sGroupIDBase = oNode.parent.groupID;
 			sGroupIDBase = sGroupIDBase[sGroupIDBase.length - 1] !== "/" ? sGroupIDBase + "/" : sGroupIDBase;
 			if (this.bHasTreeAnnotations) {
-				sGroupIDSuffix = oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "/";
+				// Forward slashes in Group IDs are used to calculate the level of a node.
+				// However, the strings used to calculate a nodes Group ID may already contain
+				//  forward slashes. These slashes need to be removed to ensure correct level calculation later on.
+				// Currently, we encode them. (Beware: the property value can be an integer)
+				sEncodedValue = (oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "").replace(/\//g, "%2F");
+				sGroupIDSuffix = sEncodedValue + "/";
 			} else {
 				//odata navigation properties
 				sGroupIDSuffix = oNode.context.sPath.substring(1) + "/";
@@ -113,7 +119,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './v2/ODataTreeB
 			//case 2: node sits on root level
 			if (this.bHasTreeAnnotations) {
 				sGroupIDBase = "/";
-				sGroupIDSuffix = oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "/";
+				// See comment at replacement above
+				sEncodedValue = (oNode.context.getProperty(this.oTreeProperties["hierarchy-node-for"]) + "").replace(/\//g, "%2F");
+				sGroupIDSuffix = sEncodedValue + "/";
 			} else {
 				//odata nav properties case
 				sGroupIDBase = "/";

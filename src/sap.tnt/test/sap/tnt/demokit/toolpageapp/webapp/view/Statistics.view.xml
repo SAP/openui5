@@ -1,24 +1,32 @@
 <mvc:View
 	controllerName="sap.ui.demo.toolpageapp.controller.Statistics"
 	xmlns="sap.m"
-	xmlns:l="sap.ui.layout"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:mc="sap.suite.ui.microchart">
-
+	xmlns:mvc="sap.ui.core.mvc">
 	<Page showHeader="false">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Statistics_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>Statistics_contentLabel}"/>
+		</landmarkInfo>
 		<content>
-			<Panel id="statisticsContainer" class="sapUiNoContentPadding">
+			<Panel
+				id="statisticsContainer"
+				accessibleRole="Region"
+				class="sapUiNoContentPadding">
 				<headerToolbar>
 					<Toolbar>
 						<Title
 							text="{i18n>shopStatisticsTitle}"
-							level="H4"
+							level="H3"
 							textAlign="Left"/>
 						<ToolbarSpacer/>
 						<Button
 							id="refresh"
 							icon="sap-icon://refresh"
-							press="onRefresh"/>
+							press="onRefresh"
+							tooltip="{i18n>refreshButtonTooltip}"/>
 					</Toolbar>
 				</headerToolbar>
 			</Panel>

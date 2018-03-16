@@ -22,7 +22,9 @@
 
 		// first require all tests
 		sap.ui.require([
-			'local/Element_dependents.qunit'
+			'local/Element.qunit',
+			'local/Element_dependents.qunit',
+			'local/Element_metadata_selector.qunit'
 		], function() {
 			// then start their execution
 			QUnit.start();
@@ -31,5 +33,6 @@
 </head>
 <body>
 	<div id="qunit"></div>
+	<div id="content"></div>
 </body>
 </html>

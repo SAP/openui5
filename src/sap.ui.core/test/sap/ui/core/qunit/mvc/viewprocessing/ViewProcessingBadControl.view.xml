@@ -1,0 +1,7 @@
+<mvc:View
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:mvcviewprocessing="sap.ui.core.qunit.mvc.viewprocessing"
+        xmlns="sap.m">
+    <mvcviewprocessing:BadControl id="myBadControl"></mvcviewprocessing:BadControl>
+    <Label text="test"></Label>
+</mvc:View>

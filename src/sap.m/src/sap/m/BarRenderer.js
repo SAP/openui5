@@ -3,8 +3,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
-	function(jQuery, BarInPageEnabler) {
+sap.ui.define(['jquery.sap.global', './BarInPageEnabler', 'sap/ui/Device'],
+	function(jQuery, BarInPageEnabler, Device) {
 	"use strict";
 
 
@@ -40,9 +40,11 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 		oRM.addClass("sapMBar");
 		oRM.addClass(this.getContext(oControl));
 
-		oControl._writeLandmarkInfo(oRM, oControl);
+		oRM.writeAccessibilityState(oControl, {
+			"role": oControl._getRootAccessibilityRole()
+		});
 
-		if (oControl.getTranslucent() && (sap.ui.Device.support.touch  || jQuery.sap.simulateMobileOnDesktop)) {
+		if (oControl.getTranslucent() && (Device.support.touch  || jQuery.sap.simulateMobileOnDesktop)) {
 			oRM.addClass("sapMBarTranslucent");
 		}
 
@@ -136,7 +138,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 	 */
 	BarRenderer.renderAllControls = function (aControls, oRM, oBar) {
 		aControls.forEach(function (oControl) {
-			sap.m.BarInPageEnabler.addChildClassTo(oControl, oBar);
+			BarInPageEnabler.addChildClassTo(oControl, oBar);
 
 			oRM.renderControl(oControl);
 		});
@@ -165,7 +167,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler'],
 	/**
 	 * Adds width style to 100% in case of the given content container is the only container with content amongst the three (left, middle, right)
 	 * @param {string} sArea The content container - one of the left, middle or right
-	 * @param {sap.ui.core.RenderManager} oRM The RenderManager that can be used for writing to the Render-Output-Buffer.
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the Render-Output-Buffer.
 	 * @param {sap.ui.core.Control} oControl the Bar instance
 	 * @private
 	 */

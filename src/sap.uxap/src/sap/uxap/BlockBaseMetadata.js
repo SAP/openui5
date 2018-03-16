@@ -72,7 +72,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/ElementMetadata"], function (jQ
 
 	/**
 	 * return a view from its name
-	 * @param {*} sViewName
+	 * @param {string} sViewName The view name
 	 * @returns {*} view
 	 */
 	BlockBaseMetadata.prototype.getView = function (sViewName) {

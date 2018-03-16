@@ -4,29 +4,33 @@
 
 // Provides control sap.uxap.ObjectPageLazyLoader.
 sap.ui.define([
+	'jquery.sap.global',
 	'./library',
 	'sap/ui/core/Element',
 	'sap/ui/core/StashedControlSupport'
-], function (library, Element, StashedControlSupport) {
+], function (jQuery, library, Element, StashedControlSupport) {
 	"use strict";
 
 	/**
-	 * Constructor for a new ObjectPageLazyLoader.
+	 * Constructor for a new <code>ObjectPageLazyLoader</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * ObjectPageLazyLoader is a helper element that enables a "stashed"-based lazy loading approach for the content of
-	 * the sap.uxap.ObjectPageSubSection control. ObjectPageLazyLoader is intended to be used in a declarative way only
-	 * (e.g. in a view) with the "stashed" property set to "true", and is recommended to be used only once per
-	 * subsection as its sole content.
+	 * A helper element that enables a "stashed-based" lazy loading approach for the content of
+	 * the {@link sap.uxap.ObjectPageSubSection} control.
 	 *
-	 * ObjectPageLazyLoader utilizes UI5's stashing mechanism and is a lightweight alternative to the native block-based
-	 * Lazy Loading of the Object Page. Wrapping the content of a subsection in an ObjectPageLazyLoader with "stashed=true"
-	 * will make the said content unstash automatically as the user scrolls.
+	 * <code>ObjectPageLazyLoader</code> is intended to be used in a declarative way only
+	 * (for example, in a view) with the <code>stashed</code> property set to <code>true</code>,
+	 * and is recommended to be used only once per subsection as its sole content.
 	 *
-	 * Note: Subsections are required to have an ID when used with ObjectPageLazyLoader.
+	 * <code>ObjectPageLazyLoader</code> utilizes UI5's stashing mechanism and is a lightweight
+	 * alternative to the native block-based Lazy Loading of the <code>ObjectPageLayout</code>.
+	 * Wrapping the content of a subsection in an <code>ObjectPageLazyLoader</code> with
+	 * <code>stashed=true</code> will make the content unstash automatically as the user scrolls.
+	 *
+	 * <b>Note:</b> Subsections are required to have an ID when used with <code>ObjectPageLazyLoader</code>.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -64,4 +68,4 @@ sap.ui.define([
 	};
 
 	return LazyLoader;
-}, true);
+});

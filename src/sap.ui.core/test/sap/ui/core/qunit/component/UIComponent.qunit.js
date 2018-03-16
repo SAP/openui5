@@ -472,4 +472,278 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Async loading of manifest modules before component instantiation", {
+		before: function () {
+			sinon.config.useFakeTimers = false;
+			this.requireSpy = sinon.spy(sap.ui, "require");
+			this.logWarningSpy = sinon.spy(jQuery.sap.log, "warning");
+		},
+
+		beforeEach : function() {
+			jQuery.sap.registerModulePath("manifestModules", "/manifestModules/");
+
+			// Define Views
+			var sXMLView1 = '<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc"\></mvc:View>';
+
+			// Setup fake server
+			var oServer = this.oServer = sinon.sandbox.useFakeServer();
+			oServer.xhr.useFilters = true;
+			oServer.xhr.filters = [];
+			oServer.xhr.addFilter(function(method, url) {
+				return (
+					url !== "/manifestModules/manifest.json?sap-language=EN"
+					&& url !== "../../../../../../resources/someRootView.view.xml"
+					&& url !== "../../../../../../resources/someRootView.view.json"
+					&& url !== "../../../../../../resources/someRootViewNotExists.view.xml"
+					&& url !== "../../../../../../resources/someCustomRouter.js"
+				);
+			});
+			oServer.autoRespond = true;
+
+			// Respond data
+			oServer.respondWith("GET", "../../../../../../resources/someRootView.view.xml", [
+				200,
+				{ "Content-Type": "application/xml" },
+				sXMLView1
+			]);
+			oServer.respondWith("GET", "../../../../../../resources/someRootViewNotExists.view.xml", [
+				404,
+				{ "Content-Type": "text/html" },
+				"not found"
+			]);
+			oServer.respondWith("GET", "../../../../../../resources/someRootView.view.json", [
+				200,
+				{ "Content-Type": "application/javascript" },
+				"{}"
+			]);
+			oServer.respondWith("GET", "../../../../../../resources/someCustomRouter.js", [
+				200,
+				{ "Content-Type": "application/javascript" },
+				"sap.ui.define(['sap/ui/core/routing/Router'], function(Router) {\n" +
+				"\treturn Router.extend(\"someCustomRouter\", {});\n" +
+				"});\n"
+			]);
+		},
+
+		setRespondedManifest: function(manifest) {
+			// Respond data
+			this.oServer.respondWith("GET", "/manifestModules/manifest.json?sap-language=EN", [
+				200,
+				{ "Content-Type": "application/json" },
+				JSON.stringify(manifest)
+			]);
+		},
+
+		afterEach: function() {
+			this.oServer.restore();
+			this.requireSpy.reset();
+			this.logWarningSpy.reset();
+		},
+
+		after: function() {
+			sinon.config.useFakeTimers = true;
+			this.requireSpy.restore();
+			this.logWarningSpy.restore();
+		}
+	});
+
+	QUnit.test("Check if all resources were loaded", function(assert) {
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			},
+			"sap.ui5": {
+				"rootView": {
+					"viewName": "someRootView",
+					"type": "JSON",
+					"id": "app"
+				},
+				"models": {
+					"i18n": {
+						"type": "sap.ui.model.resource.ResourceModel",
+						"uri": "i18n/i18n.properties"
+					},
+					"odm1": {
+						"type": "sap.ui.model.odata.ODataModel",
+						"uri": "./some/odata/service"
+					},
+					"odm2": {
+						"type": "sap.ui.model.odata.v2.ODataModel",
+						"uri": "./some/odata/service"
+					}
+				},
+				"routing": {
+					"config": {
+						"viewType": "XML",
+						"controlId": "app"
+					},
+					"routes": [
+						{
+							"pattern": "",
+							"name": "overview",
+							"target": "overview"
+						}
+					]
+				}
+			}
+		};
+		this.setRespondedManifest(oManifest);
+
+		var requireSpy = this.requireSpy;
+		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.Component", {
+				metadata: {
+					manifest: "json"
+				},
+				constructor: function() {
+					assert.ok(requireSpy.calledWith(["sap/ui/core/mvc/JSONView"]), "JSONView type required");
+					assert.ok(requireSpy.calledWith(["sap/ui/model/resource/ResourceModel"]), "ResourceModel required");
+					assert.ok(requireSpy.calledWith(["sap/ui/core/routing/Router"]), "Router loaded");
+					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/ODataModel"]), "ODataModel required");
+					assert.ok(requireSpy.calledWith(["sap/ui/model/odata/v2/ODataModel"]), "ODataModel v2 required");
+
+					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/core/mvc/JSONView.js"), "JSONView type loaded");
+					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/model/resource/ResourceModel.js"), "ResourceModel loaded");
+					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/core/routing/Router.js"), "Router loaded");
+					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/model/odata/ODataModel.js"), "ODataModel loaded");
+					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/model/odata/v2/ODataModel.js"), "ODataModel v2 loaded");
+
+					UIComponent.apply(this, arguments);
+				}
+			});
+		});
+
+		return sap.ui.component({
+			name: "manifestModules",
+			manifest: true
+		});
+	});
+
+	QUnit.test("Check if custom router class was loaded", function(assert) {
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			},
+			"sap.ui5": {
+				"routing": {
+					"config": {
+						"routerClass": "someCustomRouter",
+						"viewType": "XML",
+						"controlId": "app"
+					},
+					"routes": [
+						{
+							"pattern": "",
+							"name": "overview",
+							"target": "overview"
+						}
+					]
+				}
+			}
+		};
+		this.setRespondedManifest(oManifest);
+
+		var requireSpy = this.requireSpy;
+		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.Component", {
+				metadata: {
+					manifest: "json"
+				},
+				constructor: function() {
+					assert.ok(requireSpy.calledWith(["someCustomRouter"]), "Custom Router required");
+					assert.ok(jQuery.sap.isResourceLoaded("someCustomRouter.js"), "Custom Router loaded");
+					UIComponent.apply(this, arguments);
+				}
+			});
+		});
+
+		return sap.ui.component({
+			name: "manifestModules",
+			manifest: true
+		});
+	});
+
+	QUnit.test("Check if ViewType of root view (provided as string) was loaded", function(assert) {
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			},
+			"sap.ui5": {
+				"rootView": "someRootView"
+			}
+		};
+		this.setRespondedManifest(oManifest);
+
+		var requireSpy = this.requireSpy;
+		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.Component", {
+				metadata: {
+					manifest: "json"
+				},
+				constructor: function() {
+					assert.ok(requireSpy.calledWith(["sap/ui/core/mvc/XMLView"]), "XMLView type required");
+					assert.ok(jQuery.sap.isResourceLoaded("sap/ui/core/mvc/XMLView.js"), "XMLView type loaded");
+					UIComponent.apply(this, arguments);
+				}
+			});
+		});
+
+		return sap.ui.component({
+			name: "manifestModules",
+			manifest: true
+		});
+	});
+
+	QUnit.test("Check if modules could not be loaded and a warning was logged", function(assert) {
+		assert.expect(3);
+		var oManifest = {
+			"sap.app" : {
+				"id" : "app"
+			},
+			"sap.ui5": {
+				"models": {
+					"odm1": {
+						"type": "sap.ui.model.odata.ODataModelNotExists",
+						"uri": "./some/odata/service"
+					}
+				},
+				"routing": {
+					"config": {
+						"routerClass": "someRouterNotExists",
+						"viewType": "XML",
+						"controlId": "app"
+					},
+					"routes": [
+						{
+							"pattern": "",
+							"name": "overview",
+							"target": "overview"
+						}
+					]
+				}
+			}
+		};
+		this.setRespondedManifest(oManifest);
+
+		var logWarningSpy = this.logWarningSpy;
+		sap.ui.define("manifestModules/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+			return UIComponent.extend("manifestModules.Component", {
+				metadata: {
+					manifest: "json"
+				},
+				constructor: function() {
+					assert.ok(logWarningSpy.calledWith('Can not preload module "sap/ui/model/odata/ODataModelNotExists". This will most probably cause an error once the module is used later on.'), "Model not found");
+					assert.ok(logWarningSpy.calledWith('Can not preload module "someRouterNotExists". This will most probably cause an error once the module is used later on.'), "Router not found");
+					UIComponent.apply(this, arguments);
+				}
+			});
+		});
+
+		return sap.ui.component({
+			name: "manifestModules",
+			manifest: true
+		}).catch(function() {
+			assert.ok(true, "Modules could not be loaded and an error occured.");
+		});
+	});
 });

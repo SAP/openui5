@@ -30,10 +30,10 @@ sap.ui.define([
 			},
 
 			onRefresh: function () {
-				this.getView().byId("charts").byId("statisticsBlockLayout").invalidate();
-				this.getView().byId("charts").byId("statisticsBlockLayout").setBusy(true);
+				this.byId("charts").byId("statisticsBlockLayout").invalidate();
+				this.byId("charts").byId("statisticsBlockLayout").setBusy(true);
 				setTimeout(function () {
-					this.getView().byId("charts").byId("statisticsBlockLayout").setBusy(false);
+					this.byId("charts").byId("statisticsBlockLayout").setBusy(false);
 				}.bind(this), 2000);
 			}
 

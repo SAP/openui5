@@ -19,21 +19,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	/**
 	 * Constructor for a new JSONModel.
 	 *
-	 * @class
-	 * Model implementation for JSON format
-	 *
 	 * The observation feature is experimental! When observation is activated, the application can directly change the
 	 * JS objects without the need to call setData, setProperty or refresh. Observation does only work for existing
-	 * properties in the JSON, it can not detect new properties or new array entries.
+	 * properties in the JSON, it cannot detect new properties or new array entries.
+	 *
+	 * @param {object|string} oData Either the URL where to load the JSON from or a JS object
+	 * @param {boolean} bObserve Whether to observe the JSON data for property changes (experimental)
+	 *
+	 * @class
+	 * Model implementation for JSON format
 	 *
 	 * @extends sap.ui.model.ClientModel
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 *
-	 * @param {object} oData either the URL where to load the JSON from or a JS object
-	 * @param {boolean} bObserve whether to observe the JSON data for property changes (experimental)
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.json.JSONModel
 	 */
@@ -56,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	});
 
 	/**
-	 * Sets the JSON encoded data to the model.
+	 * Sets the data, passed as a JS object tree, to the model.
 	 *
 	 * @param {object} oData the data to set on the model
 	 * @param {boolean} [bMerge=false] whether to merge the data instead of replacing it
@@ -124,17 +123,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	};
 
 	/**
-	 * Sets the JSON encoded string data to the model.
+	 * Sets the data, passed as a string in JSON format, to the model.
 	 *
-	 * @param {string} sJSONText the string data to set on the model
+	 * @param {string} sJSON the JSON data to set on the model
 	 * @param {boolean} [bMerge=false] whether to merge the data instead of replacing it
 	 *
 	 * @public
 	 */
-	JSONModel.prototype.setJSON = function(sJSONText, bMerge){
+	JSONModel.prototype.setJSON = function(sJSON, bMerge){
 		var oJSONData;
 		try {
-			oJSONData = jQuery.parseJSON(sJSONText);
+			oJSONData = jQuery.parseJSON(sJSON);
 			this.setData(oJSONData, bMerge);
 		} catch (e) {
 			jQuery.sap.log.fatal("The following problem occurred: JSON parse Error: " + e);
@@ -147,7 +146,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	 * Serializes the current JSON data of the model into a string.
 	 * Note: May not work in Internet Explorer 8 because of lacking JSON support (works only if IE 8 mode is enabled)
 	 *
-	 * @return {string} sJSON the JSON data serialized as string
+	 * @return {string} the JSON data serialized as string
 	 * @public
 	 */
 	JSONModel.prototype.getJSON = function(){
@@ -197,9 +196,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 		}.bind(this);
 
 		var fnError = function(oParams){
-			var oError = { message : oParams.textStatus, statusCode : oParams.request.status, statusText : oParams.request.statusText, responseText : oParams.request.responseText};
-			jQuery.sap.log.fatal("The following problem occurred: " + oParams.textStatus, oParams.request.responseText + ","
-						+ oParams.request.status + "," + oParams.request.statusText);
+			var oError = { message : oParams.textStatus, statusCode : oParams.status, statusText : oParams.statusText, responseText : oParams.responseText};
+			jQuery.sap.log.fatal("The following problem occurred: " + oParams.textStatus, oParams.responseText + ","
+						+ oParams.status + "," + oParams.statusText);
 
 			this.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders,
 				info : "cache=" + bCache + ";bMerge=" + bMerge, infoObject: {cache : bCache, merge : bMerge}, success: false, errorobject: oError});
@@ -315,9 +314,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 	* Returns the value for the property with the given <code>sPropertyName</code>
 	*
 	* @param {string} sPath the path to the property
-	* @param {object} [oContext=null] the context which will be used to retrieve the property
-	* @type any
-	* @return the value of the property
+	* @param {sap.ui.model.Context} [oContext=null] the context which will be used to retrieve the property
+	* @return {any} the value of the property
 	* @public
 	*/
 	JSONModel.prototype.getProperty = function(sPath, oContext) {
@@ -327,7 +325,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 
 	/**
 	 * @param {string} sPath
-	 * @param {object} [oContext]
+	 * @param {object|sap.ui.model.Context} [oContext]
 	 * @returns {any} the node of the specified path/context
 	 */
 	JSONModel.prototype._getObject = function (sPath, oContext) {

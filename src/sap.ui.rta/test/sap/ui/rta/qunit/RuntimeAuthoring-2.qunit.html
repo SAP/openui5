@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>Test Page for sap.ui.rta.RuntimeAuthoring - 2</title>
+
+		<style>
+			html, body, #qunit-tests {
+				height : 100%;
+			}
+			.sapUiView {
+				height: 100%;
+			}
+
+			#test-view {
+				border: 1px solid grey;
+				position: fixed;
+				bottom: 0;
+				right: 0;
+				width : 50%;
+				height: 50%;
+			}
+		</style>
+
+		<script src="../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].libs = 'sap.m, sap.ui.layout, sap.ui.comp, sap.ui.rta';
+			window['sap-ui-config'].resourceroots = {
+				"sap.ui.rta.test": "../internal/testdata/rta/",
+				"sap.ui.rta.qunit": "../qunit",
+				"sap.ui.rta.qunitrta": "../internal/testdata/rta/" // Needs complete app due to variant management test
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+			if (window.blanket){
+				window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
+			}
+			jQuery.sap.includeScript('./RuntimeAuthoring-2.qunit.js');
+		</script>
+
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for sap.ui.rta.RuntimeAuthoring</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="test-view"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

@@ -11,8 +11,12 @@ sap.ui.define(['sap/m/semantic/SemanticSelect'], function(SemanticSelect) {
 	 * @param {object} [mSettings] Custom initial settings for the new control
 	 *
 	 * @class
-	 * A SortSelect button has default semantic-specific properties and is
-	 * eligible for aggregation content of a {@link sap.m.semantic.SemanticPage}.
+	 * A SortSelect is a {@link sap.m.Select} control enhanced with styling according to the semantics of a common "Sort" acton.
+	 *
+	 * A SortSelect cannot be used independently but only as aggregation content of a {@link sap.m.semantic.SemanticPage}.
+	 *
+	 * The sorting options should be added to the <code>items</code> aggregation of {@link sap.m.semantic.SortSelect} and will be displayed as a pop-up list with support for single-item selection.
+	 * If this simple popup list is not sufficient for your use case, you can implement your own custom dialog by using {@link sap.m.semantic.SortAction} to trigger the dialog opening.
 	 *
 	 * @extends sap.m.semantic.SemanticSelect
 	 * @implements sap.m.semantic.ISort
@@ -38,4 +42,4 @@ sap.ui.define(['sap/m/semantic/SemanticSelect'], function(SemanticSelect) {
 
 	return SortSelect;
 
-}, /* bExport= */ true);
+});

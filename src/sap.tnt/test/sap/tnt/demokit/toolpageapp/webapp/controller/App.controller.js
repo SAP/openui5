@@ -14,14 +14,48 @@ sap.ui.define([
 		'sap/m/NotificationListItem',
 		'sap/m/MessagePopoverItem',
 		'sap/ui/core/CustomData',
-		'sap/m/MessageToast'
-	], function (BaseController, jQuery, Fragment, Controller, JSONModel, ResponsivePopover, MessagePopover, ActionSheet, Button, Link, Bar, VerticalLayout, NotificationListItem, MessagePopoverItem,CustomData, MessageToast) {
+		'sap/m/MessageToast',
+		'sap/ui/Device'
+	], function (BaseController,
+		jQuery,
+		Fragment,
+		Controller,
+		JSONModel,
+		ResponsivePopover,
+		MessagePopover,
+		ActionSheet,
+		Button,
+		Link,
+		Bar,
+		VerticalLayout,
+		NotificationListItem,
+		MessagePopoverItem,
+		CustomData,
+		MessageToast,
+		Device) {
+
 		"use strict";
 
 		return BaseController.extend("sap.ui.demo.toolpageapp.controller.App", {
 
+			_bExpanded: true,
+
 			onInit: function() {
 				this.getView().addStyleClass(this.getOwnerComponent().getContentDensityClass());
+
+				// if the app starts on desktop devices with small or meduim screen size, collaps the sid navigation
+				if (Device.resize.width <= 1024) {
+					this.onSideNavButtonPress();
+				}
+				Device.media.attachHandler(function (oDevice) {
+					if ((oDevice.name === "Tablet" && this._bExpanded) || oDevice.name === "Desktop") {
+						this.onSideNavButtonPress();
+						// set the _bExpanded to false on tablet devices
+						// extending and collapsing of side navigation should be done when resizing from
+						// desktop to tablet screen sizes)
+						this._bExpanded = (oDevice.name === "Desktop");
+					}
+				}.bind(this));
 			},
 
 			/**
@@ -32,17 +66,22 @@ sap.ui.define([
 			onItemSelect: function(oEvent) {
 				var oItem = oEvent.getParameter('item');
 				var sKey = oItem.getKey();
-				if (sKey !== "home" && sKey !== "systemSettings" && sKey !== "statistics") {
-					MessageToast.show(sKey);
-				} else {
+				// if you click on home, settings or statistics button, call the navTo function
+				if ((sKey === "home" || sKey === "masterSettings" || sKey === "statistics")) {
+					// if the device is phone, collaps the navigation side of the app to give more space
+					if (Device.system.phone) {
+						this.onSideNavButtonPress();
+					}
 					this.getRouter().navTo(sKey);
+				} else {
+					MessageToast.show(sKey);
 				}
 			},
 
 			onUserNamePress: function(oEvent) {
 				var oBundle = this.getModel("i18n").getResourceBundle();
 				// close message popover
-				var oMessagePopover = this.getView().byId("errorMessagePopover");
+				var oMessagePopover = this.byId("errorMessagePopover");
 				if (oMessagePopover && oMessagePopover.isOpen()) {
 					oMessagePopover.destroy();
 				}
@@ -89,14 +128,14 @@ sap.ui.define([
 			},
 
 			onSideNavButtonPress: function() {
-				var oToolPage = this.getView().byId("app");
+				var oToolPage = this.byId("app");
 				var bSideExpanded = oToolPage.getSideExpanded();
 				this._setToggleButtonTooltip(bSideExpanded);
 				oToolPage.setSideExpanded(!oToolPage.getSideExpanded());
 			},
 
 			_setToggleButtonTooltip : function(bSideExpanded) {
-				var oToggleButton = this.getView().byId('sideNavigationToggleButton');
+				var oToggleButton = this.byId('sideNavigationToggleButton');
 				if (bSideExpanded) {
 					oToggleButton.setTooltip('Large Size Navigation');
 				} else {
@@ -106,7 +145,7 @@ sap.ui.define([
 
 			// Errors Pressed
 			onMessagePopoverPress: function (oEvent) {
-				if (!this.getView().byId("errorMessagePopover")) {
+				if (!this.byId("errorMessagePopover")) {
 					var oMessagePopover = new MessagePopover(this.getView().createId("errorMessagePopover"), {
 						placement: sap.m.VerticalPlacementType.Bottom,
 						items: {
@@ -117,7 +156,7 @@ sap.ui.define([
 							oMessagePopover.destroy();
 						}
 					});
-					this.getView().byId("app").addDependent(oMessagePopover);
+					this.byId("app").addDependent(oMessagePopover);
 					// forward compact/cozy style into dialog
 					jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oMessagePopover);
 					oMessagePopover.openBy(oEvent.getSource());
@@ -132,7 +171,7 @@ sap.ui.define([
 			onNotificationPress: function (oEvent) {
 				var oBundle = this.getModel("i18n").getResourceBundle();
 				// close message popover
-				var oMessagePopover = this.getView().byId("errorMessagePopover");
+				var oMessagePopover = this.byId("errorMessagePopover");
 				if (oMessagePopover && oMessagePopover.isOpen()) {
 					oMessagePopover.destroy();
 				}
@@ -155,7 +194,7 @@ sap.ui.define([
 						oNotificationPopover.destroy();
 					}
 				});
-				this.getView().byId("app").addDependent(oNotificationPopover);
+				this.byId("app").addDependent(oNotificationPopover);
 				// forward compact/cozy style into dialog
 				jQuery.sap.syncStyleClass(this.getView().getController().getOwnerComponent().getContentDensityClass(), this.getView(), oNotificationPopover);
 				oNotificationPopover.openBy(oEvent.getSource());
@@ -186,6 +225,8 @@ sap.ui.define([
 					datetime: oBindingObject.date,
 					authorPicture: oBindingObject.icon,
 					press: function () {
+						var oBundle = this.getModel("i18n").getResourceBundle();
+						MessageToast.show(oBundle.getText("notificationItemClickedMessage", oBindingObject.title));
 					},
 					customData : [
 						new CustomData({
@@ -216,4 +257,5 @@ sap.ui.define([
 			}
 
 		});
-});
+	});
+

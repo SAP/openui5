@@ -1,23 +1,19 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
-	"sap/ui/test/_timeoutCounter",
+	"sap/ui/test/autowaiter/_timeoutWaiter",
 	"sap/ui/Device",
 	"sap/m/Button",
-	"sap/ui/test/_autoWaiter"
-], function (Opa5, opaTest, _timeoutCounter, Device, Button, _autoWaiter) {
+	"sap/ui/test/autowaiter/_autoWaiter"
+], function (Opa5, opaTest, _timeoutWaiter, Device, Button, _autoWaiter) {
 	QUnit.module("Opa actions", {
 		beforeEach: function () {
 			this.oButton = new Button("foo");
 			this.oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-			sinon.config.useFakeTimers = true;
-			this.fnTimeoutStub = sinon.stub(_timeoutCounter, "hasPendingTimeouts");
 		},
 		afterEach: function () {
 			this.oButton.destroy();
-			sinon.config.useFakeTimers = false;
-			this.fnTimeoutStub.restore();
 		}
 	});
 
@@ -38,35 +34,31 @@ sap.ui.define([
 			sinon.assert.calledOnce(fnActionSpy);
 			done();
 		});
-
-		// empty the queue
-		this.clock.tick(200);
 	});
 
 	QUnit.test("Should not execute an action on a busy button", function(assert) {
-		// Arrange
 		var oOpa5 = new Opa5(),
 			fnActionSpy = this.spy(),
 			done = assert.async();
 
-		this.oButton.setBusy(true);
-
-		// Act
 		oOpa5.waitFor({
 			id: "foo",
-			// immediately time out
-			timeout: -1,
+			success: function () {
+				this.oButton.setBusy(true);
+			}.bind(this)
+		});
+
+		oOpa5.waitFor({
+			id: "foo",
+			timeout: 1,
 			actions: fnActionSpy
 		});
 
 		oOpa5.emptyQueue().fail(function () {
-			// Assert
 			sinon.assert.notCalled(fnActionSpy);
+			this.oButton.setBusy(false);
 			done();
-		});
-
-		// empty the queue
-		this.clock.tick(100);
+		}.bind(this));
 	});
 
 	QUnit.test("Should execute success after an action", function(assert) {
@@ -90,9 +82,6 @@ sap.ui.define([
 			sinon.assert.callOrder(fnCheckStub, fnActionSpy, fnSuccessSpy);
 			done();
 		});
-
-		// empty the queue
-		this.clock.tick(100);
 	});
 
 	QUnit.test("Should not execute an action before the check returns true", function(assert) {
@@ -123,10 +112,6 @@ sap.ui.define([
 		setTimeout(function () {
 			bCheckReturnValue = true;
 		}, 0);
-
-		// set the check to true
-		// and empty the queue
-		this.clock.tick(100);
 	});
 
 	QUnit.module("Async actions", {
@@ -255,18 +240,15 @@ sap.ui.define([
 			Opa5.extendConfig({
 				pollingInterval: 1
 			});
-			this.oClock = sinon.useFakeTimers();
-		},
-		afterEach: function () {
-			this.oClock.restore();
 		}
 	});
 
 	QUnit.test("Should not execute any subsequent successes as soon as an exception gets thrown in an inner actions", function (assert) {
 		var oOpa = new Opa5(),
 			// make sure no waitFors are in the queue
-			fnDone = assert.async(),
-			fnSuccessSpy = sinon.spy();
+			fnSuccessSpy = sinon.spy(),
+			fnEmptyQueueFail = sinon.spy(),
+			fnDone = assert.async();
 
 		oOpa.waitFor({
 			actions: function () {
@@ -280,14 +262,10 @@ sap.ui.define([
 			success: fnSuccessSpy
 		});
 
-		var oEmptyQueuePromise = oOpa.emptyQueue();
-
-		assert.throws(function () {
+		oOpa.emptyQueue().fail(function () {
 			sinon.assert.notCalled(fnSuccessSpy);
-			this.oClock.tick(100);
-		}.bind(this));
-
-		oEmptyQueuePromise.always(fnDone);
+			fnDone();
+		});
 	});
 
 	QUnit.module("Async actions 2 controls", {

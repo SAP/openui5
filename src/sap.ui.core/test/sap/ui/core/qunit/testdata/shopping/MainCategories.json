@@ -1,0 +1,26 @@
+[
+	{
+		"Id": "Computer Systems",
+		"Name": "Computer Systems"
+	},
+	{
+		"Id": "Computer Components",
+		"Name": "Computer Components"
+	},
+	{
+		"Id": "Printers & Scanners",
+		"Name": "Printers & Scanners"
+	},
+	{
+		"Id": "Software",
+		"Name": "Software"
+	},
+	{
+		"Id": "TV, Video & HiFi",
+		"Name": "TV, Video & HiFi"
+	},
+	{
+		"Id": "Smartphones & Tablets",
+		"Name": "Smartphones & Tablets"
+	}
+]

@@ -2,10 +2,14 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.Feed.Component", {
+	return UIComponent.extend("sap.m.sample.Feed.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.Feed.V",
+			rootView : {
+				"viewName": "sap.m.sample.Feed.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"
@@ -14,15 +18,12 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			config : {
 				sample : {
 					files : [
-						"V.view.xml",
-						"C.controller.js",
+						"Page.view.xml",
+						"Page.controller.js",
 						"feed.json"
 					]
 				}
 			}
 		}
 	});
-
-	return Component;
-
 });

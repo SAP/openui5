@@ -57,7 +57,7 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 		var oColumn = this._oColumn,
 			oTable = this._oTable;
 
-		if (oColumn.isGroupableByMenu()) {
+		if (oColumn.isGroupable()) {
 			this._oGroupIcon = this._createMenuItem(
 				"group",
 				"TBL_GROUP",
@@ -70,10 +70,6 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 					oColumn.setGrouped(!bGrouped);
 					oTable.fireGroup({column: oColumn, groupedColumns: oTable._aGroupedColumns, type: sGroupEventType});
 					oMenuItem.setIcon(!bGrouped ? "sap-icon://accept" : null);
-
-					// Grouping is not executed directly. The table will be configured accordingly and then be rendered to reflect the changes
-					// of the columns. We need to trigger a context update manually to also update the rows.
-					oTable._getRowContexts();
 				}
 			);
 			this.addItem(this._oGroupIcon);
@@ -101,10 +97,6 @@ sap.ui.define(['jquery.sap.global', './ColumnMenu', './library'],
 
 					oColumn.setSummed(!bSummed);
 					oMenuItem.setIcon(!bSummed ? "sap-icon://accept" : null);
-
-					// Summing of a column is not executed directly. The table will be configured accordingly and then we need to trigger a
-					// context update manually to update the rows.
-					oTable._getRowContexts();
 				}, this)
 			);
 			this.addItem(this._oSumItem);

@@ -14,15 +14,18 @@ sap.ui.define(['jquery.sap.global'], function (jQuery) {
 				fnResolve(result);
 			};
 			var fnError = function () {
-				fnResolve({errorMessage: "FIle not found: '" + sUrl + "'"});
+				fnResolve({errorMessage: "File not found: '" + sUrl + "'"});
 			};
 
 			if (!(sUrl in oCodeCache)) {
-				jQuery.ajax(sUrl, {
+				jQuery.ajax({
+					url: sUrl,
+					type: "GET",
 					dataType: "text",
-					success: fnSuccess,
-					error: fnError
-				});
+					beforeSend: function(request) {
+						request.overrideMimeType("text/plain; charset=x-user-defined");
+					}
+				}).done(fnSuccess).fail(fnError);
 			} else {
 				fnResolve(oCodeCache[sUrl]);
 			}

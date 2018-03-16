@@ -3,8 +3,20 @@
  */
 
 // Provides control sap.ui.suite.VerticalProgressIndicator.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', './library'],
-	function(jQuery, Control, EnabledPropagator, library) {
+sap.ui.define([
+ 'jquery.sap.global',
+ 'sap/ui/core/Control',
+ 'sap/ui/core/EnabledPropagator',
+ './library',
+ "./VerticalProgressIndicatorRenderer"
+],
+	function(
+	 jQuery,
+	 Control,
+	 EnabledPropagator,
+	 library,
+	 VerticalProgressIndicatorRenderer
+	) {
 	"use strict";
 
 

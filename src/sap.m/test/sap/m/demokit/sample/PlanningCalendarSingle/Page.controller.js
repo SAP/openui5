@@ -212,7 +212,8 @@ sap.ui.define([
 			handleAppointmentSelect: function (oEvent) {
 				var oAppointment = oEvent.getParameter("appointment");
 				if (oAppointment) {
-					MessageBox.show("Appointment selected: " + oAppointment.getTitle());
+					var sSelected = oAppointment.getSelected() ? "selected" : "deselected";
+					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + this.byId("PC1").getSelectedAppointments().length);
 				} else {
 					var aAppointments = oEvent.getParameter("appointments");
 					var sValue = aAppointments.length + " Appointments selected";
@@ -234,6 +235,11 @@ sap.ui.define([
 
 				oData.people[0].appointments.push(oAppointment);
 				oModel.setData(oData);
+			},
+
+			toggleDayNamesLine: function (oEvent) {
+				var oPC = this.byId("PC1");
+				oPC.setShowDayNamesLine(!oPC.getShowDayNamesLine());
 			}
 
 		});

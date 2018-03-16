@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.CheckBox.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.CheckBox.CheckBoxGroup",
+			rootView : {
+				"viewName": "sap.m.sample.CheckBox.CheckBoxGroup",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

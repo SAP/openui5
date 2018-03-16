@@ -164,7 +164,7 @@ sap.ui.define([
 							return this.waitFor({
 								id : "lineItemsHeader",
 								viewName : sViewName,
-								matchers : new PropertyStrictEquals({name: "text", value: "LineItems (" + iNumberOfItems + ")"}),
+								matchers : new PropertyStrictEquals({name: "text", value: "<LineItemsPlural> (" + iNumberOfItems + ")"}),
 								success : function () {
 									Opa5.assert.ok(true, "The line item list displays " + iNumberOfItems + " items");
 								},

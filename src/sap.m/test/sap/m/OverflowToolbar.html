@@ -20,7 +20,7 @@
 
 	// for behaviour testing
 	if (oUriParameters.get("oldFlex")) {
-		sap.m.Toolbar.hasNewFlexBoxSupport = false;
+		sap.m.ToolbarRenderer.hasNewFlexBoxSupport = false;
 	}
 
 	var sAddIconURI = sap.ui.core.IconPool.getIconURI("add");
@@ -201,8 +201,7 @@
 		}),
 		new sap.m.Button({
 			text : "Single Disappear",
-			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Disappear}),
-			width: "125px"
+			layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.Disappear})
 		}),
 		new sap.m.Button({
 			text : "Single Default",
@@ -362,9 +361,10 @@
 		}),
 		new sap.m.ToolbarSpacer(),
 		new sap.m.Label({
-			text : "Country:"
+			text : "Country:",
+			labelFor: "selectCountry"
 		}),
-		new sap.m.Select({
+		new sap.m.Select("selectCountry", {
 			name: "select-country",
 			items: [
 				new sap.ui.core.Item({
@@ -508,8 +508,7 @@
 			width: "150px"
 		}),
 		new sap.m.DateTimePicker({
-			placeholder: "DateTimePicker",
-			width: "150px"
+			placeholder: "DateTimePicker"
 		}),
 		new sap.m.CheckBox({
 			text : "Checkbox"
@@ -597,6 +596,96 @@
 		})
 	];
 
+	var toolbarContent8 = [
+		new sap.m.Label({
+			text : "Label and labelled controls"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.Button({
+			text : "Single button"
+		}),
+		new sap.m.Label({
+			text : "Label for Input",
+			labelFor: "labelledInput",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1
+			})
+		}),
+		new sap.m.Input("labelledInput", {
+			value : "I am labelled",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 1
+			}),
+			width: "125px"
+		}),
+		new sap.m.Label({
+			text : "This is a very long label text that exceeds the allowed overflow width limit"
+		}),
+		new sap.m.Button({
+			text : "Single button2"
+		}),
+		new sap.m.Label({
+			text : "G2 First Label",
+			labelFor: "labelledInput",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2
+			})
+		}),
+		new sap.m.Label({
+			text : "G2 Second Label",
+			labelFor: "labelledInput",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				group: 2
+			})
+		}),
+		new sap.m.Button({
+			text : "Single button3"
+		})
+	];
+
+	var toolbarContent9 = [
+		new sap.m.Label({
+			text: "SplitButton controls"
+		}),
+		new sap.m.ToolbarSpacer(),
+		new sap.m.SplitButton({
+			text: "Apply text color",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.AlwaysOverflow,
+				closeOverflowOnInteraction: true
+			}),
+			icon: "sap-icon://e-care",
+			press: function () {
+				sap.m.MessageToast.show("Text color is applied");
+			},
+			arrowPress: function () {
+				new sap.m.ColorPalettePopover({
+					colorSelect: function () {
+						sap.m.MessageToast.show("Color is selected");
+					}
+				}).openBy(this)
+			}
+		}),
+		new sap.m.SplitButton({
+			text: "Apply background color",
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				priority: sap.m.OverflowToolbarPriority.AlwaysOverflow,
+				closeOverflowOnInteraction: false
+			}),
+			icon: "sap-icon://e-care",
+			press: function () {
+				sap.m.MessageToast.show("Background color is applied");
+			},
+			arrowPress: function () {
+				new sap.m.ColorPalettePopover({
+					colorSelect: function () {
+						sap.m.MessageToast.show("Color is selected");
+					}
+				}).openBy(this)
+			}
+		})
+	];
+
 	var toolbarContentFooter = [
 		new sap.m.Label({
 			text : "When the toolbar is in the footer, the action sheet opens above it."
@@ -677,6 +766,16 @@
 		new sap.m.OverflowToolbar("otb7", {
 			width: 'auto',
 			content : toolbarContent7
+		}),
+
+		new sap.m.OverflowToolbar("otb8", {
+			width: 'auto',
+			content : toolbarContent8
+		}),
+
+		new sap.m.OverflowToolbar("otb9", {
+			width: 'auto',
+			content: toolbarContent9
 		}),
 
 		new sap.m.OverflowToolbar("otbFooter", {

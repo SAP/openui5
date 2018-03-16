@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._iPendingCalls = 0;
 			this._mBestMatchingPage = {};
 			this._aTopLevelNavItems = [];
-			this._aThemes = aThemes || ["sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcw", "sap_bluecrystal", "sap_goldreflection", "sap_hcb"];
+			this._aThemes = aThemes || ["sap_belize", "sap_belize_plus", "sap_belize_hcb", "sap_belize_hcw", "sap_bluecrystal", "sap_hcb"];
 			this._sTheme = this._aThemes[0]; // 'aThemes' must contain at least one theme
 			this._sCurrentContent = null;
 			this._mAliases = {};
@@ -517,7 +517,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					oSAPUI5Logo.addStyleClass("extraLeftPadding");
 
 					sAboutDialogContentHtml  = '<h2>OpenUI5 - Demo Kit</h2>';
-					sAboutDialogContentHtml += '<span>&copy; 2009-2017 SAP SE or an SAP affiliate company.</span><br>';
+					sAboutDialogContentHtml += '<span>&copy; 2009-2018 SAP SE or an SAP affiliate company.</span><br>';
 					sAboutDialogContentHtml += '<span>Licensed under the Apache License, Version 2.0 – <embed data-index="3"><br><br><br></span>';
 					sAboutDialogContentHtml += '<span>OpenUI5 Version <embed data-index="0"></span><br>';
 				} else {
@@ -526,7 +526,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					oSAPUI5Logo.addStyleClass("extraLeftPadding");
 
 					sAboutDialogContentHtml  = '<h2>SAP UI Development Toolkit for HTML5 (SAPUI5) - Demo Kit</h2>';
-					sAboutDialogContentHtml += '<span>&copy; Copyright 2009-2017 SAP SE. All rights reserved.</span><br><br><br>';
+					sAboutDialogContentHtml += '<span>&copy; Copyright 2009-2018 SAP SE. All rights reserved.</span><br><br><br>';
 					sAboutDialogContentHtml += '<span>SAPUI5 Version <embed data-index="0"></span><br>';
 				}
 
@@ -1229,7 +1229,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			"sap_belize_plus": "Belize Plus",
 			"sap_belize_hcb": "Belize High Contrast Black",
 			"sap_belize_hcw": "Belize High Contrast White",
-			"sap_goldreflection": "Gold Reflection",
 			"sap_hcb": "High Contrast Black"
 		};
 

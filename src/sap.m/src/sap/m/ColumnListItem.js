@@ -3,9 +3,24 @@
  */
 
 // Provides control sap.m.ColumnListItem.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './library'],
-	function(jQuery, Element, ListItemBase, library) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/core/Element",
+	"sap/ui/core/library",
+	"./library",
+	"./ListItemBase",
+	"./ColumnListItemRenderer"
+],
+	function(jQuery, Element, coreLibrary, library, ListItemBase, ColumnListItemRenderer) {
 	"use strict";
+
+
+	// shortcut for sap.m.ListType
+	var ListItemType = library.ListType;
+
+	// shortcut for sap.ui.core.VerticalAlign
+	var VerticalAlign = coreLibrary.VerticalAlign;
+
 
 	/**
 	 * Constructor for a new ColumnListItem.
@@ -41,7 +56,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 			 * <b>Note:</b> <code>vAlign</code> property of <code>sap.m.Column</code> overrides the property for cell vertical alignment if both are set.
 			 * @since 1.20
 			 */
-			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : sap.ui.core.VerticalAlign.Inherit}
+			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit}
 		},
 		defaultAggregation : "cells",
 		aggregations : {
@@ -58,13 +73,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 	 * TablePopin element that handles own events.
 	 */
 	var TablePopin = Element.extend("sap.m.TablePopin", {
-		onfocusin: function(oEvent) {
+		ontap: function(oEvent) {
 			// focus to the main row if there is nothing to focus in the popin
 			if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {
 				this.getParent().focus();
 			}
 		}
 	});
+
+	// defines tag name
+	ColumnListItem.prototype.TagName = "tr";
 
 	ColumnListItem.prototype.init = function() {
 		ListItemBase.prototype.init.call(this);
@@ -101,12 +119,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 	// returns responsible table control for the item
 	ColumnListItem.prototype.getTable = function() {
 		var oParent = this.getParent();
-		if (oParent instanceof sap.m.Table) {
-			return oParent;
+		if (!oParent) {
+			return;
 		}
 
-		// support old list with columns aggregation
-		if (oParent && oParent.getMetadata().getName() == "sap.m.Table") {
+		var fnTableClass = sap.ui.require("sap/m/Table");
+		if (typeof fnTableClass == "function" && oParent instanceof fnTableClass) {
 			return oParent;
 		}
 	};
@@ -131,7 +149,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 				onsaptabnext: this.onsaptabnext,
 				onsaptabprevious: this.onsaptabprevious,
 				onsapup: this.onsapup,
-				onsapdown: this.onsapdown
+				onsapdown: this.onsapdown,
+				oncontextmenu: this.oncontextmenu
 			}, this).setParent(this, null, true);
 		}
 
@@ -153,7 +172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 	 * @protected
 	 */
 	ColumnListItem.prototype.hasPopin = function() {
-		return !!(this._oPopin && this.getTable().hasPopin());
+		return this._oPopin;
 	};
 
 	/**
@@ -231,14 +250,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 
 	// determines whether type column for this item is necessary or not
 	ColumnListItem.prototype._needsTypeColumn = function() {
-		var sType = this.getType(),
-			mType = sap.m.ListType;
+		var sType = this.getType();
 
-		return	this.getVisible() && (
-					sType == mType.Detail ||
-					sType == mType.Navigation ||
-					sType == mType.DetailAndActive
-				);
+		return this.getVisible() && (
+			sType == ListItemType.Detail ||
+			sType == ListItemType.Navigation ||
+			sType == ListItemType.DetailAndActive
+		);
 	};
 
 	// Adds cloned header to the local collection
@@ -275,4 +293,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', './ListItemBase', './
 
 	return ColumnListItem;
 
-}, /* bExport= */ true);
+});

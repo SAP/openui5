@@ -62,20 +62,59 @@
 			return undefined;
 		}
 
+
+		var aLibraries = ["sap.ui.core", "sap.ui.testlib"];
+
+		function testApplyTheme(assert, sTheme) {
+
+			var aLibraryCss = aLibraries.map(function(lib) {
+				return {
+					name: lib,
+					domRef: jQuery.sap.domById("sap-ui-theme-" + lib)
+				};
+			});
+
+			// for the test we need to delay the theme changed event to avoid the cleanup
+			// of the old stylesheet which will be performed by the ThemeCheck
+			var fnFireThemeChangedEvent = sap.ui.core.ThemeCheck.prototype.fireThemeChangedEvent;
+			sap.ui.core.ThemeCheck.prototype.fireThemeChangedEvent = function(bOnlyOnInitFail) {
+				setTimeout(fnFireThemeChangedEvent.bind(this, bOnlyOnInitFail), 0);
+			};
+
+			sap.ui.getCore().applyTheme(sTheme);
+
+			aLibraryCss.forEach(function(lib) {
+				assert.equal(lib.domRef.parentNode, document.head, "Old stylesheet for library " + lib.name + " still exits in the DOM.");
+				assert.equal(lib.domRef.getAttribute("data-sap-ui-foucmarker"), "sap-ui-theme-" + lib.name, "Attribute for ThemeCheck has been added to old stylesheet.");
+			});
+
+			sap.ui.core.ThemeCheck.prototype.fireThemeChangedEvent = fnFireThemeChangedEvent;
+
+		}
+
+		function testThemeLoaded(assert) {
+			aLibraries.forEach(function(lib) {
+				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-" + lib);
+				var sSheetHref = getSheetHref(oLibraryCss);
+				assert.equal(sSheetHref, oLibraryCss.href, "href of loaded " + lib + " stylesheet should be equal with link href.");
+			});
+		}
+
+		function testThemeCheckCleanup(assert) {
+			aLibraries.forEach(function(lib) {
+				var oOldLibraryCss = document.querySelectorAll("link[data-sap-ui-foucmarker='sap-ui-theme-" + lib + "']");
+				assert.equal(oOldLibraryCss && oOldLibraryCss.length || 0, 0, "Old stylesheet for library " + lib + " has been removed.");
+			});
+		}
+
+
 		QUnit.test("Initial theme theck", function(assert) {
 			var done = assert.async();
 
 			themeApplied().then(function() {
 
-				// Check if the declared sap.ui.core stylesheet has been fully loaded
-				var oCoreLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
-				var sCoreSheetHref = getSheetHref(oCoreLibraryCss);
-				assert.equal(sCoreSheetHref, oCoreLibraryCss.href, "href of loaded sap.ui.core stylesheet should be equal with link href.");
-
-				// Check if the declared sap.ui.testlib stylesheet has been fully loaded
-				var oTestLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.testlib");
-				var sTestSheetHref = getSheetHref(oTestLibraryCss);
-				assert.equal(sTestSheetHref, oTestLibraryCss.href, "href of loaded sap.ui.testlib stylesheet should be equal with link href.");
+				// Check if the declared library stylesheets have been fully loaded
+				testThemeLoaded(assert);
 
 				done();
 			});
@@ -86,29 +125,25 @@
 
 			 themeChanged().then(function() {
 
-				// Check if the declared sap.ui.core stylesheet has been fully loaded
-				var oCoreLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
-				var sCoreSheetHref = getSheetHref(oCoreLibraryCss);
-				assert.equal(sCoreSheetHref, oCoreLibraryCss.href, "href of loaded sap.ui.core stylesheet should be equal with link href.");
+				// Check if the declared library stylesheets have been fully loaded
+				testThemeLoaded(assert);
 
-				// Check that the declared sap.ui.testlib stylesheet has been included but not loaded as it does not exist for "legacy" theme
-				var oTestLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.testlib");
-				var sTestSheetHref = getSheetHref(oTestLibraryCss);
-				assert.equal(sTestSheetHref, oTestLibraryCss.href, "href of loaded sap.ui.testlib stylesheet should be equal with link href.");
+				// Check if the old stylesheets have been removed again
+				testThemeCheckCleanup(assert);
 
 				// Check if the custom.css has been included
 				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
 				if (!oCustomCss) {
 					assert.ok(false, "Custom CSS file hasn't been included");
-					return;
+				} else {
+					var oCustomCssHref = oCustomCss.getAttribute("href");
+					var sExpectedCustomCssPath = "./testdata/customcss/sap/ui/core/themes/legacy/custom.css";
+					assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
 				}
-				var oCustomCssHref = oCustomCss.getAttribute("href");
-				var sExpectedCustomCssPath = "./testdata/customcss/sap/ui/core/themes/legacy/custom.css";
-				assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
 
 				done();
 			});
-			sap.ui.getCore().applyTheme("legacy");
+			testApplyTheme(assert, "legacy");
 		});
 
 		QUnit.test("After theme change with custom.css", function(assert) {
@@ -116,29 +151,25 @@
 
 			 themeChanged().then(function() {
 
-				// Check if the declared sap.ui.core stylesheet has been fully loaded
-				var oCoreLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
-				var sCoreSheetHref = getSheetHref(oCoreLibraryCss);
-				assert.equal(sCoreSheetHref, oCoreLibraryCss.href, "href of loaded sap.ui.core stylesheet should be equal with link href.");
+				// Check if the declared library stylesheets have been fully loaded
+				testThemeLoaded(assert);
 
-				// Check that the declared sap.ui.testlib stylesheet has been included but not loaded as it does not exist for "customcss" theme
-				var oTestLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.testlib");
-				var sTestSheetHref = getSheetHref(oTestLibraryCss);
-				assert.equal(sTestSheetHref, oTestLibraryCss.href, "href of loaded sap.ui.testlib stylesheet should be equal with link href.");
+				// Check if the old stylesheets have been removed again
+				testThemeCheckCleanup(assert);
 
 				// Check if the custom.css has been included
 				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
 				if (!oCustomCss) {
 					assert.ok(false, "Custom CSS file hasn't been included");
-					return;
+				} else {
+					var oCustomCssHref = oCustomCss.getAttribute("href");
+					var sExpectedCustomCssPath = "./testdata/customcss/sap/ui/core/themes/customcss/custom.css";
+					assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
 				}
-				var oCustomCssHref = oCustomCss.getAttribute("href");
-				var sExpectedCustomCssPath = "./testdata/customcss/sap/ui/core/themes/customcss/custom.css";
-				assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
 
 				done();
 			});
-			sap.ui.getCore().applyTheme("customcss");
+			testApplyTheme(assert, "customcss");
 		});
 
 		QUnit.test("After theme change without custom.css", function(assert) {
@@ -146,15 +177,11 @@
 
 			 themeChanged().then(function() {
 
-				 // Check if the declared sap.ui.core stylesheet has been fully loaded
-				var oCoreLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
-				var sCoreSheetHref = getSheetHref(oCoreLibraryCss);
-				assert.equal(sCoreSheetHref, oCoreLibraryCss.href, "href of loaded sap.ui.core stylesheet should be equal with link href.");
+				// Check if the declared library stylesheets have been fully loaded
+				testThemeLoaded(assert);
 
-				// Check if the declared sap.ui.testlib stylesheet has been fully loaded
-				var oTestLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.testlib");
-				var sTestSheetHref = getSheetHref(oTestLibraryCss);
-				assert.equal(sTestSheetHref, oTestLibraryCss.href, "href of loaded sap.ui.testlib stylesheet should be equal with link href.");
+				// Check if the old stylesheets have been removed again
+				testThemeCheckCleanup(assert);
 
 				// Check if the custom.css has been included
 				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
@@ -162,7 +189,19 @@
 
 				done();
 			});
-			sap.ui.getCore().applyTheme("sap_hcb");
+			testApplyTheme(assert, "sap_hcb");
+		});
+
+		QUnit.test("RTL switch doesn't use suppress FOUC feature", function(assert) {
+
+			sap.ui.getCore().getConfiguration().setRTL(true);
+			aLibraries.forEach(function(lib) {
+				var oLibraryCss = jQuery.sap.domById("sap-ui-theme-" + lib);
+				assert.ok(oLibraryCss, "Link for " + lib + " stylesheet should be available.");
+				var oOldLibraryCss = document.querySelectorAll("link[data-sap-ui-foucmarker='sap-ui-theme-" + lib + "']");
+				assert.equal(oOldLibraryCss && oOldLibraryCss.length || 0, 0, "Old stylesheet for library " + lib + " has been removed.");
+			});
+
 		});
 
 		</script>

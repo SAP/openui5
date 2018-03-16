@@ -18,7 +18,7 @@
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.UI.v1"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="/sap/opu/odata/IWBEP/GWSAMPLE_BASIC">
+	<edmx:Reference Uri="/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/$metadata">
 		<edmx:Include Namespace="GWSAMPLE_BASIC"/>
 	</edmx:Reference>
 	<edmx:DataServices>

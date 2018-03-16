@@ -35,6 +35,15 @@
 	vertical-align: bottom;
 }
 
+.sapMPIDisplayOnly .sapMPIText::before {
+	font-size: 0.6875rem;
+	vertical-align: top;
+}
+
+.sapMPITextLeft::before {
+	margin-left: 0.25rem;
+}
+
 .sapMPIBarPositive > .sapMPITextLeft::before,
 .sapMPIBarPositive + .sapMPIBarRemaining > .sapMPITextRight::before {
 	content: '\e1ab';
@@ -58,21 +67,23 @@
 
 .sapMPIBarDisabled {
 	opacity: 1;
-	border-color: @sapUiHcReducedAltForeground;
+	border-color: @sapUiHcReducedForeground;
 
-	.sapMPITextLeft {
-		color: @sapUiHcReducedAltForeground;
-	}
-
+	.sapMPIText.sapMPITextLeft,
 	.sapMPITextRight,
 	.sapMPIBarRemaining > .sapMPITextRight::before {
-		color: @sapUiHcReducedForeground;
+		color: @sapUiContentDisabledTextColor;
 	}
 
 	.sapMPIBarNeutral,
 	.sapMPIBarPositive,
 	.sapMPIBarNegative,
 	.sapMPIBarCritical {
-		background: @sapUiHcReducedForeground;
+		background: @sapUiHcReducedBackground;
+		border-color: @sapUiHcReducedForeground;
+	}
+
+	.sapMPIBarRemaining {
+		border-color: @sapUiHcReducedForeground;
 	}
 }

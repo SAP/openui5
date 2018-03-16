@@ -1,0 +1,9 @@
+<core:FragmentDefinition 
+	xmlns="sap.m" 
+	xmlns:core="sap.ui.core" 
+	xmlns:tf="composites">
+	<VBox>
+		<VBox id="innerVBox"/>
+		<tf:ControlContainer id="innerControlContainer"></tf:ControlContainer>
+	</VBox>
+</core:FragmentDefinition>

@@ -36,9 +36,9 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 			var oNameType = new sap.ui.model.type.String();
 			oNameType.setConstraints({maxlength:15});
 
-			this.getView().byId("Name").bindProperty("value",{path:"Name",type:oNameType});
+			this.byId("Name").bindProperty("value",{path:"Name",type:oNameType});
 			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
-			this.getView().byId("Name").getBinding("value").attachDataStateChange(function(oEvent) {
+			this.byId("Name").getBinding("value").attachDataStateChange(function(oEvent) {
 				var sName = oEvent.mParameters['name'];
 				var oDataState = oEvent.mParameters['dataState'];
 				that.applyDataStateChanged(oDataState); //visualize the data state changes on value
@@ -48,7 +48,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 			var that = this;
 			setTimeout(function(){
 				for (var i=0;i<aDataStates.length;i++) {
-					var oPropText = that.getView().byId("property_" + aDataStates[i] + "_new");
+					var oPropText = that.byId("property_" + aDataStates[i] + "_new");
 					if (oPropText) {
 						oPropText.addStyleClass("highlight").removeStyleClass("diminished");
 					}
@@ -58,7 +58,7 @@ sap.ui.define(['sap/m/MessageToast', 'sap/ui/core/mvc/Controller', 'sap/ui/core/
 		removePropertyHighlight: function() {
 			var aDataStates = ["invalidValue", "value","originalValue","laundering","dirty"];
 			for (var i=0;i<aDataStates.length;i++) {
-				this.getView().byId("property_" + aDataStates[i] + "_new").removeStyleClass("highlight").addStyleClass("diminished");
+				this.byId("property_" + aDataStates[i] + "_new").removeStyleClass("highlight").addStyleClass("diminished");
 			}
 		},
 		applyDataStateChanged: function(oDataState) {

@@ -7,6 +7,7 @@
 .sapMCustomTile {
 	border: 1px solid @sapUiTileBorderColor;
 	border-radius: 0.25rem;
+	box-shadow: none;
 	-webkit-transition-property: none;
 	transition-property: none;
 	background-color: @sapUiTileBackground;
@@ -31,10 +32,28 @@
 	pointer-events: none;
 }
 
+html[data-sap-ui-browser^="ie"],
+html[data-sap-ui-browser^="ed"] {
+	.sapMTile:focus::before,
+	.sapMTile:hover::before,
+	.sapMCustomTile:focus .sapMTile::before,
+	.sapMCustomTile:hover .sapMTile::before {
+		top: 3px;
+		right: 3px;
+		bottom: 3px;
+		left: 3px;
+	}
+}
+
 .sapMTile:focus::before,
 .sapMCustomTile:focus .sapMTile::before {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.25rem;
+}
+
+.sapMTile:hover,
+.sapMCustomTile:hover {
+	position: relative;
 }
 
 .sapMTile:hover::before,

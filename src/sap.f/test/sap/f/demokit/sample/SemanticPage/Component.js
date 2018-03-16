@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 		return UIComponent.extend("sap.f.sample.SemanticPage.Component", {
 
 			metadata: {
-				rootView: "sap.f.sample.SemanticPage.V",
+				rootView: {
+					"viewName": "sap.f.sample.SemanticPage.V",
+					"type": "XML",
+					"async": true
+				},
 				dependencies: {
 					libs: [
 						"sap.f",

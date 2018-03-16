@@ -23,11 +23,11 @@
 					backgroundDesign="Translucent">
 			</ObjectHeader>
 			<IconTabBar id="iconTabBar"
-						expanded="{device>/isNoPhone}"
+						expanded="{=! ${device>/system/phone}}"
 						class="sapUiNoContentPadding">
 				<items>
 					<IconTabFilter icon="sap-icon://hint" key="info" >
-						<form:SimpleForm>
+						<form:SimpleForm layout="ResponsiveGridLayout">
 							<form:content>
 								<Label text="{i18n>postDateLabel}"/>
 								<Text text="{Timestamp}"/>
@@ -37,7 +37,7 @@
 						</form:SimpleForm>
 					</IconTabFilter>
 					<IconTabFilter icon="sap-icon://inspection" key="statistics">
-						<Text text="Viewed 55555 times" id="viewCounter"/>
+						<Text text="{i18n>viewedManyTimes}" id="viewCounter" class="sapUiSmallMargin"/>
 					</IconTabFilter>
 				</items>
 			</IconTabBar>

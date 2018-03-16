@@ -1,0 +1,9 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<RadioButtonGroup columns="1" >
+		<buttons>
+			<RadioButton text="Option One"/>
+			<RadioButton text="Option Two"/>
+		</buttons>
+	</RadioButtonGroup>
+</core:FragmentDefinition>

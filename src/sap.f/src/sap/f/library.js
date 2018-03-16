@@ -5,29 +5,24 @@
 /**
  * Initialization Code and shared classes of library sap.f.
  */
-sap.ui.define(["jquery.sap.global",
-	"sap/ui/core/library", "sap/m/library"], // library dependency
-	function() {
+sap.ui.define(["sap/ui/base/DataType",
+	"sap/ui/Global",
+	"sap/ui/core/library",
+	"sap/m/library"], // library dependency
+	function(DataType) {
 
 	"use strict";
-
-	/**
-	 * SAPUI5 library with controls specialized for Fiori applications.
-	 *
-	 * @namespace
-	 * @name sap.f
-	 * @author SAP SE
-	 * @version ${version}
-	 * @public
-	 */
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.f",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m"],
+		designtime: "sap/f/designtime/library.designtime",
 		types: [
-			"sap.f.LayoutType"
+			"sap.f.LayoutType",
+			"sap.f.DynamicPageTitleArea",
+			"sap.f.DynamicPageTitleShrinkRatio"
 		],
 		controls: [
 			"sap.f.Avatar",
@@ -43,6 +38,7 @@ sap.ui.define(["jquery.sap.global",
 			"sap.f.semantic.CopyAction",
 			"sap.f.semantic.DeleteAction",
 			"sap.f.semantic.DiscussInJamAction",
+			"sap.f.semantic.EditAction",
 			"sap.f.semantic.ExitFullScreenAction",
 			"sap.f.semantic.FavoriteAction",
 			"sap.f.semantic.FlagAction",
@@ -59,8 +55,78 @@ sap.ui.define(["jquery.sap.global",
 			"sap.f.semantic.SendMessageAction",
 			"sap.f.semantic.ShareInJamAction",
 			"sap.f.semantic.TitleMainAction"
-		]
+		],
+		extensions: {
+			flChangeHandlers: {
+				"sap.f.DynamicPageHeader" : {
+					"hideControl": "default",
+					"unhideControl": "default",
+					"moveControls": "default"
+				},
+				"sap.f.DynamicPageTitle" : "sap/f/flexibility/DynamicPageTitle",
+				"sap.f.semantic.SemanticPage" : {
+					"moveControls": "default"
+				}
+			},
+			//Configuration used for rule loading of Support Assistant
+			"sap.ui.support": {
+				internalRules:true
+			}
+		}
 	});
+
+	/**
+	 * SAPUI5 library with controls specialized for SAP Fiori apps.
+	 *
+	 * @namespace
+	 * @alias sap.f
+	 * @author SAP SE
+	 * @version ${version}
+	 * @public
+	 */
+	var thisLib = sap.f;
+
+	/**
+	* Defines the areas within the <code>sap.f.DynamicPageTitle</code>.
+	*
+	* @enum {string}
+	* @public
+	* @since 1.50
+	* @deprecated Since version 1.54
+	* @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	thisLib.DynamicPageTitleArea = {
+		/**
+		* The area includes the <code>heading</code>, <code>expandedContent</code> and <code>snappedContent</code> aggregations,
+		* positioned in the beginning area of the {@link sap.f.DynamicPageTitle}.
+		*
+		* @public
+		*/
+		Begin: "Begin",
+
+		/**
+		* The area includes the <code>content</code> aggregation,
+		* positioned in the middle part of the {@link sap.f.DynamicPageTitle}.
+		*
+		* @public
+		*/
+		Middle: "Middle"
+	};
+
+	/**
+	* @classdesc A string type that represents the shrink ratios of the areas within the <code>sap.f.DynamicPageTitle</code>.
+	*
+	* @namespace
+	* @public
+	* @since 1.54
+	* @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	*/
+	thisLib.DynamicPageTitleShrinkRatio = DataType.createType('sap.f.DynamicPageTitleShrinkRatio', {
+		isValid : function(vValue) {
+			return /^(([0-9]\d*)(\.\d)?:([0-9]\d*)(\.\d)?:([0-9]\d*)(\.\d)?)$/.test(vValue);
+		}
+
+	}, DataType.getType('string'));
 
 	/**
 	 * Layouts, representing the number of columns to be displayed and their relative widths for a {@link sap.f.FlexibleColumnLayout} control.
@@ -70,18 +136,23 @@ sap.ui.define(["jquery.sap.global",
 	 *
 	 * <b>Note:</b> Please note that on a phone device, due to the limited screen size, only one column can be displayed at a time.
 	 * For all two-column layouts, this column is the <code>Mid</code> column, and for all three-column layouts - the <code>End</code> column,
-	 * even though the respective column may be hidden on desktop and tablet for that particular layout.
+	 * even though the respective column may be hidden on desktop and tablet for that particular layout. Therefore some of the names
+	 * (such as <code>ThreeColumnsMidExpandedEndHidden</code> for example) are representative of the desktop scenario only.
+	 *
+	 * For more information, see {@link topic:3b9f760da5b64adf8db7f95247879086 Types of Layout} in the documentation.
 	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.f.LayoutType = {
+	thisLib.LayoutType = {
 
 		/**
 		 * Desktop: 100/-/-  only the Begin column is displayed
+		 *
 		 * Tablet:  100/-/-  only the Begin column is displayed
+		 *
 		 * Phone:   100/-/-  only the Begin column is displayed
 		 *
 		 * Use to start with a master page.
@@ -92,7 +163,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 67/33/-  Begin (expanded) and Mid columns are displayed
+		 *
 		 * Tablet:  67/33/-  Begin (expanded) and Mid columns are displayed
+		 *
 		 * Phone:   -/100/-  only the Mid column is displayed
 		 *
 		 * Use to display both a master and a detail page when the user should focus on the master page.
@@ -103,7 +176,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 33/67/-  Begin and Mid (expanded) columns are displayed
+		 *
 		 * Tablet:  33/67/-  Begin and Mid (expanded) columns are displayed
+		 *
 		 * Phone:   -/100/-  only the Mid column is displayed
 		 *
 		 * Use to display both a master and a detail page when the user should focus on the detail page.
@@ -114,7 +189,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: -/100/-  only the Mid column is displayed
+		 *
 		 * Tablet:  -/100/-  only the Mid column is displayed
+		 *
 		 * Phone:   -/100/-  only the Mid column is displayed
 		 *
 		 * Use to display a detail page only, when the user should focus entirely on it.
@@ -125,7 +202,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 25/50/25 Begin, Mid (expanded) and End columns are displayed
+		 *
 		 * Tablet:  0/67/33  Mid (expanded) and End columns are displayed, Begin is accessible by a layout arrow
+		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display all three pages (master, detail, detail-detail) when the user should focus on the detail.
@@ -136,7 +215,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 25/25/50 Begin, Mid and End (expanded) columns are displayed
+		 *
 		 * Tablet:  0/33/67  Mid and End (expanded) columns are displayed, Begin is accessible by layout arrows
+		 *
 		 * Phone:   -/-/100  (only the End column is displayed)
 		 *
 		 * Use to display all three pages (master, detail, detail-detail) when the user should focus on the detail-detail.
@@ -147,7 +228,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a layout arrow
+		 *
 		 * Tablet:  33/67/0  Begin and Mid (expanded) columns are displayed, End is accessible by a layout arrow
+		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display the master and detail pages when the user should focus on the detail.
@@ -159,7 +242,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: 67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by layout arrows
+		 *
 		 * Tablet:  67/33/0  Begin (expanded) and Mid columns are displayed, End is accessible by layout arrows
+		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display the master and detail pages when the user should focus on the master.
@@ -171,7 +256,9 @@ sap.ui.define(["jquery.sap.global",
 
 		/**
 		 * Desktop: -/-/100  only the End column is displayed
+		 *
 		 * Tablet:  -/-/100  only the End column is displayed
+		 *
 		 * Phone:   -/-/100  only the End column is displayed
 		 *
 		 * Use to display a detail-detail page only, when the user should focus entirely on it.
@@ -194,7 +281,7 @@ sap.ui.define(["jquery.sap.global",
 	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.f.AvatarShape = {
+	thisLib.AvatarShape = {
 		/**
 		 * Circular shape.
 		 * @public
@@ -216,7 +303,7 @@ sap.ui.define(["jquery.sap.global",
 	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.f.AvatarSize = {
+	thisLib.AvatarSize = {
 		/**
 		 * Control size - 2rem
 		 * Font size - 0.75rem
@@ -267,7 +354,7 @@ sap.ui.define(["jquery.sap.global",
 	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.f.AvatarType = {
+	thisLib.AvatarType = {
 		/**
 		 * The displayed content is an icon.
 		 * @public
@@ -292,7 +379,7 @@ sap.ui.define(["jquery.sap.global",
 	 * @since 1.46
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	sap.f.AvatarImageFitType = {
+	thisLib.AvatarImageFitType = {
 		/**
 		 * The image is scaled to be large enough so that the control area is completely covered.
 		 * @public
@@ -305,6 +392,6 @@ sap.ui.define(["jquery.sap.global",
 		Contain: "Contain"
 	};
 
-	return sap.f;
+	return thisLib;
 
 });

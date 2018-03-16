@@ -3,60 +3,111 @@
  */
 
 sap.ui.define([
+		"jquery.sap.global",
 		"sap/ui/documentation/sdk/controller/BaseController",
 		"sap/ui/model/json/JSONModel",
 		"sap/ui/core/ResizeHandler",
 		"sap/ui/Device",
-		"sap/ui/core/Component",
 		"sap/ui/core/Fragment",
 		"sap/ui/documentation/library",
-		"sap/ui/core/util/LibraryInfo",
 		"sap/ui/core/IconPool",
-		"sap/m/SplitAppMode"
-	], function (BaseController, JSONModel, ResizeHandler, Device, Component, Fragment, library, LibraryInfo, IconPool, SplitAppMode) {
+		"sap/m/SplitAppMode",
+		"sap/m/MessageBox",
+		"sap/m/library",
+		"sap/base/log"
+	], function (jQuery, BaseController, JSONModel, ResizeHandler, Device, Fragment, library, IconPool, SplitAppMode, MessageBox, mobileLibrary, Log) {
 		"use strict";
+
+		// shortcut for sap.m.URLHelper
+		var URLHelper = mobileLibrary.URLHelper,
+			sNeoAppJsonPath = "neo-app.json",
+			ABOUT_TEXT = "About",
+			FEEDBACK_TEXT = "Feedback",
+			CHANGE_VERSION_TEXT = "Change version";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			onInit : function () {
-				var oVersionInfo = sap.ui.getVersionInfo(),
-					oViewModel = new JSONModel({
-						busy : false,
-						delay : 0,
-						bPhoneSize: false,
-						bLandscape: Device.orientation.landscape,
-						bHasMaster: false,
-						bSearchMode: false,
-						version: jQuery.sap.Version(sap.ui.version).getMajor() + "." + jQuery.sap.Version(sap.ui.version).getMinor(),
-						fullVersion: sap.ui.version,
-						isOpenUI5: oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)
-					});
+				BaseController.prototype.onInit.call(this);
+
+				var oViewModel = new JSONModel({
+					busy : false,
+					delay : 0,
+					bPhoneSize: false,
+					bShowVersionSwitchInHeader: false,
+					bShowVersionSwitchInMenu: false,
+					bLandscape: Device.orientation.landscape,
+					bHasMaster: false,
+					bSearchMode: false,
+					bHideEmptySections: window['sap-ui-documentation-hideEmptySections'],
+					sAboutInfoSAPUI5: "Looking for the Demo Kit for a specific SAPUI5 version? " +
+					"Check at <a href = 'https://sapui5.hana.ondemand.com/versionoverview.html'>https://sapui5.hana.ondemand.com/versionoverview.html</a> " +
+					"which versions are available. " +
+					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
+					"<a href='https://sapui5.hana.ondemand.com/1.44.16/'>https://sapui5.hana.ondemand.com/1.44.16/</a>",
+					sAboutInfoOpenUI5: "Looking for the Demo Kit for a specific OpenUI5 version? " +
+					"Check at <a href = 'https://openui5.hana.ondemand.com/versionoverview.html'>https://openui5.hana.ondemand.com/versionoverview.html</a> " +
+					"which versions are available. " +
+					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
+					"<a href='https://openui5.hana.ondemand.com/1.44.16/'>https://openui5.hana.ondemand.com/1.44.16/</a>"
+				}),
+				oHeaderModel = new JSONModel({
+					bShowSubHeader: Device.system.phone
+				}),
+				sTabNavigationId;
+
 				this.MENU_LINKS_MAP = {
 					"Legal": "https://www.sap.com/corporate/en/legal/impressum.html",
-					"Privacy": "https://help.hana.ondemand.com/privacy.htm",
-					"Terms of Use": "https://help.hana.ondemand.com/terms_of_use.html",
+					"Privacy": "https://www.sap.com/corporate/en/legal/privacy.html",
+					"Terms of Use": "https://www.sap.com/corporate/en/legal/terms-of-use.html",
 					"Copyright": "https://www.sap.com/corporate/en/legal/copyright.html",
-					"Trademark": "https://www.sap.com/corporate/en/legal/copyright.html#trademark",
-					"Disclaimer": "http://help-legacy.sap.com/disclaimer-full"
+					"Trademark": "https://www.sap.com/corporate/en/legal/trademark.html",
+					"Disclaimer": "https://help.sap.com/viewer/disclaimer",
+					"License": "LICENSE.txt"
 				};
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
+				this.OLD_DOC_LINK_SUFFIX = ".html";
 
 				// Cache view reference
 				this._oView = this.getView();
 
 				this.setModel(oViewModel, "appView");
 
-				this.oTabNavigation = this._oView.byId("tabHeader");
+				// set the global header visibility data
+				this.setModel(oHeaderModel, "headerView");
+
 				this.oHeader = this._oView.byId("headerToolbar");
+
+				sTabNavigationId = (Device.system.phone) ? "selectHeader" : "tabHeader";
+				this._oView.byId(sTabNavigationId).setStashed(false);
+				this.oTabNavigation = this._oView.byId(sTabNavigationId);
+
+				// the unstashed control is added as **last child** => correct its position in parent container
+				this.oHeader.removeContent(this.oTabNavigation);
+				this.oHeader.insertContent(this.oTabNavigation, 2);
+
 				this.oRouter = this.getRouter();
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
+				this.oRouter.attachBypassed(this.onRouteNotFound.bind(this));
 
-				// apply content density mode to root view
-				this._oView.addStyleClass(this.getOwnerComponent().getContentDensityClass());
+				this.oRouter.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
+				this.oRouter.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
+				this.oRouter.getRoute("entityPropertiesLegacyRoute").attachPatternMatched({entityType: "properties"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityAggregationsLegacyRoute").attachPatternMatched({entityType: "aggregations"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityAssociationsLegacyRoute").attachPatternMatched({entityType: "associations"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityEventsLegacyRoute").attachPatternMatched({entityType:"events"}, this._forwardToAPIRef, this);
+				this.oRouter.getRoute("entityMethodsLegacyRoute").attachPatternMatched({entityType:"methods"}, this._forwardToAPIRef, this);
 
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
+
+				this._requestVersionInfo();
+
+				// attach to the afterMasterClose event of the splitApp to be able to toggle the hamburger button state on clicking anywhere
+				this.byId("splitApp").attachEvent("afterMasterClose", function (oEvent) {
+					oViewModel.setProperty("/bIsShownMaster", false);
+				}, this);
 			},
 
 			onBeforeRendering: function() {
@@ -64,6 +115,11 @@ sap.ui.define([
 			},
 
 			onAfterRendering: function() {
+				// apply content density mode to the body tag
+				// in order to get the controls in the static area styled correctly,
+				// such as Dialog and Popover.
+				jQuery(document.body).addClass(this.getOwnerComponent().getContentDensityClass());
+
 				Device.orientation.attachHandler(this._onOrientationChange, this);
 			},
 
@@ -71,36 +127,109 @@ sap.ui.define([
 				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
 
+			_onTopicOldRouteMatched: function(sId) {
+				if (sId) {
+					sId = this._trimOldDocSuffix(sId);
+				}
+				this.getRouter().navTo("topicId", {id: sId});
+			},
+
+			_onApiOldRouteMatched: function(sId) {
+
+				var sEntityType,
+					sEntityId,
+					aSplit;
+
+				if (sId) {
+
+					aSplit = sId.split("#");
+					if (aSplit.length === 2) {
+						sId = aSplit[0];
+						sEntityType = aSplit[1];
+
+						aSplit = sEntityType.split(":");
+						if (aSplit.length === 2) {
+							sEntityType = aSplit[0];
+							sEntityId = aSplit[1];
+						}
+					}
+
+					sId = this._trimOldDocSuffix(sId);
+
+					if (sEntityType === 'event') { // legacy keyword is singular
+						sEntityType = "events";
+					}
+				}
+
+				this.getRouter().navTo("apiId", {id: sId, entityType: sEntityType, entityId: sEntityId});
+			},
+
+			_trimOldDocSuffix: function(sLink) {
+				if (sLink && jQuery.sap.endsWith(sLink, this.OLD_DOC_LINK_SUFFIX)) {
+					sLink = sLink.slice(0, -this.OLD_DOC_LINK_SUFFIX.length);
+				}
+				return sLink;
+			},
+
+			_forwardToAPIRef: function(oEvent, oData) {
+				oData || (oData = {});
+				oData['id'] = oEvent.getParameter("arguments").id;
+				this.oRouter.navTo("apiId", oData);
+			},
+
+			_onEntityOldRouteMatched: function(oEvent) {
+				this.oRouter.navTo("entity", {
+					id: oEvent.getParameter("arguments").id
+				});
+			},
+
 			onRouteChange: function (oEvent) {
+
+				if (!this.oRouter.getRoute(oEvent.getParameter("name"))._oConfig.target) {
+					return;
+				}
+
 				var sRouteName = oEvent.getParameter("name"),
 					sTabId = this.oRouter.getRoute(sRouteName)._oConfig.target[0] + "Tab",
 					oTabToSelect = this._oView.byId(sTabId),
 					sKey = oTabToSelect ? oTabToSelect.getKey() : "home",
 					bPhone = Device.system.phone,
 					oViewModel = this.getModel("appView"),
+					oHeaderModel = this.getModel("headerView"),
 					bHasMaster = this.getOwnerComponent().getConfigUtil().hasMasterView(sRouteName),
 					oMasterView,
 					sMasterViewId;
 
 				this.oTabNavigation.setSelectedKey(sKey);
 
+				// the *default* subHeader-visibility value is platform-dependent
+				// but can be later overwritten for specific views (in their respective controller),
+				// this is why we have to reset to the default before entering any specific view)
+				oHeaderModel.setProperty("/bShowSubHeader", bPhone); // reset to default subHeader visibility
 				oViewModel.setProperty("/bHasMaster", bHasMaster);
 
-				if (bPhone && bHasMaster) { // on phone we need the id of the master view (for mavigation)
+				this._toggleTabHeaderClass();
+
+				if (bPhone && bHasMaster) { // on phone we need the id of the master view (for navigation)
 					oMasterView = this.getOwnerComponent().getConfigUtil().getMasterView(sRouteName);
 					sMasterViewId = oMasterView && oMasterView.getId();
 					oViewModel.setProperty("/sMasterViewId", sMasterViewId);
 				}
 
 				// hide master on route change
-				this.getView().byId("splitApp").hideMaster();
+				this.byId("splitApp").hideMaster();
 				oViewModel.setProperty("/bIsShownMaster", false);
+			},
+
+			onRouteNotFound: function () {
+				this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+				return;
 			},
 
 			toggleMaster: function(oEvent) {
 				var bPressed = oEvent.getParameter("pressed"),
 					bPhone = Device.system.phone,
-					oSplitApp = this.getView().byId("splitApp"),
+					oSplitApp = this.byId("splitApp"),
 					isShowHideMode = oSplitApp.getMode() === SplitAppMode.ShowHideMode,
 					isHideMode = oSplitApp.getMode() === SplitAppMode.HideMode,
 					sMasterViewId = this.getModel("appView").getProperty("/sMasterViewId"),
@@ -123,7 +252,13 @@ sap.ui.define([
 			},
 
 			navigateToSection : function (oEvent) {
-				var sKey = oEvent.getParameter("key");
+				var sKey = oEvent.getParameter("key"),
+					oItem;
+
+				if (!sKey) {
+					oItem = oEvent.getParameter("selectedItem");
+					oItem && (sKey = oItem.getKey());
+				}
 
 				oEvent.preventDefault();
 				if (sKey && sKey !== "home") {
@@ -138,12 +273,14 @@ sap.ui.define([
 				var sTargetText = oEvent.getParameter("item").getText(),
 					sTarget = this.MENU_LINKS_MAP[sTargetText];
 
-				if (sTargetText === "About") {
+				if (sTargetText === ABOUT_TEXT) {
 					this.aboutDialogOpen();
-				} else if (sTargetText === "Feedback") {
+				} else if (sTargetText === FEEDBACK_TEXT) {
 					this.feedbackDialogOpen();
+				} else if (sTargetText === CHANGE_VERSION_TEXT) {
+					this.onChangeVersionButtonPress();
 				} else if (sTarget) {
-					sap.m.URLHelper.redirect(sTarget, true);
+					URLHelper.redirect(sTarget, true);
 				}
 			},
 
@@ -151,6 +288,8 @@ sap.ui.define([
 				if (!this._oAboutDialog) {
 					this._oAboutDialog = new sap.ui.xmlfragment("aboutDialogFragment", "sap.ui.documentation.sdk.view.AboutDialog", this);
 					this._oView.addDependent(this._oAboutDialog);
+				} else {
+					this._oAboutDialog.getContent()[0].backToTop(); // reset the nav container to the first page
 				}
 				this._oAboutDialog.open();
 			},
@@ -166,7 +305,7 @@ sap.ui.define([
 
 				library._loadAllLibInfo("", "_getLibraryInfo","", function(aLibs, oLibInfos) {
 					var data = {};
-					var oLibInfo = new LibraryInfo();
+					var oLibInfo = library._getLibraryInfoSingleton();
 
 					for (var i = 0, l = aLibs.length; i < l; i++) {
 						aLibs[i] = oLibInfos[aLibs[i]];
@@ -228,7 +367,7 @@ sap.ui.define([
 			},
 
 			onReleaseDialogOpen: function (oEvent) {
-				var oLibInfo = new LibraryInfo(),
+				var oLibInfo = library._getLibraryInfoSingleton(),
 					sVersion = oEvent.getSource().data("version"),
 					sLibrary = oEvent.getSource().data("library"),
 					oNotesModel = new JSONModel(),
@@ -272,6 +411,99 @@ sap.ui.define([
 				oNavCon.back();
 			},
 
+			onChangeVersionButtonPress: function () {
+				this.getVersionSwitchDialog().open();
+			},
+
+			onCloseVersionDialog: function () {
+				this.getVersionSwitchDialog().close();
+			},
+
+			onChangeVersionDialogSearch: function (oEvent) {
+				var sSearchedValue = oEvent.getParameter("newValue"),
+					oFilter = new sap.ui.model.Filter("version", sap.ui.model.FilterOperator.Contains, sSearchedValue),
+					oBinding = sap.ui.getCore().byId("versionList").getBinding("items");
+
+				oBinding.filter([oFilter]);
+			},
+
+			onVersionItemPress: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("listItem"),
+					sSelectedVersion = oSelectedItem ? oSelectedItem.getTitle() : null;
+
+				sSelectedVersion && this._changeVersionURL(sSelectedVersion);
+			},
+
+			getVersionSwitchDialog: function () {
+				if (!this._oChangeVersionDialog) {
+					this._createVersionDialog();
+				}
+
+				return this._oChangeVersionDialog;
+			},
+
+			/**
+			 * Custom comparison function, which is used when sorting group titles by minor version in the change version dialog
+			 *
+			 * @param sGroupTitleA
+			 * @param sGroupTitleB
+			 * @returns {number}
+			 */
+			versionSwitchCustomComparator: function (sGroupTitleA, sGroupTitleB) {
+				return jQuery.sap.Version(sGroupTitleA).compareTo(jQuery.sap.Version(sGroupTitleB));
+			},
+
+			/**
+			 * Determines whether or not to show the version change button.
+			 *
+			 * @private
+			 */
+			_updateVersionSwitchVisibility: function() {
+				var oViewModel = this.getModel("appView"),
+					bPhoneSize = oViewModel.getProperty("/bPhoneSize");
+
+				// Version switch should not be shown on phone sizes or when no versions are found
+				oViewModel.setProperty("/bShowVersionSwitchInHeader", !bPhoneSize && !!this._aNeoAppVersions);
+				oViewModel.setProperty("/bShowVersionSwitchInMenu", bPhoneSize && !!this._aNeoAppVersions);
+			},
+
+			_createVersionDialog: function () {
+				this._oChangeVersionDialog = new sap.ui.xmlfragment("sap.ui.documentation.sdk.view.ChangeVersionDialog", this);
+				this._oChangeVersionDialog.setModel(this._buildVersionDialogModel());
+				this._oView.addDependent(this._oChangeVersionDialog);
+			},
+
+			_buildVersionDialogModel: function() {
+				var oChangeVersionDialogModel = new JSONModel();
+
+				oChangeVersionDialogModel.setSizeLimit(1000);
+				oChangeVersionDialogModel.setData(this._aNeoAppVersions);
+
+				return oChangeVersionDialogModel;
+			},
+
+			_changeVersionURL: function (sVersion) {
+				var sHref = window.location.href,
+					sOrigin = window.location.origin,
+					rPattern = /\d\.\d{2}\.\d{1,2}/, // Matches x.xx.x && x.xx.xx
+					bURLVersionExists = sHref.match(rPattern) !== null,
+					sNewHref;
+
+				// Version should be inserted after the location origin
+				// E.g: https://ui5.sap.com/1.50.5/#/api/sap.f.DynamicPage
+				// If there was already a version in the URL, just replace it with the new one
+				if (bURLVersionExists) {
+					sNewHref = sHref.replace(rPattern, sVersion);
+				} else {
+					sNewHref = sOrigin + "/" + sVersion + sHref.slice(sOrigin.length);
+				}
+
+				window.location.href = sNewHref;
+			},
+
+			/**
+			 * Opens a dialog to give feedback on the demo kit
+			 */
 			feedbackDialogOpen: function () {
 				var that = this;
 
@@ -284,6 +516,7 @@ sap.ui.define([
 					this._oFeedbackDialog.contextData = Fragment.byId("feedbackDialogFragment", "contextData");
 					this._oFeedbackDialog.ratingStatus = Fragment.byId("feedbackDialogFragment", "ratingStatus");
 					this._oFeedbackDialog.ratingStatus.value = 0;
+					this._oFeedbackDialog.sendButton = Fragment.byId("feedbackDialogFragment", "sendButton");
 					this._oFeedbackDialog.ratingBar = [
 						{
 							button : Fragment.byId("feedbackDialogFragment", "excellent"),
@@ -307,6 +540,7 @@ sap.ui.define([
 						}
 					];
 					this._oFeedbackDialog.reset = function () {
+						this.sendButton.setEnabled(false);
 						this.textInput.setValue("");
 						this.contextCheckBox.setSelected(true);
 						this.ratingStatus.setText("");
@@ -320,21 +554,29 @@ sap.ui.define([
 						});
 					};
 					this._oFeedbackDialog.updateContextData = function() {
+						var sVersion = that._getUI5Version(),
+							sUI5Distribution = that._getUI5Distribution();
+
 						if (this.contextCheckBox.getSelected()) {
-							this.contextData.setValue("Location: " + that._getCurrentPageRelativeURL() + "\n" + that._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
+							this.contextData.setValue("Location: " + that._getCurrentPageRelativeURL() + "\n" + sUI5Distribution + " Version: " + sVersion);
 						} else {
-							this.contextData.setValue(that._getUI5Distribution() + " Version: " + sap.ui.getVersionInfo().version);
+							this.contextData.setValue(sUI5Distribution + " Version: " + sVersion);
 						}
 					};
 
 					this._oFeedbackDialog.updateContextData();
 				}
 				this._oFeedbackDialog.updateContextData();
-				this._oFeedbackDialog.open();
+				if (!this._oFeedbackDialog.isOpen()) {
+					jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._oFeedbackDialog);
+					this._oFeedbackDialog.open();
+				}
 			},
 
+			/**
+			 * Event handler for the send feedback button
+			 */
 			onFeedbackDialogSend: function() {
-				var that = this;
 				var data = {};
 
 				if (this._oFeedbackDialog.contextCheckBox.getSelected()) {
@@ -359,6 +601,7 @@ sap.ui.define([
 					};
 				}
 
+				// send feedback
 				this._oFeedbackDialog.setBusyIndicatorDelay(0);
 				this._oFeedbackDialog.setBusy(true);
 
@@ -370,34 +613,48 @@ sap.ui.define([
 				}).
 				done(
 					function () {
-						sap.m.MessageBox.success('Success');
-						that._oFeedbackDialog.reset();
-						that._oFeedbackDialog.close();
-						that._oFeedbackDialog.setBusy(false);
-					}
+						MessageBox.success("Your feedback has been sent.", {title: "Thank you!"});
+						this._oFeedbackDialog.reset();
+						this._oFeedbackDialog.close();
+						this._oFeedbackDialog.setBusy(false);
+					}.bind(this)
 				).
 				fail(
-					function (err) {
-						sap.m.MessageBox.error('Fail',err);
-						that._oFeedbackDialog.setBusy(false);
-					}
+					function (oRequest, sStatus, sError) {
+						var sErrorDetails = sError; // + "\n" + oRequest.responseText;
+						MessageBox.error("An error occurred sending your feedback:\n" + sErrorDetails, {title: "Sorry!"});
+						this._oFeedbackDialog.setBusy(false);
+					}.bind(this)
 				);
 
 			},
 
+			/**
+			 * Event handler for the cancel feedback button
+			 */
 			onFeedbackDialogCancel: function () {
 				this._oFeedbackDialog.reset();
 				this._oFeedbackDialog.close();
 			},
 
+			/**
+			 * Event handler for the toggle context link
+			 */
 			onShowHideContextData: function () {
 				this._oFeedbackDialog.contextData.setVisible(!this._oFeedbackDialog.contextData.getVisible());
 			},
 
+			/**
+			 * Event handler for the context selection checkbox
+			 */
 			onContextSelect: function() {
 				this._oFeedbackDialog.updateContextData();
 			},
 
+			/**
+			 * Event handler for the rating to update the label and the data
+			 * @param {sap.ui.base.Event}
+			 */
 			onPressRatingButton: function(oEvent) {
 				var that = this;
 				var oPressedButton = oEvent.getSource();
@@ -430,20 +687,23 @@ sap.ui.define([
 				});
 
 				function setRatingStatus(sState, sText, iValue) {
-					var sendButton = Fragment.byId("feedbackDialogFragment", "sendButton");
 					that._oFeedbackDialog.ratingStatus.setState(sState);
 					that._oFeedbackDialog.ratingStatus.setText(sText);
 					that._oFeedbackDialog.ratingStatus.value = iValue;
 					if (iValue) {
-						sendButton.setEnabled(true);
+						that._oFeedbackDialog.sendButton.setEnabled(true);
 					} else {
-						sendButton.setEnabled(false);
+						that._oFeedbackDialog.sendButton.setEnabled(false);
 					}
 				}
 			},
 
 			onSearch : function (oEvent) {
-				this.getRouter().navTo("search", {searchParam: oEvent.getParameter("query")}, false);
+				var sQuery = oEvent.getParameter("query");
+				if (!sQuery) {
+					return;
+				}
+				this.getRouter().navTo("search", {searchParam: sQuery}, false);
 			},
 
 			onHeaderResize: function (oEvent) {
@@ -451,10 +711,15 @@ sap.ui.define([
 					bPhoneSize = Device.system.phone || iWidth < Device.media._predefinedRangeSets[Device.media.RANGESETS.SAP_STANDARD_EXTENDED].points[0];
 
 				this.getModel("appView").setProperty("/bPhoneSize", bPhoneSize);
+
+				this._toggleTabHeaderClass();
+				this._updateVersionSwitchVisibility();
 			},
 
 			_onOrientationChange: function() {
 				this.getModel("appView").setProperty("/bLandscape", Device.orientation.landscape);
+
+				this._toggleTabHeaderClass();
 			},
 
 			onToggleSearchMode : function(oEvent) {
@@ -462,6 +727,14 @@ sap.ui.define([
 				oViewModel = this.getModel("appView");
 
 				oViewModel.setProperty("/bSearchMode", bSearchMode);
+
+				this._toggleTabHeaderClass();
+
+				if (bSearchMode) {
+					jQuery.sap.delayedCall(0, this, function () {
+						this._oView.byId("searchControl").getAggregation("_searchField").getFocusDomRef().focus();
+					});
+				}
 			},
 
 			/**
@@ -496,10 +769,54 @@ sap.ui.define([
 				});
 			},
 
+			_requestVersionInfo: function () {
+				Promise.resolve(jQuery.ajax(sNeoAppJsonPath)).then(
+					// Success
+					function(oNeoAppJson) {
+						if (!(oNeoAppJson && oNeoAppJson.routes)) {
+							Log.warning("No versions were found");
+							return;
+						}
+
+						// Current version would be displayed for a second time as the last element,
+						// therefore we should skip it to avoid duplicate items in the dialog.
+						oNeoAppJson.routes.pop();
+
+						// Store needed data
+						this._aNeoAppVersions = oNeoAppJson.routes.map(function(oRoute) {
+							var oVersion = jQuery.sap.Version(oRoute.target.version),
+								oVersionSummary = {};
+
+							// Add the following properties, in order use them for grouping later
+							oVersionSummary.patchVersion = oVersion.getPatch(); // E.g: Extract 5 from "1.52.5"
+							oVersionSummary.groupTitle = oVersion.getMajor() + "." + oVersion.getMinor(); // E.g: Extract "1.52" from "1.52.5"
+							oVersionSummary.version = oVersion.toString();
+
+							return oVersionSummary;
+						});
+
+						// Make version select visible
+						this._updateVersionSwitchVisibility();
+					}.bind(this),
+					// Error
+					function() {
+						Log.warning("No neo-app.json was detected");
+					}
+				);
+			},
+
+			_getUI5Version: function () {
+				return this.getModel("versionData").getProperty("/version");
+			},
+
+			_getUI5VersionGav: function () {
+				return this.getModel("versionData").getProperty("/versionGav");
+			},
+
 			_getUI5Distribution: function () {
-				var oVersionInfo = sap.ui.getVersionInfo();
+				var sVersionGav = this._getUI5VersionGav();
 				var sUI5Distribution = "SAPUI5";
-				if (oVersionInfo && oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav)) {
+				if (sVersionGav && /openui5/i.test(sVersionGav)) {
 					sUI5Distribution = "OpenUI5";
 				}
 				return sUI5Distribution;
@@ -508,9 +825,30 @@ sap.ui.define([
 			_getCurrentPageRelativeURL: function () {
 				var parser = window.location;
 				return parser.pathname + parser.hash + parser.search;
+			},
+
+			_isToggleButtonVisible: function() {
+				var oViewModel = this.getModel("appView"),
+					bHasMaster = oViewModel.getProperty("/bHasMaster"),
+					bPhoneSize = oViewModel.getProperty("/bPhoneSize"),
+					bLandscape = oViewModel.getProperty("/bLandscape"),
+					bSearchMode = oViewModel.getProperty("/bSearchMode");
+
+				return bHasMaster && (bPhoneSize || !bLandscape) && !bSearchMode;
+			},
+
+			_toggleTabHeaderClass: function() {
+				var th = this.byId("tabHeader");
+				if (th.getMetadata().getName() === "sap.ui.core._StashedControl") {
+					return;
+				}
+				if (this._isToggleButtonVisible()) {
+					th.addStyleClass("tabHeaderNoLeftMargin");
+				} else {
+					th.removeStyleClass("tabHeaderNoLeftMargin");
+				}
 			}
 
 		});
-
 	}
 );

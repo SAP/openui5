@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.demokit.HexagonButton
-sap.ui.define(['jquery.sap.encoder'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'jquery.sap.encoder'],
+	function(jQuery/*, jQuerySapEncoder */) {
 	"use strict";
 
 

@@ -58,7 +58,7 @@ sap.ui.define(['jquery.sap.global'], function ($) {
 		 * Fills the aErrors parameter recursively
 		 * @param oOptions
 		 * @param aErrors
-		 * @param sPropertyPath
+		 * @param {string} sPropertyPath
 		 * @returns {*}
 		 * @private
 		 */

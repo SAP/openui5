@@ -10,7 +10,8 @@
 	<semantic:FullscreenPage
 		id="page"
 		showFooter="false"
-		title="{i18n>semanticFullscreenPageTitle}">
+		title="{i18n>semanticFullscreenPageTitle}"
+		busyIndicatorDelay="0">
 		<semantic:content>
 			<IconTabBar
 				stretchContentHeight="true"
@@ -19,8 +20,7 @@
 					<IconTabFilter
 						text="{i18n>IconTabFilterText}"
 						tooltip="{i18n>IconTabFilterTooltip}"
-						icon="sap-icon://list"
-						/>
+						icon="sap-icon://list"/>
 				</items>
 				<content>
 					<l:ResponsiveSplitter id="splitter" defaultPane="default">
@@ -52,65 +52,79 @@
 												<ToggleButton  type="Transparent" id="tbShell" press="onPressShell"  text="{i18n>ToggleButtonShellText}" />
 												<ToggleButton  type="Transparent" id="tbTile" press="onPressTile"  text="{i18n>ToggleButtonTileText}" />
 												<ToggleButton  type="Transparent" id="tbToolbar" press="onPressToolbar"  text="{i18n>ToggleButtonToolbarText}" />
-												<ToggleButton  icon="sap-icon://sort" tooltip="{i18n>ToggleButtonGroupTooltip}" press="sortClass"/>
 											</OverflowToolbar>
 										</headerToolbar>
 										<columns>
-											<Column>
-												<Text  text="{i18n>TableColumnPreviewText}" />
+											<Column width="100px">
+												<Text  text="{i18n>TableColumnPreviewText}"/>
+											</Column>
+											<Column width="50px">
 											</Column>
 											<Column>
-												<Text text="{i18n>TableColumnUI5ParameterText}" />
+												<Text text="{i18n>TableColumnUI5ParameterText}"/>
 											</Column>
 											<Column
 												minScreenWidth="Tablet"
 												demandPopin="true">
-												<Text text="{i18n>TableColumnHexValueText}" />
+												<Text text="{i18n>TableColumnHexValueText}"/>
 											</Column>
 											<Column
 												minScreenWidth="Tablet"
 												demandPopin="true">
-												<Text text="{i18n>TableColumnControlgroupText}" />
+												<Text text="{i18n>TableColumnControlgroupText}"/>
 											</Column>
 											<Column
 												minScreenWidth="Tablet"
 												demandPopin="true">
-												<Text text="{i18n>TableColumnCharacteristicText}" />
+												<Text text="{i18n>TableColumnCharacteristicText}"/>
 											</Column>
 											<Column
 												minScreenWidth="Tablet"
 												demandPopin="true">
-												<Text text="{i18n>TableColumnThemingText}" />
+												<Text text="{i18n>TableColumnThemingText}"/>
 											</Column>
 											<Column
 												minScreenWidth="Tablet"
 												demandPopin="true">
-												<FlexBox alignItems="Center" justifyContent="Start">
-												<items>
-												<Text text="{i18n>TableColumnClassText}" class="sapUiSmallMarginEnd"/>
-												<Button
-												id="showInformation"
-												icon="sap-icon://hint"
-												tooltip="{i18n>ToggleButtonGroupTooltip}"
-												press="onPressInformation"
-												class="sapUiHideOnPhone"/>
-												</items>
+												<FlexBox alignItems="Center" justifyContent="Start" renderType="Bare">
+													<items>
+														<Text text="{i18n>TableColumnClassText}" class="sapUiSmallMarginEnd"/>
+														<Button
+														type="Transparent"
+														id="showInformation"
+														icon="sap-icon://hint"
+														tooltip="{i18n>ToggleButtonInformationTooltip}"
+														press="onPressInformation"
+														class="sapUiHideOnTablet"/>
+														<ToggleButton class="sapUiHideOnTablet" type="Transparent" icon="sap-icon://group-2" tooltip="{i18n>ToggleButtonGroupTooltip}" press="sortClass"/>
+													</items>
 												</FlexBox>
 											</Column>
 										</columns>
 										<items>
-											<ColumnListItem id="oTableItem" vAlign="Middle">
-												<cells>
+											<ColumnListItem id="oTableItem" vAlign="Middle" tooltip="{description}">
+												<cells vAlign="Middle">
 													<mylib:ColorPreview id="ColorPreview" color="{colors}"/>
-													<Label text="{name}" design="Bold"/>
+													<Button
+														icon="sap-icon://copy"
+														type="Transparent"
+														press="onCopyCodeToClipboard"
+														class="sapUiTinyMarginBegin"/>
+													<Label
+														id="previewCopyCode"
+														text="{name}"
+														class="sapUiCopyCode"
+														design="Bold"/>
 													<Text text="{color}"/>
 													<Text text="{controlgroup}"/>
 													<Text text="{parameter}"/>
 													<Text text="{theming}"/>
-													<Text text= "{
-																path: 'class',
-																formatter: '.formatter.addClass'
-															}"/>
+													<ObjectNumber
+													number="{path: 'class',
+															formatter: '.formatter.addClass'}"
+        											state="{parts: [
+        											{path: 'class'}],
+														formatter:  '.formatter.weightState'}"/>
 												</cells>
 											</ColumnListItem>
 										</items>

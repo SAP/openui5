@@ -2,13 +2,26 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global"], function (jQuery) {
+sap.ui.define([
+	"jquery.sap.global", "./_AnnotationHelperBasics"
+], function (jQuery, _AnnotationHelperBasics) {
 	"use strict";
 
 	/*global Promise */
 
 	var oBoolFalse = { "Bool" : "false" },
 		oBoolTrue = { "Bool" : "true" },
+		// maps V2 sap:semantics value for a date part to corresponding V4 term relative to
+		// com.sap.vocabularies.Common.v1.
+		mDatePartSemantics2CommonTerm = {
+			"fiscalyear" : "IsFiscalYear",
+			"fiscalyearperiod" : "IsFiscalYearPeriod",
+			"year" : "IsCalendarYear",
+			"yearmonth" : "IsCalendarYearMonth",
+			"yearmonthday" : "IsCalendarDate",
+			"yearquarter" : "IsCalendarYearQuarter",
+			"yearweek" : "IsCalendarYearWeek"
+		},
 		// maps V2 filter-restriction value to corresponding V4 FilterExpressionType enum value
 		mFilterRestrictions = {
 			"interval" : "SingleInterval",
@@ -184,7 +197,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * @param {object} oProperty
 		 *   the property of the entity
 		 * @param {object} oEntitySet
-		 *   the entity set to which the corresponding V4 annotations needs to be added
+		 *   the entity set to which the corresponding V4 annotations need to be added
 		 */
 		addFilterRestriction : function (oProperty, oEntitySet) {
 			var aFilterRestrictions,
@@ -211,6 +224,37 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			});
 			oEntitySet["com.sap.vocabularies.Common.v1.FilterExpressionRestrictions"] =
 				aFilterRestrictions;
+		},
+
+		/**
+		 * Adds a V4 navigation restriction annotation with a filter restriction to the given entity
+		 * set for the given navigation property with the V2 annotation
+		 * <code>sap:filterable="false"</code>.
+		 *
+		 * @param {object} oNavigationProperty
+		 *   the navigation property of the entity with the V2 annotation
+		 *   <code>sap:filterable="false"</code>
+		 * @param {object} oEntitySet
+		 *   the entity set to which the corresponding V4 annotation needs to be added
+		 */
+		addNavigationFilterRestriction : function (oNavigationProperty, oEntitySet) {
+			var oNavigationRestrictions =
+					oEntitySet["Org.OData.Capabilities.V1.NavigationRestrictions"] || {};
+
+			oNavigationRestrictions.RestrictedProperties =
+				oNavigationRestrictions.RestrictedProperties || [];
+
+			oNavigationRestrictions.RestrictedProperties.push({
+				"FilterRestrictions" : {
+					"Filterable": oBoolFalse
+				},
+				"NavigationProperty" : {
+					"NavigationPropertyPath" : oNavigationProperty.name
+				}
+			});
+
+			oEntitySet["Org.OData.Capabilities.V1.NavigationRestrictions"] =
+				oNavigationRestrictions;
 		},
 
 		/**
@@ -257,6 +301,18 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 						sV4TypeList;
 
 					if (!sV2Semantics) {
+						return;
+					}
+
+					if (sV2Semantics === "url") {
+						oProperty["Org.OData.Core.V1.IsURL"] = oBoolTrue;
+						return;
+					}
+
+					if (sV2Semantics in mDatePartSemantics2CommonTerm) {
+						sV4Annotation = "com.sap.vocabularies.Common.v1."
+							+ mDatePartSemantics2CommonTerm[sV2Semantics];
+						oProperty[sV4Annotation] = oBoolTrue;
 						return;
 					}
 					aMatches = rSemanticsWithTypes.exec(sV2Semantics);
@@ -313,30 +369,75 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		},
 
 		/**
-		 * Adds corresponding unit annotation (Org.OData.Measures.V1.Unit or
-		 * Org.OData.Measures.V1.ISOCurrency)  to the given property based on the
-		 * sap:semantics V2 annotation of the referenced unit property.
+		 * Adds unit annotations to properties that have a <code>sap:unit</code> OData V2
+		 * annotation.
 		 *
-		 * @param {object} oValueProperty
-		 *   the value property for which the unit annotation needs to be determined
-		 * @param {object[]} aProperties
-		 *   the array of properties containing the unit
+		 * Iterates over the given schemas and searches in their complex and entity types for
+		 * properties with a <code>sap:unit</code> OData V2 annotation. Creates a corresponding
+		 * OData V4 annotation <code>Org.OData.Measures.V1.Unit</code> or
+		 * <code>Org.OData.Measures.V1.ISOCurrency</code> based on the
+		 * <code>sap:semantics</code> V2 annotation of the referenced unit property, unless such an
+		 * annotation already exists.
+		 *
+		 * @param {object[]} aSchemas
+		 *   the array of schemas
+		 * @param {sap.ui.model.odata.ODataMetaModel} oMetaModel
+		 *   the OData meta model
 		 */
-		addUnitAnnotation : function (oValueProperty, aProperties) {
-			var sUnitProperty = oValueProperty["sap:unit"],
-				i = Utils.findIndex(aProperties, sUnitProperty),
-				oUnit;
+		addUnitAnnotations : function (aSchemas, oMetaModel) {
+			/**
+			 * Process all types in the given array.
+			 * @param {object[]} [aTypes] A list of complex types or entity types.
+			 */
+			function processTypes(aTypes) {
+				(aTypes || []).forEach(function (oType) {
+					(oType.property || []).forEach(function (oProperty) {
+						var sAnnotationName,
+							sSemantics,
+							oTarget,
+							oUnitPath,
+							sUnitPath = oProperty["sap:unit"],
+							oUnitProperty;
 
-			if (i >= 0) {
-				oUnit = aProperties[i];
-				if (oUnit["sap:semantics"] === "unit-of-measure") {
-					oValueProperty["Org.OData.Measures.V1.Unit"] =
-						{ "Path" : oUnit.name };
-				} else if (oUnit["sap:semantics"] === "currency-code") {
-					oValueProperty["Org.OData.Measures.V1.ISOCurrency"] =
-						{ "Path" : oUnit.name };
-				}
+						if (sUnitPath) {
+							oUnitPath = {"Path" : sUnitPath};
+							oTarget = _AnnotationHelperBasics.followPath({
+								getModel : function () { return oMetaModel; },
+								getPath : function () { return oType.$path; }
+							}, oUnitPath);
+							if (oTarget && oTarget.resolvedPath) {
+								oUnitProperty = oMetaModel.getProperty(oTarget.resolvedPath);
+								sSemantics = oUnitProperty["sap:semantics"];
+								if (sSemantics === "unit-of-measure") {
+									sAnnotationName = "Org.OData.Measures.V1.Unit";
+								} else if (sSemantics === "currency-code") {
+									sAnnotationName = "Org.OData.Measures.V1.ISOCurrency";
+								} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
+									jQuery.sap.log.warning("Unsupported sap:semantics='"
+											+ sSemantics + "' at sap:unit='" + sUnitPath + "'; "
+											+ "expected 'currency-code' or 'unit-of-measure'",
+										oType.namespace + "." + oType.name + "/" + oProperty.name,
+										sLoggingModule);
+								}
+								// Do not overwrite an existing annotation
+								if (sAnnotationName && !(sAnnotationName in oProperty)) {
+									oProperty[sAnnotationName] = oUnitPath;
+								}
+							} else if (jQuery.sap.log.isLoggable(iWARNING, sLoggingModule)) {
+								jQuery.sap.log.warning("Path '" + sUnitPath
+										+ "' for sap:unit cannot be resolved",
+									oType.namespace + "." + oType.name + "/" + oProperty.name,
+									sLoggingModule);
+							}
+						}
+					});
+				});
 			}
+
+			aSchemas.forEach(function (oSchema) {
+				processTypes(oSchema.complexType);
+				processTypes(oSchema.entityType);
+			});
 		},
 
 		/**
@@ -453,6 +554,8 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			if (oEntityType.navigationProperty) {
 				oEntityType.navigationProperty.forEach(function (oNavigationProperty) {
 					if (oNavigationProperty["sap:filterable"] === "false") {
+						Utils.addNavigationFilterRestriction(oNavigationProperty, oEntitySet);
+						// keep deprecated conversion for compatibility reasons
 						Utils.addPropertyToAnnotation("sap:filterable", oEntitySet,
 							oNavigationProperty);
 					}
@@ -639,7 +742,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 * "com.sap.vocabularies.Communication.v1.PhoneType/fax".
 		 *
 		 * @param {string} sSemantics
-		 *   the sap:semantivs value ("tel" or "email")
+		 *   the sap:semantics value ("tel" or "email")
 		 * @param {string} sTypesList
 		 *   the comma-separated list of types for sap:semantics
 		 * @param {object} oProperty
@@ -841,19 +944,29 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 		 *   annotations "JSON"
 		 * @param {object} oData
 		 *   metadata "JSON"
+		 * @param {sap.ui.model.odata.ODataMetaModel} oMetaModel
+		 *   the metamodel
 		 */
-		merge : function (oAnnotations, oData) {
+		merge : function (oAnnotations, oData, oMetaModel) {
 			var aSchemas = oData.dataServices.schema;
 
 			if (!aSchemas) {
 				return;
 			}
 			aSchemas.forEach(function (oSchema, i) {
+				var sSchemaVersion;
+
 				// remove datajs artefact for inline annotations in $metadata
 				delete oSchema.annotations;
 
 				Utils.liftSAPData(oSchema);
 				oSchema.$path = "/dataServices/schema/" + i;
+				sSchemaVersion = oSchema["sap:schema-version"];
+				if (sSchemaVersion) {
+					oSchema["Org.Odata.Core.V1.SchemaVersion"] = {
+						String : sSchemaVersion
+					};
+				}
 				jQuery.extend(oSchema, oAnnotations[oSchema.namespace]);
 
 				Utils.visitParents(oSchema, oAnnotations, "association",
@@ -882,6 +995,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 								oAnnotations, oSchema, oEntityContainer));
 					});
 			});
+			Utils.addUnitAnnotations(aSchemas, oMetaModel);
 		},
 
 		/**
@@ -917,9 +1031,7 @@ sap.ui.define(["jquery.sap.global"], function (jQuery) {
 			aChildren.forEach(function (oChild) {
 				var oEntityType;
 
-				if (sTypeClass === "Property" && oChild["sap:unit"]) {
-					Utils.addUnitAnnotation(oChild, aChildren);
-				} else if (sTypeClass === "EntitySet") {
+				if (sTypeClass === "EntitySet") {
 					// calculated entity set annotations need to be added before V4
 					// annotations are merged
 					oEntityType = Utils.getObject(aSchemas, "entityType", oChild.entityType);

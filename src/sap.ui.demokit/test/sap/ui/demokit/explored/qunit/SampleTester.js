@@ -1,18 +1,18 @@
-/*global QUnit*/
+/*global QUnit,sinon*/
 
 sap.ui.define([
-		'sap/ui/core/Component',
-		'sap/ui/core/ComponentContainer',
-		'sap/ui/core/util/LibraryInfo',
-		'sap/ui/model/odata/ODataModel',
-		'sap/m/App',
-		'sap/m/Page',
-		'jquery.sap.sjax'
-	], function(Component, ComponentContainer, LibraryInfo, ODataModel, App, Page, sjax) {
+	"jquery.sap.global",
+	"sap/ui/core/Component",
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/core/util/LibraryInfo",
+	"sap/ui/model/odata/ODataModel",
+	"sap/m/App",
+	"sap/m/Page",
+	"sap/ui/thirdparty/sinon",
+	"sap/ui/thirdparty/sinon-qunit"
+], function(jQuery, Component, ComponentContainer, LibraryInfo, ODataModel, App, Page) {
 
 	"use strict";
-
-	// global QUnit, Flexie
 
 	var oLog = jQuery.sap.log.getLogger("SampleTester");
 
@@ -91,6 +91,11 @@ sap.ui.define([
 					name: sampleConfig.id
 				});
 
+				// spy on all resources loaded by the sample
+				var oAsyncRequestSpy = sinon.spy(jQuery, "ajax");
+				var oSyncRequestSpy = sinon.spy(jQuery.sap, "sjax");
+				var aSampleRequests = [];
+
 				// load and create content
 				oPage.addContent(
 					new ComponentContainer({
@@ -101,16 +106,69 @@ sap.ui.define([
 				// wait for the rendering
 				var done = assert.async();
 				setTimeout(function() {
-					assert.ok(true, sampleConfig.description || "sample " + sampleConfig.name);
+					// evaluate all sync and async calls triggered by this component
+					var sSampleUrl = jQuery.sap.getModulePath(sampleConfig.id) + "/";
+					oAsyncRequestSpy.getCalls().concat(oSyncRequestSpy.getCalls()).forEach(function (oCall) {
+						var sResourceUrl = (typeof oCall.args[0] === "string" ? oCall.args[0] : oCall.args[0].url),
+							iIndex = sResourceUrl.indexOf(sSampleUrl);
+
+						// only add requests from within the sample and no duplicates
+						if (iIndex >= 0 && aSampleRequests.indexOf(sResourceUrl) < 0) {
+							aSampleRequests.push(sResourceUrl);
+						}
+					});
+					oAsyncRequestSpy.restore();
+					oSyncRequestSpy.restore();
+
+					// check if all files loaded by the sample are listed in the sample's component
+					var oConfig = oComponent.getMetadata().getConfig();
+					aSampleRequests.forEach(function (sResourceUrl) {
+						// chop of ./ in the beginning
+						sResourceUrl = (sResourceUrl.indexOf("./") === 0 ? sResourceUrl.substr(2) : sResourceUrl);
+
+						// ignore local-specific i18n file names (like i18n_en_US.properties and i18n_en.properties)
+						if (sResourceUrl.split("/").pop().indexOf("i18n_") === 0) {
+							return;
+						}
+
+						// cross-check found files against the sample config
+						var bFound = oConfig.sample.files.some(function (sFile) {
+							var sFileUrl = jQuery.sap.getModulePath(sampleConfig.id, '/' + sFile);
+
+							return sFileUrl === sResourceUrl;
+						});
+
+						// check if file is not existing
+						if (!bFound) {
+							jQuery.ajax({
+								url: sResourceUrl,
+								async: false,
+								type: 'HEAD',
+								error: function() {
+									// file does not exist, ignore it
+									bFound = true;
+								}
+							});
+						}
+
+						// extract the local filename
+						var iIndex = sResourceUrl.indexOf(sSampleUrl),
+							sLocalResource = sResourceUrl.substr(iIndex + sSampleUrl.length);
+
+						assert.ok(bFound, "file used in sample '" + sLocalResource + "' should be listed in sample component");
+					});
+
 					done();
 				}, iTimeout);
 
+				// check if all files listed in the sample's component exist
 				var oConfig = oComponent.getMetadata().getConfig();
 				if ( oConfig && oConfig.sample && oConfig.sample.files ) {
 					for (var i = 0; i < oConfig.sample.files.length; i++) {
-						var sFile = oConfig.sample.files[i];
-						var sUrl = jQuery.sap.getModulePath(sampleConfig.id, '/' + oConfig.sample.files[i]);
-						assert.ok(jQuery.sap.syncHead(sUrl), "listed source file '" + sFile + "' should be downloadable");
+						var sFile = oConfig.sample.files[i],
+							sUrl = jQuery.sap.getModulePath(sampleConfig.id, '/' + sFile);
+
+						assert.ok(jQuery.sap.syncHead(sUrl), "listed sample component file '" + sFile + "' should be downloadable");
 					}
 				}
 			});

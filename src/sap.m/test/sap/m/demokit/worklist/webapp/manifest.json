@@ -1,5 +1,5 @@
 {
-	"_version": "1.4.0",
+	"_version": "1.8.0",
 
 	"sap.app": {
 		"id": "sap.ui.demo.worklist",
@@ -36,20 +36,16 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_hcb",
-			"sap_belize"
-		]
+		}
 	},
 
 	"sap.ui5": {
 		"rootView": {
 			"viewName": "sap.ui.demo.worklist.view.App",
 			"type": "XML",
+			"async": true,
 			"id": "app"
 		},
-
 		"dependencies": {
 			"minUI5Version": "1.42.0",
 			"libs": {

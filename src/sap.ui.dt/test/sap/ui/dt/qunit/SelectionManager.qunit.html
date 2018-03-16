@@ -1,0 +1,28 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Test Page for sap.ui.dt.SelectionManager</title>
+		<script src="../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].libs = 'sap.ui.layout, sap.m, sap.ui.dt';
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit-2') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+
+			// code coverage report only for sap.ui.rta namespace
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/SelectionManager.js]');
+
+			jQuery.sap.includeScript('./SelectionManager.qunit.js');
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture" style="position: fixed; top: auto; right: 0; bottom: 0; left: auto; width: 600px; height: 600px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);"></div>
+	</body>
+</html>

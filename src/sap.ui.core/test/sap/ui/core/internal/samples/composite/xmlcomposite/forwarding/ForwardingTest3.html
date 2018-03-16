@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible"
+					content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>CompositeSample - sap.ui.core</title>
+
+	<script id="sap-ui-bootstrap"
+		data-sap-ui-libs="sap.m"
+		data-sap-ui-theme="sap_belize"
+		data-sap-ui-bindingSyntax="complex"
+			src="../../../../../../../../../resources/sap-ui-core.js"
+		data-sap-ui-resourceroots='{"composites": "./composites"}'>
+	</script>
+
+	<script>
+		//jQuery.sap.require("sap.ui.mdc.model.GenericType");
+		jQuery.sap.require("sap.ui.core.XMLComposite");
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		var oModel1 = new sap.ui.model.json.JSONModel({});
+
+
+		jQuery.sap.declare("sap.mdc.MyToolbar");
+		jQuery.sap.declare("sap.mdc.Layout");
+
+		// InfoButton
+		var Layout = sap.ui.core.XMLComposite.extend("sap.mdc.Layout", {
+			metadata: {
+				designTime: true,
+				aggregations: {
+					items: {
+						type: "sap.ui.core.Item",
+						multiple: true
+					}
+				}
+			},
+			alias: "outerLayoutModel", // "this",
+			fragment: "composites.layout"
+		});
+		Layout.prototype.showContexts = function(oEvent) {
+			var oSource = oEvent.getSource();
+			var oModels = oSource.oPropagatedProperties.oModels;
+			var s = "";
+			for (var n in oModels) {
+				s += "\n" + n;
+			}
+			alert(s);
+		}
+
+		//toolbar
+		var MyToolbar = sap.ui.core.XMLComposite.extend("sap.mdc.MyToolbar", {
+			metadata: {
+				aggregations: {
+					buttons: {
+						type: "sap.m.Button",
+						multiple: true
+					}
+				},
+				defaultAggregation: "buttons"
+			},
+			alias: "innerToolbarModel", // "this",
+			fragment: "composites.toolbar3"
+		});
+		MyToolbar.prototype.showContexts = function(oEvent) {
+			var oSource = oEvent.getSource();
+			var oModels = oSource.oPropagatedProperties.oModels;
+			var s = "";
+			for (var n in oModels) {
+				s += "\n" + n;
+			}
+			alert(s);
+		}
+		var oLayout = new Layout({
+			items: [new sap.ui.core.Item({
+				text: "Show Models Button 1 (AggregationProxy)"
+			}), new sap.ui.core.Item({
+				text: "Show Models Button 2 (AggregationProxy)"
+			})]
+		});
+		oLayout.setModel(oModel1, "model1");
+		oLayout.placeAt("body");
+	</script>
+</head>
+
+<body id="body"
+				class="sapUiBody">
+</body>
+
+</html>

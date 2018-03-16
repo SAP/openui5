@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/wt/controller/HelloDialog"
+	"sap/ui/demo/walkthrough/controller/HelloDialog"
 ], function (UIComponent, JSONModel, HelloDialog) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.demo.wt.Component", {
+	return UIComponent.extend("sap.ui.demo.walkthrough.Component", {
 
 		metadata: {
 			manifest: "json"
@@ -32,9 +32,15 @@ sap.ui.define([
 			this.getRouter().initialize();
 		},
 
+		exit : function() {
+			this._helloDialog.destroy();
+			delete this._helloDialog;
+		},
+
 		openHelloDialog : function () {
 			this._helloDialog.open();
 		}
+
 	});
 
 });

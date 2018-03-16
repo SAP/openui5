@@ -67,6 +67,10 @@ sap.ui.define([
 			}
 		},
 
+		onAlternateToggle: function(oEvent) {
+			this.byId("table").setAlternateRowColors(oEvent.getParameter("pressed"));
+		},
+
 		onSelectionModeChange: function(oEvent) {
 			var oTable = this.byId("table");
 			var sKey = oEvent.getParameter("selectedItem").getKey();

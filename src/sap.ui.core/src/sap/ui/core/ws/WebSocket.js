@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/EventProvider'
 		var oUri = new URI(sUrl);
 
 		// create base URI to resolve absolute URL
-		var oBaseUri = new URI();
+		var oBaseUri = new URI(document.baseURI);
 
 		// clear search string to remove parameters from the current page
 		oBaseUri.search('');

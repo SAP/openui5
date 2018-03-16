@@ -302,7 +302,7 @@
 
 		var treeBinding = bindings[0];
 
-		// Filter for node with name containing 'in', only one expected: Gina Rush
+		// Filter for node with name containing 'in', three matches expected: Inga Horst, Catherine Platte and Gina Rush
 		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "in");
 		treeBinding.filter(oFilter1);
 
@@ -348,7 +348,7 @@
 		var treeBinding = bindings[0];
 		oModel.addBinding(treeBinding);
 
-		// Filter for node with name containing 'in'
+		// Filter for node with name containing 'alla'
 		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "alla");
 		treeBinding.filter(oFilter1);
 
@@ -605,10 +605,73 @@
 		assert.equal(oModel.getProperty("name", context), "Frank Wallace", "TreeBinding node content");
 	});
 
+	QUnit.test("TreeBinding single filter ignoring model size limit", function(assert) {
+		setup();
+		oModel.setSizeLimit(1);
+		createTreeBinding("/orgStructure");
+
+		var treeBinding = bindings[0];
+
+		// Filter for node with name containing 'Gina', only one expected: Gina Rush
+		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "Gina");
+		treeBinding.filter(oFilter1);
+
+		var filteredContext = treeBinding.getRootContexts();
+		assert.equal(filteredContext.length, 1, "TreeBinding rootContexts length");
+
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		assert.equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length");
+
+		var nodeContexts2 = treeBinding.getNodeContexts(nodeContexts1[0]);
+		assert.equal(nodeContexts2.length, 1, "TreeBinding nodeContexts length");
+
+		// Gina is the third child of node "Peter Cliff". If the size limit is ignored correctly, Gina should be found.
+		assert.equal(oModel.getProperty(nodeContexts2[0].getPath()).name, "Gina Rush", "TreeBinding filter value");
+	});
+
 	QUnit.test("Bind aggregation", function(assert) {
 		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
+		});
+
+		var treeBinding = bindings[0],
+			contexts,
+			context;
+
+		assert.equal(treeBinding.getPath(), "/orgStructure2", "TreeBinding path");
+		assert.equal(treeBinding.getModel(), oModel, "TreeBinding model");
+
+		contexts = treeBinding.getRootContexts();
+		assert.equal(contexts.length, 3, "TreeBinding rootContexts length");
+
+		context = contexts[0];
+		assert.equal(oModel.getProperty("name", context), "Inga Horst", "TreeBinding root content");
+
+		context = contexts[1];
+		assert.equal(oModel.getProperty("name", context), "Tom Bay", "TreeBinding root content");
+
+		context = contexts[2];
+		assert.equal(oModel.getProperty("name", context), "Catherine Platte", "TreeBinding root content");
+
+		contexts = treeBinding.getNodeContexts(contexts[0]);
+		assert.equal(contexts.length, 3, "TreeBinding nodeContexts length");
+
+		context = contexts[0];
+		assert.equal(oModel.getProperty("name", context), "John Wallace", "TreeBinding node content");
+
+		context = contexts[1];
+		assert.equal(oModel.getProperty("name", context), "Frank Wallace", "TreeBinding node content");
+
+		context = contexts[2];
+		assert.equal(oModel.getProperty("name", context), "Gina Rush", "TreeBinding node content");
+	});
+
+	QUnit.test("Bind aggregation with arrayNames param", function(assert) {
+		setup();
+		createTreeBinding("/orgStructure2", null, [], {
+			displayRootNode: true,
+			arrayNames: ["children"]
 		});
 
 		var treeBinding = bindings[0],
@@ -764,6 +827,54 @@
 		assert.equal(aChildContexts[2].getProperty("name"), "Gina Rush", "Inga child node[2] after sorting is: Gina Rush");
 	});
 
+	QUnit.test("TreeBinding single filter with array structure", function(assert) {
+		setup();
+		createTreeBinding("/orgStructure2", null, [], {
+			displayRootNode: false,
+			// arrayNames: ["children"]
+		});
+
+		var treeBinding = bindings[0];
+
+		// Filter for node with name containing 'in', three matches expected: Inga Horst, Catherine Platte and Gina Rush
+		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "in");
+		treeBinding.filter(oFilter1);
+
+		var filteredContext = treeBinding.getRootContexts();
+		assert.equal(filteredContext.length, 2, "TreeBinding rootContexts length"); // Inga and Catherine
+
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		assert.equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length"); // Gina
+
+		assert.equal(oModel.getProperty(filteredContext[0].getPath()).name, "Inga Horst", "TreeBinding filter value");
+		assert.equal(oModel.getProperty(filteredContext[1].getPath()).name, "Catherine Platte", "TreeBinding filter value");
+		assert.equal(oModel.getProperty(nodeContexts1[0].getPath()).name, "Gina Rush", "TreeBinding filter value");
+	});
+
+	QUnit.test("TreeBinding single filter with array structure and arrayNames param", function(assert) {
+		setup();
+		createTreeBinding("/orgStructure2", null, [], {
+			displayRootNode: false,
+			arrayNames: ["children"]
+		});
+
+		var treeBinding = bindings[0];
+
+		// Filter for node with name containing 'in', three matches expected: Inga Horst, Catherine Platte and Gina Rush
+		var oFilter1 = new sap.ui.model.Filter("name", sap.ui.model.FilterOperator.Contains, "in");
+		treeBinding.filter(oFilter1);
+
+		var filteredContext = treeBinding.getRootContexts();
+		assert.equal(filteredContext.length, 2, "TreeBinding rootContexts length"); // Inga and Catherine
+
+		var nodeContexts1 = treeBinding.getNodeContexts(filteredContext[0]);
+		assert.equal(nodeContexts1.length, 1, "TreeBinding nodeContexts length"); // Gina
+
+		assert.equal(oModel.getProperty(filteredContext[0].getPath()).name, "Inga Horst", "TreeBinding filter value");
+		assert.equal(oModel.getProperty(filteredContext[1].getPath()).name, "Catherine Platte", "TreeBinding filter value");
+		assert.equal(oModel.getProperty(nodeContexts1[0].getPath()).name, "Gina Rush", "TreeBinding filter value");
+	});
+
 	QUnit.test("Check public API calls for tree with >1000 nodes", function (assert) {
 		//create a tree with 2 levels and 200 * 200 nodes
 		createData(200);
@@ -793,6 +904,23 @@
 		var oContext = aChildContexts[128];
 		assert.ok(oContext, "level 1 child is available");
 		assert.equal(oBinding.getChildCount(oContext), 0, "getChildCount(oContext) returns the correct number of child nodes (0)");
+	});
+
+	QUnit.test("getChildCount without length cache", function (assert) {
+		//create a tree with 2 levels and 200 * 200 nodes
+		createData(200);
+		createTreeBinding("/root", null, [], {
+			displayRootNode: false
+		});
+
+		var oBinding = bindings[0];
+
+		assert.equal(oBinding.getChildCount(), 200, "getChildCount() returns the correct value (200)");
+
+		//check if child contexts are returned correctly
+		var oContext = oBinding.getRootContexts(0, 1)[0];
+
+		assert.equal(oBinding.getChildCount(oContext), 200, "getChildCount(oContext) returns the correct number of child nodes (200)");
 	});
 
 	QUnit.module("Unsupported Filters", {

@@ -1,6 +1,6 @@
 .myColorPreview {
 	display:block;
-	padding: 8px;
+	padding: 12px;
 }
 .myColorPreviewBorder {
 	border-width:1px;
@@ -11,4 +11,7 @@
 }
 .padding .sapMPanelContent {
 	padding: 0rem;
+}
+.sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberText {
+	    font-size: 0.875rem;
 }

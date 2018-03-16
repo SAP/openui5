@@ -9,10 +9,12 @@ sap.ui.define(['sap/ui/base/Exception'],
 
 
 	/**
-	 * ParseException class
+	 * Create a new ParseException.
 	 *
-	 * This exception is thrown, when a parse error occurs while converting a
-	 * string value to a specific property type in the model.
+	 * @class Instances of this exception are thrown when an error occurs while
+	 * converting a string value to a specific property type in the model.
+	 *
+	 * @param {string} message Message explaining how the validation failed
 	 * @alias sap.ui.model.ParseException
 	 * @public
 	 */

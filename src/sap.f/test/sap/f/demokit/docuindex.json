@@ -1,78 +1,91 @@
 {
-  "explored": {
-    "entitiesDefaults": {
-      "appComponent": "CA-UI5-CTR",
-      "formFactors": "ML"
-    },
-    "samplesRef": {
-      "namespace": "sap.f.sample",
-      "ref": "test-resources/sap/f/demokit/sample"
-    },
-    "entities": [
-      {
-        "id": "sap.f.Avatar",
-        "name": "Avatar",
-        "category": "Display",
-        "since": "1.46",
-        "samples": ["sap.f.sample.Avatar"]
-      },
-      {
-        "id": "sap.f.DynamicPage",
-        "name": "Dynamic Page",
-        "category": "Container",
-        "since": "1.42",
-        "samples": ["sap.f.sample.DynamicPageFreeStyle", "sap.f.sample.DynamicPageListReport", "sap.f.sample.DynamicPageAnalyticalTable"]
-      },
-      {
-        "id": "sap.f.FlexibleColumnLayout",
-        "name": "Flexible Column Layout",
-        "category": "Container",
-        "since": "1.46",
-        "samples": ["sap.f.sample.FlexibleColumnLayoutSimple"]
-      },
-      {
-        "id": "sap.f.semantic.SemanticPage",
-        "name": "Semantic Page (sap.f)",
-        "category": "Container",
-        "since": "1.46",
-        "samples": ["sap.f.sample.SemanticPage", "sap.f.sample.SemanticPageFreeStyle"]
-      }
-    ],
-    "samples": [
-      {
-        "id": "sap.f.sample.DynamicPageFreeStyle",
-        "name": "Dynamic Page Freestyle Example",
-        "description": "Dynamic Page freestyle example with a responsive <code>sap.m.Table</code> in the content area, showing that each control can be placed in the title and the header content areas."
-      },
-      {
-        "id": "sap.f.sample.DynamicPageListReport",
-        "name": "Dynamic Page with sap.m.Table",
-        "description": "Dynamic Page containing a sap.m.Table in the content area and filtering options in the header (SAP Fiori 2.0 List Report floorplan)."
-      },
-      {
-        "id": "sap.f.sample.DynamicPageAnalyticalTable",
-        "name": "Dynamic Page with Analytical Table",
-        "description": "Dynamic Page containing an Analytical Table in the content area and filters in the header aligned with the SAP Fiori 2 List Report floorplan."
-      },
-      {  "id": "sap.f.sample.FlexibleColumnLayoutSimple",
-        "name": "Flexible Column Layout",
-        "description": "Clicking on a link in a column opens the next column."
-      },
-      {
-        "id": "sap.f.sample.Avatar",
-        "name": "Avatar",
-        "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
-      },
-      {
-        "id": "sap.f.sample.SemanticPage",
-        "name": "Semantic Page using Draft Indicator",
-        "description": "This sample demonstrates the use of a <code>DraftIndicator</code> in the footer area."
-      },
-      {
-        "id": "sap.f.sample.SemanticPageFreeStyle",
-        "name": "Semantic Page - Freestyle Sample",
-        "description": "This sample demonstrates a <code>SemanticPage</code> with all semantic-specific actions both in the title and in the footer areas."
-      }
-    ]
-  }
+	"explored": {
+	  "entitiesDefaults": {
+		"appComponent": "CA-UI5-CTR",
+		"formFactors": "ML"
+	  },
+	  "samplesRef": {
+		  "namespace": "sap.f.sample",
+		  "ref": "test-resources/sap/f/demokit/sample"
+		},
+	  "entities": [
+		{
+		  "id": "sap.f.Avatar",
+		  "name": "Avatar",
+		  "category": "Display",
+		  "since": "1.46",
+		  "samples": ["sap.f.sample.Avatar"]
+		},
+		{
+		  "id": "sap.f.DynamicPage",
+		  "name": "Dynamic Page",
+		  "category": "Container",
+		  "since": "1.42",
+		  "samples": [
+			"sap.f.sample.DynamicPageFreeStyle",
+			"sap.f.sample.DynamicPageAnalyticalTable"
+		  ]
+		},
+		{
+		  "id": "sap.f.FlexibleColumnLayout",
+		  "name": "Flexible Column Layout",
+		  "category": "Container",
+		  "since": "1.46",
+		  "samples": [
+			"sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
+			"sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
+			"sap.f.sample.FlexibleColumnLayoutSimple"
+		  ]
+		},
+		{
+		  "id": "sap.f.semantic.SemanticPage",
+		  "name": "Semantic Page (sap.f)",
+		  "category": "Container",
+		  "since": "1.46",
+		  "samples": ["sap.f.sample.SemanticPage", "sap.f.sample.SemanticPageFreeStyle"]
+		}
+	  ],
+	  "samples": [
+		{
+		  "id": "sap.f.sample.DynamicPageFreeStyle",
+		  "name": "Dynamic Page Freestyle Example",
+		  "description": "Dynamic Page freestyle example with a responsive <code>sap.m.Table</code> in the content area, showing that each control can be placed in the title and the header content areas."
+		},
+		{
+		  "id": "sap.f.sample.DynamicPageAnalyticalTable",
+		  "name": "Dynamic Page with Analytical Table",
+		  "description": "Dynamic Page containing an Analytical Table in the content area and filters in the header aligned with the SAP Fiori 2 List Report floorplan."
+		},
+		{
+		  "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",
+		  "name": "Flexible Column Layout with Routing and One Initial Column",
+		  "description": "Flexible Column Layout as an app with routing that starts with a single initial column."
+		},
+		{
+		  "id": "sap.f.sample.FlexibleColumnLayoutWithTwoColumnStart",
+		  "name": "Flexible Column Layout with Routing and Two Initial Columns",
+		  "description": "Flexible Column Layout as an app with routing that starts with two initial columns."
+		},
+		{
+		  "id": "sap.f.sample.FlexibleColumnLayoutSimple",
+		  "name": "Flexible Column Layout (with Event Bus)",
+		  "description": "Clicking on a link in a column opens the next column."
+		},
+		{
+		  "id": "sap.f.sample.Avatar",
+		  "name": "Avatar",
+		  "description": "This sample demonstrates different combinations of types, shapes, and sizes of the Avatar."
+		},
+		{
+		  "id": "sap.f.sample.SemanticPage",
+		  "name": "Semantic Page using Draft Indicator",
+		  "description": "This sample demonstrates the use of a <code>DraftIndicator</code> in the footer area."
+		},
+		{
+		  "id": "sap.f.sample.SemanticPageFreeStyle",
+		  "name": "Semantic Page - Freestyle Sample",
+		  "description": "This sample demonstrates a <code>SemanticPage</code> with all semantic-specific actions both in the title and in the footer areas."
+		 }
+		]
+	}
 }

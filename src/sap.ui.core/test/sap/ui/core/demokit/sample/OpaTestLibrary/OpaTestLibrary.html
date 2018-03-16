@@ -1,0 +1,77 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>OPA5 Test Library Sample</title>
+
+		<!--add test library resource root-->
+		<script
+			id="sap-ui-bootstrap" src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-resourceroots='{
+				"appUnderTest.test": "./",
+				"testLibrary": "./testLibrary"
+			}'>
+		</script>
+
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-css");
+			jQuery.sap.require("sap.ui.thirdparty.qunit");
+			jQuery.sap.require("sap.ui.qunit.qunit-junit");
+			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+			QUnit.config.autostart = false;
+
+			// require test library modules as well
+			sap.ui.require([
+				"sap/ui/test/Opa5",
+				"sap/ui/test/opaQunit",
+				"appUnderTest/test/pageObjects/Item",
+				"testLibrary/pageObjects/List"
+			], function (Opa5, opaTest, Item, List) {
+
+				// configure test library
+				Opa5.extendConfig({
+					viewNamespace: "view.",
+					autoWait: true,
+					testLibs: {
+						testLibrary: {
+							listViewName: "Main"
+						}
+					}
+				});
+
+				QUnit.module("List Journey");
+
+				opaTest("Should filter list", function (Given, When, Then) {
+					Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+					// directly start using test library page objects
+					When.onTheListPage
+						.iSetTheFilter("Sample1");
+
+					Then.onTheListPage
+						.theResultListIsVisible(2);
+				});
+
+				opaTest("Should navigate to details", function (Given, When, Then) {
+					When.onTheListPage
+						.iNavigateFromListItem("name", "Sample12");
+
+					// you can also define and use test-specific page objects
+					Then.onTheItemPage
+						.theTitleIsCorrect("Sample12")
+						.and
+						.iTeardownMyApp();
+				});
+
+				QUnit.start();
+			});
+		</script>
+
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>

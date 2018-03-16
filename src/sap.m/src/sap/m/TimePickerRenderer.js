@@ -3,9 +3,12 @@
  */
 
 // Provides default renderer for control sap.m.TimePicker
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/LabelEnablement' ],
-	function(jQuery, Renderer, InputBaseRenderer, ValueStateSupport, LabelEnablement) {
+sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/library'],
+	function(Renderer, InputBaseRenderer, coreLibrary) {
 		"use strict";
+
+		// shortcut for sap.ui.core.ValueState
+		var ValueState = coreLibrary.ValueState;
 
 		/**
 		 * TimePicker renderer.
@@ -46,9 +49,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		TimePickerRenderer.writeDecorations = function(oRm, oControl) {
 			var aClasses,
 				mAttributes,
-				oRb,
-				sText = "",
-				sTooltip;
+				oRb = oControl._oResourceBundle,
+				sText = oRb.getText("TIMEPICKER_SCREENREADER_TAG");
 
 			if (oControl.getEnabled() && oControl.getEditable()) {
 				aClasses = [VALUE_HELP_ICON_INNER_CLASS];
@@ -62,23 +64,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 				oRm.write("</div>");
 			}
 
-			oRb = oControl._oResourceBundle;
-
-			if (!oControl.getProperty("placeholder") && this._hasLabelReferencing(oControl)) {
-				/* Default (timeformat) placeholder in conjunction with timepicker labelled by other control -
-				 add the time format to the aria-desc text, because the placeholder won't be read */
-				sText = oRb.getText("TIMEPICKER_WITH_PH_SCREENREADER_TAG", oControl._getFormat());
-			} else {
-				sText = oRb.getText("TIMEPICKER_SCREENREADER_TAG");
-			}
-
-			sTooltip = ValueStateSupport.enrichTooltip(oControl, oControl.getTooltip_AsString());
-			if (sTooltip) {
-				// add tooltip to description because it is not read by JAWS from title-attribute if a label is assigned
-				sText = sTooltip + ". " + sText;
-			}
-
-			// invisible span with description for keyboard navigation
+			// invisible span with custom role
 			oRm.write('<span id="' + oControl.getId() + '-descr" style="visibility: hidden; display: none;">');
 			oRm.writeEscaped(sText);
 			oRm.write('</span>');
@@ -97,66 +83,81 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './InputBaseRenderer
 		};
 
 		/**
+		 * Write the id of the inner input
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 */
+		TimePickerRenderer.writeInnerId = function(oRm, oControl) {
+			oRm.writeAttribute("id", oControl.getId() + "-" + this.getInnerSuffix());
+		};
+
+		/**
+		 * Define own inner ID suffix.
+		 * @returns {string} The own inner ID suffix
+		 */
+		TimePickerRenderer.getInnerSuffix = function() {
+			return "inner";
+		};
+
+		/**
+		 * Returns aria accessibility role for the control.
+		 *
+		 * @override
+		 * @returns {String}
+		 */
+		TimePickerRenderer.getAriaRole = function () {
+			return "combobox";
+		};
+
+		/**
 		 * Writes the accessibility properties for the control.
 		 *
-		 * See {@link sap.m.InputBase#writeAccessibilityState}.
+		 * See {@link sap.m.InputBase#getAccessibilityState}.
 		 * @override
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
 		 * @param {sap.m.TimePicker} oControl An object representation of the control that should be rendered
 		 */
-		TimePickerRenderer.writeAccessibilityState = function (oRm, oControl) {
+		TimePickerRenderer.getAccessibilityState = function (oControl) {
 			var sAriaLabelledBy = this.getAriaLabelledBy(oControl),
-				mProps = {
-					role: "combobox",
-					multiline: false,
-					autocomplete: "none",
-					expanded: false,
-					haspopup: true,
-					owns: oControl.getId() + "-sliders",
-					describedby: {
-						value: oControl.getId() + "-descr",
-						append: true
-					}
-				};
+				sAriaDescribedBy = this.getAriaDescribedBy(oControl),
+				mAccessibilityState = oControl.getAccessibilityInfo();
 
-			//When time picker is labelled, the placeholder is not read by AT, so connect additional hidden element
-			if (sAriaLabelledBy && this._hasLabelReferencing(oControl) && oControl.getProperty("placeholder")) {
-				mProps.labelledby = {
+			if (oControl.getValueState() === ValueState.Error) {
+				mAccessibilityState.invalid = true;
+			}
+
+			if (sAriaLabelledBy) {
+				mAccessibilityState.labelledby = {
 					value: sAriaLabelledBy.trim(),
 					append: true
 				};
 			}
 
-			if (oControl.getValueState() == sap.ui.core.ValueState.Error) {
-				mProps.invalid = true;
+			if (sAriaDescribedBy) {
+				mAccessibilityState.describedby = {
+					value: sAriaDescribedBy.trim(),
+					append: true
+				};
 			}
 
-			oRm.writeAccessibilityState(oControl, mProps);
+			return mAccessibilityState;
 		};
 
 		/**
-		 * Overrides rendering of aria-labelledby.
+		 * Returns the inner aria describedby ids for the accessibility.
 		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
+		 * @override
+		 * @param {sap.ui.core.Control} oControl an object representation of the control.
+		 * @returns {String}
 		 */
-		TimePickerRenderer.renderAriaLabelledBy = function (oRm, oControl) {
-			//When time picker is labelled, the placeholder is not read by AT, so render additional hidden element
-			if (this._hasLabelReferencing(oControl) && oControl.getProperty("placeholder")) {
-				InputBaseRenderer.renderAriaLabelledBy(oRm, oControl);
+		TimePickerRenderer.getAriaDescribedBy = function (oControl) {
+			var oCustomRoleHiddenTextId = oControl.getId() + "-descr ";
+			if (this.getDescribedByAnnouncement(oControl)) {
+				oCustomRoleHiddenTextId += oControl.getId() + "-describedby";
 			}
-		};
-
-		/**
-		 * Determines if the given control is labelled by another
-		 * @param oControl the control to check
-		 * @returns {boolean} true if there is at least one other control that labels <code>oControl</control>, false otherwise
-		 * @private
-		 */
-		TimePickerRenderer._hasLabelReferencing = function(oControl) {
-			return LabelEnablement.getReferencingLabels(oControl).length > 0;
+			return oCustomRoleHiddenTextId;
 		};
 
 		return TimePickerRenderer;
-
 	}, /* bExport= */ true);

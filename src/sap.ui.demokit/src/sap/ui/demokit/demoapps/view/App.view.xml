@@ -25,12 +25,6 @@
 										titleStyle="H1"
 										text="{i18n>pageTitle}"
 										class="sapUiMediumMarginBottom"/>
-									<Text
-										text="{i18n>introText1}"
-										class="sapUiSmallMarginBottom"/>
-									<Text
-										text="{i18n>introText2}"
-										class="sapUiMediumMarginBottom"/>
 									<Button
 										id="download"
 										text="{i18n>downloadButtonText}"
@@ -38,6 +32,11 @@
 										press="onDownloadButtonPress"
 										icon="sap-icon://download">
 									</Button>
+									<Link
+											text="{i18n>linkText}"
+											target="_blank"
+											href="#docs/guide/a3ab54ecf7ac493b91904beb2095d208.html"
+											class="sapUiTinyMarginTop readMoreLink" />
 								</l:VerticalLayout>
 								<Image
 									src="resources/sap/ui/demokit/demoapps/img/demoAppsTeaser.png"
@@ -64,6 +63,7 @@
 					items="{/demoApps}"
 					title="{i18n>downloadDialogTitle}"
 					liveChange="onSearch"
+					growingThreshold="100"
 					confirm="onDownloadPress">
 					<InputListItem
 						visible="{= !!${config} }"

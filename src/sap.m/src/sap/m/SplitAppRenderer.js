@@ -2,25 +2,28 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './SplitContainerRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, SplitContainerRenderer, Renderer) {
+sap.ui.define(['./SplitContainerRenderer', 'sap/ui/core/Renderer', 'sap/m/library'],
+	function(SplitContainerRenderer, Renderer, library) {
 	"use strict";
 
-/**
-	 * SplitApp renderer.
-	 * @namespace
-	 */
+	// shortcut for sap.m.BackgroundHelper
+	var BackgroundHelper = library.BackgroundHelper;
+
+	/**
+		 * SplitApp renderer.
+		 * @namespace
+		 */
 	var SplitAppRenderer = {
 	};
 
 	var SplitAppRenderer = Renderer.extend(SplitContainerRenderer);
 
 	SplitAppRenderer.renderAttributes = function(oRm, oControl){
-		sap.m.BackgroundHelper.addBackgroundColorStyles(oRm, oControl.getBackgroundColor(),  oControl.getBackgroundImage());
+		BackgroundHelper.addBackgroundColorStyles(oRm, oControl.getBackgroundColor(),  oControl.getBackgroundImage());
 	};
 
 	SplitAppRenderer.renderBeforeContent = function(oRm, oControl){
-		sap.m.BackgroundHelper.renderBackgroundImageTag(oRm, oControl, "sapMSplitContainerBG",  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
+		BackgroundHelper.renderBackgroundImageTag(oRm, oControl, "sapMSplitContainerBG",  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
 	};
 
 	return SplitAppRenderer;

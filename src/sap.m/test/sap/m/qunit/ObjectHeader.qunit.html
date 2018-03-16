@@ -217,6 +217,10 @@
 		assert.equal(jQuery.sap.byId(ohBasic._oTitleArrowIcon.getId()).css("cursor"), "pointer", "The title arrow should have pointer cursor.");
 	});
 
+	QUnit.test("Title rendered as active but it's not a link", function(assert) {
+		assert.equal(ohe.$("title").attr("href"), undefined, "Title attribute href is not a link.");
+	});
+
 	QUnit.test("NumberRendered", function(assert) {
 
 		assert.notEqual(jQuery.sap.domById(ohBasicId + "-number"), null, "Number should be rendered.");
@@ -455,10 +459,11 @@
 
 	QUnit.test("Background is transparent", function(assert) {
 
-		var transparentCssString = sap.ui.Device.browser.firefox || sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge ? "transparent" : "rgba(0, 0, 0, 0)";
-
 		assert.equal(jQuery("#ohc1.sapMOHBgTransparent").length, 1, "Transparent background style should be set.");
-		assert.equal(jQuery.sap.byId("ohc1").css("background-color"), transparentCssString, "Background color is transparent");
+
+		// in some browsers css("background-color") instead of "transparent" returns "rgba(0, 0, 0, 0)"
+		var bBackgroundTransparent = (jQuery.sap.byId("ohc1").css("background-color") == "transparent") || (jQuery.sap.byId("ohc1").css("background-color") == "rgba(0, 0, 0, 0)");
+		assert.ok(bBackgroundTransparent, "Background color is transparent");
 	});
 
 	QUnit.test("Background is solid", function(assert) {
@@ -1044,6 +1049,7 @@
 
 	var imageOH = new sap.m.ObjectHeader("imageOH", {
 		icon : "../images/action.png",
+		iconTooltip: "test tooltip",
 		intro : "On behalf of John Smith",
 		title : "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis luctus, turpis vitae porttitor hendrerit, elit dui mollis neque, id suscipit lorem mi in sem.",
 		number : "3.624",
@@ -1056,9 +1062,10 @@
 	QUnit.module("Exiting");
 
 	QUnit.test("TestIconExit", function(assert) {
-
+		var $sImg = iconOH.$("img");
 		assert.ok(!(iconOH === null), "iconOH is not null");
 		assert.ok(sap.ui.getCore().byId("iconOH"), "Icon is found in UI5 Core");
+		assert.ok(!$sImg.attr("title"), "Icon has no tooltip");
 		assert.ok(sap.ui.getCore().byId("iconOH-flag"), "Flag icon is found in UI5 Core");
 		assert.ok(sap.ui.getCore().byId("iconOH-favorite"), "Favorite icon is found in UI5 Core");
 		iconOH.destroy();
@@ -1067,9 +1074,10 @@
 	});
 
 	QUnit.test("TestImageExit", function(assert) {
-
+		var $sImg = imageOH.$("img");
 		assert.ok(!(imageOH === null), "imageOH is not null");
 		assert.ok(sap.ui.getCore().byId("imageOH"), "Image is found in UI5 Core");
+		assert.equal($sImg.attr("title"), "test tooltip", "Image has tooltip");
 		imageOH.destroy();
 		assert.ok(!sap.ui.getCore().byId("imageOH"), "Image is removed from UI5 Core");
 	});
@@ -1457,8 +1465,39 @@
 			oObjectHeader.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-			assert.ok(sap.ui.getCore().byId("draft"), "marker draft should be rendered.");
-			assert.ok(sap.ui.getCore().byId("draft"), "marker unsaved should be rendered.");
+			assert.ok(jQuery.sap.domById("draft"), "marker draft should be rendered.");
+			assert.ok(jQuery.sap.domById("unsaved"), "marker unsaved should be rendered.");
+
+			oObjectHeader.destroy();
+		});
+
+		QUnit.test("Test _hasMarkers function", function(assert) {
+			var oObjectHeader = new sap.m.ObjectHeader({
+				title : "Markers agregation",
+				markers: [
+						new sap.m.ObjectMarker({id: "draft", type: sap.m.ObjectMarkerType.Draft}),
+						new sap.m.ObjectMarker({id: "unsaved", type: sap.m.ObjectMarkerType.Unsaved})
+						]
+			});
+
+			// System under test
+			oObjectHeader.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to false");
+
+			oObjectHeader.setShowMarkers(true);
+			oObjectHeader.setMarkFavorite(true);
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with markers aggregation and showMarkers property set to true and markFavourite set to true");
+
+			oObjectHeader.removeAggregation("markers");
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return true for - ObjectHeader with no markers aggregation and showMarkers property set to true and markFavourite set to true");
+
+			oObjectHeader.setMarkFavorite(false);
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation and showMarkers property set to true and markFavourite set to false");
+
+			oObjectHeader.setShowMarkers(false);
+			assert.ok(oObjectHeader._hasMarkers(), "_hasMarker will return false for - ObjectHeader with no markers aggregation and showMarkers property set to false and markFavourite set to false");
 
 			oObjectHeader.destroy();
 		});

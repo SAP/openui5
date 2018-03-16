@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.HBox.
-sap.ui.define(['jquery.sap.global', './FlexBox', './library'],
-	function(jQuery, FlexBox, library) {
+sap.ui.define(['./FlexBox', './library', './HBoxRenderer'],
+	function(FlexBox, library, HBoxRenderer) {
 	"use strict";
 
 
@@ -32,11 +32,12 @@ sap.ui.define(['jquery.sap.global', './FlexBox', './library'],
 	 */
 	var HBox = FlexBox.extend("sap.m.HBox", /** @lends sap.m.HBox.prototype */ { metadata : {
 
-		library : "sap.m"
+		library : "sap.m",
+		designtime: "sap/m/designtime/HBox.designtime"
 	}});
 
 
 
 	return HBox;
 
-}, /* bExport= */ true);
+});

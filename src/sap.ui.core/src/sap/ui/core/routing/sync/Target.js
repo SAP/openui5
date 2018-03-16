@@ -134,7 +134,7 @@ sap.ui.define(['jquery.sap.global'], function(jQuery) {
 		 * Validates the target options, will also be called from the route but route will not log errors
 		 *
 		 * @param oParentInfo
-		 * @param bLog
+		 * @param {boolean} bLog
 		 * @returns {boolean}
 		 * @private
 		 */

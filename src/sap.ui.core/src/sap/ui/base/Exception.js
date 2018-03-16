@@ -14,7 +14,7 @@ sap.ui.define(function() {
 	 * should be thrown in cases, where the exception can, and should, be handled
 	 * within the framework, instead of causing the application to exit.
 	 *
-	 * The try/catch statement in JavaScript can not catch specific exceptions, so
+	 * The try/catch statement in JavaScript cannot catch specific exceptions, so
 	 * when catching internal exceptions you should make sure to rethrow other errors:
 	 *
 	 * try {
@@ -29,6 +29,7 @@ sap.ui.define(function() {
 	 *     }
 	 * }
 	 *
+	 * @param {string} message Message explaining what went wrong
 	 * @alias sap.ui.base.Exception
 	 */
 	var Exception = function(message) {

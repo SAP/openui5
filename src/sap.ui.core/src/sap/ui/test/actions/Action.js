@@ -27,14 +27,14 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 		metadata : {
 			properties: {
 				/**
-				* @since 1.38
-				* Use this only if the target property or the default of the action does not work for your control.
-				* The id suffix of the DOM Element the press action will be executed on.
-				* For most of the controls you do not have to specify this, since the Control Adapters will find the correct DOM Element.
-				* But some controls have multiple DOM elements that could be target of your Action.
-				* Then you should set this property.
-				* For a detailed documentation of the suffix see {@link sap.ui.core.Element#$}
-			*/
+				 * @since 1.38
+				 * Use this only if the target property or the default of the action does not work for your control.
+				 * The id suffix of the DOM Element the press action will be executed on.
+				 * For most of the controls you do not have to specify this, since the Control Adapters will find the correct DOM Element.
+				 * But some controls have multiple DOM elements that could be target of your Action.
+				 * Then you should set this property.
+				 * For a detailed documentation of the suffix see {@link sap.ui.core.Element#$}
+				 */
 				idSuffix: {
 					type: "string"
 				}
@@ -123,15 +123,28 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 		},
 
 		_tryOrSimulateFocusin: function ($DomRef, oControl) {
+			var isAlreadyFocused = $DomRef.is(":focus");
+			var bFireArtificialEvents;
 			var oDomRef = $DomRef[0];
-			$DomRef.focus();
-			var bWasFocused = $DomRef.is(":focus");
 
-			if (!bWasFocused) {
-				$.sap.log.debug("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
+			if (isAlreadyFocused || (Device.browser.msie && (Device.browser.version < 12))) {
+				// If the event is already focused, make sure onfocusin event of the control will be properly fired when executing this action,
+				// otherwise the next blur will not be able to safely remove the focus.
+				// In IE11, if the focus action fails and focusin is dispatched, onfocusin will be called twice
+				// to avoid this, directly dispatch the artificial events
+				bFireArtificialEvents = true;
+			} else {
+				$DomRef.focus();
+				// This check will only return false if you have the focus in the dev tools console,
+				// or a background tab, or the browser is not focused at all. We still want onfocusin to work
+				var bWasFocused = $DomRef.is(":focus");
+				// do not fire the artificial events in this case since we would recieve onfocusin twice
+				bFireArtificialEvents = !bWasFocused;
 			}
 
-			if (!bWasFocused) {
+			if (bFireArtificialEvents) {
+				$.sap.log.debug("Control " + oControl + " could not be focused - maybe you are debugging?", this._sLogPrefix);
+
 				this._createAndDispatchFocusEvent("focusin", oDomRef);
 				this._createAndDispatchFocusEvent("focus", oDomRef);
 				this._createAndDispatchFocusEvent("activate", oDomRef);
@@ -146,49 +159,32 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 
 		/**
 		 * Create the correct event object for a mouse event
-		 * @param sName the mouse event name
-		 * @param oDomRef the domref on that the event is going to be triggered
+		 * @param {string} sName the mouse event name
+		 * @param {DOMElement} oDomRef the domref on that the event is going to be triggered
 		 * @private
 		 */
 		_createAndDispatchMouseEvent: function (sName, oDomRef) {
-			var oOffset = $(oDomRef).offset(),
-				x = oOffset.x,
-				y = oOffset.y;
-
+			// ignore scrolled down stuff (client X, Y not set)
+			// and assume stuff is over the whole screen (screen X, Y not set)
 			// See file jquery.sap.events.js for some insights to the magic
-			var oMouseEventObject = {
-				bubbles: true,
-				cancelable: true,
-				identifier: 1,
-				// Well offset should be fine here
-				pageX: x,
-				pageY: y,
-				// ignore scrolled down stuff in OPA
-				clientX: x,
-				clientY: y,
-				// Assume stuff is over the whole screen
-				screenX: x,
-				screenY: y,
-				target: oDomRef,
-				radiusX: 1,
-				radiusY: 1,
-				rotationAngle: 0,
-				// left mouse button
-				button: 0,
-				// include the type so jQuery.event.fixHooks can copy properties properly
-				type: sName
-			};
-
+			var iLeftMouseButtonIndex = 0;
 			var oMouseEvent;
 			if (Device.browser.phantomJS || (Device.browser.msie && (Device.browser.version < 12))) {
 				oMouseEvent = document.createEvent("MouseEvent");
-				oMouseEvent.initMouseEvent(sName, true, true, window, 0,
-					oMouseEventObject.screenX, oMouseEventObject.screenY,
-					oMouseEventObject.clientX, oMouseEventObject.clientY,
-					false, false, false, false,
-					oMouseEventObject.button, oDomRef);
-			}  else {
-				oMouseEvent = new MouseEvent(sName, oMouseEventObject);
+				oMouseEvent.initMouseEvent(sName, true, true, window, 0, 0, 0, 0, 0,
+					false, false, false, false, iLeftMouseButtonIndex, oDomRef);
+			} else {
+				oMouseEvent = new MouseEvent(sName, {
+					bubbles: true,
+					cancelable: true,
+					identifier: 1,
+					target: oDomRef,
+					radiusX: 1,
+					radiusY: 1,
+					rotationAngle: 0,
+					button: iLeftMouseButtonIndex,
+					type: sName // include the type so jQuery.event.fixHooks can copy properties properly
+				});
 			}
 			oDomRef.dispatchEvent(oMouseEvent);
 		},
@@ -215,4 +211,4 @@ function ($, ManagedObject, QUnitUtils, Opa5, Device) {
 		_sLogPrefix : "sap.ui.test.actions"
 	});
 
-}, /* bExport= */ true);
+});

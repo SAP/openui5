@@ -1,0 +1,50 @@
+{
+	"@odata.context" : "../$metadata#SOLineItemList(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber)))",
+	"@odata.count" : "6",
+	"value" : [
+		{
+			"SalesOrderID" : "0500000005",
+			"ItemPosition" : "0000000020",
+			"Note" : "EPM DG: SO ID 0500000005 Item 0000000020",
+			"NoteLanguage" : "E",
+			"CurrencyCode" : "EUR",
+			"GrossAmount" : "16.66",
+			"NetAmount" : "14.00",
+			"TaxAmount" : "2.66",
+			"DeliveryDate" : "2016-06-26T22:00:00Z",
+			"Quantity" : "2",
+			"QuantityUnit" : "EA",
+			"ProductID" : "HT-1061",
+			"SOITEM_2_PRODUCT" : {
+				"ProductID" : "HT-1061",
+				"TypeCode" : "PR",
+				"Category" : "Mice",
+				"Name" : "Speed-Computermaus",
+				"NameLanguage" : "DE",
+				"Description" : "Optical USB, PS/2 Mouse, Color: Blue, 3-button-functionality (incl. Scroll wheel)",
+				"DescriptionLanguage" : "EN",
+				"SupplierID" : "0100000026",
+				"SupplierName" : "Vente Et Réparation de Ordinateur",
+				"TaxTarifCode" : 1,
+				"MeasureUnit" : "EA",
+				"WeightMeasure" : "0.090",
+				"WeightUnit" : "KG",
+				"CurrencyCode" : "EUR",
+				"Price" : "7.00",
+				"Width" : "7.000",
+				"Depth" : "15.000",
+				"Height" : "3.100",
+				"DimUnit" : "CM",
+				"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+				"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+				"PRODUCT_2_BP" : {
+					"@odata.etag" : "W/\"20160613065313.0000000\"",
+					"BusinessPartnerID" : "0100000026",
+					"CompanyName" : "Vente Et Réparation de Ordinateur",
+					"LegalForm" : "S.A.R.L.",
+					"PhoneNumber" : "1012697341",
+					"BP_2_CONTACT" : []
+				}
+			}
+		}]
+}

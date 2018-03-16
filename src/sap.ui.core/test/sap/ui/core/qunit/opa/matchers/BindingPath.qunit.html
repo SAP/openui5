@@ -73,15 +73,13 @@
 					});
 
 					QUnit.test("Should throw an error on an incorrect binding path", function (assert) {
-						// System under Test
-						this.oBindingPath.setPath("");
+						var oErrorSpy = sinon.spy(this.oBindingPath._oLogger, "error");
 
-						// Assert
-						assert.throws(function () {
-							this.oBindingPath.isMatching(this.oList.getItems()[0]);
-						}.bind(this),
-						new Error("ManagedObject sap.ui.test.matchers.BindingPath#__path0 the path needs to be a not empty string"),
-						"Threw the error");
+						this.oBindingPath.setPath("");
+						this.oBindingPath.isMatching(this.oList.getItems()[0]);
+
+						sinon.assert.calledWithMatch(oErrorSpy, /The binding path property is required but not defined/);
+						oErrorSpy.restore();
 					});
 
 					QUnit.test("Should not match an incorrect binding path despite of using correct model name", function (assert) {
@@ -91,7 +89,7 @@
 						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
 						// Assert
 						assert.ok(!bResult, "Did not match because the binding path is incorrect");
-						sinon.assert.calledWith(this.oSpy, sinon.match(/does not have a matching binding context/))
+						sinon.assert.calledWithMatch(this.oSpy, "has a binding context for the model JSONModel but its binding path is /0 when it should be /1");
 					});
 
 					QUnit.test("Should match an correct model name and binding path", function (assert) {
@@ -110,7 +108,7 @@
 						var bResult = this.oBindingPath.isMatching(this.oList.getItems()[0]);
 						// Assert
 						assert.ok(!bResult, "Did not match because the model name is incorrect");
-						sinon.assert.calledWith(this.oSpy, sinon.match(/ has no binding context for the model/))
+						sinon.assert.calledWithMatch(this.oSpy, /has no binding context for the model Model/);
 					});
 
 					QUnit.test("Should not match no model name despite of using correct binding path", function (assert) {

@@ -107,4 +107,46 @@
 		assert.equal(this.contentView.byId("ObjectPageLayout").getHeaderContent().length, 0, "contents length is 0 after destroying HeaderContent");
 	});
 
+	QUnit.module("Dynamic Header State Preserved On Scroll", {
+		beforeEach: function () {
+			this.oObjectPageWithPreserveHeaderStateOnScroll = new sap.uxap.ObjectPageLayout({
+				preserveHeaderStateOnScroll: true
+			});
+			this.oObjectPageWithPreserveHeaderStateOnScroll.setHeaderTitle(new sap.uxap.ObjectPageDynamicHeaderTitle());
+			this.oObjectPageWithPreserveHeaderStateOnScroll.addHeaderContent(new sap.m.Text({text: "test"}));
+			this.oObjectPageWithPreserveHeaderStateOnScroll.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oObjectPageWithPreserveHeaderStateOnScroll.destroy();
+			this.oObjectPageWithPreserveHeaderStateOnScroll = null;
+		}
+	});
+
+	QUnit.test("Dynamic Header rendered within Header Wrapper", function (assert) {
+		var $headerWrapper = this.oObjectPageWithPreserveHeaderStateOnScroll.$("headerTitle"),
+			sHeaderId = this.oObjectPageWithPreserveHeaderStateOnScroll._getHeaderContent().getId();
+
+		assert.equal($headerWrapper.find("#" + sHeaderId).length, 1, "The Header is in the Header Title Wrapper");
+	});
+
+	QUnit.test("Dynamic Pin button is hidden", function (assert) {
+		var $pinButtonDom = this.oObjectPageWithPreserveHeaderStateOnScroll._getHeaderContent().getAggregation("_pinButton").getDomRef();
+
+		assert.equal($pinButtonDom, null, "The Dynamic Header Pin Button not rendered");
+	});
+
+	QUnit.module("Header content initialization");
+
+	QUnit.test("setShowHeaderContent before rendering", function (assert) {
+
+		var oObjectPage = new sap.uxap.ObjectPageLayout({
+			showHeaderContent: false
+		});
+
+		assert.equal(oObjectPage.getShowHeaderContent(), false, "The value is applied");
+
+		oObjectPage.destroy();
+	});
+
 }(jQuery, QUnit));

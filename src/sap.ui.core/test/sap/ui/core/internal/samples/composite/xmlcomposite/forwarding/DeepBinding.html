@@ -1,0 +1,97 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>CompositeSample - sap.ui.core</title>
+
+	<script id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_belize" data-sap-ui-bindingSyntax="complex"
+	 src="../../../../../../../../../resources/sap-ui-core.js" data-sap-ui-resourceroots='{"composites": "./composites"}'>
+
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		jQuery.sap.require("sap.ui.core.Item");
+		jQuery.sap.require("composites.DeepBinding");
+		jQuery.sap.require("composites.MySelect");
+		jQuery.sap.require("composites.MySelect2");
+		jQuery.sap.require("composites.MySelect3");
+		jQuery.sap.require("composites.MySelectWrapper");
+		jQuery.sap.require("sap.m.Panel");
+
+		// create some dummy JSON data
+		var data = {
+			names: [
+				{ firstName: "Christian", lastName: "1st" },
+				{ firstName: "Petra", lastName: "2nd" },
+				{ firstName: "Thomas", lastName: "3rd" },
+				{ firstName: "John", lastName: "4th" },
+				{ firstName: "Maria", lastName: "5th" }
+			]
+		};
+		var model = new sap.ui.model.json.JSONModel();
+		model.setData(data);
+		sap.ui.getCore().setModel(model);
+
+		var oDeepBinding = new composites.DeepBinding({ id: "deepBinding" });
+		oDeepBinding.setText("Hello !");
+		oDeepBinding.bindAggregation("fcItems", {
+			path: "/names",
+			template: new sap.m.Panel({
+				headerText: "{$this>/text}",
+				content: new sap.m.Button({ text: "{lastName}" })
+			})
+		});
+		var oPanelDeepBinding = new sap.m.Panel({ expandable: true, expanded: false, content: oDeepBinding, headerText: "Ex A. Deep template example" });
+
+		var oMySelect = new composites.MySelect({ id: "mySelect" });
+		oMySelect.bindAggregation("myItems", {
+			path: "/names",
+			template: new sap.ui.core.Item({
+				text: "{lastName}"
+			})
+		});
+		var oPanelMySelect = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelect, headerText: "Ex B. One level list forwarding" });
+
+		var oMySelect2 = new composites.MySelect2({ id: "mySelect2" });
+		oMySelect2.bindAggregation("myItems", {
+			path: "/names",
+			template: new sap.ui.core.Item({
+				text: "{lastName}"
+			})
+		});
+		var oPanelMySelect2 = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelect2, headerText: "Ex C. One level list forwarding with SelectList" });
+
+		var oMySelect3 = new composites.MySelect3({ id: "mySelect3" });
+		oMySelect3.bindAggregation("myItems", {
+			path: "/names",
+			template: new sap.ui.core.Item({
+				text: "{lastName}"
+			})
+		});
+		var oPanelMySelect3 = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelect3, headerText: "Ex D. One level (in reality two) list forwarding with Select" });
+
+		var oMySelectWrapper = new composites.MySelectWrapper({ id: "mySelectWrapper" });
+		oMySelectWrapper.bindAggregation("fcItems", {
+			path: "/names",
+			template: new sap.ui.core.Item({
+				text: "{lastName}"
+			})
+		});
+		var oPanelMySelectWrapper = new sap.m.Panel({ expandable: true, expanded: false, content: oMySelectWrapper, headerText: "Ex E. Two level list forwarding" });
+
+		oPanelDeepBinding.placeAt("content");
+		oPanelMySelect.placeAt("content");
+		oPanelMySelect2.placeAt("content");
+		oPanelMySelect3.placeAt("content");
+		oPanelMySelectWrapper.placeAt("content");
+	</script>
+</head>
+
+<body id="content" class="sapUiBody">
+</body>
+
+</html>

@@ -15,6 +15,7 @@
         <script>
             new sap.m.RangeSlider({
                 range: [0, 100],
+                showAdvancedTooltip: true,
                 liveChange: function (oControlEvent) {
                     jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
                 },
@@ -25,6 +26,7 @@
 
             new sap.m.RangeSlider({
                 showHandleTooltip: false,
+                showAdvancedTooltip: true,
                 range: [50,100],
                 min: 50,
                 max: 150,
@@ -39,6 +41,7 @@
             new sap.m.RangeSlider("RangeSlider1", {
                 width: "50%",
                 min: 100,
+                showAdvancedTooltip: true,
                 max: 399,
                 range: [100, 200],
                 showHandleTooltip: false
@@ -47,6 +50,7 @@
             new sap.m.RangeSlider("RangeSlider2", {
                 width: "80%",
                 min: -100,
+                showAdvancedTooltip: true,
                 max: 200,
                 range: [-50, 100],
                 showHandleTooltip: false,
@@ -59,6 +63,7 @@
             }).placeAt("content1");
 
             var oRangeSlider3 = new sap.m.RangeSlider("RangeSlider3", {
+                showAdvancedTooltip: true,
                 width: "80%"
             });
             oRangeSlider3.setRange([20, 80]);
@@ -66,6 +71,7 @@
 
             new sap.m.RangeSlider("RangeSlider4", {
                 width: "70%",
+                showAdvancedTooltip: true,
                 enabled: false,
                 liveChange: function(oControlEvent) {
                     jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
@@ -79,6 +85,7 @@
             new sap.m.RangeSlider("RangeSlider5", {
                 width: "100%",
                 step: 5,
+                showAdvancedTooltip: true,
                 min: -50,
                 max: 50,
                 range: [-45, 45],
@@ -93,6 +100,7 @@
 
             new sap.m.RangeSlider("RangeSlider6", {
                 width: "100%",
+                showAdvancedTooltip: true,
                 step: 5,
                 min: 4,
                 max: 27,
@@ -109,6 +117,7 @@
             new sap.m.RangeSlider("RangeSlider7", {
                 width: "50%",
                 step: 2,
+                showAdvancedTooltip: true,
                 min: 1,
                 max: 17,
                 range: [2, 15],
@@ -125,6 +134,7 @@
                 width: "100%",
                 step: 20,
                 min: -200000,
+                showAdvancedTooltip: true,
                 max: 200000,
                 liveChange: function(oControlEvent) {
                     jQuery.sap.log.info("Event fired: 'liveChange' range property to " + oControlEvent.getParameter("range") + " on " + this);
@@ -139,6 +149,7 @@
 
             new sap.m.RangeSlider({
                 width: "50%",
+                showAdvancedTooltip: true,
                 min: -100,
                 max: 100,
                 range: [-35, 40],
@@ -154,6 +165,7 @@
 
             new sap.m.RangeSlider({
                 width: "100%",
+                showAdvancedTooltip: true,
                 min: -100,
                 max: 100,
                 range: [-35, 40],
@@ -170,6 +182,7 @@
 
             new sap.m.RangeSlider({
                 width: "100%",
+                showAdvancedTooltip: true,
                 min: -100,
                 max: 100,
                 range: [-35.5, 40],
@@ -186,6 +199,7 @@
 
             new sap.m.RangeSlider({
                 width: "100%",
+                showAdvancedTooltip: true,
                 min: -10,
                 max: 10,
                 range: [-5.05, 3],

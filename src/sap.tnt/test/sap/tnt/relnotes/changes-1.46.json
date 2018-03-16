@@ -5,20 +5,25 @@
       {
         "id": "23959d181f477d89f79c8638010b9f2897bfd255",
         "type": "FEATURE",
-        "text": " new demo apps landing page",
+        "text": "new demo apps landing page",
         "references": []
       },
       {
         "id": "512325029f1d4ddc3df257a7767f4d2c66605b87",
         "type": "FIX",
-        "text": " sap.tnt.ToolPage: Issue with resizing in combi devices now corrected",
+        "text": "sap.tnt.ToolPage: Issue with resizing in combi devices now corrected",
         "references": []
       },
       {
         "id": "64ffb1aef46d7e506a93de5e45b1a62f21940622",
         "type": "FIX",
-        "text": " sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
-        "references": []
+        "text": "sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670554554"
+          }
+        ]
       }
     ]
   }

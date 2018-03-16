@@ -1,0 +1,120 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8" >
+		<title>Modularization</title>
+		<!-- Commented out as it is not relevant for base modules -->
+		<!-- <script src="../shared-config.js"></script> -->
+
+		<!-- minimal bootstrap code starts here -->
+		<script src="../../../../../resources/sap/ui/thirdparty/baseuri.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
+		<script src="../../../../../resources/ui5loader.js"></script>
+		<script src="../../../../../resources/ui5loader-autoconfig.js" id="sap-ui-bootstrap"
+			data-sap-ui-resource></script>
+		<!-- end of minimal bootstrap code -->
+
+		<link href="../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen" />
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script>
+		sap.ui._ui5loader.config({
+			async: 'mixed',
+			paths: {
+				'local': './'
+			}
+		});
+		QUnit.config.autostart = false;
+		QUnit.config.reorder = true;
+		sap.ui.require([
+			"local/polyfillsForTests",
+
+			// sap/base/*
+			"local/base/assert.qunit",
+			"local/base/log.qunit",
+			"local/base/storage.qunit",
+
+			// sap/base/encoding/*
+			"local/base/encoding/encodeCSS.qunit",
+			"local/base/encoding/encodeJS.qunit",
+			"local/base/encoding/encodeURL.qunit",
+			"local/base/encoding/encodeURLParameters.qunit",
+			"local/base/encoding/encodeXML.qunit",
+			"local/base/encoding/sanitizeHTML.qunit",
+			"local/base/encoding/toHex.qunit",
+
+			// sap/base/strings/*
+			"local/base/strings/camelCase.qunit",
+			"local/base/strings/charToUpperCase.qunit",
+			"local/base/strings/endsWithIgnoreCase.qunit",
+			"local/base/strings/escapeRegExp.qunit",
+			"local/base/strings/formatMessage.qunit",
+			"local/base/strings/hyphen.qunit",
+			"local/base/strings/normalize-polyfill.qunit",
+			"local/base/strings/startsWithIgnoreCase.qunit",
+
+			// sap/base/util/*
+			"local/base/util/arrayDiff.qunit",
+			"local/base/util/arraySymbolDiff.qunit",
+			"local/base/util/each.qunit",
+			"local/base/util/equal.qunit",
+			"local/base/util/extend.qunit",
+			"local/base/util/getObject.qunit",
+			"local/base/util/getter.qunit",
+			"local/base/util/hashCode.qunit",
+			"local/base/util/isPlainObject.qunit",
+			"local/base/util/isWindow.qunit",
+			"local/base/util/JSTokenizer.qunit",
+			"local/base/util/lazyProperty.qunit",
+			"local/base/util/now.qunit",
+			"local/base/util/uid.qunit",
+			"local/base/util/unique.qunit",
+			"local/base/util/UriParameters.qunit",
+			"local/base/util/URLWhiteList.qunit",
+
+			// sap/ui/*
+			"local/ActivityDetection.qunit",
+			"local/MobileSupport.qunit",
+			"local/Device.qunit",
+			"local/initjQueryBrowser.qunit",
+			"local/initjQuerySupport.qunit",
+			"local/XHRProxy.qunit",
+
+			// sap/ui/bootstrap/*
+			"local/bootstrap/StoredConfig.qunit",
+
+			// sap/ui/dom/*
+			"local/dom/appendHead.qunit",
+			"local/dom/includeScript.qunit",
+			"local/dom/includeStylesheet.qunit",
+
+			// sap/ui/performance/*
+			"local/performance/Interaction.qunit",
+			"local/performance/XHRInterceptor.qunit",
+			"local/performance/FESR.qunit",
+			"local/performance/E2ETrace/Passport.qunit",
+
+			// sap/ui/security/*
+			"local/security/FrameOptions.qunit",
+
+			// sap/ui/xml/*
+			"local/xml/serializeXML.qunit",
+			"local/xml/XMLParser.qunit"
+
+		], function(applyPolyfills) {
+			applyPolyfills();
+
+			QUnit.start();
+		});
+		</script>
+
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

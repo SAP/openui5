@@ -127,6 +127,7 @@ html.sap-desktop .sapMMultiComboBoxBorder {
 /* If a non-native placeholder is used, make sure that it is in front of children elements. */
 .sapMMultiComboBox > .sapMInputBasePlaceholder {
 	z-index: 1;
+	padding-left: 1.125rem;
 }
 
 /* If a non-native placeholder is used, make sure that arrow button is in front of placeholder. */
@@ -158,4 +159,12 @@ li.sapMMultiComboBoxItem {
 
 html.sap-desktop li.sapMMultiComboBoxItemRangeSelection {
 	background-color: @sapUiListHoverBackground;
+}
+
+/* Compact size */
+.sapUiSizeCompact {
+	.sapMMultiComboBoxItem .sapMCb {
+		height: 2rem;
+		line-height: 2rem;
+	}
 }

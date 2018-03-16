@@ -1,0 +1,222 @@
+{
+  "meter1": {
+	"decimals": 1,
+	"unit": "energy-kilowatt-hour",
+	"name": "meter1",
+	"data": [
+	  {
+		"name": "Jan",
+		"value": 9.5737
+	  },
+	  {
+		"name": "Feb",
+		"value": 9.3636
+	  },
+	  {
+		"name": "Mar",
+		"value": 1.3663
+	  },
+	  {
+		"name": "Apr",
+		"value": 3.4112
+	  },
+	  {
+		"name": "May",
+		"value": 3.1337
+	  },
+	  {
+		"name": "Jun",
+		"value": 6.6223
+	  },
+	  {
+		"name": "Jul",
+		"value": 6.2431
+	  },
+	  {
+		"name": "Aug",
+		"value": 6.8448
+	  },
+	  {
+		"name": "Sep",
+		"value": 1.553
+	  },
+	  {
+		"name": "Oct",
+		"value": 0.9454
+	  },
+	  {
+		"name": "Nov",
+		"value": 8.0754
+	  },
+	  {
+		"name": "Dec",
+		"value": 0.1139
+	  }
+	]
+  },
+  "meter2": {
+	"decimals": 2,
+	"unit": "energy-kilowatt-hour",
+	"name": "meter2",
+	"data": [
+	  {
+		"name": "Jan",
+		"value": 3.8739
+	  },
+	  {
+		"name": "Feb",
+		"value": 9.7784
+	  },
+	  {
+		"name": "Mar",
+		"value": 5.1042
+	  },
+	  {
+		"name": "Apr",
+		"value": 8.8192
+	  },
+	  {
+		"name": "May",
+		"value": 3.1337
+	  },
+	  {
+		"name": "Jun",
+		"value": 0.8292
+	  },
+	  {
+		"name": "Jul",
+		"value": 6.0637
+	  },
+	  {
+		"name": "Aug",
+		"value": 5.4471
+	  },
+	  {
+		"name": "Sep",
+		"value": 4.3508
+	  },
+	  {
+		"name": "Oct",
+		"value": 6.0685
+	  },
+	  {
+		"name": "Nov",
+		"value": 4.0823
+	  },
+	  {
+		"name": "Dec",
+		"value": 6.2111
+	  }
+	]
+  },
+  "meter3": {
+	"decimals": 3,
+	"unit": "energy-kilowatt-hour",
+	"name": "meter3",
+	"data": [
+	  {
+		"name": "Jan",
+		"value": 0.3068
+	  },
+	  {
+		"name": "Feb",
+		"value": 8.5115
+	  },
+	  {
+		"name": "Mar",
+		"value": 6.0152
+	  },
+	  {
+		"name": "Apr",
+		"value": 9.3549
+	  },
+	  {
+		"name": "May",
+		"value": 3.1337
+	  },
+	  {
+		"name": "Jun",
+		"value": 6.6145
+	  },
+	  {
+		"name": "Jul",
+		"value": 0.5309
+	  },
+	  {
+		"name": "Aug",
+		"value": 6.9193
+	  },
+	  {
+		"name": "Sep",
+		"value": 5.5302
+	  },
+	  {
+		"name": "Oct",
+		"value": 3.8601
+	  },
+	  {
+		"name": "Nov",
+		"value": 5.4961
+	  },
+	  {
+		"name": "Dec",
+		"value": 7.8652
+	  }
+	]
+  },
+  "meter4": {
+	"decimals": 4,
+	"unit": "energy-kilowatt-hour",
+	"name": "meter4",
+	"data": [
+	  {
+		"name": "Jan",
+		"value": 8.2145
+	  },
+	  {
+		"name": "Feb",
+		"value": 6.0557
+	  },
+	  {
+		"name": "Mar",
+		"value": 0.5763
+	  },
+	  {
+		"name": "Apr",
+		"value": 8.6611
+	  },
+	  {
+		"name": "May",
+		"value": 3.1337
+	  },
+	  {
+		"name": "Jun",
+		"value": 5.8226
+	  },
+	  {
+		"name": "Jul",
+		"value": 8.9645
+	  },
+	  {
+		"name": "Aug",
+		"value": 6.6514
+	  },
+	  {
+		"name": "Sep",
+		"value": 1.8067
+	  },
+	  {
+		"name": "Oct",
+		"value": 6.8359
+	  },
+	  {
+		"name": "Nov",
+		"value": 8.6859
+	  },
+	  {
+		"name": "Dec",
+		"value": 3.0501
+	  }
+	]
+  }
+}

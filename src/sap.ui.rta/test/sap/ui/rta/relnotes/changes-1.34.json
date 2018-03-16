@@ -1,0 +1,121 @@
+{
+	"1.34.0": {
+		"date": "November 2015",
+		"notes": [
+			{
+				"id": "072e1d11080e6ad44f21eb4af52557ed61435b92",
+				"type": "FEATURE",
+				"text": "sap.ui.rta - new Demo App",
+				"references": []
+			},
+			{
+				"id": "d9682a33c99d9716ad65cc1d2e26ec4b51fd0610",
+				"type": "FIX",
+				"text": "RTA: Set Popup code back to default after RTA close",
+				"references": []
+			},
+			{
+				"id": "2bad2d168448e75f8b786aec3f38e5b28247bc18",
+				"type": "FIX",
+				"text": "RTA: Suppress preventDefault for tabbing in popups",
+				"references": []
+			},
+			{
+				"id": "cb8c650a1a196ba863f1f30d300eedc286190267",
+				"type": "FIX",
+				"text": "fixes for incident 1580121464",
+				"references": []
+			},
+			{
+				"id": "72294d69bc1e603594622ec7f47520fc4165e3ef",
+				"type": "FIX",
+				"text": "fixes issues 1580152465 and 1580152318",
+				"references": []
+			},
+			{
+				"id": "782eb504de9166f24c0f741780c30e26d01f74aa",
+				"type": "FIX",
+				"text": "revision of i18n.properties file in RTA testdata folder",
+				"references": []
+			},
+			{
+				"id": "c3126ab02b43203ba7b1303c0702bea17b417bae",
+				"type": "FIX",
+				"text": "sap.ui.rta - \"add dialog\" takes ignored Fields into consideration",
+				"references": []
+			},
+			{
+				"id": "530b891941bc2759c5d574cd47145463fdbe59e7",
+				"type": "FIX",
+				"text": "sap.ui.rta : Fixes group renaming + refactoring of RTARenamePlugin.js",
+				"references": []
+			},
+			{
+				"id": "e15826488de690e35b7fd35ef443fa21de04152c",
+				"type": "FIX",
+				"text": "sap.ui.rta: Fixes removing of unbound fields, which should not be possible",
+				"references": []
+			},
+			{
+				"id": "7d224b9d5beec3bebf5c1a6639e2cafe53d9aed0",
+				"type": "FIX",
+				"text": "sap.ui.rta: fixes renamed complexType fields in repository dialog",
+				"references": []
+			},
+			{
+				"id": "18bdfed818a79ffdf9a69979e0f431c82ec7ee74",
+				"type": "FIX",
+				"text": ": RTA - Layouting of Add-Field Dialog",
+				"references": []
+			},
+			{
+				"id": "019ef2b6e80edbd51579226d9452a930b1d0bc3a",
+				"type": "FIX",
+				"text": ": RTA - duplicate application Name",
+				"references": []
+			},
+			{
+				"id": "ed8b7c02def7cb63cf42ca273a491a18a2cba79d",
+				"type": "FIX",
+				"text": ": RTA - visible focus for Toolbar",
+				"references": []
+			},
+			{
+				"id": "f53fcd4a25c4e5929fd3e4ca2980eef185587f44",
+				"type": "FIX",
+				"text": ": RTA Add Elements Dialog fix",
+				"references": []
+			},
+			{
+				"id": "895b1f52038bbd0296103ecbf523b2d6f1400bc0",
+				"type": "FIX",
+				"text": ": RTA Context Menu behaviour",
+				"references": []
+			},
+			{
+				"id": "490b378a11696aa7c68cb583e743289f961f4fc6",
+				"type": "FIX",
+				"text": ": RTA High contrast black theme fixes",
+				"references": []
+			},
+			{
+				"id": "2883e283e2610a70b2a7881b66c1844abfd176c2",
+				"type": "FIX",
+				"text": ": RTA Rename labels with attribute FOR",
+				"references": []
+			},
+			{
+				"id": "52e321c8d711ba0acd02d082005a4f4925c9a3ea",
+				"type": "FIX",
+				"text": ": RTA wrong cursor in Toolbar",
+				"references": []
+			},
+			{
+				"id": "6a21b1d6c1f0f22d00ea693f7b68a9f39b0df63d",
+				"type": "FIX",
+				"text": "fixes i18n bindings (not to be considered in test)",
+				"references": []
+			}
+		]
+	}
+}

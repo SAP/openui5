@@ -12,8 +12,8 @@
 				<core:Icon src="sap-icon://paper-plane" color="Neutral" size="6rem"/>
 			</l:HorizontalLayout>
 			<FlexBox alignContent="Stretch">
-				<Label text="Code:" class="sapUiSmallMarginTopBottom sapUiTinyMarginEnd" design="Bold"/>
-				<Input value="sap-icon://paper-plane"/>
+				<Label labelFor="iconInput" text="Code:" class="sapUiTinyMarginTopBottom sapUiTinyMarginEnd" design="Bold"/>
+				<Input id="iconInput" enabled="false" value="sap-icon://paper-plane"/>
 				<Button icon="sap-icon://copy" class="sapUiTinyMarginBegin" type="Emphasized"/>
 			</FlexBox>
 		</l:VerticalLayout>

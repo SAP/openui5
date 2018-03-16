@@ -2,8 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/m/Image' ],
-	function(jQuery, library, Control, IconPool, Image) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/m/Image',
+	'./NumericContentRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, IconPool, Image, NumericContentRenderer) {
 	"use strict";
 
 	/**
@@ -32,73 +40,73 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui
 				/**
 				 * If set to true, the change of the value will be animated.
 				 */
-				"animateTextChange" : {type : "boolean", group : "Misc", defaultValue : true},
+				"animateTextChange" : {type : "boolean", group : "Behavior", defaultValue : true},
 
 				/**
 				 * If set to true, the value parameter contains a numeric value and scale. If set to false (default), the value parameter contains a numeric value only.
 				 */
-				"formatterValue" : {type : "boolean", group : "Misc", defaultValue : false},
+				"formatterValue" : {type : "boolean", group : "Data", defaultValue : false},
 
 				/**
 				 * The icon to be displayed as a graphical element within the control. This can be an image or an icon from the icon font.
 				 */
-				"icon" : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+				"icon" : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 
 				/**
 				 * Description of an icon that is used in the tooltip.
 				 */
-				"iconDescription" : {type : "string", group : "Misc", defaultValue : null},
+				"iconDescription" : {type : "string", group : "Accessibility", defaultValue : null},
 
 				/**
 				 * The indicator arrow that shows value deviation.
 				 */
-				"indicator" : {type : "sap.m.DeviationIndicator", group : "Misc", defaultValue : "None"},
+				"indicator" : {type : "sap.m.DeviationIndicator", group : "Appearance", defaultValue : "None"},
 
 				/**
 				 * If set to true, the omitted value property is set to 0.
 				 */
-				"nullifyValue" : {type : "boolean", group : "Misc", defaultValue : true},
+				"nullifyValue" : {type : "boolean", group : "Behavior", defaultValue : true},
 
 				/**
 				 * The scaling prefix. Financial characters can be used for currencies and counters. The SI prefixes can be used for units. If the scaling prefix contains more than three characters, only the first three characters are displayed.
 				 */
-				"scale" : {type : "string", group : "Misc", defaultValue : null},
+				"scale" : {type : "string", group : "Appearance", defaultValue : null},
 
 				/**
-				 * Updates the size of the control. If not set then the default size is applied based on the device tile.
+				 * Updates the size of the control. If not set, then the default size is applied based on the device tile.
 				 * @deprecated Since version 1.38.0. The NumericContent control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : "Auto"},
+				"size" : {type : "sap.m.Size", group : "Appearance", defaultValue : "Auto"},
 
 				/**
-				 * The number of characters to display for the value property.
+				 * The number of characters of the <code>value</code> property to display.
 				 */
-				"truncateValueTo" : {type : "int", group : "Misc", defaultValue : 4},
+				"truncateValueTo" : {type : "int", group : "Appearance", defaultValue : 4},
 
 				/**
 				 * The actual value.
 				 */
-				"value" : {type : "string", group : "Misc", defaultValue : null},
+				"value" : {type : "string", group : "Data", defaultValue : null},
 
 				/**
 				 * The semantic color of the value.
 				 */
-				"valueColor" : {type : "sap.m.ValueColor", group : "Misc", defaultValue : "Neutral"},
+				"valueColor" : {type : "sap.m.ValueColor", group : "Appearance", defaultValue : "Neutral"},
 
 				/**
 				 * The width of the control. If it is not set, the size of the control is defined by the 'size' property.
 				 */
-				"width" : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : null},
+				"width" : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
 
 				/**
-				 * If the value is set to false, the content will fit to the whole size of the control.
+				 * If the value is set to false, the content is adjusted to the whole size of the control.
 				 */
 				"withMargin" : {type : "boolean", group : "Appearance", defaultValue : true},
 
 				/**
 				 * Indicates the load status.
 				 */
-				"state" : {type : "sap.m.LoadState", group : "Misc", defaultValue : "Loaded"}
+				"state" : {type : "sap.m.LoadState", group : "Behavior", defaultValue : "Loaded"}
 			},
 			events : {
 				/**
@@ -190,7 +198,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui
 		return sAltText;
 	};
 
-	NumericContent.prototype.getTooltip_AsString = function() {
+	NumericContent.prototype.getTooltip_AsString = function() { //eslint-disable-line
 		var oTooltip = this.getTooltip();
 		var sTooltip = this.getAltText();
 		if (typeof oTooltip === "string" || oTooltip instanceof String) {
@@ -295,7 +303,8 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui
 	 * Parses the formatted value
 	 *
 	 * @private
-	 * @param {Object} With scale and value
+	 * @param {string} sValue - With scale and value
+	 * @returns {Object} The scale and formatted value
 	 */
 	NumericContent.prototype._parseFormattedValue = function(sValue) {
 

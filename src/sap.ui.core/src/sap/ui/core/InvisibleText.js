@@ -25,7 +25,6 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.27.0
 	 * @alias sap.ui.core.InvisibleText
@@ -68,45 +67,53 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 		}
 	});
 
-	/**
-	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
-	 * @public
-	 * @deprecated Local BusyIndicator is not supported by control.
-	 */
-	InvisibleText.prototype.setBusy = function() {
-		jQuery.sap.log.warning("Property busy is not supported by control sap.ui.core.InvisibleText.");
-		return this;
-	};
+	// helper to create a dummy setter that logs a warning
+	function makeNotSupported(what) {
+		return function() {
+			jQuery.sap.log.warning(what + " is not supported by control sap.ui.core.InvisibleText.");
+			return this;
+		};
+	}
 
 	/**
 	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated Local BusyIndicator is not supported by control.
+	 * @function
 	 */
-	InvisibleText.prototype.setBusyIndicatorDelay = function() {
-		jQuery.sap.log.warning("Property busyIndicatorDelay is not supported by control sap.ui.core.InvisibleText.");
-		return this;
-	};
+	InvisibleText.prototype.setBusy = makeNotSupported("Property busy");
+
+	/**
+	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
+	 * @public
+	 * @deprecated Local BusyIndicator is not supported by control.
+	 * @function
+	 */
+	InvisibleText.prototype.setBusyIndicatorDelay = makeNotSupported("Property busy");
+
+	/**
+	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
+	 * @public
+	 * @deprecated Local BusyIndicator is not supported by control.
+	 * @function
+	 */
+	InvisibleText.prototype.setBusyIndicatorSize = makeNotSupported("Property busy");
 
 	/**
 	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated Property visible is not supported by control.
+	 * @function
 	 */
-	InvisibleText.prototype.setVisible = function() {
-		jQuery.sap.log.warning("Property visible is not supported by control sap.ui.core.InvisibleText.");
-		return this;
-	};
+	InvisibleText.prototype.setVisible = makeNotSupported("Property visible");
 
 	/**
 	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
 	 * @deprecated Tooltip is not supported by control.
+	 * @function
 	 */
-	InvisibleText.prototype.setTooltip = function() {
-		jQuery.sap.log.warning("Aggregation tooltip is not supported by control sap.ui.core.InvisibleText.");
-		return this;
-	};
+	InvisibleText.prototype.setTooltip = makeNotSupported("Aggregation tooltip");
 
 	InvisibleText.prototype.setText = function(sText) {
 		this.setProperty("text", sText, true);
@@ -135,6 +142,54 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 
 		return this;
 	};
+
+	// map of text IDs
+	var mTextIds = Object.create(null);
+
+	/**
+	 * Returns the ID of a shared <code>InvisibleText<code> instance whose <code>text</code> property
+	 * is retrieved from the given library resource bundle and text key.
+	 *
+	 * Calls with the same library and text key will return the same instance. The instance will be
+	 * rendered statically.
+	 *
+	 * When accessibility has been switched off by configuration or when the text key is empty
+	 * or falsy, no ID will be returned.
+	 *
+	 * @param {string} sLibrary Name of the library to load the resource bundle for
+	 * @param {string} [sTextKey] Key of the text to retrieve from the resource bundle
+	 * @returns {sap.ui.core.ID} ID of the shared control
+	 * @public
+	 */
+	InvisibleText.getStaticId = function(sLibrary, sTextKey) {
+		var sTextId = "", sKey, oBundle, oText;
+
+		if ( sap.ui.getCore().getConfiguration().getAccessibility() && sTextKey ) {
+			// Note: identify by lib and text key, not by text to avoid conflicts after a language change
+			sKey = sLibrary + "|" + sTextKey;
+			sTextId = mTextIds[sKey];
+			if ( sTextId == null ) {
+				oBundle = sap.ui.getCore().getLibraryResourceBundle(sLibrary);
+				oText = new InvisibleText().setText( oBundle.getText(sTextKey) );
+				oText.toStatic();
+				sTextId = mTextIds[sKey] = oText.getId();
+			}
+		}
+
+		return sTextId;
+	};
+
+	// listen to localizationChange event and update shared texts
+	sap.ui.getCore().attachLocalizationChanged(function(oEvent) {
+		var oCore = sap.ui.getCore(),
+			sKey, p, oBundle, oText;
+		for ( sKey in mTextIds ) {
+			p = sKey.indexOf('|');
+			oBundle = oCore.getLibraryResourceBundle(sKey.slice(0, p));
+			oText = oCore.byId(mTextIds[sKey]);
+			oText && oText.setText(oBundle.getText(sKey.slice(p + 1)));
+		}
+	});
 
 	return InvisibleText;
 

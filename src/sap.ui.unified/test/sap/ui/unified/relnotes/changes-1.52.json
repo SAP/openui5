@@ -1,0 +1,151 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "6657e51f2ce2456faeb7e3fb1985c501b83ca84b",
+        "type": "FEATURE",
+        "text": " PlanningCalendar-accessibility for special dates \u0026 appointments",
+        "references": []
+      },
+      {
+        "id": "d70fdcc726e0958febe7b6c4bac835edd80bfaa3",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Week numbers are now displayed",
+        "references": []
+      },
+      {
+        "id": "9591834ece1197bc42acceac22de18b3c4e3e9fc",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.FileUploader - new aggregation \"FileUploaderXHRSettings\" added",
+        "references": []
+      },
+      {
+        "id": "6d4bce038c4ca190034309fc7e63610827038934",
+        "type": "FEATURE",
+        "text": " unified.FileUploader: Allow processing of files before upload using interface",
+        "references": []
+      },
+      {
+        "id": "5455bd0b3eefcbbeb0773c50b57b159fdaf4eafa",
+        "type": "FEATURE",
+        "text": " unified.FileUploader: valueStateText property introduced",
+        "references": []
+      },
+      {
+        "id": "0e666758b74550370f733b30246991189dc9ed34",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "47c9993ffe3a7e5e668f255310177e2b3287869a",
+        "type": "FIX",
+        "text": " (Potentially) missing documentation for managed property is fixed.",
+        "references": []
+      },
+      {
+        "id": "ba487d1c831d714a2af7065ef0119f38898cbe10",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "b8ff1e1856c40a11b5eb21dd8d64385c902c1312",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "8bac2a5e5c06bed2178faceda172ae64ff711956",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Submit empty input value while picker open now works correctly",
+        "references": []
+      },
+      {
+        "id": "48e33a1dbee932bc8d8170122a667a71a1d9ec26",
+        "type": "FIX",
+        "text": " sap.m.Menu: has focus now",
+        "references": []
+      },
+      {
+        "id": "a3a5722f891643510e4de089485475dbebd36f5f",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black \u0026 High Contrast White themes.",
+        "references": []
+      },
+      {
+        "id": "51f799ce8ec573ce5d0bd72fdf4a5e9cbea87708",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar - when theme changes, the year picker is not shown anymore.",
+        "references": []
+      },
+      {
+        "id": "2db665f1162987a3e4a188cb625e9859e5eabd0b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: direct navigation to date bugs fixed",
+        "references": []
+      },
+      {
+        "id": "fd91387b8639af2695328522cf71cfe6d63d6f73",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: selecting appointments fires event in OneMonth view on small screen size",
+        "references": []
+      },
+      {
+        "id": "cfd82d91fe6f31a4586b57792dd56aab6b7e31c3",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Adding selected dates to the calendar does not steal the focus from other elements",
+        "references": []
+      },
+      {
+        "id": "d19f1642888f9148b52e644cc377221264413083",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Select event now has correct event source",
+        "references": []
+      },
+      {
+        "id": "63c88c0873d5812d989e37ccc310e17935bb623d",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Theme parameters improvement",
+        "references": []
+      },
+      {
+        "id": "cace2bb8db14731fe54ea4667b935f509da7fa1b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Context menu will now flip of there is not enough space on the opening side",
+        "references": []
+      },
+      {
+        "id": "55dc6ecd5ece8e44111cbf3fec4b001b44b69091",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: Repositioning in RTL after opening removed",
+        "references": []
+      },
+      {
+        "id": "7d8c0ad8977e0e919bb8bdb318a2e8c6849f0e5a",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: focus correctly set on item with input field",
+        "references": []
+      },
+      {
+        "id": "53e37a575c9cc1dab8a8b9d769f0d9ecfd8edc78",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: single interval selection highlights the right dates",
+        "references": []
+      },
+      {
+        "id": "adb0c301bb0273b422e97fd794d2b16ce660ff91",
+        "type": "FIX",
+        "text": " unified.Calendar: make documentation for setMin/MaxDate visible",
+        "references": []
+      },
+      {
+        "id": "af0db5aa7bf7216768cad374646ae30e09c920e2",
+        "type": "FIX",
+        "text": " unified.FileUploader: drag and drop behavior fixed",
+        "references": []
+      }
+    ]
+  }
+}

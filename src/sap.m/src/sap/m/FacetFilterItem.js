@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.FacetFilterItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
-	function(jQuery, ListItemBase, library) {
+sap.ui.define(['./ListItemBase', './library', './FacetFilterItemRenderer'],
+	function(ListItemBase, library, FacetFilterItemRenderer) {
 	"use strict";
 
 
@@ -23,6 +23,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @constructor
 	 * @public
 	 * @alias sap.m.FacetFilterItem
+	 * @see {@link topic:395392f30f2a4c4d80d110d5f923da77/ Facet Filter Item}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var FacetFilterItem = ListItemBase.extend("sap.m.FacetFilterItem", /** @lends sap.m.FacetFilterItem.prototype */ { metadata : {
@@ -42,13 +43,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 
 			/**
 			 * Defines the number of objects that match this item in the target data set.
-			 * @deprecated Since version 1.18.11. Use setCounter instead.
+			 * @deprecated as of version 1.18.11, replaced by <code>setCounter</code> method
 			 */
 			count : {type : "int", group : "Misc", defaultValue : null, deprecated: true}
 		}
 	}});
 
-	/**
+	/*
 	 * Sets count for the FacetFilterList.
 	 * @param {int} iCount The counter to be set to
 	 * @returns {sap.m.FacetFilterItem} this for chaining
@@ -77,15 +78,32 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	 * @private
 	 */
 	FacetFilterItem.prototype.init = function() {
+		this.attachEvent("_change", this._itemTextChange);
 
-	  ListItemBase.prototype.init.apply(this);
+		ListItemBase.prototype.init.apply(this);
 
-	  // This class must be added to the ListItemBase container element, not the FacetFilterItem container
-	  this.addStyleClass("sapMFFLI");
+		// This class must be added to the ListItemBase container element, not the FacetFilterItem container
+		this.addStyleClass("sapMFFLI");
 	};
 
+	/**
+	 * @private
+	 */
+	FacetFilterItem.prototype.exit = function() {
+		ListItemBase.prototype.exit.apply(this);
 
+		this.detachEvent("_change", this._itemTextChange);
+	};
+
+	/**
+	 * @private
+	 */
+	FacetFilterItem.prototype._itemTextChange = function (oEvent) {
+		if (oEvent.getParameter("name") === "text") {
+			this.informList("TextChange", oEvent.getParameter("newValue"));
+		}
+	};
 
 	return FacetFilterItem;
 
-}, /* bExport= */ true);
+});

@@ -7,49 +7,62 @@
 		xmlns:controls="sap.ui.documentation.sdk.controls">
 	<Page
 			id="page"
+			showHeader="false"
 			showNavButton="{/showNavButton}"
-			navButtonPress="onNavBack" >
+			navButtonPress="onNavBack"
+			busyIndicatorDelay="0">
 		<landmarkInfo>
 			<PageAccessibleLandmarkInfo rootRole="Region" rootLabel="Details" headerRole="Region" headerLabel="Header" contentRole="Main" contentLabel="Content"></PageAccessibleLandmarkInfo>
 		</landmarkInfo>
-		<headerContent>
-			<Button
-					id="prevSample"
-					icon="sap-icon://navigation-up-arrow"
-					class="sapUiHideOnPhone"
-					tooltip="{i18n>samplePreviousTooltip}"
-					enabled="{= ${/previousSampleId} !== undefined }"
-					press="onPreviousSample"/>
-			<Button
-					id="nextSample"
-					icon="sap-icon://navigation-down-arrow"
-					class="sapUiHideOnPhone"
-					tooltip="{i18n>sampleNextTooltip}"
-					enabled="{= ${/nextSampleId} !== undefined }"
-					press="onNextSample"/>
-			<Button
-					id="toggleFullScreenBtn"
-					icon="sap-icon://full-screen"
-					class="sapUiHideOnPhone"
-					tooltip="{i18n>sampleFullScreenTooltip}"
-					press="onToggleFullScreen" />
-			<Button
-					id="toggleRTA"
-					icon="sap-icon://wrench"
-					class="sapUiHideOnPhone"
-					tooltip="{i18n>sampleAdaptationTooltip}"
-					press="onToggleAdaptationMode"
-					visible="false" />
-			<Button
-					id="code"
-					icon="sap-icon://syntax"
-					tooltip="{i18n>sampleShowCodeTooltip}"
-					press="onNavToCode" />
-			<Button visible="{/showNewTab}"
-					id="newTab"
-					tooltip="{i18n>sampleNewTabTooltip}"
-					icon="sap-icon://inspect"
-					press="onNewTab" />
-		</headerContent>
+		<subHeader>
+			<Bar id="header" class="sapContrast sapContrastPlus">
+				<contentLeft>
+					<Button type="Back" press="onNavBack"/>
+				</contentLeft>
+				<contentMiddle>
+					<Title text="{/title}"/>
+				</contentMiddle>
+				<contentRight>
+					<Button id="apiRefButton" text="API Reference" type="Emphasized" press="onAPIRefPress" visible="false"/>
+					<Button
+							id="prevSample"
+							icon="sap-icon://navigation-up-arrow"
+							class="sapUiHideOnPhone"
+							tooltip="Show previous sample"
+							enabled="{= ${/previousSampleId} !== undefined }"
+							press="onPreviousSample"/>
+					<Button
+							id="nextSample"
+							icon="sap-icon://navigation-down-arrow"
+							class="sapUiHideOnPhone"
+							tooltip="Show next sample"
+							enabled="{= ${/nextSampleId} !== undefined }"
+							press="onNextSample"/>
+					<Button
+							id="toggleFullScreenBtn"
+							icon="sap-icon://full-screen"
+							visible="{device>/system/desktop}"
+							tooltip="Show this sample in full screen mode"
+							press="onToggleFullScreen" />
+					<Button
+							id="toggleRTA"
+							icon="sap-icon://wrench"
+							class="sapUiHideOnPhone"
+							tooltip="Adapt UI"
+							press="onToggleAdaptationMode"
+							visible="false" />
+					<Button
+							id="code"
+							icon="sap-icon://syntax"
+							tooltip="Show source code for this sample"
+							press="onNavToCode" />
+					<Button visible="{/showNewTab}"
+							id="newTab"
+							tooltip="Open in new Tab"
+							icon="sap-icon://inspect"
+							press="onNewTab" />
+				</contentRight>
+			</Bar>
+		</subHeader>
 	</Page>
 </mvc:View>

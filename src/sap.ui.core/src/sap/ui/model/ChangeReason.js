@@ -8,10 +8,9 @@ sap.ui.define(function() {
 
 
 	/**
-	* @class
 	* Change Reason for Model/ListBinding/TreeBinding.
 	*
-	* @static
+	* @enum {string}
 	* @public
 	* @alias sap.ui.model.ChangeReason
 	*/

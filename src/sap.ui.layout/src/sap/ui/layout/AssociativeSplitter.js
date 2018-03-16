@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.layout.AssociativeSplitter.
-sap.ui.define(['./Splitter', './SplitterRenderer'],
-	function (Splitter, SplitterRenderer) {
+sap.ui.define(['./Splitter', './SplitterRenderer', 'jquery.sap.global'],
+	function(Splitter, SplitterRenderer, jQuery) {
 	"use strict";
 
 	/**
@@ -36,8 +36,6 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		},
 		renderer: SplitterRenderer
 	});
-
-	var SPLITTERBAR_PIXEL_SIZE = 4; // 0.25rem
 
 	AssociativeSplitter.prototype.init = function () {
 		Splitter.prototype.init.call(this);
@@ -217,6 +215,11 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		var iSplitBarCircle = parseInt(oJEv.target.parentElement.id.substr((sId + "-splitbar-").length), 10);
 		var iBar = (iSplitBar + 1) ? iSplitBar : iSplitBarCircle;
 		var $Bar = jQuery(oJEv.target);
+		// on tablet in landscape mode the target is the bar's icon
+		// calculations should be executed with the bar's size instead
+		if ($Bar.attr("class") === "sapUiLoSplitterBarIcon") {
+			$Bar = $Bar.parent();
+		}
 		var mCalcSizes = this.getCalculatedSizes();
 		var iBarSize = this._bHorizontal ?  $Bar.innerWidth() : $Bar.innerHeight();
 
@@ -374,7 +377,6 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 		var aSizes = [];
 		var aContentAreas = this._getContentAreas();
 		var sOrientation = this.getOrientation();
-		var iAvailableSize = this._calculateAvailableContentSize(aSizes);
 		var aAutosizeIdx = [];
 		var aAutoMinsizeIdx = [];
 		var aPercentsizeIdx = [];
@@ -386,6 +388,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 			aSizes.push(sSize);
 		}
 
+		var iAvailableSize = this._calculateAvailableContentSize(aSizes) + 1;
 		this._calculatedSizes = [];
 
 		// Remove fixed sizes from available size
@@ -433,7 +436,7 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 			this._calculatedSizes[idx] = iColSize;
 			iRest -= iColSize;
 		}
-		iAvailableSize = iRest - SPLITTERBAR_PIXEL_SIZE;
+		iAvailableSize = iRest;
 
 		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
 
@@ -539,4 +542,4 @@ sap.ui.define(['./Splitter', './SplitterRenderer'],
 
 	return AssociativeSplitter;
 
-}, /* bExport= */ false);
+});

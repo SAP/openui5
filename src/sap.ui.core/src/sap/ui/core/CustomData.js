@@ -22,7 +22,6 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.CustomData
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -56,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './Element', './library'],
 			 */
 			writeToDom : {type : "boolean", group : "Data", defaultValue : false}
 		},
-		designTime: true
+		designtime: "sap/ui/core/designtime/CustomData.designtime"
 	}});
 
 	CustomData.prototype.setValue = function(oValue) {

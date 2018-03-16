@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.ODataPropertyBinding
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/PropertyBinding', 'sap/ui/model/ChangeReason'],
-	function(jQuery, ChangeReason, PropertyBinding) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/ChangeReason', 'sap/ui/model/PropertyBinding', 'sap/ui/model/ChangeReason'],
+	function(jQuery, Context, ChangeReason, PropertyBinding) {
 	"use strict";
 
 
@@ -87,7 +87,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 	 * Setter for context
 	 */
 	ODataPropertyBinding.prototype.setContext = function(oContext) {
-		if (this.oContext != oContext) {
+		if (oContext && oContext.isPreliminary()) {
+			return;
+		}
+
+		if (Context.hasChanged(this.oContext, oContext)) {
 			sap.ui.getCore().getMessageManager().removeMessages(this.getDataState().getControlMessages(), true);
 			this.oContext = oContext;
 			if (this.isRelative()) {
@@ -139,11 +143,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/P
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.checkDataState = function(mPaths) {
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-		if (!mPaths || sResolvedPath && sResolvedPath in mPaths) {
+		var sCanonicalPath = this.oModel.resolve(this.sPath, this.oContext, true);
+
+		if (!mPaths || sCanonicalPath && sCanonicalPath in mPaths) {
 			var oDataState = this.getDataState();
-			oDataState.setLaundering(!!mPaths && !!(sResolvedPath in mPaths));
+			oDataState.setLaundering(!!mPaths && !!(sCanonicalPath in mPaths));
 			PropertyBinding.prototype.checkDataState.apply(this, arguments);
+			oDataState.setModelMessages(this.oModel.getMessagesByPath(sCanonicalPath));
 		}
 	};
 

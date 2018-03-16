@@ -36,7 +36,8 @@
 
 				for (var number = 0; number < buttonCount; number += 1) {
 					content.push(new sap.m.Button({
-						icon: "images/iconCompetitors.png"
+						icon: "images/iconCompetitors.png",
+						tooltip: "Competitors icon " + ++number
 					}))
 				}
 
@@ -48,7 +49,8 @@
 				title: "Detail 1",
 				content: [
 					new sap.m.Label({
-						text: "this is Detail 1"
+						text: "this is Detail 1",
+						labelFor: "saNavigationToDetail"
 					}),
 					new sap.m.Button("saNavigationToDetail", {
 						text: "To DetailDetail",
@@ -91,16 +93,20 @@
 					id: "detail-footer",
 					contentMiddle: [
 						new sap.m.Button({
-							icon: "images/iconCompetitors.png"
+							icon: "images/iconCompetitors.png",
+							tooltip: "Competitors icon detail 1"
 						}),
 						new sap.m.Button({
-							icon: "images/iconCompetitors.png"
+							icon: "images/iconCompetitors.png",
+							tooltip: "Competitors icon detail 2"
 						}),
 						new sap.m.Button({
-							icon: "images/iconCompetitors.png"
+							icon: "images/iconCompetitors.png",
+							tooltip: "Competitors icon detail 3"
 						}),
 						new sap.m.Button({
-							icon: "images/iconCompetitors.png"
+							icon: "images/iconCompetitors.png",
+							tooltip: "Competitors icon detail 4"
 						})
 					]
 				})
@@ -192,16 +198,20 @@
 					id: "master-footer",
 					contentMiddle: [
 						new sap.m.Button({
-							icon: "images/iconCompetitors.png"
+							icon: "images/iconCompetitors.png",
+							tooltip: "Competitors icon master 1"
 						}),
 						new sap.m.Button({
-							icon: "images/iconCompetitors.png"
+							icon: "images/iconCompetitors.png",
+							tooltip: "Competitors icon master 2"
 						}),
 						new sap.m.Button({
-							icon: "images/iconCompetitors.png"
+							icon: "images/iconCompetitors.png",
+							tooltip: "Competitors icon master 3"
 						}),
 						new sap.m.Button({
-							icon: "images/iconCompetitors.png"
+							icon: "images/iconCompetitors.png",
+							tooltip: "Competitors icon master 4"
 						})
 					]
 				})

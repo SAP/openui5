@@ -2,7 +2,7 @@
 					 xmlns:l="sap.ui.layout" xmlns:core="sap.ui.core"
 					 xmlns:mvc="sap.ui.core.mvc"
 					 xmlns="sap.m">
-<Page>
+<Page showHeader="false">
 	<content>
 		<Button text="Delete" class="sapUiLargeMarginBegin sapUiLargeMarginTop" press="handleDialogPress"/>
 	</content>

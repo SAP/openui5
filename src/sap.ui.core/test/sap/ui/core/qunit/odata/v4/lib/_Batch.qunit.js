@@ -6,7 +6,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/lib/_Batch",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, _Batch, TestUtils) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
@@ -234,13 +234,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Batch", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -690,7 +686,7 @@ Content-Type: application/http\r\n\
 Content-Length: 4711\r\n\
 content-transfer-encoding: binary\r\n\
 \r\n\
-HTTP/1.1 200 OK\r\n\
+HTTP/1.1 200\r\n\
 Content-Type: application/json;odata.metadata=minimal\r\n\
 Content-Length: 9\r\n\
 odata-version: 4.0\r\n\
@@ -713,7 +709,7 @@ header-with-space-before-colon : Headername with space before colon\r\n\
 this is a batch request epilogue",
 		expectedResponses : [{
 			status : 200,
-			statusText : "OK",
+			statusText : "", // optional!
 			headers : {
 				"Content-Type" : "application/json;odata.metadata=minimal",
 				"Content-Length" : "9",
@@ -731,6 +727,29 @@ this is a batch request epilogue",
 				"header-with-space-before-colon" : "Headername with space before colon"
 			},
 			responseText : "{\"foo1\":\"bar1\"}"
+		}]
+	}, {
+		testTitle : "no final CRLF",
+		contentType : "multipart/mixed; boundary=batch_id-0123456789012-345",
+		body : "--batch_id-0123456789012-345\r\n\
+Content-Type: application/http\r\n\
+\r\n\
+HTTP/1.1 200 OK\r\n\
+Content-Type: application/json;odata.metadata=minimal\r\n\
+Content-Length: 9\r\n\
+odata-version: 4.0\r\n\
+\r\n\
+{\"foo\":\"bar\"}\r\n\
+--batch_id-0123456789012-345--",
+		expectedResponses : [{
+			status : 200,
+			statusText : "OK",
+			headers : {
+				"Content-Type" : "application/json;odata.metadata=minimal",
+				"Content-Length" : "9",
+				"odata-version" : "4.0"
+			},
+			responseText : "{\"foo\":\"bar\"}"
 		}]
 	}, {
 		testTitle : "batch parts without headers",
@@ -767,7 +786,7 @@ HTTP/1.1 200 OK\r\n\
 		testTitle : "batch boundary with special characters",
 		contentType : ' multipart/mixed; myboundary="invalid"; '
 		+ 'boundary="batch_id-0123456789012-345\'()+_,-./:=?"',
-		body : "--batch_id-0123456789012-345\'()+_,-./:=? \r\n\
+		body : "--batch_id-0123456789012-345\'()+_,-./:=?\t\r\n\
 Content-Type: application/http\r\n\
 Content-Length: 4711\r\n\
 content-transfer-encoding: binary\r\n\
@@ -1691,7 +1710,7 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 					},
 					responseText : oNewEmployeeBody
 				}]]
-		}].forEach(function (oFixture, i) {
+		}].forEach(function (oFixture) {
 			QUnit[oFixture.skip ? "skip" : "test"](
 				"Multipart Integration Test: " + oFixture.testTitle,
 				function (assert) {
@@ -1781,7 +1800,6 @@ Content-Type: application/json;odata.metadata=minimal;charset=UTF-8\r\n\
 						oResponse = aResponses[0];
 
 						assert.strictEqual(oResponse.status, 404);
-						assert.strictEqual(oResponse.statusText, "Not Found");
 						assert.ok(oResponse.headers["content-language"]);
 						done();
 					});

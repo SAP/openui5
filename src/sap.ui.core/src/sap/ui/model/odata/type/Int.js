@@ -48,20 +48,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   constraints, see {@link #constructor}
 	 */
 	function setConstraints(oType, oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
+		var vNullable;
 
 		oType.oConstraints = undefined;
-		switch (vNullable) {
-		case false:
-		case "false":
-			oType.oConstraints = {nullable : false};
-			break;
-		case true:
-		case "true":
-		case undefined:
-			break;
-		default:
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		if (oConstraints) {
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
+				oType.oConstraints = {nullable : false};
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+			}
 		}
 		oType._handleLocalizationChange();
 	}
@@ -78,7 +74,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
+	 * @abstract
 	 * @alias sap.ui.model.odata.type.Int
 	 * @param {object} [oFormatOptions]
 	 *   type-specific format options; see subtypes
@@ -124,12 +120,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
 	 * @throws {sap.ui.model.FormatException}
-	 *   if <code>sTargetType</code> is unsupported
+	 *   If <code>sTargetType</code> is not supported or <code>iValue</code> is not a model value
+	 *   for this type.
 	 * @public
 	 */
 	Int.prototype.formatValue = function(iValue, sTargetType) {
 		if (iValue === undefined || iValue === null) {
 			return null;
+		}
+		if (typeof iValue !== "number" && sTargetType !== "any") {
+			throw new FormatException("Illegal " + this.getName() + " value: " + iValue);
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
 			case "string":

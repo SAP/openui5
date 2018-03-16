@@ -79,7 +79,7 @@ sap.ui.define([
 		onSourceCode : function (oEvent) {
 			var oView = this.getView(),
 				sSource,
-				bVisible = oView.byId("toggleSourceCode").getPressed();
+				bVisible = this.byId("toggleSourceCode").getPressed();
 
 			oView.getModel("ui").setProperty("/codeVisible", bVisible);
 			if (bVisible) {
@@ -93,7 +93,7 @@ sap.ui.define([
 
 		_bindSelectInstance : function () {
 			var oBinding,
-				oControl = this.getView().byId("selectInstance");
+				oControl = this.byId("selectInstance");
 
 			oControl.bindAggregation("items", {
 				path : "/" + this._getSelectedSet(),
@@ -113,7 +113,7 @@ sap.ui.define([
 		},
 
 		_getDetailView : function () {
-			return this.getView().byId("detailBox").getContent()[0];
+			return this.byId("detailBox").getContent()[0];
 		},
 
 		_getSelectedSet : function () {
@@ -125,7 +125,7 @@ sap.ui.define([
 				that = this;
 
 			oMetaModel.loaded().then(function () {
-				var oDetailBox = that.getView().byId("detailBox"),
+				var oDetailBox = that.byId("detailBox"),
 					oDetailView,
 					sMetadataPath = oMetaModel.getODataEntitySet(that._getSelectedSet(), true),
 					iStart;

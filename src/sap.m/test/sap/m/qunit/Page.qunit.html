@@ -101,8 +101,8 @@
 				var sNavButtonTooltip = jQuery("#myFirstPage-navButton").attr("title");
 				assert.ok(sNavButtonTooltip && (sNavButtonTooltip.length > 0), "nav button should have a tooltip by default");
 				assert.ok(jQuery.sap.domById("qunit-header"), "Page content should be rendered");
-				assert.ok(jQuery.sap.byId("myFirstPage-intHeader").is("header"), "header should be rendered as header tag");
-				assert.ok(jQuery.sap.byId("myFooter").is("footer"), "footer should be rendered as footer tag");
+				assert.ok(jQuery.sap.byId("myFirstPage-intHeader").parent().is("header"), "header should be rendered as header tag");
+				assert.ok(jQuery.sap.byId("myFooter").parent().is("footer"), "footer should be rendered as footer tag");
 
  				// The following qunit is removed because of
  				// BCP: 1670157998
@@ -124,12 +124,6 @@
 				assert.ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgSolid"), "Page content should have a solid background color");
 				oPage.setBackgroundDesign("Transparent");
 				assert.ok(jQuery.sap.byId("myFirstPage").hasClass("sapMPageBgTransparent"), "Page content should be transparent");
-
-				var transparentCssString = (sap.ui.Device.browser.firefox ||
-								sap.ui.Device.browser.internet_explorer ||
-								sap.ui.Device.browser.edge) ? "transparent" : "rgba(0, 0, 0, 0)"
-				assert.equal(jQuery.sap.byId("myFirstPage-cont").css("background-color"), transparentCssString, "Page content should be transparent");
-
 				assert.equal(oPage.$("cont").hasClass("sapMPageEnableScrolling"), false, "In a page with scrolling disabled, no scroll-related class should be added")
 			});
 
@@ -223,6 +217,24 @@
 
 			QUnit.module("Properties Check");
 
+			QUnit.test("Title escaping", function(assert) {
+				//Setup
+				var oModel = new sap.ui.model.json.JSONModel({"test": "{hello}"});
+				var oPage = new sap.m.Page({
+					title:'{/test}'
+				});
+				oPage.setModel(oModel);
+				oPage.placeAt('content');
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.equal(oPage.getTitle(), oPage.$("title-inner").text(), "Title should be escaped properly when using curly braces.")
+
+				// Cleanup
+				oPage.destroy();
+				oModel.destroy();
+			});
+
 			QUnit.test("showSubHeader", function(assert) {
 				var oSubHeader = sap.ui.getCore().byId("mySubHeader");
 				assert.ok(jQuery.sap.domById("mySubHeader"), "subHeader should be rendered");
@@ -238,10 +250,72 @@
 				assert.equal(jQuery.sap.byId("myFirstPage-cont").css("top"), "96px", "top of Page content with subHeader shown should be 96px (6rem)");
 			});
 
-			QUnit.test("showFooter", function(assert) {
+			QUnit.test("showFooter when floatingFooter=true and showFooter=false initially", function(assert) {
+				var oPage = new sap.m.Page({
+					id: "idPage",
+					floatingFooter: true,
+					showFooter: false,
+					footer: [ new sap.m.OverflowToolbar({id: "idFooter", content: [new sap.m.Button()]}) ]
+				});
+
+				oPage.placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(!!jQuery.sap.domById("myFooter"), true, "footer should be rendered");
+				assert.equal(oPage.getFooter().$().parent().hasClass("sapUiHidden"), true, "footer is hidden");
+
+				oPage.destroy();
+			});
+
+			QUnit.test("showFooter toggling with floatingFooter disabled", function (assert) {
+				// Setup
+				var oBar = new sap.m.Bar({
+						contentRight: new sap.m.Button({text: "Hello World"})
+					}),
+					oPage = new sap.m.Page({
+						showFooter: false,
+						footer: oBar
+					}).placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
+				assert.equal(oPage.$().hasClass("sapMPageWithFooter"), false,
+						"The class .sapMPageWithFooter is not applied, although a footer exists, the showFooter is false");
+
+				// Act
+				oPage.setShowFooter(true);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(!oBar.$().parent().hasClass("sapUiHidden"), "Footer is visible.");
+				assert.equal(oPage.$().hasClass("sapMPageWithFooter"), true,
+						"The class .sapMPageWithFooter is applied, when a footer exists and showFooter is true.");
+
+				// Act
 				oPage.setShowFooter(false);
 				sap.ui.getCore().applyChanges();
-				assert.equal(jQuery.sap.domById("myFooter"), undefined, "footer should not be rendered");
+
+				// Assert
+				assert.ok(oBar.$().parent().hasClass("sapUiHidden"), "Footer is there, but is hidden.");
+				assert.equal(oPage.$().hasClass("sapMPageWithFooter"), false,
+						"The class .sapMPageWithFooter is not applied, although the footer exists, the showFooter is false.");
+
+				// Act
+				oPage.setShowFooter(true);
+				oPage.setFooter(null);
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.equal(oPage.$().hasClass("sapMPageWithFooter"), false,
+						"The class .sapMPageWithFooter is not applied, although the showFooter is true, the footer does not exist.");
+
+				// Cleanup
+				oBar = null;
+
+				oPage.destroy();
+				oPage = null;
 			});
 
 			if (sap.ui.Device.browser.chrome) {

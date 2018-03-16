@@ -1,21 +1,18 @@
 {
 	"sap.ui5": {
-
 		"dependencies": {
 			"libs": {
 				"sap.ui.core": {
 				},
 				"sap.m": {
 				},
-				"sap.f" : {
+				"sap.f": {
 				}
 			}
 		},
-
 		"config": {
 			"fullWidth": true
 		},
-
 		"routing": {
 			"config": {
 				"routerClass": "sap.f.routing.Router",
@@ -24,14 +21,29 @@
 				"controlId": "fcl",
 				"transition": "slide",
 				"bypassed": {
-				}
+				},
+				"async": true
 			},
 			"routes": [
 				{
-					"pattern": "",
+					"pattern": "page2",
+					"name": "page2",
+					"target": "page2",
+					"layout": "EndColumnFullScreen"
+				},
+				{
+					"pattern": "page3",
+					"name": "page3",
+					"target": "page3",
+					"layout": "EndColumnFullScreen"
+				},
+				{
+					"pattern": ":layout:",
 					"name": "master",
-					"target": "master",
-					"layout": "OneColumn"
+					"target": [
+						"master",
+						"detailEmpty"
+					]
 				},
 				{
 					"pattern": "detail/{layout}",
@@ -49,18 +61,6 @@
 						"detail",
 						"detailDetail"
 					]
-				},
-				{
-					"pattern": "page2",
-					"name": "page2",
-					"target": "page2",
-					"layout": "EndColumnFullScreen"
-				},
-				{
-					"pattern": "page3",
-					"name": "page3",
-					"target": "page3",
-					"layout": "EndColumnFullScreen"
 				}
 			],
 			"targets": {
@@ -83,6 +83,10 @@
 				"page3": {
 					"viewName": "Page3",
 					"controlAggregation": "endColumnPages"
+				},
+				"detailEmpty": {
+					"viewName": "DetailEmpty",
+					"controlAggregation": "midColumnPages"
 				}
 			}
 		}

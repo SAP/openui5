@@ -1,102 +1,29 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageToast',
-		'sap/m/UploadCollectionParameter',
-		'sap/ui/core/Fragment',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/Filter',
-		'sap/ui/model/Sorter',
-		'sap/ui/model/json/JSONModel',
-		'sap/m/GroupHeaderListItem'
-	], function(jQuery, MessageToast, UploadCollectionParameter, Fragment, Controller, Filter, Sorter, JSONModel, GroupHeaderListItem) {
+	"jquery.sap.global",
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageToast",
+	"sap/m/UploadCollectionParameter",
+	"sap/ui/core/Fragment",
+	"sap/ui/model/Filter",
+	"sap/ui/model/Sorter",
+	"sap/ui/model/json/JSONModel",
+	"sap/m/GroupHeaderListItem",
+	"sap/ui/core/format/FileSizeFormat"
+], function(jQuery, Controller, MessageToast, UploadCollectionParameter, Fragment, Filter, Sorter, JSONModel, GroupHeaderListItem, FileSizeFormat) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.UploadCollectionSortingFiltering.Page", {
-
+	return Controller.extend("sap.m.sample.UploadCollectionSortingFiltering.Page", {
 		_oDialog: null,
 
-		onInit: function () {
-			var sPath,
-				oModel,
-				aDataCB,
-				oModelCB,
-				oSelect,
-				oFileTypesModel,
-				mFileTypesData,
-				oFileTypesBox,
-				oUploadCollection;
-
+		onInit: function() {
 			// set mock data
-			sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollectionSortingFiltering", "/uploadCollection.json");
-			oModel = new JSONModel(sPath);
-			this.getView().setModel(oModel);
-
-			aDataCB = {
-				"items" : [{
-					"key" : "All",
-					"text" : "sap.m.ListSeparators.All"
-				}, {
-					"key" : "None",
-					"text" : "sap.m.ListSeparators.None"
-				}],
-				"selectedKey" : "All"
-			};
-
-			oModelCB = new JSONModel();
-			oModelCB.setData(aDataCB);
-
-			oSelect = this.getView().byId("tbSelect");
-			oSelect.setModel(oModelCB);
-
-			oFileTypesModel = new JSONModel();
-
-			mFileTypesData = {
-				"items": [
-					{
-						"key": "jpg",
-						"text": "jpg"
-					},
-					{
-						"key": "txt",
-						"text": "txt"
-					},
-					{
-						"key": "ppt",
-						"text": "ppt"
-					},
-					{
-						"key": "doc",
-						"text": "doc"
-					},
-					{
-						"key": "xls",
-						"text": "xls"
-					},
-					{
-						"key": "pdf",
-						"text": "pdf"
-					},
-					{
-						"key": "png",
-						"text": "png"
-					}
-				],
-				"selected" : ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"]
-			};
-
-			oFileTypesModel.setData(mFileTypesData);
-			this.getView().setModel(oFileTypesModel, "fileTypes");
-
-			oFileTypesBox = this.getView().byId("fileTypesBox");
-			oFileTypesBox.setSelectedItems(oFileTypesBox.getItems());
-
-			oUploadCollection = this.getView().byId("UploadCollection");
-			oUploadCollection.setFileType(oFileTypesBox.getSelectedKeys());
+			var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollectionSortingFiltering", "/uploadCollection.json");
+			this.getView().setModel(new JSONModel(sPath));
 
 			// Sets the text to the label
-			oUploadCollection.addEventDelegate({
-				onBeforeRendering : function () {
-					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+			this.byId("UploadCollection").addEventDelegate({
+				onBeforeRendering: function() {
+					this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
 
@@ -122,41 +49,31 @@ sap.ui.define([
 			};
 		},
 
-		onExit: function() {
-			if (this._oDialog) {
-				this._oDialog.destroy();
-				this._oDialog = null;
-			}
-		},
-
-		onViewSettingsClearFilters : function (oEvent) {
-			this.onExit();
-			//sort and filter items are empty
+		onViewSettingsClearFilters: function(oEvent) {
 			this.onViewSettingsConfirm(oEvent);
 		},
 
-		formatAttribute : function (sValue, sType) {
+		formatAttribute: function(sValue, sType) {
 			if (sType === "size") {
-				jQuery.sap.require("sap.ui.core.format.FileSizeFormat");
-				return sap.ui.core.format.FileSizeFormat.getInstance({
-					binaryFilesize : false,
-					maxFractionDigits : 1,
-					maxIntegerDigits : 3
+				return FileSizeFormat.getInstance({
+					binaryFilesize: false,
+					maxFractionDigits: 1,
+					maxIntegerDigits: 3
 				}).format(sValue);
 			} else {
 				return sValue;
 			}
 		},
 
-		onInfoToolbarPressed : function (oEvent) {
-			if (oEvent.getParameters().srcControl === this.getView().byId("icClearFilters")) {
+		onInfoToolbarPressed: function(oEvent) {
+			if (oEvent.getParameters().srcControl === this.byId("icClearFilters")) {
 				this.onViewSettingsClearFilters(oEvent);
 			} else {
 				this.onViewSettingsPressed(oEvent);
 			}
 		},
 
-		onViewSettingsPressed : function (oEvent) {
+		onViewSettingsPressed: function(oEvent) {
 			if (!this._oDialog) {
 				this._oDialog = sap.ui.xmlfragment("sap.m.sample.UploadCollectionSortingFiltering.Dialog", this);
 			}
@@ -165,8 +82,8 @@ sap.ui.define([
 			this._oDialog.open();
 		},
 
-		onViewSettingsConfirm : function (oEvent) {
-			var oUploadCollection = this.getView().byId("UploadCollection");
+		onViewSettingsConfirm: function(oEvent) {
+			var oUploadCollection = this.byId("UploadCollection");
 			var oInfoToolbar = oUploadCollection.getInfoToolbar();
 			var oBindingItems = oUploadCollection.getBinding("items");
 			var mParams = oEvent.getParameters();
@@ -189,8 +106,8 @@ sap.ui.define([
 
 			// apply filters to binding
 			var aFilters = [];
-			jQuery.each(mParams.filterItems, function (i, oItem) {
-				var aSplit = oItem.getKey().split("___");
+			jQuery.each(mParams.filterItems, function(i, oItem) {
+				var aSplit = oItem.getKey().split(" ");
 				var sPath = aSplit[0];
 				var sOperator = aSplit[1];
 				var sValue1 = aSplit[2];
@@ -209,19 +126,8 @@ sap.ui.define([
 			oInfoToolbar.getContent()[0].setText(sFilterString);
 		},
 
-		onSelectChange:  function(oEvent) {
-			var oUploadCollection = this.getView().byId("UploadCollection");
-			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
-		},
-
-		onFileTypeChange: function(oEvent) {
-			var oUploadCollection = this.getView().byId("UploadCollection");
-			var oFileTypesMultiComboBox = this.getView().byId("fileTypesBox");
-			oUploadCollection.setFileType(oFileTypesMultiComboBox.getSelectedKeys());
-		},
-
 		getAttachmentTitleText: function() {
-			var aItems = this.getView().byId("UploadCollection").getItems();
+			var aItems = this.byId("UploadCollection").getItems();
 			return "Uploaded (" + aItems.length + ")";
 		},
 
@@ -232,7 +138,4 @@ sap.ui.define([
 			});
 		}
 	});
-
-	return PageController;
-
 });

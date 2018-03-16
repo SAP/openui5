@@ -52,6 +52,7 @@
 			decimalSeparator: ","
 		});
 
+	QUnit.module("NumberFormat");
 	QUnit.test("integer default format", function(assert) {
 		assert.equal(oDefaultInteger.format(1), "1", "1");
 		assert.equal(oDefaultInteger.format(123), "123", "123");
@@ -139,10 +140,7 @@
 		assert.equal(oFormat.parse("1"), 1, "\"1\" parsed");
 		assert.equal(oFormat.parse("12"), 12, "\"12\" parsed");
 		assert.equal(oFormat.parse("123"), 123, "\"123\" parsed");
-		assert.equal(oFormat.parse("1,23 Tsd."), 1230, "\"1,23 Tsd\" parsed");
-		assert.equal(oFormat.parse("12,3 Tsd."), 12300, "\"12,3 Tsd\" parsed");
-		assert.equal(oFormat.parse("123 Tsd."), 123000, "\"123 Tsd\" parsed");
-		assert.equal(oFormat.parse("1000 Tsd."), 1000000, "\"1000 Tsd\" parsed");
+		assert.equal(oFormat.parse("1,23 Tsd."), 1230, "\"1230\" parsed");
 		assert.equal(oFormat.parse("1 Mio."), 1000000, "\"1 Mio.\" parsed");
 		assert.equal(oFormat.parse("10 Mio."), 10000000, "\"10 Mio.\" parsed");
 		assert.equal(oFormat.parse("100 Mio."), 100000000, "\"100 Mio.\" parsed");
@@ -153,10 +151,7 @@
 		assert.equal(oFormat.parse("-1"), -1, "\"-1\" parsed");
 		assert.equal(oFormat.parse("-12"), -12, "\"-12\" parsed");
 		assert.equal(oFormat.parse("-123"), -123, "\"-123\" parsed");
-		assert.equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1,23 Tsd\" parsed");
-		assert.equal(oFormat.parse("-12,3 Tsd."), -12300, "\"-12,3 Tsd\" parsed");
-		assert.equal(oFormat.parse("-123 Tsd."), -123000, "\"-123 Tsd\" parsed");
-		assert.equal(oFormat.parse("-1000 Tsd."), -1000000, "\"-1000 Tsd\" parsed");
+		assert.equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1230\" parsed");
 		assert.equal(oFormat.parse("-1 Mio."), -1000000, "\"-1 Mio.\" parsed");
 		assert.equal(oFormat.parse("-10 Mio."), -10000000, "\"-10 Mio.\" parsed");
 		assert.equal(oFormat.parse("-100 Mio."), -100000000, "\"-100 Mio.\" parsed");
@@ -422,19 +417,19 @@
 		assert.equal(oFormat.format(99999), "100 Tausend", "99999 formatted");
 		assert.equal(oFormat.format(123456), "123 Tausend", "123456 formatted");
 		assert.equal(oFormat.format(999999), "1 Million", "999999 formatted");
-		assert.equal(oFormat.format(1234567), "1,2 Million", "1234567 formatted");
+		assert.equal(oFormat.format(1234567), "1,2 Millionen", "1234567 formatted");
 		assert.equal(oFormat.format(9999999), "10 Millionen", "9999999 formatted");
 		assert.equal(oFormat.format(12345678), "12 Millionen", "12345678 formatted");
 		assert.equal(oFormat.format(99999999), "100 Millionen", "99999999 formatted");
 		assert.equal(oFormat.format(123456789), "123 Millionen", "123456789 formatted");
 		assert.equal(oFormat.format(999999999), "1 Milliarde", "999999999 formatted");
-		assert.equal(oFormat.format(1234567890), "1,2 Milliarde", "1234567890 formatted");
+		assert.equal(oFormat.format(1234567890), "1,2 Milliarden", "1234567890 formatted");
 		assert.equal(oFormat.format(9999999999), "10 Milliarden", "9999999999 formatted");
 		assert.equal(oFormat.format(12345678901), "12 Milliarden", "12345678901 formatted");
 		assert.equal(oFormat.format(99999999999), "100 Milliarden", "99999999999 formatted");
 		assert.equal(oFormat.format(123456789012), "123 Milliarden", "123456789012 formatted");
 		assert.equal(oFormat.format(999999999999), "1 Billion", "999999999999 formatted");
-		assert.equal(oFormat.format(1234567890123), "1,2 Billion", "1234567890123 formatted");
+		assert.equal(oFormat.format(1234567890123), "1,2 Billionen", "1234567890123 formatted");
 
 		oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "long", precision: 3, shortLimit: 100000}, oLocale);
 
@@ -472,6 +467,16 @@
 		assert.equal(oFormat.format(-123456), "-123 Tausend", "-123456 formatted");
 		assert.equal(oFormat.format(-999999), "-1 Million", "-999999 formatted");
 		assert.equal(oFormat.format(-1234567), "-1,23 Millionen", "-1234567 formatted");
+
+		var oLocale = new sap.ui.core.Locale("ar-SA");
+		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({style: "long", shortRefNumber: 1000000}, oLocale);
+		assert.equal(oFormat.format(0), "0 مليون", "0 formatted");
+		assert.equal(oFormat.format(1000000), "1 مليون", "1000000 formatted");
+		assert.equal(oFormat.format(2000000), "2 مليون", "2000000 formatted");
+		assert.equal(oFormat.format(3000000), "3 ملايين", "3000000 formatted");
+		assert.equal(oFormat.format(11000000), "11 مليون", "11000000 formatted");
+		assert.equal(oFormat.format(50000000), "50 مليون", "50000000 formatted");
+
 	});
 
 	QUnit.test("getScale", function(assert) {
@@ -560,7 +565,7 @@
 		assert.equal(oFormat.format(-999999), "-1", "-999999 formatted");
 	});
 
-	QUnit.test("integet long style under locale zh_CN", function(assert) {
+	QUnit.test("integer long style under locale zh_CN", function(assert) {
 		// The pattern for 1000-other in locale zh_CN is defined as "0" without any scale which means a number with 4 digits
 		// shouldn't be formatted using the short style.
 		// But when a formatted string without any scale is parsed under locale zh_CN, this pattern is always selected which
@@ -1123,6 +1128,592 @@
 		assert.equal(oFormat.format([-123456.789, "JPY"]), "JPY"+ "\ufeff" +"-123,457", "-123456.789 JPY");
 	});
 
+	QUnit.test("Currency format with sMeasure - unknown currency", function(assert) {
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance();
+
+		//invalid unit
+		assert.equal(oFormat.format([-123456.789, "ASDEF"]).toString(), "ASDEF\ufeff-123,456.79", "-123456.789 ASDEF");
+		assert.equal(oFormat.format([-123456.789, false]).toString(), "-123,456.79", "-123456.789 false");
+		assert.equal(oFormat.format([-123456.789, NaN]).toString(), "-123,456.79", "-123456.789 NaN");
+		assert.equal(oFormat.format([-123456.789, undefined]).toString(), "-123,456.79", "-123456.789 undefined");
+		assert.equal(oFormat.format([-123456.789, null]).toString(), "-123,456.79", "-123456.789 null");
+	});
+
+	QUnit.module("Unit Format");
+
+	QUnit.test("Unit format with invalid unit definition coordinate", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({}, oLocale);
+
+		assert.equal(oFormat.format(1123, "coordinateUnit"), "", "invalid unit pattern");
+		assert.equal(oFormat.format(1123, "per"), "", "invalid unit pattern");
+	});
+
+	QUnit.test("Unit format with unknown locale", function(assert) {
+		var oLocale = new sap.ui.core.Locale("unknown");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance(oLocale);
+
+		//defaults to english locale as defined in M_DEFAULT_DATA in LocaleData.js
+		assert.equal(oFormat.format(12, "duration-hour").toString(), "12 hr", "20 hours");
+		assert.equal(oFormat.format(13, "volume-liter").toString(), "13 L", "13 liter");
+	});
+
+	QUnit.test("Unit format custom pattern", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"olf": {
+					"displayName": "olf",
+					"unitPattern-count-one": "{0} olf",
+					"unitPattern-count-other": "{0} olfers"
+				},
+				"IND": {
+					"displayName": "olf",
+					"unitPattern-count-one": "{0} olf",
+					"unitPattern-count-other": "{0} olfs"
+				},
+				"electric-inductance": {
+					"displayName": "H",
+					"unitPattern-count-one": "{0} H",
+					"unitPattern-count-other": "{0} H"
+				}
+			}
+		}, oLocale);
+
+		// test exclusiveness
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "", "20 ha");
+
+		// test "other" units
+		assert.equal(oFormat.format(20, "olf").toString(), "20 olfers", "20 olfers");
+		assert.equal(oFormat.format(20, "IND").toString(), "20 olfs", "20 olfs");
+		assert.equal(oFormat.format(20, "electric-inductance").toString(), "20 H", "20 H");
+
+		// test "one" unit
+		assert.equal(oFormat.format(1, "olf").toString(), "1 olf", "1 olf");
+		assert.equal(oFormat.format(1, "IND").toString(), "1 olf", "1 olf");
+		assert.equal(oFormat.format(1, "electric-inductance").toString(), "1 H", "1 H");
+
+	});
+
+	QUnit.test("Unit parse custom pattern", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"olf": {
+					"displayName": "olf",
+					"unitPattern-count-one": "{0} olf",
+					"unitPattern-count-other": "{0} olfers"
+				},
+				"IND": {
+					"displayName": "olf",
+					"unitPattern-count-one": "{0} olf",
+					"unitPattern-count-other": "{0} olfs"
+				},
+				"electric-inductance": {
+					"displayName": "H",
+					"unitPattern-count-one": "{0} H",
+					"unitPattern-count-other": "{0} H"
+				}
+			}
+		}, oLocale);
+
+		// test exclusiveness
+		assert.equal(oFormat.parse("20 ha"), null, "20 ha");
+
+		// test "other" units
+		assert.deepEqual(oFormat.parse("20 olfers"), [20, "olf"], "20 olfers");
+		assert.deepEqual(oFormat.parse("20 olfs"), [20, "IND"], "20 olfs");
+		assert.deepEqual(oFormat.parse("20 H"), [20, "electric-inductance"], "20 H");
+
+		// test "one" unit - ambiguous for olf and IND
+		assert.deepEqual(oFormat.parse("1 olf"), [1, undefined], "1 olf");
+		assert.deepEqual(oFormat.parse("1 olf"), [1, undefined], "1 olf");
+		assert.deepEqual(oFormat.parse("1 H"), [1, "electric-inductance"], "1 H");
+
+	});
+
+	QUnit.module("Unit Format using configuration", {
+		beforeEach: function(assert) {
+
+			//ensure custom unit mappings and custom units are reset
+			this.oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			this.oFormatSettings.setUnitMappings();
+			this.oFormatSettings.setCustomUnits();
+
+			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+		}, afterEach: function(assert) {
+			//ensure custom unit mappings and custom units are reset
+			this.oFormatSettings.setUnitMappings();
+			this.oFormatSettings.setCustomUnits();
+
+			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+		}
+	});
+
+
+	QUnit.test("Unit format custom pattern in config", function(assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"electric-inductance": {
+				"unitPattern-count-one": "{0} H",
+				"unitPattern-count-other": "{0} H"
+			},
+			"length-millimeter": {
+				"unitPattern-count-other": "{0} mymm"
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({});
+
+		// test custom unit in config
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "20 ha", "20 ha");
+		assert.equal(oFormat.format(20, "electric-inductance").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(1, "electric-inductance").toString(), "1 H", "1 H");
+
+
+		//custom mappings should not affect parsing
+		oFormatSettings.setUnitMappings({
+			"henry": "electric-inductance",
+			"IND": "electric-inductance",
+			"MTR": "length-meter",
+			"MET": "length-meter",
+			"length-kilometer": "electric-inductance",
+			"DET": "MET",
+			"one": "two",
+			"two": "one"
+		});
+
+		// test existing units
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "20 ha", "20 ha");
+
+		//test overwritten units from custom units
+		assert.equal(oFormat.format(20, "length-millimeter").toString(), "20 mymm", "20 mymm");
+
+		// test defined custom units
+		assert.equal(oFormat.format(20, "electric-inductance").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(1, "electric-inductance").toString(), "1 H", "1 H");
+
+
+		//test mappings
+		assert.equal(oFormat.format(20, "length-kilometer").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(20, "henry").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(20, "IND").toString(), "20 H", "20 H");
+		assert.equal(oFormat.format(20, "MTR").toString(), "20 m", "20 m");
+		assert.equal(oFormat.format(20, "MET").toString(), "20 m", "20 m");
+		assert.equal(oFormat.format(20, "DET").toString(), "", "mapping of mapping");
+		assert.equal(oFormat.format(20, "one").toString(), "", "recursive mapping");
+		assert.equal(oFormat.format(20, "two").toString(), "", "recursive mapping");
+
+		oFormatSettings.setCustomUnits(undefined);
+		oFormatSettings.setUnitMappings(undefined);
+	});
+
+	QUnit.test("Unit parse custom pattern in config", function(assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"electric-inductance": {
+				"displayName": "H",
+				"unitPattern-count-one": "{0} H",
+				"unitPattern-count-other": "{0} H"
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({});
+
+		assert.deepEqual(oFormat.parse("20 ha"), [20, "area-hectare"],  "20 ha");
+		assert.deepEqual(oFormat.parse("20 H"), [20, "electric-inductance"],  "20 H");
+		assert.deepEqual(oFormat.parse("1 H"), [1, "electric-inductance"],  "1 H");
+
+		oFormatSettings.setCustomUnits(undefined);
+	});
+
+
+	QUnit.test("Unit format edge cases CLDR", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({}, oLocale);
+
+		//valid numbers
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "20 ha", "20 ha");
+		assert.equal(oFormat.format(0.2e2, "area-hectare").toString(), "20 ha", "20 ha");
+		assert.equal(oFormat.format(0x14, "area-hectare").toString(), "20 ha", "20 ha");
+		assert.equal(oFormat.format("20", "area-hectare").toString(), "20 ha", "string number '20'");
+		assert.equal(oFormat.format(0, "area-hectare").toString(), "0 ha", "0 ha");
+		assert.equal(oFormat.format(0x0, "area-hectare").toString(), "0 ha", "0 ha");
+		assert.equal(oFormat.format(0e2, "area-hectare").toString(), "0 ha", "0 ha");
+		assert.equal(oFormat.format("0", "area-hectare").toString(), "0 ha", "string number '0'");
+
+		//exponential numbers as string
+		assert.equal(oFormat.format("0.2e2", "area-hectare").toString(), "020 ha", "string number '0.2e2'");
+		assert.equal(oFormat.format("0.02e2", "area-hectare").toString(), "002 ha", "string number '0.2e2'");
+		assert.equal(oFormat.format("0.00e2", "area-hectare").toString(), "000 ha", "string number '0.2e2'");
+		assert.equal(oFormat.format("0.000e2", "area-hectare").toString(), "000.0 ha", "string number '0.2e2'");
+
+		//invalid number
+		assert.equal(oFormat.format("2e2", "area-hectare").toString(), "200 ha", "string number '2e2'");
+		assert.equal(oFormat.format("2e1", "area-hectare").toString(), "20 ha", "string number '2e1'");
+		assert.equal(oFormat.format("0e2", "area-hectare").toString(), "000 ha", "string number '0e2'");
+		assert.equal(oFormat.format("a", "area-hectare").toString(), "", "character a");
+		assert.equal(oFormat.format("null", "area-hectare").toString(), "", "string 'null'");
+		assert.equal(oFormat.format(undefined, "area-hectare").toString(), "", "undefined");
+		assert.equal(oFormat.format(NaN, "area-hectare").toString(), "", "NaN");
+		assert.equal(oFormat.format({}, "area-hectare").toString(), "", "empty object");
+		assert.equal(oFormat.format(function() {}, "area-hectare").toString(), "", "function");
+		assert.equal(oFormat.format().toString(), "", "no params");
+
+		//invalid unit
+		assert.equal(oFormat.format(12, 33).toString(), "", "");
+		assert.equal(oFormat.format(12, "").toString(), "", "");
+		assert.equal(oFormat.format(12, "a").toString(), "", "a");
+		assert.equal(oFormat.format(12, true).toString(), "", "boolean true");
+		assert.equal(oFormat.format(12, false).toString(), "", "boolean false");
+		assert.equal(oFormat.format(12, null).toString(), "", "null");
+		assert.equal(oFormat.format(12, undefined).toString(), "", "undefined");
+		assert.equal(oFormat.format(12, {}).toString(), "", "empty object");
+		assert.equal(oFormat.format(12, function() {}).toString(), "", "function");
+		assert.equal(oFormat.format(12).toString(), "", "params");
+		assert.equal(oFormat.format(12, NaN).toString(), "", "NaN empty string option is by default NaN");
+
+		// empty string option
+		oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({emptyString: 0}, oLocale);
+		assert.strictEqual(oFormat.format(0), "", "empty string is 0");
+
+		oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({emptyString: null}, oLocale);
+		assert.equal(oFormat.format(null), "", "empty string is 0");
+
+		oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({emptyString: NaN}, oLocale);
+		assert.equal(oFormat.format(NaN), "", "empty string is 0");
+	});
+
+	QUnit.test("Unit parse edge cases CLDR", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({}, oLocale);
+
+		assert.deepEqual(oFormat.parse("20 ha"), [20, "area-hectare"], "parsed correctly");
+		assert.deepEqual(oFormat.parse("20 c"), [20, undefined], "number and ambigious unit duration-century and volume-cup");
+		assert.equal(oFormat.parse("20"), null, "number only '20'");
+		assert.equal(oFormat.parse("ha"), null, "unit only 'ha'");
+		assert.equal(oFormat.parse("__ ha"), null, "no number area-hectare unit '__ ha'");
+		assert.equal(oFormat.parse("__ __"), null, "no number no unit '__ __'");
+		assert.equal(oFormat.parse("20 __"), null, "number no unit '20 __'");
+		assert.equal(oFormat.parse("__"), null, "no number no unit '__'");
+		assert.equal(oFormat.parse(null), null, "number no unit null");
+		assert.equal(oFormat.parse(undefined), null, "number no unit undefined");
+		assert.equal(oFormat.parse({}), null, "number no unit {}");
+		assert.equal(oFormat.parse(true), null, "number no unit true");
+		assert.equal(oFormat.parse(false), null, "number no unit false");
+		assert.equal(oFormat.parse(NaN), null, "number no unit NaN");
+		assert.equal(oFormat.parse(22), null, "number no unit 22");
+		assert.equal(oFormat.parse(function() {}), null, "number no unit function");
+		assert.equal(isNaN(oFormat.parse("")), true, "number no unit '' empty string option is by default NaN");
+
+		oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({emptyString: 0}, oLocale);
+		assert.equal(oFormat.parse(""), 0, "empty string is 0");
+
+		oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({emptyString: null}, oLocale);
+		assert.equal(oFormat.parse(""), null, "empty string is null");
+
+		oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({emptyString: NaN}, oLocale);
+		assert.deepEqual(oFormat.parse(""), NaN, "empty string is NaN");
+	});
+
+	QUnit.test("Unit parse edge cases CLDR - showMeasure = false", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({showMeasure: false}, oLocale);
+
+		assert.deepEqual(oFormat.parse("20 ha"), [20, "area-hectare"], "parsed correctly");
+		assert.deepEqual(oFormat.parse("20 c"), [20, undefined], "number and ambigious unit duration-century and volume-cup");
+		assert.equal(oFormat.parse("20"), null, "number only '20'");
+		assert.equal(oFormat.parse("ha"), null, "unit only 'ha'");
+		assert.equal(oFormat.parse("__ ha"), null, "no number area-hectare unit '__ ha'");
+		assert.equal(oFormat.parse("__ __"), null, "no number no unit '__ __'");
+		assert.equal(oFormat.parse("20 __"), null, "number no unit '20 __'");
+		assert.equal(oFormat.parse("__"), null, "no number no unit '__'");
+		assert.equal(oFormat.parse(null), null, "number no unit null");
+		assert.equal(oFormat.parse(undefined), null, "number no unit undefined");
+		assert.equal(oFormat.parse({}), null, "number no unit {}");
+		assert.equal(oFormat.parse(true), null, "number no unit true");
+		assert.equal(oFormat.parse(false), null, "number no unit false");
+		assert.equal(oFormat.parse(NaN), null, "number no unit NaN");
+		assert.equal(oFormat.parse(22), null, "number no unit 22");
+		assert.equal(oFormat.parse(function() {}), null, "number no unit function");
+		assert.deepEqual(oFormat.parse(""), NaN, "number no unit '' empty string option is by default NaN");
+
+		oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({emptyString: 0}, oLocale);
+		assert.equal(oFormat.parse(""), 0, "empty string is 0");
+
+		oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({emptyString: null}, oLocale);
+		assert.equal(oFormat.parse(""), null, "empty string is null");
+
+		oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({emptyString: NaN}, oLocale);
+		assert.deepEqual(oFormat.parse(""), NaN, "empty string is NaN");
+	});
+
+	QUnit.test("Unit format: restricted list of accepted unit types", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			allowedUnits: ["area-hectare", "duration-hour", "volume-cup"]
+		}, oLocale);
+
+		// accepted units
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "20 ha", "area-hectare is accepted");
+		assert.equal(oFormat.format(123, "duration-hour").toString(), "123 hr", "duration-hour is accepted");
+		assert.equal(oFormat.format(2, "volume-cup").toString(), "2 c", "volume-cup is accepted");
+
+		// rejected units
+		assert.equal(oFormat.format(5.6, "area-acre").toString(), "", "area-acre is rejected");
+		assert.equal(oFormat.format(1337, "duration-minute").toString(), "", "duration-minute is rejected");
+	});
+
+	QUnit.test("Unit parse: restricted list of accepted unit types", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			allowedUnits: ["area-hectare", "duration-hour", "volume-cup"]
+		}, oLocale);
+
+		// accepted units
+		assert.deepEqual(oFormat.parse("20 ha"), [20, "area-hectare"], "area-hectare is accepted");
+		assert.deepEqual(oFormat.parse("123 hr"), [123, "duration-hour"], "duration-hour is accepted");
+
+		// ambiguous unit problem is resolved, because it is contained in the allowed unit types list
+		assert.deepEqual(oFormat.parse("2 c"), [2, "volume-cup"], "volume-cup is correctly recognized");
+
+		// rejected units
+		assert.equal(oFormat.parse("5.6 ac"), null, "area-acre is rejected");
+		assert.equal(oFormat.parse("1337 min"), null, "duration-minute is rejected");
+
+		// if ambiguous units are introduced by the application, we return undefined for the unit
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			allowedUnits: ["duration-century", "volume-cup"]
+		}, oLocale);
+
+		assert.deepEqual(oFormat.parse("41.5 c"), [41.5, undefined], "volume-cup and duration-century are ambiguous");
+	});
+
+	QUnit.test("Unit format with sMeasure and showMeasure = false", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			showMeasure: false
+		}, oLocale);
+		assert.equal(oFormat.format(1, "duration-hour"), "1", "1 hour");
+		assert.equal(oFormat.format(0, "duration-hour"), "0", "0 hours");
+		assert.equal(oFormat.format(123456.789, "duration-hour"), "123,456.789", "123,456.789 hours");
+		assert.equal(oFormat.format([123456.789, "duration-hour"]), "123,456.789", "123,456.789 hours");
+
+		assert.equal(oFormat.format(1, "electric-ohm"), "1", "1 ohm");
+		assert.equal(oFormat.format(0, "electric-ohm"), "0", "0 ohms");
+		assert.equal(oFormat.format([-123456.789, "electric-ohm"]), "-123,456.789", "-123,456.789 ohms");
+		assert.equal(oFormat.format(-123456.789, "electric-ohm"), "-123,456.789", "-123,456.789 ohms");
+
+		assert.equal(oFormat.format(1, "frequency-hertz"), "1", "1 hertz");
+		assert.equal(oFormat.format(0, "frequency-hertz"), "0", "0 hertz");
+		assert.equal(oFormat.format(123456.789, "frequency-hertz"), "123,456.789", "123,456.789 hertz");
+		assert.equal(oFormat.format([123456.789, "frequency-hertz"]), "123,456.789", "123,456.789 hertz");
+
+		assert.equal(oFormat.format(1, "area-hectare"), "1", "1 hectare");
+		assert.equal(oFormat.format(0, "area-hectare"), "0", "0 hectare");
+		assert.equal(oFormat.format(-123456.789, "area-hectare"), "-123,456.789", "-123,456.789 hectares");
+		assert.equal(oFormat.format([-123456.789, "area-hectare"]), "-123,456.789", "-123,456.789 hectares");
+
+	});
+
+	QUnit.test("Unit format with sMeasure long style", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({"style":"long"}, oLocale);
+		assert.equal(oFormat.format(1, "duration-hour"), "1 hr", "1 hour");
+		assert.equal(oFormat.format(0, "duration-hour"), "0 hr", "0 hours");
+		assert.equal(oFormat.format(123456.789, "duration-hour"), "123 thousand hr", "123,456.789 hours");
+		assert.equal(oFormat.format([123456.789, "duration-hour"]), "123 thousand hr", "123,456.789 hours");
+
+		assert.equal(oFormat.format(1, "electric-ohm"), "1 Ω", "1 ohm");
+		assert.equal(oFormat.format(0, "electric-ohm"), "0 Ω", "0 ohms");
+		assert.equal(oFormat.format([-123456.789, "electric-ohm"]), "-123 thousand Ω", "-123 ohms");
+		assert.equal(oFormat.format(-123456.789, "electric-ohm"), "-123 thousand Ω", "-123 ohms");
+
+		assert.equal(oFormat.format(1, "frequency-hertz"), "1 Hz", "1 hertz");
+		assert.equal(oFormat.format(0, "frequency-hertz"), "0 Hz", "0 hertz");
+		assert.equal(oFormat.format(123456.789, "frequency-hertz"), "123 thousand Hz", "123 hertz");
+		assert.equal(oFormat.format([123456.789, "frequency-hertz"]), "123 thousand Hz", "123 hertz");
+
+		assert.equal(oFormat.format(1, "area-hectare"), "1 ha", "1 hectare");
+		assert.equal(oFormat.format(0, "area-hectare"), "0 ha", "0 hectare");
+		assert.equal(oFormat.format(-123456.789, "area-hectare"), "-123 thousand ha", "-123 hectares");
+		assert.equal(oFormat.format([-123456.789, "area-hectare"]), "-123 thousand ha", "-123 hectares");
+
+	});
+
+	QUnit.test("Unit format with sMeasure long style and showMeasure = false", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			style: "long",
+			showMeasure: false
+		}, oLocale);
+		assert.equal(oFormat.format(1, "duration-hour"), "1", "1 hour");
+		assert.equal(oFormat.format(0, "duration-hour"), "0", "0 hours");
+		assert.equal(oFormat.format(123456.789, "duration-hour"), "123 thousand", "123,456.789 hours");
+		assert.equal(oFormat.format([123456.789, "duration-hour"]), "123 thousand", "123,456.789 hours");
+
+		assert.equal(oFormat.format(1, "electric-ohm"), "1", "1 ohm");
+		assert.equal(oFormat.format(0, "electric-ohm"), "0", "0 ohms");
+		assert.equal(oFormat.format([-123456.789, "electric-ohm"]), "-123 thousand", "-123 ohms");
+		assert.equal(oFormat.format(-123456.789, "electric-ohm"), "-123 thousand", "-123 ohms");
+
+		assert.equal(oFormat.format(1, "frequency-hertz"), "1", "1 hertz");
+		assert.equal(oFormat.format(0, "frequency-hertz"), "0", "0 hertz");
+		assert.equal(oFormat.format(123456.789, "frequency-hertz"), "123 thousand", "123 hertz");
+		assert.equal(oFormat.format([123456.789, "frequency-hertz"]), "123 thousand", "123 hertz");
+
+		assert.equal(oFormat.format(1, "area-hectare"), "1", "1 hectare");
+		assert.equal(oFormat.format(0, "area-hectare"), "0", "0 hectare");
+		assert.equal(oFormat.format(-123456.789, "area-hectare"), "-123 thousand", "-123 hectares");
+		assert.equal(oFormat.format([-123456.789, "area-hectare"]), "-123 thousand", "-123 hectares");
+
+	});
+
+	QUnit.test("Unit parse with sMeasure", function(assert) {
+
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance(oLocale);
+		var aResult = oFormat.parse("1 hr");
+		assert.deepEqual(aResult, [1, "duration-hour"], "Number and unit is parsed correctly");
+
+		aResult = oFormat.parse("10e-1 hr");
+		assert.deepEqual(aResult, [1, "duration-hour"], "Number and unit is parsed correctly");
+	});
+
+	QUnit.test("Unit parse with sMeasure - parseAsString", function(assert) {
+
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			parseAsString: true
+		}, oLocale);
+		var aResult = oFormat.parse("123 hr");
+		assert.deepEqual(aResult, ["123", "duration-hour"], "Number and unit is parsed correctly");
+
+
+		aResult = oFormat.parse("10e-1 hr");
+		assert.deepEqual(aResult, ["1.0", "duration-hour"], "Number and unit is parsed correctly");
+	});
+
+	QUnit.test("Unit parse with sMeasure & special plural forms (e.g. AR locale)", function(assert) {
+		var oLocale = new sap.ui.core.Locale("ar");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance(oLocale);
+		var aResult = oFormat.parse("درجة");
+
+		//matches -one pattern
+		assert.deepEqual(aResult, [1, "angle-degree"], "Number and unit is parsed correctly");
+
+		//matches -two pattern
+		aResult = oFormat.parse("درجتان");
+		assert.deepEqual(aResult, [2, "angle-degree"], "Number and unit is parsed correctly");
+	});
+
+	QUnit.test("Unit parse with missing units", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance(oLocale);
+		var aResult = oFormat.parse("1234");
+
+		assert.equal(aResult, null, "Unit is missing");
+	});
+
+	QUnit.test("Unit parse with ambiguous units (e.g. en locale)", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance(oLocale);
+		var aResult = oFormat.parse("100 c");
+
+		// number can be uniquely determined but unit is ambiguous
+		assert.deepEqual(aResult, [100, undefined], "Number and unit is parsed correctly");
+	});
+
+	QUnit.test("Unit parse with sMeasure and unknown Unit", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance(oLocale);
+
+		aResult = oFormat.parse("123 TER");
+		assert.equal(aResult, null, "unit cannot be found");
+
+		aResult = oFormat.parse("TER 1234");
+		assert.equal(aResult, null, "unit cannot be found");
+	});
+
+	QUnit.test("Unit parse with sMeasure and Wrong Number or Unit value", function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance(oLocale);
+
+		var aResult = oFormat.parse("1r2 deg");
+		assert.equal(aResult, null, "Broken Number is recognized -> null result");
+
+		aResult = oFormat.parse("null foo");
+		assert.equal(aResult, null, "Broken Number and Unit is recognized -> null result");
+
+		aResult = oFormat.parse("deg");
+		assert.equal(aResult, null, "Broken Number and Unit is recognized -> null result");
+
+		// parseAsString does not change anything
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			parseAsString: true
+		}, oLocale);
+		var aResult = oFormat.parse("1r2 deg");
+
+		assert.equal(aResult, null, "broken Number is recognized -> null value");
+	});
+
+	QUnit.test("Unit parse with sMeasure english long", function(assert) {
+
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({"style": "long"}, oLocale);
+		var aResult = oFormat.parse("1 thousand hr");
+		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.equal(aResult[0], 1000, "Number is parsed correctly");
+		assert.equal(aResult[1], "duration-hour", "hour expression from pattern \"{1} hr\"");
+
+
+		aResult = oFormat.parse("17 million hr");
+		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.equal(aResult[0], 17000000, "Number is parsed correctly");
+		assert.equal(aResult[1], "duration-hour", "hour expression from pattern \"{1} hr\"");
+
+	});
+
+	QUnit.test("Unit parse with sMeasure complex cldr polish", function(assert) {
+
+		var oLocale = new sap.ui.core.Locale("pl_PL");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance(oLocale);
+		var aResult = oFormat.parse("1 234 567 mi/h");
+		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.equal(aResult[0], 1234567, "Number is parsed correctly");
+		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h\"");
+
+		aResult = oFormat.parse("0,5 mi/h");
+		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.equal(aResult[0], 0.5, "Number is parsed correctly");
+		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h	\"");
+
+	});
+
+
+	QUnit.test("Unit parse with sMeasure complex cldr polish long", function(assert) {
+
+		var oLocale = new sap.ui.core.Locale("pl_PL");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({style:"long"},oLocale);
+		var aResult = oFormat.parse("123 tysiące mi/h");
+		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.equal(aResult[0], 123000, "Number is parsed correctly");
+		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h\"");
+
+		aResult = oFormat.parse("500 mi/h");
+		assert.ok(jQuery.isArray(aResult), "Unit parser should return an array");
+		assert.equal(aResult[0], 500, "Number is parsed correctly");
+		assert.equal(aResult[1], "speed-mile-per-hour", "hour expression from pattern \"{0}  mi/h	\"");
+
+	});
+
+
+	QUnit.module("Currency Format");
+
 	QUnit.test("Currency format with sMeasure and showMeasure as symbol", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
 			currencyCode: false
@@ -1131,6 +1722,54 @@
 		assert.equal(oFormat.format([123456.789, "EUR"]), "\u20ac" + "123,456.79", "123456.789 EUR");
 		assert.equal(oFormat.format(-123456.789, "EUR"), "\u20ac\ufeff" + "-123,456.79", "123456.789 EUR");
 		assert.equal(oFormat.format([-123456.789, "EUR"]), "\u20ac\ufeff" + "-123,456.79", "123456.789 EUR");
+	});
+
+
+	QUnit.test("Currency format with custom number of decimals", function(assert) {
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		});
+		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
+		assert.equal(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.79", "123456.789 CZK");
+		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.789 BTC");
+
+		// set custom currency digits
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({
+			"EUR": {"digits": 1},
+			"JPY": {"digits": 3},
+			"CZK": {"digits": 3},
+			"BTC": {"digits": 5}
+		});
+
+		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		});
+		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.8", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,456.789", "123456.789 YEN");
+		assert.equal(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.789", "123456.789 CZK");
+		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.78900", "123456.789 BTC");
+
+		// add custom currencies
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({
+			"DEFAULT": {"digits": 6}
+		});
+		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		});
+		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.8", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "MON"), "MON\xa0" + "123,456.789000", "123456.789 MON");
+
+		// reset custom currencies
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+
+		oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance({
+			currencyCode: false
+		});
+		assert.equal(oFormat.format(123456.789, "EUR"), "\u20ac" + "123,456.79", "123456.789 EUR");
+		assert.equal(oFormat.format(123456.789, "JPY"), "\u00a5" + "123,457", "123456.789 YEN");
+		assert.equal(oFormat.format(123456.789, "CZK"), "CZK\xa0" + "123,456.79", "123456.789 CZK");
+		assert.equal(oFormat.format(123456.789, "BTC"), "BTC\xa0" + "123,456.79", "123456.789 BTC");
 	});
 
 	QUnit.test("Currency format with sMeasure and showMeasure set to none", function(assert) {
@@ -1288,6 +1927,37 @@
 		assert.equal(oFormat.parse("12,345.67"), "12345.67", "Number with grouping is parsed as string");
 		assert.equal(oFormat.parse("-12,345,678,901,123,456,345,678,901,123,456.78"), "-12345678901123456345678901123456.78",
 				"Ridiculously long number is parsed as string");
+	});
+
+	QUnit.test("NumberFormat for 'he' locale with big number. Contains then RTL character u+200F", function(assert) {
+		//setup
+		var oLocale = new sap.ui.core.Locale("he");
+		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+			"style": "long"
+		}, oLocale);
+
+		// input and output
+		var iExpectedNumber = 123000000;
+
+		// execution
+		var sFormatted = oFormat.format(iExpectedNumber);
+		assert.equal(sFormatted, '‏123 מיליון', "can be formatted '" + sFormatted + "'");
+
+		var sParsed = oFormat.parse(sFormatted);
+		assert.equal(sParsed, iExpectedNumber, "should match input number " + iExpectedNumber);
+	});
+
+	QUnit.test("NumberFormat for 'de' locale with big number", function(assert) {
+		var oLocale = new sap.ui.core.Locale("de");
+		var oFormat = sap.ui.core.format.NumberFormat.getIntegerInstance({
+			"style": "long"
+		}, oLocale);
+		var expectedNumber = 123000000;
+		var sFormatted = oFormat.format(expectedNumber);
+		assert.equal(sFormatted, "123 Millionen", "can be formatted '"+sFormatted+"'");
+
+		var sParsed = oFormat.parse(sFormatted);
+		assert.equal(sParsed, expectedNumber, "should match input number " + expectedNumber);
 	});
 
 	QUnit.test("parse default format with parameter 'parseAsString' set to true", function(assert) {
@@ -1456,6 +2126,8 @@
 		assert.equal(aResult[1], "EUR", "Currency Code is parsed correctly: expected EUR, parsed " + aResult[1]);
 	});
 
+	QUnit.module("Float Format");
+
 	QUnit.test("float precision", function(assert) {
 		var oLocale = new sap.ui.core.Locale("de-DE");
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({precision: 0}, oLocale);
@@ -1549,9 +2221,6 @@
 		assert.equal(oFormat.parse("12"), 12, "\"12\" parsed");
 		assert.equal(oFormat.parse("123"), 123, "\"123\" parsed");
 		assert.equal(oFormat.parse("1,23 Tsd."), 1230, "\"1,23 Tsd\" parsed");
-		assert.equal(oFormat.parse("12,3 Tsd."), 12300, "\"12,3 Tsd\" parsed");
-		assert.equal(oFormat.parse("123 Tsd."), 123000, "\"123 Tsd\" parsed");
-		assert.equal(oFormat.parse("1000 Tsd."), 1000000, "\"1000 Tsd\" parsed");
 		assert.equal(oFormat.parse("1 Mio."), 1000000, "\"1 Mio.\" parsed");
 		assert.equal(oFormat.parse("10 Mio."), 10000000, "\"10 Mio.\" parsed");
 		assert.equal(oFormat.parse("100 Mio."), 100000000, "\"100 Mio.\" parsed");
@@ -1563,10 +2232,7 @@
 		assert.equal(oFormat.parse("-1"), -1, "\"-1\" parsed");
 		assert.equal(oFormat.parse("-12"), -12, "\"-12\" parsed");
 		assert.equal(oFormat.parse("-123"), -123, "\"-123\" parsed");
-		assert.equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1,23 Tsd\" parsed");
-		assert.equal(oFormat.parse("-12,3 Tsd."), -12300, "\"-12,3 Tsd\" parsed");
-		assert.equal(oFormat.parse("-123 Tsd."), -123000, "\"-123 Tsd\" parsed");
-		assert.equal(oFormat.parse("-1000 Tsd."), -1000000, "\"-1000 Tsd\" parsed");
+		assert.equal(oFormat.parse("-1,23 Tsd."), -1230, "\"-1230\" parsed");
 		assert.equal(oFormat.parse("-1 Mio."), -1000000, "\"-1 Mio.\" parsed");
 		assert.equal(oFormat.parse("-10 Mio."), -10000000, "\"-10 Mio.\" parsed");
 		assert.equal(oFormat.parse("-100 Mio."), -100000000, "\"-100 Mio.\" parsed");
@@ -1616,7 +2282,26 @@
 
 	});
 
-	QUnit.test("float short style", function(assert) {
+	QUnit.test("float short style (non-prefix-free unit strings)", function(assert) {
+		// this test checks number parsing when one unit is a prefix of another unit
+		// (e.g Spanish 'mil' for thousands and 'mil M' for thousands of millions)
+		var oLocaleSpanish = new sap.ui.core.Locale("es-ES");
+		var oFormatSpanish = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "short", maxFractionDigits: 0
+		}, oLocaleSpanish);
+
+		assert.equal(oFormatSpanish.format(123000000000), "123\xa0mil\xa0M", "123000000000 formatted");
+		assert.equal(oFormatSpanish.format( 12000000000),  "12\xa0mil\xa0M",  "12000000000 formatted");
+		assert.equal(oFormatSpanish.format(   123000000), "123\xa0M",           "123000000 formatted");
+		assert.equal(oFormatSpanish.format(      123000), "123\xa0mil",            "123000 formatted");
+
+		assert.equal(oFormatSpanish.parse("123 mil M"), 123000000000, "\"123 mil M\" parsed");
+		assert.equal(oFormatSpanish.parse( "12 mil M"),  12000000000,  "\"12 mil M\" parsed");
+		assert.equal(oFormatSpanish.parse("123 M"),        123000000, "\"123 M\" parsed");
+		assert.equal(oFormatSpanish.parse("123 mil"),         123000, "\"123 mil\" parsed");
+	});
+
+	QUnit.test("float short style w/ decimals", function(assert) {
 		var oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
 			style: "short",
 			decimals: 2,
@@ -1640,16 +2325,48 @@
 		assert.equal(oFormat.format(1234.5), "1,2 Tausend", "1234.5 formatted");
 		assert.equal(oFormat.parse("1 Tausend"), 1000, "\"1 Tausend\" parsed");
 		assert.equal(oFormat.parse("1,2 Tausend"), 1200, "\"1,2 Tausend\" parsed");
+
+
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "long", maxFractionDigits: 0
+		}, oLocale);
+
+
+		//german has "Million" and "Millionen". The first word is contained in the second.
+		assert.equal(oFormat.format(1456789), "1 Million", "1 million formatted");
+		assert.equal(oFormat.parse("1 Million"), 1000000, "1 million parsed");
+
+		assert.equal(oFormat.format(123456789), "123 Millionen", "123 Millionen formatted");
+		assert.equal(oFormat.parse("123 Millionen"), 123000000, "123 Millionen parsed");
+
+		assert.equal(oFormat.format(123456789000), "123 Milliarden", "123 Milliarden formatted");
+		assert.equal(oFormat.parse("123 Milliarden"), 123000000000, "123 Milliarden parsed");
+
+
+		//Format should work '-10 mil millones' from number: -10000000000
+		oFormat = sap.ui.core.format.NumberFormat.getFloatInstance({
+			style: "long", maxFractionDigits: 0
+		}, new sap.ui.core.Locale("es-ES"));
+
+		//spanish has "mil milliones" and "milliones". The first word ends with the second.
+		assert.equal(oFormat.format(10000000000), "10 mil millones", "10 mil millones formatted");
+		assert.equal(oFormat.parse("10 mil millones"), 10000000000, "10 mil millones parsed");
+
+		assert.equal(oFormat.format(10000000), "10 millones", "10 millones formatted");
+		assert.equal(oFormat.parse("10 millones"), 10000000, "10 millones parsed");
+
 		// other test similar to integer -> skip
 	});
+
+	QUnit.module("General");
 
 	QUnit.test("origin info", function(assert) {
 		sap.ui.getCore().getConfiguration().originInfo = true;
 		var oOriginNumber = sap.ui.core.format.NumberFormat.getIntegerInstance(),
 			sValue = oOriginNumber.format(123),
 			oInfo = sValue.originInfo;
-		assert.equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source")
-		assert.equal(oInfo.locale, "en-US", "Origin Info: locale")
+		assert.equal(oInfo.source, "Common Locale Data Repository", "Origin Info: source");
+		assert.equal(oInfo.locale, "en-US", "Origin Info: locale");
 	});
 
 	QUnit.test("Private method NumberFormat._shiftDecimalPoint", function(assert) {
@@ -1707,6 +2424,64 @@
 				});
 			});
 		});
+	});
+
+	QUnit.test("Percent format with custom pattern", function(assert) {
+		var oLocale = new sap.ui.core.Locale("tr-TR");
+
+		// no custom pattern
+		var oFormat = sap.ui.core.format.NumberFormat.getPercentInstance(oLocale);
+
+		assert.equal(oFormat.format(.1234567), "%12,34567", ".1234567");
+		assert.equal(oFormat.parse("%12,34567"), 0.1234567, "%12,34567");
+		assert.deepEqual(oFormat.parse("12,34567%"), NaN, "12,34567%");
+
+		// custom pattern
+		oFormat = sap.ui.core.format.NumberFormat.getPercentInstance({
+			pattern: "%#####.#####"
+		}, oLocale);
+
+		assert.equal(oFormat.format(.1234567), "%12,34567", ".1234567");
+		assert.equal(oFormat.parse("%12,34567"), 0.1234567, "%12,34567");
+		assert.deepEqual(oFormat.parse("12,34567%"), NaN, "12,34567%");
+
+		//change pattern such that percent symbol is at the end
+		oFormat = sap.ui.core.format.NumberFormat.getPercentInstance({
+			pattern: "#,##0%"
+		}, oLocale);
+
+		assert.equal(oFormat.format(12), "1.200%", "12");
+		assert.equal(oFormat.format(12.34), "1.234%", "12.34");
+		assert.equal(oFormat.format(.1234567), "12%", ".1234567");
+		assert.equal(oFormat.format(-.1234567), "-12%", "-.1234567");
+		assert.equal(oFormat.format(.1234), "12%", ".1234");
+
+		assert.equal(oFormat.parse("1.200%"), 12, "1.200%");
+		assert.equal(oFormat.parse("1.234%"), 12.34, "1.234%");
+		assert.deepEqual(oFormat.parse("%1.200"), NaN, "NaN because does not match pattern '#,##0%'");
+		assert.deepEqual(oFormat.parse("%12.345%"), NaN, "NaN because does not match pattern '#,##0%'");
+	});
+
+	QUnit.test("Currency with percentage symbol",  function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getCurrencyInstance(oLocale);
+
+		assert.equal(oFormat.format(52.3, "%").toString(), "%\xa052.30", "52.3%");
+		assert.deepEqual(oFormat.parse("%\xa052.30"), [52.3, "%"], "Percentage sign is treated as currency unit");
+
+		assert.equal(oFormat.format(52.3, "xsd").toString(), "xsd\xa052.30", "xsd 52.30");
+		assert.deepEqual(oFormat.parse("xsd\xa052.30"), [52.3, "xsd"], "'xsd' is treated as currency unit");
+	});
+
+	QUnit.test("Float with percentage symbol",  function(assert) {
+		var oLocale = new sap.ui.core.Locale("en");
+		var oFormat = sap.ui.core.format.NumberFormat.getInstance(oLocale);
+
+		assert.equal(oFormat.format(52.3, "%").toString(), "52.3", "52.3%");
+		assert.deepEqual(oFormat.parse("52.3%"), 0.523, "treated as percent");
+
+		assert.equal(oFormat.format(52.3, "xsd").toString(), "52.3", "xsd 52.30");
+		assert.deepEqual(oFormat.parse("52.3xsd"), NaN, "'xsd' cannot be parsed as number");
 	});
 
 	</script>

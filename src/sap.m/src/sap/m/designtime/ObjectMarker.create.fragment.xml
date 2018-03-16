@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<ObjectMarker type="Favorite" additionalInfo="Favorite" />
+</core:FragmentDefinition>

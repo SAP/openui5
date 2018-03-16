@@ -5,633 +5,635 @@
 /*
  * Provides constants for key codes. Useful in the implementation of keypress/keydown event handlers.
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/base/events/KeyCodes'],
+	function(jQuery, KeyCodes) {
 	"use strict";
-
 
 	/**
 	 * Enumeration of key codes.
 	 *
-	 * @enum {number}
+	 * @enum {int}
 	 * @public
 	 * @since 0.9.0
 	 */
-	jQuery.sap.KeyCodes = {
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		BACKSPACE : 8,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		TAB : 9,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		ENTER : 13,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		SHIFT : 16,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		CONTROL : 17,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		ALT : 18,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		BREAK : 19,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		CAPS_LOCK : 20,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		ESCAPE : 27,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		SPACE : 32,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		PAGE_UP : 33,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		PAGE_DOWN : 34,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		END : 35,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		HOME : 36,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		ARROW_LEFT : 37,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		ARROW_UP : 38,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		ARROW_RIGHT : 39,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		ARROW_DOWN : 40,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		PRINT : 44,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		INSERT : 45,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DELETE : 46,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_0 : 48,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_1 : 49,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_2 : 50,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_3 : 51,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_4 : 52,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_5 : 53,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_6 : 54,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_7 : 55,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_8 : 56,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DIGIT_9 : 57,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		A : 65,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		B : 66,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		C : 67,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		D : 68,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		E : 69,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F : 70,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		G : 71,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		H : 72,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		I : 73,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		J : 74,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		K : 75,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		L : 76,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		M : 77,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		N : 78,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		O : 79,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		P : 80,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		Q : 81,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		R : 82,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		S : 83,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		T : 84,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		U : 85,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		V : 86,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		W : 87,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		X : 88,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		Y : 89,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		Z : 90,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		WINDOWS : 91,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		CONTEXT_MENU : 93,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		TURN_OFF : 94,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		SLEEP : 95,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_0 : 96,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_1 : 97,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_2 : 98,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_3 : 99,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_4 : 100,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_5 : 101,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_6 : 102,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_7 : 103,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_8 : 104,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_9 : 105,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_ASTERISK : 106,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_PLUS : 107,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_MINUS : 109,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_COMMA : 110,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUMPAD_SLASH : 111,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F1 : 112,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F2 : 113,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F3 : 114,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F4 : 115,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F5 : 116,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F6 : 117,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F7 : 118,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F8 : 119,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F9 : 120,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F10 : 121,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F11 : 122,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		F12 : 123,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		NUM_LOCK : 144,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		SCROLL_LOCK : 145,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		OPEN_BRACKET : 186,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		PLUS : 187,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		COMMA : 188,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		SLASH : 189,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		DOT : 190,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		PIPE : 191,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		SEMICOLON : 192,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		MINUS : 219,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		GREAT_ACCENT : 220,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		EQUALS : 221,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		SINGLE_QUOTE : 222,
-
-		/**
-		 * @type number
-		 * @public
-		 */
-		BACKSLASH : 226
-	};
-
+	jQuery.sap.KeyCodes = KeyCodes;
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.BACKSPACE
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.TAB
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.ENTER
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.SHIFT
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.CONTROL
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.ALT
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.BREAK
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.CAPS_LOCK
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.ESCAPE
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.SPACE
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.PAGE_UP
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.PAGE_DOWN
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.END
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.HOME
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.ARROW_LEFT
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.ARROW_UP
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.ARROW_RIGHT
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.ARROW_DOWN
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.PRINT
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.INSERT
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DELETE
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_0
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_1
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_2
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_3
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_4
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_5
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_6
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_7
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_8
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DIGIT_9
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.A
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.B
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.C
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.D
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.E
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.G
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.H
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.I
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.J
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.K
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.L
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.M
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.N
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.O
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.P
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.Q
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.R
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.S
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.T
+	 * @public
+	 */
+
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.U
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.V
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.W
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.X
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.Y
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.Z
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.WINDOWS
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.CONTEXT_MENU
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.TURN_OFF
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.SLEEP
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_0
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_1
+	 * @public
+	 */
+
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_2
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_3
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_4
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_5
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_6
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_7
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_8
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_9
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_ASTERISK
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_PLUS
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_MINUS
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_COMMA
+	 * @public
+	 */
+
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUMPAD_SLASH
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F1
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F2
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F3
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F4
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F5
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F6
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F7
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F8
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F9
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F10
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F11
+	 * @public
+	 */
+
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.F12
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.NUM_LOCK
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.SCROLL_LOCK
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.OPEN_BRACKET
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.PLUS
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.COMMA
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.SLASH
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.DOT
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.PIPE
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.SEMICOLON
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.MINUS
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.GREAT_ACCENT
+	 * @public
+	 */
+
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.EQUALS
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.SINGLE_QUOTE
+	 * @public
+	 */
+
+	/**
+	 * @type number
+	 * @name jQuery.sap.KeyCodes.BACKSLASH
+	 * @public
+	 */
 	return jQuery;
 
 });

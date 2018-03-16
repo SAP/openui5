@@ -1,10 +1,10 @@
 sap.ui.define([
 	'sap/m/MessagePopover',
-	'sap/m/MessagePopoverItem',
+	'sap/m/MessageItem',
 	'sap/m/Link',
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel'
-], function(MessagePopover, MessagePopoverItem, Link, Controller, JSONModel) {
+], function(MessagePopover, MessageItem, Link, Controller, JSONModel) {
 	"use strict";
 
 	var oLink = new Link({
@@ -13,7 +13,7 @@ sap.ui.define([
 		target: "_blank"
 	});
 
-	var oMessageTemplate = new MessagePopoverItem({
+	var oMessageTemplate = new MessageItem({
 		type: '{type}',
 		title: '{title}',
 		description: '{description}',
@@ -86,7 +86,7 @@ sap.ui.define([
 		},
 
 		handleMessagePopoverPress: function (oEvent) {
-			oMessagePopover.openBy(oEvent.getSource());
+			oMessagePopover.toggle(oEvent.getSource());
 		}
 	});
 

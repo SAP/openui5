@@ -179,6 +179,35 @@
 		oObjectIdentifier.destroy();
 	});
 
+	QUnit.test("ObjectIdentifier title should be escaped upon creation", function(assert) {
+		// Arrange
+		var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+			oObjectIdentifier = new sap.m.ObjectIdentifier ({
+			title: "Evil { string"
+		}).placeAt("qunit-fixture");
+
+		// Assert
+		assert.strictEqual(oEscapeSpy.callCount, 1, "escaped was called once for the setted Title");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+	QUnit.test("ObjectIdentifier text should be escaped upon creation", function(assert) {
+		// Arrange
+		var oEscapeSpy = this.spy(sap.ui.base.ManagedObject, "escapeSettingsValue"),
+			oObjectIdentifier = new sap.m.ObjectIdentifier ({
+			text: "Evil { string"
+		}).placeAt("qunit-fixture");
+
+		// Assert
+		assert.strictEqual(oEscapeSpy.callCount, 1, "escaped was called once for the setted Text");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+
 	QUnit.test("Should not rerender the ObjectIdentifier if the new  title is empty", function(assert) {
 		// Arrange
 		var sTextToSet = undefined,
@@ -353,6 +382,27 @@
 
 		//System under test
 		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.notEqual(oObjectIdentifier.$("title").children(0).css("display"), "none", "The text control is visible");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+	// BCP: 1770511853
+	QUnit.test("The title control should be visible if the title is changed from non-empty value to 0", function(assert) {
+		//Arrange
+		var oObjectIdentifier = new sap.m.ObjectIdentifier({
+			title: "not empty"
+		});
+
+		//System under test
+		oObjectIdentifier.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oObjectIdentifier.setTitle(0);
 		sap.ui.getCore().applyChanges();
 
 		//Assert
@@ -912,6 +962,44 @@
 		//Cleanup
 		oTable.destroy();
 		oRenderSpy.restore();
+	});
+
+
+	QUnit.module("ARIA");
+
+	QUnit.test("Seting ariaLabeldBy", function(assert) {
+
+		//SUT
+		var sTitle = "My Title",
+			sText = "My Text",
+			sLabelId = new sap.m.Label({text: "column name"}).getId(),
+			sut = new sap.m.ObjectIdentifier({
+				title : sTitle,
+				titleActive: true,
+				text : sText
+			}),
+			sut2 = new sap.m.ObjectIdentifier({
+				title : sTitle,
+				titleActive: true,
+				text : sText,
+				ariaLabelledBy: sLabelId
+			});
+
+		//Act
+		sut.placeAt("content");
+		sut2.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		sut.addAssociation("ariaLabelledBy", sLabelId);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(sut.$("title").children(0).attr("aria-labelledby").indexOf(sLabelId) !== -1, "Correct ariaLabeldBy is set on after rendering of the control");
+		assert.ok(sut2.$("title").children(0).attr("aria-labelledby").indexOf(sLabelId) !== -1, "Correct ariaLabeldBy is set on creating of the control");
+
+		//Cleanup
+		sut.destroy();
+		sut2.destroy();
 	});
 
 </script>

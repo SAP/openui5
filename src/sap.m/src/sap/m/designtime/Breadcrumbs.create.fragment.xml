@@ -1,0 +1,8 @@
+<core:FragmentDefinition 
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+		<Breadcrumbs currentLocationText="Location">
+			<Link text="Level 1"/>
+			<Link text="Level 2"/>
+		</Breadcrumbs>
+</core:FragmentDefinition>

@@ -1,0 +1,9 @@
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core" xmlns:tf="composites">
+    <m:VBox>
+        <tf:ControlContainer id="Button"/>
+        <m:VBox items="{path:'$this>texts', filters:{path:'text', operator:'Contains', value1:'Text'}, sorter:{path:'text', descending:true}}">
+            <m:Text text="{$this>text}"/>
+        </m:VBox>
+        <m:VBox id="VBox1"/>
+    </m:VBox>
+</FragmentDefinition>

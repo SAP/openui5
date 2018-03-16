@@ -32,6 +32,11 @@
 	overflow-y: auto;
 }
 
+// If there are subpages with disabled scrolling, then its content should overflow. I.e. reset overflow-y to defaults.
+.sapMPage > section.sapMPageEnableScrolling .sapMPage > section {
+	overflow-y: visible;
+}
+
 html[data-sap-ui-os^="bb"],
 html[data-sap-ui-os^="iOS"] {
   .sapMPage > section.sapMPageEnableScrolling {
@@ -84,14 +89,19 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   left: 0;
   /* footer has to overlap the header if the page is very small (phone with open keyboard)*/
   z-index: 2;
+  width: 100%;
 }
 
-.sapMPageFooter.sapMTB {
+.sapMPageFooter.sapUiHidden {
+  bottom: auto;
+}
+
+.sapMPageFooter .sapMTB.sapMIBar {
   right: 0;
   border-bottom-width: 0;
 }
 
-.sapMPageFloatingFooter .sapMIBar-CTX.sapMFooter-CTX.sapMPageFooter.sapMTB {
+.sapMPageFloatingFooter .sapMPageFooter .sapMIBar-CTX.sapMFooter-CTX.sapMTB {
   border-top-width: 0;
 }
 
@@ -131,7 +141,7 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
   top: 2rem;
 }
 
-.sapUiSizeCompact .sapF2CollapsedHeader > .sapMIBar.sapMPageHeader {
+.sapUiSizeCompact .sapF2CollapsedHeader > .sapMPageHeader .sapMIBar {
   height: 0rem;
 }
 
@@ -146,11 +156,15 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 }
 
 .sapMPageFloatingFooter {
-  > footer {
+  > .sapMPageFooter {
     border-radius: 0.25rem;
     margin: 0.5rem;
     width: ~"calc(100% - 1rem)";
     opacity: 0.9;
+
+    .sapMIBar {
+      border-radius: 0.25rem;
+    }
   }
 }
 
@@ -193,7 +207,6 @@ html[data-sap-ui-animation='on'] .sapMPageFloatingFooter {
   }
   @keyframes bounceShow {
     0% {
-      -webkit-transform: translateY(100%);
       transform: translateY(100%);
       opacity: 0;
     }
@@ -215,12 +228,10 @@ html[data-sap-ui-animation='on'] .sapMPageFloatingFooter {
   }
   @keyframes bounceHide {
     0% {
-      -webkit-transform: translateY(-5%);
       transform: translateY(-5%);
       opacity: 0.9;
     }
     100% {
-      -webkit-transform: translateY(100%);
       transform: translateY(100%);
       opacity: 0;
     }
@@ -280,8 +291,8 @@ html.sap-desktop .sapUiFioriObjectPage > section {
 		top: 2.5rem;
 	}
 
-	.sapMPageHeader.sapMIBar,
-	.sapMPageFooter.sapMIBar {
+	.sapMPageHeader .sapMIBar,
+	.sapMPageFooter .sapMIBar {
 		height : 2.5rem;
 
 		.sapMBarLeft,

@@ -10,7 +10,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<title>QUnit Test for StashedControlSupport</title>
 	<script src="../shared-config.js"></script>
-	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.ui.core, sap.m">
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
+		data-sap-ui-libs="sap.ui.core, sap.m"
+		data-sap-ui-resourceroots='{"test":"./"}'
+		>
 	</script>
 
 
@@ -197,6 +200,47 @@
 				assert.equal(oStashedButtonComponent.getId(), "comp", "Buttons have the right owner");
 
 				oView.destroy();
+			});
+
+			QUnit.module("Async XMLView", {
+				beforeEach: function() {
+					if (!Button.prototype.getStashed) {
+						// extend the real sap.m.Button for test purposes - once!
+						StashedControlSupport.mixInto(Button);
+					}
+					this.oView = sap.ui.xmlview("view", {
+						viewName: 'test.StashedControl',
+						async: true
+					}).placeAt("content");
+				},
+				afterEach: function() {
+					this.oView.destroy();
+				}
+			});
+
+			QUnit.test("StashedControl support", function(assert) {
+				var done = assert.async();
+				var oView = this.oView;
+
+				var fnTest = function () {
+					oView.onAfterRendering = function() {
+						assert.strictEqual(jQuery("#view--StashedButton").length, 0, "Stashed button is not rendered");
+						var oButton = sap.ui.getCore().byId("view--StashedButton");
+						assert.ok(sap.ui.getCore().byId("view--StashedButton"), "Stashed button is available by id");
+						assert.ok(sap.ui.getCore().byId("view--StashedButton") instanceof sap.ui.core._StashedControl, "Stashed button is a StashedControl");
+						assert.strictEqual(jQuery("#view--Button").length, 1, "Button is rendered");
+						assert.ok(sap.ui.getCore().byId("view--Button") instanceof Button, "Button is a Button");
+						oView.onAfterRendering = function() {
+							assert.strictEqual(jQuery("#view--StashedButton").length, 1, "Stashed button is rendered");
+							assert.ok(sap.ui.getCore().byId("view--StashedButton") instanceof Button, "StashedButton is now a Button");
+							done();
+						};
+						oButton.setStashed(false);
+						oView.invalidate();
+					};
+				};
+
+				oView.loaded().then(fnTest);
 			});
 
 		});

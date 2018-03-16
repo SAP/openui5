@@ -28,7 +28,6 @@
 	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 <script
 	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="AnyView.qunit.js"></script>
 
 <script>
 QUnit.test("Get Design Mode", function(assert) {
@@ -46,7 +45,7 @@ QUnit.test("Create an HTMLView instance and check controller methods are replace
 	var oController = oView.getController();
 
 	assert.ok(typeof oController !== "undefined", "Controller is not undefined");
-	assert.ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
+	assert.ok(oController["_sap.ui.core.mvc.EmptyControllerImpl"], "Controller is an empty Controller");
 
 	oView.destroy();
 });
@@ -58,7 +57,7 @@ QUnit.test("Create a XMLView instance and check controller methods are replaced 
 	var oController = oView.getController();
 
 	assert.ok(typeof oController !== "undefined", "Controller is not undefined");
-	assert.ok(!(oController instanceof sap.ui.core.mvc.Controller), "Controller is not instance of sap.ui.core.mvc.Controller");
+	assert.ok(oController["_sap.ui.core.mvc.EmptyControllerImpl"], "Controller is an empty Controller");
 
 	oView.destroy();
 });

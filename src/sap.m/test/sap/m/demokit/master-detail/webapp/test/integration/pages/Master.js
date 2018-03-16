@@ -312,7 +312,7 @@ sap.ui.define([
 					return this.waitFor({
 						viewName : sViewName,
 						id : "page",
-						matchers : new PropertyStrictEquals({name : "title", value : "Objects (0)"}),
+						matchers : new PropertyStrictEquals({name : "title", value : "<Objects> (0)"}),
 						success : function () {
 							Opa5.assert.ok(true, "The list header displays zero hits");
 						},
@@ -494,7 +494,7 @@ sap.ui.define([
 							return new AggregationLengthEquals({name : "items", length : iExpectedNumberOfItems}).isMatching(oList);
 						},
 						success : function (oList) {
-							Opa5.assert.strictEqual(oList.getItems().length, iExpectedNumberOfItems, "The growing list dsiplays all items");
+							Opa5.assert.strictEqual(oList.getItems().length, iExpectedNumberOfItems, "The growing list displays all items");
 						},
 						errorMessage : "List does not display all entries."
 					});
@@ -520,7 +520,7 @@ sap.ui.define([
 							this.waitFor({
 								id : "page",
 								viewName : sViewName,
-								matchers : new PropertyStrictEquals({name : "title", value : "Objects (" + iExpectedLength + ")"}),
+								matchers : new PropertyStrictEquals({name : "title", value : "<Objects> (" + iExpectedLength + ")"}),
 								success : function () {
 									Opa5.assert.ok(true, "The master page header displays " + iExpectedLength + " items");
 								},

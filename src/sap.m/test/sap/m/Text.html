@@ -29,11 +29,11 @@
 		<script>
 
 			// create and add app
-			var app = new sap.m.App("myApp", {initialPage:"textPage"});
+			var app = new sap.m.App("myApp", {initialPage:"tabBarPage"});
 			app.placeAt("body");
 
 			// create and add a page with texts
-			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.";
+			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 			var loremLineBreaks = "Lorem ipsum dolor sit amet,\r consetetur sadipscing elitr,\n sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\r\n sed diam voluptua.";
 			var form = new sap.ui.layout.form.SimpleForm({
 				minWidth : 1024,
@@ -67,24 +67,24 @@
 				]
 			});
 
-			var page = new sap.m.Page("textPage", {
-				title:"Text",
-				content : [
+			var initialPage = new sap.m.Page("tabBarPage", {
+				showHeader: false,
+				content: [
 					new sap.m.Text("text8", {
 						text: "[8. INVISIBLE] " + lorem,
 						visible: false
 					}),
-			   		new sap.m.Text("text1", {
-			   			text: "[1. STANDARD] " + lorem
-			   		}),
-			   		new sap.m.Text("text2", {
-			   			text: "[2. NO WRAPPING] " + lorem,
-			   			wrapping: false
-			   		}),
-			   		new sap.m.Text("text3", {
-			   			text: "[3. FIXED WIDTH in em] " + lorem,
-			   			width: "45em"
-			   		}),
+					new sap.m.Text("text1", {
+						text: "[1. STANDARD] " + lorem
+					}),
+					new sap.m.Text("text2", {
+						text: "[2. NO WRAPPING] " + lorem,
+						wrapping: false
+					}),
+					new sap.m.Text("text3", {
+						text: "[3. FIXED WIDTH in em] " + lorem,
+						width: "45em"
+					}),
 					new sap.m.Text("text3a", {
 						text: "[3a. FIXED WIDTH in %] " + lorem,
 						width: "50%"
@@ -93,13 +93,13 @@
 						text: "[3b. FIXED WIDTH in px] " + lorem,
 						width: "600px"
 					}),
-			   		new sap.m.Text("text4", {
-			   			text: "[4. STYLED] " + lorem
-			   		}),
-			   		new sap.m.Text("text5", {
-			   			text: "[5. ALIGN RIGHT] " + lorem,
-			   			textAlign: sap.ui.core.TextAlign.Right
-			   		}),
+					new sap.m.Text("text4", {
+						text: "[4. STYLED] " + lorem
+					}),
+					new sap.m.Text("text5", {
+						text: "[5. ALIGN RIGHT] " + lorem,
+						textAlign: sap.ui.core.TextAlign.Right
+					}),
 					new sap.m.Text("text5a", {
 						text: "[5a. ALIGN LEFT] " + lorem,
 						textAlign: sap.ui.core.TextAlign.Left
@@ -120,10 +120,10 @@
 						text: "[5e. ALIGN INITIAL] " + lorem,
 						textAlign: sap.ui.core.TextAlign.Inititial
 					}),
-			   		new sap.m.Text("text6", {
-			   			text: "Text [6. RTL] " + lorem,
-			   			textDirection: sap.ui.core.TextDirection.RTL
-			   		}),
+					new sap.m.Text("text6", {
+						text: "Text [6. RTL] " + lorem,
+						textDirection: sap.ui.core.TextDirection.RTL
+					}),
 					new sap.m.Text("text6a", {
 						text: "Text [6a. LTR] " + lorem,
 						textDirection: sap.ui.core.TextDirection.LTR
@@ -132,26 +132,34 @@
 						text: "Text [6b. DIRECTION INHERIT] " + lorem,
 						textDirection: sap.ui.core.TextDirection.Inherit
 					}),
-			   		new sap.m.Text("text7", {
-			   			text: "[7. LINE BREAKS]\n...\n" + lorem
-			   		}),
-			   		new sap.m.Text("text9", {
-			   			text: "[9. MAXLINES:3] " + lorem + lorem + lorem,
-			   			maxLines: 3
-			   		}),
-			   		new sap.m.Text("text10", {
-			   			text: "Text [10. RTL + MAXLINE:2] " + lorem,
-			   			textDirection: "RTL",
-			   			maxLines: 2
-			   		}),
+					new sap.m.Text("text7", {
+						text: "[7. LINE BREAKS]\n...\n" + lorem
+					}),
+					new sap.m.Text("text9", {
+						text: "[9. MAXLINES:3] " + lorem + lorem + lorem,
+						maxLines: 3
+					}),
+					new sap.m.Text("text10", {
+						text: "Text [10. RTL + MAXLINE:2] " + lorem,
+						textDirection: "RTL",
+						maxLines: 2
+					}),
 					new sap.m.Text("text11", {
 						text: "Text [11. Text with line breaks] " + loremLineBreaks
 					}),
+					new sap.m.Text("text12", {
+						text: "Text [12. Text with renderWhiteSpace]  This text contains whitespace and it shall not wrap, still preserving the whitespace." +
+						"\n This is the(3 tabs follow)\t\t\tfirst line." +
+						"\n This is the second(10 spaces follow)         line.",
+						renderWhitespace:true,
+						wrapping:true
+					}),
 					form
-	            ]
-			});
 
-			app.addPage(page);
+
+				]
+			});
+			app.addPage(initialPage);
 
 		</script>
 	</head>

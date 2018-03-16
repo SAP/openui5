@@ -54,12 +54,6 @@
 	oPanel.addContent(oLabel);
 	oPanel.placeAt("target1");
 
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	};
-	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
-
 	function removeSharedServicedata(sURI){
 		var sServiceURI = sURI.replace(/\/$/, "");
 		if(sap.ui.model.odata.ODataModel.mServiceData && sap.ui.model.odata.ODataModel.mServiceData[sServiceURI]){
@@ -113,13 +107,6 @@
 		bDataReceived = true;
 		assert.ok(bChanged && bDataRequested,"dataRecieved fired");
 	};
-
-	QUnit.test("check datajs AMD shim", function(assert) {
-		assert.ok(typeof define === "function" && define.amd, "precondition: AMD like define exists");
-		jQuery.sap.require("sap.ui.thirdparty.datajs");
-		assert.ok(!!window.datajs, "global datajs object should exist");
-		assert.ok(!!window.OData, "global OData object should exist");
-	});
 
 	// assertion methods for the next 3 constructor tests
 	function assertCommonArguments(oModel) {
@@ -634,7 +621,7 @@
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -653,7 +640,7 @@
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -672,14 +659,14 @@
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.getElementBinding().attachChange(fnHandler2);
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 		}
 		var fnHandler2 = function() {
 			assert.ok(!oLabel.getBindingContext(), "no bindingContext");
 			assert.ok(!oLabel.getElementBinding().getBoundContext(), "element context must be reset");
 			assert.ok(!oLabel.getElementBinding().getBoundContext(), "parent context must be reset");
 			oLabel.getElementBinding().detachChange(fnHandler2);
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			oLabel.unbindElement();
 			done();
 		}
@@ -694,12 +681,12 @@
 		oLabel.bindElement("Category");
 		var oTestContext = oModel.getContext("/Products(2)");
 		oLabel.setBindingContext(oTestContext);
-		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
+		assert.ok(oLabel.getBindingContext() == null, "Context should be null until the data from bindElement is loaded");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -718,7 +705,7 @@
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
 			oLabel.getElementBinding().detachChange(fnHandler);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -746,7 +733,7 @@
 			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);
@@ -774,7 +761,7 @@
 			assert.ok(sUrl.indexOf('Products(1)/Category') > -1, "Parent context should be Products(1)");
 			oLabel.getElementBinding().detachChange(fnHandler2);
 			oLabel.unbindElement();
-			oLabel.setBindingContext(null);
+			oLabel.setBindingContext();
 			done();
 		}
 		oLabel.getElementBinding().attachChange(fnHandler);

@@ -88,6 +88,10 @@
 			<semantic:CopyAction />
 		</semantic:copyAction>
 
+		<semantic:editAction>
+			<semantic:EditAction />
+		</semantic:editAction>
+
 		<semantic:favoriteAction>
 			<semantic:FavoriteAction />
 		</semantic:favoriteAction>
@@ -96,13 +100,17 @@
 			<semantic:FlagAction />
 		</semantic:flagAction>
 
+		<semantic:closeAction>
+			<semantic:CloseAction />
+		</semantic:closeAction>
+
 		<semantic:fullScreenAction>
 			<semantic:FullScreenAction />
 		</semantic:fullScreenAction>
 
-		<semantic:closeAction>
-			<semantic:CloseAction />
-		</semantic:closeAction>
+		<semantic:exitFullScreenAction>
+			<semantic:ExitFullScreenAction />
+		</semantic:exitFullScreenAction>
 
 		<!-- Custom Title Text Content-->
 		<semantic:titleCustomTextActions>

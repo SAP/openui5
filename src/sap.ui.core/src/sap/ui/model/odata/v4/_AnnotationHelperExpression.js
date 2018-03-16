@@ -6,8 +6,8 @@
 // helper module for sap.ui.model.odata.v4.AnnotationHelper.
 sap.ui.define([
 	'jquery.sap.global', '../_AnnotationHelperBasics', 'sap/ui/base/BindingParser',
-	'sap/ui/base/ManagedObject', 'sap/ui/core/format/DateFormat', 'sap/ui/model/odata/ODataUtils'
-], function(jQuery, Basics, BindingParser, ManagedObject, DateFormat, ODataUtils) {
+	'sap/ui/base/ManagedObject'
+], function(jQuery, Basics, BindingParser, ManagedObject) {
 	'use strict';
 
 	// see http://docs.oasis-open.org/odata/odata/v4.0/errata02/os/complete/abnf/odata-abnf-construction-rules.txt

@@ -3,12 +3,14 @@
  */
 
 // Provides helper sap.ui.table.TableAccExtension.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './TableExtension', './TableAccRenderExtension', './TableUtils'],
-	function(jQuery, Control, library, TableExtension, TableAccRenderExtension, TableUtils) {
+sap.ui.define([
+	"jquery.sap.global", "sap/ui/core/Control", "./library", "./TableExtension", "./TableAccRenderExtension", "./TableUtils"
+], function(jQuery, Control, library, TableExtension, TableAccRenderExtension, TableUtils) {
 	"use strict";
 
 	// shortcuts
 	var SelectionMode = library.SelectionMode;
+	var CellType = TableUtils.CELLTYPE;
 
 	/*
 	 * Provides utility functions to handle acc info objects.
@@ -22,7 +24,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 *       and a combined description.
 		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 */
-		getAccInfoOfControl: function(oControl, oBundle) {
+		getAccInfoOfControl: function(oControl) {
 			if (oControl && typeof oControl.getAccessibilityInfo === "function") {
 				if (typeof oControl.getVisible === "function" && !oControl.getVisible()) {
 					return ACCInfoHelper._normalize({});
@@ -30,7 +32,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				var oSource = oControl.getAccessibilityInfo();
 				if (oSource) {
 					var oTarget = {};
-					ACCInfoHelper._flatten(oSource, oTarget, oBundle);
+					ACCInfoHelper._flatten(oSource, oTarget);
 					return oTarget;
 				}
 			}
@@ -40,7 +42,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		/*
 		 * Normalizes the given acc info object and ensures that all the defaults are set.
 		 */
-		_normalize : function(oInfo) {
+		_normalize: function(oInfo) {
 			if (!oInfo) {
 				return null;
 			}
@@ -64,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		/*
 		 * Merges the focusable flag and the descriptions of the source and its children into the given target.
 		 */
-		_flatten : function(oSourceInfo, oTargetInfo, oBundle, iLevel) {
+		_flatten: function(oSourceInfo, oTargetInfo, iLevel) {
 			iLevel = iLevel ? iLevel : 0;
 
 			ACCInfoHelper._normalize(oSourceInfo);
@@ -74,7 +76,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			}
 
 			oTargetInfo.focusable = oTargetInfo.focusable || oSourceInfo.focusable;
-			oTargetInfo._descriptions.push(ACCInfoHelper._getFullDescription(oSourceInfo, oBundle));
+			oTargetInfo._descriptions.push(ACCInfoHelper._getFullDescription(oSourceInfo));
 
 			oSourceInfo.children.forEach(function(oChild) {
 				if (!oChild.getAccessibilityInfo || (oChild.getVisible && !oChild.getVisible())) {
@@ -83,7 +85,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				var oChildInfo = oChild.getAccessibilityInfo();
 				if (oChildInfo) {
-					ACCInfoHelper._flatten(oChildInfo, oTargetInfo, oBundle, iLevel + 1);
+					ACCInfoHelper._flatten(oChildInfo, oTargetInfo, iLevel + 1);
 				}
 			});
 
@@ -98,18 +100,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * on the information of the given acc info object
 		 * Note: The description does not include the description of the children (if available).
 		 */
-		_getFullDescription : function(oInfo, oBundle) {
+		_getFullDescription: function(oInfo) {
 			var sDesc = oInfo.type + " " + oInfo.description;
 			if (oInfo.enabled != null && !oInfo.enabled) {
-				sDesc = sDesc + " " + oBundle.getText("TBL_CTRL_STATE_DISABLED");
+				sDesc = sDesc + " " + TableUtils.getResourceText("TBL_CTRL_STATE_DISABLED");
 			} else if (oInfo.editable != null && !oInfo.editable) {
-				sDesc = sDesc + " " + oBundle.getText("TBL_CTRL_STATE_READONLY");
+				sDesc = sDesc + " " + TableUtils.getResourceText("TBL_CTRL_STATE_READONLY");
 			}
 			return sDesc.trim();
 		}
 
 	};
-
 
 	/*
 	 * Provides utility functions used this extension
@@ -120,20 +121,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * Returns the index of the column (in the array of visible columns (see Table._getVisibleColumns())) of the current focused cell
 		 * In case the focused cell is a row action the given index equals the length of the visible columns.
 		 * This function must not be used if the focus is on a row header.
-		 * @return {int}
+		 * @returns {int}
 		 */
-		getColumnIndexOfFocusedCell : function(oExtension) {
+		getColumnIndexOfFocusedCell: function(oExtension) {
 			var oTable = oExtension.getTable();
 			var oInfo = TableUtils.getFocusedItemInfo(oTable);
 			return oInfo.cellInRow - (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 		},
 
-		/*
+		/**
 		 * If the current focus is on a cell of the table, this function returns
 		 * the cell type and the jQuery wrapper object of the corresponding cell:
-		 * {type: <TYPE>, cell: <$CELL>}
+		 *
+		 * @param {sap.ui.table.TableAccExtension} oExtension The accessibility extension.
+		 * @returns {sap.ui.table.TableUtils.CellInfo} An object containing information about the cell.
 		 */
-		getInfoOfFocusedCell : function(oExtension) {
+		getInfoOfFocusedCell: function(oExtension) {
 			var oTable = oExtension.getTable();
 			var oIN = oTable._getItemNavigation();
 			var oTableRef = oTable.getDomRef();
@@ -152,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		/*
 		 * Returns the IDs of the column headers which are relevant for the given column (esp. in multi header case).
 		 */
-		getRelevantColumnHeaders : function(oTable, oColumn) {
+		getRelevantColumnHeaders: function(oTable, oColumn) {
 			if (!oTable || !oColumn) {
 				return [];
 			}
@@ -182,7 +185,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		/*
 		 * Returns whether the given cell is hidden
 		 */
-		isHiddenCell : function($Cell, oCell) {
+		isHiddenCell: function($Cell, oCell) {
 			var bGroup = TableUtils.Grouping.isInGroupingRow($Cell);
 			var bSum = TableUtils.Grouping.isInSumRow($Cell);
 			var bSupportStyleClass = !!oCell && !!oCell.hasStyleClass;
@@ -199,14 +202,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		/*
 		 * Returns whether the given cell is in the tree column of a TreeTable
 		 */
-		isTreeColumnCell : function(oExtension, $Cell) {
+		isTreeColumnCell: function(oExtension, $Cell) {
 			return TableUtils.Grouping.isTreeMode(oExtension.getTable()) && $Cell.hasClass("sapUiTableTdFirst");
 		},
 
 		/*
 		 * Returns the tooltip of the column or the contained label, if any.
 		 */
-		getColumnTooltip : function(oColumn) {
+		getColumnTooltip: function(oColumn) {
 			if (!oColumn) {
 				return null;
 			}
@@ -230,7 +233,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		/*
 		 * Determines the current row and column and updates the hidden description texts of the table accordingly.
 		 */
-		updateRowColCount : function(oExtension) {
+		updateRowColCount: function(oExtension) {
 			var oTable = oExtension.getTable(),
 				oIN = oTable._getItemNavigation(),
 				bIsRowChanged = false,
@@ -238,18 +241,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				bIsInitial = false;
 
 			if (oIN) {
-				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1; //+1 -> we want to announce a count and not the index, the action column is handled like a normal column
-				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable.getFirstVisibleRow() + 1; //same here + take virtualization into account
+				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1; // +1 -> we want to announce a count and not the
+																								 // index, the action column is handled like a normal
+																								 // column
+				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable._getFirstRenderedRowIndex() + 1; // same here + take
+																													   // virtualization
+																													   // into account
 				var iColCount = TableUtils.getVisibleColumnCount(oTable) + (TableUtils.hasRowActions(oTable) ? 1 : 0);
 				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : TableUtils.getTotalRowCount(oTable, true);
 
-				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber && oExtension._iLastColumnNumber == iColumnNumber);
+				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber
+																			 && oExtension._iLastColumnNumber == iColumnNumber);
 				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
 				bIsInitial = !oExtension._iLastRowNumber && !oExtension._iLastColumnNumber;
 
-				oTable.$("rownumberofrows").text(bIsRowChanged ? oTable._oResBundle.getText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : " ");
-				oTable.$("colnumberofcols").text(bIsColChanged ? oTable._oResBundle.getText("TBL_COL_COLCOUNT", [iColumnNumber, iColCount]) : " ");
-				oTable.$("ariacount").text(bIsInitial ? oTable._oResBundle.getText("TBL_DATA_ROWS_COLS", [iRowCount, iColCount]) : " ");
+				oTable.$("rownumberofrows").text(bIsRowChanged ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : " ");
+				oTable.$("colnumberofcols").text(bIsColChanged ? TableUtils.getResourceText("TBL_COL_COLCOUNT", [iColumnNumber, iColCount]) : " ");
+				oTable.$("ariacount").text(bIsInitial ? TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [iRowCount, iColCount]) : " ");
 
 				oExtension._iLastRowNumber = iRowNumber;
 				oExtension._iLastColumnNumber = iColumnNumber;
@@ -265,7 +273,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		/*
 		 * Removes the acc modifications of the cell which had the focus before.
 		 */
-		cleanupCellModifications : function(oExtension) {
+		cleanupCellModifications: function(oExtension) {
 			if (oExtension._cleanupInfo) {
 				oExtension._cleanupInfo.cell.attr(oExtension._cleanupInfo.attr);
 				oExtension._cleanupInfo = null;
@@ -276,12 +284,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * Stores the defaults before modifications of a cell for later cleanup
 		 * @see ExtensionHelper.cleanupCellModifications
 		 */
-		storeDefaultsBeforeCellModifications : function(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions) {
+		storeDefaultsBeforeCellModifications: function(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions) {
 			oExtension._cleanupInfo = {
 				cell: $Cell,
 				attr: {
-					"aria-labelledby" : aDefaultLabels && aDefaultLabels.length ? aDefaultLabels.join(" ") : null,
-					"aria-describedby" : aDefaultDescriptions && aDefaultDescriptions.length ? aDefaultDescriptions.join(" ") : null
+					"aria-labelledby": aDefaultLabels && aDefaultLabels.length ? aDefaultLabels.join(" ") : null,
+					"aria-describedby": aDefaultDescriptions && aDefaultDescriptions.length ? aDefaultDescriptions.join(" ") : null
 				}
 			};
 		},
@@ -292,7 +300,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * @see ExtensionHelper.updateRowColCount
 		 * @see ExtensionHelper.storeDefaultsBeforeCellModifications
 		 */
-		performCellModifications : function(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions, aLabels, aDescriptions, sText, fAdapt) {
+		performCellModifications: function(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions, aLabels, aDescriptions, sText, fAdapt) {
 			ExtensionHelper.storeDefaultsBeforeCellModifications(oExtension, $Cell, aDefaultLabels, aDefaultDescriptions);
 			var oCountChangeInfo = ExtensionHelper.updateRowColCount(oExtension);
 			oExtension.getTable().$("cellacc").text(sText || " "); //set the custom text to the prepared hidden element
@@ -305,6 +313,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			if (oCountChangeInfo.initial) {
 				var oTable = oExtension.getTable();
 				sLabel = oTable.getAriaLabelledBy().join(" ") + " " + oTable.getId() + "-ariadesc " + oTable.getId() + "-ariacount";
+				if (oTable.getSelectionMode() !== SelectionMode.None) {
+					sLabel = sLabel + " " + oTable.getId() + "-ariaselection";
+				}
 			}
 
 			if (aLabels && aLabels.length) {
@@ -312,8 +323,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			}
 
 			$Cell.attr({
-				"aria-labelledby" : sLabel ? sLabel : null,
-				"aria-describedby" : aDescriptions && aDescriptions.length ? aDescriptions.join(" ") : null
+				"aria-labelledby": sLabel ? sLabel : null,
+				"aria-describedby": aDescriptions && aDescriptions.length ? aDescriptions.join(" ") : null
 			});
 		},
 
@@ -321,7 +332,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * Modifies the labels and descriptions of a data cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfDATACELL : function($Cell, bOnCellFocus) {
+		modifyAccOfDATACELL: function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
 				oIN = oTable._getItemNavigation();
@@ -331,7 +342,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			}
 
 			var iRow = TableUtils.getRowIndexOfFocusedCell(oTable),
-				iCol = ExtensionHelper.getColumnIndexOfFocusedCell(this), // Because we are on a data cell this is the index in the visible columns array
+				iCol = ExtensionHelper.getColumnIndexOfFocusedCell(this), // Because we are on a data cell this is the index in the visible columns
+																		  // array
 				oTableInstances = TableUtils.getRowColCell(oTable, iRow, iCol, false),
 				oInfo = null,
 				bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell),
@@ -339,10 +351,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
 				bIsInSumRow = TableUtils.Grouping.isInSumRow($Cell),
 				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.DATACELL, {
-					index: iCol,
-					column: oTableInstances.column,
-					fixed: TableUtils.isFixedColumn(oTable, iCol)
-				})["aria-labelledby"] || [],
+						index: iCol,
+						column: oTableInstances.column,
+						fixed: TableUtils.isFixedColumn(oTable, iCol)
+					})["aria-labelledby"] || [],
 				aDescriptions = [],
 				aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"];
 
@@ -368,15 +380,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			aLabels = aLabels.concat(aDefaultLabels);
 
 			if (!bHidden) {
-				oInfo = ACCInfoHelper.getAccInfoOfControl(oTableInstances.cell, oTable._oResBundle);
+				oInfo = ACCInfoHelper.getAccInfoOfControl(oTableInstances.cell);
 				aLabels.push(oInfo ? (sTableId + "-cellacc") : oTableInstances.cell.getId());
 
 				// Possible later extension for aria-labelledby and aria-describedby support
 				// if (oInfo && oInfo.labelled) { aLabels.push(oInfo.labelled); }
 				// if (oInfo && oInfo.described) { aDescriptions.push(oInfo.described); }
 
-				if (((!oInfo || oInfo.focusable) && !this._readonly) || (bIsTreeColumnCell && oTableInstances.row && oTableInstances.row._bHasChildren)) {
+				if (((!oInfo || oInfo.focusable) && !this._readonly) || (bIsTreeColumnCell && oTableInstances.row
+																		 && oTableInstances.row._bHasChildren)) {
 					aDescriptions.push(sTableId + "-toggleedit");
+				}
+
+				if (TableUtils.Grouping.isTreeMode(oTable) && !!$Cell.parent().attr("aria-selected")) {
+					// aria-selected on the row seems not be enough for treegrids
+					aLabels.push(sTableId + "-ariarowselected");
 				}
 			}
 
@@ -389,7 +407,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, aDescriptions, sText,
-				function (aLabels, aDescriptions, bRowChange, bColChange, bInitial) {
+				function(aLabels, aDescriptions, bRowChange, bColChange, bInitial) {
 					if (!bHidden && TableUtils.isRowSelectionAllowed(oTable) && bRowChange) {
 						aDescriptions.push(oTableInstances.row.getId() + "-rowselecttext");
 					}
@@ -401,7 +419,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * Modifies the labels and descriptions of a row header cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfROWHEADER : function($Cell, bOnCellFocus) {
+		modifyAccOfROWHEADER: function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
 				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
@@ -411,9 +429,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows"]);
 
 			if (!bIsInSumRow && !bIsInGroupingRow) {
-				if ($Cell.attr("aria-selected") == "true") {
-					aLabels.push(sTableId + "-ariarowselected");
-				}
 				if (!$Cell.hasClass("sapUiTableRowHidden")) {
 					aLabels.push(oRow.getId() + "-rowselecttext");
 
@@ -445,7 +460,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * Modifies the labels and descriptions of a column header cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfCOLUMNHEADER : function($Cell, bOnCellFocus) {
+		modifyAccOfCOLUMNHEADER: function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				oColumn = sap.ui.getCore().byId($Cell.attr("data-sap-ui-colid")),
 				mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNHEADER, {
@@ -455,52 +470,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				}),
 				sText = ExtensionHelper.getColumnTooltip(oColumn),
 				aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]),
-				oHeaderInfo = TableUtils.getColumnHeaderCellInfo($Cell),
-				iSpan = oHeaderInfo ? oHeaderInfo.span : 1,
-				bIsMainHeader = oColumn && oColumn.getId() === $Cell.attr("id");
+				oCellInfo = TableUtils.getCellInfo($Cell),
+				iSpan = oCellInfo.columnSpan;
 
 			if (iSpan > 1) {
 				aLabels.push(oTable.getId() + "-ariacolspan");
 				// Update Span information
-				oTable.$("ariacolspan").text(oTable._oResBundle.getText("TBL_COL_DESC_SPAN", ["" + iSpan]));
+				oTable.$("ariacolspan").text(TableUtils.getResourceText("TBL_COL_DESC_SPAN", ["" + iSpan]));
 			}
 
 			if (sText) {
 				aLabels.push(oTable.getId() + "-cellacc");
 			}
 
-			if (bIsMainHeader && oColumn && oColumn.getSorted()) {
+			if (iSpan <= 1 && oColumn && oColumn.getSorted()) {
 				aLabels.push(oTable.getId() + (oColumn.getSortOrder() === "Ascending" ? "-ariacolsortedasc" : "-ariacolsorteddes"));
 			}
-			if (bIsMainHeader && oColumn && oColumn.getFiltered()) {
+			if (iSpan <= 1 && oColumn && oColumn.getFiltered()) {
 				aLabels.push(oTable.getId() + "-ariacolfiltered");
 			}
 
-			if ($Cell.attr("aria-haspopup") === "true") {
+			if (iSpan <= 1 && $Cell.attr("aria-haspopup") === "true") {
 				aLabels.push(oTable.getId() + "-ariacolmenu");
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
-				aLabels, mAttributes["aria-describedby"], sText);
+				aLabels, mAttributes["aria-describedby"], sText
+			);
 		},
 
 		/*
 		 * Modifies the labels and descriptions of the column row header.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfCOLUMNROWHEADER : function($Cell, bOnCellFocus) {
+		modifyAccOfCOLUMNROWHEADER: function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				bEnabled = $Cell.hasClass("sapUiTableSelAllEnabled");
-			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER, {enabled: bEnabled, checked: bEnabled && !oTable.$().hasClass("sapUiTableSelAll")});
+			oTable.$("sapUiTableGridCnt").removeAttr("role");
+
+			var mAttributes = ExtensionHelper.getAriaAttributesFor(
+				this, TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER,
+				{enabled: bEnabled, checked: bEnabled && !oTable.$().hasClass("sapUiTableSelAll")}
+			);
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
-				mAttributes["aria-labelledby"], mAttributes["aria-describedby"], null);
+				mAttributes["aria-labelledby"], mAttributes["aria-describedby"], null
+			);
 		},
 
 		/*
 		 * Modifies the labels and descriptions of a row action cell.
 		 * @see ExtensionHelper.performCellModifications
 		 */
-		modifyAccOfROWACTION : function($Cell, bOnCellFocus) {
+		modifyAccOfROWACTION: function($Cell, bOnCellFocus) {
 			var oTable = this.getTable(),
 				sTableId = oTable.getId(),
 				bIsInGroupingRow = TableUtils.Grouping.isInGroupingRow($Cell),
@@ -557,7 +578,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		 * Returns the default aria attibutes for the given element type with the given settings.
 		 * @see TableAccExtension.ELEMENTTYPES
 		 */
-		getAriaAttributesFor : function(oExtension, sType, mParams) {
+		getAriaAttributesFor: function(oExtension, sType, mParams) {
 			var mAttributes = {},
 				oTable = oExtension.getTable(),
 				sTableId = oTable.getId();
@@ -627,7 +648,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER:
 					var oColumn = mParams && mParams.column;
-					var bIsMainHeader = oColumn && oColumn.getId() === mParams.headerId;
+					var bHasColSpan = mParams && mParams.colspan;
+
 					mAttributes["role"] = "columnheader";
 					var aLabels = [];
 
@@ -645,11 +667,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
 
-					if (bIsMainHeader && oColumn && oColumn.getSorted()) {
+					if (!bHasColSpan && oColumn && oColumn.getSorted()) {
 						mAttributes["aria-sort"] = oColumn.getSortOrder() === "Ascending" ? "ascending" : "descending";
 					}
 
-					if (oColumn && oColumn._menuHasItems()) {
+					if (!bHasColSpan && oColumn && oColumn._menuHasItems()) {
 						mAttributes["aria-haspopup"] = "true";
 					}
 					break;
@@ -665,6 +687,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 					if (oColumn) {
 						aLabels = ExtensionHelper.getRelevantColumnHeaders(oTable, oColumn);
+						for (var i = 0; i < aLabels.length; i++) {
+							aLabels[i] = aLabels[i] + "-inner";
+						}
 
 						if (mParams && mParams.fixed) {
 							aLabels.push(sTableId + "-ariafixedcolumn");
@@ -674,8 +699,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					mAttributes["aria-labelledby"] = aLabels;
 
 					/*if (oTable.getSelectionMode() !== SelectionMode.None) {
-						mAttributes["aria-selected"] = "false";
-					}*/
+					 mAttributes["aria-selected"] = "false";
+					 }*/
 
 					// Handle expand state for first Column in TreeTable
 					if (TableUtils.Grouping.isTreeMode(oTable) && mParams && mParams.firstCol && mParams.row) {
@@ -715,20 +740,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 					mAttributes["role"] = "presentation";
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
-					if (!TableUtils.hasRowHeader(oTable)) {
-						mAttributes["role"] = "row";
-					}
+				case TableAccExtension.ELEMENTTYPES.COLUMNHEADER_ROW: //The area which contains the column headers
+					mAttributes["role"] = "row";
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, false);
 					break;
 
-				case TableAccExtension.ELEMENTTYPES.ROWHEADER_COL: //The area which contains the row headers (TableUtils.CELLTYPES.ROWHEADER)
+				case TableAccExtension.ELEMENTTYPES.ROWHEADER_COL: //The area which contains the row headers
 					addAriaForOverlayOrNoData(oTable, mAttributes, true, true);
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.TH: //The "technical" column headers
 					var bHasFixedColumns = oTable.getFixedColumnCount() > 0;
-					mAttributes["role"] = bHasFixedColumns ? "columnheader" : "presentation";
+					if (!bHasFixedColumns) {
+						mAttributes["role"] = "presentation";
+					}
 					mAttributes["scope"] = "col";
 					if (bHasFixedColumns) {
 						if (mParams && mParams.column) {
@@ -756,11 +781,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				case TableAccExtension.ELEMENTTYPES.TR: //The rows
 					mAttributes["role"] = "row";
 					var bSelected = false;
-					if (mParams && typeof mParams.index === "number" && oTable.getSelectionMode() !== SelectionMode.None && oTable.isIndexSelected(mParams.index)) {
+					if (mParams && typeof mParams.index === "number" && oTable.getSelectionMode() !== SelectionMode.None
+						&& oTable.isIndexSelected(mParams.index)) {
 						mAttributes["aria-selected"] = "true";
 						bSelected = true;
 					}
-					if (TableUtils.isRowSelectionAllowed(oTable)) {
+					if (TableUtils.isRowSelectionAllowed(oTable) && oTable.getContextByIndex(mParams.index)) {
 						var mTooltipTexts = oExtension.getAriaTextsForSelectionMode(true);
 						mAttributes["title"] = mTooltipTexts.mouse[bSelected ? "rowDeselect" : "rowSelect"];
 					}
@@ -769,15 +795,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 				case TableAccExtension.ELEMENTTYPES.TREEICON: //The expand/collapse icon in the TreeTable
 					if (TableUtils.Grouping.isTreeMode(oTable)) {
 						mAttributes = {
-							"aria-label" : "",
-							"title" : "",
-							"role" : ""
+							"aria-label": "",
+							"title": "",
+							"role": ""
 						};
 						if (oTable.getBinding("rows")) {
 							mAttributes["role"] = "button";
 							if (mParams && mParams.row) {
 								if (mParams.row._bHasChildren) {
-									var sText = oTable._oResBundle.getText(mParams.row._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
+									var sText = TableUtils.getResourceText(mParams.row._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
 									if (oTable._getShowStandardTooltips()) {
 										mAttributes["title"] = sText;
 									} else {
@@ -785,7 +811,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 									}
 									mAttributes["aria-expanded"] = "" + (!!mParams.row._bIsExpanded);
 								} else {
-									mAttributes["aria-label"] = oTable._oResBundle.getText("TBL_LEAF");
+									mAttributes["aria-label"] = TableUtils.getResourceText("TBL_LEAF");
 								}
 							}
 						}
@@ -827,12 +853,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 	};
 
-
 	/**
 	 * Extension for sap.ui.table.Table which handles ACC related things.
+	 * <b>This is an internal class that is only intended to be used inside the sap.ui.table library! Any usage outside the sap.ui.table library is
+	 * strictly prohibited!</b>
 	 *
 	 * @class Extension for sap.ui.table.Table which handles ACC related things.
-	 *
 	 * @extends sap.ui.table.TableExtension
 	 * @author SAP SE
 	 * @version ${version}
@@ -840,14 +866,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 	 * @private
 	 * @alias sap.ui.table.TableAccExtension
 	 */
-	var TableAccExtension = TableExtension.extend("sap.ui.table.TableAccExtension", /* @lends sap.ui.table.TableAccExtension */ {
-
-		/*
-		 * @see TableExtension._init
+	var TableAccExtension = TableExtension.extend("sap.ui.table.TableAccExtension", /** @lends sap.ui.table.TableAccExtension.prototype */ {
+		/**
+		 * @override
+		 * @inheritDoc
+		 * @returns {string} The name of this extension.
 		 */
-		_init : function(oTable, sTableType, mSettings) {
+		_init: function(oTable, sTableType, mSettings) {
 			this._accMode = sap.ui.getCore().getConfiguration().getAccessibility();
-			this._readonly = sTableType == TableExtension.TABLETYPES.ANALYTICAL ? true : false;
+			this._readonly = sTableType === TableExtension.TABLETYPES.ANALYTICAL;
 
 			oTable.addEventDelegate(this);
 
@@ -857,10 +884,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			return "AccExtension";
 		},
 
-		/*
-		 * @see sap.ui.base.Object#destroy
+		/**
+		 * Enables debugging for the extension. Internal helper classes become accessible.
+		 *
+		 * @private
 		 */
-		destroy : function() {
+		_debug: function() {
+			this._ExtensionHelper = ExtensionHelper;
+			this._ACCInfoHelper = ACCInfoHelper;
+		},
+
+		/**
+		 * @override
+		 * @inheritDoc
+		 */
+		destroy: function() {
 			this.getTable().removeEventDelegate(this);
 
 			this._readonly = false;
@@ -868,29 +906,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			TableExtension.prototype.destroy.apply(this, arguments);
 		},
 
-		/*
-		 * Enables debugging for the extension
-		 */
-		_debug : function() {
-			this._ExtensionHelper = ExtensionHelper;
-			this._ACCInfoHelper = ACCInfoHelper;
-		},
-
-		/*
-		 * Provide protected access for TableACCRenderExtension
+		/**
+		 * Provide protected access for TableACCRenderExtension.
+		 *
+		 * @param {sap.ui.table.TableAccExtension.ELEMENTTYPES} sType The type of the table area to get the aria attributes for.
+		 * @param {Object} mParams Accessibility parameters.
+		 * @returns {Object} The aria attributes.
 		 * @see ExtensionHelper.getAriaAttributesFor
+		 * @protected
 		 */
-		_getAriaAttributesFor : function(sType, mParams) {
+		getAriaAttributesFor: function(sType, mParams) {
 			return ExtensionHelper.getAriaAttributesFor(this, sType, mParams);
 		},
 
-		/*
-		 * Delegate function for focusin event
-		 * @public (Part of the API for Table control only!)
+		/**
+		 * Delegate for the focusin event.
+		 *
+		 * @private
+		 * @param {jQuery.Event} oEvent The event object.
 		 */
-		onfocusin : function(oEvent) {
+		onfocusin: function(oEvent) {
 			var oTable = this.getTable();
-			if (!oTable || !TableUtils.getCellInfo(oEvent.target)) {
+			if (!oTable || TableUtils.getCellInfo(oEvent.target).cell == null) {
 				return;
 			}
 			if (oTable._mTimeouts._cleanupACCExtension) {
@@ -900,15 +937,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			this.updateAccForCurrentCell(true);
 		},
 
-		/*
-		 * Delegate function for focusout event
-		 * @public (Part of the API for Table control only!)
+		/**
+		 * Delegate for the focusout event.
+		 *
+		 * @private
+		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		onfocusout: function(oEvent) {
 			var oTable = this.getTable();
 			if (!oTable) {
 				return;
 			}
+			oTable.$("sapUiTableGridCnt").attr("role", ExtensionHelper.getAriaAttributesFor(this, "CONTENT", {}).role);
 			oTable._mTimeouts._cleanupACCExtension = jQuery.sap.delayedCall(100, this, function() {
 				var oTable = this.getTable();
 				if (!oTable) {
@@ -922,46 +962,55 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		}
 	});
 
-	/*
-	 * Known element types (DOM areas) in the table
+	/**
+	 * Known element types (DOM areas) in the table.
+	 *
+	 * @type {{DATACELL: string, COLUMNHEADER: string, ROWHEADER: string, ROWACTION: string, COLUMNROWHEADER: string, ROOT: string, CONTENT: string,
+	 *     TABLE: string, TABLEHEADER: string, TABLEFOOTER: string, TABLESUBHEADER: string, COLUMNHEADER_TBL: string, COLUMNHEADER_ROW: string,
+	 *     ROWHEADER_COL: string, TH: string, ROWHEADER_TD: string, TR: string, TREEICON: string, ROWACTIONHEADER: string, NODATA: string, OVERLAY:
+	 *     string}|*}
 	 * @see TableAccRenderExtension.writeAriaAttributesFor
-	 * @public (Part of the API for Table control only!)
+	 * @public
 	 */
 	TableAccExtension.ELEMENTTYPES = {
-		DATACELL : 			TableUtils.CELLTYPES.DATACELL, 			// @see TableUtils.CELLTYPES
-		COLUMNHEADER : 		TableUtils.CELLTYPES.COLUMNHEADER, 		// @see TableUtils.CELLTYPES
-		ROWHEADER : 		TableUtils.CELLTYPES.ROWHEADER, 		// @see TableUtils.CELLTYPES
-		ROWACTION : 		TableUtils.CELLTYPES.ROWACTION, 		// @see TableUtils.CELLTYPES
-		COLUMNROWHEADER : 	TableUtils.CELLTYPES.COLUMNROWHEADER, 	// @see TableUtils.CELLTYPES
-		ROOT : 				"ROOT", 								// The tables root dom element
-		CONTENT: 			"CONTENT",								// The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
-		TABLE : 			"TABLE", 								// The "real" table element(s)
-		TABLEHEADER : 		"TABLEHEADER", 							// The table header area
-		TABLEFOOTER : 		"TABLEFOOTER", 							// The table footer area
-		TABLESUBHEADER : 	"TABLESUBHEADER", 						// The table toolbar and extension areas
-		COLUMNHEADER_TBL :  "COLUMNHEADER_TABLE", 					// The table with the column headers
-		COLUMNHEADER_ROW : 	"COLUMNHEADER_ROW", 					// The table row with the column headers (TableUtils.CELLTYPES.COLUMNHEADER)
-		ROWHEADER_COL : 	"ROWHEADER_COL", 						// The area which contains the row headers (TableUtils.CELLTYPES.ROWHEADER)
-		TH : 				"TH", 									// The "technical" column headers
-		ROWHEADER_TD : 		"ROWHEADER_TD", 						// The "technical" row headers
-		TR : 				"TR", 									// The rows
-		TREEICON : 			"TREEICON", 							// The expand/collapse icon in the TreeTable
-		ROWACTIONHEADER : 	"ROWACTIONHEADER", 						// The header of the row action column
-		NODATA :			"NODATA",								// The no data container
-		OVERLAY :			"OVERLAY"								// The overlay container
+		DATACELL: "DATACELL",					// Standard data cell (standard, group or sum)
+		COLUMNHEADER: "COLUMNHEADER", 			// Column header
+		ROWHEADER: "ROWHEADER", 				// Row header (standard, group or sum)
+		ROWACTION: "ROWACTION", 				// Row action (standard, group or sum)
+		COLUMNROWHEADER: "COLUMNROWHEADER",		// Select all row selector (top left cell)
+		ROOT: "ROOT",							// The tables root dom element
+		CONTENT: "CONTENT",						// The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
+		TABLE: "TABLE",							// The "real" table element(s)
+		TABLEHEADER: "TABLEHEADER", 			// The table header area
+		TABLEFOOTER: "TABLEFOOTER", 			// The table footer area
+		TABLESUBHEADER: "TABLESUBHEADER", 		// The table toolbar and extension areas
+		COLUMNHEADER_TBL: "COLUMNHEADER_TABLE", // The table with the column headers
+		COLUMNHEADER_ROW: "COLUMNHEADER_ROW", 	// The table row with the column headers
+		ROWHEADER_COL: "ROWHEADER_COL", 		// The area which contains the row headers
+		TH: "TH", 								// The "technical" column headers
+		ROWHEADER_TD: "ROWHEADER_TD", 			// The "technical" row headers
+		TR: "TR", 								// The rows
+		TREEICON: "TREEICON", 					// The expand/collapse icon in the TreeTable
+		ROWACTIONHEADER: "ROWACTIONHEADER", 	// The header of the row action column
+		NODATA: "NODATA",						// The no data container
+		OVERLAY: "OVERLAY"						// The overlay container
 	};
 
-	/*
-	 * Returns whether acc mode is switched on ore not.
-	 * @public (Part of the API for Table control only!)
+	/**
+	 * Returns whether the accessibility mode is turned on.
+	 *
+	 * @public
+	 * @returns {boolean} Returns <code>true</code>, if the accessibility mode is turned on.
 	 */
 	TableAccExtension.prototype.getAccMode = function() {
 		return this._accMode;
 	};
 
-	/*
+	/**
 	 * Determines the current focused cell and modifies the labels and descriptions if needed.
-	 * @public (Part of the API for Table control only!)
+	 *
+	 * @param {boolean} bOnCellFocus Whether the accessibility information of the cell are updated because the cell was focused.
+	 * @public
 	 */
 	TableAccExtension.prototype.updateAccForCurrentCell = function(bOnCellFocus) {
 		if (!this._accMode || !this.getTable()._getItemNavigation()) {
@@ -980,21 +1029,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		}
 
 		var oInfo = ExtensionHelper.getInfoOfFocusedCell(this);
-		if (!oInfo || !oInfo.cell || !oInfo.type || !ExtensionHelper["modifyAccOf" + oInfo.type]) {
+		var sCellType;
+
+		if (!oInfo || !oInfo.cell) {
+			return;
+		}
+
+		if (oInfo.isOfType(CellType.DATACELL)) {
+			sCellType = TableAccExtension.ELEMENTTYPES.DATACELL;
+		} else if (oInfo.isOfType(CellType.COLUMNHEADER)) {
+			sCellType = TableAccExtension.ELEMENTTYPES.COLUMNHEADER;
+		} else if (oInfo.isOfType(CellType.ROWHEADER)) {
+			sCellType = TableAccExtension.ELEMENTTYPES.ROWHEADER;
+		} else if (oInfo.isOfType(CellType.ROWACTION)) {
+			sCellType = TableAccExtension.ELEMENTTYPES.ROWACTION;
+		} else if (oInfo.isOfType(CellType.COLUMNROWHEADER)) {
+			sCellType = TableAccExtension.ELEMENTTYPES.COLUMNROWHEADER;
+		}
+
+		if (!ExtensionHelper["modifyAccOf" + sCellType]) {
 			return;
 		}
 
 		if (!bOnCellFocus) {
 			// Delayed reinitialize the focus when scrolling (focus stays on the same cell, only content is replaced)
 			// to force screenreader announcements
-			if (oInfo.type === TableUtils.CELLTYPES.DATACELL || TableUtils.CELLTYPES.ROWHEADER) {
+			if (oInfo.isOfType(CellType.DATACELL | CellType.ROWHEADER)) {
 				oTable._mTimeouts._cleanupACCFocusRefresh = jQuery.sap.delayedCall(100, this, function($Cell) {
 					var oTable = this.getTable();
 					if (!oTable) {
 						return;
 					}
 					var oInfo = ExtensionHelper.getInfoOfFocusedCell(this);
-					if (oInfo && oInfo.cell && oInfo.type && oInfo.cell.get(0) && $Cell.get(0) === oInfo.cell.get(0)) {
+					if (oInfo && oInfo.cell && oInfo.cell.get(0) && $Cell.get(0) === oInfo.cell.get(0)) {
 						oInfo.cell.blur().focus();
 					}
 					oTable._mTimeouts._cleanupACCFocusRefresh = null;
@@ -1003,15 +1070,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			return;
 		}
 
-		ExtensionHelper["modifyAccOf" + oInfo.type].apply(this, [oInfo.cell, bOnCellFocus]);
+		ExtensionHelper["modifyAccOf" + sCellType].apply(this, [oInfo.cell, bOnCellFocus]);
 	};
 
-	/*
-	 * Is called by the Column whenever the sort or filter state is changed and updates the corresponding
-	 * ARIA attributes.
-	 * @public (Part of the API for Table control only!)
+	/**
+	 * Is called by the column whenever the sort or filter state is changed and updates the corresponding ARIA attributes.
+	 *
+	 * @param {sap.ui.table.Column} oColumn Instance of the column.
+	 * @public
 	 */
-	TableAccExtension.prototype.updateAriaStateOfColumn = function(oColumn, $Ref) {
+	TableAccExtension.prototype.updateAriaStateOfColumn = function(oColumn) {
 		if (!this._accMode) {
 			return;
 		}
@@ -1022,18 +1090,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 			index: this.getTable().indexOfColumn(oColumn)
 		});
 
-		$Ref = $Ref ? $Ref : oColumn.$();
-
-		$Ref.attr({
-			"aria-sort" : mAttributes["aria-sort"] || null,
-			"aria-labelledby" : mAttributes["aria-labelledby"] ? mAttributes["aria-labelledby"].join(" ") : null
-		});
+		var aHeaders = ExtensionHelper.getRelevantColumnHeaders(this.getTable(), oColumn);
+		for (var i = 0; i < aHeaders.length; i++) {
+			var $Header = jQuery.sap.byId(aHeaders[i]);
+			if (!$Header.attr("colspan")) {
+				$Header.attr({
+					"aria-sort": mAttributes["aria-sort"] || null
+				});
+			}
+		}
 	};
 
-	/*
-	 * Is called by the Row whenever the selection state is changed and updates the corresponding
-	 * ARIA attributes.
-	 * @public (Part of the API for Table control only!)
+	/**
+	 * Is called by the row whenever the selection state is changed and updates the corresponding ARIA attributes.
+	 *
+	 * @param {sap.ui.table.Row} oRow Instance of the row.
+	 * @param {jQuery} $Ref The jQuery references to the DOM areas of the row.
+	 * @param {boolean} bIsSelected Whether the row is selected.
+	 * @public
 	 */
 	TableAccExtension.prototype.updateAriaStateOfRow = function(oRow, $Ref, bIsSelected) {
 		if (!this._accMode) {
@@ -1046,14 +1120,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 		if ($Ref.row) {
 			$Ref.row.children("td").add($Ref.row).attr("aria-selected", bIsSelected ? "true" : null);
+			if (bIsSelected && $Ref.rowSelectorText) {
+				var sText = $Ref.rowSelectorText.text();
+				if (sText) {
+					sText = TableUtils.getResourceText("TBL_ROW_DESC_SELECTED") + " " + sText;
+				}
+				$Ref.rowSelectorText.text(sText);
+			}
 		}
 	};
 
-	/*
-	 * Updates the expand state and level for accessibility in case of grouping
-	 * @public (Part of the API for Table control only!)
+	/**
+	 * Updates the expand state and level for accessibility in case of grouping.
+	 *
+	 * @param {sap.ui.table.Row} oRow Instance of the row.
+	 * @param {jQuery} $ScrollRow The jQuery reference to the scrollable area of the row.
+	 * @param {jQuery} $RowHdr The jQuery reference to the header area of the row.
+	 * @param {jQuery} $FixedRow The jQuery reference to the fixed area of the row.
+	 * @param {jQuery} $RowAct The jQuery reference to the action area of the row.
+	 * @param {boolean} bGroup Whether the row is a group header row.
+	 * @param {boolean} bExpanded Whether the row is expanded (for group header or tree node rows).
+	 * @param {int} iLevel The level of the row (for group header or tree node rows).
+	 * @param {jQuery} $TreeIcon The jQuery reference to the tree icon of a row (for tree node rows).
+	 * @public
 	 */
-	TableAccExtension.prototype.updateAriaExpandAndLevelState = function(oRow, $ScrollRow, $RowHdr, $FixedRow, $RowAct, bGroup, bExpanded, iLevel, $TreeIcon) {
+	TableAccExtension.prototype.updateAriaExpandAndLevelState = function(oRow, $ScrollRow, $RowHdr, $FixedRow, $RowAct, bGroup, bExpanded, iLevel,
+																		 $TreeIcon) {
 		if (!this._accMode) {
 			return;
 		}
@@ -1066,14 +1158,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 
 		if (!bGroup && $RowHdr && !bTreeMode) {
 			var iIndex = $RowHdr.attr("data-sap-ui-rowindex");
-			var mAttributes = ExtensionHelper.getAriaAttributesFor(this, TableAccExtension.ELEMENTTYPES.ROWHEADER, {rowSelected: !oRow._bHidden && oTable.isIndexSelected(iIndex)});
+			var mAttributes = ExtensionHelper.getAriaAttributesFor(
+				this, TableAccExtension.ELEMENTTYPES.ROWHEADER, {rowSelected: !oRow._bHidden && oTable.isIndexSelected(iIndex)});
 			sTitle = mAttributes["title"] || null;
 		}
 
 		if ($RowHdr && !bTreeMode) {
 			$RowHdr.attr({
-				"aria-haspopup" : bGroup ? "true" : null,
-				"title" : sTitle
+				"aria-haspopup": bGroup ? "true" : null,
+				"title": sTitle
 			});
 		}
 
@@ -1085,7 +1178,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		for (var i = 0; i < aRefs.length; i++) {
 			if (aRefs[i]) {
 				aRefs[i].attr({
-					"aria-expanded" : bGroup ? bExpanded + "" : null,
+					"aria-expanded": bGroup ? bExpanded + "" : null,
 					"aria-level": iLevel < 0 ? null : (iLevel + 1)
 				});
 			}
@@ -1096,9 +1189,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		}
 	};
 
-	/*
+	/**
 	 * Updates the row highlight state.
-	 * @public (Part of the API for Table control only!)
+	 *
+	 * @param {sap.ui.table.RowSettings} oRowSettings The row settings.
+	 * @public
 	 */
 	TableAccExtension.prototype.updateAriaStateOfRowHighlight = function(oRowSettings) {
 		if (!this._accMode || oRowSettings == null) {
@@ -1112,9 +1207,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		}
 	};
 
-	/*
+	/**
 	 * Updates the relevant aria-properties in case of overlay or noData is set / reset.
-	 * @public (Part of the API for Table control only!)
+	 *
+	 * @public
 	 */
 	TableAccExtension.prototype.updateAriaStateForOverlayAndNoData = function() {
 		var oTable = this.getTable();
@@ -1135,21 +1231,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		}
 	};
 
-	/*
-	 * Retrieve Aria descriptions from resource bundle for a certain selection mode
-	 * @param {Boolean} [bConsiderSelectionState] set to true if the current selection state of the table shall be considered
-	 * @param {String} [sSelectionMode] optional parameter. If no selection mode is set, the current selection mode of the table is used
-	 * @returns {{mouse: {rowSelect: string, rowDeselect: string}, keyboard: {rowSelect: string, rowDeselect: string}}}
-	 * @public (Part of the API for Table control only!)
+	/**
+	 * Retrieve Aria descriptions from resource bundle for a certain selection mode.
+	 *
+	 * @param {boolean} [bConsiderSelectionState] Set to <code>true</code>, to consider the current selection state of the table.
+	 * @param {string} [sSelectionMode] If no selection mode is set, the current selection mode of the table is used.
+	 * @returns {{mouse: {rowSelect: string, rowDeselect: string}, keyboard: {rowSelect: string, rowDeselect: string}}} Tooltip texts.
+	 * @public
 	 */
-	TableAccExtension.prototype.getAriaTextsForSelectionMode = function (bConsiderSelectionState, sSelectionMode) {
+	TableAccExtension.prototype.getAriaTextsForSelectionMode = function(bConsiderSelectionState, sSelectionMode) {
 		var oTable = this.getTable();
 
 		if (!sSelectionMode) {
 			sSelectionMode = oTable.getSelectionMode();
 		}
 
-		var oResBundle = oTable._oResBundle;
 		var bShowTooltips = oTable._getShowStandardTooltips();
 		var mTooltipTexts = {
 			mouse: {
@@ -1165,43 +1261,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 		var iSelectedIndicesCount = oTable._getSelectedIndicesCount();
 
 		if (sSelectionMode === SelectionMode.Single) {
-			mTooltipTexts.mouse.rowSelect = bShowTooltips ? oResBundle.getText("TBL_ROW_SELECT") : "";
-			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? oResBundle.getText("TBL_ROW_DESELECT") : "";
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+			mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";
+			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_DESELECT") : "";
+			mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
+			mTooltipTexts.keyboard.rowDeselect = TableUtils.getResourceText("TBL_ROW_DESELECT_KEY");
 		} else if (sSelectionMode === SelectionMode.MultiToggle) {
-			mTooltipTexts.mouse.rowSelect = bShowTooltips ? oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE") : "";
+			mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT_MULTI_TOGGLE") : "";
 			// text for de-select is the same like for single selection
-			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? oResBundle.getText("TBL_ROW_DESELECT") : "";
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
+			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_DESELECT") : "";
+			mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
 			// text for de-select is the same like for single selection
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+			mTooltipTexts.keyboard.rowDeselect = TableUtils.getResourceText("TBL_ROW_DESELECT_KEY");
 
 			if (bConsiderSelectionState === true && iSelectedIndicesCount === 0) {
 				// if there is no row selected yet, the selection is like in single selection case
-				mTooltipTexts.mouse.rowSelect = bShowTooltips ? oResBundle.getText("TBL_ROW_SELECT") : "";
-				mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
+				mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";
+				mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
 			}
 		}
 
 		return mTooltipTexts;
 	};
 
-	/*
+	/**
 	 * Applies corresponding ARIA properties of the given state to the select all button.
-	 * @param {boolean} bSelectAll the select all state which should be applied to the select all button
-	 * @public (Part of the API for Table control only!)
+	 *
+	 * @param {boolean} bSelectAll The select all state to be applied to the select all button.
+	 * @public
 	 */
-	TableAccExtension.prototype.setSelectAllState = function (bSelectAll) {
+	TableAccExtension.prototype.setSelectAllState = function(bSelectAll) {
 		var oTable = this.getTable();
 		if (oTable) {
 			oTable.$("selall").attr("aria-pressed", bSelectAll ? "true" : "false");
 		}
 	};
 
-	/*
-	 * Adds the column header / label of the given column to the ariaLabelledBy association (if exists)
-	 * of the given control.
+	/**
+	 * Adds the column header / label of a column to the ariaLabelledBy association (if exists) of the given control.
+	 *
+	 * @param {sap.ui.table.Column} oColumn Instance of the column.
+	 * @param {sap.ui.core.Control} oControl Instance of the control.
 	 */
 	TableAccExtension.prototype.addColumnHeaderLabel = function(oColumn, oControl) {
 		var oTable = this.getTable();
@@ -1223,5 +1322,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', './Table
 	};
 
 	return TableAccExtension;
-
 });
+
+/**
+ * Gets the accessibility extension.
+ *
+ * @name sap.ui.table.Table#_getAccExtension
+ * @function
+ * @returns {sap.ui.table.TableAccExtension} The accessibility extension.
+ * @private
+ */

@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.ux3.Overlay.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', './library'],
-	function(jQuery, Control, Popup, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/Popup',
+    './library',
+    "./OverlayRenderer"
+],
+	function(jQuery, Control, Popup, library, OverlayRenderer) {
 	"use strict";
 
 	/**
@@ -176,12 +182,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 
 	/**
 	 *
-	 * @param fFocusFirst
-	 * @param fFocusLast
-	 * @param fApplyChanges
+	 * @param {function} fnFocusFirst
+	 * @param {function} fnFocusLast
+	 * @param {function} fnApplyChanges
 	 * @private
 	 */
-	Overlay.prototype._initDom = function(fFocusFirst, fFocusLast, fApplyChanges) {
+	Overlay.prototype._initDom = function(fnFocusFirst, fnFocusLast, fnApplyChanges) {
 		//Override the popup theming and init the focus handling
 		var oShell = jQuery(".sapUiUx3Shell").control();
 		this._oShell = oShell.length ? oShell[0] : null;
@@ -189,7 +195,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/Popup', 
 		this.$().css("position", "fixed");
 		if (oShell) {
 			this._bFocusEventsRegistered = true;
-			oShell.syncWithCanvasSize(this.getId(), true, fFocusFirst, fFocusLast, fApplyChanges);
+			oShell.syncWithCanvasSize(this.getId(), true, fnFocusFirst, fnFocusLast, fnApplyChanges);
 			this.$("firstFocusDummyPaneFw").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusFirstHdr,oShell));
 			this.$("firstFocusDummyPaneBw").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusLastTool,oShell));
 			this.$("LastFocusDummyPane").attr("tabindex", "0").focusin(jQuery.proxy(oShell.focusPaneStart,oShell));

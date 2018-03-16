@@ -25,9 +25,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 		/**
 		 * A helper used for (read-only) access to CSS parameters at runtime.
 		 *
-		 * @class A helper used for (read-only) access to CSS parameters at runtime
 		 * @author SAP SE
-		 * @static
+		 * @namespace
 		 *
 		 * @public
 		 * @alias sap.ui.core.theming.Parameters
@@ -107,25 +106,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 
 		function forEachStyleSheet(fnCallback) {
 			jQuery("link[id^=sap-ui-theme-]").each(function() {
-				fnCallback(this.getAttribute("id"), this.href);
+				fnCallback(this.getAttribute("id"));
 			});
 		}
 
 		/*
 		 * Load parameters for a library/theme combination as identified by the URL of the library.css
 		 */
-		function loadParameters(sId, sStyleSheetUrl) {
-
-			// Remove CSS file name and query to create theme base url (to resolve relative urls)
-			var sThemeBaseUrl = new URI(sStyleSheetUrl).filename("").query("").toString();
+		function loadParameters(sId) {
 
 			// read inline parameters from css style rule
 			// (can be switched off for testing purposes via private URI parameter "sap-ui-xx-no-inline-theming-parameters=true")
 			var oLink = document.getElementById(sId);
-			var $link = jQuery(oLink);
-			if ($link.length > 0 && jQuery.sap.getUriParameters().get("sap-ui-xx-no-inline-theming-parameters") !== "true") {
+
+			if (!oLink) {
+				jQuery.sap.log.warning("Could not find stylesheet element with ID", sId, "sap.ui.core.theming.Parameters");
+				return;
+			}
+
+			var sStyleSheetUrl = oLink.href;
+
+			// Remove CSS file name and query to create theme base url (to resolve relative urls)
+			var sThemeBaseUrl = new URI(sStyleSheetUrl).filename("").query("").toString();
+
+			if (jQuery.sap.getUriParameters().get("sap-ui-xx-no-inline-theming-parameters") !== "true") {
+				var $link = jQuery(oLink);
 				var sDataUri = $link.css("background-image");
-				var aParams = /\(["']data:text\/plain;utf-8,(.*)["']\)$/i.exec(sDataUri);
+				var aParams = /\(["']?data:text\/plain;utf-8,(.*?)['"]?\)$/i.exec(sDataUri);
 				if (aParams && aParams.length >= 2) {
 					var sParams = aParams[1];
 					// decode only if necessary
@@ -202,9 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 
 		function loadPendingLibraryParameters() {
 			// lazy loading of further library parameters
-			aParametersToLoad.forEach(function(oInfo) {
-				loadParameters("sap-ui-theme-" + oInfo.id, oInfo.url);
-			});
+			aParametersToLoad.forEach(loadParameters);
 
 			// clear queue
 			aParametersToLoad = [];
@@ -213,16 +218,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 		/**
 		 * Called by the Core when a new library and its stylesheet have been loaded.
 		 * Must be called AFTER a link-tag (with id: "sap-ui-theme" + sLibName) for the theme has been created.
-		 * @param {string} sThemeId id of theme link-tag
-		 * @param {string} sCssUrl href of css file
+		 * @param {string} sLibId id of theme link-tag
 		 * @private
 		 */
-		Parameters._addLibraryTheme = function(sThemeId, sCssUrl) {
+		Parameters._addLibraryTheme = function(sLibId) {
 			// only queue new libraries if some have been loaded already
 			// otherwise they will be loaded when the first one requests a parameter
 			// see "Parameters.get" for lazy loading of queued library parameters
 			if (mParameters) {
-				aParametersToLoad.push({ id: sThemeId, url: sCssUrl });
+				aParametersToLoad.push("sap-ui-theme-" + sLibId);
 			}
 		};
 
@@ -462,14 +466,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', '../Element', 'jque
 				"scopes": {}
 			};
 			sTheme = sap.ui.getCore().getConfiguration().getTheme();
-			forEachStyleSheet(function(sId, sHref) {
+			forEachStyleSheet(function(sId) {
 				var sLibname = sId.substr(13); // length of sap-ui-theme-
 				if (mLibraryParameters[sLibname]) {
 					// if parameters are already provided for this lib, use them (e.g. from LessSupport)
 					jQuery.extend(mParameters["default"], mLibraryParameters[sLibname]);
 				} else {
 					// otherwise use inline-parameters or library-parameters.json
-					loadParameters(sId, sHref);
+					loadParameters(sId);
 				}
 			});
 		};

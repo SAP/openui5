@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
-	function(jQuery, FlexBoxCssPropertyMap) {
+sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap', 'sap/ui/Device'],
+	function(jQuery, FlexBoxCssPropertyMap, Device) {
 	"use strict";
 
 	/**
@@ -67,8 +67,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.FlexItemData} oLayoutData an object representation of the layout data
-	 * @param sProperty name of the property
-	 * @param sValue value of the property
+	 * @param {string} sProperty name of the property
+	 * @param {string} sValue value of the property
 	 */
 	FlexBoxStylingHelper.setStyle = function(oRm, oLayoutData, sProperty, sValue) {
 		if (typeof (sValue) === "string") {
@@ -77,11 +77,11 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		}
 
 		if (jQuery.support.flexBoxPrefixed) {
-			if (sap.ui.Device.browser.webkit) {
+			if (Device.browser.webkit) {
 				this.sVendorPrefix = "-webkit-";
-			} else if (sap.ui.Device.browser.mozilla) {
+			} else if (Device.browser.mozilla) {
 				this.sVendorPrefix = "-moz-";
-			} else if (sap.ui.Device.browser.internet_explorer) {
+			} else if (Device.browser.internet_explorer) {
 				this.sVendorPrefix = "-ms-";
 			}
 		} else {
@@ -103,8 +103,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.FlexItemData} oLayoutData an object representation of the layout data
-	 * @param sProperty name of the property
-	 * @param sValue value of the property
+	 * @param {string} sProperty name of the property
+	 * @param {string} sValue value of the property
 	 */
 	FlexBoxStylingHelper.setOldSpecStyle = function(oRm, oLayoutData, sProperty, sValue) {
 		// Choose specification
@@ -155,8 +155,8 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 	 *
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.m.FlexItemData} oLayoutData an object representation of the layout data
-	 * @param sProperty name of the property
-	 * @param sValue value of the property
+	 * @param {string} sProperty name of the property
+	 * @param {string} sValue value of the property
 	 */
 	FlexBoxStylingHelper.writeStyle = function(oRm, oLayoutData, sProperty, sValue) {
 		var sPropertyPrefix = "";
@@ -173,7 +173,7 @@ sap.ui.define(['jquery.sap.global', './FlexBoxCssPropertyMap'],
 		// IE 10-11 miscalculate the width of the flex items when box-sizing: border-box
 		// Instead of using flex-basis, we use an explicit width/height
 		// @see https://github.com/philipwalton/flexbugs#7-flex-basis-doesnt-account-for-box-sizingborder-box
-		if (sap.ui.Device.browser.internet_explorer && (sProperty === "flex-basis" || sProperty === "flex-preferred-size")) {
+		if (Device.browser.internet_explorer && (sProperty === "flex-basis" || sProperty === "flex-preferred-size")) {
 			sPropertyPrefix = "";
 			if (oLayoutData.getParent()) {
 				if (oLayoutData.getParent().getParent().getDirection().indexOf("Row") > -1) {

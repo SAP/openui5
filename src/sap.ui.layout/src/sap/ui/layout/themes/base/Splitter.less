@@ -35,17 +35,12 @@
 	font-size: 16px;
 	background-color: transparent;
 	color: @sapUiContentIconColor;
-	
+
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-}
-
-.sapUiLoSplitter > .sapUiLoSplitterBar:focus {
-	outline: 1px dotted @sapUiContentFocusColor;
-	outline-offset: -1px;
 }
 
 .sapUiLoSplitter > .sapUiLoSplitterBar:hover,
@@ -207,52 +202,42 @@ html.sap-phone .sapUiLoSplitterV .sapUiLoSplitterBarIcon {
 
 /*********************************** IE Focus outline workaround **********************************/
 
-html[data-sap-ui-browser^=ie] .sapUiLoSplitter > .sapUiLoSplitterBar:focus {
-	outline: 0px solid @sapUiContentFocusColor;
-	outline-offset: 0;
-}
-
-html[data-sap-ui-browser^=ie] .sapUiLoSplitter > .sapUiLoSplitterBar:focus::after {
+.sapUiLoSplitter > .sapUiLoSplitterBar:focus::after {
 	content: "";
 	display: block;
 	position: relative;
+    height: 100%;
+}
+
+html[data-sap-ui-browser^=cr] .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
+  border: 1px dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser^=cr] .sapUiLoSplitterH > .sapUiLoSplitterBar:focus {
+  outline:none;
 }
 
 html[data-sap-ui-browser^=ie] .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
 	top: -1em;
 }
 
-html[data-sap-ui-browser^=ie].sap-desktop .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
-	height: 100%;
-	width: 6px;
-	border: 1px dotted @sapUiContentFocusColor;
-}
-html[data-sap-ui-browser^=ie].sap-tablet .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
-	height: 100%;
-	width: 16px;
-	border: 1px dotted @sapUiContentFocusColor;
-}
 html[data-sap-ui-browser^=ie].sap-phone .sapUiLoSplitterH > .sapUiLoSplitterBar:focus::after {
 	height: 100%;
 	width: 1px;
-	border: 1px dotted @sapUiContentFocusColor;
 }
 
 html[data-sap-ui-browser^=ie].sap-desktop .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
 	top: -6px;
 	height: 6px;
 	width: 100%;
-	border: 1px dotted @sapUiContentFocusColor;
 }
 html[data-sap-ui-browser^=ie].sap-tablet .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
 	top: -16px;
 	height: 16px;
 	width: 100%;
-	border: 1px dotted @sapUiContentFocusColor;
 }
 html[data-sap-ui-browser^=ie].sap-phone .sapUiLoSplitterV > .sapUiLoSplitterBar:focus::after {
 	top: -1px;
 	height: 1px;
 	width: 100%;
-	border: 1px dotted @sapUiContentFocusColor;
 }

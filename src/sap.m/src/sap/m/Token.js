@@ -3,9 +3,23 @@
  */
 
 // Provides control sap.m.Token.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Tokenizer'],
-	function(jQuery, library, Control, Tokenizer) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'./Tokenizer',
+	'sap/ui/core/library',
+	'sap/ui/core/Icon',
+	'./TokenRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, Tokenizer, coreLibrary, Icon, TokenRenderer) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 
@@ -33,6 +47,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * @constructor
 	 * @public
 	 * @alias sap.m.Token
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/token/ Token}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Token = Control.extend("sap.m.Token", /** @lends sap.m.Token.prototype */ { metadata : {
@@ -64,7 +79,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 			 * This property specifies the text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 		},
 		aggregations : {
 
@@ -109,23 +124,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 		}
 	}});
 
-	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-	// create an ARIA announcement and remember its ID for later use in the renderer:
-	Token.prototype._sAriaTokenLabelId = new sap.ui.core.InvisibleText({
-		text: oRb.getText("TOKEN_ARIA_LABEL")
-	}).toStatic().getId();
-
-	Token.prototype._sAriaTokenDeletableId = new sap.ui.core.InvisibleText({
-		text: oRb.getText("TOKEN_ARIA_DELETABLE")
-	}).toStatic().getId();
-
 	/**
 	 * This file defines behavior for the control,
 	 */
 	Token.prototype.init = function() {
 		var that = this;
-		this._deleteIcon = new sap.ui.core.Icon({
+		this._deleteIcon = new Icon({
 			id : that.getId() + "-icon",
 			src : "sap-icon://sys-cancel",
 			noTabStop: true,
@@ -168,7 +172,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Sets the selection status of the token.
 	 *
 	 * @param {boolean} bSelected Indicates if the token is selected.
-	 * @return {sap.m.Token} this for chaining
+	 * @return {sap.m.Token} this instance for method chaining
 	 * @public
 	 */
 	Token.prototype.setSelected = function(bSelected) {
@@ -193,7 +197,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Sets the editable status of the token.
 	 *
 	 * @param {boolean} bEditable Indicates if the token is editable.
-	 * @return {sap.m.Token} this for chaining
+	 * @return {sap.m.Token} this instance for method chaining
 	 * @public
 	 */
 	Token.prototype.setEditable = function(bEditable) {
@@ -213,7 +217,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Function is called when token is pressed to select/deselect token.
 	 * @private
-	 * @param {jQuery.Event} oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype._onTokenPress = function(oEvent) {
 		var bSelected = this.getSelected(),
@@ -272,12 +276,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Event handler called when control is on tap
 	 *
-	 * @param {jQuery.Event}
-	 * 			oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	Token.prototype.ontap = function(oEvent) {
 		if (oEvent.target.id == this._deleteIcon.getId()){
+			oEvent.setMark("tokenDeletePress", true);
 			return;
 		}
 		this._onTokenPress(oEvent);
@@ -286,8 +290,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Event handler called when control is loosing the focus, removes selection from token
 	 *
-	 * @param {jQuery.Event}
-	 * 			oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	Token.prototype.onsapfocusleave = function(oEvent) {
@@ -302,8 +305,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Function is called on keyboard backspace, deletes token
 	 *
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype.onsapbackspace = function(oEvent) {
 		this._deleteToken(oEvent);
@@ -313,8 +315,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	 * Function is called on keyboard delete, deletes token
 	 *
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype.onsapdelete = function(oEvent) {
 		this._deleteToken(oEvent);
@@ -337,8 +338,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Function is called on keyboard space, select/deselect token
 	 * @private
-	 * @param {jQuery.Event}
-	 *          oEvent
+	 * @param {jQuery.Event} oEvent The event object
 	 */
 	Token.prototype.onsapspace = function(oEvent) {
 
@@ -353,8 +353,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 	/**
 	 * Handle the key down event for Ctrl+ space
 	 *
-	 * @param {jQuery.Event}
-	 *            oEvent - the occuring event
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	Token.prototype.onkeydown = function(oEvent) {
@@ -368,4 +367,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', './Token
 
 	return Token;
 
-}, /* bExport= */ true);
+});

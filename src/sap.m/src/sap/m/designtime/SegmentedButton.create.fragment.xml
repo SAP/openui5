@@ -1,0 +1,10 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SegmentedButton selectedKey="one">
+		<items>
+			<SegmentedButtonItem text="Button One" key="one"/>
+			<SegmentedButtonItem text="Button Two" key="two"/>
+			<SegmentedButtonItem text="Button Three" key="three"/>
+		</items>
+	</SegmentedButton>
+</core:FragmentDefinition>

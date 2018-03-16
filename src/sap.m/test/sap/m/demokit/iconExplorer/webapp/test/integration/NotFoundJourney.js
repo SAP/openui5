@@ -9,9 +9,6 @@ sap.ui.define([
 
 	/* page not found tests */
 	opaTest("Should see the resource not found page when changing to an invalid hash", function (Given, When, Then) {
-		//Arrangement
-		Given.iStartMyAppOnTheDetailsTab();
-
 		//Actions
 		When.onTheOverviewPage.iWaitUntilTheTableIsLoaded();
 		When.onTheBrowser.iChangeTheHashToSomethingInvalid();
@@ -35,7 +32,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeResourceNotFound().
-		and.iTeardownMyAppFrame();
+		and.iTeardownMyApp();
 	});
 
 	/* no data text tests for all 4 tabs */
@@ -47,7 +44,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iSearchForSomethingWithNoResults();
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheTabularNoDataTextForNoSearchResults();
+		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
 	});
 
 	opaTest("Should see the not found text for no search results on the grid tab", function (Given, When, Then) {
@@ -55,7 +52,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("grid");
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheVisualNoDataTextForNoSearchResults();
+		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
 	});
 
 	opaTest("Should see the not found text for no search results on the visual tab", function (Given, When, Then) {
@@ -63,7 +60,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("visual");
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheVisualNoDataTextForNoSearchResults();
+		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
 	});
 
 	opaTest("Should see the not found text for no search results on the favorites tab", function (Given, When, Then) {
@@ -71,7 +68,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheTabularNoDataTextForNoSearchResults();
+		Then.onTheOverviewPage.iShouldSeeTheNoDataTextForNoSearchResults();
 	});
 
 	opaTest("Should see the 'error' icon on the preview pane when an invalid icon was set in the hash", function (Given, When, Then) {
@@ -82,7 +79,7 @@ sap.ui.define([
 		// Assertions
 		Then.onThePreviewPage.iShouldSeeThePreviewArea().
 			and.iShouldSeeTheIcon("error").
-			and.iTeardownMyAppFrame();
+			and.iTeardownMyApp();
 	});
 
 });

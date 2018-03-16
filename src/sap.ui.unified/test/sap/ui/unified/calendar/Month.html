@@ -66,35 +66,36 @@
 								["20160709",undefined,"Type09",9],
 								["20160710",undefined,"Type10",10]];
 
-			var oMonth = new sap.ui.unified.calendar.Month("Month1",{
-				focus: function(oEvent){
-					var oTF = sap.ui.getCore().byId("TF1");
-					var oMonth = oEvent.oSource;
-					var oDate = oEvent.getParameter("date");
-					if (oDate) {
-						oTF.setValue(oFormatYyyymmdd.format(oDate));
-					} else {
-						oTF.setValue("");
-					}
-					if (!oEvent.getParameter("otherMonth")) {
-						oTF.setValueState(sap.ui.core.ValueState.None);
-					} else {
-						oTF.setValueState(sap.ui.core.ValueState.Error);
-					}
-				},
-				select: function(oEvent){
-					var oTF = sap.ui.getCore().byId("TF2");
-					var oMonth = oEvent.oSource;
-					var aSelectedDates = oMonth.getSelectedDates();
-					var oDate;
-					if (aSelectedDates.length > 0 ) {
-						oDate = aSelectedDates[0].getStartDate();
-						oTF.setValue(oFormatYyyymmdd.format(oDate));
-					} else {
-						oTF.setValue("");
-					}
-				}
-			}).placeAt("sample1");
+			var oMonth = new sap.ui.unified.calendar.Month("Month1",
+					{
+						date: new Date(2016, 0, 1) /* to make sure special dates are in visible range */,
+						focus: function (oEvent) {
+							var oTF = sap.ui.getCore().byId("TF1");
+							var oDate = oEvent.getParameter("date");
+							if (oDate) {
+								oTF.setValue(oFormatYyyymmdd.format(oDate));
+							} else {
+								oTF.setValue("");
+							}
+							if (!oEvent.getParameter("otherMonth")) {
+								oTF.setValueState(sap.ui.core.ValueState.None);
+							} else {
+								oTF.setValueState(sap.ui.core.ValueState.Error);
+							}
+						},
+						select: function (oEvent) {
+							var oTF = sap.ui.getCore().byId("TF2");
+							var oMonth = oEvent.oSource;
+							var aSelectedDates = oMonth.getSelectedDates();
+							var oDate;
+							if (aSelectedDates.length > 0) {
+								oDate = aSelectedDates[0].getStartDate();
+								oTF.setValue(oFormatYyyymmdd.format(oDate));
+							} else {
+								oTF.setValue("");
+							}
+						}
+					}).placeAt("sample1");
 
 			var oForm = new sap.ui.layout.form.Form("F1", {
 				layout: new sap.ui.layout.form.ResponsiveGridLayout("L1", {

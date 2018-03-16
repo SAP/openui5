@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['./SliderUtilities'],
+	function(SliderUtilities) {
 		"use strict";
 
 		/**
@@ -28,7 +28,10 @@ sap.ui.define(['jquery.sap.global'],
 		SliderRenderer.render = function(oRm, oSlider) {
 			var bEnabled = oSlider.getEnabled(),
 				sTooltip = oSlider.getTooltip_AsString(),
-				CSS_CLASS = SliderRenderer.CSS_CLASS;
+				CSS_CLASS = SliderRenderer.CSS_CLASS,
+				sSliderLabels = oSlider.getAriaLabelledBy().reduce(function(sAccumulator, sId){
+					return sAccumulator + " " + sId;
+				}, "");
 
 			oRm.write("<div");
 			this.addClass(oRm, oSlider);
@@ -60,10 +63,10 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write(">");
 
 			if (oSlider.getProgress()) {
-				this.renderProgressIndicator(oRm, oSlider);
+				this.renderProgressIndicator(oRm, oSlider, sSliderLabels);
 			}
 
-			this.renderHandles(oRm, oSlider);
+			this.renderHandles(oRm, oSlider, sSliderLabels);
 			oRm.write("</div>");
 
 			if (oSlider.getEnableTickmarks()) {
@@ -89,21 +92,17 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeStyles();
 			oRm.write(' aria-hidden="true"></div>');
 		};
-
 		/**
 		 * This hook method is reserved for derived classes to render more handles.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oSlider An object representation of the slider that should be rendered.
 		 */
-		SliderRenderer.renderHandles = function(oRm, oSlider) {
+		SliderRenderer.renderHandles = function(oRm, oSlider, sForwardedLabels) {
 			this.renderHandle(oRm, oSlider,  {
-				id: oSlider.getId() + "-handle"
+				id: oSlider.getId() + "-handle",
+				forwardedLabels: sForwardedLabels
 			});
-
-			if (oSlider.getShowAdvancedTooltip()) {
-				this.renderTooltips(oRm, oSlider);
-			}
 		};
 
 		SliderRenderer.renderHandle = function(oRm, oSlider, mOptions) {
@@ -115,8 +114,14 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.writeAttributeEscaped("id", mOptions.id);
 			}
 
+			oRm.writeAttribute("aria-labelledby", (mOptions.forwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[0].getId()).trim());
+
 			if (oSlider.getShowHandleTooltip() && !oSlider.getShowAdvancedTooltip()) {
 				this.writeHandleTooltip(oRm, oSlider);
+			}
+
+			if (oSlider.getInputsAsTooltips()) {
+				oRm.writeAttribute("aria-controls", oSlider.getAggregation("_tooltips")[0].getId());
 			}
 
 			this.addHandleClass(oRm, oSlider);
@@ -130,44 +135,6 @@ sap.ui.define(['jquery.sap.global'],
 			}
 
 			oRm.write("></span>");
-		};
-
-		/**
-		 * This hook method is reserved for derived classes to render more tooltips.
-		 *
-		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
-		 * @param {sap.ui.core.Control} oSlider An object representation of the slider that should be rendered.
-		 */
-		SliderRenderer.renderTooltips = function(oRm, oSlider) {
-
-			// the tooltips container
-			oRm.write("<div");
-			oRm.writeAttribute("id", oSlider.getId() + "-TooltipsContainer");
-			oRm.addClass(SliderRenderer.CSS_CLASS + "TooltipContainer");
-			oRm.addStyle("left", "0%");
-			oRm.addStyle("right", "0%");
-			oRm.addStyle("min-width", "0%");
-			oRm.writeClasses();
-			oRm.writeStyles();
-			oRm.write(">");
-			this.renderTooltip(oRm, oSlider, oSlider.getInputsAsTooltips());
-			oRm.write("</div>");
-		};
-
-		SliderRenderer.renderTooltip = function(oRm, oSlider, bInput) {
-			if (bInput && oSlider._oInputTooltip) {
-				oRm.renderControl(oSlider._oInputTooltip.tooltip);
-			} else {
-				oRm.write("<span");
-				oRm.addClass(SliderRenderer.CSS_CLASS + "HandleTooltip");
-				oRm.addStyle("width", oSlider._iLongestRangeTextWidth + "px");
-				oRm.writeAttribute("id", oSlider.getId() + "-Tooltip");
-
-				oRm.writeClasses();
-				oRm.writeStyles();
-				oRm.write(">");
-				oRm.write("</span>");
-			}
 		};
 
 		/**
@@ -225,7 +192,7 @@ sap.ui.define(['jquery.sap.global'],
 			fSliderStep = oSlider.getStep();
 
 			iLabelsCount = oScale.getTickmarksBetweenLabels();
-			iTickmarksToRender = oScale.calcNumTickmarks(fSliderSize, fSliderStep, oSlider._CONSTANTS.TICKMARKS.MAX_POSSIBLE);
+			iTickmarksToRender = oScale.calcNumTickmarks(fSliderSize, fSliderStep, SliderUtilities.CONSTANTS.TICKMARKS.MAX_POSSIBLE);
 			fTickmarksDistance = oSlider._getPercentOfValue(
 				oScale.calcTickmarksDistance(iTickmarksToRender, oSlider.getMin(), oSlider.getMax(), fSliderStep));
 
@@ -248,11 +215,15 @@ sap.ui.define(['jquery.sap.global'],
 		};
 
 		SliderRenderer.renderTickmarksLabel = function (oRm, oSlider, fValue) {
-			var fLeft = oSlider._getPercentOfValue(fValue);
+			var fOffset = oSlider._getPercentOfValue(fValue);
+			var sLeftOrRightPosition = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
 			fValue = oSlider.toFixed(fValue, oSlider.getDecimalPrecisionOfNumber(oSlider.getStep()));
 
 			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "TickLabel\"");
-			oRm.write(" style=\"left: " + fLeft + "%;\"");
+
+			oRm.addStyle(sLeftOrRightPosition, (fOffset + "%"));
+			oRm.writeStyles();
+
 			oRm.write(">");
 			oRm.write("<div class=\"" + SliderRenderer.CSS_CLASS + "Label\">");
 			oRm.writeEscaped("" + fValue);
@@ -310,7 +281,9 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
 		 */
-		SliderRenderer.renderLabels = function (oRm, oSlider) {};
+		SliderRenderer.renderLabels = function (oRm, oSlider) {
+			oSlider.getAggregation("_handlesLabels").forEach(oRm.renderControl);
+		};
 
 		return SliderRenderer;
 

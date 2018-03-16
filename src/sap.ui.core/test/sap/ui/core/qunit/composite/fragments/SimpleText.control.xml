@@ -1,3 +1,0 @@
-<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
-    <m:Text text="{$this>text}" visible="{= ${$this>text} !== ''}"/>
-</FragmentDefinition>

@@ -17,6 +17,14 @@
 	padding: 0.25rem 0;
 }
 
+.sapUiUfdShellHead .sapMSF {
+	padding: 0;
+}
+
+.sapUiSizeCompact .sapUiUfdShellHead .sapMSF {
+	padding: 0.25rem 0;
+}
+
 html.sap-desktop .sapMFocus > .sapMSFF::before {
 	border: 1px dotted @sapUiContentFocusColor;
 	position: absolute;
@@ -280,9 +288,6 @@ input.sapMSFI[type="search"]:focus {
 
 }
 
-html[dir=rtl] .sapMSF .sapMSFB {
-	transform: translateZ(0);
-}
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMFocus > .sapMSFF::before  {

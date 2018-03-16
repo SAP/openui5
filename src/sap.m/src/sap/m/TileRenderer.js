@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.m.Text
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -17,10 +17,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
-	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the render output buffer
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	TileRenderer.render = function(rm, oControl) {
+		var oTileContainer,
+			aVisibleTiles;
+
 		rm.write("<div tabindex=\"0\"");
 		rm.writeControlData(oControl);
 		rm.addClass("sapMTile");
@@ -37,10 +40,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		/* WAI ARIA if in TileContainer context */
 		if (oControl.getParent() instanceof sap.m.TileContainer) {
+			oTileContainer = oControl.getParent();
+			aVisibleTiles = oTileContainer._getVisibleTiles();
+
 			rm.writeAccessibilityState(oControl, {
 				role: "option",
-				posinset: oControl._getTileIndex(),
-				setsize: oControl._getTilesCount()
+				posinset: oTileContainer._indexOfVisibleTile(oControl, aVisibleTiles) + 1,
+				setsize: aVisibleTiles.length
 			});
 		}
 

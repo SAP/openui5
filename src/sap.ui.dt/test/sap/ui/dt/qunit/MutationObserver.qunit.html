@@ -1,181 +1,31 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 		<title>Test Page for sap.ui.dt.MutationObserver</title>
-
-		<style>
-			#__layout0 {
-				position: absolute;
-				left: 100px;
-				top : 650px;
-				width : 500px;
-				height : 1500px;
-				border: 1px solid black;
-				overflow: auto;
-			}
-			#__layout1 {
-				position: absolute;
-				left: 100px;
-				top : 500px;
-				width : 500px;
-				height : 100px;
-				border: 1px solid black;
-				overflow: auto;
-			}
-			.sapUiDtElementOverlay {
-				box-sizing: border-box;
-				border: 1px dashed grey;
-			}
-
-		</style>
-
 		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				src="../../../../../resources/sap-ui-core.js">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-
 		<script>
+			window['sap-ui-config'].libs = 'sap.m, sap.ui.dt, sap.ui.layout';
+			window['sap-ui-config'].resourceroots = {
+				'dt.view': 'testdata/designtime/'
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			jQuery.sap.require("sap.ui.thirdparty.sinon");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+			// code coverage report only for sap.ui.dt namespace
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/MutationObserver.js]');
 
-			jQuery.sap.require("sap.ui.dt.MutationObserver");
-			jQuery.sap.require("sap.ui.dt.OverlayUtil");
-			jQuery.sap.require("sap.ui.dt.DesignTime");
-			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-			jQuery.sap.require("sap.m.Button");
-
-
-			var sandbox = sinon.sandbox.create();
-
-			QUnit.module("Given that a MutationObserver is created", {
-				beforeEach : function() {
-					this.oLabel = new sap.m.Label({
-						text : "text"
-					});
-					this.oMutationObserver = new sap.ui.dt.MutationObserver();
-					this.oLabel.placeAt("content");
-					sap.ui.getCore().applyChanges();
-				},
-				afterEach : function() {
-					this.oMutationObserver.destroy();
-					this.oLabel.destroy();
-				}
-			});
-
-			QUnit.test("when window is resized", function(assert) {
-				var done = assert.async();
-
-				this.oMutationObserver.attachEventOnce("domChanged", function(oEvent) {
-					assert.ok(oEvent, 'DomChanged event is fired');
-					done();
-				});
-				jQuery(window).trigger("resize");
-			});
-
-			QUnit.test("when the text node of a control is modified", function(assert) {
-				var done = assert.async();
-
-				this.oMutationObserver.attachEventOnce("domChanged", function(oEvent) {
-					assert.ok(oEvent, 'then a "domChanged" event is fired because of the mutation observer');
-					done();
-				});
-
-				this.oLabel.setText("test");
-			});
-
-			QUnit.module("Given that a MutationObserver and DesignTime with root control have been created", {
-				beforeEach : function() {
-
-					sandbox.stub(sap.ui.dt.OverlayUtil, "isInOverlayContainer").returns(false);
-					sandbox.stub(sap.ui.dt.OverlayUtil, "getClosestOverlayForNode").returns(false);
-
-					var aButtons0 = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19].map(function(i) {
-						return new sap.m.Button("button" + i);
-					});
-					this.oVerticalLayout0 = new sap.ui.layout.VerticalLayout({
-						id : "__layout0",
-						content : aButtons0
-					});
-
-					var aButtons1 = [20,21,22,23,24,25].map(function(i) {
-						return new sap.m.Button("button" + i);
-					});
-					this.oVerticalLayout1 = new sap.ui.layout.VerticalLayout({
-						id : "__layout1",
-						content : aButtons1
-					});
-
-					this.oVerticalLayoutRoot = new sap.ui.layout.VerticalLayout({
-						id : "__layout2",
-						content : [this.oVerticalLayout0, this.oVerticalLayout1]
-					}).placeAt("content");
-
-					sap.ui.getCore().applyChanges();
-
-					this.oDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [this.oVerticalLayoutRoot]
-					});
-
-					var done = assert.async();
-
-					this.oDesignTime.attachEventOnce("synced", function() {
-						this.oVerticalLayout1Overlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oVerticalLayout1);
-						this.oVerticalLayoutRootOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oVerticalLayoutRoot);
-						done();
-					}.bind(this));
-				},
-				afterEach : function() {
-					this.oVerticalLayout0.destroy();
-					this.oVerticalLayout1.destroy();
-					this.oVerticalLayoutRoot.destroy();
-					this.oDesignTime.destroy();
-					sandbox.restore();
-				}
-			});
-
-			QUnit.test("when whole document is scrolled", function(assert) {
-				var done = assert.async();
-				var fnAssertScrollEvent = function(oEvent) {
-					assert.ok(oEvent, "then a 'scroll' event is fired because of the mutation observer");
-					document.removeEventListener("scroll", fnAssertScrollEvent, { once: true });
-					done();
-				};
-				document.addEventListener("scroll", fnAssertScrollEvent, { once: true });
-				this.oVerticalLayoutRootOverlay._oMutationObserver.attachDomChanged(function(oEvent) {
-					if (oEvent.mParameters.type === "scroll") {
-						assert.notEqual(oEvent.mParameters.type, "scroll", "then a 'domChanged' with 'scroll'-type shouldn't be triggered");
-					}
-				});
-				jQuery(document).scrollTop(50);
-			});
-
-			QUnit.test("when verticalLayoutOverlay is scrolled", function(assert) {
-				var done = assert.async();
-				this.oVerticalLayoutRootOverlay._oMutationObserver.attachEventOnce("domChanged", function(oEvent) {
-					assert.strictEqual(oEvent.mParameters.type, "scroll", "then a 'domChanged' with 'scroll'-type is triggered");
-						done();
-				}, this.oVerticalLayoutRootOverlay);
-				jQuery(this.oVerticalLayout1.getDomRef()).scrollTop(50);
-			});
-
+			jQuery.sap.includeScript('./MutationObserver.qunit.js');
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for sap.ui.dt.MutationObserver</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
+		<div id="qunit"></div>
+		<div id="qunit-fixture" style="position: fixed; top: auto; right: 0; bottom: 0; left: auto; width: 600px; height: 600px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);"></div>
 	</body>
 </html>

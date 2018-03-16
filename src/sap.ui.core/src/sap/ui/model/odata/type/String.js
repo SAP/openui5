@@ -2,10 +2,9 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/FormatException',
-		'sap/ui/model/odata/type/ODataType', 'sap/ui/model/ParseException',
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/ODataType',
 		'sap/ui/model/ValidateException', 'sap/ui/model/type/String'],
-	function(jQuery, FormatException, ODataType, ParseException, ValidateException, StringType) {
+	function(jQuery, ODataType, ValidateException, StringType) {
 	"use strict";
 
 	var rDigitsOnly = /^\d+$/,

@@ -558,6 +558,47 @@
 						]
 			});
 
+			addRemoveSelectedDateSample();
+
+			function addRemoveSelectedDateSample(){
+					var oDateRange = new sap.ui.unified.DateRange({startDate: new Date(2017, 4, 10)});
+					var oCalRemove = new sap.ui.unified.Calendar({
+						selectedDates: [oDateRange]
+					});
+
+					jQuery.sap.require("sap.m.Button");
+
+					var oButton2 = new sap.m.Button({
+						text: "2) Remove Date",
+						enabled: false,
+						press: function (oEvent) {
+							oEvent.oSource.setEnabled(false);
+							oCalRemove.removeSelectedDate(oDateRange);
+							oButton1.invalidate();// to let UIArea think Calendar is rendered with Button
+						}
+					}).placeAt('removeSelectedDate');
+
+					new sap.m.Button({
+						text: "3) Close",
+						press: function (oEvent) {
+							oPopup.close();
+						}
+					}).placeAt('removeSelectedDate');
+
+					var oButton1 = new sap.m.Button({
+						text: "1) Open",
+						press: function (oEvent) {
+							var eDock = sap.ui.core.Popup.Dock;
+							oPopup.open(0, eDock.BeginTop, eDock.BeginBottom, oButton1, null, "fit", true);
+							oButton2.setEnabled(true);
+						}
+					}).placeAt('removeSelectedDate');
+					oCalRemove.setParent(oButton1);
+
+					jQuery.sap.require("sap.ui.core.Popup");
+					var oPopup = new sap.ui.core.Popup();
+					oPopup.setContent(oCalRemove);
+				}
 		</script>
 
 	</head>
@@ -591,5 +632,7 @@
 			<div id="sample4" style="display:inline-block;"></div>
 			<div id="event4" style="display:inline-block; vertical-align: top; width: 60%; min-width: 350px; max-width: 600px;"></div>
 		</div>
+	    <div>Removing selected Date</div>
+		<div id="removeSelectedDate"></div>
 	</body>
 </html>

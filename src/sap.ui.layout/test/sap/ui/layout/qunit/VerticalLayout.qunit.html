@@ -85,7 +85,12 @@
 
 	QUnit.test("Container Padding Classes", function (assert) {
 		// System under Test + Act
-		var oContainer = new sap.ui.layout.VerticalLayout(),
+		var oContainer = new sap.ui.layout.VerticalLayout({
+					content: [
+						new sap.ui.commons.Label({text: "foo"}),
+						new sap.ui.commons.Label({text: "bar"})
+					]
+				}),
 			sResponsiveSize = (sap.ui.Device.resize.width <= 599 ? "0px" : (sap.ui.Device.resize.width <= 1023 ? "16px" : "16px 32px")),
 			aResponsiveSize = sResponsiveSize.split(" "),
 			$container,
@@ -112,6 +117,8 @@
 		assert.strictEqual($containerContent.css("padding-right"), "16px", "The container has 1rem right content padding when class \"sapUiContentPadding\" is set");
 		assert.strictEqual($containerContent.css("padding-top"), "16px", "The container has 1rem top content padding when class \"sapUiContentPadding\" is set");
 		assert.strictEqual($containerContent.css("padding-bottom"), "16px", "The container has 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+		assert.strictEqual($containerContent.children().css("padding-bottom"), "16px", "The container children have 1rem bottom content padding when class \"sapUiContentPadding\" is set");
+		assert.strictEqual($containerContent.children().last().css("padding-bottom"), "0px", "The last container child has no bottom content padding when class \"sapUiContentPadding\" is set");
 
 		// Act
 		oContainer.removeStyleClass("sapUiContentPadding");
@@ -122,6 +129,8 @@
 		assert.strictEqual($containerContent.css("padding-right"), (aResponsiveSize[1] ? aResponsiveSize[1] : aResponsiveSize[0]) , "The container has " + sResponsiveSize + " right content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 		assert.strictEqual($containerContent.css("padding-top"), aResponsiveSize[0], "The container has " + sResponsiveSize + " top content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
 		assert.strictEqual($containerContent.css("padding-bottom"), aResponsiveSize[0], "The container has " + sResponsiveSize + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set (tested value depends on window size)");
+		assert.strictEqual($containerContent.children().css("padding-bottom"), (sap.ui.Device.resize.width <= 599 ? "0px" : "16px"), "The container children have " + (sap.ui.Device.resize.width <= 599 ? "0px" : "16px") + " bottom content padding when class \"sapUiResponsiveContentPadding\" is set");
+		assert.strictEqual($containerContent.children().last().css("padding-bottom"), "0px", "The last container child has no bottom content padding when class \"sapUiResponsiveContentPadding\" is set");
 
 		// Cleanup
 		oContainer.destroy();

@@ -227,7 +227,7 @@
 
 		sap.ui.test.qunit.triggerKeydown(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
 		sap.ui.test.qunit.triggerKeyup(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
-		this.clock.tick();
+		this.clock.tick(500);
 
 		// Find the first, second and seventh anchors in the popover
 		var aPopoverAnchors = $(sPopOverAnchorSelector),
@@ -288,7 +288,7 @@
 
 		sap.ui.test.qunit.triggerKeydown(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
 		sap.ui.test.qunit.triggerKeyup(oTestAnchor, jQuery.sap.KeyCodes.SPACE);
-		this.clock.tick();
+		this.clock.tick(500);
 
 		// Find the first, second and seventh anchors in the popover
 		var aPopoverAnchors = $(sPopOverAnchorSelector),
@@ -313,6 +313,16 @@
 		sap.ui.test.qunit.triggerKeydown(jQuery.sap.byId(oSeventhLastAnchor), jQuery.sap.KeyCodes.PAGE_DOWN);
 		assert.strictEqual(jQuery.sap.byId(oLastAnchor).is(":focus"),
 			true, "Five anchors should be skipped over and the last anchor shoud be focused");
+	});
+
+	QUnit.test("F6: Anchor level", function (assert) {
+		var oAncorBar = getAnchorBar(),
+			oFirstAnchor = oAncorBar.getContent()[0].getDomRef();
+
+		// Focus the first anchor and trigger F6
+		jQuery(oFirstAnchor).focus();
+		sap.ui.test.qunit.triggerKeydown(oFirstAnchor, jQuery.sap.KeyCodes.F6);
+		assert.strictEqual(jQuery("#UxAP-70_KeyboardHandling--single-subsection-show-section").is(":focus"), true, "The single subsection button should be in focus");
 	});
 
 	QUnit.module("Section/Subsection", {

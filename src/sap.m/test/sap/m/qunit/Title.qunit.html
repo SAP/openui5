@@ -30,7 +30,8 @@
 					width : "50%",
 					textAlign : sap.ui.core.TextAlign.Begin,
 					visible : false,
-					tooltip : "Tooltip"
+					tooltip : "Tooltip",
+					wrapping: true
 				});
 			},
 			afterEach : function() {
@@ -62,6 +63,9 @@
 
 			assert.ok(this.title1.getVisible(), "Default property 'visible'");
 			assert.ok(!this.title2.getVisible(), "Custom property 'visible'");
+
+			assert.ok(!this.title1.getWrapping(), "Default property 'wrapping'");
+			assert.ok(this.title2.getWrapping(), "Custom property 'wrapping'");
 		});
 
 		QUnit.test("Title should be shrinkable", function(assert){
@@ -104,8 +108,16 @@
 			assert.ok(this.title.$().hasClass("sapUiSelectable"), "Title has class sapUiSelectable.");
 		});
 
-		QUnit.test("Should not be wrapable", function(assert){
+		QUnit.test("Wrapping", function(assert){
+			this.title.setText("Some very very very very long text");
+			this.title.setWidth("100px");
+			sap.ui.getCore().applyChanges();
+			var iHeight = this.title.$().outerHeight();
 			assert.ok(this.title.$().hasClass("sapMTitleNoWrap"), "Title has class sapMTitleNoWrap.");
+			this.title.setWrapping(true);
+			sap.ui.getCore().applyChanges();
+			assert.ok(this.title.$().hasClass("sapMTitleWrap"), "Title has class sapMTitleWrap.");
+			assert.ok(this.title.$().outerHeight() >= 3*iHeight, "Title height increases when wrapping is active");
 		});
 
 		QUnit.test("TitleStyle correct", function(assert){
@@ -147,11 +159,25 @@
 			}
 		});
 
+		QUnit.test("Title in Toolbar", function(assert){
+			assert.ok(!this.title.$().hasClass("sapMTitleTB"), "Title has no toolbar class");
+			var oToolbar = new sap.m.Toolbar();
+			oToolbar.addContent(this.title);
+			oToolbar.placeAt("uiArea");
+			sap.ui.getCore().applyChanges();
+			assert.ok(this.title.$().hasClass("sapMTitleTB"), "Title has toolbar class");
+			this.title = oToolbar; // Correct cleanup in teardown
+		});
+
 		QUnit.module("Title Association", {
 			beforeEach : function() {
 				this.coreTitle = new sap.ui.core.Title({
 					text: "Hello2",
 					tooltip : "Tooltip2"
+				});
+				this.anotherTitle = new sap.ui.core.Title({
+					text: "Hello4",
+					tooltip : "Tooltip4"
 				});
 				this.title = new sap.m.Title({
 					text : "Hello",
@@ -176,8 +202,11 @@
 			this.coreTitle.setText("Hello3");
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(this.title.$().text(), "Hello3", "Text got rendered");
-			this.coreTitle.destroy();
-			this.coreTitle = null;
+			this.title.setTitle(this.anotherTitle);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(this.title.$().text(), "Hello4", "Text got rendered");
+			this.anotherTitle.destroy();
+			this.anotherTitle = null;
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(this.title.$().text(), "Hello", "Text got rendered");
 		});
@@ -187,8 +216,11 @@
 			this.coreTitle.setTooltip("Tooltip3");
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(this.title.$().attr("title"), "Tooltip3", "Tooltip got rendered");
-			this.coreTitle.destroy();
-			this.coreTitle = null;
+			this.title.setTitle(this.anotherTitle);
+			sap.ui.getCore().applyChanges();
+			assert.strictEqual(this.title.$().attr("title"), "Tooltip4", "Tooltip got rendered");
+			this.anotherTitle.destroy();
+			this.anotherTitle = null;
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 		});

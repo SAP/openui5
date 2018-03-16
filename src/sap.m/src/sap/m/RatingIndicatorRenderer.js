@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
-	function(jQuery, IconPool) {
+sap.ui.define(['sap/ui/core/IconPool', 'sap/ui/Device'],
+	function(IconPool, Device) {
 	"use strict";
 
 
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @namespace
 	 */
 	var RatingIndicatorRenderer = {},
-        sIconSizeMeasure = 'px';
+		sIconSizeMeasure = 'px';
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -25,170 +25,186 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	RatingIndicatorRenderer.render = function (oRm, oControl) {
-        var that = this;
+		var that = this;
 
-        this.initSharedState(oControl);
-        this.renderControlContainer(oRm, oControl,
-            function () {
-                that.renderAriaLabel(oRm, oControl);
-                that.renderSelectedItems(oRm, oControl);
-                that.renderUnselectedItems(oRm, oControl);
-                that.renderHoverItems(oRm, oControl);
-                that.renderSelectorDiv(oRm, oControl);
-            }
-        );
+		this.initSharedState(oControl);
+		this.renderControlContainer(oRm, oControl,
+			function () {
+				that.renderAriaLabel(oRm, oControl);
+				that.renderSelectedItems(oRm, oControl);
+				that.renderUnselectedItems(oRm, oControl);
+				that.renderHoverItems(oRm, oControl);
+				that.renderSelectorDiv(oRm, oControl);
+			}
+		);
 	};
 
     RatingIndicatorRenderer.renderControlContainer = function (oRm, oControl, innerRenderer) {
-        oRm.write("<div");
+	    var bEnabled = oControl.getEnabled(),
+		    bEditable = oControl.getEditable(),
+		    bDisplayOnly = oControl.getDisplayOnly();
+	    oRm.write("<div");
 
         oRm.writeControlData(oControl);
         oRm.addStyle("width", this._iWidth + "px");
         oRm.addStyle("height", this._iHeight + "px");
-        oControl.getEnabled() ? oRm.writeAttribute("tabindex", "0") : oRm.writeAttribute("tabindex", "-1");
-        oControl.getEnabled() ? oRm.addClass("sapMPointer") : oRm.addClass("sapMRIDisabled");
-        oRm.addClass("sapMRI");
+        if (bEnabled && !bDisplayOnly) {
+            // Interactive
+            oRm.writeAttribute("tabindex", "0");
+            oRm.addClass("sapMPointer");
+	        if (!bEditable) {
+		        oRm.addClass("sapMRIReadOnly");
+	        }
+        } else {
+            // DisplayOnly or disabled
+            oRm.writeAttribute("tabindex", "-1");
+            bEnabled ? oRm.addClass("sapMRIDisplayOnly") : oRm.addClass("sapMRIDisabled");
+        }
+	    oRm.writeAttribute("aria-readonly", !bEditable);
+	    oRm.addClass("sapMRI");
         oRm.addClass("sapUiRatingIndicator" + oControl._getIconSizeLabel(this._fIconSize));
         oRm.writeStyles();
         oRm.writeClasses();
         this.writeTooltip(oRm, oControl);
         this.writeAccessibility(oRm, oControl);
 
-        oRm.write(">");
+		oRm.write(">");
 
-        innerRenderer();
+		innerRenderer();
 
-        oRm.write("</div>");
-    };
+		oRm.write("</div>");
+	};
 
-    RatingIndicatorRenderer.initSharedState = function (oControl) {
-        var fRatingValue = oControl._roundValueToVisualMode(oControl.getValue()),
-            fIconSize = oControl._iPxIconSize,
-            fIconPadding = oControl._iPxPaddingSize,
-            iSelectedWidth = fRatingValue * fIconSize + (Math.round(fRatingValue) - 1) * fIconPadding;
+	RatingIndicatorRenderer.initSharedState = function (oControl) {
+		var fRatingValue = oControl._roundValueToVisualMode(oControl.getValue()),
+			fIconSize = oControl._iPxIconSize,
+			fIconPadding = oControl._iPxPaddingSize,
+			iSelectedWidth = fRatingValue * fIconSize + (Math.round(fRatingValue) - 1) * fIconPadding;
 
+		if (iSelectedWidth < 0) { //width should not be negative
+			iSelectedWidth = 0;
+		}
 
-        if (iSelectedWidth < 0) { //width should not be negative
-            iSelectedWidth = 0;
-        }
+		// gradients in combination with background-clip: text are not supported by ie, android < 4.2 or blackberry
+		this._bUseGradient = Device.browser.chrome || Device.browser.safari;
+		this._sLabelID = oControl.getId() + "-ariaLabel";
+		this._iSymbolCount = oControl.getMaxValue();
+		this._iWidth = this._iSymbolCount * (fIconSize + fIconPadding) - fIconPadding;
+		this._iHeight = fIconSize;
+		this._iSelectedWidth = iSelectedWidth;
+		this._fIconSize = fIconSize;
+	};
 
-        // gradients in combination with background-clip: text are not supported by ie, android < 4.2 or blackberry
-        this._bUseGradient = sap.ui.Device.browser.chrome || sap.ui.Device.browser.safari;
-        this._sLabelID = oControl.getId() + "-ariaLabel";
-        this._iSymbolCount = oControl.getMaxValue();
-        this._iWidth = this._iSymbolCount * (fIconSize + fIconPadding) - fIconPadding;
-        this._iHeight = fIconSize;
-        this._iSelectedWidth = iSelectedWidth;
-        this._fIconSize = fIconSize;
-    };
+	RatingIndicatorRenderer.writeTooltip = function (oRm, oControl) {
+		var sTooltip = oControl.getTooltip_AsString();
 
-    RatingIndicatorRenderer.writeTooltip = function (oRm, oControl) {
-        var sTooltip = oControl.getTooltip_AsString();
+		if (sTooltip) {
+			oRm.writeAttributeEscaped("title", sTooltip);
+		}
+	};
 
-        if (sTooltip) {
-            oRm.writeAttributeEscaped("title", sTooltip);
-        }
-    };
+	RatingIndicatorRenderer.writeAccessibility = function (oRm, oControl) {
+		oRm.writeAccessibilityState(oControl, {
+			"role": "slider",
+			"orientation": "horizontal",
+			"valuemin": 0,
+			"disabled": !oControl.getEnabled() || oControl.getDisplayOnly(),
+			"labelledby": {
+				value: this._sLabelID,
+				append: true
+			}
+		});
+	};
 
-    RatingIndicatorRenderer.writeAccessibility = function (oRm, oControl) {
-        oRm.writeAccessibilityState(oControl, {
-            "role": "slider",
-            "orientation": "horizontal",
-            "valuemin": 0,
-            "disabled": !oControl.getEnabled(),
-            "labelledby": {
-                value: this._sLabelID,
-                append: true
-            }
-        });
-    };
+	RatingIndicatorRenderer.renderAriaLabel = function (oRm, oControl) {
+		oRm.write("<span id='" + this._sLabelID + "' class='sapUiInvisibleText' aria-hidden='true'>" + oControl._oResourceBundle.getText("RATING_ARIA_NAME") + "</span>");
+	};
 
-    RatingIndicatorRenderer.renderAriaLabel = function (oRm, oControl) {
-        oRm.write("<label id='" + this._sLabelID + "' class='sapMRIAriaLabel' aria-hidden='true'>" + oControl._oResourceBundle.getText("RATING_ARIA_NAME") + "</label>");
-    };
+	RatingIndicatorRenderer.renderSelectedItems = function (oRm, oControl) {
+		oRm.write("<div class='sapMRISel");
+		if (this._bUseGradient) {
+			oRm.write(" sapMRIGrd");
+		}
+		oRm.write("'");
+		oRm.writeAttribute("id", oControl.getId() + "-sel");
+		oRm.writeAttribute("style", "width: " + this._iSelectedWidth + sIconSizeMeasure);
+		oRm.write(">");
 
-    RatingIndicatorRenderer.renderSelectedItems = function (oRm, oControl) {
-        oRm.write("<div class='sapMRISel");
-        if (this._bUseGradient) {
-            oRm.write(" sapMRIGrd");
-        }
-        oRm.write("'");
-        oRm.writeAttribute("id", oControl.getId() + "-sel");
-        oRm.writeAttribute("style", "width: " + this._iSelectedWidth + sIconSizeMeasure);
-        oRm.write(">");
+		for (var i = 0; i < this._iSymbolCount; i++) {
+			this.renderIcon("SELECTED", oRm, oControl);
+		}
 
-        for (var i = 0; i < this._iSymbolCount; i++) {
-            this.renderIcon("SELECTED", oRm, oControl);
-        }
+		oRm.write("</div>");
+	};
 
-        oRm.write("</div>");
-    };
+	RatingIndicatorRenderer.renderUnselectedItems = function (oRm, oControl) {
+		// render unselected items div (container and relative child)
+		oRm.write("<div class='sapMRIUnselWrapper'");
+		oRm.writeAttribute("id", oControl.getId() + "-unsel-wrapper");
+		oRm.writeAttribute("style", "width: " + (this._iWidth - this._iSelectedWidth) + sIconSizeMeasure);
+		oRm.write(">");
+		oRm.write("<div class='sapMRIUnsel");
+		if (this._bUseGradient && (oControl.getEnabled() || !oControl.getDisplayOnly())) { // see the specification for read only rating indicator
+			oRm.write(" sapMRIGrd");
+		}
+		oRm.write("' id='" + oControl.getId() + "-unsel'>");
 
-    RatingIndicatorRenderer.renderUnselectedItems = function (oRm, oControl) {
-        // render unselected items div (container and relative child)
-        oRm.write("<div class='sapMRIUnselWrapper'");
-        oRm.writeAttribute("id", oControl.getId() + "-unsel-wrapper");
-        oRm.writeAttribute("style", "width: " + (this._iWidth - this._iSelectedWidth) + sIconSizeMeasure);
-        oRm.write(">");
-        oRm.write("<div class='sapMRIUnsel");
-        if (this._bUseGradient && oControl.getEnabled()) { // see the specification for read only rating indicator
-            oRm.write(" sapMRIGrd");
-        }
-        oRm.write("' id='" + oControl.getId() + "-unsel'>");
+		for (var i = 0; i < this._iSymbolCount; i++) {
+			this.renderIcon("UNSELECTED", oRm, oControl);
+		}
 
-        for (var i = 0; i < this._iSymbolCount; i++) {
-            this.renderIcon("UNSELECTED", oRm, oControl);
-        }
+		oRm.write("</div>");
+		oRm.write("</div>");
+	};
 
-        oRm.write("</div>");
-        oRm.write("</div>");
-    };
+	RatingIndicatorRenderer.renderHoverItems = function (oRm, oControl) {
+		if (oControl.getEnabled() || !oControl.getDisplayOnly()) {
+			oRm.write("<div class='sapMRIHov' id='" + oControl.getId() + "-hov'>");
 
-    RatingIndicatorRenderer.renderHoverItems = function (oRm, oControl) {
-        if (oControl.getEnabled()) {
-            oRm.write("<div class='sapMRIHov' id='" + oControl.getId() + "-hov'>");
+			for (var i = 0; i < this._iSymbolCount; i++) {
+				this.renderIcon("HOVERED", oRm, oControl);
+			}
+			oRm.write("</div>");
+		}
+	};
 
-            for (var i = 0; i < this._iSymbolCount; i++) {
-                this.renderIcon("HOVERED", oRm, oControl);
-            }
-            oRm.write("</div>");
-        }
-    };
+	RatingIndicatorRenderer.renderSelectorDiv = function (oRm, oControl) {
+		oRm.write("<div class='sapMRISelector' id='" + oControl.getId() + "-selector'>");
+		oRm.write("</div>");
+	};
 
-    RatingIndicatorRenderer.renderSelectorDiv = function (oRm, oControl) {
-        oRm.write("<div class='sapMRISelector' id='" + oControl.getId() + "-selector'>");
-        oRm.write("</div>");
-    };
-
-    RatingIndicatorRenderer.renderIcon = function (iconType, oRm, oControl) {
-        var sIconURI = this.getIconURI(iconType, oControl),
-            tag = this.getIconTag(sIconURI),
-            bIsIconURI = sap.ui.core.IconPool.isIconURI(sIconURI),
-            size = this._fIconSize + sIconSizeMeasure;
+	RatingIndicatorRenderer.renderIcon = function (iconType, oRm, oControl) {
+		var sIconURI = this.getIconURI(iconType, oControl),
+			tag = this.getIconTag(sIconURI),
+			bIsIconURI = IconPool.isIconURI(sIconURI),
+			size = this._fIconSize + sIconSizeMeasure;
 
         oRm.write("<" + tag + " ");
+	    if (iconType === "UNSELECTED" && !oControl.getEditable()) {
+		    iconType = "READONLY";
+	    }
         oRm.write("class='sapUiIcon " + this.getIconClass(iconType) + "' ");
 
-        var style = "";
-        style += "width:" + size + ";";
-        style += "height:" + size + ";";
-        style += "line-height:" + size + ";";
-        style += "font-size:" + size + ";";
+		var style = "";
+		style += "width:" + size + ";";
+		style += "height:" + size + ";";
+		style += "line-height:" + size + ";";
+		style += "font-size:" + size + ";";
 
-        oRm.writeAttribute("style", style);
+		oRm.writeAttribute("style", style);
 
-        if (!bIsIconURI) {
-            oRm.writeAttributeEscaped("src", sIconURI);
-        }
+		if (!bIsIconURI) {
+			oRm.writeAttributeEscaped("src", sIconURI);
+		}
 
-        oRm.write(">");
+		oRm.write(">");
 
-        if (bIsIconURI) {
-            oRm.writeEscaped(IconPool.getIconInfo(sIconURI).content);
-        }
+		if (bIsIconURI) {
+			oRm.writeEscaped(IconPool.getIconInfo(sIconURI).content);
+		}
 
-        oRm.write("</" + tag + ">");
-    };
+		oRm.write("</" + tag + ">");
+	};
 
     RatingIndicatorRenderer.getIconClass = function (iconType) {
         switch (iconType) {
@@ -198,36 +214,42 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
                 return "sapMRIIconUnsel";
             case "HOVERED":
                 return "sapMRIIconHov";
+            case "READONLY":
+                return "sapMRIIconReadOnly";
         }
     };
 
     RatingIndicatorRenderer.getIconURI = function (sState, oControl) {
-        var aHighContrastStyles = ["sap_hcb", "sap_belize_hcb", "sap_belize_hcw"];
-        if (aHighContrastStyles.indexOf(sap.ui.getCore().getConfiguration().getTheme()) > -1) {
-            if (sState == "UNSELECTED" && oControl.getEnabled()) {
-                return IconPool.getIconURI("unfavorite");
-            }
+	    if (sap.ui.getCore().getConfiguration().getTheme() === "sap_hcb") {
+		    if (sState === "UNSELECTED" && (oControl.getEnabled() && !oControl.getDisplayOnly())) {
+			    return IconPool.getIconURI("unfavorite");
+		    }
 
-            return IconPool.getIconURI('favorite');
-        }
+			return IconPool.getIconURI('favorite');
+		}
 
-        switch (sState) {
-             case "SELECTED":
-                return oControl.getIconSelected() || IconPool.getIconURI("favorite");
-            case "UNSELECTED":
-                return oControl.getIconUnselected() || IconPool.getIconURI("favorite");
-            case "HOVERED":
-                return oControl.getIconHovered() || IconPool.getIconURI("favorite");
-        }
+	    switch (sState) {
+		    case "SELECTED":
+			    return oControl.getIconSelected() || IconPool.getIconURI("favorite");
+		    case "UNSELECTED":
+				if (oControl.getEditable() && !oControl.getDisplayOnly()) {
+				    return oControl.getIconUnselected() || IconPool.getIconURI("unfavorite");
+			    } else {
+				    return oControl.getIconUnselected() || IconPool.getIconURI("favorite");
+			    }
+			    break;
+		    case "HOVERED":
+			    return oControl.getIconHovered() || IconPool.getIconURI("favorite");
+	    }
     };
 
-    RatingIndicatorRenderer.getIconTag = function (sIconURI) {
-        if (sap.ui.core.IconPool.isIconURI(sIconURI)) {
-            return "span";
-        }
+	RatingIndicatorRenderer.getIconTag = function (sIconURI) {
+		if (IconPool.isIconURI(sIconURI)) {
+			return "span";
+		}
 
-        return "img";
-    };
+		return "img";
+	};
 
 	return RatingIndicatorRenderer;
 

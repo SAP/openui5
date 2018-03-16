@@ -1,0 +1,134 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>hierarchy tree</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+</script>
+
+<script>
+jQuery.sap.require("sap.ui.core.util.MockServer");
+jQuery.sap.require("sap.ui.model.odata.ODataModel");
+
+var sServiceURI = "/odataFake/";
+var sMetaDataURI = "mockdata/";
+
+// configure respond to requests delay
+sap.ui.core.util.MockServer.config({
+	autoRespond : true,
+	autoRespondAfter : 1000
+});
+
+// create mockserver
+var oMockServer = new sap.ui.core.util.MockServer({
+	rootUri : sServiceURI
+});
+
+// start mockserver
+oMockServer.simulate("../ui/core/qunit/model/metadata_orgHierarchy.xml", "../ui/core/qunit/model/orgHierarchy/");
+oMockServer.start();
+
+var oTemplate = new sap.m.StandardTreeItem({
+	title: "{odata>HIERARCHY_NODE}"
+});
+
+var oTree = new sap.m.Tree({
+	headerText: "OData with hierarchy annotation in Tree Structure",
+	dragDropConfig: new sap.ui.core.dnd.DragDropInfo({
+		sourceAggregation: "items",
+		targetAggregation: "items",
+		dragStart:onDragStart,
+		drop:onDrop
+	})
+});
+oTree.setMode("MultiSelect");
+
+this.oODataModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {
+	json: true,
+	defaultUpdateMethod: "PUT",
+	disableHeadRequestForToken: true,
+	tokenHandling: true,
+	sizeLimit: 20
+});
+oTree.setModel(this.oODataModel, "odata");
+
+oTree.bindItems({
+	path: "odata>/orgHierarchy",
+	template: oTemplate,
+	parameters: {
+		countMode: 'Inline',
+		numberOfExpandedLevels: 2,
+		treeAnnotationProperties: {
+			hierarchyLevelFor: "LEVEL",
+			hierarchyParentNodeFor: "PARENT_NODE",
+			hierarchyNodeFor: "HIERARCHY_NODE",
+			hierarchyDrillStateFor: "DRILLDOWN_STATE",
+			hierarchyNodeDescendantCountFor: ""
+		}
+	}
+});
+
+var oBinding = oTree.getBinding("items");
+
+function onDragStart(oEvent) {
+	var oDragSession = oEvent.getParameter("dragSession");
+	var oDraggedItem = oEvent.getParameter("target");
+	var iDraggedItemIndex = oTree.indexOfItem(oDraggedItem);
+
+	var aSelectedIndices = oTree.getBinding("items").getSelectedIndices();
+	var aSelectedItems = oTree.getSelectedItems();
+	var aDraggedItemContexts = [];
+	
+	if (aSelectedItems.length >0) {
+		if (aSelectedIndices.indexOf(iDraggedItemIndex) === -1) {
+				oEvent.preventDefault();
+			} else {
+				for (var i = 0; i < aSelectedItems.length; i++) {
+					aDraggedItemContexts.push(oBinding.getContextByIndex(aSelectedIndices[i]));
+				}
+			}
+	} else {
+		aDraggedItemContexts.push(oBinding.getContextByIndex(iDraggedItemIndex));
+	}
+
+	oDragSession.setComplexData("hierarchymaintenance", {
+		draggedItemContexts: aDraggedItemContexts
+	});
+};
+
+function onDrop(oEvent) {
+	var oDragSession = oEvent.getParameter("dragSession");
+	var oDroppedItem = oEvent.getParameter("droppedControl");
+	var aDraggedItemContexts = oDragSession.getComplexData("hierarchymaintenance").draggedItemContexts;
+	var iDroppedIndex = oTree.indexOfItem(oDroppedItem);
+	var oBinding = oTree.getBinding("items");
+	var oNewParentContext = oBinding.getContextByIndex(iDroppedIndex);
+
+	if (aDraggedItemContexts.length > 0) {
+
+		if (oNewParentContext != null) {
+			for (var i = 0; i < aDraggedItemContexts.length; i++) {
+				oBinding.removeContext(aDraggedItemContexts[i]);
+			}
+			oBinding.addContexts(oNewParentContext, aDraggedItemContexts);
+		}
+	}
+};
+
+var oApp = new sap.m.App();
+var oLabel3 = new sap.m.Label({text:"*********************Tree*********************"});
+
+var oPage = new sap.m.Page("TreeTest", {
+	title : "Test Page for m.Tree hierarchy",
+	content : [oTree]
+});
+
+oApp.addPage(oPage).placeAt("body");
+</script>
+</head>
+<body id="body" class="sapUiBody">
+</body>
+</html>

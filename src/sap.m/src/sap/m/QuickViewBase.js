@@ -422,4 +422,4 @@ sap.ui.define([
 
 		return QuickViewBase;
 
-}, /* bExport= */true);
+});

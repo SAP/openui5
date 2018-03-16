@@ -224,8 +224,9 @@ sap.ui.define([
 
 		// model: "default-with-annotations"
 		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+			odataVersion: "4.0",
 			serviceUrl: '/path/to/odata/service/?sap-client=foo&sap-server=bar',
-			synchronizationMode : "None"
+			synchronizationMode: "None"
 		});
 
 
@@ -927,9 +928,11 @@ sap.ui.define([
 	});
 
 	QUnit.test("dynamic enhance of models and datasources", function(assert) {
+		this.stubGetUriParameters();
 
-		jQuery.sap.declare("sap.ui.test.v2local.Component");
-		sap.ui.define(["sap/ui/core/UIComponent"], function(UIComponent) {
+		// @evo-todo using declare and define without name together was bad,
+		// using define with a name is better, but still the result is expected synchronously - will fail in future!
+		sap.ui.define("sap/ui/test/v2local/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 
 			var LocalComponent = UIComponent.extend("sap.ui.test.v2local.Component", {
 				metadata : {
@@ -941,13 +944,15 @@ sap.ui.define([
 				}
 			});
 
-			LocalComponent.prototype._initComponentModels = function(mModels, mDataSources) {
+			LocalComponent.prototype._initComponentModels = function(mModels, mDataSources, mCacheTokens) {
 
 				mModels = mModels || {};
 				mDataSources = mDataSources || {};
+				mCacheTokens = mCacheTokens || {};
+				mCacheTokens.dataSources = mCacheTokens.dataSources || {};
 
 				mModels["ODataModel"] = {
-					"type": "sap.ui.model.odata.ODataModel",
+					"type": "sap.ui.model.odata.v2.ODataModel",
 					"dataSource": "OData",
 					"settings": {
 						"useBatch": false,
@@ -970,7 +975,9 @@ sap.ui.define([
 					"type": "ODataAnnotation"
 				};
 
-				UIComponent.prototype._initComponentModels.call(this, mModels, mDataSources);
+				mCacheTokens.dataSources["/path/to/odata/service"] = "1234567890";
+
+				UIComponent.prototype._initComponentModels.call(this, mModels, mDataSources, mCacheTokens);
 
 			};
 
@@ -982,26 +989,68 @@ sap.ui.define([
 			name: "sap.ui.test.v2local"
 		});
 
-		// sap.ui.model.odata.ODataModel
-		sinon.assert.callCount(this.modelSpy.odata, 1);
+		// sap.ui.model.odata.v2.ODataModel
+		sinon.assert.callCount(this.modelSpy.odataV2, 1);
 
 		// model: "ODataModel"
-		sinon.assert.calledWithExactly(this.modelSpy.odata, {
-			serviceUrl: '/path/to/odata/service',
-			annotationURI: [ 'testdata/v2local/path/to/local/odata/annotations' ],
+		sinon.assert.calledWithExactly(this.modelSpy.odataV2, {
+			serviceUrl: '/path/to/odata/service?sap-client=foo&sap-server=bar',
+			annotationURI: [ 'testdata/v2local/path/to/local/odata/annotations?sap-language=EN&sap-client=foo' ],
+			metadataUrlParams: { "sap-context-token": '1234567890', "sap-language": 'EN' },
 			useBatch: false,
-			refreshAfterChange: false,
-			json: true
+			refreshAfterChange: false
 		});
 
 		// check if models are set on component (and save them internally)
 		this.assertModelInstances({
-			"ODataModel": sap.ui.model.odata.ODataModel
+			"ODataModel": sap.ui.model.odata.v2.ODataModel
 		});
 
 		// destroy the component
 		this.oComponent.destroy();
 
+	});
+
+	QUnit.test("consume V2 service with V4 model", function(assert) {
+		this.oComponent = sap.ui.component({
+			name: "sap.ui.test.v4models"
+		});
+
+		// sap.ui.model.odata.v4.ODataModel
+		sinon.assert.callCount(this.modelSpy.odataV4, 1);
+		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+			serviceUrl: '/path/to/odata/service/',
+			autoExpandSelect: false,
+			odataVersion: "2.0",
+			operationMode: "Server",
+			synchronizationMode: "None"
+		});
+
+		// check if models are set on component (and save them internally)
+		this.assertModelInstances({
+			"ODataV2Consumption": sap.ui.model.odata.v4.ODataModel
+		});
+
+		// destroy the component
+		this.oComponent.destroy();
+	});
+
+	QUnit.test("pass unsupported service version to V4 model", function(assert) {
+		assert.throws(function () {
+			this.oComponent = sap.ui.component({
+				name: "sap.ui.test.v4models.unsupportedVersion"
+			});
+		});
+
+		// sap.ui.model.odata.v4.ODataModel
+		sinon.assert.callCount(this.modelSpy.odataV4, 1);
+		sinon.assert.calledWithExactly(this.modelSpy.odataV4, {
+			serviceUrl: '/path/to/odata/service/',
+			autoExpandSelect: false,
+			odataVersion: "foo",
+			operationMode: "Server",
+			synchronizationMode: "None"
+		});
 	});
 
 	QUnit.module("metadata v2 with dataSources (empty inheritance)", {
@@ -1308,7 +1357,7 @@ sap.ui.define([
 						},
 						"i18n1": {
 							"type": "sap.ui.model.resource.ResourceModel",
-							"uri": "./i18n.properties",
+							"uri": "./i18n_preload.properties",
 							"preload": true,
 							"settings": {
 								"async": true
@@ -1373,8 +1422,7 @@ sap.ui.define([
 				waitFor: new Promise(function(resolve, reject) {
 					setTimeout(function() {
 
-						// OData / JSON Models should be created before the Component instance
-						// Resource Model should only be created on component init
+						// OData / JSON / ResourceModels Models should be created before the Component instance
 
 						// sap.ui.model.odata.v2.ODataModel
 						sinon.assert.callCount(this.modelSpy.odataV2, 1);
@@ -1395,7 +1443,7 @@ sap.ui.define([
 						});
 
 						// sap.ui.model.resource.ResourceModel
-						sinon.assert.callCount(this.modelSpy.resource, 1);
+						sinon.assert.callCount(this.modelSpy.resource, 2);
 
 						resolve();
 
@@ -1413,9 +1461,15 @@ sap.ui.define([
 			// sap.ui.model.json.JSONModel
 			sinon.assert.callCount(this.modelSpy.json, 2);
 
-			// Resource Model should be now created
+			// Both models have been loaded already
 			// sap.ui.model.resource.ResourceModel
 			sinon.assert.callCount(this.modelSpy.resource, 2);
+
+			assert.ok(this.modelSpy.resource.getCall(0).returnValue, "ResourceModel should be available");
+			assert.ok(this.modelSpy.resource.getCall(0).returnValue.getResourceBundle() instanceof Promise, "Promise should be available as async=true is set in manifest");
+
+			assert.ok(this.modelSpy.resource.getCall(1).returnValue, "ResourceModel should be available");
+			assert.ok(jQuery.sap.resources.isBundle(this.modelSpy.resource.getCall(1).returnValue.getResourceBundle()), "ResourceBundle should be available");
 
 			// check error log for "class-not-loaded" model
 			sinon.assert.calledWithExactly(this.oLogErrorSpy,
@@ -1446,6 +1500,54 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Early model instantiation (with failing ResourceBundle loading)", function(assert) {
+		var that = this,
+			iLoadResourceBundleAsync = 0,
+			fnJQuerySapResource = jQuery.sap.resources,
+			jQuerySapResourcesStub = sinon.stub(jQuery.sap, "resources", function(mConfig) {
+				if (mConfig.async) {
+					iLoadResourceBundleAsync++;
+					return Promise.reject();
+				}
+				return fnJQuerySapResource.apply(this, arguments);
+			});
+
+		sap.ui.core.Component._fnLoadComponentCallback = function() {
+			assert.equal(iLoadResourceBundleAsync, 2, "loadResourceBundle async should be called twice before component instantiation");
+			assert.equal(that.modelSpy.resource.callCount, 1, "One ResourceModel should be created (preload=true)");
+		};
+
+		return sap.ui.component({
+			manifestUrl: "/anylocation/manifest.json",
+			async: true
+		}).then(function(oComponent) {
+			this.oComponent = oComponent;
+
+			// sap.ui.model.resource.ResourceModel
+			assert.equal(iLoadResourceBundleAsync, 2, "loadResourceBundle async should still be called 2 times");
+			assert.equal(this.modelSpy.resource.callCount, 2, "ResourceModels should be created (during Component instantiation)");
+
+			this.assertModelInstances({
+				"odata1": sap.ui.model.odata.v2.ODataModel,
+				"odata2": sap.ui.model.odata.v2.ODataModel,
+				"odata3": sap.ui.model.odata.v2.ODataModel,
+				"json1": sap.ui.model.json.JSONModel,
+				"json2": sap.ui.model.json.JSONModel,
+				"i18n1": sap.ui.model.resource.ResourceModel,
+				"i18n2": sap.ui.model.resource.ResourceModel
+			});
+
+			this.oComponent.destroy();
+
+			// check if all models got destroyed (uses the models from #assertModelInstances)
+			this.assertModelsDestroyed();
+
+			jQuerySapResourcesStub.restore();
+			sap.ui.core.Component._fnLoadComponentCallback = null;
+
+		}.bind(this));
+	});
+
 	QUnit.test("Early model instantiation (with startupParameters)", function(assert) {
 		return sap.ui.component({
 			manifestUrl: "/anylocation/manifest.json",
@@ -1454,8 +1556,7 @@ sap.ui.define([
 				waitFor: new Promise(function(resolve, reject) {
 					setTimeout(function() {
 
-						// OData / JSON Models should be created before the Component instance
-						// Resource Model should only be created on component init
+						// OData / JSON / Resource Models should be created before the Component instance
 
 						// sap.ui.model.odata.v2.ODataModel
 						sinon.assert.callCount(this.modelSpy.odataV2, 1);
@@ -1476,7 +1577,7 @@ sap.ui.define([
 						});
 
 						// sap.ui.model.resource.ResourceModel
-						sinon.assert.callCount(this.modelSpy.resource, 1);
+						sinon.assert.callCount(this.modelSpy.resource, 2);
 
 						resolve();
 
@@ -1499,7 +1600,6 @@ sap.ui.define([
 			// sap.ui.model.json.JSONModel
 			sinon.assert.callCount(this.modelSpy.json, 2);
 
-			// Resource Model should be now created
 			// sap.ui.model.resource.ResourceModel
 			sinon.assert.callCount(this.modelSpy.resource, 2);
 
@@ -1676,10 +1776,13 @@ sap.ui.define([
 			assert.ok(oJSONModel.bDestroyed, "JSONModel should have been destroyed.");
 
 			// sap.ui.model.resource.ResourceModel
-			sinon.assert.callCount(this.modelSpy.resource, 1);
+			sinon.assert.callCount(this.modelSpy.resource, 2);
 
-			var oResourceModel = this.modelSpy.resource.getCall(0).returnValue;
-			assert.ok(oResourceModel.bDestroyed, "ResourceModel should have been destroyed.");
+			var oResourceModel1 = this.modelSpy.resource.getCall(0).returnValue;
+			assert.ok(oResourceModel1.bDestroyed, "ResourceModel should have been destroyed.");
+
+			var oResourceModel2 = this.modelSpy.resource.getCall(1).returnValue;
+			assert.ok(oResourceModel2.bDestroyed, "ResourceModel should have been destroyed.");
 
 			// check warning log for "class-not-loaded" model
 			sinon.assert.calledWithExactly(this.oLogWarningSpy,
@@ -1736,10 +1839,13 @@ sap.ui.define([
 			assert.ok(oJSONModel.bDestroyed, "JSONModel should have been destroyed.");
 
 			// sap.ui.model.resource.ResourceModel
-			sinon.assert.callCount(this.modelSpy.resource, 1);
+			sinon.assert.callCount(this.modelSpy.resource, 2);
 
-			var oResourceModel = this.modelSpy.resource.getCall(0).returnValue;
-			assert.ok(oResourceModel.bDestroyed, "ResourceModel should have been destroyed.");
+			var oResourceModel1 = this.modelSpy.resource.getCall(0).returnValue;
+			assert.ok(oResourceModel1.bDestroyed, "ResourceModel should have been destroyed.");
+
+			var oResourceModel2 = this.modelSpy.resource.getCall(1).returnValue;
+			assert.ok(oResourceModel2.bDestroyed, "ResourceModel should have been destroyed.");
 
 			// check warning log for "class-not-loaded" model
 			sinon.assert.calledWithExactly(this.oLogWarningSpy,

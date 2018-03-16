@@ -3,8 +3,28 @@
  */
 
 // Provides control sap.ui.unified.ShellLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/ui/core/theming/Parameters', './SplitContainer', './library', 'jquery.sap.dom', 'jquery.sap.script'],
-	function(jQuery, Device, Control, Popup, Parameters, SplitContainer, library/* , jQuerySap1, jQuerySap */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Device',
+	'sap/ui/core/Control',
+	'sap/ui/core/Popup',
+	'sap/ui/core/theming/Parameters',
+	'./SplitContainer',
+	'./library',
+	'./ShellLayoutRenderer',
+	'jquery.sap.dom',
+	'jquery.sap.script'
+], function(
+	jQuery,
+	Device,
+	Control,
+	Popup,
+	Parameters,
+	SplitContainer,
+	library,
+	ShellLayoutRenderer
+	/* , jQueryDom, jQueryScript */
+) {
 	"use strict";
 
 
@@ -58,12 +78,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 			/**
 			 * The content to appear in the main canvas.
 			 */
-			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content"},
+			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", forwarding: {idSuffix: "-container", aggregation: "content"}},
 
 			/**
 			 * The content to appear in the pane area.
 			 */
-			paneContent : {type : "sap.ui.core.Control", multiple : true, singularName : "paneContent"},
+			paneContent : {type : "sap.ui.core.Control", multiple : true, singularName : "paneContent", forwarding: {idSuffix: "-container", aggregation: "secondaryContent"}},
 
 			/**
 			 * The control to appear in the header area.
@@ -293,58 +313,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 	};
 
 
-	ShellLayout.prototype.getContent = function() {
-		return this._cont.getContent();
-	};
-	ShellLayout.prototype.insertContent = function(oContent, iIndex) {
-		this._cont.insertContent(oContent, iIndex);
-		return this;
-	};
-	ShellLayout.prototype.addContent = function(oContent) {
-		this._cont.addContent(oContent);
-		return this;
-	};
-	ShellLayout.prototype.removeContent = function(vIndex) {
-		return this._cont.removeContent(vIndex);
-	};
-	ShellLayout.prototype.removeAllContent = function() {
-		return this._cont.removeAllContent();
-	};
-	ShellLayout.prototype.destroyContent = function() {
-		this._cont.destroyContent();
-		return this;
-	};
-	ShellLayout.prototype.indexOfContent = function(oContent) {
-		return this._cont.indexOfContent(oContent);
-	};
-
-
-	ShellLayout.prototype.getPaneContent = function() {
-		return this._cont.getSecondaryContent();
-	};
-	ShellLayout.prototype.insertPaneContent = function(oContent, iIndex) {
-		this._cont.insertSecondaryContent(oContent, iIndex);
-		return this;
-	};
-	ShellLayout.prototype.addPaneContent = function(oContent) {
-		this._cont.addSecondaryContent(oContent);
-		return this;
-	};
-	ShellLayout.prototype.removePaneContent = function(vIndex) {
-		return this._cont.removeSecondaryContent(vIndex);
-	};
-	ShellLayout.prototype.removeAllPaneContent = function() {
-		return this._cont.removeAllSecondaryContent();
-	};
-	ShellLayout.prototype.destroyPaneContent = function() {
-		this._cont.destroySecondaryContent();
-		return this;
-	};
-	ShellLayout.prototype.indexOfPaneContent = function(oContent) {
-		return this._cont.indexOfSecondaryContent(oContent);
-	};
-
-
 	ShellLayout.prototype.setHeader = function(oHeader) {
 		this.setAggregation("header", oHeader, true);
 		oHeader = this.getHeader();
@@ -434,7 +402,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 		var bRendered = !!this.getDomRef();
 		var res = fMod.apply(this, [bRendered]);
 		if (bRendered && oDoIfRendered) {
-			if (oDoIfRendered instanceof sap.ui.unified._ContentRenderer) {
+			if (oDoIfRendered instanceof library._ContentRenderer) {
 				oDoIfRendered.render();
 			} else {
 				oDoIfRendered.apply(this);
@@ -509,7 +477,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 
 	ShellLayout.prototype._isHeaderHidingActive = function(){
 		// Not active if no touch, the curtain is open or the hiding is deactivated via API
-		if (ShellLayout._HEADER_ALWAYS_VISIBLE || this.getShowCurtain() || !this.getHeaderHiding() || sap.ui.unified._iNumberOfOpenedShellOverlays > 0 || !this.getHeaderVisible()) {
+		if (ShellLayout._HEADER_ALWAYS_VISIBLE || this.getShowCurtain() || !this.getHeaderHiding() || library._iNumberOfOpenedShellOverlays > 0 || !this.getHeaderVisible()) {
 			return false;
 		}
 		return true;
@@ -589,4 +557,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap
 
 	return ShellLayout;
 
-}, /* bExport= */ true);
+});

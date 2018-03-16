@@ -23,24 +23,24 @@
 			QUnit.config.autostart = false;
 
 			sap.ui.require([
-				'sap/ui/test/opaQunit',
-				'sap/ui/test/Opa5',
-				'sap/ui/test/matchers/AggregationFilled'
+				"sap/ui/test/opaQunit",
+				"sap/ui/test/Opa5",
+				"sap/ui/test/matchers/AggregationFilled"
 			], function (opaTest, Opa5, AggregationFilled) {
-				Opa5.extendConfig({
-					viewNamespace : "view.",
-					autoWait : true
-				});
 
 				QUnit.module("iStartMyAppInAFrame");
 
 				var sTestNameExt = "";
 
-				if (window["sap-ui-debug"]){
+				if (window["sap-ui-debug"]) {
 					sTestNameExt = " when sap-ui-debug=true";
 				}
 
 				opaTest("Should start and teardown an app in a frame" + sTestNameExt, function (Given, When, Then) {
+					Opa5.extendConfig({
+						viewNamespace: "view.",
+						autoWait: true
+					});
 
 					// Arrangements
 					Given.iStartMyAppInAFrame("applicationUnderTest/index.html").done(function(){
@@ -58,6 +58,35 @@
 					}).
 					// Removes the component again
 					and.iTeardownMyApp();
+
+				});
+
+				opaTest("Should start an application in a frame and wait for it to load fully", function (Given, When, Then) {
+					Opa5.extendConfig({
+						viewNamespace: "view.",
+						autoWait: false
+					});
+
+					// wait for the application to fully load, including all onInit process
+					Given.iStartMyAppInAFrame({
+						source: "applicationUnderTest/index.html",
+						autoWait: true
+					});
+
+					// should wait for the table to fully load
+					// because the app and the table is fully loaded, there is no need to poll and it matches already at the first check.
+					Then.waitFor({
+						viewName: "Main",
+						id: "productList",
+						timeout: 3,
+						matchers: new AggregationFilled({ name: "items" }),
+						success: function () {
+							Opa5.assert.ok(true, "The application was loaded before subsequent test steps");
+						},
+						errorMessage: "The application was not loaded and OPA timeout was reached" 
+					});
+
+					Then.iTeardownMyApp();
 
 				});
 

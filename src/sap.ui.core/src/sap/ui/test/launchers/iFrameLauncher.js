@@ -5,16 +5,13 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/thirdparty/URI',
 		'sap/ui/Device',
-		'sap/ui/test/_LogCollector',
-		'sap/ui/test/_autoWaiter'
-	], function (jQuery, URI, Device, _LogCollector, _autoWaiter) {
+		'sap/ui/test/_LogCollector'
+	], function ($, URI, Device, _LogCollector) {
 	"use strict";
 
 	/*global CollectGarbage */
 
-	var sLogPrefix = "sap.ui.test.Opa5",
-		$ = jQuery,
-		oFrameWindow = null,
+	var oFrameWindow = null,
 		$Frame = null,
 		oFramePlugin = null,
 		oFrameUtils = null,
@@ -22,7 +19,8 @@ sap.ui.define([
 		bRegisteredToUI5Init = false,
 		bUi5Loaded = false,
 		oAutoWaiter = null,
-		FrameHashChanger = null;
+		FrameHashChanger = null,
+		sOpaLogLevel;
 
 	/*
 	 * INTERNALS
@@ -39,7 +37,7 @@ sap.ui.define([
 	function registerOnError () {
 		var fnFrameOnError = oFrameWindow.onerror;
 
-		oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine) {
+		oFrameWindow.onerror = function (sErrorMsg, sUrl, iLine, iColumn, oError) {
 			var vReturnValue = false;
 
 			if (fnFrameOnError) {
@@ -51,7 +49,10 @@ sap.ui.define([
 			// function is wrapped in QUnits onerror function the exception needs to be thrown in a setTimeout
 			// to make sure the QUnit onerror can run to the end
 			setTimeout(function () {
-				throw new Error("OpaFrame error message: " + sErrorMsg + ",\nurl: " + sUrl + ",\nline: " + iLine);
+				// column number and error object may be missing in older browsers. Currently, Edge doesn't provide the oError object
+				var sColumn = iColumn ? "\ncolumn: " + iColumn : "";
+				var sIFrameError = oError && "\niFrame error: " + (oError.stack ? oError.message + "\n" + oError.stack : oError) || "";
+				throw new Error("Error in launched application iFrame: " + sErrorMsg + "\nurl: " + sUrl + "\nline: " + iLine + sColumn + sIFrameError);
 			}, 0);
 			return vReturnValue;
 		};
@@ -76,7 +77,7 @@ sap.ui.define([
 
 	/**
 	 * Firefox only function - load sinon as often as needed until it is defined.
-	 * @param fnDone executed when sinon is loaded
+	 * @param {function} fnDone executed when sinon is loaded
 	 */
 	function loadSinon(fnDone) {
 		oFrameWindow.sap.ui.require(["sap/ui/thirdparty/sinon"], function (sinon) {
@@ -205,7 +206,7 @@ sap.ui.define([
 				sNewPreviousHash = oHistory.aHistory[oHistory.iHistoryPosition];
 
 			if (sNewCurrentHash === undefined) {
-				jQuery.sap.log.error("Could not navigate forwards, there is no history entry in the forwards direction", this);
+				$.sap.log.error("Could not navigate forwards, there is no history entry in the forwards direction", this);
 				return;
 			}
 
@@ -225,7 +226,7 @@ sap.ui.define([
 				return;
 			}
 
-			jQuery.sap.log.error("Using history.go with a number greater than 1 is not supported by OPA5", this);
+			$.sap.log.error("Using history.go with a number greater than 1 is not supported by OPA5", this);
 			return fnOriginalGo.apply(oFrameWindow.history, arguments);
 		};
 	}
@@ -233,7 +234,8 @@ sap.ui.define([
 	function loadFrameModules() {
 		oFrameWindow.sap.ui.require([
 			"sap/ui/test/OpaPlugin",
-			"sap/ui/test/_autoWaiter",
+			"sap/ui/test/autowaiter/_autoWaiter",
+			"sap/ui/test/_OpaLogger",
 			"sap/ui/qunit/QUnitUtils",
 			"sap/ui/thirdparty/hasher",
 			"sap/ui/core/routing/History",
@@ -241,12 +243,14 @@ sap.ui.define([
 		], function (
 			OpaPlugin,
 			_autoWaiter,
+			_OpaLogger,
 			QUnitUtils,
 			hasher,
 			History,
 			HashChanger
 		) {
-			oFramePlugin = new OpaPlugin(sLogPrefix);
+			_OpaLogger.setLevel(sOpaLogLevel);
+			oFramePlugin = new OpaPlugin();
 			oAutoWaiter = _autoWaiter;
 			oFrameUtils = QUnitUtils;
 			modifyIFrameNavigation(hasher, History, HashChanger);
@@ -256,12 +260,15 @@ sap.ui.define([
 	}
 
 	function registerAbsoluteModulePathInIframe(sModule) {
-		var sOpaLocation = jQuery.sap.getModulePath(sModule);
+		var sOpaLocation = $.sap.getModulePath(sModule);
 		var sAbsoluteOpaPath = new URI(sOpaLocation).absoluteTo(document.baseURI).search("").toString();
 		oFrameJQuery.sap.registerModulePath(sModule,sAbsoluteOpaPath);
 	}
 
 	function destroyFrame () {
+		if (!oFrameWindow) {
+			throw new Error("sap.ui.test.launchers.iFrameLauncher: Teardown was called before launch. No iFrame was loaded.");
+		}
 		// Workaround for IE - there are errors even after removing the frame so setting the onerror to noop again seems to be fine
 		oFrameWindow.onerror = $.noop;
 		for (var i = 0; i < $Frame.length; i++) {
@@ -292,8 +299,7 @@ sap.ui.define([
 	return {
 		launch: function (options) {
 			if (oFrameWindow) {
-				$.sap.log.error("sap.ui.test.launchers.iFrameLauncher: Only one IFrame may be loaded at a time.");
-				return;
+				throw new Error("sap.ui.test.launchers.iFrameLauncher: Launch was called twice without teardown. Only one iFrame may be loaded at a time.");
 			}
 
 			//invalidate the cache
@@ -313,8 +319,15 @@ sap.ui.define([
 			} else {
 				$Frame.on("load", handleFrameLoad);
 			}
-
+			sOpaLogLevel = options.opaLogLevel;
 			return checkForUI5ScriptLoaded();
+		},
+		hasLaunched: function () {
+			checkForUI5ScriptLoaded();
+			return bUi5Loaded;
+		},
+		teardown: function () {
+			destroyFrame();
 		},
 		getHashChanger: function () {
 			if (!FrameHashChanger) {
@@ -332,20 +345,11 @@ sap.ui.define([
 		getUtils: function () {
 			return oFrameUtils;
 		},
-		hasLaunched: function () {
-			checkForUI5ScriptLoaded();
-			return bUi5Loaded;
-		},
 		getWindow: function () {
 			return oFrameWindow;
 		},
-		_getAutoWaiter:function () {
-			return  oAutoWaiter || _autoWaiter;
-		},
-		teardown: function () {
-			destroyFrame();
-		},
-		_sLogPrefix :sLogPrefix
+		_getAutoWaiter: function () {
+			return oAutoWaiter;
+		}
 	};
 }, /* export= */ true);
-

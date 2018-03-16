@@ -14,10 +14,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1030",
-				"ProductName" : "Ergo Screen E-I"
-			},
+			"ProductID" : "HT-1030",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1030",
 				"TypeCode" : "PR",
@@ -62,10 +59,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "3",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1031",
-				"ProductName" : "Ergo Screen E-II"
-			},
+			"ProductID" : "HT-1031",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1031",
 				"TypeCode" : "PR",
@@ -110,10 +104,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "1",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1032",
-				"ProductName" : "Ergo Screen E-III"
-			},
+			"ProductID" : "HT-1032",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1032",
 				"TypeCode" : "PR",
@@ -158,10 +149,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1035",
-				"ProductName" : "Flat Basic"
-			},
+			"ProductID" : "HT-1035",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1035",
 				"TypeCode" : "PR",
@@ -206,10 +194,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1036",
-				"ProductName" : "Flat Future"
-			},
+			"ProductID" : "HT-1036",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1036",
 				"TypeCode" : "PR",
@@ -254,10 +239,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "1",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1037",
-				"ProductName" : "Flat XL"
-			},
+			"ProductID" : "HT-1037",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1037",
 				"TypeCode" : "PR",
@@ -302,10 +284,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "3",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1000",
-				"ProductName" : "Notebook Basic 15"
-			},
+			"ProductID" : "HT-1000",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1000",
 				"TypeCode" : "PR",
@@ -350,10 +329,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "1",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1001",
-				"ProductName" : "modified by QUnit test"
-			},
+			"ProductID" : "HT-1001",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1001",
 				"TypeCode" : "PR",

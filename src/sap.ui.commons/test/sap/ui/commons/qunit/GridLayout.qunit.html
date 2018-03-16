@@ -18,6 +18,7 @@
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script>
@@ -481,17 +482,29 @@
 			assert.ok(jQuery.sap.domById("C2T"), "Title2 (as Control) is rendered");
 			assert.equal(jQuery("#C2T").attr("title"), "Title tooltip", "Title2 (as Control): tooltip is rendered");
 			assert.ok(jQuery.sap.domById("C2T-ico"), "Title2 (as Control): image is rendered");
-			assert.ok(!jQuery.sap.domById("C2--Exp"), "Container2 no expander is rendered");
 			assert.ok((jQuery("#C2T").parent().next().is("td") && !jQuery("#C2T").parent().next().hasClass("sapUiGridHeader")), "Separator cell is rendered")
 			assert.equal(jQuery("#C2T").parent().next().children().length, 0, "Separator cell has no content");
 			assert.ok(!jQuery.sap.domById("C3T-ico"), "Title3 (as Control): no image is rendered");
-			assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
 
 			assert.ok(!jQuery("#C6E1_L1").parent().parent().prev().children().first().hasClass("sapUiGridHeader"), "Container6 no header rendered");
 
 			assert.equal(jQuery("#F3C2E1_T1").parent().attr("colspan"), "5", "Form3(singleColumn) - Container3 - Element1: Field 1 rendered over 5 grid cells (full size even half container)");
 			assert.equal(jQuery("#F3C2E1_T1").parent().next().length, 0, "Form3(singleColumn) - Container3 - Element1: Field 1 - no field beside renderd");
 			assert.ok(jQuery("#F3C2E1_T1").parent().parent().next().children().first().hasClass("sapUiGridHeader"), "Form3(singleColumn) - Container3 - Element1: next half container rendered below");
+
+			// as button is loaded async, check if already there and rendered, if not, start test async
+			if (sap.ui.require("sap/ui/commons/Button") && jQuery.sap.domById("C3--Exp")) {
+				assert.ok(!jQuery.sap.domById("C2--Exp"), "Container2 no expander is rendered");
+				assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
+			} else {
+				var fnDone = assert.async();
+				sap.ui.require(["sap/ui/commons/Button"], function() {
+					sap.ui.getCore().applyChanges(); // to wait for re-rendering
+					assert.ok(!jQuery.sap.domById("C2--Exp"), "Container2 no expander is rendered");
+					assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
+					fnDone();
+				});
+			}
 		});
 
 		QUnit.test("FormControls Half-Size", function(assert) {

@@ -1,0 +1,1263 @@
+[{
+	"__metadata": {
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"BankCharges": {
+		"__metadata": {
+			"type": "FAC_FINANCIALS_POSTING_SRV.AcctgDocHdrBankCharges"
+		},
+		"AmountInTransCrcy": "0.00",
+		"TransactionCurrency": "",
+		"AmountInCoCodeCrcy": "0.00",
+		"CoCodeCurrency": "",
+		"TaxCode": "",
+		"UxFcTaxCode": 0,
+		"UxFcAmountInCoCodeCrcy": 0,
+		"UxFcAmountInTransactionCurrency": 0,
+		"CompanyCode": ""
+	},
+	"Payment": {
+		"__metadata": {
+			"type": "FAC_FINANCIALS_POSTING_SRV.AcctgDocHdrPayment"
+		},
+		"HouseBank": "",
+		"GLAccount": "",
+		"GLAccountName": "",
+		"HouseBankAccount": "",
+		"AmountInTransCrcy": "0.00",
+		"TransactionCurrency": "",
+		"AmountInCoCodeCrcy": "0.00",
+		"CoCodeCurrency": "",
+		"BusinessArea": "",
+		"ProfitCenter": "",
+		"DocumentItemText": "",
+		"AssignmentReference": "",
+		"ValueDate": null,
+		"UxFcHouseBank": 3,
+		"UxFcGLAccount": 7,
+		"UxFcHouseBankAccount": 3,
+		"UxFcAmountInTransCrcy": 7,
+		"UxFcAmountInCoCodeCrcy": 3,
+		"UxFcBusinessArea": 3,
+		"UxFcProfitCenter": 3,
+		"UxFcDocumentItemText": 3,
+		"UxFcAssignmentReference": 3,
+		"UxFcValueDate": 3,
+		"CompanyCode": ""
+	},
+	"HasInvoiceReference": false,
+	"IsCollectionManagementActive": true,
+	"IsDisputeManagementActive": true,
+	"IsNetEntry": false,
+	"IsTransactionDisputable": false,
+	"TaxIsCalculatedAutomatically": true,
+	"UxProcessTaxAlways": true,
+	"UxFcAccountingDocument": 3,
+	"UxFcAccountingDocumentHeaderText": 3,
+	"UxFcAccountingDocumentType": 7,
+	"UxFcCompanyCode": 7,
+	"UxFcDocumentDate": 7,
+	"UxFcDocumentReferenceID": 3,
+	"UxFcExchangeRate": 3,
+	"UxFcExchangeRateDate": 3,
+	"UxFcExchangeRateForTaxes": 3,
+	"UxFcFiscalPeriod": 3,
+	"UxFcIntercompanyTransaction": 3,
+	"UxFcIsNetEntry": 3,
+	"UxFcLedgerGroup": 3,
+	"UxFcPostingDate": 7,
+	"UxFcTaxIsCalculatedAutomatically": 3,
+	"UxFcTaxReportingDate": 3,
+	"UxFcTransactionCurrency": 7,
+	"DocumentDate": null,
+	"ExchangeRateDate": null,
+	"PostingDate": "/Date(1446422400000)/",
+	"TaxReportingDate": null,
+	"TotalCreditAmountInDisplayCrcy": "0.00",
+	"TotalDebitAmountInDisplayCrcy": "0.00",
+	"TotalOpenGLItmAmtInDspCrcy": "0.00",
+	"TotalOpenAPARItmAmtInDspCrcy": "0.00",
+	"AccountingDocument": "",
+	"AccountingDocumentCategory": "",
+	"AccountingDocumentHeaderText": "",
+	"AccountingDocumentType": "DZ",
+	"AccountingDocumentTypeName": "",
+	"CompanyCode": "",
+	"CompanyCodeCurrency": "",
+	"CompanyCodeName": "",
+	"DisplayCurrency": "",
+	"DocumentReferenceID": "",
+	"ExchangeRate": "",
+	"ExchangeRateForTaxes": "",
+	"FiscalPeriod": "00",
+	"FiscalYear": "0000",
+	"IntercompanyTransaction": "",
+	"LedgerGroup": "",
+	"NoteToPayee": "",
+	"ScreenVariant": "",
+	"TmpId": "4HNF052050",
+	"TmpIdType": "T",
+	"TransactionCurrency": "",
+	"UxAction": "",
+	"UxStatus": "1"
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 2851.89,
+		"TransactionCurrency": "TransactionCurrency 1",
+		"AmountInCoCodeCrcy": 585.31,
+		"CoCodeCurrency": "CoCodeCurrency 1",
+		"TaxCode": "TaxCode 1",
+		"UxFcTaxCode": 1,
+		"UxFcAmountInCoCodeCrcy": 9,
+		"UxFcAmountInTransCrcy": 9
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 1",
+		"GLAccount": "GLAccount 1",
+		"GLAccountName": "GLAccountName 1",
+		"HouseBankAccount": "HouseBankAccount 1",
+		"AmountInTransCrcy": 5851.44,
+		"TransactionCurrency": "TransactionCurrency 1",
+		"AmountInCoCodeCrcy": 4023.36,
+		"CoCodeCurrency": "CoCodeCurrency 1",
+		"BusinessArea": "BusinessArea 1",
+		"ProfitCenter": "ProfitCenter 1",
+		"DocumentItemText": "DocumentItemText 1",
+		"AssignmentReference": "AssignmentReference 1",
+		"ValueDate": "/Date(1024430614000)/",
+		"UxFcHouseBank": 4,
+		"UxFcGLAccount": 1,
+		"UxFcHouseBankAccount": 4,
+		"UxFcAmountInTransCrcy": 2,
+		"UxFcAmountInCoCodeCrcy": 0,
+		"UxFcBusinessArea": 3,
+		"UxFcProfitCenter": 7,
+		"UxFcDocumentItemText": 8,
+		"UxFcAssignmentReference": 5,
+		"UxFcValueDate": 2
+	},
+	"AccountingDocument": "AccountingDocument 1",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 1",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 1",
+	"AccountingDocumentType": "AccountingDocumentType 1",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 1",
+	"CompanyCode": "CompanyCode 1",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 1",
+	"CompanyCodeName": "CompanyCodeName 1",
+	"DisplayCurrency": "DisplayCurrency 1",
+	"DocumentDate": "/Date(1136063014000)/",
+	"DocumentReferenceID": "DocumentReferenceID 1",
+	"ExchangeRate": "ExchangeRate 1",
+	"ExchangeRateDate": "/Date(1152561814000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 1",
+	"FiscalPeriod": "FiscalPeriod 1",
+	"FiscalYear": "FiscalYear 1",
+	"HasInvoiceReference": false,
+	"IntercompanyTransaction": "IntercompanyTransaction 1",
+	"IsNetEntry": true,
+	"LedgerGroup": "LedgerGroup 1",
+	"NoteToPayee": "NoteToPayee 1",
+	"PostingDate": "/Date(1048799014000)/",
+	"ScreenVariant": "ScreenVariant 1",
+	"TaxIsCalculatedAutomatically": false,
+	"TaxReportingDate": "/Date(1209672214000)/",
+	"TmpId": "TmpId 1",
+	"TmpIdType": "TmpIdType 1",
+	"TotalCreditAmountInDisplayCrcy": 9295.11,
+	"TotalDebitAmountInDisplayCrcy": 626.61,
+	"TotalNetAmountInDisplayCrcy": 8818.93,
+	"TransactionCurrency": "TransactionCurrency 1",
+	"UxAction": "UxAction 1",
+	"UxFcAccountingDocument": 3,
+	"UxFcAccountingDocumentHeaderText": 0,
+	"UxFcAccountingDocumentType": 1,
+	"UxFcCompanyCode": 9,
+	"UxFcDocumentDate": 6,
+	"UxFcDocumentReferenceID": 4,
+	"UxFcExchangeRate": 1,
+	"UxFcExchangeRateDate": 7,
+	"UxFcExchangeRateForTaxes": 4,
+	"UxFcFiscalPeriod": 2,
+	"UxFcIntercompanyTransaction": 2,
+	"UxFcIsNetEntry": 3,
+	"UxFcLedgerGroup": 2,
+	"UxFcPostingDate": 8,
+	"UxFcTaxIsCalculatedAutomatically": 8,
+	"UxFcTaxReportingDate": 1,
+	"UxFcTransactionCurrency": 2,
+	"UxProcessTaxAlways": true,
+	"UxStatus": "UxStatus 1",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 1',TmpIdType='TmpIdType 1')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 1',TmpIdType='TmpIdType 1')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 1',TmpIdType='TmpIdType 1')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 1',TmpIdType='TmpIdType 1')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 1',TmpIdType='TmpIdType 1')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 1',TmpIdType='TmpIdType 1')/Items"
+		}
+	}
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 5076.96,
+		"TransactionCurrency": "TransactionCurrency 2",
+		"AmountInCoCodeCrcy": 7619.41,
+		"CoCodeCurrency": "CoCodeCurrency 2",
+		"TaxCode": "TaxCode 2",
+		"UxFcTaxCode": 7,
+		"UxFcAmountInCoCodeCrcy": 9,
+		"UxFcAmountInTransCrcy": 4
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 2",
+		"GLAccount": "GLAccount 2",
+		"GLAccountName": "GLAccountName 2",
+		"HouseBankAccount": "HouseBankAccount 2",
+		"AmountInTransCrcy": 9442.28,
+		"TransactionCurrency": "TransactionCurrency 2",
+		"AmountInCoCodeCrcy": 3124.06,
+		"CoCodeCurrency": "CoCodeCurrency 2",
+		"BusinessArea": "BusinessArea 2",
+		"ProfitCenter": "ProfitCenter 2",
+		"DocumentItemText": "DocumentItemText 2",
+		"AssignmentReference": "AssignmentReference 2",
+		"ValueDate": "/Date(1410811414000)/",
+		"UxFcHouseBank": 5,
+		"UxFcGLAccount": 9,
+		"UxFcHouseBankAccount": 2,
+		"UxFcAmountInTransCrcy": 1,
+		"UxFcAmountInCoCodeCrcy": 4,
+		"UxFcBusinessArea": 4,
+		"UxFcProfitCenter": 5,
+		"UxFcDocumentItemText": 8,
+		"UxFcAssignmentReference": 1,
+		"UxFcValueDate": 7
+	},
+	"AccountingDocument": "AccountingDocument 2",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 2",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 2",
+	"AccountingDocumentType": "AccountingDocumentType 2",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 2",
+	"CompanyCode": "CompanyCode 2",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 2",
+	"CompanyCodeName": "CompanyCodeName 2",
+	"DisplayCurrency": "DisplayCurrency 2",
+	"DocumentDate": "/Date(986155414000)/",
+	"DocumentReferenceID": "DocumentReferenceID 2",
+	"ExchangeRate": "ExchangeRate 2",
+	"ExchangeRateDate": "/Date(1433102614000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 2",
+	"FiscalPeriod": "FiscalPeriod 2",
+	"FiscalYear": "FiscalYear 2",
+	"HasInvoiceReference": false,
+	"IntercompanyTransaction": "IntercompanyTransaction 2",
+	"IsNetEntry": true,
+	"LedgerGroup": "LedgerGroup 2",
+	"NoteToPayee": "NoteToPayee 2",
+	"PostingDate": "/Date(1403813014000)/",
+	"ScreenVariant": "ScreenVariant 2",
+	"TaxIsCalculatedAutomatically": true,
+	"TaxReportingDate": "/Date(1472760214000)/",
+	"TmpId": "TmpId 2",
+	"TmpIdType": "TmpIdType 2",
+	"TotalCreditAmountInDisplayCrcy": 7965.36,
+	"TotalDebitAmountInDisplayCrcy": 5189.66,
+	"TotalNetAmountInDisplayCrcy": 9131.62,
+	"TransactionCurrency": "TransactionCurrency 2",
+	"UxAction": "UxAction 2",
+	"UxFcAccountingDocument": 4,
+	"UxFcAccountingDocumentHeaderText": 2,
+	"UxFcAccountingDocumentType": 7,
+	"UxFcCompanyCode": 2,
+	"UxFcDocumentDate": 8,
+	"UxFcDocumentReferenceID": 6,
+	"UxFcExchangeRate": 6,
+	"UxFcExchangeRateDate": 1,
+	"UxFcExchangeRateForTaxes": 0,
+	"UxFcFiscalPeriod": 3,
+	"UxFcIntercompanyTransaction": 4,
+	"UxFcIsNetEntry": 0,
+	"UxFcLedgerGroup": 8,
+	"UxFcPostingDate": 0,
+	"UxFcTaxIsCalculatedAutomatically": 5,
+	"UxFcTaxReportingDate": 8,
+	"UxFcTransactionCurrency": 6,
+	"UxProcessTaxAlways": true,
+	"UxStatus": "UxStatus 2",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 2',TmpIdType='TmpIdType 2')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 2',TmpIdType='TmpIdType 2')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 2',TmpIdType='TmpIdType 2')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 2',TmpIdType='TmpIdType 2')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 2',TmpIdType='TmpIdType 2')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 2',TmpIdType='TmpIdType 2')/Items"
+		}
+	}
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 7199.62,
+		"TransactionCurrency": "TransactionCurrency 3",
+		"AmountInCoCodeCrcy": 9156.76,
+		"CoCodeCurrency": "CoCodeCurrency 3",
+		"TaxCode": "TaxCode 3",
+		"UxFcTaxCode": 6,
+		"UxFcAmountInCoCodeCrcy": 2,
+		"UxFcAmountInTransCrcy": 4
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 3",
+		"GLAccount": "GLAccount 3",
+		"GLAccountName": "GLAccountName 3",
+		"HouseBankAccount": "HouseBankAccount 3",
+		"AmountInTransCrcy": 4288.86,
+		"TransactionCurrency": "TransactionCurrency 3",
+		"AmountInCoCodeCrcy": 7984.08,
+		"CoCodeCurrency": "CoCodeCurrency 3",
+		"BusinessArea": "BusinessArea 3",
+		"ProfitCenter": "ProfitCenter 3",
+		"DocumentItemText": "DocumentItemText 3",
+		"AssignmentReference": "AssignmentReference 3",
+		"ValueDate": "/Date(1129838614000)/",
+		"UxFcHouseBank": 8,
+		"UxFcGLAccount": 7,
+		"UxFcHouseBankAccount": 7,
+		"UxFcAmountInTransCrcy": 4,
+		"UxFcAmountInCoCodeCrcy": 2,
+		"UxFcBusinessArea": 4,
+		"UxFcProfitCenter": 9,
+		"UxFcDocumentItemText": 1,
+		"UxFcAssignmentReference": 2,
+		"UxFcValueDate": 9
+	},
+	"AccountingDocument": "AccountingDocument 3",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 3",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 3",
+	"AccountingDocumentType": "AccountingDocumentType 3",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 3",
+	"CompanyCode": "CompanyCode 3",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 3",
+	"CompanyCodeName": "CompanyCodeName 3",
+	"DisplayCurrency": "DisplayCurrency 3",
+	"DocumentDate": "/Date(1498421014000)/",
+	"DocumentReferenceID": "DocumentReferenceID 3",
+	"ExchangeRate": "ExchangeRate 3",
+	"ExchangeRateDate": "/Date(1440878614000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 3",
+	"FiscalPeriod": "FiscalPeriod 3",
+	"FiscalYear": "FiscalYear 3",
+	"HasInvoiceReference": false,
+	"IntercompanyTransaction": "IntercompanyTransaction 3",
+	"IsNetEntry": false,
+	"LedgerGroup": "LedgerGroup 3",
+	"NoteToPayee": "NoteToPayee 3",
+	"PostingDate": "/Date(1058817814000)/",
+	"ScreenVariant": "ScreenVariant 3",
+	"TaxIsCalculatedAutomatically": true,
+	"TaxReportingDate": "/Date(1396814614000)/",
+	"TmpId": "TmpId 3",
+	"TmpIdType": "TmpIdType 3",
+	"TotalCreditAmountInDisplayCrcy": 9734.84,
+	"TotalDebitAmountInDisplayCrcy": 9350.51,
+	"TotalNetAmountInDisplayCrcy": 991.47,
+	"TransactionCurrency": "TransactionCurrency 3",
+	"UxAction": "UxAction 3",
+	"UxFcAccountingDocument": 6,
+	"UxFcAccountingDocumentHeaderText": 9,
+	"UxFcAccountingDocumentType": 0,
+	"UxFcCompanyCode": 0,
+	"UxFcDocumentDate": 7,
+	"UxFcDocumentReferenceID": 6,
+	"UxFcExchangeRate": 0,
+	"UxFcExchangeRateDate": 4,
+	"UxFcExchangeRateForTaxes": 3,
+	"UxFcFiscalPeriod": 2,
+	"UxFcIntercompanyTransaction": 5,
+	"UxFcIsNetEntry": 6,
+	"UxFcLedgerGroup": 0,
+	"UxFcPostingDate": 1,
+	"UxFcTaxIsCalculatedAutomatically": 4,
+	"UxFcTaxReportingDate": 8,
+	"UxFcTransactionCurrency": 0,
+	"UxProcessTaxAlways": true,
+	"UxStatus": "UxStatus 3",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 3',TmpIdType='TmpIdType 3')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 3',TmpIdType='TmpIdType 3')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 3',TmpIdType='TmpIdType 3')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 3',TmpIdType='TmpIdType 3')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 3',TmpIdType='TmpIdType 3')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 3',TmpIdType='TmpIdType 3')/Items"
+		}
+	}
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 8094.81,
+		"TransactionCurrency": "TransactionCurrency 4",
+		"AmountInCoCodeCrcy": 9652.61,
+		"CoCodeCurrency": "CoCodeCurrency 4",
+		"TaxCode": "TaxCode 4",
+		"UxFcTaxCode": 7,
+		"UxFcAmountInCoCodeCrcy": 1,
+		"UxFcAmountInTransCrcy": 3
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 4",
+		"GLAccount": "GLAccount 4",
+		"GLAccountName": "GLAccountName 4",
+		"HouseBankAccount": "HouseBankAccount 4",
+		"AmountInTransCrcy": 4038.52,
+		"TransactionCurrency": "TransactionCurrency 4",
+		"AmountInCoCodeCrcy": 3185.59,
+		"CoCodeCurrency": "CoCodeCurrency 4",
+		"BusinessArea": "BusinessArea 4",
+		"ProfitCenter": "ProfitCenter 4",
+		"DocumentItemText": "DocumentItemText 4",
+		"AssignmentReference": "AssignmentReference 4",
+		"ValueDate": "/Date(1408824214000)/",
+		"UxFcHouseBank": 5,
+		"UxFcGLAccount": 3,
+		"UxFcHouseBankAccount": 0,
+		"UxFcAmountInTransCrcy": 0,
+		"UxFcAmountInCoCodeCrcy": 3,
+		"UxFcBusinessArea": 1,
+		"UxFcProfitCenter": 9,
+		"UxFcDocumentItemText": 6,
+		"UxFcAssignmentReference": 9,
+		"UxFcValueDate": 4
+	},
+	"AccountingDocument": "AccountingDocument 4",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 4",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 4",
+	"AccountingDocumentType": "AccountingDocumentType 4",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 4",
+	"CompanyCode": "CompanyCode 4",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 4",
+	"CompanyCodeName": "CompanyCodeName 4",
+	"DisplayCurrency": "DisplayCurrency 4",
+	"DocumentDate": "/Date(1313006614000)/",
+	"DocumentReferenceID": "DocumentReferenceID 4",
+	"ExchangeRate": "ExchangeRate 4",
+	"ExchangeRateDate": "/Date(1199826214000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 4",
+	"FiscalPeriod": "FiscalPeriod 4",
+	"FiscalYear": "FiscalYear 4",
+	"HasInvoiceReference": true,
+	"IntercompanyTransaction": "IntercompanyTransaction 4",
+	"IsNetEntry": true,
+	"LedgerGroup": "LedgerGroup 4",
+	"NoteToPayee": "NoteToPayee 4",
+	"PostingDate": "/Date(1348085014000)/",
+	"ScreenVariant": "ScreenVariant 4",
+	"TaxIsCalculatedAutomatically": true,
+	"TaxReportingDate": "/Date(1520283814000)/",
+	"TmpId": "TmpId 4",
+	"TmpIdType": "TmpIdType 4",
+	"TotalCreditAmountInDisplayCrcy": 660.24,
+	"TotalDebitAmountInDisplayCrcy": 2109.78,
+	"TotalNetAmountInDisplayCrcy": 7715.17,
+	"TransactionCurrency": "TransactionCurrency 4",
+	"UxAction": "UxAction 4",
+	"UxFcAccountingDocument": 4,
+	"UxFcAccountingDocumentHeaderText": 1,
+	"UxFcAccountingDocumentType": 2,
+	"UxFcCompanyCode": 5,
+	"UxFcDocumentDate": 3,
+	"UxFcDocumentReferenceID": 9,
+	"UxFcExchangeRate": 8,
+	"UxFcExchangeRateDate": 0,
+	"UxFcExchangeRateForTaxes": 1,
+	"UxFcFiscalPeriod": 6,
+	"UxFcIntercompanyTransaction": 2,
+	"UxFcIsNetEntry": 2,
+	"UxFcLedgerGroup": 9,
+	"UxFcPostingDate": 6,
+	"UxFcTaxIsCalculatedAutomatically": 5,
+	"UxFcTaxReportingDate": 0,
+	"UxFcTransactionCurrency": 7,
+	"UxProcessTaxAlways": false,
+	"UxStatus": "UxStatus 4",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 4',TmpIdType='TmpIdType 4')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 4',TmpIdType='TmpIdType 4')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 4',TmpIdType='TmpIdType 4')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 4',TmpIdType='TmpIdType 4')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 4',TmpIdType='TmpIdType 4')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 4',TmpIdType='TmpIdType 4')/Items"
+		}
+	}
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 5169.93,
+		"TransactionCurrency": "TransactionCurrency 5",
+		"AmountInCoCodeCrcy": 3688.41,
+		"CoCodeCurrency": "CoCodeCurrency 5",
+		"TaxCode": "TaxCode 5",
+		"UxFcTaxCode": 2,
+		"UxFcAmountInCoCodeCrcy": 2,
+		"UxFcAmountInTransCrcy": 3
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 5",
+		"GLAccount": "GLAccount 5",
+		"GLAccountName": "GLAccountName 5",
+		"HouseBankAccount": "HouseBankAccount 5",
+		"AmountInTransCrcy": 5588.26,
+		"TransactionCurrency": "TransactionCurrency 5",
+		"AmountInCoCodeCrcy": 6550.4,
+		"CoCodeCurrency": "CoCodeCurrency 5",
+		"BusinessArea": "BusinessArea 5",
+		"ProfitCenter": "ProfitCenter 5",
+		"DocumentItemText": "DocumentItemText 5",
+		"AssignmentReference": "AssignmentReference 5",
+		"ValueDate": "/Date(1139519014000)/",
+		"UxFcHouseBank": 6,
+		"UxFcGLAccount": 5,
+		"UxFcHouseBankAccount": 9,
+		"UxFcAmountInTransCrcy": 8,
+		"UxFcAmountInCoCodeCrcy": 7,
+		"UxFcBusinessArea": 6,
+		"UxFcProfitCenter": 3,
+		"UxFcDocumentItemText": 6,
+		"UxFcAssignmentReference": 0,
+		"UxFcValueDate": 0
+	},
+	"AccountingDocument": "AccountingDocument 5",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 5",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 5",
+	"AccountingDocumentType": "AccountingDocumentType 5",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 5",
+	"CompanyCode": "CompanyCode 5",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 5",
+	"CompanyCodeName": "CompanyCodeName 5",
+	"DisplayCurrency": "DisplayCurrency 5",
+	"DocumentDate": "/Date(1053633814000)/",
+	"DocumentReferenceID": "DocumentReferenceID 5",
+	"ExchangeRate": "ExchangeRate 5",
+	"ExchangeRateDate": "/Date(1084997014000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 5",
+	"FiscalPeriod": "FiscalPeriod 5",
+	"FiscalYear": "FiscalYear 5",
+	"HasInvoiceReference": false,
+	"IntercompanyTransaction": "IntercompanyTransaction 5",
+	"IsNetEntry": false,
+	"LedgerGroup": "LedgerGroup 5",
+	"NoteToPayee": "NoteToPayee 5",
+	"PostingDate": "/Date(1343246614000)/",
+	"ScreenVariant": "ScreenVariant 5",
+	"TaxIsCalculatedAutomatically": false,
+	"TaxReportingDate": "/Date(1267909414000)/",
+	"TmpId": "TmpId 5",
+	"TmpIdType": "TmpIdType 5",
+	"TotalCreditAmountInDisplayCrcy": 8134.13,
+	"TotalDebitAmountInDisplayCrcy": 6569,
+	"TotalNetAmountInDisplayCrcy": 9661.41,
+	"TransactionCurrency": "TransactionCurrency 5",
+	"UxAction": "UxAction 5",
+	"UxFcAccountingDocument": 6,
+	"UxFcAccountingDocumentHeaderText": 0,
+	"UxFcAccountingDocumentType": 2,
+	"UxFcCompanyCode": 2,
+	"UxFcDocumentDate": 0,
+	"UxFcDocumentReferenceID": 6,
+	"UxFcExchangeRate": 4,
+	"UxFcExchangeRateDate": 2,
+	"UxFcExchangeRateForTaxes": 9,
+	"UxFcFiscalPeriod": 2,
+	"UxFcIntercompanyTransaction": 7,
+	"UxFcIsNetEntry": 1,
+	"UxFcLedgerGroup": 5,
+	"UxFcPostingDate": 4,
+	"UxFcTaxIsCalculatedAutomatically": 7,
+	"UxFcTaxReportingDate": 2,
+	"UxFcTransactionCurrency": 3,
+	"UxProcessTaxAlways": false,
+	"UxStatus": "UxStatus 5",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 5',TmpIdType='TmpIdType 5')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 5',TmpIdType='TmpIdType 5')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 5',TmpIdType='TmpIdType 5')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 5',TmpIdType='TmpIdType 5')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 5',TmpIdType='TmpIdType 5')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 5',TmpIdType='TmpIdType 5')/Items"
+		}
+	}
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 6382.05,
+		"TransactionCurrency": "TransactionCurrency 6",
+		"AmountInCoCodeCrcy": 8928.74,
+		"CoCodeCurrency": "CoCodeCurrency 6",
+		"TaxCode": "TaxCode 6",
+		"UxFcTaxCode": 5,
+		"UxFcAmountInCoCodeCrcy": 4,
+		"UxFcAmountInTransCrcy": 3
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 6",
+		"GLAccount": "GLAccount 6",
+		"GLAccountName": "GLAccountName 6",
+		"HouseBankAccount": "HouseBankAccount 6",
+		"AmountInTransCrcy": 4965.96,
+		"TransactionCurrency": "TransactionCurrency 6",
+		"AmountInCoCodeCrcy": 4748.82,
+		"CoCodeCurrency": "CoCodeCurrency 6",
+		"BusinessArea": "BusinessArea 6",
+		"ProfitCenter": "ProfitCenter 6",
+		"DocumentItemText": "DocumentItemText 6",
+		"AssignmentReference": "AssignmentReference 6",
+		"ValueDate": "/Date(948747814000)/",
+		"UxFcHouseBank": 4,
+		"UxFcGLAccount": 2,
+		"UxFcHouseBankAccount": 9,
+		"UxFcAmountInTransCrcy": 1,
+		"UxFcAmountInCoCodeCrcy": 0,
+		"UxFcBusinessArea": 3,
+		"UxFcProfitCenter": 9,
+		"UxFcDocumentItemText": 4,
+		"UxFcAssignmentReference": 9,
+		"UxFcValueDate": 0
+	},
+	"AccountingDocument": "AccountingDocument 6",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 6",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 6",
+	"AccountingDocumentType": "AccountingDocumentType 6",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 6",
+	"CompanyCode": "CompanyCode 6",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 6",
+	"CompanyCodeName": "CompanyCodeName 6",
+	"DisplayCurrency": "DisplayCurrency 6",
+	"DocumentDate": "/Date(1360962214000)/",
+	"DocumentReferenceID": "DocumentReferenceID 6",
+	"ExchangeRate": "ExchangeRate 6",
+	"ExchangeRateDate": "/Date(1397246614000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 6",
+	"FiscalPeriod": "FiscalPeriod 6",
+	"FiscalYear": "FiscalYear 6",
+	"HasInvoiceReference": true,
+	"IntercompanyTransaction": "IntercompanyTransaction 6",
+	"IsNetEntry": true,
+	"LedgerGroup": "LedgerGroup 6",
+	"NoteToPayee": "NoteToPayee 6",
+	"PostingDate": "/Date(1108933414000)/",
+	"ScreenVariant": "ScreenVariant 6",
+	"TaxIsCalculatedAutomatically": true,
+	"TaxReportingDate": "/Date(1192824214000)/",
+	"TmpId": "TmpId 6",
+	"TmpIdType": "TmpIdType 6",
+	"TotalCreditAmountInDisplayCrcy": 6190.3,
+	"TotalDebitAmountInDisplayCrcy": 1305.94,
+	"TotalNetAmountInDisplayCrcy": 6127.58,
+	"TransactionCurrency": "TransactionCurrency 6",
+	"UxAction": "UxAction 6",
+	"UxFcAccountingDocument": 8,
+	"UxFcAccountingDocumentHeaderText": 5,
+	"UxFcAccountingDocumentType": 0,
+	"UxFcCompanyCode": 5,
+	"UxFcDocumentDate": 6,
+	"UxFcDocumentReferenceID": 8,
+	"UxFcExchangeRate": 0,
+	"UxFcExchangeRateDate": 8,
+	"UxFcExchangeRateForTaxes": 9,
+	"UxFcFiscalPeriod": 4,
+	"UxFcIntercompanyTransaction": 6,
+	"UxFcIsNetEntry": 4,
+	"UxFcLedgerGroup": 0,
+	"UxFcPostingDate": 0,
+	"UxFcTaxIsCalculatedAutomatically": 4,
+	"UxFcTaxReportingDate": 9,
+	"UxFcTransactionCurrency": 4,
+	"UxProcessTaxAlways": false,
+	"UxStatus": "UxStatus 6",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 6',TmpIdType='TmpIdType 6')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 6',TmpIdType='TmpIdType 6')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 6',TmpIdType='TmpIdType 6')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 6',TmpIdType='TmpIdType 6')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 6',TmpIdType='TmpIdType 6')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 6',TmpIdType='TmpIdType 6')/Items"
+		}
+	}
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 920.65,
+		"TransactionCurrency": "TransactionCurrency 7",
+		"AmountInCoCodeCrcy": 9228.5,
+		"CoCodeCurrency": "CoCodeCurrency 7",
+		"TaxCode": "TaxCode 7",
+		"UxFcTaxCode": 7,
+		"UxFcAmountInCoCodeCrcy": 8,
+		"UxFcAmountInTransCrcy": 4
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 7",
+		"GLAccount": "GLAccount 7",
+		"GLAccountName": "GLAccountName 7",
+		"HouseBankAccount": "HouseBankAccount 7",
+		"AmountInTransCrcy": 1551.94,
+		"TransactionCurrency": "TransactionCurrency 7",
+		"AmountInCoCodeCrcy": 533.94,
+		"CoCodeCurrency": "CoCodeCurrency 7",
+		"BusinessArea": "BusinessArea 7",
+		"ProfitCenter": "ProfitCenter 7",
+		"DocumentItemText": "DocumentItemText 7",
+		"AssignmentReference": "AssignmentReference 7",
+		"ValueDate": "/Date(1387141414000)/",
+		"UxFcHouseBank": 5,
+		"UxFcGLAccount": 9,
+		"UxFcHouseBankAccount": 1,
+		"UxFcAmountInTransCrcy": 2,
+		"UxFcAmountInCoCodeCrcy": 4,
+		"UxFcBusinessArea": 7,
+		"UxFcProfitCenter": 5,
+		"UxFcDocumentItemText": 8,
+		"UxFcAssignmentReference": 4,
+		"UxFcValueDate": 1
+	},
+	"AccountingDocument": "AccountingDocument 7",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 7",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 7",
+	"AccountingDocumentType": "AccountingDocumentType 7",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 7",
+	"CompanyCode": "CompanyCode 7",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 7",
+	"CompanyCodeName": "CompanyCodeName 7",
+	"DisplayCurrency": "DisplayCurrency 7",
+	"DocumentDate": "/Date(1301173414000)/",
+	"DocumentReferenceID": "DocumentReferenceID 7",
+	"ExchangeRate": "ExchangeRate 7",
+	"ExchangeRateDate": "/Date(1068843814000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 7",
+	"FiscalPeriod": "FiscalPeriod 7",
+	"FiscalYear": "FiscalYear 7",
+	"HasInvoiceReference": true,
+	"IntercompanyTransaction": "IntercompanyTransaction 7",
+	"IsNetEntry": true,
+	"LedgerGroup": "LedgerGroup 7",
+	"NoteToPayee": "NoteToPayee 7",
+	"PostingDate": "/Date(1067025814000)/",
+	"ScreenVariant": "ScreenVariant 7",
+	"TaxIsCalculatedAutomatically": true,
+	"TaxReportingDate": "/Date(1316981014000)/",
+	"TmpId": "TmpId 7",
+	"TmpIdType": "TmpIdType 7",
+	"TotalCreditAmountInDisplayCrcy": 2638.74,
+	"TotalDebitAmountInDisplayCrcy": 7705.94,
+	"TotalNetAmountInDisplayCrcy": 7040.39,
+	"TransactionCurrency": "TransactionCurrency 7",
+	"UxAction": "UxAction 7",
+	"UxFcAccountingDocument": 7,
+	"UxFcAccountingDocumentHeaderText": 3,
+	"UxFcAccountingDocumentType": 8,
+	"UxFcCompanyCode": 9,
+	"UxFcDocumentDate": 8,
+	"UxFcDocumentReferenceID": 7,
+	"UxFcExchangeRate": 0,
+	"UxFcExchangeRateDate": 3,
+	"UxFcExchangeRateForTaxes": 3,
+	"UxFcFiscalPeriod": 5,
+	"UxFcIntercompanyTransaction": 9,
+	"UxFcIsNetEntry": 6,
+	"UxFcLedgerGroup": 6,
+	"UxFcPostingDate": 6,
+	"UxFcTaxIsCalculatedAutomatically": 1,
+	"UxFcTaxReportingDate": 8,
+	"UxFcTransactionCurrency": 0,
+	"UxProcessTaxAlways": false,
+	"UxStatus": "UxStatus 7",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 7',TmpIdType='TmpIdType 7')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 7',TmpIdType='TmpIdType 7')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 7',TmpIdType='TmpIdType 7')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 7',TmpIdType='TmpIdType 7')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 7',TmpIdType='TmpIdType 7')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 7',TmpIdType='TmpIdType 7')/Items"
+		}
+	}
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 4868.25,
+		"TransactionCurrency": "TransactionCurrency 8",
+		"AmountInCoCodeCrcy": 4898,
+		"CoCodeCurrency": "CoCodeCurrency 8",
+		"TaxCode": "TaxCode 8",
+		"UxFcTaxCode": 0,
+		"UxFcAmountInCoCodeCrcy": 7,
+		"UxFcAmountInTransCrcy": 8
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 8",
+		"GLAccount": "GLAccount 8",
+		"GLAccountName": "GLAccountName 8",
+		"HouseBankAccount": "HouseBankAccount 8",
+		"AmountInTransCrcy": 3695.48,
+		"TransactionCurrency": "TransactionCurrency 8",
+		"AmountInCoCodeCrcy": 9813.13,
+		"CoCodeCurrency": "CoCodeCurrency 8",
+		"BusinessArea": "BusinessArea 8",
+		"ProfitCenter": "ProfitCenter 8",
+		"DocumentItemText": "DocumentItemText 8",
+		"AssignmentReference": "AssignmentReference 8",
+		"ValueDate": "/Date(992635414000)/",
+		"UxFcHouseBank": 7,
+		"UxFcGLAccount": 6,
+		"UxFcHouseBankAccount": 5,
+		"UxFcAmountInTransCrcy": 8,
+		"UxFcAmountInCoCodeCrcy": 9,
+		"UxFcBusinessArea": 6,
+		"UxFcProfitCenter": 8,
+		"UxFcDocumentItemText": 0,
+		"UxFcAssignmentReference": 7,
+		"UxFcValueDate": 7
+	},
+	"AccountingDocument": "AccountingDocument 8",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 8",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 8",
+	"AccountingDocumentType": "AccountingDocumentType 8",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 8",
+	"CompanyCode": "CompanyCode 8",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 8",
+	"CompanyCodeName": "CompanyCodeName 8",
+	"DisplayCurrency": "DisplayCurrency 8",
+	"DocumentDate": "/Date(1483736614000)/",
+	"DocumentReferenceID": "DocumentReferenceID 8",
+	"ExchangeRate": "ExchangeRate 8",
+	"ExchangeRateDate": "/Date(1553893414000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 8",
+	"FiscalPeriod": "FiscalPeriod 8",
+	"FiscalYear": "FiscalYear 8",
+	"HasInvoiceReference": true,
+	"IntercompanyTransaction": "IntercompanyTransaction 8",
+	"IsNetEntry": false,
+	"LedgerGroup": "LedgerGroup 8",
+	"NoteToPayee": "NoteToPayee 8",
+	"PostingDate": "/Date(1413749014000)/",
+	"ScreenVariant": "ScreenVariant 8",
+	"TaxIsCalculatedAutomatically": true,
+	"TaxReportingDate": "/Date(992462614000)/",
+	"TmpId": "TmpId 8",
+	"TmpIdType": "TmpIdType 8",
+	"TotalCreditAmountInDisplayCrcy": 6777.31,
+	"TotalDebitAmountInDisplayCrcy": 4106.8,
+	"TotalNetAmountInDisplayCrcy": 6575.85,
+	"TransactionCurrency": "TransactionCurrency 8",
+	"UxAction": "UxAction 8",
+	"UxFcAccountingDocument": 2,
+	"UxFcAccountingDocumentHeaderText": 4,
+	"UxFcAccountingDocumentType": 3,
+	"UxFcCompanyCode": 2,
+	"UxFcDocumentDate": 6,
+	"UxFcDocumentReferenceID": 1,
+	"UxFcExchangeRate": 0,
+	"UxFcExchangeRateDate": 6,
+	"UxFcExchangeRateForTaxes": 4,
+	"UxFcFiscalPeriod": 2,
+	"UxFcIntercompanyTransaction": 4,
+	"UxFcIsNetEntry": 2,
+	"UxFcLedgerGroup": 3,
+	"UxFcPostingDate": 8,
+	"UxFcTaxIsCalculatedAutomatically": 4,
+	"UxFcTaxReportingDate": 2,
+	"UxFcTransactionCurrency": 7,
+	"UxProcessTaxAlways": false,
+	"UxStatus": "UxStatus 8",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 8',TmpIdType='TmpIdType 8')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 8',TmpIdType='TmpIdType 8')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 8',TmpIdType='TmpIdType 8')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 8',TmpIdType='TmpIdType 8')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 8',TmpIdType='TmpIdType 8')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 8',TmpIdType='TmpIdType 8')/Items"
+		}
+	}
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 9732.7,
+		"TransactionCurrency": "TransactionCurrency 9",
+		"AmountInCoCodeCrcy": 1413.17,
+		"CoCodeCurrency": "CoCodeCurrency 9",
+		"TaxCode": "TaxCode 9",
+		"UxFcTaxCode": 1,
+		"UxFcAmountInCoCodeCrcy": 6,
+		"UxFcAmountInTransCrcy": 7
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 9",
+		"GLAccount": "GLAccount 9",
+		"GLAccountName": "GLAccountName 9",
+		"HouseBankAccount": "HouseBankAccount 9",
+		"AmountInTransCrcy": 4371.98,
+		"TransactionCurrency": "TransactionCurrency 9",
+		"AmountInCoCodeCrcy": 8345.02,
+		"CoCodeCurrency": "CoCodeCurrency 9",
+		"BusinessArea": "BusinessArea 9",
+		"ProfitCenter": "ProfitCenter 9",
+		"DocumentItemText": "DocumentItemText 9",
+		"AssignmentReference": "AssignmentReference 9",
+		"ValueDate": "/Date(1525464214000)/",
+		"UxFcHouseBank": 1,
+		"UxFcGLAccount": 6,
+		"UxFcHouseBankAccount": 0,
+		"UxFcAmountInTransCrcy": 8,
+		"UxFcAmountInCoCodeCrcy": 7,
+		"UxFcBusinessArea": 4,
+		"UxFcProfitCenter": 8,
+		"UxFcDocumentItemText": 8,
+		"UxFcAssignmentReference": 7,
+		"UxFcValueDate": 4
+	},
+	"AccountingDocument": "AccountingDocument 9",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 9",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 9",
+	"AccountingDocumentType": "AccountingDocumentType 9",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 9",
+	"CompanyCode": "CompanyCode 9",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 9",
+	"CompanyCodeName": "CompanyCodeName 9",
+	"DisplayCurrency": "DisplayCurrency 9",
+	"DocumentDate": "/Date(1105131814000)/",
+	"DocumentReferenceID": "DocumentReferenceID 9",
+	"ExchangeRate": "ExchangeRate 9",
+	"ExchangeRateDate": "/Date(1455051814000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 9",
+	"FiscalPeriod": "FiscalPeriod 9",
+	"FiscalYear": "FiscalYear 9",
+	"HasInvoiceReference": false,
+	"IntercompanyTransaction": "IntercompanyTransaction 9",
+	"IsNetEntry": false,
+	"LedgerGroup": "LedgerGroup 9",
+	"NoteToPayee": "NoteToPayee 9",
+	"PostingDate": "/Date(1210709014000)/",
+	"ScreenVariant": "ScreenVariant 9",
+	"TaxIsCalculatedAutomatically": false,
+	"TaxReportingDate": "/Date(1243281814000)/",
+	"TmpId": "TmpId 9",
+	"TmpIdType": "TmpIdType 9",
+	"TotalCreditAmountInDisplayCrcy": 6892.02,
+	"TotalDebitAmountInDisplayCrcy": 2598.56,
+	"TotalNetAmountInDisplayCrcy": 1394.15,
+	"TransactionCurrency": "TransactionCurrency 9",
+	"UxAction": "UxAction 9",
+	"UxFcAccountingDocument": 5,
+	"UxFcAccountingDocumentHeaderText": 2,
+	"UxFcAccountingDocumentType": 1,
+	"UxFcCompanyCode": 4,
+	"UxFcDocumentDate": 5,
+	"UxFcDocumentReferenceID": 0,
+	"UxFcExchangeRate": 4,
+	"UxFcExchangeRateDate": 3,
+	"UxFcExchangeRateForTaxes": 7,
+	"UxFcFiscalPeriod": 8,
+	"UxFcIntercompanyTransaction": 5,
+	"UxFcIsNetEntry": 6,
+	"UxFcLedgerGroup": 6,
+	"UxFcPostingDate": 3,
+	"UxFcTaxIsCalculatedAutomatically": 1,
+	"UxFcTaxReportingDate": 1,
+	"UxFcTransactionCurrency": 0,
+	"UxProcessTaxAlways": true,
+	"UxStatus": "UxStatus 9",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 9',TmpIdType='TmpIdType 9')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 9',TmpIdType='TmpIdType 9')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 9',TmpIdType='TmpIdType 9')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 9',TmpIdType='TmpIdType 9')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 9',TmpIdType='TmpIdType 9')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 9',TmpIdType='TmpIdType 9')/Items"
+		}
+	}
+}, {
+	"BankCharges": {
+		"AmountInTransCrcy": 1456.98,
+		"TransactionCurrency": "TransactionCurrency 10",
+		"AmountInCoCodeCrcy": 8811.55,
+		"CoCodeCurrency": "CoCodeCurrency 10",
+		"TaxCode": "TaxCode 10",
+		"UxFcTaxCode": 1,
+		"UxFcAmountInCoCodeCrcy": 5,
+		"UxFcAmountInTransCrcy": 5
+	},
+	"Payment": {
+		"HouseBank": "HouseBank 10",
+		"GLAccount": "GLAccount 10",
+		"GLAccountName": "GLAccountName 10",
+		"HouseBankAccount": "HouseBankAccount 10",
+		"AmountInTransCrcy": 168,
+		"TransactionCurrency": "TransactionCurrency 10",
+		"AmountInCoCodeCrcy": 451.05,
+		"CoCodeCurrency": "CoCodeCurrency 10",
+		"BusinessArea": "BusinessArea 10",
+		"ProfitCenter": "ProfitCenter 10",
+		"DocumentItemText": "DocumentItemText 10",
+		"AssignmentReference": "AssignmentReference 10",
+		"ValueDate": "/Date(1078261414000)/",
+		"UxFcHouseBank": 1,
+		"UxFcGLAccount": 8,
+		"UxFcHouseBankAccount": 5,
+		"UxFcAmountInTransCrcy": 3,
+		"UxFcAmountInCoCodeCrcy": 0,
+		"UxFcBusinessArea": 8,
+		"UxFcProfitCenter": 6,
+		"UxFcDocumentItemText": 4,
+		"UxFcAssignmentReference": 4,
+		"UxFcValueDate": 2
+	},
+	"AccountingDocument": "AccountingDocument 10",
+	"AccountingDocumentCategory": "AccountingDocumentCategory 10",
+	"AccountingDocumentHeaderText": "AccountingDocumentHeaderText 10",
+	"AccountingDocumentType": "AccountingDocumentType 10",
+	"AccountingDocumentTypeName": "AccountingDocumentTypeName 10",
+	"CompanyCode": "CompanyCode 10",
+	"CompanyCodeCurrency": "CompanyCodeCurrency 10",
+	"CompanyCodeName": "CompanyCodeName 10",
+	"DisplayCurrency": "DisplayCurrency 10",
+	"DocumentDate": "/Date(1481317414000)/",
+	"DocumentReferenceID": "DocumentReferenceID 10",
+	"ExchangeRate": "ExchangeRate 10",
+	"ExchangeRateDate": "/Date(1147809814000)/",
+	"ExchangeRateForTaxes": "ExchangeRateForTaxes 10",
+	"FiscalPeriod": "FiscalPeriod 10",
+	"FiscalYear": "FiscalYear 10",
+	"HasInvoiceReference": false,
+	"IntercompanyTransaction": "IntercompanyTransaction 10",
+	"IsNetEntry": false,
+	"LedgerGroup": "LedgerGroup 10",
+	"NoteToPayee": "NoteToPayee 10",
+	"PostingDate": "/Date(1573074214000)/",
+	"ScreenVariant": "ScreenVariant 10",
+	"TaxIsCalculatedAutomatically": false,
+	"TaxReportingDate": "/Date(1206479014000)/",
+	"TmpId": "TmpId 10",
+	"TmpIdType": "TmpIdType 10",
+	"TotalCreditAmountInDisplayCrcy": 9003.06,
+	"TotalDebitAmountInDisplayCrcy": 4452,
+	"TotalNetAmountInDisplayCrcy": 311.28,
+	"TransactionCurrency": "TransactionCurrency 10",
+	"UxAction": "UxAction 10",
+	"UxFcAccountingDocument": 3,
+	"UxFcAccountingDocumentHeaderText": 7,
+	"UxFcAccountingDocumentType": 7,
+	"UxFcCompanyCode": 4,
+	"UxFcDocumentDate": 7,
+	"UxFcDocumentReferenceID": 8,
+	"UxFcExchangeRate": 5,
+	"UxFcExchangeRateDate": 3,
+	"UxFcExchangeRateForTaxes": 3,
+	"UxFcFiscalPeriod": 7,
+	"UxFcIntercompanyTransaction": 4,
+	"UxFcIsNetEntry": 9,
+	"UxFcLedgerGroup": 2,
+	"UxFcPostingDate": 7,
+	"UxFcTaxIsCalculatedAutomatically": 2,
+	"UxFcTaxReportingDate": 5,
+	"UxFcTransactionCurrency": 3,
+	"UxProcessTaxAlways": true,
+	"UxStatus": "UxStatus 10",
+	"__metadata": {
+		"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 10',TmpIdType='TmpIdType 10')",
+		"type": "FAC_FINANCIALS_POSTING_SRV.FinsPostingPaymentHeader"
+	},
+	"Attachments": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 10',TmpIdType='TmpIdType 10')/Attachments"
+		}
+	},
+	"Notes": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 10',TmpIdType='TmpIdType 10')/Notes"
+		}
+	},
+	"APARItemsToBeClrd": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 10',TmpIdType='TmpIdType 10')/APARItemsToBeClrd"
+		}
+	},
+	"APARItems": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 10',TmpIdType='TmpIdType 10')/APARItems"
+		}
+	},
+	"Items": {
+		"__deferred": {
+			"uri": "FinsPostingPaymentHeaders(TmpId='TmpId 10',TmpIdType='TmpIdType 10')/Items"
+		}
+	}
+}]

@@ -4,16 +4,21 @@
 			"title": "Home",
 			"icon": "sap-icon://home",
 			"expanded": true,
-			"key": "home"
+			"key": "home",
+			"items": []
 		},
 		{
 			"title": "Settings",
 			"icon": "sap-icon://settings",
-			"key": "systemSettings"
+			"expanded": false,
+			"key": "masterSettings"
+		,
+			"items": []
 		},
 		{
 			"title": "Statistics",
 			"icon": "sap-icon://line-chart",
+			"expanded": true,
 			"key": "statistics",
 			"items": [
 				{

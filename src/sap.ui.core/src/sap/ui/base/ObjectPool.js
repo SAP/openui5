@@ -9,8 +9,8 @@ sap.ui.define(['./Object'],
 
 
 	/**
-	 * Creates an ObjectPool instance based on the given oObjectClass.&lt;br/&gt;
-	 * If there is a free pooled instance, returns that one, otherwise creates a new one.&lt;br/&gt;
+	 * Creates an ObjectPool instance based on the given oObjectClass.<br/>;
+	 * If there is a free pooled instance, returns that one, otherwise creates a new one.<br/>;
 	 * In order to be maintained by the ObjectPool, oObjectClass must implement
 	 * methods described in the class description.
 	 *
@@ -38,9 +38,8 @@ sap.ui.define(['./Object'],
 	 * </pre>
 	 *
 	 * @extends sap.ui.base.Object
-	 * @author Malte Wedel
+	 * @author SAP SE
 	 * @version ${version}
-	 * @constructor
 	 * @alias sap.ui.base.ObjectPool
 	 * @public
 	 */

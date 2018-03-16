@@ -1,0 +1,37 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": "QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "012b33628fe2749a95df15befd5163769fbb71aa",
+        "type": "FIX",
+        "text": "sap.ui.dt.MiniMenu - various bugfixes & cleaning (split1)",
+        "references": []
+      },
+      {
+        "id": "b71479bc898d27a2490385c58535f68d238096b3",
+        "type": "FIX",
+        "text": "sap.ui.dt - Root elements in DT can become invalid on app close",
+        "references": []
+      },
+      {
+        "id": "92a3a8f624fdadaad50402a1eac6b23a4dde2f0f",
+        "type": "FIX",
+        "text": "sap.ui.rta - Aggregation binding Overlay movable when not editable",
+        "references": []
+      },
+      {
+        "id": "bcecb61ee50e6ce23d8987147c2048e87e2fa260",
+        "type": "FIX",
+        "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
+        "references": []
+      }
+    ]
+  }
+}

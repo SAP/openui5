@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, InputRenderer, Renderer) {
+sap.ui.define(['./InputRenderer', 'sap/ui/core/Renderer'],
+	function(InputRenderer, Renderer) {
 	"use strict";
 
 
@@ -29,7 +29,8 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 	MultiInputRenderer.getAriaDescribedBy = function(oControl) {
 
 		var sAriaDescribedBy = InputRenderer.getAriaDescribedBy.apply(this, arguments),
-			oInvisibleTextId = oControl.getAggregation("_tokensInfo").getId();
+			oInvisibleTextId = oControl.getAggregation("tokenizer") &&
+				oControl.getAggregation("tokenizer").getTokensInfoId();
 
 		if (sAriaDescribedBy) {
 			sAriaDescribedBy = sAriaDescribedBy + " " + oInvisibleTextId;
@@ -38,12 +39,6 @@ sap.ui.define(['jquery.sap.global', './InputRenderer', 'sap/ui/core/Renderer'],
 		}
 
 		return sAriaDescribedBy;
-	};
-
-	MultiInputRenderer.renderAriaDescribedBy  = function(oRm, oControl) {
-		InputRenderer.renderAriaDescribedBy.call(this, oRm, oControl);
-
-		oRm.renderControl(oControl.getAggregation("_tokensInfo"));
 	};
 
 	MultiInputRenderer.openInputTag = function(oRm, oControl) {

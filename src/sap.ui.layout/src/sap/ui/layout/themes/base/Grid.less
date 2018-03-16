@@ -3,21 +3,22 @@
 @_sap_ui_layout_Grid_RespGridCols: 12;
 @_sap_ui_layout_Grid_RespGridCols-1: @_sap_ui_layout_Grid_RespGridCols - 1;
 @_sap_ui_layout_Grid_RespGridOneCol: 100% / @_sap_ui_layout_Grid_RespGridCols;
-@_sap_ui_layout_Grid_RespGridMedia_Phone: sapUiRespGridMedia-Std-Phone;
-@_sap_ui_layout_Grid_RespGridMedia_Tablet: sapUiRespGridMedia-Std-Tablet;
-@_sap_ui_layout_Grid_RespGridMedia_Desktop: sapUiRespGridMedia-Std-Desktop;
-@_sap_ui_layout_Grid_RespGridMedia_XL: sapUiRespGridMedia-Std-LargeDesktop;
-@_sap_ui_layout_Grid_RespGridMedia_PhoneSize: 320px;
-@_sap_ui_layout_Grid_RespGridMedia_TabletSize: 600px;
-@_sap_ui_layout_Grid_RespGridMedia_DesktopSize: 1024px;
-@_sap_ui_layout_Grid_RespGridMedia_XLSize: 1440px;
-@_sap_ui_layout_Grid_RespGrid_PxInRem: 16;
+@_sap_ui_layout_Grid_RespGridMediaPhone: sapUiRespGridMedia-Std-Phone;
+@_sap_ui_layout_Grid_RespGridMediaTablet: sapUiRespGridMedia-Std-Tablet;
+@_sap_ui_layout_Grid_RespGridMediaDesktop: sapUiRespGridMedia-Std-Desktop;
+@_sap_ui_layout_Grid_RespGridMediaXL: sapUiRespGridMedia-Std-LargeDesktop;
+@_sap_ui_layout_Grid_RespGridMediaPhoneSize: 320px;
+@_sap_ui_layout_Grid_RespGridMediaTabletSize: 600px;
+@_sap_ui_layout_Grid_RespGridMediaDesktopSize: 1024px;
+@_sap_ui_layout_Grid_RespGridMediaXLSize: 1440px;
+@_sap_ui_layout_Grid_RespGridPxInRem: 16;
 @_sap_ui_layout_Grid_RespGridVisible: sapUiRespGridVisible;
 @_sap_ui_layout_Grid_RespGridHidden: sapUiRespGridHidden;
 
 div[class*="sapUiRespGrid"] > div[class*="sapUiRespGridSpan"] {
     float: left;
     overflow: hidden;
+	min-height: 1px; // BCP: 1770523047
 }
 
 /* CLEAR FIX */
@@ -79,19 +80,26 @@ div[class*="sapUiRespGrid"]:after {
     margin-bottom: 2rem;
 }
 
+.sapUiRespGrid[class*="sapUiRespGridVSpace0"] > .sapUiRespGridSpanInvisible,
+.sapUiRespGrid[class*="sapUiRespGridVSpace05"] > .sapUiRespGridSpanInvisible,
+.sapUiRespGrid[class*="sapUiRespGridVSpace1"] > .sapUiRespGridSpanInvisible,
+.sapUiRespGrid[class*="sapUiRespGridVSpace2"] > .sapUiRespGridSpanInvisible {
+	margin-bottom: 0;
+}
+
 /* GENERAL BREAK */
 
 .sapUiRespGridBreak { clear: both; }
 
 .sapUiRespGridWriteSpanClass(@classFor, @hspace, @span, @screenSize) when (@classFor = Span) {
     @a:  @_sap_ui_layout_Grid_RespGridOneCol * @span;
-    width: @a - 100% * @_sap_ui_layout_Grid_RespGrid_PxInRem * @hspace / @screenSize;
+    width: @a - 100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace / @screenSize;
     .sapUiRespGrid-getCalcFuncSpan(@a, @hspace);
 }
 
 .sapUiRespGridWriteIndentClass(@classFor, @hspace, @span, @screenSize) when (@classFor = Indent) {
     @a:  @_sap_ui_layout_Grid_RespGridOneCol * @span;
-    margin-left: @a + (100% * @_sap_ui_layout_Grid_RespGrid_PxInRem * @hspace/2) / @screenSize ;
+    margin-left: @a + (100% * @_sap_ui_layout_Grid_RespGridPxInRem * @hspace/2) / @screenSize ;
     .sapUiRespGrid-getCalcFuncIndent(@a, @hspace);
 }
 
@@ -175,19 +183,19 @@ div[class*="sapUiRespGrid"]:after {
 /*   S M A L L   D E V I C E S     */
 /* =============================== */
 
-.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMedia_Phone, S, @_sap_ui_layout_Grid_RespGridMedia_PhoneSize);
+.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMediaPhone, S, @_sap_ui_layout_Grid_RespGridMediaPhoneSize);
 
 /* SHOW and HIDE for SMALL contexts */
 
-.@{_sap_ui_layout_Grid_RespGridMedia_Phone} > .@{_sap_ui_layout_Grid_RespGridVisible}XL { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_Phone} > .@{_sap_ui_layout_Grid_RespGridVisible}L { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_Phone} > .@{_sap_ui_layout_Grid_RespGridVisible}M { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_Phone} > .@{_sap_ui_layout_Grid_RespGridVisible}S { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaPhone} > .@{_sap_ui_layout_Grid_RespGridVisible}XL { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaPhone} > .@{_sap_ui_layout_Grid_RespGridVisible}L { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaPhone} > .@{_sap_ui_layout_Grid_RespGridVisible}M { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaPhone} > .@{_sap_ui_layout_Grid_RespGridVisible}S { display: block }
 
-.@{_sap_ui_layout_Grid_RespGridMedia_Phone} > .@{_sap_ui_layout_Grid_RespGridHidden}XL { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_Phone} > .@{_sap_ui_layout_Grid_RespGridHidden}L { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_Phone} > .@{_sap_ui_layout_Grid_RespGridHidden}M { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_Phone} > .@{_sap_ui_layout_Grid_RespGridHidden}S { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaPhone} > .@{_sap_ui_layout_Grid_RespGridHidden}XL { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaPhone} > .@{_sap_ui_layout_Grid_RespGridHidden}L { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaPhone} > .@{_sap_ui_layout_Grid_RespGridHidden}M { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaPhone} > .@{_sap_ui_layout_Grid_RespGridHidden}S { display: none }
 
 
 
@@ -195,54 +203,54 @@ div[class*="sapUiRespGrid"]:after {
 /*   M E D I U M   D E V I C E S   */
 /* =============================== */
 
-.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMedia_Tablet, M, @_sap_ui_layout_Grid_RespGridMedia_TabletSize);
+.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMediaTablet, M, @_sap_ui_layout_Grid_RespGridMediaTabletSize);
 
   /* SHOW and HIDE for MEDIUM contexts */
-.@{_sap_ui_layout_Grid_RespGridMedia_Tablet} > .@{_sap_ui_layout_Grid_RespGridVisible}XL { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_Tablet} > .@{_sap_ui_layout_Grid_RespGridVisible}L { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_Tablet} > .@{_sap_ui_layout_Grid_RespGridVisible}M { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_Tablet} > .@{_sap_ui_layout_Grid_RespGridVisible}S { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaTablet} > .@{_sap_ui_layout_Grid_RespGridVisible}XL { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaTablet} > .@{_sap_ui_layout_Grid_RespGridVisible}L { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaTablet} > .@{_sap_ui_layout_Grid_RespGridVisible}M { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaTablet} > .@{_sap_ui_layout_Grid_RespGridVisible}S { display: none }
 
-.@{_sap_ui_layout_Grid_RespGridMedia_Tablet} > .@{_sap_ui_layout_Grid_RespGridHidden}XL { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_Tablet} > .@{_sap_ui_layout_Grid_RespGridHidden}L { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_Tablet} > .@{_sap_ui_layout_Grid_RespGridHidden}M { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_Tablet} > .@{_sap_ui_layout_Grid_RespGridHidden}S { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaTablet} > .@{_sap_ui_layout_Grid_RespGridHidden}XL { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaTablet} > .@{_sap_ui_layout_Grid_RespGridHidden}L { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaTablet} > .@{_sap_ui_layout_Grid_RespGridHidden}M { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaTablet} > .@{_sap_ui_layout_Grid_RespGridHidden}S { display: block }
 
 
 /* ============================= */
 /*   L A R G E   D E V I C E S   */
 /* ============================= */
 
-.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMedia_Desktop, L, @_sap_ui_layout_Grid_RespGridMedia_DesktopSize);
+.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMediaDesktop, L, @_sap_ui_layout_Grid_RespGridMediaDesktopSize);
 
  /* SHOW and HIDE for LARGE contexts */
-.@{_sap_ui_layout_Grid_RespGridMedia_Desktop} > .@{_sap_ui_layout_Grid_RespGridVisible}XL { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_Desktop} > .@{_sap_ui_layout_Grid_RespGridVisible}L { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_Desktop} > .@{_sap_ui_layout_Grid_RespGridVisible}M { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_Desktop} > .@{_sap_ui_layout_Grid_RespGridVisible}S { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaDesktop} > .@{_sap_ui_layout_Grid_RespGridVisible}XL { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaDesktop} > .@{_sap_ui_layout_Grid_RespGridVisible}L { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaDesktop} > .@{_sap_ui_layout_Grid_RespGridVisible}M { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaDesktop} > .@{_sap_ui_layout_Grid_RespGridVisible}S { display: none }
 
-.@{_sap_ui_layout_Grid_RespGridMedia_Desktop} > .@{_sap_ui_layout_Grid_RespGridHidden}XL { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_Desktop} > .@{_sap_ui_layout_Grid_RespGridHidden}L { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_Desktop} > .@{_sap_ui_layout_Grid_RespGridHidden}M { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_Desktop} > .@{_sap_ui_layout_Grid_RespGridHidden}S { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaDesktop} > .@{_sap_ui_layout_Grid_RespGridHidden}XL { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaDesktop} > .@{_sap_ui_layout_Grid_RespGridHidden}L { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaDesktop} > .@{_sap_ui_layout_Grid_RespGridHidden}M { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaDesktop} > .@{_sap_ui_layout_Grid_RespGridHidden}S { display: block }
 
 
 /* ====================================== */
 /*  E X T R A   L A R G E   D E V I C E S */
 /* ====================================== */
 
-.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMedia_XL, XL, @_sap_ui_layout_Grid_RespGridMedia_XLSize);
+.sapUiRespGridWriteCSS(@_sap_ui_layout_Grid_RespGridMediaXL, XL, @_sap_ui_layout_Grid_RespGridMediaXLSize);
 
 /* SHOW and HIDE for XLARGE contexts */
-.@{_sap_ui_layout_Grid_RespGridMedia_XL} > .@{_sap_ui_layout_Grid_RespGridVisible}XL { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_XL} > .@{_sap_ui_layout_Grid_RespGridVisible}L { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_XL} > .@{_sap_ui_layout_Grid_RespGridVisible}M { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_XL} > .@{_sap_ui_layout_Grid_RespGridVisible}S { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaXL} > .@{_sap_ui_layout_Grid_RespGridVisible}XL { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaXL} > .@{_sap_ui_layout_Grid_RespGridVisible}L { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaXL} > .@{_sap_ui_layout_Grid_RespGridVisible}M { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaXL} > .@{_sap_ui_layout_Grid_RespGridVisible}S { display: none }
 
-.@{_sap_ui_layout_Grid_RespGridMedia_XL} > .@{_sap_ui_layout_Grid_RespGridHidden}XL { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_XL} > .@{_sap_ui_layout_Grid_RespGridHidden}L { display: none }
-.@{_sap_ui_layout_Grid_RespGridMedia_XL} > .@{_sap_ui_layout_Grid_RespGridHidden}M { display: block }
-.@{_sap_ui_layout_Grid_RespGridMedia_XL} > .@{_sap_ui_layout_Grid_RespGridHidden}S { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaXL} > .@{_sap_ui_layout_Grid_RespGridHidden}XL { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaXL} > .@{_sap_ui_layout_Grid_RespGridHidden}L { display: none }
+.@{_sap_ui_layout_Grid_RespGridMediaXL} > .@{_sap_ui_layout_Grid_RespGridHidden}M { display: block }
+.@{_sap_ui_layout_Grid_RespGridMediaXL} > .@{_sap_ui_layout_Grid_RespGridHidden}S { display: block }
 
 
 

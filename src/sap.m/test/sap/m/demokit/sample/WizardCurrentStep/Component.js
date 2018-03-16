@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 		var Component = UIComponent.extend("sap.m.sample.WizardCurrentStep.Component", {
 
 			metadata: {
-				rootView: "sap.m.sample.WizardCurrentStep.V",
+				rootView: {
+					"viewName": "sap.m.sample.WizardCurrentStep.V",
+					"type": "XML",
+					"async": true
+				},
 				dependencies: {
 					libs: [
 						"sap.m",

@@ -1,222 +1,40 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
+
+<!--
+  Tested class: sap.ui.table.Column
+-->
+
 <html>
 
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta charset="utf-8">
-
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<title>QUnit Page for sap.ui.table.Column</title>
-
 	<script src="../shared-config.js"></script>
-	<script src="../../../../../resources/sap-ui-core.js"
-			data-sap-ui-libs="sap.m,sap.ui.core,sap.ui.commons,sap.ui.table">
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.table,sap.m">
 	</script>
-
-	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/table"></script>
-
-	<script>
-		(function () {
-			"use strict";
-			jQuery.sap.require("sap.ui.thirdparty.sinon");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-			sinon.config.useFakeTimers = true;
-
-			jQuery.sap.require("sap.ui.table.Table");
-
-			var Table = sap.ui.table.Table;
-			var Column = sap.ui.table.Column;
-
-			QUnit.module("Column Menu Items", {
-				beforeEach: function() {
-					this._oTable = new Table();
-					this._oColumn = new Column();
-				},
-				afterEach: function() {
-					this._oColumn.destroy();
-					this._oTable.destroy();
-				}
-			});
-
-			QUnit.test("Pre-Check Menu Item Creation", function(assert) {
-
-				//######################################################################################################
-				// Filter menu item
-				//######################################################################################################
-				this._oColumn.setFilterProperty("");
-				this._oColumn.setShowFilterMenuEntry(true);
-
-				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
-						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
-						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
-
-				this._oColumn.setShowFilterMenuEntry(false);
-				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
-						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
-						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
-
-				this._oColumn.setFilterProperty("myFilterPropertyName");
-				assert.ok(!this._oColumn.isFilterableByMenu(), "Not filterable by menu: " +
-						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
-						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
-
-				this._oColumn.setShowFilterMenuEntry(true);
-				assert.ok(this._oColumn.isFilterableByMenu(), "Filterable by menu: " +
-						"filterProperty: '" + (this._oColumn.getFilterProperty() ? this._oColumn.getFilterProperty() : "") + "', " +
-						"showFilterMenuEntry: " + this._oColumn.getShowFilterMenuEntry());
-
-				//######################################################################################################
-				// Sort menu item
-				//######################################################################################################
-				this._oColumn.setSortProperty("");
-				this._oColumn.setShowSortMenuEntry(true);
-
-				assert.ok(!this._oColumn.isSortableByMenu(), "Not sortable by menu: " +
-						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
-						"showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
-
-				this._oColumn.setShowSortMenuEntry(false);
-				assert.ok(!this._oColumn.isSortableByMenu(), "Not sortable by menu: " +
-						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
-						"showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
-
-				this._oColumn.setSortProperty("mySortPropertyName");
-				assert.ok(!this._oColumn.isSortableByMenu(), "Not sortable by menu: " +
-						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
-						"showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
-
-				this._oColumn.setShowSortMenuEntry(true);
-				assert.ok(this._oColumn.isSortableByMenu(), "Sortable by menu: " +
-						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
-						"showSortMenuEntry: " + this._oColumn.getShowSortMenuEntry());
-
-				//######################################################################################################
-				// Group menu item
-				//######################################################################################################
-
-				// reset Column Properties
-				this._oColumn.setFilterProperty("");
-				this._oColumn.setShowFilterMenuEntry(true);
-				this._oColumn.setSortProperty("");
-				this._oColumn.setShowSortMenuEntry(true);
-
-
-				// check column without parent
-				this._oTable.setEnableGrouping(true);
-				this._oColumn.setSortProperty("mySortPropertyName");
-				assert.ok(!this._oColumn.isGroupableByMenu(), "Not groupable by menu: " +
-						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
-						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
-						"enableGrouping: " + this._oTable.getEnableGrouping());
-
-				// check column with parent
-				this._oTable.addColumn(this._oColumn);
-
-				this._oTable.setEnableGrouping(true);
-				this._oColumn.setSortProperty("");
-				assert.ok(!this._oColumn.isGroupableByMenu(), "Not groupable by menu: " +
-						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
-						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
-						"enableGrouping: " + this._oTable.getEnableGrouping());
-
-				this._oTable.setEnableGrouping(false);
-				assert.ok(!this._oColumn.isGroupableByMenu(), "Not groupable by menu: " +
-						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
-						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
-						"enableGrouping: " + this._oTable.getEnableGrouping());
-
-				this._oColumn.setSortProperty("mySortPropertyName");
-				assert.ok(!this._oColumn.isGroupableByMenu(), "Not groupable by menu: " +
-						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
-						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
-						"enableGrouping: " + this._oTable.getEnableGrouping());
-
-				this._oTable.setEnableGrouping(true);
-				assert.ok(this._oColumn.isGroupableByMenu(), "Groupable by menu: " +
-						"parent: '" + (this._oColumn.getParent() ? "Has parent" : "No Parent") + "', " +
-						"sortProperty: '" + (this._oColumn.getSortProperty() ? this._oColumn.getSortProperty() : "") + "', " +
-						"enableGrouping: " + this._oTable.getEnableGrouping());
-			});
-
-			QUnit.module("Column Menu", {
-				beforeEach: function() {
-					var oModel = new sap.ui.model.json.JSONModel();
-					oModel.setData([{myProp: "someValue", myOtherProp: "someOtherValue"}]);
-					this._oTable = new Table();
-					this._oTable.bindRows("/");
-					this._oTable.setModel(oModel);
-					this._oColumnWithColumnMenu = new Column({
-						filterProperty: "myProp",
-						showFilterMenuEntry: true
-					});
-
-					this._oColumnWithUnifiedMenu = new Column({
-						filterProperty: "myOtherProp",
-						showFilterMenuEntry: true,
-						menu: new sap.ui.unified.Menu()
-					});
-
-					this._oTable.addColumn(this._oColumnWithColumnMenu);
-					this._oTable.addColumn(this._oColumnWithUnifiedMenu);
-
-					this._oTable.placeAt("qunit-fixture");
-					sap.ui.getCore().applyChanges();
-				},
-				afterEach: function() {
-					this._oColumnWithColumnMenu.destroy();
-					this._oColumnWithUnifiedMenu.destroy();
-					this._oTable.destroy();
-				}
-			});
-
-			QUnit.test("Filter on Column with ColumnMenu and UnifiedMenu", function(assert) {
-				var oColumnMenu = this._oColumnWithColumnMenu.getMenu();
-				var oSpyColumnMenu = this.spy(oColumnMenu, "_setFilterValue");
-				this._oColumnWithColumnMenu.filter("filterValue");
-				this._oColumnWithColumnMenu._openMenu();
-
-				var oFilterField = sap.ui.getCore().byId(oColumnMenu.getId() + "-filter");
-				assert.equal(oFilterField.getValue(), "filterValue", "Filter value set on ColumnMenu");
-				assert.ok(oSpyColumnMenu.called, "_setFilterValue called on ColumnMenu");
-
-				var oUnifiedMenu = this._oColumnWithUnifiedMenu.getMenu();
-				// implement a dummy function to allow usage of sinon.spy
-				oUnifiedMenu._setFilterValue = function() {};
-				var oSpyUnifiedMenu = this.spy(oUnifiedMenu, "_setFilterValue");
-
-				// if filter is called on a column, the filter state of the other columns must be updated as well
-				var oSpyColumnMenuFilterState = this.spy(oColumnMenu, "_setFilterState");
-				this._oColumnWithUnifiedMenu.filter("filterValue");
-				assert.ok(!oSpyUnifiedMenu.called, "_setFilterValue not called on UnifiedMenu");
-				assert.ok(oSpyColumnMenuFilterState.calledOnce, "_setFilterState called on ColumnMenu");
-			});
-
-			QUnit.test("Localization and Invalidation", function(assert) {
-				var oColumnMenu = this._oColumnWithColumnMenu.getMenu();
-				var oSpyColumnMenu = this.spy(oColumnMenu, "_updateResourceBundle");
-				this._oColumnWithColumnMenu._openMenu();
-
-				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
-				this._oTable._invalidateColumnMenus(true);
-				assert.ok(oSpyColumnMenu.calledOnce, "Bundle updated");
-				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-				this._oColumnWithColumnMenu._openMenu();
-				assert.ok(!oColumnMenu._bInvalidated, "ColumnMenu not invalidated");
-				this._oTable._invalidateColumnMenus();
-				assert.ok(oSpyColumnMenu.calledOnce, "Bundle not updated");
-				assert.ok(oColumnMenu._bInvalidated, "ColumnMenu invalidated");
-			});
-		})();
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-sap-ui-cover-only="sap/ui/table">
 	</script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+
+	<link rel="stylesheet" href="shared-qunit.css">
+	<script src="Column.qunit.js"></script>
 </head>
-<body>
-	<h1 id="qunit-header">QUnit Page for sap.ui.table.Column</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
+
+<body class="sapUiBody">
+<div id="qunit"></div>
+<div id="qunit-fixture"></div>
+<div id="content"></div> <!-- The content, which should exist throughout the entire test run. -->
 </body>
+
 </html>

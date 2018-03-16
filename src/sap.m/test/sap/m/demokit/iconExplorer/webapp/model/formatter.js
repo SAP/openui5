@@ -29,6 +29,15 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the approriate rating based on the favorite state
+		 * @param {string} sName the name of the icon
+		 * @return {int} 1 if favorite, 0 otherwise
+		 */
+		favoriteRating: function (sName) {
+			return (this.getModel("fav").isFavorite(sName) ? 1 : 0);
+		},
+
+		/**
 		 * Retrieves formatted text containing the unicode of the icon identified by the icon's name. Used as a formatter in the view.
 		 * @param {string} name the icon's name
 		 * @return {strng} the formattet text taht contains unicode of the queried icon
@@ -39,7 +48,7 @@ sap.ui.define([
 			var sUnicode = this.getModel().getUnicodeHTML(name.toLowerCase()),
 				sFormattedText;
 			sUnicode = sUnicode.substring(2, sUnicode.length - 1);
-			sFormattedText = this.getResourceBundle().getText("previewInfoUnicodeWithParams", [sUnicode])
+			sFormattedText = this.getResourceBundle().getText("previewInfoUnicodeWithParams", [sUnicode]);
 			return sFormattedText;
 		},
 

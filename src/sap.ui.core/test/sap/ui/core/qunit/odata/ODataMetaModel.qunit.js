@@ -38,11 +38,13 @@ sap.ui.require([
 					sap:sortable="false" sap:required-in-filter ="true" \
 					sap:display-format="UpperCase" >\
 				</Property>\
+				<Property Name="WebAddress" Type="Edm.String" />\
 				<Property Name="AnyProperty" Type="Edm.String" sap:display-format="NonNegative" \
 					sap:field-control="UX_FC_READONLY" sap:filterable="false" sap:sortable="false" \
 					sap:updatable="false" />\
 				<Property Name="NonFilterable" Type="Edm.String" sap:filterable="false" \
 					sap:heading="No Filter" sap:quickinfo="No Filtering" />\
+				<Property Name="YearMonthDay" Type="Edm.String" sap:semantics="yearmonthday" />\
 				<NavigationProperty Name="ToFoo" Relationship="GWSAMPLE_BASIC.Assoc_Foo" \
 					FromRole="FromRole_Foo" ToRole="ToRole_Foo" sap:filterable="false"/>\
 				<NavigationProperty Name="Corrupt" Relationship="NOT.Found" FromRole="F" \
@@ -98,6 +100,10 @@ sap.ui.require([
 					EntitySet="ProductSet" m:HttpMethod="POST" \
 					sap:action-for="GWSAMPLE_BASIC.Product">\
 				</FunctionImport>\
+				<FunctionImport Name="ReturnsCollection" \
+					ReturnType="Collection(GWSAMPLE_BASIC.Product)" \
+					EntitySet="ProductSet">\
+				</FunctionImport>\
 			</EntityContainer>\
 			<ComplexType Name="CT_Address">\
 				<Property Name="City" Type="Edm.String" MaxLength="40" sap:label="City"\
@@ -107,6 +113,35 @@ sap.ui.require([
 				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="1" Role="FromRole_Foo"/>\
 				<End Type="GWSAMPLE_BASIC.BusinessPartner" Multiplicity="*" Role="ToRole_Foo"/>\
 			</Association>\
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+					Target="GWSAMPLE_BASIC.BusinessPartner">\
+				<Annotation Term="Org.OData.Capabilities.V1.InsertRestrictions">\
+						<Record>\
+							<PropertyValue xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+								xmlns:bar="http://docs.oasis-open.org/odata/ns/bar"\
+								Property="AttributeNotation" NavigationPropertyPath="ToFoo"/>\
+							<PropertyValue Property="Collection_PropertyPath">\
+									<Collection>\
+										<PropertyPath\
+											xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+											>ToFoo</PropertyPath>\
+									</Collection>\
+							</PropertyValue>\
+							<PropertyValue Property="ElementNotation">\
+								<NavigationPropertyPath\
+									xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+									>ToFoo</NavigationPropertyPath>\
+							</PropertyValue>\
+							<PropertyValue Property="NonInsertableNavigationProperties">\
+									<Collection>\
+										<NavigationPropertyPath\
+											xmlns="http://docs.oasis-open.org/odata/ns/edm"\
+											>ToFoo</NavigationPropertyPath>\
+									</Collection>\
+							</PropertyValue>\
+						</Record>\
+				</Annotation>\
+			</Annotations>\
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
@@ -167,6 +202,9 @@ sap.ui.require([
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/BusinessPartnerID">\
 		<Annotation Term="Org.OData.Core.V1.Computed" Bool="false"/>\
 		<Annotation Term="com.sap.vocabularies.Common.v1.Text" Path="AnyProperty"/>\
+	</Annotations>\
+	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/WebAddress">\
+		<Annotation Term="Org.OData.Core.V1.IsURL"/>\
 	</Annotations>\
 	<Annotations Target="GWSAMPLE_BASIC.BusinessPartner/AnyProperty">\
 		<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl" Path="UX_FC_READONLY"/>\
@@ -316,6 +354,71 @@ sap.ui.require([
 </Schema>\
 </edmx:DataServices>\
 </edmx:Edmx>\
+		', sCurrencyCodeViaPath = '\
+<?xml version="1.0" encoding="utf-8"?>\
+<edmx:Edmx Version="1.0"\
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"\
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"\
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">\
+	<edmx:DataServices m:DataServiceVersion="2.0">\
+		<Schema Namespace="foo.bar" sap:schema-version="1"\
+			xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+			<ComplexType Name="Foo">\
+				<Property Name="Price" Type="Edm.Decimal" sap:unit="Currency/Code"/>\
+				<Property Name="BadPrice" Type="Edm.Decimal" sap:unit="Code"/>\
+				<Property Name="WrongSemantics" Type="Edm.Decimal" sap:unit="Currency/BadCode"/>\
+				<Property Name="Currency" Type="foo.bar.Currency"/>\
+			</ComplexType>\
+			<ComplexType Name="Currency">\
+				<Property Name="Code" Type="Edm.String" sap:semantics="currency-code"/>\
+				<Property Name="BadCode" Type="Edm.String" sap:semantics="wrongSemantics"/>\
+			</ComplexType>\
+			<EntityType Name="Product" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="ProductId" />\
+				</Key>\
+				<Property Name="ProductId" Type="Edm.String" MaxLength="20" />\
+				<Property Name="Price" Type="Edm.Decimal" sap:unit="to_Currency/Code" />\
+				<NavigationProperty Name="to_Currency"\
+					Relationship="foo.bar.ProductCurrency"\
+					FromRole="ToRole_ProductCurrency" ToRole="FromRole_ProductCurrency" />\
+			</EntityType>\
+			<EntityType Name="Currency" sap:content-version="1">\
+				<Key>\
+					<PropertyRef Name="Id" />\
+				</Key>\
+				<Property Name="Id" Type="Edm.String" MaxLength="20" />\
+				<Property Name="Code" Type="Edm.String" sap:semantics="currency-code" />\
+			</EntityType>\
+			<Association Name="ProductCurrency" sap:content-version="1">\
+				<End Type="foo.bar.Currency" Multiplicity="1"\
+					Role="FromRole_ProductCurrency" />\
+				<End Type="foo.bar.Product" Multiplicity="*"\
+					Role="ToRole_ProductCurrency" />\
+				<ReferentialConstraint>\
+					<Principal Role="FromRole_ProductCurrency">\
+						<PropertyRef Name="CurrencyId" />\
+					</Principal>\
+					<Dependent Role="ToRole_ProductCurrency">\
+						<PropertyRef Name="Id" />\
+					</Dependent>\
+				</ReferentialConstraint>\
+			</Association>\
+			<EntityContainer Name="foo.bar_Entities" m:IsDefaultEntityContainer="true"\
+				sap:supported-formats="atom json xlsx">\
+				<EntitySet Name="Products" EntityType="foo.bar.Product"\
+					sap:content-version="1" />\
+				<EntitySet Name="Currencies" EntityType="foo.bar.Currency"\
+					sap:content-version="1" />\
+				<AssociationSet Name="ProductCurrenciesSet"\
+					Association="foo.bar.ProductCurrency" sap:content-version="1">\
+					<End EntitySet="Currencies" Role="FromRole_ProductCurrency" />\
+					<End EntitySet="Products" Role="ToRole_ProductCurrency" />\
+				</AssociationSet>\
+			</EntityContainer>\
+		</Schema>\
+	</edmx:DataServices>\
+</edmx:Edmx>\
 		', sEmptyAnnotations = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">\
@@ -379,8 +482,7 @@ sap.ui.require([
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
-		',
-		sFARMetadataInvalid = '\
+		', sFARMetadataInvalid = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <!--\
 	fictitious empty response for \
@@ -407,8 +509,7 @@ sap.ui.require([
 		</Schema>\
 	</edmx:DataServices>\
 </edmx:Edmx>\
-		',
-		sMultipleValueListAnnotations = '\
+		', sMultipleValueListAnnotations = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="4.0"\
 	xmlns="http://docs.oasis-open.org/odata/ns/edm"\
@@ -432,8 +533,7 @@ sap.ui.require([
 </Schema>\
 </edmx:DataServices>\
 </edmx:Edmx>\
-		',
-		sValueListMetadata = '\
+		', sValueListMetadata = '\
 <?xml version="1.0" encoding="utf-8"?>\
 <edmx:Edmx Version="1.0"\
 	xmlns="http://schemas.microsoft.com/ado/2008/09/edm"\
@@ -471,7 +571,11 @@ sap.ui.require([
 </edmx:Edmx>\
 		',
 		mHeaders = {"Content-Type" : "application/xml"},
+		sIgnoreThisWarning = "EventProvider sap.ui.model.odata.ODataModel path /$metadata should be"
+			+ " absolute if no Context is set",
 		mFixture = {
+			"/fake/currencyCodeViaPath/$metadata" :
+				{headers : mHeaders, message : sCurrencyCodeViaPath},
 			"/fake/emptyDataServices/$metadata" :
 				{headers : mHeaders, message : sEmptyDataServices},
 			"/fake/emptyEntityType/$metadata" : {headers : mHeaders, message : sEmptyEntityType},
@@ -484,7 +588,8 @@ sap.ui.require([
 			"/fake/emptyAnnotations" : {headers : mHeaders, message : sEmptyAnnotations},
 			"/fake/multipleValueLists" :
 				{headers : mHeaders, message : sMultipleValueListAnnotations},
-			"/fake/valueListMetadata/$metadata" : {headers : mHeaders, message : sValueListMetadata},
+			"/fake/valueListMetadata/$metadata" :
+				{headers : mHeaders, message : sValueListMetadata},
 			"/FAR_CUSTOMER_LINE_ITEMS/annotations" :
 				{headers : mHeaders, message : sCustomerAnnotations},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata" :
@@ -507,9 +612,33 @@ sap.ui.require([
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_MyComplexTypeCustomer.xml"},
 			"/GWSAMPLE_BASIC/$metadata" : {source : "GWSAMPLE_BASIC.metadata.xml"},
 			"/GWSAMPLE_BASIC/annotations" : {source : "GWSAMPLE_BASIC.annotations.xml"}
-		},
-		oGlobalSandbox; // global sandbox for async tests
+		};
 
+	/**
+	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
+	 * "/fake/service" and the given (array of) annotation URLs.
+	 *
+	 * @param {object} assert the assertions
+	 * @param {object} oLogMock the log mock
+	 * @param {string|string[]} vAnnotationUrl
+	 *   the (array of) annotation URLs
+	 * @param {function(sap.ui.model.odata.ODataMetaModel)} fnCodeUnderTest
+	 *   the given code under test
+	 * @returns {any|Promise}
+	 *   (a promise to) whatever <code>fnCodeUnderTest</code> returns
+	 */
+	function withFakeService(assert, oLogMock, vAnnotationUrl, fnCodeUnderTest) {
+		oLogMock.expects("warning")
+			.withExactArgs("Inconsistent service",
+				"Use either 'sap:deletable' or 'sap:deletable-path' at entity set 'ProductSet'",
+				sComponent);
+		oLogMock.expects("warning")
+			.withExactArgs("Inconsistent service",
+				"Use either 'sap:updatable' or 'sap:updatable-path' at entity set 'ProductSet'",
+				sComponent);
+
+		return withGivenService(assert, "/fake/service", vAnnotationUrl, fnCodeUnderTest);
+	}
 
 	/**
 	 * Runs the given code under test with an <code>ODataMetaModel</code> for the service URL
@@ -583,21 +712,17 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.ODataMetaModel", {
 		beforeEach : function () {
-			oGlobalSandbox = sinon.sandbox.create();
-			TestUtils.useFakeServer(oGlobalSandbox, "sap/ui/core/qunit/model", mFixture);
+			TestUtils.useFakeServer(this._oSandbox, "sap/ui/core/qunit/model", mFixture);
 			this.iOldLogLevel = jQuery.sap.log.getLevel(sComponent);
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sComponent);
-			this.oLogMock = oGlobalSandbox.mock(jQuery.sap.log);
-			// TODO activate when all warnings unrelated to this module have been removed
-			//this.oLogMock.expects("warning").never();
+			this.oLogMock = this.mock(jQuery.sap.log);
+			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 		},
 		afterEach : function () {
 			jQuery.sap.log.setLevel(this.iOldLogLevel, sComponent);
 			ODataModel.mServiceData = {}; // clear cache
-			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
-			oGlobalSandbox.verifyAndRestore();
 		}
 	});
 
@@ -623,12 +748,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("compatibility with synchronous ODataModel", function (assert) {
-		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
-				json : true,
-				loadMetadataAsync : false
-			}),
-			oMetaModel = oModel.getMetaModel();
+		var oMetaModel, oModel;
+
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+			annotationURI : "/GWSAMPLE_BASIC/annotations",
+			json : true,
+			loadMetadataAsync : false
+		});
+		oMetaModel = oModel.getMetaModel();
 
 		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
 			"GWSAMPLE_BASIC", "metadata available");
@@ -646,22 +775,26 @@ sap.ui.require([
 
 		return oMetaModel.loaded().then(function () {
 			assert.strictEqual(arguments.length, 1, "almost no args");
-			assert.deepEqual(arguments[0], undefined, "almost no args");
+			assert.strictEqual(arguments[0], undefined, "almost no args");
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("compatibility with asynchronous old ODataModel", function (assert) {
-		var oModel = new ODataModel1("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
-				json : true,
-				loadMetadataAsync : true
-			}),
-			oMetaModel = oModel.getMetaModel();
+		var oMetaModel, oModel;
+
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+			annotationURI : "/GWSAMPLE_BASIC/annotations",
+			json : true,
+			loadMetadataAsync : true
+		});
+		oMetaModel = oModel.getMetaModel();
 
 		return oMetaModel.loaded().then(function () {
 			assert.strictEqual(arguments.length, 1, "almost no args");
-			assert.deepEqual(arguments[0], undefined, "almost no args");
+			assert.strictEqual(arguments[0], undefined, "almost no args");
 
 			assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
 				"GWSAMPLE_BASIC", "metadata available");
@@ -683,14 +816,11 @@ sap.ui.require([
 	QUnit.test("compatibility w/ asynchronous old ODataModel: use after load", function (assert) {
 		var iCount = 0,
 			fnDone = assert.async(),
-			oModel = new ODataModel1("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
-				json : true,
-				loadMetadataAsync : true
-			}),
-			oMetaModel;
+			oModel;
 
 		function loaded() {
+			var oMetaModel;
+
 			iCount += 1;
 			if (iCount === 2) {
 				// ...then get meta model and use immediately
@@ -719,6 +849,14 @@ sap.ui.require([
 			}
 		}
 
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+			annotationURI : "/GWSAMPLE_BASIC/annotations",
+			json : true,
+			loadMetadataAsync : true
+		});
+
 		// wait for metadata and annotations to be loaded (but not via oMetaModel.loaded())...
 		oModel.attachAnnotationsLoaded(loaded);
 		oModel.attachMetadataLoaded(loaded);
@@ -726,14 +864,18 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("compatibility with old ODataModel: separate value list load", function (assert) {
-		var oModel = new ODataModel1("/FAR_CUSTOMER_LINE_ITEMS", {
-				json : true,
-				loadMetadataAsync : false
-			}),
-			oMetaModel = oModel.getMetaModel(),
-			oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item"),
-			oProperty = oMetaModel.getODataProperty(oEntityType, "Customer"),
-			oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
+		var oContext, oEntityType, oMetaModel, oModel, oProperty;
+
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oModel = new ODataModel1("/FAR_CUSTOMER_LINE_ITEMS", {
+			json : true,
+			loadMetadataAsync : false
+		});
+		oMetaModel = oModel.getMetaModel();
+		oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
+		oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item");
+		oProperty = oMetaModel.getODataProperty(oEntityType, "Customer");
 
 		return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
 			assert.deepEqual(mValueLists, {
@@ -794,17 +936,22 @@ sap.ui.require([
 	QUnit.test("basics", function (assert) {
 		var oMetaModel = new ODataMetaModel({
 				getServiceMetadata : function () { return {dataServices : {}}; }
-			});
+			}),
+			that = this;
+
+		// code under test
+		assert.strictEqual(oMetaModel.getAdapterFactoryModulePath(),
+			"sap/ui/model/odata/v2/meta/ODataAdapterFactory");
 
 		return oMetaModel.loaded().then(function () {
-			var oMetaModelMock = oGlobalSandbox.mock(oMetaModel),
-				oModelMock = oGlobalSandbox.mock(oMetaModel.oModel),
+			var oMetaModelMock = that.mock(oMetaModel),
+				oModelMock = that.mock(oMetaModel.oModel),
 				oResult = {};
 
 			assert.strictEqual(arguments.length, 1, "almost no args");
-			assert.deepEqual(arguments[0], undefined, "almost no args");
+			assert.strictEqual(arguments[0], undefined, "almost no args");
 
-			oGlobalSandbox.mock(Model.prototype).expects("destroy");
+			that.mock(Model.prototype).expects("destroy");
 
 			// generic dispatching
 			["destroy", "isList"].forEach(function (sName) {
@@ -893,8 +1040,10 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("bindList", function (assert) {
+		var that = this;
+
 		return withMetaModel(assert, function (oMetaModel) {
-			var fnApply = oGlobalSandbox.mock(FilterProcessor).expects("apply"),
+			var fnApply = that.mock(FilterProcessor).expects("apply"),
 				oBinding,
 				oContext = oMetaModel.createBindingContext("/"),
 				aFilters = [],
@@ -914,7 +1063,7 @@ sap.ui.require([
 			assert.strictEqual(oBinding.iLength, oBinding.aIndices.length);
 
 			fnGetValue = fnApply.args[0][2];
-			oGlobalSandbox.mock(oMetaModel).expects("getProperty")
+			that.mock(oMetaModel).expects("getProperty")
 				.withExactArgs("0/namespace", sinon.match.same(oBinding.oList["schema"]))
 				.returns("foo");
 
@@ -1124,7 +1273,7 @@ sap.ui.require([
 	QUnit.test("_getObject: some error in parseExpression (not SyntaxError)", function (assert) {
 		var oError = new Error();
 
-		oGlobalSandbox.mock(BindingParser).expects("parseExpression").throws(oError);
+		this.mock(BindingParser).expects("parseExpression").throws(oError);
 
 		return withMetaModel(assert, function (oMetaModel) {
 			assert.throws(function () {
@@ -1135,12 +1284,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_getObject: caching queries", function (assert) {
+		var that = this;
+
 		return withMetaModel(assert, function (oMetaModel) {
 			var sPath = "/dataServices/schema/[${namespace}==='GWSAMPLE_BASIC']/entityType/"
 					+ "[$\{name}==='Product']",
 				oResult = oMetaModel._getObject(sPath);
 
-			oGlobalSandbox.mock(oMetaModel.oResolver).expects("bindProperty").never();
+			that.mock(oMetaModel.oResolver).expects("bindProperty").never();
 
 			assert.strictEqual(oMetaModel._getObject(sPath), oResult);
 		});
@@ -1236,8 +1387,8 @@ sap.ui.require([
 		title : "multiple annotation files"
 	}].forEach(function (oFixture, i) {
 		QUnit.test("ODataMetaModel loaded: " + oFixture.title, function (assert) {
-			return withGivenService(assert,
-					"/fake/service", oFixture.annotationURI, function (oMetaModel, oModel) {
+			return withFakeService(assert, this.oLogMock, oFixture.annotationURI,
+					function (oMetaModel, oModel) {
 				var oMetadata = oModel.getServiceMetadata(),
 					oMetaModelData = oMetaModel.getObject("/"),
 					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
@@ -1248,14 +1399,15 @@ sap.ui.require([
 					oBusinessPartner = oGWSampleBasic.entityType[0],
 					oBusinessPartnerId = oBusinessPartner.property[0],
 					oBusinessPartnerSet = oEntityContainer.entitySet[0],
+					oBusinessPartnerWebAddress = oBusinessPartner.property[1],
 					oContact = oGWSampleBasic.entityType[3],
 					oContactTel = oContact.property[4],
-					oAnyProperty = oBusinessPartner.property[1],
-					oNonFilterable = oBusinessPartner.property[2],
+					oAnyProperty = oBusinessPartner.property[2],
+					oNonFilterable = oBusinessPartner.property[3],
+					oYearMonthDay = oBusinessPartner.property[4],
 					oCTAddress = oGWSampleBasic.complexType[0],
 					oCTAddressCity = oCTAddress.property[0],
 					oFunctionImport = oEntityContainer.functionImport[0],
-					oNavigationProperty = oBusinessPartner.navigationProperty[0],
 					oParameter = oFunctionImport.parameter[0],
 					sPrefix,
 					oProduct = oGWSampleBasic.entityType[2],
@@ -1264,6 +1416,7 @@ sap.ui.require([
 					oProductSet = oEntityContainer.entitySet[1],
 					oProductWeightMeasure =  oProduct.property[2],
 					oProductWeightUnit =  oProduct.property[3],
+					oToFooNavigationProperty = oBusinessPartner.navigationProperty[0],
 					oValue,
 					oVHSex = oGWSampleBasic.entityType[1],
 					oVHSexSet = oEntityContainer.entitySet[2];
@@ -1285,7 +1438,7 @@ sap.ui.require([
 							sProperty = "Insertable";
 					}
 
-					assert.deepEqual(oVHSexSet["sap:" + sExtension], "false");
+					assert.strictEqual(oVHSexSet["sap:" + sExtension], "false");
 					delete oVHSexSet["sap:" + sExtension];
 					oExpected = {};
 					oExpected[sProperty] = {"Bool" : "false"};
@@ -1318,11 +1471,31 @@ sap.ui.require([
 
 				assert.strictEqual(oGWSampleBasic.$path, "/dataServices/schema/0");
 				delete oGWSampleBasic.$path;
-				assert.deepEqual(oGWSampleBasic["sap:schema-version"], "0000");
+				assert.strictEqual(oGWSampleBasic["sap:schema-version"], "0000");
 				delete oGWSampleBasic["sap:schema-version"];
+				assert.deepEqual(oGWSampleBasic["Org.Odata.Core.V1.SchemaVersion"], {
+					String : "0000"
+				});
+				delete oGWSampleBasic["Org.Odata.Core.V1.SchemaVersion"];
 
-				assert.deepEqual(oBusinessPartner["sap:content-version"], "1");
+				assert.strictEqual(oBusinessPartner["sap:content-version"], "1");
 				delete oBusinessPartner["sap:content-version"];
+
+				assert.deepEqual(oBusinessPartner["Org.OData.Capabilities.V1.InsertRestrictions"], {
+					"AttributeNotation" : {
+						"NavigationPropertyPath" : "ToFoo"
+					},
+					"Collection_PropertyPath": [{
+						"PropertyPath": "ToFoo"
+					}],
+					"ElementNotation": {
+						"NavigationPropertyPath": "ToFoo"
+					},
+					"NonInsertableNavigationProperties" : [{
+						"NavigationPropertyPath" : "ToFoo"
+					}]
+				});
+				delete oBusinessPartner["Org.OData.Capabilities.V1.InsertRestrictions"];
 
 				assert.strictEqual(oCTAddress.namespace, "GWSAMPLE_BASIC");
 				delete oCTAddress.namespace;
@@ -1330,7 +1503,7 @@ sap.ui.require([
 					"$path");
 				delete oCTAddress.$path;
 
-				assert.deepEqual(oAssociation["sap:content-version"], "1");
+				assert.strictEqual(oAssociation["sap:content-version"], "1");
 				delete oAssociation["sap:content-version"];
 
 				assert.strictEqual(oAssociation.namespace, "GWSAMPLE_BASIC");
@@ -1338,13 +1511,13 @@ sap.ui.require([
 				assert.strictEqual(oAssociation.$path, "/dataServices/schema/0/association/0");
 				delete oAssociation.$path;
 
-				assert.deepEqual(oAssociationSet["sap:creatable"], "false");
+				assert.strictEqual(oAssociationSet["sap:creatable"], "false");
 				delete oAssociationSet["sap:creatable"];
 
-				assert.deepEqual(oBusinessPartnerSet["sap:content-version"], "1");
+				assert.strictEqual(oBusinessPartnerSet["sap:content-version"], "1");
 				delete oBusinessPartnerSet["sap:content-version"];
 
-				assert.deepEqual(oEntityContainer["sap:use-batch"], "false");
+				assert.strictEqual(oEntityContainer["sap:use-batch"], "false");
 				delete oEntityContainer["sap:use-batch"];
 
 				assert.strictEqual(oEntityContainer.namespace, "GWSAMPLE_BASIC");
@@ -1353,20 +1526,17 @@ sap.ui.require([
 					"/dataServices/schema/0/entityContainer/0");
 				delete oEntityContainer.$path;
 
-				assert.deepEqual(oFunctionImport["sap:action-for"],
+				assert.strictEqual(oFunctionImport["sap:action-for"],
 					"GWSAMPLE_BASIC.BusinessPartner");
 				delete oFunctionImport["sap:action-for"];
 
-				assert.deepEqual(oEntityContainer.functionImport[1]["sap:action-for"],
+				assert.strictEqual(oEntityContainer.functionImport[1]["sap:action-for"],
 					"GWSAMPLE_BASIC.Product");
 				delete oEntityContainer.functionImport[1]["sap:action-for"];
 
-				assert.deepEqual(oNavigationProperty["sap:filterable"], "false");
-				delete oNavigationProperty["sap:filterable"];
-
-				assert.deepEqual(oVHSex["sap:content-version"], "1");
+				assert.strictEqual(oVHSex["sap:content-version"], "1");
 				delete oVHSex["sap:content-version"];
-				assert.deepEqual(oVHSexSet["sap:content-version"], "1");
+				assert.strictEqual(oVHSexSet["sap:content-version"], "1");
 				delete oVHSexSet["sap:content-version"];
 
 				if (i > 0) {
@@ -1404,6 +1574,11 @@ sap.ui.require([
 					});
 					delete oBusinessPartner["com.sap.vocabularies.UI.v1.HeaderInfo"];
 
+					// DefaultValue="true"
+					assert.deepEqual(oBusinessPartnerWebAddress["Org.OData.Core.V1.IsURL"],
+						{"Bool" : "true"}, 'DefaultValue="true"');
+					delete oBusinessPartnerWebAddress["Org.OData.Core.V1.IsURL"];
+
 					if (i > 1) { // additional tests for 2nd annotations file
 						// schema
 						assert.deepEqual(oGWSampleBasic["acme.Foo.v1.Foo"], {
@@ -1411,10 +1586,10 @@ sap.ui.require([
 						});
 						delete oGWSampleBasic["acme.Foo.v1.Foo"];
 						// entity type: navigation property
-						assert.deepEqual(oNavigationProperty["acme.Foo.v1.Foo"], {
+						assert.deepEqual(oToFooNavigationProperty["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.BusinessPartner/ToFoo"
 						});
-						delete oNavigationProperty["acme.Foo.v1.Foo"];
+						delete oToFooNavigationProperty["acme.Foo.v1.Foo"];
 						// complex type
 						assert.deepEqual(oCTAddress["acme.Foo.v1.Foo"], {
 							"String" : "GWSAMPLE_BASIC.CT_Address"
@@ -1471,7 +1646,7 @@ sap.ui.require([
 				delete oProductWeightMeasure["com.sap.vocabularies.Analytics.v1.Measure"];
 
 				// sap:label
-				assert.deepEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
+				assert.strictEqual(oBusinessPartnerId["sap:label"], "Bus. Part. ID");
 				delete oBusinessPartnerId["sap:label"];
 				assert.deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : "Bus. Part. ID"
@@ -1480,20 +1655,20 @@ sap.ui.require([
 
 				// in case of i > 1 property has been overwritten by annotation file
 				// complex type: property
-				assert.deepEqual(oCTAddressCity["sap:label"], "City");
+				assert.strictEqual(oCTAddressCity["sap:label"], "City");
 				delete oCTAddressCity["sap:label"];
 				assert.deepEqual(oCTAddressCity["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : i <= 1 ? "City" : "GWSAMPLE_BASIC.CT_Address/City"
 				}, "Label derived from sap:label");
 				delete oCTAddressCity["com.sap.vocabularies.Common.v1.Label"];
 				// check sap:semantics
-				assert.deepEqual(oCTAddressCity["sap:semantics"], "city");
+				assert.strictEqual(oCTAddressCity["sap:semantics"], "city");
 				delete oCTAddressCity["sap:semantics"];
 				assert.deepEqual(oCTAddress["com.sap.vocabularies.Communication.v1.Contact"],
 					{ "adr" : { "locality" : { "Path" : "City" } } });
 				delete oCTAddress["com.sap.vocabularies.Communication.v1.Contact"];
 
-				assert.deepEqual(oParameter["sap:label"], "ID");
+				assert.strictEqual(oParameter["sap:label"], "ID");
 				delete oParameter["sap:label"];
 				assert.deepEqual(oParameter["com.sap.vocabularies.Common.v1.Label"], {
 					"String" : "ID"
@@ -1510,9 +1685,9 @@ sap.ui.require([
 				checkCapabilities("deletable");
 
 				// sap:creatable=false and sap:updatable=false on property level
-				assert.deepEqual(oBusinessPartnerId["sap:creatable"], "false");
+				assert.strictEqual(oBusinessPartnerId["sap:creatable"], "false");
 				delete oBusinessPartnerId["sap:creatable"];
-				assert.deepEqual(oBusinessPartnerId["sap:updatable"], "false");
+				assert.strictEqual(oBusinessPartnerId["sap:updatable"], "false");
 				delete oBusinessPartnerId["sap:updatable"];
 				assert.deepEqual(oBusinessPartnerId["Org.OData.Core.V1.Computed"], {
 					"Bool" : (i > 0 ? "false" : "true")
@@ -1521,7 +1696,7 @@ sap.ui.require([
 
 				// sap:creatable=true and sap:updatable=false on property level
 				// sap:creatable=true is the default and thus no SAP V2 annotation is added
-				assert.deepEqual(oAnyProperty["sap:updatable"], "false");
+				assert.strictEqual(oAnyProperty["sap:updatable"], "false");
 				delete oAnyProperty["sap:updatable"];
 				assert.deepEqual(oAnyProperty["Org.OData.Core.V1.Immutable"], {
 					"Bool" : "true"
@@ -1529,7 +1704,7 @@ sap.ui.require([
 				delete oAnyProperty["Org.OData.Core.V1.Immutable"];
 
 				// sap:searchable
-				assert.deepEqual(oVHSexSet["sap:searchable"], "true");
+				assert.strictEqual(oVHSexSet["sap:searchable"], "true");
 				delete oVHSexSet["sap:searchable"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"], {
@@ -1538,7 +1713,7 @@ sap.ui.require([
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SearchRestrictions"];
 
 				// sap:pageable
-				assert.deepEqual(oVHSexSet["sap:pageable"], "false");
+				assert.strictEqual(oVHSexSet["sap:pageable"], "false");
 				delete oVHSexSet["sap:pageable"];
 				assert.deepEqual(oVHSexSet["Org.OData.Capabilities.V1.TopSupported"],
 					{"Bool" : "false"}, "VH_SexSet not TopSupported");
@@ -1548,14 +1723,14 @@ sap.ui.require([
 				delete oVHSexSet["Org.OData.Capabilities.V1.SkipSupported"];
 
 				// sap:topable
-				assert.deepEqual(oBusinessPartnerSet["sap:topable"], "false");
+				assert.strictEqual(oBusinessPartnerSet["sap:topable"], "false");
 				delete oBusinessPartnerSet["sap:topable"];
 				assert.deepEqual(oBusinessPartnerSet["Org.OData.Capabilities.V1.TopSupported"],
 					{"Bool" : "false"}, "oBusinessPartnerSet not TopSupported");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.TopSupported"];
 
 				// sap:requires-filter
-				assert.deepEqual(oBusinessPartnerSet["sap:requires-filter"], "true");
+				assert.strictEqual(oBusinessPartnerSet["sap:requires-filter"], "true");
 				delete oBusinessPartnerSet["sap:requires-filter"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"].
@@ -1564,48 +1739,48 @@ sap.ui.require([
 					RequiresFilter;
 
 				// sap:text
-				assert.deepEqual(oBusinessPartnerId["sap:text"], "AnyProperty");
+				assert.strictEqual(oBusinessPartnerId["sap:text"], "AnyProperty");
 				delete oBusinessPartnerId["sap:text"];
 				assert.deepEqual(oBusinessPartnerId["com.sap.vocabularies.Common.v1.Text"],
 					{ "Path" : "AnyProperty" }, "BusinessPartnerId text");
 				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.Text"];
 
 				// sap:precision
-				assert.deepEqual(oProductPrice["sap:precision"], "PriceScale");
+				assert.strictEqual(oProductPrice["sap:precision"], "PriceScale");
 				delete oProductPrice["sap:precision"];
 				assert.deepEqual(oProductPrice["Org.OData.Measures.V1.Scale"],
 					{ "Path" : "PriceScale" }, "ProductPrice precision");
 				delete oProductPrice["Org.OData.Measures.V1.Scale"];
 
 				// sap:unit - currency
-				assert.deepEqual(oProductPrice["sap:unit"], "CurrencyCode");
+				assert.strictEqual(oProductPrice["sap:unit"], "CurrencyCode");
 				delete oProductPrice["sap:unit"];
-				assert.deepEqual(oProductCurrencyCode["sap:semantics"], "currency-code");
+				assert.strictEqual(oProductCurrencyCode["sap:semantics"], "currency-code");
 				delete oProductCurrencyCode["sap:semantics"];
 				assert.deepEqual(oProductPrice["Org.OData.Measures.V1.ISOCurrency"],
 					{ "Path" : (i > 0 ? "CurrencyCodeFromAnnotation" : "CurrencyCode") },
 					"ProductPrice currency");
 				delete oProductPrice["Org.OData.Measures.V1.ISOCurrency"];
 				// sap:unit - unit
-				assert.deepEqual(oProductWeightMeasure["sap:unit"], "WeightUnit");
+				assert.strictEqual(oProductWeightMeasure["sap:unit"], "WeightUnit");
 				delete oProductWeightMeasure["sap:unit"];
-				assert.deepEqual(oProductWeightUnit["sap:semantics"], "unit-of-measure");
+				assert.strictEqual(oProductWeightUnit["sap:semantics"], "unit-of-measure");
 				delete oProductWeightUnit["sap:semantics"];
 				assert.deepEqual(oProductWeightMeasure["Org.OData.Measures.V1.Unit"],
 					{ "Path" : "WeightUnit" }, "ProductWeightMeasure unit");
 				delete oProductWeightMeasure["Org.OData.Measures.V1.Unit"];
 
 				// sap:field-control
-				assert.deepEqual(oAnyProperty["sap:field-control"], "UX_FC_READONLY");
+				assert.strictEqual(oAnyProperty["sap:field-control"], "UX_FC_READONLY");
 				delete oAnyProperty["sap:field-control"];
 				assert.deepEqual(oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"],
 					{ "Path" : "UX_FC_READONLY" }, "AnyProperty FieldControl");
 				delete oAnyProperty["com.sap.vocabularies.Common.v1.FieldControl"];
 
 				// sap:sortable
-				assert.deepEqual(oBusinessPartnerId["sap:sortable"], "false");
+				assert.strictEqual(oBusinessPartnerId["sap:sortable"], "false");
 				delete oBusinessPartnerId["sap:sortable"];
-				assert.deepEqual(oAnyProperty["sap:sortable"], "false");
+				assert.strictEqual(oAnyProperty["sap:sortable"], "false");
 				delete oAnyProperty["sap:sortable"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"], {
@@ -1617,9 +1792,9 @@ sap.ui.require([
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.SortRestrictions"];
 
 				// sap:filterable
-				assert.deepEqual(oAnyProperty["sap:filterable"], "false");
+				assert.strictEqual(oAnyProperty["sap:filterable"], "false");
 				delete oAnyProperty["sap:filterable"];
-				assert.deepEqual(oNonFilterable["sap:filterable"], "false");
+				assert.strictEqual(oNonFilterable["sap:filterable"], "false");
 				delete oNonFilterable["sap:filterable"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
@@ -1628,14 +1803,39 @@ sap.ui.require([
 						[
 							{"PropertyPath" : "AnyProperty"},
 							{"PropertyPath" : "NonFilterable"},
-							{"PropertyPath" : "ToFoo"}
+							// deprecated but still converted
+							// TODO Remove Utils.addPropertyToAnnotation("sap:filterable"...) call
+							// for navigation properties from calculateEntitySetAnnotations after
+							// all annotation consumers have adjusted their code to use only
+							// Org.OData.Capabilities.V1.NavigationRestrictions instead of
+							// Org.OData.Capabilities.V1.FilterRestrictions for navigation
+							// properties.
+							{"PropertyPath" : "ToFoo"} // deprecated but still converted
 						],
 					"BusinessPartnerSet not filterable");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"]
 					["NonFilterableProperties"];
 
+				assert.deepEqual(
+					oBusinessPartnerSet["Org.OData.Capabilities.V1.NavigationRestrictions"],
+					{
+						"RestrictedProperties" : [{
+							"NavigationProperty" : {
+								"NavigationPropertyPath" : "ToFoo"
+							},
+							"FilterRestrictions" : {
+								"Filterable": {"Bool" : "false"}
+							}
+						}]
+					},
+					"Non filterable navigation property");
+				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.NavigationRestrictions"];
+
+				assert.strictEqual(oToFooNavigationProperty["sap:filterable"], "false");
+				delete oToFooNavigationProperty["sap:filterable"];
+
 				// sap:required-in-filter
-				assert.deepEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
+				assert.strictEqual(oBusinessPartnerId["sap:required-in-filter"], "true");
 				delete oBusinessPartnerId["sap:required-in-filter"];
 				// check that V4 annotations win
 				assert.deepEqual(
@@ -1645,6 +1845,15 @@ sap.ui.require([
 						: [ {"PropertyPath" : "AnyProperty"} ]
 					}, "BusinessPartnerSet filter restrictions");
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.FilterRestrictions"];
+
+				// sap:semantics="yearmonthday" --> com.sap.vocabularies.Common.v1.IsCalendarDate
+				assert.strictEqual(oYearMonthDay["sap:semantics"], "yearmonthday");
+				delete oYearMonthDay["sap:semantics"];
+				assert.deepEqual(
+					oYearMonthDay["com.sap.vocabularies.Common.v1.IsCalendarDate"],
+					{"Bool" : "true"},
+					'sap:semantics="yearmonthday" --> ...Common.v1.IsCalendarDate');
+				delete oYearMonthDay["com.sap.vocabularies.Common.v1.IsCalendarDate"];
 
 				// sap:semantics for Communication.Contact
 				// test only a subset of sap:semantics (different categories)
@@ -1708,18 +1917,18 @@ sap.ui.require([
 				delete oContactTel["com.sap.vocabularies.Communication.v1.IsPhoneNumber"];
 
 				// sap:display-format
-				assert.deepEqual(oAnyProperty["sap:display-format"], "NonNegative");
+				assert.strictEqual(oAnyProperty["sap:display-format"], "NonNegative");
 				delete oAnyProperty["sap:display-format"];
 				oValue = oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 				if (i === 2) {
-					assert.deepEqual(oValue, {}, "sap:display-format=NonNegative");
+					assert.deepEqual(oValue, {"Bool" : "true"}, "sap:display-format=NonNegative");
 				} else {
 					assert.deepEqual(oValue, { "Bool" : (i === 0 ? "true" : "false") },
 						"sap:display-format=NonNegative");
 				}
 				delete oAnyProperty["com.sap.vocabularies.Common.v1.IsDigitSequence"];
 
-				assert.deepEqual(oBusinessPartnerId["sap:display-format"], "UpperCase");
+				assert.strictEqual(oBusinessPartnerId["sap:display-format"], "UpperCase");
 				delete oBusinessPartnerId["sap:display-format"];
 				assert.deepEqual(
 					oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"], {
@@ -1728,7 +1937,7 @@ sap.ui.require([
 				delete oBusinessPartnerId["com.sap.vocabularies.Common.v1.IsUpperCase"];
 
 				// sap:heading
-				assert.deepEqual(oNonFilterable["sap:heading"], "No Filter");
+				assert.strictEqual(oNonFilterable["sap:heading"], "No Filter");
 				delete oNonFilterable["sap:heading"];
 				assert.deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.Heading"], {
 					"String" : (i === 0 ? "No Filter" : "No Filter via Annotation")
@@ -1736,7 +1945,7 @@ sap.ui.require([
 				delete oNonFilterable["com.sap.vocabularies.Common.v1.Heading"];
 
 				// sap:quickinfo
-				assert.deepEqual(oNonFilterable["sap:quickinfo"], "No Filtering");
+				assert.strictEqual(oNonFilterable["sap:quickinfo"], "No Filtering");
 				delete oNonFilterable["sap:quickinfo"];
 				assert.deepEqual(oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"], {
 					"String" : (i === 0 ? "No Filtering" : "No Filtering via Annotation")
@@ -1744,9 +1953,9 @@ sap.ui.require([
 				delete oNonFilterable["com.sap.vocabularies.Common.v1.QuickInfo"];
 
 				// sap:visible
-				assert.deepEqual(oProductWeightUnit["sap:visible"], "false");
+				assert.strictEqual(oProductWeightUnit["sap:visible"], "false");
 				delete oProductWeightUnit["sap:visible"];
-				assert.deepEqual(oProductWeightMeasure["sap:visible"], "true");
+				assert.strictEqual(oProductWeightMeasure["sap:visible"], "true");
 				delete oProductWeightMeasure["sap:visible"];
 				assert.deepEqual(
 					oProductWeightUnit["com.sap.vocabularies.Common.v1.FieldControl"], {
@@ -1760,7 +1969,7 @@ sap.ui.require([
 				delete oProductWeightUnit["com.sap.vocabularies.UI.v1.Hidden"];
 
 				// sap:deletable-path (EntitySet)
-				assert.deepEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
+				assert.strictEqual(oBusinessPartnerSet["sap:deletable-path"], "Deletable");
 				delete oBusinessPartnerSet["sap:deletable-path"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.DeleteRestrictions"],
@@ -1769,7 +1978,7 @@ sap.ui.require([
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.DeleteRestrictions"];
 
 				// sap:updatable-path (EntitySet)
-				assert.deepEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
+				assert.strictEqual(oBusinessPartnerSet["sap:updatable-path"], "Updatable");
 				delete oBusinessPartnerSet["sap:updatable-path"];
 				assert.deepEqual(
 					oBusinessPartnerSet["Org.OData.Capabilities.V1.UpdateRestrictions"],
@@ -1778,11 +1987,11 @@ sap.ui.require([
 				delete oBusinessPartnerSet["Org.OData.Capabilities.V1.UpdateRestrictions"];
 
 				// sap:filter-restriction (Property)
-				assert.deepEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
+				assert.strictEqual(oBusinessPartnerId["sap:filter-restriction"], "multi-value");
 				delete oBusinessPartnerId["sap:filter-restriction"];
-				assert.deepEqual(oProductPrice["sap:filter-restriction"], "interval");
+				assert.strictEqual(oProductPrice["sap:filter-restriction"], "interval");
 				delete oProductPrice["sap:filter-restriction"];
-				assert.deepEqual(oProductCurrencyCode["sap:filter-restriction"], "single-value");
+				assert.strictEqual(oProductCurrencyCode["sap:filter-restriction"], "single-value");
 				delete oProductCurrencyCode["sap:filter-restriction"];
 
 				sPrefix = "com.sap.vocabularies.Common.v1.";
@@ -1813,24 +2022,28 @@ sap.ui.require([
 				delete oProductSet[sPrefix + "FilterExpressionRestrictions"];
 
 				// sap:deletable/updatable-path after sap:deletable/updatable (EntitySet)
-				assert.deepEqual(oProductSet["sap:deletable-path"], "Deletable");
+				assert.strictEqual(oProductSet["sap:deletable-path"], "Deletable");
 				delete oProductSet["sap:deletable-path"];
-				assert.deepEqual(oProductSet["sap:deletable"], "false");
+				assert.strictEqual(oProductSet["sap:deletable"], "false");
 				delete oProductSet["sap:deletable"];
 				assert.deepEqual(
 					oProductSet["Org.OData.Capabilities.V1.DeleteRestrictions"],
 					{"Deletable" : {"Bool" : "false"}}, "deletable-path");
 				delete oProductSet["Org.OData.Capabilities.V1.DeleteRestrictions"];
-				assert.deepEqual(oProductSet["sap:updatable-path"], "Updatable");
+				assert.strictEqual(oProductSet["sap:updatable-path"], "Updatable");
 				delete oProductSet["sap:updatable-path"];
-				assert.deepEqual(oProductSet["sap:updatable"], "true");
+				assert.strictEqual(oProductSet["sap:updatable"], "true");
 				delete oProductSet["sap:updatable"];
 				assert.deepEqual(
 					oProductSet["Org.OData.Capabilities.V1.UpdateRestrictions"],
 					{"Updatable" : {"Bool" : "false"}}, "updatable-path");
 				delete oProductSet["Org.OData.Capabilities.V1.UpdateRestrictions"];
-				assert.deepEqual(oProductSet["sap:searchable"], "true");
+				assert.strictEqual(oProductSet["sap:searchable"], "true");
 				delete oProductSet["sap:searchable"];
+
+				// remove datajs artefact for inline annotations in $metadata
+				// @see _ODataMetaModelUtils.merge
+				delete oMetadata.dataServices.schema[0].annotations;
 
 				assert.deepEqual(oMetaModelData, oMetadata, "nothing else left...");
 				assert.notStrictEqual(oMetaModelData, oMetadata, "is clone");
@@ -1844,12 +2057,17 @@ sap.ui.require([
 	// We make sure the same happens even with our asynchronous constructor.
 	[false, true].forEach(function (bAsync) {
 		QUnit.test("Errors thrown inside load(), async = " + bAsync, function (assert) {
-			var oError = new Error("This call failed intentionally"),
-				oModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
-					annotationURI : "",
-					json : true,
-					loadMetadataAsync : bAsync
-				});
+			var oError, oModel;
+
+			this.oLogMock.expects("warning").exactly(bAsync ? 0 : 1)
+				.withExactArgs(sIgnoreThisWarning);
+
+			oError = new Error("This call failed intentionally");
+			oModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
+				annotationURI : "",
+				json : true,
+				loadMetadataAsync : bAsync
+			});
 
 			if (bAsync) {
 				this.oLogMock.expects("error").withExactArgs(
@@ -1857,7 +2075,7 @@ sap.ui.require([
 					"sap.ui.model.odata.v2.ODataModel");
 			}
 			// Note: this is just a placeholder for "anything which could go wrong inside load()"
-			oGlobalSandbox.stub(Model.prototype, "setDefaultBindingMode").throws(oError);
+			this.mock(Model.prototype).expects("setDefaultBindingMode").throws(oError);
 
 			// code under test
 			return oModel.getMetaModel().loaded().then(function () {
@@ -1910,20 +2128,53 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getODataEntityContainer", function (assert) {
+	QUnit.test("getODataEntityContainer (as object or as path)", function (assert) {
 		return withMetaModel(assert, function (oMetaModel) {
-			assert.strictEqual(oMetaModel.getODataEntityContainer(),
-				oMetaModel.getObject("/dataServices/schema/0/entityContainer/0"));
+			var sPath = "/dataServices/schema/0/entityContainer/0",
+				oEntityContainer = oMetaModel.getObject(sPath);
+
+			assert.strictEqual(oMetaModel.getODataEntityContainer(), oEntityContainer);
+			assert.strictEqual(oMetaModel.getODataEntityContainer(true), sPath);
+
+			// find the single container even if it is not marked as default
+			delete oEntityContainer.isDefaultEntityContainer;
+			assert.strictEqual(oMetaModel.getODataEntityContainer(), oEntityContainer);
+			assert.strictEqual(oMetaModel.getODataEntityContainer(true), sPath);
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getODataEntityContainer as path", function (assert) {
+	QUnit.test("getODataEntityContainer (multiple containers)", function (assert) {
 		return withMetaModel(assert, function (oMetaModel) {
-			assert.strictEqual(oMetaModel.getODataEntityContainer(true),
-				"/dataServices/schema/0/entityContainer/0");
+
+			// multiple entity containers within single schema
+			oMetaModel.getObject("/dataServices").schema = [{
+				entityContainer : [{name : "A"}, {name : "B"}],
+				namespace : "ignored"
+			}];
+
+			assert.strictEqual(oMetaModel.getODataEntityContainer(), null);
+			assert.strictEqual(oMetaModel.getODataEntityContainer(true), undefined);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getODataEntityContainer (multiple schemas)", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+
+			// single entity container, but multiple schemas
+			oMetaModel.getObject("/dataServices").schema = [{
+				entityContainer : [{name : "ignored"}],
+				namespace : "A"
+			}, {
+				namespace : "B"
+			}];
+
+			assert.strictEqual(oMetaModel.getODataEntityContainer(), null);
+			assert.strictEqual(oMetaModel.getODataEntityContainer(true), undefined);
+		});
+	});
+	// Note: see sEmptyDataServices and sEmptySchema for cases w/o schemas or w/o entity containers
 
 	//*********************************************************************************************
 	QUnit.test("getODataEntitySet", function (assert) {
@@ -2061,13 +2312,28 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataAssociation*Set*End: set not found", function (assert) {
-		return withGivenService(assert, "/fake/service", "", function (oMetaModel, oModel) {
+		return withFakeService(assert, this.oLogMock, "", function (oMetaModel, oModel) {
 				var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner");
 
 				assert.strictEqual(
 					oMetaModel.getODataAssociationSetEnd(oEntityType, "Corrupt"),
 					null);
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getODataAssociation*Set*End: entityContainer is undefined", function (assert) {
+		var that = this;
+
+		return withMetaModel(assert, function (oMetaModel) {
+			var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product");
+
+			that.mock(oMetaModel).expects("getODataEntityContainer").returns(null);
+
+			// code under test
+			assert.strictEqual(oMetaModel.getODataAssociationSetEnd(oEntityType, "ToSupplier"),
+				null);
+		});
 	});
 
 	//*********************************************************************************************
@@ -2184,10 +2450,10 @@ sap.ui.require([
 			}, /Not an absolute path: foo\/bar/);
 			assert.throws(function () {
 				oMetaModel.getMetaContext("/FooSet('123')");
-			}, /Entity set not found: FooSet\('123'\)/);
+			}, /Entity set or function import not found: FooSet/);
 			assert.throws(function () {
 				oMetaModel.getMetaContext("/('123')");
-			}, /Entity set not found: \('123'\)/);
+			}, /Entity set or function import not found: /);
 		});
 	});
 
@@ -2238,7 +2504,7 @@ sap.ui.require([
 
 			assert.throws(function () {
 				oMetaModel.getMetaContext("/FooSet('123')/Bar");
-			}, /Entity set not found: FooSet/);
+			}, /Entity set or function import not found: FooSet/);
 		});
 	});
 
@@ -2286,8 +2552,97 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import only", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			var sPath = "/SalesOrder_Confirm",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/entityContainer/0/functionImport/1");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import returning collection", function (assert) {
+		return withFakeService(assert, this.oLogMock, "", function (oMetaModel) {
+			var sPath = "/ReturnsCollection(0)/Price",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/entityType/2/property/0");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import & navigation property", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			var sPath = "/SalesOrder_Confirm/ToBusinessPartner",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/entityType/0");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+
+			assert.throws(function () {
+				oMetaModel.getMetaContext("/SalesOrder_Confirm/ToBusinessPartner/Foo");
+			}, /Property not found: Foo/);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import, navigation & complex property", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			var sPath = "/SalesOrder_Confirm/ToBusinessPartner/Address/Street",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/complexType/0/property/2");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+
+			assert.throws(function () {
+				oMetaModel.getMetaContext("/SalesOrder_Confirm/ToBusinessPartner/Address/Foo");
+			}, /Property not found: Foo/);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaContext: function import & complex type", function (assert) {
+		return withMetaModel(assert, function (oMetaModel) {
+			var sPath = "/RegenerateAllData/String",
+				oMetaContext = oMetaModel.getMetaContext(sPath);
+
+			assert.ok(oMetaContext instanceof Context);
+			assert.strictEqual(oMetaContext.getModel(), oMetaModel);
+			assert.strictEqual(oMetaContext.getPath(),
+				"/dataServices/schema/0/complexType/1/property/0");
+
+			assert.strictEqual(oMetaModel.getMetaContext(sPath), oMetaContext, "cached");
+
+			assert.throws(function () {
+				oMetaModel.getMetaContext("/RegenerateAllData/Foo");
+			}, /Property not found: Foo/);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getODataValueLists: Metadata loaded completely, ValueList w/o qualifier",
-		function (assert){
+		function (assert) {
+			var that = this;
+
 			return withMetaModel(assert, function (oMetaModel) {
 				var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/Category"),
 					oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
@@ -2295,14 +2650,10 @@ sap.ui.require([
 					oPromise,
 					oProperty = oMetaModel.getODataProperty(oEntityType, "Category");
 
-				oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function () {
-					return Promise.reject(new Error("Unexpected call to addAnnotationUrl"));
-				});
+				that.mock(oInterface).expects("addAnnotationUrl").never();
 
 				oPromise = oMetaModel.getODataValueLists(oContext);
 
-				assert.strictEqual(oInterface.addAnnotationUrl.callCount, 0,
-					"no separate load of value list");
 				oPromise.then(function (mValueLists) {
 					assert.deepEqual(mValueLists,
 						{"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"]});
@@ -2352,12 +2703,14 @@ sap.ui.require([
 		// Note: "/FAR_CUSTOMER_LINE_ITEMS/annotations" contains
 		// @com.sap.vocabularies.Common.v1.ValueList#DEBID_addtl, but we expect a request as long as
 		// the annotation w/o qualifier is missing!
-		function (assert){
+		function (assert) {
+			var that = this;
+
 			return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS",
 					"/FAR_CUSTOMER_LINE_ITEMS/annotations", function (oMetaModel) {
 				var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 					oPromise,
-					fnSpy = oGlobalSandbox.spy(oMetaModel.oODataModelInterface, "addAnnotationUrl");
+					fnSpy = that.spy(oMetaModel.oODataModelInterface, "addAnnotationUrl");
 
 				// no sap:value-list => no request
 				oMetaModel.getODataValueLists(
@@ -2414,15 +2767,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataValueLists: addAnnotationUrl rejects", function (assert) {
+		var that = this;
+
 		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 				oInterface = oMetaModel.oODataModelInterface,
 				oMyError = new Error(),
 				oPromise;
 
-			oGlobalSandbox.stub(oInterface, "addAnnotationUrl", function () {
-				return Promise.reject(oMyError);
-			});
+			that.mock(oInterface).expects("addAnnotationUrl")
+				.returns(Promise.reject(oMyError));
 
 			oPromise = oMetaModel.getODataValueLists(oContext);
 			return oPromise.then(function () {
@@ -2465,6 +2819,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataValueLists: request bundling", function (assert) {
+		var that = this;
+
 		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oCompanyCode = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
 				oCustomer = oMetaModel.getMetaContext("/Items('foo')/Customer"),
@@ -2472,7 +2828,7 @@ sap.ui.require([
 				oPromiseCompanyCode,
 				oPromiseCustomer;
 
-			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+			that.spy(oInterface, "addAnnotationUrl");
 
 			// Note: "wrong" alphabetic order of calls to check that property names will be sorted!
 			oPromiseCustomer = oMetaModel.getODataValueLists(oCustomer);
@@ -2502,54 +2858,54 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_sendBundledRequest", function (assert) {
+		var that = this;
+
 		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oError = new Error(),
-				fnBarReject = sinon.spy(),
-				fnBarResolve = sinon.stub().throws(oError),
-				fnFooResolve = sinon.spy(),
 				oInterface = oMetaModel.oODataModelInterface,
-				oPromise,
+				mQName2PendingRequest = {
+					"BAR" : {
+						resolve : function () {},
+						reject : function () {}
+					},
+					"FOO" : {
+						resolve : function () {},
+						reject : function (oError) {
+							assert.ok(false, oError);
+						}
+					}
+				},
 				oResponse = {
 					annotations : {},
 					entitySets : []
-				};
-
-			oGlobalSandbox.stub(oInterface, "addAnnotationUrl")
-				.returns(new Promise(function (fnResolve, fnReject) {
-					fnResolve(oResponse);
-				}));
-
-			oMetaModel.mQName2PendingRequest = {
-				"BAR" : {
-					resolve : fnBarResolve,
-					reject : fnBarReject
 				},
-				"FOO" : {
-					resolve : fnFooResolve,
-					reject : function (oError) {
-						assert.ok(false, oError);
-					}
-				}
-			};
+				oPromise = Promise.resolve(oResponse);
 
+			that.mock(oInterface).expects("addAnnotationUrl")
+				.withExactArgs("$metadata?sap-value-list=BAR,FOO")
+				.returns(oPromise);
+
+			oMetaModel.mQName2PendingRequest = mQName2PendingRequest;
+
+			// technical test: oResponse is delivered to all pending requests, regardless of
+			// errors thrown
+			that.mock(mQName2PendingRequest.BAR).expects("resolve")
+				.withExactArgs(sinon.match.same(oResponse))
+				.throws(oError);
+			// if "resolve" handler throws, "reject" handler is called
+			that.mock(mQName2PendingRequest.BAR).expects("reject")
+				.withExactArgs(sinon.match.same(oError));
+			that.mock(mQName2PendingRequest.FOO).expects("resolve")
+				.withExactArgs(sinon.match.same(oResponse));
+
+			// code under test
 			oMetaModel._sendBundledRequest();
 
 			// check bundling
-			assert.strictEqual(oInterface.addAnnotationUrl.callCount, 1, "addAnnotationUrl once");
-			assert.strictEqual(oInterface.addAnnotationUrl.args[0][0],
-				"$metadata?sap-value-list=BAR,FOO",
-				oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
 			assert.deepEqual(Object.keys(oMetaModel.mQName2PendingRequest), [], "nothing pending");
 
-			oPromise = oInterface.addAnnotationUrl.returnValues[0];
 			return oPromise.then(function (oResponse0) {
 				assert.strictEqual(oResponse0, oResponse);
-				// technical test: oResponse is delivered to all pending requests, regardless of
-				// errors thrown
-				assert.ok(fnBarResolve.calledWithExactly(oResponse), fnBarResolve.printf("%C"));
-				assert.ok(fnFooResolve.calledWithExactly(oResponse), fnFooResolve.printf("%C"));
-				// if "resolve" handler throws, "reject" handler is called
-				assert.ok(fnBarReject.calledWithExactly(oError), fnBarReject.printf("%C"));
 			});
 		});
 	});
@@ -2664,11 +3020,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getODataValueLists: ValueList on ComplexType", function (assert) {
+		var that = this;
+
 		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/Complex/Customer"),
 				oInterface = oMetaModel.oODataModelInterface;
 
-			oGlobalSandbox.spy(oInterface, "addAnnotationUrl");
+			that.spy(oInterface, "addAnnotationUrl");
 
 			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
 				assert.deepEqual(mValueLists, {
@@ -2691,16 +3049,20 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("load: Performance measurement points", function (assert) {
-		var oAverageSpy = oGlobalSandbox.spy(jQuery.sap.measure, "average")
-				.withArgs("sap.ui.model.odata.ODataMetaModel/load", "", [sComponent]),
-			oEndSpy = oGlobalSandbox.spy(jQuery.sap.measure, "end")
-				.withArgs("sap.ui.model.odata.ODataMetaModel/load"),
-			oModel = new ODataModel1("/GWSAMPLE_BASIC", {
-				annotationURI : "/GWSAMPLE_BASIC/annotations",
-				json : true,
-				loadMetadataAsync : true
-			}),
-			oMetaModel = oModel.getMetaModel();
+		var oAverageSpy, oEndSpy, oMetaModel, oModel;
+
+		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
+
+		oAverageSpy = this.spy(jQuery.sap.measure, "average")
+			.withArgs("sap.ui.model.odata.ODataMetaModel/load", "", [sComponent]);
+		oEndSpy = this.spy(jQuery.sap.measure, "end")
+			.withArgs("sap.ui.model.odata.ODataMetaModel/load");
+		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+			annotationURI : "/GWSAMPLE_BASIC/annotations",
+			json : true,
+			loadMetadataAsync : true
+		});
+		oMetaModel = oModel.getMetaModel();
 
 		assert.strictEqual(oAverageSpy.callCount, 0, "load start measurement before");
 		assert.strictEqual(oEndSpy.callCount, 0, "load end measurement before");
@@ -2732,6 +3094,45 @@ sap.ui.require([
 		});
 	});
 
+	//*********************************************************************************************
+	[false, true].forEach(function (bWarn) {
+		QUnit.test("Get sap:semantics for sap:unit via a path, warn=" + bWarn, function (assert) {
+			var oMetaModel, oModel;
+
+			this.oLogMock.expects("isLoggable").twice()
+				.withExactArgs(jQuery.sap.log.Level.WARNING, sComponent)
+				.returns(bWarn);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Path 'Code' for sap:unit cannot be resolved",
+					"foo.bar.Foo/BadPrice", sComponent);
+			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+				.withExactArgs("Unsupported sap:semantics='wrongSemantics' "
+						+ "at sap:unit='Currency/BadCode'; "
+						+ "expected 'currency-code' or 'unit-of-measure'",
+					"foo.bar.Foo/WrongSemantics", sComponent);
+
+			oModel = new ODataModel("/fake/currencyCodeViaPath", {json : true});
+
+			// code under test
+			oMetaModel = oModel.getMetaModel();
+
+			return oMetaModel.loaded().then(function () {
+				assert.strictEqual(oMetaModel.getObject("/dataServices/schema/"
+						+ "[${namespace}==='foo.bar']/entityType/"
+						+ "[$\{name}==='Product']/property/[$\{name}==='Price']/"
+						+ "Org.OData.Measures.V1.ISOCurrency/Path"),
+					"to_Currency/Code");
+				assert.strictEqual(oMetaModel.getObject("/dataServices/schema/"
+						+ "[${namespace}==='foo.bar']/complexType/"
+						+ "[$\{name}==='Foo']/property/[$\{name}==='Price']/"
+						+ "Org.OData.Measures.V1.ISOCurrency/Path"),
+					"Currency/Code");
+				assert.notOk("undefined" in oMetaModel.getObject("/dataServices/schema/"
+						+ "[${namespace}==='foo.bar']/complexType/"
+						+ "[$\{name}==='Foo']/property/[$\{name}==='WrongSemantics']"));
+			});
+		});
+	});
 
 	//TODO support getODataValueLists with reference to complex type property via entity type
 	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?

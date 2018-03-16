@@ -12,6 +12,7 @@
 			data-sap-ui-libs="sap.m, sap.ui.layout"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-compatVersion="edge"
+			data-sap-ui-preload="async"
 			data-sap-ui-resourceroots='{"sap.ui.demo.orderbrowser": "../"}'
 			data-sap-ui-frameOptions='allow'> 	// NON-SECURE setting for testing environment
 	</script>
@@ -29,7 +30,10 @@
 				new Shell({
 					app: new ComponentContainer({
 						height : "100%",
-						name : "sap.ui.demo.orderbrowser"
+						name : "sap.ui.demo.orderbrowser",
+						settings : {
+							id : "orderbrowser"
+						}
 					})
 				}).placeAt("content");
 			});

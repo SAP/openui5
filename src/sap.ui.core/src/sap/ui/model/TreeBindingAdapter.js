@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.model.odata.TreeBindingAdapter
-sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/ClientTreeBinding', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils', 'sap/ui/model/odata/OperationMode'],
-	function(jQuery, TreeBinding, ClientTreeBinding, TreeAutoExpandMode, ChangeReason, TreeBindingUtils, OperationMode) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/TreeAutoExpandMode', 'sap/ui/model/ChangeReason', 'sap/ui/model/TreeBindingUtils'],
+	function(jQuery, TreeBinding, TreeAutoExpandMode, ChangeReason, TreeBindingUtils) {
 		"use strict";
 
 		/**
@@ -121,7 +121,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Sets the AutoExpand Mode for this Adapter. Default is "Bundled".
-		 * @param sAutoExpandMode
+		 * @param {sap.ui.model.TreeAutoExpandMode} sAutoExpandMode
 		 */
 		TreeBindingAdapter.prototype.setAutoExpandMode = function (sAutoExpandMode) {
 			this._autoExpandMode = sAutoExpandMode;
@@ -466,9 +466,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Retrieves the requested part from the tree and returns node objects.
-		 * @param iStartIndex
-		 * @param iLength
-		 * @param iThreshold
+		 * @param {int} iStartIndex
+		 * @param {int} iLength
+		 * @param {int} iThreshold
 		 * @return {Object} Tree Node
 		 * @protected
 		 */
@@ -584,6 +584,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 * @param {int} iMaxGroupSize the maximum group size
 		 * @param {object} oSection the information of the current section
 		 * @protected
+		 * @deprecated since version 1.52. This method is marked as 'protected' which was meant to be overwritten
+		 *  by its subclasses. It may be renamed or deleted and should only be called from this class or its subclasses.
 		 */
 		TreeBindingAdapter.prototype._calculateRequestLength = function(iMaxGroupSize, oSection) {
 			var iRequestedLength;
@@ -756,7 +758,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Creates a new tree node with valid default values
-		 * @params {object} mParameters a set of parameters which might differ from the default values
+		 * @param {object} mParameters a set of parameters which might differ from the default values
 		 * @returns {object} a newly created tree node
 		 */
 		TreeBindingAdapter.prototype._createNode = function (mParameters) {
@@ -795,8 +797,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		/**
 		 * Expand the tree node sitting at the given index.
 		 * @param {int} iIndex the absolute row index
+		 * @param {boolean} bSuppressChange if set to true, no change event will be fired
 		 */
-		TreeBindingAdapter.prototype.expand = function(iIndex) {
+		TreeBindingAdapter.prototype.expand = function(iIndex, bSuppressChange) {
 			var oNode = this.findNode(iIndex);
 
 			if (!oNode) {
@@ -805,7 +808,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 			}
 
 			this._updateTreeState({groupID: oNode.nodeState.groupID, fallbackNodeState: oNode.nodeState, expanded: true});
-			this._fireChange({reason: ChangeReason.Expand});
+
+			if (!bSuppressChange) {
+				this._fireChange({reason: ChangeReason.Expand});
+			}
 		};
 
 		/**
@@ -831,6 +837,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		/**
 		 * Collapses the given node, identified via an absolute row index.
 		 * @param {int} vParam the row index of the tree node
+		 * @param {boolean} bSuppressChange if set to true, no change event will be fired
 		 */
 		TreeBindingAdapter.prototype.collapse = function(vParam, bSuppressChange) {
 			var oNodeStateForCollapsingNode;
@@ -1261,7 +1268,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 
 		/**
 		 * Returns the number of currently selectable nodes (with respect to the current expand/collapse state).
-		 * @returns
+		 * @returns {int} Number of currently selectable nodes
 		 */
 		TreeBindingAdapter.prototype._getSelectableNodesCount = function (oNode) {
 			if (oNode) {
@@ -1637,7 +1644,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 		 *            fnFunction The function to call, when the event occurs. This function will be called on the
 		 *            oListener-instance (if present) or in a 'static way'.
 		 * @param {object}
-		 *            [oListener] Object on which to call the given function. If empty, this Model is used.
+		 *            [oListener] Object on which to call the given function. If empty, this <code>TreeBindingAdapter</code> is used.
 		 *
 		 * @return {sap.ui.model.SelectionModel} <code>this</code> to allow method chaining
 		 * @public

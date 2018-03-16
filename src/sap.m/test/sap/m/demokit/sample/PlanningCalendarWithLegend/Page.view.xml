@@ -1,0 +1,84 @@
+<mvc:View
+		controllerName="sap.m.sample.PlanningCalendarWithLegend.Page"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:unified="sap.ui.unified"
+		xmlns:l="sap.ui.layout"
+		xmlns="sap.m">
+	<l:DynamicSideContent
+			id="DynamicSideContent"
+			class="sapUiDSCExplored sapUiContentPadding"
+			sideContentVisibility="AlwaysShow"
+			showSideContent="{path: 'stateModel>/legendShown'}"
+			containerQuery="true"
+			breakpointChanged="updateToggleButtonState">
+		<l:mainContent>
+			<VBox>
+				<PlanningCalendar
+						id="PC1"
+						startDate="{path: '/startDate'}"
+						rows="{path: '/people'}"
+						appointmentsVisualization="Filled"
+						showEmptyIntervalHeaders="false"
+						viewChange="handleViewChange"
+						legend="PlanningCalendarLegend"
+						specialDates="{path: '/specialDates', templateShareable: 'true'}">
+					<toolbarContent>
+						<ToolbarSpacer/>
+						<ToggleButton pressed="{path: 'stateModel>/legendShown'}" icon="sap-icon://legend"/>
+					</toolbarContent>
+					<rows>
+						<PlanningCalendarRow
+								icon="{pic}"
+								title="{name}"
+								text="{role}"
+								appointments="{path : 'appointments', templateShareable: 'true'}"
+								intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+							<appointments>
+								<unified:CalendarAppointment
+										startDate="{start}"
+										endDate="{end}"
+										icon="{pic}"
+										title="{title}"
+										text="{info}"
+										type="{type}"
+										tentative="{tentative}">
+								</unified:CalendarAppointment>
+							</appointments>
+							<intervalHeaders>
+								<unified:CalendarAppointment
+										startDate="{start}"
+										endDate="{end}"
+										icon="{pic}"
+										title="{title}"
+										type="{type}">
+								</unified:CalendarAppointment>
+							</intervalHeaders>
+						</PlanningCalendarRow>
+					</rows>
+					<specialDates>
+						<unified:DateTypeRange
+								startDate="{start}"
+								endDate="{end}"
+								type="{type}">
+						</unified:DateTypeRange>
+					</specialDates>
+				</PlanningCalendar>
+			</VBox>
+		</l:mainContent>
+		<l:sideContent width="200px">
+			<PlanningCalendarLegend id="PlanningCalendarLegend"
+				items="{path : '/legendItems', templateShareable: 'true'}"
+				appointmentItems="{path : '/legendAppointmentItems', templateShareable: 'true'}"
+				standardItems="Today,Selected,NonWorkingDay">
+				<items>
+					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />
+				</items>
+				<appointmentItems>
+					<unified:CalendarLegendItem text="{text}" type="{type}" tooltip="{text}" />
+				</appointmentItems>
+			</PlanningCalendarLegend>
+		</l:sideContent>
+	</l:DynamicSideContent>
+
+</mvc:View>

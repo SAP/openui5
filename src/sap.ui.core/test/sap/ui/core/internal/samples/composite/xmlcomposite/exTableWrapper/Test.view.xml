@@ -1,0 +1,35 @@
+<mvc:View height="100%" controllerName="sap.ui.core.internal.samples.composite.xmlcomposite.exTableWrapper.Test" 
+	xmlns:mvc="sap.ui.core.mvc" 	
+	xmlns="sap.m"
+	xmlns:fc="sap.ui.core.internal.samples.composite.xmlcomposite.exTableWrapper.comp">
+	<fc:table>
+		<fc:columns>
+			<Column width="10em">
+				<Text text="Product" />
+			</Column>
+			<Column width="12em">
+				<Text text="Supplier" />
+			</Column>
+		</fc:columns>
+		<fc:items>
+			<ColumnListItem>
+				<cells>
+					<Text text="M3" />
+					<Text text="BMW" />
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+				<cells>
+					<Text text="A45" />
+					<Text text="Mercedes" />
+				</cells>
+			</ColumnListItem>
+			<ColumnListItem>
+				<cells>
+					<Text text="R32" />
+					<Text text="VW" />
+				</cells>
+			</ColumnListItem>
+		</fc:items>
+	</fc:table>
+</mvc:View>

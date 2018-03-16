@@ -4,8 +4,16 @@
 
 // Provides class sap.ui.rta.plugin.ContextMenu.
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/dt/Plugin', 'sap/ui/dt/ContextMenuControl'
-], function(jQuery, Plugin, ContextMenuControl) {
+	'jquery.sap.global',
+	'sap/ui/dt/Plugin',
+	'sap/ui/dt/ContextMenuControl',
+	'sap/ui/dt/OverlayRegistry'
+], function(
+	jQuery,
+	Plugin,
+	ContextMenuControl,
+    OverlayRegistry
+) {
 	"use strict";
 
 	/**
@@ -33,6 +41,9 @@ sap.ui.define([
 			properties: {
 				contextElement : {
 					type : "object"
+				},
+				styleClass: {
+					type: "string"
 				}
 			},
 			associations: {},
@@ -91,20 +102,73 @@ sap.ui.define([
 	 *        is passed, default true
 	 * @param {function} mMenuItem.enabled? function to determine if the menu entry should be enabled, the element for which the menu should be opened
 	 *        is passed, default true
+	 * @param {boolean} bRetrievedFromPlugin flag to mark if a menu item was retrieved from a plugin (in runtime)
 	 */
-	ContextMenu.prototype.addMenuItem = function(mMenuItem) {
-		this._aMenuItems.push(mMenuItem);
+	ContextMenu.prototype.addMenuItem = function(mMenuItem, bRetrievedFromPlugin) {
+		var mMenuItemEntry = {
+			menuItem : mMenuItem,
+			fromPlugin : !!bRetrievedFromPlugin
+		};
+		this._aMenuItems.push(mMenuItemEntry);
 	};
 
+	/**
+	 * Open the context menu with the items that have been added before or
+	 * will be returned by the plugins.
+	 * @param  {sap.ui.base.Event} oOriginalEvent Event that triggered the menu to open
+	 * @param  {sap.ui.dt.ElementOverlay} oTargetOverlay Overlay where the menu was triggered
+	 */
 	ContextMenu.prototype.open = function(oOriginalEvent, oTargetOverlay) {
-		this.setContextElement(oTargetOverlay.getElementInstance());
+		this.setContextElement(oTargetOverlay.getElement());
+
+		//Remove all previous entries retrieved by plugins (the list should always be rebuilt)
+		this._aMenuItems = this._aMenuItems.filter(function(mMenuItemEntry){
+			return !mMenuItemEntry.fromPlugin;
+		});
+
+		var aPlugins = this.getDesignTime().getPlugins();
+		aPlugins.forEach(function(oPlugin){
+			var aPluginMenuItems = oPlugin.getMenuItems(oTargetOverlay) || [];
+			aPluginMenuItems.forEach(function(mMenuItem){
+				this.addMenuItem(mMenuItem, true);
+			}.bind(this));
+		}.bind(this));
+
+		var aMenuItems = this._aMenuItems.map(function(mMenuItemEntry){
+			return mMenuItemEntry.menuItem;
+		});
+
+		aMenuItems = this._sortMenuItems(aMenuItems);
 
 		this._oContextMenuControl = new ContextMenuControl();
-		this._oContextMenuControl.setMenuItems(this._aMenuItems, oTargetOverlay);
+		this._oContextMenuControl.addStyleClass(this.getStyleClass());
+		this._oContextMenuControl.setMenuItems(aMenuItems, oTargetOverlay);
 		this._oContextMenuControl.setOverlayDomRef(oTargetOverlay);
 		this._oContextMenuControl.attachItemSelect(this._onItemSelected, this);
 		this._oContextMenuControl.openMenu(oOriginalEvent, oTargetOverlay);
 		this.fireOpenedContextMenu();
+	};
+
+	/**
+	 * Collect menu items sorted by rank (entries without rank come first)
+	 * @param  {object[]} aMenuItems List of menu items
+	 * @return {object[]}            Returned a sorted list of menu items; higher rank come later
+	 */
+	ContextMenu.prototype._sortMenuItems = function(aMenuItems){
+		return aMenuItems.sort(function(mFirstEntry, mSecondEntry){
+			// Both entries do not have rank, do not change the order
+			if (!mFirstEntry.rank && !mSecondEntry.rank){
+				return 0;
+			}
+			// One entry does not have rank, push it to the front
+			if (!mFirstEntry.rank && mSecondEntry.rank){
+				return -1;
+			}
+			if (mFirstEntry.rank && !mSecondEntry.rank){
+				return 1;
+			}
+			return mFirstEntry.rank - mSecondEntry.rank;
+		});
 	};
 
 	/**
@@ -115,16 +179,27 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenu.prototype._onItemSelected = function(oEvent) {
-		var aSelection = [];
-		var sId = oEvent.getParameter("item").data("id");
-		this._aMenuItems.some(function(oItem) {
+		var aSelection = [],
+			oEventItem = oEvent.getParameter("item"),
+			oContextElement = this.getContextElement(),
+			sId = oEventItem.data("id");
+
+		var aMenuItems = this._aMenuItems.map(function(mMenuItemEntry){
+			return mMenuItemEntry.menuItem;
+		});
+
+		aMenuItems.some(function(oItem) {
 			if (sId === oItem.id) {
-				var oDesignTime = this.getDesignTime();
-				aSelection = oDesignTime.getSelection();
+				aSelection = this.getSelectedOverlays();
 
 				jQuery.sap.assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 
-				oItem.handler(aSelection);
+				if (!oEventItem.getSubmenu()) {
+					var mPropertiesBag = {};
+					mPropertiesBag.eventItem = oEventItem;
+					mPropertiesBag.contextElement = oContextElement;
+					oItem.handler(aSelection, mPropertiesBag);
+				}
 				return true;
 			}
 		}, this);
@@ -141,7 +216,7 @@ sap.ui.define([
 		oEvent.preventDefault();
 		document.activeElement.blur();
 
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		var sTargetClasses = oEvent.target.className;
 
 		if (oOverlay && oOverlay.isSelectable() && sTargetClasses.indexOf("sapUiDtOverlay") > -1) {
@@ -161,7 +236,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenu.prototype._onKeyDown = function(oEvent) {
-		var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 
 		if ((oEvent.keyCode === jQuery.sap.KeyCodes.F10) && (oEvent.shiftKey === true) && (oEvent.altKey === false) && (oEvent.ctrlKey === false)) {
 			// hide browser-context menu

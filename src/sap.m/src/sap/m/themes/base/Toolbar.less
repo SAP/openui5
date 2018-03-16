@@ -19,11 +19,14 @@
 	-ms-text-size-adjust: none;
 	height: 3rem;
 	background: @sapUiToolbarBackground;
-	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
 }
 
 .sapMTB:focus {
 	outline: 0;
+}
+
+.sapMTBStandard {
+	border-bottom: 1px solid @sapUiGroupTitleBorderColor;
 }
 
 /* Transparent Toolbar Context */
@@ -32,14 +35,14 @@
 }
 
 /* Info Toolbar Context */
-.sapMIBar.sapMTB.sapMTB-Info-CTX.sapMTB > *,
-.sapMIBar.sapMTB.sapMTB-Info-CTX.sapMTB > :first-child,
-.sapMIBar.sapMTB.sapMTB-Info-CTX.sapMTB > :last-child {
-	margin: 0 .5rem;
+.sapMIBar.sapMTB.sapMTB-Info-CTX > :first-child,
+.sapMIBar.sapMTB.sapMTB-Info-CTX > :last-child {
+	margin: 0;
+	padding: 0 0.5rem;
 }
 
-.sapMIBar.sapMTB.sapMTB-Info-CTX > .sapUiIcon {
-  padding-left: 0.5rem;
+.sapMIBar.sapMTB.sapMTB-Info-CTX > :last-child.sapUiIcon {
+	padding-right: 0;
 }
 
 .sapMTBActive,
@@ -139,8 +142,17 @@
 	height: 2rem;
 }
 
+/* class used to get a height of 3rem in compact mode */
+.sapUiSizeCompact .sapMTB.sapMTBHeader-CTX {
+	height: 3rem;
+}
+
 /* default min-width value for the shrinkable items */
 .sapUiSizeCompact .sapMTBShrinkItem,
 .sapUiSizeCondensed .sapUiTableCell .sapMTBShrinkItem{
 	min-width: 2rem;
+}
+
+.sapFDynamicPageTitleContent-CTX .sapMTB {
+	border-bottom: none;
 }

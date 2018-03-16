@@ -1,0 +1,232 @@
+<mvc:View xmlns="sap.m"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:core="sap.ui.core"
+		  xmlns:table="sap.ui.table"
+		  xmlns:unified="sap.ui.unified"
+		  xmlns:dnd="sap.ui.core.dnd"
+		  controllerName="sap.ui.table.testApps.DragAndDrop">
+	<HBox renderType="Bare">
+		<items>
+			<table:Table
+					id="table"
+					title="Table - Reorder rows and drag to TreeTable"
+					width="50%"
+					rows="{/listData}">
+				<table:columns>
+					<table:Column width="120px" sortProperty="lastName" filterProperty="lastName">
+						<table:label>
+							<Label text="m.Text"/>
+						</table:label>
+						<table:template>
+							<Text text="{lastName}" wrapping="false"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="6em" sortProperty="name" filterProperty="name">
+						<table:label>
+							<Label text="m.Label"/>
+						</table:label>
+						<table:template>
+							<Label text="{name}"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="200px" sortProperty="objStatusState" filterProperty="objStatusState">
+						<table:label>
+							<Label text="m.ObjectStatus"/>
+						</table:label>
+						<table:template>
+							<ObjectStatus text="{objStatusText}" state="{objStatusState}"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="80px">
+						<table:label>
+							<Label text="core.Icon"/>
+						</table:label>
+						<table:template>
+							<core:Icon src="sap-icon://account" decorative="false"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="100px">
+						<table:label>
+							<Label text="m.Button"/>
+						</table:label>
+						<table:template>
+							<Button text="{gender}"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="200px">
+						<table:label>
+							<Label text="m.Input"/>
+						</table:label>
+						<table:template>
+							<Input value="{name}"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="200px">
+						<table:label>
+							<Label text="m.DatePicker"/>
+						</table:label>
+						<table:template>
+							<DatePicker dateValue="{birthdayDate}"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="150px">
+						<table:label>
+							<Label text="m.Select"/>
+						</table:label>
+						<table:template>
+							<Select>
+								<items>
+									<core:Item key="v1" text="Value 1"/>
+									<core:Item key="v2" text="Value 2"/>
+									<core:Item key="v3" text="Value 3"/>
+									<core:Item key="v4" text="Value 4"/>
+								</items>
+							</Select>
+						</table:template>
+					</table:Column>
+					<table:Column width="150px">
+						<table:label>
+							<Label text="m.ComboBox"/>
+						</table:label>
+						<table:template>
+							<ComboBox>
+								<items>
+									<core:Item key="v1" text="Value 1"/>
+									<core:Item key="v2" text="Value 2"/>
+									<core:Item key="v3" text="Value 3"/>
+									<core:Item key="v4" text="Value 4"/>
+								</items>
+							</ComboBox>
+						</table:template>
+					</table:Column>
+					<table:Column width="250px">
+						<table:label>
+							<Label text="m.MultiComboBox"/>
+						</table:label>
+						<table:template>
+							<MultiComboBox>
+								<items>
+									<core:Item key="v1" text="Value 1"/>
+									<core:Item key="v2" text="Value 2"/>
+									<core:Item key="v3" text="Value 3"/>
+									<core:Item key="v4" text="Value 4"/>
+								</items>
+							</MultiComboBox>
+						</table:template>
+					</table:Column>
+					<table:Column width="50px">
+						<table:label>
+							<Label text="m.CheckBox"/>
+						</table:label>
+						<table:template>
+							<CheckBox selected="{checked}" text="{lastName}"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="150px">
+						<table:label>
+							<Label text="m.Link"/>
+						</table:label>
+						<table:template>
+							<Link href="{href}" text="{linkText}"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="200px">
+						<table:label>
+							<Label text="unified.Currency"/>
+						</table:label>
+						<table:template>
+							<unified:Currency value="{money}" currency="{currency}"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="150px">
+						<table:label>
+							<Label text="m.ProgressIndicator"/>
+						</table:label>
+						<table:template>
+							<ProgressIndicator percentValue="{path: 'lastName', formatter: '.getProgress'}"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="200px">
+						<table:label>
+							<Label text="m.RatingIndicator"/>
+						</table:label>
+						<table:template>
+							<RatingIndicator value="{path: 'lastName', formatter: '.getRating'}"/>
+						</table:template>
+					</table:Column>
+				</table:columns>
+				<table:dragDropConfig>
+					<dnd:DragDropInfo
+							sourceAggregation="rows"
+							targetAggregation="rows"
+							dropEffect="Move"
+							dropPosition="Between"
+							dragStart="tableDragStart"
+							dragEnter="tableReorderDragEnter"
+							drop="tableReorderDrop"/>
+					<dnd:DragDropInfo
+							sourceAggregation="rows"
+							targetAggregation="rows"
+							dropEffect="Copy"
+							dropPosition="On"
+							dragStart="tableDragStart"
+							dragEnter="tableToTreeTableDragEnter"
+							drop="tableToTreeTableDrop"
+							targetElement="treetable"/>
+				</table:dragDropConfig>
+			</table:Table>
+			<ToolbarSpacer width="1rem"/>
+			<table:TreeTable
+					id="treetable"
+					title="TreeTable - Reorder rows and drag to Table"
+					width="50%"
+					expandFirstLevel="true"
+					rows="{/treeData/root}"
+					groupHeaderProperty="name">
+				<table:columns>
+					<table:Column width="300px" sortProperty="name" filterProperty="name">
+						<table:label>
+							<Label text="Name"/>
+						</table:label>
+						<table:template>
+							<Text text="{name}" wrapping="false"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="300px" sortProperty="description" filterProperty="description">
+						<table:label>
+							<Label text="Description"/>
+						</table:label>
+						<table:template>
+							<Text text="{description}" wrapping="false"/>
+						</table:template>
+					</table:Column>
+					<table:Column width="500px">
+						<table:label>
+							<Label text="Available"/>
+						</table:label>
+						<table:template>
+							<CheckBox selected="{checked}"/>
+						</table:template>
+					</table:Column>
+				</table:columns>
+				<table:dragDropConfig>
+					<dnd:DragDropInfo
+							sourceAggregation="rows"
+							targetAggregation="rows"
+							dropEffect="Move"
+							dropPosition="OnOrBetween"
+							dragStart="treeTableDragStart"
+							dragEnter="treeTableReorderDragEnter"
+							drop="treeTableReorderDrop"/>
+					<dnd:DragDropInfo
+							sourceAggregation="rows"
+							dropEffect="Copy"
+							dragStart="treeTableDragStart"
+							dragEnter="treeTableToTableDragEnter"
+							drop="treeTableToTableDrop"
+							targetElement="table"/>
+				</table:dragDropConfig>
+			</table:TreeTable>
+		</items>
+	</HBox>
+</mvc:View>

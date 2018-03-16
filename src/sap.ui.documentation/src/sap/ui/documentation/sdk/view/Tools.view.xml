@@ -1,0 +1,290 @@
+<mvc:View
+		controllerName="sap.ui.documentation.sdk.controller.Tools"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core"
+		xmlns:custom="sap.ui.documentation.sdk.controls">
+
+	<Page showHeader="false"
+		  class="sapUiNoContentPadding">
+		<l:BlockLayout>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="sapUiNoContentPadding sapUiDemokitLandingImageCell toolsImageCell">
+					<Image
+						id="phoneImage"
+						src="./resources/sap/ui/documentation/sdk/images/Tools_S_cropped.jpg"
+						width="100%"
+						densityAware="false"
+						class="landingImage"
+						load="handleLandingImageLoad"
+						visible="{device>/system/phone}"/>
+					<Image
+						src="./resources/sap/ui/documentation/sdk/images/Tools_M_and_L_cropped.jpg"
+						width="100%"
+						class="landingImage"
+						densityAware="false"
+						load="handleLandingImageLoad"
+						visible="{=!${device>/system/phone}}"/>
+					<Text id="landingImageHeadline"
+						visible="false"
+						class="sapUiDocumentationToolsHeaderText"
+						text="Tools"
+						width="100%"
+						textAlign="Left"/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeB">
+					<l:VerticalLayout
+							width="100%">
+						<Image
+							src="./resources/sap/ui/documentation/sdk/images/WebIDE_logo_white_32x61.png"
+							class="sapUiTinyMarginBottom"
+							densityAware="false"/>
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="SAP Web IDE"
+								href="https://www.sap.com/developer/topics/sap-webide.html"
+								class="demokitInitialPagesWhiteText"
+								target="_blank"/>
+						<Text
+								text="SAP Web IDE on SAP CP is delivered on SAP Cloud Platform, SAP's public cloud,
+								and is used to build modern UI apps for desktop and mobile devices with the latest
+								SAPUI5 and SAP Fiori technologies."
+								class="sapUiSmallMarginBottom"/>
+						<Link text="View Documentation"
+								  target="_blank"
+								  href="https://help.sap.com/viewer/825270ffffe74d9f988a0f0066ad59f0/CF/en-US"
+								  class="demokitInitialPagesWhiteText"/>
+						<Link text="SAP Web IDE SDK"
+								  target="_blank"
+								  href="https://sdk-sapwebide.dispatcher.hana.ondemand.com/index.html"
+								  class="demokitInitialPagesWhiteText"/>
+						<Link text="Community"
+								  target="_blank"
+								  href="https://www.sap.com/developer/topics/sap-webide.html"
+								  class="demokitInitialPagesWhiteText"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
+					<l:VerticalLayout
+							width="100%">
+						<core:Icon
+								src="sap-icon://inspection"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="UI5 Inspector"
+								href="https://chrome.google.com/webstore/detail/ui5-inspector/bebecogbafbighhaildooiibipcnbngo?hl=en"
+								target="_blank"/>
+						<Text text="With the UI5 Inspector, you can easily debug and support your OpenUI5 or SAPUI5-based apps."
+							  class="sapUiSmallMarginBottom"/>
+						<Link text="View Documentation"
+								  target="_blank"
+								  href="#/topic/b24e72443eb34d0fb7bf6940f2d697eb"/>
+						<Link text="View Source Code"
+								  target="_blank"
+								  href="https://github.com/SAP/ui5-inspector"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
+					<l:Grid width="100%"
+								vSpacing="1"
+								hSpacing="0"
+								position="Left"
+								defaultSpan="L6 M12 S12"
+								defaultIndent="XL0 L0 M0 S0">
+						<l:VerticalLayout width="100%">
+							<core:Icon
+									src="sap-icon://widgets"
+									color="Default"
+									size="2rem"
+									class="sapUiTinyMarginBottom"/>
+							<custom:TitleLink
+									level="H1"
+									titleStyle="H1"
+									text="Icon Explorer"
+									href="test-resources/sap/m/demokit/iconExplorer/webapp/index.html"
+									target="_blank"/>
+							<Text
+									text="All our icons at your fingertips"
+									class="sapUiSmallMarginBottom"/>
+							<Link text="View Documentation"
+								  target="_blank"
+								  href="#/topic/21ea0ea94614480d9a910b2e93431291"
+								  class="sapUiTinyMarginBottom"/>
+							<Link text="Run Integration Tests"
+								  target="_blank"
+								  href="test-resources/sap/m/demokit/iconExplorer/webapp/test/integration/opaTests.qunit.html"
+								  class="sapUiTinyMarginBottom"/>
+							<Link text="Run Unit Tests"
+								  target="_blank"
+								  href="test-resources/sap/m/demokit/iconExplorer/webapp/test/unit/unitTests.qunit.html"
+								  class="sapUiTinyMarginBottom"/>
+
+						</l:VerticalLayout>
+						<Panel headerText="Browse Hundreds of icons">
+							<l:VerticalLayout>
+								<l:HorizontalLayout>
+									<core:Icon
+										src="sap-icon://paper-plane"
+										size="1.5rem"
+										color="Neutral"/>
+									<core:Icon
+										src="sap-icon://paper-plane"
+										size="2.5rem"
+										color="Neutral"/>
+									<core:Icon
+										src="sap-icon://paper-plane"
+										size="4.5rem"
+										color="Neutral"/>
+									<core:Icon
+										src="sap-icon://paper-plane"
+										size="6rem"
+										color="Neutral"/>
+								</l:HorizontalLayout>
+								<HBox>
+									<Label text="Code:" design="Bold" class="sapUiTinyMarginEnd sapUiTinyMarginTopBottom"/>
+									<Input type="text" value="sap-icon://paper-plane" enabled="false"/>
+									<Button type="Emphasized" icon="sap-icon://copy" class="sapUiTinyMarginBegin"/>
+								</HBox>
+							</l:VerticalLayout>
+						</Panel>
+					</l:Grid>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeC">
+						<l:Grid width="100%"
+								vSpacing="1"
+								hSpacing="0"
+								position="Left"
+								defaultSpan="L6 M12 S12"
+								defaultIndent="XL0 L0 M0 S0">
+							<l:VerticalLayout>
+								<Image
+									src="./resources/sap/ui/documentation/sdk/images/build_logo__white_26x80.png"
+									class="sapUiTinyMarginBottom"
+									densityAware="false"/>
+								<custom:TitleLink
+										level="H1"
+										titleStyle="H1"
+										text="Find Out About Build"
+										href="https://www.build.me"
+										target="_blank"
+										class="demokitInitialPagesWhiteText"/>
+								<Text text="Everything you need to design beautiful apps in one set of cloud-based tools."
+									  class="sapUiSmallMarginBottom"/>
+								<Link text="View Documentation"
+									  target="_blank"
+									  href="http://sap.github.io/BUILD_User_Assistance/build/external/"
+									  class="demokitInitialPagesWhiteText"/>
+								<Link text="View Source Code"
+									  target="_blank"
+									  href="https://www.github.com/SAP/BUILD"
+									  class="demokitInitialPagesWhiteText"/>
+							</l:VerticalLayout>
+							<Image
+								src="./resources/sap/ui/documentation/sdk/images/build_illu_astronaut_320x235.png"
+								densityAware="false"/>
+						</l:Grid>
+				</l:BlockLayoutCell>
+
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeD" >
+					<l:Grid width="100%"
+							vSpacing="1"
+							hSpacing="0"
+							position="Left"
+							defaultSpan="L6 M12 S12"
+							defaultIndent="XL0 L0 M0 S0">
+						<l:VerticalLayout
+								width="100%">
+							<core:Icon
+									src="sap-icon://palette"
+									size="2rem"
+									class="sapUiTinyMarginBottom"/>
+							<custom:TitleLink
+									level="H1"
+									titleStyle="H1"
+									text="UI Theme Designer"
+									href="https://themedesigner-themedesigner.dispatcher.hanatrial.ondemand.com/index.html"
+									target="_blank"
+									class="demokitInitialPagesWhiteText"/>
+							<Text
+									text="Responsive controls for touch-enabled devices and desktop browsers"
+									class="sapUiSmallMarginBottom"/>
+							<Link text="View Documentation"
+								  target="_blank"
+								  href="https://help.sap.com/viewer/09f6818d8e064537973102d6289e2aca/Cloud/en-US"
+								  class="demokitInitialPagesWhiteText"/>
+							<Link text="Community"
+								  target="_blank"
+								  href="https://www.sap.com/community/topic/ui-theme-designer.html"
+								  class="demokitInitialPagesWhiteText"/>
+						</l:VerticalLayout>
+						<Image
+							src="./resources/sap/ui/documentation/sdk/images/Theme_Designer_Image_350x197.jpg"
+							densityAware="false"/>
+					</l:Grid>
+				</l:BlockLayoutCell>
+
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
+					<l:VerticalLayout
+							width="100%">
+						<core:Icon
+								src="sap-icon://example"
+								color="Default"
+								size="2rem"
+								class="sapUiTinyMarginBottom"/>
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Theme Parameter Toolbox"
+								href="test-resources/sap/m/demokit/theming/webapp/index.html"
+								target="_blank"/>
+						<Text text="Search, filter and preview semantic theme parameters"
+							  class="sapUiSmallMarginBottom"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow>
+				<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
+			</l:BlockLayoutRow>
+
+		</l:BlockLayout>
+	</Page>
+</mvc:View>

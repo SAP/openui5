@@ -3,18 +3,55 @@
  */
 
 // Provides control sap.ui.table.Table.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
-		'sap/ui/core/Control', 'sap/ui/core/Element', 'sap/ui/core/IconPool',
-		'sap/ui/core/ResizeHandler', 'sap/ui/core/ScrollBar', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/core/theming/Parameters',
-		'sap/ui/model/ChangeReason', 'sap/ui/model/Context', 'sap/ui/model/Filter', 'sap/ui/model/SelectionModel', 'sap/ui/model/Sorter',
-		'./Column', './Row', './library', './TableUtils', './TableExtension', './TableAccExtension', './TableKeyboardExtension', './TablePointerExtension',
-		'./TableScrollExtension', 'jquery.sap.dom', 'jquery.sap.trace'],
-	function(jQuery, Device,
-		Control, Element, IconPool,
-		ResizeHandler, ScrollBar, ItemNavigation, Parameters,
-		ChangeReason, Context, Filter, SelectionModel, Sorter,
-		Column, Row, library, TableUtils, TableExtension, TableAccExtension, TableKeyboardExtension,
-		TablePointerExtension, TableScrollExtension /*, jQuerySapPlugin,jQuerySAPTrace */) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/Device',
+    'sap/ui/core/Control',
+    'sap/ui/core/Element',
+    'sap/ui/core/IconPool',
+    'sap/ui/model/ChangeReason',
+    'sap/ui/model/Filter',
+    'sap/ui/model/SelectionModel',
+    'sap/ui/model/Sorter',
+    'sap/ui/model/BindingMode',
+    './Column',
+    './Row',
+    './library',
+    './TableUtils',
+    './TableExtension',
+    './TableAccExtension',
+    './TableKeyboardExtension',
+    './TablePointerExtension',
+    './TableScrollExtension',
+    './TableDragAndDropExtension',
+    "./TableRenderer",
+    'jquery.sap.dom',
+    'jquery.sap.trace',
+    'jquery.sap.events'
+],
+	function(
+	    jQuery,
+		Device,
+		Control,
+		Element,
+		IconPool,
+		ChangeReason,
+		Filter,
+		SelectionModel,
+		Sorter,
+		BindingMode,
+		Column,
+		Row,
+		library,
+		TableUtils,
+		TableExtension,
+		TableAccExtension,
+		TableKeyboardExtension,
+		TablePointerExtension,
+		TableScrollExtension,
+		TableDragAndDropExtension /*, jQuerySapPlugin,jQuerySAPTrace */,
+		TableRenderer
+	) {
 	"use strict";
 
 
@@ -57,6 +94,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.table.Table
+	 * @see {@link topic:08197fa68e4f479cbe30f639cc1cd22c sap.ui.table}
+	 * @see {@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I Choose?}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Table = Control.extend("sap.ui.table.Table", /** @lends sap.ui.table.Table.prototype */ { metadata : {
@@ -70,7 +109,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : 'auto'},
 
 			/**
-			 * Height of a row of the Table in pixel.
+			 * The height of the row content in pixel. The actual row height is also influenced by other factors, such as the border width.
+			 * If no value is set, a default height is applied based on the content density configuration.
 			 */
 			rowHeight : {type : "int", group : "Appearance", defaultValue : null},
 
@@ -97,12 +137,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			/**
 			 * Selection mode of the Table. This property controls whether single or multiple rows can be selected and
 			 * how the selection can be extended. It may also influence the visual appearance.
+			 * When the selection mode is changed, the current selection is removed.
+			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
+			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionMode.None</code> is set.
 			 */
 			selectionMode : {type : "sap.ui.table.SelectionMode", group : "Behavior", defaultValue : SelectionMode.MultiToggle},
 
 			/**
 			 * Selection behavior of the Table. This property defines whether the row selector is displayed and whether the row, the row selector or
 			 * both can be clicked to select a row.
+			 * <b>Note:</b> Since the group header visualization relies on the row selectors, the row selectors are always shown if the grouping
+			 * functionality (depends on table type) is enabled, even if <code>sap.ui.table.SelectionBehavior.RowOnly</code> is set.
 			 */
 			selectionBehavior : {type : "sap.ui.table.SelectionBehavior", group : "Behavior", defaultValue : SelectionBehavior.RowSelector},
 
@@ -141,7 +186,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			enableColumnReordering : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Flag to enable or disable column grouping. (experimental!)
+			 * Enables or disables grouping. If grouping is enabled, the table is grouped by the column which is defined
+			 * in the <code>groupBy</code> association.
+			 *
+			 * The following restrictions apply:
+			 * <ul>
+			 *  <li>Only client models are supported (e.g. {@link sap.ui.model.json.JSONModel}). Grouping does not work with OData models.</li>
+			 *  <li>The table can only be grouped by <b>one</b> column at a time. Grouping by another column will remove the current grouping.</li>
+			 *  <li>If grouping has been done, sorting and filtering is not possible. Any existing sorting and filtering rules do no longer apply.
+			 *      The UI is not updated accordingly (e.g. menu items, sort and filter icons).</li>
+			 *  <li>The column, by which the table is grouped, is not visible. It will become visible again only if the table is grouped by another
+			 *      column or grouping is disabled.</li>
+			 * </ul>
+			 *
+			 * @experimental As of 1.28. This feature has a limited functionality.
+			 * @see sap.ui.table.Table#setGroupBy
 			 */
 			enableGrouping : {type : "boolean", group : "Behavior", defaultValue : false},
 
@@ -165,7 +224,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * the property minAutoRowCount (default value : 5) In manual mode the user can change
 			 * the visibleRowCount interactively.
 			 * @since 1.9.2
-			 * @see sap.ui.table.VisibleRowCountMode
 			 */
 			visibleRowCountMode : {type : "sap.ui.table.VisibleRowCountMode", group : "Appearance", defaultValue : VisibleRowCountMode.Fixed},
 
@@ -176,7 +234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			minAutoRowCount : {type : "int", group : "Appearance", defaultValue : 5},
 
 			/**
-			 * Number of columns that are fix on the left. When you use a horizontal scroll bar, only
+			 * Number of columns that are fix on the left. When you use a horizontal scrollbar, only
 			 * the columns which are not fixed, will scroll. Fixed columns need a defined width for the feature to work.
 			 * Please note that the aggregated width of all fixed columns must not exceed the table width since there
 			 * will be no scrollbar for fixed columns.
@@ -184,12 +242,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			fixedColumnCount : {type : "int", group : "Appearance", defaultValue : 0},
 
 			/**
-			 * Number of rows that are fix on the top. When you use a vertical scroll bar, only the rows which are not fixed, will scroll.
+			 * Number of rows that are fix on the top. When you use a vertical scrollbar, only the rows which are not fixed, will scroll.
 			 */
 			fixedRowCount : {type : "int", group : "Appearance", defaultValue : 0},
 
 			/**
-			 * Number of rows that are fix on the bottom. When you use a vertical scroll bar, only the rows which are not fixed, will scroll.
+			 * Number of rows that are fix on the bottom. When you use a vertical scrollbar, only the rows which are not fixed, will scroll.
 			 * @since 1.18.7
 			 */
 			fixedBottomRowCount : {type : "int", group : "Appearance", defaultValue : 0},
@@ -240,7 +298,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * The values <code>0</code>, <code>1</code> and <code>2</code> are possible.
 			 * @since 1.45.0
 			 */
-			rowActionCount : {type : "int", group : "Appearance", defaultValue : 0}
+			rowActionCount : {type : "int", group : "Appearance", defaultValue : 0},
+
+			/**
+			 * Enables alternating table row colors.
+			 * Alternate row coloring is not available for the tree mode.
+			 * @since 1.52
+			 */
+			alternateRowColors : {type : "boolean", group : "Appearance", defaultValue : false}
 		},
 		defaultAggregation : "columns",
 		aggregations : {
@@ -256,13 +321,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			footer : {type : "sap.ui.core.Control", altTypes : ["string"], multiple : false},
 
 			/**
-			 * Toolbar of the Table (if not set it will be hidden)
-			 * @deprecated Since version 1.38. This aggregation is deprecated, use the <code>extension<code> aggregation instead.
+			 * Toolbar of the Table
+			 * If not set, no toolbar area will be rendered.
+			 * Note: The CSS class sapMTBHeader-CTX is applied on the given toolbar.
+			 * @deprecated Since version 1.38. This aggregation is deprecated, use the <code>extension</code> aggregation instead.
 			 */
 			toolbar : {type : "sap.ui.core.Toolbar", multiple : false, deprecated: true},
 
 			/**
-			 * Extension section of the Table (if not set it will be hidden)
+			 * Extension section of the Table.
+			 * If not set, no extension area will be rendered.
+			 * Note: In case a <code>sap.m.Toolbar</code> is used as header the CSS class sapMTBHeader-CTX should be applied on this toolbar via <code>addStyleClass</code>.
 			 */
 			extension : {type : "sap.ui.core.Control", multiple : true, singularName : "extension"},
 
@@ -295,12 +364,59 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			 * the template's properties or aggregations are changed, the template has to be applied again via
 			 * <code>setRowSettingsTemplate</code> for the changes to take effect.
 			 */
-			rowSettingsTemplate : {type : "sap.ui.table.RowSettings", multiple : false}
+			rowSettingsTemplate : {type : "sap.ui.table.RowSettings", multiple : false},
+
+			/**
+			 * Defines the drag-and-drop configuration via {@link sap.ui.core.dnd.DragDropInfo}
+			 *
+			 * The following restrictions apply:
+			 * <ul>
+			 *   <li>Drag and drop is not supported on mobile devices and there is no accessible alternative.</li>
+			 *   <li>Columns cannot be configured to be draggable.</li>
+			 *   <li>The following rows are not draggable:
+			 *     <ul>
+			 *       <li>Empty rows</li>
+			 *       <li>Group header rows</li>
+			 *       <li>Sum rows</li>
+			 *     </ul>
+			 *   </li>
+			 *   <li>Columns cannot be configured to be droppable.</li>
+			 *   <li>The following rows are not droppable:
+			 *     <ul>
+			 *       <li>The dragged row itself</li>
+			 *       <li>Empty rows</li>
+			 *       <li>Group header rows</li>
+			 *       <li>Sum rows</li>
+			 *     </ul>
+			 *   </li>
+			 *   <li>Texts in draggable rows cannot be selected.</li>
+			 *   <li>The text of input fields in draggable rows can be selected, but not dragged.</li>
+			 * </ul>
+			 *
+			 * @since 1.52
+			 */
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"},
+
+			/**
+			 * Defines the context menu for the table.
+			 *
+			 * <b>Note:</b> The context menu will also be available for the row selectors as well as in the row actions cell of the table control.
+			 *
+			 * The custom context menu will not be shown in the group header rows and the sum row of the <code>AnalyticalTable</code> control.
+			 *
+			 * If this aggregation is set, then the <code>enableCellFilter</code> property will have no effect.
+			 *
+			 * @since 1.54
+			 */
+			contextMenu : {type : "sap.ui.core.IContextMenu", multiple : false}
 		},
 		associations : {
 
 			/**
-			 * Group By Column (experimental!)
+			 * The column by which the table is grouped. Grouping will only be performed if <code>enableGrouping</code> is set to <code>true</code>.
+			 *
+			 * @experimental Since 1.28. This feature has a limited functionality.
+			 * @see sap.ui.table.Table#setEnableGrouping
 			 */
 			groupBy : {type : "sap.ui.table.Column", multiple : false},
 
@@ -508,6 +624,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			/**
 			 * fired when the user clicks a cell of the table.
 			 * @since 1.21.0
+			 * @deprecated As of 1.54, replaced by <code>beforeOpenContextMenu</code>.
 			 */
 			cellContextmenu : {allowPreventDefault : true,
 				parameters : {
@@ -541,6 +658,31 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					 * Row binding context of the selected cell.
 					 */
 					rowBindingContext : {type : "sap.ui.model.Context"}
+				}
+			},
+
+			/**
+			 * Fired when the user requests the context menu for a table cell.
+			 * @since 1.54
+			 */
+			beforeOpenContextMenu : {
+				allowPreventDefault : true,
+				parameters: {
+					/**
+					 * Row index where the context menu opens.
+					 */
+					rowIndex : {type : "int"},
+
+					/**
+					 * Column index where the context menu opens.
+					 * This is the index of the column in the <code>columns</code> aggregation.
+					 */
+					columnIndex : {type : "int"},
+
+					/**
+					 * Context menu
+					 */
+					contextMenu : {type : "sap.ui.core.IContextMenu"}
 				}
 			},
 
@@ -600,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				busy : {type : "boolean"}
 			}
 		},
-		designTime : true
+		designtime:  "sap/ui/table/designtime/Table.designtime"
 	}});
 
 
@@ -617,14 +759,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype.init = function() {
 		this._iBaseFontSize = parseFloat(jQuery("body").css("font-size")) || 16;
 		// create an information object which contains always required infos
-		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
 		this._attachExtensions();
 
-		this._bBindingLengthChanged = false;
 		this._bRowAggregationInvalid = true;
 		this._mTimeouts = {};
+		this._mAnimationFrames = {};
 
 		// TBD: Tooltips are not desired by Visual Design, discuss whether to switch it off by default
 		this._bHideStandardTooltips = false;
@@ -634,9 +775,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		 */
 		this._lastCalledUpdateRows = 0;
 		this._iBindingTimerDelay = 50;
-		this._iMaxScrollbarHeight = 1000000; // maximum px height of a DOM element in FF/IE/Chrome
 		this._aRowHeights = [];
-		this._iRowHeightsDelta = 0;
 		this._iRenderedFirstVisibleRow = 0;
 
 		this._aSortedColumns = [];
@@ -665,30 +804,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					that._updateRowHeights(that._aRowHeights, false); // table body rows
 
 					if (TableUtils.isVariableRowHeightEnabled(that)) {
-						that._iRowHeightsDelta = this._getRowHeightsDelta(that._aRowHeights);
-						that._iRenderedFirstVisibleRow = this.getFirstVisibleRow();
+						that._iRenderedFirstVisibleRow = this._getFirstRenderedRowIndex();
 					}
-					if (that._bBindingLengthChanged) {
-						that._updateVSbScrollTop();
-					}
-					that._toggleVSb();
-
-					if (TableUtils.isVariableRowHeightEnabled(that)) {
-						var iScrollTop = 0;
-						var oVSb = that._getScrollExtension().getVerticalScrollbar();
-						if (oVSb) {
-							iScrollTop = oVSb.scrollTop;
-						}
-						that._adjustTablePosition(iScrollTop, that._aRowHeights);
-					}
+					that._getScrollExtension().updateVerticalScrollbarVisibility();
 				}
 
 				that._mTimeouts.bindingTimer = undefined;
 				// Helper event for testing
 				that._fireRowsUpdated(sReason);
 			}
-
-			that._bBindingLengthChanged = false;
 		};
 
 		// basic selection model (by default the table uses multi selection)
@@ -705,8 +829,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// text selection for column headers?
 		this._bAllowColumnHeaderTextSelection = false;
 
-		this._bPendingRequest = false;
-		this._iBindingLength = 0;
+		this._iPendingRequests = 0;
+		this._bPendingRequest = false; // Fallback in case a counter is not applicable.
+		this._iBindingLength = null;
 
 		this._iTableRowContentHeight = 0;
 		this._bFirstRendering = true;
@@ -715,10 +840,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// Toolbar has its own F6 stop.
 		// this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 
-		this._bInvalid = true;
+		this._nDevicePixelRatio = window.devicePixelRatio;
 
-		this._bIsScrollVertical = null;
-		this._bIgnoreFixedColumnCount = false;
+		this._bInvalid = true;
 	};
 
 
@@ -733,7 +857,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		TableExtension.enrich(this, TablePointerExtension);
 		TableExtension.enrich(this, TableScrollExtension);
 		TableExtension.enrich(this, TableKeyboardExtension);
-		TableExtension.enrich(this, TableAccExtension); //Must be registered after keyboard to reach correct delegate order
+		TableExtension.enrich(this, TableAccExtension); // Must be registered after keyboard to reach correct delegate order
+		TableExtension.enrich(this, TableDragAndDropExtension);
 		this._bExtensionsInitialized = true;
 	};
 
@@ -796,53 +921,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		var oChanges = oEvent.changes || {};
 		var bRtlChanged = oChanges.hasOwnProperty("rtl");
 		var bLangChanged = oChanges.hasOwnProperty("language");
-		if (bRtlChanged || bLangChanged) {
-			this._adaptLocalization(bRtlChanged, bLangChanged);
-			// Trigger rerendering of whole table
+		this._adaptLocalization(bRtlChanged, bLangChanged).then(function() {
 			this.invalidate();
-		}
+		}.bind(this));
 	};
 
 	/**
-	 * Localization changed
+	 * Adapts the table to localization changes. Re-rendering or invalidation of the table needs to be taken care of by the caller.
+	 *
+	 * @param {boolean} bRtlChanged Whether the text direction changed.
+	 * @param {boolean} bLangChanged Whether the language changed.
+	 * @return {Promise} A promise on the adaptation. If no adaptation is required, because text direction and language did not change, the
+	 * promise will be rejected.
 	 * @private
 	 */
 	Table.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
+		if (!bRtlChanged && !bLangChanged) {
+			return Promise.reject();
+		}
+
+		var pUpdateLocalizationInfo = Promise.resolve();
+
 		if (bRtlChanged) {
 			this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 		}
 
 		if (bLangChanged) {
-			var aRows = this.getRows();
-			var i;
-
-			// Update the resource bundle.
-			this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
-
-			// Update the resource bundle of row actions.
-			var oRowAction;
-			for (i = 0; i < aRows.length; i++) {
-				oRowAction = aRows[i].getAggregation("_rowAction");
-				if (oRowAction) {
-					oRowAction._oResBundle = this._oResBundle;
-				}
-			}
-
-			// Update the resource bundle of row settings.
-			var oRowSettings;
-			for (i = 0; i < aRows.length; i++) {
-				oRowSettings = aRows[i].getAggregation("_settings");
-				if (oRowSettings) {
-					oRowSettings._oResBundle = this._oResBundle;
-				}
-			}
-
-			// Clear the cell context menu.
-			TableUtils.Menu.cleanupDataCellContextMenu(this);
-
-			// Update the column menus.
-			this._invalidateColumnMenus(true);
+			pUpdateLocalizationInfo = TableUtils.getResourceBundle({async: true, reload: true});
 		}
+
+		return pUpdateLocalizationInfo.then(function() {
+			if (bLangChanged) {
+				// Clear the cell context menu.
+				TableUtils.Menu.cleanupDataCellContextMenu(this);
+
+				// Update the column menus.
+				this._invalidateColumnMenus();
+			}
+		}.bind(this));
 	};
 
 	/**
@@ -850,7 +966,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * scrollable column areas is returned.
 	 *
 	 * @param {boolean} bHeader If set to <code>true</code>, only the heights of the rows in the column header will be returned
-	 * @return {int[]} The row heights
+	 * @returns {int[]} The row heights
 	 * @private
 	 */
 	Table.prototype._collectRowHeights = function(bHeader) {
@@ -900,7 +1016,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._resetRowHeights = function() {
-		var iRowHeight = this.getRowHeight();
+		var iRowHeight = this._getDefaultRowHeight();
 
 		var sRowHeight = "";
 		if (iRowHeight) {
@@ -937,7 +1053,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	/**
 	 * Determines the space available for the rows.
 	 *
-	 * @return {int} The available space in pixels.
+	 * @returns {int} The available space in pixels.
 	 * @private
 	 */
 	Table.prototype._determineAvailableSpace = function() {
@@ -948,6 +1064,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			if (oCCnt) {
 				var iUsedHeight = oDomRef.scrollHeight - oCCnt.clientHeight;
+
 				// take into account controls above the table in the container
 				var iTableTop = 0;
 				if (oDomRef.parentNode.firstChild !== oDomRef) {
@@ -959,9 +1076,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				}
 
 				// For simplicity always add the default height of the horizontal scrollbar to the used height, even if it will not be visible.
-				iUsedHeight += 18;
+				var oScrollExtension = this._getScrollExtension();
+				var oHSb = oScrollExtension.getHorizontalScrollbar();
 
-				return jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop;
+				if (oHSb == null || !oScrollExtension.isHorizontalScrollbarVisible()) {
+					var mDefaultScrollbarHeight = {};
+					mDefaultScrollbarHeight[Device.browser.BROWSER.CHROME] = 16;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.FIREFOX] = 16;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.INTERNET_EXPLORER] = 18;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.EDGE] = 12;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.SAFARI] = 16;
+					mDefaultScrollbarHeight[Device.browser.BROWSER.ANDROID] = 8;
+					iUsedHeight += mDefaultScrollbarHeight[Device.browser.name];
+				}
+
+				if (this._iLastAvailableSpace == null) {
+					this._iLastAvailableSpace = 0;
+				}
+
+				var iNewAvailableSpace = Math.floor(jQuery(oDomRef.parentNode).height() - iUsedHeight - iTableTop);
+				var iAvailableSpaceDifference = Math.abs(iNewAvailableSpace - this._iLastAvailableSpace);
+
+				if (iAvailableSpaceDifference >= 5) {
+					this._iLastAvailableSpace = Math.floor(iNewAvailableSpace);
+				}
+
+				return this._iLastAvailableSpace;
 			}
 		}
 
@@ -1022,38 +1162,66 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 		var iFixedColumnCount = this.getProperty("fixedColumnCount");
 		var iFixedHeaderWidthSum = 0;
-		var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol:not(.sapUiTableCHTHR) > th:not(.sapUiTableColSel)");
-		if (aHeaderElements) {
-			var aColumns = this.getColumns();
+		if (iFixedColumnCount) {
+			var aHeaderElements = oDomRef.querySelectorAll(".sapUiTableCtrlFirstCol:not(.sapUiTableCHTHR) > th");
 			for (var i = 0; i < aHeaderElements.length; i++) {
-				var iHeaderWidth = aHeaderElements[i].getBoundingClientRect().width;
-
-				if (i < aColumns.length && aColumns[i] && !aColumns[i].getVisible()) {
-					// the fixedColumnCount does not consider the visibility of the column, whereas the DOM only represents
-					// the visible columns. In order to match both, the fixedColumnCount (aggregation) and fixedColumnCount
-					// of the DOM, for each invisible column, 1 must be deducted from the fixedColumnCount (aggregation).
-					iFixedColumnCount--;
-				}
-
-				if (i < iFixedColumnCount) {
-					iFixedHeaderWidthSum += iHeaderWidth;
+				var iColIndex = parseInt(aHeaderElements[i].getAttribute("data-sap-ui-headcolindex"), 10);
+				if (!isNaN(iColIndex) && (iColIndex < iFixedColumnCount)) {
+					iFixedHeaderWidthSum += aHeaderElements[i].getBoundingClientRect().width;
 				}
 			}
 		}
 
-		if (iFixedColumnCount > 0) {
-			var iColumnAreaWidth = oSizes.tableCtrlFixedWidth + oSizes.tableCtrlScrWidth;
-			var iFixedColumnsWidthThreshold = iFixedHeaderWidthSum + TableUtils.Column.getMinColumnWidth();
-			var bFixedColumnsFitIntoTable = iColumnAreaWidth > iFixedColumnsWidthThreshold;
+		if (iFixedHeaderWidthSum > 0) {
+			var iUsedHorizontalTableSpace = oSizes.tableRowHdrScrWidth;
 
-			// Render fixed columns as scrollable columns when there is not enough space available.
-			if (this._bIgnoreFixedColumnCount === bFixedColumnsFitIntoTable) {
-				this._bIgnoreFixedColumnCount = !bFixedColumnsFitIntoTable;
+			var oVsb = this.getDomRef("vsb");
+			if (oVsb) {
+				iUsedHorizontalTableSpace += oVsb.offsetWidth;
+			}
+
+			if (TableUtils.hasRowActions(this)) {
+				var oRowActions = this.getDomRef("sapUiTableRowActionScr");
+				if (oRowActions) {
+					iUsedHorizontalTableSpace += oRowActions.offsetWidth;
+				}
+			}
+
+			// If the columns fit into the table, we do not need to ignore the fixed column count.
+			// Otherwise, check if the new fixed columns fit into the table. If they don't, the fixed column count setting will be ignored.
+			var bNonFixedColumnsFitIntoTable = oSizes.tableCtrlScrollWidth === oSizes.tableCtrlScrWidth; // Also true if no non-fixed columns exist.
+
+			if (!bNonFixedColumnsFitIntoTable) { // horizontal scrollbar should be at least 48px wide
+				iUsedHorizontalTableSpace += TableUtils.Column.getMinColumnWidth();
+			}
+
+			var bFixedColumnsFitIntoTable = oSizes.tableCtrlFixedWidth + iUsedHorizontalTableSpace <= oSizes.tableCntWidth; // Also true if no fixed columns exist.
+			var bIgnoreFixedColumnCountCandidate = false;
+
+			if (!bNonFixedColumnsFitIntoTable || !bFixedColumnsFitIntoTable) {
+				bIgnoreFixedColumnCountCandidate = (oSizes.tableCntWidth - iUsedHorizontalTableSpace < iFixedHeaderWidthSum);
+			}
+
+			if (this._bIgnoreFixedColumnCount !== bIgnoreFixedColumnCountCandidate) {
+				this._bIgnoreFixedColumnCount = bIgnoreFixedColumnCountCandidate;
+				if (this.getEnableColumnFreeze()) {
+					this._invalidateColumnMenus();
+				}
 				this.invalidate();
 			}
 		}
 
 		return oSizes;
+	};
+
+	/**
+	 * Returns the aggregation containers DOM reference.
+	 * @private
+	 */
+	Table.prototype.getAggregationDomRef = function(sAggregationName) {
+		if (sAggregationName == "rows") {
+			return this.getDomRef("tableCCnt");
+		}
 	};
 
 	/**
@@ -1116,15 +1284,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (sVisibleRowCountMode == VisibleRowCountMode.Interactive ||
 			sVisibleRowCountMode == VisibleRowCountMode.Fixed ||
 			(sVisibleRowCountMode == VisibleRowCountMode.Auto && this._iTableRowContentHeight && aRows.length == 0)) {
-			if (this.getBinding("rows")) {
-				this._updateRows(this._calculateRowsToDisplay(), TableUtils.RowsUpdateReason.Render);
-			} else {
-				var that = this;
-				this._mTimeouts.onBeforeRenderingAdjustRows = this._mTimeouts.onBeforeRenderingAdjustRows || window.setTimeout(function() {
-						that._updateRows(that._calculateRowsToDisplay(), TableUtils.RowsUpdateReason.Render);
-						that._mTimeouts.onBeforeRenderingAdjustRows = undefined;
-					}, 0);
-			}
+
+			// Necessary due to the fact that getBinding initializes the grouping functionality
+			this.getBinding("rows");
+
+			this._updateRows(this._calculateRowsToDisplay(), TableUtils.RowsUpdateReason.Render);
 		} else if (this._bRowAggregationInvalid && aRows.length > 0) {
 			// Rows got invalidated, recreate rows with new template
 			this._updateRows(aRows.length, TableUtils.RowsUpdateReason.Render);
@@ -1137,12 +1301,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype.onAfterRendering = function(oEvent) {
-		var bEventIsMarked = oEvent && oEvent.isMarked("renderRows");
-
-		if (bEventIsMarked) {
-			this._getScrollExtension().updateVerticalScrollbarHeight();
-			this._updateVSbRange();
-		}
+		var bRenderedRows = oEvent && oEvent.isMarked("renderRows");
 
 		this._bInvalid = false;
 		this._bOnAfterRendering = true;
@@ -1163,7 +1322,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		// enable/disable text selection for column headers
-		if (!this._bAllowColumnHeaderTextSelection && !bEventIsMarked) {
+		if (!this._bAllowColumnHeaderTextSelection && !bRenderedRows) {
 			this._disableTextSelection($this.find(".sapUiTableColHdrCnt"));
 		}
 
@@ -1180,10 +1339,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			// to be executed before timeouts may be executed.
 			Promise.resolve().then(this._updateTableSizes.bind(this, TableUtils.RowsUpdateReason.Render, true));
 		} else {
-			this._updateTableSizes(TableUtils.RowsUpdateReason.Render);
+			this._updateTableSizes(TableUtils.RowsUpdateReason.Render, null, bRenderedRows,
+				bRenderedRows && TableUtils.isVariableRowHeightEnabled(this));
 		}
 
-		if (!bEventIsMarked) {
+		if (!bRenderedRows) {
 			// needed for the column resize ruler
 			this._aTableHeaders = this.$().find(".sapUiTableColHdrCnt th");
 
@@ -1214,7 +1374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * First collects all table sizes, then synchronizes row/column heights, updates scrollbars and selection.
 	 * @private
 	 */
-	Table.prototype._updateTableSizes = function(sReason, bForceUpdateTableSizes, bSkipHandleRowCountMode) {
+	Table.prototype._updateTableSizes = function(sReason, bForceUpdateTableSizes, bSkipHandleRowCountMode, bForceSetRowContentHeight) {
 		var oDomRef = this.getDomRef();
 		var that = this;
 
@@ -1232,11 +1392,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._resetColumnHeaderHeights();
 		this._aRowHeights = this._collectRowHeights(false);
 		var aColumnHeaderRowHeights = this._collectRowHeights(true);
+
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			this._iRowHeightsDelta = this._getRowHeightsDelta(this._aRowHeights);
+			// Necessary in case the visible row count does not change after a resize (for example, this is always the case
+			// if visibleRowCountMode is set to "Fixed"). The row heights might change due to decreased column widths, so the inner scroll position
+			// must be adjusted.
+			this._getScrollExtension().updateInnerVerticalScrollPosition();
 		}
 
-		var iRowContentSpace = 0;
+		var iRowContentSpace = null;
 		if (!bSkipHandleRowCountMode && this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
 			iRowContentSpace = this._determineAvailableSpace();
 			// if no height is granted we do not need to do any further row adjustment or layout sync.
@@ -1333,12 +1497,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._updateRowHeights(aColumnHeaderRowHeights, true);
 
 		this._determineVisibleCols(oTableSizes);
-		if (!bSkipHandleRowCountMode) {
+		if (!bSkipHandleRowCountMode || bForceSetRowContentHeight) {
 			this._setRowContentHeight(iRowContentSpace);
 		}
 
-		this._updateHSb(oTableSizes);
-		this._updateVSbTop();
+		if (this.getVisibleRowCountMode() == VisibleRowCountMode.Auto) {
+			//if visibleRowCountMode is auto change the visibleRowCount according to the parents container height
+			var iRows = this._calculateRowsToDisplay(iRowContentSpace != null ? iRowContentSpace : this._determineAvailableSpace());
+			// if minAutoRowCount has reached, table should use block this height.
+			// In case row > minAutoRowCount, the table height is 0, because ResizeTrigger must detect any changes of the table parent.
+			if (iRows == this._determineMinAutoRowCount()) {
+				this.$().height("auto");
+			} else {
+				this.$().height("0px");
+			}
+		}
+
+		var oScrollExtension = this._getScrollExtension();
+		oScrollExtension.updateHorizontalScrollbar(oTableSizes);
+		oScrollExtension.updateVerticalScrollbarPosition();
+		oScrollExtension.updateVerticalScrollbarVisibility();
 
 		var $this = this.$();
 
@@ -1489,7 +1667,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Sets the selection mode. The current selection is lost.
 	 * @param {string} sSelectionMode the selection mode, see sap.ui.table.SelectionMode
 	 * @public
-	 * @return a reference on the table for chaining
+	 * @returns a reference on the table for chaining
 	 */
 	Table.prototype.setSelectionMode = function(sSelectionMode) {
 		this.clearSelection();
@@ -1506,44 +1684,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this;
 	};
 
-	/**
-	 * Shifts the vertical table position according to the delta of the estimated row heights to actual row heights.
-	 * The table simulates the pixel-based scrolling by adjusting the vertical position of the scrolling areas.
-	 * Additionally when there are rows inside which have a larger height than estimated, this will also be corrected
-	 * and leads to a bigger vertical shift.
-	 * @private
-	 */
-	Table.prototype._adjustTablePosition = function(iScrollTop, aRowHeights) {
-		var bScrollPositionAtVirtualRange = iScrollTop < this._getVirtualScrollRange();
-		var bVirtualScrollingNeeded = this._getRowCount() > this.getVisibleRowCount();
-
-		// Only update table scroll simulation when table is not waiting for an update of rows
-		if (bScrollPositionAtVirtualRange && this.getFirstVisibleRow() != this._iRenderedFirstVisibleRow) {
-			return;
-		}
-
-		var iRowCorrection = null;
-		if (bScrollPositionAtVirtualRange && bVirtualScrollingNeeded) {
-			var iFirstRowHeight = aRowHeights[0];
-			var iScrollingPixelsForRow = this._getScrollingPixelsForRow();
-			var iPixelOnCurrentRow = iScrollTop - (this.getFirstVisibleRow() * iScrollingPixelsForRow);
-			var iPercentOfFirstRowReached = iPixelOnCurrentRow / iScrollingPixelsForRow;
-			iRowCorrection = Math.ceil(iPercentOfFirstRowReached * iFirstRowHeight);
-			// Is scroll position over the first row height >> do nothing until performUpdateRows()
-			if (iRowCorrection > iFirstRowHeight) {
-				iRowCorrection = null;
-			}
-		} else if (this._iRowHeightsDelta >= 0) {
-			// Correct the total amount of RowHeightsDelta over the overflow scroll area.
-			var iScrollPositionAtOverflowRange = bVirtualScrollingNeeded ? iScrollTop - this._getVirtualScrollRange() : iScrollTop;
-			iRowCorrection = (this._iRowHeightsDelta / this._getRowCorrectionScrollRange()) * iScrollPositionAtOverflowRange;
-		}
-
-		if (iRowCorrection != null && iRowCorrection > -1) {
-			this.$().find(".sapUiTableCCnt").scrollTop(iRowCorrection);
-		}
-	};
-
 	/*
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
@@ -1553,8 +1693,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 								 " The value has been set to 0.", this);
 			iRowIndex = 0;
 		}
-		if (this._getRowCount() > 0) {
-			var iMaxRowIndex = this._getMaxRowIndex();
+		if (this._getTotalRowCount() > 0) {
+			var iMaxRowIndex = this._getMaxFirstVisibleRowIndex();
 
 			if (iMaxRowIndex < iRowIndex) {
 				jQuery.sap.log.warning("The index of the first visible row must be lesser or equal than the scrollable row count minus the visible row count." +
@@ -1564,17 +1704,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		var bFirstVisibleRowChanged = this.getFirstVisibleRow() != iRowIndex;
+		var oScrollExtension = this._getScrollExtension();
 
 		if (bFirstVisibleRowChanged) {
+			var iOldFirstRenderedRowIndex = this._getFirstRenderedRowIndex();
 			// Prevent re-rendering of the table, just update the rows.
 			this.setProperty("firstVisibleRow", iRowIndex, true);
+			var bFirstRenderedRowChanged = this._getFirstRenderedRowIndex() !== iOldFirstRenderedRowIndex;
 
 			if (this.getBinding("rows")) {
-				var sReason = bOnScroll === true ? TableUtils.RowsUpdateReason.VerticalScroll : TableUtils.RowsUpdateReason.FirstVisibleRowChange;
-				this.updateRows(sReason);
+				if (bFirstRenderedRowChanged) {
+					var sReason = bOnScroll === true ? TableUtils.RowsUpdateReason.VerticalScroll : TableUtils.RowsUpdateReason.FirstVisibleRowChange;
+					this.updateRows(sReason);
+				}
 
+				// If changing the first visible row was initiated by a scroll action, the scroll position is already accurate.
+				// If the first visible row is set to the maximum row index, the table is scrolled to the bottom including the overflow.
 				if (!bOnScroll) {
-					this._updateVSbScrollTop();
+					oScrollExtension.updateVerticalScrollPosition();
 				}
 			}
 
@@ -1583,11 +1730,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					firstVisibleRow: iRowIndex
 				});
 			}
+		} else if (!bOnScroll) {
+			// Even if the first visible row was not changed, this row may not be visible because of the inner scroll position. Therefore the
+			// scroll position is adjusted to make it visible (by resetting the inner scroll position).
+			oScrollExtension.updateVerticalScrollPosition();
 		}
 
 		return this;
 	};
-
 
 	// enable calling 'bindAggregation("rows")' without a factory
 	Table.getMetadata().getAggregation("rows")._doesNotRequireFactory = true;
@@ -1604,29 +1754,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.bindRows = function(oBindingInfo) {
-		// Old API compatibility
-		if (typeof oBindingInfo === "string") {
-			// (sPath, vTemplate, oSorter, aFilters)
-			var oSorter = arguments[2];
-			var aFilters = arguments[3];
-			var oTemplate = arguments[1];
-
-			// (sPath, [oSorter], [aFilters])
-			if (oTemplate instanceof Sorter || jQuery.isArray(oSorter) && oSorter[0] instanceof Filter) {
-				oSorter = oTemplate;
-				aFilters = oSorter;
-				oTemplate = undefined;
-			}
-
-			oBindingInfo = {
-				path: oBindingInfo,
-				sorter: oSorter,
-				filters: aFilters,
-				template: oTemplate
-			};
+		if (this.getEnableBusyIndicator()) {
+			this.setBusy(false);
 		}
-
-		return Control.prototype.bindAggregation.call(this, "rows", oBindingInfo);
+		this._iPendingRequests = 0;
+		this._bPendingRequest = false;
+		return Control.prototype.bindAggregation.call(this, "rows", Table._getSanitizedBindingInfo(arguments));
 	};
 
 	/**
@@ -1635,18 +1768,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @override {@link sap.ui.base.ManagedObject#_bindAggregation}
 	 */
 	Table.prototype._bindAggregation = function(sName, oBindingInfo) {
+		if (sName === "rows") {
+			Table._addBindingListener(oBindingInfo, "change", this._onBindingChange.bind(this));
+			Table._addBindingListener(oBindingInfo, "dataRequested", this._onBindingDataRequested.bind(this));
+			Table._addBindingListener(oBindingInfo, "dataReceived", this._onBindingDataReceived.bind(this));
+		}
+
 		// Create the binding.
 		Element.prototype._bindAggregation.call(this, sName, oBindingInfo);
 
 		var oBinding = this.getBinding("rows");
 
 		if (sName === "rows" && oBinding != null) {
-			// Attach event listeners after the binding has been created to not overwrite the event listeners of other parties.
-			oBinding.attachEvents({
-				change: this._onBindingChange.bind(this),
-				dataRequested: this._onBindingDataRequestedListener.bind(this),
-				dataReceived: this._onBindingDataReceivedListener.bind(this)
-			});
+			var oModel = oBinding.getModel();
+			if (oModel != null && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
+				jQuery.sap.log.error("The binding mode of the model is set to \"OneTime\"."
+									 + " This binding mode is not supported for the \"rows\" aggregation!"
+									 + " Scrolling can not be performed.", this);
+			}
 		}
 
 		// Re-initialize the selection model. Might be necessary in case the table gets "rebound".
@@ -1654,10 +1793,70 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
+	 * Converts old binding configuration APIs to the new API.
+	 *
+	 * @param {...*} [args] Binding configuration arguments.
+	 * @returns {Object|null} The binding info object or null.
+	 * @static
+	 * @private
+	 */
+	Table._getSanitizedBindingInfo = function(args) {
+		var oBindingInfo;
+
+		if (args == null || args[0] == null) {
+			oBindingInfo = null;
+		} else if (typeof args[0] === "string") {
+			/* Old API compatibility */
+
+			// (sPath, vTemplate, oSorter, aFilters)
+			var sPath = args[0];
+			var oTemplate = args[1];
+			var oSorter = args[2];
+			var aFilters = args[3];
+
+			// (sPath, [oSorter], [aFilters])
+			if (oTemplate instanceof Sorter || jQuery.isArray(oSorter) && oSorter[0] instanceof Filter) {
+				aFilters = oSorter;
+				oSorter = oTemplate;
+				oTemplate = undefined;
+			}
+
+			oBindingInfo = {
+				path: sPath,
+				sorter: oSorter,
+				filters: aFilters,
+				template: oTemplate
+			};
+		} else {
+			// The first (and only) argument should be a valid binding info object.
+			oBindingInfo = args[0];
+		}
+
+		return oBindingInfo;
+	};
+
+	Table._addBindingListener = function(oBindingInfo, sEventName, fHandler) {
+		if (oBindingInfo.events == null) {
+			oBindingInfo.events = {};
+		}
+
+		if (oBindingInfo.events[sEventName] == null) {
+			oBindingInfo.events[sEventName] = fHandler;
+		} else {
+			// Wrap the event handler of the other party to add our handler.
+			var fOriginalHandler = oBindingInfo.events[sEventName];
+			oBindingInfo.events[sEventName] = function() {
+				fHandler.apply(this, arguments);
+				fOriginalHandler.apply(this, arguments);
+			};
+		}
+	};
+
+	/**
 	 * Initialises a new selection model for the Table instance.
 	 * @param {sap.ui.model.SelectionModel.MULTI_SELECTION|sap.ui.model.SelectionModel.SINGLE_SELECTION} sSelectionMode the selection mode of the
 	 *     selection model
-	 * @return {sap.ui.table.Table} the table instance for chaining
+	 * @returns {sap.ui.table.Table} the table instance for chaining
 	 * @private
 	 */
 	Table.prototype._initSelectionModel = function (sSelectionMode) {
@@ -1701,7 +1900,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			this._restoreAppDefaultsColumnHeaderSortFilter();
 			// metadata might have changed
 			this._invalidateColumnMenus();
-			this._updateBindingLength();
+			this._updateTotalRowCount(true);
 			this.updateRows(TableUtils.RowsUpdateReason.Unbind);
 		}
 
@@ -1729,12 +1928,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		iVisibleRowCount = this.validateProperty("visibleRowCount", iVisibleRowCount);
-		if (this.getBinding("rows") && this.getBinding("rows").getLength() <= iVisibleRowCount) {
+		if (this.getBinding("rows") != null && this._getTotalRowCount() <= iVisibleRowCount) {
 			this.setProperty("firstVisibleRow", 0);
 		}
 		this.setProperty("visibleRowCount", iVisibleRowCount);
 		this._setRowContentHeight(iVisibleRowCount * this._getDefaultRowHeight());
 		return this;
+	};
+
+	Table.prototype.setMinAutoRowCount = function(iMinAutoRowCount) {
+		if (parseInt(iMinAutoRowCount, 10) < 1) {
+			jQuery.sap.log.error("The minAutoRowCount property must be greater than 0. The value has been set to 1.", this);
+			iMinAutoRowCount = 1;
+		}
+		this.setProperty("minAutoRowCount", iMinAutoRowCount);
 	};
 
 	Table.prototype.setRowHeight = function(iRowHeight) {
@@ -1781,7 +1988,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		iFixedBottomRowCount = iFixedBottomRowCount || this.getFixedBottomRowCount();
-		iBindingLength = iBindingLength || oBinding.getLength();
+		iBindingLength = iBindingLength || this._getTotalRowCount();
 
 		var iVisibleRowCount = this.getVisibleRowCount();
 		if (iFixedBottomRowCount > 0 && (iVisibleRowCount - iFixedBottomRowCount) < iBindingLength) {
@@ -1836,7 +2043,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		bSuppressUpdate = bSuppressUpdate === true;
 		bSecondCall = bSecondCall === true;
 
-		var iFirstVisibleRow = this.getFirstVisibleRow();
+		var iFirstVisibleRow = this._getFirstRenderedRowIndex();
 		var iFixedRowCount = this.getFixedRowCount();
 		var iFixedBottomRowCount = this.getFixedBottomRowCount();
 		var iReceivedLength = 0;
@@ -1883,7 +2090,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// since the tree gets only build once (as result of getContexts call). If first the fixed bottom row would
 		// be requested the analytical binding would build the tree twice.
 		aTmpContexts = this._getContexts(iStartIndex, iLength, iThreshold);
-		var iBindingLength = this._updateBindingLength(bSuppressUpdate);
+		var iBindingLength = this._updateTotalRowCount(!bSuppressUpdate);
+
 		// iLength is the number of rows which shall get filled. It might be more than the binding actually has data.
 		// Therefore Math.min is required to make sure to not request data again from the binding.
 		bReceivedLessThanRequested = aTmpContexts.length < Math.min(iLength, iBindingLength - iFixedBottomRowCount);
@@ -1906,69 +2114,67 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			fnMergeArrays(aContexts, aTmpContexts, iMergeOffsetBottomRow);
 		}
 
-		if (bReceivedLessThanRequested && !bSecondCall) {
-			if (iBindingLength > 0) {
-				var iMaxRowIndex = this._getMaxRowIndex();
+		var iMaxRowIndex = this._getMaxFirstRenderedRowIndex();
 
-				if (iMaxRowIndex < iFirstVisibleRow) {
-					iFirstVisibleRow = iMaxRowIndex;
-					this.setProperty("firstVisibleRow", iFirstVisibleRow, true);
+		if (bReceivedLessThanRequested
+			&& iBindingLength > 0
+			&& iMaxRowIndex < iFirstVisibleRow
+			&& !bSecondCall) {
 
-					// Get the contexts again, this time with the maximum possible value for the first visible row.
-					aContexts = this._getRowContexts(iVisibleRowCount, bSuppressUpdate, true);
-					iReceivedLength = aContexts.length;
-				}
-			}
+			iFirstVisibleRow = iMaxRowIndex;
+			this.setProperty("firstVisibleRow", iFirstVisibleRow, true);
+
+			// Get the contexts again, this time with the maximum possible value for the first visible row.
+			aContexts = this._getRowContexts(iVisibleRowCount, bSuppressUpdate, true);
 		}
 
 		return aContexts;
 	};
 
 	/**
-	 * Get current binding length and store it in <code>Table._iBindingLength</code>.
+	 * Updates the cached total number of rows (binding length) and stores it in <code>Table._iBindingLength</code>.
 	 *
-	 * @param {boolean} [bSuppressUpdate=false] If set to <code>true</code>, the dependent UI parts of the table will not be updated when the
-	 * 											binging length has changed.
-	 * @returns {int} The binding length
+	 * @param {boolean} [bUpdateUI=true] If set to <code>true</code>, the parts of the UI which are dependent on the total row count will
+	 *                                   be updated, if the total row count has changed.
+	 * @returns {int} The updated total row count.
 	 * @private
 	 */
-	Table.prototype._updateBindingLength = function(bSuppressUpdate) {
+	Table.prototype._updateTotalRowCount = function(bUpdateUI) {
 		// If the binding length changes it must call updateAggregation (updateRows).
 		// Therefore it should be save to buffer the binding length here. This gives some performance advantage,
-		// especially for tree bindings using the TreeBindingAdapter where a tree structure must be created to
+		// especially for tree bindings using the TreeBindingAdapter, where a tree structure must be created to
 		// calculate the correct length.
-		var oBinding = this.getBinding("rows");
-		var iBindingLength = 0;
-
-		bSuppressUpdate = bSuppressUpdate === true;
-
-		if (oBinding) {
-			iBindingLength = oBinding.getLength();
+		if (this._iBindingLength === null) {
+			this._iBindingLength = 0; // Initialize the binding length. From now on always the cached version should be used.
 		}
 
-		if (iBindingLength != this._iBindingLength) {
-			this._iBindingLength = iBindingLength;
-			this._bBindingLengthChanged = true;
+		var oBinding = this.getBinding("rows");
+		var iCurrentTotalRowCount = this._getTotalRowCount();
+		var iNewTotalRowCount = oBinding == null ? 0 : oBinding.getLength();
 
-			// When the binding length has changed, some UI parts need to be updated.
-			if (!bSuppressUpdate) {
+		if (iCurrentTotalRowCount !== iNewTotalRowCount) {
+			this._iBindingLength = iNewTotalRowCount;
+
+			// If the binding length changes, some parts of the UI need to be updated.
+			if (bUpdateUI !== false) {
+				var oScrollExtension = this._getScrollExtension();
+				var bClientBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientListBinding")
+									 || TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding");
+
 				this._updateFixedBottomRows();
-				this._toggleVSb();
-				this._updateVSbRange();
-
-				var bClientBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientListBinding") ||
-									 TableUtils.isInstanceOf(oBinding, "sap/ui/model/ClientTreeBinding");
+				oScrollExtension.updateVerticalScrollbarVisibility();
+				oScrollExtension.updateVerticalScrollHeight();
 
 				if (oBinding == null || bClientBinding) {
 					// A client binding does not fire dataReceived events. Therefore we need to update the no data area here.
-					// When the binding has been removed, the table might not be completely re-rendered (just the content). But the bindingLengthChange event
-					// is fired. In this case we also need to update the no data area.
+					// When the binding has been removed, the table might not be completely re-rendered (just the content). But the cached binding
+					// length changes. In this case the no data area needs to be updated.
 					this._updateNoData();
 				}
 			}
 		}
 
-		return iBindingLength;
+		return iNewTotalRowCount;
 	};
 
 	/**
@@ -2029,12 +2235,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				this._updateRows(this._calculateRowsToDisplay(), sReason);
 			}
 		}
-
-		// when not scrolling we update also the scroll position of the scrollbar
-		//if (this._oVSb.getScrollPosition() !== iStartIndex) {
-			// TODO
-			//this._updateAriaRowOfRowsText(true);
-		//}
 
 		// update the bindings only once the table is rendered
 		if (!this.bIsDestroyed) {
@@ -2120,30 +2320,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._attachEvents = function() {
 		var $this = this.$();
 
-		// listen to the scroll events of the containers (for keyboard navigation)
-		$this.find(".sapUiTableColHdrScr").scroll(jQuery.proxy(this._oncolscroll, this));
-		$this.find(".sapUiTableCtrlScr").scroll(jQuery.proxy(this._oncntscroll, this));
-		$this.find(".sapUiTableCtrlScrFixed").scroll(jQuery.proxy(this._oncntscroll, this));
-
-		$this.find(".sapUiTableCtrlScrFixed").on("scroll.sapUiTablePreventFixedAreaScroll", function(oEvent) {oEvent.target.scrollLeft = 0;});
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			var oInnerScrollContainer = $this.find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed, .sapUiTableRowHdrScr");
-			oInnerScrollContainer.on("scroll.sapUiTableSyncScrollPosition", function(oEvent) {
-				oInnerScrollContainer.scrollTop(oEvent.target.scrollTop);
-			});
-		}
-
 		if (sap.ui.getCore().getConfiguration().getAnimation()) {
 			jQuery(document.body).on("webkitTransitionEnd transitionend",
 				function(oEvent) {
 					if (jQuery(oEvent.target).has($this).length > 0) {
-						this._iDefaultRowHeight = undefined;
 						this._updateTableSizes(TableUtils.RowsUpdateReason.Animation);
 					}
 				}.bind(this)
 			);
 		}
 
+		Device.resize.attachHandler(this._onWindowResize, this);
 		TableExtension.attachEvents(this);
 	};
 
@@ -2155,31 +2342,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		jQuery(document.body).off('webkitTransitionEnd transitionend');
 
 		TableUtils.deregisterResizeHandler(this);
+		Device.resize.detachHandler(this._onWindowResize, this);
 		TableExtension.detachEvents(this);
 	};
 
 	/**
-	 * Collect the scroll wheel/touch targets needed for scrolling the table.
-	 * @returns {*}
-	 * @private
-	 */
-	Table.prototype._getScrollTargets = function() {
-		var $ctrlScr = jQuery(this.getDomRef("sapUiTableCtrlScr"));
-		var $rsz = jQuery(this.getDomRef("rsz"));
-		var $ctrlScrFixed = jQuery(this.getDomRef("sapUiTableCtrlScrFixed"));
-		var $rowHdrScr = jQuery(this.getDomRef("sapUiTableRowHdrScr"));
-		return $ctrlScr.add($ctrlScrFixed).add($rowHdrScr).add($rsz);
-	};
-
-	/**
-	 * cleanup the timers when not required anymore
+	 * cleanup the timers and animation frames when not required anymore
 	 * @private
 	 */
 	Table.prototype._cleanUpTimers = function() {
-		for (var sKey in this._mTimeouts) {
+		var sKey;
+
+		for (sKey in this._mTimeouts) {
 			if (this._mTimeouts[sKey]) {
 				window.clearTimeout(this._mTimeouts[sKey]);
 				delete this._mTimeouts[sKey];
+			}
+		}
+
+		for (sKey in this._mAnimationFrames) {
+			if (this._mAnimationFrames[sKey]) {
+				window.cancelAnimationFrame(this._mAnimationFrames[sKey]);
+				delete this._mAnimationFrames[sKey];
 			}
 		}
 	};
@@ -2187,145 +2371,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 	// PRIVATE TABLE STUFF :)
 	// =============================================================================
-	/**
-	 * updates the horizontal scrollbar
-	 * @private
-	 */
-	Table.prototype._updateHSb = function(oTableSizes) {
-		// get the width of the container
-		var $this = this.$();
-		var iColsWidth = oTableSizes.tableCtrlScrollWidth;
-		if (!!Device.browser.safari) {
-			iColsWidth = Math.max(iColsWidth, this._getColumnsWidth(this.getFixedColumnCount()));
-		}
-
-		// add the horizontal scrollbar
-		if (iColsWidth > oTableSizes.tableCtrlScrWidth) {
-			// show the scrollbar
-			if (!this._getScrollExtension().isHorizontalScrollbarVisible()) {
-				$this.addClass("sapUiTableHScr");
-
-				if (!!Device.browser.safari) {
-					var $sapUiTableColHdr = $this.find(".sapUiTableCtrlScroll, .sapUiTableColHdrScr > .sapUiTableColHdr");
-					// min-width on table elements does not work for safari
-					$sapUiTableColHdr.outerWidth(iColsWidth);
-				}
-			}
-
-			var iScrollPadding = oTableSizes.tableCtrlFixedWidth;
-			if ($this.find(".sapUiTableRowHdrScr").length > 0) {
-				iScrollPadding += oTableSizes.tableRowHdrScrWidth;
-			}
-
-			if (this.getRows().length > 0) {
-				var $sapUiTableHSb = $this.find(".sapUiTableHSb");
-				if (this._bRtlMode) {
-					$sapUiTableHSb.css('margin-right', iScrollPadding + 'px');
-				} else {
-					$sapUiTableHSb.css('margin-left', iScrollPadding + 'px');
-				}
-			}
-
-			var oHSbContent = this.getDomRef("hsb-content");
-			if (oHSbContent) {
-				oHSbContent.style.width = iColsWidth + "px";
-			}
-		} else {
-			// hide the scrollbar
-			if (this._getScrollExtension().isHorizontalScrollbarVisible()) {
-				$this.removeClass("sapUiTableHScr");
-				if (!!Device.browser.safari) {
-					// min-width on table elements does not work for safari
-					$this.find(".sapUiTableCtrlScroll, .sapUiTableColHdr").css("width", "");
-				}
-			}
-		}
-	};
-
-	/**
-	 * Update the vertical scrollbar position
-	 * @private
-	 */
-	Table.prototype._updateVSbTop = function() {
-		var oVSb = this._getScrollExtension().getVerticalScrollbar();
-		if (!oVSb) {
-			return;
-		}
-
-		var oTableCCnt = this.getDomRef("tableCCnt");
-		if (oTableCCnt) {
-			var iTop = oTableCCnt.offsetTop;
-			var oVSbBg = this.getDomRef("vsb-bg");
-			oVSbBg.style.top = iTop + "px";
-
-			var iFixedRows = this.getFixedRowCount();
-			if (iFixedRows > 0) {
-				iTop += this._iVsbTop;
-			}
-			oVSb.style.top = iTop + "px";
-		}
-	};
-
-	Table.prototype._updateVSbScrollTop = function(iScrollTop) {
-		var oScrollExtension = this._getScrollExtension();
-		var oVSb = oScrollExtension.getVerticalScrollbar();
-		if (!oVSb) {
-			return;
-		}
-		if (!this._isVSbRequired()) {
-			return;
-		}
-		if (iScrollTop === undefined) {
-			iScrollTop = Math.ceil(this.getFirstVisibleRow() * this._getScrollingPixelsForRow());
-		}
-
-		oScrollExtension._iVerticalScrollPosition = null;
-		window.requestAnimationFrame(function(){oVSb.scrollTop = iScrollTop;});
-	};
-
-	/**
-	 * Updates the vertical scroll bar range (inner element height)
-	 * @private
-	 */
-	Table.prototype._updateVSbRange = function() {
-		var oVSb = this._getScrollExtension().getVerticalScrollbar();
-		if (!oVSb) {
-			return;
-		}
-
-		jQuery(this.getDomRef("vsb-content")).height(this._getTotalScrollRange());
-	};
-
-	/**
-	 * Toggles the visibility of the Vertical Scroll Bar.
-	 * @private
-	 */
-	Table.prototype._toggleVSb = function() {
-		var oDomRef = this.getDomRef();
-		if (oDomRef) {
-			if (this._isVSbRequired()) {
-				if (!oDomRef.classList.contains("sapUiTableVScr")) {
-					oDomRef.classList.add("sapUiTableVScr");
-					this._updateVSbScrollTop(0);
-				}
-			} else {
-				oDomRef.classList.remove("sapUiTableVScr");
-			}
-		}
-	};
-
-	/**
-	 * Indicates whether a Vertical Scroll Bar is needed.
-	 * @private
-	 * @returns {Boolean} true/false when Vertical Scroll Bar is required
-	 */
-	Table.prototype._isVSbRequired = function() {
-		if (this._iRowHeightsDelta > 0 || (this.getBinding("rows") && this._iBindingLength > this.getVisibleRowCount())) {
-			return true;
-		}
-
-		return false;
-	};
 
 	/**
 	 * Updates the binding contexts of the cells (column template clones).
@@ -2358,7 +2403,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				var oContext = aContexts ? aContexts[iIndex] : undefined;
 				var oRow = aRows[iIndex];
 				if (oRow) {
-					//calculate the absolute row index, used by the Tree/AnalyticalTable to find the rendering infos for this row
 					oRow.setRowBindingContext(oContext, sModelName, oBinding);
 				}
 			}
@@ -2453,139 +2497,81 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Returns the count of rows when bound or 0.
+	 * Returns the number of rows the <code>rows</code> aggregation is bound to. The return value of this function is cached for performance
+	 * reasons. If the <code>rows</code> aggregation is not bound, always 0 is returned.
+	 *
+	 * @param {boolean} [bIgnoreCache=false] If set to <code>true</code>, the length will be requested from the binding, ignoring any cached value.
+	 * @returns {int} The total number of rows.
+	 * @see sap.ui.table.Table#_updateTotalRowCount
 	 * @private
 	 */
-	Table.prototype._getRowCount = function() {
-		return this._iBindingLength;
+	Table.prototype._getTotalRowCount = function(bIgnoreCache) {
+		if (this._iBindingLength === null || bIgnoreCache === true) {
+			var oBinding = this.getBinding("rows");
+			return oBinding == null ? 0 : oBinding.getLength();
+		} else {
+			return this._iBindingLength;
+		}
 	};
 
 	/**
-	 * Returns the count of rows which can ca selected when bound or 0.
+	 * Returns the number of rows which can be selected.
+	 *
+	 * @returns {int} The number of rows which can be selected.
 	 * @private
 	 */
 	Table.prototype._getSelectableRowCount = function() {
-		return this._iBindingLength;
-	};
-
-	/**
-	 * Returns the current top scroll position of the scrollbar (row number)
-	 * @private
-	 */
-	Table.prototype._getFirstVisibleRowByScrollTop = function(iScrollTop) {
-		if (TableUtils.isVariableRowHeightEnabled(this) && this._getRowCount() < this.getVisibleRowCount()) {
-			return 0;
-		} else {
-			// If there are 2 scrollable rows of 50 pixels height, the scrollbar should have a scroll range of 100 pixels. If zoomed in Chrome,
-			// the heights of elements can be slightly lower (below 1 pixel) than their original value, so the scroll range could be only 99.2 pixels.
-			// In this case the scrolling logic would not determine that the rows should be scrolled to the end.
-			// Therefore we need to check if the scroll position is at its maximum by reading the DOM.
-			if (Device.browser.chrome && window.devicePixelRatio != 1) {
-				var oVSb = this._getScrollExtension().getVerticalScrollbar();
-
-				if (oVSb != null) {
-					var nDeviationFromMaximumScrollPosition = this._getVirtualScrollRange() - oVSb.scrollTop;
-
-					// When there is less than 1 pixel left until the calculated value for the maximum scroll position is reached, we can
-					// consider the table to be scrolled to the end.
-					if (nDeviationFromMaximumScrollPosition < 1) {
-						return this._getMaxRowIndex();
-					}
-				}
-			}
-
-			var iFirstVisibleRow = Math.floor(iScrollTop / this._getScrollingPixelsForRow());
-			return Math.min(this._getMaxRowIndex(), iFirstVisibleRow);
-		}
-	};
-
-	/**
-	 * Returns the amount of pixels which are to needed to scroll one data row
-	 * @private
-	 */
-	Table.prototype._getScrollingPixelsForRow = function() {
-		return this._getVirtualScrollRange() / Math.max(1, this._getMaxRowIndex());
-	};
-
-	/**
-	 * Returns the vertical scroll bar height
-	 * @private
-	 */
-	Table.prototype._getVSbHeight = function() {
-		return this._getScrollableRowCount() * this._getDefaultRowHeight();
-	};
-
-	/**
-	 * Returns the amount of scrollable rows
-	 * @private
-	 */
-	Table.prototype._getScrollableRowCount = function() {
-		return Math.max(1, this.getVisibleRowCount() - this.getFixedRowCount() - this.getFixedBottomRowCount());
-	};
-
-	/**
-	 * Returns the delta of the sum of the actual height of all rows, compared with sum of estimated row heights
-	 * @private
-	 */
-	Table.prototype._getRowHeightsDelta = function(aRowHeights) {
-		var iEstimatedViewportHeight = this._getDefaultRowHeight() * this.getVisibleRowCount();
-		// Case: Not enough data to fill all available rows, only sum used rows.
-		if (this.getVisibleRowCount() >= this._getRowCount()) {
-			aRowHeights = aRowHeights.slice(0, this._getRowCount());
-		}
-		var iRowHeightsDelta = aRowHeights.reduce(function(a, b) { return a + b; }, 0) - iEstimatedViewportHeight;
-		if (iRowHeightsDelta > 0) {
-			iRowHeightsDelta = Math.ceil(iRowHeightsDelta);
-		}
-		return Math.max(0, iRowHeightsDelta);
-	};
-
-	/**
-	 * Calculates the total scroll range for the vertical scroll bar
-	 * @private
-	 */
-	Table.prototype._getTotalScrollRange = function() {
-		var iRowCount = Math.max(this._getRowCount(), this.getVisibleRowCount() + 1);
-		var iScrollbarRange = this._getDefaultRowHeight() * iRowCount;
-		return Math.min(this._iMaxScrollbarHeight, iScrollbarRange);
-	};
-
-	/**
-	 * Returns the amount of pixels which are used for virtual scrolling (from the total scroll range)
-	 * @private
-	 */
-	Table.prototype._getVirtualScrollRange = function() {
-		var iMaxScrollRange = this._getTotalScrollRange() - this._getVSbHeight();
-		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			iMaxScrollRange = iMaxScrollRange - this._iRowHeightsDelta;
-		}
-		return Math.max(1, iMaxScrollRange);
-	};
-
-	/**
-	 * Returns the amount of pixels which are used for the correction of the row heights delta (from total  scroll range)
-	 * @private
-	 */
-	Table.prototype._getRowCorrectionScrollRange = function() {
-		var iScrollOverflowRange = this._getTotalScrollRange() - this._getVSbHeight();
-		if (this._getRowCount() > this.getVisibleRowCount()) {
-			iScrollOverflowRange -= this._getVirtualScrollRange();
-		}
-		return Math.max(1, iScrollOverflowRange);
+		return this._getTotalRowCount();
 	};
 
 	/**
 	 * Returns the maximum row index to which can be scrolled to
 	 * @private
 	 */
-	Table.prototype._getMaxRowIndex = function() {
-		var iMaxRowIndex = this._getRowCount() - this.getVisibleRowCount();
+	Table.prototype._getMaxFirstVisibleRowIndex = function() {
+		var iMaxRowIndex;
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			iMaxRowIndex -= 1;
+			iMaxRowIndex = this._getTotalRowCount(true) - 1;
+		} else {
+			iMaxRowIndex = this._getTotalRowCount(true) - this.getVisibleRowCount();
 		}
 
 		return Math.max(0, iMaxRowIndex);
+	};
+
+	/**
+	 * Gets the maximum row index where rendering can start from.
+	 *
+	 * @returns {int} The maximum first rendered row index
+	 * @private
+	 */
+	Table.prototype._getMaxFirstRenderedRowIndex = function() {
+		var iMaxRowIndex;
+
+		if (TableUtils.isVariableRowHeightEnabled(this)) {
+			iMaxRowIndex = this._getTotalRowCount(true) - this.getVisibleRowCount() - 1;
+		} else {
+			iMaxRowIndex = this._getTotalRowCount(true) - this.getVisibleRowCount();
+		}
+
+		return Math.max(0, iMaxRowIndex);
+	};
+
+	/**
+	 * Gets the index of the first rendered row.
+	 *
+	 * @returns {int} The first rendered row index
+	 * @private
+	 */
+	Table.prototype._getFirstRenderedRowIndex = function() {
+		var iFirstVisibleRowIndex = this.getFirstVisibleRow();
+
+		if (TableUtils.isVariableRowHeightEnabled(this) && iFirstVisibleRowIndex > this._getMaxFirstRenderedRowIndex()) {
+			return this._getMaxFirstRenderedRowIndex();
+		} else {
+			return iFirstVisibleRowIndex;
+		}
 	};
 
 	/**
@@ -2634,8 +2620,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 * Calculates the pixel value from a given CSS size and returns it with or without unit.
-	 * @param sCSSSize
-	 * @param bReturnWithUnit
+	 * @param {string} sCSSSize
+	 * @param {boolean} bReturnWithUnit
 	 * @returns {string|number} Converted CSS value in pixel
 	 * @private
 	 */
@@ -2673,58 +2659,44 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		this._updateTableSizes(TableUtils.RowsUpdateReason.Resize);
 	};
 
+	Table.prototype._onWindowResize = function() {
+		if (this._bInvalid || !this.getDomRef()) {
+			return;
+		}
+
+		if (Device.browser.chrome && window.devicePixelRatio !== this._nDevicePixelRatio) {
+			this._nDevicePixelRatio = window.devicePixelRatio;
+			this._updateTableSizes(TableUtils.RowsUpdateReason.Zoom);
+		}
+	};
+
 	Table.prototype._handleRowCountModeAuto = function(iTableAvailableSpace, sReason) {
+		iTableAvailableSpace = iTableAvailableSpace || this._determineAvailableSpace();
+
 		var oBinding = this.getBinding("rows");
+		var iRows = this._calculateRowsToDisplay(iTableAvailableSpace);
 
 		if (oBinding && this.getRows().length > 0) {
-			return this._executeAdjustRows(sReason, iTableAvailableSpace);
+			return this._updateRows(iRows, sReason);
 		} else {
 			var bReturn = !this._mTimeouts.handleRowCountModeAutoAdjustRows;
-			var iBusyIndicatorDelay = this.getBusyIndicatorDelay();
-			var bBusyIndicatorEnabled = this.getEnableBusyIndicator();
 			var that = this;
-
-			if (oBinding && bBusyIndicatorEnabled) {
-				this.setBusyIndicatorDelay(0);
-				this.setBusy(true);
-			}
 
 			if (iTableAvailableSpace) {
 				this._setRowContentHeight(iTableAvailableSpace);
 			}
 
 			this._mTimeouts.handleRowCountModeAutoAdjustRows = this._mTimeouts.handleRowCountModeAutoAdjustRows || window.setTimeout(function() {
-				if (!that._executeAdjustRows(sReason)) {
+				if (!that._updateRows(iRows, sReason)) {
 					// table sizes were not updated by AdjustRows
 					that._updateTableSizes(sReason, false, true);
 				}
 
 				delete that._mTimeouts.handleRowCountModeAutoAdjustRows;
-
-				if (oBinding && bBusyIndicatorEnabled) {
-					that.setBusyIndicatorDelay(iBusyIndicatorDelay);
-					that.setBusy(false);
-				}
 			}, 0);
 
 			return bReturn;
 		}
-	};
-
-	Table.prototype._executeAdjustRows = function(sReason, iTableAvailableSpace) {
-		iTableAvailableSpace = iTableAvailableSpace || this._determineAvailableSpace();
-
-		//if visibleRowCountMode is auto change the visibleRowCount according to the parents container height
-		var iRows = this._calculateRowsToDisplay(iTableAvailableSpace);
-		// if minAutoRowCount has reached, table should use block this height.
-		// In case row > minAutoRowCount, the table height is 0, because ResizeTrigger must detect any changes of the table parent.
-		if (iRows == this._determineMinAutoRowCount()) {
-			this.$().height("auto");
-		} else {
-			this.$().height("0px");
-		}
-
-		return this._updateRows(iRows, sReason);
 	};
 
 	/**
@@ -2739,7 +2711,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				"-moz-user-select": "none",
 				"-webkit-user-select": "none",
 				"user-select": "none"
-	        }).
+			}).
 			bind("selectstart", function(oEvent) {
 				oEvent.preventDefault();
 				return false;
@@ -2768,15 +2740,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	Table.prototype._clearTextSelection = function () {
 		if (window.getSelection) {
 		  if (window.getSelection().empty) {  // Chrome
-		    window.getSelection().empty();
+			window.getSelection().empty();
 		  } else if (window.getSelection().removeAllRanges) {  // Firefox
-		    window.getSelection().removeAllRanges();
+			window.getSelection().removeAllRanges();
 		  }
 		} else if (document.selection && document.selection.empty) {  // IE?
 			try {
-			    document.selection.empty();
+				document.selection.empty();
 			} catch (ex) {
-			    // ignore error to as a workaround for bug in IE8
+				// ignore error to as a workaround for bug in IE8
 			}
 		}
 	};
@@ -2791,7 +2763,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * should be openend.
 	 * @param {function} fnFire function to fire the event
 	 * @param {jQuery.Event} oEvent event object
-	 * @return {boolean} cancelled or not
+	 * @returns {boolean} cancelled or not
 	 * @private
 	 */
 	Table.prototype._findAndfireCellEvent = function(fnFire, oEvent, fnContextMenu) {
@@ -2853,12 +2825,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 *
-	 * @param iRowIndex
+	 * @param {int} iRowIndex
 	 * @returns {boolean}
 	 * @private
 	 */
 	Table.prototype._isRowSelectable = function(iRowIndex) {
-		return iRowIndex >= 0 && iRowIndex < this._getRowCount();
+		return iRowIndex >= 0 && iRowIndex < this._getTotalRowCount();
 	};
 
 	// =============================================================================
@@ -2890,10 +2862,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Gets sorted columns in the order of which the sort API at the table or column was called.
 	 * Sorting on binding level is not reflected here.
 	 *
+	 * @returns Array of sorted columns
 	 * @see sap.ui.table.Table#sort
 	 * @see sap.ui.table.Column#sort
-	 *
-	 * @return Array of sorted columns
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -2985,18 +2956,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// update internal property to reflect the correct index
 		this.setProperty("selectedIndex", this.getSelectedIndex(), true);
 
-		var $SelAll = this.$("selall");
-		if ((oSelMode == SelectionMode.Multi || oSelMode == SelectionMode.MultiToggle) && this.getEnableSelectAll()) {
-			var iSelectedIndicesCount = this._getSelectedIndicesCount();
-			var bClearSelectAll = iSelectedIndicesCount == 0;
-			if (!bClearSelectAll) {
-				var iSelectableRowCount = this._getSelectableRowCount();
-				bClearSelectAll = iSelectableRowCount == 0 || iSelectableRowCount !== iSelectedIndicesCount;
-			}
-			$SelAll.toggleClass("sapUiTableSelAll", bClearSelectAll);
-			this._getAccExtension().setSelectAllState(!bClearSelectAll);
-			if (bClearSelectAll && this._getShowStandardTooltips()) {
-				this.$("selall").attr('title', this._oResBundle.getText("TBL_SELECT_ALL"));
+		if (TableUtils.hasSelectAll(this)) {
+			var $SelectAll = this.$("selall");
+			var bAllRowsSelected = TableUtils.areAllRowsSelected(this);
+
+			$SelectAll.toggleClass("sapUiTableSelAll", !bAllRowsSelected);
+			this._getAccExtension().setSelectAllState(bAllRowsSelected);
+
+			if (this._getShowStandardTooltips()) {
+				$SelectAll.attr('title', TableUtils.getResourceText(bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL"));
 			}
 		}
 	};
@@ -3029,11 +2997,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		});
 	};
 
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-
 	/**
 	 * Returns the context of a row by its index. Please note that for server-based models like OData,
 	 * the supplied index might not have been loaded yet. If the context is not available at the client,
@@ -3043,8 +3006,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * For server-based models you should consider to only make this API call when the index is within
 	 * the currently visible scroll area.
 	 *
-	 * @param {int} iIndex
-	 *         Index of the row to return the context from.
+	 * @param {int} iIndex Index of the row to return the context from.
 	 * @type object
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -3077,10 +3039,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this;
 	};
 
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-
 	/**
 	 * Removes complete selection.
 	 *
@@ -3093,56 +3051,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this;
 	};
 
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
-
 	/**
 	 * Add all rows to the selection.
 	 * Please note that for server based models like OData the indices which are considered to be selected might not
 	 * be available at the client yet. Calling getContextByIndex might not return a result but trigger a roundtrip
 	 * to request this single entity.
 	 *
-	 * @return sap.ui.table.Table
+	 * @returns sap.ui.table.Table
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.selectAll = function() {
-		var oSelMode = this.getSelectionMode();
-		if (!this.getEnableSelectAll() || (oSelMode != "Multi" && oSelMode != "MultiToggle")) {
+		if (!TableUtils.hasSelectAll(this)) {
 			return this;
 		}
+
 		var oBinding = this.getBinding("rows");
 		if (oBinding) {
-			var $SelAll = this.$("selall");
-			$SelAll.removeClass("sapUiTableSelAll");
-			if (this._getShowStandardTooltips()) {
-				$SelAll.attr('title', this._oResBundle.getText("TBL_DESELECT_ALL"));
-			}
-			this._getAccExtension().setSelectAllState(true);
-			this._oSelection.selectAll((oBinding.getLength() || 0) - 1);
+			this._oSelection.selectAll(this._getTotalRowCount() - 1);
 		}
+
 		return this;
 	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
 
 	/**
 	 * Zero-based indices of selected items, wrapped in an array. An empty array means "no selection".
 	 *
-	 * @return int[]
+	 * @returns int[]
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.getSelectedIndices = function() {
 		return this._oSelection.getSelectedIndices();
 	};
-
-	/*
-	 * @see JSDoc generated by SAPUI5 control API generator
-	 */
 
 	/**
 	 * Adds the given selection interval to the selection. In case of single selection the "indexTo" value will be used for as selected index.
@@ -3218,11 +3159,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	// =============================================================================
 
 	/*
-	 * overridden to hide the group by column when set
+	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.setGroupBy = function(vValue) {
-		// determine the group by column
 		var oGroupByColumn = vValue;
+		var oOldGroupByColumn = sap.ui.getCore().byId(this.getGroupBy());
+
 		if (typeof oGroupByColumn === "string") {
 			oGroupByColumn = sap.ui.getCore().byId(oGroupByColumn);
 		}
@@ -3230,7 +3172,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// only for columns we do the full handling here - otherwise the method
 		// setAssociation will fail below with a specific fwk error message
 		var bReset = false;
-		if (oGroupByColumn && oGroupByColumn instanceof Column) {
+		if (oGroupByColumn != null && oGroupByColumn instanceof Column && oGroupByColumn !== oOldGroupByColumn) {
 
 			// check for column being part of the columns aggregation
 			if (jQuery.inArray(oGroupByColumn, this.getColumns()) === -1) {
@@ -3241,26 +3183,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			var bExecuteDefault = this.fireGroup({column: oGroupByColumn, groupedColumns: [oGroupByColumn.getId()], type: GroupEventType.group});
 
 			// first we reset the grouping indicator of the old column (will show the column)
-			var oOldGroupByColumn = sap.ui.getCore().byId(this.getGroupBy());
-			if (oOldGroupByColumn) {
+			if (oOldGroupByColumn != null) {
 				oOldGroupByColumn.setGrouped(false);
 				bReset = true;
 			}
 
 			// then we set the grouping indicator of the new column (will hide the column)
 			// ==> only if the default behavior is not prevented
-			if (bExecuteDefault && oGroupByColumn instanceof Column) {
+			if (bExecuteDefault && this.getEnableGrouping()) {
 				oGroupByColumn.setGrouped(true);
 			}
-
 		}
 
 		// reset the binding when no value is given or the binding needs to be reseted
 		// TODO: think about a better handling to recreate the group binding
-		if (!oGroupByColumn || bReset) {
-			var oBindingInfo = this.getBindingInfo("rows");
-			delete oBindingInfo.binding;
-			this._bindAggregation("rows", oBindingInfo);
+		if (oGroupByColumn == null || bReset) {
+			if (oOldGroupByColumn != null) {
+				oOldGroupByColumn.setGrouped(false);
+			}
+
+			TableUtils.Grouping.resetExperimentalGrouping(this);
 		}
 
 		// set the new group by column (TODO: undefined doesn't work!)
@@ -3272,16 +3214,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return Element.prototype.getBinding.call(this, [sName || "rows"]);
 	};
 
-	/**
-	 * @private
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
 	 */
 	Table.prototype.setEnableGrouping = function(bEnableGrouping) {
-		// set the property
+		var oGroupedByColumn = sap.ui.getCore().byId(this.getGroupBy());
+
 		this.setProperty("enableGrouping", bEnableGrouping);
-		// reset the grouping
-		if (!bEnableGrouping) {
-			TableUtils.Grouping.resetExperimentalGrouping(this);
+
+		if (oGroupedByColumn != null) {
+			oGroupedByColumn.setGrouped(bEnableGrouping);
 		}
+
+		TableUtils.Grouping.resetExperimentalGrouping(this);
+
 		// update the column headers
 		this._invalidateColumnMenus();
 		return this;
@@ -3316,8 +3262,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/*
-	* @see JSDoc generated by SAPUI5 control API generator
-	*/
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
 	Table.prototype.getFixedColumnCount = function() {
 		if (this._bIgnoreFixedColumnCount) {
 			return 0;
@@ -3362,7 +3308,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		// call collectTableSizes to determine whether the number of fixed columns can be displayed at all
 		// this is required to avoid flickering of the table in IE if the fixedColumnCount must be adjusted
 		this._collectTableSizes();
-		this._invalidateColumnMenus();
+		if (this.getEnableColumnFreeze()) {
+			this._invalidateColumnMenus();
+		}
 		return this;
 	};
 
@@ -3413,13 +3361,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 * Invalidates all column menus.
-	 * @param {boolean} bUpdateLocalization Whether the texts of the menu should be updated too.
 	 * @private
 	 */
-	Table.prototype._invalidateColumnMenus = function(bUpdateLocalization) {
+	Table.prototype._invalidateColumnMenus = function() {
 		var aCols = this.getColumns();
 		for (var i = 0, l = aCols.length; i < l; i++) {
-			aCols[i].invalidateMenu(bUpdateLocalization);
+			aCols[i].invalidateMenu();
 		}
 	};
 
@@ -3427,7 +3374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * Checks whether the event is a touch event.
 	 *
 	 * @param {jQuery.Event} oEvent The event to check
-	 * @return {boolean} Returns <code>true</code>, if <code>oEvent</code> is a touch event
+	 * @returns {boolean} Returns <code>true</code>, if <code>oEvent</code> is a touch event
 	 * @private
 	 */
 	Table.prototype._isTouchEvent = function(oEvent) {
@@ -3482,7 +3429,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @param {int} iNumberOfRows The number of rows to be updated.
 	 * @param {sap.ui.table.TableUtils.RowsUpdateReason|undefined} [sReason=undefined] The reason for updating the rows.
 	 * @param {boolean} [bUpdateUI=true] Whether the contexts and the cells should be updated.
-	 * @return {boolean} Returns <code>true</code>, if the UI was updated.
+	 * @returns {boolean} Returns <code>true</code>, if the UI was updated.
 	 * @private
 	 */
 	Table.prototype._updateRows = function(iNumberOfRows, sReason, bUpdateUI) {
@@ -3510,7 +3457,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			return false;
 		}
 
-		// remove rows from aggregation if they are not needed anymore required
+		// Remove rows from the aggregation if they are no longer required.
 		for (i = aRows.length - 1; i >= iNumberOfRows; i--) {
 			this.removeAggregation("rows", i, true).destroy();
 		}
@@ -3572,7 +3519,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @param {sap.ui.table.TableUtils.RowsUpdateReason|undefined} [sReason=undefined] The reason why the rows need to be rendered.
 	 * @param {boolean} [bFireRowsUpdated=false] Whether the <code>_rowsUpdated</code> event should be fired after the HTML has been written.
-	 * @return {boolean} Returns <code>true</code>, if rendering and writing to the DOM was performed.
+	 * @returns {boolean} Returns <code>true</code>, if rendering and writing to the DOM was performed.
 	 * @private
 	 */
 	Table.prototype._renderRows = function(sReason, bFireRowsUpdated) {
@@ -3635,10 +3582,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._getDefaultRowHeight = function() {
-		var iRowHeight = this.getRowHeight();
+		var iRowContentHeight = this.getRowHeight();
 
-		if (iRowHeight > 0) {
-			return iRowHeight;
+		if (iRowContentHeight > 0) {
+			return iRowContentHeight + TableUtils.ROW_HORIZONTAL_FRAME_SIZE;
 		} else {
 			var sContentDensity = TableUtils.getContentDensity(this);
 			return TableUtils.DEFAULT_ROW_HEIGHT[sContentDensity];
@@ -3647,7 +3594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 	/**
 	 * Determines and sets the height of tableCtrlCnt based upon the VisibleRowCountMode and other conditions.
-	 * @param iHeight
+	 * @param {int} iHeight
 	 * @private
 	 */
 	Table.prototype._setRowContentHeight = function(iHeight) {
@@ -3684,7 +3631,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		}
 
 		if (TableUtils.isVariableRowHeightEnabled(this)) {
-			jQuery(this.getDomRef("tableCCnt")).css("height", iDefaultRowHeight * this.getVisibleRowCount() + "px");
+			jQuery(this.getDomRef("tableCCnt")).css("height", iDefaultRowHeight * iVisibleRowCount + "px");
 		} else {
 			if ((sVisibleRowCountMode == VisibleRowCountMode.Fixed || sVisibleRowCountMode == VisibleRowCountMode.Interactive) && this.getRows().length > 0) {
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", "auto");
@@ -3692,8 +3639,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				jQuery(this.getDomRef("tableCtrlCnt")).css("height", this._iTableRowContentHeight + "px");
 			}
 		}
-
-		this._toggleVSb();
 	};
 
 	/**
@@ -3701,11 +3646,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._determineMinAutoRowCount = function() {
-		var iVisibleRowCount = this.getVisibleRowCount();
-		var iMinAutoRowCount = this.getMinAutoRowCount();
-		var iMinRowCount = iMinAutoRowCount || iVisibleRowCount || 5;
+		var iMinRowCount = this.getMinAutoRowCount();
 		if (this.getVisibleRowCountMode() == VisibleRowCountMode.Interactive && !this.bOutput) {
-			iMinRowCount = iVisibleRowCount || iMinAutoRowCount || 5;
+			iMinRowCount = this.getVisibleRowCount() || iMinRowCount;
 		}
 		return iMinRowCount;
 	};
@@ -3715,7 +3658,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._calculateRowsToDisplay = function(iTableRowContentHeight) {
-		iTableRowContentHeight = iTableRowContentHeight || this._iTableRowContentHeight;
+		// Remember the last used value for the case when this function is called with undefined iTableRowContentHeight
+		// _iTableRowContentHeight is not updated during resize and can be used as a last resort only
+		this._iRowsToDisplayHeight = iTableRowContentHeight || this._iRowsToDisplayHeight || this._iTableRowContentHeight;
+		iTableRowContentHeight = this._iRowsToDisplayHeight;
 		var sVisibleRowCountMode = this.getVisibleRowCountMode();
 		var iCalculatedRowsToDisplay = 0;
 		if (sVisibleRowCountMode == VisibleRowCountMode.Fixed) {
@@ -3750,18 +3696,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		return this;
 	};
 
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	Table.prototype.setNoData = function(vNoData) {
+		var sNoDataText_Old = TableUtils.getNoDataText(this);
+		this.setAggregation("noData", vNoData, true);
+		var sNoDataText_New = TableUtils.getNoDataText(this);
+		// Avoid full table rerendering when only the text is changed
+		if (sNoDataText_Old != null && sNoDataText_New != null && sNoDataText_Old != sNoDataText_New) {
+			this.$("noDataMsg").text(sNoDataText_New);
+		} else {
+			this.invalidate();
+		}
+		return this;
+	};
+
 	/**
 	 * Creates a new {@link sap.ui.core.util.Export} object and fills row/column information from the table if not provided. For the cell content,
 	 * the column's "sortProperty" will be used (experimental!)
 	 *
 	 * <p><b>Please note: The return value was changed from jQuery Promises to standard ES6 Promises.
 	 * jQuery specific Promise methods ('done', 'fail', 'always', 'pipe' and 'state') are still available but should not be used.
-	 * Please use only the standard methods 'then' and 'catch'!</b></p>
+	 * Please use only the standard methods 'then' and 'catch'!
+	 *
+	 * This method uses synchronous requests. Support and functioning ends with the support for synchronous requests in browsers.</b></p>
 	 *
 	 * @param {object} [mSettings] settings for the new Export, see {@link sap.ui.core.util.Export} <code>constructor</code>
-	 * @return {Promise} Promise object
+	 * @returns {Promise} Promise object
 	 *
 	 * @experimental Experimental because the property for the column/cell definitions (sortProperty) could change in future.
+	 * @deprecated As of 1.56, replaced by the <code>sap.ui.export</code> library.
 	 * @public
 	 */
 	Table.prototype.exportData = function(mSettings) {
@@ -3902,24 +3867,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 */
 	Table.prototype.setEnableBusyIndicator = function (bValue) {
 		this.setProperty("enableBusyIndicator", bValue, true);
-	};
-
-	/**
-	 *
-	 * @private
-	 */
-	Table.prototype._onBindingDataRequestedListener = function (oEvent) {
-		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
-			this._bPendingRequest = true;
-
-			if (this.getEnableBusyIndicator()) {
-				this.setBusy(true);
-			}
-
-			if (this._dataReceivedHandlerId != null) {
-				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
-				delete this._dataReceivedHandlerId;
-			}
+		if (!bValue) {
+			this.setBusy(false);
 		}
 	};
 
@@ -3927,25 +3876,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *
 	 * @private
 	 */
-	Table.prototype._onBindingDataReceivedListener = function (oEvent) {
-		if (oEvent.getSource() == this.getBinding("rows") && !oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
-			this._bPendingRequest = false;
+	Table.prototype._onBindingDataRequested = function (oEvent) {
+		if (oEvent.getSource() != this.getBinding("rows") || oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+			return;
+		}
 
-			if (this._dataReceivedHandlerId != null) {
-				jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
-				delete this._dataReceivedHandlerId;
-			}
+		this._iPendingRequests++;
+		this._bPendingRequest = true;
 
-			// The table will be set to busy when a request is sent, and set to not busy when a response is received.
-			// When scrolling down fast it can happen that there are multiple requests in the request queue of the binding, which will be processed
-			// sequentially. In this case the busy indicator will be shown and hidden multiple times (flickering) until all requests have been
-			// processed. With this timer we avoid the flickering, as the table will only be set to not busy after all requests have been processed.
-			// The same applied for updating the NoData area.
+		var bCanUsePendingRequestsCounter = TableUtils.canUsePendingRequestsCounter(this);
+
+		if (this.getEnableBusyIndicator()
+			&& (bCanUsePendingRequestsCounter && this._iPendingRequests === 1
+				|| !bCanUsePendingRequestsCounter)) {
+			this.setBusy(true);
+		}
+
+		if (this._dataReceivedHandlerId != null) {
+			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
+			delete this._dataReceivedHandlerId;
+		}
+	};
+
+	/**
+	 *
+	 * @private
+	 */
+	Table.prototype._onBindingDataReceived = function (oEvent) {
+		if (oEvent.getSource() != this.getBinding("rows") || oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+			return;
+		}
+
+		this._iPendingRequests--;
+		this._bPendingRequest = false;
+
+		// The AnalyticalBinding updates the length after it fires dataReceived, therefore the total row count will not change here. Later,
+		// when the contexts are retrieved in Table#_getRowContexts, the AnalyticalBinding updates the length and Table#_updateTotalRowCount
+		// will be called again and actually perform the update.
+		this._updateTotalRowCount(true);
+
+		if (!TableUtils.hasPendingRequests(this)) {
+			// This timer should avoid flickering of the busy indicator and unnecessary updates of NoData in case a request will be sent
+			// (dataRequested) immediately after the last response was received (dataReceived).
 			this._dataReceivedHandlerId = jQuery.sap.delayedCall(0, this, function() {
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);
 				}
-				this._updateBindingLength(true);
 				this._updateNoData();
 				delete this._dataReceivedHandlerId;
 			});
@@ -3953,10 +3929,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	};
 
 	/**
-	 * Lets you control in which situation the <code>ScrollBar</code> fires scroll events.
+	 * Lets you control in which situation the <code>Scrollbar</code> fires scroll events.
 	 *
-	 * @param {boolean} bLargeDataScrolling Set to true to let the <code>ScrollBar</code> only fire scroll events when
-	 * the scroll handle is released. No matter what the setting is, the <code>ScrollBar</code> keeps on firing scroll events
+	 * @param {boolean} bLargeDataScrolling Set to true to let the <code>Scrollbar</code> only fire scroll events when
+	 * the scroll handle is released. No matter what the setting is, the <code>Scrollbar</code> keeps on firing scroll events
 	 * when the user scrolls with the mouse wheel or using touch.
 	 * @private
 	 */
@@ -4072,7 +4048,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 *     <code>bVisibleColumnIndex</code>
 	 * @param {boolean} bVisibleColumnIndex If set to <code>true</code>, the given column index is interpreted as index in the list of visible
 	 *     columns, otherwise as index in the <code>columns</code> aggregation
-	 * @return {sap.ui.core.Control} Control inside the cell with the given row and column index or <code>null</code> if no such control exists
+	 * @returns {sap.ui.core.Control} Control inside the cell with the given row and column index or <code>null</code> if no such control exists
 	 * @protected
 	 */
 	Table.prototype.getCellControl = function(iRowIndex, iColumnIndex, bVisibleColumnIndex) {

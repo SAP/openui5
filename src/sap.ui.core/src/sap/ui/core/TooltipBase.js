@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.core.TooltipBase.
-sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
-	function(jQuery, Control, Popup, library) {
+sap.ui.define(['jquery.sap.global', './Control', './Popup', './library', 'jquery.sap.keycodes'],
+	function(jQuery, Control, Popup, library /*, jQuerySapKeycodes */) {
 	"use strict";
 
 
@@ -17,12 +17,12 @@ sap.ui.define(['jquery.sap.global', './Control', './Popup', './library'],
 	 * @param {string} [sId] id for the new control, generated automatically if no id is given
 	 * @param {object} [mSettings] initial settings for the new control
 	 *
+	 * @abstract
 	 * @class
 	 * Abstract class that can be extended in order to implement any extended tooltip. For example, RichTooltip Control is based on it. It provides the opening/closing behavior and the main "text" property.
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.TooltipBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

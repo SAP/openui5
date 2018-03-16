@@ -15,7 +15,7 @@
 
 	<groupId>com.sap.openui5</groupId>
 	<artifactId>testsuite</artifactId>
-	<version>1.49.0-SNAPSHOT</version>
+	<version>1.55.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 
 
@@ -141,12 +141,12 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>themelib_sap_bluecrystal</artifactId>
+			<artifactId>sap.ui.rta</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
-			<artifactId>themelib_sap_goldreflection</artifactId>
+			<artifactId>themelib_sap_bluecrystal</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

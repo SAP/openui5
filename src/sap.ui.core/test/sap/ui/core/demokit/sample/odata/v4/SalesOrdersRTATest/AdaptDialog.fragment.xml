@@ -1,0 +1,14 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<Dialog draggable="true" id="AdaptDialog" title="Adapt UI">
+		<List items="{ui>/adaptationProperties}">
+			<CustomListItem>
+				<CheckBox selected="{ui>displayed}" text="{ui>name}" select="onAdaptColumnOrField"/>
+			</CustomListItem>
+		</List>
+		<buttons>
+			<Button id="ApplyChangesInFragment" text="Apply changes" press="onApplyChanges"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>

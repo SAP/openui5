@@ -7,7 +7,7 @@ sap.ui.define([
 
     var PageController = Controller.extend("sap.m.sample.PageFloatingFooter.Page", {
         onInit: function () {
-            this._Page = this.getView().byId("floatingFooterPage");
+            this._Page = this.byId("floatingFooterPage");
             for (var i = 0; i < 15; i++) {
                 this.addPanel();
             }

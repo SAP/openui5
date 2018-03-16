@@ -48,13 +48,13 @@
 						textValue: "foo",
 						matcherValue: "bar",
 						expected: false,
-						logMessage: "The property 'text' of 'myButton' has the value 'foo' expected 'bar'"
+						logMessage: "Control 'Element sap.m.Button#myButton' property 'text' has value 'foo' but should have value 'bar'"
 					},
 					{
 						textValue: "",
 						matcherValue: null,
 						expected: false,
-						logMessage: "The property 'text' of 'myButton' has the value '' expected 'undefined'"
+						logMessage: "Control 'Element sap.m.Button#myButton' property 'text' has value '' but should have value 'undefined'"
 					}].forEach(function (oTestCase) {
 						QUnit.test("Should strictmatch for " + JSON.stringify(oTestCase), function (assert) {
 							// Arrange
@@ -93,7 +93,7 @@
 
 						// Assert
 						assert.strictEqual(bResult, false, "Did not match");
-						sinon.assert.calledWith(oErrorSpy, "Control 'myButton' does not have a property called 'aPropertyThatWillNeverBeAddedToTheButton'");
+						sinon.assert.calledWith(oErrorSpy, "Control 'Element sap.m.Button#myButton' does not have a property 'aPropertyThatWillNeverBeAddedToTheButton'");
 					});
 
 					QUnit.start();

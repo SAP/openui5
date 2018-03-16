@@ -83,12 +83,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			}
 			rm.write("<tr class=\"sapUiGridTitle\"><th colspan=" + iTitleCells + ">");
 
-			if (oToolbar) {
-				rm.renderControl(oToolbar);
-			} else {
-				var sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
-				this.renderTitle(rm, oTitle, undefined, false, sSize, oForm.getId());
+			var sSize;
+			if (!oToolbar) {
+				sSize = sap.ui.core.theming.Parameters.get('sap.ui.layout.FormLayout:_sap_ui_layout_FormLayout_FormTitleSize');
 			}
+			this.renderHeader(rm, oToolbar, oTitle, undefined, false, sSize, oForm.getId());
 			rm.write("</th></tr>");
 		}
 
@@ -98,12 +97,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 		while (i < iContainerLength) {
 			oContainer = aContainers[i];
 			oContainer._checkProperties();
-			if (oContainer.getVisible()) {
+			if (oContainer.isVisible()) {
 				oContainerData = this.getContainerData(oLayout, oContainer);
 				if (oContainerData && oContainerData.getHalfGrid() && !bSingleColumn) {
 					oContainer2 = aContainers[i + 1];
 					oContainerData2 = undefined;
-					if (oContainer2 && oContainer2.getVisible()) {
+					if (oContainer2 && oContainer2.isVisible()) {
 						oContainerData2 = this.getContainerData(oLayout, oContainer2);
 					}
 					if (oContainerData2 && oContainerData2.getHalfGrid()) {
@@ -120,18 +119,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			}
 
 			i++;
-		}
-
-		if (!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version == 9) {
-			// As IE9 is buggy with colspan and layout fixed if not all columns are defined least once
-			rm.write("<tr style=\"visibility:hidden;\">");
-			for ( i = 0; i < iColumns; i++) {
-				rm.write("<td style=\"visibility:hidden; padding:0; height: 0;\"></td>");
-			}
-			if (bSeparatorColumn) {
-				rm.write("<td style=\"visibility:hidden; padding:0; height: 0;\"></td>");
-			}
-			rm.write("</tr>");
 		}
 
 		rm.write("</tbody></table>");
@@ -156,7 +143,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			if (bSeparatorColumn) {
 				iTitleCells++;
 			}
-			rm.write("<tr class=\"sapUiGridConteinerFirstRow\"><td colspan=" + iTitleCells);
+			rm.write("<tr class=\"sapUiGridConteinerFirstRow sapUiGridConteinerHeaderRow\"><td colspan=" + iTitleCells);
 			rm.addClass("sapUiGridHeader");
 			if (sTooltip) {
 				rm.writeAttributeEscaped('title', sTooltip);
@@ -169,11 +156,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			rm.writeClasses();
 
 			rm.write(">");
-			if (oToolbar) {
-				rm.renderControl(oToolbar);
-			} else {
-				this.renderTitle(rm, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, false, oContainer.getId());
-			}
+			this.renderHeader(rm, oToolbar, oContainer.getTitle(), oContainer._oExpandButton, bExpandable, false, oContainer.getId());
 			rm.write("</td></tr>");
 		}
 
@@ -187,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			for (var j = 0, jl = aElements.length; j < jl; j++) {
 
 				oElement = aElements[j];
-				if (oElement.getVisible()) {
+				if (oElement.isVisible()) {
 					bEmptyRow = aReservedCells[0] && (aReservedCells[0][0] == iColumns);
 
 					rm.write("<tr");
@@ -265,7 +248,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 		if (oTitle1 || oTitle2 || oToolbar1 || oToolbar2) {
 			// render title row (if one container has a title, the other has none leave the cells empty)
-			rm.write("<tr class=\"sapUiGridConteinerFirstRow\"><td colspan=" + iContainerColumns);
+			rm.write("<tr class=\"sapUiGridConteinerFirstRow sapUiGridConteinerHeaderRow\"><td colspan=" + iContainerColumns);
 			rm.addClass("sapUiGridHeader");
 			if (sTooltip1) {
 				rm.writeAttributeEscaped('title', sTooltip1);
@@ -277,10 +260,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			}
 			rm.writeClasses();
 			rm.write(">");
-			if (oToolbar1) {
-				rm.renderControl(oToolbar1);
-			} else if (oTitle1) {
-				this.renderTitle(rm, oTitle1, oContainer1._oExpandButton, bExpandable1, false, oContainer1.getId());
+			if (oContainer1) {
+				this.renderHeader(rm, oToolbar1, oTitle1, oContainer1._oExpandButton, bExpandable1, false, oContainer1.getId());
 			}
 			rm.write("</td><td></td><td colspan=" + iContainerColumns);
 			rm.addClass("sapUiGridHeader");
@@ -294,10 +275,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 			}
 			rm.writeClasses();
 			rm.write(">");
-			if (oToolbar2) {
-				rm.renderControl(oToolbar2);
-			} else if (oTitle2) {
-				this.renderTitle(rm, oTitle2, oContainer2._oExpandButton, bExpandable2, false, oContainer2.getId());
+			if (oContainer2) {
+				this.renderHeader(rm, oToolbar2, oTitle2, oContainer2._oExpandButton, bExpandable2, false, oContainer2.getId());
 			}
 			rm.write("</td></tr>");
 		}
@@ -318,7 +297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 				bEmptyRow1 = aReservedCells1[0] && (aReservedCells1[0][0] == iContainerColumns);
 				bEmptyRow2 = aReservedCells2[0] && (aReservedCells2[0][0] == iContainerColumns);
 
-				if ((oElement1 && oElement1.getVisible()) || (oElement2 && oElement2.getVisible()) || bEmptyRow1 || bEmptyRow2) {
+				if ((oElement1 && oElement1.isVisible()) || (oElement2 && oElement2.isVisible()) || bEmptyRow1 || bEmptyRow2) {
 					rm.write("<tr");
 
 					if (!bFirstVisibleFound) {
@@ -332,7 +311,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 					rm.write(">");
 
 					if (!bEmptyRow1) {
-						if (oElement1 && oElement1.getVisible() && (!bExpandable1 || oContainer1.getExpanded())) {
+						if (oElement1 && oElement1.isVisible() && (!bExpandable1 || oContainer1.getExpanded())) {
 							aReservedCells1 = this.renderElement(rm, oLayout, oElement1, true, iContainerColumns, false, aReservedCells1);
 						} else {
 							rm.write("<td colspan=" + iContainerColumns + "></td>");
@@ -349,7 +328,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 					}
 					rm.write("<td></td>"); // separator column
 					if (!bEmptyRow2) {
-						if (oElement2 && oElement2.getVisible() && (!bExpandable2 || oContainer2.getExpanded())) {
+						if (oElement2 && oElement2.isVisible() && (!bExpandable2 || oContainer2.getExpanded())) {
 							aReservedCells2 = this.renderElement(rm, oLayout, oElement2, true, iContainerColumns, false, aReservedCells2);
 						} else {
 							rm.write("<td colspan=" + iContainerColumns + "></td>");
@@ -581,13 +560,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 	GridLayoutRenderer.getContainerData = function(oLayout, oContainer){
 
-		return oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.form.GridContainerData");
+		return oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/form/GridContainerData");
 
 	};
 
 	GridLayoutRenderer.getElementData = function(oLayout, oControl){
 
-		return oLayout.getLayoutDataForElement(oControl, "sap.ui.layout.form.GridElementData");
+		return oLayout.getLayoutDataForElement(oControl, "sap/ui/layout/form/GridElementData");
 
 	};
 

@@ -4,6 +4,7 @@ describe("sap.m.SelectDialog", function () {
 	"use strict";
 
 	it("Should load test page", function () {
+		element(by.id("page-title")).click();
 		expect(takeScreenshot()).toLookAs("initial");
 	});
 
@@ -15,6 +16,7 @@ describe("sap.m.SelectDialog", function () {
 
 	it("Should open SelectDialog with already initialized binding", function () {
 		element(by.id("Button3")).click();
+		element(by.id("SelectDialog3-dialog-title")).click();
 		expect(takeScreenshot(element(by.id("SelectDialog3-dialog")))).toLookAs("select-dialog-2");
 		browser.executeScript("sap.ui.getCore().byId('SelectDialog3-dialog').close();");
 	});

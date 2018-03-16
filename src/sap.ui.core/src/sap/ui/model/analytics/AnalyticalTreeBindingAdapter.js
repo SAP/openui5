@@ -637,13 +637,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 				}
 			});
 
+			var aDeselectedNodeIds = [];
 			// also remove selections from child nodes of the collapsed node
 			jQuery.each(this._mTreeState.selected, function (sGroupID, oNodeState) {
 				if (jQuery.sap.startsWith(sGroupID, sGroupIDforCollapsingNode)) {
 					oNodeState.selectAllMode = false;
 					that.setNodeSelection(oNodeState, false);
+					aDeselectedNodeIds.push(sGroupID);
 				}
 			});
+			if (aDeselectedNodeIds.length) {
+				var selectionChangeParams = {
+					rowIndices: []
+				};
+				// Collect the changed indices
+				var iNodeCounter = 0;
+				this._map(this._oRootNode, function (oNode) {
+					if (!oNode || !oNode.isArtificial) {
+						iNodeCounter++;
+					}
+
+					if (oNode && aDeselectedNodeIds.indexOf(oNode.groupID) !== -1) {
+						if (oNode.groupID === this._sLeadSelectionGroupID) {
+							// Lead selection got deselected
+							selectionChangeParams.oldIndex = iNodeCounter;
+							selectionChangeParams.leadIndex = -1;
+						}
+						selectionChangeParams.rowIndices.push(iNodeCounter);
+					}
+				});
+
+				this._publishSelectionChanges(selectionChangeParams);
+			}
 		}
 
 		// only fire change if no autoexpand request is triggered:
@@ -717,7 +742,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	 * Used for rendering sum rows.
 	 *
 	 * @public
-	 * @returns {boolean} wether the binding has totaled measures or not
+	 * @returns {boolean} Whether the binding has totaled measures or not
 	 */
 	AnalyticalTreeBindingAdapter.prototype.hasTotaledMeasures = function() {
 		var bHasMeasures = false;
@@ -790,7 +815,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', './AnalyticalBin
 	/**
 	 * Overrides the default from the TBA.
 	 * Returns the maximum number of currently selectable nodes, in this case the total number of leaves.
-	 * @returns
+	 * @returns {int} Maximum number of currently selectable node
 	 */
 	AnalyticalTreeBindingAdapter.prototype._getSelectableNodesCount = function (oNode) {
 		if (oNode) {

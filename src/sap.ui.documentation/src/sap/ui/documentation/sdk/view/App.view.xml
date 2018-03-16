@@ -15,19 +15,40 @@
 		class="sapUiDemokit">
 		<content>
 			<tnt:ToolHeader id="headerToolbar">
-				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; ( ${appView>/bPhoneSize} || !${appView>/bLandscape} ) }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
+				<ToggleButton icon="sap-icon://menu2" type="Transparent" visible="{= ${appView>/bHasMaster} &amp;&amp; !${device>/system/phone} &amp;&amp; !${appView>/bLandscape} &amp;&amp; !${appView>/bSearchMode} }" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</ToggleButton>
-				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_openui5.png"
+				<Image id="sap_logo" src="./resources/sap/ui/documentation/sdk/images/logo_ui5.png"
 					visible="{=!${appView>/bPhoneSize}}"
+					densityAware="false"
 					height="2rem"
+					alt="UI5 logo"
 					class="sapLogo"
 					decorative="false"
 					press="navigateToSection" />
 				<core:ExtensionPoint name="customStartLinks" />
+				<Select id="selectHeader"
+						stashed="true"
+						class="sapUiDocumentationSelect"
+						visible="{=!${appView>/bSearchMode}}"
+						change="navigateToSection"
+						autoAdjustWidth="true">
+					<items>
+						<core:Item id="welcomeTab" text="Home" key="home"/>
+						<core:Item id="topicMasterTab" text="Documentation" key="topic"/>
+						<core:Item id="apiMasterTab" text="API Reference" key="api"/>
+						<core:Item id="controlsMasterTab" text="Samples" key="controls"/>
+						<core:Item id="demoAppsTab" text="Demo Apps" key="demoapps"/>
+						<core:Item id="toolsTab" text="Tools" key="tools"/>
+					</items>
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" shrinkable="true" />
+					</layoutData>
+				</Select>
 				<IconTabHeader id="tabHeader"
+						stashed="true"
 						selectedKey="home"
 						showOverflowSelectList="true"
 						backgroundDesign="Transparent"
@@ -40,24 +61,32 @@
 					<items>
 						<IconTabFilter id="welcomeTab" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
 						</IconTabFilter>
-						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic">
+						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic" visible="{= !${appView>/bHideEmptySections}}">
+						</IconTabFilter>
+						<IconTabFilter id="apiMasterTab" text="API Reference" key="api" visible="{= !${appView>/bHideEmptySections}}">
 						</IconTabFilter>
 						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
 						</IconTabFilter>
-						<IconTabFilter id="apiMasterTab" text="API Reference" key="api">
-						</IconTabFilter>
 						<IconTabFilter id="demoAppsTab" text="Demo Apps" key="demoapps">
+						</IconTabFilter>
+						<IconTabFilter id="toolsTab" text="Tools" key="tools">
 						</IconTabFilter>
 					</items>
 				</IconTabHeader>
 
-				<ToolbarSpacer visible="{=!${appView>/bPhoneSize}}">
+				<ToolbarSpacer visible="{= ${device>/system/phone} || !${appView>/bPhoneSize}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="{= ${device>/system/tablet} ? '' : '1rem'}" />
 					</layoutData>
 				</ToolbarSpacer>
 
-				<ObjectStatus text="Version {appView>/version} - development in progress!" state="Warning" visible="{=!${appView>/bPhoneSize}}" />
+				<ObjectStatus text="{= ${versionData>/isBetaVersion} ? 'Beta version' : 'Version'} {versionData>/version} {= ${versionData>/isBetaVersion} ? '– not for productive use!' : ${versionData>/isDevVersion} ? '- development in progress!' : ''}" state="{= ${versionData>/isBetaVersion} ? 'Error' : ${versionData>/isDevVersion} ? 'Warning' : 'None'}" visible="{=!${appView>/bPhoneSize}}" />
+
+				<Button id="changeVersionButton" press="onChangeVersionButtonPress" type="Transparent" text="Change version" visible="{appView>/bShowVersionSwitchInHeader}">
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
+				</Button>
 
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
@@ -75,12 +104,13 @@
 					<menu>
 						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
 							<items>
-								<MenuItem text="Version {appView>/version}" visible="{appView>/bPhoneSize}" />
+								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version} {=${versionData>/isDevVersion} ? '- development in progress!' : ''}" visible="{appView>/bPhoneSize}" />
+								<MenuItem text="Change version" visible="{appView>/bShowVersionSwitchInMenu}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="About" />
-								<MenuItem text="Legal" visible="{=!${appView>/isOpenUI5}}"/>
-								<MenuItem text="Privacy" visible="{=!${appView>/isOpenUI5}}"/>
-								<MenuItem text="Terms of Use" visible="{=!${appView>/isOpenUI5}}">
+								<MenuItem text="Legal" />
+								<MenuItem text="Privacy" />
+								<MenuItem text="Terms of Use" visible="{=!${versionData>/isOpenUI5}}">
 									<items>
 										<MenuItem text="Terms of Use" />
 										<MenuItem text="Copyright" />
@@ -88,6 +118,7 @@
 										<MenuItem text="Disclaimer" />
 									</items>
 								</MenuItem>
+								<MenuItem text="License" visible="{versionData>/isOpenUI5}"/>
 							</items>
 						</Menu>
 					</menu>
@@ -95,16 +126,26 @@
 				<core:ExtensionPoint name="customLinks" />
 			</tnt:ToolHeader>
 
+			<Bar visible="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} }" class="sapContrast sapContrastPlus">
+				<contentLeft>
+					<ToggleButton icon="sap-icon://menu2" type="Transparent" press="toggleMaster" pressed="{appView>/bIsShownMaster}">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow" />
+						</layoutData>
+					</ToggleButton>
+				</contentLeft>
+			</Bar>
+
 			<core:ExtensionPoint name="customControls" />
 			<ScrollContainer
 					id="contentId"
 					width="100%"
-					height="calc(100% - 3rem)"
+					height="{= ${device>/system/phone} &amp;&amp; ${appView>/bHasMaster} &amp;&amp; ${headerView>/bShowSubHeader} ? 'calc(100% - 5rem)' : 'calc(100% - 3rem)'}"
 					horizontal="false"
 					vertical="false">
 				<SplitApp id="splitApp"
 						  mode="HideMode"
-						  defaultTransitionNameDetail="fade"
+						  defaultTransitionNameDetail="show"
 						  defaultTransitionNameMaster="fade">
 				</SplitApp>
 			</ScrollContainer>

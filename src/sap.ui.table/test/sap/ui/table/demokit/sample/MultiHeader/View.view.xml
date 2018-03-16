@@ -12,7 +12,7 @@
 		class="sapUiContentPadding">
 		<m:content>
 
-		<Table id="table1" selectionMode="MultiToggle" rows="{/modelData}" visibleRowCount="5">
+		<Table id="table1" title="Contacts" selectionMode="MultiToggle" rows="{/modelData}" visibleRowCount="5">
 
 			<columns>
 				<Column width="11rem" sortProperty="supplier" filterProperty="supplier">

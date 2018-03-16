@@ -1,9 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/core/library"],
+	function(coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 	/**
@@ -11,6 +15,10 @@ sap.ui.define(['jquery.sap.global'],
 	 * @namespace
 	 */
 	var ObjectAttributeRenderer = {
+		MAX_LINES: {
+			SINGLE_LINE: 1,
+			MULTI_LINE: 2
+		}
 	};
 
 	/**
@@ -46,9 +54,9 @@ sap.ui.define(['jquery.sap.global'],
 
 		oRm.write(">");
 
-		// If the attribute is active only the "text" should be clickable, so render title, colon and text in different spans
+		// If the attribute is active and there is no CustomContent only the "text" should be clickable, so render title, colon and text in different spans
 		// For the ObjectHeader the rendering of the parts of the ObjectAttribute is always in separate spans
-		if (oOA.getActive() || (oParent instanceof sap.m.ObjectHeader)) {
+		if (oOA.getActive() && !oOA.getCustomContent() || (oParent instanceof sap.m.ObjectHeader)) {
 			this.renderActiveTitle(oRm, oOA);
 			this.renderActiveText(oRm, oOA, oParent);
 		} else {
@@ -82,7 +90,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.write("<span id=\"" + oOA.getId() + "-text\"");
 		oRm.addClass("sapMObjectAttributeText");
 
-		if (sTextDir && sTextDir !== sap.ui.core.TextDirection.Inherit) {
+		if (sTextDir && sTextDir !== TextDirection.Inherit) {
 			oRm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 
@@ -91,9 +99,9 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (oAttrAggregation && oParent) {
 			if ((oParent instanceof sap.m.ObjectHeader) && !oOA.getParent().getResponsive()) {
-				oOA._setControlWrapping(oAttrAggregation, true, sap.m.ObjectAttribute.MAX_LINES.MULTI_LINE);
+				oOA._setControlWrapping(oAttrAggregation, true, ObjectAttributeRenderer.MAX_LINES.MULTI_LINE);
 			} else {
-				oOA._setControlWrapping(oAttrAggregation, false, sap.m.ObjectAttribute.MAX_LINES.SINGLE_LINE);
+				oOA._setControlWrapping(oAttrAggregation, false, ObjectAttributeRenderer.MAX_LINES.SINGLE_LINE);
 			}
 			oRm.renderControl(oAttrAggregation);
 		} else {

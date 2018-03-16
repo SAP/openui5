@@ -4,11 +4,8 @@
 /**
  * Describes the public facade of the {@link sap.m.SelectionDetails} control.
  * @name sap.m.SelectionDetailsFacade
- * @class The public facade of the {@link sap.m.SelectionDetails} control
- * @extends sap.ui.base.Interface
+ * @class The public facade of the {@link sap.m.SelectionDetails} control.
  * @since 1.48.0
- * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
- * @alias sap.m.SelectionDetailsFacade
  * @public
  * @author SAP SE
  * @version ${version}
@@ -40,11 +37,8 @@
 /**
  * Describes the public facade of the {@link sap.m.SelectionDetailsItem} element.
  * @name sap.m.SelectionDetailsItemFacade
- * @class The public facade of the {@link sap.m.SelectionDetailsItem} element
- * @extends sap.ui.base.Interface
+ * @class The public facade of the {@link sap.m.SelectionDetailsItem} element.
  * @since 1.48.0
- * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
- * @alias sap.m.SelectionDetailsItemFacade
  * @public
  * @author SAP SE
  * @version ${version}

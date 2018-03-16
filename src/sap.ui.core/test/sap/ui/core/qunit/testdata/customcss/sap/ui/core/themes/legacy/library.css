@@ -1,3 +1,7 @@
 .sapUiThemeDesignerCustomCss {
   visible: true;
 }
+
+.sapThemeMetaData-UI5-sap-ui-core {
+  background-image: url('data:text/plain;utf-8,{"Path": "UI5.sap/ui/core.legacy.library", "PathPattern": "/%frameworkId%/%libId%/themes/%themeId%/%fileId%.css", "Extends": ["sap_hcb","base"], "Version": { "Build":"1.0.0", "Source": "1.0.0", "Engine": "1.0.0"}}');
+}

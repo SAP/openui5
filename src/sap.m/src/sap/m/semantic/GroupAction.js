@@ -11,10 +11,16 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 	 * @param {object} [mSettings] Custom initial settings for the new control
 	 *
 	 * @class
-	 * A GroupAction button has default semantic-specific properties and is
-	 * eligible for aggregation content of a {@link sap.m.semantic.SemanticPage}.
+	 * A GroupAction is a {@link sap.m.Button} control enhanced with styling according to the semantics of a common "Group" action.
+	 *
+	 * A GroupAction cannot be used independently but only as aggregation content of a {@link sap.m.semantic.SemanticPage}.
+	 *
+	 * Your app should listen to the <code>press</code> event of {@link sap.m.semantic.GroupAction} in order to trigger the display of the grouping options.
+	 *
+	 * If your grouping options are a simple list of items and require single choice only, then you can consider using a {@link sap.m.semantic.GroupSelect} instead.
 	 *
 	 * @extends sap.m.semantic.SemanticButton
+	 * @implements sap.m.semantic.IGroup
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -37,4 +43,4 @@ sap.ui.define(['sap/m/semantic/SemanticButton'], function(SemanticButton) {
 
 	return GroupAction;
 
-}, /* bExport= */ true);
+});

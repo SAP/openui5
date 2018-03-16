@@ -12,6 +12,10 @@
     <dependency>
       <libraryName>sap.ui.core</libraryName>
     </dependency>
+    <dependency>
+      <libraryName>sap.ui.unified</libraryName>
+      <lazy>true</lazy>
+    </dependency>
   </dependencies>
 
   <appData>
@@ -40,13 +44,7 @@
             </modules>
         </component>
         <component>
-            <name>CA-UI5-BS-FCP</name>
-            <modules>
-                <module>sap/m/PDFViewer</module>
-            </modules>
-        </component>
-        <component>
-            <name>CA-UI5-BS-FCW</name>
+            <name>CA-UI5-SC</name>
             <modules>
                 <module>sap/m/FeedInput</module>
                 <module>sap/m/FeedListItem</module>
@@ -73,6 +71,8 @@
                 <module>sap/m/SelectionDetailsItem</module>
                 <module>sap/m/SelectionDetailsItemFacade</module>
                 <module>sap/m/SelectionDetailsLine</module>
+                <module>sap/m/MultiEditField</module>
+                <module>sap/m/PDFViewer</module>
             </modules>
         </component>
         <component>
@@ -111,11 +111,6 @@
                 <module>sap/m/GrowingList</module>
                 <module>sap/m/Column</module>
                 <module>sap/m/ColumnListItem</module>
-                <module>sap/m/FlexBox</module>
-                <module>sap/m/FlexItemData</module>
-                <module>sap/m/HBox</module>
-                <module>sap/m/VBox</module>
-                <module>sap/m/Title</module>
             </modules>
         </component>
     </ownership>

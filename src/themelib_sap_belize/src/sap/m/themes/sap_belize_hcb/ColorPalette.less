@@ -1,0 +1,60 @@
+/* ================================== */
+/* CSS for control sap.m/ColorPalette */
+/* Belize High Contrast Black theme 1111  */
+/* ================================== */
+
+html:not(.sap-phone) .sapMColorPalette .sapMColorPaletteSquare {
+	&:hover {
+		> div {
+			border: 1px solid @sapUiContentForegroundBorderColor; // 1px for the div + 1 already defined for the square
+		}
+	}
+	&:focus {
+		border: none;
+	}
+	&:focus:before {
+		content: "";
+		box-sizing: border-box;
+		position: absolute;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		border: 2px solid @sapUiContentFocusColor;
+		pointer-events: none;
+	}
+	&:focus:after {
+		content: "";
+		position: absolute;
+		box-sizing: border-box;
+		left: 0;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		border: 2px dotted @sapUiButtonLiteBackground;
+		pointer-events: none;
+	}
+}
+
+.sap-desktop .sapMColorPalette .sapMBtn:focus:after {
+	border-width: 2px;
+	top: 1px;
+	left: 1px;
+	bottom: 1px;
+	right: 1px;
+}
+
+.sapMColorPalette .sapMColorPaletteSeparator {
+	height: 0.125rem;
+	html[data-sap-ui-browser^="ie"] &,
+	html[data-sap-ui-browser^="ed"] & {
+		height: 2px; //needed since IE & Edge would round the 0.125rem to 0.12
+	}
+	> hr {
+		border-top-width: 0.125rem;
+		html[data-sap-ui-browser^="ie"] &,
+		html[data-sap-ui-browser^="ed"] & {
+			border-top-width: 2px; //needed since IE & Edge would round the 0.125rem to 0.12
+		}
+	}
+}

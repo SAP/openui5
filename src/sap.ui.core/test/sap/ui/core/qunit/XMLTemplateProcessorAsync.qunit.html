@@ -1,0 +1,273 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>QUnit Page for XMLTemplateProcessorAsync</title>
+
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-resourceroots='{"sap.ui.testlib":"testdata/uilib/", "example.mvc": "testdata/mvc/"}'>
+	</script>
+
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script>
+		sap.ui.require(["sap/ui/core/XMLTemplateProcessor", "jquery.sap.xml"], function(XMLTemplateProcessor) {
+			QUnit.begin(function() {
+				jQuery.sap.registerModulePath("testdata/view", "./testdata/view");
+				jQuery.sap.registerModulePath("my", "../../../../../test-resources/sap/ui/core/qunit/fragment/");
+			});
+
+			QUnit.module("enrichTemplateIdsPromise", {
+				beforeEach: function(assert) {
+					var done = assert.async();
+					this.oRootView = sap.ui.xmlview({
+						viewName: "testdata/view/XMLTemplateProcessorAsync_root",
+						id: "root",
+						async: true
+					});
+					this.oView = sap.ui.xmlview({
+						viewName: "testdata/view/XMLTemplateProcessorAsync",
+						id: "view",
+						async: true
+					});
+
+					this.oRootView.loaded().then(function() {
+						this.oView.loaded().then(function() {
+							this.xView = this.oView._xContent;
+							done();
+						}.bind(this));
+					}.bind(this));
+				},
+				afterEach: function() {
+					this.oRootView.destroy();
+					this.oView.destroy();
+				}
+			});
+
+			QUnit.test("create IDs", function(assert) {
+				assert.expect(6);
+				var done = assert.async();
+
+				assert.ok(jQuery.isXMLDoc(this.xView), "valid xml document as input");
+				XMLTemplateProcessor.enrichTemplateIdsPromise(this.xView, this.oRootView, true).then(function(xml) {
+					assert.ok(jQuery.isXMLDoc(xml), "valid xml document returned");
+					assert.strictEqual(xml, this.xView, "no copying");
+					var node = jQuery(this.xView).find("#root--button")[0];
+					assert.ok(node, "control was found by full id");
+					assert.equal(node.nodeName, "Button", "button is a button");
+					assert.equal(
+							node.getAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id"),
+							"true",
+							"full id flag is set to true"
+					);
+					done();
+				}.bind(this));
+			});
+
+			QUnit.test("create Controls", function(assert) {
+				assert.expect(2);
+				var done = assert.async();
+				XMLTemplateProcessor.enrichTemplateIdsPromise(this.xView, this.oRootView, true).then(function() {
+					assert.ok(!this.oRootView.byId("button"), "no control has been created yet");
+					XMLTemplateProcessor.parseTemplatePromise(this.xView, this.oRootView, true).then(function() {
+						assert.ok(this.oRootView.byId("button"), "button control is created");
+						done();
+					}.bind(this));
+				}.bind(this));
+			});
+
+			QUnit.test("do not create stashed Controls", function(assert) {
+				assert.expect(2);
+				var done = assert.async();
+				XMLTemplateProcessor.enrichTemplateIdsPromise(this.xView, this.oRootView,true).then(function() {
+					assert.ok(!this.oRootView.byId("stashedButton"), "no stashed control has been created yet");
+					XMLTemplateProcessor.parseTemplatePromise(this.xView, this.oRootView, true).then(function() {
+						assert.ok(this.oRootView.byId("stashedButton"), "stashed button control is created");
+						done();
+					}.bind(this));
+				}.bind(this));
+			});
+
+			QUnit.test("do not process ExtensionPoints", function(assert) {
+				assert.expect(2);
+				var done = assert.async();
+
+				// Preferrably we should test with a spy on "ExtensionPoint", but due
+				// to the AMD module handling it is not possible to place one
+				var node = jQuery(this.xView).find("#extensionButton")[0];
+				XMLTemplateProcessor.enrichTemplateIdsPromise(this.xView, this.oRootView, true).then(function() {
+					assert.equal(node.getAttribute("id"), "extensionButton", "id was not enriched");
+					XMLTemplateProcessor.parseTemplatePromise(this.xView, this.oRootView, true).then(function() {
+						assert.ok(this.oRootView.byId("extensionButton"), "extension button is created");
+						done();
+					}.bind(this));
+				}.bind(this));
+			});
+
+			QUnit.module("General");
+
+			QUnit.test("on design mode create Controls and fragment with correct declarativeSourceInfo", function (assert) {
+				assert.expect(7);
+				var done = assert.async();
+				var fnOrig_getDesignMode = sap.ui.getCore().getConfiguration().getDesignMode;
+				sap.ui.getCore().getConfiguration().getDesignMode = function () {
+					return true;
+				};
+				var oView = sap.ui.view({
+					viewName: "my.View",
+					type: sap.ui.core.mvc.ViewType.XML
+				});
+				sap.ui.getCore().getConfiguration().getDesignMode = fnOrig_getDesignMode;
+				oView.loaded().then(function () {
+					var oButton = oView.byId("button");
+					assert.ok(oButton, "button control is created");
+					assert.equal(oButton._sapui_declarativeSourceInfo.xmlNode.getAttribute("text"), "Button");
+					var xmlRootNode = oButton._sapui_declarativeSourceInfo.xmlRootNode;
+					assert.equal(xmlRootNode.getAttribute("controllerName"), "my.View");
+					var oLabel = oView.byId("namedName");
+					assert.equal(oLabel._sapui_declarativeSourceInfo.xmlNode.getAttribute("text"), "{named>name}");
+					assert.equal(oLabel.getParent()._sapui_declarativeSourceInfo.fragmentName, "my.Fragment");
+					assert.equal(oLabel._sapui_declarativeSourceInfo.xmlRootNode, xmlRootNode);
+					assert.equal(oLabel.getParent()._sapui_declarativeSourceInfo.xmlRootNode, xmlRootNode);
+					oView.destroy();
+					done();
+				});
+			});
+
+			QUnit.test("on regular mode create Controls and fragment with no declarativeSourceInfo", function (assert) {
+				assert.expect(3);
+				var done = assert.async();
+				sap.ui.view({
+					viewName: "my.View",
+					type: sap.ui.core.mvc.ViewType.XML
+				}).loaded().then(function(oView) {
+					var oButton = oView.byId("button");
+					assert.ok(oButton, "button control is created");
+					assert.notOk(oButton.hasOwnProperty("_sapui_declarativeSourceInfo"));
+					var oLabel = oView.byId("namedName");
+					assert.notOk(oLabel.hasOwnProperty("_sapui_declarativeSourceInfo"));
+					oView.destroy();
+					done();
+				});
+			});
+
+			QUnit.module("Metadata Contexts");
+
+			QUnit.test("On regular controls with metadataContexts the XMLTemplateProcessorAsync._preprocessMetadataContexts is called", function (assert) {
+				assert.expect(2);
+				var done = assert.async();
+				var mMetadataContexts = {};
+
+				XMLTemplateProcessor._preprocessMetadataContexts = function(sClassName, mSettings, oContext) {
+					mMetadataContexts = mSettings.metadataContexts;
+				};
+
+				sap.ui.view({
+					viewName: "my.View",
+					type: sap.ui.core.mvc.ViewType.XML
+				}).loaded().then(function (oView) {
+					var oButton = oView.byId("button");
+					assert.ok(oButton instanceof sap.m.Button, "Button found.");
+					assert.ok(mMetadataContexts,"XMLTemplateProcessorAsync._preprocessMetadataContexts is called");
+					XMLTemplateProcessor._preprocessMetadataContexts = null;
+					oView.destroy();
+					done();
+				});
+			});
+
+			QUnit.test("The named model map is built correctly", function (assert) {
+				var sError;
+				var mMap = XMLTemplateProcessor._calculatedModelMapping("{/path}", null, true);
+
+				assert.ok(mMap,"The map is build for {/path}");
+				assert.ok(mMap[undefined],"The map contains an entry keyed by the undefined model");
+				assert.equal(mMap[undefined].length,1,"The keyed model is an array of length one");
+				assert.equal(mMap[undefined][0].path,'/path',"The resulting path is '/path'");
+
+				mMap = XMLTemplateProcessor._calculatedModelMapping("{model>/path}", null, true);
+
+				assert.ok(mMap,"The map is build for {model>/path}");
+				assert.ok(mMap["model"],"The map contains an entry keyed by the 'model' model");
+				assert.equal(mMap["model"].length,1,"The keyed model is an array of length one");
+				assert.equal(mMap["model"][0].path,'/path',"The resulting path is '/path'");
+
+				mMap = XMLTemplateProcessor._calculatedModelMapping("{model: 'model', path: '/path'},{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}", null, true);
+
+				assert.ok(mMap,"The map is build for {model: 'model', path: '/path'},{path: '/path', name: 'context1'},{path: '/any', name: 'context2'} allowing multiple contexts");
+				assert.ok(mMap["model"],"The map contains an entry keyed by the 'model' model");
+				assert.equal(mMap["model"].length,1,"The keyed 'model' model is an array of length one");
+				assert.equal(mMap["model"][0].path,'/path',"The 'model' resulting path is '/path'");
+				assert.equal(mMap[undefined].length,2,"The 'undefined' model entry is an array of length two");
+				assert.equal(mMap[undefined][0].path,'/path',"The resulting path is '/path'");
+				assert.equal(mMap[undefined][0].name,'context1',"The resulting context name is 'context1'");
+				assert.equal(mMap[undefined][1].path,'/any',"The resulting path is '/any'");
+				assert.equal(mMap[undefined][1].name,'context2',"The resulting context name is 'context2'");
+
+				mMap = XMLTemplateProcessor._calculatedModelMapping("{model: 'model', path: '/path'},{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}", null, false);
+
+				assert.ok(mMap,"The map is build for {model: 'model', path: '/path'},{path: '/path', name: 'context1'},{path: '/any', name: 'context2'} not allowing multiple contexts");
+				assert.ok(mMap["model"],"The map contains an entry keyed by the 'model' model");
+				assert.equal(mMap["model"].path,'/path',"The 'model' resulting path is '/path'");
+				assert.ok(mMap[undefined],"The 'undefined' model entry is an object");
+				assert.equal(mMap[undefined].path,'/any',"The resulting path is '/any', i.e. the first binding gets overrulled");
+				assert.equal(mMap[undefined].name,'context2',"The resulting context name is 'context2', i.e. the first binding gets overrulled");
+
+				try {
+					XMLTemplateProcessor._calculatedModelMapping("{model: 'model', path: '/path'}fcb{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}", null, false);
+				} catch (e) {
+					sError = e.message;
+				}
+
+				assert.ok(sError,"Wrong delimiter in {model: 'model', path: '/path'}fcb{path: '/path', name: 'context1'},{path: '/any', name: 'context2'} is detected");
+				sError = null;
+
+				try {
+					XMLTemplateProcessor._calculatedModelMapping("{model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}", null, false);
+				} catch (e) {
+					sError = e.message;
+				}
+
+				assert.ok(sError,"Missing , in {model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'} is detected");
+				sError = null;
+
+				try {
+					XMLTemplateProcessor._calculatedModelMapping("huhuhudfhudf{model: 'model', path: '/path'},{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}", null, false);
+				} catch (e) {
+					sError = e.message;
+				}
+
+				assert.ok(sError,"Not starting with binding in huhuhudfhudf{model: 'model', path: '/path'},{path: '/path', name: 'context1'},{path: '/any', name: 'context2'} detected");
+				sError = null;
+
+				try {
+					XMLTemplateProcessor._calculatedModelMapping("{model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}uhuhuh", null, false);
+				} catch (e) {
+					sError = e.message;
+				}
+
+				assert.ok(sError,"Not ending with binding in {model: 'model', path: '/path'}{path: '/path', name: 'context1'},{path: '/any', name: 'context2'}huhuhuh is detected");
+			});
+		});
+	</script>
+</head>
+
+<body>
+<h1 id="qunit-header">QUnit Page for XMLTemplateProcessor (Async)</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+<div id="content"></div>
+</body>
+
+</html>

@@ -3,9 +3,17 @@
  */
 
 // Provides control sap.m._overflowToolbarHelpers.OverflowToolbarAssociativePopover.
-sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePopoverControls', './OverflowToolbarLayoutData'],
-	function(Popover, PopoverRenderer, OverflowToolbarAssociativePopoverControls, OverflowToolbarLayoutData) {
+sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePopoverControls', './OverflowToolbarLayoutData', 'sap/m/library'],
+	function(Popover, PopoverRenderer, OverflowToolbarAssociativePopoverControls, OverflowToolbarLayoutData, library) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 
 
@@ -49,6 +57,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	OverflowToolbarAssociativePopover.prototype.onBeforeRendering = function() {
 		Popover.prototype.onBeforeRendering.apply(this, arguments);
 		this.addStyleClass("sapMOTAPopover");
+		this.addStyleClass("sapMOverflowToolbarMenu-CTX");
 
 		var bHasButtonsWithIcons = this._getAllContent().some(function(oControl) {
 			return oControl.hasStyleClass("sapMOTAPButtonWithIcon");
@@ -88,9 +97,8 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	 * @private
 	 */
 	OverflowToolbarAssociativePopover.prototype._preProcessControl = function(oControl){
-		var sCtrlClass = OverflowToolbarAssociativePopoverControls.getControlClass(oControl),
-			oCtrlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oControl),
-			sAttachFnName, sPreProcessFnName;
+		var oCtrlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oControl),
+			sAttachFnName;
 
 		// For each event that must close the popover, attach a handler
 		oCtrlConfig.listenForEvents.forEach(function(sEventType) {
@@ -103,14 +111,13 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		}, this);
 
 		// Call preprocessor function, if any
-		sPreProcessFnName = "_preProcess" + sCtrlClass.split(".").map(fnCapitalize).join("");
-		if (typeof this.oControlsManager[sPreProcessFnName] === "function") {
-			this.oControlsManager[sPreProcessFnName](oControl);
+		if (typeof oCtrlConfig.preProcess === "function") {
+			oCtrlConfig.preProcess.call(this.oControlsManager, oControl);
 		}
 
 		var oLayoutData = oControl.getLayoutData();
 
-		if (oLayoutData instanceof OverflowToolbarLayoutData && oLayoutData.getPriority() === sap.m.OverflowToolbarPriority.Disappear) {
+		if (oLayoutData instanceof OverflowToolbarLayoutData && oLayoutData.getPriority() === OverflowToolbarPriority.Disappear) {
 			oControl.addStyleClass("sapMOTAPHidden");
 		}
 
@@ -124,9 +131,8 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	 * @private
 	 */
 	OverflowToolbarAssociativePopover.prototype._postProcessControl = function(oControl) {
-		var sCtrlClass = OverflowToolbarAssociativePopoverControls.getControlClass(oControl),
-			oCtrlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oControl),
-			sDetachFnName, sPostProcessFnName;
+		var oCtrlConfig = OverflowToolbarAssociativePopoverControls.getControlConfig(oControl),
+			sDetachFnName;
 
 		// For each event that must close the popover, detach the handler
 		oCtrlConfig.listenForEvents.forEach(function(sEventType) {
@@ -139,9 +145,8 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 		}, this);
 
 		// Call preprocessor function, if any
-		sPostProcessFnName =  "_postProcess" + sCtrlClass.split(".").map(fnCapitalize).join("");
-		if (typeof this.oControlsManager[sPostProcessFnName] === "function") {
-			this.oControlsManager[sPostProcessFnName](oControl);
+		if (typeof oCtrlConfig.postProcess === "function") {
+			oCtrlConfig.postProcess.call(this.oControlsManager, oControl);
 		}
 
 		oControl.removeStyleClass("sapMOTAPHidden");
@@ -185,7 +190,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	 * @private
 	 */
 	OverflowToolbarAssociativePopover.prototype._recalculateMargins = function (sCalculatedPlacement, oPosParams) {
-		if (sCalculatedPlacement !== sap.m.PlacementType.Top){
+		if (sCalculatedPlacement !== PlacementType.Top){
 			return Popover.prototype._recalculateMargins.apply(this, arguments);
 		}
 
@@ -202,7 +207,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 			return sap.ui.getCore().byId(sId);
 		});
 
-		if (this.getPlacement() === sap.m.PlacementType.Top) {
+		if (this.getPlacement() === PlacementType.Top) {
 			aAssociatedContent.reverse();
 		}
 
@@ -227,4 +232,4 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 
 	return OverflowToolbarAssociativePopover;
 
-}, /* bExport= */ false);
+});

@@ -64,12 +64,12 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', 'sap/ui/core/format/DateF
 			 */
 			key : {type : "string", group : "Data", defaultValue : null},
 
-            /**
-             * Overrides the color derived from the <code>type</code> property.
-             * This property will work only with full hex color with pound symbol, e.g.: #FF0000.
-             * @since 1.46.0
-             */
-            color: {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null}
+			/**
+			 * Overrides the color derived from the <code>type</code> property.
+			 * This property will work only with full hex color with pound symbol, e.g.: #FF0000.
+			 * @since 1.46.0
+			 */
+			color: {type : "sap.ui.core.CSSColor", group : "Appearance", defaultValue : null}
 		}
 	}});
 
@@ -154,7 +154,7 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', 'sap/ui/core/format/DateF
 		};
 	};
 
-	/**
+	/*
 	 * Sets for the <code>color</code> property.
 	 * @param {string} sColor Hex type CSS color
 	 * @returns {control} <code>this</code> context for chaining.
@@ -184,4 +184,4 @@ sap.ui.define(['jquery.sap.global', './DateTypeRange', 'sap/ui/core/format/DateF
 
 	return CalendarAppointment;
 
-}, /* bExport= */ true);
+});

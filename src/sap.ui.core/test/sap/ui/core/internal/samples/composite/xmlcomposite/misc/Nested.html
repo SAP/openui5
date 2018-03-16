@@ -1,0 +1,98 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible"
+	    content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>One XMLComposite nested in another - sap.ui.core</title>
+
+	<base href="../../../../../../../../..">
+
+
+	<script id="sap-ui-bootstrap"
+	    data-sap-ui-libs="sap.m"
+	    data-sap-ui-theme="sap_bluecrystal"
+	    data-sap-ui-bindingSyntax="complex"
+	    src="resources/sap-ui-core.js"
+	    data-sap-ui-resourceroots='{"xml": "./test-resources/sap/ui/core/internal/samples/composite/xmlcomposite/misc/xml"}'>
+	</script>
+
+	<script>
+		//jQuery.sap.require("sap.ui.mdc.model.GenericType");
+		jQuery.sap.require("sap.ui.core.XMLComposite");
+		jQuery.sap.declare("sap.mdc.InfoButton");
+
+		//TODO: move to another file !
+		// InfoButton
+		var InfoButton = sap.ui.core.XMLComposite.extend("sap.mdc.InfoButton", {
+			constructor: function(sId, mSettings) {
+				sap.ui.core.XMLComposite.apply(this, arguments);
+			},
+			metadata: {
+				designTime: true,
+				properties: {
+					buttonText: {
+						type: "string",
+						defaultValue: "x"
+					},
+					infoText: {
+						type: "string",
+						defaultValue: "y",
+						invalidate: true
+					}
+				}
+			},
+			fragment: "xml.infobutton"
+		});
+
+		//TODO: move to another file !
+		//toolbar
+		var MyToolbar = sap.ui.core.XMLComposite.extend("MyToolbar", {
+			constructor: function(sId, mSettings) {
+				sap.ui.core.XMLComposite.apply(this, arguments);
+			},
+			metadata: {
+				properties: {
+					title: {
+						type: "string"
+					},
+					buttonText: {
+						type: "string"
+					},
+					buttonInfo: {
+						type: "string"
+					},
+					count: {
+						type: "int",
+						defaultValue: -1
+					}
+				}
+			},
+			alias: "this",
+			fragment: "xml.toolbar",
+			renderer: "sap.ui.core.XMLCompositeRenderer"
+		});
+
+		var oToolbar = new MyToolbar("toolbar", {
+			title: "{/title}",
+			buttonText: "{/buttonText}",
+			buttonInfo: "{/buttonInfo}",
+			count: "{/count}"
+		});
+		oToolbar.setModel(new sap.ui.model.json.JSONModel({
+			title: "Title",
+			buttonText: "Button Text",
+			buttonInfo: "Button Info",
+			count: 1000
+		}));
+		oToolbar.placeAt("body");
+	</script>
+</head>
+
+<body id="body"
+    class="sapUiBody">
+</body>
+
+</html>

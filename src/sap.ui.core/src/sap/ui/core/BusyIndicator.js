@@ -3,9 +3,12 @@
  */
 
 // A static class to show a busy indicator
-sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core', './BusyIndicatorUtils'],
-	function(jQuery, EventProvider, Popup, Core, BusyIndicatorUtils) {
+sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core', './BusyIndicatorUtils', 'sap/ui/core/library'],
+	function(jQuery, EventProvider, Popup, Core, BusyIndicatorUtils, library) {
 	"use strict";
+
+	//shortcut for sap.ui.core.BusyIndicatorSize
+	var BusyIndicatorSize = library.BusyIndicatorSize;
 
 	/**
 	 * Provides methods to show or hide a waiting animation covering the whole
@@ -96,7 +99,7 @@ sap.ui.define(['jquery.sap.global', '../base/EventProvider', './Popup', './Core'
 		oBusyContainer.setAttribute("title", sTitle);
 		oRootDomRef.appendChild(oBusyContainer);
 
-		var oBusyElement = BusyIndicatorUtils.getElement("Big");
+		var oBusyElement = BusyIndicatorUtils.getElement(BusyIndicatorSize.Large);
 		oBusyElement.setAttribute("title", sTitle);
 		oRootDomRef.appendChild(oBusyElement);
 

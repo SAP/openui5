@@ -200,20 +200,21 @@ QUnit.test("Create a ManagedObject Model - Property Access", function(assert) {
 	// set properties with absolute path
 	assert.equal(oModel.setProperty("/value", "hello"), true, "Property set");
 	assert.equal(oModel.getProperty("/value"), "hello", "Property exists and has new value");
+	assert.notOk(oModel.setProperty("/value", "hello"), "Property not set, because it already has the same value");
 	assert.equal(oModel.setProperty("/abc", "hello"), false, "Property not set, because it does not exist");
 	assert.equal(oModel.getProperty("/abc"), null, "Property does not exist");
 	assert.equal(oModel.setProperty("value", "hello"), false, "Property not set, because it is not resolvable");
 
 	// Access property of hidden aggregation
-	assert.equal(oModel.setProperty("/_hiddenObjects/0/value", "hidden"), true, "Property of hidden element set");
+	assert.equal(oModel.setProperty("/_hiddenObjects/0/value", "hidden1"), true, "Property of hidden element set");
 
 	// context not given
 	assert.equal(oModel.setProperty("value", "hello"), false, "Property not set, because it is not resolvable without a context");
 
 	// context given
 	var oContext = oModel.getContext("/");
-	assert.equal(oModel.setProperty("value", "hello", oContext), true, "Property set, because context is resolvable");
-	assert.equal(oModel.getProperty("value", oContext), "hello", "Property has correct value, because context is resolvable");
+	assert.equal(oModel.setProperty("value", "hello1", oContext), true, "Property set, because context is resolvable");
+	assert.equal(oModel.getProperty("value", oContext), "hello1", "Property has correct value, because context is resolvable");
 });
 
 QUnit.test("ManagedObject Model  - Property Binding - Registration and Housekeeping", function(assert) {
@@ -471,21 +472,21 @@ QUnit.test("ManagedObject Model  - List Binding", function(assert) {
 	iLength = 1;
 	this.obj.addSubObj(this.subObj);
 	assert.equal(iCalls, iCount, "Binding change event fired for list aggregation");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Binding change event fired for list aggregation");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
 
 	iCount = 1;
 	iLength = 1;
 	this.obj.addSubObj(this.subObj);
 	assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected, remove, add");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Binding change event fired for list aggregation");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
 
 	iCount = 2;
 	iLength = 2;
 	this.subObj2 = new sap.ui.test.TestElement("subObject1");
 	this.obj.addSubObj(this.subObj2);
 	assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Binding change event fired for list aggregation");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj2, true, "Binding change event fired for list aggregation");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj, true, "Contexts are correctly applied");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj2, true, "Contexts are correctly applied");
 
 	iCount = 4;
 	iIndex = 1;
@@ -495,8 +496,8 @@ QUnit.test("ManagedObject Model  - List Binding", function(assert) {
 	iLength = 2;
 	this.obj.insertSubObj(this.subObj2, 0);
 	assert.equal(iCalls, iCount, "Change event called " + iCount + " as expected");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj, true, "Binding change event fired for list aggregation");
-	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj2, true, "Binding change event fired for list aggregation");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[1]) === that.subObj, true, "Contexts are correctly applied");
+	assert.equal(that.oManagedObjectModel.getProperty("", oBinding.getContexts()[0]) === that.subObj2, true, "Contexts are correctly applied");
 
 	// check that no additional event is called
 	assert.equal(this.oManagedObjectModel.setProperty("/value", "hello"), true, "Property set");
@@ -722,5 +723,32 @@ QUnit.test("ManagedObjectModel - Generic Testing for sap.m Controls", function(a
 
 });
 
+QUnit.test("ManagedObjectModel - Marker interface sap.ui.core.IDScope handling", function(assert) {
+	var sContent = sView = jQuery('#view').html();
 
+	var oView = sap.ui.xmlview({
+		viewContent: sView
+	});
+
+	sinon.spy(oView, "byId");
+
+	var sIdPrefix = oView.getId() + "--";
+
+	var oManagedObjectModel = new sap.ui.model.base.ManagedObjectModel(oView);
+
+	var oButton1 = oManagedObjectModel.getProperty("/#button1");
+
+	assert.ok(oButton1, "There is a button");
+	assert.equal(oButton1.getId(),sIdPrefix + "button1","We get the button");
+	ok(oView.byId.called, "As the view has the marker interface sap.ui.core.IDScope the byId method is called");
+
+	var oButton2 = oView.byId("button2");
+	var sText = oManagedObjectModel.getProperty("/#button2/text");
+	assert.equal(sText, oButton2.getText(), "We get the buttons text");
+
+	var oPanel = oManagedObjectModel.getProperty("/#panel");
+
+	assert.ok(oPanel, "There is a panel");
+	assert.equal(oPanel.getId(),sIdPrefix + "panel","We get the correct panel");
+});
 

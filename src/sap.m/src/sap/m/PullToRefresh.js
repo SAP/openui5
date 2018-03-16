@@ -3,9 +3,21 @@
  */
 
 // Provides control sap.m.PullToRefresh.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, library, Control, Parameters) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'./PullToRefreshRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, Device, PullToRefreshRenderer) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.ImageHelper
+	var ImageHelper = library.ImageHelper;
 
 
 
@@ -66,7 +78,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	}});
 
 	PullToRefresh.prototype.init = function(){
-		this._bTouchMode = sap.ui.Device.support.touch && !sap.ui.Device.system.combi || jQuery.sap.simulateMobileOnDesktop;
+		this._bTouchMode = Device.support.touch && !Device.system.combi || jQuery.sap.simulateMobileOnDesktop;
 		this._iState = 0; // 0 - normal; 1 - release to refresh; 2 - loading
 	};
 
@@ -244,7 +256,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 		var aCssClasses = ['sapMPullDownCIImg'];
 
-		this._oCustomImage = sap.m.ImageHelper.getImageControl(null, this._oCustomImage, this, mProperties, aCssClasses);
+		this._oCustomImage = ImageHelper.getImageControl(null, this._oCustomImage, this, mProperties, aCssClasses);
 
 		return this._oCustomImage;
 	};
@@ -276,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handle the enter key event
 	 *
-	 * @param {jQuery.Event} event - the keyboard event.
+	 * @param {jQuery.Event} oEvent The ENTER keyboard event object
 	 * @private
 	 */
 	PullToRefresh.prototype.onsapenter = function(oEvent) {
@@ -289,7 +301,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handle the space key event
 	 *
-	 * @param {jQuery.Event} event - the keyboard event.
+	 * @param {jQuery.Event} oEvent The SPACE keyboard event object
 	 * @private
 	 */
 	PullToRefresh.prototype.onsapspace = function(oEvent) {
@@ -306,7 +318,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Hides the control and resets it to the normal state. In non-touch environments the control is not hidden.
 	 *
-	 * @type void
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -317,10 +328,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
-	/*
-	* Override visibility setter
-	* @private
-	*/
 	PullToRefresh.prototype.setVisible = function(bVisible){
 		if (this.getVisible() == bVisible) {
 			return this;
@@ -338,4 +345,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 	return PullToRefresh;
 
-}, /* bExport= */ true);
+});

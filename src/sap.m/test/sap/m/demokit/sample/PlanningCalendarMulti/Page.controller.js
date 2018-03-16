@@ -328,7 +328,8 @@ sap.ui.define([
 			handleAppointmentSelect: function (oEvent) {
 				var oAppointment = oEvent.getParameter("appointment");
 				if (oAppointment) {
-					MessageBox.show("Appointment selected: " + oAppointment.getTitle());
+					var sSelected = oAppointment.getSelected() ? "selected" : "deselected";
+					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + this.byId("PC1").getSelectedAppointments().length);
 				} else {
 					var aAppointments = oEvent.getParameter("appointments");
 					var sValue = aAppointments.length + " Appointments selected";

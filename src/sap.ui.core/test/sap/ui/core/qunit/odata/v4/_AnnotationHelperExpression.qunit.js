@@ -22,15 +22,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4._AnnotationHelperExpression", {
 		beforeEach : function () {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			// I would consider this an API, see https://github.com/cjohansen/Sinon.JS/issues/614
-			this.oSandbox.verifyAndRestore();
 		}
 	});
 
@@ -49,7 +43,7 @@ sap.ui.require([
 			values : ["+1.1"]},
 
 		{constant : undefined, type : "Edm.Double",
-			values : [3.1415926535]},
+			values : [3.1415926535, Infinity, -Infinity, NaN]},
 		{constant : "$Float", type : "Edm.Double",
 			values : ["INF", "-INF", "NaN"]},
 
@@ -68,7 +62,7 @@ sap.ui.require([
 		{constant : "$TimeOfDay", type : "Edm.TimeOfDay", expectType : "string",
 			values : ["23:59:59.123456789012"]}
 	].forEach(function (oFixture) {
-		oFixture.values.forEach(function (vConstantValue, i) {
+		oFixture.values.forEach(function (vConstantValue) {
 			var oValue = {};
 
 			function testIt(oRawValue, sProperty, vConstantValue) {
@@ -1083,7 +1077,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getExpression: failure", function (assert) {
-		var oError,
+		var oError = {},
 			oPathValue = {value : 42};
 
 		this.mock(Expression).expects("expression")

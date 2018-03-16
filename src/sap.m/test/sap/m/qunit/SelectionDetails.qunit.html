@@ -10,8 +10,8 @@
 	data-sap-ui-language="en">
 </script>
 
-<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
+<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
@@ -1360,6 +1360,31 @@
 
 		//Assert
 		assert.equal(this.oSelectionDetails.getItems().length, 2, "Items are added");
+	});
+
+	QUnit.test("Marker SVG string is passed to factored item", function(assert) {
+		//Arrange
+		var oItem = {};
+
+		this.oSelectionDetails._oItemFactory = {
+			factory: function() {
+				return oItem;
+			}
+		};
+		this.oSelectionDetails._oSelectionData = [
+			{
+				displayData: [],
+				data: [],
+				shapeString: "<svg></svg>"
+			}
+		];
+		sinon.stub(this.oSelectionDetails, "addAggregation");
+
+		//Act
+		this.oSelectionDetails._callFactory();
+
+		//Assert
+		assert.equal(oItem._sMarkerShapeString, "<svg></svg>", "Shape string has been passed to created items.");
 	});
 
 	QUnit.test("Before factory is called existing items are destroyed", function(assert) {

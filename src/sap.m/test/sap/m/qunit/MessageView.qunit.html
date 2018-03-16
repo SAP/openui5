@@ -9,6 +9,7 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-noConflict="true"
+				data-sap-ui-xx-bindingSyntax="complex"
 				data-sap-ui-libs="sap.m">
 		</script>
 
@@ -358,6 +359,16 @@
 				customButton.destroy();
 			});
 
+			QUnit.test("showDetailsPageHeader property", function(assert) {
+				this.oMessageView.setShowDetailsPageHeader(false);
+				sap.ui.getCore().applyChanges();
+
+				this.oDialog.open();
+				this.clock.tick(500);
+
+				assert.notOk(this.oMessageView._detailsPage.getShowHeader(), "Header show not be shown");
+			});
+
 			QUnit.module("Core integration", {
 				beforeEach: function () {
 					var that = this;
@@ -425,6 +436,10 @@
 				assert.equal(this.oMessageView.getItems().length, 1, "The message should be one - from MessageManager");
 			});
 
+			QUnit.test("NavContainer should be child of the MessageView", function(assert) {
+				assert.equal(this.oMessageView._navContainer.getParent(), this.oMessageView, "Parent child relation is correct");
+			});
+
 			QUnit.module("HTML representation", {
 				beforeEach: function () {
 					var that = this;
@@ -484,12 +499,16 @@
 					title: sLongTitle
 				}));
 
+				this.oMessageView.addItem(new sap.m.MessageItem({
+					title: "dummy item"
+				}));
+
 				sap.ui.getCore().applyChanges();
 
 				this.oDialog.open();
 				this.clock.tick(500);
 
-				assert.strictEqual(this.oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
+				assert.strictEqual(this.oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type");
 			});
 
 			QUnit.module("Binding", {
@@ -549,8 +568,38 @@
 				this.clock.tick(500);
 				this.oDialog2.open();
 
-                assert.strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
-            });
+				assert.strictEqual(this.oMessageView2._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
+			});
+
+			QUnit.test("No segmented button filter when not needed", function (assert) {
+				this.oDialog2.open();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oMessageView2._oSegmentedButton.getVisible(), false, "Segmented button is not needed and should not be visible");
+
+				assert.strictEqual(this.oMessageView2._listPage.getShowHeader(), false, "Header is not visible because no segmented button is visible and no custom header button is there");
+
+				this.oDialog2.close();
+
+				this.clock.tick(500);
+
+				this.oMessageView2.setHeaderButton(new sap.m.Button({text: 'header button'}));
+
+				this.oDialog2.open();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oMessageView2._listPage.getShowHeader(), true, "Header should be shown when there is a custom header button even if segmente button is hidden");
+
+				this.oDialog2.close();
+
+				this.oDialog2.open();
+
+				this.clock.tick(500);
+
+				assert.strictEqual(this.oMessageView2._listPage.getShowHeader(), true, "Header should be shown when there is a custom header button even if segmented button is hidden after closing the dialog container");
+			});
 
 			QUnit.test("Removing all items", function (assert) {
 				var tempObject = {
@@ -571,6 +620,146 @@
 
 				tempObject = null;
 			});
+
+
+		QUnit.module("Interaction", {
+			beforeEach: function () {
+				this.oMessageView = new sap.m.MessageView({
+					items: [
+						new sap.m.MessageItem({
+							title: "Test",
+							description: "Test Description"
+						})
+					]
+				});
+
+				this.oMessageView.placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oMessageView.destroy();
+			}
+		});
+
+		QUnit.test("First visible page should be details page", function (assert) {
+			assert.strictEqual(this.oMessageView._navContainer.getCurrentPage().getId(), this.oMessageView._detailsPage.getId(), "Details page should be initially shown if item is just one");
+		});
+
+		QUnit.module("Aggregation Binding", {
+			beforeEach: function () {
+				this.oMessageView = new sap.m.MessageView();
+
+				var oTemplate = new sap.m.MessageItem({
+					title: "{title}",
+					description: "Test Description",
+					link: new sap.m.Link({
+						text: "{link}"
+					})
+				});
+
+				var oData = {
+					messages: [{
+						type: "Error",
+						groupName: "Group 1",
+						title: "Error message",
+						subtitle: "Subtitle",
+						link: "Link 1",
+						linkCustomData: "Link CustomData 1",
+						description: "First Error message description"
+					}, {
+						type: "Warning",
+						groupName: "Group 2",
+						title: "Warning without description",
+						link: "Link 2"
+					}]
+				};
+
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData(oData);
+
+				this.oMessageView.setModel(oModel);
+				this.oMessageView.bindAggregation("items",{
+					path: "/messages",
+					template: oTemplate
+				});
+
+				this.oMessageView.placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.oMessageView.destroy();
+			}
+		});
+
+		QUnit.test("Link in details page", function (assert) {
+			this.oMessageView._setDescription(this.oMessageView.getItems()[0]);
+			var oLink = this.oMessageView.getAggregation("_navContainer").getPages()[1].getContent()[1];
+
+			//assert
+			assert.strictEqual(oLink.getMetadata().getName(), "sap.m.Link", "A Link is added to details page");
+			assert.strictEqual(oLink.getText(), "Link 1", "The link is bound correctly");
+		});
+
+		QUnit.test("Escaping brackets", function (assert) {
+			// set up
+			var oMessageTemplate, aMockMessages, oModel,
+				oMessageView, oDialog, oButton;
+
+			oMessageTemplate = new sap.m.MessageItem({
+				type: '{type}',
+				title: '{title}',
+				description: '{description}',
+			});
+
+			aMockMessages = [
+				{
+					type: 'Error',
+					title: 'Error message { 123',
+					description: 'Error message { description'
+
+				}];
+
+			oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(aMockMessages);
+
+			oMessageView = new sap.m.MessageView({
+				items: {
+					path: "/",
+					template: oMessageTemplate
+				}
+			});
+
+			oMessageView.setModel(oModel);
+
+			oDialog = new sap.m.Dialog({
+				content: [oMessageView]
+			});
+
+			oButton = new sap.m.Button({
+				press: function(){
+					oDialog.open();
+				}
+			}).placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oButton.firePress();
+
+			// assert
+			assert.strictEqual(oMessageView.getItems()[0].getTitle(), "Error message { 123", "The item's title is set right.")
+			assert.strictEqual(oMessageView.getItems()[0].getDescription(), "Error message { description", "The item's description is set right.")
+
+			// clean up
+			oButton.destroy();
+			oDialog.destroy();
+			oButton = null;
+			oDialog = null;
+			oMessageView = null;
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

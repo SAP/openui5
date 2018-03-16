@@ -3,8 +3,17 @@
  */
 
 // Provides control sap.ui.commons.Accordion.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/thirdparty/jqueryui/jquery-ui-core', 'sap/ui/thirdparty/jqueryui/jquery-ui-widget', 'sap/ui/thirdparty/jqueryui/jquery-ui-mouse', 'sap/ui/thirdparty/jqueryui/jquery-ui-sortable'],
-	function(jQuery, library, Control) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    "./AccordionRenderer",
+    'sap/ui/thirdparty/jqueryui/jquery-ui-core',
+    'sap/ui/thirdparty/jqueryui/jquery-ui-widget',
+    'sap/ui/thirdparty/jqueryui/jquery-ui-mouse',
+    'sap/ui/thirdparty/jqueryui/jquery-ui-sortable'
+],
+	function(jQuery, library, Control, AccordionRenderer) {
 	"use strict";
 
 

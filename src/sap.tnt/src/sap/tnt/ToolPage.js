@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.t.ToolPage.
-sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
-	function (library, Control, Device, ResizeHandler) {
+sap.ui.define([
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/Device',
+    'sap/ui/core/ResizeHandler',
+    "./ToolPageRenderer"
+],
+	function(library, Control, Device, ResizeHandler, ToolPageRenderer) {
 		'use strict';
 
 		/**
@@ -14,7 +20,12 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/Device', 'sap/ui/core
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * The ToolPage is a layout control, used to put together the parts of a basic tools app - ToolHeader, SideNavigation and contents area.
+		 * The ToolPage is a layout control, used to create a basic tools app that has a header, side navigation and contents area.
+		 * <h4>Overview</h4>
+		 * The control has three main areas - a header on top, navigation to the side and a content are that can hold any control. The header and side navigation use custom controls
+		 * - {@link sap.tnt.ToolHeader} and {@link sap.tnt.SideNavigation}.
+		 * <h4>Usage</h4>
+		 * The main usage for the asp.tnt controls is for scenarios in the tooling or administration space.
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE

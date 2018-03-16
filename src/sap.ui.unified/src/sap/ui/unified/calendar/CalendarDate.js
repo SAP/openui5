@@ -105,7 +105,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 
 		/**
 		 * Sets an year.
-		 * @param {int} year. Short format for year (2 digits) is not supported. This means that if 10 is given, this will
+		 * @param {int} year Short format for year (2 digits) is not supported. This means that if 10 is given, this will
 		 * be considered as year 10, not 1910, as in JS Date.
 		 * @returns {sap.ui.unified.calendar.CalendarDate} <code>this</code> for method chaining.
 		 */
@@ -282,7 +282,13 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		 * @returns {sap.ui.unified.calendar.CalendarDate} the calendar date corresponding to the given JavaScript Date.
 		 */
 		CalendarDate.fromLocalJSDate = function (oJSDate, sCalendarType) {
-			if (!(oJSDate instanceof Date)) {
+			// Cross frame check for a date should be performed here otherwise setDateValue would fail in OPA tests
+			// because Date object in the test is different than the Date object in the application (due to the iframe).
+			// We can use jQuery.type or this method:
+			// function isValidDate (date) {
+			//	return date && Object.prototype.toString.call(date) === "[object Date]" && !isNaN(date);
+			//}
+			if (jQuery.type(oJSDate) !== "date") {
 				throw new Error("Date parameter must be a JavaScript Date object: [" + oJSDate + "].");
 			}
 			return new CalendarDate(oJSDate.getFullYear(), oJSDate.getMonth(), oJSDate.getDate(), sCalendarType);
@@ -291,9 +297,9 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 		/**
 		 * Creates an UniversalDate corresponding to the given date and calendar type.
 		 * @param {Date} oDate JavaScript date object to create the UniversalDate from. Local date information is used.
-		 * @param {sap.ui.core.CalendarType} [sCalendarType] to be used. If not specified, the calendar type from configuration will be used.
+		 * @param {sap.ui.core.CalendarType} sCalendarType The type to be used. If not specified, the calendar type from configuration will be used.
 		 * For more details on the Configuration, please check sap.ui.core.Configuration#getCalendarType
-		 * @returns {sap.ui.core.date.UniversalDate}
+		 * @returns {sap.ui.core.date.UniversalDate} The created date
 		 */
 		function createUniversalUTCDate(oDate, sCalendarType) {
 			if (sCalendarType) {
@@ -324,8 +330,8 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 
 		/**
 		 * Verifies the given value is numeric like, i.e. 3, "3" and throws an error if it is not.
-		 * @param {any} value the value of any type to check. If null or undefined, this method throws an error.
-		 * @param {string} the message to be used if an error is to be thrown
+		 * @param {any} value The value of any type to check. If null or undefined, this method throws an error.
+		 * @param {string} message The message to be used if an error is to be thrown
 		 * @throws will throw an error if the value is null or undefined or is not like a number
 		 */
 		function checkNumericLike(value, message) {
@@ -336,5 +342,5 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/date/UniversalDate'],
 
 		return CalendarDate;
 
-}, /* bExport= */ true);
+});
 

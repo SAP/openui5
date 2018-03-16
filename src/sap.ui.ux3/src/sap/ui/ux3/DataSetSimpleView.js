@@ -3,8 +3,22 @@
  */
 
 // Provides control sap.ui.ux3.DataSetSimpleView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', './library', 'jquery.sap.script'],
-	function(jQuery, Control, ResizeHandler, library/* , jQuerySap */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/ResizeHandler',
+	'./library',
+	"./DataSetSimpleViewRenderer",
+	'jquery.sap.script'
+],
+	function(
+		jQuery,
+		Control,
+		ResizeHandler,
+		library,
+		DataSetSimpleViewRenderer
+		/* jQuerySap */
+	) {
 	"use strict";
 
 
@@ -23,7 +37,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated Since version 1.38. Use a layout by choice from the {@link sap.m} library, instead.
 	 * @alias sap.ui.ux3.DataSetSimpleView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -454,7 +468,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/ResizeHa
 	 * @private
 	 */
 	DataSetSimpleView.prototype.calculateItemCounts = function(){
-		if (this.getDomRef()) {
+		if (this.getDomRef() && sap.ui.getCore().isThemeApplied()) {
 			var $itemArea = this.$(),
 				$firstItem = $itemArea.children().first();
 

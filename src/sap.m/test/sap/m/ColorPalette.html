@@ -1,0 +1,503 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Color Palette - sap.m</title>
+	<style>
+		#content {
+			width: 100%;
+			border: 1px dashed black;
+		}
+
+		.formBackground {
+			border: 1px black dashed;
+		}
+	</style>
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			src="../../../resources/sap-ui-core.js">
+	</script>
+	<script>
+
+		jQuery.sap.require("sap.m.ColorPalette");
+		jQuery.sap.require("sap.m.ColorPalettePopover");
+		jQuery.sap.require("sap.m.MessageBox");
+
+		var ColorPalette = sap.m.ColorPalette,
+			ColorPalettePopover = sap.m.ColorPalettePopover,
+			Panel = sap.m.Panel,
+			Label = sap.m.Label,
+			Title = sap.m.Title,
+			Button = sap.m.Button,
+			Slider = sap.m.Slider,
+			ToggleButton = sap.m.ToggleButton,
+			VBox = sap.m.VBox,
+			HBox = sap.m.HBox,
+			FlexBox = sap.m.FlexBox,
+			Toolbar = sap.m.Toolbar,
+			Select = sap.m.Select,
+			Item = sap.ui.core.Item,
+			ToolbarSpacer = sap.m.ToolbarSpacer,
+			CheckBox = sap.m.CheckBox,
+			MessageToast = sap.m.MessageToast,
+			MessageBox = sap.m.MessageBox,
+			Input = sap.m.Input,
+			Device = sap.ui.Device;
+
+		sap.ui.getCore().attachInit(function () {
+			new VBox({
+				items: [
+					new Label({text: "Use slider to control the width of the content area"}),
+					new Slider("theslider", {
+						value: window.innerWidth,
+						max: window.innerWidth,
+						step: 1,
+						liveChange: function (oEvent) {
+							jQuery("#content").css('width', oEvent.getParameter("value"));
+						},
+						showHandleTooltip: true,
+						inputsAsTooltips: true
+					}),
+					new FlexBox({
+						alignItems: "Center",
+						wrap: "Wrap",
+						items: [
+							new ToggleButton({
+								text: "+",
+								press: function (oEvent) {
+									var bPressed = this.getPressed();
+									sap.ui.getCore().getUIArea("content").getContent().forEach(function (oItem) {
+										if (oItem.getMetadata().getName() === "sap.m.Panel") {
+											oItem.setExpanded(bPressed);
+										}
+									});
+									this.setText(bPressed ? "-" : "+");
+								}
+							}),
+							new HBox({
+								alignItems: "Center",
+								items: [
+									new Label({text: "Form Factor"}),
+									new ToggleButton({
+										text: "Compact Mode",
+										pressed: !Device.system.phone && jQuery("html").hasClass("sapUiSizeCompact"),
+										press: function () {
+											jQuery("body").toggleClass("sapUiSizeCompact", this.getPressed());
+											jQuery("body").toggleClass("sapUiSizeCozy", !this.getPressed());
+										}
+									})
+								]
+							}),
+							new HBox("settingsTheme", {
+								alignItems: "Center",
+								items: [
+									new Label({text: "Theme:"}),
+									new Select("settingsThemeName",
+										{
+											selectedKey: "sap_belize",
+											items: [
+												new Item({key: "sap_belize", text: "Belize"}),
+												new Item({key: "sap_belize_plus", text: "Belize Deep"}),
+												new Item({key: "sap_belize_hcb", text: "Belize HCB"}),
+												new Item({key: "sap_belize_hcw", text: "Belize HCW"})
+											],
+											change: function (oEvent) {
+												var oSelectedTheme = oEvent.getParameter("selectedItem"),
+													bIsBelize,
+													oContrastContainerToggleBtn;
+
+												sap.ui.getCore().applyTheme(oSelectedTheme.getKey());
+
+												bIsBelize = ["sap_belize", "sap_belize_plus"].indexOf(oSelectedTheme.getKey()) > -1;
+
+												oContrastContainerToggleBtn = sap.ui.getCore().byId("settingsContrastContainer");
+												oContrastContainerToggleBtn.setVisible(bIsBelize);
+												oContrastContainerToggleBtn.setPressed(false);
+												jQuery("body").toggleClass("sapContrast", false);
+												jQuery("body").toggleClass("sapContrastPlus", false);
+											}
+										}),
+									new ToggleButton("settingsContrastContainer",
+										{
+											text: "Contrast",
+											press: function (oEvent) {
+												var oSelectedTheme = sap.ui.getCore().byId("settingsThemeName").getSelectedItem();
+
+												var sContrastContainer = oSelectedTheme.getKey().indexOf("plus") > -1 ? "sapContrastPlus" : "sapContrast";
+												jQuery("body").toggleClass(sContrastContainer, this.getPressed());
+											}
+										})
+								]
+							})
+						]
+					})]
+			}).placeAt("beforecontent");
+
+			//As Popover
+			new Panel({
+				headerText: "As Popover",
+				expandable: true,
+				expanded: true,
+				content: generateColorPalettePopoverElements()
+			}).placeAt("content");
+
+			//Default Color Palette in standalone mode
+			new Panel({
+				headerText: "Default Standalone",
+				expandable: true,
+				expanded: true,
+				content: [
+					new Input({placeholder: " focus placeholder"}),
+					new ColorPalette({
+						colorSelect: handleColorSelect
+					})
+				]
+			}).placeAt("content");
+
+			//Standalone Color Palette with custom color
+			new Panel({
+				headerText: "Standalone with custom colors",
+				expandable: true,
+				content: [
+					new ColorPalette("cpCustomColors", {
+						colors: [
+							"red",
+							"#ffff00",
+							"green",
+							"hsl(350, 60%, 60%)",
+							"lightblue",
+							"#a811ff",
+							"hsl(120, 80%, 80%)",
+							"black",
+							"#ffaa00",
+							"hsl(20, 100%, 70%)",
+							"white",
+							"aqua",
+							"lime",
+							"teal",
+							"purple"
+						],
+						colorSelect: handleColorSelect
+					}),
+					generateColorPaletteCustomColorItems("cpCustomColors")
+
+				]
+			}).placeAt("content");
+
+
+			//In a HBox with other elements
+			new Panel({
+				headerText: "Standalone in a HBox with other elements",
+				expandable: true,
+				content: generateColorPaletteWithOtherElements()
+			}).placeAt("content");
+
+
+			//In a Simple form with other elements
+			new Panel({
+				headerText: "Standalone in a SimpleForm with other elements and private aggregations",
+				expandable: true,
+				content: generateColorPaletteInSimpleForm()
+			}).placeAt("content");
+
+
+			function generateColorPaletteCustomColorItems(sColorPaletteId) {
+				var oPanel,
+					oColorPaletteItemsSelection,
+					oColorPalettePopover = sap.ui.getCore().byId(sColorPaletteId);
+				aDefaultColors = oColorPalettePopover.getColors();
+
+				oPanel = new Panel({
+					expandable: true,
+					headerText: "Edit custom colors"
+				});
+
+				oColorPaletteItemsSelection = new FlexBox("flexbox1", {
+					fitContainer: true,
+					wrap: "Wrap",
+					alignContent: "Stretch",
+					justifyContent: "Start"
+				});
+
+				aDefaultColors.forEach(function (sColor, i) {
+					var oHBox = new HBox({
+						items: [
+							new Input({enabled: false, width: "3rem", value: i.toString()}),
+							new Input({value: sColor}),
+							new Button({
+								icon: "sap-icon://delete",
+								press: function () {
+									oHBox.destroy();
+								}
+							})
+						]
+					});
+					oHBox._bColor = true; //mark this box as one containing a color elements fo further use
+					oColorPaletteItemsSelection.addItem(oHBox);
+				});
+
+				oPanel.addContent(oColorPaletteItemsSelection);
+
+				//Add new input for color
+				oPanel.addContent(new Button({
+					text: "Add new",
+					press: function () {
+						oColorPaletteItemsSelection.addItem(new HBox({
+							items: [
+								new Input({
+									enabled: false,
+									width: "3rem",
+									value: oColorPaletteItemsSelection.getItems().length - 1
+								}),
+								new Input({placeholder: "Enter value..."}),
+								new Button({
+									icon: "sap-icon://delete",
+									press: function () {
+										this.getParent().destroy(); //destroy the hbox
+									}
+								})
+							]
+						}))
+					}
+				}));
+
+				oPanel.addContent(new Button({
+					text: "Set",
+					press: function () {
+						var aColors = [],
+							sOperationResult = "";
+
+						oColorPaletteItemsSelection.getItems().forEach(function (oItem) {
+							if (oItem._bColor) {
+								aColors.push(oItem.getItems()[1].getValue());
+							}
+						});
+
+						try {
+							oColorPalettePopover.setColors(aColors);
+							sOperationResult = "Successfully set total of " + aColors.length + " colors\n" + aColors;
+						} catch (e) {
+							sOperationResult = "Setting of " + aColors.length + " colors failed!\n" + aColors;
+						}
+
+						MessageBox.show(sOperationResult, {title: "Custom colors"});
+					}
+				}));
+
+				return oPanel;
+			}
+
+			function generateColorPaletteWithOtherElements() {
+				return new HBox(
+					{
+						items: [
+							new Label({text: "Label Before"}),
+							new ColorPalette({
+								colors: [
+									"#FFB200",
+									"#FF8C00",
+									"#CD5C5C",
+									"#8B008B",
+									"#6495ED",
+									"#00BFFF",
+									"#008B8B",
+									"#6B8E23",
+									"#2F4F4F",
+									"#F0FFFF",
+									"#FFF",
+									"#D3D3D3",
+									"#A9A9A9",
+									"#696969",
+									"#000"
+								],
+								colorSelect: handleColorSelect
+							}),
+							new Label({text: "Label After"})
+						]
+					}
+				);
+			}
+
+			function generateColorPaletteInSimpleForm() {
+				var oSimpleForm,
+					oColorPalette = new ColorPalette({
+						colors: [
+							"red",
+							"#ffff00",
+							"green",
+							"hsl(350, 60%, 60%)",
+							"lightblue",
+							"#a811ff",
+							"hsl(120, 80%, 80%)",
+							"black",
+							"#ffaa00",
+							"hsl(20, 100%, 70%)",
+							"#123456",
+							"#789101",
+							"#121314",
+							"#abcdef",
+							"#b0b015"
+						],
+						colorSelect: handleColorSelect
+					});
+				oColorPalette._setDefaultColor("#FFFBBB");
+				oColorPalette._setShowDefaultColorButton(true);
+				oColorPalette._setShowMoreColorsButton(true);
+
+				oSimpleForm = new sap.ui.layout.form.SimpleForm("SF2", {
+					maxContainerCols: 3,
+					editable: true,
+					backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
+					toolbar: new Toolbar("TB1", {
+						content: [
+							new Title("SF2-Title", {
+								text: "Editable SimpleForm with transparent background and Toolbars",
+								titleStyle: sap.ui.core.TitleLevel.H6
+							}),
+							new ToolbarSpacer(),
+							new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
+						]
+					}),
+					ariaLabelledBy: "SF2-Title",
+					content: [
+						new Label({text: "Label 1:"}),
+						new Input({value: "input 1"}),
+						new Label({text: "Label 2"}),
+						oColorPalette,
+						new Label({text: "Label 3"}),
+						new Input({placeholder: "Add your address"})
+
+					]
+				});
+				oSimpleForm.addStyleClass("formBackground");
+
+				return oSimpleForm;
+			}
+
+			function generateColorPalettePopoverElements() {
+				var oCPPop, oCPPop2Colors, oCPPop7Colors;
+
+				oCPPop = new ColorPalettePopover("oCPPop", {
+					defaultColor: "red",
+					colorSelect: handleColorSelect
+				});
+
+				oCPPop2Colors = new ColorPalettePopover("kpop2", {
+					defaultColor: "black",
+					colors: [
+						"red",
+						"#ffff00"
+					],
+					colorSelect: handleColorSelect
+				});
+
+				oCPPop7Colors = new ColorPalettePopover("oCPPop7Colors", {
+					showDefaultColorButton: false,
+					showMoreColorsButton: false,
+					colors: [
+						"red",
+						"#ffff00",
+						"green",
+						"hsl(350, 60%, 60%)",
+						"lightblue",
+						"#a811ff",
+						"black"
+					],
+					colorSelect: handleColorSelect
+				});
+
+				return [
+					new HBox({
+						items: [
+							new CheckBox({
+								text: "Default Color ",
+								selected: true,
+								select: function (oEvent) {
+									oCPPop.setShowDefaultColorButton(oEvent.getParameter("selected"))
+								}
+							}),
+							new CheckBox({
+								text: "More Colors ",
+								selected: true,
+								select: function (oEvent) {
+									oCPPop.setShowMoreColorsButton(oEvent.getParameter("selected"))
+								}
+							}),
+							new Button({
+								text: "Open",
+								press: function () {
+									oCPPop.openBy(this);
+								}
+							})
+						]
+					}),
+
+					new HBox({
+						items: [
+							new CheckBox({
+								text: "Default Color ",
+								selected: true,
+								select: function (oEvent) {
+									oCPPop2Colors.setShowDefaultColorButton(oEvent.getParameter("selected"))
+								}
+							}),
+							new CheckBox({
+								text: "More Colors ",
+								selected: true,
+								select: function (oEvent) {
+									oCPPop2Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
+								}
+							}),
+							new Button({
+								text: "Open 2",
+								press: function () {
+									oCPPop2Colors.openBy(this);
+								}
+							})
+						]
+					}),
+
+					new HBox({
+						items: [
+							new CheckBox({
+								text: "Default Color ",
+								selected: false,
+								select: function (oEvent) {
+									oCPPop7Colors.setShowDefaultColorButton(oEvent.getParameter("selected"))
+								}
+							}),
+							new CheckBox({
+								text: "More Colors ",
+								selected: false,
+								select: function (oEvent) {
+									oCPPop7Colors.setShowMoreColorsButton(oEvent.getParameter("selected"))
+								}
+							}),
+							new Button({
+								text: "Open 7",
+								press: function () {
+									oCPPop7Colors.openBy(this);
+								}
+							})
+						]
+					})
+				];
+			}
+
+			function handleColorSelect(oEvent) {
+				MessageToast.show("value: " + oEvent.getParameter("value") +
+					", \n defaultAction: " + oEvent.getParameter("defaultAction"));
+			}
+		});
+	</script>
+</head>
+
+<body class="sapUiBody" style="width: 100vw; height: 100vh">
+<div id="beforecontent"></div>
+<div id="content"></div>
+<div id="aftercontent"></div>
+</body>
+</html>

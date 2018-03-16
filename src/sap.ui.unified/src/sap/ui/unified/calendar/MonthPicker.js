@@ -3,8 +3,25 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation', 'sap/ui/unified/library'],
-		function(jQuery, Control, LocaleData, ItemNavigation, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/unified/library',
+	'sap/ui/core/Locale',
+	"./MonthPickerRenderer"
+], function(
+	jQuery,
+	Control,
+	Device,
+	LocaleData,
+	ItemNavigation,
+	library,
+	Locale,
+	MonthPickerRenderer
+) {
 	"use strict";
 
 	/**
@@ -154,7 +171,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return oParent._getLocaleData();
 		} else if (!this._oLocaleData) {
 			var sLocale = this._getLocale();
-			var oLocale = new sap.ui.core.Locale(sLocale);
+			var oLocale = new Locale(sLocale);
 			this._oLocaleData = LocaleData.getInstance(oLocale);
 		}
 
@@ -179,12 +196,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	MonthPicker.prototype.onmousedown = function (oEvent) {
+		this._oMousedownPosition = {
+			clientX: oEvent.clientX,
+			clientY: oEvent.clientY
+		};
+	};
+
 	MonthPicker.prototype.onmouseup = function(oEvent){
 
 		// fire select event on mouseup to prevent closing MonthPicker during click
 
 		if (this._bMousedownChange) {
 			this._bMousedownChange = false;
+			this.fireSelect();
+		} else if (Device.support.touch
+			&& this._isValueInThreshold(this._oMousedownPosition.clientX, oEvent.clientX, 10)
+			&& this._isValueInThreshold(this._oMousedownPosition.clientY, oEvent.clientY, 10)
+		) {
+			var iIndex = this._oItemNavigation.getFocusedIndex();
+			var iMonth = iIndex + this.getStartMonth();
+			_selectMonth.call(this, iMonth);
 			this.fireSelect();
 		}
 
@@ -329,6 +361,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/**
+	 * Returns if value is in predefined threshold.
+	 *
+	 * @private
+	 */
+	MonthPicker.prototype._isValueInThreshold = function (iReference, iValue, iThreshold) {
+		var iLowerThreshold = iReference - iThreshold,
+			iUpperThreshold = iReference + iThreshold;
+
+		return iValue >= iLowerThreshold && iValue <= iUpperThreshold;
+	};
+
 	function _initItemNavigation(){
 
 		var oRootDomRef = this.getDomRef();
@@ -399,8 +443,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	function _handleMousedown(oEvent, iIndex){
 
-		if (oEvent.button) {
-			// only use left mouse button
+		if (oEvent.button || Device.support.touch) {
+			// only use left mouse button or not touch
 			return;
 		}
 
@@ -607,4 +651,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	return MonthPicker;
 
-}, /* bExport= */ true);
+});

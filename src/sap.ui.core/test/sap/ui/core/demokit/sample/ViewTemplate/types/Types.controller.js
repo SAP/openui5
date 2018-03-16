@@ -22,7 +22,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.core.sample.ViewTemplate.types.Types", {
 		showErrorPopover : function (sButtonID) {
-			this.messagePopover.openBy(this.getView().byId(sButtonID));
+			this.messagePopover.openBy(this.byId(sButtonID));
 		},
 
 		onInit : function () {
@@ -43,19 +43,19 @@ sap.ui.define([
 
 		onReset : function () {
 			var i,
+				oModel = this.getView().getModel(),
 				aObjects = this.getView().findAggregatedObjects(true),
-				that = this,
-				oView = this.getView();
+				that = this;
 
-			if (oView.getModel("ui").getProperty("/v2")) {
-
+			if (this.getView().getModel("ui").getProperty("/v2")) {
 				for (i = 0; i < aObjects.length; i += 1) {
 					if (aObjects[i].setValueState) {
 						aObjects[i].setValueState(ValueState.None);
 					}
 				}
-				this.getView().getModel().resetChanges();
-				this.getView().getModel().callFunction("/ResetEdmTypes", {
+				oModel.resetChanges();
+				oModel.callFunction("/ResetEdmTypes", {
+					urlParameters : {ID : '1'},
 					method : "POST",
 					success : function () {
 						showSuccessMessage("reset");
@@ -65,10 +65,8 @@ sap.ui.define([
 					}
 				});
 			} else {
-				oView.byId("resetButton").getObjectBinding("v4").execute()
+				this.byId("resetButton").getObjectBinding("v4").execute()
 					.then(function () {
-						var oModel = oView.getModel();
-
 						//TODO: refresh needed as long there is no synchronisation
 						oModel.refresh();
 						showSuccessMessage("reset");
@@ -88,11 +86,10 @@ sap.ui.define([
 		},
 
 		onSave : function () {
-			var that = this,
-				oView = this.getView(),
-				oModel = oView.getModel();
+			var oModel = this.getView().getModel(),
+				that = this;
 
-			if (oView.getModel("ui").getProperty("/v2")) {
+			if (this.getView().getModel("ui").getProperty("/v2")) {
 				oModel.attachEventOnce("requestCompleted", this, function(oEvent) {
 					if (oEvent.getParameter("success")) {
 						showSuccessMessage("saved");
@@ -113,7 +110,7 @@ sap.ui.define([
 
 		onSourceCode : function (oEvent) {
 			var oView = this.getView(),
-				bVisible = oView.byId("toggleSourceCodeButton").getPressed(),
+				bVisible = this.byId("toggleSourceCodeButton").getPressed(),
 				sSource;
 
 			oView.getModel("ui").setProperty("/codeVisible", bVisible);
@@ -136,7 +133,7 @@ sap.ui.define([
 
 		onV4 : function (oEvent) {
 			var oView = this.getView(),
-				oIdentificationBox = oView.byId("identificationBox"),
+				oIdentificationBox = this.byId("identificationBox"),
 				bV4 = oView.getModel("ui").getProperty("/v4");
 
 			oIdentificationBox.removeAllItems();

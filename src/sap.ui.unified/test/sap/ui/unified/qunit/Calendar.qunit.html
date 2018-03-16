@@ -30,6 +30,13 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 			jQuery.sap.require("sap.ui.core.LocaleData");
 			jQuery.sap.require("sap.ui.model.type.Date");
+			jQuery.sap.require("sap.ui.unified.CalendarLegend");
+
+			var CalendarLegend = sap.ui.unified.CalendarLegend,
+				CalendarDayType = sap.ui.unified.CalendarDayType;
+
+			// set language to en-US, since we have specific language strings tested
+			sap.ui.getCore().getConfiguration().setLanguage("en_US");
 
 			var bSelectFired = false;
 			var oSelectedDate = undefined;
@@ -64,6 +71,8 @@
 								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "5"), type: sap.ui.unified.CalendarDayType.Type04}),
 								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "6"),
 									endDate: new Date("2011", "0", "10"), type: sap.ui.unified.CalendarDayType.NonWorking}),
+								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "6"),
+										endDate: new Date("2011", "0", "6"), type: sap.ui.unified.CalendarDayType.Type01}),
 								new sap.ui.unified.DateTypeRange({startDate: new Date("2011", "0", "21"), type:
 									sap.ui.unified.CalendarDayType.NonWorking})
 				],
@@ -96,15 +105,15 @@
 
 			var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
 				items: [
-						new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Type 1"}),
-						new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Type 2"}),
-						new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Type 3"}),
-						new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Type 5"}),
-						new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Type 6"}),
-						new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Type 7"}),
-						new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Type 8"}),
-						new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Type 9"}),
-						new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Type 10"})
+						new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "My Type 1"}),
+						new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "My Type 2"}),
+						new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "My Type 3"}),
+						new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "My Type 5"}),
+						new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "My Type 6"}),
+						new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "My Type 7"}),
+						new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "My Type 8"}),
+						new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "My Type 9"}),
+						new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "My Type 10"})
 						]
 			});
 
@@ -182,7 +191,7 @@
 				}
 				assert.ok(bOK, "Only Saturday and Sunday are Weekend");
 
-				assert.equal(jQuery("#Cal3--Head-B1").text(), "Januar – Februar", "January – Februar shown");
+				assert.equal(jQuery("#Cal3--Head-B1").text(), "Januar", "January shown");
 				assert.equal(jQuery("#Cal3--Head-B2").text(), "2015", "year 2015 shown");
 				aMonths = jQuery(jQuery("#Cal3-content").children(".sapUiCalMonthView"));
 				assert.equal(aMonths.length, 2, "2 months rendered");
@@ -235,7 +244,23 @@
 				assert.ok((bFound && jQuery(aDays[i]).attr("data-sap-day") == "20121212"), "20121212 focused");
 				assert.equal(iStartDateChangeFired, 0, "no startdateChange event fired");
 
+				// BCP 1780270593
+				try {
+					oCal2.focusDate(null);
+					assert.ok(true, "focusDate() is called successfully with 'null'");
+				} catch (e) {
+					assert.ok(false, "focusDate() throws error when called with 'null'!");
+				}
+
 				oCal2.focusDate(new Date(2011, 0, 10));
+
+				// Act - move the focus out of Cal2 (to Cal1) and set focus date to the same date on Cal2
+				oCal1.focus();
+				oCal2.focusDate(new Date(2011, 0, 10));
+
+				// Assert
+				assert.strictEqual(jQuery(document.activeElement).attr("id"), "Cal2--Month0-20110110",
+							"Focus should NOT remain on Cal1 but on Cal2 focused date");
 			});
 
 			QUnit.test("week number calculation", function(assert) {
@@ -266,35 +291,28 @@
 
 				assert.ok(jQuery("#Cal2--Month0-20110101").hasClass("sapUiCalItemType01"), "20110101 is special day of Type01");
 				assert.equal(jQuery("#Cal2--Month0-20110101").attr("title"), "Text", "20110101 has special days tooltip");
-				assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "1. Januar 2011", "20110101 aria label");
-
-				sDescribingDomTextId = oLegend.getItems()[0].getId() + "-Text";
-				assert.ok(jQuery("#Cal2--Month0-20110101").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a legend item with the same type");
+				assert.equal(jQuery("#Cal2--Month0-20110101").attr("aria-label"), "1. Januar 2011; My Type 1", "20110101 aria label");
 
 				assert.ok(jQuery("#Cal2--Month0-20110102").hasClass("sapUiCalItemType02"), "20110102 is special day of Type02");
 				assert.equal(jQuery("#Cal2--Month0-20110102").attr("title"), "Text", "20110102 has special days tooltip");
-				assert.equal(jQuery("#Cal2--Month0-20110102").attr("aria-label"), "2. Januar 2011", "20110102 aria label");
-
-				sDescribingDomTextId = oLegend.getItems()[1].getId() + "-Text";
-				assert.ok(jQuery("#Cal2--Month0-20110102").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a legend item with the same type");
+				assert.equal(jQuery("#Cal2--Month0-20110102").attr("aria-label"), "2. Januar 2011; My Type 2", "20110102 aria label");
 
 				assert.ok(jQuery("#Cal2--Month0-20110103").hasClass("sapUiCalItemType02"), "20110103 is special day of Type02");
 				assert.equal(jQuery("#Cal2--Month0-20110103").attr("title"), "Text", "20110103 has special days tooltip");
-				assert.equal(jQuery("#Cal2--Month0-20110103").attr("aria-label"), "3. Januar 2011", "20110103 aria label");
+				assert.equal(jQuery("#Cal2--Month0-20110103").attr("aria-label"), "3. Januar 2011; My Type 2", "20110103 aria label");
 
-				assert.ok(jQuery("#Cal2--Month0-20110103").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a legend item with the same type");
 
 				assert.ok(jQuery("#Cal2--Month0-20110104").hasClass("sapUiCalItemType02"), "20110104 is special day of Type02");
 				assert.equal(jQuery("#Cal2--Month0-20110104").attr("title"), "Text", "20110104 has special days tooltip");
-				assert.equal(jQuery("#Cal2--Month0-20110104").attr("aria-label"), "4. Januar 2011", "20110104 aria label");
+				assert.equal(jQuery("#Cal2--Month0-20110104").attr("aria-label"), "4. Januar 2011; My Type 2", "20110104 aria label");
 
-				assert.ok(jQuery("#Cal2--Month0-20110104").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a legend item with the same type");
-
-				sDescribingDomTextId = sap.ui.unified.CalendarLegend.typeARIATexts["Type04"].getId();
+				sDescribingDomTextId = sap.ui.unified.CalendarLegendRenderer.typeARIATexts["Type04"].getId();
 				assert.ok(jQuery("#Cal2--Month0-20110105").attr("aria-describedby").indexOf(sDescribingDomTextId) > -1, "special day is described by a static label");
 
 				assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
 						"20110106 is date of type 'NonWorking' as part of a date range");
+				assert.ok(jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemType01") && jQuery("#Cal2--Month0-20110106").hasClass("sapUiCalItemWeekEnd"),
+				"20110106 is date of type 'Type0' and type 'NonWorking'");
 				assert.ok(jQuery("#Cal2--Month0-20110108").hasClass("sapUiCalItemWeekEnd"),
 						"20110108 is date of type 'NonWorking' as part of a date range");
 				assert.ok(jQuery("#Cal2--Month0-20110110").hasClass("sapUiCalItemWeekEnd"),
@@ -380,6 +398,34 @@
 				oCalM.destroy();
 			});
 
+			QUnit.test("Remove selectedDate", function(assert) {
+				//Arrange
+				var done = assert.async(),
+						oSelectedDateRange = new sap.ui.unified.DateRange({startDate: new Date()}),
+						oCal = new sap.ui.unified.Calendar("calSelectedDates", {selectedDates: oSelectedDateRange}),
+						oInvalidateMonthSpy = sinon.spy(oCal, "_invalidateMonth");
+
+				oCal.placeAt("uiArea1");
+				//Act
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				var $selectedDates = oCal.$().find(".sapUiCalItems .sapUiCalItemSel");
+				assert.equal($selectedDates.size(), 1, "Initially there should be one selected date");
+
+				//Act
+				oCal.removeSelectedDate(oSelectedDateRange);
+				setTimeout(function() {
+					//Assert
+					assert.equal(oInvalidateMonthSpy.callCount, 1, "oInvalidateMonthSpy should be called once, " +
+							"otherwise the removed selected date will still be shown as selected");
+
+					// clean up
+					oCal.destroy();
+					oInvalidateMonthSpy.restore();
+					done();
+				}, 100);
+			});
 
 			QUnit.module("Interaction");
 
@@ -431,14 +477,14 @@
 				qutils.triggerKeyboardEvent($January.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 				qutils.triggerEvent("click", "Cal3--Head-prev");
-				assert.equal(jQuery("#Cal3--Head-B1").text(), "November – Dezember", "November – December shown");
+				assert.equal(jQuery("#Cal3--Head-B1").text(), "November", "November shown");
 				assert.equal(jQuery("#Cal3--Head-B2").text(), "2014", "year 2014 shown");
 				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
 				assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141028", "first displayed day");
 				aDays = jQuery("#Cal3--Month1-days").find(".sapUiCalItem");
 				assert.equal(jQuery(aDays[aDays.length-1]).attr("data-sap-day"), "20150105", "last displayed day");
 				qutils.triggerEvent("click", "Cal3--Head-next");
-				assert.equal(jQuery("#Cal3--Head-B1").text(), "Januar – Februar", "january – february shown again");
+				assert.equal(jQuery("#Cal3--Head-B1").text(), "Januar", "january shown again");
 				assert.equal(jQuery("#Cal3--Head-B2").text(), "2015", "year 2015 shown again");
 				aDays = jQuery("#Cal3--Month0-days").find(".sapUiCalItem");
 				assert.equal(jQuery(aDays[0]).attr("data-sap-day"), "20141230", "first displayed day");
@@ -808,11 +854,594 @@
 					oAssert.strictEqual($Focus.attr("id"), oHTMLButton.getId(),
 						"Focus should remain on the button");
 
+					// Cleanup
+					oHTMLButton.destroy();
+
 					fnDone();
 				}, 0);
 
 			});
 
+			// BCP: 1780156715
+			QUnit.test("Adding selected date should not move the focus to the calendar control", function (oAssert) {
+				// Arrange
+				var fnDone = oAssert.async(), // Async test
+						oSelectedDate = new sap.ui.unified.DateRange({
+							startDate: new Date(2017, 1, 20)
+						}),
+						oHTMLButton = new sap.ui.core.HTML("persist_focus_target", {
+							content: "<button>Btn</button>"
+						}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				// Act - focus the control and add a selected date to the month
+				oHTMLButton.focus();
+				this.oCal.addSelectedDate(oSelectedDate);
+
+				// Assert
+				setTimeout(function () {
+					var $Focus = jQuery(document.activeElement);
+
+					if($Focus.length === 0) {
+						oAssert.ok(false, "The focus should be on the browser tab on which this " +
+								"QUnit is executed. If not the test will fail!");
+						fnDone(); // Complete async test
+						return;
+					}
+
+					oAssert.strictEqual($Focus.attr("id"), oHTMLButton.getId(),
+							"Focus should remain on the button");
+
+					// Cleanup
+					oHTMLButton.destroy();
+
+					fnDone();
+				}, 0);
+
+			});
+
+			QUnit.module("Other");
+
+			QUnit.test("interval selection feedback", function(assert) {
+				//arrange
+				var oCal = new sap.ui.unified.Calendar({
+						intervalSelection: true,
+						months: 2
+					}),
+					$HoveredDate,
+					$HoveredDateNextMonth,
+					oSelectedDate = new sap.ui.unified.DateRange({ startDate: new Date(2017, 6, 19) }),
+					aMonths;
+
+				oCal.displayDate(new Date(2017, 6, 19)); //2017, July 19
+				oCal.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				aMonths = oCal.getAggregation("month");
+
+				//act - hover a date, with nothing selected yet
+				$HoveredDate = jQuery("#" + aMonths[0].getId() + "-20170725");
+				aMonths[0].onmouseover({ target: $HoveredDate }); //2017, July 25
+
+				//assert
+				assert.equal(jQuery("#" + aMonths[0].getId() + ' .sapUiCalItemSelBetween').length, 0, 'no selection feedback yet');
+
+				//act - hover the same end date
+				oCal.addSelectedDate(oSelectedDate);
+				aMonths[0].onmouseover({ target: $HoveredDate }); //2017, July 25
+
+				//assert
+				assert.equal(jQuery("#" + aMonths[0].getId() + ' .sapUiCalItemSelBetween').length, 5, 'selection feedback is applied');
+
+				//act - hover a date in another month
+				$HoveredDateNextMonth = jQuery("#" + aMonths[1].getId() + "-20170806");
+				aMonths[1].onmouseover({ target: $HoveredDateNextMonth }); //2017, August 6
+
+				//assert
+				assert.equal(jQuery("#" + aMonths[0].getId() + ' .sapUiCalItemSelBetween').length, 17, 'selection feedback is applied on hovered dates from the first month');
+				assert.equal(jQuery("#" + aMonths[1].getId() + ' .sapUiCalItemSelBetween').length, 7, 'selection feedback is applied on hovered dates from the second month');
+
+				//clean
+				oCal.destroy();
+			});
+
+			QUnit.test("getFocusDomRef", function (oAssert) {
+				//arrange
+				var $selectedDate,
+					oCal6 = new sap.ui.unified.Calendar("Cal6");
+				oCal6.placeAt("uiArea6");
+				sap.ui.getCore().applyChanges();
+
+				//act
+				oCal6.displayDate(new Date(2017, 06, 08));
+				$selectedDate = jQuery("#Cal6--Month0-20170725");
+				$selectedDate.focus();
+				qutils.triggerKeydown($selectedDate, jQuery.sap.KeyCodes.ENTER);
+
+				//assert
+				assert.equal(oCal6.getFocusDomRef().id, "Cal6--Month0-20170725",
+						"getFocusDomRef returns the correct selected date when only one month");
+
+				//arrange
+				var oCal7 = new sap.ui.unified.Calendar("Cal7", {
+					months: 2
+				});
+				oCal7.placeAt("uiArea6");
+				sap.ui.getCore().applyChanges();
+
+				//act
+				oCal7.displayDate(new Date(2017, 06, 08));
+				$selectedDate = jQuery("#Cal7--Month1-20170825");
+				$selectedDate.focus();
+				qutils.triggerKeydown($selectedDate, jQuery.sap.KeyCodes.ENTER);
+
+				//assert
+				assert.equal(oCal7.getFocusDomRef().id, "Cal7--Month1-20170825",
+						"getFocusDomRef returns the correct selected date when multiple months");
+
+				//cleanup
+				oCal6.destroy();
+				oCal7.destroy();
+			});
+
+			// BCP: 1780409322
+			QUnit.test("year change update aria-label of the button", function (assert) {
+				// prepare
+				var oCalendar = new sap.ui.unified.Calendar(),
+					oCurrentDate = new Date(2017, 5, 2),
+					oNewFocusedDate = new Date(2018, 6, 3);
+
+				oCalendar.displayDate(oCurrentDate);
+				oCalendar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),oCalendar.$("-Head-B2").text(), "aria-label should be equal to the text of the button");
+
+				// act
+				oCalendar.displayDate(oNewFocusedDate);
+
+				// assert
+				assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),oCalendar.$("-Head-B2").text(), "aria-label should be equal to the text of the button");
+
+				// cleanup
+				oCalendar.destroy();
+			});
+
+
+			// BCP: 1780409322
+			QUnit.test("month change update aria-label of the button", function (assert) {
+				// prepare
+				var oCalendar = new sap.ui.unified.Calendar(),
+					oCurrentDate = new Date(2017, 5, 2),
+					oNewFocusedDate = new Date(2017, 6, 3);
+
+				oCalendar.displayDate(oCurrentDate);
+				oCalendar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				assert.equal(oCalendar.$("-Head-B1").attr("aria-label"),oCalendar.$("-Head-B1").text(), "aria-label should be equal to the text of the button");
+
+				// act
+				oCalendar.focusDate(oNewFocusedDate);
+
+				// assert
+				assert.equal(oCalendar.$("-Head-B1").attr("aria-label"),oCalendar.$("-Head-B1").text(), "aria-label should be equal to the text of the button");
+
+				// cleanup
+				oCalendar.destroy();
+			});
+
+			QUnit.test("_initializeSecondMonthHeader creates a header", function (assert) {
+				// arrange & act
+				var oCalendar = new sap.ui.unified.Calendar(),
+					oSecondHeader = oCalendar.getAggregation("secondMonthHeader");
+
+				// assert
+				assert.ok(oSecondHeader, "second month header is added as an association");
+				assert.ok(oSecondHeader.hasStyleClass("sapUiCalHeadSecondMonth"), "second month header has custom CSS class sapUiCalHeadSecondMonth");
+				assert.ok(oSecondHeader.hasListeners("pressPrevious"), "second month header has listener for pressPrevious event");
+				assert.ok(oSecondHeader.hasListeners("pressNext"), "second month header has listener for pressNext event");
+				assert.ok(oSecondHeader.hasListeners("pressButton1"), "second month header has listener for pressButton1 event");
+				assert.ok(oSecondHeader.hasListeners("pressButton2"), "second month header has listener for pressButton2 event");
+
+				// cleanup
+				oCalendar.destroy();
+			});
+
+			QUnit.test("onThemeChanged calls _updateHeadersButtons, _setPrimaryHeaderMonthButtonText and _toggleTwoMonthsInTwoColumnsCSS methods", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar(),
+					oupdateHeadersButtonsSpy = this.spy(oCalendar, "_updateHeadersButtons"),
+					osetPrimaryHeaderMonthButtonTextSpy = this.spy(oCalendar, "_setPrimaryHeaderMonthButtonText"),
+					oToggleTwoMonthsInTwoColumnsCSSSpy = this.spy(oCalendar, "_toggleTwoMonthsInTwoColumnsCSS");
+				oCalendar.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// act
+				oCalendar.onThemeChanged();
+
+				// assert
+				assert.equal(oupdateHeadersButtonsSpy.callCount, 1, "_updateHeadersButtons should be called once onThemeChanged");
+				assert.equal(osetPrimaryHeaderMonthButtonTextSpy.callCount, 1, "_setPrimaryHeaderMonthButtonText should be called once onThemeChanged");
+				assert.equal(oToggleTwoMonthsInTwoColumnsCSSSpy.callCount, 1, "_toggleTwoMonthsInTwoColumnsCSS should be called once onThemeChanged");
+
+				// cleanup
+				oCalendar.destroy();
+			});
+
+			QUnit.test("_setHeaderText sets the correct month name to the third button", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+					oHeader = oCalendar.getAggregation("header"),
+					oSetTextButton3Spy = this.spy(oHeader, "_setTextButton3"),
+					oSetAriaLabelButton3Spy = this.spy(oHeader, "_setAriaLabelButton3");
+
+				// act
+				oCalendar._setHeaderText(new sap.ui.unified.calendar.CalendarDate(2017, 2, 14, oCalendar.getPrimaryCalendarType()));
+
+				// assert
+				assert.equal(oSetTextButton3Spy.getCall(0).args[0], "April", "_setTextButton3 is called with April");
+				assert.equal(oSetAriaLabelButton3Spy.getCall(0).args[0], "April", "_setAriaLabelButton3 is called with April");
+
+				// cleanup
+				oCalendar.destroy();
+			});
+
+			QUnit.test("_setHeaderText sets the correct month name to the first button in secondMonthHeader aggregation", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+						oHeader = oCalendar.getAggregation("secondMonthHeader"),
+						oSetTextButton1Spy = this.spy(oHeader, "setTextButton1"),
+						oSetAriaLabelButton1Spy = this.spy(oHeader, "setAriaLabelButton1");
+
+				// act
+				oCalendar._setHeaderText(sap.ui.unified.calendar.CalendarDate.fromLocalJSDate(new Date(2017, 2, 14), oCalendar.getPrimaryCalendarType()));
+
+				// assert
+				assert.equal(oSetTextButton1Spy.getCall(0).args[0], "April", "setTextButton1 is called with April");
+				assert.equal(oSetAriaLabelButton1Spy.getCall(0).args[0], "April", "setAriaLabelButton1 is called with April");
+
+				// cleanup
+				oCalendar.destroy();
+				oSetTextButton1Spy.restore();
+				oSetAriaLabelButton1Spy.restore();
+			});
+
+			QUnit.test("_setColumns sets properly the inner iColumns property", function () {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar();
+
+				// act
+				oCalendar._setColumns(4);
+
+				// assert
+				assert.equal(oCalendar._iColumns, 4, "Columns are properly set to 4");
+
+				// cleanup
+				oCalendar.destroy();
+			});
+
+			QUnit.test("_getColumns gets properly the inner iColumns property", function () {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar();
+
+				// act && assert
+				assert.equal(oCalendar._getColumns(), oCalendar._iColumns, "getColumns returns the value of iColumns");
+
+				// cleanup
+				oCalendar.destroy();
+			});
+
+			QUnit.test("_isTwoMonthsInTwoColumns returns true if calendar is with two months in two columns", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2 });
+
+				// act & assert
+				assert.ok(oCalendar._isTwoMonthsInTwoColumns(), "should return true");
+
+				// cleanup
+				oCalendar.destroy();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_isTwoMonthsInTwoColumns returns false if calendar is with two months in one column", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1 });
+
+				// act & assert
+				assert.equal(oCalendar._isTwoMonthsInTwoColumns(), false, "should return false");
+
+				// cleanup
+				oCalendar.destroy();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_isTwoMonthsInTwoColumns returns false if calendar is with not two months in two columns", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 1 }),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2 });
+
+				// act & assert
+				assert.equal(oCalendar._isTwoMonthsInTwoColumns(), false, "should return false");
+
+				// cleanup
+				oCalendar.destroy();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_isTwoMonthsInOneColumn returns true if calendar is with two months in one column", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1 });
+
+				// act & assert
+				assert.ok(oCalendar._isTwoMonthsInOneColumn(), "should return true");
+
+				// cleanup
+				oCalendar.destroy();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_isTwoMonthsInOneColumn returns false if calendar is with two months in more than one column", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 3 });
+
+				// act & assert
+				assert.equal(oCalendar._isTwoMonthsInOneColumn(), false, "should return false");
+
+				// cleanup
+				oCalendar.destroy();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_isTwoMonthsInOneColumn returns false if calendar is with not two months in one column", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 1 }),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1 });
+
+				// act & assert
+				assert.equal(oCalendar._isTwoMonthsInOneColumn(), false, "should return false");
+
+				// cleanup
+				oCalendar.destroy();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_toggleTwoMonthsInTwoColumnsCSS should call addStyleClass if calendar is with two months in two columns", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar(),
+					oAddStyleClassSpy = this.spy(oCalendar, "addStyleClass"),
+					oRemoveStyleClassSpy = this.spy(oCalendar, "removeStyleClass"),
+					oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns", function () { return true; });
+
+				// act
+				oCalendar._toggleTwoMonthsInTwoColumnsCSS();
+
+				// assert
+				assert.equal(oAddStyleClassSpy.callCount, 1, "addStyleClass is called once");
+				assert.equal(oAddStyleClassSpy.getCall(0).args[0], "sapUiCalTwoMonthsTwoColumns", "addStyleClass is called with sapUiCalTwoMonthsTwoColumns param");
+				assert.equal(oRemoveStyleClassSpy.callCount, 0, "removeStyleClass is not called");
+
+				// cleanup
+				oCalendar.destroy();
+				oAddStyleClassSpy.restore();
+				oRemoveStyleClassSpy.restore();
+				oIsTwoMonthsInTwoColumnsStub.restore();
+			});
+
+			QUnit.test("_toggleTwoMonthsInTwoColumnsCSS should call removeStyleClass if calendar is with tnot wo months in two columns", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar(),
+					oAddStyleClassSpy = this.spy(oCalendar, "addStyleClass"),
+					oRemoveStyleClassSpy = this.spy(oCalendar, "removeStyleClass"),
+					oIsTwoMonthsInTwoColumnsStub = this.stub(oCalendar, "_isTwoMonthsInTwoColumns", function () { return false; });
+
+				// act
+				oCalendar._toggleTwoMonthsInTwoColumnsCSS();
+
+				// assert
+				assert.equal(oAddStyleClassSpy.callCount, 0, "addStyleClass is not called");
+				assert.equal(oRemoveStyleClassSpy.getCall(0).args[0], "sapUiCalTwoMonthsTwoColumns", "removeStyleClass is called with sapUiCalTwoMonthsTwoColumns param");
+				assert.equal(oRemoveStyleClassSpy.callCount, 1, "removeStyleClass is called once");
+
+				// cleanup
+				oCalendar.destroy();
+				oAddStyleClassSpy.restore();
+				oRemoveStyleClassSpy.restore();
+				oIsTwoMonthsInTwoColumnsStub.restore();
+			});
+
+			QUnit.test("_setPrimaryHeaderMonthButtonText should sets the button1 text of the header to _sFirstName value if calendar is in two columns with two months", function (assert) {
+				// arrange
+				var sExpectedText = "Text of the button",
+					oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+					oHeader = oCalendar.getAggregation("header"),
+					oSetTextButton1Spy = this.spy(oHeader, "setTextButton1"),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2 });
+				oCalendar._sFirstMonthName = sExpectedText;
+
+				// act
+				oCalendar._setPrimaryHeaderMonthButtonText();
+
+				// assert
+				assert.equal(oSetTextButton1Spy.getCall(0).args[0], sExpectedText, "setTextButton1 should be called with: " + sExpectedText);
+
+				// cleanup
+				oCalendar.destroy();
+				oSetTextButton1Spy.restore();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_setPrimaryHeaderMonthButtonText should sets the button1 text of the header to _sFirstName value if calendar is in one columns with two months", function (assert) {
+				// arrange
+				var sExpectedText = "Text of the button",
+					oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+					oHeader = oCalendar.getAggregation("header"),
+					oSetTextButton1Spy = this.spy(oHeader, "setTextButton1"),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1 });
+				oCalendar._sFirstMonthName = sExpectedText;
+
+				// act
+				oCalendar._setPrimaryHeaderMonthButtonText();
+
+				// assert
+				assert.equal(oSetTextButton1Spy.getCall(0).args[0], sExpectedText, "setTextButton1 should be called with: " + sExpectedText);
+
+				// cleanup
+				oCalendar.destroy();
+				oSetTextButton1Spy.restore();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_setPrimaryHeaderMonthButtonText should not call setTextButton1 if months are different than two", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 1 }),
+					oHeader = oCalendar.getAggregation("header"),
+					oSetTextButton1Spy = this.spy(oHeader, "setTextButton1"),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2 });
+
+				// act
+				oCalendar._setPrimaryHeaderMonthButtonText();
+
+				// assert
+				assert.equal(oSetTextButton1Spy.callCount, 0, "setTextButton1 should not be called");
+
+				// cleanup
+				oCalendar.destroy();
+				oSetTextButton1Spy.restore();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_updateHeadersButtons should hide 3 and 4 button of the header and show the secondMOnthHeader if months are 2 and columns is 1", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+					oHeader = oCalendar.getAggregation("header"),
+					oSecondMonthHeader = oCalendar.getAggregation("secondMonthHeader"),
+					oSetVisibleSpy = this.spy(oSecondMonthHeader, "setVisible"),
+					oSetVisibleButton3Spy = this.spy(oHeader, "_setVisibleButton3"),
+					oSetVisibleButton4Spy = this.spy(oHeader, "_setVisibleButton4"),
+					oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 1 });
+
+				// act
+				oCalendar._updateHeadersButtons();
+
+				// assert
+				assert.equal(oSetVisibleSpy.getCall(0).args[0], true, "secondMonthHeader should visible");
+				assert.equal(oSetVisibleButton3Spy.getCall(0).args[0], false, "third button of header should not be visible");
+				assert.equal(oSetVisibleButton4Spy.getCall(0).args[0], false, "fourth button of header should not be visible");
+
+				// cleanup
+				oCalendar.destroy();
+				oSetVisibleSpy.restore();
+				oSetVisibleButton3Spy.restore();
+				oSetVisibleButton4Spy.restore();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_updateHeadersButtons should show 3 and 4 button of the header and hide the secondMOnthHeader if months are 2 and columns are 2", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 2 }),
+						oHeader = oCalendar.getAggregation("header"),
+						oSecondMonthHeader = oCalendar.getAggregation("secondMonthHeader"),
+						oSetVisibleSpy = this.spy(oSecondMonthHeader, "setVisible"),
+						oSetVisibleButton3Spy = this.spy(oHeader, "_setVisibleButton3"),
+						oSetVisibleButton4Spy = this.spy(oHeader, "_setVisibleButton4"),
+						oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 2 });
+
+				// act
+				oCalendar._updateHeadersButtons();
+
+				// assert
+				assert.equal(oSetVisibleSpy.getCall(0).args[0], false, "secondMonthHeader should not visible");
+				assert.equal(oSetVisibleButton3Spy.getCall(0).args[0], true, "third button of header should be visible");
+				assert.equal(oSetVisibleButton4Spy.getCall(0).args[0], true, "fourth button of header should be visible");
+
+				// cleanup
+				oCalendar.destroy();
+				oSetVisibleSpy.restore();
+				oSetVisibleButton3Spy.restore();
+				oSetVisibleButton4Spy.restore();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_updateHeadersButtons should hide 3 and 4 button of the header and hide the secondMOnthHeader if months different than two", function (assert) {
+				// arrange
+				var oCalendar = new sap.ui.unified.Calendar({ months: 3 }),
+						oHeader = oCalendar.getAggregation("header"),
+						oSecondMonthHeader = oCalendar.getAggregation("secondMonthHeader"),
+						oSetVisibleSpy = this.spy(oSecondMonthHeader, "setVisible"),
+						oSetVisibleButton3Spy = this.spy(oHeader, "_setVisibleButton3"),
+						oSetVisibleButton4Spy = this.spy(oHeader, "_setVisibleButton4"),
+						oGetColumnsStub = this.stub(oCalendar, "_getColumns", function () { return 3 });
+
+				// act
+				oCalendar._updateHeadersButtons();
+
+				// assert
+				assert.equal(oSetVisibleSpy.getCall(0).args[0], false, "secondMonthHeader should not be visible");
+				assert.equal(oSetVisibleButton3Spy.getCall(0).args[0], false, "third button of header should not be visible");
+				assert.equal(oSetVisibleButton4Spy.getCall(0).args[0], false, "fourth button of header should not be visible");
+
+				// cleanup
+				oCalendar.destroy();
+				oSetVisibleSpy.restore();
+				oSetVisibleButton3Spy.restore();
+				oSetVisibleButton4Spy.restore();
+				oGetColumnsStub.restore();
+			});
+
+			QUnit.test("_updateHeadersYearPrimaryText should call header and secondMonthHeader methods with proper value", function (assert) {
+				// arrange
+				var sExpectedValue = "2018",
+					oHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy(), _setTextButton4: this.spy(), _setAriaLabelButton4: this.spy() },
+					oSecondMonthHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy() },
+					oCalendar = new sap.ui.unified.Calendar(),
+					oGetAggregationStub = this.stub(oCalendar, "getAggregation");
+				oGetAggregationStub.withArgs("header").returns(oHeader);
+				oGetAggregationStub.withArgs("secondMonthHeader").returns(oSecondMonthHeader);
+
+				// act
+				oCalendar._updateHeadersYearPrimaryText(sExpectedValue);
+
+				// assert
+				assert.equal(oHeader.setTextButton2.getCall(0).args[0], sExpectedValue, "setTextButton2 should be called with " + sExpectedValue);
+				assert.equal(oHeader.setAriaLabelButton2.getCall(0).args[0], sExpectedValue, "setAriaLabelButton2 should be called with " + sExpectedValue);
+				assert.equal(oHeader._setTextButton4.getCall(0).args[0], sExpectedValue, "_setTextButton4 should be called with " + sExpectedValue);
+				assert.equal(oHeader._setAriaLabelButton4.getCall(0).args[0], sExpectedValue, "_setAriaLabelButton4 should be called with " + sExpectedValue);
+				assert.equal(oSecondMonthHeader.setTextButton2.getCall(0).args[0], sExpectedValue, "setTextButton2 should be called with " + sExpectedValue);
+				assert.equal(oSecondMonthHeader.setAriaLabelButton2.getCall(0).args[0], sExpectedValue, "setAriaLabelButton2 should be called with " + sExpectedValue);
+
+				// cleanup
+				oCalendar.destroy();
+				oGetAggregationStub.restore();
+			});
+
+			QUnit.test("_updateHeadersYearAdditionalText should call header and secondMonthHeader methods with proper value", function (assert) {
+				// arrange
+				var sExpectedValue = "2018",
+						oHeader = { setAdditionalTextButton2: this.spy(), _setAdditionalTextButton4: this.spy() },
+						oSecondMonthHeader = { setAdditionalTextButton2: this.spy() },
+						oCalendar = new sap.ui.unified.Calendar(),
+						oGetAggregationStub = this.stub(oCalendar, "getAggregation");
+				oGetAggregationStub.withArgs("header").returns(oHeader);
+				oGetAggregationStub.withArgs("secondMonthHeader").returns(oSecondMonthHeader);
+
+				// act
+				oCalendar._updateHeadersYearAdditionalText(sExpectedValue);
+
+				// assert
+				assert.equal(oHeader.setAdditionalTextButton2.getCall(0).args[0], sExpectedValue, "setAdditionalTextButton2 should be called with " + sExpectedValue);
+				assert.equal(oHeader._setAdditionalTextButton4.getCall(0).args[0], sExpectedValue, "_setAdditionalTextButton4 should be called with " + sExpectedValue);
+				assert.equal(oSecondMonthHeader.setAdditionalTextButton2.getCall(0).args[0], sExpectedValue, "setAdditionalTextButton2 should be called with " + sExpectedValue);
+
+				// cleanup
+				oCalendar.destroy();
+				oGetAggregationStub.restore();
+			});
 		</script>
 
 	</head>
@@ -833,5 +1462,7 @@
 		<div id="uiArea4"></div>
 		<br>
 		<div id="uiArea5"></div>
+		<br>
+		<div id="uiArea6"></div>
 	</body>
 </html>

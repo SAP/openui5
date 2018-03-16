@@ -15,8 +15,16 @@
 	z-index: 2;
 }
 
-.sapMMultiInput.sapMInputBaseWarning .sapMMultiInputBorder,
-.sapMMultiInput.sapMInputBaseError .sapMMultiInputBorder,
-.sapMMultiInput.sapMInputBaseSuccess .sapMMultiInputBorder {
-	border-width: 2px;
+.sapMMultiInput.sapMInputBaseState {
+	.sapMMultiInputBorder {
+		border-width: 2px;
+	}
+
+	.sapMInputValHelpInner {
+		line-height: 2.275rem
+	}
+}
+
+.sapUiSizeCompact .sapMMultiInput.sapMInputBaseState .sapMInputValHelpInner {
+	line-height: 1.4rem
 }

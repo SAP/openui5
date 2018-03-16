@@ -3,8 +3,28 @@
  */
 
 // Provides control sap.ui.ux3.Feed.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/DropdownBox', 'sap/ui/commons/MenuButton', 'sap/ui/commons/SearchField', 'sap/ui/commons/ToggleButton', 'sap/ui/core/Control', './Feeder', './library'],
-	function(jQuery, DropdownBox, MenuButton, SearchField, ToggleButton, Control, Feeder, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/commons/DropdownBox',
+    'sap/ui/commons/MenuButton',
+    'sap/ui/commons/SearchField',
+    'sap/ui/commons/ToggleButton',
+    'sap/ui/core/Control',
+    './Feeder',
+    './library',
+    "./FeedRenderer"
+],
+	function(
+	    jQuery,
+		DropdownBox,
+		MenuButton,
+		SearchField,
+		ToggleButton,
+		Control,
+		Feeder,
+		library,
+		FeedRenderer
+	) {
 	"use strict";
 
 

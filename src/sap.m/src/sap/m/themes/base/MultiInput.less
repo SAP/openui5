@@ -17,6 +17,7 @@
 
 .sapMMultiInput .sapMTokenizer {
 	min-width: 4rem;
+	max-width: 100%;
 	margin-left: -0.375rem;
 }
 
@@ -185,6 +186,8 @@ html.sap-tablet .sapMMultiInputMultiModeBorder {
 	display: inline-block;
 	font-size: @sapMFontMediumSize;
 	line-height: 2.375rem;
+	width: 100%;
+	overflow: hidden;
 }
 
 .sapMMultiInputMultiModeBorder .sapMInputBaseInner {
@@ -310,7 +313,7 @@ html.sap-phone .sapMTokenizerMultiLine > .sapMTokenizerScrollContainer > .sapMTo
 }
 
 .sapUiSizeCompact .sapMMultiInputMultiModeBorder .sapMTokenizer .sapMToken {
-	margin-bottom: -0.125rem;
+	margin-bottom: 0;
 }
 
 // Prevents the cursor offset on desktop when there is only 1 token

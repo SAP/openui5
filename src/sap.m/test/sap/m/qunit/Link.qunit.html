@@ -23,7 +23,8 @@
 			href: "x.html",
 			target: "_blank",
 			width : "200px",
-			press:function() {
+			press:function(oEvent) {
+				oEvent.preventDefault();
 				assert.ok(true, "This should be executed when the link is triggered");
 			}
 		}).placeAt("uiArea1");
@@ -58,10 +59,39 @@
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
 		});
 
+		QUnit.test("Enter event should fire press event on keydown", function (assert) {
+			assert.expect(1); // verifies the event handler was executed
+			qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		});
+
+		QUnit.test("Enter event should not fire press on keyup", function (assert) {
+			assert.expect(0); // verifies the event handler was executed
+			qutils.triggerKeyup(oLink1.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+		});
+
+		QUnit.test("Space event should fire press event on keyup", function (assert) {
+			assert.expect(1); // verifies the event handler was executed
+			qutils.triggerKeyup(oLink1.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		});
+
+		QUnit.test("Space event should not fire press on keydown", function (assert) {
+			assert.expect(0); // verifies the event handler was executed
+			qutils.triggerKeydown(oLink1.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+		});
+
 		QUnit.test("Disabled", function(assert) {
 			assert.expect(0); // verifies the event handler was NOT executed
 			oLink1.setEnabled(false);
 			qutils.triggerEvent((jQuery.support.touch ? "tap" : "click"), oLink1.getId());
+		});
+
+		QUnit.test("Enabled is properly validated", function(assert) {
+			var sut = new sap.m.Link({text : "text"}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			sut.setEnabled(undefined);
+			sap.ui.getCore().applyChanges();
+			assert.ok(!sut.$().hasClass("sapMLnkDsbl"), "The disabled CSS class was not set when trying to set undefined for the enabled property.");
 		});
 
 		QUnit.test("When width is not set max-width should apply to control", function(assert) {
@@ -130,7 +160,7 @@
 		});
 
 		QUnit.test("Disabled link should not have the preseted href", function(assert) {
-			assert.equal(oLink2.$().attr("href"), "#", "oLink2 href should be '#'");
+			assert.equal(oLink2.$().attr("href"), undefined, "oLink2 href should not exist");
 			oLink2.setEnabled(true);
 			sap.ui.getCore().applyChanges();
 			assert.equal(oLink2.$().attr("href"), "x.html", "oLink2 href should be 'x.html' again after enabling");
@@ -298,6 +328,29 @@
 			sap.ui.getCore().applyChanges();
 
 			assert.strictEqual(oLink.$().attr('dir'), undefined, "The dir attribute should not be rendered");
+
+			oLink.destroy();
+		});
+
+		QUnit.test("validateUrl property behavior", function(assert) {
+			var sValidUrl = "http://sap.com",
+				sInvalidUrl = "hhtp://invalid",
+				oLink = new sap.m.Link({
+					validateUrl: true,
+					text: "Validate URL",
+					href: sInvalidUrl
+				});
+
+			oLink.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(oLink.$().attr("href"), undefined, "Link href should not exist if an invalid URL is provided");
+
+			oLink.setHref(sValidUrl);
+			assert.equal(oLink.$().attr("href"), sValidUrl, "Link href should equal the valid URL");
+
+			oLink.setHref(sInvalidUrl);
+			assert.equal(oLink.$().attr("href"), undefined, "Link href should not exist if an invalid URL is set");
 
 			oLink.destroy();
 		});

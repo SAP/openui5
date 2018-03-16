@@ -1,33 +1,36 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<VBox>
+	<VBox renderType="Bare">
 		<OverflowToolbar>
 			<SearchField
-			 width="auto"
-		     id="searchField"
-             tooltip="{i18n>masterSearchTooltip}"
-			 liveChange="onSearch">
+				width="auto"
+				id="searchField"
+				tooltip="{i18n>masterSearchTooltip}"
+				liveChange="onSearch">
 				<layoutData>
 					<OverflowToolbarLayoutData/>
 				</layoutData>
 			</SearchField>
 			<ComboBox
-			 width="auto"
-			 id="comboBox"
-		   	 items="{/items}"
-			 change="onThemeChange"
-			 placeholder="{i18n>ComboBoxPlaceholder}"
-			 tooltip="{i18n>ComboBoxTooltip}">
+				width="auto"
+				id="comboBox"
+				items="{/items}"
+				change="onThemeChange"
+				placeholder="{i18n>ComboBoxPlaceholder}"
+				tooltip="{i18n>ComboBoxTooltip}">
 				<core:Item key="{key}" text="{text}"/>
 					<layoutData>
 						<OverflowToolbarLayoutData />
 					</layoutData>
 			</ComboBox>
 			<ToolbarSpacer/>
+			<Label text="{i18n>FilterLabelText}"/>
+				<ToggleButton  type="Transparent" id="tbText" press="onPressText" icon="sap-icon://text-formatting" text="{i18n>ToggleButtonTextText}" />
+				<ToolbarSeparator/>
 				<ToggleButton  type="Transparent" id="tbColor" press="onPressColor" icon="sap-icon://palette" text="{i18n>ToggleButtonColorText}" />
 				<ToggleButton  type="Transparent" id="tbDimension" press="onPressDimension"  icon="sap-icon://dimension" text="{i18n>ToggleButtonDimensionText}" />
 				<ToggleButton  type="Transparent" id="tbImage" press="onPressImage"  icon="sap-icon://background" text="{i18n>ToggleButtonImageText}" />
 				<ToggleButton  type="Transparent" id="tbOpacity" press="onPressOpacity"  icon="sap-icon://customize" text="{i18n>ToggleButtonOpacityText}" />
-			<ToolbarSeparator/>
+				<ToolbarSeparator/>
 				<ToggleButton type="Transparent" id="tbExpert" press="onPressExpert"  text="{i18n>ToggleButtonExpertText}" />
 				<ToggleButton type="Transparent" id="tbQuick" press="onPressQuick"  text="{i18n>ToggleButtonQuickText}" />
 		</OverflowToolbar>

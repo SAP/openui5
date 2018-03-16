@@ -12,6 +12,7 @@
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-compatVersion="edge"
+			data-sap-ui-preload="async"
 			data-sap-ui-resourceroots='{"mycompany.myapp": "../"}'
 			data-sap-ui-frameOptions='allow'> 	// NON-SECURE setting for testing environment
 	</script>
@@ -29,7 +30,10 @@
 				new Shell({
 					app: new ComponentContainer({
 						height : "100%",
-						name : "mycompany.myapp"
+						name : "mycompany.myapp",
+						settings : {
+							id : "myapp"
+						}
 					})
 				}).placeAt("content");
 			});

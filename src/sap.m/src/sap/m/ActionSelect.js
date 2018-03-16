@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ActionSelect.
-sap.ui.define(['jquery.sap.global', './Select', './library'],
-	function(jQuery, Select, library) {
+sap.ui.define(['./Select', 'sap/ui/core/InvisibleText', './library', './ActionSelectRenderer'],
+	function(Select, InvisibleText, library, ActionSelectRenderer) {
 		"use strict";
 
 		/**
@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		/**
 		 * Determines whether the ActionSelect has content or not.
 		 *
-		 * @return {boolean}
+		 * @return {boolean} Whether the ActionSelect has content
 		 * @override
 		 * @private
 		 */
@@ -81,6 +81,11 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		/* =========================================================== */
 		/* Lifecycle methods                                           */
 		/* =========================================================== */
+
+		ActionSelect.prototype._onBeforeRenderingPopover = function () {
+			Select.prototype._onBeforeRenderingPopover.call(this);
+			this._updateTutorMessage();
+		};
 
 		ActionSelect.prototype.onAfterRenderingPicker = function() {
 			Select.prototype.onAfterRenderingPicker.call(this);
@@ -147,7 +152,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		/**
 		 * Handler for SHIFT-TAB key  - 'tab previous' key event.
 		 *
-		 * @param oEvent - key event
+		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 *
 		 */
@@ -178,7 +183,7 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 		/**
 		 * Handler for TAB key - sap 'tab next' key event.
 		 *
-		 * @param oEvent - key event
+		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 *
 		 */
@@ -222,12 +227,14 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 			if (bKeepFocus) {
 				Select.prototype.onsapfocusleave.apply(this, arguments);
 			}
+
+			this._toggleListFocusIndication(true);
 		};
 
 		/**
 		 * Handler for focus in event on The Selection List.
 		 *
-		 * @param oEvent - key event
+		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
 		ActionSelect.prototype.onfocusinList = function(oEvent) {
@@ -236,6 +243,67 @@ sap.ui.define(['jquery.sap.global', './Select', './library'],
 			}
 		};
 
+		ActionSelect.prototype.onfocusin = function() {
+			Select.prototype.onfocusin.apply(this, arguments);
+			this._toggleListFocusIndication(false);
+		};
+
+		/**
+		 * Handles toggling of focus indication from the list items.
+		 * If drop down is open and there is a selected item focus indication will be toggled.
+		 *
+		 * @param {boolean} bRemove - defines whether the focus indication should be removed or not.
+		 * @private
+		 */
+		ActionSelect.prototype._toggleListFocusIndication = function(bRemove) {
+			var oSelecteditem = this.getSelectedItem();
+
+			if (this.isOpen() && oSelecteditem) {
+				oSelecteditem.$().toggleClass("sapMActionSelectItemWithoutFocus", bRemove);
+			}
+		};
+
+		/**
+		 * Handles the creating and setting of a tutor message when the control has buttons.
+		 *
+		 * @private
+		 */
+		ActionSelect.prototype._updateTutorMessage = function() {
+			var oPicker = this.getPicker(),
+				aAriaLabels = oPicker.getAriaLabelledBy(),
+				bHasButtons = !!this.getButtons().length,
+				bTutorMessageNotReferenced;
+
+			if (!this._sTutorMessageId) {
+				this._sTutorMessageId = this.getId() + "-tutorMessage";
+				this._oTutorMessageText = new InvisibleText(this._sTutorMessageId, {
+					text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACTION_SELECT_TUTOR_MESSAGE")
+				}).toStatic();
+			}
+
+			bTutorMessageNotReferenced = (aAriaLabels.indexOf(this._sTutorMessageId) === -1);
+
+			if (bTutorMessageNotReferenced && bHasButtons) {
+				oPicker.addAriaLabelledBy(this._sTutorMessageId);
+			} else {
+				if (!bHasButtons) {
+					oPicker.removeAriaLabelledBy(this._sTutorMessageId);
+				}
+			}
+		};
+
+		/**
+		 * Called when the control is destroyed
+		 *
+		 * @private
+		 */
+		ActionSelect.prototype.exit = function () {
+			if (this._oTutorMessageText) {
+				this._oTutorMessageText.destroy();
+				this._oTutorMessageText = null;
+			}
+		};
+
 		return ActionSelect;
 
-	}, /* bExport= */ true);
+	});

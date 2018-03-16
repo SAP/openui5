@@ -24,16 +24,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _
 	 * @author SAP SE
 	 * @since 1.27
 	 */
+
 	return function (oProperties) {
-		return function(oControl) {
+		return function (oControl) {
 			var bIsMatching = true;
 			$.each(oProperties, function(sPropertyName, oPropertyValue) {
 				var fnProperty = oControl["get" + $.sap.charToUpperCase(sPropertyName, 0)];
 
 				if (!fnProperty) {
 					bIsMatching = false;
-					oLogger.error("Control '" + oControl.sId + "' does not have a property called: '" +
-						sPropertyName + "'");
+					oLogger.error("Control '" + oControl + "' does not have a property '" + sPropertyName + "'");
 					return false;
 				}
 
@@ -45,8 +45,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/test/_LogCollector"], function ($, _
 				}
 
 				if (!bIsMatching) {
-					oLogger.debug("The property '" + sPropertyName + "' of the control '" + oControl + "' " +
-						"is '" + vCurrentPropertyValue + "', expected '" + oPropertyValue + "'");
+					oLogger.debug("Control '" + oControl + "' property '" + sPropertyName +
+						"' has value '" + vCurrentPropertyValue + "' but should have value '" + oPropertyValue + "'");
 					return false;
 				}
 			});

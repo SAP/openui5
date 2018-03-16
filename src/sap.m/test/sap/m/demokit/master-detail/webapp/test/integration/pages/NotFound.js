@@ -2,8 +2,9 @@ sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/PropertyStrictEquals",
+	"sap/ui/Device",
 	"sap/ui/demo/masterdetail/test/integration/pages/Common"
-], function(Opa5, Press, PropertyStrictEquals, Common) {
+], function(Opa5, Press, PropertyStrictEquals, Device, Common) {
 	"use strict";
 
 	var sNotFoundPageId = "page",
@@ -20,7 +21,7 @@ sap.ui.define([
 					return this.waitFor({
 						viewName : sViewName,
 						controlType : "sap.m.Button",
-						matchers: new PropertyStrictEquals({name : "type", value : "Back"}),
+						matchers: new PropertyStrictEquals({name : "type", value : (Device.os.android ? "Up" : "Back")}),
 						actions : new Press(),
 						errorMessage : "Did not find the back button"
 					});

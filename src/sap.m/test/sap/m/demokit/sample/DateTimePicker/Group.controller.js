@@ -13,6 +13,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 			this.getView().setModel(oModel);
 
 			this.byId("DTP3").setDateValue(new Date());
+			this.byId("DTP6").setInitialFocusedDateValue(new Date(2017, 5, 13, 11, 12, 13));
 
 			this._iEvent = 0;
 

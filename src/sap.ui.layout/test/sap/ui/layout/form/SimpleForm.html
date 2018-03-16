@@ -11,193 +11,283 @@
 	</script>
 
 	<script type="text/javascript">
-		var oButtonLayout = new sap.m.SegmentedButton("MyLayout", {
-			selectedKey: "L1",
-			items: [ new sap.m.SegmentedButtonItem({key: "L1", text: "ResponsiveLayout"}),
-			         new sap.m.SegmentedButtonItem({key: "L2", text: "GridLayout"}),
-			         new sap.m.SegmentedButtonItem({key: "L3", text: "ResponsiveGridLayout"})
-			        ],
-			select: function(oEvent) {
-				var oSimpleForm1 = sap.ui.getCore().byId("SF1");
-				var oSimpleForm2 = sap.ui.getCore().byId("SF2");
-				switch (oEvent.getParameter("key")) {
-				case "L1":
-					oSimpleForm1.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);
-					oSimpleForm2.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);
-					break;
+	sap.ui.require([
+		"sap/ui/core/library",
+		"sap/ui/layout/library",
+		"sap/m/library",
+		"sap/ui/layout/form/SimpleForm",
+		"sap/ui/layout/GridData",
+		"sap/ui/layout/ResponsiveFlowLayoutData",
+		"sap/ui/layout/form/GridElementData",
+		"sap/ui/layout/form/GridContainerData",
+		"sap/ui/layout/form/ColumnElementData",
+		"sap/ui/layout/form/ColumnContainerData",
+		"sap/ui/core/VariantLayoutData",
+		"sap/ui/core/Title",
+		"sap/m/Toolbar",
+		"sap/m/OverflowToolbar",
+		"sap/m/ToolbarSpacer",
+		"sap/m/Title",
+		"sap/m/Label",
+		"sap/m/Text",
+		"sap/m/Input",
+		"sap/m/TextArea",
+		"sap/m/Link",
+		"sap/m/ToggleButton",
+		"sap/m/Button",
+		"sap/m/Image",
+		"sap/m/CheckBox",
+		"sap/m/SegmentedButton",
+		"sap/m/SegmentedButtonItem",
+		"sap/ui/core/Icon",
+		"sap/m/App",
+		"sap/m/Page",
+		"sap/m/Bar"
+		],
+		function(
+			CoreLib,
+			LayoutLib,
+			MLib,
+			SimpleForm,
+			GridData,
+			ResponsiveFlowLayoutData,
+			GridElementData,
+			GridContainerData,
+			ColumnElementData,
+			ColumnContainerData,
+			VariantLayoutData,
+			Title,
+			Toolbar,
+			OverflowToolbar,
+			ToolbarSpacer,
+			mTitle,
+			Label,
+			Text,
+			Input,
+			TextArea,
+			Link,
+			ToggleButton,
+			Button,
+			Image,
+			CheckBox,
+			SegmentedButton,
+			SegmentedButtonItem,
+			Icon,
+			App,
+			Page,
+			Bar
+			) {
 
-				case "L2":
-					oSimpleForm1.setLayout(sap.ui.layout.form.SimpleFormLayout.GridLayout);
-					oSimpleForm2.setLayout(sap.ui.layout.form.SimpleFormLayout.GridLayout);
-					break;
+			var oButtonLayout = new SegmentedButton("MyLayout", {
+				selectedKey: "L1",
+				items: [ new SegmentedButtonItem({key: "L1", text: "ResponsiveLayout"}),
+				         new SegmentedButtonItem({key: "L2", text: "GridLayout"}),
+				         new SegmentedButtonItem({key: "L3", text: "ResponsiveGridLayout"}),
+				         new SegmentedButtonItem({key: "L4", text: "ColumnLayout"})
+				        ],
+				selectionChange: function(oEvent) {
+					var oItem = oEvent.getParameter("item");
+					switch (oItem.getKey()) {
+					case "L1":
+						oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveLayout);
+						oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveLayout);
+						break;
 
-				case "L3":
-					oSimpleForm1.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
-					oSimpleForm2.setLayout(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
-					break;
+					case "L2":
+						oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.GridLayout);
+						oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.GridLayout);
+						break;
 
-				default:
-					break;
+					case "L3":
+						oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveGridLayout);
+						oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.ResponsiveGridLayout);
+						break;
+
+					case "L4":
+						oSimpleForm1.setLayout(LayoutLib.form.SimpleFormLayout.ColumnLayout);
+						oSimpleForm2.setLayout(LayoutLib.form.SimpleFormLayout.ColumnLayout);
+						break;
+
+					default:
+						break;
+					}
 				}
-			}
-		});
+			});
 
-		var oSimpleForm1 = new sap.ui.layout.form.SimpleForm(
-				"SF1",
-				{
-					minWidth : 1024,
-					maxContainerCols: 2,
-					title: "Form title",
-					editable: true,
-					content:[
-						new sap.ui.core.Title({text:"Title 1"}),
-						new sap.m.Label({text:"Label 1"}),
-						new sap.m.Input("I1",{value:"Value 1", required: true}),
-						new sap.m.Label({text:"Label 2"}),
-						new sap.m.Input("I2",{value:"Value 2/1"}),
-						new sap.m.Input("I3",{value:"Value 2/2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),new sap.ui.layout.GridData({span: "L2 M2 S2"})]})}),
-						new sap.m.Label({text:"Label 3"}),
-						new sap.m.Input({value:"Value 3/1"}),
-						new sap.m.Input({value:"Value 3/2"}),
-						new sap.m.Input({value:"Value 3/3"}),
-						new sap.m.Label({text:"Label 4"}),
-						new sap.m.CheckBox({selected:false}),
-						new sap.m.Label({text:"Label 4"}),
-						new sap.m.TextArea({value:"Long Text,Long Text,Long Text,Long Text,Long TextLong Text,Long TextLong Text,Long TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong Text"}),
-						new sap.ui.core.Title({text:"Title 2"}),
-						new sap.m.Label({text:"Label 1"}),
-						new sap.m.Input({value:"Value 1"}),
-						new sap.m.Label({text:"Label 2"}),
-						new sap.m.Input({value:"Value 2/1"}),
-						new sap.m.Input({value:"Value 2/2"}),
-						new sap.m.Label({text:"Label 3"}),
-						new sap.m.Input({value:"Value 3/1"}),
-						new sap.m.Input({value:"Value 3/2"}),
-						new sap.m.Input({value:"Value 3/3"}),
-						new sap.m.Label({text:"Label 4"}),
-						new sap.m.CheckBox({selected:false}),
-						new sap.m.TextArea({layoutData:new sap.ui.layout.ResponsiveFlowLayoutData({linebreak:true,weight:8}),value:"Long Text,Long Text,Long Text,Long Text,Long TextLong Text,Long TextLong Text,Long TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong Text"}),
-						new sap.ui.core.Title({text:"Title 3"}),
-						new sap.m.Label({text:"Label 1"}),
-						new sap.m.Link({text:"Text 1", href:"http://www.sap.com"}),
-						new sap.m.Label({text:"Label 2"}),
-						new sap.m.Input({value:"Value 2/1"}),
-						new sap.m.Text({text:"Text 2/2"}),
-						new sap.m.Label({text:"Label 3"}),
-						new sap.m.Input({value:"Value 3/1 weight",layoutData:new sap.ui.layout.ResponsiveFlowLayoutData({weight:2})}),
-						new sap.m.Text({text:"Text 3/2 weight",layoutData:new sap.ui.layout.ResponsiveFlowLayoutData({weight:2})}),
-						new sap.ui.core.Icon({src:"sap-icon://travel-expense",layoutData:new sap.ui.layout.ResponsiveFlowLayoutData({weight:1})}),
-						new sap.m.Label({text:"Label 4"}),
-						new sap.m.CheckBox({selected:false}),
-						new sap.m.TextArea({layoutData:new sap.ui.layout.ResponsiveFlowLayoutData({linebreak:true,weight:8}),value:"Long Text,Long Text,Long Text,Long Text,Long TextLong Text,Long TextLong Text,Long TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong Text"}),
-						new sap.m.Label({text:"This was invisible"}),
-						new sap.m.CheckBox("myCB",{selected:false,visible:false}),
-						new sap.m.Label({text:"a nice image"}),
-						new sap.m.Image({src: "../../commons/images/SAPLogo.gif"}),
-						new sap.m.Label({text:"Change the visibility"}),
-						new sap.m.ToggleButton("myButton1",{text:"Hide Fields",press:function(oEvent) {
-							if (oEvent.getParameter("pressed")) {
-								sap.ui.getCore().byId("I1").setVisible(false);
-								sap.ui.getCore().byId("I2").setVisible(false);
-								sap.ui.getCore().byId("I3").setVisible(false);
-							} else {
-								sap.ui.getCore().byId("I1").setVisible(true);
-								sap.ui.getCore().byId("I2").setVisible(true);
-								sap.ui.getCore().byId("I3").setVisible(true);
-							}
-						}}),
-						new sap.m.Button("myButton3",{text:"Destroy",press:function(oEvent) {
-							oSimpleForm1.destroy();
-						}}),
-						new sap.m.ToggleButton("myButton4",{text:"Label colons",press:function(oEvent) {
-							var bPressed = oEvent.getParameter("pressed");
-							var oForm = sap.ui.getCore().byId("SF1");
-							if (bPressed) {
-								oForm.addStyleClass("sapUiFormLblColon");
-							} else {
-								oForm.removeStyleClass("sapUiFormLblColon");
-							}
-						}}),
-						new sap.m.Label({text:"BackgroundDesign"}),
-						new sap.m.SegmentedButton("BackCol", {
-							width: "100%",
-							selectedKey: "Back3",
-							items: [ new sap.m.SegmentedButtonItem({key: "Back1", text: sap.ui.layout.BackgroundDesign.Transparent}),
-							         new sap.m.SegmentedButtonItem({key: "Back2", text: sap.ui.layout.BackgroundDesign.Solid}),
-							         new sap.m.SegmentedButtonItem({key: "Back3", text: sap.ui.layout.BackgroundDesign.Translucent})
-							        ],
-							select: function(oEvent) {
-								var sDesign;
-								switch (oEvent.getParameter("key")) {
-								case "Back1":
-									sDesign = sap.ui.layout.BackgroundDesign.Transparent;
-									break;
-
-								case "Back2":
-									sDesign = sap.ui.layout.BackgroundDesign.Solid;
-									break;
-
-								default:
-									sDesign = sap.ui.layout.BackgroundDesign.Translucent;
-									break;
+			var oSimpleForm1 = new SimpleForm(
+					"SF1",
+					{
+						minWidth : 1024,
+						maxContainerCols: 2,
+						title: "Form title",
+						editable: true,
+						content:[
+							new Title({text:"Title 1"}),
+							new Label({text:"Label 1"}),
+							new Input("I1",{value:"Value 1", required: true}),
+							new Label({text:"Label 2"}),
+							new Input("I2",{value:"Value 2/1"}),
+							new Input("I3",{value:"Value 2/2",
+								layoutData: new VariantLayoutData({multipleLayoutData: [
+								                                   new GridElementData({hCells: "1"}),
+								                                   new GridData({span: "L2 M2 S2"}),
+								                                   new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})}),
+							new Label({text:"Label 3"}),
+							new Input({value:"Value 3/1"}),
+							new Input({value:"Value 3/2"}),
+							new Input({value:"Value 3/3"}),
+							new Label({text:"Label 4"}),
+							new CheckBox({selected:false}),
+							new Label({text:"Label 5"}),
+							new TextArea({value:"Long Text,Long Text,Long Text,Long Text,Long TextLong Text,Long TextLong Text,Long TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong Text"}),
+							new Title({text:"Title 2"}),
+							new Label({text:"Label 1"}),
+							new Input({value:"Value 1"}),
+							new Label({text:"Label 2"}),
+							new Input({value:"Value 2/1"}),
+							new Input({value:"Value 2/2"}),
+							new Label({text:"Label 3"}),
+							new Input({value:"Value 3/1"}),
+							new Input({value:"Value 3/2"}),
+							new Input({value:"Value 3/3"}),
+							new Label("L4", {text:"Label 4"}),
+							new CheckBox({selected:false}),
+							new TextArea({layoutData:new ResponsiveFlowLayoutData({linebreak:true,weight:8}),value:"Long Text,Long Text,Long Text,Long Text,Long TextLong Text,Long TextLong Text,Long TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong Text",
+								                  ariaLabelledBy: "L4"}),
+							new Title({text:"Title 3"}),
+							new Label({text:"Label 1"}),
+							new Link({text:"Text 1", href:"http://www.sap.com"}),
+							new Label({text:"Label 2"}),
+							new Input({value:"Value 2/1"}),
+							new Text({text:"Text 2/2"}),
+							new Label({text:"Label 3"}),
+							new Input({value:"Value 3/1 weight",layoutData:new ResponsiveFlowLayoutData({weight:2})}),
+							new Text({text:"Text 3/2 weight",layoutData:new ResponsiveFlowLayoutData({weight:2})}),
+							new Icon({src:"sap-icon://travel-expense",layoutData:new ResponsiveFlowLayoutData({weight:1})}),
+							new Label("L4a", {text:"Label 4"}),
+							new CheckBox({selected:false}),
+							new TextArea({layoutData:new ResponsiveFlowLayoutData({linebreak:true,weight:8}),value:"Long Text,Long Text,Long Text,Long Text,Long TextLong Text,Long TextLong Text,Long TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong TextLong Text",
+								                  ariaLabelledBy: "L4a"}),
+							new Label({text:"This was invisible"}),
+							new CheckBox("myCB",{selected:false,visible:false}),
+							new Label({text:"a nice image"}),
+							new Image({src: "../../../m/images/SAPLogo.jpg", densityAware: false}),
+							new Label({text:"Change the visibility"}),
+							new ToggleButton("myButton1",{text:"Hide Fields",press:function(oEvent) {
+								if (oEvent.getParameter("pressed")) {
+									sap.ui.getCore().byId("I1").setVisible(false);
+									sap.ui.getCore().byId("I2").setVisible(false);
+									sap.ui.getCore().byId("I3").setVisible(false);
+								} else {
+									sap.ui.getCore().byId("I1").setVisible(true);
+									sap.ui.getCore().byId("I2").setVisible(true);
+									sap.ui.getCore().byId("I3").setVisible(true);
 								}
-								oSimpleForm1.setBackgroundDesign(sDesign);
-							}
-						})
-					]
-				});
+							}}),
+							new Button("myButton3",{text:"Destroy",press:function(oEvent) {
+								oSimpleForm1.destroy();
+							}}),
+							new ToggleButton("myButton4",{text:"Label colons",press:function(oEvent) {
+								var bPressed = oEvent.getParameter("pressed");
+								var oForm = sap.ui.getCore().byId("SF1");
+								if (bPressed) {
+									oForm.addStyleClass("sapUiFormLblColon");
+								} else {
+									oForm.removeStyleClass("sapUiFormLblColon");
+								}
+							}}),
+							new Label({text:"BackgroundDesign"}),
+							new SegmentedButton("BackCol", {
+								width: "100%",
+								selectedKey: "Back3",
+								items: [ new SegmentedButtonItem({key: "Back1", text: sap.ui.layout.BackgroundDesign.Transparent}),
+								         new SegmentedButtonItem({key: "Back2", text: sap.ui.layout.BackgroundDesign.Solid}),
+								         new SegmentedButtonItem({key: "Back3", text: sap.ui.layout.BackgroundDesign.Translucent})
+								        ],
+								selectionChange: function(oEvent) {
+									var oItem = oEvent.getParameter("item");
+									var sDesign;
+									switch (oItem.getKey()) {
+									case "Back1":
+										sDesign = sap.ui.layout.BackgroundDesign.Transparent;
+										break;
 
-		var oSimpleForm2 = new sap.ui.layout.form.SimpleForm("SF2", {
-			minWidth : 1024,
-			maxContainerCols: 2,
-			editable: false,
-			backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
-			toolbar: new sap.m.Toolbar("TB1", {
-				content: [new sap.m.Title("SF2-Title", {text: "Non-Editable SimpleForm with transparent background and Toolbars", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
-				          new sap.m.ToolbarSpacer(),
-				          new sap.m.Button({icon: "sap-icon://sap-ui5"})
-				          ]
-			}),
-			ariaLabelledBy: "SF2-Title",
-			content:[
-			        new sap.m.Toolbar("TB2", {
-			        	content: [new sap.m.Title("SF2C1-Title", {text: "Title 1", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
-			        	          new sap.m.ToolbarSpacer(),
-			        	          new sap.m.Button({icon: "sap-icon://sap-ui5"})
-			        	          ]
-			        }),
-			        new sap.m.Label({text:"Label 1"}),
-			        new sap.m.Text("T1",{text:"Value 1"}),
-			        new sap.m.Label({text:"Label 2"}),
-			        new sap.m.Text("T2",{text:"Value 2/1"}),
-			        new sap.m.Text("T3",{text:"Value 2/2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.form.GridElementData({hCells: "1"}),new sap.ui.layout.GridData({span: "L2 M2 S2"})]})}),
-			        new sap.m.OverflowToolbar("TB3", {
-			        	content: [new sap.m.Title("SF2C2-Title", {text: "Title 2", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
-			        	          new sap.m.ToolbarSpacer(),
-			        	          new sap.m.Button({icon: "sap-icon://sap-ui5"})
-			        	          ]
-			        }),
-			        new sap.m.Label({text:"Label 1", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.GridData({span: "L4 M2 S5", linebreak: true})]})}),
-			        new sap.m.Text({text:"Value 1"}),
-			        new sap.m.Label({text:"Label 2", layoutData: new sap.ui.core.VariantLayoutData({multipleLayoutData: [new sap.ui.layout.GridData({span: "L4 M2 S5", linebreak: true})]})}),
-			        new sap.m.Text({text:"Value 2/1"}),
-			        new sap.m.Text({text:"Value 2/2"})
-			]
+									case "Back2":
+										sDesign = sap.ui.layout.BackgroundDesign.Solid;
+										break;
+
+									default:
+										sDesign = sap.ui.layout.BackgroundDesign.Translucent;
+										break;
+									}
+									oSimpleForm1.setBackgroundDesign(sDesign);
+								}
+							})
+						]
+					});
+
+			var oSimpleForm2 = new SimpleForm("SF2", {
+				minWidth : 1024,
+				maxContainerCols: 2,
+				editable: false,
+				backgroundDesign: sap.ui.layout.BackgroundDesign.Transparent,
+				toolbar: new Toolbar("TB1", {
+					content: [new mTitle("SF2-Title", {text: "Non-Editable SimpleForm with transparent background and Toolbars", level: sap.ui.core.TitleLevel.H4, titleStyle: sap.ui.core.TitleLevel.H4, tooltip: "Title tooltip"}),
+					          new ToolbarSpacer(),
+					          new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
+					          ]
+				}),
+				ariaLabelledBy: "SF2-Title",
+				content:[
+				        new Toolbar("TB2", {
+				        	content: [new mTitle("SF2C1-Title", {text: "Title 1", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
+				        	          new ToolbarSpacer(),
+				        	          new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
+				        	          ]
+				        }),
+				        new Label({text:"Label 1"}),
+				        new Text("T1",{text:"Value 1"}),
+				        new Label({text:"Label 2"}),
+				        new Text("T2",{text:"Value 2/1"}),
+				        new Text("T3",{text:"Value 2/2",
+				        	layoutData: new VariantLayoutData({multipleLayoutData: [
+				        	                                   new GridElementData({hCells: "1"}),
+				        	                                   new GridData({span: "L2 M2 S2"}),
+				        	                                   new ColumnElementData({cellsSmall: 2, cellsLarge: 2})]})}),
+				        new OverflowToolbar("TB3", {
+				        	content: [new mTitle("SF2C2-Title", {text: "Title 2", level: sap.ui.core.TitleLevel.H5, titleStyle: sap.ui.core.TitleLevel.H5, tooltip: "Title tooltip"}),
+				        	          new ToolbarSpacer(),
+				        	          new Button({icon: "sap-icon://sap-ui5", tooltip: "SAPUI5"})
+				        	          ]
+				        }),
+				        new Label({text:"Label 1",
+				        	layoutData: new VariantLayoutData({multipleLayoutData: [
+				        	                                   new GridData({span: "L4 M2 S5", linebreak: true}),
+				        	                                   new ColumnElementData({cellsSmall: 5, cellsLarge: 4})]})}),
+				        new Text({text:"Value 1"}),
+				        new Label({text:"Label 2",
+				        	layoutData: new VariantLayoutData({multipleLayoutData: [
+				        	                                   new GridData({span: "L4 M2 S5", linebreak: true}),
+				        	                                   new ColumnElementData({cellsSmall: 5, cellsLarge: 4})]})}),
+				        new Text({text:"Value 2/1"}),
+				        new Text({text:"Value 2/2"})
+				]
+			});
+
+			var oApp = new App("myApp", {
+				pages: new Page("page1", {
+					title: "Test Page for sap.ui.layout.form.SimpleForm",
+					content: [
+					          oSimpleForm1,
+					          oSimpleForm2
+					         ],
+					footer: new Bar({
+										contentMiddle: [oButtonLayout]
+									})
+				})
+			}).placeAt("body");
+
 		});
-
-		var oApp = new sap.m.App("myApp", {
-			pages: new sap.m.Page("page1", {
-				title: "Test Page for sap.ui.layout.form.SimpleForm",
-				content: [
-				          oSimpleForm1,
-				          oSimpleForm2
-				         ],
-				footer: new sap.m.Bar({
-									contentMiddle: [oButtonLayout]
-								})
-			})
-		}).placeAt("body");
-
 	</script>
 
 </head>

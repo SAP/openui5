@@ -342,13 +342,6 @@
 
 			assert.ok(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignTransparent") > -1, "Panel should now have AreaDesign.Transparent");
 			assert.equal(oRootDomRef3.className.indexOf("sapUiPanelAreaDesignPlain"), -1, "Panel must not anymore have AreaDesign.Plain");
-			if (sap.ui.Device.browser.internet_explorer) {
-				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
-			} else if (sap.ui.Device.browser.firefox) {
-				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "transparent", "Panel should now be filled with a transparent color");
-			} else if (sap.ui.Device.browser.webkit) {
-				assert.equal(jQuery(oContDomRef3).css("backgroundColor"), "rgba(0, 0, 0, 0)", "Panel should now be filled with a transparent color");
-			}
 		});
 
 		QUnit.test("Border Design", function(assert) {

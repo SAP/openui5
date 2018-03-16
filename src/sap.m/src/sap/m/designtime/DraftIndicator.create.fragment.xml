@@ -1,0 +1,5 @@
+<core:FragmentDefinition 
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+		<DraftIndicator state="Saved"/>
+</core:FragmentDefinition>

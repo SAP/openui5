@@ -49,8 +49,8 @@
 					EntitySet="com.sap.gateway.default.zui5_edm_types_v4.v0001.Container/EdmTypesCollection" />
 			</EntityContainer>
 			<Annotations Target="SAP__self.EdmTypes/Decimal">
-				<Annotation Term="Org.OData.Validation.V1.Minimum" String="0.00"/>
-				<Annotation Term="Org.OData.Validation.V1.Maximum" String="100000.00">
+				<Annotation Term="Org.OData.Validation.V1.Minimum" Decimal="0.00"/>
+				<Annotation Term="Org.OData.Validation.V1.Maximum" Decimal="100000.00">
 					<Annotation Term="Org.OData.Validation.V1.Exclusive"/>
 				</Annotation>
 			</Annotations>

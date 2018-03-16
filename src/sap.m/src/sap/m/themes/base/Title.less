@@ -15,11 +15,18 @@
 	color: @sapUiGroupTitleTextColor;
 	font-family: @sapUiFontHeaderFamily;
 	box-sizing: border-box;
-	white-space: nowrap;
-	text-overflow: ellipsis;
 	overflow: hidden;
+	text-overflow: ellipsis;
 	cursor: text;
 	text-shadow: @sapUiShadowText;
+}
+
+.sapMTitle.sapMTitleWrap {
+	white-space: pre-line;
+}
+
+.sapMTitle.sapMTitleNoWrap {
+	white-space: nowrap;
 }
 
 .sapMTitleMaxWidth {
@@ -129,4 +136,9 @@ html[dir=rtl][data-sap-ui-browser^="ed"] .sapMTitleAlignEnd {
 .sapMIBar-CTX.sapMFooter-CTX .sapMTitle {
 	color: @sapUiPageFooterTextColor;
 	text-shadow: @sapUiShadowText;
+}
+
+/* DynamicPageTitle Heading-CTX */
+.sapFDynamicPageTitleHeading-CTX > .sapMTitle {
+	margin-top: 0;
 }

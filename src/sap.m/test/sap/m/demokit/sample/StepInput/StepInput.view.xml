@@ -1,38 +1,39 @@
 <mvc:View
 	xmlns:mvc="sap.ui.core.mvc"
-    controllerName="sap.m.sample.StepInput.StepInput"
+	controllerName="sap.m.sample.StepInput.StepInput"
 	xmlns="sap.m">
 
-    <Table id="idTable"
-           items="{
-                path: '/modelData'
-            }">
-        <columns>
-            <Column/>
-            <Column/>
-        </columns>
+	<List id="idTable"
+		items="{
+			path: '/modelData'
+			}">
 
-        <items>
-            <ColumnListItem>
-                <cells>
-                    <Label
-                            text="{label}"/>
-                    <StepInput
-                            value="{value}"
-                            displayValuePrecision="{displayValuePrecision}"
-                            min="{min}"
-                            max="{max}"
-                            width="{width}"
-                            step="{step}"
-                            largerStep="{largerStep}"
-                            valueState="{valueState}"
-                            enabled="{enabled}"
-                            editable="{editable}"
-                            change="onChange"/>
-
-                </cells>
-            </ColumnListItem>
-        </items>
-    </Table>
+		<CustomListItem>
+			<HBox class="sapUiTinyMargin" justifyContent="SpaceBetween" alignItems="Center">
+				<VBox class="sapUiSmallMarginEnd">
+					<Label text="{label}" wrapping="true"/>
+				</VBox>
+				<VBox>
+					<StepInput
+						value="{value}"
+						displayValuePrecision="{displayValuePrecision}"
+						min="{min}"
+						max="{max}"
+						width="{width}"
+						step="{step}"
+						largerStep="{largerStep}"
+						stepMode="{stepMode}"
+						valueState="{valueState}"
+						enabled="{enabled}"
+						editable="{editable}"
+						description="{description}"
+						fieldWidth="{fieldWidth}"
+						textAlign="{textAlign}"
+						validationMode="{validationMode}"
+						change="onChange"/>
+				</VBox>
+			</HBox>
+		</CustomListItem>
+	</List>
 
 </mvc:View>

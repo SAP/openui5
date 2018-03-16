@@ -180,6 +180,18 @@
 			assert.strictEqual(aCtrls.length, 3, "All requested Controls should be returned");
 		});
 
+		QUnit.test("control check with data-sap-ui-related", function(assert) {
+			var oTestControl7 = new sap.jsunittest.Test("testControl7");
+			var oTestControl8 = new sap.jsunittest.Test("testControl8");
+
+			jQuery("#uiAreaTarget7").root(oTestControl7);
+			sap.ui.getCore().applyChanges();
+			oTestControl7.$().attr("data-sap-ui-related", oTestControl8.getId());
+
+			var oCtrl = oTestControl7.$().control(0, true);
+			assert.ok(oCtrl === oTestControl8, "Related control is find out!");
+		});
+
 		QUnit.test("GetUIAreasOk", function(assert) {
 			var oCore = sap.ui.getCore();
 			oCore.registerPlugin(oTestPlugin);
@@ -229,7 +241,7 @@
 		<div id="uiAreaTarget4" ></div>
 		<div id="uiAreaTarget5" ></div>
 		<div id="uiAreaTarget6" ></div>
-
+		<div id="uiAreaTarget7" ></div>
 
 		<div id="uiAreaPreSetup1" ></div>
 		<div id="uiAreaPreSetup2" ></div>

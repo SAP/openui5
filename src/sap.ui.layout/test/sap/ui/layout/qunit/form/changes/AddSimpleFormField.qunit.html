@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>Test Page for sap.ui.layout.qunit.form.changes.AddSimpleFormField</title>
+		<script src="../../../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].libs = 'sap.ui.rta, sap.m, sap.ui.dt, sap.ui.comp';
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.thirdparty.sinon');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+
+			// code coverage report only for sap.ui.layout namespace
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/layout]');
+
+			jQuery.sap.includeScript('AddSimpleFormField.qunit.js');
+		</script>
+	</head>
+	<body>
+		<h2 id='qunit-banner'></h2>
+		<div id='qunit-testrunner-toolbar'></div>
+		<ol id='qunit-tests'></ol>
+		<div id='sap-ui-static'></div>
+	</body>
+</html>

@@ -3,25 +3,65 @@
  */
 
 // Provides control sap.m.Toolbar.
-sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData', './ToolbarSpacer', './library', 'sap/ui/core/Control', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, BarInPageEnabler, ToolbarLayoutData, ToolbarSpacer, library, Control, EnabledPropagator, ResizeHandler) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./BarInPageEnabler',
+	'./ToolbarLayoutData',
+	'./ToolbarSpacer',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/ResizeHandler',
+	'./ToolbarRenderer'
+],
+function(
+	jQuery,
+	BarInPageEnabler,
+	ToolbarLayoutData,
+	ToolbarSpacer,
+	library,
+	Control,
+	EnabledPropagator,
+	ResizeHandler,
+	ToolbarRenderer
+) {
 	"use strict";
 
-
-	var ToolbarDesign = sap.m.ToolbarDesign;
+	var ToolbarDesign = library.ToolbarDesign,
+		ToolbarStyle = library.ToolbarStyle;
 
 	/**
-	 * Constructor for a new Toolbar.
+	 * Constructor for a new <code>Toolbar</code>.
 	 *
-	 * @param {string} [sId] ID for the new control, generated automatically if no id is given
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The Toolbar control is a horizontal container that is most commonly used to display buttons, labels, selects and various other input controls.
+	 * Horizontal container most commonly used to display buttons, labels, selects and various
+	 * other input controls.
 	 *
-	 * By default, Toolbar items are shrinkable if they have percent-based width (e.g. Input, Slider) or implement the {@link sap.ui.core.IShrinkable} interface (e.g. Text, Label). This behavior can be overridden by providing {@link sap.m.ToolbarLayoutData} for the Toolbar items.
+	 * <h3>Overview</h3>
 	 *
-	 * Note: It is recommended that you use {@link sap.m.OverflowToolbar} over Toolbar, unless you want to avoid overflow in favor of shrinking.
+	 * By default, the <code>Toolbar</code> items are shrinkable if they have percent-based width
+	 * (for example, {@link sap.m.Input} and {@link sap.m.Slider}) or implement the
+	 * {@link sap.ui.core.IShrinkable} interface (for example, {@link sap.m.Text} and {@link sap.m.Label}).
+	 * This behavior can be overridden by providing {@link sap.m.ToolbarLayoutData} for the <code>Toolbar</code> items.
+	 *
+	 * <b>Note:</b> It is recommended that you use {@link sap.m.OverflowToolbar} over <code>sap.m.Toolbar</code>,
+	 * unless you want to avoid the overflow behavior in favor of shrinking.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * You can add a visual separator between the preceding and succeeding {@link sap.m.Toolbar} item
+	 * with the use of the {@link sap.m.ToolbarSeparator}. The separator is theme dependent and can be
+	 * a padding, a margin or a line.
+	 *
+	 * To add horizontal space between the <code>Toolbar</code> items, use the {@link sap.m.ToolbarSpacer}.
+	 * You can define the width of the horizontal space or make it flexible to cover the remaining space
+	 * between the <code>Toolbar</code> items (for example, to to push an item to the edge of the <code>Toolbar</code>.
+	 *
+	 * <b>Note:</b> {@link sap.m.ToolbarLayoutData} should not be used together with {@link sap.m.ToolbarSpacer}.
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.Toolbar,sap.m.IBar
 	 *
@@ -62,17 +102,29 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 * Defines the height of the control.
-			 * Note: By default, the Height property depends on the used theme and the Design property.
+			 * Defines the height of the control. By default, the <code>height</code>
+			 * property depends on the used theme and the <code>design</code> property.
+			 *
+			 * <b>Note:</b> It is not recommended to use this property if the
+			 * <code>sapMTBHeader-CTX</code> class is used
 			 */
 			height : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : ''},
 
 			/**
 			 * Defines the toolbar design.
-			 * Note: Design settings are theme-dependent. They also determine the default height of the toolbar.
+			 *
+			 * <b>Note:</b> Design settings are theme-dependent. They also determine the default height of the toolbar.
 			 * @since 1.16.8
 			 */
-			design : {type : "sap.m.ToolbarDesign", group : "Appearance", defaultValue : ToolbarDesign.Auto}
+			design : {type : "sap.m.ToolbarDesign", group : "Appearance", defaultValue : ToolbarDesign.Auto},
+
+			/**
+			 * Defines the visual style of the <code>Toolbar</code>.
+			 *
+			 * <b>Note:</b> The visual styles are theme-dependent.
+			 * @since 1.54
+			 */
+			style : {type : "sap.m.ToolbarStyle", group : "Appearance", defaultValue : ToolbarStyle.Standard}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -104,7 +156,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 				}
 			}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/Toolbar.designtime"
 	}});
 
 	EnabledPropagator.call(Toolbar.prototype);
@@ -192,12 +244,6 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 			return oControl.addStyleClass(sShrinkClass);
 		}
 	};
-
-	// determines whether toolbar has new flexbox (shrink) support
-	Toolbar.hasNewFlexBoxSupport = (function() {
-		var oStyle = document.documentElement.style;
-		return (oStyle.flex !== undefined || oStyle.webkitFlexShrink !== undefined);
-	}());
 
 	Toolbar.prototype.init = function() {
 		// define group for F6 handling
@@ -298,7 +344,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 
 	// apply the layout calculation according to flexbox support
 	Toolbar.prototype._doLayout = function() {
-		if (Toolbar.hasNewFlexBoxSupport) {
+		if (ToolbarRenderer.hasNewFlexBoxSupport) {
 			return;
 		}
 
@@ -433,6 +479,17 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		this._doLayout();
 	};
 
+	Toolbar.prototype._getAccessibilityRole = function () {
+		var aContent = this.getContent(),
+			sRole = this._getRootAccessibilityRole();
+
+		if (this.getActive() && (!aContent || aContent.length === 0)) {
+			sRole = "button";
+		}
+
+		return sRole;
+	};
+
 	/*
 	 * Augment design property setter.
 	 * 2nd parameter can be used to define auto design context.
@@ -451,11 +508,31 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 		return this;
 	};
 
+	Toolbar.prototype.setStyle = function(sNewStyle) {
+		var sTbStyleClass, bEnable;
+
+		if (this.getStyle() === sNewStyle) {
+			return this;
+		}
+
+		this.setProperty("style", sNewStyle, true /* suppress invalidate */);
+
+		if (this.getDomRef()) {
+			Object.keys(ToolbarStyle).forEach(function(sStyleKey) {
+
+				sTbStyleClass = "sapMTB" + sStyleKey;
+				bEnable = (sStyleKey === sNewStyle);
+				this.$().toggleClass(sTbStyleClass, bEnable);
+			}, this);
+		}
+
+		return this;
+	};
+
 	/**
 	 * Returns the currently applied design property of the Toolbar.
 	 *
-	 * @returns {sap.m.ToolbarDesign}
-	 * @protected
+	 * @returns {sap.m.ToolbarDesign} The <code>sap.m.ToolbarDesign</code> instance
 	 */
 	Toolbar.prototype.getActiveDesign = function() {
 		var sDesign = this.getDesign();
@@ -469,7 +546,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	/**
 	 * Returns the first sap.m.Title control instance inside the toolbar for the accessibility
 	 *
-	 * @returns {sap.m.Title|undefined}
+	 * @returns {sap.m.Title|undefined} The <code>sap.m.Title</code> instance or undefined
 	 * @since 1.44
 	 * @protected
 	 */
@@ -490,7 +567,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	/**
 	 * Returns the first sap.m.Title control id inside the toolbar for the accessibility
 	 *
-	 * @returns {String}
+	 * @returns {String} The <code>sap.m.Title</code> ID
 	 * @since 1.28
 	 * @protected
 	 */
@@ -506,6 +583,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * Returns if the bar is sensitive to the container context. Implementation of the IBar interface
 	 * @returns {boolean} isContextSensitive
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype.isContextSensitive = BarInPageEnabler.prototype.isContextSensitive;
 
@@ -514,6 +592,7 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * @param {string} sTag
 	 * @returns {IBar} this for chaining
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype.setHTMLTag = BarInPageEnabler.prototype.setHTMLTag;
 
@@ -521,32 +600,61 @@ sap.ui.define(['jquery.sap.global', './BarInPageEnabler', './ToolbarLayoutData',
 	 * Gets the HTML tag of the root domref
 	 * @returns {IBarHTMLTag} the HTML-tag
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype.getHTMLTag = BarInPageEnabler.prototype.getHTMLTag;
 
 	/**
-	 * Sets classes and tag according to the context in the page. Possible contexts are header, footer, subheader
-	 * @returns {IBar} this for chaining
+	 * Sets classes and HTML tag according to the context of the page. Possible contexts are header, footer, subheader
+	 * @returns {IBar} <code>this</code> for chaining
 	 * @protected
+	 * @function
 	 */
 	Toolbar.prototype.applyTagAndContextClassFor = BarInPageEnabler.prototype.applyTagAndContextClassFor;
 
 	/**
-	 * Sets landmarks members to the bar instance
-	 *
-	 * @param {boolean} bHasLandmarkInfo indicates that bar has landmarkinfo
-	 * @param {string} sContext context of the bar
-	 * @private
+	 * Sets classes according to the context of the page. Possible contexts are header, footer and subheader.
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
+	 * @protected
+	 * @function
 	 */
-	Toolbar.prototype._setLandmarkInfo = BarInPageEnabler.prototype._setLandmarkInfo;
+	Toolbar.prototype._applyContextClassFor  = BarInPageEnabler.prototype._applyContextClassFor;
 
 	/**
-	 * Writes landmarks info to the bar
+	 * Sets HTML tag according to the context of the page. Possible contexts are header, footer and subheader.
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
+	 * @protected
+	 * @function
+	 */
+	Toolbar.prototype._applyTag  = BarInPageEnabler.prototype._applyTag;
+
+	/**
+	 * Get context options of the Page.
 	 *
+	 * Possible contexts are header, footer, subheader.
+	 * @param {string} sContext allowed values are header, footer, subheader.
+	 * @returns {object|null}
 	 * @private
 	 */
-	Toolbar.prototype._writeLandmarkInfo = BarInPageEnabler.prototype._writeLandmarkInfo;
+	Toolbar.prototype._getContextOptions  = BarInPageEnabler.prototype._getContextOptions;
+
+	/**
+	 * Gets accessibility role of the Root HTML element.
+	 *
+	 * @param {string} sRole AccessibilityRole of the root Element
+	 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+	 * @private
+	 */
+	Toolbar.prototype._setRootAccessibilityRole = BarInPageEnabler.prototype._setRootAccessibilityRole;
+
+	/**
+	 * Gets accessibility role of the Root HTML element.
+	 *
+	 * @returns {string} Accessibility role
+	 * @private
+	 */
+	Toolbar.prototype._getRootAccessibilityRole = BarInPageEnabler.prototype._getRootAccessibilityRole;
 
 	return Toolbar;
 
-}, /* bExport= */ true);
+});

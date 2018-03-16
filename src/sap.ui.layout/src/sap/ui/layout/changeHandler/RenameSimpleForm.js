@@ -5,8 +5,8 @@
 /*global sap */
 
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/JsControlTreeModifier", "sap/ui/fl/Utils"
-], function(jQuery, BaseChangeHandler, JsControlTreeModifier, Utils) {
+	"sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/JsControlTreeModifier", "sap/ui/fl/Utils"
+], function(BaseChangeHandler, JsControlTreeModifier, Utils) {
 	"use strict";
 
 	/**
@@ -29,7 +29,6 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
 	 *                                sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
 	 * @private
-	 * @name sap.ui.layout.changeHandler.RenameForm#applyChange
 	 */
 	RenameForm.applyChange = function(oChangeWrapper, oControl, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier;
@@ -74,11 +73,14 @@ sap.ui.define([
 
 		if (oSpecificChangeInfo.renamedElement && oSpecificChangeInfo.renamedElement.id) {
 			var oRenamedElement = sap.ui.getCore().byId(oSpecificChangeInfo.renamedElement.id);
+			var oStableRenamedElement;
 			if (oSpecificChangeInfo.changeType === "renameLabel") {
-				oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getLabel(), mPropertyBag.appComponent);
+				oStableRenamedElement = oRenamedElement.getLabel();
 			} else if (oSpecificChangeInfo.changeType === "renameTitle") {
-				oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oRenamedElement.getTitle(), mPropertyBag.appComponent);
+				oStableRenamedElement = oRenamedElement.getTitle();
 			}
+			oChangeDefinition.content.elementSelector = JsControlTreeModifier.getSelector(oStableRenamedElement, mPropertyBag.appComponent);
+			oChangeWrapper.addDependentControl(oStableRenamedElement, "elementSelector", mPropertyBag);
 		} else {
 			throw new Error("oSpecificChangeInfo.renamedElement attribute required");
 		}

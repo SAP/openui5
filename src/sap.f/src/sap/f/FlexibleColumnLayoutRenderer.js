@@ -2,17 +2,24 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
-	function (FCL, Device) {
+sap.ui.define(["sap/ui/core/InvisibleText", "sap/ui/Device", "sap/m/library"],
+	function (InvisibleText, Device, mobileLibrary) {
 		"use strict";
 
 		var FCLRenderer = {};
 
 		FCLRenderer.render = function (oRm, oControl) {
 
+			var sBackgroundDesign = oControl.getBackgroundDesign();
+
 			oRm.write("<div");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapFFCL");
+
+			if (sBackgroundDesign !== mobileLibrary.BackgroundDesign.Transparent) {
+				oRm.addClass("sapFFCLBackgroundDesign" + sBackgroundDesign);
+			}
+
 			oRm.writeClasses();
 			oRm.write(">");
 
@@ -31,12 +38,15 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 			oRm.writeAttribute("id", oControl.getId() + "-beginColumn");
 			oRm.writeAccessibilityState(oControl, {
 				role: "region",
-				labelledBy: FCL._getAriaLabels().beginColumnLabel
+				labelledBy: InvisibleText.getStaticId("sap.f", "FCL_BEGIN_COLUMN_REGION_TEXT")
 			});
 			oRm.addClass("sapFFCLColumn").addClass("sapFFCLColumnBegin").addClass("sapFFCLColumnActive");
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
+
+			// Begin column content
+			FCLRenderer.renderColumnContentWrapper(oRm);
 
 			// Arrow - collapse begin
 			FCLRenderer.renderArrow(oRm, oBeginColumnBackArrow);
@@ -53,7 +63,7 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 			oRm.writeAttribute("id", oControl.getId() + "-midColumn");
 			oRm.writeAccessibilityState(oControl, {
 				role: "region",
-				labelledBy: FCL._getAriaLabels().midColumnLabel
+				labelledBy: InvisibleText.getStaticId("sap.f", "FCL_MID_COLUMN_REGION_TEXT")
 			});
 			oRm.addClass("sapFFCLColumn").addClass("sapFFCLColumnMid");
 			oRm.writeClasses();
@@ -62,6 +72,9 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 
 			// Arrow - expand begin
 			FCLRenderer.renderArrow(oRm, oMidColumnForwardArrow);
+
+			// Mid column content
+			FCLRenderer.renderColumnContentWrapper(oRm);
 
 			// Arrow - expand end
 			FCLRenderer.renderArrow(oRm, oMidColumnBackArrow);
@@ -77,7 +90,7 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 			oRm.writeAttribute("id", oControl.getId() + "-endColumn");
 			oRm.writeAccessibilityState(oControl, {
 				role: "region",
-				labelledBy: FCL._getAriaLabels().endColumnLabel
+				labelledBy: InvisibleText.getStaticId("sap.f", "FCL_END_COLUMN_REGION_TEXT")
 			});
 			oRm.addClass("sapFFCLColumn").addClass("sapFFCLColumnEnd");
 			oRm.writeClasses();
@@ -87,6 +100,9 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 			// Arrow - right
 			FCLRenderer.renderArrow(oRm, oEndColumnForwardArrow);
 
+			// End column content
+			FCLRenderer.renderColumnContentWrapper(oRm);
+
 			oRm.write("</div>");
 		};
 
@@ -95,6 +111,13 @@ sap.ui.define(["sap/f/FlexibleColumnLayout", "sap/ui/Device"],
 				oArrow.addStyleClass("sapContrastPlus");
 				oRm.renderControl(oArrow);
 			}
+		};
+
+		FCLRenderer.renderColumnContentWrapper = function (oRm) {
+			oRm.write("<div");
+			oRm.addClass("sapFFCLColumnContent");
+			oRm.writeClasses();
+			oRm.write("></div>");
 		};
 
 		return FCLRenderer;

@@ -16,10 +16,18 @@ sap.ui.define([
 		},
 
 		getAssertions : function () {
+
+			var fnShouldSkipRulesIssues = function () {
+				return jQuery.sap.getUriParameters().get('sap-skip-rules-issues') == 'true';
+			};
+
 			return {
 				/**
 				 * Run the Support Assistant and analyze against a specific state of the application.
 				 * Depending on the options passed the assertion might either fail or not if any issues were found.
+				 *
+				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
+				 *
 				 * @param {Object} [options] The options used to configure an analysis.
 				 * @param {boolean} [options.failOnAnyIssues=true] Should the test fail or not if there are issues of any severity.
 				 * @param {boolean} [options.failOnHighIssues] Should the test fail or not if there are issues of high severity.
@@ -56,6 +64,10 @@ sap.ui.define([
 							assertionResult = true;
 						}
 
+						if (fnShouldSkipRulesIssues()) {
+							assertionResult = true;
+						}
+
 						ruleDeferred.resolve({
 							result: assertionResult,
 							message: "Support Assistant issues found: [High: " + issueSummary.high +
@@ -73,29 +85,32 @@ sap.ui.define([
 				 * If there are issues found the assertion result will be false and a report with all the issues will be generated
 				 * in the message of the test. If no issues were found the assertion result will be true and no report will
 				 * be generated.
+				 *
+				 * If "sap-skip-rules-issues=true" is set as an URI parameter, assertion result will be always positive.
 				 */
 				getFinalReport: function () {
-					var ruleDeferred = jQuery.Deferred();
+					var ruleDeferred = jQuery.Deferred(),
+						history = jQuery.sap.support.getFormattedAnalysisHistory(),
+						analysisHistory = jQuery.sap.support.getAnalysisHistory(),
+						totalIssues = analysisHistory.reduce(function (total, analysis) {
+							return total + analysis.issues.length;
+						}, 0),
+						result = totalIssues === 0,
+						message = "Support Assistant Analysis History",
+						actual = message;
 
-					jQuery.sap.support.getFormattedAnalysisHistory().then(function (history) {
-						var analysisHistory = jQuery.sap.support.getAnalysisHistory(),
-							totalIssues = analysisHistory.reduce(function (total, analysis) {
-								return total + analysis.issues.length;
-							}, 0),
-							result = totalIssues === 0,
-							message = "Support Assistant Analysis History",
-							actual = message;
+					if (result) {
+						message += " - no issues found";
+					} else  if (fnShouldSkipRulesIssues()) {
+						result = true;
+						message += ' - issues are found. To see them remove the "sap-skip-rules-issues=true" URI parameter';
+					}
 
-						if (result) {
-							message += " - no issues found";
-						}
-
-						ruleDeferred.resolve({
-							result: result,
-							message: message,
-							actual: actual,
-							expected: history
-						});
+					ruleDeferred.resolve({
+						result: result,
+						message: message,
+						actual: actual,
+						expected: history
 					});
 
 					return ruleDeferred.promise();

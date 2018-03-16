@@ -14,10 +14,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1060",
-				"ProductName" : "Schnurlose Computermaus"
-			},
+			"ProductID" : "HT-1060",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1060",
 				"TypeCode" : "PR",
@@ -62,10 +59,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1061",
-				"ProductName" : "Speed-Computermaus"
-			},
+			"ProductID" : "HT-1061",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1061",
 				"TypeCode" : "PR",
@@ -110,10 +104,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1062",
-				"ProductName" : "Trackball-Maus"
-			},
+			"ProductID" : "HT-1062",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1062",
 				"TypeCode" : "PR",
@@ -158,10 +149,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "3",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1063",
-				"ProductName" : "Ergonomische Tastatur"
-			},
+			"ProductID" : "HT-1063",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1063",
 				"TypeCode" : "PR",
@@ -206,10 +194,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "1",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1064",
-				"ProductName" : "Internet-Tastatur"
-			},
+			"ProductID" : "HT-1064",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1064",
 				"TypeCode" : "PR",
@@ -254,10 +239,7 @@
 			"DeliveryDate" : "2016-06-26T22:00:00Z",
 			"Quantity" : "2",
 			"QuantityUnit" : "EA",
-			"Product" : {
-				"ProductID" : "HT-1065",
-				"ProductName" : "Medien-Tastatur"
-			},
+			"ProductID" : "HT-1065",
 			"SOITEM_2_PRODUCT" : {
 				"ProductID" : "HT-1065",
 				"TypeCode" : "PR",

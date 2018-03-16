@@ -1,0 +1,357 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>Object Status - sap.m</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.uxap">
+
+</script>
+
+<script>
+	function addToPage(oContent, oPage){
+		oPage.addContent(oContent);
+		oPage.addContent(oContent.addStyleClass("sapUiSmallMargin"));
+	}
+
+// ObjectStatus inside ObjectHeader static and responsive
+	var oStatuses = [ new sap.m.ObjectStatus({
+		title: "Some title",
+		text : "Contract #D1234567890 Ñagçyfox",
+		icon: "sap-icon://alert",
+		state: "Success",
+		active : true,
+		press : function() {
+			oAttrs[0].setText("Ñagçyfox #D1234567890 Contract");
+		}
+	}), new sap.m.ObjectStatus({
+		title: "Some title",
+		text : "John Doe Ñagçyfox",
+		state: "Error",
+		active : true,
+		press : function() {
+			oAttrs[0].setText("Ñagçyfox Contract #D1234567890");
+		}
+	}), new sap.m.ObjectStatus({
+		text : "John Doe Ñagçyfox"
+	}), new sap.m.ObjectStatus({
+		title: "Created by",
+		text : "John Doe Ñagçyfox",
+		state: "Warning",
+	}) ];
+
+	var oStatuses2 = [ new sap.m.ObjectStatus({
+		title: "Some title",
+		text : "Contract #D1234567890 Ñagçyfox",
+		state: "Success",
+		active : true,
+		press : function() {
+			oStatuses2[0].setText("Ñagçyfox #D1234567890 Contract");
+		}
+	}), new sap.m.ObjectStatus({
+		text : "John Doe Ñagçyfox",
+		active : true,
+		press : function() {
+			oStatuses2[0].setText("Ñagçyfox Contract #D1234567890");
+		}
+	}), new sap.m.ObjectStatus({
+		text : "John Doe Ñagçyfox"
+	}), new sap.m.ObjectStatus({
+		title: "Created by",
+		text : "John Doe Ñagçyfox",
+		state: "Error",
+	}) ];
+
+	var oOh = new sap.m.ObjectHeader("oh", {
+		title : "Static ObjectHeader with statuses",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		statuses : oStatuses
+	});
+
+	var oOh2 = new sap.m.ObjectHeader("oh2", {
+		title : "Responsive ObjectHeader with statuses",
+		number : "3.628.000",
+		numberUnit : "EUR",
+		responsive: true,
+		statuses : oStatuses2
+	});
+
+// ObjectStatus inside ObjectListItem
+	var oList = new sap.m.List("test_list", {
+		headerText: "Object List Items"
+	});
+
+	var listItemId = "worst_case";
+	var oOli = new sap.m.ObjectListItem({
+		type: "Active",
+		title: "ObjectListItem with statuses",
+		number: "Ñ999999999",
+		numberUnit: "Euro",
+		firstStatus: new sap.m.ObjectStatus({text: "Positive Ñagçyfox", state: "Success", tooltip: "Status tip", icon: "sap-icon://alert", active:true}),
+		secondStatus: new sap.m.ObjectStatus({text: "Negative Ñagçyfox", state: "Error", tooltip: "Status tip", active:true}),
+		showMarkers: true,
+		markFavorite: true
+	});
+	oList.addItem(oOli);
+
+// ObjectStatus inside ObjectPage
+	var oOP = new sap.uxap.ObjectPageLayout({
+		showHeaderContent:true,
+		showTitleInHeaderContent:true,
+		headerTitle: new sap.uxap.ObjectPageHeader({
+			headerDesign:"Light",
+			isActionAreaAlwaysVisible:true,
+			isObjectSubtitleAlwaysVisible:false,
+			isObjectTitleAlwaysVisible:false,
+			objectTitle: 'ObjectPage with ObjectStatus inside the HeaderContent and inside the Sections',
+			showPlaceholder:true
+		}),
+		headerContent:[
+			new sap.m.ObjectStatus({
+				title: "Some title",
+				text : "Contract #D1234567890 Ñagçyfox",
+				state: "Success",
+				active : true,
+				press : function() {
+					new sap.m.MessageToast.show("you click me");
+				}
+			}), new sap.m.ObjectStatus({
+				text : "John Doe Ñagçyfox",
+				state: "Error",
+				active : true,
+				press : function() {
+					new sap.m.MessageToast.show("you click me");
+				}
+			}), new sap.m.ObjectStatus({
+				text : "John Doe Ñagçyfox",
+				state: "Warning",
+			}), new sap.m.ObjectStatus({
+				title: "Created by",
+				text : "John Doe Ñagçyfox"
+			})],
+		sections: [
+			new sap.uxap.ObjectPageSection({
+				title: 'Section 1',
+				subSections: [
+					new sap.uxap.ObjectPageSubSection({
+						blocks: [
+							new sap.m.ObjectStatus({
+								title: "Some title",
+								text : "Contract #D1234567890 Ñagçyfox",
+								state: "Success",
+								active : true,
+								press : function() {
+									new sap.m.MessageToast.show("you click me");
+								}
+							}), new sap.m.ObjectStatus({
+								text : "John Doe Ñagçyfox",
+								state: "Warning",
+								active : true,
+								press : function() {
+									new sap.m.MessageToast.show("you click me");
+								}
+							}), new sap.m.ObjectStatus({
+								text : "John Doe Ñagçyfox"
+							}), new sap.m.ObjectStatus({
+								title: "Created by",
+								text : "John Doe Ñagçyfox",
+								state: "Error"
+							})
+						]
+					})
+				]
+			})
+		]
+	});
+
+// Object Attribute inside Table
+	var data = aNotificationTypesSettings = [{
+		NotificationTypeId: "type1"
+		}, {
+		NotificationTypeId: "type2",
+	}];
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setProperty("/rows", data);
+
+	var oVBox = new sap.m.VBox();
+
+	oNotificationTypeTable = new sap.m.Table("notificationSettingsTable", {
+		backgroundDesign: sap.m.BackgroundDesign.Transparent,
+		showSeparators: sap.m.ListSeparators.All,
+		columns: [
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Active ObjectStatus with title and text"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Active ObjectStatus with only text"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "ObjectStatus with only text"
+				})
+			}),
+			new sap.m.Column("disableTypeColumn", {
+				header: new sap.m.Text("xxx", {
+					text : "ObjectStatus with title and text"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "ObjectStatus with title and icon"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "Active ObjectStatus with icon"
+				})
+			}),
+			new sap.m.Column({
+				header: new sap.m.Text({
+					text : "ObjectStatus with icon"
+				})
+			})
+		]
+	});
+
+
+		// Arrange the table columns according to the cells content width
+		oNotificationTypeTable.setFixedLayout(false);
+
+		oTableRowTemplate = new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.ObjectStatus({
+						title: "Some title",
+						text : "Contract #D1234567890 Ñagçyfox",
+						active : true,
+						icon: "sap-icon://alert",
+						state: "Error",
+						press : function() {
+							new sap.m.MessageToast.show("you click me");
+						}
+					}), new sap.m.ObjectStatus({
+						text : "John Doe Ñagçyfox",
+						state: "Success",
+						active : true,
+						press : function() {
+							new sap.m.MessageToast.show("you click me");
+						}
+					}), new sap.m.ObjectStatus({
+						text : "John Doe Ñagçyfox",
+						state: "Warning",
+						icon: "sap-icon://pharmacy",
+					}), new sap.m.ObjectStatus({
+						title: "Created by",
+						text : "John Doe Ñagçyfox",
+						state: "Warning"
+					}), new sap.m.ObjectStatus({
+						title : "Some title",
+						state: "Success",
+						icon: "sap-icon://pharmacy"
+					}), new sap.m.ObjectStatus({
+						active : true,
+						state: "Error",
+						icon: "sap-icon://alert"
+					}), new sap.m.ObjectStatus({
+						state: "Error",
+						icon: "sap-icon://alert",
+						tooltip: "Alert"
+					})
+			]
+		});
+
+		oNotificationTypeTable.bindAggregation("items", {
+				path : "/rows",
+				template: oTableRowTemplate
+		});
+		oNotificationTypeTable.setModel(oModel);
+
+	oVBox.addItem(oNotificationTypeTable);
+
+
+	var oPage = new sap.m.Page({
+		showHeader : false,
+		enableScrolling : true
+	});
+	new sap.m.App({
+		pages: [oPage]
+	}).placeAt("body");
+
+
+	// Object Attribute standalone cases
+	addToPage(new sap.m.ObjectStatus({
+		text : "Ñagçyfox Contract #D1234567890"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		state: "Error",
+		icon: "sap-icon://alert",
+		text : "Very long not active status containing only text Ñagçyfox Created by John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		state: "Success",
+		icon: "sap-icon://pharmacy",
+		active: true,
+		text : "Very long active status containing only text Ñagçyfox Created by John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		state: "Success",
+		active: true,
+		text : "Very long active status containing only text Ñagçyfox Created by John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John DoeÑagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe Ñagçyfox Created by: John Doe"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		title: "ObjectStatus with title Ñagçyfox",
+		text : "and some text April 9, 2013 Ñagçyfox",
+		state: "Success"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		text : "Ñagçyfox Contract #D1234567890",
+		active: true
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		state: "Error",
+		icon: "sap-icon://alert",
+		title: "ObjectStatus with title Ñagçyfox",
+		text : "and some text April 9, 2013 Ñagçyfox",
+		active: true
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		state: "Error",
+		icon: "sap-icon://alert",
+		title: "ObjectStatus with only title and icon",
+		active: true
+	}), oPage);
+
+	addToPage(new sap.m.ObjectStatus({
+		state: "Success",
+		title : "Active status with only title which therefore can't be clicked",
+		active: true
+	}), oPage);
+
+	addToPage(oOh, oPage);
+	addToPage(oOh2, oPage);
+
+	addToPage(oList, oPage);
+
+	addToPage(oOP, oPage);
+
+	addToPage(oVBox, oPage);
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody" role="application">
+</body>
+</html>

@@ -1,0 +1,480 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>sap.m.Button and sap.m.ToggleButton Test</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+
+</script>
+
+<style type="text/css">
+.ButtonSpace {
+	display: inline;
+	position: relative;
+}
+</style>
+
+<script>
+	jQuery.sap.require("sap.ui.core.HTML");
+	jQuery.sap.require("sap.ui.core.IconPool");
+
+	new sap.ui.core.HTML({content: "</br>Default type Buttons</br>"}).placeAt("standAloneBtn");
+	////////////////////////// DEFAULT //////////////////////////////////
+	var oButton1 = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton2 = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		text: "Button Type Default",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton3 = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "Button Type Default",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton4 = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton5 = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		text: "Button Type Default",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton6 = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "Button Type Default",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+
+	new sap.ui.core.HTML({content: "</br></br>Transparent type Buttons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// TRANSPARENT //////////////////////////////////
+	var oButton7 = new sap.m.Button({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton8 = new sap.m.Button({
+		type: sap.m.ButtonType.Transparent,
+		text: "Button Type Transparent",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton9 = new sap.m.Button({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		text: "Button Type Transparent",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton10 = new sap.m.Button({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton11 = new sap.m.Button({
+		type: sap.m.ButtonType.Transparent,
+		text: "Button Type Transparent",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton12 = new sap.m.Button({
+		type: sap.m.ButtonType.Transparent,
+		icon: "sap-icon://home",
+		text: "Button Type Transparent",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+
+	new sap.ui.core.HTML({content: "</br></br>Reject type Buttons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Reject //////////////////////////////////
+	var oButton13 = new sap.m.Button({
+		type: sap.m.ButtonType.Reject,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton14 = new sap.m.Button({
+		type: sap.m.ButtonType.Reject,
+		text: "Button Type Reject",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton15 = new sap.m.Button({
+		type: sap.m.ButtonType.Reject,
+		icon: "sap-icon://home",
+		text: "Button Type Reject",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton16 = new sap.m.Button({
+		type: sap.m.ButtonType.Reject,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton17 = new sap.m.Button({
+		type: sap.m.ButtonType.Reject,
+		text: "Button Type Reject",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton18 = new sap.m.Button({
+		type: sap.m.ButtonType.Reject,
+		icon: "sap-icon://home",
+		text: "Button Type Reject",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+
+	new sap.ui.core.HTML({content: "</br></br>Accept type Buttons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Accept //////////////////////////////////
+	var oButton19 = new sap.m.Button({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton20 = new sap.m.Button({
+		type: sap.m.ButtonType.Accept,
+		text: "Button Type Accept",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton21 = new sap.m.Button({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		text: "Button Type Accept",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton22 = new sap.m.Button({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton23 = new sap.m.Button({
+		type: sap.m.ButtonType.Accept,
+		text: "Button Type Accept",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton24 = new sap.m.Button({
+		type: sap.m.ButtonType.Accept,
+		icon: "sap-icon://home",
+		text: "Button Type Accept",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "</br></br><span id='buttons2'>Emphasized type Buttons</span></br></br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Emphasized //////////////////////////////////
+	var oButton25 = new sap.m.Button({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton26 = new sap.m.Button({
+		type: sap.m.ButtonType.Emphasized,
+		text: "Button Type Emphasized",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton27 = new sap.m.Button({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		text: "Button Type Emphasized",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton28 = new sap.m.Button({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton29 = new sap.m.Button({
+		type: sap.m.ButtonType.Emphasized,
+		text: "Button Type Emphasized",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton30 = new sap.m.Button({
+		type: sap.m.ButtonType.Emphasized,
+		icon: "sap-icon://home",
+		text: "Button Type Emphasized",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+
+	new sap.ui.core.HTML({content: "</br></br>Back type Buttons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Back //////////////////////////////////
+	var oButton31 = new sap.m.Button({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton32 = new sap.m.Button({
+		type: sap.m.ButtonType.Back,
+		text: "Button Type Back",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton33 = new sap.m.Button({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		text: "Button Type Back",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton34 = new sap.m.Button({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton35 = new sap.m.Button({
+		type: sap.m.ButtonType.Back,
+		text: "Button Type Back",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton36 = new sap.m.Button({
+		type: sap.m.ButtonType.Back,
+		icon: "sap-icon://home",
+		text: "Button Type Back",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+
+	new sap.ui.core.HTML({content: "</br></br>UP type Buttons</br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Up //////////////////////////////////
+	var oButton37 = new sap.m.Button({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton38 = new sap.m.Button({
+		type: sap.m.ButtonType.Up,
+		text: "Button Type Up",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton39 = new sap.m.Button({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		text: "Button Type Up",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton40 = new sap.m.Button({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton41 = new sap.m.Button({
+		type: sap.m.ButtonType.Up,
+		text: "Button Type Up",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton42 = new sap.m.Button({
+		type: sap.m.ButtonType.Up,
+		icon: "sap-icon://home",
+		text: "Button Type Up",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+
+	new sap.ui.core.HTML({content: "</br></br>Unstyled type Buttons</br></br>"}).placeAt("standAloneBtn");
+
+	////////////////////////// Unstyled //////////////////////////////////
+	var oButton43 = new sap.m.Button({
+		type: sap.m.ButtonType.Unstyled,
+		icon: "sap-icon://home",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton44 = new sap.m.Button({
+		type: sap.m.ButtonType.Unstyled,
+		text: "Button Type Unstyled",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton45 = new sap.m.Button({
+		type: sap.m.ButtonType.Unstyled,
+		icon: "sap-icon://home",
+		text: "Button Type Unstyled",
+		enabled: true
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton46 = new sap.m.Button({
+		type: sap.m.ButtonType.Unstyled,
+		icon: "sap-icon://home",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton47 = new sap.m.Button({
+		type: sap.m.ButtonType.Unstyled,
+		text: "Button Type Up",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("standAloneBtn");
+
+	var oButton48 = new sap.m.Button({
+		type: sap.m.ButtonType.Unstyled,
+		icon: "sap-icon://home",
+		text: "Button Type Unstyled",
+		enabled: false
+	}).placeAt("standAloneBtn");
+
+	new sap.ui.core.HTML({content: "</br></br><span id='buttons_rtl'>RTL specific buttons</span></br>"}).placeAt("RTLBtn");
+
+	var oButton1RTL = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "(Button Type Default)",
+		enabled: true
+	}).placeAt("RTLBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("RTLBtn");
+
+	var oButton2RTL = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		text: "(Button Type Default)",
+		enabled: true
+	}).placeAt("RTLBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("RTLBtn");
+
+	var oButton3RTL = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		icon: "sap-icon://home",
+		text: "(עִבְרִית‬ עִבְרִית‬ עִבְרִית‬)",
+		enabled: true
+	}).placeAt("RTLBtn");
+
+	new sap.ui.core.HTML({content: "<div class='ButtonSpace'>&nbsp;</div>"}).placeAt("RTLBtn");
+
+	var oButton4RTL = new sap.m.Button({
+		type: sap.m.ButtonType.Default,
+		text: "(עִבְרִית‬ עִבְרִית‬ עִבְרִית‬)",
+		enabled: true
+	}).placeAt("RTLBtn");
+
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+<div id="standAloneBtn"></div>
+<div id="RTLBtn"></div>
+</body>
+</html>

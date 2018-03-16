@@ -36,12 +36,6 @@
 	});
 	oAnnotationMockServer.simulate("model/metadata_odtbmd.xml", "model/odtbmd/");
 
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	}
-	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
-
 	var oModel, oBinding;
 
 	function createTreeBinding(sPath, oContext, aFilters, mParameters){
@@ -445,7 +439,7 @@
 			// contexts should be now loaded
 			var aContexts = oBinding.getRootContexts();
 
-			assert.equal(aContexts.length, 0, "No contexts are avilable data has been reset");
+			assert.equal(aContexts.length, 0, "No contexts are available data has been reset");
 
 			oBinding.detachChange(handler2);
 

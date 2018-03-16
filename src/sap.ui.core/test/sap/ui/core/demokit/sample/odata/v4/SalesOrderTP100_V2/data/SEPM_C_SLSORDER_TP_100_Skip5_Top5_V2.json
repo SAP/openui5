@@ -1,0 +1,427 @@
+{
+	"d" : {
+		"__count" : "10",
+		"results" : [
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70649e433')",
+						"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70649e433')",
+						"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDER_TP_100Type"
+					},
+					"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+					"SalesOrder" : "500000005",
+					"Customer" : "100000008",
+					"OverallStatus" : "N",
+					"to_Item" : {
+						"results" : [
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706606433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706606433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706606433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+									"SalesOrder" : "500000005",
+									"SalesOrderItem" : "60",
+									"Product" : "HT-1112",
+									"GrossAmount" : "92.82"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7065fe433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7065fe433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa7065fe433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+									"SalesOrder" : "500000005",
+									"SalesOrderItem" : "20",
+									"Product" : "HT-1501",
+									"GrossAmount" : "3570000"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706600433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706600433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706600433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+									"SalesOrder" : "500000005",
+									"SalesOrderItem" : "30",
+									"Product" : "HT-1502",
+									"GrossAmount" : "59500.00"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7065fc433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7065fc433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa7065fc433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+									"SalesOrder" : "500000005",
+									"SalesOrderItem" : "10",
+									"Product" : "HT-1500",
+									"GrossAmount" : "5950.00"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706602433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706602433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706602433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+									"SalesOrder" : "500000005",
+									"SalesOrderItem" : "40",
+									"Product" : "HT-1110",
+									"GrossAmount" : "31.77"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706604433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706604433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706604433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+									"SalesOrder" : "500000005",
+									"SalesOrderItem" : "50",
+									"Product" : "HT-1111",
+									"GrossAmount" : "16.42"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706608433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706608433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706608433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa70649e433",
+									"SalesOrder" : "500000005",
+									"SalesOrderItem" : "70",
+									"Product" : "HT-1113",
+									"GrossAmount" : "8.21"
+								}]
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7064a0433')",
+						"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7064a0433')",
+						"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDER_TP_100Type"
+					},
+					"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a0433",
+					"SalesOrder" : "500000006",
+					"Customer" : "100000003",
+					"OverallStatus" : "N",
+					"to_Item" : {
+						"results" : [
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70660e433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70660e433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70660e433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a0433",
+									"SalesOrder" : "500000006",
+									"SalesOrderItem" : "30",
+									"Product" : "HT-1107",
+									"GrossAmount" : "106.74"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70660a433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70660a433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70660a433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a0433",
+									"SalesOrder" : "500000006",
+									"SalesOrderItem" : "10",
+									"Product" : "HT-1105",
+									"GrossAmount" : "103.53"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70660c433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70660c433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70660c433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a0433",
+									"SalesOrder" : "500000006",
+									"SalesOrderItem" : "20",
+									"Product" : "HT-1106",
+									"GrossAmount" : "40.46"
+								}]
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7064a2433')",
+						"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7064a2433')",
+						"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDER_TP_100Type"
+					},
+					"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+					"SalesOrder" : "500000007",
+					"Customer" : "100000004",
+					"OverallStatus" : "N",
+					"to_Item" : {
+						"results" : [
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706614433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706614433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706614433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+									"SalesOrder" : "500000007",
+									"SalesOrderItem" : "30",
+									"Product" : "HT-1032",
+									"GrossAmount" : "410.55"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706610433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706610433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706610433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+									"SalesOrder" : "500000007",
+									"SalesOrderItem" : "10",
+									"Product" : "HT-1030",
+									"GrossAmount" : "547.40"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706612433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706612433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706612433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+									"SalesOrder" : "500000007",
+									"SalesOrderItem" : "20",
+									"Product" : "HT-1031",
+									"GrossAmount" : "1017.45"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706616433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706616433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706616433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+									"SalesOrder" : "500000007",
+									"SalesOrderItem" : "40",
+									"Product" : "HT-1035",
+									"GrossAmount" : "949.62"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706618433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706618433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706618433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+									"SalesOrder" : "500000007",
+									"SalesOrderItem" : "50",
+									"Product" : "HT-1036",
+									"GrossAmount" : "1023.40"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70661a433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70661a433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70661a433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+									"SalesOrder" : "500000007",
+									"SalesOrderItem" : "60",
+									"Product" : "HT-1037",
+									"GrossAmount" : "1463.70"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70661c433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70661c433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70661c433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+									"SalesOrder" : "500000007",
+									"SalesOrderItem" : "70",
+									"Product" : "HT-1000",
+									"GrossAmount" : "3412.92"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70661e433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70661e433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70661e433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a2433",
+									"SalesOrder" : "500000007",
+									"SalesOrderItem" : "80",
+									"Product" : "HT-1001",
+									"GrossAmount" : "1486.31"
+								}]
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7064a4433')",
+						"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7064a4433')",
+						"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDER_TP_100Type"
+					},
+					"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+					"SalesOrder" : "500000008",
+					"Customer" : "100000009",
+					"OverallStatus" : "N",
+					"to_Item" : {
+						"results" : [
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706622433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706622433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706622433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+									"SalesOrder" : "500000008",
+									"SalesOrderItem" : "20",
+									"Product" : "HT-1061",
+									"GrossAmount" : "16.66"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706624433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706624433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706624433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+									"SalesOrder" : "500000008",
+									"SalesOrderItem" : "30",
+									"Product" : "HT-1062",
+									"GrossAmount" : "26.18"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706620433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706620433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706620433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+									"SalesOrder" : "500000008",
+									"SalesOrderItem" : "10",
+									"Product" : "HT-1060",
+									"GrossAmount" : "21.42"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706626433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706626433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706626433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+									"SalesOrder" : "500000008",
+									"SalesOrderItem" : "40",
+									"Product" : "HT-1063",
+									"GrossAmount" : "49.98"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706628433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706628433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706628433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+									"SalesOrder" : "500000008",
+									"SalesOrderItem" : "50",
+									"Product" : "HT-1064",
+									"GrossAmount" : "19.04"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70662a433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70662a433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70662a433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a4433",
+									"SalesOrder" : "500000008",
+									"SalesOrderItem" : "60",
+									"Product" : "HT-1065",
+									"GrossAmount" : "61.88"
+								}]
+					}
+				},
+				{
+					"__metadata" : {
+						"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7064a6433')",
+						"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDER_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa7064a6433')",
+						"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDER_TP_100Type"
+					},
+					"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a6433",
+					"SalesOrder" : "500000009",
+					"Customer" : "100000000",
+					"OverallStatus" : "N",
+					"to_Item" : {
+						"results" : [
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706630433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa706630433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa706630433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a6433",
+									"SalesOrder" : "500000009",
+									"SalesOrderItem" : "30",
+									"Product" : "HT-1042",
+									"GrossAmount" : "830.62"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70662c433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70662c433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70662c433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a6433",
+									"SalesOrder" : "500000009",
+									"SalesOrderItem" : "10",
+									"Product" : "HT-1040",
+									"GrossAmount" : "1975.40"
+								},
+								{
+									"__metadata" : {
+										"id" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70662e433')",
+										"uri" : "/sap/opu/odata/sap/sepm_c_slsorder_tp_100_cds/SEPM_C_SLSORDERITEM_TP_100(guid'00505691-2ec5-1ed7-9df3-3aa70662e433')",
+										"type" : "SEPM_C_SLSORDER_TP_100_CDS.SEPM_C_SLSORDERITEM_TP_100Type"
+									},
+									"SalesOrderItemUUID" : "00505691-2ec5-1ed7-9df3-3aa70662e433",
+									"SalesOrderUUID" : "00505691-2ec5-1ed7-9df3-3aa7064a6433",
+									"SalesOrder" : "500000009",
+									"SalesOrderItem" : "20",
+									"Product" : "HT-1041",
+									"GrossAmount" : "1166.20"
+								}]
+					}
+				}]
+	}
+}

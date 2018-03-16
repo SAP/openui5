@@ -54,6 +54,19 @@
 				"config": "test-resources/sap/m/demokit/master-detail/demoapp.json"
 			},
 			{
+				"icon": "begin",
+				"text": "Basic Template",
+				"desc": "Blank app as starting point for your app development",
+				"ref" : "test-resources/sap/m/demokit/basicTemplate/webapp/index.html",
+				"links": {
+					"View Documentation": "#docs/guide/7a4d93c0b0bb439b9d889ffc5b02eac9.html",
+					"Run Integration Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/integration/opaTests.qunit.html",
+					"Run Unit Tests": "test-resources/sap/m/demokit/basicTemplate/webapp/test/unit/unitTests.qunit.html"
+				},
+				"category": "Template",
+				"config": "test-resources/sap/m/demokit/basicTemplate/demoapp.json"
+			},
+			{
 				"icon": "legend",
 				"text": "Bulletin Board",
 				"desc": "Worklist app created with the 'Testing' tutorial" ,
@@ -94,6 +107,18 @@
 				"config": "test-resources/sap/m/demokit/tutorial/walkthrough/demoapp.json"
 			},
 			{
+				"icon": "retail-store-manager",
+				"text": "Browse Orders",
+				"desc": "Master-detail app for browsing orders",
+				"ref": "test-resources/sap/m/demokit/orderbrowser/webapp/test/mockServer.html",
+				"links": {
+					"Run Unit Tests": "test-resources/sap/m/demokit/orderbrowser/webapp/test/unit/unitTests.qunit.html",
+					"Run Integration Tests": "test-resources/sap/m/demokit/orderbrowser/webapp/test/integration/opaTests.qunit.html"
+				},
+				"category": "Showcase",
+				"config": "test-resources/sap/m/demokit/orderbrowser/demoapp.json"
+			},
+			{
 				"icon": "widgets",
 				"text": "Icon Explorer",
 				"desc": "All our icons at your fingertips",
@@ -114,18 +139,6 @@
 				"ref": "test-resources/sap/m/demokit/theming/webapp/index.html",
 				"category": "Tool",
 				"config": "test-resources/sap/m/demokit/theming/demoapp.json"
-			},
-			{
-				"icon": "retail-store-manager",
-				"text": "Browse Orders",
-				"desc": "Master-detail app for browsing orders",
-				"ref": "test-resources/sap/m/demokit/orderbrowser/webapp/test/mockServer.html",
-				"links": {
-					"Run Unit Tests": "test-resources/sap/m/demokit/orderbrowser/webapp/test/unit/unitTests.qunit.html",
-					"Run Integration Tests": "test-resources/sap/m/demokit/orderbrowser/webapp/test/integration/opaTests.qunit.html"
-				},
-				"category": "Showcase",
-				"config": "test-resources/sap/m/demokit/orderbrowser/demoapp.json"
 			}
 		]
 	},
@@ -249,7 +262,10 @@
 		  "name": "Column List Item",
 		  "category": "List",
 		  "since": "1.12",
-		  "samples": ["sap.m.sample.Table"]
+		  "samples": [
+				"sap.m.sample.Table",
+				"sap.m.sample.TableTest"
+			]
 		},
 		{
 		  "id": "sap.m.CustomListItem",
@@ -298,6 +314,13 @@
 		  "since": "1.38",
 		  "formFactors": "L",
 		  "samples": ["sap.m.sample.DateTimePicker"]
+		},
+		{
+		  "id": "sap.m.TimePickerSliders",
+		  "name": "Time Picker Sliders",
+		  "category": "User Input",
+		  "since": "1.54",
+		  "samples": ["sap.m.sample.TimePickerSliders"]
 		},
 		{
 		  "id": "sap.m.Dialog",
@@ -424,7 +447,8 @@
 			"sap.m.sample.UploadCollection",
 			"sap.m.sample.UploadCollectionForPendingUpload",
 			"sap.m.sample.UploadCollectionVersioning",
-			"sap.m.sample.UploadCollectionSortingFiltering"
+			"sap.m.sample.UploadCollectionSortingFiltering",
+			"sap.m.sample.UploadCollectionFolderHierarchy"
 		  ]
 		},
 		{
@@ -542,8 +566,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.Label",
-			"sap.ui.layout.sample.Form354",
-			"sap.ui.layout.sample.SimpleForm354"
+			"sap.m.sample.LabelProperties",
+			"sap.ui.layout.sample.Form354"
 		  ]
 		},
 		{
@@ -625,7 +649,8 @@
 		  "since": "1.30",
 		  "samples": [
 			"sap.m.sample.MessageStrip",
-			"sap.m.sample.DynamicMessageStripGenerator"
+			"sap.m.sample.DynamicMessageStripGenerator",
+			"sap.m.sample.MessageStripWithEnableFormattedText"
 		  ]
 		},
 		{
@@ -792,6 +817,7 @@
 			"sap.m.sample.ToolbarAlignment",
 			"sap.m.sample.ToolbarActive",
 			"sap.m.sample.ToolbarEnabled",
+			"sap.m.sample.ToolbarDesign",
 			"sap.m.sample.TitleToolBar"
 		  ]
 		},
@@ -800,6 +826,15 @@
 		  "name": "Overflow Toolbar Button",
 		  "category": "Action",
 		  "since": "1.28",
+		  "samples": [
+			"sap.m.sample.OverflowToolbarFooter"
+		  ]
+		},
+		{
+		  "id": "sap.m.OverflowToolbarToggleButton",
+		  "name": "Overflow Toolbar Toggle Button",
+		  "category": "Action",
+		  "since": "1.52",
 		  "samples": [
 			"sap.m.sample.OverflowToolbarFooter"
 		  ]
@@ -835,7 +870,8 @@
 		  "since": "1.48",
 		  "samples": [
 			  "sap.m.sample.PDFViewerEmbedded",
-			  "sap.m.sample.PDFViewerPopup"
+			  "sap.m.sample.PDFViewerPopup",
+			  "sap.m.sample.PDFViewerMultiple"
 		  ]
 		},
 		{
@@ -850,7 +886,10 @@
 			"sap.m.sample.PlanningCalendarViews",
 			"sap.m.sample.PlanningCalendarOneLine",
 			"sap.m.sample.PlanningCalendarMinMax",
-			"sap.m.sample.PlanningCalendarModifyAppointments"]
+			"sap.m.sample.PlanningCalendarModifyAppointments",
+			"sap.m.sample.PlanningCalendarWithLegend",
+			"sap.m.sample.PlanningCalendarDnD",
+			"sap.m.sample.PlanningCalendarWithStickyHeader"]
 		},
 		{
 		  "id": "sap.m.Popover",
@@ -859,7 +898,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.Popover",
-			"sap.m.sample.PopoverNavCon"
+			"sap.m.sample.PopoverNavCon",
+			"sap.m.sample.PopoverControllingCloseBehavior"
 		  ]
 		},
 		{
@@ -1076,7 +1116,9 @@
 			"sap.m.sample.TableViewSettingsDialog",
 			"sap.m.sample.TableExport",
 			"sap.m.sample.TableOutdated",
-			"sap.m.sample.TableEditable"
+			"sap.m.sample.TableEditable",
+			"sap.m.sample.TableAlternateRowColors",
+			"sap.m.sample.TableDnD"
 		  ]
 		},
 		{
@@ -1093,7 +1135,8 @@
 		  "since": "1.10",
 		  "samples": [
 			"sap.m.sample.Text",
-			"sap.m.sample.TextMaxLines"
+			"sap.m.sample.TextMaxLines",
+			"sap.m.sample.TextRenderWhitespace"
 		  ]
 		},
 		{
@@ -1137,7 +1180,10 @@
 		  "name": "Title",
 		  "category": "Display",
 		  "since": "1.28",
-		  "samples": ["sap.m.sample.Title"]
+			"samples": [
+				"sap.m.sample.Title",
+				"sap.m.sample.TitleWrapping"
+			]
 		},
 		{
 		  "id": "sap.m.ToggleButton",
@@ -1181,7 +1227,9 @@
 			"sap.m.sample.TreeSelection",
 			"sap.m.sample.TreeInitialExpandState",
 			"sap.m.sample.TreeCollapseAll",
-			"sap.m.sample.TreeOData"
+			"sap.m.sample.TreeOData",
+			"sap.m.sample.TreeJSONLazyLoading",
+			"sap.m.sample.TreeDnD"
 		  ]
 		},
 		{
@@ -1240,7 +1288,8 @@
 		  "since": "1.28",
 		  "formFactors": "-",
 		  "samples": [
-			"sap.m.sample.MessagePage"
+			"sap.m.sample.MessagePage",
+			"sap.m.sample.MessagePageWithButtons"
 		  ]
 		},
 		{
@@ -1273,12 +1322,19 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.ColorPalette",
+		  "name": "Color Palette",
+		  "category": "User Input",
+		  "since": "1.54",
+		  "samples": ["sap.m.sample.ColorPalettePopover", "sap.m.sample.ColorPalette"]
+		},
+		{
 		  "id": "sap.m.tutorial.walkthrough",
 		  "name": "Walkthrough",
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
-		  "description": "In this tutorial we are introducing you to all major development paradigms of SAPUI5",
+		  "description": "In this tutorial we are introducing you to all major development paradigms of SAPUI5.",
 		  "docuLink": "#docs/guide/3da5f4be63264db99f2e5b04c5e853db.html",
 		  "samplesAsSteps": [
 			"Hello World!",
@@ -1326,7 +1382,7 @@
 		  "category": "Tutorial",
 		  "since": "1.30",
 		  "formFactors": "-",
-		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server",
+		  "description": "In this tutorial we will test application functionality with QUnit, OPA5, and the mock server.",
 		  "docuLink": "#docs/guide/291c9121e6044ab381e0b51716f97f52.html",
 		  "samplesAsSteps": [
 			"Overview and Testing Strategy",
@@ -1353,7 +1409,7 @@
 		  "category": "Tutorial",
 		  "since": "1.32",
 		  "formFactors": "-",
-		  "description": "In this tutorial we implement typical features of a full-screen worklist app, a typical SAP Fiori design pattern",
+		  "description": "In this tutorial we implement typical features of a full-screen worklist app, a typical SAP Fiori design pattern.",
 		  "docuLink": "#docs/guide/6a6a621c978145ad9eef2b221d2cf21d.html",
 		  "samplesAsSteps": [
 			"Creating the Initial App",
@@ -1376,6 +1432,11 @@
 		  "id": "sap.m.sample.MessagePage",
 		  "name": "Message Page",
 		  "description": "This sample displays the MessagePage with basic information."
+		},
+		{
+		  "id": "sap.m.sample.MessagePageWithButtons",
+		  "name": "Message Page With FormattedText and Buttons",
+		  "description": "This sample displays the MessagePage with FormattedText and buttons."
 		},
 		{
 		  "id": "sap.m.sample.ComboBox",
@@ -1440,7 +1501,12 @@
 		{
 		  "id": "sap.m.sample.Table",
 		  "name": "Table - Columns",
-		  "description": "The Table shares many features with the List and, in addition, introduces columns. The table is fully responsive and can hide columns or shown them in-place if the screen space is not sufficient."
+		  "description": "The table shares many features with the list and, in addition, introduces columns. The table is fully responsive and can hide columns or shown them in-place if the screen space is not sufficient. This example also demonstrates the different table pop-in layout options that can be used for the table pop-in rendering."
+		},
+		{
+		  "id": "sap.m.sample.TableTest",
+		  "name": "Table Test with OPA",
+		  "description": "The following example simulates a click on a list item in a table."
 		},
 		{
 		  "id": "sap.m.sample.ActionSheet",
@@ -1471,6 +1537,11 @@
 		  "id": "sap.m.sample.ToolbarEnabled",
 		  "name": "OverflowToolbar - Enabled",
 		  "description": "The Enabled property can be used to enable or disable all the controls inside the OverflowToolbar/Toolbar."
+		},
+		{
+		  "id": "sap.m.sample.ToolbarDesign",
+		  "name": "OverflowToolbar - Design and styling",
+		  "description": "The Design and Style properties can be used to specify the visual design of the OverflowToolbar/Toolbar."
 		},
 		{
 		  "id": "sap.m.sample.ToolbarShrinkable",
@@ -1556,6 +1627,11 @@
 		  "id": "sap.m.sample.PDFViewerPopup",
 		  "name": "PDF Viewer - Popup",
 		  "description": "A PDF viewer opening as a popup dialog."
+		},
+		{
+		  "id": "sap.m.sample.PDFViewerMultiple",
+		  "name": "PDF Viewer - Two PDF Documents",
+		  "description": "Two PDF viewer frames displayed side by side."
 		},
 		{
 		  "id": "sap.m.sample.FlexBoxOpposingAlignment",
@@ -1708,6 +1784,11 @@
 		  "description": "Labels are helpful when you need to describe some other UI control."
 		},
 		{
+		  "id": "sap.m.sample.LabelProperties",
+		  "name": "Label Properties",
+		  "description": "This sample shows the different behaviors of a label."
+		},
+		{
 		  "id": "sap.m.sample.ProgressIndicator",
 		  "name": "Progress Indicator",
 		  "description": "Shows the progress of a process in a graphical way. To indicate the progress, the inside of the ProgressIndicator is filled with a color."
@@ -1723,9 +1804,19 @@
 		  "description": "The Text control has a property to limit the number of lines for wrapping texts."
 		},
 		{
+		  "id": "sap.m.sample.TextRenderWhitespace",
+		  "name": "Text - Render Whitespace",
+		  "description": "The Text control has a property allowing browsers to render whitespace and tabs."
+		},
+		{
 		  "id": "sap.m.sample.Title",
 		  "name": "Title",
 		  "description": "The Title control is a simple one line text with additional semantic information about the level of the following section in the page structure for accessibility purposes."
+		},
+		{
+			"id": "sap.m.sample.TitleWrapping",
+			"name": "Title - wrapping",
+			"description": "The Title wrapping property can be used to change the layout of the Title control within containers with dynamic width."
 		},
 		{
 		  "id": "sap.m.sample.ObjectAttributes",
@@ -1750,7 +1841,7 @@
 		{
 		  "id": "sap.m.sample.ObjectHeaderFavFlag",
 		  "name": "Object Header - Favorite & Flag",
-		  "description": "The Object Header can indicate wether the object is a favorite, or has been flagged for further action. Changing these states is done elsewhere.<br><br><b>Note:</b> The <code>markFlagged</code> and <code>markFavorite</code> properties are deprecated as of version 1.42. We recommend using the <code>markers</code> aggregation instead."
+		  "description": "The Object Header can indicate whether the object is a favorite, or has been flagged for further action. Changing these states is done elsewhere.<br><br><b>Note:</b> The <code>markFlagged</code> and <code>markFavorite</code> properties are deprecated as of version 1.42. We recommend using the <code>markers</code> aggregation instead."
 		},
 		{
 		  "id": "sap.m.sample.ObjectHeaderTitleSel",
@@ -2004,8 +2095,8 @@
 		},
 		{
 		  "id": "sap.m.sample.TreeIcon",
-		  "name": "Tree - Icon",
-		  "description": "Tree item with icon."
+		  "name": "Tree - Icon & Context Menu",
+		  "description": "Tree item with icon. This example also shows the context menu for the items in the Tree control."
 		},
 		{
 		  "id": "sap.m.sample.TreeInitialExpandState",
@@ -2022,6 +2113,16 @@
 		  "name": "Tree - OData",
 		  "description": "This example shows tree with odata service."
 		},
+        {
+          "id": "sap.m.sample.TreeJSONLazyLoading",
+          "name": "Tree - Lazy loading with a JSON model",
+          "description": "Shows how lazy loading with a JSON model can be done using the toggleOpenState event."
+        },
+        {
+          "id": "sap.m.sample.TreeDnD",
+          "name": "Tree - Drag and Drop",
+          "description": "This example shows drag-and-drop capability."
+        },
 		{
 			"id": "sap.m.sample.RangeSlider",
 			"name": "RangeSlider",
@@ -2203,8 +2304,8 @@
 		},
 		{
 		  "id": "sap.m.sample.ListGrouping",
-		  "name": "List - Grouping",
-		  "description": "Grouping your items makes it easier for the user to browse and find the desired content"
+		  "name": "List - Grouping & Context Menu",
+		  "description": "Grouping your items makes it easier for the user to browse and find the desired content. This example also shows the context menu for the items in the List control."
 		},
 		{
 		  "id": "sap.m.sample.ListUnread",
@@ -2228,8 +2329,8 @@
 		},
 		{
 		  "id": "sap.m.sample.TableViewSettingsDialog",
-		  "name": "Table - View Settings",
-		  "description": "The View Settings Dialog is standard UI pattern for specifying sorting, grouping and filtering. For a table it should be triggered by a button in the table header with the 'drop-down-list' icon. The active filter should be shown with the table's info bar."
+		  "name": "Table - View Settings & Context Menu",
+		  "description": "The View Settings Dialog is standard UI pattern for specifying sorting, grouping and filtering. For a table it should be triggered by a button in the table header with the 'drop-down-list' icon. The active filter should be shown with the table's info bar. This example also shows the context menu for the items in the Table control."
 		},
 		{
 		  "id": "sap.m.sample.TableLayout",
@@ -2240,6 +2341,16 @@
 		  "id": "sap.m.sample.TableColumnWidth",
 		  "name": "Table - Defining Column Width",
 		  "description": "While defining the column width you can use percent values but you should be careful with them. Click to see some traps and tipps."
+		},
+		{
+		  "id": "sap.m.sample.TableAlternateRowColors",
+		  "name": "Table - Alternate Row Colors",
+		  "description": "Table with alternating light and dark background colors. Note: The effect of this feature is only visible in the SAP Belize and Belize Deep themes."
+		},
+		{
+		  "id": "sap.m.sample.TableDnD",
+		  "name": "Table - Drag and Drop",
+		  "description": "Shows the different kinds of drag-and-drop capabilities along with custom context menu alternatives to perform these action."
 		},
 		{
 		  "id": "sap.m.sample.TablePerso",
@@ -2412,6 +2523,11 @@
 		  "description": "MessageStrip for showing status messages."
 		},
 		{
+			"id": "sap.m.sample.MessageStripWithEnableFormattedText",
+			"name": "Message Strip with enableFormattedText",
+			"description": "A sample MessageStrip that shows status messages with additional formatting."
+		},
+		{
 		  "id": "sap.m.sample.DynamicMessageStripGenerator",
 		  "name": "Dynamic Message Strip Generator",
 		  "description": "Generates MessageStrips with random properties."
@@ -2430,6 +2546,11 @@
 		  "id": "sap.m.sample.PopoverNavCon",
 		  "name": "Popover With NavContainer",
 		  "description": "You can nest NavContainers in Popovers (and Dialogs) to navigate to further details in place."
+		},
+		{
+		  "id": "sap.m.sample.PopoverControllingCloseBehavior",
+		  "name": "Popover - Cotrolling Closing Behavior",
+		  "description": "In some cases the closing behavior of the Popover can lead to drill down navigation. This is a sample demonstrating how this can be controlled. When the popover is opened, add a style \"pointer-events: none\" to the area that should remain static and when the popover is closed, remove it. "
 		},
 		{
 		  "id": "sap.m.sample.SelectDialog",
@@ -2537,6 +2658,11 @@
 		  "description": "Shows the UploadCollection with grouping, sorting and filtering feature. After setting the criteria for filtering and sorting you get the filtering information displayed in the info toolbar."
 		},
 		{
+		  "id": "sap.m.sample.UploadCollectionFolderHierarchy",
+		  "name": "Upload Collection with Folder Hierarchy",
+		  "description": "Shows the UploadCollection with a navigable folder structure."
+		},
+		{
 		  "id": "sap.m.sample.StandardMarginsAll",
 		  "name": "Margins All Around",
 		  "description": "Use standard margin classes 'sapUiTinyMargin', 'sapUiSmallMargin', 'sapUiMediumMargin' or 'sapUiLargeMargin' to add a 8px (0.5rem), 16px (1rem), 32px (2rem) or 48px (3rem) margin to your control. This will clear the area all around your control (outside its border)."
@@ -2574,12 +2700,17 @@
 		{
 		  "id": "sap.m.sample.StepInput",
 		  "name": "StepInput",
-		  "description": "The StepInput allows the user to change stepwise a value by a predefined step."
+		  "description": "The StepInput allows the user to change stepwise a value by a predefined step and also to set additional description, such as units of measurement and currencies after the input field."
 		},
 		{
 		"id": "sap.m.sample.TimePicker",
 		"name": "Time Picker",
 		"description": "TimePicker examples displaying the four time formats: \nHH : mm, \nHH : mm : ss, \nHH : mm : pp, \nHH : mm : ss : pp"
+		},
+		{
+		"id": "sap.m.sample.TimePickerSliders",
+		"name": "Time Picker Sliders",
+		"description": "TimePickerSliders used in a Dialog."
 		},
 		{
 		  "id": "sap.m.sample.ContainerNoPadding",
@@ -2719,7 +2850,7 @@
 		{
 		  "id": "sap.m.sample.PlanningCalendar",
 		  "name": "simple Planning Calendar",
-		  "description": "PlanningCalendar with single row selection."
+		  "description": "PlanningCalendar with single row selection that illustrates the built-in views."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarMulti",
@@ -2734,7 +2865,7 @@
 		{
 		  "id": "sap.m.sample.PlanningCalendarViews",
 		  "name": "Planning Calendar - with custom views",
-		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. Sub-intervals are shown. Custom non-working days and hours are set. In months view some appointments are grouped. The group appointment mode can be toggled to expand the appointments."
+		  "description": "PlanningCalendar with custom views to set number of hours, days and months and change view description. It illustrates both built-in and custom views. Sub-intervals are shown. Custom non-working days and hours are set. In months view some appointments are grouped. The group appointment mode can be toggled to expand the appointments."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarOneLine",
@@ -2752,10 +2883,35 @@
 		  "description": "PlanningCalendar containing sap.m.Popover with information for the appointments and sap.m.Dialog for creating a new appointment. Note: Illustrates how the PlanningCalendar can be used in combination with the sap.m.Popover and sap.m.Dialog controls for details/create. These features are NOT part of the control."
 		},
 		{
+		  "id": "sap.m.sample.PlanningCalendarWithLegend",
+		  "name": "Planning Calendar - with legend",
+		  "description": "PlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part. The legend includes calendar and appointments sections."
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarDnD",
+		  "name": "Planning Calendar - Drag and Drop",
+		  "description": "PlanningCalendar with draggable appointments"
+		},
+		{
+		  "id": "sap.m.sample.PlanningCalendarWithStickyHeader",
+		  "name": "Planning Calendar - with header that remains visible (fixed on top) on scroll",
+		  "description": "PlanningCalendar with header area that remains visible (fixed on top) when the rest of the content is scrolled out of view."
+		},
+		{
 		  "id": "sap.m.sample.ImageContent",
 		  "name": "ImageContent",
 		  "description": "Shows ImageContent that can include an icon, a profile image, or a logo with a tooltip."
-		}
+		},
+		{
+		  "id": "sap.m.sample.ColorPalettePopover",
+		  "name": "Color Palette as popover",
+		  "description": "The ColorPalette in a popover (by use of thin wrapper control <code>sap.m.ColorPalettePopover</code>)."
+		},
+		{
+		  "id": "sap.m.sample.ColorPalette",
+		  "name": "Color Palette in a form",
+		  "description": "The standalone ColorPalette in a container (<code>sap.ui.layout.SimpleForm</code>)."
+		 }
 		]
 	}
 }

@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.m.TileContainer.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, IconPool) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'./TileContainerRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	IconPool,
+	Device,
+	ResizeHandler,
+	TileContainerRenderer
+	) {
 	"use strict";
 
 
@@ -25,6 +41,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @constructor
 	 * @public
 	 * @since 1.12
+	 * @deprecated as of version 1.50, replaced by a container of your choice with {@link sap.m.GenericTile} instances
 	 * @alias sap.m.TileContainer
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -113,12 +130,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 */
 	TileContainer.prototype.init = function() {
 		this._iCurrentTileStartIndex = 0;
-		this._iCurrentPage = 0;
-		this._iPages = 0;
+
+		//keeps info about last known container dimension in order to reduce the access to the DOM. Guarantee up to date
+		//value hooking into the resize handler and onAfterRendering.
+		this._oDim = null;
 		this._iScrollLeft = 0;
 		this._iScrollGap = 0;	// gap to the left and right that is allowed to be moved while touchmove event if max scrollwidth or min scrollwidth is already reached
 
-		if (!sap.ui.Device.system.desktop) {
+		if (!Device.system.desktop) {
 			this._iScrollGap = 0;
 		}
 
@@ -130,12 +149,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._bAvoidChildTapEvent = false;
 
 		// the amount on the left and right during drag drop of a tile needed to start showing the edge of the page
-		this._iEdgeShowStart = sap.ui.Device.system.phone ? 10 : 20;
+		this._iEdgeShowStart = Device.system.phone ? 10 : 20;
 
 		// the amount of pixels a tile needs to be moved over the left or right edge to trigger a scroll
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			this._iTriggerScrollOffset = 10;
-		} else if (sap.ui.Device.system.desktop) {
+		} else if (Device.system.desktop) {
 			this._iTriggerScrollOffset = -40;
 		} else {
 			this._iTriggerScrollOffset = 20;
@@ -143,7 +162,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// keyboard support
 		this._iCurrentFocusIndex = -1;
-		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+		if (Device.system.desktop || Device.system.combi) {
 			var fnOnHome = jQuery.proxy(function(oEvent) {
 				if (this._iCurrentFocusIndex >= 0) {
 					var iRowFirstTileIndex = this._iCurrentFocusIndex - this._iCurrentFocusIndex % this._iMaxTilesX;
@@ -185,14 +204,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}, this),
 
 			fnOnPageUp = jQuery.proxy(function(oEvent) {
-				var oTiles = this._getVisibleTiles();
+				var aTiles = this._getVisibleTiles();
 
-				if (oTiles.length > 0) {
+				if (aTiles.length > 0) {
 					var iNextIndex = this._iCurrentFocusIndex - this._iMaxTiles >= 0 ? this._iCurrentFocusIndex - this._iMaxTiles : 0;
 
-					var oNextTile = oTiles[iNextIndex];
+					var oNextTile = aTiles[iNextIndex];
 
 					if (!!oNextTile) {
+						this._renderTilesInTheSamePage(iNextIndex, aTiles);
 						this._findTile(oNextTile.$()).focus();
 						// event should not trigger any further actions
 						oEvent.stopPropagation();
@@ -202,15 +222,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}, this),
 
 			fnOnPageDown = jQuery.proxy(function(oEvent) {
-				var oTiles = this._getVisibleTiles();
-				var iTilesCount = oTiles.length;
+				var aTiles = this._getVisibleTiles(),
+					iTilesCount = aTiles.length;
 
 				if (iTilesCount > 0) {
 					var iNextIndex = this._iCurrentFocusIndex + this._iMaxTiles < iTilesCount ? this._iCurrentFocusIndex + this._iMaxTiles : iTilesCount - 1;
 
-					var oNextTile = oTiles[iNextIndex];
+					var oNextTile = aTiles[iNextIndex];
 
 					if (!!oNextTile) {
+						this._renderTilesInTheSamePage(iNextIndex, aTiles);
 						this._findTile(oNextTile.$()).focus();
 						// event should not trigger any further actions
 						oEvent.stopPropagation();
@@ -221,17 +242,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			fnOnRight = jQuery.proxy(function(oEvent) {
 				if (this._iCurrentFocusIndex >= 0) {
-					var oTiles = this._getVisibleTiles();
-					var iNextIndex = this._iCurrentFocusIndex + 1 < oTiles.length ? this._iCurrentFocusIndex + 1 : this._iCurrentFocusIndex;
+					var aTiles = this._getVisibleTiles();
+					var iNextIndex = this._iCurrentFocusIndex + 1 < aTiles.length ? this._iCurrentFocusIndex + 1 : this._iCurrentFocusIndex;
 
 					if (!oEvent.ctrlKey) {
-						var oNextTile = oTiles[iNextIndex];
+						var oNextTile = aTiles[iNextIndex];
 
 						if (!!oNextTile) {
 							if (iNextIndex < this._iCurrentTileStartIndex + this._iMaxTiles) { // tile on same page?
 								this._findTile(oNextTile.$()).focus();
 							} else {
-								this.scrollIntoView(oNextTile, true);
+								this._renderTilesInTheSamePage(iNextIndex, aTiles);
+								this.scrollIntoView(oNextTile, true, aTiles);
 								var that = this;
 								setTimeout(function() {
 									that._findTile(oNextTile.$()).focus();
@@ -239,7 +261,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 							}
 						}
 					} else if (this.getEditable()) {
-						var oTile = oTiles[this._iCurrentFocusIndex];
+						var oTile = aTiles[this._iCurrentFocusIndex];
 						this.moveTile(oTile, iNextIndex);
 						oTile.$().focus();
 					}
@@ -252,17 +274,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			fnOnLeft = jQuery.proxy(function(oEvent) {
 				if (this._iCurrentFocusIndex >= 0) {
-					var oTiles = this._getVisibleTiles();
+					var aTiles = this._getVisibleTiles();
 					var iNextIndex = this._iCurrentFocusIndex - 1 >= 0 ? this._iCurrentFocusIndex - 1 : this._iCurrentFocusIndex;
 
 					if (!oEvent.ctrlKey) {
-						var oNextTile = oTiles[iNextIndex];
+						var oNextTile = aTiles[iNextIndex];
 
 						if (!!oNextTile) {
 							if (iNextIndex >= this._iCurrentTileStartIndex) { // tile on same page?
 								this._findTile(oNextTile.$()).focus();
 							} else {
-								this.scrollIntoView(oNextTile, true);
+								this._renderTilesInTheSamePage(iNextIndex, aTiles);
+								this.scrollIntoView(oNextTile, true, aTiles);
 								var that = this;
 								setTimeout(function () {
 									that._findTile(oNextTile.$()).focus();
@@ -270,7 +293,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 							}
 						}
 					} else if (this.getEditable()) {
-						var oTile = oTiles[this._iCurrentFocusIndex];
+						var oTile = aTiles[this._iCurrentFocusIndex];
 						this.moveTile(oTile, iNextIndex);
 						oTile.$().focus();
 					}
@@ -356,6 +379,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}, this);
 
+
 			this.onsaphome = fnOnHome;
 			this.onsaphomemodifiers = fnOnHome;
 			this.onsapend = fnOnEnd;
@@ -375,7 +399,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
 		}
 
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
+		if (Device.system.tablet || Device.system.phone) {
 			this._fnOrientationChange = function(oEvent) {
 				if (this.getDomRef()) {
 					this._oTileDimensionCalculator.calc();
@@ -383,8 +407,101 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 			}.bind(this);
 		}
-
 		this._oTileDimensionCalculator = new TileDimensionCalculator(this);
+
+		this._bRtl = sap.ui.getCore().getConfiguration().getRTL();
+		//Keeps info about the current page and total page count. In addition the old(previous) values of the same are kept.
+		this._oPagesInfo = (function (bRightToLeftMode) {
+			var iCurrentPage, iCount,
+				iOldCurrentPage, iOldCount,
+				bPagerCreated = false,
+				bRtl = bRightToLeftMode;
+
+			return {
+				/* Zero based index of the current page */
+				setCurrentPage: function (currentPage) {
+					iOldCurrentPage = iCurrentPage;
+					iCurrentPage = currentPage;
+				},
+				setCount: function (count) {
+					iOldCount = iCount;
+					iCount = count;
+				},
+				/*Sets that the pager with dots is created*/
+				setPagerCreated: function(created) {
+					bPagerCreated = created;
+				},
+				/*Sets the old values the same as the current*/
+				syncOldToCurrentValues: function() {
+					iOldCount = iCount;
+					iOldCurrentPage = iCurrentPage;
+				},
+				reset: function() {
+					iOldCount = undefined;
+					iOldCurrentPage = undefined;
+					iCount = undefined;
+					iCurrentPage = undefined;
+					bPagerCreated = false;
+				},
+				getCurrentPage: function () {
+					return iCurrentPage;
+				},
+				getCount: function () {
+					return iCount;
+				},
+				getOldCurrentPage: function () {
+					return iOldCurrentPage;
+				},
+				getOldCount: function () {
+					return iOldCount;
+				},
+				/*If the pager with dots is created*/
+				isPagerCreated: function() {
+					return bPagerCreated;
+				},
+				/*Checks if the current page is the last page (considers RTL)*/
+				currentPageIsLast: function() {
+					return bRtl ? (iCurrentPage === 0) : (iCurrentPage === iCount - 1);
+				},
+				/*Checks if the current page is the first page (considers RTL)*/
+				currentPageIsFirst: function() {
+					return bRtl ? (iCurrentPage === iCount - 1) : (iCurrentPage === 0);
+				},
+				oldCurrentPageIsLast: function() {
+					if (isNaN(iOldCurrentPage)) {
+						return false;
+					}
+					return bRtl ? (iOldCurrentPage === 0) : (iOldCurrentPage === iOldCount - 1);
+				},
+				oldCurrentPageIsFirst: function() {
+					if (isNaN(iOldCurrentPage)) {
+						return false;
+					}
+					return bRtl ? (iOldCurrentPage === iOldCount - 1) : (iOldCurrentPage === 0);
+				},
+				/*Is the 'currentPage is last' has changed. Example - it wasn't last before, but now it is and vice versa*/
+				currentPageIsLastChanged: function() {
+					return this.currentPageIsLast() !== this.oldCurrentPageIsLast();
+				},
+				/*Is the 'currentPage is first' has changed. Example - it wasn't first before, but now it is and vice versa*/
+				currentPageIsFirstChanged: function() {
+					return this.currentPageIsFirst() !== this.oldCurrentPageIsFirst();
+				},
+				/* true if current page's relative position is changed - the page becomes first, last or was first or last and now it is not*/
+				currentPageRelativePositionChanged: function() {
+					return this.currentPageIsFirstChanged() || this.currentPageIsLastChanged();
+				},
+				pageCountChanged: function() {
+					return iCount !== iOldCount;
+				},
+				currentPageChanged: function() {
+					return iCurrentPage !== iOldCurrentPage;
+				}
+			};
+		}(this._bRtl));
+
+		//make sure we start from starting meaningful, otherwise we may not have right value unless height is given.
+		this._iMaxTiles = 1;
 	};
 
 	/**
@@ -407,12 +524,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @private
 	 */
-	TileContainer.prototype.onBeforeRendering = function() {
+	TileContainer.prototype.onBeforeRendering = function () {
+		var aTiles = this.getTiles(),
+			iTilesCount = aTiles.length;
 
 		// unregister the resize listener
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
+		}
+		this._oPagesInfo.reset();
+
+		for (var i = 0; i < iTilesCount; i++) {
+			aTiles[i]._rendered = false;
 		}
 	};
 
@@ -422,26 +546,41 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	TileContainer.prototype.onAfterRendering = function() {
+		var aVisibleTiles = [];
 
 		// init resizing
-		this._sResizeListenerId = sap.ui.core.ResizeHandler.register(this.getDomRef().parentElement,  jQuery.proxy(this._resize, this));
+		this._sResizeListenerId = ResizeHandler.register(this.getDomRef().parentElement,  jQuery.proxy(this._resize, this));
 
 		// init the dimensions to the container scoll area
+		this._oDim = this._calculateDimension();
 		this._applyDimension();
 		this.$().toggleClass("sapMTCEditable",this.getEditable() === true);
 
-		this._update(true);
+		if (this._bRenderFirstPage) { //Set by the TileContainerRenderer if it cannot determine the size of the tiles per page
+			this._bRenderFirstPage = false;
+			aVisibleTiles = this._getVisibleTiles();
+			this._updateTileDimensionInfoAndPageSize(aVisibleTiles);
+			if (this.getTiles().length === 1) {
+				// in case of only one tile, it was rendered
+				// but still needs it's position and visibility to be updated
+				this._update(false, aVisibleTiles);
+			} else if (this._iMaxTiles !== Infinity && this._iMaxTiles ) {
+				this._renderTiles(aVisibleTiles, 0, this._iMaxTiles - 1);
+			}
+		} else {
+			this._update(true);
+		}
 
-		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
-			var aTiles = this._getVisibleTiles();
+		if (Device.system.desktop || Device.system.combi) {
+			var aTiles = aVisibleTiles || this._getVisibleTiles();
 
 			if (aTiles.length > 0 && this._mFocusables && this._mFocusables[aTiles[0].getId()]) {
 				this._mFocusables[aTiles[0].getId()].eq(0).attr('tabindex', '0');
 			}
 		}
 
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
-			sap.ui.Device.orientation.attachHandler(this._fnOrientationChange, this);
+		if (Device.system.tablet || Device.system.phone) {
+			Device.orientation.attachHandler(this._fnOrientationChange, this);
 		}
 	};
 
@@ -477,7 +616,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @private
 	 */
-	TileContainer.prototype.updateTiles = function (sReason) {
+	TileContainer.prototype.updateTiles = function () {
 		this.destroyTiles();
 		this.updateAggregation('tiles');
 	};
@@ -488,7 +627,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	TileContainer.prototype._applyDimension = function() {
-		var oDim = this._getContainerDimension(),
+		var oDim = this._getDimension(),
 			$this = this.$(),
 			oThisPos,
 			iOffset = 10,
@@ -507,9 +646,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		scrollPos  = $scroll.position();
 		scrollOuterHeight = $scroll.outerHeight();
 
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			iOffset = 2;
-		} else if (sap.ui.Device.system.desktop) {
+		} else if (Device.system.desktop) {
 			iOffset = 0;
 		}
 
@@ -548,9 +687,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		setTimeout(jQuery.proxy(function() {
-			this._update(true);
-		},this),
-		0);
+			var aVisibleTiles = this._getVisibleTiles(),
+				iTilesCount = aVisibleTiles.length,
+				iCurrentPageStartTileIndex = this._iCurrentTileStartIndex,
+				iOldMaxTiles = this._iMaxTiles,
+				iNewPage, iNewPageTileStartIndex, iNewPageTileEndIndex;
+
+			this._oPagesInfo.reset();
+
+			this._oDim = this._calculateDimension();
+			this._updateTileDimensionInfoAndPageSize(aVisibleTiles);
+
+			if (iOldMaxTiles !== this._iMaxTiles) {
+				//remove all previously rendered tiles(should be a few pages)
+				// in order to make sure the don't interfere with the new
+				for (var i = 0; i < iTilesCount; i++) {
+					if (aVisibleTiles[i]._rendered) {
+						aVisibleTiles[i]._rendered = false;
+						aVisibleTiles[i].$().remove();
+					}
+				}
+				iNewPage = this._getPageNumberForTile(iCurrentPageStartTileIndex);
+				iNewPageTileStartIndex = iNewPage * this._iMaxTiles;
+				iNewPageTileEndIndex = iNewPageTileStartIndex + this._iMaxTiles - 1;
+				this._renderTiles(aVisibleTiles, iNewPageTileStartIndex, iNewPageTileEndIndex);
+			}
+		},this), 0);
 	};
 
 	/**
@@ -561,35 +723,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	TileContainer.prototype.exit = function() {
 
 		if (this._sResizeListenerId) {
-			sap.ui.core.ResizeHandler.deregister(this._sResizeListenerId);
+			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sResizeListenerId = null;
 		}
 
-		if (sap.ui.Device.system.tablet || sap.ui.Device.system.phone) {
-			sap.ui.Device.orientation.detachHandler(this._fnOrientationChange, this);
+		if (Device.system.tablet || Device.system.phone) {
+			Device.orientation.detachHandler(this._fnOrientationChange, this);
 		}
+		delete this._oPagesInfo;
 	};
 
 	/**
 	 * Updates all Tiles.
-	 *
+	 * @param {boolean} bAnimated to apply animation during update
+	 * @param {sap.m.Tile[]} [aVisibleTiles] optional list of visible tiles in order to avoid filtering them again.
+	 * @return {void}
 	 * @private
 	 */
-	TileContainer.prototype._update = function(bAnimated) {
+	TileContainer.prototype._update = function(bAnimated, aVisibleTiles) {
 
 		if (!this.getDomRef()) {
 			return;
 		}
 
-		if (!this.$().is(":visible")) {
+		if (!this.getVisible()) {
 			return;
 		}
+		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
 
-		this._oTileDimensionCalculator.calc();
-		this._updateTilePositions();
+		this._oTileDimensionCalculator.calc(aVisibleTiles);
+		this._updateTilePositions(aVisibleTiles);
 
 		if (!this._oDragSession) {
-			this.scrollIntoView(this._iCurrentTileStartIndex || 0, bAnimated);
+			this.scrollIntoView(this._iCurrentTileStartIndex || 0, bAnimated, aVisibleTiles);
 		}
 	};
 
@@ -651,9 +817,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	TileContainer.prototype.insertTile = function(oTile, iIndex) {
-		var that = this;
+		var that = this,
+			aVisibleTiles;
 		// keyboard support for desktop environments
-		if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+		if (Device.system.desktop || Device.system.combi) {
 			oTile.addEventDelegate({
 				"onAfterRendering": function() {
 					if (!that._mFocusables) {
@@ -668,11 +835,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var fnOnFocusIn = function(oEvent) {
 				var iIndex = that.indexOfAggregation("tiles", this),
 					iExpectedPage = Math.floor(iIndex / that._iMaxTiles),
-					iPageDelta = iExpectedPage - that._iCurrentPage;
+					iPageDelta = iExpectedPage - that._oPagesInfo.getCurrentPage();
 
 
 				var iPreviousTileIndex = that._iCurrentFocusIndex >= 0 ? that._iCurrentFocusIndex : 0;
-				var oPrevTile = that._getVisibleTiles()[iPreviousTileIndex];
+				var aVTiles = that._getVisibleTiles();
+				var oPrevTile = aVTiles[iPreviousTileIndex];
 
 				if (oPrevTile) {
 					that._mFocusables[oPrevTile.getId()].attr("tabindex", "-1");
@@ -680,8 +848,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				}
 
 				if (iPageDelta != 0) {
-					that.scrollIntoView(iIndex);
-					that._resize();
+					that.scrollIntoView(iIndex, null, aVTiles);
 				}
 				that._handleAriaActiveDescendant();
 
@@ -695,29 +862,36 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (this.getDomRef()) {
 			this.insertAggregation("tiles", oTile, iIndex, true);
+			aVisibleTiles = this._getVisibleTiles();
 
 			if (!this._oDragSession) {
-				var oRm = sap.ui.getCore().createRenderManager(),
-					oContent = this.$("cnt")[0];
-				oRm.renderControl(oTile);
-				oRm.flush(oContent, false, iIndex);
-				oRm.destroy();
+				//Render the tiles and reposition the rest if the tile is visible and inserted at position  that needs other tiles repositioning.
+				// Ex. 12 tiles, 3 pages x 4 tiles, current page is 2, tile inserted at index 0 (page 1) - should render.
+				if (oTile.getVisible() &&
+					(aVisibleTiles.length === 1 || this._getPageNumberForTile(iIndex) <= this._oPagesInfo.getCurrentPage())) {
+					this._renderTile(oTile, iIndex);
+					this._update(false, aVisibleTiles);//updates also the page's count
+				} else {//we just need to update the pager
+					this._oPagesInfo.setCount(Math.ceil(aVisibleTiles.length / this._iMaxTiles));
+					this._updatePager();
+				}
+			} else {
+				this._update(false, aVisibleTiles);
 			}
-
-			this._update(false);
-
 			// When the control is initialized/updated with data binding and optimization for rendering
 			// tile by tile is used we need to be sure we have a focusable tile.
-			if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
-				this._updateTilesTabIndex();
+			if (Device.system.desktop || Device.system.combi) {
+				this._updateTilesTabIndex(aVisibleTiles);
 			}
 		} else {
 			this.insertAggregation("tiles",oTile,iIndex);
+			aVisibleTiles = this._getVisibleTiles();
 		}
 
-		//handleAriaPositionInSet.call(this, iIndex, this.getTiles().length);
-		handleAriaPositionInSet.call(this, iIndex, this._getVisibleTiles().length);
-		handleAriaSize.call(this);
+		if (oTile.getVisible()) {
+			handleAriaPositionInSet.call(this, iIndex, aVisibleTiles.length, aVisibleTiles);
+			handleAriaSize.call(this, aVisibleTiles);
+		}
 
 		return this;
 	};
@@ -727,16 +901,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * If there is no focusable Tile (for example, tabindex = 0), updates the first tile.
 	 * @private
 	 */
-	TileContainer.prototype._updateTilesTabIndex = function () {
-		var aTiles = this._getVisibleTiles();
-		if (aTiles.length && aTiles.length > 0) {
-			for (var i = 0; i < aTiles.length; i++) {
-				if (aTiles[i].$().attr("tabindex") === "0") {
+	TileContainer.prototype._updateTilesTabIndex = function (aVisibleTiles) {
+		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
+		if (aVisibleTiles.length && aVisibleTiles.length > 0) {
+			for (var i = 0; i < aVisibleTiles.length; i++) {
+				if (aVisibleTiles[i].$().attr("tabindex") === "0") {
 					return;
 				}
 			}
 		}
-		aTiles[0].$().attr("tabindex", "0");
+		aVisibleTiles[0].$().attr("tabindex", "0");
 	};
 
 	/**
@@ -778,27 +952,35 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	TileContainer.prototype.deleteTile = function(oTile) {
-		var iTileUnderDeletionIndex = this.indexOfAggregation("tiles",oTile);
+		var aVisibleTiles = this._getVisibleTiles(),
+			iDeletedTileIndex = this._indexOfVisibleTile(oTile, aVisibleTiles);
 
 		if (this.getDomRef()) {
+			aVisibleTiles.splice(iDeletedTileIndex, 1);
 			this.removeAggregation("tiles",oTile,true);
-
 			if (!this._oDragSession) {
-				oTile.getDomRef().parentNode.removeChild(oTile.getDomRef());
-				if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+				if (oTile.getDomRef()) {
+					oTile.getDomRef().parentNode.removeChild(oTile.getDomRef());
+				}
+				if (Device.system.desktop || Device.system.combi) {
 					if (this._mFocusables && this._mFocusables[oTile.getId()]) {
 						delete this._mFocusables[oTile.getId()];
 					}
 				}
 			}
-
+			if (aVisibleTiles.length === 0) {
+				this._oPagesInfo.reset();
+			} else if (oTile.getVisible() && iDeletedTileIndex >= 0
+				&& this._getPageNumberForTile(iDeletedTileIndex) <= this._oPagesInfo.getCurrentPage()) {
+				this._renderTilesInTheSamePage(this._oPagesInfo.getCurrentPage() * this._iMaxTiles, aVisibleTiles);
+			}
 			this._update(false);
 		} else {
 			this.removeAggregation("tiles",oTile,false);
+			aVisibleTiles = this._getVisibleTiles();
 		}
-
-		handleAriaPositionInSet.call(this, iTileUnderDeletionIndex, this._getVisibleTiles().length);
-		handleAriaSize.call(this);
+		handleAriaPositionInSet.call(this, iDeletedTileIndex, aVisibleTiles.length);
+		handleAriaSize.call(this, aVisibleTiles);
 		return this;
 	};
 
@@ -817,6 +999,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		if (this.getDomRef()) {
 			var aTiles = this.getTiles();
 			this.removeAllAggregation("tiles", true);
+			this._oPagesInfo.reset();
 			this._update();
 			for (var i = 0;i < aTiles.length; i++) {
 				var tile = aTiles[i];
@@ -840,11 +1023,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	TileContainer.prototype.scrollLeft = function() {
+		var iScrollToIndex = 0,
+			aVisibleTiles = this._getVisibleTiles();
+
 		if (this._bRtl) {
-			this.scrollIntoView(this._iCurrentTileStartIndex + this._iMaxTiles);
+			iScrollToIndex = this._iCurrentTileStartIndex + this._iMaxTiles;
 		} else {
-			this.scrollIntoView(this._iCurrentTileStartIndex - this._iMaxTiles);
+			iScrollToIndex = this._iCurrentTileStartIndex - this._iMaxTiles;
 		}
+		this._renderTiles(aVisibleTiles, iScrollToIndex, iScrollToIndex + this._iMaxTiles - 1);
+		this.scrollIntoView(iScrollToIndex, null, aVisibleTiles);
 	};
 
 	/**
@@ -853,10 +1041,60 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @public
 	 */
 	TileContainer.prototype.scrollRight = function() {
+		var iScrollToIndex = 0,
+			aVisibleTiles = this._getVisibleTiles();
+
 		if (this._bRtl) {
-			this.scrollIntoView(this._iCurrentTileStartIndex - this._iMaxTiles);
+			iScrollToIndex = this._iCurrentTileStartIndex - this._iMaxTiles;
 		} else {
-			this.scrollIntoView(this._iCurrentTileStartIndex + this._iMaxTiles);
+			iScrollToIndex = this._iCurrentTileStartIndex + this._iMaxTiles;
+		}
+		this._renderTiles(aVisibleTiles, iScrollToIndex, iScrollToIndex + this._iMaxTiles - 1);
+		this.scrollIntoView(iScrollToIndex, null, aVisibleTiles);
+	};
+
+
+	/**
+	 * Renders all tiles (if not rendered yet) that share the same page as the given tile
+	 * @param {int} tileIndex the given tile whose page of tiles should be rendered
+	 * @param {sap.m.Tile[]} tiles tiles to check against
+	 * @private
+	 * @returns {void}
+	 */
+	TileContainer.prototype._renderTilesInTheSamePage = function(tileIndex, tiles) {
+		var iTilePage = this._getPageNumberForTile(tileIndex),
+			iFirstTileInPage = iTilePage * this._iMaxTiles,
+			iLastTileInPage = iFirstTileInPage + this._iMaxTiles - 1;
+
+		this._renderTiles(tiles, iFirstTileInPage, iLastTileInPage);
+	};
+
+	/**
+	 * Renders any tile in given range if it is not rendered yet.
+	 * @param {sap.m.Tile[]} tiles tiles list
+	 * @param {int} startIndex start position of a tile in the given tiles list
+	 * @param {int} endIndex end position (inclusive) of a tile in the given tiles list
+	 * @private
+	 * @returns {void}
+	 */
+	TileContainer.prototype._renderTiles = function(tiles, startIndex, endIndex) {
+		var bNewTilesRendered = false,
+			i;
+
+		for (i = startIndex; i <= endIndex; i++) {
+			if (tiles[i] && !tiles[i]._rendered) {
+				this._renderTile(tiles[i], i);
+				bNewTilesRendered = true;
+			}
+		}
+		if (bNewTilesRendered) {
+			this._update(false, tiles);
+
+			// When the control is initialized/updated with data binding and optimization for rendering
+			// tile by tile is used we need to be sure we have a focusable tile.
+			if (Device.system.desktop || Device.system.combi) {
+				this._updateTilesTabIndex();
+			}
 		}
 	};
 
@@ -866,76 +1104,83 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @param {sap.m.Tile|int} vTile The Tile or tile index to be scrolled into view
 	 * @param {boolean} bAnimated Whether the scroll should be animated
+	 * @param {sap.m.Tile[]} [aVisibleTiles] optional list of visible tiles in order to avoid filtering them again.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	TileContainer.prototype.scrollIntoView = function(vTile, bAnimated) {
+	TileContainer.prototype.scrollIntoView = function(vTile, bAnimated, aVisibleTiles) {
 
 		var iContentWidth = this._getContentDimension().outerwidth,
-			iIndex = vTile;
+			iIndex = vTile,
+			aAllTiles = this.getTiles();
 
 		if (isNaN(vTile)) {
 			iIndex = this.indexOfAggregation("tiles",vTile);
 		}
 
-		if (!this.getTiles()[iIndex] || !this.getTiles()[iIndex].getVisible()) {
+		if (!aAllTiles[iIndex] || !aAllTiles[iIndex].getVisible()) {
 			return;
 		}
 
-		this._applyPageStartIndex(iIndex);
+		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
+		iIndex = this._indexOfVisibleTile(aAllTiles[iIndex]);//find tile's index amongst visible tiles
 
-		this._iCurrentPage = Math.floor(this._iCurrentTileStartIndex / this._iMaxTiles);
-
-		if (this._bRtl) {
-			this._scrollTo((this._iPages - this._iCurrentPage) * iContentWidth, bAnimated);
-		} else {
-			this._scrollTo(this._iCurrentPage * iContentWidth, bAnimated);
+		if (!!iIndex && iIndex >= 0) {
+			this._renderTilesInTheSamePage(iIndex, aVisibleTiles);
 		}
 
+		this._applyPageStartIndex(iIndex, aVisibleTiles);
+
+		this._oPagesInfo.setCurrentPage(Math.floor(this._iCurrentTileStartIndex / this._iMaxTiles));
+
+		if (this._bRtl) {
+			this._scrollTo((this._oPagesInfo.getCount() - this._oPagesInfo.getCurrentPage()) * iContentWidth, bAnimated);
+		} else {
+			this._scrollTo(this._oPagesInfo.getCurrentPage() * iContentWidth, bAnimated);
+		}
 		this._updatePager();
 	};
 
 	/**
-	 * Updates the tile positions.
+	 * Updates the tile positions only of the rendered tiles.
+	 * Tile property _rendered is set inside Tile.js onAfterRendering.
 	 *
 	 * @private
 	 */
-	TileContainer.prototype._updateTilePositions = function(){
+	TileContainer.prototype._updateTilePositions = function(aVisibleTiles){
+		var oDim = this._getDimension();
 
-		var oContentDimension = this._getContainerDimension();
-
-		if (oContentDimension.height === 0) {	// nothing to do because the height of the content is not (yet) available
+		if (oDim.height === 0) {// nothing to do because the height of the content is not (yet) available
 			return;
 		}
-		
-		if (this._getVisibleTiles().length === 0) {	// no tiles
-			this._iPages = 0; // no tiles no pages
+		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
+
+		if (aVisibleTiles.length === 0) { // no tiles
+			this._oPagesInfo.setCount(0); // no tiles no pages
 			this._updatePager();
 			return;
 		}
 
-		this._applyPageStartIndex(this._iCurrentTileStartIndex);
+		this._applyPageStartIndex(this._iCurrentTileStartIndex, aVisibleTiles);
 		this._applyDimension();
 
-		var aTiles = this._getVisibleTiles(),
-			oContentDimension = this._getContentDimension();
+		var oContentDimension = this._getContentDimension();
 
-		this._iPages = Math.ceil(aTiles.length / this._iMaxTiles);
+		this._oPagesInfo.setCount(Math.ceil(aVisibleTiles.length / this._iMaxTiles));
 
 		var oTileDimension = this._oTileDimensionCalculator.getLastCalculatedDimension();
-		for (var i = 0; i < aTiles.length; i++) {
-
-			if (aTiles[i].isDragged()) {
+		for (var i = 0; i < aVisibleTiles.length; i++) {
+			if (!aVisibleTiles[i]._rendered || aVisibleTiles[i].isDragged()) {
 				continue;
 			}
 
 			var iPage =  Math.floor(i / this._iMaxTiles),
-				oTile = aTiles[i],
+				oTile = aVisibleTiles[i],
 				iLeft = (iPage * oContentDimension.outerwidth) + this._iOffsetX + i % this._iMaxTilesX * oTileDimension.width,
 				iTop =  this._iOffsetY + Math.floor(i / this._iMaxTilesX) * oTileDimension.height - (iPage * this._iMaxTilesY * oTileDimension.height);
 
 			if (this._bRtl) {
-				iLeft = (this._iPages - iPage) * oContentDimension.outerwidth - this._iOffsetX - (i % this._iMaxTilesX  + 1) * oTileDimension.width;
+				iLeft = (this._oPagesInfo.getCount() - iPage) * oContentDimension.outerwidth - this._iOffsetX - (i % this._iMaxTilesX  + 1) * oTileDimension.width;
 			}
 
 			oTile.setPos(iLeft,iTop);
@@ -947,7 +1192,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Finds a Tile.
 	 * Convenience method, which returns $node if it has Css class sapMTile
 	 * or the first child with that class.
-	 *
+	 * @param {jQuery.object} $node The node to be examined
+	 * @returns {jQuery.object} The first node which has the class
 	 * @private
 	 */
 	TileContainer.prototype._findTile = function($node) {
@@ -966,60 +1212,74 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @private
 	 */
 	TileContainer.prototype._updatePager = function() {
+		var oPager,
+			oScrollLeft,
+			oScrollRight,
+			aHTML,
+			/* true if the pager is created as part of this function*/
+			bPagerJustCreated = false;
 
-		var oPager = this.$("pager")[0],
-			oScrollLeft = this.$("leftscroller")[0],
-			oScrollRight = this.$("rightscroller")[0];
+		if (!this._oPagesInfo.pageCountChanged() && !this._oPagesInfo.currentPageChanged()) {
+			return;
+		}
 
-		if (this._iPages > 1) {
-			var aHTML = [""];
+		oPager = this.$("pager")[0];
+		oScrollLeft = this.$("leftscroller")[0];
+		oScrollRight = this.$("rightscroller")[0];
 
-			for (var i = 0;i < this._iPages;i++) {
-				aHTML.push("");
-			}
-
-			oPager.innerHTML = aHTML.join("<span></span>");
-			oPager.style.display = "block";
-			oPager.childNodes[this._iCurrentPage].className = "sapMTCActive";
-
-			if (sap.ui.Device.system.desktop) {
-
-				var hide = {
-					r: this._iCurrentPage == this._iPages - 1,
-					l: this._iCurrentPage == 0
-				};
-
-				if (this._bRtl) {
-					var tmp = hide.r;
-					hide.r = hide.l;
-					hide.l = tmp;
-					// Less builder swaps left and right in RTL styles,
-					// and that is not required here
-					oScrollRight.style.left = "auto";
-					oScrollLeft.style.right = "auto";
-				}
-
-				oScrollRight.style.right = hide.r ? "-100px" : "1rem";
-				oScrollLeft.style.left   = hide.l ? "-100px" : "1rem";
-				oScrollLeft.style.display  = "block";
-				oScrollRight.style.display = "block";
-
-				if (hide.r) {
-					oScrollRight.style.display = "none";
-				}
-
-				if (hide.l) {
-					oScrollLeft.style.display = "none";
-				}
-			}
-		} else {
-
+		if (this._oPagesInfo.getCount() == undefined || this._oPagesInfo.getCount() <= 1) { //reset pager if there is no need of it
 			oPager.innerHTML = "";
 			oScrollRight.style.right = "-100px";
 			oScrollLeft.style.left = "-100px";
 			oScrollLeft.style.display = "none";
 			oScrollRight.style.display = "none";
+			this._oPagesInfo.setPagerCreated(false);
+			return;
 		}
+
+		if (!this._oPagesInfo.isPagerCreated()) {
+			aHTML = [""];
+
+			for (var i = 0; i < this._oPagesInfo.getCount(); i++) {
+				aHTML.push("");
+			}
+			oPager.innerHTML = aHTML.join("<span></span>");
+			oPager.style.display = "block";
+			oPager.childNodes[0].className = "sapMTCActive"; //initially active page is the 1st(span)
+			this._oPagesInfo.setPagerCreated(true);
+			bPagerJustCreated = true;
+		} else if (this._oPagesInfo.pageCountChanged()) {
+			if (this._oPagesInfo.getCount() - this._oPagesInfo.getOldCount() < 0) {//one page less
+				oPager.removeChild(oPager.lastChild);
+			} else {
+				oPager.appendChild(document.createElement("span")); //one page more
+			}
+		}
+
+		if (this._oPagesInfo.currentPageChanged()) {
+			oPager.childNodes[this._oPagesInfo.getCurrentPage()].className = "sapMTCActive";
+			if (oPager.childNodes[this._oPagesInfo.getOldCurrentPage()]) {
+				oPager.childNodes[this._oPagesInfo.getOldCurrentPage()].className = "";
+			}
+			if (this._oPagesInfo.getCurrentPage() >= 1) { //deactivate the initially active page (span)
+				oPager.childNodes[0].className = "";
+			}
+		}
+
+		if (Device.system.desktop && (bPagerJustCreated || this._oPagesInfo.currentPageRelativePositionChanged())) {
+			if (this._bRtl) {
+				// Less builder swaps left and right in RTL styles,
+				// and that is not required here, otherwise left scroller will go right and vice versa.
+				oScrollRight.style.left = "auto";
+				oScrollLeft.style.right = "auto";
+			}
+			oScrollRight.style.right = this._oPagesInfo.currentPageIsLast() ? "-100px" : "1rem";
+			oScrollLeft.style.left   = this._oPagesInfo.currentPageIsFirst() ? "-100px" : "1rem";
+			oScrollRight.style.display = this._oPagesInfo.currentPageIsLast() ? "none" : "block";
+			oScrollLeft.style.display = this._oPagesInfo.currentPageIsFirst() ? "none" : "block";
+		}
+		this._oPagesInfo.syncOldToCurrentValues();
+
 	};
 
 	/**
@@ -1047,50 +1307,47 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Returns the dimension (width and height) of the TileContainer content.
 	 *
-	 * @returns {object} Width and height of the pages content
+	 * @returns {{width, height, outerheight, outerwidth}|{width, height: *, outerheight: *, outerwidth: *}|*|null}
+	 * Width and height of the pages content
 	 * @private
 	 */
-	TileContainer.prototype._getContainerDimension = function() {
-		var oDomRef = this.$();
-
-		if (!oDomRef) {
-			return;
+	TileContainer.prototype._getDimension = function() {
+		if (!this._oDim) {
+			this._oDim = this._calculateDimension();
 		}
-
-		return {
-			width  		: oDomRef.width(),
-			height 		: oDomRef.height(),
-			outerheight : oDomRef.outerHeight(),
-			outerwidth 	: oDomRef.outerWidth()
-		};
+		return this._oDim;
 	};
 
 	/**
-	 * Calculates the Tile page sizes.
+	 * Calculates the Tile page sizes, i.e. how many tiles per X, Y and page can be rendered
 	 *
 	 * @private
 	 */
-	TileContainer.prototype._calculatePositions = function() {
+	TileContainer.prototype._calculatePageSize = function(aVisibleTiles) {
+		var oDim,
+			iTiles;
 
-		if (this._getVisibleTiles().length === 0) {	// no tiles
+		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
+		iTiles = aVisibleTiles.length;
+
+		if (iTiles === 0) {// no tiles
 			return;
 		}
 
-		var oContentDimension = this._getContainerDimension(),
-			iTiles = this._getVisibleTiles().length,
-			iPagerHeight = this.$("pager")[0].offsetHeight;
+		oDim = jQuery.extend({}, this._getDimension());
 
-		if (oContentDimension.height === 0) {	// nothing to do because the height of the content is not (yet) available
+		if (oDim.height === 0) {	// nothing to do because the height of the content is not (yet) available
 			return;
 		}
 
-		if (sap.ui.Device.system.desktop) {
-			oContentDimension.width  -= 45 * 2;
+		if (Device.system.desktop) {
+			oDim.width  -= 45 * 2;
 		}
 
 		var oTileDimension = this._oTileDimensionCalculator.getLastCalculatedDimension(),
-			iMaxTilesX = Math.max( Math.floor( oContentDimension.width / oTileDimension.width ),1), 		  //at least one tile needs to be visible
-			iMaxTilesY = Math.max( Math.floor((oContentDimension.height - iPagerHeight) / oTileDimension.height),1), //at least one tile needs to be visible
+			iPagerHeight = this.$("pager")[0].offsetHeight,
+			iMaxTilesX = Math.max( Math.floor( oDim.width / oTileDimension.width ),1), 		  //at least one tile needs to be visible
+			iMaxTilesY = Math.max( Math.floor((oDim.height - iPagerHeight) / oTileDimension.height),1), //at least one tile needs to be visible
 			iNumTileX = (iTiles < iMaxTilesX)  ? iTiles : iMaxTilesX,
 			iNumTileY = (iTiles / iNumTileX < iMaxTilesY)  ? Math.ceil(iTiles / iNumTileX) : iMaxTilesY;
 
@@ -1098,13 +1355,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		this._iMaxTiles = iMaxTilesX * iMaxTilesY;
 		this._iMaxTilesX = iMaxTilesX;
 		this._iMaxTilesY = iMaxTilesY;
-		this._iOffsetX = Math.floor(( oContentDimension.width  -  (oTileDimension.width * iNumTileX)) / 2);
+		this._iOffsetX = Math.floor(( oDim.width  -  (oTileDimension.width * iNumTileX)) / 2);
 
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			this._iOffsetX += 45;
 		}
 
-		this._iOffsetY = Math.floor(( oContentDimension.height - iPagerHeight - (oTileDimension.height * iNumTileY )) / 2);
+		this._iOffsetY = Math.floor(( oDim.height - iPagerHeight - (oTileDimension.height * iNumTileY )) / 2);
 
 	};
 
@@ -1150,18 +1407,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * Applies the start index of the pages' first Tile according to the given index.
 	 *
 	 * @param {int} iIndex The index of the tile that should be visible
+	 * @param {sap.m.Tile[]} [aVisibleTiles] optional list of visible tiles in order to avoid filtering them again.
 	 * @private
 	 */
-	TileContainer.prototype._applyPageStartIndex = function(iIndex) {
+	TileContainer.prototype._applyPageStartIndex = function (iIndex, aVisibleTiles) {
 
-		var oContentDimension = this._getContainerDimension();
+		var oContentDimension = this._getDimension();
 
 		if (oContentDimension.height === 0) {	// nothing to do because the height of the content is not (yet) available
 			return;
 		}
 
-		this._calculatePositions();
-		var iLength = this._getVisibleTiles().length;
+		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
+
+		this._calculatePageSize(aVisibleTiles);
+		var iLength = aVisibleTiles.length;
 
 		if (iIndex < 0) {
 			iIndex = 0;
@@ -1171,7 +1431,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// where does the page start
 		var iCurrentPage = Math.floor(iIndex / this._iMaxTiles || 0);
-		this._iCurrentTileStartIndex = iCurrentPage * (this._iMaxTiles  || 0);
+		this._iCurrentTileStartIndex = iCurrentPage * (this._iMaxTiles || 0);
 
 		jQuery.sap.log.info("current index " + this._iCurrentTileStartIndex);
 	};
@@ -1305,7 +1565,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.scrollLeft();
 		} else if (oEvent.target.id == this.getId() + "-rightscroller" || oEvent.target.parentNode.id == this.getId() + "-rightscroller") {
 			this.scrollRight();
-		} else if (oEvent.target == oPager && sap.ui.Device.system.desktop) {
+		} else if (oEvent.target == oPager && Device.system.desktop) {
 			if (oEvent.offsetX < oPager.offsetWidth / 2) {
 				this.scrollLeft();
 			} else {
@@ -1398,14 +1658,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			if (iNewLeft > this._iScrollGap) {
 				return;
-			} else if (iNewLeft < -(((this._iPages - 1) * contentWidth) + this._iScrollGap)) {
+			} else if (iNewLeft < -(((this._oPagesInfo.getCount() - 1) * contentWidth) + this._iScrollGap)) {
 				return;
 			}
 
 			if (this._bRtl) {
 				iNewLeft = iNewLeft - contentWidth;
 			}
+			var aVisibleTiles = this._getVisibleTiles();
 
+			var iNextPageStartTileIndex = this._iCurrentTileStartIndex + this._iMaxTiles;
+			var iNextPageEndTileIndex = iNextPageStartTileIndex + this._iMaxTiles - 1;
+
+			this._renderTiles(aVisibleTiles, iNextPageStartTileIndex, iNextPageEndTileIndex);
 			this._applyTranslate(this.$("cnt"),iNewLeft,0,false);
 		}
 	};
@@ -1413,7 +1678,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	/**
 	 * Handles the touchend and mouseup events on the TileContainer.
 	 *
-	 * @param {jQuery.Event} The event object
+	 * @param {jQuery.Event} oEvent The event object
 	 * @private
 	 */
 	TileContainer.prototype._onend = function(oEvent) {
@@ -1449,7 +1714,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 				this._applyPageStartIndex(this._iCurrentTileStartIndex + ((oTouchSession.fDiffX * iRtl > 0 ? 1 : -1) * this._iMaxTiles));
 				this._bAvoidChildTapEvent = true;
-			} else if (oEvent.target == oPager && !sap.ui.Device.system.desktop) {
+			} else if (oEvent.target == oPager && !Device.system.desktop) {
 
 				if ((oTouchSession.iOffsetX - oPager.offsetWidth / 2) * iRtl < 0) {
 					this.scrollLeft();
@@ -1538,20 +1803,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		// clip the right part of the tile if it is near the right edge
 		var oRight = this.$("rightedge")[0];
-		if (iLeft + this._oDragSession.oTile._width > oRight.offsetLeft + oRight.offsetWidth && this._iCurrentPage < this._iPages - 1) {
+		if (iLeft + this._oDragSession.oTile._width > oRight.offsetLeft + oRight.offsetWidth && this._oPagesInfo.getCurrentPage() < this._oPagesInfo.getCount() - 1) {
 			var iClipRight = oRight.offsetLeft + oRight.offsetWidth - iLeft - ((this._oDragSession.oTile._width - this._oDragSession.oTile.$().outerWidth(false)) / 2) - 2;
 			this._oDragSession.oTile.$().css("clip","rect(-25px," + iClipRight + "px," + (this._oDragSession.oTile._height + 20) + "px,-25px)");
 		}
 
 		// clip the left part of the tile if it is near the left edge
 		var oLeft = this.$("leftedge")[0];
-		if (iLeft < oLeft.offsetLeft + 2 + ((this._oDragSession.oTile._width - this._oDragSession.oTile.$().outerWidth(false)) / 2) && this._iCurrentPage > 0) {
+		if (iLeft < oLeft.offsetLeft + 2 + ((this._oDragSession.oTile._width - this._oDragSession.oTile.$().outerWidth(false)) / 2) && this._oPagesInfo.getCurrentPage() > 0) {
 			var iClipLeft = oLeft.offsetLeft + 4 - iLeft - ((this._oDragSession.oTile._width - this._oDragSession.oTile.$().outerWidth(false)) / 2);
 			this._oDragSession.oTile.$().css("clip","rect(-25px," + this._oDragSession.oTile._width + "px," + (this._oDragSession.oTile._height + 20) + "px," + iClipLeft + "px)");
 		}
 
 		// increase the opacity of the right edge the closer the tile is moved
-		if (iNearRight < this._iEdgeShowStart && this._iCurrentPage < this._iPages - 1) {
+		if (iNearRight < this._iEdgeShowStart && this._oPagesInfo.getCurrentPage() < this._oPagesInfo.getCount() - 1) {
 			var iOpacity = (this._iEdgeShowStart - iNearRight) / (this._iEdgeShowStart + this._iTriggerScrollOffset);
 			this.$("rightedge").css("opacity","" + iOpacity);
 		} else {
@@ -1561,7 +1826,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		// increase the opacity of the left edge the closer the tile is moved
-		if (iNearLeft < this._iEdgeShowStart && this._iCurrentPage > 0) {
+		if (iNearLeft < this._iEdgeShowStart && this._oPagesInfo.getCurrentPage() > 0) {
 			var iOpacity = (this._iEdgeShowStart - iNearLeft) / (this._iEdgeShowStart + this._iTriggerScrollOffset);
 			this.$("leftedge").css("opacity","" + iOpacity);
 		} else {
@@ -1574,9 +1839,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		var bScrollNeeded;
 
 		if (this._bRtl) {
-			bScrollNeeded = bScrollRight && this._iCurrentPage > 0 || bScrollLeft && this._iCurrentPage < this._iPages - 1;
+			bScrollNeeded = bScrollRight && this._oPagesInfo.getCurrentPage() > 0 || bScrollLeft && this._oPagesInfo.getCurrentPage() < this._oPagesInfo.getCount() - 1;
 		} else {
-			bScrollNeeded = bScrollLeft && this._iCurrentPage > 0 || bScrollRight && this._iCurrentPage < this._iPages - 1;
+			bScrollNeeded = bScrollLeft && this._oPagesInfo.getCurrentPage() > 0 || bScrollRight && this._oPagesInfo.getCurrentPage() < this._oPagesInfo.getCount() - 1;
 		}
 
 		if (bScrollNeeded) {
@@ -1630,7 +1895,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 			this._oDragSession.iIndex = iIndex;
 			this.moveTile(this._oDragSession.oTile,this._oDragSession.iIndex);
-		} else if (this._iCurrentPage == this._iPages - 1) {
+		} else if (this._oPagesInfo.getCurrentPage() == this._oPagesInfo.getCount() - 1) {
 
 			// check whether the dragged tile is at the end of the tile container
 			var aTiles = this._getVisibleTiles(),
@@ -1680,7 +1945,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this.moveTile(oTile, iIndex);
 			this.scrollIntoView(oTile, false);
 
-			if (sap.ui.Device.system.desktop || sap.ui.Device.system.combi) {
+			if (Device.system.desktop || Device.system.combi) {
 				this._findTile(oTile.$()).focus();
 			}
 			this._handleAriaActiveDescendant();
@@ -1701,6 +1966,22 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 	};
 
+	/**
+	 * Renders a given tile via render manager.
+	 * @param {sap.m.Tile} oTile the tile to render
+	 * @param {int} iIndex the index of the tile
+	 * @private
+	 */
+	TileContainer.prototype._renderTile = function(oTile, iIndex) {
+		var oRm = sap.ui.getCore().createRenderManager(),
+			oContent = this.$("cnt")[0];
+
+		oRm.renderControl(oTile);
+		oRm.flush(oContent, false, iIndex);
+		oRm.destroy();
+	};
+
+
 	TileContainer.prototype.onThemeChanged = function() {
 		if (this.getDomRef()) {
 			this.invalidate();
@@ -1708,41 +1989,128 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	};
 
 	/**
+	 * Calculates the dimension of TileContainer root DOM element.
+	 * @return {{width, height: *, outerheight: *, outerwidth: *}}
+	 * @private
+	 */
+	TileContainer.prototype._calculateDimension = function(){
+		var oDomRef = this.$();
+
+		if (!oDomRef) {
+			return;
+		}
+		return {
+			width: oDomRef.width(),
+			height: oDomRef.height(),
+			outerheight: oDomRef.outerHeight(),
+			outerwidth: oDomRef.outerWidth()
+		};
+	};
+
+	/**
+	 * Obtain all visible tiles.
+	 * @returns {sap.m.Tile[]} all tiles whose property <code>visible</code> is true
+	 * @private
+	 */
+	TileContainer.prototype._getVisibleTiles = function () {
+		var aResult = [],
+			aTiles = this.getTiles();
+
+		//This method is called once per inserting new tile, so it must be well performing.
+		for (var i = 0, iTilesCount = aTiles.length; i < iTilesCount; i++) {
+			if (aTiles[i].mProperties["visible"]) {//for performance reasons
+				aResult.push(aTiles[i]);
+			}
+		}
+
+		return aResult;
+	};
+
+	/**
+	 * Finds given tile amongst visible tiles list
+	 * @param {sap.m.Tile} oTile the tile to look for
+	 * @param {sap.m.Tile[]} [aTiles] optional list of visible tiles in order to avoid filtering them again.
+	 * @returns {number} the index of the visible tile. If tile is not found, -1 will be returned
+	 * @private
+	 */
+	TileContainer.prototype._indexOfVisibleTile = function (oTile, aTiles) {
+		var i,
+			iTilesCount;
+
+		aTiles = aTiles || this._getVisibleTiles();
+		iTilesCount = aTiles.length;
+
+		for (i = 0; i < iTilesCount; i++) {
+			if (aTiles[i] === oTile) {
+				return i;
+			}
+		}
+
+		return -1;
+	};
+
+	/**
+	 * Updates the information about the dimension of a tile and the page size.
+	 * @param {sap.m.Tile[]} [aVisibleTiles] optional list of visible tiles in order to avoid filtering them again.
+	 * @private
+	 */
+	TileContainer.prototype._updateTileDimensionInfoAndPageSize = function(aVisibleTiles) {
+		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
+
+		this._oTileDimensionCalculator.calc(aVisibleTiles);
+		this._calculatePageSize(aVisibleTiles);
+	};
+
+	/**
+	 * Retrivees the page number corresponding to a given tile index.
+	 * @param {int} iTileIndex the index of the tile
+	 * @returns {number} page number (0-based) where the given tile is supposed to be rendered.
+	 * @private
+	 */
+	TileContainer.prototype._getPageNumberForTile = function(iTileIndex) {
+		return Math.floor((iTileIndex / this._iMaxTiles) || 0);
+	};
+
+	/**
 	 * Calculates a common Tile dimension (width and height) applied for all the Tiles.
 	 * Function {@link getLastCalculatedDimension} does not do the calculation.
 	 * The caller must explicitly call the {@link calc} function before it, or when he/she wants up-to-date dimension.
+	 * @param {sap.m.TileContainer} oTileContainer The sap.m.TileContainer for which the dimensions will be calculated
 	 * @private
 	 */
 	var TileDimensionCalculator = function(oTileContainer) {
-		this._oDimension = null;
+		this._oDim = null;
 		this._oTileContainer = oTileContainer;
 	};
 	/**
 	 * Calculates the dimension (width and height) of a Tile.
-	 * @returns {object} Width and height of a tile
+	 * @returns {object} Width and height of a tile or undefined if no DOM yet.
 	 * @protected
 	 */
-	TileDimensionCalculator.prototype.calc = function() {
+	TileDimensionCalculator.prototype.calc = function(visibleTiles) {
 		var aVisibleTiles,
 			oTile;
 
 		if (!this._oTileContainer.getDomRef()) {
 			return;
 		}
+		aVisibleTiles = visibleTiles || this._oTileContainer._getVisibleTiles();
 
-		if (this._oTileContainer._getVisibleTiles().length) {
-			//All tiles have fixed with, defined in the corresponding tile css/less file. So use the first.
-			aVisibleTiles = this._oTileContainer._getVisibleTiles();
-
-			if (aVisibleTiles.length) {
-				oTile = aVisibleTiles[0];
-				this._oDimension = {
-					width  : Math.round(oTile.$().outerWidth(true)),
-					height : Math.round(oTile.$().outerHeight(true))
-				};
+		if (aVisibleTiles.length) {
+			//All tiles have fixed with, defined in the corresponding tile css/less file. So use the first rendered tile
+			oTile = aVisibleTiles[0];
+			for (var i = 0, len = aVisibleTiles.length; i < len; i++) {
+				if (aVisibleTiles[i]._rendered) {
+					oTile = aVisibleTiles[i];
+					break;
+				}
 			}
+			this._oDim = {
+				width  : Math.round(oTile.$().outerWidth(true)),
+				height : Math.round(oTile.$().outerHeight(true))
+			};
 		}
-		return this._oDimension;
+		return this._oDim;
 	};
 	/**
 	 * Returns the current dimension (width and height) of a Tile.
@@ -1751,7 +2119,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * @protected
 	 */
 	TileDimensionCalculator.prototype.getLastCalculatedDimension = function() {
-		return this._oDimension;
+		return this._oDim;
 	};
 
 	/**
@@ -1759,39 +2127,42 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @private
 	 */
-	function handleAriaSize () {
-		var iTilesCount = this._getVisibleTiles().length,
-			oDomRef = null;
-		this._getVisibleTiles().forEach(function(oTile) {
-			oDomRef = oTile.getDomRef();
-			if (oDomRef) {
-				oDomRef.setAttribute("aria-setsize", iTilesCount);
+	function handleAriaSize (aVisibleTiles) {
+		var iTilesCount,
+			i,
+			oTile;
+
+		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
+		iTilesCount = aVisibleTiles.length;
+
+		for (i = 0; i < iTilesCount; i++) {
+			oTile = aVisibleTiles[i];
+			if (oTile._rendered && oTile.getDomRef()) {
+				oTile.getDomRef().setAttribute("aria-setsize", iTilesCount);
 			}
-		});
+		}
 	}
 	/**
 	 * Handles the WAI ARIA property aria-posinset after a change in the TileContainer.
 	 * @param {int} iStartIndex The index of the Tile to start with
 	 * @param {int} iEndIndex The index of the Tile to complete with
+	 * @param {sap.m.Tile[]} [aVisibleTiles] optional list of visible tiles in order to avoid filtering them again.
 	 * @private
 	 */
-	function handleAriaPositionInSet(iStartIndex, iEndIndex) {
-		var aTiles = this._getVisibleTiles(),
-			i, oTile = null;
-		for (var i = iStartIndex; i < iEndIndex; i++) {
-			oTile = aTiles[i];
+	function handleAriaPositionInSet(iStartIndex, iEndIndex, aVisibleTiles) {
+		var i,
+			oTile = null;
+
+		aVisibleTiles = aVisibleTiles || this._getVisibleTiles();
+
+		for (i = iStartIndex; i < iEndIndex; i++) {
+			oTile = aVisibleTiles[i];
 			if (oTile) {
-				oTile._updateAriaPosition();
+				oTile.$().attr('aria-posinset', this._indexOfVisibleTile(oTile, aVisibleTiles) + 1);
 			}
 		}
 	}
 
-	TileContainer.prototype._getVisibleTiles = function() {
-		return this.getTiles().filter(function(oTile) {
-					return oTile.getVisible();
-				});
-	};
-
 	return TileContainer;
 
-}, /* bExport= */ true);
+});

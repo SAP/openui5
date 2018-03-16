@@ -4,13 +4,33 @@
 
 // Provides control sap.m.QuickView.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool',
-		'./QuickViewBase', './ResponsivePopover', './NavContainer',
-		'./PlacementType', './Page', './Bar', './Button'],
-	function(jQuery, library, Control, IconPool,
-			QuickViewBase, ResponsivePopover, NavContainer,
-			PlacementType, Page, Bar, Button) {
+	'./library',
+	'sap/ui/Device',
+	'sap/ui/core/IconPool',
+	'./QuickViewBase',
+	'./ResponsivePopover',
+	'./NavContainer',
+	'./Page',
+	'./Bar',
+	'./Button',
+	'./QuickViewRenderer'
+],
+	function(
+	library,
+	Device,
+	IconPool,
+	QuickViewBase,
+	ResponsivePopover,
+	NavContainer,
+	Page,
+	Bar,
+	Button,
+	QuickViewRenderer
+	) {
 	"use strict";
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 	/**
 	 * Constructor for a new QuickView.
@@ -18,11 +38,25 @@ sap.ui.define([
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
-	 * @class The QuickView control renders a responsive popover (sap.m.Popover or sap.m.Dialog)
-	 * and displays information of an object in a business-card format. It also allows this object to be linked to
-	 * another object using one of the links in the responsive popover. Clicking that link updates the information in the
-	 * popover with the data of the linked object. Unlimited number of objects can be linked.
-	 *
+	 * @class A responsive popover that displays information on an object in a business-card format.
+	 * <h3>Overview</h3>
+	 * The quick view is used to show business information on either a person or an entity (e.g. a company). It uses a set of pre-defined controls.
+	 * Objects can be linked together and you can navigate between several objects. An unlimited number of objects can be linked.
+	 * <h3>Structure</h3>
+	 * Each card is represented by a {@link sap.m.QuickViewPage} which holds all the information (icon, title, header, description) for the object.
+	 * A single quick view can hold multiple objects, each showing information on a single entity.
+	 * <h3>Usage</h3>
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>You want to display a concise overview of an object (an employee or a company).</li>
+	 * <li>Information on the object can be split into concrete groups.</li>
+	 * </ul>
+	 * <h4>When not to use</h4>
+	 * <ul>
+	 * <li>You want to display complex information about an object.</li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * The quick view is displayed in a {@link sap.m.Popover popover} on desktop and a full-screen {@link sap.m.Dialog dialog} on mobile devices.
 	 * @extends sap.m.QuickViewBase
 	 *
 	 * @author SAP SE
@@ -32,6 +66,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.28.11
 	 * @alias sap.m.QuickView
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/quickview/ Quick View}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var QuickView = QuickViewBase.extend("sap.m.QuickView", /** @lends sap.m.QuickView.prototype */	{
@@ -58,6 +93,7 @@ sap.ui.define([
 					},
 					aggregations: {
 					},
+					designtime: "sap/m/designtime/QuickView.designtime",
 					events: {
 						/**
 						 * This event fires after the QuickView is opened.
@@ -188,7 +224,7 @@ sap.ui.define([
 
 		var oPopupControl = this._oPopover.getAggregation("_popup");
 		oPopupControl.addEventDelegate({
-			onBeforeRendering: this.onBeforeRenderingPopover,
+			onBeforeRendering: this._initializeQuickView,
 			onAfterRendering: this._setLinkWidth,
 			onkeydown: this._onPopupKeyDown
 		}, this);
@@ -209,7 +245,11 @@ sap.ui.define([
 		this._oPopover.addStyleClass("sapMQuickView");
 	};
 
-	QuickView.prototype.onBeforeRenderingPopover = function() {
+	/**
+	 * Initialize the QuickView.
+	 * @private
+	 */
+	QuickView.prototype._initializeQuickView = function() {
 
 		this._bRendered = true;
 
@@ -220,7 +260,7 @@ sap.ui.define([
 
 			// add a close button on phone devices when there are no pages
 			var aPages = this.getAggregation("pages");
-			if (!aPages && sap.ui.Device.system.phone) {
+			if (!aPages && Device.system.phone) {
 				this._addEmptyPage();
 			}
 
@@ -263,7 +303,7 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickView.prototype._afterOpen = function(oEvent) {
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			this._restoreFocus();
 		}
 	};
@@ -330,7 +370,7 @@ sap.ui.define([
 	 * @private
 	 */
 	QuickView.prototype.getCloseButton = function() {
-		if (!sap.ui.Device.system.phone) {
+		if (!Device.system.phone) {
 			return undefined;
 		}
 
@@ -403,7 +443,16 @@ sap.ui.define([
 		"removeAggregation", "removeAllAggregation", "destroyAggregation"].forEach(function (sFuncName) {
 			QuickView.prototype["_" + sFuncName + "Old"] = QuickView.prototype[sFuncName];
 			QuickView.prototype[sFuncName] = function () {
-				var result = QuickView.prototype["_" + sFuncName + "Old"].apply(this, arguments);
+				var newArgs,
+					result;
+
+				if (["removeAggregation", "removeAllAggregation", "destroyAggregation"].indexOf(sFuncName) !== -1) {
+					newArgs = [arguments[0], true];
+				} else {
+					newArgs = [arguments[0], arguments[1], true];
+				}
+
+				result = QuickView.prototype["_" + sFuncName + "Old"].apply(this, newArgs);
 
 				// Marks items aggregation as changed and invalidate popover to trigger rendering
 				this._bItemsChanged = true;
@@ -414,7 +463,7 @@ sap.ui.define([
 					}
 
 					if (this._bRendered) {
-						this._oPopover.invalidate();
+						this._initializeQuickView();
 					}
 				}
 
@@ -428,4 +477,4 @@ sap.ui.define([
 
 	return QuickView;
 
-}, /* bExport= */true);
+});

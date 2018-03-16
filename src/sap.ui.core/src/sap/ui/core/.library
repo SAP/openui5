@@ -19,26 +19,32 @@
     <!-- excludes for the all-in-one file -->
     <packaging xmlns="http://www.sap.com/ui5/buildext/packaging" version="2.0" >
       <module-infos>
-        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js" />
+        <!--
+        <raw-module name="jquery.sap.global.js" depends="sap/ui/Device.js,sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/jqueryui/jquery-ui-position.js,sap/ui/thirdparty/URI.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/baseuri.js" />
+        -->
         <raw-module name="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/core/support/trace/E2eTraceLib.js" depends="sap/ui/core/support/trace/EppLib.js" />
         <raw-module name="sap/ui/Device.js" />
+        <raw-module name="sap/ui/thirdparty/baseuri.js" />
+        <raw-module name="sap/ui/thirdparty/blanket.js" />
+        <raw-module name="sap/ui/thirdparty/caja-html-sanitizer.js" />
         <raw-module name="sap/ui/thirdparty/crossroads.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/d3.js" />
         <raw-module name="sap/ui/thirdparty/datajs.js" />
         <raw-module name="sap/ui/thirdparty/es6-promise.js" />
+        <raw-module name="sap/ui/thirdparty/es6-string-methods.js" />
         <raw-module name="sap/ui/thirdparty/flexie.js" />
         <raw-module name="sap/ui/thirdparty/handlebars.js" />
         <raw-module name="sap/ui/thirdparty/hasher.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/IPv6.js" />
-        <raw-module name="sap/ui/thirdparty/iscroll.js" />
         <raw-module name="sap/ui/thirdparty/iscroll-lite.js" />
+        <raw-module name="sap/ui/thirdparty/iscroll.js" />
         <raw-module name="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jquery-mobile-custom.js" depends="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-bounce.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-clip.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-drop.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-explode.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-fade.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
@@ -50,9 +56,9 @@
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-slide.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-effects-transfer.js" depends="sap/ui/thirdparty/jqueryui/jquery-effects-core.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-core.js" depends="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-widget.js" depends="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-position.js" depends="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" depends="sap/ui/thirdparty/jquery.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-datepicker.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-core.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-draggable.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-droppable.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js,sap/ui/thirdparty/jqueryui/jquery-ui-draggable.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-blind.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-bounce.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-clip.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
@@ -66,33 +72,34 @@
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-shake.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-slide.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect-transfer.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-datepicker.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-core.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-core.js,sap/ui/thirdparty/jqueryui/jquery-ui-widget.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-draggable.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-position.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-resizable.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-selectable.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js" />
         <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-sortable.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js" />
-        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-droppable.js" depends="sap/ui/thirdparty/jqueryui/jquery-ui-mouse.js,sap/ui/thirdparty/jqueryui/jquery-ui-draggable.js" />
+        <raw-module name="sap/ui/thirdparty/jqueryui/jquery-ui-widget.js" depends="sap/ui/thirdparty/jquery.js" />
         <raw-module name="sap/ui/thirdparty/jszip.js" />
+        <raw-module name="sap/ui/thirdparty/klay.js" />
         <raw-module name="sap/ui/thirdparty/less.js" />
         <raw-module name="sap/ui/thirdparty/mobify-carousel.js" />
-        <raw-module name="sap/ui/thirdparty/mobify/carousel.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" depends="sap/ui/thirdparty/jquery.js" />
-        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
         <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
+        <raw-module name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" depends="sap/ui/thirdparty/jquery.js,sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
         <raw-module name="sap/ui/thirdparty/punycode.js" />
         <raw-module name="sap/ui/thirdparty/qunit-2.js" />
-        <raw-module name="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit-composite.js" depends="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/qunit-reporter-junit.js" depends="sap/ui/thirdparty/qunit.js" />
-        <raw-module name="sap/ui/thirdparty/require.js" />
+        <raw-module name="sap/ui/thirdparty/qunit.js" />
         <raw-module name="sap/ui/thirdparty/RequestRecorder.js" depends="sap/ui/thirdparty/URI.js,sap/ui/thirdparty/sinon.js"/>
+        <raw-module name="sap/ui/thirdparty/require.js" />
         <raw-module name="sap/ui/thirdparty/SecondLevelDomains.js" />
         <raw-module name="sap/ui/thirdparty/signals.js" />
-        <raw-module name="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-ie.js" depends="sap/ui/thirdparty/sinon.js" />
         <raw-module name="sap/ui/thirdparty/sinon-qunit.js" depends="sap/ui/thirdparty/qunit.js,sap/ui/thirdparty/sinon.js,sap/ui/thirdparty/sinon-ie.js" />
         <raw-module name="sap/ui/thirdparty/sinon-server.js" depends="sap/ui/thirdparty/sinon.js" />
+        <raw-module name="sap/ui/thirdparty/sinon.js" />
+        <raw-module name="sap/ui/thirdparty/sinon-4.js" />
         <raw-module name="sap/ui/thirdparty/swipe-view.js" />
         <raw-module name="sap/ui/thirdparty/unorm.js" />
         <raw-module name="sap/ui/thirdparty/unormdata.js" depends="sap/ui/thirdparty/unorm.js" />
@@ -100,6 +107,8 @@
         <raw-module name="sap/ui/thirdparty/URITemplate.js" depends="sap/ui/thirdparty/URI.js"/>
         <raw-module name="sap/ui/thirdparty/vkbeautify.js" />
         <raw-module name="sap/ui/thirdparty/zyngascroll.js" />
+        <raw-module name="ui5loader.js" depends="sap/ui/thirdparty/baseuri.js,sap/ui/thirdparty/es6-promise.js,sap/ui/thirdparty/es6-string-methods.js" />
+        <raw-module name="ui5loader-autoconfig.js" depends="ui5loader.js" />
         <module-cycle modules="sap/ui/core/Core.js,sap/ui/core/Component.js" />
       </module-infos>
       <all-in-one>
@@ -123,6 +132,7 @@
         <!-- Third party libs which should NOT be part of the all-in-one file -->
         <exclude name="sap/ui/thirdparty/blanket.js" />
         <!-- <exclude name="sap/ui/thirdparty/crossroads.js" /> -->
+        <!-- <exclude name="sap/ui/thirdparty/caja-htmlsanitizer.js" /> -->
         <exclude name="sap/ui/thirdparty/d3.js" />
         <exclude name="sap/ui/thirdparty/datajs.js" />
         <exclude name="sap/ui/thirdparty/flexie.js" />
@@ -131,12 +141,6 @@
         <exclude name="sap/ui/thirdparty/IPv6.js" />
         <exclude name="sap/ui/thirdparty/iscroll.js" />
         <exclude name="sap/ui/thirdparty/iscroll-lite.js" />
-        <exclude name="sap/ui/thirdparty/less.js" />
-        <exclude name="sap/ui/thirdparty/mobify/carousel.js" />
-        <exclude name="sap/ui/thirdparty/mobify-carousel.js" />
-        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
-        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
-        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" />
         <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-widget.js" />
         <exclude name="sap/ui/thirdparty/jqueryui/jquery-effect*.js" />
         <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-effect.js" />
@@ -160,25 +164,34 @@
         <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-sortable.js" />
         <exclude name="sap/ui/thirdparty/jqueryui/jquery-ui-droppable.js" />
         <exclude name="sap/ui/thirdparty/jszip.js" />
+        <exclude name="sap/ui/thirdparty/klay.js" />
+        <exclude name="sap/ui/thirdparty/less.js" />
+        <exclude name="sap/ui/thirdparty/mobify-carousel.js" />
+        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-core.js" />
+        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-scroller.js" />
+        <exclude name="sap/ui/thirdparty/mobiscroll/js/mobiscroll-datetime.js" />
         <exclude name="sap/ui/thirdparty/punycode.js" />
-        <exclude name="sap/ui/thirdparty/qunit.js" />
+        <exclude name="sap/ui/thirdparty/qunit-2.js" />
         <exclude name="sap/ui/thirdparty/qunit-composite.js" />
         <exclude name="sap/ui/thirdparty/qunit-reporter-junit.js" />
-        <exclude name="sap/ui/thirdparty/require.js" />
+        <exclude name="sap/ui/thirdparty/qunit.js" />
         <exclude name="sap/ui/thirdparty/RequestRecorder.js"/>
+        <exclude name="sap/ui/thirdparty/require.js" />
+        <exclude name="sap/ui/thirdparty/SecondLevelDomains.js" />
         <!-- <exclude name="sap/ui/thirdparty/signals.js" /> -->
-        <exclude name="sap/ui/thirdparty/sinon.js" />
+        <exclude name="sap/ui/thirdparty/sinon-4.js" />
         <exclude name="sap/ui/thirdparty/sinon-ie.js" />
-        <exclude name="sap/ui/thirdparty/sinon-server.js" />
         <exclude name="sap/ui/thirdparty/sinon-qunit.js" />
+        <exclude name="sap/ui/thirdparty/sinon-server.js" />
+        <exclude name="sap/ui/thirdparty/sinon.js" />
         <exclude name="sap/ui/thirdparty/swipe-view.js" />
         <exclude name="sap/ui/thirdparty/unorm.js" />
         <exclude name="sap/ui/thirdparty/unormdata.js" />
-        <exclude name="sap/ui/thirdparty/vkbeautify.js" />
-        <exclude name="sap/ui/thirdparty/zyngascroll.js" />
-        <!-- Excluding URI is removed because it's needed in sap/ui/core/IconPool -->
+        <!-- URI is no longer excluded because it's needed in jquery.sap.global and others -->
         <!-- <exclude name="sap/ui/thirdparty/URI.js" /> -->
         <exclude name="sap/ui/thirdparty/URITemplate.js" />
+        <exclude name="sap/ui/thirdparty/vkbeautify.js" />
+        <exclude name="sap/ui/thirdparty/zyngascroll.js" />
         <!-- INCLUDED (because not mentioned in the list above) are the following libs: -->
         <!-- jquery.sap.global.js -->
         <!-- sap/ui/thirdparty/jquery-mobile-custom.js -->
@@ -214,8 +227,10 @@
         <exclude name="sap.ui.debug." />
         <exclude name="sap.ui.jsunit." />
         <exclude name="sap.ui.qunit." />
+        <exclude name="sap.ui.test.BranchTracking" />
         <exclude name="sap.ui.test.ControlTree" />
         <exclude name="sap.ui.test.TestEnv" />
+        <exclude name="sap.ui.test.TestUtils" />
         <exclude name="sap.ui.thirdparty." />
     </jscoverage>
     <!-- Thirdparty references -->
@@ -229,8 +244,8 @@
         <lib name="qunit-composite" displayName="Qunit Composite" homepage="https://github.com/jquery/qunit-composite">
         	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-composite-MIT-LICENSE.txt" />
         </lib>
-        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" homepage="https://github.com/jquery/qunit-reporter-junit">
-        	<license url="http://jquery.org/license" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
+        <lib name="qunit-reporter-junit" displayName="JUnit Reporter for QUnit" homepage="https://github.com/JamesMGreene/qunit-reporter-junit">
+        	<license url="https://raw.githubusercontent.com/JamesMGreene/qunit-reporter-junit/master/LICENSE.txt" type="MIT License" file="../thirdparty/licenses/qunit-reporter-junit-MIT-LICENSE.txt" />
         </lib>
         <lib name="iscroll" displayName="cubiq.org - iscroll" homepage="http://cubiq.org/iscroll-4">
         	<license url="http://cubiq.org/license" type="MIT License" file="../thirdparty/licenses/iscroll-MIT-LICENSE.txt" />
@@ -242,7 +257,7 @@
         	<license url="http://www.mobify.com/mobifyjs/license/" type="MIT License" file="../thirdparty/licenses/mobify-MIT-LICENSE.txt" />
         </lib>
         <lib name="zynga" displayName="Zynga Scroller" homepage="http://zynga.github.com/scroller/">
-        	<license url="https://raw.github.com/zynga/scroller/master/MIT-LICENSE.txt" type="MIT License" file="../thirdparty/licenses/zyngascroll-MIT-LICENSE.txt" />
+        	<license url="https://github.com/pbakaus/scroller/blob/master/LICENSE.txt" type="MIT License" file="../thirdparty/licenses/zyngascroll-LICENSE.txt" />
         </lib>
         <lib name="less" displayName="LESS" homepage="http://lesscss.org/">
         	<license url="https://raw.github.com/cloudhead/less.js/master/LICENSE" type="Apache License Version 2.0" file="../thirdparty/licenses/LESS-Apache-LICENSE.txt" />
@@ -254,7 +269,7 @@
         	<license url="https://raw.github.com/mbostock/d3/master/LICENSE" type="BSD License" file="../thirdparty/licenses/D3-BSD-LICENSE.txt" />
         </lib>
         <lib name="jszip" displayName="JSZip" homepage="http://stuartk.com/jszip/">
-        	<license url="https://raw.github.com/Stuk/jszip/master/docs/MIT.txt" type="MIT License" file="../thirdparty/licenses/JSZip-MIT-LICENSE.txt" />
+        	<license url="https://github.com/Stuk/jszip/blob/master/LICENSE.markdown" type="MIT License" file="../thirdparty/licenses/JSZip-LICENSE.txt" />
         </lib>
         <lib name="caja" displayName="Google-Caja JS HTML Sanitizer" homepage="http://code.google.com/p/google-caja/wiki/JsHtmlSanitizer">
         	<license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache License Version 2.0" file="../thirdparty/licenses/Caja-Apache-LICENSE.txt" />
@@ -293,7 +308,7 @@
         	<license url="http://opensource.org/licenses/mit-license.php" type="MIT License" file="../thirdparty/licenses/signals-MIT-LICENSE.txt" />
         </lib>
         <lib name="blanket" displayName="blanket.js" homepage="http://blanketjs.org/">
-        	<license url="https://github.com/alex-seville/blanket/blob/master/LICENSE-MIT" type="MIT License" file="../thirdparty/licenses/blanket-MIT-LICENSE.txt" />
+        	<license url="https://github.com/alex-seville/blanket/blob/master/LICENSE" type="MIT License" file="../thirdparty/licenses/blanket-LICENSE.txt" />
         </lib>
         <lib name="array-polyfills" displayName="Array.prototype Polyfills" homepage="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/">
         	<license url="https://developer.mozilla.org/en-US/docs/MDN/About#Copyrights_and_licenses" type="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication" file="../thirdparty/licenses/array-polyfills-LICENSE.txt" />
@@ -306,6 +321,24 @@
         </lib>
         <lib name="es6-promise" displayName="es6-promise" homepage="https://github.com/jakearchibald/es6-promise/">
         	<license url="https://raw.githubusercontent.com/jakearchibald/es6-promise/master/LICENSE" type="MIT License" file="../thirdparty/licenses/es6-promise-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-method-startsWith" displayName="String.prototype Polyfill (startsWith)" homepage="https://github.com/mathiasbynens/String.prototype.startsWith">
+            <license url="https://github.com/mathiasbynens/String.prototype.startsWith/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-methods-endsWith" displayName="String.prototype Polyfill (endsWith)" homepage="https://github.com/mathiasbynens/String.prototype.endsWith">
+            <license url="https://github.com/mathiasbynens/String.prototype.endsWith/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-methods-includes" displayName="String.prototype Polyfill (includes)" homepage="https://github.com/mathiasbynens/String.prototype.includes">
+            <license url="https://github.com/mathiasbynens/String.prototype.includes/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-methods-repeat" displayName="String.prototype Polyfill (repeat)" homepage="https://github.com/mathiasbynens/String.prototype.repeat">
+            <license url="https://github.com/mathiasbynens/String.prototype.repeat/blob/master/LICENSE-MIT.txt" type="MIT License" file="../thirdparty/licenses/es6-string-methods-basic-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="es6-string-methods-pad" displayName="String.prototype Polyfills (padStart/padEnd)" homepage="https://github.com/uxitten/polyfill">
+            <license url="https://github.com/uxitten/polyfill/blob/master/License.md" type="MIT License" file="../thirdparty/licenses/es6-string-methods-pad-MIT-LICENSE.txt" />
+        </lib>
+        <lib name="klayjs" displayName="KLayJS" homepage="https://github.com/OpenKieler/klayjs">
+            <license url="https://github.com/OpenKieler/klayjs/blob/master/LICENSE" type="Eclipse Public License" file="../thirdparty/licenses/klayjs-ECLIPSE-LICENSE.txt" />
         </lib>
     </thirdparty>
 
@@ -338,6 +371,13 @@
             <name>CA-UI5-CTR</name>
             <modules>
                 <module>sap/ui/core/InvisibleText</module>
+            </modules>
+        </component>
+
+        <component>
+            <name>CA-UI5-TBL</name>
+            <modules>
+                <module>sap/ui/core/dnd/*</module>
             </modules>
         </component>
 

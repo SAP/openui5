@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/Device"],
+	function(Element, Device) {
 		"use strict";
 
 		/**
@@ -27,16 +27,18 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.render = function(oRm, oList) {
-			this.writeOpenListTag(oRm, oList);
+			this.writeOpenListTag(oRm, oList, { elementData: true });
 			this.renderItems(oRm, oList);
 			this.writeCloseListTag(oRm, oList);
 		};
 
-		SelectListRenderer.writeOpenListTag = function(oRm, oList) {
+		SelectListRenderer.writeOpenListTag = function(oRm, oList, mStates) {
 			var CSS_CLASS = SelectListRenderer.CSS_CLASS;
 
 			oRm.write("<ul");
-			oRm.writeControlData(oList);
+			if (mStates.elementData) {
+				oRm.writeControlData(oList);
+			}
 			oRm.addClass(CSS_CLASS);
 
 			if (oList.getShowSecondaryValues()) {
@@ -66,16 +68,24 @@ sap.ui.define(['jquery.sap.global'],
 		 * @param {sap.ui.core.Control} oList An object representation of the control that should be rendered.
 		 */
 		SelectListRenderer.renderItems = function(oRm, oList) {
-			var iSize = oList.getItems().length,
-				oSelectedItem = oList.getSelectedItem();
+			var iSize = oList._getNonSeparatorItemsCount(),
+				aItems = oList.getItems(),
+				oSelectedItem = oList.getSelectedItem(),
+				iCurrentPosInSet = 1,
+				oItemStates;
 
-			for (var i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
-				this.renderItem(oRm, oList, aItems[i], {
+			for (var i = 0; i < aItems.length; i++) {
+				oItemStates = {
 					selected: oSelectedItem === aItems[i],
 					setsize: iSize,
-					posinset: i + 1,
 					elementData: true
-				});
+				};
+
+				if (!(aItems[i] instanceof sap.ui.core.SeparatorItem)) {
+					oItemStates.posinset = iCurrentPosInSet++;
+				}
+
+				this.renderItem(oRm, oList, aItems[i], oItemStates);
 			}
 		};
 
@@ -89,7 +99,7 @@ sap.ui.define(['jquery.sap.global'],
 		 */
 		SelectListRenderer.renderItem = function(oRm, oList, oItem, mStates) {
 
-			if (!(oItem instanceof sap.ui.core.Element)) {
+			if (!(oItem instanceof Element)) {
 				return;
 			}
 
@@ -129,7 +139,7 @@ sap.ui.define(['jquery.sap.global'],
 					oRm.addClass(CSS_CLASS + "ItemBaseDisabled");
 				}
 
-				if (bEnabled && sap.ui.Device.system.desktop) {
+				if (bEnabled && Device.system.desktop) {
 					oRm.addClass(CSS_CLASS + "ItemBaseHoverable");
 				}
 
@@ -158,6 +168,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.addClass(CSS_CLASS + "Cell");
 				oRm.addClass(CSS_CLASS + "FirstCell");
 				oRm.writeClasses();
+				oRm.writeAttribute("disabled", "disabled"); // fixes span obtaining focus in IE
 				oRm.write(">");
 				oRm.writeEscaped(oItem.getText());
 				oRm.write("</span>");
@@ -166,6 +177,7 @@ sap.ui.define(['jquery.sap.global'],
 				oRm.addClass(CSS_CLASS + "Cell");
 				oRm.addClass(CSS_CLASS + "LastCell");
 				oRm.writeClasses();
+				oRm.writeAttribute("disabled", "disabled"); // fixes span obtaining focus in IE
 				oRm.write(">");
 
 				if (typeof oItem.getAdditionalText === "function") {

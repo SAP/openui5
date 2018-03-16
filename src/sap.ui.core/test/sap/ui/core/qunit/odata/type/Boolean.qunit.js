@@ -13,7 +13,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, ManagedObject, FormatException, JSONModel, ParseException, ValidateException,
 		BooleanType, ODataType, TestUtils) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
@@ -21,17 +21,17 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Boolean", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
-			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
 
+	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
 		var oType = new BooleanType();
 
@@ -39,7 +39,17 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is an ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Boolean", "type name");
 		assert.strictEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "no constraints");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new BooleanType(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
@@ -160,7 +170,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("setConstraints", function (assert) {
-		var oType = new BooleanType();
+		var oType;
 
 		this.oLogMock.expects("warning")
 			.withExactArgs("Illegal nullable: foo", null, "sap.ui.model.odata.type.Boolean");
@@ -179,5 +189,8 @@ sap.ui.require([
 
 		oType = new BooleanType({}, {nullable : "foo"});
 		assert.strictEqual(oType.oConstraints, undefined, "illegal nullable -> ignored");
+
+		oType = new BooleanType({}, {});
+		assert.strictEqual(oType.oConstraints, undefined, "empty constraints");
 	});
 });

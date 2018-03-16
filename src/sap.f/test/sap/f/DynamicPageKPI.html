@@ -1,0 +1,114 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>sap.f.DynamicPage test page</title>
+
+    <script src="shared-config.js"></script>
+    <script src="../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-libs="sap.m, sap.f">
+    </script>
+
+    <style>html, body, .container {height: 100%}</style>
+
+    <script id="view1" type="sapui5/xmlview">
+		<core:View
+			id="view1"
+			height="100%"
+			xmlns:mvc="sap.ui.core.mvc"
+			xmlns:core="sap.ui.core"
+			xmlns="sap.m"
+			xmlns:f="sap.f">
+
+			<f:DynamicPage id="dynamicPageId">
+				<!-- DynamicPage Title -->
+				<f:title>
+					<f:DynamicPageTitle primaryArea="Middle">
+						<f:heading>
+							<Title text="This is the complete list of my products"/>
+						</f:heading>
+						<f:expandedContent>
+                            <Text text="This is a subheading about the long complete list of products"/>
+                        </f:expandedContent>
+						<f:content>
+                            <OverflowToolbar>
+                                <Button text="KPI 1" />
+                                <Button text="KPI 2" />
+                                <Button text="KPI 3" />
+                                <Button text="KPI 4" />
+                                <Button text="KPI 5" />
+                                <Button text="KPI 6" />
+                                <Button text="KPI 7" />
+                                <Button text="KPI 8" />
+                                <Button text="KPI 9" />
+                                <Button text="KPI 10" />
+                            </OverflowToolbar>
+					    </f:content>
+					    <f:actions>
+                            <Button
+                                    text="Edit"
+                                    type="Emphasized"
+                                    press="toggleAreaPriority"/>
+                            <Button
+                                    text="Delete"
+                                    type="Transparent"/>
+                            <Button
+                                    text="Copy"
+                                    type="Transparent"/>
+                            <Button
+                                    text="Toggle Footer"
+                                    type="Transparent"
+                                    press="onToggleFooter"/>
+                            <Button
+                                    icon="sap-icon://action"
+                                    type="Transparent"/>
+                        </f:actions>
+					</f:DynamicPageTitle>
+				</f:title>
+
+				<!-- DynamicPage Header -->
+				<f:header>
+					<f:DynamicPageHeader pinnable="true">
+						<f:content>
+							<VBox fitContainer="true">
+								<Button text="Button in header"/>
+								<Button text="Button in header"/>
+							</VBox>
+						</f:content>
+					</f:DynamicPageHeader>
+				</f:header>
+
+				<!-- DynamicPage Content -->
+				<f:content>
+					<VBox fitContainer="true">
+						<MessageStrip text="I am in DynamicPage content"/>
+						<MessageStrip text="I am in DynamicPage content"/>
+						<MessageStrip text="I am in DynamicPage content"/>
+						<MessageStrip text="I am in DynamicPage content"/>
+						<MessageStrip text="I am in DynamicPage content"/>
+					</VBox>
+				</f:content>
+
+				<!-- DynamicPage Footer -->
+				<f:footer>
+					<OverflowToolbar>
+						<ToolbarSpacer/>
+						<Button type="Accept" text="Accept"/>
+						<Button type="Reject" text="Reject"/>
+					</OverflowToolbar>
+				</f:footer>
+			</f:DynamicPage>
+		</core:View>
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+<script>
+	(function (jQuery) {
+		sap.ui.xmlview({viewContent:jQuery('#view1').html()}).placeAt("content");
+	}(jQuery))
+</script>
+<div class="container" id="content"></div>
+</body>
+</html>

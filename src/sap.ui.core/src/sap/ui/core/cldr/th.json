@@ -2,7 +2,7 @@
 	"__license": "This file has been derived from Unicode Common Locale Data Repository (CLDR) files (http://cldr.unicode.org). See the copyright and permission notice in the Unicode-Data-Files-LICENSE.txt available at the same location as this file or visit http://www.unicode.org/copyright.html",
 	"languages": {
 		"aa": "อะฟาร์",
-		"ab": "อับคาซ",
+		"ab": "อับฮาเซีย",
 		"ace": "อาเจะห์",
 		"ach": "อาโคลิ",
 		"ada": "อาแดงมี",
@@ -13,7 +13,7 @@
 		"afh": "แอฟริฮีลี",
 		"agq": "อักเฮม",
 		"ain": "ไอนุ",
-		"ak": "อาคัน",
+		"ak": "อาคาน",
 		"akk": "อักกาด",
 		"akz": "แอละแบมา",
 		"ale": "อาลิวต์",
@@ -26,7 +26,7 @@
 		"ar": "อาหรับ",
 		"ar_001": "อาหรับมาตรฐานสมัยใหม่",
 		"arc": "อราเมอิก",
-		"arn": "อาเราคาเนียน",
+		"arn": "มาปูเช",
 		"aro": "อาเรานา",
 		"arp": "อาราปาโฮ",
 		"arq": "อาหรับแอลจีเรีย",
@@ -59,7 +59,7 @@
 		"bfd": "บาฟัต",
 		"bfq": "พทคะ",
 		"bg": "บัลแกเรีย",
-		"bgn": "บาลูจิตะวันออก",
+		"bgn": "บาลูจิตะวันตก",
 		"bho": "โภชปุรี",
 		"bi": "บิสลามา",
 		"bik": "บิกอล",
@@ -107,6 +107,7 @@
 		"cps": "กาปิซนอน",
 		"cr": "ครี",
 		"crh": "ตุรกีไครเมีย",
+		"crs": "ครีโอลเซเซลส์ฝรั่งเศส",
 		"cs": "เช็ก",
 		"csb": "คาซูเบียน",
 		"cu": "เชอร์ชสลาวิก",
@@ -150,20 +151,20 @@
 		"en_US": "อังกฤษ - อเมริกัน",
 		"en_US-alt-short": "อังกฤษ - อเมริกัน",
 		"enm": "อังกฤษกลาง",
-		"eo": "เอสเปอรันโต",
+		"eo": "เอสเปรันโต",
 		"es": "สเปน",
 		"es_419": "สเปน - ละตินอเมริกา",
 		"es_ES": "สเปน - ยุโรป",
 		"es_MX": "สเปน - เม็กซิโก",
 		"esu": "ยูพิกกลาง",
 		"et": "เอสโตเนีย",
-		"eu": "บัสเก",
+		"eu": "บาสก์",
 		"ewo": "อีวันโด",
 		"ext": "เอกซ์เตรมาดูรา",
 		"fa": "เปอร์เซีย",
 		"fan": "ฟอง",
 		"fat": "ฟันติ",
-		"ff": "ฟูลาฮ์",
+		"ff": "ฟูลาห์",
 		"fi": "ฟินแลนด์",
 		"fil": "ฟิลิปปินส์",
 		"fit": "ฟินแลนด์ทอร์เนดาเล็น",
@@ -184,17 +185,17 @@
 		"ga": "ไอริช",
 		"gaa": "กา",
 		"gag": "กากาอุซ",
-		"gan": "จีนกาน",
+		"gan": "จีนกั้น",
 		"gay": "กาโย",
 		"gba": "กบายา",
 		"gbz": "ดารีโซโรอัสเตอร์",
-		"gd": "สกอตส์กาลิก",
+		"gd": "เกลิกสกอต",
 		"gez": "กีซ",
 		"gil": "กิลเบอร์ต",
 		"gl": "กาลิเซีย",
 		"glk": "กิลากี",
 		"gmh": "เยอรมันสูงกลาง",
-		"gn": "กวารานี",
+		"gn": "กัวรานี",
 		"goh": "เยอรมันสูงโบราณ",
 		"gom": "กอนกานีของกัว",
 		"gon": "กอนดิ",
@@ -209,7 +210,7 @@
 		"guz": "กุซซี",
 		"gv": "มานซ์",
 		"gwi": "กวิชอิน",
-		"ha": "เฮาชา",
+		"ha": "เฮาซา",
 		"hai": "ไฮดา",
 		"hak": "จีนแคะ",
 		"haw": "ฮาวาย",
@@ -221,9 +222,9 @@
 		"hmn": "ม้ง",
 		"ho": "ฮีรีโมตู",
 		"hr": "โครเอเชีย",
-		"hsb": "ซอร์บส์ตอนบน",
+		"hsb": "ซอร์เบียตอนบน",
 		"hsn": "จีนเซียง",
-		"ht": "เฮติ",
+		"ht": "เฮติครีโอล",
 		"hu": "ฮังการี",
 		"hup": "ฮูปา",
 		"hy": "อาร์เมเนีย",
@@ -231,7 +232,7 @@
 		"ia": "อินเตอร์ลิงกัว",
 		"iba": "อิบาน",
 		"ibb": "อิบิบิโอ",
-		"id": "อินโดนีเชีย",
+		"id": "อินโดนีเซีย",
 		"ie": "อินเตอร์ลิงกิว",
 		"ig": "อิกโบ",
 		"ii": "เสฉวนยิ",
@@ -320,6 +321,7 @@
 		"ln": "ลิงกาลา",
 		"lo": "ลาว",
 		"lol": "มองโก",
+		"lou": "ภาษาครีโอลุยเซียนา",
 		"loz": "โลซิ",
 		"lrc": "ลูรีเหนือ",
 		"lt": "ลิทัวเนีย",
@@ -343,7 +345,6 @@
 		"mas": "มาไซ",
 		"mde": "มาบา",
 		"mdf": "มอคชา",
-		"mdh": "mdh",
 		"mdr": "มานดาร์",
 		"men": "เมนเด",
 		"mer": "เมรู",
@@ -356,7 +357,6 @@
 		"mi": "เมารี",
 		"mic": "มิกแมก",
 		"min": "มีนังกาเบา",
-		"mis": "mis",
 		"mk": "มาซิโดเนีย",
 		"ml": "มาลายาลัม",
 		"mn": "มองโกเลีย",
@@ -426,6 +426,7 @@
 		"pap": "ปาเปียเมนโต",
 		"pau": "ปาเลา",
 		"pcd": "ปิการ์",
+		"pcm": "พิดจิน",
 		"pdc": "เยอรมันเพนซิลเวเนีย",
 		"pdt": "เพลาท์ดิช",
 		"peo": "เปอร์เซียโบราณ",
@@ -438,12 +439,12 @@
 		"pon": "พอห์นเพ",
 		"prg": "ปรัสเซีย",
 		"pro": "โปรวองซาลโบราณ",
-		"ps": "พาชตู",
+		"ps": "พัชโต",
 		"ps_alt-variant": "พุชโต",
 		"pt": "โปรตุเกส",
 		"pt_BR": "โปรตุเกส - บราซิล",
 		"pt_PT": "โปรตุเกส - ยุโรป",
-		"qu": "ควิชัว",
+		"qu": "เคชวา",
 		"quc": "กีเช",
 		"qug": "ควิชัวไฮแลนด์ชิมโบราโซ",
 		"raj": "ราชสถาน",
@@ -467,7 +468,7 @@
 		"rwk": "รวา",
 		"sa": "สันสกฤต",
 		"sad": "ซันดาเว",
-		"sah": "ซาฮา",
+		"sah": "ซาคา",
 		"sam": "อราเมอิกซามาเรีย",
 		"saq": "แซมบูรู",
 		"sas": "ซาซัก",
@@ -478,7 +479,7 @@
 		"sc": "ซาร์เดญา",
 		"scn": "ซิซิลี",
 		"sco": "สกอตส์",
-		"sd": "สินธุ",
+		"sd": "สินธิ",
 		"sdc": "ซาร์ดิเนียซาสซารี",
 		"sdh": "เคอร์ดิชใต้",
 		"se": "ซามิเหนือ",
@@ -487,7 +488,7 @@
 		"sei": "เซรี",
 		"sel": "เซลคุป",
 		"ses": "โคย์ราโบโรเซนนี",
-		"sg": "แซงโก",
+		"sg": "ซันโก",
 		"sga": "ไอริชโบราณ",
 		"sgs": "ซาโมจิเตียน",
 		"sh": "เซอร์โบ-โครเอเชีย",
@@ -523,7 +524,7 @@
 		"sux": "ซูเมอ",
 		"sv": "สวีเดน",
 		"sw": "สวาฮีลี",
-		"sw_CD": "สวาฮีลี-คองโก",
+		"sw_CD": "สวาฮีลี - คองโก",
 		"swb": "โคเมอเรียน",
 		"syc": "ซีเรียแบบดั้งเดิม",
 		"syr": "ซีเรีย",
@@ -540,7 +541,7 @@
 		"ti": "ติกริญญา",
 		"tig": "ตีเกร",
 		"tiv": "ทิฟ",
-		"tk": "เติร์กเมนิสถาน",
+		"tk": "เติร์กเมน",
 		"tkl": "โตเกเลา",
 		"tkr": "แซคเซอร์",
 		"tl": "ตากาล็อก",
@@ -555,7 +556,7 @@
 		"tr": "ตุรกี",
 		"tru": "ตูโรโย",
 		"trv": "ทาโรโก",
-		"ts": "ซิิตซองกา",
+		"ts": "ซิตซองกา",
 		"tsd": "ซาโคเนีย",
 		"tsi": "ซิมชีแอน",
 		"tt": "ตาตาร์",
@@ -568,8 +569,7 @@
 		"tyv": "ตูวา",
 		"tzm": "ทามาไซต์แอตลาสกลาง",
 		"udm": "อุดมูร์ต",
-		"ug": "อุยกัว",
-		"ug_alt-variant": "อุยกูร์",
+		"ug": "อุยกูร์",
 		"uga": "ยูการิต",
 		"uk": "ยูเครน",
 		"umb": "อุมบุนดู",
@@ -603,7 +603,7 @@
 		"yap": "ยัป",
 		"yav": "แยงเบน",
 		"ybb": "เยมบา",
-		"yi": "ยิว",
+		"yi": "ยิดดิช",
 		"yo": "โยรูบา",
 		"yrl": "เหงงกาตุ",
 		"yue": "กวางตุ้ง",
@@ -660,17 +660,18 @@
 		"Egyh": "เฮียราติกอียิปต์",
 		"Egyp": "เฮียโรกลิฟส์อียิปต์",
 		"Elba": "เอลบ์ซาน",
-		"Ethi": "เอทิโอปิก",
+		"Ethi": "เอธิโอปิก",
 		"Geok": "คัตซูรีจอร์เจีย",
 		"Geor": "จอร์เจีย",
 		"Glag": "กลาโกลิติก",
+		"Gonm": "Gonm",
 		"Goth": "โกธิก",
 		"Gran": "คฤณห์",
 		"Grek": "กรีก",
 		"Gujr": "คุชราต",
 		"Guru": "กูร์มูคี",
-		"Hanb": "Hanb",
-		"Hang": "ฮันกูล",
+		"Hanb": "จีนกลาง",
+		"Hang": "ฮันกึล",
 		"Hani": "ฮั่น",
 		"Hano": "ฮานูโนโอ",
 		"Hans": "ตัวย่อ",
@@ -686,7 +687,7 @@
 		"Hung": "ฮังการีโบราณ",
 		"Inds": "อินดัส",
 		"Ital": "อิตาลีโบราณ",
-		"Jamo": "Jamo",
+		"Jamo": "จาโม",
 		"Java": "ชวา",
 		"Jpan": "ญี่ปุ่น",
 		"Jurc": "จูร์เชน",
@@ -750,55 +751,6 @@
 		"Phnx": "ฟินิเชีย",
 		"Plrd": "สัทศาสตร์พอลลาร์ด",
 		"Prti": "พาร์เทียอินสคริปชันแนล",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "เรจัง",
 		"Roro": "รองโกรองโก",
 		"Runr": "รูนิก",
@@ -813,6 +765,7 @@
 		"Sind": "คุดาวาดี",
 		"Sinh": "สิงหล",
 		"Sora": "โสราสมเป็ง",
+		"Soyo": "Soyo",
 		"Sund": "ซุนดา",
 		"Sylo": "ซิโลตินากรี",
 		"Syrc": "ซีเรีย",
@@ -826,7 +779,7 @@
 		"Taml": "ทมิฬ",
 		"Tang": "ตันกัท",
 		"Tavt": "ไทเวียต",
-		"Telu": "เทลูกู",
+		"Telu": "เตลูกู",
 		"Teng": "เทงกวาร์",
 		"Tfng": "ทิฟินาก",
 		"Tglg": "ตากาล็อก",
@@ -842,10 +795,11 @@
 		"Xpeo": "เปอร์เซียโบราณ",
 		"Xsux": "อักษรรูปลิ่มสุเมเรีย-อัคคาเดีย",
 		"Yiii": "ยิ",
+		"Zanb": "Zanb",
 		"Zinh": "อินเฮอริต",
 		"Zmth": "เครื่องหมายทางคณิตศาสตร์",
-		"Zsye": "Zsye",
-		"Zsym": "ซิมโบลส์",
+		"Zsye": "อีโมจิ",
+		"Zsym": "สัญลักษณ์",
 		"Zxxx": "ไม่มีภาษาเขียน",
 		"Zyyy": "สามัญ",
 		"Zzzz": "สคริปต์ที่ไม่รู้จัก"
@@ -858,6 +812,7 @@
 		"151": "ยุโรปตะวันออก",
 		"154": "ยุโรปเหนือ",
 		"155": "ยุโรปตะวันตก",
+		"202": "202",
 		"419": "ละตินอเมริกา",
 		"001": "โลก",
 		"002": "แอฟริกา",
@@ -921,14 +876,14 @@
 		"BZ": "เบลีซ",
 		"CA": "แคนาดา",
 		"CC": "หมู่เกาะโคโคส (คีลิง)",
-		"CD": "คองโก-กินชาซา",
+		"CD": "คองโก - กินชาซา",
 		"CD-alt-variant": "คองโก (สาธารณรัฐประชาธิปไตย)",
 		"CF": "สาธารณรัฐแอฟริกากลาง",
-		"CG": "คองโก-บราซซาวิล",
+		"CG": "คองโก - บราซซาวิล",
 		"CG-alt-variant": "คองโก (สาธารณรัฐ)",
 		"CH": "สวิตเซอร์แลนด์",
-		"CI": "ไอวอรี่โคสต์",
-		"CI-alt-variant": "CI",
+		"CI": "โกตดิวัวร์",
+		"CI-alt-variant": "ไอวอรี่โคสต์",
 		"CK": "หมู่เกาะคุก",
 		"CL": "ชิลี",
 		"CM": "แคเมอรูน",
@@ -941,7 +896,8 @@
 		"CW": "คูราเซา",
 		"CX": "เกาะคริสต์มาส",
 		"CY": "ไซปรัส",
-		"CZ": "สาธารณรัฐเช็ก",
+		"CZ": "เช็ก",
+		"CZ-alt-variant": "สาธารณรัฐเช็ก",
 		"DE": "เยอรมนี",
 		"DG": "ดิเอโกการ์เซีย",
 		"DJ": "จิบูตี",
@@ -949,7 +905,7 @@
 		"DM": "โดมินิกา",
 		"DO": "สาธารณรัฐโดมินิกัน",
 		"DZ": "แอลจีเรีย",
-		"EA": "ซีโอตาและเมลิลลา",
+		"EA": "เซวตาและเมลียา",
 		"EC": "เอกวาดอร์",
 		"EE": "เอสโตเนีย",
 		"EG": "อียิปต์",
@@ -958,6 +914,7 @@
 		"ES": "สเปน",
 		"ET": "เอธิโอเปีย",
 		"EU": "สหภาพยุโรป",
+		"EZ": "ยูโรโซน",
 		"FI": "ฟินแลนด์",
 		"FJ": "ฟิจิ",
 		"FK": "หมู่เกาะฟอล์กแลนด์",
@@ -1033,13 +990,13 @@
 		"MC": "โมนาโก",
 		"MD": "มอลโดวา",
 		"ME": "มอนเตเนโกร",
-		"MF": "เซนต์มาติน",
+		"MF": "เซนต์มาร์ติน",
 		"MG": "มาดากัสการ์",
 		"MH": "หมู่เกาะมาร์แชลล์",
 		"MK": "มาซิโดเนีย",
 		"MK-alt-variant": "มาซิโดเนีย (FYROM)",
 		"ML": "มาลี",
-		"MM": "เมียนม่าร์ (พม่า)",
+		"MM": "เมียนมาร์ (พม่า)",
 		"MN": "มองโกเลีย",
 		"MO": "เขตปกครองพิเศษมาเก๊าแห่งสาธารณรัฐประชาชนจีน",
 		"MO-alt-short": "มาเก๊า",
@@ -1100,17 +1057,17 @@
 		"SJ": "สฟาลบาร์และยานไมเอน",
 		"SK": "สโลวะเกีย",
 		"SL": "เซียร์ราลีโอน",
-		"SM": "ซานมารีโน",
+		"SM": "ซานมาริโน",
 		"SN": "เซเนกัล",
 		"SO": "โซมาเลีย",
 		"SR": "ซูรินาเม",
 		"SS": "ซูดานใต้",
 		"ST": "เซาตูเมและปรินซิปี",
 		"SV": "เอลซัลวาดอร์",
-		"SX": "เซนต์มาร์ติน",
+		"SX": "ซินต์มาร์เทน",
 		"SY": "ซีเรีย",
 		"SZ": "สวาซิแลนด์",
-		"TA": "ทริสตัน เดอ คูนา",
+		"TA": "ทริสตันดาคูนา",
 		"TC": "หมู่เกาะเติกส์และหมู่เกาะเคคอส",
 		"TD": "ชาด",
 		"TF": "เฟรนช์เซาเทิร์นเทร์ริทอรีส์",
@@ -1131,6 +1088,8 @@
 		"UA": "ยูเครน",
 		"UG": "ยูกันดา",
 		"UM": "หมู่เกาะรอบนอกของสหรัฐอเมริกา",
+		"UN": "สหประชาชาติ",
+		"UN-alt-short": "สหประชาชาติ",
 		"US": "สหรัฐอเมริกา",
 		"US-alt-short": "สหรัฐฯ",
 		"UY": "อุรุกวัย",
@@ -1172,8 +1131,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm น.",
@@ -1192,7 +1156,7 @@
 				"Hms": "HH:mm:ss",
 				"hmsv": "h:mm:ss a v",
 				"Hmsv": "HH:mm:ss v",
-				"hmv": "h:mm a v",
+				"hmv": "h:mm น. a v",
 				"Hmv": "HH:mm v",
 				"M": "L",
 				"Md": "d/M",
@@ -1219,7 +1183,9 @@
 				"yMMMMEd": "E d MMMM G y",
 				"yMMMMEEEEd": "EEEEที่ d MMMM G y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ G y"
+				"yQQQQ": "QQQQ G y",
+				"MMMMW": "สัปดาห์ที่ W ของ MMM",
+				"yw": "สัปดาห์ที่ w ของ Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1279,14 +1245,14 @@
 					"M": "d/M – d/M"
 				},
 				"MEd": {
-					"d": "E d – E d/M",
+					"d": "E d/M – E d/M/",
 					"M": "E d/M – E d/M"
 				},
 				"MMM": {
-					"M": "LLL–LLL"
+					"M": "MMM – MMM"
 				},
 				"MMMd": {
-					"d": "d – d MMM",
+					"d": "MMM d–d",
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
@@ -1305,12 +1271,12 @@
 					"y": "M/y – M/y"
 				},
 				"yMd": {
-					"d": "d–d/M/y",
+					"d": "d/M/y – d/M/y",
 					"M": "d/M/y – d/M/y",
 					"y": "d/M/y – d/M/y"
 				},
 				"yMEd": {
-					"d": "E d – E d/M/y",
+					"d": "E d/M/y – E d/M/y",
 					"M": "E d/M/y – E d/M/y",
 					"y": "E d/M/y – E d/M/y"
 				},
@@ -1324,7 +1290,7 @@
 					"y": "d MMM y – d MMM y"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM y",
+					"d": "E d MMM – E d MMM y",
 					"M": "E d MMM – E d MMM y",
 					"y": "E d MMM y – E d MMM y"
 				},
@@ -1334,8 +1300,8 @@
 					"y": "EEEEที่ d MMM y – EEEEที่ d MMM y"
 				},
 				"yMMMM": {
-					"M": "MMMM–MMMM G y",
-					"y": "MMMM G y – MMMM y"
+					"M": "MMMM – MMMM y",
+					"y": "MMMM y – MMMM y"
 				},
 				"yMMMMd": {
 					"d": "d–d MMMM G y",
@@ -1626,8 +1592,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1724,7 +1695,7 @@
 					"M": "d/M – d/M"
 				},
 				"MEd": {
-					"d": "E d – E d/M",
+					"d": "E d/M – E d/M",
 					"M": "E d/M – E d/M"
 				},
 				"MMM": {
@@ -1735,7 +1706,7 @@
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E d – E d MMM",
+					"d": "E d MMM – E d MMM",
 					"M": "E d MMM – E d MMM"
 				},
 				"MMMEEEEd": {
@@ -1750,12 +1721,12 @@
 					"y": "M/y – M/y G"
 				},
 				"yMd": {
-					"d": "d–d/M/y G",
+					"d": "d/M/y – d/M/y G",
 					"M": "d/M/y – d/M/y G",
 					"y": "d/M/y – d/M/y G"
 				},
 				"yMEd": {
-					"d": "E d – E d/M/y G",
+					"d": "E d/M/y – E d/M/y G",
 					"M": "E d/M/y – E d/M/y G",
 					"y": "E d/M/y – E d/M/y G"
 				},
@@ -1769,7 +1740,7 @@
 					"y": "d MMM G y – d MMM y"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM G y",
+					"d": "E d MMM – E d MMM G y",
 					"M": "E d MMM – E d MMM G y",
 					"y": "E d MMM G y – E d MMM y"
 				},
@@ -2053,8 +2024,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2151,7 +2127,7 @@
 					"M": "d/M – d/M"
 				},
 				"MEd": {
-					"d": "E d – E d/M",
+					"d": "E d/M – E d/M",
 					"M": "E d/M – E d/M"
 				},
 				"MMM": {
@@ -2162,7 +2138,7 @@
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E d – E d MMM",
+					"d": "E d MMM – E d MMM",
 					"M": "E d MMM – E d MMM"
 				},
 				"MMMEEEEd": {
@@ -2177,12 +2153,12 @@
 					"y": "M/y – M/y G"
 				},
 				"yMd": {
-					"d": "d–d/M/y G",
+					"d": "d/M/y – d/M/y G",
 					"M": "d/M/y – d/M/y G",
 					"y": "d/M/y – d/M/y G"
 				},
 				"yMEd": {
-					"d": "E d – E d/M/y G",
+					"d": "E d/M/y – E d/M/y G",
 					"M": "E d/M/y – E d/M/y G",
 					"y": "E d/M/y – E d/M/y G"
 				},
@@ -2196,7 +2172,7 @@
 					"y": "d MMM G y – d MMM y"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM G y",
+					"d": "E d MMM – E d MMM G y",
 					"M": "E d MMM – E d MMM G y",
 					"y": "E d MMM G y – E d MMM y"
 				},
@@ -2489,8 +2465,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2587,7 +2568,7 @@
 					"M": "d/M – d/M"
 				},
 				"MEd": {
-					"d": "E d – E d/M",
+					"d": "E d/M – E d/M",
 					"M": "E d/M – E d/M"
 				},
 				"MMM": {
@@ -2598,7 +2579,7 @@
 					"M": "d MMM – d MMM"
 				},
 				"MMMEd": {
-					"d": "E d – E d MMM",
+					"d": "E d MMM – E d MMM",
 					"M": "E d MMM – E d MMM"
 				},
 				"MMMEEEEd": {
@@ -2613,12 +2594,12 @@
 					"y": "M/y – M/y G"
 				},
 				"yMd": {
-					"d": "d–d/M/y G",
+					"d": "d/M/y – d/M/y G",
 					"M": "d/M/y – d/M/y G",
 					"y": "d/M/y – d/M/y G"
 				},
 				"yMEd": {
-					"d": "E d – E d/M/y G",
+					"d": "E d/M/y – E d/M/y G",
 					"M": "E d/M/y – E d/M/y G",
 					"y": "E d/M/y – E d/M/y G"
 				},
@@ -2632,7 +2613,7 @@
 					"y": "d MMM G y – d MMM y"
 				},
 				"yMMMEd": {
-					"d": "E d – E d MMM G y",
+					"d": "E d MMM – E d MMM G y",
 					"M": "E d MMM – E d MMM G y",
 					"y": "E d MMM G y – E d MMM y"
 				},
@@ -2939,9 +2920,9 @@
 		},
 		"quarter-wide": {
 			"displayName": "ไตรมาส",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "ไตรมาสที่แล้ว",
+			"relative-type-0": "ไตรมาสนี้",
+			"relative-type-1": "ไตรมาสหน้า",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ในอีก {0} ไตรมาส"
 			},
@@ -2951,9 +2932,9 @@
 		},
 		"quarter-short": {
 			"displayName": "ไตรมาส",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "ไตรมาสที่แล้ว",
+			"relative-type-0": "ไตรมาสนี้",
+			"relative-type-1": "ไตรมาสหน้า",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ใน {0} ไตรมาส"
 			},
@@ -2963,9 +2944,9 @@
 		},
 		"quarter-narrow": {
 			"displayName": "ไตรมาส",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "ไตรมาสที่แล้ว",
+			"relative-type-0": "ไตรมาสนี้",
+			"relative-type-1": "ไตรมาสหน้า",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ใน {0} ไตรมาส"
 			},
@@ -3019,7 +3000,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} สัปดาห์ที่ผ่านมา"
-			}
+			},
+			"relativePeriod": "สัปดาห์ที่เริ่มต้นวันที่"
 		},
 		"week-short": {
 			"displayName": "สัปดาห์",
@@ -3031,7 +3013,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} สัปดาห์ที่แล้ว"
-			}
+			},
+			"relativePeriod": "สัปดาห์ที่เริ่มต้นวันที่"
 		},
 		"week-narrow": {
 			"displayName": "สัปดาห์",
@@ -3043,7 +3026,8 @@
 			},
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-other": "{0} สัปดาห์ที่แล้ว"
-			}
+			},
+			"relativePeriod": "สัปดาห์ที่เริ่มต้นวันที่"
 		},
 		"day-wide": {
 			"displayName": "วัน",
@@ -3092,6 +3076,7 @@
 		},
 		"hour-wide": {
 			"displayName": "ชั่วโมง",
+			"relative-type-0": "ชั่วโมงนี้",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ในอีก {0} ชั่วโมง"
 			},
@@ -3101,6 +3086,7 @@
 		},
 		"hour-short": {
 			"displayName": "ชม.",
+			"relative-type-0": "ชั่วโมงนี้",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ใน {0} ชม."
 			},
@@ -3110,6 +3096,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "ชม.",
+			"relative-type-0": "ชั่วโมงนี้",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ใน {0} ชม."
 			},
@@ -3119,6 +3106,7 @@
 		},
 		"minute-wide": {
 			"displayName": "นาที",
+			"relative-type-0": "นาทีนี้",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ในอีก {0} นาที"
 			},
@@ -3128,6 +3116,7 @@
 		},
 		"minute-short": {
 			"displayName": "น.",
+			"relative-type-0": "นาทีนี้",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ใน {0} นาที"
 			},
@@ -3137,6 +3126,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "น.",
+			"relative-type-0": "นาทีนี้",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-other": "ใน {0} นาที"
 			},
@@ -3196,18 +3186,18 @@
 		"100000000000000-other": "000 ล้านล้าน"
 	},
 	"decimalFormat-short": {
-		"1000-other": "0 พ'.'",
-		"10000-other": "0 ม'.'",
-		"100000-other": "0 ส'.'",
-		"1000000-other": "0 ล'.'",
-		"10000000-other": "00 ล'.'",
-		"100000000-other": "000 ล'.'",
-		"1000000000-other": "0 พ'.'ล'.'",
-		"10000000000-other": "0 ม'.'ล'.'",
-		"100000000000-other": "0 ส'.'ล'.'",
-		"1000000000000-other": "0 ล'.'ล'.'",
-		"10000000000000-other": "00 ล'.'ล'.'",
-		"100000000000000-other": "000 ล'.'ล'.'"
+		"1000-other": "0K",
+		"10000-other": "00K",
+		"100000-other": "000K",
+		"1000000-other": "0M",
+		"10000000-other": "00M",
+		"100000000-other": "000M",
+		"1000000000-other": "0B",
+		"10000000000-other": "00B",
+		"100000000000-other": "000B",
+		"1000000000000-other": "0T",
+		"10000000000000-other": "00T",
+		"100000000000000-other": "000T"
 	},
 	"scientificFormat": {
 		"standard": "#E0"
@@ -3230,6 +3220,20 @@
 				"insertBetween": " "
 			}
 		}
+	},
+	"currencyFormat-short": {
+		"1000-other": "¤0K",
+		"10000-other": "¤00K",
+		"100000-other": "¤000K",
+		"1000000-other": "¤0M",
+		"10000000-other": "¤00M",
+		"100000000-other": "¤000M",
+		"1000000000-other": "¤0B",
+		"10000000000-other": "¤00B",
+		"100000000000-other": "¤000B",
+		"1000000000000-other": "¤0T",
+		"10000000000000-other": "¤00T",
+		"100000000000000-other": "¤000T"
 	},
 	"symbols-latn-decimal": ".",
 	"symbols-latn-group": ",",
@@ -3265,6 +3269,610 @@
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
+	"rtl": false,
+	"listPattern-standard-wide": {
+		"2": "{0}และ{1}",
+		"start": "{0} {1}",
+		"middle": "{0} {1}",
+		"end": "{0} และ{1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} หรือ {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} หรือ {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} หรือ {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} หรือ {1}"
+	},
+	"listPattern-standard-short": {
+		"2": "{0} และ {1}",
+		"start": "{0} {1}",
+		"middle": "{0} {1}",
+		"end": "{0} และ{1}"
+	},
+	"units": {
+		"short": {
+			"per": {
+				"compoundUnitPattern": "{0}/{1}"
+			},
+			"acceleration-g-force": {
+				"displayName": "แรง G",
+				"unitPattern-count-other": "{0} G"
+			},
+			"acceleration-meter-per-second-squared": {
+				"displayName": "เมตร/วินาที²",
+				"unitPattern-count-other": "{0} ม./วิ²"
+			},
+			"angle-revolution": {
+				"displayName": "รอบ",
+				"unitPattern-count-other": "{0} รอบ"
+			},
+			"angle-radian": {
+				"displayName": "เรเดียน",
+				"unitPattern-count-other": "{0} เรเดียน"
+			},
+			"angle-degree": {
+				"displayName": "องศา",
+				"unitPattern-count-other": "{0}°"
+			},
+			"angle-arc-minute": {
+				"displayName": "ลิปดา",
+				"unitPattern-count-other": "{0} ลิปดา"
+			},
+			"angle-arc-second": {
+				"displayName": "พิลิปดา",
+				"unitPattern-count-other": "{0} พิลิปดา"
+			},
+			"area-square-kilometer": {
+				"displayName": "ตร.กม.",
+				"unitPattern-count-other": "{0} ตร.กม.",
+				"perUnitPattern": "{0}/ตร.กม."
+			},
+			"area-hectare": {
+				"displayName": "เฮกตาร์",
+				"unitPattern-count-other": "{0} เฮกตาร์"
+			},
+			"area-square-meter": {
+				"displayName": "ตร.ม.",
+				"unitPattern-count-other": "{0} ตร.ม.",
+				"perUnitPattern": "{0}/ตร.ม."
+			},
+			"area-square-centimeter": {
+				"displayName": "ตร.ซม.",
+				"unitPattern-count-other": "{0} ตร.ซม.",
+				"perUnitPattern": "{0}/ตร.ซม."
+			},
+			"area-square-mile": {
+				"displayName": "ตร.ไมล์",
+				"unitPattern-count-other": "{0} ตร.ไมล์",
+				"perUnitPattern": "{0}/ตร.ไมล์"
+			},
+			"area-acre": {
+				"displayName": "เอเคอร์",
+				"unitPattern-count-other": "{0} เอเคอร์"
+			},
+			"area-square-yard": {
+				"displayName": "ตร.หลา",
+				"unitPattern-count-other": "{0} ตร.หลา"
+			},
+			"area-square-foot": {
+				"displayName": "ตร.ฟุต",
+				"unitPattern-count-other": "{0} ตร.ฟุต"
+			},
+			"area-square-inch": {
+				"displayName": "ตร.นิ้ว",
+				"unitPattern-count-other": "{0} ตร.นิ้ว",
+				"perUnitPattern": "{0}/ตร.นิ้ว"
+			},
+			"concentr-karat": {
+				"displayName": "กะรัต",
+				"unitPattern-count-other": "{0} กะรัต"
+			},
+			"concentr-milligram-per-deciliter": {
+				"displayName": "มก./ดล.",
+				"unitPattern-count-other": "{0} มก./ดล."
+			},
+			"concentr-millimole-per-liter": {
+				"displayName": "มิลลิโมล/ลิตร",
+				"unitPattern-count-other": "{0} มลม./ล."
+			},
+			"concentr-part-per-million": {
+				"displayName": "ส่วน/ล้าน",
+				"unitPattern-count-other": "{0} สตล."
+			},
+			"consumption-liter-per-kilometer": {
+				"displayName": "ลิตร/กม.",
+				"unitPattern-count-other": "{0} ล./กม."
+			},
+			"consumption-liter-per-100kilometers": {
+				"displayName": "ล./100 กม.",
+				"unitPattern-count-other": "{0} ล./100กม."
+			},
+			"consumption-mile-per-gallon": {
+				"displayName": "ไมล์/แกลลอน",
+				"unitPattern-count-other": "{0} ไมล์/แกลลอน"
+			},
+			"consumption-mile-per-gallon-imperial": {
+				"displayName": "ไมล์/แกลลอนอังกฤษ",
+				"unitPattern-count-other": "{0} ไมล์ต่อแกลลอนอังกฤษ"
+			},
+			"digital-terabyte": {
+				"displayName": "TB",
+				"unitPattern-count-other": "{0} TB"
+			},
+			"digital-terabit": {
+				"displayName": "Tb",
+				"unitPattern-count-other": "{0} Tb"
+			},
+			"digital-gigabyte": {
+				"displayName": "GB",
+				"unitPattern-count-other": "{0} GB"
+			},
+			"digital-gigabit": {
+				"displayName": "Gb",
+				"unitPattern-count-other": "{0} Gb"
+			},
+			"digital-megabyte": {
+				"displayName": "MB",
+				"unitPattern-count-other": "{0} MB"
+			},
+			"digital-megabit": {
+				"displayName": "Mb",
+				"unitPattern-count-other": "{0} Mb"
+			},
+			"digital-kilobyte": {
+				"displayName": "kB",
+				"unitPattern-count-other": "{0} kB"
+			},
+			"digital-kilobit": {
+				"displayName": "kb",
+				"unitPattern-count-other": "{0} kb"
+			},
+			"digital-byte": {
+				"displayName": "ไบต์",
+				"unitPattern-count-other": "{0} ไบต์"
+			},
+			"digital-bit": {
+				"displayName": "บิต",
+				"unitPattern-count-other": "{0} บิต"
+			},
+			"duration-century": {
+				"displayName": "ศตวรรษ",
+				"unitPattern-count-other": "{0} ศตวรรษ"
+			},
+			"duration-year": {
+				"displayName": "ปี",
+				"unitPattern-count-other": "{0} ปี",
+				"perUnitPattern": "{0}/ปี"
+			},
+			"duration-month": {
+				"displayName": "เดือน",
+				"unitPattern-count-other": "{0} เดือน",
+				"perUnitPattern": "{0}/เดือน"
+			},
+			"duration-week": {
+				"displayName": "สัปดาห์",
+				"unitPattern-count-other": "{0} สัปดาห์",
+				"perUnitPattern": "{0}/สัปดาห์"
+			},
+			"duration-day": {
+				"displayName": "วัน",
+				"unitPattern-count-other": "{0} วัน",
+				"perUnitPattern": "{0}/วัน"
+			},
+			"duration-hour": {
+				"displayName": "ชั่วโมง",
+				"unitPattern-count-other": "{0} ชม.",
+				"perUnitPattern": "{0}/ชม."
+			},
+			"duration-minute": {
+				"displayName": "นาที",
+				"unitPattern-count-other": "{0} นาที",
+				"perUnitPattern": "{0}/นาที"
+			},
+			"duration-second": {
+				"displayName": "วินาที",
+				"unitPattern-count-other": "{0} วิ",
+				"perUnitPattern": "{0}/วิ"
+			},
+			"duration-millisecond": {
+				"displayName": "มิลลิวินาที",
+				"unitPattern-count-other": "{0} มิลลิวินาที"
+			},
+			"duration-microsecond": {
+				"displayName": "ไมโครวินาที",
+				"unitPattern-count-other": "{0} ไมโครวิ"
+			},
+			"duration-nanosecond": {
+				"displayName": "นาโนวินาที",
+				"unitPattern-count-other": "{0} นาโนวิ"
+			},
+			"electric-ampere": {
+				"displayName": "แอมป์",
+				"unitPattern-count-other": "{0} แอมป์"
+			},
+			"electric-milliampere": {
+				"displayName": "มิลลิแอมป์",
+				"unitPattern-count-other": "{0} มิลลิแอมป์"
+			},
+			"electric-ohm": {
+				"displayName": "โอห์ม",
+				"unitPattern-count-other": "{0} Ω"
+			},
+			"electric-volt": {
+				"displayName": "โวลต์",
+				"unitPattern-count-other": "{0} V"
+			},
+			"energy-kilocalorie": {
+				"displayName": "กิโลแคลอรี",
+				"unitPattern-count-other": "{0} กิโลแคลอรี"
+			},
+			"energy-calorie": {
+				"displayName": "แคลอรี",
+				"unitPattern-count-other": "{0} แคลอรี"
+			},
+			"energy-foodcalorie": {
+				"displayName": "แคลอรี",
+				"unitPattern-count-other": "{0} แคลอรี"
+			},
+			"energy-kilojoule": {
+				"displayName": "กิโลจูล",
+				"unitPattern-count-other": "{0} กิโลจูล"
+			},
+			"energy-joule": {
+				"displayName": "จูล",
+				"unitPattern-count-other": "{0} จูล"
+			},
+			"energy-kilowatt-hour": {
+				"displayName": "กว.-ชม.",
+				"unitPattern-count-other": "{0} กว.-ชม."
+			},
+			"frequency-gigahertz": {
+				"displayName": "GHz",
+				"unitPattern-count-other": "{0} GHz"
+			},
+			"frequency-megahertz": {
+				"displayName": "MHz",
+				"unitPattern-count-other": "{0} MHz"
+			},
+			"frequency-kilohertz": {
+				"displayName": "kHz",
+				"unitPattern-count-other": "{0} kHz"
+			},
+			"frequency-hertz": {
+				"displayName": "Hz",
+				"unitPattern-count-other": "{0} Hz"
+			},
+			"length-kilometer": {
+				"displayName": "กม.",
+				"unitPattern-count-other": "{0} กม.",
+				"perUnitPattern": "{0}/กม."
+			},
+			"length-meter": {
+				"displayName": "เมตร",
+				"unitPattern-count-other": "{0} ม.",
+				"perUnitPattern": "{0}/ม."
+			},
+			"length-decimeter": {
+				"displayName": "ดม.",
+				"unitPattern-count-other": "{0} ดม."
+			},
+			"length-centimeter": {
+				"displayName": "ซม.",
+				"unitPattern-count-other": "{0} ซม.",
+				"perUnitPattern": "{0}/ซม."
+			},
+			"length-millimeter": {
+				"displayName": "มม.",
+				"unitPattern-count-other": "{0} มม."
+			},
+			"length-micrometer": {
+				"displayName": "ไมโครเมตร",
+				"unitPattern-count-other": "{0} ไมโครเมตร"
+			},
+			"length-nanometer": {
+				"displayName": "น.ม.",
+				"unitPattern-count-other": "{0} น.ม."
+			},
+			"length-picometer": {
+				"displayName": "พิโกเมตร",
+				"unitPattern-count-other": "{0} พิโกเมตร"
+			},
+			"length-mile": {
+				"displayName": "ไมล์",
+				"unitPattern-count-other": "{0} ไมล์"
+			},
+			"length-yard": {
+				"displayName": "หลา",
+				"unitPattern-count-other": "{0} หลา"
+			},
+			"length-foot": {
+				"displayName": "ฟุต",
+				"unitPattern-count-other": "{0} ฟุต",
+				"perUnitPattern": "{0}/ฟุต"
+			},
+			"length-inch": {
+				"displayName": "นิ้ว",
+				"unitPattern-count-other": "{0} นิ้ว",
+				"perUnitPattern": "{0}/นิ้ว"
+			},
+			"length-parsec": {
+				"displayName": "พาร์เซก",
+				"unitPattern-count-other": "{0} พาร์เซก"
+			},
+			"length-light-year": {
+				"displayName": "ปีแสง",
+				"unitPattern-count-other": "{0} ปีแสง"
+			},
+			"length-astronomical-unit": {
+				"displayName": "หน่วยดาราศาสตร์",
+				"unitPattern-count-other": "{0} หน่วยดาราศาสตร์"
+			},
+			"length-furlong": {
+				"displayName": "fur",
+				"unitPattern-count-other": "{0} fur"
+			},
+			"length-fathom": {
+				"displayName": "fm",
+				"unitPattern-count-other": "{0} fm"
+			},
+			"length-nautical-mile": {
+				"displayName": "ไมล์ทะเล",
+				"unitPattern-count-other": "{0} ไมล์ทะเล"
+			},
+			"length-mile-scandinavian": {
+				"displayName": "ไมล์สแกนดินีเวีย",
+				"unitPattern-count-other": "{0} ไมล์สแกนดินีเวีย"
+			},
+			"length-point": {
+				"displayName": "จุด",
+				"unitPattern-count-other": "{0} จุด"
+			},
+			"light-lux": {
+				"displayName": "ลักซ์",
+				"unitPattern-count-other": "{0} ลักซ์"
+			},
+			"mass-metric-ton": {
+				"displayName": "ต.",
+				"unitPattern-count-other": "{0} ต."
+			},
+			"mass-kilogram": {
+				"displayName": "กก.",
+				"unitPattern-count-other": "{0} กก.",
+				"perUnitPattern": "{0}/กก."
+			},
+			"mass-gram": {
+				"displayName": "กรัม",
+				"unitPattern-count-other": "{0} ก.",
+				"perUnitPattern": "{0}/ก."
+			},
+			"mass-milligram": {
+				"displayName": "มก.",
+				"unitPattern-count-other": "{0} มก."
+			},
+			"mass-microgram": {
+				"displayName": "มคก.",
+				"unitPattern-count-other": "{0} มคก."
+			},
+			"mass-ton": {
+				"displayName": "ตัน",
+				"unitPattern-count-other": "{0} ตัน"
+			},
+			"mass-stone": {
+				"displayName": "st",
+				"unitPattern-count-other": "{0} st"
+			},
+			"mass-pound": {
+				"displayName": "ปอนด์",
+				"unitPattern-count-other": "{0} ปอนด์",
+				"perUnitPattern": "{0}/ปอนด์"
+			},
+			"mass-ounce": {
+				"displayName": "ออนซ์",
+				"unitPattern-count-other": "{0} ออนซ์",
+				"perUnitPattern": "{0}/ออนซ์"
+			},
+			"mass-ounce-troy": {
+				"displayName": "ทรอยออนซ์",
+				"unitPattern-count-other": "{0} ทรอยออนซ์"
+			},
+			"mass-carat": {
+				"displayName": "กะรัต",
+				"unitPattern-count-other": "{0} กะรัต"
+			},
+			"power-gigawatt": {
+				"displayName": "กิกะวัตต์",
+				"unitPattern-count-other": "{0} กิกะวัตต์"
+			},
+			"power-megawatt": {
+				"displayName": "เมกะวัตต์",
+				"unitPattern-count-other": "{0} เมกะวัตต์"
+			},
+			"power-kilowatt": {
+				"displayName": "กิโลวัตต์",
+				"unitPattern-count-other": "{0} กิโลวัตต์"
+			},
+			"power-watt": {
+				"displayName": "วัตต์",
+				"unitPattern-count-other": "{0} วัตต์"
+			},
+			"power-milliwatt": {
+				"displayName": "มิลลิวัตต์",
+				"unitPattern-count-other": "{0} มิลลิวัตต์"
+			},
+			"power-horsepower": {
+				"displayName": "แรงม้า",
+				"unitPattern-count-other": "{0} แรงม้า"
+			},
+			"pressure-hectopascal": {
+				"displayName": "เฮกโตปาสกาล",
+				"unitPattern-count-other": "{0} เฮกโตปาสกาล"
+			},
+			"pressure-millimeter-of-mercury": {
+				"displayName": "มม. ปรอท",
+				"unitPattern-count-other": "{0} มม. ปรอท"
+			},
+			"pressure-pound-per-square-inch": {
+				"displayName": "ปอนด์/ตร.นิ้ว",
+				"unitPattern-count-other": "{0} ปอนด์/ตร.นิ้ว"
+			},
+			"pressure-inch-hg": {
+				"displayName": "นิ้วปรอท",
+				"unitPattern-count-other": "{0} นิ้วปรอท"
+			},
+			"pressure-millibar": {
+				"displayName": "มิลลิบาร์",
+				"unitPattern-count-other": "{0} มิลลิบาร์"
+			},
+			"speed-kilometer-per-hour": {
+				"displayName": "กม./ชั่วโมง",
+				"unitPattern-count-other": "{0} กม./ชม."
+			},
+			"speed-meter-per-second": {
+				"displayName": "เมตรต่อวินาที",
+				"unitPattern-count-other": "{0} ม./วิ"
+			},
+			"speed-mile-per-hour": {
+				"displayName": "ไมล์/ชั่วโมง",
+				"unitPattern-count-other": "{0} ไมล์/ชม."
+			},
+			"speed-knot": {
+				"displayName": "นอต",
+				"unitPattern-count-other": "{0} นอต"
+			},
+			"temperature-generic": {
+				"displayName": "°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"temperature-celsius": {
+				"displayName": "องศาเซลเซียส",
+				"unitPattern-count-other": "{0}°C"
+			},
+			"temperature-fahrenheit": {
+				"displayName": "องศาฟาเรนไฮต์",
+				"unitPattern-count-other": "{0}°F"
+			},
+			"temperature-kelvin": {
+				"displayName": "K",
+				"unitPattern-count-other": "{0} K"
+			},
+			"volume-cubic-kilometer": {
+				"displayName": "ลบ.กม.",
+				"unitPattern-count-other": "{0} ลบ.กม."
+			},
+			"volume-cubic-meter": {
+				"displayName": "ลบ.ม.",
+				"unitPattern-count-other": "{0} ลบ.ม.",
+				"perUnitPattern": "{0}/ลบ.ม."
+			},
+			"volume-cubic-centimeter": {
+				"displayName": "ลบ.ซม.",
+				"unitPattern-count-other": "{0} ลบ.ซม.",
+				"perUnitPattern": "{0}/ลบ.ซม."
+			},
+			"volume-cubic-mile": {
+				"displayName": "ลบ.ไมล์",
+				"unitPattern-count-other": "{0} ลบ.ไมล์"
+			},
+			"volume-cubic-yard": {
+				"displayName": "ลบ.หลา",
+				"unitPattern-count-other": "{0} ลบ.หลา"
+			},
+			"volume-cubic-foot": {
+				"displayName": "ลบ.ฟุต",
+				"unitPattern-count-other": "{0} ลบ.ฟุต"
+			},
+			"volume-cubic-inch": {
+				"displayName": "ลบ.นิ้ว",
+				"unitPattern-count-other": "{0} ลบ.นิ้ว"
+			},
+			"volume-megaliter": {
+				"displayName": "เมกะลิตร",
+				"unitPattern-count-other": "{0} เมกะลิตร"
+			},
+			"volume-hectoliter": {
+				"displayName": "ฮล.",
+				"unitPattern-count-other": "{0} ฮล."
+			},
+			"volume-liter": {
+				"displayName": "ลิตร",
+				"unitPattern-count-other": "{0} ล.",
+				"perUnitPattern": "{0}/ล."
+			},
+			"volume-deciliter": {
+				"displayName": "ดล.",
+				"unitPattern-count-other": "{0} ดล."
+			},
+			"volume-centiliter": {
+				"displayName": "ซล.",
+				"unitPattern-count-other": "{0} ซล."
+			},
+			"volume-milliliter": {
+				"displayName": "มล.",
+				"unitPattern-count-other": "{0} มล."
+			},
+			"volume-pint-metric": {
+				"displayName": "ไพนต์เมตริก",
+				"unitPattern-count-other": "{0} ไพนต์เมตริก"
+			},
+			"volume-cup-metric": {
+				"displayName": "ถ. เมตริก",
+				"unitPattern-count-other": "{0} ถ. เมตริก"
+			},
+			"volume-acre-foot": {
+				"displayName": "เอเคอร์-ฟุต",
+				"unitPattern-count-other": "{0} เอเคอร์-ฟุต"
+			},
+			"volume-bushel": {
+				"displayName": "bu",
+				"unitPattern-count-other": "{0} bu"
+			},
+			"volume-gallon": {
+				"displayName": "แกลลอน",
+				"unitPattern-count-other": "{0} แกลลอน",
+				"perUnitPattern": "{0}/แกลลอน"
+			},
+			"volume-gallon-imperial": {
+				"displayName": "แกลลอนอังกฤษ",
+				"unitPattern-count-other": "{0} แกลลอนอังกฤษ",
+				"perUnitPattern": "{0}/แกลลอนอังกฤษ"
+			},
+			"volume-quart": {
+				"displayName": "คว.",
+				"unitPattern-count-other": "{0} คว."
+			},
+			"volume-pint": {
+				"displayName": "ไพนต์",
+				"unitPattern-count-other": "{0} ไพนต์"
+			},
+			"volume-cup": {
+				"displayName": "ถ้วย",
+				"unitPattern-count-other": "{0} ถ."
+			},
+			"volume-fluid-ounce": {
+				"displayName": "ฟลูอิดออนซ์",
+				"unitPattern-count-other": "{0} ฟลูอิดออนซ์"
+			},
+			"volume-tablespoon": {
+				"displayName": "ชต.",
+				"unitPattern-count-other": "{0} ชต."
+			},
+			"volume-teaspoon": {
+				"displayName": "ชช.",
+				"unitPattern-count-other": "{0} ชช."
+			},
+			"coordinateUnit": {
+				"east": "{0} ตอ",
+				"north": "{0} น",
+				"south": "{0}ใต้",
+				"west": "{0} ตต"
+			}
+		}
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
@@ -3273,13 +3881,9 @@
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
-		"CAD": 2,
-		"CHF": 2,
 		"CLF": 4,
 		"CLP": 0,
 		"COP": 0,
-		"CRC": 0,
-		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
@@ -3333,6 +3937,7 @@
 		"ZMK": 0,
 		"ZWD": 0
 	},
+	"plurals": {},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 0,
 	"weekData-weekendStart": 6,

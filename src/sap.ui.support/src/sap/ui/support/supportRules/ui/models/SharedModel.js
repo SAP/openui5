@@ -3,11 +3,15 @@
  */
 
 sap.ui.define([
+	"sap/ui/support/library",
 	"sap/ui/model/json/JSONModel"
-], function (JSONModel) {
+], function (library, JSONModel) {
 	"use strict";
 
-	var executionScopes = {
+	var Audiences = library.Audiences,
+		Categories = library.Categories,
+		Severity = library.Severity,
+		executionScopes = {
 			global: {
 				key: "global",
 				displayName: "Global",
@@ -43,29 +47,31 @@ sap.ui.define([
 		updateRuleStringified: "",
 		subtreeExecutionContextId: "",
 		availableComponents: [],
-		audiences: sap.ui.support.Audiences,
-		categories: sap.ui.support.Categories,
-		severities: sap.ui.support.Severity,
-		audiencesFilter : ["All"].concat(Object.keys(sap.ui.support.Audiences)),
-		categoriesFilter : ["All"].concat(Object.keys(sap.ui.support.Categories)),
-		severitiesFilter : ["All"].concat(Object.keys(sap.ui.support.Severity)),
+		audiences: Audiences,
+		categories: Categories,
+		severities: Severity,
+		audiencesFilter : ["All"].concat(Object.keys(Audiences)),
+		categoriesFilter : ["All"].concat(Object.keys(Categories)),
+		severitiesFilter : ["All"].concat(Object.keys(Severity)),
 		newEmptyRule: {
 			libName: "",
 			id: "",
-			categories: [sap.ui.support.Categories.Other],
-			audiences: [sap.ui.support.Audiences.Internal],
+			categories: [Categories.Other],
+			audiences: [Audiences.Internal],
 			title: "",
 			description: "",
 			resolution: "",
 			resolutionurls: [],
-			check: "function(oIssueManager, oCoreFacade, oScope) {\n\t/* \n\t oIssueManager - allows you to add new issues with the addIssue() method \n\t oCoreFacade - gives you access to state of the core: getMetadata(), getUIAreas(), getComponents(), getModels() \n\t oScope - retrieves elements in the scope with these methods: getElements(), getElementsByClassName(className), getLoggedObjects(type) \n\t*/ \n}",
-			selected: true
+			check: "function (oIssueManager, oCoreFacade, oScope) {\n\t/* \n\t oIssueManager - allows you to add new issues with the addIssue() method \n\t oCoreFacade - gives you access to state of the core: getMetadata(), getUIAreas(), getComponents(), getModels() \n\t oScope - retrieves elements in the scope with these methods: getElements(), getElementsByClassName(className), getLoggedObjects(type) \n\t fnResolve - optional, passed when the rule property async is set to true \n\t*/ \n}",
+			selected: true,
+			async: false
 		},
 		editRule: null,
 		tempLink: {
 			href: "",
 			text: ""
 		},
+		resolveDescription: "Make sure to resolve your async rule by using the passed fnResolve function",
 		selectedRuleStringify: "",
 		analyzeContext: executionScopes.global,
 		executionScopes: executionScopes,
@@ -77,7 +83,13 @@ sap.ui.define([
 		persistingSettings: false,
 		loadingAdditionalRuleSets: false,
 		analyzedFinish: false,
-		selectedRules: true
+		selectedRules: true,
+		filteredIssues: null,
+		issuesCount: 0,
+		visibleRowCount: 5,
+		supportAssistantOrigin: "",
+		supportAssistantVersion: "",
+		initialRulesLoading: true
 	});
 
 	return model;

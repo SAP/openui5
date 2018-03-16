@@ -1,0 +1,308 @@
+<core:View xmlns:core="sap.ui.core" xmlns="sap.m"
+		   xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform" xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
+		   xmlns:customData="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+		   xmlns:form="sap.ui.layout.form" xmlns:smartTable="sap.ui.comp.smarttable"
+		   xmlns:smartLink="sap.ui.comp.navpopover"
+		   xmlns:html="http://www.w3.org/1999/xhtml"
+		   xmlns:sap.ui.layout="sap.ui.layout"
+		   xmlns:sap.ui.rta="sap.ui.rta"
+		   xmlns:sap.ui.dt="sap.ui.dt"
+		   xmlns:sap.ui.fl="sap.ui.fl"
+		   xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+		   controllerName="sap.ui.rta.test.ComplexTest">
+
+	<Page title="{i18n>appTitle}" id="mainPage">
+		<headerContent>
+			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
+		</headerContent>
+		<content>
+			<sap.ui.layout:VerticalLayout id="layout0" width="100%">
+				<ObjectHeader id="obheader0" title="{CompanyCodeName}" number="{Summary}" numberUnit="{CoCodeCurrency}">
+					<attributes>
+						<ObjectAttribute id="attribute1" title="{AccountingDocumentTypeName}" text="{AccountingDocument}" active="false"/>
+					</attributes>
+					<statuses>
+						<ObjectStatus id="status1" text="{AccountingDocumentStatus}" state="Error"/>
+					</statuses>
+					<attributes>
+						<ObjectAttribute id="attribute2" title="{OverallDiscount}" text="{OverallDiscountAmount}" active="false"/>
+					</attributes>
+					<statuses>
+						<ObjectStatus id="status2" text="{ExpirationState}" state="Error"/>
+					</statuses>
+				</ObjectHeader>
+			</sap.ui.layout:VerticalLayout>
+			<sap.ui.layout:VerticalLayout width="100%">
+				<Button id="smartFormPopoverButton" text="Open Popover" press=".openSmartFormPopover" />
+				<Button id="smartFormDialogButton" text="Open Smart Form Dialog" press=".openSmartFormDialog" />
+				<core:Fragment fragmentName="sap.ui.rta.test.fragment.QUnitTestArea" type="XML"></core:Fragment>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
+				<smartForm:SmartForm id="MainFormExpandable" title="Expandable SmartForm" editable="true" entityType="Header" ignoredFields="TransactionCode" expandable="true" expanded="true">
+					<smartForm:Group id="MainFormExpandable.GeneralLedgerDocument" label="General Ledger Document" expandable="true">
+						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.Name" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocument}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.CompanyCode" >
+							<smartField:SmartField value="{CompanyCode}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Ship-to-Adress" id="MainFormExpandable.GeneralLedgerDocument.CompanyAdress" >
+							<smartField:SmartField value="{CompanyAdress}">
+							</smartField:SmartField>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.TextArea" >
+							<TextArea value="{CreatedByUserName}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.Mandatory" >
+							<smartField:SmartField value="Some Value" mandatory="true"></smartField:SmartField>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Hello" id="MainFormExpandable.GeneralLedgerDocument.I18NTest" >
+							<smartField:SmartField value="{i18n>groupElementLabelText}">
+							</smartField:SmartField>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="One-Bound-Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton" >
+							<Button text="{i18n>buttonText}"></Button>
+							<TextArea value="{CreatedByUser}"></TextArea>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="No-Bound-Field" id="MainFormExpandable.GeneralLedgerDocument.BoundButton34" >
+							<Button text="{i18n>buttonText}"></Button>
+							<TextArea value="Some Text"></TextArea>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.UnboundButton" >
+							<Button text="No Binding"></Button>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Expiry Date" id="MainFormExpandable.GeneralLedgerDocument.ExpirationDate" >
+							<smartField:SmartField value="{ExpirationDate}" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.ValidityFrom" >
+							<smartField:SmartField value="{ValidityFrom}" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.ValidityTo" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{ValidityTo}" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="MainFormExpandable.GeneralLedgerDocument.RequestedDeliveryDate" >
+							<smartField:SmartField value="{RequestedDeliveryDate}" />
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group label="Dates" id="MainFormExpandable.Dates" expandable="true">
+						<smartForm:GroupElement label="Belegdatum" id="MainFormExpandable.Dates.DocumentDate" >
+							<smartField:SmartField value="{DocumentDate}" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Two-Bound-Fields" id="MainFormExpandable.GeneralLedgerDocument.BoundButton35" >
+							<Button text="{PostingDate}"></Button>
+							<TextArea value="{CreationDate}"></TextArea>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
+				<smartForm:SmartForm id="MainForm1" title="Personal Data" editable="true" entityType="Header">
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
+				<form:SimpleForm title="SimpleForm with toolbars" id="SimpleFormWithToolbars"
+								 maxContainerCols="3"
+								 editable="true"
+								 layout="ResponsiveGridLayout"
+								 labelSpanXL="4"
+								 labelSpanL="4"
+								 labelSpanM="4"
+								 emptySpanXL="0"
+								 emptySpanL="0"
+								 emptySpanM="0"
+								 columnsXL="3"
+								 columnsL="2"
+								 columnsM="2"
+								 class="editableForm">
+					<form:content>
+						<Toolbar id="Toolbar0">
+							<Title text="Office" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://settings"/>
+						</Toolbar>
+						<Label id="Tlabel0" text="Name" />
+						<Input id="Tinput0" value="" />
+						<Label id="Tlabel1" text="Street/No." />
+						<Input id="Tinput1" value="">
+						</Input>
+						<Input id="Tinput2" value="">
+							<layoutData>
+								<sap.ui.layout:GridData span="L3 M3 S4" />
+							</layoutData>
+						</Input>
+						<Label id="Tlabel2" text="ZIP Code/City" />
+						<Input id="Tinput3" value="">
+							<layoutData>
+								<sap.ui.layout:GridData span="L3 M3 S4" />
+							</layoutData>
+						</Input>
+						<Input id="Tinput4" value="" />
+						<Label id="Tlabel3" text="Country" />
+						<Select id="TSelect0" width="100%">
+							<items>
+								<core:Item text="Germany" />
+								<core:Item text="USA" />
+								<core:Item text="England" />
+							</items>
+						</Select>
+						<Toolbar id="Toolbar1">
+							<Title text="Online" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://settings"/>
+						</Toolbar>
+						<Label id="Tlabel4" text="Web" />
+						<Input id="Tinput5" value="" />
+						<Label id="Tlabel5" text="Twitter" />
+						<Input id="Tinput6" value="" />
+						<Toolbar id="Toolbar2">
+							<Title text="Contact" level="H5" titleStyle="H5"/>
+							<ToolbarSpacer />
+							<Button icon="sap-icon://settings"/>
+						</Toolbar>
+						<Label id="Tlabel6" text="Email" />
+						<Input id="Tinput7" value="" type="Email" />
+						<Label id="Tlabel7" text="Tel." />
+						<Input id="Tinput8" value="" type="Tel" />
+						<Label id="Tlabel8" text="SMS" />
+						<Input id="Tinput9" value="" type="Tel" />
+						<Toolbar id="Toolbar3">
+							<Title text="Toolbar with Title control" level="H5" titleStyle="H5"/>
+						</Toolbar>
+						<Label id="Tlabel9" text="Add. Information" />
+						<Input id="Tinput10" value="Some text"  />
+						<Toolbar id="Toolbar4">
+							<Label id="Tlabel10" text="Toolbar with Label control" />
+						</Toolbar>
+						<Label id="Tlabel11" text="More Information" />
+						<Input id="Tinput11" value="More text"  />
+					</form:content>
+				</form:SimpleForm>
+			</sap.ui.layout:VerticalLayout>
+			<sap.ui.layout:VerticalLayout width="100%">
+				<smartForm:SmartForm title="SmartForm without stable ids" entityType="Header, Tax">
+					<smartForm:layout>
+						<smartForm:Layout columnsL="2" breakpointL="900" />
+					</smartForm:layout>
+					<smartForm:Group label="General Ledger Document" >
+						<smartForm:GroupElement label="Ship-to-Party">
+							<smartField:SmartField value="{CompanyCode}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group label="Dates" >
+						<smartForm:GroupElement label="BLA42" >
+							<smartField:SmartField value="{DocumentDate}" />
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Buchungsdatum" >
+							<smartField:SmartField value="{PostingDate}" />
+						</smartForm:GroupElement>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout id = "smartFilterLayout" width="100%">
+				<Button id="toggleUpdateMode" text="Change to 'LiveMode'" press="toggleUpdateMode"></Button>
+				<smartFilterBar:SmartFilterBar id="smartFilterBar"
+											   entityType="LineItems">
+					<smartFilterBar:controlConfiguration>
+						<smartFilterBar:ControlConfiguration
+								key="MyOwnFilterField" index="1" label="Custom Filter Field"
+								groupId="_BASIC" width="300px" mandatory="mandatory"
+								visibleInAdvancedArea="true">
+							<smartFilterBar:customControl>
+								<Select id="foo" customData:hasValue="true">
+									<core:Item key="1" text="ONE" />
+									<core:Item key="2" text="TWO" />
+									<core:Item key="3" text="THREE" />
+								</Select>
+							</smartFilterBar:customControl>
+						</smartFilterBar:ControlConfiguration>
+					</smartFilterBar:controlConfiguration>
+					<!-- layout data used to make the table growing but the filter bar fixed -->
+					<smartFilterBar:layoutData>
+						<FlexItemData shrinkFactor="0"/>
+					</smartFilterBar:layoutData>
+				</smartFilterBar:SmartFilterBar>
+				<smartTable:SmartTable id="smartTable" entitySet="LineItemsSet"
+									   smartFilterId="smartFilterBar" tableType="Table" useExportToExcel="true"
+									   useVariantManagement="false" useTablePersonalisation="true" header="Line Items"
+									   showRowCount="true">
+					<smartTable:layoutData>
+						<FlexItemData growFactor="1" baseSize="0%" />
+					</smartTable:layoutData>
+				</smartTable:SmartTable>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%"  class="sapUiLargeMarginTop">
+				<smartForm:SmartForm id="SmartForm01" title="Smart Form with standard layout" editable="true" entityType="Header" ignoredFields="TransactionCode">
+					<smartForm:Group id="SmartFormGroup01" label="SmartForm Group 01">
+						<smartForm:GroupElement id="SmartFormGroup01.CompanyCodeName" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{CompanyCodeName}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group id="SmartFormGroup02" label="SmartForm Group 02" >
+						<smartForm:GroupElement id="SmartFormGroup01.CreationTime" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{CreationTime}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="SmartFormGroup01.BoundButton01" label="No-Bound-Field" >
+							<Button text="{i18n>buttonText}"></Button>
+							<TextArea value="Some Text"></TextArea>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="SmartFormGroup01.UnboundButton" label="No-Bound-Field-1">
+							<Button text="No Binding"></Button>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group id="SmartFormGroup03" label="SmartForm Group 03 with GridData ('L6 M6 S6')">
+						<smartForm:layout>
+							<sap.ui.layout:GridData span="L6 M6 S6" />
+						</smartForm:layout>
+						<smartForm:GroupElement id="SmartFormGroup01.ReferenceDocumentTypeName" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{ReferenceDocumentTypeName}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
+				<smartForm:SmartForm id="SmartForm02" title="Smart Form with horizontal layout" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
+					<smartForm:Group id="SmartForm02Group01" label="SmartForm Group 01" >
+						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentType" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentType}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group id="SmartForm02Group02" label="SmartForm Group 02">
+						<smartForm:GroupElement id="SmartForm02Group01.AccountingDocumentStatus" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{AccountingDocumentStatus}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement label="Partially visible combined field" id="SmartForm02Group01.PartiallyVisible" >
+							<smartField:SmartField value="{AccountingDocumentCategoryName}"/>
+							<smartField:SmartField value="{TaxIsCalculatedAutomatically}" visible="false"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout width="100%">
+				<smartForm:SmartForm id="SmartForm03" title="Smart Form with smartForm:Layout aggregation (gridDataSpan='L1 M1 S1')" editable="true" entityType="Header" ignoredFields="TransactionCode" useHorizontalLayout="true">
+					<smartForm:layout>
+						<smartForm:Layout gridDataSpan="L1 M1 S1" />
+					</smartForm:layout>
+					<smartForm:Group id="SmartForm03Group01" label="SmartForm Group 01" >
+						<smartForm:GroupElement id="SmartForm03Group01.AlternativeReferenceDocument" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{AlternativeReferenceDocument}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+					<smartForm:Group id="SmartForm03Group02" label="SmartForm Group 02">
+						<smartForm:GroupElement id="SmartForm03Group01.CoCodeCurrency" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{CoCodeCurrency}"/>
+							<smartField:SmartField editable="true" contextEditable="true" value="{TransactionCurrency}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+
+		</content>
+	</Page>
+</core:View>

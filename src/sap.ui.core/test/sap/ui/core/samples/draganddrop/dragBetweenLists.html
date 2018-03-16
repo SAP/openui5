@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+
+		<title>Drag and Drop: between lists</title>
+
+		<script id='sap-ui-bootstrap'
+			src='../../../../../../resources/sap-ui-core.js'
+			data-sap-ui-xx-supportedLanguages="en"
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.m'></script>
+
+		<script>
+			jQuery.sap.registerModulePath("mvc", "./mvc");
+
+			var oData = {
+				names: [
+					{firstName: "Peter", lastName: "Mueller"},
+					{firstName: "Petra", lastName: "Maier"},
+					{firstName: "Thomas", lastName: "Smith"},
+					{firstName: "John", lastName: "Williams"},
+					{firstName: "Maria", lastName: "Jones"}
+				],
+				selectedNames: []
+			};
+
+			// create a Model with this data
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(oData);
+			sap.ui.getCore().setModel(oModel);
+
+			// create the UI
+			sap.ui.xmlview({viewName:"mvc.betweenLists"}).placeAt("content");
+		</script>
+
+	</head>
+	<body class='sapUiBody' id='content'>
+	</body>
+</html>

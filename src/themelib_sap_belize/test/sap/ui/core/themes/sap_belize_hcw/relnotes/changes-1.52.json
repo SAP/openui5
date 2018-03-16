@@ -1,0 +1,163 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "0d9fbe1ed8db027bb5c49d94d00451d870c5afe8",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPage: Visual indicator for expand/collapse added",
+        "references": []
+      },
+      {
+        "id": "3384a42df7e24643fa3ccc4bd25b81b531205314",
+        "type": "FEATURE",
+        "text": " sap.f.DynamicPageTitle: New breadcrumbs aggregation added",
+        "references": []
+      },
+      {
+        "id": "d70fdcc726e0958febe7b6c4bac835edd80bfaa3",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Week numbers are now displayed",
+        "references": []
+      },
+      {
+        "id": "e4f1ecb029fe592d4b0d4b215c775677d2478adf",
+        "type": "FEATURE",
+        "text": " sap.m.RatingIndicator: editable property is added",
+        "references": []
+      },
+      {
+        "id": "6331a15a7874dd5763f8d3023ef0ec2032b482fa",
+        "type": "FEATURE",
+        "text": " sap.m.Table: alternateRowColors property added",
+        "references": []
+      },
+      {
+        "id": "6c930aa98f401c8fc8c6c774010601cafe5d3600",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Added visual indicator for ObjectPageDynamicHeaderTitle",
+        "references": []
+      },
+      {
+        "id": "4f55a9b43b01094011772b329831ed11278e8d94",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageLayout: Enabled toggle header on title press",
+        "references": []
+      },
+      {
+        "id": "73f60e47dc5de5f19016ad5409677a25428b385b",
+        "type": "FIX",
+        "text": " @sapShell_TextColor: contrast statement for Belize flavors",
+        "references": []
+      },
+      {
+        "id": "82f486cf84653fc9590c0208b8967b1718a65f41",
+        "type": "FIX",
+        "text": " @sapUiShellGroupTextColor: contrast statement removed",
+        "references": []
+      },
+      {
+        "id": "7f4839656213fb8c6c5175110df1285aef2ded2b",
+        "type": "FIX",
+        "text": " Revert: @sapShell_TextColor: contrast statement for Belize flavors",
+        "references": []
+      },
+      {
+        "id": "ba487d1c831d714a2af7065ef0119f38898cbe10",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "b8ff1e1856c40a11b5eb21dd8d64385c902c1312",
+        "type": "FIX",
+        "text": " ShellHeader Layout fixed",
+        "references": []
+      },
+      {
+        "id": "7992aaeae9dab269bafaf900113ec7468a1f8239",
+        "type": "FIX",
+        "text": " sap.m.GrowingEnablement: Fix updateDiff handling for empty diffs",
+        "references": []
+      },
+      {
+        "id": "fd583bb32a2dd4fa8970f630214749c7ee9c3270",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: The \"show all\" filter focus is now correct",
+        "references": []
+      },
+      {
+        "id": "c7e3bd17c308dbd3431fb45ed71339deda187863",
+        "type": "FIX",
+        "text": " sap.m.Input: Value state icon is now correctly shown",
+        "references": []
+      },
+      {
+        "id": "06b8ee66dd6bec25b70eb2875574a0d2ff8d019b",
+        "type": "FIX",
+        "text": " sap.m.Label: Dispaly only colors in Belize Plus are now correct",
+        "references": []
+      },
+      {
+        "id": "2c7b6541e49b6447397eaa7c657d1ec1db65754f",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Focus should be visible when the control is read only",
+        "references": []
+      },
+      {
+        "id": "265aa8f4a0ec76bd2656934425e316a4771a2427",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: correct different height of the ObjectAttributeDiv between IE and Chrome",
+        "references": []
+      },
+      {
+        "id": "22587f663ffc4209f96bfb9ca4cfd88927f74f4b",
+        "type": "FIX",
+        "text": " sap.m.Page: properly show floatingFooter when PageAccessibleLandmark info is used",
+        "references": []
+      },
+      {
+        "id": "e7c4f05faf84b4f0644e44364aaf515b443c560d",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton - when used inside sap.m.Bar spacing is preserved.",
+        "references": []
+      },
+      {
+        "id": "5f91d86eb1f476132add1711eae3646e818a834b",
+        "type": "FIX",
+        "text": " sap.ui.layout.Splitter: Focus in HCB under IE is now correct",
+        "references": []
+      },
+      {
+        "id": "bade948550820800db627620e0ef20ba840d58f7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: minor visual fix in the header",
+        "references": []
+      },
+      {
+        "id": "63c88c0873d5812d989e37ccc310e17935bb623d",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Theme parameters improvement",
+        "references": []
+      },
+      {
+        "id": "e3440899a40f8ea69b8defb42eef4acec3ffb465",
+        "type": "FIX",
+        "text": " transparent icontabheader in contrast mode for sap_belize_plus",
+        "references": []
+      },
+      {
+        "id": "771ac27d3394a6cea49b28c035dc757c607a9803",
+        "type": "FIX",
+        "text": " transparent toolbar in contrast mode fixed for sap_belize_plus",
+        "references": []
+      },
+      {
+        "id": "65f829455bb2cf1711487bbd55fe3c1d6e3d2108",
+        "type": "FIX",
+        "text": ": sap.m.Select: Double focus on HCW fixed",
+        "references": []
+      }
+    ]
+  }
+}

@@ -12,24 +12,9 @@
 		<dependency>
 			<libraryName>sap.ui.core</libraryName>
 		</dependency>
-		<dependency>
-			<libraryName>sap.ui.fl</libraryName>
-		</dependency>
-		<dependency>
-			<libraryName>sap.ui.layout</libraryName>
-		</dependency>
-		<dependency>
-			<libraryName>sap.ui.codeeditor</libraryName>
-		</dependency>
-		<dependency>
-			<libraryName>sap.m</libraryName>
-		</dependency>
 	</dependencies>
 
 	<appData>
-		 <documentation xmlns="http://www.sap.com/ui5/buildext/documentation"
-	        indexUrl="../../../../test-resources/sap/ui/support/demokit/docuindex.json"
-	        resolve="lib" />
 		<!-- excludes for the JSDoc -->
 		<jsdoc xmlns="http://www.sap.com/ui5/buildext/jsdoc">
 			<exclude name="sap.ui.support.js."/>

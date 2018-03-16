@@ -34,6 +34,9 @@
 @sapContent_ContrastIconColor: @sapContent_ContrastTextColor; //<=new
 @sapContent_NonInteractiveIconColor: @sapContent_IconColor; //<=new
 @sapContent_MarkerIconColor: @sapContent_IconColor; //<=new
+@sapContent_MarkerTextColor: @sapTextColor;
+@sapContent_ImagePlaceholderBackground: @sapBackgroundColor;
+@sapContent_ImagePlaceholderForegroundColor: #585858;
 @sapContent_FocusColor: #000; //<=new
 @sapContent_ContrastFocusColor: #fff; //<=new
 @sapContent_ShadowColor: #000; //<=new
@@ -151,24 +154,32 @@
 @sapTile_TextColor: @sapTile_TitleTextColor;
 @sapTile_IconColor: contrast(@sapTile_Background, @sapContent_IconColor, @sapContent_ContrastIconColor, @sapContent_ContrastTextThreshold);
 
-@sapChart_OrderedColor_1: #5cbae6; //<=new
-@sapChart_OrderedColor_2: #b6d957; //<=new
-@sapChart_OrderedColor_3: #fac364; //<=new
-@sapChart_OrderedColor_4: #8cd3ff; //<=new
-@sapChart_OrderedColor_5: #d998cb; //<=new
-@sapChart_OrderedColor_6: #f2d249; //<=new
-@sapChart_OrderedColor_7: #93b9c6; //<=new
-@sapChart_OrderedColor_8: #ccc5a8; //<=new
-@sapChart_OrderedColor_9: #52bacc; //<=new
-@sapChart_OrderedColor_10: #dbdb46; //<=new
-@sapChart_OrderedColor_11: #98aafb; //<=new
+@sapChart_OrderedColor_1: #286ac3;
+@sapChart_OrderedColor_2: #d74114;
+@sapChart_OrderedColor_3: #057d47;
+@sapChart_OrderedColor_4: #e11e48;
+@sapChart_OrderedColor_5: #642eb2;
+@sapChart_OrderedColor_6: #03778c;
+@sapChart_OrderedColor_7: #232deb;
+@sapChart_OrderedColor_8: #9b136f;
+@sapChart_OrderedColor_9: #395563;
+@sapChart_OrderedColor_10: #e02e2e;
+@sapChart_OrderedColor_11: #0d3367;
 
-@sapChart_Bad: #dc0d0e; //<=new
-@sapChart_Critical: #de890d; //<=new
-@sapChart_Good: #3fa45b; //<=new
-@sapChart_Neutral: #848f94; //<=new
+@sapChart_Bad: #ab0000;
+@sapChart_Critical: #5c5c00;
+@sapChart_Good: #006362;
+@sapChart_Neutral: #000000;
 
-@sapChart_Sequence_1: #27a3dd; //<=new
-@sapChart_Sequence_2: #9dc62d; //<=new
-@sapChart_Sequence_3: #f8ac29; //<=new
-@sapChart_Sequence_Neutral: #848f94; //<=new
+@sapChart_Sequence_1: @sapChart_OrderedColor_1;
+@sapChart_Sequence_2: @sapChart_OrderedColor_2;
+@sapChart_Sequence_3: @sapChart_OrderedColor_3;
+@sapChart_Sequence_4: @sapChart_OrderedColor_4;
+@sapChart_Sequence_5: @sapChart_OrderedColor_5;
+@sapChart_Sequence_6: @sapChart_OrderedColor_6;
+@sapChart_Sequence_7: @sapChart_OrderedColor_7;
+@sapChart_Sequence_8: @sapChart_OrderedColor_8;
+@sapChart_Sequence_9: @sapChart_OrderedColor_9;
+@sapChart_Sequence_10: @sapChart_OrderedColor_10;
+@sapChart_Sequence_11: @sapChart_OrderedColor_11;
+@sapChart_Sequence_Neutral: @sapChart_Neutral;

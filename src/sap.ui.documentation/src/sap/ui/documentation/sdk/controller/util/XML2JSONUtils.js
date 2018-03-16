@@ -17,15 +17,7 @@ sap.ui.define(['jquery.sap.global'],
 					return '';
 				}
 				var nodeText = jQuery("<div/>").html(removeHTMLTags(oNodes[0].innerHTML)).text();
-				return oNodes && oNodes.length > 0 && ("innerHTML" in oNodes[0]) && escapeHTML(nodeText) || '';
-			};
-
-			var escapeHTML = function(txt) {
-				return txt.replace(/[\\]/g, "\\\\")
-					.replace(/[\"]/g, '\\"')
-					.replace(/[\n]/g, '\\n')
-					.replace(/[\r]/g, '\\r')
-					.replace(/\s{2,}/g, ' ');
+				return oNodes && oNodes.length > 0 && ("innerHTML" in oNodes[0]) && nodeText || '';
 			};
 
 			var removeHTMLTags = function(txt) {

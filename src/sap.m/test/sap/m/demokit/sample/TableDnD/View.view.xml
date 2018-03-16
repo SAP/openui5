@@ -1,0 +1,30 @@
+<mvc:View
+	controllerName="sap.m.sample.TableDnD.Controller"
+	xmlns:dnd="sap.ui.core.dnd"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:c="sap.ui.core"
+	xmlns="sap.m"
+	height="100%">
+	<Page
+		showHeader="false"
+		enableScrolling="true"
+		class="sapUiContentPadding">
+		<content>
+			<HBox renderType="Bare">
+				<mvc:XMLView id="availableProducts" viewName="sap.m.sample.TableDnD.AvailableProducts" />
+				<VBox justifyContent="Center" class="sapUiTinyMarginBeginEnd">
+					<Button
+						class="sapUiTinyMarginBottom"
+						icon="sap-icon://navigation-right-arrow"
+						tooltip="Move to selected"
+						press="moveToSelectedProductsTable"/>
+					<Button
+						icon="sap-icon://navigation-left-arrow"
+						tooltip="Move to available"
+						press="moveToAvailableProductsTable"/>
+				</VBox>
+				<mvc:XMLView id="selectedProducts" viewName="sap.m.sample.TableDnD.SelectedProducts" />
+			</HBox>
+		</content>
+	</Page>
+</mvc:View>

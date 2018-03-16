@@ -1,9 +1,8 @@
 {
-	"_version": "1.2.0",
+	"_version": "1.8.0",
 
 	"sap.app": {
-		"_version": "1.2.0",
-		"id": "sap.ui.demo.iconexplorer",
+	"id": "sap.ui.demo.iconexplorer",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
 		"title": "{{appTitle}}",
@@ -14,8 +13,7 @@
 	},
 
 	"sap.ui": {
-		"_version": "1.2.0",
-		"technology": "UI5",
+	"technology": "UI5",
 		"icons": {
 			"icon": "sap-icon://image-viewer",
 			"favIcon": "",
@@ -28,18 +26,14 @@
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": [
-			"sap_hcb",
-			"sap_belize"
-		]
+		}
 	},
 
 	"sap.ui5": {
-		"_version": "1.2.0",
-		"rootView": {
+	"rootView": {
 			"viewName": "sap.ui.demo.iconexplorer.view.App",
 			"type": "XML",
+			"async": true,
 			"id": "app"
 		},
 

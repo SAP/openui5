@@ -419,7 +419,7 @@
 		title : "Object Header for testing title arrow icon",
 		showTitleSelector : true,
 		titleSelectorPress : oh16EventHandler,
-		titleSelectorTooltip: "custom tooltip",
+		titleSelectorTooltip: "Related Options",
 		number : "1.000",
 		numberUnit : "EUR",
 		numberState : sap.ui.core.ValueState.Error,
@@ -681,15 +681,43 @@
 
 	objectHeaderLayout.addItem(ohCondensed9);
 
+	var oLongTitleOH = new sap.m.ObjectHeader({
+		title : "TitleThatDoesNotHaveAnySpaceAsItIsOneVeryLongWordWithoutNarrowClassSet",
+		showTitleSelector: true,
+		titleActive: true,
+		responsive:true
+	});
+
+	var oLongTitleOH1 = new sap.m.ObjectHeader({
+		title : "TitleThatDoesNotHaveAnySpaceAsItIsOneVeryLongWordWithNarrowClassSet",
+		showTitleSelector: true,
+		responsive:true
+	}).addStyleClass("sapUiContainer-Narrow");
+
+	var oLongTitleOH2 = new sap.m.ObjectHeader({
+		title : "TitleThatDoesNotHaveAnySpaceAsItIsOneVeryLongWordWithNarrowClassSet",
+		showTitleSelector: true,
+		titleActive: true,
+		responsive:true
+	}).addStyleClass("sapUiContainer-Narrow");
+
+	var page1 = new sap.m.Page("page1", {
+		title:"ObjectHeader (Responsive)",
+		content : [
+			oLongTitleOH2
+			]
+	});
+
+
 	// put all the testing object header objects on the testing page
-	var app = new sap.m.App();
+	var app = new sap.m.SplitApp("myApp");
 	var page = new sap.m.Page({
 		showHeader : false,
 		enableScrolling : true
 	});
 
-	app.setInitialPage(page.getId());
-	app.addPage(page);
+	app.addMasterPage(page1);
+	app.addDetailPage(page);
 	page.addContent(new sap.ui.core.HTML({
 		content : "<div style='width:100%;height:2px;background-color:blue'/>"
 	}));
@@ -757,6 +785,8 @@
 	addToPage(ohCondensed8);
 	addToPage(ohAdditionalNumbers);
 	addToPage(ohMarkers);
+	addToPage(oLongTitleOH);
+	addToPage(oLongTitleOH1);
 
 	app.placeAt('body');
 </script>

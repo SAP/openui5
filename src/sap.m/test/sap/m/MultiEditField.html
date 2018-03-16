@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>MultiEditField - sap.m</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-bindingSyntax="complex"
+			data-sap-ui-libs="sap.m">
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.m.MultiEditField");
+		jQuery.sap.require("sap.m.MessageToast");
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+
+		var oModel = new sap.ui.model.json.JSONModel({
+			"selectedItem": null,
+			"showValueHelp": true,
+			"nullable": false,
+			"items": [
+				{
+					key: "key1",
+					text: "sample text 1"
+				},
+				{
+					key: "key2",
+					text: "sample text 2"
+				}
+			]
+		});
+
+		var fnChange = function(oEvent) {
+			sap.m.MessageToast.show("Change event triggered on item "+ oEvent.getParameter("selectedItem").getText());
+		};
+
+		var oMultiEditField = new sap.m.MultiEditField({
+			selectedItem: "{/selectedItem}",
+			showValueHelp: "{/showValueHelp}",
+			nullable: "{/nullable}",
+			items: {
+				path: "/items",
+				template: new sap.ui.core.Item({
+					key: "{key}",
+					text: "{text}"
+				})
+			},
+			change: fnChange
+		});
+
+		var oToolbar = new sap.m.Toolbar({
+			content: [
+				new sap.m.Label({
+					text : "Value Help",
+					labelFor : "showValueHelpSwitch"
+				}),
+				new sap.m.Switch({
+					id : "showValueHelpSwitch",
+					state : "{/showValueHelp}"
+				}),
+				new sap.m.Label({
+					text : "Nullable",
+					labelFor : "nullableSwitch"
+				}),
+				new sap.m.Switch({
+					id : "nullableSwitch",
+					state : "{/nullable}"
+				}),
+			]
+		});
+
+		var oPage = new sap.m.Page({
+			title: "sap.m.MultiEditField",
+			content: [
+				oToolbar,
+				oMultiEditField
+			]
+		});
+		oPage.setModel(oModel);
+		var oApp = new sap.m.App();
+		oApp.addPage(oPage).placeAt("content");
+	</script>
+</head>
+
+<body id="body" class="sapUiBody">
+	<div id="content"></div>
+</body>
+</html>

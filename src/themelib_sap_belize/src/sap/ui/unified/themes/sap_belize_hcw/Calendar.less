@@ -101,6 +101,11 @@ html.sap-desktop .sapUiCalItem:focus{
 	outline: none;
 }
 
+html[data-sap-ui-browser^="ed"].sap-desktop .sapUiCalItem:focus,
+html[data-sap-ui-browser^="ie"].sap-desktop .sapUiCalItem:focus {
+	border-style: dashed;
+}
+
 html.sap-desktop .sapUiCalItem:hover > .sapUiCalItemText,
 html.sap-desktop .sapUiCalItem:focus > .sapUiCalItemText{
 	line-height: 2.5rem;
@@ -452,39 +457,55 @@ html.sap-tablet .sapUiCalYearPicker .sapUiCalItemSel {
 
 /* Special days */
 .dayColorMixIn(@class, @color) {
-	.@{class} > .sapUiCalItemText,
-	.sap-desktop .sapUiCalItem.@{class}:hover {
-		box-shadow: inset 0 -0.125rem 0 @color;
-	}
+  .@{class}.sapUiCalItemSel:not(.sapUiCalItemNow) > .sapUiCalItemText {
+	box-shadow: inset 0.0625rem 0.0625rem 0 0 @sapUiListBackground, inset -0.0625rem -0.0625rem 0 0 @sapUiListBackground, inset 0 -0.25rem 0 @color, inset 0 -0.313rem 0 @sapUiListBackground;
+  }
 
-	.sap-desktop .@{class}.sapUiCalItem:focus {
-		box-shadow: inset 0 -0.125rem 0 @color;
-	}
+  .@{class}:not(.sapUiCalItemSel):not(.sapUiCalItemNow) > .sapUiCalItemText {
+	box-shadow: inset 0.0625rem 0.0625rem 0 0 @sapUiListBackground, inset -0.0625rem -0.0625rem 0 0 @sapUiListBackground, inset 0 -0.25rem 0 @color, inset 0 -0.313rem 0 @sapUiListBackground;
+  }
 
-	.sap-desktop .@{class}.sapUiCalItem:focus:hover {
-		background-color: @sapUiHighlight;
-	}
+  .@{class}.sapUiCalItemSel.sapUiCalItemNow > .sapUiCalItemText {
+	box-shadow: inset 0.0625rem 0.0625rem 0 0 @sapUiListBackground, inset -0.0625rem -0.0625rem 0 0 @sapUiListBackground, inset 0 -0.1875rem 0 @color, inset 0 -0.25rem 0 @sapUiListBackground;
+  }
 
-	.sap-desktop .@{class}.sapUiCalFirstWDay:focus > .sapUiCalItemText {
-		box-shadow: inset 0 0 0 @color;
-	}
+  .@{class}:not(.sapUiCalItemSel).sapUiCalItemNow > .sapUiCalItemText {
+	box-shadow: inset 0.0625rem 0.0625rem 0 0 @sapUiListBackground, inset -0.0625rem -0.0625rem 0 0 @sapUiListBackground, inset 0 -0.1875rem 0 @color, inset 0 -0.25rem 0 @sapUiListBackground;
+  }
 
-	.@{class}.sapUiCalItemSel > .sapUiCalItemText {
-		box-shadow: inset 0 -0.125rem 0 @color, inset 0 -0.1875rem @sapUiContentForegroundBorderColor;
-	}
+  .@{class}.sapUiCalItemSel:not(.sapUiCalItemNow):hover {
+	box-shadow: inset 0.0625rem 0.0625rem 0 0 @sapUiListBackground, inset -0.0625rem -0.0625rem 0 0 @sapUiListBackground, inset 0 -0.25rem 0 @color, inset 0 -0.313rem 0 @sapUiListBackground;
+  }
 
-	.sap-desktop .@{class}.sapUiCalFirstWDay.sapUiCalItemSel:focus > .sapUiCalItemText {
-		box-shadow: inset 0 0 0 @color, inset 0 0 @sapUiContentForegroundBorderColor;
-	}
+  .@{class}.sapUiCalItemSel:not(.sapUiCalItemNow):hover  > .sapUiCalItemText {
+	box-shadow: none;
+  }
 
-	.@{class}.sapUiCalItemNow > .sapUiCalItemText {
-		box-shadow: inset 0 -0.1875rem 0 @color;
-	}
+  .@{class}:not(.sapUiCalItemSel):not(.sapUiCalItemNow):hover {
+	box-shadow: inset 0.0625rem 0.0625rem 0 0 @sapUiListBackground, inset -0.0625rem -0.0625rem 0 0 @sapUiListBackground, inset 0 -0.25rem 0 @color, inset 0 -0.313rem 0 @sapUiListBackground;
+  }
 
-	.@{class}.sapUiCalItemSel.sapUiCalItemNow > .sapUiCalItemText,
-	.sap-desktop .@{class}.sapUiCalItemSel:focus > .sapUiCalItemText {
-		box-shadow: inset 0 -0.1875rem 0 @color, inset 0 -0.25rem @sapUiContentForegroundBorderColor;
-	}
+  .@{class}:not(.sapUiCalItemSel):not(.sapUiCalItemNow):hover  > .sapUiCalItemText {
+	box-shadow: none;
+  }
+
+  //not today, focused
+  .@{class}:not(.sapUiCalItemSel):not(.sapUiCalItemNow):focus {
+	box-shadow: inset 0.0625rem 0.0625rem 0 0 @sapUiListBackground, inset -0.0625rem -0.0625rem 0 0 @sapUiListBackground, inset 0 -0.25rem 0 @color, inset 0 -0.313rem 0 @sapUiListBackground;
+  }
+
+  .@{class}:not(.sapUiCalItemSel):not(.sapUiCalItemNow):focus  > .sapUiCalItemText {
+	box-shadow: none;
+  }
+
+  .@{class}.sapUiCalItemSel:not(.sapUiCalItemNow):focus {
+	box-shadow: inset 0.0625rem 0.0625rem 0 0 @sapUiListBackground, inset -0.0625rem -0.0625rem 0 0 @sapUiListBackground, inset 0 -0.25rem 0 @color, inset 0 -0.313rem 0 @sapUiListBackground;
+  }
+
+  .@{class}.sapUiCalItemSel:not(.sapUiCalItemNow):focus  > .sapUiCalItemText {
+	box-shadow: none;
+  }
+  //end: not today, focused
 }
 
 .dayColorMixIn(sapUiCalItemType01, @sapUiAccent1);
@@ -497,3 +518,13 @@ html.sap-tablet .sapUiCalYearPicker .sapUiCalItemSel {
 .dayColorMixIn(sapUiCalItemType08, @sapUiAccent8);
 .dayColorMixIn(sapUiCalItemType09, darken(@sapUiAccent6, 15));
 .dayColorMixIn(sapUiCalItemType10, darken(desaturate(@sapUiAccent4, 40), 2));
+.dayColorMixIn(sapUiCalItemType11, darken(desaturate(@sapUiAccent1,50),4));
+.dayColorMixIn(sapUiCalItemType12, lighten(saturate(@sapUiAccent2,40),4));
+.dayColorMixIn(sapUiCalItemType13, darken(desaturate(@sapUiAccent3,20),5));
+.dayColorMixIn(sapUiCalItemType14, lighten(desaturate(@sapUiAccent2,80),13));
+.dayColorMixIn(sapUiCalItemType15, desaturate(@sapUiAccent4,60));
+.dayColorMixIn(sapUiCalItemType16, darken(desaturate(@sapUiAccent5,20),2));
+.dayColorMixIn(sapUiCalItemType17, lighten(desaturate(@sapUiAccent7,55),10));
+.dayColorMixIn(sapUiCalItemType18, lighten(desaturate(@sapUiAccent8,40),16));
+.dayColorMixIn(sapUiCalItemType19, darken(desaturate(@sapUiAccent6,85),5));
+.dayColorMixIn(sapUiCalItemType20, darken(saturate(@sapUiAccent5,70),25));

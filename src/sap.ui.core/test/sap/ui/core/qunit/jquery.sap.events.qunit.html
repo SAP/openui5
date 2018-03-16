@@ -125,6 +125,9 @@
 
 	if (sap.ui.Device.support.touch && bEmulationNeeded) {
 		aMobileBrowserEvents.push("sapmousedown", "sapmousemove", "sapmouseup");
+		if (sap.ui.Device.os.ios){
+			aMobileBrowserEvents.push("sapcontextmenu");
+		}
 	}
 
 	function keyEvent(sName, sAddText, iTrigger, sKeyCode, bShift, bAlt, bCtrl){
@@ -915,6 +918,171 @@
 
 		assert.ok(!jQuery.sap.isMouseEventDelayed, "isMouseEventDelayed should be marked with false for Chrome with version >= 32");
 	});
+
+	var cleanupDelegatesAndEventListener = function(){
+		//ensure all delegates are deregistered
+		oTestControl1.aDelegates.slice().forEach(function(oDelegate) {
+			oTestControl1.removeDelegate(oDelegate.oDelegate);
+		});
+		assert.equal(oTestControl1.aDelegates.length, 0);
+
+
+		//cleanup taphold event listener
+		var oElement = oTestControl1.$();
+		oElement.off("taphold");
+	};
+
+	QUnit.module("jQuery.sap.events context menu simulation", {
+		beforeEach: cleanupDelegatesAndEventListener,
+		afterEach: cleanupDelegatesAndEventListener
+	});
+
+	QUnit.test("Simulated event for contextmenu under non-iOS", function(assert) {
+		var done = assert.async();
+
+		//reload events with simulated ios device to map "sapcontextmenu" event
+		jQuery.sap.unloadResources("sap/base/events/PseudoEvents.js", false, true, true);
+		jQuery.sap.unloadResources("sap/base/events/PseudoTypes.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/ControlEvents.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/EventSimulation.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/jqueryEvent.js", false, true, true);
+		jQuery.sap.unloadResources("jquery.sap.events.js", false, true, true);
+		this.stub(sap.ui.Device, "os", {
+			ios: false
+		});
+
+		sap.ui.require(["jquery.sap.events"], function(jQUeryEvents) {
+			var uiArea = sap.ui.getCore().getUIArea("uiArea");
+
+			//trigger reload of events in order to have "sapcontextmenu" event as part of ControlEvents array
+			var oldRootNode = uiArea.getRootNode();
+			uiArea.setRootNode(null);
+			uiArea.setRootNode(oldRootNode);
+
+			// add event listener for contextmenu event
+
+			oTestControl1.addEventDelegate({oncontextmenu: function(oEvent){
+				assert.notOk(true, "oncontextmenu should not be fired");
+			}}, oTestControl1);
+
+			var oElement = oTestControl1.$();
+			oElement.on("taphold", function() {
+				assert.ok(true);
+				done();
+			});
+
+			oElement.trigger("taphold");
+		});
+	});
+
+	QUnit.test("Simulated event for contextmenu under iOS", function(assert) {
+		var done = assert.async();
+
+		//reload events with simulated ios device to map "sapcontextmenu" event
+		jQuery.sap.unloadResources("sap/base/events/PseudoEvents.js", false, true, true);
+		jQuery.sap.unloadResources("sap/base/events/PseudoTypes.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/ControlEvents.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/EventSimulation.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/jqueryEvent.js", false, true, true);
+		jQuery.sap.unloadResources("jquery.sap.events.js", false, true, true);
+		this.stub(sap.ui.Device, "os", {
+			ios: true
+		});
+
+		sap.ui.require(["jquery.sap.events"], function(jQUeryEvents) {
+			var uiArea = sap.ui.getCore().getUIArea("uiArea");
+
+			//trigger reload of events in order to have "sapcontextmenu" event as part of ControlEvents array
+			var oldRootNode = uiArea.getRootNode();
+			uiArea.setRootNode(null);
+			uiArea.setRootNode(oldRootNode);
+
+			// add event listener for contextmenu event
+			oTestControl1.addEventDelegate({oncontextmenu: function(oEvent){
+				assert.equal(oEvent.type, "contextmenu");
+				done();
+			}}, oTestControl1);
+
+			//trigger sapcontextmenu custom event
+			oTestControl1.$().trigger("taphold");
+		});
+	});
+
+	QUnit.test("Simulated event for contextmenu under iOS with selected text", function(assert) {
+		var done = assert.async();
+		assert.expect(3);
+
+		//reload events with simulated ios device to map "sapcontextmenu" event
+		jQuery.sap.unloadResources("sap/base/events/PseudoEvents.js", false, true, true);
+		jQuery.sap.unloadResources("sap/base/events/PseudoTypes.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/ControlEvents.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/EventSimulation.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/jqueryEvent.js", false, true, true);
+		jQuery.sap.unloadResources("jquery.sap.events.js", false, true, true);
+		this.stub(sap.ui.Device, "os", { ios: true });
+		var getSelectionStub = sinon.stub(window, "getSelection", function () { return "someText"; });
+
+		sap.ui.require(["jquery.sap.events"], function(jQUeryEvents) {
+			var uiArea = sap.ui.getCore().getUIArea("uiArea");
+
+			//trigger reload of events in order to have "sapcontextmenu" event as part of ControlEvents array
+			var oldRootNode = uiArea.getRootNode();
+			uiArea.setRootNode(null);
+			uiArea.setRootNode(oldRootNode);
+
+			oTestControl1.addEventDelegate({oncontextmenu: function(oEvent){
+				assert.notOk(true, "oncontextmenu should not be fired");
+			}}, oTestControl1);
+
+			//trigger sapcontextmenu custom event
+			var oElement = oTestControl1.$();
+			oElement.on("taphold", function() {
+				assert.ok(true);
+				done();
+			});
+
+			//trigger sapcontextmenu custom event
+			oElement.trigger("taphold");
+
+			getSelectionStub.restore();
+		});
+	});
+
+	QUnit.test("Simulated event for contextmenu under iOS without selected text", function(assert) {
+		var done = assert.async();
+
+		//reload events with simulated ios device to map "sapcontextmenu" event
+		jQuery.sap.unloadResources("sap/base/events/PseudoEvents.js", false, true, true);
+		jQuery.sap.unloadResources("sap/base/events/PseudoTypes.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/ControlEvents.js", false, true, true);
+		jQuery.sap.unloadResources("sap/ui/events/EventSimulation.js", false, true, true);
+		jQuery.sap.unloadResources("jquery.sap.events.js", false, true, true);
+		this.stub(sap.ui.Device, "os", {
+			ios: true
+		});
+		var getSelectionStub = sinon.stub(window, "getSelection", function () { return ""; });
+
+		sap.ui.require(["jquery.sap.events"], function(jQUeryEvents) {
+			var uiArea = sap.ui.getCore().getUIArea("uiArea");
+
+			//trigger reload of events in order to have "sapcontextmenu" event as part of ControlEvents array
+			var oldRootNode = uiArea.getRootNode();
+			uiArea.setRootNode(null);
+			uiArea.setRootNode(oldRootNode);
+
+			// add event listener for contextmenu event
+			oTestControl1.addEventDelegate({oncontextmenu: function(oEvent){
+				assert.equal(oEvent.type, "contextmenu");
+				done();
+			}}, oTestControl1);
+
+			//trigger sapcontextmenu custom event
+			oTestControl1.$().trigger("taphold");
+
+			getSelectionStub.restore();
+		});
+	});
+
 	</script>
 </head>
 <body>

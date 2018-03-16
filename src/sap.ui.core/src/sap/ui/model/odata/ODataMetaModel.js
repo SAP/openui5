@@ -99,6 +99,7 @@ sap.ui.define([
 	 * are added, if they are not yet defined in the V4 annotations:
 	 * <ul>
 	 * <li><code>label</code>;</li>
+	 * <li><code>schema-version</code> (since 1.53.0) on schemas;</li>
 	 * <li><code>creatable</code>, <code>deletable</code>, <code>deletable-path</code>,
 	 * <code>pageable</code>, <code>requires-filter</code>, <code>searchable</code>,
 	 * <code>topable</code>, <code>updatable</code> and <code>updatable-path</code> on entity sets;
@@ -125,7 +126,14 @@ sap.ui.define([
 	 * <li>"body", "from", "received", "sender" and "subject" (mapped to V4 annotation
 	 * <code>com.sap.vocabularies.Communication.v1.Message</code>);</li>
 	 * <li>"completed", "due", "percent-complete" and "priority" (mapped to V4 annotation
-	 * <code>com.sap.vocabularies.Communication.v1.Task</code>).</li>
+	 * <code>com.sap.vocabularies.Communication.v1.Task</code>);</li>
+	 * <li>"fiscalyear", "fiscalyearperiod" (mapped to the corresponding V4 annotation
+	 * <code>com.sap.vocabularies.Common.v1.IsFiscal(Year|YearPeriod)</code>);</li>
+	 * <li>"year", "yearmonth", "yearmonthday", "yearquarter", "yearweek" (mapped to the
+	 * corresponding V4 annotation
+	 * <code>com.sap.vocabularies.Common.v1.IsCalendar(Year|YearMonth|Date|YearQuarter|YearWeek)</code>);
+	 * </li>
+	 * <li>"url" (mapped to V4 annotation <code>Org.OData.Core.V1.IsURL"</code>).</li>
 	 * </ul>
 	 * </ul>
 	 * For example:
@@ -188,9 +196,9 @@ sap.ui.define([
 					}
 					jQuery.sap.measure.average(sPerformanceLoad, "", aPerformanceCategories);
 					oData = JSON.parse(JSON.stringify(oMetadata.getServiceMetadata()));
-					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData);
 					that.oModel = new JSONModel(oData);
 					that.oModel.setDefaultBindingMode(that.sDefaultBindingMode);
+					Utils.merge(oAnnotations ? oAnnotations.getAnnotationsData() : {}, oData, that);
 					jQuery.sap.measure.end(sPerformanceLoad);
 				}
 
@@ -267,8 +275,8 @@ sap.ui.define([
 				try {
 					oResult = BindingParser.parseExpression(sResolvedPath, 1);
 					iEnd = oResult.at;
-					if (iEnd >= 0 && (sResolvedPath.length === iEnd + 1
-							|| sResolvedPath.charAt(iEnd + 1) === '/')) {
+					if (sResolvedPath.length === iEnd + 1
+							|| sResolvedPath.charAt(iEnd + 1) === '/') {
 						oBinding = oResult.result;
 						vPart = sResolvedPath.slice(0, iEnd + 1);
 						sResolvedPath = sResolvedPath.slice(iEnd + 2);
@@ -454,6 +462,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the module path to the model specific adapter factory.
+	 *
+	 * @returns {string}
+	 *   The module path to the model specific adapter factory
+	 *
+	 * @private
+	 * @see sap.ui.model.MetaModel#getAdapterFactoryModulePath
+	 * @since 1.55.0
+	 */
+	// @override
+	ODataMetaModel.prototype.getAdapterFactoryModulePath = function() {
+		return "sap/ui/model/odata/v2/meta/ODataAdapterFactory";
+	};
+
+	/**
 	 * Returns the OData meta model context corresponding to the given OData model path.
 	 *
 	 * @param {string} [sPath]
@@ -471,10 +494,12 @@ sap.ui.define([
 		var oAssocationEnd,
 			oEntitySet,
 			oEntityType,
+			oFunctionImport,
 			sMetaPath,
 			sNavigationPropertyName,
+			sPart,
 			aParts,
-			sQualifiedName; // qualified name of current entity type across navigations
+			sQualifiedName; // qualified name of current (entity) type across navigations
 
 		/*
 		 * Strips the OData key predicate from a resource path segment.
@@ -500,21 +525,38 @@ sap.ui.define([
 		aParts.shift();
 
 		// from entity set to entity type
-		oEntitySet = this.getODataEntitySet(stripKeyPredicate(aParts[0]));
-		if (!oEntitySet) {
-			throw new Error("Entity set not found: " + aParts[0]);
+		sPart = stripKeyPredicate(aParts[0]);
+		oEntitySet = this.getODataEntitySet(sPart);
+		if (oEntitySet) {
+			sQualifiedName = oEntitySet.entityType;
+		} else {
+			oFunctionImport = this.getODataFunctionImport(sPart);
+			if (oFunctionImport) {
+				if (aParts.length === 1) {
+					sMetaPath = this.getODataFunctionImport(sPart, true);
+				}
+				sQualifiedName = oFunctionImport.returnType;
+				if (sQualifiedName.lastIndexOf("Collection(", 0) === 0) {
+					sQualifiedName = sQualifiedName.slice(11, -1);
+				}
+			} else {
+				throw new Error("Entity set or function import not found: " + sPart);
+			}
 		}
 		aParts.shift();
-		sQualifiedName = oEntitySet.entityType;
 
 		// follow (navigation) properties
 		while (aParts.length) {
 			oEntityType = this.getODataEntityType(sQualifiedName);
-			sNavigationPropertyName = stripKeyPredicate(aParts[0]);
-			oAssocationEnd = this.getODataAssociationEnd(oEntityType, sNavigationPropertyName);
+			if (oEntityType) {
+				sNavigationPropertyName = stripKeyPredicate(aParts[0]);
+				oAssocationEnd = this.getODataAssociationEnd(oEntityType, sNavigationPropertyName);
+			} else { // function import's return type may be a complex type
+				oEntityType = this.getODataComplexType(sQualifiedName);
+			}
 
 			if (oAssocationEnd) {
-				// navigation property
+				// navigation property (Note: can appear in entity types, but not complex types)
 				sQualifiedName = oAssocationEnd.type;
 				if (oAssocationEnd.multiplicity === "1" && sNavigationPropertyName !== aParts[0]) {
 					// key predicate not allowed here
@@ -610,7 +652,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the OData default entity container.
+	 * Returns the OData default entity container. If there is only a single schema with a single
+	 * entity container, the entity container does not need to be marked as default explicitly.
 	 *
 	 * @param {boolean} [bAsPath=false]
 	 *   determines whether the entity container is returned as a path or as an object
@@ -635,6 +678,13 @@ sap.ui.define([
 					return false; //break
 				}
 			});
+
+			if (!vResult && aSchemas.length === 1 && aSchemas[0].entityContainer
+					&& aSchemas[0].entityContainer.length === 1) {
+				vResult = bAsPath
+					? "/dataServices/schema/0/entityContainer/0"
+					: aSchemas[0].entityContainer[0];
+			}
 		}
 
 		return vResult;
@@ -831,9 +881,8 @@ sap.ui.define([
 					resolve : function (oResponse) {
 						// enhance property by annotations from response to get value lists
 						jQuery.extend(oProperty,
-							((oResponse.annotations.propertyAnnotations || {})
-								[sQualifiedTypeName] || {})
-									[oProperty.name]
+							(oResponse.annotations.propertyAnnotations[sQualifiedTypeName] || {})
+								[oProperty.name]
 						);
 						mValueLists = Utils.getValueLists(oProperty);
 						if (jQuery.isEmptyObject(mValueLists)) {

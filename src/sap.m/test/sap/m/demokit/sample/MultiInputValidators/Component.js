@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.MultiInputValidators.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.MultiInputValidators.Page",
+			rootView : {
+				"viewName": "sap.m.sample.MultiInputValidators.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

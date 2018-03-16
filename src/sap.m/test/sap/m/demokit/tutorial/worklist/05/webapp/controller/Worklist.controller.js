@@ -279,7 +279,7 @@ sap.ui.define([
 				for (i = 0; i < aSelectedProducts.length; i++) {
 					oProduct = aSelectedProducts[i];
 					oProductId = oProduct.getBindingContext().getProperty("ProductID");
-					sPath = oProduct.getBindingContextPath();
+					sPath = oProduct.getBindingContext().getPath();
 					this.getModel().remove(sPath, {
 						success : this._handleUnlistActionResult.bind(this, oProductId, true, i + 1, aSelectedProducts.length),
 						error : this._handleUnlistActionResult.bind(this, oProductId, false, i + 1, aSelectedProducts.length)
@@ -302,7 +302,7 @@ sap.ui.define([
 			aSelectedProducts = this.byId("table").getSelectedItems();
 			if (aSelectedProducts.length) {
 				for (i = 0; i < aSelectedProducts.length; i++) {
-					sPath = aSelectedProducts[i].getBindingContextPath();
+					sPath = aSelectedProducts[i].getBindingContext().getPath();
 					oProductObject = aSelectedProducts[i].getBindingContext().getObject();
 					oProductObject.UnitsInStock += 10;
 					this.getModel().update(sPath, oProductObject, {

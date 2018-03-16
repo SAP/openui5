@@ -39,7 +39,9 @@ sap.ui.define([
 
 		onCancelPressed: function () {
 			MessageToast.show("Cancel was pressed");
+		},
+		onNavButtonPress: function  () {
+			this.getOwnerComponent().myNavBack();
 		}
-
 	});
 });

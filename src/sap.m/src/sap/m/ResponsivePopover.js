@@ -3,9 +3,35 @@
  */
 
 // Provides control sap.m.ResponsivePopover.
-sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/base/ManagedObject'],
-	function(jQuery, Dialog, Popover, library, Control, IconPool, ManagedObject) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./Dialog',
+	'./Popover',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/Device',
+	'./ResponsivePopoverRenderer'
+],
+	function(
+		jQuery,
+		Dialog,
+		Popover,
+		library,
+		Control,
+		IconPool,
+		ManagedObject,
+		Device,
+		ResponsivePopoverRenderer
+	) {
 	"use strict";
+
+	// shortcut for sap.m.DialogType
+	var DialogType = library.DialogType;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 
 
@@ -16,8 +42,14 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * A popover-based control that behaves differently according to the device it is on.
 	 * @class
+	 * <h3>Overview</h3>
 	 * The responsive popover acts as a {@link sap.m.Popover popover} on desktop and tablet,
-	 * while on phone it acts as a {@ link sap.m.Dialog dialog} with <code>stretch</code> set to true.
+	 * while on phone it acts as a {@link sap.m.Dialog dialog} with <code>stretch</code> set to true.
+	 *
+	 * <b>Note:</b> It is recommended that <code>ResponsivePopover</code> is used in fragments otherwise there might
+	 * be some implications on the user experience. For example, on desktop, open or close functions
+	 * of the <code>Popover</code> might not be called.
+	 *
 	 * <h3>Usage</h3>
 	 * When you want to make sure that all content is visible on any device.
 	 *
@@ -30,6 +62,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	 * @public
 	 * @since 1.15.1
 	 * @alias sap.m.ResponsivePopover
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/popover/ Responsive Popover}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ResponsivePopover = Control.extend("sap.m.ResponsivePopover", /** @lends sap.m.ResponsivePopover.prototype */ { metadata : {
@@ -40,7 +73,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			/**
 			 * This property only takes effect on desktop or tablet. Please see the documentation sap.m.Popover#placement.
 			 */
-			placement : {type : "sap.m.PlacementType", group : "Misc", defaultValue : sap.m.PlacementType.Right},
+			placement : {type : "sap.m.PlacementType", group : "Misc", defaultValue : PlacementType.Right},
 
 			/**
 			 * This property is supported by both variants. Please see the documentation on sap.m.Popover#showHeader and sap.m.Dialog#showHeader
@@ -99,6 +132,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 			/**
 			 * Determines if a close button should be inserted into the dialog's header dynamically to close the dialog. This property only takes effect on phone.
+			 * <b>Note:</b> The close button could be placed only in a sap.m.Bar if a sap.m.Toolbar is passed as a header - the property will not take effect.
 			 */
 			showCloseButton : {type : "boolean", group : "Misc", defaultValue : true},
 
@@ -274,10 +308,10 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 				that.fireAfterClose({openBy: oEvent.getParameter('openBy'), origin: oEvent.getParameter('origin')});
 			}
 		};
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			this._aNotSupportedProperties = ["placement", "modal", "offsetX", "offsetY", "showCloseButton"];
 			settings.stretch = true;
-			settings.type = sap.m.DialogType.Standard;
+			settings.type = DialogType.Standard;
 			this._oControl = new Dialog(this.getId() + "-dialog", settings);
 		} else {
 			this._aNotSupportedProperties = ["icon", "showCloseButton"];
@@ -294,7 +328,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 					oHeader = this._oControl._getAnyHeader(),
 					oNavContent, oPage, oRealPage;
 
-				if (!bShowCloseButton ||  !sap.ui.Device.system.phone) {
+				if (!bShowCloseButton ||  !Device.system.phone) {
 					this._removeCloseButton(oHeader);
 					return;
 				}
@@ -362,10 +396,8 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 	/**
 	 * Opens the ResponsivePopover. The ResponsivePopover is positioned relatively to the control parameter on tablet or desktop and is full screen on phone. Therefore the control parameter is only used on tablet or desktop and is ignored on phone.
 	 *
-	 * @param {object} oControl
-	 *
-	 *         When this control is displayed on tablet or desktop, the ResponsivePopover is positioned relatively to this control.
-	 * @type sap.ui.core.Control
+	 * @param {object} oParent When this control is displayed on tablet or desktop, the ResponsivePopover is positioned relative to this control.
+	 * @returns {object} Reference to the opening control
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -377,7 +409,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			this._bAppendedToUIArea = true;
 		}
 
-		if (sap.ui.Device.system.phone) {
+		if (Device.system.phone) {
 			return this._oControl.open();
 		} else {
 			return this._oControl.openBy(oParent);
@@ -418,7 +450,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Adds content to the ResponsivePopover
-	 * @param {sap.ui.core.Control} oControl - The control to be added to the content
+	 * @param {sap.ui.core.Control} oControl The control to be added to the content
 	 * @public
 	 */
 	ResponsivePopover.prototype.addContent = function(oControl){
@@ -477,13 +509,13 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Inserts closeButton aggregation in the header's contentRight aggregation
-	 * @param {sap.m.IBar} oHeader - The header in which the closeButton will be inserted
+	 * @param {sap.m.IBar} oHeader The header in which the closeButton will be inserted
 	 * @private
 	 */
 	ResponsivePopover.prototype._insertCloseButton = function(oHeader){
 		var oCloseButton = this._getCloseButton(),
 			iIndex;
-		if (oHeader) {
+		if (oHeader && oHeader.addContentRight) {
 			iIndex = oHeader.getAggregation("contentRight", []).length;
 			oHeader.insertAggregation("contentRight", oCloseButton, iIndex);
 		}
@@ -491,7 +523,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Removes closeButton aggregation from header's contentRight aggregation
-	 * @param {sap.m.IBar} oHeader - The header from which the closeButton will be removed
+	 * @param {sap.m.IBar} oHeader The header from which the closeButton will be removed
 	 * @private
 	 */
 	ResponsivePopover.prototype._removeCloseButton = function(oHeader) {
@@ -504,7 +536,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Returns a string whose first letter is uppercase
-	 * @param {string} sValue - A string
+	 * @param {string} sValue A string
 	 * @returns {string} String whose first letter is uppercase
 	 * @private
 	 */
@@ -514,7 +546,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Returns the last index of an uppercase letter in a string
-	 * @param {string} sValue - A string
+	 * @param {string} sValue A string
 	 * @returns {number} Position on which an uppercase letter is found or -1 if there are no uppercase letters found
 	 * @private
 	 */
@@ -598,7 +630,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Returns the status of the step locking mechanism
-	 * @param {string} sPos - Defines if begin or end button will be returned
+	 * @param {string} sPos Defines if begin or end button will be returned
 	 * @returns {sap.m.Button} The button that is set to beginButton or endButton aggregation
 	 * @private
 	 */
@@ -614,37 +646,29 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	/**
 	 * Setter for beginButton aggregation
-	 * @param {sap.m.Button} oButton - The button that will be set as an aggregation
+	 * @param {sap.m.Button} oButton The button that will be set as an aggregation
 	 * @returns {sap.m.ResponsivePopover} Pointer to the control instance for chaining
 	 * @public
 	 */
 	ResponsivePopover.prototype.setBeginButton = function(oButton){
-		if (oButton) {
-			oButton.setType(sap.m.ButtonType.Transparent);
-		}
-
 		this._oControl.setBeginButton(oButton);
 		return this._setButton("begin", oButton);
 	};
 
 	/**
 	 * Setter for endButton aggregation
-	 * @param {sap.m.Button} oButton - The button that will be set as an aggregation
+	 * @param {sap.m.Button} oButton The button that will be set as an aggregation
 	 * @returns {sap.m.ResponsivePopover} Pointer to the control instance for chaining
 	 * @public
 	 */
 	ResponsivePopover.prototype.setEndButton = function(oButton){
-		if (oButton) {
-			oButton.setType(sap.m.ButtonType.Transparent);
-		}
-
 		this._oControl.setEndButton(oButton);
 		return this._setButton("end", oButton);
 	};
 
 	/**
 	 * Determines if the close button to the ResponsivePopover is shown or not. Works only when ResponsivePopover is used as a dialog
-	 * @param {boolean} bShowCloseButton - Defines whether the close button is shown
+	 * @param {boolean} bShowCloseButton Defines whether the close button is shown
 	 * @returns {sap.m.ResponsivePopover} Pointer to the control instance for chaining
 	 * @public
 	 */
@@ -724,4 +748,4 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 
 	return ResponsivePopover;
 
-}, /* bExport= */ true);
+});

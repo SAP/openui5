@@ -141,6 +141,26 @@
 		oTB.destroy();
 	});
 
+	QUnit.test("test style property", function (assert) {
+		var oTB = createToolbar({
+			Toolbar: {},
+			Label: {text: "text"}
+		});
+
+		assert.equal(oTB.getStyle(), sap.m.ToolbarStyle.Standard, "The initial ToolbarStyle property value is correct");
+		assert.ok(oTB.$().hasClass("sapMTBStandard"), "Initially, toolbar has correct style class");
+
+		//act
+		oTB.setStyle(sap.m.ToolbarStyle.Clear);
+		sap.ui.getCore().applyChanges();
+
+		//check
+		assert.ok(!oTB.$().hasClass("sapMTBStandard"), "toolbar has correct style class");
+		assert.ok(oTB.$().hasClass("sapMTBClear"), "toolbar has correct style class");
+
+		oTB.destroy();
+	});
+
 	QUnit.test("test that Toolbar Separator is rendered", function(assert) {
 		var oToolbarSeparator = new sap.m.ToolbarSeparator();
 		var oTB = createToolbar({
@@ -173,8 +193,6 @@
 
         //Assert
         assert.equal(oTB.$().attr("role"), "toolbar", "Toolbar has attribute role='toolbar'");
-        assert.equal(oTB.$().attr("aria-labelledby"), oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby to the internal label");
-        assert.equal(jQuery.find("#" + oTB._sInternalAriaLabelId).length, 1, "Toolbar dom has a label describing it.");
         assert.equal(oTB.$().attr("aria-disabled"), undefined, "Toolbar has no attribute aria-disabled");
 
         //Act
@@ -226,7 +244,7 @@
 		sap.ui.getCore().applyChanges();
 
 		//Assert
-		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId() + " " + oTB._sInternalAriaLabelId, "Toolbar has attribute aria-labelledby for internal and external labels");
+		assert.equal(oTB.$().attr("aria-labelledby"), oLabel.getId(), "Toolbar has attribute aria-labelledby for internal and external labels");
 
 		//Cleanup
 		oLabel.destroy();
@@ -409,7 +427,7 @@
 	QUnit.test("should behave correct according to latest flex box support", function(assert) {
 		// stub for latest flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
-		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", true);
+		this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", true);
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "text"}
@@ -424,7 +442,7 @@
 	QUnit.test("should behave correct according to old flex box support", function(assert) {
 		// stub for latest old flex support
 		var spy = this.spy(sap.m.Toolbar.prototype, "_registerContentResize");
-		this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
+		this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", false);
 		var oTB = createToolbar({
 			Toolbar : {},
 			Label : {text: "text"}

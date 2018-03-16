@@ -7,8 +7,11 @@
  * This class handles the <code>AnchorGeneration</code> for the <code>FormattedText</code> control.
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata"], function (jQuery, Metadata) {
+sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata", "sap/m/library"], function(jQuery, Metadata, library) {
 	"use strict";
+
+	// shortcut for sap.m.LinkConversion
+	var LinkConversion = library.LinkConversion;
 
 	var AnchorGenerator = Metadata.createClass("sap.m.FormattedTextAnchorGenerator", {});
 
@@ -21,19 +24,19 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata"], function (jQuery, M
 
 	/**
 	 * Generates anchors based on the provided configuration.
-	 * @param {string} sText
-	 * @param {sap.m.LinkConversion} sLinkConversionStrategy
-	 * @param {string} sTarget
+	 * @param {string} sText The text to be processed
+	 * @param {sap.m.LinkConversion} sLinkConversionStrategy The link conversion strategy
+	 * @param {string} sTarget The target attribute of the newly created anchors
 	 * @static
 	 * @public
-	 * @returns {string}
+	 * @returns {string} The resulting text after the anchor generation
 	 */
 	AnchorGenerator.generateAnchors = function (sText, sLinkConversionStrategy, sTarget) {
-		if (sLinkConversionStrategy === sap.m.LinkConversion.ProtocolOnly) {
+		if (sLinkConversionStrategy === LinkConversion.ProtocolOnly) {
 			sText = AnchorGenerator._createAnchors(sText, LINK_SEARCH_PATTERN, sTarget);
 		}
 
-		if (sLinkConversionStrategy === sap.m.LinkConversion.All) {
+		if (sLinkConversionStrategy === LinkConversion.All) {
 			sText = AnchorGenerator._createAnchors(sText, LINK_SEARCH_PATTERN, sTarget);
 			sText = AnchorGenerator._createAnchors(sText, WWW_DETECTION_PATTERN, sTarget, WWW_DETECTED_LINKS_PREFIX);
 		}
@@ -152,5 +155,4 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata"], function (jQuery, M
 	};
 
 	return AnchorGenerator;
-
 }, /* bExport= */ false);

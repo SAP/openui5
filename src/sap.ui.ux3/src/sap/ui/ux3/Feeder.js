@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.ux3.Feeder.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/Button', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters', './library'],
-	function(jQuery, Button, Control, Parameters, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/commons/Button',
+    'sap/ui/core/Control',
+    'sap/ui/core/theming/Parameters',
+    './library',
+    "./FeederRenderer"
+],
+	function(jQuery, Button, Control, Parameters, library, FeederRenderer) {
 	"use strict";
 
 

@@ -1,0 +1,224 @@
+{
+	"accidental-leave": {
+		"tags": [
+			"accidental",
+			"leave",
+			"medical",
+			"cross",
+			"plus",
+			"emergency",
+			"hospital"
+		]
+	},
+	"account": {
+		"tags": [
+			"user",
+			"menu",
+			"settings"
+		]
+	},
+	"ppt-attachment": {
+		"tags": [
+			"document",
+			"page",
+			"file",
+			"attachment",
+			"ppt",
+			"powerpoint"
+		]
+	},
+	"present": {
+		"tags": [
+			"time",
+			"clock",
+			"star",
+			"current",
+			"present"
+		]
+	},
+	"product": {
+		"tags": [
+			"product",
+			"commodity",
+			"goods",
+			"stock",
+			"merchandise",
+			"package"
+		]
+	},
+	"refresh": {
+		"tags": [
+			"reload",
+			"refresh",
+			"arrow"
+		]
+	},
+	"retail-store": {
+		"tags": [
+			"shop",
+			"store",
+			"retail",
+			"market"
+		]
+	},
+	"sales-document": {
+		"tags": [
+			"document",
+			"page",
+			"file",
+			"text",
+			"sales",
+			"money"
+		]
+	},
+	"search": {
+		"tags": [
+			"search",
+			"magnifier",
+			"glass"
+		]
+	},
+	"settings": {
+		"tags": [
+			"cogwheels",
+			"configuration",
+			"settings",
+			"tools",
+			"modify",
+			"customize"
+		]
+	},
+	"survey": {
+		"tags": [
+			"survey",
+			"form",
+			"checklist",
+			"list",
+			"checkbox",
+			"checkmark",
+			"x"
+		]
+	},
+	"synchronize": {
+		"tags": [
+			"synchronize",
+			"reload",
+			"refresh",
+			"arrow"
+		]
+	},
+	"task": {
+		"tags": [
+			"clipboard",
+			"task",
+			"checkbox",
+			"checklist",
+			"list",
+			"checkmark"
+		]
+	},
+	"temperature": {
+		"tags": [
+			"temperature",
+			"hot",
+			"heat",
+			"cold",
+			"cool",
+			"illness",
+			"sickness",
+			"health",
+			"medical"
+		]
+	},
+	"travel-expense": {
+		"tags": [
+			"plane",
+			"dollar",
+			"money",
+			"trip",
+			"expense",
+			"travel",
+			"holiday",
+			"flight",
+			"budget",
+			"billing",
+			"invoice",
+			"cost",
+			"payments"
+		]
+	},
+	"video": {
+		"tags": [
+			"camera",
+			"recorder",
+			"video",
+			"movie",
+			"clip"
+		]
+	},
+	"visits": {
+		"tags": [
+			"user",
+			"arrow",
+			"door",
+			"visit",
+			"login",
+			"entry"
+		]
+	},
+	"washing-machine": {
+		"tags": [
+			"washing",
+			"machine",
+			"laundry",
+			"clean",
+			"wash",
+			"purify"
+		]
+	},
+	"windows-doors": {
+		"tags": [
+			"window",
+			"door",
+			"entry"
+		]
+	},
+	"wrench": {
+		"tags": [
+			"wrench",
+			"control",
+			"configuration",
+			"settings",
+			"tool"
+		]
+	},
+	"error": {
+		"tags": [
+			"message",
+			"error",
+			"negative",
+			"notifications",
+			"status",
+			"solid"
+		]
+	},
+	"activate": {
+		"tags": [
+			"activate",
+			"ignite",
+			"initiate",
+			"magic",
+			"wand",
+			"spark"
+		]
+	},
+	"copy": {
+		"tags": [
+			"copy",
+			"document",
+			"file",
+			"duplicate",
+			"text"
+		]
+	}
+}

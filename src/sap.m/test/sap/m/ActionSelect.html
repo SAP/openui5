@@ -33,13 +33,18 @@
 		<script src="shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 				src="../../../resources/sap-ui-core.js"
-				data-sap-ui-libs="sap.m">
+				data-sap-ui-libs="sap.m, sap.ui.layout">
 		</script>
 		<script>
 		jQuery.sap.require("sap.m.MessageToast");
 
 		var oApp = new sap.m.App("myApp", {
 				initialPage:"page1"
+			}),
+
+			oLabel0 = new sap.m.Label({
+				text: "Action Select in Custom Header Left:",
+				labelFor: oActionSelect0
 			}),
 
 			// select controls
@@ -99,6 +104,11 @@
 				}
 			}),
 
+			oLabel4 = new sap.m.Label({
+				text: "Action Select in Custom Header Right:",
+				labelFor: oActionSelect4
+			}),
+
 			// select controls
 			oActionSelect4 = new sap.m.ActionSelect("content_right",{	// the selected item is not specified, the first one will be selected
 				width: "33%",
@@ -138,6 +148,12 @@
 					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 				}
 			}),
+
+			oLabel1 = new sap.m.Label({
+				text: "Action Select in Header:",
+				labelFor: oActionSelect1
+			}),
+
 			oActionSelect1 = new sap.m.ActionSelect("header_left",{	// the selected item is not specified, the first one will be selected
 				items: [
 					oItem6 = new sap.ui.core.Item("first_header_left",{
@@ -222,6 +238,11 @@
 				}
 			}),
 
+			oLabel2 = new sap.m.Label({
+				text: "Action Select in Footer Right:",
+				labelFor: oActionSelect2
+			}),
+
 			oActionSelect2 = new sap.m.ActionSelect("footer_right",{	// the selected item is not specified, the first one will be selected
 				width: "10rem",
 				items: [
@@ -269,6 +290,11 @@
 				change: function(oControlEvent) {
 					jQuery.sap.log.info("Event fired: 'change' value property to " + oControlEvent.getParameter("selectedItem") + " on " + this);
 				}
+			}),
+
+			oLabel3 = new sap.m.Label({
+				text: "Action Select in Footer Left:",
+				labelFor: oActionSelect3
 			}),
 
 			oActionSelect3 = new sap.m.ActionSelect("footer_left",{	// the selected item is not specified, the first one will be selected
@@ -327,18 +353,25 @@
 			oPage1 = new sap.m.Page("page1", {
 				customHeader: oBar0 = new sap.m.Bar({
 
-					contentLeft: oActionSelect1,
+					contentLeft: [oLabel1, oActionSelect1],
 
-					contentMiddle: oLabel0 = new sap.m.Label({
+					contentMiddle: new sap.m.Label({
 						text: "Action Select Control demo page"
 					})
 				}),
 
-				content: [oActionSelect0, oActionSelect4],
+				content: [
+					new sap.ui.layout.Grid({
+						content: [
+							new sap.m.VBox({items: [oLabel0, oActionSelect0]}),
+							new sap.m.VBox({items: [oLabel4, oActionSelect4]})
+						]
+					})
+				],
 
 				footer: oBar1 = new sap.m.Bar({
-					contentLeft: oActionSelect3,
-					contentRight: [oActionSelect2]
+					contentLeft: [oLabel3, oActionSelect3],
+					contentRight: [oLabel2, oActionSelect2]
 				})
 			});
 

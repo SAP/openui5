@@ -8,37 +8,28 @@
 		"ada": "Αντάνγκμε",
 		"ady": "Αντιγκέα",
 		"ae": "Αβεστάν",
-		"aeb": "aeb",
 		"af": "Αφρικάανς",
 		"afh": "Αφριχίλι",
 		"agq": "Αγκέμ",
 		"ain": "Αϊνού",
 		"ak": "Ακάν",
 		"akk": "Ακάντιαν",
-		"akz": "akz",
-		"ale": "Αλούτ",
-		"aln": "aln",
-		"alt": "Νότια Αλαταϊκά",
-		"am": "Αμαρικά",
-		"an": "Αραγκονικά",
+		"ale": "Αλεούτ",
+		"alt": "Νότια Αλτάι",
+		"am": "Αμχαρικά",
+		"an": "Αραγονικά",
 		"ang": "Παλαιά Αγγλικά",
 		"anp": "Ανγκικά",
 		"ar": "Αραβικά",
 		"ar_001": "Σύγχρονα Τυπικά Αραβικά",
 		"arc": "Αραμαϊκά",
-		"arn": "Αρουκάνιαν",
-		"aro": "aro",
-		"arp": "Αράπαχο",
-		"arq": "arq",
+		"arn": "Αραουκανικά",
+		"arp": "Αραπάχο",
 		"arw": "Αραγουάκ",
-		"ary": "ary",
-		"arz": "arz",
-		"as": "Ασαμεζικά",
+		"as": "Ασαμικά",
 		"asa": "Άσου",
-		"ase": "ase",
 		"ast": "Αστουριανά",
-		"av": "Άβαρικ",
-		"avk": "avk",
+		"av": "Αβαρικά",
 		"awa": "Αγουαντί",
 		"ay": "Αϊμάρα",
 		"az": "Αζερμπαϊτζανικά",
@@ -46,35 +37,27 @@
 		"ba": "Μπασκίρ",
 		"bal": "Μπαλούτσι",
 		"ban": "Μπαλινίζ",
-		"bar": "bar",
 		"bas": "Μπάσα",
 		"bax": "Μπαμούν",
-		"bbc": "bbc",
 		"bbj": "Γκομάλα",
 		"be": "Λευκορωσικά",
 		"bej": "Μπέζα",
 		"bem": "Μπέμπα",
-		"bew": "bew",
 		"bez": "Μπένα",
 		"bfd": "Μπαφούτ",
-		"bfq": "bfq",
 		"bg": "Βουλγαρικά",
 		"bgn": "Δυτικά Μπαλοχικά",
 		"bho": "Μποζπούρι",
 		"bi": "Μπισλάμα",
 		"bik": "Μπικόλ",
 		"bin": "Μπίνι",
-		"bjn": "bjn",
 		"bkm": "Κομ",
 		"bla": "Σικσίκα",
 		"bm": "Μπαμπάρα",
-		"bn": "Μπενγκάλι",
+		"bn": "Βεγγαλικά",
 		"bo": "Θιβετιανά",
-		"bpy": "bpy",
-		"bqi": "bqi",
 		"br": "Βρετονικά",
 		"bra": "Μπρατζ",
-		"brh": "brh",
 		"brx": "Μπόντο",
 		"bs": "Βοσνιακά",
 		"bss": "Ακόσι",
@@ -89,9 +72,9 @@
 		"cay": "Καγιούγκα",
 		"cch": "Ατσάμ",
 		"ce": "Τσετσενικά",
-		"ceb": "Κεμπουάνο",
+		"ceb": "Σεμπουάνο",
 		"cgg": "Τσίγκα",
-		"ch": "Καμόρρο",
+		"ch": "Τσαμόρο",
 		"chb": "Τσίμπτσα",
 		"chg": "Τσαγκατάι",
 		"chk": "Τσουκίζι",
@@ -104,9 +87,9 @@
 		"ckb": "Κουρδικά Σοράνι",
 		"co": "Κορσικανικά",
 		"cop": "Κοπτικά",
-		"cps": "cps",
 		"cr": "Κρι",
 		"crh": "Τουρκικά Κριμαίας",
+		"crs": "Κρεολικά Γαλλικά Σεϋχελλών",
 		"cs": "Τσεχικά",
 		"csb": "Κασούμπιαν",
 		"cu": "Εκκλησιαστικά Σλαβικά",
@@ -118,15 +101,14 @@
 		"dav": "Τάιτα",
 		"de": "Γερμανικά",
 		"de_AT": "Γερμανικά Αυστρίας",
-		"de_CH": "Άνω Γερμανικά Ελβετίας",
+		"de_CH": "Υψηλά Γερμανικά Ελβετίας",
 		"del": "Ντέλαγουερ",
 		"den": "Σλαβικά",
 		"dgr": "Ντόγκριμπ",
 		"din": "Ντίνκα",
 		"dje": "Ζάρμα",
 		"doi": "Ντόγκρι",
-		"dsb": "Γλώσσα Κάτω Λουσατίας",
-		"dtp": "dtp",
+		"dsb": "Κάτω Σορβικά",
 		"dua": "Ντουάλα",
 		"dum": "Μέσα Ολλανδικά",
 		"dv": "Ντιβέχι",
@@ -135,9 +117,8 @@
 		"dz": "Ντζόνγκχα",
 		"dzg": "Νταζάγκα",
 		"ebu": "Έμπου",
-		"ee": "Γι",
+		"ee": "Έουε",
 		"efi": "Εφίκ",
-		"egl": "egl",
 		"egy": "Αρχαία Αιγυπτιακά",
 		"eka": "Εκατζούκ",
 		"el": "Ελληνικά",
@@ -145,7 +126,7 @@
 		"en": "Αγγλικά",
 		"en_AU": "Αγγλικά Αυστραλίας",
 		"en_CA": "Αγγλικά Καναδά",
-		"en_GB": "Αγγλικά Ηνωμένου Βασιλείου",
+		"en_GB": "Αγγλικά Βρετανίας",
 		"en_GB-alt-short": "Αγγλικά ΗΒ",
 		"en_US": "Αγγλικά Αμερικής",
 		"en_US-alt-short": "Αγγλικά ΗΠΑ",
@@ -155,48 +136,41 @@
 		"es_419": "Ισπανικά Λατινικής Αμερικής",
 		"es_ES": "Ισπανικά Ευρώπης",
 		"es_MX": "Ισπανικά Μεξικού",
-		"esu": "esu",
 		"et": "Εσθονικά",
 		"eu": "Βασκικά",
 		"ewo": "Εγουόντο",
-		"ext": "ext",
 		"fa": "Περσικά",
 		"fan": "Φανγκ",
 		"fat": "Φάντι",
-		"ff": "Φουλάχ",
+		"ff": "Φουλά",
 		"fi": "Φινλανδικά",
-		"fil": "Φιλιππινεζικά",
-		"fit": "fit",
+		"fil": "Φιλιππινικά",
 		"fj": "Φίτζι",
-		"fo": "Φαρόε",
+		"fo": "Φεροϊκά",
 		"fon": "Φον",
 		"fr": "Γαλλικά",
 		"fr_CA": "Γαλλικά Καναδά",
 		"fr_CH": "Γαλλικά Ελβετίας",
-		"frc": "frc",
+		"frc": "Γαλλικά (Λουιζιάνα)",
 		"frm": "Μέσα Γαλλικά",
 		"fro": "Παλαιά Γαλλικά",
-		"frp": "frp",
 		"frr": "Βόρεια Φριζιανά",
 		"frs": "Ανατολικά Φριζιανά",
-		"fur": "Φριούλιαν",
-		"fy": "Δυτικά Φριζιανά",
+		"fur": "Φριουλανικά",
+		"fy": "Δυτικά Φριζικά",
 		"ga": "Ιρλανδικά",
 		"gaa": "Γκα",
 		"gag": "Γκαγκάουζ",
 		"gan": "gan",
 		"gay": "Γκάγιο",
 		"gba": "Γκμπάγια",
-		"gbz": "gbz",
 		"gd": "Σκωτικά Κελτικά",
 		"gez": "Γκιζ",
 		"gil": "Γκιλμπερτίζ",
 		"gl": "Γαλικιανά",
-		"glk": "glk",
 		"gmh": "Μέσα Άνω Γερμανικά",
 		"gn": "Γκουαρανί",
 		"goh": "Παλαιά Άνω Γερμανικά",
-		"gom": "gom",
 		"gon": "Γκόντι",
 		"gor": "Γκοροντάλο",
 		"got": "Γοτθικά",
@@ -204,24 +178,21 @@
 		"grc": "Αρχαία Ελληνικά",
 		"gsw": "Γερμανικά Ελβετίας",
 		"gu": "Γκουγιαράτι",
-		"guc": "guc",
-		"gur": "gur",
 		"guz": "Γκούσι",
 		"gv": "Μανξ",
 		"gwi": "Γκουίτσιν",
 		"ha": "Χάουσα",
 		"hai": "Χάιντα",
 		"hak": "hak",
-		"haw": "Χαβανεζικά",
+		"haw": "Χαβαϊκά",
 		"he": "Εβραϊκά",
 		"hi": "Χίντι",
-		"hif": "hif",
-		"hil": "Χιλιγκαγιόν",
+		"hil": "Χιλιγκαϊνόν",
 		"hit": "Χιτίτε",
 		"hmn": "Χμονγκ",
 		"ho": "Χίρι Μότου",
 		"hr": "Κροατικά",
-		"hsb": "Γλώσσα Άνω Λουσατίας",
+		"hsb": "Άνω Σορβικά",
 		"hsn": "hsn",
 		"ht": "Αϊτιανά",
 		"hu": "Ουγγρικά",
@@ -234,24 +205,21 @@
 		"id": "Ινδονησιακά",
 		"ie": "Ιντερλίνγκουε",
 		"ig": "Ίγκμπο",
-		"ii": "Σικουάν Γι",
+		"ii": "Σίτσουαν Γι",
 		"ik": "Ινουπιάκ",
 		"ilo": "Ιλόκο",
 		"inh": "Ινγκούς",
 		"io": "Ίντο",
 		"is": "Ισλανδικά",
 		"it": "Ιταλικά",
-		"iu": "Ινουκτιτούτ",
-		"izh": "izh",
+		"iu": "Ινούκτιτουτ",
 		"ja": "Ιαπωνικά",
-		"jam": "jam",
 		"jbo": "Λόζμπαν",
 		"jgo": "Νγκόμπα",
-		"jmc": "Μάχαμε",
+		"jmc": "Ματσάμε",
 		"jpr": "Ιουδαϊκά-Περσικά",
 		"jrb": "Ιουδαϊκά-Αραβικά",
-		"jut": "jut",
-		"jv": "Ιαβανεζικά",
+		"jv": "Ιαβανικά",
 		"ka": "Γεωργιανά",
 		"kaa": "Κάρα-Καλπάκ",
 		"kab": "Καμπίλε",
@@ -261,119 +229,103 @@
 		"kaw": "Κάουι",
 		"kbd": "Καμπαρντιανά",
 		"kbl": "Κανέμπου",
-		"kcg": "Τουάπ",
+		"kcg": "Τιάπ",
 		"kde": "Μακόντε",
 		"kea": "Γλώσσα του Πράσινου Ακρωτηρίου",
-		"ken": "ken",
 		"kfo": "Κόρο",
 		"kg": "Κονγκό",
-		"kgp": "kgp",
 		"kha": "Κάσι",
 		"kho": "Κοτανικά",
 		"khq": "Κόιρα Τσίνι",
-		"khw": "khw",
 		"ki": "Κικούγιου",
-		"kiu": "kiu",
-		"kj": "Κουανιγιάμα",
+		"kj": "Κουανιάμα",
 		"kk": "Καζακικά",
 		"kkj": "Κάκο",
 		"kl": "Καλαάλισουτ",
 		"kln": "Καλεντζίν",
-		"km": "Καμποτζιανά",
+		"km": "Χμερ",
 		"kmb": "Κιμπούντου",
 		"kn": "Κανάντα",
 		"ko": "Κορεατικά",
 		"koi": "Κόμι-Περμιάκ",
-		"kok": "Κονκάνι",
+		"kok": "Κονκανικά",
 		"kos": "Κοσραενικά",
 		"kpe": "Κπέλε",
 		"kr": "Κανούρι",
 		"krc": "Καρατσάι-Μπαλκάρ",
-		"kri": "kri",
-		"krj": "krj",
-		"krl": "Καρελιακά",
+		"krl": "Καρελικά",
 		"kru": "Κουρούχ",
-		"ks": "Κασμίρι",
-		"ksb": "Σάμπαλα",
+		"ks": "Κασμιρικά",
+		"ksb": "Σαμπάλα",
 		"ksf": "Μπάφια",
 		"ksh": "Κολωνικά",
 		"ku": "Κουρδικά",
 		"kum": "Κουμγιούκ",
 		"kut": "Κουτενάι",
 		"kv": "Κόμι",
-		"kw": "Κόρνις",
-		"ky": "Κυργιζικά",
+		"kw": "Κορνουαλικά",
+		"ky": "Κιργιζικά",
 		"la": "Λατινικά",
 		"lad": "Λαδίνο",
 		"lag": "Λάνγκι",
 		"lah": "Λάχδα",
 		"lam": "Λάμπα",
 		"lb": "Λουξεμβουργιανά",
-		"lez": "Λαζγκιάν",
-		"lfn": "lfn",
+		"lez": "Λεζγκικά",
 		"lg": "Γκάντα",
 		"li": "Λιμβουργιανά",
-		"lij": "lij",
-		"liv": "liv",
 		"lkt": "Λακότα",
-		"lmo": "lmo",
 		"ln": "Λινγκάλα",
-		"lo": "Λαοθιανά",
+		"lo": "Λαοτινά",
 		"lol": "Μόνγκο",
+		"lou": "Κρεολικά (Λουιζιάνα)",
 		"loz": "Λόζι",
 		"lrc": "Βόρεια Λούρι",
 		"lt": "Λιθουανικά",
-		"ltg": "ltg",
 		"lu": "Λούμπα-Κατάνγκα",
 		"lua": "Λούμπα-Λουλούα",
 		"lui": "Λουισένο",
 		"lun": "Λούντα",
 		"luo": "Λούο",
-		"lus": "Λουσάι",
+		"lus": "Μίζο",
 		"luy": "Λουχία",
 		"lv": "Λετονικά",
-		"lzh": "lzh",
-		"lzz": "lzz",
 		"mad": "Μαντουρίζ",
 		"maf": "Μάφα",
 		"mag": "Μαγκάχι",
 		"mai": "Μαϊτχίλι",
-		"mak": "Μακαζάρ",
+		"mak": "Μακασάρ",
 		"man": "Μαντίνγκο",
 		"mas": "Μασάι",
 		"mde": "Μάμπα",
 		"mdf": "Μόκσα",
-		"mdh": "mdh",
 		"mdr": "Μανδάρ",
 		"men": "Μέντε",
-		"mer": "Μερού",
-		"mfe": "Μορίσιεν",
-		"mg": "Μαλαγάσι",
+		"mer": "Μέρου",
+		"mfe": "Μορισιέν",
+		"mg": "Μαλγασικά",
 		"mga": "Μέσα Ιρλανδικά",
 		"mgh": "Μακούβα-Μέτο",
-		"mgo": "Μετά",
-		"mh": "Μάρσαλ",
-		"mi": "Μάορι",
+		"mgo": "Μέτα",
+		"mh": "Μαρσαλέζικα",
+		"mi": "Μαορί",
 		"mic": "Μικμάκ",
 		"min": "Μινανγκαμπάου",
-		"mis": "mis",
 		"mk": "Σλαβομακεδονικά",
-		"ml": "Μαλαγιαλάμ",
+		"ml": "Μαλαγιαλαμικά",
 		"mn": "Μογγολικά",
 		"mnc": "Μαντσού",
 		"mni": "Μανιπούρι",
 		"moh": "Μοχόκ",
 		"mos": "Μόσι",
-		"mr": "Μαράθι",
-		"mrj": "mrj",
-		"ms": "Μαλάι",
+		"mr": "Μαραθικά",
+		"ms": "Μαλαισιανά",
 		"mt": "Μαλτεζικά",
 		"mua": "Μουντάνγκ",
 		"mul": "Πολλαπλές γλώσσες",
 		"mus": "Κρικ",
 		"mwl": "Μιραντεζικά",
 		"mwr": "Μαργουάρι",
-		"mwv": "mwv",
 		"my": "Βιρμανικά",
 		"mye": "Μιένε",
 		"myv": "Έρζυα",
@@ -383,15 +335,14 @@
 		"nap": "Ναπολιτανικά",
 		"naq": "Νάμα",
 		"nb": "Νορβηγικά Μποκμάλ",
-		"nd": "Ντεμπέλε Βορρά",
+		"nd": "Βόρεια Ντεμπέλε",
 		"nds": "Κάτω Γερμανικά",
 		"nds_NL": "Κάτω Γερμανικά Ολλανδίας",
-		"ne": "Νεπάλι",
+		"ne": "Νεπαλικά",
 		"new": "Νεγουάρι",
 		"ng": "Ντόνγκα",
 		"nia": "Νίας",
-		"niu": "Νιούεαν",
-		"njo": "njo",
+		"niu": "Νιούε",
 		"nl": "Ολλανδικά",
 		"nl_BE": "Φλαμανδικά",
 		"nmg": "Κβάσιο",
@@ -400,11 +351,10 @@
 		"no": "Νορβηγικά",
 		"nog": "Νογκάι",
 		"non": "Παλαιά Νορβηγικά",
-		"nov": "nov",
 		"nqo": "Ν’Κο",
-		"nr": "Ντεμπέλε Νότου",
+		"nr": "Νότια Ντεμπέλε",
 		"nso": "Βόρεια Σόθο",
-		"nus": "Νουέρ",
+		"nus": "Νούερ",
 		"nv": "Νάβαχο",
 		"nwc": "Κλασικά Νεουάρι",
 		"ny": "Νιάντζα",
@@ -412,10 +362,10 @@
 		"nyn": "Νιανκόλε",
 		"nyo": "Νιόρο",
 		"nzi": "Νζίμα",
-		"oc": "Οκσιτανικά",
+		"oc": "Οξιτανικά",
 		"oj": "Οζιβίγουα",
 		"om": "Ορόμο",
-		"or": "Ορίγια",
+		"or": "Όντια",
 		"os": "Οσετικά",
 		"osa": "Οσάζ",
 		"ota": "Οθωμανικά Τουρκικά",
@@ -425,70 +375,55 @@
 		"pam": "Παμπάνγκα",
 		"pap": "Παπιαμέντο",
 		"pau": "Παλάουαν",
-		"pcd": "pcd",
-		"pdc": "pdc",
-		"pdt": "pdt",
+		"pcm": "Πίτζιν Νιγηρίας",
 		"peo": "Αρχαία Περσικά",
-		"pfl": "pfl",
 		"phn": "Φοινικικά",
 		"pi": "Πάλι",
 		"pl": "Πολωνικά",
-		"pms": "pms",
-		"pnt": "pnt",
-		"pon": "Ποχπέιαν",
-		"prg": "prg",
-		"pro": "Παλαιά Προβενσιάλ",
+		"pon": "Πομπηικά",
+		"prg": "Πρωσικά",
+		"pro": "Παλαιά Προβανσάλ",
 		"ps": "Πάστο",
 		"pt": "Πορτογαλικά",
 		"pt_BR": "Πορτογαλικά Βραζιλίας",
 		"pt_PT": "Πορτογαλικά Ευρώπης",
-		"qu": "Κετσούα",
-		"quc": "Κισέ",
-		"qug": "qug",
+		"qu": "Κέτσουα",
+		"quc": "Κιτσέ",
 		"raj": "Ραζασθάνι",
 		"rap": "Ραπανούι",
 		"rar": "Ραροτονγκάν",
-		"rgn": "rgn",
-		"rif": "rif",
 		"rm": "Ρομανικά",
 		"rn": "Ρούντι",
 		"ro": "Ρουμανικά",
 		"ro_MD": "Μολδαβικά",
 		"rof": "Ρόμπο",
 		"rom": "Ρομανί",
-		"root": "Ρουτ",
-		"rtm": "rtm",
+		"root": "Ρίζα",
 		"ru": "Ρωσικά",
-		"rue": "rue",
-		"rug": "rug",
 		"rup": "Αρομανικά",
-		"rw": "Κινιαρβάντα",
+		"rw": "Κινιαρουάντα",
 		"rwk": "Ρουά",
 		"sa": "Σανσκριτικά",
 		"sad": "Σαντάγουε",
-		"sah": "Γιακούτ",
+		"sah": "Σαχά",
 		"sam": "Σαμαρίτικα Αραμαϊκά",
 		"saq": "Σαμπούρου",
 		"sas": "Σασάκ",
 		"sat": "Σαντάλι",
-		"saz": "saz",
 		"sba": "Νγκαμπέι",
 		"sbp": "Σάνγκου",
-		"sc": "Σαρδινικά",
-		"scn": "Σικελιανά",
+		"sc": "Σαρδηνιακά",
+		"scn": "Σικελικά",
 		"sco": "Σκωτικά",
 		"sd": "Σίντι",
-		"sdc": "sdc",
 		"sdh": "Νότια Κουρδικά",
 		"se": "Βόρεια Σάμι",
 		"see": "Σένεκα",
 		"seh": "Σένα",
-		"sei": "sei",
 		"sel": "Σελκούπ",
 		"ses": "Κοϊραμπόρο Σένι",
 		"sg": "Σάνγκο",
 		"sga": "Παλαιά Ιρλανδικά",
-		"sgs": "sgs",
 		"sh": "Σερβοκροατικά",
 		"shi": "Τασελχίτ",
 		"shn": "Σαν",
@@ -497,25 +432,22 @@
 		"sid": "Σιντάμο",
 		"sk": "Σλοβακικά",
 		"sl": "Σλοβενικά",
-		"sli": "sli",
-		"sly": "sly",
-		"sm": "Σαμόαν",
+		"sm": "Σαμοανά",
 		"sma": "Νότια Σάμι",
 		"smj": "Λούλε Σάμι",
 		"smn": "Ινάρι Σάμι",
 		"sms": "Σκολτ Σάμι",
-		"sn": "Σχόνα",
+		"sn": "Σόνα",
 		"snk": "Σονίνκε",
-		"so": "Σομάλι",
+		"so": "Σομαλικά",
 		"sog": "Σογκντιέν",
 		"sq": "Αλβανικά",
 		"sr": "Σερβικά",
-		"srn": "Σρανάρ Τόνγκο",
+		"srn": "Σρανάν Τόνγκο",
 		"srr": "Σερέρ",
 		"ss": "Σουάτι",
 		"ssy": "Σάχο",
 		"st": "Νότια Σόθο",
-		"stq": "stq",
 		"su": "Σουνδανικά",
 		"suk": "Σουκούμα",
 		"sus": "Σούσου",
@@ -523,80 +455,67 @@
 		"sv": "Σουηδικά",
 		"sw": "Σουαχίλι",
 		"sw_CD": "Κονγκό Σουαχίλι",
-		"swb": "Κομόρρια",
+		"swb": "Κομοριανά",
 		"syc": "Κλασικά Συριακά",
 		"syr": "Συριακά",
-		"szl": "szl",
-		"ta": "Ταμίλ",
-		"tcy": "tcy",
+		"ta": "Ταμιλικά",
 		"te": "Τελούγκου",
 		"tem": "Τίμνε",
 		"teo": "Τέσο",
 		"ter": "Τερένο",
 		"tet": "Τέτουμ",
-		"tg": "Τατζίκ",
+		"tg": "Τατζικικά",
 		"th": "Ταϊλανδικά",
-		"ti": "Τιγκρίνυα",
+		"ti": "Τιγκρινικά",
 		"tig": "Τίγκρε",
 		"tiv": "Τιβ",
 		"tk": "Τουρκμενικά",
 		"tkl": "Τοκελάου",
-		"tkr": "tkr",
-		"tl": "Ταγκαλόγκ",
+		"tl": "Τάγκαλογκ",
 		"tlh": "Κλίνγκον",
 		"tli": "Τλίνγκιτ",
-		"tly": "tly",
 		"tmh": "Ταμασέκ",
-		"tn": "Τσιγουάνα",
+		"tn": "Τσουάνα",
 		"to": "Τονγκανικά",
 		"tog": "Νιάσα Τόνγκα",
 		"tpi": "Τοκ Πισίν",
 		"tr": "Τουρκικά",
-		"tru": "tru",
 		"trv": "Ταρόκο",
 		"ts": "Τσόνγκα",
-		"tsd": "tsd",
 		"tsi": "Τσίμσιαν",
-		"tt": "Τατάρ",
-		"ttt": "ttt",
+		"tt": "Ταταρικά",
 		"tum": "Τουμπούκα",
 		"tvl": "Τουβαλού",
 		"tw": "Τούι",
 		"twq": "Τασαβάκ",
 		"ty": "Ταϊτιανά",
-		"tyv": "Τουβίνιαν",
+		"tyv": "Τουβινικά",
 		"tzm": "Ταμαζίτ Κεντρικού Μαρόκο",
 		"udm": "Ουντμούρτ",
-		"ug": "Ουιγουρικά",
+		"ug": "Ουιγκουρικά",
 		"ug_alt-variant": "Ουιγκούρ",
-		"uga": "Ουγκαρίτικ",
+		"uga": "Ουγκαριτικά",
 		"uk": "Ουκρανικά",
 		"umb": "Ουμπούντου",
 		"und": "Άγνωστη γλώσσα",
 		"ur": "Ουρντού",
 		"uz": "Ουζμπεκικά",
 		"vai": "Βάι",
-		"ve": "Βένδα",
-		"vec": "vec",
-		"vep": "vep",
+		"ve": "Βέντα",
 		"vi": "Βιετναμικά",
-		"vls": "vls",
-		"vmf": "vmf",
-		"vo": "Βόλαπικ",
+		"vo": "Βολαπιούκ",
 		"vot": "Βότικ",
-		"vro": "vro",
 		"vun": "Βούντζο",
-		"wa": "Γουαλούν",
+		"wa": "Βαλλωνικά",
 		"wae": "Βάλσερ",
-		"wal": "Γουάλαμο",
-		"war": "Γουάρει",
+		"wal": "Γουολάιτα",
+		"war": "Γουάραϊ",
 		"was": "Γουασό",
 		"wbp": "Γουαρλπίρι",
 		"wo": "Γουόλοφ",
 		"wuu": "wuu",
 		"xal": "Καλμίκ",
-		"xh": "Ζόσα",
-		"xmf": "xmf",
+		"xh": "Κόσα",
 		"xog": "Σόγκα",
 		"yao": "Γιάο",
 		"yap": "Γιαπίζ",
@@ -604,14 +523,12 @@
 		"ybb": "Γιέμπα",
 		"yi": "Γίντις",
 		"yo": "Γιορούμπα",
-		"yrl": "yrl",
 		"yue": "Καντονέζικα",
 		"za": "Ζουάνγκ",
 		"zap": "Ζάποτεκ",
 		"zbl": "Σύμβολα Bliss",
-		"zea": "zea",
 		"zen": "Ζενάγκα",
-		"zgh": "Τυπικά Ταμαζίγκτ Μαρόκου",
+		"zgh": "Τυπικά Ταμαζίτ Μαρόκου",
 		"zh": "Κινεζικά",
 		"zh_Hans": "Απλοποιημένα Κινεζικά",
 		"zh_Hant": "Παραδοσιακά Κινεζικά",
@@ -662,12 +579,13 @@
 		"Geok": "Γεωργιανό Κχουτσούρι",
 		"Geor": "Γεωργιανό",
 		"Glag": "Γκλαγκολιτικό",
+		"Gonm": "Gonm",
 		"Goth": "Γοτθικό",
 		"Gran": "Gran",
 		"Grek": "Ελληνικό",
 		"Gujr": "Γκουγιαράτι",
 		"Guru": "Γκουρμουκχί",
-		"Hanb": "Hanb",
+		"Hanb": "Χανμπ",
 		"Hang": "Χανγκούλ",
 		"Hani": "Χαν",
 		"Hano": "Χανούνου",
@@ -684,7 +602,7 @@
 		"Hung": "Παλαιό Ουγγρικό",
 		"Inds": "Ίνδους",
 		"Ital": "Παλαιό Ιταλικό",
-		"Jamo": "Jamo",
+		"Jamo": "Τζάμο",
 		"Java": "Ιαβανεζικό",
 		"Jpan": "Ιαπωνικό",
 		"Kali": "Καγιάχ Λι",
@@ -727,10 +645,11 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "Ν’Κο",
+		"Nshu": "Nshu",
 		"Ogam": "Όγκχαμ",
 		"Olck": "Ολ Τσίκι",
 		"Orkh": "Όρκχον",
-		"Orya": "Ορίγια",
+		"Orya": "Όντια",
 		"Osge": "Osge",
 		"Osma": "Οσμάνγια",
 		"Palm": "Palm",
@@ -743,55 +662,6 @@
 		"Phnx": "Φοινικικό",
 		"Plrd": "Φωνητικό Πόλαρντ",
 		"Prti": "Επιγραφικό Παρθιάν",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "Ρετζάνγκ",
 		"Roro": "Ρονγκορόνγκο",
 		"Runr": "Ρουνίκ",
@@ -806,6 +676,7 @@
 		"Sind": "Sind",
 		"Sinh": "Σινχάλα",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "Σουνδανικό",
 		"Sylo": "Συλότι Νάγκρι",
 		"Syrc": "Συριακό",
@@ -834,9 +705,10 @@
 		"Xpeo": "Παλαιό Περσικό",
 		"Xsux": "Σούμερο-Ακάντιαν Κουνεϊφόρμ",
 		"Yiii": "Γι",
+		"Zanb": "Zanb",
 		"Zinh": "Κληρονομημένο",
-		"Zmth": "Μαθηματική παράσταση",
-		"Zsye": "Zsye",
+		"Zmth": "Μαθηματική σημειογραφία",
+		"Zsye": "Emoji",
 		"Zsym": "Σύμβολα",
 		"Zxxx": "Άγραφο",
 		"Zyyy": "Κοινό",
@@ -850,6 +722,7 @@
 		"151": "Ανατολική Ευρώπη",
 		"154": "Βόρεια Ευρώπη",
 		"155": "Δυτική Ευρώπη",
+		"202": "202",
 		"419": "Λατινική Αμερική",
 		"001": "Κόσμος",
 		"002": "Αφρική",
@@ -881,7 +754,7 @@
 		"AI": "Ανγκουίλα",
 		"AL": "Αλβανία",
 		"AM": "Αρμενία",
-		"AO": "Ανγκόλα",
+		"AO": "Αγκόλα",
 		"AQ": "Ανταρκτική",
 		"AR": "Αργεντινή",
 		"AS": "Αμερικανική Σαμόα",
@@ -891,7 +764,7 @@
 		"AX": "Νήσοι Όλαντ",
 		"AZ": "Αζερμπαϊτζάν",
 		"BA": "Βοσνία - Ερζεγοβίνη",
-		"BB": "Μπαρμπάντος",
+		"BB": "Μπαρμπέιντος",
 		"BD": "Μπανγκλαντές",
 		"BE": "Βέλγιο",
 		"BF": "Μπουρκίνα Φάσο",
@@ -914,7 +787,7 @@
 		"CA": "Καναδάς",
 		"CC": "Νήσοι Κόκος (Κίλινγκ)",
 		"CD": "Κονγκό - Κινσάσα",
-		"CD-alt-variant": "Κονγκό",
+		"CD-alt-variant": "Κονγκό (DRC)",
 		"CF": "Κεντροαφρικανική Δημοκρατία",
 		"CG": "Κονγκό - Μπραζαβίλ",
 		"CG-alt-variant": "Κονγκό (Δημοκρατία)",
@@ -933,7 +806,8 @@
 		"CW": "Κουρασάο",
 		"CX": "Νήσος των Χριστουγέννων",
 		"CY": "Κύπρος",
-		"CZ": "Τσεχική Δημοκρατία",
+		"CZ": "Τσεχία",
+		"CZ-alt-variant": "Τσεχική Δημοκρατία",
 		"DE": "Γερμανία",
 		"DG": "Ντιέγκο Γκαρσία",
 		"DJ": "Τζιμπουτί",
@@ -941,8 +815,8 @@
 		"DM": "Ντομίνικα",
 		"DO": "Δομινικανή Δημοκρατία",
 		"DZ": "Αλγερία",
-		"EA": "Θεούτα και Μελίλα",
-		"EC": "Εκουαδόρ",
+		"EA": "Θέουτα και Μελίγια",
+		"EC": "Ισημερινός",
 		"EE": "Εσθονία",
 		"EG": "Αίγυπτος",
 		"EH": "Δυτική Σαχάρα",
@@ -950,6 +824,7 @@
 		"ES": "Ισπανία",
 		"ET": "Αιθιοπία",
 		"EU": "Ευρωπαϊκή Ένωση",
+		"EZ": "Ευρωζώνη",
 		"FI": "Φινλανδία",
 		"FJ": "Φίτζι",
 		"FK": "Νήσοι Φόκλαντ",
@@ -988,7 +863,7 @@
 		"ID": "Ινδονησία",
 		"IE": "Ιρλανδία",
 		"IL": "Ισραήλ",
-		"IM": "Νήσος Μαν",
+		"IM": "Νήσος του Μαν",
 		"IN": "Ινδία",
 		"IO": "Βρετανικά Εδάφη Ινδικού Ωκεανού",
 		"IQ": "Ιράκ",
@@ -1004,11 +879,11 @@
 		"KH": "Καμπότζη",
 		"KI": "Κιριμπάτι",
 		"KM": "Κομόρες",
-		"KN": "Άγιος Χριστόφορος και Νέβις",
+		"KN": "Σεν Κιτς και Νέβις",
 		"KP": "Βόρεια Κορέα",
 		"KR": "Νότια Κορέα",
 		"KW": "Κουβέιτ",
-		"KY": "Νήσοι Κάιμαν",
+		"KY": "Νήσοι Κέιμαν",
 		"KZ": "Καζακστάν",
 		"LA": "Λάος",
 		"LB": "Λίβανος",
@@ -1031,7 +906,7 @@
 		"MK": "Πρώην Γιουγκοσλαβική Δημοκρατία της Μακεδονίας",
 		"MK-alt-variant": "Πρώην Γιουγκοσλαβική Δημοκρατία της Μακεδονίας (ΠΓΔΜ)",
 		"ML": "Μάλι",
-		"MM": "Μιανμάρ/Βιρμανία",
+		"MM": "Μιανμάρ (Βιρμανία)",
 		"MN": "Μογγολία",
 		"MO": "Μακάο ΕΔΠ Κίνας",
 		"MO-alt-short": "Μακάο",
@@ -1103,7 +978,7 @@
 		"SY": "Συρία",
 		"SZ": "Σουαζιλάνδη",
 		"TA": "Τριστάν ντα Κούνια",
-		"TC": "Νήσοι Τερκ και Κάικος",
+		"TC": "Νήσοι Τερκς και Κάικος",
 		"TD": "Τσαντ",
 		"TF": "Γαλλικές περιοχές του νοτίου ημισφαιρίου",
 		"TG": "Τόγκο",
@@ -1123,6 +998,8 @@
 		"UA": "Ουκρανία",
 		"UG": "Ουγκάντα",
 		"UM": "Απομακρυσμένες Νησίδες ΗΠΑ",
+		"UN": "Ηνωμένα Έθνη",
+		"UN-alt-short": "ΟΗΕ",
 		"US": "Ηνωμένες Πολιτείες",
 		"US-alt-short": "ΗΠΑ",
 		"UY": "Ουρουγουάη",
@@ -1130,13 +1007,13 @@
 		"VA": "Βατικανό",
 		"VC": "Άγιος Βικέντιος και Γρεναδίνες",
 		"VE": "Βενεζουέλα",
-		"VG": "Βρετανικές Παρθένοι Νήσοι",
-		"VI": "Αμερικανικές Παρθένοι Νήσοι",
+		"VG": "Βρετανικές Παρθένες Νήσοι",
+		"VI": "Αμερικανικές Παρθένες Νήσοι",
 		"VN": "Βιετνάμ",
 		"VU": "Βανουάτου",
 		"WF": "Ουάλις και Φουτούνα",
 		"WS": "Σαμόα",
-		"XK": "Κόσοβο",
+		"XK": "Κοσσυφοπέδιο",
 		"YE": "Υεμένη",
 		"YT": "Μαγιότ",
 		"ZA": "Νότια Αφρική",
@@ -1164,8 +1041,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1188,7 +1070,7 @@
 				"M": "L",
 				"Md": "d/M",
 				"MEd": "E, d/M",
-				"MMM": "LLL",
+				"MMM": "MMM",
 				"MMMd": "d MMM",
 				"MMMEd": "E, d MMM",
 				"MMMMd": "d MMMM",
@@ -1201,9 +1083,11 @@
 				"yMMM": "MMM y",
 				"yMMMd": "d MMM y",
 				"yMMMEd": "E, d MMM y",
-				"yMMMM": "MMMM y",
+				"yMMMM": "LLLL y",
 				"yQQQ": "y QQQ",
-				"yQQQQ": "y QQQQ"
+				"yQQQQ": "y QQQQ",
+				"MMMMW": "εβδομάδα W του MMM",
+				"yw": "εβδομάδα w του Y"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1545,8 +1429,8 @@
 					"μ.μ."
 				],
 				"narrow": [
-					"π.μ.",
-					"μ.μ."
+					"πμ",
+					"μμ"
 				],
 				"wide": [
 					"π.μ.",
@@ -1586,8 +1470,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1964,8 +1853,8 @@
 					"μ.μ."
 				],
 				"narrow": [
-					"π.μ.",
-					"μ.μ."
+					"πμ",
+					"μμ"
 				],
 				"wide": [
 					"π.μ.",
@@ -1974,13 +1863,13 @@
 			}
 		},
 		"era-wide": {
-			"0": "AH"
+			"0": "Ε.Ε."
 		},
 		"era-abbreviated": {
-			"0": "AH"
+			"0": "Ε.Ε."
 		},
 		"era-narrow": {
-			"0": "AH"
+			"0": "Ε.Ε."
 		}
 	},
 	"ca-japanese": {
@@ -2002,8 +1891,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2387,8 +2281,8 @@
 					"μ.μ."
 				],
 				"narrow": [
-					"π.μ.",
-					"μ.μ."
+					"πμ",
+					"μμ"
 				],
 				"wide": [
 					"π.μ.",
@@ -2434,8 +2328,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2812,8 +2711,8 @@
 					"μ.μ."
 				],
 				"narrow": [
-					"π.μ.",
-					"μ.μ."
+					"πμ",
+					"μμ"
 				],
 				"wide": [
 					"π.μ.",
@@ -2964,7 +2863,7 @@
 		"week-wide": {
 			"displayName": "εβδομάδα",
 			"relative-type--1": "προηγούμενη εβδομάδα",
-			"relative-type-0": "αυτήν την εβδομάδα",
+			"relative-type-0": "τρέχουσα εβδομάδα",
 			"relative-type-1": "επόμενη εβδομάδα",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "σε {0} εβδομάδα",
@@ -2973,12 +2872,13 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "πριν από {0} εβδομάδα",
 				"relativeTimePattern-count-other": "πριν από {0} εβδομάδες"
-			}
+			},
+			"relativePeriod": "την εβδομάδα {0}"
 		},
 		"week-short": {
 			"displayName": "εβδ.",
 			"relative-type--1": "προηγούμενη εβδομάδα",
-			"relative-type-0": "αυτήν την εβδομάδα",
+			"relative-type-0": "τρέχουσα εβδομάδα",
 			"relative-type-1": "επόμενη εβδομάδα",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "σε {0} εβδ.",
@@ -2987,12 +2887,13 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "πριν από {0} εβδ.",
 				"relativeTimePattern-count-other": "πριν από {0} εβδ."
-			}
+			},
+			"relativePeriod": "την εβδ. {0}"
 		},
 		"week-narrow": {
 			"displayName": "εβδ.",
 			"relative-type--1": "προηγούμενη εβδομάδα",
-			"relative-type-0": "αυτήν την εβδομάδα",
+			"relative-type-0": "τρέχουσα εβδομάδα",
 			"relative-type-1": "επόμενη εβδομάδα",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "σε {0} εβδ.",
@@ -3001,7 +2902,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} εβδ. πριν",
 				"relativeTimePattern-count-other": "{0} εβδ. πριν"
-			}
+			},
+			"relativePeriod": "την εβδ. {0}"
 		},
 		"day-wide": {
 			"displayName": "ημέρα",
@@ -3020,23 +2922,23 @@
 			}
 		},
 		"day-short": {
-			"displayName": "ημέρα",
+			"displayName": "ημ.",
 			"relative-type--2": "προχθές",
 			"relative-type--1": "χθες",
 			"relative-type-0": "σήμερα",
 			"relative-type-1": "αύριο",
 			"relative-type-2": "μεθαύριο",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "σε {0} ημέρα",
-				"relativeTimePattern-count-other": "σε {0} ημέρες"
+				"relativeTimePattern-count-one": "σε {0} ημ.",
+				"relativeTimePattern-count-other": "σε {0} ημ."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "πριν από {0} ημέρα",
-				"relativeTimePattern-count-other": "πριν από {0} ημέρες"
+				"relativeTimePattern-count-one": "πριν από {0} ημ.",
+				"relativeTimePattern-count-other": "πριν από {0} ημ."
 			}
 		},
 		"day-narrow": {
-			"displayName": "ημέρα",
+			"displayName": "ημ.",
 			"relative-type--2": "προχθές",
 			"relative-type--1": "χθες",
 			"relative-type-0": "σήμερα",
@@ -3056,6 +2958,7 @@
 		},
 		"hour-wide": {
 			"displayName": "ώρα",
+			"relative-type-0": "τρέχουσα ώρα",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "σε {0} ώρα",
 				"relativeTimePattern-count-other": "σε {0} ώρες"
@@ -3066,18 +2969,20 @@
 			}
 		},
 		"hour-short": {
-			"displayName": "ώρ.",
+			"displayName": "ώ.",
+			"relative-type-0": "τρέχουσα ώρα",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "σε {0} ώρα",
-				"relativeTimePattern-count-other": "σε {0} ώρ."
+				"relativeTimePattern-count-one": "σε {0} ώ.",
+				"relativeTimePattern-count-other": "σε {0} ώ."
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "πριν από {0} ώρα",
-				"relativeTimePattern-count-other": "πριν από {0} ώρ."
+				"relativeTimePattern-count-one": "πριν από {0} ώ.",
+				"relativeTimePattern-count-other": "πριν από {0} ώ."
 			}
 		},
 		"hour-narrow": {
-			"displayName": "ώ",
+			"displayName": "ώ.",
+			"relative-type-0": "τρέχουσα ώρα",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "σε {0} ώ.",
 				"relativeTimePattern-count-other": "σε {0} ώ."
@@ -3089,6 +2994,7 @@
 		},
 		"minute-wide": {
 			"displayName": "λεπτό",
+			"relative-type-0": "τρέχον λεπτό",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "σε {0} λεπτό",
 				"relativeTimePattern-count-other": "σε {0} λεπτά"
@@ -3100,6 +3006,7 @@
 		},
 		"minute-short": {
 			"displayName": "λεπ.",
+			"relative-type-0": "τρέχον λεπτό",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "σε {0} λεπ.",
 				"relativeTimePattern-count-other": "σε {0} λεπ."
@@ -3110,7 +3017,8 @@
 			}
 		},
 		"minute-narrow": {
-			"displayName": "λ",
+			"displayName": "λ.",
+			"relative-type-0": "τρέχον λεπτό",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "σε {0} λ.",
 				"relativeTimePattern-count-other": "σε {0} λ."
@@ -3145,7 +3053,7 @@
 			}
 		},
 		"second-narrow": {
-			"displayName": "δ",
+			"displayName": "δ.",
 			"relative-type-0": "τώρα",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "σε {0} δ.",
@@ -3223,7 +3131,7 @@
 	},
 	"currencyFormat": {
 		"standard": "#,##0.00 ¤",
-		"accounting": "#,##0.00 ¤;(#,##0.00 ¤)",
+		"accounting": "#,##0.00 ¤",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[:^S:]",
@@ -3236,6 +3144,32 @@
 				"insertBetween": " "
 			}
 		}
+	},
+	"currencyFormat-short": {
+		"1000-one": "0 χιλ'.' ¤",
+		"1000-other": "0 χιλ'.' ¤",
+		"10000-one": "00 χιλ'.' ¤",
+		"10000-other": "00 χιλ'.' ¤",
+		"100000-one": "000 χιλ'.' ¤",
+		"100000-other": "000 χιλ'.' ¤",
+		"1000000-one": "0 εκ'.' ¤",
+		"1000000-other": "0 εκ'.' ¤",
+		"10000000-one": "00 εκ'.' ¤",
+		"10000000-other": "00 εκ'.' ¤",
+		"100000000-one": "000 εκ'.' ¤",
+		"100000000-other": "000 εκ'.' ¤",
+		"1000000000-one": "0 δισ'.' ¤",
+		"1000000000-other": "0 δισ'.' ¤",
+		"10000000000-one": "00 δισ'.' ¤",
+		"10000000000-other": "00 δισ'.' ¤",
+		"100000000000-one": "000 δισ'.' ¤",
+		"100000000000-other": "000 δισ'.' ¤",
+		"1000000000000-one": "0 τρισ'.' ¤",
+		"1000000000000-other": "0 τρισ'.' ¤",
+		"10000000000000-one": "00 τρισ'.' ¤",
+		"10000000000000-other": "00 τρισ'.' ¤",
+		"100000000000000-one": "000 τρισ'.' ¤",
+		"100000000000000-other": "000 τρισ'.' ¤"
 	},
 	"symbols-latn-decimal": ",",
 	"symbols-latn-group": ".",
@@ -3273,6 +3207,741 @@
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
+	"rtl": false,
+	"listPattern-standard-wide": {
+		"2": "{0} και {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} και {1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} ή {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ή {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} ή {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ή {1}"
+	},
+	"listPattern-standard-short": {
+		"2": "{0} και {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} και {1}"
+	},
+	"units": {
+		"short": {
+			"per": {
+				"compoundUnitPattern": "{0}/{1}"
+			},
+			"acceleration-g-force": {
+				"displayName": "δύν. επιτάχ.",
+				"unitPattern-count-one": "{0} G",
+				"unitPattern-count-other": "{0} G"
+			},
+			"acceleration-meter-per-second-squared": {
+				"displayName": "μέτρα/τετρ. δευτ.",
+				"unitPattern-count-one": "{0} m/s²",
+				"unitPattern-count-other": "{0} m/s²"
+			},
+			"angle-revolution": {
+				"displayName": "στρφ",
+				"unitPattern-count-one": "{0} στρφ",
+				"unitPattern-count-other": "{0} στρφ"
+			},
+			"angle-radian": {
+				"displayName": "ακτν",
+				"unitPattern-count-one": "{0} ακτν",
+				"unitPattern-count-other": "{0} ακτν"
+			},
+			"angle-degree": {
+				"displayName": "μοίρες",
+				"unitPattern-count-one": "{0}°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"angle-arc-minute": {
+				"displayName": "λεπτά του τόξου",
+				"unitPattern-count-one": "{0} λεπ. τόξου",
+				"unitPattern-count-other": "{0} λεπ. τόξου"
+			},
+			"angle-arc-second": {
+				"displayName": "arcsec",
+				"unitPattern-count-one": "{0} arcsec",
+				"unitPattern-count-other": "{0} arcsec"
+			},
+			"area-square-kilometer": {
+				"displayName": "τ.χλμ.",
+				"unitPattern-count-one": "{0} τ.χλμ.",
+				"unitPattern-count-other": "{0} τ.χλμ.",
+				"perUnitPattern": "{0}/τ.χλμ."
+			},
+			"area-hectare": {
+				"displayName": "εκτ.",
+				"unitPattern-count-one": "{0} εκτ.",
+				"unitPattern-count-other": "{0} εκτ."
+			},
+			"area-square-meter": {
+				"displayName": "τ. μέτρα",
+				"unitPattern-count-one": "{0} τ.μ.",
+				"unitPattern-count-other": "{0} τ.μ.",
+				"perUnitPattern": "{0}/τ.μ."
+			},
+			"area-square-centimeter": {
+				"displayName": "τ.εκ.",
+				"unitPattern-count-one": "{0} τ.εκ.",
+				"unitPattern-count-other": "{0} τ.εκ.",
+				"perUnitPattern": "{0}/τ.εκ."
+			},
+			"area-square-mile": {
+				"displayName": "τετρ. μίλια",
+				"unitPattern-count-one": "{0} τ.μίλι",
+				"unitPattern-count-other": "{0} τ.μίλια",
+				"perUnitPattern": "{0}/τ.μίλι"
+			},
+			"area-acre": {
+				"displayName": "ακρ",
+				"unitPattern-count-one": "{0} ακρ",
+				"unitPattern-count-other": "{0} ακρ"
+			},
+			"area-square-yard": {
+				"displayName": "τετρ. γιάρδες",
+				"unitPattern-count-one": "{0} τ.γρδ",
+				"unitPattern-count-other": "{0} τ.γρδ"
+			},
+			"area-square-foot": {
+				"displayName": "τετρ. πόδια",
+				"unitPattern-count-one": "{0} τ.πδ",
+				"unitPattern-count-other": "{0} τ.πδ"
+			},
+			"area-square-inch": {
+				"displayName": "τετρ. ίντσες",
+				"unitPattern-count-one": "{0} τ. ίντσα",
+				"unitPattern-count-other": "{0} τ. ίντσες",
+				"perUnitPattern": "{0}/τ. ίντσα"
+			},
+			"concentr-karat": {
+				"displayName": "κρτ",
+				"unitPattern-count-one": "{0} κρτ",
+				"unitPattern-count-other": "{0} κρτ"
+			},
+			"concentr-milligram-per-deciliter": {
+				"displayName": "mg/dL",
+				"unitPattern-count-one": "{0} mg/dL",
+				"unitPattern-count-other": "{0} mg/dL"
+			},
+			"concentr-millimole-per-liter": {
+				"displayName": "mmol/L",
+				"unitPattern-count-one": "{0} mmol/L",
+				"unitPattern-count-other": "{0} mmol/L"
+			},
+			"concentr-part-per-million": {
+				"displayName": "ppm",
+				"unitPattern-count-one": "{0} ppm",
+				"unitPattern-count-other": "{0} ppm"
+			},
+			"consumption-liter-per-kilometer": {
+				"displayName": "λίτρα/χλμ.",
+				"unitPattern-count-one": "{0} λίτρο/χλμ",
+				"unitPattern-count-other": "{0} λίτρα/χλμ"
+			},
+			"consumption-liter-per-100kilometers": {
+				"displayName": "λ./100 χλμ.",
+				"unitPattern-count-one": "{0} λ./100 χλμ.",
+				"unitPattern-count-other": "{0} λ./100 χλμ."
+			},
+			"consumption-mile-per-gallon": {
+				"displayName": "μίλια/γαλόνι",
+				"unitPattern-count-one": "{0} mpg",
+				"unitPattern-count-other": "{0} mpg"
+			},
+			"consumption-mile-per-gallon-imperial": {
+				"displayName": "μίλια/αγγλ. γαλόνι",
+				"unitPattern-count-one": "{0} μίλι/αγγλ. γαλόνι",
+				"unitPattern-count-other": "{0} μίλια/αγγλ. γαλόνι"
+			},
+			"digital-terabyte": {
+				"displayName": "TB",
+				"unitPattern-count-one": "{0} TB",
+				"unitPattern-count-other": "{0} TB"
+			},
+			"digital-terabit": {
+				"displayName": "Tb",
+				"unitPattern-count-one": "{0} Tb",
+				"unitPattern-count-other": "{0} Tb"
+			},
+			"digital-gigabyte": {
+				"displayName": "GB",
+				"unitPattern-count-one": "{0} GB",
+				"unitPattern-count-other": "{0} GB"
+			},
+			"digital-gigabit": {
+				"displayName": "Gb",
+				"unitPattern-count-one": "{0} Gb",
+				"unitPattern-count-other": "{0} Gb"
+			},
+			"digital-megabyte": {
+				"displayName": "MB",
+				"unitPattern-count-one": "{0} MB",
+				"unitPattern-count-other": "{0} MB"
+			},
+			"digital-megabit": {
+				"displayName": "Mb",
+				"unitPattern-count-one": "{0} Mb",
+				"unitPattern-count-other": "{0} Mb"
+			},
+			"digital-kilobyte": {
+				"displayName": "kB",
+				"unitPattern-count-one": "{0} kB",
+				"unitPattern-count-other": "{0} kB"
+			},
+			"digital-kilobit": {
+				"displayName": "kb",
+				"unitPattern-count-one": "{0} kb",
+				"unitPattern-count-other": "{0} kb"
+			},
+			"digital-byte": {
+				"displayName": "byte",
+				"unitPattern-count-one": "{0} byte",
+				"unitPattern-count-other": "{0} byte"
+			},
+			"digital-bit": {
+				"displayName": "bit",
+				"unitPattern-count-one": "{0} bit",
+				"unitPattern-count-other": "{0} bit"
+			},
+			"duration-century": {
+				"displayName": "αιών.",
+				"unitPattern-count-one": "{0} αιών.",
+				"unitPattern-count-other": "{0} αιών."
+			},
+			"duration-year": {
+				"displayName": "έτη",
+				"unitPattern-count-one": "{0} έτ.",
+				"unitPattern-count-other": "{0} έτ.",
+				"perUnitPattern": "{0}/έτ."
+			},
+			"duration-month": {
+				"displayName": "μήνες",
+				"unitPattern-count-one": "{0} μήν.",
+				"unitPattern-count-other": "{0} μήν.",
+				"perUnitPattern": "{0}/μ."
+			},
+			"duration-week": {
+				"displayName": "εβδομάδες",
+				"unitPattern-count-one": "{0} εβδ.",
+				"unitPattern-count-other": "{0} εβδ.",
+				"perUnitPattern": "{0}/εβδ."
+			},
+			"duration-day": {
+				"displayName": "ημέρες",
+				"unitPattern-count-one": "{0} ημέρα",
+				"unitPattern-count-other": "{0} ημέρες",
+				"perUnitPattern": "{0}/ημ."
+			},
+			"duration-hour": {
+				"displayName": "ώρες",
+				"unitPattern-count-one": "{0} ώρα",
+				"unitPattern-count-other": "{0} ώρ.",
+				"perUnitPattern": "{0}/ώ."
+			},
+			"duration-minute": {
+				"displayName": "λεπ.",
+				"unitPattern-count-one": "{0} λεπ.",
+				"unitPattern-count-other": "{0} λεπ.",
+				"perUnitPattern": "{0}/λ."
+			},
+			"duration-second": {
+				"displayName": "δευτ.",
+				"unitPattern-count-one": "{0} δευτ.",
+				"unitPattern-count-other": "{0} δευτ.",
+				"perUnitPattern": "{0}/δευτ."
+			},
+			"duration-millisecond": {
+				"displayName": "χιλιοστά δευτ.",
+				"unitPattern-count-one": "{0} ms",
+				"unitPattern-count-other": "{0} ms"
+			},
+			"duration-microsecond": {
+				"displayName": "μικροδεύτερα",
+				"unitPattern-count-one": "{0} μs",
+				"unitPattern-count-other": "{0} μs"
+			},
+			"duration-nanosecond": {
+				"displayName": "νανοδεύτερα",
+				"unitPattern-count-one": "{0} ns",
+				"unitPattern-count-other": "{0} ns"
+			},
+			"electric-ampere": {
+				"displayName": "αμπέρ",
+				"unitPattern-count-one": "{0} A",
+				"unitPattern-count-other": "{0} A"
+			},
+			"electric-milliampere": {
+				"displayName": "μιλιαμπέρ",
+				"unitPattern-count-one": "{0} mA",
+				"unitPattern-count-other": "{0} mA"
+			},
+			"electric-ohm": {
+				"displayName": "ωμ",
+				"unitPattern-count-one": "{0} Ω",
+				"unitPattern-count-other": "{0} Ω"
+			},
+			"electric-volt": {
+				"displayName": "βολτ",
+				"unitPattern-count-one": "{0} V",
+				"unitPattern-count-other": "{0} V"
+			},
+			"energy-kilocalorie": {
+				"displayName": "kcal",
+				"unitPattern-count-one": "{0} kcal",
+				"unitPattern-count-other": "{0} kcal"
+			},
+			"energy-calorie": {
+				"displayName": "θερμ.",
+				"unitPattern-count-one": "{0} θερμ.",
+				"unitPattern-count-other": "{0} θερμ."
+			},
+			"energy-foodcalorie": {
+				"displayName": "θερμ.",
+				"unitPattern-count-one": "{0} θερμ.",
+				"unitPattern-count-other": "{0} θερμ."
+			},
+			"energy-kilojoule": {
+				"displayName": "κιλοτζάουλ",
+				"unitPattern-count-one": "{0} kJ",
+				"unitPattern-count-other": "{0} kJ"
+			},
+			"energy-joule": {
+				"displayName": "τζάουλ",
+				"unitPattern-count-one": "{0} J",
+				"unitPattern-count-other": "{0} J"
+			},
+			"energy-kilowatt-hour": {
+				"displayName": "κιλοβάτ/ώρα",
+				"unitPattern-count-one": "{0} kWh",
+				"unitPattern-count-other": "{0} kWh"
+			},
+			"frequency-gigahertz": {
+				"displayName": "γιγαχέρτζ",
+				"unitPattern-count-one": "{0} GHz",
+				"unitPattern-count-other": "{0} GHz"
+			},
+			"frequency-megahertz": {
+				"displayName": "μεγαχέρτζ",
+				"unitPattern-count-one": "{0} MHz",
+				"unitPattern-count-other": "{0} MHz"
+			},
+			"frequency-kilohertz": {
+				"displayName": "κιλοχέρτζ",
+				"unitPattern-count-one": "{0} kHz",
+				"unitPattern-count-other": "{0} kHz"
+			},
+			"frequency-hertz": {
+				"displayName": "χερτζ",
+				"unitPattern-count-one": "{0} Hz",
+				"unitPattern-count-other": "{0} Hz"
+			},
+			"length-kilometer": {
+				"displayName": "χλμ.",
+				"unitPattern-count-one": "{0} χλμ.",
+				"unitPattern-count-other": "{0} χλμ.",
+				"perUnitPattern": "{0}/χλμ."
+			},
+			"length-meter": {
+				"displayName": "μέτρα",
+				"unitPattern-count-one": "{0} μ.",
+				"unitPattern-count-other": "{0} μ.",
+				"perUnitPattern": "{0}/μ."
+			},
+			"length-decimeter": {
+				"displayName": "δεκ.",
+				"unitPattern-count-one": "{0} δεκ.",
+				"unitPattern-count-other": "{0} δεκ."
+			},
+			"length-centimeter": {
+				"displayName": "εκ.",
+				"unitPattern-count-one": "{0} εκ.",
+				"unitPattern-count-other": "{0} εκ.",
+				"perUnitPattern": "{0}/εκ."
+			},
+			"length-millimeter": {
+				"displayName": "χιλιοστόμ.",
+				"unitPattern-count-one": "{0} χλστ.",
+				"unitPattern-count-other": "{0} χλστ."
+			},
+			"length-micrometer": {
+				"displayName": "μικρόμετρα",
+				"unitPattern-count-one": "{0} µm",
+				"unitPattern-count-other": "{0} µm"
+			},
+			"length-nanometer": {
+				"displayName": "nm",
+				"unitPattern-count-one": "{0} nm",
+				"unitPattern-count-other": "{0} nm"
+			},
+			"length-picometer": {
+				"displayName": "pm",
+				"unitPattern-count-one": "{0} pm",
+				"unitPattern-count-other": "{0} pm"
+			},
+			"length-mile": {
+				"displayName": "μίλια",
+				"unitPattern-count-one": "{0} μίλ.",
+				"unitPattern-count-other": "{0} μίλ."
+			},
+			"length-yard": {
+				"displayName": "γιάρδες",
+				"unitPattern-count-one": "{0} γρδ",
+				"unitPattern-count-other": "{0} γρδ"
+			},
+			"length-foot": {
+				"displayName": "πόδια",
+				"unitPattern-count-one": "{0} πδ",
+				"unitPattern-count-other": "{0} πδ",
+				"perUnitPattern": "{0}/πδ"
+			},
+			"length-inch": {
+				"displayName": "ίντσες",
+				"unitPattern-count-one": "{0} ίν.",
+				"unitPattern-count-other": "{0} ίν.",
+				"perUnitPattern": "{0}/ίν."
+			},
+			"length-parsec": {
+				"displayName": "παρσέκ",
+				"unitPattern-count-one": "{0} pc",
+				"unitPattern-count-other": "{0} pc"
+			},
+			"length-light-year": {
+				"displayName": "έτη φωτός",
+				"unitPattern-count-one": "{0} έ.φ.",
+				"unitPattern-count-other": "{0} έ.φ."
+			},
+			"length-astronomical-unit": {
+				"displayName": "α.μ.",
+				"unitPattern-count-one": "{0} α.μ.",
+				"unitPattern-count-other": "{0} α.μ."
+			},
+			"length-furlong": {
+				"displayName": "fur",
+				"unitPattern-count-other": "{0} fur"
+			},
+			"length-fathom": {
+				"displayName": "fm",
+				"unitPattern-count-other": "{0} fm"
+			},
+			"length-nautical-mile": {
+				"displayName": "ν.μ.",
+				"unitPattern-count-one": "{0} ν.μ.",
+				"unitPattern-count-other": "{0} ν.μ."
+			},
+			"length-mile-scandinavian": {
+				"displayName": "σκανδ. μίλια",
+				"unitPattern-count-one": "{0} σκανδ. μίλι",
+				"unitPattern-count-other": "{0} σκανδ. μίλια"
+			},
+			"length-point": {
+				"displayName": "στιγμές",
+				"unitPattern-count-one": "{0} στ.",
+				"unitPattern-count-other": "{0} στ."
+			},
+			"light-lux": {
+				"displayName": "lux",
+				"unitPattern-count-one": "{0} lux",
+				"unitPattern-count-other": "{0} lux"
+			},
+			"mass-metric-ton": {
+				"displayName": "μ.τ.",
+				"unitPattern-count-one": "{0} μ.τ.",
+				"unitPattern-count-other": "{0} μ.τ."
+			},
+			"mass-kilogram": {
+				"displayName": "kg",
+				"unitPattern-count-one": "{0} κιλό",
+				"unitPattern-count-other": "{0} κιλά",
+				"perUnitPattern": "{0}/κιλό"
+			},
+			"mass-gram": {
+				"displayName": "γραμμ.",
+				"unitPattern-count-one": "{0} γρ.",
+				"unitPattern-count-other": "{0} γρ.",
+				"perUnitPattern": "{0}/γρ."
+			},
+			"mass-milligram": {
+				"displayName": "mg",
+				"unitPattern-count-one": "{0} mg",
+				"unitPattern-count-other": "{0} mg"
+			},
+			"mass-microgram": {
+				"displayName": "µg",
+				"unitPattern-count-one": "{0} µg",
+				"unitPattern-count-other": "{0} µg"
+			},
+			"mass-ton": {
+				"displayName": "τόνοι",
+				"unitPattern-count-one": "{0} τ.",
+				"unitPattern-count-other": "{0} τ."
+			},
+			"mass-stone": {
+				"displayName": "st",
+				"unitPattern-count-other": "{0} st"
+			},
+			"mass-pound": {
+				"displayName": "λίβρες",
+				"unitPattern-count-one": "{0} λβ",
+				"unitPattern-count-other": "{0} λβ",
+				"perUnitPattern": "{0}/λβ"
+			},
+			"mass-ounce": {
+				"displayName": "oz",
+				"unitPattern-count-one": "{0} oz",
+				"unitPattern-count-other": "{0} oz",
+				"perUnitPattern": "{0}/oz"
+			},
+			"mass-ounce-troy": {
+				"displayName": "ευγενής ουγγιά",
+				"unitPattern-count-one": "{0} oz t",
+				"unitPattern-count-other": "{0} oz t"
+			},
+			"mass-carat": {
+				"displayName": "καράτια",
+				"unitPattern-count-one": "{0} κρτ",
+				"unitPattern-count-other": "{0} κρτ"
+			},
+			"power-gigawatt": {
+				"displayName": "γιγαβάτ",
+				"unitPattern-count-one": "{0} GW",
+				"unitPattern-count-other": "{0} GW"
+			},
+			"power-megawatt": {
+				"displayName": "μεγαβάτ",
+				"unitPattern-count-one": "{0} MW",
+				"unitPattern-count-other": "{0} MW"
+			},
+			"power-kilowatt": {
+				"displayName": "κιλοβάτ",
+				"unitPattern-count-one": "{0} kW",
+				"unitPattern-count-other": "{0} kW"
+			},
+			"power-watt": {
+				"displayName": "βατ",
+				"unitPattern-count-one": "{0} W",
+				"unitPattern-count-other": "{0} W"
+			},
+			"power-milliwatt": {
+				"displayName": "μιλιβάτ",
+				"unitPattern-count-one": "{0} mW",
+				"unitPattern-count-other": "{0} mW"
+			},
+			"power-horsepower": {
+				"displayName": "ίπποι",
+				"unitPattern-count-one": "{0} ίπ.",
+				"unitPattern-count-other": "{0} ίπ."
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-one": "{0} hPa",
+				"unitPattern-count-other": "{0} hPa"
+			},
+			"pressure-millimeter-of-mercury": {
+				"displayName": "mmHg",
+				"unitPattern-count-one": "{0} mmHg",
+				"unitPattern-count-other": "{0} mmHg"
+			},
+			"pressure-pound-per-square-inch": {
+				"displayName": "psi",
+				"unitPattern-count-one": "{0} psi",
+				"unitPattern-count-other": "{0} psi"
+			},
+			"pressure-inch-hg": {
+				"displayName": "inHg",
+				"unitPattern-count-one": "{0} inHg",
+				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-millibar": {
+				"displayName": "mbar",
+				"unitPattern-count-one": "{0} mbar",
+				"unitPattern-count-other": "{0} mbar"
+			},
+			"speed-kilometer-per-hour": {
+				"displayName": "χλμ./ώρα",
+				"unitPattern-count-one": "{0} χλμ./ώρα",
+				"unitPattern-count-other": "{0} χλμ./ώρα"
+			},
+			"speed-meter-per-second": {
+				"displayName": "μέτρα/δευτ.",
+				"unitPattern-count-one": "{0} μέτρο/δευτ.",
+				"unitPattern-count-other": "{0} μέτρα/δευτ."
+			},
+			"speed-mile-per-hour": {
+				"displayName": "μίλια/ώρα",
+				"unitPattern-count-one": "{0} μίλι/ώρα",
+				"unitPattern-count-other": "{0} μίλια/ώρα"
+			},
+			"speed-knot": {
+				"displayName": "κμβ",
+				"unitPattern-count-one": "{0} κμβ",
+				"unitPattern-count-other": "{0} κμβ"
+			},
+			"temperature-generic": {
+				"displayName": "°",
+				"unitPattern-count-one": "{0}°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"temperature-celsius": {
+				"displayName": "βθμ C",
+				"unitPattern-count-one": "{0}°C",
+				"unitPattern-count-other": "{0}°C"
+			},
+			"temperature-fahrenheit": {
+				"displayName": "βθμ F",
+				"unitPattern-count-one": "{0}°F",
+				"unitPattern-count-other": "{0}°F"
+			},
+			"temperature-kelvin": {
+				"displayName": "K",
+				"unitPattern-count-one": "{0} K",
+				"unitPattern-count-other": "{0} K"
+			},
+			"volume-cubic-kilometer": {
+				"displayName": "km³",
+				"unitPattern-count-one": "{0} km³",
+				"unitPattern-count-other": "{0} km³"
+			},
+			"volume-cubic-meter": {
+				"displayName": "m³",
+				"unitPattern-count-one": "{0} m³",
+				"unitPattern-count-other": "{0} m³",
+				"perUnitPattern": "{0}/m³"
+			},
+			"volume-cubic-centimeter": {
+				"displayName": "cm³",
+				"unitPattern-count-one": "{0} cm³",
+				"unitPattern-count-other": "{0} cm³",
+				"perUnitPattern": "{0}/cm³"
+			},
+			"volume-cubic-mile": {
+				"displayName": "mi³",
+				"unitPattern-count-one": "{0} mi³",
+				"unitPattern-count-other": "{0} mi³"
+			},
+			"volume-cubic-yard": {
+				"displayName": "κυβ. γιάρδες",
+				"unitPattern-count-one": "{0} yd³",
+				"unitPattern-count-other": "{0} yd³"
+			},
+			"volume-cubic-foot": {
+				"displayName": "ft³",
+				"unitPattern-count-one": "{0} ft³",
+				"unitPattern-count-other": "{0} ft³"
+			},
+			"volume-cubic-inch": {
+				"displayName": "in³",
+				"unitPattern-count-one": "{0} in³",
+				"unitPattern-count-other": "{0} in³"
+			},
+			"volume-megaliter": {
+				"displayName": "ML",
+				"unitPattern-count-one": "{0} ML",
+				"unitPattern-count-other": "{0} ML"
+			},
+			"volume-hectoliter": {
+				"displayName": "hL",
+				"unitPattern-count-one": "{0} hL",
+				"unitPattern-count-other": "{0} hL"
+			},
+			"volume-liter": {
+				"displayName": "λίτρα",
+				"unitPattern-count-one": "{0} λίτ.",
+				"unitPattern-count-other": "{0} λίτ.",
+				"perUnitPattern": "{0}/λ."
+			},
+			"volume-deciliter": {
+				"displayName": "dL",
+				"unitPattern-count-one": "{0} dL",
+				"unitPattern-count-other": "{0} dL"
+			},
+			"volume-centiliter": {
+				"displayName": "cL",
+				"unitPattern-count-one": "{0} cL",
+				"unitPattern-count-other": "{0} cL"
+			},
+			"volume-milliliter": {
+				"displayName": "mL",
+				"unitPattern-count-one": "{0} mL",
+				"unitPattern-count-other": "{0} mL"
+			},
+			"volume-pint-metric": {
+				"displayName": "μετρικές πίντες",
+				"unitPattern-count-one": "{0} μετρ. πίντα",
+				"unitPattern-count-other": "{0} μετρ. πίντες"
+			},
+			"volume-cup-metric": {
+				"displayName": "μετρ. κύπελλο",
+				"unitPattern-count-one": "{0} μετρ. κύπελλο",
+				"unitPattern-count-other": "{0} μετρ. κύπελλα"
+			},
+			"volume-acre-foot": {
+				"displayName": "ακρ πόδια",
+				"unitPattern-count-one": "{0} ακρ πδ",
+				"unitPattern-count-other": "{0} ακρ πδ"
+			},
+			"volume-bushel": {
+				"displayName": "bu",
+				"unitPattern-count-other": "{0} bu"
+			},
+			"volume-gallon": {
+				"displayName": "γαλ.",
+				"unitPattern-count-one": "{0} γαλ.",
+				"unitPattern-count-other": "{0} γαλ.",
+				"perUnitPattern": "{0}/γαλ."
+			},
+			"volume-gallon-imperial": {
+				"displayName": "αγγλοσαξ. γαλόνια",
+				"unitPattern-count-one": "{0} αγγλοσαξ. γαλόνι",
+				"unitPattern-count-other": "{0} αγγλοσαξ. γαλόνια",
+				"perUnitPattern": "{0}/αγγλοσαξ. γαλόνι"
+			},
+			"volume-quart": {
+				"displayName": "τέταρτα γαλονιού",
+				"unitPattern-count-one": "{0} τέτ. γαλ.",
+				"unitPattern-count-other": "{0} τέτ. γαλ."
+			},
+			"volume-pint": {
+				"displayName": "πίντες",
+				"unitPattern-count-one": "{0} πντ",
+				"unitPattern-count-other": "{0} πντ"
+			},
+			"volume-cup": {
+				"displayName": "κύπ.",
+				"unitPattern-count-one": "{0} κύπ.",
+				"unitPattern-count-other": "{0} κύπ."
+			},
+			"volume-fluid-ounce": {
+				"displayName": "fl oz",
+				"unitPattern-count-one": "{0} fl oz",
+				"unitPattern-count-other": "{0} fl oz"
+			},
+			"volume-tablespoon": {
+				"displayName": "κ.σ.",
+				"unitPattern-count-one": "{0} κ.σ.",
+				"unitPattern-count-other": "{0} κ.σ."
+			},
+			"volume-teaspoon": {
+				"displayName": "κ.γ.",
+				"unitPattern-count-one": "{0} κ.γ.",
+				"unitPattern-count-other": "{0} κ.γ."
+			},
+			"coordinateUnit": {
+				"east": "{0} Α",
+				"north": "{0} Β",
+				"south": "{0} Ν",
+				"west": "{0} Δ"
+			}
+		}
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
@@ -3281,13 +3950,9 @@
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
-		"CAD": 2,
-		"CHF": 2,
 		"CLF": 4,
 		"CLP": 0,
 		"COP": 0,
-		"CRC": 0,
-		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
@@ -3340,6 +4005,9 @@
 		"YER": 0,
 		"ZMK": 0,
 		"ZWD": 0
+	},
+	"plurals": {
+		"one": "n = 1"
 	},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 1,

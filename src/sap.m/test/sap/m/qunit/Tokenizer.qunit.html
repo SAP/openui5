@@ -14,66 +14,76 @@
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 <script	src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 <script	src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script	src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
 <script>
-	var tokenizer;
-	var tokenizer1;
-	var key = "testKey";
-	var text = "testText";
-
 	QUnit.module("Init", {
 		beforeEach : function() {
-			tokenizer = new sap.m.Tokenizer();
+			this.tokenizer = new sap.m.Tokenizer();
 		},
 		afterEach : function() {
-			tokenizer.destroy();
+			this.tokenizer.destroy();
 		}
 	});
 
 	QUnit.test("test scroll width", function(assert) {
-		assert.strictEqual(tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
+		assert.strictEqual(this.tokenizer.getScrollWidth(), 0, 'Scroll width should be 0 when control is not rendered');
+	});
+
+	QUnit.test("scrollToStart before tokenizer is rendered", function(assert) {
+		var fnDeactivateScrollSpy = this.spy(this.tokenizer, "_deactivateScrollToEnd");
+
+		// act
+		this.tokenizer.scrollToStart();
+
+		// assert
+		assert.equal(fnDeactivateScrollSpy.callCount, 0, "_deactivateScrollToEnd was not called");
 	});
 
 	QUnit.module("Basic", {
 		beforeEach : function() {
-			tokenizer1 = new sap.m.Tokenizer("t1");
-			tokenizer1.placeAt("content");
+			this.tokenizer = new sap.m.Tokenizer("t1");
+			this.tokenizer.placeAt("content");
 		},
 		afterEach : function() {
-			token1 = null;
-			tokenizer1.destroy();
+			this.tokenizer.destroy();
 		}
 	});
 
 	QUnit.test("validator add/remove/removeAll", function(assert) {
-		var function1 = function() {
-		};
-		var function2 = function() {
-		};
-		var function3 = function() {
-		};
+		// arrange
+		var function1 = function() {},
+			function2 = function() {},
+			function3 = function() {};
 
-		tokenizer1.removeAllValidators();
-		assert.equal(tokenizer1._aTokenValidators.length, 0, "No token validators available");
+		// act
+		this.tokenizer.removeAllValidators();
 
-		tokenizer1.addValidator(function1);
-		assert.equal(tokenizer1._aTokenValidators.length, 1, "1 token validator available");
+		// assert
+		assert.equal(this.tokenizer._aTokenValidators.length, 0, "No token validators available");
 
-		tokenizer1.addValidator(function2);
-		assert.equal(tokenizer1._aTokenValidators.length, 2, "2 token validators available");
+		// act
+		this.tokenizer.addValidator(function1);
 
-		tokenizer1.addValidator(function3);
-		assert.equal(tokenizer1._aTokenValidators.length, 3, "3 token validators available");
+		// assert
+		assert.equal(this.tokenizer._aTokenValidators.length, 1, "1 token validator available");
 
-		tokenizer1.removeValidator(function2);
-		assert.equal(tokenizer1._aTokenValidators.length, 2, "2 token validators available");
+		// act
+		this.tokenizer.addValidator(function2);
+		this.tokenizer.addValidator(function3);
 
-		tokenizer1.removeAllValidators();
-		assert.equal(tokenizer1._aTokenValidators.length, 0, "No token validators available");
+		this.tokenizer.removeValidator(function2);
+
+		// assert
+		assert.equal(this.tokenizer._aTokenValidators.length, 2, "2 token validators available");
+
+		// act
+		this.tokenizer.removeAllValidators();
+
+		// assert
+		assert.equal(this.tokenizer._aTokenValidators.length, 0, "No token validators available");
 	});
 
 	QUnit.test("clone", function(assert) {
@@ -81,74 +91,59 @@
 		var token1 = new sap.m.Token(),
 			token2 = new sap.m.Token(),
 			token3 = new sap.m.Token(),
-			tokenizer2;
+			tokenizerClone;
 
-		tokenizer1.addToken(token1);
-		tokenizer1.addToken(token2);
-		tokenizer1.addToken(token3);
+		this.tokenizer.addToken(token1);
+		this.tokenizer.addToken(token2);
+		this.tokenizer.addToken(token3);
 
 		//act
-		tokenizer2 = tokenizer1.clone();
+		tokenizerClone = this.tokenizer.clone();
 
 		//assert
-		assert.equal(tokenizer2.getTokens().length, 3, "Clone has 3 tokens");
+		assert.equal(tokenizerClone.getTokens().length, 3, "Clone has 3 tokens");
 
 		//clean-up
-		tokenizer2.destroy();
+		tokenizerClone.destroy();
 	});
 
 	QUnit.test("tokens aggregation", function(assert) {
-		var token1 = new sap.m.Token();
-		var token2 = new sap.m.Token();
-		var token3 = new sap.m.Token();
-		tokenizer1.addToken(token1);
-		tokenizer1.addToken(token2);
-		tokenizer1.addToken(token3);
+		var token1 = new sap.m.Token(),
+			token2 = new sap.m.Token(),
+			token3 = new sap.m.Token();
 
-		assert.equal(tokenizer1.getTokens().length, 3, "Tokenizer contains 3 tokens");
+		this.tokenizer.addToken(token1);
+		this.tokenizer.addToken(token2);
+		this.tokenizer.addToken(token3);
 
-		tokenizer1.removeToken(token1);
-		assert.equal(tokenizer1.getTokens().length, 2, "Tokenizer contains 2 tokens");
+		assert.equal(this.tokenizer.getTokens().length, 3, "Tokenizer contains 3 tokens");
 
-		tokenizer1.removeAllTokens();
-		assert.equal(tokenizer1.getTokens().length, 0, "Tokenizer contains 0 tokens");
+		this.tokenizer.removeToken(token1);
+		assert.equal(this.tokenizer.getTokens().length, 2, "Tokenizer contains 2 tokens");
 
-		tokenizer1.addToken(token1);
-		tokenizer1.addToken(token2);
-		tokenizer1.addToken(token3);
-		assert.equal(tokenizer1.getTokens().length, 3, "Tokenizer contains 3 tokens");
-
-		tokenizer1.removeAllTokens();
+		this.tokenizer.removeAllTokens();
+		assert.equal(this.tokenizer.getTokens().length, 0, "Tokenizer contains 0 tokens");
 	});
 
 	QUnit.test("validate tokens using validator callback", function(assert) {
-		// 1
-		assert.equal(tokenizer1.getTokens().length, 0, "Tokenizer contains 0 tokens");
-		tokenizer1.removeAllValidators();
+		var validationCallbackCount = 0,
+			isValidated = false,
+			fValidationCallback = function(bValidated) {
+				validationCallbackCount++;
+				isValidated = bValidated;
+			},
+			tokenText = "new Token 1";
 
-		var validationCallbackCount = 0;
-		var isValidated = false;
-		var fValidationCallback = function(bValidated) {
-			validationCallbackCount++;
-			isValidated = bValidated;
-		}
-		var tokenText = "new Token 1";
-
-		tokenizer1.addValidateToken({
+		this.tokenizer.addValidateToken({
 			text : tokenText,
 			validationCallback : fValidationCallback
 		});
 
-		// 2
-		assert.equal(tokenizer1.getTokens().length, 0, "Tokenizer contains 0 tokens, as no validator exists");
-
-		// 3
 		assert.equal(validationCallbackCount, 1, "validation callback called 1x");
 
-		// 4
 		assert.equal(isValidated, false, "token not validated");
 
-		tokenizer1.addValidateToken({
+		this.tokenizer.addValidateToken({
 			text : tokenText,
 			token : new sap.m.Token({
 				text : tokenText
@@ -156,77 +151,72 @@
 			validationCallback : fValidationCallback
 		});
 
-		// 5
-		assert.equal(tokenizer1.getTokens().length, 1, "Tokenizer contains 1 token");
-
-		// 6
-		assert.equal(tokenizer1.getTokens()[0].getText(), tokenText, "added token contains validated text");
-
-		// 7
+		assert.equal(this.tokenizer.getTokens().length, 1, "Tokenizer contains 1 token");
+		assert.equal(this.tokenizer.getTokens()[0].getText(), tokenText, "added token contains validated text");
 		assert.equal(validationCallbackCount, 2, "validation callback called 2x");
-
-		// 8
 		assert.equal(isValidated, true, "token got validated");
 
-		tokenizer1.removeAllTokens();
 
-		tokenizer1.addValidator(function(args) {
+
+
+
+
+		this.tokenizer.removeAllTokens();
+
+		this.tokenizer.addValidator(function(args) {
 			return new sap.m.Token({
 				text : args.text
 			});
 		});
 
 		tokenText = "TestToken1";
-		tokenizer1.addValidateToken({
+		this.tokenizer.addValidateToken({
 			text : tokenText,
 			validationCallback : fValidationCallback
 		});
 
-		// 9
-		assert.equal(tokenizer1.getTokens().length, 1, "Tokenizer contains 1 token");
-
-		//10
-		assert.equal(tokenizer1.getTokens()[0].getText(), tokenText, "added token contains validated text");
+		assert.equal(this.tokenizer.getTokens().length, 1, "Tokenizer contains 1 token");
+		assert.equal(this.tokenizer.getTokens()[0].getText(), tokenText, "added token contains validated text");
 		assert.equal(validationCallbackCount, 3, "validation callback called 3x");
 		assert.equal(isValidated, true, "token got validated");
 
 		isValdiated = false;
 		var tokenText = "TestToken2";
-		tokenizer1.addValidateToken({
+		this.tokenizer.addValidateToken({
 			text : tokenText,
 			validationCallback : fValidationCallback
 		});
 
-		assert.equal(tokenizer1.getTokens().length, 2, "Tokenizer contains 2 tokens");
-		assert.equal(tokenizer1.getTokens()[1].getText(), tokenText, "added token contains validated text");
+		assert.equal(this.tokenizer.getTokens().length, 2, "Tokenizer contains 2 tokens");
+		assert.equal(this.tokenizer.getTokens()[1].getText(), tokenText, "added token contains validated text");
 		assert.equal(validationCallbackCount, 4, "validation callback called 4x");
 		assert.equal(isValidated, true, "token got validated");
 
-		tokenizer1.removeAllValidators();
-		tokenizer1.addValidator(function(args) {
+		this.tokenizer.removeAllValidators();
+		this.tokenizer.addValidator(function(args) {
 			return;
 		});
 		tokenText = "TestToken3";
-		tokenizer1.addValidateToken({
+		this.tokenizer.addValidateToken({
 			text : tokenText,
 			validationCallback : fValidationCallback
 		});
-		assert.equal(tokenizer1.getTokens().length, 2, "Tokenizer contains 2 tokens, no token added as validator rejected it");
+		assert.equal(this.tokenizer.getTokens().length, 2, "Tokenizer contains 2 tokens, no token added as validator rejected it");
 		assert.equal(validationCallbackCount, 5, "validation callback called 5x");
 		assert.equal(isValidated, false, "token not validated");
 
 		var fAsyncValidateCallback;
-		tokenizer1.removeAllValidators();
-		tokenizer1.addValidator(function(args) {
+		this.tokenizer.removeAllValidators();
+		this.tokenizer.addValidator(function(args) {
 			fAsyncValidateCallback = args.asyncCallback;
 			return sap.m.Tokenizer.WaitForAsyncValidation;
 		});
 		tokenText = "TestToken4";
-		tokenizer1.addValidateToken({
+		this.tokenizer.addValidateToken({
 			text : tokenText,
 			validationCallback : fValidationCallback
 		});
-		assert.equal(tokenizer1.getTokens().length, 2,
+		assert.equal(this.tokenizer.getTokens().length, 2,
 				"Tokenizer contains 2 tokens, no token added as validator runs asynchronously");
 		assert.equal(validationCallbackCount, 5, "validation callback called 5x (1 call still pending)");
 
@@ -234,108 +224,138 @@
 			text : "dummy"
 		}));
 
-		assert.equal(tokenizer1.getTokens().length, 3, "Tokenizer contains 3 tokens");
+		assert.equal(this.tokenizer.getTokens().length, 3, "Tokenizer contains 3 tokens");
 		assert.equal(validationCallbackCount, 6, "validation callback called 6x");
 		assert.equal(isValidated, true, "token got validated");
-
-		tokenizer1.removeAllValidators();
-		tokenizer1.removeAllTokens();
 	});
 
     QUnit.test("tokens change event", function(assert) {
-        var eventType;
-        tokenizer1.attachTokenChange(function(args) {
+        var eventType,
+			token1 = new sap.m.Token();
+
+        this.tokenizer.attachTokenChange(function(args) {
             eventType = args.getParameter("type");
         });
 
-        var token1 = new sap.m.Token();
-        tokenizer1.addToken(token1);
+        this.tokenizer.addToken(token1);
         assert.equal(eventType, sap.m.Tokenizer.TokenChangeType.Added, "added event raised");
 
-        tokenizer1.removeToken(token1);
+        this.tokenizer.removeToken(token1);
         assert.equal(eventType, sap.m.Tokenizer.TokenChangeType.Removed, "removed event raised");
 
-        tokenizer1.removeAllTokens();
+        this.tokenizer.removeAllTokens();
         assert.equal(eventType, sap.m.Tokenizer.TokenChangeType.RemovedAll, "removedAll event raised");
+
+		// clean-up
+		token1.destroy();
     });
 
-	QUnit.test("getSelectedTokens", function(assert) {
-		var token1 = new sap.m.Token({
-			selected : true
-		});
-		var token2 = new sap.m.Token();
-		var token3 = new sap.m.Token({
-			selected : true
-		});
-		tokenizer1.addToken(token1);
-		tokenizer1.addToken(token2);
-		tokenizer1.addToken(token3);
+	QUnit.test("tokenUpdate event", function(assert) {
+		var eventType,
+			token1 = new sap.m.Token({key: "test", text: "test", selected: true}),
+			count = 0;
 
-		var aSelectedTokens = tokenizer1.getSelectedTokens();
+		this.tokenizer.attachTokenUpdate(function(args) {
+			eventType = args.getParameter("type");
+			count++;
+		});
+
+		this.tokenizer._addValidateToken({
+			token : token1,
+			validationCallback : function() {return true}
+		});
+		assert.strictEqual(eventType, sap.m.Tokenizer.TokenUpdateType.Added, "tokenUpdate event raised when token added");
+		assert.strictEqual(count, 1, "tokenUpdate event fired once upon adding unique token");
+
+		this.tokenizer._removeSelectedTokens();
+		assert.strictEqual(eventType, sap.m.Tokenizer.TokenUpdateType.Removed, "tokenUpdate event raised when token removed");
+		assert.strictEqual(count, 2, "tokenUpdate event fired once upon removing selected token");
+
+		// clean-up
+		token1.destroy();
+	});
+
+	QUnit.test("getSelectedTokens", function(assert) {
+		var token1 = new sap.m.Token({ selected : true });
+		var token2 = new sap.m.Token();
+		var token3 = new sap.m.Token({ selected : true });
+
+		this.tokenizer.addToken(token1);
+		this.tokenizer.addToken(token2);
+		this.tokenizer.addToken(token3);
+
+		var aSelectedTokens = this.tokenizer.getSelectedTokens();
+
 		assert.equal(aSelectedTokens.length, 2, "2 selected tokens");
 		assert.equal(aSelectedTokens[0], token1, "correct selected token1");
 		assert.equal(aSelectedTokens[1], token3, "correct selected token3");
+		assert.equal(this.tokenizer.isAllTokenSelected(), false, "not all tokens are selected");
 
-		tokenizer1.removeAllTokens();
+		// act
+		token2.setSelected(true);
+
+		// assert
+		assert.equal(this.tokenizer.isAllTokenSelected(), true, "all tokens are selected");
 	});
 
 	QUnit.test("test keyboard select all", function(assert) {
-		var token1 = new sap.m.Token();
-		var token2 = new sap.m.Token();
-		var token3 = new sap.m.Token();
-		tokenizer.setTokens([token1, token2, token3]);
+		// arrange
+		var token1 = new sap.m.Token(),
+			token2 = new sap.m.Token(),
+			token3 = new sap.m.Token();
 
-		tokenizer.onkeydown({ctrlKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		this.tokenizer.setTokens([token1, token2, token3]);
+
+		// act
+		this.tokenizer.onkeydown({ctrlKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+
+		// assert
 		assert.equal(token1.getSelected(), true, "Token1 got selected using ctrl+a");
 		assert.equal(token2.getSelected(), true, "Token2 got selected using ctrl+a");
 		assert.equal(token3.getSelected(), true, "Token3 got selected using ctrl+a");
 
+		// act
 		token1.setSelected(false);
 		token2.setSelected(false);
 		token3.setSelected(false);
 
-		tokenizer.onkeydown({metaKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+		this.tokenizer.onkeydown({metaKey: true, which: jQuery.sap.KeyCodes.A, preventDefault: function(){}});
+
+		// assert
 		assert.equal(token1.getSelected(), true, "Token1 got selected using metaKey+a");
 		assert.equal(token2.getSelected(), true, "Token2 got selected using metaKey+a");
 		assert.equal(token3.getSelected(), true, "Token3 got selected using metaKey+a");
-
-		tokenizer.removeAllTokens();
 	});
 
 
 	QUnit.test("token editable in tokenizer", function(assert) {
+		var oToken1 = new sap.m.Token({text:"Dente", editable: false}),
+			oToken2 = new sap.m.Token({text:"Friese", editable: false}),
+			oToken3 = new sap.m.Token({text:"Mann", editable: true});
 
-		var oToken1 = new sap.m.Token({text:"Dente", editable: false});
-		var oToken2 = new sap.m.Token({text:"Friese", editable: false});
-		var oToken3 = new sap.m.Token({text:"Mann", editable: true});
-
-		tokenizer1.setTokens([oToken1, oToken2, oToken3]);
+		this.tokenizer.setTokens([oToken1, oToken2, oToken3]);
 
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oToken1.$().hasClass("sapMTokenReadOnly"), true, "token1 is not editable");
 		assert.equal(oToken2.$().hasClass("sapMTokenReadOnly"), true, "token2 is not editable");
 		assert.equal(oToken3.$().hasClass("sapMTokenReadOnly"), false, "token3 is editable");
-
-		tokenizer1.removeAllTokens();
 	});
 
     QUnit.test("selected token is visible after select with left arrow", function(assert) {
-        var oSpecialToken = new sap.m.Token({text: "Token 5", key: "0005"});
-        var oMultiInput = new sap.m.MultiInput({
-            width: '300px',
-            tokens: [
-                new sap.m.Token({text: "Token 1", key: "0001"}),
-                new sap.m.Token({text: "Token 2", key: "0002"}),
-                new sap.m.Token({text: "Token 3", key: "0003"}),
-                new sap.m.Token({text: "Token 4", key: "0004"}),
-                oSpecialToken,
-                new sap.m.Token({text: "Token 6", key: "0006"}),
-                new sap.m.Token({text: "Token 7", key: "0007"}),
-                new sap.m.Token({text: "Token 8", key: "0008"})
-            ],
-            editable: true
-        });
+        var oSpecialToken = new sap.m.Token({text: "Token 5", key: "0005"}),
+        	oMultiInput = new sap.m.MultiInput({
+            	width: '300px',
+            	tokens: [
+            	    new sap.m.Token({text: "Token 1", key: "0001"}),
+            	    new sap.m.Token({text: "Token 2", key: "0002"}),
+            	    new sap.m.Token({text: "Token 3", key: "0003"}),
+            	    new sap.m.Token({text: "Token 4", key: "0004"}),
+            	    oSpecialToken,
+            	    new sap.m.Token("t6", {text: "Token 6", key: "0006"})
+            	],
+            	editable: true
+        	});
 
         oMultiInput.placeAt("qunit-fixture");
         sap.ui.getCore().applyChanges();
@@ -343,8 +363,8 @@
         var oTokenizerDomRef = oMultiInput.$().find('.sapMTokenizer')[0];
 
         sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
-        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
-        sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
+		assert.equal(sap.ui.getCore().byId("t6").getSelected(), true, "Token6 is selected");
+
         sap.ui.test.qunit.triggerKeydown(oTokenizerDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
 
         assert.equal(oSpecialToken.getSelected(), true, "Token5 is selected");
@@ -353,44 +373,337 @@
         oMultiInput.destroy();
     });
 
+	QUnit.test("test setEditable=false Tokenizer with editable tokens", function(assert) {
+		var aFirstToken,
+			aSecondToken;
+
+		//arrange
+		this.tokenizer.addToken(new sap.m.Token({text: "Token 1", key: "0001"}));
+		this.tokenizer.addToken(new sap.m.Token({text: "Token 2", key: "0002", editable: false}));
+
+		aFirstToken = this.tokenizer.getTokens()[0];
+		aSecondToken = this.tokenizer.getTokens()[1];
+
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.ok(aFirstToken.getDomRef('icon'), 'First token has icon');
+		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+
+		//act
+		this.tokenizer.setEditable(false);
+
+		sap.ui.getCore().applyChanges();
+
+		//assert
+		assert.ok(aFirstToken.getDomRef('icon'), 'First token icon does not exist');
+		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
+	});
+
+	QUnit.module("Setters", {
+		beforeEach : function() {
+			this.tokenizer = new sap.m.Tokenizer();
+
+			this.tokenizer.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
+	QUnit.test("setWidth and setPixelWidth", function(assert) {
+		var WIDTH = 300,
+			S_WIDTH = "200px";
+
+		// act
+		this.tokenizer.setWidth(S_WIDTH);
+
+		// assert
+		assert.equal(this.tokenizer.getDomRef().style.width, S_WIDTH, "Tokenizer width is set to " + S_WIDTH);
+
+		// act
+		this.tokenizer.setPixelWidth("400px");
+
+		assert.equal(this.tokenizer.getDomRef().style.width, S_WIDTH, "Tokenizer width remains " + S_WIDTH);
+
+		// act
+		this.tokenizer.setPixelWidth(WIDTH);
+
+		// assert
+		assert.equal(this.tokenizer.getDomRef().style.width, WIDTH + "px", "Tokenizer width is set to 300px");
+	});
+
+	QUnit.module("Scrolling public API", {
+		beforeEach : function() {
+			this.tokenizer = new sap.m.Tokenizer({
+				width: "200px",
+				tokens : [
+					new sap.m.Token({ text : "Token 1"}),
+					new sap.m.Token({ text : "Token 2"}),
+					new sap.m.Token({ text : "Token 3"})
+				]
+			});
+
+			this.tokenizer.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
+	QUnit.test("scrollToStart and scrollToEnd", function(assert) {
+		// assert
+		assert.ok(this.tokenizer._sResizeHandlerId, "Tokenizer has resize handler.");
+
+		// act
+		this.tokenizer.scrollToStart();
+
+		//assert
+		assert.ok(!this.tokenizer._sResizeHandlerId, "Tokenizer's resize handler has been deregistered.");
+
+		// act
+		this.tokenizer.scrollToEnd();
+
+		//assert
+		assert.ok(this.tokenizer._sResizeHandlerId, "Tokenizer has resize handler.");
+	});
+
+	QUnit.module("Keyboard handling", {
+		beforeEach : function() {
+			this.tokenizer = new sap.m.Tokenizer("t", {
+				tokens : [
+					new sap.m.Token("t1", { text : "Token 1", selected : true}),
+					new sap.m.Token("t2", { text : "Token 2", selected : false}),
+					new sap.m.Token("t3", { text : "Token 3", selected : true})
+				]
+			});
+
+			this.tokenizer.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
+	QUnit.test("delete with editable=false", function(assert) {
+		// arrange
+		this.tokenizer.setEditable(false);
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.DELETE);
+
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
+	});
+
+	QUnit.test("delete with editable=true", function(assert) {
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.DELETE);
+
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 1, "Two tokens were removed");
+		assert.equal(document.activeElement, this.tokenizer.$()[0], "tokenizer is focused");
+	});
+
+	QUnit.test("backspace with editable=false", function(assert) {
+		// arrange
+		this.tokenizer.setEditable(false);
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.BACKSPACE);
+
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 3, "No tokens were removed");
+	});
+
+	QUnit.test("backspace with editable=true", function(assert) {
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.BACKSPACE);
+
+		// assert
+		assert.equal(this.tokenizer.getTokens().length, 1, "Two tokens were removed");
+	});
+
+	QUnit.test("backspace with no selected tokens", function(assert) {
+		// arrange
+		this.tokenizer._changeAllTokensSelection(false);
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.BACKSPACE);
+
+		// assert
+		assert.equal(this.tokenizer.getSelectedTokens().length, 1, "There is one selected token");
+		assert.equal(this.tokenizer.getTokens()[2].getSelected(), true, "The last token is selected");
+	});
+
+	QUnit.test("tab", function(assert) {
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.TAB);
+
+		// assert
+		assert.equal(this.tokenizer.getSelectedTokens().length, 0, "There are no selected tokens");
+	});
+
+	QUnit.test("Ctrl + C (copy)", function(assert) {
+		// arrange
+		var fnCopySpy = this.spy(this.tokenizer, "_copy");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.C, false, false, true);
+
+		// assert
+		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.INSERT, false, false, true);
+
+		// assert
+		assert.equal(fnCopySpy.callCount, 2, "Copy was triggered");
+	});
+
+	QUnit.test("Ctrl + X (cut)", function(assert) {
+		var fnCutSpy = this.spy(this.tokenizer, "_cut");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.X, false, false, true);
+
+		// assert
+		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
+	});
+
+	QUnit.test("Ctrl + X (copy)", function(assert) {
+		// arrange
+		var fnCopySpy = this.spy(this.tokenizer, "_copy");
+
+		this.tokenizer.setEditable(false);
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.X, false, false, true);
+
+		// assert
+		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
+	});
+
+	QUnit.test("Shift + DELETE (cut)", function(assert) {
+		var fnCutSpy = this.spy(this.tokenizer, "_cut");
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.DELETE, true);
+
+		// assert
+		assert.equal(fnCutSpy.callCount, 1, "Cut was triggered");
+	});
+
+	QUnit.test("Shift + DELETE (copy)", function(assert) {
+		// arrange
+		var fnCopySpy = this.spy(this.tokenizer, "_copy");
+
+		this.tokenizer.setEditable(false);
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t", jQuery.sap.KeyCodes.DELETE, true);
+
+		// assert
+		assert.equal(fnCopySpy.callCount, 1, "Copy was triggered");
+	});
+
+	QUnit.test("Arrow_right", function(assert) {
+		// arrange
+		sap.ui.getCore().byId("t1").focus();
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.ARROW_RIGHT);
+
+		// assert
+		assert.equal(this.tokenizer.getSelectedTokens().length, 1, "There is one selected token");
+		assert.equal(this.tokenizer.getSelectedTokens()[0].getId(), "t2", "The second token is selected");
+	});
+
+	QUnit.test("Arrow_up", function(assert) {
+		// arrange
+		sap.ui.getCore().byId("t1").focus();
+
+		// act
+		sap.ui.test.qunit.triggerKeyboardEvent("t1", jQuery.sap.KeyCodes.ARROW_UP);
+
+		// assert
+		assert.equal(this.tokenizer.getSelectedTokens().length, 2, "Token selection is not changed");
+	});
+
+	QUnit.module("Token selection", {
+		beforeEach : function() {
+			this.t1 = new sap.m.Token({ text : "Token 1"});
+			this.t3 = new sap.m.Token({ text : "Token 3", selected : true});
+			this.t5 = new sap.m.Token({ text : "Token 5"});
+			this.tokenizer = new sap.m.Tokenizer({
+				tokens : [
+					this.t1,
+					new sap.m.Token({ text : "Token 2"}),
+					this.t3,
+					new sap.m.Token({ text : "Token 4"}),
+					this.t5
+				]
+			});
+
+			this.tokenizer.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
+	QUnit.test("Test token selection with Shift and Ctrl", function(assert){
+		// arrange
+		this.t3.focus();
+
+		// act
+		sap.ui.test.qunit.triggerEvent("tap", this.t1.getDomRef(), {target : this.t1.getDomRef(), shiftKey: true});
+
+		// assert
+		assert.equal(this.tokenizer.getSelectedTokens().length, 3, "Tokens 1 to 3 are selected");
+
+		// act
+		sap.ui.test.qunit.triggerEvent("tap", this.t5.getDomRef(), {target : this.t5.getDomRef(), shiftKey: true, ctrlKey: true});
+
+		// assert
+		assert.equal(this.tokenizer.getSelectedTokens().length, 5, "All 5 tokens are selected");
+	});
+
+	QUnit.module("Copy and paste", {
+		beforeEach : function() {
+			this.tokenizer = new sap.m.Tokenizer();
+
+			this.tokenizer.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.tokenizer.destroy();
+		}
+	});
+
 	QUnit.test("parsing for copy and paste", function(assert) {
-		var text1 = "1\r\n2\r\n3";
-		var aTextArray1 = tokenizer1._parseString(text1);
+		var text1 = "1\r\n2\r\n3",
+			aTextArray1 = this.tokenizer._parseString(text1);
 
 		assert.equal(aTextArray1[0], "1", "text separated");
 		assert.equal(aTextArray1[1], "2", "text separated");
 		assert.equal(aTextArray1[2], "3", "text separated");
 
 		var text1 = "1 2\n2+4\r3)\t(/&%$)";
-		var aTextArray1 = tokenizer1._parseString(text1);
+		var aTextArray1 = this.tokenizer._parseString(text1);
 
 		assert.equal(aTextArray1[0], "1 2", "text separated");
 		assert.equal(aTextArray1[1], "2+4", "text separated");
 		assert.equal(aTextArray1[2], "3)\t(/&%$)", "text separated");
-	});
-
-	QUnit.test("test setEditable=false Tokenizer with editable tokens", function(assert) {
-		var aFirstToken,
-			aSecondToken;
-		//arrange
-		tokenizer1.addToken(new sap.m.Token({text: "Token 1", key: "0001"}));
-		tokenizer1.addToken(new sap.m.Token({text: "Token 2", key: "0002", editable: false}));
-
-		aFirstToken = tokenizer1.getTokens()[0];
-		aSecondToken = tokenizer1.getTokens()[1];
-		sap.ui.getCore().applyChanges();
-
-		//assert
-		assert.equal(aFirstToken.$('icon').css('display'), 'inline-block', 'First token icon is visible');
-		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
-
-		//act
-		tokenizer1.setEditable(false);
-		sap.ui.getCore().applyChanges();
-
-		//assert
-		assert.equal(aFirstToken.$('icon').css('display'), 'none', 'First token icon is invisible');
-		assert.ok(!aSecondToken.getDomRef('icon'), 'Second token icon does not exist');
 	});
 
 	QUnit.test("copy to clipboard", function(assert) {
@@ -404,30 +717,31 @@
 			}
 		}
 
+		// arrange
 		for (var i = 0; i < 4; i++) {
-			tokenizer1.addToken(new sap.m.Token({text: "Token " + i, key: "000" + i}));
+			this.tokenizer.addToken(new sap.m.Token({text: "Token " + i, key: "000" + i}));
 		}
 
 		sap.ui.getCore().applyChanges();
 
 		if (!sap.ui.Device.system.desktop && !sap.ui.Device.system.combi) {
-			assert.ok(!tokenizer1._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
+			assert.ok(!this.tokenizer._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
 			return;
 		} else {
-			assert.ok(tokenizer1._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
+			assert.ok(this.tokenizer._bCopyToClipboardSupport, "Copy to Clipboard support only on Desktop so far");
 		}
 
 		function testCopiedText(sText) {
 			assert.equal(sText, "Token 0\r\nToken 1\r\nToken 2\r\nToken 3", "Copied text is correct");
 		}
 
-		tokenizer1.focus();
-		tokenizer1.selectAllTokens(true);
+		this.tokenizer.focus();
+		this.tokenizer.selectAllTokens(true);
 
 		if (!sap.ui.Device.browser.phantomJS) {
 			try {
 				var oRange = window.getSelection().getRangeAt(0);
-				var oClipRef = tokenizer1.getDomRef("clip");
+				var oClipRef = this.tokenizer.getDomRef("clip");
 				assert.ok(oRange.startContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
 				assert.ok(oRange.endContainer === oClipRef || oRange.startContainer.parentNode === oClipRef, "Dummy Clip Element is start of selection");
 			} catch (e) {
@@ -445,7 +759,7 @@
 				}
 			}
 		});
-		tokenizer1.$("clip").trigger(oCopyEvent);
+		this.tokenizer.$("clip").trigger(oCopyEvent);
 
 		if (window.clipboardData) {
 			testCopiedText(window.clipboardData.getData("text"));
@@ -453,8 +767,6 @@
 			//Reset clipboad again
 			window.clipboardData.setData("text", "Hello");
 		}
-
-		tokenizer1.destroyTokens();
 	});
 
 </script>

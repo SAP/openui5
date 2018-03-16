@@ -1,5 +1,5 @@
-@sapUiDlgHeaderHeight: 19px;
-@sapUiDlgFooterHeight: 36px;
+@_sap_ui_commons_Dialog_HeaderHeight: 19px;
+@_sap_ui_commons_Dialog_FooterHeight: 36px;
 
 .sapUiDlg {
 	position: absolute; /*relative;/* enable positioning for children */
@@ -11,7 +11,7 @@
 /* header */
 
 .sapUiDlgHdr {
-	height: @sapUiDlgHeaderHeight;
+	height: @_sap_ui_commons_Dialog_HeaderHeight;
 	margin: 10px 10px 0 10px;
 	cursor: move;
 	overflow: hidden;
@@ -96,7 +96,7 @@ html[data-sap-ui-browser="ff3"] .sapUiDlgHdrBtns > a {
 	bottom: 0;
 	left: 0;
 	right: 0;
-	height: @sapUiDlgFooterHeight;
+	height: @_sap_ui_commons_Dialog_FooterHeight;
 }
 
 .sapUiDlgFlexHeight .sapUiDlgFooter {

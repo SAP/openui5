@@ -8,16 +8,13 @@
 		"ada": "अदान्गमे",
 		"ady": "अदिघे",
 		"ae": "अवस्ताई",
-		"aeb": "aeb",
 		"af": "अफ़्रीकी",
 		"afh": "अफ्रिहिली",
 		"agq": "अग्हेम",
 		"ain": "ऐनू",
 		"ak": "अकन",
 		"akk": "अक्कादी",
-		"akz": "akz",
 		"ale": "अलेउत",
-		"aln": "aln",
 		"alt": "दक्षिणी अल्ताई",
 		"am": "अम्हेरी",
 		"an": "अर्गोनी",
@@ -27,18 +24,12 @@
 		"ar_001": "आधुनिक मानक अरबी",
 		"arc": "ऐरेमेक",
 		"arn": "मापूचे",
-		"aro": "aro",
-		"arp": "अराफाओ",
-		"arq": "arq",
+		"arp": "अरापाहो",
 		"arw": "अरावक",
-		"ary": "ary",
-		"arz": "arz",
 		"as": "असमिया",
 		"asa": "असु",
-		"ase": "ase",
 		"ast": "अस्तुरियन",
 		"av": "अवेरिक",
-		"avk": "avk",
 		"awa": "अवधी",
 		"ay": "आयमारा",
 		"az": "अज़रबैजानी",
@@ -46,47 +37,31 @@
 		"ba": "बशख़िर",
 		"bal": "बलूची",
 		"ban": "बालिनीस",
-		"bar": "bar",
 		"bas": "बसा",
-		"bax": "bax",
-		"bbc": "bbc",
-		"bbj": "bbj",
 		"be": "बेलारूसी",
 		"bej": "बेजा",
 		"bem": "बेम्बा",
-		"bew": "bew",
 		"bez": "बेना",
-		"bfd": "bfd",
-		"bfq": "bfq",
 		"bg": "बुल्गारियाई",
 		"bgn": "पश्चिमी बलोची",
 		"bho": "भोजपुरी",
 		"bi": "बिस्लामा",
 		"bik": "बिकोल",
 		"bin": "बिनी",
-		"bjn": "bjn",
-		"bkm": "bkm",
 		"bla": "सिक्सिका",
 		"bm": "बाम्बारा",
 		"bn": "बंगाली",
 		"bo": "तिब्बती",
-		"bpy": "bpy",
-		"bqi": "bqi",
 		"br": "ब्रेटन",
 		"bra": "ब्रज",
-		"brh": "brh",
 		"brx": "बोडो",
 		"bs": "बोस्नियाई",
-		"bss": "bss",
 		"bua": "बुरियात",
 		"bug": "बगिनीस",
-		"bum": "bum",
 		"byn": "ब्लिन",
-		"byv": "byv",
 		"ca": "कातालान",
 		"cad": "कैड्डो",
 		"car": "कैरिब",
-		"cay": "cay",
 		"cch": "अत्सम",
 		"ce": "चेचन",
 		"ceb": "सिबुआनो",
@@ -99,14 +74,14 @@
 		"chn": "चिनूक जारगॉन",
 		"cho": "चोक्तौ",
 		"chp": "शिपेव्यान",
-		"chr": "शेरोकी",
+		"chr": "चेरोकी",
 		"chy": "शेयेन्न",
 		"ckb": "सोरानी कुर्दिश",
 		"co": "कोर्सीकन",
 		"cop": "कॉप्टिक",
-		"cps": "cps",
 		"cr": "क्री",
 		"crh": "क्रीमीन तुर्की",
+		"crs": "सेसेल्वा क्रिओल फ्रेंच",
 		"cs": "चेक",
 		"csb": "काशुबियन",
 		"cu": "चर्च साल्विक",
@@ -126,18 +101,16 @@
 		"dje": "झार्मा",
 		"doi": "डोग्री",
 		"dsb": "निचला सॉर्बियन",
-		"dtp": "dtp",
 		"dua": "दुआला",
-		"dum": "मध्य पुर्तगाली",
+		"dum": "मध्यकालीन पुर्तगाली",
 		"dv": "दिवेही",
 		"dyo": "जोला-फोंई",
 		"dyu": "ड्युला",
 		"dz": "ज़ोन्गखा",
-		"dzg": "dzg",
+		"dzg": "दज़ागा",
 		"ebu": "एम्बु",
 		"ee": "ईवे",
 		"efi": "एफिक",
-		"egl": "egl",
 		"egy": "प्राचीन मिस्री",
 		"eka": "एकाजुक",
 		"el": "यूनानी",
@@ -146,39 +119,35 @@
 		"en_AU": "ऑस्ट्रेलियाई अंग्रेज़ी",
 		"en_CA": "कनाडाई अंग्रेज़ी",
 		"en_GB": "ब्रिटिश अंग्रेज़ी",
-		"en_GB-alt-short": "यू.के. अंग्रेज़ी",
+		"en_GB-alt-short": "यू॰के॰ अंग्रेज़ी",
 		"en_US": "अमेरिकी अंग्रेज़ी",
 		"en_US-alt-short": "अमेरिकी अंग्रेज़ी",
 		"enm": "मध्यकालीन अंग्रेज़ी",
 		"eo": "एस्पेरेंतो",
 		"es": "स्पेनी",
-		"es_419": "लैटिन अमेरिकी स्पेनी",
+		"es_419": "लैटिन अमेरिकी स्पेनिश",
 		"es_ES": "यूरोपीय स्पेनिश",
 		"es_MX": "मैक्सिकन स्पेनिश",
-		"esu": "esu",
 		"et": "एस्टोनियाई",
 		"eu": "बास्क",
 		"ewo": "इवोन्डो",
-		"ext": "ext",
 		"fa": "फ़ारसी",
 		"fan": "फैन्ग",
 		"fat": "फन्टी",
 		"ff": "फुलाह",
 		"fi": "फ़िनिश",
 		"fil": "फ़िलिपीनो",
-		"fit": "fit",
-		"fj": "फ़ीजी",
+		"fj": "फिजियन",
 		"fo": "फ़ैरोइज़",
 		"fon": "फॉन",
 		"fr": "फ़्रेंच",
 		"fr_CA": "कनाडाई फ़्रेंच",
 		"fr_CH": "स्विस फ़्रेंच",
-		"frc": "frc",
+		"frc": "केजन फ़्रेंच",
 		"frm": "मध्यकालीन फ़्रांसीसी",
 		"fro": "पुरातन फ़्रांसीसी",
-		"frp": "frp",
-		"frr": "उत्तरी फ्रीसीयन",
-		"frs": "पूर्वी फ्रीसीयन",
+		"frr": "उत्तरी फ़्रीसियाई",
+		"frs": "पूर्वी फ़्रीसियाई",
 		"fur": "फ्रीयुलीयान",
 		"fy": "पश्चिमी फ़्रिसियाई",
 		"ga": "आइरिश",
@@ -187,16 +156,13 @@
 		"gan": "gan",
 		"gay": "गायो",
 		"gba": "ग्बाया",
-		"gbz": "gbz",
-		"gd": "स्काट्स् गायेलिक्",
+		"gd": "स्कॉटिश गाएलिक",
 		"gez": "गीज़",
 		"gil": "गिल्बरतीस",
 		"gl": "गैलिशियन",
-		"glk": "glk",
 		"gmh": "मध्यकालीन हाइ जर्मन",
 		"gn": "गुआरानी",
 		"goh": "पुरातन हाइ जर्मन",
-		"gom": "gom",
 		"gon": "गाँडी",
 		"gor": "गोरोन्तालो",
 		"got": "गॉथिक",
@@ -204,18 +170,15 @@
 		"grc": "प्राचीन यूनानी",
 		"gsw": "स्विस जर्मन",
 		"gu": "गुजराती",
-		"guc": "guc",
-		"gur": "gur",
 		"guz": "गुसी",
 		"gv": "मैंक्स",
-		"gwi": "ग्विच’इन",
+		"gwi": "ग्विचइन",
 		"ha": "हौसा",
 		"hai": "हैडा",
 		"hak": "hak",
 		"haw": "हवाई",
 		"he": "हिब्रू",
 		"hi": "हिन्दी",
-		"hif": "hif",
 		"hil": "हिलिगेनन",
 		"hit": "हिताइत",
 		"hmn": "ह्मॉंग",
@@ -228,9 +191,9 @@
 		"hup": "हूपा",
 		"hy": "आर्मेनियाई",
 		"hz": "हरैरो",
-		"ia": "ईन्टरलिंगुआ",
+		"ia": "इंटरलिंगुआ",
 		"iba": "इबान",
-		"ibb": "ibb",
+		"ibb": "इबिबियो",
 		"id": "इंडोनेशियाई",
 		"ie": "ईन्टरलिंगुइ",
 		"ig": "ईग्बो",
@@ -242,15 +205,12 @@
 		"is": "आइसलैंडिक",
 		"it": "इतालवी",
 		"iu": "इनूकीटूत्",
-		"izh": "izh",
 		"ja": "जापानी",
-		"jam": "jam",
 		"jbo": "लोज्बान",
 		"jgo": "नगोंबा",
 		"jmc": "मैकहैमे",
 		"jpr": "जुदेओ-पर्शियन",
 		"jrb": "जुदेओ-अरेबिक",
-		"jut": "jut",
 		"jv": "जावानीज़",
 		"ka": "जॉर्जियाई",
 		"kaa": "कारा-कल्पक",
@@ -260,23 +220,18 @@
 		"kam": "कम्बा",
 		"kaw": "कावी",
 		"kbd": "कबार्डियन",
-		"kbl": "kbl",
 		"kcg": "त्याप",
 		"kde": "मैकोंड",
 		"kea": "काबुवेर्दियानु",
-		"ken": "ken",
 		"kfo": "कोरो",
 		"kg": "कोंगो",
-		"kgp": "kgp",
 		"kha": "खासी",
 		"kho": "खोतानीस",
 		"khq": "कोयरा चीनी",
-		"khw": "khw",
 		"ki": "किकुयू",
-		"kiu": "kiu",
 		"kj": "क्वान्यामा",
 		"kk": "कज़ाख़",
-		"kkj": "kkj",
+		"kkj": "काको",
 		"kl": "कलालीसुत",
 		"kln": "कलेंजिन",
 		"km": "खमेर",
@@ -286,20 +241,18 @@
 		"koi": "कोमी-पर्मयाक",
 		"kok": "कोंकणी",
 		"kos": "कोसरैन",
-		"kpe": "क्पेल्लै",
+		"kpe": "क्पेल",
 		"kr": "कनुरी",
 		"krc": "कराचय-बल्कार",
-		"kri": "kri",
-		"krj": "krj",
 		"krl": "करेलियन",
 		"kru": "कुरूख",
 		"ks": "कश्मीरी",
 		"ksb": "शम्बाला",
 		"ksf": "बफिआ",
-		"ksh": "ksh",
+		"ksh": "कोलोनियाई",
 		"ku": "कुर्दिश",
 		"kum": "कुमीक",
-		"kut": "कुतेनाई",
+		"kut": "क्यूतनाई",
 		"kv": "कोमी",
 		"kw": "कोर्निश",
 		"ky": "किर्गीज़",
@@ -310,72 +263,59 @@
 		"lam": "लाम्बा",
 		"lb": "लग्ज़मबर्गी",
 		"lez": "लेज़्घीयन",
-		"lfn": "lfn",
 		"lg": "गांडा",
 		"li": "लिंबर्गिश",
-		"lij": "lij",
-		"liv": "liv",
 		"lkt": "लैकोटा",
-		"lmo": "lmo",
 		"ln": "लिंगाला",
 		"lo": "लाओ",
 		"lol": "मोंगो",
+		"lou": "लुईज़ियाना क्रियोल",
 		"loz": "लोज़ी",
 		"lrc": "उत्तरी लूरी",
 		"lt": "लिथुआनियाई",
-		"ltg": "ltg",
 		"lu": "ल्यूबा-कटांगा",
 		"lua": "ल्यूबा-लुलुआ",
 		"lui": "लुइसेनो",
 		"lun": "लुन्डा",
 		"luo": "ल्युओ",
-		"lus": "लुशाई",
+		"lus": "मिज़ो",
 		"luy": "ल्युईआ",
 		"lv": "लातवियाई",
-		"lzh": "lzh",
-		"lzz": "lzz",
 		"mad": "मादुरीस",
-		"maf": "maf",
-		"mag": "मगाही",
+		"mag": "मगही",
 		"mai": "मैथिली",
 		"mak": "मकासर",
 		"man": "मन्डिन्गो",
 		"mas": "मसाई",
-		"mde": "mde",
 		"mdf": "मोक्ष",
-		"mdh": "mdh",
-		"mdr": "मंधार",
+		"mdr": "मंदार",
 		"men": "मेन्डे",
 		"mer": "मेरु",
 		"mfe": "मोरीस्येन",
 		"mg": "मालागासी",
-		"mga": "मध्यकाल आइरिश",
+		"mga": "मध्यकालीन आइरिश",
 		"mgh": "मैखुवा-मीट्टो",
 		"mgo": "मेटा",
 		"mh": "मार्शलीज़",
 		"mi": "माओरी",
 		"mic": "मिकमैक",
 		"min": "मिनांग्काबाउ",
-		"mis": "mis",
-		"mk": "मैसिडोनियाई",
+		"mk": "मकदूनियाई",
 		"ml": "मलयालम",
-		"mn": "मंगोलीयाई",
+		"mn": "मंगोलियाई",
 		"mnc": "मन्चु",
-		"mni": "मणिपूरी",
+		"mni": "मणिपुरी",
 		"moh": "मोहौक",
 		"mos": "मोस्सी",
 		"mr": "मराठी",
-		"mrj": "mrj",
 		"ms": "मलय",
 		"mt": "माल्टीज़",
 		"mua": "मुंडैंग",
-		"mul": "विविध भाषाएँ",
+		"mul": "एकाधिक भाषाएँ",
 		"mus": "क्रीक",
 		"mwl": "मिरांडी",
 		"mwr": "मारवाड़ी",
-		"mwv": "mwv",
 		"my": "बर्मीज़",
-		"mye": "mye",
 		"myv": "एर्ज़या",
 		"mzn": "माज़न्देरानी",
 		"na": "नाउरू",
@@ -391,16 +331,14 @@
 		"ng": "डोन्गा",
 		"nia": "नियास",
 		"niu": "नियुआन",
-		"njo": "njo",
 		"nl": "डच",
 		"nl_BE": "फ़्लेमिश",
 		"nmg": "क्वासिओ",
 		"nn": "नॉर्वेजियाई नॉयनॉर्स्क",
-		"nnh": "nnh",
+		"nnh": "गैम्बू",
 		"no": "नॉर्वेजियाई",
 		"nog": "नोगाई",
 		"non": "पुराना नॉर्स",
-		"nov": "nov",
 		"nqo": "एन्को",
 		"nr": "दक्षिण देबेल",
 		"nso": "उत्तरी सोथो",
@@ -425,18 +363,13 @@
 		"pam": "पाम्पान्गा",
 		"pap": "पापियामेन्टो",
 		"pau": "पलोउआन",
-		"pcd": "pcd",
-		"pdc": "pdc",
-		"pdt": "pdt",
+		"pcm": "नाइजीरियाई पिडगिन",
 		"peo": "पुरानी फारसी",
-		"pfl": "pfl",
 		"phn": "फोएनिशियन",
 		"pi": "पाली",
 		"pl": "पोलिश",
-		"pms": "pms",
-		"pnt": "pnt",
 		"pon": "पोह्नपिएन",
-		"prg": "prg",
+		"prg": "प्रुशियाई",
 		"pro": "पुरानी प्रोवेन्सल",
 		"ps": "पश्तो",
 		"ps_alt-variant": "पुश्तो",
@@ -445,12 +378,9 @@
 		"pt_PT": "यूरोपीय पुर्तगाली",
 		"qu": "क्वेचुआ",
 		"quc": "किश",
-		"qug": "qug",
 		"raj": "राजस्थानी",
 		"rap": "रापानुई",
 		"rar": "रारोतोंगन",
-		"rgn": "rgn",
-		"rif": "rif",
 		"rm": "रोमान्श",
 		"rn": "रुन्दी",
 		"ro": "रोमानियाई",
@@ -458,10 +388,7 @@
 		"rof": "रोम्बो",
 		"rom": "रोमानी",
 		"root": "रूट",
-		"rtm": "rtm",
 		"ru": "रूसी",
-		"rue": "rue",
-		"rug": "rug",
 		"rup": "अरोमानियन",
 		"rw": "किन्यारवांडा",
 		"rwk": "रवा",
@@ -471,37 +398,29 @@
 		"sam": "सामैरिटन अरैमिक",
 		"saq": "सैम्बुरु",
 		"sas": "सासाक",
-		"sat": "संताली",
-		"saz": "saz",
-		"sba": "sba",
+		"sat": "संथाली",
+		"sba": "न्गाम्बे",
 		"sbp": "सैंगु",
 		"sc": "सार्दिनियन",
 		"scn": "सिसिलियन",
 		"sco": "स्कॉट्स",
 		"sd": "सिंधी",
-		"sdc": "sdc",
 		"sdh": "दक्षिणी कार्डिश",
 		"se": "नॉर्दन सामी",
-		"see": "see",
 		"seh": "सेना",
-		"sei": "sei",
 		"sel": "सेल्कप",
 		"ses": "कोयराबोरो सेन्नी",
 		"sg": "सांगो",
 		"sga": "पुरानी आइरिश",
-		"sgs": "sgs",
-		"sh": "सेर्बो-क्रोएशन्",
+		"sh": "सेर्बो-क्रोएशियाई",
 		"shi": "तैचेल्हित",
 		"shn": "शैन",
-		"shu": "shu",
 		"si": "सिंहली",
 		"sid": "सिदामो",
 		"sk": "स्लोवाक",
 		"sl": "स्लोवेनियाई",
-		"sli": "sli",
-		"sly": "sly",
 		"sm": "सामोन",
-		"sma": "दक्षिण सामी",
+		"sma": "दक्षिणी सामी",
 		"smj": "ल्युल सामी",
 		"smn": "इनारी सामी",
 		"sms": "स्कोल्ट सामी",
@@ -514,9 +433,8 @@
 		"srn": "स्रानान टॉन्गो",
 		"srr": "सेरेर",
 		"ss": "स्वाती",
-		"ssy": "ssy",
-		"st": "सेसोथो",
-		"stq": "stq",
+		"ssy": "साहो",
+		"st": "दक्षिणी सेसेथो",
 		"su": "सुंडानी",
 		"suk": "सुकुमा",
 		"sus": "सुसु",
@@ -524,12 +442,10 @@
 		"sv": "स्वीडिश",
 		"sw": "स्वाहिली",
 		"sw_CD": "कांगो स्वाहिली",
-		"swb": "swb",
+		"swb": "कोमोरियन",
 		"syc": "क्लासिकल सिरिएक",
 		"syr": "सिरिएक",
-		"szl": "szl",
 		"ta": "तमिल",
-		"tcy": "tcy",
 		"te": "तेलुगू",
 		"tem": "टिम्ने",
 		"teo": "टेसो",
@@ -542,24 +458,19 @@
 		"tiv": "तिव",
 		"tk": "तुर्कमेन",
 		"tkl": "तोकेलाऊ",
-		"tkr": "tkr",
-		"tl": "तागालोग",
+		"tl": "टैगलॉग",
 		"tlh": "क्लिंगन",
 		"tli": "त्लिंगित",
-		"tly": "tly",
 		"tmh": "तामाशेक",
 		"tn": "सेत्स्वाना",
 		"to": "टोंगन",
 		"tog": "न्यासा टोन्गा",
 		"tpi": "टोक पिसिन",
 		"tr": "तुर्की",
-		"tru": "tru",
-		"trv": "trv",
+		"trv": "तारोको",
 		"ts": "सोंगा",
-		"tsd": "tsd",
 		"tsi": "त्सिमीशियन",
 		"tt": "तातार",
-		"ttt": "ttt",
 		"tum": "तम्बूका",
 		"tvl": "तुवालु",
 		"tw": "ट्वी",
@@ -577,17 +488,12 @@
 		"uz": "उज़्बेक",
 		"vai": "वाई",
 		"ve": "वेन्दा",
-		"vec": "vec",
-		"vep": "vep",
 		"vi": "वियतनामी",
-		"vls": "vls",
-		"vmf": "vmf",
 		"vo": "वोलापुक",
 		"vot": "वॉटिक",
-		"vro": "vro",
 		"vun": "वुंजो",
 		"wa": "वाल्लून",
-		"wae": "wae",
+		"wae": "वाल्सर",
 		"wal": "वलामो",
 		"war": "वारै",
 		"was": "वाशो",
@@ -596,20 +502,17 @@
 		"wuu": "wuu",
 		"xal": "काल्मिक",
 		"xh": "ख़ोसा",
-		"xmf": "xmf",
 		"xog": "सोगा",
 		"yao": "याओ",
 		"yap": "यापीस",
-		"yav": "yav",
-		"ybb": "ybb",
-		"yi": "येहुदी",
+		"yav": "यांगबेन",
+		"ybb": "येंबा",
+		"yi": "यहूदी",
 		"yo": "योरूबा",
-		"yrl": "yrl",
 		"yue": "कैंटोनीज़",
 		"za": "ज़ुआंग",
 		"zap": "ज़ेपोटेक",
 		"zbl": "ब्लिसिम्बॉल्स",
-		"zea": "zea",
 		"zen": "ज़ेनान्गा",
 		"zgh": "मानक मोरक्कन तामाज़ाइट",
 		"zh": "चीनी",
@@ -662,12 +565,13 @@
 		"Geok": "जॉर्जियन खुतसुरी",
 		"Geor": "जॉर्जियन",
 		"Glag": "ग्लेगोलिटिक",
+		"Gonm": "Gonm",
 		"Goth": "गोथिक",
 		"Gran": "ग्रन्थ",
 		"Grek": "यूनानी",
 		"Gujr": "गुजराती",
 		"Guru": "गुरमुखी",
-		"Hanb": "Hanb",
+		"Hanb": "हांब",
 		"Hang": "हंगुल",
 		"Hani": "हान",
 		"Hano": "हनुनू",
@@ -680,11 +584,11 @@
 		"Hira": "हिरागाना",
 		"Hluw": "Hluw",
 		"Hmng": "पाहो ह्मोन्ग",
-		"Hrkt": "कचाकना और हिरागना",
+		"Hrkt": "जापानी सिलेबरीज़",
 		"Hung": "ऑल्ड हंगेरियन",
 		"Inds": "सिन्धु",
 		"Ital": "पुरानी इटली",
-		"Jamo": "Jamo",
+		"Jamo": "जामो",
 		"Java": "जावानीस",
 		"Jpan": "जापानी",
 		"Kali": "कायाह ली",
@@ -727,6 +631,7 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "एन्‘को",
+		"Nshu": "Nshu",
 		"Ogam": "ओगम",
 		"Olck": "ऑल चिकी",
 		"Orkh": "ओरखोन",
@@ -743,55 +648,6 @@
 		"Phnx": "फोनिशियन",
 		"Plrd": "पॉलार्ड फोनेटिक",
 		"Prti": "इंस्क्रिपश्नल पार्थियन",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "रीजांग",
 		"Roro": "रोन्गोरोन्गो",
 		"Runr": "रूनिक",
@@ -806,6 +662,7 @@
 		"Sind": "Sind",
 		"Sinh": "सिंहली",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "सूडानी",
 		"Sylo": "सिलोती नागरी",
 		"Syrc": "सिरियेक",
@@ -834,9 +691,10 @@
 		"Xpeo": "पुरानी फारसी",
 		"Xsux": "सुमेरो अक्कादियन सुनिफॉर्म",
 		"Yiii": "यी",
+		"Zanb": "Zanb",
 		"Zinh": "विरासत",
 		"Zmth": "गणितीय संकेतन",
-		"Zsye": "Zsye",
+		"Zsye": "ईमोजी",
 		"Zsym": "चिह्न",
 		"Zxxx": "अलिखित",
 		"Zyyy": "सामान्य",
@@ -850,6 +708,7 @@
 		"151": "पूर्वी यूरोप",
 		"154": "उत्तरी यूरोप",
 		"155": "पश्चिमी यूरोप",
+		"202": "202",
 		"419": "लैटिन अमेरिका",
 		"001": "विश्व",
 		"002": "अफ़्रीका",
@@ -872,7 +731,7 @@
 		"053": "ऑस्ट्रेलेशिया",
 		"054": "मेलानेशिया",
 		"057": "माइक्रोनेशियाई क्षेत्र",
-		"061": "पोलीनेशिया",
+		"061": "पोलिनेशिया",
 		"AC": "असेंशन द्वीप",
 		"AD": "एंडोरा",
 		"AE": "संयुक्त अरब अमीरात",
@@ -933,7 +792,8 @@
 		"CW": "क्यूरासाओ",
 		"CX": "क्रिसमस द्वीप",
 		"CY": "साइप्रस",
-		"CZ": "चेक गणराज्य",
+		"CZ": "चेकिया",
+		"CZ-alt-variant": "चेक गणराज्य",
 		"DE": "जर्मनी",
 		"DG": "डिएगो गार्सिया",
 		"DJ": "जिबूती",
@@ -950,6 +810,7 @@
 		"ES": "स्पेन",
 		"ET": "इथियोपिया",
 		"EU": "यूरोपीय संघ",
+		"EZ": "यूरोज़ोन",
 		"FI": "फ़िनलैंड",
 		"FJ": "फ़िजी",
 		"FK": "फ़ॉकलैंड द्वीपसमूह",
@@ -959,10 +820,10 @@
 		"FR": "फ़्रांस",
 		"GA": "गैबॉन",
 		"GB": "यूनाइटेड किंगडम",
-		"GB-alt-short": "यू.के.",
+		"GB-alt-short": "यू॰के॰",
 		"GD": "ग्रेनाडा",
 		"GE": "जॉर्जिया",
-		"GF": "फ़्रेंच गयाना",
+		"GF": "फ़्रेंच गुयाना",
 		"GG": "गर्नसी",
 		"GH": "घाना",
 		"GI": "जिब्राल्टर",
@@ -976,7 +837,7 @@
 		"GT": "ग्वाटेमाला",
 		"GU": "गुआम",
 		"GW": "गिनी-बिसाउ",
-		"GY": "गयाना",
+		"GY": "गुयाना",
 		"HK": "हाँग काँग (चीन विशेष प्रशासनिक क्षेत्र)",
 		"HK-alt-short": "हाँग काँग",
 		"HM": "हर्ड द्वीप और मैकडोनॉल्ड द्वीपसमूह",
@@ -987,7 +848,7 @@
 		"IC": "कैनेरी द्वीपसमूह",
 		"ID": "इंडोनेशिया",
 		"IE": "आयरलैंड",
-		"IL": "इसराइल",
+		"IL": "इज़राइल",
 		"IM": "आइल ऑफ़ मैन",
 		"IN": "भारत",
 		"IO": "ब्रिटिश हिंद महासागरीय क्षेत्र",
@@ -1008,7 +869,7 @@
 		"KP": "उत्तर कोरिया",
 		"KR": "दक्षिण कोरिया",
 		"KW": "कुवैत",
-		"KY": "केमैन द्वीपसमूह",
+		"KY": "कैमेन द्वीपसमूह",
 		"KZ": "कज़ाखस्तान",
 		"LA": "लाओस",
 		"LB": "लेबनान",
@@ -1028,8 +889,8 @@
 		"MF": "सेंट मार्टिन",
 		"MG": "मेडागास्कर",
 		"MH": "मार्शल द्वीपसमूह",
-		"MK": "मैसिडोनिया",
-		"MK-alt-variant": "मैसिडोनिया (FYROM)",
+		"MK": "मकदूनिया",
+		"MK-alt-variant": "मकदूनिया (FYROM)",
 		"ML": "माली",
 		"MM": "म्यांमार (बर्मा)",
 		"MN": "मंगोलिया",
@@ -1040,7 +901,7 @@
 		"MR": "मॉरिटानिया",
 		"MS": "मोंटसेरात",
 		"MT": "माल्टा",
-		"MU": "मॉरिशस",
+		"MU": "मॉरीशस",
 		"MV": "मालदीव",
 		"MW": "मलावी",
 		"MX": "मैक्सिको",
@@ -1073,7 +934,7 @@
 		"PS-alt-short": "फ़िलिस्तीन",
 		"PT": "पुर्तगाल",
 		"PW": "पलाऊ",
-		"PY": "पेराग्वे",
+		"PY": "पराग्वे",
 		"QA": "क़तर",
 		"QO": "आउटलाइंग ओशिनिया",
 		"RE": "रियूनियन",
@@ -1108,7 +969,7 @@
 		"TF": "फ़्रांसीसी दक्षिणी क्षेत्र",
 		"TG": "टोगो",
 		"TH": "थाईलैंड",
-		"TJ": "ताजिकिस्तान",
+		"TJ": "ताज़िकिस्तान",
 		"TK": "तोकेलाउ",
 		"TL": "तिमोर-लेस्त",
 		"TL-alt-variant": "पूर्वी तिमोर",
@@ -1122,7 +983,9 @@
 		"TZ": "तंज़ानिया",
 		"UA": "यूक्रेन",
 		"UG": "युगांडा",
-		"UM": "यू.एस. आउटलाइंग द्वीपसमूह",
+		"UM": "यू॰एस॰ आउटलाइंग द्वीपसमूह",
+		"UN": "संयुक्त राष्ट्र",
+		"UN-alt-short": "संयुक्त राष्ट्र",
 		"US": "संयुक्त राज्य",
 		"US-alt-short": "अमेरिका",
 		"UY": "उरूग्वे",
@@ -1131,7 +994,7 @@
 		"VC": "सेंट विंसेंट और ग्रेनाडाइंस",
 		"VE": "वेनेज़ुएला",
 		"VG": "ब्रिटिश वर्जिन द्वीपसमूह",
-		"VI": "यू.एस. वर्जिन द्वीपसमूह",
+		"VI": "यू॰एस॰ वर्जिन द्वीपसमूह",
 		"VN": "वियतनाम",
 		"VU": "वनुआतू",
 		"WF": "वालिस और फ़्यूचूना",
@@ -1149,7 +1012,7 @@
 		"dateFormats": {
 			"full": "EEEE, d MMMM y",
 			"long": "d MMMM y",
-			"medium": "dd/MM/y",
+			"medium": "d MMM y",
 			"short": "d/M/yy"
 		},
 		"timeFormats": {
@@ -1164,8 +1027,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E B h:mm",
+				"EBhms": "E B h:mm:ss",
 				"Ed": "E d",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1206,7 +1074,9 @@
 				"yMMMEd": "E, d MMM y",
 				"yMMMM": "MMMM y",
 				"yQQQ": "QQQ y",
-				"yQQQQ": "QQQQ y"
+				"yQQQQ": "QQQQ y",
+				"MMMMW": "MMM का सप्ताह W",
+				"yw": "Y का सप्ताह w"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1530,8 +1400,8 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"पूर्व",
-					"अपर"
+					"पूर्वाह्न",
+					"अपराह्न"
 				],
 				"narrow": [
 					"पू",
@@ -1544,8 +1414,8 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"पूर्व",
-					"अपर"
+					"पूर्वाह्न",
+					"अपराह्न"
 				],
 				"narrow": [
 					"पू",
@@ -1589,8 +1459,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1950,8 +1825,8 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"पूर्व",
-					"अपर"
+					"पूर्वाह्न",
+					"अपराह्न"
 				],
 				"narrow": [
 					"पू",
@@ -1964,8 +1839,8 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"पूर्व",
-					"अपर"
+					"पूर्वाह्न",
+					"अपराह्न"
 				],
 				"narrow": [
 					"पू",
@@ -2006,8 +1881,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2367,8 +2247,8 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"पूर्व",
-					"अपर"
+					"पूर्वाह्न",
+					"अपराह्न"
 				],
 				"narrow": [
 					"पू",
@@ -2381,8 +2261,8 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"पूर्व",
-					"अपर"
+					"पूर्वाह्न",
+					"अपराह्न"
 				],
 				"narrow": [
 					"पू",
@@ -2432,8 +2312,13 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2793,8 +2678,8 @@
 		"dayPeriods": {
 			"format": {
 				"abbreviated": [
-					"पूर्व",
-					"अपर"
+					"पूर्वाह्न",
+					"अपराह्न"
 				],
 				"narrow": [
 					"पू",
@@ -2807,8 +2692,8 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"पूर्व",
-					"अपर"
+					"पूर्वाह्न",
+					"अपराह्न"
 				],
 				"narrow": [
 					"पू",
@@ -2910,12 +2795,12 @@
 			"relative-type-0": "इस तिमाही",
 			"relative-type-1": "अगली तिमाही",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} ति. में",
-				"relativeTimePattern-count-other": "{0} ति. में"
+				"relativeTimePattern-count-one": "{0} ति॰ में",
+				"relativeTimePattern-count-other": "{0} ति॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} ति. पहले",
-				"relativeTimePattern-count-other": "{0} ति. पहले"
+				"relativeTimePattern-count-one": "{0} ति॰ पहले",
+				"relativeTimePattern-count-other": "{0} ति॰ पहले"
 			}
 		},
 		"month-wide": {
@@ -2972,7 +2857,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} सप्ताह पहले",
 				"relativeTimePattern-count-other": "{0} सप्ताह पहले"
-			}
+			},
+			"relativePeriod": "{0} के सप्ताह"
 		},
 		"week-short": {
 			"displayName": "सप्ताह",
@@ -2986,7 +2872,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} सप्ताह पहले",
 				"relativeTimePattern-count-other": "{0} सप्ताह पहले"
-			}
+			},
+			"relativePeriod": "{0} के सप्ताह"
 		},
 		"week-narrow": {
 			"displayName": "सप्ताह",
@@ -3000,11 +2887,12 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} सप्ताह पहले",
 				"relativeTimePattern-count-other": "{0} सप्ताह पहले"
-			}
+			},
+			"relativePeriod": "{0} के सप्ताह"
 		},
 		"day-wide": {
 			"displayName": "दिन",
-			"relative-type--2": "बीता परसों",
+			"relative-type--2": "परसों",
 			"relative-type--1": "कल",
 			"relative-type-0": "आज",
 			"relative-type-1": "कल",
@@ -3020,7 +2908,7 @@
 		},
 		"day-short": {
 			"displayName": "दिन",
-			"relative-type--2": "बीता परसों",
+			"relative-type--2": "परसों",
 			"relative-type--1": "कल",
 			"relative-type-0": "आज",
 			"relative-type-1": "कल",
@@ -3036,7 +2924,7 @@
 		},
 		"day-narrow": {
 			"displayName": "दिन",
-			"relative-type--2": "बीता परसों",
+			"relative-type--2": "परसों",
 			"relative-type--1": "कल",
 			"relative-type-0": "आज",
 			"relative-type-1": "कल",
@@ -3055,6 +2943,7 @@
 		},
 		"hour-wide": {
 			"displayName": "घंटा",
+			"relative-type-0": "यह घंटा",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} घंटे में",
 				"relativeTimePattern-count-other": "{0} घंटे में"
@@ -3065,29 +2954,32 @@
 			}
 		},
 		"hour-short": {
-			"displayName": "घं.",
+			"displayName": "घं॰",
+			"relative-type-0": "यह घंटा",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} घं. में",
-				"relativeTimePattern-count-other": "{0} घं. में"
+				"relativeTimePattern-count-one": "{0} घं॰ में",
+				"relativeTimePattern-count-other": "{0} घं॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} घं. पहले",
-				"relativeTimePattern-count-other": "{0} घं. पहले"
+				"relativeTimePattern-count-one": "{0} घं॰ पहले",
+				"relativeTimePattern-count-other": "{0} घं॰ पहले"
 			}
 		},
 		"hour-narrow": {
-			"displayName": "घं.",
+			"displayName": "घं॰",
+			"relative-type-0": "यह घंटा",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} घं. में",
-				"relativeTimePattern-count-other": "{0} घं. में"
+				"relativeTimePattern-count-one": "{0} घं॰ में",
+				"relativeTimePattern-count-other": "{0} घं॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} घं. पहले",
-				"relativeTimePattern-count-other": "{0} घं. पहले"
+				"relativeTimePattern-count-one": "{0} घं॰ पहले",
+				"relativeTimePattern-count-other": "{0} घं॰ पहले"
 			}
 		},
 		"minute-wide": {
 			"displayName": "मिनट",
+			"relative-type-0": "यह मिनट",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} मिनट में",
 				"relativeTimePattern-count-other": "{0} मिनट में"
@@ -3098,25 +2990,27 @@
 			}
 		},
 		"minute-short": {
-			"displayName": "मि.",
+			"displayName": "मि॰",
+			"relative-type-0": "यह मिनट",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} मि. में",
-				"relativeTimePattern-count-other": "{0} मि. में"
+				"relativeTimePattern-count-one": "{0} मि॰ में",
+				"relativeTimePattern-count-other": "{0} मि॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} मि. पहले",
-				"relativeTimePattern-count-other": "{0} मि. पहले"
+				"relativeTimePattern-count-one": "{0} मि॰ पहले",
+				"relativeTimePattern-count-other": "{0} मि॰ पहले"
 			}
 		},
 		"minute-narrow": {
-			"displayName": "मि.",
+			"displayName": "मि॰",
+			"relative-type-0": "यह मिनट",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} मि. में",
-				"relativeTimePattern-count-other": "{0} मि. में"
+				"relativeTimePattern-count-one": "{0} मि॰ में",
+				"relativeTimePattern-count-other": "{0} मि॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} मि. पहले",
-				"relativeTimePattern-count-other": "{0} मि. पहले"
+				"relativeTimePattern-count-one": "{0} मि॰ पहले",
+				"relativeTimePattern-count-other": "{0} मि॰ पहले"
 			}
 		},
 		"second-wide": {
@@ -3132,27 +3026,27 @@
 			}
 		},
 		"second-short": {
-			"displayName": "से.",
+			"displayName": "से॰",
 			"relative-type-0": "अब",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} से. में",
-				"relativeTimePattern-count-other": "{0} से. में"
+				"relativeTimePattern-count-one": "{0} से॰ में",
+				"relativeTimePattern-count-other": "{0} से॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} से. पहले",
-				"relativeTimePattern-count-other": "{0} से. पहले"
+				"relativeTimePattern-count-one": "{0} से॰ पहले",
+				"relativeTimePattern-count-other": "{0} से॰ पहले"
 			}
 		},
 		"second-narrow": {
-			"displayName": "से.",
+			"displayName": "से॰",
 			"relative-type-0": "अब",
 			"relativeTime-type-future": {
-				"relativeTimePattern-count-one": "{0} से. में",
-				"relativeTimePattern-count-other": "{0} से. में"
+				"relativeTimePattern-count-one": "{0} से॰ में",
+				"relativeTimePattern-count-other": "{0} से॰ में"
 			},
 			"relativeTime-type-past": {
-				"relativeTimePattern-count-one": "{0} से. पहले",
-				"relativeTimePattern-count-other": "{0} से. पहले"
+				"relativeTimePattern-count-one": "{0} से॰ पहले",
+				"relativeTimePattern-count-other": "{0} से॰ पहले"
 			}
 		},
 		"zone": {
@@ -3197,18 +3091,18 @@
 		"100000-other": "0 लाख",
 		"1000000-one": "00 लाख",
 		"1000000-other": "00 लाख",
-		"10000000-one": "0 क'.'",
-		"10000000-other": "0 क'.'",
-		"100000000-one": "00 क'.'",
-		"100000000-other": "00 क'.'",
-		"1000000000-one": "0 अ'.'",
-		"1000000000-other": "0 अ'.'",
-		"10000000000-one": "00 अ'.'",
-		"10000000000-other": "00 अ'.'",
-		"100000000000-one": "0 ख'.'",
-		"100000000000-other": "0 ख'.'",
-		"1000000000000-one": "00 ख'.'",
-		"1000000000000-other": "00 ख'.'",
+		"10000000-one": "0 क॰",
+		"10000000-other": "0 क॰",
+		"100000000-one": "00 क॰",
+		"100000000-other": "00 क॰",
+		"1000000000-one": "0 अ॰",
+		"1000000000-other": "0 अ॰",
+		"10000000000-one": "00 अ॰",
+		"10000000000-other": "00 अ॰",
+		"100000000000-one": "0 ख॰",
+		"100000000000-other": "0 ख॰",
+		"1000000000000-one": "00 ख॰",
+		"1000000000000-other": "00 ख॰",
 		"10000000000000-one": "0 नील",
 		"10000000000000-other": "0 नील",
 		"100000000000000-one": "00 नील",
@@ -3235,6 +3129,32 @@
 				"insertBetween": " "
 			}
 		}
+	},
+	"currencyFormat-short": {
+		"1000-one": "¤0 हज़ार",
+		"1000-other": "¤0 हज़ार",
+		"10000-one": "¤00 हज़ार",
+		"10000-other": "¤00 हज़ार",
+		"100000-one": "¤0 लाख",
+		"100000-other": "¤0 लाख",
+		"1000000-one": "¤00 लाख",
+		"1000000-other": "¤00 लाख",
+		"10000000-one": "¤0 क॰",
+		"10000000-other": "¤0 क॰",
+		"100000000-one": "¤00 क॰",
+		"100000000-other": "¤00 क॰",
+		"1000000000-one": "¤0 अ॰",
+		"1000000000-other": "¤0 अ॰",
+		"10000000000-one": "¤00 अ॰",
+		"10000000000-other": "¤00 अ॰",
+		"100000000000-one": "¤0 ख॰",
+		"100000000000-other": "¤0 ख॰",
+		"1000000000000-one": "¤00 ख॰",
+		"1000000000000-other": "¤00 ख॰",
+		"10000000000000-one": "¤0 नील",
+		"10000000000000-other": "¤0 नील",
+		"100000000000000-one": "¤00 नील",
+		"100000000000000-other": "¤00 नील"
 	},
 	"symbols-latn-decimal": ".",
 	"symbols-latn-group": ",",
@@ -3271,6 +3191,741 @@
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
+	"rtl": false,
+	"listPattern-standard-wide": {
+		"2": "{0} और {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0}, और {1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} या {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} या {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} या {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} या {1}"
+	},
+	"listPattern-standard-short": {
+		"2": "{0} और {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} और {1}"
+	},
+	"units": {
+		"short": {
+			"per": {
+				"compoundUnitPattern": "{0}/{1}"
+			},
+			"acceleration-g-force": {
+				"displayName": "गु–बल",
+				"unitPattern-count-one": "{0} गु॰",
+				"unitPattern-count-other": "{0} गु॰"
+			},
+			"acceleration-meter-per-second-squared": {
+				"displayName": "मीटर/से²",
+				"unitPattern-count-one": "{0} मी॰/व॰से॰",
+				"unitPattern-count-other": "{0} मी॰/व॰से॰"
+			},
+			"angle-revolution": {
+				"displayName": "घूर्णन",
+				"unitPattern-count-one": "{0} घूर्णन",
+				"unitPattern-count-other": "{0} घूर्णन"
+			},
+			"angle-radian": {
+				"displayName": "रेडियन",
+				"unitPattern-count-one": "{0} रेडियन",
+				"unitPattern-count-other": "{0} रेडियन"
+			},
+			"angle-degree": {
+				"displayName": "अंश",
+				"unitPattern-count-one": "{0} अंश",
+				"unitPattern-count-other": "{0} अंश"
+			},
+			"angle-arc-minute": {
+				"displayName": "आर्क मिनट",
+				"unitPattern-count-one": "{0} आर्क मिनट",
+				"unitPattern-count-other": "{0} आर्क मिनट"
+			},
+			"angle-arc-second": {
+				"displayName": "आर्क सेकंड",
+				"unitPattern-count-one": "{0} आर्क से॰",
+				"unitPattern-count-other": "{0} आर्क से॰"
+			},
+			"area-square-kilometer": {
+				"displayName": "वर्ग कि॰मी॰",
+				"unitPattern-count-one": "{0} वर्ग कि॰मी॰",
+				"unitPattern-count-other": "{0} वर्ग कि॰मी॰",
+				"perUnitPattern": "{0}/वर्ग कि॰मी॰"
+			},
+			"area-hectare": {
+				"displayName": "हेक्टेयर",
+				"unitPattern-count-one": "{0} हे॰",
+				"unitPattern-count-other": "{0} हे॰"
+			},
+			"area-square-meter": {
+				"displayName": "वर्ग मीटर",
+				"unitPattern-count-one": "{0} वर्ग मी॰",
+				"unitPattern-count-other": "{0} वर्ग मी॰",
+				"perUnitPattern": "{0}/वर्ग मीटर"
+			},
+			"area-square-centimeter": {
+				"displayName": "वर्ग सें॰",
+				"unitPattern-count-one": "{0} व॰ सें॰",
+				"unitPattern-count-other": "{0} व॰ सें॰",
+				"perUnitPattern": "{0}/वर्ग सें॰ मी॰"
+			},
+			"area-square-mile": {
+				"displayName": "वर्ग मील",
+				"unitPattern-count-one": "{0} वर्ग मील",
+				"unitPattern-count-other": "{0} वर्ग मील",
+				"perUnitPattern": "{0}/मील²"
+			},
+			"area-acre": {
+				"displayName": "एकड़",
+				"unitPattern-count-one": "{0} एकड़",
+				"unitPattern-count-other": "{0} एकड़"
+			},
+			"area-square-yard": {
+				"displayName": "व॰ ग॰",
+				"unitPattern-count-one": "{0} व॰ ग॰",
+				"unitPattern-count-other": "{0} व॰ ग॰"
+			},
+			"area-square-foot": {
+				"displayName": "व॰फ़ी॰",
+				"unitPattern-count-one": "{0} व॰फ़ी॰",
+				"unitPattern-count-other": "{0} व॰फ़ी॰"
+			},
+			"area-square-inch": {
+				"displayName": "व॰ इं॰",
+				"unitPattern-count-one": "{0} व॰ इं॰",
+				"unitPattern-count-other": "{0} व॰ इं॰",
+				"perUnitPattern": "{0}/वर्ग इंच"
+			},
+			"concentr-karat": {
+				"displayName": "कैरट",
+				"unitPattern-count-one": "{0} kt",
+				"unitPattern-count-other": "{0} kt"
+			},
+			"concentr-milligram-per-deciliter": {
+				"displayName": "मि॰ग्रा॰/डे॰ली॰",
+				"unitPattern-count-one": "{0} मि॰ग्रा॰/डे॰ली॰",
+				"unitPattern-count-other": "{0} मि॰ग्रा॰/डे॰ली॰"
+			},
+			"concentr-millimole-per-liter": {
+				"displayName": "मिलीमोल/लीटर",
+				"unitPattern-count-one": "{0} मिलीमोल/ली॰",
+				"unitPattern-count-other": "{0} मिलीमोल/ली॰"
+			},
+			"concentr-part-per-million": {
+				"displayName": "ppm",
+				"unitPattern-count-one": "{0} ppm",
+				"unitPattern-count-other": "{0} ppm"
+			},
+			"consumption-liter-per-kilometer": {
+				"displayName": "लीटर/किमी",
+				"unitPattern-count-one": "{0} ली/किमी",
+				"unitPattern-count-other": "{0} ली/किमी"
+			},
+			"consumption-liter-per-100kilometers": {
+				"displayName": "ली॰/100 कि॰मी॰",
+				"unitPattern-count-one": "{0} ली॰/100 कि॰मी॰",
+				"unitPattern-count-other": "{0} ली॰/100 कि॰मी॰"
+			},
+			"consumption-mile-per-gallon": {
+				"displayName": "मील/गैलन",
+				"unitPattern-count-one": "{0} mpg",
+				"unitPattern-count-other": "{0} mpg"
+			},
+			"consumption-mile-per-gallon-imperial": {
+				"displayName": "mpg इंपीरियल",
+				"unitPattern-count-one": "{0} mpg इंपीरियल",
+				"unitPattern-count-other": "{0} mpg इंपीरियल"
+			},
+			"digital-terabyte": {
+				"displayName": "TB",
+				"unitPattern-count-one": "{0} TB",
+				"unitPattern-count-other": "{0} TB"
+			},
+			"digital-terabit": {
+				"displayName": "Tb",
+				"unitPattern-count-one": "{0} Tb",
+				"unitPattern-count-other": "{0} Tb"
+			},
+			"digital-gigabyte": {
+				"displayName": "GB",
+				"unitPattern-count-one": "{0} GB",
+				"unitPattern-count-other": "{0} GB"
+			},
+			"digital-gigabit": {
+				"displayName": "Gb",
+				"unitPattern-count-one": "{0} Gb",
+				"unitPattern-count-other": "{0} Gb"
+			},
+			"digital-megabyte": {
+				"displayName": "MB",
+				"unitPattern-count-one": "{0} MB",
+				"unitPattern-count-other": "{0} MB"
+			},
+			"digital-megabit": {
+				"displayName": "Mb",
+				"unitPattern-count-one": "{0} Mb",
+				"unitPattern-count-other": "{0} Mb"
+			},
+			"digital-kilobyte": {
+				"displayName": "kB",
+				"unitPattern-count-one": "{0} kB",
+				"unitPattern-count-other": "{0} kB"
+			},
+			"digital-kilobit": {
+				"displayName": "kb",
+				"unitPattern-count-one": "{0} kb",
+				"unitPattern-count-other": "{0} kb"
+			},
+			"digital-byte": {
+				"displayName": "बाइट",
+				"unitPattern-count-one": "{0} बाइट",
+				"unitPattern-count-other": "{0} बाइट"
+			},
+			"digital-bit": {
+				"displayName": "बिट",
+				"unitPattern-count-one": "{0} बिट",
+				"unitPattern-count-other": "{0} बिट"
+			},
+			"duration-century": {
+				"displayName": "शता",
+				"unitPattern-count-one": "{0} शता",
+				"unitPattern-count-other": "{0} शता"
+			},
+			"duration-year": {
+				"displayName": "वर्ष",
+				"unitPattern-count-one": "{0} वर्ष",
+				"unitPattern-count-other": "{0} वर्ष",
+				"perUnitPattern": "{0}/वर्ष"
+			},
+			"duration-month": {
+				"displayName": "माह",
+				"unitPattern-count-one": "{0} माह",
+				"unitPattern-count-other": "{0} माह",
+				"perUnitPattern": "{0}/माह"
+			},
+			"duration-week": {
+				"displayName": "सप्ताह",
+				"unitPattern-count-one": "{0} सप्ताह",
+				"unitPattern-count-other": "{0} सप्ताह",
+				"perUnitPattern": "{0}/सप्ताह"
+			},
+			"duration-day": {
+				"displayName": "दिन",
+				"unitPattern-count-one": "{0} दिन",
+				"unitPattern-count-other": "{0} दिन",
+				"perUnitPattern": "{0}/दिन"
+			},
+			"duration-hour": {
+				"displayName": "घंटे",
+				"unitPattern-count-one": "{0} घं॰",
+				"unitPattern-count-other": "{0} घं॰",
+				"perUnitPattern": "{0}/घं॰"
+			},
+			"duration-minute": {
+				"displayName": "मिनट",
+				"unitPattern-count-one": "{0} मि॰",
+				"unitPattern-count-other": "{0} मि॰",
+				"perUnitPattern": "{0}/मिनट"
+			},
+			"duration-second": {
+				"displayName": "सेकंड",
+				"unitPattern-count-one": "{0} से॰",
+				"unitPattern-count-other": "{0} से॰",
+				"perUnitPattern": "{0}/से॰"
+			},
+			"duration-millisecond": {
+				"displayName": "मिलीसेकंड",
+				"unitPattern-count-one": "{0} मि॰से॰",
+				"unitPattern-count-other": "{0} मि॰से॰"
+			},
+			"duration-microsecond": {
+				"displayName": "माइक्रोसेकंड",
+				"unitPattern-count-one": "{0} μs",
+				"unitPattern-count-other": "{0} μs"
+			},
+			"duration-nanosecond": {
+				"displayName": "नैनो से॰",
+				"unitPattern-count-one": "{0} नैनो से॰",
+				"unitPattern-count-other": "{0} नैनो से॰"
+			},
+			"electric-ampere": {
+				"displayName": "एम्पी॰",
+				"unitPattern-count-one": "{0} ए॰",
+				"unitPattern-count-other": "{0} ए॰"
+			},
+			"electric-milliampere": {
+				"displayName": "मि॰ ए॰",
+				"unitPattern-count-one": "{0} मि॰ ए॰",
+				"unitPattern-count-other": "{0} मि॰ ए॰"
+			},
+			"electric-ohm": {
+				"displayName": "ओम",
+				"unitPattern-count-one": "{0} Ω",
+				"unitPattern-count-other": "{0} Ω"
+			},
+			"electric-volt": {
+				"displayName": "वोल्ट",
+				"unitPattern-count-one": "{0} V",
+				"unitPattern-count-other": "{0} V"
+			},
+			"energy-kilocalorie": {
+				"displayName": "kcal",
+				"unitPattern-count-one": "{0} kcal",
+				"unitPattern-count-other": "{0} kcal"
+			},
+			"energy-calorie": {
+				"displayName": "cal",
+				"unitPattern-count-one": "{0} cal",
+				"unitPattern-count-other": "{0} cal"
+			},
+			"energy-foodcalorie": {
+				"displayName": "Cal",
+				"unitPattern-count-one": "{0} Cal",
+				"unitPattern-count-other": "{0} Cal"
+			},
+			"energy-kilojoule": {
+				"displayName": "किलो जूल",
+				"unitPattern-count-one": "{0} kJ",
+				"unitPattern-count-other": "{0} kJ"
+			},
+			"energy-joule": {
+				"displayName": "जूल",
+				"unitPattern-count-one": "{0} J",
+				"unitPattern-count-other": "{0} J"
+			},
+			"energy-kilowatt-hour": {
+				"displayName": "kWh",
+				"unitPattern-count-one": "{0} kWh",
+				"unitPattern-count-other": "{0} kWh"
+			},
+			"frequency-gigahertz": {
+				"displayName": "GHz",
+				"unitPattern-count-one": "{0} GHz",
+				"unitPattern-count-other": "{0} GHz"
+			},
+			"frequency-megahertz": {
+				"displayName": "MHz",
+				"unitPattern-count-one": "{0} MHz",
+				"unitPattern-count-other": "{0} MHz"
+			},
+			"frequency-kilohertz": {
+				"displayName": "kHz",
+				"unitPattern-count-one": "{0} kHz",
+				"unitPattern-count-other": "{0} kHz"
+			},
+			"frequency-hertz": {
+				"displayName": "Hz",
+				"unitPattern-count-one": "{0} Hz",
+				"unitPattern-count-other": "{0} Hz"
+			},
+			"length-kilometer": {
+				"displayName": "कि॰मी॰",
+				"unitPattern-count-one": "{0} कि॰मी॰",
+				"unitPattern-count-other": "{0} कि॰मी॰",
+				"perUnitPattern": "{0}/कि॰मी॰"
+			},
+			"length-meter": {
+				"displayName": "मीटर",
+				"unitPattern-count-one": "{0} मी",
+				"unitPattern-count-other": "{0} मी",
+				"perUnitPattern": "{0}/मी"
+			},
+			"length-decimeter": {
+				"displayName": "डे॰मी॰",
+				"unitPattern-count-one": "{0} डे॰मी॰",
+				"unitPattern-count-other": "{0} डे॰मी॰"
+			},
+			"length-centimeter": {
+				"displayName": "सें॰मी॰",
+				"unitPattern-count-one": "{0} सें॰मी॰",
+				"unitPattern-count-other": "{0} सें॰मी॰",
+				"perUnitPattern": "{0}/सें॰मी॰"
+			},
+			"length-millimeter": {
+				"displayName": "मि॰मी॰",
+				"unitPattern-count-one": "{0} मि॰मी॰",
+				"unitPattern-count-other": "{0} मि॰मी॰"
+			},
+			"length-micrometer": {
+				"displayName": "µ मा॰मी॰",
+				"unitPattern-count-one": "{0} µ मा॰मी॰",
+				"unitPattern-count-other": "{0} µ मा॰मी॰"
+			},
+			"length-nanometer": {
+				"displayName": "नै॰मी॰",
+				"unitPattern-count-one": "{0} नै॰मी॰",
+				"unitPattern-count-other": "{0} नै॰मी॰"
+			},
+			"length-picometer": {
+				"displayName": "पि॰मी॰",
+				"unitPattern-count-one": "{0} पि॰मी॰",
+				"unitPattern-count-other": "{0} पि॰मी॰"
+			},
+			"length-mile": {
+				"displayName": "मील",
+				"unitPattern-count-one": "{0} मील",
+				"unitPattern-count-other": "{0} मील"
+			},
+			"length-yard": {
+				"displayName": "यार्ड",
+				"unitPattern-count-one": "{0} यार्ड",
+				"unitPattern-count-other": "{0} यार्ड"
+			},
+			"length-foot": {
+				"displayName": "फ़ीट",
+				"unitPattern-count-one": "{0} फ़ीट",
+				"unitPattern-count-other": "{0} फ़ीट",
+				"perUnitPattern": "{0}/फ़ीट"
+			},
+			"length-inch": {
+				"displayName": "इंच",
+				"unitPattern-count-one": "{0} इंच",
+				"unitPattern-count-other": "{0} इंच",
+				"perUnitPattern": "{0}/इंच"
+			},
+			"length-parsec": {
+				"displayName": "पार्सेक",
+				"unitPattern-count-one": "{0} पार्सेक",
+				"unitPattern-count-other": "{0} पार्सेक"
+			},
+			"length-light-year": {
+				"displayName": "प्रकाश वर्ष",
+				"unitPattern-count-one": "{0} प्र॰व॰",
+				"unitPattern-count-other": "{0} प्र॰व॰"
+			},
+			"length-astronomical-unit": {
+				"displayName": "खगो॰ इका॰",
+				"unitPattern-count-one": "{0} खगो॰ इका॰",
+				"unitPattern-count-other": "{0} खगो॰ इका॰"
+			},
+			"length-furlong": {
+				"displayName": "fur",
+				"unitPattern-count-other": "{0} fur"
+			},
+			"length-fathom": {
+				"displayName": "fm",
+				"unitPattern-count-other": "{0} fm"
+			},
+			"length-nautical-mile": {
+				"displayName": "नॉ॰ मी॰",
+				"unitPattern-count-one": "{0} नॉ॰ मी॰",
+				"unitPattern-count-other": "{0} नॉ॰ मी॰"
+			},
+			"length-mile-scandinavian": {
+				"displayName": "smi",
+				"unitPattern-count-one": "{0} smi",
+				"unitPattern-count-other": "{0} smi"
+			},
+			"length-point": {
+				"displayName": "pt",
+				"unitPattern-count-one": "{0} pt",
+				"unitPattern-count-other": "{0} pt"
+			},
+			"light-lux": {
+				"displayName": "लक्स",
+				"unitPattern-count-one": "{0} lx",
+				"unitPattern-count-other": "{0} lx"
+			},
+			"mass-metric-ton": {
+				"displayName": "मीट्रिक टन",
+				"unitPattern-count-one": "{0} मीट्रिक टन",
+				"unitPattern-count-other": "{0} मीट्रिक टन"
+			},
+			"mass-kilogram": {
+				"displayName": "कि॰ग्रा॰",
+				"unitPattern-count-one": "{0} कि॰ग्रा॰",
+				"unitPattern-count-other": "{0} कि॰ग्रा॰",
+				"perUnitPattern": "{0}/कि॰ग्रा॰"
+			},
+			"mass-gram": {
+				"displayName": "ग्राम",
+				"unitPattern-count-one": "{0} ग्रा॰",
+				"unitPattern-count-other": "{0} ग्रा॰",
+				"perUnitPattern": "{0}/ग्रा॰"
+			},
+			"mass-milligram": {
+				"displayName": "मि॰ग्रा॰",
+				"unitPattern-count-one": "{0} मि॰ग्रा॰",
+				"unitPattern-count-other": "{0} मि॰ग्रा॰"
+			},
+			"mass-microgram": {
+				"displayName": "मा॰ग्रा॰",
+				"unitPattern-count-one": "{0} मा॰ग्रा॰",
+				"unitPattern-count-other": "{0} मा॰ग्रा॰"
+			},
+			"mass-ton": {
+				"displayName": "टन",
+				"unitPattern-count-one": "{0} टन",
+				"unitPattern-count-other": "{0} टन"
+			},
+			"mass-stone": {
+				"displayName": "st",
+				"unitPattern-count-other": "{0} st"
+			},
+			"mass-pound": {
+				"displayName": "पौंड",
+				"unitPattern-count-one": "{0} पौंड",
+				"unitPattern-count-other": "{0} पौंड",
+				"perUnitPattern": "{0}/पौंड"
+			},
+			"mass-ounce": {
+				"displayName": "औंस",
+				"unitPattern-count-one": "{0} औं॰",
+				"unitPattern-count-other": "{0} औं॰",
+				"perUnitPattern": "{0}/औंस"
+			},
+			"mass-ounce-troy": {
+				"displayName": "ट्राई औंस",
+				"unitPattern-count-one": "{0} ट्राई औंस",
+				"unitPattern-count-other": "{0} ट्राई औंस"
+			},
+			"mass-carat": {
+				"displayName": "कै॰",
+				"unitPattern-count-one": "{0} कै॰",
+				"unitPattern-count-other": "{0} कै॰"
+			},
+			"power-gigawatt": {
+				"displayName": "GW",
+				"unitPattern-count-one": "{0} GW",
+				"unitPattern-count-other": "{0} GW"
+			},
+			"power-megawatt": {
+				"displayName": "MW",
+				"unitPattern-count-one": "{0} MW",
+				"unitPattern-count-other": "{0} MW"
+			},
+			"power-kilowatt": {
+				"displayName": "kW",
+				"unitPattern-count-one": "{0} kW",
+				"unitPattern-count-other": "{0} kW"
+			},
+			"power-watt": {
+				"displayName": "वॉट",
+				"unitPattern-count-one": "{0} W",
+				"unitPattern-count-other": "{0} W"
+			},
+			"power-milliwatt": {
+				"displayName": "mW",
+				"unitPattern-count-one": "{0} mW",
+				"unitPattern-count-other": "{0} mW"
+			},
+			"power-horsepower": {
+				"displayName": "hp",
+				"unitPattern-count-one": "{0} hp",
+				"unitPattern-count-other": "{0} hp"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-one": "{0} hPa",
+				"unitPattern-count-other": "{0} hPa"
+			},
+			"pressure-millimeter-of-mercury": {
+				"displayName": "mm Hg",
+				"unitPattern-count-one": "{0} mm Hg",
+				"unitPattern-count-other": "{0} mm Hg"
+			},
+			"pressure-pound-per-square-inch": {
+				"displayName": "psi",
+				"unitPattern-count-one": "{0} psi",
+				"unitPattern-count-other": "{0} psi"
+			},
+			"pressure-inch-hg": {
+				"displayName": "inHg",
+				"unitPattern-count-one": "{0} inHg",
+				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-millibar": {
+				"displayName": "mbar",
+				"unitPattern-count-one": "{0} mbar",
+				"unitPattern-count-other": "{0} mbar"
+			},
+			"speed-kilometer-per-hour": {
+				"displayName": "कि॰मी॰/घं॰",
+				"unitPattern-count-one": "{0} कि॰मी॰ प्रति घं॰",
+				"unitPattern-count-other": "{0} कि॰मी॰ प्रति घं॰"
+			},
+			"speed-meter-per-second": {
+				"displayName": "मी॰/से॰",
+				"unitPattern-count-one": "{0} मी॰/से॰",
+				"unitPattern-count-other": "{0} मी॰/से॰"
+			},
+			"speed-mile-per-hour": {
+				"displayName": "मील/घंटा",
+				"unitPattern-count-one": "{0} मी॰प्र॰घं॰",
+				"unitPattern-count-other": "{0} मी॰प्र॰घं॰"
+			},
+			"speed-knot": {
+				"displayName": "नॉट",
+				"unitPattern-count-one": "{0} नॉट",
+				"unitPattern-count-other": "{0} नॉट"
+			},
+			"temperature-generic": {
+				"displayName": "°",
+				"unitPattern-count-one": "{0}°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"temperature-celsius": {
+				"displayName": "डिग्री सेल्सियस",
+				"unitPattern-count-one": "{0}°से॰",
+				"unitPattern-count-other": "{0}°से॰"
+			},
+			"temperature-fahrenheit": {
+				"displayName": "डिग्री फ़ेरनहाइट",
+				"unitPattern-count-one": "{0}°फेरन॰",
+				"unitPattern-count-other": "{0}°फेरन॰"
+			},
+			"temperature-kelvin": {
+				"displayName": "K",
+				"unitPattern-count-one": "{0} K",
+				"unitPattern-count-other": "{0} K"
+			},
+			"volume-cubic-kilometer": {
+				"displayName": "घन कि॰मी॰",
+				"unitPattern-count-one": "{0} घन कि॰मी॰",
+				"unitPattern-count-other": "{0} घन कि॰मी॰"
+			},
+			"volume-cubic-meter": {
+				"displayName": "घन मी॰",
+				"unitPattern-count-one": "{0} घन मी॰",
+				"unitPattern-count-other": "{0} घन मी॰",
+				"perUnitPattern": "{0}/घन मी॰"
+			},
+			"volume-cubic-centimeter": {
+				"displayName": "घन सें॰ मी॰",
+				"unitPattern-count-one": "{0} घन सें॰ मी॰",
+				"unitPattern-count-other": "{0} घन सें॰ मी॰",
+				"perUnitPattern": "{0}/घन सें॰ मी॰"
+			},
+			"volume-cubic-mile": {
+				"displayName": "घन मील",
+				"unitPattern-count-one": "{0} घन मील",
+				"unitPattern-count-other": "{0} घन मील"
+			},
+			"volume-cubic-yard": {
+				"displayName": "घन या॰",
+				"unitPattern-count-one": "{0} घन या॰",
+				"unitPattern-count-other": "{0} घन या॰"
+			},
+			"volume-cubic-foot": {
+				"displayName": "घ॰ फ़ी॰",
+				"unitPattern-count-one": "{0} घ॰ फ़ी॰",
+				"unitPattern-count-other": "{0} घ॰ फ़ी॰"
+			},
+			"volume-cubic-inch": {
+				"displayName": "घन इंच",
+				"unitPattern-count-one": "{0} घन इंच",
+				"unitPattern-count-other": "{0} घन इंच"
+			},
+			"volume-megaliter": {
+				"displayName": "मे॰ ली॰",
+				"unitPattern-count-one": "{0} मे॰ ली॰",
+				"unitPattern-count-other": "{0} मे॰ ली॰"
+			},
+			"volume-hectoliter": {
+				"displayName": "है॰ली॰",
+				"unitPattern-count-one": "{0} है॰ली॰",
+				"unitPattern-count-other": "{0} है॰ली॰"
+			},
+			"volume-liter": {
+				"displayName": "लीटर",
+				"unitPattern-count-one": "{0} ली॰",
+				"unitPattern-count-other": "{0} ली॰",
+				"perUnitPattern": "{0}/ली॰"
+			},
+			"volume-deciliter": {
+				"displayName": "डे॰ली॰",
+				"unitPattern-count-one": "{0} डे॰ली॰",
+				"unitPattern-count-other": "{0} डे॰ली॰"
+			},
+			"volume-centiliter": {
+				"displayName": "सें॰ली॰",
+				"unitPattern-count-one": "{0} सें॰ली॰",
+				"unitPattern-count-other": "{0} सें॰ली॰"
+			},
+			"volume-milliliter": {
+				"displayName": "मि॰ ली॰",
+				"unitPattern-count-one": "{0} मि॰ ली॰",
+				"unitPattern-count-other": "{0} मि॰ ली॰"
+			},
+			"volume-pint-metric": {
+				"displayName": "मीट्रिक पिंट",
+				"unitPattern-count-one": "{0} मीट्रिक पिंट",
+				"unitPattern-count-other": "{0} मीट्रिक पिंट"
+			},
+			"volume-cup-metric": {
+				"displayName": "मीट्रिक कप",
+				"unitPattern-count-one": "{0} मीट्रिक कप",
+				"unitPattern-count-other": "{0} मीट्रिक कप"
+			},
+			"volume-acre-foot": {
+				"displayName": "एकड़ फ़ीट",
+				"unitPattern-count-one": "{0} ए॰फ़ी॰",
+				"unitPattern-count-other": "{0} ए॰फ़ी॰"
+			},
+			"volume-bushel": {
+				"displayName": "bu",
+				"unitPattern-count-other": "{0} bu"
+			},
+			"volume-gallon": {
+				"displayName": "गैलन",
+				"unitPattern-count-one": "{0} गैलन",
+				"unitPattern-count-other": "{0} गैलन",
+				"perUnitPattern": "{0}/गैलन"
+			},
+			"volume-gallon-imperial": {
+				"displayName": "इम्पी॰ गैलन",
+				"unitPattern-count-one": "{0} इम्पी॰ गैलन",
+				"unitPattern-count-other": "{0} इम्पी॰ गैलन",
+				"perUnitPattern": "{0}/इम्पी॰ गैलन"
+			},
+			"volume-quart": {
+				"displayName": "क्वार्ट",
+				"unitPattern-count-one": "{0} क्वार्ट",
+				"unitPattern-count-other": "{0} क्वार्ट"
+			},
+			"volume-pint": {
+				"displayName": "पिंट",
+				"unitPattern-count-one": "{0} पिंट",
+				"unitPattern-count-other": "{0} पिंट"
+			},
+			"volume-cup": {
+				"displayName": "कप",
+				"unitPattern-count-one": "{0} कप",
+				"unitPattern-count-other": "{0} कप"
+			},
+			"volume-fluid-ounce": {
+				"displayName": "फ़्लूइड आउंस",
+				"unitPattern-count-one": "{0} फ़्लूइड आउंस",
+				"unitPattern-count-other": "{0} फ़्लूइड आउंस"
+			},
+			"volume-tablespoon": {
+				"displayName": "टे॰ स्पून",
+				"unitPattern-count-one": "{0} टे॰ स्पून",
+				"unitPattern-count-other": "{0} टे॰ स्पून"
+			},
+			"volume-teaspoon": {
+				"displayName": "टी स्पून",
+				"unitPattern-count-one": "{0} टी स्पून",
+				"unitPattern-count-other": "{0} टी स्पून"
+			},
+			"coordinateUnit": {
+				"east": "{0}E",
+				"north": "{0}N",
+				"south": "{0}S",
+				"west": "{0}W"
+			}
+		}
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
@@ -3279,13 +3934,9 @@
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
-		"CAD": 2,
-		"CHF": 2,
 		"CLF": 4,
 		"CLP": 0,
 		"COP": 0,
-		"CRC": 0,
-		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
@@ -3338,6 +3989,9 @@
 		"YER": 0,
 		"ZMK": 0,
 		"ZWD": 0
+	},
+	"plurals": {
+		"one": "i = 0 or n = 1"
 	},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 0,

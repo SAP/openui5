@@ -39,6 +39,11 @@
 	box-sizing: border-box;
 	overflow: auto;
 	white-space: normal;
+
+	/* This is needed in order to remove the additional outline added by tabindex=-1*/
+	&:focus {
+		outline: none;
+	}
 }
 
 .sapMPanelExpandablePart {
@@ -47,32 +52,14 @@
 
 .sapMPanelExpandableIcon {
 	position: absolute;
-	width: 3rem;
-	line-height: 3rem;
+	width: 1.5rem;
+	line-height: 1.5rem;
 	font-size: 1rem;
+	margin: 0 0.75rem;
 	top: 50%;
 	-webkit-transform: translateY(-50%);
 	transform: translateY(-50%);
 	color: @sapUiContentIconColor;
-
-	&:focus {
-		outline: none;
-	}
-
-	&:focus::after {
-		content: "";
-		position: absolute;
-		pointer-events: none;
-		top: 0.75rem;
-		right: 0.75rem;
-		bottom: 0.75rem;
-		left: 0.75rem;
-		border: 1px dotted @sapUiContentFocusColor;
-	}
-
-	html[data-sap-ui-browser^="ie"].sap-desktop &:focus::after {
-		border-style: dashed;
-	}
 }
 
 .sapMPanelExpandableIconExpanded {
@@ -131,7 +118,7 @@ html.sap-desktop .sapUiFioriObjectPage > section > .sapMPanel {
 
 /* workaround for drawing issue in IE - ensures that the content will be redrawn */
 html[data-sap-ui-animation='on'][data-sap-ui-browser^="ie"] .sapMPanelContent {
-	transform: translate(0, 0);
+	transform: translate2d(0, 0);
 }
 
 /* workaround for drawing issue in Edge - ensures that the content will be redrawn */

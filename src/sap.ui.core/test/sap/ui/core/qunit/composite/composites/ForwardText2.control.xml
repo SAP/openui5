@@ -1,0 +1,4 @@
+<FragmentDefinition xmlns:m="sap.m" xmlns="sap.ui.core">
+    <m:VBox id="VBox">
+    </m:VBox>
+</FragmentDefinition>

@@ -1,0 +1,296 @@
+<mvc:View
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:smartField="sap.ui.comp.smartfield"
+	xmlns:smartForm="sap.ui.comp.smartform"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:sap.ui.layout="sap.ui.layout"
+	xmlns:sap.ui.rta="sap.ui.rta"
+	xmlns:uxap="sap.uxap"
+	xmlns:layout="sap.ui.layout"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	controllerName="sap.ui.rta.test.additionalElements.ComplexTest">
+
+	<!--The view is is bound to EntityType01 in the controller -->
+	<Page title="{i18n>appTitle}">
+		<headerContent>
+			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
+		</headerContent>
+		<content>
+			<uxap:ObjectPageLayout id="ObjectPageLayout">
+				<uxap:headerTitle>
+					<uxap:ObjectPageHeader
+							id="obheader0"
+							objectTitle="Available Elements Test App (view bound to EntityType01): {Property01}"
+							objectSubtitle="{Property02} : {Property03}"
+							objectImageURI="">
+					</uxap:ObjectPageHeader>
+				</uxap:headerTitle>
+				<uxap:sections>
+					<uxap:ObjectPageSection id="ObjectPageSectionWithForm" title="Objectpage section with form">
+						<uxap:ObjectPageSubSection>
+							<!--This SmartForm is bound to EntityType02 in the controller -->
+							<smartForm:SmartForm id="MainForm" title="Smart Form bound to EntityType02" editable="true" entityType="EntityType01" ignoredFields="Property05, Property07">
+								<!--This Group is bound to EntityType01 in the controller -->
+								<smartForm:Group id="GroupEntityType01" label="Group1 bound to  EntityType01" >
+									<smartForm:GroupElement id="EntityType01.Prop1" >
+										<smartField:SmartField editable="true" contextEditable="true" value="{Property01}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType01.Prop2" >
+										<smartField:SmartField value="{Property02}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType01.Prop3" >
+										<TextArea value="{Property03}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType02.EntityType02_Property02" label="Field bound to EntityType02" >
+										<smartField:SmartField value="{EntityType02_Property02}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="i18n Bound Value" id="EntityType01.I18NTest" >
+										<smartField:SmartField value="{i18n>groupElementLabelText}" />
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Invisible field" id="EntityType01.Property04.Invisible" visible="false">
+										<smartField:SmartField value="{Property04}" />
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Ignored Property05 bound" id="EntityType01.BoundButton" >
+										<Button text="{Property05}"></Button>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="No-Bound-Field" id="EntityType01.BoundButton34" >
+										<Button text="{i18n>buttonText}"></Button>
+										<TextArea value="Some Text"></TextArea>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType01.UnboundButton" >
+										<Button text="No Binding"></Button>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType01.CommonProperty" visible="false">
+										<smartField:SmartField value="{CommonPropertyName}" />
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Invisible complex property" id="EntityType01.ComplexProperty031.Invisible" visible="false">
+										<smartField:SmartField value="{EntityType01_Complex/ComplexProperty031}" />
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Invisible property without binding" id="InvisibleNoBinding" visible="false">
+										<smartField:SmartField />
+									</smartForm:GroupElement>
+								</smartForm:Group>
+								<!--This Group is bound to EntityType02 because the form is bound to EntityType02 -->
+								<smartForm:Group id="GroupEntityType02" label="Group2 bound to EntityType02" >
+									<smartForm:GroupElement id="EntityType02.CompProp1" >
+										<smartField:SmartField editable="true" contextEditable="true" value="{EntityType02_Complex/ComplexProperty01}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType02.CompProp2" >
+										<smartField:SmartField value="{EntityType02_Complex/ComplexProperty02}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Property02 bound button" id="EntityType02.Prop2Button" >
+										<Button text="{EntityType02_Property02}"></Button>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="{i18n>customLabel}" id="ComplexBindingCase">
+										<TextArea id="mytextarea" value="{EntityType02_Property03} {EntityType02_Complex/ComplexProperty02}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="No-Bound-Field" id="EntityType02.BoundButton34" >
+										<Button text="{i18n>buttonText}"></Button>
+										<TextArea value="Some Text"></TextArea>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType02.UnboundButton" >
+										<Button text="No Binding"></Button>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Partially visible combined field, real use case from SD CustomerReturn_OP_F1708Type" id="EntityType02.PartiallyVisible" >
+										<smartField:SmartField value="{EntityType02_Property05}"/>
+										<smartField:SmartField value="{EntityType02_Property06}" visible="false"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement id="EntityType02.CommonProperty" visible="false">
+										<smartField:SmartField value="{CommonPropertyName}" />
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="NavigationLabel01" id="EntityType02.NavigationProperty" visible="false">
+										<smartField:SmartField value="{to_EntityType02Nav/NavProperty}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="IncorrectNavigationProperty" id="EntityType02.IncorrectNavigationProperty" visible="false">
+										<smartField:SmartField value="{to_NonexistentEntity/NavProperty}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Field with absolute binding" id="EntityType02.AbsoluteBinding" visible="false">
+										<smartField:SmartField value="{/ModelName/PropertyName}"/>
+									</smartForm:GroupElement>
+									<smartForm:GroupElement label="Field with binding to non-existent model" id="NonExistentModel" visible="false">
+										<smartField:SmartField value="{NonExistentModel>PropertyName}"/>
+									</smartForm:GroupElement>
+								</smartForm:Group>
+							</smartForm:SmartForm>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSectionAbsoluteBindingList" title="Object Page Section Absolute Binding">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSectionAbsoluteBinding" >
+							<List id="listWithAbsoluteBinding" items="{/EntityTypes2}">
+								<items>
+									<StandardListItem title="{path: 'EntityType02_Property01'}" description="{path: 'EntityType02_Property02'}" />
+								</items>
+							</List>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSectionAbsoluteBindingTable" title="Object Page Section Absolute Binding2">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSectionAbsoluteBinding2" >
+							<Table id="tableWithAbsoluteBinding" items="{/EntityTypes2}">
+								<columns>
+									<Column id="Column00">
+										<Text text="{/#EntityTypes2/EntityType02_Property01/@sap:label}" />
+									</Column>
+									<Column id="Column01">
+										<Text text="{/#EntityTypes2/EntityType02_Property02/@sap:label}" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{EntityType02_Property01}" />
+											<Text text="{EntityType02_Property02}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSectionForNavigation" title="Object Page Section NavProperty">
+						<uxap:ObjectPageSubSection id="ObjectPageSubSectionForNavigation" blocks="{ path: 'to_EntityType01Nav', length: 1, templateShareable: false }">
+							<!-- This form is bound to EntityTypeNav through navigation in the controller -->
+							<smartForm:SmartForm id="NavPropertyForm" title="Smart Form bound to EntityTypeNav using navigation">
+									<smartForm:Group id="NavPropertyGroup" label="Group for navigation property">
+										<smartForm:GroupElement id="NavPropertyGroupElement" label="Relative navigation property">
+											<smartField:SmartField value="{NavProperty}"/>
+										</smartForm:GroupElement>
+									</smartForm:Group>
+									<smartForm:Group id="OtherGroup" label="Other Group" >
+										<smartForm:GroupElement id="NavForm.EntityType01.Prop1" label="Element bound to EntityType01" binding="{path: &quot;/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')&quot;}">
+											<smartField:SmartField editable="true" contextEditable="true" value="{Property01}"/>
+										</smartForm:GroupElement>
+										<smartForm:GroupElement id="OtherGroup.UnboundButton" label="Button without binding">
+											<Button text="No Binding"></Button>
+										</smartForm:GroupElement>
+									</smartForm:Group>
+							</smartForm:SmartForm>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+
+					<uxap:ObjectPageSection id="ObjectPageSectionInvisible" title="{i18n>objectPageSectionTitle}" visible="false">
+						<uxap:ObjectPageSubSection>
+							<Button text="Click Invisible ObjectPage Section"/>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+					<uxap:ObjectPageSection title="Invisible ObjectPage Section without stable Id" visible="false">
+						<uxap:ObjectPageSubSection>
+							<Button text="Click Invisible ObjectPage Section without stable Id"/>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+					<uxap:ObjectPageSection id="ObjectPageSectionStashed1" title="Stashed ObjectPage Section 1" stashed="true">
+						<uxap:ObjectPageSubSection>
+							<Button text="Click Stashed ObjectPage Section 1"/>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+					<uxap:ObjectPageSection id="ObjectPageSectionStashed2" title="Stashed ObjectPage Section 2" stashed="true">
+						<uxap:ObjectPageSubSection>
+							<Button text="Click Stashed ObjectPage Section 2"/>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+					<uxap:ObjectPageSection id="ObjectPageSectionSimpleForm" title="Visible ObjectPage Section">
+						<uxap:ObjectPageSubSection>
+							<form:SimpleForm title="SimpleForm with titles" id="SimpleForm"
+								maxContainerCols="3"
+								editable="true"
+								layout="ResponsiveGridLayout"
+								labelSpanXL="4"
+								labelSpanL="4"
+								labelSpanM="4"
+								emptySpanXL="0"
+								emptySpanL="0"
+								emptySpanM="0"
+								columnsXL="3"
+								columnsL="2"
+								columnsM="2"
+								class="editableForm">
+								<form:content>
+									<core:Title id="Title1" text="1. Group Bound to EntityType01" />
+									<Label id="Label11" text="Property01" />
+									<Input id="Input11" value="{Property01}" />
+									<Label id="Label12" text="Property02" />
+									<Input id="Input12" value="{Property02}" />
+									<Label id="Label13" text="Invisible 1" visible="false"/>
+									<Input id="Input131" value="{Property02}" visible="false"/>
+									<Input id="Input132" value="{Property02}" visible="false"/>
+									<Label id="Label14" text="Deleted oData Property" visible="false" />
+									<Input id="Input141" value="{deleted}" visible="false" />
+									<Label id="Label15" text="Complex Invisible oData Property" visible="false" />
+									<Input id="Input151" value="{EntityType01_Complex/ComplexProperty031}" visible="false" />
+									<Label id="Label16" visible="false" />
+									<Input id="Input161" visible="false" />
+									<core:Title id="Title2" text="2. Group Bound to EntityType01" />
+									<Label id="Label21" text="Property03" />
+									<Input id="Input21" value="{Property03}" />
+									<Label id="Label22" text="Invisible Property04" visible="false"/>
+									<Input id="Input22" value="{Property04}" visible="false"/>
+								</form:content>
+							</form:SimpleForm>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+					<uxap:ObjectPageSection id="ObjectPageSectionTable" title="Table">
+						<uxap:ObjectPageSubSection>
+							<Table id="table" items="{path: 'to_EntityType01Nav'}">
+								<columns>
+									<Column id="Column0">
+										<Text text="{/#EntityTypeNav/id/@sap:label}" />
+									</Column>
+									<Column id="Column1">
+										<Text text="{/#EntityTypeNav/EntityTypeNav_Property01/@sap:label}" />
+									</Column>
+									<Column id="Column2">
+										<Text text="{/#EntityTypeNav/EntityTypeNav_Property02/@sap:label}" />
+									</Column>
+									<Column id="Column3">
+										<Text text="{/#EntityTypeNav/EntityTypeNav_Property03/@sap:label}" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{id}" />
+											<Text text="{EntityTypeNav_Property01}" />
+											<Text text="{EntityTypeNav_Property02}" />
+											<Text text="{EntityTypeNav_Property03}" />
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+					<uxap:ObjectPageSection id="ObjectPageSectionEmptyTable" title="Empty Table">
+						<uxap:ObjectPageSubSection>
+							<Table id="emptyTable" items="{path: 'to_EntityType02Nav'}">
+								<columns>
+									<Column id="emptyTable-Column0">
+										<Text text="{/#EntityTypeNav/EntityTypeNav_Property01/@sap:label}" />
+									</Column>
+									<Column id="emptyTable-Column1">
+										<Text text="{/#EntityTypeNav/EntityTypeNav_Property02/@sap:label}" />
+									</Column>
+									<Column id="emptyTable-Column2" visible="false">
+										<Text text="{/#EntityTypeNav/EntityTypeNav_Property03/@sap:label}" />
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<Text text="{to_Supplier/EntityTypeNav_Property01}" />
+											<Text text="{EntityTypeNav_Property02} {EntityTypeNav_Property04}" />
+											<Text text="{EntityTypeNav_Property03}" visible="false"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</uxap:ObjectPageSubSection>
+					</uxap:ObjectPageSection>
+				</uxap:sections>
+			</uxap:ObjectPageLayout>
+		</content>
+	</Page>
+</mvc:View>

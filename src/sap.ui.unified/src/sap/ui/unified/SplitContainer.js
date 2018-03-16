@@ -3,9 +3,21 @@
  */
 
 // Provides control sap.ui.unified.SplitContainer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters', './library'],
-	function(jQuery, Control, Parameters, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/theming/Parameters',
+	'./library',
+	'sap/ui/core/library',
+	'./SplitContainerRenderer',
+	'jquery.sap.script'
+], function(jQuery, Control, Parameters, library, coreLibrary, SplitContainerRenderer /*, jQueryScript*/ ) {
 	"use strict";
+
+
+
+	// shortcut for sap.ui.core.Orientation
+	var Orientation = coreLibrary.Orientation;
 
 
 
@@ -58,7 +70,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 			 * Whether to show the secondary content on the left ("Horizontal", default) or on the top ("Vertical").
 			 * @since 1.22.0
 			 */
-			orientation : {type : "sap.ui.core.Orientation", group : "Appearance", defaultValue : sap.ui.core.Orientation.Horizontal}
+			orientation : {type : "sap.ui.core.Orientation", group : "Appearance", defaultValue : Orientation.Horizontal}
 		},
 		defaultAggregation : "content",
 		aggregations : {
@@ -83,8 +95,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	SplitContainer.prototype.init = function(){
 		this.bRtl  = sap.ui.getCore().getConfiguration().getRTL();
 
-		this._paneRenderer = new sap.ui.unified._ContentRenderer(this, this.getId() + "-panecntnt", "secondaryContent");
-		this._canvasRenderer = new sap.ui.unified._ContentRenderer(this, this.getId() + "-canvascntnt", "content");
+		this._paneRenderer = new library._ContentRenderer(this, this.getId() + "-panecntnt", "secondaryContent");
+		this._canvasRenderer = new library._ContentRenderer(this, this.getId() + "-canvascntnt", "content");
 
 	// Design decided that content does not need to be handled differently depending on device - remove
 	// comments if needed again...
@@ -169,7 +181,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	SplitContainer.prototype._applySecondaryContentSize = function(){
 		// Only set if rendered...
 		if (this.getDomRef()) {
-			var bVertical = this.getOrientation() == sap.ui.core.Orientation.Vertical;
+			var bVertical = this.getOrientation() == Orientation.Vertical;
 			var sSize, sOtherSize;
 			var sDir, sOtherDir;
 			var sSizeValue = this.getSecondaryContentSize();
@@ -250,7 +262,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 	//////////////////////////////////////// Overridden Methods ////////////////////////////////////////
 
-	    //////////////////////////// Property "showSecondaryContent" ///////////////////////////////
+		//////////////////////////// Property "showSecondaryContent" ///////////////////////////////
 
 	SplitContainer.prototype.setShowSecondaryContent = function(bShow){
 		var bRendered = this.getDomRef();
@@ -318,7 +330,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 	};
 
 
-	    ////////////////////////////// Aggregation "secondaryContent" //////////////////////////////
+		////////////////////////////// Aggregation "secondaryContent" //////////////////////////////
 
 	SplitContainer.prototype.insertSecondaryContent = function(oContent, iIndex) {
 		return this._mod(function(bRendered){
@@ -352,4 +364,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/theming/
 
 	return SplitContainer;
 
-}, /* bExport= */ true);
+});

@@ -2,10 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
+sap.ui.define(["sap/m/library", "sap/ui/core/InvisibleText"],
 
-	function(jQuery) {
+	function(library, InvisibleText) {
 		"use strict";
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
 
 		/**
 		 * <code>SplitButton</code> renderer.
@@ -39,10 +42,10 @@ sap.ui.define(['jquery.sap.global'],
 			if (oButton.getIcon()) {
 				oRm.addClass(SplitButtonRenderer.CSS_CLASS + "HasIcon");
 			}
-			if (sType === sap.m.ButtonType.Accept
-				|| sType === sap.m.ButtonType.Reject
-				|| sType === sap.m.ButtonType.Emphasized
-				|| sType === sap.m.ButtonType.Transparent) {
+			if (sType === ButtonType.Accept
+				|| sType === ButtonType.Reject
+				|| sType === ButtonType.Emphasized
+				|| sType === ButtonType.Transparent) {
 				oRm.addClass(SplitButtonRenderer.CSS_CLASS + sType);
 			}
 
@@ -92,7 +95,7 @@ sap.ui.define(['jquery.sap.global'],
 		SplitButtonRenderer.writeAriaLabelledBy = function(oButton, mAccProperties) {
 			var sAriaLabelledByValue = "",
 				sTitleAttribute = oButton.getTitleAttributeValue(),
-				oButtonTypeAriaLabel = oButton.getButtonTypeAriaLabel();
+				oButtonTypeAriaLabelId = oButton.getButtonTypeAriaLabelId();
 
 			if (sTitleAttribute) {
 				sAriaLabelledByValue += oButton.getTooltipInfoLabel(sTitleAttribute).getId();
@@ -104,18 +107,17 @@ sap.ui.define(['jquery.sap.global'],
 				sAriaLabelledByValue += " ";
 			}
 
-			if (oButtonTypeAriaLabel) {
-				sAriaLabelledByValue += oButtonTypeAriaLabel.getId();
+			if (oButtonTypeAriaLabelId) {
+				sAriaLabelledByValue += oButtonTypeAriaLabelId;
 				sAriaLabelledByValue += " ";
 			}
 
-			sAriaLabelledByValue += oButton.getSplitButtonAriaLabel().getId();
+			sAriaLabelledByValue += InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_DESCRIPTION");
 
-			sAriaLabelledByValue += " " + oButton.getKeyboardDescriptionAriaLabel().getId();
+			sAriaLabelledByValue += " " + InvisibleText.getStaticId("sap.m", "SPLIT_BUTTON_KEYBOARD_HINT");
 
 			mAccProperties["labelledby"] = {value: sAriaLabelledByValue, append: true };
 		};
 
 		return SplitButtonRenderer;
-
 	}, /* bExport= */ true);

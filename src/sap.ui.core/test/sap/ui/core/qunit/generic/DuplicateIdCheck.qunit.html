@@ -36,13 +36,22 @@
 				sap.ui.require(
 					[
 						"jquery.sap.global",
-						"sap/ui/core/Control"
+						"sap/ui/base/DataType",
+						"sap/ui/core/Element",
+						"sap/ui/core/Control",
+						"sap/ui/core/Item",
+						"sap/ui/commons/TextField",
+						"sap/m/Text",
 					],
-					function (jQuery, Control) {
+					function (jQuery, DataType, Element, Control, Item, CommonsTextField, MobileText) {
 						var oCore,
 							iAllControls = 0,
 							iFullyTestedControls = 0,
-							iTestedWithoutRenderingControls = 0;
+							iTestedWithoutRenderingControls = 0,
+							aFailuresWhenFillingAggregations = [],
+							iSuccessfullyFilledAggregations = 0,
+							aFailuresWhenFillingProperties = [],
+							iSuccessfullyFilledProperties = 0;
 
 						// get access to the real core object to access the control list
 						sap.ui.getCore().registerPlugin({
@@ -54,6 +63,24 @@
 							}
 						});
 
+
+						function loadClass(sClassName) {
+							var sModuleName = jQuery.sap.getResourceName(sClassName, ""),
+								FNClass;
+
+							FNClass = sap.ui.require(sModuleName);
+							if ( !FNClass ) {
+								try {
+									FNClass = sap.ui.requireSync(sModuleName);
+								} catch (e) {
+									// ignore
+								}
+							}
+							if ( !FNClass ) {
+								FNClass = jQuery.sap.getObject(sClassName);
+							}
+							return FNClass;
+						}
 
 						/**
 						 * Iterates over all loaded libraries, but also all available libraries and tries to load them and their control lists.
@@ -95,10 +122,25 @@
 								var oProperty = mProperties[sPropertyName];
 								try {
 									if (!shouldIgnoreProperty(sControlName, sPropertyName)) {
-										oControl[oProperty._sMutator]("test"); // just try a string for everything now, TODO: check type
+										var vValueToSet = "text" // just try a string as default, with some frequently happening exceptions
+
+										/*
+										 * This block increases the successfully set properties from 27% to 78%, but leads to no new memory leak detection
+										 * and leads to issues in several controls. So don't do it.
+
+										if (oProperty.type === "boolean") {
+											vValueToSet = true;
+										} else if (oProperty.type === "int") {
+											vValueToSet = 100;
+										}
+										 */
+
+										oControl[oProperty._sMutator](vValueToSet);
+										iSuccessfullyFilledProperties++;
 									}
 								} catch (e) {
 									// type check error, ignore
+									aFailuresWhenFillingProperties.push(oProperty.type + " (" + sControlName + "." + sPropertyName + ")");
 								}
 							}
 							oControl.setTooltip("test"); // seems not to be a property...
@@ -113,46 +155,77 @@
 						}
 
 
-						function fillControlAggregations(oControl) {
+						function fillControlAggregations(oControl, assert) {
 							var mAggregations = oControl.getMetadata().getAggregations();
 
 							for (var sAggregationName in mAggregations) {
 								var oAggregation = mAggregations[sAggregationName];
 								try {
-									createAndAddAggregatedElement(oControl, oAggregation);
+									var oAddedElement = createAndAddAggregatedElement(oControl, oAggregation, assert);
+									if (oAddedElement) {
+										iSuccessfullyFilledAggregations++;
+									} else {
+										aFailuresWhenFillingAggregations.push(oAggregation.type);
+									}
 								} catch (e) {
-									// error during creating or adding a child element: not a problem
+									// error during creating or adding a child element: not a problem, just reducing test coverage a bit
+									aFailuresWhenFillingAggregations.push(oAggregation.type);
 								}
 							}
 						}
 
-						function createAndAddAggregatedElement(oControl, oAggregation) {
-							var oElement;
+						function createAndAddAggregatedElement(oControl, oAggregation, assert) {
+							var oElement,
+								sAggregationType = oAggregation.type;
 
-							if (oAggregation.getType() === Control) {
-								
+							if ( DataType.isInterfaceType(sAggregationType) ) {
+								// we can't instantiate interface types and in general don't know the implementations
+
+								// however... we know SOME
+								if (false && sAggregationType === "sap.m.IBar" || sAggregationType === "sap.ui.core.Toolbar") {
+									sAggregationType = "sap.m.Bar";
+								} else if (false && sAggregationType ===  "sap.m.IconTab") {
+									sAggregationType = "sap.m.IconTabFilter";
+								} else {
+									return; // really don't know
+								}
+							}
+
+							var FNClass = loadClass(sAggregationType);
+
+							if (!FNClass) {
+								assert.ok(false, "No class of type " + sAggregationType + " for aggregation '" + oAggregation.name + "' of " + oControl + " could be loaded. Does this class exist? Is it properly implemented?");
+							}
+
+							if (FNClass === Control) {
+
 								if (oControl.getMetadata().getName() === "sap.ui.commons.InPlaceEdit" && oAggregation.name === "content") {
-									oElement = new sap.ui.commons.TextField();
+									oElement = new CommonsTextField();
 								} else {
 									// this aggregation is a typical container aggregation, allowing any control as child.
 									// Or it is more specific, but allows different child types, and Control is the common base class.
 									// Let's try adding a Text control.
-									oElement = new sap.m.Text();
+									oElement = new MobileText();
 								}
 
-							} else if (oAggregation.getType() === Element) {
+							} else if (FNClass === Element) {
 								// This aggregation accepts any sap.ui.Element?? Strange. Give an Item, then.
-								oElement = new sap.ui.core.Item();
+								oElement = new Item();
+
+							} else if ( FNClass.getMetadata().isAbstract() ) {
+								// we also shouldn't instantiate abstract classes
+								return;
 
 							} else {
 								// A specific Control or Element type. Try to add a working instance.
-								oElement = new (oAggregation.getType())();
+								oElement = new FNClass();
 							}
 
 							// In case we were able to instantiate a suitable Element, add it into the aggregation.
 							if (oElement) {
 								oControl[oAggregation._sMutator](oElement);
 							}
+							return oElement;
 						}
 
 
@@ -165,7 +238,7 @@
 								"sap.ui.commons.SearchFieldCB",
 								"sap.ui.commons.Accordion",
 								"sap.ui.core.ComponentContainer",
-								"sap.ui.core.FragmentControl",
+								"sap.ui.core.XMLComposite",
 								"sap.ui.core.UIComponent",
 								"sap.ui.core.mvc.HTMLView",
 								"sap.ui.core.mvc.JSONView",
@@ -176,12 +249,12 @@
 								"sap.ui.core.tmpl.Template",
 								"sap.m.DateTimeInput", // setting an invalid type crashes and only leaks a picker control because of this
 								"sap.m.FacetFilterItem",
-								"sap.m.TabStripSelect",
 								"sap.m.LightBox",
 								"sap.m.NotificationListGroup",
 								"sap.m.NotificationListItem",
 								"sap.m.QuickViewPage",
 								"sap.m.PlanningCalendar",
+								"sap.m.SelectionDetailsListItem", // not prepared to be used standalone
 								"sap.m.TimePickerSlider",
 								"sap.m.TimePickerSliders",
 								"sap.m.Wizard",
@@ -220,6 +293,7 @@
 								"sap.uiext.inbox.InboxToggleTextView",
 								"sap.uiext.inbox.InboxTaskDetails",
 								"sap.viz.ui5.controls.common.BaseControl",
+								"sap.viz.ui5.controls.VizRangeSlider",
 								"sap.viz.ui5.core.BaseChart"
 							].indexOf(sControlName) > -1) { // known to be untestable
 								assert.ok(true, "WARNING: " + sControlName + " cannot be tested and has therefore been EXCLUDED.");
@@ -257,7 +331,7 @@
 						var checkControl = function(sControlName, assert) {
 							assert.ok(true, sControlName);
 
-							var oControlClass = jQuery.sap.getObject(sControlName),
+							var oControlClass = loadClass(sControlName),
 								sId = sControlName.replace(/\./g, "_"),
 								oControl1 = new oControlClass(sId + "_1"),
 								oControl2 = new oControlClass(sId + "_2"),
@@ -278,9 +352,9 @@
 							// Render Control Instances
 
 							fillControlProperties(oControl1);
-							fillControlAggregations(oControl1);
+							fillControlAggregations(oControl1, assert);
 							fillControlProperties(oControl2);
-							fillControlAggregations(oControl2);
+							fillControlAggregations(oControl2, assert);
 
 							if (bCanRender) {
 								oControl1.placeAt("qunit-fixture");
@@ -377,6 +451,14 @@
 							assert.ok(true, "Number of controls tested without rendering: " + iTestedWithoutRenderingControls);
 
 							assert.ok(iFullyTestedControls >= 200 /* magic number... just make sure we have tested lots of controls */, "Should have tested lots of controls, at least 200");
+
+							var fPropertyPercentage = Math.round(iSuccessfullyFilledProperties / (iSuccessfullyFilledProperties + aFailuresWhenFillingProperties.length) * 100);
+							assert.ok(iSuccessfullyFilledProperties> 2000, "There should be more than 2000 successfully filled properties. There are " + iSuccessfullyFilledProperties + " (" + fPropertyPercentage + "%)");
+							// too many.... 6000...  assert.ok(aFailuresWhenFillingProperties.length < 20000, "Three should be less than 20000 failures when a property is filled. There are " + aFailuresWhenFillingProperties.length + ". Failing properties: " + aFailuresWhenFillingProperties.join(",\n"));
+
+							var fAggregationPercentage = Math.round(iSuccessfullyFilledAggregations/(iSuccessfullyFilledAggregations + aFailuresWhenFillingAggregations.length) * 100);
+							assert.ok(iSuccessfullyFilledAggregations > 1000, "There should be more than 1000 successfully filled aggregations. There are " + iSuccessfullyFilledAggregations + " (" + fAggregationPercentage + "%)");
+							assert.ok(aFailuresWhenFillingAggregations.length < 500, "There should be less than 500 failures when an aggregation is filled. There are " + aFailuresWhenFillingAggregations.length + ". Failing aggregation types: " + aFailuresWhenFillingAggregations.join(",\n"));
 						});
 
 						QUnit.start();

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.layout.HorizontalLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/library', 'sap/ui/layout/HorizontalLayout'],
-	function(jQuery, library, HorizontalLayout1) {
+sap.ui.define([
+ 'jquery.sap.global',
+ 'sap/ui/commons/library',
+ 'sap/ui/layout/HorizontalLayout',
+ "./HorizontalLayoutRenderer"
+],
+	function(jQuery, library, HorizontalLayout1, HorizontalLayoutRenderer) {
 	"use strict";
 
 

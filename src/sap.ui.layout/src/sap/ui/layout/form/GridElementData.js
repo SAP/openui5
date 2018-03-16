@@ -3,15 +3,15 @@
  */
 
 // Provides control sap.ui.layout.form.GridElementData.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', 'sap/ui/layout/library'],
-	function(jQuery, LayoutData, library) {
+sap.ui.define(['sap/ui/core/LayoutData', 'sap/ui/layout/library'],
+	function(LayoutData, library) {
 	"use strict";
 
 	/**
 	 * Constructor for a new sap.ui.layout.form.GridElementData.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * The <code>GridLayout</code>-specific layout data for <code>FormElement</code> fields.
@@ -60,4 +60,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/LayoutData', 'sap/ui/layout/lib
 
 	return GridElementData;
 
-}, /* bExport= */ true);
+});

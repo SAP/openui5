@@ -1,6 +1,7 @@
 <core:FragmentDefinition
 		xmlns="sap.m"
-		xmlns:core="sap.ui.core">
+		xmlns:core="sap.ui.core"
+		xmlns:html="http://www.w3.org/1999/xhtml">
 	<Dialog
 		title="Give Feedback"
 		class="sapUiContentPadding"
@@ -8,15 +9,14 @@
 		resizable="true"
 		draggable="true"
 		contentHeight="35rem"
-		contentWidth="25rem"
-		verticalScrolling="false"
+		contentWidth="32rem"
 		stretch="{appView>/bPhoneSize}"
 		showHeader="true">
 		<content>
 		<VBox>
 			<HBox justifyContent="SpaceBetween">
 				<items>
-					<Label text="Rate your experience:" required="true" class="sapMFontMediumSize"/>
+					<Label text="How is your overall experience?" design="Bold" class="sapMFontMediumSize" required="true"/>
 					<ObjectStatus id="ratingStatus" text="" state="None" class="sapMFontMediumSize"/>
 				</items>
 			</HBox>
@@ -49,15 +49,29 @@
 					</ToggleButton>
 				</items>
 			</HBox>
-			<TextArea id="feedbackInput" width="100%" placeholder="Describe what you like or what needs to be improved.You can share your feedback for the overall Demokit experience or for the specific page you are currently viewing."
-						rows="8" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
-			<CheckBox id="pageContext" text="Feedback is related to the current page" selected="true" class="sapMFontMediumSize contextCheckBoxAlign sapUiTinyMarginBottom" select="onContextSelect"/>
-			<Link text="Show context Data" class="sapMFontMediumSize sapUiSmallMarginBottom" press="onShowHideContextData"/>
-			<TextArea id="contextData" width="100%" value="Details/ descriptive text..." visible="false" editable="false" rows="3" class="sapUiBaseText sapMFontMediumSize sapUiSmallMarginBottom"/>
-			<Text text="Your feedback is anonymous, we do not collect any personal data. For more information see the following links" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
-			<Link text="Privacy" href="https://help.hana.ondemand.com/privacy.htm" target="_blank" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
-			<Link text="Term of Use" href="https://help.hana.ondemand.com/terms_of_use.html" target="_blank" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
-			<Link text="Legal Agreement" href="resources/sap/ui/documentation/sdk/legal_agreement_with_privacy.html" target="_blank" class="sapMFontMediumSize sapUiTinyMarginBottom"/>
+
+			<Label text="What would you like to tell us?" design="Bold" class="sapUiTinyMarginTop"/>
+
+			<TextArea id="feedbackInput" width="100%" placeholder="You can share your feedback for the overall Demo Kit experience or for the specific page you are currently viewing."
+						rows="7" class="sapMFontMediumSize sapUiFeedbackDialogTextArea"/>
+
+			<CheckBox id="pageContext" text="Feedback is related to the current page" selected="true" class="sapMFontMediumSize contextCheckBoxAlign" select="onContextSelect"/>
+
+			<FormattedText class="sapMLabel sapUiFeedbackDialogNoteLabel sapUiTinyMarginBottom"
+						   htmlText="&lt;strong&gt;Note:&lt;/strong&gt; If you want to report a bug,
+			{= ${versionData>/isOpenUI5} ?
+			' you can open a GitHub issue &lt;a href=&quot;https://github.com/SAP/openui5/issues/new&quot;&gt;here.&lt;/a&gt;' :
+			${versionData>/isSnapshotVersion} ?
+			' please open a BCP ticket on CA-UI5-CTR component.' :
+			' you can report an Incident &lt;a href=&quot;https://launchpad.support.sap.com/#incident/solution&quot;&gt;here.&lt;/a&gt;'
+			}
+			This way we will be able to get back to you in case we have follow-up questions."/>
+
+			<Link text="Show context Data" class="sapMFontMediumSize sapUiTinyMarginBottom" press="onShowHideContextData"/>
+
+			<TextArea id="contextData" width="100%" value="Details/ descriptive text..." visible="false" editable="false" rows="3" class="sapUiBaseText sapMFontMediumSize sapUiTinyMarginBottom sapUiNoMarginTop"/>
+
+			<MessageStrip text="Your feedback is anonymous, we do not collect any personal data" type="Information" showIcon="true"/>
 		</VBox>
 		</content>
 		<beginButton>

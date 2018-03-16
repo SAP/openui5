@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Tree.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./TreeRenderer"],
+	function(jQuery, library, Control, TreeRenderer) {
 	"use strict";
 
 
@@ -22,7 +22,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.Tree}
 	 * @alias sap.ui.commons.Tree
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -198,9 +198,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	***********************************************************************************/
 
 	/**
-	 * Expands all nodes in the tree
+	 * Expands all nodes in the tree.
 	 *
-	 * @type void
+	 * @type {void}
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -214,9 +214,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 
 	/**
-	 * Collapses all nodes in the tree
+	 * Collapses all nodes in the tree.
 	 *
-	 * @type void
+	 * @type {void}
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -234,10 +234,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	* KEYBOARD NAVIGATION
 	***********************************************************************************/
 	/**
-	* DOWN key behavior
-	* Opens the section or activates the UI element on DOWN key
+	* DOWN key behavior.
+	* Opens the section or activates the UI element on DOWN key.
 	* @private
-	* @param oEvent Browser event
+	* @param {Object} oEvent Browser event
 	*/
 	Tree.prototype.onsapdown = function(oEvent){
 		this.moveFocus(false);
@@ -245,10 +245,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	* UP key behavior
-	* Opens the section or activates the UI element on UP key
+	* UP key behavior.
+	* Opens the section or activates the UI element on UP key.
 	* @private
-	* @param oEvent Browser event
+	* @param {Object} oEvent Browser event
 	*/
 	Tree.prototype.onsapup = function(oEvent){
 		this.moveFocus(true);
@@ -256,7 +256,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * The general HOME key event of the tree
+	 * The general HOME key event of the tree.
 	 * @private
 	 * @param {jQuery.Event} oEvent The saphome event object
 	 */
@@ -266,7 +266,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * The general CTRL+HOME key event of the tree
+	 * The general CTRL+HOME key event of the tree.
 	 * @private
 	 * @param {jQuery.Event} oEvent The saphome event object
 	 */
@@ -276,7 +276,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * The general END key event of the tree
+	 * The general END key event of the tree.
 	 * @private
 	 * @param {jQuery.Event} oEvent The sapend event object
 	 */
@@ -286,7 +286,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * The general CTRL+END key event of the tree
+	 * The general CTRL+END key event of the tree.
 	 * @private
 	 * @param {jQuery.Event} oEvent The sapend event object
 	 */
@@ -296,7 +296,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * The numpad STAR(*) key event of the tree
+	 * The numpad STAR(*) key event of the tree.
 	 * @private
 	 * @param {jQuery.Event} oEvent The sapcollapseall event object
 	 */
@@ -316,8 +316,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	***********************************************************************************/
 
 	/**
-	 * Determine the icon prefix for the embedded button icons
+	 * Determine the icon prefix for the embedded button icons.
 	 * @private
+	 * @returns {string} The icon path prefix
 	 */
 	Tree.prototype.getIconPrefix = function() {
 		var sIconPrefix = "themes/" + sap.ui.getCore().getConfiguration().getTheme() + "/";
@@ -330,9 +331,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return sap.ui.resource("sap.ui.commons", sIconPrefix);
 	};
 
-	/**Returns the first Sibling tree node based on DOM Tree node provided
-	 * @param oDomNode The DOM Tree node from which calculate the first sibling
-	 * @returns The first sibling tree node
+	/**Returns the first Sibling tree node based on DOM Tree node provided.
+	 * @param {Object} oDomNode The DOM Tree node from which calculate the first sibling
+	 * @returns {Object} The first sibling tree node
 	 * @private
 	*/
 	Tree.prototype.getFirstSibling = function(oDomNode) {
@@ -344,9 +345,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return null;
 	};
 
-	/**Returns the last Sibling tree node based on DOM Tree node provided
-	 * @param oDomNode The DOM Tree node from which calculate the last sibling
-	 * @returns The last sibling tree node
+	/** Returns the last Sibling tree node based on DOM Tree node provided.
+	 * @param {Object} oDomNode The DOM Tree node from which calculate the last sibling
+	 * @returns {Object} The last sibling tree node
 	 * @private
 	*/
 	Tree.prototype.getLastSibling = function(oDomNode) {
@@ -358,8 +359,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return null;
 	};
 
-	/**Returns the first tree node of the tree. Children of collapsed nodes (hidden) are not considered.
-	 * @returns The first tree node
+	/** Returns the first tree node of the tree. Children of collapsed nodes (hidden) are not considered.
+	 * @returns {Object} The first tree node
 	 * @private
 	*/
 	Tree.prototype.getFirst = function() {
@@ -371,8 +372,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return null;
 	};
 
-	/**Returns the last tree node of the tree. Children of collapsed nodes (hidden) are not considered.
-	 * @returns The last tree node
+	/** Returns the last tree node of the tree. Children of collapsed nodes (hidden) are not considered.
+	 * @returns {Object} The last tree node
 	 * @private
 	*/
 	Tree.prototype.getLast = function() {
@@ -391,7 +392,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	/**
 	 * Move the focus by one position, either UP or DOWN depending of "bMoveUp"
-	 * @param bMoveUp When true the focus is move up. Otherwise, it's moved down
+	 * @param {boolean} bMoveUp When true the focus is move up. Otherwise, it's moved down
 	 * @private
 	 */
 	Tree.prototype.moveFocus = function(bMoveUp){
@@ -451,8 +452,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	};
 
-	/**Places the focus on the node corresponding to given DOM Tree Node
-	 * @param oDomTargetNode The DOM Tree Node corresponding to the node to focus
+	/**Places the focus on the node corresponding to given DOM Tree Node.
+	 * @param {Object} oDomTargetNode The DOM Tree Node corresponding to the node to focus
 	 * @private
 	 */
 	Tree.prototype.placeFocus = function(oDomTargetNode){
@@ -595,16 +596,20 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * override this method on Element.js and return true if tree binding
+	 * Overrides this method on ManagedObject.js and return true if tree binding.
 	 * @private
+	 * @param {string} sName The aggregation to bind (e.g. nodes for a tree managed object)
+	 * @return {boolean} Whether tree binding should be used or list binding. Default is false. Override method to change this behavior.
+	 * @override
 	 */
 	Tree.prototype.isTreeBinding = function(sName) {
 		return (sName == "nodes");
 	};
 
 	/**
-	 * override element updateAggregation method with this one and update the tree node bindings
+	 * Overrides element updateAggregation method with this one and update the tree node bindings.
 	 * @private
+	 * @param {string} sReason The reason for updating
 	 */
 	Tree.prototype.updateNodes = function(sReason) {
 		var aNodes,
@@ -660,10 +665,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * Determine the binding context of the given node (dependent on the model name used
-	 * for the nodes binding)
+	 * Determines the binding context of the given node (dependent on the model name used
+	 * for the nodes binding).
 	 *
-	 * @param {sap.ui.commons.TreeNode} oNode
+	 * @param {sap.ui.commons.TreeNode} oNode The node whose binding context will be determined
+	 * @returns {sap.ui.model.Context} The binding context of the node
 	 * @private
 	 */
 	Tree.prototype.getNodeContext = function(oNode) {
@@ -673,9 +679,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
-	 * Returns the node with the given context, or null if no such node currently exists
+	 * Returns the node with the given context, or null if no such node currently exists.
 	 *
-	 * @param {sap.ui.model.Context} oContext the context of the node to be retrieved
+	 * @param {sap.ui.model.Context} oContext The context of the node to be retrieved
+	 * @returns {sap.ui.commons.TreeNode} The found tree node
 	 * @public
 	 * @since 1.19
 	 */
@@ -691,12 +698,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	};
 
 	/**
+	 * A function which matches a node.
+	 *
+	 * @callback functionCallback
+	 * @param {sap.ui.commons.Tree|sap.ui.commons.TreeNode} oNode The node to be matched
+	 */
+
+	/**
 	 * Search through all existing nodes and return the first node which matches using
 	 * the given matching function
 	 *
-	 * @param {function} fnMatch the matching function
-	 * @param {sap.ui.commons.Tree|sap.ui.commons.TreeNode} oNode the node to check
-	 * @returns The found node
+	 * @param {sap.ui.commons.Tree|sap.ui.commons.TreeNode} oNode The node to check
+	 * @param {functionCallback} fnMatch The matching function
+	 * @returns {sap.ui.commons.TreeNode} The found node
 	 * @private
 	 */
 	Tree.prototype.findNode = function(oNode, fnMatch) {
@@ -723,8 +737,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		}
 	};
 
-	/**Returns the selected node in the tree. If not selection, returns false.
-	 * @returns The selected node
+	/** Returns the selected node in the tree. If not selection, returns null.
+	 * @returns {sap.ui.commons.TreeNode} The selected node
 	 * @private
 	 */
 	Tree.prototype.getSelection = function(){
@@ -734,10 +748,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		return null;
 	};
 
-	/**Sets the selected node reference of the Tree
+	/** Sets the selected node reference of the Tree.
 	 * @private
+	 * @param {sap.ui.commons.TreeNode} oNode The node to be selected
+	 * @param {boolean} bSuppressEvent Whether the event is suppressed
+	 * @param {string} sType The tree type
 	 */
-	Tree.prototype.setSelection = function(oNode, bSuppressEvent, sType, bDeselectOtherNodes){
+	Tree.prototype.setSelection = function(oNode, bSuppressEvent, sType){
 		var bDoSelect = true;
 		if (!bSuppressEvent) {
 			bDoSelect = this.fireSelect({node: oNode, nodeContext: this.getNodeContext(oNode)});
@@ -797,7 +814,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	/**
 	 * Add's node context to the internal mSelectedContexts object.
 	 * Taking care if TreeSelectionMode === Multi to not duplicate the node context in mSelectedContexts.
-	 * @param oContext The binding context of the node
+	 * @param {Object} oContext The binding context of the node
 	 * @private
 	 */
 	Tree.prototype._addSelectedNodeContext = function (oContext) {

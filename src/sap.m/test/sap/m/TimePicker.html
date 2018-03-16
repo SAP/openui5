@@ -27,6 +27,7 @@
 
 		var options = [
 			{
+				id: "TP1",
 				valueFormat: "mm:ss",
 				value: "13:15",
 				displayFormat: "mm:ss",
@@ -34,69 +35,101 @@
 				secondsStep: 15
 			},
 			{
+				id: "TP2",
 				displayFormat: "hh:mm a"
 			},
 			{
+				id: "TP3",
 				localeId: "de_DE",
 				displayFormat: "hh:mm a"
 			},
 			{
+				id: "TP4",
 				displayFormat: "HH:mm:ss"
 			},
 			{
+				id: "TP5",
 				value: "09:15:16 PM",
 				title: "Departure time"
 			},
 			{
+				id: "TP6",
 				value: "9:12:13"
 			},
 			{
+				id: "TP7",
 				value: "09:59"
 			},
 			{
+				id: "TP8",
 				value: "21:37",
 				valueFormat: "HH:mm" //needed
 			},
 			{
+				id: "TP9",
 				value: "21+-44-+01",
 				valueFormat: "HH+-mm-+ss" //needed
 			},
 			{
+				id: "TP10",
 				value: "21 March 2013 5:21 PM",
 				valueFormat: "dd MMMM yyyy h:mm a"
 			},
 			{
+				id: "TP11",
 				value: "04:33 PM 17 May",
 				valueFormat: "hh:mm a dd MMMM"
 			},
 			{
+				id: "TP12",
 				value: "12/02/99 17:00",
 				valueFormat: "dd/MM/yy HH:mm"
 			},
 			{
+				id: "TP13",
 				value: "09:17:16 PM",
 				displayFormat: "mm",
 				minutesStep: 20
 			}
 			,
 			{
+				id: "TP14",
 				value: "09:15:16 PM",
 				displayFormat: "HH:mm"
 			},
 			{
+				id: "TP15",
 				valueState: "Error",
 				valueStateText: "Error Message"
 			},
 			{
+				id: "TP16",
 				value: {
 					path: "/timeValue",
 					type: new sap.ui.model.type.Time({style: "medium", strictParsing: true})
-		 		}
-		 	}, {
+				}
+			}, {
+				id: "TP17",
 				localeId: "zh_CN",
 				displayFormat: "ah:mm:ss",
 				valueFormat: "HH:mm:ss",
 				value: "13:22:52"
+			},
+			{
+				id: "TP18",
+				value: "22:33",
+				initialFocusedDateValue: new Date(2017, 8, 9, 10, 11, 12)
+			},
+			{
+				id: "TP19",
+				initialFocusedDateValue: new Date(2017, 8, 9, 10, 11, 12)
+			},
+			{
+				id: "TP20",
+				valueFormat: "HH:mm:ss",
+				displayFormat: "HH:mm:ss",
+				support2400: true,
+				value: "24:00:00"
 			}
 		];
 
@@ -148,6 +181,25 @@
 		var page = new sap.m.Page("page1", {
 			title: "TimePicker",
 			content : [
+				new sap.m.HBox({
+					alignItems: sap.m.FlexAlignItems.Center,
+					items: [
+						new sap.m.Text({ text: "MaskInput is:" }),
+						new sap.m.Switch({
+							state: true,
+							change: function (oEvent) {
+								var sMaskMode = oEvent.getParameter("state") ? sap.m.TimePickerMaskMode.On : sap.m.TimePickerMaskMode.Off;
+
+								for (i = 0; i < options.length; i++) {
+									var sId = options[i].id;
+
+									sap.ui.getCore().byId(sId).setMaskMode(sMaskMode);
+								}
+
+							}
+						})
+					]
+				}),
 				generateTimePickers(),
 				new sap.ui.core.HTML({
 					content: "<div id='eventsDiv' style='float:right;'>Some Events:</div>"

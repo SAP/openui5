@@ -4,7 +4,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 	var Component = UIComponent.extend("sap.m.sample.ObjectListItemMarkers.Component", {
 		metadata : {
-			rootView : "sap.m.sample.ObjectListItemMarkers.List",
+			rootView : {
+				"viewName": "sap.m.sample.ObjectListItemMarkers.List",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TableExport.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TableExport.Table",
+			rootView : {
+				"viewName": "sap.m.sample.TableExport.Table",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",
@@ -17,7 +21,8 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					files : [
 						"Table.view.xml",
 						"Table.controller.js",
-						"Formatter.js"
+						"Formatter.js",
+						"DemoPersoService.js"
 					]
 				}
 			}

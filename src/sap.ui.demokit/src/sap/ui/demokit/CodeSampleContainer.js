@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.ui.demokit.CodeSampleContainer.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/commons/Link', './library', './CodeViewer', './UIAreaSubstitute'],
-	function(jQuery, Control, Link, library, CodeViewer, UIAreaSubstitute) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/commons/Link',
+    './library',
+    './CodeViewer',
+    './UIAreaSubstitute',
+    "./CodeSampleContainerRenderer"
+],
+	function(
+	    jQuery,
+		Control,
+		Link,
+		library,
+		CodeViewer,
+		UIAreaSubstitute,
+		CodeSampleContainerRenderer
+	) {
 	"use strict";
 
 

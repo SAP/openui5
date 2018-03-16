@@ -72,6 +72,7 @@ sap.ui.define(["sap/m/Button","sap/m/Label","sap/m/DatePicker","sap/m/Slider","s
 					});
 					oDesignTime.addRootElement(oHorizontalLayout);
 				}).then(function(){
+					sap.ui.getCore().applyChanges();
 					document.getElementById("overlay-container").setAttribute("sap-ui-dt-loaded","true");
 				});
 			}

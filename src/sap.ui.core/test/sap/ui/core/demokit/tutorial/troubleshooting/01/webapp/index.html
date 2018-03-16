@@ -11,12 +11,14 @@
 		<meta charset="UTF-8">
 
 		<title>Heap Of Shards</title>
-
+		<!-- set data-sap-ui-preload="sync" to enable the user to fix it in the
+		troubleshooting tutorial step 4: Diagnostics Window -->
 		<script id="sap-ui-bootstrap"
 			src="https://openui5.hana.ondemand.com/resources/sap-ui-core.js"
 			data-sap-ui-libs="sap.m, sap.f"
 			data-sap-ui-theme="sap_belize"
 			data-sap-ui-compatVersion="edge"
+			data-sap-ui-preload="sync"
 			data-sap-ui-resourceroots='{"sap.ui.demo.HeapOfShards": "./", "sap.ui.demo.DoesNotExist": "./DoesNotExist"}'>
 		</script>
 
@@ -25,9 +27,12 @@
 		<script>
 			sap.ui.getCore().attachInit(function() {
 				new sap.m.Shell({
-					app: new sap.ui.core.ComponentContainer({
+					app : new sap.ui.core.ComponentContainer({
 						height : "100%",
-						name : "sap.ui.demo.HeapOfShards"
+						name : "sap.ui.demo.HeapOfShards",
+						settings : {
+							id : "HeapOfShards"
+						}
 					})
 				}).placeAt("content");
 			});

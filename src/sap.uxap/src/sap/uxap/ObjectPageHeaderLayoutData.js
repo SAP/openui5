@@ -7,13 +7,17 @@ sap.ui.define(["sap/ui/core/LayoutData", "./library"], function (LayoutData, lib
 	"use strict";
 
 	/**
-	 * Constructor for a new ObjectPageHeaderLayoutData.
+	 * Constructor for a new <code>ObjectPageHeaderLayoutData</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * This is a LayoutData Element that can be added to a control if this control is used within an ObjectPage headerContent aggregation
+	 * A {@link sap.ui.core.LayoutData} element that can be added to controls used in the
+	 * <code>headerContent</code> aggregation of the <code>ObjectPageLayout</code>.
+	 *
+	 * <b>Note:</b> This element is only taken into account when the <code>sap.uxap.ObjectPageLayout</code> control is used together with
+	 * <code>sap.uxap.ObjectPageHeader</code> as value of <code>headerTitle</code>.
 	 * @extends sap.ui.core.LayoutData
 	 *
 	 * @author SAP SE

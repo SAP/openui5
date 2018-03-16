@@ -1,43 +1,29 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-<head>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<title>QUnit - sap.ui.fl.FlexController</title>
+		<script src="../shared-config.js"></script>
+		<script>
+			document.write('<script src="'+ document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit-2') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>QUnit - sap.ui.fl.FlexController</title>
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	src="../../../../../resources/sap-ui-core.js"
-	data-sap-ui-noconflict="true"
-	data-sap-ui-libs="sap.ui.fl">
+			// code coverage report only for sap.ui.fl namespace
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/fl]');
 
-</script>
-
-
-<link rel="stylesheet"
-	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
-	type="text/css" media="screen" />
-<script
-	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-<script
-	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script
-        src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<script
-	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<script src="FlexController.qunit.js"></script>
-</head>
-<body id="body" class="sapUiBody">
-	<h1 id="qunit-header">QUnit Page for sap.ui.fl.FlexController</h1>
-
-	<h2 id="qunit-banner"></h2>
-
-	<h2 id="qunit-userAgent"></h2>
-	<ol id="qunit-tests"></ol>
-	<div id="content"></div>
-</body>
+			sap.ui.getCore().loadLibrary('sap.ui.fl');
+			jQuery.sap.includeScript('./FlexController.qunit.js');
+		</script>
+	</head>
+	<body>
+		<h2 id='qunit-banner'></h2>
+		<div id='qunit-testrunner-toolbar'></div>
+		<ol id='qunit-tests'></ol>
+	</body>
 </html>

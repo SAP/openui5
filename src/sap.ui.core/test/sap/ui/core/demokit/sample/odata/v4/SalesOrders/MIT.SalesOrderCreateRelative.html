@@ -23,9 +23,9 @@
 			<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
 		</ul>
 
-		<h3>Testing with backend</h3>
+		<h3>Testing with back end</h3>
 		Configure your IDE to be able to execute the Sales Orders application against an ABAP
-		backend system.<br>
+		back end system.<br>
 		Start the Sales Orders application with the URL (adjust host and port if necessary):
 		<ul>
 			<li>local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true</a></li>
@@ -79,29 +79,66 @@
 		<ol>
 			<li>Click on the <code>Create</code> button in the <code>Sales Order Line Items</code>
 				table.</li>
-			<li>Select the newly created sales order line item</li>
+			<li>Select the newly created sales order line item.</li>
 			<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
 				section.</li>
 			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
-			<li><b>Check:</b> The <code>Sales Order Line Items</code> table header shows
-				<code>1 Sales Order Line Items</code>.
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> table header shows 1 (0 w/o
+				realOData) <code>Sales Order Line Items</code>.</li>
+			<li>Within realOData Mode:
+			<ol>
 			<li>Update the Note of the newly created sales order line item.</li>
 			<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
 				section.</li>
-			<li> Within realOData Mode:
-			<ol>
 			<li>Update the Note of the just saved sales order line item.</li>
 			<li>Update the Quantity to an invalid value of "0.0" (invalid on server side)</li>
 			<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
 				section.</li>
-			<li><b>Check:</b>You got a error message about the invalid Quantity "0.0"</li>
+			<li><b>Check:</b>You got a error message about the invalid Quantity "0.0".</li>
 			<li>Correct the Quantity to something greater than "0.0"</li>
 			<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
 				section.</li>
 			<li><b>Check:</b> The <code>Sales Order Line Items</code> regarding <code>Note</code>
-				and <code>Quantity</code> is as expected</li>
+				and <code>Quantity</code> is as expected.</li>
+			<li>Change the Note for the parent sales order in the <code>Sales Orders</code>
+				table.</li>
+			<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+			<li>Now change the context by selecting a different sales order in the
+				<code>Sales Orders</code> table.</li>
+			<li><b>Check:</b> That the dependent bindings for the current sales order looks as
+				expected.</li>
+			<li>Select again the sales order selected before.</li>
+			<li><b>Check:</b> That the dependent bindings for the current sales order looks as
+				expected.</li>
+			<li>Change the <code>Note</code> in the <code>Sales Order Details</code> object page
+				and click on the <code>Save</code> button for the <code>Sales Order Details</code>.
+				</li>
+			<li>Now change the <code>Note</code> in the <code>Sales Order List</code> table
+				and click on the <code>Save</code> button for the <code>Sales Orders</code>
+				table.</li>
+			<li>Now change again the <code>Note</code> in the <code>Sales Order Details</code>
+				object page and click on the <code>Save</code> button for the
+				<code>Sales Order Details</code>.</li>
+			<li><b>Check:</b> That you got an error popup regarding of outdated Etag.</li>
+			<li>Confirm the error popup.</li>
+			<li>Reset changes for the <code>Sales Order Details</code>.</li>
+			<li>Click on the <code>Refresh Selected Sales Order</code> button in the
+				<code>Sales Orders</code> table.</li>
+			<li>Now change again the <code>Note</code> in the <code>Sales Order Details</code>
+				object page and click on the <code>Save</code> button for the
+				<code>Sales Order Details</code>.</li>
+			<li><b>Check:</b> That <code>Note</code> in the <code>Sales Order List</code> table
+				is as updated as expected.</li>
+			<li>Delete the created Line Item in the <code>Sales Order Line Item</code> table
+				and check that the table is updated as expected.</li>
 			</ol>
-			</li>
+			<li>Select another sales order in the <code>Sales Order</code> table.</li>
+			<li><b>Check:</b> The <code>Sales Order Line Items</code> are related to the current
+				sales order.</li>
+			<li>Select again the sales order where the new sales order line items was created within
+				the <code>Sales Order</code> table.</li>
+			<li>Select again the before created sales order line item in the <code>Sales Order Line
+				Item</code> table.</li>
 			<li>Click on <code>Delete</code> button in the <code>Sales Order Line Items</code>
 				table.</li>
 			<li>Click on the <code>OK</code> button in the <code>Sales Order Line Item Deletion
@@ -110,5 +147,25 @@
 			<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
 			<li><b>Check:</b> The <code>Sales Order Line Items</code> table contains 0 entries.
 		</ol>
+		<h3>Test refresh single</h3>
+		<li>Refresh the <code>Sales Order</code> Table.</li>
+		<li>Click on the <code>Create</code> button in the <code>Sales Orders</code> table.</li>
+		<li>Click on <code>OK</code> in the <code>Create New Sales Order</code> dialog.</li>
+		<li>Click on the <code>Save</code> button in the <code>Sales Orders</code> table.</li>
+		<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
+		<li>Select the newly created sales order.</li>
+		<li>Click on <code>Refresh Selected Sales Order</code> button.</li>
+		<li><b>Check:</b>That <code>Company Name</code> in the <code>Sales Order</code> table is
+			updated with "SAP".</li>
+		<li>Click on the <code>Create</code> button in the <code>Sales Order Line Items</code>
+			table.</li>
+		<li>Click on the <code>Save</code> button in the <code>Sales Order Details</code>
+			section.</li>
+		<li>Click on <code>OK</code> in the <code>Success</code> dialog.</li>
+		<li><b>Check:</b>That <code>Sales Order Line Items</code> table contains 1 (0 w/o realOData)
+			entries.</li>
+		<li>Click on <code>Refresh Selected Sales Order</code> button.</li>
+		<li><b>Check:</b>That <code>Sales Order Line Items</code> table contains 1 (0 w/o realOData)
+			entries.</li>
 	</body>
 </html>

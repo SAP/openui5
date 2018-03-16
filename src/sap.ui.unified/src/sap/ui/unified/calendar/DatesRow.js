@@ -3,9 +3,14 @@
  */
 
 //Provides control sap.ui.unified.Calendar.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
-               'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/calendar/Month', 'sap/ui/unified/library'],
-               function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, CalendarDate, Month, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/calendar/Month',
+	'sap/ui/unified/library',
+	"./DatesRowRenderer"
+], function(jQuery, CalendarUtils, CalendarDate, Month, library, DatesRowRenderer) {
 	"use strict";
 
 	/*
@@ -67,11 +72,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 		this._iColumns = 1;
 
+		//holds objects describing the weeks of the currently displayed days
+		//example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
+		this._aWeekNumbers = [];
+
 	};
 
-	/**
+	/*
 	 * Sets a start date.
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date} oStartDate A JavaScript date
 	 * @return {sap.ui.unified.calendar.DatesRow} <code>this</code> for method chaining
 	 */
 	DatesRow.prototype.setStartDate = function(oStartDate){
@@ -121,8 +130,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * @param {object} oDate JavaScript date object for start date.
 	 * @returns {sap.ui.unified.calendar.DatesRow} <code>this</code> to allow method chaining
 	 * @public
-	 * @name sap.ui.unified.calendar.DatesRow#setDate
-	 * @function
 	 */
 	DatesRow.prototype.setDate = function(oDate){
 
@@ -180,9 +187,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	 * Property <code>firstDayOfWeek</code> is not supported in <code>sap.ui.unified.calendar.DatesRow</code> control.
 	 *
 	 * @protected
-	 * @param {int} [iFirstDayOfWeek] first day of the week
-	 * @name sap.ui.unified.calendar.DatesRow#setFirstDayOfWeek
-	 * @function
+	 * @param {int} iFirstDayOfWeek The first day of the week
+	 * @returns {sap.ui.unified.calendar.DatesRow} <code>this</code> to allow method chaining
 	 */
 	DatesRow.prototype.setFirstDayOfWeek = function(iFirstDayOfWeek){
 
@@ -302,6 +308,53 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
+	/**
+	 * Returns the weeks with their length and number for the displayed dates.
+	 * @returns {Array} Array with objects containing info about the weeks. Example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
+	 * @private
+	 */
+	DatesRow.prototype.getWeekNumbers = function() {
+		var iDays = this.getDays(),
+			oLocale = this._getLocale(),
+			oLocaleData = this._getLocaleData(),
+			oCalType = this.getPrimaryCalendarType(),
+			oStartDate = this._getStartDate(),
+			oDate = new CalendarDate(oStartDate, oCalType),
+			oEndDate = new CalendarDate(oStartDate, oCalType).setDate(oDate.getDate() + iDays),
+			aDisplayedDates = [];
+
+		while (oDate.isBefore(oEndDate)) {
+			aDisplayedDates.push(new CalendarDate(oDate, oCalType));
+			oDate.setDate(oDate.getDate() + 1);
+		}
+
+		this._aWeekNumbers = aDisplayedDates.reduce(function (aWeekNumbers, oDay) {
+			var iWeekNumber = CalendarUtils.calculateWeekNumber(oDay.toUTCJSDate(), oDay.getYear(), oLocale, oLocaleData);
+
+			if (!aWeekNumbers.length || aWeekNumbers[aWeekNumbers.length - 1].number !== iWeekNumber) {
+				aWeekNumbers.push({
+					len: 0,
+					number: iWeekNumber
+				});
+			}
+
+			aWeekNumbers[aWeekNumbers.length - 1].len++;
+
+			return aWeekNumbers;
+		}, []);
+
+		return this._aWeekNumbers;
+	};
+
+	/**
+	 * Returns the cached week numbers.
+	 * @returns {Array} Array with objects containing info about the weeks. Example: [{ len: 3, number: 12 }, { len: 7, number: 13 }, ...]
+	 * @private
+	 */
+	DatesRow.prototype._getCachedWeekNumbers = function() {
+		return this._aWeekNumbers;
+	};
+
 	return DatesRow;
 
-}, /* bExport= */ true);
+});

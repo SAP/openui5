@@ -18,6 +18,7 @@
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script>
@@ -201,10 +202,18 @@
 			assert.ok(jQuery.sap.domById(sTitleId), "Form3: Container1 Title rendered");
 			assert.equal(jQuery.sap.byId(sTitleId).text(), oContainer.getTitle().getText(), "Form3: Container1 Title Text");
 			// expander
-			// Disabling for phantomJS browser only because tests are unstable
-			if (!sap.ui.Device.browser.phantomJS) {
+			// as button is loaded async, check if already there and rendered, if not, start test async
+			if (sap.ui.require("sap/ui/commons/Button") && jQuery.sap.domById("F3C2--Exp")) {
 				assert.ok(!jQuery.sap.domById("F3C1--Exp"), "Form3: Container1 no expander rendered");
 				assert.ok(jQuery.sap.domById("F3C2--Exp"), "Form3: Container2 expander rendered");
+			} else {
+				var fnDone = assert.async();
+				sap.ui.require(["sap/ui/commons/Button"], function() {
+					sap.ui.getCore().applyChanges(); // to wait for re-rendering
+					assert.ok(!jQuery.sap.domById("F3C1--Exp"), "Form3: Container1 no expander rendered");
+					assert.ok(jQuery.sap.domById("F3C2--Exp"), "Form3: Container2 expander rendered XXX");
+					fnDone();
+				});
 			}
 
 			assert.ok(!jQuery.sap.domById("F3C5--Panel"), "Form3: invisible Container5 - Panel not rendered");

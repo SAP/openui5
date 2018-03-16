@@ -1,96 +1,25 @@
 sap.ui.define([
-		'jquery.sap.global',
-		'sap/m/MessageToast',
-		'sap/m/UploadCollectionParameter',
-		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, MessageToast, UploadCollectionParameter, Controller, JSONModel) {
+	"jquery.sap.global",
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageToast",
+	"sap/m/UploadCollectionParameter",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/format/FileSizeFormat"
+], function(jQuery, Controller, MessageToast, UploadCollectionParameter, JSONModel, FileSizeFormat) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.UploadCollectionVersioning.Page", {
-
-		onInit: function () {
-			var sPath,
-				oModel,
-				aDataCB,
-				oModelCB,
-				oSelect,
-				oFileTypesModel,
-				mFileTypesData,
-				oFileTypesBox,
-				oUploadCollection;
+	return Controller.extend("sap.m.sample.UploadCollectionVersioning.Page", {
+		onInit: function() {
+			var sPath;
 
 			// set mock data
 			sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollectionVersioning", "/uploadCollection.json");
-			oModel = new JSONModel(sPath);
-			this.getView().setModel(oModel);
-
-			aDataCB = {
-				"items" : [{
-					"key" : "All",
-					"text" : "sap.m.ListSeparators.All"
-				}, {
-					"key" : "None",
-					"text" : "sap.m.ListSeparators.None"
-				}],
-				"selectedKey" : "All"
-			};
-
-			oModelCB = new JSONModel();
-			oModelCB.setData(aDataCB);
-
-			oSelect = this.getView().byId("tbSelect");
-			oSelect.setModel(oModelCB);
-
-			oFileTypesModel = new sap.ui.model.json.JSONModel();
-
-			mFileTypesData = {
-				"items": [
-					{
-						"key": "jpg",
-						"text": "jpg"
-					},
-					{
-						"key": "txt",
-						"text": "txt"
-					},
-					{
-						"key": "ppt",
-						"text": "ppt"
-					},
-					{
-						"key": "doc",
-						"text": "doc"
-					},
-					{
-						"key": "xls",
-						"text": "xls"
-					},
-					{
-						"key": "pdf",
-						"text": "pdf"
-					},
-					{
-						"key": "png",
-						"text": "png"
-					}
-				],
-				"selected" : ["jpg", "txt", "ppt", "doc", "xls", "pdf", "png"]
-			};
-
-			oFileTypesModel.setData(mFileTypesData);
-			this.getView().setModel(oFileTypesModel, "fileTypes");
-
-			oFileTypesBox = this.getView().byId("fileTypesBox");
-			oFileTypesBox.setSelectedItems(oFileTypesBox.getItems());
-
-			oUploadCollection = this.getView().byId("UploadCollection");
-			oUploadCollection.setFileType(oFileTypesBox.getSelectedKeys());
+			this.getView().setModel(new JSONModel(sPath));
 
 			// Sets the text to the label
-			oUploadCollection.addEventDelegate({
-				onBeforeRendering : function () {
-					this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+			this.byId("UploadCollection").addEventDelegate({
+				onBeforeRendering: function() {
+					this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 				}.bind(this)
 			});
 
@@ -98,13 +27,12 @@ sap.ui.define([
 			this.bIsUploadVersion = false;
 		},
 
-		formatAttribute : function (sValue, sType) {
+		formatAttribute: function(sValue, sType) {
 			if (sType === "size") {
-				jQuery.sap.require("sap.ui.core.format.FileSizeFormat");
-				return sap.ui.core.format.FileSizeFormat.getInstance({
-					binaryFilesize : false,
-					maxFractionDigits : 1,
-					maxIntegerDigits : 3
+				return FileSizeFormat.getInstance({
+					binaryFilesize: false,
+					maxFractionDigits: 1,
+					maxIntegerDigits: 3
 				}).format(sValue);
 			} else {
 				return sValue;
@@ -115,18 +43,18 @@ sap.ui.define([
 			var oUploadCollection = oEvent.getSource();
 			// Header Token
 			var oCustomerHeaderToken = new UploadCollectionParameter({
-				name : "x-csrf-token",
-				value : "securityTokenFromModel"
+				name: "x-csrf-token",
+				value: "securityTokenFromModel"
 			});
 			oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
 
 		},
 
-		onFileSizeExceed : function(oEvent) {
+		onFileSizeExceed: function(oEvent) {
 			MessageToast.show("FileSizeExceed event triggered.");
 		},
 
-		onTypeMissmatch : function(oEvent) {
+		onTypeMissmatch: function(oEvent) {
 			MessageToast.show("TypeMissmatch event triggered.");
 		},
 
@@ -135,7 +63,7 @@ sap.ui.define([
 			if (this.bIsUploadVersion) {
 				this.updateFile(oEvent.getParameters());
 			} else {
-				var oData = this.getView().byId("UploadCollection").getModel().getData();
+				var oData = this.byId("UploadCollection").getModel().getData();
 				var aItems = jQuery.extend(true, {}, oData).items;
 				var oItem = {};
 				var sUploadedFile = oEvent.getParameter("files")[0].fileName;
@@ -145,36 +73,36 @@ sap.ui.define([
 					sUploadedFile = aUploadedFile[0];
 				}
 				oItem = {
-					"documentId" : jQuery.now().toString(), // generate Id,
-					"fileName" : sUploadedFile,
-					"mimeType" : "",
-					"thumbnailUrl" : "",
-					"url" : "",
-					"attributes":[
+					"documentId": jQuery.now().toString(), // generate Id,
+					"fileName": sUploadedFile,
+					"mimeType": "",
+					"thumbnailUrl": "",
+					"url": "",
+					"attributes": [
 						{
-							"title" : "Uploaded By",
-							"text" : "You"
+							"title": "Uploaded By",
+							"text": "You"
 						},
 						{
-							"title" : "Uploaded On",
-							"text" : new Date(jQuery.now()).toLocaleDateString()
+							"title": "Uploaded On",
+							"text": new Date(jQuery.now()).toLocaleDateString()
 						},
 						{
-							"title" : "File Size",
-							"text" : "505000"
+							"title": "File Size",
+							"text": "505000"
 						},
 						{
-							"title" : "Version",
-							"text" : "1"
+							"title": "Version",
+							"text": "1"
 						}
 					]
 				};
 				aItems.unshift(oItem);
-				this.getView().byId("UploadCollection").getModel().setData({
-					"items" : aItems
+				this.byId("UploadCollection").getModel().setData({
+					"items": aItems
 				});
 				// Sets the text to the label
-				this.getView().byId("attachmentTitle").setText(this.getAttachmentTitleText());
+				this.byId("attachmentTitle").setText(this.getAttachmentTitleText());
 			}
 
 			// delay the success message for to notice onChange message
@@ -183,40 +111,26 @@ sap.ui.define([
 			}, 4000);
 		},
 
-		onSelectChange:  function(oEvent) {
-			var oUploadCollection = this.getView().byId("UploadCollection");
-			oUploadCollection.setShowSeparators(oEvent.getParameters().selectedItem.getProperty("key"));
-		},
-
 		onBeforeUploadStarts: function(oEvent) {
 			// Header Slug
-			var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
-				name : "slug",
-				value : oEvent.getParameter("fileName")
+			var oCustomerHeaderSlug = new UploadCollectionParameter({
+				name: "slug",
+				value: oEvent.getParameter("fileName")
 			});
 			oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
 			MessageToast.show("BeforeUploadStarts event triggered.");
 		},
 
-		onUploadTerminated: function() {
-			/*
-			// get parameter file name
-			var sFileName = oEvent.getParameter("fileName");
-			// get a header parameter (in case no parameter specified, the callback function getHeaderParameter returns all request headers)
-			var oRequestHeaders = oEvent.getParameters().getHeaderParameter();
-			*/
-		},
-
-		getAttachmentTitleText: function(){
-			var aItems = this.getView().byId("UploadCollection").getItems();
+		getAttachmentTitleText: function() {
+			var aItems = this.byId("UploadCollection").getItems();
 			return "Uploaded (" + aItems.length + ")";
 		},
 
-		onDownloadItem: function(){
-			var oUploadCollection = this.getView().byId("UploadCollection");
+		onDownloadItem: function() {
+			var oUploadCollection = this.byId("UploadCollection");
 			var aSelectedItems = oUploadCollection.getSelectedItems();
-			if (aSelectedItems){
-				for (var i = 0; i < aSelectedItems.length; i++){
+			if (aSelectedItems) {
+				for (var i = 0; i < aSelectedItems.length; i++) {
 					oUploadCollection.downloadItem(aSelectedItems[i], true);
 				}
 			} else {
@@ -224,37 +138,31 @@ sap.ui.define([
 			}
 		},
 
-		onVersion: function(){
-			var oUploadCollection = this.getView().byId("UploadCollection");
+		onVersion: function() {
+			var oUploadCollection = this.byId("UploadCollection");
 			this.bIsUploadVersion = true;
 			this.oItemToUpdate = oUploadCollection.getSelectedItem();
 			oUploadCollection.openFileDialog(this.oItemToUpdate);
 		},
 
-		onSelectionChange: function(){
-			var oUploadCollection = this.getView().byId("UploadCollection");
+		onSelectionChange: function() {
+			var oUploadCollection = this.byId("UploadCollection");
 			// If there's any item selected, sets download button enabled
 			if (oUploadCollection.getSelectedItems().length > 0) {
-				this.getView().byId("downloadButton").setEnabled(true);
+				this.byId("downloadButton").setEnabled(true);
 				if (oUploadCollection.getSelectedItems().length === 1) {
-					this.getView().byId("versionButton").setEnabled(true);
+					this.byId("versionButton").setEnabled(true);
 				} else {
-					this.getView().byId("versionButton").setEnabled(false);
+					this.byId("versionButton").setEnabled(false);
 				}
 			} else {
-				this.getView().byId("downloadButton").setEnabled(false);
-				this.getView().byId("versionButton").setEnabled(false);
+				this.byId("downloadButton").setEnabled(false);
+				this.byId("versionButton").setEnabled(false);
 			}
 		},
 
-		onFileTypeChange: function() {
-			var oUploadCollection = this.getView().byId("UploadCollection");
-			var oFileTypesMultiComboBox = this.getView().byId("fileTypesBox");
-			oUploadCollection.setFileType(oFileTypesMultiComboBox.getSelectedKeys());
-		},
-
-		updateFile: function(){
-			var oData = this.getView().byId("UploadCollection").getModel().getData();
+		updateFile: function() {
+			var oData = this.byId("UploadCollection").getModel().getData();
 			var aItems = jQuery.extend(true, {}, oData).items;
 			// Adds the new metadata to the file which was updated.
 			for (var i = 0; i < aItems.length; i++) {
@@ -270,15 +178,12 @@ sap.ui.define([
 				}
 			}
 			// Updates the model.
-			this.getView().byId("UploadCollection").getModel().setData({
-				"items" : aItems
+			this.byId("UploadCollection").getModel().setData({
+				"items": aItems
 			});
 			// Sets the flag back to false.
 			this.bIsUploadVersion = false;
 			this.oItemToUpdate = null;
 		}
 	});
-
-	return PageController;
-
 });

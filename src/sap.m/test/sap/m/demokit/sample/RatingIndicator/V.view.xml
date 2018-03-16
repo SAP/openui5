@@ -4,7 +4,7 @@
 	xmlns="sap.m">
 	<l:VerticalLayout
 		class="sapUiContentPadding">
-		<Label text="Rating Indicator default size " labelFor="RI_default"/>
+		<Label text="Rating Indicator default size" labelFor="RI_default"/>
 		<RatingIndicator id="RI_default" maxValue="5" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip" />
 		<Label text="Rating Indicator with size L" labelFor="RI_L"/>
 		<RatingIndicator id="RI_L" maxValue="5" class="sapUiSmallMarginBottom" value="4" iconSize="32px" tooltip="Rating Tooltip" />
@@ -18,10 +18,15 @@
 		<RatingIndicator id="RI_EnabledTrue" maxValue="5" enabled= "true" class="sapUiSmallMarginBottom" value="4" iconSize="12px" tooltip="Rating Tooltip" />
 		<Label text="Rating Indicator with non active state" labelFor="RI_EnabledFalse"/>
 		<RatingIndicator id="RI_EnabledFalse" maxValue="5" enabled= "false" class="sapUiSmallMarginBottom" value="4" iconSize="12px" tooltip="Rating Tooltip" />
-		<RatingIndicator maxValue="8" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip" />
-		<RatingIndicator maxValue="7" class="sapUiSmallMarginBottom" value="3.5" tooltip="Rating Tooltip" />
+		<Label text="Rating Indicator display only" labelFor="RI_display_only"/>
+		<RatingIndicator id="RI_display_only" maxValue="5" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip" displayOnly="true"/>
+		<Label text="Rating Indicator readonly mode" labelFor="RI_read_only"/>
+		<RatingIndicator id="RI_read_only" maxValue="5" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip" editable="false"/>
+		<Label text="Rating Indicator with different maxValue" labelFor="RI_maxValue"/>
+		<RatingIndicator id="RI_maxValue" maxValue="8" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip" />
+		<RatingIndicator maxValue="7" class="sapUiSmallMarginBottom" value="4" tooltip="Rating Tooltip" />
 		<RatingIndicator maxValue="6" class="sapUiSmallMarginBottom" value="3" tooltip="Rating Tooltip" />
-		<RatingIndicator maxValue="5" class="sapUiSmallMarginBottom" value="2.5" />
+		<RatingIndicator maxValue="5" class="sapUiSmallMarginBottom" value="2" />
 		<RatingIndicator maxValue="4" class="sapUiSmallMarginBottom" value="2" />
 	</l:VerticalLayout>
 </mvc:View>

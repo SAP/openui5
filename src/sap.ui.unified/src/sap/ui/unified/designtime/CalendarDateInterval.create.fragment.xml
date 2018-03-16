@@ -1,0 +1,5 @@
+<core:FragmentDefinition
+	xmlns="sap.ui.unified"
+	xmlns:core="sap.ui.core">
+		<CalendarDateInterval days="21" />
+</core:FragmentDefinition>

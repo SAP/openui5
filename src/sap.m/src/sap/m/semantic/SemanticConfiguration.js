@@ -10,9 +10,24 @@
  */
 
 // Provides class sap.m.semantic.SemanticConfiguration
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolbarLayoutData", "sap/ui/core/InvisibleText", "sap/ui/core/IconPool"],
-	function(jQuery, Metadata, OverflowToolbarLayoutData, InvisibleText, IconPool) {
+sap.ui.define([
+	"sap/ui/base/Metadata",
+	"sap/m/library",
+	"sap/m/OverflowToolbarLayoutData",
+	"sap/ui/core/IconPool"
+], function(Metadata, library, OverflowToolbarLayoutData, IconPool) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
+
+	// shortcut for sap.m.semantic.SemanticRuleSetType
+	var SemanticRuleSetType = library.semantic.SemanticRuleSetType;
+
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
 
 	/**
 	 * Constructor for an sap.m.semantic.SemanticConfiguration.
@@ -84,18 +99,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 
 		switch (sRuleSetType) {
 
-			case sap.m.semantic.SemanticRuleSetType.Classic:
+			case SemanticRuleSetType.Classic:
 
 				return {
-					baseButtonPlacement: sap.m.PlacementType.Bottom,
-					actionSheetPlacement: sap.m.PlacementType.Top
+					baseButtonPlacement: PlacementType.Bottom,
+					actionSheetPlacement: PlacementType.Top
 				};
 
-			case sap.m.semantic.SemanticRuleSetType.Optimized:
+			case SemanticRuleSetType.Optimized:
 
 				return {
-					baseButtonPlacement: sap.m.PlacementType.Top,
-					actionSheetPlacement: sap.m.PlacementType.Bottom
+					baseButtonPlacement: PlacementType.Top,
+					actionSheetPlacement: PlacementType.Bottom
 				};
 		}
 	};
@@ -119,10 +134,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_TextOnly,
 			getSettings: function() {
 				return {
-					type: sap.m.ButtonType.Emphasized,
+					type: ButtonType.Emphasized,
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: false,
-						stayInOverflow: false
+						priority: OverflowToolbarPriority.NeverOverflow
 					})};
 			},
 			order: 0
@@ -134,10 +148,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			getSettings: function() {
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_EDIT"),
-					type: sap.m.ButtonType.Emphasized,
+					type: ButtonType.Emphasized,
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: false,
-						stayInOverflow: false
+						priority: OverflowToolbarPriority.NeverOverflow
 					})
 				};
 			},
@@ -150,10 +163,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			getSettings: function() {
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_SAVE"),
-					type: sap.m.ButtonType.Emphasized,
+					type: ButtonType.Emphasized,
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: false,
-						stayInOverflow: false
+						priority: OverflowToolbarPriority.NeverOverflow
 					})
 				};
 			},
@@ -167,8 +179,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 				return {
 					text: oBundle.getText("SEMANTIC_CONTROL_DELETE"),
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: false,
-						stayInOverflow: false
+						priority: OverflowToolbarPriority.NeverOverflow
 					})
 				};
 			},
@@ -179,10 +190,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_TextOnly,
 			getSettings: function() {
 				return {
-					type: sap.m.ButtonType.Accept,
+					type: ButtonType.Accept,
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: false,
-						stayInOverflow: false
+						priority: OverflowToolbarPriority.NeverOverflow
 					})};
 			},
 			order: 5
@@ -192,10 +202,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_TextOnly,
 			getSettings: function() {
 				return {
-					type: sap.m.ButtonType.Reject,
+					type: ButtonType.Reject,
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: false,
-						stayInOverflow: false
+						priority: OverflowToolbarPriority.NeverOverflow
 					})};
 			},
 			order: 6
@@ -216,11 +225,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerRight_TextOnly,
 			getSettings: function() {
 				return {
-					text: oBundle.getText("SEMANTIC_CONTROL_FORWARD"),
-					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
-						stayInOverflow: false
-					})
+					text: oBundle.getText("SEMANTIC_CONTROL_FORWARD")
 				};
 			},
 			order: 8
@@ -297,11 +302,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 				return {
 					icon: IconPool.getIconURI("sort"),
 					text: oBundle.getText("SEMANTIC_CONTROL_SORT"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_SORT"),
-					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
-						stayInOverflow: false
-					})
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_SORT")
 				};
 			},
 			constraints: "IconOnly"
@@ -314,11 +315,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					icon: IconPool.getIconURI("sort"),
 					type: "IconOnly",
 					autoAdjustWidth: true,
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_SORT"),
-					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
-						stayInOverflow: false
-					})
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_SORT")
 				};
 			},
 			getEventDelegates: function(oContext) {
@@ -337,11 +334,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 				return {
 					icon: IconPool.getIconURI("filter"),
 					text: oBundle.getText("SEMANTIC_CONTROL_FILTER"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER"),
-					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
-						stayInOverflow: false
-					})
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER")
 				};
 			},
 			constraints: "IconOnly"
@@ -354,11 +347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					icon: IconPool.getIconURI("filter"),
 					type: "IconOnly",
 					autoAdjustWidth: true,
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER"),
-					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
-						stayInOverflow: false
-					})
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_FILTER")
 				};
 			},
 			constraints: "IconOnly"
@@ -370,11 +359,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 				return {
 					icon: IconPool.getIconURI("group-2"),
 					text: oBundle.getText("SEMANTIC_CONTROL_GROUP"),
-					tooltip: oBundle.getText("SEMANTIC_CONTROL_GROUP"),
-					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
-						stayInOverflow: false
-					})
+					tooltip: oBundle.getText("SEMANTIC_CONTROL_GROUP")
 				};
 			},
 			constraints: "IconOnly"
@@ -388,11 +373,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 				return {
 					icon: IconPool.getIconURI("group-2"),
 					type: "IconOnly",
-					autoAdjustWidth: true,
-					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: true,
-						stayInOverflow: false
-					})
+					autoAdjustWidth: true
 				};
 			},
 			getEventDelegates: function(oContext) {
@@ -487,7 +468,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 						}
 					},
 					tooltip: oBundle.getText("SEMANTIC_CONTROL_MESSAGES_INDICATOR"),
-					type: sap.m.ButtonType.Emphasized,
+					type: ButtonType.Emphasized,
 					visible: {
 						path: "message>/",
 						formatter: function (aMessages) {
@@ -496,8 +477,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 					},
 					models: {message: sap.ui.getCore().getMessageManager().getMessageModel()},
 					layoutData: new OverflowToolbarLayoutData({
-						moveToOverflow: false,
-						stayInOverflow: false
+						priority: OverflowToolbarPriority.NeverOverflow
 					})
 				};
 			}
@@ -507,7 +487,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 			position: SemanticConfiguration.prototype._PositionInPage.footerLeft,
 			getSettings: function() {
 				return {
-					layoutData: new sap.m.OverflowToolbarLayoutData({shrinkable: false})
+					layoutData: new OverflowToolbarLayoutData({shrinkable: false})
 				};
 			},
 			order: 1
@@ -517,5 +497,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', "sap/m/OverflowToolb
 	})();
 
 	return SemanticConfiguration;
-
 }, /* bExport= */ false);

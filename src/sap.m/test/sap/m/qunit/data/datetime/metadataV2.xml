@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="com.sap.ui5.OData" xml:lang="en"
+			sap:schema-version="0001" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+			<EntityType Name="EdmTypes" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="ID" />
+				</Key>
+				<Property Name="ID" Type="Edm.String" Nullable="false"
+					MaxLength="1" />
+				<Property Name="Binary" Type="Edm.Binary" />
+				<Property Name="Boolean" Type="Edm.Boolean" />
+				<Property Name="Byte" Type="Edm.Byte" />
+				<Property Name="Date" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Date" />
+				<Property Name="TravelStartDate" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Date"/>
+				<Property Name="TravelEndDate" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Date" />
+				<Property Name="Date2" Type="Edm.DateTime" Precision="0"
+					sap:display-format="Date" sap:label="Date" />
+				<Property Name="DateTime" Type="Edm.DateTime" Precision="0"
+					sap:label="Time Stamp" />
+				<Property Name="DateTimeOffset" Type="Edm.DateTimeOffset"
+					Precision="7" sap:label="Time Stamp" />
+				<Property Name="Decimal" Type="Edm.Decimal" Precision="31"
+					Scale="14" />
+				<Property Name="DigitSequence" Type="Edm.String" MaxLength="7"
+					sap:display-format="NonNegative" />
+				<Property Name="Double" Type="Edm.Double" />
+				<Property Name="Float" Type="Edm.Float" />
+				<Property Name="GlobalUID" Type="Edm.Guid" sap:label="GUID" />
+				<Property Name="Int16" Type="Edm.Int16" sap:label="Int2" />
+				<Property Name="Int32" Type="Edm.Int32" sap:label="Number" />
+				<Property Name="Int64" Type="Edm.Int64" />
+				<Property Name="SByte" Type="Edm.SByte" />
+				<Property Name="Single" Type="Edm.Single" />
+				<Property Name="String" Type="Edm.String" />
+				<Property Name="String40" Type="Edm.String" MaxLength="40" />
+				<Property Name="Time" Type="Edm.Time" Precision="0" />
+				<Property Name="TimeStampLong" Type="Edm.DateTime"
+					Precision="7" sap:label="Time Stamp" />
+				<Property Name="TimeStampShort" Type="Edm.DateTime"
+					Precision="0" sap:label="Time Stamp" />
+			</EntityType>
+			<EntityContainer Name="com.sap.ui5.OData_Entities"
+				m:IsDefaultEntityContainer="true">
+				<EntitySet Name="EdmTypesCollection" EntityType="com.sap.ui5.OData.EdmTypes"
+					sap:content-version="1" />
+				<FunctionImport Name="ResetEdmTypes" ReturnType="com.sap.ui5.OData.EdmTypes"
+					EntitySet="EdmTypesCollection" m:HttpMethod="POST"
+					sap:action-for="com.sap.ui5.OData.EdmTypes" />
+			</EntityContainer>
+			<atom:link rel="self"
+				href="/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+			<atom:link rel="latest-version"
+				href="/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata"
+				xmlns:atom="http://www.w3.org/2005/Atom" />
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

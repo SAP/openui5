@@ -8,16 +8,13 @@
 		"ada": "adangmu",
 		"ady": "adigu",
 		"ae": "avesta",
-		"aeb": "aeb",
 		"af": "afrikandu",
 		"afh": "afrihili",
 		"agq": "aghemu",
 		"ain": "ainu",
 		"ak": "akanu",
 		"akk": "akadiešu",
-		"akz": "akz",
 		"ale": "aleutu",
-		"aln": "aln",
 		"alt": "dienvidaltajiešu",
 		"am": "amharu",
 		"an": "aragoniešu",
@@ -27,18 +24,12 @@
 		"ar_001": "mūsdienu standarta arābu",
 		"arc": "aramiešu",
 		"arn": "araukāņu",
-		"aro": "aro",
 		"arp": "arapahu",
-		"arq": "arq",
 		"arw": "aravaku",
-		"ary": "ary",
-		"arz": "arz",
 		"as": "asamiešu",
 		"asa": "asu",
-		"ase": "ase",
 		"ast": "astūriešu",
 		"av": "avāru",
-		"avk": "avk",
 		"awa": "avadhu",
 		"ay": "aimaru",
 		"az": "azerbaidžāņu",
@@ -47,35 +38,27 @@
 		"ba": "baškīru",
 		"bal": "beludžu",
 		"ban": "baliešu",
-		"bar": "bar",
 		"bas": "basu",
 		"bax": "bamumu",
-		"bbc": "bbc",
 		"bbj": "gomalu",
 		"be": "baltkrievu",
 		"bej": "bedžu",
 		"bem": "bembu",
-		"bew": "bew",
 		"bez": "bena",
 		"bfd": "bafutu",
-		"bfq": "bfq",
 		"bg": "bulgāru",
 		"bgn": "rietumbeludžu",
 		"bho": "bhodžpūru",
 		"bi": "bišlamā",
 		"bik": "bikolu",
 		"bin": "binu",
-		"bjn": "bjn",
 		"bkm": "komu",
 		"bla": "siksiku",
 		"bm": "bambaru",
 		"bn": "bengāļu",
 		"bo": "tibetiešu",
-		"bpy": "bpy",
-		"bqi": "bqi",
 		"br": "bretoņu",
 		"bra": "bradžiešu",
-		"brh": "brh",
 		"brx": "bodo",
 		"bs": "bosniešu",
 		"bss": "nkosi",
@@ -102,12 +85,12 @@
 		"chp": "čipevaianu",
 		"chr": "čiroku",
 		"chy": "šejenu",
-		"ckb": "kurdu (Sorani)",
+		"ckb": "centrālkurdu",
 		"co": "korsikāņu",
 		"cop": "koptu",
-		"cps": "cps",
 		"cr": "krī",
 		"crh": "Krimas tatāru",
+		"crs": "kreolu franču",
 		"cs": "čehu",
 		"csb": "kašubu",
 		"cu": "baznīcslāvu",
@@ -118,7 +101,7 @@
 		"dar": "dargu",
 		"dav": "taitu",
 		"de": "vācu",
-		"de_AT": "Austrijas vācu",
+		"de_AT": "vācu (Austrija)",
 		"de_CH": "Šveices augšvācu",
 		"del": "delavēru",
 		"den": "sleivu",
@@ -127,7 +110,6 @@
 		"dje": "zarmu",
 		"doi": "dogru",
 		"dsb": "lejassorbu",
-		"dtp": "dtp",
 		"dua": "dualu",
 		"dum": "vidusholandiešu",
 		"dv": "maldīviešu",
@@ -138,46 +120,41 @@
 		"ebu": "kjembu",
 		"ee": "evu",
 		"efi": "efiku",
-		"egl": "egl",
 		"egy": "ēģiptiešu",
 		"eka": "ekadžuku",
 		"el": "grieķu",
 		"elx": "elamiešu",
 		"en": "angļu",
-		"en_AU": "Austrālijas angļu",
-		"en_CA": "Kanādas angļu",
-		"en_GB": "Lielbritānijas angļu",
+		"en_AU": "angļu (Austrālija)",
+		"en_CA": "angļu (Kanāda)",
+		"en_GB": "angļu (Lielbritānija)",
 		"en_GB-alt-short": "angļu (Lielbritānija)",
-		"en_US": "ASV angļu",
+		"en_US": "angļu (Amerikas Savienotās Valstis)",
 		"en_US-alt-short": "angļu (ASV)",
 		"enm": "vidusangļu",
 		"eo": "esperanto",
 		"es": "spāņu",
-		"es_419": "Latīņamerikas spāņu",
-		"es_ES": "Eiropas spāņu",
-		"es_MX": "Meksikas spāņu",
-		"esu": "esu",
+		"es_419": "spāņu (Latīņamerika)",
+		"es_ES": "spāņu (Spānija)",
+		"es_MX": "spāņu (Meksika)",
 		"et": "igauņu",
 		"eu": "basku",
 		"ewo": "evondu",
-		"ext": "ext",
 		"fa": "persiešu",
 		"fan": "fangu",
 		"fat": "fantu",
 		"ff": "fulu",
 		"fi": "somu",
 		"fil": "filipīniešu",
-		"fit": "fit",
 		"fj": "fidžiešu",
 		"fo": "fēru",
 		"fon": "fonu",
 		"fr": "franču",
-		"fr_CA": "Kanādas franču",
-		"fr_CH": "Šveices franču",
-		"frc": "frc",
+		"fr_CA": "franču (Kanāda)",
+		"fr_CH": "franču (Šveice)",
+		"frc": "kadžūnu franču",
 		"frm": "vidusfranču",
 		"fro": "senfranču",
-		"frp": "frp",
 		"frr": "ziemeļfrīzu",
 		"frs": "austrumfrīzu",
 		"fur": "friūlu",
@@ -188,16 +165,13 @@
 		"gan": "gan",
 		"gay": "gajo",
 		"gba": "gbaju",
-		"gbz": "gbz",
 		"gd": "gēlu",
 		"gez": "gēzu",
 		"gil": "kiribatiešu",
 		"gl": "galisiešu",
-		"glk": "glk",
 		"gmh": "vidusaugšvācu",
 		"gn": "gvaranu",
 		"goh": "senaugšvācu",
-		"gom": "gom",
 		"gon": "gondu valodas",
 		"gor": "gorontalu",
 		"got": "gotu",
@@ -205,8 +179,6 @@
 		"grc": "sengrieķu",
 		"gsw": "Šveices vācu",
 		"gu": "gudžaratu",
-		"guc": "guc",
-		"gur": "gur",
 		"guz": "gusii",
 		"gv": "meniešu",
 		"gwi": "kučinu",
@@ -216,7 +188,6 @@
 		"haw": "havajiešu",
 		"he": "ivrits",
 		"hi": "hindi",
-		"hif": "hif",
 		"hil": "hiligainonu",
 		"hit": "hetu",
 		"hmn": "hmongu",
@@ -240,18 +211,15 @@
 		"ilo": "iloku",
 		"inh": "ingušu",
 		"io": "ido",
-		"is": "īslandiešu",
+		"is": "islandiešu",
 		"it": "itāļu",
 		"iu": "inuītu",
-		"izh": "izh",
 		"ja": "japāņu",
-		"jam": "jam",
 		"jbo": "ložbans",
 		"jgo": "jgo",
 		"jmc": "mačamu",
 		"jpr": "jūdpersiešu",
 		"jrb": "jūdarābu",
-		"jut": "jut",
 		"jv": "javiešu",
 		"ka": "gruzīnu",
 		"kaa": "karakalpaku",
@@ -265,16 +233,12 @@
 		"kcg": "katabu",
 		"kde": "makonde",
 		"kea": "kaboverdiešu",
-		"ken": "ken",
 		"kfo": "koru",
 		"kg": "kongu",
-		"kgp": "kgp",
 		"kha": "khasu",
 		"kho": "hotaniešu",
 		"khq": "koiračiinī",
-		"khw": "khw",
 		"ki": "kikuju",
-		"kiu": "kiu",
 		"kj": "kvaņamu",
 		"kk": "kazahu",
 		"kkj": "kako",
@@ -290,8 +254,6 @@
 		"kpe": "kpellu",
 		"kr": "kanuru",
 		"krc": "karačaju un balkāru",
-		"kri": "kri",
-		"krj": "krj",
 		"krl": "karēļu",
 		"kru": "kuruhu",
 		"ks": "kašmiriešu",
@@ -311,20 +273,16 @@
 		"lam": "lambu",
 		"lb": "luksemburgiešu",
 		"lez": "lezgīnu",
-		"lfn": "lfn",
 		"lg": "gandu",
 		"li": "limburgiešu",
-		"lij": "lij",
-		"liv": "liv",
 		"lkt": "lakotu",
-		"lmo": "lmo",
 		"ln": "lingala",
 		"lo": "laosiešu",
 		"lol": "mongu",
+		"lou": "Luiziānas kreolu",
 		"loz": "lozu",
 		"lrc": "ziemeļluru",
 		"lt": "lietuviešu",
-		"ltg": "ltg",
 		"lu": "lubakatanga",
 		"lua": "lubalulva",
 		"lui": "luisenu",
@@ -333,8 +291,6 @@
 		"lus": "lušeju",
 		"luy": "luhju",
 		"lv": "latviešu",
-		"lzh": "lzh",
-		"lzz": "lzz",
 		"mad": "maduriešu",
 		"maf": "mafu",
 		"mag": "magahiešu",
@@ -344,20 +300,18 @@
 		"mas": "masaju",
 		"mde": "mabu",
 		"mdf": "mokšu",
-		"mdh": "mdh",
 		"mdr": "mandaru",
 		"men": "mendu",
 		"mer": "meru",
 		"mfe": "Maurīcijas kreolu",
 		"mg": "malagasu",
 		"mga": "vidusīru",
-		"mgh": "makua-meetto",
+		"mgh": "makua",
 		"mgo": "mgo",
 		"mh": "māršaliešu",
 		"mi": "maoru",
 		"mic": "mikmaku",
 		"min": "minangkabavu",
-		"mis": "mis",
 		"mk": "maķedoniešu",
 		"ml": "malajalu",
 		"mn": "mongoļu",
@@ -365,8 +319,7 @@
 		"mni": "manipūru",
 		"moh": "mohauku",
 		"mos": "mosu",
-		"mr": "maratu",
-		"mrj": "mrj",
+		"mr": "marathu",
 		"ms": "malajiešu",
 		"mt": "maltiešu",
 		"mua": "mundangu",
@@ -374,7 +327,6 @@
 		"mus": "krīku",
 		"mwl": "mirandiešu",
 		"mwr": "marvaru",
-		"mwv": "mwv",
 		"my": "birmiešu",
 		"mye": "mjenu",
 		"myv": "erzju",
@@ -392,7 +344,6 @@
 		"ng": "ndongu",
 		"nia": "njasu",
 		"niu": "niuāņu",
-		"njo": "njo",
 		"nl": "holandiešu",
 		"nl_BE": "flāmu",
 		"nmg": "kvasio",
@@ -401,7 +352,6 @@
 		"no": "norvēģu",
 		"nog": "nogaju",
 		"non": "sennorvēģu",
-		"nov": "nov",
 		"nqo": "nko",
 		"nr": "dienvidndebelu",
 		"nso": "ziemeļsotu",
@@ -426,31 +376,23 @@
 		"pam": "pampanganu",
 		"pap": "papjamento",
 		"pau": "palaviešu",
-		"pcd": "pcd",
-		"pdc": "pdc",
-		"pdt": "pdt",
+		"pcm": "pidžins",
 		"peo": "senpersu",
-		"pfl": "pfl",
 		"phn": "feniķiešu",
 		"pi": "pāli",
 		"pl": "poļu",
-		"pms": "pms",
-		"pnt": "pnt",
 		"pon": "ponapiešu",
-		"prg": "prg",
+		"prg": "prūšu",
 		"pro": "senprovansiešu",
 		"ps": "puštu",
 		"pt": "portugāļu",
-		"pt_BR": "Brazīlijas portugāļu",
-		"pt_PT": "Eiropas portugāļu",
+		"pt_BR": "portugāļu (Brazīlija)",
+		"pt_PT": "portugāļu (Portugāle)",
 		"qu": "kečvu",
 		"quc": "kiče",
-		"qug": "qug",
 		"raj": "radžastāņu",
 		"rap": "rapanuju",
 		"rar": "rarotongiešu",
-		"rgn": "rgn",
-		"rif": "rif",
 		"rm": "retoromāņu",
 		"rn": "rundu",
 		"ro": "rumāņu",
@@ -458,39 +400,32 @@
 		"rof": "rombo",
 		"rom": "čigānu",
 		"root": "sakne",
-		"rtm": "rtm",
 		"ru": "krievu",
-		"rue": "rue",
-		"rug": "rug",
 		"rup": "aromūnu",
 		"rw": "kiņaruanda",
 		"rwk": "ruanda",
 		"sa": "sanskrits",
 		"sad": "sandavu",
 		"sah": "jakutu",
-		"sam": "samārijas aramiešu",
+		"sam": "Samārijas aramiešu",
 		"saq": "samburu",
 		"sas": "sasaku",
 		"sat": "santalu",
-		"saz": "saz",
 		"sba": "ngambeju",
 		"sbp": "sangu",
 		"sc": "sardīniešu",
 		"scn": "sicīliešu",
 		"sco": "skotu",
 		"sd": "sindhu",
-		"sdc": "sdc",
 		"sdh": "dienvidkurdu",
 		"se": "ziemeļsāmu",
 		"see": "seneku",
 		"seh": "senu",
-		"sei": "sei",
 		"sel": "selkupu",
 		"ses": "koiraboro senni",
 		"sg": "sango",
 		"sga": "senīru",
-		"sgs": "sgs",
-		"sh": "serbu-horvātu",
+		"sh": "serbu–horvātu",
 		"shi": "šilhu",
 		"shn": "šanu",
 		"shu": "Čadas arābu",
@@ -498,8 +433,6 @@
 		"sid": "sidamu",
 		"sk": "slovāku",
 		"sl": "slovēņu",
-		"sli": "sli",
-		"sly": "sly",
 		"sm": "samoāņu",
 		"sma": "dienvidsāmu",
 		"smj": "Luleo sāmu",
@@ -516,8 +449,7 @@
 		"ss": "svatu",
 		"ssy": "saho",
 		"st": "dienvidsotu",
-		"stq": "stq",
-		"su": "sundaniešu",
+		"su": "zundu",
 		"suk": "sukumu",
 		"sus": "susu",
 		"sux": "šumeru",
@@ -527,9 +459,7 @@
 		"swb": "komoru",
 		"syc": "klasiskā sīriešu",
 		"syr": "sīriešu",
-		"szl": "szl",
 		"ta": "tamilu",
-		"tcy": "tcy",
 		"te": "telugu",
 		"tem": "temnu",
 		"teo": "teso",
@@ -542,24 +472,19 @@
 		"tiv": "tivu",
 		"tk": "turkmēņu",
 		"tkl": "tokelaviešu",
-		"tkr": "tkr",
 		"tl": "tagalu",
 		"tlh": "klingoņu",
 		"tli": "tlinkitu",
-		"tly": "tly",
 		"tmh": "tuaregu",
 		"tn": "cvanu",
 		"to": "tongiešu",
-		"tog": "njasas tongu",
+		"tog": "Njasas tongu",
 		"tpi": "tokpisins",
 		"tr": "turku",
-		"tru": "tru",
 		"trv": "taroko",
 		"ts": "congu",
-		"tsd": "tsd",
 		"tsi": "cimšiāņu",
 		"tt": "tatāru",
-		"ttt": "ttt",
 		"tum": "tumbuku",
 		"tvl": "tuvaliešu",
 		"tw": "tvī",
@@ -577,14 +502,9 @@
 		"uz": "uzbeku",
 		"vai": "vaju",
 		"ve": "vendu",
-		"vec": "vec",
-		"vep": "vep",
 		"vi": "vjetnamiešu",
-		"vls": "vls",
-		"vmf": "vmf",
 		"vo": "volapiks",
 		"vot": "votu",
-		"vro": "vro",
 		"vun": "vundžo",
 		"wa": "valoņu",
 		"wae": "Vallisas vācu",
@@ -596,7 +516,6 @@
 		"wuu": "wuu",
 		"xal": "kalmiku",
 		"xh": "khosu",
-		"xmf": "xmf",
 		"xog": "sogu",
 		"yao": "jao",
 		"yap": "japiešu",
@@ -604,12 +523,10 @@
 		"ybb": "jembu",
 		"yi": "jidišs",
 		"yo": "jorubu",
-		"yrl": "yrl",
 		"yue": "kantoniešu",
 		"za": "džuanu",
 		"zap": "sapoteku",
 		"zbl": "blissimbolika",
-		"zea": "zea",
 		"zen": "zenagu",
 		"zgh": "standarta marokāņu berberu",
 		"zh": "ķīniešu",
@@ -659,19 +576,20 @@
 		"Ethi": "etiopiešu",
 		"Geor": "gruzīnu",
 		"Glag": "Glag",
+		"Gonm": "Gonm",
 		"Goth": "gotu",
 		"Gran": "Gran",
 		"Grek": "grieķu",
 		"Gujr": "gudžaratu",
 		"Guru": "pandžabu",
-		"Hanb": "Hanb",
-		"Hang": "hangila",
+		"Hanb": "haņu ar bopomofo",
+		"Hang": "hangils",
 		"Hani": "ķīniešu",
 		"Hano": "Hano",
-		"Hans": "ķīniešu vienkāršotā",
-		"Hans-alt-stand-alone": "hanu vienkāršotā",
-		"Hant": "ķīniešu tradicionālā",
-		"Hant-alt-stand-alone": "hanu tradicionālā",
+		"Hans": "vienkāršotā",
+		"Hans-alt-stand-alone": "haņu vienkāršotā",
+		"Hant": "tradicionālā",
+		"Hant-alt-stand-alone": "haņu tradicionālā",
 		"Hatr": "Hatr",
 		"Hebr": "ivrits",
 		"Hira": "hiragana",
@@ -680,7 +598,7 @@
 		"Hrkt": "katakana vai hiragana",
 		"Hung": "senungāru",
 		"Ital": "vecitāļu",
-		"Jamo": "Jamo",
+		"Jamo": "džamo",
 		"Java": "javiešu",
 		"Jpan": "japāņu",
 		"Kali": "Kali",
@@ -688,7 +606,7 @@
 		"Khar": "Khar",
 		"Khmr": "khmeru",
 		"Khoj": "Khoj",
-		"Knda": "kannaru",
+		"Knda": "kannadu",
 		"Kore": "korejiešu",
 		"Kthi": "Kthi",
 		"Lana": "Lana",
@@ -721,6 +639,7 @@
 		"Nbat": "Nbat",
 		"Newa": "Newa",
 		"Nkoo": "Nkoo",
+		"Nshu": "Nshu",
 		"Ogam": "ogamiskais raksts",
 		"Olck": "Olck",
 		"Orkh": "Orkh",
@@ -736,55 +655,6 @@
 		"Phnx": "feniķiešu",
 		"Plrd": "Plrd",
 		"Prti": "Prti",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "Rjng",
 		"Roro": "rongorongo",
 		"Runr": "rūnu raksts",
@@ -798,6 +668,7 @@
 		"Sind": "Sind",
 		"Sinh": "singāļu",
 		"Sora": "Sora",
+		"Soyo": "Soyo",
 		"Sund": "zundu",
 		"Sylo": "Sylo",
 		"Syrc": "sīriešu",
@@ -813,7 +684,7 @@
 		"Telu": "telugu",
 		"Tfng": "Tfng",
 		"Tglg": "tagalu",
-		"Thaa": "taana",
+		"Thaa": "tāna",
 		"Thai": "taju",
 		"Tibt": "tibetiešu",
 		"Tirh": "Tirh",
@@ -823,9 +694,10 @@
 		"Xpeo": "senperiešu",
 		"Xsux": "šumeru-akadiešu ķīļraksts",
 		"Yiii": "ji",
+		"Zanb": "Zanb",
 		"Zinh": "mantotā",
 		"Zmth": "matemātiskais pieraksts",
-		"Zsye": "Zsye",
+		"Zsye": "emocijzīmes",
 		"Zsym": "simboli",
 		"Zxxx": "bez rakstības",
 		"Zyyy": "vispārējā",
@@ -839,6 +711,7 @@
 		"151": "Austrumeiropa",
 		"154": "Ziemeļeiropa",
 		"155": "Rietumeiropa",
+		"202": "202",
 		"419": "Latīņamerika",
 		"001": "pasaule",
 		"002": "Āfrika",
@@ -873,7 +746,7 @@
 		"AO": "Angola",
 		"AQ": "Antarktika",
 		"AR": "Argentīna",
-		"AS": "Amerikāņu Samoa",
+		"AS": "ASV Samoa",
 		"AT": "Austrija",
 		"AU": "Austrālija",
 		"AW": "Aruba",
@@ -886,7 +759,7 @@
 		"BF": "Burkinafaso",
 		"BG": "Bulgārija",
 		"BH": "Bahreina",
-		"BI": "Burundi",
+		"BI": "Burundija",
 		"BJ": "Benina",
 		"BL": "Senbartelmī",
 		"BM": "Bermudu salas",
@@ -901,11 +774,11 @@
 		"BY": "Baltkrievija",
 		"BZ": "Beliza",
 		"CA": "Kanāda",
-		"CC": "Kokosu jeb Kīlinga salas",
-		"CD": "Kongo-Kinšasa",
+		"CC": "Kokosu (Kīlinga) salas",
+		"CD": "Kongo (Kinšasa)",
 		"CD-alt-variant": "Kongo Demokrātiskā Republika",
 		"CF": "Centrālāfrikas Republika",
-		"CG": "Kongo - Brazavila",
+		"CG": "Kongo (Brazavila)",
 		"CG-alt-variant": "Kongo (Republika)",
 		"CH": "Šveice",
 		"CI": "Kotdivuāra",
@@ -923,6 +796,7 @@
 		"CX": "Ziemsvētku sala",
 		"CY": "Kipra",
 		"CZ": "Čehija",
+		"CZ-alt-variant": "Čehijas Republika",
 		"DE": "Vācija",
 		"DG": "Djego Garsijas atols",
 		"DJ": "Džibutija",
@@ -939,19 +813,20 @@
 		"ES": "Spānija",
 		"ET": "Etiopija",
 		"EU": "Eiropas Savienība",
+		"EZ": "Eirozona",
 		"FI": "Somija",
 		"FJ": "Fidži",
 		"FK": "Folklenda salas",
 		"FK-alt-variant": "Folklenda (Malvinu) salas",
 		"FM": "Mikronēzija",
-		"FO": "Fēru Salas",
+		"FO": "Fēru salas",
 		"FR": "Francija",
 		"GA": "Gabona",
 		"GB": "Lielbritānija",
 		"GB-alt-short": "Lielbritānija",
 		"GD": "Grenāda",
 		"GE": "Gruzija",
-		"GF": "Franču Gviāna",
+		"GF": "Francijas Gviāna",
 		"GG": "Gērnsija",
 		"GH": "Gana",
 		"GI": "Gibraltārs",
@@ -968,7 +843,7 @@
 		"GY": "Gajāna",
 		"HK": "Ķīnas īpašās pārvaldes apgabals Honkonga",
 		"HK-alt-short": "Honkonga",
-		"HM": "Hērda un Makdonalda salas",
+		"HM": "Hērda sala un Makdonalda salas",
 		"HN": "Hondurasa",
 		"HR": "Horvātija",
 		"HT": "Haiti",
@@ -982,7 +857,7 @@
 		"IO": "Indijas okeāna Britu teritorija",
 		"IQ": "Irāka",
 		"IR": "Irāna",
-		"IS": "Īslande",
+		"IS": "Islande",
 		"IT": "Itālija",
 		"JE": "Džērsija",
 		"JM": "Jamaika",
@@ -1018,7 +893,7 @@
 		"MG": "Madagaskara",
 		"MH": "Māršala salas",
 		"MK": "Maķedonija",
-		"MK-alt-variant": "Maķedonija (BDRM)",
+		"MK-alt-variant": "bijusī Dienvidslāvijas Maķedonijas Republika",
 		"ML": "Mali",
 		"MM": "Mjanma (Birma)",
 		"MN": "Mongolija",
@@ -1050,13 +925,13 @@
 		"OM": "Omāna",
 		"PA": "Panama",
 		"PE": "Peru",
-		"PF": "Franču Polinēzija",
+		"PF": "Francijas Polinēzija",
 		"PG": "Papua-Jaungvineja",
 		"PH": "Filipīnas",
 		"PK": "Pakistāna",
 		"PL": "Polija",
 		"PM": "Senpjēra un Mikelona",
-		"PN": "Pitkērna",
+		"PN": "Pitkērnas salas",
 		"PR": "Puertoriko",
 		"PS": "Palestīna",
 		"PS-alt-short": "Palestīna",
@@ -1072,7 +947,7 @@
 		"RW": "Ruanda",
 		"SA": "Saūda Arābija",
 		"SB": "Zālamana salas",
-		"SC": "Šeišelu salas",
+		"SC": "Seišelu salas",
 		"SD": "Sudāna",
 		"SE": "Zviedrija",
 		"SG": "Singapūra",
@@ -1094,7 +969,7 @@
 		"TA": "Tristana da Kuņas salas",
 		"TC": "Tērksas un Kaikosas salas",
 		"TD": "Čada",
-		"TF": "Francijas Dienvidjūru Zemes",
+		"TF": "Francijas Dienvidjūru teritorija",
 		"TG": "Togo",
 		"TH": "Taizeme",
 		"TJ": "Tadžikistāna",
@@ -1111,7 +986,9 @@
 		"TZ": "Tanzānija",
 		"UA": "Ukraina",
 		"UG": "Uganda",
-		"UM": "ASV Aizjūras salas",
+		"UM": "ASV Mazās Aizjūras salas",
+		"UN": "Apvienoto Nāciju Organizācija",
+		"UN-alt-short": "ANO",
 		"US": "Amerikas Savienotās Valstis",
 		"US-alt-short": "ASV",
 		"UY": "Urugvaja",
@@ -1123,7 +1000,7 @@
 		"VI": "ASV Virdžīnas",
 		"VN": "Vjetnama",
 		"VU": "Vanuatu",
-		"WF": "Volisa un Futuna",
+		"WF": "Volisa un Futunas salas",
 		"WS": "Samoa",
 		"XK": "Kosova",
 		"YE": "Jemena",
@@ -1153,8 +1030,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E, d.",
 				"Ehm": "E, h:mm a",
 				"EHm": "E, HH:mm",
@@ -1186,14 +1068,16 @@
 				"ms": "mm:ss",
 				"y": "y. 'g'.",
 				"yM": "MM.y.",
-				"yMd": "d.M.y.",
+				"yMd": "y.MM.d.",
 				"yMEd": "E, d.M.y.",
 				"yMMM": "y. 'g'. MMM",
 				"yMMMd": "y. 'g'. d. MMM",
 				"yMMMEd": "E, y. 'g'. d. MMM",
 				"yMMMM": "y. 'g'. MMMM",
 				"yQQQ": "y. 'g'. QQQ",
-				"yQQQQ": "y. 'g'. QQQQ"
+				"yQQQQ": "y. 'g'. QQQQ",
+				"MMMMW": "MMM W. 'nedēļa'",
+				"yw": "Y. 'g'. w. 'nedēļa'"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1299,7 +1183,7 @@
 					"y": "E, y. 'gada' d. MMM – E, y. 'gada' d. MMM"
 				},
 				"yMMMM": {
-					"M": "y. 'gada' MMMM–MMMM",
+					"M": "y. 'gada' MMMM – MMMM",
 					"y": "y. 'gada' MMMM – y. 'gada' MMMM"
 				}
 			}
@@ -1351,18 +1235,18 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Janv.",
-					"Febr.",
-					"Marts",
-					"Apr.",
-					"Maijs",
-					"Jūn.",
-					"Jūl.",
-					"Aug.",
-					"Sept.",
-					"Okt.",
-					"Nov.",
-					"Dec."
+					"janv.",
+					"febr.",
+					"marts",
+					"apr.",
+					"maijs",
+					"jūn.",
+					"jūl.",
+					"aug.",
+					"sept.",
+					"okt.",
+					"nov.",
+					"dec."
 				],
 				"narrow": [
 					"J",
@@ -1379,31 +1263,31 @@
 					"D"
 				],
 				"wide": [
-					"Janvāris",
-					"Februāris",
-					"Marts",
-					"Aprīlis",
-					"Maijs",
-					"Jūnijs",
-					"Jūlijs",
-					"Augusts",
-					"Septembris",
-					"Oktobris",
-					"Novembris",
-					"Decembris"
+					"janvāris",
+					"februāris",
+					"marts",
+					"aprīlis",
+					"maijs",
+					"jūnijs",
+					"jūlijs",
+					"augusts",
+					"septembris",
+					"oktobris",
+					"novembris",
+					"decembris"
 				]
 			}
 		},
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Sv",
-					"Pr",
-					"Ot",
-					"Tr",
-					"Ce",
-					"Pk",
-					"Se"
+					"svētd.",
+					"pirmd.",
+					"otrd.",
+					"trešd.",
+					"ceturtd.",
+					"piektd.",
+					"sestd."
 				],
 				"narrow": [
 					"S",
@@ -1435,13 +1319,13 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Sv",
-					"Pr",
-					"Ot",
-					"Tr",
-					"Ce",
-					"Pk",
-					"Se"
+					"Svētd.",
+					"Pirmd.",
+					"Otrd.",
+					"Trešd.",
+					"Ceturtd.",
+					"Piektd.",
+					"Sestd."
 				],
 				"narrow": [
 					"S",
@@ -1536,10 +1420,10 @@
 				],
 				"narrow": [
 					"priekšp.",
-					"pēcp."
+					"pēcpusd."
 				],
 				"wide": [
-					"priekšpusdienā",
+					"priekšpusdiena",
 					"pēcpusdiena"
 				]
 			}
@@ -1576,13 +1460,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E, d.",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y. 'g'. G",
 				"GyMMM": "y. 'g'. MMM G",
 				"GyMMMd": "y. 'g'. d. MMM G",
@@ -1630,7 +1519,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"d": {
-					"d": "d–d"
+					"d": "d.–d."
 				},
 				"h": {
 					"a": "h a – h a",
@@ -1816,13 +1705,13 @@
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Sv",
-					"Pr",
-					"Ot",
-					"Tr",
-					"Ce",
-					"Pk",
-					"Se"
+					"svētd.",
+					"pirmd.",
+					"otrd.",
+					"trešd.",
+					"ceturtd.",
+					"piektd.",
+					"sestd."
 				],
 				"narrow": [
 					"S",
@@ -1854,13 +1743,13 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Sv",
-					"Pr",
-					"Ot",
-					"Tr",
-					"Ce",
-					"Pk",
-					"Se"
+					"Svētd.",
+					"Pirmd.",
+					"Otrd.",
+					"Trešd.",
+					"Ceturtd.",
+					"Piektd.",
+					"Sestd."
 				],
 				"narrow": [
 					"S",
@@ -1955,16 +1844,16 @@
 				],
 				"narrow": [
 					"priekšp.",
-					"pēcp."
+					"pēcpusd."
 				],
 				"wide": [
-					"priekšpusdienā",
+					"priekšpusdiena",
 					"pēcpusdiena"
 				]
 			}
 		},
 		"era-wide": {
-			"0": "AH"
+			"0": "pēc hidžras"
 		},
 		"era-abbreviated": {
 			"0": "AH"
@@ -1992,13 +1881,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E, d.",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y. 'g'. G",
 				"GyMMM": "y. 'g'. MMM G",
 				"GyMMMd": "y. 'g'. d. MMM G",
@@ -2046,7 +1940,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"d": {
-					"d": "d–d"
+					"d": "d.–d."
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2186,18 +2080,18 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Janv.",
-					"Febr.",
-					"Marts",
-					"Apr.",
-					"Maijs",
-					"Jūn.",
-					"Jūl.",
-					"Aug.",
-					"Sept.",
-					"Okt.",
-					"Nov.",
-					"Dec."
+					"janv.",
+					"febr.",
+					"marts",
+					"apr.",
+					"maijs",
+					"jūn.",
+					"jūl.",
+					"aug.",
+					"sept.",
+					"okt.",
+					"nov.",
+					"dec."
 				],
 				"narrow": [
 					"J",
@@ -2214,31 +2108,31 @@
 					"D"
 				],
 				"wide": [
-					"Janvāris",
-					"Februāris",
-					"Marts",
-					"Aprīlis",
-					"Maijs",
-					"Jūnijs",
-					"Jūlijs",
-					"Augusts",
-					"Septembris",
-					"Oktobris",
-					"Novembris",
-					"Decembris"
+					"janvāris",
+					"februāris",
+					"marts",
+					"aprīlis",
+					"maijs",
+					"jūnijs",
+					"jūlijs",
+					"augusts",
+					"septembris",
+					"oktobris",
+					"novembris",
+					"decembris"
 				]
 			}
 		},
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Sv",
-					"Pr",
-					"Ot",
-					"Tr",
-					"Ce",
-					"Pk",
-					"Se"
+					"svētd.",
+					"pirmd.",
+					"otrd.",
+					"trešd.",
+					"ceturtd.",
+					"piektd.",
+					"sestd."
 				],
 				"narrow": [
 					"S",
@@ -2270,13 +2164,13 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Sv",
-					"Pr",
-					"Ot",
-					"Tr",
-					"Ce",
-					"Pk",
-					"Se"
+					"Svētd.",
+					"Pirmd.",
+					"Otrd.",
+					"Trešd.",
+					"Ceturtd.",
+					"Piektd.",
+					"Sestd."
 				],
 				"narrow": [
 					"S",
@@ -2371,10 +2265,10 @@
 				],
 				"narrow": [
 					"priekšp.",
-					"pēcp."
+					"pēcpusd."
 				],
 				"wide": [
-					"priekšpusdienā",
+					"priekšpusdiena",
 					"pēcpusdiena"
 				]
 			}
@@ -2417,13 +2311,18 @@
 			"medium": "{1}, {0}",
 			"short": "{1}, {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E, h:mm B",
+				"EBhms": "E, h:mm:ss B",
 				"Ed": "E, d.",
-				"Ehm": "E h:mm a",
-				"EHm": "E HH:mm",
-				"Ehms": "E h:mm:ss a",
-				"EHms": "E HH:mm:ss",
+				"Ehm": "E, h:mm a",
+				"EHm": "E, HH:mm",
+				"Ehms": "E, h:mm:ss a",
+				"EHms": "E, HH:mm:ss",
 				"Gy": "y. 'g'. G",
 				"GyMMM": "y. 'g'. MMM G",
 				"GyMMMd": "y. 'g'. d. MMM G",
@@ -2471,7 +2370,7 @@
 			"intervalFormats": {
 				"intervalFormatFallback": "{0}–{1}",
 				"d": {
-					"d": "d–d"
+					"d": "d.–d."
 				},
 				"h": {
 					"a": "h a – h a",
@@ -2567,18 +2466,18 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardīns",
+					"ordibehešts",
+					"hordāds",
+					"tīrs",
+					"mordāds",
+					"šahrivērs",
+					"mehrs",
+					"abans",
+					"azers",
+					"dejs",
+					"bahmans",
+					"esfands"
 				],
 				"narrow": [
 					"1",
@@ -2595,34 +2494,34 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardīns",
+					"ordibehešts",
+					"hordāds",
+					"tīrs",
+					"mordāds",
+					"šahrivērs",
+					"mehrs",
+					"abans",
+					"azers",
+					"dejs",
+					"bahmans",
+					"esfands"
 				]
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardīns",
+					"ordibehešts",
+					"hordāds",
+					"tīrs",
+					"mordāds",
+					"šahrivērs",
+					"mehrs",
+					"abans",
+					"azers",
+					"dejs",
+					"bahmans",
+					"esfands"
 				],
 				"narrow": [
 					"1",
@@ -2639,31 +2538,31 @@
 					"12"
 				],
 				"wide": [
-					"Farvardin",
-					"Ordibehesht",
-					"Khordad",
-					"Tir",
-					"Mordad",
-					"Shahrivar",
-					"Mehr",
-					"Aban",
-					"Azar",
-					"Dey",
-					"Bahman",
-					"Esfand"
+					"farvardīns",
+					"ordibehešts",
+					"hordāds",
+					"tīrs",
+					"mordāds",
+					"šahrivērs",
+					"mehrs",
+					"abans",
+					"azers",
+					"dejs",
+					"bahmans",
+					"esfands"
 				]
 			}
 		},
 		"days": {
 			"format": {
 				"abbreviated": [
-					"Sv",
-					"Pr",
-					"Ot",
-					"Tr",
-					"Ce",
-					"Pk",
-					"Se"
+					"svētd.",
+					"pirmd.",
+					"otrd.",
+					"trešd.",
+					"ceturtd.",
+					"piektd.",
+					"sestd."
 				],
 				"narrow": [
 					"S",
@@ -2695,13 +2594,13 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Sv",
-					"Pr",
-					"Ot",
-					"Tr",
-					"Ce",
-					"Pk",
-					"Se"
+					"Svētd.",
+					"Pirmd.",
+					"Otrd.",
+					"Trešd.",
+					"Ceturtd.",
+					"Piektd.",
+					"Sestd."
 				],
 				"narrow": [
 					"S",
@@ -2796,22 +2695,22 @@
 				],
 				"narrow": [
 					"priekšp.",
-					"pēcp."
+					"pēcpusd."
 				],
 				"wide": [
-					"priekšpusdienā",
+					"priekšpusdiena",
 					"pēcpusdiena"
 				]
 			}
 		},
 		"era-wide": {
-			"0": "AP"
+			"0": "persiešu gads"
 		},
 		"era-abbreviated": {
-			"0": "AP"
+			"0": "pers. gads"
 		},
 		"era-narrow": {
-			"0": "AP"
+			"0": "pers. gads"
 		}
 	},
 	"dateFields": {
@@ -2868,9 +2767,9 @@
 		},
 		"quarter-wide": {
 			"displayName": "ceturksnis",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "pēdējais ceturksnis",
+			"relative-type-0": "šis ceturksnis",
+			"relative-type-1": "nākamais ceturksnis",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "pēc {0} ceturkšņiem",
 				"relativeTimePattern-count-one": "pēc {0} ceturkšņa",
@@ -2884,9 +2783,9 @@
 		},
 		"quarter-short": {
 			"displayName": "cet.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "pēdējais ceturksnis",
+			"relative-type-0": "šis ceturksnis",
+			"relative-type-1": "nākamais ceturksnis",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "pēc {0} cet.",
 				"relativeTimePattern-count-one": "pēc {0} cet.",
@@ -2900,9 +2799,9 @@
 		},
 		"quarter-narrow": {
 			"displayName": "cet.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "pēdējais ceturksnis",
+			"relative-type-0": "šis ceturksnis",
+			"relative-type-1": "nākamais ceturksnis",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "pēc {0} cet.",
 				"relativeTimePattern-count-one": "pēc {0} cet.",
@@ -2976,7 +2875,8 @@
 				"relativeTimePattern-count-zero": "pirms {0} nedēļām",
 				"relativeTimePattern-count-one": "pirms {0} nedēļas",
 				"relativeTimePattern-count-other": "pirms {0} nedēļām"
-			}
+			},
+			"relativePeriod": "{0}. nedēļa"
 		},
 		"week-short": {
 			"displayName": "ned.",
@@ -2992,7 +2892,8 @@
 				"relativeTimePattern-count-zero": "pirms {0} ned.",
 				"relativeTimePattern-count-one": "pirms {0} ned.",
 				"relativeTimePattern-count-other": "pirms {0} ned."
-			}
+			},
+			"relativePeriod": "{0}. ned."
 		},
 		"week-narrow": {
 			"displayName": "ned.",
@@ -3008,7 +2909,8 @@
 				"relativeTimePattern-count-zero": "pirms {0} ned.",
 				"relativeTimePattern-count-one": "pirms {0} ned.",
 				"relativeTimePattern-count-other": "pirms {0} ned."
-			}
+			},
+			"relativePeriod": "{0}. ned."
 		},
 		"day-wide": {
 			"displayName": "diena",
@@ -3069,6 +2971,7 @@
 		},
 		"hour-wide": {
 			"displayName": "stundas",
+			"relative-type-0": "šajā stundā",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "pēc {0} stundām",
 				"relativeTimePattern-count-one": "pēc {0} stundas",
@@ -3082,6 +2985,7 @@
 		},
 		"hour-short": {
 			"displayName": "st.",
+			"relative-type-0": "šajā stundā",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "pēc {0} st.",
 				"relativeTimePattern-count-one": "pēc {0} st.",
@@ -3095,6 +2999,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "h",
+			"relative-type-0": "šajā stundā",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "pēc {0} h",
 				"relativeTimePattern-count-one": "pēc {0} h",
@@ -3108,6 +3013,7 @@
 		},
 		"minute-wide": {
 			"displayName": "minūtes",
+			"relative-type-0": "šajā minūtē",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "pēc {0} minūtēm",
 				"relativeTimePattern-count-one": "pēc {0} minūtes",
@@ -3121,6 +3027,7 @@
 		},
 		"minute-short": {
 			"displayName": "min.",
+			"relative-type-0": "šajā minūtē",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "pēc {0} min.",
 				"relativeTimePattern-count-one": "pēc {0} min.",
@@ -3134,6 +3041,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "min",
+			"relative-type-0": "šajā minūtē",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-zero": "pēc {0} min",
 				"relativeTimePattern-count-one": "pēc {0} min",
@@ -3195,7 +3103,7 @@
 		"standard": "#,##0.###"
 	},
 	"decimalFormat-long": {
-		"1000-zero": "0 tūkstoši",
+		"1000-zero": "0 tūkstošu",
 		"1000-one": "0 tūkstotis",
 		"1000-other": "0 tūkstoši",
 		"10000-zero": "00 tūkstoši",
@@ -3204,7 +3112,7 @@
 		"100000-zero": "000 tūkstoši",
 		"100000-one": "000 tūkstotis",
 		"100000-other": "000 tūkstoši",
-		"1000000-zero": "0 miljoni",
+		"1000000-zero": "0 miljonu",
 		"1000000-one": "0 miljons",
 		"1000000-other": "0 miljoni",
 		"10000000-zero": "00 miljoni",
@@ -3213,7 +3121,7 @@
 		"100000000-zero": "000 miljoni",
 		"100000000-one": "000 miljons",
 		"100000000-other": "000 miljoni",
-		"1000000000-zero": "0 miljardi",
+		"1000000000-zero": "0 miljardu",
 		"1000000000-one": "0 miljards",
 		"1000000000-other": "0 miljardi",
 		"10000000000-zero": "00 miljardi",
@@ -3222,7 +3130,7 @@
 		"100000000000-zero": "000 miljardi",
 		"100000000000-one": "000 miljards",
 		"100000000000-other": "000 miljardi",
-		"1000000000000-zero": "0 triljoni",
+		"1000000000000-zero": "0 triljonu",
 		"1000000000000-one": "0 triljons",
 		"1000000000000-other": "0 triljoni",
 		"10000000000000-zero": "00 triljoni",
@@ -3277,8 +3185,8 @@
 		"standard": "#,##0%"
 	},
 	"currencyFormat": {
-		"standard": "#0.00 ¤",
-		"accounting": "#0.00 ¤",
+		"standard": "#,##0.00 ¤",
+		"accounting": "#,##0.00 ¤",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[:^S:]",
@@ -3292,6 +3200,44 @@
 			}
 		}
 	},
+	"currencyFormat-short": {
+		"1000-zero": "0 tūkst'.' ¤",
+		"1000-one": "0 tūkst'.' ¤",
+		"1000-other": "0 tūkst'.' ¤",
+		"10000-zero": "00 tūkst'.' ¤",
+		"10000-one": "00 tūkst'.' ¤",
+		"10000-other": "00 tūkst'.' ¤",
+		"100000-zero": "000 tūkst'.' ¤",
+		"100000-one": "000 tūkst'.' ¤",
+		"100000-other": "000 tūkst'.' ¤",
+		"1000000-zero": "0 milj'.' ¤",
+		"1000000-one": "0 milj'.' ¤",
+		"1000000-other": "0 milj'.' ¤",
+		"10000000-zero": "00 milj'.' ¤",
+		"10000000-one": "00 milj'.' ¤",
+		"10000000-other": "00 milj'.' ¤",
+		"100000000-zero": "000 milj'.' ¤",
+		"100000000-one": "000 milj'.' ¤",
+		"100000000-other": "000 milj'.' ¤",
+		"1000000000-zero": "0 mljrd'.' ¤",
+		"1000000000-one": "0 mljrd'.' ¤",
+		"1000000000-other": "0 mljrd'.' ¤",
+		"10000000000-zero": "¤00 mljrd'.'",
+		"10000000000-one": "¤00 mljrd'.'",
+		"10000000000-other": "¤00 mljrd'.'",
+		"100000000000-zero": "¤000 mljrd'.'",
+		"100000000000-one": "¤000 mljrd'.'",
+		"100000000000-other": "¤000 mljrd'.'",
+		"1000000000000-zero": "¤0 trilj'.'",
+		"1000000000000-one": "¤0 trilj'.'",
+		"1000000000000-other": "¤0 trilj'.'",
+		"10000000000000-zero": "¤00 trilj'.'",
+		"10000000000000-one": "¤00 trilj'.'",
+		"10000000000000-other": "¤00 trilj'.'",
+		"100000000000000-zero": "¤000 trilj'.'",
+		"100000000000000-one": "¤000 trilj'.'",
+		"100000000000000-other": "¤000 trilj'.'"
+	},
 	"symbols-latn-decimal": ",",
 	"symbols-latn-group": " ",
 	"symbols-latn-list": ";",
@@ -3302,7 +3248,7 @@
 	"symbols-latn-superscriptingExponent": "×",
 	"symbols-latn-perMille": "‰",
 	"symbols-latn-infinity": "∞",
-	"symbols-latn-nan": "nav skaitlis",
+	"symbols-latn-nan": "NS",
 	"symbols-latn-timeSeparator": ":",
 	"currencySymbols": {
 		"AUD": "AU$",
@@ -3328,6 +3274,878 @@
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
+	"rtl": false,
+	"listPattern-standard-wide": {
+		"2": "{0} un {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} un {1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} vai {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} vai {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} vai {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} vai {1}"
+	},
+	"listPattern-standard-short": {
+		"2": "{0} un {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} un {1}"
+	},
+	"units": {
+		"short": {
+			"per": {
+				"compoundUnitPattern": "{0}/{1}"
+			},
+			"acceleration-g-force": {
+				"displayName": "Brīvās krišanas paātrinājums:",
+				"unitPattern-count-zero": "{0} G",
+				"unitPattern-count-one": "{0} G",
+				"unitPattern-count-other": "{0} G"
+			},
+			"acceleration-meter-per-second-squared": {
+				"displayName": "m/s²",
+				"unitPattern-count-zero": "{0} m/s²",
+				"unitPattern-count-one": "{0} m/s²",
+				"unitPattern-count-other": "{0} m/s²"
+			},
+			"angle-revolution": {
+				"displayName": "apgr.",
+				"unitPattern-count-zero": "{0} apgr.",
+				"unitPattern-count-one": "{0} apgr.",
+				"unitPattern-count-other": "{0} apgr."
+			},
+			"angle-radian": {
+				"displayName": "rad",
+				"unitPattern-count-zero": "{0} rad",
+				"unitPattern-count-one": "{0} rad",
+				"unitPattern-count-other": "{0} rad"
+			},
+			"angle-degree": {
+				"displayName": "°",
+				"unitPattern-count-zero": "{0}°",
+				"unitPattern-count-one": "{0}°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"angle-arc-minute": {
+				"displayName": "′",
+				"unitPattern-count-zero": "{0}′",
+				"unitPattern-count-one": "{0}′",
+				"unitPattern-count-other": "{0}′"
+			},
+			"angle-arc-second": {
+				"displayName": "″",
+				"unitPattern-count-zero": "{0}″",
+				"unitPattern-count-one": "{0}″",
+				"unitPattern-count-other": "{0}″"
+			},
+			"area-square-kilometer": {
+				"displayName": "km²",
+				"unitPattern-count-zero": "{0} km²",
+				"unitPattern-count-one": "{0} km²",
+				"unitPattern-count-other": "{0} km²",
+				"perUnitPattern": "{0}/km²"
+			},
+			"area-hectare": {
+				"displayName": "ha",
+				"unitPattern-count-zero": "{0} ha",
+				"unitPattern-count-one": "{0} ha",
+				"unitPattern-count-other": "{0} ha"
+			},
+			"area-square-meter": {
+				"displayName": "m²",
+				"unitPattern-count-zero": "{0} m²",
+				"unitPattern-count-one": "{0} m²",
+				"unitPattern-count-other": "{0} m²",
+				"perUnitPattern": "{0}/m²"
+			},
+			"area-square-centimeter": {
+				"displayName": "cm²",
+				"unitPattern-count-zero": "{0} cm²",
+				"unitPattern-count-one": "{0} cm²",
+				"unitPattern-count-other": "{0} cm²",
+				"perUnitPattern": "{0}/cm²"
+			},
+			"area-square-mile": {
+				"displayName": "mi²",
+				"unitPattern-count-zero": "{0} mi²",
+				"unitPattern-count-one": "{0} mi²",
+				"unitPattern-count-other": "{0} mi²",
+				"perUnitPattern": "{0}/mi²"
+			},
+			"area-acre": {
+				"displayName": "ac",
+				"unitPattern-count-zero": "{0} ac",
+				"unitPattern-count-one": "{0} ac",
+				"unitPattern-count-other": "{0} ac"
+			},
+			"area-square-yard": {
+				"displayName": "yd²",
+				"unitPattern-count-zero": "{0} yd²",
+				"unitPattern-count-one": "{0} yd²",
+				"unitPattern-count-other": "{0} yd²"
+			},
+			"area-square-foot": {
+				"displayName": "ft²",
+				"unitPattern-count-zero": "{0} ft²",
+				"unitPattern-count-one": "{0} ft²",
+				"unitPattern-count-other": "{0} ft²"
+			},
+			"area-square-inch": {
+				"displayName": "in²",
+				"unitPattern-count-zero": "{0} in²",
+				"unitPattern-count-one": "{0} in²",
+				"unitPattern-count-other": "{0} in²",
+				"perUnitPattern": "{0} uz collu²"
+			},
+			"concentr-karat": {
+				"displayName": "kt",
+				"unitPattern-count-zero": "{0} kt",
+				"unitPattern-count-one": "{0} kt",
+				"unitPattern-count-other": "{0} kt"
+			},
+			"concentr-milligram-per-deciliter": {
+				"displayName": "mg/dL",
+				"unitPattern-count-zero": "{0} mg/dL",
+				"unitPattern-count-one": "{0} mg/dL",
+				"unitPattern-count-other": "{0} mg/dL"
+			},
+			"concentr-millimole-per-liter": {
+				"displayName": "mmol/L",
+				"unitPattern-count-zero": "{0} mmol/L",
+				"unitPattern-count-one": "{0} mmol/L",
+				"unitPattern-count-other": "{0} mmol/L"
+			},
+			"concentr-part-per-million": {
+				"displayName": "ppm",
+				"unitPattern-count-zero": "{0} ppm",
+				"unitPattern-count-one": "{0} ppm",
+				"unitPattern-count-other": "{0} ppm"
+			},
+			"consumption-liter-per-kilometer": {
+				"displayName": "l/km",
+				"unitPattern-count-zero": "{0} l/km",
+				"unitPattern-count-one": "{0} l/km",
+				"unitPattern-count-other": "{0} l/km"
+			},
+			"consumption-liter-per-100kilometers": {
+				"displayName": "l/100 km",
+				"unitPattern-count-zero": "{0} l/100 km",
+				"unitPattern-count-one": "{0} l/100 km",
+				"unitPattern-count-other": "{0} l/100 km"
+			},
+			"consumption-mile-per-gallon": {
+				"displayName": "mpg",
+				"unitPattern-count-zero": "{0} mpg",
+				"unitPattern-count-one": "{0} mpg",
+				"unitPattern-count-other": "{0} mpg"
+			},
+			"consumption-mile-per-gallon-imperial": {
+				"displayName": "mpg Imp.",
+				"unitPattern-count-zero": "{0} mpg Imp.",
+				"unitPattern-count-one": "{0} mpg Imp.",
+				"unitPattern-count-other": "{0} mpg Imp."
+			},
+			"digital-terabyte": {
+				"displayName": "TB",
+				"unitPattern-count-zero": "{0} TB",
+				"unitPattern-count-one": "{0} TB",
+				"unitPattern-count-other": "{0} TB"
+			},
+			"digital-terabit": {
+				"displayName": "Tb",
+				"unitPattern-count-zero": "{0} Tb",
+				"unitPattern-count-one": "{0} Tb",
+				"unitPattern-count-other": "{0} Tb"
+			},
+			"digital-gigabyte": {
+				"displayName": "GB",
+				"unitPattern-count-zero": "{0} GB",
+				"unitPattern-count-one": "{0} GB",
+				"unitPattern-count-other": "{0} GB"
+			},
+			"digital-gigabit": {
+				"displayName": "Gb",
+				"unitPattern-count-zero": "{0} Gb",
+				"unitPattern-count-one": "{0} Gb",
+				"unitPattern-count-other": "{0} Gb"
+			},
+			"digital-megabyte": {
+				"displayName": "MB",
+				"unitPattern-count-zero": "{0} MB",
+				"unitPattern-count-one": "{0} MB",
+				"unitPattern-count-other": "{0} MB"
+			},
+			"digital-megabit": {
+				"displayName": "Mb",
+				"unitPattern-count-zero": "{0} Mb",
+				"unitPattern-count-one": "{0} Mb",
+				"unitPattern-count-other": "{0} Mb"
+			},
+			"digital-kilobyte": {
+				"displayName": "KB",
+				"unitPattern-count-zero": "{0} KB",
+				"unitPattern-count-one": "{0} KB",
+				"unitPattern-count-other": "{0} KB"
+			},
+			"digital-kilobit": {
+				"displayName": "Kb",
+				"unitPattern-count-zero": "{0} Kb",
+				"unitPattern-count-one": "{0} Kb",
+				"unitPattern-count-other": "{0} Kb"
+			},
+			"digital-byte": {
+				"displayName": "B",
+				"unitPattern-count-zero": "{0} B",
+				"unitPattern-count-one": "{0} B",
+				"unitPattern-count-other": "{0} B"
+			},
+			"digital-bit": {
+				"displayName": "b",
+				"unitPattern-count-zero": "{0} b",
+				"unitPattern-count-one": "{0} b",
+				"unitPattern-count-other": "{0} b"
+			},
+			"duration-century": {
+				"displayName": "gs.",
+				"unitPattern-count-zero": "{0} gs.",
+				"unitPattern-count-one": "{0} gs.",
+				"unitPattern-count-other": "{0} gs."
+			},
+			"duration-year": {
+				"displayName": "g.",
+				"unitPattern-count-zero": "{0} g.",
+				"unitPattern-count-one": "{0} g.",
+				"unitPattern-count-other": "{0} g.",
+				"perUnitPattern": "{0}/g."
+			},
+			"duration-month": {
+				"displayName": "mēneši",
+				"unitPattern-count-zero": "{0} mēn.",
+				"unitPattern-count-one": "{0} mēn.",
+				"unitPattern-count-other": "{0} mēn.",
+				"perUnitPattern": "{0}/mēn."
+			},
+			"duration-week": {
+				"displayName": "ned.",
+				"unitPattern-count-zero": "{0} ned.",
+				"unitPattern-count-one": "{0} ned.",
+				"unitPattern-count-other": "{0} ned.",
+				"perUnitPattern": "{0}/ned."
+			},
+			"duration-day": {
+				"displayName": "d.",
+				"unitPattern-count-zero": "{0} d.",
+				"unitPattern-count-one": "{0} d.",
+				"unitPattern-count-other": "{0} d.",
+				"perUnitPattern": "{0}/d."
+			},
+			"duration-hour": {
+				"displayName": "st.",
+				"unitPattern-count-zero": "{0} st.",
+				"unitPattern-count-one": "{0} st.",
+				"unitPattern-count-other": "{0} st.",
+				"perUnitPattern": "{0}/st."
+			},
+			"duration-minute": {
+				"displayName": "min.",
+				"unitPattern-count-zero": "{0} min.",
+				"unitPattern-count-one": "{0} min.",
+				"unitPattern-count-other": "{0} min.",
+				"perUnitPattern": "{0}/min."
+			},
+			"duration-second": {
+				"displayName": "sek.",
+				"unitPattern-count-zero": "{0} sek.",
+				"unitPattern-count-one": "{0} sek.",
+				"unitPattern-count-other": "{0} sek.",
+				"perUnitPattern": "{0}/sek."
+			},
+			"duration-millisecond": {
+				"displayName": "ms",
+				"unitPattern-count-zero": "{0} ms",
+				"unitPattern-count-one": "{0} ms",
+				"unitPattern-count-other": "{0} ms"
+			},
+			"duration-microsecond": {
+				"displayName": "μs",
+				"unitPattern-count-zero": "{0} μs",
+				"unitPattern-count-one": "{0} μs",
+				"unitPattern-count-other": "{0} μs"
+			},
+			"duration-nanosecond": {
+				"displayName": "ns",
+				"unitPattern-count-zero": "{0} ns",
+				"unitPattern-count-one": "{0} ns",
+				"unitPattern-count-other": "{0} ns"
+			},
+			"electric-ampere": {
+				"displayName": "A",
+				"unitPattern-count-zero": "{0} A",
+				"unitPattern-count-one": "{0} A",
+				"unitPattern-count-other": "{0} A"
+			},
+			"electric-milliampere": {
+				"displayName": "mA",
+				"unitPattern-count-zero": "{0} mA",
+				"unitPattern-count-one": "{0} mA",
+				"unitPattern-count-other": "{0} mA"
+			},
+			"electric-ohm": {
+				"displayName": "Ω",
+				"unitPattern-count-zero": "{0} Ω",
+				"unitPattern-count-one": "{0} Ω",
+				"unitPattern-count-other": "{0} Ω"
+			},
+			"electric-volt": {
+				"displayName": "V",
+				"unitPattern-count-zero": "{0} V",
+				"unitPattern-count-one": "{0} V",
+				"unitPattern-count-other": "{0} V"
+			},
+			"energy-kilocalorie": {
+				"displayName": "kcal",
+				"unitPattern-count-zero": "{0} kcal",
+				"unitPattern-count-one": "{0} kcal",
+				"unitPattern-count-other": "{0} kcal"
+			},
+			"energy-calorie": {
+				"displayName": "cal",
+				"unitPattern-count-zero": "{0} cal",
+				"unitPattern-count-one": "{0} cal",
+				"unitPattern-count-other": "{0} cal"
+			},
+			"energy-foodcalorie": {
+				"displayName": "cal",
+				"unitPattern-count-zero": "{0} cal",
+				"unitPattern-count-one": "{0} cal",
+				"unitPattern-count-other": "{0} cal"
+			},
+			"energy-kilojoule": {
+				"displayName": "kJ",
+				"unitPattern-count-zero": "{0} kJ",
+				"unitPattern-count-one": "{0} kJ",
+				"unitPattern-count-other": "{0} kJ"
+			},
+			"energy-joule": {
+				"displayName": "J",
+				"unitPattern-count-zero": "{0} J",
+				"unitPattern-count-one": "{0} J",
+				"unitPattern-count-other": "{0} J"
+			},
+			"energy-kilowatt-hour": {
+				"displayName": "kWh",
+				"unitPattern-count-zero": "{0} kWh",
+				"unitPattern-count-one": "{0} kWh",
+				"unitPattern-count-other": "{0} kWh"
+			},
+			"frequency-gigahertz": {
+				"displayName": "GHz",
+				"unitPattern-count-zero": "{0} GHz",
+				"unitPattern-count-one": "{0} GHz",
+				"unitPattern-count-other": "{0} GHz"
+			},
+			"frequency-megahertz": {
+				"displayName": "MHz",
+				"unitPattern-count-zero": "{0} MHz",
+				"unitPattern-count-one": "{0} MHz",
+				"unitPattern-count-other": "{0} MHz"
+			},
+			"frequency-kilohertz": {
+				"displayName": "kHz",
+				"unitPattern-count-zero": "{0} kHz",
+				"unitPattern-count-one": "{0} kHz",
+				"unitPattern-count-other": "{0} kHz"
+			},
+			"frequency-hertz": {
+				"displayName": "Hz",
+				"unitPattern-count-zero": "{0} Hz",
+				"unitPattern-count-one": "{0} Hz",
+				"unitPattern-count-other": "{0} Hz"
+			},
+			"length-kilometer": {
+				"displayName": "kilometri",
+				"unitPattern-count-zero": "{0} km",
+				"unitPattern-count-one": "{0} km",
+				"unitPattern-count-other": "{0} km",
+				"perUnitPattern": "{0}/km"
+			},
+			"length-meter": {
+				"displayName": "m",
+				"unitPattern-count-zero": "{0} m",
+				"unitPattern-count-one": "{0} m",
+				"unitPattern-count-other": "{0} m",
+				"perUnitPattern": "{0}/m"
+			},
+			"length-decimeter": {
+				"displayName": "dm",
+				"unitPattern-count-zero": "{0} dm",
+				"unitPattern-count-one": "{0} dm",
+				"unitPattern-count-other": "{0} dm"
+			},
+			"length-centimeter": {
+				"displayName": "cm",
+				"unitPattern-count-zero": "{0} cm",
+				"unitPattern-count-one": "{0} cm",
+				"unitPattern-count-other": "{0} cm",
+				"perUnitPattern": "{0}/cm"
+			},
+			"length-millimeter": {
+				"displayName": "mm",
+				"unitPattern-count-zero": "{0} mm",
+				"unitPattern-count-one": "{0} mm",
+				"unitPattern-count-other": "{0} mm"
+			},
+			"length-micrometer": {
+				"displayName": "µm",
+				"unitPattern-count-zero": "{0} µm",
+				"unitPattern-count-one": "{0} µm",
+				"unitPattern-count-other": "{0} µm"
+			},
+			"length-nanometer": {
+				"displayName": "nm",
+				"unitPattern-count-zero": "{0} nm",
+				"unitPattern-count-one": "{0} nm",
+				"unitPattern-count-other": "{0} nm"
+			},
+			"length-picometer": {
+				"displayName": "pm",
+				"unitPattern-count-zero": "{0} pm",
+				"unitPattern-count-one": "{0} pm",
+				"unitPattern-count-other": "{0} pm"
+			},
+			"length-mile": {
+				"displayName": "jūdzes",
+				"unitPattern-count-zero": "{0} jūdzes",
+				"unitPattern-count-one": "{0} jūdze",
+				"unitPattern-count-other": "{0} jūdzes"
+			},
+			"length-yard": {
+				"displayName": "jardi",
+				"unitPattern-count-zero": "{0} jardi",
+				"unitPattern-count-one": "{0} jards",
+				"unitPattern-count-other": "{0} jardi"
+			},
+			"length-foot": {
+				"displayName": "pēdas",
+				"unitPattern-count-zero": "{0} pēdas",
+				"unitPattern-count-one": "{0} pēda",
+				"unitPattern-count-other": "{0} pēdas",
+				"perUnitPattern": "{0}/pēda"
+			},
+			"length-inch": {
+				"displayName": "colla",
+				"unitPattern-count-zero": "{0} collas",
+				"unitPattern-count-one": "{0} colla",
+				"unitPattern-count-other": "{0} collas",
+				"perUnitPattern": "{0}/colla"
+			},
+			"length-parsec": {
+				"displayName": "parseki",
+				"unitPattern-count-zero": "{0} parseki",
+				"unitPattern-count-one": "{0} parseks",
+				"unitPattern-count-other": "{0} parseki"
+			},
+			"length-light-year": {
+				"displayName": "g.g.",
+				"unitPattern-count-zero": "{0} g.g.",
+				"unitPattern-count-one": "{0} g.g.",
+				"unitPattern-count-other": "{0} g.g."
+			},
+			"length-astronomical-unit": {
+				"displayName": "a.v.",
+				"unitPattern-count-zero": "{0} a.v.",
+				"unitPattern-count-one": "{0} a.v.",
+				"unitPattern-count-other": "{0} a.v."
+			},
+			"length-furlong": {
+				"displayName": "furlongi",
+				"unitPattern-count-zero": "{0} furlongu",
+				"unitPattern-count-one": "{0} furlongs",
+				"unitPattern-count-other": "{0} furlongi"
+			},
+			"length-fathom": {
+				"displayName": "fatomi",
+				"unitPattern-count-zero": "{0} fatomu",
+				"unitPattern-count-one": "{0} fatoms",
+				"unitPattern-count-other": "{0} fatomi"
+			},
+			"length-nautical-mile": {
+				"displayName": "jūras jūdzes",
+				"unitPattern-count-zero": "{0} jūras jūdzes",
+				"unitPattern-count-one": "{0} jūras jūdze",
+				"unitPattern-count-other": "{0} jūras jūdzes"
+			},
+			"length-mile-scandinavian": {
+				"displayName": "skandināvu jūdze",
+				"unitPattern-count-zero": "{0} skandināvu jūdzes",
+				"unitPattern-count-one": "{0} skandināvu jūdze",
+				"unitPattern-count-other": "{0} skandināvu jūdzes"
+			},
+			"length-point": {
+				"displayName": "pk.",
+				"unitPattern-count-zero": "{0} pk.",
+				"unitPattern-count-one": "{0} pk.",
+				"unitPattern-count-other": "{0} pk."
+			},
+			"light-lux": {
+				"displayName": "lx",
+				"unitPattern-count-zero": "{0} lx",
+				"unitPattern-count-one": "{0} lx",
+				"unitPattern-count-other": "{0} lx"
+			},
+			"mass-metric-ton": {
+				"displayName": "t",
+				"unitPattern-count-zero": "{0} t",
+				"unitPattern-count-one": "{0} t",
+				"unitPattern-count-other": "{0} t"
+			},
+			"mass-kilogram": {
+				"displayName": "kg",
+				"unitPattern-count-zero": "{0} kg",
+				"unitPattern-count-one": "{0} kg",
+				"unitPattern-count-other": "{0} kg",
+				"perUnitPattern": "{0}/kg"
+			},
+			"mass-gram": {
+				"displayName": "g",
+				"unitPattern-count-zero": "{0} g",
+				"unitPattern-count-one": "{0} g",
+				"unitPattern-count-other": "{0} g",
+				"perUnitPattern": "{0}/g"
+			},
+			"mass-milligram": {
+				"displayName": "mg",
+				"unitPattern-count-zero": "{0} mg",
+				"unitPattern-count-one": "{0} mg",
+				"unitPattern-count-other": "{0} mg"
+			},
+			"mass-microgram": {
+				"displayName": "µg",
+				"unitPattern-count-zero": "{0} µg",
+				"unitPattern-count-one": "{0} µg",
+				"unitPattern-count-other": "{0} µg"
+			},
+			"mass-ton": {
+				"displayName": "tonnas",
+				"unitPattern-count-zero": "{0} tonnas",
+				"unitPattern-count-one": "{0} tonna",
+				"unitPattern-count-other": "{0} tonnas"
+			},
+			"mass-stone": {
+				"displayName": "stouni",
+				"unitPattern-count-zero": "{0} stounu",
+				"unitPattern-count-one": "{0} stouns",
+				"unitPattern-count-other": "{0} stouni"
+			},
+			"mass-pound": {
+				"displayName": "mārc.",
+				"unitPattern-count-zero": "{0} mārc.",
+				"unitPattern-count-one": "{0} mārc.",
+				"unitPattern-count-other": "{0} mārc.",
+				"perUnitPattern": "{0}/mārc."
+			},
+			"mass-ounce": {
+				"displayName": "unces",
+				"unitPattern-count-zero": "{0} unču",
+				"unitPattern-count-one": "{0} unce",
+				"unitPattern-count-other": "{0} unces",
+				"perUnitPattern": "{0}/unce"
+			},
+			"mass-ounce-troy": {
+				"displayName": "Trojas unces",
+				"unitPattern-count-zero": "{0} Trojas unces",
+				"unitPattern-count-one": "{0} Trojas unce",
+				"unitPattern-count-other": "{0} Trojas unces"
+			},
+			"mass-carat": {
+				"displayName": "karāti",
+				"unitPattern-count-zero": "{0} ct",
+				"unitPattern-count-one": "{0} ct",
+				"unitPattern-count-other": "{0} ct"
+			},
+			"power-gigawatt": {
+				"displayName": "GW",
+				"unitPattern-count-zero": "{0} GW",
+				"unitPattern-count-one": "{0} GW",
+				"unitPattern-count-other": "{0} GW"
+			},
+			"power-megawatt": {
+				"displayName": "MW",
+				"unitPattern-count-zero": "{0} MW",
+				"unitPattern-count-one": "{0} MW",
+				"unitPattern-count-other": "{0} MW"
+			},
+			"power-kilowatt": {
+				"displayName": "kW",
+				"unitPattern-count-zero": "{0} kW",
+				"unitPattern-count-one": "{0} kW",
+				"unitPattern-count-other": "{0} kW"
+			},
+			"power-watt": {
+				"displayName": "W",
+				"unitPattern-count-zero": "{0} W",
+				"unitPattern-count-one": "{0} W",
+				"unitPattern-count-other": "{0} W"
+			},
+			"power-milliwatt": {
+				"displayName": "mW",
+				"unitPattern-count-zero": "{0} mW",
+				"unitPattern-count-one": "{0} mW",
+				"unitPattern-count-other": "{0} mW"
+			},
+			"power-horsepower": {
+				"displayName": "ZS",
+				"unitPattern-count-zero": "{0} ZS",
+				"unitPattern-count-one": "{0} ZS",
+				"unitPattern-count-other": "{0} ZS"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-zero": "{0} hPa",
+				"unitPattern-count-one": "{0} hPa",
+				"unitPattern-count-other": "{0} hPa"
+			},
+			"pressure-millimeter-of-mercury": {
+				"displayName": "mmHg",
+				"unitPattern-count-zero": "{0} mmHg",
+				"unitPattern-count-one": "{0} mmHg",
+				"unitPattern-count-other": "{0} mmHg"
+			},
+			"pressure-pound-per-square-inch": {
+				"displayName": "psi",
+				"unitPattern-count-zero": "{0} psi",
+				"unitPattern-count-one": "{0} psi",
+				"unitPattern-count-other": "{0} psi"
+			},
+			"pressure-inch-hg": {
+				"displayName": "inHg",
+				"unitPattern-count-zero": "{0} inHg",
+				"unitPattern-count-one": "{0} inHg",
+				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-millibar": {
+				"displayName": "mbar",
+				"unitPattern-count-zero": "{0} mbar",
+				"unitPattern-count-one": "{0} mbar",
+				"unitPattern-count-other": "{0} mbar"
+			},
+			"speed-kilometer-per-hour": {
+				"displayName": "km/st.",
+				"unitPattern-count-zero": "{0} km/st.",
+				"unitPattern-count-one": "{0} km/st.",
+				"unitPattern-count-other": "{0} km/st."
+			},
+			"speed-meter-per-second": {
+				"displayName": "m/s",
+				"unitPattern-count-zero": "{0} m/s",
+				"unitPattern-count-one": "{0} m/s",
+				"unitPattern-count-other": "{0} m/s"
+			},
+			"speed-mile-per-hour": {
+				"displayName": "mi/h",
+				"unitPattern-count-zero": "{0} mi/h",
+				"unitPattern-count-one": "{0} mi/h",
+				"unitPattern-count-other": "{0} mi/h"
+			},
+			"speed-knot": {
+				"displayName": "mezgls",
+				"unitPattern-count-zero": "{0} mezgli",
+				"unitPattern-count-one": "{0} mezgls",
+				"unitPattern-count-other": "{0} mezgli"
+			},
+			"temperature-generic": {
+				"displayName": "°",
+				"unitPattern-count-zero": "{0}°",
+				"unitPattern-count-one": "{0}°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"temperature-celsius": {
+				"displayName": "°C",
+				"unitPattern-count-zero": "{0} °C",
+				"unitPattern-count-one": "{0} °C",
+				"unitPattern-count-other": "{0} °C"
+			},
+			"temperature-fahrenheit": {
+				"displayName": "°F",
+				"unitPattern-count-zero": "{0} °F",
+				"unitPattern-count-one": "{0} °F",
+				"unitPattern-count-other": "{0} °F"
+			},
+			"temperature-kelvin": {
+				"displayName": "K",
+				"unitPattern-count-zero": "{0} K",
+				"unitPattern-count-one": "{0} K",
+				"unitPattern-count-other": "{0} K"
+			},
+			"volume-cubic-kilometer": {
+				"displayName": "km³",
+				"unitPattern-count-zero": "{0} km³",
+				"unitPattern-count-one": "{0} km³",
+				"unitPattern-count-other": "{0} km³"
+			},
+			"volume-cubic-meter": {
+				"displayName": "m³",
+				"unitPattern-count-zero": "{0} m³",
+				"unitPattern-count-one": "{0} m³",
+				"unitPattern-count-other": "{0} m³",
+				"perUnitPattern": "{0}/m³"
+			},
+			"volume-cubic-centimeter": {
+				"displayName": "cm³",
+				"unitPattern-count-zero": "{0} cm³",
+				"unitPattern-count-one": "{0} cm³",
+				"unitPattern-count-other": "{0} cm³",
+				"perUnitPattern": "{0}/cm³"
+			},
+			"volume-cubic-mile": {
+				"displayName": "mi³",
+				"unitPattern-count-zero": "{0} mi³",
+				"unitPattern-count-one": "{0} mi³",
+				"unitPattern-count-other": "{0} mi³"
+			},
+			"volume-cubic-yard": {
+				"displayName": "yd³",
+				"unitPattern-count-zero": "{0} yd³",
+				"unitPattern-count-one": "{0} yd³",
+				"unitPattern-count-other": "{0} yd³"
+			},
+			"volume-cubic-foot": {
+				"displayName": "ft³",
+				"unitPattern-count-zero": "{0} ft³",
+				"unitPattern-count-one": "{0} ft³",
+				"unitPattern-count-other": "{0} ft³"
+			},
+			"volume-cubic-inch": {
+				"displayName": "in³",
+				"unitPattern-count-zero": "{0} in³",
+				"unitPattern-count-one": "{0} in³",
+				"unitPattern-count-other": "{0} in³"
+			},
+			"volume-megaliter": {
+				"displayName": "ML",
+				"unitPattern-count-zero": "{0} ML",
+				"unitPattern-count-one": "{0} ML",
+				"unitPattern-count-other": "{0} ML"
+			},
+			"volume-hectoliter": {
+				"displayName": "hl",
+				"unitPattern-count-zero": "{0} hl",
+				"unitPattern-count-one": "{0} hl",
+				"unitPattern-count-other": "{0} hl"
+			},
+			"volume-liter": {
+				"displayName": "l",
+				"unitPattern-count-zero": "{0} l",
+				"unitPattern-count-one": "{0} l",
+				"unitPattern-count-other": "{0} l",
+				"perUnitPattern": "{0}/l"
+			},
+			"volume-deciliter": {
+				"displayName": "dl",
+				"unitPattern-count-zero": "{0} dl",
+				"unitPattern-count-one": "{0} dl",
+				"unitPattern-count-other": "{0} dl"
+			},
+			"volume-centiliter": {
+				"displayName": "cl",
+				"unitPattern-count-zero": "{0} cl",
+				"unitPattern-count-one": "{0} cl",
+				"unitPattern-count-other": "{0} cl"
+			},
+			"volume-milliliter": {
+				"displayName": "ml",
+				"unitPattern-count-zero": "{0} ml",
+				"unitPattern-count-one": "{0} ml",
+				"unitPattern-count-other": "{0} ml"
+			},
+			"volume-pint-metric": {
+				"displayName": "mpt",
+				"unitPattern-count-zero": "{0} mpt",
+				"unitPattern-count-one": "{0} mpt",
+				"unitPattern-count-other": "{0} mpt"
+			},
+			"volume-cup-metric": {
+				"displayName": "metr.gl.",
+				"unitPattern-count-zero": "{0} metr.gl.",
+				"unitPattern-count-one": "{0} metr.gl.",
+				"unitPattern-count-other": "{0} metr.gl."
+			},
+			"volume-acre-foot": {
+				"displayName": "ac ft",
+				"unitPattern-count-zero": "{0} ac ft",
+				"unitPattern-count-one": "{0} ac ft",
+				"unitPattern-count-other": "{0} ac ft"
+			},
+			"volume-bushel": {
+				"displayName": "bu",
+				"unitPattern-count-other": "{0} bu"
+			},
+			"volume-gallon": {
+				"displayName": "gal",
+				"unitPattern-count-zero": "{0} gal",
+				"unitPattern-count-one": "{0} gal",
+				"unitPattern-count-other": "{0} gal",
+				"perUnitPattern": "{0}/gal."
+			},
+			"volume-gallon-imperial": {
+				"displayName": "imp. gal.",
+				"unitPattern-count-zero": "{0} imp. gal.",
+				"unitPattern-count-one": "{0} imp. gal.",
+				"unitPattern-count-other": "{0} imp. gal.",
+				"perUnitPattern": "{0}/imp. gal."
+			},
+			"volume-quart": {
+				"displayName": "qt",
+				"unitPattern-count-zero": "{0} qt",
+				"unitPattern-count-one": "{0} qt",
+				"unitPattern-count-other": "{0} qt"
+			},
+			"volume-pint": {
+				"displayName": "pt",
+				"unitPattern-count-zero": "{0} pt",
+				"unitPattern-count-one": "{0} pt",
+				"unitPattern-count-other": "{0} pt"
+			},
+			"volume-cup": {
+				"displayName": "gl.",
+				"unitPattern-count-zero": "{0} gl.",
+				"unitPattern-count-one": "{0} gl.",
+				"unitPattern-count-other": "{0} gl."
+			},
+			"volume-fluid-ounce": {
+				"displayName": "fl oz",
+				"unitPattern-count-zero": "{0} fl oz",
+				"unitPattern-count-one": "{0} fl oz",
+				"unitPattern-count-other": "{0} fl oz"
+			},
+			"volume-tablespoon": {
+				"displayName": "ĒK",
+				"unitPattern-count-zero": "{0} ĒK",
+				"unitPattern-count-one": "{0} ĒK",
+				"unitPattern-count-other": "{0} ĒK"
+			},
+			"volume-teaspoon": {
+				"displayName": "TK",
+				"unitPattern-count-zero": "{0} TK",
+				"unitPattern-count-one": "{0} TK",
+				"unitPattern-count-other": "{0} TK"
+			},
+			"coordinateUnit": {
+				"east": "{0}A",
+				"north": "{0}Z",
+				"south": "{0}D",
+				"west": "{0}R"
+			}
+		}
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
@@ -3336,13 +4154,9 @@
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
-		"CAD": 2,
-		"CHF": 2,
 		"CLF": 4,
 		"CLP": 0,
 		"COP": 0,
-		"CRC": 0,
-		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
@@ -3395,6 +4209,10 @@
 		"YER": 0,
 		"ZMK": 0,
 		"ZWD": 0
+	},
+	"plurals": {
+		"zero": "n % 10 = 0 or n % 100 = 11..19 or v = 2 and f % 100 = 11..19",
+		"one": "n % 10 = 1 and n % 100 != 11 or v = 2 and f % 10 = 1 and f % 100 != 11 or v != 2 and f % 10 = 1"
 	},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 1,

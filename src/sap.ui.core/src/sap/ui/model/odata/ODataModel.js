@@ -48,7 +48,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @deprecated Please use {@link sap.ui.model.odata.v2.ODataModel} instead.
 	 * @alias sap.ui.model.odata.ODataModel
@@ -2193,7 +2192,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 * @param {object} [mParameters] Optional, can contain the following attributes: oContext, fnSuccess, fnError, sETag:
 	 * @param {object} [mParameters.context] If specified the sPath has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success]  a callback function which is called when the data has been successfully retrieved.
-	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
+	 *		The handler can have the following parameters: <code>oData</code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {string} [mParameters.eTag] If specified, the If-Match-Header will be set to this Etag.
@@ -2278,7 +2277,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 * @param {map} [mParameters.urlParameters] A map containing the parameters that will be passed as query strings
 	 * @param {object} [mParameters.context] If specified the sPath has to be relative to the path given with the context.
 	 * @param {function} [mParameters.success] a callback function which is called when the data has been successfully retrieved.
-	 *		The handler can have the following parameters: <code>oData<code> and <code>response</code>.
+	 *		The handler can have the following parameters: <code>oData</code> and <code>response</code>.
 	 * @param {function} [mParameters.error] a callback function which is called when the request failed.
 	 *		The handler can have the parameter: <code>oError</code> which contains additional error information.
 	 * @param {boolean} [mParameters.async=false] Whether or not to send the request asynchronously. Default: false
@@ -3099,7 +3098,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 *
 	 * Please note that deep creates (including data defined by navigationproperties) are not supported
 	 *
-	 * @param {String} sPath Name of the path to the collection
+	 * @param {string} sPath Name of the path to the collection
 	 * @param {array|object} vProperties An array that specifies a set of properties or the entry
 	 * @return {sap.ui.model.Context} oContext A Context object that point to the new created entry.
 	 * @public

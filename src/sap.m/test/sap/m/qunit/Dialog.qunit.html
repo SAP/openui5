@@ -407,8 +407,6 @@
 				this.clock.tick(500);
 
 				var $Dialog = oDialog.$();
-				assert.ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
-				assert.ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
 				assert.ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
 				assert.ok(oDialog.getDomRef('scrollCont').classList.contains('sapMDialogStretchContent'), "Stretched dialog should have class sapMDialogStretchContent");
 				oDialog.destroy();
@@ -462,8 +460,6 @@
 				this.clock.tick(500);
 
 				var $Dialog = oDialog.$();
-				assert.ok(marginCompare(jQuery(window).width(), $Dialog.outerWidth()), "Stretched Dialog's width equals window's width");
-				assert.ok(marginCompare(jQuery(window).height(), $Dialog.outerHeight()), "Stretched Dialog's height equals window's height");
 				assert.ok(marginCompare($Dialog.width(), oDialog._$content.width()), "content should be as wide as dialog");
 				oDialog.destroy();
 				jQuery("html").css("overflow", ""); // restore scrollbar after test
@@ -823,8 +819,8 @@
 				this.clock.tick(500);
 
 				// Assert
-				var dialogHeaderId = oDialog.getDomRef('header').getAttribute('id');
-				var subHeaderId = oDialog.$().find('.sapMDialogSubHeader').attr('id');
+				var dialogHeaderId = oDialog.$().find('header > .sapMBar').attr('id');
+				var subHeaderId = oDialog.$().find('.sapMDialogSubHeader > .sapMBar').attr('id');
 				var dialogAriaLabelledBy = oDialog.getAriaLabelledBy();
 				assert.strictEqual(oDialog.getDomRef().getAttribute('aria-labelledby'), dialogHeaderId + ' ' + subHeaderId +
 						' ' + TEXT_ID);
@@ -1205,6 +1201,117 @@
 				// cleanup
 				oDialog.destroy();
 			});
+
+			QUnit.module("Dragging");
+
+			QUnit.test("Check if dialog size remain unchanged after dragging it", function(assert) {
+				// arrange
+				var oDialog = new sap.m.Dialog({
+					draggable: true,
+					title: "Some title",
+					beginButton: new sap.m.Button({text: "button"}),
+					content: [
+						new sap.m.Text({
+							text: "Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag Some looooooong looong looooong long text that shouldn't affect the dialog's size on drag"
+						})
+					]
+				});
+
+				// act
+				oDialog.open();
+
+				this.clock.tick(500);
+
+				var oMockEvent = {
+					pageX: 608,
+					pageY: 646,
+					offsetX: 177,
+					offsetY: 35,
+					preventDefault: function () {},
+					stopPropagation: function () {},
+					target: oDialog.getAggregation("_header").$().find(".sapMBarPH")[0]
+				};
+
+				var iInitialWidth = oDialog.$().width();
+				var iInitialHeight = oDialog.$().height();
+
+				oDialog.onmousedown(oMockEvent);
+
+				this.clock.tick(500);
+
+				var iAfterDragWidth = oDialog.$().width();
+				var iAfterDragHeight = oDialog.$().height();
+
+				// assert
+				assert.ok(iInitialWidth === iAfterDragWidth, "The width of the dialog should not change after dragging it.");
+				assert.ok(iInitialHeight === iAfterDragHeight, "The height of the dialog should not change after dragging it.");
+
+				// cleanup
+				oDialog.destroy();
+			});
+
+			QUnit.module("PopUp Position",{
+				beforeEach: function() {
+					this.oDialog = new sap.m.Dialog({
+						title: "Some title"
+					});
+					this.mockPosition = {};
+				},
+				afterEach: function() {
+					this.oDialog.destroy();
+					this.mockPosition = null;
+				}
+			});
+
+			QUnit.test("Check if device is ios", function(assert) {
+				this.stub(sap.ui.Device, "os", {ios: true});
+
+				// act
+				this.oDialog.open();
+
+				this.clock.tick(500);
+
+				this.stub(window, "scrollY", 50);
+				this.oDialog.oPopup._applyPosition(this.mockPosition);
+
+				// assert
+				assert.strictEqual(this.mockPosition.at.top, "calc(50% + 0px)", "The top position should not add additional pixels in scrollPosY ");
+				assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
+
+			});
+
+			QUnit.test("ScrollY should be included in the top position calculation", function(assert) {
+				this.stub(sap.ui.Device, "os", {ios: false});
+
+				// act
+				this.oDialog.open();
+
+				this.clock.tick(500);
+
+				this.stub(window, "scrollY", 50);
+				this.oDialog.oPopup._applyPosition(this.mockPosition);
+
+				// assert
+				assert.strictEqual(this.mockPosition.at.top, "calc(50% + 50px)", "The top position should include scrollPosY");
+				assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
+			});
+
+			QUnit.test("ScrollY should not be included in the top position calculation", function(assert) {
+				this.stub(sap.ui.Device, "os", {ios: false});
+
+				// act
+				this.oDialog.open();
+
+				this.clock.tick(500);
+
+				this.stub(window, "scrollY", -50);
+				this.oDialog.oPopup._applyPosition(this.mockPosition);
+
+				// assert
+				assert.strictEqual(this.mockPosition.at.top, "calc(50% + 0px)", "The top position should not add additional pixels in scrollPosY ");
+				assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
+			});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

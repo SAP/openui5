@@ -3,8 +3,8 @@
  */
 
 // Provides a simple search feature
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 
@@ -32,12 +32,11 @@ sap.ui.define(['jquery.sap.global'],
 			if (arguments.length === 2) {
 				bFullScreen = !(this._getSplitApp(oController).getMode() === "ShowHideMode");
 			}
-			var i18nModel = oView.getModel('i18n');
 			if (!bFullScreen) {
-				oButton.setTooltip(i18nModel.getProperty('sampleFullScreenTooltip'));
+				oButton.setTooltip("Show this sample in full screen mode");
 				oButton.setIcon('sap-icon://full-screen');
 			} else {
-				oButton.setTooltip(i18nModel.getProperty('sampleExitFullScreenTooltip'));
+				oButton.setTooltip("Show this sample in the detail view of a split container.");
 				oButton.setIcon('sap-icon://exit-full-screen');
 			}
 		},

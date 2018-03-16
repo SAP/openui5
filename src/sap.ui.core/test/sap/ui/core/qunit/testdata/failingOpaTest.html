@@ -23,17 +23,19 @@
 		sap.ui.require([
 					"sap/ui/test/Opa5",
 					"sap/ui/test/Opa",
+					"sap/ui/test/_OpaLogger",
 					"sap/ui/test/opaQunit",
 					"sap/ui/test/matchers/PropertyStrictEquals",
+					"sap/ui/test/autowaiter/_timeoutWaiter",
 					"sap/ui/qunit/qunit-junit",
 					"sap/ui/qunit/qunit-coverage"
 				],
-				function (Opa5, Opa, opaTest, PropertyStrictEquals) {
+				function (Opa5, Opa, _OpaLogger, opaTest, PropertyStrictEquals, _timeoutWaiter) {
 					"use strict";
 
 					QUnit.module("Timeouts");
 
-					opaTest("Should hit a QUNit time out", function (oOpa) {
+					opaTest("Should hit a QUnit timeout", function (oOpa) {
 						oOpa.waitFor({
 							check: function () {
 								return false;
@@ -197,8 +199,19 @@
 					});
 
 					opaTest("Should enable autoWait when searching for a control", function (oOpa) {
+						var oTimeoutWaiterStub;
+
 						Opa5.extendConfig({
 							autoWait: true
+						});
+
+						oOpa.waitFor({
+							success: function () {
+								// prevent timeout detection from interfering (IE11 testrunner)
+								var oIFrameTimeoutWaiter = Opa5.getWindow().sap.ui.test.autowaiter._timeoutWaiter;
+								oTimeoutWaiterStub = sinon.stub(oIFrameTimeoutWaiter, "hasPending");
+								oTimeoutWaiterStub.returns(false);
+							}
 						});
 
 						oOpa.waitFor({
@@ -215,6 +228,9 @@
 							id: "myButton",
 							success: function () {
 								assert.ok(false, "Should not happen");
+							},
+							error: function () {
+								oTimeoutWaiterStub.restore();
 							}
 						})
 					});

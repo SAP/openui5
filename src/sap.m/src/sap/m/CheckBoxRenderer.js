@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, ValueState, ValueStateSupport) {
+sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/Device'],
+	function(coreLibrary, ValueStateSupport, Device) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 
 	/**
@@ -25,10 +29,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/Value
 		// get control properties
 		var sId = oCheckBox.getId(),
 			bEnabled = oCheckBox.getEnabled(),
+			bDisplayOnly = oCheckBox.getDisplayOnly(),
 			bEditable = oCheckBox.getEditable(),
+			bInteractive = bEnabled && !bDisplayOnly,
+			bDisplayOnlyApplied = bEnabled && bDisplayOnly,
 			oCbLabel = oCheckBox.getAggregation("_label"),
 			bInErrorState = ValueState.Error === oCheckBox.getValueState(),
-			bInWarningState = ValueState.Warning === oCheckBox.getValueState();
+			bInWarningState = ValueState.Warning === oCheckBox.getValueState(),
+			bUseEntireWidth = oCheckBox.getUseEntireWidth();
 
 		// CheckBox wrapper
 		oRm.write("<div");
@@ -36,6 +44,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/Value
 
 		if (!bEditable) {
 			oRm.addClass("sapMCbRo");
+		}
+
+		if (bDisplayOnlyApplied) {
+			oRm.addClass("sapMCbDisplayOnly");
 		}
 
 		if (!bEnabled) {
@@ -52,15 +64,24 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/Value
 			oRm.addClass("sapMCbHasLabel");
 		}
 
+		if (oCheckBox.getWrapping()) {
+			oRm.addClass("sapMCbWrapped");
+		}
+
 		oRm.writeControlData(oCheckBox);
 		oRm.writeClasses();
+
+		if (bUseEntireWidth) {
+			oRm.addStyle("width", oCheckBox.getWidth());
+			oRm.writeStyles();
+		}
 
 		var sTooltip = ValueStateSupport.enrichTooltip(oCheckBox, oCheckBox.getTooltip_AsString());
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
-		if (bEnabled) {
+		if (bInteractive) {
 			oRm.writeAttribute("tabindex", oCheckBox.getTabIndex());
 		}
 
@@ -72,6 +93,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/Value
 			describedby: sTooltip ? sId + "-Descr" : undefined
 		});
 
+		if (bDisplayOnlyApplied) {
+			oRm.writeAttribute("aria-readonly", true);
+		}
+
 		oRm.write(">");		// DIV element
 
 		// write the HTML into the render manager
@@ -81,7 +106,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueState', 'sap/ui/core/Value
 		// CheckBox style class
 		oRm.addClass("sapMCbBg");
 
-		if (bEnabled && bEditable && sap.ui.Device.system.desktop) {
+		if (bInteractive && bEditable && Device.system.desktop) {
 			oRm.addClass("sapMCbHoverable");
 		}
 

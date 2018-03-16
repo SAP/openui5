@@ -56,6 +56,13 @@
 						selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
 						associatedObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "associatedObj"}
 					},
+					specialSettings: {
+						metadataContexts: {
+							type: "object",
+							defaultValue: "{}",
+							myprop:"test"
+						}
+					},
 					defaultAggregation : "singleAggr",
 					defaultProperty: "value"
 				},
@@ -371,6 +378,18 @@
 				setAndTest("booleanArray", true, ERROR);
 
 				setAndTest("unknown", "testtest", ERROR);
+			});
+
+			QUnit.test("Escape property before setting", function(assert) {
+				// cannot test actual escaping because it does not change the value when bindingSyntax is not set to "complex"
+				sinon.spy(sap.ui.base.ManagedObject.bindingParser, "escape");
+
+				// string
+				sap.ui.base.ManagedObject.escapeSettingsValue("x");
+				assert.equal(sap.ui.base.ManagedObject.bindingParser.escape.callCount, 1, "strings should be escaped by escapeSettingsValue");
+
+				sap.ui.base.ManagedObject.escapeSettingsValue(41);
+				assert.equal(sap.ui.base.ManagedObject.bindingParser.escape.callCount, 1, "non-strings should not be escaped by escapeSettingsValue");
 			});
 
 			QUnit.test("Bind property", function(assert) {
@@ -1713,6 +1732,50 @@
 				assert.ok(!sap.ui.getCore().byId("myId"), "object was deregistered");
 			});
 
+			QUnit.test("Registration of components: duplicate IDs", function (assert) {
+				assert.expect(3);
+				new sap.ui.core.Element("myId");
+				assert.ok(sap.ui.getCore().byId("myId"), "object should be initially registered");
+
+				try {
+					new sap.ui.core.Element("myId");
+				} catch (ex) {
+					assert.equal(ex.message, "Error: adding element with duplicate id 'myId'");
+				}
+
+				assert.ok(sap.ui.getCore().byId("myId"), "object should still be registered");
+			});
+
+			QUnit.test("Registration of components: do not call unregister if register fails", function (assert) {
+
+				assert.expect(4);
+
+				var fnEmpty = function() {
+
+				};
+				var registrationObj = {
+					register: fnEmpty,
+					deregister: fnEmpty,
+					init: fnEmpty
+				};
+				var register = sinon.stub(registrationObj, 'register').throws();
+				var deregister = sinon.stub(registrationObj, 'deregister');
+				var init = sinon.stub(registrationObj, 'init');
+
+				var FailingManagedObject = sap.ui.base.ManagedObject.extend("sap.ui.namespace.for.unitTests.FailingManagedObject", registrationObj);
+
+
+				try {
+					new FailingManagedObject("myid");
+				} catch (ex) {
+					assert.ok(ex, "registration failed");
+				}
+
+				assert.equal(register.callCount, 1, "register was called");
+				assert.equal(deregister.callCount, 0, "deregister should not be called as register fails");
+				assert.equal(init.callCount, 0, "init should not be called as register fails");
+			});
+
 			QUnit.module("Contextual settings", {
 				beforeEach: function() {
 					this.obj1 = new sap.ui.core.TestManagedObject();
@@ -1808,6 +1871,20 @@
 
 				assert.ok(this.obj2._getContextualSettings() === sap.ui.base.ManagedObject._defaultContextualSettings, "Child now has the default contextual settings");
 
+			});
+
+			QUnit.test("SpecialSettings default values", function(assert) {
+				var oControl = new sap.ui.core.TestManagedObject(),
+					mSpecial = oControl.getMetadata()._mAllSpecialSettings;
+				assert.ok(mSpecial["metadataContexts"].defaultValue, "Metadata context default value is set");
+				assert.ok(mSpecial["metadataContexts"].type == "object", "Metadata context of type object");
+				assert.ok(mSpecial["metadataContexts"].appData.myprop == "test", "Metadata context has appdata applied");
+
+				oControl = new sap.test.TestManagedObject();
+				mSpecial = oControl.getMetadata()._mAllSpecialSettings;
+				assert.ok(mSpecial["metadataContexts"].defaultValue === undefined, "Metadata context default value is not set");
+				assert.ok(mSpecial["metadataContexts"].type === "object", "Metadata context of type not set");
+				assert.ok(mSpecial["metadataContexts"].appData === null, "Metadata context has no appdata applied");
 			});
 		</script>
 	</head>

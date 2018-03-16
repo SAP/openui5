@@ -15,7 +15,7 @@
 
 		<customHeader>
 			<Toolbar width="100%">
-				<SearchField placeholder="Filter" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"></SearchField>
+				<SearchField id="searchField" placeholder="Filter" liveChange="onTreeFilter" class="sapUiDocumentationFilterField"></SearchField>
 				<Button icon="sap-icon://expand-group" press="onTreeExpandAll"></Button>
 				<Button icon="sap-icon://collapse-group" press="onTreeCollapseAll"></Button>
 			</Toolbar>
@@ -27,10 +27,15 @@
 					id="tree"
 					mode="SingleSelectMaster"
 					selectionChange="onNodeSelect"
-					items="{ path: 'treeData>/' }">
+					items="{
+						path: 'treeData>/',
+						sorter : {
+							path : 'name',
+							comparator : '.compareTreeNodes'
+						}
+					}">
 				<StandardTreeItem
-						title="{treeData>text}"
-						selected="{treeData>isSelected}">
+						title="{treeData>text}">
 					<customData>
 						<core:CustomData key="nodeId" value="{treeData>name}" />
 					</customData>

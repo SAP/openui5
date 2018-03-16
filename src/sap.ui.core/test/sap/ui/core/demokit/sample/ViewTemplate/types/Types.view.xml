@@ -12,15 +12,13 @@
 			<Button id="saveButton" text="Save" press="onSave" visible="{ui>/realOData}"/>
 			<Button id="resetButton" binding="{v4>/ResetEdmTypes(...)}" text="Reset" press="onReset" visible="{ui>/realOData}"/>
 			<Button id="resetModelButton" icon="sap-icon://sys-cancel" text="Reset Model" tooltip="Reset Model" press="onResetModel"/>
-			<Button id="resetContextBindingButton" icon="sap-icon://sys-cancel" text="Reset ContextBinding" tooltip="Reset ContextBinding" press="onResetContextBinding" visible="{ui>/v4}"/>
 			<ToggleButton id="toggleV4Button" icon="sap-icon://switch-views" press="onV4" pressed="{ui>/v4}" text="V4"/>
 			<ToggleButton id="toggleSourceCodeButton" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
+			<Button id="resetContextBindingButton" icon="sap-icon://sys-cancel" text="Reset ContextBinding" tooltip="Reset ContextBinding" press="onResetContextBinding" visible="{ui>/v4}"/>
 		</HBox>
 		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
 			width="auto" class="sapUiResponsiveMargin">
-			<content>
-				<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
-			</content>
+			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
 		</Panel>
 		<form:SimpleForm id="simpleForm" layout="ResponsiveGridLayout" labelSpanL="12" labelSpanM="12" columnsM="2" columnsL="3">
 			<!--TODO: sap.ui.model.odata.type.Binary not yet available
@@ -36,16 +34,19 @@
 			<CheckBox selected="{path: 'Boolean', type: 'sap.ui.model.odata.type.Boolean'}"/>
 
 			<core:Title text="DateTime variants"/>
+			<Label text="DateRange"/>
+			<Input value="{parts: [{path: 'Date'}, {path: 'DateTimeOffset'}], type: 'sap.ui.model.type.DateInterval'}"/>
+			<DateRangeSelection value="{parts: [{path: 'Date'}, {path: 'DateTimeOffset'}], type: 'sap.ui.model.type.DateInterval'}"/>
 			<Label text="Date" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>Date'}" visible="{ui>/v4}"/>
 			<DatePicker value="{path: 'v4>Date'}" visible="{ui>/v4}"/>
 			<Label text="Date, nullable: false" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', constraints: {nullable: false}}" visible="{ui>/v4}"/>
 			<DatePicker value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', constraints: {nullable: false}}" visible="{ui>/v4}"/>
-			<Label text="Date, style:  &quot;short&quot;" visible="{ui>/v4}"/>
+			<Label text="Date, style: &quot;short&quot;" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v4}"/>
 			<DatePicker value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v4}"/>
-			<Label text="Date, relative:  &quot;true&quot;" visible="{ui>/v4}"/>
+			<Label text="Date, relative: &quot;true&quot;" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
 			<DatePicker value="{path: 'v4>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
 
@@ -55,9 +56,12 @@
 			<Label text="DateTime, nullable: false" visible="{ui>/v2}"/>
 			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}" visible="{ui>/v2}"/>
 			<DateTimePicker value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', constraints: {nullable: false}}" visible="{ui>/v2}"/>
-			<Label text="DateTime, style:  &quot;short&quot;" visible="{ui>/v2}"/>
-			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}}" visible="{ui>/v2}"/>
-			<DateTimePicker value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'short'}}" visible="{ui>/v2}"/>
+			<Label text="DateTime, style: &quot;long&quot;" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}}" visible="{ui>/v2}"/>
+			<DateTimePicker value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long'}}" visible="{ui>/v2}"/>
+			<Label text="DateTime, style: &quot;long&quot;, UTC" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long', UTC: true}}" visible="{ui>/v2}"/>
+			<DateTimePicker value="{path: 'v2>DateTime', type: 'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'long', UTC: true}}" visible="{ui>/v2}"/>
 			<Label text="DateTime, displayFormat: &quot;Date&quot;" visible="{ui>/v2}"/>
 			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}" visible="{ui>/v2}"/>
 			<DatePicker value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date'}}" visible="{ui>/v2}"/>
@@ -71,9 +75,12 @@
 			<Label text="DateTimeOffset, nullable: false"/>
 			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"/>
 			<DateTimePicker value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', constraints: {nullable: false}}"/>
-			<Label text="DateTimeOffset, style:  &quot;short&quot;"/>
-			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'short'}}"/>
-			<DateTimePicker value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'short'}}"/>
+			<Label text="DateTimeOffset, style: &quot;long&quot;"/>
+			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long'}}"/>
+			<DateTimePicker value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long'}}"/>
+			<Label text="DateTimeOffset, style: &quot;long&quot;, UTC"/>
+			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long', UTC: true}}"/>
+			<DateTimePicker value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset', formatOptions: {style: 'long', UTC: true}}"/>
 
 			<Label text="Time" visible="{ui>/v2}"/>
 			<Input value="{path: 'v2>Time', type: 'sap.ui.model.odata.type.Time'}" visible="{ui>/v2}"/>
@@ -88,16 +95,16 @@
 			<Label text="TimeOfDay" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay'}" visible="{ui>/v4}"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay'}" visible="{ui>/v4}"/>
-			<Label text="TimeOfDay, nullable: false, style:  &quot;medium&quot;" visible="{ui>/v4}"/>
+			<Label text="TimeOfDay, nullable: false, style: &quot;medium&quot;" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', constraints: {nullable: false}, formatOptions: {style: 'medium'}}" visible="{ui>/v4}"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', constraints: {nullable: false}, formatOptions: {style: 'medium'}}" visible="{ui>/v4}"/>
-			<Label text="TimeOfDay, style:  &quot;short&quot;" visible="{ui>/v4}"/>
+			<Label text="TimeOfDay, style: &quot;short&quot;" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}}" visible="{ui>/v4}"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'short'}}" visible="{ui>/v4}"/>
-			<Label text="TimeOfDay, style:  &quot;long&quot;" visible="{ui>/v4}"/>
+			<Label text="TimeOfDay, style: &quot;long&quot;" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}}" visible="{ui>/v4}"/>
-			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {style: 'long'}}" visible="{ui>/v4}"/>
-			<Label text="TimeOfDay, relative:  &quot;true&quot;" visible="{ui>/v4}"/>
+			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay'}" visible="{ui>/v4}"/>
+			<Label text="TimeOfDay, relative: &quot;true&quot;" visible="{ui>/v4}"/>
 			<Input value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
 			<TimePicker value="{path: 'v4>TimeOfDay', type: 'sap.ui.model.odata.type.TimeOfDay', formatOptions: {relative: 'true'}}" visible="{ui>/v4}"/>
 
@@ -110,6 +117,7 @@
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {precision: 10, scale: 3}}"/>
 			<Label text="scale: default (0), nullable: false"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
+			<StepInput min="0" max="99" value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false}}"/>
 			<Label text="scale: &quot;variable&quot;, style: &quot;short&quot;, shortDecimals: 3"/>
 			<Input value="{path: 'Decimal', type: 'sap.ui.model.odata.type.Decimal', constraints: {nullable: false, scale: 'variable'}, formatOptions: {style: 'short', shortDecimals: 3}}"/>
 			<Label text="precision: 10, scale: 3, minimum: 100 (exclusive), maximum: 1000"/>

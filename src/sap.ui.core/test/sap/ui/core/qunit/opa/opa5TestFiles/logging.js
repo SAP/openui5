@@ -11,7 +11,7 @@ sap.ui.define([
 	// all modules that save Opa5 inside their closure and modify it need to be unlaoded too!
 	jQuery.sap.unloadResources("sap/ui/test/opaQunit.js", false, true, true);
 
-	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa5");
+	var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.Opa5")[2];
 	var Opa5 = sap.ui.test.Opa5;
 	var Opa = sap.ui.test.Opa;
 
@@ -61,7 +61,7 @@ sap.ui.define([
 		this.check();
 
 		// Assert
-		sinon.assert.calledWith(this.debugSpy, "Found no control with the id: 'notExistingId' in the view: 'bar'");
+		sinon.assert.calledWith(this.debugSpy, "Found no control with ID 'notExistingId' in view 'bar'");
 	});
 
 	QUnit.test("Should log if a view is not found", function(assert) {

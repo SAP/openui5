@@ -1,0 +1,18 @@
+<sap.ui.core.mvc:View controllerName="rta.view.Test"
+    xmlns="sap.m"
+    xmlns:sap.ui.layout="sap.ui.layout"
+    xmlns:sap.ui.core.mvc="sap.ui.core.mvc" >
+    <Page title="Title">
+        <content>
+			<sap.ui.layout:VerticalLayout id="layout0" width="50%">
+				<Button id="button0" text="Button 0" width="100px"></Button>
+				<sap.ui.layout:HorizontalLayout id="layout0-0">
+					<Button id="button0-0" text="Button 0 0" width="100px"></Button>
+	            </sap.ui.layout:HorizontalLayout>
+            </sap.ui.layout:VerticalLayout>
+            <sap.ui.layout:VerticalLayout id="layout1" width="50%">
+                <Button id="button1" text="Button 1" width="100px"></Button>
+            </sap.ui.layout:VerticalLayout>
+        </content>
+    </Page>
+</sap.ui.core.mvc:View>

@@ -143,7 +143,7 @@
 							}),
 							new sap.ui.layout.form.FormElement({
 								label: "Image",
-								fields: [new sap.m.Image({src: "../../commons/images/SAPLogo.gif", layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
+								fields: [new sap.m.Image({src: "../../commons/images/SAPLogo.gif", densityAware: false, layoutData: new sap.ui.layout.form.GridElementData({hCells: "2"})})]
 							})
 						],
 					layoutData: new sap.ui.layout.form.GridContainerData({halfGrid: true})
@@ -219,15 +219,15 @@
 						title: new sap.ui.core.Title({text: "Test for vCells"}),
 						formElements: [
 										new sap.ui.layout.form.FormElement({
-											label: new sap.m.Label({text:"Label1"}),
-											fields: [new sap.m.TextArea({height: "10rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 3})}),
-															 new sap.m.TextArea({height: "6.5rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})}),
+											label: new sap.m.Label("Label1", {text:"Label1"}),
+											fields: [new sap.m.TextArea({height: "9rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 3})}),
+															 new sap.m.TextArea({height: "6rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})}),
 															 new sap.m.TextArea({height: "3rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})})
 																]
 										}),
 										new sap.ui.layout.form.FormElement({
-											fields: [new sap.m.TextArea({height: "3rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})}),
-															 new sap.m.TextArea({height: "6.5rem", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})})
+											fields: [new sap.m.TextArea({height: "3rem", ariaLabelledBy: "Label1", layoutData: new sap.ui.layout.form.GridElementData({vCells: 1})}),
+															 new sap.m.TextArea({height: "6rem", ariaLabelledBy: "Label1", layoutData: new sap.ui.layout.form.GridElementData({vCells: 2})})
 																]
 										}),
 										new sap.ui.layout.form.FormElement({

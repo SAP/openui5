@@ -1,6 +1,8 @@
-/*global QUnit,qutils,oTable,oTreeTable*/
+/*global QUnit, oTable, oTreeTable */
 
-(function () {
+sap.ui.require([
+	"sap/ui/qunit/QUnitUtils"
+], function(qutils) {
 	"use strict";
 
 	// mapping of global function calls
@@ -16,18 +18,11 @@
 	var initRowActions = window.initRowActions;
 	var checkFocus = window.checkFocus;
 
-//************************************************************************
-// Test Code
-//************************************************************************
-
-	sap.ui.test.qunit.delayTestStart(500);
-
-
 	QUnit.module("Initialization", {
 		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
@@ -45,43 +40,42 @@
 		assert.ok(iCount == 1, "Pointer Delegate registered");
 	});
 
-
 	QUnit.module("VisibleRowCountMode 'Interactive'", {
 		beforeEach: function() {
-			jQuery.sap.byId("content").toggleClass("StablePosition", true);
-			createTables(true);
-			oTable.placeAt("content");
+			createTables();
 			oTable.setVisibleRowCountMode("Interactive");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
-			jQuery.sap.byId("content").toggleClass("StablePosition", false);
 		}
 	});
 
 	QUnit.test("resize", function(assert) {
 		function testAdaptations(bDuringResize) {
-			assert.equal(jQuery.sap.byId(oTable.getId() + "-rzoverlay").length, bDuringResize ? 1 : 0, "The handle to resize overlay is" + (bDuringResize ? "" : " not") + " visible");
-			assert.equal(jQuery.sap.byId(oTable.getId() + "-ghost").length, bDuringResize ? 1 : 0, "The handle to resize ghost is" + (bDuringResize ? "" : " not") + " visible");
+			assert.equal(jQuery.sap.byId(oTable.getId() + "-rzoverlay").length, bDuringResize ? 1 : 0,
+				"The handle to resize overlay is" + (bDuringResize ? "" : " not") + " visible");
+			assert.equal(jQuery.sap.byId(oTable.getId() + "-ghost").length, bDuringResize ? 1 : 0,
+				"The handle to resize ghost is" + (bDuringResize ? "" : " not") + " visible");
 
-			var oEvent = jQuery.Event({type : "selectstart"});
+			var oEvent = jQuery.Event({type: "selectstart"});
 			oEvent.target = oTable.getDomRef();
 			$Table.trigger(oEvent);
-			assert.ok(oEvent.isDefaultPrevented() && bDuringResize || !oEvent.isDefaultPrevented() && !bDuringResize, "Prevent Default of selectstart event");
-			assert.ok(oEvent.isPropagationStopped() && bDuringResize || !oEvent.isPropagationStopped() && !bDuringResize, "Stopped Propagation of selectstart event");
+			assert.ok(oEvent.isDefaultPrevented() && bDuringResize || !oEvent.isDefaultPrevented() && !bDuringResize,
+				"Prevent Default of selectstart event");
+			assert.ok(oEvent.isPropagationStopped() && bDuringResize || !oEvent.isPropagationStopped() && !bDuringResize,
+				"Stopped Propagation of selectstart event");
 			var sUnselectable = jQuery(document.body).attr("unselectable") || "off";
 			assert.ok(sUnselectable == (bDuringResize ? "on" : "off"), "Text Selection switched " + (bDuringResize ? "off" : "on"));
 		}
 
 		var $Table = oTable.$();
-		var $Resizer = $Table.find('.sapUiTableHeightResizer');
+		var $Resizer = $Table.find(".sapUiTableHeightResizer");
 		var iInitialHeight = $Table.height();
 		var iY = $Resizer.offset().top;
 
 		assert.equal($Resizer.length, 1, "The handle to resize the table is visible");
-		assert.equal($Table.offset().top, 0, "Initial Offset");
-		assert.equal(oTable.getVisibleRowCount(), 3, "Initial visible rows");
+		assert.equal(oTable.getVisibleRowCount(), 5, "Initial visible rows");
 		testAdaptations(false);
 
 		qutils.triggerMouseEvent(oTable.$("sb"), "mousedown", 0, 0, 10, iY, 0);
@@ -94,7 +88,7 @@
 		}
 		qutils.triggerMouseEvent($Table, "mouseup", 0, 0, 10, iY + 10, 0);
 		// resized table by 110px, in cozy mode this allows 2 rows to be added
-		assert.equal(oTable.getVisibleRowCount(), 5, "Visible rows after resize");
+		assert.equal(oTable.getVisibleRowCount(), 7, "Visible rows after resize");
 		assert.ok(iInitialHeight < $Table.height(), "Height of the table increased");
 		testAdaptations(false);
 	});
@@ -103,9 +97,7 @@
 		beforeEach: function() {
 			this.bOriginalSystemDesktop = sap.ui.Device.system.desktop;
 
-			jQuery.sap.byId("content").toggleClass("StablePosition", true);
-			createTables(true);
-			oTable.placeAt("content");
+			createTables();
 
 			// Ensure that the last column is "streched" and the others have their defined size
 			var oLastColumn = oTable.getColumns()[oTable.getColumns().length - 1];
@@ -128,19 +120,18 @@
 				return oControl.getMetadata().getName() === "TestControl";
 			};
 		},
-		afterEach: function () {
+		afterEach: function() {
 			sap.ui.Device.system.desktop = this.bOriginalSystemDesktop;
 
 			destroyTables();
-			jQuery.sap.byId("content").toggleClass("StablePosition", false);
 			sap.ui.table.TablePointerExtension._fnCheckTextBasedControl = null;
 		}
 	});
 
 	function moveResizer(oColumn, assert, bExpect, iIndex) {
 		qutils.triggerEvent("mousemove", oColumn.getId(), {
-			clientX : Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10),
-			clientY : Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100)
+			clientX: Math.floor(oColumn.getDomRef().getBoundingClientRect().left + 10),
+			clientY: Math.floor(oColumn.getDomRef().getBoundingClientRect().top + 100)
 		});
 
 		if (assert) {
@@ -150,16 +141,17 @@
 		}
 	}
 
-	QUnit.test("Moving Resizer", function(assert){
+	QUnit.test("Moving Resizer", function(assert) {
 		var aVisibleColumns = oTable._getVisibleColumns();
 		moveResizer(aVisibleColumns[0], assert, true, 0);
 		moveResizer(aVisibleColumns[1], assert, false, 0);
-		assert.ok(Math.abs(parseInt(oTable.$("rsz").css("left"), 10) - 100 - aVisibleColumns[0].getDomRef().getBoundingClientRect().left) < 10, "Position of Resizer still on column 0");
+		assert.ok(Math.abs(parseInt(oTable.$("rsz").css("left"), 10) - 100 - aVisibleColumns[0].getDomRef().getBoundingClientRect().left) < 10,
+			"Position of Resizer still on column 0");
 		moveResizer(aVisibleColumns[2], assert, true, 2);
 
 	});
 
-	QUnit.test("Automatic Column Resize via Double Click", function(assert){
+	QUnit.test("Automatic Column Resize via Double Click", function(assert) {
 		var done = assert.async();
 		sap.ui.Device.system.desktop = true;
 
@@ -211,7 +203,7 @@
 		}, 50);
 	});
 
-	QUnit.test("Automatic Column Resize via API", function(assert){
+	QUnit.test("Automatic Column Resize via API", function(assert) {
 		var done = assert.async();
 		var oColumn = this.oColumn;
 		assert.ok(!oColumn.getAutoResizable(), "Column is not yet autoresizable");
@@ -327,7 +319,7 @@
 			this.oPointerExtension = oTable._getPointerExtension();
 			this.oPointerExtension._debug();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		},
 
@@ -336,8 +328,8 @@
 		 *
 		 * @param {jQuery|HTMLElement} oElement The target of the event.
 		 * @param {int} iButton 0 = Left mouse button,
-		 * 						1 = Middle mouse button,
-		 * 						2 = Right mouse button
+		 *                      1 = Middle mouse button,
+		 *                      2 = Right mouse button
 		 */
 		triggerMouseDownEvent: function(oElement, iButton) {
 			qutils.triggerMouseEvent(oElement, "mousedown", null, null, null, null, iButton);
@@ -469,7 +461,8 @@
 		oContextMenuEvent.reset();
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 
-		// If an interactive/clickable element inside a data cell was clicked, open the default context menu instead of the column or cell context menu.
+		// If an interactive/clickable element inside a data cell was clicked, open the default context menu instead of the column or cell context
+		// menu.
 		var aKnownClickableControls = this.oPointerExtension._KNOWNCLICKABLECONTROLS;
 		var $CellContent = oTable.getRows()[0].getCells()[0].$();
 
@@ -489,12 +482,12 @@
 		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("Columnheader", function(assert){
+	QUnit.test("Columnheader", function(assert) {
 		var done = assert.async();
 		var oColumn = oTable._getVisibleColumns()[3];
 		var bColumnReorderingTriggered = false;
@@ -506,7 +499,7 @@
 
 		qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
 		assert.ok(oPointerExtension._bShowMenu, "Show Menu flag set to be used in onSelect later");
-		setTimeout(function(){
+		setTimeout(function() {
 			assert.ok(!oPointerExtension._bShowMenu, "ShowMenu flag reset again");
 			assert.ok(bColumnReorderingTriggered, "Column Reordering triggered");
 
@@ -517,20 +510,20 @@
 
 			qutils.triggerMouseEvent(getColumnHeader(3), "mousedown", 1, 1, 1, 1, 0);
 			assert.ok(!oPointerExtension._bShowMenu, "Menu was opened -> _bShowMenu is false");
-			setTimeout(function(){
+			setTimeout(function() {
 				assert.ok(!bColumnReorderingTriggered, "Column Reordering not triggered (enableColumnReordering == false)");
 				done();
 			}, 250);
 		}, 250);
 	});
 
-	QUnit.test("Scrollbar", function(assert){
-		var oEvent = jQuery.Event({type : "mousedown"});
+	QUnit.test("Scrollbar", function(assert) {
+		var oEvent = jQuery.Event({type: "mousedown"});
 		oEvent.target = oTable._getScrollExtension().getHorizontalScrollbar();
 		oEvent.button = 0;
 		jQuery(oEvent.target).trigger(oEvent);
 		assert.ok(oEvent.isDefaultPrevented(), "Prevent Default of mousedown on horizontal scrollbar");
-		oEvent = jQuery.Event({type : "mousedown"});
+		oEvent = jQuery.Event({type: "mousedown"});
 		oEvent.target = oTable._getScrollExtension().getVerticalScrollbar();
 		oEvent.button = 0;
 		jQuery(oEvent.target).trigger(oEvent);
@@ -541,7 +534,7 @@
 		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
@@ -551,7 +544,7 @@
 		var oExtension = oTreeTable._getPointerExtension();
 		oExtension._debug();
 
-		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
+		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
 		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 		oExtension._ExtensionHelper.__handleClickSelection = oExtension._ExtensionHelper._handleClickSelection;
 		oExtension._ExtensionHelper._handleClickSelection = function() {
@@ -560,7 +553,7 @@
 
 		var fnHandler = function() {
 			sap.ui.getCore().applyChanges();
-			assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
+			assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 			oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 			oExtension._ExtensionHelper.__handleClickSelection = null;
@@ -571,7 +564,6 @@
 		var $Icon = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon");
 		qutils.triggerMouseEvent($Icon, "click");
 	});
-
 
 	QUnit.test("Group Header", function(assert) {
 		var done = assert.async();
@@ -585,12 +577,12 @@
 			assert.ok(false, "_doSelect should not be called");
 		};
 
-		assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows, "Row count before expand");
+		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
 		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
 
 		var fnHandler = function() {
 			sap.ui.getCore().applyChanges();
-			assert.equal(oTreeTable.getBinding("rows").getLength(), iNumberOfRows + 1, "Row count after expand");
+			assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
 			oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 			oExtension._ExtensionHelper.__handleClickSelection = null;
@@ -601,7 +593,6 @@
 		var $GroupHdr = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-groupHeader");
 		qutils.triggerMouseEvent($GroupHdr, "click");
 	});
-
 
 	QUnit.test("Analytical Table Sum", function(assert) {
 		var oExtension = oTreeTable._getPointerExtension();
@@ -621,7 +612,6 @@
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;
 	});
-
 
 	QUnit.test("Mobile Group Menu Button", function(assert) {
 		var oExtension = oTreeTable._getPointerExtension();
@@ -646,7 +636,6 @@
 		oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
 		oExtension._ExtensionHelper.__handleClickSelection = null;
 	});
-
 
 	QUnit.test("Cell + Cell Click Event", function(assert) {
 		var oExtension = oTreeTable._getPointerExtension();
@@ -673,21 +662,23 @@
 		}
 
 		var oRowColCell = sap.ui.table.TableUtils.getRowColCell(oTreeTable, 1, 2);
-		initCellClickHandler(function(oEvent){
+		initCellClickHandler(function(oEvent) {
 			bClickHandlerCalled = true;
 			assert.ok(oEvent.getParameter("cellControl") === oRowColCell.cell, "Cell Click Event: Parameter cellControl");
-			assert.ok(oEvent.getParameter("cellDomRef") === jQuery.sap.domById(oTreeTable.getId() + "-rows-row1-col2"), "Cell Click Event: Parameter cellDomRef");
+			assert.ok(oEvent.getParameter("cellDomRef") === jQuery.sap.domById(oTreeTable.getId() + "-rows-row1-col2"),
+				"Cell Click Event: Parameter cellDomRef");
 			assert.equal(oEvent.getParameter("rowIndex"), 1, "Cell Click Event: Parameter rowIndex");
 			assert.equal(oEvent.getParameter("columnIndex"), 2, "Cell Click Event: Parameter columnIndex");
 			assert.equal(oEvent.getParameter("columnId"), oRowColCell.column.getId(), "Cell Click Event: Parameter columnId");
-			assert.ok(oEvent.getParameter("rowBindingContext") === oRowColCell.row.getBindingContext(), "Cell Click Event: Parameter rowBindingContext");
+			assert.ok(oEvent.getParameter("rowBindingContext") === oRowColCell.row.getBindingContext(),
+				"Cell Click Event: Parameter rowBindingContext");
 		});
 		var $Cell = oRowColCell.cell.$();
-		qutils.triggerMouseEvent($Cell, "click"); // Should incease the counter
+		qutils.triggerMouseEvent($Cell, "click"); // Should increase the counter
 		assert.equal(iSelectCount, 1, iSelectCount + " Selections should happen");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
-		initCellClickHandler(function(oEvent){
+		initCellClickHandler(function(oEvent) {
 			oEvent.preventDefault();
 			bClickHandlerCalled = true;
 		});
@@ -695,23 +686,23 @@
 		assert.equal(iSelectCount, 1, iSelectCount + " Selections should happen");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
-		initCellClickHandler(function(oEvent){
+		initCellClickHandler(function(oEvent) {
 			bClickHandlerCalled = true;
 		});
 		$Cell = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0");
-		qutils.triggerMouseEvent($Cell, "click"); // Should incease the counter
+		qutils.triggerMouseEvent($Cell, "click"); // Should increase the counter
 		assert.equal(iSelectCount, 2, iSelectCount + " Selections should happen");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
 
 		bClickHandlerCalled = false;
-		var oEvent = jQuery.Event({type : "click"});
+		var oEvent = jQuery.Event({type: "click"});
 		oEvent.setMarked();
 		$Cell.trigger(oEvent);
 		assert.equal(iSelectCount, 2, iSelectCount + " Selections should happen");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
 		var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel0");
-		qutils.triggerMouseEvent($RowHdr, "click"); // Should incease the counter
+		qutils.triggerMouseEvent($RowHdr, "click"); // Should increase the counter
 		assert.equal(iSelectCount, 3, iSelectCount + " Selections should happen");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
@@ -730,7 +721,7 @@
 		for (var i = 0; i < aKnownClickableControls.length; i++) {
 			$Cell.toggleClass(aKnownClickableControls[i], true);
 			qutils.triggerMouseEvent($Cell, "click");
-			assert.equal(iSelectCount, 3, iSelectCount + " Selections should happen");
+			assert.equal(iSelectCount, 3, iSelectCount + " Selections should not happen");
 			assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 			$Cell.toggleClass(aKnownClickableControls[i], false);
 		}
@@ -750,14 +741,13 @@
 		oExtension._ExtensionHelper.__handleClickSelection = null;
 	});
 
-
 	QUnit.test("Selection", function(assert) {
 		oTable.clearSelection();
 		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.Row);
 		initRowActions(oTable, 2, 2);
 		sap.ui.getCore().applyChanges();
 
-		var oElem = getCell(0,0);
+		var oElem = getCell(0, 0);
 		assert.ok(!oTable.isIndexSelected(0), "Row not selected");
 		qutils.triggerMouseEvent(oElem, "click");
 		assert.ok(oTable.isIndexSelected(0), "Row selected");
@@ -767,27 +757,30 @@
 		oElem = getRowAction(0);
 		qutils.triggerMouseEvent(oElem, "click");
 		assert.ok(oTable.isIndexSelected(0), "Row selected");
-	});
 
+		// Range selection with Shift + Click.
+		oTable.setFirstVisibleRow(3); // Scroll down 3 rows
+		sap.ui.getCore().applyChanges();
+		qutils.triggerEvent("click", getCell(2, 0), {
+			shiftKey: true
+		});
+		assert.deepEqual(oTable.getSelectedIndices(), [0, 1, 2, 3, 4, 5], "Range selection with Shift + Click should select the correct rows");
+		assert.strictEqual(window.getSelection().toString(), "", "Range selection with Shift + Click should not select text");
+	});
 
 	QUnit.module("Column Reordering", {
 		beforeEach: function() {
-			jQuery.sap.byId("content").toggleClass("StablePosition", true);
-			createTables(true);
-			oTable.placeAt("content");
-			oTreeTable.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
-			jQuery.sap.byId("content").toggleClass("StablePosition", false);
 		}
 	});
 
 	function computeSettingsForReordering(oTable, iIndex, bIncreaseIndex) {
 		var oSettings = {
-			column : oTable._getVisibleColumns()[iIndex],
-			relatedColumn : oTable._getVisibleColumns()[bIncreaseIndex ? iIndex + 1 : iIndex - 1]
+			column: oTable._getVisibleColumns()[iIndex],
+			relatedColumn: oTable._getVisibleColumns()[bIncreaseIndex ? iIndex + 1 : iIndex - 1]
 		};
 
 		var initialXPos = 2; //Move mouse 2px from left onto the column
@@ -815,7 +808,7 @@
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
 		qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-		setTimeout(function(){
+		setTimeout(function() {
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
@@ -825,7 +818,7 @@
 				assert.equal(iCount, 1, "updateAnalyticalInfo called");
 
 				qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-				setTimeout(function(){
+				setTimeout(function() {
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
@@ -850,7 +843,7 @@
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
 		qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-		setTimeout(function(){
+		setTimeout(function() {
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
@@ -859,7 +852,7 @@
 				assert.equal(oTable.indexOfColumn(oColumn), 2, "Index of column not changed because not dragged enough");
 
 				qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-				setTimeout(function(){
+				setTimeout(function() {
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
@@ -886,7 +879,7 @@
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
 		qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-		setTimeout(function(){
+		setTimeout(function() {
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
@@ -910,7 +903,7 @@
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
 		qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-		setTimeout(function(){
+		setTimeout(function() {
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
@@ -934,7 +927,7 @@
 		assert.equal(oTable.indexOfColumn(oColumn), 2, "Initial index of column");
 
 		qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-		setTimeout(function(){
+		setTimeout(function() {
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
@@ -958,7 +951,7 @@
 		assert.equal(oTreeTable.indexOfColumn(oColumn), 0, "Initial index of column");
 
 		qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-		setTimeout(function(){
+		setTimeout(function() {
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
@@ -967,7 +960,7 @@
 				assert.equal(oTreeTable.indexOfColumn(oColumn), 0, "Index of column not changed because not dragged enough");
 
 				qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-				setTimeout(function(){
+				setTimeout(function() {
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 30, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 20, oSettings.top, 0);
 					qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft + 20, oSettings.top, 0);
@@ -994,7 +987,7 @@
 		assert.equal(oTreeTable.indexOfColumn(oColumn), 1, "Initial index of column");
 
 		qutils.triggerMouseEvent(oColumn.$(), "mousedown", 1, 1, oSettings.left, oSettings.top, 0);
-		setTimeout(function(){
+		setTimeout(function() {
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft + 30, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mousemove", 1, 1, iLeft - 20, oSettings.top, 0);
 			qutils.triggerMouseEvent(oColumn.$(), "mouseup", 1, 1, iLeft - 20, oSettings.top, 0);
@@ -1006,19 +999,12 @@
 		}, 250);
 	});
 
-
-
 	QUnit.module("Row Hover Effect", {
 		beforeEach: function() {
-			jQuery.sap.byId("content").toggleClass("StablePosition", true);
-			createTables(true);
-			oTable.placeAt("content");
-			oTreeTable.placeAt("content");
-			sap.ui.getCore().applyChanges();
+			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
-			jQuery.sap.byId("content").toggleClass("StablePosition", false);
 		}
 	});
 
@@ -1064,13 +1050,11 @@
 		assert.ok(!getCell(0, 2).parent().hasClass("sapUiTableRowHvr"), "No hover effect on scroll part of row");
 	});
 
-
-
 	QUnit.module("Helpers", {
 		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
@@ -1135,20 +1119,17 @@
 		assert.equal(oPos.y, y, "TouchEvent (wrapped) - Y");
 	});
 
-
-
 	QUnit.module("Destruction", {
 		beforeEach: function() {
 			createTables();
 		}
 	});
 
-
 	QUnit.test("destroy()", function(assert) {
 		var oExtension = oTable._getPointerExtension();
 		oTable.destroy();
 		assert.ok(!oExtension.getTable(), "Table cleared");
 		assert.ok(!oExtension._delegate, "Delegate cleared");
+		oTreeTable.destroy();
 	});
-
-}());
+});

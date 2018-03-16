@@ -5,11 +5,11 @@
 		title="Choose Your Action"
 		showCancelButton="true"
 		placement="Bottom">
-			<Button text="Reject" icon="sap-icon://decline" />
-			<Button text="Accept" icon="sap-icon://accept" />
-			<Button text="Email" icon="sap-icon://email" />
-			<Button text="Forward" icon="sap-icon://forward" />
-			<Button text="Delete" icon="sap-icon://delete" />
-			<Button text="Other" />
+			<Button text="Accept" icon="sap-icon://accept" press="actionSelected" />
+			<Button text="Reject" icon="sap-icon://decline" press="actionSelected" />
+			<Button text="Email" icon="sap-icon://email" press="actionSelected" />
+			<Button text="Forward" icon="sap-icon://forward" press="actionSelected" />
+			<Button text="Delete" icon="sap-icon://delete" press="actionSelected" />
+			<Button text="Other" press="actionSelected" />
 	</ActionSheet>
 </core:FragmentDefinition>

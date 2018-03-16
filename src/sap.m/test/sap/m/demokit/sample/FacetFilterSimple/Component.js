@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.FacetFilterSimple.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.FacetFilterSimple.FacetFilter",
+			rootView : {
+				"viewName": "sap.m.sample.FacetFilterSimple.FacetFilter",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

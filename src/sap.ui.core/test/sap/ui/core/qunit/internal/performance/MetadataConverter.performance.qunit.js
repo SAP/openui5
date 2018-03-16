@@ -4,11 +4,23 @@
 sap.ui.require([
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/v4/ODataModel",
-	"sap/ui/model/odata/v4/lib/_MetadataConverter",
+	"sap/ui/model/odata/v4/lib/_V2MetadataConverter",
+	"sap/ui/model/odata/v4/lib/_V4MetadataConverter",
 	"sap/ui/test/TestUtils"
-], function (ODataModelV2, ODataModelV4, MetadataConverter, TestUtils) {
-	/*global QUnit */
+], function (ODataModelV2, ODataModelV4, V2MetadataConverter, V4MetadataConverter, TestUtils) {
+	/*global QUnit, sinon */
 	"use strict";
+
+	var mFixture = {
+			"/fake/v2/$metadata" : {source : "v2/metadata.xml"},
+			"/fake/v4/$metadata" : {source : "v4/metadata.xml"},
+			"/fake/v4vh/$metadata" : {source : "v4vh/metadata.xml"}
+		},
+		oSandbox = sinon.sandbox.create();
+
+	// Since useFakeServer loads all sources from the fixture in advance, call it here and not in
+	// beforeEach
+	TestUtils.useFakeServer(oSandbox, "sap/ui/core/qunit/odata/v4/lib/data", mFixture);
 
 	//*********************************************************************************************
 	QUnit.module("sap/ui/model/odata/v4/lib/_MetadataConverter: Performance");
@@ -51,12 +63,12 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[
-		{file: "v4vh/$metadata", desc: "with value help"},
-		{file: "v4/$metadata", desc: "without value help"}
+		{file: "v4vh/$metadata", Converter: V4MetadataConverter, desc: "V4 with value help"},
+		{file: "v4/$metadata", Converter: V4MetadataConverter, desc: "V4 without value help"},
+		{file: "v2/$metadata", Converter: V2MetadataConverter, desc: "V4 loading V2 document"}
 	].forEach(function (oFixture) {
 		QUnit.test(oFixture.desc, function (assert) {
-			var sUrl = "/testsuite/test-resources/sap/ui/core/qunit/odata/v4/lib/data/"
-					+ oFixture.file;
+			var sUrl = "/fake/" + oFixture.file;
 			return repeatAsyncTest(10, function () {
 				return new Promise(function (fnResolve) {
 					var oRequest = new XMLHttpRequest(),
@@ -70,7 +82,7 @@ sap.ui.require([
 							iReceived = Date.now();
 							oXML = this.responseXML;
 							iXml = Date.now();
-							MetadataConverter.convertXMLMetadata(oXML);
+							new (oFixture.Converter)().convertXMLMetadata(oXML, sUrl);
 							fnResolve({
 								received: iReceived - iStart,
 								xml: iXml - iReceived,
@@ -96,9 +108,7 @@ sap.ui.require([
 			var iStart = Date.now();
 
 			ODataModelV2.mServiceData = {}; // clear the cache for compatibility
-			return new ODataModelV2(
-					"/testsuite/test-resources/sap/ui/core/qunit/odata/v4/lib/data/v2/"
-			).getMetaModel().loaded().then(function () {
+			return new ODataModelV2("/fake/v2/").getMetaModel().loaded().then(function () {
 				return {time: Date.now() - iStart};
 			});
 		}).then(function (oResult) {
@@ -112,7 +122,7 @@ sap.ui.require([
 			var iStart = Date.now();
 
 			return new ODataModelV4({
-				serviceUrl : "/testsuite/test-resources/sap/ui/core/qunit/odata/v4/lib/data/v4/",
+				serviceUrl : "/fake/v4/",
 				synchronizationMode : "None"
 			}).getMetaModel().requestObject("/").then(function () {
 				return {time: Date.now() - iStart};

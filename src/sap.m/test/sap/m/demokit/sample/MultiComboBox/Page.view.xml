@@ -1,15 +1,22 @@
-<mvc:View height="100%" controllerName="sap.m.sample.MultiComboBox.Page"
-		xmlns:core="sap.ui.core"
-		xmlns:mvc="sap.ui.core.mvc"
-		xmlns="sap.m">
-	<MultiComboBox
-		selectionChange="handleSelectionChange"
-		selectionFinish="handleSelectionFinish"
-		width="500px"
-		items="{
-			path: '/ProductCollection',
-			sorter: { path: 'Name' }
-		}">
-		<core:Item key="{ProductId}" text="{Name}" />
-	</MultiComboBox>
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.MultiComboBox.Page"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<MultiComboBox
+			selectionChange="handleSelectionChange"
+			selectionFinish="handleSelectionFinish"
+			width="500px"
+			items="{
+				path: '/ProductCollection',
+				sorter: { path: 'Name' }
+			}">
+			<core:Item key="{ProductId}" text="{Name}" />
+		</MultiComboBox>
+	</l:VerticalLayout>
 </mvc:View>

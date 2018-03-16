@@ -8,6 +8,11 @@
 			id="DTP1"
 			placeholder="Enter Date ..."
 			change="handleChange"/>
+		<Label text="with initialFocusedDateValue new Date(2017, 5, 13, 11, 12, 13)" labelFor="DTP6"/>
+		<DateTimePicker
+				id="DTP6"
+				placeholder="Enter Date ..."
+				change="handleChange"/>
 		<Label text="DateTimePicker with given Value and Formatter" labelFor="DTP2"/>
 		<DateTimePicker
 			id="DTP2"

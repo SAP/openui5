@@ -3,11 +3,30 @@
 /* Belize High Contrast White theme   */
 /* ================================== */
 
-.sapFDynamicPageActualFooterControl.sapMTB {
-	box-shadow: @sapUiShadowLevel2;
-	border-bottom: 0 none;
-}
+.sapFDynamicPage {
+	/* DynamicPageTitle and Toggle Header Visual Indicator hover state */
+	&.sapFDynamicPageTitleClickEnabled:not(.sapFDynamicPageHeaderPinned) {
+		.sapFDynamicPageTitle:hover,
+		&.sapFDynamicPageTitleForceHovered .sapFDynamicPageTitle {
+			background: @sapUiHighlight;
+			box-shadow: @sapUiShadowHeader;
+		}
+		&.sapFDynamicPageTitleForceHovered {
+			.sapFDynamicPageToggleHeaderIndicator {
+				.sapMBtnInner {
+					background-color: @sapUiHighlight;
+				}
+			}
+		}
+	}
 
-.sapFDynamicPageFooter {
-	opacity: 1;
+	// Footer
+	.sapFDynamicPageFooter {
+		opacity: 1;
+
+		.sapFDynamicPageActualFooterControl.sapMTB {
+			box-shadow: @sapUiShadowLevel2;
+			border-bottom: 0 none;
+		}
+	}
 }

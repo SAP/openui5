@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.layout.sample.HorizontalLayout.Component", {
 
 		metadata : {
-			rootView : "sap.ui.layout.sample.HorizontalLayout.V",
+			rootView : {
+				"viewName": "sap.ui.layout.sample.HorizontalLayout.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

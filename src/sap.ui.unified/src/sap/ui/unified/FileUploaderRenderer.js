@@ -3,8 +3,8 @@
  */
 
 // Provides default renderer for control sap.ui.unified.FileUploader
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/unified/library'],
+	function(jQuery, library) {
 	"use strict";
 
 
@@ -29,7 +29,11 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.writeControlData(oFileUploader);
 		oRm.addClass("sapUiFup");
 
-		var sClass = sap.ui.unified.FileUploaderHelper.addFormClass();
+		if (oFileUploader.getButtonOnly()) {
+			oRm.addClass("sapUiFupButtonOnly");
+		}
+
+		var sClass = library.FileUploaderHelper.addFormClass();
 		if (sClass) {
 			oRm.addClass(sClass);
 		}

@@ -731,7 +731,9 @@
 			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
 			checkHoveredItem("item8", oSubMenu, assert);
-			if (sap.ui.Device.system.desktop) {
+			// if the device supports touches the programmatic focus is not working correctly
+			// so use touch events
+			if (!sap.ui.Device.support.touch) {
 				jQuery("#input").get(0).focus();
 			} else {
 				qutils.triggerEvent("touchstart", "input", {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
@@ -743,7 +745,9 @@
 			qutils.triggerKeyboardEvent("menu2", "ARROW_DOWN");
 			qutils.triggerKeyboardEvent("menu2", "ARROW_RIGHT");
 			checkHoveredItem("item8", oSubMenu, assert);
-			if (sap.ui.Device.system.desktop) {
+			// if the device supports touches the programmatic focus is not working correctly
+			// so use touch events
+			if (!sap.ui.Device.support.touch) {
 				oButton.focus();
 			} else {
 				qutils.triggerEvent("touchstart", oButton.getId(), {touches:[{pageX:0, pageY:0}], targetTouches: [{pageX:0, pageY:0}], changedTouches: [{pageX:0, pageY:0}]});
@@ -853,6 +857,31 @@
 			}, 100);
 		});
 
+		QUnit.test("Keyboard - keyup sets correctly focus depending on the focused item", function(assert) {
+			var done = assert.async();
+			lastSelectedItemId = null;
+			var sTfId = "item12-tf";
+			setTimeout(function(){
+				openMenu(oSpecialMenu);
+				checkHoveredItem("item11", oSpecialMenu, assert); // we are on item11
+				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN"); // press arrow down to go on item12 which contains a text field
+				qutils.triggerKeyEvent("keyup", sTfId, "ARROW_DOWN"); //key up happens on the text field
+				checkHoveredItem("item12", oSpecialMenu, assert); // item 12 is hovered
+				assert.ok(jQuery.sap.byId(sTfId).is(":focus"), 'Text field should be focused'); // text field inside item12 is focused
+
+				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
+					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -1");
+				}
+
+				qutils.triggerKeyboardEvent(sTfId, "ARROW_UP"); // arrow up on the text field inside item12
+				qutils.triggerKeyEvent("keyup", "item11", "ARROW_UP"); // key up happens on item 11
+				assert.ok(jQuery.sap.byId('item11').is(":focus"), 'Item11 should be focused'); // item11 should be focused (to have a focus outline)
+				checkHoveredItem("item11", oSpecialMenu, assert); // item11 should be hovered
+
+				done();
+			}, 100);
+		});
+
 		QUnit.test("Keyboard - Home, End, Enter", function(assert) {
 			var done = assert.async();
 			lastSelectedItemId = null;
@@ -938,6 +967,22 @@
 			assert.ok(!sap.ui.getCore().byId(sId), "No Menu registered in the Core anymore");
 			assert.ok(!sap.ui.getCore().byId(sSubId), "No Submenu registered in the Core anymore");
 			assert.ok(!oRootMenu.oPopup && bHasPopup, "Internal Popup cleaned up");
+		});
+
+
+		QUnit.test("Destroy detaches resize handler", function(assert) {
+			// Prepare
+			var oMenu = new sap.ui.unified.Menu(),
+				bSpyDestroyHandler;
+
+			oMenu.open();
+			bSpyDestroyHandler = this.spy(sap.ui.Device.resize, "detachHandler");
+
+			// Act
+			oMenu.destroy();
+
+			// Assert
+			assert.equal(bSpyDestroyHandler.callCount, 1, " resize handler should be called");
 		});
 
 		QUnit.test("setRootMenuTopStyle", function(assert) {
@@ -1027,6 +1072,19 @@
 
 			oMenu.destroy();
 			jQuery.sap.byId("menuDockRef").toggleClass("sapUiSizeCozy", false);
+		});
+
+		QUnit.test("openAsContextMenu functionality", function(assert) {
+			var oMenu = new sap.ui.unified.Menu({tooltip: "a tooltip"});
+			var eDock = sap.ui.core.Popup.Dock;
+			var fnEventHandler = function (oEvent) {
+				oMenu.openAsContextMenu(oEvent, jQuery("#menuDockRef").get(0));
+				assert.ok(oMenu.bOpen, "Menu opened");
+			};
+			jQuery("#menuDockRef").bind("contextmenu", fnEventHandler)
+			jQuery("#menuDockRef").contextmenu();
+			jQuery("#menuDockRef").unbind("contextmenu", fnEventHandler)
+			oMenu.destroy();
 		});
 
 	</script>

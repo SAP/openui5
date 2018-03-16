@@ -3,8 +3,26 @@
  */
 
 // Provides control sap.ui.ux3.ToolPopup.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/Popup', 'sap/ui/core/theming/Parameters', 'sap/ui/core/RenderManager', './library'],
-    function (jQuery, Control, IconPool, Popup, Parameters, RenderManager, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/IconPool',
+    'sap/ui/core/Popup',
+    'sap/ui/core/theming/Parameters',
+    'sap/ui/core/RenderManager',
+    './library',
+    "./ToolPopupRenderer"
+],
+    function(
+	    jQuery,
+		Control,
+		IconPool,
+		Popup,
+		Parameters,
+		RenderManager,
+		library,
+		ToolPopupRenderer
+	) {
         "use strict";
 
 
@@ -1387,7 +1405,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
         /**
          * Overriden setter for the max width internally.
          *
-         * @param sMaxWidth
+         * @param {sap.ui.core.CSSSize} sMaxWidth
+         * @returns {sap.ui.ux3.ToolPopup}
          */
         ToolPopup.prototype.setMaxWidth = function (sMaxWidth) {
             var pattern = /[0-9]+px/;

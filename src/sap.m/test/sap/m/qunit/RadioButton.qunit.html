@@ -47,7 +47,7 @@
 			});
 			oRadioButton2.placeAt("qunit-fixture");
 
-			sap.ui.getCore().applyChanges()
+			sap.ui.getCore().applyChanges();
 
 			// assertions
 			assert.ok(oRadioButton1.$().hasClass('sapMRb'), true);
@@ -100,6 +100,24 @@
 			oDisabledRadioButton.destroy();
 			oEnabledRadioButton.destroy();
 
+		});
+
+		QUnit.test("Radio Button with empty string value", function(assert) {
+
+			// arrange
+			var oRadioButton = new sap.m.RadioButton({
+				text: "Text"
+			});
+			oRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oRadioButton.setText("");
+
+			// assertions
+			assert.equal(oRadioButton.$().hasClass('sapMRbHasLabel'), false, 'The button should not have class sapMRbDis');
+
+			// cleanup
+			oRadioButton.destroy();
 		});
 
 
@@ -503,7 +521,7 @@
 			sap.ui.getCore().applyChanges();
 
 			// act
-			var oFocusDomRef = oRadioButton.applyFocusInfo();
+			oRadioButton.applyFocusInfo();
 
 			// assertions
 			assert.ok(oRadioButton.$().is(":focus"), "The focus was set on the button wrapper");
@@ -515,7 +533,7 @@
 		QUnit.test("Should handle a tap event", function(assert) {
 
 			// arrange
-			var oSelectSpy = this.spy()
+			var oSelectSpy = this.spy();
 			var oRadioButton = new sap.m.RadioButton();
 			oRadioButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -658,7 +676,7 @@
 				oRadioButton1.destroy();
 
 			});
-		};
+		}
 
 		checkKeyboardEventhandling("Firing ENTER event", {
 			keyCode : jQuery.sap.KeyCodes.ENTER
@@ -668,7 +686,34 @@
 			keyCode : jQuery.sap.KeyCodes.SPACE
 		});
 
-		QUnit.module("Event testing");
+		QUnit.module("Event testing", {
+			testArrowNavigation: function (oRadioButtonSettings, iKeyCode, oAssert) {
+				var oRadioButton1 = new sap.m.RadioButton(oRadioButtonSettings),
+					oRadioButton2 = new sap.m.RadioButton(oRadioButtonSettings),
+					oFireSelectSpy = this.spy(oRadioButton2, "fireSelect");
+
+				oRadioButton1.placeAt("qunit-fixture");
+				oRadioButton2.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				oRadioButton1.applyFocusInfo();
+				sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), iKeyCode);
+				this.clock.tick(100);
+
+				oAssert.strictEqual(oFireSelectSpy.callCount, 0, "Button 2 should not be selected");
+
+				oRadioButton1.destroy();
+				oRadioButton2.destroy();
+			}
+		});
+
+		QUnit.test("Event should not be fired when buttons are not editable", function(assert) {
+			this.testArrowNavigation({ editable: false }, jQuery.sap.KeyCodes.ARROW_RIGHT, assert);
+		});
+
+		QUnit.test("Event should not be fired when buttons are not enabled", function(assert) {
+			this.testArrowNavigation({ editable: false }, jQuery.sap.KeyCodes.ARROW_RIGHT, assert);
+		});
 
 		QUnit.test("Radio Button Select Event", function(assert) {
 
@@ -696,21 +741,28 @@
 			oRadioButton2.destroy();
 		});
 
-		QUnit.test("Keybaord navigation with forward arrows", function(assert) {
-			var oRadioButton1 = new sap.m.RadioButton(),
-			 oRadioButton2 = new sap.m.RadioButton({groupName: "testGroup"}),
-			 oRadioButton3 = new sap.m.RadioButton();
+		QUnit.test("Keybaord navigation with forward arrows", function (assert) {
+			var oRadioButton1 = new sap.m.RadioButton({selected: true}),
+				oRadioButton2 = new sap.m.RadioButton({groupName: "testGroup"}),
+				oRadioButton3 = new sap.m.RadioButton(),
+				oFireSelectSpy1 = this.spy(oRadioButton1, "fireSelect"),
+				oFireSelectSpy2 = this.spy(oRadioButton3, "fireSelect");
 
 			oRadioButton1.placeAt("qunit-fixture");
 			oRadioButton2.placeAt("qunit-fixture");
 			oRadioButton3.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
-
 			oRadioButton1.applyFocusInfo();
 			sap.ui.test.qunit.triggerKeydown(oRadioButton1.getDomRef(), jQuery.sap.KeyCodes.ARROW_RIGHT);
+			this.clock.tick(100);
 
 			assert.strictEqual(oRadioButton3.$().is(":focus"), true, "3rd RadioButton should be focussed");
+
+			assert.ok(oFireSelectSpy1.calledBefore(oFireSelectSpy2), "Unselect is called before select");
+			assert.strictEqual(oFireSelectSpy2.callCount, 1, "Button 3 fires selected=true event");
+			assert.strictEqual(oFireSelectSpy1.callCount, 1, "Button 1 fires selected=false (unselect) event");
+
 
 			oRadioButton1.destroy();
 			oRadioButton2.destroy();
@@ -757,6 +809,257 @@
 
 			oLabel.destroy();
 			oRadioButton.destroy();
+		});
+
+		QUnit.test("Aria-posinset and aria-setsize in default group", function(assert) {
+
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton(),
+				oRadioButton2 = new sap.m.RadioButton(),
+				$oRadio1, $oRadio2;
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			$oRadio1 = oRadioButton1.$();
+			$oRadio2 = oRadioButton2.$();
+
+			// assertions
+			assert.equal($oRadio1.attr("aria-posinset"), 1, "The aria-posinset property should be 1");
+			assert.equal($oRadio2.attr("aria-posinset"), 2, "The aria-posinset property should be 2");
+			assert.equal($oRadio1.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+			assert.equal($oRadio2.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+
+		});
+
+		QUnit.test("Aria-posinset and aria-setsize", function(assert) {
+
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+					groupName:"Group"
+				}),
+				oRadioButton2 = new sap.m.RadioButton({
+					groupName:"Group"
+				}),
+				$oRadio1, $oRadio2;
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			$oRadio1 = oRadioButton1.$();
+			$oRadio2 = oRadioButton2.$();
+
+			// assertions
+			assert.equal($oRadio1.attr("aria-posinset"), 1, "The aria-posinset property should be 1");
+			assert.equal($oRadio2.attr("aria-posinset"), 2, "The aria-posinset property should be 2");
+			assert.equal($oRadio1.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+			assert.equal($oRadio2.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+
+		});
+
+		QUnit.test("Aria-posinset and aria-setsize with invisible radio button in the group", function(assert) {
+
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+					groupName:"Group"
+				}),
+				oRadioButton2 = new sap.m.RadioButton({
+					groupName:"Group"
+				}),
+				oRadioButton3 = new sap.m.RadioButton({
+					groupName:"Group"
+				}),
+				$oRadio1, $oRadio3;
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton3.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			$oRadio1 = oRadioButton1.$();
+			$oRadio3 = oRadioButton3.$();
+
+			// assertions
+			assert.equal($oRadio1.attr("aria-posinset"), 1, "The aria-posinset property should be 1");
+			assert.equal($oRadio3.attr("aria-posinset"), 2, "The aria-posinset property should be 2");
+			assert.equal($oRadio1.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+			assert.equal($oRadio3.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+			oRadioButton3.destroy();
+
+		});
+
+		QUnit.test("Aria-posinset and aria-setsize with radio button added to the content", function(assert) {
+
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+						groupName:"Group1"
+					}),
+					oRadioButton2 = new sap.m.RadioButton({
+						groupName:"Group1"
+					}),
+					oRadioButton3 = new sap.m.RadioButton({
+						groupName:"Group1"
+					}),
+					$oRadio1, $oRadio2, $oRadio3;
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton3.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oRadioButton2.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			$oRadio1 = oRadioButton1.$();
+			$oRadio2 = oRadioButton2.$();
+			$oRadio3 = oRadioButton3.$();
+
+			// assertions
+			assert.equal($oRadio1.attr("aria-posinset"), 1, "The aria-posinset property should be 1");
+			assert.equal($oRadio2.attr("aria-posinset"), 2, "The aria-posinset property should be 2");
+			assert.equal($oRadio3.attr("aria-posinset"), 3, "The aria-posinset property should be 2");
+			assert.equal($oRadio1.attr("aria-setsize"), 3, "The aria-setsize property should be 3");
+			assert.equal($oRadio2.attr("aria-setsize"), 3, "The aria-setsize property should be 3");
+			assert.equal($oRadio3.attr("aria-setsize"), 3, "The aria-setsize property should be 3");
+
+
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+			oRadioButton3.destroy();
+
+		});
+
+		QUnit.test("Aria-posinset and aria-setsize with invisible radio button moved from one group to another", function(assert) {
+
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+					groupName:"Group1"
+				}),
+				oRadioButton2 = new sap.m.RadioButton({
+					groupName:"Group1"
+				}),
+				oRadioButton3 = new sap.m.RadioButton({
+					groupName:"Group1"
+				}),
+				oRadioButton4 = new sap.m.RadioButton({
+					groupName:"Group2"
+				}),
+				oRadioButton5 = new sap.m.RadioButton({
+					groupName:"Group2"
+				}),
+				oRadioButton6 = new sap.m.RadioButton({
+					groupName:"Group2"
+				}),
+				$oRadio1, $oRadio3, $oRadio4, $oRadio6;
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton3.placeAt("qunit-fixture");
+			oRadioButton4.placeAt("qunit-fixture");
+			oRadioButton6.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oRadioButton2.setGroupName("Group2");
+
+			$oRadio1 = oRadioButton1.$();
+			$oRadio3 = oRadioButton3.$();
+			$oRadio4 = oRadioButton4.$();
+			$oRadio6 = oRadioButton6.$();
+
+			// assertions
+			assert.equal($oRadio1.attr("aria-posinset"), 1, "The aria-posinset property should be 1");
+			assert.equal($oRadio3.attr("aria-posinset"), 2, "The aria-posinset property should be 2");
+
+			assert.equal($oRadio1.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+			assert.equal($oRadio3.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+
+			assert.equal($oRadio4.attr("aria-posinset"), 1, "The aria-posinset property should be 1");
+			assert.equal($oRadio6.attr("aria-posinset"), 2, "The aria-posinset property should be 2");
+
+			assert.equal($oRadio4.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+			assert.equal($oRadio6.attr("aria-setsize"), 2, "The aria-setsize property should be 2");
+
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+			oRadioButton3.destroy();
+			oRadioButton4.destroy();
+			oRadioButton5.destroy();
+			oRadioButton6.destroy();
+
+		});
+
+		QUnit.test("Aria-posinset and aria-setsize with visible radio button moved from one group to another", function(assert) {
+
+			// arrange
+			var oRadioButton1 = new sap.m.RadioButton({
+					groupName:"Group1"
+				}),
+				oRadioButton2 = new sap.m.RadioButton({
+					groupName:"Group1"
+				}),
+				oRadioButton3 = new sap.m.RadioButton({
+					groupName:"Group1"
+				}),
+				oRadioButton4 = new sap.m.RadioButton({
+					groupName:"Group2"
+				}),
+				oRadioButton5 = new sap.m.RadioButton({
+					groupName:"Group2"
+				}),
+				oRadioButton6 = new sap.m.RadioButton({
+					groupName:"Group2"
+				}),
+				$oRadio1, $oRadio3, $oRadio4, $oRadio6;
+
+
+			oRadioButton1.placeAt("qunit-fixture");
+			oRadioButton3.placeAt("qunit-fixture");
+			oRadioButton4.placeAt("qunit-fixture");
+			oRadioButton6.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oRadioButton3.setGroupName("Group2");
+			sap.ui.getCore().applyChanges();
+
+			$oRadio1 = oRadioButton1.$();
+			$oRadio3 = oRadioButton3.$();
+			$oRadio4 = oRadioButton4.$();
+			$oRadio6 = oRadioButton6.$();
+
+			// assertions
+			assert.equal($oRadio1.attr("aria-posinset"), 1, "The aria-posinset property should be 1");
+			assert.equal($oRadio1.attr("aria-setsize"), 1, "The aria-setsize property should be 1");
+
+			assert.equal($oRadio4.attr("aria-posinset"), 1, "The aria-posinset property should be 1");
+			assert.equal($oRadio6.attr("aria-posinset"), 2, "The aria-posinset property should be 2");
+			assert.equal($oRadio3.attr("aria-posinset"), 3, "The aria-posinset property should be 3");
+
+			assert.equal($oRadio4.attr("aria-setsize"), 3, "The aria-setsize property should be 3");
+			assert.equal($oRadio6.attr("aria-setsize"), 3, "The aria-setsize property should be 3");
+			assert.equal($oRadio3.attr("aria-setsize"), 3, "The aria-setsize property should be 3");
+
+
+			// cleanup
+			oRadioButton1.destroy();
+			oRadioButton2.destroy();
+			oRadioButton3.destroy();
+			oRadioButton4.destroy();
+			oRadioButton5.destroy();
+			oRadioButton6.destroy();
+
 		});
 
 		</script>

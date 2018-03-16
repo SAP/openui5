@@ -1,0 +1,48 @@
+<mvc:View
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	controllerName="sap.m.sample.MessageStripWithEnableFormattedText.C">
+	<l:VerticalLayout
+		class="sapUiContentPadding"
+		width="100%">
+		<l:content>
+
+			<MessageStrip
+				text="{/default}"
+				enableFormattedText="true"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="{/error}"
+				type="Error"
+				enableFormattedText="true"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="{/warning}"
+				type="Warning"
+				enableFormattedText="true"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+			<MessageStrip
+				text="{/success}"
+				type="Success"
+				enableFormattedText="true"
+				showIcon="true"
+				showCloseButton="true"
+				class="sapUiMediumMarginBottom">
+			</MessageStrip>
+
+		</l:content>
+	</l:VerticalLayout>
+</mvc:View>

@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.SegmentedButton.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, Control, ItemNavigation) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    'sap/ui/core/delegate/ItemNavigation',
+    "./SegmentedButtonRenderer"
+],
+	function(jQuery, Control, ItemNavigation, SegmentedButtonRenderer) {
 	"use strict";
 
 
@@ -23,7 +28,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.SegmentedButton</code> control.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.SegmentedButton}
 	 * @alias sap.ui.commons.SegmentedButton
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -110,6 +115,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 	/**
 	 * @private
+	 * @param {jQuery.Event} oEvent The fired event
 	 */
 	SegmentedButton.prototype._buttonSelected = function(oEvent) {
 		var oOldButtonSelection = sap.ui.getCore().byId(this.getSelectedButton()),
@@ -122,6 +128,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/delegate
 	};
 	/**
 	 * @private
+	 * @param {boolean} bAddDelegate Whether a delegate is attached
 	 */
 	SegmentedButton.prototype._setItemNavigation = function(bAddDelegate) {
 		var oButton,

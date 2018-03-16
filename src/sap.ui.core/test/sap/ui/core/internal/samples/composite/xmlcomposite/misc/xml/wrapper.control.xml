@@ -1,0 +1,7 @@
+<core:FragmentDefinition 
+	xmlns="sap.m" 
+	xmlns:core="sap.ui.core">
+	<Panel height="100%">
+		<Button text="x"/>
+	</Panel>
+</core:FragmentDefinition>

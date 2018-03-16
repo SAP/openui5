@@ -2,26 +2,26 @@
  * ${copyright}
  */
 sap.ui.require([
-	"sap/ui/core/sample/common/Helper",
+	"sap/m/MessageBox",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/ODataUtils",
-	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/BindingPath",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties"
 ],
-function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterText, Press,
-	BindingPath, Interactable, Properties) {
+function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press, Interactable,
+		Properties) {
 	"use strict";
-	var ID_COLUMN_INDEX = 0,
-		NOTE_COLUMN_INDEX = 5,
-		SOITEM_NOTE_COLUMN_INDEX = 10,
-		SOITEM_QUANTITY_COLUMN_INDEX = 7,
+	var COMPANY_NAME_COLUMN_INDEX = 1,
+		GROSS_AMOUNT_COLUMN_INDEX = 2,
+		ID_COLUMN_INDEX = 0,
 		ITEM_COLUMN_INDEX = 1,
+		NOTE_COLUMN_INDEX = 4,
+		SOITEM_NOTE_COLUMN_INDEX = 11,
+		SOITEM_QUANTITY_COLUMN_INDEX = 7,
 		sLastNewNoteValue,
 		sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
@@ -51,6 +51,26 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 				aControls[0].getButtons()[bConfirm ? 0 : 1].$().tap();
 				Opa5.assert.ok(true, sLog || (bConfirm ? 'Confirm ' : 'Cancel ') + sTitle);
 			}
+		});
+	}
+
+	function selectSalesOrder(oOpa, iIndex, bRememberGrossAmount) {
+		return oOpa.waitFor({
+			controlType : "sap.m.Table",
+			id : "SalesOrders",
+			success : function (oTable) {
+				var oItem = oTable.getItems()[iIndex],
+					oControl = oItem.getCells()[ID_COLUMN_INDEX];
+				oControl.$().tap();
+				Opa5.assert.ok(true, "Sales Order selected: " +
+					oControl.getText());
+				if (bRememberGrossAmount) {
+					sap.ui.test.Opa.getContext().GrossAmount =
+						oItem.getCells()[GROSS_AMOUNT_COLUMN_INDEX]
+							.getBinding("text").getValue();
+				}
+			},
+			viewName : sViewName
 		});
 	}
 
@@ -141,24 +161,6 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 			}
 		},
 		/*
-		 * Actions and assertions for the "Error" information dialog
-		 */
-		onTheErrorInfo : {
-			actions : {
-				confirm : function () {
-					return this.waitFor({
-						controlType : "sap.m.Dialog",
-						matchers : new Properties({icon : "sap-icon://message-error"}),
-						success : function (aControls) {
-							aControls[0].getButtons()[0].$().tap();
-							Opa5.assert.ok(true, "Confirm 'Error'");
-						}
-					});
-				}
-			},
-			assertions : {}
-		},
-		/*
 		 * Actions and assertions for the main view of the Sales Orders application
 		 */
 		onTheMainPage : {
@@ -173,6 +175,17 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 							oRow.getCells()[NOTE_COLUMN_INDEX].setValue(sNewNoteValue);
 							Opa5.assert.ok(true,
 								"Note of row " + iRow + " set to " + sNewNoteValue);
+						},
+						viewName : sViewName
+					});
+				},
+				changeNoteInDetails : function (sValue) {
+					return this.waitFor({
+						actions : new EnterText({ clearTextFirst : true, text : sValue }),
+						controlType : "sap.m.Input",
+						id : "Note",
+						success : function (oInput) {
+							Opa5.assert.ok(true, "Details Note text set to " + sValue);
 						},
 						viewName : sViewName
 					});
@@ -200,7 +213,35 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 
 							oRow.getCells()[SOITEM_QUANTITY_COLUMN_INDEX].setValue(sNewQuantity);
 							Opa5.assert.ok(true,
-								"SO Item Note of row " + iRow + " set to " + sNewQuantity);
+								"SO Item Quantity of row " + iRow + " set to " + sNewQuantity);
+						},
+						viewName : sViewName
+					});
+				},
+				createInvalidSalesOrderViaAPI : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oTable) {
+							var oNewContext = oTable.getBinding("items").create({
+								"SalesOrderID" : "",
+								// properties
+								"BuyerID" : "0100000000",
+								"ChangedAt" : "1970-01-01T00:00:00Z",
+								"CreatedAt" : "1970-01-01T00:00:00Z",
+								"CurrencyCode" : "EUR",
+								"GrossAmount" : "0.00",
+								"LifecycleStatus" : "N",
+								"LifecycleStatusDesc" : "New",
+								"Note" : "RAISE_ERROR",
+								"NoteLanguage" : "E",
+								// navigation property
+								"SO_2_BP" : null
+							});
+						oNewContext.created().then(function() {
+							MessageBox.success("SalesOrder created: " +
+								oNewContext.getProperty("SalesOrderID"));
+							});
 						},
 						viewName : sViewName
 					});
@@ -221,6 +262,25 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						viewName : sViewName
 					});
 				},
+				deleteSelectedSalesOrderViaGroupId : function (sGroupId) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							var oSalesOrderContext = oSalesOrderTable.getSelectedItem()
+									.getBindingContext(),
+								sOrderID = oSalesOrderContext.getProperty("SalesOrderID", true);
+							oSalesOrderContext["delete"](sGroupId).then(function () {
+									Opa5.assert.ok(true, "Deleted Sales Order: " + sOrderID);
+								}, function (oError) {
+									Opa5.assert.ok(false, "Error deleting Sales Order: " + sOrderID
+										+ " Error: " + oError);
+								}
+							);
+						},
+						viewName : sViewName
+					});
+				},
 				doubleRefresh : function () {
 					return this.waitFor({
 						controlType : "sap.m.Table",
@@ -233,12 +293,37 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 					});
 				},
 				filterGrossAmount : function (sFilterValue) {
+					// no sFilterValue means 'take GrossAmount from OPA context'
+					// but then the constructor of EnterText above has to call delayed
+					// this is why the check is chained here
 					return this.waitFor({
-						actions: new EnterText({clearTextFirst : true, text : sFilterValue}),
 						controlType : "sap.m.SearchField",
 						id : "filterGrossAmount",
-						success : function (oSearchField) {
-							Opa5.assert.ok(true, "Filter by GrossAmount:" + sFilterValue);
+						success : function () {
+							sFilterValue = sFilterValue ||
+								sap.ui.test.Opa.getContext().GrossAmount;
+							return this.waitFor({
+								actions: new EnterText({clearTextFirst: true, text: sFilterValue}),
+								controlType : "sap.m.SearchField",
+								id : "filterGrossAmount",
+								success : function (oSearchField) {
+									Opa5.assert.ok(true, "Filter by GrossAmount:" + sFilterValue);
+								},
+								viewName : sViewName
+							});
+						},
+						viewName : sViewName
+					});
+				},
+				filterGrossAmountViaAPI : function (sFilterValue) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oTable) {
+							oTable.getBinding("items").filter(
+								new Filter("GrossAmount", FilterOperator.GT, sFilterValue));
+							Opa5.assert.ok(true, "Filtered SalesOrders via API by GrossAmount > " +
+								sFilterValue);
 						},
 						viewName : sViewName
 					});
@@ -248,9 +333,19 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						controlType : "sap.m.Table",
 						id : "SalesOrderLineItems",
 						success : function (oSOItemsTable) {
-							var oRow = oSOItemsTable.getItems()[iRow],
-								sProductID = oRow.getCells()[2].getText();
-
+							var sProductID,
+								oRow;
+							if (iRow === undefined) {
+								oSOItemsTable.getBinding("items")
+									.changeParameters({
+										$filter : undefined
+								});
+								Opa5.assert.ok(true,
+									"Reset Filter by ProductID with changeParameters");
+								return;
+							}
+							oRow  = oSOItemsTable.getItems()[iRow];
+							sProductID = oRow.getCells()[2].getText();
 							// store sales order id and item postion for later comparison
 							sap.ui.test.Opa.getContext().sExpectedSalesOrderID =
 								oRow.getCells()[ID_COLUMN_INDEX].getText();
@@ -260,7 +355,7 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 							// filter for SOItem with Product ID from 2nd row
 							oSOItemsTable.getBinding("items")
 								.changeParameters({
-									$filter : "Product/ProductID eq '" + sProductID + "'"
+									$filter : "ProductID eq '" + sProductID + "'"
 								});
 							Opa5.assert.ok(true, "Filter by ProductID with changeParameters:"
 								+ sProductID);
@@ -275,23 +370,27 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						success : function (oSalesOrderItemsTable) {
 							// Note: filter cannot be triggered via UI; field is disabled
 							oSalesOrderItemsTable.getBinding("items")
-								.filter(new Filter("Product/ProductID", FilterOperator.EQ, sValue));
+								.filter(new Filter("ProductID", FilterOperator.EQ, sValue));
 						},
 						viewName : sViewName
 					});
 				},
 				firstSalesOrderIsVisible : function () {
 					return this.waitFor({
-						controlType : "sap.m.Text",
-						matchers : new BindingPath({path : "/SalesOrderList/0"}),
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						check : function (oSalesOrderTable) {
+							return  oSalesOrderTable.getItems().length > 0;
+						},
 						success : function (oControl) {
 							var oCore = sap.ui.getCore(),
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
 									.getItems()[0].getCells()[0].getText();
 							sap.ui.test.Opa.getContext().firstSalesOrderId = sSalesOrderId;
-							Opa5.assert.ok(true, "First SalesOrderID " + sSalesOrderId);
+							Opa5.assert.ok(true, "First SalesOrderID: " + sSalesOrderId);
 
-						}
+						},
+						viewName : sViewName
 					});
 				},
 				firstSalesOrderIsAtPos0 : function () {
@@ -303,7 +402,7 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 								=== sap.ui.test.Opa.getContext().firstSalesOrderId;
 						},
 						success : function (oSalesOrderTable) {
-							Opa5.assert.ok(true, "First SalesOrderID " +
+							Opa5.assert.ok(true, "First SalesOrderID: " +
 								oSalesOrderTable.getItems()[0].getCells()[0].getText());
 						},
 						viewName : sViewName
@@ -327,17 +426,6 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						id : "cancelSalesOrderListChanges",
 						success : function (oCancelSalesOrderListChangesButton) {
 							Opa5.assert.ok(true, "Cancel Sales Order List Changes button pressed");
-						},
-						viewName : sViewName
-					});
-				},
-				pressConfirmSalesOrdersButton : function () {
-					return this.waitFor({
-						actions : new Press(),
-						controlType : "sap.m.Button",
-						id : "confirmSalesOrder",
-						success : function (oCreateSalesOrderButton) {
-							Opa5.assert.ok(true, "Confirm Sales Order button pressed");
 						},
 						viewName : sViewName
 					});
@@ -369,7 +457,7 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "refreshAll",
-						success : function (aControls) {
+						success : function () {
 							Opa5.assert.ok(true, "Refresh All pressed");
 						},
 						viewName : sViewName
@@ -380,17 +468,33 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "refreshSalesOrders",
-						success : function (aControls) {
+						success : function () {
 							Opa5.assert.ok(true, "Refresh Sales Orders pressed");
 						},
 						viewName : sViewName
 					});
 				},
+
+				pressRefreshSelectedSalesOrdersButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "refreshSelectedSalesOrder",
+						success : function () {
+							Opa5.assert.ok(true, "Refresh selected Sales Order pressed");
+						},
+						viewName : sViewName
+					});
+				},
+
 				pressSaveSalesOrderButton : function () {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "saveSalesOrder",
+						success : function () {
+							Opa5.assert.ok(true, "Save Sales Order pressed");
+						},
 						viewName : sViewName
 					});
 				},
@@ -399,6 +503,9 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						actions : new Press(),
 						controlType : "sap.m.Button",
 						id : "saveSalesOrders",
+						success : function () {
+							Opa5.assert.ok(true, "Save Sales Orders pressed");
+						},
 						viewName : sViewName
 					});
 				},
@@ -414,8 +521,8 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Input",
-						matchers : new BindingPath({path : "/SalesOrderList/0/SO_2_SOITEM/0"}),
-						id : /-field/,
+						// "0" is the index, "field" is the prefix for the control within ValueHelp
+						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on Product.Category pressed");
 							return this.waitFor({
@@ -433,8 +540,8 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.ComboBox",
-						matchers : new BindingPath({path : "/SalesOrderList/0/SO_2_SOITEM/0"}),
-						id : /-field/,
+						// "0" is the index, "field" is the prefix for the control within ValueHelp
+						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on Product.TypeCode pressed");
 						},
@@ -444,30 +551,37 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 				rememberCreatedSalesOrder : function () {
 					return this.waitFor({
 						controlType : "sap.m.Text",
-						matchers : new BindingPath({path : "/SalesOrderList/0"}),
-						success : function (oControl) {
+						success : function () {
 							var oCore = sap.ui.getCore(),
 								sSalesOrderId = oCore.byId(sViewName).byId("SalesOrders")
-									.getItems()[0].getCells()[0].getText();
+									.getItems()[0].getCells()[ID_COLUMN_INDEX].getText();
 							if (!sap.ui.test.Opa.getContext().aOrderIds) {
 								sap.ui.test.Opa.getContext().aOrderIds = [];
 							}
-							sap.ui.test.Opa.getContext().aOrderIds.push(sSalesOrderId);
+							if (sap.ui.test.Opa.getContext().aOrderIds.indexOf(sSalesOrderId) < 0) {
+								sap.ui.test.Opa.getContext().aOrderIds.push(sSalesOrderId);
+							}
 
 							Opa5.assert.ok(true, "SalesOrderID remembered:" + sSalesOrderId);
 						}
 					});
 				},
-				selectFirstSalesOrder : function () {
+				resetSalesOrderListChanges : function () {
 					return this.waitFor({
-						controlType : "sap.m.Text",
-						id : /--SalesOrders_ID-/,
-						matchers : new BindingPath({path : "/SalesOrderList/0"}),
-						success : function (aControls) {
-							aControls[0].$().tap();
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oTable) {
+							oTable.getBinding("items").resetChanges();
+							Opa5.assert.ok(true, "SalesOrders reset by API");
 						},
 						viewName : sViewName
 					});
+				},
+				selectFirstSalesOrder : function ( bRememberGrossAmount) {
+					return selectSalesOrder(this, 0, bRememberGrossAmount);
+				},
+				selectSalesOrder : function (iIndex) {
+					return selectSalesOrder(this, iIndex);
 				},
 				selectSalesOrderItemWithPosition : function (sPosition) {
 					return this.waitFor({
@@ -501,6 +615,17 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						viewName : sViewName
 					});
 				},
+				sortByGrossAmountViaController : function () {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function () {
+							sap.ui.getCore().byId(sViewName).oController.onSortByGrossAmount();
+							Opa5.assert.ok(true, "controller.onSortByGrossAmount() called" );
+						},
+						viewName : sViewName
+					});
+				},
 				sortBySalesOrderID  : function () {
 					return this.waitFor({
 						actions : new Press(),
@@ -509,16 +634,13 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						viewName : sViewName
 					});
 				},
-				// Uses #changeParameters() to delete the 'Note' entry of the $select query option,
-				// in order to achieve that the edit text note is not shown anymore
-				unselectSODetailsNoteWithChangeParameters : function () {
+				sortBySalesOrderIDviaController : function () {
 					return this.waitFor({
-						controlType : "sap.m.VBox",
-						id : "ObjectPage",
-						success : function (oSODetails) {
-							oSODetails.getBindingContext().getBinding().changeParameters({
-								$select : 'ChangedAt,CreatedAt,LifecycleStatusDesc,SalesOrderID'
-							});
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function () {
+							sap.ui.getCore().byId(sViewName).oController.onSortBySalesOrderID();
+							Opa5.assert.ok(true, "controller.onSortBySalesOrderID() called" );
 						},
 						viewName : sViewName
 					});
@@ -557,7 +679,8 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 
 							Opa5.assert.strictEqual(
 								oItem.getTitle().slice(0, sExpectedContactName.length),
-								sExpectedContactName, "Contact Name in row " + iRow);
+								sExpectedContactName, "Contact Name '" + sExpectedContactName
+								+ "' in row " + iRow);
 						},
 						viewName : sViewName
 					});
@@ -571,7 +694,7 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 
 							Opa5.assert.notStrictEqual(oRow.getCells()[ID_COLUMN_INDEX].getText(),
 								sExpectedID,
-								"ID of row " + iRow + " is not \"" + sExpectedID + "\"");
+								"ID of row " + iRow + " is not: " + sExpectedID);
 						},
 						viewName : sViewName
 					});
@@ -587,7 +710,7 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						viewName : sViewName
 					});
 				},
-				checkFirstGrossAmountGreater : function (sAmount) {
+				checkFirstGrossAmountGreater : function (sExpectedAmount) {
 					return this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrders",
@@ -597,7 +720,9 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 							if (aTableItems.length > 0) {
 								sAmount = aTableItems[0].getBindingContext()
 									.getProperty("GrossAmount");
-								Opa5.assert.ok(ODataUtils.compare(sAmount, "1000", true) > 0);
+								Opa5.assert.ok(
+									ODataUtils.compare(sAmount, sExpectedAmount, true) > 0,
+									"checkFirstGrossAmountGreater('" + sExpectedAmount + "')");
 							}
 						},
 						viewName : sViewName
@@ -625,68 +750,12 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 									Opa5.assert.strictEqual(
 										oRow.getCells()[ID_COLUMN_INDEX].getText(),
 										sExpectedID,
-										"ID of row " + iRow + " as expected \""
-											+ sExpectedID + "\"");
+										"ID of row " + iRow + " as expected: " + sExpectedID);
 								},
 								viewName : sViewName
 							});
 						},
 						viewName : sViewName
-					});
-				},
-				checkLog : function (aExpected) {
-					return this.waitFor({
-						success : function (oControl) {
-							var aLogEntries = jQuery.sap.log.getLogEntries(),
-								iStartIndex = sap.ui.test.Opa.getContext().iNextLogIndex || 0;
-
-							function isExpected(oLog) {
-								if (!aExpected) {
-									return false;
-								}
-								return aExpected.some(function (oExpected, i) {
-									if (oLog.component === oExpected.component &&
-											oLog.level === oExpected.level &&
-											oLog.message.indexOf(oExpected.message) >= 0 &&
-											(!oExpected.details ||
-												oLog.details.indexOf(oExpected.details) >= 0 )) {
-										aExpected.splice(i, 1);
-										return true;
-									}
-								});
-							}
-
-							sap.ui.test.Opa.getContext().iNextLogIndex = aLogEntries.length;
-							aLogEntries.splice(iStartIndex).forEach(function (oLog) {
-								var sComponent = oLog.component || "";
-
-								if (Helper.isRelevantLog(oLog)) {
-									if (isExpected(oLog)) {
-										Opa5.assert.ok(true,
-											"Expected Warning or error found: " + sComponent
-											+ " Level: " + oLog.level
-											+ " Message: " + oLog.message
-											+ (oLog.details ? " Details: " + oLog.details : ""));
-									} else {
-										Opa5.assert.ok(false,
-											"Unexpected warning or error found: " + sComponent
-											+ " Level: " + oLog.level
-											+ " Message: " + oLog.message
-											+ (oLog.details ? " Details: " + oLog.details : ""));
-									}
-								}
-							});
-							if (aExpected) {
-								aExpected.forEach(function (oExpected) {
-								Opa5.assert.ok(false,
-									"Expected warning or error not logged: " + oExpected.component
-									+ " Level: " + oExpected.level
-									+ " Message: " + oExpected.message
-									+ (oExpected.details ? " Details: " + oExpected.details : ""));
-								});
-							}
-							Opa5.assert.ok(true, "Log checked");
-						}
 					});
 				},
 				checkNewSalesOrderItemProductName : function (sExpectProductName) {
@@ -698,6 +767,19 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 
 							Opa5.assert.strictEqual(oRow.getCells()[3].getText(),
 								sExpectProductName, "Product name of new created SOItem");
+						},
+						viewName : sViewName
+					});
+				},
+				checkCompanyName : function (iRow, sExpectedCompanyName) {
+					return this.waitFor({
+						controlType : "sap.m.Table",
+						id : "SalesOrders",
+						success : function (oSalesOrderTable) {
+							Opa5.assert.strictEqual(oSalesOrderTable.getItems()[iRow].getCells()
+								[COMPANY_NAME_COLUMN_INDEX].getText(), sExpectedCompanyName,
+								"CompanyName of row " + iRow + " as expected "
+									+ sExpectedCompanyName);
 						},
 						viewName : sViewName
 					});
@@ -718,27 +800,18 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						viewName : sViewName
 					});
 				},
-				checkSalesOrderDetailsNote: function () {
-					return this.waitFor({
-						controlType : "sap.m.Input",
-						id : "Note",
-						success : function (oSONote) {
-							Opa5.assert.strictEqual(oSONote.getValue(), "");
-						},
-						viewName : sViewName
-					});
-				},
-				checkSalesOrderIdInDetailsChanged : function () {
+				checkSalesOrderIdInDetails : function (bChanged) {
 					return this.waitFor({
 						controlType : "sap.m.Text",
 						id : "Details_SalesOrderID",
 						success : function (oText) {
-							Opa5.assert.notStrictEqual(
-								oText.getText(),
-								sap.ui.test.Opa.getContext().firstSalesOrderId,
-								"Current sales order ID in 'Sales Order Details'" + oText.getText()
-									+ ", previous " + sap.ui.test.Opa.getContext().firstSalesOrderId
-							);
+							var sCurrentId = oText.getText(),
+								sIdBefore  = sap.ui.test.Opa.getContext().firstSalesOrderId,
+								sMessage = "checkSalesOrderIdInDetails(" + !!bChanged
+									+ ") before: '" + sIdBefore + "' current: '" + sCurrentId;
+							Opa5.assert.ok(
+								bChanged ? sCurrentId !== sIdBefore : sCurrentId === sIdBefore,
+								sMessage);
 						},
 						viewName : sViewName
 					});
@@ -747,9 +820,10 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 					return this.waitFor({
 						controlType : "sap.m.Table",
 						id : "SalesOrderLineItems",
-						success : function (oSalesOrderItemsTable) {
-							var oRow = oSalesOrderItemsTable.getItems()[iRow];
-
+						check : function (oSalesOrderItemsTable) {
+							var oRow = oSalesOrderItemsTable.getItems()[iRow],
+								sItem,
+								sSalesOrderId;
 							// if called without 2nd and 3rd parameter use previously stored values
 							// for comparison
 							sExpectedSalesOrderID = sExpectedSalesOrderID
@@ -757,10 +831,20 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 							sExpectedItem = sExpectedItem
 								|| sap.ui.test.Opa.getContext().sExpectedItem;
 
-							Opa5.assert.strictEqual(oRow.getCells()[ID_COLUMN_INDEX].getText(),
-								sExpectedSalesOrderID, "Sales Order ID in row " + iRow);
-							Opa5.assert.strictEqual(oRow.getCells()[ITEM_COLUMN_INDEX].getText(),
-								sExpectedItem, "Item position in row " + iRow);
+							if (oRow) {
+								sSalesOrderId  = oRow.getCells()[ID_COLUMN_INDEX].getText();
+								sItem = oRow.getCells()[ITEM_COLUMN_INDEX].getText();
+								if (sSalesOrderId ===  sExpectedSalesOrderID &&
+										sItem === sExpectedItem) {
+									Opa5.assert.strictEqual(sSalesOrderId, sExpectedSalesOrderID,
+										"Sales Order ID '" + sExpectedSalesOrderID + "' in row "
+										+ iRow);
+									Opa5.assert.strictEqual(sItem, sExpectedItem,
+										"Item position '" + sExpectedItem + "' in row " + iRow);
+									return true;
+								}
+							}
+							return false;
 						},
 						viewName : sViewName
 					});
@@ -804,7 +888,8 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						id : "PhoneNumber",
 						success : function (oPhoneNumberInput) {
 							Opa5.assert.strictEqual(oPhoneNumberInput.getValue(),
-								sExpectedPhoneNumber);
+								sExpectedPhoneNumber, "checkSupplierPhoneNumber('"
+								+ sExpectedPhoneNumber + "')");
 						},
 						viewName : sViewName
 					});
@@ -818,40 +903,6 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 								iExpectedLength,
 								"Expected length for table with ID " + sTableId + ": "
 									+ iExpectedLength);
-						},
-						viewName : sViewName
-					});
-				},
-				cleanUp : function() {
-					return this.waitFor({
-						controlType : "sap.m.Table",
-						autoWait : false,
-						id : "SalesOrders",
-						success : function (oSalesOrderTable) {
-							var aPromises = [],
-								bCleanUpFinished = false,
-								// use private requestor to prevent additional read requests(ETag)
-								// which need additional mockdata
-								oRequestor = oSalesOrderTable.getModel().oRequestor;
-							sap.ui.test.Opa.getContext().aOrderIds.forEach(function (sOrderId) {
-								aPromises.push(oRequestor.request("DELETE",
-									"SalesOrderList('" + sOrderId + "')", "Cleanup",
-									{"If-Match" : "*"}));
-								Opa5.assert.ok(true, "Cleanup; delete SalesOrder:" + sOrderId);
-							});
-							sap.ui.test.Opa.getContext().aOrderIds = [];
-							oRequestor.submitBatch("Cleanup").then(function () {
-								Opa5.assert.ok(true, "Cleanup finished");
-								bCleanUpFinished = true;
-							}, function (oError) {
-								Opa5.assert.ok(false, "Cleanup failed: " + oError.message);
-								bCleanUpFinished = true;
-							});
-							return this.waitFor({
-								check : function() {
-									return bCleanUpFinished;
-								}
-							});
 						},
 						viewName : sViewName
 					});
@@ -925,24 +976,6 @@ function (Helper, Filter, FilterOperator, ODataUtils, _Requestor, Opa5, EnterTex
 						success : function (aControls) {
 							aControls[0].getButtons()[0].$().tap(); // confirm deletion
 							Opa5.assert.ok(true, "Confirm Delete Sales Line Item Order");
-						}
-					});
-				}
-			},
-			assertions : {}
-		},
-		/*
-		 * Actions and assertions for the "Success" information dialog
-		 */
-		onTheSuccessInfo : {
-			actions : {
-				confirm : function () {
-					return this.waitFor({
-						controlType : "sap.m.Dialog",
-						matchers : new Properties({icon : "sap-icon://message-success"}),
-						success : function (aControls) {
-							aControls[0].getButtons()[0].$().tap();
-							Opa5.assert.ok(true, "Confirm 'Success'");
 						}
 					});
 				}

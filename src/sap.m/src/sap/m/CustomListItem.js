@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.CustomListItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
-	function(jQuery, ListItemBase, library) {
+sap.ui.define(['./ListItemBase', './library', './CustomListItemRenderer'],
+	function(ListItemBase, library, CustomListItemRenderer) {
 	"use strict";
 
 
@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			 */
 			content : {type : "sap.ui.core.Control", multiple : true, singularName : "content", bindable : "bindable"}
 		},
-		designTime: true
+		designtime: "sap/m/designtime/CustomListItem.designtime"
 	}});
 
 	CustomListItem.prototype.getContentAnnouncement = function() {
@@ -51,4 +51,4 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 
 	return CustomListItem;
 
-}, /* bExport= */ true);
+});

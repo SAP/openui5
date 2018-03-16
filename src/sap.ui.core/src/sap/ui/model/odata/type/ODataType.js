@@ -16,12 +16,12 @@
  *
  * <b>Example:</b>
  * <pre>
- *   &lt;Label text="ID"/&gt;
+ *   &lt;Label text="ID"/>
  *   &lt;Input value="{path : 'id', type : 'sap.ui.model.odata.type.String',
- *       constraints : {nullable : false, maxLength : 10}}"/&gt;
- *   &lt;Label text="valid through"/&gt;
+ *       constraints : {nullable : false, maxLength : 10}}"/>
+ *   &lt;Label text="valid through"/>
  *   &lt;Input value="{path : 'validThrough', type : 'sap.ui.model.odata.type.DateTime',
- *       constraints : {displayFormat : 'Date'}}"/&gt;
+ *       constraints : {displayFormat : 'Date'}}"/>
  * </pre>
  *
  * All types support formatting from the representation used in ODataModel ("model format") to
@@ -101,6 +101,7 @@ sap.ui.define(['sap/ui/model/SimpleType'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
+	 * @abstract
 	 * @alias sap.ui.model.odata.type.ODataType
 	 * @param {object} [oFormatOptions]
 	 *   type-specific format options; see subtypes

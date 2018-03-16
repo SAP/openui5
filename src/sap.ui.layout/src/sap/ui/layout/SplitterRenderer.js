@@ -1,9 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/core/library"],
+	function(coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.Orientation
+	var Orientation = coreLibrary.Orientation;
 
 
 	/**
@@ -23,7 +27,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
 	SplitterRenderer.render = function(oRm, oControl){
-		var bHorizontal       = oControl.getOrientation() === sap.ui.core.Orientation.Horizontal;
+		var bHorizontal       = oControl.getOrientation() === Orientation.Horizontal;
 		var sOrientationClass = bHorizontal ? "sapUiLoSplitterH" : "sapUiLoSplitterV";
 		var bAnimate          = sap.ui.getCore().getConfiguration().getAnimation();
 
@@ -51,7 +55,7 @@ sap.ui.define(['jquery.sap.global'],
 
 	SplitterRenderer.renderInitialContent = function(oRm, oControl) {
 		var sId         = oControl.getId();
-		var bHorizontal = oControl.getOrientation() === sap.ui.core.Orientation.Horizontal;
+		var bHorizontal = oControl.getOrientation() === Orientation.Horizontal;
 		var sSizeType   = bHorizontal ? "width" : "height";
 		var sGripIcon = "sap-icon://" + (bHorizontal ? "horizontal" : "vertical") + "-grip";
 

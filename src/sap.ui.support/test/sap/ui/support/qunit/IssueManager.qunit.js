@@ -1,156 +1,261 @@
-/*global QUnit*/
+/* global QUnit */
+sap.ui.require([
+	'sap/ui/support/supportRules/IssueManager',
+	'sap/ui/support/supportRules/RuleSet',
+	'sap/ui/support/supportRules/Storage'],
+	function (IssueManager, RuleSet, Storage, Main) {
+		"use strict";
 
-(function () {
-	"use strict";
-
-	jQuery.sap.require("sap/ui/support/supportRules/IssueManager");
-	jQuery.sap.require("sap/ui/support/supportRules/RuleSet");
-
-	var createValidIssue = function () {
-		return {
-			details: "detailsStr",
-			severity: "Medium",
-			context: {
-				id: "testId"
-			}
+		var createValidIssue = function () {
+			return {
+				details: 'detailsStr',
+				severity: 'Medium',
+				context: {
+					id: 'testId'
+				}
+			};
 		};
-	};
 
-	QUnit.module("IssueManager API test", {
-		setup: function () {
-			this.im = sap.ui.support.supportRules.IssueManager;
-			this.rs = new sap.ui.support.supportRules.RuleSet({name: "testRuleSet"});
-			this.rs.addRule(window.saptest.createValidRule("id1"));
-			this.imFacade = this.im.createIssueManagerFacade(this.rs.getRules().id1);
-		},
-		teardown: function () {
-			sap.ui.support.supportRules.RuleSet.clearAllRuleSets();
-			this.im.clearIssues();
-			this.im.clearHistory();
-		}
-	});
-
-	QUnit.test("IssueManagerFacade addIssue ", function (assert) {
-		assert.ok(this.imFacade.addIssue != undefined
-				&& typeof this.imFacade.addIssue == "function",
-				"public API should not change");
-	});
-
-	QUnit.test("IssueManager addIssue ", function (assert) {
-		var issue = createValidIssue(),
-			that = this;
-
-		delete issue.details;
-
-		assert.throws(function () {
-			that.imFacade.addIssue(issue);
-		}, "should throw errror if no details is provided");
-	});
-
-	QUnit.test("IssueManager addIssue ", function (assert) {
-		var issue = createValidIssue(),
-			that = this;
-
-		delete issue.severity;
-
-		assert.throws(function () {
-			that.imFacade.addIssue(issue);
-		}, "should throw errror if no severity is provided");
-	});
-
-	QUnit.test("IssueManager addIssue ", function (assert) {
-		var issue = createValidIssue(),
-			that = this;
-
-		issue.severity = "nonexistingseverity";
-
-		assert.throws(function () {
-			that.imFacade.addIssue(issue);
-		}, "should throw errror severity is not in the sap.ui.support.Severity enum");
-	});
-
-	QUnit.test("IssueManager addIssue ", function (assert) {
-		var issue = createValidIssue(),
-			that = this;
-
-		delete issue.context;
-
-		assert.throws(function () {
-			that.imFacade.addIssue(issue);
-		}, "should throw errror if no context is provided");
-	});
-
-	QUnit.test("IssueManager addIssue ", function (assert) {
-		var issue = createValidIssue(),
-			that = this;
-
-		delete issue.context.id;
-
-		assert.throws(function () {
-			that.imFacade.addIssue(issue);
-		}, "should throw errror if no context ID is provided");
-	});
-
-	QUnit.test("IssueManager walkIssue ", function (assert) {
-		var issueCount = 10,
-			walkCounter = 0;
-
-		for (var i = 0; i < issueCount; i++) {
-			this.imFacade.addIssue(createValidIssue());
-		}
-
-		this.im.walkIssues(function () {
-			walkCounter++;
+		QUnit.module('IssueManager API test', {
+			setup: function () {
+				this.IssueManager = sap.ui.support.supportRules.IssueManager;
+				this.ruleSet = new sap.ui.support.supportRules.RuleSet({ name: 'testRuleSet' });
+				this.ruleSet.addRule(window.saptest.createValidRule('id1'));
+				this.IssueManagerFacade = this.IssueManager.createIssueManagerFacade(this.ruleSet.getRules().id1);
+				this.issue = createValidIssue();
+			},
+			teardown: function () {
+				sap.ui.support.supportRules.RuleSet.clearAllRuleSets();
+				this.issue = null;
+				this.IssueManager.clearIssues();
+				this.IssueManager.clearHistory();
+			}
 		});
 
-		assert.equal(issueCount, walkCounter, "should walk exactly as many issues as were added");
-	});
-
-	QUnit.test("IssueManager clearIssues ", function (assert) {
-		var issueCount = 10,
-			walkCounter = 0;
-		for (var i = 0; i < issueCount; i++) {
-			this.imFacade.addIssue(createValidIssue());
-		}
-
-		this.im.clearIssues();
-
-		this.im.walkIssues(function () {
-			walkCounter++;
+		QUnit.test('IssueManager createIssueManagerFacade', function (assert) {
+			assert.ok(this.IssueManagerFacade, 'IssueManagerFacade has been created successfully !');
 		});
 
-		assert.equal(walkCounter, 0, "No issues should be visited");
+		QUnit.test('IssueManager addIssue without severity', function (assert) {
+			delete this.issue.severity;
+
+			assert.throws(function () {
+				this.IssueManagerFacade.addIssue(this.issue);
+			}, 'Should throw errror if no severity is provided');
+		});
+
+		QUnit.test('IssueManager addIssue with non existing severity', function (assert) {
+			this.issue.severity = 'nonexistingseverity';
+
+			assert.throws(function () {
+				this.IssueManagerFacade.addIssue(this.issue);
+			}, 'Should throw errror severity is not in the sap.ui.support.Severity enum');
+		});
+
+		QUnit.test('IssueManager addIssue without context', function (assert) {
+			delete this.issue.context;
+
+			assert.throws(function () {
+				this.IssueManagerFacade.addIssue(this.issue);
+			}, 'Should throw errror if no context is provided');
+		});
+
+		QUnit.test('IssueManager addIssue without context id', function (assert) {
+			delete this.issue.context.id;
+
+			assert.throws(function () {
+				this.IssueManagerFacade.addIssue(this.issue);
+			}, 'Should throw errror if no context ID is provided');
+		});
+
+		QUnit.test('IssueManager walkIssue', function (assert) {
+			var iIssues = 10,
+				iCounter = 0;
+
+			for (var i = 0; i < iIssues; i++) {
+				this.IssueManagerFacade.addIssue(createValidIssue());
+			}
+
+			this.IssueManager.walkIssues(function () {
+				iCounter++;
+			});
+
+			assert.equal(iIssues, iCounter, 'Should walk exactly as many issues as were added');
+		});
+
+		QUnit.test('IssueManager clearIssues', function (assert) {
+			var iIssues = 10,
+				iIssuesCount = 0;
+			for (var i = 0; i < iIssues; i++) {
+				this.IssueManager.addIssue(createValidIssue());
+			}
+
+			this.IssueManager.clearIssues();
+
+			this.IssueManager.walkIssues(function () {
+				iIssuesCount++;
+			});
+
+			assert.equal(iIssuesCount, 0, 'No issues should be visited');
+		});
+
+		QUnit.test('IssueManager clearHistory', function (assert) {
+			var iIssues = 10;
+
+			for (var i = 0; i < iIssues; i++) {
+				this.IssueManager.addIssue(createValidIssue());
+			}
+
+			this.IssueManager.saveHistory();
+			this.IssueManager.clearIssues();
+
+			assert.equal(this.IssueManager.getHistory()[0] instanceof Object, true, 'There should be some issues in the history');
+
+			this.IssueManager.clearHistory();
+
+			assert.equal(typeof this.IssueManager.getHistory()[0], 'undefined', 'Should dump them to history');
+		});
+
+		QUnit.test('IssueManager saveHistory', function (assert) {
+			var issueCount = 10;
+
+			// Add an empty history to mock a case where the analysis returned 0 issues
+			this.IssueManager.saveHistory();
+
+			for (var i = 0; i < issueCount; i++) {
+				this.IssueManagerFacade.addIssue(createValidIssue());
+			}
+
+			// Save the previously added 10 issues to the history
+			this.IssueManager.saveHistory();
+
+			var history = this.IssueManager.getHistory();
+
+			assert.equal(history.length, 2, 'There should be two runs in the history');
+			assert.equal(history[0].issues.length, 0, 'There should be 0 issues in the first history');
+			assert.equal(history[1].issues.length, 10, 'There should be 10 issues in the second history');
+		});
+
+		QUnit.test('IssueManager getHistory', function (assert) {
+			var iIssues = 10,
+				iIssuesCount;
+
+			for (var i = 0; i < iIssues; i++) {
+				this.IssueManagerFacade.addIssue(createValidIssue());
+			}
+
+			this.IssueManager.saveHistory();
+
+			iIssuesCount = this.IssueManager.getHistory()[0].issues.length;
+
+			assert.equal(iIssuesCount, iIssues, 'Should have the same amount of elements as added with addIssue()');
+		});
+
+		QUnit.test('IssueManager getConvertedHistory & convertToViewModel', function (assert) {
+			var iIssues = 10;
+
+			for (var i = 0; i < iIssues; i++) {
+				this.IssueManagerFacade.addIssue(createValidIssue());
+			}
+
+			this.IssueManager.saveHistory();
+
+			assert.throws(function () {
+				this.IssueManagerFacade.getConvertedHistory();
+			}, 'Should throw errror if no convertedHistory & convertToViewModel don\'t work');
+
+			var convertedHistory = this.IssueManager.getConvertedHistory();
+
+			assert.ok(convertedHistory[0].issues instanceof Object, 'Issues is of type Object !');
+
+			assert.ok(convertedHistory[0].issues.testRuleSet.id1 instanceof Array, 'There are issues in the History !');
+
+			assert.equal(convertedHistory[0].issues.testRuleSet.id1[0].ruleId, 'id1', 'Issue with the correct id has been set inside the History !');
+		});
+
+		QUnit.test('IssueManager getIssuesViewModel', function (assert) {
+			var iIssues = 10;
+
+			for (var i = 0; i < iIssues; i++) {
+				this.IssueManagerFacade.addIssue(this.issue);
+			}
+
+			var issuesViewModel = this.IssueManager.getIssuesModel();
+
+			assert.equal(typeof issuesViewModel[0], 'object', 'The retrieved model contains Issues !');
+
+			assert.equal(issuesViewModel[0].ruleId, 'id1', 'The retrieved model has an id !');
+
+			assert.equal(issuesViewModel[0].severity, 'Medium', 'The retrieved model has a severity !');
+		});
+
+		QUnit.test('IssueManager getRulesViewModel', function (assert) {
+			var oIssues = this.IssueManager.groupIssues(this.IssueManager.getIssuesViewModel()),
+				oRuleIds = {
+					placeholderNoDots:true,
+					preloadAsyncCheck :true,
+					segmentedButtonMixedItems:true,
+					selectUsage:true,
+					selectionDetailsNumberOfActionGroups:true,
+					stableId:true,
+					texttooltip:true,
+					tokenparent:true,
+					bindingPathSyntaxValidation:true,
+					wizardBranchingAssociations:true,
+					wizardStepParent:true
+				},
+				oRuleSets = {
+					temporary: {
+						lib: {
+							name: 'temporary'
+						},
+						ruleset: {
+							_mRules: {},
+							_oSettings: {
+								name: 'temporary'
+							}
+						}
+					}
+				},
+				rulesViewModel = this.IssueManager.getRulesViewModel(oRuleSets, oRuleIds, oIssues);
+
+			assert.strictEqual((rulesViewModel instanceof Object), true, 'The rulesViewModel is returned successfully !');
+
+			assert.ok(rulesViewModel.temporary, 'The view model contains the previous set ruleSet !');
+		});
+
+		QUnit.test('IssueManager groupIssues', function(assert) {
+			var aIssues,
+				oIssue = createValidIssue();
+
+			oIssue.context.id = 'testId - 1';
+			oIssue.ruleId = '1';
+
+			this.IssueManagerFacade.addIssue(oIssue);
+
+			aIssues = this.IssueManager.getIssuesModel();
+
+			assert.strictEqual(aIssues[0] instanceof Object, true, 'The retrieved issues are of type Object !');
+			assert.ok(aIssues[0].ruleId, 'The retrieved issues has a ruleId !');
+			assert.strictEqual(aIssues[0].ruleId, 'id1', 'The retrieved issues have the correct id set !');
+
+			assert.ok(aIssues[0].context, 'The retrieved issues have a context !');
+			assert.ok(aIssues[0].context.id === 'testId - 1', 'The context within the issues has the correct id !');
+
+			assert.ok(aIssues[0].audiences, 'The retrieved issues have audiences !');
+			assert.ok(aIssues[0].categories, 'The retrieved issues have categories !');
+
+			aIssues = this.IssueManager.groupIssues(aIssues);
+
+			assert.strictEqual(aIssues.testRuleSet instanceof Object, true, 'The retrieved issues have been grouped in a single rule set !');
+			assert.strictEqual(aIssues.testRuleSet.id1 instanceof Array, true, 'The rule within the rule set has issues !');
+			assert.strictEqual(aIssues.testRuleSet.id1[0].ruleId, 'id1', 'The rule has the correct ruleId set to it !');
+			assert.strictEqual(aIssues.testRuleSet.id1[0].ruleLibName, 'testRuleSet', 'The grouped issues have the correct ruleLibName set !');
+
+			assert.ok(aIssues.testRuleSet.id1[0].context, 'The grouped issues have a context !');
+			assert.strictEqual(aIssues.testRuleSet.id1[0].context.id, 'testId - 1', 'The context has a correct id !');
+
+			assert.ok(aIssues.testRuleSet.id1[0].audiences, 'The grouped issues have audiences !');
+			assert.ok(aIssues.testRuleSet.id1[0].categories, 'The grouped issues have categories !');
+		});
 	});
-
-	QUnit.test("IssueManager clearIssues ", function (assert) {
-		var issueCount = 10;
-		for (var i = 0; i < issueCount; i++) {
-			this.imFacade.addIssue(createValidIssue());
-		}
-
-		this.im.clearIssues();
-
-		assert.equal(this.im.getHistory()[0].issues.length, issueCount, "should dump them to history");
-	});
-
-	QUnit.test("IssueManager getHistory ", function (assert) {
-		var issueCount = 10,
-			issueCountSecond = 5;
-
-		for (var i = 0; i < issueCount; i++) {
-			this.imFacade.addIssue(createValidIssue());
-		}
-
-		var firstHistoryLength = this.im.getHistory()[0].issues.length;
-
-		for (var j = 0; j < issueCountSecond; j++) {
-			this.imFacade.addIssue(createValidIssue());
-		}
-
-		var secondHistoryLength = this.im.getHistory()[1].issues.length;
-
-		assert.equal(firstHistoryLength, issueCount, "Should have the same amount of elements as added with addIssue()");
-		assert.equal(secondHistoryLength, issueCountSecond, "Should have the same amount of elements as added with addIssue()");
-		assert.equal(firstHistoryLength + secondHistoryLength, issueCount + issueCountSecond, "sum of 2 history gets should be equal to total added issues");
-	});
-}());

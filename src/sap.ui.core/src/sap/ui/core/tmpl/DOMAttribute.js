@@ -20,7 +20,6 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/library'],
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.15
 	 * @alias sap.ui.core.tmpl.DOMAttribute

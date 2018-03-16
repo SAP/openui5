@@ -8,8 +8,8 @@ sap.ui.define(function() {
 
 
 	/**
-	 * @class Control renderer.
-	 * @static
+	 * TemplateControl renderer.
+	 * @namespace
 	 * @alias sap.ui.core.tmpl.TemplateControlRenderer
 	 */
 	var TemplateControlRenderer = {};

@@ -4,10 +4,21 @@
 
 // Provides control sap.m.QuickViewCard.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control',
-		'./QuickViewBase', './NavContainer', './Page', './ScrollContainer'],
-	function(jQuery, library, Control,
-			QuickViewBase, NavContainer, Page, ScrollContainer) {
+	'./library',
+	'./QuickViewBase',
+	'./NavContainer',
+	'./Page',
+	'./ScrollContainer',
+	'./QuickViewCardRenderer'
+],
+	function(
+	library,
+	QuickViewBase,
+	NavContainer,
+	Page,
+	ScrollContainer,
+	QuickViewCardRenderer
+	) {
 	"use strict";
 
 	/**
@@ -44,7 +55,8 @@ sap.ui.define([
 							group : "Behavior",
 							defaultValue : true
 						}
-					}
+					},
+					designtime: "sap/m/designtime/QuickViewCard.designtime"
 
 				}
 			});
@@ -123,4 +135,4 @@ sap.ui.define([
 
 	return QuickViewCard;
 
-}, /* bExport= */true);
+});

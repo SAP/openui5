@@ -56,8 +56,9 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 	 * Returns an instance of Date, based on the calendar type from the configuration, or as explicitly
 	 * defined by parameter. The object provides all methods also known on the JavaScript Date object.
 	 *
-	 * @param [Date] oDate the JavaScript Date object
-	 * @param [sap.ui.core.CalendarType] sCalendarType the type of the used calendar
+	 * @param {Date} oDate A JavaScript date object
+	 * @param {sap.ui.core.CalendarType} sCalendarType A calendar type
+	 * @returns {sap.ui.core.date.UniversalDate} A date instance
 	 * @public
 	 */
 	UniversalDate.getInstance = function(oDate, sCalendarType) {
@@ -79,7 +80,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 	 * Returns a specific Date class, based on the calendar type from the configuration, or as explicitly
 	 * defined by parameter. The object provides all methods also known on the JavaScript Date object.
 	 *
-	 * @param [sap.ui.core.CalendarType] sCalendarType the type of the used calendar
+	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the used calendar
 	 * @public
 	 */
 	UniversalDate.getClass = function(sCalendarType) {
@@ -98,16 +99,16 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 		"getTime", "valueOf", "getTimezoneOffset", "toString", "toDateString",
 		"setDate", "setFullYear", "setYear", "setMonth", "setHours", "setMinutes", "setSeconds", "setMilliseconds",
 		"setUTCDate", "setUTCFullYear", "setUTCMonth", "setUTCHours", "setUTCMinutes", "setUTCSeconds", "setUTCMilliseconds"
-    ].forEach(function(sName) {
+	].forEach(function(sName) {
 		UniversalDate.prototype[sName] = function() {
 			return this.oDate[sName].apply(this.oDate, arguments);
 		};
 	});
 
 	/**
-	 * Returns the JS date object representing the current calendar date value
+	 * Returns the JS date object representing the current calendar date value.
 	 *
-	 * @return {Date}
+	 * @returns {Date} The JS date object representing the current calendar date value
 	 * @public
 	 */
 	UniversalDate.prototype.getJSDate = function() {
@@ -115,9 +116,9 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 	};
 
 	/**
-	 * Returns the calendar type of the current instance of a UniversalDate
+	 * Returns the calendar type of the current instance of a UniversalDate.
 	 *
-	 * @return [string] the calendar type
+	 * @returns {sap.ui.core.CalendarType} The calendar type of the date
 	 */
 	UniversalDate.prototype.getCalendarType = function() {
 		return this.sCalendarType;
@@ -151,6 +152,26 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/LocaleData'],
 	UniversalDate.prototype.setUTCWeek = function(oWeek) {
 		var oDate = UniversalDate.getFirstDateOfWeek(this.sCalendarType, oWeek.year || this.getFullYear(), oWeek.week);
 		this.setUTCFullYear(oDate.year, oDate.month, oDate.day);
+	};
+	UniversalDate.prototype.getQuarter = function() {
+		return Math.floor((this.getMonth() / 3));
+	};
+	UniversalDate.prototype.getUTCQuarter = function() {
+		return Math.floor((this.getUTCMonth() / 3));
+	};
+	UniversalDate.prototype.getDayPeriod = function() {
+		if (this.getHours() < 12) {
+			return 0;
+		} else {
+			return 1;
+		}
+	};
+	UniversalDate.prototype.getUTCDayPeriod = function() {
+		if (this.getUTCHours() < 12) {
+			return 0;
+		} else {
+			return 1;
+		}
 	};
 
 

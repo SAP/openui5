@@ -205,7 +205,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 
 	}
 
-	function get(sEntityName, sLibraryName) {
+	function findLibraryFromEntityName(sEntityName) {
+		var oVersionInfo = sap.ui.getVersionInfo(),
+			oLibrary,
+			iLen,
+			i;
+
+		if ( oVersionInfo && Array.isArray(oVersionInfo.libraries) ) {
+			iLen = oVersionInfo.libraries.length;
+			for (i = 0; i < iLen; i++) {
+				oLibrary = oVersionInfo.libraries[i];
+				if ( sEntityName === oLibrary.name || sEntityName.indexOf(oLibrary.name + ".") === 0 ) {
+					return oLibrary.name;
+				}
+			}
+		}
+
+		// fallback to core (this ensures that the extraordinary packages of sap.ui.core are found, but doesn't work as
+		// soon as other libs do the same)
+		return "sap.ui.core";
+	}
+
+	function getAsync(sEntityName, sLibraryName) {
 
 		var oPackageInfo = getPackageInfo(sEntityName);
 		var oEntityDoc;
@@ -216,40 +237,52 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 				var oMetadata = oClass.getMetadata();
 				if (oMetadata.getLibraryName) {
 					sLibraryName = oMetadata.getLibraryName();
+				} else {
+					sLibraryName = "sap.ui.core";
 				}
 			} else {
-				sLibraryName = sEntityName.substr(0, sEntityName.lastIndexOf("."));
+				sLibraryName = findLibraryFromEntityName(sEntityName);
 			}
 		}
 
 		// api.json per library
 		if ( !oEntityDoc && !oPackageInfo.__noAPIJson ) {
-			var oEntityCollection = APIInfo.getLibraryElementsJSONSync(sLibraryName),
-				oEntity;
 
-			// Find single entity entry
-			for (var i = 0, iLen = oEntityCollection.length; i < iLen; i++) {
-				if (oEntityCollection[i].name === sEntityName) {
-					oEntity = oEntityCollection[i];
-					break;
+			// If we have APIInfo json file we return a new promise which will return the oEntityDoc
+			return APIInfo.getLibraryElementsJSONPromise(sLibraryName).then(function (oEntityCollection) {
+				var oEntity;
+
+				// Find single entity entry
+				for (var i = 0, iLen = oEntityCollection.length; i < iLen; i++) {
+					if (oEntityCollection[i].name === sEntityName) {
+						oEntity = oEntityCollection[i];
+						break;
+					}
 				}
-			}
 
-			if (oEntity) {
-				// Create oEntityDoc
-				oEntityDoc = {
-					baseType: oEntity.extends,
-					deprecation: oEntity.deprecated ? oEntity.deprecated.text : null,
-					doc: oEntity.description,
-					module: oEntity.module,
-					name: oEntity.name,
-					since: oEntity.since,
-					values: oEntity.properties
-				};
+				if (oEntity) {
+					// Create oEntityDoc
+					oEntityDoc = {
+						baseType: oEntity.extends,
+						deprecation: oEntity.deprecated ? oEntity.deprecated.text : null,
+						doc: oEntity.description,
+						module: oEntity.module,
+						name: oEntity.name,
+						since: oEntity.since,
+						values: oEntity.properties,
+						uxGuidelinesLink: oEntity.uxGuidelinesLink,
+						uxGuidelinesLinkText: oEntity.uxGuidelinesLinkText,
+						docuLink: oEntity.docuLink,
+						docuLinkText: oEntity.docuLinkText
+					};
 
-				oPackageInfo.__noSource = true;
-				oPackageInfo.__noMetamodel = true;
-			}
+					oPackageInfo.__noSource = true;
+					oPackageInfo.__noMetamodel = true;
+				}
+
+				return oEntityDoc;
+			});
+
 		} else if ( oPackageInfo.__noAPIJson ) {
 			jQuery.sap.log.debug("ancestor package for " + sEntityName + " is marked with 'noMetamodel'");
 		}
@@ -289,14 +322,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/sdk/thirdparty/jsanaly
 
 	}
 
-	var EntityInfo = {
+	return {
 
-		getEntityDocu : function (sEntityName, sLibraryName) {
-			return get(sEntityName, sLibraryName);
+		getEntityDocuAsync : function (sEntityName, sLibraryName) {
+			return getAsync(sEntityName, sLibraryName);
 		}
 
 	};
-
-	return EntityInfo;
 
 }, /* bExport= */ true);

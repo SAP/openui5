@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Shopping Cart</title>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <meta charset="utf-8">
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<meta charset="utf-8">
 
 	<script
 		id='sap-ui-bootstrap'
@@ -15,9 +14,9 @@
 		data-sap-ui-resourceroots='{
 			"sap.ui.demo.cart" : "./"
 		}'>
-    </script>
+	</script>
 
-    <script>
+	<script>
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
 				"sap/m/Shell",
@@ -27,10 +26,12 @@
 				mockserver.init();
 
 				new Shell("Shell", {
-					title : "Shopping Cart",
 					showLogout : false,
 					app : new ComponentContainer({
-						name : 'sap.ui.demo.cart'
+						name : 'sap.ui.demo.cart',
+						settings : {
+							id : "cart"
+						}
 					}),
 					homeIcon : {
 						'phone' : 'img/57_iPhone_Desktop_Launch.png',
@@ -43,7 +44,7 @@
 				}).placeAt('content');
 			})
 		});
-        </script>
+		</script>
 
 </head>
 <body class='sapUiBody' id='content'>

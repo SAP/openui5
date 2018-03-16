@@ -3,8 +3,8 @@
  */
 
 //Provides default renderer for control sap.ui.table.RowAction
-sap.ui.define(['jquery.sap.global', 'sap/ui/table/Row'],
-	function(jQuery, Row) {
+sap.ui.define(['sap/ui/table/Row'],
+	function(Row) {
 	"use strict";
 
 	/**

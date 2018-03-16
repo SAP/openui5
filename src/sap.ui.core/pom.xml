@@ -16,7 +16,7 @@
 	<parent>
 		<groupId>com.sap.openui5</groupId>
 		<artifactId>reactor</artifactId>
-		<version>1.49.0-SNAPSHOT</version>
+		<version>1.55.0-SNAPSHOT</version>
 		<relativePath>../../pom.xml</relativePath>
 	</parent>
 
@@ -88,22 +88,22 @@
 								<echo>Merging module: sap-ui-core.js</echo>
 								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core.js" overwrite="true" encoding="UTF-8" eol="lf" fixlastline="true">
 									<filelist dir="${project.build.outputDirectory}/META-INF/resources/">
-										<file name="sap/ui/thirdparty/jquery.js"/>
-										<file name="sap/ui/thirdparty/jqueryui/jquery-ui-position.js"/>
-										<file name="sap/ui/Device.js"/>
-										<file name="sap/ui/thirdparty/URI.js"/>
+										<file name="sap/ui/thirdparty/baseuri.js"/>
 										<file name="sap/ui/thirdparty/es6-promise.js"/>
-										<file name="jquery.sap.global.js"/>
+										<file name="sap/ui/thirdparty/es6-string-methods.js"/>
+										<file name="ui5loader.js"/>
+										<file name="ui5loader-autoconfig.js"/>
 									</filelist>
 								</concat>
 								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core.js" append="true" encoding="UTF-8" eol="lf" fixlastline="true"><![CDATA[jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();]]></concat>
 								<echo>Merging module: sap-ui-nojQuery.js</echo>
 								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core-nojQuery.js" overwrite="true" encoding="UTF-8"  eol="lf" fixlastline="true">
 									<filelist dir="${project.build.outputDirectory}/META-INF/resources/">
-										<file name="sap/ui/Device.js"/>
-										<file name="sap/ui/thirdparty/URI.js"/>
+										<file name="sap/ui/thirdparty/baseuri.js"/>
 										<file name="sap/ui/thirdparty/es6-promise.js"/>
-										<file name="jquery.sap.global.js"/>
+										<file name="sap/ui/thirdparty/es6-string-methods.js"/>
+										<file name="ui5loader.js"/>
+										<file name="ui5loader-autoconfig.js"/>
 									</filelist>
 								</concat>
 								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core-nojQuery.js" append="true" encoding="UTF-8" eol="lf" fixlastline="true"><![CDATA[jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();]]></concat>

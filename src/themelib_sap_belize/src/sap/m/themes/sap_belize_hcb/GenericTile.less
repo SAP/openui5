@@ -4,16 +4,17 @@
 /* ================================== */
 
 .sapMGT {
-	border-radius: 0.375rem;
+	border-radius: 0.125rem;
+	box-shadow: none;
 }
 
 .sapMGT.sapMGTBackgroundImage .sapMGTContent {
-	border-bottom-left-radius: 0.375rem;
-	border-bottom-right-radius: 0.375rem;
+	border-bottom-left-radius: 0.125rem;
+	border-bottom-right-radius: 0.125rem;
 }
 
 .sapMGT.sapMGTScopeActions.sapMGTBackgroundImage .sapMGTContent:before {
-	border-radius: 0.375rem;
+	border-radius: 0.125rem;
 }
 
 .sapMGTOverlay {
@@ -109,20 +110,18 @@
 		margin-bottom: 1px;
 	}
 
-	&:focus {
-		border: 0.125rem dotted @sapUiContentFocusColor;
-	}
-
-	&:focus, &:active {
-		.sapMGTLineStyleHelperInner:before {
-			content: "";
-			position: absolute;
-			top: 1px;
-			left: 1px;
-			bottom: 1px;
-			right: 1px;
-			box-sizing: border-box;
-			border: 0.125rem dotted @sapUiContentFocusColor;
+	&:not(.sapMGTDisabled) {
+		&:focus, &:active {
+			.sapMGTLineStyleHelperInner:before {
+				content: "";
+				position: absolute;
+				top: 1px;
+				left: 1px;
+				bottom: 1px;
+				right: 1px;
+				box-sizing: border-box;
+				border: 0.125rem dotted @sapUiContentFocusColor;
+			}
 		}
 	}
 }

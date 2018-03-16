@@ -3,14 +3,34 @@
  */
 
 // Provides control sap.m.MessagePopover.
-sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolbar", "./ToolbarSpacer", "./Bar", "./List",
-		"./StandardListItem", "./ListType" ,"./library", "sap/ui/core/Control", "./PlacementType", "sap/ui/core/IconPool",
-		"sap/ui/core/HTML", "./Text", "sap/ui/core/Icon", "./SegmentedButton", "./Page", "./NavContainer",
-		"./semantic/SemanticPage", "./Link" ,"./Popover", "./MessagePopoverItem", "./MessageView"],
-	function (jQuery, ResponsivePopover, Button, Toolbar, ToolbarSpacer, Bar, List,
-			  StandardListItem, ListType, library, Control, PlacementType, IconPool,
-			  HTML, Text, Icon, SegmentedButton, Page, NavContainer, SemanticPage, Link, Popover, MessagePopoverItem,
-			  MessageView) {
+sap.ui.define([
+	"jquery.sap.global",
+	"./ResponsivePopover",
+	"./Button",
+	"./Toolbar",
+	"./Bar",
+	"sap/ui/core/Control",
+	"sap/ui/core/IconPool",
+	"./semantic/SemanticPage",
+	"./Popover",
+	"./MessageView",
+	"sap/ui/Device",
+	"./MessagePopoverRenderer"
+],
+function(
+	jQuery,
+	ResponsivePopover,
+	Button,
+	Toolbar,
+	Bar,
+	Control,
+	IconPool,
+	SemanticPage,
+	Popover,
+	MessageView,
+	Device,
+	MessagePopoverRenderer
+	) {
 		"use strict";
 
 		/**
@@ -30,7 +50,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * <li> If the message cannot be fully displayed or includes a long description, the message popover provides navigation to the detailed description.</li>
 		 * </ul>
 		 * <h3>Structure</h3>
-		 * The message popover stores all messages in an association of type {@link sap.m.MessagePopoverItem} named <code>items</code>.
+		 * The message popover stores all messages in an aggregation of type {@link sap.m.MessageItem} named <code>items</code>.
 		 *
 		 * A set of properties determines how the items are rendered:
 		 * <ul>
@@ -44,7 +64,9 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * The message popover is triggered from a messaging button in the footer toolbar. If an error has occurred at any validation point,
 		 * the total number of messages should be incremented, but the user's work shouldn't be interrupted.
 		 * <h3>Responsive Behavior</h3>
-		 * On mobile phones, the message popover is automatically shown in full screen mode.
+		 * On mobile phones, the message popover is automatically shown in full screen mode.<br>
+		 * On desktop and tablet, the message popover opens in a popover.<br>
+		 * On desktop the opened popover is resizable if it is placed in a {@link sap.m.Toolbar}, {@link sap.m.Bar} or used in {@link sap.f.semantic.SemanticPage}
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
@@ -54,6 +76,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @public
 		 * @since 1.28
 		 * @alias sap.m.MessagePopover
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/message-popover/ Message Popover}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var MessagePopover = Control.extend("sap.m.MessagePopover", /** @lends sap.m.MessagePopover.prototype */ {
@@ -90,7 +113,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					placement: {type: "sap.m.VerticalPlacementType", group: "Behavior", defaultValue: "Vertical"},
 
 					/**
-					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded
+					 * Sets the initial state of the control - expanded or collapsed. By default the control opens as expanded.
 					 */
 					initiallyExpanded: {type: "boolean", group: "Behavior", defaultValue: true}
 				},
@@ -99,12 +122,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					/**
 					 * A list with message items
 					 */
-					items: {type: "sap.m.MessagePopoverItem", multiple: true, singularName: "item"},
+					items: {type: "sap.m.MessageItem", altTypes: ["sap.m.MessagePopoverItem"], multiple: true, singularName: "item"},
 
 					/**
 					 * A custom header button
 					 */
-					headerButton: {type: "sap.m.Button", multiple: false}
+					headerButton: {type: "sap.m.Button", multiple: false, forwarding: {idSuffix: "-messageView", aggregation: "headerButton"}}
 				},
 				events: {
 					/**
@@ -205,6 +228,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		}
 
 		var CSS_CLASS = "sapMMsgPopover",
+			DEFAULT_CONTENT_HEIGHT = "320px",
+			DEFAULT_CONTENT_WIDTH = "440px",
 			ICONS = {
 				back: IconPool.getIconURI("nav-back"),
 				close: IconPool.getIconURI("decline"),
@@ -242,8 +267,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 * @static
 		 * @protected
 		 * @param {object} mDefaultHandlers An object setting default callbacks
-		 * @param {function} mDefaultHandlers.asyncDescriptionHandler
-		 * @param {function} mDefaultHandlers.asyncURLHandler
+		 * @param {function} mDefaultHandlers.asyncDescriptionHandler The description handler
+		 * @param {function} mDefaultHandlers.asyncURLHandler The URL handler
 		 */
 		MessagePopover.setDefaultHandlers = function (mDefaultHandlers) {
 			ASYNC_HANDLER_NAMES.forEach(function (sFuncName) {
@@ -272,6 +297,17 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			this._oMessageView = this._initMessageView();
+
+			this._oMessageView.addEventDelegate({
+				onBeforeRendering: function () {
+					var bSegmentedButtonVisibleInMV = that._oMessageView._oSegmentedButton.getVisible(),
+						bShowHeader = !that.getInitiallyExpanded() || bSegmentedButtonVisibleInMV;
+
+					that._oMessageView._oSegmentedButton.setVisible(bShowHeader);
+					that._oMessageView._listPage.setShowHeader(true);
+				}
+			});
+
 			// insert the close buttons in both list and details pages as the MessageView
 			// doesn't know it is being created in Popover
 			this._insertCloseBtn(this._oMessageView._oListHeader);
@@ -281,7 +317,8 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 			this._oPopover = new ResponsivePopover(this.getId() + "-messagePopover", {
 				showHeader: false,
-				contentWidth: "440px",
+				contentWidth: DEFAULT_CONTENT_WIDTH,
+				contentHeight: DEFAULT_CONTENT_HEIGHT,
 				placement: this.getPlacement(),
 				showCloseButton: false,
 				verticalScrolling: false,
@@ -312,7 +349,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				onAfterRendering: this.onAfterRenderingPopover
 			}, this);
 
-			if (sap.ui.Device.system.phone) {
+			if (Device.system.phone) {
 				this._oPopover.setBeginButton(new Button({
 					text: this._oResourceBundle.getText("MESSAGEPOPOVER_CLOSE"),
 					press: this.close.bind(this)
@@ -325,6 +362,12 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 					this['set' + capitalize(sFuncName)](DEFAULT_ASYNC_HANDLERS[sFuncName]);
 				}
 			}, this);
+		};
+
+		MessagePopover.prototype.onBeforeRendering = function () {
+			if (this.getDependents().indexOf(this._oPopover) === -1) {
+				this.addDependent(this._oPopover);
+			}
 		};
 
 		/**
@@ -345,24 +388,19 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 				var items = this.getItems();
 				var that = this;
 
-				this._oMessageView.removeAllItems();
+				this._oMessageView.destroyItems();
 
 				items.forEach(function (item) {
-
 					// we need to know if the MessagePopover's item was changed so to
 					// update the MessageView's items as well
 					item._updateProperties(function () {
 						that._bItemsChanged = true;
 					});
 
-					this._oMessageView.addItem(new sap.m.MessageItem({
-						type: item.getType(),
-						title: item.getTitle(),
-						subtitle: item.getSubtitle(),
-						description: item.getDescription(),
-						markupDescription: item.getMarkupDescription(),
-						longtextUrl: item.getLongtextUrl(),
-						counter: item.getCounter()
+					// we need to clone the item along with its bindings and aggregations
+					this._oMessageView.addItem(item.clone("", "", {
+						cloneChildren: true,
+						cloneBinding: true
 					}));
 				}, this);
 
@@ -434,6 +472,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 			if (this._oPopover) {
 				this._restoreExpansionDefaults();
+
 				this._oPopover.openBy(oControl);
 			}
 
@@ -489,6 +528,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		 *
 		 * @param {sap.m.PlacementType} sPlacement Placement type
 		 * @returns {sap.m.MessagePopover} Reference to the 'this' for chaining purposes
+		 * @public
 		 */
 		MessagePopover.prototype.setPlacement = function (sPlacement) {
 			this.setProperty("placement", sPlacement, true);
@@ -559,15 +599,15 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 		};
 
 		/**
-		 * Expands the MessagePopover so that the width and height are equal
+		 * Expands the MessagePopover so that the width and height are with their default values
 		 * @private
 		 */
 		MessagePopover.prototype._expandMsgPopover = function () {
 			var sDomHeight,
-				sHeight = this._oPopover.getContentWidth();
-
-			if (this.getInitiallyExpanded()) {
+				sHeight = DEFAULT_CONTENT_HEIGHT,
 				sDomHeight = this._oPopover.$("cont").css("height");
+
+			if (this.getInitiallyExpanded() && sDomHeight !== "0px") {
 				sHeight = parseFloat(sDomHeight) ? sDomHeight : sHeight;
 			}
 
@@ -597,7 +637,7 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			var sCloseBtnDescr = this._oResourceBundle.getText("MESSAGEPOPOVER_CLOSE"),
 				oCloseBtn = new Button({
 				icon: ICONS["close"],
-				visible: !sap.ui.Device.system.phone,
+				visible: !Device.system.phone,
 				tooltip: sCloseBtnDescr,
 				press: this.close.bind(this)
 			}).addStyleClass(CSS_CLASS + "CloseBtn");
@@ -667,20 +707,14 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 			return this;
 		};
 
-		/*
-		 * =========================================
-		 * MessagePopover HeaderButton
-		 * proxy methods
-		 * =========================================
-		 */
+		MessagePopover.prototype.setModel = function(oModel, sName) {
+			/* When a model is set to the MessagePopover it is propagated to all its aggregation
+				Unfortunately the MessageView is not an aggregation of the MessagePopover (due to some rendering issues)
+				Furthermore the MessageView is actually child of a ResponsivePopover
+				Therefore once the developer set a model to the MessagePopover we need to forward it to the internal MessageView */
+			this._oMessageView.setModel(oModel, sName);
 
-		MessagePopover.prototype.setHeaderButton = function (oBtn) {
-			this._oMessageView.setHeaderButton(oBtn);
-			return this;
-		};
-
-		MessagePopover.prototype.getHeaderButton = function () {
-			return this._oMessageView.getHeaderButton();
+			return Control.prototype.setModel.apply(this, arguments);
 		};
 
 		["invalidate", "addStyleClass", "removeStyleClass", "toggleStyleClass", "hasStyleClass", "getBusyIndicatorDelay",
@@ -729,4 +763,4 @@ sap.ui.define(["jquery.sap.global", "./ResponsivePopover", "./Button", "./Toolba
 
 		return MessagePopover;
 
-	}, /* bExport= */ true);
+	});

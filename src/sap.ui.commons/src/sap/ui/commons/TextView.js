@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.commons.TextView.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define([
+ 'jquery.sap.global',
+ './library',
+ 'sap/ui/core/Control',
+ "./TextViewRenderer"
+],
+	function(jQuery, library, Control, TextViewRenderer) {
 	"use strict";
 
 	/**

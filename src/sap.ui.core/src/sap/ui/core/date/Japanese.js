@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.core.date.Japanese
-sap.ui.define(['jquery.sap.global', './UniversalDate'],
-	function(jQuery, UniversalDate, LocaleData) {
+sap.ui.define(['./UniversalDate'],
+	function(UniversalDate) {
 	"use strict";
 
 

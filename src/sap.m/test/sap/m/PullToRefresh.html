@@ -17,10 +17,6 @@
  * functions
  */
 
-function getLastUpdated() {
-	return "updated " + new Date().toLocaleTimeString();
-}
-
 function createSelect(oPullDown, iSelectedItem){
 	var sId = oPullDown.getId();
 	var iconSelect = new sap.m.Select({
@@ -85,6 +81,7 @@ function createSelect(oPullDown, iSelectedItem){
 		headerText : "Pull variants",
 		items: [
 			new sap.m.StandardListItem({
+				id: "standard_pull_page",
 				title: "Standard Pull Down to Refresh",
 				type: sap.m.ListType.Active,
 				press: function() {
@@ -92,6 +89,7 @@ function createSelect(oPullDown, iSelectedItem){
 				}
 			}),
 			new sap.m.StandardListItem({
+				id: "hide_pull_page",
 				title: "Hide Immediately",
 				type: sap.m.ListType.Active,
 				press: function() {
@@ -99,6 +97,7 @@ function createSelect(oPullDown, iSelectedItem){
 				}
 			}),
 			new sap.m.StandardListItem({
+				id: "busy_dialog_pull_page",
 				title: "Show Busy Dialog",
 				type: sap.m.ListType.Active,
 				press: function() {
@@ -124,13 +123,12 @@ function createSelect(oPullDown, iSelectedItem){
 	var standardList =  new sap.m.List({inset : false});
 	addItems(standardList, 5);
 	var pullToRefreshStd = new sap.m.PullToRefresh({
-		description: getLastUpdated(),
+		id: "standard_pull_control",
 		tooltip: "Standard Pull to Refresh",
 		refresh: function(){
 			setTimeout(function(){
 				pullToRefreshStd.hide();
 				addItems(standardList, 10);
-				pullToRefreshStd.setDescription(getLastUpdated());
 			}, 2000);
 		}
 	});
@@ -181,15 +179,15 @@ function createSelect(oPullDown, iSelectedItem){
  */
 
 	var pullToHide = new sap.m.PullToRefresh({
+		id: "hide_pull_control",
 		customIcon: "images/SAPUI5Logo.png",
 		showIcon: true,
-		description: getLastUpdated(),
 		refresh: function(){
 			pullToHide.hide();
 			pullToHide.setDescription("...");
 			setTimeout(function(){
 				addItems(simpleList, 10);
-				pullToHide.setDescription(getLastUpdated());
+				pullToHide.setDescription("");
 			}, 2000);
 	}});
 	var simpleList =  new sap.m.List("simpleList", {inset : false});
@@ -240,7 +238,7 @@ function createSelect(oPullDown, iSelectedItem){
 	var oTimeout = null;
 
 	var pullToBusy = new sap.m.PullToRefresh({
-		description: getLastUpdated(),
+		id: "busy_dialog_pull_control",
 		showIcon: false,
 		refresh: function(){
 			pullToBusy.hide();
@@ -250,7 +248,7 @@ function createSelect(oPullDown, iSelectedItem){
 				busyDialog.open();
 				oTimeout = setTimeout(function(){
 					addItems(busyList, 10);
-					pullToBusy.setDescription(getLastUpdated());
+					pullToBusy.setDescription("");
 					oTimeout = null;
 					busyDialog.close();
 				}, 5000);

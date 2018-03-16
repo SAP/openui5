@@ -16,7 +16,11 @@
 input.sapMComboBoxTextFieldInner {
 	border: none;
 	margin: 0;
+}
+
+.sapMComboBoxTextField .sapMInputDivWrapper {
 	height: 100% !important;
+	max-width: 100%;
 }
 
 .sapMComboBoxTextFieldInnerWidthExtraPadding:not(.sapMComboBoxTextFieldInnerReadonly) {
@@ -108,4 +112,8 @@ html[data-sap-ui-browser^="sf"] {
 
 .sapUiSizeCondensed .sapUiTableCell .sapMComboBoxTextFieldArrow {
 	line-height: 1.375rem; /* + 2*1px padding = 1.5rem */
+}
+
+html:not([dir="rtl"]) .sapMILI-CTX .sapMComboBoxTextFieldInner.sapMInputBaseInner {
+	text-align: left;
 }

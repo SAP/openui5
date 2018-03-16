@@ -93,6 +93,7 @@
 	// anchors in all steps after the active one have the default cursor and no focus
 	& ~ .sapMWizardProgressNavStep > .sapMWizardProgressNavAnchor {
 		cursor: default;
+		display: inline;
 
 		&:focus {
 			outline: none;
@@ -110,7 +111,7 @@
 		top: 0;
 	}
 
-	.sapMWizardProgressNavAnchorTitle {
+	.sapMWizardProgressNavAnchorTitleContainer {
 		display: none;
 	}
 }
@@ -173,24 +174,6 @@
 	}
 }
 
-.sapMWizardProgressNavAnchorTitle {
-	display: inline-block;
-	vertical-align: middle;
-	text-align: left;
-	padding: 0 @_sap_m_WizardProgressNavigator_StepPadding;
-	max-height: @_sap_m_WizardProgressNavigator_ListHeight;
-	overflow: hidden;
-	overflow-wrap: normal;
-	max-width: ~"calc(100% - 3rem)";
-
-	// allow only two lines of text
-	line-height: @_sap_m_WizardProgressNavigator_ListHeight  / 2;
-
-	font-size: @sapMFontMediumSize;
-	color: @sapUiGroupTitleTextColor;
-	background: @sapUiObjectHeaderBackground;
-}
-
 .sapMSplitContainerDetail .sapMWizardProgressNav {
 	padding: 0.875rem 1rem;
 }
@@ -221,4 +204,40 @@ html.sap-phone .sapMWizardProgressNav {
 		background: @sapUiSelected;
 		color: @sapUiContentContrastIconColor;
 	}
+}
+
+
+.sapMWizardProgressNavAnchorTitleContainer {
+	display: inline-block;
+	vertical-align: middle;
+	text-align: left;
+	padding: 0 @_sap_m_WizardProgressNavigator_StepPadding;
+	max-height: @_sap_m_WizardProgressNavigator_ListHeight;
+	overflow: hidden;
+	max-width: ~"calc(100% - 3rem)";
+	background: @sapUiObjectHeaderBackground;
+}
+
+.sapMWizardProgressNavAnchorTitle {
+	display: inline-block;
+	overflow: hidden;
+	max-width: 100%;
+	max-height: @_sap_m_WizardProgressNavigator_ListHeight;
+	line-height: @_sap_m_WizardProgressNavigator_ListHeight  / 2;
+	font-size: @sapMFontMediumSize;
+	color: @sapUiGroupTitleTextColor;
+	vertical-align: middle;
+}
+
+.sapMWizardProgressNavAnchorTitleOptional {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	line-height: 100%;
+}
+
+.sapMWizardProgressNavAnchorLabelOptional {
+	display: table-row;
+	font-size: @sapMFontSmallSize;
+	color: @sapUiContentLabelColor;
+	overflow: hidden;
 }

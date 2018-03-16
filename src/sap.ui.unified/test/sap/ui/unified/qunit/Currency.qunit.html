@@ -216,6 +216,32 @@
 				assert.strictEqual(this.oCurrency.getFormattedValue(), "0", "For undefined value we expect 0 as a result");
 			});
 
+			QUnit.test("getFormattedValue use stringValue property if it is set", function (assert) {
+				// Arrange
+				var oGetStringValueSpy = this.spy(this.oCurrency, "getStringValue"),
+					oGetValueSpy = this.spy(this.oCurrency, "getValue");
+
+				// Act
+				this.oCurrency.setStringValue("1234");
+
+				// Assert
+				assert.equal(this.oCurrency.getFormattedValue(), "1,234.00\u2007", "value should be set right");
+				assert.equal(oGetStringValueSpy.callCount, 1, "getStringValue should be called once");
+				assert.equal(oGetValueSpy.callCount, 0, "getValue should not be called once");
+
+				// Cleanup
+				oGetStringValueSpy.restore();
+				oGetValueSpy.restore();
+			});
+
+			QUnit.test("getFormattedValue should return not rounded value if stringValue property is used with large number", function (assert) {
+				// Act
+				this.oCurrency.setStringValue("1234567890123456789012"); // normally this will be converted to 1234567890123456780000 if value property is used
+
+				// Assert
+				assert.equal(this.oCurrency.getFormattedValue(), "1,234,567,890,123,456,789,012.00\u2007", "number should not be rounded");
+			});
+
 			QUnit.module("Data binding", {
 				beforeEach: function () {
 					this.oData = {

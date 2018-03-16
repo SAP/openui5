@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
-	function(Control, library, ResizeHandler) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    './library',
+    'sap/ui/core/ResizeHandler',
+    "./AlignedFlowLayoutRenderer"
+],
+	function(jQuery, Control, library, ResizeHandler, AlignedFlowLayoutRenderer) {
 		"use strict";
 
 		/**
@@ -126,20 +132,6 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 		AlignedFlowLayout.prototype.onAfterRendering = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 		AlignedFlowLayout.prototype.onThemeChanged = AlignedFlowLayout.prototype._onRenderingOrThemeChanged;
 
-		function getRootFontSize() {
-			var oRootDomRef = document.documentElement;
-
-			if (!oRootDomRef) {
-				return 16; // browser default font size
-			}
-
-			return parseFloat(window.getComputedStyle(oRootDomRef).getPropertyValue("font-size"));
-		}
-
-		function remToPx(vRem) {
-			return parseFloat(vRem) * getRootFontSize();
-		}
-
 		// this resize handler needs to be called on after rendering, theme change, and whenever the width of this
 		// control changes
 		AlignedFlowLayout.prototype._onResize = function(oEvent, oDomRef, oEndItemDomRef) {
@@ -152,6 +144,7 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 			oDomRef = oDomRef || this.getDomRef();
 
+			// skip unnecessary style recalculations if the control root DOM element has been removed from the DOM
 			if (!oDomRef) {
 				return;
 			}
@@ -172,6 +165,12 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 					iEndItemWidth = oEndItemDomRef.offsetWidth,
 					iLastItemOffsetLeft = oLastItemDomRef.offsetLeft,
 					iAvailableWidthForEndItem;
+
+				// skip unnecessary style recalculations if the control root DOM element or any ancestor is hidden
+				// (the "display" style property is set to "none")
+				if (!oDomRef.offsetParent) {
+					return;
+				}
 
 				if (sap.ui.getCore().getConfiguration().getRTL()) {
 					iAvailableWidthForEndItem = iLastItemOffsetLeft;
@@ -294,9 +293,9 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 
 			// the CSS unit of the minItemWidth control property is in rem
 			if (sMinItemWidth.lastIndexOf("rem") !== -1) {
-				fMinItemWidth = remToPx(sMinItemWidth);
+				fMinItemWidth = jQuery.sap.remToPx(sMinItemWidth);
 
-				// the CSS unit of the minItemWidth control property is in px
+			// the CSS unit of the minItemWidth control property is in px
 			} else if (sMinItemWidth.lastIndexOf("px") !== -1) {
 				fMinItemWidth = parseFloat(sMinItemWidth);
 			}
@@ -318,4 +317,4 @@ sap.ui.define(['sap/ui/core/Control', './library', 'sap/ui/core/ResizeHandler'],
 		};
 
 		return AlignedFlowLayout;
-}, /* bExport= */ true);
+});

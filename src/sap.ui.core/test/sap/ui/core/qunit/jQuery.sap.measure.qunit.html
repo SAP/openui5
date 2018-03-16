@@ -168,7 +168,7 @@
 		QUnit.module("test measure rendering");
 
 		QUnit.test("render Button", function(assert) {
-			assert.expect(7);
+			assert.expect(5);
 			var oButton = new sap.ui.commons.Button("B1",{text:"Test"}).placeAt("target1");
 			sap.ui.getCore().applyChanges();
 			var aMeasurements = jQuery.sap.measure.getAllMeasurements();
@@ -182,6 +182,11 @@
 			assert.ok(oMeasurement, "Measurement for rendering all UIAreas found");
 			oMeasurement = jQuery.sap.measure.getMeasurement("target1---rerender");
 			assert.ok(oMeasurement, "Measurement for rendering UIArea found");
+			
+			/*
+			 * @evo-todo temp. disable test as JS resources are no longer loaded with jQuery.ajax 
+			 * In general, loading JS Resources no longer might be done with an XHR (e.g. <script> tag), how to write a generic test?
+					 
 			oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/Button.js").absoluteTo(document.location.origin + document.location.pathname).href());
 			if (!oMeasurement){
 				// check if debug sources are used
@@ -194,6 +199,7 @@
 				oMeasurement = jQuery.sap.measure.getMeasurement(URI("../../../../../resources/sap/ui/commons/ButtonRenderer-dbg.js").absoluteTo(document.location.origin + document.location.pathname).href());
 			}
 			assert.ok(oMeasurement, "Measurement for request for ButtonRenderer.js found");
+			*/
 
 		});
 
@@ -246,6 +252,23 @@
 			jQuery.sap.measure.unregisterAllMethods();
 			assert.ok(oObject.func === f , "function is reset");
 			assert.ok(oObject.func2 === f , "function2 is reset");
+		});
+
+		QUnit.test("registerMethod - correct function context", function(assert) {
+			jQuery.sap.measure.setActive(true);
+			jQuery.sap.measure.clear();
+			var f = function() {
+				// Check for equality by reference ("==")
+				assert.equal(this, oObject, "Registered function is called with correct 'this' value");
+			};
+			var oObject = {func: f};
+
+			//register functions
+			jQuery.sap.measure.registerMethod("oObject.func", oObject, "func");
+			oObject.func(); //execute
+
+			// unregister function
+			jQuery.sap.measure.unregisterAllMethods();
 		});
 
 		QUnit.test("Categories/Filtering/Completed measuremtents", function(assert) {
@@ -440,6 +463,9 @@
 			assert.ok(oMeasurement.bytesReceived === 0, "No processing");
 		});
 
+		// do not test safari as it does not seem to work in testing environments
+		var bStablePerformanceAPI = window.performance && window.performance.getEntries && !sap.ui.Device.browser.safari;
+
 		QUnit.test("Performance API depending measures", function(assert) {
 			jQuery.sap.measure.startInteraction("click", this.oButton);
 			var oReq = new XMLHttpRequest();
@@ -448,14 +474,14 @@
 			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			// ignore browsers where no Performance API is present or insufficient
-			if(window.performance && window.performance.getEntries) {
+			if(bStablePerformanceAPI) {
 				assert.equal(oMeasurement.requests.length, 1, "One requests");
 				assert.equal(oMeasurement.measurements.length, 0, "No measurements");
 				assert.ok(oMeasurement.navigation === oMeasurement.requests[0].requestStart - oMeasurement.requests[0].startTime, "Navigation correct");
 				assert.ok(oMeasurement.roundtrip === oMeasurement.requests[0].responseEnd - oMeasurement.requests[0].startTime, "Roundtrip correct");
 				assert.ok(oMeasurement.processing <= oMeasurement.end - oMeasurement.start, "Processing plausible");
 			} else {
-				assert.ok(!(window.performance && window.performance.getEntries), "Performance API not fully available");
+				assert.ok(!bStablePerformanceAPI, "Performance API not fully/stable available");
 			}
 		});
 
@@ -467,14 +493,14 @@
 			jQuery.sap.measure.endInteraction(true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			// ignore browsers where no Performance API is present or insufficient
-			if(window.performance && window.performance.getEntries) {
+			if(bStablePerformanceAPI) {
 				assert.equal(oMeasurement.requests.length, 1, "One requests");
 				assert.equal(oMeasurement.measurements.length, 0, "No measurements");
 				assert.ok(oMeasurement.networkTime === 0, "No sap-perf-fesrec response header");
 				assert.ok(oMeasurement.bytesSent === 0, "Nothing posted/putted");
 				assert.ok(oMeasurement.bytesReceived === 0, "No bytes received when fesr is not active"); //parseInt(oReq.getResponseHeader("content-length"), 10)
 			} else {
-				assert.ok(!(window.performance && window.performance.getEntries), "Performance API not fully available");
+				assert.ok(!bStablePerformanceAPI, "Performance API not fully/stable available");
 			}
 		});
 

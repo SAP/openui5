@@ -6,10 +6,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'jquery.sap.sc
 
 		onAction : function (oEvt) {
 
-			var oPanel = this.getView().byId("panel1");
+			var oPanel = this.byId("panel1");
 			oPanel.setBusy(true);
 
-			var oIcon = this.getView().byId("panel2-icon");
+			var oIcon = this.byId("panel2-icon");
 			oIcon.setBusy(true)
 
 			// simulate delayed end of operation

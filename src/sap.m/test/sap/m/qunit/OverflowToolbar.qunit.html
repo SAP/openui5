@@ -105,9 +105,9 @@
 
 		function setFlexboxMode(sMode) {
 			if (sMode === "new") {
-				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", true);
+				this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", true);
 			} else if (sMode === "old") {
-				this.stub(sap.m.Toolbar, "hasNewFlexBoxSupport", false);
+				this.stub(sap.m.ToolbarRenderer, "hasNewFlexBoxSupport", false);
 			}
 		}
 
@@ -918,6 +918,47 @@
 			oOverflowTB.destroy();
 		});
 
+		QUnit.test("The order of grouped controls should be preserved in the overflow", function (assert) {
+			// Create a toolbar 500px and 5 buttons x 100px
+			// Two of the buttons belongs to group number 1
+			var oGroupedButton1 = getButton('2', sap.m.OverflowToolbarPriority.Low, 1),
+				oGroupedButton2 = getButton('3', sap.m.OverflowToolbarPriority.Low, 1),
+
+					aDefaultContent = [
+						getButton('1'),
+						oGroupedButton1,
+						oGroupedButton2,
+						getButton('4'),
+						getButton('5')
+					],
+
+					oOverflowTB = createOverflowToolbar({
+						width: "500px"
+					}, aDefaultContent),
+
+					aElementsInOverflowIds,
+					iGroupedButton1Index,
+					iGroupedButton2Index;
+
+			// Shrink the toolbar with 100px
+			oOverflowTB.setWidth('400px');
+			sap.ui.getCore().applyChanges();
+
+			// Click the overflow button
+			oOverflowTB._getOverflowButton().firePress();
+			this.clock.tick(1000);
+
+			aElementsInOverflowIds = oOverflowTB._getPopover().getAssociatedContent();
+			iGroupedButton1Index = aElementsInOverflowIds.indexOf(oGroupedButton1.getId());
+			iGroupedButton2Index = aElementsInOverflowIds.indexOf(oGroupedButton2.getId());
+
+			// Check if the order of the grouped items is correct
+			assert.strictEqual(iGroupedButton1Index < iGroupedButton2Index, true,
+					"The button 1 from group number 1 is ordered before button 2 from the same group");
+
+			oOverflowTB.destroy();
+		});
+
 		QUnit.test("Changing the group of a button should move it in the overflow", function (assert) {
 			// Create a toolbar 500px and 5 buttons x 100px
 			// Two of the buttons belongs to group number 1
@@ -1342,6 +1383,16 @@
 					oOverflowTB,
 					spy;
 
+			var oSelect = new sap.m.Select({
+				autoAdjustWidth: true,
+				items: [
+					new sap.ui.core.Item({id: "idItem1", text: "Item 1"}),
+					new sap.ui.core.Item({id: "idItem2", text: "This is an extremely long Item 2"}),
+				]
+			});
+
+			aContent.push(oSelect);
+
 			spy = this.spy(sap.m.OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
 
 			oOverflowTB = createOverflowToolbar({width: 'auto'}, aContent);
@@ -1354,6 +1405,17 @@
 			this.clock.tick(1000);
 
 			var iInvalidationCountAfter = spy.callCount;
+
+			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
+
+			//Assert usage of sap.m.Select with autoAdjustWidth: true, causing control size change
+			iInvalidationCountBefore = spy.callCount;
+
+			oSelect.setSelectedItemId("idItem2");
+
+			this.clock.tick(1000);
+
+			iInvalidationCountAfter = spy.callCount;
 
 			assert.strictEqual(iInvalidationCountAfter - iInvalidationCountBefore, 1, "Layout recalculation triggered (_resetAndInvalidateToolbar called)");
 
@@ -1457,11 +1519,39 @@
 			oOverflowTB.destroy();
 		});
 
+		QUnit.test("[_resetAndInvalidateToolbar] resets also values in _aControlSizes object", function (assert) {
+			// Create a toolbar 550px wide with 5 buttons x 100px each, so all can fit (button margins included)
+			var aDefaultContent = [
+				new sap.m.Button({text: "1", width: "100px"}),
+				new sap.m.Button({text: "2", width: "100px"}),
+				new sap.m.Button({text: "3", width: "100px"}),
+				new sap.m.Button({text: "4", width: "100px"}),
+				new sap.m.Button({text: "5", width: "100px"})
+			],
+			oOverflowTB = createOverflowToolbar({
+				width: "550px"
+			}, aDefaultContent);
+
+			oOverflowTB.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			oOverflowTB._resetAndInvalidateToolbar();
+
+			for (var iControlSize in oOverflowTB._aControlSizes) {
+				if (oOverflowTB._aControlSizes.hasOwnProperty(iControlSize)) {
+					assert.strictEqual(oOverflowTB._aControlSizes[iControlSize], 0, "Cached control size is 0");
+				}
+			}
+
+			oOverflowTB.destroy();
+		});
+
 		QUnit.test("[_cacheControlsInfo] Control caching works properly", function (assert) {
 			var spyCache = this.spy(sap.m.OverflowToolbar.prototype, "_cacheControlsInfo"),
 					aDefaultContent = [
-						new sap.m.Label({text: "Label1", width: "100px"}),
-						new sap.m.Label({text: "Label2", width: "100px"}),
+						new sap.m.Text({text: "Label1", width: "100px"}),
+						new sap.m.Text({text: "Label2", width: "100px"}),
 						new sap.m.Button({text: "1", width: "100px"}),
 						new sap.m.Button({text: "2", width: "100px"}),
 						new sap.m.Button({text: "3", width: "100px", layoutData: new sap.m.OverflowToolbarLayoutData({stayInOverflow: true})}),
@@ -1476,7 +1566,7 @@
 			assert.strictEqual(spyCache.callCount, 1, "After a toolbar is created, _cacheControlsInfo is called once and _bControlsInfoCached is set to true");
 			assert.strictEqual(oOverflowTB._bControlsInfoCached, true, "After a toolbar is created, _bControlsInfoCached is set to true");
 			assert.strictEqual(oOverflowTB._aMovableControls.length, 4, "4 of the buttons are properly marked as movable to the popover");
-			assert.strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 labels are properly marked as toolbar only");
+			assert.strictEqual(oOverflowTB._aToolbarOnlyControls.length, 2, "The 2 texts are properly marked as toolbar only");
 			assert.strictEqual(oOverflowTB._aActionSheetOnlyControls.length, 1, "The button with special layout is properly marked as popover only");
 
 			// Note: control sizes and total content size are not checked here because they depend on margins and calculations are not always predictable
@@ -1575,7 +1665,7 @@
 		QUnit.test("Items must first overflow and then shrink", function (assert) {
 
 			var aDefaultContent = [
-						new sap.m.Label({text: "This is a very very very long label"}),
+						new sap.m.Text({text: "This is a very very very long text"}),
 						new sap.m.Button({text: "2", width: "100px"})
 					],
 					oOverflowTB = createOverflowToolbar({
@@ -1725,6 +1815,89 @@
 			assert.strictEqual(sSize, 333);
 		});
 
+		QUnit.module("Content size measurement");
+
+		QUnit.test("Size of content is reported correctly", function (assert) {
+			var oButton1 = new sap.m.Button({
+						text: "Test1",
+						layoutData: new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow})
+					}),
+					oButton2 = new sap.m.Button({text: "Test2"}),
+					oOverflowTB = new sap.m.OverflowToolbar({width: 'auto', content: [oButton1, oButton2]}),
+					fnCheckContentSize = function(oEvent) {
+
+						var iButton2Width = oOverflowTB._aControlSizes[oButton2.getId()],
+								iOverflowButtonWidth = oOverflowTB._getOverflowButtonSize(),
+								iExpectedContentSize = iButton2Width + iOverflowButtonWidth;
+
+						assert.ok(oEvent.getParameter("contentSize"), iExpectedContentSize);
+						done();
+					},
+					done = assert.async();
+
+			oOverflowTB.placeAt("qunit-fixture");
+			oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.test("Presence of overflow button is checked correctly", function (assert) {
+			var oButton1 = new sap.m.Button({text: "Test1"}),
+					oButton2 = new sap.m.Button({text: "Test2"}),
+					oOverflowTB = new sap.m.OverflowToolbar({width: 'auto', content: [oButton1, oButton2]}),
+					fnCheckContentSize = function(oEvent) {
+
+						var iButton2Width = oOverflowTB._aControlSizes[oButton2.getId()],
+								iOverflowButtonWidth = oOverflowTB._getOverflowButtonSize(),
+								iExpectedContentSize = iButton2Width + iOverflowButtonWidth;
+
+						assert.ok(oEvent.getParameter("contentSize"), iExpectedContentSize);
+						done();
+					},
+					done = assert.async();
+
+			oOverflowTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oOverflowTB.addContent(oButton1.clone());
+			oButton1.setLayoutData(new sap.m.OverflowToolbarLayoutData({priority: sap.m.OverflowToolbarPriority.AlwaysOverflow}));
+			oOverflowTB.attachEventOnce("_contentSizeChange", fnCheckContentSize);
+			sap.ui.getCore().applyChanges();
+		});
+
+		QUnit.module("Control destroy");
+
+		QUnit.test("Popover is not re-created on layoutDataChange after Toolbar is destroyed", function (assert) {
+			var oOTB = createOverflowToolbar({}, [
+				getButton("B1"),
+				getButton("B2")
+			]), oPopover;
+
+			// Arrange
+			oOTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Overwrite the OverflowToolbar exit method
+			// to simulate layoutDataChange is fired before the _popover aggregation is unregistered from the Core.
+			oOTB.exit = function () {
+				var oPopover = this.getAggregation("_popover");
+				if (oPopover) {
+					var fnOriginalDeregister = oPopover.deregister;
+					oPopover.deregister = function(oElement) {};
+					oPopover.destroy();
+					this.onLayoutDataChange(); // call the layoutDataChange handler
+					oPopover.deregister = fnOriginalDeregister;
+					oPopover.deregister();
+				}
+			};
+
+			// Act: destroy the OverflowToolbar
+			oOTB.destroy(); // exit is called
+			oPopover = oOTB.getAggregation("_popover");
+
+			// Assert
+			assert.strictEqual(oOTB._bIsBeingDestroyed, true, "Toolbar is destroyed");
+			assert.strictEqual(oPopover, null, "Popover is destroyed");
+		});
 
 	})();
 	</script>

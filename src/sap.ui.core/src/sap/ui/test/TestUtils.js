@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define("sap/ui/test/TestUtils", [
+sap.ui.define([
 		"jquery.sap.global",
 		"sap/ui/core/Core",
 		"sap/ui/thirdparty/URI",
@@ -21,9 +21,12 @@ sap.ui.define("sap/ui/test/TestUtils", [
 			+ "Content-Transfer-Encoding: binary\r\n\r\nHTTP/1.1 ",
 		sRealOData = jQuery.sap.getUriParameters().get("realOData"),
 		rRequestLine = /^(GET|DELETE|PATCH|POST) (\S+) HTTP\/1\.1$/,
+		mData = {},
 		bProxy = sRealOData === "true" || sRealOData === "proxy",
 		bRealOData = bProxy || sRealOData === "direct",
-		TestUtils;
+		TestUtils,
+		sV2VersionKey = "DataServiceVersion",
+		sV4VersionKey = "OData-Version";
 
 	if (bRealOData) {
 		document.title = document.title + " (real OData)";
@@ -89,10 +92,19 @@ sap.ui.define("sap/ui/test/TestUtils", [
 	function pushDeeplyContains(oActual, oExpected, sMessage, bExpectSuccess) {
 		try {
 			deeplyContains(oActual, oExpected, "/");
-			QUnit.assert.push(bExpectSuccess, oActual, oExpected, sMessage);
+			QUnit.assert.pushResult({
+				result: bExpectSuccess,
+				actual:oActual,
+				expected : oExpected,
+				message : sMessage
+			});
 		} catch (ex) {
-			QUnit.assert.push(!bExpectSuccess, oActual, oExpected,
-				(sMessage || "") + " failed because of " + ex.message);
+			QUnit.assert.pushResult({
+				result : !bExpectSuccess,
+				actual : oActual,
+				expected : oExpected,
+				message : (sMessage || "") + " failed because of " + ex.message
+			});
 		}
 	}
 
@@ -200,6 +212,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 				sBoundary = firstLine(sBody);
 				sBody.split(sBoundary).slice(1, -1).forEach(function (sRequestPart) {
 					var aMatches,
+						oRequestHeaders = oRequest.requestHeaders,
 						sRequestLine,
 						aResponse,
 						sResponse;
@@ -210,22 +223,29 @@ sap.ui.define("sap/ui/test/TestUtils", [
 					if (!aMatches) {
 						sResponse = notFound(sRequestLine);
 					} else if (aMatches[1] === "DELETE") {
-						sResponse = "204 No Data\r\n\r\n\r\n";
+						sResponse = "204\r\n"
+							+ "Content-Length: 0\r\n"
+							+ convertToString(getVersionHeader(oRequestHeaders))
+							+ "\r\n\r\n";
 					} else if (aMatches[1] === "POST" || aMatches[1] === "PATCH") {
-						sResponse = "200 OK\r\nContent-Type: " + sJson + "\r\n\r\n"
+						sResponse = "200\r\nContent-Type: " + sJson + "\r\n"
+							+ convertToString(getVersionHeader(oRequestHeaders))
+							+ "\r\n"
 							+ message(sRequestPart);
 					} else {
 						aResponse = mUrls[sServiceBase + aMatches[2]];
 						if (aResponse) {
 							try {
-								sResponse = "200 OK\r\nContent-Type: " + sJson + "\r\n"
-									+ "ODataVersion: 4.0\r\n\r\n"
+								sResponse = "200\r\nContent-Type: " + sJson + "\r\n"
+									// set headers for single request within $batch
+									+ convertToString(getVersionHeader(oRequestHeaders,
+										aResponse[1]))
+									+ "\r\n"
 									+ JSON.stringify(JSON.parse(aResponse[2]))
 									+ "\r\n";
 								jQuery.sap.log.info(sRequestLine, null, "sap.ui.test.TestUtils");
 							} catch (e) {
-								sResponse = error(sRequestLine, 500, "Internal Error",
-									"Invalid JSON");
+								sResponse = error(sRequestLine, 500, "Invalid JSON");
 							}
 						} else {
 							sResponse = notFound(sRequestLine);
@@ -234,15 +254,14 @@ sap.ui.define("sap/ui/test/TestUtils", [
 					aResponseParts.push(sMimeHeaders + sResponse);
 				});
 				aResponseParts.push("--\r\n");
-				oRequest.respond(200, {
-					"Content-Type" : "multipart/mixed;boundary=" + sBoundary.slice(2)
-				}, aResponseParts.join(sBoundary));
+				// take data service version also for complete batch from request headers
+				respond([200, { "Content-Type" : "multipart/mixed;boundary=" + sBoundary.slice(2) },
+					aResponseParts.join(sBoundary)], oRequest);
 			}
 
-			function error(sRequestLine, iCode, sStatus, sMessage) {
+			function error(sRequestLine, iCode, sMessage) {
 				jQuery.sap.log.error(sRequestLine, sMessage, "sap.ui.test.TestUtils");
-				return iCode + " " + sStatus + "\r\nContent-Type: text/plain\r\n\r\n"
-					+ sMessage + "\r\n";
+				return iCode + "\r\nContent-Type: text/plain\r\n\r\n" + sMessage + "\r\n";
 			}
 
 			/*
@@ -270,6 +289,14 @@ sap.ui.define("sap/ui/test/TestUtils", [
 				return mUrls;
 			}
 
+			/*
+			 * Converts the header array to a string and adds "\r\n" if the array was not empty.
+			 * Only works with one header-key/value pair. See getVersionHeader.
+			 */
+			function convertToString(aHeader) {
+				return aHeader && aHeader.length ? aHeader.join(": ") + "\r\n" : "";
+			}
+
 			function contentType(sName) {
 				if (/\.xml$/.test(sName)) {
 					return "application/xml";
@@ -281,11 +308,56 @@ sap.ui.define("sap/ui/test/TestUtils", [
 			}
 
 			function echo(oRequest) {
-				oRequest.respond(200, {"Content-Type" : sJson}, oRequest.requestBody);
+				respond([200, {"Content-Type" : sJson}, oRequest.requestBody], oRequest);
 			}
 
 			function firstLine(sText) {
 				return sText.slice(0, sText.indexOf("\r\n"));
+			}
+
+			function getHeaderValue(oHeaders, sKey) {
+				var sHeaderKey;
+
+				sKey = sKey.toLowerCase();
+
+				for (sHeaderKey in oHeaders) {
+					if (sHeaderKey.toLowerCase() === sKey) {
+						return oHeaders[sHeaderKey];
+					}
+				}
+			}
+
+			/*
+			 * Get the header for the OData service version from the given request and response
+			 * headers. First checks the given response headers and then the given request headers
+			 * if either "OData-Version" or "ODataServiceVersion" header is contained
+			 * (case-insensitive) and returns the found header key and header value as an array.
+			 *
+			 * @param {object} oRequestHeaders The request headers
+			 * @param {object} oResponseHeaders The response headers
+			 * @returns {string[]} An empty array if OData service version is neither found in
+			 *   response nor in request headers. Otherwise the array contains as first element the
+			 *   header key ("OData-Version" or "ODataServiceVersion") and as second element the
+			 *   corresponding header value.
+			 */
+			function getVersionHeader(oRequestHeaders, oResponseHeaders) {
+				var sODataVersion = getHeaderValue(oResponseHeaders, sV4VersionKey),
+					sODataServiceVersion = getHeaderValue(oResponseHeaders, sV2VersionKey),
+					aResult = [];
+
+				if (!sODataVersion && !sODataServiceVersion) {
+					//no OData service version is set for the GET, take it from request
+					sODataVersion = getHeaderValue(oRequestHeaders, sV4VersionKey);
+					sODataServiceVersion = getHeaderValue(oRequestHeaders, sV2VersionKey);
+				}
+				if (sODataVersion) {
+					aResult.push(sV4VersionKey);
+					aResult.push(sODataVersion);
+				} else if (sODataServiceVersion) {
+					aResult.push(sV2VersionKey);
+					aResult.push(sODataServiceVersion);
+				}
+				return aResult;
 			}
 
 			function message(sText) {
@@ -303,7 +375,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 			}
 
 			function notFound(sRequestLine) {
-				return error(sRequestLine, 404, "Not Found", "No mock data found");
+				return error(sRequestLine, 404, "No mock data found");
 			}
 
 			/*
@@ -315,8 +387,8 @@ sap.ui.define("sap/ui/test/TestUtils", [
 
 				if (!sMessage) {
 					oResult = jQuery.sap.sjax({
-						url: sPath,
-						dataType: "text"
+						url : sPath,
+						dataType : "text"
 					});
 					if (!oResult.success) {
 						throw new Error(sPath + ": resource not found");
@@ -326,6 +398,31 @@ sap.ui.define("sap/ui/test/TestUtils", [
 				return sMessage;
 			}
 
+			/*
+			 * Responds to the given request with the given response data. If the response headers
+			 * do not contain a response header for the OData service version (either V2 or V4) the
+			 * OData service version from the request is taken into the response headers.
+			 *
+			 * @param {object[]} aResponseData
+			 *   An array containing the status code as number, the response headers as object and
+			 *   the response body as string
+			 * @param {object} oRequest The request object
+			 */
+			function respond(aResponseData, oRequest) {
+				var oResponseHeaders = aResponseData[1],
+					aVersion = getVersionHeader({}, oResponseHeaders);
+
+				if (aVersion.length === 0) {
+					aVersion = getVersionHeader(oRequest.requestHeaders);
+					if (aVersion.length > 0) {
+						oResponseHeaders = jQuery.extend({}, oResponseHeaders);
+						oResponseHeaders[aVersion[0]] = aVersion[1];
+					}
+
+				}
+				oRequest.respond(aResponseData[0], oResponseHeaders, aResponseData[2]);
+			}
+
 			function setupServer() {
 				var fnRestore,
 					oServer,
@@ -333,13 +430,16 @@ sap.ui.define("sap/ui/test/TestUtils", [
 					sUrl;
 
 				// set up the fake server
-				oServer = oSandbox.useFakeServer();
+				oServer = sinon.fakeServer.create();
+				oSandbox.add(oServer);
 				oServer.autoRespond = true;
 
 				for (sUrl in mUrls) {
-					oServer.respondWith("GET", sUrl, mUrls[sUrl]);
+					oServer.respondWith("GET", sUrl, respond.bind(null, mUrls[sUrl]));
 				}
-				oServer.respondWith("DELETE", /.*/, [204, {}, ""]);
+				oServer.respondWith("DELETE", /.*/, respond.bind(null, [204, {}, ""]));
+				// Empty response for HEAD request to retrieve security token
+				oServer.respondWith("HEAD", /.*/, respond.bind(null, [200, {}, ""]));
 				// for PATCH/POST we simply echo the body, in real scenarios the server would
 				// respond with different data (generated keys, side-effects, ETag)
 				oServer.respondWith("PATCH", /.*/, echo);
@@ -359,8 +459,8 @@ sap.ui.define("sap/ui/test/TestUtils", [
 				sinon.FakeXMLHttpRequest.useFilters = true;
 				sinon.FakeXMLHttpRequest.addFilter(function (sMethod, sUrl) {
 					// must return true if the request is NOT processed by the fake server
-					return sMethod !== "DELETE" && sMethod !== "PATCH" && sMethod !== "POST" &&
-						!(sMethod === "GET" && sUrl in mUrls);
+					return sMethod !== "DELETE" && sMethod !== "HEAD" && sMethod !== "PATCH"
+						&& sMethod !== "POST" && !(sMethod === "GET" && sUrl in mUrls);
 				});
 			}
 
@@ -404,7 +504,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 		 * QUnit.test("parse error", function (assert) {
 		 *     sap.ui.test.TestUtils.withNormalizedMessages(function () {
 		 *         var oType = new sap.ui.model.odata.type.Decimal({},
-		 *                        {constraints: {precision: 10, scale: 3});
+		 *                        {constraints : {precision : 10, scale : 3});
 		 *
 		 *         assert.throws(function () {
 		 *             oType.parseValue("-123.4567", "string");
@@ -416,13 +516,15 @@ sap.ui.define("sap/ui/test/TestUtils", [
 		 *   the code under test
 		 * @since 1.27.1
 		 */
-		withNormalizedMessages: function (fnCodeUnderTest) {
-			sinon.test(function () {
+		withNormalizedMessages : function (fnCodeUnderTest) {
+			var oSandbox = sinon.sandbox.create();
+
+			try {
 				var oCore = sap.ui.getCore(),
 					fnGetBundle = oCore.getLibraryResourceBundle;
 
-				this.stub(oCore, "getLibraryResourceBundle").returns({
-					getText: function (sKey, aArgs) {
+				oSandbox.stub(oCore, "getLibraryResourceBundle").returns({
+					getText : function (sKey, aArgs) {
 						var sResult = sKey,
 							sText = fnGetBundle.call(oCore).getText(sKey),
 							i;
@@ -437,8 +539,9 @@ sap.ui.define("sap/ui/test/TestUtils", [
 				});
 
 				fnCodeUnderTest.apply(this);
-
-			}).apply({}); // give Sinon a "this" to enrich
+			} finally {
+				oSandbox.verifyAndRestore();
+			}
 		},
 
 		/**
@@ -452,7 +555,7 @@ sap.ui.define("sap/ui/test/TestUtils", [
 		/**
 		 * Returns the realOData query parameter so that it can be forwarded to an embedded test
 		 *
-		 * @returns {String}
+		 * @returns {string}
 		 *  the realOData query parameter or "" if none was given
 		 */
 		getRealOData : function () {
@@ -495,7 +598,36 @@ sap.ui.define("sap/ui/test/TestUtils", [
 		},
 
 		/**
-		 * Sets up the fake server for OData V4 responses unless real OData responses are requested.
+		 * Returns the value which has been stored with the given key using {@link #setData} and
+		 * resets it.
+		 *
+		 * @param {string} sKey
+		 *   The key
+		 * @returns {object}
+		 *   The value
+		 */
+		retrieveData : function (sKey) {
+			var vValue = mData[sKey];
+
+			delete mData[sKey];
+			return vValue;
+		},
+
+		/**
+		 * Stores the given value under the given key so that it can be used by a test at a later
+		 * point in time.
+		 *
+		 * @param {string} sKey
+		 *   The key
+		 * @param {object} vValue
+		 *   The value
+		 */
+		setData : function (sKey, vValue) {
+			mData[sKey] = vValue;
+		},
+
+		/**
+		 * Sets up the fake server for OData responses unless real OData responses are requested.
 		 *
 		 * The behavior is controlled by the request property "realOData". If the property has any
 		 * of the following values, the fake server is <i>not</i> set up.

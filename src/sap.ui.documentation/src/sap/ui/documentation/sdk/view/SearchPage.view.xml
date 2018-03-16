@@ -6,7 +6,8 @@
 		xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
 		<op:ObjectPageLayout id="searchPage"
 							useIconTabBar="true"
-							alwaysShowContentHeader="true">
+							alwaysShowContentHeader="true"
+							upperCaseAnchorBar="false">
 		<op:headerTitle>
 			<op:ObjectPageHeader objectTitle='Search Results for "{/searchTerm}"'>
 			</op:ObjectPageHeader>
@@ -21,9 +22,10 @@
 					<op:blocks>
 						<VBox>
 							<OverflowToolbar design="Transparent" height="3rem">
-								<Title text="ALL (0 - {/visibleAllLength} of {/AllLength})"/>
+								<Title text="ALL ({=!!${/AllLength} > 0 ? '1 - ' + ${/visibleAllLength} : '0'} of {/AllLength})"/>
 							</OverflowToolbar>
 							<List
+								id="allList"
 								width="100%"
 								growing="true"
 								growingThreshold="25"
@@ -39,10 +41,8 @@
 								}">
 								<FeedListItem
 									sender="{title}"
-									senderPress="openSearchResult"
 									text="{summary}"
 									showIcon="false"
-									info="{path}"
 									app:path="{path}"/>
 							</List>
 						</VBox>
@@ -56,9 +56,10 @@
 						<op:blocks>
 							<VBox>
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="API Reference (0 - {/visibleAPILength} of {/APILength})"/>
+									<Title text="API Reference (1 - {/visibleAPILength} of {/APILength})"/>
 								</OverflowToolbar>
 								<List
+									id="apiList"
 									growing="true"
 									growingThreshold="25"
 									updateFinished="onAPILoadMore"
@@ -72,10 +73,8 @@
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryAPIFormatter'}"
 										sender="{title}"
-										senderPress="openSearchResult"
 										text="{summary}"
 										showIcon="false"
-										info="{path}"
 										app:path="{path}"/>
 								</List>
 							</VBox>
@@ -89,9 +88,10 @@
 						<op:blocks>
 							<VBox>
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="Documentation (0 - {/visibleDocLength} of {/DocLength})"/>
+									<Title text="Documentation (1 - {/visibleDocLength} of {/DocLength})"/>
 								</OverflowToolbar>
 								<List
+									id="documentationList"
 									growing="true"
 									growingThreshold="25"
 									updateFinished="onDocLoadMore"
@@ -105,10 +105,8 @@
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryDocFormatter'}"
 										sender="{title}"
-										senderPress="openSearchResult"
 										text="{summary}"
 										showIcon="false"
-										info="{path}"
 										app:path="{path}"/>
 								</List>
 							</VBox>
@@ -116,15 +114,16 @@
 					</op:ObjectPageSubSection>
  				</op:subSections>
 			</op:ObjectPageSection>
-			<op:ObjectPageSection title="Explored ({/ExploredLength})" visible="{=!!${/ExploredLength}}">
+			<op:ObjectPageSection title="Samples ({/ExploredLength})" visible="{=!!${/ExploredLength}}">
 				<op:subSections>
 					<op:ObjectPageSubSection>
 						<op:blocks>
 							<VBox>
 								<OverflowToolbar design="Transparent" height="3rem">
-									<Title text="Explored (0 - {/visibleExploredLength} of {/ExploredLength})"/>
+									<Title text="Samples (1 - {/visibleExploredLength} of {/ExploredLength})"/>
 								</OverflowToolbar>
 								<List
+									id="samplesList"
 									growing="true"
 									growingThreshold="25"
 									updateFinished="onExploredLoadMore"
@@ -138,10 +137,8 @@
 									<FeedListItem
 										visible="{path:'category', formatter:'.categoryExploredFormatter'}"
 										sender="{title}"
-										senderPress="openSearchResult"
 										text="{summary}"
 										showIcon="false"
-										info="{path}"
 										app:path="{path}"/>
 								</List>
 							</VBox>

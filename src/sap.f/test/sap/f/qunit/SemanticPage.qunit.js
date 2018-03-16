@@ -22,7 +22,6 @@
 		}
 	});
 
-
 	QUnit.test("test SemanticPage instantiation", function (assert) {
 		var CLASS_NAME = "sap.f.semantic.SemanticPage";
 
@@ -136,29 +135,104 @@
 			"SemanticPage toggleHeaderOnTitleClick set to true and retrieved successfully.");
 	});
 
+	QUnit.test("test SemanticPage titlePrimaryArea setter and getter", function (assert) {
+		var sBeginArea = sap.f.DynamicPageTitleArea.Begin,
+			sMiddleArea = sap.f.DynamicPageTitleArea.Middle;
+
+		// Assert default
+		assert.strictEqual(this.oSemanticPage.getTitlePrimaryArea(), sBeginArea,
+			"SemanticPage titlePrimaryArea is sap.f.DynamicPageTitleArea.Begin by default.");
+		assert.strictEqual(this.oSemanticPage._getTitle().getPrimaryArea(), sBeginArea,
+			"DynamicPageTitle primaryArea is sap.f.DynamicPageTitleArea.Begin by default.");
+
+		// Act
+		this.oSemanticPage.setTitlePrimaryArea(sMiddleArea);
+
+		// Assert
+		assert.strictEqual(this.oSemanticPage.getTitlePrimaryArea(), sMiddleArea,
+			"SemanticPage titlePrimaryArea set to sap.f.DynamicPageTitleArea.Middle and retrieved successfully.");
+		assert.strictEqual(this.oSemanticPage._getTitle().getPrimaryArea(), sMiddleArea,
+			"DynamicPageTitle primaryArea set to sap.f.DynamicPageTitleArea.Middle and retrieved successfully.");
+
+		//Setup
+		//Create a <code>SemanticPage</code> with <code>titlePrimaryArea</code> set to
+		//<code>sap.f.DynamicPageTitleArea.Middle</code> in the constructor
+		this.oSemanticPage2 = oFactory.getSemanticPage({titlePrimaryArea : sMiddleArea});
+		oUtil.renderObject(this.oSemanticPage2);
+
+		// Assert default
+		assert.strictEqual(this.oSemanticPage2.getTitlePrimaryArea(), sMiddleArea,
+			"SemanticPage titlePrimaryArea is sap.f.DynamicPageTitleArea.Middle by default.");
+		assert.strictEqual(this.oSemanticPage2._getTitle().getPrimaryArea(), sMiddleArea,
+			"DynamicPageTitle primaryArea is sap.f.DynamicPageTitleArea.Middle by default.");
+
+		// Act
+		this.oSemanticPage2.setTitlePrimaryArea(sBeginArea);
+
+		// Assert
+		assert.strictEqual(this.oSemanticPage2.getTitlePrimaryArea(), sBeginArea,
+			"SemanticPage titlePrimaryArea set to sap.f.DynamicPageTitleArea.Begin and retrieved successfully.");
+		assert.strictEqual(this.oSemanticPage2._getTitle().getPrimaryArea(), sBeginArea,
+			"DynamicPageTitle primaryArea set to sap.f.DynamicPageTitleArea.Begin and retrieved successfully..");
+
+		//Cleanup
+		this.oSemanticPage2.destroy();
+		this.oSemanticPage2 = null;
+	});
 
 	QUnit.test("test SemanticPage titleHeading aggregation methods", function (assert) {
-		var oTitle = oFactory.getTitle();
+		var oTitle = oFactory.getTitle(),
+			vResult;
 
 		// Assert default
 		assert.equal(this.oSemanticPage.getTitleHeading(), null,
 			"SemanticPage titleHeading is null by default.");
 
-		// Аct - set titleHeading
-		this.oSemanticPage.setTitleHeading(oTitle);
+		// Аct: set titleHeading
+		vResult = this.oSemanticPage.setTitleHeading(oTitle);
 
 		// Assert
 		assert.equal(this.oSemanticPage.getTitleHeading(), oTitle,
 			"SemanticPage titleHeading is set and retrieved successfully.");
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage setTitleHeading returns the SemanticPage instance.");
 
-		// Аct - destroy content
-		this.oSemanticPage.destroyTitleHeading();
+		// Аct: destroy titleHeading
+		vResult = this.oSemanticPage.destroyTitleHeading();
 
 		// Assert
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage destroyTitleHeading returns the SemanticPage instance.");
 		assert.equal(this.oSemanticPage.getTitleHeading(), null,
 			"SemanticPage content is destroyed successfully.");
 	});
 
+	QUnit.test("test SemanticPage titleBreadcrumbs aggregation methods", function (assert) {
+		var oBreadcrumbs = oFactory.getBreadcrumbs(),
+			vResult;
+
+		// Assert default
+		assert.equal(this.oSemanticPage.getTitleBreadcrumbs(), null,
+			"SemanticPage titleBreadcrumbs is null by default.");
+
+		// Аct: set titleHeading
+		vResult = this.oSemanticPage.setTitleBreadcrumbs(oBreadcrumbs);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleBreadcrumbs(), oBreadcrumbs,
+			"SemanticPage titleBreadcrumbs is set and retrieved successfully.");
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage setTitleBreadcrumbs returns the SemanticPage instance.");
+
+		// Аct: destroy titleHeading
+		vResult = this.oSemanticPage.destroyTitleBreadcrumbs();
+
+		// Assert
+		assert.equal(this.oSemanticPage, vResult,
+			"SemanticPage destroyTitleBreadcrumbs returns the SemanticPage instance.");
+		assert.equal(this.oSemanticPage.getTitleBreadcrumbs(), null,
+			"SemanticPage titleBreadcrumbs is destroyed successfully.");
+	});
 
 	QUnit.test("test SemanticPage titleExpandedContent aggregation methods", function (assert) {
 		var oMessageStrip = oFactory.getMessageStrip(1),
@@ -209,7 +283,6 @@
 		assert.ok(oMessageStrip2.bIsDestroyed, "SemanticPage item has been destroyed.");
 	});
 
-
 	QUnit.test("test SemanticPage titleSnappedContent aggregation methods", function (assert) {
 		var oMessageStrip = oFactory.getMessageStrip(1),
 			oMessageStrip2 = oFactory.getMessageStrip(2),
@@ -259,6 +332,54 @@
 		assert.ok(oMessageStrip2.bIsDestroyed, "SemanticPage item has been destroyed.");
 	});
 
+	QUnit.test("test SemanticPage titleContent aggregation methods", function (assert) {
+		var oMessageStrip = oFactory.getMessageStrip(1),
+			oMessageStrip2 = oFactory.getMessageStrip(2),
+			iContentCount = 0, iContentIdx = 0;
+
+		// Assert default
+		assert.equal(this.oSemanticPage.getTitleContent().length, iContentCount,
+			"SemanticPage titleContent is empty by default - items count: " + iContentCount);
+
+		// Act
+		iContentCount++;
+		this.oSemanticPage.addTitleContent(oMessageStrip);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleContent().length, iContentCount,
+			"SemanticPage titleContent has one new item added - items count: " + iContentCount);
+		assert.equal(this.oSemanticPage.indexOfTitleContent(oMessageStrip), iContentIdx,
+			"SemanticPage titleContent item added is on index: " + iContentIdx);
+
+		// Act
+		iContentCount--;
+		this.oSemanticPage.removeAllTitleContent();
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleContent().length, iContentCount,
+			"SemanticPage titleContent has been removed - items count: " + iContentCount);
+
+		// Act
+		iContentCount += 2;
+		this.oSemanticPage.addTitleContent(oMessageStrip);
+		this.oSemanticPage.insertTitleContent(oMessageStrip2, iContentIdx);
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleContent().length, iContentCount,
+			"SemanticPage titleContent has two items inserted - items count: " + iContentCount);
+		assert.equal(this.oSemanticPage.indexOfTitleContent(oMessageStrip2), iContentIdx,
+			"SemanticPage titleContent second item is inserted on index: " + iContentIdx);
+
+		// Act
+		iContentCount -= 2;
+		this.oSemanticPage.destroyTitleContent();
+
+		// Assert
+		assert.equal(this.oSemanticPage.getTitleContent().length, iContentCount,
+			"SemanticPage titleContent has been destroyed - items count: " + iContentCount);
+		assert.ok(oMessageStrip.bIsDestroyed, "SemanticPage item has been destroyed.");
+		assert.ok(oMessageStrip2.bIsDestroyed, "SemanticPage item has been destroyed.");
+	});
 
 	QUnit.test("test SemanticPage headerContent aggregation methods", function (assert) {
 		var oMessageStrip = oFactory.getMessageStrip(1),
@@ -626,7 +747,7 @@
 
 	QUnit.test("test getOrder method", function (assert) {
 		var sSemanticAddType = "sap.f.semantic.AddAction",
-			iSemanticAddTypeOrder = 1,
+			iSemanticAddTypeOrder = 4,
 			sSemanticDeleteType = "sap.f.semantic.DeleteAction",
 			iSemanticDeleteTypeOrder = 2;
 
@@ -662,7 +783,6 @@
 			sSemanticCloseType + " has the correct Constraint: " + sSemanticCloseConstraintType);
 	});
 
-
 	QUnit.test("test isMainAction method", function (assert) {
 		var sSemanticAddType = "sap.f.semantic.AddAction",
 			sSemanticTitleMainActionType = "sap.f.semantic.TitleMainAction";
@@ -684,4 +804,16 @@
 		assert.equal(oSemanticConfiguration.isNavigationAction(sSemanticCloseType), true,
 			sSemanticCloseType + " is a Navigation Action");
 	});
+
+	QUnit.test("test if a SemanticControl should be preprocessed", function (assert) {
+		var sSemanticDraftIndicatorType = "sap.m.DraftIndicator",
+			sSemanticAddType = "sap.f.semantic.AddAction";
+
+		// Assert
+		assert.equal(oSemanticConfiguration.shouldBePreprocessed(sSemanticDraftIndicatorType), true,
+			sSemanticDraftIndicatorType + " should be preprocessed");
+		assert.equal(oSemanticConfiguration.shouldBePreprocessed(sSemanticAddType), false,
+			sSemanticAddType + " should not be preprocessed");
+	});
+
 })(jQuery, QUnit, sinon, sap.f.semantic.SemanticPage);

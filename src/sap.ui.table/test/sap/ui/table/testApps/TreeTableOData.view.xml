@@ -1,317 +1,346 @@
 <mvc:View xmlns="sap.m"
+	controllerName="sap.ui.table.testApps.TreeTableOData"
+	height="100%"
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:table="sap.ui.table"
-	controllerName="sap.ui.table.testApps.TreeTableOData"
+  	xmlns:dnd="sap.ui.core.dnd"
 	>
-
-	<Panel
-		expandable="true"
-		expanded="false"
-		width="auto"
-		class="sapUiResponsiveMargin sapUiNoContentPadding">
-		<headerToolbar>
-			<Toolbar>
-				<Title text="TreeTable/Binding settings" level="H2"/>
-			</Toolbar>
-		</headerToolbar>
+	<App>
+	<pages>
+	<Page>
 		<content>
-			<f:Form id="testForm"
-				editable="true">
-				<f:layout>
-					<f:ResponsiveGridLayout
-						labelSpanL="3"
-						labelSpanM="3"
-						emptySpanL="4"
-						emptySpanM="4"
-						columnsL="1"
-						columnsM="1" />
-				</f:layout>
-				<f:formContainers>
-					<f:FormContainer>
-						<f:formElements>
-							<f:FormElement label="Service URL">
-								<f:fields>
-									<Input value="{/serviceURL}" id="serviceURL"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Collection">
-								<f:fields>
-									<Input value="{/collection}" id="collection"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Entity-Type">
-								<f:fields>
-									<Input value="{/entityType}" id="entityType"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="$select properties">
-								<f:fields>
-									<Input value="{/selectProperties}" id="selectProperties"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="CountMode">
-								<f:fields>
-									<Select width="100%" id="countMode" selectedKey="{/countMode}">
-										<items>
-											<core:Item text="Request" key="Request"/>
-											<core:Item text="Inline" key="Inline"/>
-											<core:Item text="Both" key="Both"/>
-											<core:Item text="None" key="None"/>
-										</items>
-									</Select>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="OperationMode">
-								<f:fields>
-									<Select width="100%" id="operationMode" selectedKey="{/operationMode}">
-										<items>
-											<core:Item text="Server" key="Server"/>
-											<core:Item text="Client" key="Client"/>
-											<core:Item text="Auto" key="Auto"/>
-										</items>
-									</Select>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Table Threshold">
-								<f:fields>
-									<Input value="{path: '/tableThreshold', type:'sap.ui.model.type.Integer'}" id="tableThreshold"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="ListBinding Threshold">
-								<f:fields>
-									<Input value="{path: '/bindingThreshold', type:'sap.ui.model.type.Integer'}" id="bindingThreshold"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Root Level">
-								<f:fields>
-									<Input value="{path:'/rootLevel', type:'sap.ui.model.type.Integer'}" id="rootLevel"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="# of exp. Level">
-								<f:fields>
-									<Input value="{path: '/initialLevel', type:'sap.ui.model.type.Integer'}" id="initialLevel"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Application Filter">
-								<f:fields>
-									<Input value="{/filterProperty}" id="filterProperty"/>
-									<Input value="{/filterOperator}" id="filterOperator"/>
-									<Input value="{/filterValue}" id="filterValue"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="VisibleRowCount">
-								<f:fields>
-									<Input value="{path: '/visibleRowCount', type:'sap.ui.model.type.Integer'}" id="visibleRowCount"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="VisibleRowCountMode">
-								<f:fields>
-									<Select width="100%" id="visibleRowCountMode" selectedKey="{/visibleRowCountMode}">
-										<items>
-											<core:Item text="Fixed" key="Fixed"/>
-											<core:Item text="Auto" key="Auto"/>
-										</items>
-									</Select>
-								</f:fields>
-							</f:FormElement>
-						</f:formElements>
-					</f:FormContainer>
-				</f:formContainers>
-			</f:Form>
-		</content>
-	</Panel>
-	<Panel
-		expandable="true"
-		expanded="false"
-		width="auto"
-		class="sapUiResponsiveMargin sapUiNoContentPadding">
-		<headerToolbar>
-			<Toolbar>
-				<Title text="Hierarchy Properties" level="H2"/>
-			</Toolbar>
-		</headerToolbar>
-		<content>
-			<f:Form id="hierarchyPropertiesForm"
-				editable="true">
-				<f:layout>
-					<f:ResponsiveGridLayout
-						labelSpanL="3"
-						labelSpanM="3"
-						emptySpanL="4"
-						emptySpanM="4"
-						columnsL="1"
-						columnsM="1" />
-				</f:layout>
-				<f:formContainers>
-					<f:FormContainer>
-						<f:formElements>
-							<f:FormElement label="Level">
-								<f:fields>
-									<Input value="{/hierarchyLevelFor}" id="hierarchyLevelFor"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Parent-Node">
-								<f:fields>
-									<Input value="{/hierarchyParentNodeFor}" id="hierarchyParentNodeFor"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Hierarchy-Node">
-								<f:fields>
-									<Input value="{/hierarchyNodeFor}" id="hierarchyNodeFor"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Drill-State">
-								<f:fields>
-									<Input value="{/hierarchyDrillStateFor}" id="hierarchyDrillStateFor"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Descendant-Count">
-								<f:fields>
-									<Input value="{/hierarchyDescendantCountFor}" id="hierarchyDescendantCountFor"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="External-Key">
-								<f:fields>
-									<Input value="{/hierarchyExternalKeyFor}" id="hierarchyExternalKeyFor"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Use Local Metadata">
-								<f:fields>
-									<CheckBox selected="{/useLocalMetadata}" id="useLocalMetadata"/>
-								</f:fields>
-							</f:FormElement>
-						</f:formElements>
-					</f:FormContainer>
-				</f:formContainers>
-			</f:Form>
-		</content>
-	</Panel>
-	<Panel
-		expandable="true"
-		expanded="true"
-		width="auto"
-		height="auto"
-		class="sapUiResponsiveMargin sapUiNoContentPadding"
-		id="tableContainerPanel">
-		<headerToolbar>
-			<Toolbar>
-				<Title text="TreeTable Container" level="H2" id="tableContainerTitle"/>
-			</Toolbar>
-		</headerToolbar>
-		<content>
-			<table:TreeTable
-				id="tableOData"
-				selectionMode="MultiToggle"
-				visibleRowCount="{path:'/visibleRowCount', type:'sap.ui.model.type.Integer'}"
-				visibleRowCountMode="{/visibleRowCountMode}"
-				threshold="{/tableThreshold}"
-				rootLevel="{/rootLevel}">
-				<table:toolbar>
+			<Panel
+				expandable="true"
+				expanded="false"
+				width="auto"
+				class="sapUiResponsiveMargin sapUiNoContentPadding">
+				<headerToolbar>
 					<Toolbar>
-						<Label text="Table-Tools" />
-						<Button text="Create" icon="sap-icon://add" press=".onCreate"></Button>
-						<Button text="Cut" icon="sap-icon://scissors" press=".onCut"></Button>
-						<Button text="Paste" icon="sap-icon://paste" press=".onPaste"></Button>
-						<Button text="Save" icon="sap-icon://save" press=".onSave"></Button>
-						<ToolbarSpacer />
-						<!--<Label text="Tree State Tools" />
-						<Button text="Save" icon="sap-icon://loan" press=".onSaveTreeState"></Button>
-						<Button text="Restore" icon="sap-icon://soccor" press=".onRestoreTreeState"></Button>-->
-						<ToolbarSpacer />
-						<Button type="Emphasized" text="doMagic()" icon="sap-icon://activate" press="onCreateTableClick"/>
+						<Title text="TreeTable/Binding settings" level="H2"/>
 					</Toolbar>
-				</table:toolbar>
-			</table:TreeTable>
+				</headerToolbar>
+				<content>
+					<f:Form id="testForm"
+						editable="true">
+						<f:layout>
+							<f:ResponsiveGridLayout
+								labelSpanL="3"
+								labelSpanM="3"
+								emptySpanL="4"
+								emptySpanM="4"
+								columnsL="1"
+								columnsM="1" />
+						</f:layout>
+						<f:formContainers>
+							<f:FormContainer>
+								<f:formElements>
+									<f:FormElement label="Service URL">
+										<f:fields>
+											<Input value="{/serviceURL}" id="serviceURL"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Collection">
+										<f:fields>
+											<Input value="{/collection}" id="collection"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Entity-Type">
+										<f:fields>
+											<Input value="{/entityType}" id="entityType"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="$select properties">
+										<f:fields>
+											<Input value="{/selectProperties}" id="selectProperties"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="CountMode">
+										<f:fields>
+											<Select width="100%" id="countMode" selectedKey="{/countMode}">
+												<items>
+													<core:Item text="Request" key="Request"/>
+													<core:Item text="Inline" key="Inline"/>
+													<core:Item text="Both" key="Both"/>
+													<core:Item text="None" key="None"/>
+												</items>
+											</Select>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="OperationMode">
+										<f:fields>
+											<Select width="100%" id="operationMode" selectedKey="{/operationMode}">
+												<items>
+													<core:Item text="Server" key="Server"/>
+													<core:Item text="Client" key="Client"/>
+													<core:Item text="Auto" key="Auto"/>
+												</items>
+											</Select>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Table Threshold">
+										<f:fields>
+											<Input value="{path: '/tableThreshold', type:'sap.ui.model.type.Integer'}" id="tableThreshold"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="ListBinding Threshold">
+										<f:fields>
+											<Input value="{path: '/bindingThreshold', type:'sap.ui.model.type.Integer'}" id="bindingThreshold"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Root Level">
+										<f:fields>
+											<Input value="{path:'/rootLevel', type:'sap.ui.model.type.Integer'}" id="rootLevel"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="# of exp. Level">
+										<f:fields>
+											<Input value="{path: '/initialLevel', type:'sap.ui.model.type.Integer'}" id="initialLevel"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Application Filter">
+										<f:fields>
+											<Input value="{/filterProperty}" id="filterProperty"/>
+											<Input value="{/filterOperator}" id="filterOperator"/>
+											<Input value="{/filterValue}" id="filterValue"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="VisibleRowCount">
+										<f:fields>
+											<Input value="{path: '/visibleRowCount', type:'sap.ui.model.type.Integer'}" id="visibleRowCount"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="VisibleRowCountMode">
+										<f:fields>
+											<Select width="100%" id="visibleRowCountMode" selectedKey="{/visibleRowCountMode}">
+												<items>
+													<core:Item text="Fixed" key="Fixed"/>
+													<core:Item text="Auto" key="Auto"/>
+												</items>
+											</Select>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="RestoreTreeStateAfterChange">
+										<f:fields>
+											<CheckBox selected="{/restoreTreeStateAfterChange}" id="restoreTreeStateAfterChange"/>
+										</f:fields>
+									</f:FormElement>
+								</f:formElements>
+							</f:FormContainer>
+						</f:formContainers>
+					</f:Form>
+				</content>
+			</Panel>
+			<Panel
+				expandable="true"
+				expanded="false"
+				width="auto"
+				class="sapUiResponsiveMargin sapUiNoContentPadding">
+				<headerToolbar>
+					<Toolbar>
+						<Title text="Hierarchy Properties" level="H2"/>
+					</Toolbar>
+				</headerToolbar>
+				<content>
+					<f:Form id="hierarchyPropertiesForm"
+						editable="true">
+						<f:layout>
+							<f:ResponsiveGridLayout
+								labelSpanL="3"
+								labelSpanM="3"
+								emptySpanL="4"
+								emptySpanM="4"
+								columnsL="1"
+								columnsM="1" />
+						</f:layout>
+						<f:formContainers>
+							<f:FormContainer>
+								<f:formElements>
+									<f:FormElement label="Level">
+										<f:fields>
+											<Input value="{/hierarchyLevelFor}" id="hierarchyLevelFor"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Parent-Node">
+										<f:fields>
+											<Input value="{/hierarchyParentNodeFor}" id="hierarchyParentNodeFor"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Hierarchy-Node">
+										<f:fields>
+											<Input value="{/hierarchyNodeFor}" id="hierarchyNodeFor"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Drill-State">
+										<f:fields>
+											<Input value="{/hierarchyDrillStateFor}" id="hierarchyDrillStateFor"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Descendant-Count">
+										<f:fields>
+											<Input value="{/hierarchyDescendantCountFor}" id="hierarchyDescendantCountFor"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="External-Key">
+										<f:fields>
+											<Input value="{/hierarchyExternalKeyFor}" id="hierarchyExternalKeyFor"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Use Local Metadata">
+										<f:fields>
+											<CheckBox selected="{/useLocalMetadata}" id="useLocalMetadata"/>
+										</f:fields>
+									</f:FormElement>
+								</f:formElements>
+							</f:FormContainer>
+						</f:formContainers>
+					</f:Form>
+				</content>
+			</Panel>
+			<Panel
+				expandable="true"
+				expanded="true"
+				width="auto"
+				height="auto"
+				class="sapUiResponsiveMargin sapUiNoContentPadding"
+				id="tableContainerPanel">
+				<headerToolbar>
+					<Toolbar>
+						<Title text="TreeTable Container" level="H2" id="tableContainerTitle"/>
+					</Toolbar>
+				</headerToolbar>
+				<content>
+					<table:TreeTable
+						id="tableOData"
+						selectionMode="MultiToggle"
+						visibleRowCount="{path:'/visibleRowCount', type:'sap.ui.model.type.Integer'}"
+						visibleRowCountMode="{/visibleRowCountMode}"
+						threshold="{/tableThreshold}"
+						rootLevel="{/rootLevel}">
+						<table:extension>
+							<Toolbar>
+								<Label text="Table-Tools" />
+								<Button text="Create" icon="sap-icon://add" press=".onCreate"></Button>
+								<Button text="Cut" icon="sap-icon://scissors" press=".onCut"></Button>
+								<Button text="Paste" icon="sap-icon://paste" press=".onPaste"></Button>
+								<Button text="Save" icon="sap-icon://save" press=".onSave"></Button>
+								<Button text="Refresh and restore Tree State" icon="sap-icon://refresh" press=".onRefreshAndRestore"></Button>
+								<ToolbarSpacer />
+								<!--<Label text="Tree State Tools" />
+								<Button text="Save" icon="sap-icon://loan" press=".onSaveTreeState"></Button>
+								<Button text="Restore" icon="sap-icon://soccor" press=".onRestoreTreeState"></Button>-->
+								<ToolbarSpacer />
+								<Button type="Emphasized" text="doMagic()" icon="sap-icon://activate" press="onCreateTableClick"/>
+							</Toolbar>
+						</table:extension>
+						<table:dragDropConfig>
+							<dnd:DragDropInfo
+								sourceAggregation="rows"
+								targetAggregation="rows"
+								dragStart="onDragStart"
+								drop="onDrop"/>
+						</table:dragDropConfig>
+					</table:TreeTable>
+				</content>
+			</Panel>
+				<Panel
+				expandable="true"
+				expanded="false"
+				width="auto"
+				class="sapUiResponsiveMargin sapUiNoContentPadding">
+				<headerToolbar>
+					<Toolbar>
+						<Title text="Performance" level="H2" id="Performance"/>
+						<Button icon="sap-icon://download" press="onDownload"/>
+					</Toolbar>
+				</headerToolbar>
+				<content>
+					<f:Form
+						editable="true">
+						<f:layout>
+							<f:ResponsiveGridLayout
+								labelSpanL="5"
+								labelSpanM="5"
+								emptySpanL="1"
+								emptySpanM="1"
+								columnsL="1"
+								columnsM="1" />
+						</f:layout>
+						<f:formContainers>
+							<f:FormContainer>
+								<f:formElements>
+									<f:FormElement label="overall">
+										<f:fields>
+											<Text id="overall" text="{/overall}"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="onBeforeRendering" >
+										<f:fields>
+											<Text id="onBeforeRendering" text="{/onBeforeRendering}"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="rendering">
+										<f:fields>
+											<Text id="rendering" text="{/rendering}"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="onAfterRendering">
+										<f:fields>
+											<Text id="onAfterRendering" text="{/onAfterRendering}"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="tableCreate">
+										<f:fields>
+											<Text id="tableCreate" text="{/tableCreate}"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="factor">
+										<f:fields>
+											<Text id="factor" text="{/factor}"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement>
+										<f:fields>
+											<Text />
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Table._createRows">
+										<f:fields>
+											<Text id="_createRows" text="{/createRows}"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="TreeTable._updateTableContent">
+										<f:fields>
+											<Text id="_updateTableContent" text="{/updateTableContent}"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Table._syncColumnHeaders">
+										<f:fields>
+											<Text id="_syncColumnHeaders" text="{/syncColumnHeaders}"/>
+										</f:fields>
+									</f:FormElement>
+									<f:FormElement label="Table._updateRowHeader">
+										<f:fields>
+											<Text id="_updateRowHeader" text="{/updateRowHeader}"/>
+										</f:fields>
+									</f:FormElement>
+								</f:formElements>
+							</f:FormContainer>
+						</f:formContainers>
+					</f:Form>
+				</content>
+			</Panel>
 		</content>
-	</Panel>
-		<Panel
-		expandable="true"
-		expanded="false"
-		width="auto"
-		class="sapUiResponsiveMargin sapUiNoContentPadding">
-		<headerToolbar>
+		<footer>
 			<Toolbar>
-				<Title text="Performance" level="H2" id="Performance"/>
-				<Button icon="sap-icon://download" press="onDownload"/>
+				<Button id="btn_messagePopover" icon="sap-icon://message-popup" text="{/messagesLength}" type="Emphasized"
+						press="handleMessagePopoverPress"/>
+				<ToolbarSpacer/>
 			</Toolbar>
-		</headerToolbar>
-		<content>
-			<f:Form
-				editable="true">
-				<f:layout>
-					<f:ResponsiveGridLayout
-						labelSpanL="5"
-						labelSpanM="5"
-						emptySpanL="1"
-						emptySpanM="1"
-						columnsL="1"
-						columnsM="1" />
-				</f:layout>
-				<f:formContainers>
-					<f:FormContainer>
-						<f:formElements>
-							<f:FormElement label="overall">
-								<f:fields>
-									<Text id="overall" text="{/overall}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="onBeforeRendering" >
-								<f:fields>
-									<Text id="onBeforeRendering" text="{/onBeforeRendering}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="rendering">
-								<f:fields>
-									<Text id="rendering" text="{/rendering}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="onAfterRendering">
-								<f:fields>
-									<Text id="onAfterRendering" text="{/onAfterRendering}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="tableCreate">
-								<f:fields>
-									<Text id="tableCreate" text="{/tableCreate}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="factor">
-								<f:fields>
-									<Text id="factor" text="{/factor}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement>
-								<f:fields>
-									<Text />
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Table._createRows">
-								<f:fields>
-									<Text id="_createRows" text="{/createRows}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="TreeTable._updateTableContent">
-								<f:fields>
-									<Text id="_updateTableContent" text="{/updateTableContent}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Table._syncColumnHeaders">
-								<f:fields>
-									<Text id="_syncColumnHeaders" text="{/syncColumnHeaders}"/>
-								</f:fields>
-							</f:FormElement>
-							<f:FormElement label="Table._updateRowHeader">
-								<f:fields>
-									<Text id="_updateRowHeader" text="{/updateRowHeader}"/>
-								</f:fields>
-							</f:FormElement>
-						</f:formElements>
-					</f:FormContainer>
-				</f:formContainers>
-			</f:Form>
-		</content>
-	</Panel>
+		</footer>
+	</Page>
+	</pages>
+	</App>
 </mvc:View>

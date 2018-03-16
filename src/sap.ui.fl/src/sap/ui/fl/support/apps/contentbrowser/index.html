@@ -7,7 +7,7 @@
 
 		<script src="../../../../../../../resources/sap-ui-core.js"
 				id="sap-ui-bootstrap"
-				data-sap-ui-libs="sap.m,sap.ui.fl"
+				data-sap-ui-libs="sap.m,sap.ui.fl,sap.ui.layout"
 				data-sap-ui-theme="sap_bluecrystal"
 				data-sap-ui-xx-bindingSyntax="complex">
 		</script>
@@ -16,10 +16,13 @@
 		<script type="text/javascript">
 			sap.ui.getCore().attachInit(function () {
 				new sap.m.Shell({
-					app: new sap.ui.core.ComponentContainer({
-						name: "sap.ui.fl.support.apps.contentbrowser"
+					app : new sap.ui.core.ComponentContainer({
+						name : "sap.ui.fl.support.apps.contentbrowser",
+						settings : {
+							id : "contentbrowser"
+						}
 					}),
-					appWidthLimited: false
+					appWidthLimited : false
 				}).placeAt("content");
 			});
 		</script>

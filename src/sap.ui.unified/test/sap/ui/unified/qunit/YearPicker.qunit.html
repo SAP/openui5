@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>YearPicker - sap.ui.unified.calendar.YearPicker</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+	        src="../../../../../resources/sap-ui-core.js"
+	        data-sap-ui-noConflict="true"
+	        data-sap-ui-libs="sap.ui.unified"
+	        data-sap-ui-language="en-US">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+	<script>
+
+		(function () {
+
+			QUnit.module("Corner cases", {
+				beforeEach: function () {
+					this.oYP = new sap.ui.unified.calendar.YearPicker();
+					this.oYP.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+				afterEach: function () {
+					this.oYP.destroy();
+					this.oYP = null;
+				}
+			});
+
+			QUnit.test("_isValueInThreshold return true if provided value is in provided threshold", function (assert) {
+				assert.ok(this.oYP._isValueInThreshold(248, 258, 10), "value is between 238 and 258 - upper boundary"); // (reference value, actual value, threshold)
+				assert.ok(this.oYP._isValueInThreshold(248, 238, 10), "value is between 238 and 258 - lower boundary"); // (reference value, actual value, threshold)
+				assert.ok(this.oYP._isValueInThreshold(248, 240, 10), "value is between 238 and 258"); // (reference value, actual value, threshold)
+				assert.ok(this.oYP._isValueInThreshold(248, 250, 10), "value is between 238 and 258"); // (reference value, actual value, threshold)
+			});
+
+			QUnit.test("_isValueInThreshold return false if provided value is out of provided threshold", function (assert) {
+				assert.equal(this.oYP._isValueInThreshold(248, 237, 10), false, "value is lower"); // (reference value, actual value, threshold)
+				assert.equal(this.oYP._isValueInThreshold(248, 259, 10), false, "value is upper"); // (reference value, actual value, threshold)
+			});
+
+			QUnit.test("Years are properly selected on touch devices mouseup", function (assert) {
+				var iSelectedYear = 3,
+						oMousePosition = { clientX: 10, clientY: 10 },
+						deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+						isValueInThresholdStub = this.stub(this.oYP, "_isValueInThreshold", function () { return true; }),
+						itemNavigationStub = this.stub(this.oYP._oItemNavigation, "getFocusedIndex", function () { return iSelectedYear; }),
+						selectSpy = this.spy(function () {});
+
+				this.oYP.attachSelect(selectSpy);
+
+				assert.equal(this.oYP.getYear(), 2000, "2000 year is initially selected");
+
+				this.oYP._oMousedownPosition = oMousePosition;
+				this.oYP.onmouseup(oMousePosition);
+
+				assert.equal(this.oYP.getYear(), 1993, "1993 year is selected on mouseup");
+				assert.equal(selectSpy.callCount, 1, "select event is fired once");
+
+				deviceStub.restore();
+				isValueInThresholdStub.restore();
+				itemNavigationStub.restore();
+			});
+
+		})();
+
+	</script>
+
+</head>
+<body class="sapUiBody" role="application">
+<h1 id="qunit-header">QUnit tests: sap.ui.unified.calendar.YearPicker</h1>
+<div id="qunit-fixture"></div>
+</body>
+</html>

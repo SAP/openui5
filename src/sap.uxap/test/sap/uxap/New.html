@@ -1,0 +1,327 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>sap.uxap.ObjectPage</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-xx-waitForTheme="true"
+            data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.f">
+    </script>
+    <script id="view1" type="sapui5/xmlview">
+	    <m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" xmlns:l="sap.ui.layout" displayBlock="true" height="100%">
+            <ObjectPageLayout id="ObjectPageLayout"
+					showTitleInHeaderContent="true"
+					alwaysShowContentHeader="false"
+					preserveHeaderStateOnScroll="false"
+					headerContentPinnable="true"
+					isChildPage="true">
+                <headerTitle>
+                    <ObjectPageDynamicHeaderTitle primaryArea="Left">
+                        <breadcrumbs>
+                            <m:Breadcrumbs currentLocationText="My Profile">
+                                <m:Link text='My Company' />
+                                <m:Link text='My Department' />
+                                <m:Link text='Employees' />
+                            </m:Breadcrumbs>
+                        </breadcrumbs>
+
+                        <expandedHeading>
+                            <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+                                <m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>
+                                <m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+                                    <m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>
+                                    <m:ObjectMarker type="Flagged"/>
+                                    <m:Button icon="sap-icon://private" type="Transparent"/>
+                                    <m:Button icon="sap-icon://arrow-down" type="Transparent"/>
+                                </m:FlexBox>
+                            </m:FlexBox>
+                        </expandedHeading>
+
+                        <snappedHeading>
+                            <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+                                <m:FlexBox renderType="Bare" wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+                                    <f:Avatar src="../../sap/f/images/Woman_avatar_02.png" displaySize="S" class="sapUiTinyMarginEnd"/>
+                                    <m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>
+                                </m:FlexBox>
+                                <m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+                                    <m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>
+                                    <m:ObjectMarker type="Flagged"/>
+                                    <m:Button icon="sap-icon://private" type="Transparent"/>
+                                    <m:Button icon="sap-icon://arrow-down" type="Transparent"/>
+                                </m:FlexBox>
+                            </m:FlexBox>
+                        </snappedHeading>
+
+                        <expandedContent>
+                            <m:Text text="Senior Developer" />
+                        </expandedContent>
+
+                        <snappedContent>
+                           <m:Text text="Senior Developer" />
+                        </snappedContent>
+
+                        <content>
+                            <m:OverflowToolbar>
+                                <m:Button text="KPI 1" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 2" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 3" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 4" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 5" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 6" class="sapUiTinyMargin"/>
+                            </m:OverflowToolbar>
+                        </content>
+
+                        <actions>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://copy"/>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://delete"/>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://add"/>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://paste"/>
+                        </actions>
+
+                        <navigationActions>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" tooltip="Enter Full Screen Mode"/>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" tooltip="Close column"/>
+                        </navigationActions>
+
+                    </ObjectPageDynamicHeaderTitle>
+                </headerTitle>
+
+                <headerContent>
+                    <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
+                        <f:Avatar class="sapUiSmallMarginEnd sapUiSmallMarginTop"
+                                src="../../sap/f/images/Woman_avatar_02.png"
+                                displaySize="L">
+                        </f:Avatar>
+
+                        <l:VerticalLayout class="sapUiSmallMarginEnd sapUiSmallMarginTop">
+                            <m:Link text="+33 6 4512 5158"/>
+                            <m:Link text="DeniseSmith@sap.com"/>
+                        </l:VerticalLayout>
+
+                        <l:VerticalLayout class="sapUiSmallMarginEnd sapUiSmallMarginTop">
+                            <m:Label text="Hello! I am Denise and I use Object Page"/>
+                            <m:VBox height="63px">
+                                <m:Label text="Achieved goals"/>
+                                <m:ProgressIndicator
+                                        percentValue="30"
+                                        displayValue="30%"
+                                        showValue="true"
+                                        state="None"/>
+                            </m:VBox>
+                        </l:VerticalLayout>
+
+                        <l:VerticalLayout class="sapUiSmallMarginEnd sapUiSmallMarginTop">
+                            <m:Label text="San Jose, USA"/>
+                        </l:VerticalLayout>
+                    </m:FlexBox>
+                </headerContent>
+
+                <sections>
+                    <ObjectPageSection title="2014 Goals Plan">
+                        <subSections>
+                            <ObjectPageSubSection title=" ">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Personal">
+                        <subSections>
+                            <ObjectPageSubSection title="Connect">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+
+                            <ObjectPageSubSection id="paymentSubSection" title="Payment information">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                                <moreBlocks>
+                                    <m:Text text="Content" />
+                                </moreBlocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section3">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection3.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection3.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section4">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection4.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection4.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section5">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection5.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection5.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section6">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection6.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection6.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section7">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection7.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection7.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section8">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection8.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection8.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section9">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection9.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection9.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section10">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection10.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection10.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section11">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection11.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection11.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                    <ObjectPageSection title="Section12">
+                        <subSections>
+                            <ObjectPageSubSection title="Subsection12.1">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                            <ObjectPageSubSection title="Subsection12.2">
+                                <blocks>
+                                    <m:Text text="Content" />
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+
+                </sections>
+			</ObjectPageLayout>
+
+		</m:View>
+    </script>
+</head>
+
+
+<body id="body" class="sapUiBody">
+<script>
+	(function (jQuery, App, Page) {
+
+		sap.ui.getCore().attachInit(function () {
+			var oApp = new App(),
+				myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
+
+			oApp.addPage(new Page({
+				title: "New Header",
+				content: [myView]
+			})).placeAt("content");
+		});
+
+	}(jQuery, sap.m.App, sap.m.Page));
+</script>
+<div id="content"></div>
+</body>
+</html>

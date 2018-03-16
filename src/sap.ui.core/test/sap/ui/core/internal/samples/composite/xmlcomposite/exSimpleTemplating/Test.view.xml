@@ -1,0 +1,13 @@
+<mvc:View height="100%"
+				controllerName="sap.ui.core.internal.samples.composite.xmlcomposite.exSimpleTemplating.Test"
+				xmlns:m="sap.m"
+				xmlns:mvc="sap.ui.core.mvc"
+				xmlns:fc="sap.ui.core.internal.samples.composite.xmlcomposite.exSimpleTemplating.comp">
+	<m:VBox>
+		<m:Button text="Toggle order of children"
+						press="handlePress" />
+		<fc:field id="field"
+						text="{/text}"
+						value="{/value}" />
+	</m:VBox>
+</mvc:View>

@@ -6,7 +6,10 @@
 	xmlns="sap.m">
 
 	<VBox class="sapUiSmallMargin">
-
+		<HBox alignItems="Center">
+			<Text text="MaskInput is: " />
+			<Switch change="handleChangeMaskMode" state="true"/>
+		</HBox>
 		<Label text = "HH:mm"/>
 		<TimePicker
 				id="TP1"
@@ -39,6 +42,23 @@
 				displayFormat="hh:mm:ss a"
 				change="handleChange"
 				placeholder="Enter time"/>
+		<Label text="hh:mm:ss a, initialFocusedDateValue: new Date(2017, 8, 9, 10, 11, 12)"/>
+		<TimePicker
+				id="TP5"
+				valueFormat="hh:mm:ss a"
+				displayFormat="hh:mm:ss a"
+				change="handleChange"
+				placeholder="Enter time"/>
+		<Label
+                text="HH:mm:ss, support2400: true (for cases where 24:00:00 indicates the end of the day)"/>
+		<TimePicker
+				id="TP6"
+				valueFormat="HH:mm:ss"
+				displayFormat="HH:mm:ss"
+				change="handleChange"
+				placeholder="Enter time"
+				support2400="true"
+				value="23:40:50"/>
 		<Text
 				id="T1"
 				text="change event result"

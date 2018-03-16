@@ -99,27 +99,26 @@ sap.ui.define([
 	 * Returns a settings instance after reading the settings from the back end if not already done. There is only one instance of settings during a
 	 * session.
 	 *
-	 * @param {string} [sComponentName] - Current SAPUI5 component name
-	 * @param {string} [sAppVersion] - Current application version
-	 * @param {map} [mPropertyBag] - Contains additional data needed for reading changes
-	 * @param {object} [mPropertyBag.appDescriptor] - App descriptor belonging to actual component
-	 * @param {string} [mPropertyBag.siteId] - Side ID that belongs to actual component
 	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
 	 * @public
 	 */
-	Settings.getInstance = function(sComponentName, sAppVersion, mPropertyBag) {
+	Settings.getInstance = function() {
 		if (Settings._instance) {
 			return Promise.resolve(Settings._instance);
 		}
-		if (sComponentName) {
-			sAppVersion = sAppVersion || Utils.DEFAULT_APP_VERSION;
-			return Cache.getChangesFillingCache(LrepConnector.createConnector(), { name: sComponentName, appVersion: sAppVersion }, mPropertyBag)
-				.then(function (oFileContent) {
+		var oPromise = Cache.getFlexDataPromise();
+		if (oPromise) {
+			return oPromise.then(
+				function (oFileContent) {
 					var oSettings = {};
 					if (oFileContent.changes && oFileContent.changes.settings) {
 						oSettings = oFileContent.changes.settings;
 					}
 					return Settings._storeInstance(oSettings);
+				},
+				function () {
+					// In case /flex/data request failed, send /flex/settings as a fallback
+					return Settings._loadSettings();
 				});
 		}
 		return Settings._loadSettings();
@@ -332,6 +331,20 @@ sap.ui.define([
 			bIsAtoEnabled = this._oSettings.isAtoEnabled;
 		}
 		return bIsAtoEnabled;
+	};
+
+	/**
+	 * Returns true if ATO is available in the back end.
+	 *
+	 * @returns {boolean} true if ATO is available.
+	 * @public
+	 */
+	Settings.prototype.isAtoAvailable = function() {
+		var bIsAtoAvailable = false;
+		if (this._oSettings.isAtoAvailable) {
+			bIsAtoAvailable = this._oSettings.isAtoAvailable;
+		}
+		return bIsAtoAvailable;
 	};
 
 	/**

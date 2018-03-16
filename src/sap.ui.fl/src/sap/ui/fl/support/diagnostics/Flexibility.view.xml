@@ -1,0 +1,124 @@
+<mvc:View xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns:l="sap.ui.layout"
+		  controllerName="sap.ui.fl.support.diagnostics.Flexibility">
+	<!-- layout wrapping the html element because the visibility does not hide inner html coding correct -->
+	<l:VerticalLayout
+			visible="{= !${flexToolSettings>/flInDebug}}">
+		<core:HTML
+				content="{flexToolSettings>/noDebugInfoText}"
+				class="sapUISupportLabel" />
+	</l:VerticalLayout>
+	<Toolbar visible="{flexToolSettings>/flInDebug}" >
+		<Select id="appSelection" showSecondaryValues="true"
+				items="{flexApps>/}" change="onAppSelect">
+			<core:ListItem key="{flexApps>key}" text="{flexApps>text}" additionalText="{flexApps>additionalText}"/>
+		</Select>
+		<ToolbarSpacer/>
+		<Button icon="sap-icon://synchronize" tooltip="Synchronize Apps" press="refreshApps"/>
+	</Toolbar>
+	<l:Splitter visible="{flexToolSettings>/flInDebug}" >
+		<Tree
+				id="Tree"
+				items="{flexChanges>/tree}"
+				mode="SingleSelectMaster"
+				includeItemInSelection="true"
+				selectionChange="treeItemPressed">
+			<StandardTreeItem
+					title="{flexChanges>text}"
+					visible="{
+							parts: ['flexChanges>', 'flexChanges>/changes', 'flexToolSettings>/hideDependingChanges'],
+							formatter: '.formatChangeVisibility'
+						}"
+					class="sapUiSupportFlexibility-TreeNode"
+					icon="{
+							parts: ['flexChanges>id', 'flexChanges>/changes'],
+							formatter: '.formatTreeIcon'
+						}">
+				<customData>
+					<core:CustomData key="id" value="{flexChanges>id}"/>
+					<core:CustomData key="{
+							parts: ['flexChanges>id', 'flexChanges>/changes'],
+							formatter: '._getChangeState'
+						}" value="foo" writeToDom="true"/>
+				</customData>
+			</StandardTreeItem>
+			<layoutData>
+				<l:SplitterLayoutData size="auto"/>
+			</layoutData>
+		</Tree>
+		<l:VerticalLayout visible="{= !!${flexChangeDetails>/id}}">
+			<l:layoutData>
+				<l:SplitterLayoutData size="400px"/>
+			</l:layoutData>
+			<l:content>
+				<List width="100%">
+					<GroupHeaderListItem title="Change Data" upperCase="true"/>
+					<CustomListItem>
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="ID"/>
+							<Text text="{flexChangeDetails>/id}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+					<CustomListItem>
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="Applicable"/>
+							<Text text="{= ${flexChangeDetails>/isApplicable} ? 'yes' : 'no'}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+					<CustomListItem>
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="Possible Root Cause"/>
+							<Text text="{= ${flexChangeDetails>/isPossibleRootCause} ? 'yes' : 'no'}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+					<CustomListItem visible="{= ${flexChangeDetails>/modifier} !== undefined}">
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="Modifier"/>
+							<Text text="{flexChangeDetails>/modifier}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+					<GroupHeaderListItem title="Processing" upperCase="true"/>
+					<CustomListItem>
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="Applied as Change #"/>
+							<Text text="{flexChangeDetails>/indexInAppliedChanges}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+					<CustomListItem>
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="Failed as Change #"/>
+							<Text text="{flexChangeDetails>/indexOfFirstFailing}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+					<GroupHeaderListItem title="Preconditions" upperCase="true"/>
+					<CustomListItem>
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="Control Present"/>
+							<Text text="{= ${flexChangeDetails>/controlPresent} ? 'yes' : 'no'}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+					<CustomListItem>
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="Depending Controls Present"/>
+							<Text text="{= ${flexChangeDetails>/dependentControls/length} === 0 ? '-' : ${flexChangeDetails>/allDependendingControlsPresent} ? 'yes' : 'no'}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+					<CustomListItem>
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="Direct Dependent Changes Applied"/>
+							<Text text="{= ${flexChangeDetails>/dependentChanges/length} === 0 ? '-' : ${flexChangeDetails>/someDirectDependingChangesNotApplied} ? 'no' : 'yes'}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+					<GroupHeaderListItem title="Dependent Controls" upperCase="true"/>
+				</List>
+				<List items="{flexChangeDetails>/dependentControls}">
+					<CustomListItem>
+						<l:VerticalLayout class="sapUiTinyMargin">
+							<Label text="{flexChangeDetails>id}"/>
+							<Text text="{= ${flexChangeDetails>/controlPresent} ? 'Present' : 'Not Present'}"/>
+						</l:VerticalLayout>
+					</CustomListItem>
+				</List>
+			</l:content>
+		</l:VerticalLayout>
+	</l:Splitter>
+</mvc:View>

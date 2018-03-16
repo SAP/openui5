@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.core.mvc.TemplateView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
-	function(jQuery, library, View) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/library',
+    './View',
+    "./TemplateViewRenderer"
+],
+	function(jQuery, library, View, TemplateViewRenderer) {
 	"use strict";
 
 
@@ -24,7 +29,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', './View'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.16.0
 	 * @alias sap.ui.core.mvc.TemplateView

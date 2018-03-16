@@ -4,6 +4,9 @@ src/*/target/
 /target
 /tmp
 
+# Ignore default target directory for the npm package 'ui5-codecompletion'
+.ui5
+
 # Ignore Eclipse project and settings files
 .classpath
 .settings
@@ -43,4 +46,8 @@ yarn.lock
 
 # Ignore documentation artifacts
 src/testsuite/src/main/webapp/documentation-config.js
+src/testsuite/src/main/webapp/docs/
 src/sap.ui.documentation/src/sap/ui/documentation/sdk/model/data/guide/
+
+# Ignore default target directory for the npm package 'ui5-schemas'
+.tmp

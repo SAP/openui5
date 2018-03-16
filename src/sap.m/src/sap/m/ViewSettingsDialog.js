@@ -3,9 +3,48 @@
 */
 
 // Provides control sap.m.ViewSettingsDialog.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', './Toolbar', './CheckBox', './SearchField', './List', './StandardListItem', 'sap/ui/base/ManagedObject'],
-function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, List, StandardListItem, ManagedObject) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/IconPool',
+	'./Toolbar',
+	'./CheckBox',
+	'./SearchField',
+	'./List',
+	'./StandardListItem',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/base/EventProvider',
+	'sap/ui/Device',
+	'sap/ui/core/InvisibleText',
+	'./ViewSettingsDialogRenderer'
+],
+function(
+	jQuery,
+	library,
+	Control,
+	IconPool,
+	Toolbar,
+	CheckBox,
+	SearchField,
+	List,
+	StandardListItem,
+	ManagedObject,
+	EventProvider,
+	Device,
+	InvisibleText,
+	ViewSettingsDialogRenderer
+) {
 	"use strict";
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
+
+	// shortcut for sap.m.StringFilterOperator
+	var StringFilterOperator = library.StringFilterOperator;
 
 	var LIST_ITEM_SUFFIX = "-list-item";
 
@@ -66,6 +105,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * @public
 	 * @since 1.16
 	 * @alias sap.m.ViewSettingsDialog
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/view-settings-dialog/ View Settings Dialog}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ViewSettingsDialog = Control.extend("sap.m.ViewSettingsDialog", /** @lends sap.m.ViewSettingsDialog.prototype */ { metadata : {
@@ -94,7 +134,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			 * This property will be ignored if a custom callback is provided through <code>setFilterSearchCallback</code> method.
 			 * @since 1.42
 			 */
-			filterSearchOperator: {type: "sap.m.StringFilterOperator", group: "Behavior", defaultValue: sap.m.StringFilterOperator.StartsWith }
+			filterSearchOperator: {type: "sap.m.StringFilterOperator", group: "Behavior", defaultValue: StringFilterOperator.StartsWith }
 		},
 		aggregations : {
 
@@ -112,6 +152,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 			/**
 			 * The list of items with key and value that can be filtered on (for example, a list of columns for a table). A filterItem is associated with one or more detail filters.
+			 *
+			 * <b>Note:</b> It is recommended to use the <code>sap.m.ViewSettingsFilterItem</code> as it fits best at the filter page.
 			 * @since 1.16
 			 */
 			filterItems : {type : "sap.m.ViewSettingsItem", multiple : true, singularName : "filterItem", bindable : "bindable"},
@@ -136,6 +178,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 			/**
 			 * The group item that is selected. It can be set by either passing a key or the item itself to the function setSelectedGroupItem.
+			 * By default 'None' is selected. You can restore back to 'None' by setting this association to empty value.
 			 */
 			selectedGroupItem : {type : "sap.m.ViewSettingsItem", multiple : false},
 
@@ -185,7 +228,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 					/**
 					 * The selected filter items in an object notation format: { key: boolean }. If a custom control filter was displayed (for example, the user clicked on the filter item), the value for its key is set to true to indicate that there has been an interaction with the control.
-					 * @deprecated As of version 1.42, replaced by filterCompoundKeys
+					 * @deprecated as of version 1.42, replaced by <code>filterCompoundKeys</code> event
 					 */
 					filterKeys : {type : "object", deprecated: true},
 
@@ -246,6 +289,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		this._oContentItem                  = null;
 		this._oPreviousState                = {};
 		this._sCustomTabsButtonsIdPrefix    = '-custom-button-';
+		this._sTitleLabelId                 = this.getId() + "-title";
 
 		/* setup a name map between the sortItems
 		 aggregation and an sap.m.List with items
@@ -257,9 +301,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			selected: {
 			}
 		}, {
-			type : sap.m.ListType.Active
+			type : ListType.Active
 		}, {
-			mode : sap.m.ListMode.SingleSelectLeft,
+			mode : ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
 				var oListItem = oEvent.getParameter('listItem'),
@@ -297,10 +341,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		// sap.ui.core.Popup removes its content on close()/destroy() automatically from the static UIArea,
 		// but only if it added it there itself. As we did that, we have to remove it also on our own
-		if ( this._bAppendedToUIArea ) {
+		if ( this._bAppendedToUIArea && this._dialog ) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
 			oStatic = sap.ui.getCore().getUIArea(oStatic);
-			oStatic.removeContent(this, true);
+			oStatic.removeContent(this._dialog, true);
 		}
 
 		// controls that are internally managed and may or may not be assigned to an
@@ -710,7 +754,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	};
 
 	ViewSettingsDialog.prototype._detachItemPropertyChange = function(oVSItem) {
-		delete sap.ui.base.EventProvider.getEventList(oVSItem)["itemPropertyChanged"];
+		delete EventProvider.getEventList(oVSItem)["itemPropertyChanged"];
 	};
 
 	ViewSettingsDialog.prototype._attachItemPropertyChange = function(sType, oVSItem) {
@@ -740,7 +784,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Attaches event handlers responsible for propagating
-	 * item property changes as well as filter detail items' change
+	 * item property changes as well as filter detail items' change.
+	 * @param {string} sAggregationName The name of the aggregation
+	 * @param {Object} oObject
 	 * @returns {object} This instance for chaining
 	 */
 	ViewSettingsDialog.prototype._attachItemEventHandlers = function(sAggregationName, oObject) {
@@ -781,6 +827,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 						this._updateSelectAllCheckBoxState();
 					}
 				}
+				this._updateFilterCounters(); //selected item has changed, so counters must be updated
 			} else {
 				// call _initFilterContent and _initFilterItems methods, where "Filter" might be also "Group"
 				if (typeof this['_init' + sType + 'Content'] === 'function') {
@@ -949,6 +996,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 				"Could not set selected group item. Item is not found: '" + vItemOrKey + "'"
 			);
 
+		// if no Item is found and the key is empty set the default "None" item as selected
+		// BCP: 1780536754
+		if (!oItem && !vItemOrKey) {
+			oItem = this._oGroupingNoneItem;
+		}
 		//change selected item only if it is found among the group items
 		if (validateViewSettingsItem(oItem)) {
 			// set selected = true for this item & selected = false for all others items
@@ -1013,11 +1065,16 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	ViewSettingsDialog.prototype.open = function(sPageId) {
+
 		// add to static UI area manually because we don't have a renderer
+
 		if (!this.getParent() && !this._bAppendedToUIArea) {
 			var oStatic = sap.ui.getCore().getStaticAreaRef();
 			oStatic = sap.ui.getCore().getUIArea(oStatic);
-			oStatic.addContent(this, true);
+			// add as content the Dialog to the Static area and not the ViewSettingsDialog
+			// once the Static area is invalidated, the Dialog will be rendered and not the ViewSettingsDialog which has no renderer
+			// and uses the renderer of the Dialog
+			oStatic.addContent(this._getDialog(), true);
 			this._bAppendedToUIArea = true;
 		}
 
@@ -1042,14 +1099,16 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			filterCompoundKeys: this.getSelectedFilterCompoundKeys(),
 			navPage : this._getNavContainer().getCurrentPage(),
 			contentPage : this._vContentPage,
-			contentItem : this._oContentItem
+			contentItem : this._oContentItem ? this._oContentItem.clone() : null
 		};
 
+		this.addDependent(this._oPreviousState.contentItem);
+
 		//focus the first focusable item in current page's content
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			this._getDialog().attachEventOnce("afterOpen", function () {
 				var oCurrentPage = this._getNavContainer().getCurrentPage(),
-				    $firstFocusable;
+					$firstFocusable;
 				if (oCurrentPage) {
 					$firstFocusable = oCurrentPage.$("cont").firstFocusableDomRef();
 					if ($firstFocusable) {
@@ -1117,13 +1176,13 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterString = function() {
 		var sFilterString       = "",
-		    sSubfilterString,
-		    oPresetFilterItem   = this.getSelectedPresetFilterItem(),
-		    aFilterItems        = this.getFilterItems(),
-		    aSubFilterItems,
-		    bMultiSelect        = true,
-		    i                   = 0,
-		    j;
+			sSubfilterString,
+			oPresetFilterItem   = this.getSelectedPresetFilterItem(),
+			aFilterItems        = this.getFilterItems(),
+			aSubFilterItems,
+			bMultiSelect        = true,
+			i                   = 0,
+			j;
 
 		if (oPresetFilterItem) {
 			// preset filter: add "filter name"
@@ -1182,7 +1241,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * @public
 	 * @return {object} An object with item and sub-item keys
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @deprecated As of version 1.42, replaced by getSelectedFilterCompoundKeys
+	 * @deprecated as of version 1.42, replaced by <code>getSelectedFilterCompoundKeys</code> method
 	 */
 	ViewSettingsDialog.prototype.getSelectedFilterKeys = function() {
 		var oSelectedFilterKeys = {}, aSelectedFilterItems = this
@@ -1242,16 +1301,16 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 *         It can be used to set the dialog state based on presets.
 	 * @return {sap.m.ViewSettingsDialog} this pointer for chaining
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @deprecated As of version 1.42, replaced by setSelectedFilterCompoundKeys
+	 * @deprecated as of version 1.42, replaced by <code>setSelectedFilterCompoundKeys</code> method
 	 */
 	ViewSettingsDialog.prototype.setSelectedFilterKeys = function(oSelectedFilterKeys) {
 		var aFilterItems    = this.getFilterItems(),
-		    aSubFilterItems = {},
-		    oFilterItem,
-		    bMultiSelect,
-		    i,
-		    j,
-		    k;
+			aSubFilterItems = {},
+			oFilterItem,
+			bMultiSelect,
+			i,
+			j,
+			k;
 
 		// clear preset filters (only one mode is allowed, preset filters or filters)
 		if (Object.keys(oSelectedFilterKeys).length) {
@@ -1384,6 +1443,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal dialog.
+	 * @returns {sap.m.Dialog} The created dialog
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getDialog = function() {
@@ -1392,8 +1452,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		// create an internal instance of a dialog
 		if (this._dialog === undefined) {
 			this._dialog = new sap.m.Dialog(this.getId() + "-dialog", {
+				ariaLabelledBy      : this._sTitleLabelId,
 				showHeader          : false,
-				stretch             : sap.ui.Device.system.phone,
+				stretch             : Device.system.phone,
 				verticalScrolling   : true,
 				horizontalScrolling : false,
 				contentWidth        : this._sDialogWidth,
@@ -1435,6 +1496,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal nav container.
+	 * @returns {sap.m.NavContainer} The created navigation container
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getNavContainer = function() {
@@ -1450,11 +1512,12 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal title label.
+	 * @returns {sap.m.Label} The created title label
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getTitleLabel = function() {
 		if (this._titleLabel === undefined) {
-			this._titleLabel = new sap.m.Label(this.getId() + "-title", {
+			this._titleLabel = new sap.m.Label(this._sTitleLabelId, {
 				text : this._rb.getText("VIEWSETTINGS_TITLE")
 			}).addStyleClass("sapMVSDTitle");
 		}
@@ -1463,6 +1526,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal reset button.
+	 * @returns {sap.m.Button} The created reset button
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getResetButton = function() {
@@ -1482,6 +1546,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal detail title label.
+	 * @returns {sap.m.Label} The created detail title label
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getDetailTitleLabel = function() {
@@ -1496,6 +1561,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal header.
+	 * @returns {sap.m.Bar} The created header
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getHeader = function() {
@@ -1509,6 +1575,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal sub header.
+	 * @returns {sap.m.Bar} The created sub-header
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getSubHeader = function() {
@@ -1522,6 +1589,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal segmented button.
+	 * @returns {sap.m.SegmentedButton} The created segmentedButton
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getSegmentedButton = function() {
@@ -1542,8 +1610,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 						that._switchToPage(2);
 					} else {
 						for (i = 0; i < iCustomTabsLength; i++) {
-							var oCustomTab = aCustomTabs[i];
-							if (!that._isEmptyTab(oCustomTab) && selectedId === oCustomTab.getTabButton().getId()) {
+							var oCustomTab = aCustomTabs[i],
+								sCustomTabId = that.getId() + that._sCustomTabsButtonsIdPrefix + oCustomTab.getId();
+							if (!that._isEmptyTab(oCustomTab) && selectedId === sCustomTabId) {
 								that._switchToPage(oCustomTab.getId());
 								break;
 							}
@@ -1563,6 +1632,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal sort button.
+	 * @returns {sap.m.Button} The created sort button
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getSortButton = function() {
@@ -1577,6 +1647,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal group button.
+	 * @returns {sap.m.Button} The created group button
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getGroupButton = function() {
@@ -1591,6 +1662,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal filter button.
+	 * @returns {sap.m.Button} The created filter sap.m.Button
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getFilterButton = function() {
@@ -1606,6 +1678,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	/**
 	 * Lazy initialization of the internal page1 (sort/group/filter).
 	 * @param {boolean} bSuppressCreation If true, no page will be create in case it doesn't exist.
+	 * @returns {sap.m.Page} The created first page
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getPage1 = function(bSuppressCreation) {
@@ -1622,6 +1695,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Lazy initialization of the internal page2 (detail filters).
+	 * @returns {sap.m.Page} The created second page
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._getPage2 = function() {
@@ -1673,17 +1747,17 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		this._getPage2().removeAllAggregation('content');
 
-		this._filterDetailList = new sap.m.List(
+		this._filterDetailList = new List(
 		{
-			mode : (bMultiSelectMode ? sap.m.ListMode.MultiSelect
-				: sap.m.ListMode.SingleSelectLeft),
+			mode : (bMultiSelectMode ? ListMode.MultiSelect
+				: ListMode.SingleSelectLeft),
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
 				var oSubItem,
-				    aEventListItems = oEvent.getParameter("listItems"),
-				    aSubItems,
-				    i = 0,
-				    bNewValue;
+					aEventListItems = oEvent.getParameter("listItems"),
+					aSubItems,
+					i = 0,
+					bNewValue;
 
 				that._clearPresetFilter();
 
@@ -1724,9 +1798,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		for (var i = 0; i < aSubFilters.length; i++) {
 			// use name if there is no key defined
-			oListItem = new sap.m.StandardListItem({
-				title : aSubFilters[i].getText(),
-				type : sap.m.ListType.Active,
+			oListItem = new StandardListItem({
+				title : ManagedObject.escapeSettingsValue(aSubFilters[i].getText()),
+				type : ListType.Active,
 				selected : aSubFilters[i].getSelected()
 			}).data("item", aSubFilters[i]);
 			this._filterDetailList.addItem(oListItem);
@@ -1761,27 +1835,27 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		this._vContentPage = -1;
 
 		// Aria - used to label the sort order list
-		this._ariaSortOrderInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-sortOrderLabel", {
+		this._ariaSortOrderInvisibleText = new InvisibleText(this.getId() + "-sortOrderLabel", {
 			text: this._rb.getText("VIEWSETTINGS_SORT_DIRECTION").concat(":")
 		});
 
-		this._sortOrderList = new sap.m.List(this.getId() + "-sortorderlist", {
-			mode : sap.m.ListMode.SingleSelectLeft,
+		this._sortOrderList = new List(this.getId() + "-sortorderlist", {
+			mode : ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
 				that.setProperty('sortDescending', oEvent.getParameter("listItem").data("item"), true);
 			},
 			ariaLabelledBy: this._ariaSortOrderInvisibleText
 		}).addStyleClass("sapMVSDUpperList");
-		this._sortOrderList.addItem(new sap.m.StandardListItem({
+		this._sortOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
 		}).data("item", false).setSelected(true));
-		this._sortOrderList.addItem(new sap.m.StandardListItem({
+		this._sortOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_DESCENDING_ITEM")
 		}).data("item", true));
 
 		// Aria - used to label the sort list
-		this._ariaSortListInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-sortListLabel", {
+		this._ariaSortListInvisibleText = new InvisibleText(this.getId() + "-sortListLabel", {
 			text: this._rb.getText("VIEWSETTINGS_TITLE_SORT").concat(":")
 		});
 
@@ -1803,10 +1877,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 		if (!!aGroupItems.length) {
 			aGroupItems.forEach(function (oItem) {
-				oListItem = new sap.m.StandardListItem({
+				oListItem = new StandardListItem({
 					id: oItem.getId() + LIST_ITEM_SUFFIX,
-					title: oItem.getText(),
-					type: sap.m.ListType.Active,
+					title: ManagedObject.escapeSettingsValue(oItem.getText()),
+					type: ListType.Active,
 					selected: oItem.getSelected()
 				}).data("item", oItem);
 				this._groupList.addItem(oListItem);
@@ -1831,10 +1905,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 			}
 
 			// Append the None button to the list
-			oListItem = new sap.m.StandardListItem({
+			oListItem = new StandardListItem({
 				id: this._oGroupingNoneItem.getId() + LIST_ITEM_SUFFIX,
 				title: this._oGroupingNoneItem.getText(),
-				type: sap.m.ListType.Active,
+				type: ListType.Active,
 				selected: this._oGroupingNoneItem.getSelected()
 			}).data("item", this._oGroupingNoneItem);
 			this._groupList.addItem(oListItem);
@@ -1854,33 +1928,33 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		this._vContentPage = -1;
 
 		// Aria - used to label the group order
-		this._ariaGroupOrderInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-groupOrderLabel", {
+		this._ariaGroupOrderInvisibleText = new InvisibleText(this.getId() + "-groupOrderLabel", {
 			text: this._rb.getText("VIEWSETTINGS_GROUP_DIRECTION").concat(":")
 		});
 
-		this._groupOrderList = new sap.m.List(this.getId() + "-grouporderlist", {
-			mode : sap.m.ListMode.SingleSelectLeft,
+		this._groupOrderList = new List(this.getId() + "-grouporderlist", {
+			mode : ListMode.SingleSelectLeft,
 			includeItemInSelection : true,
 			selectionChange : function(oEvent) {
 				that.setProperty('groupDescending', oEvent.getParameter("listItem").data("item"), true);
 			},
 			ariaLabelledBy: this._ariaGroupOrderInvisibleText
 		}).addStyleClass("sapMVSDUpperList");
-		this._groupOrderList.addItem(new sap.m.StandardListItem({
+		this._groupOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_ASCENDING_ITEM")
 		}).data("item", false).setSelected(true));
-		this._groupOrderList.addItem(new sap.m.StandardListItem({
+		this._groupOrderList.addItem(new StandardListItem({
 			title : this._rb.getText("VIEWSETTINGS_DESCENDING_ITEM")
 		}).data("item", true));
 
 		// Aria - used to label the group list
-		this._ariaGroupListInvisibleText = new sap.ui.core.InvisibleText(this.getId() + "-groupListLabel", {
+		this._ariaGroupListInvisibleText = new InvisibleText(this.getId() + "-groupListLabel", {
 			text: this._rb.getText("VIEWSETTINGS_TITLE_GROUP").concat(":")
 		});
 
-		this._groupList = new sap.m.List(this.getId() + "-grouplist",
+		this._groupList = new List(this.getId() + "-grouplist",
 			{
-				mode : sap.m.ListMode.SingleSelectLeft,
+				mode : ListMode.SingleSelectLeft,
 				includeItemInSelection : true,
 				selectionChange: function (oEvent) {
 					var item = oEvent.getParameter("listItem").data("item");
@@ -1898,18 +1972,18 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._initFilterItems = function() {
 		var aPresetFilterItems,
-		    aFilterItems,
-		    oListItem,
+			aFilterItems,
+			oListItem,
 			that = this;
 
 		this._presetFilterList.destroyItems();
 		aPresetFilterItems = this.getPresetFilterItems();
 		if (aPresetFilterItems.length) {
 			aPresetFilterItems.forEach(function(oItem) {
-				oListItem = new sap.m.StandardListItem({
+				oListItem = new StandardListItem({
 					id: oItem.getId() + LIST_ITEM_SUFFIX,
-					title: oItem.getText(),
-					type: sap.m.ListType.Active,
+					title: ManagedObject.escapeSettingsValue(oItem.getText()),
+					type: ListType.Active,
 					selected: oItem.getSelected()
 				}).data("item", oItem);
 				this._presetFilterList.addItem(oListItem);
@@ -1917,7 +1991,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		}
 		// add none item to preset filter list
 		if (aPresetFilterItems.length) {
-			oListItem = new sap.m.StandardListItem({
+			oListItem = new StandardListItem({
 				id: this._presetFilterList.getId() + "-none" + LIST_ITEM_SUFFIX,
 				title : this._rb.getText("VIEWSETTINGS_NONE_ITEM"),
 				selected : !!this.getSelectedPresetFilterItem()
@@ -1929,11 +2003,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		aFilterItems = this.getFilterItems();
 		if (aFilterItems.length) {
 			aFilterItems.forEach(function(oItem) {
-				oListItem = new sap.m.StandardListItem(
+				oListItem = new StandardListItem(
 					{
 						id: oItem.getId() + LIST_ITEM_SUFFIX,
-						title : oItem.getText(),
-						type : sap.m.ListType.Active,
+						title : ManagedObject.escapeSettingsValue(oItem.getText()),
+						type : ListType.Active,
 						press : (function(oItem) {
 							return function(oEvent) {
 								// navigate to details page
@@ -1942,7 +2016,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 									that._prevSelectedFilterItem = this;
 									jQuery.sap.delayedCall(0, that._navContainer, "to", [ that.getId() + '-page2', "slide" ]);
 								}
-								if (sap.ui.Device.system.desktop && that._filterDetailList && that._filterDetailList.getItems()[0]) {
+								if (Device.system.desktop && that._filterDetailList && that._filterDetailList.getItems()[0]) {
 									that._getNavContainer().attachEventOnce("afterNavigate", function() {
 										that._filterDetailList.getItems()[0].focus();
 									});
@@ -1967,10 +2041,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		}
 		this._vContentPage = -1;
 
-		this._presetFilterList = new sap.m.List(
+		this._presetFilterList = new List(
 			this.getId() + "-predefinedfilterlist",
 			{
-				mode : sap.m.ListMode.SingleSelectLeft,
+				mode : ListMode.SingleSelectLeft,
 				includeItemInSelection : true,
 				selectionChange : function(oEvent) {
 					var item = oEvent.getParameter("listItem").data("item");
@@ -1982,7 +2056,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 				}
 			}).addStyleClass("sapMVSDUpperList");
 
-		this._filterList = new sap.m.List(this.getId() + "-filterlist", {});
+		this._filterList = new List(this.getId() + "-filterlist", {});
 
 		this._filterContent = [ this._presetFilterList, this._filterList ];
 	};
@@ -1994,9 +2068,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._initDialogContent = function(sPageId) {
 		var bSort               = !!this.getSortItems().length,
-		    bGroup              = !!this.getGroupItems().length,
-		    bPredefinedFilter   = !!this.getPresetFilterItems().length,
-		    bFilter             = !!this.getFilterItems().length;
+			bGroup              = !!this.getGroupItems().length,
+			bPredefinedFilter   = !!this.getPresetFilterItems().length,
+			bFilter             = !!this.getFilterItems().length;
 
 		// sort
 		if (bSort) {
@@ -2023,6 +2097,28 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	};
 
 	/**
+	 * Gets or creates the sap.m.Button which is used inside the SegmentedButton for representation of the custom tab.
+	 * @private
+	 * @param {Object} oCustomTab with options for the button
+	 * @param {String} sButtonIdPrefix preffix for the button id
+	 * @returns {sap.m.Button} The created button
+	 */
+	ViewSettingsDialog.prototype._getTabButton = function (oCustomTab, sButtonIdPrefix) {
+		var sButtonId = sButtonIdPrefix + oCustomTab.getId(),
+			oButton = sap.ui.getCore().byId(sButtonId);
+
+		if (oButton) {
+			return oButton;
+		} else {
+			return new sap.m.Button({
+				id      : sButtonId,
+				icon    : oCustomTab.getIcon(),
+				tooltip : oCustomTab.getTooltip()
+			});
+		}
+	};
+
+	/**
 	 * Sets the state of the dialog when it is opened.
 	 * If content for only one tab is defined, then tabs are not displayed, otherwise,
 	 * a SegmentedButton is displayed and the button for the initially displayed page is focused.
@@ -2031,18 +2127,18 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._updateDialogState = function(sPageId) {
 		var bSort                       = !!this.getSortItems().length,
-		    bGroup                      = !!this.getGroupItems().length,
-		    bPredefinedFilter           = !!this.getPresetFilterItems().length,
-		    bFilter                     = !!this.getFilterItems().length,
-		    bCustomTabs                 = !!this.getCustomTabs().length,
-		    oSegmentedButton            = this._getSegmentedButton(),
-		    sSelectedButtonId           = null,
-		    bIsPageIdOfPredefinedPage   = false,
-		    oDefaultPagesIds            = {
-			    "sort"          : 0,
-			    "group"         : 1,
-			    "filter"        : 2
-		    };
+			bGroup                      = !!this.getGroupItems().length,
+			bPredefinedFilter           = !!this.getPresetFilterItems().length,
+			bFilter                     = !!this.getFilterItems().length,
+			bCustomTabs                 = !!this.getCustomTabs().length,
+			oSegmentedButton            = this._getSegmentedButton(),
+			sSelectedButtonId           = null,
+			bIsPageIdOfPredefinedPage   = false,
+			oDefaultPagesIds            = {
+				"sort"          : 0,
+				"group"         : 1,
+				"filter"        : 2
+			};
 
 		// reset state
 		oSegmentedButton.removeAllButtons();
@@ -2074,9 +2170,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		if (bCustomTabs) {
 			this.getCustomTabs().forEach(function (oCustomTab) {
 				if (!this._isEmptyTab(oCustomTab)) {
-					var oButton = oCustomTab.getTabButton({
-						'idPrefix': this.getId() + this._sCustomTabsButtonsIdPrefix
-					});
+					var sCustomTabButtonIdPrefix = this.getId() + this._sCustomTabsButtonsIdPrefix,
+						oButton = this._getTabButton(oCustomTab, sCustomTabButtonIdPrefix);
 					// add custom tab to segmented button
 					oSegmentedButton.addButton(oButton);
 				}
@@ -2148,8 +2243,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._determineValidPageId = function (sPageId) {
 		var sDefaultPageId      = 'sort',
-		    bHasMatch           = false,
-		    aValidPageIds       = [];
+			bHasMatch           = false,
+			aValidPageIds       = [];
 
 		// get a list of 'valid' page ids - meaning that each one exists and has content
 		aValidPageIds       = this._fetchValidPagesIds();
@@ -2190,9 +2285,9 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._fetchValidPagesIds = function () {
 		var i,
-		    aCustomTabs         = this.getCustomTabs(),
-		    aCustomTabsLength   = aCustomTabs.length,
-		    aValidPageIds       = [];
+			aCustomTabs         = this.getCustomTabs(),
+			aCustomTabsLength   = aCustomTabs.length,
+			aValidPageIds       = [];
 
 		/* make sure to push the predefined pages ids before the custom tabs as the order is important - if the control
 		 *  has to determine which page to load it takes the first valid page id */
@@ -2218,8 +2313,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Checks whether a custom tab instance is not empty.
-	 * @param {object} oCustomTab
-	 * @returns {*|boolean}
+	 * @param {Object} oCustomTab The tab to be checked
+	 * @returns {boolean} Whether the tab is empty
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._isEmptyTab = function (oCustomTab) {
@@ -2233,7 +2328,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * Checks whether a given page name corresponds to a valid predefined page ID.
 	 * The meaning of valid would be for the predefined page to also have content.
 	 * @param {string} sName The page name
-	 * @returns {boolean}
+	 * @returns {boolean} whether the name is valid
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._isValidPredefinedPageId = function (sName) {
@@ -2279,8 +2374,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * Overwrites the model setter to reset the remembered page in case it was a filter detail page, to make sure
 	 * that the dialog is not trying to re-open a page for a removed item.
 	 *
-	 * @param {object} oModel
-	 * @param {string} sName
+	 * @param {sap.ui.model.Model} oModel The model whose setter will be overwritten
+	 * @param {string} sName The name of the model
 	 * @returns {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.setModel = function (oModel, sName) {
@@ -2288,7 +2383,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 		if (this._vContentPage === 3 && this._oContentItem) {
 			resetFilterPage.call(this);
 		}
-		return sap.ui.base.ManagedObject.prototype.setModel.call(this, oModel, sName);
+		return ManagedObject.prototype.setModel.call(this, oModel, sName);
 	};
 
 	/**
@@ -2355,10 +2450,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._switchToPage = function(vWhich, oItem) {
 		var i               = 0,
-		    oTitleLabel     = this._getTitleLabel(),
-		    oResetButton    = this._getResetButton(),
-		    oHeader         = this._getHeader(),
-		    oSubHeader      = this._getSubHeader();
+			oTitleLabel     = this._getTitleLabel(),
+			oResetButton    = this._getResetButton(),
+			oHeader         = this._getHeader(),
+			oSubHeader      = this._getSubHeader();
 
 		// nothing to do if we are already on the requested page (except for filter detail page)
 		if (this._vContentPage === vWhich && vWhich !== 3) {
@@ -2532,8 +2627,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._updateSelectAllCheckBoxState = function() {
 		var bAllSelected = false,
-		    aItems = this._filterDetailList.getItems(),
-		    aItemsVisible = [];
+			aItems = this._filterDetailList.getItems(),
+			aItemsVisible = [];
 
 		if (!this._selectAllCheckBox) {
 			return;
@@ -2645,11 +2740,11 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._updateFilterCounters = function() {
 		var aListItems = (this._filterList ? this._filterList.getItems() : []),
-		    oItem,
-		    aSubItems,
-		    iFilterCount = 0,
-		    i = 0,
-		    j;
+			oItem,
+			aSubItems,
+			iFilterCount = 0,
+			i = 0,
+			j;
 
 		for (; i < aListItems.length; i++) {
 			oItem = aListItems[i].data("item");
@@ -2713,10 +2808,10 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 */
 	ViewSettingsDialog.prototype._calculateNumberOfPages = function () {
 		var iActivePages        = 0,
-		    bSort               = !!this.getSortItems().length,
-		    bGroup              = !!this.getGroupItems().length,
-		    bPredefinedFilter   = !!this.getPresetFilterItems().length,
-		    bFilter             = !!this.getFilterItems().length;
+			bSort               = !!this.getSortItems().length,
+			bGroup              = !!this.getGroupItems().length,
+			bPredefinedFilter   = !!this.getPresetFilterItems().length,
+			bFilter             = !!this.getFilterItems().length;
 
 		if (bSort) {
 			iActivePages++;
@@ -2740,7 +2835,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	/**
 	 * Determines if a sub header should be displayed or not.
 	 * @private
-	 * @return {boolean}
+	 * @return {boolean} Whether a sub header should be displayed
 	 */
 	ViewSettingsDialog.prototype._hasSubHeader = function () {
 		return !(this._calculateNumberOfPages() < 2);
@@ -2760,8 +2855,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	/**
 	 * Gets an sap.m.ViewSettingsItem from a list of items by a given key.
 	 *
-	 * @param aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
-	 * @param sKey
+	 * @param {array} aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
+	 * @param {string} sKey The key of the searched item
 	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
 	 * @private
 	 */
@@ -2784,8 +2879,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	 * Finds an sap.m.ViewSettingsItem from a list of items by a given key.
 	 * If it does not succeed logs an error.
 	 *
-	 * @param {sap.m.ViewSettingsItem|string}
-	 * @param aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
+	 * @param {sap.m.ViewSettingsItem|string} vItemOrKey The searched item or its key
+	 * @param {array} aViewSettingsItems The list of sap.m.ViewSettingsItem objects to be searched
 	 * @param {string} sErrorMessage The error message that will be logged if the item is not found
 	 * @returns {*} The sap.m.ViewSettingsItem found in the list of items
 	 * @private
@@ -2829,6 +2924,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Internal event handler for the Confirm button.
+	 * @param {Object} oEvent The fired event
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._onConfirm = function(oEvent) {
@@ -2869,6 +2965,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Internal event handler for the Cancel button.
+	 * @param {Object} oEvent The fired event
 	 * @private
 	 */
 	ViewSettingsDialog.prototype._onCancel = function(oEvent) {
@@ -3014,7 +3111,7 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 	/**
 	 * Determine if the last opened page has custom tab contents
 	 * @private
-	 * @returns {boolean}
+	 * @returns {boolean} Whether the last opened page has custom tab contents
 	 */
 	function isLastPageContentCustomTab() {
 		// ToDo: make this into enumeration
@@ -3042,24 +3139,24 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * String filter helper class.
- 	 * @param {string} sOperator sap.m.StringFilterOperator value. Default is sap.m.StringFilterOperator.StartsWith.
+	 * @param {string} sOperator sap.m.StringFilterOperator value. Default is sap.m.StringFilterOperator.StartsWith.
 	 * @constructor
 	 * @private
 	 */
 	var StringFilter = function(sOperator) {
-		this.sOperator = sOperator || sap.m.StringFilterOperator.StartsWith;
+		this.sOperator = sOperator || StringFilterOperator.StartsWith;
 
 		switch (this.sOperator) {
-			case sap.m.StringFilterOperator.Equals:
+			case StringFilterOperator.Equals:
 				this.fnOperator = fnEquals;
 				break;
-			case sap.m.StringFilterOperator.Contains:
+			case StringFilterOperator.Contains:
 				this.fnOperator = fnContains;
 				break;
-			case sap.m.StringFilterOperator.StartsWith:
+			case StringFilterOperator.StartsWith:
 				this.fnOperator = fnStartsWith;
 				break;
-			case sap.m.StringFilterOperator.AnyWordStartsWith:
+			case StringFilterOperator.AnyWordStartsWith:
 				this.fnOperator = fnAnyWordStartsWith;
 				break;
 			default:
@@ -3072,8 +3169,8 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	/**
 	 * Tests if a string satisfies the query string.
-	 * @param {string} sQuery
-	 * @param {string} sValue
+	 * @param {string} sQuery The string to which will be compared
+	 * @param {string} sValue The tested string
 	 * @returns {boolean} true if the string satisfies the query string
 	 * @private
 	 */
@@ -3111,4 +3208,4 @@ function(jQuery, library, Control, IconPool, Toolbar, CheckBox, SearchField, Lis
 
 	return ViewSettingsDialog;
 
-}, /* bExport= */ true);
+});

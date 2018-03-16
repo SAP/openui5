@@ -49,6 +49,54 @@
 	height: 1.9375rem;
 }
 
+// title hover
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) .sapFDynamicPageTitle:hover {
+	background-color: darken(@sapUiObjectHeaderBackground, 3);
+}
+
+
+/* ======================================== */
+/* Title and Toggle Header Visual Indicator */
+/* ======================================== */
+.sapUxAPObjectPageLayout {
+  &.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
+    .sapFDynamicPageTitle:hover,
+    &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
+      background-color: darken(@sapUiObjectHeaderBackground, 3);
+    }
+
+    &.sapUxAPObjectPageLayoutTitleForceHovered {
+      .sapFDynamicPageToggleHeaderIndicator {
+        .sapMBtnInner.sapMBtnHoverable {
+          background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+        }
+      }
+    }
+  }
+
+  // Toggle Header Visual Indicator
+  .sapFDynamicPageToggleHeaderIndicator.sapMBtn {
+
+    // normal state
+    & > .sapMBtnInner {
+      border: none;
+      background-color: @sapUiObjectHeaderBorderColor;
+    }
+
+    // hover state
+    &:hover > .sapMBtnInner.sapMBtnHoverable {
+      background-color: darken(@sapUiObjectHeaderBorderColor, 3);
+    }
+
+    // active state
+    &:focus > .sapMBtnInner.sapMFocusable.sapMBtnActive {
+      background: @sapUiSelected;
+      color: @sapUiButtonActiveBackground;
+    }
+  }
+}
+
+// footer
 .sapUxAPObjectPageFooter .sapUxAPObjectPageFloatingFooter {
 	background: fade(@sapUiPageFooterBackground, 90);
 	color: @sapUiPageFooterTextColor;

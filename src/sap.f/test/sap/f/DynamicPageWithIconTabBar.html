@@ -46,9 +46,9 @@
 			press: fnToggleFooter
 		});
 
-		var oTitle = getTitle(oToggleFooterButton);
-		var oHeader = getHeader();
-		var oFooter = getFooter();
+		var oTitle = oDynamicPageUtil.getTitle(oToggleFooterButton);
+		var oHeader = oDynamicPageUtil.getHeader();
+		var oFooter = oDynamicPageUtil.getFooter();
 		var oContent = new sap.m.IconTabBar("itb1", {
 			expandable: false,
 			items: [
@@ -100,27 +100,27 @@
 				columns: [
 					new sap.m.Column({
 						width: "2em",
-						header: getLabel("ID")
+						header: oDynamicPageUtil.getLabel("ID")
 					}),
 					new sap.m.Column({
 						width: "7em",
-						header: getLabel("Name")
+						header: oDynamicPageUtil.getLabel("Name")
 					}),
 					new sap.m.Column({
 						width: "3em",
-						header: getLabel("Status")
+						header: oDynamicPageUtil.getLabel("Status")
 					}),
 					new sap.m.Column({
 						width: "2em",
 						minScreenWidth: "Tablet",
 						hAlign: "Right",
-						header: getLabel("Amount")
+						header: oDynamicPageUtil.getLabel("Amount")
 					}),
 					new sap.m.Column({
 						width: "3em",
 						hAlign: "Right",
 						minScreenWidth: "Tablet",
-						header: getLabel("Price")
+						header: oDynamicPageUtil.getLabel("Price")
 					})
 				],
 				items: {
@@ -162,7 +162,7 @@
 			})
 		});
 
-		var oPage = getDynamicPage(true, oTitle, oHeader, oContent, oFooter);
+		var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oContent, oFooter);
 
 		var oApp = new sap.m.App;
 		oApp.addPage(oPage).placeAt("body");

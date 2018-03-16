@@ -203,11 +203,10 @@
 					var aAreas = oSplitter.getContentAreas();
 					var aSizes = oSplitter.getCalculatedSizes();
 
-					// Sizes should be about the same (rounding errors should be within 1px)
-					assert.ok(aSizes[0] >= aSizes[1] - 1 && aSizes[0] <= aSizes[1] + 1, "Content size #1 is correct.");
-					assert.ok(aSizes[1] >= aSizes[2] - 1 && aSizes[1] <= aSizes[2] + 1, "Content size #2 is correct.");
-					assert.ok(aSizes[2] >= aSizes[0] - 1 && aSizes[2] <= aSizes[0] + 1, "Content size #3 is correct.");
-
+					// Sizes should be about the same (rounding errors should be within 2px)
+					assert.ok(aSizes[0] >= aSizes[1] - 2 && aSizes[0] <= aSizes[1] + 2, "Content size #1 is correct.");
+					assert.ok(aSizes[1] >= aSizes[2] - 2 && aSizes[1] <= aSizes[2] + 2, "Content size #2 is correct.");
+					assert.ok(aSizes[2] >= aSizes[0] - 2 && aSizes[2] <= aSizes[0] + 2, "Content size #3 is correct.");
 					oSplitter.removeDelegate(oDelegate);
 				}
 			};
@@ -224,12 +223,10 @@
 				onAfterRendering : function() {
 					var aAreas = oSplitter.getContentAreas();
 					var aSizes = oSplitter.getCalculatedSizes();
-
 					// Sizes should be about the same (rounding errors should be within 1px)
-					assert.ok(aSizes[0] >= aSizes[1] - 1 && aSizes[0] <= aSizes[1] + 1, "Content size #1 is correct.");
-					assert.ok(aSizes[1] >= aSizes[2] - 1 && aSizes[1] <= aSizes[2] + 1, "Content size #2 is correct.");
-					assert.ok(aSizes[2] >= aSizes[0] - 1 && aSizes[2] <= aSizes[0] + 1, "Content size #3 is correct.");
-
+					assert.ok(aSizes[0] >= aSizes[1] - 2 && aSizes[0] <= aSizes[1] + 2, "Content size #1 is correct.");
+					assert.ok(aSizes[1] >= aSizes[2] - 2 && aSizes[1] <= aSizes[2] + 2, "Content size #2 is correct.");
+					assert.ok(aSizes[2] >= aSizes[0] - 2 && aSizes[2] <= aSizes[0] + 2, "Content size #3 is correct.");
 					oSplitter.removeDelegate(oDelegate);
 				}
 			}
@@ -388,18 +385,6 @@
 			assert.ok(oKeyboardResizeSpy.withArgs(0, 5, true).calledOnce);
 		});
 
-		QUnit.test("Splitter should unsubscribe after destroy", function(assert) {
-			var oSplitter = new sap.ui.layout.Splitter(),
-				oUnsubscribeStub = sinon.spy(sap.ui.core.EventBus.prototype, "unsubscribe");
-
-			oSplitter.destroy();
-
-			assert.strictEqual(oUnsubscribeStub.args[0].length, 4, "Unsubscribe should be called with 4 arguments");
-			assert.ok(oUnsubscribeStub.calledWith("sap.ui","__preserveContent", oSplitter._preserveHandler, oSplitter), "Should be called with instance of a Splitter");
-
-			oUnsubscribeStub.restore();
-		});
-
 		QUnit.module("Content areas");
 
 		QUnit.test("addContentArea", function (assert) {
@@ -508,6 +493,38 @@
 			assert.strictEqual(oSplitter.getContentAreas().length, 0, "Has 0 content areas");
 			assert.ok(oBtn.bIsDestroyed, "Content inside has been destroyed");
 		});
+
+		QUnit.module("Resize Handling");
+
+		QUnit.test("Prevent size calculation while rerendering", function (assert) {
+			// Check whether the resize calculation is not done when the Splitter is located in the preserve area
+			var done = assert.async();
+			sap.ui.require(['sap/ui/core/mvc/XMLView', 'sap/ui/layout/Splitter', 'sap/ui/core/RenderManager'], function(XMLView, Splitter, RenderManager){
+
+				// setup
+				var sXMLViewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout">'
+																+ '<layout:Splitter id="myResizeSplitter">'
+																+ '</layout:Splitter>'
+															+ '</mvc:View>'
+				var oXMLView = new XMLView({viewContent: sXMLViewContent});
+				var oResizeSplitter = oXMLView.byId("myResizeSplitter");
+				
+				oXMLView.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				var oSpy = sinon.spy(oResizeSplitter, "getCalculatedSizes");
+				
+				oXMLView.onBeforeRendering = function(){
+					// check
+					assert.ok(RenderManager.isPreservedContent(oXMLView.getDomRef()), "Splitter control is preserved as part of XMLView.");
+					oResizeSplitter.triggerResize(true);
+					assert.strictEqual(oSpy.called, false, "Splitter has not calculated its sizes again.");
+					done();
+				};
+
+				oXMLView.rerender();
+			});
+		});
+
 	}
 	else{
 		jQuery.sap.log.warning("Splitter control is not supported for Internet Explorer 8!");

@@ -1,5 +1,4 @@
 <mvc:View
-	id="notFoundView"
 	controllerName="sap.ui.demo.cart.controller.NotFound"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:core="sap.ui.core"
@@ -7,6 +6,15 @@
 	<Page
 		id="page"
 		title="{i18n>categoryNoData}">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>NotFound_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>NotFound_contentLabel}"
+				headerRole="Region"
+				headerLabel="{i18n>NotFound_headerLabel}" />
+		</landmarkInfo>
 		<content>
 			<MessagePage
 				showHeader="false"

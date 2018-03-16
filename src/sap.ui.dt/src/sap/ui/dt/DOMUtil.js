@@ -6,7 +6,9 @@
 sap.ui.define([
 	'jquery.sap.global'
 ],
-function(jQuery) {
+function(
+	jQuery
+) {
 	"use strict";
 
 	/**
@@ -39,18 +41,24 @@ function(jQuery) {
 	};
 
 	/**
-	 *
+	 * Returns the offset for an element based on the parent position and scrolling
+	 * @param  {object} oPosition     Position object containing left and top values
+	 * @param  {object} mParentOffset Offset object from the parent containing left and top values
+	 * @param  {number} iScrollTop    Scrolling position from top in pixels
+	 * @param  {number} iScrollLeft   Scrolling position from left in pixels
+	 * @return {object}               Returns the calculated offset containing left and top values
 	 */
-	DOMUtil.getOffsetFromParent = function(oPosition, mParentOffset, scrollTop, scrollLeft) {
+	DOMUtil.getOffsetFromParent = function(oPosition, mParentOffset, iScrollTop, iScrollLeft) {
 		var mOffset = {
 			left : oPosition.left,
 			top : oPosition.top
 		};
 
 		if (mParentOffset) {
-			mOffset.left -= (mParentOffset.left - (scrollLeft ? scrollLeft : 0));
-			mOffset.top -= (mParentOffset.top - (scrollTop ? scrollTop : 0));
+			mOffset.left -= (mParentOffset.left - (iScrollLeft ? iScrollLeft : 0));
+			mOffset.top -= (mParentOffset.top - (iScrollTop ? iScrollTop : 0));
 		}
+
 		return mOffset;
 	};
 
@@ -67,32 +75,84 @@ function(jQuery) {
 	};
 
 	/**
-	 *
+	 * Checks whether DOM Element has vertical scrollbar
+	 * @param oDomRef {HTMLElement} - DOM Element
+	 * @return {boolean}
 	 */
-	DOMUtil.hasScrollBar = function(oDomRef) {
+	DOMUtil.hasVerticalScrollBar = function(oDomRef) {
 		var $DomRef = jQuery(oDomRef);
-
 		var bOverflowYScroll = $DomRef.css("overflow-y") === "auto" || $DomRef.css("overflow-y") === "scroll";
-		var bOverflowXScroll = $DomRef.css("overflow-x") === "auto" || $DomRef.css("overflow-x") === "scroll";
 
-		var bHasYScroll = bOverflowYScroll && $DomRef.get(0).scrollHeight > $DomRef.height();
-		var bHasXScroll = bOverflowXScroll && $DomRef.get(0).scrollWidth > $DomRef.width();
-
-		return bHasYScroll || bHasXScroll;
+		return bOverflowYScroll && $DomRef.get(0).scrollHeight > $DomRef.height();
 	};
 
 	/**
-	 *
+	 * Checks whether DOM Element has horizontal scrollbar
+	 * @param oDomRef {HTMLElement} - DOM Element
+	 * @return {boolean}
+	 */
+	DOMUtil.hasHorizontalScrollBar = function (oDomRef) {
+		var $DomRef = jQuery(oDomRef);
+		var bOverflowXScroll = $DomRef.css("overflow-x") === "auto" || $DomRef.css("overflow-x") === "scroll";
+
+		return bOverflowXScroll && $DomRef.get(0).scrollWidth > $DomRef.width();
+	};
+
+	/**
+	 * Checks whether DOM Element has vertical or horizontal scrollbar
+	 * @param oDomRef {HTMLElement} - DOM Element
+	 * @return {boolean}
+	 */
+	DOMUtil.hasScrollBar = function(oDomRef) {
+		return DOMUtil.hasVerticalScrollBar(oDomRef) || DOMUtil.hasHorizontalScrollBar(oDomRef);
+	};
+
+	/**
+	 * Gets scrollbar width in the running browser
+	 * @return {number} - returns width in pixels
+	 */
+	DOMUtil.getScrollbarWidth = function() {
+		if (typeof DOMUtil.getScrollbarWidth._cache === 'undefined') {
+			// add outer div
+			var oOuter = jQuery('<div/>')
+				.css({
+					position: 'absolute',
+					top: '-9999px',
+					left: '-9999px',
+					width: '100px'
+				})
+				.appendTo('body');
+
+			var iWidthNoScroll = oOuter.width();
+			oOuter.css('overflow', 'scroll');
+
+			// add inner div
+			var oInner = jQuery('<div/>')
+				.css('width', '100%')
+				.appendTo(oOuter);
+
+			var iWidthWithScroll = oInner.width();
+
+			// clean up
+			oOuter.remove();
+
+			DOMUtil.getScrollbarWidth._cache = iWidthNoScroll - iWidthWithScroll;
+		}
+
+		return DOMUtil.getScrollbarWidth._cache;
+	};
+
+
+	/**
+	 * @param {HTMLElement} oDomRef
 	 */
 	DOMUtil.getOverflows = function(oDomRef) {
-		var oOverflows;
-		var $ElementDomRef = jQuery(oDomRef);
-		if ($ElementDomRef.length) {
-			oOverflows = {};
-			oOverflows.overflowX = $ElementDomRef.css("overflow-x");
-			oOverflows.overflowY = $ElementDomRef.css("overflow-y");
-		}
-		return oOverflows;
+		var $DomRef = jQuery(oDomRef);
+
+		return {
+			overflowX: $DomRef.css("overflow-x"),
+			overflowY: $DomRef.css("overflow-y")
+		};
 	};
 
 	/**
@@ -184,6 +244,15 @@ function(jQuery) {
 		oElement = jQuery(oElement);
 
 		oElement.attr("draggable", bValue);
+	};
+
+	/**
+	 *
+	 */
+	DOMUtil.getDraggable = function(oElement) {
+		oElement = jQuery(oElement);
+
+		return oElement.attr("draggable");
 	};
 
 	/**
@@ -292,6 +361,29 @@ function(jQuery) {
 		this.copyComputedStyles(oNode, oCopy);
 
 		jQuery(oTarget).append(oCopy);
+	};
+
+	/**
+	 * Inserts <style/> tag width specified styles into #overlay-container
+	 * @param {string} sStyles - string with plain CSS to be rendered into the page
+	 */
+	DOMUtil.insertStyles = function (sStyles) {
+		var oStyle = document.createElement('style');
+		oStyle.type = 'text/css';
+
+		if (oStyle.styleSheet) {
+			oStyle.styleSheet.cssText = sStyles;
+		} else {
+			oStyle.appendChild(document.createTextNode(sStyles));
+		}
+
+		// FIXME: we can't use Overlay module because of the cycled dependency
+		jQuery('#overlay-container').prepend(oStyle);
+	};
+
+	DOMUtil.contains = function (sId, oTargetNode) {
+		var oNode = document.getElementById(sId);
+		return oNode && oNode.contains(oTargetNode);
 	};
 
 	return DOMUtil;

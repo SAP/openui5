@@ -77,7 +77,7 @@ sap.ui.define([ 'sap/ui/core/Renderer'],
 			rm.addStyle("width", sWidth);
 		}
 
-		if (!oLabel.getWrapping()) {
+		if (!oLabel.isWrapping()) {
 			rm.addClass("sapUiLblNowrap");
 		}
 

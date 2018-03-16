@@ -1,7 +1,6 @@
 {
-	"_version": "1.1.0",
+	"_version": "1.8.0",
 	"sap.app": {
-		"_version": "1.1.0",
 		"id": "sap.ui.demo.nav",
 		"type": "application",
 		"i18n": "i18n/i18n.properties",
@@ -23,18 +22,20 @@
 		}
 	},
 	"sap.ui": {
-		"_version": "1.1.0",
 		"technology": "UI5",
 		"deviceTypes": {
 			"desktop": true,
 			"tablet": true,
 			"phone": true
-		},
-		"supportedThemes": ["sap_belize"]
+		}
   	},
 	"sap.ui5": {
-		"_version": "1.1.0",
-		"rootView": "sap.ui.demo.nav.view.App",
+		"rootView": {
+			"viewName": "sap.ui.demo.nav.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
+		},
 		"dependencies": {
 			"minUI5Version": "1.30",
 			"libs": {

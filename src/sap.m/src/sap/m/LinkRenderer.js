@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
- sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement'],
-	function(jQuery, Renderer, LabelEnablement) {
+ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/LabelEnablement', 'sap/ui/core/library'],
+	function(Renderer, LabelEnablement, coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 	/**
@@ -31,7 +35,9 @@
 			oAccAttributes =  {
 				role: 'link',
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
-			};
+			},
+			sHref = oControl.getHref(),
+			bIsValid = sHref && oControl._isHrefValid(sHref);
 
 		// Link is rendered as a "<a>" element
 		oRm.write("<a");
@@ -78,10 +84,8 @@
 		}
 
 		/* set href only if link is enabled - BCP incident 1570020625 */
-		if (oControl.getHref() && oControl.getEnabled()) {
-			oRm.writeAttributeEscaped("href", oControl.getHref());
-		} else {
-			oRm.writeAttribute("href", "#");
+		if (bIsValid && oControl.getEnabled()) {
+			oRm.writeAttributeEscaped("href", sHref);
 		}
 
 		if (oControl.getTarget()) {
@@ -99,7 +103,7 @@
 		}
 
 		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
-		if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+		if (sTextDir !== TextDirection.Inherit) {
 			oRm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 

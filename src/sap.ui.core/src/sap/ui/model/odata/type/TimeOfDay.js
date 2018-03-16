@@ -84,20 +84,25 @@ sap.ui.define([
 	 *   integer values between 0 and 12 are valid.
 	 */
 	function setConstraints(oType, oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable,
-			vPrecision = oConstraints && oConstraints.precision;
+		var vNullable,
+			vPrecision;
 
 		oType.oConstraints = undefined;
-		if (vNullable === false) {
-			oType.oConstraints = {nullable : false};
-		} else if (vNullable !== undefined && vNullable !== true) {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
-		}
-		if (vPrecision === Math.floor(vPrecision) && vPrecision > 0 && vPrecision <= 12) {
-			oType.oConstraints = oType.oConstraints || {};
-			oType.oConstraints.precision = vPrecision;
-		} else if (vPrecision !== undefined && vPrecision !== 0) {
-			jQuery.sap.log.warning("Illegal precision: " + vPrecision, null, oType.getName());
+		if (oConstraints) {
+			vNullable = oConstraints.nullable;
+			vPrecision = oConstraints.precision;
+			// "true" and "false" not allowed here, because in V4 they are never sent as string
+			if (vNullable === false) {
+				oType.oConstraints = {nullable : false};
+			} else if (vNullable !== undefined && vNullable !== true) {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+			}
+			if (vPrecision === Math.floor(vPrecision) && vPrecision > 0 && vPrecision <= 12) {
+				oType.oConstraints = oType.oConstraints || {};
+				oType.oConstraints.precision = vPrecision;
+			} else if (vPrecision !== undefined && vPrecision !== 0) {
+				jQuery.sap.log.warning("Illegal precision: " + vPrecision, null, oType.getName());
+			}
 		}
 	}
 
@@ -192,6 +197,21 @@ sap.ui.define([
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);
 		}
+	};
+
+	/**
+	 * Returns a formatter that converts between the model format and a Javascript Date. It has two
+	 * methods: <code>format</code> takes a Date and returns a date as a String in the format
+	 * expected by the model, <code>parse</code> converts from the String to a Date.
+	 *
+	 * @returns {sap.ui.core.format.DateFormat}
+	 *   The formatter
+	 *
+	 * @override
+	 * @protected
+	 */
+	TimeOfDay.prototype.getModelFormat = function() {
+		return getModelFormat(this);
 	};
 
 	/**

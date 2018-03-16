@@ -15,9 +15,9 @@ sap.ui.define(['sap/ui/model/ContextBinding', 'sap/ui/model/ChangeReason'],
 	 * The ContextBinding is a specific binding for a setting context for the model
 	 *
 	 * @param {sap.ui.model.Model} oModel
-	 * @param {String} sPath
-	 * @param {Object} oContext
-	 * @param {Object} [mParameters]
+	 * @param {string} sPath
+	 * @param {sap.ui.model.Context} oContext
+	 * @param {object} [mParameters]
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.odata.ODataContextBinding

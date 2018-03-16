@@ -31,7 +31,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalBinding', "./AnalyticalTreeBind
 		var iModelVersion = AnalyticalVersionInfo.getVersion(this);
 
 		// ensure only ODataModel are enhanced which have not been enhanced yet
-		if (this.iModelVersion === AnalyticalVersionInfo.NONE || this.getAnalyticalExtensions) {
+		if (iModelVersion === AnalyticalVersionInfo.NONE || this.getAnalyticalExtensions) {
 			return;
 		}
 

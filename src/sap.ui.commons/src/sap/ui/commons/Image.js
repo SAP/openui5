@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.Image.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', "./ImageRenderer"],
+	function(jQuery, library, Control, ImageRenderer) {
 	"use strict";
 
 
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Image</code> control.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.Image}
 	 * @alias sap.ui.commons.Image
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

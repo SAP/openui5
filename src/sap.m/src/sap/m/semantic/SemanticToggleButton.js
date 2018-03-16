@@ -2,8 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/semantic/SemanticControl', 'sap/m/ButtonType', 'sap/ui/base/ManagedObject'], function(SemanticButton, SemanticControl, ButtonType, ManagedObject) {
+sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/library', 'jquery.sap.keycodes'], function(SemanticButton, library, jQuery) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
 
 	/**
 	 * Constructor for a new SemanticToggleButton.
@@ -111,4 +114,4 @@ sap.ui.define(['sap/m/semantic/SemanticButton', 'sap/m/semantic/SemanticControl'
 	};
 
 	return SemanticToggleButton;
-}, /* bExport= */ true);
+});

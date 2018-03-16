@@ -1,0 +1,72 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.SalesOrderTP100_V2.Main"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+	<VBox>
+		<Table growing="true" growingThreshold="5" id="SalesOrders"
+			items="{path : '/SEPM_C_SLSORDER_TP_100',
+					parameters : {
+						$count : true,
+						$expand : { to_Item : {
+							$select : ['SalesOrderItemUUID', 'SalesOrderUUID', 'SalesOrder',
+								'SalesOrderItem', 'Product', 'GrossAmount']
+						}},
+						$select : ['SalesOrderUUID', 'SalesOrder', 'Customer', 'OverallStatus'],
+						$filter : 'SalesOrder ge \'500000000\''
+				}}"
+			mode="SingleSelectMaster"
+			selectionChange="onSalesOrdersSelect">
+			<headerToolbar>
+				<Toolbar>
+					<Title id="SalesOrdersTitle" text="{$count} Sales Orders" titleStyle="H2"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Text text="SalesOrder ID"/>
+				</Column>
+				<Column>
+					<Text text="Customer"/>
+				</Column>
+				<Column>
+					<Text text="OverallStatus"/>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<Text text="{SalesOrder}"/>
+				<Text text="{Customer}"/>
+				<Text text="{OverallStatus}"/>
+			</ColumnListItem>
+		</Table>
+		<Table growing="true" growingThreshold="5" id="SalesOrderItems"
+			items="{to_Item}"
+			mode="SingleSelectMaster">
+			<headerToolbar>
+				<Toolbar>
+					<Title text="Sales Order Items" titleStyle="H2"/>
+				</Toolbar>
+			</headerToolbar>
+			<columns>
+				<Column>
+					<Text text="SalesOrder"/>
+				</Column>
+				<Column>
+					<Text text="SalesOrderItem"/>
+				</Column>
+				<Column>
+					<Text text="Product"/>
+				</Column>
+				<Column>
+					<Text text="GrossAmount"/>
+				</Column>
+			</columns>
+			<ColumnListItem>
+				<Text text="{SalesOrder}"/>
+				<Text text="{SalesOrderItem}"/>
+				<Text text="{Product}"/>
+				<Text text="{GrossAmount}"/>
+			</ColumnListItem>
+		</Table>
+	</VBox>
+</mvc:View>

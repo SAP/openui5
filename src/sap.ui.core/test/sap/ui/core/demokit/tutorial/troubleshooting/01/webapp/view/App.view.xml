@@ -1,9 +1,11 @@
 <!--/***************************************************************************
- * Note: This file intentionally contains errors for illustration purposes!    *
+ * Note: This file intentionally contains errors for illustration purposes!	*
  *  The Troubleshooting Tutorial in the official UI5 documentation will show   *
- *  how to analyze and debug them with the support tools delivered by UI5.     *
+ *  how to analyze and debug them with the support tools delivered by UI5.	 *
  ******************************************************************************/-->
-<mvc:View controllerName="sap.ui.demo.HeapOfShards.controller.App"
+
+<mvc:View
+	controllerName="sap.ui.demo.HeapOfShards.controller.App"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:doesnotexist="sap.ui.doesnotexist"
 	xmlns:table="sap.ui.table"
@@ -11,25 +13,29 @@
 	xmlns="sap.m">
 	<App>
 		<pages>
-			<Page title="{i18n>title}" class="sapUiContentPadding">
+			<Page
+				title="{i18n>title}"
+				class="sapUiContentPadding">
 				<content>
 					<MessageStrip
-							text="Note: This file intentionally contains errors for illustration purposes! Read the Troubleshooting Tutorial in the official UI5 documentation to find out more about this."
-							type="Warning"
-							showIcon="true"
-							showCloseButton="false"
-							class="sapUiMediumMarginBottom">
+						text="{i18n>warning}"
+						type="Warning"
+						showIcon="true"
+						showCloseButton="false"
+						class="sapUiMediumMarginBottom">
 					</MessageStrip>
-					<List doesnotexist="true">
-						<StandardListItem
-							title="Some hard-coded text"
-							counter="17x">
-						</StandardListItem>
-					</List>
-					<Panel title="Data Binding Issues">
-						<Text text="my tooltip does not show" tooltip="{doesnotexist>/tooltip}"/>
-					</Panel>
-					<Button id="mybutton" icon="sap-icon://action" text="Do something" press="onPress" type="Emphasized"> </Button>
+
+					<VBox>
+						<Button 
+							id="myButton"
+							icon="sap-icon://action"
+							text="{i18n>doSomething}"
+							press="onPress"
+							type="Emphasized"/>
+						<Label
+							id="LabelWithMissingI18NText"
+							text="{i18n>Label_Missing_I18N_Text}"/>
+					</VBox>
 				</content>
 			</Page>
 		</pages>

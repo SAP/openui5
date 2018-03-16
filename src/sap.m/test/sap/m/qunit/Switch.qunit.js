@@ -388,7 +388,7 @@
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_ACCEPT"));
+		assert.strictEqual(oSwitch.getDomRef("invisible").textContent, sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SWITCH_ARIA_REJECT"));
 		assert.strictEqual(getComputedStyle(oSwitch.getDomRef("invisible")).getPropertyValue("display"), "none");
 		assert.strictEqual(oSwitch.getDomRef("invisible").getAttribute("aria-hidden"), "true");
 
@@ -483,6 +483,32 @@
 			assert.ok(mDomRefs.$Swt.hasClass("sapMSwtDisabled"), 'The switch first-child html element "must have" the css class "sapMSwtDisabled"');
 		}
 	}
+
+	// There should be no text ellipsis used in this control labels
+	// BCP: 1770146840
+	QUnit.test("No ellipsis", function (oAssert) {
+		// Arrange
+		var oSwitch = new sap.m.Switch().placeAt("content"),
+			aDomRefs;
+
+		sap.ui.getCore().applyChanges();
+		aDomRefs = oSwitch.$().find(".sapMSwtLabel");
+
+		// Assert
+		oAssert.strictEqual(aDomRefs.length, 2, "There should be 2 dom elements with class sapMSwtLabel");
+
+		// Act
+		aDomRefs.each(function (i, oDomRef) {
+			var oComputedStyle = window.getComputedStyle(oDomRef);
+
+			// Assert
+			oAssert.ok(oComputedStyle.textOverflow !== "ellipsis",
+				"There should be no ellipsis style applied to label " + (i + 1) + " HTML element");
+		});
+
+		// Cleanup
+		oSwitch.destroy();
+	});
 
 	QUnit.module("Updating");
 
@@ -791,7 +817,7 @@
 		var oTouchmove = {
 			touches: {
 				0: {
-					pageX: 2,
+					pageX: 7,
 					identifier: 1,
 					target: oSwitch.getDomRef()
 				},
@@ -801,7 +827,7 @@
 
 			changedTouches: {
 				0: {
-					pageX: 2,
+					pageX: 7,
 					identifier: 1,
 					target: oSwitch.getDomRef()
 				},
@@ -813,7 +839,7 @@
 		var oTouchend = {
 			changedTouches: {
 				0: {
-					pageX: 2,
+					pageX: 7,
 					identifier: 1,
 					target: oSwitch.getDomRef()
 				},
@@ -830,7 +856,8 @@
 
 		// act
 		sap.ui.test.qunit.triggerTouchEvent("touchstart", oSwitch.getDomRef(), oTouchstart);
-		sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch.getDomRef(), oTouchmove);	// drag the switch handle 1px to the right
+		// drag the switch handle 7px to the right - we compensate for touch/slide threshold which is 6px
+		sap.ui.test.qunit.triggerTouchEvent("touchmove", oSwitch.getDomRef(), oTouchmove);
 		sap.ui.test.qunit.triggerTouchEvent("touchend", oSwitch.getDomRef(), oTouchend);
 		this.clock.tick(sap.m.Switch._TRANSITIONTIME + 1);	// wait some ms after the CSS transition is completed
 
@@ -912,5 +939,30 @@
 
 		// cleanup
 		oCustomSwitch.destroy();
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach : function() {
+			this.switch = new sap.m.Switch();
+			this.switch.placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.switch.destroy();
+		}
+	});
+
+	QUnit.test("_setDomState", function(assert) {
+		// arrange
+		var invisibleElementSpy = this.spy(this.switch, "getInvisibleElementText"),
+			switchDomRef = this.switch.getDomRef(),
+			domRefSpy = this.spy(switchDomRef, "setAttribute");
+
+		// act
+		this.switch._setDomState(true);
+
+		// assert
+		assert.ok(invisibleElementSpy.calledBefore(domRefSpy), "InvisibleElement text was set before updating the dom reference attribute.");
 	});
 }());

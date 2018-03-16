@@ -62,7 +62,7 @@ snippet getopt\n\
 	  -h|help       Display this message\n\
 	  -v|version    Display script version\n\
 \n\
-			EOT\n\
+	EOT\n\
 	}    # ----------  end of function usage  ----------\n\
 \n\
 	#-----------------------------------------------------------------------\n\

@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.wt.controller.App"
+	controllerName="sap.ui.demo.walkthrough.controller.App"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true">
@@ -12,7 +12,7 @@
 						press="onOpenDialog"/>
 				</headerContent>
 				<content>
-					<mvc:XMLView viewName="sap.ui.demo.wt.view.HelloPanel"/>
+					<mvc:XMLView viewName="sap.ui.demo.walkthrough.view.HelloPanel"/>
 				</content>
 			</Page>
 		</pages>

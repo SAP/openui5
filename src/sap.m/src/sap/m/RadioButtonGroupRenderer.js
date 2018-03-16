@@ -3,9 +3,13 @@
  */
 
 // Provides default renderer for control sap.m.RadioButtonGroup
-sap.ui.define([],
-	function() {
+sap.ui.define(["sap/ui/core/library"],
+	function(coreLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 	/**
@@ -63,7 +67,7 @@ sap.ui.define([],
 		}
 
 		// check global rtl config and textDirection property and add "dir" attribute
-		if (!bGlobalTextDir && sControlTextDir != sap.ui.core.TextDirection.Inherit) {
+		if (!bGlobalTextDir && sControlTextDir != TextDirection.Inherit) {
 			rm.writeAttribute("dir", sControlTextDir.toLowerCase());
 		}
 

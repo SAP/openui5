@@ -1,40 +1,132 @@
 {
-	"ColumnCollection":[
-		{"text" : "ProductId", "path" : "productId", "type": "Dimension"},
-		{"text" : "Name", "path" : "name", "type": "Dimension"},
-		{"text" : "Category", "path" : "category", "type": "Dimension"},
-		{"text" : "SupplierName", "path" : "supplierName", "type": "Dimension"},
-		{"text" : "Description", "path" : "description", "type": "Dimension"},
-		{"text" : "WeightMeasure", "path" : "weightMeasure", "type": "Measure"},
-		{"text" : "WeightUnit", "path" : "weightUnit", "type": "Dimension"},
-		{"text" : "Price", "path" : "price", "type": "Measure"},
-		{"text" : "CurrencyCode", "path" : "currencyCode", "type": "Dimension"},
-		{"text" : "Status", "path" : "status", "type": "Dimension"},
-		{"text" : "Quantity", "path" : "quantity", "type": "Measure"},
-		{"text" : "UoM", "path" : "uom", "type": "Dimension"},
-		{"text" : "Width", "path" : "width", "type": "Measure"},
-		{"text" : "Depth", "path" : "depth", "type": "Measure"},
-		{"text" : "Height", "path" : "height", "type": "Measure"},
-		{"text" : "DimUnit", "path" : "dimUnit", "type": "Dimension"},
-		{"text" : "ProductPicUrl", "path" : "productPicUrl", "type": "Dimension"}
-	],
-	"ChartTypes":[
-		{"key":"bar","text":"Bar Chart"},
-		{"key":"column","text":"Column Chart"},
-		{"key":"line","text":"Line Chart"},
-		{"key":"pie","text":"Pie Chart"}
-	],
-	"ColumnsItems":[
-		{"columnKey" : "name", "index" : 1, "visible" : true},
-		{"columnKey" : "category", "index" : 2, "visible" : true},
-		{"columnKey" : "price", "index" : 5, "visible" : true},
-		{"columnKey" : "quantity", "index" : 6, "visible" : true}
-	],
-	"SortItems":[
-		{"columnKey" : "name", "operation" : "Descending"}
-	],
-	"FilterItems":[
-		{"columnKey" : "name", "operation" : "Contains", "value1" : "a"}
-	],
-	"FilterTitle": "My favorite filters"
+  "DimMeasureCollection": [
+    {
+      "text": "Product ID",
+      "columnKey": "productId",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "Name",
+      "columnKey": "name",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "Category",
+      "columnKey": "category",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "Supplier Name",
+      "columnKey": "supplierName",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "Description",
+      "columnKey": "description",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "Weight Measure",
+      "columnKey": "weightMeasure",
+      "aggregationRole": "Measure"
+    },
+    {
+      "text": "WeightUnit",
+      "columnKey": "weightUnit",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "Price",
+      "columnKey": "price",
+      "aggregationRole": "Measure"
+    },
+    {
+      "text": "Currency Code",
+      "columnKey": "currencyCode",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "Status",
+      "columnKey": "status",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "Quantity",
+      "columnKey": "quantity",
+      "aggregationRole": "Measure"
+    },
+    {
+      "text": "UoM",
+      "columnKey": "uom",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "Width",
+      "columnKey": "width",
+      "aggregationRole": "Measure"
+    },
+    {
+      "text": "Depth",
+      "columnKey": "depth",
+      "aggregationRole": "Measure"
+    },
+    {
+      "text": "Height",
+      "columnKey": "height",
+      "aggregationRole": "Measure"
+    },
+    {
+      "text": "DimUnit",
+      "columnKey": "dimUnit",
+      "aggregationRole": "Dimension"
+    },
+    {
+      "text": "ProductPicUrl",
+      "columnKey": "productPicUrl",
+      "aggregationRole": "Dimension"
+    }
+  ],
+  "ChartTypes": [
+    {
+      "key": "bar",
+      "text": "Bar Chart"
+    },
+    {
+      "key": "column",
+      "text": "Column Chart"
+    },
+    {
+      "key": "line",
+      "text": "Line Chart"
+    },
+    {
+      "key": "pie",
+      "text": "Pie Chart"
+    }
+  ],
+  "SelectedChartType": "line",
+  "DimMeasureItems": [
+    {
+      "columnKey": "name",
+      "index": 1,
+      "visible": true
+    },
+    {
+      "columnKey": "category",
+      "index": 2,
+      "visible": true,
+      "role": "series"
+    },
+    {
+      "columnKey": "price",
+      "index": 5,
+      "visible": true
+    },
+    {
+      "columnKey": "quantity",
+      "index": 6,
+      "visible": true
+    }
+  ],
+  "ShowResetEnabled": false
 }

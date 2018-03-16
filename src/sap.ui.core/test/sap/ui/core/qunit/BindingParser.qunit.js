@@ -64,15 +64,14 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.base.BindingParser", {
 		beforeEach : function (assert) {
-			this.oSandbox = sinon.sandbox.create();
-			this.oLogMock = this.oSandbox.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			// create spies for all functions that are not referenced as constructors
 			for ( var n in oController ) {
 				if ( typeof oController[n] === 'function' && n !== 'mytype' ) {
-					this.oSandbox.spy(oController, n);
+					this.spy(oController, n);
 				}
 			}
 
@@ -84,9 +83,6 @@ sap.ui.require([
 				fnActual.call(/* arbitrary this */{}, /* arbitrary args */ "some", 42 );
 				assert.ok(fnExpected.calledOnce && fnExpected.calledOn(fnExpectedThis) && fnExpected.calledWithExactly("some", 42), sMessage);
 			};
-		},
-		afterEach : function () {
-			this.oSandbox.verifyAndRestore();
 		}
 	});
 
@@ -461,15 +457,12 @@ sap.ui.require([
 					at: oFixture.expression.length - 1
 				};
 
-			this.stub(ExpressionParser, "parse", function () {
-				return oParseResult;
-			});
+			this.mock(ExpressionParser).expects("parse")
+				.withExactArgs(sinon.match.func, oFixture.expression, 2)
+				.returns(oParseResult);
 
 			oBindingInfo = parse(oFixture.expression);
 
-			assert.strictEqual(typeof ExpressionParser.parse.args[0][0], "function");
-			assert.strictEqual(ExpressionParser.parse.args[0][1], oFixture.expression);
-			assert.strictEqual(ExpressionParser.parse.args[0][2], 2);
 			assert.deepEqual(oBindingInfo, {
 				formatter: oParseResult.result.formatter,
 				parts: oFixture.parts
@@ -484,27 +477,30 @@ sap.ui.require([
 		assert.strictEqual(o.model, "special}Name");
 	});
 
-	QUnit.test("Expression binding: error handling", function (assert) {
-		var sMsg;
+	QUnit.test("Expression binding: propagate ExpressionParser exception", function (assert) {
+		var oError = new Error("error message"),
+			sInput = "{=invalid}";
 
-		this.stub(ExpressionParser, "parse", function (fnResolveBinding, sInput) {
-			if (sInput === "{=invalid}") {
-				throw new Error("error message");
-			}
-			if (sInput === "{='foo',}") {
-				return {at: sInput.length - 2, result: {}};
-			}
-			return {at: sInput.length - 1, result: {}};
-		});
+		this.mock(ExpressionParser).expects("parse")
+			.withExactArgs(sinon.match.func, sInput, 2)
+			.throws(oError);
 
 		assert.throws(function () {
-			parse("{=invalid}");
-		}, /error message/, "propagate ExpressionParser exception");
+			parse(sInput);
+		}, oError);
+	});
 
-		sMsg = "Expected '}' and instead saw ',' in expression binding {='foo',} at position 7";
+	QUnit.test("Expression binding: expression binding must end with }", function (assert) {
+		var sInput = "{='foo',}",
+			sMsg = "Expected '}' and instead saw ',' in expression binding {='foo',} at position 7";
+
+		this.mock(ExpressionParser).expects("parse")
+			.withExactArgs(sinon.match.func, sInput, 2)
+			.returns({at: sInput.length - 2, result: {}});
+
 		assert.throws(function () {
-			parse("{='foo',}");
-		}, new RegExp(jQuery.sap.escapeRegExp(sMsg)), "expression binding must end with }");
+			parse(sInput);
+		}, {message : sMsg, name : "SyntaxError"});
 	});
 
 	QUnit.test("mergeParts w/o root formatter", function (assert) {
@@ -818,7 +814,7 @@ sap.ui.require([
 			oResult = {};
 
 		this.mock(ExpressionParser).expects("parse")
-			.withExactArgs(sinon.match.func, sInput, iStart).returns(oResult);
+			.withExactArgs(sinon.match.func, sInput, iStart, undefined).returns(oResult);
 
 		assert.strictEqual(BindingParser.parseExpression(sInput, iStart), oResult);
 	});
@@ -880,15 +876,16 @@ sap.ui.require([
 
 	QUnit.test("Expression binding with embedded composite binding", function (assert) {
 		var sBinding
-			= "{:= ${parts:[{path:'/foo'},{path:'/bar'}],formatter:'Global.joiningFormatter'} }",
-			oModel = new JSONModel({"foo" : 0, "bar" : 1}),
-			oIcon = new Icon({models : oModel});
+			= "{:= ${parts:['m2>/foo',{path:'/bar'}],formatter:'Global.joiningFormatter'} }",
+			oModel = new JSONModel({"bar" : 1}),
+			oModel2 = new JSONModel({"foo" : 0}),
+			oIcon = new Icon({models : {undefined : oModel, "m2" : oModel2}});
 
 		// code under test
 		oIcon.bindProperty("color", parse(sBinding));
 
 		assert.strictEqual(oIcon.getColor(), "0,1");
-		oModel.setProperty("/foo", 42);
+		oModel.setProperty("/bar", 42);
 		assert.strictEqual(oIcon.getColor(), "0,1", "one time binding -> value unchanged");
 	});
 
@@ -929,5 +926,7 @@ sap.ui.require([
 		assert.deepEqual(BindingParser.simpleParser("{/some/random/path}"), {
 			"path": "/some/random/path"
 		});
+		assert.deepEqual(BindingParser.simpleParser("/some/random/path}"), undefined);
+		assert.deepEqual(BindingParser.simpleParser("{/some/random/path"), undefined);
 	});
 });

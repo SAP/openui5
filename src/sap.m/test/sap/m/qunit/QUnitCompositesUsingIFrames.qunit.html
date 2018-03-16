@@ -1,4 +1,4 @@
-<!DOCTYPE HTML>
+fetch<!DOCTYPE HTML>
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -22,12 +22,13 @@
 	if (sap.ui.Device.browser.chrome) {
 		//IFrame QUnits currently only work under chrome!
 		QUnit.testSuites('ResponsiveMargins',[
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=320px&sap-ui-height=460px&sap-ui-expect=0px 0px 16px",
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=599px&sap-ui-height=460px&sap-ui-expect=0px 0px 16px",
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=600px&sap-ui-height=460px&sap-ui-expect=16px",
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=1023px&sap-ui-height=460px&sap-ui-expect=16px",
-       		"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=1024px&sap-ui-height=460px&sap-ui-expect=16px 32px",
-       	]);
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=320px&sap-ui-height=460px&sap-ui-expect=0px 0px 16px",
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=599px&sap-ui-height=460px&sap-ui-expect=0px 0px 16px",
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=600px&sap-ui-height=460px&sap-ui-expect=16px",
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=1023px&sap-ui-height=460px&sap-ui-expect=16px",
+			"./ResponsiveMarginCssClasses.qunit.html?sap-ui-width=1024px&sap-ui-height=460px&sap-ui-expect=16px 32px",
+		]);
+
  	} else {
  		//Write a comment into the test protocol that responsive
  		//tests can not be executed.

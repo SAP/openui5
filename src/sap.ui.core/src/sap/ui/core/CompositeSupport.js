@@ -30,10 +30,10 @@ sap.ui.define(['jquery.sap.global', './Control', 'sap/ui/model/control/ControlMo
 	 * Applies the CompositeMixin to the given control class <code>fnClass</code>. This includes the following steps:
 	 *
 	 * <ul>
-	 * <li>Creates a new subclass of {@link sap.ui.core.ComponentFactory} and adds it to the given class
-	 * <li>Merges the given methods into the prototype of the newly created class
-	 * <li>Enriches the prototype of the given control class with a getComponentFactory() method
-	 * <li>Hooks into init() and destroy() of the given class
+	 * <li>Creates a new subclass of {@link sap.ui.core.ComponentFactory} and adds it to the given class</li>
+	 * <li>Merges the given methods into the prototype of the newly created class</li>
+	 * <li>Enriches the prototype of the given control class with a getComponentFactory() method</li>
+	 * <li>Hooks into init() and destroy() of the given class</li>
 	 * </ul>
 	 *
 	 * @param {function} fnClass the class (constructor function) of a control calls to be enriched

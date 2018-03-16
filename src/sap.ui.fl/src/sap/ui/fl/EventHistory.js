@@ -21,6 +21,8 @@ sap.ui.define(function () {
 		"ControlForPersonalizationRendered"
 	];
 
+	EventHistory._aUnsubscribedEventIds = [];
+
 	EventHistory._oHistory = {};
 
 	/**
@@ -30,8 +32,10 @@ sap.ui.define(function () {
 	 */
 	EventHistory.start = function () {
 		EventHistory._aEventIds.forEach(function(sEventId) {
-			sap.ui.getCore().getEventBus().subscribe("sap.ui", sEventId, EventHistory.saveEvent);
-			EventHistory._oHistory[sEventId] = [];
+			if (EventHistory._aUnsubscribedEventIds.indexOf(sEventId) === -1) {
+				sap.ui.getCore().getEventBus().subscribe("sap.ui", sEventId, EventHistory.saveEvent);
+				EventHistory._oHistory[sEventId] = [];
+			}
 		});
 	};
 
@@ -67,7 +71,14 @@ sap.ui.define(function () {
 	 */
 	EventHistory.getHistoryAndStop = function (sEventId) {
 		sap.ui.getCore().getEventBus().unsubscribe("sap.ui", sEventId, EventHistory.saveEvent);
-		return EventHistory._oHistory[sEventId];
+		EventHistory._addUnsubscribedEvent(sEventId);
+		return EventHistory._oHistory[sEventId] || [];
+	};
+
+	EventHistory._addUnsubscribedEvent = function(sEventId) {
+		if (EventHistory._aUnsubscribedEventIds.indexOf(sEventId) === -1) {
+			EventHistory._aUnsubscribedEventIds.push(sEventId);
+		}
 	};
 
 	return EventHistory;

@@ -3,8 +3,24 @@
  */
 
 // Provides control sap.ui.ux3.FeedChunk.
-sap.ui.define(['jquery.sap.global', 'sap/ui/commons/MenuButton', 'sap/ui/core/Control', 'sap/ui/core/theming/Parameters', './Feeder', './library'],
-	function(jQuery, MenuButton, Control, Parameters, Feeder, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/commons/MenuButton',
+    'sap/ui/core/Control',
+    'sap/ui/core/theming/Parameters',
+    './Feeder',
+    './library',
+    "./FeedChunkRenderer"
+],
+	function(
+	    jQuery,
+		MenuButton,
+		Control,
+		Parameters,
+		Feeder,
+		library,
+		FeedChunkRenderer
+	) {
 	"use strict";
 
 

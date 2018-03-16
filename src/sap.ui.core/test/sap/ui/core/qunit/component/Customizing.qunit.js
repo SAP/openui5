@@ -38,7 +38,6 @@ sap.ui.define([
 	oCompCont.placeAt("content");
 
 
-
 	// TESTS
 	QUnit.module("CustomizingConfiguration");
 
@@ -50,7 +49,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("CustomizingConfiguration returning the customizing data", function(assert) {
-		assert.expect(7);
+		assert.expect(8);
 
 		var CustomizingConfiguration = sap.ui.require("sap/ui/core/CustomizingConfiguration");
 		assert.equal(CustomizingConfiguration.getViewReplacement("testdata.customizing.sap.Sub1").viewName,
@@ -59,6 +58,9 @@ sap.ui.define([
 		assert.equal(CustomizingConfiguration.getViewExtension("testdata.customizing.sap.Sub2", "extension2").fragmentName,
 				"testdata.customizing.customer.CustomFrag1WithCustomerAction",
 				"CustomizingConfiguration should return the View extension data");
+		assert.equal(CustomizingConfiguration.getViewExtension("testdata.customizing.sap.Frag1", "extensionPointInFragment").fragmentName,
+				"testdata.customizing.customer.CustomFrag1",
+				"CustomizingConfiguration should return the Fragment extension data");
 		assert.equal(CustomizingConfiguration.getControllerReplacement("testdata.customizing.sap.Main"),
 				"testdata.customizing.customer.Main",
 				"CustomizingConfiguration should return the Controller replacement data");
@@ -89,9 +91,20 @@ sap.ui.define([
 	QUnit.test("View Extension", function(assert) {
 		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customFrag1BtnWithCustAction"), "XMLView Extension should be rendered");
 		assert.ok(jQuery.sap.domById("buttonWithCustomerAction"), "JSView Extension should be rendered");
+
 		// extension within extension
 		assert.ok(jQuery.sap.domById("__jsview1--customerButton1"), "Extension within Extension Point should be rendered");
+
+		// extension withing fragment
+		assert.ok(jQuery.sap.domById("theComponent---mainView--customFrag1Btn"), "Extension within Fragment without id should be rendered");
 		assert.ok(jQuery.sap.domById("theComponent---mainView--frag1--customFrag1Btn"), "Extension within Fragment should be rendered");
+
+		// check ID prefixing of views in extensions by checking their existence
+		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customSubSubView1"), "XMLView Extension should be rendered");
+		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customSubSubView1--customFrag1Btn"), "Button of XMLView Extension should be rendered");
+
+		// extension within html Control
+		assert.ok(jQuery.sap.domById("theComponent---mainView--sub2View--customFrag21Btn"), "Button of XMLView Extension inside html Control should be rendered");
 	});
 
 

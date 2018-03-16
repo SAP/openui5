@@ -30,9 +30,6 @@ sap.ui.define([
 	});
 
 	opaTest("Should see the not found text for no search results", function(Given, When, Then) {
-		// Arrangements
-		Given.iStartMyApp();
-
 		//Actions
 		When.onTheWorklistPage.iSearchForSomethingWithNoResults();
 
@@ -46,7 +43,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheNotFoundPage.iShouldSeeResourceNotFound().
-		and.iTeardownMyAppFrame();
+			and.iTeardownMyAppFrame();
 	});
 
 	opaTest("Should see the 'Object not found' page if an invalid object ID has been called", function(Given, When, Then) {
@@ -69,7 +66,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheWorklistPage.iShouldSeeTheTable().
-		and.iTeardownMyAppFrame();
+			and.iTeardownMyAppFrame();
 	});
 
 });

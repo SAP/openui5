@@ -8,30 +8,32 @@
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<script src="../shared-config.js"></script>
+		<link href="../../../../../resources/sap/ui/thirdparty/qunit-2.css" media="screen"
+			rel="stylesheet">
+		<script src="../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-4.js"></script>
 		<!-- minimal bootstrap code starts here -->
 		<!-- @see sap-ui-core.js, @see BootstrapMinimal.qunit.html -->
-		<script src="../../../../../resources/sap/ui/thirdparty/jquery.js"></script>
-		<script src="../../../../../resources/sap/ui/thirdparty/jqueryui/jquery-ui-position.js"></script>
-		<script src="../../../../../resources/sap/ui/Device.js"></script>
-		<script src="../../../../../resources/sap/ui/thirdparty/URI.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/baseuri.js"></script>
 		<script src="../../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
-		<script src="../../../../../resources/jquery.sap.global.js"
+		<script src="../../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
+		<script src="../../../../../resources/ui5loader.js"></script>
+		<script src="../../../../../resources/ui5loader-autoconfig.js"
 			id="sap-ui-bootstrap"
 			data-sap-ui-compatversion="edge">
 		</script>
 		<!-- end of minimal bootstrap code -->
-		<link href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen"
-			rel="stylesheet">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
-			data-cover-flags="branchTracking"></script>
+			data-cover-flags="branchTracking"
+			data-sap-ui-cover-only="sap/ui/base/BindingParser"></script>
+		<script src="../../../../../resources/sap/ui/test/BranchTracking.js"
+			data-threshold="100"></script>
 		<script>
 			// Note: to cover "sap/ui/base", this MUST happen after "qunit-coverage.js" is included!
-			jQuery.sap.require("sap.ui.core.Core");
+			sap.ui.requireSync("sap/ui/core/Core");
 			// needed for bootstrap properties like data-sap-ui-libs
 			sap.ui.getCore().boot && sap.ui.getCore().boot();
 		</script>

@@ -8,19 +8,25 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 	"use strict";
 
 	/**
+	 * Creates a new ClientListBinding.
+	 *
+	 * This constructor should only be called by subclasses or model implementations, not by application or control code.
+	 * Such code should use {@link sap.ui.model.Model#bindList Model#bindList} on the corresponding model implementation instead.
+	 *
+	 * @param {sap.ui.model.Model} oModel Model instance that this binding is created for and that it belongs to
+	 * @param {string} sPath Binding path to be used for this binding, syntax depends on the concrete subclass
+	 * @param {sap.ui.model.Context} oContext Binding context relative to which a relative binding path will be resolved
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order (can be either a sorter or an array of sorters)
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filter/s (can be either a filter or an array of filters)
+	 * @param {object} [mParameters] Map of optional parameters as defined by subclasses; this class does not introduce any own parameters
+	 * @throws {Error} When one of the filters uses an operator that is not supported by the underlying model implementation
 	 *
 	 * @class
-	 * List binding implementation for client models
-	 *
-	 * @param {sap.ui.model.Model} oModel
-	 * @param {string} sPath
-	 * @param {sap.ui.model.Context} oContext
-	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] initial sort order (can be either a sorter or an array of sorters)
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters)
-	 * @param {object} [mParameters]
+	 * List binding implementation for client models.
 	 *
 	 * @alias sap.ui.model.ClientListBinding
 	 * @extends sap.ui.model.ListBinding
+	 * @protected
 	 */
 	var ClientListBinding = ListBinding.extend("sap.ui.model.ClientListBinding", /** @lends sap.ui.model.ClientListBinding.prototype */ {
 
@@ -89,9 +95,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 		}
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.ListBinding.prototype.getLength
-	 *
 	 */
 	ClientListBinding.prototype.getLength = function() {
 		return this.iLength;
@@ -117,7 +122,7 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 
 	};
 
-	/**
+	/*
 	 * @see sap.ui.model.ListBinding.prototype.sort
 	 */
 	ClientListBinding.prototype.sort = function(aSorters){
@@ -163,18 +168,20 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 	};
 
 	/**
-	 * Filters the list.
+	 * Applies a new set of filters to the list represented by this binding.
 	 *
-	 * Filters are first grouped according to their binding path.
-	 * All filters belonging to a group are ORed and after that the
-	 * results of all groups are ANDed.
-	 * Usually this means, all filters applied to a single table column
-	 * are ORed, while filters on different table columns are ANDed.
+	 * See {@link sap.ui.model.ListBinding#filter ListBinding#filter} for a more detailed
+	 * description of list filtering.
+	 *
+	 * When no <code>sFilterType</code> is given, any previously configured application
+	 * filters are cleared and the given filters are used as control filters
 	 *
 	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
+	 * @param {sap.ui.model.FilterType} [sFilterType=undefined] Type of the filter which should
+	 *  be adjusted; if no type is given, then any previously configured application filters are
+	 *  cleared and the given filters are used as control filters
 	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
-	 *
+	 * @throws {Error} When one of the filters uses an operator that is not supported by the underlying model implementation
 	 * @public
 	 */
 	ClientListBinding.prototype.filter = function(aFilters, sFilterType){
@@ -244,12 +251,8 @@ sap.ui.define(['jquery.sap.global', './ChangeReason', './Filter', './FilterType'
 		this.iLength = this.aIndices.length;
 	};
 
-	/**
-	 * Get distinct values
-	 *
-	 * @param {String} sPath
-	 *
-	 * @protected
+	/*
+	 * @see sap.ui.model.ListBinding.prototype.getDistinctValues
 	 */
 	ClientListBinding.prototype.getDistinctValues = function(sPath){
 		var aResult = [],

@@ -9,8 +9,8 @@ sap.ui.define(['jquery.sap.global'],
 
 
 	/**
-	 * @class DOM element renderer.
-	 * @static
+	 * DOM element renderer.
+	 * @namespace
 	 * @alias sap.ui.core.tmpl.DOMElementRenderer
 	 */
 	var DOMElementRenderer = {};

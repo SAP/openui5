@@ -2,9 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport'],
-	function(jQuery, Renderer, ValueStateSupport) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(Renderer, coreLibrary, Device) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.ui.core.ValueState
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Input renderer.
@@ -49,7 +55,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.addClass("sapMInputBaseReadonly");
 		}
 
-		if (sValueState !== sap.ui.core.ValueState.None) {
+		if (sValueState !== ValueState.None) {
 			this.addValueStateClasses(oRm, oControl);
 		}
 
@@ -69,7 +75,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		// enable self-made placeholder
 		if (oControl.bShowLabelAsPlaceholder) {
-			oRm.write("<label");
+			oRm.write("<span");
 			oRm.writeAttribute("id", oControl.getId() + "-placeholder");
 
 			if (sTextAlign) {
@@ -82,7 +88,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			oRm.writeStyles();
 			oRm.write(">");
 			oRm.writeEscaped(oControl._getPlaceholder());
-			oRm.write("</label>");
+			oRm.write("</span>");
 		}
 
 		oRm.write('<div ');
@@ -130,7 +136,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 
 		}
 		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
-		if (sTextDir != sap.ui.core.TextDirection.Inherit) {
+		if (sTextDir != TextDirection.Inherit) {
 			oRm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 
@@ -141,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			this.writeAccessibilityState(oRm, oControl);
 		}
 
-		if (sap.ui.Device.browser.mozilla) {
+		if (Device.browser.mozilla) {
 			if (sTooltip) {
 
 				// fill tooltip to mozilla validation flag too, to display it in validation error case too
@@ -158,7 +164,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		// inner classes
 		oRm.addClass("sapMInputBaseInner");
 
-		if (sValueState !== sap.ui.core.ValueState.None) {
+		if (sValueState !== ValueState.None) {
 			this.addValueStateInnerClasses(oRm, oControl);
 		}
 
@@ -237,14 +243,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 	InputBaseRenderer.renderAriaLabelledBy = function(oRm, oControl) {
 		var sAnnouncement = this.getLabelledByAnnouncement(oControl);
 		if (sAnnouncement) {
-			oRm.write("<label");
+			oRm.write("<span");
 			oRm.writeAttribute("id", oControl.getId() + "-labelledby");
 			oRm.writeAttribute("aria-hidden", "true");
 			oRm.addClass("sapUiInvisibleText");
 			oRm.writeClasses();
 			oRm.write(">");
 			oRm.writeEscaped(sAnnouncement.trim());
-			oRm.write("</label>");
+			oRm.write("</span>");
 		}
 	};
 
@@ -310,7 +316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 			mAccessibilityState.role = sRole;
 		}
 
-		if (oControl.getValueState() === sap.ui.core.ValueState.Error) {
+		if (oControl.getValueState() === ValueState.Error) {
 			mAccessibilityState.invalid = true;
 		}
 

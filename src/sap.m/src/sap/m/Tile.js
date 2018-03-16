@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.m.Tile.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 'sap/ui/core/Control'],
-	function(jQuery, library, InvisibleText, Control) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/Control',
+	'sap/ui/Device',
+	'./TileRenderer'
+],
+	function(jQuery, library, InvisibleText, Control, Device, TileRenderer) {
 	"use strict";
 
 
@@ -31,6 +38,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 	 * @constructor
 	 * @public
 	 * @since 1.12
+	 * @deprecated as of version 1.50, replaced by {@link sap.m.GenericTile}
 	 * @alias sap.m.Tile
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -53,15 +61,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 		}
 	}});
 
-	//Keeps a reference to the static aria text for deletable items.
-	var oAriaDescribedByDeleteLabel;
 	/**
 	 * Initializes the control.
 	 * @private
 	 */
 	Tile.prototype.init = function() {
 		//keyboard support for desktop environments
-		if (sap.ui.Device.system.desktop) {
+		if (Device.system.desktop) {
 			var fnOnSpaceOrEnter = jQuery.proxy(function(oEvent) {
 				if (oEvent.srcControl === this && !oEvent.isMarked()) {
 					this.ontap();
@@ -114,14 +120,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 			this.$().css("visibility","");
 			delete this._invisible;
 		}
-		//jQuery.sap.log.info("Set tile pos, id:" + this.getId() + ", x:" + iX + ", y:" + iY);
 
 	};
 
 	/**
 	 * Sets the px size of the Tile.
-	 * @param {int} iX left position
-	 * @param {int} iY top position
+	 * @param {int} iWidth left position
+	 * @param {int} iHeight top position
 	 * @private
 	 */
 	Tile.prototype.setSize = function(iWidth,iHeight){
@@ -133,7 +138,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 
 	/**
 	 * Returns and optionally sets whether the Tile is editable.
-	 * @param {boolean} optional The editable state of the tile
+	 * @param {boolean} bIsEditable The editable state of the tile
 	 * @returns {boolean} Whether the tile is editable
 	 * @see sap.m.TileContainer
 	 * @private
@@ -145,7 +150,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 		}
 		if (bOldValue != bIsEditable && this.$()) {
 			//update the ARIA hint for DEL
-			this.$().attr("aria-describedBy", bIsEditable ? this._getAriaDescribedByDeleteLabel().getId() : null);
+			this.$().attr("aria-describedBy", bIsEditable ? InvisibleText.getStaticId("sap.m", "TILE_REMOVE_BY_DEL_KEY") : null);
 		}
 
 		return this._bIsEditable;
@@ -172,6 +177,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 
 	/**
 	 * Sets active state.
+	 * @param {Object} oEvent The fired event
 	 * @private
 	 */
 	Tile.prototype.ontouchstart = function(oEvent) {
@@ -212,6 +218,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 
 	/**
 	 * Unsets active state on touch move.
+	 * @param {Object} oEvent The fired event
 	 * @private
 	 */
 	Tile.prototype.ontouchmove = function(oEvent) {
@@ -230,6 +237,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 
 	Tile.prototype.setVisible = function(bVisible){
 		this.setProperty("visible", bVisible);
+		if (!bVisible) {
+			this._rendered = false;
+		}
 		if (this.getParent() && this.getParent() instanceof sap.m.TileContainer) {
 			this.getParent().invalidate(); // Force rerendering of TileContainer, so the tiles can be rearanged
 		}
@@ -239,6 +249,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 	/**
 	 * Sets initial visibility of the Tile.
 	 * @param {boolean} bVisible visibility
+	 * @returns {sap.m.Tile} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Tile.prototype._setVisible = function(bVisible){
@@ -246,58 +257,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/InvisibleText', 's
 		return this;
 	};
 
-	/**
-	 * Gets the index of the Tile in TileContainer.
-	 * @private
-	 * @returns {int | null} The corresponding index of the Tile if it is in TileContainer or otherwise null
-	 */
-	Tile.prototype._getTileIndex = function() {
-		var oTileContainer = this.getParent(),
-			iTileIndex = null;
-		if (oTileContainer && oTileContainer instanceof sap.m.TileContainer) {
-			iTileIndex = oTileContainer.indexOfAggregation("tiles", this) + 1;
-		}
-		return iTileIndex;
-	};
-
-	/**
-	 * Gets the number of tiles in the TileContainer.
-	 * @private
-	 * @returns The number of tiles in TileContainer if it is in TileContainer or otherwise null
-	 */
-	Tile.prototype._getTilesCount = function() {
-		var oTileContainer = this.getParent(),
-			iTileCount = null;
-		if (oTileContainer && oTileContainer instanceof sap.m.TileContainer) {
-			iTileCount = oTileContainer.getTiles().length;
-		}
-		return iTileCount;
-	};
-
-
-	/**
-	 * Updates the value of the ARIA posinset attribute of the control's DOM element.
-	 * @private
-	 * @returns {sap.m.Tile} this pointer for chaining
-	 */
-	Tile.prototype._updateAriaPosition = function () {
-		this.$().attr('aria-posinset', this._getTileIndex());
-		return this;
-	};
-
-	/**
-	 * Retrieves the label responsible for ARIA attribute for deletable tiles.
-	 * @returns {Object}
-	 * @private
-	 */
-	Tile.prototype._getAriaDescribedByDeleteLabel = function() {
-		if (!oAriaDescribedByDeleteLabel) {
-			oAriaDescribedByDeleteLabel = new InvisibleText({
-				text: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("TILE_REMOVE_BY_DEL_KEY")
-			}).toStatic();
-		}
-		return oAriaDescribedByDeleteLabel;
-	};
 	return Tile;
 
-}, /* bExport= */ true);
+});

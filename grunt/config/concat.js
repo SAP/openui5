@@ -19,10 +19,11 @@ module.exports = function(grunt, config) {
 				footer: 'if (!window["sap-ui-debug"]) { sap.ui.requireSync("sap/ui/core/library-preload"); } sap.ui.requireSync("sap/ui/core/Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();'
 			},
 			src: [
-				sSourcesFolder + 'sap/ui/Device.js',
-				sSourcesFolder + 'sap/ui/thirdparty/URI.js',
+				sSourcesFolder + 'sap/ui/thirdparty/baseuri.js',
 				sSourcesFolder + 'sap/ui/thirdparty/es6-promise.js',
-				sSourcesFolder + 'jquery.sap.global.js'
+				sSourcesFolder + "sap/ui/thirdparty/es6-string-methods.js",
+				sSourcesFolder + "ui5loader.js",
+				sSourcesFolder + "ui5loader-autoconfig.js"
 			],
 			dest: sSourcesFolder + 'sap-ui-core-nojQuery-dbg.js'
 		},
@@ -31,9 +32,11 @@ module.exports = function(grunt, config) {
 				footer:  '<%= concat.coreNoJQueryJS.options.footer %>'
 			},
 			src: [
-				sSourcesFolder + 'sap/ui/thirdparty/jquery.js',
-				sSourcesFolder + 'sap/ui/thirdparty/jqueryui/jquery-ui-position.js',
-				'<%= concat.coreNoJQueryJS.src %>'
+				sSourcesFolder + 'sap/ui/thirdparty/baseuri.js',
+				sSourcesFolder + 'sap/ui/thirdparty/es6-promise.js',
+				sSourcesFolder + "sap/ui/thirdparty/es6-string-methods.js",
+				sSourcesFolder + "ui5loader.js",
+				sSourcesFolder + "ui5loader-autoconfig.js"
 			],
 			dest: sSourcesFolder + 'sap-ui-core-dbg.js'
 		}

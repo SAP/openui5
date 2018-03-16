@@ -363,11 +363,15 @@ var JsonHighlightRules = function() {
                 token : "constant.language.boolean",
                 regex : "(?:true|false)\\b"
             }, {
-                token : "invalid.illegal", // single quoted strings are not allowed
+                token : "text", // single quoted strings are not allowed
                 regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
             }, {
-                token : "invalid.illegal", // comments are not allowed
+                token : "comment", // comments are not allowed, but who cares?
                 regex : "\\/\\/.*$"
+            }, {
+                token : "comment.start", // comments are not allowed, but who cares?
+                regex : "\\/\\*",
+                next  : "comment"
             }, {
                 token : "paren.lparen",
                 regex : "[[({]"
@@ -385,15 +389,19 @@ var JsonHighlightRules = function() {
                 regex : /\\(?:x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|["\\\/bfnrt])/
             }, {
                 token : "string",
-                regex : '[^"\\\\]+'
-            }, {
-                token : "string",
-                regex : '"',
+                regex : '"|$',
                 next  : "start"
             }, {
-                token : "string",
-                regex : "",
+                defaultToken : "string"
+            }
+        ],
+        "comment" : [
+            {
+                token : "comment.end", // comments are not allowed, but who cares?
+                regex : "\\*\\/",
                 next  : "start"
+            }, {
+                defaultToken: "comment"
             }
         ]
     };
@@ -463,11 +471,11 @@ var JavaScriptHighlightRules = function(options) {
                 regex : '"(?=.)',
                 next  : "qqstring"
             }, {
-                token : "constant.numeric", // hex
-                regex : /0(?:[xX][0-9a-fA-F]+|[bB][01]+)\b/
+                token : "constant.numeric", // hexadecimal, octal and binary
+                regex : /0(?:[xX][0-9a-fA-F]+|[oO][0-7]+|[bB][01]+)\b/
             }, {
-                token : "constant.numeric", // float
-                regex : /[+-]?\d[\d_]*(?:(?:\.\d*)?(?:[eE][+-]?\d+)?)?\b/
+                token : "constant.numeric", // decimal integers and floats
+                regex : /(?:\d\d*(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+\b)?/
             }, {
                 token : [
                     "storage.type", "punctuation.operator", "support.function",
@@ -518,6 +526,9 @@ var JavaScriptHighlightRules = function(options) {
                 next: "function_arguments"
             }, {
                 token : "keyword",
+                regex : "from(?=\\s*('|\"))"
+            }, {
+                token : "keyword",
                 regex : "(?:" + kwBeforeRe + ")\\b",
                 next : "start"
             }, {
@@ -533,6 +544,9 @@ var JavaScriptHighlightRules = function(options) {
                 token : "punctuation.operator",
                 regex : /[.](?![.])/,
                 next  : "property"
+            }, {
+                token : "storage.type",
+                regex : /=>/
             }, {
                 token : "keyword.operator",
                 regex : /--|\+\+|\.{3}|===|==|=|!=|!==|<+=?|>+=?|!|&&|\|\||\?:|[!$%&*+\-~\/^]=?/,
@@ -673,7 +687,7 @@ var JavaScriptHighlightRules = function(options) {
             }, {
                 token : "string",
                 regex : "\\\\$",
-                next  : "qqstring"
+                consumeLineEnd  : true
             }, {
                 token : "string",
                 regex : '"|$',
@@ -689,7 +703,7 @@ var JavaScriptHighlightRules = function(options) {
             }, {
                 token : "string",
                 regex : "\\\\$",
-                next  : "qstring"
+                consumeLineEnd  : true
             }, {
                 token : "string",
                 regex : "'|$",
@@ -699,8 +713,8 @@ var JavaScriptHighlightRules = function(options) {
             }
         ]
     };
-    
-    
+
+
     if (!options || !options.noES6) {
         this.$rules.no_regex.unshift({
             regex: "[{}]", onMatch: function(val, state, stack) {
@@ -735,14 +749,14 @@ var JavaScriptHighlightRules = function(options) {
                 defaultToken: "string.quasi"
             }]
         });
-        
+
         if (!options || options.jsx != false)
             JSX.call(this);
     }
-    
+
     this.embedRules(DocCommentHighlightRules, "doc-",
         [ DocCommentHighlightRules.getEndRule("no_regex") ]);
-    
+
     this.normalizeRules();
 };
 
@@ -793,8 +807,8 @@ function JSX() {
         {defaultToken: "string"}
     ];
     this.$rules.jsxAttributes = [{
-        token : "meta.tag.punctuation.tag-close.xml", 
-        regex : "/?>", 
+        token : "meta.tag.punctuation.tag-close.xml",
+        regex : "/?>",
         onMatch : function(value, currentState, stack) {
             if (currentState == stack[0])
                 stack.shift();
@@ -809,7 +823,7 @@ function JSX() {
             return [{type: this.token, value: value}];
         },
         nextState: "jsx"
-    }, 
+    },
     jsxJsRule,
     comments("jsxAttributes"),
     {
@@ -1397,31 +1411,28 @@ var PgsqlHighlightRules = function() {
 
         "comment" : [{
                 token : "comment", // closing comment
-                regex : ".*?\\*\\/",
+                regex : "\\*\\/",
                 next : "start"
             }, {
-                token : "comment", // comment spanning whole line
-                regex : ".+"
+                defaultToken : "comment"
             }
         ],
 
         "commentStatement" : [{
                 token : "comment", // closing comment
-                regex : ".*?\\*\\/",
+                regex : "\\*\\/",
                 next : "statement"
             }, {
-                token : "comment", // comment spanning whole line
-                regex : ".+"
+                defaultToken : "comment"
             }
         ],
 
         "commentDollarSql" : [{
                 token : "comment", // closing comment
-                regex : ".*?\\*\\/",
+                regex : "\\*\\/",
                 next : "dollarSql"
             }, {
-                token : "comment", // comment spanning whole line
-                regex : ".+"
+                defaultToken : "comment"
             }
         ],
 

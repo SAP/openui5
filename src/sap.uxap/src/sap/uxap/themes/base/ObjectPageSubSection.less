@@ -132,32 +132,48 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 	margin-bottom: 0;
 }
 
+.sapUxAPBlockContainer {
+	.sapUiFormResGrid>.sapUiFormTitle {
+		padding: 0;
+	}
+}
+
 .sapUxAPBlockContainerDesktop {
 	padding: 1rem 2rem 3rem 2rem;
 	.sapUiFormResGrid > div {
-		padding: 0 0;
+		padding: 1rem 0;
 	}
 }
 .sapUxAPBlockContainerTablet {
 	padding: 1rem 1rem 3rem 1rem;
 	.sapUiFormResGrid > div {
-		padding: 0 0;
+		padding: 1rem 0;
 	}
 }
 .sapUxAPBlockContainerPhone {
-	padding: 1rem 0 1rem 0;
+	padding: 0 1rem;
 	.sapUiFormResGrid > div {
-		padding: 0 0;
+		padding: 1rem 0;
+	}
+	.sapUiRespGrid.sapUiRespGridHSpace1 {
+		padding: 0;
+	}
+	.sapUiRespGrid.sapUiRespGridHSpace1 > div {
+		margin: 0;
 	}
 }
 
-.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail,
-.sapUiMedia-Std-Phone .sapMSplitContainer:not(.sapMSplitContainerHideMode) {
+.sapUxAPObjectPageSubSectionPromoted .sapUxAPBlockContainerPhone {
+	padding-top: 1rem;
+}
+
+.sapUiMedia-Std-Desktop .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapMSplitContainerDetail .sapUxAPObjectPageSubSection,
+.sapUiMedia-Std-Phone .sapMSplitContainer:not(.sapMSplitContainerHideMode) .sapUxAPObjectPageSubSection {
 	.sapUiRespGrid.sapUiRespGridHSpace1 {
-		padding: 0 0;
+		padding: 0;
 	}
 	.sapUiRespGrid.sapUiRespGridHSpace1 > div {
-		margin: 0 0;
+		margin: 0;
 	}
 }
 
@@ -171,18 +187,24 @@ html .sapUiContainer-Medium .sapUxAPObjectPageSubSectionHeader {
 		padding: 1rem 2rem 2rem 2rem;
 	}
 	.sapUxAPBlockContainerTablet,
-	.sapUxAPBlockContainerPhone{
+	.sapUxAPBlockContainerPhone {
 		padding: 1rem 1rem 2rem 1rem;
+	}
+	.sapUxAPBlockContainerPhone {
+		.sapUiFormResGrid > div {
+			padding: 1rem 0;
+		}
 	}
 }
 
-/* IE ignores outline-offset. Use an overlay: */
-html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageSubSection, .sapUxAPObjectPageSubSectionHeaderTitle {
-	&:focus {
+/* IE and Edge ignores outline-offset. Use an overlay: */
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapUxAPObjectPageSubSection:focus {
 		outline: none;
 		position: relative;
 	}
-	&:focus:before {
+	.sapUxAPObjectPageSubSection:focus:before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;
@@ -190,7 +212,9 @@ html[data-sap-ui-browser^="ie"] .sapUxAPObjectPageSubSection, .sapUxAPObjectPage
 		position: absolute;
 		left: 0;
 		top: 0;
-		border: 0.0625rem dotted @sapUiContentFocusColor;
+		right: 0;
+		bottom: 0;
+		border: 0.0625rem dashed @sapUiContentFocusColor;
 		pointer-events: none;
 	}
 }

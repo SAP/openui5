@@ -3,10 +3,16 @@
  */
 
 // Provides control sap.m.GroupHeaderListItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
-	function(jQuery, ListItemBase, library) {
+sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHeaderListItemRenderer"],
+	function(coreLibrary, library, ListItemBase, GroupHeaderListItemRenderer) {
 	"use strict";
 
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 	/**
@@ -57,13 +63,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 			 * Defines the title text directionality with enumerated options. By default, the control inherits text direction from the DOM.
 			 * @since 1.28.0
 			 */
-			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : sap.ui.core.TextDirection.Inherit}
+			titleTextDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 		}
 	}});
 
 	// GroupHeaderListItem does not respect the list mode
 	GroupHeaderListItem.prototype.getMode = function() {
-		return sap.m.ListMode.None;
+		return ListMode.None;
 	};
 
 	GroupHeaderListItem.prototype.shouldClearLastValue = function() {
@@ -73,23 +79,26 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 	// returns responsible table control for the item
 	GroupHeaderListItem.prototype.getTable = function() {
 		var oParent = this.getParent();
-		if (oParent instanceof sap.m.Table) {
-			return oParent;
+		if (!oParent) {
+			return;
 		}
 
-		// support old list with columns aggregation
-		if (oParent && oParent.getMetadata().getName() == "sap.m.Table") {
+		var fnTableClass = sap.ui.require("sap/m/Table");
+		if (typeof fnTableClass == "function" && oParent instanceof fnTableClass) {
 			return oParent;
 		}
 	};
 
 	GroupHeaderListItem.prototype.onBeforeRendering = function() {
-		var oParent = this.getParent();
-		if (oParent && sap.m.Table && oParent instanceof sap.m.Table) {
+		var oTable = this.getTable();
+		if (oTable) {
 			// clear column last value to reset cell merging
-			oParent.getColumns().forEach(function(oColumn) {
+			oTable.getColumns().forEach(function(oColumn) {
 				oColumn.clearLastValue();
 			});
+
+			// defines the tag name
+			this.TagName = "tr";
 		}
 	};
 
@@ -102,6 +111,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 		return this.getTitle();
 	};
 
+	// group header has no group announcement
+	GroupHeaderListItem.prototype.getGroupAnnouncement = function() {};
+
 	return GroupHeaderListItem;
 
-}, /* bExport= */ true);
+});

@@ -401,6 +401,26 @@
 
 		});
 
+		// BCP: 1880065660
+		QUnit.test("fromLocalJSDate with iframe's JS date object should convert properly the date", function (assert) {
+			// arrange
+			var iframe = document.createElement('iframe');
+			document.body.appendChild(iframe);
+			var oWindow = iframe.contentWindow;
+			oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+			// act
+			CalendarDate.fromLocalJSDate(oWindow.dateObj);
+
+			// assert
+			assert.ok(true, "fromLocalJSDate did not throw an expection with date object from an iframe");
+
+			// cleanup
+			document.body.removeChild(iframe);
+			iframe = null;
+		});
+
+
 		QUnit.module("isBefore");
 		QUnit.test("checks if a CalendarDate is before another one", function () {
 			//Act

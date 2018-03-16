@@ -56,16 +56,45 @@ sap.ui
 						 */
 
 						/**
-						 * Getter for property <code>rootUri</code>.
+						 * Getter for property <code>rootUri</code>. Has to be relative and requires a trailing '/'. It also needs to match the URI set in OData/JSON models or simple XHR calls in order for the mock server to intercept them.
 						 *
-						 * Default value is empty/<code>undefined</code>
-						 *
+						 * Default value is empty/<code>undefined</code>.
+						 * Must end with a a trailing slash ("/").
 						 * @return {string} the value of property <code>rootUri</code>
 						 * @public
 						 * @name sap.ui.core.util.MockServer#getRootUri
 						 * @function
 						 */
 						rootUri: "string",
+
+						/**
+						 * Setter for property <code>recordRequests</code>. Defines whether or not the requests performed should be recorded (stored).
+						 *
+						 * Default value is <code>true</code>
+						 * @param {boolean} recordRequests new value for property <code>recordRequests</code>
+						 * @public
+						 * @name sap.ui.core.util.MockServer#setRecordRequests
+						 * @function
+						 */
+
+						/**
+						 * Getter for property <code>recordRequests</code>. Returns whether or not the requests performed should be recorded (stored).
+						 *
+						 * Default value is <code>true</code>
+						 *
+						 * @return {boolean} the value of property <code>recordRequests</code>
+						 * @public
+						 * @name sap.ui.core.util.MockServer#getRecordRequests
+						 * @function
+						 */
+
+						/**
+						 * Whether or not the requests performed should be recorded (stored).
+						 * This could be memory intense if each request is recorded.
+						 * For unit testing purposes it should be set to <code>true</code> to compare requests performed
+						 * otherwise this flag should be set to <code>false</code> e.g. for demonstration/app purposes.
+						 */
+						recordRequests: {type : "boolean", defaultValue : true},
 
 						/**
 						 * Setter for property <code>requests</code>.
@@ -151,7 +180,7 @@ sap.ui
 
 
 			/**
-			 * generates a floating-point, pseudo-random number in the range [0, 1[
+			 * Generates a floating-point, pseudo-random number in the range [0, 1[
 			 * using a linear congruential generator with drand48 parameters
 			 * the seed is fixed, so the generated random sequence is always the same
 			 * each property type has a own seed. Valid types are:
@@ -179,11 +208,22 @@ sap.ui
 				this._oServer = MockServer._getInstance();
 				this._aFilters = [];
 				var aRequests = this.getRequests();
-				var iLength = aRequests.length;
-				for (var i = 0; i < iLength; i++) {
-					var oRequest = aRequests[i];
-					this._addRequestHandler(oRequest.method, oRequest.path, oRequest.response);
-				}
+				var that = this;
+				aRequests.forEach(function(oRequest) {
+
+					var fnResponse;
+					if (that.getRecordRequests() === false && oRequest.response) {
+						fnResponse = function() {
+							oRequest.response.apply(this, arguments);
+							// reset recorded requests for memory savings as mockserver is also used for apps and not only testing
+							that._oServer.requests = [];
+						};
+					} else {
+						fnResponse = oRequest.response;
+					}
+
+					that._addRequestHandler(oRequest.method, oRequest.path, fnResponse);
+				});
 			};
 
 			/**
@@ -265,7 +305,7 @@ sap.ui
 			/**
 			 * Returns the data model of the given EntitySet name.
 			 *
-			 * @param sEntitySetName EntitySet name
+			 * @param {string} sEntitySetName EntitySet name
 			 * @return {array} data model of the given EntitySet
 			 * @public
 			 */
@@ -282,8 +322,8 @@ sap.ui
 
 			/**
 			 * Sets the data of the given EntitySet name with the given array.
-			 * @param sEntitySetName EntitySet name
-			 * @param aData
+			 * @param {string} sEntitySetName EntitySet name
+			 * @param {array} aData
 			 * @public
 			 */
 			MockServer.prototype.setEntitySetData = function(sEntitySetName, aData) {
@@ -820,50 +860,80 @@ sap.ui
 			 */
 			MockServer.prototype._getOdataQuerySelect = function(aDataSet, sODataQueryValue, sEntitySetName) {
 				var that = this;
-				var sPropName, sComplexType;
+				var sPropName, sComplexOrNavProperty;
 				var aProperties = sODataQueryValue.split(',');
 				var aSelectedDataSet = [];
 				var oPushedObject;
 				var oDataEntry = aDataSet[0] ? aDataSet[0][aProperties[0].split('/')[0]] : null;
 				if (!(oDataEntry != null && oDataEntry.results && oDataEntry.results.length > 0)) {
-					var fnCreatePushedEntry = function(aProperties, oData, oPushedObject, sParentName) {
-						if (oData["__metadata"]) {
-							oPushedObject["__metadata"] = oData["__metadata"];
-						}
-						jQuery.each(aProperties, function(i, sPropertyName) {
-							var iComplexType = sPropertyName.indexOf("/");
-							// this is a complex type property
-							if (iComplexType !== -1) {
-								sPropName = sPropertyName.substring(iComplexType + 1);
-								sComplexType = sPropertyName.substring(0, iComplexType);
-								if (!oPushedObject[sComplexType]) {
-									oPushedObject[sComplexType] = {};
-								}
-								oPushedObject[sComplexType] = fnCreatePushedEntry([sPropName], oData[sComplexType], oPushedObject[sComplexType], sComplexType);
-								// this is a simple property
-							} else {
-								if (oData && !oData.hasOwnProperty(sPropertyName)) {
-									var bExist = false;
-									var aTypeProperties = [];
-									if (sParentName) {
-										var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sParentName].to.entitySet;
-										aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
-										for (var i = 0; i < aTypeProperties.length; i++) {
-											if (aTypeProperties[i].name === sPropertyName) {
-												bExist = true;
-												break;
-											}
-										}
-									}
-									if (!bExist) {
-										that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
-									}
-								}
-								oPushedObject[sPropertyName] = oData[sPropertyName];
-							}
-						});
-						return oPushedObject;
-					};
+                    var fnCreatePushedEntry = function (aProperties, oData, oPushedObject, sParentName) {
+                        // Get for each complex type or navigation property its list of properties
+                        var oComplexOrNav = {};
+                        jQuery.each(aProperties, function (i, sPropertyName) {
+                            var iComplexOrNavProperty = sPropertyName.indexOf("/");
+                            // This is a complex type or navigation property
+                            if (iComplexOrNavProperty !== -1) {
+                                sPropName = sPropertyName.substring(iComplexOrNavProperty + 1);
+                                sComplexOrNavProperty = sPropertyName.substring(0, iComplexOrNavProperty);
+                                if (oComplexOrNav[sComplexOrNavProperty]) {
+                                    oComplexOrNav[sComplexOrNavProperty].push(sPropName);
+                                } else {
+                                    oComplexOrNav[sComplexOrNavProperty] = [sPropName];
+                                }
+                            }
+                        });
+                        jQuery.each(Object.keys(oComplexOrNav), function (i, sComplexOrNav) {
+                            if (!oPushedObject[sComplexOrNav]) {
+                                oPushedObject[sComplexOrNav] = {};
+                            }
+                            // call recursively to get the properties of each complex type or navigation property
+                            oPushedObject[sComplexOrNav] = fnCreatePushedEntry(oComplexOrNav[sComplexOrNav], oData[sComplexOrNav], oPushedObject[sComplexOrNav], sComplexOrNav);
+                        });
+
+                        if (oData.results) {
+                            // Navigation property - filter the results for each navigation property based on the properties defined by $select
+                            var oFilteredResults = [];
+                            jQuery.each(oData.results, function (i, oResult) {
+                                var oFilteredResult = {};
+                                jQuery.each(aProperties, function (j, sPropertyName) {
+                                    oFilteredResult[sPropertyName] = oResult[sPropertyName];
+                                });
+                                oFilteredResults.push(oFilteredResult);
+                            });
+                            if (oPushedObject) {
+                                oPushedObject.results = oFilteredResults;
+                            }
+                        } else {
+                            // Complex types or flat properties
+                            if (oData["__metadata"]) {
+                                oPushedObject["__metadata"] = oData["__metadata"];
+                            }
+                            jQuery.each(aProperties, function (i, sPropertyName) {
+                                var iComplexType = sPropertyName.indexOf("/");
+                                if (iComplexType === -1) { // Complex types were already handled above
+                                    if (oData && !oData.hasOwnProperty(sPropertyName)) {
+                                        var bExist = false;
+                                        var aTypeProperties = [];
+                                        if (sParentName) {
+                                            var sTargetEntitySet = that._mEntitySets[sEntitySetName].navprops[sParentName].to.entitySet;
+                                            aTypeProperties = that._mEntityTypes[that._mEntitySets[sTargetEntitySet].type].properties;
+                                            for (var i = 0; i < aTypeProperties.length; i++) {
+                                                if (aTypeProperties[i].name === sPropertyName) {
+                                                    bExist = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                        if (!bExist) {
+                                            that._logAndThrowMockServerCustomError(404, that._oErrorMessages.RESOURCE_NOT_FOUND_FOR_SEGMENT, sPropertyName);
+                                        }
+                                    }
+                                    oPushedObject[sPropertyName] = oData[sPropertyName];
+                                }
+                            });
+                        }
+                        return oPushedObject;
+                    };
 
 					// in case of $select=* return the data as is
 					if (jQuery.inArray("*", aProperties) !== -1) {
@@ -1011,7 +1081,7 @@ sap.ui
 			MockServer.prototype._refreshData = function() {
 
 				// load the metadata
-				var oMetadata = this._loadMetadata(this._sMetadataUrl);
+				var oMetadata = this._loadMetadata(this._sMetadataString);
 				if (!oMetadata) {
 					return;
 				}
@@ -1049,15 +1119,22 @@ sap.ui
 			 * @return {XMLDocument} the xml document object
 			 * @private
 			 */
-			MockServer.prototype._loadMetadata = function(sMetadataUrl) {
-				// load the metadata as string to avoid usage of serializer
-				var sMetadata = jQuery.sap.sjax({
-					url: sMetadataUrl,
-					dataType: "text"
-				}).data;
-				if (!sMetadata) {
-					jQuery.sap.log.error("MockServer: The metadata for url \"" + sMetadataUrl + "\" could not be found!");
+			MockServer.prototype._loadMetadata = function(sMetadata) {
+				var sMetadata;
+				sMetadata = sMetadata.trim();
+
+				// "<" as first character is a strong indicator for an XML-containing string. Everything else: URL...
+				if (sMetadata.substring(0,1) !== "<") {
+					// load the metadata as string to avoid usage of serializer
+					sMetadata = jQuery.sap.sjax({
+						url: sMetadata,
+						dataType: "text"
+					}).data;
+					if (!sMetadata) {
+						jQuery.sap.log.error("MockServer: The metadata for url \"" + sMetadata + "\" could not be found!");
+					}
 				}
+
 				this._sMetadata = sMetadata;
 				try {
 					this._oMetadata = jQuery.parseXML(sMetadata);
@@ -1841,7 +1918,7 @@ sap.ui
 			 * each entity type in a separate JSON file. The name of the JSON file needs to match the name of the entity type. If
 			 * no base url for the mockdata is specified then the mockdata are generated from the metadata
 			 *
-			 * @param {string} sMetadataUrl url to the service metadata document
+			 * @param {string} sMetadataString Either the URL to the service metadata document or the metadata document as xml string itself (starting with "<?xml")
 			 * @param {string|object} [vMockdataSettings] (optional) base url which contains the path to the mockdata, or an object which contains the following properties: sMockdataBaseUrl, bGenerateMissingMockData, aEntitySetsNames. See below for descriptions of these parameters. Ommit this parameter to produce random mock data based on the service metadata.
 			 * @param {string} [vMockdataSettings.sMockdataBaseUrl] base url which contains the mockdata as single .json files or the .json file containing the complete mock data
 			 * @param {boolean} [vMockdataSettings.bGenerateMissingMockData] true for the MockServer to generate mock data for missing .json files that are not found in sMockdataBaseUrl. Default value is false.
@@ -1850,9 +1927,9 @@ sap.ui
 			 * @since 1.13.2
 			 * @public
 			 */
-			MockServer.prototype.simulate = function(sMetadataUrl, vMockdataSettings) {
+			MockServer.prototype.simulate = function(sMetadataString, vMockdataSettings) {
 				var that = this;
-				this._sMetadataUrl = sMetadataUrl;
+				this._sMetadataString = sMetadataString;
 				if (!vMockdataSettings || typeof vMockdataSettings === "string") {
 					this._sMockdataBaseUrl = vMockdataSettings;
 				} else {
@@ -1862,7 +1939,7 @@ sap.ui
 				}
 
 				// load the metadata
-				var oMetadata = this._loadMetadata(this._sMetadataUrl);
+				var oMetadata = this._loadMetadata(this._sMetadataString);
 				if (!oMetadata) {
 					return;
 				}
@@ -3403,7 +3480,12 @@ sap.ui
 					day.setHours(day.getHours() + offset);
 					return day.getTime();
 				};
-				return "/Date(" + fnNoOffset(sString.substring("datetime'".length, sString.length - 1)) + ")/";
+
+				if (sString.indexOf("datetimeoffset") > -1) {
+					return "/Date(" + fnNoOffset(sString.substring("datetimeoffset'".length, sString.length - 1)) + ")/";
+				} else {
+					return "/Date(" + fnNoOffset(sString.substring("datetime'".length, sString.length - 1)) + ")/";
+				}
 			};
 
 			/**

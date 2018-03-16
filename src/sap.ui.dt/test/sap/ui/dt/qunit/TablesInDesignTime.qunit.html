@@ -49,35 +49,40 @@
 						width : "200px"
 					});
 
+					this.oTable.placeAt("content");
+
+					sap.ui.getCore().applyChanges();
+
 					this.oColumn = new sap.ui.table.Column({
 						label: new sap.m.Label({text: "Last Name"}),
-						width: "200px"
+						width: "200px",
+						template: "dummy"
 					});
 
 					this.oTable.addColumn(this.oColumn);
 					this.oTable.addColumn(new sap.ui.table.Column({
 						label: new sap.m.Label({text: "First Name"}),
-						width: "100px"
+						width: "100px",
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.Column({
 						label: new sap.m.Label({text: "Checked"}),
-						width: "75px"
+						width: "75px",
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.Column({
-						label: new sap.m.Label({text: "Web Site"})
+						label: new sap.m.Label({text: "Web Site"}),
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.Column({
 						label: new sap.m.Label({text: "Image"}),
-						width: "75px"
+						width: "75px",
+						template: "dummy"
 					}));
-
-					this.oTable.placeAt("content");
 
 					this.oDesignTime = new sap.ui.dt.DesignTime({
 						rootElements : [this.oTable]
 					});
-
-					sap.ui.getCore().applyChanges();
 
 					this.oDesignTime.attachEventOnce("synced", function() {
 						sap.ui.getCore().applyChanges();
@@ -94,7 +99,6 @@
 			QUnit.test("when Table is scrolled horizontally via aggregationOverlay hScroll...", function(assert) {
 				var done = assert.async();
 
-				sap.ui.getCore().applyChanges();
 				var oTableOverlay = OverlayRegistry.getOverlay(this.oTable);
 				var oInitialColumnOffset = this.oColumn.$().offset();
 
@@ -102,14 +106,16 @@
 
 				var oScrollOverlay = oTableOverlay.getAggregationOverlay("hScroll");
 
-				oColumnsOverlay.$().on("scroll", function() {
+				var fnCallback = function() {
 					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBar") > -1, "then the ScrollBar Style Class was set");
 					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") > -1, "then the ScrollBar Horizontal Style Class was set");
 					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "then columns are also scrolled");
 					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "if this test fails, check Table.designtime.js : hScroll and vScroll domRefs!");
 
+					oColumnsOverlay.$().off("scroll", fnCallback);
 					done();
-				}.bind(this));
+				}.bind(this);
+				oColumnsOverlay.$().scroll(fnCallback);
 
 				oScrollOverlay.$().scrollLeft(20);
 			});
@@ -126,31 +132,36 @@
 						width : "200px"
 					});
 
+					this.oTable.placeAt("content");
+
+					sap.ui.getCore().applyChanges();
+
 					this.oColumn = new sap.ui.table.AnalyticalColumn({
 						label: new sap.m.Label({text: "Last Name"}),
-						width: "200px"
+						width: "200px",
+						template: "dummy"
 					});
 
 					this.oTable.addColumn(this.oColumn);
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
 						label: new sap.m.Label({text: "First Name"}),
-						width: "100px"
+						width: "100px",
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
 						label: new sap.m.Label({text: "Checked"}),
-						width: "75px"
+						width: "75px",
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
-						label: new sap.m.Label({text: "Web Site"})
+						label: new sap.m.Label({text: "Web Site"}),
+						template: "dummy"
 					}));
 					this.oTable.addColumn(new sap.ui.table.AnalyticalColumn({
 						label: new sap.m.Label({text: "Image"}),
-						width: "75px"
+						width: "75px",
+						template: "dummy"
 					}));
-
-					this.oTable.placeAt("content");
-
-					sap.ui.getCore().applyChanges();
 
 					this.oDesignTime = new sap.ui.dt.DesignTime({
 						rootElements : [this.oTable]
@@ -171,7 +182,6 @@
 			QUnit.test("when AnalyticalTable is scrolled horizontally via aggregationOverlay hScroll...", function(assert) {
 				var done = assert.async();
 
-				sap.ui.getCore().applyChanges();
 				var oTableOverlay = OverlayRegistry.getOverlay(this.oTable);
 				var oInitialColumnOffset = this.oColumn.$().offset();
 
@@ -179,14 +189,17 @@
 
 				var oScrollOverlay = oTableOverlay.getAggregationOverlay("hScroll");
 
-				oColumnsOverlay.$().on("scroll", function() {
+				var fnCallback = function() {
 					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBar") > -1, "then the ScrollBar Style Class was set");
 					assert.ok(oTableOverlay.$()[0].className.indexOf("sapUiDtOverlayWithScrollBarHorizontal") > -1, "then the ScrollBar Horizontal Style Class was set");
 					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "then columns are also scrolled");
 					assert.strictEqual(this.oColumn.$().offset().left+20, oInitialColumnOffset.left, "if this test fails, check AnalyticalTable.designtime.js : hScroll and vScroll domRefs!");
 
+					oColumnsOverlay.$().off("scroll", fnCallback);
 					done();
-				}.bind(this));
+				}.bind(this);
+
+				oColumnsOverlay.$().scroll(fnCallback);
 
 				oScrollOverlay.$().scrollLeft(20);
 			});

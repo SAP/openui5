@@ -16,8 +16,21 @@
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
 		<script>
 			jQuery.sap.require("sap.ui.unified.calendar.CalendarDate");
+			jQuery.sap.require("sap.ui.unified.CalendarLegend");
+			jQuery.sap.require("sap.ui.unified.CalendarLegendRenderer");
+			jQuery.sap.require("sap.ui.unified.calendar.Month");
+
+			var Month = sap.ui.unified.calendar.Month,
+				CalendarDayType = sap.ui.unified.CalendarDayType,
+				CalendarLegend = sap.ui.unified.CalendarLegend,
+				CalendarLegendRenderer = sap.ui.unified.CalendarLegendRenderer,
+				CalendarLegendItem = sap.ui.unified.CalendarLegendItem;
+
 			(function () {
 				var CalendarDate = sap.ui.unified.calendar.CalendarDate;
 				/**
@@ -64,7 +77,7 @@
 
 				QUnit.module("Rendering", {
 					beforeEach: function () {
-						this.oM = new sap.ui.unified.calendar.Month().placeAt("qunit-fixture");
+						this.oM = new Month().placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					afterEach: function () {
@@ -104,7 +117,7 @@
 
 				QUnit.module("_getVisibleDays", {
 					beforeEach: function () {
-						this.oM = new sap.ui.unified.calendar.Month();
+						this.oM = new Month();
 					},
 					afterEach: function () {
 						this.oM.destroy();
@@ -206,7 +219,7 @@
 
 				QUnit.module("Rendering", {
 					beforeEach: function () {
-						this.oM = new sap.ui.unified.calendar.Month().placeAt("qunit-fixture");
+						this.oM = new Month().placeAt("qunit-fixture");
 						sap.ui.getCore().applyChanges();
 					},
 					afterEach: function () {
@@ -264,7 +277,7 @@
 
 				QUnit.module("Internals", {
 					beforeEach: function () {
-						this.oM = new sap.ui.unified.calendar.Month();
+						this.oM = new Month();
 					},
 					afterEach: function () {
 						this.oM.destroy();
@@ -275,7 +288,7 @@
 				QUnit.test("Invalidate from parent aggregation specialDates", function (oAssert) {
 					// Arrange
 					this.oM.getDomRef = function () {
-						return true; // Mock object getDomRef() method return
+						return document.createElement("div"); // Mock object getDomRef() method return
 					};
 					this.oM._bNoFocus = false; // Mock focus return boolean
 
@@ -289,10 +302,310 @@
 					this.oM.invalidate(new sap.ui.unified.DateRange().setParent(this.oM, "specialDates"));
 
 					// Assert
-					oAssert.strictEqual(this.oM._bNoFocus, true, "When invalidating with origin DateRange and parent " +
-						"aggregation 'specialDates' focus should not be returned");
+					oAssert.strictEqual(this.oM._bNoFocus, false, "When invalidating with origin DateRange and parent " +
+						"aggregation 'specialDates' focus should be returned");
 				});
+
+				QUnit.test("_isValueInThreshold return true if provided value is in provided threshold", function (assert) {
+					assert.ok(this.oM._isValueInThreshold(248, 258, 10), "value is between 238 and 258 - upper boundary"); // (reference value, actual value, threshold)
+					assert.ok(this.oM._isValueInThreshold(248, 238, 10), "value is between 238 and 258 - lower boundary"); // (reference value, actual value, threshold)
+					assert.ok(this.oM._isValueInThreshold(248, 240, 10), "value is between 238 and 258"); // (reference value, actual value, threshold)
+					assert.ok(this.oM._isValueInThreshold(248, 250, 10), "value is between 238 and 258"); // (reference value, actual value, threshold)
+				});
+
+				QUnit.test("_isValueInThreshold return false if provided value is out of provided threshold", function (assert) {
+					assert.equal(this.oM._isValueInThreshold(248, 237, 10), false, "value is lower"); // (reference value, actual value, threshold)
+					assert.equal(this.oM._isValueInThreshold(248, 259, 10), false, "value is upper"); // (reference value, actual value, threshold)
+				});
+
+				// BCP: 1880151681
+				QUnit.test("Selecting a weeknumber does not throw an error", function (assert) {
+					// Arrange
+					var oTarget = document.createElement("span");
+					oTarget.classList.add("sapUiCalWeekNum");
+					var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
+						deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+						isValueInThresholdStub = this.stub(this.oM, "_isValueInThreshold", function () { return true; });
+
+					// Act
+					this.oM._oMousedownPosition = oMouseEvent;
+					this.oM.onmouseup(oMouseEvent);
+
+					// Assert
+					assert.ok(true, "onmouseup does not throw an exception when weeknum is selected");
+
+					deviceStub.restore();
+					isValueInThresholdStub.restore();
+				});
+
+				// BCP: 1880151681
+				QUnit.test("Selecting a day header does not throw an error", function (assert) {
+					// Arrange
+					var oTarget = document.createElement("span");
+					oTarget.classList.add("sapUiCalWH");
+					var oMouseEvent = { clientX: 10, clientY: 10, target: oTarget },
+						deviceStub = this.stub(sap.ui.Device.support, "touch", true),
+						isValueInThresholdStub = this.stub(this.oM, "_isValueInThreshold", function () { return true; });
+
+					// Act
+					this.oM._oMousedownPosition = oMouseEvent;
+					this.oM.onmouseup(oMouseEvent);
+
+					// Assert
+					assert.ok(true, "onmouseup does not throw an exception when day header is selected");
+
+					deviceStub.restore();
+					isValueInThresholdStub.restore();
+				});
+
+				QUnit.module("Aria", {
+					beforeEach: function() {
+						//Prepare
+						this.sOldLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+						sap.ui.getCore().getConfiguration().setLanguage("en-US");//due to text strings for built-in CalendarDayType texts
+
+						this.oLegend = new CalendarLegend({
+							items: [
+								new CalendarLegendItem({
+									type: CalendarDayType.Type01,
+									text: "National Holidays"
+								})]
+						});
+
+						this.oSut = new Month({
+							date: new Date(2016, 0, 1),
+							legend: this.oLegend,
+							specialDates: [
+								new sap.ui.unified.DateTypeRange({
+									startDate: new Date(2016, 0, 1),
+									endDate:  new Date(2016, 0, 1),
+									type: CalendarDayType.Type01 /* Calendar Legend Item exists for this type*/
+								}),
+								new sap.ui.unified.DateTypeRange({
+									startDate: new Date(2016, 0, 2),
+									endDate:  new Date(2016, 0, 2),
+									type: CalendarDayType.Type02 /* Calendar Legend Item DOES not exist for this type*/
+								})
+							]
+						});
+					},
+					afterEach: function() {
+						//Clear
+						this.oSut.destroy();
+						this.oLegend.destroy();
+						sap.ui.getCore().getConfiguration().setLanguage(this.sOldLanguage);
+					}
+				});
+
+				QUnit.test("Special Dates with legend", function (assert) {
+					//Act
+					this.oSut.placeAt('qunit-fixture');
+					sap.ui.getCore().applyChanges();
+
+					//Assert
+					assert.ok(jQuery("#" + this.oSut.getId() + "-20160101").attr("aria-label").indexOf("National Holidays") >= 0,
+							"The corresponding legend item's text is used as aria-label");
+				});
+
+				QUnit.test("Special Dates without legend", function (assert) {
+					//Act
+					this.oSut.placeAt('qunit-fixture');
+					sap.ui.getCore().applyChanges();
+
+					assert.ok(jQuery("#" + this.oSut.getId() + "-20160102").attr("aria-describedby").indexOf(CalendarLegendRenderer.typeARIATexts[CalendarDayType.Type02].getId()),
+							"The corresponding CalendarDayType.Type02 text is used as aria-describedby");
+				});
+
+				QUnit.module("Other");
+
+				QUnit.test("interval selection feedback", function(assert) {
+					//arrange
+					var oMonth = new Month({
+							intervalSelection: true,
+							date: new Date(2017, 6, 19) //2017, July 19
+						}),
+						$HoveredDate,
+						$HoveredDateBefore,
+						oSelectedDate = new sap.ui.unified.DateRange({ startDate: new Date(2017, 6, 19) });
+
+					oMonth.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+
+					//act - hover a date, with nothing selected yet
+					$HoveredDate = jQuery("#" + oMonth.getId() + "-20170725");
+					oMonth.onmouseover({ target: $HoveredDate }); //2017, July 25
+
+					//assert
+					assert.equal(jQuery('.sapUiCalItemSelBetween').length, 0, 'no selection feedback yet');
+
+					//act - hover the same end date
+					oMonth.addSelectedDate(oSelectedDate);
+					oMonth.onmouseover({ target: $HoveredDate }); //2017, July 25
+
+					//assert
+					assert.equal(jQuery('.sapUiCalItemSelBetween').length, 5, 'selection feedback is applied');
+
+					//act - hover a date before the selected.startDate
+					$HoveredDateBefore = jQuery("#" + oMonth.getId() + "-20170712");
+					oMonth.onmouseover({ target: $HoveredDateBefore }); //2017, July 12
+
+					//assert
+					assert.equal(jQuery('.sapUiCalItemSelBetween').length, 6, 'selection feedback is applied on hovered dates before start date');
+
+					//act - finish selection and then hover
+					oMonth.getSelectedDates()[0].setEndDate(new Date(2017, 6, 12));
+					oMonth.onmouseover({ target: $HoveredDate }); //2017, July 25
+
+					//assert
+					assert.equal(jQuery('.sapUiCalItemSelBetween').length, 6, 'no additional selection feedback after end date has been given');
+
+					//clean
+					oMonth.destroy();
+				});
+
+				QUnit.module("_getDateTypes function", {
+					beforeEach: function () {
+						this.oM = new Month({date: new Date(2017, 1, 1)}).placeAt("qunit-fixture");
+						sap.ui.getCore().applyChanges();
+					},
+					afterEach: function () {
+						this.oM.destroy();
+						this.oM = null;
+					}
+				});
+
+				QUnit.test("_getDateTypes when Type01 and NonWorking types are set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						}),
+						oSpecialDate2 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.NonWorking,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+					this.oM.addSpecialDate(oSpecialDate2);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 2, "Two types are returned");
+					assert.equal(aDayTypes[0].type, "Type01", "Type01 is returned");
+					assert.equal(aDayTypes[1].type, "NonWorking", "NonWorking type is returned");
+				});
+
+				QUnit.test("_getDateTypes when NonWorking and Type01 types are set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.NonWorking,
+							startDate: oDate
+						}),
+						oSpecialDate2 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+					this.oM.addSpecialDate(oSpecialDate2);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 2, "Two types are returned");
+					assert.equal(aDayTypes[0].type, "NonWorking", "NonWorking type is returned");
+					assert.equal(aDayTypes[1].type, "Type01", "Type01 is returned");
+				});
+
+				QUnit.test("_getDateTypes when Type01, NonWorking and Type03 types are set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						}),
+						oSpecialDate2 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.NonWorking,
+							startDate: oDate
+						}),
+						oSpecialDate3 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type03,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+					this.oM.addSpecialDate(oSpecialDate2);
+					this.oM.addSpecialDate(oSpecialDate3);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 2, "Two types are returned");
+					assert.equal(aDayTypes[0].type, "Type01", "Type01 is returned since it was set first");
+					assert.equal(aDayTypes[1].type, "NonWorking", "NonWorking type is returned");
+				});
+
+				QUnit.test("_getDateTypes when Type02 and Type01 types are set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type02,
+							startDate: oDate
+						}),
+						oSpecialDate2 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+					this.oM.addSpecialDate(oSpecialDate2);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 1, "Only one type is returned");
+					assert.equal(aDayTypes[0].type, "Type02", "Type02 is returned since it was set first");
+				});
+
+				QUnit.test("_getDateTypes when only Type01 is set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.Type01,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 1, "Only one type is returned");
+					assert.equal(aDayTypes[0].type, "Type01", "Type01 is returned");
+				});
+
+				QUnit.test("_getDateTypes when only NonWorking is set", function (assert) {
+					var aDayTypes,
+						oDate = new Date(2017, 1, 20),
+						oSpecialDate1 = new sap.ui.unified.DateTypeRange({
+							type: sap.ui.unified.CalendarDayType.NonWorking,
+							startDate: oDate
+						});
+
+					this.oM.addSpecialDate(oSpecialDate1);
+
+					aDayTypes = this.oM._getDateTypes(createCalendarDate(2017, 1, 20, true));
+
+					// Assert
+					assert.equal(aDayTypes.length, 1, "Only one type is returned");
+					assert.equal(aDayTypes[0].type, "NonWorking", "NonWorking is returned");
+				});
+
 			})();
+
 
 		</script>
 

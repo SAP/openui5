@@ -1,0 +1,27 @@
+<mvc:View xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core"
+	controllerName="sample.Main">
+	<VBox id="box">
+		<Button text="{path:'/txt', formatter: '.formatButtonText'}" press="._sayHello"></Button>
+
+		<Button text="Calling a public -> private"
+			press=".sayHello2('test',{test:'hello', val: ${/txt}}, ${/txt}, ${$parameters>id}, ${$source>text})">
+		</Button>
+
+		<Button text="Calling a private method on .routing"
+			press=".routing._navTo('test')">
+		</Button>
+
+		<Button text="Calling a public method on .routing"
+			press=".routing.navTo('test')">
+		</Button>
+
+		<Button text="Call on extension"
+			press=".extension.com.sap.industry.oil.OilExtension.sayHello('test',{test:'hello', val: ${/txt}}, ${/txt})">
+		</Button>
+
+		<Button text="Bound with formatter of extension {path:'/txt', formatter: '.extension.com.sap.industry.oil.OilExtension.formatButtonText'}"
+			press=".extension.com.sap.industry.oil.OilExtension.sayHello('test',{test:'hello', val: ${/txt}}, ${/txt})">
+		</Button>
+	</VBox>
+</mvc:View>

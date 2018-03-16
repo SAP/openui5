@@ -3,9 +3,10 @@
  */
 
 sap.ui.define([
+	"jquery.sap.global",
 	"sap/ui/core/mvc/Controller",
 	"jquery.sap.storage"
-	], function (Controller, jQuery) {
+	], function (jQuery, Controller/* jQuerySapStorage */) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.base", {

@@ -2,9 +2,13 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ListItemBaseRenderer, Renderer) {
+sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(ListItemBaseRenderer, Renderer, coreLibrary, Device) {
 		"use strict";
+
+
+		// shortcut for sap.ui.core.TextDirection
+		var TextDirection = coreLibrary.TextDirection;
 
 
 		/**
@@ -90,11 +94,9 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		 * Renders the HTML for the given control, using the provided
 		 * {@link sap.ui.core.RenderManager}.
 		 *
-		 * @param {sap.ui.core.RenderManager}
-		 *          oRenderManager The RenderManager that can be used for writing to the
+		 * @param {sap.ui.core.RenderManager} rm The RenderManager that can be used for writing to the
 		 *          Render-Output-Buffer
-		 * @param {sap.ui.core.Control}
-		 *          oControl An object representation of the control that should be
+		 * @param {sap.ui.core.Control} oLI An object representation of the control that should be
 		 *          rendered
 		 */
 		ObjectListItemRenderer.renderLIAttributes = function(rm, oLI) {
@@ -117,7 +119,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 				rm.write("<span");
 				//sets the dir attribute to "rtl" or "ltr" if a direction
 				//for the intro text is provided explicitly
-				if (sIntroDir !== sap.ui.core.TextDirection.Inherit) {
+				if (sIntroDir !== TextDirection.Inherit) {
 					rm.writeAttribute("dir", sIntroDir.toLowerCase());
 				}
 				rm.write(">");
@@ -176,7 +178,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 
 			rm.write("</div>"); // End Top row container
 
-			if (!(sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
+			if (!(Device.browser.internet_explorer && Device.browser.version < 10)) {
 				rm.write("<div style=\"clear: both;\"></div>");
 			}
 
@@ -264,5 +266,4 @@ sap.ui.define(['jquery.sap.global', './ListItemBaseRenderer', 'sap/ui/core/Rende
 		};
 
 		return ObjectListItemRenderer;
-
 	}, /* bExport= */ true);

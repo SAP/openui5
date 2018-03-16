@@ -3,9 +3,13 @@
 * ${copyright}
 
 */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
+	function(coreLibrary, InvisibleText) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 
 	/**
@@ -52,14 +56,14 @@ sap.ui.define(['jquery.sap.global'],
 
 		//ARIA attributes
 		oAccAttributes.describedby = {
-			value: oControl._sAriaTokenLabelId,
+			value: InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_LABEL"),
 			append: true
 		};
 
 		if (oControl.getEditable()) {
 			oAccAttributes.describedby = {
-					value: oControl._sAriaTokenDeletableId,
-					append: true
+				value: InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE"),
+				append: true
 			};
 		}
 
@@ -89,7 +93,7 @@ sap.ui.define(['jquery.sap.global'],
 		oRm.addClass("sapMTokenText");
 		oRm.writeClasses();
 		// set text direction
-		if (sTextDir !== sap.ui.core.TextDirection.Inherit) {
+		if (sTextDir !== TextDirection.Inherit) {
 			oRm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 		oRm.write(">");

@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>sap.m.ColumnHeader</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+</script>
+
+<script>
+
+	var aData = [
+		{id: Math.random(), lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 4, money: 5.67, birthday: "1984-06-01", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Friese", name: "Andy", checked: true, linkText: "www.google.de", href: "http://www.google.de", src: "leads", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "employee", gender: "female", rating: 3, money: 1345.212, birthday: "1987-01-07", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Schutt", name: "Doris", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "female", rating: 4, money: 1.1, birthday: "2001-03-01", currency: "USD", type: "Inactive"},
+		{id: Math.random(), lastName: "Open", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "female", rating: 2, money: 55663.1, birthday: "1953-01-04", currency: "USD", type: "Inactive"},
+		{id: Math.random(), lastName: "Dewit", name: "Kenya", checked: false, linkText: "www.google.de", href: "http://www.google.de", src: "employee", gender: "female", rating: 3, money: 34.23, birthday: "1957-01-01", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Zar", name: "Lou", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 1, money: 123, birthday: "1965-02-08", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Burr", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 2, money: 678.45, birthday: "1978-08-11", currency: "DEM", type: "Inactive"},
+		{id: Math.random(), lastName: "Hughes", name: "Tish", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "male", rating: 5, money: 123.45, birthday: "1972-03-04", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Town", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "male", rating: 3, money: 678.90, birthday: "1968-03-03", currency: "JPY", type: "Inactive"},
+		{id: Math.random(), lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 3, money: 8756.2, birthday: "1968-01-06", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Time", name: "Justin", checked: true, linkText: "www.google.de", href: "http://www.google.de", src: "employee", gender: "male", rating: 4, money: 836.4, birthday: "1968-08-01", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Barr", name: "Sandy", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 2, money: 9.3, birthday: "1968-09-12", currency: "USD", type: "Inactive"},
+		{id: Math.random(), lastName: "Poole", name: "Gene", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 1, money: 6344.21, birthday: "1968-03-21", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Ander", name: "Corey", checked: false, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 5, money: 563.2, birthday: "1968-05-14", currency: "JPY", type: "Inactive"},
+		{id: Math.random(), lastName: "Early", name: "Brighton", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "male", rating: 3, money: 8564.4, birthday: "1968-01-22", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Noring", name: "Constance", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "female", rating: 4, money: 3563, birthday: "1968-09-19", currency: "USD", type: "Inactive"},
+		{id: Math.random(), lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.google.de", href: "http://www.google.de", src: "employee", gender: "male", rating: 2, money: 5.67, birthday: "1968-08-13", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-15", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "female", rating: 3, money: 5.67, birthday: "1968-03-01", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Dente", name: "Al", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 4, money: 5.67, birthday: "1984-06-01", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Friese", name: "Andy", checked: true, linkText: "www.google.de", href: "http://www.google.de", src: "leads", gender: "male", rating: 2, money: 10.45, birthday: "1975-01-01", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Mann", name: "Anita", checked: false, linkText: "www.kicker.de", href: "http://www.kicker.de", src: "employee", gender: "female", rating: 3, money: 1345.212, birthday: "1987-01-07", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Schutt", name: "Doris", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "female", rating: 4, money: 1.1, birthday: "2001-03-01", currency: "USD", type: "Inactive"},
+		{id: Math.random(), lastName: "Open", name: "Doris", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "female", rating: 2, money: 55663.1, birthday: "1953-01-04", currency: "USD", type: "Inactive"},
+		{id: Math.random(), lastName: "Dewit", name: "Kenya", checked: false, linkText: "www.google.de", href: "http://www.google.de", src: "employee", gender: "female", rating: 3, money: 34.23, birthday: "1957-01-01", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Zar", name: "Lou", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 1, money: 123, birthday: "1965-02-08", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Burr", name: "Tim", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 2, money: 678.45, birthday: "1978-08-11", currency: "DEM", type: "Inactive"},
+		{id: Math.random(), lastName: "Hughes", name: "Tish", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "male", rating: 5, money: 123.45, birthday: "1972-03-04", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Town", name: "Mo", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "male", rating: 3, money: 678.90, birthday: "1968-03-03", currency: "JPY", type: "Inactive"},
+		{id: Math.random(), lastName: "Case", name: "Justin", checked: false, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "male", rating: 3, money: 8756.2, birthday: "1968-01-06", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Time", name: "Justin", checked: true, linkText: "www.google.de", href: "http://www.google.de", src: "employee", gender: "male", rating: 4, money: 836.4, birthday: "1968-08-01", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Barr", name: "Sandy", checked: true, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 2, money: 9.3, birthday: "1968-09-12", currency: "USD", type: "Inactive"},
+		{id: Math.random(), lastName: "Poole", name: "Gene", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 1, money: 6344.21, birthday: "1968-03-21", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Ander", name: "Corey", checked: false, linkText: "www.facebook.de", href: "http://www.facebook.de", src: "employee", gender: "male", rating: 5, money: 563.2, birthday: "1968-05-14", currency: "JPY", type: "Inactive"},
+		{id: Math.random(), lastName: "Early", name: "Brighton", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "doctor", gender: "male", rating: 3, money: 8564.4, birthday: "1968-01-22", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Noring", name: "Constance", checked: true, linkText: "www.sap.com", href: "http://www.sap.com", src: "employee", gender: "female", rating: 4, money: 3563, birthday: "1968-09-19", currency: "USD", type: "Inactive"},
+		{id: Math.random(), lastName: "O'Lantern", name: "Jack", checked: true, linkText: "www.google.de", href: "http://www.google.de", src: "employee", gender: "male", rating: 2, money: 5.67, birthday: "1968-08-13", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Tress", name: "Matt", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "leads", gender: "male", rating: 4, money: 5.67, birthday: "1968-01-15", currency: "EUR", type: "Inactive"},
+		{id: Math.random(), lastName: "Turner", name: "Paige", checked: true, linkText: "www.spiegel.de", href: "http://www.spiegel.de", src: "employee", gender: "female", rating: 3, money: 5.67, birthday: "1968-03-01", currency: "EUR", type: "Inactive"}
+	];
+
+	var oApp = new sap.m.App;
+
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData({modelData: aData});
+
+	var fGenericFilter = function(oViewSettingsPopover, oEvent) {
+		var oTable = oViewSettingsPopover.getParent().getParent().getParent();
+		var aItems = oEvent.getParameters().items;
+		var sPath = "";
+		var sFilterValue = "";
+
+		if (aItems != null && aItems.length > 0) {
+			sPath = aItems[0].getParent().getKey();
+			sFilterValue = aItems[0].getKey();
+		}
+		var oFilter = new sap.ui.model.Filter(sPath, "Contains", sFilterValue);
+		oTable.getBinding("items").filter(oFilter);
+	};
+
+	var aColumns = [
+		new sap.m.Column({
+			header: new sap.m.ColumnHeader({
+				text: "Last Name",
+				viewSettingsPopover: new sap.m.ViewSettingsPopover({
+					sortItems: [
+						new sap.m.ViewSettingsItem({
+							text: "Last Name",
+							key: "lastName"
+						})
+					],
+					filterItems: [
+						new sap.m.ViewSettingsFilterItem({
+							text: "Last Name",
+							key: "lastName",
+							items: [
+								new sap.m.ViewSettingsItem({
+									text: "Dente",
+									key: "dente"
+								})
+							]
+						})
+					],
+					groupItems: [
+						new sap.m.ViewSettingsItem({
+							text: "Last Name",
+							key: "lastName"
+						})
+					],
+					sortSelected: function(oEvent) {
+						var aItems = oEvent.getParameters().items;
+						var oTable = this.getParent().getParent().getParent();
+						var sSortOrder = this.getParent().getSortOrder();
+						var oSorter = new sap.ui.model.Sorter(aItems[0].getKey(), sSortOrder === "Descending");
+						oTable.getBinding("items").sort(oSorter);
+					},
+					filterSelected : function(oEvent) {
+						fGenericFilter(this, oEvent);
+					},
+					groupSelected: function(oEvent) {
+						var fGroupFunction = function(oContext) {
+							var sKey = oContext.getProperty(sPath);
+							return {
+								key: sKey,
+								text: sKey
+							};
+						};
+						var oTable = this.getParent().getParent().getParent();
+						var aItems = oEvent.getParameters().items;
+						var sPath = aItems[0].getKey();
+						var sSortOrder = this.getParent().getSortOrder();
+
+						var oGrouping = new sap.ui.model.Sorter(sPath, sSortOrder === "Descending", fGroupFunction);
+						oTable.getBinding("items").sort(oGrouping);
+					}
+				})
+			})
+		}),
+		new sap.m.Column({
+			header : new sap.m.Label({
+				text : "FirstName"
+			})
+		}),
+		new sap.m.Column({
+			hAlign: "Center",
+			header : new sap.m.Label({
+				text : "Available"
+			})
+		}),
+		new sap.m.Column({
+			header : new sap.m.ColumnHeader("webiste", {
+				text: "Website",
+				viewSettingsPopover: new sap.m.ViewSettingsPopover({
+					filterItems: [
+						new sap.m.ViewSettingsFilterItem({
+							text: "Website",
+							key: "linkText",
+							items: [
+								new sap.m.ViewSettingsItem({
+									text: "SAP",
+									key: "www.sap.com"
+								})
+							]
+						})
+					],
+					filterSelected: function(oEvent) {
+						fGenericFilter(this, oEvent);
+					}
+				})
+			}),
+			minScreenWidth : "XXLarge",
+			popinDisplay : "Inline",
+			demandPopin : true,
+			hAlign : "End"
+		}),
+		new sap.m.Column({
+			hAlign: "Center",
+			header : new sap.m.Label({
+				text : "Image"
+			}),
+			minScreenWidth : "Phone",
+		}),
+		new sap.m.Column({
+			header : new sap.m.Label({
+				text : "Raiting"
+			}),
+			minScreenWidth : "Tablet",
+			popinDisplay : "WithoutHeader",
+			demandPopin : true
+		}),
+		new sap.m.Column({
+			header : new sap.m.Label({
+				text : "Birthday"
+			}),
+			minScreenWidth: "800px"
+		})
+	];
+
+	var oTemplate = new sap.m.ColumnListItem({
+		vAlign: "Middle",
+		type : "{type}",
+		cells : [
+			new sap.m.Text({
+				text : "{lastName}",
+				wrapping : false
+			}),
+			new sap.m.Text({
+				text : "{name}",
+				wrapping : false
+			}),
+			new sap.m.CheckBox({
+				selected: "{checked}"
+			}),
+			new sap.m.Link({
+				text: "{linkText}"
+			}),
+			new sap.ui.core.Icon({
+				src : "sap-icon://{src}",
+				decorative: false,
+				press: function() {}
+			}),
+			new sap.m.RatingIndicator({
+				value: "{rating}"
+			}),
+			new sap.m.DatePicker({
+				value : "{birthday}",
+				valueFormat : "yyyy-MM-dd",
+				displayFormat : "dd.MM.yyyy"
+			}),
+			new sap.m.Text({
+				text : "{money} EUR",
+			})
+		]
+	});
+
+	var oTable = new sap.m.Table({
+		growing: true,
+		growingThreshold: 5,
+		columns : aColumns,
+	});
+
+	oTable.setModel(oModel);
+	oTable.bindItems({
+		path: "/modelData",
+		template : oTemplate,
+		key: "id"
+	});
+
+	var oPage = new sap.m.Page({
+		title: "ColumnHeader Test Page",
+		enableScrolling : true,
+		content : [oTable]
+	});
+
+	oApp.addPage(oPage).placeAt("body");
+
+</script>
+
+</head>
+
+<body id="body" class="sapUiBody">
+</body>
+
+</html>

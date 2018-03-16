@@ -1,12 +1,23 @@
 <mvc:View
-	controllerName="sap.m.sample.Tree.Page"
+	controllerName="sap.m.sample.TreeIcon.Page"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	 	<Tree
-            id="Tree"
-            items="{path: '/'}">
-            <StandardTreeItem
-                title="{text}"
+			id="Tree"
+			items="{path: '/'}">
+			<headerToolbar>
+				<OverflowToolbar>
+					<Title
+						text="Tree" />
+					<ToolbarSpacer />
+					<ToggleButton
+						icon="sap-icon://menu"
+						tooltip="Enable / Disable Custom Context Menu"
+						press="onToggleContextMenu" />
+				</OverflowToolbar>
+			</headerToolbar>
+			<StandardTreeItem
+				title="{text}"
 				icon="{ref}"/>
 		</Tree>
 </mvc:View>

@@ -3,9 +3,22 @@
  */
 
 // Provides control sap.tnt.ToolHeader
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
-		'sap/m/OverflowToolbar', 'sap/m/OverflowToolbarAssociativePopover'],
-	function(jQuery, library, Control, OverflowToolbar, OverflowToolbarAssociativePopover) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/m/OverflowToolbar',
+    'sap/m/OverflowToolbarAssociativePopover',
+    "./ToolHeaderRenderer"
+],
+	function(
+	    jQuery,
+		library,
+		Control,
+		OverflowToolbar,
+		OverflowToolbarAssociativePopover,
+		ToolHeaderRenderer
+	) {
 		"use strict";
 
 
@@ -18,11 +31,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 		 * @class
 		 *
 		 * The ToolHeader control is a horizontal container that is most
-		 * commonly used to display buttons, labels, selects and other various input controls.
-		 *
-		 * The ToolHeader control is based on sap.m.OverflowToolbar. In addition to the OverflowToolbar,
-		 * the user can specify where the overflow button is placed.
-		 *
+		 * commonly used to display buttons, labels, and other various input controls.
+		 * <h4>Overview</h4>
+		 * The ToolHeader control is based on {@link sap.m.OverflowToolbar}. It contains clearly structured menus of commands that are available across the various apps within the same tool layout.
+		 * <h4>Usage</h4>
+		 * <ul>
+		 * <li>If an app implements side navigation in addition to the tool header menu, the menu icon must be the first item on the left-hand side of the tool header.</li>
+		 * <li>The app menu and the side navigation must not have any dependencies and must work independently.</li>
+		 * </ul>
 		 * @extends sap.m.OverflowToolbar
 		 *
 		 * @author SAP SE
@@ -32,6 +48,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 		 * @public
 		 * @since 1.34
 		 * @alias sap.tnt.ToolHeader
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/tool-header/ Tool Header}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var ToolHeader = OverflowToolbar.extend("sap.tnt.ToolHeader", /** @lends sap.tnt.ToolHeader.prototype */ {
@@ -55,8 +72,6 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control',
 			OverflowToolbar.prototype.init.apply(this, arguments);
 
 			this.addStyleClass('sapTntToolHeader sapContrast sapContrastPlus');
-
-			this.setHTMLTag(sap.m.IBarHTMLTag.Header);
 		};
 
 		/**

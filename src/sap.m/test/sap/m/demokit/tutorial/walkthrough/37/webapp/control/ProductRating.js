@@ -6,7 +6,7 @@ sap.ui.define([
 ], function (Control, RatingIndicator, Label, Button) {
 	"use strict";
 
-	return Control.extend("sap.ui.demo.wt.control.ProductRating", {
+	return Control.extend("sap.ui.demo.walkthrough.control.ProductRating", {
 
 		metadata: {
 			properties: {
@@ -35,23 +35,33 @@ sap.ui.define([
 			}));
 			this.setAggregation("_label", new Label({
 				text: "{i18n>productRatingLabelInitial}"
-			}).addStyleClass("sapUiTinyMargin"));
+			}).addStyleClass("sapUiSmallMargin"));
 			this.setAggregation("_button", new Button({
 				text: "{i18n>productRatingButton}",
 				press: this._onSubmit.bind(this)
-			}));
+			}).addStyleClass("sapUiTinyMarginTopBottom"));
 		},
 
-		setValue: function (iValue) {
-			this.setProperty("value", iValue, true);
-			this.getAggregation("_rating").setValue(iValue);
+		setValue: function (fValue) {
+			this.setProperty("value", fValue, true);
+			this.getAggregation("_rating").setValue(fValue);
+		},
+
+		reset: function () {
+			var oResourceBundle = this.getModel("i18n").getResourceBundle();
+
+			this.setValue(0);
+			this.getAggregation("_label").setDesign("Standard");
+			this.getAggregation("_rating").setEnabled(true);
+			this.getAggregation("_label").setText(oResourceBundle.getText("productRatingLabelInitial"));
+			this.getAggregation("_button").setEnabled(true);
 		},
 
 		_onRate: function (oEvent) {
 			var oRessourceBundle = this.getModel("i18n").getResourceBundle();
 			var fValue = oEvent.getParameter("value");
 
-			this.setValue(fValue);
+			this.setProperty("value", fValue, true);
 
 			this.getAggregation("_label").setText(oRessourceBundle.getText("productRatingLabelIndicator", [fValue, oEvent.getSource().getMaxValue()]));
 			this.getAggregation("_label").setDesign("Bold");

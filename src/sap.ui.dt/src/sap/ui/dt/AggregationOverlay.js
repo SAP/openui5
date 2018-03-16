@@ -5,11 +5,19 @@
 // Provides class sap.ui.dt.AggregationOverlay.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/dt/Overlay'
+	'sap/ui/dt/Overlay',
+	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/ElementUtil',
+	'sap/ui/dt/Util'
 ],
-function(jQuery, Overlay) {
+function(
+	jQuery,
+	Overlay,
+	OverlayRegistry,
+	ElementUtil,
+	Util
+) {
 	"use strict";
-
 
 	/**
 	 * Constructor for an AggregationOverlay.
@@ -33,9 +41,6 @@ function(jQuery, Overlay) {
 	 */
 	var AggregationOverlay = Overlay.extend("sap.ui.dt.AggregationOverlay", /** @lends sap.ui.dt.AggregationOverlay.prototype */ {
 		metadata : {
-			// ---- object ----
-
-			// ---- control specific ----
 			library : "sap.ui.dt",
 			properties : {
 				/**
@@ -50,23 +55,9 @@ function(jQuery, Overlay) {
 				targetZone : {
 					type : "boolean",
 					defaultValue : false
-				}
-			},
-			aggregations : {
-				/**
-				 * Overlays for the elements, which are public children of this aggregation
-				 */
-				children : {
-					type : "sap.ui.dt.Overlay",
-					multiple : true
 				},
-				/**
-				 * [designTimeMetadata description]
-				 * @type {Object}
-				 */
-				designTimeMetadata : {
-					type : "sap.ui.dt.AggregationDesignTimeMetadata",
-					multiple : false
+				scrollContainerId: {
+					type: "int"
 				}
 			},
 			events : {
@@ -83,13 +74,136 @@ function(jQuery, Overlay) {
 	});
 
 	/**
+	 * @override
+	 */
+	AggregationOverlay.prototype._getAttributes = function () {
+		return jQuery.extend(
+			true,
+			{},
+			Overlay.prototype._getAttributes.apply(this, arguments),
+			{
+				"data-sap-ui-dt-aggregation": this.getAggregationName()
+			}
+		);
+	};
+
+	/**
+	 * Gets the current position of the provided child (ElementOverlay) in DOM
+	 * @param {sap.ui.dt.ElementOverlay} oChild - Lookup ElementOverlay
+	 * @return {number} - position index in DOM
+	 */
+	AggregationOverlay.prototype._getChildIndex = function (oChild) {
+		var aChildren = this.getChildren();
+
+		var oPreviousSibling;
+		var iPreviousSiblingWithDomIndex = aChildren.indexOf(oChild) - 1;
+
+		while (iPreviousSiblingWithDomIndex > 0) {
+			oPreviousSibling = aChildren[iPreviousSiblingWithDomIndex];
+
+			if (oPreviousSibling.isRendered()) {
+				break;
+			}
+
+			iPreviousSiblingWithDomIndex--;
+		}
+
+		return iPreviousSiblingWithDomIndex < 0 ? 0 : iPreviousSiblingWithDomIndex + 1;
+	};
+
+	/**
+	 * @override
+	 */
+	AggregationOverlay.prototype.insertChild = function (iPosition, oChild) {
+		/**
+		 * Legend:
+		 * iPosition - position in aggregation/association
+		 * iPreviousPosition - previous position in aggregation/association
+		 * iPositionInDom - position in DOM
+		 * iCurrentPosition - previous position in DOM
+		 */
+		if (!(Util.isInteger(iPosition))) {
+			iPosition = ElementUtil[this.isAssociation() ? 'getIndexInAssociation' : 'getIndexInAggregation'](
+				oChild.getElement(),
+				this.getElement(),
+				this.getAggregationName()
+			);
+		}
+
+		var iPreviousPosition = this.indexOfAggregation('children', oChild);
+
+		if (iPreviousPosition !== iPosition) {
+			// when child is already inside the aggregation but on different position, we need to remove it first
+			if (iPreviousPosition > -1) {
+				this.removeAggregation('children', oChild);
+			}
+			this.insertAggregation('children', oChild, iPosition);
+
+			if (this.isRendered()) {
+				var iPositionInDom = this._getChildIndex(oChild);
+				var $Child = oChild.isRendered() ? oChild.$() : oChild.render(true);
+				var iCurrentPosition = this._$children.find('>').index($Child);
+				var iInsertIndex;
+
+				if (iCurrentPosition !== iPositionInDom) {
+					if (iPositionInDom > 0) {
+						iInsertIndex = iCurrentPosition > -1 && iCurrentPosition < iPositionInDom ? iPositionInDom : iPositionInDom - 1;
+						this._$children.find('>').eq(iInsertIndex).after($Child);
+					} else {
+						iInsertIndex = iPositionInDom; // === 0
+						this._$children.prepend($Child);
+					}
+				}
+
+				oChild.fireAfterRendering({
+					domRef: $Child.get(0)
+				});
+			}
+
+			this.fireChildAdded();
+		}
+	};
+
+	/**
+	 * @override
+	 */
+	AggregationOverlay.prototype.addChild = function (oChild, bSuppressedEvent) {
+		this.insertChild(this.getChildren().length, oChild);
+
+		if (!bSuppressedEvent) {
+			this.fireChildAdded();
+		}
+	};
+
+	/**
+	 * @override
+	 */
+	AggregationOverlay.prototype.render = function () {
+		if (this.getChildren().length > 0 || this.getDesignTimeMetadata().getDomRef()) {
+			this.addStyleClass('sapUiDtAggregationOverlay');
+			return Overlay.prototype.render.apply(this, arguments);
+		}
+	};
+
+	/**
+	 * @override
+	 */
+	AggregationOverlay.prototype._getRenderingParent = function () {
+		if (Util.isInteger(this.getScrollContainerId())) {
+			return this.getParent().getScrollContainerByIndex(this.getScrollContainerId());
+		} else {
+			return Overlay.prototype._getRenderingParent.apply(this, arguments);
+		}
+	};
+
+	/**
 	 * Returns a DOM representation for an aggregation, associated with this AggregationOverlay, if it can be found or undefined
 	 * Representation is searched in DOM based on DesignTimeMetadata defined for the parent Overlay
 	 * @return {jQuery} Associated with this AggregationOverlay DOM Element or null, if it can't be found
 	 * @public
 	 */
 	AggregationOverlay.prototype.getAssociatedDomRef = function() {
-		var oElement = this.getElementInstance();
+		var oElement = this.getElement();
 		var sAggregationName = this.getAggregationName();
 		var oDesignTimeMetadata = this.getDesignTimeMetadata();
 
@@ -127,12 +241,12 @@ function(jQuery, Overlay) {
 	};
 
 	/**
-	 * Returns an array with Overlays for the public children of the aggregation, associated with this AggregationOverlay
-	 * @return {sap.ui.dt.Overlay[]} children Overlays
+	 * Returns if the AggregationOverlay is an association
 	 * @public
+	 * @return {boolean} if the AggregationOverlay is an association
 	 */
-	AggregationOverlay.prototype.getChildren = function() {
-		return this.getAggregation("children") || [];
+	AggregationOverlay.prototype.isAssociation = function() {
+		return !!this.getDesignTimeMetadata().getData().aggregationLike;
 	};
 
 	return AggregationOverlay;

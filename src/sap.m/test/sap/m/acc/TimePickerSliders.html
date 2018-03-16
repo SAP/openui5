@@ -1,0 +1,34 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>TimePickerSliders - sap.m</title>
+	<script src="../shared-config.js"></script>
+	<script src="../../../../resources/sap-ui-core.js"
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m"
+	        data-sap-ui-xx-bindingSyntax="complex">
+	</script>
+	<script>
+		new sap.m.App({
+			pages: [
+				new sap.m.Page({
+					enabledScrolling: false,
+					title: "TimePickerSliders accessibility example",
+					content: new sap.m.Panel({
+						headerText: "sap.m.TimePickerSliders in a standalone scenario",
+						expandable: false,
+						height: "300px",
+						content: new sap.m.TimePickerSliders({
+							change: function (oEvent) {
+								sap.m.MessageToast.show("Selected time: " + oEvent.getParameter("value"))
+							}
+						})
+					})
+				})
+			]
+		}).placeAt("content");
+	</script>
+</head>
+<body id="content" class="sapUiBody" role="application"></body>
+</html>

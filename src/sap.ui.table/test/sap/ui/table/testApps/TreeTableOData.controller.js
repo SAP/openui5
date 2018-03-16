@@ -5,15 +5,37 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Text",
 	"sap/m/TextArea",
-	"sap/m/Button"
-], function (Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button) {
+	"sap/m/Button",
+	"sap/m/MessagePopover",
+	"sap/m/MessagePopoverItem"
+], function (Controller, MessageToast, JSONModel, Dialog, Text, TextArea, Button, MessagePopover, MessagePopoverItem) {
 	"use strict";
 
 	var oTable;
 
+	var oMessageTemplate = new MessagePopoverItem({
+		type: '{type}',
+		title: '{message}',
+		description: '{code}',
+		subtitle: '{subtitle}',
+		counter: '{counter}'
+	});
+
+	var oMessagePopover = new MessagePopover({
+		items: {
+			path: '/',
+			template: oMessageTemplate
+		}
+	});
+
 	return Controller.extend("sap.ui.table.testApps.TreeTableOData", {
 
 		onInit: function () {
+			this._oMessageManager = sap.ui.getCore().getMessageManager();
+			var oMessageModel = this._oMessageManager.getMessageModel();
+
+			oMessagePopover.setModel(oMessageModel);
+
 			var oFormData = {
 				serviceURL: "odataFake",
 				collection: "/orgHierarchy",
@@ -29,6 +51,7 @@ sap.ui.define([
 				filterOperator: "Contains",
 				filterValue: "",
 				useLocalMetadata: true,
+				restoreTreeStateAfterChange: true,
 				hierarchyLevelFor: "LEVEL",
 				hierarchyParentNodeFor: "PARENT_NODE",
 				hierarchyNodeFor: "HIERARCHY_NODE",
@@ -148,6 +171,8 @@ sap.ui.define([
 
 			this.aVisibleRow.push(oVisibleRow);
 
+			var bRestoreTreeStateAfterChange = oView.byId("restoreTreeStateAfterChange").getSelected();
+
 			/**
 			 * Clear the Table and rebind it
 			 */
@@ -185,6 +210,7 @@ sap.ui.define([
 			// clean up model & create new one
 			if (this.oODataModel) {
 				this.oODataModel.destroy();
+				this._oMessageManager.unregisterMessageProcessor(this.oODataModel);
 			}
 			this.oODataModel = new sap.ui.model.odata.v2.ODataModel(sServiceUrl, {
 				json: true,
@@ -192,6 +218,16 @@ sap.ui.define([
 				disableHeadRequestForToken: true,
 				tokenHandling: true
 			});
+
+			this.oODataModel.attachMessageChange(function(oEvent) {
+				var counter = oEvent.getParameter("newMessages").length;
+				if (counter > 0) {
+					this.byId("btn_messagePopover").setText(counter);
+				}
+			}.bind(this));
+
+			this._oMessageManager.registerMessageProcessor(this.oODataModel);
+
 			this.oODataModel.setDefaultCountMode("Inline");
 
 			this.ensureCorrectChangeGroup(sEntityType);
@@ -214,7 +250,8 @@ sap.ui.define([
 						hierarchyNodeFor: sHierarchyNodeFor,
 						hierarchyDrillStateFor: sHierarchyDrillStateFor,
 						hierarchyNodeDescendantCountFor: sHierarchyDescendantCountFor
-					} : undefined
+					} : undefined,
+					restoreTreeStateAfterChange: bRestoreTreeStateAfterChange
 				}
 			});
 
@@ -361,7 +398,7 @@ sap.ui.define([
 		 * Create new node
 		 */
 		onCreate: function() {
-			var oTable = this.getView().byId("tableOData");
+			var oTable = this.byId("tableOData");
 			var iSelectedIndex = oTable.getSelectedIndex();
 			var oViewModel = this.getView().getModel();
 
@@ -457,7 +494,7 @@ sap.ui.define([
 		 * Paste logic
 		 */
 		onPaste: function () {
-			var oTable = this.getView().byId("tableOData");
+			var oTable = this.byId("tableOData");
 			var iSelectedIndex = oTable.getSelectedIndex();
 			if (this._oClipboardModel && iSelectedIndex != -1) {
 				this.openClipboard();
@@ -512,34 +549,35 @@ sap.ui.define([
 					// re-setup and clear the clipboard
 					this.setupCutAndPaste();
 
-					// check if the change responses are missing --> at least one change failed
-					if (oData.__batchResponses && oData.__batchResponses[0] &&
-						!oData.__batchResponses[0].__changeResponses) {
-						// check for error message
-						var iStatusCode = parseInt(oData.__batchResponses[0].response.statusCode, 10);
-						if (iStatusCode < 200 || iStatusCode > 299) {
-							var sErrorCode = "";
-							var sErrorMessage = "";
-							try {
-								var oErrorObj = JSON.parse(oData.__batchResponses[0].response.body);
-								sErrorCode = oErrorObj.error.code;
-								sErrorMessage = oErrorObj.error.message.value;
-							} catch (e) {
-								sErrorCode = "Unknown Error";
-								sErrorMessage = "A service error occured. The error message could not be formatted correctly.";
-							}
-							this.showErrorDialogue(sErrorCode, sErrorMessage);
-						}
-					}
-
 				}.bind(this),
 				error: function (oEvent) {
-					this.showErrorDialogue("error");
 					oTable.setBusy(false);
 				}
 			});
 			// scroll to top after submitting
 			oTable.setFirstVisibleRow(0);
+		},
+
+		/**
+		 * Submit the changes on the model
+		 */
+		onRefreshAndRestore: function () {
+			MessageToast.show("Refreshing and restoring...");
+			var oBinding = oTable.getBinding();
+
+			oTable.setBusyIndicatorDelay(1);
+			oTable.setEnableBusyIndicator(true);
+			oTable.setBusy(true);
+
+			// send collected change data to the back-end
+			oBinding._restoreTreeState().then(
+				function () {
+					// remove busy state of table
+					oTable.setBusy(false);
+				},
+				function (oEvent) {
+					oTable.setBusy(false);
+				});
 		},
 
 		/**
@@ -605,6 +643,49 @@ sap.ui.define([
 		 */
 		onRestoreTreeState: function () {
 			this.onCreateTableClick(undefined, this._oTreeState);
+		},
+
+		onDragStart: function(oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession");
+			var oDraggedRow = oEvent.getParameter("target");
+			var iDraggedRowIndex = oDraggedRow.getIndex();
+			var aSelectedIndices = oTable.getSelectedIndices();
+			var aDraggedRowContexts = [];
+
+			if (aSelectedIndices.length > 0) {
+				// If rows are selected, do not allow to start dragging from a row which is not selected.
+				if (aSelectedIndices.indexOf(iDraggedRowIndex) === -1) {
+					oEvent.preventDefault();
+				} else {
+					aSelectedIndices.forEach(function(iSelectedIndex) {
+						aDraggedRowContexts.push(oTable.getContextByIndex(iSelectedIndex));
+					});
+				}
+			} else {
+				aDraggedRowContexts.push(oTable.getContextByIndex(iDraggedRowIndex));
+			}
+
+			oDragSession.setComplexData("hierarchymaintenance", {
+				draggedRowContexts: aDraggedRowContexts
+			});
+		},
+
+		onDrop: function(oEvent) {
+			var oDragSession = oEvent.getParameter("dragSession");
+			var oDroppedRow = oEvent.getParameter("droppedControl");
+			var aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
+
+			if (aDraggedRowContexts.length > 0) {
+				var oBinding = oTable.getBinding("rows");
+				var oNewParentContext = oTable.getContextByIndex(oDroppedRow.getIndex());
+
+				if (oNewParentContext != null) {
+					for (var i = 0; i < aDraggedRowContexts.length; i++) {
+						oBinding.removeContext(aDraggedRowContexts[i]);
+					}
+					oBinding.addContexts(oNewParentContext, aDraggedRowContexts);
+				}
+			}
 		},
 
 		/**
@@ -698,6 +779,11 @@ sap.ui.define([
 				oLink.download = sFileName;
 				oLink.click();
 			}
+		},
+
+		handleMessagePopoverPress: function(oEvent) {
+			oEvent.getSource().setText("");
+			oMessagePopover.toggle(oEvent.getSource());
 		}
 	});
 });

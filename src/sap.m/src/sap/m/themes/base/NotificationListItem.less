@@ -54,7 +54,6 @@
 	display: inline-block;
 	font-size: @sapMFontLargeSize;
 	font-weight: normal;
-	line-height: normal;
 	margin-bottom: 0.25rem;
 	margin-right: 2rem;
 	white-space: normal;
@@ -71,7 +70,6 @@
   ========================================================================== */
 
 .sapMNLI-Body {
-
 	display: -webkit-box;
 	display: -webkit-flex;
 	display: flex;
@@ -168,11 +166,11 @@ html[data-sap-ui-browser*='ie'] .sapMNLI-Footer .sapMBtnInner {
 
 .sapMNLI-TextWrapper {
 	max-height: 2rem;
+	overflow: hidden;
 }
 
 .sapMNLI-TextWrapper--is-expanded,
 .sapMNLI-TitleWrapper--is-expanded {
-
 	max-height: none;
 	.sapMTextMaxLine {
 		-webkit-line-clamp: initial !important;

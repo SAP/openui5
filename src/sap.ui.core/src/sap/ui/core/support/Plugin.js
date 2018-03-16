@@ -16,7 +16,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	 * @abstract
 	 * @extends sap.ui.base.Object
 	 * @version ${version}
-	 * @constructor
 	 * @private
 	 * @sap-restricted
 	 * @alias sap.ui.core.support.Plugin
@@ -95,7 +94,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 	Plugin.prototype.getTitle = function(){
 		return this._title;
 	};
-
 
 	/**
 	 * Returns whether a plugin instance can run in the diagnostics tool window, default is <code>true</code>.

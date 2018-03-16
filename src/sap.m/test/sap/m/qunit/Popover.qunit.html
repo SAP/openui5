@@ -1005,6 +1005,24 @@
 			oPopover.destroy();
 		});
 
+		QUnit.test("Scrolling is properly disabled", function (assert){
+			var oPopover = new sap.m.Popover({
+				content: [
+					new sap.m.Button({text: 'text1'}),
+					new sap.m.Button({text: 'text2'}),
+					new sap.m.Button({text: 'text2'})
+				],
+				verticalScrolling: false,
+				horizontalScrolling: false,
+				enableScrolling: false
+			});
+
+			oPopover.openBy(oButton);
+			assert.ok(!oPopover.getScrollDelegate(), "Scrolling is properly disabled");
+
+			oPopover.destroy();
+		});
+
 		QUnit.test("Enable content scrolling even with NavContainer as content in Popover", function (assert){
 			var oPopover = new sap.m.Popover({
 				content: new sap.m.NavContainer({
@@ -1429,6 +1447,10 @@
 
 
 		QUnit.module("Internal methods");
+
+		QUnit.test("_getAnimationDuration", function (assert) {
+			assert.strictEqual(sap.m.Popover.prototype._getAnimationDuration(), 300, "Default Duration should be 300");
+		});
 
 		QUnit.test("_applyPosition should be called with two parameters from check docking", function (assert){
 			var oPopover = new sap.m.Popover(),
@@ -2094,6 +2116,40 @@
 
 			//Clean
 			oPopover.destroy();
+		});
+
+		QUnit.test("Do not fire close events when already closed.", function (assert) {
+			// Setup
+			var oPopover = new sap.m.Popover(),
+				oButton = new sap.m.Button(),
+				beforeCloseSpy = this.spy(),
+				afterCloseSpy = this.spy();
+
+			oPopover.oPopup.touchEnabled = true;
+			oButton.addDependent(oPopover);
+			oButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			oPopover.attachBeforeClose(beforeCloseSpy);
+			oPopover.attachAfterClose(afterCloseSpy);
+
+			//Act
+			oPopover.openBy(oButton);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(1000);
+
+			oPopover.oPopup.close();
+			oPopover.oPopup.close();
+			this.clock.tick(1000);
+
+			// Assert
+			assert.strictEqual(beforeCloseSpy.callCount, 1, "Should be called only once during the first call.");
+			assert.strictEqual(afterCloseSpy.callCount, 1, "Should be called only once during the first call.");
+
+			// Cleanup
+			oButton.destroy();
+			oButton = null;
+			oPopover = null;
 		});
 	</script>
 </head>

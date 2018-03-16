@@ -90,6 +90,11 @@
 
 		// test property accessor methods
 
+		QUnit.test("VerticalAlignOk", function(assert) {
+			assert.strictEqual(l1.getVAlign(), "Inherit", "l1.getVAlign() returns result: " + l1.getVAlign());
+			assert.strictEqual(l2.getVAlign(), "Inherit", "l2.getVAlign() returns result: " + l2.getVAlign());
+		});
+
 		QUnit.test("TextOk", function(assert) {
 			assert.strictEqual(l1.getText(), sText, "l1.getText() returns result: " + l1.getText());
 			assert.strictEqual(l2.getText(), sText, "l2.getText() returns result: " + l2.getText());
@@ -116,6 +121,18 @@
 			assert.strictEqual(l2.getDesign(), oBoldDesign, "l2.getDesign() returns result: " + l2.getDesign());
 		});
 
+		QUnit.test("Should set vertical alignment", function(assert) {
+			var sVerticalAlign = l1.getVAlign();
+
+			assert.strictEqual(l1.getVAlign(), "Inherit", "should have vertical-align: inherit set as default");
+
+			l1.setVAlign(sap.ui.core.VerticalAlign.Top);
+
+			assert.ok(l1.$().attr("vertical-align", "top"), "should have vertical-align set on the DOM element");
+
+			l1.setVAlign(sap.ui.core.VerticalAlign.Inherit);
+		});
+
 		QUnit.test("When width is not set max-width should apply to control", function(assert) {
 			var sut = new sap.m.Label({text : "text"}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -125,6 +142,47 @@
 			sap.ui.getCore().applyChanges();
 			assert.ok(!sut.$().hasClass("sapMLabelMaxWidth"), "Label has width and does not have max width restriction.");
 		});
+
+		QUnit.test("Label wrapping", function(assert) {
+
+			assert.strictEqual(l1.getWrapping(), false, "Has to be set to false.");
+			assert.strictEqual(l2.getWrapping(), false, "Has to be set to false.");
+
+			assert.strictEqual(l1.$().hasClass("sapMLabelWrapped"), false, "Doesn't have a class set.");
+			assert.strictEqual(l2.$().hasClass("sapMLabelWrapped"), false, "Doesn't have a class set.");
+
+			l1.setWrapping(true);
+			l2.setWrapping(true);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(l1.getWrapping(), true, "Has to be set to true.");
+			assert.strictEqual(l2.getWrapping(), true, "Has to be set to true.");
+
+			assert.strictEqual(l1.$().hasClass("sapMLabelWrapped"), true, "Has the appropriate class set.");
+			assert.strictEqual(l2.$().hasClass("sapMLabelWrapped"), true, "Has the appropriate class set.");
+
+			//reset values
+			l1.setWrapping(false);
+			l2.setWrapping(false);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(l1.getWrapping(), false, "Has to be set to false.");
+			assert.strictEqual(l2.getWrapping(), false, "Has to be set to false.");
+
+			assert.strictEqual(l1.$().hasClass("sapMLabelWrapped"), false, "Doesn't have a class set.");
+			assert.strictEqual(l2.$().hasClass("sapMLabelWrapped"), false, "Doesn't have a class set.");
+
+			l2.setWrapping(true);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(l2.getWrapping(), true, "Has to be set to true.");
+
+			assert.strictEqual(l2.$().hasClass("sapMLabelWrapped"), true, "Has the appropriate class set.");
+
+			//reset value
+			l2.setWrapping(false);
+			sap.ui.getCore().applyChanges();
+		})
 
 		QUnit.module("tooltip");
 
@@ -213,26 +271,214 @@
 
 		});
 
-		QUnit.module("Accessibility");
+		QUnit.module("Accessibility", {
+		    beforeEach: function() {
+		        this.label = new sap.m.Label({text: "Label"});
+		        this.label.placeAt("qunit-fixture");
+		        sap.ui.getCore().applyChanges();
+		    },
+		    afterEach: function() {
+		        this.label.destroy();
+		        this.label = null;
+		    }
+		});
 
 		QUnit.test("getAccessibilityInfo", function(assert) {
-			var oControl = new sap.m.Label({text: "Text"});
-			assert.ok(!!oControl.getAccessibilityInfo, "Label has a getAccessibilityInfo function");
-			var oInfo = oControl.getAccessibilityInfo();
+			assert.ok(!!this.label.getAccessibilityInfo, "Label has a getAccessibilityInfo function");
+			var oInfo = this.label.getAccessibilityInfo();
 			assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 			assert.strictEqual(oInfo.role, undefined, "AriaRole");
 			assert.strictEqual(oInfo.type, undefined, "Type");
-			assert.strictEqual(oInfo.description, "Text", "Description");
+			assert.strictEqual(oInfo.description, "Label", "Description");
 			assert.strictEqual(oInfo.focusable, undefined, "Focusable");
 			assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 			assert.strictEqual(oInfo.editable, undefined, "Editable");
-			oControl.destroy();
 		});
+
+		QUnit.test("Label rendering when no labelFor association is set", function (assert) {
+			assert.strictEqual(this.label.getDomRef() instanceof HTMLSpanElement, true, "Should be rendered as a span element");
+		});
+
+		QUnit.test("Label rendering when labelFor association is set", function (assert) {
+			var oInput = new sap.m.Input().placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			this.label.setLabelFor(oInput);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.label.getDomRef() instanceof HTMLLabelElement, true, "Should be rendered as a label element");
+
+			oInput.destroy();
+		});
+
+		QUnit.test("Label rendering when labelFor association is set to non-labelable control", function (assert) {
+			var oLink = new sap.m.Link({text: "text"}).placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			this.label.setLabelFor(oLink);
+
+			assert.strictEqual(this.label.getDomRef() instanceof HTMLSpanElement, true,
+					"Should be rendered as a span element when the labelFor points to a non-labelable control");
+
+			oLink.destroy();
+		});
+
+		QUnit.module("DisplayOnly mode", {
+		    beforeEach: function() {
+		        this.label = new sap.m.Label({text: "Sample Label"});
+		        this.label.placeAt("qunit-fixture");
+			    sap.ui.getCore().applyChanges();
+		    },
+		    afterEach: function() {
+		        this.label.destroy();
+		        this.label = null;
+		    }
+		});
+
+		QUnit.test("Initial value", function (assert) {
+			assert.strictEqual(this.label.getDisplayOnly(), false, "The property displayOnly should be false by default.")
+		});
+
+		QUnit.test("Setting the displayOnly property", function (assert) {
+			var afterRenderingSpy = sinon.spy(this.label, "onAfterRendering");
+
+			var result = this.label.setDisplayOnly(true);
+
+			assert.strictEqual(this.label.getDisplayOnly(), true, "The property displayOnly should be set tot true");
+			assert.strictEqual(result, this.label, "Setter should return this for chaining");
+			assert.strictEqual(this.label.$().hasClass("sapMLabelDisplayOnly"), true, "The right class should be applied");
+			assert.strictEqual(afterRenderingSpy.callCount, 0, "The change should not cause rerendering");
+
+			this.label.onAfterRendering.restore();
+		});
+
+		jQuery.sap.require("sap.ui.layout.form.Form");
+		jQuery.sap.require("sap.ui.layout.form.FormRenderer");
+		jQuery.sap.require("sap.ui.layout.form.FormLayout");
+		jQuery.sap.require("sap.ui.layout.form.FormLayoutRenderer");
+		jQuery.sap.require("sap.ui.layout.form.FormContainer");
+		jQuery.sap.require("sap.ui.layout.form.FormElement");
+
+		QUnit.module("DisplayOnlyForm", {
+			beforeEach: function() {
+				var formLayout = new sap.ui.layout.form.FormLayout("FL1");
+				this.form = new sap.ui.layout.form.Form("F1", {
+					layout: formLayout
+				}).placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				if (this.form) {
+					this.form.destroy();
+					this.form = undefined;
+				}
+			}
+		});
+
+		QUnit.test("Aria", function(assert) {
+			var formContainer1 = new sap.ui.layout.form.FormContainer("FC1");
+			var formElement1 = new sap.ui.layout.form.FormElement("FE1");
+			formElement1.setLabel("Test1");
+			var field1 = new sap.m.Text("Text1", {
+				text: 'Display Value'
+			});
+			formElement1.addField(field1);
+
+			formContainer1.addFormElement(formElement1);
+			this.form.addFormContainer(formContainer1);
+			sap.ui.getCore().applyChanges();
+
+			assert.equal(this.form.$().find('.sapUiFormElement.sapUiFormElementLbl').text(), 'Test1:Display Value', '":" span is added.');
+		});
+
+		QUnit.module("Label in Overflow Toolbar", {
+			beforeEach: function () {
+				this.clock = sinon.useFakeTimers();
+			},
+
+			afterEach: function () {
+				this.clock.restore();
+			}
+		});
+
+		QUnit.test("Grouped labels are identified", function (assert) {
+			var oSingleLabel = new sap.m.Label({ text: "Single label"}),
+				oGroupedLabel = new sap.m.Label({
+				text: "Label For Control",
+					layoutData: new sap.m.OverflowToolbarLayoutData({group: 1}),
+					labelFor: "labelledControlId"
+				}),
+				oLabelledControl = new sap.m.Input("labelledControlId", {layoutData: new sap.m.OverflowToolbarLayoutData({group: 1})}),
+
+				aToolbarContent = [
+					new sap.m.ToolbarSpacer(),
+					oSingleLabel,
+					oGroupedLabel,
+					oLabelledControl
+				],
+				oOverflowTB = new sap.m.OverflowToolbar({width: 'auto', content: aToolbarContent});
+
+			oOverflowTB.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oOverflowTB.setWidth('10px'); // set small width that causes all content to move to the overflow
+			this.clock.tick(1000);
+
+			assert.strictEqual(oGroupedLabel.hasStyleClass("sapMLabelMediumMarginTop"), true, "grouped label is correctly marked in the overflow");
+			assert.strictEqual(oSingleLabel.hasStyleClass("sapMLabelMediumMarginTop"), false, "non-grouped label is correctly marked in the overflow");
+
+			// remove the labelled control
+			oOverflowTB.removeContent(oLabelledControl);
+			this.clock.tick(1000);
+
+			assert.strictEqual(oGroupedLabel.hasStyleClass("sapMLabelMediumMarginTop"), false, "grouped label is correctly marked in the overflow");
+
+			oOverflowTB.destroy();
+			oLabelledControl.destroy();
+		});
+
+		QUnit.module("LabelFor with non-labelable controls", {
+			beforeEach: function () {
+				this.select = new sap.m.Select('select1', {
+					items: [
+						new sap.ui.core.Item({text: 'item 1'}),
+						new sap.ui.core.Item({text: 'item 2'}),
+						new sap.ui.core.Item({text: 'item 3'})
+					]
+				}).placeAt('qunit-fixture');
+
+				this.label = new sap.m.Label('label1', {
+					text: 'Hello World'
+				}).placeAt('qunit-fixture');
+
+				sap.ui.getCore().applyChanges();
+			},
+
+			afterEach: function () {
+				this.select.destroy();
+				this.label.destroy();
+			}
+		});
+
+		QUnit.test("aria-labelledby is correctly set", function (assert) {
+			var ariaLabelledby = this.select.$().attr('aria-labelledby');
+
+			assert.equal(ariaLabelledby.indexOf(this.label.getId()), -1, "aria-labelledby doesn't contain label id");
+
+			this.label.setLabelFor(this.select);
+
+			sap.ui.getCore().applyChanges();
+
+			ariaLabelledby = this.select.$().attr('aria-labelledby');
+
+			assert.equal(ariaLabelledby.indexOf(this.label.getId()) > -1, true, "aria-labelledby contains label id");
+		});
+
 		</script>
 
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for sap.ui.m.Label</h1>
+		<h1 id="qunit-header">QUnit page for sap.m.Label</h1>
 		<h2 id="qunit-banner"></h2>
 	 	<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>

@@ -1,0 +1,11 @@
+<core:FragmentDefinition 
+	xmlns:m="sap.m" 
+	xmlns:core="sap.ui.core" 
+	xmlns:comp="forwardingComposites">
+	<m:VBox>
+		<comp:ControlContainer id="innerControlContainer" />
+		<m:VBox items="{path:'$this>texts', filters:{path:'text', operator:'Contains', value1:'Text'}, sorter:{path:'text', descending:true}}">
+			<m:Text text="{$this>text}" />
+		</m:VBox>
+		<m:VBox id="innerVBoxLinks"/></m:VBox>
+</core:FragmentDefinition>

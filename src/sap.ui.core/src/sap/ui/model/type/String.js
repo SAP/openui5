@@ -19,7 +19,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/For
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @param {object} [oFormatOptions] formatting options. String doesn't support any formatting options
 	 * @param {object} [oConstraints] value constraints. All given constraints must be fulfilled by a value to be valid
@@ -156,7 +155,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/SimpleType', 'sap/ui/model/For
 				}
 			});
 			if (aViolatedConstraints.length > 0) {
-				throw new ValidateException(aMessages.join(" "), aViolatedConstraints);
+				throw new ValidateException(this.combineMessages(aMessages), aViolatedConstraints);
 			}
 		}
 	};

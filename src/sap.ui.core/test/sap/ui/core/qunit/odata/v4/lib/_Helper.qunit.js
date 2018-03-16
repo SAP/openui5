@@ -3,10 +3,11 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, _Helper, TestUtils, URI) {
+], function (jQuery, SyncPromise, _Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
@@ -14,14 +15,98 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Helper", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createGetMethod, not throwing", function (assert) {
+		var aArguments = ["foo", "bar"],
+			oResult = {},
+			oSyncPromise = SyncPromise.resolve(oResult),
+			oContext = {
+				fetch : function () {
+					assert.strictEqual(this, oContext);
+					assert.deepEqual(Array.prototype.slice.call(arguments), aArguments);
+					return oSyncPromise;
+				}
+			},
+			fnGet;
+
+		// code under test
+		// Note: passing the function's name instead of reference allows for dynamic dispatch, thus
+		// making a mock for "fetch*" possible in the first place
+		fnGet = _Helper.createGetMethod("fetch");
+
+		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
+		this.mock(oSyncPromise).expects("isFulfilled").returns(false);
+		assert.strictEqual(fnGet.apply(oContext, aArguments), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createGetMethod, throwing", function (assert) {
+		var aArguments = ["foo", "bar"],
+			oResult = {},
+			oSyncPromise = SyncPromise.resolve(oResult),
+			oContext = {
+				fetch : function () {
+					assert.strictEqual(this, oContext);
+					assert.deepEqual(Array.prototype.slice.call(arguments), aArguments);
+					return oSyncPromise;
+				}
+			},
+			fnGet,
+			oSyncPromiseMock = this.mock(oSyncPromise);
+
+		// code under test
+		fnGet = _Helper.createGetMethod("fetch", true);
+
+		// fulfilled
+		assert.strictEqual(fnGet.apply(oContext, aArguments), oResult);
+
+		// pending
+		oSyncPromiseMock.expects("isFulfilled").returns(false);
+		oSyncPromiseMock.expects("isRejected").returns(false);
+		assert.throws(function () {
+			fnGet.apply(oContext, aArguments);
+		}, new Error("Result pending"));
+
+		// verify and restore
+		oSyncPromiseMock.verify();
+		oSyncPromiseMock = this.mock(oSyncPromise);
+
+		// rejected
+		oSyncPromiseMock.expects("isFulfilled").returns(false);
+		oSyncPromiseMock.expects("isRejected").returns(true);
+		oSyncPromiseMock.expects("caught");
+		assert.throws(function () {
+			fnGet.apply(oContext, aArguments);
+		}, oResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createRequestMethod", function (assert) {
+		var aArguments = ["foo", "bar"],
+			oResult = {},
+			oSyncPromise = SyncPromise.resolve(),
+			oContext = {
+				fetch : function () {
+					assert.strictEqual(this, oContext);
+					assert.deepEqual(Array.prototype.slice.call(arguments), aArguments);
+					return oSyncPromise;
+				}
+			},
+			fnRequest;
+
+		this.mock(Promise).expects("resolve")
+			.withExactArgs(sinon.match.same(oSyncPromise)).returns(oResult);
+
+		// code under test
+		fnRequest = _Helper.createRequestMethod("fetch");
+
+		assert.strictEqual(fnRequest.apply(oContext, aArguments), oResult);
 	});
 
 	//*********************************************************************************************
@@ -116,6 +201,25 @@ sap.ui.require([
 			"headers" : {},
 			"status" : 404,
 			"statusText" : "Not Found"
+		}
+	}, {
+		// V2 error
+		body : {
+			error : {
+				code : "0050569259751EE4BA9710043F8A5115",
+				message : {
+					lang : "en",
+					value : "An unknown internal server error occurred"
+				}
+			}
+		},
+		message : "An unknown internal server error occurred",
+		"response" : {
+			"headers" : {
+				"Content-Type" : "application/json;charset=UTF-8"
+			},
+			"status" : 500,
+			"statusText" : "Internal Server Error"
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("createError: " + oFixture.message, function (assert) {
@@ -230,6 +334,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("fireChanges: null value", function (assert) {
+		var mChangeListeners = {
+			"path/to/property/Foo" : [{onChange : function () {}}]
+		};
+
+		this.mock(mChangeListeners["path/to/property/Foo"][0]).expects("onChange")
+			.withExactArgs(null);
+
+		// code under test
+		_Helper.fireChanges(mChangeListeners, "path/to/property", {
+				Foo : null
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("formatLiteral", function (assert) {
 		assert.throws(function () {
 			_Helper.formatLiteral();
@@ -241,37 +360,49 @@ sap.ui.require([
 	//*********************************************************************************************
 	// t: the tested type
 	// v: the value to format
-	// e: the expected result
+	// e: the literal (if different to v)
 	[
-		{t : "Edm.Binary", v : "1qkYNh/P5uvZ0zA+siScD=", e : "binary'1qkYNh/P5uvZ0zA+siScD='"},
-		{t : "Edm.Boolean", v : true, e : "true"},
-		{t : "Edm.Byte", v : 255, e : "255"},
-		{t : "Edm.Date", v : "2016-01-19", e : "2016-01-19"},
-		{t : "Edm.DateTimeOffset", v : "2016-01-13T14:08:31Z", e : "2016-01-13T14:08:31Z"},
-		{t : "Edm.Decimal", v : "-255.55", e : "-255.55"},
-		{t : "Edm.Double", v : 3.14, e : "3.14"},
-		{t : "Edm.Double", v : "INF", e : "INF"},
-		{t : "Edm.Duration", v : "P1DT0H0M0S",	e : "duration'P1DT0H0M0S'"},
-		{t : "Edm.Guid", v : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8",
-			e : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"},
-		{t : "Edm.Int16", v : -32768, e : "-32768"},
-		{t : "Edm.Int32", v : 2147483647, e : "2147483647"},
-		{t : "Edm.Int64", v : "12345678901234568", e : "12345678901234568"},
-		{t : "Edm.SByte", v : -128, e : "-128"},
+		{t : "Edm.Binary", v : "1qkYNh/P5uvZ0zA+siScD=", l : "binary'1qkYNh/P5uvZ0zA+siScD='"},
+		{t : "Edm.Boolean", v : true, l : "true"},
+		{t : "Edm.Byte", v : 255, l : "255"},
+		{t : "Edm.Date", v : "2016-01-19"},
+		{t : "Edm.DateTimeOffset", v : "2016-01-13T14:08:31Z"},
+		{t : "Edm.Decimal", v : "-255.55"},
+		{t : "Edm.Double", v : 3.14, l : "3.14"},
+		{t : "Edm.Double", v : "INF"},
+		{t : "Edm.Duration", v : "P1DT0H0M0S", l : "duration'P1DT0H0M0S'"},
+		{t : "Edm.Guid", v : "936DA01F-9ABD-4D9D-80C7-02AF85C822A8"},
+		{t : "Edm.Int16", v : -32768, l : "-32768"},
+		{t : "Edm.Int32", v : 2147483647, l : "2147483647"},
+		{t : "Edm.Int64", v : "12345678901234568"},
+		{t : "Edm.SByte", v : -128, l : "-128"},
 		// Note: the internal representation of NaN/Infinity/-Infinity in the ODataModel
 		// is "NaN", "INF" and "-INF".
 		// That is how it comes from the server and it is not possible to change the model values
 		// to the JS representation Infinity,-Infinity or NaN
-		{t : "Edm.Single", v : "NaN", e : "NaN"},
-		{t : "Edm.Single", v : "-INF", e : "-INF"},
-		{t : "Edm.String", v : "foo", e : "'foo'"},
-		{t : "Edm.String", v : "string with 'quote'", e : "'string with ''quote'''"},
-		{t : "Edm.String", v : null, e : "null"},
-		{t : "Edm.TimeOfDay", v : "18:59:59.999", e : "18:59:59.999"}
+		{t : "Edm.Single", v : "NaN"},
+		{t : "Edm.Single", v : "-INF"},
+		{t : "Edm.String", v : "foo", l : "'foo'"},
+		{t : "Edm.String", v : "string with 'quote'", l : "'string with ''quote'''"},
+		{t : "Edm.String", v : null, l : "null"},
+		{t : "Edm.TimeOfDay", v : "18:59:59.999"}
 	].forEach(function (oFixture) {
-		QUnit.test("formatLiteral: " + oFixture.t + " " +  oFixture.v, function (assert) {
-			assert.strictEqual(
-				_Helper.formatLiteral(oFixture.v, oFixture.t), oFixture.e);
+		var sTitle = "formatLiteral/parseLiteral: " + oFixture.t + " " +  oFixture.v;
+		QUnit.test(sTitle, function (assert) {
+			var sLiteral = oFixture.l || oFixture.v;
+
+			assert.strictEqual(_Helper.formatLiteral(oFixture.v, oFixture.t), sLiteral);
+
+			switch (oFixture.t) {
+				case "Edm.Binary":
+				case "Edm.Duration":
+				case "Edm.String":
+					// not supported
+					break;
+				default:
+					assert.strictEqual(_Helper.parseLiteral(sLiteral, oFixture.t, "path"),
+						oFixture.v);
+			}
 		});
 	});
 
@@ -281,6 +412,41 @@ sap.ui.require([
 			function () { _Helper.formatLiteral("foo", "Edm.bar"); },
 			new Error("Unsupported type: Edm.bar")
 		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseLiteral: null", function (assert) {
+		assert.strictEqual(_Helper.parseLiteral("null", "Any.Type"), null);
+	});
+
+	//*********************************************************************************************
+	["Edm.Binary", "Edm.Duration", "Edm.String", "Edm.bar"].forEach(function (sType) {
+		QUnit.test("parseLiteral: unsupported " + sType, function (assert) {
+			assert.throws(function () {
+				_Helper.parseLiteral("foo", sType, "path/to/property");
+			}, new Error("path/to/property: Unsupported type: " + sType));
+		});
+	});
+
+	//*********************************************************************************************
+	// t: the tested type
+	// l: the literal to parse
+	[
+		{t : "Edm.Byte", l : "ten"},
+		{t : "Edm.Int16", l : "ten"},
+		{t : "Edm.Int32", l : "ten"},
+		{t : "Edm.SByte", l : "ten"},
+		{t : "Edm.Double", l : "Pi"},
+		{t : "Edm.Double", l : "Infinity"},
+		{t : "Edm.Single", l : "Pi"},
+		{t : "Edm.Single", l : "-Infinity"}
+	].forEach(function (oFixture) {
+		QUnit.test("parseLiteral: error: " + oFixture.t + " " +  oFixture.l, function (assert) {
+			assert.throws(function () {
+				_Helper.parseLiteral(oFixture.l, oFixture.t, "path/to/property");
+			}, new Error("path/to/property: Not a valid " + oFixture.t + " literal: "
+				+ oFixture.l));
+		});
 	});
 
 	//*********************************************************************************************
@@ -304,6 +470,7 @@ sap.ui.require([
 				"SO_2_SOITEM/AnotherNote" : [{onChange : function () {}}]
 			},
 			oCacheData = {
+				DeliveryDate : null,
 				SalesOrderItemID : "000100",
 				Note : "old",
 				AnotherNote : "oldAnotherNote"
@@ -316,12 +483,14 @@ sap.ui.require([
 
 		// code under test
 		_Helper.updateCache(mChangeListeners, "SO_2_SOITEM", oCacheData, {
+			DeliveryDate : null,
 			Note : "new",
 			Foo : "bar",
 			AnotherNote :"newAnotherNote"
 		});
 
 		assert.deepEqual(oCacheData, {
+			DeliveryDate : null,
 			SalesOrderItemID : "000100",
 			Note : "new",
 			AnotherNote : "newAnotherNote"
@@ -450,6 +619,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateCache: empty value from PATCH response", function (assert) {
+		var oCacheData = {
+				SalesOrderItemID : "000100"
+			};
+
+		// code under test
+		_Helper.updateCache({/*mChangeListeners*/}, "SO_2_SOITEM", oCacheData,
+			/*empty PATCH response*/undefined);
+
+		assert.deepEqual(oCacheData, {
+			SalesOrderItemID : "000100"
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("toArray", function (assert) {
 		var oObject = {},
 			aObjects = [oObject];
@@ -468,7 +652,7 @@ sap.ui.require([
 		QUnit.test("Integration test for formatLiteral", function (assert) {
 			var done = assert.async(),
 			sResolvedServiceUrl = TestUtils.proxy(
-				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0001/");
+				"/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/");
 
 			jQuery.ajax(sResolvedServiceUrl + "BusinessPartnerList?"
 				+ "$filter=CompanyName eq + " + _Helper.formatLiteral("Becker Berlin", "Edm.String")
@@ -528,28 +712,56 @@ sap.ui.require([
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyPredicate: " + oFixture.sKeyPredicate, function (assert) {
-			var sProperty;
-
 			this.spy(_Helper, "formatLiteral");
 
 			assert.strictEqual(
-				_Helper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance),
+				_Helper.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
+					"~path~" : oFixture.oEntityType
+				}),
 				oFixture.sKeyPredicate);
 
-			// check that _Helper.formatLiteral() is called for each property
-			for (sProperty in oFixture.oEntityType) {
-				if (sProperty[0] !== "$") {
-					assert.ok(
-						_Helper.formatLiteral.calledWithExactly(
-							oFixture.oEntityInstance[sProperty],
-							oFixture.oEntityType[sProperty].$Type),
-						_Helper.formatLiteral.printf(
-							"_Helper.formatLiteral('" + sProperty + "',...) %C"));
-				}
-			}
+			// check that formatPropertyAsLiteral() is called for each key property
+			oFixture.oEntityType.$Key.forEach(function (sProperty) {
+				sinon.assert.calledWithExactly(_Helper.formatLiteral,
+					sinon.match.same(oFixture.oEntityInstance[sProperty]),
+					sinon.match.same(oFixture.oEntityType[sProperty].$Type));
+			});
 		});
 	});
-	//TODO handle keys with aliases!
+
+	//*********************************************************************************************
+	QUnit.test("getKeyPredicate: key with alias", function (assert) {
+		var oComplexType = {
+				"baz" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.Int16"
+				}
+			},
+			oEntityInstance = {},
+			oEntityType = {
+				"$Key" : ["qux", {"foo" : "bar/baz"}],
+				"qux" : {
+					"$kind" : "Property",
+					"$Type" : "Edm.String"
+				}
+			},
+			oHelperMock = this.mock(_Helper);
+
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oEntityInstance, ["qux"]).returns("v1");
+		oHelperMock.expects("drillDown")
+			.withExactArgs(oEntityInstance, ["bar", "baz"]).returns("v2");
+		oHelperMock.expects("formatLiteral")
+			.withExactArgs("v1", "Edm.String").returns("~1");
+		oHelperMock.expects("formatLiteral")
+			.withExactArgs("v2", "Edm.Int16").returns("~2");
+
+		assert.strictEqual(_Helper.getKeyPredicate(oEntityInstance, "~path~", {
+				"~path~" : oEntityType,
+				"~path~/bar" : oComplexType
+			}),
+			"(qux=~1,foo=~2)");
+	});
 
 	//*********************************************************************************************
 	[{
@@ -575,17 +787,12 @@ sap.ui.require([
 		}
 	}].forEach(function (oFixture) {
 		QUnit.test("getKeyPredicate: missing key, " + oFixture.sDescription, function (assert) {
-			assert.throws(function () {
-				_Helper.getKeyPredicate(oFixture.oEntityType, oFixture.oEntityInstance);
-			}, new Error("Missing value for key property 'ID'"));
+			assert.strictEqual(
+				_Helper.getKeyPredicate(oFixture.oEntityInstance, "~path~", {
+					"~path~" : oFixture.oEntityType
+				}),
+				undefined);
 		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getKeyPredicate: no instance", function (assert) {
-		assert.throws(function () {
-			_Helper.getKeyPredicate({$Key : ["ID"]}, undefined);
-		}, new Error("No instance to calculate key predicate"));
 	});
 
 	//*********************************************************************************************
@@ -603,7 +810,7 @@ sap.ui.require([
 			$select : ["Param1", "Param2"]
 		},
 		sPath : "",
-		result: ["Param1", "Param2"]
+		result : ["Param1", "Param2"]
 	}, {
 		options : {},
 		sPath : "",
@@ -621,7 +828,7 @@ sap.ui.require([
 			$select : ["Param1", "Param2"]
 		},
 		sPath : "FooSet",
-		result: undefined
+		result : undefined
 	}, {
 		options : {
 			$expand : {
@@ -769,4 +976,69 @@ sap.ui.require([
 			assert.deepEqual(oCacheBefore, oCacheAfter);
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("makeAbsolute", function (assert) {
+		assert.strictEqual(_Helper.makeAbsolute("/foo/bar", "/baz"), "/foo/bar");
+		assert.strictEqual(_Helper.makeAbsolute("baz", "/foo/bar"), "/foo/baz");
+		assert.strictEqual(_Helper.makeAbsolute("Foo('1')/Bar(baz='2',qux=3)", "/service/"),
+			"/service/Foo('1')/Bar(baz='2',qux=3)");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("drillDown", function (assert) {
+		var oObject = {
+				"foo" : "bar",
+				"bar" : {
+					"baz" : "qux"
+				},
+				"null" : null
+			};
+
+		assert.strictEqual(_Helper.drillDown(oObject, []), oObject);
+		assert.strictEqual(_Helper.drillDown(oObject, ["foo"]), "bar");
+		assert.strictEqual(_Helper.drillDown(oObject, ["bar", "baz"]), "qux");
+		assert.strictEqual(_Helper.drillDown(oObject, ["unknown"]), undefined);
+		assert.strictEqual(_Helper.drillDown(oObject, ["unknown", "value"]), undefined);
+		assert.strictEqual(_Helper.drillDown(oObject, ["null"]), null);
+		assert.strictEqual(_Helper.drillDown(oObject, ["null", "value"]), undefined);
+	});
+
+	//*********************************************************************************************
+	[{
+		dataPath : "/Foo",
+		metaPath : "/Foo"
+	}, { // e.g. function call plus key predicate
+		dataPath : "/Foo/name.space.bar_42(key='value')(key='value')",
+		metaPath : "/Foo/name.space.bar_42"
+	}, {
+		dataPath : "/Foo(key='value')(key='value')/bar",
+		metaPath : "/Foo/bar"
+	}, { // any segment with digits only
+		dataPath : "/Foo/" + Date.now(),
+		metaPath : "/Foo"
+	}, {
+		dataPath : "/Foo/" + Date.now() + "/bar",
+		metaPath : "/Foo/bar"
+	}, { // global removal needed
+		dataPath : "/Foo(key='value')/" + Date.now() + "/bar(key='value')/"  + Date.now(),
+		metaPath : "/Foo/bar"
+	}, { // transient entity
+		dataPath : "/Foo/-1/bar",
+		metaPath : "/Foo/bar"
+	}].forEach(function (oFixture) {
+		QUnit.test("getMetaPath: " + oFixture.dataPath, function (assert) {
+			var sMetaPath = _Helper.getMetaPath(oFixture.dataPath);
+
+			assert.strictEqual(sMetaPath, oFixture.metaPath);
+		});
+	});
+	//TODO $all, $count, $crossjoin, $ref, $value
+	// Q: Do we need to keep signatures to resolve overloads?
+	// A: Most probably not. The spec says "All bound functions with the same function name and
+	//    binding parameter type within a namespace MUST specify the same return type."
+	//    "All unbound functions with the same function name within a namespace MUST specify the
+	//    same return type." --> We can find the return type (from the binding parameter type).
+	//    If it comes to annotations, the signature might make a difference, but then "unordered
+	//    set of (non-binding) parameter names" is unique.
 });

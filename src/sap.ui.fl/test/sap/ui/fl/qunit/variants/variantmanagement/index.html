@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Variant Management - sap.ui.fl.variants.VariantManagement</title>
+
+	<script src="../../../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			data-sap-ui-libs="sap.ui.comp, sap.m"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-xx-bindingSyntax="complex"
+			src="../../../../../../../resources/sap-ui-core.js"
+>
+	</script>
+
+	<script>
+		var oComp = sap.ui.component({
+			name: "sap.ui.fl.sample.variantmanagement",
+			url: "./",
+			id: "Comp1"
+		});
+
+		var oCompCont = new sap.ui.core.ComponentContainer("CompCont1", {
+			component: oComp
+		});
+
+		oCompCont.placeAt("target1");
+
+	</script>
+
+</head>
+
+<body class="sapUiBody sapUiSizeCompact" role="application">
+	<h2>VariantManagement control</h2>
+	<div id="target1"></div>
+</body>
+
+</html>

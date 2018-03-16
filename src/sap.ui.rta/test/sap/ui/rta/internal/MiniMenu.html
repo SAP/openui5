@@ -1,0 +1,575 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>Test Page</title>
+
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js" data-sap-ui-libs="sap.m, sap.ui.rta" data-sap-ui-theme="sap_belize"
+		data-sap-ui-resourceroots='{"dt.view": "qunit/testdata/designtime/"}'>
+	</script>
+
+	<script>
+		sap.ui.getCore().attachInit(function () {
+
+			jQuery.sap.require("sap.ui.dt.plugin.MiniMenu");
+			jQuery.sap.require("sap.ui.fl.FakeLrepConnectorLocalStorage");
+
+			sap.ui.fl.FakeLrepConnectorLocalStorage.enableFakeConnector({},
+				"sap.ui.rta.MiniMenuTest.Component",
+				"1.0.0");
+
+			var Comp = sap.ui.core.UIComponent.extend("sap.ui.rta.MiniMenuTest", {
+				metadata: {
+					manifest: {
+						"sap.app": {
+							"id": "sap.ui.rta.MiniMenuTest",
+							"type": "application"
+						}
+					}
+				},
+				createContent: function () {
+
+					this.oButton0 = new sap.m.Button({
+						id: "Button0",
+					});
+
+					this.oTable1 = new sap.m.Table({
+						id: "Table1",
+						width: "auto",
+						columns: [
+							new sap.m.Column({
+								id: "Column1",
+								header: new sap.m.Text({
+									id: "ColumnText1",
+									text: "Column 1"
+								})
+							}),
+							new sap.m.Column({
+								id: "Column2",
+								header: new sap.m.Text({
+									id: "ColumnText2",
+									text: "Column2"
+								})
+							}),
+							new sap.m.Column({
+								id: "Column3",
+								header: new sap.m.Text({
+									id: "ColumnText3",
+									text: "Column 3"
+								})
+							}),
+							new sap.m.Column({
+								id: "Column4",
+								header: new sap.m.Text({
+									id: "ColumnText4",
+									text: "Column 4"
+								})
+							}),
+							new sap.m.Column({
+								id: "Column5",
+								header: new sap.m.Text({
+									id: "ColumnText5",
+									text: "Column 5"
+								})
+							}),
+						],
+						items: [
+							new sap.m.ColumnListItem({
+								id: "ColListItm1",
+								cells: [
+									new sap.m.Text({
+										id: "Col1Row1Text",
+										text: "Text 1 1"
+									}),
+									new sap.m.Text({
+										id: "Col2Row1Text",
+										text: "Text 2 1"
+									}),
+									new sap.m.Text({
+										id: "Col3Row1Text",
+										text: "Text 3 1"
+									}),
+									new sap.m.Text({
+										id: "Col4Row1Text",
+										text: "Text 4 1"
+									}),
+									new sap.m.Text({
+										id: "Col5Row1Text",
+										text: "Text 5 1"
+									})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								id: "ColListItm2",
+								cells: [
+									new sap.m.Text({
+										id: "Col1Row2Text",
+										text: "Text 1 2"
+									}),
+									new sap.m.Text({
+										id: "Col2Row2Text",
+										text: "Text 2 2"
+									}),
+									new sap.m.Text({
+										id: "Col3Row2Text",
+										text: "Text 3 2"
+									}),
+									new sap.m.Text({
+										id: "Col4Row2Text",
+										text: "Text 4 2"
+									}),
+									new sap.m.Text({
+										id: "Col5Row2Text",
+										text: "Text 5 2"
+									})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								id: "ColListItm3",
+								cells: [
+									new sap.m.Text({
+										id: "Col1Row3Text",
+										text: "Text 1 3"
+									}),
+									new sap.m.Text({
+										id: "Col2Row3Text",
+										text: "Text 2 3"
+									}),
+									new sap.m.Text({
+										id: "Col3Row3Text",
+										text: "Text 3 3"
+									}),
+									new sap.m.Text({
+										id: "Col4Row3Text",
+										text: "Text 4 3"
+									}),
+									new sap.m.Text({
+										id: "Col5Row3Text",
+										text: "Text 5 3"
+									})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								id: "ColListItm4",
+								cells: [
+									new sap.m.Text({
+										id: "Col1Row4Text",
+										text: "Text 1 4"
+									}),
+									new sap.m.Text({
+										id: "Col2Row4Text",
+										text: "Text 2 4"
+									}),
+									new sap.m.Text({
+										id: "Col3Row4Text",
+										text: "Text 3 4"
+									}),
+									new sap.m.Text({
+										id: "Col4Row4Text",
+										text: "Text 4 4"
+									}),
+									new sap.m.Text({
+										id: "Col5Row4Text",
+										text: "Text 5 4"
+									})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								id: "ColListItm5",
+								cells: [
+									new sap.m.Text({
+										id: "Col1Row5Text",
+										text: "Text 1 5"
+									}),
+									new sap.m.Text({
+										id: "Col2Row5Text",
+										text: "Text 2 5"
+									}),
+									new sap.m.Text({
+										id: "Col3Row5Text",
+										text: "Text 3 5"
+									}),
+									new sap.m.Text({
+										id: "Col4Row5Text",
+										text: "Text 4 5"
+									}),
+									new sap.m.Text({
+										id: "Col5Row5Text",
+										text: "Text 5 5"
+									})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								id: "ColListItm6",
+								cells: [
+									new sap.m.Text({
+										id: "Col1Row6Text",
+										text: "Text 1 6"
+									}),
+									new sap.m.Text({
+										id: "Col2Row6Text",
+										text: "Text 2 6"
+									}),
+									new sap.m.Text({
+										id: "Col3Row6Text",
+										text: "Text 3 6"
+									}),
+									new sap.m.Text({
+										id: "Col4Row6Text",
+										text: "Text 4 6"
+									}),
+									new sap.m.Text({
+										id: "Col5Row6Text",
+										text: "Text 5 6"
+									})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								id: "ColListItm7",
+								cells: [
+									new sap.m.Text({
+										id: "Col1Row7Text",
+										text: "Text 1 7"
+									}),
+									new sap.m.Text({
+										id: "Col2Row7Text",
+										text: "Text 2 7"
+									}),
+									new sap.m.Text({
+										id: "Col3Row7Text",
+										text: "Text 3 7"
+									}),
+									new sap.m.Text({
+										id: "Col4Row7Text",
+										text: "Text 4 7"
+									}),
+									new sap.m.Text({
+										id: "Col5Row7Text",
+										text: "Text 5 7"
+									})
+								]
+							}),
+							new sap.m.ColumnListItem({
+								id: "ColListItm8",
+								cells: [
+									new sap.m.Text({
+										id: "Col1Row8Text",
+										text: "Text 1 8"
+									}),
+									new sap.m.Text({
+										id: "Col2Row8Text",
+										text: "Text 2 8"
+									}),
+									new sap.m.Text({
+										id: "Col3Row8Text",
+										text: "Text 3 8"
+									}),
+									new sap.m.Text({
+										id: "Col4Row8Text",
+										text: "Text 4 8"
+									}),
+									new sap.m.Text({
+										id: "Col5Row8Text",
+										text: "Text 5 8"
+									})
+								]
+							}),
+						]
+
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oTile1 = new sap.m.GenericTile({
+						id: "Tile1",
+						header: "Tile 1",
+						subheader: "Subheader 1"
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oTile2 = new sap.m.GenericTile({
+						id: "Tile2",
+						header: "Tile 2",
+						subheader: "Subheader 2"
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oTile3 = new sap.m.GenericTile({
+						id: "Tile3",
+						header: "Tile 3",
+						subheader: "Subheader 3"
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oTile4 = new sap.m.GenericTile({
+						id: "Tile4",
+						header: "Tile 4",
+						subheader: "Subheader 4"
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oTile5 = new sap.m.GenericTile({
+						id: "Tile5",
+						header: "Tile 5",
+						subheader: "Subheader 5"
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oTile6 = new sap.m.GenericTile({
+						id: "Tile6",
+						header: "Tile 6",
+						subheader: "Subheader 6"
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oButton1 = new sap.m.Button({
+						id: "Button1",
+						text: "Do stuff"
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oButton2 = new sap.m.Button({
+						id: "Button2",
+						text: "Do more stuff"
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oButton3 = new sap.m.Button({
+						id: "Button3",
+						text: "Do something else"
+					}).addStyleClass("sapUiTinyMargin");
+
+					this.oList1 = new sap.m.List({
+						id: "List1",
+						items: [
+							new sap.m.StandardListItem({
+								id: "ListItem1",
+								title: "List Item 1"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem2",
+								title: "List Item 2"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem3",
+								title: "List Item 3"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem4",
+								title: "List Item 4"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem5",
+								title: "List Item 5"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem6",
+								title: "List Item 6"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem7",
+								title: "List Item 7"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem8",
+								title: "List Item 8"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem9",
+								title: "List Item 9"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem10",
+								title: "List Item 10"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem11",
+								title: "List Item 11"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem12",
+								title: "List Item 12"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem13",
+								title: "List Item 13"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem14",
+								title: "List Item 14"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem15",
+								title: "List Item 15"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem16",
+								title: "List Item 16"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem17",
+								title: "List Item 17"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem18",
+								title: "List Item 18"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem19",
+								title: "List Item 19"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem20",
+								title: "List Item 20"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem21",
+								title: "List Item 21"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem22",
+								title: "List Item 22"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem23",
+								title: "List Item 23"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem24",
+								title: "List Item 24"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem25",
+								title: "List Item 25"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem26",
+								title: "List Item 26"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem27",
+								title: "List Item 27"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem28",
+								title: "List Item 28"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem29",
+								title: "List Item 29"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem30",
+								title: "List Item 30"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem31",
+								title: "List Item 31"
+							}),
+							new sap.m.StandardListItem({
+								id: "ListItem32",
+								title: "List Item 32"
+							})
+						]
+					}).addStyleClass("list");
+
+					this.oFlexBox2 = new sap.m.FlexBox({
+						id: "FlexBox2",
+						items: [
+							this.oTile1,
+							this.oTile2,
+							this.oTile3,
+							this.oTile4,
+							this.oTile5,
+							this.oTile6,
+							this.oTile7,
+							this.oTile8
+						]
+					});
+
+					this.oFlexBox3 = new sap.m.FlexBox({
+						id: "FlexBox3",
+						items: [
+							this.oTable1
+						]
+					});
+
+					this.oFlexBox4 = new sap.m.FlexBox({
+						id: "FlexBox4",
+						items: [
+							this.oButton1,
+							this.oButton2,
+							this.oButton3
+						]
+					});
+
+					this.oFlexBox1 = new sap.m.ScrollContainer({
+						id: "FlexBox1",
+						horizontal : false,
+						vertical : true,
+						width: "auto",
+						content: [
+							this.oButton0,
+							this.oFlexBox3,
+							this.oFlexBox2,
+							this.oFlexBox4,
+							this.oFlexBox5,
+							this.oList1
+						]
+					});
+
+					this.oPage = new sap.m.Page({
+						id: "Page1",
+						title: "MiniMenu Test",
+						content: [
+						this.oFlexBox2,
+						this.oFlexBox4,
+						this.oFlexBox3,
+						this.oFlexBox5,
+						this.oList1
+						]
+					});
+
+					return this.oPage;
+				}
+
+			});
+			this.oUiComponent = new Comp();
+			this.oUiComponentContainer = new sap.ui.core.ComponentContainer({
+					id: "app",
+					height: "100%",
+				component: this.oUiComponent
+			});
+			// this.oUiComponentContainer.placeAt("theDiv");
+
+			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
+			jQuery.sap.require("sap.m.Shell");
+
+			// initialize the UI component
+			new sap.m.Shell({
+				id: "Shell",
+				app: oUiComponentContainer
+			}).placeAt("theDiv");
+
+			var oRta = new sap.ui.rta.RuntimeAuthoring({
+				rootControl: this.oUiComponent.getRootControl(),
+				flexSettings: {
+					developerMode: false
+				}
+			});
+			oRta.attachEvent('stop', function () {
+				oRta.destroy();
+			});
+			var mPlugins = oRta.getDefaultPlugins();
+			mPlugins["contextMenu"] = new sap.ui.dt.plugin.MiniMenu({});
+			oRta.setPlugins(mPlugins);
+			oRta.start();
+		});
+	</script>
+
+	<style>
+
+	</style>
+
+</head>
+
+<body id="content" class="sapUiBody">
+	<div id="theDiv"></div>
+
+</body>
+
+</html>

@@ -128,6 +128,42 @@
 			}
 		});
 
+		QUnit.test("HeaderButton aggregation binding", function (assert) {
+
+			sap.ui.controller("test.controller", {
+				onInit: function(){
+					var oModel = new sap.ui.model.json.JSONModel({
+						deleteIcon: "sap-icon://delete"
+					});
+					this.getView().setModel(oModel)
+				}
+			});
+
+			sap.ui.jsview("test.view", {
+				getControllerName: function() {
+					return "test.controller";
+				},
+				createContent: function(oController) {
+					return [
+						new sap.m.Button({id: "idOpenBtn"}),
+						new sap.m.MessagePopover({
+							headerButton: new sap.m.Button({
+								id: "idHeaderButton",
+								icon: "{/deleteIcon}"
+							})
+						})
+					]
+				}
+			});
+
+			var JSView = sap.ui.view({type:sap.ui.core.mvc.ViewType.JS, viewName:"test.view"});
+			JSView.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(sap.ui.getCore().byId("idHeaderButton").getIcon(), "sap-icon://delete", "The header button is bound correctly");
+		});
+
 		QUnit.test("setDescription() property", function (assert) {
 			// A total of 8 assertions are expected
 			assert.expect(8);
@@ -544,7 +580,7 @@
 			this.clock.tick(500);
 			$Content = this.oMessagePopover.$("cont");
 
-			assert.strictEqual($Content.height(), 440, "height should be 440px");
+			assert.strictEqual($Content.height(), 320, "height should be 320px");
 		});
 
 		QUnit.test("The items in the list should have info state set according to the message type", function(assert) {
@@ -603,6 +639,34 @@
 			}
 		});
 
+		QUnit.test("MessagePopover's filter should not be displayed if there is only one type of messages", function(assert){
+
+			var oItem = new sap.m.MessageItem({title: "MessageItem", type: "Error"}),
+				oItem2 = new sap.m.MessageItem({title: "MessageItem", type: "Error"});
+
+			this.oMessagePopover.insertItem(oItem);
+			this.oMessagePopover.insertItem(oItem2);
+
+			this.oMessagePopover.openBy(this.oButton);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.oMessagePopover._oMessageView._oSegmentedButton.getVisible(), false, "no header buttons should be rendered");
+		});
+
+		QUnit.test("MessagePopover's filter should be displayed if there are more that one type of messages", function(assert){
+
+			var oItem = new sap.m.MessageItem({title: "MessageItem", type: "Error"}),
+				oItem2 = new sap.m.MessageItem({title: "MessageItem", type: "Warning"});
+
+			this.oMessagePopover.insertItem(oItem);
+			this.oMessagePopover.insertItem(oItem2);
+
+			this.oMessagePopover.openBy(this.oButton);
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(this.oMessagePopover._oMessageView._oSegmentedButton.getVisible(), true, "header buttons should be rendered");
+		});
+
 		QUnit.test("sapMMsgPopover class should be present", function (assert) {
 			this.oMessagePopover.openBy(this.oButton);
 			var oDomRef = this.oMessagePopover.getDomRef();
@@ -642,12 +706,16 @@
 				title: sLongTitle
 			}));
 
+			this.oMessagePopover.addItem(new sap.m.MessagePopoverItem({
+				title: "dummy item"
+			}));
+
 			sap.ui.getCore().applyChanges();
 
 			this.oMessagePopover.openBy(this.oButton);
 			this.clock.tick(500);
 
-			assert.strictEqual(this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type")
+			assert.strictEqual(this.oMessagePopover._oMessageView._oLists.all.getItems()[0].getType(), "Navigation", "The first item should be navigation type");
 		});
 
 		QUnit.test("aria-labelledby attribute", function (assert) {
@@ -1057,6 +1125,13 @@
 			assert.strictEqual(this.oMessagepopover2._oMessageView._oLists.error.getItems()[0].getTitle(), "Two", "Title to be changed");
 		});
 
+		QUnit.test("No segmented button filter when not needed", function (assert) {
+			this.oMessagepopover2.setInitiallyExpanded(false);
+			this.oMessagepopover2.openBy(this.oButton2);
+
+			assert.strictEqual(this.oMessagepopover2._oMessageView._oSegmentedButton.getVisible(), true, "Segmented button is not needed but must be shown because message popover is set initiallyExpanded=false");
+		});
+
 		QUnit.test("Adding item to MessagePopover", function (assert) {
 			var oMessagePopover = new sap.m.MessagePopover(),
 				oMessagePopoverItem = new sap.m.MessagePopoverItem({ title: "Test" }),
@@ -1092,6 +1167,14 @@
 			assert.ok(this.oMessagepopover2.getItems().length);
 
 			tempObject = null;
+		});
+
+		QUnit.test("Model should be forwarded to the internal MessageView", function (assert) {
+			var oSetModelStub = this.stub(this.oMessagepopover2._oMessageView, "setModel");
+
+			this.oMessagepopover2.setModel(new sap.ui.model.json.JSONModel([]), "test");
+
+			assert.ok(oSetModelStub.called, "setModel of the MessageView should be called");
 		});
 
 		QUnit.module("Refactoring", {
@@ -1229,6 +1312,24 @@
 
 			//Clean
 			spyInvalidate.restore();
+		});
+
+		QUnit.test("Any custom data from the items of the MessagePopover should be cloned in the MessageView's items", function (assert) {
+			//System under test
+			this.oMessagePopover.setModel(this.oModel);
+			sap.ui.getCore().applyChanges();
+
+			//Act
+			this.oMessagePopover.getItems()[0].addCustomData(new sap.ui.core.CustomData({key : "test", value : true}));
+
+			//Open the MessagePopover
+			this.oMessagePopover.openBy(this.oButton);
+			this.clock.tick(500);
+
+			//Assert
+			assert.strictEqual(this.oMessagePopover.getItems()[0].getCustomData().length, 1, "The message popover's item has custom data.");
+			assert.strictEqual(this.oMessagePopover._oMessageView.getItems()[0].getCustomData().length, 1, "The custom data was cloned into the message view's item.");
+			assert.ok(this.oMessagePopover._oMessageView.getItems()[0].getCustomData()[0].getValue(), "The data was passed correctly");
 		});
 	</script>
 </head>

@@ -3,8 +3,16 @@
  */
 
 // Provides control sap.ui.core.mvc.JSONView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/library', 'sap/ui/model/resource/ResourceModel', './View'],
-	function(jQuery, ManagedObject, library, ResourceModel, View) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/base/ManagedObject',
+    'sap/ui/core/library',
+    'sap/ui/model/resource/ResourceModel',
+    './View',
+    "./JSONViewRenderer",
+    "./EventHandlerResolver"
+],
+	function(jQuery, ManagedObject, library, ResourceModel, View, JSONViewRenderer, EventHandlerResolver) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -22,7 +30,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/li
 	 * @extends sap.ui.core.mvc.View
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.mvc.JSONView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -163,7 +170,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/core/li
 								break;
 							case 5: // EVENTS
 								if ( typeof oValue === "string" ) {
-									oSettings[sKey] = View._resolveEventHandler(oValue, oController);
+									oSettings[sKey] = EventHandlerResolver.resolveEventHandler(oValue, oController);
 								}
 								break;
 							}

@@ -1,0 +1,228 @@
+<core:View xmlns:core="sap.ui.core"
+		   xmlns="sap.uxap"
+		   xmlns:m="sap.m"
+		   xmlns:f="sap.f"
+		   xmlns:layout="sap.ui.layout"
+		   xmlns:sample="sap.uxap.sample.AnchorBar"
+		   height="100%"
+>
+
+	<ObjectPageLayout id="ObjectPageLayout"
+					  showTitleInHeaderContent="true"
+					  alwaysShowContentHeader="false"
+					  preserveHeaderStateOnScroll="false"
+					  headerContentPinnable="true"
+					  isChildPage="true"
+					  enableLazyLoading="false"
+					  upperCaseAnchorBar="false">
+		<headerTitle>
+			<ObjectPageDynamicHeaderTitle primaryArea="Left">
+				<breadcrumbs>
+					<m:Breadcrumbs>
+						<m:Link text='Page 1'/>
+						<m:Link text='Page 2'/>
+						<m:Link text='Page 3'/>
+						<m:Link text='Page 4'/>
+						<m:Link text='Page 5'/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
+
+				<expandedHeading>
+					<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginTop"/>
+				</expandedHeading>
+
+				<snappedHeading>
+					<m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginTop"/>
+				</snappedHeading>
+
+				<expandedContent>
+					<m:Text text="Senior Developer"/>
+				</expandedContent>
+
+				<snappedContent>
+					<m:Text text="Senior Developer"/>
+				</snappedContent>
+
+				<actions>
+					<ObjectPageHeaderActionButton text="Edit" type="Emphasized" hideText="false"/>
+					<ObjectPageHeaderActionButton type="Transparent" text="Delete" hideText="false" hideIcon="true"/>
+					<ObjectPageHeaderActionButton type="Transparent" text="Copy" hideText="false" hideIcon="true"/>
+					<ObjectPageHeaderActionButton type="Transparent" text="Add" hideText="false" hideIcon="true"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" type="Transparent" text="Share"/>
+				</actions>
+				<navigationActions>
+					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-up" type="Transparent"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-down" type="Transparent"/>
+				</navigationActions>
+
+			</ObjectPageDynamicHeaderTitle>
+		</headerTitle>
+
+		<headerContent>
+			<layout:HorizontalLayout
+					allowWrapping="true">
+				<layout:VerticalLayout
+						class="sapUiMediumMarginEnd">
+					<m:ObjectAttribute title="Location" text="Warehouse A"/>
+					<m:ObjectAttribute title="Halway" text="23L"/>
+					<m:ObjectAttribute title="Rack" text="34"/>
+				</layout:VerticalLayout>
+				<layout:VerticalLayout>
+					<m:ObjectAttribute title="Availability"/>
+					<m:ObjectStatus text="In Stock" state="Success"/>
+				</layout:VerticalLayout>
+			</layout:HorizontalLayout>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection id="section1" title="Section 1">
+				<subSections>
+					<ObjectPageSubSection id="section1_SS1" title="Subsection 1.1 ">
+						<blocks>
+							<sample:mySimpleBlock id="bbt1"/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection id="section1_SS2" title="Subsection 1.2 ">
+						<blocks>
+							<sample:mySimpleBlock id="bbt2"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="section2" title="Section 2">
+			</ObjectPageSection>
+
+			<ObjectPageSection id="section3" title="Section 3">
+				<subSections>
+					<ObjectPageSubSection id="section3_SS1" title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="bbt3"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="section4" title="Section 4">
+				<subSections>
+					<ObjectPageSubSection id="section4_SS1" title="Subsection 4.1 ">
+						<blocks>
+							<sample:mySimpleBlock id="bbt4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="section5" title="Section 5">
+				<subSections>
+					<ObjectPageSubSection id="section5_SS1" title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="bbt5"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="section6" title="Section 6">
+				<subSections>
+					<ObjectPageSubSection id="section6_SS1" title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b1"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="section7" title="Section 7">
+				<subSections>
+					<ObjectPageSubSection id="section7_SS1" title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b2"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section 8">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b3"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section 9">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b4"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section 10">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b5"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section 11">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b6"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section 12">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b7"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section 13">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b8"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section 14">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b9"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection title="Section 15">
+				<subSections>
+					<ObjectPageSubSection title=" ">
+						<blocks>
+							<sample:mySimpleBlock id="b10"/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+		</sections>
+
+	</ObjectPageLayout>
+</core:View>

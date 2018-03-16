@@ -3,14 +3,11 @@
  */
 
 // Provides class sap.ui.core.support.RuleEngineOpaExtension
-sap.ui.define([
-    'jquery.sap.global',
-    'sap/ui/base/Object'
-],function($, Ui5Object) {
+sap.ui.define(['sap/ui/base/Object'],function(Ui5Object) {
     "use strict";
 
     /*
-    var oLogger = $.sap.log.getLogger("sap.ui.test.OpaExtension",
+    var oLogger = _OpaLogger.getLogger("sap.ui.test.OpaExtension",
         $.sap.log.Level.DEBUG);
     */
 
@@ -37,8 +34,7 @@ sap.ui.define([
          * Executed in the application frame.
          * Subsequent waitFor's will wait for the returned promise to be resolved.
          *
-         * @name onAfterInit
-         * @alias sap.ui.test.OpaExtension.onAfterInit
+         * @name sap.ui.test.OpaExtension.onAfterInit
          * @public
          * @function
          * @since 1.48
@@ -62,8 +58,7 @@ sap.ui.define([
          * Executed in the application frame.
          * Subsequent waitFor's will wait for the returned promise to be resolved.
          *
-         * @name onBeforeExit
-         * @alias sap.ui.test.OpaExtension.onBeforeExit
+         * @name sap.ui.test.OpaExtension.onBeforeExit
          * @public
          * @function
          * @since 1.48
@@ -84,8 +79,7 @@ sap.ui.define([
          * The default QUnit assertion object will be augmented with them.
          * Subsequent waitFor's will wait for the returned promise to be resolved.
          *
-         * @name getAssertions
-         * @alias sap.ui.test.OpaExtension.getAssertions
+         * @name sap.ui.test.OpaExtension.getAssertions
          * @public
          * @function
          * @since 1.48

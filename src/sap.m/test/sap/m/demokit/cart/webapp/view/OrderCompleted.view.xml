@@ -1,14 +1,24 @@
 <mvc:View
-	id="orderCompletedView"
 	controllerName="sap.ui.demo.cart.controller.OrderCompleted"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<Page
 		id="orderCompletedPage"
-		title="{i18n>ordercompletedTitle}"
+		title="{i18n>orderCompletedTitle}"
 		class="sapUiContentPadding">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>OrderCompleted_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>OrderCompleted_contentLabel}"
+				headerRole="Region"
+				headerLabel="{i18n>OrderCompleted_headerLabel}"
+				footerRole="Region"
+				footerLabel="{i18n>OrderCompleted_footerLabel}" />
+		</landmarkInfo>
 		<content>
-			<FormattedText htmlText="{i18n>ordercompletedText}" />
+			<FormattedText htmlText="{i18n>orderCompletedText}" />
 		</content>
 		<footer>
 			<Bar>
@@ -16,7 +26,7 @@
 					<Button
 						id="returnToShopButton"
 						type="Emphasized"
-						text="{i18n>returntoshopButtonText}"
+						text="{i18n>returnToShopButtonText}"
 						press="onReturnToShopButtonPress" />
 				</contentRight>
 			</Bar>

@@ -13,52 +13,28 @@
 		</style>
 
 		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				src="../../../../../resources/sap-ui-core.js"
-				data-sap-ui-rtl="true">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+
 		<script>
-
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-			jQuery.sap.require("sap.ui.thirdparty.sinon");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-			jQuery.sap.require("sap.ui.dt.ElementOverlay");
-
-			QUnit.module("Given that an Overlay Container is created on RTL mode", {
-				beforeEach : function() {
-					this.oButton = new sap.m.Button({
-						text : "Button"
-					});
-
-					this.oOverlay = new sap.ui.dt.ElementOverlay({
-						element : this.oButton,
-						designTimeMetadata : {}
-					});
-					this.oOverlay.placeInOverlayContainer();
-
-					this.oButton.placeAt("content");
-					sap.ui.getCore().applyChanges();
-				},
-				afterEach : function() {
-					this.oButton.destroy();
-					this.oOverlay.destroy();
-				}
-			});
-
-			QUnit.test("then", function(assert) {
-				assert.deepEqual(this.oOverlay.$().offset(), this.oButton.$().offset(), "overlay has same position as a control");
-			});
-
+			window['sap-ui-config'].libs = 'sap.ui.dt, sap.m, sap.ui.layout';
+			window['sap-ui-config'].resourceroots = {
+				'dt.view': 'testdata/designtime/'
+			};
+			window['sap-ui-config'].rtl = 'true';
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
+		<script>
+			jQuery.sap.require('sap.ui.qunit.qunit-2-css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+
+			// code coverage report only for listed namespaces
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt]');
+
+			jQuery.sap.includeScript('./ElementOverlayRTL.qunit.js');
+		</script>
+
 	</head>
 	<body>
 		<h1 id="qunit-header">QUnit page for sap.ui.dt.ElementOverlay RTL</h1>

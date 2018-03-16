@@ -5,14 +5,15 @@
 /**
  * Initialization Code and shared classes of library sap.ui.core.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
-	function(jQuery, DataType) {
+sap.ui.define(['sap/ui/base/DataType', './Core'],
+	function(DataType) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.core",
 		version: "${version}",
+		designtime: "sap/ui/core/designtime/library.designtime",
 		types: [
 
 			// builtin types
@@ -29,6 +30,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.AccessibleRole",
 			"sap.ui.core.AccessibleLandmarkRole",
 			"sap.ui.core.BarColor",
+			"sap.ui.core.BusyIndicatorSize",
 			"sap.ui.core.CalendarType",
 			"sap.ui.core.CSSColor",
 			"sap.ui.core.CSSSize",
@@ -55,6 +57,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.ValueState",
 			"sap.ui.core.VerticalAlign",
 			"sap.ui.core.Wrapping",
+			"sap.ui.core.dnd.DropEffect",
+			"sap.ui.core.dnd.DropLayout",
+			"sap.ui.core.dnd.DropPosition",
 			"sap.ui.core.mvc.ViewType",
 			"sap.ui.core.routing.HistoryDirection"
 		],
@@ -64,12 +69,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.PopupInterface",
 			"sap.ui.core.Toolbar",
 			"sap.ui.core.IContextMenu",
-			"sap.ui.core.IFormContent"
+			"sap.ui.core.IFormContent",
+			"sap.ui.core.dnd.IDragInfo",
+			"sap.ui.core.dnd.IDropInfo",
+			"sap.ui.core.IDScope"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
 			"sap.ui.core.Control",
-			"sap.ui.core.FragmentControl",
 			"sap.ui.core.HTML",
 			"sap.ui.core.Icon",
 			"sap.ui.core.InvisibleText",
@@ -77,6 +84,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.ScrollBar",
 			"sap.ui.core.TooltipBase",
 			"sap.ui.core.UIComponent",
+			"sap.ui.core.XMLComposite",
 			"sap.ui.core.mvc.HTMLView",
 			"sap.ui.core.mvc.JSONView",
 			"sap.ui.core.mvc.JSView",
@@ -97,6 +105,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 			"sap.ui.core.SeparatorItem",
 			"sap.ui.core.Title",
 			"sap.ui.core.VariantLayoutData",
+			"sap.ui.core.dnd.DragDropBase",
+			"sap.ui.core.dnd.DragInfo",
+			"sap.ui.core.dnd.DropInfo",
+			"sap.ui.core.dnd.DragDropInfo",
 			"sap.ui.core.search.OpenSearchProvider",
 			"sap.ui.core.search.SearchProvider",
 			"sap.ui.core.tmpl.DOMAttribute"
@@ -114,7 +126,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 					"sap/ui/core/support/plugins/LocalStorage",
 					"sap/ui/core/support/plugins/Interaction",
 					"sap/ui/core/support/plugins/Performance"
-				]
+				],
+				//Configuration used for rule loading of Support Assistant
+				publicRules:true,
+				internalRules:true
 			}
 		}
 	});
@@ -693,6 +708,39 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	};
 
 	/**
+	 * Configuration options for the BusyIndicator size
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.BusyIndicatorSize = {
+		/**
+		 * Type: automatic size detection
+		 * @public
+		 */
+		Auto : "Auto",
+
+		/**
+		 * Type: small size
+		 * @public
+		 */
+		Small : "Small",
+
+		/**
+		 * Type: Medium size
+		 * @public
+		 */
+		Medium : "Medium",
+
+		/**
+		 * Type: Large size
+		 * @public
+		 */
+		Large : "Large"
+	};
+
+	/**
 	 * The types of Calendar
 	 *
 	 * @enum {string}
@@ -745,7 +793,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 				// Note: the following regexp by intention is a single regexp literal.
 				// It could be made much more readable by constructing it out of (reused) sub-expressions (strings)
 				// but this would not be parseable by the metamodel recovery tooling that is used inside SAP
-				return /^(#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})|rgb\(\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*(,\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|rgba\((\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){3}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|hsl\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*(,\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|hsla\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*,(\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){2}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coralcornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgrey|darkgreen|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|grey|green|greenyellow|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgrey|lightgreen|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silverskyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen|transparent|inherit|)$/.test(vValue);
+				return /^(#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})|rgb\(\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*(,\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|rgba\((\s*((1?[0-9]?[0-9]|2([0-4][0-9]|5[0-5]))|([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){3}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|hsl\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*(,\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*){2}\)|hsla\(\s*([0-2]?[0-9]?[0-9]|3([0-5][0-9]|60))\s*,(\s*(([0-9]?[0-9](\.[0-9]+)?|100(\.0+)?)%)\s*,){2}\s*(0(\.[0-9]+)?|1(\.0+)?)\s*\)|aliceblue|antiquewhite|aqua|aquamarine|azure|beige|bisque|black|blanchedalmond|blue|blueviolet|brown|burlywood|cadetblue|chartreuse|chocolate|coral|cornflowerblue|cornsilk|crimson|cyan|darkblue|darkcyan|darkgoldenrod|darkgray|darkgrey|darkgreen|darkkhaki|darkmagenta|darkolivegreen|darkorange|darkorchid|darkred|darksalmon|darkseagreen|darkslateblue|darkslategray|darkslategrey|darkturquoise|darkviolet|deeppink|deepskyblue|dimgray|dimgrey|dodgerblue|firebrick|floralwhite|forestgreen|fuchsia|gainsboro|ghostwhite|gold|goldenrod|gray|grey|green|greenyellow|honeydew|hotpink|indianred|indigo|ivory|khaki|lavender|lavenderblush|lawngreen|lemonchiffon|lightblue|lightcoral|lightcyan|lightgoldenrodyellow|lightgray|lightgrey|lightgreen|lightpink|lightsalmon|lightseagreen|lightskyblue|lightslategray|lightslategrey|lightsteelblue|lightyellow|lime|limegreen|linen|magenta|maroon|mediumaquamarine|mediumblue|mediumorchid|mediumpurple|mediumseagreen|mediumslateblue|mediumspringgreen|mediumturquoise|mediumvioletred|midnightblue|mintcream|mistyrose|moccasin|navajowhite|navy|oldlace|olive|olivedrab|orange|orangered|orchid|palegoldenrod|palegreen|paleturquoise|palevioletred|papayawhip|peachpuff|peru|pink|plum|powderblue|purple|red|rosybrown|royalblue|saddlebrown|salmon|sandybrown|seagreen|seashell|sienna|silverskyblue|slateblue|slategray|slategrey|snow|springgreen|steelblue|tan|teal|thistle|tomato|turquoise|violet|wheat|white|whitesmoke|yellow|yellowgreen|transparent|inherit|)$/.test(vValue);
 			}
 		},
 		DataType.getType('string')
@@ -1464,6 +1512,46 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	 */
 
 	/**
+	 * Marker interface for drag configuration providing information about the source of the drag operation.
+	 *
+	 * @since 1.52.0
+	 * @name sap.ui.core.dnd.IDragInfo
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Marker interface for drop configuration providing information about the target of the drop operation.
+	 *
+	 * @since 1.52.0
+	 * @name sap.ui.core.dnd.IDropInfo
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Marker interface to flag controls that provide access to substructures from a byId method.
+	 *
+	 * @since 1.56.0
+	 * @name sap.ui.core.IDScope
+	 * @interface
+	 * @private
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Marker interface for a ControllerExtension.
+	 *
+	 * @since 1.56.0
+	 * @name sap.ui.core.mvc.IControllerExtension
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
 	 * Opens the control by given opener ref.
 	 * @param {string} oEvent oncontextmenu event
 	 * @param {sap.ui.core.Element|DOMRef} oOpenerRef The element which will get the focus back again after the menu was closed.
@@ -1631,6 +1719,96 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	};
 
 
+	thisLib.dnd = thisLib.dnd || {};
+
+	/**
+	 * Configuration options for drop positions.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.52.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.dnd.DropPosition = {
+
+		/**
+		 * Drop on the control.
+		 * @public
+		 */
+		On : "On",
+
+		/**
+		 * Drop between the controls.
+		 * @public
+		 */
+		Between : "Between",
+
+		/**
+		 * Drop on the control or between the controls.
+		 * @public
+		 */
+		OnOrBetween : "OnOrBetween"
+	};
+
+	/**
+	 * Configuration options for the layout of the droppable controls.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.52.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.dnd.DropLayout = {
+
+		/**
+		 * Droppable controls are arranged vertically.
+		 * @public
+		 */
+		Vertical : "Vertical",
+
+		/**
+		 * Droppable controls are arranged horizontally.
+		 * @public
+		 */
+		Horizontal : "Horizontal"
+	};
+
+	/**
+	 * Configuration options for visual drop effects that are given during a drag and drop operation.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.52.0
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.dnd.DropEffect = {
+
+		/**
+		 * A copy of the source item is made at the new location.
+		 * @public
+		 */
+		Copy : "Copy",
+
+		/**
+		 * An item is moved to a new location.
+		 * @public
+		 */
+		Move : "Move",
+
+		/**
+		 * A link is established to the source at the new location.
+		 * @public
+		 */
+		Link : "Link",
+
+		/**
+		 * The item cannot be dropped.
+		 * @public
+		 */
+		None : "None"
+	};
+
+
 	thisLib.mvc = thisLib.mvc || {};
 
 	/**
@@ -1764,6 +1942,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	lazy("sap.ui.core.BusyIndicator", "show hide attachOpen detachOpen attachClose detachClose");
 	lazy("sap.ui.core.tmpl.Template", "registerType unregisterType");
 	lazy("sap.ui.core.Fragment", "registerType");
+	lazy("sap.ui.core.IconPool", "createControlByURI addIcon getIconURI getIconInfo isIconURI getIconCollectionNames getIconNames getIconForMimeType");
 	lazy("sap.ui.core.service.ServiceFactoryRegistry", "register unregister get");
 
 	lazy("sap.ui.model.odata.AnnotationHelper", "createPropertySetting format getNavigationPath"
@@ -1782,8 +1961,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './Core'],
 	lazy("sap.ui", "htmlfragment", "sap.ui.core.Fragment");
 
 	each("sap.ui.model.", ["Filter","Sorter","json.JSONModel","resource.ResourceModel","odata.ODataModel","odata.v2.ODataModel","odata.v4.ODataModel","xml.XMLModel"]);
-	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize", "Currency"]);
-	each("sap.ui.model.odata.type.", ["Boolean","Byte","Date","DateTime","DateTimeOffset","Double","Decimal","Guid","Int16","Int32","Int64","Raw","SByte","Single","String","Time","TimeOfDay"]);
+	each("sap.ui.model.type.", ["Boolean","Integer","Float","String","Date","Time","DateTime","FileSize","Currency","Unit","DateInterval", "DateTimeInterval", "TimeInterval"]);
+	each("sap.ui.model.odata.type.", ["Boolean","Byte","Date","DateTime","DateTimeOffset","Double","Decimal","Guid","Int16","Int32","Int64","Raw","SByte","Single","Stream","String","Time","TimeOfDay"]);
 	each("sap.ui.core.", ["Locale","LocaleData","mvc.Controller"]);
 	each("sap.ui.core.mvc.", ["Controller", "View", "JSView", "JSONView", "XMLView", "HTMLView", "TemplateView"], "sap.ui");
 	each("sap.ui.core.", ["Component"], "sap.ui");

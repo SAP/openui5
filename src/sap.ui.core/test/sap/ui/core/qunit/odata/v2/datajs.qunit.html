@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="UTF-8">
+	<title>sap/ui/thirdparty/datajs</title>
+	<script src="../../../shared-config.js"></script>
+	<script src="../../../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"></script>
+	<link  href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" rel="stylesheet" media="screen" />
+	<script src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script>
+
+		if ( typeof window.define !== 'function' || !window.define.amd ) {
+			// create a dummy AMD define to check if shim works for datajs
+			window.define = function() {
+				throw Error("define should not be called");
+			};
+			window.define.amd = {vendor: "SAPUI5 QUnit Test"};
+		}
+
+		QUnit.test("", function(assert) {
+			assert.equal(typeof window.define, 'function', "[precondition] there should be a function window.define");
+			assert.ok(window.define.amd, "[precondition] global define function should be an AMD compatible loader");
+
+			var done = assert.async();
+			sap.ui.require(['sap/ui/thirdparty/datajs'], function(datajs) {
+				assert.ok(typeof window.datajs === 'object' && window.datajs != null, "global datajs property should be a valid object");
+				assert.ok(typeof window.OData === 'object' && window.OData != null, "global OData property should be a valid object");
+				assert.ok(typeof datajs === 'object' && datajs != null, "datajs module should export a valid object");
+				assert.strictEqual(datajs, window.OData, "export of datajs and global OData should be the same");
+				done();
+			});
+		});
+
+	</script>
+</head>
+<body>
+	<div id="qunit"></div>
+</body>
+</html>

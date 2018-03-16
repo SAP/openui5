@@ -1,0 +1,60 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8">
+<title>QUnit Test Page for sap.m.FeedListItemAction</title>
+
+<!-- UI5 Bootstrap -->
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap"
+	src="../../../../resources/sap-ui-core.js"
+	data-sap-ui-libs="sap.m"
+	data-sap-ui-language="en">
+</script>
+
+<!-- QUnit libraries -->
+<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
+<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<script>
+
+(function() {
+	QUnit.config.autostart = false;
+
+	QUnit.module("Default values", {
+		beforeEach: function() {
+			this.oAction = new sap.m.FeedListItemAction();
+		},
+		afterEach: function() {
+			this.oAction.destroy();
+			this.oAction = null;
+		}
+	});
+
+	QUnit.test("Default value of property icon", function(assert) {
+		assert.equal(this.oAction.getProperty("icon"), "", "Default value is correct");
+	});
+
+	QUnit.test("Default value of property text", function(assert) {
+		assert.equal(this.oAction.getProperty("text"), "", "Default value is correct");
+	});
+
+	QUnit.test("Default value of property key", function(assert) {
+		assert.equal(this.oAction.getProperty("key"), "", "Default value is correct");
+	});
+
+	QUnit.start();
+})();
+
+</script>
+</head>
+<body id="body" class="sapUiBody">
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

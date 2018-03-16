@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.ui.core.sample.ThemeCustomClasses.Component", {
 
 		metadata : {
-			rootView : "sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses",
+			rootView : {
+				"viewName": "sap.ui.core.sample.ThemeCustomClasses.ThemeCustomClasses",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.ui.layout"

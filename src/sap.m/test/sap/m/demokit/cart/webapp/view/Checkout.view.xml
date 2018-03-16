@@ -1,5 +1,4 @@
 <mvc:View
-	id="checkoutView"
 	height="100%"
 	controllerName="sap.ui.demo.cart.controller.Checkout"
 	xmlns:layout="sap.ui.layout"
@@ -12,36 +11,46 @@
 			<Page
 				id="wizardContentPage"
 				title="{i18n>checkoutTitle}">
+				<landmarkInfo>
+					<PageAccessibleLandmarkInfo
+						rootRole="Region"
+						rootLabel="{i18n>Checkout_rootLabel}"
+						contentRole="Main"
+						contentLabel="{i18n>Checkout_contentLabel}"
+						footerRole="Region"
+						footerLabel="{i18n>Checkout_footerLabel}" />
+				</landmarkInfo>
 				<headerContent>
 					<Button
 						id="returnToShopButton"
 						type="Emphasized"
-						text="{i18n>returntoshopButtonText}"
+						text="{i18n>returnToShopButtonText}"
 						press="onReturnToShopButtonPress" />
 				</headerContent>
 				<content>
 					<Wizard
 						id="shoppingCartWizard"
-						complete="completedHandler"
+						complete="checkCompleted"
 						enableBranching="true"
 						finishButtonText="{i18n>checkoutWizardReviewbtn}">
-						<WizardStep
-							id="contentsStep"
-							nextStep="paymentTypeStep"
-							title="{i18n>checkoutContentsTitle}"
-							icon="sap-icon://cart">
-							<List
-								id="entryList"
-								noDataText="{i18n>cartNoData}"
-								items="{
-									path : 'cartProducts>/cartEntries',
-									sorter : {
-										path : 'Name',
-										descending : false
-									}
-							}">
-								<items>
-									<ObjectListItem
+						<steps>
+							<WizardStep
+								id="contentsStep"
+								nextStep="paymentTypeStep"
+								title="{i18n>checkoutContentsTitle}"
+								icon="sap-icon://cart">
+								<List
+									id="entryList"
+									noDataText="{i18n>cartNoData}"
+									items="{
+										path : 'cartProducts>/cartEntries',
+										sorter : {
+											path : 'Name',
+											descending : false
+										}
+								}">
+									<items>
+										<ObjectListItem
 											intro="{cartProducts>Quantity} x"
 											icon="{
 												path : 'cartProducts>PictureUrl',
@@ -55,8 +64,8 @@
 											numberUnit="EUR"
 											press="onEntryListPress"
 											iconDensityAware="false">
-										<firstStatus>
-											<ObjectStatus
+											<firstStatus>
+												<ObjectStatus
 													text="{
 														path : 'cartProducts>Status',
 														formatter : '.formatter.statusText'
@@ -65,324 +74,670 @@
 														path : 'cartProducts>Status',
 														formatter : '.formatter.statusState'
 													}" />
-										</firstStatus>
-									</ObjectListItem>
-								</items>
-							</List>
-							<Bar>
-								<contentRight>
-									<Text
+											</firstStatus>
+										</ObjectListItem>
+									</items>
+								</List>
+								<Bar>
+									<contentRight>
+										<Text
 											text="{
-													path : 'cartProducts>/cartEntries',
-													formatter : '.formatter.totalPrice'
-												} EUR" />
-								</contentRight>
-							</Bar>
-						</WizardStep>
-						<WizardStep
+												path : 'cartProducts>/cartEntries',
+												formatter : '.formatter.totalPrice'
+											} EUR" />
+									</contentRight>
+								</Bar>
+							</WizardStep>
+							<WizardStep
 								id="paymentTypeStep"
 								title="{i18n>checkoutPaymentTitle}"
 								subsequentSteps="creditCardStep, bankAccountStep, cashOnDeliveryStep"
 								complete="goToPaymentStep"
 								icon="sap-icon://money-bills">
-							<Text
+								<Text
 									class="sapUiSmallMarginBottom"
 									text="{i18n>checkoutPaymentText}" />
 							<HBox
-									alignItems="Center"
-									justifyContent="Center"
-									width="100%">
+								renderType="Bare"
+								alignItems="Center"
+								justifyContent="Center"
+								width="100%">
 								<SegmentedButton
 										select="setPaymentMethod"
 										id="paymentMethodSelection"
 										selectedKey="{/SelectedPayment}">
-									<items>
-										<SegmentedButtonItem
+										<items>
+											<SegmentedButtonItem
 												id="payViaCC"
 												key="Credit Card"
-												icon="sap-icon://credit-card"
-												text="{i18n>checkoutPaymentCreditcard}" />
-										<SegmentedButtonItem
+												text="{i18n>checkoutPaymentCreditCard}" />
+											<SegmentedButtonItem
 												id="payViaBank"
 												key="Bank Transfer"
-												icon="sap-icon://official-service"
-												text="{i18n>checkoutPaymentBanktransfer}" />
-										<SegmentedButtonItem
+												text="{i18n>checkoutPaymentBankTransfer}" />
+											<SegmentedButtonItem
 												id="payViaCOD"
 												key="Cash on Delivery"
-												icon="sap-icon://money-bills"
 												text="{i18n>checkoutPaymentCod}" />
-									</items>
-								</SegmentedButton>
-							</HBox>
-						</WizardStep>
-						<WizardStep
+										</items>
+									</SegmentedButton>
+								</HBox>
+							</WizardStep>
+							<WizardStep
 								id="creditCardStep"
-								title="{i18n>checkoutCreditcardCreditcardinfo}"
-								nextStep="billingStep"
-								activate="checkCreditCardStep"
-								icon="sap-icon://credit-card">
-							<MessageStrip text="{i18n>checkoutCreditcardMessage}" />
-							<form:SimpleForm editable="true">
+								title="{i18n>checkoutCreditCardCreditCardInfo}"
+								nextStep="invoiceStep"
+								activate="onCheckStepActivation"
+								icon="sap-icon://credit-card"
+								validated="false">
+							<form:SimpleForm
+								editable="true"
+								layout="ResponsiveGridLayout">
 								<Label
-										text="{i18n>checkoutCreditcardName}"
-										required="true" />
+									labelFor="creditCardHolderName"
+									text="{i18n>checkoutCreditCardName}"
+									required="true">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="creditCardName"
-										value="{/CreditCard/Name}"
-										liveChange="checkCreditCardStep"
-										valueLiveUpdate="true" />
-								<Label text="{i18n>checkoutCreditcardCardno}" />
-								<Input value="{/CardNumber}" />
-								<Label text="{i18n>checkoutCreditcardCode}" />
-								<Input value="{/CreditCard/SecurityCode}" />
-								<Label text="{i18n>checkoutCreditcardExpiration}" />
+									id="creditCardHolderName"
+									placeholder="{i18n>creditCardHolderText}"
+									value="{
+										path: '/CreditCard/Name',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[a-zA-Z]+[\\s]?[a-zA-Z]+$'
+										}
+									}"
+									change="checkCreditCardStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutCreditCardCardNo}"
+									labelFor="creditCardNumber"
+									required="true">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<MaskInput
+									id="creditCardNumber"
+									placeholder="{i18n>creditCardNumberText}"
+									mask = "CCCC-CCCC-CCCC-CCCC"
+									placeholderSymbol = "_"
+									value="{
+										path: '/CreditCard/CardNumber',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											search: '^[0-9-]+$',
+											minLength: 16
+										}
+									}"
+									change="checkCreditCardStep">
+									<rules>
+										<MaskInputRule
+											maskFormatSymbol="C"
+											regex="[0-9]"/>
+									</rules>
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</MaskInput>
+								<Label
+									text="{i18n>checkoutCreditCardCode}"
+									labelFor="creditCardSecurityNumber"
+									required="true">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<MaskInput
+									id="creditCardSecurityNumber"
+									placeholder="{i18n>creditCardSecurityNumberText}"
+									mask = "CCC"
+									placeholderSymbol = "_"
+									value="{
+										path: '/CreditCard/SecurityCode',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[0-9]+$'
+										}
+									}"
+									change="checkCreditCardStep">
+									<rules>
+										<MaskInputRule
+											maskFormatSymbol ="C"
+											regex = "[0-9]"/>
+									</rules>
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</MaskInput>
+								<Label text="{i18n>checkoutCreditCardExpiration}">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<DatePicker
-										value="{/CreditCard/Expire}"
-										valueFormat="MM/YYYY"
-										displayFormat="MM/YYYY" />
+									id="creditCardExpirationDate"
+									value="{
+										path: '/CreditCard/Expire',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 7,
+											maxLength: 7
+										}
+									}"
+									valueFormat="MM/YYYY"
+									displayFormat="MM/YYYY"
+									required="true"
+									change="checkCreditCardStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</DatePicker>
 							</form:SimpleForm>
 						</WizardStep>
 						<WizardStep
-								id="bankAccountStep"
-								title="{i18n>checkoutBankaccontTitle}"
-								nextStep="billingStep"
-								icon="sap-icon://official-service">
+							id="bankAccountStep"
+							title="{i18n>checkoutBankAccountTitle}"
+							nextStep="invoiceStep"
+							icon="sap-icon://official-service">
 							<Panel>
 								<layout:Grid
-										defaultSpan="L6 M6 S10"
-										hSpacing="2">
+									defaultSpan="L6 M6 S10"
+									hSpacing="2">
 									<Label
-											text="{i18n>checkoutBankaccontName}"
-											design="bold" />
-									<Label text="Singapore Hardware e-Commerce LTD" />
+										text="{i18n>checkoutBankAccountName}"
+										design="bold" />
+									<Label text="{i18n>beneficiaryNameText}" />
 									<Label
-											text="{i18n>checkoutBankaccontBank}"
-											design="bold" />
-									<Label text="CITY BANK, SINGAPORE BRANCH" />
+										text="{i18n>checkoutBankAccountBank}"
+										design="bold" />
+									<Label text="{i18n>bankNameText}" />
 									<Label
-											text="{i18n>checkoutBankaccontNumber}"
-											design="bold" />
-									<Label text="06110702027218" />
+										text="{i18n>checkoutBankAccountNumber}"
+										design="bold" />
+									<Label text="{i18n>accountNumberText}" />
 								</layout:Grid>
 							</Panel>
 						</WizardStep>
 						<WizardStep
-								id="cashOnDeliveryStep"
-								title="{i18n>checkoutCodTitle}"
-								nextStep="billingStep"
-								activate="checkCashOnDeliveryStep"
-								icon="sap-icon://money-bills">
-							<MessageStrip text="{i18n>checkoutCodMessage}" />
-							<form:SimpleForm editable="true">
+							id="cashOnDeliveryStep"
+							title="{i18n>checkoutCodTitle}"
+							nextStep="invoiceStep"
+							activate="onCheckStepActivation"
+							icon="sap-icon://money-bills"
+							validated="false">
+							<form:SimpleForm
+								editable="true"
+								layout="ResponsiveGridLayout">
 								<Label
-										text="{i18n>checkoutCodFirstname}"
-										required="true" />
+									text="{i18n>checkoutCodFirstName}"
+									required="true"
+									labelFor="cashOnDeliveryName">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="cashOnDeliveryName"
-										value="{/CashOnDelivery/FirstName}"
-										liveChange="checkCashOnDeliveryStep"
-										valueLiveUpdate="true" />
-								<Label text="{i18n>checkoutCodLastname}" />
-								<Input value="{/CashOnDelivery/LastName}" />
-								<Label text="{i18n>checkoutCodPhone}" />
-								<Input value="{/CashOnDelivery/Phone Number}" />
-								<Label text="{i18n>checkoutCodEmail}" />
-								<Input value="{/CashOnDelivery/Email}" />
+									id="cashOnDeliveryName"
+									placeholder="{i18n>firstNameText}"
+									value="{
+										path: '/CashOnDelivery/FirstName',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 2
+										}
+									}"
+									change="checkCashOnDeliveryStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutCodLastName}"
+									labelFor="cashOnDeliveryLastName"
+									required="true">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="cashOnDeliveryLastName"
+									placeholder="{i18n>lastNameText}"
+									value="{
+										path: '/CashOnDelivery/LastName',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 2
+										}
+									}"
+									change="checkCashOnDeliveryStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutCodPhone}"
+									labelFor="cashOnDeliveryPhoneNumber"
+									required="true">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="cashOnDeliveryPhoneNumber"
+									placeholder="{i18n>phoneNumberText}"
+									value="{
+										path: '/CashOnDelivery/PhoneNumber',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											search: '^[(0-9+]+[)\\s]?[0-9\\/\\s]+$'
+										}
+									}"
+									change="checkCashOnDeliveryStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label
+									text="{i18n>checkoutCodEmail}"
+									labelFor="cashOnDeliveryEmail"
+									required="true">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
+								<Input
+									id="cashOnDeliveryEmail"
+									placeholder="{i18n>emailAddressText}"
+									value="{
+										path: '/CashOnDelivery/Email',
+										type: 'sap.ui.demo.cart.model.EmailType'
+										}"
+									change="checkCashOnDeliveryStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
 							</form:SimpleForm>
 						</WizardStep>
 						<WizardStep
-								id="billingStep"
-								title="{i18n>checkoutBillingaddressTitle}"
-								subsequentSteps="deliveryAddressStep, deliveryTypeStep"
-								activate="checkBillingStep"
-								complete="billingAddressComplete"
-								icon="sap-icon://sales-quote">
-							<MessageStrip text="{i18n>checkoutBillingaddressMessage}" />
-							<form:SimpleForm editable="true">
-								<Label text="{i18n>checkoutBillingaddressDifferentdeliveryadddress}" />
+							id="invoiceStep"
+							title="{i18n>checkoutInvoiceAddressTitle}"
+							subsequentSteps="deliveryAddressStep, deliveryTypeStep"
+							activate="onCheckStepActivation"
+							complete="invoiceAddressComplete"
+							icon="sap-icon://sales-quote"
+							validated="false">
+							<form:SimpleForm
+								layout="ResponsiveGridLayout"
+								editable="true">
+								<Label text="{i18n>checkoutInvoiceAddressDifferentDeliveryAddress}">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<CheckBox
-										id="differentDeliveryAddress"
-										selected="{/DifferentDeliveryAddress}"
-										select="setDifferentDeliveryAddress" />
+									id="differentDeliveryAddress"
+									selected="{/DifferentDeliveryAddress}"
+									select="setDifferentDeliveryAddress">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</CheckBox>
 								<Label
-										text="{i18n>checkoutBillingaddressAdddress}"
-										required="true" />
+									text="{i18n>checkoutInvoiceAddress}"
+									required="true"
+									labelFor="invoiceAddressAddress">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="billingAddressAddress"
-										value="{/BillingAddress/Address}"
-										liveChange="checkBillingStep"
-										valueLiveUpdate="true" />
+									id="invoiceAddressAddress"
+									placeholder="{i18n>addressText}"
+									value="{
+										path: '/InvoiceAddress/Address',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 4,
+											search: '^[a-zA-Z-]+\\.?\\s?[0-9a-zA-Z\\s]*$'
+										}
+									}"
+									change="checkInvoiceStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
 								<Label
-										text="{i18n>checkoutBillingaddressCity}"
-										required="true" />
+									text="{i18n>checkoutInvoiceAddressCity}"
+									required="true"
+									labelFor="invoiceAddressCity">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="billingAddressCity"
-										value="{/BillingAddress/City}"
-										liveChange="checkBillingStep"
-										valueLiveUpdate="true" />
+									id="invoiceAddressCity"
+									placeholder="{i18n>cityText}"
+									value="{
+										path: '/InvoiceAddress/City',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[a-zA-Z\\s]+$'
+										}
+									}"
+									change="checkInvoiceStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
 								<Label
-										text="{i18n>checkoutBillingaddressZip}"
-										required="true" />
+									text="{i18n>checkoutInvoiceAddressZip}"
+									required="true"
+									labelFor="invoiceAddressZip">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="billingAddressZip"
-										value="{/BillingAddress/ZipCode}"
-										liveChange="checkBillingStep"
-										valueLiveUpdate="true" />
+									id="invoiceAddressZip"
+									placeholder="{i18n>zipCodeText}"
+									value="{
+										path: '/InvoiceAddress/ZipCode',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[0-9]+$'
+										}
+									}"
+									change="checkInvoiceStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
 								<Label
-										text="{i18n>checkoutBillingaddressCountry}"
-										required="true" />
+									text="{i18n>checkoutInvoiceAddressCountry}"
+									required="true"
+									labelFor="invoiceAddressCountry">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="billingAddressCountry"
-										value="{/BillingAddress/Country}"
-										liveChange="checkBillingStep"
-										valueLiveUpdate="true" />
+									id="invoiceAddressCountry"
+									placeholder="{i18n>countryText}"
+									value="{
+										path: '/InvoiceAddress/Country',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 2,
+											search: '^[a-zA-Z]+$'
+										}
+									}"
+									change="checkInvoiceStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
 								<Label
-										text="{i18n>checkoutBillingaddressNote}"
-										required="false" />
+									text="{i18n>checkoutInvoiceAddressNote}"
+									required="false">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<TextArea
-										rows="8"
-										value="{/BillingAddress/Note}" />
+									rows="8"
+									placeholder="{i18n>noteText}"
+									value="{/InvoiceAddress/Note}">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</TextArea>
 							</form:SimpleForm>
 						</WizardStep>
 						<WizardStep
 								id="deliveryAddressStep"
-								title="{i18n>checkoutDeliveryaddressTitle}"
+								activate="onCheckStepActivation"
+								validated="false"
+								title="{i18n>checkoutDeliveryAddressTitle}"
 								nextStep="deliveryTypeStep"
 								icon="sap-icon://sales-quote">
-							<form:SimpleForm editable="true">
+							<form:SimpleForm
+								editable="true"
+								layout="ResponsiveGridLayout">
 								<Label
-										text="{i18n>checkoutDeliveryaddressAdddress}"
-										required="true"/>
+									text="{i18n>checkoutDeliveryAddressAddress}"
+									required="true"
+									labelFor="deliveryAddressAddress">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="deliveryAddressAddress"
-										value="{/DeliveryAddress/Address}"
-										liveChange="checkDeliveryStep"
-										valueLiveUpdate="true" />
+									id="deliveryAddressAddress"
+									placeholder="{i18n>addressText}"
+									value="{
+										path: '/DeliveryAddress/Address',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 4,
+											search: '^[a-zA-Z-]+\\.?\\s?[0-9a-zA-Z\\s]*$'
+										}
+									}"
+									change="checkDeliveryAddressStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
 								<Label
-										text="{i18n>checkoutDeliveryaddressCity}"
-										required="true"/>
+									text="{i18n>checkoutDeliveryAddressCity}"
+									required="true"
+									labelFor="deliveryAddressCity">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="deliveryAddressCity"
-										value="{/DeliveryAddress/City}"
-										liveChange="checkDeliveryStep"
-										valueLiveUpdate="true" />
+									id="deliveryAddressCity"
+									placeholder="{i18n>cityText}"
+									value="{
+										path: '/DeliveryAddress/City',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[a-zA-Z\\s]+$'
+										}
+									}"
+									change="checkDeliveryAddressStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
 								<Label
-										text="{i18n>checkoutDeliveryaddressZip}"
-										required="true"/>
+									text="{i18n>checkoutDeliveryAddressZip}"
+									required="true"
+									labelFor="deliveryAddressZip">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="deliveryAddressZip"
-										value="{/DeliveryAddress/ZipCode}"
-										liveChange="checkDeliveryStep"
-										valueLiveUpdate="true" />
+									id="deliveryAddressZip"
+									placeholder="{i18n>zipCodeText}"
+									value="{
+										path: '/DeliveryAddress/ZipCode',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 3,
+											search: '^[0-9]+$'
+										}
+									}"
+									change="checkDeliveryAddressStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
 								<Label
-										text="{i18n>checkoutDeliveryaddressCountry}"
-										required="true"/>
+									text="{i18n>checkoutDeliveryAddressCountry}"
+									required="true"
+									labelFor="deliveryAddressCountry">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<Input
-										id="deliveryAddressCountry"
-										value="{/DeliveryAddress/Country}"
-										liveChange="checkDeliveryStep"
-										valueLiveUpdate="true" />
-								<Label text="{i18n>checkoutDeliveryaddressNote}" />
+									id="deliveryAddressCountry"
+									placeholder="{i18n>countryText}"
+									value="{
+										path: '/DeliveryAddress/Country',
+										type: 'sap.ui.model.type.String',
+										constraints: {
+											minLength: 2,
+											search: '^[a-zA-Z]+$'
+										}
+									}"
+									change="checkDeliveryAddressStep">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</Input>
+								<Label text="{i18n>checkoutDeliveryAddressNote}">
+									<layoutData>
+										<layout:GridData span="XL4 L4 M4 S12"/>
+									</layoutData>
+								</Label>
 								<TextArea
-										rows="8"
-										value="{/DeliveryAddress/Note}" />
+									rows="8"
+									placeholder="{i18n>noteText}"
+									value="{/DeliveryAddress/Note}">
+									<layoutData>
+										<layout:GridData span="XL8 L8 M8 S12"/>
+									</layoutData>
+								</TextArea>
 							</form:SimpleForm>
 						</WizardStep>
 						<WizardStep
 								id="deliveryTypeStep"
-								title="{i18n>checkoutDeliverytypeTitle}"
+								title="{i18n>checkoutDeliveryTypeTitle}"
 								icon="sap-icon://insurance-car">
-							<Text
+								<Text
 									class="sapUiSmallMarginBottom"
-									text="{i18n>checkoutDeliverytypeText}" />
+									text="{i18n>checkoutDeliveryTypeText}" />
 							<HBox
-									alignItems="Center"
-									justifyContent="Center"
-									width="100%">
+								renderType="Bare"
+								alignItems="Center"
+								justifyContent="Center"
+								width="100%">
 								<SegmentedButton
 										id="deliveryType"
 										selectedKey="{/SelectedDeliveryMethod}">
-									<items>
-										<SegmentedButtonItem
+										<items>
+											<SegmentedButtonItem
 												key="Standard Delivery"
-												text="{i18n>checkoutDeliverytypeStandard}" />
-										<SegmentedButtonItem
+												text="{i18n>checkoutDeliveryTypeStandard}" />
+											<SegmentedButtonItem
 												id="expressDelivery"
 												key="Express Delivery"
-												text="{i18n>checkoutDeliverytypeExpress}" />
-									</items>
-								</SegmentedButton>
-							</HBox>
-						</WizardStep>
+												text="{i18n>checkoutDeliveryTypeExpress}" />
+										</items>
+									</SegmentedButton>
+								</HBox>
+							</WizardStep>
+						</steps>
 					</Wizard>
 				</content>
+				<footer>
+					<Bar id="wizardFooterBar" visible="{= ${message>/}.length === 0 ? false : true}">
+						<contentLeft>
+							<Button
+								id="showPopoverButton"
+								icon="sap-icon://message-popup"
+								text="{= ${message>/}.length }"
+								type="Emphasized"
+								press="onShowMessagePopoverPress"/>
+						</contentLeft>
+					</Bar>
+				</footer>
 			</Page>
 			<Page
-					id="summaryPage"
-					showHeader="false">
+				id="summaryPage"
+				showHeader="false">
+				<landmarkInfo>
+					<PageAccessibleLandmarkInfo
+							rootRole="Region" rootLabel="{i18n>Checkout_rootLabel}"
+							contentRole="Main" contentLabel="{i18n>Checkout_summaryContentLabel}"
+							footerRole="Banner" footerLabel="{i18n>Checkout_footerLabel}" />
+				</landmarkInfo>
 				<content>
-					<form:SimpleForm
-							editable="false"
-							layout="ResponsiveGridLayout">
-						<form:toolbar>
+					<Panel>
+						<headerToolbar>
 							<Toolbar id="toolbarProductList">
 								<Title
-										text="{i18n>checkoutSummaryTitle1}"
-										level="H4"
-										titleStyle="H4" />
+									id="checkoutItems"
+									text="{i18n>checkoutSummaryTitle1}"
+									level="H2"
+									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
-										id="backtoList"
-										icon="sap-icon://edit"
-										text="{i18n>checkoutSummaryEdit}"
-										type="Emphasized"
-										press="_navBackToStep">
+									id="backtoList"
+									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
+									type="Emphasized"
+									press="_navBackToStep">
 									<customData>
 										<core:CustomData key="navBackTo" value="contentsStep"/>
 									</customData>
 								</Button>
 							</Toolbar>
-						</form:toolbar>
-						<form:content>
+						</headerToolbar>
+						<content>
 							<List
-									id="summaryEntryList"
-									footerText="{
-									   path : 'cartProducts>/savedForLaterEntries',
-										formatter : '.formatter.footerTextForCart'
-									  }"
-									delete="onCartEntriesDelete"
-									select="onEntryListSelect"
-									noDataText="{i18n>cartNoData}"
-									items="{
-										path : 'cartProducts>/cartEntries',
-									   sorter : {
-										  path : 'Name',
-										  descending : false
-										}
+								id="summaryEntryList"
+								footerText="{
+									path : 'cartProducts>/savedForLaterEntries',
+									formatter : '.formatter.footerTextForCart'
+								}"
+								noDataText="{i18n>cartNoData}"
+								items="{
+									path : 'cartProducts>/cartEntries',
+									sorter : {
+									path : 'Name',
+									descending : false
+								}
 							 }">
 								<items>
 									<ObjectListItem
-											intro="{cartProducts>Quantity} x"
-											icon="{
-												 path : 'cartProducts>PictureUrl',
-												 formatter : '.formatter.pictureUrl'
-											   }"
-											title="{cartProducts>Name}"
-											number="{
-												 path : 'cartProducts>Price',
-												  formatter : '.formatter.price'
-												}"
-											numberUnit="EUR"
-											press="onEntryListPress"
-											iconDensityAware="false">
+										intro="{cartProducts>Quantity} x"
+										icon="{
+											path : 'cartProducts>PictureUrl',
+											formatter : '.formatter.pictureUrl'
+											}"
+										title="{cartProducts>Name}"
+										number="{
+											path : 'cartProducts>Price',
+											formatter : '.formatter.price'
+										}"
+										numberUnit="EUR"
+										press="onEntryListPress"
+										iconDensityAware="false">
 										<firstStatus>
 											<ObjectStatus
-													text="{
+												text="{
 												   path : 'cartProducts>Status',
 												   formatter : '.formatter.statusText'
 												 }"
-													state="{
+												state="{
 													path : 'cartProducts>Status',
 												   formatter : '.formatter.statusState'
 												  }" />
@@ -390,39 +745,42 @@
 									</ObjectListItem>
 								</items>
 							</List>
-						</form:content>
-					</form:SimpleForm>
-					<form:SimpleForm>
+						</content>
+					</Panel>
+					<form:SimpleForm ariaLabelledBy="totalPriceTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarTotalPrice">
 								<ToolbarSpacer />
 								<Title
-										level="H4"
-										titleStyle="H4"
-										text="{
-											 path : 'cartProducts>/cartEntries',
-											 formatter : '.formatter.totalPrice'
-										   }" />
+									id="totalPriceTitle"
+									level="H3"
+									titleStyle="H4"
+									text="{
+										path : 'cartProducts>/cartEntries',
+										formatter : '.formatter.totalPrice'
+									}" />
 							</Toolbar>
 						</form:toolbar>
 					</form:SimpleForm>
 
 					<form:SimpleForm
-							editable="false"
-							layout="ResponsiveGridLayout">
+						editable="false"
+						layout="ResponsiveGridLayout"
+						ariaLabelledBy="toolbarPaymentTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarPayment">
 								<Title
-										text="{i18n>checkoutSummaryTitle2}"
-										level="H4"
-										titleStyle="H4" />
+									id="toolbarPaymentTitle"
+									text="{i18n>checkoutSummaryTitle2}"
+									level="H2"
+									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
-										id="backToPaymentType"
-										icon="sap-icon://edit"
-										text="{i18n>checkoutSummaryEdit}"
-										type="Emphasized"
-										press="_navBackToStep">
+									id="backToPaymentType"
+									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
+									type="Emphasized"
+									press="_navBackToStep">
 									<customData>
 										<core:CustomData key="navBackTo" value="paymentTypeStep"/>
 									</customData>
@@ -430,7 +788,7 @@
 							</Toolbar>
 						</form:toolbar>
 						<form:content>
-							<Label text="{i18n>checkoutSummaryPaymentheader}" />
+							<Label text="{i18n>checkoutSummaryPaymentHeader}" />
 							<Text text="{/SelectedPayment}" />
 						</form:content>
 					</form:SimpleForm>
@@ -438,20 +796,22 @@
 					<form:SimpleForm
 							visible="{= ${/SelectedPayment}==='Credit Card' ? true : false}"
 							editable="false"
-							layout="ResponsiveGridLayout">
+							layout="ResponsiveGridLayout"
+							ariaLabelledBy="creditCardPaymentTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarCreditCard">
 								<Title
-										text="{i18n>checkoutSummaryTitle3cc}"
-										level="H4"
-										titleStyle="H4" />
+									id="creditCardPaymentTitle"
+									text="{i18n>checkoutSummaryTitle3cc}"
+									level="H2"
+									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
-										id="backToCreditCard"
-										icon="sap-icon://edit"
-										text="{i18n>checkoutSummaryEdit}"
-										type="Emphasized"
-										press="_navBackToStep">
+									id="backToCreditCard"
+									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
+									type="Emphasized"
+									press="_navBackToStep">
 									<customData>
 										<core:CustomData key="navBackTo" value="creditCardStep"/>
 									</customData>
@@ -459,54 +819,56 @@
 							</Toolbar>
 						</form:toolbar>
 						<form:content>
-							<Label text="{i18n>checkoutCreditcardName}" />
+							<Label text="{i18n>checkoutCreditCardName}" />
 							<Text text="{/CreditCard/Name}" />
-							<Label text="{i18n>checkoutCreditcardCardno}" />
-							<Text text="{/CardNumber}" />
-							<Label text="{i18n>checkoutCreditcardCode}" />
+							<Label text="{i18n>checkoutCreditCardCardNo}" />
+							<Text text="{/CreditCard/CardNumber}" />
+							<Label text="{i18n>checkoutCreditCardCode}" />
 							<Text text="{/CreditCard/SecurityCode}" />
-							<Label text="{i18n>checkoutCreditcardExpiration}" />
+							<Label text="{i18n>checkoutCreditCardExpiration}" />
 							<Text text="{/CreditCard/Expire}" />
 						</form:content>
 					</form:SimpleForm>
 
 					<form:SimpleForm
-							visible="{= ${/SelectedPayment}==='Bank Transfer' ? true : false}"
-							title="{i18n>checkoutSummaryTitle3bt}"
-							editable="false"
-							layout="ResponsiveGridLayout">
+						visible="{= ${/SelectedPayment}==='Bank Transfer' ? true : false}"
+						title="{i18n>checkoutSummaryTitle3bt}"
+						editable="false"
+						layout="ResponsiveGridLayout">
 						<form:content>
 							<Label
-									text="{i18n>checkoutBankaccontName}"
-									design="bold" />
-							<Text text="Singapore Hardware e-Commerce LTD" />
+								text="{i18n>checkoutBankAccountName}"
+								design="bold" />
+							<Text text="{i18n>beneficiaryNameText}" />
 							<Label
-									text="{i18n>checkoutBankaccontBank}"
-									design="bold" />
-							<Text text="CITY BANK, SINGAPORE BRANCH" />
+								text="{i18n>checkoutBankAccountBank}"
+								design="bold" />
+							<Text text="{i18n>bankNameText}" />
 							<Label
-									text="{i18n>checkoutBankaccontNumber}"
-									design="bold" />
-							<Text text="06110702027218" />
+								text="{i18n>checkoutBankAccountNumber}"
+								design="bold" />
+							<Text text="{i18n>accountNumberText}" />
 						</form:content>
 					</form:SimpleForm>
 					<form:SimpleForm
-							visible="{= ${/SelectedPayment}==='Cash on Delivery' ? true : false}"
-							editable="false"
-							layout="ResponsiveGridLayout">
+						visible="{= ${/SelectedPayment}==='Cash on Delivery' ? true : false}"
+						editable="false"
+						layout="ResponsiveGridLayout"
+						ariaLabelledBy="cashOnDeliveryTitle">
 						<form:toolbar>
 							<Toolbar id="toolbarCOD">
 								<Title
-										text="{i18n>checkoutSummaryTitle3cod}"
-										level="H4"
-										titleStyle="H4" />
+									id="cashOnDeliveryTitle"
+									text="{i18n>checkoutSummaryTitle3cod}"
+									level="H2"
+									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
-										id="backToCashOnDelivery"
-										icon="sap-icon://edit"
-										text="{i18n>checkoutSummaryEdit}"
-										type="Emphasized"
-										press="_navBackToStep">
+									id="backToCashOnDelivery"
+									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
+									type="Emphasized"
+									press="_navBackToStep">
 									<customData>
 										<core:CustomData key="navBackTo" value="cashOnDeliveryStep"/>
 									</customData>
@@ -514,12 +876,12 @@
 							</Toolbar>
 						</form:toolbar>
 						<form:content>
-							<Label text="{i18n>checkoutCodFirstname}" />
+							<Label text="{i18n>checkoutCodFirstName}" />
 							<Text text="{/CashOnDelivery/FirstName}" />
-							<Label text="{i18n>checkoutCodLastname}" />
+							<Label text="{i18n>checkoutCodLastName}" />
 							<Text text="{/CashOnDelivery/LastName}" />
 							<Label text="{i18n>checkoutCodPhone}" />
-							<Text text="{/CashOnDelivery/Phone Number}" />
+							<Text text="{/CashOnDelivery/PhoneNumber}" />
 							<Label text="{i18n>checkoutCodEmail}" />
 							<Text text="{/CashOnDelivery/Email}" />
 						</form:content>
@@ -527,56 +889,60 @@
 					<form:SimpleForm
 							title=""
 							editable="false"
-							layout="ResponsiveGridLayout">
+							layout="ResponsiveGridLayout"
+							ariaLabelledBy="invoiceAddressTitle">
 						<form:toolbar>
-							<Toolbar id="toolbarBilling">
+							<Toolbar id="toolbarInvoice">
 								<Title
-										text="{i18n>checkoutSummaryTitle4}"
-										level="H4"
-										titleStyle="H4" />
+									id="invoiceAddressTitle"
+									text="{i18n>checkoutSummaryTitle4}"
+									level="H2"
+									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
-										id="backToBillingAddress"
-										icon="sap-icon://edit"
-										text="{i18n>checkoutSummaryEdit}"
-										type="Emphasized"
-										press="_navBackToStep">
+									id="backToInvoiceAddress"
+									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
+									type="Emphasized"
+									press="_navBackToStep">
 									<customData>
-										<core:CustomData key="navBackTo" value="billingStep"/>
+										<core:CustomData key="navBackTo" value="invoiceStep"/>
 									</customData>
 								</Button>
 							</Toolbar>
 						</form:toolbar>
 						<form:content>
-							<Label text="{i18n>checkoutBillingaddressAdddress}" />
-							<Text text="{/BillingAddress/Address}" />
-							<Label text="{i18n>checkoutBillingaddressCity}" />
-							<Text text="{/BillingAddress/City}" />
-							<Label text="{i18n>checkoutBillingaddressZip}" />
-							<Text text="{/BillingAddress/ZipCode}" />
-							<Label text="{i18n>checkoutBillingaddressCountry}" />
-							<Text text="{/BillingAddress/Country}" />
-							<Label text="{i18n>checkoutBillingaddressNote}" />
-							<Text text="{/BillingAddress/Note}" />
+							<Label text="{i18n>checkoutInvoiceAddress}" />
+							<Text text="{/InvoiceAddress/Address}" />
+							<Label text="{i18n>checkoutInvoiceAddressCity}" />
+							<Text text="{/InvoiceAddress/City}" />
+							<Label text="{i18n>checkoutInvoiceAddressZip}" />
+							<Text text="{/InvoiceAddress/ZipCode}" />
+							<Label text="{i18n>checkoutInvoiceAddressCountry}" />
+							<Text text="{/InvoiceAddress/Country}" />
+							<Label text="{i18n>checkoutInvoiceAddressNote}" />
+							<Text text="{/InvoiceAddress/Note}" />
 						</form:content>
 					</form:SimpleForm>
 					<form:SimpleForm
 							title=""
 							editable="false"
-							layout="ResponsiveGridLayout">
+							layout="ResponsiveGridLayout"
+							ariaLabelledBy="deliveryTypeTitle" >
 						<form:toolbar>
 							<Toolbar id="toolbarShippping">
 								<Title
-										text="{i18n>checkoutSummaryTitle5}"
-										level="H4"
-										titleStyle="H4" />
+									id="deliveryTypeTitle"
+									text="{i18n>checkoutSummaryTitle5}"
+									level="H2"
+									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
-										id="backToDeliveryType"
-										icon="sap-icon://edit"
-										text="{i18n>checkoutSummaryEdit}"
-										type="Emphasized"
-										press="_navBackToStep">
+									id="backToDeliveryType"
+									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
+									type="Emphasized"
+									press="_navBackToStep">
 									<customData>
 										<core:CustomData key="navBackTo" value="deliveryTypeStep"/>
 									</customData>
@@ -584,27 +950,29 @@
 							</Toolbar>
 						</form:toolbar>
 						<form:content>
-							<Label text="{i18n>checkoutSummaryDeliveryheader}" />
+							<Label text="{i18n>checkoutSummaryDeliveryHeader}" />
 							<Text id="selectedDeliveryMethod" text="{/SelectedDeliveryMethod}" />
 						</form:content>
 					</form:SimpleForm>
 					<form:SimpleForm
-							editable="false"
-							layout="ResponsiveGridLayout"
-							visible="{= ${/DifferentDeliveryAddress}}">
+						editable="false"
+						layout="ResponsiveGridLayout"
+						visible="{= ${/DifferentDeliveryAddress}}"
+						ariaLabelledBy="shippingAddressTitle1">
 						<form:toolbar>
 							<Toolbar id="toolbar5ShippingAddress">
 								<Title
-										text="{i18n>checkoutDeliveryaddressTitle}"
-										level="H4"
-										titleStyle="H4" />
+									id="shippingAddressTitle1"
+									text="{i18n>checkoutDeliveryAddressTitle}"
+									level="H2"
+									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
-										id="backToDeliveryAddress"
-										icon="sap-icon://edit"
-										text="{i18n>checkoutSummaryEdit}"
-										type="Emphasized"
-										press="_navBackToStep">
+									id="backToDeliveryAddress"
+									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
+									type="Emphasized"
+									press="_navBackToStep">
 									<customData>
 										<core:CustomData key="navBackTo" value="deliveryAddressStep"/>
 									</customData>
@@ -612,59 +980,61 @@
 							</Toolbar>
 						</form:toolbar>
 						<form:content>
-							<Label text="{i18n>checkoutDeliveryaddressAdddress}" />
+							<Label text="{i18n>checkoutDeliveryAddressAddress}" />
 							<Text text="{/DeliveryAddress/Address}" />
-							<Label text="{i18n>checkoutDeliveryaddressCity}" />
+							<Label text="{i18n>checkoutDeliveryAddressCity}" />
 							<Text text="{/DeliveryAddress/City}" />
-							<Label text="{i18n>checkoutDeliveryaddressZip}" />
+							<Label text="{i18n>checkoutDeliveryAddressZip}" />
 							<Text text="{/DeliveryAddress/ZipCode}" />
-							<Label text="{i18n>checkoutDeliveryaddressCountry}" />
+							<Label text="{i18n>checkoutDeliveryAddressCountry}" />
 							<Text text="{/DeliveryAddress/Country}" />
-							<Label text="{i18n>checkoutDeliveryaddressNote}" />
+							<Label text="{i18n>checkoutDeliveryAddressNote}" />
 							<Text text="{/DeliveryAddress/Note}" />
 						</form:content>
 					</form:SimpleForm>
 					<form:SimpleForm
-							editable="false"
-							layout="ResponsiveGridLayout"
-							visible="{= !${/DifferentDeliveryAddress}}">
+						editable="false"
+						layout="ResponsiveGridLayout"
+						visible="{= !${/DifferentDeliveryAddress}}"
+						ariaLabelledBy="shippingAddressTitle2">
 						<form:toolbar>
-							<Toolbar id="toolbar5SameAsBilling">
+							<Toolbar id="toolbar5SameAsInvoice">
 								<Title
-										text="{i18n>checkoutDeliveryaddressTitle}"
-										level="H4"
-										titleStyle="H4" />
+									id="shippingAddressTitle2"
+									text="{i18n>checkoutDeliveryAddressTitle}"
+									level="H2"
+									titleStyle="H4" />
 								<ToolbarSpacer />
 								<Button
-										id="backToDifferentDeliveryAddress"
-										icon="sap-icon://edit"
-										text="{i18n>checkoutSummaryEdit}"
-										type="Emphasized"
-										press="_navBackToStep">
+									id="backToDifferentDeliveryAddress"
+									icon="sap-icon://edit"
+									tooltip="{i18n>backToWizard}"
+									type="Emphasized"
+									press="_navBackToStep">
 									<customData>
-										<core:CustomData key="navBackTo" value="billingStep"/>
+										<core:CustomData key="navBackTo" value="invoiceStep"/>
 									</customData>
 								</Button>
 							</Toolbar>
 						</form:toolbar>
 						<form:content>
-							<Text text="{i18n>checkoutSummarySameasbilling}" />
+							<Text text="{i18n>checkoutSummarySameAsInvoice}" />
 						</form:content>
 					</form:SimpleForm>
 				</content>
 				<footer>
-					<Bar>
+					<Bar id="summaryFooterBar">
 						<contentRight>
 							<Button
-									id="submitOrder"
-									type="Accept"
-									text="{i18n>checkoutSummarySubmit}"
-									press="handleWizardSubmit"></Button>
+								id="submitOrder"
+								type="Accept"
+								text="{i18n>checkoutSummarySubmit}"
+								press="handleWizardSubmit"></Button>
 							<Button
-									id="cancelOrder"
-									type="Reject"
-									text="{i18n>checkoutSummaryCancel}"
-									press="handleWizardCancel"></Button>
+								id="cancelOrder"
+								type="Reject"
+								text="{i18n>checkoutSummaryCancel}"
+								press="handleWizardCancel"></Button>
 						</contentRight>
 					</Bar>
 				</footer>

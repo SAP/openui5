@@ -68,22 +68,22 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	QUnit.test("when calling applyChange with XmlTreeModifier and a legacy change", function (assert) {
 		var oXmlString =
-		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:layout='sap.ui.layout' xmlns='sap.m'>" +
-		"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
-		"<layout:content>" +
+		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:form='sap.ui.layout.form' xmlns='sap.m'>" +
+		"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+		"<form:content>" +
 		"<Title id='Title0' text='Title 0' visible='true' />" +
 		"<Label id='Label0' text='Label 0' visible='false' />" +
 		"<Input id='Input0' visible='true' />" +
 		"<Label id='Label1' text='Label 1' visible='true' />" +
 		"<Input id='Input1' visible='true' />" +
-		"</layout:content>" +
-		"</layout:SimpleForm>" +
+		"</form:content>" +
+		"</form:SimpleForm>" +
 		"</mvc:View>";
 
 		var oDOMParser = new DOMParser();
-		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 
-		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0].childNodes[0];
+		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
@@ -91,7 +91,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			modifier : sap.ui.fl.changeHandler.XmlTreeModifier,
 			view : this.oXmlDocument
 		}), "no errors occur");
-		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is visible");
+		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
 	});
 
 	QUnit.module("using sap.ui.layout.changeHandler.UnhideSimpleForm with new change format", {
@@ -194,22 +194,22 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 	QUnit.test("when calling applyChange with XmlTreeModifier", function (assert) {
 		var oXmlString =
-		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:layout='sap.ui.layout' xmlns='sap.m'>" +
-		"<layout:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
-		"<layout:content>" +
+		"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:form='sap.ui.layout.form' xmlns='sap.m'>" +
+		"<form:SimpleForm id='SimpleForm' editable='true' title='Simple Form' class='editableForm'>" +
+		"<form:content>" +
 		"<Title id='component---Title0' text='Title 0' visible='true' />" +
 		"<Label id='component---Label0' text='Label 0' visible='false' />" +
 		"<Input id='component---Input0' visible='true' />" +
 		"<Label id='component---Label1' text='Label 1' visible='true' />" +
 		"<Input id='component---Input1' visible='true' />" +
-		"</layout:content>" +
-		"</layout:SimpleForm>" +
+		"</form:content>" +
+		"</form:SimpleForm>" +
 		"</mvc:View>";
 
 		var oDOMParser = new DOMParser();
-		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml");
+		this.oXmlDocument = oDOMParser.parseFromString(oXmlString, "application/xml").documentElement;
 
-		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0].childNodes[0];
+		this.oXmlSimpleForm = this.oXmlDocument.childNodes[0];
 		this.oXmlLabel0 = this.oXmlSimpleForm.childNodes[0].childNodes[1];
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oXmlSimpleForm, {
@@ -217,7 +217,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 			modifier : sap.ui.fl.changeHandler.XmlTreeModifier,
 			view : this.oXmlDocument
 		}), "no errors occur");
-		assert.ok(this.oXmlLabel0.getAttribute("visible"), "the FormElement is visible");
+		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
 	});
 
 	QUnit.test("applyChange shall raise an exception if the control does not have the required methods", function (assert) {
@@ -253,6 +253,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
         assert.equal(oChange.content.elementSelector.id, "Label0", "sUnhideId has been added to the change");
         assert.ok(oChange.content.elementSelector.idIsLocal, "the id is a local id");
+		assert.equal(oChangeWrapper.getDependentControl("elementSelector", this.mPropertyBag).getId(), this.oLabel0.getId(), "elementSelector is part of dependent selector");
 	});
 
 	QUnit.test('when calling completeChangeContent without sUnhideId', function (assert) {

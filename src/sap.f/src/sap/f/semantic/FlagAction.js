@@ -32,4 +32,4 @@ sap.ui.define(['./SemanticToggleButton'], function(SemanticToggleButton) {
 	});
 
 	return FlagAction;
-}, /* bExport= */ true);
+});

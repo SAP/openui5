@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-<title>Test Page for sap.ui.m.SearchField</title>
+<title>Test Page for sap.m.SearchField</title>
 <script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap" data-sap-ui-noConflict="true"
 	data-sap-ui-libs="sap.m" src="../../../../resources/sap-ui-core.js">
@@ -18,7 +18,6 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
-
 	var sf1, sf2, sf3,
 		sPlaceholder = "search for..",
 		sValue = "value",
@@ -201,24 +200,24 @@
 				visible: true
 			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
-        },
-        afterEach: function() {
+		},
+		afterEach: function() {
 			this.SearchField.destroy();
-        }
-    });
+		}
+	});
 
 	QUnit.test("ARIA attributes for Chrome specific", function(assert) {
 		// arrange
-        var bHasAutocorrect;
+		var bHasAutocorrect;
 		this.stub(sap.ui.Device, "browser", {name: "cr", chrome: true});
 
-        // act
-        this.SearchField.rerender();
+		// act
+		this.SearchField.rerender();
 		bHasAutocorrect = this.SearchField.$("I").attr("autocorrect") == "off";
 
-        // assert
+		// assert
 		assert.strictEqual(bHasAutocorrect, false, "Shouldn't be rendered");
-    });
+	});
 
 	QUnit.test("ARIA attributes for Safari specific", function(assert) {
 		// arrange
@@ -236,13 +235,107 @@
 	QUnit.test("When refresh button is added invisible text should be set", function (assert) {
 		// arrange
 		var ariaDescribedByAttr = this.SearchField.$("I").attr('aria-describedby');
-		var f5Text = this.SearchField._sAriaF5LabelId;
-		var isF5TextSet = ariaDescribedByAttr.indexOf(f5Text) >= 0;
+		var f5TextId = sap.ui.core.InvisibleText.getStaticId("sap.m", "SEARCHFIELD_ARIA_F5");
+		var isF5TextSet = ariaDescribedByAttr.indexOf(f5TextId) >= 0;
 
 		// assert
-		assert.strictEqual(isF5TextSet, true, 'The "Pres F5 to refresh" text should be set as aria-describedby');
+		assert.strictEqual(isF5TextSet, true, 'The "Press F5 to refresh" text should be set as aria-describedby');
 	});
 
+	QUnit.module("SearchField tooltip:", {
+		beforeEach: function () {
+			this.oSearchField = new sap.m.SearchField("SF", {
+				placeholder: sPlaceholder,
+				enabled: true,
+				showRefreshButton: true,
+				visible: true
+			}).placeAt("content");
+			this.oButton = new sap.m.Button({}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+            this.oRB = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			this.oMockEvent = {type: "focus"};
+
+		},
+		afterEach: function() {
+			this.oSearchField.destroy();
+            this.oButton.destroy();
+			this.oRb = null;
+			this.oMockEvent = null;
+		}
+	});
+	QUnit.test("After initial loading only Search button", function (assert) {
+		//act
+		this.oSearchField.setShowRefreshButton(false);
+		this.oSearchField.rerender();
+		// assert
+		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
+	});
+
+    QUnit.test("After initial loading Search and Refresh buttons", function(assert) {
+		// assert
+		assert.strictEqual(jQuery("#SF-reset").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
+		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP"), "Refresh button should be with 'Refresh' tooltip");
+	});
+
+	QUnit.test("After initial loading and losing focus", function(assert) {
+		// assert
+		assert.strictEqual(jQuery("#SF-reset").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
+		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP"), "Refresh button should be with 'Refresh' tooltip");
+
+		//act
+		this.oSearchField.focus();
+		this.oButton.focus();
+
+		// assert
+		assert.strictEqual(jQuery("#SF-reset").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
+		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP"), "Refresh button should be with 'Refresh' tooltip");
+	});
+
+	QUnit.test("After initial loading and 'Refresh button' tooltip is set and value is set", function(assert) {
+
+		// arrange
+		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP"), "Refresh button should be with 'Refresh' tooltip");
+		assert.strictEqual(jQuery("#SF-reset").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
+
+		//act
+		this.oSearchField.setRefreshButtonTooltip("Reload");
+		this.oSearchField.setValue("Test");
+		this.oSearchField.rerender();
+
+		// assert
+		assert.strictEqual(jQuery("#SF-reset").attr("title"), this.oRB.getText("SEARCHFIELD_RESET_BUTTON_TOOLTIP"), "Reset button should be with 'Reset' tooltip");
+		assert.strictEqual(jQuery("#SF-search").attr("title"), 'Reload', "Refresh button should be with 'Reload' tooltip");
+	});
+
+	QUnit.test("After control is focused, no value is set", function(assert) {
+
+		// arrange
+		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP"), "Refresh button should be with 'Refresh' tooltip");
+		//act
+		//IE does not apply focus correctly, this way works for all browsers
+		this.oSearchField.onFocus(this.oMockEvent);
+
+		// assert
+		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
+	});
+
+	QUnit.test("After control is focused and value is set", function(assert) {
+
+		// arrange
+		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP"), "Refresh button should be with 'Refresh' tooltip");
+		assert.strictEqual(jQuery("#SF-reset").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
+
+		//act
+		this.oSearchField.setValue("Test");
+		this.oSearchField.rerender();
+		//IE does not apply focus correctly, this way works for all browsers
+		this.oSearchField.onFocus(this.oMockEvent);
+
+		// assert
+		assert.strictEqual(jQuery("#SF-search").attr("title"), this.oRB.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"), "Search button should be with 'Search' tooltip");
+		assert.strictEqual(jQuery("#SF-reset").attr("title"), this.oRB.getText("SEARCHFIELD_RESET_BUTTON_TOOLTIP"), "Reset button should be with 'Reset' tooltip");
+	});
 </script>
 
 </head>

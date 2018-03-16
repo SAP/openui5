@@ -263,13 +263,13 @@ sap.ui.define([
 					]
 				});
 				this.getView().setModel(oModel);
-
 			},
 
 			handleAppointmentSelect: function (oEvent) {
 				var oAppointment = oEvent.getParameter("appointment");
 				if (oAppointment) {
-					MessageBox.showalert("Appointment selected: " + oAppointment.getTitle());
+					var sSelected = oAppointment.getSelected() ? "selected" : "deselected";
+					MessageBox.show("'" + oAppointment.getTitle() + "' " + sSelected + ". \n Selected appointments: " + this.byId("PC1").getSelectedAppointments().length);
 				} else {
 					var aAppointments = oEvent.getParameter("appointments");
 					var sValue = aAppointments.length + " Appointments selected";
@@ -305,6 +305,26 @@ sap.ui.define([
 
 				oModel.setData(oData);
 
+			},
+
+			handleSortChange: function (oEvent) {
+				//make a custom sort regarding alphabetical order
+				var oPC = this.byId("PC1"),
+					fnSelectedSort = oEvent.getParameter("selectedItem").getKey() === "custom" ? this.fnAlphabeticalOrder : null;
+
+				oPC.setCustomAppointmentsSorterCallback(fnSelectedSort);
+
+			},
+
+			// custom function for appointments sort by alphabetical order
+			fnAlphabeticalOrder : function(oApp1, oApp2) {
+				if (oApp1.getTitle() > oApp2.getTitle()) {
+					return 1;
+				}
+				if (oApp1.getTitle() < oApp2.getTitle()) {
+					return -1;
+				}
+				return 0;
 			}
 
 		});

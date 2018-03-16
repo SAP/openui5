@@ -4,87 +4,76 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-
 	<Page showHeader="false">
-		<content>
-			<OverflowToolbar>
-				<ToolbarSpacer/>
-				<Select
-					id="tbSelect"
-					items="{/items}"
-					selectedKey="{/selectedKey}"
-					change="onSelectChange" >
-					<core:Item key="{key}" text="{text}"/>
-				</Select>
-				<Label text="File types"></Label>
-				<MultiComboBox
-						id="fileTypesBox"
-						selectionChange="onFileTypeChange"
-						width="250px"
-						placeholder="Choose the valid file types"
-						items="{fileTypes>/items}">
-					<core:Item key="{fileTypes>key}" text="{fileTypes>text}" />
-				</MultiComboBox>
-			</OverflowToolbar>
-			<UploadCollection
-				id="UploadCollection"
-				uploadEnabled="false"
-				items="{
-					path : '/items',
-					templateShareable : false,
-					sorter: {
-						path: 'version',
-						descending: false,
-						group: true
-					},
-					groupHeaderFactory: '.getGroupHeader'
-				}">
-				<toolbar>
-					<OverflowToolbar id="myId">
-						<Title id="attachmentTitle"/>
-						<ToolbarSpacer/>
-						<Button type="Transparent" icon="sap-icon://drop-down-list" press="onViewSettingsPressed"/>
-					</OverflowToolbar>
-				</toolbar>
-				<infoToolbar>
-					<Toolbar
-						id="idInfoToolbar"
-						active="true"
-						press="onInfoToolbarPressed"
-						visible="false">
-						<Label id="idInfoToolbarLabel" />
-						<ToolbarSpacer/>
-						<core:Icon id="icClearFilters" width="2rem" src="sap-icon://sys-cancel"/>
-					</Toolbar>
-				</infoToolbar>
-				<items>
-					<UploadCollectionItem
-						documentId="{documentId}"
-						fileName="{fileName}"
-						mimeType="{mimeType}"
-						thumbnailUrl="{thumbnailUrl}"
-						url="{url}"
-						attributes="{path : 'attributes', templateShareable : false}"
-						statuses="{path : 'statuses', templateShareable : false}"
-						selected="{selected}">
-						<attributes>
-							<ObjectAttribute
-								title="{title}"
-								text="{parts : ['text', 'type'], formatter : '.formatAttribute'}"
-								active="{active}"/>
-						</attributes>
-						<statuses>
-							<ObjectStatus
-								title="{title}"
-								text="{text}"
-								state="{state}"
-								icon="{icon}"
-								iconDensityAware="{iconDensityAware}"
-								textDirection="{textDirection}"/>
-						</statuses>
-					</UploadCollectionItem>
-				</items>
-			</UploadCollection>
-		</content>
+		<UploadCollection
+			id="UploadCollection"
+			uploadEnabled="false"
+			items="{
+				path: '/items',
+				templateShareable: false,
+				sorter: {
+					path: 'version',
+					descending: false,
+					group: true
+				},
+				groupHeaderFactory: '.getGroupHeader'
+			}">
+			<toolbar>
+				<OverflowToolbar id="myId">
+					<Title id="attachmentTitle" />
+					<ToolbarSpacer />
+					<Button
+						type="Transparent"
+						icon="sap-icon://drop-down-list"
+						tooltip="View settings"
+						press="onViewSettingsPressed" />
+				</OverflowToolbar>
+			</toolbar>
+			<infoToolbar>
+				<Toolbar
+					id="idInfoToolbar"
+					active="true"
+					press="onInfoToolbarPressed"
+					visible="false">
+					<Label id="idInfoToolbarLabel" />
+					<ToolbarSpacer />
+					<core:Icon id="icClearFilters"
+						width="2rem"
+						src="sap-icon://sys-cancel" />
+				</Toolbar>
+			</infoToolbar>
+			<items>
+				<UploadCollectionItem
+					documentId="{documentId}"
+					fileName="{fileName}"
+					mimeType="{mimeType}"
+					thumbnailUrl="{thumbnailUrl}"
+					url="{url}"
+					attributes="{
+						path: 'attributes',
+						templateShareable: false
+					}"
+					statuses="{
+						path: 'statuses',
+						templateShareable: false
+					}"
+					selected="{selected}">
+					<attributes>
+						<ObjectAttribute
+							title="{title}"
+							text="{
+								parts: ['text', 'type'],
+								formatter: '.formatAttribute'
+							}" />
+					</attributes>
+					<statuses>
+						<ObjectStatus
+							title="{title}"
+							text="{text}"
+							state="{state}" />
+					</statuses>
+				</UploadCollectionItem>
+			</items>
+		</UploadCollection>
 	</Page>
 </mvc:View>

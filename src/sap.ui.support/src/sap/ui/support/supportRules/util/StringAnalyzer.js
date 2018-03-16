@@ -12,8 +12,8 @@ sap.ui.define([],
 	var StringAnalyzer = {
 		/**
 		 *
-		 * @param sWordA
-		 * @param sWordB
+		 * @param {string} sWordA
+		 * @param {string} sWordB
 		 * @returns levenshtein distance number
 		 */
 		calculateLevenshteinDistance: function(sWordA, sWordB) {

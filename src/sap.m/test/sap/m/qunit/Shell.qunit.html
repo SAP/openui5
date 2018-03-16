@@ -78,10 +78,11 @@
 
 		// Shell features
 		QUnit.test("Shell features", function(assert) {
+            var sExpectedAltForLogoImage = sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SHELL_ARIA_LOGO");
 			assert.equal(byIdSuffix("-hdrTxt").text(), "Test Shell", "Title should be rendered");
 			assert.equal(jQuery(".sapMShellHeaderRightText").text(), "Mr. Right", "Header right text should be rendered");
 			assert.equal(byIdSuffix("-logo").attr("src"), "../images/SAPLogo.jpg", "Logo URL should be rendered");
-			assert.equal(byIdSuffix("-logo").attr("alt"), "Logo", "Logo ALT should be 'Logo''");
+			assert.equal(byIdSuffix("-logo").attr("alt"), sExpectedAltForLogoImage, "Logo ALT should be 'Logo''");
 		});
 
 		QUnit.test("Shell without title", function(assert) {
@@ -317,6 +318,85 @@
 				jQuery.sap.setIcons.restore();
 			});
 		}
+
+		QUnit.module("Shell's 'titleLevel' property is configurable which prevents adding an invalid HTML header level for some scenarios.");
+
+		QUnit.test("Title has default level H1", function(assert){
+			// Arrange
+			var oShell = new sap.m.Shell({
+				title: "Test Title level of the Shell"
+			});
+
+			// System under test
+			oShell.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var $sTitle = oShell.$("hdr");
+			assert.strictEqual($sTitle.find( "h1" ).length, 1, "Title has the default titleLevel H1");
+
+			// cleanup
+			oShell.destroy();
+		});
+
+		QUnit.test("Title has level H3", function(assert){
+			// Arrange
+			var oShell = new sap.m.Shell({
+				title: "Test Title level of the Shell",
+				titleLevel: sap.ui.core.TitleLevel.H3
+			});
+
+			// System under test
+			oShell.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var $sTitle = oShell.$("hdr");
+			assert.strictEqual($sTitle.find( "h3" ).length, 1, "Title has titleLevel H3");
+
+			// cleanup
+			oShell.destroy();
+		});
+
+		QUnit.test("Title level is set correctly", function(assert){
+			// Arrange
+			var oShell = new sap.m.Shell({
+				title: "Test Title level of the Shell"
+			});
+
+			// System under test
+			oShell.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oShell.setTitleLevel("H4");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var $sTitle = oShell.$("hdr");
+			assert.strictEqual($sTitle.find( "h4" ).length, 1, "Title has titleLevel H4");
+
+			// cleanup
+			oShell.destroy();
+		});
+
+		QUnit.test("When set to Auto title has level H1", function(assert){
+			// Arrange
+			var oShell = new sap.m.Shell({
+				title: "Test Title level of the Shell",
+				titleLevel: sap.ui.core.TitleLevel.Auto
+			});
+
+			// System under test
+			oShell.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			var $sTitle = oShell.$("hdr");
+			assert.strictEqual($sTitle.find( "h1" ).length, 1, "Title has titleLevel H1");
+
+			// cleanup
+			oShell.destroy();
+		});
 
 	</script>
 

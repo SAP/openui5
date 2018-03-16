@@ -1,0 +1,127 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "b893762ef14618f9a43e0a16dab698b7eb5b37db",
+        "type": "FEATURE",
+        "text": " Table: Support for drag and drop added",
+        "references": []
+      },
+      {
+        "id": "33e7c5dca6a641fb56a1bac3dbbf65c9408dc513",
+        "type": "FEATURE",
+        "text": " TreeBindingAdapter: Add bSuppressChange parameter to expand function",
+        "references": []
+      },
+      {
+        "id": "4a63925a064d2ac24cee081e3c9dfca2c585adc1",
+        "type": "FEATURE",
+        "text": " sap.ui.table.Table: alternateRowColors property added",
+        "references": []
+      },
+      {
+        "id": "50408c8e520372b32fffeb6b88cddb304c3d3b87",
+        "type": "FIX",
+        "text": " AnalyticalTable: Correctly bind rows via XML view",
+        "references": []
+      },
+      {
+        "id": "156ec50ee2e83c4eb049b2c3810b360046bdd258",
+        "type": "FIX",
+        "text": " AnalyticalTable: Sort and move group up/down",
+        "references": []
+      },
+      {
+        "id": "4a29faeace0bc25dbad18a917499b694ce0e014b",
+        "type": "FIX",
+        "text": " AnalyticalTable: filter menu handling for measures corrected",
+        "references": []
+      },
+      {
+        "id": "3b066a8de026524c15c671ad076fe41567fad41c",
+        "type": "FIX",
+        "text": " ODataTreeBindingAdapter: Encode slashes in property values when calculation group IDs",
+        "references": []
+      },
+      {
+        "id": "4943bc42d24db822e655b767d775d3014ea838a7",
+        "type": "FIX",
+        "text": " Table: Arrow key navigation if the cell content is not rendered",
+        "references": []
+      },
+      {
+        "id": "73491989ae6aecba12f61fc66b6fba5d8d90c282",
+        "type": "FIX",
+        "text": " Table: Avoid text selection in Edge, if selecting with Shift+Click",
+        "references": []
+      },
+      {
+        "id": "6adb737cfb1c22e64cb6fc444f660a72195ecb64",
+        "type": "FIX",
+        "text": " Table: Correctly process focus events related to the edit mode",
+        "references": []
+      },
+      {
+        "id": "d2b740d2b53cefacec7eeda86f6e079895e42e91",
+        "type": "FIX",
+        "text": " Table: Correctly set the checked state of the SelectAll checkbox",
+        "references": []
+      },
+      {
+        "id": "3962e1f21e5b551e2fb3e6102a0d0ebe50bb3633",
+        "type": "FIX",
+        "text": " Table: Edit mode navigation with input elements with non-text type",
+        "references": []
+      },
+      {
+        "id": "4691c74e368c6549ff5c073cfa8101ba010e179d",
+        "type": "FIX",
+        "text": " Table: Lets the page scroll if scrolled to the end in the table",
+        "references": []
+      },
+      {
+        "id": "f9711a751e6725df17a598b2d3189d13bb51350e",
+        "type": "FIX",
+        "text": " Table: Prevent page scrolling on keyboard navigation in the table",
+        "references": []
+      },
+      {
+        "id": "ac68ab8a120255c684b54ea3b661c34b3d078059",
+        "type": "FIX",
+        "text": " core.ClientTreeBinding: Fix for relative treebinding",
+        "references": []
+      },
+      {
+        "id": "232d20f5d6f82568a7feecb7131f99c9655be33b",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - filter is not set",
+        "references": []
+      },
+      {
+        "id": "ec334ec05c42ddd65a45cbc6d089fec2803951ef",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - space key is suppressed in the toolbar",
+        "references": []
+      },
+      {
+        "id": "1328f53fc6e0084d74366f3c632bb1e8fe162280",
+        "type": "FIX",
+        "text": " sap.ui.table.Table - vertical scrollbar is not updated",
+        "references": []
+      },
+      {
+        "id": "d0572cc107906ae955ceec84cac882d6ea001f24",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Removed initial tooltip from empty rows",
+        "references": []
+      },
+      {
+        "id": "7a8d6824e2bd02992247534ed87db68b1ac4363a",
+        "type": "FIX",
+        "text": " sap.ui.table.Table: Removed tooltip from empty rows",
+        "references": []
+      }
+    ]
+  }
+}

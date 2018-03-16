@@ -9,6 +9,11 @@ html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .sapUiDemoApps .headlineC
 	padding-bottom: 1rem;
 }
 
+/* override color for link to demo apps overview (features, controls, libraries, etc.) */
+.readMoreLink {
+    color: #7ed0ff;
+}
+
 /*gradient colors for all different browsers */
 html:not(.sapUiTheme-sap_hcb):not(.sapUiTheme-sap_hcw) .gradient {
 	background: #a9c4df; /* Old browsers */

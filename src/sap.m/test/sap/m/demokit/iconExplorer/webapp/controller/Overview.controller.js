@@ -9,8 +9,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/m/Label",
 	"sap/m/ToggleButton",
+	"sap/m/library",
 	"jquery.sap.global"
-], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton, $) {
+], function (BaseController, IconPool, JSONModel, formatter, Filter, FilterOperator, Device, MessageToast, Label, ToggleButton, mobileLibrary, $) {
 	"use strict";
 
 	var TYPING_DELAY = 200; // ms
@@ -36,7 +37,7 @@ sap.ui.define([
 
 			// model used to manipulate control states
 			oViewModel = new JSONModel({
-				growingThreshold : 50,
+				growingThreshold : 200,
 				iconFilterCount: this.getResourceBundle().getText("overviewTabAllInitial"),
 				overviewNoDataText : this.getResourceBundle().getText("overviewNoDataText")
 			});
@@ -78,7 +79,16 @@ sap.ui.define([
 		 */
 		onUpdateFinished : function () {
 			function getRootControl(oEvent) {
-				return oEvent.srcControl.getMetadata().getName().search("VerticalLayout") >= 0 ? oEvent.srcControl : oEvent.srcControl.getParent();
+				if (oEvent.srcControl.getMetadata().getName().search("CustomListItem") >= 0) {
+					// keyboard event, get child
+					return oEvent.srcControl.getContent()[0];
+				} else if (oEvent.srcControl.getMetadata().getName().search("VerticalLayout") >= 0) {
+					// layout clicked, just return it
+					return oEvent.srcControl;
+				} else {
+					// inner control clicked, return parent
+					return oEvent.srcControl.getParent();
+				}
 			}
 
 			// show total count of items
@@ -134,13 +144,18 @@ sap.ui.define([
 							}.bind(this));
 						}.bind(this)
 					};
+					// enter + space key: same as tab
+					this._oPressLayoutCellDelegate.onsapenter = this._oPressLayoutCellDelegate.ontap;
 				}
 
 				// there is no addEventDelegateOnce so we remove and add it for all items
-				this.byId("results").getAggregation(this._sAggregationName).forEach(function (oItem) {
-					oItem.removeEventDelegate(this._oPressLayoutCellDelegate);
-					oItem.addEventDelegate(this._oPressLayoutCellDelegate);
-				}.bind(this));
+				var aItems = this.byId("results").getAggregation(this._sAggregationName);
+				if (aItems) {
+					aItems.forEach(function (oItem) {
+						oItem.removeEventDelegate(this._oPressLayoutCellDelegate);
+						oItem.addEventDelegate(this._oPressLayoutCellDelegate);
+					}.bind(this));
+				}
 			}
 		},
 
@@ -204,9 +219,10 @@ sap.ui.define([
 			var sModelName = (this._oCurrentQueryContext.tab === "favorites" ? "fav" : undefined),
 				oBindingContext = oEvent.getSource().getBindingContext(sModelName),
 				sName = oBindingContext.getProperty("name"),
-				oResourceBundle = this.getResourceBundle();
+				oResourceBundle = this.getResourceBundle(),
+				bFavorite = this.getModel("fav").toggleFavorite(oBindingContext);
 
-			if (this.getModel("fav").toggleFavorite(oBindingContext)) {
+			if (bFavorite) {
 				MessageToast.show(oResourceBundle.getText("overviewFavoriteAdd", [sName]));
 			} else {
 				MessageToast.show(oResourceBundle.getText("overviewFavoriteRemove", [sName]));
@@ -285,15 +301,15 @@ sap.ui.define([
 		},
 
 		/**
-		 * Closes the preview pane
+		 * Downloads the icon font relatively from the UI5 delivery
 		 * @public
 		 */
-		onClosePreview: function () {
-			this._updateHash("icon");
+		onDownload: function () {
+			mobileLibrary.URLHelper.redirect(jQuery.sap.getModulePath("sap.ui.core", "/themes/base/fonts/SAP-icons.ttf"));
 		},
 
 		/* =========================================================== */
-		/* internal methods                                            */
+		/* internal method                                             */
 		/* =========================================================== */
 
 		/**
@@ -301,8 +317,7 @@ sap.ui.define([
 		 * @param {string} copyText the text string that has to be copied to the clipboard
 		 */
 		_copyStringToClipboard: function (copyText, successText, exceptionText) {
-			var $temp = $("<input>"),
-				oResourceBundle = this.getResourceBundle();
+			var $temp = $("<input>");
 
 			try {
 				$("body").append($temp);
@@ -377,18 +392,19 @@ sap.ui.define([
 			this._oCurrentQueryContext = oQuery;
 
 			// helper variables for updating the UI pieces
-			var bTabularResults = !!(oQuery.tab === "details" || oQuery.tab === "favorites");
 			var bTabChanged = this._oPreviousQueryContext.tab !== oQuery.tab;
 			var bCategoryChanged = this._oPreviousQueryContext.cat !== oQuery.cat;
 			var bSearchChanged = this._oPreviousQueryContext.search !== oQuery.search;
 			var bTagChanged = this._oPreviousQueryContext.tag !== oQuery.tag;
 			var bIconChanged = this._oPreviousQueryContext.icon !== oQuery.icon;
 
-			this._sAggregationName = (bTabularResults  ? "items" : "content");
+			this._sAggregationName = "items";
 
 			this.getOwnerComponent().iconsLoaded().then(function () {
 				// tab
-				this._toggleScrollToLoad(!bTabularResults);
+				if (!this.byId("iconTabBar")) {
+					return;
+				}
 				this.byId("iconTabBar").setSelectedKey(oQuery.tab);
 				if (bTabChanged) {
 					var oContent = this.byId("resultContainer").getContent();
@@ -706,8 +722,7 @@ sap.ui.define([
 		_tagSelectionFactory: function (sId, oContext) {
 			if (oContext.getProperty("name") === "") {
 				return new Label(sId, {
-					text: "{i18n>overviewTagSelectionLabel}",
-					tooltip: "{i18n>overviewSelectTagsTooltip}"
+					text: "{i18n>overviewTagSelectionLabel}"
 				});
 			} else {
 				return new ToggleButton(sId, {
@@ -716,75 +731,6 @@ sap.ui.define([
 					press: [this.onTagSelect, this]
 				});
 			}
-		},
-
-		/**
-		 * Enables/Disables scroll to load functionality for the grid and visual view
-		 * @param {boolean} bToggle whether to enable or disable scroll to load
-		 * @private
-		 */
-		_toggleScrollToLoad: function (bToggle) {
-			var oScrollContainer = this.byId("resultContainer");
-
-			// hack: we side-step all the scrolling complexity and attach growing-list-style to the ScrollEnablement callback directly
-			if (!oScrollContainer._oScroller) { // not initialize yet
-				return;
-			}
-			if (bToggle) {
-				if (!this._fnInjectedScrollToLoadCallback) {
-					this._fnInjectedScrollToLoadCallback = function () {
-						this._loadMoreIcons();
-						if (this._fnScrollLoadCallback && (this._oCurrentQueryContext.tab === "details" || this._oCurrentQueryContext.tab === "favorites")) {
-							this._fnScrollLoadCallback();
-						}
-					}.bind(this);
-				}
-
-				// store initial callback once
-				if (!this._fnScrollLoadCallback && oScrollContainer._oScroller._fnScrollLoadCallback !== this._fnInjectedScrollToLoadCallback) {
-					this._fnScrollLoadCallback = oScrollContainer._oScroller._fnScrollLoadCallback;
-				}
-
-				// hook in our callback
-				oScrollContainer._oScroller._fnScrollLoadCallback = this._fnInjectedScrollToLoadCallback;
-			} else {
-				// reset initial callback
-				oScrollContainer._oScroller._fnScrollLoadCallback = this._fnScrollLoadCallback;
-			}
-		},
-
-		/**
-		 * Loads [growingThreshold] more icons when scrolling down in the grid or visual tab
-		 * @private
-		 */
-		_loadMoreIcons: function () {
-			var oBindingInfo = this.byId("results").getBindingInfo(this._sAggregationName),
-				iOldLength = parseInt(oBindingInfo.length, 10),
-				iTotalLength = this.byId("results").getBinding("content").getLength();
-
-			// exit condition
-			if (iOldLength >= iTotalLength) {
-				this._toggleScrollToLoad(false);
-				return;
-			}
-
-			// calculate new length
-			oBindingInfo.length = iOldLength + this.getModel("view").getProperty("/growingThreshold");
-
-			// rebind the result set to show the new items
-			this.byId("results").bindAggregation(this._sAggregationName, oBindingInfo);
-			this._oScrollToLastResultPositionEventDelegate = {
-				onAfterRendering: function () {
-					var oLastItemFromOldLength = this.byId("results").getAggregation(this._sAggregationName)[iOldLength - 1];
-					if (oLastItemFromOldLength.$()[0].scrollIntoView) {
-						oLastItemFromOldLength.$()[0].scrollIntoView(false);
-					} else {
-						this.byId("resultContainer").scrollToElement(oLastItemFromOldLength);
-					}
-					this.byId("results").removeEventDelegate(this._oScrollToLastResultPositionEventDelegate);
-				}.bind(this)
-			};
-			this.byId("results").addEventDelegate(this._oScrollToLastResultPositionEventDelegate);
 		}
 
 	});

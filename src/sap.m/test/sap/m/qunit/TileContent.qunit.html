@@ -19,7 +19,41 @@
 
 <script>
 
-	QUnit.module("sap.m.TileContent", {
+	QUnit.module("Default Values", {
+		beforeEach : function() {
+			this.oTileContent = new sap.m.TileContent();
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oTileContent.destroy();
+		}
+	});
+
+	QUnit.test("Property 'size'", function(assert) {
+		assert.equal(this.oTileContent.getSize(), "Auto", "Property 'size' default value is correct.")
+	});
+
+	QUnit.test("Property 'footer'", function(assert) {
+		assert.equal(this.oTileContent.getFooter(), "", "Property 'footer' default value is correct.")
+	});
+
+	QUnit.test("Property 'footerColor'", function(assert) {
+		assert.equal(this.oTileContent.getFooterColor(), "Neutral", "Property 'footerColor' default value is correct.")
+	});
+
+	QUnit.test("Property 'unit'", function(assert) {
+		assert.equal(this.oTileContent.getUnit(), "", "Property 'unit' default value is correct.")
+	});
+
+	QUnit.test("Property 'disabled'", function(assert) {
+		assert.equal(this.oTileContent.getDisabled(), false, "Property 'disabled' default value is correct.")
+	});
+
+	QUnit.test("Property 'frameType'", function(assert) {
+		assert.equal(this.oTileContent.getFrameType(), "Auto", "Property 'frameType' default value is correct.")
+	});
+
+	QUnit.module("Rendering", {
 		beforeEach : function() {
 			this.oNewsTileContent = new sap.m.TileContent("tc1", {
 				footer : "Current Quarter",
@@ -39,11 +73,50 @@
 		}
 	});
 
-	QUnit.test("Rendering", function(assert) {
+	QUnit.test("DOM structure created", function(assert) {
 		assert.equal(this.oNewsTileContent._getContentType(), "News", "Type was get successfully");
 		assert.ok(jQuery.sap.domById("tc1"), "TileContent1 was rendered successfully");
 		assert.ok(jQuery.sap.domById("news"), "News content was rendered successfully");
 		assert.ok(jQuery.sap.domById("tc1-footer-text"), "TileContent1 footer was rendered successfully");
+	});
+
+	QUnit.module("Rendering of colored footer", {
+		beforeEach : function() {
+			this.oTileContent = new sap.m.TileContent();
+			this.oTileContent.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oTileContent.destroy();
+		}
+	});
+
+	QUnit.test("Neutral CSS Class added", function(assert) {
+		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorNeutral"), "Correct CSS class added");
+	});
+
+	QUnit.test("Critical CSS Class added", function(assert) {
+		//Act
+		this.oTileContent.setFooterColor(sap.m.ValueColor.Critical);
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorCritical"), "Correct CSS class added");
+	});
+
+	QUnit.test("Error CSS Class added", function(assert) {
+		//Act
+		this.oTileContent.setFooterColor(sap.m.ValueColor.Error);
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorError"), "Correct CSS class added");
+	});
+
+	QUnit.test("Good CSS Class added", function(assert) {
+		//Act
+		this.oTileContent.setFooterColor(sap.m.ValueColor.Good);
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oTileContent.$("footer-text").hasClass("sapMTileCntFooterTextColorGood"), "Correct CSS class added");
 	});
 
 	QUnit.module("Functional test", {

@@ -40,14 +40,13 @@ sap.ui.require([
 		//*****************************************************************************************
 		QUnit.module(sName, {
 			beforeEach : function () {
-				this.oLogMock = sinon.mock(jQuery.sap.log);
+				this.oLogMock = this.mock(jQuery.sap.log);
 				this.oLogMock.expects("warning").never();
 				this.oLogMock.expects("error").never();
 				sap.ui.getCore().getConfiguration().setLanguage("en-US");
 				oType = createType();
 			},
 			afterEach : function () {
-				this.oLogMock.verify();
 				sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 			}
 		});
@@ -57,8 +56,17 @@ sap.ui.require([
 			assert.ok(oType instanceof ODataType, "is an ODataType");
 			assert.strictEqual(oType.getName(), sName, "is the right name");
 			assert.strictEqual(oType.oFormatOptions, undefined, "no formatting options");
+			assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 			assert.strictEqual(oType.oConstraints, undefined, "are the right constraints");
 			assert.strictEqual(oType.oFormat, null, "no formatter preload");
+		});
+
+		QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+			function (assert) {
+				var oType = createType(null, null);
+
+				assert.deepEqual(oType.oFormatOptions, null, "no format options");
+				assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 		});
 
 		QUnit.test("localization change", function (assert) {
@@ -70,7 +78,7 @@ sap.ui.require([
 			assert.strictEqual(oType.oFormat, null, "localization change resets formatter");
 			oType.formatValue(1234, "int");
 			assert.strictEqual(oType.oFormat, null, "no formatter for int");
-			assert.strictEqual(oType.formatValue(1234, "string"), "1'234",
+			assert.strictEqual(oType.formatValue(1234, "string"), "1’234",
 				"adjusted to changed language");
 			assert.ok(oType.oFormat, "Formatter has been created on demand");
 		});
@@ -257,6 +265,18 @@ sap.ui.require([
 				oType.formatValue(42, "string");
 				sinon.assert.calledWithExactly(oSpy, oFixture.expect);
 			});
+		});
+
+		QUnit.test("format: bad input type", function (assert) {
+			var oBadModelValue = new Date(),
+				oType = createType();
+
+			["string", "int", "float"].forEach(function (sTargetType) {
+				assert.throws(function () {
+					oType.formatValue(oBadModelValue, sTargetType);
+				}, new FormatException("Illegal " + sName + " value: " + oBadModelValue));
+			});
+			assert.strictEqual(oType.formatValue(oBadModelValue, "any"), oBadModelValue);
 		});
 	}
 

@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.AccButton.
-sap.ui.define(['jquery.sap.global', './Button' ],
-	function(jQuery, Button) {
+sap.ui.define(['./Button','./AccButtonRenderer'],
+	function(Button, AccButtonRenderer) {
 		"use strict";
 
 	/**
@@ -37,4 +37,4 @@ sap.ui.define(['jquery.sap.global', './Button' ],
 	});
 
 	return AccButton;
-}, /* bExport= */ false);
+});

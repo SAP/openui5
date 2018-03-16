@@ -2,8 +2,16 @@
  * ${copyright}
  */
 
-sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/Device' ],
-	function(jQuery, library, Control, Text, Device) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/m/Text',
+	'sap/ui/Device',
+	'./NewsContentRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, library, Control, Text, Device, NewsContentRenderer) {
 	"use strict";
 
 	/**
@@ -26,6 +34,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 	var NewsContent = Control.extend("sap.m.NewsContent", /** @lends sap.m.NewsContent.prototype */ {
 		metadata : {
 			library : "sap.m",
+			designtime: "sap/m/designtime/NewsContent.designtime",
 			properties : {
 				/**
 				 * Updates the size of the chart. If not set then the default size is applied based on the device tile.
@@ -135,7 +144,7 @@ sap.ui.define([ 'jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/
 		return sAltText;
 	};
 
-	NewsContent.prototype.getTooltip_AsString = function() {
+	NewsContent.prototype.getTooltip_AsString = function() { //eslint-disable-line
 		var oTooltip = this.getTooltip();
 		var sTooltip = this.getAltText();
 		if (typeof oTooltip === "string" || oTooltip instanceof String) {

@@ -22,6 +22,13 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized.sapMFocusable {
 	outline-color:    @_sap_m_Button_EmphasizedFocusColor;
 }
 
+html.sap-desktop .sapMBtn:focus > .sapMBtnActive.sapMBtnEmphasized.sapMFocusable {
+	outline-color:    @sapUiContentContrastFocusColor;
+}
+
+.sapMTB-Transparent-CTX .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive):not(.sapMBtnGhost) {
+	border-color: @sapUiButtonLiteBorderColor;
+}
 /* ---------------------------------------------------------------------*/
 /* Custom focus outline for IE and Edge:                                */
 /* ---------------------------------------------------------------------*/
@@ -71,6 +78,11 @@ html.sap-desktop .sapMBtn:focus > .sapMBtnEmphasized > .sapMBtnFocusDiv {
 
 .sapMIBar-CTX .sapMBtn:hover > .sapMBtnHoverable:not(.sapMBtnActive) {
 	border-color:     transparent;
+}
+
+.sapMIBar-CTX .sapMBtn:hover > .sapMBtnGhost.sapMBtnHoverable:not(.sapMBtnActive):not(.sapMToggleBtnPressed) {
+	background: fade(@sapUiButtonLiteTextColor, 20);
+	border-color: fade(@sapUiButtonLiteTextColor, 50);
 }
 
 html.sap-desktop .sapMFooter-CTX .sapMBtnInner.sapMBtnAccept {

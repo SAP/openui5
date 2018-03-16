@@ -3,31 +3,32 @@
  */
 
 // Provides information about 'explored' samples.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/documentation/library'],
-	function(jQuery, LibraryInfo, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/documentation/library'],
+	function(jQuery, library) {
 		"use strict";
+
+		var oPromise;
 
 		var ControlsInfo = {
 
-			listeners: [],
+			loadData: function() {
+				if (!oPromise) {
 
-			init: function () {
-
-				var that = this;
-
-				library._loadAllLibInfo(
-					"", "_getDocuIndex",
-					function (aLibs, oDocIndicies) {
-						ControlsInfo._getIndices(aLibs, oDocIndicies);
-
-						var listeners = that.listeners;
-						for (var i = 0; i < listeners.length; i++) {
-							listeners[i]();
-						}
+					oPromise = new Promise(function(resolve, reject) {
+						library._loadAllLibInfo(
+							"", "_getDocuIndex",
+							function (aLibs, oDocIndicies) {
+								var oData = ControlsInfo._getIndices(aLibs, oDocIndicies, function () {
+									// We pass the resolve method to be called when we have all the component data loaded
+									resolve(oData);
+								});
+							});
 					});
+				}
+				return oPromise;
 			},
 
-			_getIndices: function (aLibs, oDocIndicies) {
+			_getIndices: function (aLibs, oDocIndicies, fnComponentLoadCallback) {
 
 				var aCategoryWhiteList = [
 					"Action",
@@ -46,6 +47,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 					"Tutorial",
 					"Routing",
 					"Data Binding",
+					"Data Visualization",
 					"Map"
 				];
 				var afilterProps = ["namespace", "since", "category"]; // content density are set manually
@@ -192,6 +194,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 							oFilterSets[sProp][oEnt[sProp]] = true;
 						});
 
+						oEnt.library = oDoc.library;
+
 						// add entity
 						data.entities.push(oEnt);
 					});
@@ -205,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 						fnPrependZero;
 
 					// define search tags
-					oEnt.searchTags = oEnt.name + " " + oEnt.name.replace(" ", "") + " " + oEnt.category;
+					oEnt.searchTags = oEnt.name + " " + oEnt.name.replace(/\s/g, "") + " " + oEnt.category;
 
 					// check samples property
 					if (oEnt.samples && !(oEnt.samples instanceof Array)) {
@@ -270,6 +274,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 								}
 								oPreviousSample = oSample;
 
+								oSample.entityId = oEnt.id;
+
 								// add the sample to the local store
 								aSamples.push(oSample);
 								oEnt.searchTags += " " + oSample.name;
@@ -292,22 +298,37 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/util/LibraryInfo', 'sap/ui/docu
 						data.filter[setKey].push({id: key});
 					});
 				});
+				// Call LibraryInfo API method for collecting all component info from the .library files
+				// Note: _getLibraryInfo collects info with a delayed call so we need a callback to know
+				// when the last library info is collected
 
-				// call LibraryInfo API method for collecting all component info from the .library files
-
-				var oLibInfo = new LibraryInfo();
+				var oLibInfo = library._getLibraryInfoSingleton();
 				var oLibComponents = {};
-				var oLibraryComponentInfo = function (oComponent) {
-					oLibComponents[oComponent.library] = oComponent.componentInfo;
-				};
+				var aPromises = [];
+
+				// Create promises for all libraries needed
 				for (var i = 0; i < aLibs.length; i++) {
-					oLibInfo._getLibraryInfo(aLibs[i], oLibraryComponentInfo);
+					/* eslint-disable no-loop-func */
+					aPromises.push(new Promise(function (fnResolve) {
+						var oLibraryComponentInfo = function (oComponent) {
+							oLibComponents[oComponent.library] = oComponent.componentInfo;
+							fnResolve();
+						};
+						oLibInfo._getLibraryInfo(aLibs[i], oLibraryComponentInfo);
+					}));
+					/* eslint-enable no-loop-func */
 				}
+
+				// Execute promises
+				Promise.all(aPromises).then(function () {
+					// Callback so the loading of the library component data can be handled
+					fnComponentLoadCallback && fnComponentLoadCallback();
+				});
 
 				data.libComponentInfos = oLibComponents;
 
 				data.groups = this.getGroups(data.entities);
-				ControlsInfo.data = data;
+				return data;
 			},
 
 			findGroup: function (groups, name) {

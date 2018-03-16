@@ -6,7 +6,7 @@
 		<headerTitle>
 			<ObjectPageHeader id="headerForTest"
 							  headerDesign="Light"
-							  objectTitle="Denise Smith"
+							  objectTitle="John Smith"
 							  showTitleSelector="true"
 							  showMarkers="true"
 							  markFavorite="true"
@@ -30,14 +30,14 @@
 		</headerTitle>
 		<headerContent>
 			<layout:VerticalLayout>
-				<m:Link text="denise-smith"/>
+				<m:Link text="john-smith"/>
 				<m:Button text="To next page" press="handleDetailDetailPress" />
-				<m:Link text="DeniseSmith@sap.com"/>
+				<m:Link text="JohnSmith@sap.com"/>
 				<layout:HorizontalLayout>
 				</layout:HorizontalLayout>
 			</layout:VerticalLayout>
 			<m:Text width="200px"
-					text="Hi, I'm Denise. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
+					text="Hi, I'm John. I am passionate about what I do and I'll go the extra mile to make the customer win."/>
 			<layout:VerticalLayout>
 				<m:Label text="Profile completion"/>
 				<m:ProgressIndicator

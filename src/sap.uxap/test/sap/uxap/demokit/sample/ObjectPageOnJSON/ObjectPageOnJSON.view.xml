@@ -28,9 +28,15 @@
 					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
 					<ObjectPageHeaderActionButton text="Toggle Footer" hideIcon="true" hideText="false" type="Emphasized" press="toggleFooter"/>
 				</actions>
+				<breadcrumbs>
+					<m:Breadcrumbs id="breadcrumbsId" currentLocationText="Object Page Example" >
+						<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+						<m:Link text="Page 2 long link" press="handleLink2Press"/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
 				<breadCrumbsLinks>
-					<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
-					<m:Link text="Page 2 long link" press="handleLink2Press"/>
+					<m:Link id="breadCrumbLink1" text="Links in old aggregation" press="handleLink1Press"/>
+					<m:Link id="breadCrumbLink2" text="Don't appear in ObjectPageHeader" press="handleLink2Press"/>
 				</breadCrumbsLinks>
 			</ObjectPageHeader>
 		</headerTitle>
@@ -96,15 +102,15 @@
 				</subSections>
 			</ObjectPageSection>
 
-            <ObjectPageSection id="employmentSection" title="Employment">
-                <subSections>
-                    <ObjectPageSubSection id="employmentSectionSS1" title="Job information">
-                        <blocks>
-                            <employment:BlockJobInfoPart1 id="jobinfopart1"/>
-                            <employment:BlockJobInfoPart2 id="jobinfopart2"/>
-                            <employment:BlockJobInfoPart3 id="jobinfopart3"/>
-                        </blocks>
-                    </ObjectPageSubSection>
+			<ObjectPageSection id="employmentSection" title="Employment">
+				<subSections>
+					<ObjectPageSubSection id="employmentSectionSS1" title="Job information">
+						<blocks>
+							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
+							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
+							<employment:BlockJobInfoPart3 id="jobinfopart3"/>
+						</blocks>
+					</ObjectPageSubSection>
 
 					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" mode="Collapsed" importance="Medium">
 						<blocks>
@@ -136,7 +142,7 @@
 							</employment:EmploymentBlockJob>
 						</blocks>
 					</ObjectPageSubSection>
-			    </subSections>
+				</subSections>
 			</ObjectPageSection>
 		</sections>
 		<footer>

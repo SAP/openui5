@@ -5,64 +5,32 @@
 -->
 
 <html>
-	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-		<title>QUnit Page for sap.ui.table.library.js</title>
-		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>QUnit Page for sap.ui.table.library.js</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/table"></script>
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-sap-ui-cover-only="sap/ui/table">
+	</script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
-<script>
+	<script src="TableLib.qunit.js"></script>
+</head>
 
+<body class="sapUiBody sapUiSizeCozy">
+<div id="qunit"></div>
+</body>
 
-
-QUnit.module("Library", {});
-
-QUnit.test("load", function(assert) {
-	try {
-		sap.ui.getCore().loadLibrary("sap.ui.table");
-	} catch (e) {
-		assert.ok(false, "Fail on load");
-	}
-	assert.ok(!!sap.ui.table, "Table Lib loaded");
-});
-
-QUnit.test("TableHelper", function(assert) {
-	var oHelper = sap.ui.table.TableHelper;
-	
-	assert.ok(!!oHelper, "TableHelper exists");
-	assert.ok(!oHelper.bFinal, "TableHelper is not final");
-	assert.equal(oHelper.addTableClass(), "", "TableHelper.addTableClass");
-	try {
-		oHelper.createLabel();
-	} catch (e) {
-		assert.ok(true, "TableHelper.createLabel");
-	}
-	try {
-		oHelper.createTextView();
-	} catch (e) {
-		assert.ok(true, "TableHelper.createTextView");
-	}
-});
-
-</script>
-
-	</head>
-	<body id="body" class="sapUiBody sapUiSizeCozy">
-		<h1 id="qunit-header">QUnit Page for sap.ui.table.library.js</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
-		<div id="outerelement" tabindex="0"></div>
-	</body>
 </html>

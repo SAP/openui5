@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>QUnit Page for sap.ui.test.autoWaiter</title>
+
+		<script src="../../../shared-config.js"></script>
+		<script
+			src="../../../../../../../resources/sap-ui-core.js"
+			data-sap-ui-libs="sap.ui.commons, sap.m"
+			data-sap-ui-logLevel="ERROR"
+			data-sap-ui-resourceroots='{
+			"samples" : "../../../samples/",
+			"unitTests" : "../"
+			}'>
+		</script>
+		<script src="../../_includeQUnit.js"></script>
+
+		<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		jQuery.sap.require("sap.ui.thirdparty.sinon");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+		jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
+		QUnit.config.autostart = false;
+		jQuery.sap.require("samples.components.button.Component");
+		jQuery.sap.require("sap.ui.core.routing.HashChanger");
+
+		QUnit.test("Should not execute the test in debug mode", function (assert) {
+			assert.ok(!window["sap-ui-debug"], "Starting the OPA tests in debug mode is not supported since it changes timeouts");
+		});
+
+		sap.ui.require([
+			"sap/ui/test/opaQunit",
+			"unitTests/utils/customQUnitAssertions",
+			"unitTests/autowaiter/_navigationContainerWaiter",
+			"unitTests/autowaiter/_timeoutWaiter",
+			"unitTests/autowaiter/_promiseWaiter",
+			"unitTests/autowaiter/_autoWaiterAsync",
+			"unitTests/autowaiter/_autoWaiterLogCollector",
+			"unitTests/autowaiter/_utils",
+			"unitTests/autowaiter/_XHRWaiter"
+		], function (opaTest) {
+			QUnit.start();
+		});
+
+		</script>
+	</head>
+	<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+	</body>
+</html>

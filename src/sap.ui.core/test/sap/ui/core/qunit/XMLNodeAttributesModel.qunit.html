@@ -1,0 +1,64 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta charset="UTF-8">
+
+<title>QUnit tests: sap.ui.model.base.XMLNodeAttributesModel</title>
+
+<script id="sap-ui-bootstrap"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal" data-sap-ui-noConflict="true"
+	data-sap-ui-xx-bindingSyntax="complex">
+
+</script>
+
+<link rel="stylesheet" type="text/css"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css" />
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+	data-sap-ui-cover-only="sap/ui/model/controltree"></script>
+
+<script id="view" type="application/xml">
+		<mvc:View height="100%" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns="sap.m" id="view">
+			<Panel id="panel" metadataContexts="{model: 'model', path: '/players', adapter: 'dummy'}">
+				<content>
+					<Table items="{model>/players}" headerText = "{model>/team}" id="table">
+						<columns>
+							<Column>
+								<Text metadataContexts="{model>/players}" text="First Name" />
+								<Text text="Last Name" />
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<Text text="{model>firstName}" />
+									<Text text="{model>lastName}" />
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+
+					<Button text="Button" id="button"></Button>
+				</content>
+			</Panel>
+		</mvc:View>
+</script>
+
+<script src="XMLNodeAttributesModel.qunit.js"></script>
+
+</head>
+
+<body class="sapUiBody">
+	<h1 id="qunit-header">QUnit tests: sap.ui.model.base.XMLNodeAttributesModel</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+	<br>
+	<div id="qunit-fixture"></div>
+</body>
+</html>

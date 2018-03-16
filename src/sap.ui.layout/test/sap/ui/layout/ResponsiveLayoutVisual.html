@@ -175,7 +175,10 @@
 				]
 			});
 
-			oApp.addPage(oPage);
+			sap.ui.require(["sap/ui/layout/form/ResponsiveLayout", "sap/ui/layout/ResponsiveFlowLayoutData"], function() {
+				// to render only after everything is loaded to keep initial focus stable
+				oApp.addPage(oPage);
+			});
 
 		</script>
 

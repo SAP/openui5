@@ -22,14 +22,26 @@ sap.ui.define([
 
 	ValueHelp = Control.extend("sap.ui.core.sample.common.ValueHelp", {
 		metadata : {
+			interfaces : ["sap.ui.core.IFormContent"],
 			properties : {
-				editable : {type: "boolean", defaultValue: true, bindable: "bindable"},
+				enabled : {type: "boolean", defaultValue: true, bindable: "bindable"},
 				value: {type: "string", group: "Data", defaultValue: null, bindable: "bindable"}
 			},
 			aggregations : {
 				field : {type : "sap.ui.core.Control", multiple : false, visibility : "hidden"}
 			},
-			events : {/*TODO*/}
+			associations: {
+				/**
+				 * Association to controls / IDs that label this control (see WAI-ARIA attribute
+				 * aria-labelledby).
+				 */
+				ariaLabelledBy: {
+					type: "sap.ui.core.Control",
+					multiple: true,
+					singularName: "ariaLabelledBy"
+				}
+			},
+			events : {}
 		},
 
 		renderer : {
@@ -44,13 +56,26 @@ sap.ui.define([
 		},
 
 		init : function () {
+			// Note: Do not pass "this"! Template control vs. clone!
 			this.attachModelContextChange(this.onModelContextChange);
-			this.setAggregation("field", new Input({
-				editable : this.getEditable(),
-				id : this.getId() + "-field",
-				showValueHelp : false,
-				value : this.getValue()
-			}));
+		},
+
+		addAssociation : function() {
+			var oField = this.getAggregation("field");
+
+			if (oField) {
+				oField.addAssociation.apply(oField, arguments);
+			} // else: will be called again later
+			return this;
+		},
+
+		removeAssociation : function() {
+			var oField = this.getAggregation("field");
+
+			if (oField) {
+				oField.removeAssociation.apply(oField, arguments);
+			}
+			return this;
 		},
 
 		onModelContextChange : function (oEvent) {
@@ -59,16 +84,20 @@ sap.ui.define([
 
 			if (oBinding && oBinding.isResolved()) {
 				oBinding.requestValueListType().then(function (sValueListType) {
-					var oField = that.getAggregation("field");
+					var oField = that.getAggregation("field"),
+						sId = that.getId() + "-field";
 
-					if (oField) {
-						oField.destroy();
+					if (oField // changes to sValueListType are not supported
+							// no need to create a field if control is already destroyed
+							|| that.bIsDestroyed) {
+						return;
 					}
+
 					switch (sValueListType) {
 						case ValueListType.Standard:
 							oField = new Input({
-								editable : true,
-								id : that.getId() + "-field",
+								change: that.onValueChange.bind(that),
+								id : sId,
 								showValueHelp : true,
 								value : that.getValue(),
 								valueHelpRequest : that.onValueHelp.bind(that)
@@ -76,16 +105,14 @@ sap.ui.define([
 							break;
 						case ValueListType.Fixed:
 							oField = new ComboBox({
-								editable : true,
-								id : that.getId() + "-field",
+								id : sId,
 								loadItems : that.onLoadItems.bind(that),
 								value : that.getValue()
 							});
 							break;
 						default:
 							oField = new Input({
-								editable : that.getEditable(),
-								id : that.getId() + "-field",
+								id : sId,
 								showValueHelp : false,
 								value : that.getValue()
 							});
@@ -131,6 +158,10 @@ sap.ui.define([
 				jQuery.sap.log.error(oError, undefined,
 					"sap.ui.core.sample.common.ValueHelp");
 			});
+		},
+
+		onValueChange : function (oEvent) {
+			this.setProperty("value", oEvent.getParameter("newValue"));
 		},
 
 		onValueHelp : function (oEvent) {
@@ -179,7 +210,12 @@ sap.ui.define([
 					var sParameterPath = oParameter.ValueListProperty;
 
 					// TODO use Label annotation
-					oTable.addColumn(new Column({header : new Text({text : sParameterPath})}));
+					oTable.addColumn(new Column({
+						header : new Text({
+							text : sParameterPath,
+							wrapping : false
+						})
+					}));
 					oColumnListItem.addCell(new Text({text : "{" + sParameterPath + "}"}));
 				});
 				oTable.attachSelectionChange(onSelectionChange);
@@ -192,6 +228,12 @@ sap.ui.define([
 				jQuery.sap.log.error(oError, undefined,
 					"sap.ui.core.sample.common.ValueHelp");
 			});
+		},
+
+		setEnabled : function (bEnabled) {
+			if (this.getAggregation("field")) {
+				this.getAggregation("field").setEnabled(bEnabled);
+			}
 		},
 
 		setValue : function (sValue) {

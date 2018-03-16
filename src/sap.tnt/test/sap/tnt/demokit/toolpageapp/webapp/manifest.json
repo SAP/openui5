@@ -1,119 +1,127 @@
 {
-  "_version": "1.1.0",
-  "sap.app": {
-	"_version": "1.1.0",
-	"id": "sap.ui.demo.toolpageapp",
-	"type": "application",
-	"i18n": "i18n/i18n.properties",
-	"title": "{{appTitle}}",
-	"description": "{{appDescription}}",
-	"applicationVersion": {
-	  "version": "1.0.0"
-	}
-  },
-  "sap.ui": {
-	"_version": "1.1.0",
-	"technology": "UI5",
-	"deviceTypes": {
-	  "desktop": true,
-	  "tablet": true,
-	  "phone": true
-	},
-	"supportedThemes": [
-	  "sap_hcb",
-	  "sap_bluecrystal",
-	  "sap_belize"
-	]
-  },
-  "sap.ui5": {
-	"_version": "1.1.0",
-	"rootView": "sap.ui.demo.toolpageapp.view.App",
-	"dependencies": {
-	  "minUI5Version": "1.30",
-	  "libs": {
-		"sap.ui.core": {},
-		"sap.m": {},
-		"sap.tnt": {},
-		"sap.ui.layout": {}
-	  }
-	},
-	"models": {
-	  "i18n": {
-		"type": "sap.ui.model.resource.ResourceModel",
-		"settings": {
-		  "bundleName": "sap.ui.demo.toolpageapp.i18n.i18n"
-		}
-	  },
-		"side" : {
-			"type": "sap.ui.model.json.JSONModel",
-			"uri": "model/sideContent.json"
-		},
-		"alerts": {
-			"type": "sap.ui.model.json.JSONModel",
-			"uri": "model/alerts.json"
-		},
-		"customer": {
-			"type": "sap.ui.model.json.JSONModel",
-			"uri": "model/customers.json"
+	"_version": "1.8.0",
+	"sap.app": {
+		"id": "sap.ui.demo.toolpageapp",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
 		}
 	},
-	"resources": {
-		"css": [
-			{
-				"uri": "css/style.css"
-			}
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		},
+		"supportedThemes": [
+			"sap_hcb",
+			"sap_bluecrystal",
+			"sap_belize"
 		]
 	},
-	"routing": {
-	  "config": {
-		"routerClass": "sap.m.routing.Router",
-		"controlId": "mainContents",
-		"viewType": "XML",
-		"controlAggregation": "pages",
-		"viewPath": "sap.ui.demo.toolpageapp.view",
-		"async": true
-	  },
-	  "routes": [
-		{
-		  "pattern": "",
-			"name": "home",
-			"target": "home"
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.toolpageapp.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
 		},
-		{
-		  "pattern": "SystemSettings",
-		  "name": "systemSettings",
-		  "target": ["masterSettings", "detailSettings1"]
+		"dependencies": {
+			"minUI5Version": "1.30",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.tnt": {},
+				"sap.ui.layout": {},
+				"sap.uxap": {}
+			}
 		},
-		  {
-		  "pattern": "Statistics",
-		  "name": "statistics",
-		  "target": "statistics"
-		  }
-	  ],
-	  "targets": {
-		"home": {
-			"viewName": "Home"
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.toolpageapp.i18n.i18n"
+				}
+			},
+			"side": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/sideContent.json"
+			},
+			"alerts": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/alerts.json"
+			},
+			"customer": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/customers.json"
+			}
 		},
-		"appSettings":
-		{
-			"viewName": "settings.AppSettings"
-		},
-		"masterSettings": {
-		  "viewName": "settings.MasterSettings",
-			"controlId": "appSettings",
-			"controlAggregation": "masterPages",
-			"parent": "appSettings"
-		},
-		  "detailSettings1": {
-			  "viewName": "settings.DetailSettings1",
-			  "controlId": "appSettings",
-			  "controlAggregation": "detailPages",
-			  "parent": "appSettings"
-		  },
-		"statistics": {
-		  "viewName": "Statistics"
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"controlId": "mainContents",
+				"viewType": "XML",
+				"controlAggregation": "pages",
+				"viewPath": "sap.ui.demo.toolpageapp.view",
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "home",
+					"target": "home"
+				},
+				{
+					"pattern": "MasterSettings",
+					"name": "masterSettings",
+					"target": [
+						"detailSettings",
+						"masterSettings"
+					]
+				},
+				{
+					"pattern": "SystemSettings",
+					"name": "systemSettings",
+					"target": "detailSettings"
+				},
+				{
+					"pattern": "Statistics",
+					"name": "statistics",
+					"target": "statistics"
+				}
+			],
+			"targets": {
+				"home": {
+					"viewId": "home",
+					"viewName": "Home"
+				},
+				"appSettings": {
+					"viewId": "appSettings",
+					"viewName": "settings.AppSettings"
+				},
+				"masterSettings": {
+					"viewId": "masterSettings",
+					"viewName": "settings.MasterSettings",
+					"controlId": "appSettings",
+					"controlAggregation": "masterPages",
+					"parent": "appSettings"
+				},
+				"detailSettings": {
+					"viewId": "detailSettings",
+					"viewName": "settings.DetailSettings",
+					"controlId": "appSettings",
+					"controlAggregation": "detailPages",
+					"parent": "appSettings"
+				},
+				"statistics": {
+					"viewId": "statistics",
+					"viewName": "Statistics"
+				}
+			}
 		}
-	  }
 	}
-  }
 }

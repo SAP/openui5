@@ -152,11 +152,10 @@ var JavaHighlightRules = function() {
         "comment" : [
             {
                 token : "comment", // closing comment
-                regex : ".*?\\*\\/",
+                regex : "\\*\\/",
                 next : "start"
             }, {
-                token : "comment", // comment spanning whole line
-                regex : ".+"
+                defaultToken : "comment"
             }
         ]
     };
@@ -267,11 +266,10 @@ var DroolsHighlightRules = function() {
         return [
             {
                 token : "comment.block", // closing comment
-                regex : ".*?\\*\\/",
+                regex : "\\*\\/",
                 next : returnRule
             }, {
-                token : "comment.block", // comment spanning whole line
-                regex : ".+"
+                defaultToken : "comment.block"
             }
         ];
       }

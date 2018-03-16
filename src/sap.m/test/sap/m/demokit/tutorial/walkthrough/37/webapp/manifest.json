@@ -1,97 +1,98 @@
 {
-  "_version": "1.1.0",
-  "sap.app": {
-	"_version": "1.1.0",
-	"id": "sap.ui.demo.wt",
-	"type": "application",
-	"i18n": "i18n/i18n.properties",
-	"title": "{{appTitle}}",
-	"description": "{{appDescription}}",
-	"applicationVersion": {
-	  "version": "1.0.0"
-	},
-	"dataSources": {
-	  "invoiceRemote": {
-		"uri": "/destinations/northwind/V2/Northwind/Northwind.svc/",
-		"type": "OData",
-		"settings": {
-		  "odataVersion": "2.0"
-		}
-	  }
-	}
-  },
-  "sap.ui": {
-	"_version": "1.1.0",
-	"technology": "UI5",
-	"deviceTypes": {
-	  "desktop": true,
-	  "tablet": true,
-	  "phone": true
-	},
-	"supportedThemes": [
-		"sap_hcb",
-		"sap_belize"
-	]
-  },
-  "sap.ui5": {
-	"_version": "1.1.0",
-	"rootView": "sap.ui.demo.wt.view.App",
-	"dependencies": {
-	  "minUI5Version": "1.30",
-	  "libs": {
-		"sap.m": {}
-	  }
-	},
-	"contentDensities": {
-	  "compact": true,
-	  "cozy": true
-	},
-	"models": {
-	  "i18n": {
-		"type": "sap.ui.model.resource.ResourceModel",
-		"settings": {
-		  "bundleName": "sap.ui.demo.wt.i18n.i18n"
-		}
-	  },
-	  "invoice": {
-		"dataSource": "invoiceRemote"
-	  }
-	},
-	"resources": {
-	  "css": [
-		{
-		  "uri": "css/style.css"
-		}
-	  ]
-	},
-	"routing": {
-	  "config": {
-		"routerClass": "sap.m.routing.Router",
-		"viewType": "XML",
-		"viewPath": "sap.ui.demo.wt.view",
-		"controlId": "app",
-		"controlAggregation": "pages"
-	  },
-	  "routes": [
-		{
-		  "pattern": "",
-		  "name": "overview",
-		  "target": "overview"
+	"_version": "1.8.0",
+	"sap.app": {
+		"id": "sap.ui.demo.walkthrough",
+		"type": "application",
+		"i18n": "i18n/i18n.properties",
+		"title": "{{appTitle}}",
+		"description": "{{appDescription}}",
+		"applicationVersion": {
+			"version": "1.0.0"
 		},
-		{
-		  "pattern": "detail/{invoicePath}",
-		  "name": "detail",
-		  "target": "detail"
+		"dataSources": {
+			"invoiceRemote": {
+				"uri": "https://services.odata.org/V2/Northwind/Northwind.svc/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0"
+				}
+			}
 		}
-	  ],
-	  "targets": {
-		"overview": {
-		  "viewName": "Overview"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.demo.walkthrough.view.App",
+			"type": "XML",
+			"async": true,
+			"id": "app"
 		},
-		"detail": {
-		  "viewName": "Detail"
+		"dependencies": {
+			"minUI5Version": "1.30",
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.demo.walkthrough.i18n.i18n"
+				}
+			},
+			"invoice": {
+				"dataSource": "invoiceRemote"
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "css/style.css"
+				}
+			]
+		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "sap.ui.demo.walkthrough.view",
+				"controlId": "app",
+				"controlAggregation": "pages",
+				"async": true
+			},
+			"routes": [
+				{
+					"pattern": "",
+					"name": "overview",
+					"target": "overview"
+				},
+				{
+					"pattern": "detail/{invoicePath}",
+					"name": "detail",
+					"target": "detail"
+				}
+			],
+			"targets": {
+				"overview": {
+					"viewId": "overview",
+					"viewName": "Overview"
+				},
+				"detail": {
+					"viewId": "detail",
+					"viewName": "Detail"
+				}
+			}
 		}
-	  }
 	}
-  }
 }

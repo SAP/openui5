@@ -10,18 +10,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 
 
 	/**
+	 * Creates a new JSONListBinding.
+	 *
+	 * This constructor should only be called by subclasses or model implementations, not by application or control code.
+	 * Such code should use {@link sap.ui.model.json.JSONModel#bindList JSONModel#bindList} on the corresponding model instance instead.
+	 *
+	 * @param {sap.ui.model.json.JSONModel} oModel Model instance that this binding is created for and that it belongs to
+	 * @param {string} sPath Binding path to be used for this binding
+	 * @param {sap.ui.model.Context} oContext Binding context relative to which a relative binding path will be resolved
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order (can be either a sorter or an array of sorters)
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filter/s (can be either a filter or an array of filters)
+	 * @param {object} [mParameters] Map of optional parameters as defined by subclasses; this class does not introduce any own parameters
+	 * @throws {Error} When one of the filters uses an operator that is not supported by the underlying model implementation
 	 *
 	 * @class
-	 * List binding implementation for JSON format
+	 * List binding implementation for JSON format.
 	 *
-	 * @param {sap.ui.model.json.JSONModel} oModel
-	 * @param {string} sPath
-	 * @param {sap.ui.model.Context} oContext
-	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] initial sort order (can be either a sorter or an array of sorters)
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] predefined filter/s (can be either a filter or an array of filters)
-	 * @param {object} [mParameters]
 	 * @alias sap.ui.model.json.JSONListBinding
 	 * @extends sap.ui.model.ClientListBinding
+	 * @protected
 	 */
 	var JSONListBinding = ClientListBinding.extend("sap.ui.model.json.JSONListBinding");
 
@@ -140,7 +147,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 		}
 
 		if (!this.bUseExtendedChangeDetection) {
-			var oList = this.oModel._getObject(this.sPath, this.oContext);
+			var oList = this.oModel._getObject(this.sPath, this.oContext) || [];
 			if (!jQuery.sap.equal(this.oList, oList) || bForceupdate) {
 				this.update();
 				this._fireChange({reason: ChangeReason.Change});
@@ -150,8 +157,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ChangeReason', 'sap/ui/model/C
 			var that = this;
 
 			//If the list has changed we need to update the indices first
-			var oList = this.oModel._getObject(this.sPath, this.oContext);
-			if (oList && this.oList.length != oList.length) {
+			var oList = this.oModel._getObject(this.sPath, this.oContext) || [];
+			if (this.oList.length != oList.length) {
 				bChangeDetected = true;
 			}
 			if (!jQuery.sap.equal(this.oList, oList)) {

@@ -52,7 +52,6 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.model.DataState
 	 */
@@ -239,7 +238,7 @@ sap.ui.define([ 'jquery.sap.global', '../base/Object' ], function(jQuery, BaseOb
 
 	/**
 	 * Returns whether the data state is in laundering.
-	 * If data is send to the server the data state becomes laundering until the
+	 * If data is sent to the server, the data state becomes laundering until the
 	 * data was accepted or rejected.
 	 *
 	 * @returns {boolean} true if the data is laundering

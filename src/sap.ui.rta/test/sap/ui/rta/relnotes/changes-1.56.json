@@ -1,0 +1,91 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "450cad221c6fb2bb23af7c834ef1d949d2751d78",
+        "type": "FIX",
+        "text": " Fix maven coldwater plugin errors",
+        "references": []
+      },
+      {
+        "id": "012b33628fe2749a95df15befd5163769fbb71aa",
+        "type": "FIX",
+        "text": " sap.ui.dt.MiniMenu - various bugfixes \u0026 cleaning (split1)",
+        "references": []
+      },
+      {
+        "id": "4d385e4122a066b70b8ce1699073406b77c8af82",
+        "type": "FIX",
+        "text": " sap.ui.rta - Fix and refactor SimpleFormMove tests",
+        "references": []
+      },
+      {
+        "id": "eae3461b28a5303637147cc679a7e7427de08ddb",
+        "type": "FIX",
+        "text": " sap.ui.rta: Adjust overlay container in PopupManager._applyPopupPatch to new dt implementation",
+        "references": []
+      },
+      {
+        "id": "b97c0b31fcb0a0780dc10e105521d76c99fd795f",
+        "type": "FEATURE",
+        "text": " sap.ui.rta: Support the layer switch for app variants from",
+        "references": []
+      },
+      {
+        "id": "92a3a8f624fdadaad50402a1eac6b23a4dde2f0f",
+        "type": "FIX",
+        "text": "sap.ui.rta - Aggregation binding Overlay movable when not editable",
+        "references": []
+      },
+      {
+        "id": "bcecb61ee50e6ce23d8987147c2048e87e2fa260",
+        "type": "FIX",
+        "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
+        "references": []
+      },
+      {
+        "id": "c941314f3d3bde2b8a43a8e699c107555a30f537",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "81365b124839a91ceb909835c5c5a9f864573159",
+        "type": "FIX",
+        "text": " sap.ui.rta: Getting rid of the feature toggle parameter.",
+        "references": []
+      },
+      {
+        "id": "37e85c891ed99e12402ab626974119243dfed3aa",
+        "type": "FIX",
+        "text": " sap.ui.rta: RuntimeAuthoring test fix for IE11",
+        "references": []
+      },
+      {
+        "id": "0fc252d4cb24580ec97f06f02d3fbf6293cde8b5",
+        "type": "FIX",
+        "text": " sap.ui.rta: fixed tests running out of stack space in IE11",
+        "references": []
+      },
+      {
+        "id": "4276d565086f20cd232dc9360c5ac3cd73fbb1ce",
+        "type": "FIX",
+        "text": " sap.ui.rta: check geometry of overlay instead of original element",
+        "references": []
+      },
+      {
+        "id": "ff97aeb09fc61c7bb7b283f30bd5b2b2070a6553",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
+      },
+      {
+        "id": "28d2646b2dd79a23912750f70b2c82c5b2bc504b",
+        "type": "FIX",
+        "text": " sap.ui.rta: Delete the app variant from the layered repository if",
+        "references": []
+      }
+    ]
+  }
+}

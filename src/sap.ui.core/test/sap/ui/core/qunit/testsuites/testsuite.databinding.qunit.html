@@ -11,9 +11,12 @@
 		function suite() {
 			var suite = new parent.jsUnitTestSuite();
 			var contextPath = "/" + window.location.pathname.split("/")[1];
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/analytics/AnalyticalBinding.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/analytics/odata4analytics.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/CalculatedFields.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/BindingParser.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DataBinding.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/odata/v2/datajs.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ExpressionParser.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ClientModel.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/Filter.qunit.html");
@@ -25,7 +28,6 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/JSONTwoWay.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ListBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/MasterDetail.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/OData4Analytics.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataAnnotations.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataAnnotationsV2.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataModel.qunit.html");
@@ -51,7 +53,7 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataV2ListBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataV2TreeBinding.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataV2TreeBindingFlat.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/AnalyticalBinding.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataV2TreeBindingFlatExpansionState.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ODataMessages.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/V2ODataModelDataState.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DataState.qunit.html");

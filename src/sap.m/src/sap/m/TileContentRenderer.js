@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define(['jquery.sap.global'],
+	function(jQuery) {
 	"use strict";
 
 	/**
@@ -83,11 +83,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			return;
 		}
 
+		var sColorClass = "sapMTileCntFooterTextColor" + oControl.getFooterColor();
 		var sTooltip = oControl.getTooltip_AsString();
 		var sFooterTxt = oControl._getFooterText(oRm, oControl);
 		// footer text div
 		oRm.write("<div");
 		oRm.addClass("sapMTileCntFtrTxt");
+		oRm.addClass(jQuery.sap.encodeCSS(sColorClass));
 		oRm.writeClasses();
 		oRm.writeAttribute("id", oControl.getId() + "-footer-text");
 		if (sTooltip.trim()) { // check for white space(s) needed since the IE11 renders it

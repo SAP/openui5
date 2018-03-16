@@ -2,6 +2,5 @@
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 		<SplitApp
-			id="appSettings"
-			mode="StretchCompressMode"/>
+			id="appSettings"/>
 </mvc:View>

@@ -131,6 +131,8 @@
 			content : [
 				new sap.m.Label({text: "initial DatePicker", labelFor: "DP1"}),
 				new sap.m.DatePicker("DP1", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
+				new sap.m.Label({text: "initial DatePicker, initialFocusedDate new Date(2017, 5, 13)", labelFor: "DP1_v0"}),
+				new sap.m.DatePicker("DP1_v0", { fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation, initialFocusedDateValue: new Date(2017, 5, 13) }),
 				new sap.m.Label({text: "DatePicker with given Value and Formatter", labelFor: "DP2"}),
 				new sap.m.DatePicker("DP2", { value: "2014-03-26", valueFormat: "yyyy-MM-dd", displayFormat: "long", fieldGroupIds: ["group1"], change: handleChange, validateFieldGroup: handleFieldGroupValidation }),
 				new sap.m.ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),

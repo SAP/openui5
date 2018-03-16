@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 		var oRouters = {};
 
 		/**
-		 * Instantiates an SAPUI5 Router
+		 * Instantiates a SAPUI5 Router
 		 *
 		 * @class
 		 * @extends sap.ui.base.EventProvider
@@ -556,7 +556,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 *  c. the pattern of its nested route. When this occurs, the 'nestedRoute' parameter is set with the instance of nested route.
 			 * </pre>
 			 *
-			 * Please refer to event {@link sap.ui.core.routing.Router#event:routePatternMatched|routePatternMatched} for getting notified only when a route's own pattern is matched with the URL hash not its sub-routes.
+			 * Please refer to event {@link sap.ui.core.routing.Router#event:routePatternMatched routePatternMatched} for getting notified only when a route's own pattern is matched with the URL hash not its sub-routes.
 			 *
 			 * @name sap.ui.core.routing.Router#routeMatched
 			 * @event
@@ -581,7 +581,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 			 *            oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
+			 * @param {object} [oListener] Object on which to call the given function. If empty, this router is used.
 			 *
 			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 			 * @public
@@ -652,7 +652,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 			 *            oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
+			 * @param {object} [oListener] Object on which to call the given function. If empty, this router is used.
 			 *
 			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 			 * @public
@@ -695,7 +695,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 			 * oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
+			 * @param {object} [oListener] Object on which to call the given function. If empty, this router is used.
 			 *
 			 * @deprecated Since 1.28 use {@link #getViews} instead.
 			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
@@ -758,7 +758,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 			 *            oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
+			 * @param {object} [oListener] Object on which to call the given function. If empty, this router is used.
 			 *
 			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 			 * @public
@@ -817,7 +817,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 * @param {object} [oData] The object, that should be passed along with the event-object when firing the event.
 			 * @param {function} fnFunction The function to call, when the event occurs. This function will be called on the
 			 *            oListener-instance (if present) or in a 'static way'.
-			 * @param {object} [oListener] Object on which to call the given function. If empty, this Model is used.
+			 * @param {object} [oListener] Object on which to call the given function. If empty, this router is used.
 			 *
 			 * @return {sap.ui.core.routing.Router} <code>this</code> to allow method chaining
 			 * @public
@@ -871,9 +871,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/base/EventPro
 			 * @param {object} oEvent.getParameters
 			 * @param {string} oEvent.getParameters.title The current displayed title
 			 * @param {array} oEvent.getParameters.history An array which contains the history of previous titles
-			 * @param {string} oEvent.getParameters.history[].title The title
-			 * @param {string} oEvent.getParameters.history[].hash The hash
-			 * @param {boolean} oEvent.getParameters.history[].isHome The app home indicator
+			 * @param {string} oEvent.getParameters.history.title The title
+			 * @param {string} oEvent.getParameters.history.hash The hash
+			 * @param {boolean} oEvent.getParameters.history.isHome The app home indicator
 			 * @public
 			 */
 

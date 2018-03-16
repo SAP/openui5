@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 		"use strict";
 
 		/**
@@ -27,7 +27,6 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.write("<div ");
 			oRm.writeControlData(oControl);
 			oRm.addClass("sapMTabContainer");
-			oRm.addClass("sapContrastPlus");
 			oRm.writeClasses();
 			oRm.write(">");
 

@@ -112,9 +112,11 @@ sap.ui.define(['jquery.sap.global'],
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
-	 * @param {sap.ui.core.RenderManager} oRenderManager the RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oNode an object representation of the control that should be rendered
-	 * @param {int} iLevel the hierarchical level value of the node
+	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.Control} oNode An object representation of the control that should be rendered
+	 * @param {int} iLevel The hierarchical level value of the node
+	 * @param {int} iSize The size of the set
+	 * @param {int} iPos The position of the node in the set
 	 */
 	TreeRenderer.renderNode = function(oRenderManager, oNode, iLevel, iSize, iPos){
 		// convenience variable

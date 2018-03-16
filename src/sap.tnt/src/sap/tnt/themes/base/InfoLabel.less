@@ -1,0 +1,75 @@
+/* ================================= */
+/* CSS for control sap.tnt/InfoLabel */
+/* Base theme                        */
+/* ================================= */
+
+/* ==========================================================================
+   Root element
+   ========================================================================== */
+.sapTntInfoLabel {
+	box-sizing: border-box;
+	padding: 0 0.625rem;
+	text-align: center;
+	border-radius: 1.125rem;
+	height: 1.125rem;
+	display: inline-block;
+	max-width: 100%;
+
+	.sapTntInfoLabelInner {
+		font-size: @sapMFontSmallSize;
+		vertical-align: top;
+		line-height: 1.125rem;
+		font-weight: 600;
+		letter-spacing: 0.0125rem;
+		text-transform: uppercase;
+		display: inline-block;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		overflow: hidden;
+		max-width: 100%;
+	}
+}
+
+.sapTntInfoLabelRenderModeNarrow{
+	padding: 0 0.3125rem;
+}
+
+/* ==========================================================================
+   InfoLabel Display Only
+   ========================================================================== */
+.sapTntInfoLabel.sapTntInfoLabelDisplayOnly {
+	height: 1rem;
+
+	.sapTntInfoLabelInner {
+		font-size: 0.6875rem;
+		line-height: 1rem;
+	}
+}
+
+/* ==========================================================================
+   InfoLabel No Text
+   ========================================================================== */
+   .sapTntInfoLabel.sapTntInfoLabelNoText {
+	padding: 0 0.5625rem;
+
+		&.sapTntInfoLabelDisplayOnly{
+			padding: 0 0.5rem;
+		}
+   }
+
+/* ==========================================================================
+   InfoLabel in Form
+   ========================================================================== */
+
+.sapUiFormM:not(.sapUiFormEdit) .sapUiFormResGridCont > div .sapTntInfoLabel {
+	font-size: 1rem;
+}
+
+.sapUiFormEdit .sapTntInfoLabel:not(.sapTntInfoLabelDisplayOnly) {
+	margin: 0.9375rem 0;
+}
+
+/* Compact size */
+.sapUiSizeCompact .sapUiFormEdit .sapTntInfoLabel:not(.sapTntInfoLabelDisplayOnly) {
+	margin: 0.4375rem 0;
+}

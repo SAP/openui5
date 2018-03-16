@@ -2,8 +2,10 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/m/GroupHeaderListItem',
 		'sap/ui/core/mvc/Controller',
-		'sap/ui/model/json/JSONModel'
-	], function(jQuery, GroupHeaderListItem, Controller, JSONModel) {
+		'sap/ui/model/json/JSONModel',
+		'sap/m/Menu',
+		'sap/m/MenuItem'
+	], function(jQuery, GroupHeaderListItem, Controller, JSONModel, Menu, MenuItem) {
 	"use strict";
 
 	var ListController = Controller.extend("sap.m.sample.ListGrouping.List", {
@@ -19,6 +21,19 @@ sap.ui.define([
 				title: oGroup.key,
 				upperCase: false
 			} );
+		},
+
+		onToggleContextMenu: function(oEvent) {
+			if (oEvent.getParameter("pressed")) {
+				this.byId("idList").setContextMenu(new Menu({
+					items: [
+						new MenuItem({text: "{Name}"}),
+						new MenuItem({text: "{ProductId}"})
+					]
+				}));
+			} else {
+				this.byId("idList").destroyContextMenu();
+			}
 		}
 	});
 

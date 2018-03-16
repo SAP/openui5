@@ -37,6 +37,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		var sText = "";
 		var sTextDirection = sap.ui.core.TextDirection.Inherit;
 		var sWidth = "";
+		var bUseEntireWidth = false;
 
 		// system under test
 		var oCheckBox = new sap.m.CheckBox();
@@ -54,6 +55,7 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		assert.strictEqual(oCheckBox.getText(), sText, "Property 'text': Default value should be '" + sText + "'");
 		assert.strictEqual(oCheckBox.getTextDirection(), sTextDirection, "Property 'textDirection': Default value should be '" + sTextDirection + "'");
 		assert.strictEqual(oCheckBox.getWidth(), sWidth, "Property 'width': Default value should be '" + sWidth + "'");
+		assert.strictEqual(oCheckBox.getUseEntireWidth(), bUseEntireWidth, "Property 'useEntireWidth': Default value should be '" + bUseEntireWidth + "'");
 
 		// cleanup
 		oCheckBox.destroy();
@@ -175,6 +177,50 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		oCheckBox.destroy();
 	});
 
+    /* ----------------------------------------------- */
+	/* Test: 'displayOnly=true'                        */
+	/* ----------------------------------------------- */
+    QUnit.test("'displayOnly=true'", function(assert) {
+
+		// system under test
+		var bDisplayOnly = true;
+		var oCheckBox = new sap.m.CheckBox({displayOnly: bDisplayOnly});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oCheckBox.getTabIndex(), -1 , "'getTabindex' should return -1");
+		assert.equal(oCheckBox.$().hasClass("sapMCbDisplayOnly"), true, ": The CheckBox should have class sapMCbDisplayOnly");
+		assert.strictEqual(oCheckBox.$().attr("aria-readonly"), "true", "Property 'aria-readonly' should be 'true'");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+    /* ----------------------------------------------- */
+	/* Test: 'displayOnly=true&enabled=false'          */
+	/* ----------------------------------------------- */
+    QUnit.test("'displayOnly=true'", function(assert) {
+
+		// system under test
+		var bDisplayOnly = true;
+		var bEnabled = false;
+		var oCheckBox = new sap.m.CheckBox({displayOnly: bDisplayOnly, enabled: bEnabled});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.equal(oCheckBox.$().hasClass("sapMCbDisplayOnly"), false, ": The CheckBox should not have class sapMCbDisplayOnly");
+		assert.strictEqual(oCheckBox.$().attr("aria-readonly"), undefined, "Property 'aria-readonly' is not set");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
 
 	/* ----------------------------------------------- */
 	/* Test: 'selected=true'                           */
@@ -216,6 +262,70 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		assert.ok(!oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), "selected=false: CheckBox should not have class sapMCbMarkChecked");
 		assert.ok(!oCheckBox.$("CB").is(":checked"), "selected=false: CheckBox should not have attribute 'checked'");
 		assert.strictEqual(oCheckBox.$().attr("aria-checked"), "false", "Property 'aria-checked': Default value should be 'false'");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+	/* ----------------------------------------------- */
+	/* Test: wrapping property                         */
+	/* ----------------------------------------------- */
+
+	QUnit.test("wrapping property", function(assert) {
+
+		// system under test
+		var oCheckBox = new sap.m.CheckBox({wrapping: true});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.ok(oCheckBox._getLabel().getWrapping(), "wrapping=true: CheckBox's label wrapping should be set");
+		assert.ok(oCheckBox.$().hasClass("sapMCbWrapped"), "wrapping=true: CheckBox should have class sapMCbWrapped");
+
+		//act
+		oCheckBox.setWrapping(false);
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.ok(!oCheckBox._getLabel().getWrapping(), "wrapping=false: CheckBox's label wrapping should not be set");
+		assert.ok(!oCheckBox.$().hasClass("sapMCbWrapped"), "wrapping=false: CheckBox should not have class sapMCbWrapped");
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+	/* ----------------------------------------------- */
+	/* Test: 'useEntireWidth functionality'            */
+	/* ----------------------------------------------- */
+
+	QUnit.test("useEntireWidth functionality", function(assert) {
+
+		// system under test
+		var CHECKBOX_WIDTH = 50,
+			oCheckBox = new sap.m.CheckBox({
+				text: "Label",
+				useEntireWidth: true
+			}),
+			oLabel = oCheckBox._getLabel();
+
+		// arrange
+		oCheckBox.placeAt("content");
+		oCheckBox.setWidth("50px");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oCheckBox.$().outerWidth(), CHECKBOX_WIDTH, "CheckBox main div should have width of '50px'");
+		assert.strictEqual(oLabel.$().prop("style")["width"], "", "CheckBox label should not have width set");
+
+		// act
+		oCheckBox.setUseEntireWidth(false);
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.strictEqual(oCheckBox.$().prop("style")["width"], "", "CheckBox main div should not have width set");
+		assert.strictEqual(oLabel.$().width(), CHECKBOX_WIDTH, "CheckBox label should have width of '50px'");
 
 		// cleanup
 		oCheckBox.destroy();

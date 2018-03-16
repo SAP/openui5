@@ -1,0 +1,15 @@
+<mvc:View
+	height="100%"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+	<MessagePage showHeader="false"
+				 text="Warning (this is a sample)"
+				 enableFormattedText="true"
+				 description="This page might not behave as expected because your browser isn't &lt;em&gt;&lt;u&gt;configured to load unsigned&lt;/u&gt;&lt;/em&gt; third party controls. Allow this page to install an unsigned control? &lt;em&gt;&lt;strong&gt;Doing so from untrusted sources&lt;/strong&gt; may harm your computer.&lt;/em&gt; &lt;a target='_self'&gt;Learn more&lt;/a&gt;&lt;ul&gt;&lt;li&gt;Your current security settings prohibit running third party controls on this page, or&lt;/li&gt;&lt;li&gt;You have blocked a publisher of one of the controls.&lt;/li&gt;&lt;li&gt;Learn about using third party controls &lt;a target='_self'&gt;here&lt;/a&gt;.&lt;/li&gt;&lt;/ul&gt;"
+				 icon="sap-icon://message-warning">
+		<buttons>
+			<Button text="Change security settings"/>
+			<Button text="Reload page"/>
+		</buttons>
+	</MessagePage>
+</mvc:View>

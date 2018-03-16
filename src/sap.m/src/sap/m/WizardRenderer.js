@@ -63,6 +63,8 @@ sap.ui.define([], function () {
 	 * If WizardStepsAggregation is [{id:1, subSeq:[2,3]},{id:2,subSeq:[4]},{id:3,subSeq[2]},{id:4,subSeq:[]}]
 	 * and this array of steps gets rendered 1, 2, 3, 4 (without reordering it) the user can go 1 -> 3 -> 2 -> 4
 	 * the steps need to be reordered in the DOM for correct visual order
+	 * @param {sap.m.Wizard} oWizard The control instance
+	 * @returns {sap.m.WizardStep[]} The step array
 	 */
 	WizardRenderer._getStepsRenderingOrder = function (oWizard) {
 		if (!oWizard.getEnableBranching()) {

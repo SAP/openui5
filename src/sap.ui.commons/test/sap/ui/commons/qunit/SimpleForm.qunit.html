@@ -18,9 +18,13 @@
 	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script>
+	jQuery.sap.require("sap.ui.commons.form.SimpleForm");
+	jQuery.sap.require("sap.ui.commons.form.ResponsiveLayout"); // as layout is loaded async - keep the old test stable
+	jQuery.sap.require("sap.ui.commons.form.GridLayout");
 
 		// create SimpleForm
 	var oSimpleForm = new sap.ui.commons.form.SimpleForm(
@@ -445,18 +449,18 @@
 			var oTextField = sap.ui.getCore().byId("TF-X-3");
 			var oElement = oTextField.getParent();
 			oTextField.setVisible(false);
-			assert.equal(oElement.getVisible(), false, "FormElement is invisible if Field is invisible");
+			assert.equal(oElement.isVisible(), false, "FormElement is invisible if Field is invisible");
 
 			oTextField = sap.ui.getCore().byId("TF-X-1");
 			oElement = oTextField.getParent();
 			oTextField.setVisible(false);
-			assert.equal(oElement.getVisible(), true, "FormElement is still visible if only one Field is invisible");
+			assert.equal(oElement.isVisible(), true, "FormElement is still visible if only one Field is invisible");
 			oTextField = sap.ui.getCore().byId("TF-Y");
 			oTextField.setVisible(false);
-			assert.equal(oElement.getVisible(), false, "FormElement is invisible if all fields are invisible");
+			assert.equal(oElement.isVisible(), false, "FormElement is invisible if all fields are invisible");
 
 			oTextField.setVisible(true);
-			assert.equal(oElement.getVisible(), true, "FormElement is visible again if one field is visible");
+			assert.equal(oElement.isVisible(), true, "FormElement is visible again if one field is visible");
 
 			sap.ui.getCore().applyChanges();
 		});
@@ -465,7 +469,7 @@
 		</script>
 
 	<title>QUnit Test for SimpleForm</title>
-	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.Form.gif">
+	<link rel="shortcut icon" type="image/x-icon" href="../images/controls/sap.ui.commons.form.Form.gif">
 
 
 </head>

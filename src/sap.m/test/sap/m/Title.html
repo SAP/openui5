@@ -22,6 +22,7 @@
 		     text: "This is the text of the title.",
 		     width: "",
 		     visible: true,
+		     wrapping: false,
 		     align: "Initial",
 		     level: "Auto"
 		}
@@ -83,6 +84,7 @@
 					text: "{/text}",
 					width: "{/width}",
 					visible: "{/visible}",
+					wrapping: "{/wrapping}",
 					textAlign: "{/align}",
 					level: "{/level}"
 				});
@@ -108,6 +110,10 @@
 			});
 			createSetting("Level", oData.style, ["Auto", "H1", "H2", "H3", "H4", "H5", "H6"], function(oEvent, val){
 				oData.level = val;
+				oModel.setData(oData);
+			});
+			createSetting("Wrapping", oData.wrapping, null, function(oEvent, val){
+				oData.wrapping = val;
 				oModel.setData(oData);
 			});
 			createSetting("Highlight", false, null, function(oEvent, val){

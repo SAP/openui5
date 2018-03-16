@@ -9,8 +9,8 @@ sap.ui.define(['./ViewRenderer'],
 
 
 	/**
-	 * @class TemplateView renderer.
-	 * @static
+	 * TemplateView renderer.
+	 * @namespace
 	 * @alias sap.ui.core.mvc.TemplateViewRenderer
 	 */
 	var TemplateViewRenderer = {

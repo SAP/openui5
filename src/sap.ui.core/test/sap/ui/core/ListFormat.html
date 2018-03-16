@@ -1,0 +1,240 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>ListFormat</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-libs="sap.m, sap.ui.layout"
+			data-sap-ui-xx-bindingSyntax="complex" >
+	</script>
+	<style>
+		.large {font-size: 2rem !important; }
+		.largeinput {height: 3rem !important; }
+		.large .sapMInputBaseInner{font-size: 2rem !important; line-height: 3rem;}
+		.margin { margin: 15px 30px; }
+	</style>
+	<script type="text/javascript" src="FormatHelper.js"></script>
+	<script>
+		sap.ui.getCore().attachInit(function() {
+			sap.ui.require([
+				"sap/m/App",
+				"sap/m/Page",
+				"sap/m/List",
+				"sap/m/Input",
+				"sap/m/Label",
+				"sap/m/Text",
+				"sap/m/TextArea",
+				"sap/m/Button",
+				"sap/m/Input",
+				"sap/ui/layout/form/SimpleForm",
+				"sap/ui/layout/Splitter",
+				"sap/ui/layout/VerticalLayout",
+				"sap/ui/core/format/ListFormat"
+			], function(App, Page, List, Input, Label, Text, TextArea, Button, Input, SimpleForm, Splitter, VerticalLayout, ListFormat) {
+
+				var oFormatOptions = {
+					type: "standard",
+					style: "wide"
+				};
+				var oListFormat = ListFormat.getInstance(oFormatOptions);
+
+				var aParsedValue = [1, 2, 3, 4];
+				var sFormattedValue = oListFormat.format(aParsedValue);
+
+				var oModel = new sap.ui.model.json.JSONModel({
+					formatOptions: oFormatOptions,
+					formattedValue: sFormattedValue,
+					parsedValue: aParsedValue,
+					parsedValueDisplay: "1,2,3,4",
+					locales: aLocales
+				});
+
+				sap.ui.getCore().setModel(oModel);
+
+				function updateStringValue() {
+					var aParsedValue = oModel.getProperty('/parsedValue');
+					var oOptions = oModel.getProperty('/formatOptions');
+					var listFormat = ListFormat.getInstance(oOptions);
+
+					oModel.setProperty("/formattedValue", listFormat.format(aParsedValue));
+				}
+
+				var oApp = new App({
+					pages: [
+						new Page({
+							enableScrolling: false,
+							title: "ListFormat",
+							content: [
+								new Splitter({
+									contentAreas: [
+										new VerticalLayout({
+											width: "100%",
+											content: [
+												new SimpleForm({
+													layout: "ResponsiveGridLayout",
+													width: "100%",
+													editable: true,
+													content: [
+														new sap.ui.core.Title({
+															text: "ListFormatter"
+														}),
+														new Label({
+															text: "Format Options",
+														}),
+														new TextArea({
+															editable: false,
+															rows: 3,
+															value: {
+																path: "/formatOptions",
+																formatter: function (oFormatOptions) {
+																	return JSON.stringify(oFormatOptions);
+																}
+															}
+														}).addStyleClass("large"),
+														new Label({
+															text: "Type",
+														}),
+														new sap.m.Select({
+															items: [
+																new sap.ui.core.Item({ key: "type", text: "standard" }),
+																new sap.ui.core.Item({ key: "type", text: "or" })
+															],
+															change: function(oEvent) {
+																var oSelectedItem = oEvent.getParameter("selectedItem");
+																var oFormatOptions = jQuery.extend({}, oModel.getProperty("/formatOptions"));
+
+																oFormatOptions[oSelectedItem.getKey()] = oSelectedItem.getText();
+																oModel.setProperty("/formatOptions", oFormatOptions);
+
+																updateStringValue();
+
+																oModel.updateBindings(true);
+															}
+														}),
+														new Label({
+															text: "Style",
+														}),
+														new sap.m.Select({
+															items: [
+																new sap.ui.core.Item({ key: "style", text: "wide" }),
+																new sap.ui.core.Item({ key: "style", text: "short" }),
+															],
+															change: function (oEvent) {
+																var oSelectedItem = oEvent.getParameter("selectedItem");
+																var oFormatOptions = jQuery.extend({}, oModel.getProperty("/formatOptions"));
+
+																oFormatOptions[oSelectedItem.getKey()] = oSelectedItem.getText();
+																oModel.setProperty("/formatOptions", oFormatOptions);
+
+																updateStringValue();
+
+																oModel.updateBindings(true);
+															}
+														})
+													]
+												}),
+												new SimpleForm({
+													layout: "ResponsiveGridLayout",
+													columnsL: 1,
+													width: "100%",
+													editable: true,
+													content: [
+														new sap.ui.core.Title({
+															text: "Input"
+														}),
+														new Label({
+															text: "Array",
+														}),
+														new sap.m.Input({
+															value: {
+																path: "/parsedValueDisplay",
+																bindingMode: sap.ui.model.BindingMode.OneWay
+															},
+															liveChange: function (oEvent) {
+																var sValue = "[" + oEvent.getParameter('value') + "]";
+																var aValues = [];
+																var oListFormat = ListFormat.getInstance(oModel.getProperty("/formatOptions"));
+
+																try {
+																	aValues = JSON.parse(sValue);
+																} catch (error) {
+																	// wayne
+																}
+																var sFormatted;
+																sFormatted = oListFormat.format(aValues);
+
+																oModel.setProperty("/parsedValue", aValues);
+																oModel.setProperty("/formattedValue", sFormatted);
+															}
+														}).addStyleClass("large"),
+														new Label({
+															text: "String",
+														}),
+														new sap.m.Input({
+															value: {
+																path: "/formattedValue",
+																bindingMode: sap.ui.model.BindingMode.OneWay
+															},
+															liveChange: function (oEvent) {
+																var aParsed = [];
+																var sFormatted = oEvent.getParameter('value');
+																var oListFormat = ListFormat.getInstance(oModel.getProperty("/formatOptions"));
+
+																aParsed = oListFormat.parse(sFormatted);
+																var sResult = aParsed.toString();
+
+																oModel.setProperty("/parsedValue", aParsed);
+																oModel.setProperty("/parsedValueDisplay", sResult);
+															}
+														}).addStyleClass("large")
+													]
+												})
+											]
+										}),
+										new VerticalLayout({
+											width: "90%",
+											content: [
+												new List({
+													items: {
+														path: "/locales",
+														template: new LocaleListItem({
+															locale: "{}",
+															text: {
+																parts: ["/parsedValue",  ""],
+																formatter: function (aParsedValue, sLocale) {
+																	var aValues = [],
+																		oLocale = new sap.ui.core.Locale(sLocale),
+																		oListFormat = ListFormat.getInstance(oModel.getProperty("/formatOptions"), oLocale);
+
+																	return oListFormat.format(aParsedValue);
+																}
+															}
+														})
+													}
+												}).addStyleClass("margin")
+										]
+										})
+									]
+								})
+							]
+						})
+					]
+				});
+
+				oApp.placeAt("content");
+			});
+		});
+</script>
+
+</head>
+<body class="sapUiBody" role="application" id="content">
+
+</body>
+</html>

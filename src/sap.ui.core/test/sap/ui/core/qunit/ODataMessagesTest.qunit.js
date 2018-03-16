@@ -514,6 +514,186 @@ function runODataMessagesTests() {
 		});
 	});
 
+	QUnit.test("ODataMessageParser: target key for created entities", function(assert) {
+		var done = assert.async();
+		var sServiceURI = "fakeservice://testdata/odata/northwind";
+
+		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+
+			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+			// Use processor to get new messages
+			var aNewMessages = [];
+			var aOldMessages = [];
+			oParser.setProcessor({
+				fireMessageChange: function(oObj) {
+					aNewMessages = oObj.newMessages;
+					aOldMessages = oObj.oldMessages;
+				}
+			});
+
+			//SETUP
+			var oRequest = {
+				method: "POST",
+				key: "Products(1)",
+				created: true
+			};
+
+			var oResponse = {
+				statusCode: "400", //CREATED
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;"
+				}
+			};
+
+			var oResponseHeaderSapMessageObject = {
+				"odata.error": {
+					"details": [],
+					"code":		"999"
+				},
+				"message":	"resource created but error occurred",
+				"severity":	"error",
+				"details": []
+			};
+
+			var oRequest2 = {
+				method: "POST",
+				key: "Products(1)",
+				created: true
+			};
+
+			var oResponseHeaderSapMessageObject2 = {
+				"odata.error": {
+					"details": [],
+					"code":		"888"
+				},
+				"message":	"resource created but error occurred",
+				"severity":	"error",
+				"details": []
+			};
+
+			// location header set in response (Products)
+
+
+			//request uri:          fakeservice://testdata/odata/northwind/Products
+			oRequest.requestUri = sServiceURI + "/Products";
+			oResponse.body = JSON.stringify(oResponseHeaderSapMessageObject);
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)/", "target is read from the provided key");
+
+
+			//request uri:          fakeservice://testdata/odata/northwind/Products
+			oRequest.created = false;
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products", "target is parsed from the requestUri");
+
+			oRequest2.requestUri = sServiceURI + "/Products";
+			oResponse.body = JSON.stringify(oResponseHeaderSapMessageObject2);
+			oParser.parse(oResponse, oRequest2);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)/", "target is read from the provided key");
+			assert.equal(aNewMessages[0].code, "888", "target is read from the provided key");
+			assert.equal(aOldMessages.length, 1);
+			assert.equal(aOldMessages[0].target, "/Products(1)/", "target is read from the provided key");
+			assert.equal(aOldMessages[0].code, "999", "target is read from the provided key");
+
+			//request uri:          fakeservice://testdata/odata/northwind/Products
+			oRequest.created = false;
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products", "target is parsed from the requestUri");
+
+			done();
+		});
+	});
+
+
+	QUnit.test("ODataMessageParser: error for newly created resource with relative target", function(assert) {
+		var done = assert.async();
+		var sServiceURI = "fakeservice://testdata/odata/northwind";
+
+		var oMetadata = new sap.ui.model.odata.ODataMetadata(sServiceURI + "/$metadata", {});
+		oMetadata.loaded().then(function() {
+
+
+			var oParser = new sap.ui.model.odata.ODataMessageParser(sServiceURI, oMetadata);
+			// Use processor to get new messages
+			var aNewMessages = [];
+			oParser.setProcessor({
+				fireMessageChange: function(oObj) {
+					aNewMessages = oObj.newMessages;
+				}
+			});
+
+
+			//SETUP
+			var oRequest = {
+				method: "POST"
+			};
+
+			var oResponse = {
+				statusCode: "201", //CREATED
+				body: "Ignored",
+				headers: {
+					"Content-Type": "text/plain;charset=utf-8",
+					"DataServiceVersion": "2.0;"
+				}
+			};
+
+			var oResponseHeaderSapMessageObject = {
+				"code":		"999",
+				"message":	"resource created but error occurred",
+				"severity":	"error",
+				"details": []
+			};
+
+			// location header set in response (Products)
+
+
+			//request uri:          fakeservice://testdata/odata/northwind/Products
+			//response location:    fakeservice://testdata/odata/northwind/Products(1)
+			//target:               name
+			oRequest.requestUri = sServiceURI + "/Products";
+			oResponseHeaderSapMessageObject.target = "name";
+			oResponse.headers["location"] = sServiceURI + "/Products(1)";
+			oResponse.headers["Sap-Message"] = JSON.stringify(oResponseHeaderSapMessageObject);
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)/name", "target is relative to newly created product");
+
+
+			//request uri:          fakeservice://testdata/odata/northwind/Categories(1)/Products
+			//response location:    fakeservice://testdata/odata/northwind/Products(1)
+			//target:               name
+			oRequest.requestUri = sServiceURI + "/Categories(1)/Products";
+			oResponseHeaderSapMessageObject.target = "name";
+			oResponse.headers["location"] = sServiceURI + "/Products(1)";
+			oResponse.headers["Sap-Message"] = JSON.stringify(oResponseHeaderSapMessageObject);
+
+			oParser.parse(oResponse, oRequest);
+
+			assert.equal(aNewMessages.length, 1);
+			assert.equal(aNewMessages[0].target, "/Products(1)/name", "target is relative to newly created product");
+
+
+			done();
+		});
+	});
+
 	QUnit.test("ODataMessageParser without ODataModel", function(assert) {
 		var done = assert.async();
 		var sServiceURI = "fakeservice://testdata/odata/northwind";
@@ -909,9 +1089,10 @@ function runODataMessagesTests() {
 	var fnTestFunctionImportWithInvalidTarget = function(assert) {
 		var done = assert.async();
 
-		assert.expect(20);
+		assert.expect(26);
 		var oModel = new sap.ui.model.odata.v2.ODataModel("fakeservice://testdata/odata/northwind/", { tokenHandling: false, useBatch: false });
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
+		var oMessage;
 
 		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test")
 
@@ -970,8 +1151,33 @@ function runODataMessagesTests() {
 
 											assert.ok(aMessageTagets.indexOf("/Products(1)/ProductName") === -1, "Message targetting '/Products(1)/ProductName' has been removed.");
 
-											oModel.destroy();
-											done();
+
+											oModel.callFunction("/functionWithInvalidReturnType", {
+												method: "POST",
+												success: function() {
+													var aMessages = oMessageModel.getProperty("/");
+													oMessage = aMessages.filter(function(oMessage) { return oMessage.getTarget() === ""; })[0];
+
+													assert.strictEqual(aMessages.length, 4, "Four messages are set after FunctionImport is called again");
+													assert.strictEqual(typeof oMessage, "object", "Message with empty target was created.");
+													assert.strictEqual(oMessage.message, "This is FunctionImport specific message with an invalid return type.");
+
+													oModel.callFunction("/functionWithInvalidEntitySet", {
+														method: "POST",
+														success: function() {
+															var aMessages = oMessageModel.getProperty("/");
+															oMessage = aMessages.filter(function(oMessage) { return oMessage.getTarget() === ""; })[0];
+
+															assert.strictEqual(aMessages.length, 4, "Four messages are set after FunctionImport is called again");
+															assert.strictEqual(typeof oMessage, "object", "Message with empty target was created.");
+															assert.strictEqual(oMessage.message, "This is FunctionImport specific message with an invalid entityset.");
+
+															oModel.destroy();
+															done();
+														}
+													});
+												}
+											});
 										}
 									});
 								}
@@ -1085,7 +1291,7 @@ function runODataMessagesTests() {
 			return new Promise(function(resolve) {
 				oModel.read(sPath, { success: resolve });
 			});
-		}
+		};
 
 		var oMessageModel = sap.ui.getCore().getMessageManager().getMessageModel();
 
@@ -1216,4 +1422,85 @@ function runODataMessagesTests() {
 	};
 
 	QUnit.test("Transient message removal from MessageManager", fnTestTransientMessageRemoval);
+
+	var fnTestNormalization = function(assert) {
+		var done = assert.async();
+
+		assert.expect(7);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		sap.ui.getCore().setModel(oModel);
+
+		var oBinding = oModel.bindProperty("/Products(ContextId='CLF(12)SEMANTIC_OBJ(7)Product(10)OBJECT_KEY(11)ZTEST_GD_02(9)DRAFT_KEY(36)005056ba-1dcb-1ee7-8ec6-ae98ab359923')/ProductName");
+		oModel.addBinding(oBinding);
+		var read = function(sPath) {
+			return new Promise(function(resolve) {
+				oModel.read(sPath, { success: resolve });
+			});
+		}
+
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+
+		read("/Products(ContextId='CLF%2812%29SEMANTIC_OBJ%287%29Product%2810%29OBJECT_KEY%2811%29ZTEST_GD_02%289%29DRAFT_KEY%2836%29005056ba-1dcb-1ee7-8ec6-ae98ab359923')").then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			assert.equal(aMessages.length, 2, "Two messages from the back-end");
+			assert.equal(aMessages[0].target, "/Products(ContextId='CLF(12)SEMANTIC_OBJ(7)Product(10)OBJECT_KEY(11)ZTEST_GD_02(9)DRAFT_KEY(36)005056ba-1dcb-1ee7-8ec6-ae98ab359923')/ProductName", "Message has correct target");
+			assert.ok(oBinding.getDataState().getChanges(), "Messages propageted to binding");
+			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propageted to binding");
+			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propageted to binding");
+			oMessageManager.removeAllMessages();
+			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
+			return read("/Products(ContextId='CLF%2812%29SEMANTIC_OBJ%287%29Product%2810%29OBJECT_KEY%2811%29ZTEST_GD_02%289%29DRAFT_KEY%2836%29005056ba-1dcb-1ee7-8ec6-ae98ab359923')");
+		}).then(function() {
+			oModel.destroy();
+			done();
+		});
+	};
+
+	QUnit.test("Message target normalization", fnTestNormalization);
+
+	var fnTestNavProp = function() {
+		var done = assert.async();
+
+		assert.expect(8);
+
+		var oModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, jQuery.extend({}, mModelOptions, { json: true }));
+		sap.ui.getCore().setModel(oModel);
+		var oBinding = oModel.bindProperty("Supplier/Name");
+		oModel.addBinding(oBinding);
+		var oContext = oModel.getContext("/Products(1)");
+		oBinding.setContext(oContext);
+
+		var read = function(sPath, mParameters) {
+			return new Promise(function(resolve) {
+				mParameters = mParameters ? mParameters : {};
+				mParameters.success = resolve;
+				oModel.read(sPath, mParameters);
+			});
+		}
+
+		var oMessageManager = sap.ui.getCore().getMessageManager();
+		var oMessageModel = oMessageManager.getMessageModel();
+
+		assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set at the beginning of the test");
+
+		read("/Products(1)", {urlParameters:{"$expand":"Supplier"}}).then(function() {
+			var aMessages = oMessageModel.getProperty("/");
+			assert.equal(aMessages.length,1, "One message from the back-end");
+			assert.equal(aMessages[0].target, "/Suppliers(1)/Name", "Message has correct target");
+			assert.ok(oBinding.getDataState().getChanges(), "Messages propageted to binding");
+			assert.equal(oBinding.getDataState().getMessages().length, 1, " 1 Message propageted to binding");
+			assert.equal(oBinding.getDataState().getMessages()[0], aMessages[0], "Message propageted to binding");
+			assert.equal(oBinding.getDataState().getMessages()[0].message, "This is a server test message", "Message has correct message text");
+			oMessageManager.removeAllMessages();
+			assert.equal(oMessageModel.getProperty("/").length, 0, "No messages are set after removal of all messages");
+			oModel.destroy();
+			done();
+		});
+	};
+
+	QUnit.test("Propagate Message: Binding to NavProp",fnTestNavProp);
 }

@@ -19,12 +19,12 @@
 			press: fnToggleFooter
 		});
 
-		var oTitle = getTitle(oToggleFooterButton);
-		var oHeader = getHeader();
+		var oTitle = oDynamicPageUtil.getTitle(oToggleFooterButton);
+		var oHeader = oDynamicPageUtil.getHeader();
 		var oContent = new sap.m.Button({text: "Home"});
-		var oFooter = getFooter();
+		var oFooter = oDynamicPageUtil.getFooter();
 
-		var oPage = getDynamicPage(true, oTitle, oHeader, oContent, oFooter);
+		var oPage = oDynamicPageUtil.getDynamicPage(true, oTitle, oHeader, oContent, oFooter);
 
 		var oApp = new sap.m.App("myApp");
 		oApp.addPage(oPage).placeAt("body");

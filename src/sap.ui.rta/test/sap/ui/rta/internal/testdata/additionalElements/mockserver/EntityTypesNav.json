@@ -1,0 +1,62 @@
+{
+  "d": {
+    "results": [
+      {
+        "__metadata": {
+          "type": "AdditionalElementsTest.EntityTypeNav"
+        },
+        "id": 1,
+        "EntityTypeNav_Property01": "propValue04",
+        "EntityTypeNav_Property02": "NavPropValue02_1",
+        "EntityTypeNav_Property03": "NavPropValue03_1",
+        "EntityTypeNav_Property04": "NavPropValue04_1",
+        "EntityTypeNav_Property05": "NavPropValue05_1",
+        "NavProperty": "Navigated Property-from entity1"
+      },
+      {
+        "__metadata": {
+          "type": "AdditionalElementsTest.EntityTypeNav"
+        },
+        "id": 2,
+        "EntityTypeNav_Property01": "propValue04",
+        "EntityTypeNav_Property02": "NavPropValue02_2",
+        "EntityTypeNav_Property03": "NavPropValue03_2",
+        "EntityTypeNav_Property04": "NavPropValue04_2",
+        "EntityTypeNav_Property05": "NavPropValue05_2",
+        "NavProperty": "Navigated Property-from entity1"
+      },
+      {
+        "__metadata": {
+          "type": "AdditionalElementsTest.EntityTypeNav"
+        },
+        "id": 3,
+        "EntityTypeNav_Property01": "propValue04",
+        "EntityTypeNav_Property02": "NavPropValue02_3",
+        "EntityTypeNav_Property03": "NavPropValue03_3",
+        "EntityTypeNav_Property04": "NavPropValue04_3",
+        "EntityTypeNav_Property05": "NavPropValue05_3",
+        "NavProperty": "Navigated Property-from entity1"
+      },
+      {
+        "__metadata": {
+          "type": "AdditionalElementsTest.EntityTypeNav"
+        },
+        "id": 4,
+        "EntityTypeNav_Property01": "propValue04",
+        "EntityTypeNav_Property02": "NavPropValue02_4",
+        "EntityTypeNav_Property03": "NavPropValue03_4",
+        "EntityTypeNav_Property04": "NavPropValue04_4",
+        "EntityTypeNav_Property05": "NavPropValue05_4",
+        "NavProperty": "Navigated Property-from entity1"
+      },
+      {
+        "__metadata": {
+          "type": "AdditionalElementsTest.EntityTypeNav"
+        },
+        "id": 5,
+        "EntityTypeNav_Property01": "EntityType02Property01Value",
+        "NavProperty": "Navigated Property-from entity2"
+      }
+    ]
+  }
+}

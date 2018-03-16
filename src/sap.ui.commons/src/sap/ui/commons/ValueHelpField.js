@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.ValueHelpField.
-sap.ui.define(['jquery.sap.global', './TextField', './library', 'sap/ui/core/IconPool', 'sap/ui/core/theming/Parameters'],
-	function(jQuery, TextField, library, IconPool, Parameters) {
+sap.ui.define([
+    'jquery.sap.global',
+    './TextField',
+    './library',
+    'sap/ui/core/IconPool',
+    'sap/ui/core/theming/Parameters',
+    "./ValueHelpFieldRenderer"
+],
+	function(jQuery, TextField, library, IconPool, Parameters, ValueHelpFieldRenderer) {
 	"use strict";
 
 

@@ -124,39 +124,39 @@ sap.ui.define([
 		},
 
 		onBeforeRendering: function() {
-			var oButton = this.getView().byId('buttonBack');
+			var oButton = this.byId('buttonBack');
 			oButton.setEnabled(false);
 		},
 
 		onAfterRendering: function() {
 			/* This code is for the purposes of the example only so that the QuickViewCard can be scrolled properly	on iPhone. */
-			var oPageContent = this.getView().byId("quickViewCardExamplePage").getDomRef("cont");
+			var oPageContent = this.byId("quickViewCardExamplePage").getDomRef("cont");
 
 			oPageContent.addEventListener("touchmove", function(event) {
 				event.stopPropagation();
 			});
 			/* This code is for the purposes of the example only so that the QuickViewCard can be scrolled properly	on iPhone. */
 
-			this.getView().byId("quickViewCardContainer").$().css("maxWidth", "320px");
+			this.byId("quickViewCardContainer").$().css("maxWidth", "320px");
 		},
 
 		onButtonBackClick : function() {
-			var oQuickViewCard = this.getView().byId('quickViewCard');
+			var oQuickViewCard = this.byId('quickViewCard');
 			oQuickViewCard.navigateBack();
 		},
 
 		onHideScrollClick : function() {
-			var oQuickViewCard = this.getView().byId('quickViewCard');
+			var oQuickViewCard = this.byId('quickViewCard');
 			oQuickViewCard.setShowVerticalScrollBar(false);
 		},
 
 		onShowScrollClick : function() {
-			var oQuickViewCard = this.getView().byId('quickViewCard');
+			var oQuickViewCard = this.byId('quickViewCard');
 			oQuickViewCard.setShowVerticalScrollBar(true);
 		},
 
 		onScrollSwitchChange : function(oEvent) {
-			var oQuickViewCard = this.getView().byId('quickViewCard');
+			var oQuickViewCard = this.byId('quickViewCard');
 
 			oQuickViewCard.setShowVerticalScrollBar(oEvent.getParameters().state);
 		},
@@ -176,7 +176,7 @@ sap.ui.define([
 		},
 
 		onNavigate : function(oEvent) {
-			var oButton = this.getView().byId('buttonBack');
+			var oButton = this.byId('buttonBack');
 			oButton.setEnabled(!oEvent.getParameter('isTopPage'));
 		}
 	});

@@ -58,48 +58,57 @@ sap.ui.define([
 				counter: 1
 			}];
 
-			var oModel = new JSONModel();
+			var oModel = new JSONModel(),
+				that = this;
+
 			oModel.setData(aMockMessages);
 
-			this._oMessageView = new sap.m.MessageView({
-				items: {
-					path: "/",
-					template: oMessageTemplate
-				}
-			});
+			var oMessageView = new sap.m.MessageView({
+					showDetailsPageHeader: false,
+					itemSelect: function () {
+						oBackButton.setVisible(true);
+					},
+					items: {
+						path: "/",
+						template: oMessageTemplate
+					}
+				}),
+				oBackButton = new sap.m.Button({
+					icon: sap.ui.core.IconPool.getIconURI("nav-back"),
+					visible: false,
+					press: function () {
+						oMessageView.navigateBack();
+						this.setVisible(false);
+					}
+				});
 
-			this._oMessageView.setModel(oModel);
+			oMessageView.setModel(oModel);
 
 			var oCloseButton =  new sap.m.Button({
-				text: "Close",
-				press: function () {
-					that._oPopover.close();
-				}
-			});
-
-			var oPopoverToolbar = new sap.m.Toolbar({
-				content: [
-					new sap.m.ToolbarSpacer(),
-					new sap.ui.core.Icon({
-						color: "#bb0000",
-						src: "sap-icon://message-error"}),
-					new sap.m.Text({
-						text: "Messages"
-					}),
-					new sap.m.ToolbarSpacer()
-				]
-			});
+					text: "Close",
+					press: function () {
+						that._oPopover.close();
+					}
+				}),
+				oPopoverBar = new sap.m.Bar({
+						contentLeft: [oBackButton],
+						contentMiddle: [
+							new sap.ui.core.Icon({
+								color: "#bb0000",
+								src: "sap-icon://message-error"}),
+							new sap.m.Text({
+								text: "Messages"
+							})
+						]
+				});
 
 			this._oPopover = new sap.m.ResponsivePopover({
-				showHeader: true,
-				customHeader: oPopoverToolbar,
+				customHeader: oPopoverBar,
 				contentWidth: "440px",
 				contentHeight: "440px",
 				verticalScrolling: false,
 				modal: true,
-				content: [
-					this._oMessageView
-				],
+				content: [oMessageView],
 				endButton:oCloseButton
 			});
 		},

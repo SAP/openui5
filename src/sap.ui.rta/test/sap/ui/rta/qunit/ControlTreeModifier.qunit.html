@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta charset="utf-8">
+
+		<title>Test Page for sap.ui.rta.ControlTreeModifier</title>
+		<script src="../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].bindingSyntax = 'complex';
+			window['sap-ui-config'].resourceroots = {
+				'sap.ui.rta.test': '../testdata/ObjectPage/'
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta]');
+
+			sap.ui.getCore().loadLibrary('sap.ui.rta');
+
+			jQuery.sap.includeScript('./ControlTreeModifier.qunit.js');
+		</script>
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit page for ControlTreeModifier</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="test-view"></div>
+	</body>
+</html>

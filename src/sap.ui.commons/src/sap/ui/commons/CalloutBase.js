@@ -4,8 +4,13 @@
  */
 
 // Provides control sap.ui.commons.CalloutBase.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
-	function(jQuery, library, TooltipBase) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/TooltipBase',
+    "./CalloutBaseRenderer"
+],
+	function(jQuery, library, TooltipBase, CalloutBaseRenderer) {
 	"use strict";
 
 
@@ -25,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/TooltipBase'],
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.Popover</code> control.
+	 * @deprecated Since version 1.38.
 	 * @alias sap.ui.commons.CalloutBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

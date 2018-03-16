@@ -1,0 +1,43 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "625807262b92f2ae4d7a7f144b9212707edc1abc",
+        "type": "FIX",
+        "text": " Always return a Promise for ControllerExtensions",
+        "references": []
+      },
+      {
+        "id": "c941314f3d3bde2b8a43a8e699c107555a30f537",
+        "type": "FIX",
+        "text": " Fix several issues in variant management control",
+        "references": []
+      },
+      {
+        "id": "05ef3a73b62f976301efb7c9ef6e5b64130b7e1b",
+        "type": "FIX",
+        "text": " sap.ui.fl: MoveControls now reverts to the correct position",
+        "references": []
+      },
+      {
+        "id": "b2bf2b7faf961d427609444570d3f23f4f8bee65",
+        "type": "FIX",
+        "text": " Fix open issues",
+        "references": []
+      },
+      {
+        "id": "ff97aeb09fc61c7bb7b283f30bd5b2b2070a6553",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
+      }
+    ]
+  }
+}

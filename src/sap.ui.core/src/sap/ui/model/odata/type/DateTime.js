@@ -50,7 +50,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/type/DateTimeBase'],
 	 *
 	 * In {@link sap.ui.model.odata.v2.ODataModel} this type is represented as a
 	 * <code>Date</code>. With the constraint <code>displayFormat: "Date"</code>, the time zone is
-	 * UTF and the time part is ignored, otherwise it is a date/time value in local time.
+	 * UTC and the time part is ignored, otherwise it is a date/time value in local time.
 	 *
 	 * @extends sap.ui.model.odata.type.DateTimeBase
 	 *

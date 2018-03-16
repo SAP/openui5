@@ -16,7 +16,7 @@
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-<script src="../../../resources/sap/ui/qunit/qunit-coverage.js" data-cover-flags="branchTracking" data-sap-ui-cover-only="sap/ui/core/util"></script>
+<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <!-- use the sinon faketimers for this test -->
 <script>
 	sinon.config.useFakeTimers = true;
@@ -107,6 +107,38 @@ var oData2 = [
 				{
 					text: "Node2",
 					ref: "../images/action.png"
+				},
+				{
+					text: "Node3",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node4",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node5",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node6",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node7",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node8",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node9",
+					ref: "../images/action.png"
+				},
+				{
+					text: "Node10",
+					ref: "../images/action.png"
 				}
 			];
 
@@ -120,6 +152,15 @@ oModel.setData(oData);
 oTree.bindItems("/", oTreeItem);
 //oTree.expandToLevel(6);
 oTree.placeAt("content");
+
+function assertToggleOpenStateParameters(assert, iIndex, bExpanded, mActualParameters) {
+	assert.deepEqual(mActualParameters, {
+		id: oTree.getId(),
+		itemIndex: iIndex,
+		itemContext: oTree.getItems()[iIndex].getBindingContext(oTree.getBindingInfo("items").model),
+		expanded: bExpanded
+	}, "The toggleOpenState event was called with the correct parameters");
+}
 
 /*
 // ================================================================================
@@ -139,16 +180,16 @@ QUnit.test("indentation1", function(assert){
 	this.clock.tick(100);
 	assert.equal(oTree.getDeepestLevel(), 0, "deepestLevel");
 
-	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-1").$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	oArrow = sap.ui.getCore().byId("__item0-__tree0-1-expander");
+	oArrow.firePress();
 	this.clock.tick(100);
 
 	assert.equal(oTree.getDeepestLevel(), 1, "deepestLevel");
 	assert.equal(sap.ui.getCore().byId("__item0-__tree0-1").$().css("padding-left"), "0px", "padding");
 	assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "24px", "padding");
 
-	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	oArrow = sap.ui.getCore().byId("__item0-__tree0-2-expander");
+	oArrow.firePress();
 	this.clock.tick(100);
 
 	assert.equal(oTree.getDeepestLevel(), 2, "deepestLevel");
@@ -156,8 +197,8 @@ QUnit.test("indentation1", function(assert){
 	assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "16px", "padding");
 	assert.equal(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "32px", "padding");
 
-	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-3").$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	oArrow = sap.ui.getCore().byId("__item0-__tree0-3-expander");
+	oArrow.firePress();
 	this.clock.tick(100);
 
 	assert.equal(oTree.getDeepestLevel(), 3, "deepestLevel");
@@ -166,16 +207,16 @@ QUnit.test("indentation1", function(assert){
 	assert.equal(sap.ui.getCore().byId("__item0-__tree0-3").$().css("padding-left"), "16px", "padding");
 	assert.equal(sap.ui.getCore().byId("__item0-__tree0-4").$().css("padding-left"), "24px", "padding");
 
-	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-4").$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	oArrow = sap.ui.getCore().byId("__item0-__tree0-4-expander");
+	oArrow.firePress();
 	this.clock.tick(100);
 
-	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-5").$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	oArrow = sap.ui.getCore().byId("__item0-__tree0-5-expander");
+	oArrow.firePress();
 	this.clock.tick(100);
 
-	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-6").$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	oArrow = sap.ui.getCore().byId("__item0-__tree0-6-expander");
+	oArrow.firePress();
 	this.clock.tick(100);
 
 	assert.equal(oTree.getDeepestLevel(), 6, "deepestLevel");
@@ -192,8 +233,8 @@ QUnit.test("indentation1", function(assert){
 	this.clock.tick(100);
 
 	//expand
-	oArrowDomRef = sap.ui.getCore().byId("__item0-__tree0-2").$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	oArrow = sap.ui.getCore().byId("__item0-__tree0-2-expander");
+	oArrow.firePress();
 	this.clock.tick(100);
 
 	assert.equal(sap.ui.getCore().byId("__item0-__tree0-2").$().css("padding-left"), "4px", "padding");
@@ -223,28 +264,60 @@ QUnit.test("Multi selection", function(assert){
 QUnit.module("Expand/Collapse");
 
 QUnit.test("Expand", function(assert){
+	var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
+		oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
+	});
+	oTree.attachToggleOpenState(oToggleOpenStateEventSpy);
+
 	//initial state
-	assert.ok(oTree.getItems(), 2, "two nodes displayed before tree expanding");
+	assert.strictEqual(oTree.getItems().length, 2, "two nodes displayed before tree expanding");
 
 	oTree.focus();
-	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	assert.strictEqual(oTree.getItems()[0].$().attr("aria-expanded"), "false", "aria-expanded is false");
 
-	assert.ok(oTree.getItems(), 4, "four nodes displayed after tree expanding");
+	var oArrow = sap.ui.getCore().byId("__item0-__tree0-0-expander");
+	oArrow.firePress();
+
+	assert.strictEqual(oTree.getItems().length, 4, "four nodes displayed after tree expanding");
 
 	assert.equal(oTree.getItems()[0].getLevel(), 0, "first level node is in level 0");
 	assert.equal(oTree.getItems()[1].getLevel(), 1, "second node is in level 1");
+	assert.strictEqual(oTree.getItems()[0].$().attr("aria-expanded"), "true", "aria-expanded is true");
+
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
+	assertToggleOpenStateParameters(assert, 0, true, oToggleOpenStateEventSpy._mEventParameters);
+
+	oArrowDomRef = oTree.getItems()[1].$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "Clicked a leaf: The toggleOpenState event was not called");
+
+	oTree.detachToggleOpenState(oToggleOpenStateEventSpy);
 });
 
 QUnit.test("Collapse", function(assert){
+	var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
+		oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
+	});
+	oTree.attachToggleOpenState(oToggleOpenStateEventSpy);
+
+	var oArrowDomRef = oTree.getItems()[1].$().find(".sapMTreeItemBaseExpander");
+	oArrowDomRef.trigger("click");
+	assert.ok(oToggleOpenStateEventSpy.notCalled, "Clicked a leaf: The toggleOpenState event was not called");
+
 	//back to initial state
-	assert.ok(oTree.getItems(), 4, "four nodes before tree expanding");
+	assert.strictEqual(oTree.getItems().length, 4, "four nodes before tree expanding");
 
 	oTree.focus();
-	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	var oArrow = sap.ui.getCore().byId("__item0-__tree0-0-expander");
+	oArrow.firePress();
+	this.clock.tick(100);
 
-	assert.ok(oTree.getItems(), 2, "two nodes displayed after tree collapsing");
+	assert.strictEqual(oTree.getItems().length, 2, "two nodes displayed after tree collapsing");
+
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
+	assertToggleOpenStateParameters(assert, 0, false, oToggleOpenStateEventSpy._mEventParameters);
+
+	oTree.detachToggleOpenState(oToggleOpenStateEventSpy);
 });
 
 QUnit.test("Expand to level", function(assert){
@@ -263,8 +336,8 @@ QUnit.module("Node structure");
 
 QUnit.test("ParentNode", function(assert){
 	oTree.focus();
-	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
+	var oArrow = sap.ui.getCore().byId("__item0-__tree0-0-expander");
+	oArrow.firePress();
 	assert.ok(oTree.getItems()[1].getParentNode().getId(),"__item0-__tree0-0","parent node is found.")
 });
 
@@ -280,9 +353,8 @@ QUnit.test("Is top level", function(assert){
 
 QUnit.test("Expanded", function(assert){
 	oTree.focus();
-	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
-	oArrowDomRef.trigger("click");
-	this.clock.tick(100);
+	var oArrow = sap.ui.getCore().byId("__item0-__tree0-0-expander");
+	oArrow.firePress();
 	assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 	assert.ok(!oTree.getItems()[1].getExpanded(), "second node is not expanded");
 });
@@ -290,38 +362,39 @@ QUnit.test("Expanded", function(assert){
 QUnit.module("Keyboard Handling");
 
 QUnit.test("Right + Left key", function(assert){
+	var oToggleOpenStateEventSpy = sinon.spy(function(oEvent) {
+		oToggleOpenStateEventSpy._mEventParameters = oEvent.mParameters;
+	});
+	oTree.attachToggleOpenState(oToggleOpenStateEventSpy);
+
 	assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
 	oTree.focus();
 	var oArrowDomRef = oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander");
 
 	sap.ui.test.qunit.triggerKeydown(oArrowDomRef, jQuery.sap.KeyCodes.ARROW_RIGHT);
-	this.clock.tick(1);
 	assert.ok(oTree.getItems()[0].getExpanded(), "first node is expanded");
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was called once");
+	assertToggleOpenStateParameters(assert, 0, true, oToggleOpenStateEventSpy._mEventParameters);
+
+	sap.ui.test.qunit.triggerKeydown(oArrowDomRef, jQuery.sap.KeyCodes.ARROW_RIGHT);
+	assert.ok(oToggleOpenStateEventSpy.calledOnce, "The toggleOpenState event was not called as the node already was expanded");
 
 	sap.ui.test.qunit.triggerKeydown(oArrowDomRef, jQuery.sap.KeyCodes.ARROW_LEFT);
-	this.clock.tick(1);
 	assert.ok(!oTree.getItems()[0].getExpanded(), "first node is not expanded");
+	assert.ok(oToggleOpenStateEventSpy.calledTwice, "The toggleOpenState event was called twice");
+	assertToggleOpenStateParameters(assert, 0, false, oToggleOpenStateEventSpy._mEventParameters);
 
+	oTree.detachToggleOpenState(oToggleOpenStateEventSpy);
 });
 
 QUnit.module("Icon");
+
 QUnit.test("tree item with icon", function(assert){
 	assert.ok(jQuery.sap.domById("__item0-__tree0-0-icon"), "icon is rendered");
 
 	var oImage = sap.ui.getCore().byId("__item0-__tree0-0-icon");
 	assert.strictEqual(oImage.getSrc(), "../images/action.png", "icon source is correct");
-});
 
-QUnit.module("Binding");
-
-QUnit.test("data binding update", function(assert){
-	assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"));
-
-	oModel.setProperty("/", oData2);
-	sap.ui.getCore().applyChanges();
-
-	assert.ok(!oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "binding update successfully.");
-	oTree.destroy();
 });
 
 QUnit.module("Aggregation");
@@ -334,6 +407,53 @@ QUnit.test("Validate aggregation", function(assert){
 		oTree.addItem(oTreeItem);
 	}, "Wrong aggregation object.");
 
+});
+
+QUnit.module("Binding", {
+	beforeEach: function() {
+		var oTemplate = new sap.m.StandardTreeItem({
+			title: "{text}"
+		});
+
+		var oTree = new sap.m.Tree();
+
+		var oModel = new sap.ui.model.json.JSONModel();
+		oTree.setModel(oModel, "odata");
+
+		oTree.bindItems({
+			path: "/",
+			template: oTemplate
+		});
+
+		oTree.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		this.oTree = oTree;
+	},
+	
+	afterEach: function() {
+		this.oTree.destroy();
+		delete oModel;
+	}
+});
+
+QUnit.test("data binding update", function(assert){
+	assert.ok(oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "initial binding context.");
+
+	oModel.setProperty("/", oData2);
+	sap.ui.getCore().applyChanges();
+
+	assert.ok(!oTree.getItems()[0].$().find(".sapMTreeItemBaseExpander")[0].hasAttribute("data-sap-ui-icon-content"), "binding updated successfully.");
+});
+
+QUnit.test("context length", function(assert){
+	assert.strictEqual(oTree.getItems().length, 10, "initial length is 10.");
+
+	oTree.getModel().setSizeLimit(6);
+	oTree.getModel().refresh();
+
+	assert.strictEqual(oTree.getItems().length, 6, "new length is 6.");
+	//oTree.destroy();
 });
 
 </script>

@@ -7,9 +7,9 @@ sap.ui.define([
 
 		onInit: function(evt) {
 			this.oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
-			this.oTable = this.getView().byId("idProductsTable");
+			this.oTable = this.byId("idProductsTable");
 			this.getView().setModel(this.oModel);
-			this.oReadOnlyTemplate = this.getView().byId("idProductsTable").removeItem(0);
+			this.oReadOnlyTemplate = this.byId("idProductsTable").removeItem(0);
 			this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 			this.oEditableTemplate = new sap.m.ColumnListItem({
 				cells: [
@@ -39,23 +39,23 @@ sap.ui.define([
 
 		onEdit: function() {
 			this.aProductCollection = jQuery.extend(true, [], this.oModel.getProperty("/ProductCollection"));
-			this.getView().byId("editButton").setVisible(false);
-			this.getView().byId("saveButton").setVisible(true);
-			this.getView().byId("cancelButton").setVisible(true);
+			this.byId("editButton").setVisible(false);
+			this.byId("saveButton").setVisible(true);
+			this.byId("cancelButton").setVisible(true);
 			this.rebindTable(this.oEditableTemplate, "Edit");
 		},
 
 		onSave: function() {
-			this.getView().byId("saveButton").setVisible(false);
-			this.getView().byId("cancelButton").setVisible(false);
-			this.getView().byId("editButton").setVisible(true);
+			this.byId("saveButton").setVisible(false);
+			this.byId("cancelButton").setVisible(false);
+			this.byId("editButton").setVisible(true);
 			this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 		},
 
 		onCancel: function() {
-			this.getView().byId("cancelButton").setVisible(false);
-			this.getView().byId("saveButton").setVisible(false);
-			this.getView().byId("editButton").setVisible(true);
+			this.byId("cancelButton").setVisible(false);
+			this.byId("saveButton").setVisible(false);
+			this.byId("editButton").setVisible(true);
 			this.oModel.setProperty("/ProductCollection", this.aProductCollection);
 			this.rebindTable(this.oReadOnlyTemplate, "Navigation");
 		},

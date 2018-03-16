@@ -10,30 +10,78 @@
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
+			data-sap-ui-language="en_US"
 			data-sap-ui-libs="sap.m, sap.ui.unified">
 		</script>
 
 		<script>
-		var oLegend = new sap.ui.unified.CalendarLegend("Legend1", {
-			items: [
-					new sap.ui.unified.CalendarLegendItem("T1", {type: sap.ui.unified.CalendarDayType.Type01, text: "Typ 1"}),
-					new sap.ui.unified.CalendarLegendItem("T2", {type: sap.ui.unified.CalendarDayType.Type02, text: "Typ 2"}),
-					new sap.ui.unified.CalendarLegendItem("T3", {type: sap.ui.unified.CalendarDayType.Type03, text: "Typ 3"}),
-					new sap.ui.unified.CalendarLegendItem("T4", {type: sap.ui.unified.CalendarDayType.Type04, text: "Typ 4"}),
-					new sap.ui.unified.CalendarLegendItem("T5", {type: sap.ui.unified.CalendarDayType.Type05, text: "Typ 5"}),
-					new sap.ui.unified.CalendarLegendItem("T6", {type: sap.ui.unified.CalendarDayType.Type06, text: "Typ 6"}),
-					new sap.ui.unified.CalendarLegendItem("T7", {type: sap.ui.unified.CalendarDayType.Type07, text: "Typ 7"}),
-					new sap.ui.unified.CalendarLegendItem("T8", {type: sap.ui.unified.CalendarDayType.Type08, text: "Typ 8"}),
-					new sap.ui.unified.CalendarLegendItem("T9", {type: sap.ui.unified.CalendarDayType.Type09, text: "Typ 9"}),
-					new sap.ui.unified.CalendarLegendItem("T10", {type: sap.ui.unified.CalendarDayType.Type10, text: "Typ 10"}),
-					]
-		});
+			var StandardCalendarLegendItem = sap.ui.unified.StandardCalendarLegendItem,
+					oLegend = new sap.m.PlanningCalendarLegend("Legend1", {
+						standardItems: [StandardCalendarLegendItem.WorkingDay, StandardCalendarLegendItem.NonWorkingDay, StandardCalendarLegendItem.Today],
+						items: [
+							new sap.ui.unified.CalendarLegendItem("T1", {
+								type: sap.ui.unified.CalendarDayType.Type01,
+								text: "Type 1 in Legend Calendar area"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T2", {
+								type: sap.ui.unified.CalendarDayType.Type02,
+								text: "Type 2 in Legend Calendar area"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T3", {
+								type: sap.ui.unified.CalendarDayType.Type03,
+								text: "Type 3 in Legend Calendar area"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T4", {
+								type: sap.ui.unified.CalendarDayType.Type04,
+								text: "Type 4 in Legend Calendar area"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T5", {
+								type: sap.ui.unified.CalendarDayType.Type05,
+								text: "Type 5 in Legend Calendar area"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T6", {
+								type: sap.ui.unified.CalendarDayType.Type06,
+								text: "Type 6 in Legend Calendar area"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T7", {
+								type: sap.ui.unified.CalendarDayType.Type07,
+								text: "Type 7 in Legend Calendar area"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T8", {
+								type: sap.ui.unified.CalendarDayType.Type08,
+								text: "Type 8 in Legend Calendar area"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T9", {
+								type: sap.ui.unified.CalendarDayType.Type09,
+								text: "Type 9 in Legend Calendar area"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T10", {
+								type: sap.ui.unified.CalendarDayType.Type10,
+								text: "Type 10 in Legend Calendar area"
+							}),
+						],
+						appointmentItems: [
+							new sap.ui.unified.CalendarLegendItem("T31", {
+								type: sap.ui.unified.CalendarDayType.Type01,
+								text: "Type Private Appointment"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T32", {
+								type: sap.ui.unified.CalendarDayType.Type02,
+								text: "Type Face2Face Appointment"
+							}),
+							new sap.ui.unified.CalendarLegendItem("T33", {
+								type: sap.ui.unified.CalendarDayType.Type12,
+								text: "Type Public Appointment"
+							})
+						]
+					});
 
 		var oDialog = new sap.m.Dialog("D1", {
 			title: "Legend",
 			content: [oLegend],
 			endButton: new sap.m.Button({
-				text: "Close", press: function (oEvent) {
+				text: "Close",
+				press: function (oEvent) {
 					oDialog.close();
 				}
 			})
@@ -44,6 +92,7 @@
 		var oEventLabel = new sap.m.Label({text: "Events log"});
 		function createFooter(){
 			return new sap.m.Bar({
+				contentLeft: new sap.m.Input("inputFocusHelper", {value: "VisualTest focus helper, Don't remove."}),
 				contentMiddle: [new sap.m.Button({
 					text: "PlanningCalendar",
 					press: function(){
@@ -82,24 +131,89 @@
 							var sSelectedWidth = oEvent.getParameter('selectedItem').getKey();
 							sap.ui.getCore().byId('PC1').setWidth(sSelectedWidth);
 						}
+					}),
+					new sap.m.MultiComboBox({
+						id : "MCB1",
+						width: "230px",
+						placeholder : "Choose built-in views",
+						items : [
+							oItem20 = new sap.ui.core.Item({
+								key : "Hour",
+								text : "Hour"
+							}),
+
+							oItem21 = new sap.ui.core.Item({
+								key : "Day",
+								text : "Day"
+							}),
+
+							oItem22 = new sap.ui.core.Item({
+								key : "Month",
+								text : "Month"
+							}),
+
+							oItem23 = new sap.ui.core.Item({
+								key : "Week",
+								text : "1 week"
+							}),
+
+							oItem24 = new sap.ui.core.Item({
+								key : "One Month",
+								text : "1 month"
+							})
+						],
+						selectionFinish : function(oEvent) {
+							var aSelectedKeys = this.getSelectedKeys();
+							oPC1.setBuiltInViews(aSelectedKeys);
+						}
 					})
 				]
 			});
 		};
 
 		var handleAppointmentSelect = function(oEvent){
-			var oInput = sap.ui.getCore().byId("I1");
-			var oAppointment = oEvent.getParameter("appointment");
+			var oInput = sap.ui.getCore().byId("I1"),
+				oAppointment = oEvent.getParameter("appointment"),
+				sPopoverValue,
+				bDiffType,
+				aAppointments,
+				sValue,
+				sGroupAppointmentType,
+				sGroupAppDomRefId = oEvent.getParameter("domRefId"),
+				sTitle,
+				i;
+
 			if (oAppointment) {
 				oInput.setValue("Appointment selected: " + oAppointment.getId());
-			}else {
-				var aAppointments = oEvent.getParameter("appointments");
-				var sValue = aAppointments.length + " Appointments selected: ";
-				for(var i = 0; i < aAppointments.length; i++) {
+				sPopoverValue = "Appointment selected: " + oAppointment.getId();
+				sTitle = "Appointment";
+			} else {
+				aAppointments = oEvent.getParameter("appointments");
+				sValue = aAppointments.length + " Appointments selected: ";
+				sGroupAppointmentType = aAppointments[0].getType();
+				sTitle = "Group Appointment";
+				for (i = 1; i < aAppointments.length; i++) {
+					if (sGroupAppointmentType !== aAppointments[i].getType()) {
+						bDiffType = true;
+					}
 					sValue = sValue + aAppointments[i].getId() + " ";
 				}
 				oInput.setValue(sValue);
+				if (bDiffType) {
+					sPopoverValue = aAppointments.length + " Appointments of different types selected";
+				} else {
+					sPopoverValue = aAppointments.length + " Appointments of " + sGroupAppointmentType + " selected";
+				}
 			}
+			jQuery.sap.require("sap.m.Popover");
+			var oPopover = new sap.m.Popover({
+				title: sTitle,
+				content: new sap.m.Label({
+					text: sPopoverValue
+				})
+			});
+			oPopover.addStyleClass("sapUiPopupWithPadding");
+			oPopover.openBy(document.getElementById(sGroupAppDomRefId));
 			setEventLog("'appointmentSelect' for appointment: " + (oAppointment ? oAppointment.getTitle() : "<no app>"));
 		};
 
@@ -257,6 +371,7 @@
 			icon: "sap-icon://header",
 			type: sap.m.ButtonType.Transparent,
 			pressed: true,
+			tooltip: "Toggle planning calendar showIntervalHeaders property",
 			press: function(oEvent) {
 				var oPC = sap.ui.getCore().byId("PC1");
 				var bPressed = oEvent.getParameter("pressed");
@@ -267,6 +382,7 @@
 		var oButtonShowRowHeaders = new sap.m.ToggleButton("B_ShowRowHead", {
 			icon: "sap-icon://person-placeholder",
 			type: sap.m.ButtonType.Transparent,
+			tooltip: "Toggle planning calendar showRowHeaders property",
 			pressed: true,
 			press: function(oEvent) {
 				var oPC = sap.ui.getCore().byId("PC1");
@@ -275,9 +391,21 @@
 			}
 		});
 
+		var oButtonShowWeekNumbers = new sap.m.ToggleButton("B_ShowWeekNumbers", {
+			type: sap.m.ButtonType.Transparent,
+			text: "Weeks",
+			tooltip: "Toggle week numbers",
+			press: function(oEvent) {
+				var oPC = sap.ui.getCore().byId("PC1");
+				var bPressed = oEvent.getParameter("pressed");
+				oPC.setShowWeekNumbers(bPressed);
+			}
+		});
+
 		var oButtonLegend = new sap.m.Button("B_Legend", {
 			icon: "sap-icon://legend",
 			type: sap.m.ButtonType.Transparent,
+			tooltip: "Open PlanningCalendar legend",
 			press: handleLegend
 		});
 
@@ -285,6 +413,7 @@
 			icon: "sap-icon://resize-vertical",
 			type: sap.m.ButtonType.Transparent,
 			pressed: false,
+			tooltip:"Toggle appointmentsReducedHeight property",
 			press: function(oEvent) {
 				var oPC = sap.ui.getCore().byId("PC1");
 				var bPressed = oEvent.getParameter("pressed");
@@ -322,7 +451,50 @@
 						if(oSpecialDate.getType() === sap.ui.unified.CalendarDayType.NonWorking) {
 							oPC1.removeSpecialDate(oSpecialDate);
 						}
-					})
+				})
+				}
+			}
+		});
+
+		var oButtonToggleShowDayNamesLine = new sap.m.ToggleButton({
+			icon: "sap-icon://decrease-line-height",
+			tooltip: "Toggle Day Names Line",
+			type: sap.m.ButtonType.Transparent,
+			press: function (oEvent) {
+				oPC1.setShowDayNamesLine(oEvent.getParameter("pressed"));
+			}
+		});
+
+		var oButtonToggleCustomViews = new sap.m.ToggleButton({
+			icon: "sap-icon://chart-table-view",
+			tooltip: "Toggle custom predefined custom views",
+			type: sap.m.ButtonType.Transparent,
+			press: function (oEvent) {
+				if (oEvent.getParameter("pressed")) {
+					oPC1.addView(
+						new sap.m.PlanningCalendarView({
+							key: "customView1",
+							intervalType: sap.ui.unified.CalendarIntervalType.Day,
+							description: "custom view 1",
+							intervalsS: 7,
+							intervalsM: 7,
+							intervalsL: 7
+						})
+					);
+					oPC1.addView(
+						new sap.m.PlanningCalendarView({
+							key: "customView2",
+							intervalType: sap.ui.unified.CalendarIntervalType.Hour,
+							description: "custom view 2",
+							intervalsS: 5,
+							intervalsM: 5,
+							intervalsL: 5
+						})
+					);
+					oPC1.setViewKey(oPC1.getViews()[0].getKey());
+				} else {
+					oPC1.destroyViews();
+
 				}
 			}
 		});
@@ -419,9 +591,20 @@
 			text: "Title"
 		});
 
+
+		var oButtonSwitchLegendAssociation = new sap.m.Switch({
+			state: true,
+			change: function(oEvent) {
+				var vLegend = oEvent.getParameter("state") ? oLegend : "";
+				oPC1.setLegend(vLegend);
+			}
+		});
+		var oLegendLabel = new sap.m.Label({text: "Legend Connected to PC", labelFor: oButtonSwitchLegendAssociation.getId()});
+
 		var oPC1 = sap.m.PlanningCalendar("PC1", {
 			startDate: new Date("2015", "0", "1", "08", "00"),
 			rows: [ new sap.m.PlanningCalendarRow("Row1", {
+						customData: new sap.ui.core.CustomData({key: "myKey", value: "myValue", writeToDom: true}),
 						icon: "sap-icon://employee",
 						title: "Max Mustermann",
 						text: "Musterteam",
@@ -438,7 +621,7 @@
 						appointments: [ new sap.ui.unified.CalendarAppointment("R1A1", {
 											startDate: new Date("2015", "0", "1", "08", "00"),
 											endDate: new Date("2015", "0", "2", "09", "00"),
-											type: sap.ui.unified.CalendarDayType.Type01,
+											type: sap.ui.unified.CalendarDayType.Type03,
 											title: "2 days meeting",
 											icon: "../ui/unified/images/m_01.png",
 											tooltip: "2 days meeting",
@@ -447,7 +630,7 @@
 										new sap.ui.unified.CalendarAppointment("R1A2", {
 											startDate: new Date("2014", "11", "31", "10", "45"),
 											endDate: new Date("2015", "0", "3", "09", "00"),
-											type: sap.ui.unified.CalendarDayType.Type02,
+											type: sap.ui.unified.CalendarDayType.Type06,
 											title: "Appointment 2",
 											icon: "sap-icon://home",
 											tooltip: "Tooltip 2",
@@ -457,7 +640,7 @@
 										new sap.ui.unified.CalendarAppointment("R1A3", {
 											startDate: new Date("2014", "11", "31", "08", "30"),
 											endDate: new Date("2015", "0", "1", "09", "30"),
-											type: sap.ui.unified.CalendarDayType.Type03,
+											type: sap.ui.unified.CalendarDayType.Type02,
 											title: "Blocker 3",
 											icon: "sap-icon://home",
 											tooltip: "Tooltip 3"
@@ -465,7 +648,7 @@
 										new sap.ui.unified.CalendarAppointment("R1A4", {
 											startDate: new Date("2015", "0", "1", "09", "45"),
 											endDate: new Date("2015", "0", "1", "10", "45"),
-											type: sap.ui.unified.CalendarDayType.Type04,
+											type: sap.ui.unified.CalendarDayType.Type09,
 											title: "Meeting 4",
 											tooltip: "Tooltip 4",
 											selected: true
@@ -807,6 +990,56 @@
 												icon: "sap-icon://palette"
 											})
 							]
+							}),
+							new sap.m.PlanningCalendarRow("Row5", {
+								icon: "sap-icon://employee",
+								title: "Appointments of the same type",
+								tooltip: "Header tooltip",
+								intervalHeaders: [ new sap.ui.unified.CalendarAppointment("R5H1",{
+									startDate: new Date("2015", "0", "1", "09", "00"),
+									endDate: new Date("2015", "0", "1", "11", "00"),
+									type: sap.ui.unified.CalendarDayType.Type02,
+									title: "SAPUI5",
+									tooltip: "Test",
+									icon: "sap-icon://sap-ui5"
+								})
+								],
+								appointments: [ new sap.ui.unified.CalendarAppointment("R5A1", {
+									startDate: new Date("2015", "0", "1", "08", "00"),
+									endDate: new Date("2015", "0", "2", "09", "00"),
+									type: sap.ui.unified.CalendarDayType.Type02,
+									title: "2 days meeting",
+									icon: "../ui/unified/images/m_01.png",
+									tooltip: "2 days meeting",
+									text: "Room 1"
+								}),
+									new sap.ui.unified.CalendarAppointment("R5A2", {
+										startDate: new Date("2014", "11", "31", "10", "45"),
+										endDate: new Date("2015", "0", "3", "09", "00"),
+										type: sap.ui.unified.CalendarDayType.Type02,
+										title: "Appointment 2",
+										icon: "sap-icon://home",
+										tooltip: "Tooltip 2",
+										text: "Home",
+										tentative: true
+									}),
+									new sap.ui.unified.CalendarAppointment("R5A3", {
+										startDate: new Date("2014", "11", "31", "08", "30"),
+										endDate: new Date("2015", "0", "1", "09", "30"),
+										type: sap.ui.unified.CalendarDayType.Type02,
+										title: "Blocker 3",
+										icon: "sap-icon://home",
+										tooltip: "Tooltip 3"
+									}),
+									new sap.ui.unified.CalendarAppointment("R5A4", {
+										startDate: new Date("2015", "0", "1", "09", "45"),
+										endDate: new Date("2015", "0", "1", "10", "45"),
+										type: sap.ui.unified.CalendarDayType.Type02,
+										title: "Meeting 4",
+										tooltip: "Tooltip 4",
+										selected: true
+									})
+								]
 							})
 				],
 			specialDates: [ new sap.ui.unified.DateTypeRange({
@@ -821,13 +1054,22 @@
 								tooltip: "Heilige 3 Könige"
 							}),
 							new sap.ui.unified.DateTypeRange({
+								startDate: new Date(2015, 0, 10),
+								type: sap.ui.unified.CalendarDayType.Type01,
+								tooltip: "Lunch"
+							}),
+							new sap.ui.unified.DateTypeRange({
+								startDate: new Date(2015, 0, 6),
+								type: sap.ui.unified.CalendarDayType.NonWorking
+							}),
+							new sap.ui.unified.DateTypeRange({
 								startDate: new Date(2015, 1, 1),
 								endDate: new Date(2015, 1, 3),
 								type: sap.ui.unified.CalendarDayType.Type03,
 								tooltip: "Test"
 							})
 						  ],
-            toolbarContent: [oTitle,
+			toolbarContent: [oTitle,
 							 new sap.m.ToolbarSpacer(),
 							 oSearchField,
 							 oButton1,
@@ -836,14 +1078,19 @@
 							 oButtonAddRow,
 							 oButtonShowIntervalHeaders,
 							 oButtonShowRowHeaders,
+							 oButtonShowWeekNumbers,
 							 oButtonLegend,
+							 oLegendLabel,
+							 oButtonSwitchLegendAssociation,
 							 oButtonReducedHeight,
 							 oButtonToggleAlternatingRowColor,
 							 oButtonToggleSpecNoWork,
 							 oButtonMinMax,
+							 oButtonToggleShowDayNamesLine,
+							 oButtonToggleCustomViews,
 							 oVisSelect,
 							 oGroupModeSelect],
-			legend: "Legend1",
+			legend: oLegend,
 			appointmentSelect: handleAppointmentSelect,
 			startDateChange: handleStartDateChange,
 			rowHeaderClick: handleRowHeaderClick,

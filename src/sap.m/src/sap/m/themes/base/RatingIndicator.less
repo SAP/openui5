@@ -9,6 +9,7 @@
 	overflow: hidden;
 	vertical-align: top;
 	padding: 0;
+	margin: 0.8125rem 0;
 
 	/* IE Windows 8 */
 	/* This elements receives events when not panning in vertial direction */
@@ -33,17 +34,13 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 	background-color: rgba(255,255,255,0.01);
 }
 
-.sapMRIAriaLabel {
-    display: none;
-}
-
 .sapMRISel {
 	float: left;
 	display: block;
 	overflow: hidden;
 	padding:0;
 	margin:0;
-	color: @sapUiSelected;
+	color: @sapUiAccent1;
 	word-wrap: normal;
 	white-space: nowrap;
 }
@@ -51,7 +48,7 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 .sapMRIUnsel {
 	position: relative;
 	float: right;
-	color: @sapUiContentForegroundColor;
+	color: darken(@sapUiContentForegroundColor, 25);
 	word-wrap: normal;
 	white-space: nowrap;
 }
@@ -67,10 +64,15 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 	overflow: hidden;
 	word-wrap: normal;
 	white-space: nowrap;
+	color: darken(@sapUiAccent1, 5);
 }
 
-.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov {
+.sapMRIIconSel, .sapMRIIconUnsel, .sapMRIIconHov, .sapMRIIconReadOnly {
     font-family: SAP-icons;
+}
+
+.sapMListTblCell > .sapMRI {
+  margin: 0;
 }
 
 .sapUiSizeCondensed .sapUiTableCell > .sapMRI {
@@ -123,6 +125,12 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 	cursor: default;
 }
 
+.sapMRIDisplayOnly {
+	outline: none;
+	cursor: default;
+	margin: 0;
+}
+
 .sapMRI .sapUiIcon,
 .sapMRI .sapMImg {
 	padding-right: 0.25rem;
@@ -134,10 +142,18 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 }
 
 /* Compact mode */
-.sapUiSizeCompact .sapMRIIcon {
-	height: 1rem; /* default size for the compact mode */
-}
+.sapUiSizeCompact {
+	.sapMRI {
+		margin: 0.5rem 0;
 
+		&.sapMRIDisplayOnly {
+			margin: 0;
+		}
+	}
+	.sapMRIIcon {
+		height: 1rem; /* default size for the compact mode */
+	}
+}
 /* Condensed mode */
 .sapUiSizeCondensed .sapUiTableCell .sapMRI .sapUiIcon,
 .sapUiSizeCondensed .sapUiTableCell .sapMRI .sapMImg{
@@ -181,5 +197,11 @@ html[data-sap-ui-browser*='ie'] .sapMRISelector {
 .sapMRI.sapUiRatingIndicatorL {
 	.sapUiIcon:last-child, .sapMImg:last-child {
 		padding-right: 0;
+	}
+}
+
+.sapMRI.sapMRIDisplayOnly {
+	.sapMRIIconSel {
+		color: @sapUiBaseText;
 	}
 }

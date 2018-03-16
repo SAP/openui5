@@ -2,19 +2,19 @@
  * ${copyright}
  */
 
-/*global JSZip, URI *///declare unusual global vars for JSLint/SAPUI5 validation
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
+/*global JSZip, URI */
+
+sap.ui.define(['jquery.sap.global',
 	'sap/ui/core/routing/History',
 	'sap/ui/core/Component', 'sap/ui/core/UIComponent', 'sap/ui/core/mvc/Controller',
 	'sap/ui/model/json/JSONModel',
-	'sap/m/MessageToast',
 	'../data'],
-	function (jQuery, Device, History, Component, UIComponent, Controller, JSONModel, MessageToast, data) {
+	function (jQuery, History, Component, UIComponent, Controller, JSONModel, data) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demokit.explored.view.code", {
 
-		_aMockFiles : ["products.json", "supplier.json", "img.json"],
+		_aMockFiles : ["products.json", "supplier.json", "img.json", "countriesCollection.json"],
 
 		onInit : function () {
 			this.router = UIComponent.getRouterFor(this);
@@ -92,7 +92,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 			oJSONModel.refresh(true);
 
 			// scroll to top of page
-			var page = this.getView().byId("page");
+			var page = this.byId("page");
 			page.scrollTo(0);
 		},
 
@@ -109,11 +109,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			if (!(sUrl in this._viewData.component.codeCache)) {
 				this._viewData.component.codeCache[sUrl] = "";
-				jQuery.ajax(sUrl, {
+				jQuery.ajax({
+					url: sUrl,
+					type: "GET",
 					async: false,
 					dataType: "text",
 					success: fnSuccess,
-					error: fnError
+					error: fnError,
+					beforeSend: function(request) {
+						request.overrideMimeType("text/plain; charset=x-user-defined");
+					}
 				});
 			}
 
@@ -147,7 +152,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 					sRawFileContent = this._changeIframeBootstrapToCloud(sRawFileContent);
 				}
 
-				oZipFile.file(sFileNameCloned, sRawFileContent);
+				oZipFile.file(sFileNameCloned, sRawFileContent, { base64: false, binary: true });
 
 				// mock files
 				for (var j = 0; j < this._aMockFiles.length; j++) {
@@ -164,13 +169,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 
 			// iframe examples have a separate index file and a component file to describe it
 			if (!oData.iframe) {
-				oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"));
+				oZipFile.file("Component.js", this.fetchSourceFile(sRef, "Component.js"), { base64: false, binary: true });
 				oZipFile.file("index.html", this._changeIframeBootstrapToCloud(this.createIndexFile(oData, iRequiredParentLevels)));
 			}
 
 			// add extra download files
 			aExtraFiles.forEach(function(sFileName, index) {
-				oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName));
+				oZipFile.file(sFileName, that.fetchSourceFile(sRef, sFileName), { base64: false, binary: true });
 			});
 
 			var oContent = oZipFile.generate({type:"blob"});

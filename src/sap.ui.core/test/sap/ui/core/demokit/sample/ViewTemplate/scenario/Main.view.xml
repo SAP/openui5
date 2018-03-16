@@ -7,23 +7,29 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	>
 	<layout:VerticalLayout width="inherit">
-		<layout:HorizontalLayout allowWrapping="true">
-			<Select change="onChangeType" items="{ui>/entitySet}" selectedKey="{ui>/selectedEntitySet}">
+		<HBox alignItems="Center" wrap="Wrap">
+			<Label class="sapUiSmallMarginEnd" design="Bold" labelFor="selectEntitySet"
+				text="Select Entity Set"/>
+			<Select class="sapUiSmallMarginEnd" change="onChangeType" id="selectEntitySet"
+				items="{ui>/entitySet}" selectedKey="{ui>/selectedEntitySet}">
 				<core:ListItem text="{ui>name}" key="{ui>name}"/>
 			</Select>
-			<Select id="selectInstance" change="onChangeInstance" selectedKey="{ui>/selectedInstance}">
+			<Label class="sapUiSmallMarginEnd" design="Bold" labelFor="selectInstance"
+				text="Select Instance"/>
+			<Select class="sapUiSmallMarginEnd" id="selectInstance" change="onChangeInstance"
+				selectedKey="{ui>/selectedInstance}">
 				<!-- aggregation items is bound in controller  -->
 			</Select>
 			<Button enabled="false" icon="{ui>/icon}" tooltip="{ui>/iconTooltip}"
 				type="Transparent"/>
-			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode" text="Design-Time Source Code"/>
-			<CheckBox selected="{ui>/bindTexts}" select="onChangeType" text="bindTexts"/><!-- triggers XML templating! -->
-		</layout:HorizontalLayout>
+			<ToggleButton id="toggleSourceCode" icon="sap-icon://syntax" press="onSourceCode"
+				text="Design-Time Source Code"/>
+			<CheckBox selected="{ui>/bindTexts}" select="onChangeType" text="bindTexts"/>
+			<!-- triggers XML templating! -->
+		</HBox>
 		<Panel expandable="false" visible="{ui>/codeVisible}" headerText="Design-Time Source Code"
 			width="inherit" class="sapUiResponsiveMargin">
-			<content>
-				<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
-			</content>
+			<ce:CodeEditor editable="false" height="500px" type="xml" value="{ui>/code}"/>
 		</Panel>
 		<layout:HorizontalLayout id="detailBox"/>
 	</layout:VerticalLayout>

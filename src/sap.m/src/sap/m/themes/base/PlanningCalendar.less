@@ -20,12 +20,35 @@
 	height: 6.25rem;
 }
 
+.sapMPlanCalWithWeekNumbers .sapMPlanCalHead{
+	height: 9.25rem;
+}
+
+.sapMPlanCalWithDayNamesLine .sapMPlanCalHead{
+	height: 8.25rem;
+}
+
+.sapMPlanCalWithWeekNumbers.sapMPlanCalWithDayNamesLine .sapMPlanCalHead{
+	height: 11.25rem;
+}
+
 .sapMPlanCalHead > .sapMTB.sapMIBar{
 	padding-left: 0.875rem;
 }
 
-.sapUiSizeCompact .sapMPlanCalHead{
-	height: 4.25rem;
+.sapUiSizeCompact {
+	.sapMPlanCalHead {
+		height: 4.25rem;
+	}
+
+	.sapMPlanCalWithWeekNumbers .sapMPlanCalHead,
+	.sapMPlanCalWithDayNamesLine .sapMPlanCalHead {
+		height: 6.25rem;
+	}
+
+	.sapMPlanCalWithWeekNumbers.sapMPlanCalWithDayNamesLine .sapMPlanCalHead {
+		height: 8.25rem;
+	}
 }
 
 .sapMPlanCal > .sapMList .sapMPlanCalRowHead > .sapMLIB,
@@ -81,6 +104,10 @@
 	padding-bottom: 0;
 }
 
+html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUiCalNoNameLine) > .sapUiCalItems {
+	display: block;
+}
+
 .sapMPlanCal > .sapMList > .sapMListInfoTBar > .sapUiCalInt > .sapUiCalContent >.sapUiCalContentOver{
 	bottom: 0;
 }
@@ -88,6 +115,9 @@
 .sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalRowHead,
 .sapMPlanCal > .sapMList .sapMListTblCell.sapMPlanCalAppRow{
 	padding: 0;
+	.sapUiCalendarRow {
+		padding-top: 0.25rem; //to give some space for row focus outline
+	}
 }
 
 /* Responsiveness */
@@ -102,6 +132,25 @@
 
 .sapMPlanCal > .sapMList > table > tbody > tr > td > .sapMListTblSubCnt > .sapMListTblSubCntRow >.sapMListTblSubCntVal{
 	margin: 0;
+}
+
+.sapMPlanCalStickyHeader {
+	position: sticky;
+	position: -webkit-sticky;
+	z-index: 1;
+	top: 0;
+}
+
+.sapMPlanCal .sapMPlanCalStickyHeader.sapMListHdrTBar {
+	background-color: @sapUiListBackground;
+}
+.sapMPlanCal .sapMPlanCalStickyHeader.sapMListInfoTBar {
+	top: 3rem;
+	background-color: @sapUiListBackground;
+}
+
+.sap-phone .sapMPlanCal .sapMPlanCalStickyHeader.sapMListInfoTBar {
+	top: 0;
 }
 
 .sapMPlanCal.sapMPlanCalNoHead > .sapMList > .sapMListInfoTBar,
@@ -164,4 +213,33 @@
 .sapMPlanCal .sapMListBGTranslucent .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover),
 .sapMPlanCal .sapMListBGSolid .sapMLIB:not(.sapMLIBActive):not(.sapMLIBSelected):not(:hover) {
 	background: transparent;
+}
+
+.sapMPlanCal {
+  .sapMListTbl .sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
+	font-size: 1.375rem;
+	height: 2rem;
+	width: 2rem;
+	line-height: 2rem;
+	margin: 0.5rem 0.75rem 0.5rem 0;
+  }
+  .sapMSLIImg {
+	height: 2rem;
+	width: 2rem;
+	margin: 0.5rem 0.75rem 0.5rem 0;
+  }
+}
+
+.sapMPlanCal .sapUiCalDateInt .sapUiCalHeadB1 {
+	width: 12.5rem;
+}
+
+.sapMPlanCal .sapUiCalHead {
+	display: flex;
+	justify-content: center;
+
+	.sapUiCalHeadPrev,
+	.sapUiCalHeadNext {
+		position: static;
+	}
 }

@@ -13,28 +13,29 @@
 	color: @sapUiContentLabelColor;
 }
 
-.sapMObjStatusNone > .sapMObjStatusText
-.sapMObjStatusNone > .sapMObjStatusIcon {
+.sapMObjStatusNone .sapMObjStatusText,
+.sapMObjStatusNone .sapMObjStatusIcon {
 	color: @sapUiNeutralText;
 }
 
-.sapMObjStatusError > .sapMObjStatusText,
-.sapMObjStatusError > .sapMObjStatusIcon {
+.sapMObjStatusError .sapMObjStatusText,
+.sapMObjStatusError .sapMObjStatusIcon {
 	color: @sapUiNegativeText;
 }
 
-.sapMObjStatusWarning > .sapMObjStatusText,
-.sapMObjStatusWarning > .sapMObjStatusIcon {
+.sapMObjStatusWarning .sapMObjStatusText,
+.sapMObjStatusWarning .sapMObjStatusIcon {
 	color: @sapUiCriticalText;
 }
 
-.sapMObjStatusSuccess > .sapMObjStatusText,
-.sapMObjStatusSuccess > .sapMObjStatusIcon {
+.sapMObjStatusSuccess .sapMObjStatusText,
+.sapMObjStatusSuccess .sapMObjStatusIcon {
 	color: @sapUiPositiveText;
 }
 
 .sapMObjStatusIcon > .sapUiIcon {
 	font-size: 1rem;
+	vertical-align: bottom;
 }
 
 .sapMObjStatusIcon {
@@ -85,17 +86,31 @@
 	line-height: 2rem;
 }
 
+/*
+	FIX for 2715207
+	Fiori design guidelines say that statuses should be specially styled for ObjectPage
+	and share looks with other text only controls.
+*/
+.sapUxAPObjectPageContainer .sapMObjStatusNone,
+.sapUxAPObjectPageHeaderContentItem.sapMObjStatusNone,
+.sapUxAPObjectPageHeaderContentItem .sapMObjStatusNone {
+	.sapMObjStatusText,
+	.sapMObjStatusIcon {
+		color: @sapUiGroupTitleTextColor;
+	}
+}
+
 /* ============================================= */
 /* FIX: CSS 0120061532 0001316230 2014 */
 /* ============================================= */
-.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusText,
-.sapMLIBActive .sapMObjStatusNone > .sapMObjStatusIcon,
-.sapMLIBActive .sapMObjStatusError > .sapMObjStatusText,
-.sapMLIBActive .sapMObjStatusError > .sapMObjStatusIcon,
-.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusText,
-.sapMLIBActive .sapMObjStatusWarning > .sapMObjStatusIcon,
-.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusText,
-.sapMLIBActive .sapMObjStatusSuccess > .sapMObjStatusIcon {
+.sapMLIBActive .sapMObjStatusNone .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusNone .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusError .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusError .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusWarning .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusWarning .sapMObjStatusIcon,
+.sapMLIBActive .sapMObjStatusSuccess .sapMObjStatusText,
+.sapMLIBActive .sapMObjStatusSuccess .sapMObjStatusIcon {
 	color: @sapUiListActiveTextColor;
 }
 
@@ -104,4 +119,62 @@
 	line-height: 1.5rem;
 	vertical-align: middle;
 	font-size: @sapMFontMediumSize;
+}
+
+
+html.sap-desktop .sapMObjStatusActive:focus {
+	outline: none;
+}
+
+.sapMObjStatusActive .sapMObjStatusText {
+	pointer-events: auto;
+}
+
+
+.sapMObjStatusActive:hover > .sapMObjStatusText,
+.sapMObjStatusActive:hover > .sapMObjStatusIcon > .sapUiIcon {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.sapMObjStatusActive:focus .sapMObjStatusTitle {
+	text-decoration: none;
+}
+
+.sapMObjStatusLink:hover .sapMObjStatusIcon > .sapUiIcon {
+	cursor: pointer;
+}
+
+.sapMObjStatusLink:hover .sapMObjStatusText,
+.sapMObjStatusLink:hover .sapMObjStatusIcon:only-child > .sapUiIcon {
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.sapMObjStatusLink .sapMObjStatusIcon:only-child {
+	padding-right: 0;
+}
+
+html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink {
+	position: relative;
+	display: inline-block;
+}
+
+html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink::after {
+	pointer-events: none;
+	display: block;
+	content: "";
+	position: absolute;
+	top: 1px;
+	left: 1px;
+	bottom: 1px;
+	right: 1px;
+	width: 100%;
+	outline: 1px dotted @sapUiContentFocusColor;
+}
+
+html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
+	.sapMObjStatusActive:focus .sapMObjStatusLink::after {
+		outline-style: dashed;
+	}
 }

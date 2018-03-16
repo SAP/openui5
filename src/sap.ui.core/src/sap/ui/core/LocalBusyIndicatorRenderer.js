@@ -6,8 +6,8 @@ sap.ui.define(function() {
 
 
 	/**
-	 * @class LocalBusyIndicator renderer.
-	 * @static
+	 * LocalBusyIndicator renderer.
+	 * @namespace
 	 * @alias sap.ui.core.LocalBusyIndicatorRenderer
 	 */
 	var LocalBusyIndicatorRenderer = {};

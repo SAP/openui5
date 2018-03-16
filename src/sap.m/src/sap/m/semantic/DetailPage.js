@@ -2,8 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer", "sap/m/PagingButton"], function(ShareMenuPage, SemanticConfiguration, SemanticPageRenderer, PagingButton) {
+sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfiguration", "sap/m/semantic/SemanticPageRenderer", "sap/m/library"], function(ShareMenuPage, SemanticConfiguration, SemanticPageRenderer, library) {
 	"use strict";
+
+
+	// shortcut for sap.m.semantic.SemanticRuleSetType
+	var SemanticRuleSetType = library.semantic.SemanticRuleSetType;
 
 
 	/**
@@ -200,7 +204,7 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 					multiple: false
 				}
 			},
-			designTime : true
+			designtime: "sap/m/designtime/semantic/DetailPage.designtime"
 		},
 		renderer: SemanticPageRenderer.render
 	});
@@ -272,8 +276,8 @@ sap.ui.define(["sap/m/semantic/ShareMenuPage", "sap/m/semantic/SemanticConfigura
 	};
 
 	DetailPage.prototype.getSemanticRuleSet = function() {
-		return sap.m.semantic.SemanticRuleSetType.Classic; //this page should only use the Classic ruleset (no other rules are specified for this page for now)
+		return SemanticRuleSetType.Classic; //this page should only use the Classic ruleset (no other rules are specified for this page for now)
 	};
 
 	return DetailPage;
-}, /* bExport= */ true);
+});

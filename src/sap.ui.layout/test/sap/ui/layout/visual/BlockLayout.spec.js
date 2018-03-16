@@ -5,6 +5,8 @@ describe('sap.ui.layout.BlockLayout', function () {
 
 	function _switchBackgroundAndTakeScreenshot(sClickId, sScreenshotAreaId) {
 		element(by.id(sClickId)).click();
+		element(by.id("__page0-intHeader")).click(); // Remove focus from the input field
+
 		var blockLayoutRef = element(by.id(sScreenshotAreaId));
 		expect(takeScreenshot(blockLayoutRef)).toLookAs(sScreenshotAreaId);
 	}
@@ -15,10 +17,6 @@ describe('sap.ui.layout.BlockLayout', function () {
 
 	it('Light Background', function () {
 		_switchBackgroundAndTakeScreenshot("navigate-to-light", "layout-light");
-	});
-
-	it('Mixed Background', function () {
-		_switchBackgroundAndTakeScreenshot("navigate-to-mixed", "layout-mixed");
 	});
 
 	it('Accent Background', function () {

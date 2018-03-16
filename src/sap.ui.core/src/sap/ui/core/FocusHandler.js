@@ -87,11 +87,11 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 			var oControl = this.oCore && this.oCore.byId(sControlId);
 			if (oControl) {
 				return {
-				    id : sControlId,
-				    control : oControl,
-				    info : oControl.getFocusInfo(),
-				    type : oControl.getMetadata().getName(),
-				    focusref : oControl.getFocusDomRef()
+					id : sControlId,
+					control : oControl,
+					info : oControl.getFocusInfo(),
+					type : oControl.getMetadata().getName(),
+					focusref : oControl.getFocusDomRef()
 				};
 			}
 			return null;
@@ -207,7 +207,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 		/**
 		 * Processes the focus event taken from the event queue.
 		 *
-		 * @param sControlId Id of the event related control
+		 * @param {string} sControlId Id of the event related control
 		 * @private
 		 */
 		FocusHandler.prototype.onfocusEvent = function(sControlId){
@@ -234,7 +234,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../base/Object', 'jquery.sap.s
 		/**
 		 * Processes the blur event taken from the event queue.
 		 *
-		 * @param sControlId Id of the event related control
+		 * @param {string} sControlId Id of the event related control
 		 * @private
 		 */
 		FocusHandler.prototype.onblurEvent = function(sControlId){

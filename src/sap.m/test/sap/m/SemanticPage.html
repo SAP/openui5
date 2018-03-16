@@ -1153,7 +1153,7 @@
 			]
 		});
 
-		var oMenuPage = new sap.m.Page({
+		var oMenuPage = new sap.m.Page("menuPage", {
 			title: "Modify Content:",
 			content: [
 				new sap.m.VBox({
@@ -1222,7 +1222,7 @@
 			saveAsTileAction: new sap.m.Button("saveAsTileBtn", {icon: "sap-icon://add-favorite", text: "Save as Tile"}),
 			pagingAction: new sap.m.PagingButton("pagingBtn", {count: 5})
 		});
-		var oSplitContainer = new sap.m.SplitContainer();
+		var oSplitContainer = new sap.m.SplitContainer("semanticPageContainer");
 
 		oSplitContainer.addMasterPage(page1);
 		oSplitContainer.addDetailPage(page2);

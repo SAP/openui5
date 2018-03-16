@@ -3,8 +3,8 @@
  */
 
 //Provides the locale object sap.ui.core.LocaleData
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './Locale'],
-	function(jQuery, BaseObject, Configuration, Locale) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Locale'],
+	function(jQuery, BaseObject, Locale) {
 	"use strict";
 
 	/**
@@ -30,6 +30,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 		_get: function() {
 			return this._getDeep(this.mData, arguments);
+		},
+
+		/**
+		 * Retrieves merged object if overlay data is available
+		 * @private
+		 * @return {object} merged object
+		 */
+		_getMerged: function() {
+			return this._get.apply(this, arguments);
 		},
 
 		_getDeep: function(oObject, aPropertyNames) {
@@ -324,109 +333,115 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * See http://unicode.org/reports/tr35/tr35-dates.html#availableFormats_appendItems
 		 *
 		 * @param {string} sSkeleton the wanted skeleton format for the datetime pattern
-		 * @param {string} sGreatestDiff the symbol matching the greatest difference in the two dates to format
+		 * @param {object|string} vGreatestDiff is either a string which represents the symbol matching the greatest difference in the two dates to format or an object which contains key-value pairs.
+		 *  The value is always true. The key is one of the date field symbol groups whose value are different between the two dates. The key can only be set with 'Year', 'Quarter', 'Month', 'Week',
+		 *  'Day', 'DayPeriod', 'Hour', 'Minute', or 'Second'.
 		 * @param {sap.ui.core.CalendarType} [sCalendarType] the type of calendar. If it's not set, it falls back to the calendar type either set in configuration or calculated from locale.
-		 * @returns {string} the best matching interval pattern
+		 * @returns {string|string[]} the best matching interval pattern if interval difference is given otherwise an array with all possible interval patterns which match the given skeleton format
 		 * @since 1.46
 		 * @public
 		 */
-		getCustomIntervalPattern : function(sSkeleton, sGreatestDiff, sCalendarType) {
+		getCustomIntervalPattern : function(sSkeleton, vGreatestDiff, sCalendarType) {
 			var oAvailableFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "intervalFormats");
-			return this._getFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, sGreatestDiff);
+			return this._getFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, vGreatestDiff);
 		},
 
 		/* Helper functions for skeleton pattern processing */
-		_getFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
-			var sPattern, oIntervalFormats;
-			if (sIntervalDiff) {
-				if (sIntervalDiff == "j" || sIntervalDiff == "J") {
-					sIntervalDiff = this.getPreferredHourSymbol();
+		_getFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, vDiff) {
+			var vPattern, aPatterns, oIntervalFormats;
+
+			if (!vDiff) {
+				// the call is from getCustomDateTimePattern
+				vPattern = oAvailableFormats[sSkeleton];
+			} else if (typeof vDiff === "string") {
+				// vDiff is given as a symbol
+				if (vDiff == "j" || vDiff == "J") {
+					vDiff = this.getPreferredHourSymbol();
 				}
 				oIntervalFormats = oAvailableFormats[sSkeleton];
-				sPattern = oIntervalFormats && oIntervalFormats[sIntervalDiff];
-			} else {
-				sPattern = oAvailableFormats[sSkeleton];
+				vPattern = oIntervalFormats && oIntervalFormats[vDiff];
 			}
-			if (!sPattern) {
-				sPattern = this._createFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff);
+
+			if (vPattern) {
+				if (typeof vPattern === "object") {
+					aPatterns = Object.keys(vPattern).map(function(sKey) {
+						return vPattern[sKey];
+					});
+				} else {
+					return vPattern;
+				}
 			}
-			return sPattern;
+
+			if (!aPatterns) {
+				aPatterns = this._createFormatPattern(sSkeleton, oAvailableFormats, sCalendarType, vDiff);
+			}
+
+			if (aPatterns && aPatterns.length === 1) {
+				return aPatterns[0];
+			}
+
+			return aPatterns;
 		},
 
-		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
-			var aTokens = this._parseSkeletonFormat(sSkeleton),
+		_createFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, vDiff) {
+			var aTokens = this._parseSkeletonFormat(sSkeleton), aPatterns,
 				oBestMatch = this._findBestMatch(aTokens, sSkeleton, oAvailableFormats),
-				sPattern, sSinglePattern,
-				oAvailableDateTimeFormats,
-				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/;
-			var bSymbolFound;
+				oToken, oAvailableDateTimeFormats,
+				sPattern, sSinglePattern, sDiffSymbol, sDiffGroup,
+				rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
+				bSingleDate,
+				i;
 
-			var sDiffGroup = sIntervalDiff;
-			var oGroup;
-			if (sDiffGroup) {
-				if (sDiffGroup === "a") {
-					sDiffGroup = "Hour";
-				}
 
-				if (sDiffGroup.length === 1) {
-					sDiffGroup = mCLDRSymbols[sDiffGroup] ? mCLDRSymbols[sDiffGroup].group : "";
-				}
-
-				if (sDiffGroup) {
-					oGroup = mCLDRSymbolGroups[sDiffGroup];
-					if (oGroup.index > aTokens[aTokens.length - 1].index) {
-						// if the index of interval diff is greater than the index of the last field
-						// in the sSkeleton, which means the diff unit is smaller than all units in
-						// the skeleton, return a single date pattern which is generated using the
-						// given skeleton
-						return this.getCustomDateTimePattern(sSkeleton, sCalendarType);
+			if (vDiff) {
+				if (typeof vDiff === "string") {
+					sDiffGroup = mCLDRSymbols[vDiff] ? mCLDRSymbols[vDiff].group : "";
+					if (sDiffGroup) {
+							// if the index of interval diff is greater than the index of the last field
+							// in the sSkeleton, which means the diff unit is smaller than all units in
+							// the skeleton, return a single date pattern which is generated using the
+							// given skeleton
+							bSingleDate = mCLDRSymbolGroups[sDiffGroup].index > aTokens[aTokens.length - 1].index;
 					}
-				}
-			}
+					sDiffSymbol = vDiff;
+				} else {
+					bSingleDate = true;
+					// Check if at least one token's group appears in the interval diff
+					// If not, a single date pattern is returned
+					for (i = aTokens.length - 1; i >= 0; i--){
+						oToken = aTokens[i];
 
-			if (sIntervalDiff) {
-				// FieldGroup
-				if (sIntervalDiff.length > 1) {
-					// Find out the symbol of the given group
-					// and set the interval diff
-					bSymbolFound = aTokens.some(function(oToken) {
-						if (oToken.group === sIntervalDiff) {
-							sIntervalDiff = oToken.symbol;
-							return true;
+						if (vDiff[oToken.group]) {
+							bSingleDate = false;
+							break;
 						}
-					});
+					}
 
-					// When no symbol is found
-					// an empty interval diff will be set
-					if (!bSymbolFound) {
-						sIntervalDiff = "";
+					// select the greatest diff symbol
+					for (i = 0; i < aTokens.length; i++){
+						oToken = aTokens[i];
+
+						if (vDiff[oToken.group]) {
+							sDiffSymbol = oToken.symbol;
+							break;
+						}
+					}
+					// Special handling of "a" (Dayperiod)
+					// Find out whether dayperiod is different between the dates
+					// If yes, set the  diff symbol with 'a' Dayperiod symbol
+					if ((sDiffSymbol == "h" || sDiffSymbol == "K") && vDiff.DayPeriod) {
+						sDiffSymbol = "a";
 					}
 				}
 
-				// Special handling of "a" (Dayperiod)
-				if (sIntervalDiff === "a") {
-					// Find out whether dayperiod is needed
-					// If not, set the internal diff with the actual 'Hour' symbol
-					bSymbolFound = aTokens.some(function(oToken) {
-						if (oToken.group === "Hour") {
-							if (oToken.symbol !== "h" && oToken.symbol !== "K") {
-								sIntervalDiff = oToken.symbol;
-							}
-							return true;
-						}
-					});
-
-					// When no symbol is found
-					// an empty interval diff will be set
-					if (!bSymbolFound) {
-						sIntervalDiff = "";
-					}
+				if (bSingleDate) {
+					return [this.getCustomDateTimePattern(sSkeleton, sCalendarType)];
 				}
 
 				// Only use best match, if there are no missing tokens, as there is no possibility
 				// to append items on interval formats
 				if (oBestMatch && oBestMatch.missingTokens.length === 0) {
-					sPattern = oBestMatch.pattern[sIntervalDiff];
+					sPattern = oBestMatch.pattern[sDiffSymbol];
 					// if there is no exact match, we need to do further processing
 					if (sPattern && oBestMatch.distance > 0) {
 						sPattern = this._expandFields(sPattern, oBestMatch.patternTokens, aTokens);
@@ -437,38 +452,54 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				if (!sPattern) {
 					oAvailableDateTimeFormats = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "availableFormats");
 					// If it is a mixed skeleton and the greatest interval on time, create a mixed pattern
-					if (rMixedSkeleton.test(sSkeleton) && "ahHkKjJms".indexOf(sIntervalDiff) >= 0) {
-						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType, sIntervalDiff);
+					if (rMixedSkeleton.test(sSkeleton) && "ahHkKjJms".indexOf(sDiffSymbol) >= 0) {
+						sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType, vDiff);
 					} else {
 						sSinglePattern = this._getFormatPattern(sSkeleton, oAvailableDateTimeFormats, sCalendarType);
 						sPattern = this.getCombinedIntervalPattern(sSinglePattern, sCalendarType);
 					}
 				}
+
+				aPatterns = [sPattern];
+
 			} else if (!oBestMatch) {
 				sPattern = sSkeleton;
+				aPatterns = [sPattern];
 			} else {
-				sPattern = oBestMatch.pattern;
+				if (typeof oBestMatch.pattern === "string") {
+					aPatterns = [oBestMatch.pattern];
+				} else if (typeof oBestMatch.pattern === "object") {
+					aPatterns = [];
+
+					for (var sKey in oBestMatch.pattern) {
+						sPattern = oBestMatch.pattern[sKey];
+						aPatterns.push(sPattern);
+					}
+				}
 				// if there is no exact match, we need to do further processing
 				if (oBestMatch.distance > 0) {
 					if (oBestMatch.missingTokens.length > 0) {
 						// if tokens are missing create a pattern containing all, otherwise just adjust pattern
 						if (rMixedSkeleton.test(sSkeleton)) {
-							sPattern = this._getMixedFormatPattern(sSkeleton, oAvailableFormats, sCalendarType);
+							aPatterns = [this._getMixedFormatPattern(sSkeleton, oAvailableFormats, sCalendarType)];
 						} else {
-							sPattern = this._expandFields(oBestMatch.pattern, oBestMatch.patternTokens, aTokens);
-							sPattern = this._appendItems(sPattern, oBestMatch.missingTokens, sCalendarType);
+							aPatterns = this._expandFields(aPatterns, oBestMatch.patternTokens, aTokens);
+							aPatterns = this._appendItems(aPatterns, oBestMatch.missingTokens, sCalendarType);
 						}
 					} else {
-						sPattern = this._expandFields(oBestMatch.pattern, oBestMatch.patternTokens, aTokens);
+						aPatterns = this._expandFields(aPatterns, oBestMatch.patternTokens, aTokens);
 					}
 				}
 			}
+
 			// If special input token "J" was used, remove dayperiod from pattern
 			if (sSkeleton.indexOf("J") >= 0) {
-				sPattern = sPattern.replace(/ ?[abB](?=([^']*'[^']*')*[^']*)$/g, "");
+				aPatterns.forEach(function(sPattern, iIndex) {
+					aPatterns[iIndex] = sPattern.replace(/ ?[abB](?=([^']*'[^']*')*[^']*)$/g, "");
+				});
 			}
 
-			return sPattern;
+			return aPatterns;
 		},
 
 		_parseSkeletonFormat: function(sSkeleton) {
@@ -492,7 +523,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				oSymbol = mCLDRSymbols[sSymbol];
 				oGroup = mCLDRSymbolGroups[oSymbol.group];
 				// if group is other, the symbol is not allowed in skeleton tokens
-				if (oSymbol.group == "Other") {
+				if (oSymbol.group == "Other" || oGroup.diffOnly) {
 					throw new Error("Symbol '" + sSymbol + "' is not allowed in skeleton format '" + sSkeleton + "'");
 				}
 				// if group index the same or lower, format is invalid
@@ -530,7 +561,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				};
 			// Loop through all available tokens, find matches and calculate distance
 			for (var sTestSkeleton in oAvailableFormats) {
-				if (sTestSkeleton === "intervalFormatFallback") {
+				// Skip patterns with symbol "B" (which is introduced from CLDR v32.0.0) which isn't supported in DateFormat yet
+				if (sTestSkeleton === "intervalFormatFallback" || sTestSkeleton.indexOf("B") > -1) {
 					continue;
 				}
 				aTestTokens = this._parseSkeletonFormat(sTestSkeleton);
@@ -607,102 +639,120 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			}
 		},
 
-		_expandFields: function(sPattern, aPatternTokens, aTokens) {
-			var mGroups = {},
-				mPatternGroups = {},
-				sResultPatterm = "",
-				bQuoted = false,
-				i = 0,
-				iSkeletonLength,
-				iPatternLength,
-				iOldLength,
-				iNewLength,
-				oSkeletonToken,
-				oBestToken,
-				oSymbol,
-				oSkeletonSymbol,
-				oBestSymbol,
-				sChar;
-			// Create a map of group names to token
-			aTokens.forEach(function(oToken) {
-				mGroups[oToken.group] = oToken;
-			});
-			// Create a map of group names to token in best pattern
-			aPatternTokens.forEach(function(oToken) {
-				mPatternGroups[oToken.group] = oToken;
-			});
-			// Loop through pattern and adjust symbol length
-			while (i < sPattern.length) {
-				sChar = sPattern.charAt(i);
-				if (bQuoted) {
-					sResultPatterm += sChar;
-					if (sChar == "'") {
-						bQuoted = false;
-					}
-				} else {
-					oSymbol = mCLDRSymbols[sChar];
-					// If symbol is a CLDR symbol and is contained in the group, expand length
-				if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
-						oSkeletonToken = mGroups[oSymbol.group];
-						oBestToken = mPatternGroups[oSymbol.group];
-						oSkeletonSymbol = mCLDRSymbols[oSkeletonToken.symbol];
-						oBestSymbol = mCLDRSymbols[oBestToken.symbol];
+		_expandFields: function(vPattern, aPatternTokens, aTokens) {
+			var bSinglePattern = (typeof vPattern === "string");
 
-						iSkeletonLength = oSkeletonToken.length;
-						iPatternLength = oBestToken.length;
+			var aPatterns;
+			if (bSinglePattern) {
+				aPatterns = [vPattern];
+			} else {
+				aPatterns = vPattern;
+			}
 
-						iOldLength = 1;
-						while (sPattern.charAt(i + 1) == sChar) {
-							i++;
-							iOldLength++;
-						}
+			var aResult = aPatterns.map(function(sPattern) {
+				var mGroups = {},
+					mPatternGroups = {},
+					sResultPatterm = "",
+					bQuoted = false,
+					i = 0,
+					iSkeletonLength,
+					iPatternLength,
+					iOldLength,
+					iNewLength,
+					oSkeletonToken,
+					oBestToken,
+					oSymbol,
+					oSkeletonSymbol,
+					oBestSymbol,
+					sChar;
 
-						// Prevent expanding the length of the field when:
-						// 1. The length in the best matching skeleton (iPatternLength) matches the length of the application provided skeleton (iSkeletonLength) or
-						// 2. The length of the provided skeleton (iSkeletonLength) and the length of the result pattern (iOldLength) are not in the same category (numeric or text)
-						//	because switching between numeric to text representation is wrong in all cases
-						if (iSkeletonLength === iPatternLength ||
-							((iSkeletonLength < oSkeletonSymbol.numericCeiling) ?
-								(iPatternLength >= oBestSymbol.numericCeiling) : (iPatternLength < oBestSymbol.numericCeiling)
-							)) {
-							iNewLength = iOldLength;
-						} else {
-							iNewLength = Math.max(iOldLength, iSkeletonLength);
-						}
-
-						for (var j = 0; j < iNewLength; j++) {
-							sResultPatterm += sChar;
-						}
-					} else {
+				// Create a map of group names to token
+				aTokens.forEach(function(oToken) {
+					mGroups[oToken.group] = oToken;
+				});
+				// Create a map of group names to token in best pattern
+				aPatternTokens.forEach(function(oToken) {
+					mPatternGroups[oToken.group] = oToken;
+				});
+				// Loop through pattern and adjust symbol length
+				while (i < sPattern.length) {
+					sChar = sPattern.charAt(i);
+					if (bQuoted) {
 						sResultPatterm += sChar;
 						if (sChar == "'") {
-							bQuoted = true;
+							bQuoted = false;
+						}
+					} else {
+						oSymbol = mCLDRSymbols[sChar];
+						// If symbol is a CLDR symbol and is contained in the group, expand length
+					if (oSymbol && mGroups[oSymbol.group] && mPatternGroups[oSymbol.group]) {
+							oSkeletonToken = mGroups[oSymbol.group];
+							oBestToken = mPatternGroups[oSymbol.group];
+							oSkeletonSymbol = mCLDRSymbols[oSkeletonToken.symbol];
+							oBestSymbol = mCLDRSymbols[oBestToken.symbol];
+
+							iSkeletonLength = oSkeletonToken.length;
+							iPatternLength = oBestToken.length;
+
+							iOldLength = 1;
+							while (sPattern.charAt(i + 1) == sChar) {
+								i++;
+								iOldLength++;
+							}
+
+							// Prevent expanding the length of the field when:
+							// 1. The length in the best matching skeleton (iPatternLength) matches the length of the application provided skeleton (iSkeletonLength) or
+							// 2. The length of the provided skeleton (iSkeletonLength) and the length of the result pattern (iOldLength) are not in the same category (numeric or text)
+							//	because switching between numeric to text representation is wrong in all cases
+							if (iSkeletonLength === iPatternLength ||
+								((iSkeletonLength < oSkeletonSymbol.numericCeiling) ?
+									(iPatternLength >= oBestSymbol.numericCeiling) : (iPatternLength < oBestSymbol.numericCeiling)
+								)) {
+								iNewLength = iOldLength;
+							} else {
+								iNewLength = Math.max(iOldLength, iSkeletonLength);
+							}
+
+							for (var j = 0; j < iNewLength; j++) {
+								sResultPatterm += sChar;
+							}
+						} else {
+							sResultPatterm += sChar;
+							if (sChar == "'") {
+								bQuoted = true;
+							}
 						}
 					}
+					i++;
 				}
-				i++;
-			}
-			return sResultPatterm;
+				return sResultPatterm;
+			});
+
+			return bSinglePattern ? aResult[0] : aResult;
 		},
 
-		_appendItems: function(sPattern, aMissingTokens, sCalendarType) {
-			var oAppendItems = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "appendItems"),
-				sDisplayName,
-				sAppendPattern,
-				sAppendField;
-			aMissingTokens.forEach(function(oToken) {
-				sAppendPattern = oAppendItems[oToken.group];
-				sDisplayName = "'" + this.getDisplayName(oToken.field) + "'";
-				sAppendField = "";
-				for (var i = 0; i < oToken.length; i++) {
-					sAppendField += oToken.symbol;
-				}
-				sPattern = sAppendPattern.replace(/\{0\}/, sPattern).replace(/\{1\}/, sAppendField).replace(/\{2\}/, sDisplayName);
+		_appendItems: function(aPatterns, aMissingTokens, sCalendarType) {
+			var oAppendItems = this._get(getCLDRCalendarName(sCalendarType), "dateTimeFormats", "appendItems");
+			aPatterns.forEach(function(sPattern, iIndex) {
+				var sDisplayName,
+					sAppendPattern,
+					sAppendField;
+
+				aMissingTokens.forEach(function(oToken) {
+					sAppendPattern = oAppendItems[oToken.group];
+					sDisplayName = "'" + this.getDisplayName(oToken.field) + "'";
+					sAppendField = "";
+					for (var i = 0; i < oToken.length; i++) {
+						sAppendField += oToken.symbol;
+					}
+					aPatterns[iIndex] = sAppendPattern.replace(/\{0\}/, sPattern).replace(/\{1\}/, sAppendField).replace(/\{2\}/, sDisplayName);
+				}.bind(this));
 			}.bind(this));
-			return sPattern;
+
+			return aPatterns;
 		},
 
-		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, sIntervalDiff) {
+		_getMixedFormatPattern: function(sSkeleton, oAvailableFormats, sCalendarType, vDiff) {
 			var rMixedSkeleton = /^([GyYqQMLwWEecdD]+)([hHkKjJmszZvVOXx]+)$/,
 				rWideMonth = /MMMM|LLLL/,
 				rAbbrevMonth = /MMM|LLL/,
@@ -716,8 +766,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			sTimeSkeleton = oResult[2];
 			// Get patterns for date and time separately
 			sDatePattern = this._getFormatPattern(sDateSkeleton, oAvailableFormats, sCalendarType);
-			if (sIntervalDiff) {
-				sTimePattern = this.getCustomIntervalPattern(sTimeSkeleton, sIntervalDiff, sCalendarType);
+			if (vDiff) {
+				sTimePattern = this.getCustomIntervalPattern(sTimeSkeleton, vDiff, sCalendarType);
 			} else {
 				sTimePattern = this._getFormatPattern(sTimeSkeleton, oAvailableFormats, sCalendarType);
 			}
@@ -861,13 +911,23 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @since 1.21.1
 		 */
 		getCurrencyDigits: function(sCurrency) {
-			var oCurrencyDigits = this._get("currencyDigits");
-			var iDigits = 2;
-			if (oCurrencyDigits) {
-				if (oCurrencyDigits[sCurrency] != undefined) {
-					iDigits = oCurrencyDigits[sCurrency];
-				} else {
-					iDigits = oCurrencyDigits["DEFAULT"];
+
+			// try to lookup currency digits from custom currencies
+			var mCustomCurrencies = this._get("currency");
+			if (mCustomCurrencies) {
+				if (mCustomCurrencies[sCurrency] && mCustomCurrencies[sCurrency].hasOwnProperty("digits")) {
+					return mCustomCurrencies[sCurrency].digits;
+				} else if (mCustomCurrencies["DEFAULT"] && mCustomCurrencies["DEFAULT"].hasOwnProperty("digits")) {
+					return mCustomCurrencies["DEFAULT"].digits;
+				}
+			}
+
+			var iDigits = this._get("currencyDigits", sCurrency);
+			if (iDigits == null) {
+				iDigits = this._get("currencyDigits", "DEFAULT");
+
+				if (iDigits == null) {
+					iDigits = 2; // default
 				}
 			}
 			return iDigits;
@@ -905,6 +965,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Retrieves the localized display name of a unit by sUnit, e.g. "duration-hour".
+		 * @param {string} sUnit the unit key, e.g. "duration-hour"
+		 * @return {string} The localized display name for the requested unit, e.g. <code>"Hour"</code>. Return empty string <code>""</code> if not found
+		 * @public
+		 * @since 1.54
+		 */
+		getUnitDisplayName: function(sUnit) {
+			var mUnitFormat = this.getUnitFormat(sUnit);
+			return (mUnitFormat && mUnitFormat["displayName"]) || "";
+		},
+
+
+		/**
 		 * Returns relative time patterns for the given scales as an array of objects containing scale, value and pattern.
 		 *
 		 * The array may contain the following values: "year", "month", "week", "day", "hour", "minute" and "second". If
@@ -933,6 +1006,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			jQuery.sap.assert(sStyle === "wide" || sStyle === "short" || sStyle === "narrow", "sStyle is only allowed to be set with 'wide', 'short' or 'narrow'");
 
 			var aPatterns = [],
+				aPluralCategories = this.getPluralCategories(),
 				oScale,
 				oTimeEntry,
 				iValue,
@@ -955,17 +1029,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					} else if (sEntry.indexOf("relativeTime-type-") == 0) {
 						oTimeEntry = oScale[sEntry];
 						iSign = sEntry.substr(18) === "past" ? -1 : 1;
-						if (oTimeEntry["relativeTimePattern-count-one"]) {
+						aPluralCategories.forEach(function(sKey) { // eslint-disable-line no-loop-func
 							aPatterns.push({
 								scale: sScale,
 								sign: iSign,
-								pattern: oTimeEntry["relativeTimePattern-count-one"]
+								pattern: oTimeEntry["relativeTimePattern-count-" + sKey]
 							});
-						}
-						aPatterns.push({
-							scale: sScale,
-							sign: iSign,
-							pattern: oTimeEntry["relativeTimePattern-count-other"]
 						});
 					}
 				}
@@ -986,7 +1055,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * @since 1.34
 		 */
 		getRelativePattern: function(sScale, iDiff, bFuture, sStyle) {
-			var sPattern, oTypes, sKey;
+			var sPattern, oTypes, sKey, sPluralCategory;
 
 			if (typeof bFuture === "string") {
 				sStyle = bFuture;
@@ -1005,18 +1074,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 
 			sKey = sScale + "-" + sStyle;
 
-			sPattern = this._get("dateFields", sKey, "relative-type-" + iDiff);
+			if (iDiff === 0 || iDiff === -2 || iDiff === 2) {
+				sPattern = this._get("dateFields", sKey, "relative-type-" + iDiff);
+			}
 
 			if (!sPattern) {
 				oTypes = this._get("dateFields", sKey, "relativeTime-type-" + (bFuture ? "future" : "past"));
-
-				if (Math.abs(iDiff) === 1) {
-					sPattern = oTypes["relativeTimePattern-count-one"];
-				}
-
-				if (!sPattern) {
-					sPattern = oTypes["relativeTimePattern-count-other"];
-				}
+				sPluralCategory = this.getPluralCategory(Math.abs(iDiff).toString());
+				sPattern = oTypes["relativeTimePattern-count-" + sPluralCategory];
 			}
 
 			return sPattern;
@@ -1197,6 +1262,116 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		},
 
 		/**
+		 * Returns the short currency formats (like 1K USD, 1M USD....).
+		 *
+		 * @param {string} sStyle short
+		 * @param {string} sNumber 1000, 10000 ...
+		 * @param {string} sPlural one or other (if not exists other is used)
+		 * @returns {string} decimal format
+		 * @public
+		 * @since 1.51.0
+		 */
+		getCurrencyFormat: function(sStyle, sNumber, sPlural) {
+
+			var sFormat;
+			var oFormats;
+
+			switch (sStyle) {
+			default: //short
+				oFormats = this._get("currencyFormat-short");
+				break;
+			}
+
+			if (oFormats) {
+				var sName = sNumber + "-" + sPlural;
+				sFormat = oFormats[sName];
+				if (!sFormat) {
+					sName = sNumber + "-other";
+					sFormat = oFormats[sName];
+				}
+			}
+
+			return sFormat;
+
+		},
+
+		/**
+		 * Returns a map containing patterns for formatting lists
+		 *
+		 *@param {string} [sType='standard'] The type of the list pattern. It can be 'standard' or 'or'.
+		 *@param {string} [sStyle='wide'] The style of the list pattern. It can be 'wide' or 'short'.
+		* @return {object} Map with list patterns
+		 */
+		getListFormat: function (sType, sStyle) {
+			var oFormats = this._get("listPattern-" + (sType || "standard") + "-" + (sStyle || "wide"));
+
+			if (oFormats) {
+				return oFormats;
+			}
+
+			return {};
+		},
+
+		/**
+		 * Retrieves the unit format pattern for a specific unit name considering the unit mappings.
+		 * @param {string} sUnit unit name, e.g. "duration-hour" or "my"
+		 * @return {object} The unit format configuration for the given unit name
+		 * @public
+		 * @since 1.54
+		 * @see sap.ui.core.LocaleData#getUnitFromMapping
+		 */
+		getResolvedUnitFormat: function (sUnit) {
+			sUnit = this.getUnitFromMapping(sUnit) || sUnit;
+			return this.getUnitFormat(sUnit);
+		},
+
+		/**
+		 * Retrieves the unit format pattern for a specific unit name.
+		 *
+		 * Note: Does not take unit mapping into consideration.
+		 * @param {string} sUnit unit name, e.g. "duration-hour"
+		 * @return {object} The unit format configuration for the given unit name
+		 * @public
+		 * @since 1.54
+		 */
+		getUnitFormat: function (sUnit) {
+			return this._get("units", "short", sUnit);
+		},
+
+		/**
+		 * Retrieves all unit format patterns merged.
+		 *
+		 * Note: Does not take unit mapping into consideration.
+		 * @return {object} The unit format patterns
+		 * @public
+		 * @since 1.54
+		 */
+		getUnitFormats: function() {
+			return this._getMerged("units", "short");
+		},
+
+		/**
+		 * Looks up the unit from defined unit mapping.
+		 * E.g. for defined unit mapping
+		 * <code>
+		 * {
+		 *  "my": "my-custom-unit",
+		 *  "cm": "length-centimeter"
+		 * }
+		 * </code>
+		 *
+		 * Call:
+		 * <code>getUnitFromMapping("my")</code> would result in <code>"my-custom-unit"</code>
+		 * @return {string} unit from the mapping
+		 * @public
+		 * @since 1.54
+		 */
+		getUnitFromMapping: function (sMapping) {
+			return this._get("unitMappings", sMapping);
+		},
+
+
+		/**
 		 * Returns array of eras.
 		 *
 		 * @param {string} sWidth the style of the era name. It can be 'wide', 'abbreviated' or 'narrow'
@@ -1239,7 +1414,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		 * Returns the defined pattern for representing the calendar week number.
 		 *
 		 * @param {string} sStyle the style of the pattern. It can only be either "wide" or "narrow".
-		 * @param {number} iWeekNumber the week number
+		 * @param {int} iWeekNumber the week number
 		 * @return {string} the week number string
 		 *
 		 * @public
@@ -1285,14 +1460,234 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		/**
 		 * Returns the preferred hour pattern symbol (h for 12, H for 24 hours) for the current locale.
 		 *
-		 * returns {string} the preferred hour symbol
+		 * @returns {string} the preferred hour symbol
 		 * @public
 		 * @since 1.34
 		 */
 		getPreferredHourSymbol: function() {
 			return this._get("timeData", "_preferred");
-		}
+		},
 
+		/**
+		 * Returns an array of all plural categories available in this language.
+		 *
+		 * @returns {array} The array of plural categories
+		 * @public
+		 * @since 1.50
+		 */
+		getPluralCategories: function() {
+			var oPlurals = this._get("plurals"),
+				aCategories =  Object.keys(oPlurals);
+			aCategories.push("other");
+			return aCategories;
+		},
+
+		/**
+		 * Returns the plural category (zero, one, two, few, many or other) for the given number value.
+		 * The number should be passed as a string with dot as decimal separator and the number of decimal/fraction digits
+		 * as used in the final output. This is needed in order to preserve trailing zeros which are relevant to
+		 * determine the right plural category.
+		 *
+		 * @param {string|number} sNumber The number to find the plural category for
+		 * @returns {string} The plural category
+		 * @public
+		 * @since 1.50
+		 */
+		getPluralCategory: function(sNumber) {
+			var oPlurals = this._get("plurals");
+			if (typeof sNumber === "number") {
+				sNumber = sNumber.toString();
+			}
+			if (!this._pluralTest) {
+				this._pluralTest = {};
+			}
+			for (var sCategory in oPlurals) {
+				var fnTest = this._pluralTest[sCategory];
+				if (!fnTest) {
+					fnTest = this._parsePluralRule(oPlurals[sCategory]);
+					this._pluralTest[sCategory] = fnTest;
+				}
+				if (fnTest(sNumber)) {
+					return sCategory;
+				}
+			}
+			return "other";
+		},
+
+		_parsePluralRule: function(sRule) {
+
+			var OP_OR = "or",
+				OP_AND = "and",
+				OP_MOD = "%",
+				OP_EQ = "=",
+				OP_NEQ = "!=",
+				OPD_N = "n",
+				OPD_I = "i",
+				OPD_F = "f",
+				OPD_T = "t",
+				OPD_V = "v",
+				OPD_W = "w",
+				RANGE = "..",
+				SEP = ",";
+
+			var i = 0,
+				aTokens;
+
+			aTokens = sRule.split(" ");
+
+			function accept(sToken) {
+				if (aTokens[i] === sToken) {
+					i++;
+					return true;
+				}
+				return false;
+			}
+
+			function consume() {
+				var sToken = aTokens[i];
+				i++;
+				return sToken;
+			}
+
+			function or_condition() {
+				var fnAnd, fnOr;
+				fnAnd = and_condition();
+				if (accept(OP_OR)) {
+					fnOr = or_condition();
+					return function(o) {
+						return fnAnd(o) || fnOr(o);
+					};
+				}
+				return fnAnd;
+			}
+
+			function and_condition() {
+				var fnRelation, fnAnd;
+				fnRelation = relation();
+				if (accept(OP_AND)) {
+					fnAnd = and_condition();
+					return function(o) {
+						return fnRelation(o) && fnAnd(o);
+					};
+				}
+				return fnRelation;
+			}
+
+			function relation() {
+				var fnExpr, fnRangeList, bEq;
+				fnExpr = expr();
+				if (accept(OP_EQ)) {
+					bEq = true;
+				} else if (accept(OP_NEQ)) {
+					bEq = false;
+				} else {
+					throw new Error("Expected '=' or '!='");
+				}
+				fnRangeList = range_list();
+				if (bEq) {
+					return function(o) {
+						return fnRangeList(o).indexOf(fnExpr(o)) >= 0;
+					};
+				} else {
+					return function(o) {
+						return fnRangeList(o).indexOf(fnExpr(o)) === -1;
+					};
+				}
+			}
+
+			function expr() {
+				var fnOperand;
+				fnOperand = operand();
+				if (accept(OP_MOD)) {
+					var iDivisor = parseInt(consume(), 10);
+					return function(o) {
+						return fnOperand(o) % iDivisor;
+					};
+				}
+				return fnOperand;
+			}
+
+			function operand() {
+				if (accept(OPD_N)) {
+					return function(o) {
+						return o.n;
+					};
+				} else if (accept(OPD_I)) {
+					return function(o) {
+						return o.i;
+					};
+				} else if (accept(OPD_F)) {
+					return function(o) {
+						return o.f;
+					};
+				} else if (accept(OPD_T)) {
+					return function(o) {
+						return o.t;
+					};
+				} else if (accept(OPD_V)) {
+					return function(o) {
+						return o.v;
+					};
+				} else if (accept(OPD_W)) {
+					return function(o) {
+						return o.w;
+					};
+				} else {
+					throw new Error("Unknown operand: " + consume());
+				}
+			}
+
+			function range_list() {
+				var aValues = [],
+					sRangeList = consume(),
+					aParts = sRangeList.split(SEP),
+					aRange, iFrom, iTo;
+				aParts.forEach(function(sPart) {
+					aRange = sPart.split(RANGE);
+					if (aRange.length === 1) {
+						aValues.push(parseInt(sPart, 10));
+					} else {
+						iFrom = parseInt(aRange[0], 10);
+						iTo = parseInt(aRange[1], 10);
+						for (var i = iFrom; i <= iTo; i++) {
+							aValues.push(i);
+						}
+					}
+				});
+				return function(o) {
+					return aValues;
+				};
+			}
+
+			var fnOr = or_condition();
+			if (i != aTokens.length) {
+				throw new Error("Not completely parsed");
+			}
+			return function(sValue) {
+				var iDotPos = sValue.indexOf("."),
+					sDecimal, sFraction, sFractionNoZeros, o;
+
+				if (iDotPos === -1) {
+					sDecimal = sValue;
+					sFraction = "";
+					sFractionNoZeros = "";
+				} else {
+					sDecimal = sValue.substr(0, iDotPos);
+					sFraction = sValue.substr(iDotPos + 1);
+					sFractionNoZeros = sFraction.replace(/0+$/, '');
+				}
+
+				o = {
+					n: parseFloat(sValue),
+					i: parseInt(sDecimal, 10),
+					v: sFraction.length,
+					w: sFractionNoZeros.length,
+					f: parseInt(sFraction, 10),
+					t: parseInt(sFractionNoZeros, 10)
+				};
+				return fnOr(o);
+			};
+		}
 	});
 
 	var mCLDRSymbolGroups = {
@@ -1303,10 +1698,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		"Week": { field: "week", index: 4 },
 		"Day-Of-Week": { field: "weekday", index: 5 },
 		"Day": { field: "day", index: 6 },
-		"Hour": { field: "hour", index: 7 },
-		"Minute": { field: "minute", index: 8 },
-		"Second": { field: "second", index: 9 },
-		"Timezone": { field: "zone", index: 10 }
+		"DayPeriod": { field: "hour", index: 7, diffOnly: true },
+		"Hour": { field: "hour", index: 8 },
+		"Minute": { field: "minute", index: 9 },
+		"Second": { field: "second", index: 10 },
+		"Timezone": { field: "zone", index: 11 }
 	};
 
 	var mCLDRSymbols = {
@@ -1343,7 +1739,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 		"r": { group: "Other", numericCeiling: 100},
 		"F": { group: "Other", numericCeiling: 100},
 		"g": { group: "Other", numericCeiling: 100},
-		"a": { group: "Other", numericCeiling: 1},
+		"a": { group: "DayPeriod", numericCeiling: 1},
 		"b": { group: "Other", numericCeiling: 1},
 		"B": { group: "Other", numericCeiling: 1},
 		"A": { group: "Other", numericCeiling: 100}
@@ -1603,6 +1999,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} years ago"
 					}
 				},
+				"year-short": {
+					"displayName": "yr.",
+					"relative-type--1": "last yr.",
+					"relative-type-0": "this yr.",
+					"relative-type-1": "next yr.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} yr.",
+						"relativeTimePattern-count-other": "in {0} yr."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} yr. ago",
+						"relativeTimePattern-count-other": "{0} yr. ago"
+					}
+				},
+				"year-narrow": {
+					"displayName": "yr.",
+					"relative-type--1": "last yr.",
+					"relative-type-0": "this yr.",
+					"relative-type-1": "next yr.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} yr.",
+						"relativeTimePattern-count-other": "in {0} yr."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} yr. ago",
+						"relativeTimePattern-count-other": "{0} yr. ago"
+					}
+				},
 				"quarter-wide": {
 					"displayName": "quarter",
 					"relative-type--1": "last quarter",
@@ -1615,6 +2039,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					"relativeTime-type-past": {
 						"relativeTimePattern-count-one": "{0} quarter ago",
 						"relativeTimePattern-count-other": "{0} quarters ago"
+					}
+				},
+				"quarter-short": {
+					"displayName": "qtr.",
+					"relative-type--1": "last qtr.",
+					"relative-type-0": "this qtr.",
+					"relative-type-1": "next qtr.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} qtr.",
+						"relativeTimePattern-count-other": "in {0} qtrs."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} qtr. ago",
+						"relativeTimePattern-count-other": "{0} qtrs. ago"
+					}
+				},
+				"quarter-narrow": {
+					"displayName": "qtr.",
+					"relative-type--1": "last qtr.",
+					"relative-type-0": "this qtr.",
+					"relative-type-1": "next qtr.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} qtr.",
+						"relativeTimePattern-count-other": "in {0} qtrs."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} qtr. ago",
+						"relativeTimePattern-count-other": "{0} qtrs. ago"
 					}
 				},
 				"month-wide": {
@@ -1631,6 +2083,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} months ago"
 					}
 				},
+				"month-short": {
+					"displayName": "mo.",
+					"relative-type--1": "last mo.",
+					"relative-type-0": "this mo.",
+					"relative-type-1": "next mo.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} mo.",
+						"relativeTimePattern-count-other": "in {0} mo."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} mo. ago",
+						"relativeTimePattern-count-other": "{0} mo. ago"
+					}
+				},
+				"month-narrow": {
+					"displayName": "mo.",
+					"relative-type--1": "last mo.",
+					"relative-type-0": "this mo.",
+					"relative-type-1": "next mo.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} mo.",
+						"relativeTimePattern-count-other": "in {0} mo."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} mo. ago",
+						"relativeTimePattern-count-other": "{0} mo. ago"
+					}
+				},
 				"week-wide": {
 					"displayName": "week",
 					"relative-type--1": "last week",
@@ -1643,9 +2123,68 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					"relativeTime-type-past": {
 						"relativeTimePattern-count-one": "{0} week ago",
 						"relativeTimePattern-count-other": "{0} weeks ago"
-					}
+					},
+					"relativePeriod": "the week of {0}"
+				},
+				"week-short": {
+					"displayName": "wk.",
+					"relative-type--1": "last wk.",
+					"relative-type-0": "this wk.",
+					"relative-type-1": "next wk.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} wk.",
+						"relativeTimePattern-count-other": "in {0} wk."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} wk. ago",
+						"relativeTimePattern-count-other": "{0} wk. ago"
+					},
+					"relativePeriod": "the week of {0}"
+				},
+				"week-narrow": {
+					"displayName": "wk.",
+					"relative-type--1": "last wk.",
+					"relative-type-0": "this wk.",
+					"relative-type-1": "next wk.",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} wk.",
+						"relativeTimePattern-count-other": "in {0} wk."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} wk. ago",
+						"relativeTimePattern-count-other": "{0} wk. ago"
+					},
+					"relativePeriod": "the week of {0}"
 				},
 				"day-wide": {
+					"displayName": "day",
+					"relative-type--1": "yesterday",
+					"relative-type-0": "today",
+					"relative-type-1": "tomorrow",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} day",
+						"relativeTimePattern-count-other": "in {0} days"
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} day ago",
+						"relativeTimePattern-count-other": "{0} days ago"
+					}
+				},
+				"day-short": {
+					"displayName": "day",
+					"relative-type--1": "yesterday",
+					"relative-type-0": "today",
+					"relative-type-1": "tomorrow",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} day",
+						"relativeTimePattern-count-other": "in {0} days"
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} day ago",
+						"relativeTimePattern-count-other": "{0} days ago"
+					}
+				},
+				"day-narrow": {
 					"displayName": "day",
 					"relative-type--1": "yesterday",
 					"relative-type-0": "today",
@@ -1664,6 +2203,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 				},
 				"hour-wide": {
 					"displayName": "hour",
+					"relative-type-0": "this hour",
 					"relativeTime-type-future": {
 						"relativeTimePattern-count-one": "in {0} hour",
 						"relativeTimePattern-count-other": "in {0} hours"
@@ -1673,8 +2213,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} hours ago"
 					}
 				},
+				"hour-short": {
+					"displayName": "hr.",
+					"relative-type-0": "this hour",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} hr.",
+						"relativeTimePattern-count-other": "in {0} hr."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} hr. ago",
+						"relativeTimePattern-count-other": "{0} hr. ago"
+					}
+				},
+				"hour-narrow": {
+					"displayName": "hr.",
+					"relative-type-0": "this hour",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} hr.",
+						"relativeTimePattern-count-other": "in {0} hr."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} hr. ago",
+						"relativeTimePattern-count-other": "{0} hr. ago"
+					}
+				},
 				"minute-wide": {
 					"displayName": "minute",
+					"relative-type-0": "this minute",
 					"relativeTime-type-future": {
 						"relativeTimePattern-count-one": "in {0} minute",
 						"relativeTimePattern-count-other": "in {0} minutes"
@@ -1682,6 +2247,30 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					"relativeTime-type-past": {
 						"relativeTimePattern-count-one": "{0} minute ago",
 						"relativeTimePattern-count-other": "{0} minutes ago"
+					}
+				},
+				"minute-short": {
+					"displayName": "min.",
+					"relative-type-0": "this minute",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} min.",
+						"relativeTimePattern-count-other": "in {0} min."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} min. ago",
+						"relativeTimePattern-count-other": "{0} min. ago"
+					}
+				},
+				"minute-narrow": {
+					"displayName": "min.",
+					"relative-type-0": "this minute",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} min.",
+						"relativeTimePattern-count-other": "in {0} min."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} min. ago",
+						"relativeTimePattern-count-other": "{0} min. ago"
 					}
 				},
 				"second-wide": {
@@ -1696,12 +2285,50 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 						"relativeTimePattern-count-other": "{0} seconds ago"
 					}
 				},
+				"second-short": {
+					"displayName": "sec.",
+					"relative-type-0": "now",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} sec.",
+						"relativeTimePattern-count-other": "in {0} sec."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} sec. ago",
+						"relativeTimePattern-count-other": "{0} sec. ago"
+					}
+				},
+				"second-narrow": {
+					"displayName": "sec.",
+					"relative-type-0": "now",
+					"relativeTime-type-future": {
+						"relativeTimePattern-count-one": "in {0} sec.",
+						"relativeTimePattern-count-other": "in {0} sec."
+					},
+					"relativeTime-type-past": {
+						"relativeTimePattern-count-one": "{0} sec. ago",
+						"relativeTimePattern-count-other": "{0} sec. ago"
+					}
+				},
 				"zone": {
 					"displayName": "time zone"
 				}
 			},
 			"decimalFormat": { "standard": "#,##0.###" },
-			"currencyFormat": { "standard": "¤#,##0.00"},
+			"currencyFormat": {
+				"standard": "¤#,##0.00",
+				"currencySpacing": {
+					"beforeCurrency": {
+						"currencyMatch": "[:^S:]",
+						"surroundingMatch": "[:digit:]",
+						"insertBetween": " "
+					},
+					"afterCurrency": {
+						"currencyMatch": "[:^S:]",
+						"surroundingMatch": "[:digit:]",
+						"insertBetween": " "
+					}
+				}
+			},
 			"percentFormat": { "standard": "#,##0%"},
 			"symbols-latn-decimal":".",
 			"symbols-latn-group":",",
@@ -1715,7 +2342,721 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			"timeData": {
 				_allowed: "H h",
 				_preferred: "H"
+			},
+			"plurals": {},
+			"units": {
+			"short": {
+				"per": {
+					"compoundUnitPattern": "{0}/{1}"
+				},
+				"acceleration-g-force": {
+					"displayName": "g-force",
+					"unitPattern-count-one": "{0} G",
+					"unitPattern-count-other": "{0} G"
+				},
+				"acceleration-meter-per-second-squared": {
+					"displayName": "meters/sec²",
+					"unitPattern-count-one": "{0} m/s²",
+					"unitPattern-count-other": "{0} m/s²"
+				},
+				"angle-revolution": {
+					"displayName": "rev",
+					"unitPattern-count-one": "{0} rev",
+					"unitPattern-count-other": "{0} rev"
+				},
+				"angle-radian": {
+					"displayName": "radians",
+					"unitPattern-count-one": "{0} rad",
+					"unitPattern-count-other": "{0} rad"
+				},
+				"angle-degree": {
+					"displayName": "degrees",
+					"unitPattern-count-one": "{0} deg",
+					"unitPattern-count-other": "{0} deg"
+				},
+				"angle-arc-minute": {
+					"displayName": "arcmins",
+					"unitPattern-count-one": "{0} arcmin",
+					"unitPattern-count-other": "{0} arcmins"
+				},
+				"angle-arc-second": {
+					"displayName": "arcsecs",
+					"unitPattern-count-one": "{0} arcsec",
+					"unitPattern-count-other": "{0} arcsecs"
+				},
+				"area-square-kilometer": {
+					"displayName": "km²",
+					"unitPattern-count-one": "{0} km²",
+					"unitPattern-count-other": "{0} km²",
+					"perUnitPattern": "{0}/km²"
+				},
+				"area-hectare": {
+					"displayName": "hectares",
+					"unitPattern-count-one": "{0} ha",
+					"unitPattern-count-other": "{0} ha"
+				},
+				"area-square-meter": {
+					"displayName": "meters²",
+					"unitPattern-count-one": "{0} m²",
+					"unitPattern-count-other": "{0} m²",
+					"perUnitPattern": "{0}/m²"
+				},
+				"area-square-centimeter": {
+					"displayName": "cm²",
+					"unitPattern-count-one": "{0} cm²",
+					"unitPattern-count-other": "{0} cm²",
+					"perUnitPattern": "{0}/cm²"
+				},
+				"area-square-mile": {
+					"displayName": "sq miles",
+					"unitPattern-count-one": "{0} sq mi",
+					"unitPattern-count-other": "{0} sq mi",
+					"perUnitPattern": "{0}/mi²"
+				},
+				"area-acre": {
+					"displayName": "acres",
+					"unitPattern-count-one": "{0} ac",
+					"unitPattern-count-other": "{0} ac"
+				},
+				"area-square-yard": {
+					"displayName": "yards²",
+					"unitPattern-count-one": "{0} yd²",
+					"unitPattern-count-other": "{0} yd²"
+				},
+				"area-square-foot": {
+					"displayName": "sq feet",
+					"unitPattern-count-one": "{0} sq ft",
+					"unitPattern-count-other": "{0} sq ft"
+				},
+				"area-square-inch": {
+					"displayName": "inches²",
+					"unitPattern-count-one": "{0} in²",
+					"unitPattern-count-other": "{0} in²",
+					"perUnitPattern": "{0}/in²"
+				},
+				"concentr-karat": {
+					"displayName": "karats",
+					"unitPattern-count-one": "{0} kt",
+					"unitPattern-count-other": "{0} kt"
+				},
+				"concentr-milligram-per-deciliter": {
+					"displayName": "mg/dL",
+					"unitPattern-count-one": "{0} mg/dL",
+					"unitPattern-count-other": "{0} mg/dL"
+				},
+				"concentr-millimole-per-liter": {
+					"displayName": "millimol/liter",
+					"unitPattern-count-one": "{0} mmol/L",
+					"unitPattern-count-other": "{0} mmol/L"
+				},
+				"concentr-part-per-million": {
+					"displayName": "parts/million",
+					"unitPattern-count-one": "{0} ppm",
+					"unitPattern-count-other": "{0} ppm"
+				},
+				"consumption-liter-per-kilometer": {
+					"displayName": "liters/km",
+					"unitPattern-count-one": "{0} L/km",
+					"unitPattern-count-other": "{0} L/km"
+				},
+				"consumption-liter-per-100kilometers": {
+					"displayName": "L/100 km",
+					"unitPattern-count-one": "{0} L/100 km",
+					"unitPattern-count-other": "{0} L/100 km"
+				},
+				"consumption-mile-per-gallon": {
+					"displayName": "miles/gal",
+					"unitPattern-count-one": "{0} mpg",
+					"unitPattern-count-other": "{0} mpg"
+				},
+				"consumption-mile-per-gallon-imperial": {
+					"displayName": "miles/gal Imp.",
+					"unitPattern-count-one": "{0} mpg Imp.",
+					"unitPattern-count-other": "{0} mpg Imp."
+				},
+				"digital-terabyte": {
+					"displayName": "TByte",
+					"unitPattern-count-one": "{0} TB",
+					"unitPattern-count-other": "{0} TB"
+				},
+				"digital-terabit": {
+					"displayName": "Tbit",
+					"unitPattern-count-one": "{0} Tb",
+					"unitPattern-count-other": "{0} Tb"
+				},
+				"digital-gigabyte": {
+					"displayName": "GByte",
+					"unitPattern-count-one": "{0} GB",
+					"unitPattern-count-other": "{0} GB"
+				},
+				"digital-gigabit": {
+					"displayName": "Gbit",
+					"unitPattern-count-one": "{0} Gb",
+					"unitPattern-count-other": "{0} Gb"
+				},
+				"digital-megabyte": {
+					"displayName": "MByte",
+					"unitPattern-count-one": "{0} MB",
+					"unitPattern-count-other": "{0} MB"
+				},
+				"digital-megabit": {
+					"displayName": "Mbit",
+					"unitPattern-count-one": "{0} Mb",
+					"unitPattern-count-other": "{0} Mb"
+				},
+				"digital-kilobyte": {
+					"displayName": "kByte",
+					"unitPattern-count-one": "{0} kB",
+					"unitPattern-count-other": "{0} kB"
+				},
+				"digital-kilobit": {
+					"displayName": "kbit",
+					"unitPattern-count-one": "{0} kb",
+					"unitPattern-count-other": "{0} kb"
+				},
+				"digital-byte": {
+					"displayName": "byte",
+					"unitPattern-count-one": "{0} byte",
+					"unitPattern-count-other": "{0} byte"
+				},
+				"digital-bit": {
+					"displayName": "bit",
+					"unitPattern-count-one": "{0} bit",
+					"unitPattern-count-other": "{0} bit"
+				},
+				"duration-century": {
+					"displayName": "c",
+					"unitPattern-count-one": "{0} c",
+					"unitPattern-count-other": "{0} c"
+				},
+				"duration-year": {
+					"displayName": "years",
+					"unitPattern-count-one": "{0} yr",
+					"unitPattern-count-other": "{0} yrs",
+					"perUnitPattern": "{0}/y"
+				},
+				"duration-month": {
+					"displayName": "months",
+					"unitPattern-count-one": "{0} mth",
+					"unitPattern-count-other": "{0} mths",
+					"perUnitPattern": "{0}/m"
+				},
+				"duration-week": {
+					"displayName": "weeks",
+					"unitPattern-count-one": "{0} wk",
+					"unitPattern-count-other": "{0} wks",
+					"perUnitPattern": "{0}/w"
+				},
+				"duration-day": {
+					"displayName": "days",
+					"unitPattern-count-one": "{0} day",
+					"unitPattern-count-other": "{0} days",
+					"perUnitPattern": "{0}/d"
+				},
+				"duration-hour": {
+					"displayName": "hours",
+					"unitPattern-count-one": "{0} hr",
+					"unitPattern-count-other": "{0} hr",
+					"perUnitPattern": "{0}/h"
+				},
+				"duration-minute": {
+					"displayName": "mins",
+					"unitPattern-count-one": "{0} min",
+					"unitPattern-count-other": "{0} min",
+					"perUnitPattern": "{0}/min"
+				},
+				"duration-second": {
+					"displayName": "secs",
+					"unitPattern-count-one": "{0} sec",
+					"unitPattern-count-other": "{0} sec",
+					"perUnitPattern": "{0}/s"
+				},
+				"duration-millisecond": {
+					"displayName": "millisecs",
+					"unitPattern-count-one": "{0} ms",
+					"unitPattern-count-other": "{0} ms"
+				},
+				"duration-microsecond": {
+					"displayName": "μsecs",
+					"unitPattern-count-one": "{0} μs",
+					"unitPattern-count-other": "{0} μs"
+				},
+				"duration-nanosecond": {
+					"displayName": "nanosecs",
+					"unitPattern-count-one": "{0} ns",
+					"unitPattern-count-other": "{0} ns"
+				},
+				"electric-ampere": {
+					"displayName": "amps",
+					"unitPattern-count-one": "{0} A",
+					"unitPattern-count-other": "{0} A"
+				},
+				"electric-milliampere": {
+					"displayName": "milliamps",
+					"unitPattern-count-one": "{0} mA",
+					"unitPattern-count-other": "{0} mA"
+				},
+				"electric-ohm": {
+					"displayName": "ohms",
+					"unitPattern-count-one": "{0} Ω",
+					"unitPattern-count-other": "{0} Ω"
+				},
+				"electric-volt": {
+					"displayName": "volts",
+					"unitPattern-count-one": "{0} V",
+					"unitPattern-count-other": "{0} V"
+				},
+				"energy-kilocalorie": {
+					"displayName": "kcal",
+					"unitPattern-count-one": "{0} kcal",
+					"unitPattern-count-other": "{0} kcal"
+				},
+				"energy-calorie": {
+					"displayName": "cal",
+					"unitPattern-count-one": "{0} cal",
+					"unitPattern-count-other": "{0} cal"
+				},
+				"energy-foodcalorie": {
+					"displayName": "Cal",
+					"unitPattern-count-one": "{0} Cal",
+					"unitPattern-count-other": "{0} Cal"
+				},
+				"energy-kilojoule": {
+					"displayName": "kilojoule",
+					"unitPattern-count-one": "{0} kJ",
+					"unitPattern-count-other": "{0} kJ"
+				},
+				"energy-joule": {
+					"displayName": "joules",
+					"unitPattern-count-one": "{0} J",
+					"unitPattern-count-other": "{0} J"
+				},
+				"energy-kilowatt-hour": {
+					"displayName": "kW-hour",
+					"unitPattern-count-one": "{0} kWh",
+					"unitPattern-count-other": "{0} kWh"
+				},
+				"frequency-gigahertz": {
+					"displayName": "GHz",
+					"unitPattern-count-one": "{0} GHz",
+					"unitPattern-count-other": "{0} GHz"
+				},
+				"frequency-megahertz": {
+					"displayName": "MHz",
+					"unitPattern-count-one": "{0} MHz",
+					"unitPattern-count-other": "{0} MHz"
+				},
+				"frequency-kilohertz": {
+					"displayName": "kHz",
+					"unitPattern-count-one": "{0} kHz",
+					"unitPattern-count-other": "{0} kHz"
+				},
+				"frequency-hertz": {
+					"displayName": "Hz",
+					"unitPattern-count-one": "{0} Hz",
+					"unitPattern-count-other": "{0} Hz"
+				},
+				"length-kilometer": {
+					"displayName": "km",
+					"unitPattern-count-one": "{0} km",
+					"unitPattern-count-other": "{0} km",
+					"perUnitPattern": "{0}/km"
+				},
+				"length-meter": {
+					"displayName": "m",
+					"unitPattern-count-one": "{0} m",
+					"unitPattern-count-other": "{0} m",
+					"perUnitPattern": "{0}/m"
+				},
+				"length-decimeter": {
+					"displayName": "dm",
+					"unitPattern-count-one": "{0} dm",
+					"unitPattern-count-other": "{0} dm"
+				},
+				"length-centimeter": {
+					"displayName": "cm",
+					"unitPattern-count-one": "{0} cm",
+					"unitPattern-count-other": "{0} cm",
+					"perUnitPattern": "{0}/cm"
+				},
+				"length-millimeter": {
+					"displayName": "mm",
+					"unitPattern-count-one": "{0} mm",
+					"unitPattern-count-other": "{0} mm"
+				},
+				"length-micrometer": {
+					"displayName": "µmeters",
+					"unitPattern-count-one": "{0} µm",
+					"unitPattern-count-other": "{0} µm"
+				},
+				"length-nanometer": {
+					"displayName": "nm",
+					"unitPattern-count-one": "{0} nm",
+					"unitPattern-count-other": "{0} nm"
+				},
+				"length-picometer": {
+					"displayName": "pm",
+					"unitPattern-count-one": "{0} pm",
+					"unitPattern-count-other": "{0} pm"
+				},
+				"length-mile": {
+					"displayName": "miles",
+					"unitPattern-count-one": "{0} mi",
+					"unitPattern-count-other": "{0} mi"
+				},
+				"length-yard": {
+					"displayName": "yards",
+					"unitPattern-count-one": "{0} yd",
+					"unitPattern-count-other": "{0} yd"
+				},
+				"length-foot": {
+					"displayName": "feet",
+					"unitPattern-count-one": "{0} ft",
+					"unitPattern-count-other": "{0} ft",
+					"perUnitPattern": "{0}/ft"
+				},
+				"length-inch": {
+					"displayName": "inches",
+					"unitPattern-count-one": "{0} in",
+					"unitPattern-count-other": "{0} in",
+					"perUnitPattern": "{0}/in"
+				},
+				"length-parsec": {
+					"displayName": "parsecs",
+					"unitPattern-count-one": "{0} pc",
+					"unitPattern-count-other": "{0} pc"
+				},
+				"length-light-year": {
+					"displayName": "light yrs",
+					"unitPattern-count-one": "{0} ly",
+					"unitPattern-count-other": "{0} ly"
+				},
+				"length-astronomical-unit": {
+					"displayName": "au",
+					"unitPattern-count-one": "{0} au",
+					"unitPattern-count-other": "{0} au"
+				},
+				"length-furlong": {
+					"displayName": "furlongs",
+					"unitPattern-count-one": "{0} fur",
+					"unitPattern-count-other": "{0} fur"
+				},
+				"length-fathom": {
+					"displayName": "fathoms",
+					"unitPattern-count-one": "{0} ftm",
+					"unitPattern-count-other": "{0} ftm"
+				},
+				"length-nautical-mile": {
+					"displayName": "nmi",
+					"unitPattern-count-one": "{0} nmi",
+					"unitPattern-count-other": "{0} nmi"
+				},
+				"length-mile-scandinavian": {
+					"displayName": "smi",
+					"unitPattern-count-one": "{0} smi",
+					"unitPattern-count-other": "{0} smi"
+				},
+				"length-point": {
+					"displayName": "points",
+					"unitPattern-count-one": "{0} pt",
+					"unitPattern-count-other": "{0} pt"
+				},
+				"light-lux": {
+					"displayName": "lux",
+					"unitPattern-count-one": "{0} lx",
+					"unitPattern-count-other": "{0} lx"
+				},
+				"mass-metric-ton": {
+					"displayName": "t",
+					"unitPattern-count-one": "{0} t",
+					"unitPattern-count-other": "{0} t"
+				},
+				"mass-kilogram": {
+					"displayName": "kg",
+					"unitPattern-count-one": "{0} kg",
+					"unitPattern-count-other": "{0} kg",
+					"perUnitPattern": "{0}/kg"
+				},
+				"mass-gram": {
+					"displayName": "grams",
+					"unitPattern-count-one": "{0} g",
+					"unitPattern-count-other": "{0} g",
+					"perUnitPattern": "{0}/g"
+				},
+				"mass-milligram": {
+					"displayName": "mg",
+					"unitPattern-count-one": "{0} mg",
+					"unitPattern-count-other": "{0} mg"
+				},
+				"mass-microgram": {
+					"displayName": "µg",
+					"unitPattern-count-one": "{0} µg",
+					"unitPattern-count-other": "{0} µg"
+				},
+				"mass-ton": {
+					"displayName": "tons",
+					"unitPattern-count-one": "{0} tn",
+					"unitPattern-count-other": "{0} tn"
+				},
+				"mass-stone": {
+					"displayName": "stones",
+					"unitPattern-count-one": "{0} st",
+					"unitPattern-count-other": "{0} st"
+				},
+				"mass-pound": {
+					"displayName": "pounds",
+					"unitPattern-count-one": "{0} lb",
+					"unitPattern-count-other": "{0} lb",
+					"perUnitPattern": "{0}/lb"
+				},
+				"mass-ounce": {
+					"displayName": "oz",
+					"unitPattern-count-one": "{0} oz",
+					"unitPattern-count-other": "{0} oz",
+					"perUnitPattern": "{0}/oz"
+				},
+				"mass-ounce-troy": {
+					"displayName": "oz troy",
+					"unitPattern-count-one": "{0} oz t",
+					"unitPattern-count-other": "{0} oz t"
+				},
+				"mass-carat": {
+					"displayName": "carats",
+					"unitPattern-count-one": "{0} CD",
+					"unitPattern-count-other": "{0} CD"
+				},
+				"power-gigawatt": {
+					"displayName": "GW",
+					"unitPattern-count-one": "{0} GW",
+					"unitPattern-count-other": "{0} GW"
+				},
+				"power-megawatt": {
+					"displayName": "MW",
+					"unitPattern-count-one": "{0} MW",
+					"unitPattern-count-other": "{0} MW"
+				},
+				"power-kilowatt": {
+					"displayName": "kW",
+					"unitPattern-count-one": "{0} kW",
+					"unitPattern-count-other": "{0} kW"
+				},
+				"power-watt": {
+					"displayName": "watts",
+					"unitPattern-count-one": "{0} W",
+					"unitPattern-count-other": "{0} W"
+				},
+				"power-milliwatt": {
+					"displayName": "mW",
+					"unitPattern-count-one": "{0} mW",
+					"unitPattern-count-other": "{0} mW"
+				},
+				"power-horsepower": {
+					"displayName": "hp",
+					"unitPattern-count-one": "{0} hp",
+					"unitPattern-count-other": "{0} hp"
+				},
+				"pressure-hectopascal": {
+					"displayName": "hPa",
+					"unitPattern-count-one": "{0} hPa",
+					"unitPattern-count-other": "{0} hPa"
+				},
+				"pressure-millimeter-of-mercury": {
+					"displayName": "mmHg",
+					"unitPattern-count-one": "{0} mmHg",
+					"unitPattern-count-other": "{0} mmHg"
+				},
+				"pressure-pound-per-square-inch": {
+					"displayName": "psi",
+					"unitPattern-count-one": "{0} psi",
+					"unitPattern-count-other": "{0} psi"
+				},
+				"pressure-inch-hg": {
+					"displayName": "inHg",
+					"unitPattern-count-one": "{0} inHg",
+					"unitPattern-count-other": "{0} inHg"
+				},
+				"pressure-millibar": {
+					"displayName": "mbar",
+					"unitPattern-count-one": "{0} mbar",
+					"unitPattern-count-other": "{0} mbar"
+				},
+				"speed-kilometer-per-hour": {
+					"displayName": "km/hour",
+					"unitPattern-count-one": "{0} kph",
+					"unitPattern-count-other": "{0} kph"
+				},
+				"speed-meter-per-second": {
+					"displayName": "meters/sec",
+					"unitPattern-count-one": "{0} m/s",
+					"unitPattern-count-other": "{0} m/s"
+				},
+				"speed-mile-per-hour": {
+					"displayName": "miles/hour",
+					"unitPattern-count-one": "{0} mph",
+					"unitPattern-count-other": "{0} mph"
+				},
+				"speed-knot": {
+					"displayName": "kn",
+					"unitPattern-count-one": "{0} kn",
+					"unitPattern-count-other": "{0} kn"
+				},
+				"temperature-generic": {
+					"displayName": "°",
+					"unitPattern-count-other": "{0}°"
+				},
+				"temperature-celsius": {
+					"displayName": "deg. C",
+					"unitPattern-count-one": "{0}°C",
+					"unitPattern-count-other": "{0}°C"
+				},
+				"temperature-fahrenheit": {
+					"displayName": "deg. F",
+					"unitPattern-count-one": "{0}°F",
+					"unitPattern-count-other": "{0}°F"
+				},
+				"temperature-kelvin": {
+					"displayName": "K",
+					"unitPattern-count-one": "{0} K",
+					"unitPattern-count-other": "{0} K"
+				},
+				"volume-cubic-kilometer": {
+					"displayName": "km³",
+					"unitPattern-count-one": "{0} km³",
+					"unitPattern-count-other": "{0} km³"
+				},
+				"volume-cubic-meter": {
+					"displayName": "m³",
+					"unitPattern-count-one": "{0} m³",
+					"unitPattern-count-other": "{0} m³",
+					"perUnitPattern": "{0}/m³"
+				},
+				"volume-cubic-centimeter": {
+					"displayName": "cm³",
+					"unitPattern-count-one": "{0} cm³",
+					"unitPattern-count-other": "{0} cm³",
+					"perUnitPattern": "{0}/cm³"
+				},
+				"volume-cubic-mile": {
+					"displayName": "mi³",
+					"unitPattern-count-one": "{0} mi³",
+					"unitPattern-count-other": "{0} mi³"
+				},
+				"volume-cubic-yard": {
+					"displayName": "yards³",
+					"unitPattern-count-one": "{0} yd³",
+					"unitPattern-count-other": "{0} yd³"
+				},
+				"volume-cubic-foot": {
+					"displayName": "feet³",
+					"unitPattern-count-one": "{0} ft³",
+					"unitPattern-count-other": "{0} ft³"
+				},
+				"volume-cubic-inch": {
+					"displayName": "inches³",
+					"unitPattern-count-one": "{0} in³",
+					"unitPattern-count-other": "{0} in³"
+				},
+				"volume-megaliter": {
+					"displayName": "ML",
+					"unitPattern-count-one": "{0} ML",
+					"unitPattern-count-other": "{0} ML"
+				},
+				"volume-hectoliter": {
+					"displayName": "hL",
+					"unitPattern-count-one": "{0} hL",
+					"unitPattern-count-other": "{0} hL"
+				},
+				"volume-liter": {
+					"displayName": "liters",
+					"unitPattern-count-one": "{0} L",
+					"unitPattern-count-other": "{0} L",
+					"perUnitPattern": "{0}/L"
+				},
+				"volume-deciliter": {
+					"displayName": "dL",
+					"unitPattern-count-one": "{0} dL",
+					"unitPattern-count-other": "{0} dL"
+				},
+				"volume-centiliter": {
+					"displayName": "cL",
+					"unitPattern-count-one": "{0} cL",
+					"unitPattern-count-other": "{0} cL"
+				},
+				"volume-milliliter": {
+					"displayName": "mL",
+					"unitPattern-count-one": "{0} mL",
+					"unitPattern-count-other": "{0} mL"
+				},
+				"volume-pint-metric": {
+					"displayName": "mpt",
+					"unitPattern-count-one": "{0} mpt",
+					"unitPattern-count-other": "{0} mpt"
+				},
+				"volume-cup-metric": {
+					"displayName": "mcup",
+					"unitPattern-count-one": "{0} mc",
+					"unitPattern-count-other": "{0} mc"
+				},
+				"volume-acre-foot": {
+					"displayName": "acre ft",
+					"unitPattern-count-one": "{0} ac ft",
+					"unitPattern-count-other": "{0} ac ft"
+				},
+				"volume-bushel": {
+					"displayName": "bushels",
+					"unitPattern-count-one": "{0} bu",
+					"unitPattern-count-other": "{0} bu"
+				},
+				"volume-gallon": {
+					"displayName": "gal",
+					"unitPattern-count-one": "{0} gal",
+					"unitPattern-count-other": "{0} gal",
+					"perUnitPattern": "{0}/gal US"
+				},
+				"volume-gallon-imperial": {
+					"displayName": "Imp. gal",
+					"unitPattern-count-one": "{0} gal Imp.",
+					"unitPattern-count-other": "{0} gal Imp.",
+					"perUnitPattern": "{0}/gal Imp."
+				},
+				"volume-quart": {
+					"displayName": "qts",
+					"unitPattern-count-one": "{0} qt",
+					"unitPattern-count-other": "{0} qt"
+				},
+				"volume-pint": {
+					"displayName": "pints",
+					"unitPattern-count-one": "{0} pt",
+					"unitPattern-count-other": "{0} pt"
+				},
+				"volume-cup": {
+					"displayName": "cups",
+					"unitPattern-count-one": "{0} c",
+					"unitPattern-count-other": "{0} c"
+				},
+				"volume-fluid-ounce": {
+					"displayName": "fl oz",
+					"unitPattern-count-one": "{0} fl oz",
+					"unitPattern-count-other": "{0} fl oz"
+				},
+				"volume-tablespoon": {
+					"displayName": "tbsp",
+					"unitPattern-count-one": "{0} tbsp",
+					"unitPattern-count-other": "{0} tbsp"
+				},
+				"volume-teaspoon": {
+					"displayName": "tsp",
+					"unitPattern-count-one": "{0} tsp",
+					"unitPattern-count-other": "{0} tsp"
+				},
+				"coordinateUnit": {
+					"east": "{0} E",
+					"north": "{0} N",
+					"south": "{0} S",
+					"west": "{0} W"
+				}
 			}
+		}
 	};
 
 	var M_ISO639_OLD_TO_NEW = {
@@ -1877,6 +3218,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 			LocaleData.apply(this, arguments);
 			this.mCustomData = sap.ui.getCore().getConfiguration().getFormatSettings().getCustomLocaleData();
 		},
+
+		/**
+		 * Retrieves the value for the given arguments by checking first <code>mCustomData</code> and if not
+		 * found <code>mData</code>
+		 * @returns {*} value
+		 * @private
+		 */
 		_get: function() {
 			var aArguments = Array.prototype.slice.call(arguments),
 				sCalendar, sKey;
@@ -1887,8 +3235,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './Configuration', './
 					aArguments = aArguments.slice(1);
 				}
 			}
+
 			sKey = aArguments.join("-");
-			return this.mCustomData[sKey] || this._getDeep(this.mData, arguments);
+			// first try customdata with special formatted key
+			// afterwards try customdata lookup
+			// afterwards try mData lookup
+			var vValue = this.mCustomData[sKey];
+			if (vValue == null) {
+				vValue = this._getDeep(this.mCustomData, arguments);
+				if (vValue == null) {
+					vValue = this._getDeep(this.mData, arguments);
+				}
+			}
+
+			return vValue;
+		},
+
+		/**
+		 * Retrieves merged object from <code>mData</code> extended with <code>mCustomData</code>.
+		 * This function merges the content of <code>mData</code> and <code>mCustomData</code> instead of returning one or the other like <code>_get()</code> does.
+		 *
+		 * Note: Properties defined in <code>mCustomData</code> overwrite the ones from <code>mData</code>.
+		 * @private
+		 * @return {object} merged object
+		 */
+		_getMerged: function () {
+			var mData = this._getDeep(this.mData, arguments);
+			var mCustomData = this._getDeep(this.mCustomData, arguments);
+
+			return jQuery.extend({}, mData, mCustomData);
 		}
 	});
 

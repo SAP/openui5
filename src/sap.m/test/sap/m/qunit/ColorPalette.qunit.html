@@ -1,0 +1,1128 @@
+<!DOCTYPE HTML>
+
+<!--
+  Tested control/class: sap.m.ColorPalette
+-->
+
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>ColorPalette - sap.m</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-xx-bindingSyntax="complex"
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-language="en-US">
+	</script>
+	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+	<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+
+	<script>
+		jQuery.sap.require("sap.m.ColorPalette");
+
+		var ColorPalette = sap.m.ColorPalette,
+			ColorPalettePopover = sap.m.ColorPalettePopover,
+			ResponsivePopover = sap.m.ResponsivePopover,
+			Dialog = sap.m.Dialog,
+			Button = sap.m.Button,
+			Device = sap.ui.Device,
+			CSSColor = sap.ui.core.CSSColor,
+			Control = sap.ui.core.Control;
+
+		var DEFAULT_COLORS = ["gold", "darkorange", "indianred", "darkmagenta", "cornflowerblue", "deepskyblue", "darkcyan",
+			"olivedrab", "darkslategray", "azure", "white", "lightgray", "darkgray", "dimgray", "black"];
+
+
+		QUnit.module("Internal API");
+
+		QUnit.test("init", function (assert) {
+			//Act
+			var oCP = new ColorPalette();
+
+			// Assert
+			assert.strictEqual(oCP._bShowDefaultColorButton, false, "should lead to default value of _bShowDefaultColorButton");
+			assert.strictEqual(oCP._bShowMoreColorsButton, false, "should lead to default value of _bShowMoreColorsButton");
+
+			assert.deepEqual(oCP.onsapspace, oCP.ontap, "Keyboard handler for <sapspace> shuld be the same as for <tap>");
+			assert.deepEqual(oCP.onsapenter, oCP.ontap, "Keyboard handler for <sapenter> shuld be the same as for <tap>");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("exit", function (assert) {
+			//Prepare
+			var oCP = new ColorPalette(),
+				oSpyMoreColorsDialogDestroy,
+				oSpyItemNavDestroy,
+				oSpyRemoveDelegate,
+				oItemNavigation = new ColorPalette.prototype._ItemNavigation();
+
+			oCP._oMoreColorsDialog = new Dialog();
+			oCP._oItemNavigation = oItemNavigation;
+
+			oSpyMoreColorsDialogDestroy = this.spy(oCP._oMoreColorsDialog, "destroy");
+			oSpyItemNavDestroy = this.spy(oCP._oItemNavigation, "destroy");
+			oSpyRemoveDelegate = this.spy(oCP, "removeDelegate");
+
+			// Act
+			oCP.destroy();
+
+			// Assert
+			assert.equal(oSpyMoreColorsDialogDestroy.callCount, 1, "'More colors' dialog #destroy is called");
+			assert.strictEqual(this._oMoreColorsDialog, undefined, "There is no reference to the 'More colors' dialog");
+
+			assert.equal(oSpyItemNavDestroy.callCount, 1, "ItemNavigation#destroy is called");
+			assert.strictEqual(this._oItemNavigation, undefined, "There is no reference to the ItemNavigation");
+
+			assert.equal(oSpyRemoveDelegate.callCount, 1, "Call to removeDelegate should be executed");
+			assert.strictEqual(oSpyRemoveDelegate.getCall(0).args[0], oItemNavigation, "Delegate to the ItemNavigation" +
+				" instance should be removed");
+
+			// Cleanup
+			oSpyMoreColorsDialogDestroy.restore();
+			oSpyItemNavDestroy.restore();
+			oSpyRemoveDelegate.restore();
+		});
+
+
+		QUnit.test("ItemNavigation after rendering", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette();
+
+			oCP.placeAt("qunit-fixture");
+			// Act
+			oCP.onAfterRendering();
+
+			// Assert
+			assert.ok(oCP._oItemNavigation, ".. should be initialized");
+			assert.ok(oCP._oItemNavigation instanceof ColorPalette.prototype._ItemNavigation, "..should be of expected type");
+
+			// Cleanup
+			oCP.destroy();
+
+		});
+
+		QUnit.test("_bShowDefaultColorButton - default value", function (assert) {
+			// Act
+			var oCP = new ColorPalette();
+
+			// Assert
+			assert.equal(oCP._getShowDefaultColorButton(), false, "..should be initially <false>");
+			assert.equal(oCP._getDefaultColorButton(), null, "..should not lead to creation of defaultColor button aggregation");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+
+		QUnit.test("_setShowDefaultColorButton with invalid type", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				sInvalidType = "invalid type of string";
+
+			// Act
+			assert.throws(function () {
+
+					oCP._setShowDefaultColorButton(sInvalidType);
+				}, Error("Cannot set internal property 'showDefaultColorButton' - invalid value: " + sInvalidType),
+				"..should throw a certain exception");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+
+		QUnit.test("_setShowDefaultColorButton, _getShowDefaultColorButton", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oResult;
+
+			// Act
+			oResult = oCP._setShowDefaultColorButton(true);
+
+			// Assert
+			assert.equal(oCP._getShowDefaultColorButton(), true, "..should be <true> after setter with <true> is called");
+			assert.ok(oCP._getDefaultColorButton(), "..should create a default button aggregation");
+			assert.equal(oCP._getDefaultColorButton().getVisible(), true, "..should set visibility of the defaultColorButton accordingly");
+			assert.deepEqual(oResult, oCP, "..setter returns this");
+
+			// Act
+			oCP._setShowDefaultColorButton(false);
+
+			// Assert
+			assert.equal(oCP._getShowDefaultColorButton(), false, "..should be <false> after setter with <false> is called");
+			assert.equal(oCP._getDefaultColorButton().getVisible(), false, "..should set visibility of the defaultColorButton accordingly");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+
+		QUnit.test("_bShowMoreColorsButton - default value", function (assert) {
+			// Act
+			var oCP = new ColorPalette();
+
+			// Assert
+			assert.equal(oCP._getShowMoreColorsButton(), false, "..should be initially <false>");
+			assert.equal(oCP._getMoreColorsButton(), null, "..should not lead to creation of moreColors button aggregation");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("_setShowMoreColorsButton with invalid type", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				sInvalidType = "invalid type of string";
+
+			// Act
+			assert.throws(function () {
+
+					oCP._setShowMoreColorsButton(sInvalidType);
+				}, Error("Cannot set internal property 'showMoreColorsButton' - invalid value: " + sInvalidType),
+				"..should throw a certain exception");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+
+		QUnit.test("_setShowMoreColorsButton, _getShowMoreColorsButton", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oResult;
+
+			// Act
+			oResult = oCP._setShowMoreColorsButton(true);
+
+			// Assert
+			assert.equal(oCP._getShowMoreColorsButton(), true, "..should be <true> after setter with <true> is called");
+			assert.ok(oCP._getMoreColorsButton(), null, "..should create moreColors button aggregation");
+			assert.equal(oCP._getMoreColorsButton().getVisible(), true, "..should set visibility of the moreColors button accordingly");
+			assert.deepEqual(oResult, oCP, "..setter returns this");
+
+			// Act
+			oCP._setShowMoreColorsButton(false);
+
+			// Assert
+			assert.equal(oCP._getShowMoreColorsButton(), false, "..should be <false> after setter with <false> is called");
+			assert.equal(oCP._getMoreColorsButton().getVisible(), false, "..should set visibility of the moreColors button accordingly");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("_setDefaultColor - invalid value", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				spyCSSColorIsValid = this.spy(CSSColor, "isValid");
+
+			// Act & Assert
+			assert.throws(function () {
+					oCP._setDefaultColor("mycolor");
+				}, Error("Cannot set internal property '_defaultColor' - invalid value: mycolor"),
+				"..should throw a certain exception");
+			assert.equal(spyCSSColorIsValid.callCount, 1, "..CSSColor validation is called");
+			assert.deepEqual(spyCSSColorIsValid.getCall(0).args, ["mycolor"], "..with certain argument");
+			assert.notOk(oCP._oDefaultColor, "..defaultColor should not be set");
+
+			// Cleanup
+			spyCSSColorIsValid.restore();
+			oCP.destroy();
+		});
+
+		QUnit.test("_setDefaultColor - valid value", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette();
+
+			// Pre-assert
+			assert.notOk(oCP._oDefaultColor, ".. defaultColor initially should not be defined");
+
+			// Act & Assert
+			assert.deepEqual(oCP._setDefaultColor("red"), oCP, "..setter return this");
+			assert.equal(oCP._oDefaultColor, "red", "..works for named color");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("_getDefaultColor", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette();
+
+			oCP._oDefaultColor = "orange";
+
+			// Act & Assert
+			assert.equal(oCP._getDefaultColor(), "orange", ".. uses the private variable _oDefaultColor");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("_openColorPicker", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oSpyBeforeOpen = this.spy(),
+				oSpyOpenDialog = this.spy(),
+				oStubOpenDialog = this.stub(oCP, "_ensureMoreColorsDialog", function () {
+					return {open: oSpyOpenDialog}
+				});
+
+			oCP.attachEvent("_beforeOpenColorPicker", oSpyBeforeOpen);
+
+			// Act
+			oCP._openColorPicker();
+
+			// Assert
+			assert.equal(oSpyBeforeOpen.callCount, 1, "..should fire _beforeOpenColorPicker event");
+			assert.equal(oSpyOpenDialog.callCount, 1, "..should open call Dialog's open method");
+
+			// Cleanup
+			oStubOpenDialog.restore();
+			oCP.destroy();
+		});
+
+		QUnit.test("_ensureMoreColorsDialog creates dialog only once", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oStubDialog = {
+					fakeProp: "1", destroy: function () {
+					}
+				},
+				oResult,
+				oDialogFirstTimeCreation,
+				oStubCreateMoreColors = this.stub(oCP, "_createMoreColorsDialog", function () {
+					return oStubDialog;
+				});
+
+			// Pre-Assert
+			assert.notOk(oCP._oMoreColorsDialog, "..initially no dialog is created");
+
+			// Act
+			oResult = oCP._ensureMoreColorsDialog();
+
+			// Assert
+			assert.ok(oCP._oMoreColorsDialog, "..first time ensuring the dialog leads to an object creation");
+			assert.deepEqual(oCP._oMoreColorsDialog, oStubDialog, "..where the object is the one that function " +
+				"createMoreColorsDialog creates");
+			assert.deepEqual(oCP._oMoreColorsDialog, oResult, "..and the same instance if being returned");
+
+			oDialogFirstTimeCreation = oCP._oMoreColorsDialog;
+
+			// Act
+			oCP._ensureMoreColorsDialog();
+
+			// Prepare
+			assert.deepEqual(oCP._oMoreColorsDialog, oDialogFirstTimeCreation, ".. second time ensuring dialog reuses the" +
+				" just crated instance");
+
+			// Cleanup
+			oStubCreateMoreColors.restore();
+			oCP.destroy();
+		});
+
+		QUnit.test("_createMoreColorsDialog for Desktop", function (assert) {
+			// Prepare
+			var oDialog,
+				sTitleMoreColors = "More Colors...",
+				oDeviceDesktopStub = this.stub(Device.system, "phone", false),
+				oCP = new ColorPalette();
+
+
+			// Act
+			oDialog = oCP._createMoreColorsDialog();
+
+			// Assert
+			assert.ok(oDialog, "..returns an object");
+			assert.equal(oDialog.getMetadata().getName(), "sap.m.Dialog", "..of type sap.m.Dialog");
+			assert.equal(oDialog.getContentWidth(), "29rem", "..with certain contentWidth");
+			assert.equal(oDialog.getStretch(), false, ".. with no stretch");
+
+			assert.ok(oDialog.getBeginButton(), "..and with begin button");
+			assert.ok(oDialog.getEndButton(), "..and with end button");
+
+			// Cleanup
+			oCP.destroy();
+			oDeviceDesktopStub.restore();
+		});
+
+		QUnit.test("_createMoreColorsDialog for phone", function (assert) {
+			// Prepare
+			var oDialog,
+				sTitleMoreColors = "More Colors...",
+				oDevicePhoneStub = this.stub(Device.system, "phone", true),
+				oCP = new ColorPalette();
+
+
+			// Act
+			oDialog = oCP._createMoreColorsDialog();
+
+			// Assert
+			assert.ok(oDialog, "..returns an object");
+			assert.equal(oDialog.getMetadata().getName(), "sap.m.Dialog", "..of type sap.m.Dialog");
+			assert.equal(oDialog.getContentWidth(), "", "..with no contentWidth");
+			assert.equal(oDialog.getStretch(), true, ".. with stretch=true");
+
+			assert.ok(oDialog.getBeginButton(), "..and with begin button");
+			assert.ok(oDialog.getEndButton(), "..and with end button");
+
+			// Cleanup
+			oCP.destroy();
+			oDevicePhoneStub.restore();
+		});
+
+		QUnit.test("_focusFirstElement when 'Default Color' button is available", function (asserr) {
+			// Prepare
+			var oCP = new sap.m.ColorPalette({}),
+				oSpyFocusDefaultButton;
+
+			oCP._setShowDefaultColorButton(true);
+			oCP.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oSpyFocusDefaultButton = this.spy(oCP._getDefaultColorButton().getDomRef(), "focus");
+
+			// Act
+			oCP._focusFirstElement();
+
+			// Assert
+			assert.ok(oSpyFocusDefaultButton.called, "..focuses the 'Default Color' button");
+
+			// Cleanup
+			oSpyFocusDefaultButton.restore();
+			oCP.destroy();
+		});
+
+		QUnit.test("_focusFirstElement when 'Default Color' button is not available", function (assert) {
+			// Prepare
+			var oCP = new sap.m.ColorPalette({}),
+				oSpyFocusFirstSwatch;
+
+			oCP._setShowDefaultColorButton(false);
+			oCP.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			oSpyFocusFirstSwatch = this.spy(oCP._getAllSwatches()[0], "focus");
+
+			// Act
+			oCP._focusFirstElement();
+
+			// Assert
+			assert.ok(oSpyFocusFirstSwatch.called, "..focuses the first swatch");
+
+			// Cleanup
+			oSpyFocusFirstSwatch.restore();
+			oCP.destroy();
+		});
+
+		QUnit.test("_fireColorSelect", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oSpyFireColorSelect = this.spy(oCP, "fireColorSelect"),
+				oOriginalEvent = jQuery.Event();
+
+			// Act
+			oCP._fireColorSelect("red", true, oOriginalEvent);
+
+			// Assert
+			assert.equal(oSpyFireColorSelect.callCount, 1, "..calls fireColorSelect once");
+			assert.deepEqual(oSpyFireColorSelect.getCall(0).args[0], {
+					_originalEvent: oOriginalEvent,
+					value: "red",
+					id: oCP.getId(),
+					defaultAction: true
+				},
+				"..with certain parameters");
+
+			oSpyFireColorSelect.reset();
+
+			// Act
+			oCP._fireColorSelect("green", false, oOriginalEvent);
+
+			// Assert
+			assert.equal(oSpyFireColorSelect.callCount, 1, "..calls fireColorSelect once");
+			assert.deepEqual(oSpyFireColorSelect.getCall(0).args[0], {
+					_originalEvent: oOriginalEvent,
+					value: "green",
+					id: oCP.getId(),
+					defaultAction: false
+				},
+				"..with certain parameters");
+
+			// Cleanup
+			oSpyFireColorSelect.restore();
+			oCP.destroy();
+
+		});
+
+
+		QUnit.module("Internal API: Internal ItemNavigation");
+
+		QUnit.test("ItemNavigation._calcIndexOfBorderSwatch", function (assert) {
+			// Prepare
+			var oItemNavigation = new ColorPalette.prototype._ItemNavigation();
+
+			function callSut(bHome, iCurrentSwatchIndex, iSwatchesCount, iExpectedResult) {
+				assert.equal(oItemNavigation._calcIndexOfBorderSwatch(bHome, iCurrentSwatchIndex, iSwatchesCount), iExpectedResult,
+					"calcIndexOfBorderSwatch(" + bHome
+					+ ", " + iCurrentSwatchIndex + ", " + iSwatchesCount + ")");
+			}
+
+			// Act & Assert
+			// First row
+			callSut(true, 0, 15, 0);
+			callSut(true, 2, 15, 0);
+			callSut(true, 4, 15, 0);
+
+			callSut(false, 0, 15, 4);
+			callSut(false, 2, 15, 4);
+			callSut(false, 4, 15, 4);
+
+
+			// Second row
+			callSut(true, 5, 15, 5);
+			callSut(true, 7, 15, 5);
+			callSut(true, 9, 15, 5);
+
+			callSut(false, 5, 15, 9);
+			callSut(false, 7, 15, 9);
+			callSut(false, 9, 15, 9);
+
+			// Cleanup
+			oItemNavigation.destroy();
+		});
+
+		QUnit.test("onsaphome", function (assert) {
+			assert.deepEqual(ColorPalette.prototype._ItemNavigation.prototype.onsaphome,
+				ColorPalette.prototype._ItemNavigation.prototype._onHomeEnd,
+				"..corresponds to the function ItemNavigation.prototype._onHomeEnd");
+		});
+
+		QUnit.test("onsapend", function (assert) {
+			assert.deepEqual(ColorPalette.prototype._ItemNavigation.prototype.onsapend,
+				ColorPalette.prototype._ItemNavigation.prototype._onHomeEnd,
+				"..corresponds to the function ItemNavigation.prototype._onHomeEnd");
+		});
+
+
+		QUnit.test("ItemNavigation._onHomeEnd when HOME is pressed", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oEvent = jQuery.Event("saphome"),
+				oSpyPreventDefault = this.spy(oEvent, "preventDefault"),
+				oSpyStopPropagation = this.spy(oEvent, "stopPropagation"),
+				oSpyFirstSwatchFocus = this.spy(),
+				oStubGetAllSwatches = this.stub(oCP, "_getAllSwatches", function () {
+					var oSwatches = new Array(15);
+					oSwatches[0] = {focus: oSpyFirstSwatchFocus}
+					return oSwatches;
+				}),
+				oSpyCalcIndexOfBorderSwatch;
+
+			oCP._oItemNavigation = new ColorPalette.prototype._ItemNavigation(oCP);
+			oSpyCalcIndexOfBorderSwatch = this.spy(oCP._oItemNavigation, "_calcIndexOfBorderSwatch");
+
+			// Event is on swatch
+			var oSwatchCont = document.createElement("div");
+			oEvent.target = document.createElement("div");
+			oEvent.target.className = "sapMColorPaletteSquare";
+			oSwatchCont.appendChild(oEvent.target);
+
+
+			// Act
+			oCP._oItemNavigation._onHomeEnd(oEvent);
+
+			// Assert
+			assert.equal(oSpyPreventDefault.callCount, 1, ".. prevents default browser action");
+			assert.equal(oSpyStopPropagation.callCount, 1, ".. stops propagating the event");
+			assert.equal(oSpyCalcIndexOfBorderSwatch.callCount, 1, "..calls _calcIndexOfBorderSwatch");
+			assert.deepEqual(oSpyCalcIndexOfBorderSwatch.getCall(0).args, [true, 0, 15], "..with certain parameters");
+			assert.equal(oSpyFirstSwatchFocus.callCount, 1, ".. and results in focusing the first swatch");
+
+			// Cleanup
+			oSpyPreventDefault.restore();
+			oSpyStopPropagation.restore();
+			oStubGetAllSwatches.restore();
+			oSpyCalcIndexOfBorderSwatch.restore();
+			oCP.destroy();
+		});
+
+		QUnit.test("ItemNavigation._onHomeEnd when END is pressed", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oEvent = jQuery.Event("sapend"),
+				oSpyPreventDefault = this.spy(oEvent, "preventDefault"),
+				oSpyStopPropagation = this.spy(oEvent, "stopPropagation"),
+				oSpyLastSwatchFocus = this.spy(),
+				oStubGetAllSwatches = this.stub(oCP, "_getAllSwatches", function () {
+					var oSwatches = new Array(10);
+					oSwatches[4] = {focus: oSpyLastSwatchFocus};
+					return oSwatches;
+				}),
+				oSpyCalcIndexOfBorderSwatch;
+
+			oCP._oItemNavigation = new ColorPalette.prototype._ItemNavigation(oCP);
+			oSpyCalcIndexOfBorderSwatch = this.spy(oCP._oItemNavigation, "_calcIndexOfBorderSwatch");
+
+			// Event is on swatch
+			var oSwatchCont = document.createElement("div");
+			oEvent.target = document.createElement("div");
+			oEvent.target.className = "sapMColorPaletteSquare";
+			oSwatchCont.appendChild(oEvent.target);
+
+
+			// Act
+			oCP._oItemNavigation._onHomeEnd(oEvent);
+
+			// Assert
+			assert.equal(oSpyPreventDefault.callCount, 1, ".. prevents default browser action");
+			assert.equal(oSpyStopPropagation.callCount, 1, ".. stops propagating the event");
+			assert.equal(oSpyCalcIndexOfBorderSwatch.callCount, 1, "..calls _calcIndexOfBorderSwatch");
+			assert.deepEqual(oSpyCalcIndexOfBorderSwatch.getCall(0).args, [false, 0, 10], "..with certain parameters");
+			assert.equal(oSpyLastSwatchFocus.callCount, 1, ".. and results in focusing the first swatch");
+
+			// Cleanup
+			oSpyPreventDefault.restore();
+			oSpyStopPropagation.restore();
+			oStubGetAllSwatches.restore();
+			oSpyCalcIndexOfBorderSwatch.restore();
+			oCP.destroy();
+		});
+
+		QUnit.test("ItemNavigation._onHomeEnd when focus is not on a swatch", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oEvent = jQuery.Event("sapend"),
+				oSpyPreventDefault = this.spy(oEvent, "preventDefault"),
+				oSpyStopPropagation = this.spy(oEvent, "stopPropagation"),
+				oSpyCalcIndexOfBorderSwatch;
+
+			oCP._oItemNavigation = new ColorPalette.prototype._ItemNavigation(oCP);
+			oSpyCalcIndexOfBorderSwatch = this.spy(oCP._oItemNavigation, "_calcIndexOfBorderSwatch");
+
+			// Event is not on a swatch (i.e. no certain css class is attached to it
+			oEvent.target = document.createElement("div");
+
+			// Act
+			oCP._oItemNavigation._onHomeEnd(oEvent);
+
+			// Assert
+			assert.equal(oSpyPreventDefault.callCount, 0, ".. should not prevent default browser action");
+			assert.equal(oSpyStopPropagation.callCount, 0, ".. should not stop propagating the event");
+			assert.equal(oSpyCalcIndexOfBorderSwatch.callCount, 0, "..should not call _calcIndexOfBorderSwatch");
+
+			// Cleanup
+			oSpyPreventDefault.restore();
+			oSpyStopPropagation.restore();
+			oSpyCalcIndexOfBorderSwatch.restore();
+			oCP.destroy();
+		});
+
+		QUnit.module("InternalAPI - ColorHelper");
+
+		QUnit.test("getNamedColor", function (assert) {
+			// Prepare
+			var oCPHelper = ColorPalette.prototype._ColorsHelper;
+
+			// Act
+			assert.equal(oCPHelper.getNamedColor("#Ffb200"), "gold", "..finds the right named color for given hex");
+			assert.equal(oCPHelper.getNamedColor("#000"), "black", "..finds the right named color for given short hex");
+			assert.equal(oCPHelper.getNamedColor("hsl"), undefined, "..is not supported for HSL color");
+			assert.equal(oCPHelper.getNamedColor("Gold"), "gold", "..works for named colors as well");
+			assert.equal(oCPHelper.getNamedColor("magentanonexisting"), undefined, "..returns undefined for named colors" +
+				" that does not exist");
+			assert.equal(oCPHelper.getNamedColor("#CcCcCc"), undefined, "..returns undefined for HEX colors that does not correspond" +
+				" to a named color");
+
+		});
+
+
+		QUnit.module("Public API");
+		QUnit.test("Property <colors> - default value", function (assert) {
+			// Act
+			var oCP = new ColorPalette();
+
+			// Assert
+			assert.deepEqual(oCP.getColors(), DEFAULT_COLORS, "..should be as expected");
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("Property <colors> - setColor with allowed amount of colors", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				aColors = ["green", "#fff000"],
+				oSpySetProperty = this.spy(oCP, "setProperty");
+
+			// Act
+			oCP.setColors(aColors);
+
+			// Assert
+			assert.equal(oSpySetProperty.callCount, 1, ".. should call setProperty");
+			assert.deepEqual(oSpySetProperty.getCall(0).args, ["colors", aColors], ".. with the given colors");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("Property <colors> - setColor with invalid color", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				aColors = ["greenn", "#fff000#"],
+				oSpySetProperty = this.spy(oCP, "setProperty"),
+				oSpyValidateProperty = this.spy(oCP, "validateProperty");
+
+			// Act
+			assert.throws(function () {
+					oCP.setColors(aColors);
+				}, '..should throw an exception with expected message'
+			);
+
+			assert.equal(oSpyValidateProperty.callCount, 1, ".. should delegate validation to the validateProperty");
+			assert.equal(oSpySetProperty.callCount, 0, ".. should not really call the setProperty");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("Property <colors> - setColor with valid colors, but less than allowed", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				aColors = DEFAULT_COLORS.slice().concat(["#FFFAAA"]);
+			oSpySetProperty = this.spy(oCP, "setProperty");
+
+			// Act
+			assert.throws(function () {
+					oCP.setColors(aColors);
+				},
+				Error("Cannot set property 'colors' - array must has minimum 2 and maximum 15 elements"),
+				"..should throw an exception with expected message"
+			);
+			assert.equal(oSpySetProperty.callCount, 0, ".. should not really call the setProperty");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.test("Property <colors> - setColor with valid colors, but more than allowed", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				aColors = ["green"],
+				oSpySetProperty = this.spy(oCP, "setProperty");
+
+			// Act
+			assert.throws(function () {
+					oCP.setColors(aColors);
+				},
+				Error("Cannot set property 'colors' - array must has minimum 2 and maximum 15 elements"),
+				'.. should throw an exception with expected message'
+			);
+
+			assert.equal(oSpySetProperty.callCount, 0, ".. should not really set call the setProperty");
+
+			// Cleanup
+			oCP.destroy();
+		});
+
+		QUnit.module("ColorPalette - ARIA");
+
+		// The ARIA tests are the only ones, that checks something at the DOM. DOM rendering is supposed to be tested via OPA.
+		QUnit.test("ARIA attributes are rendered", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette({
+					colors: [
+						"black",
+						"#ffffff",
+						"#a811ff"
+					]/*black, white, non-named*/
+				}),
+				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				$SwatchContainer,
+				$aSwatches,
+				sCPSwatchContainerTitle = oBundle.getText("COLOR_PALETTE_SWATCH_CONTAINER_TITLE");
+
+			// Act
+			oCP.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Assert
+			// swatch container
+			$SwatchContainer = oCP.$().find(".sapMColorPaletteContent");
+			assert.equal($SwatchContainer.attr("role"), "region", "Swatch Container: role");
+			assert.equal($SwatchContainer.attr("aria-label"), sCPSwatchContainerTitle, "Swatch Container: aria-label");
+
+			// swatches
+			$aSwatches = oCP._getAllSwatches();
+
+			assert.equal($aSwatches[0].getAttribute("role"), "button", "Swatch 1 role");
+			assert.equal($aSwatches[0].getAttribute("aria-label"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [1, "black"]),
+				"Swatch 1 label");
+
+			assert.equal($aSwatches[1].getAttribute("role"), "button", "Swatch 2 role");
+			assert.equal($aSwatches[1].getAttribute("aria-label"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [2, "white"]),
+				"Swatch 2 label");
+
+			assert.equal($aSwatches[2].getAttribute("role"), "button", "Swatch 3 role");
+			assert.equal($aSwatches[2].getAttribute("aria-label"), oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR", [3,
+					oBundle.getText("COLOR_PALETTE_PREDEFINED_COLOR_CUSTOM")]),
+				"Swatch 3 label");
+
+			// Cleanup
+			oCP.destroy()
+		});
+
+
+		QUnit.module("ColorPalettePopover - API");
+
+		QUnit.test("exit", function (assert) {
+			var oCPP = new ColorPalettePopover(),
+				oSpyPopoverRemoveDelegate = this.spy(),
+				oSpyPopoverDestroy = this.spy(),
+				onAfterRenderingDelegate = {};
+
+			oCPP._oPopover = {
+				removeDelegate: oSpyPopoverRemoveDelegate,
+				destroy: oSpyPopoverDestroy,
+				_onAfterRenderingDelegate: onAfterRenderingDelegate,
+				getDomRef: function () {
+				}
+
+			};
+
+			// Act
+			oCPP.destroy();
+
+			// Assert
+			assert.equal(oSpyPopoverDestroy.callCount, 1, "..should destroy internal popover");
+			assert.equal(oSpyPopoverRemoveDelegate.callCount, 1, "..should call internal popover's removeDelegate");
+			assert.deepEqual(oSpyPopoverRemoveDelegate.getCall(0).args, [onAfterRenderingDelegate],
+				"..with the right delegate object");
+			assert.notOk(oCPP._oPopover, "..should not keep reference to the popover");
+
+		});
+
+		QUnit.test("openBy", function (assert) {
+			// Prepare
+			var oOpener = new Button(),
+				oCPP = new ColorPalettePopover(),
+				oRPopover = new ResponsivePopover(),
+				oStubEnsurePopover = this.stub(oCPP, "_ensurePopover", function () {
+					return oRPopover;
+				}),
+				oSpyResponsivePopoverOpenBy = this.spy(sap.m.ResponsivePopover.prototype, "openBy");
+
+			// Act
+			oCPP.openBy(oOpener);
+
+			// Assert
+			assert.equal(oSpyResponsivePopoverOpenBy.callCount, 1, "..should call ResponsivePopover.openBy");
+			assert.deepEqual(oSpyResponsivePopoverOpenBy.getCall(0).args, [oOpener]);
+
+			// Cleanup
+			oOpener.destroy();
+			oCPP.destroy();
+			oStubEnsurePopover.restore();
+			oSpyResponsivePopoverOpenBy.restore();
+		});
+
+
+		QUnit.test("getDomRef", function (assert) {
+			// Prepare
+			var oOpener = new Button(),
+				oCPP = new ColorPalettePopover(),
+				oRPopover = new ResponsivePopover(),
+				oStubEnsurePopover = this.stub(oCPP, "_ensurePopover", function () {
+					return oRPopover;
+				}),
+				oSpyResponsivePopoverGetDomRef = this.spy(sap.m.ResponsivePopover.prototype, "getDomRef");
+
+			// Act
+			oCPP.getDomRef();
+
+			// Assert
+			assert.equal(oSpyResponsivePopoverGetDomRef.callCount, 1, "..should call ResponsivePopover.getDomRef");
+			assert.deepEqual(oSpyResponsivePopoverGetDomRef.getCall(0).args, []);
+
+			// Cleanup
+			oOpener.destroy();
+			oCPP.destroy();
+			oStubEnsurePopover.restore();
+			oSpyResponsivePopoverGetDomRef.restore();
+		});
+
+		QUnit.test("close", function (assert) {
+			// Prepare
+			var oOpener = new Button(),
+				oCPP = new ColorPalettePopover(),
+				oRPopover = new ResponsivePopover(),
+				oStubEnsurePopover = this.stub(oCPP, "_ensurePopover", function () {
+					return oRPopover;
+				}),
+				oSpyResponsivePopoveClose = this.spy(sap.m.ResponsivePopover.prototype, "close");
+
+			// Act
+			oCPP.close();
+
+			// Assert
+			assert.equal(oSpyResponsivePopoveClose.callCount, 1, "..should call ResponsivePopover.close");
+			assert.deepEqual(oSpyResponsivePopoveClose.getCall(0).args, []);
+
+			// Cleanup
+			oOpener.destroy();
+			oCPP.destroy();
+			oStubEnsurePopover.restore();
+			oSpyResponsivePopoveClose.restore();
+		});
+
+
+		QUnit.test("Property <colors>", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oCPP = new ColorPalettePopover(),
+				oStub_getPalette = this.stub(oCPP, "_getPalette").returns(oCP),
+				oSpyCPSetColor = this.spy(ColorPalette.prototype.setColors, "call"),
+				oSpyCPSetProperty = this.spy(ColorPalette.prototype, "setProperty");
+
+			// Act
+			oCPP.setColors(["red", "green"]);
+
+			// Assert
+			assert.equal(oSpyCPSetColor.callCount, 1, "..should call the setColors to the ColorPalette");
+			assert.deepEqual(oSpyCPSetColor.getCall(0).args, [oCP, ["red", "green"]], "..with the same parameter");
+			assert.equal(oSpyCPSetProperty.callCount, 1, "..should call the setProperty on the Control");
+			assert.deepEqual(oSpyCPSetProperty.getCall(0).args, ["colors", ["red", "green"]], " ..with same parameter");
+
+			// Cleanup
+			oStub_getPalette.restore();
+			oSpyCPSetColor.restore();
+			oCP.destroy();
+			oCPP.destroy();
+		});
+
+		QUnit.test("Property <showDefaultColorButton>", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oCPP = new ColorPalettePopover(),
+				oStub_getPalette = this.stub(oCPP, "_getPalette").returns(oCP),
+				oSpyCP_setShowDefaultColorButton = this.spy(ColorPalette.prototype._setShowDefaultColorButton, "call"),
+				oSpyCPP_setShowDefaultColorButton = this.spy(Control.prototype.setProperty, "apply");
+
+			// Act
+			oCPP.setShowDefaultColorButton(true);
+
+			// Assert
+			assert.equal(oSpyCP_setShowDefaultColorButton.callCount, 1, "..should call the _setShowDefaultColorButton to the ColorPalette");
+			assert.deepEqual(oSpyCP_setShowDefaultColorButton.getCall(0).args[1],
+				/*first param is the instance, second is the value*/true, "..with the same parameter");
+			assert.equal(oSpyCPP_setShowDefaultColorButton.callCount, 1, "..should call the setProperty on the Control");
+			assert.deepEqual(oSpyCPP_setShowDefaultColorButton.getCall(0).args[1], {
+				0: "showDefaultColorButton",
+				1: true
+			}, "..with same parameter");
+
+			// Cleanup
+			oStub_getPalette.restore();
+			oSpyCP_setShowDefaultColorButton.restore();
+			oSpyCPP_setShowDefaultColorButton.restore();
+			oCP.destroy();
+			oCPP.destroy();
+		});
+
+		QUnit.test("Property <showMoreColorsButton>", function (assert) {
+			// Prepare
+			var oCP = new ColorPalette(),
+				oCPP = new ColorPalettePopover(),
+				oStub_getPalette = this.stub(oCPP, "_getPalette").returns(oCP),
+				oSpyCP_setShowMoreColorsButton = this.spy(ColorPalette.prototype._setShowMoreColorsButton, "call"),
+				oSpyCPP_setShowMoreColorsButton = this.spy(Control.prototype.setProperty, "apply");
+
+			// Act
+			oCPP.setShowMoreColorsButton(true);
+
+			// Assert
+			assert.equal(oSpyCP_setShowMoreColorsButton.callCount, 1, "..should call the _setShowMoreColorsButton to the ColorPalette");
+			assert.deepEqual(oSpyCP_setShowMoreColorsButton.getCall(0).args[1],
+				/*first param is the instance, second is the value*/true, "..with the same parameter");
+			assert.equal(oSpyCPP_setShowMoreColorsButton.callCount, 1, "..should call the setProperty on the Control");
+			assert.deepEqual(oSpyCPP_setShowMoreColorsButton.getCall(0).args[1], {
+				0: "showMoreColorsButton",
+				1: true
+			}, "..with same parameter");
+
+			// Cleanup
+			oStub_getPalette.restore();
+			oSpyCP_setShowMoreColorsButton.restore();
+			oSpyCPP_setShowMoreColorsButton.restore();
+			oCP.destroy();
+			oCPP.destroy();
+		});
+
+		QUnit.test("colorSelect event ", function (assert) {
+			// Prepare
+			var oCPP = new ColorPalettePopover(),
+				/* custom spies as the event cannot be kept after it is being thrown (the framework returns it back to the pool)*/
+				oSpyColorSelectParams = {},
+				aColorSelectCalls = [];
+
+			oCPP.attachEvent("colorSelect", function (oEvent) {
+				aColorSelectCalls.push("");
+				oSpyColorSelectParams = oEvent.getParameters();
+			});
+
+			// Act
+			oCPP._getPalette().fireEvent("colorSelect", {value: 'red', defaultAction: true});
+
+			// Assert
+			assert.ok(aColorSelectCalls.length, 1, "..is fired when the inner ColorPalette fires its own colorSelect");
+			assert.deepEqual(oSpyColorSelectParams.value, "red", "..and has the expected parameter 'value'");
+			assert.deepEqual(oSpyColorSelectParams.defaultAction, true, "..and has the expected parameter 'defaultAction'");
+
+			// Cleanup
+			oCPP.destroy();
+		});
+
+		QUnit.module("ColorPalettePopover - Private API functions");
+
+		QUnit.test("_ensurePopover", function (assert) {
+			// Prepare
+			var oCPP = new ColorPalettePopover(),
+				oFakePopover = {destroy: jQuery.noop, getDomRef: jQuery.noop, removeDelegate: jQuery.noop},
+				oStubCreatePopover = this.stub(oCPP, "_createPopover").returns(oFakePopover);
+
+			oCPP._oPopover = null;
+
+			// Act
+			oCPP._ensurePopover();
+
+
+			// Assert
+			assert.deepEqual(oCPP._oPopover, oFakePopover, "..should assign an instance to private _oPopover like the " +
+				"one returned from the _createPopover");
+
+			// Act
+			oCPP._ensurePopover();
+
+			// Assert
+			assert.deepEqual(oCPP._oPopover, oFakePopover, "..should reuse the existing instance");
+
+
+			// Cleanup
+			oCPP.destroy();
+			oStubCreatePopover.restore();
+		});
+
+
+		QUnit.test("Popover is closed when ColorPalette is about to open the ColorPicker", function (assert) {
+			// Prepare
+			var oCPP = new ColorPalettePopover(),
+				oSpyPopoverClose = this.spy(oCPP._oPopover, "close");
+
+			// Act
+			oCPP._getPalette().fireEvent("_beforeOpenColorPicker");
+
+			// Assert
+			assert.equal(oSpyPopoverClose.callCount, 1, "..popover close method should be called");
+
+
+			// Cleanup
+			oCPP.destroy();
+			oSpyPopoverClose.restore();
+		});
+
+		QUnit.test("Popover is closed when end-user chooses a color from ColorPalette ", function (assert) {
+			// Prepare
+			var oCPP = new ColorPalettePopover(),
+				oSpyPopoverClose = this.spy(oCPP._oPopover, "close");
+
+			// Act
+			oCPP._getPalette().fireEvent("colorSelect");
+
+			// Assert
+			assert.equal(oSpyPopoverClose.callCount, 1, "..popover close method should be called");
+
+			// Cleanup
+			oCPP.destroy();
+			oSpyPopoverClose.restore();
+		});
+
+		QUnit.test("_handleNextOrPreviousUponPaletteClose - ColorPalette closed with TAB", function (assert) {
+			// Prepare
+			var oCPP = new ColorPalettePopover(),
+				oTabEvent = jQuery.Event("saptabnext"),
+				oSpyPreventDefault = this.spy(oTabEvent, "preventDefault"),
+				oSpyStopPropagation = this.spy(oTabEvent, "stopPropagation");
+
+			// Act
+			oCPP._getPalette()._fireColorSelect("white", false, oTabEvent); // [TAB] on the "white" swatch
+
+			// Assert
+			assert.equal(oSpyPreventDefault.callCount, 1, "..should prevent the default event handling in order to preserve " +
+				" the focus on the opener");
+			assert.equal(oSpyStopPropagation.callCount, 1, "..should stop event propagation in order to preserve the focus" +
+				" on the opener");
+
+			// Cleanup
+			oCPP.destroy();
+		});
+
+		QUnit.test("_handleNextOrPreviousUponPaletteClose - ColorPalette closed with SHIFT+TAB", function (assert) {
+			// Prepare
+			var oCPP = new ColorPalettePopover(),
+				oShiftTabEvent = jQuery.Event("saptabprevious"),
+				oSpyPreventDefault = this.spy(oShiftTabEvent, "preventDefault"),
+				oSpyStopPropagation = this.spy(oShiftTabEvent, "stopPropagation");
+
+			// Act
+			oCPP._getPalette()._fireColorSelect("white", false, oShiftTabEvent); // [SHIFT+TAB] on the "white" swatch
+
+			// Assert
+			assert.equal(oSpyPreventDefault.callCount, 1, "..should prevent the default event handling in order to preserve " +
+				" the focus on the opener");
+			assert.equal(oSpyStopPropagation.callCount, 1, "..should stop event propagation in order to preserve the focus" +
+				" on the opener");
+
+			// Cleanup
+			oCPP.destroy();
+		});
+
+
+		QUnit.module("ColorPalettePopover - ARIA");
+
+		// The ARIA tests are the only ones, that checks something at the DOM. DOM rendering is supposed to be tested via OPA.
+		QUnit.test("Popover has certain aria attributes", function (assert) {
+			// Prepare
+			var oCPP = new ColorPalettePopover(),
+				oOpener = new Button();
+
+			oOpener.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			oCPP.openBy(oOpener);
+
+			// Assert
+			assert.equal(oCPP._oPopover.$().attr("aria-modal"), "true", "aria-modal");
+			assert.equal(oCPP._oPopover.$().attr("aria-label"), oCPP._oPopover.getTitle(), "aria-label");
+
+			// Cleanup
+			oCPP.destroy()
+		});
+
+	</script>
+</head>
+<body class="sapUiBody" role="application">
+<h1 id="qunit-header">QUnit tests: sap.m.ColorPalette</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<div id="qunit-fixture"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

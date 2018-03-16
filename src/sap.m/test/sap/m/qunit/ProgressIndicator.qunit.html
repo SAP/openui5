@@ -127,18 +127,18 @@
 		var iPercentTest = 120;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		assert.equal(iPercentAfter, 0, "the value should be set to the default one");
+		assert.equal(iPercentAfter, 100, "the value should be set to the mximum one");
 	});
 
 	QUnit.test("setPercentValue wrong input (int out of range, too small)", function(assert) {
 		var iPercentTest = -20;
 		oProgInd.setPercentValue(iPercentTest);
 		var iPercentAfter = oProgInd.getPercentValue();
-		assert.equal(iPercentAfter, 0, "the value should be set to the default one");
+		assert.equal(iPercentAfter, 0, "the value should be set to the minimum one");
 	});
 
 
-	QUnit.test("setPercentValue with various values", function(assert) {
+	QUnit.test("setPercentValue to various values", function(assert) {
 		var oProgressIndicator = new sap.m.ProgressIndicator({
 			percentValue: 0
 		}),
@@ -151,9 +151,11 @@
 			{value: 1, expectedClass: "sapMPIValueNormal"},
 			{value: 0.1, expectedClass: "sapMPIValueNormal"},
 			{value: 0.255, expectedClass: "sapMPIValueNormal"},
-			{value: 101, expectedClass: "sapMPIValueMin"},
+			{value: 101, expectedClass: "sapMPIValueMax"},
 			{value: 0, expectedClass: "sapMPIValueMin"},
-			{value: -1, expectedClass: "sapMPIValueMin"}
+			{value: -1, expectedClass: "sapMPIValueMin"},
+			{value: null, expectedClass: "sapMPIValueMin"}, // null is normalized to 0 by the framework
+			{value: undefined, expectedClass: "sapMPIValueMin"} // null is normalized to 0 by the framework
 		],
 		fnTestForClassesToValuesMapping = function (fPercentValueToSet, sExpectedClass){
 			oProgressIndicator.setPercentValue(fPercentValueToSet);
@@ -172,6 +174,31 @@
 		oProgressIndicator.destroy();
 	});
 
+	QUnit.test("setPercentValue to not valid type of values", function(assert) {
+		var oProgressIndicator = new sap.m.ProgressIndicator({percentValue: 0}),
+				$progressIndicator,
+				aNotValidTypes = ["110", "110abc", {}, []],
+				fnTestPercentValue = function (fPercentValueToSet){
+
+					assert.throws(
+							function() {
+								oProgressIndicator.setPercentValue(fPercentValueToSet);
+							},
+							"throws error: expected type 'float' for property 'percentValue'"
+					);
+				};
+
+		oProgressIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+		$progressIndicator = oProgressIndicator.$();
+
+		aNotValidTypes.forEach(function (vValue){
+			fnTestPercentValue(vValue);
+		});
+
+		oProgressIndicator.destroy();
+	});
+
 	QUnit.test("text should not be rendered when displayValue is not set", function(assert) {
 		var oProgIndicator = new sap.m.ProgressIndicator({
 			percentValue: 50
@@ -182,6 +209,24 @@
 
 		assert.strictEqual(oProgIndicator.$().find(".sapMPITextLeft").text(), "", "no text is rendered");
 		assert.strictEqual(oProgIndicator.$().find(".sapMPITextRight").text(), "", "no text is rendered");
+
+		oProgIndicator.destroy();
+	});
+
+	QUnit.test("Display-Only progress indicator", function(assert) {
+		var oProgIndicator = new sap.m.ProgressIndicator({
+			displayOnly: true
+		});
+
+		oProgIndicator.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIDisplayOnly"), true, "should have class 'sapMPIDisplayOnly'");
+
+		oProgIndicator.setDisplayOnly(false);
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oProgIndicator.$().hasClass("sapMPIDisplayOnly"), false, "class 'sapMPIDisplayOnly' should be removed");
 
 		oProgIndicator.destroy();
 	});

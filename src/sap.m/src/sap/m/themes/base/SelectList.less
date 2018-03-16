@@ -3,6 +3,9 @@
 /* Base theme                        */
 /* ================================= */
 
+@_sap_m_SelectListItem_Height: 2.5rem;
+@_sap_m_SelectListItem_CompactHeight: 2rem;
+
 /* ------------------------------ */
 /* commons styles                 */
 /* ------------------------------ */
@@ -48,7 +51,7 @@
 	user-select: none;
 	color: @sapUiListTextColor;
 	font-size: @sapMFontMediumSize;
-	height: 2.5rem;
+	height: @_sap_m_SelectListItem_Height;
 	cursor: pointer;
 }
 
@@ -57,10 +60,15 @@
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	padding: 0 1rem 0 1rem;
-	line-height: 2.5rem;
+	line-height: @_sap_m_SelectListItem_Height;
 }
 
 li.sapMSelectListItemBaseInvisible {
+	display: none;
+}
+
+/* elements inside the select effects the size of the browsers default dragging ghost element */
+.sapUiDnDDragging .sapMSelectListItemBase + .sapMSelectListItemBase {
 	display: none;
 }
 
@@ -90,12 +98,9 @@ html.sap-desktop .sapMSelectListItemBase:focus {
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 
-	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected:not(.sapMSelectListRow) {
-		outline: none;
-		position: relative;
-	}
-
-	li.sapMSelectListItemBase.sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before {
+	.sapMSelectListItemBase:not(.sapMSelectListRow):focus::before,
+	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before,
+	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected:not(.sapMSelectListRow)::before {
 		content: " ";
 		position: absolute;
 		top: 1px;
@@ -103,6 +108,38 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 		bottom: 1px;
 		left: 1px;
 		pointer-events: none;
+	}
+
+	.sapMSelectListItemBase:focus,
+	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+		outline: none;
+		position: relative;
+	}
+
+	.sapMSelectListCell {
+		position: relative;
+	}
+
+	.sapMSelectListItemBase:focus,
+	.sapMSltPicker-CTX .sapMSelectListItemBaseSelected,
+	.sapMComboBoxBasePicker-CTX .sapMSelectListItemBaseSelected {
+		.sapMSelectListCell::before {
+			position: absolute;
+			bottom: 1px;
+			left: 0;
+			right: 0;
+			content: " ";
+			pointer-events: none;
+		}
+
+		.sapMSelectListFirstCell.sapMSelectListCell::before {
+			left: 1px;
+		}
+
+		.sapMSelectListLastCell.sapMSelectListCell::before {
+			right: 1px;
+		}
 	}
 }
 
@@ -145,9 +182,9 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 /* ------------------------------ */
 
 .sapUiSizeCompact .sapMSelectListItemBase {
-	height: 2rem;
+	height: @_sap_m_SelectListItem_CompactHeight;
 }
 
 .sapUiSizeCompact .sapMSelectListItem {
-	line-height: 2rem;
+	line-height: @_sap_m_SelectListItem_CompactHeight;
 }

@@ -9,8 +9,8 @@
  */
 
 // Provides class sap.ui.core.delegate.ItemNavigation
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
-	function(jQuery, EventProvider) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'jquery.sap.keycodes'],
+	function(jQuery, EventProvider /*, jQuerySapKeycodes */) {
 	"use strict";
 	/* eslint-disable no-lonely-if */
 
@@ -72,7 +72,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * @param {boolean} [bNotInTabChain=false] Whether the selected element should be in the tab chain or not
 	 *
 	 * @version ${version}
-	 * @constructor
 	 * @alias sap.ui.core.delegate.ItemNavigation
 	 * @public
 	 */
@@ -229,7 +228,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider'],
 	 * Check whether given event has disabled modifier or not
 	 *
 	 * @param {jQuery.Event} oEvent jQuery event
-	 * @return {Boolean} Flag if disabled modifiers are set
+	 * @return {boolean} Flag if disabled modifiers are set
 	 * @public
 	 */
 	ItemNavigation.prototype.hasDisabledModifier = function(oEvent) {

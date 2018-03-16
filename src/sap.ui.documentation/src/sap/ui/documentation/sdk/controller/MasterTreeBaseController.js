@@ -32,9 +32,9 @@ sap.ui.define([
 			 * Makes the tree open all nodes up to the node with "sTopicId" and then selects it
 			 * @private
 			 */
-			_expandTreeToNode: function (sTopicId) {
-				var oTree = this.byId("tree");
-				var oData = this.getOwnerComponent().getModel("treeData").getData();
+			_expandTreeToNode: function (sTopicId, oModel) {
+				var oTree = this.byId("tree"),
+					oData = oModel.getData();
 
 				// Find the path to the new node, traversing the model
 				var aTopicIds = this._oTreeUtil.getPathToNode(sTopicId, oData);
@@ -65,7 +65,7 @@ sap.ui.define([
 			/**
 			 * Scans the items aggregation of a sap.m.Tree for an item that has custom data with key="topicId" and value=sId
 			 * Note: It's important to always fetch the items before searching as they change dynamically when nodes expand/collapse
-			 * @param sId
+			 * @param {string} sId
 			 * @returns {null}
 			 * @private
 			 */
@@ -94,6 +94,7 @@ sap.ui.define([
 			onTreeFilter: function (oEvent) {
 				var oTree = this.byId("tree");
 				var sFilterArgument = oEvent.getParameter("newValue").trim();
+				var sFilterArgumentJoined = sFilterArgument.replace(/\s/g, '');
 				var oBinding = oTree.getBinding("items");
 
 				if (this._filterTimeout) {
@@ -111,8 +112,13 @@ sap.ui.define([
 
 					var aFilters = [];
 					if (sFilterArgument) {
-						var oNameFilter = new Filter("text", FilterOperator.Contains, sFilterArgument);
+						var oNameFilter = new Filter("name", FilterOperator.Contains, sFilterArgument);
 						aFilters.push(oNameFilter);
+					}
+
+					if (sFilterArgumentJoined) {
+						var oNameFilterJoined = new Filter("name", FilterOperator.Contains, sFilterArgumentJoined);
+						aFilters.push(oNameFilterJoined);
 					}
 
 					oBinding.filter(aFilters);
@@ -131,6 +137,15 @@ sap.ui.define([
 			_collapseAllNodes: function () {
 				var oTree = this.byId("tree");
 				oTree.collapseAll();
+			},
+
+			_clearSelection: function () {
+				var oTree = this.byId("tree"),
+					aItems = oTree.getItems();
+
+				if (aItems.length) {
+					aItems[0].setSelected(false);
+				}
 			},
 
 			_expandFirstNodeOnly: function () {

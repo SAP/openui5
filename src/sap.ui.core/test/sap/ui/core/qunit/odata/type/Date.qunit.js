@@ -5,9 +5,10 @@ sap.ui.require([
 	"jquery.sap.global",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/type/Date",
-	"sap/ui/model/odata/type/ODataType"
-], function (jQuery, DateFormat, DateType, ODataType) {
-	/*global QUnit, sinon */
+	"sap/ui/model/odata/type/ODataType",
+	"sap/ui/test/TestUtils"
+], function (jQuery, DateFormat, DateType, ODataType, TestUtils) {
+	/*global QUnit */
 	/*eslint no-warning-comments: 0 */ //no ESLint warning for TODO list
 	"use strict";
 
@@ -20,7 +21,7 @@ sap.ui.require([
 	 */
 	function checkError(assert, oType, oValue, sReason, sAction) {
 		var fnExpectedException;
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+		TestUtils.withNormalizedMessages(function () {
 			try {
 				if (sAction === "parseValue") {
 					fnExpectedException = sap.ui.model.ParseException;
@@ -40,13 +41,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Date", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
-			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(this.sDefaultLanguage);
 		},
 
@@ -62,7 +62,17 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is a ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Date", "type name");
 		assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.deepEqual(oType.oConstraints, undefined, "default constraints");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new DateType(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
@@ -227,6 +237,18 @@ sap.ui.require([
 
 		oType.validateValue(sResultingDate);
 		assert.deepEqual(sResultingDate, "0715-11-01", "format and parse did not change the date");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelFormat()", function (assert) {
+		var oType = new DateType(),
+			sModelValue = "2015-11-27",
+			oFormat = oType.getModelFormat(),
+			oParsedDate = oFormat.parse(sModelValue);
+
+		assert.ok(oParsedDate instanceof Date, "parse delivers a Date");
+		assert.strictEqual(oParsedDate.getTime(), Date.UTC(2015, 10, 27), "parse value");
+		assert.strictEqual(oFormat.format(oParsedDate), sModelValue, "format");
 	});
 
 	//*********************************************************************************************

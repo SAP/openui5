@@ -50,7 +50,7 @@ html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapM
 	background-color: @sapUiListActiveBackground;
 }
 
-.sapMTB-Transparent-CTX .sapUxAPAnchorBarButton .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive),
+.sapMTB-Transparent-CTX .sapUxAPAnchorBarButton.sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnActive),
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner.sapMBtnTransparent.sapMBtnHoverable:hover,
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton.sapMBtn:hover > .sapMBtnHoverable {
 	background: none;
@@ -61,6 +61,15 @@ html.sapUiMedia-Std-Desktop .sapMSplitContainer.sapMSplitContainerHideMode .sapM
 .sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent {
 	height: 1.875rem;
 	line-height: 1.875rem;
+}
+
+.sapUiSizeCompact {
+	.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnIcon,
+	.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner,
+	.sapUxAPAnchorBar .sapUxAPAnchorBarButton .sapMBtnInner .sapMBtnContent {
+		height: 1.75rem;
+		line-height: 1.75rem;
+	}
 }
 
 .sapUxAPAnchorBarButton.sapUxAPAnchorBarButtonSelected::after {

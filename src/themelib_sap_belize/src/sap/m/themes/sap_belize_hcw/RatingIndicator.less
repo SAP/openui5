@@ -13,8 +13,37 @@
 	color: @sapUiHcReducedAltForeground;
 }
 
+.sapMRI.sapMRIDisplayOnly {
+	.sapMRIIconSel{
+		color: @sapUiContentIconColor;
+	}
+	.sapMRIIconUnsel {
+		color: darken(@sapUiContentForegroundColor, 50);
+	}
+}
+
+.sapMRI.sapMRIReadOnly {
+  .sapMRIIconSel {
+	color: @sapUiContentIconColor;
+  }
+
+  .sapMRIIconReadOnly {
+	color: darken(@sapUiContentForegroundColor, 50);
+  }
+}
+
+.sapMRIDisabled {
+  .sapMRIIconSel {
+	color: @sapUiHcReducedForeground;
+  }
+
+  .sapMRIIconUnsel {
+	color: @sapUiContentDisabledTextColor;
+  }
+}
+
 /* Custom focus outline */
-html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
 }
@@ -25,7 +54,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		outline: none;
 		position: relative;
 	}
-	.sapMRI:focus:not(.sapMRIDisabled)::before {
+	.sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly)::before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;

@@ -4,8 +4,8 @@
 	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
 	width="100%">
 	<template:repeat list="{meta>com.sap.vocabularies.UI.v1.Identification}">
-		<Label text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
-		<Input value="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+		<Label labelFor="Identification::{meta>Value/Path}" text="{path: 'meta>Label', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
+		<Input id="Identification::{meta>Value/Path}" value="{path: 'meta>Value', formatter: 'sap.ui.model.odata.AnnotationHelper.format'}"/>
 	</template:repeat>
 </mvc:View>
 

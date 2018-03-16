@@ -3,9 +3,23 @@
 /* Belize High Contrast White theme       */
 /* ====================================== */
 
-html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+.sapMObjectAttributeActive:focus .sapMObjectAttributeText {
+	position: relative;
+}
+
+html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText::after {
+	pointer-events: none;
+	display: block;
+	content: "";
+	position: absolute;
+	top: 0.125rem;
+	left: 0.125rem;
+	bottom: 0.125rem;
+	right: 0.125rem;
 	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.125rem;
+}
+
+html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
 	text-decoration: none;
 }
 
@@ -36,20 +50,10 @@ html.sap-desktop .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
 	text-decoration: underline;
 }
 
-.sapMOHR .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	outline: 0.125rem dotted @sapUiHcStandardForeground;
-	outline-offset: -0.125rem;
-}
-
 /*=========================================== */
 /* Custom design for Static Object Header     */
 /*=========================================== */
 
 .sapMOH .sapMObjectAttributeActive .sapMObjectAttributeText {
 	text-decoration: underline;
-}
-
-.sapMOH .sapMObjectAttributeActive:focus .sapMObjectAttributeText {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.125rem;
 }

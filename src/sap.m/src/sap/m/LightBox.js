@@ -2,35 +2,72 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup', 'sap/m/Text',
-		'sap/m/Button', 'sap/m/Image', 'sap/ui/core/ResizeHandler', 'sap/ui/Device', 'sap/m/MessagePage',
-		'sap/ui/core/Icon', 'sap/ui/layout/VerticalLayout', './InstanceManager', 'sap/ui/core/InvisibleText'],
-	function (jQuery, library, Control, Popup, Text,
-			Button, Image, ResizeHandler, Device, MessagePage,
-			Icon, VerticalLayout, InstanceManager, InvisibleText) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/Popup',
+	'sap/m/Text',
+	'sap/m/Button',
+	'sap/ui/core/ResizeHandler',
+	'sap/ui/Device',
+	'sap/ui/core/Icon',
+	'sap/ui/layout/VerticalLayout',
+	'./InstanceManager',
+	'sap/ui/core/InvisibleText',
+	'sap/ui/core/library',
+	'./LightBoxRenderer'
+],
+	function(
+		jQuery,
+		library,
+		Control,
+		Popup,
+		Text,
+		Button,
+		ResizeHandler,
+		Device,
+		Icon,
+		VerticalLayout,
+		InstanceManager,
+		InvisibleText,
+		coreLibrary,
+		LightBoxRenderer
+	) {
 
 		'use strict';
 
+		// shortcut for sap.ui.core.TextAlign
+		var TextAlign = coreLibrary.TextAlign;
+
+		// shortcut for sap.m.ButtonType
+		var ButtonType = library.ButtonType;
+
+		// shortcut for sap.m.LightBoxLoadingStates
+		var LightBoxLoadingStates = library.LightBoxLoadingStates;
+
 		/**
-		 * Constructor for a new Lightbox.
+		 * Constructor for a new LightBox.
 		 *
 		 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 		 * @param {object} [mSettings] Initial settings for the new control
 		 *
 		 * @class
-		 * <strong><i>Overview</i></strong>
-		 * <br><br>
-		 * A {@link sap.m.LightBox} control represents a popup containing an image and a footer.
-		 * The purpose of the control is to display an image in its original size as long as this is possible. On smaller screens, images are scaled down to fit.
-		 * <br><br>
+		 * Represents a popup containing an image and a footer.
+		 *
+		 * <h3>Overview</h3>
+		 *
+		 * The purpose of the control is to display an image in its original size as long as this is possible.
+		 * On smaller screens images are scaled down to fit.
+		 *
 		 * <strong>Notes:</strong>
 		 * <ul>
-		 *     <li>If the image doesn't load in 10 seconds an error is displayed. </li>
+		 *     <li>If the image doesn't load in 10 seconds, an error is displayed.</li>
 		 *     <li>Setting the <code>imageContent</code> aggregation of the control as well as the source of the image and the title of the image is <u>mandatory</u>.
 		 *          If the image source is not set, the control will not open.</li>
 		 * </ul>
-		 * <strong><i>Structure</i></strong>
-		 * <br><br>
+		 * <h3>Structure</h3>
+		 *
 		 * Each LightBox holds a {@link sap.m.LightBoxItem LightBoxItem} which keeps the properties of the image:
 		 * <ul>
 		 *     <li> imageSrc - The source URI of the image </li>
@@ -38,17 +75,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 *     <li> subtitle - The subtitle of the image </li>
 		 *     <li> alt - The alt text of the image </li>
 		 * </ul>
-		 * <strong><i>Usage</i></strong>
-		 * <br><br>
-		 * The most common usecase is to click on an image thumbnail to view it in bigger size.
+		 * <h3>Usage</h3>
+		 *
+		 * The most common use case is to click on an image thumbnail to view it in bigger size.
 		 * When the image that should be displayed in the control cannot be loaded, an error is displayed in the popup.
-		 * <br><br>
-		 * <strong><i>Responsive Behavior</i></strong>
-		 * <br><br>
+		 *
+		 * <h3>Responsive Behavior</h3>
+		 *
 		 * On a mobile device, flipping the device to landscape will flip the lightbox and the image will be adjusted to fit the new dimensions.
-		 * <br><br>
-		 * <strong><i>Additional Information</i></strong>
-		 * <br><br>
+		 *
+		 * <h3>Additional Information</h3>
+		 *
 		 * Check out the <a href="/#docs/api/symbols/sap.m.LightBox.html" >API Reference</a>.
 		 * @author SAP SE
 		 * @version ${version}
@@ -56,6 +93,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		 * @constructor
 		 * @public
 		 * @alias sap.m.LightBox
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/lightbox/ Light Box}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var LightBox = Control.extend('sap.m.LightBox', /** @lends sap.m.LightBox.prototype */ {
@@ -108,7 +146,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 					_busy: {type: "sap.m.BusyIndicator", multiple: false, visibility: "hidden"}
 				},
 				events: {},
-				defaultAggregation: 'imageContent'
+				defaultAggregation: 'imageContent',
+				designtime: "sap/m/designtime/LightBox.designtime"
 			}
 		});
 
@@ -116,6 +155,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		// Lifecycle methods
 		//================================================================================
 
+		/**
+		 * Sets up the initial values of the control.
+		 *
+		 * @protected
+		 */
 		LightBox.prototype.init = function () {
 			this._createPopup();
 			this._width = 0; //to be calculated later
@@ -135,6 +179,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 		};
 
+		/**
+		 * Overwrites the onBeforeRendering.
+		 *
+		 * @public
+		 */
 		LightBox.prototype.onBeforeRendering = function () {
 			var oImageContent = this._getImageContent(),
 				oNativeImage = oImageContent._getNativeImage(),
@@ -155,16 +204,16 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			switch (sState) {
-				case sap.m.LightBoxLoadingStates.Loading:
+				case LightBoxLoadingStates.Loading:
 					this._timeoutId = setTimeout(function () {
-						oImageContent._setImageState(sap.m.LightBoxLoadingStates.TimeOutError);
+						oImageContent._setImageState(LightBoxLoadingStates.TimeOutError);
 					}, 10000);
 					break;
-				case sap.m.LightBoxLoadingStates.Loaded:
+				case LightBoxLoadingStates.Loaded:
 					clearTimeout(this._timeoutId);
 					this._calculateSizes(oNativeImage);
 					break;
-				case sap.m.LightBoxLoadingStates.Error:
+				case LightBoxLoadingStates.Error:
 					clearTimeout(this._timeoutId);
 					break;
 				default:
@@ -179,18 +228,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			this._isRendering = true;
 		};
 
+		/**
+		 * Overwrites the onAfterRendering.
+		 *
+		 * @public
+		 */
 		LightBox.prototype.onAfterRendering = function () {
 			this._isRendering = false;
 			this._$lightBox = this.$();
 
 			if (!this._resizeListenerId) {
-				Device.resize.attachHandler(this._onResize.bind(this));
-				this._resizeListenerId = ResizeHandler.register(this, this._onResize.bind(this));
+				this._onResizeHandler = this._onResize.bind(this);
+				Device.resize.attachHandler(this._onResizeHandler);
+				this._resizeListenerId = ResizeHandler.register(this, this._onResizeHandler);
 			}
 		};
 
 		LightBox.prototype.forceInvalidate = Control.prototype.invalidate;
 
+		/**
+		 * Rerenders the LightBox.
+		 *
+		 * @public
+		 * @param {object} oOrigin Origin of the invalidation.
+		 * @returns {sap.m.LightBox} this LightBox reference for chaining.
+		 */
 		LightBox.prototype.invalidate = function (oOrigin) {
 			var oImageContent = this._getImageContent();
 
@@ -205,6 +267,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return this;
 		};
 
+		/**
+		 * Detaches all handlers and destroys the instance.
+		 *
+		 * @public
+		 */
 		LightBox.prototype.exit = function () {
 			if (this._oPopup) {
 				this._oPopup.detachOpened(this._fnOpened, this);
@@ -214,7 +281,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			}
 
 			if (this._resizeListenerId) {
-				Device.resize.detachHandler(this._onResize);
+				Device.resize.detachHandler(this._onResizeHandler);
 				ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
@@ -228,16 +295,18 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Opens the LightBox.
+		 *
 		 * @public
 		 * @returns {sap.m.LightBox} Pointer to the control instance for chaining.
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		LightBox.prototype.open = function () {
-			var oImageContent = this._getImageContent();
+			/** @type {sap.m.LightBoxItem} */
+			var imageContent = this._getImageContent();
 
 			this._oPopup.setContent(this);
 
-			if (oImageContent && oImageContent.getImageSrc()) {
+			if (imageContent && imageContent.getImageSrc()) {
 				this._oPopup.open(300, 'center center', 'center center', document.body, null);
 				InstanceManager.addLightBoxInstance(this);
 			}
@@ -247,7 +316,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Returns if the LightBox is open.
-		 * @returns {boolean}
+		 *
+		 * @public
+		 * @returns {boolean} Is the LightBox open
 		 */
 		LightBox.prototype.isOpen = function() {
 			if (this._oPopup && this._oPopup.isOpen()) {
@@ -259,13 +330,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Closes the LightBox.
+		 *
 		 * @public
 		 * @returns {sap.m.LightBox} Pointer to the control instance for chaining.
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		LightBox.prototype.close = function () {
 			if (this._resizeListenerId) {
-				Device.resize.detachHandler(this._onResize);
+				Device.resize.detachHandler(this._onResizeHandler);
 				ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
@@ -282,8 +354,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Instantiates (if not defined) and returns the close button for the LightBox.
-		 * @returns {sap.m.Button} - the close button
+		 *
 		 * @private
+		 * @returns {sap.m.Button} The close button.
 		 */
 		LightBox.prototype._getCloseButton = function () {
 			var closeButton = this.getAggregation('_closeButton');
@@ -292,7 +365,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				closeButton = new Button({
 					id: this.getId() + '-closeButton',
 					text: this._closeButtonText,
-					type: sap.m.ButtonType.Transparent,
+					type: ButtonType.Transparent,
 					press: function () {
 						this.close();
 					}.bind(this)
@@ -305,26 +378,31 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Instantiates (if not defined) and returns the BusyIndicator for the LightBox.
-		 * @returns {sap.m.BusyIndicator} - the BusyIndicator
+		 *
 		 * @private
+		 * @returns {sap.m.BusyIndicator} The BusyIndicator displayed while the image is loading.
 		 */
 		LightBox.prototype._getBusyIndicator = function () {
-			var oBusy = this.getAggregation("_busy");
-			if (!oBusy) {
-				oBusy = new sap.m.BusyIndicator();
-				this.setAggregation("_busy", oBusy, true);
+			var busyIndicator = this.getAggregation("_busy");
+
+			if (!busyIndicator) {
+				busyIndicator = new sap.m.BusyIndicator();
+				this.setAggregation("_busy", busyIndicator, true);
 			}
 
-			return oBusy;
+			return busyIndicator;
 		};
 
 		/**
 		 * Forces rerendering of the control when an image loads/fails to load.
-		 * @param {string} sNewState - the new state of the image possible values are "LOADING", "LOADED" and "ERROR"
+		 *
 		 * @private
+		 * @param {string} newState The new state of the image. Possible values are: "LOADING", "LOADED" and "ERROR".
 		 */
-		LightBox.prototype._imageStateChanged = function (sNewState) {
-			if ((sNewState === sap.m.LightBoxLoadingStates.Loaded || sNewState === sap.m.LightBoxLoadingStates.Error) && !this._isRendering) {
+		LightBox.prototype._imageStateChanged = function (newState) {
+			var stateUnfinished = newState === LightBoxLoadingStates.Loaded || newState === LightBoxLoadingStates.Error;
+
+			if (stateUnfinished && !this._isRendering) {
 				this.rerender();
 			}
 		};
@@ -332,6 +410,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		/**
 		 * Creates the popup in which the LightBox is displayed and adds event handlers. Event handlers are necessary
 		 * to close the popup when the user clicks on the overlay around the popup.
+		 *
 		 * @private
 		 */
 		LightBox.prototype._createPopup = function () {
@@ -342,6 +421,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Adds event listener to the blocklayer area to close the lightbox when the area is clicked.
+		 *
 		 * @private
 		 */
 		LightBox.prototype._fnOpened = function() {
@@ -353,6 +433,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Removes the event listener.
+		 *
 		 * @private
 		 */
 		LightBox.prototype._fnClosed = function() {
@@ -361,6 +442,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Creates the controls used to display error state of the LightBox.
+		 *
 		 * @private
 		 */
 		LightBox.prototype._createErrorControls = function() {
@@ -368,7 +450,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			var errorMessageTitle;
 			var errorMessageSubtitle;
 
-			if (this._getImageContent()._getImageState() === sap.m.LightBoxLoadingStates.TimeOutError) {
+			if (this._getImageContent()._getImageState() === LightBoxLoadingStates.TimeOutError) {
 				errorMessageTitle = resourceBundle.getText('LIGHTBOX_IMAGE_TIMED_OUT');
 				errorMessageSubtitle = resourceBundle.getText('LIGHTBOX_IMAGE_TIMED_OUT_DETAILS');
 			} else {
@@ -379,11 +461,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (!this.getAggregation('_verticalLayout')) {
 				var errorTitle = new Text({
 					text : errorMessageTitle,
-					textAlign : sap.ui.core.TextAlign.Center
+					textAlign : TextAlign.Center
 				}).addStyleClass("sapMLightBoxErrorTitle"),
 					errorSubtitle = new Text({
 						text : errorMessageSubtitle,
-						textAlign : sap.ui.core.TextAlign.Center
+						textAlign : TextAlign.Center
 					}).addStyleClass("sapMLightBoxErrorSubtitle"),
 					errorIcon = new Icon({
 						src : "sap-icon://picture"
@@ -396,7 +478,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Handles the resize of the LightBox (usually caused by window resize)
+		 * Handles the resize of the LightBox (usually caused by window resize).
+		 *
 		 * @private
 		 */
 		LightBox.prototype._onResize = function () {
@@ -412,7 +495,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 				minimumOffset = calculateOffset(),
 				hcbBorderSize = 2;
 
-			if (oImageContent._getImageState() === sap.m.LightBoxLoadingStates.Loaded) {
+			if (oImageContent._getImageState() === LightBoxLoadingStates.Loaded) {
 				this._calculateSizes(oImageContent._getNativeImage());
 
 				lightBoxWidth = this._width;
@@ -449,9 +532,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Calculates the target size of the image and the lightbox based on the size of the image that will be loaded
-		 * @param {window.Image} internalImage The javascript native object referring to the image that will be loaded
+		 * Calculates the target size of the image and the lightbox based on the size of the image that will be loaded.
+		 *
 		 * @private
+		 * @param {window.Image} internalImage The javascript native object referring to the image that will be loaded.
 		 */
 		LightBox.prototype._calculateSizes = function (internalImage) {
 			var iFooterHeightPx = this._calculateFooterHeightInPx(),
@@ -470,30 +554,33 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Calculates the height of the footer of the LightBox in pixels
-		 * @returns Number The height of the footer
+		 * Calculates the height of the footer of the LightBox in pixels.
+		 *
 		 * @private
+		 * @returns {int} The height of the footer.
 		 */
-		LightBox.prototype._calculateFooterHeightInPx = function (image) {
-			var bCompact = this.$().parents().hasClass('sapUiSizeCompact');
+		LightBox.prototype._calculateFooterHeightInPx = function () {
+			var compact = this.$().parents().hasClass('sapUiSizeCompact');
 			var subtitle = this._getImageContent().getSubtitle();
 
-			var iFooterHeightRem = 2.5; // base height of the footer in rem
+			var footerHeightRem = 2.5; // base height of the footer in rem
 
-			if (!bCompact) {
-				iFooterHeightRem += 0.5;
+			if (!compact) {
+				footerHeightRem += 0.5;
 			}
 
 			if (subtitle) {
-				iFooterHeightRem += 1.5;
+				footerHeightRem += 1.5;
 			}
 
-			return iFooterHeightRem * 16; // 1rem == 16px
+			return footerHeightRem * 16; // 1rem == 16px
 		};
 
 		/**
-		 * Calculates and sets in private properties the width and height of the LightBox
+		 * Calculates and sets in private properties the width and height of the LightBox.
+		 *
 		 * @private
+		 * @param {sap.m.Image} image The image of the LightBoxItem.
 		 */
 		LightBox.prototype._calculateAndSetLightBoxSize = function (image) {
 			var imageHeight,
@@ -508,10 +595,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Calculates and sets the Image size in the Light box.
-		 * @param {number} imageWidth The width of the internal image.
-		 * @param {number} imageHeight The height of the internal image.
+		 * Calculates and sets the Image size in the LightBox.
+		 *
 		 * @private
+		 * @param {sap.m.Image} image The image instance.
+		 * @param {int} imageWidth The width of the internal image.
+		 * @param {int} imageHeight The height of the internal image.
 		 */
 		LightBox.prototype._setImageSize = function (image, imageWidth, imageHeight) {
 			var footerHeight = this._calculateFooterHeightInPx(),
@@ -522,13 +611,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Calculates the size for an image inside the LightBox
-		 * @param {number} imageWidth The natural width of the loaded images in px
-		 * @param {number} imageHeight The natural height of the loaded images in px
-		 * @param {number} footerHeight The footer height in px
-		 * @param {jQuery} $window jQuery reference to the window object
-		 * @returns {Object} An object holding the calculated dimensions of the image
+		 * Calculates the size for an image inside the LightBox.
+		 *
 		 * @private
+		 * @param {int} imageWidth The natural width of the loaded images in px.
+		 * @param {int} imageHeight The natural height of the loaded images in px.
+		 * @param {int} footerHeight The footer height in px.
+		 * @returns {Object} An object holding the calculated dimensions of the image
 		 */
 		LightBox.prototype._getDimensions = function (imageWidth, imageHeight, footerHeight) {
 			// minimum size of the lightbox
@@ -570,10 +659,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		};
 
 		/**
-		 * Converts size in px to a number
-		 * @param {string} sizeToConvert The size to be converted
-		 * @returns {number} The size in number value
+		 * Converts size from px to a number.
+		 *
 		 * @private
+		 * @param {string} sizeToConvert The size to be converted
+		 * @returns {int} The size in number value
 		 */
 		LightBox.prototype._pxToNumber = function (sizeToConvert) {
 			return (sizeToConvert.substring(0, (sizeToConvert.length - 2)) ) * 1;
@@ -581,8 +671,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		/**
 		 * Returns the first LightBoxItem in the aggregation.
-		 * @returns {sap.m.LightBoxItem|null}
+		 *
 		 * @private
+		 * @returns {sap.m.LightBoxItem|null} The first LightBoxItem in the imageContent aggregation.
 		 */
 		LightBox.prototype._getImageContent = function () {
 			var rgImageContent = this.getAggregation('imageContent');
@@ -590,8 +681,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			return rgImageContent && rgImageContent[0];
 		};
 
+		/**
+		 * Helper function for calculating offset.
+		 *
+		 * @private
+		 * @returns {int} Calculated offset.
+		 */
 		function calculateOffset() {
-			var system = sap.ui.Device.system;
+			var system = Device.system;
 
 			if (system.desktop) {
 				return 4 /*rem*/ * 16 /*px*/;
@@ -605,4 +702,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		}
 
 		return LightBox;
-	}, /* bExport= */ true);
+	});

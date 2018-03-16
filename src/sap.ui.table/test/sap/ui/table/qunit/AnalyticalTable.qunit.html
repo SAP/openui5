@@ -1,46 +1,45 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
+
+<!--
+  Tested class: sap.ui.table.AnalyticalTable, sap.ui.table.AnalyticalColumn
+-->
+
 <html>
+
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta charset="utf-8">
-<title>QUnit Page for sap.ui.table.AnalyticalTable / sap.ui.table.AnalyticalColumn (incl. OData V2)</title>
-
-<!-- Initialization -->
-<script src="../shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-libs="sap.ui.core,sap.m,sap.ui.table"></script>
-
-<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js" data-sap-ui-cover-only="sap/ui/table"></script>
-
-<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-<!--[if IE]>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>QUnit Page for sap.ui.table.AnalyticalTable / sap.ui.table.AnalyticalColumn (incl. OData V2)</title>
+	<script src="../shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			src="../../../../../resources/sap-ui-core.js"
+			data-sap-ui-noConflict="true"
+			data-sap-ui-libs="sap.ui.table,sap.m">
+	</script>
+	<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-sap-ui-cover-only="sap/ui/table">
+	</script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
-<![endif]-->
-<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
-<!-- Fake Service Implementaton -->
-<script src="../../core/qunit/analytics/o4aFakeService.js"></script>
-<!-- The metadata Fake Content -->
-<script src="../../core/qunit/analytics/o4aMetadata.js"></script>
-<!-- Fake Service Document -->
-<script src="../../core/qunit/analytics/TBA_ServiceDocument.js"></script>
-<!-- ATBA Request Mocks -->
-<script src="../../core/qunit/analytics/ATBA_Batch_Contexts.js"></script>
+<script>
+	jQuery.sap.registerModulePath("sap.ui.core.qunit",
+	"../../../../../test-resources/sap/ui/core/qunit");
+</script>
 
-<script src="AnalyticalTable.qunit.js"></script>
+	<link rel="stylesheet" href="shared-qunit.css">
+	<script src="AnalyticalTable.qunit.js"></script>
 </head>
+
 <body class="sapUiBody sapUiSizeCompact">
-	<h1 id="qunit-header">QUnit Page for sap.ui.table.AnalyticalTable / sap.ui.table.AnalyticalColumn (incl. OData V2)</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="qunit-fixture"></div>
-	<div id="content"></div>
+<div id="qunit"></div>
+<div id="qunit-fixture" class="visible"></div>
+<div id="content"></div> <!-- The content, which should exist throughout the entire test run. -->
 </body>
+
 </html>

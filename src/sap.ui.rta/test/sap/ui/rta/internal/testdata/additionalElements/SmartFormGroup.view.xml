@@ -1,0 +1,49 @@
+<core:View xmlns:core="sap.ui.core" xmlns="sap.m"
+	xmlns:smartField="sap.ui.comp.smartfield" xmlns:smartForm="sap.ui.comp.smartform"
+	xmlns:form="sap.ui.layout.form" xmlns:smartTable="sap.ui.comp.smarttable"
+	xmlns:html="http://www.w3.org/1999/xhtml"
+	xmlns:sap.ui.layout="sap.ui.layout"
+	xmlns:sap.ui.rta="sap.ui.rta"
+	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
+	controllerName="sap.ui.rta.test.additionalElements.SmartFormGroup">
+
+	<Page title="{i18n>appTitle}">
+		<headerContent>
+			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
+		</headerContent>
+		<content>
+			<sap.ui.layout:VerticalLayout id="layout0" width="100%">
+				<ObjectHeader id="obheader0" title="{CompanyCodeName}" number="{Summary}" numberUnit="{CoCodeCurrency}">
+					<attributes>
+						<ObjectAttribute id="attribute1" title="{AccountingDocumentTypeName}" text="{AccountingDocument}" active="false"/>
+					</attributes>
+					<statuses>
+						<ObjectStatus id="status1" text="{AccountingDocumentStatus}" state="Error"/>
+					</statuses>
+					<attributes>
+						<ObjectAttribute id="attribute2" title="{OverallDiscount}" text="{OverallDiscountAmount}" active="false"/>
+					</attributes>
+					<statuses>
+						<ObjectStatus id="status2" text="{ExpirationState}" state="Error"/>
+					</statuses>
+				</ObjectHeader>
+			</sap.ui.layout:VerticalLayout>
+			<sap.ui.layout:VerticalLayout width="100%">
+				<smartForm:SmartForm id="MainForm" title="Information" editable="true" entityType="EntityType01" ignoredFields="Property05">
+					<smartForm:Group id="GroupEntityType01" label="General Ledger Document" >
+						<smartForm:GroupElement id="EntityType01.CombinedFields" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{Property01}"/>
+							<smartField:SmartField value="{Property02}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="EntityType01.Prop1" >
+							<smartField:SmartField editable="true" contextEditable="true" value="{Property03}"/>
+						</smartForm:GroupElement>
+						<smartForm:GroupElement id="EntityType01.Prop4" >
+							<smartField:SmartField value="{Property04}"/>
+						</smartForm:GroupElement>
+					</smartForm:Group>
+				</smartForm:SmartForm>
+			</sap.ui.layout:VerticalLayout>
+		</content>
+	</Page>
+</core:View>

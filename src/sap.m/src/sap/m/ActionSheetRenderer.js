@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define(["sap/ui/Device"],
+	function(Device) {
 	"use strict";
 
 
@@ -27,7 +27,12 @@ sap.ui.define(['jquery.sap.global'],
 			iButtonsCount = aActionButtons.length,
 			bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility(),
 			iVisibleButtonCount = aActionButtons.filter(function (oButton) { return oButton.getVisible(); }).length,
-			i, bMixedButtons, oButton, iVisibleButtonTempCount = 1;
+			oCurInvisibleText, i, bMixedButtons, oButton, iVisibleButtonTempCount = 1,
+			fnGetRelatedInvisibleText = function (oBtn) {
+				return aInvisibleTexts.filter(function (oInvisibleText) {
+					return oInvisibleText.getId().indexOf(oBtn.getId()) > -1;
+				})[0];
+			};
 
 		for (i = 0 ; i < iButtonsCount ; i++) {
 			oButton = aActionButtons[i];
@@ -53,6 +58,9 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
 
+		// This is needed in order to prevent JAWS from announcing the ActionSheet content multiple times
+		bAccessibilityOn && oRm.writeAttributeEscaped("role", "presentation");
+
 		oRm.write(">");
 
 		for (i = 0 ; i < iButtonsCount ; i++) {
@@ -60,13 +68,20 @@ sap.ui.define(['jquery.sap.global'],
 			oRm.renderControl(aActionButtons[i].addStyleClass("sapMActionSheetButton"));
 
 			if (bAccessibilityOn && oButton.getVisible()) {
-				aInvisibleTexts[i].setText(oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [iVisibleButtonTempCount, iVisibleButtonCount]));
+
+				// It's not guaranteed that Button aggregation order is the same as InvisibleTexts aggregation order.
+				// So, just find the proper matching between Button & Text
+				oCurInvisibleText = fnGetRelatedInvisibleText(oButton);
+
+				if (oCurInvisibleText) {
+					oCurInvisibleText.setText(oResourceBundle.getText('ACTIONSHEET_BUTTON_INDEX', [iVisibleButtonTempCount, iVisibleButtonCount]));
+					oRm.renderControl(oCurInvisibleText);
+				}
 				iVisibleButtonTempCount++;
-				oRm.renderControl(aInvisibleTexts[i]);
 			}
 		}
 
-		if (sap.ui.Device.system.phone && oControl.getShowCancelButton()) {
+		if (Device.system.phone && oControl.getShowCancelButton()) {
 			oRm.renderControl(oControl._getCancelButton());
 		}
 

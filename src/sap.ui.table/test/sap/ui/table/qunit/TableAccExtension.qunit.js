@@ -1,6 +1,9 @@
-/*global QUnit,oTable,oTreeTable*/
+/*global QUnit, oTable, oTreeTable */
 
-(function () {
+sap.ui.require([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/TableUtils"
+], function(qutils, TableUtils) {
 	"use strict";
 
 	// mapping of global function calls
@@ -21,7 +24,6 @@
 	// Preparation Code
 	//************************************************************************
 
-
 	sap.ui.base.ManagedObject.extend("sap.ui.table.test.TextControl", {
 		metadata: {
 			properties: {
@@ -30,14 +32,14 @@
 				}
 			}
 		},
-		getAccessibilityInfo: function () {
+		getAccessibilityInfo: function() {
 			return {
 				description: this.getText()
 			};
 		}
 	});
 
-	sap.ui.table.test.TestControl.prototype.getAccessibilityInfo = function () {
+	sap.ui.table.test.TestControl.prototype.getAccessibilityInfo = function() {
 		var iMode = this.getIndex();
 		switch (iMode) {
 			case 0:
@@ -75,7 +77,6 @@
 		}
 	};
 
-
 	function _modifyTables() {
 		var oColumn = oTable.getColumns()[1];
 		oColumn.setSortProperty(aFields[1]);
@@ -86,9 +87,12 @@
 		oTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
 			highlight: "Success"
 		}));
+		oTreeTable.setRowSettingsTemplate(new sap.ui.table.RowSettings({
+			highlight: "Success"
+		}));
+		oTreeTable.setSelectedIndex(0);
 		sap.ui.getCore().applyChanges();
 	}
-
 
 	function checkAriaSelected(sPropertyValue, bExpectSelected, assert) {
 		if (bExpectSelected) {
@@ -98,20 +102,16 @@
 		}
 	}
 
-
 	//************************************************************************
 	// Test Code
 	//************************************************************************
 
-	sap.ui.test.qunit.delayTestStart(500);
-
-
 	QUnit.module("Data Cells", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 			_modifyTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
@@ -121,6 +121,7 @@
 		var bFirstTime = !!mParams.firstTime;
 		var bRowChange = !!mParams.rowChange;
 		var bColChange = !!mParams.colChange;
+		var oTable = !mParams.table ? window.oTable : mParams.table;
 		var bGroup = !!mParams.group;
 		var bSum = !!mParams.sum;
 
@@ -129,6 +130,7 @@
 			aLabels.push("ARIALABELLEDBY");
 			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
+			aLabels.push(oTable.getId() + "-ariaselection");
 		}
 
 		aLabels.push(oTable.getId() + "-rownumberofrows");
@@ -153,7 +155,7 @@
 			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
 		}
 
-		aLabels.push(oColumn.getId());
+		aLabels.push(oColumn.getId() + "-inner");
 
 		if (iIndex == 0) {
 			aLabels.push(oTable.getId() + "-ariafixedcolumn");
@@ -165,6 +167,10 @@
 			} else {
 				aLabels.push(oTable.getId() + "-cellacc");
 			}
+		}
+
+		if (oTable.isIndexSelected(iRow) && sap.ui.table.TableUtils.Grouping.isTreeMode(oTable)) {
+			aLabels.push(oTable.getId() + "-ariarowselected");
 		}
 
 		assert.strictEqual(
@@ -196,12 +202,13 @@
 	function testAriaLabelsForNonFocusedDataCell($Cell, iRow, iCol, assert, mParams) {
 		var mParams = mParams || {};
 		var aLabels = [];
+		var oTable = !mParams.table ? window.oTable : mParams.table;
 		var oColumn = oTable._getVisibleColumns()[iCol];
 		var oRow = oTable.getRows()[iRow];
 		var oCell = oRow.getCells()[iCol];
 		var iIndex = oCell.getIndex();
 
-		aLabels.push(oColumn.getId());
+		aLabels.push(oColumn.getId() + "-inner");
 		if (iIndex == 0) {
 			aLabels.push(oTable.getId() + "-ariafixedcolumn");
 		}
@@ -233,10 +240,10 @@
 			aExpected.push("DESCRIPTION_" + oCell.getText());
 		}
 		if (iIndex == 0) {
-			aExpected.push(sap.ui.getCore().getLibraryResourceBundle("sap.ui.table").getText("TBL_CTRL_STATE_READONLY"));
+			aExpected.push(TableUtils.getResourceBundle().getText("TBL_CTRL_STATE_READONLY"));
 		}
 		if (iIndex == 2) {
-			aExpected.push(sap.ui.getCore().getLibraryResourceBundle("sap.ui.table").getText("TBL_CTRL_STATE_DISABLED"));
+			aExpected.push(TableUtils.getResourceBundle().getText("TBL_CTRL_STATE_DISABLED"));
 			aExpected.push("CHILD1 CHILD2");
 		}
 
@@ -265,7 +272,7 @@
 		);
 	}
 
-	QUnit.test("aria-labelledby with Focus", function (assert) {
+	QUnit.test("aria-labelledby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell;
 		var i;
@@ -278,13 +285,32 @@
 			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true});
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell($Cell, 1, aFields.length - 1, assert);
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-labelledby without Focus", function (assert) {
+	QUnit.test("aria-labelledby with Focus (TreeTable)", function(assert) {
+		var done = assert.async();
+		var $Cell;
+		var i;
+		for (i = 0; i < aFields.length; i++) {
+			$Cell = getCell(0, i, true, assert, oTreeTable);
+			testAriaLabelsForFocusedDataCell($Cell, 0, i, assert, {firstTime: i == 0, colChange: true, table: oTreeTable});
+		}
+		for (i = 0; i < aFields.length; i++) {
+			$Cell = getCell(1, i, true, assert, oTreeTable);
+			testAriaLabelsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true, table: oTreeTable});
+		}
+		setFocusOutsideOfTable(assert);
+		setTimeout(function() {
+			testAriaLabelsForNonFocusedDataCell($Cell, 1, aFields.length - 1, assert, {table: oTreeTable});
+			done();
+		}, 100);
+	});
+
+	QUnit.test("aria-labelledby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
 		var i;
@@ -299,7 +325,7 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("ACCInfo", function (assert) {
+	QUnit.test("ACCInfo", function(assert) {
 		var done = assert.async();
 		var $Cell;
 		for (var i = 0; i < aFields.length; i++) {
@@ -307,13 +333,13 @@
 			testACCInfoForFocusedDataCell($Cell, 0, i, assert);
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell($Cell, 0, aFields.length - 1, assert);
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-describedby with Focus", function (assert) {
+	QUnit.test("aria-describedby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell;
 		var i;
@@ -326,13 +352,13 @@
 			testAriaDescriptionsForFocusedDataCell($Cell, 1, i, assert, {rowChange: i == 0, colChange: true});
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			assert.ok(!$Cell.attr("aria-describedby"), "No aria-describedby on cell [1, " + (aFields.length - 1) + "]");
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-describedby without Focus", function (assert) {
+	QUnit.test("aria-describedby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
 		var i;
@@ -347,7 +373,7 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("Grouping Row", function (assert) {
+	QUnit.test("Grouping Row", function(assert) {
 		var done = assert.async();
 		initRowActions(oTable, 1, 1);
 
@@ -379,14 +405,14 @@
 		}
 
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell(getCell(1, aFields.length - 1, false, assert), 1, aFields.length - 1, assert);
 			oTable.rerender();
 			done();
 		}, 100);
 	});
 
-	QUnit.test("Sum Row", function (assert) {
+	QUnit.test("Sum Row", function(assert) {
 		var done = assert.async();
 		initRowActions(oTable, 1, 1);
 
@@ -415,14 +441,14 @@
 		}
 
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForNonFocusedDataCell(getCell(1, aFields.length - 1, false, assert), 1, aFields.length - 1, assert);
 			oTable.rerender();
 			done();
 		}, 100);
 	});
 
-	QUnit.test("Other ARIA Attributes of Data Cell", function (assert) {
+	QUnit.test("Other ARIA Attributes of Data Cell", function(assert) {
 		var $Elem = oTable.$("rows-row0-col0");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		$Elem = oTreeTable.$("rows-row0-col0");
@@ -435,13 +461,12 @@
 		assert.strictEqual($Elem.attr("aria-expanded"), "false", "aria-expanded");
 	});
 
-
 	QUnit.module("Column Header", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 			_modifyTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
@@ -457,6 +482,7 @@
 			aLabels.push("ARIALABELLEDBY");
 			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
+			aLabels.push(oTable.getId() + "-ariaselection");
 		}
 
 		if (bFocus) {
@@ -500,7 +526,7 @@
 		}
 	}
 
-	QUnit.test("aria-labelledby with Focus", function (assert) {
+	QUnit.test("aria-labelledby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell;
 		for (var i = 0; i < aFields.length; i++) {
@@ -508,13 +534,13 @@
 			testAriaLabelsForColumnHeader($Cell, i, assert, {firstTime: i == 0, colChange: true, focus: true});
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForColumnHeader($Cell, aFields.length - 1, assert);
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-labelledby without Focus", function (assert) {
+	QUnit.test("aria-labelledby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
 		for (var i = 0; i < aFields.length; i++) {
@@ -524,7 +550,7 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("aria-describedby with Focus", function (assert) {
+	QUnit.test("aria-describedby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell;
 		for (var i = 0; i < aFields.length; i++) {
@@ -532,12 +558,12 @@
 			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of column header " + i);
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-describedby without Focus", function (assert) {
+	QUnit.test("aria-describedby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
 		for (var i = 0; i < aFields.length; i++) {
@@ -547,7 +573,7 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("Other ARIA Attributes of Column Header", function (assert) {
+	QUnit.test("Other ARIA Attributes of Column Header", function(assert) {
 		var $Elem = oTable.getColumns()[0].$();
 		assert.strictEqual($Elem.attr("role"), "columnheader", "role");
 		assert.ok(!$Elem.attr("aria-haspopup"), "aria-haspopup");
@@ -558,13 +584,12 @@
 		assert.strictEqual($Elem.attr("aria-sort"), "ascending", "aria-sort");
 	});
 
-
 	QUnit.module("Row Header", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 			_modifyTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
@@ -582,15 +607,13 @@
 			aLabels.push("ARIALABELLEDBY");
 			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
+			aLabels.push(oTable.getId() + "-ariaselection");
 		}
 
 		aLabels.push(oTable.getId() + "-ariarowheaderlabel");
 
 		if (bFocus) {
 			aLabels.push(oTable.getId() + "-rownumberofrows");
-			if (iRow == 0) {
-				aLabels.push(oTable.getId() + "-ariarowselected");
-			}
 			if (bGroup) {
 				aLabels.push(oTable.getId() + "-ariarowgrouplabel");
 			} else if (bSum) {
@@ -617,7 +640,7 @@
 		}
 	}
 
-	QUnit.test("aria-labelledby with Focus", function (assert) {
+	QUnit.test("aria-labelledby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell;
 		for (var i = 0; i < 2; i++) {
@@ -625,13 +648,13 @@
 			testAriaLabelsForRowHeader($Cell, i, assert, {firstTime: i == 0, rowChange: true, focus: true});
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForRowHeader($Cell, 2, assert);
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-labelledby without Focus", function (assert) {
+	QUnit.test("aria-labelledby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
 		for (var i = 0; i < 2; i++) {
@@ -641,7 +664,7 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("aria-describedby with Focus", function (assert) {
+	QUnit.test("aria-describedby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell;
 		for (var i = 0; i < 2; i++) {
@@ -649,12 +672,12 @@
 			assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of row header " + i);
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-describedby without Focus", function (assert) {
+	QUnit.test("aria-describedby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
 		for (var i = 0; i < 2; i++) {
@@ -664,7 +687,7 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("Grouping Row", function (assert) {
+	QUnit.test("Grouping Row", function(assert) {
 		var done = assert.async();
 		var oRefs = fakeGroupRow(1);
 
@@ -680,14 +703,14 @@
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForRowHeader($Cell, 1, assert);
 			oTable.rerender();
 			done();
 		}, 100);
 	});
 
-	QUnit.test("Sum Row", function (assert) {
+	QUnit.test("Sum Row", function(assert) {
 		var done = assert.async();
 		var oRefs = fakeSumRow(1);
 
@@ -701,14 +724,14 @@
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of group row header");
 
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForRowHeader($Cell, 1, assert);
 			oTable.rerender();
 			done();
 		}, 100);
 	});
 
-	QUnit.test("Other ARIA Attributes of Row Header", function (assert) {
+	QUnit.test("Other ARIA Attributes of Row Header", function(assert) {
 		var $Elem = oTable.$("rowsel0");
 		assert.strictEqual($Elem.attr("role"), "rowheader", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
@@ -716,14 +739,13 @@
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
-
 	QUnit.module("Row Actions", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 			_modifyTables();
 			initRowActions(oTable, 1, 1);
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
@@ -742,6 +764,7 @@
 			aLabels.push("ARIALABELLEDBY");
 			aLabels.push(oTable.getId() + "-ariadesc");
 			aLabels.push(oTable.getId() + "-ariacount");
+			aLabels.push(oTable.getId() + "-ariaselection");
 		}
 
 		if (bFocus) {
@@ -786,7 +809,7 @@
 		}
 	}
 
-	QUnit.test("aria-labelledby with Focus", function (assert) {
+	QUnit.test("aria-labelledby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell;
 		for (var i = 0; i < 2; i++) {
@@ -799,13 +822,13 @@
 			});
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForRowAction($Cell, 2, assert);
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-labelledby with Focus (Group Row)", function (assert) {
+	QUnit.test("aria-labelledby with Focus (Group Row)", function(assert) {
 		var done = assert.async();
 		fakeGroupRow(1);
 		var $Cell;
@@ -820,13 +843,13 @@
 			});
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForRowAction($Cell, 2, assert);
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-labelledby with Focus (Sum Row)", function (assert) {
+	QUnit.test("aria-labelledby with Focus (Sum Row)", function(assert) {
 		var done = assert.async();
 		fakeSumRow(1);
 		var $Cell;
@@ -841,13 +864,13 @@
 			});
 		}
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			testAriaLabelsForRowAction($Cell, 2, assert);
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-labelledby without Focus", function (assert) {
+	QUnit.test("aria-labelledby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell;
 		for (var i = 0; i < 2; i++) {
@@ -857,7 +880,7 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("Other ARIA Attributes of Row Action", function (assert) {
+	QUnit.test("Other ARIA Attributes of Row Action", function(assert) {
 		var $Elem = oTable.$("rowact0");
 		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
@@ -865,53 +888,54 @@
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
-
 	QUnit.module("SelectAll", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 			_modifyTables();
 			this._sAdditionalLabeling = oTable._getShowStandardTooltips() ? "" : (" " + oTable.getId() + "-ariaselectall");
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("aria-labelledby with Focus", function (assert) {
+	QUnit.test("aria-labelledby with Focus", function(assert) {
 		var done = assert.async();
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
+			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel"
+			+ this._sAdditionalLabeling, "aria-labelledby of select all");
 		getRowHeader(0, true, assert); //set row header somewhere else on the table
 		$Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
 			sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-labelledby with Focus (Single Selection)", function (assert) {
+	QUnit.test("aria-labelledby with Focus (Single Selection)", function(assert) {
 		var done = assert.async();
 		oTable.setSelectionMode("Single");
 		sap.ui.getCore().applyChanges();
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariacolrowheaderlabel " + sId + "-ariaselectall", "aria-labelledby of select all");
+			"ARIALABELLEDBY " + sId + "-ariadesc " + sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel " + sId
+			+ "-ariaselectall", "aria-labelledby of select all");
 		getRowHeader(0, true, assert); //set row header somewhere else on the table
 		$Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
 			sId + "-ariacolrowheaderlabel " + sId + "-ariaselectall", "aria-labelledby of select all");
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-labelledby without Focus", function (assert) {
+	QUnit.test("aria-labelledby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell = getSelectAll(false, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
@@ -919,7 +943,7 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("aria-labelledby without Focus (Single Selection)", function (assert) {
+	QUnit.test("aria-labelledby without Focus (Single Selection)", function(assert) {
 		oTable.setSelectionMode("Single");
 		sap.ui.getCore().applyChanges();
 		setFocusOutsideOfTable(assert);
@@ -929,24 +953,24 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("aria-describedby with Focus", function (assert) {
+	QUnit.test("aria-describedby with Focus", function(assert) {
 		var done = assert.async();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of select all");
 		setFocusOutsideOfTable(assert);
-		setTimeout(function () {
+		setTimeout(function() {
 			done();
 		}, 100);
 	});
 
-	QUnit.test("aria-describedby without Focus", function (assert) {
+	QUnit.test("aria-describedby without Focus", function(assert) {
 		setFocusOutsideOfTable(assert);
 		var $Cell = getSelectAll(false, assert);
 		assert.strictEqual(($Cell.attr("aria-describedby") || "").trim(), "", "aria-describedby of select all");
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("Other ARIA Attributes SelectAll", function (assert) {
+	QUnit.test("Other ARIA Attributes SelectAll", function(assert) {
 		var $Elem = getSelectAll(false);
 		assert.strictEqual($Elem.attr("role"), "button", "role");
 		assert.strictEqual($Elem.attr("aria-pressed"), "false", "aria-pressed");
@@ -959,21 +983,20 @@
 		assert.strictEqual($Elem.attr("aria-disabled"), "true", "aria-disabled");
 	});
 
-
 	QUnit.module("Misc", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 			_modifyTables();
 			oTable.addExtension(new sap.ui.table.test.TestControl({text: "Extension"}));
 			oTable.setFooter(new sap.ui.table.test.TestControl({text: "Footer"}));
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("ARIA Labels of Column Template", function (assert) {
+	QUnit.test("ARIA Labels of Column Template", function(assert) {
 		var aColumns = oTable._getVisibleColumns();
 		var aCells = oTable.getRows()[0].getCells();
 		for (var i = 0; i < aCells.length; i++) {
@@ -981,41 +1004,40 @@
 		}
 	});
 
-	QUnit.test("ARIA Attributes of Tree Table Expand Icon", function (assert) {
+	QUnit.test("ARIA Attributes of Tree Table Expand Icon", function(assert) {
 		var $Elem = oTreeTable.$("rows-row0-col0").find(".sapUiTableTreeIcon");
 		assert.strictEqual($Elem.attr("role"), "button", "role");
 	});
 
-	QUnit.test("ARIA Attributes of Table Header", function (assert) {
+	QUnit.test("ARIA Attributes of Table Header", function(assert) {
 		var $Elem = oTable.$().find(".sapUiTableHdr");
 		assert.strictEqual($Elem.attr("role"), "heading", "role");
 	});
 
-	QUnit.test("ARIA Attributes of Table Elements", function (assert) {
+	QUnit.test("ARIA Attributes of Table Elements", function(assert) {
 		var $Elem = oTable.$().find("table");
-		$Elem.each(function () {
+		$Elem.each(function() {
 			assert.strictEqual(jQuery(this).attr("role"), "presentation", "role");
 		});
 	});
 
-	QUnit.test("ARIA Attributes of Content Element", function (assert) {
-		var $Elem = oTable.$("sapUiTableCnt");
+	QUnit.test("ARIA Attributes of Content Element", function(assert) {
+		var $Elem = oTable.$("sapUiTableGridCnt");
 		assert.strictEqual($Elem.attr("role"), "grid", "role");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
-		$Elem = oTreeTable.$("sapUiTableCnt");
+		$Elem = oTreeTable.$("sapUiTableGridCnt");
 		assert.strictEqual($Elem.attr("role"), "treegrid", "role");
 		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
 	});
 
-	QUnit.test("ARIA Attributes of TH Elements", function (assert) {
+	QUnit.test("ARIA Attributes of TH Elements", function(assert) {
 		var $Elem = oTable.$().find(".sapUiTableCCnt th[id]"); // all with ID
-		$Elem.each(function () {
+		$Elem.each(function() {
 			var $TH = jQuery(this);
 			if ($TH.attr("id") === oTable.getId() + "-dummycolhdr") {
 				assert.strictEqual($TH.attr("role"), "presentation", "role");
 			} else {
-				assert.strictEqual($TH.attr("role"), "columnheader", "role");
 				assert.strictEqual($TH.attr("scope"), "col", "scope");
 				var oColumn = oTable.getColumns()[$TH.attr("data-sap-ui-headcolindex")];
 				if (oColumn) {
@@ -1025,13 +1047,13 @@
 			}
 		});
 		$Elem = oTable.$().find(".sapUiTableCCnt th:not([id])"); // dummy column
-		$Elem.each(function () {
+		$Elem.each(function() {
 			var $TH = jQuery(this);
 			assert.strictEqual($TH.attr("role"), "presentation", "role");
 		});
 	});
 
-	QUnit.test("ARIA Attributes of TR Elements", function (assert) {
+	QUnit.test("ARIA Attributes of TR Elements", function(assert) {
 		var $Elem = getCell(0, 0, false, assert).parent();
 		assert.strictEqual($Elem.attr("role"), "row", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
@@ -1046,9 +1068,9 @@
 		checkAriaSelected($Elem.attr("aria-selected"), false, assert);
 	});
 
-	QUnit.test("ARIA Attributes of Row Header TD Elements", function (assert) {
+	QUnit.test("ARIA Attributes of Row Header TD Elements", function(assert) {
 		var $Elem = oTable.$().find("[headers='" + oTable.getId() + "-colsel']");
-		$Elem.each(function () {
+		$Elem.each(function() {
 			var $TD = jQuery(this);
 			assert.strictEqual($TD.attr("role"), "rowheader", "role");
 			var sOwns = $TD.attr("aria-owns");
@@ -1057,53 +1079,53 @@
 		});
 	});
 
-	QUnit.test("ARIA for Overlay", function (assert) {
+	QUnit.test("ARIA for Overlay", function(assert) {
 		var $OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
 		//Heading + Extension + Footer + 2xTable + Row Selector + 2xColumn Headers + NoData Container = 8
 		assert.strictEqual($OverlayCoveredElements.length, 9, "Number of potentionally covered elements");
-		$OverlayCoveredElements.each(function () {
+		$OverlayCoveredElements.each(function() {
 			assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
 		});
 		oTable.setShowOverlay(true);
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
-		$OverlayCoveredElements.each(function () {
+		$OverlayCoveredElements.each(function() {
 			assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 		});
 		oTable.rerender();
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
-		$OverlayCoveredElements.each(function () {
+		$OverlayCoveredElements.each(function() {
 			assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 		});
 		oTable.setShowOverlay(false);
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
-		$OverlayCoveredElements.each(function () {
+		$OverlayCoveredElements.each(function() {
 			assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
 		});
 	});
 
-	QUnit.test("ARIA for NoData", function (assert) {
+	QUnit.test("ARIA for NoData", function(assert) {
 		var done = assert.async();
 		var $NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
 		//2xTable + Row Selector = 3
 		assert.strictEqual($NoDataCoveredElements.length, 3, "Number of potentionally covered elements");
-		$NoDataCoveredElements.each(function () {
+		$NoDataCoveredElements.each(function() {
 			assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
 		});
 
 		function onNewModelApplied() {
 			oTable.detachEvent("_rowsUpdated", onNewModelApplied);
 			$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
-			$NoDataCoveredElements.each(function () {
+			$NoDataCoveredElements.each(function() {
 				assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 			});
 			oTable.rerender();
 			$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
-			$NoDataCoveredElements.each(function () {
+			$NoDataCoveredElements.each(function() {
 				assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 			});
 			oTable.setShowNoData(false);
 			$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
-			$NoDataCoveredElements.each(function () {
+			$NoDataCoveredElements.each(function() {
 				assert.ok(!jQuery(this).attr("aria-hidden"), "No aria-hidden");
 			});
 			done();
@@ -1113,10 +1135,14 @@
 		oTable.setModel(new sap.ui.model.json.JSONModel());
 	});
 
-	QUnit.test("HiddenTexts", function (assert) {
-		var aHiddenTexts = ["ariadesc", "ariacount", "toggleedit", "ariaselectall", "ariarowheaderlabel", "ariarowgrouplabel", "ariagrandtotallabel", "ariagrouptotallabel",
-			"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolspan", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
-			"ariafixedcolumn", "ariainvalid"];
+	QUnit.test("HiddenTexts", function(assert) {
+		var aHiddenTexts = [
+			"ariadesc", "ariacount", "toggleedit", "ariaselectall", "ariarowheaderlabel", "ariarowgrouplabel", "ariagrandtotallabel",
+			"ariagrouptotallabel",
+			"ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu", "ariacolspan",
+			"ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes",
+			"ariafixedcolumn", "ariainvalid", "ariaselection"
+		];
 		var $Elem = oTable.$().find(".sapUiTableHiddenTexts");
 		assert.strictEqual($Elem.length, 1, "Hidden Text Area available");
 		$Elem = $Elem.children();
@@ -1124,7 +1150,7 @@
 		for (var i = 0; i < aHiddenTexts.length; i++) {
 			assert.strictEqual(jQuery.sap.byId(oTable.getId() + "-" + aHiddenTexts[i]).length, 1, "Hidden Text " + aHiddenTexts[i] + " available");
 		}
-		$Elem.each(function () {
+		$Elem.each(function() {
 			var $T = jQuery(this);
 			var sId = $T.attr("id");
 			assert.strictEqual($T.attr("aria-hidden"), "true", "aria-hidden " + sId);
@@ -1132,7 +1158,7 @@
 		});
 	});
 
-	QUnit.test("Highlight texts", function (assert) {
+	QUnit.test("Highlight texts", function(assert) {
 		var aVisibleHighlights = [
 			sap.ui.core.MessageType.Success,
 			sap.ui.core.MessageType.Warning,
@@ -1155,8 +1181,8 @@
 				var oRow = aRows[j];
 				var oHighlightTextElement = oRow.getDomRef("highlighttext");
 
-				var sMessage = "Row " + (j + 1) + ": "
-					+ (bTextExists ? "The highlight text element exists in the DOM" : "The highlight text element does not exist in the DOM");
+				var sMessage = "Row " + (j + 1) + ": The highlight text element "
+							   + (bTextExists ? "exists in the DOM" : "does not exist in the DOM");
 				assert.strictEqual(oHighlightTextElement != null, bTextExists, sMessage);
 
 				if (oHighlightTextElement != null) {
@@ -1177,7 +1203,7 @@
 			}));
 			sap.ui.getCore().applyChanges();
 
-			assertHighlightTexts(true, sHighlight);
+			assertHighlightTexts(true, TableUtils.getResourceBundle().getText("TBL_ROW_STATE_" + sHighlight.toUpperCase()));
 		}
 
 		for (i = 0; i < aInvisibleHighlights.length; i++) {
@@ -1192,7 +1218,7 @@
 		}
 	});
 
-	QUnit.test("Scrolling", function (assert) {
+	QUnit.test("Scrolling", function(assert) {
 		var done = assert.async();
 		var $Cell = getCell(2, 0, true, assert);
 		testAriaLabelsForFocusedDataCell($Cell, 2, 0, assert, {firstTime: true});
@@ -1201,7 +1227,7 @@
 		var iDelay = 100 + oTable._iBindingTimerDelay;
 
 		var oDelegate = {
-			onfocusin: function (oEvent) {
+			onfocusin: function(oEvent) {
 				assert.ok(oEvent.target === $Cell.get(0), "Refocus of cell done to trigger screenreader refresh");
 				bFocusTriggered = true;
 			}
@@ -1212,28 +1238,28 @@
 		oTable.setFirstVisibleRow(1); // Simulate scrolling by one row
 		assert.ok(!bFocusTriggered, "No sync refocus of cell done");
 
-		setTimeout(function () {
+		setTimeout(function() {
 			oTable.removeEventDelegate(oDelegate);
 			assert.ok(bFocusTriggered, "Refocus of cell done after " + (iDelay + 10) + " ms");
 			testAriaLabelsForFocusedDataCell($Cell, 2, 0, assert, {rowChange: true});
 			assert.ok((oTable.$("cellacc").html() || "").indexOf("A4") >= 0, "Acc Text after scrolling");
 			setFocusOutsideOfTable(assert);
 			oTable.setFirstVisibleRow(0);
-			setTimeout(function () {
+			setTimeout(function() {
 				testAriaLabelsForNonFocusedDataCell($Cell, 2, 0, assert);
 				done();
 			}, 100);
 		}, iDelay + 50);
 	});
 
-	QUnit.test("_debug()", function (assert) {
+	QUnit.test("_debug()", function(assert) {
 		var oExtension = oTable._getAccExtension();
 		assert.ok(!oExtension._ExtensionHelper, "No debug mode");
 		oExtension._debug();
 		assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
 	});
 
-	QUnit.test("ExtensionHelper.getColumnIndexOfFocusedCell", function (assert) {
+	QUnit.test("ExtensionHelper.getColumnIndexOfFocusedCell", function(assert) {
 		var oExtension = oTable._getAccExtension();
 		oExtension._debug();
 		oTable.getColumns()[1].setVisible(false);
@@ -1262,7 +1288,7 @@
 		assert.strictEqual(oExtension._ExtensionHelper.getColumnIndexOfFocusedCell(oExtension), -1, "COLUMNROWHEADER");
 	});
 
-	QUnit.test("ExtensionHelper.getRelevantColumnHeaders", function (assert) {
+	QUnit.test("ExtensionHelper.getRelevantColumnHeaders", function(assert) {
 		var oExtension = oTable._getAccExtension();
 		oExtension._debug();
 		var oHelper = oExtension._ExtensionHelper;
@@ -1307,7 +1333,7 @@
 		checkColumnHeaders(oTable, oCol, [oCol.getId(), oCol.getId() + "_1", oCol.getId() + "_2"]);
 	});
 
-	QUnit.test("Hidden Standard Tooltips", function (assert) {
+	QUnit.test("Hidden Standard Tooltips", function(assert) {
 
 		function checkTooltips(bEnable, sSelectionBehavior, sSelectionMode, iExpected) {
 			oTable._bHideStandardTooltips = !bEnable;
@@ -1315,7 +1341,8 @@
 			oTable.setSelectionMode(sSelectionMode);
 			oTable.invalidate();
 			sap.ui.getCore().applyChanges();
-			assert.equal(oTable.$().find("[title]").length, iExpected, "Tooltip enabled:" + bEnable + ", " + sSelectionBehavior + ", " + sSelectionMode);
+			assert.equal(oTable.$().find("[title]").length, iExpected,
+				"Tooltip enabled:" + bEnable + ", " + sSelectionBehavior + ", " + sSelectionMode);
 		}
 
 		var aColumns = oTable.getColumns();
@@ -1327,8 +1354,8 @@
 		checkTooltips(true, "Row", "MultiToggle", 1 /*SelAll*/ + iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors*/);
 		checkTooltips(true, "Row", "Single", iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors*/);
 		checkTooltips(true, "Row", "None", 0);
-		checkTooltips(true, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors (rendered but not shown)*/);
-		checkTooltips(true, "RowOnly", "Single", iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors (rendered but not shown)*/);
+		checkTooltips(true, "RowOnly", "MultiToggle", 1 /*SelAll*/ + iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors (not visible)*/);
+		checkTooltips(true, "RowOnly", "Single", iRows + iRows /*Fixed/Non-Fixed Rows*/ + iRows /*Row Selectors (not visible)*/);
 		checkTooltips(true, "RowOnly", "None", 0);
 		checkTooltips(true, "RowSelector", "MultiToggle", 1 /*SelAll*/ + iRows /*Row Selectors*/);
 		checkTooltips(true, "RowSelector", "Single", iRows /*Row Selectors*/);
@@ -1345,18 +1372,17 @@
 		checkTooltips(false, "RowSelector", "None", 0);
 	});
 
-
 	QUnit.module("No Acc Mode", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 			_modifyTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("No Acc Mode", function (assert) {
+	QUnit.test("No Acc Mode", function(assert) {
 		oTable._getAccExtension()._accMode = false;
 		oTable.invalidate();
 		sap.ui.getCore().applyChanges();
@@ -1381,18 +1407,16 @@
 		sap.ui.getCore().applyChanges();
 	});
 
-
 	QUnit.module("Destruction", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 		}
 	});
 
-	QUnit.test("destroy()", function (assert) {
+	QUnit.test("destroy()", function(assert) {
 		var oExtension = oTable._getAccExtension();
 		oTable.destroy();
 		oTreeTable.destroy();
 		assert.ok(!oExtension._table, "Table cleared");
 	});
-
-}());
+});

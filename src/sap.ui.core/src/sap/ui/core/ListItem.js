@@ -22,7 +22,6 @@ sap.ui.define(['./Item', './library'],
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.ListItem
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel

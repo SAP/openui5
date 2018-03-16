@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.core.LocalBusyIndicator.
-sap.ui.define(['jquery.sap.global', './Control', './library', './theming/Parameters'],
-	function(jQuery, Control, library, Parameters) {
+sap.ui.define([
+    'jquery.sap.global',
+    './Control',
+    './library',
+    './theming/Parameters',
+    "./LocalBusyIndicatorRenderer"
+],
+	function(jQuery, Control, library, Parameters, LocalBusyIndicatorRenderer) {
 	"use strict";
 
 
@@ -27,7 +33,6 @@ sap.ui.define(['jquery.sap.global', './Control', './library', './theming/Paramet
 	 * @author SAP SE
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.11.0
 	 * @deprecated Since version 1.14.2.

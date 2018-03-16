@@ -1,3 +1,5 @@
+@import url("ControlTree.css");
+
 body {
 	background: #fff;
 	content: "SupportTools loading...";
@@ -116,4 +118,31 @@ body {
 
 .customSettingsPadding{
 	padding-left: 0.375rem;
+}
+
+.customSettingsInfo {
+	border-top: 1px solid #999999;
+	margin: 0.4rem 0 0;
+	width: 100%;
+	padding: 0.4rem 0 0;
+}
+
+.sapUiSupportToolIssueHeader .sapMBarChild.sapMBtn {
+	padding-top: 0.75rem;
+}
+
+.sapUiSupportToolIssuesTreeTable .sapMFT {
+	overflow: hidden;
+}
+
+.selectedRuleTitle {
+	height: 2rem !important;
+}
+
+.issuesSeverityIcon.sapUiIcon {
+	top: 0.2rem;
+}
+
+.sapMBarContainer.sapMBarRight > .sapMBarChild.sapMIBar > .sapUiIcon {
+	padding: 0;
 }

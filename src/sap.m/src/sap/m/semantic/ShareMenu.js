@@ -11,7 +11,23 @@
  */
 
 // Provides class sap.m.semantic.ShareMenu
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap/m/OverflowToolbarLayoutData', 'sap/ui/core/IconPool', 'sap/m/OverflowToolbarButton'], function(jQuery, Metadata, Button, OverflowToolbarLayoutData, IconPool, OverflowToolbarButton) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/base/Metadata',
+	'sap/ui/base/ManagedObjectObserver',
+	'sap/m/Button',
+	'sap/m/OverflowToolbarLayoutData',
+	'sap/ui/core/IconPool',
+	'sap/m/OverflowToolbarButton',
+	'sap/m/OverflowToolbarPriority'],
+	function(jQuery,
+			 Metadata,
+			 ManagedObjectObserver,
+			 Button,
+			 OverflowToolbarLayoutData,
+			 IconPool,
+			 OverflowToolbarButton,
+			 OverflowToolbarPriority) {
 	"use strict";
 
 	/**
@@ -37,6 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 			}
 
 			this._oActionSheet = oActionSheet;
+			this._oContentObserver = new ManagedObjectObserver(this._updateShareBtnVisibility.bind(this));
 
 			this._setMode(ShareMenu._Mode.initial);
 		}
@@ -115,13 +132,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	 * @returns {Array} an array of controls that comprise the menu-items
 	 */
 	ShareMenu.prototype.getContent = function () {
+		var sMode = this._getMode();
 
-		if (this._getMode() === ShareMenu._Mode.initial) {
+		if (sMode === ShareMenu._Mode.initial) {
 			return [];
-		} else if (this._getMode() === ShareMenu._Mode.button) {
+		} else if (sMode === ShareMenu._Mode.button) {
 			return [this._oBaseButton];
 		} else {
-			return this._oActionSheet.getAggregation("buttons");
+			return this._oActionSheet.getAggregation("buttons") || [];
 		}
 	};
 
@@ -133,17 +151,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
 	 */
 	ShareMenu.prototype.addContent = function (oButton, bSuppressInvalidate) {
-		if (this._getMode() === ShareMenu._Mode.initial) {
+		var sMode = this._getMode();
+
+		this._observeButton(oButton);
+
+		if (sMode === ShareMenu._Mode.initial) {
 			this._setMode(ShareMenu._Mode.button, bSuppressInvalidate, oButton);
 			return this;
 		}
 
-		if (this._getMode() === ShareMenu._Mode.button) {
+		if (sMode === ShareMenu._Mode.button) {
 			this._setMode(ShareMenu._Mode.actionSheet, bSuppressInvalidate);
 		}
 
 		this._preProcessOverflowToolbarButton(oButton);
 		this._oActionSheet.addButton(oButton, bSuppressInvalidate);
+		this._updateShareBtnVisibility();
 		return this;
 	};
 
@@ -152,21 +175,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	 *
 	 * @param {sap.m.Button} oButton - the new button to be inserted
 	 * @param {number} iIndex - the insert index
-	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
+	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
 	 */
 	ShareMenu.prototype.insertContent = function (oButton, iIndex, bSuppressInvalidate) {
-		if (this._getMode() === ShareMenu._Mode.initial) {
+		var sMode = this._getMode();
+
+		this._observeButton(oButton);
+
+		if (sMode === ShareMenu._Mode.initial) {
 			this._setMode(ShareMenu._Mode.button, bSuppressInvalidate, oButton);
 			return this;
 		}
 
-		if (this._getMode() === ShareMenu._Mode.button) {
+		if (sMode === ShareMenu._Mode.button) {
 			this._setMode(ShareMenu._Mode.actionSheet, bSuppressInvalidate);
 		}
 
 		this._preProcessOverflowToolbarButton(oButton);
 		this._oActionSheet.insertButton(oButton, iIndex, bSuppressInvalidate);
+		this._updateShareBtnVisibility();
 		return this;
 	};
 
@@ -191,25 +219,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	 * Removes the given item from the menu
 	 *
 	 * @param {sap.m.Button} oButton - the button to be removed
-	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
+	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @return {sap.m.Button} - the removed button
 	 */
 	ShareMenu.prototype.removeContent = function (oButton, bSuppressInvalidate) {
-		var result;
-		if (this._getMode() === ShareMenu._Mode.actionSheet) {
+		var result, sMode = this._getMode();
+
+		if (sMode === ShareMenu._Mode.actionSheet) {
 			result = this._oActionSheet.removeButton(oButton, bSuppressInvalidate);
 			this._postProcessOverflowToolbarButton(oButton);
-
+			this._unobserveButton(oButton);
 			if (result) {
 				if (this._oActionSheet.getAggregation("buttons").length === 1) {
 					this._setMode(ShareMenu._Mode.button, bSuppressInvalidate);
 				}
 			}
-
+			this._updateShareBtnVisibility();
 			return result;
 		}
 
-		if (this._getMode() === ShareMenu._Mode.button) {
+		if (sMode === ShareMenu._Mode.button) {
 			var oLastButton = this._oBaseButton;
 			this._setMode(ShareMenu._Mode.initial, bSuppressInvalidate);
 			return oLastButton;
@@ -221,14 +250,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	/**
 	 * Removes all of the items of the menu
 	 *
-	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
+	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @return {array} - an array of the removed buttons
 	 */
 	ShareMenu.prototype.removeAllContent = function (bSuppressInvalidate) {
 		var result;
 		if (this._getMode() === ShareMenu._Mode.actionSheet) {
 			result = this._oActionSheet.removeAllButtons(bSuppressInvalidate);
-			result.forEach(this._postProcessOverflowToolbarButton, this);
+			result.forEach(function(oButton){
+				this._postProcessOverflowToolbarButton(oButton);
+				this._unobserveButton(oButton);
+			}, this);
+			this._updateShareBtnVisibility();
 
 		} else if (this._getMode() === ShareMenu._Mode.button) {
 			result = [this._oBaseButton];
@@ -241,7 +274,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	/**
 	 * Destroys the controls used internally for this menu
 	 *
-	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
+	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 */
 	ShareMenu.prototype.destroy = function(bSuppressInvalidate) {
 		this._oActionSheet.destroy(bSuppressInvalidate);
@@ -249,6 +282,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 		if (this._oShareMenuBtn) {
 			this._oShareMenuBtn.destroy(bSuppressInvalidate);
 			this._oShareMenuBtn = null;
+		}
+
+		if (this._oContentObserver) {
+			this._oContentObserver.disconnect();
+			this._oContentObserver = null;
 		}
 	};
 
@@ -258,7 +296,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 	 * (1) In actionSheet mode, it opens the menu
 	 * (2) In "button" mode (i.e. when the menu has a single menu-item) it represents the only menu-item
 	 *
-	 * @param (boolean) bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
+	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @param {sap.m.Button} oButton - the new base button
 	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
 	 */
@@ -292,8 +330,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 	/**
 	 * Sets a new ShareMenu mode
-	 * @param sMode - the new mode
-	 * @param bSuppressInvalidate - flag to suppress control invalidation upon change
+	 * @param {sap.m.semantic.ShareMenu._Mode} sMode - the new mode
+	 * @param {boolean} bSuppressInvalidate - flag to suppress control invalidation upon change
 	 * @param oBaseButton - when the new mode is ShareMenu._Mode.button, a reference to that button
 	 *
 	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
@@ -353,12 +391,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 
 			var that = this;
 
-			this._oShareMenuBtn = new sap.m.Button(this._oActionSheet.getParent().getId() + "-shareButton", {
+			this._oShareMenuBtn = new Button(this._oActionSheet.getParent().getId() + "-shareButton", {
 				icon: IconPool.getIconURI("action"),
 				tooltip: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SEMANTIC_CONTROL_ACTION_SHARE"),
 				layoutData: new OverflowToolbarLayoutData({
-					moveToOverflow: false,
-					stayInOverflow: false
+					priority: OverflowToolbarPriority.NeverOverflow
 				}),
 				press: function () {
 					that._oActionSheet.openBy(that._oShareMenuBtn);
@@ -373,6 +410,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 		}
 
 		return this._oShareMenuBtn;
+	};
+
+	/**
+	* Retrieves the visible items of this menu.
+	*
+	* @returns {Array} an array of the visible menu items
+	*/
+	ShareMenu.prototype._getVisibleContent = function () {
+		return this.getContent().filter(function(oButton) {
+			return oButton.getVisible();
+		});
+	};
+
+	/**
+	* Updates the share menu button visibility
+	* in respect to the hare menu content count and visibility.
+	*
+	* If there is a single item - that button is the base button.
+	* If there are two or more share menu buttons:
+	* (a) at least one visible button - the share menu button is visible.
+	* (b) no visible buttons - the share menu button is hidden.
+	*
+	* @returns {Array} an array of the visible menu items
+	*/
+	ShareMenu.prototype._updateShareBtnVisibility = function () {
+		var aVisibleContent = this._getVisibleContent(),
+			bToggle = aVisibleContent.length > 0;
+
+		this._getShareMenuButton().setVisible(bToggle);
 	};
 
 	/**
@@ -397,6 +463,26 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Metadata', 'sap/m/Button', 'sap
 		if (oButton instanceof OverflowToolbarButton) {
 			delete oButton._bInOverflow;
 		}
+	};
+
+	/**
+	* Starts observing the <code>visible</code> property.
+	*
+	* @param {sap.m.Button} oButton
+	*/
+	ShareMenu.prototype._observeButton = function(oButton) {
+		this._oContentObserver.observe(oButton, {
+			properties: ["visible"]
+		});
+	};
+
+	/**
+	* Stops observing the <code>visible</code> property.
+	*/
+	ShareMenu.prototype._unobserveButton = function(oButton) {
+		this._oContentObserver.unobserve(oButton, {
+			properties: ["visible"]
+		});
 	};
 
 	return ShareMenu;

@@ -13,652 +13,228 @@
  * All measurement activities get recorded by jquery.sap.measure, which is located in jquery.sap.global. As the initial
  * interaction is the app startup, we need the measuring capability already before this module is loaded.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/Global'],
-	function(jQuery, URI, Device /*,jQuery*/) {
-		"use strict";
-
-			// activation by meta tag or url parameter as fallback
-			var bFesrActive = getInitialFESRState(),
-				bTraceActive,
-				bInteractionActive,
-				bMethodsOverridden, // indicates if the method overrides for fesr have already taken place
-				ROOT_ID = createGUID(), // static per session
-				CLIENT_ID = createGUID().substr(-8, 8) + ROOT_ID, // static per session
-				HOST = window.location.host, // static per session
-				CLIENT_OS = Device.os.name + "_" + Device.os.version,
-				CLIENT_MODEL = Device.browser.name + "_" + Device.browser.version,
-				sAppVersion = "", // shortened app version with fesr delimiter e.g. "@1.7.1"
-				sAppVersionFull = "", // full app version e.g. 1.7.1-SNAPSHOT
-				iE2eTraceLevel,
-				sTransactionId, // transaction id for the current request
-				sFESRTransactionId, // first transaction id of an interaction step, serves as identifier for the fesr-header
-				oPendingInteraction = {},
-				iStepCounter = 0, // counts interaction steps
-				iInteractionStepTimer,
-				oCurrentBrowserEvent,
-				sFESR, // current header string
-				sFESRopt, // current header string
-				iScrollEventDelayId = 0;
-
-			function getInitialFESRState() {
-				var bActive = !!document.querySelector("meta[name=sap-ui-fesr][content=true]"),
-					aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false)&?/);
-				if (aParamMatches) {
-					bActive = aParamMatches[1] && aParamMatches[1] != "false";
-				}
-				return bActive;
-			}
-
-			function activateDetectionMethods() {
-				// in case we do not have this API measurement is superfluous due to insufficient performance data
-				if (!(window.performance && window.performance.getEntries)) {
-					jQuery.sap.log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
-				}
-
-				// only start this once to avoid multiple overrides of the xhr methods
-				if (!bMethodsOverridden) {
-					bMethodsOverridden = true;
-
-					var fnXHRopen = window.XMLHttpRequest.prototype.open,
-						fnXHRsend = window.XMLHttpRequest.prototype.send,
-						fnXHRsetRequestHeader = window.XMLHttpRequest.prototype.setRequestHeader;
-
-					// inject function in window.XMLHttpRequest.open for FESR and E2eTraceLib
-					window.XMLHttpRequest.prototype.open = function() {
-						fnXHRopen.apply(this, arguments);
-						// as we should not reset this function override, we just skip the implementation in case none
-						// of the features is activated - later override should so be kept active
-						if (bInteractionActive || bFesrActive || bTraceActive) {
-							var sHost = new URI(arguments[1]).host();
-
-							// only use passport & FESR for non CORS requests (relative or with same host)
-							if (!sHost || sHost === HOST) {
-								sTransactionId = createGUID();
-								if (bInteractionActive || bFesrActive) {
-									this.addEventListener("readystatechange", handleResponse);
-									// assign the current interaction to the xhr for later response header retrieval.
-									this.pendingInteraction = oPendingInteraction;
-
-									if (bFesrActive) {
-										// set FESR
-										if (sFESR) {
-											this.setRequestHeader("SAP-Perf-FESRec", sFESR);
-											this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
-											sFESR = null;
-											sFESRopt = null;
-											sFESRTransactionId = sTransactionId;
-											iStepCounter++;
-										} else if (!sFESRTransactionId) {
-											// initial request should set the FESR Transaction Id
-											sFESRTransactionId = sTransactionId;
-										}
-
-										// check for updated version and update formatted versions
-										if (sAppVersionFull != oPendingInteraction.appVersion) {
-											sAppVersionFull = oPendingInteraction.appVersion;
-											sAppVersion = sAppVersionFull ? formatVersion(sAppVersionFull) : "";
-										}
-
-										// set passport with Root Context ID, Transaction ID, Component Info, Action
-										this.setRequestHeader("SAP-PASSPORT", passportHeader(
-											iE2eTraceLevel,
-											ROOT_ID,
-											sTransactionId,
-											oPendingInteraction.component + sAppVersion,
-											oPendingInteraction.trigger + "_" + oPendingInteraction.event + "_" + iStepCounter)
-										);
-									}
-								}
-								if (!bFesrActive && bTraceActive) {
-									// set passport with Root Context ID, Transaction ID for Trace
-									this.setRequestHeader("SAP-PASSPORT", passportHeader(iE2eTraceLevel, ROOT_ID, sTransactionId));
-								}
-							}
-						}
-					};
-
-					// inject function in window.XMLHttpRequest.send
-					window.XMLHttpRequest.prototype.send = function() {
-						fnXHRsend.apply(this, arguments);
-						if ((bInteractionActive || bFesrActive) && this.pendingInteraction) {
-							// double string length for byte length as in js characters are stored as 16 bit ints
-							this.pendingInteraction.bytesSent += arguments[0] ? arguments[0].length * 2 : 0;
-						}
-					};
-
-					// count request header size
-					window.XMLHttpRequest.prototype.setRequestHeader = function(sHeader, sValue) {
-						fnXHRsetRequestHeader.apply(this, arguments);
-						if (bInteractionActive || bFesrActive) {
-							// count request header length consistent to what getAllResponseHeaders().length would return
-							if (!this.requestHeaderLength) {
-								this.requestHeaderLength = 0;
-							}
-							// double string length for byte length as in js characters are stored as 16 bit ints
-							// sHeader + ": " + sValue + " "   --  means two blank and one colon === 3
-							this.requestHeaderLength += (sHeader.length + sValue.length + 3) * 2;
-						}
-					};
-
-					// detect scroll interactions by global event handler
-					window.addEventListener("scroll", jQuery.sap.interaction.notifyScrollEvent);
-					window.addEventListener("mousewheel", jQuery.sap.interaction.notifyScrollEvent);
-				}
-			}
-
-			// response handler which uses the custom properties we added to the xhr to retrieve information from the response headers
-			function handleResponse() {
-				if (this.readyState === 4 && this.pendingInteraction && !this.pendingInteraction.completed) {
-					// enrich interaction with information
-					var sContentLength = this.getResponseHeader("content-length"),
-						bCompressed = this.getResponseHeader("content-encoding") === "gzip",
-						sFesrec = this.getResponseHeader("sap-perf-fesrec");
-					this.pendingInteraction.bytesReceived += sContentLength ? parseInt(sContentLength, 10) : 0;
-					// double string length for byte length as in js characters are stored as 16 bit ints
-					this.pendingInteraction.bytesReceived += this.getAllResponseHeaders().length * 2;
-					this.pendingInteraction.bytesSent += this.requestHeaderLength || 0;
-					// this should be true only if all responses are compressed
-					this.pendingInteraction.requestCompression = bCompressed && (this.pendingInteraction.requestCompression !== false);
-					// sap-perf-fesrec header contains milliseconds
-					this.pendingInteraction.networkTime += sFesrec ? Math.round(parseFloat(sFesrec, 10) / 1000) : 0;
-					var sSapStatistics = this.getResponseHeader("sap-statistics");
-					if (sSapStatistics) {
-						var aTimings = jQuery.sap.measure.getRequestTimings();
-						this.pendingInteraction.sapStatistics.push({
-							// add response url for mapping purposes
-							url: this.responseURL,
-							statistics: sSapStatistics,
-							timing: aTimings ? aTimings[aTimings.length - 1] : undefined
-						});
-					}
-					delete this.requestHeaderLength;
-					delete this.pendingInteraction;
-				}
-			}
-
-			// creates mandatory FESR header string
-			function createFESR(oInteraction) {
-				return [
-					format(ROOT_ID, 32), // root_context_id
-					format(sFESRTransactionId, 32), // transaction_id
-					format(oInteraction.navigation, 16), // client_navigation_time
-					format(oInteraction.roundtrip, 16), // client_round_trip_time
-					format(oInteraction.duration, 16), // end_to_end_time
-					format(oInteraction.requests.length - oInteraction.incompleteRequests, 8), // completed network_round_trips
-					format(CLIENT_ID, 40), // client_id
-					format(oInteraction.networkTime, 16), // network_time
-					format(oInteraction.requestTime, 16), // request_time
-					format(CLIENT_OS, 20), // client_os
-					"SAP_UI5" // client_type
-				].join(",");
-			}
-
-			// creates optional FESR header string
-			function createFESRopt(oInteraction) {
-				return [
-					format(oInteraction.component, 20, true), // application_name, trimmed from left
-					format(oInteraction.trigger + "_" + oInteraction.event, 20, true), // step_name
-					"", // 1 empty field
-					format(CLIENT_MODEL, 20), // client_model
-					format(oInteraction.bytesSent, 16), // client_data_sent
-					format(oInteraction.bytesReceived, 16), // client_data_received
-					"", "", // 2 empty fields
-					format(oInteraction.processing, 16), // client_processing_time
-					oInteraction.requestCompression ? "X" : "", // compressed - empty if not compressed
-					"", "", "", "", // 4 empty fields
-					format(oInteraction.busyDuration, 16), // busy duration
-					"", "", "", "", // 4 empty fields
-					format(oInteraction.component, 70, true) // application_name with 70 characters, trimmed from left
-				].join(",");
-			}
-
-			// format string to fesr compliant string
-			function format(vField, iLength, bCutFromFront) {
-				if (!vField) {
-					vField = vField === 0 ? "0" : "";
-				} else if (typeof vField === "number") {
-					var iField = vField;
-					vField = Math.round(vField).toString();
-					// Calculation of figures may be erroneous because incomplete performance entries lead to negative
-					// numbers. In that case we set a -1, so the "dirty" record can be identified as such.
-					if (vField.length > iLength || iField < 0) {
-						vField = "-1";
-					}
-				} else {
-					vField = bCutFromFront ? vField.substr(-iLength, iLength) : vField.substr(0, iLength);
-				}
-				return vField;
-			}
-
-			function formatVersion(sVersion) {
-				var oVersion = new jQuery.sap.Version(sVersion);
-				return "@" + oVersion.getMajor() + "." + oVersion.getMinor() + "." + oVersion.getPatch();
-			}
-
-
-			/**
-			 * @namespace Provides base functionality for interaction detection heuristics & API<br>
-			 * <p>
-			 * Interaction detection works through the detection of relevant events and tracking of rendering activities.<br>
-			 * An example:<br>
-			 * The user clicks on a button<br>
-			 * -> "click" event gets detected via notification (jQuery.sap.interaction.notifyEventStart)<br>
-			 * -> a click handler is registered on the button, so this is an interaction start (jQuery.sap.interaction.notifyStepStart)<br>
-			 * -> some requests are made and rendering has finished (jQuery.sap.interaction.notifyStepEnd)<br>
-			 * </p>
-			 * All measurement takes place in {@link jQuery.sap.measure}<br>.
-			 *
-			 * Namespace exists since 1.32 and became public API since 1.36.
-			 *
-			 * @name jQuery.sap.interaction
-			 * @static
-			 * @public
-			 * @since 1.36
-			 */
-			jQuery.sap.interaction = {};
-
-			/**
-			 * Enables the interaction tracking.
-			 *
-			 * @param {boolean} bActive state of the interaction detection
-			 * @public
-			 * @since 1.36
-			 */
-			jQuery.sap.interaction.setActive = function(bActive) {
-				if (bActive && !bInteractionActive) {
-					activateDetectionMethods();
-				}
-				bInteractionActive = bActive;
-			};
-
-			/**
-			 * Returns true if the interaction detection was enabled explicitly, or implicitly along with fesr.
-			 *
-			 * @return {boolean} bActive state of the interaction detection
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.interaction.getActive = function() {
-				return bInteractionActive || bFesrActive;
-			};
-
-			/**
-			 * This method starts the actual interaction measurement when all criteria are met. As it is the starting point
-			 * for the new interaction the creation of the FESR headers for the last interaction is triggered here, so that
-			 * the headers can be sent with the first request of the current interaction.<br>
-			 *
-			 * @param {sap.ui.core.Element} oElement Element on which the interaction has been triggered
-			 * @param {boolean} bForce forces the interaction to start independently from a currently active browser event
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.interaction.notifyStepStart = function(oElement, bForce) {
-				if (bInteractionActive || bFesrActive) {
-					if (oCurrentBrowserEvent || bForce) {
-						var sType;
-						if (bForce) {
-							sType = "startup";
-						} else if (oCurrentBrowserEvent.originalEvent) {
-							sType = oCurrentBrowserEvent.originalEvent.type;
-						} else {
-							sType = oCurrentBrowserEvent.type;
-						}
-
-						jQuery.sap.measure.startInteraction(sType, oElement);
-
-						var aInteraction = jQuery.sap.measure.getAllInteractionMeasurements();
-						var oFinshedInteraction = aInteraction[aInteraction.length - 1];
-						var oPI = jQuery.sap.measure.getPendingInteractionMeasurement();
-
-						// update pending interaction infos
-						oPendingInteraction = oPI ? oPI : oPendingInteraction;
-						// we do not create FESR headers if no requests have been performed
-						if (bFesrActive && oFinshedInteraction && oFinshedInteraction.requests.length > 0) {
-							// create FESR from completed interaction
-							sFESR = createFESR(oFinshedInteraction);
-							sFESRopt = createFESRopt(oFinshedInteraction);
-						}
-						oCurrentBrowserEvent = null;
-					}
-				}
-			};
-
-			/**
-			 * This method ends the started interaction measurement.
-			 *
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.interaction.notifyStepEnd = function() {
-				if (bInteractionActive || bFesrActive) {
-					if (iInteractionStepTimer) {
-						jQuery.sap.clearDelayedCall(iInteractionStepTimer);
-					}
-					iInteractionStepTimer = jQuery.sap.delayedCall(1, jQuery.sap.measure, "endInteraction");
-				}
-			};
-
-			/**
-			 * This method notifies if a relevant event has been triggered.
-			 *
-			 * @param {Event} oEvent event whose processing has started
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.interaction.notifyEventStart = function(oEvent) {
-				oCurrentBrowserEvent = (bInteractionActive || bFesrActive) ? oEvent : null;
-			};
-
-			function notifyScrollStepStart() {
-				jQuery.sap.interaction.notifyStepStart();
-				iScrollEventDelayId = 0;
-			}
-
-			/**
-			 * This method notifies if a scroll event has been triggered. Some controls require this special treatment,
-			 * as the generic detection process via notifyEventStart is not sufficient.
-			 *
-			 * @param {Event} oEvent scroll event whose processing has started
-			 * @private
-			 * @since 1.36.2
-			 */
-			 jQuery.sap.interaction.notifyScrollEvent = function(oEvent) {
-				if (bInteractionActive || bFesrActive) {
-					// notify for a newly started interaction, but not more often than every 250ms.
-					if (!iScrollEventDelayId) {
-						jQuery.sap.interaction.notifyEventStart(oEvent);
-					} else {
-						jQuery.sap.clearDelayedCall(iScrollEventDelayId);
-					}
-					iScrollEventDelayId = jQuery.sap.delayedCall(250, undefined, notifyScrollStepStart);
-				}
-			};
-
-			/**
-			 * This method notifies if a relevant event has ended by detecting another interaction.
-			 *
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.interaction.notifyEventEnd = function() {
-				if (oCurrentBrowserEvent) {
-					// End interaction when a new potential interaction starts
-					if (oCurrentBrowserEvent.type.match(/^(mousedown|touchstart|keydown)$/)) {
-						jQuery.sap.measure.endInteraction(/*bForce*/true);
-					}
-				}
-			};
-
-			/**
-			 * This method sets the component name for an interaction.
-			 *
-			 * @private
-			 * @since 1.38.5
-			 */
-			jQuery.sap.interaction.setStepComponent = function(sComponentName) {
-				if ((bInteractionActive || bFesrActive) && sComponentName) {
-					oPendingInteraction.component = sComponentName;
-				}
-			};
-
-
-			/**
-			 * @namespace FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
-			 *<p>
-			 * Provides functionalities for creating the headers for the frontend-subrecords which will be sent with each
-			 * first request of an interaction. The headers have a specific format, you may have a look at the createFESR
-			 * methods.<br>
-			 *</p><p>
-			 * There is a special order in which things are happening: <br>
-			 * 1. Interaction starts<br>
-			 * 1.1. Request 1.1 sent<br>
-			 * 1.2. Request 1.2 sent<br>
-			 * 2. Interaction starts<br>
-			 * 2.1 Creation of FESR for 1. interaction<br>
-			 * 2.2 Request 2.1 sent with FESR header for 1. interaction<br>
-			 * ...<br>
-			 *</p>
-			 * @name jQuery.sap.fesr
-			 * @static
-			 * @private
-			 */
-			jQuery.sap.fesr = {};
-
-			/**
-			 * @param {boolean} bActive state of the FESR header creation
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.fesr.setActive = function(bActive) {
-				if (bActive && !bFesrActive) {
-					bFesrActive = true;
-					if (!bInteractionActive) {
-						activateDetectionMethods();
-					}
-				} else if (!bActive) {
-					bFesrActive = false;
-				}
-			};
-
-			/**
-			 * @return {boolean} state of the FESR header creation
-			 * @private
-			 * @since 1.36.2
-			 */
-			jQuery.sap.fesr.getActive = function() {
-				return bFesrActive;
-			};
-
-			/**
-			 * @return {String} ID of the currently processed transaction
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.fesr.getCurrentTransactionId = function() {
-				return sTransactionId;
-			};
-
-			/**
-			 * @return {String} Root ID of the current session
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.fesr.getRootId = function() {
-				return ROOT_ID;
-			};
-
-			/**
-			 * @param {float} iDuration increase busy duration of pending interaction by this value
-			 * @private
-			 * @since 1.36.2
-			 */
-			jQuery.sap.fesr.addBusyDuration = function(iDuration) {
-				if (!oPendingInteraction.busyDuration) {
-					oPendingInteraction.busyDuration = 0;
-				}
-				oPendingInteraction.busyDuration += iDuration;
-			};
-
-
-			/**
-			 * @namespace Passport implementation, former EppLib.js <br>
-			 *
-			 * Provides functionalities which where former located in the EppLib.js, but as the PASSPORT header is mandatory
-			 * for correct assignment of the FESR headers some functionality had to be moved to here. The actual tracing
-			 * functionality of EppLib.js remained in the original file.
-			 *
-			 * @name jQuery.sap.passport
-			 * @static
-			 * @private
-			 */
-			jQuery.sap.passport = {};
-
-			/**
-			 * @param {boolean} bActive state of the Passport header creation
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.passport.setActive = function(bActive) {
-				if (bActive && !bTraceActive) {
-					bTraceActive = true;
-					activateDetectionMethods();
-				} else if (!bActive) {
-					bTraceActive = false;
-				}
-			};
-
-			// old methods taken over from E2eTraceLib
-			function getBytesFromString(s) {
-				var bytes = [];
-				for (var i = 0; i < s.length; ++i) {
-					bytes.push(s.charCodeAt(i));
-				}
-				return bytes;
-			}
-
-			function createHexString(arr) {
-				var result = "";
-
-				for (var i = 0; i < arr.length; i++) {
-					var str = arr[i].toString(16);
-					str = Array(2 - str.length + 1).join("0") + str;
-					result += str;
-				}
-
-				return result;
-			}
-
-			function passportHeader(trcLvl, RootID, TransID, component, action) {
-				var SAPEPPTemplateLow = [
-				0x2A, 0x54, 0x48, 0x2A, 0x03, 0x00, 0xE6, 0x00, 0x00, 0x53, 0x41, 0x50, 0x5F, 0x45, 0x32, 0x45, 0x5F, 0x54, 0x41, 0x5F, 0x50, 0x6C, 0x75, 0x67,
-				0x49, 0x6E, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x00, 0x00, 0x53, 0x41, 0x50, 0x5F, 0x45,
-				0x32, 0x45, 0x5F, 0x54, 0x41, 0x5F, 0x55, 0x73, 0x65, 0x72, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
-				0x20, 0x20, 0x20, 0x53, 0x41, 0x50, 0x5F, 0x45, 0x32, 0x45, 0x5F, 0x54, 0x41, 0x5F, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x20, 0x20, 0x20,
-				0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x00, 0x05, 0x53, 0x41, 0x50,
-				0x5F, 0x45, 0x32, 0x45, 0x5F, 0x54, 0x41, 0x5F, 0x50, 0x6C, 0x75, 0x67, 0x49, 0x6E, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
-				0x20, 0x20, 0x20, 0x20, 0x20, 0x34, 0x36, 0x33, 0x35, 0x30, 0x30, 0x30, 0x30, 0x30, 0x30, 0x33, 0x31, 0x31, 0x45, 0x45, 0x30, 0x41, 0x35, 0x44,
-				0x32, 0x35, 0x30, 0x39, 0x39, 0x39, 0x43, 0x33, 0x39, 0x32, 0x42, 0x36, 0x38, 0x20, 0x20, 0x20, 0x00, 0x07, 0x46, 0x35, 0x00, 0x00, 0x00, 0x31,
-				0x1E, 0xE0, 0xA5, 0xD2, 0x4E, 0xDB, 0xB2, 0xE4, 0x4B, 0x68, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xE2, 0x2A, 0x54, 0x48, 0x2A
-				];
-
-				var RootIDPosLen = [
-					372, 32
-				];
-
-				var TransIDPosLen = [
-					149, 32
-				];
-
-				var CompNamePosLEn = [
-					9, 32
-				];
-
-				var PreCompNamePosLEn = [
-					117, 32
-				];
-
-				var actionOffset = [
-					75, 40
-				];
-
-				var traceFlgsOffset = [
-					7, 2
-				];
-
-				var prefix = getBytesFromString("SAP_E2E_TA_UI5LIB");
-				prefix = prefix.concat(getBytesFromString(new Array(32 + 1 - prefix.length).join(' ')));
-
-				if (component) {
-					component = getBytesFromString(component.substr(-32,32));
-					component = component.concat(getBytesFromString(new Array(32 + 1 - component.length).join(' ')));
-					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, CompNamePosLEn.concat(component));
-					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, PreCompNamePosLEn.concat(component));
-				} else {
-					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, CompNamePosLEn.concat(prefix));
-					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, PreCompNamePosLEn.concat(prefix));
-				}
-
-				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, TransIDPosLen.concat(getBytesFromString(TransID)));
-				SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, traceFlgsOffset.concat(trcLvl));
-
-				if (action) {
-					action = getBytesFromString(action.substr(-40,40));
-					action = action.concat(getBytesFromString(new Array(40 + 1 - action.length).join(' ')));
-					SAPEPPTemplateLow.splice.apply(SAPEPPTemplateLow, actionOffset.concat(action));
-				}
-
-				var retVal = createHexString(SAPEPPTemplateLow).toUpperCase();
-
-				return retVal.substring(0, RootIDPosLen[0]).concat(RootID) + retVal.substring(RootIDPosLen[0] + RootIDPosLen[1]);
-			}
-
-			/**
-			 * @param {String} lvl tracing level to be calculated
-			 * @return {int[]} Array with two int representation of characters for trace level
-			 * @private
-			 * @since 1.32
-			 */
-			jQuery.sap.passport.traceFlags = function(lvl) {
-				switch (lvl) {
-					case 'low':
-						iE2eTraceLevel = [0x00, 0x00];
-						break;
-					case 'medium':
-						iE2eTraceLevel = [0x89, 0x0A];
-						break;
-					case 'high':
-						iE2eTraceLevel = [0x9F, 0x0D];
-						break;
-					default:
-						iE2eTraceLevel = [];
-						iE2eTraceLevel.push((parseInt(lvl, 16) & 0xFF00) / 256);
-						iE2eTraceLevel.push((parseInt(lvl, 16) & 0xFF));
-				}
-				return iE2eTraceLevel;
-			};
-
-			function createGUID() {
-				var S4 = function() {
-					var temp = Math.floor(Math.random() * 0x10000 /* 65536 */ );
-					return (new Array(4 + 1 - temp.toString(16).length)).join('0') + temp.toString(16);
-				};
-
-				var S5 = function() {
-					var temp = (Math.floor(Math.random() * 0x10000 /* 65536 */ ) & 0x0fff) + 0x4000;
-					return (new Array(4 + 1 - temp.toString(16).length)).join('0') + temp.toString(16);
-				};
-
-				var S6 = function() {
-					var temp = (Math.floor(Math.random() * 0x10000 /* 65536 */ ) & 0x3fff) + 0x8000;
-					return (new Array(4 + 1 - temp.toString(16).length)).join('0') + temp.toString(16);
-				};
-
-				var retVal = (S4() + S4() + //"-" +
-					S4() + //"-" +
-					S5() + //"-" +
-					S6() + //"-" +
-					S4() + S4() + S4());
-
-				return retVal.toUpperCase();
-			}
-
-			// set initial trace level (default)
-			iE2eTraceLevel = jQuery.sap.passport.traceFlags();
-
-			// start initial interaction
-			jQuery.sap.interaction.notifyStepStart(null, true);
-
-			// activate FESR header generation and determine version
-			if (bFesrActive) {
-				activateDetectionMethods();
-			}
-
-			// *********** Include E2E-Trace Scripts *************
-			if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
-				sap.ui.requireSync("sap/ui/core/support/trace/E2eTraceLib");
-			}
-
-		return jQuery;
-
-	});
+sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2ETrace/Passport', 'sap/ui/performance/Interaction', 'sap/ui/performance/FESR', 'sap/base/log', 'sap/ui/Global'],
+function(jQuery, URI, Device, Passport, Interaction, FESR, log) {
+	"use strict";
+
+
+	function logSupportWarning() {
+		// in case we do not have this API measurement is superfluous due to insufficient performance data
+		if (!(window.performance && window.performance.getEntries)) {
+			log.warning("Interaction tracking is not supported on browsers with insufficient performance API");
+		}
+	}
+
+	/**
+	 * @namespace Provides base functionality for interaction detection heuristics & API<br>
+	 * <p>
+	 * Interaction detection works through the detection of relevant events and tracking of rendering activities.<br>
+	 * An example:<br>
+	 * The user clicks on a button<br>
+	 * -> "click" event gets detected via notification (jQuery.sap.interaction.notifyEventStart)<br>
+	 * -> a click handler is registered on the button, so this is an interaction start (jQuery.sap.interaction.notifyStepStart)<br>
+	 * -> some requests are made and rendering has finished (jQuery.sap.interaction.notifyStepEnd)<br>
+	 * </p>
+	 * All measurement takes place in {@link jQuery.sap.measure}<br>.
+	 *
+	 * Namespace exists since 1.32 and became public API since 1.36.
+	 *
+	 * @name jQuery.sap.interaction
+	 * @static
+	 * @public
+	 * @since 1.36
+	 */
+	jQuery.sap.interaction = {};
+
+	/**
+	 * Enables the interaction tracking.
+	 *
+	 * @param {boolean} bActive state of the interaction detection
+	 * @public
+	 * @since 1.36
+	 */
+	jQuery.sap.interaction.setActive = function() {
+		logSupportWarning();
+		Interaction.setActive.apply(this, arguments);
+	};
+
+	/**
+	 * Returns true if the interaction detection was enabled explicitly, or implicitly along with fesr.
+	 *
+	 * @return {boolean} bActive state of the interaction detection
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.interaction.getActive = Interaction.getActive;
+
+	/**
+	 * This method starts the actual interaction measurement when all criteria are met. As it is the starting point
+	 * for the new interaction the creation of the FESR headers for the last interaction is triggered here, so that
+	 * the headers can be sent with the first request of the current interaction.<br>
+	 *
+	 * @param {sap.ui.core.Element} oElement Element on which the interaction has been triggered
+	 * @param {boolean} bForce forces the interaction to start independently from a currently active browser event
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.interaction.notifyStepStart = Interaction.notifyStepStart;
+
+	/**
+	 * This method ends the started interaction measurement.
+	 *
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.interaction.notifyStepEnd = Interaction.notifyStepEnd;
+
+	/**
+	 * This method notifies if a relevant event has been triggered.
+	 *
+	 * @param {Event} oEvent event whose processing has started
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.interaction.notifyEventStart = Interaction.notifyEventStart;
+
+	/**
+	 * This method notifies if a scroll event has been triggered. Some controls require this special treatment,
+	 * as the generic detection process via notifyEventStart is not sufficient.
+	 *
+	 * @param {Event} oEvent scroll event whose processing has started
+	 * @private
+	 * @since 1.36.2
+	 */
+	 jQuery.sap.interaction.notifyScrollEvent = Interaction.notifyScrollEvent;
+
+	/**
+	 * This method notifies if a relevant event has ended by detecting another interaction.
+	 *
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.interaction.notifyEventEnd = Interaction.notifyEventEnd;
+
+	/**
+	 * This method sets the component name for an interaction.
+	 *
+	 * @private
+	 * @since 1.38.5
+	 */
+	jQuery.sap.interaction.setStepComponent = Interaction.setStepComponent;
+
+
+	/**
+	 * @namespace FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
+	 *<p>
+	 * Provides functionalities for creating the headers for the frontend-subrecords which will be sent with each
+	 * first request of an interaction. The headers have a specific format, you may have a look at the createFESR
+	 * methods.<br>
+	 *</p><p>
+	 * There is a special order in which things are happening: <br>
+	 * 1. Interaction starts<br>
+	 * 1.1. Request 1.1 sent<br>
+	 * 1.2. Request 1.2 sent<br>
+	 * 2. Interaction starts<br>
+	 * 2.1 Creation of FESR for 1. interaction<br>
+	 * 2.2 Request 2.1 sent with FESR header for 1. interaction<br>
+	 * ...<br>
+	 *</p>
+	 * @name jQuery.sap.fesr
+	 * @static
+	 * @private
+	 */
+	jQuery.sap.fesr = {};
+
+	/**
+	 * @param {boolean} bActive state of the FESR header creation
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.fesr.setActive = function() {
+		logSupportWarning();
+		FESR.setActive.apply(this, arguments);
+	};
+
+	/**
+	 * @return {boolean} state of the FESR header creation
+	 * @private
+	 * @since 1.36.2
+	 */
+	jQuery.sap.fesr.getActive = FESR.getActive;
+
+	/**
+	 * @return {string} ID of the currently processed transaction
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.fesr.getCurrentTransactionId = Passport.getTransactionId;
+
+	/**
+	 * @return {string} Root ID of the current session
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.fesr.getRootId = Passport.getRootId;
+
+
+	/**
+	 * @param {float} iDuration increase busy duration of pending interaction by this value
+	 * @private
+	 * @since 1.36.2
+	 */
+	jQuery.sap.fesr.addBusyDuration = Interaction.addBusyDuration;
+
+
+	/**
+	 * @namespace Passport implementation, former EppLib.js <br>
+	 *
+	 * Provides functionalities which where former located in the EppLib.js, but as the PASSPORT header is mandatory
+	 * for correct assignment of the FESR headers some functionality had to be moved to here. The actual tracing
+	 * functionality of EppLib.js remained in the original file.
+	 *
+	 * @name jQuery.sap.passport
+	 * @static
+	 * @private
+	 */
+	jQuery.sap.passport = {};
+
+	/**
+	 * @param {boolean} bActive state of the Passport header creation
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.passport.setActive = Passport.setActive;
+
+
+	/**
+	 * @param {string} lvl tracing level to be calculated
+	 * @return {int[]} Array with two int representation of characters for trace level
+	 * @private
+	 * @since 1.32
+	 */
+	jQuery.sap.passport.traceFlags = Passport.traceFlags;
+
+	// @EVO-TODO This should be part of configuration. It is here as this module is required before the actual configuration is loaded.
+	function getInitialFESRState() {
+		var bActive = !!document.querySelector("meta[name=sap-ui-fesr][content=true]"),
+			aParamMatches = window.location.search.match(/[\?|&]sap-ui-(?:xx-)?fesr=(true|x|X|false)&?/);
+		if (aParamMatches) {
+			bActive = aParamMatches[1] && aParamMatches[1] != "false";
+		}
+		return bActive;
+	}
+
+	// start initial interaction
+	jQuery.sap.interaction.notifyStepStart(null, true);
+
+	// activate FESR header generation
+	FESR.setActive(getInitialFESRState());
+
+	// *********** Include E2E-Trace Scripts *************
+	if (/sap-ui-xx-e2e-trace=(true|x|X)/.test(location.search)) {
+		sap.ui.requireSync("sap/ui/core/support/trace/E2eTraceLib");
+	}
+
+	return jQuery;
+
+});

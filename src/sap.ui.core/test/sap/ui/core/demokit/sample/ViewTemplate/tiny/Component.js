@@ -44,6 +44,7 @@ sap.ui.define([
 
 			oMetaModel.loaded().then(function () {
 				var oTemplateView = sap.ui.view({
+						async : true,
 						preprocessors : {
 							xml : {
 								bindingContexts : {

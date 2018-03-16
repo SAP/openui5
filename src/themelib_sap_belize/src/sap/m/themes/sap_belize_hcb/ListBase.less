@@ -35,6 +35,11 @@ html.sap-desktop .sapMGrowingList  .sapMCLI.sapMLIB.sapMLIB-CTX:focus{
 	outline:none;
 }
 
+/* avoid double focus borders in IE */
+html.sap-desktop .sapMGrowingList .sapMLIBLegacyOutline:focus::before {
+	border: none;
+}
+
 html.sap-desktop .sapMLIB-CTX:focus .sapMGrowingListTrigger {
 	border: 0.125rem dotted @sapUiContentFocusColor;
 	border-radius: 0;

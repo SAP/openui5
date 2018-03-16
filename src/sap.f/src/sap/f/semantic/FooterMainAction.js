@@ -32,4 +32,4 @@ sap.ui.define(["./MainAction"], function(MainAction) {
 	});
 
 	return FooterMainAction;
-}, /* bExport= */ true);
+});

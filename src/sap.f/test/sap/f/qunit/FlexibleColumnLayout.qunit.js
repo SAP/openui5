@@ -1,7 +1,8 @@
 /* global QUnit,sinon*/
 
 jQuery.sap.require("sap.f.FlexibleColumnLayout");
-(function ($, QUnit, sinon, FlexibleColumnLayout, Page, Button, NavContainer, LT, bDebugMode) {
+jQuery.sap.require("sap.f.FlexibleColumnLayoutSemanticHelper");
+(function ($, QUnit, sinon, FlexibleColumnLayout, FlexibleColumnLayoutSemanticHelper, Page, Button, NavContainer, LT, bDebugMode) {
 	"use strict";
 	var oCore = sap.ui.getCore(),
 		sQUnitFixture = bDebugMode ? "qunit-fixture-visible" : "qunit-fixture",
@@ -98,9 +99,31 @@ jQuery.sap.require("sap.f.FlexibleColumnLayout");
 
 	QUnit.test("Instantiation", function (assert) {
 		this.oFCL = oFactory.createFCL();
-
 		assert.ok(this.oFCL, "Instantiated successfully");
 		assert.ok(this.oFCL.$().length, "In the DOM");
+
+		// Assert backgroundDesign
+		assert.strictEqual(this.oFCL.getBackgroundDesign(), "Transparent", "The default backgroundDesign is Transparent");
+		assert.ok(!this.oFCL.$().hasClass("sapFFCLBackgroundDesignTranslucent"), "Translucent background is Not set in the  DOM");
+		assert.ok(!this.oFCL.$().hasClass("sapFFCLBackgroundDesignSolid"), "Solid background is Not set in the  DOM");
+
+		// Act: change backgroundDesign to Solid
+		this.oFCL.setBackgroundDesign("Solid");
+
+		oCore.applyChanges();
+
+		// Assert backgroundDesign
+		assert.ok(this.oFCL.$().hasClass("sapFFCLBackgroundDesignSolid"), "Solid background is set in the  DOM");
+		assert.ok(!this.oFCL.$().hasClass("sapFFCLBackgroundDesignTranslucent"), "Translucent background is Not set in the  DOM");
+
+		// Act: change backgroundDesign to Translucent
+		this.oFCL.setBackgroundDesign("Translucent");
+
+		oCore.applyChanges();
+
+		// Assert backgroundDesign
+		assert.ok(this.oFCL.$().hasClass("sapFFCLBackgroundDesignTranslucent"), "Translucent background is set in the  DOM");
+		assert.ok(!this.oFCL.$().hasClass("sapFFCLBackgroundDesignSolid"), "Solid background is Not set in the  DOM");
 	});
 
 	QUnit.test("Layout: OneColumn", function (assert) {
@@ -785,5 +808,27 @@ jQuery.sap.require("sap.f.FlexibleColumnLayout");
 			fnGetResourceBundleText("FCL_END_COLUMN_FORWARD_ARROW"), "End column forward arrow has correct tooltip");
 	});
 
+	QUnit.module("FlexibleColumnLayoutSemanticHelper");
 
-}(jQuery, QUnit, sinon, sap.f.FlexibleColumnLayout, sap.m.Page, sap.m.Button, sap.m.NavContainer, sap.f.LayoutType, false));
+	QUnit.test("SemanticHelper cleans destroyed FCL instance data", function (assert) {
+		var sId = "myFCL",
+			oFCL;
+
+		// setup
+		oFCL = new FlexibleColumnLayout(sId);
+
+		// act
+		FlexibleColumnLayoutSemanticHelper.getInstanceFor(oFCL);
+
+		// assert
+		assert.ok(FlexibleColumnLayoutSemanticHelper._oInstances[sId], "Semantic helper has an entry for this FCL");
+
+		// act again
+		oFCL.destroy();
+
+		// assert the opposite
+		assert.ok(!FlexibleColumnLayoutSemanticHelper._oInstances[sId], "Semantic helper no longer has an entry for this FCL");
+	});
+
+
+}(jQuery, QUnit, sinon, sap.f.FlexibleColumnLayout, sap.f.FlexibleColumnLayoutSemanticHelper, sap.m.Page, sap.m.Button, sap.m.NavContainer, sap.f.LayoutType, false));

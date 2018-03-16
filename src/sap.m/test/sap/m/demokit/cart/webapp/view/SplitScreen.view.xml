@@ -1,5 +1,4 @@
 <mvc:View
-	id="splitView"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<SplitContainer

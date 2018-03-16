@@ -1,6 +1,8 @@
-/*global QUnit,qutils,oTable*/
+/*global QUnit, oTable */
 
-(function () {
+sap.ui.require([
+	"sap/ui/qunit/QUnitUtils"
+], function(qutils) {
 	"use strict";
 
 	// mapping of global function calls
@@ -12,23 +14,16 @@
 	var iNumberOfCols = window.iNumberOfCols;
 	var setFocusOutsideOfTable = window.setFocusOutsideOfTable;
 
-	//************************************************************************
-	// Test Code
-	//************************************************************************
-
-	sap.ui.test.qunit.delayTestStart(500);
-
-
 	QUnit.module("Initialization", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-	QUnit.test("init()", function (assert) {
+	QUnit.test("init()", function(assert) {
 		var oExtension = oTable._getKeyboardExtension();
 		assert.ok(!!oExtension, "Keyboard Extension available");
 		assert.ok(!oExtension._itemNavigation, "Item Navigation not yet initialized");
@@ -46,25 +41,23 @@
 		setFocusOutsideOfTable(assert);
 	});
 
-	QUnit.test("_debug()", function (assert) {
+	QUnit.test("_debug()", function(assert) {
 		var oExtension = oTable._getKeyboardExtension();
 		assert.ok(!oExtension._ExtensionHelper, "No debug mode");
 		oExtension._debug();
 		assert.ok(!!oExtension._ExtensionHelper, "Debug mode");
 	});
 
-
 	QUnit.module("Item Navigation", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-
-	QUnit.test("init() / destroy()", function (assert) {
+	QUnit.test("init() / destroy()", function(assert) {
 		var oExtension = sap.ui.table.TableExtension.enrich(new sap.ui.table.Table(), sap.ui.table.TableKeyboardExtension);
 		assert.ok(!oExtension._itemNavigation, "Item Navigation not yet initialized");
 		oExtension.initItemNavigation();
@@ -73,7 +66,7 @@
 		assert.ok(!oExtension._itemNavigation, "Item Navigation not available anymore after destroy");
 	});
 
-	QUnit.test("invalidation", function (assert) {
+	QUnit.test("invalidation", function(assert) {
 		var oExtension = oTable._getKeyboardExtension();
 		assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid due to intial rendering");
 		oExtension.initItemNavigation();
@@ -82,19 +75,21 @@
 		assert.ok(oExtension._itemNavigationInvalidated, "Item Navigation invalid after invalidateItemNavigation");
 	});
 
-	var aEvents = ["focusin", "sapfocusleave", "mousedown", "sapnext", "sapnextmodifiers", "sapprevious", "sappreviousmodifiers",
-		"sappageup", "sappagedown", "saphome", "saphomemodifiers", "sapend", "sapendmodifiers", "sapkeyup"];
+	var aEvents = [
+		"focusin", "sapfocusleave", "mousedown", "sapnext", "sapnextmodifiers", "sapprevious", "sappreviousmodifiers",
+		"sappageup", "sappagedown", "saphome", "saphomemodifiers", "sapend", "sapendmodifiers", "sapkeyup"
+	];
 
 	function setupItemNavigationFakeTest(assert) {
 		var oControl = new sap.ui.table.test.TestControl();
 		var oExtension = sap.ui.table.TableExtension.enrich(oControl, sap.ui.table.TableKeyboardExtension);
 		oExtension._itemNavigation = {
-			destroy: function () {
+			destroy: function() {
 			}
 		};
 		/* eslint-disable no-loop-func */
 		for (var i = 0; i < aEvents.length; i++) {
-			oExtension._itemNavigation["on" + aEvents[i]] = function (oEvent) {
+			oExtension._itemNavigation["on" + aEvents[i]] = function(oEvent) {
 				assert.ok(true, oEvent.type + " reached ItemNavigation");
 			};
 		}
@@ -103,7 +98,7 @@
 		return oControl;
 	}
 
-	QUnit.test("ItemNavigationDelegate", function (assert) {
+	QUnit.test("ItemNavigationDelegate", function(assert) {
 		var oControl = setupItemNavigationFakeTest(assert);
 
 		assert.expect(14);
@@ -116,7 +111,7 @@
 		oControl._getKeyboardExtension().destroy();
 	});
 
-	QUnit.test("Suspend / Resume", function (assert) {
+	QUnit.test("Suspend / Resume", function(assert) {
 		var oControl = setupItemNavigationFakeTest(assert);
 		var i;
 
@@ -141,7 +136,7 @@
 		oControl._getKeyboardExtension().destroy();
 	});
 
-	QUnit.test("Marked Event", function (assert) {
+	QUnit.test("Marked Event", function(assert) {
 		var oControl = setupItemNavigationFakeTest(assert);
 		var i;
 
@@ -164,7 +159,7 @@
 		oControl._getKeyboardExtension().destroy();
 	});
 
-	QUnit.test("Stored Focus Position", function (assert) {
+	QUnit.test("Stored Focus Position", function(assert) {
 		var oExtension = oTable._getKeyboardExtension();
 		oExtension._oLastFocusedCellInfo = null;
 		oExtension.initItemNavigation();
@@ -192,20 +187,18 @@
 		assert.ok(oExtension._oLastFocusedCellInfo === oInfo, "LastFocusedCellInfo stored");
 	});
 
-
 	QUnit.module("Misc", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
 		},
-		afterEach: function () {
+		afterEach: function() {
 			destroyTables();
 		}
 	});
 
-
-	QUnit.test("Silent Focus", function (assert) {
+	QUnit.test("Silent Focus", function(assert) {
 		var oDelegate = {
-			onfocusin: function (oEvent) {
+			onfocusin: function(oEvent) {
 				assert.ok(oEvent.isMarked("sapUiTableIgnoreFocusIn"), "Focus Event is marked to be ignored");
 			}
 		};
@@ -216,10 +209,9 @@
 		oTable.removeEventDelegate(oDelegate);
 	});
 
-
-	QUnit.test("Resize Bar", function (assert) {
+	QUnit.test("Resize Bar", function(assert) {
 		var oDelegate = {
-			onfocusin: function (oEvent) {
+			onfocusin: function(oEvent) {
 				assert.ok(false, "The resize bar should not get focus");
 			}
 		};
@@ -229,8 +221,7 @@
 		oTable.removeEventDelegate(oDelegate);
 	});
 
-
-	QUnit.test("Action Mode", function (assert) {
+	QUnit.test("Action Mode", function(assert) {
 		var oTestArgs = {};
 		var bSkipActionMode = false;
 		var bTestArguments = true;
@@ -247,7 +238,7 @@
 		var oControl = new sap.ui.table.test.TestControl();
 		var oExtension = sap.ui.table.TableExtension.enrich(oControl, sap.ui.table.TableKeyboardExtension);
 		oExtension._delegate = {
-			enterActionMode: function (oArgs) {
+			enterActionMode: function(oArgs) {
 				testHandler(oArgs);
 				return !bSkipActionMode;
 			},
@@ -286,8 +277,7 @@
 		oControl.destroy();
 	});
 
-
-	QUnit.test("Table Type", function (assert) {
+	QUnit.test("Table Type", function(assert) {
 		assert.strictEqual((new sap.ui.table.TreeTable())._getKeyboardExtension()._getTableType(),
 			sap.ui.table.TableExtension.TABLETYPES.TREE, "TREE");
 		assert.strictEqual((new sap.ui.table.Table())._getKeyboardExtension()._getTableType(),
@@ -296,8 +286,7 @@
 			sap.ui.table.TableExtension.TABLETYPES.ANALYTICAL, "ANALYTICAL");
 	});
 
-
-	QUnit.test("Overly / NoData focus handling", function (assert) {
+	QUnit.test("Overly / NoData focus handling", function(assert) {
 		var done = assert.async();
 
 		function containsOrHasFocus(sIdSuffix) {
@@ -331,8 +320,7 @@
 		oTable.setModel(new sap.ui.model.json.JSONModel());
 	});
 
-
-	QUnit.test("IEFocusOutlineWorkaround", function (assert) {
+	QUnit.test("IEFocusOutlineWorkaround", function(assert) {
 		var bOriginalMSIE = sap.ui.Device.browser.msie;
 
 		sap.ui.Device.browser.msie = false;
@@ -359,19 +347,20 @@
 		sap.ui.Device.browser.msie = bOriginalMSIE;
 	});
 
-
 	QUnit.module("Destruction", {
-		beforeEach: function () {
+		beforeEach: function() {
 			createTables();
+		},
+		afterEach: function() {
+			destroyTables();
 		}
 	});
 
-	QUnit.test("destroy()", function (assert) {
+	QUnit.test("destroy()", function(assert) {
 		var oExtension = oTable._getKeyboardExtension();
 		oTable.destroy();
 		assert.ok(!oExtension.getTable(), "Table cleared");
 		assert.ok(!oExtension._itemNavigation, "Item Navigation cleared");
 		assert.ok(!oExtension._delegate, "Delegate cleared");
 	});
-
-}());
+});

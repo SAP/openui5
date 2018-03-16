@@ -9,7 +9,7 @@ module.exports = function(grunt, config) {
 			// pass in src folders of all libraries to support @import directives
 			// across library projects
 			rootPaths: config.allLibraries.map(function(library) {
-				return library.path + '/src';
+				return library.src;
 			}),
 
 			// set compress flag using grunt option (--minifiy-css)
@@ -25,7 +25,7 @@ module.exports = function(grunt, config) {
 			files: [
 				{
 					expand: true,
-					cwd: library.path + '/src',
+					cwd: library.src,
 					src: '**/themes/*/library.source.less',
 					dest: 'target/openui5-' + library.name + '/resources'
 				}

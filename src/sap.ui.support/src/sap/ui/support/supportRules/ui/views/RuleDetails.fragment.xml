@@ -1,0 +1,83 @@
+<core:FragmentDefinition
+		xmlns:m="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:f="sap.ui.layout.form"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:t="sap.ui.table"
+		xmlns:core="sap.ui.core"
+		xmlns:tools="sap.ui.codeeditor">
+	<m:Page showHeader="false">
+		<m:Bar>
+			<m:contentLeft >
+				<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined}" titleStyle="H6" class="customMarginLeft" />
+			</m:contentLeft>
+			<m:contentMiddle>
+				<m:IconTabHeader
+						selectedKey="{/selectedRulePreviewKey}"
+						class="customIconTabHeader">
+					<m:items>
+						<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="ruleProperties" text="Rule properties" />
+						<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="checkFunction" text="Check function" />
+						<m:IconTabFilter enabled="{= ${/selectedRule} !== undefined}" key="jsonOutput" text="Code" />
+					</m:items>
+				</m:IconTabHeader>
+			</m:contentMiddle>
+		</m:Bar>
+		<f:SimpleForm
+				visible="{= ${/selectedRule/type} !== 'library'  &amp;&amp; ${/selectedRulePreviewKey} === 'ruleProperties' &amp;&amp; ${/selectedRule} !== undefined}">
+			<f:content>
+				<m:Label text="ID" />
+				<m:Text text="{/selectedRule/id}" />
+				<m:Label text="Title" />
+				<m:Text text="{/selectedRule/title}" />
+				<m:Label text="Async" />
+				<m:Text text="{= ${/selectedRule/async} === true }" />
+				<m:Label text="Audiences" />
+				<m:Text text="{/selectedRule/audiences}" />
+				<m:Label text="Categories" />
+				<m:Text text="{/selectedRule/categories}" />
+				<m:Label text="Min version" />
+				<m:Text text="{/selectedRule/minversion}" />
+				<m:Label text="Description" />
+				<m:Text text="{/selectedRule/description}" />
+				<m:Label text="Resolution" />
+				<m:Text text="{/selectedRule/resolution}" />
+				<m:Label text="Resolution URLs" />
+				<l:VerticalLayout
+						content="{/selectedRule/resolutionurls}">
+					<m:Link target="_blank"
+							text="{text}"
+							href="{href}"/>
+				</l:VerticalLayout>
+			</f:content>
+			<f:layoutData><l:SplitterLayoutData size="40%" /></f:layoutData>
+		</f:SimpleForm>
+		<m:Panel
+				width="100%"
+				height="calc(100% - 2rem)"
+				visible="{= ${/selectedRulePreviewKey} === 'checkFunction' }">
+			<tools:CodeEditor
+					id="codeEditorPreview"
+					syntaxHints="false"
+					width="100%"
+					height="100%"
+					value="{/selectedRule/check}"
+					editable="false">
+			</tools:CodeEditor>
+		</m:Panel>
+		<m:Panel
+					width="100%"
+					height="calc(100% - 2rem)"
+					visible="{= ${/selectedRulePreviewKey} === 'jsonOutput' }">
+			<tools:CodeEditor
+					id="codeEditorJson1"
+					syntaxHints="false"
+					width="100%"
+					height="100%"
+					value="{/selectedRuleStringify}"
+					editable="false"
+					type="javascript">
+			</tools:CodeEditor>
+		</m:Panel>
+	</m:Page>
+</core:FragmentDefinition>

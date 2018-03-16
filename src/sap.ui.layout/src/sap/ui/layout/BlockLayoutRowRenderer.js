@@ -2,9 +2,12 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library'],
-	function (jQuery, library) {
+sap.ui.define(['./library'],
+	function (library) {
 		"use strict";
+
+		// shortcut for sap.ui.layout.BlockBackgroundType
+		var BlockBackgroundType = library.BlockBackgroundType;
 
 		var BlockLayoutRowRenderer = {};
 
@@ -33,24 +36,23 @@ sap.ui.define(['jquery.sap.global', './library'],
 			} else {
 				oRm.addClass("sapUiBlockHorizontalCellsRow");
 			}
-
-			if (oBlockLayoutRow._rowSCase) {
-				oRm.addClass("sapUiBlockRowSCase");
-			}
 		};
 
 		BlockLayoutRowRenderer.renderContent = function (oRm, oBlockLayoutRow) {
 			var aContent = oBlockLayoutRow.getContent(),
-				scrollable = oBlockLayoutRow.getScrollable(),
-				oBackgrounds = sap.ui.layout.BlockBackgroundType,
+				bScrollable = oBlockLayoutRow.getScrollable(),
+				oBackgrounds = BlockBackgroundType,
 				sLayoutBackground = oBlockLayoutRow.getParent().getBackground(),
-				aAccentedCells = oBlockLayoutRow.getAccentCells();
+				aAccentedCells = oBlockLayoutRow.getAccentCells(),
+				iContentCounter = 0,
+				flexWidth;
 
-			aContent.forEach(function (cell) {
-				if (scrollable) {
-					cell.addStyleClass("sapUiBlockScrollableCell");
+			aContent.forEach(function (oCell, index) {
+				(index % 2) == 0 ? oCell.addStyleClass("sapUiBlockLayoutOddCell") : oCell.addStyleClass("sapUiBlockLayoutEvenCell");
+				if (bScrollable) {
+					oCell.addStyleClass("sapUiBlockScrollableCell");
 				} else {
-					cell.addStyleClass("sapUiBlockHorizontalCell");
+					oCell.addStyleClass("sapUiBlockHorizontalCell");
 				}
 			});
 
@@ -62,8 +64,30 @@ sap.ui.define(['jquery.sap.global', './library'],
 					oBlockLayoutRow._processAccentCellStyles(aAccentedCells, aContent);
 					break;
 			}
+			var arrangement = oBlockLayoutRow._getCellArangementForCurrentSize();
+			if (bScrollable) {
+				/**
+				 * The arrangement is passed from the BlockLayout to the BlockLayoutRow after the BlockLayout is rendered.
+				 * This means that we need to rerender the BlockLayoutRow after its initial rendering, because the size was previously unknown
+				 */
+				aContent.forEach(oRm.renderControl);
+			} else if (arrangement) {
+				for (var i = 0; i < arrangement.length; i++) {
+					var aSubRow = arrangement[i];
+					oRm.write("<div ");
+					oRm.addStyle("display", "flex");
+					oRm.writeStyles();
+					oRm.write(">");
 
-			aContent.forEach(oRm.renderControl);
+					for (var j = 0; j < aSubRow.length; j++) {
+						flexWidth = aSubRow[j];
+						aContent[iContentCounter]._setFlexWidth(flexWidth);
+						oRm.renderControl(aContent[iContentCounter]);
+						iContentCounter++;
+					}
+					oRm.write("</div>");
+				}
+			}
 		};
 
 		BlockLayoutRowRenderer.endRow = function (oRm) {
@@ -71,5 +95,4 @@ sap.ui.define(['jquery.sap.global', './library'],
 		};
 
 		return BlockLayoutRowRenderer;
-
 	}, /* bExport= */ true);

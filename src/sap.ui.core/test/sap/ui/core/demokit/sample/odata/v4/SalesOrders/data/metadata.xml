@@ -11,7 +11,7 @@
 		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures" />
 	</edmx:Reference>
 	<edmx:DataServices>
-		<Schema Namespace="com.sap.gateway.default.zui5_epm_sample.v0001" Alias="SAP__self">
+		<Schema Namespace="com.sap.gateway.default.zui5_epm_sample.v0002" Alias="SAP__self">
 			<EntityType Name="BusinessPartner">
 				<Key>
 					<PropertyRef Name="BusinessPartnerID" />
@@ -27,10 +27,10 @@
 				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5" />
 				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
-				<Property Name="Address" Type="com.sap.gateway.default.zui5_epm_sample.v0001.Address" Nullable="false" />
-				<NavigationProperty Name="BP_2_CONTACT" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0001.Contact)" />
-				<NavigationProperty Name="BP_2_PRODUCT" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0001.Product)" />
-				<NavigationProperty Name="BP_2_SO" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder)" />
+				<Property Name="Address" Type="com.sap.gateway.default.zui5_epm_sample.v0002.Address" Nullable="false" />
+				<NavigationProperty Name="BP_2_CONTACT" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Contact)" />
+				<NavigationProperty Name="BP_2_PRODUCT" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Product)" />
+				<NavigationProperty Name="BP_2_SO" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder)" />
 			</EntityType>
 			<EntityType Name="Contact">
 				<Key>
@@ -50,8 +50,8 @@
 				<Property Name="EmailAddress" Type="Edm.String" Nullable="false" MaxLength="255" />
 				<Property Name="Language" Type="Edm.String" Nullable="false" MaxLength="2" />
 				<Property Name="DateOfBirth" Type="Edm.Date" />
-				<Property Name="Address" Type="com.sap.gateway.default.zui5_epm_sample.v0001.Address" Nullable="false" />
-				<NavigationProperty Name="CONTACT_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0001.BusinessPartner" Nullable="false" />
+				<Property Name="Address" Type="com.sap.gateway.default.zui5_epm_sample.v0002.Address" Nullable="false" />
+				<NavigationProperty Name="CONTACT_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner" Nullable="false" />
 			</EntityType>
 			<EntityType Name="ItemSchedule">
 				<Key>
@@ -60,7 +60,7 @@
 				<Property Name="ScheduleKey" Type="Edm.String" Nullable="false" />
 				<Property Name="ItemKey" Type="Edm.String" Nullable="false" />
 				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" />
-				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="18" />
+				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="2" />
 				<Property Name="DeliveryDate" Type="Edm.DateTimeOffset" Nullable="false" />
 			</EntityType>
 			<EntityType Name="Product">
@@ -88,7 +88,7 @@
 				<Property Name="DimUnit" Type="Edm.String" Nullable="false" MaxLength="3" />
 				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
-				<NavigationProperty Name="PRODUCT_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0001.BusinessPartner" Nullable="false" />
+				<NavigationProperty Name="PRODUCT_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner" Nullable="false" />
 			</EntityType>
 			<EntityType Name="SalesOrder">
 				<Key>
@@ -98,7 +98,6 @@
 				<Property Name="Note" Type="Edm.String" Nullable="false" MaxLength="255" />
 				<Property Name="NoteLanguage" Type="Edm.String" Nullable="false" MaxLength="1" />
 				<Property Name="BuyerID" Type="Edm.String" Nullable="false" MaxLength="10" />
-				<Property Name="BuyerName" Type="Edm.String" Nullable="false" MaxLength="80" />
 				<Property Name="CurrencyCode" Type="Edm.String" Nullable="false" MaxLength="5" />
 				<Property Name="GrossAmount" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="2" />
 				<Property Name="NetAmount" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="2" />
@@ -112,11 +111,11 @@
 				<Property Name="CreatedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="ChangedAt" Type="Edm.DateTimeOffset" Nullable="false" Precision="7" />
 				<Property Name="SOItemCount" Type="Edm.Int16" />
-				<NavigationProperty Name="SO_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0001.BusinessPartner" Nullable="false" />
-				<NavigationProperty Name="SO_2_SCHDL" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrderSchedule)" ContainsTarget="true">
+				<NavigationProperty Name="SO_2_BP" Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner" />
+				<NavigationProperty Name="SO_2_SCHDL" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderSchedule)" ContainsTarget="true">
 					<OnDelete Action="Cascade" />
 				</NavigationProperty>
-				<NavigationProperty Name="SO_2_SOITEM" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0001.SOLineItem)" Partner="SOITEM_2_SO" ContainsTarget="true" />
+				<NavigationProperty Name="SO_2_SOITEM" Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem)" Partner="SOITEM_2_SO" ContainsTarget="true" />
 			</EntityType>
 			<EntityType Name="SOLineItem">
 				<Key>
@@ -134,12 +133,10 @@
 				<Property Name="DeliveryDate" Type="Edm.DateTimeOffset" Precision="7" />
 				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="13" Scale="3" />
 				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" MaxLength="3" />
-				<Property Name="Product" Type="com.sap.gateway.default.zui5_epm_sample.v0001.ProductInfo" Nullable="false" />
-				<NavigationProperty Name="SOITEM_2_PRODUCT" Type="com.sap.gateway.default.zui5_epm_sample.v0001.Product" Nullable="false" />
-				<NavigationProperty Name="SOITEM_2_SCHDL" Type="com.sap.gateway.default.zui5_epm_sample.v0001.ItemSchedule" Nullable="false" ContainsTarget="true" />
-				<NavigationProperty Name="SOITEM_2_SO" Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false">
-					<ReferentialConstraint Property="SalesOrderID" ReferencedProperty="SalesOrderID" />
-				</NavigationProperty>
+				<Property Name="ProductID" Type="Edm.String" Nullable="false" MaxLength="10" />
+				<NavigationProperty Name="SOITEM_2_PRODUCT" Type="com.sap.gateway.default.zui5_epm_sample.v0002.Product" />
+				<NavigationProperty Name="SOITEM_2_SCHDL" Type="com.sap.gateway.default.zui5_epm_sample.v0002.ItemSchedule" Nullable="false" ContainsTarget="true" />
+				<NavigationProperty Name="SOITEM_2_SO" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 			</EntityType>
 			<EntityType Name="SalesOrderSchedule">
 				<Key>
@@ -148,7 +145,7 @@
 				<Property Name="ScheduleKey" Type="Edm.String" Nullable="false" />
 				<Property Name="ItemKey" Type="Edm.String" Nullable="false" />
 				<Property Name="QuantityUnit" Type="Edm.String" Nullable="false" />
-				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="18" />
+				<Property Name="Quantity" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="2" />
 				<Property Name="DeliveryDate" Type="Edm.DateTimeOffset" Nullable="false" />
 			</EntityType>
 			<ComplexType Name="Address">
@@ -158,40 +155,36 @@
 				<Property Name="Building" Type="Edm.String" Nullable="false" MaxLength="10" />
 				<Property Name="Country" Type="Edm.String" Nullable="false" MaxLength="3" />
 				<Property Name="AddressType" Type="Edm.String" Nullable="false" MaxLength="2" />
-				<Property Name="GeoLocation" Type="com.sap.gateway.default.zui5_epm_sample.v0001.GeoLocation" Nullable="false" />
+				<Property Name="GeoLocation" Type="com.sap.gateway.default.zui5_epm_sample.v0002.GeoLocation" Nullable="false" />
 			</ComplexType>
 			<ComplexType Name="GeoLocation">
 				<Property Name="Longitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
 				<Property Name="Latitude" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="12" />
 			</ComplexType>
-			<ComplexType Name="ProductInfo">
-				<Property Name="ProductID" Type="Edm.String" Nullable="false" MaxLength="10" />
-				<Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="255" />
-			</ComplexType>
 			<Action Name="RegenerateEPMData" />
 			<Action Name="SalesOrder_Cancel" IsBound="true">
-				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false" />
-				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false" />
+				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 			</Action>
 			<Action Name="SalesOrder_Confirm" IsBound="true">
-				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false" />
-				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false" />
+				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 			</Action>
 			<Action Name="SalesOrder_GoodsIssueCreated" IsBound="true">
-				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false" />
-				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false" />
+				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 			</Action>
 			<Action Name="SalesOrder_InvoiceCreated" IsBound="true">
-				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false" />
-				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder" Nullable="false" />
+				<Parameter Name="SalesOrder" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder" Nullable="false" />
 			</Action>
 			<Function Name="FuGetCreatedByBP">
 				<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false" MaxLength="10" />
-				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0001.BusinessPartner" />
+				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner" />
 			</Function>
 			<Function Name="FuGetDeliveryAddress">
 				<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false" MaxLength="10" />
-				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0001.Address" Nullable="false" />
+				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.Address" Nullable="false" />
 			</Function>
 			<Function Name="FuGetProductStock">
 				<Parameter Name="ProductID" Type="Edm.String" Nullable="false" MaxLength="10" />
@@ -199,28 +192,29 @@
 			</Function>
 			<Function Name="FuGetSOContactList">
 				<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false" MaxLength="10" />
-				<ReturnType Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0001.Contact)" />
+				<ReturnType Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Contact)" />
 			</Function>
 			<EntityContainer Name="Container">
-				<EntitySet Name="BusinessPartnerList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0001.BusinessPartner">
+				<EntitySet Name="BusinessPartnerList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner">
 					<NavigationPropertyBinding Path="BP_2_SO" Target="SalesOrderList" />
 					<NavigationPropertyBinding Path="BP_2_CONTACT" Target="ContactList" />
 					<NavigationPropertyBinding Path="BP_2_PRODUCT" Target="ProductList" />
 				</EntitySet>
-				<EntitySet Name="ContactList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0001.Contact">
+				<EntitySet Name="ContactList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0002.Contact">
 					<NavigationPropertyBinding Path="CONTACT_2_BP" Target="BusinessPartnerList" />
 				</EntitySet>
-				<EntitySet Name="ProductList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0001.Product">
+				<EntitySet Name="ProductList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0002.Product">
 					<NavigationPropertyBinding Path="PRODUCT_2_BP" Target="BusinessPartnerList" />
 				</EntitySet>
-				<EntitySet Name="SalesOrderList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0001.SalesOrder">
+				<EntitySet Name="SalesOrderList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder">
 					<NavigationPropertyBinding Path="SO_2_BP" Target="BusinessPartnerList" />
+					<NavigationPropertyBinding Path="SO_2_SOITEM/SOITEM_2_PRODUCT" Target="ProductList" />
 				</EntitySet>
-				<ActionImport Name="RegenerateEPMData" Action="com.sap.gateway.default.zui5_epm_sample.v0001.RegenerateEPMData" />
-				<FunctionImport Name="GetCreatedByBP" Function="com.sap.gateway.default.zui5_epm_sample.v0001.FuGetCreatedByBP" EntitySet="com.sap.gateway.default.zui5_epm_sample.v0001.Container/BusinessPartnerList" IncludeInServiceDocument="true" />
-				<FunctionImport Name="GetDeliveryAddress" Function="com.sap.gateway.default.zui5_epm_sample.v0001.FuGetDeliveryAddress" IncludeInServiceDocument="true" />
-				<FunctionImport Name="GetProductStock" Function="com.sap.gateway.default.zui5_epm_sample.v0001.FuGetProductStock" IncludeInServiceDocument="true" />
-				<FunctionImport Name="GetSOContactList" Function="com.sap.gateway.default.zui5_epm_sample.v0001.FuGetSOContactList" EntitySet="com.sap.gateway.default.zui5_epm_sample.v0001.Container/ContactList" IncludeInServiceDocument="true" />
+				<ActionImport Name="RegenerateEPMData" Action="com.sap.gateway.default.zui5_epm_sample.v0002.RegenerateEPMData" />
+				<FunctionImport Name="GetCreatedByBP" Function="com.sap.gateway.default.zui5_epm_sample.v0002.FuGetCreatedByBP" EntitySet="com.sap.gateway.default.zui5_epm_sample.v0002.Container/BusinessPartnerList" IncludeInServiceDocument="true" />
+				<FunctionImport Name="GetDeliveryAddress" Function="com.sap.gateway.default.zui5_epm_sample.v0002.FuGetDeliveryAddress" IncludeInServiceDocument="true" />
+				<FunctionImport Name="GetProductStock" Function="com.sap.gateway.default.zui5_epm_sample.v0002.FuGetProductStock" IncludeInServiceDocument="true" />
+				<FunctionImport Name="GetSOContactList" Function="com.sap.gateway.default.zui5_epm_sample.v0002.FuGetSOContactList" EntitySet="com.sap.gateway.default.zui5_epm_sample.v0002.Container/ContactList" IncludeInServiceDocument="true" />
 			</EntityContainer>
 			<Annotations Target="SAP__self.Product">
 				<Annotation Term="com.sap.vocabularies.UI.v1.HeaderInfo">
@@ -416,23 +410,11 @@
 								<PropertyValue Property="Value" Path="SalesOrderID" />
 							</Record>
 						</PropertyValue>
-						<PropertyValue Property="Description">
-							<Record Type="com.sap.vocabularies.UI.v1.DataField">
-								<PropertyValue Property="Label" String="Customer" />
-								<PropertyValue Property="Value" Path="BuyerName" />
-							</Record>
-						</PropertyValue>
 					</Record>
 				</Annotation>
 				<Annotation Term="com.sap.vocabularies.UI.v1.Badge">
 					<Record Type="com.sap.vocabularies.UI.v1.BadgeType">
 						<PropertyValue Property="HeadLine" Path="SalesOrderID" />
-						<PropertyValue Property="Title">
-							<Record Type="com.sap.vocabularies.UI.v1.DataField">
-								<PropertyValue Property="Label" String="Customer" />
-								<PropertyValue Property="Value" Path="BuyerName" />
-							</Record>
-						</PropertyValue>
 						<PropertyValue Property="MainInfo">
 							<Record Type="com.sap.vocabularies.UI.v1.DataField">
 								<PropertyValue Property="Label" String="Gross Amount" />
@@ -1138,14 +1120,9 @@
 				<Annotation Term="SAP__common.Label" String="Unit of Measure" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Quantity Unit" />
 			</Annotations>
-			<Annotations Target="SAP__self.SOLineItem/ProductInfo/ProductID">
+			<Annotations Target="SAP__self.SOLineItem/ProductID">
 				<Annotation Term="SAP__common.Label" String="Product ID" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product ID" />
-			</Annotations>
-			<Annotations Target="SAP__self.SOLineItem/ProductInfo/ProductName">
-				<Annotation Term="SAP__common.Label" String="Name" />
-				<Annotation Term="SAP__common.Heading" String="Product Name" />
-				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Name" />
 			</Annotations>
 			<Annotations Target="SAP__self.Address/City">
 				<Annotation Term="SAP__common.Label" String="City" />
@@ -1191,19 +1168,10 @@
 				<Annotation Term="SAP__common.Heading" String="Geocoordinates: Latiude" />
 				<Annotation Term="SAP__common.QuickInfo" String="EPM: Latitude" />
 			</Annotations>
-			<Annotations Target="SAP__self.ProductInfo/ProductID">
-				<Annotation Term="SAP__common.Label" String="Product ID" />
-				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product ID" />
-			</Annotations>
-			<Annotations Target="SAP__self.ProductInfo/ProductName">
-				<Annotation Term="SAP__common.Label" String="Name" />
-				<Annotation Term="SAP__common.Heading" String="Product Name" />
-				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Name" />
-			</Annotations>
 			<Annotations Target="SAP__self.BusinessPartner/BusinessPartnerRole">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_bp_role-fv/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-BUSINESSPARTNER.BP_ROLE'/$metadata</String>
+						<String>../../../../f4/sap/d_bp_role-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.BP_ROLE'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
@@ -1211,14 +1179,14 @@
 			<Annotations Target="SAP__self.BusinessPartner/CurrencyCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-BUSINESSPARTNER.CURRENCY_CODE'/$metadata</String>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-BUSINESSPARTNER.CURRENCY_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Contact/Sex">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_mf-fv/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-CONTACT.SEX'/$metadata</String>
+						<String>../../../../f4/sap/d_mf-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-CONTACT.SEX'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
@@ -1226,14 +1194,14 @@
 			<Annotations Target="SAP__self.Product/ProductID">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_pr-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.PRODUCT_ID'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_pr-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.PRODUCT_ID'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/TypeCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_pr_type-fv/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.TYPE_CODE'/$metadata</String>
+						<String>../../../../f4/sap/d_pr_type-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TYPE_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
@@ -1241,28 +1209,28 @@
 			<Annotations Target="SAP__self.Product/Category">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.CATEGORY'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_pd_cats-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CATEGORY'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/NameLanguage">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.NAME_LANGUAGE'/$metadata</String>
+						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.NAME_LANGUAGE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/DescriptionLanguage">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.DESCRIPTION_LANGUAGE'/$metadata</String>
+						<String>../../../../f4/sap/h_t002-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DESCRIPTION_LANGUAGE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/TaxTarifCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_pr_tax-fv/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.TAX_TARIF_CODE'/$metadata</String>
+						<String>../../../../f4/sap/d_pr_tax-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.TAX_TARIF_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />
@@ -1270,56 +1238,56 @@
 			<Annotations Target="SAP__self.Product/MeasureUnit">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_t006-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.MEASURE_UNIT'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_t006-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.MEASURE_UNIT'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/WeightUnit">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_t006_qu-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.WEIGHT_UNIT'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_t006_qu-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.WEIGHT_UNIT'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/CurrencyCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.CURRENCY_CODE'/$metadata</String>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.CURRENCY_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Product/DimUnit">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_epm_t006_le-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-PRODUCT.DIM_UNIT'/$metadata</String>
+						<String>../../../../f4/sap/h_epm_t006_le-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-PRODUCT.DIM_UNIT'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.SalesOrder/BuyerID">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/iwbep/v4_sample_sh_account-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-SALESORDER.BUYER_ID'/$metadata</String>
+						<String>../../../../f4/iwbep/v4_sample_sh_account-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.BUYER_ID'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.SalesOrder/CurrencyCode">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.ET-SALESORDER.CURRENCY_CODE'/$metadata</String>
+						<String>../../../../f4/sap/h_tcurc-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.ET-SALESORDER.CURRENCY_CODE'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Address/Country">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/f4_intca-sh/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.CT-CT_ADDRESS.COUNTRY'/$metadata</String>
+						<String>../../../../f4/sap/f4_intca-sh/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.COUNTRY'/$metadata</String>
 					</Collection>
 				</Annotation>
 			</Annotations>
 			<Annotations Target="SAP__self.Address/AddressType">
 				<Annotation Term="SAP__common.ValueListReferences">
 					<Collection>
-						<String>../../../../f4/sap/d_ad_type-fv/0001;ps='default-zui5_epm_sample-0001';va='com.sap.gateway.default.zui5_epm_sample.v0001.CT-CT_ADDRESS.ADDRESS_TYPE'/$metadata</String>
+						<String>../../../../f4/sap/d_ad_type-fv/0001;ps='default-zui5_epm_sample-0002';va='com.sap.gateway.default.zui5_epm_sample.v0002.CT-CT_ADDRESS.ADDRESS_TYPE'/$metadata</String>
 					</Collection>
 				</Annotation>
 				<Annotation Term="SAP__common.ValueListWithFixedValues" />

@@ -476,7 +476,7 @@
 
 	QUnit.test("test oDataModel read error test", function(assert) {
 		var done = assert.async();
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				assert.ok(false, "request succeeded...error expected");
 			},
@@ -1921,6 +1921,198 @@
 			},
 			error: function() {
 				assert.ok(false, "request failed");
+				done();
+			}
+		});
+	});
+
+	QUnit.test("test oDataModel setProperty: resetChanges - messages should be deleted", function(assert) {
+		var done = assert.async();
+		var oSpy;
+		var oMessage = new sap.ui.core.message.Message({
+			message: "Message1",
+			description: "Message1 description",
+			type: sap.ui.core.MessageType.Error,
+			target: "/ProductSet('AD-1000')/Name",
+			processor: oModel
+		});
+		var oMessage2 = new sap.ui.core.message.Message({
+			message: "Message2",
+			description: "Message2 description",
+			type: sap.ui.core.MessageType.Error,
+			target: "/ProductSet('AD-1000')/",
+			processor: oModel
+		});
+		var oMessage3 = new sap.ui.core.message.Message({
+			message: "Message3",
+			description: "Message3 description",
+			type: sap.ui.core.MessageType.Error,
+			target: "/ProductSet('HT-1000')",
+			processor: oModel
+		});
+		oModel.read("/ProductSet('HT-1000')");
+		oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2, oMessage3]);
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
+				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
+				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')"), "Messages for 'AD-1000' set");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 2, "2 Messages for 'AD-1000' set");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')"), "Messages 'HT-1000' set");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 1, "1 Message for 'HT-1000' set");
+				oModel.resetChanges(["/ProductSet('AD-1000')","/ProductSet('HT-1000')"]);
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 0, "Messages for 'HT-1000' deleted");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 0, "Messages for 'AD-1000' deleted");
+				assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+				oSpy = sinon.spy(oModel, "_submitBatchRequest");
+				oModel.submitChanges();
+				jQuery.sap.delayedCall(0,this, function() {
+					assert.ok(oSpy.callCount == 0, "No request sent");
+					oSpy.restore();
+					start()
+				});
+			},
+			error: function() {
+				assert.ok(false, "reqauest failed");
+				done();
+			}
+		});
+	});
+
+	QUnit.test("test oDataModel deleteCreatedEntry - messages should be deleted", function(assert) {
+		var done = assert.async();
+		var oSpy;
+		oModel.metadataLoaded().then(function() {
+			var oContext = oModel.createEntry("/ProductSet");
+			var oContextPath = oContext.getPath();
+
+			var oMessage = new sap.ui.core.message.Message({
+				message: "Message1",
+				description: "Message1 description",
+				type: sap.ui.core.MessageType.Error,
+				target: oContextPath,
+				processor: oModel
+			});
+			var oMessage2 = new sap.ui.core.message.Message({
+				message: "Message2",
+				description: "Message2 description",
+				type: sap.ui.core.MessageType.Error,
+				target: oContextPath,
+				processor: oModel
+			});
+			sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2]);
+			assert.ok(oModel.hasPendingChanges(), "model has pending changes");
+			assert.ok(oModel.getMessagesByEntity(oContextPath), "Messages set");
+			assert.ok(oModel.getMessagesByEntity(oContextPath).length === 2, "2 Messages set");
+			oModel.deleteCreatedEntry(oContext);
+			assert.ok(oModel.getMessagesByEntity(oContextPath).length === 0, "Messages deleted");
+			start();
+		});
+	});
+
+	QUnit.test("test oDataModel setProperty: resetChanges - messages should be deleted 2", function(assert) {
+		var done = assert.async();
+		var oSpy;
+		var oMessage = new sap.ui.core.message.Message({
+			message: "Message1",
+			description: "Message1 description",
+			type: sap.ui.core.MessageType.Error,
+			target: "/ProductSet('AD-1000')/Name",
+			processor: oModel
+		});
+		var oMessage2 = new sap.ui.core.message.Message({
+			message: "Message2",
+			description: "Message2 description",
+			type: sap.ui.core.MessageType.Error,
+			target: "/ProductSet('AD-1000')/",
+			processor: oModel
+		});
+		var oMessage3 = new sap.ui.core.message.Message({
+			message: "Message3",
+			description: "Message3 description",
+			type: sap.ui.core.MessageType.Error,
+			target: "/ProductSet('HT-1000')",
+			processor: oModel
+		});
+		oModel.read("/ProductSet('HT-1000')");
+		oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2, oMessage3]);
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
+				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
+				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')"), "Messages for 'AD-1000' set");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 2, "2 Messages for 'AD-1000' set");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')"), "Messages 'HT-1000' set");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 1, "1 Message for 'HT-1000' set");
+				oModel.resetChanges(["/ProductSet('AD-1000')"]);
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 0, "Messages deleted for 'AD-1000'");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 1, "1 Message for 'HT-1000' still exist");
+				oSpy = sinon.spy(oModel, "_submitBatchRequest");
+				oModel.submitChanges();
+				jQuery.sap.delayedCall(0,this, function() {
+					assert.ok(oSpy.callCount == 1, "Change request sent");
+					oSpy.restore();
+					start()
+				});
+			},
+			error: function() {
+				assert.ok(false, "reqauest failed");
+				done();
+			}
+		});
+	});
+
+	QUnit.test("test oDataModel setProperty: resetChanges - messages should be deleted 3", function(assert) {
+		var done = assert.async();
+		var oSpy;
+		var oMessage = new sap.ui.core.message.Message({
+			message: "Message1",
+			description: "Message1 description",
+			type: sap.ui.core.MessageType.Error,
+			target: "/ProductSet('AD-1000')/Name",
+			processor: oModel
+		});
+		var oMessage2 = new sap.ui.core.message.Message({
+			message: "Message2",
+			description: "Message2 description",
+			type: sap.ui.core.MessageType.Error,
+			target: "/ProductSet('AD-1000')/",
+			processor: oModel
+		});
+		var oMessage3 = new sap.ui.core.message.Message({
+			message: "Message3",
+			description: "Message3 description",
+			type: sap.ui.core.MessageType.Error,
+			target: "/ProductSet('HT-1000')",
+			processor: oModel
+		});
+		oModel.read("/ProductSet('HT-1000')");
+		oModel.read("/ProductSet('AD-1000')", {
+			success: function() {
+				sap.ui.getCore().getMessageManager().addMessages([oMessage, oMessage2, oMessage3]);
+				oModel.setProperty("/ProductSet('AD-1000')/Name", "NewName");
+				oModel.setProperty("/ProductSet('HT-1000')/Name", "NewName");
+				assert.ok(oModel.hasPendingChanges(), "model has pending changes");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')"), "Messages for 'AD-1000' set");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 2, "2 Messages for 'AD-1000' set");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')"), "Messages 'HT-1000' set");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 1, "1 Message for 'HT-1000' set");
+				oModel.resetChanges();
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('HT-1000')").length === 0, "Messages for 'HT-1000' deleted");
+				assert.ok(oModel.getMessagesByEntity("/ProductSet('AD-1000')").length === 0, "Messages for 'AD-1000' deleted");
+				assert.ok(!oModel.hasPendingChanges(), "model should not have pending changes");
+				oSpy = sinon.spy(oModel, "_submitBatchRequest");
+				oModel.submitChanges();
+				jQuery.sap.delayedCall(0,this, function() {
+					assert.ok(oSpy.callCount == 0, "No request sent");
+					oSpy.restore();
+					start()
+				});
+			},
+			error: function() {
+				assert.ok(false, "reqauest failed");
 				done();
 			}
 		});
@@ -4002,7 +4194,7 @@
 		var iReqSent = 0;
 		var iReqFailed = 0;
 		var sReqId = null;
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				assert.ok(false, "request succeeded...error expected");
 			},
@@ -4030,7 +4222,7 @@
 			var aRequests = oEvent.getParameter('requests');
 			assert.ok(aRequests.length == 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-			assert.equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+			assert.equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 
 			sReqId = oEvent.getParameter('ID');
@@ -4053,7 +4245,7 @@
 				var aRequests = oEvent.getParameter('requests');
 				assert.ok(aRequests.length == 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-				assert.equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+				assert.equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 				assert.equal(aRequests[0].response.statusCode, "404", "internal response, Param Check: statusCode");
 				assert.equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText");
@@ -4071,7 +4263,7 @@
 		var iReqSent = 0;
 		var iReqFailed = 0;
 		var sReqId = null;
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				assert.ok(false, "request succeeded...error expected");
 			},
@@ -4081,7 +4273,7 @@
 				iError++;
 			}
 		});
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				assert.ok(false, "request succeeded...error expected");
 			},
@@ -4109,7 +4301,7 @@
 			var aRequests = oEvent.getParameter('requests');
 			assert.ok(aRequests.length == 1, "should contain one request");
 			assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-			assert.equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+			assert.equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 			assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 			sReqId = oEvent.getParameter('ID');
 		});
@@ -4131,7 +4323,7 @@
 				var aRequests = oEvent.getParameter('requests');
 				assert.ok(aRequests.length == 1, "should contain one request");
 				assert.equal(aRequests[0].method, "GET", "internal request, Param Check: method");
-				assert.equal(aRequests[0].url, "ProductXYSet", "internal request, Param Check: url");
+				assert.equal(aRequests[0].url, "ProductSet('4711')", "internal request, Param Check: url");
 				assert.equal(aRequests[0].headers.Accept, "application/json", "internal request Param check: headers");
 				assert.equal(aRequests[0].response.statusCode, "404", "internal response, Param Check: statusCode");
 				assert.equal(aRequests[0].response.statusText, "Not Found", "internal response, Param Check: statusText");
@@ -4443,7 +4635,7 @@
 
 		oModel.setUseBatch(false);
 
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				assert.ok(false, "request succeeded...error expected");
 			},
@@ -4453,7 +4645,7 @@
 				iError++;
 			}
 		});
-		oModel.read("/ProductXYSet", {
+		oModel.read("/ProductSet('4711')", {
 			success : function(oData, oResponse) {
 				assert.ok(false, "request succeeded...error expected");
 			},
@@ -4485,7 +4677,7 @@
 			iReqSent++;
 			assert.equal(oEvent.getId(), "requestSent", "event id check");
 			assert.ok(oEvent.getParameter('url'), "Param check: url");
-			assert.ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
+			assert.ok(oEvent.getParameter('url').indexOf("ProductSet('4711')") !== -1, "Param check: url should be non batch");
 			assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 			assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 			assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
@@ -4502,7 +4694,7 @@
 				assert.equal(oEvent.getParameter('method'), "GET" , "Param check: method");
 				assert.equal(oEvent.getId(), "requestCompleted", "event id check");
 				assert.ok(oEvent.getParameter('url'), "Param check: url");
-				assert.ok(oEvent.getParameter('url').indexOf("ProductXYSet") !== -1, "Param check: url should be non batch");
+				assert.ok(oEvent.getParameter('url').indexOf("ProductSet('4711')") !== -1, "Param check: url should be non batch");
 				assert.equal(oEvent.getParameter('async'), true , "Param check: async");
 				assert.equal(oEvent.getParameter('headers').Accept, "application/json", true , "Param check: headers");
 
@@ -6146,6 +6338,32 @@
 
 		oModel.attachRequestSent(this, function(oEventInfo) {
 			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='test'", "Valid parameter is added to URL");
+			done();
+		});
+	});
+
+	QUnit.test("test oDataModel callFunction: empty string Parameter", function(assert) {
+		var done = assert.async();
+		oModel.callFunction("/SalesOrder_Confirm",{
+			method: "POST",
+			urlParameters: {"SalesOrderID": ""}
+		});
+
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID=''", "Valid parameter is added to URL");
+			done();
+		});
+	});
+
+		QUnit.test("test oDataModel callFunction: null Parameter", function(assert) {
+		var done = assert.async();
+		oModel.callFunction("/SalesOrder_Confirm",{
+			method: "POST",
+			urlParameters: {"SalesOrderID": "null"}
+		});
+
+		oModel.attachRequestSent(this, function(oEventInfo) {
+			assert.ok(oEventInfo.getParameter("url") === "SalesOrder_Confirm?SalesOrderID='null'", "Valid parameter is added to URL");
 			done();
 		});
 	});

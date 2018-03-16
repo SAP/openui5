@@ -100,7 +100,7 @@
 			assert.strictEqual(Array.isArray(this.oResponsiveSplitter._currentInterval.aPages[0]), true, "First page should be an Array of two pages");
 			assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 2, "The internal Splitter should have 2 contentAreas");
 			done();
-		}.bind(this), 0);
+		}.bind(this), 500 /* IE needs more time to render properly */);
 	});
 
 	QUnit.test("One demand true and one demand false panes first in range", function (assert) {
@@ -115,7 +115,7 @@
 			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginator").css("height"), "0px", "Paginator's height should be 0");
 			assert.strictEqual(this.oResponsiveSplitter.getRootPaneContainer()._oSplitter.getAssociatedContentAreas().length, 1, "The internal Splitter should have 2 contentAreas");
 			done();
-		}.bind(this), 0);
+		}.bind(this), 500 /* IE needs more time to render properly */);
 	});
 
 	QUnit.test("Demand true panes first in range second not", function (assert) {
@@ -131,7 +131,7 @@
 			assert.strictEqual(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div").length, 2, "Two buttons should be rendered");
 			assert.strictEqual(jQuery(this.oResponsiveSplitter.$().find(".sapUiResponsiveSplitterPaginatorButtons > div")[0]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), true, "The first button should be selected");
 			done();
-		}.bind(this), 0);
+		}.bind(this), 500 /* IE needs more time to render properly */);
 	});
 
 	QUnit.test("Demand false panes both not in range second default", function (assert) {
@@ -416,20 +416,22 @@
 			})
 		});
 
+		var defaultPaneContainer = new sap.ui.layout.PaneContainer({
+			id: "middlePaneCont",
+			panes: [new sap.ui.layout.SplitPane({
+				id: "middlePane",
+				content: [new sap.m.Text({text: "Middle"})]
+			})],
+			layoutData: new sap.ui.layout.SplitterLayoutData({
+				size: "80%"
+			})
+		});
+
 		var oSplitter = new sap.ui.layout.ResponsiveSplitter({
 			rootPaneContainer: new sap.ui.layout.PaneContainer({
 				id: "rootPaneCont",
 				panes: [
-					new sap.ui.layout.PaneContainer({
-						id: "middlePaneCont",
-						panes: [new sap.ui.layout.SplitPane({
-							id: "middlePane",
-							content: [new sap.m.Text({text: "Middle"})]
-						})],
-						layoutData: new sap.ui.layout.SplitterLayoutData({
-							size: "80%"
-						})
-					})
+					defaultPaneContainer
 				]
 			})
 		});
@@ -440,11 +442,63 @@
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		oSplitter.getRootPaneContainer().insertPane(oPane);
+		oSplitter.getRootPaneContainer().insertPane(oPane, 0);
 		sap.ui.getCore().applyChanges();
 
 		//Assert
 		assert.strictEqual(oResizeSpy.callCount, 1, "The resizer should be called manually after panel has been inserted");
+
+		//Cleanup
+		oPane = null;
+		oSplitter.destroy();
+		oSplitter = null;
+	});
+
+	QUnit.test("Removing panel inside panel should trigger 'manual' resize.", function (assert) {
+		// Setup
+		var oPane = new sap.ui.layout.PaneContainer({
+			id: "leftPaneCont",
+			panes: [new sap.ui.layout.SplitPane({
+				id: "leftPane",
+				content: [new sap.m.Text({text: "This text should have automatic word wrap, as the size of the left area is resized via resize handler of the splitter. But when the text control is removed from the splitter aggregation and added again, then the previous width is remembered and compared with the new width. As the width did not change the left area is not resized correctly and the text is not wrapped anymore correctly."})]
+			})],
+			layoutData: new sap.ui.layout.SplitterLayoutData({
+				size: "20%"
+			})
+		});
+
+		var defaultPaneContainer = new sap.ui.layout.PaneContainer({
+			id: "middlePaneCont",
+			panes: [new sap.ui.layout.SplitPane({
+				id: "middlePane",
+				content: [new sap.m.Text({text: "Middle"})]
+			})],
+			layoutData: new sap.ui.layout.SplitterLayoutData({
+				size: "80%"
+			})
+		});
+
+		var oSplitter = new sap.ui.layout.ResponsiveSplitter({
+			rootPaneContainer: new sap.ui.layout.PaneContainer({
+				id: "rootPaneCont",
+				panes: [
+					oPane,
+					defaultPaneContainer
+				]
+			})
+		});
+
+		var oResizeSpy = this.spy(oPane._oSplitter, "triggerResize");
+
+		oSplitter.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		oSplitter.getRootPaneContainer().removePane(defaultPaneContainer);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(oResizeSpy.callCount, 1, "The resizer should be called manually after panel has been removed");
 
 		//Cleanup
 		oPane = null;

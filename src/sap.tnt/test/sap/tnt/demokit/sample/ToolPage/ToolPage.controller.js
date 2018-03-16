@@ -301,7 +301,7 @@ sap.ui.define([
 		},
 
 		_setToggleButtonTooltip : function(bLarge) {
-			var toggleButton = this.getView().byId('sideNavigationToggleButton');
+			var toggleButton = this.byId('sideNavigationToggleButton');
 			if (bLarge) {
 				toggleButton.setTooltip('Large Size Navigation');
 			} else {

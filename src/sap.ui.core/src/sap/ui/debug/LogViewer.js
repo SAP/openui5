@@ -106,7 +106,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 		}
 
 		// when attached to a log, clear the dom node and add all entries from the log
-		var aLog = this.oLogger.getLog();
+		var aLog = this.oLogger.getLogEntries();
 		for (var i = this.iFirstEntry,l = aLog.length;i < l;i++) {
 			if ( aLog[i].level <= this.iLogLevel ) {
 				this.addEntry(aLog[i]);
@@ -122,7 +122,7 @@ sap.ui.define('sap/ui/debug/LogViewer', function() {
 
 	LogViewer.prototype.truncate = function() {
 		this.clear();
-		this.fillFromLogger(this.oLogger.getLog().length);
+		this.fillFromLogger(this.oLogger.getLogEntries().length);
 	};
 
 	LogViewer.prototype.setFilter = function(oFilter) {

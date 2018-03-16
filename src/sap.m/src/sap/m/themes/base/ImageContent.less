@@ -18,22 +18,6 @@
 	max-height: 3.5rem;
 }
 
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
-	.sapMImageContent {
-		height: 3.438rem;
-		width: 8rem;
-	}
-
-	.sapMImageContentImageIcon {
-		max-height: 3rem;
-	}
-	
-	.sapMImageContentImageIcon.sapUiIcon {
-		font-size: 1.5rem;
-	}
-}
-
 html.sap-desktop .sapMImageContent:focus {
 	outline-color: @sapUiContentFocusColor;
 	outline-style: dotted;
@@ -48,4 +32,19 @@ html.sap-desktop .sapMImageContent:focus:not([tabindex]) {
 	font-size: 1.75rem;
 	color: @sapUiTileIconColor;
 	padding-bottom: 0.35rem;
+}
+
+.sapMTileSmallPhone {
+	.sapMImageContent {
+		height: 3.438rem;
+		width: 8rem;
+	}
+
+	.sapMImageContentImageIcon {
+		max-height: 3rem;
+	}
+
+	.sapMImageContentImageIcon.sapUiIcon {
+		font-size: 1.5rem;
+	}
 }

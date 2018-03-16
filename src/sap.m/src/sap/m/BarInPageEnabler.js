@@ -3,9 +3,12 @@
  */
 
 // Provides helper sap.m.BarInPageEnabler
-sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/core/InvisibleText'],
-	function(Object, PageAccessibleLandmarkInfo, InvisibleText) {
+sap.ui.define(['sap/ui/base/Object', 'sap/m/library', 'jquery.sap.global'],
+	function(Object, library, jQuery) {
 	"use strict";
+
+	// shortcut for sap.m.IBarHTMLTag
+	var IBarHTMLTag = library.IBarHTMLTag;
 
 	var mContexts = {
 		footer : {
@@ -27,26 +30,6 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 	var IBAR_CSS_CLASS = "sapMIBar";
 
-	var _mInvisibleTexts = {},
-		oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-	/**
-	 * Creates (if not already created) and returns an invisible text element for screan reader support
-	 * @param sType - the type of the control we want to get a label for
-	 * @param sText - the text to be used
-	 * @private
-	 */
-	var _ensureInvisibleText = function(sType, sText) {
-
-		if (typeof _mInvisibleTexts[sType] === "undefined") {
-			_mInvisibleTexts[sType] = new InvisibleText({
-				text: sText
-			}).toStatic().getId();
-		}
-
-		return _mInvisibleTexts[sType];
-	};
-
 	/**
 	 * @class Helper Class for implementing the IBar interface. Should be created once per IBar instance.
 	 * @version 1.22
@@ -67,8 +50,8 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 		/**
 		 * Sets the HTML tag of the root element.
-		 * @param {string} sTag
-		 * @returns {sap.m.IBar} this for chaining
+		 * @param {string} sNewTag The new root element
+		 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
 		 * @protected
 		 */
 		setHTMLTag : function (sNewTag) {
@@ -89,7 +72,7 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 		getHTMLTag : function () {
 			if (!this.hasOwnProperty("sTag")) {
 				//Div is the default
-				this.sTag = sap.m.IBarHTMLTag.Div;
+				this.sTag = IBarHTMLTag.Div;
 			}
 
 			return this.sTag;
@@ -105,14 +88,112 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 		},
 
 		/**
-		 * Sets classes and tag according to the context in the page.
+		 * Gets accessibility role of the Root HTML element.
+		 *
+		 * @returns {string} Accessibility role
+		 * @private
+		 */
+		_getRootAccessibilityRole: function () {
+			var sRootAccessibilityRole = this._sRootAccessibilityRole || "toolbar";
+
+			return sRootAccessibilityRole;
+		},
+
+		/**
+		 * Sets accessibility role of the Root HTML element.
+		 *
+		 * @param {string} sRole AccessibilityRole of the root Element
+		 * @returns {sap.m.IBar} <code>this</code> to allow method chaining
+		 * @private
+		 */
+		_setRootAccessibilityRole: function (sRole) {
+			this._sRootAccessibilityRole = sRole;
+
+			return this;
+		},
+
+		/**
+		 * Sets classes and HTML tag according to the context of the page.
 		 *
 		 * Possible contexts are header, footer, subheader.
 		 * @param {string} sContext allowed values are header, footer, subheader.
-		 * @returns {sap.m.IBar} this for chaining
+		 * @returns {sap.m.IBar} <code>this</code> for chaining
 		 * @protected
 		 */
 		applyTagAndContextClassFor : function (sContext) {
+			this._applyTag(sContext);
+
+			return this._applyContextClassFor(sContext);
+		},
+
+		/**
+		 * Sets classes according to the context of the page.
+		 *
+		 * Possible contexts are header, footer, subheader.
+		 * @param {string} sContext allowed values are header, footer, subheader.
+		 * @returns {sap.m.IBar} <code>this</code> for chaining
+		 * @sap-restricted
+		 * @private
+		 */
+		_applyContextClassFor : function (sContext) {
+			var oOptions = this._getContextOptions(sContext);
+
+			if (!oOptions) {
+				return this;
+			}
+
+			if (!this.isContextSensitive) {
+				jQuery.sap.log.error("The bar control you are using does not implement all the members of the IBar interface", this);
+				return this;
+			}
+
+			//If this class does not gets added by the renderer, add it here
+			if (!this.getRenderer().shouldAddIBarContext()) {
+				this.addStyleClass(IBAR_CSS_CLASS + "-CTX");
+			}
+
+			if (this.isContextSensitive()) {
+				this.addStyleClass(oOptions.contextClass);
+			}
+
+			return this;
+		},
+
+		/**
+		 * Sets HTML tag according to the context of the page.
+		 *
+		 * Possible contexts are header, footer, subheader.
+		 * @param {string} sContext allowed values are header, footer, subheader.
+		 * @returns {sap.m.IBar} <code>this</code> for chaining
+		 * @sap-restricted
+		 * @private
+		 */
+		_applyTag : function (sContext) {
+			var oOptions = this._getContextOptions(sContext);
+
+			if (!oOptions) {
+				return this;
+			}
+
+			if (!this.setHTMLTag) {
+				jQuery.sap.log.error("The bar control you are using does not implement all the members of the IBar interface", this);
+				return this;
+			}
+
+			this.setHTMLTag(oOptions.tag);
+
+			return this;
+		},
+
+		/**
+		 * Get context options of the Page.
+		 *
+		 * Possible contexts are header, footer, subheader.
+		 * @param {string} sContext allowed values are header, footer, subheader.
+		 * @returns {object|null}
+		 * @private
+		 */
+		_getContextOptions : function (sContext) {
 			var oContext;
 
 			if (this.getContext) {
@@ -125,70 +206,11 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 			if (!oOptions) {
 				jQuery.sap.log.error("The context " + sContext + " is not known", this);
-				return this;
+
+				return null;
 			}
 
-			if (!this.isContextSensitive || !this.setHTMLTag) {
-				jQuery.sap.log.error("The bar control you are using does not implement all the members of the IBar interface", this);
-				return this;
-			}
-
-			//If this class does not gets added by the renderer, add it here
-			if (!this.getRenderer().shouldAddIBarContext()) {
-				this.addStyleClass(IBAR_CSS_CLASS + "-CTX");
-			}
-
-			this.setHTMLTag(oOptions.tag);
-
-			if (oOptions.internalAriaLabel) {
-				this._sInternalAriaLabelId = _ensureInvisibleText(oOptions.tag, oBundle.getText(oOptions.internalAriaLabel));
-			}
-
-			if (this.isContextSensitive()) {
-				this.addStyleClass(oOptions.contextClass);
-			}
-
-			return this;
-		},
-
-		/**
-		 * Sets landmarks members to the bar instance
-		 *
-		 * @param {boolean} bHasLandmarkInfo indicates that bar has landmarkinfo
-		 * @param {string} sContext context of the bar
-		 * @private
-		 */
-		_setLandmarkInfo: function (bHasLandmarkInfo, sContext) {
-			this._bHasLandmarkInfo = bHasLandmarkInfo;
-
-			if (bHasLandmarkInfo) {
-				this._sLandmarkContext = sContext;
-			} else {
-				this._sLandmarkContext = null;
-			}
-		},
-
-		/**
-		 * Writes landmarks info to the bar
-		 *
-		 * @private
-		 */
-		_writeLandmarkInfo: function (oRm, oControl) {
-			var sRole;
-			var bIsDialogHeader = (sap.m.Dialog && oControl.getParent() instanceof sap.m.Dialog) &&
-				(oControl.getHTMLTag() == sap.m.IBarHTMLTag.Header);
-
-			if (oControl._bHasLandmarkInfo) {
-				PageAccessibleLandmarkInfo._writeLandmarkInfo(oRm, oControl.getParent(), oControl._sLandmarkContext);
-			} else {
-				// BCP: 1670153972
-				// Bar in Dialog has to have 'role' attr set to 'heading' for the header
-				sRole = bIsDialogHeader ? "heading" : "toolbar";
-
-				oRm.writeAccessibilityState(oControl, {
-					role: sRole
-				});
-			}
+			return oOptions;
 		},
 
 		//Rendering
@@ -203,12 +225,6 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 			oRM.write("<" + sTag);
 			oRM.addClass(IBAR_CSS_CLASS);
-
-			if (oControl._sInternalAriaLabelId) {
-				oRM.writeAccessibilityState(oControl, {
-					"labelledby": {value: oControl._sInternalAriaLabelId, append: true}
-				});
-			}
 
 			if (this.shouldAddIBarContext(oControl)) {
 				oRM.addClass(IBAR_CSS_CLASS + "-CTX");
@@ -247,7 +263,7 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 
 	/**
 	 * Adds the sapMBarChildClass to a control.
-	 * @param {sap.ui.core.Control} oControl
+	 * @param {sap.ui.core.Control} oControl The sap.ui.core.Control to which the sapMBarChildClass will be added
 	 * @protected
 	 * @static
 	 */
@@ -255,17 +271,6 @@ sap.ui.define(['sap/ui/base/Object', './PageAccessibleLandmarkInfo', 'sap/ui/cor
 		oControl.addStyleClass("sapMBarChild");
 	};
 
-	/**
-	 * Termination of the BarInPageEnabler control
-	 * @private
-	 */
-	BarInPageEnabler.prototype.exit = function () {
-		if (this._sInternalAriaLabelId) {
-			this._sInternalAriaLabelId.destroy();
-			this._sInternalAriaLabelId = null;
-		}
-	};
-
 	return BarInPageEnabler;
 
-}, /* bExport= */ true);
+});

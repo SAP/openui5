@@ -2,41 +2,27 @@
 	xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:html="http://www.w3.org/1999/xhtml">
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Sales Fulfillment Application Title"
 		subheader="Subtitle" press="press">
-		<tileContent>
-			<TileContent unit="EUR" footer="Current Quarter">
-				<content>
-					<ImageContent src="sap-icon://home-share"/>
-				</content>
-			</TileContent>
-		</tileContent>
+		<TileContent unit="EUR" footer="Current Quarter">
+			<ImageContent src="sap-icon://home-share" />
+		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Master Data Type"
 		subheader="Subtitle" press="press">
-		<tileContent>
-			<TileContent>
-				<content>
-					<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png"></ImageContent>
-				</content>
-			</TileContent>
-		</tileContent>
+		<TileContent>
+			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/SAPLogoLargeTile_28px_height.png" />
+		</TileContent>
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Manage Activity Master Data Type With a Long Title Without an Icon"
 		subheader="Subtitle Launch Tile" mode="HeaderMode" press="press">
-		<tileContent>
-			<TileContent unit="EUR" footer="Current Quarter" />
-		</tileContent>
+		<TileContent unit="EUR" footer="Current Quarter" />
 	</GenericTile>
 
 	<GenericTile class="sapUiTinyMarginBegin sapUiTinyMarginTop tileLayout" header="Jessica D. Prince Senior Consultant"
 		subheader="Department" press="press">
-		<tileContent>
-			<TileContent>
-				<content>
-					<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/ProfileImage_LargeGenTile.png"/>
-				</content>
-			</TileContent>
-		</tileContent>
+		<TileContent>
+			<ImageContent src="test-resources/sap/m/demokit/sample/GenericTileAsLaunchTile/images/ProfileImage_LargeGenTile.png" />
+		</TileContent>
 	</GenericTile>
 </mvc:View>

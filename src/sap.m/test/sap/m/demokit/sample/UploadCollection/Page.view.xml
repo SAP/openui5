@@ -1,64 +1,67 @@
-<mvc:View
-	height="100%"
+<mvc:View height="100%"
 	controllerName="sap.m.sample.UploadCollection.Page"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-
 	<Page showHeader="false">
 		<content>
 			<OverflowToolbar>
-				<ToolbarSpacer/>
-				<Label text="Upload button invisible"></Label>
-				<Switch id="uploadInvisibleSwitch" state="false" change="onSwitchUploadInvisibleChange" type="Transparent"></Switch>
-				<Label text="Layout: Enable FileUploader"></Label>
-				<Switch state="true" change="onSwitchUploaderChange" type="Transparent"></Switch>
-				<Label text="Multi-selection mode"></Label>
-				<Switch id="modeSwitch" state="false" change="onSwitchModeChange" type="Transparent"></Switch>
-				<Label text="File types"></Label>
-				<MultiComboBox
-					id="fileTypesBox"
-					selectionChange="onFileTypeChange"
-					width="250px"
-					placeholder="Choose the valid file types"
-					items="{fileTypes>/items}">
-					<core:Item key="{fileTypes>key}" text="{fileTypes>text}" />
-				</MultiComboBox>
-				<Select
-					id="tbSelect"
-					items="{/items}"
-					selectedKey="{/selectedKey}"
-					change="onSeparatorsChange" >
-					<core:Item key="{key}" text="{text}"/>
-				</Select>
+				<core:Icon
+					class="sapUiSmallMarginBegin"
+					visible="{=!${device>/browser/mobile}}"
+					src="sap-icon://message-information" />
+				<Text
+					wrapping="false"
+					visible="{=!${device>/browser/mobile}}"
+					text="To add files, you can also use drag &amp; drop on your desktop or tablet." />
+				<ToolbarSpacer />
+				<Button icon="sap-icon://action-settings" tooltip="More settings" press="onOpenAppSettings" />
 			</OverflowToolbar>
-			<MessageStrip showIcon="true" type="Information" text="To add files, you can also use drag &amp; drop on your desktop or tablet." class="sapUiTinyMargin"></MessageStrip>
 			<UploadCollection
 				id="UploadCollection"
-				maximumFilenameLength="55"
-				maximumFileSize="10"
+				maximumFilenameLength="{settings>/maximumFilenameLength}"
+				maximumFileSize="{settings>/maximumFileSize}"
 				multiple="true"
 				change="onChange"
 				fileDeleted="onFileDeleted"
 				filenameLengthExceed="onFilenameLengthExceed"
 				fileRenamed="onFileRenamed"
 				fileSizeExceed="onFileSizeExceed"
+				fileType="{fileTypes>/selected}"
 				selectionChange="onSelectionChange"
 				typeMissmatch="onTypeMissmatch"
 				uploadComplete="onUploadComplete"
 				beforeUploadStarts="onBeforeUploadStarts"
 				uploadTerminated="onUploadTerminated"
-				items="{path : '/items', templateShareable : false}"
+				items="{
+					path: '/items',
+					templateShareable: false
+				}"
 				numberOfAttachmentsText="Uploaded (8)"
-				mode="SingleSelectMaster">
+				showSeparators="{settings>/showSeparators}"
+				uploadEnabled="{settings>/uploadEnabled}"
+				uploadButtonInvisible="{=!${settings>/uploadButtonVisible}}"
+				mode="{settings>/mode}">
 				<toolbar>
-					<OverflowToolbar id="myId" >
-						<Title id="attachmentTitle"/>
-						<ToolbarSpacer/>
-						<SearchField width="10rem" search="onSearch"></SearchField>
-						<Button id="deleteSelectedButton" text="Delete" press="onDeleteSelectedItems" enabled="false" visible="false" type="Transparent"></Button>
-						<ToggleButton id="selectAllButton" text="Select all" press="onSelectAllPress" enabled="false" visible="false" type="Transparent"></ToggleButton>
-						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
+					<OverflowToolbar id="myId">
+						<Title id="attachmentTitle" />
+						<ToolbarSpacer />
+						<SearchField width="10rem" search="onSearch" />
+						<Button
+							id="deleteSelectedButton"
+							text="Delete"
+							press="onDeleteSelectedItems"
+							enabled="false"
+							visible="false"
+							type="Transparent" />
+						<ToggleButton
+							id="selectAllButton"
+							text="Select all"
+							press="onSelectAllPress"
+							enabled="false"
+							visible="false"
+							type="Transparent" />
+						<UploadCollectionToolbarPlaceholder />
 					</OverflowToolbar>
 				</toolbar>
 				<items>
@@ -68,35 +71,25 @@
 						mimeType="{mimeType}"
 						thumbnailUrl="{thumbnailUrl}"
 						url="{url}"
-						enableEdit="{enableEdit}"
-						enableDelete="{enableDelete}"
-						visibleDelete="{visibleDelete}"
-						visibleEdit="{visibleEdit}"
+						enableEdit="{settings>/enableEdit}"
+						enableDelete="{settings>/enableDelete}"
+						visibleDelete="{settings>/visibleDelete}"
+						visibleEdit="{settings>/visibleEdit}"
 						attributes="{path : 'attributes', templateShareable : false}"
 						statuses="{path : 'statuses', templateShareable : false}"
-						markers="{path : 'markers', templateShareable : false}"
+						markers="{path : 'markers', factory: '.createObjectMarker'}"
 						selected="{selected}">
 						<attributes>
-							<ObjectAttribute
-								title="{title}"
+							<ObjectAttribute title="{title}"
 								text="{path : 'text', formatter : '.formatAttribute'}"
 								active="{active}"
-								press="onAttributePress"/>
+								press="onAttributePress" />
 						</attributes>
 						<statuses>
-							<ObjectStatus
-								title="{title}"
+							<ObjectStatus title="{title}"
 								text="{text}"
-								state="{state}"
-								icon="{icon}"
-								iconDensityAware="{iconDensityAware}"
-								textDirection="{textDirection}"/>
+								state="{state}" />
 						</statuses>
-						<markers>
-							<ObjectMarker
-								type="{type}"
-								press="onMarkerPress"/>
-						</markers>
 					</UploadCollectionItem>
 				</items>
 			</UploadCollection>

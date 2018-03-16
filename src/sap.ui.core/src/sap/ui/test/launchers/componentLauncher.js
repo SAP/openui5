@@ -3,11 +3,12 @@
  */
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/core/ComponentContainer'
-], function (jQuery, ComponentContainer) {
+	'sap/ui/core/ComponentContainer',
+	'sap/ui/core/Component' // sap.ui.component
+], function ($, ComponentContainer/*, Component */) {
 	"use strict";
-	var $ = jQuery,
-		_loadingStarted = false,
+
+	var _loadingStarted = false,
 		_oComponentContainer = null,
 		_$Component = null;
 
@@ -24,7 +25,7 @@ sap.ui.define([
 
 		start: function (mComponentConfig) {
 			if (_loadingStarted) {
-				throw "sap.ui.test.launchers.componentLauncher: Start was called twice without teardown";
+				throw new Error("sap.ui.test.launchers.componentLauncher: Start was called twice without teardown. Only one component can be started at a time.");
 			}
 
 			mComponentConfig.async = true;
@@ -33,7 +34,7 @@ sap.ui.define([
 			_loadingStarted = true;
 
 			return oPromise.then(function (oComponent) {
-				var sId = jQuery.sap.uid();
+				var sId = $.sap.uid();
 
 				// create and add div to html
 				_$Component = $('<div id="' + sId + '" class="sapUiOpaComponent"></div>');
@@ -54,7 +55,7 @@ sap.ui.define([
 		teardown: function () {
 			// Opa prevent the case if teardown was called after the start but before the promise was fulfilled
 			if (!_loadingStarted){
-				throw "sap.ui.test.launchers.componentLauncher: Teardown has been called but there was no start";
+				throw new Error("sap.ui.test.launchers.componentLauncher: Teardown was called before start. No component was started.");
 			}
 			_oComponentContainer.destroy();
 			_$Component.remove();

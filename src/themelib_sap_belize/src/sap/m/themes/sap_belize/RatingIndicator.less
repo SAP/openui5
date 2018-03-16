@@ -6,26 +6,18 @@
 @_sap_m_RatingIndicator_IconUnselectedColor: darken(@sapUiContentForegroundColor, 30);
 @_sap_m_RatingIndicator_IconHoverColor: darken(@sapUiAccent1, 5);
 
-.sapMRIIconSel {
-	color: @sapUiAccent1;
-}
-
-.sapMRIIconUnsel  {
-    color: @_sap_m_RatingIndicator_IconUnselectedColor;
-}
-
 .sapMRIDisabled {
     opacity: 0.5;
 }
 
-.sapMRIIconHov {
-	color: @_sap_m_RatingIndicator_IconHoverColor;
-}
-
 /* Custom focus outline */
-html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled) {
+html.sap-desktop .sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly){
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
+}
+
+.sapMRIUnsel {
+  color: @_sap_m_RatingIndicator_IconUnselectedColor;
 }
 
 /* IE ignores outline-offset. Use an overlay: */
@@ -34,7 +26,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop {
 		outline: none;
 		position: relative;
 	}
-	.sapMRI:focus:not(.sapMRIDisabled)::before {
+	.sapMRI:focus:not(.sapMRIDisabled):not(.sapMRIDisplayOnly)::before {
 		content: " ";
 		box-sizing: border-box;
 		width: 100%;

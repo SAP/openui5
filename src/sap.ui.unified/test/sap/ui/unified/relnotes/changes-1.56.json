@@ -1,0 +1,73 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "7ddf4cab9138f99a4033ec7181153398d7243647",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: DemoKit sample improvement",
+        "references": []
+      },
+      {
+        "id": "d77050250cd60be10c307176b0f949a0556af4df",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Custom appointments sorter",
+        "references": []
+      },
+      {
+        "id": "30c0e987fcc55155f3d64b0462bc536eefc722ee",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Selecting day header or week number does not throw an error",
+        "references": []
+      },
+      {
+        "id": "775bc74085a36133b7d6cc678fec077154e77157",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
+        "references": []
+      },
+      {
+        "id": "c576ff2eadee2c6129be4fb41f1cf28aa252191a",
+        "type": "FIX",
+        "text": " sap.ui.unified.ColorPicker: Sample is now scrollable on mobile",
+        "references": []
+      },
+      {
+        "id": "97447e2d75b19c2db6ff4476f55e8b9e8fd3e00d",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Change header when two months are used",
+        "references": []
+      },
+      {
+        "id": "fe28125b3307fb60ccb790152e8f5573c88b261f",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: No double focus outline on Belize on IE",
+        "references": []
+      },
+      {
+        "id": "bf7681e89ae1cd89b0fdd55d2e28697da8db2709",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Update aria-label for the year button",
+        "references": []
+      },
+      {
+        "id": "06ac89fd56d0f2191fb8a75fd21510a0f9f1850b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: focus clearly visible in IE for HCB and HCW",
+        "references": []
+      },
+      {
+        "id": "427664ce587dc07cdff9ada945e3a3a0a36d7049",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments\u0027 container has no tab stop anymore.",
+        "references": []
+      }
+    ]
+  }
+}

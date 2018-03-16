@@ -22,6 +22,7 @@
 <script type="text/javascript"
 	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
+
 <!-- Test functions -->
 <script language="javascript">
 	var oModel, oBinding, fnOldSend, oMockServer;
@@ -49,12 +50,6 @@
 		oMockServer.simulate("./model/metadata_orgHierarchy.xml", "./model/orgHierarchy/");
 		oMockServer.start();
 	};
-	
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	};
-	window.define.amd = { vendor : "SAPUI5 QUnit Test" };
 	
 	// create binding
 	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){

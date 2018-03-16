@@ -3,23 +3,35 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
-	"sap/ui/model/odata/v4/lib/_Cache",
-	"sap/ui/model/odata/v4/lib/_Parser"
-], function (jQuery, _Cache, _Parser) {
-	/*global QUnit, sinon */
+	"sap/ui/model/odata/v4/lib/_Parser",
+	"sap/ui/model/odata/v4/lib/_Requestor",
+	"sap/ui/test/TestUtils"
+], function (jQuery, _Parser, _Requestor, TestUtils) {
+	/*global QUnit */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
+
+	/*
+	 * Parses the given filter and expects the given syntax tree and vice versa
+	 * @param {object} assert The assert
+	 * @param {string} sFilter The filter string
+	 * @param {object} oExpectedSyntaxTree The expected syntax tree, tested with deepContains
+	 * @param {string} [sResultingFilter=sFilter] The resulting filter string
+	 */
+	function parseAndRebuild(assert, sFilter, oExpectedSyntaxTree, sResultingFilter) {
+		var oSyntaxTree = _Parser.parseFilter(sFilter);
+
+		TestUtils.deepContains(oSyntaxTree, oExpectedSyntaxTree, "parse " + sFilter);
+		assert.strictEqual(_Parser.buildFilterString(oSyntaxTree), sResultingFilter || sFilter,
+			"rebuild " + sFilter);
+	}
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._Parser", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-		},
-
-		afterEach : function () {
-			this.oLogMock.verify();
 		}
 	});
 
@@ -71,7 +83,8 @@ sap.ui.require([
 			assert.deepEqual(_Parser.parseSystemQueryOption("$expand=" + oFixture.string),
 				{"$expand" : oFixture.parsed});
 			// verify that the parsed result is consumable
-			assert.deepEqual(_Cache.convertQueryOptions({"$expand" : oFixture.parsed}),
+			assert.deepEqual(_Requestor.create("/~/")
+					.convertQueryOptions("Foo", {"$expand" : oFixture.parsed}),
 				{"$expand" : oFixture.string});
 		});
 	});
@@ -109,7 +122,8 @@ sap.ui.require([
 			assert.deepEqual(_Parser.parseSystemQueryOption("$select=" + oFixture.string),
 					{"$select" : oFixture.parsed});
 			// verify that the parsed result is consumable
-			assert.deepEqual(_Cache.convertQueryOptions({"$select" : oFixture.parsed}),
+			assert.deepEqual(_Requestor.create("/~/")
+					.convertQueryOptions("Foo", {"$select" : oFixture.parsed}),
 				{"$select" : oFixture.string});
 		});
 	});
@@ -156,7 +170,7 @@ sap.ui.require([
 				"contains(Supplier/Name,'SAP')",
 				"foo(bar,baz)", // see that the actual names do not matter
 				"name.space.foo(bar,baz)",
-				"(BuyerName eq 'SAP' and GrossAmount le 12345) and (GrossAmount ge 1000)",
+				"(SO_2_BP/CompanyName eq 'SAP' and GrossAmount le 12345) and (GrossAmount ge 1000)",
 				"((p1 eq 'v1') or (p2 eq 'v2' and contains( p3 , 'v3' ))) and p4 eq 'v4'",
 				"$root/Me",
 				"$root/Foo(key='va''lue')/bar",
@@ -182,10 +196,11 @@ sap.ui.require([
 		mValuesForOption[sOption].forEach(function (sValue) {
 			QUnit.test("_Parser: " + sOption + "=" + sValue, function (assert) {
 				var sAssignment = sOption + "=" + sValue,
-					oResult = {},
 					oExpand = {
 						"$select" : ["*"]
-					};
+					},
+					oRequestor = _Requestor.create("/~/"),
+					oResult = {};
 
 				oResult[sOption] = sValue;
 				oExpand[sOption] = sValue;
@@ -201,7 +216,7 @@ sap.ui.require([
 					"as only/last option in an expand, terminated by ')'");
 				// verify that the parsed result is consumable
 				assert.deepEqual(
-					_Cache.convertQueryOptions({
+					oRequestor.convertQueryOptions("Foo", {
 						"$expand" : {
 							"foo" : oResult
 						}
@@ -218,7 +233,7 @@ sap.ui.require([
 					"as first/inner option in an expand, terminated by ';'");
 				// verify that the parsed result is consumable
 				assert.deepEqual(
-					_Cache.convertQueryOptions({
+					oRequestor.convertQueryOptions("Foo", {
 						"$expand" : {
 							"foo" : oExpand
 						}
@@ -281,6 +296,21 @@ sap.ui.require([
 	}, {
 		string : "$filter=a eq 'foo",
 		error : "Unterminated string at 14"
+	}, {
+		string : "$select=a, b",
+		error : "Expected PATH but instead saw ' ' at 11"
+	}, {
+		string : "$expand=foo  eq 'bar'",
+		error : "Expected end of input but instead saw 'eq' at 14"
+	}, {
+		string : "$expand=foo\teq%09'bar'",
+		error : "Expected end of input but instead saw 'eq' at 13"
+	}, {
+		string : "$expand=foo%09eq\t'bar'",
+		error : "Expected end of input but instead saw 'eq' at 15"
+	}, {
+		string : "$expand=foo%20eq%20'bar'",
+		error : "Expected end of input but instead saw 'eq' at 15"
 	}].forEach(function (oFixture) {
 		QUnit.test("_Parser: " + oFixture.string, function (assert) {
 			assert.throws(function () {
@@ -382,12 +412,435 @@ sap.ui.require([
 			string : '$search=%22foo%5c%22bar%5C\\baz%22',
 			parsed : {"$search" : '%22foo%5c%22bar%5C\\baz%22'},
 			converted : {"$search" : '%22foo%5c%22bar%5C\\baz%22'}
+		}, {
+			//       "$search= " foo \  " bar \ \ baz% ",
+			string : '$search=%22foo%5c%22bar%5C\\baz%%22',
+			parsed : {"$search" : '%22foo%5c%22bar%5C\\baz%%22'},
+			converted : {"$search" : '%22foo%5c%22bar%5C\\baz%%22'}
 		}].forEach(function (oFixture) {
 			assert.deepEqual(_Parser.parseSystemQueryOption(oFixture.string), oFixture.parsed,
 				oFixture.string);
 			// verify that the parsed result is consumable
-			assert.deepEqual(_Cache.convertQueryOptions(oFixture.parsed), oFixture.converted,
-				JSON.stringify(oFixture.converted));
+			assert.deepEqual(_Requestor.create("/~/").convertQueryOptions("Foo", oFixture.parsed),
+				oFixture.converted, JSON.stringify(oFixture.converted));
+		});
+	});
+
+	//*********************************************************************************************
+	['eq', 'ge', 'gt', 'le', 'lt', 'ne'].forEach(function (sOperator) {
+		QUnit.test("parseFilter: operator=" + sOperator, function (assert) {
+
+			// Part 1: foo op 'bar'
+			parseAndRebuild(assert, "foo " + sOperator + " 'bar'", {
+				id : sOperator,
+				value : " " + sOperator + " ",
+				type : "Edm.Boolean",
+				at : 5,
+				left : {
+					id : "PATH",
+					value : "foo",
+					at : 1
+				},
+				right : {
+					id : "VALUE",
+					value : "'bar'",
+					at : 8
+				}
+			});
+
+			// Part 2: 'bar' op foo
+			parseAndRebuild(assert, "'bar' " + sOperator + " foo", {
+				id : sOperator,
+				value : " " + sOperator + " ",
+				type : "Edm.Boolean",
+				at : 7,
+				left : {
+					id : "VALUE",
+					value : "'bar'",
+					at : 1
+				},
+				right : {
+					id : "PATH",
+					value : "foo",
+					at : 10
+				}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseFilter: String constants", function (assert) {
+		["'bar'", "'ba''r'", "'ba%27'r'", "'ba'%27r'", "'ba%27%27r'"].forEach(function (sValue) {
+			assert.strictEqual(_Parser.buildFilterString(_Parser.parseFilter(sValue)), sValue,
+				sValue);
+		});
+	});
+
+	//*********************************************************************************************
+	// string: the filter string
+	// parsed: the syntax tree
+	// converted: the resulting filter string after parsing and rebuilding (if different to string)
+	[{ // logical operators, precedence, brackets
+		string :"foo eq bar ne baz",
+		parsed :{
+			id : "ne",
+			left : {
+				id : "eq",
+				left : {value : "foo"},
+				right : {value : "bar"}
+			},
+			right : {value : "baz"}
+		}
+	}, {
+		string :"foo eq '1' and bar gt 2",
+		parsed :{
+			id : "and",
+			left : {
+				id : "eq",
+				left : {value : "foo"},
+				right : {value : "'1'"}
+			},
+			right : {
+				id : "gt",
+				left : {value : "bar"},
+				right : {value : "2"}
+			}
+		}
+	}, {
+		string :"not foo",
+		parsed :{
+			id : "not",
+			right : {value : "foo"}
+		}
+	}, {
+		string :"not foo and bar",
+		parsed :{
+			id : "and",
+			left : {
+				id : "not",
+				right : {value : "foo"}
+			},
+			right : {value : "bar"}
+		}
+	}, {
+		string :"not (foo and bar)",
+		parsed :{
+			id : "not",
+			right : {
+				id : "and",
+				left : {value : "foo"},
+				right : {value : "bar"}
+			}
+		}
+	}, {
+		string :"foo and not bar",
+		parsed :{
+			id : "and",
+			left : {value : "foo"},
+			right : {
+				id : "not",
+				right : {value : "bar"}
+			}
+		}
+	}, {
+		string :"foo and ( \t bar or baz %09%20 )",
+		parsed :{
+			id : "and",
+			left : {value : "foo"},
+			right : {
+				id : "or",
+				left : {value : "bar"},
+				right : {value : "baz"}
+			}
+		},
+		converted : "foo and (bar or baz)"
+	}, { // string functions
+		string : "trim(foo)",
+		parsed : {
+			id : "FUNCTION", value : "trim", type : "Edm.String",
+			parameters : [{value : "foo"}]
+		}
+	}, {
+		string : "concat(foo,bar)",
+		parsed : {
+			id : "FUNCTION", value : "concat", type : "Edm.String",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		}
+	}, {
+		string : "concat( foo , bar )",
+		parsed : {
+			id : "FUNCTION", value : "concat",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		},
+		converted : "concat(foo,bar)"
+	}, {
+		string : "concat(trim(foo),bar)",
+		parsed : {
+			id : "FUNCTION", value : "concat",
+			parameters : [{
+				id : "FUNCTION", value : "trim",
+				parameters : [{value : "foo"}]
+			}, {
+				value : "bar"
+			}]
+		}
+	}, {
+		string : "not startswith(foo,'bar')",
+		parsed : {
+			id : "not", type : "Edm.Boolean",
+			right : {
+				id : "FUNCTION", value : "startswith", type : "Edm.Boolean",
+				parameters : [{value : "foo"}, {value : "'bar'"}]
+			}
+		}
+	}, {
+		string : "endswith(foo,bar)",
+		parsed : {
+			id : "FUNCTION", value : "endswith", type : "Edm.Boolean",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		}
+	}, {
+		string : "indexof(foo,bar)",
+		parsed : {
+			id : "FUNCTION", value : "indexof", type : "Edm.Int32",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		}
+	}, {
+		string : "length(foo)",
+		parsed : {
+			id : "FUNCTION", value : "length", type : "Edm.Int32",
+			parameters : [{value : "foo"}]
+		}
+	}, {
+		string : "substring(foo,bar,baz)",
+		parsed : {
+			id : "FUNCTION", value : "substring", type : "Edm.String",
+			parameters : [{value : "foo"}, {value : "bar"}, {value : "baz"}]
+		}
+	}, {
+		string : "tolower(foo)",
+		parsed : {
+			id : "FUNCTION", value : "tolower", type : "Edm.String",
+			parameters : [{value : "foo"}]
+		}
+	}, {
+		string : "toupper(foo)",
+		parsed : {
+			id : "FUNCTION", value : "toupper", type : "Edm.String",
+			parameters : [{value : "foo"}]
+		}
+	}, {
+		string : "contains(foo,bar)",
+		parsed : {
+			id : "FUNCTION", value : "contains", type : "Edm.Boolean",
+			parameters : [{value : "foo"}, {value : "bar"}]
+		}
+	}, { // date functions
+		string : "day(foo)",
+		parsed : {
+			id : "FUNCTION", value : "day", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "hour(foo)",
+		parsed : {
+			id : "FUNCTION", value : "hour", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "minute(foo)",
+		parsed : {
+			id : "FUNCTION", value : "minute", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "month(foo)",
+		parsed : {
+			id : "FUNCTION", value : "month", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "second(foo)",
+		parsed : {
+			id : "FUNCTION", value : "second", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "year(foo)",
+		parsed : {
+			id : "FUNCTION", value : "year", type : "Edm.Int32",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, { // arithmetic functions
+		string : "ceiling(foo)",
+		parsed : {
+			id : "FUNCTION", value : "ceiling",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "floor(foo)",
+		parsed : {
+			id : "FUNCTION", value : "floor",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}, {
+		string : "round(foo)",
+		parsed : {
+			id : "FUNCTION", value : "round",
+			parameters : [{value : "foo", ambiguous : true}]
+		}
+	}].forEach(function (oFixture) {
+		QUnit.test("parseFilter: " + oFixture.string, function (assert) {
+			parseAndRebuild(assert, oFixture.string, oFixture.parsed, oFixture.converted);
+		});
+	});
+
+	//*********************************************************************************************
+	// If the operators have equal precedence, then
+	// a op1 b op2 c  -->  (a op1 b) op2 c
+	// a op2 b op1 c  -->  (a op2 b) op1 c
+	[
+		{op1 : "eq", op2 : "ne"},
+		{op1 : "ge", op2 : "gt"},
+		{op1 : "ge", op2 : "le"},
+		{op1 : "ge", op2 : "lt"}
+	].forEach(function (oFixture) {
+		var sTitle = "parseFilter: lpb(" + oFixture.op1 + ") === lpb(" + oFixture.op2 + ")";
+
+		QUnit.test(sTitle, function (assert) {
+			parseAndRebuild(assert, "a " + oFixture.op1 + " b " + oFixture.op2 + " c", {
+				id : oFixture.op2,
+				left : {
+					id : oFixture.op1,
+					left : {value : "a"},
+					right : {value : "b"}
+				},
+				right : {value : "c"}
+			});
+
+			parseAndRebuild(assert, "a " + oFixture.op2 + " b " + oFixture.op1 + " c", {
+				id : oFixture.op1,
+				left : {
+					id : oFixture.op2,
+					left : {value : "a"},
+					right : {value : "b"}
+				},
+				right : {value : "c"}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// If op1 has lower precedence than op2, then
+	// a op1 b op2 c  -->  a op1 (b op2 c)
+	// a op2 b op1 c  -->  (a op2 b) op1 c
+	[
+		{op1 : "or", op2 : "and"},
+		{op1 : "and", op2 : "eq"},
+		{op1 : "eq", op2 : "ge"}
+	].forEach(function (oFixture) {
+		var sTitle = "parseFilter: lpb(" + oFixture.op1 + ") < lpb(" + oFixture.op2 + ")";
+
+		QUnit.test(sTitle, function (assert) {
+			parseAndRebuild(assert, "a " + oFixture.op1 + " b " + oFixture.op2 + " c", {
+				id : oFixture.op1,
+				left : {value : "a"},
+				right : {
+					id : oFixture.op2,
+					left : {value : "b"},
+					right : {value : "c"}
+				}
+			});
+
+			parseAndRebuild(assert, "a " + oFixture.op2 + " b " + oFixture.op1 + " c", {
+				id : oFixture.op1,
+				left : {
+					id : oFixture.op2,
+					left : {value : "a"},
+					right : {value : "b"}
+				},
+				right : {value : "c"}
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	["false", "true", "null"].forEach(function (sLiteral) {
+		QUnit.test("parseFilter: literal=" + sLiteral, function (assert) {
+			var sFilter = "foo eq " + sLiteral,
+				oSyntaxTree = _Parser.parseFilter(sFilter);
+
+			TestUtils.deepContains(oSyntaxTree, {
+				id : "eq",
+				value : " eq ",
+				at : 5,
+				left : {
+					id : "PATH",
+					value : "foo",
+					at : 1
+				},
+				right : {
+					id : "VALUE",
+					value : sLiteral,
+					at : 8
+				}
+			});
+
+			assert.strictEqual(_Parser.buildFilterString(oSyntaxTree), sFilter);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		string : ";",
+		error : "Expected expression but instead saw ';' at 1"
+	}, {
+		string : "foo='bar'",
+		error : "Expected end of input but instead saw '=' at 4"
+	}, {
+		string : "foo eq",
+		error : "Expected expression but instead saw end of input"
+	}, {
+		string : "foo eq ",
+		error : "Expected expression but instead saw end of input"
+	}, {
+		string : "foo eq  ",
+		error : "Expected expression but instead saw end of input"
+	}, {
+		string : "foo and not;",
+		error : "Expected expression but instead saw ';' at 12"
+	}, {
+		string : "foo and (bar or baz",
+		error : "Expected ')' but instead saw end of input"
+	}, {
+		string : "2()",
+		error : "Unexpected '(' at 2"
+	}, {
+		string : "foo(bar)",
+		error : "Unknown function 'foo' at 1"
+	}, {
+		string : "trim()",
+		error : "Expected expression but instead saw ')' at 6"
+	}].forEach(function (oFixture) {
+		QUnit.test('_Parser#parseFilter: "' + oFixture.string + '"', function (assert) {
+			assert.throws(function () {
+				_Parser.parseFilter(oFixture.string);
+			}, new SyntaxError(oFixture.error + ": " + oFixture.string));
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("parseKeyPredicate", function (assert) {
+		["false", "true", "3.14", "2016-04-23", "2016-01-13T14:08:31Z", "-1", "'foo'", "'foo''bar'",
+			"'foo/bar'", "F050568D-393C-1ED4-9D97-E65F0F3FCC23"
+		].forEach(function (sValue) {
+			var sPredicate = "(" + sValue + ")";
+			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"" : sValue}, sPredicate);
+			sPredicate = "(foo=" + sValue + ")";
+			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"foo" : sValue}, sPredicate);
+			sPredicate = "(foo=" + sValue + ",bar='baz')";
+			assert.deepEqual(_Parser.parseKeyPredicate(sPredicate), {"foo" : sValue, bar : "'baz'"},
+				sPredicate);
 		});
 	});
 });

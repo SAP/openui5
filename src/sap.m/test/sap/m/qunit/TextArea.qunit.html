@@ -48,6 +48,21 @@
 		sut.destroy();
 	});
 
+	QUnit.test("Should render TextArea correctly when _adjustHeight is called before the DOM is ready", function(assert) {
+		var sut = new sap.m.TextArea()
+
+		// act
+		sut._adjustHeight();
+		sut.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(sut.getDomRef(), "TextArea rendered");
+
+		//Cleanup
+		sut.destroy();
+	});
+
 	QUnit.test("Should inherit from InputBase", function(assert) {
 		var sut = new sap.m.TextArea();
 		sut.placeAt("qunit-fixture");
@@ -201,7 +216,7 @@
 		}
 
 		var spy = this.spy(sut, "_onTouchStart");
-		$textarea.trigger(tsEvent);
+		sap.ui.test.qunit.triggerTouchEvent("touchstart", sut.getDomRef());
 		assert.strictEqual(spy.called, false, "TouchStart event never called as expected");
 
 		//Cleanup
@@ -405,23 +420,40 @@
 		oTA.destroy();
 	});
 
-	QUnit.test("height is adjust on resize event", function() {
-		var spyResizeHandler,
+    QUnit.test("after setValue the height is adjusted", function(assert) {
+        var sLongText = new Array(1000).join("text ");
+        var oTA = new sap.m.TextArea({
+            growing: true,
+            width: "100%"
+        }).placeAt("content");
+        sap.ui.getCore().applyChanges();
+
+        oTA.setValue(sLongText);
+        sap.ui.getCore().applyChanges();
+        assert.ok(oTA.getFocusDomRef().clientHeight >= 250, "TextArea height is adjusted");
+        oTA.destroy();
+    });
+
+	QUnit.test("height is adjust on resize event", function(assert) {
+		var fnOnResizeSpy,
 			sLongText = new Array(1000).join("text "),
 			oTA = new sap.m.TextArea({
 			value: sLongText,
-			growing: true,
-			width: "100%"
+			growing: true
 		}).placeAt("content");
+
+		oTA._updateOverflow();
+		assert.ok(true,  "_updateOverflow is pass successfully when the control is not rendered");
+
 		sap.ui.getCore().applyChanges();
 
-		spyResizeHandler = this.spy(sap.m.TextArea.prototype, "_resizeHandler");
+		fnOnResizeSpy = this.spy(oTA, "_resizeHandler");
 
 		oTA.setWidth("500px");
 		this.clock.tick(200);
 
 		assert.ok(oTA._sResizeListenerId, "TextArea has resize handler");
-		assert.strictEqual(spyResizeHandler.callCount, 1, "The resize handler was called once");
+		assert.strictEqual(fnOnResizeSpy.callCount, 1, "The resize handler was called once");
 		oTA.destroy();
 	});
 
@@ -438,6 +470,37 @@
 		oTA.focus();
 		assert.ok(oTA.getFocusDomRef().scrollHeight > oTA.getFocusDomRef().offsetHeight, "There is scroll bar. Whole content is not visible");
 		assert.ok(jQuery(oTA.getFocusDomRef()).css("max-height"), "There is a max-height defined");
+		oTA.destroy();
+	});
+
+	QUnit.test("Grow and shrink properly", function(assert) {
+		var sLongText = new Array(1000).join("text ");
+		var shortText = "Lorem ipsulum";
+		var oTA = new sap.m.TextArea({
+			value: sLongText,
+			growing: true,
+			growingMaxLines: 5,
+			width: "100%"
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oDOMRef = oTA.getDomRef();
+		var initialHeight = oDOMRef.clientHeight;
+
+		//Act
+		oTA.setValue(shortText);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(initialHeight > oDOMRef.clientHeight, "TextArea height should have been shrinked properly.");
+
+		//Act
+		oTA.setValue(sLongText);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.ok(initialHeight === oDOMRef.clientHeight, "TextArea height should have been extended properly.");
+
 		oTA.destroy();
 	});
 
@@ -526,7 +589,10 @@
 					value: sInitValue,
 					maxLength: 6,
 					showExceededText: true
-				});
+				}),
+				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				sMessageBundleKey = "TEXTAREA_CHARACTERS_EXCEEDED";
+
 
 		// arrange
 		oTA.placeAt("content");
@@ -537,7 +603,7 @@
 		oTA.onfocusin();
 
 		// assertions
-		assert.strictEqual(oCounter.text(), "13 Characters Exceeded", "the counter content is correct");
+		assert.strictEqual(oCounter.text(), oBundle.getText(sMessageBundleKey, 13), "the counter content is correct");
 
 		sap.ui.test.qunit.triggerEvent("paste", oTA.getFocusDomRef(), {
 			originalEvent: {
@@ -562,7 +628,7 @@
 		assert.strictEqual(oTA.getValue(), sInitValue + sPasteText, "The Textarea value is correct");
 
 		assert.strictEqual(oCounterStyle.visibility, "visible", "The counter is visible");
-		assert.strictEqual(oCounter.text(), "37 Characters Exceeded", "The counter content is correct");
+		assert.strictEqual(oCounter.text(), oBundle.getText(sMessageBundleKey, 37), "The counter content is correct");
 
 		// cleanup
 		oTA.destroy();
@@ -578,7 +644,9 @@
 					value: "",
 					maxLength: iMaxLength,
 					showExceededText: false
-				});
+				}),
+				oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				sMessageBundleKey = "TEXTAREA_CHARACTERS";
 
 		// arrange
 		oTA.setValue(sInitValue);
@@ -603,12 +671,12 @@
 		// assertions
 		assert.strictEqual(oTA.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
 		assert.strictEqual(oTA.getMaxLength(), 6, "The TextArea maxLength property is correctly set to 0");
-		assert.strictEqual(oCounter[0].innerText, "0 Characters Left", "The counter is empty");
+		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_LEFT", "0"), "The counter is empty");
 
 		//arrange
 		oTA.setValue(sInitValue);
 		assert.strictEqual(oTA.getValue(), sInitValue, "The TextArea value is correct");
-		assert.strictEqual(oCounter[0].innerText, "12 Characters Exceeded", "The counter is empty");
+		assert.strictEqual(oCounter[0].innerText, oBundle.getText(sMessageBundleKey + "_EXCEEDED", 12), "The counter is empty");
 		assert.strictEqual(oTA.$("inner")[0].hasAttribute("aria-labelledby"), true, "The TextArea has got an aria-labelledby attribute");
 		assert.strictEqual(oTA.$("inner").attr("aria-labelledby"), oCounter[0].id, "The TextArea aria-labelledby attribute is set to counter id correctly");
 

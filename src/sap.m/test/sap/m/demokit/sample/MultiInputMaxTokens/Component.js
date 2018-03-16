@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.MultiInputMaxTokens.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.MultiInputMaxTokens.Page",
+			rootView : {
+				"viewName": "sap.m.sample.MultiInputMaxTokens.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"

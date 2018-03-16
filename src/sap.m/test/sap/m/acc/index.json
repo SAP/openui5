@@ -56,8 +56,8 @@
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
-			"control": "sap.m.CustomTile",
-			"url": "../CustomTile.html",
+			"control": "sap.m.ColorPalette",
+			"url": "ColorPalette.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -93,17 +93,17 @@
 		{
 			"control": "sap.m.FeedContent",
 			"url": "../FeedContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.FeedInput",
 			"url": "../FeedInput.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.FeedListItem",
 			"url": "../FeedListItem.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.FormattedText",
@@ -113,12 +113,12 @@
 		{
 			"control": "sap.m.GenericTile",
 			"url": "../GenericTile.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.HeaderContainer",
 			"url":  "../HeaderContainer.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.semantic.FullscreenPage",
@@ -173,7 +173,7 @@
 		},
 		{
 			"control": "sap.m.MessagePage",
-			"url": "../MessagePage.html",
+			"url": "MessagePage.html",
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
@@ -213,7 +213,7 @@
 		},
 		{
 			"control": "sap.m.MessageView",
-			"url": "../MessageView.html",
+			"url": "MessageView.html",
 			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
@@ -234,7 +234,7 @@
 		{
 			"control": "sap.m.NewsContent",
 			"url": "../NewsContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.NotificationListGroup",
@@ -249,7 +249,7 @@
 		{
 			"control": "sap.m.NumericContent",
 			"url": "../NumericContent.html",
-			"appComponent" : "CA-UI5-BS-FCW"
+			"appComponent" : "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.ObjectAttribute",
@@ -399,7 +399,7 @@
 		{
 			"control": "sap.m.SlideTile",
 			"url": "../SlideTile.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.SplitApp",
@@ -444,7 +444,12 @@
 		},
 		{
 			"control": "sap.m.TimePicker",
-			"url": "../TimePicker.html",
+			"url": "TimePicker.html",
+			"appComponent": "CA-UI5-CTR-BAL"
+		},
+		{
+			"control": "sap.m.TimePickerSliders",
+			"url": "TimePickerSliders.html",
 			"appComponent": "CA-UI5-CTR-BAL"
 		},
 		{
@@ -463,11 +468,6 @@
 			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
-			"control": "sap.m.Tile",
-			"url": "../Tile.html",
-			"appComponent": "CA-UI5-CTR-BAL"
-		},
-		{
 			"control": "sap.m.TileContainer",
 			"url": "../TileContainer.html",
 			"appComponent": "CA-UI5-CTR-BAL"
@@ -475,12 +475,12 @@
 		{
 			"control": "sap.m.TileContent",
 			"url": "../TileContent.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.Title",
 			"url": "Title.html",
-			"appComponent": "CA-UI5-TBL"
+			"appComponent": "CA-UI5-CTR"
 		},
 		{
 			"control": "sap.m.ToggleButton",
@@ -500,12 +500,12 @@
 		{
 			"control": "sap.m.UploadCollection",
 			"url": "../UploadCollection.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.UploadCollectionForPendingUpload",
 			"url": "../UploadCollectionForPendingUpload.html",
-			"appComponent": "CA-UI5-BS-FCW"
+			"appComponent": "CA-UI5-SC"
 		},
 		{
 			"control": "sap.m.ViewSettingsDialog",
@@ -521,6 +521,11 @@
 			"control": "sap.m.Wizard",
 			"url": "Wizard.html",
 			"appComponent": "CA-UI5-CTR-RIL"
+		},
+		{
+			"control": "sap.m.PDFViewer",
+			"url": "PDFViewer.html",
+			"appComponent": "CA-UI5-SC"
 		}
 	]
 }

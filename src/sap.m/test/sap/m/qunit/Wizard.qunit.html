@@ -25,6 +25,8 @@
 		jQuery.sap.require("sap.m.WizardProgressNavigator");
 		jQuery.sap.require("sap.m.WizardStep");
 
+		sinon.config.useFakeTimers = true;
+
 		QUnit.module("Wizard Public API", {
 			sWizardId: "wizard-id",
 			oSpies: {},
@@ -125,7 +127,14 @@
 		QUnit.test("Wizard setCurrentStep()", function (assert) {
 			this.oWizard.nextStep().nextStep();
 			this.oWizard.setCurrentStep(this.oWizard.getSteps()[0]);
-			assert.equal(this.oWizard.getSteps()[0].getValidated(), false, " should reset the validated state");
+			assert.equal(this.oWizard.getSteps()[0].getValidated(), true, " should not reset the validated state");
+		});
+
+		QUnit.test("Wizard setCurrentStep() and setValidated()", function (assert) {
+			this.oWizard.nextStep().nextStep();
+			this.oWizard.setCurrentStep(this.oWizard.getSteps()[0]);
+			this.oWizard.getSteps()[0].setValidated(false);
+			assert.equal(this.oWizard.getSteps()[0].getValidated(), false, " should invalidate the current step");
 		});
 
 		QUnit.test("Scroll handler", function (assert) {
@@ -306,7 +315,14 @@
 		QUnit.test("DiscardProgress() ", function (assert) {
 			this.oWizard.nextStep().nextStep();
 			this.oWizard.discardProgress(this.oWizard.getSteps()[0]);
-			assert.strictEqual(this.oWizard.getSteps()[0].getValidated(), false, "should reset the initial validated state");
+			assert.strictEqual(this.oWizard.getSteps()[0].getValidated(), true, "should not reset the initial validated state");
+		});
+
+		QUnit.test("DiscardProgress() with setValidated()", function (assert) {
+			this.oWizard.nextStep().nextStep();
+			this.oWizard.discardProgress(this.oWizard.getSteps()[0]);
+			this.oWizard.getSteps()[0].setValidated(false);
+			assert.strictEqual(this.oWizard.getSteps()[0].getValidated(), false, "should validate the current step after discarding the progress");
 		});
 
 		QUnit.test("DiscardProgress() should hide the steps after the step", function (assert) {
@@ -345,6 +361,42 @@
 		QUnit.test("preivousStep().previousStep() chaining previousStep method should be possible", function (assert) {
 			this.oWizard.nextStep().nextStep();
 			assert.ok(this.oWizard.previousStep().previousStep(), "previousStep chaining should not throw an Error");
+		});
+
+		QUnit.test("Optional Step property", function (assert) {
+			var oNavigator,
+				oFirstStepRef,
+				oSecondStepRef,
+				oWizard = new sap.m.Wizard({
+					steps: [
+						new sap.m.WizardStep({
+							title: "First",
+							optional: true
+						}),
+						new sap.m.WizardStep({
+							title: "Second",
+							optional: false
+						}),
+						new sap.m.WizardStep({
+							title: "Third"
+						})
+					]
+				});
+
+			// arrange
+			oWizard.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			oNavigator = oWizard._getProgressNavigator();
+			oFirstStepRef = jQuery(oNavigator.$().find("li")[0]);
+			oSecondStepRef = jQuery(oNavigator.$().find("li")[1]);
+
+			// assert
+			assert.strictEqual(oFirstStepRef.find(".sapMWizardProgressNavAnchorLabelOptional").length, 1, "An element with style class sapMWizardProgressNavAnchorLabelOptional should be added");
+			assert.strictEqual(oSecondStepRef.find(".sapMWizardProgressNavAnchorLabelOptional").length, 0, "An element with style class sapMWizardProgressNavAnchorLabelOptional should not be added");
+
+			// clean up
+			oWizard.destroy();
 		});
 
 		QUnit.module("Wizard Branching", {
@@ -534,6 +586,27 @@
 			assert.strictEqual(sAriaLabel, sWizardLabel, "Aria-label attribute of the wizard should be set to '" + sWizardLabel + "'");
 		});
 
+		QUnit.test("Wizard aria-label attribute", function (assert) {
+			var oWizardStep = this.oWizard.getSteps()[0],
+				oNextButton = this.oWizard._getNextButton();
+
+			this.oWizard.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(0);
+
+			// assert
+			assert.ok(oWizardStep.getValidated(), "The step is validated.");
+			assert.strictEqual(oNextButton.$().attr("aria-hidden"), undefined, "The next button has no aria-hidden attribute for validated steps.");
+
+			// set-up
+			oWizardStep.setValidated(false);
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(0);
+
+			// assert
+			assert.notOk(oWizardStep.getValidated(), "The step is not validated.");
+			assert.strictEqual(oNextButton.$().attr("aria-hidden"), "true", "The next button has aria-hidden=true for not validated steps.");
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">

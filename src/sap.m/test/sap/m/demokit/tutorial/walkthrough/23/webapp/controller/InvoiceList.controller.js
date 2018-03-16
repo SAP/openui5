@@ -1,11 +1,11 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/demo/wt/model/formatter"
+	"sap/ui/demo/walkthrough/model/formatter"
 ], function (Controller, JSONModel, formatter) {
 	"use strict";
 
-	return Controller.extend("sap.ui.demo.wt.controller.InvoiceList", {
+	return Controller.extend("sap.ui.demo.walkthrough.controller.InvoiceList", {
 
 		formatter: formatter,
 

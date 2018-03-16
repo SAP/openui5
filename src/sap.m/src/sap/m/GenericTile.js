@@ -2,9 +2,40 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool', 'sap/m/Button', 'sap/m/GenericTileRenderer', 'sap/m/GenericTileLineModeRenderer', 'sap/ui/Device', 'sap/ui/core/ResizeHandler'],
-	function(jQuery, library, Control, Text, HTML, Icon, IconPool, Button, GenericTileRenderer, LineModeRenderer, Device, ResizeHandler) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/m/Text',
+	'sap/ui/core/HTML',
+	'sap/ui/core/Icon',
+	'sap/ui/core/IconPool',
+	'sap/m/Button',
+	'sap/m/GenericTileRenderer',
+	'sap/m/GenericTileLineModeRenderer',
+	'sap/ui/Device',
+	'sap/ui/core/ResizeHandler',
+	'jquery.sap.events'
+], function (jQuery, library, Control, Text, HTML, Icon, IconPool, Button, GenericTileRenderer, LineModeRenderer, Device,
+			 ResizeHandler) {
 	"use strict";
+
+	// shortcut for sap.m.GenericTileScope
+	var GenericTileScope = library.GenericTileScope;
+
+	// shortcut for sap.m.LoadState
+	var LoadState = library.LoadState;
+
+	// shortcut for sap.m.FrameType
+	var FrameType = library.FrameType;
+
+	// shortcut for sap.m.Size
+	var Size = library.Size;
+
+	// shortcut for sap.m.GenericTileMode
+	var GenericTileMode = library.GenericTileMode;
+
+	var DEVICE_SET = "GenericTileDeviceSet";
 
 	/**
 	 * Constructor for a new sap.m.GenericTile control.
@@ -18,116 +49,125 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @author SAP SE
 	 * @version ${version}
-	 * @since 1.34
+	 * @since 1.34.0
 	 *
 	 * @public
 	 * @alias sap.m.GenericTile
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var GenericTile = Control.extend("sap.m.GenericTile", /** @lends sap.m.GenericTile.prototype */ {
-		metadata : {
+		metadata: {
 
-			library : "sap.m",
-			properties : {
+			library: "sap.m",
+			properties: {
 				/**
 				 * The mode of the GenericTile.
 				 */
-				"mode" : {type: "sap.m.GenericTileMode", group : "Appearance", defaultValue : sap.m.GenericTileMode.ContentMode},
+				mode: {type: "sap.m.GenericTileMode", group: "Appearance", defaultValue: GenericTileMode.ContentMode},
 				/**
 				 * The header of the tile.
 				 */
-				"header" : {type : "string", group : "Appearance", defaultValue : null},
+				header: {type: "string", group: "Appearance", defaultValue: null},
 				/**
 				 * The subheader of the tile.
 				 */
-				"subheader" : {type : "string", group : "Appearance", defaultValue : null},
+				subheader: {type: "string", group: "Appearance", defaultValue: null},
 				/**
 				 * The message that appears when the control is in the Failed state.
 				 */
-				"failedText" : {type : "string", group : "Appearance", defaultValue : null},
+				failedText: {type: "string", group: "Appearance", defaultValue: null},
 				/**
 				 * The size of the tile. If not set, then the default size is applied based on the device.
 				 * @deprecated Since version 1.38.0. The GenericTile control has now a fixed size, depending on the used media (desktop, tablet or phone).
 				 */
-				"size" : {type : "sap.m.Size", group : "Misc", defaultValue : sap.m.Size.Auto},
+				size: {type: "sap.m.Size", group: "Misc", defaultValue: Size.Auto},
 				/**
 				 * The frame type: OneByOne or TwoByOne. Set to OneByOne as default if no property is defined or set to Auto by the app.
 				 */
-				"frameType" : {type : "sap.m.FrameType", group : "Misc", defaultValue : sap.m.FrameType.OneByOne},
+				frameType: {type: "sap.m.FrameType", group: "Misc", defaultValue: FrameType.OneByOne},
 				/**
 				 * The URI of the background image.
 				 */
-				"backgroundImage" : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+				backgroundImage: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 				/**
 				 * The image to be displayed as a graphical element within the header. This can be an image or an icon from the icon font.
 				 */
-				"headerImage" : {type : "sap.ui.core.URI", group : "Misc", defaultValue : null},
+				headerImage: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 				/**
 				 * The load status.
 				 */
-				"state" : {type : "sap.m.LoadState", group : "Misc", defaultValue : sap.m.LoadState.Loaded},
+				state: {type: "sap.m.LoadState", group: "Misc", defaultValue: LoadState.Loaded},
 				/**
 				 * Description of a header image that is used in the tooltip.
 				 */
-				"imageDescription" : {type : "string", group : "Misc", defaultValue : null},
-
+				imageDescription: {type: "string", group: "Accessibility", defaultValue: null},
 				/**
 				 * Changes the visualization in order to enable additional actions with the Generic Tile.
 				 * @since 1.46.0
 				 */
-				"scope": { type: "sap.m.GenericTileScope", group: "Misc", defaultValue: sap.m.GenericTileScope.Display }
+				scope: {type: "sap.m.GenericTileScope", group: "Misc", defaultValue: GenericTileScope.Display},
+				/**
+				 * If set to <code>true</code>, the tile size is the same as it would be on a small-screened phone (374px wide and lower),
+				 * regardless of the screen size of the actual device being used.
+				 */
+				enforceMobileSize: {type: "boolean", defaultValue: false},
+				/**
+				 * Additional description for aria-label. The aria-label is rendered before the standard aria-label.
+				 * @since 1.50.0
+				 */
+				ariaLabel: {type: "string", group: "Accessibility", defaultValue: null}
 			},
-			defaultAggregation : "tileContent",
-			aggregations : {
+			defaultAggregation: "tileContent",
+			aggregations: {
 				/**
 				 * The content of the tile.
 				 */
-				"tileContent" : {type : "sap.m.TileContent", multiple : true, bindable : "bindable"},
+				tileContent: {type: "sap.m.TileContent", multiple: true, bindable: "bindable"},
 				/**
 				 * An icon or image to be displayed in the control.
-				 * This aggregation is deprecated since version 1.36.0, to display an icon or image use sap.m.TileContent control instead.
-				 * @deprecated Since version 1.36.0. This aggregation is deprecated, use sap.m.TileContent control to display an icon instead.
+				 * This aggregation is deprecated since version 1.36.0, to display an icon or image use sap.m.ImageContent control instead.
+				 * @deprecated since version 1.36.0. This aggregation is deprecated, use sap.m.ImageContent control to display an icon instead.
 				 */
-				"icon" : {type : "sap.ui.core.Control", multiple : false},
+				icon: {type: "sap.ui.core.Control", multiple: false},
 				/**
 				 * The hidden aggregation for the title.
 				 */
-				"_titleText" : {type : "sap.m.Text", multiple : false, visibility : "hidden"},
+				_titleText: {type: "sap.m.Text", multiple: false, visibility: "hidden"},
 				/**
 				 * The hidden aggregation for the message in the failed state.
 				 */
-				"_failedMessageText" : {type : "sap.m.Text", multiple : false, visibility : "hidden"}
+				_failedMessageText: {type: "sap.m.Text", multiple: false, visibility: "hidden"}
 			},
-			events : {
+			events: {
 				/**
-				 * The event is fired when the user chooses the tile.
+				 * The event is triggered when the user presses the tile.
 				 */
-				"press" : {
+				press: {
 					parameters: {
 						/**
 						 * The current scope the GenericTile was in when the event occurred.
 						 * @since 1.46.0
 						 */
-						"scope": { type: "sap.m.GenericTileScope" },
+						scope: {type: "sap.m.GenericTileScope"},
 
 						/**
 						 * The action that was pressed on the tile. In the Actions scope, the available actions are Press and Remove.
 						 * In Display scope, the parameter value is only Press.
 						 * @since 1.46.0
 						 */
-						"action": { type: "string" },
+						action: {type: "string"},
 
 						/**
-						 * The Element's DOM Element. Points to GenericTile instance DOM Element in Display scope.
-						 * In Actions scope the domRef points to the DOM Element of the remove button (if pressed) or the more icon.
+						 * The pressed DOM Element pointing to the GenericTile's DOM Element in Display scope.
+						 * In Actions scope it points to the more icon, when the tile is pressed, or to the DOM Element of the remove button, when the remove button is pressed.
 						 * @since 1.46.0
 						 */
-						"domRef" : { type: "any" }
+						domRef: {type: "any"}
 					}
 				}
 			}
 		},
-		renderer : function (oRm, oControl) {
+		renderer: function (oRm, oControl) {
 			if (oControl.getMode() === library.GenericTileMode.LineMode) {
 				LineModeRenderer.render(oRm, oControl);
 			} else {
@@ -137,19 +177,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	});
 
 	GenericTile._Action = {
-		Press : "Press",
-		Remove : "Remove"
+		Press: "Press",
+		Remove: "Remove"
 	};
 
-	GenericTile.LINEMODE_SIBILING_PROPERTIES = [ "state", "subheader", "header", "scope" ];
+	GenericTile.LINEMODE_SIBLING_PROPERTIES = ["state", "subheader", "header", "scope"];
 
 	/* --- Lifecycle Handling --- */
 
-	GenericTile.prototype.init = function() {
+	GenericTile.prototype.init = function () {
 		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 		// Defines custom screen range set: smaller than or equal to 449px defines 'small' and bigger than 449px defines 'large' screen
-		Device.media.initRangeSet("GenericTileDeviceSet", [450], "px", ["small", "large"]);
+		if (!Device.media.hasRangeSet(DEVICE_SET)) {
+			Device.media.initRangeSet(DEVICE_SET, [450], "px", ["small", "large"]);
+		}
 
 		this._oTitle = new Text(this.getId() + "-title");
 		this._oTitle.addStyleClass("sapMGTTitle");
@@ -160,15 +202,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		this._sLoading = this._oRb.getText("INFOTILE_LOADING");
 
 		this._oFailedText = new Text(this.getId() + "-failed-txt", {
-			maxLines : 2
+			maxLines: 2
 		});
 		this._oFailedText.cacheLineHeight = false;
 		this._oFailedText.addStyleClass("sapMGTFailed");
 		this.setAggregation("_failedMessageText", this._oFailedText, true);
 
 		this._oWarningIcon = new Icon(this.getId() + "-warn-icon", {
-			src : "sap-icon://notification",
-			size : "1.375rem"
+			src: "sap-icon://notification",
+			size: "1.375rem"
 		});
 
 		this._oWarningIcon.addStyleClass("sapMGTFtrFldIcnMrk");
@@ -194,7 +236,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @private
 	 */
-	GenericTile.prototype._handleCoreInitialized = function() {
+	GenericTile.prototype._handleCoreInitialized = function () {
 		this._bThemeApplied = sap.ui.getCore().isThemeApplied();
 		if (!this._bThemeApplied) {
 			sap.ui.getCore().attachThemeChanged(this._handleThemeApplied, this);
@@ -206,7 +248,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @private
 	 */
-	GenericTile.prototype._handleThemeApplied = function() {
+	GenericTile.prototype._handleThemeApplied = function () {
 		this._bThemeApplied = true;
 		this._oTitle.clampHeight();
 		sap.ui.getCore().detachThemeChanged(this._handleThemeApplied, this);
@@ -218,39 +260,39 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {string} sTileClass indicates the tile's CSS class name
 	 * @private
 	 */
-	GenericTile.prototype._initScopeContent = function(sTileClass) {
+	GenericTile.prototype._initScopeContent = function (sTileClass) {
 		switch (this.getScope()) {
 			case library.GenericTileScope.Actions:
 				if (this.getState && this.getState() === library.LoadState.Disabled) {
 					break;
 				}
 				this._oMoreIcon = this._oMoreIcon || IconPool.createControlByURI({
-					id: this.getId() + "-action-more",
-					size: "1rem",
-					useIconTooltip: false,
-					src: "sap-icon://overflow"
-				}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
+						id: this.getId() + "-action-more",
+						size: "1rem",
+						useIconTooltip: false,
+						src: "sap-icon://overflow"
+					}).addStyleClass("sapMPointer").addStyleClass(sTileClass + "MoreIcon");
 
 				this._oRemoveButton = this._oRemoveButton || new Button({
-					id: this.getId() + "-action-remove",
-					icon: "sap-icon://decline",
-					tooltip: this._oRb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
-				}).addStyleClass("sapUiSizeCompact").addStyleClass(sTileClass + "RemoveButton");
+						id: this.getId() + "-action-remove",
+						icon: "sap-icon://decline",
+						tooltip: this._oRb.getText("GENERICTILE_REMOVEBUTTON_TEXT")
+					}).addStyleClass("sapUiSizeCompact").addStyleClass(sTileClass + "RemoveButton");
 
 				this._oRemoveButton._bExcludeFromTabChain = true;
 				break;
 			default:
-				// do nothing
+			// do nothing
 		}
 	};
 
-	GenericTile.prototype.exit = function() {
+	GenericTile.prototype.exit = function () {
 		if (this._sParentResizeListenerId) {
 			ResizeHandler.deregister(this._sResizeListenerId);
 			this._sParentResizeListenerId = null;
 		}
 
-		Device.media.detachHandler(this._handleMediaChange, this, "GenericTileDeviceSet");
+		Device.media.detachHandler(this._handleMediaChange, this, DEVICE_SET);
 
 		if (this._$RootNode) {
 			this._$RootNode.off(this._getAnimationEvents());
@@ -274,7 +316,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	GenericTile.prototype.onBeforeRendering = function() {
+	GenericTile.prototype.onBeforeRendering = function () {
 		var bSubheader = !!this.getSubheader();
 		if (this.getMode() === library.GenericTileMode.HeaderMode) {
 			this._applyHeaderMode(bSubheader);
@@ -297,7 +339,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this._sParentResizeListenerId = null;
 		}
 
-		Device.media.detachHandler(this._handleMediaChange, this, "GenericTileDeviceSet");
+		Device.media.detachHandler(this._handleMediaChange, this, DEVICE_SET);
 
 		if (this._$RootNode) {
 			this._$RootNode.off(this._getAnimationEvents());
@@ -308,7 +350,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	GenericTile.prototype.onAfterRendering = function() {
+	GenericTile.prototype.onAfterRendering = function () {
+		this._setupResizeClassHandler();
+
 		// attaches handler this._updateAriaAndTitle to the event mouseenter and removes attributes ARIA-label and title of all content elements
 		this.$().bind("mouseenter", this._updateAriaAndTitle.bind(this));
 
@@ -323,7 +367,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this.$().parent().addClass("sapMGTLineModeContainer");
 			this._updateHoverStyle(true); //force update
 
-			if (this.getParent() instanceof  Control) {
+			if (this.getParent() instanceof Control) {
 				this._sParentResizeListenerId = ResizeHandler.register(this.getParent(), this._handleResize.bind(this));
 			} else {
 				this._sParentResizeListenerId = ResizeHandler.register(this.$().parent(), this._handleResize.bind(this));
@@ -339,7 +383,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		if (sMode === library.GenericTileMode.LineMode) {
 			// attach handler in order to check the device type based on width and invalidate on change
-			Device.media.attachHandler(this._handleMediaChange, this, "GenericTileDeviceSet");
+			Device.media.attachHandler(this._handleMediaChange, this, DEVICE_SET);
 		}
 
 	};
@@ -350,10 +394,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @private
 	 */
-	GenericTile.prototype._handleResize = function() {
+	GenericTile.prototype._handleResize = function () {
 		if (this.getMode() === library.GenericTileMode.LineMode && this._isScreenLarge() && this.getParent()) {
 			this._queueAnimationEnd();
 		}
+	};
+
+	/**
+	 * @private
+	 */
+	GenericTile.prototype._setupResizeClassHandler = function () {
+		var fnCheckMedia = function () {
+			if (this.getEnforceMobileSize() || window.matchMedia("(max-width: 374px)").matches) {
+				this.$().addClass("sapMTileSmallPhone");
+			} else {
+				this.$().removeClass("sapMTileSmallPhone");
+			}
+		}.bind(this);
+
+		jQuery(window).resize(fnCheckMedia);
+		fnCheckMedia();
 	};
 
 	/**
@@ -362,7 +422,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {boolean} True if class 'sapUiSizeCompact' was found, otherwise false.
 	 * @private
 	 */
-	GenericTile.prototype._isCompact = function() {
+	GenericTile.prototype._isCompact = function () {
 		return jQuery("body").hasClass("sapUiSizeCompact") || this.$().is(".sapUiSizeCompact") || this.$().closest(".sapUiSizeCompact").length > 0;
 	};
 
@@ -374,7 +434,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *                        single line or null if the tile is invisible or not in compact density.
 	 * @private
 	 */
-	GenericTile.prototype._calculateStyleData = function() {
+	GenericTile.prototype._calculateStyleData = function () {
 		this.$("lineBreak").remove();
 
 		if (!this._isScreenLarge() || !this.getDomRef() || this.$().is(":hidden")) {
@@ -383,7 +443,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 		var $this = this.$(),
 			$End = this.$("endMarker"),
-			$Start =  this.$("startMarker");
+			$Start = this.$("startMarker");
 
 		//due to animations or transitions, this function is called when no rendering has been done yet. So we have to check if the markers are available.
 		if ($End.length === 0 || $Start.length === 0) {
@@ -479,7 +539,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {boolean} True if the data has changed, false if no changes have been detected by jQuery.sap.equal
 	 * @private
 	 */
-	GenericTile.prototype._getStyleData = function() {
+	GenericTile.prototype._getStyleData = function () {
 		var oStyleData = this._calculateStyleData();
 
 		if (!jQuery.sap.equal(this._oStyleData, oStyleData)) {
@@ -499,7 +559,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {string} A string containing the animation events with instance-specific namespaces
 	 * @private
 	 */
-	GenericTile.prototype._getAnimationEvents = function() {
+	GenericTile.prototype._getAnimationEvents = function () {
 		return "transitionend.sapMGT$id animationend.sapMGT$id".replace(/\$id/g, jQuery.sap.camelCase(this.getId()));
 	};
 
@@ -512,7 +572,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {boolean} forceUpdate If set to true, the tile's hover style is updated even if the data has not changed.
 	 * @private
 	 */
-	GenericTile.prototype._updateHoverStyle = function(forceUpdate) {
+	GenericTile.prototype._updateHoverStyle = function (forceUpdate) {
 		if (!this._getStyleData() && !forceUpdate) {
 			return;
 		}
@@ -538,7 +598,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {boolean} true or false
 	 * @private
 	 */
-	GenericTile.prototype._queueAnimationEnd = function(oEvent) {
+	GenericTile.prototype._queueAnimationEnd = function (oEvent) {
 		if (oEvent) {
 			var $Target = jQuery(oEvent.target);
 
@@ -556,7 +616,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 
 		this._cHoverStyleUpdates++;
-		this._oAnimationEndCallIds[this._cHoverStyleUpdates] = jQuery.sap.delayedCall(10, this, this._handleAnimationEnd, [ this._cHoverStyleUpdates ]);
+		this._oAnimationEndCallIds[this._cHoverStyleUpdates] = jQuery.sap.delayedCall(10, this, this._handleAnimationEnd, [this._cHoverStyleUpdates]);
 	};
 
 	/**
@@ -565,7 +625,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {int} hoverStyleUpdateCount The action's index in the mutex queue
 	 * @private
 	 */
-	GenericTile.prototype._handleAnimationEnd = function(hoverStyleUpdateCount) {
+	GenericTile.prototype._handleAnimationEnd = function (hoverStyleUpdateCount) {
 		delete this._oAnimationEndCallIds[hoverStyleUpdateCount]; //delayedCall is finished and its ID can be removed
 
 		if (this._cHoverStyleUpdates === hoverStyleUpdateCount) {
@@ -579,7 +639,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @private
 	 */
-	GenericTile.prototype._clearAnimationUpdateQueue = function() {
+	GenericTile.prototype._clearAnimationUpdateQueue = function () {
 		for (var k in this._oAnimationEndCallIds) {
 			jQuery.sap.clearDelayedCall(this._oAnimationEndCallIds[k]);
 			delete this._oAnimationEndCallIds[k];
@@ -593,7 +653,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {number} The number of lines
 	 * @private
 	 */
-	GenericTile.prototype._getLineCount = function() {
+	GenericTile.prototype._getLineCount = function () {
 		var oClientRect = this.getDomRef().getBoundingClientRect(),
 			cHeight = LineModeRenderer._getCSSPixelValue(this, "line-height"); //height including gap between lines
 
@@ -607,7 +667,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @experimental since 1.44.1 This method's implementation is subject to change
 	 * @protected
 	 */
-	GenericTile.prototype.getBoundingRects = function() {
+	GenericTile.prototype.getBoundingRects = function () {
 		var oPosition = this.$().offset(); //get the tile's position relative to the document (for drag and drop)
 		if (this.getMode() === library.GenericTileMode.LineMode && this._isScreenLarge()) {
 			this._getStyleData();
@@ -615,7 +675,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 				$StyleHelper,
 				oOffset;
 
-			this.$().find(".sapMGTLineStyleHelper").each(function() {
+			this.$().find(".sapMGTLineStyleHelper").each(function () {
 				$StyleHelper = jQuery(this);
 				oOffset = $StyleHelper.offset();
 
@@ -630,14 +690,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			});
 			return aRects;
 		} else {
-			return [ {
+			return [{
 				offset: {
 					x: oPosition.left,
 					y: oPosition.top
 				},
 				width: this.$().width(),
 				height: this.$().height()
-			} ];
+			}];
 		}
 	};
 
@@ -646,7 +706,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @private
 	 */
-	GenericTile.prototype._updateLineTileSiblings = function() {
+	GenericTile.prototype._updateLineTileSiblings = function () {
 		var oParent = this.getParent();
 		if (this.getMode() === library.GenericTileMode.LineMode && this._isScreenLarge() && oParent) {
 			var i = oParent.indexOfAggregation(this.sParentAggregationName, this);
@@ -662,10 +722,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	/* --- Event Handling --- */
-	/**
-	 * Handler for touchstart event
-	 */
-	GenericTile.prototype.ontouchstart = function() {
+	GenericTile.prototype.ontouchstart = function () {
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").addClass("sapMGTPressActive");
 		}
@@ -677,19 +734,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	/**
-	 * Handler for touchcancel event
-	 */
-	GenericTile.prototype.ontouchcancel = function() {
+	GenericTile.prototype.ontouchcancel = function () {
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
 		}
 	};
 
-	/**
-	 * Handler for touchend event
-	 */
-	GenericTile.prototype.ontouchend = function() {
+	GenericTile.prototype.ontouchend = function () {
 		if (this.$("hover-overlay").length > 0) {
 			this.$("hover-overlay").removeClass("sapMGTPressActive");
 		}
@@ -701,12 +752,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	/**
-	 * Handler for tap event
-	 *
-	 * @param {sap.ui.base.Event} event Event which was fired
-	 */
-	GenericTile.prototype.ontap = function(event) {
+	GenericTile.prototype.ontap = function (event) {
 		var oParams;
 		if (this._bTilePress && this.getState() !== library.LoadState.Disabled) {
 			this.$().focus();
@@ -716,12 +762,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	/**
-	 * Handler for keydown event
-	 *
-	 * @param {sap.ui.base.Event} event Event which was fired
-	 */
-	GenericTile.prototype.onkeydown = function(event) {
+	GenericTile.prototype.onkeydown = function (event) {
 		if (jQuery.sap.PseudoEvents.sapselect.fnCheck(event) && this.getState() !== library.LoadState.Disabled) {
 			if (this.$("hover-overlay").length > 0) {
 				this.$("hover-overlay").addClass("sapMGTPressActive");
@@ -730,12 +771,21 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 		}
 	};
 
-	/**
-	 * Handler for keyup event
-	 *
-	 * @param {sap.ui.base.Event} event Event which was fired
-	 */
-	GenericTile.prototype.onkeyup = function(event) {
+	/*--- update Aria Label when Generic Tile change. Used while navigate using Tab Key and focus is on Generic Tile  ---*/
+
+        GenericTile.prototype._updateAriaLabel = function () {
+
+            var sAriaText = this._getAriaText(),
+                $Tile = this.$(),
+                bIsAriaUpd = false;
+            if ($Tile.attr("aria-label") !== sAriaText) {
+                $Tile.attr("aria-label", sAriaText);
+                bIsAriaUpd = true;                  // Aria Label Updated
+            }
+            return bIsAriaUpd;
+        };
+
+        GenericTile.prototype.onkeyup = function (event) {
 		var oParams,
 			bFirePress = false,
 			sScope = this.getScope(),
@@ -745,7 +795,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			oParams = {
 				scope: sScope,
 				action: GenericTile._Action.Remove,
-				domRef : this._oRemoveButton.getPopupAnchorDomRef()
+				domRef: this._oRemoveButton.getPopupAnchorDomRef()
 			};
 			bFirePress = true;
 		}
@@ -760,30 +810,32 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			this.firePress(oParams);
 			event.preventDefault();
 		}
+
+            this._updateAriaLabel();  // To update the Aria Label for Generic Tile on change.
 	};
 
 	/* --- Getters and Setters --- */
 
-	GenericTile.prototype.setProperty = function(sPropertyName) {
-		sap.ui.core.Control.prototype.setProperty.apply(this, arguments);
+	GenericTile.prototype.setProperty = function (sPropertyName) {
+		Control.prototype.setProperty.apply(this, arguments);
 
-		//If properties in GenericTile.LINEMODE_SIBILING_PROPERTIES are being changed, update all sibling controls that are GenericTiles in LineMode
-		if (this.getMode() === library.GenericTileMode.LineMode && GenericTile.LINEMODE_SIBILING_PROPERTIES.indexOf(sPropertyName) !== -1) {
+		//If properties in GenericTile.LINEMODE_SIBLING_PROPERTIES are being changed, update all sibling controls that are GenericTiles in LineMode
+		if (this.getMode() === library.GenericTileMode.LineMode && GenericTile.LINEMODE_SIBLING_PROPERTIES.indexOf(sPropertyName) !== -1) {
 			this._bUpdateLineTileSiblings = true;
 		}
 		return this;
 	};
 
-	GenericTile.prototype.getHeader = function() {
+	GenericTile.prototype.getHeader = function () {
 		return this._oTitle.getText();
 	};
 
-	GenericTile.prototype.setHeader = function(title) {
+	GenericTile.prototype.setHeader = function (title) {
 		this._oTitle.setText(title);
 		return this;
 	};
 
-	GenericTile.prototype.setHeaderImage = function(uri) {
+	GenericTile.prototype.setHeaderImage = function (uri) {
 		var bValueChanged = !jQuery.sap.equal(this.getHeaderImage(), uri);
 
 		if (bValueChanged) {
@@ -794,8 +846,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 
 			if (uri) {
 				this._oImage = IconPool.createControlByURI({
-					id : this.getId() + "-icon-image",
-					src : uri
+					id: this.getId() + "-icon-image",
+					src: uri
 				}, library.Image);
 
 				this._oImage.addStyleClass("sapMGTHdrIconImage");
@@ -809,7 +861,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @param {boolean} bSubheader which indicates the existance of subheader
 	 */
-	GenericTile.prototype._applyHeaderMode = function(bSubheader) {
+	GenericTile.prototype._applyHeaderMode = function (bSubheader) {
 		// when subheader is available, the header can have maximal 4 lines and the subheader can have 1 line
 		// when subheader is unavailable, the header can have maximal 5 lines
 		if (bSubheader) {
@@ -859,7 +911,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 * @returns {String} The text
 	 */
-	GenericTile.prototype._getHeaderAriaAndTooltipText = function() {
+	GenericTile.prototype._getHeaderAriaAndTooltipText = function () {
 		var sText = "";
 		var bIsFirst = true;
 		if (this.getHeader()) {
@@ -884,7 +936,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 * @returns {String} The text
 	 */
-	GenericTile.prototype._getContentAriaAndTooltipText = function() {
+	GenericTile.prototype._getContentAriaAndTooltipText = function () {
 		var sText = "";
 		var bIsFirst = true;
 		var aTiles = this.getTileContent();
@@ -906,14 +958,14 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 * @returns {String} The ARIA label text
 	 */
-	GenericTile.prototype._getAriaAndTooltipText = function() {
+	GenericTile.prototype._getAriaAndTooltipText = function () {
 		var sAriaText = (this.getTooltip_AsString() && !this._isTooltipSuppressed()) ? this.getTooltip_AsString() : (this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText());
 		switch (this.getState()) {
-			case library.LoadState.Disabled :
+			case library.LoadState.Disabled:
 				return "";
-			case library.LoadState.Loading :
+			case library.LoadState.Loading:
 				return sAriaText + "\n" + this._sLoading;
-			case library.LoadState.Failed :
+			case library.LoadState.Failed:
 				return sAriaText + "\n" + this._oFailedText.getText();
 			default :
 				if (jQuery.trim(sAriaText).length === 0) { // If the string is empty or just whitespace, IE renders an empty tooltip (e.g. "" + "\n" + "")
@@ -933,13 +985,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 * @returns {String} Text for ARIA label.
 	 */
-	GenericTile.prototype._getAriaText = function() {
+	GenericTile.prototype._getAriaText = function () {
 		var sAriaText = this.getTooltip_Text();
+		var sAriaLabel = this.getAriaLabel();
 		if (!sAriaText || this._isTooltipSuppressed()) {
 			sAriaText = this._getAriaAndTooltipText(); // ARIA label set by the control
 		}
 		if (this.getScope() === library.GenericTileScope.Actions) {
 			sAriaText = this._oRb.getText("GENERICTILE_ACTIONS_ARIA_TEXT") + " " + sAriaText;
+		}
+		if (sAriaLabel) {
+			sAriaText = sAriaLabel + " " + sAriaText;
 		}
 		return sAriaText; // ARIA label set by the app, equal to tooltip
 	};
@@ -952,7 +1008,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {String} Text for tooltip or null.
 	 * @private
 	 */
-	GenericTile.prototype._getTooltipText = function() {
+	GenericTile.prototype._getTooltipText = function () {
 		var sTooltip = this.getTooltip_Text(); // checks (typeof sTooltip === "string" || sTooltip instanceof String || sTooltip instanceof sap.ui.core.TooltipBase), returns text, null or undefined
 		if (this._isTooltipSuppressed() === true) {
 			sTooltip = null; // tooltip suppressed by the app
@@ -969,7 +1025,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @param {sap.m.TileContent} tileContent TileContent control of which the footer visibility is set
 	 * @param {sap.m.GenericTile} control current GenericTile instance
 	 */
-	GenericTile.prototype._checkFooter = function(tileContent, control) {
+	GenericTile.prototype._checkFooter = function (tileContent, control) {
 		var sState = control.getState();
 		var bActions = this.getScope() === library.GenericTileScope.Actions || this._bShowActionsView === true;
 		if (sState === library.LoadState.Failed || bActions && sState !== library.LoadState.Disabled) {
@@ -985,7 +1041,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @private
 	 */
-	GenericTile.prototype._generateFailedText = function() {
+	GenericTile.prototype._generateFailedText = function () {
 		var sCustomFailedMsg = this.getFailedText();
 		var sFailedMsg = sCustomFailedMsg ? sCustomFailedMsg : this._sFailedToLoad;
 		this._oFailedText.setText(sFailedMsg);
@@ -998,7 +1054,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 * @returns {boolean} true if the application suppressed the tooltip rendering, otherwise false.
 	 */
-	GenericTile.prototype._isTooltipSuppressed = function() {
+	GenericTile.prototype._isTooltipSuppressed = function () {
 		var sTooltip = this.getTooltip_Text();
 		if (sTooltip && sTooltip.length > 0 && jQuery.trim(sTooltip).length === 0) {
 			return true;
@@ -1013,7 +1069,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 * @returns {boolean} true or false
 	 */
-	GenericTile.prototype._isHeaderTextTruncated = function() {
+	GenericTile.prototype._isHeaderTextTruncated = function () {
 		var oDom, iMaxHeight, $Header, iWidth;
 		if (this.getMode() === library.GenericTileMode.LineMode) {
 			$Header = this.$("hdr-text");
@@ -1036,7 +1092,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @private
 	 * @returns {boolean} true or false
 	 */
-	GenericTile.prototype._isSubheaderTextTruncated = function() {
+	GenericTile.prototype._isSubheaderTextTruncated = function () {
 		var $Subheader = this.$("subHdr-text"), iWidth;
 		if ($Subheader.length > 0) {
 			iWidth = Math.ceil($Subheader[0].getBoundingClientRect().width);
@@ -1052,7 +1108,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @private
 	 */
-	GenericTile.prototype._setTooltipFromControl = function() {
+	GenericTile.prototype._setTooltipFromControl = function () {
 		var oContent, sTooltip = "";
 		var bIsFirst = true;
 		var aTiles = this.getTileContent();
@@ -1116,7 +1172,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 *
 	 * @private
 	 */
-	GenericTile.prototype._removeTooltipFromControl = function() {
+	GenericTile.prototype._removeTooltipFromControl = function () {
 		if (this._bTooltipFromControl) {
 			this.$().removeAttr("title");
 			this._bTooltipFromControl = false;
@@ -1128,8 +1184,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {boolean} Returns true if current screen is large enough to display complete floating list.
 	 * @private
 	 */
-	GenericTile.prototype._isScreenLarge = function() {
-		return this._getCurrentMediaContainerRange("GenericTileDeviceSet").name === "large";
+	GenericTile.prototype._isScreenLarge = function () {
+		return this._getCurrentMediaContainerRange(DEVICE_SET).name === "large";
 	};
 
 	/**
@@ -1138,7 +1194,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @returns {object} An object containing the tile's scope and the action which triggered the event
 	 * @private
 	 */
-	GenericTile.prototype._getEventParams = function(oEvent) {
+	GenericTile.prototype._getEventParams = function (oEvent) {
 		var oParams,
 			sAction = GenericTile._Action.Press,
 			sScope = this.getScope(),
@@ -1151,19 +1207,19 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 			oDomRef = this._oMoreIcon.getDomRef();
 		}
 		oParams = {
-			scope : sScope,
-			action : sAction,
-			domRef : oDomRef
+			scope: sScope,
+			action: sAction,
+			domRef: oDomRef
 		};
 		return oParams;
 	};
 
 	/**
-	 * Perform needed style adjustments through invalidation of control if GenericTile in LineMode.
+	 * Performs needed style adjustments through invalidation of control if GenericTile is in LineMode.
 	 * Triggered when changed from floating view (large screens) to list view (small screens) and vice versa.
 	 * @private
 	 */
-	GenericTile.prototype._handleMediaChange  = function() {
+	GenericTile.prototype._handleMediaChange = function () {
 		// no need to check previous state as the event is only triggered on change
 		this._bUpdateLineTileSiblings = true;
 		this.invalidate();
@@ -1176,7 +1232,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @protected
 	 * @since 1.46
 	 */
-	GenericTile.prototype.setPressEnabled = function(value) {
+	GenericTile.prototype.setPressEnabled = function (value) {
 		this._bTilePress = value;
 	};
 
@@ -1187,7 +1243,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	 * @protected
 	 * @since 1.46
 	 */
-	GenericTile.prototype.showActionsView = function(value) {
+	GenericTile.prototype.showActionsView = function (value) {
 		if (this._bShowActionsView !== value) {
 			this._bShowActionsView = value;
 			this.invalidate();
@@ -1195,4 +1251,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	};
 
 	return GenericTile;
-}, /* bExport= */ true);
+});

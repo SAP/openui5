@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-	<VBox>
+	<VBox renderType="Bare">
 		<Toolbar>
 			<SearchField
 			 width="50%"
@@ -19,6 +19,9 @@
 		</Toolbar>
 		<OverflowToolbar>
 			<ToolbarSpacer/>
+			<Label text="{i18n>FilterLabelText}"/>
+				<ToggleButton  type="Transparent" id="tbText" press="onPressText" icon="sap-icon://text-formatting" text="{i18n>ToggleButtonTextText}" />
+				<ToolbarSeparator/>
 				<ToggleButton  type="Transparent" id="tbColor" press="onPressColor" icon="sap-icon://palette" text="{i18n>ToggleButtonColorText}" />
 				<ToggleButton  type="Transparent" id="tbDimension" press="onPressDimension"  icon="sap-icon://dimension" text="{i18n>ToggleButtonDimensionText}" />
 				<ToggleButton  type="Transparent" id="tbImage" press="onPressImage"  icon="sap-icon://background" text="{i18n>ToggleButtonImageText}" />

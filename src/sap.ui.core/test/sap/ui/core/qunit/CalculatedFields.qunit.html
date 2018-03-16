@@ -63,7 +63,8 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 				[
 				 {"value" : 3.55},
 				 {"value" : 5.322},
-				 {"value" : 222.322}
+				 {"value" : 222.322},
+				 {"value" : "13:47:26"}
 			]
 		};
 
@@ -276,6 +277,25 @@ jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
 		});
 
 		assert.equal(oTxt.getValue(), "555562.06241" , "calculated fields formatter raw values");
+	});
+
+	QUnit.test("Calculated fields with types and native values", function(assert) {
+		setup();
+		assert.expect(2);
+
+		oTxt.bindValue({
+			parts: [
+						{path: "/values/3/value", type: new sap.ui.model.odata.type.TimeOfDay()},
+						{path: "model2>/values/1/value", type: new sap.ui.model.type.Float()}
+					],
+			formatter: function(oV1, oV2){
+				assert.ok(oV1 instanceof Date, "The value is parsed with the model format");
+				assert.strictEqual(oV2, 555554.32241, "The raw value is returned");
+			},
+			useInternalValues : true
+		});
+
+		oTxt.getValue();
 	});
 	QUnit.module("Table", {
 		beforeEach: function() {

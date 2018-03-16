@@ -4,22 +4,25 @@ sap.ui.define([
 	"test/sap/m/qunit/PDFViewerTestUtils",
 	"sap/ui/Device",
 	"sap/m/PDFViewer",
+	'sap/m/PDFViewerRenderer',
 	"jquery.sap.global",
 	"sap/ui/thirdparty/sinon",
 	"sap/ui/thirdparty/sinon-qunit"
 	// QUnit dependency cannot be defined here because test requires the instance specified in *.html file
-], function (TestUtils, Device, PDFViewer, $, sinon) {
+], function (TestUtils, Device, PDFViewer, PDFViewerRenderer, $, sinon) {
 	"use strict";
 
 	var oPDFViewer;
+	var sandbox = sinon.sandbox.create();
 	QUnit.module('Special use cases', {
 		afterEach: function (assert) {
 			oPDFViewer.destroy();
+			sandbox.verifyAndRestore();
 		}
 	});
 
 	// if the environment does not have pdf plugin, then it is not possible to run standard test suite
-	if (!PDFViewer._isPdfPluginEnabled()) {
+	if (!PDFViewerRenderer._isPdfPluginEnabled()) {
 		return;
 	}
 
@@ -180,4 +183,36 @@ sap.ui.define([
 				done();
 			});
 	});
+
+	QUnit.test("Loads pdf with non ascii name", function (assert) {
+		var done = assert.async();
+
+		oPDFViewer = TestUtils.createPdfViewer({
+			source: "./pdfviewer/sample file with spaces.pdf",
+			loaded: function fnLoadedHandler() {
+				assert.ok(true, "The pdf was loaded");
+				done();
+			},
+			error: function fnErrorHandler() {
+				assert.ok(false, "The pdf was loaded");
+				done();
+			}
+		});
+
+		TestUtils.renderPdfViewer(oPDFViewer);
+	});
+
+	QUnit.test("Height on mobile/tablet devices is always auto", function (assert) {
+		this.sandbox.stub(Device, "system", {desktop: false});
+
+		oPDFViewer = TestUtils.createPdfViewer({
+			height: '250px',
+			source: "./pdfviewer/sample file with spaces.pdf"
+		});
+
+		TestUtils.renderPdfViewer(oPDFViewer);
+
+		assert.equal(oPDFViewer.$()[0].style.height, 'auto');
+	});
+
 });

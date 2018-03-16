@@ -1,0 +1,4 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SearchField placeholder="Search for ..."></SearchField>
+</core:FragmentDefinition>

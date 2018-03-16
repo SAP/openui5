@@ -3,7 +3,7 @@
 /* Belize High Contrast White theme  */
 /* ================================= */
 
-.sapMInputFocused:not(.sapMInputBaseReadonly) .sapMMultiInputBorder::before {
+.sapMInputFocused .sapMMultiInputBorder::before {
 	border: 2px dotted @sapUiContentFocusColor;
 	content: "";
 	position: absolute;
@@ -15,12 +15,12 @@
 	z-index: 2;
 }
 
-.sapMMultiInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:hover,
-.sapMMultiInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:focus {
+.sapMMultiInput .sapMInputValHelp > .sapMInputValHelpInner:hover,
+.sapMMultiInput .sapMInputValHelp > .sapMInputValHelpInner:focus {
 	border-left: 1px solid @sapUiButtonLiteHoverBorderColor;
 }
 
-.sapMMultiInput:not(.sapMInputBaseReadonly) .sapMInputValHelp > .sapMInputValHelpInner:active {
+.sapMMultiInput .sapMInputValHelp > .sapMInputValHelpInner:active {
 	border-left: 1px solid @sapUiButtonLiteActiveBorderColor;
 }
 

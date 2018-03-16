@@ -9,12 +9,14 @@
 	overflow: auto; /* remove scrollbars if not needed */
 	-webkit-transform: none; /* transform is blocking scroll */
 	resize: none;
+	margin: 0;
 }
 
 .sapMTextArea .sapMInputDivWrapper {
 	-webkit-overflow-scrolling: touch;
 	height: 100%;
 	width: 100%;
+	line-height: 0;
 }
 
 .sapMTextArea .sapMTextAreaInner {
@@ -26,14 +28,11 @@
 
 .sapMTextAreaGrow {
 	/* should not grow more than screen size */
+	max-height: calc(~"100vh - 6rem");
 	overflow: hidden;
 }
 
 .sapMTextAreaWithCounter {
-	& .sapMTextAreaInner:not(.sapMTextAreaGrow) {
-		height: calc(100% - 1.5rem);
-	}
-
 	& .sapMTextAreaCounter {
 		float:right;
 		overflow: hidden;
@@ -48,18 +47,12 @@
 		border-color: transparent;
 	}
 
-	&.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner):not(.sapMTextAreaGrow) {
-		&::before {
-			bottom: 1.7rem;
-		}
-	}
 }
 
 .sapMInputBase.sapMTextArea {
 	height: auto;
 	min-width: 6rem;
 	min-height: 2.5rem;
-	margin: 0.25rem 0;
 
 	.sapMTextAreaInner {
 		line-height: 1.4;
@@ -79,20 +72,8 @@
 		margin: 0.1875rem 0;
 
 		.sapMTextAreaInner {
+			line-height: 1.4;
 			padding: 0.1875rem 0.5rem;
-			height: auto;
-		}
-	}
-
-	.sapMTextAreaWithCounter {
-		& .sapMTextAreaInner:not(.sapMTextAreaGrow) {
-			height: 100%;
-		}
-
-		&.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner):not(.sapMTextAreaGrow) {
-			&::before {
-				bottom: 1.5rem;
-			}
 		}
 	}
 }

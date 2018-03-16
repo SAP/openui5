@@ -1,0 +1,9 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core">
+	<Toolbar>
+		<Button text="Button 1"/>
+		<Button text="Button 2"/>
+		<Button text="Button 3"/>
+	</Toolbar>
+</core:FragmentDefinition>

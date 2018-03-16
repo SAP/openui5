@@ -13,6 +13,7 @@
 		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
+			data-sap-ui-xx-bindingSyntax="complex"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-language="en-US">
 		</script>
@@ -25,13 +26,65 @@
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
 
+		<script id="myxml" type="text/xmldata">
+		<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="my.own.controller">
+			<VBox>
+				<DatePicker id="picker1"
+					value="{
+						path: 'DateTimeOffset',
+						type: 'sap.ui.model.odata.type.DateTimeOffset'
+					}"
+					displayFormat= "dd+MM+yyyy"
+				/>
+				<DatePicker id="picker2"
+					valueFormat= "dd+MM+yyyy"
+					value="{
+						path: 'DateTimeOffset',
+						type: 'sap.ui.model.odata.type.DateTimeOffset',
+						constraints: { nullable: false }
+					}"
+				/>
+				<DatePicker id="picker3"
+					displayFormat= "dd+MM+yyyy"
+					value="{
+						path: 'DateTimeOffset',
+						type: 'sap.ui.model.odata.type.DateTimeOffset',
+						formatOptions: {
+							style: 'short'
+						}
+					}"
+					valueFormat= "dd+MM+yyyy"
+				/>
+				<DatePicker id="picker4"
+					value="{
+						path: 'DateTimeOffset',
+						type: 'sap.ui.model.odata.type.DateTimeOffset',
+						formatOptions: {
+							pattern: 'dd+MM+yyyy'
+						}
+					}"
+				/>
+			</VBox>
+		</mvc:View>
+		</script>
+
 		<!-- Test functions -->
 		<script>
+			jQuery.sap.require("sap.ui.test.TestUtils");
+			jQuery.sap.require("sap.ui.model.json.JSONModel");
+			jQuery.sap.require("sap.ui.core.format.DateFormat");
+
+			var JSONModel = sap.ui.model.json.JSONModel;
+			var DatePicker = sap.m.DatePicker;
+			var DateFormat = sap.ui.core.format.DateFormat;
 
 			var bChange = false;
 			var sValue = "";
 			var bValid = false;
 			var sId = "";
+
+			var oDefaultMinDate = new sap.m.DatePicker()._oMinDate;
+			var oDefaultMaxDate = new sap.m.DatePicker()._oMaxDate;
 
 			function handleChange(oEvent){
 					var oDP = oEvent.oSource;
@@ -41,11 +94,11 @@
 					sId = oDP.getId();
 				};
 
-			var oDP1 = new sap.m.DatePicker("DP1", {
+			var oDP1 = new DatePicker("DP1", {
 				change: handleChange
 				}).placeAt("uiArea1");
 
-			var oDP2 = new sap.m.DatePicker("DP2", {
+			var oDP2 = new DatePicker("DP2", {
 				width: "250px",
 				value: "2014-04-01",
 				valueFormat: "yyyy-MM-dd",
@@ -53,13 +106,13 @@
 				change: handleChange
 				}).placeAt("uiArea2");
 
-			var oDP3 = new sap.m.DatePicker("DP3", {
+			var oDP3 = new DatePicker("DP3", {
 				dateValue: new Date("2014", "03", "01"),
 				displayFormat: "long",
 				change: handleChange
 				}).placeAt("uiArea3");
 
-			var oDP5 = new sap.m.DatePicker("DP5", {
+			var oDP5 = new DatePicker("DP5", {
 				dateValue: new Date("2015", "10", "23"),
 				displayFormat: "long",
 				displayFormatType: "Islamic",
@@ -67,7 +120,7 @@
 				change: handleChange
 				}).placeAt("uiArea5");
 
-			var oModel = new sap.ui.model.json.JSONModel();
+			var oModel = new JSONModel();
 			oModel.setData({
 				dateValue: new Date("2015", "10", "23"),
 				dateValue1: new Date("2015", "10", "23")
@@ -92,14 +145,14 @@
 						bValidationSuccess = true;
 					});
 
-			var oDP6 = new sap.m.DatePicker("DP6", {
+			var oDP6 = new DatePicker("DP6", {
 				width: "250px",
 				value: {
 					path: "/dateValue",
 					type: new sap.ui.model.type.Date({style: "short", strictParsing: true})}
 				}).placeAt("uiArea6");
 
-			var oDP7 = new sap.m.DatePicker("DP7", {
+			var oDP7 = new DatePicker("DP7", {
 				width: "250px",
 				value: {
 					path: "/dateValue1",
@@ -148,6 +201,433 @@
 				assert.equal(jQuery("#DP6").children("div.sapMInputDivWrapper").children("input").val(), "11/23/15", "DP6: defined output format from binding used");
 				assert.equal(jQuery("#DP7").children("div.sapMInputDivWrapper").children("input").val(), "2/10/1437 AH", "DP7: defined islamic output format from binding used");
 			});
+
+			QUnit.module("data binding");
+
+			QUnit.test("data binding with OData", function(assert) {
+				var done = assert.async();
+				sap.ui.controller("my.own.controller", {
+					onInit: function() {
+						this.getView().bindObject("/EdmTypesCollection(ID='1')");
+					}
+				});
+
+				sap.ui.test.TestUtils.useFakeServer(sinon.sandbox.create(),
+					"sap/ui/core/demokit/sample/ViewTemplate/types/data", {
+						"/sap/opu/odata/sap/ZUI5_EDM_TYPES/$metadata" : {
+							source : "metadataV2.xml"
+						},
+						"/sap/opu/odata/sap/ZUI5_EDM_TYPES/EdmTypesCollection(ID='1')" : {
+							source : "EdmTypesV2.json"
+						}
+					});
+
+				var oModelV2 = new sap.ui.model.odata.v2.ODataModel({
+					serviceUrl : "/sap/opu/odata/sap/ZUI5_EDM_TYPES/",
+					useBatch : false
+				});
+
+				var view = sap.ui.view({ viewContent: document.scripts.myxml.innerText, type: sap.ui.core.mvc.ViewType.XML })
+					.setModel(oModelV2)
+					.placeAt("qunit-fixture");
+
+				oModelV2.attachRequestCompleted(function () {
+					var oDate = new Date(1420529121547); // Tue Jan 06 2015 09:25:21 GMT+0200 (FLE Standard Time)
+
+					assert.equal(view.byId("picker1")._$input.val(), DateFormat.getDateTimeInstance().format(oDate), "picker1 has correct value!");
+					assert.equal(view.byId("picker2")._$input.val(), DateFormat.getDateTimeInstance().format(oDate), "picker2 has correct value!");
+					assert.equal(view.byId("picker3")._$input.val(), DateFormat.getDateTimeInstance({style: "short"}).format(oDate), "picker3 has correct value!");
+					assert.equal(view.byId("picker4")._$input.val(), DateFormat.getDateTimeInstance({pattern: "dd+MM+yyyy"}).format(oDate), "picker4 has correct value!");
+					done();
+				});
+			});
+
+			QUnit.module("API");
+
+			QUnit.test("setDateValue(time part cut) when mindate/maxdate is the same date, but with time part", function (assert) {
+				//Prepare
+				var now = new Date(2017, 0, 1, 13, 0, 0),
+						today = new Date(now.getFullYear(), now.getMonth(), now.getDate()),
+						oDPMinDate = new DatePicker({
+							minDate: now,
+							displayFormat: "dd.MM.YYYY"
+						}),
+						oDPMaxDate = new DatePicker({
+							maxDate: now,
+							displayFormat: "dd.MM.YYYY"
+						});
+				oDPMinDate.placeAt("qunit-fixture");
+				oDPMaxDate.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				//Act
+				oDPMinDate.setDateValue(today);
+
+				//Assert
+				assert.equal(oDPMinDate.$().children("div.sapMInputDivWrapper").children("input").val(), "01.01.2017",
+						"DOM value should equal the minDate> without time part");
+
+				//Act
+				oDPMaxDate.setDateValue(today);
+
+				//Assert
+				assert.equal(oDPMaxDate.$().children("div.sapMInputDivWrapper").children("input").val(), "01.01.2017",
+						"DOM value should equal the maxDate without time part");
+
+				//Cleanup
+				oDPMinDate.destroy();
+				oDPMaxDate.destroy();
+			});
+
+			QUnit.test("default maxDate has maximum possible hour of the day", function (assert) {
+				//Prepare
+				var oDP = new DatePicker({
+					dateValue: new Date(2000, 11, 31, 23, 59, 59)
+				});
+				oDP.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oDP.setDateValue(new Date(9999, 11, 31, 23, 59, 59));
+				//Assert
+				assert.ok(oDP.getValue() !== "", "Given date which is equal to the default maxDate is set correctly");
+
+				//Cleanup
+				oDP.destroy();
+			});
+
+			QUnit.test("setMinDate when dateValue does not match the new min date", function(assert) {
+				var oDateValue = new Date(2017, 0, 1),
+					oNewMinDate = new Date(2018, 0, 1),
+					oSut = new DatePicker({
+						valueFormat: "yyyyMMdd",
+						dateValue: oDateValue
+					}),
+					sExpectedErrorMsg = "dateValue " + oDateValue.toString() + "(value=20170101) does not match" +
+						" min/max date range(" + oNewMinDate.toString() + " - " + oDefaultMaxDate.toString() + ")." +
+						" App. developers should take care to maintain dateValue/value accordingly.",
+					oSpySetProperty = this.spy(oSut, "setProperty"),
+					oSpyLogError = this.spy(jQuery.sap.log, "error");
+
+				oSut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oSut.setMinDate(oNewMinDate);
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
+				assert.equal(oSpySetProperty.withArgs("value").callCount, 0, ".. should not update the property <value>");
+				assert.equal(oSpyLogError.callCount, 1, "..should log one error message in the console");
+				oSpyLogError.callCount && assert.equal(oSpyLogError.getCall(0).args[0], sExpectedErrorMsg, ".. with concrete message text");
+
+				//Cleanup
+				oSpySetProperty.restore();
+				oSpyLogError.restore();
+				oSut.destroy();
+			});
+
+			QUnit.test("setMaxDate when dateValue does not match the new max date", function(assert) {
+				var oDateValue = new Date(2017, 0, 1),
+					oNewMaxDate = new Date(2016, 0, 1),
+					oSut = new DatePicker({
+						valueFormat: "yyyyMMdd",
+						dateValue: oDateValue
+					}),
+					sExpectedErrorMsg = "dateValue " + oDateValue.toString() + "(value=20170101) does not match" +
+						" min/max date range(" + oDefaultMinDate.toString() + " - " + new Date(oNewMaxDate.setHours(23, 59, 59)).toString() + ")." +
+						" App. developers should take care to maintain dateValue/value accordingly.",
+					oSpySetProperty = this.spy(oSut, "setProperty"),
+					oSpyLogError = this.spy(jQuery.sap.log, "error");
+
+				oSut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oSut.setMaxDate(oNewMaxDate);
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				assert.equal(oSpySetProperty.withArgs("dateValue").callCount, 0, ".. should not update the property <dateValue>");
+				assert.equal(oSpySetProperty.withArgs("value").callCount, 0, ".. should not update the property <value>");
+				assert.equal(oSpyLogError.callCount, 1, "..should log one error message in the console");
+				oSpyLogError.callCount && assert.equal(oSpyLogError.getCall(0).args[0], sExpectedErrorMsg,
+					".. with concrete message text");
+
+				//Cleanup
+				oSpySetProperty.restore();
+				oSpyLogError.restore();
+				oSut.destroy();
+			});
+
+			QUnit.test("minDate and value in databinding scenario where the order of setters is not known",
+				function (assert) {
+					/**
+					 * value in second model is intentionally Jan 20, 2017, in order to examine the scenario, where value
+					 * setter is called before the minDate setter and a potentially valid value is not yet considered such,
+					 * because the corresponding valid minDate didn't arrive yet.
+					 */
+					var oModelInvalid = new JSONModel({
+							value: "20170101",
+							minDate: new Date(2018, 0, 1)
+						}),
+						oModelValid = new JSONModel({
+							minDate: new Date(2017, 0, 10),
+							value: "20170120"
+						}),
+						oDP1 = new DatePicker({
+							valueFormat: "yyyyMMdd",
+							value: "{/value}",
+							minDate: "{/minDate}"
+						}),
+						oDP2 = new DatePicker({
+							valueFormat: "yyyyMMdd",
+							minDate: "{/minDate}",
+							value: "{/value}"
+						}),
+						sErrorMsgDP1 = "dateValue " + new Date(2017, 0, 1).toString() + "(value=20170101) does not match" +
+							" min/max date range(" + oModelInvalid.getProperty("/minDate").toString() + " - " + oDefaultMaxDate.toString() + ")." +
+							" App. developers should take care to maintain dateValue/value accordingly.",
+						sErrorMsgDP2 = sErrorMsgDP1,
+						oSpyLogError = this.spy(jQuery.sap.log, "error");
+
+					oDP1.setModel(oModelInvalid);
+					oDP2.setModel(oModelInvalid);
+					oDP1.placeAt("qunit-fixture");
+					oDP2.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+
+					//Pre-Assert
+					assert.equal(oDP1.getValue().toString(), "20170101",
+						"Although outside min range, DP1 property <value> should be always set");
+					assert.equal(oDP2.getValue().toString(), "20170101",
+						"Although outside min range, DP2 property <value> should be always set");
+
+					assert.equal(oDP1.getDateValue().toString(), new Date(2017, 0, 1).toString(),
+						"Although outside min range, DP1 property <value> should update the <dateValue> as well");
+					assert.equal(oDP2.getDateValue().toString(), new Date(2017, 0, 1).toString(),
+						"Although outside min range, DP2 property <value> should update the <dateValue> as well");
+
+					assert.equal(oSpyLogError.callCount, 2, "There should be error messages in the console");
+					if (oSpyLogError.callCount) {
+						assert.equal(oSpyLogError.getCall(0).args[0], sErrorMsgDP1, "And the first message is with expected text");
+						assert.equal(oSpyLogError.getCall(1).args[0], sErrorMsgDP2, "And the second message is with expected text");
+					}
+
+					oSpyLogError.reset();
+
+					//Act - set a valid model
+					oDP1.setModel(oModelValid);
+					oDP2.setModel(oModelValid);
+					sap.ui.getCore().applyChanges();
+
+					//Assert
+					assert.equal(oDP1.getValue().toString(), "20170120", "A valid DP1 property <value> should be always set");
+					assert.equal(oDP2.getValue().toString(), "20170120", "A valid DP2 property <value> should be always set");
+
+					assert.equal(oDP1.getDateValue().toString(), new Date(2017, 0, 20).toString(),
+						"A valid DP1 property <value> should update the <dateValue> as well");
+					assert.equal(oDP2.getDateValue().toString(), new Date(2017, 0, 20).toString(),
+						"A valid DP2 property <value> should update the <dateValue> as well");
+
+					assert.equal(oSpyLogError.callCount, 0, "There must be no error messages in the console");
+
+					//Cleanup
+					oSpyLogError.restore();
+					oDP1.destroy();
+					oDP2.destroy();
+				}
+			);
+
+			QUnit.test("set(Date)Value to undefined", function(assert) {
+				var oDP1 = new sap.m.DatePicker({
+					value: "20170101",
+					valueFormat: "yyyyMMdd"
+				}),
+				oDP2  = new sap.m.DatePicker({
+					value: "20170101",
+					valueFormat: "yyyyMMdd"
+				});
+
+				oDP1.placeAt("qunit-fixture");
+				oDP2.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oDP1.setDateValue();
+				oDP2.setValue();
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				assert.strictEqual(oDP1.getDateValue(), null, "Property <dateValue> should be null as it was just set to undefined");
+				assert.strictEqual(oDP1.getValue(), "", "Property <value> should be empty, because property <dateValue> was just set to undefined");
+
+				assert.strictEqual(oDP2.getValue(), "", "Property <value> should be empty, as it was just set to undefined");
+				assert.strictEqual(oDP2.getDateValue(), null, "Property <dateValue> should be null, because property <value> was just set to undefiend");
+
+				//Cleanup
+				oDP1.destroy();
+				oDP2.destroy();
+			});
+
+			// BCP: 1780526208
+			QUnit.test("setDateValue with iframe's JS date object should set properly the date", function (assert) {
+				// arrange
+				var oDP = new sap.m.DatePicker(),
+					iframe = document.createElement('iframe');
+				document.body.appendChild(iframe);
+				var oWindow = iframe.contentWindow;
+				oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+				// act
+				oDP.setDateValue(oWindow.dateObj);
+
+				// assert
+				assert.ok(true, "setDateValue did not throw an expection with date object from an iframe");
+
+				// cleanup
+				oDP.destroy();
+				document.body.removeChild(iframe);
+				iframe = null;
+				oDP = null;
+			});
+
+			// BCP: 1880065660
+			QUnit.test("setMinDate with iframe's JS date object should set properly the min date value", function (assert) {
+				// arrange
+				var oDP = new sap.m.DatePicker(),
+						iframe = document.createElement('iframe');
+				document.body.appendChild(iframe);
+				var oWindow = iframe.contentWindow;
+				oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+				// act
+				oDP.setMinDate(oWindow.dateObj);
+
+				// assert
+				assert.ok(true, "setMinDate did not throw an expection with date object from an iframe");
+
+				// cleanup
+				oDP.destroy();
+				document.body.removeChild(iframe);
+				iframe = null;
+				oDP = null;
+			});
+
+			// BCP: 1880065660
+			QUnit.test("setMaxDate with iframe's JS date object should set properly the max date value", function (assert) {
+				// arrange
+				var oDP = new sap.m.DatePicker(),
+						iframe = document.createElement('iframe');
+				document.body.appendChild(iframe);
+				var oWindow = iframe.contentWindow;
+				oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+				// act
+				oDP.setMaxDate(oWindow.dateObj);
+
+				// assert
+				assert.ok(true, "setMaxDate did not throw an expection with date object from an iframe");
+
+				// cleanup
+				oDP.destroy();
+				document.body.removeChild(iframe);
+				iframe = null;
+				oDP = null;
+			});
+
+			QUnit.test("set(Date)Value to (null)empty string", function(assert) {
+				var oDP1 = new sap.m.DatePicker({
+						value: "20170101",
+						valueFormat: "yyyyMMdd"
+					}),
+					oDP2  = new sap.m.DatePicker({
+						value: "20170101",
+						valueFormat: "yyyyMMdd"
+					});
+
+				oDP1.placeAt("qunit-fixture");
+				oDP2.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oDP1.setDateValue(null);
+				oDP2.setValue("");
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				assert.strictEqual(oDP1.getDateValue(), null, "Property <dateValue> should be null as it was just set to null");
+				assert.strictEqual(oDP1.getValue(), "", "Property <value> should be empty, because property <dateValue> was just set to null");
+
+				assert.strictEqual(oDP2.getValue(), "", "Property <value> should be empty string, as it was just set");
+				assert.strictEqual(oDP2.getDateValue(), null, "Property <dateValue> should be null, because property <value> was just set to empty string");
+
+				//Cleanup
+				oDP1.destroy();
+				oDP2.destroy();
+			});
+
+			QUnit.module("initialFocusedDate property", {
+				beforeEach: function () {
+					this.oDp = new sap.m.DatePicker();
+					this.oDp.placeAt("qunit-fixture");
+					sap.ui.getCore().applyChanges();
+				},
+
+				afterEach: function () {
+					this.oDp.destroy();
+					this.oDp = null;
+				}
+			});
+
+			QUnit.test("_fillDateRange should call Calendar's focusDate method with initialFocusedDateValue if no value is set", function (assert) {
+				// prepare
+				var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
+				this.oDp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+				this.oDp._oDateRange = { getStartDate: function () { return false; } };
+
+				// act
+				this.oDp.setInitialFocusedDateValue(oExpectedDateValue);
+				this.oDp._fillDateRange();
+
+				// assert
+
+				assert.ok(this.oDp._oCalendar.focusDate.calledWith(oExpectedDateValue), "focusDate should be called with initialFocusedDateValue");
+				assert.equal(this.oDp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+			});
+
+			QUnit.test("_fillDateRange should call Calendar's focusDate method with current date if initialFocusedDateValue and value are not set", function (assert) {
+				// prepare
+				var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8);
+				this.oDp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+				this.oDp._oDateRange = { getStartDate: function () { return false; } };
+
+				// act
+				this.oDp._fillDateRange();
+
+				// assert
+				assert.equal(this.oDp._oCalendar.focusDate.calledWith(oExpectedDateValue), false, "focusDate should not be called with initialFocusedDateValue");
+				assert.notEqual(this.oDp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+			});
+
+			QUnit.test("_fillDateRange should call Calendar's focusDate method with dateValue", function (assert) {
+				// prepare
+				var oExpectedDateValue = new Date(2017, 4, 5, 6, 7, 8),
+					oGetDateValue = this.stub(this.oDp, "getDateValue", function () { return oExpectedDateValue; });
+				this.oDp._oCalendar = { focusDate: this.spy(), destroy: function () {} };
+				this.oDp._oDateRange = { setStartDate: function () {}, getStartDate: function () {} };
+
+				// act
+				this.oDp._fillDateRange();
+
+				// assert
+				assert.ok(this.oDp._oCalendar.focusDate.calledWith(oExpectedDateValue), "focusDate should be called with dateValue");
+				assert.equal(this.oDp._oCalendar.focusDate.getCall(0).args[0].toString(), oExpectedDateValue.toString(), "focusDate should be called with " + oExpectedDateValue);
+
+				// cleanup
+				oGetDateValue.restore();
+			});
+
 
 			QUnit.module("interaction");
 
@@ -288,6 +768,11 @@
 				assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after date selection");
 
 				qutils.triggerEvent("click", "DP5-icon");
+				jQuery("#DP5-cal--Month0-20151124").focus();
+				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after selecting the same date");
+
+				qutils.triggerEvent("click", "DP5-icon");
 				jQuery("#DP5-cal").control(0).fireCancel();
 				assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after cancel");
 
@@ -298,6 +783,11 @@
 				jQuery("#DP5-cal--Month0-20151124").focus();
 				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after date selection");
+
+				qutils.triggerEvent("click", "DP5-icon");
+				jQuery("#DP5-cal--Month0-20151124").focus();
+				qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				assert.notEqual(document.activeElement.id, "DP5-inner", "Focus is NOT on the input field after selecting the same date");
 
 				qutils.triggerEvent("click", "DP5-icon");
 				jQuery("#DP5-cal").control(0).fireCancel();
@@ -395,80 +885,196 @@
 			QUnit.test("min/max", function(assert) {
 				var oMinDate = new Date(1,0,1);
 				oMinDate.setFullYear("0001");
-				var oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 99);
+				var oMaxDate = new Date(9999, 11, 31, 23, 59, 59, 999);
+				var oSpyLogError = sinon.spy(jQuery.sap.log, "error");
+
+				//Assert
 				assert.ok(!oDP3.getMinDate(), "DP3: no min date set");
 				assert.ok(!oDP3.getMaxDate(), "DP3: no max date set");
-				assert.ok(jQuery.sap.equal(oDP3._oMinDate, oMinDate), "DP3: default min date");
-				assert.ok(jQuery.sap.equal(oDP3._oMaxDate, oMaxDate), "DP3: default max date");
+				assert.equal(oDP3._oMinDate.toString(), oMinDate.toString(), "DP3: default min date");
+				assert.equal(oDP3._oMaxDate.toString(), oMaxDate.toString(), "DP3: default max date");
 
+				//Act - set min & max date to whatsoever
 				var oNewMinDate = new Date(2014,0,1);
-				var oNewMaxDate = new Date(2014,11,31);
+				var oNewMaxDate = new Date(2014,11,31, 23, 59, 59, 999);
 				oDP3.setMinDate(oNewMinDate);
 				oDP3.setMaxDate(oNewMaxDate);
 				sap.ui.getCore().applyChanges();
-				assert.ok(jQuery.sap.equal(oDP3.getMinDate(), oNewMinDate), "DP3: new min date property");
-				assert.ok(jQuery.sap.equal(oDP3.getMaxDate(), oNewMaxDate), "DP3: new max date property");
-				assert.ok(jQuery.sap.equal(oDP3._oMinDate, oNewMinDate), "DP3: new min date");
-				assert.ok(jQuery.sap.equal(oDP3._oMaxDate, oNewMaxDate), "DP3: new max date");
+				//Assert
+				assert.equal(oDP3.getMinDate().toString(), oNewMinDate.toString(), "DP3: new min date property");
+				assert.equal(oDP3.getMaxDate().toString(), oNewMaxDate.toString(), "DP3: new max date property");
+				assert.equal(oDP3._oMinDate.toString(), oNewMinDate.toString(), "DP3: new min date");
+				assert.equal(oDP3._oMaxDate.toString(), oNewMaxDate.toString(), "DP3: new max date");
 
+				//Prepare
+				oSpyLogError.reset();
 				var oNewDate = new Date(2016, 1, 15);
-				oDP3.setDateValue(oNewDate);
-				assert.ok(!jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: new invalid date not set");
-				assert.equal(oDP3.getValue(), "", "DP3: new invalid date not displayed");
+				var sErrorMsg = "dateValue " + oNewDate.toString() + "(value=" + oDP3._getFormatter(false).format(oNewDate) +
+					") does not match min/max date range(" + oNewMinDate.toString() + " - " + oNewMaxDate.toString() + ")." +
+					" App. developers should take care to maintain dateValue/value accordingly.";
 
-				oDP3.setDateValue();
+				//Act - set dateValue that does not match min/max range
+				oDP3.setDateValue(oNewDate);
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				assert.equal(oDP3.getDateValue(), oNewDate, "DP3: new invalid <dateValue> set");
+				assert.equal(oDP3.getValue(), oDP3._getFormatter(false).format(oNewDate), "DP3: new invalid <value> displayed");
+				assert.equal(oSpyLogError.callCount, 1, "There is one error message in the console");
+				oSpyLogError.callCount && assert.equal(oSpyLogError.getCall(0).args[0], sErrorMsg, "And the message is as expected");
+
+				//Act - picker focused date, when dateValue does not match the min/max range
+				qutils.triggerEvent("click", "DP3-icon"); //to load the picker and initialize the calendar
 				oDP3._fillDateRange();
+				//Assert
 				var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
 				var oFocusedDate = oDP3._oCalendar._getFocusedDate().toUTCJSDate();
-				assert.ok(jQuery.sap.equal(oFocusedDate, oNewMinDateUTC), "DP3: focused date equals min date when current date is out of the min/max range");
+				assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "DP3: focused date equals min date when current dateValue out of min/max range");
 
+				//Cleanup
+				qutils.triggerEvent("click", "DP3-icon");//closes the picker
+
+				//Act - the focused date in the picker, when dateValue is null
+				oDP3.setDateValue();
+				oDP3._fillDateRange();
+
+				//Assert
+				var oNewMinDateUTC = new Date(Date.UTC(oNewMinDate.getFullYear(), oNewMinDate.getMonth(), oNewMinDate.getDate()));
+				oFocusedDate = oDP3._oCalendar._getFocusedDate().toUTCJSDate();
+				assert.equal(oFocusedDate.toString(), oNewMinDateUTC.toString(), "DP3: focused date equals min date when" +
+					" current <dateValue> is null");
+
+				//Prepare
+				oSpyLogError.reset();
+				//Act - switch from empty dateValue to a valid dateValue
 				oNewDate = new Date(2014, 0, 1);
 				oDP3.setDateValue(oNewDate);
-				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: new valid date set");
+				//Assert
+				assert.equal(oDP3.getDateValue().toString(), oNewDate.toString(), "DP3: new valid date set");
 				assert.equal(oDP3.getValue(), "1/1/14", "DP3: new valid date displayed");
+				assert.equal(oSpyLogError.callCount, 0, "Error message [" + sErrorMsg  + "] is NOT logged anymore");
 
+				//Act - page down
 				bChange = false;
 				oDP3.focus();
-				qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+				qutils.triggerKeydown("DP3-inner", jQuery.sap.KeyCodes.PAGE_DOWN, false, false, false);
+				//Assert
 				assert.ok(!bChange, "DP3: No change event fired by PAGE_DOWN");
 				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oNewDate), "DP3: date not changed by PAGE_DOWN");
 				assert.equal(oDP3.getValue(), "1/1/14", "DP3: value not changed by PAGE_DOWN");
 
+				//Act - pagedown+shift+ctrl
 				bChange = false;
 				oDP3.focus();
-				qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
+				qutils.triggerKeydown("DP3-inner", jQuery.sap.KeyCodes.PAGE_UP, true, false, true);
 				assert.ok(bChange, "DP3: change event fired by PAGE_UP+shift+ctrl");
-				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oNewMaxDate), "DP3: date changed by PAGE_DOWN+shift+ctrl");
+				assert.equal(oDP3.getDateValue().toString(), oNewMaxDate.toString(), "DP3: date changed by PAGE_DOWN+shift+ctrl");
 				assert.equal(oDP3.getValue(), "12/31/14", "DP3: value changed by PAGE_DOWN+shift+ctrl");
 
+				//Act - user types invalid <value> and presses Enter
 				bChange = false;
 				bValid = true;
 				oDP3.focus();
 				jQuery("#DP3").children("div.sapMInputDivWrapper").children("input").val("December 31, 2015");
-				qutils.triggerKeyboardEvent("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeydown("DP3-inner", jQuery.sap.KeyCodes.ENTER, false, false, false);
 				jQuery("#DP3").children("div.sapMInputDivWrapper").children("input").change(); // trigger change event, because browser do not if value is changed using jQuery
+				//Assert
 				assert.ok(bChange, "DP3: change event fired by typing invalid date");
-				assert.ok(!bValid, "DP3: invalid typed date is not valid")
-				assert.ok(jQuery.sap.equal(oDP3.getDateValue(), oNewMaxDate), "DP3: dateValue not changed by invalid typing");
+				assert.ok(!bValid, "DP3: invalid typed date is described in <change> event by its non-public parameter <valid>");
+				assert.equal(oDP3.getDateValue().toString(), oNewMaxDate.toString(), "DP3: dateValue not changed by invalid typing");
 
+				//Act - open the date picker
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
-				assert.ok(jQuery.sap.equal(oDP3._oCalendar.getMinDate(), oDP3.getMinDate()), "Calendar has MinDate");
-				assert.ok(jQuery.sap.equal(oDP3._oCalendar.getMaxDate(), oDP3.getMaxDate()), "Calendar has MaxDate");
+				//Assert
+				assert.equal(oDP3._oCalendar.getMinDate().toString(), oDP3.getMinDate().toString(), "Calendar has the same MinDate as DatePicker");
+				assert.equal(oDP3._oCalendar.getMaxDate().toString(), oDP3.getMaxDate().toString(), "Calendar has the same MaxDate as DatePicker");
+				//Clean - closes the picker
 				qutils.triggerEvent("click", "DP3-icon");
 
+				//Act - app.developer sets empty min/max date
 				oDP3.setMinDate();
 				oDP3.setMaxDate();
 				sap.ui.getCore().applyChanges();
+				//Assert
 				assert.ok(!oDP3.getMinDate(), "DP3: no min date set");
 				assert.ok(!oDP3.getMaxDate(), "DP3: no max date set");
-				assert.ok(jQuery.sap.equal(oDP3._oMinDate, oMinDate), "DP3: default min date");
-				assert.ok(jQuery.sap.equal(oDP3._oMaxDate, oMaxDate), "DP3: default max date");
+				assert.equal(oDP3._oMinDate.toString(), oMinDate.toString(), "DP3: default min date");
+				assert.equal(oDP3._oMaxDate.toString(), oMaxDate.toString(), "DP3: default max date");
+
+				//Act - open date picker when min/max date are empty
 				oDP3.focus();
 				qutils.triggerEvent("click", "DP3-icon");
+				//Assert
 				assert.ok(!oDP3._oCalendar.getMinDate(), "Calendar has no MinDate");
 				assert.ok(!oDP3._oCalendar.getMaxDate(), "Calendar has no MaxDate");
+				//Cleanup
 				qutils.triggerEvent("click", "DP3-icon");
+				oSpyLogError.restore();
+			});
+
+			QUnit.test("setValue with value outside min/max range", function (assert) {
+				//Prepare
+				var oMinDate = new Date(2017, 0, 1),
+					oMaxDate = new Date(2017, 11, 31),
+					oDateValue = new Date(2017, 1, 10),
+					sValue = "20200630",
+					oDP = new DatePicker({
+						valueFormat: "yyyyMMdd",
+						minDate: oMinDate,
+						maxDate: oMaxDate,
+						dateValue: oDateValue
+					}),
+					oSpyLogError = sinon.spy(jQuery.sap.log, "error"),
+					sErrorMsg = "dateValue " + new Date(2020, 5, 30).toString() + "(value=20200630) does not match " +
+						"min/max date range(" + oMinDate.toString() + " - " + new Date(oMaxDate.setHours(23, 59, 59)).toString() +
+						"). App. developers should take care to maintain dateValue/value accordingly.";
+
+				oDP.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oDP.setValue(sValue);
+				sap.ui.getCore().applyChanges();
+
+				//Assert
+				assert.equal(oDP.getValue(), sValue, "..sets the <value> property");
+				//new test
+				assert.equal(oDP.getDateValue().toString(), new Date(2020, 5, 30).toString(), "..sets the <dateValue> property");
+				assert.equal(oSpyLogError.callCount, 1, "There is one error message in the console");
+				oSpyLogError.callCount && assert.equal(oSpyLogError.getCall(0).args[0], sErrorMsg, "And the message is as expected");
+
+				//Cleanup
+				oSpyLogError.restore();
+				oDP.destroy();
+			});
+
+			QUnit.test("Opening picker when current value/dateValue is outside min/max range", function (assert) {
+				//Prepare
+				var oMinDate = new Date(2016, 0, 1),
+					oMaxDate = new Date(2016, 11, 31),
+					oDP = new DatePicker({
+						valueFormat: "yyyyMMdd",
+						minDate: oMinDate,
+						maxDate: oMaxDate,
+						dateValue: new Date(2016, 1, 10)
+					}),
+					sIconId = oDP.getId() + "-icon";
+
+				oDP.placeAt("qunit-fixture");
+				oDP.setValue("20200630");
+				sap.ui.getCore().applyChanges();
+
+				//Act
+				oDP.focus();
+				qutils.triggerEvent("click", sIconId);
+				//Assert
+				assert.equal(oDP._oCalendar._getFocusedDate().toLocalJSDate().toString(), oDP._oCalendar.getMinDate().toString(),
+					".. should focus a date equal to the <minDate>");
+
+				//Cleanup
+				qutils.triggerEvent("click", sIconId);
+				oDP.destroy();
 			});
 
 			QUnit.test("special cases", function(assert) {
@@ -577,7 +1183,7 @@
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
 					done();
-				}, 1);
+				}, 100);
 
 			});
 
@@ -601,7 +1207,7 @@
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
 					done();
-				}, 1);
+				}, 100);
 
 			});
 
@@ -630,7 +1236,7 @@
 					oDP3.focus();
 					qutils.triggerEvent("click", "DP3-icon");
 					done();
-				}, 1);
+				}, 100);
 
 			});
 
@@ -638,7 +1244,7 @@
 			QUnit.test("value is updated when we change the century", function(assert) {
 				//arrange
 				var newValue,
-					oDP = new sap.m.DatePicker({
+					oDP = new DatePicker({
 						value: "05-05-16",
 						valueFormat: "MM-dd-yy",
 						displayFormat: "dd+MM+yyyy",
@@ -662,10 +1268,49 @@
 				oDP.destroy();
 			});
 
+			// BCP: 1880193676
+			QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {
+				// Arrange
+				var done = assert.async(),
+					oStub = this.stub(sap.ui.Device, "browser", {msie: true});
+
+				this.clock = sinon.useFakeTimers();
+				var oDP = new sap.m.DatePicker("DTP6", {
+					dateValue: new Date()
+				}).placeAt("uiArea2");
+				sap.ui.getCore().applyChanges();
+
+				oDP._$input.get(0).selectionStart = 3;
+				oDP._$input.get(0).selectionEnd = 3;
+
+				oDP.$().find(".sapUiIcon").click(); //simulate opening
+				this.clock.tick(100);
+
+				//Assert
+				assert.equal(oDP._$input.get(0).selectionStart, 0, "selection start should be 0");
+				assert.equal(oDP._$input.get(0).selectionEnd, 0, "selection end should be 0");
+
+				//Act
+				oDP._oPopup.close();
+
+				setTimeout(function(){
+					//Assert
+					assert.equal(oDP._$input.get(0).selectionStart, 3, "selection start must be restored");
+					assert.equal(oDP._$input.get(0).selectionEnd, 3, "selection end must be restored");
+
+					//Cleanup
+					oStub.restore();
+					this.clock.restore();
+					done();
+				}.bind(this), 1000);
+
+				this.clock.tick(1000);//"waits" for close popup animation to complete
+			});
+
 			QUnit.module("ARIA");
 
 			QUnit.test("aria-ownes and aria-expanded correctly set", function(assert) {
-				var oDP = new sap.m.DatePicker("DP", {}).placeAt("uiArea4");
+				var oDP = new DatePicker("DP", {}).placeAt("uiArea4");
 				sap.ui.getCore().applyChanges();
 
 				//before opening the popup
@@ -687,7 +1332,7 @@
 			QUnit.test("Tooltip and date annoncement should be set correctly at the described by", function(assert) {
 				var sTooltip = "tooltip";
 				var sPlaceholder = "placeholder";
-				var oDP = new sap.m.DatePicker({
+				var oDP = new DatePicker({
 					placeholder: sPlaceholder
 				}).placeAt("uiArea4");
 				sap.ui.getCore().applyChanges();
@@ -711,7 +1356,7 @@
 			});
 
 			QUnit.test("getAccessibilityInfo", function(assert) {
-				var oInput = new sap.m.DatePicker({
+				var oInput = new DatePicker({
 					value: "Value",
 					tooltip: "Tooltip",
 					placeholder: "Placeholder"
@@ -747,7 +1392,7 @@
 			});
 
 			QUnit.test("Aria in calendar with Secondary calendar type", function(assert) {
-				var oFormatSecondaryLong = sap.ui.core.format.DateFormat.getInstance({style: "long", calendarType: "Gregorian"}),
+				var oFormatSecondaryLong = DateFormat.getInstance({style: "long", calendarType: "Gregorian"}),
 					oSecondaryDay = sap.ui.core.date.UniversalDate.getInstance(new Date(2015, 10, 25, 0, 0, 0), "Gregorian");
 					sAriaSecondaryDay = oFormatSecondaryLong.format(oSecondaryDay, true),
 					sDayAriaText = jQuery("#DP5-inner").val(),
@@ -759,7 +1404,7 @@
 
 			QUnit.module("Events", {
 				beforeEach: function () {
-					this.oDP = new sap.m.DatePicker("EDP").placeAt("uiArea6");
+					this.oDP = new DatePicker("EDP").placeAt("uiArea6");
 					sap.ui.getCore().applyChanges();
 
 					this.oSpy = sinon.spy();
@@ -791,7 +1436,7 @@
 
 			QUnit.module("SpecialDates - lazy loading", {
 				beforeEach: function () {
-					this.oDP = new sap.m.DatePicker("SDP", {
+					this.oDP = new DatePicker("SDP", {
 						dateValue: new Date(2016, 0, 1),
 						navigate: this.fHandleNavigate.bind(this)
 					}).placeAt("uiArea6");
@@ -834,7 +1479,7 @@
 					);
 				},
 				assertSpecialDatesMarked: function (fnDone) {
-					var oDateFormat = sap.ui.core.format.DateFormat.getInstance({pattern: "YYYYMMdd"});
+					var oDateFormat = DateFormat.getInstance({pattern: "YYYYMMdd"});
 
 					// We use 200 ms timeout here to place the test on a safe place on the event loop queue
 					// to catch all the ui updates happening with multiple delayed calls.
@@ -930,12 +1575,58 @@
 
 			QUnit.module("Private methods", {
 				beforeEach: function () {
-					this.oDP = new sap.m.DatePicker();
+					this.oDP = new DatePicker();
 				},
 				afterEach: function () {
 					this.oDP.destroy();
 					this.oDP = null;
 				}
+			});
+
+			// BCP: 1880193676
+			QUnit.test("_storeInputSelection should store the selectionStart and End position of the Input and set it to 0", function (assert) {
+				// Arrange
+				var oStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+						iExpectedSelectionStart = 2,
+						iExpectedSelectionEnd = 3,
+						oMockedInput = { selectionStart: iExpectedSelectionStart, selectionEnd: iExpectedSelectionEnd },
+						oDP = new sap.m.DatePicker();
+
+				// Act
+				oDP._storeInputSelection(oMockedInput);
+
+				// Assert
+				assert.equal(oDP._oInputSelBeforePopupOpen.iStart, iExpectedSelectionStart, "Stored selectionStart should be equal to " + iExpectedSelectionStart);
+				assert.equal(oDP._oInputSelBeforePopupOpen.iStart, iExpectedSelectionStart, "Stored selectionEnd should be equal to " + iExpectedSelectionEnd);
+				assert.equal(oMockedInput.selectionStart, 0, "Input's sectionStart should be restored to 0");
+				assert.equal(oMockedInput.selectionEnd, 0, "Input's sectionEnd should be restored to 0");
+
+				// Cleanup
+				oDP.destroy();
+			});
+
+			// BCP: 1880193676
+			QUnit.test("_restoreInputSelection should restore the selectionStart and End position of the Input", function (assert) {
+				// Arrange
+				var oStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+					iExpectedSelectionStart = 2,
+					iExpectedSelectionEnd = 3,
+					oMockedInput = { selectionStart: iExpectedSelectionStart, selectionEnd: iExpectedSelectionEnd },
+					oDP = new sap.m.DatePicker();
+				oDP._oInputSelBeforePopupOpen = {
+					iStart: iExpectedSelectionStart,
+					iEnd: iExpectedSelectionEnd
+				};
+
+				// Act
+				oDP._restoreInputSelection(oMockedInput);
+
+				// Assert
+				assert.equal(oMockedInput.selectionStart, iExpectedSelectionStart, "Input's sectionStart should be restored to " + iExpectedSelectionStart);
+				assert.equal(oMockedInput.selectionEnd, iExpectedSelectionEnd, "Input's sectionEnd should be restored to " + iExpectedSelectionEnd);
+
+				// Cleanup
+				oDP.destroy();
 			});
 
 			QUnit.test("_getVisibleDatesRange", function (assert) {
@@ -978,6 +1669,7 @@
 		<h2 id="qunit-banner"></h2>
 		<h2 id="qunit-userAgent"></h2>
 		<div id="qunit-testrunner-toolbar"></div>
+		<div id="qunit-fixture"></div>
 		<ol id="qunit-tests"></ol>
 		<br>
 		<div id="uiArea1"></div>

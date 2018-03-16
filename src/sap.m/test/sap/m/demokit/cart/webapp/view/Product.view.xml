@@ -1,32 +1,47 @@
 <mvc:View
-	id="productView"
 	controllerName="sap.ui.demo.cart.controller.Product"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
 		title="{Name}"
-		showNavButton="{device>/isPhone}"
+		showNavButton="{device>/system/phone}"
 		navButtonPress="onNavButtonPress" >
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Product_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>Product_contentLabel}"
+				headerRole="Region"
+				headerLabel="{i18n>Product_headerLabel}"
+				footerRole="Region"
+				footerLabel="{i18n>Product_footerLabel}" />
+		</landmarkInfo>
 		<headerContent>
 			<Button
 				icon="sap-icon://cart"
-				visible="{device>/isPhone}"
+				visible="{device>/system/phone}"
 				tooltip="{i18n>toCartButtonTooltip}"
 				press="onCartButtonPress" />
+			<ToolbarSpacer/>
+			<Button
+				icon="sap-icon://customer"
+				press="onAvatarPress"
+				tooltip="{i18n>avatarButtonTooltip}"/>
 		</headerContent>
 		<footer>
 			<Toolbar>
 				<ToolbarSpacer/>
 				<Button
 					icon="sap-icon://cart-3"
-					tooltip="{i18n>productAddButtonTooltip}"
 					press="onAddButtonPress" />
 			</Toolbar>
 		</footer>
 		<content>
 			<ObjectHeader
 				title="{Name}"
+				titleLevel="H3"
 				number="{
 					path : 'Price',
 					formatter : '.formatter.price'
@@ -46,7 +61,7 @@
 						title="{i18n>productMeasuresAttributeText}"
 						text="{DimensionWidth} {Unit}, {DimensionDepth} {Unit}, {DimensionHeight} {Unit}"/>
 				</attributes>
-				<firstStatus>
+				<statuses>
 					<ObjectStatus
 						text="{
 							path : 'Status',
@@ -56,19 +71,21 @@
 							path : 'Status',
 							formatter : '.formatter.statusState'
 						}" />
-				</firstStatus>
+				</statuses>
 			</ObjectHeader>
-			<VBox alignItems="Center">
-				<Image
-					id = "productImage"
-					src= "{
+			<VBox
+				alignItems="Center"
+				renderType="Div">
+					<Image
+						id = "productImage"
+						src= "{
 							path : 'PictureUrl',
 							formatter : '.formatter.pictureUrl'
 						}"
-					decorative="true"
-					class="sapUiSmallMargin"
-					press="onPicturePress"
-					width="100%"
+						decorative="true"
+						class="sapUiSmallMargin"
+						press="onPicturePress"
+						width="100%"
 					/>
 			</VBox>
 		</content>

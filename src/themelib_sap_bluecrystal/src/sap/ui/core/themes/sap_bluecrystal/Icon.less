@@ -1,5 +1,15 @@
-.sapUiIcon:focus {
-	outline: 1px dashed @sapUiKeyboardFocus;
+/* ================================= */
+/* CSS for control sap.ui.core/Icon  */
+/* BlueCrystal theme                 */
+/* ================================= */
+
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapUiIcon:focus {
+	outline-color: @sapUiKeyboardFocus;
+}
+
+html[data-sap-ui-browser^="ie"] .sapUiIcon:focus::after,
+html[data-sap-ui-browser^="ed"] .sapUiIcon:focus::after {
+	border-color: @sapUiKeyboardFocus;
 }
 
 .sapMTB-Info-CTX > .sapUiIcon {

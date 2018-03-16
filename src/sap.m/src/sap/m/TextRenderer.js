@@ -3,9 +3,12 @@
  */
 
 // Provides default renderer for control sap.m.Text
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
-	function(jQuery, Renderer) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
+	function(Renderer, coreLibrary) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	/**
 	 * Text renderer.
@@ -29,7 +32,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			sTooltip = oText.getTooltip_AsString(),
 			nMaxLines = oText.getMaxLines(),
 			bWrapping = oText.getWrapping(),
-			sTextAlign = oText.getTextAlign();
+			sTextAlign = oText.getTextAlign(),
+			bRenderWhitespace = oText.getRenderWhitespace();
 
 		// start writing html
 		oRm.write("<span");
@@ -49,7 +53,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 
 		// write style and attributes
 		sWidth ? oRm.addStyle("width", sWidth) : oRm.addClass("sapMTextMaxWidth");
-		if (sTextDir !== sap.ui.core.TextDirection.Inherit){
+		if (sTextDir !== TextDirection.Inherit){
 			oRm.writeAttribute("dir", sTextDir.toLowerCase());
 		}
 		sTooltip && oRm.writeAttributeEscaped("title", sTooltip);
@@ -58,6 +62,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 			if (sTextAlign) {
 				oRm.addStyle("text-align", sTextAlign);
 			}
+		}
+
+		if (bRenderWhitespace) {
+			var whitespaceClass = bWrapping ? "sapMTextRenderWhitespaceWrap" : "sapMTextRenderWhitespace";
+			oRm.addClass(whitespaceClass);
 		}
 
 		// finish writing html
@@ -87,6 +96,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 		oRm.writeAttribute("id", oText.getId() + "-inner");
 		oRm.addClass("sapMTextMaxLine");
 
+		// check native line clamp support
+		if (oText.canUseNativeLineClamp()) {
+			oRm.addClass("sapMTextLineClamp");
+			oRm.addStyle("-webkit-line-clamp", oText.getMaxLines());
+		}
+
 		oRm.writeClasses();
 		oRm.writeStyles();
 		oRm.write(">");
@@ -101,7 +116,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer'],
 	 * @param {sap.m.Text} oText An object representation of the control that should be rendered.
 	 */
 	TextRenderer.renderText = function(oRm, oText) {
-		var sText = oText.getText(true);
+		var sText = oText.getText(true).replace(/\\t/g,"\t");
 		oRm.writeEscaped(sText);
 	};
 

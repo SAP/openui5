@@ -290,8 +290,8 @@
 		var bHoverable = oButton._isHoverable();
 
 		// Assert
-		assert.strictEqual(bHoverable, oTestDescription.shouldBeHoverable, "The button determined wether is should be hoverable");
-		assert.strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determined wether is should be hoverable");
+		assert.strictEqual(bHoverable, oTestDescription.shouldBeHoverable, "The button determines whether it should be hoverable");
+		assert.strictEqual(oButton.$("inner").hasClass("sapMBtnHoverable"), oTestDescription.shouldHaveCssClass, "The button determines whether it should be hoverable");
 	}
 
 	QUnit.test("Should be hoverable if the button is enabled and in desktop", function(assert) {
@@ -510,7 +510,10 @@
 		oButton.destroy();
 	});
 
-	QUnit.test("AriaLabeledBy when the Button is associated with Label", function(assert) {
+	// check if we have reference added to the text content of the button
+	// so it can be read otherwise it causes the issue reported in BCP: 1680223321
+	QUnit.test("AriaLabeledBy when the Button is associated with Label and the button has text", function(assert) {
+		var sTextSpanId = "-content";
 		var oLabel = new sap.m.Label("L1", {
 			text:'Label'
 		});
@@ -523,7 +526,28 @@
 		oButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oButton.$().attr("aria-labelledby"), "L1 B1", "Label id and Button id are written inside aria-labelledby attribute");
+		assert.equal(oButton.$().attr("aria-labelledby"), "L1 B1" + sTextSpanId, "Label id and Button content id are written inside aria-labelledby attribute");
+
+		oLabel.destroy();
+		oButton.destroy();
+	});
+
+	// in case of icon only button we souldn't have self reference otherwise
+	// it causes issue reported in BCP: 1780428239
+	QUnit.test("AriaLabeledBy when the Button is associated with Label and the button has icon only", function(assert) {
+		var oLabel = new sap.m.Label("L1", {
+			text:'Label'
+		});
+		var oButton = new sap.m.Button("B1",{
+			icon: "sap-icon://edit",
+			ariaLabelledBy: "L1"
+		});
+
+		oLabel.placeAt("qunit-fixture");
+		oButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oButton.$().attr("aria-labelledby"), "L1", "Only Label id is written inside aria-labelledby attribute");
 
 		oLabel.destroy();
 		oButton.destroy();
@@ -574,7 +598,81 @@
 		assert.equal(b1.$("inner").attr("tabindex"), "-1", "Button(inner) should have negative tabindex when requested via _bExcludeFromTabChain");
 	});
 
+	QUnit.test("Enter event should fire press on keydown", function(assert) {
+		// System under Test
+		var pressSpy = this.spy();
+			oButton = new sap.m.Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
 
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Enter event should not fire press on keyup", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new sap.m.Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Space event should not fire press on keydown", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new sap.m.Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		qutils.triggerKeydown(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 0, "Press event should not be fired");
+
+		// Cleanup
+		oButton.destroy();
+	});
+
+	QUnit.test("Space event should fire press on keyup", function(assert) {
+		// System under Test
+		var pressSpy = this.spy(),
+			oButton = new sap.m.Button({
+				press: pressSpy
+			}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// Action
+		qutils.triggerKeyup(oButton.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+		// Assert
+		assert.equal(pressSpy.callCount, 1, "Press event should be fired once");
+
+		// Cleanup
+		oButton.destroy();
+	});
 
 </script>
 

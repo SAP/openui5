@@ -1,0 +1,185 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>sap.uxap.ObjectPage</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../resources/sap-ui-core.js"
+            id="sap-ui-bootstrap"
+            data-sap-ui-xx-waitForTheme="true"
+            data-sap-ui-libs="sap.m,sap.uxap,sap.ui.layout,sap.f">
+    </script>
+    <script id="view1" type="sapui5/xmlview">
+	    <m:View xmlns="sap.uxap" xmlns:m="sap.m" xmlns:f="sap.f" xmlns:l="sap.ui.layout" displayBlock="true" height="100%" controllerName="myController">
+            <ObjectPageLayout id="ObjectPageLayout"
+					showTitleInHeaderContent="true"
+					alwaysShowContentHeader="false"
+					preserveHeaderStateOnScroll="false"
+					headerContentPinnable="true"
+					isChildPage="true">
+                <headerTitle>
+                    <ObjectPageDynamicHeaderTitle id="dynamicPageTitle">
+                        <breadcrumbs>
+                            <m:Breadcrumbs currentLocationText="My Profile">
+                                <m:Link text='My Company' />
+                                <m:Link text='My Department' />
+                                <m:Link text='Employees' />
+                            </m:Breadcrumbs>
+                        </breadcrumbs>
+
+                        <expandedHeading>
+                            <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+                                <m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>
+                                <m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+                                    <m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>
+                                    <m:ObjectMarker type="Flagged"/>
+                                    <m:Button icon="sap-icon://private" type="Transparent"/>
+                                    <m:Button icon="sap-icon://arrow-down" type="Transparent"/>
+                                </m:FlexBox>
+                            </m:FlexBox>
+                        </expandedHeading>
+
+                        <snappedHeading>
+                            <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Center">
+                                <m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+                                    <f:Avatar src="../../sap/f/images/Woman_avatar_02.png" displaySize="S" class="sapUiTinyMarginEnd"/>
+                                    <m:Title text="Denise Smith" wrapping="true" class="sapUiTinyMarginEnd"/>
+                                </m:FlexBox>
+                                <m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
+                                    <m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>
+                                    <m:ObjectMarker type="Flagged"/>
+                                    <m:Button icon="sap-icon://private" type="Transparent"/>
+                                    <m:Button icon="sap-icon://arrow-down" type="Transparent"/>
+                                </m:FlexBox>
+                            </m:FlexBox>
+                        </snappedHeading>
+
+                        <expandedContent>
+                            <m:Text text="Senior Developer" />
+                        </expandedContent>
+
+                        <snappedContent>
+                           <m:Text text="Senior Developer" />
+                        </snappedContent>
+
+                        <content>
+                            <m:OverflowToolbar>
+                                <m:Button text="KPI 1" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 2" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 3" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 4" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 5" class="sapUiTinyMargin"/>
+                                <m:Button text="KPI 6" class="sapUiTinyMargin"/>
+                            </m:OverflowToolbar>
+                        </content>
+
+                        <actions>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://copy"/>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://delete"/>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://add"/>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://paste"/>
+                        </actions>
+
+                        <navigationActions>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://full-screen" tooltip="Enter Full Screen Mode"/>
+                            <m:OverflowToolbarButton type="Transparent" icon="sap-icon://decline" tooltip="Close column"/>
+                        </navigationActions>
+
+                    </ObjectPageDynamicHeaderTitle>
+                </headerTitle>
+
+                <headerContent>
+                    <m:FlexBox wrap="Wrap" fitContainer="true" alignItems="Stretch">
+                        <f:Avatar class="sapUiSmallMarginEnd sapUiSmallMarginTop"
+                                src="../../sap/f/images/Woman_avatar_02.png"
+                                displaySize="L">
+                        </f:Avatar>
+
+                        <l:VerticalLayout class="sapUiSmallMarginEnd sapUiSmallMarginTop">
+                            <m:Link text="+33 6 4512 5158"/>
+                            <m:Link text="DeniseSmith@sap.com"/>
+                        </l:VerticalLayout>
+
+                        <l:VerticalLayout class="sapUiSmallMarginEnd sapUiSmallMarginTop">
+                            <m:Label text="Hello! I am Denise and I use Object Page"/>
+                            <m:VBox height="63px">
+                                <m:Label text="Achieved goals"/>
+                                <m:ProgressIndicator
+                                        percentValue="30"
+                                        displayValue="30%"
+                                        showValue="true"
+                                        state="None"/>
+                            </m:VBox>
+                        </l:VerticalLayout>
+
+                        <l:VerticalLayout class="sapUiSmallMarginEnd sapUiSmallMarginTop">
+                            <m:Label text="San Jose, USA"/>
+                        </l:VerticalLayout>
+                    </m:FlexBox>
+                </headerContent>
+
+                <sections>
+                    <ObjectPageSection title="Relative Areas Priority">
+                        <subSections>
+                            <ObjectPageSubSection title=" ">
+                                <blocks>
+                                    <m:VBox>
+                                        <m:Label text="Title shrink factor"/>
+                                        <m:Slider id="titleSlider" width="300px" min="1" max="100" value="1" change="changeShrinkRatio"/>
+                                        <m:Label text="Content shrink factor"/>
+                                        <m:Slider id="contentSlider" width="300px" min="1" max="100" value="2" change="changeShrinkRatio"/>
+                                        <m:Label text="Actions shrink factor"/>
+                                        <m:Slider id="actionsSlider" width="300px" min="1" max="100" value="4" change="changeShrinkRatio"/>
+                                    </m:VBox>
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+                </sections>
+			</ObjectPageLayout>
+		</m:View>
+    </script>
+
+    <script id="formView" type="sapui5/xmlview">
+        <mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:layout="sap.ui.layout",
+    </script>
+</head>
+
+
+<body id="body" class="sapUiBody">
+<script>
+	(function (jQuery, App, Page) {
+		sap.ui.controller("myController", {
+			onInit: function() {
+				this.view = this.getView();
+				this.titleSlider = this.view.byId('titleSlider');
+				this.contentSlider = this.view.byId('contentSlider');
+				this.actionsSlider = this.view.byId('actionsSlider');
+			},
+
+			// implement an event handler in the Controller
+			changeShrinkRatio: function(oEvent) {
+				var oView = this.getView(),
+					sAreaShrinkRatio = this.titleSlider.getValue() + ":"
+										+ this.contentSlider.getValue() + ":"
+										+ this.actionsSlider.getValue();
+
+				oView.byId('dynamicPageTitle').setAreaShrinkRatio(sAreaShrinkRatio);
+			}
+		});
+
+		sap.ui.getCore().attachInit(function () {
+			var oApp = new App(),
+				myView = sap.ui.xmlview({viewContent: jQuery('#view1').html()});
+
+			oApp.addPage(new Page({
+				title: "New Header",
+				content: [myView]
+			})).placeAt("content");
+		});
+
+	}(jQuery, sap.m.App, sap.m.Page));
+</script>
+<div id="content"></div>
+</body>
+</html>

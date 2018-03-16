@@ -4,12 +4,26 @@
 
 // Provides control sap.f.Avatar.
 sap.ui.define([
-	"jquery.sap.global",
-	"./library",
-	"sap/ui/core/Control",
-	"sap/ui/core/IconPool"
-], function (jQuery, library, Control, IconPool) {
+    "jquery.sap.global",
+    "./library",
+    "sap/ui/core/Control",
+    "sap/ui/core/IconPool",
+    "./AvatarRenderer",
+    "jquery.sap.keycodes"
+], function(jQuery, library, Control, IconPool, AvatarRenderer) {
 	"use strict";
+
+	// shortcut for sap.f.AvatarType
+	var AvatarType = library.AvatarType;
+
+	// shortcut for sap.f.AvatarImageFitType
+	var AvatarImageFitType = library.AvatarImageFitType;
+
+	// shortcut for sap.f.AvatarSize
+	var AvatarSize = library.AvatarSize;
+
+	// shortcut for sap.f.AvatarShape
+	var AvatarShape = library.AvatarShape;
 
 	/**
 	 * Constructor for a new <code>Avatar</code>.
@@ -55,6 +69,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.46
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/avatar/ Avatar}
 	 * @alias sap.f.Avatar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -73,11 +88,11 @@ sap.ui.define([
 				/**
 				 * Defines the shape of the <code>Avatar</code>.
 				 */
-				displayShape: {type: "sap.f.AvatarShape", group: "Appearance", defaultValue: sap.f.AvatarShape.Circle},
+				displayShape: {type: "sap.f.AvatarShape", group: "Appearance", defaultValue: AvatarShape.Circle},
 				/**
 				 * Sets a predefined display size of the <code>Avatar</code>.
 				 */
-				displaySize: {type: "sap.f.AvatarSize", group: "Appearance", defaultValue: sap.f.AvatarSize.S},
+				displaySize: {type: "sap.f.AvatarSize", group: "Appearance", defaultValue: AvatarSize.S},
 				/**
 				 * Specifies custom display size of the <code>Avatar</code>.
 				 *
@@ -93,7 +108,7 @@ sap.ui.define([
 				/**
 				 * Specifies how an image would fit in the <code>Avatar</code>.
 				 */
-				imageFitType: {type: "sap.f.AvatarImageFitType", group: "Appearance", defaultValue: sap.f.AvatarImageFitType.Cover}
+				imageFitType: {type: "sap.f.AvatarImageFitType", group: "Appearance", defaultValue: AvatarImageFitType.Cover}
 			},
 			aggregations : {
 				/**
@@ -110,7 +125,8 @@ sap.ui.define([
 				 * Fired when the user selects the control.
 				 */
 				press: {}
-			}
+			},
+			designtime: "sap/f/designtime/Avatar.designtime"
 		}
 	});
 
@@ -178,6 +194,28 @@ sap.ui.define([
 		return this.setAggregation("detailBox", oLightBox);
 	};
 
+	/**
+	 * @override
+	 */
+	Avatar.prototype.clone = function () {
+		var oClone = Control.prototype.clone.apply(this, arguments),
+			oCloneDetailBox = oClone.getDetailBox();
+
+		// Handle press event if DetailBox is available
+		if (oCloneDetailBox) {
+
+			// Detach the old event
+			oClone.detachPress(this._fnLightBoxOpen, this.getDetailBox());
+
+			// Attach new event with the cloned detail box
+			oClone._fnLightBoxOpen = oCloneDetailBox.open;
+			oClone.attachPress(oClone._fnLightBoxOpen, oCloneDetailBox);
+
+		}
+
+		return oClone;
+	};
+
 	Avatar.prototype.attachPress = function() {
 		Array.prototype.unshift.apply(arguments, ["press"]);
 		Control.prototype.attachEvent.apply(this, arguments);
@@ -207,7 +245,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Avatar.prototype.ontap = function (oEvent) {
+	Avatar.prototype.ontap = function () {
 		this.firePress({/* no parameters */});
 	};
 
@@ -230,15 +268,15 @@ sap.ui.define([
 	 * Checks the validity of the <code>initials</code> parameter and returns <code>true</code> if the
 	 * initials are correct.
 	 *
-	 * @param sInitials
-	 * @returns {boolean}
+	 * @param {string} sInitials The initials value
+	 * @returns {boolean} The initials are valid or not
 	 * @private
 	 */
 	Avatar.prototype._areInitialsValid = function (sInitials) {
 		var validInitials = /^[a-zA-Z]{1,2}$/;
 		if (!validInitials.test(sInitials)) {
 			jQuery.sap.log.warning("Initials should consist of only 1 or 2 latin letters", this);
-			this._sActualType = sap.f.AvatarType.Icon;
+			this._sActualType = AvatarType.Icon;
 			this._bIsDefaultIcon = true;
 			return false;
 		}
@@ -249,16 +287,16 @@ sap.ui.define([
 	/**
 	 * Validates the <code>src</code> parameter, and sets the actual type appropriately.
 	 *
-	 * @param sSrc
+	 * @param {string} sSrc
 	 * @returns {sap.f.Avatar}
 	 * @private
 	 */
 	Avatar.prototype._validateSrc = function (sSrc) {
 		if (IconPool.isIconURI(sSrc)) {
-			this._sActualType = sap.f.AvatarType.Icon;
+			this._sActualType = AvatarType.Icon;
 			this._bIsDefaultIcon = false;
 		} else {
-			this._sActualType = sap.f.AvatarType.Image;
+			this._sActualType = AvatarType.Image;
 		}
 
 		return this;
@@ -267,7 +305,7 @@ sap.ui.define([
 	/**
 	 * Validates the entered parameters, and returns what the actual display type parameter would be.
 	 *
-	 * @returns {string|*}
+	 * @returns {sap.f.AvatarType}
 	 * @private
 	 */
 	Avatar.prototype._getActualDisplayType = function () {
@@ -277,10 +315,10 @@ sap.ui.define([
 		if (sSrc) {
 			this._validateSrc(sSrc);
 		} else if (sInitials && this._areInitialsValid(sInitials)) {
-			this._sActualType = sap.f.AvatarType.Initials;
+			this._sActualType = AvatarType.Initials;
 		} else {
 			jQuery.sap.log.warning("No src and initials were provided", this);
-			this._sActualType = sap.f.AvatarType.Icon;
+			this._sActualType = AvatarType.Icon;
 			this._bIsDefaultIcon = true;
 		}
 
@@ -290,16 +328,16 @@ sap.ui.define([
 	/**
 	 * Returns the path for the default icon, based on the value of the <code>DisplayShape</code> property.
 	 *
-	 * @param sDisplayShape
-	 * @returns {*}
+	 * @param {sap.f.AvatarShape} sDisplayShape
+	 * @returns {string} the default icon
 	 * @private
 	 */
 	Avatar.prototype._getDefaultIconPath = function (sDisplayShape) {
 		var sDefaultIconPath = null;
 
-		if (sDisplayShape === sap.f.AvatarShape.Circle) {
+		if (sDisplayShape === AvatarShape.Circle) {
 			sDefaultIconPath = Avatar.DEFAULT_CIRCLE_PLACEHOLDER;
-		} else if (sDisplayShape === sap.f.AvatarShape.Square) {
+		} else if (sDisplayShape === AvatarShape.Square) {
 			sDefaultIconPath = Avatar.DEFAULT_SQUARE_PLACEHOLDER;
 		}
 
@@ -333,10 +371,21 @@ sap.ui.define([
 		return this._icon;
 	};
 
+	// Escape single quotes. BCP: 1780430119
+	Avatar.prototype._getEscapedSrc = function () {
+		var sSrc = this.getSrc();
+
+		if (!sSrc) {
+			return '';
+		}
+
+		return sSrc.replace(/'/g, "\\'");
+	};
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
+	 * @returns {Object} The <code>sap.f.Avatar</code> accessibility information
 	 */
 	Avatar.prototype.getAccessibilityInfo = function() {
 		var bHasPressListeners = this.hasListeners("press");
@@ -354,4 +403,4 @@ sap.ui.define([
 
 	return Avatar;
 
-}, /* bExport= */ true);
+});

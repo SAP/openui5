@@ -8,11 +8,14 @@
 		id="Dialog"
 		class="sapUiNoContentPadding"
 		contentWidth="40%"
+		ariaLabelledBy="title"
 		draggable="true">
 		<customHeader>
 			<Toolbar>
 				<ToolbarSpacer/>
-				<Title text="{i18n>TechInfo.DialogTitle}"/>
+				<Title
+					id="title"
+					text="{i18n>TechInfo.DialogTitle}"/>
 				<ToolbarSpacer/>
 				<Button
 					class="sapUiTinyMarginBegin"
@@ -28,6 +31,8 @@
 		<f:SimpleForm
 			id="Form"
 			adjustLabelSpan="false"
+			ariaLabelledBy="title"
+			layout="ResponsiveGridLayout"
 			editable="true">
 			<f:content>
 				<!-- Product Version info -->
@@ -40,19 +45,7 @@
 							tooltip="{i18n>TechInfo.VersionLink.Tooltip}"/>
 						<Text
 							id="versionBuiltAt"
-							text="{
-								parts: [
-									'i18n>TechInfo.VersionBuildTime.Text',
-									{
-										path:'view>/ProductTimestamp',
-										type:'sap.ui.model.type.DateTime',
-										formatOptions: {
-											style: 'medium'
-										}
-									}
-								],
-								formatter: 'jQuery.sap.formatMessage'
-							}"
+							text="{view>/ProductTimestamp}"
 							class="sapUiTinyMarginBegin"
 							/>
 					</l:HorizontalLayout>
@@ -68,19 +61,7 @@
 						<Text text="{view>/OpenUI5ProductVersion}"/>
 						<Text
 							id="versionOpenUI5BuiltAt"
-							text="{
-								parts: [
-									'i18n>TechInfo.VersionBuildTime.Text',
-									{
-										path:'view>/OpenUI5ProductTimestamp',
-										type:'sap.ui.model.type.DateTime',
-										formatOptions: {
-											style: 'medium'
-										}
-									}
-								],
-								formatter: 'jQuery.sap.formatMessage'
-							}"
+							text="{view>/OpenUI5ProductTimestamp}"
 							class="sapUiTinyMarginBegin"/>
 					</l:HorizontalLayout>
 				</l:VerticalLayout>
@@ -101,12 +82,12 @@
 				<!-- Debug sources -->
 				<Label
 					text="{i18n>TechInfo.DebugSources.Label}"
-					tooltip="{i18n>TechInfo.DebugSources.Tooltip}"
 					labelFor="debugMode"/>
-				<HBox>
+				<HBox renderType="Bare">
 					<CheckBox
 						id="debugMode"
 						selected="{view>/DebugMode}"
+						tooltip="{i18n>TechInfo.DebugSources.Tooltip}"
 						select="onDebugSources"/>
 					<Link
 						text="{i18n>TechInfo.DebugSourcesModules.Link}"
@@ -117,9 +98,9 @@
 		<buttons>
 			<Button
 				text="{i18n>TechnInfo.DiagnosticsButton.Text}"
-				press="onOpenDiagnostics"
-				type="Emphasized"/>
+				press="onOpenDiagnostics"/>
 			<Button
+				id="startSupportAssistantButton"
 				text="{i18n>TechnInfo.AssistantButton.Text}"
 				press="onOpenAssistant"
 				class="sapUiDebugTechnicalInfoAssistantButton"
@@ -129,7 +110,9 @@
 				</layoutData>
 			</Button>
 			<Button
+				id="supportAssistantSettingsButton"
 				icon="sap-icon://settings"
+				tooltip="{i18n>Icon.settings}"
 				press="onConfigureAssistantBootstrap"
 				class="sapUiDebugTechnicalInfoAssistantSettingsButton"
 				type="Emphasized">
@@ -139,8 +122,7 @@
 			</Button>
 			<Button
 				text="{i18n>CLOSE}"
-				press="close"
-				type="Emphasized">
+				press="close">
 				<layoutData>
 					<OverflowToolbarLayoutData priority="NeverOverflow"/>
 				</layoutData>

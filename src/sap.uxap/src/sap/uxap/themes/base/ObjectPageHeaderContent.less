@@ -93,6 +93,18 @@
 			}
 		}
 
+		/* ObjectAttribute will not truncate inside ObjectPage but rather will go on more lines */
+		.sapUxAPObjectPageHeaderContentItem.sapMObjectAttributeActive {
+			line-height:1rem;
+		}
+		.sapMObjectAttributeActive .sapMObjectAttributeTitle,
+		.sapMObjectAttributeActive .sapMObjectAttributeText {
+			display: inline;
+			position: relative;
+			white-space: pre-line;
+			word-wrap: break-word;
+		}
+
 		.sapUiVltCell > .sapMObjectAttributeDiv, .sapUiVltCell > .sapMObjStatus {
 			line-height: 1.5rem;
 		}
@@ -144,6 +156,10 @@
 	.sapUiMedia-Std-Tablet & .sapUxAPObjectPageHeaderLayoutHiddenM,
 	.sapUiMedia-Std-Phone & .sapUxAPObjectPageHeaderLayoutHiddenS {
 		display: none;
+	}
+
+	.sapUxAPObjectPageHeaderObjectImage.sapMImgFocusable {
+		margin-top: 1px;
 	}
 }
 

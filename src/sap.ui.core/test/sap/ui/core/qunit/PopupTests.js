@@ -1351,6 +1351,23 @@ QUnit.test("autoclose area delegate should be removed when popup is destroyed", 
 	assert.equal(this.oRemoveDelegateSpy.callCount, 1, "Delegate is removed after destroy popup");
 });
 
+QUnit.test("autoclose area delegate should be added once even when the same control is added again", function(assert) {
+	this.oInput = new this.CustomInput({
+		change: function () {
+			that.oPopup.open();
+		}
+	}).placeAt("uiarea");
+
+	sap.ui.getCore().applyChanges();
+
+	this.oPopup.setAutoCloseAreas([this.oInput]);
+	// call the function again because popup control calls the function before each open action
+	this.oPopup.setAutoCloseAreas([this.oInput]);
+
+	assert.equal(this.oInput.aDelegates.length, 1, "there's only 1 delegate added");
+	assert.equal(this.oPopup._aAutoCloseAreas.length, 1, "the same control is only added once as autoclose area");
+});
+
 QUnit.module("bug fixes", {
 	beforeEach: function() {
 		var oPopupDomRef = jQuery.sap.domById("popup1");

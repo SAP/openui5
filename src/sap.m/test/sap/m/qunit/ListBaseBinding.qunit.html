@@ -23,7 +23,7 @@
 <script>
 
 	// global service URL keep the path relative not to have cross domain issue.
-	var sServiceURI = "/service/"
+	var sServiceURI = "/service/";
 
 	// keep the filter operator as a global
 	var mFilterOperator = sap.ui.model.FilterOperator;
@@ -120,14 +120,20 @@
 		var done = assert.async();
 		var oMockServer = startMockServer(0),
 			oList = createList({
-				busyIndicatorDelay : 0,
-				updateStarted : function() {
-					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible when update is started");
-				},
-				updateFinished : function() {
-					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
+				busyIndicatorDelay: 0
+			}, {
+				events: {
+					dataRequested: function() {
+						var $BusyIndicator = jQuery(".sapUiLocalBusyIndicator");
+						assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
+					},
+					dataReceived: function() {
+						window.setTimeout(function() {
+							var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
+							assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed after data has been received");
+							done();
+						}, 0);
+					}
 				}
 			});
 
@@ -135,7 +141,6 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			done();
 		});
 	});
 
@@ -146,14 +151,22 @@
 				growing : true,
 				growingThreshold : 10,
 				busyIndicatorDelay : 0,
-				updateStarted : function() {
-					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible when update is started");
-				},
 				updateFinished : function(oEvent) {
-					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
 					assert.strictEqual(oEvent.getParameter("actual"), 10, "Because of the growingThreshold we should see only first 10 items.");
+				}
+			}, {
+				events: {
+					dataRequested: function() {
+						var $BusyIndicator = jQuery(".sapUiLocalBusyIndicator");
+						assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
+					},
+					dataReceived: function() {
+						window.setTimeout(function() {
+							var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
+							assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed after data has been received");
+							done();
+						}, 0);
+					}
 				}
 			});
 
@@ -161,7 +174,6 @@
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			done();
 		});
 	});
 
@@ -170,24 +182,30 @@
 		var oMockServer = startMockServer(),
 			oList = createList({
 				busyIndicatorDelay : 0,
-				updateStarted : function() {
-					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible when update is started");
-				},
 				updateFinished : function(oEvent) {
-					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
 					assert.strictEqual(oEvent.getParameter("total"), 0, "Because of the filter total binding length should be 0");
 				}
 			}, {
-				filters : [new sap.ui.model.Filter("Name", mFilterOperator.EQ, "ThisTextShouldNotBeFound")]
+				filters : [new sap.ui.model.Filter("Name", mFilterOperator.EQ, "ThisTextShouldNotBeFound")],
+				events: {
+					dataRequested: function() {
+						var $BusyIndicator = jQuery(".sapUiLocalBusyIndicator");
+						assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
+					},
+					dataReceived: function() {
+						window.setTimeout(function() {
+							var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
+							assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed after data has been received");
+							done();
+						}, 0);
+					}
+				}
 			});
 
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			done();
 		});
 	});
 
@@ -235,26 +253,32 @@
 		var oMockServer = startMockServer(),
 			oList = createList({
 				busyIndicatorDelay : 0,
-				updateStarted : function() {
-					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible before error has occured");
-				},
 				updateFinished : function(oEvent) {
-					var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-					assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
 					assert.strictEqual(oEvent.getParameter("total"), 0, "Because on error data is cleared, binding length should be 0");
 					assert.strictEqual(oEvent.getParameter("actual"), 0, "Because on error data is cleared, current item count should be 0");
 					assert.strictEqual(this.$().find(".sapMListNoData").length, 1, "No Data indication is shown after error");
 				}
 			}, {
-				path :"/ThereIsNoSuchPath"
+				path :"/ThereIsNoSuchPath",
+				events: {
+					dataRequested: function() {
+						var $BusyIndicator = jQuery(".sapUiLocalBusyIndicator");
+						assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
+					},
+					dataReceived: function() {
+						window.setTimeout(function() {
+							var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
+							assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed after data has been received");
+							done();
+						}, 0);
+					}
+				}
 			});
 
 		// when initial binding is completed
 		oList.done(function () {
 			oMockServer.stop();
 			oList.destroy();
-			done();
 		});
 	});
 
@@ -272,20 +296,32 @@
 		oList.done(function () {
 			// attach to the update binding events
 			oList.attachUpdateStarted(function(oEvent) {
-				var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-				assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible before error has occured");
 				assert.strictEqual(oEvent.getParameter("actual"), 10, "There are 10 items after initial loading");
 			}).attachUpdateFinished(function(oEvent) {
-				var $BusyIndicator = this.$().find(".sapUiLocalBusyIndicator");
-				assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed when update is finished");
 				assert.strictEqual(oEvent.getParameter("total"), 0, "Because on error data is cleared, binding length should be 0");
 				assert.strictEqual(oEvent.getParameter("actual"), 0, "Because on error data is cleared, current item count should be 0");
 				assert.strictEqual(this.$().find(".sapMListNoData").length, 1, "No Data indication is shown after error");
-				oDeferred.resolve();
 			});
 
-			// create http error with unkown sorter field
-			oList.getBinding("items").sort(new sap.ui.model.Sorter("NoSuchField"));
+			var oBinding = oList.getBinding("items");
+			oBinding.attachEvents({
+				dataRequested: function() {
+					var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
+					assert.strictEqual($BusyIndicator.length, 1, "Busy indicator should be visible after data has been requested");
+				},
+				dataReceived: function() {
+					window.setTimeout(function() {
+						var $BusyIndicator = oList.$().find(".sapUiLocalBusyIndicator");
+						assert.strictEqual($BusyIndicator.length, 0, "Busy indicator should be removed after data has been received");
+						oDeferred.resolve();
+					}, 0);
+				}
+			});
+
+			window.setTimeout(function() { // first let the list finish rendering
+				// create http error with unkown sorter field
+				oBinding.sort(new sap.ui.model.Sorter("NoSuchField"));
+			}, 0);
 		});
 
 		// when test is completed
@@ -318,8 +354,7 @@
 	testOData("Should not have a static after busy", function() {
 		var done = assert.async();
 		// Arrange
-		var oMockServer = startMockServer(),
-			oDeferred = jQuery.Deferred();
+		var oMockServer = startMockServer();
 
 		// System under Test
 		var oList = createList({
@@ -445,7 +480,7 @@
 		});
 	});
 
-	QUnit.module("NonAbsoluteAndUnresolveable Binding Path")
+	QUnit.module("NonAbsoluteAndUnresolveable Binding Path");
 	QUnit.test("Should not fire update started if a binding cannot be resolved", function(assert) {
 		var oMockServer = startMockServer(),
 			oList = createList({
@@ -470,7 +505,7 @@
 			oMockServer = startMockServer(),
 			oDeferred = jQuery.Deferred(),
 			oList = createList({
-				growing : false,
+				growing : false
 			}, {
 				template : new sap.m.InputListItem({
 					label: "Product Name",
@@ -553,7 +588,7 @@
 					assert.ok($GrowingButton.parent().next().get(0) === oList.getDomRef("before"), "Growing button is inserted before the first item.");
 					assert.ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
 
-					if (document.hasFocus()) {
+					if (document.hasFocus() && oList.getItemNavigation()) {
 						oList.focus();
 						assert.ok(document.activeElement === oNavigationRoot.children[iThreshold - 1], "First focus jumps to last item");
 					}
@@ -562,7 +597,7 @@
 					$GrowingButton.focus().trigger("tap");
 
 					oList.attachUpdateFinished(function(oEvent) {
-						oNavigationRoot = oList.getNavigationRoot(),
+						oNavigationRoot = oList.getNavigationRoot();
 						assert.ok(oList.getItems().pop().getDomRef() === oNavigationRoot.children[0], "Last aggregation DOM is the first child of the list");
 
 						if (document.hasFocus()) {

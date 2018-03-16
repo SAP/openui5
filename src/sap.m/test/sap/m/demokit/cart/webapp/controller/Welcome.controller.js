@@ -10,17 +10,18 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.demo.cart.controller.Welcome", {
 
 		_iCarouselTimeout: 0, // a pointer to the current timeout
-		_iCarouselLoopTime : 8000, // loop to next picture after 8 seconds
+		_iCarouselLoopTime: 8000, // loop to next picture after 8 seconds
 
-		formatter : formatter,
+		formatter: formatter,
 
 		_mFilters: {
-				Promoted: [new Filter("Type", "EQ", "Promoted")],
-				Viewed: [new Filter("Type", "EQ", "Viewed")],
-				Favorite: [new Filter("Type", "EQ", "Favorite")]
-			},
+			Promoted: [new Filter("Type", "EQ", "Promoted")],
+			Viewed: [new Filter("Type", "EQ", "Viewed")],
+			Favorite: [new Filter("Type", "EQ", "Favorite")]
+		},
 
 		onInit: function () {
+			this._router = this.getRouter();
 			var oViewModel = new JSONModel({
 				welcomeCarouselShipping: 'img/ShopCarouselShipping.jpg',
 				welcomeCarouselInviteFriend: 'img/ShopCarouselInviteFriend.jpg',
@@ -37,14 +38,14 @@ sap.ui.define([
 
 			// select random carousel page at start
 			var oWelcomeCarousel = this.byId("welcomeCarousel");
-			var iRandomIndex = Math.floor(Math.random() * oWelcomeCarousel.getPages().length - 1);
+			var iRandomIndex = Math.floor(Math.abs(Math.random()) * oWelcomeCarousel.getPages().length);
 			oWelcomeCarousel.setActivePage(oWelcomeCarousel.getPages()[iRandomIndex]);
 		},
 
 		/**
 		 * lifecycle hook that will initialize the welcome carousel
 		 */
-		onAfterRendering: function() {
+		onAfterRendering: function () {
 			this.onCarouselPageChanged();
 		},
 
@@ -75,7 +76,7 @@ sap.ui.define([
 		/**
 		 * clear previous animation and initialize the loop animation of the welcome carousel
 		 */
-		onCarouselPageChanged: function() {
+		onCarouselPageChanged: function () {
 			clearTimeout(this._iCarouselTimeout);
 			this._iCarouselTimeout = setTimeout(function () {
 				var oWelcomeCarousel = this.byId("welcomeCarousel");
@@ -87,14 +88,14 @@ sap.ui.define([
 		},
 
 		/**
-		* Event handler to determine which link the user has clicked
-		* @param {sap.ui.base.Event} oEvent the press event of the link
-		*/
+		 * Event handler to determine which link the user has clicked
+		 * @param {sap.ui.base.Event} oEvent the press event of the link
+		 */
 		onSelectProduct: function (oEvent) {
 			var oContext = oEvent.getSource().getBindingContext("view");
 			var sCategoryId = oContext.getProperty("Product/Category");
 			var sProductId = oContext.getProperty("Product/ProductId");
-			this.getOwnerComponent().getRouter().navTo("product", {
+			this._router.navTo("product", {
 				id: sCategoryId,
 				productId: sProductId
 			});
@@ -118,9 +119,9 @@ sap.ui.define([
 		},
 
 		/**
-		* Event handler to determine which button was clicked
-		* @param {sap.ui.base.Event} oEvent the button press event
-		*/
+		 * Event handler to determine which button was clicked
+		 * @param {sap.ui.base.Event} oEvent the button press event
+		 */
 		onAddButtonPress: function (oEvent) {
 			var oResourceBundle = this.getModel("i18n").getResourceBundle();
 			var oProduct = oEvent.getSource().getBindingContext("view").getObject();
@@ -129,17 +130,16 @@ sap.ui.define([
 		},
 
 		/**
-		 * Select two random elements from the promoted array
+		 * Select two random elements from the promoted products array
 		 * @private
 		 */
 		_selectPromotedItems: function () {
 			var aPromotedItems = this.getView().getModel("view").getProperty("/Promoted");
-			var aSelectedPromoted = [];
-			for (var i = 0; i < 2; i++) {
-				var oSelectedPromoted = aPromotedItems[Math.floor(Math.random() * aPromotedItems.length)];
-				aSelectedPromoted.push(oSelectedPromoted);
-			}
-			this.getModel("view").setProperty("/Promoted", aSelectedPromoted);
+			var iRandom1, iRandom2 = Math.floor(Math.random() * aPromotedItems.length);
+			do {
+				iRandom1 = Math.floor(Math.random() * aPromotedItems.length);
+			} while (iRandom1 === iRandom2);
+			this.getModel("view").setProperty("/Promoted", [aPromotedItems[iRandom1], aPromotedItems[iRandom2]]);
 		}
 	});
 });

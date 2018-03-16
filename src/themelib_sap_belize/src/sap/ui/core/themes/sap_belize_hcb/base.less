@@ -36,7 +36,7 @@
 // [Label "Font Family"]
 // [Description "The preferred font family"]
 // [Tags "Quick", "Base", "Content", "Font", "Protected"]
-@sapFontFamily: "72-Web",Arial, Helvetica, sans-serif;
+@sapFontFamily: "72", Arial, Helvetica, sans-serif;
 
 // [Label "Font Size"]
 // [Description "The preferred font size"]
@@ -227,6 +227,21 @@
 // [Description "The color of marker icons."]
 // [Tags "Base", "Content", "Color"]
 @sapContent_MarkerIconColor: @sapContent_IconColor;
+
+// [Label "Marker Text Color"]
+// [Description "The color of Marker Texts."]
+// [Tags "Base", "Content", "Color", "Font"]
+@sapContent_MarkerTextColor: @sapTextColor;
+
+// [Label "Image Placeholder Background Color"]
+// [Description "The background color of Image Placeholders."]
+// [Tags "Base", "Content", "Color"]
+@sapContent_ImagePlaceholderBackground: @sapBackgroundColor;
+
+// [Label "Image Placeholder Foreground Color"]
+// [Description "The foreground color of Image Placeholders."]
+// [Tags "Base", "Content", "Color"]
+@sapContent_ImagePlaceholderForegroundColor: @sapHC_ReducedAltForeground;
 
 // [Label "Content Focus Color"]
 // [Description "The color of the focus."]
@@ -723,57 +738,57 @@
 // [Label "Chart Ordered Color 1"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_1: #30a7df;
+@sapChart_OrderedColor_1: #4da2f6;
 
 // [Label "Chart Ordered Color 2"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_2: #a3ce2f;
+@sapChart_OrderedColor_2: #e8743b;
 
 // [Label "Chart Ordered Color 3"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_3: #f8b033;
+@sapChart_OrderedColor_3: #19a979;
 
 // [Label "Chart Ordered Color 4"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_4: #cb73b8;
+@sapChart_OrderedColor_4: #ed4a7b;
 
 // [Label "Chart Ordered Color 5"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_5: #efc619;
+@sapChart_OrderedColor_5: #945ecf;
 
 // [Label "Chart Ordered Color 6"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_6: #b9b088;
+@sapChart_OrderedColor_6: #13a4b4;
 
 // [Label "Chart Ordered Color 7"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_7: #30a7df;
+@sapChart_OrderedColor_7: #5c66f5;
 
 // [Label "Chart Ordered Color 8"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_8: #a3ce2f;
+@sapChart_OrderedColor_8: #c63fa4;
 
 // [Label "Chart Ordered Color 9"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_9: #f8b033;
+@sapChart_OrderedColor_9: #6c8893;
 
 // [Label "Chart Ordered Color 10"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_10: #cb73b8;
+@sapChart_OrderedColor_10: #ee6868;
 
 // [Label "Chart Ordered Color 11"]
 // [Description "This color is used as a ordered color of a sequence of 11 chart colors. It has a defined contrast to its predecessor and successor."]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_OrderedColor_11: #efc619;
+@sapChart_OrderedColor_11: #387bb7;
 
 // [Label "Chart Color 'Bad'"]
 // [Description "This color is to visualize a 'Bad' value."]
@@ -798,17 +813,57 @@
 // [Label "Chart Color Sequence 1"]
 // [Description "This color is the base chart color of the sequence 1"]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Sequence_1: #5cbae5;
+@sapChart_Sequence_1: @sapChart_OrderedColor_1;
 
 // [Label "Chart Color Sequence 2"]
 // [Description "This color is the base chart color of the sequence 2"]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Sequence_2: #c6e17d;
+@sapChart_Sequence_2: @sapChart_OrderedColor_2;
 
 // [Label "Chart Color Sequence 3"]
 // [Description "This color is the base chart color of the sequence 3"]
 // [Tags "Base", "Chart", "Color"]
-@sapChart_Sequence_3: #ffab1d;
+@sapChart_Sequence_3: @sapChart_OrderedColor_3;
+
+// [Label "Chart Color Sequence 4"]
+// [Description "This color is the base chart color of the sequence 4"]
+// [Tags "Base", "Chart", "Color"]
+@sapChart_Sequence_4: @sapChart_OrderedColor_4;
+
+// [Label "Chart Color Sequence 5"]
+// [Description "This color is the base chart color of the sequence 5"]
+// [Tags "Base", "Chart", "Color"]
+@sapChart_Sequence_5: @sapChart_OrderedColor_5;
+
+// [Label "Chart Color Sequence 6"]
+// [Description "This color is the base chart color of the sequence 6"]
+// [Tags "Base", "Chart", "Color"]
+@sapChart_Sequence_6: @sapChart_OrderedColor_6;
+
+// [Label "Chart Color Sequence 7"]
+// [Description "This color is the base chart color of the sequence 7"]
+// [Tags "Base", "Chart", "Color"]
+@sapChart_Sequence_7: @sapChart_OrderedColor_7;
+
+// [Label "Chart Color Sequence 8"]
+// [Description "This color is the base chart color of the sequence 8"]
+// [Tags "Base", "Chart", "Color"]
+@sapChart_Sequence_8: @sapChart_OrderedColor_8;
+
+// [Label "Chart Color Sequence 9"]
+// [Description "This color is the base chart color of the sequence 9"]
+// [Tags "Base", "Chart", "Color"]
+@sapChart_Sequence_9: @sapChart_OrderedColor_9;
+
+// [Label "Chart Color Sequence 10"]
+// [Description "This color is the base chart color of the sequence 10"]
+// [Tags "Base", "Chart", "Color"]
+@sapChart_Sequence_10: @sapChart_OrderedColor_10;
+
+// [Label "Chart Color Sequence 11"]
+// [Description "This color is the base chart color of the sequence 11"]
+// [Tags "Base", "Chart", "Color"]
+@sapChart_Sequence_11: @sapChart_OrderedColor_11;
 
 // [Label "Chart Color Sequence 'Neutral'"]
 // [Description "This color is the base chart color of the sequence 'Neutral'"]

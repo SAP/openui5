@@ -1,9 +1,88 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/Renderer", "sap/m/ListItemBaseRenderer"],
-	function(jQuery, Renderer, ListItemBaseRenderer) {
+sap.ui.define([
+	"jquery.sap.global",
+	"sap/ui/core/Renderer",
+	"sap/m/ListItemBaseRenderer"
+], function(jQuery, Renderer, ListItemBaseRenderer) {
 	"use strict";
+
+	var TAG_WHITELIST = {
+		"svg": {
+			attributes: ["width", "height", "focusable", "preserveAspectRatio"]
+		},
+		"path": {
+			attributes: ["d", "fill", "transform", "stroke", "stroke-width"]
+		},
+		"line": {
+			attributes: ["x1", "x2", "y1", "y2", "stroke-width", "stroke", "stroke-dasharray", "stroke-linecap"]
+		}
+	},
+		bIsDOMParserSupported;
+
+	try {
+		var oParser = new DOMParser();
+		bIsDOMParserSupported = oParser.parseFromString("<svg />", "text/html") !== null;
+	} catch (ex) {
+		bIsDOMParserSupported = false;
+	}
+
+	var fnParseSvgString;
+
+	// Most browsers support DOMParser for text/html. Sadly our voter job uses phantomjs. This is a fix for phantomjs.
+	if (bIsDOMParserSupported) {
+		fnParseSvgString = function (sString) {
+			var oParser = new DOMParser(),
+				oDocument = oParser.parseFromString(sString, "text/html");
+			return oDocument.body.childNodes;
+		};
+	} else {
+		fnParseSvgString = function (sString) {
+			var oDocument = document.implementation.createHTMLDocument("");
+			oDocument.body.innerHTML = sString;
+			return oDocument.body.childNodes;
+		};
+	}
+
+	function every(aDomArray, fnCallback) {
+		var i;
+		if (!aDomArray) {
+			return true;
+		}
+		for (i = 0; i < aDomArray.length; i++) {
+			if (!fnCallback(aDomArray[i])) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	function isValidSvgNode(oNode) {
+		if (oNode.nodeType !== window.Node.ELEMENT_NODE) {
+			return true;
+		}
+		var sTagName = oNode.tagName.toLowerCase(),
+			oTag = TAG_WHITELIST[sTagName],
+			bTagsValid;
+		if (!oTag) {
+			return false;
+		}
+		bTagsValid = every(oNode.attributes, function (attribute) {
+			if (attribute.value === "") {
+				return true;
+			}
+			var sAttributeName = attribute.name.toLowerCase();
+			return oTag.attributes.indexOf(sAttributeName) >= 0;
+		});
+		if (!bTagsValid) {
+			return false;
+		}
+		if (!oTag.allowTextContenet && oNode.textContent.trim().length > 0) {
+			return false;
+		}
+		return every(oNode.childNodes, isValidSvgNode);
+	}
 
 	/**
 	 * SelectionDetailsItemRenderer renderer.
@@ -33,10 +112,23 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Renderer", "sap/m/ListItemBaseR
 		ListItemBaseRenderer.renderType(oRm, oControl);
 	};
 
+	SelectionDetailsListItemRenderer._isValidSvg = function (data) {
+		try {
+			var aNodes = fnParseSvgString(data);
+			if (aNodes.length === 0) {
+				return false;
+			}
+			return every(aNodes, isValidSvgNode);
+		} catch (ex) {
+			return false;
+		}
+	};
+
 	SelectionDetailsListItemRenderer.renderLine = function(oRm, oControl, line) {
 		var sUnit = line.getUnit().trim(),
-			sValue = line.getValue(),
-			sDisplayValue = line.getDisplayValue();
+			sValue = line._getValueToRender(),
+			sDisplayValue = line.getDisplayValue(),
+			sLineMarker = line.getLineMarker();
 
 		oRm.write("<div");
 		oRm.addClass("sapMSDItemLine");
@@ -47,6 +139,9 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Renderer", "sap/m/ListItemBaseR
 		oRm.addClass("sapMSDItemLineMarkerContainer");
 		oRm.writeClasses();
 		oRm.write(">");
+		if (sLineMarker && SelectionDetailsListItemRenderer._isValidSvg(sLineMarker)) {
+			oRm.write(sLineMarker);
+		}
 		oRm.write("</div>");
 
 		oRm.write("<div");

@@ -1,0 +1,43 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "0162e96c5452e5045751e400739f7a07d96c7732",
+        "type": "FEATURE",
+        "text": " Core: DragInfo/DropInfo are added to configure drag-and-drop",
+        "references": []
+      },
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": " QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "d9e75779444d717800aa857a591d401495224679",
+        "type": "FIX",
+        "text": " TreeTable: Outline offset of tree icon in zoom levels \u003c 100%",
+        "references": []
+      },
+      {
+        "id": "964f990699939f33c47044823f0222f1d74412e1",
+        "type": "FIX",
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
+      },
+      {
+        "id": "a73a2443094c0bd2e428a9d94c091cb96ce4352b",
+        "type": "FIX",
+        "text": " GridTable: Fix update of firstVisibleRow on scrolling",
+        "references": []
+      },
+      {
+        "id": "8d2a3caaf2a2539e9ebd1461ff4b7343735a4bd1",
+        "type": "FIX",
+        "text": " GridTable: Scrollbar styling in base theme",
+        "references": []
+      }
+    ]
+  }
+}

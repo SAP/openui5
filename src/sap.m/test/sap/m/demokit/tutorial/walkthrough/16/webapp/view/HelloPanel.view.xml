@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.wt.controller.HelloPanel"
+	controllerName="sap.ui.demo.walkthrough.controller.HelloPanel"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Panel
@@ -19,8 +19,8 @@
 				value="{/recipient/name}"
 				valueLiveUpdate="true"
 				width="60%"/>
-			<Text
-				text="Hello {/recipient/name}"
+			<FormattedText
+				htmlText="Hello {/recipient/name}"
 				class="sapUiSmallMargin sapThemeHighlight-asColor myCustomText"/>
 		</content>
 	</Panel>

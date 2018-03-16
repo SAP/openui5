@@ -3,14 +3,17 @@
  */
 
 // Provides helper sap.ui.table.TablePointerExtension.
-sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUtils', 'sap/ui/Device', 'sap/ui/core/Popup', 'jquery.sap.dom'],
-	function(library, jQuery, TableExtension, TableUtils, Device, Popup, jQueryDom) {
+sap.ui.define([
+"./library", "jquery.sap.global", "./TableExtension", "./TableUtils", "sap/ui/Device", "sap/ui/core/Popup"
+], function(library, jQuery, TableExtension, TableUtils, Device, Popup) {
 	"use strict";
 
 	// shortcuts
 	var SelectionMode = library.SelectionMode;
 
-	var KNOWNCLICKABLECONTROLS = ["sapMBtnBase", "sapMInputBase", "sapMLnk", "sapMSlt", "sapMCb", "sapMRI", "sapMSegBBtn", "sapUiIconPointer"];
+	var KNOWNCLICKABLECONTROLS = [
+		"sapMBtnBase", "sapMInputBase", "sapMLnk", "sapMSlt",
+		"sapMCb", "sapMRI", "sapMSegBBtn", "sapUiIconPointer", "sapMBtnIcon"];
 
 	/*
 	 * Provides utility functions used this extension
@@ -20,7 +23,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Returns the pageX and pageY position of the given mouse/touch event.
 		 */
-		_getEventPosition : function(oEvent, oTable) {
+		_getEventPosition: function(oEvent, oTable) {
 			var oPosition;
 
 			function getTouchObject(oTouchEvent) {
@@ -53,8 +56,8 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		 * Returns true, when the given click event should be skipped because it happened on a
 		 * interactive control inside a table cell.
 		 */
-		_skipClick : function(oEvent, $Target, oCellInfo) {
-			if (oCellInfo.type != TableUtils.CELLTYPES.DATACELL && oCellInfo.type != TableUtils.CELLTYPES.ROWACTION) {
+		_skipClick: function(oEvent, $Target, oCellInfo) {
+			if (!oCellInfo.isOfType(TableUtils.CELLTYPE.DATACELL | TableUtils.CELLTYPE.ROWACTION)) {
 				return false;
 			}
 
@@ -93,12 +96,12 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Changes the selection based on the given click event on the given row selector, data cell or row action cell.
 		 */
-		_handleClickSelection : function(oEvent, $Cell, oTable) {
+		_handleClickSelection: function(oEvent, $Cell, oTable) {
 
 			TableUtils.toggleRowSelection(oTable, $Cell, null, function(iRowIndex) {
 
-				// in case of IE and SHIFT we clear the text selection
-				if (!!Device.browser.internet_explorer && oEvent.shiftKey) {
+				// IE and Edge perform a text selection if holding shift while clicking. This is not desired for range selection of rows.
+				if ((Device.browser.msie || Device.browser.edge) && oEvent.shiftKey) {
 					oTable._clearTextSelection();
 				}
 
@@ -165,7 +168,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Initializes the drag&drop for resizing
 		 */
-		initColumnResizing : function(oTable, oEvent){
+		initColumnResizing: function(oTable, oEvent) {
 			if (oTable._bIsColumnResizerMoving) {
 				return;
 			}
@@ -179,8 +182,10 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			oTable._$colResize = oTable.$("rsz");
 			oTable._iColumnResizeStart = ExtensionHelper._getEventPosition(oEvent, oTable).x;
 
-			$Document.bind((bTouch ? "touchend" : "mouseup") + ".sapUiTableColumnResize", ColumnResizeHelper.exitColumnResizing.bind(oTable));
-			$Document.bind((bTouch ? "touchmove" : "mousemove") + ".sapUiTableColumnResize", ColumnResizeHelper.onMouseMoveWhileColumnResizing.bind(oTable));
+			$Document.bind((bTouch ? "touchend" : "mouseup") + ".sapUiTableColumnResize",
+				ColumnResizeHelper.exitColumnResizing.bind(oTable));
+			$Document.bind((bTouch ? "touchmove" : "mousemove") + ".sapUiTableColumnResize",
+				ColumnResizeHelper.onMouseMoveWhileColumnResizing.bind(oTable));
 
 			oTable._disableTextSelection();
 		},
@@ -211,7 +216,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 			var oColumn = this._getVisibleColumns()[this._iLastHoveredColumnIndex];
 			var iDeltaX = iLocationX - this._iColumnResizeStart;
-			var iColWidth = this.$().find('th[data-sap-ui-colid="' + oColumn.getId() + '"]').width();
+			var iColWidth = this.$().find("th[data-sap-ui-colid=\"" + oColumn.getId() + "\"]").width();
 			var iWidth = Math.max(iColWidth + iDeltaX * (this._bRtlMode ? -1 : 1), TableUtils.Column.getMinColumnWidth());
 
 			// calculate and set the position of the resize handle
@@ -275,7 +280,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		 *
 		 * Experimental feature.
 		 */
-		doAutoResizeColumn : function(oTable, iColIndex) {
+		doAutoResizeColumn: function(oTable, iColIndex) {
 			var aVisibleColumns = oTable._getVisibleColumns(),
 				oColumn;
 
@@ -298,20 +303,20 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		 * Headers with column span are not taken into account.
 		 * @param {sap.ui.table.Column} oCol the column
 		 * @param {int} iColIndex index of the column
-		 * @return {int} iWidth calculated column width
+		 * @returns {int} iWidth calculated column width
 		 * @private
 		 */
-		_calculateAutomaticColumnWidth : function(oCol, iColIndex) {
+		_calculateAutomaticColumnWidth: function(oCol, iColIndex) {
 			oCol = oCol || this.getColumns()[iColIndex];
 			var $this = this.$();
 			var $hiddenArea = jQuery("<div>").addClass("sapUiTableHiddenSizeDetector");
 			$this.append($hiddenArea);
 
 			// Create a copy of  all visible cells in the column, including the header cells without colspan
-			var $cells = $this.find('td[data-sap-ui-colid = "' + oCol.getId() + '"]:not([colspan])')
-				.filter(function(index, element) {
-					return element.style.display != "none";
-				}).children().clone();
+			var $cells = $this.find("td[data-sap-ui-colid = \"" + oCol.getId() + "\"]:not([colspan])")
+							  .filter(function(index, element) {
+								  return element.style.display != "none";
+							  }).children().clone();
 			$cells.find("[id]").removeAttr("id"); // remove all id attributes
 
 			// Determine the column width
@@ -327,9 +332,9 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Initialize the event listener for positioning the column resize bar and computing the currently hovered column.
 		 */
-		initColumnTracking : function(oTable) {
+		initColumnTracking: function(oTable) {
 			// attach mousemove listener to update resizer position
-			oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed").mousemove(function(oEvent){
+			oTable.$().find(".sapUiTableCtrlScr, .sapUiTableCtrlScrFixed").mousemove(function(oEvent) {
 				var oDomRef = this.getDomRef();
 				if (!oDomRef || this._bIsColumnResizerMoving) {
 					return;
@@ -368,8 +373,6 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		}
 	};
 
-
-
 	/*
 	 * Provides drag&drop resize capabilities for visibleRowCountMode "Interactive".
 	 */
@@ -378,7 +381,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Initializes the drag&drop for resizing
 		 */
-		initInteractiveResizing: function(oTable, oEvent){
+		initInteractiveResizing: function(oTable, oEvent) {
 			var $Body = jQuery(document.body),
 				$Splitter = oTable.$("sb"),
 				$Document = jQuery(document),
@@ -395,10 +398,14 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 				+ width + "px; left:" + offset.left + "px; top:" + offset.top + "px\" ></div>");
 
 			// Append overlay over splitter to enable correct functionality of moving the splitter
-			$Splitter.append("<div id=\"" + oTable.getId() + "-rzoverlay\" style =\"left: 0px; right: 0px; bottom: 0px; top: 0px; position:absolute\" ></div>");
+			$Splitter.append(
+				"<div id=\"" + oTable.getId() + "-rzoverlay\" style =\"left: 0px; right: 0px; bottom: 0px; top: 0px; position:absolute\" ></div>");
 
-			$Document.bind((bTouch ? "touchend" : "mouseup") + ".sapUiTableInteractiveResize", InteractiveResizeHelper.exitInteractiveResizing.bind(oTable));
-			$Document.bind((bTouch ? "touchmove" : "mousemove") + ".sapUiTableInteractiveResize", InteractiveResizeHelper.onMouseMoveWhileInteractiveResizing.bind(oTable));
+			$Document.bind((bTouch ? "touchend" : "mouseup") + ".sapUiTableInteractiveResize",
+				InteractiveResizeHelper.exitInteractiveResizing.bind(oTable));
+			$Document.bind((bTouch ? "touchmove" : "mousemove") + ".sapUiTableInteractiveResize",
+				InteractiveResizeHelper.onMouseMoveWhileInteractiveResizing.bind(oTable)
+			);
 
 			oTable._disableTextSelection();
 		},
@@ -406,7 +413,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Drops the previous dragged horizontal splitter bar and recalculates the amount of rows to be displayed.
 		 */
-		exitInteractiveResizing : function(oEvent) {
+		exitInteractiveResizing: function(oEvent) {
 			var $Body = jQuery(document.body),
 				$Document = jQuery(document),
 				$This = this.$(),
@@ -434,7 +441,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Handler for the selectstart event triggered in IE to select the text. Avoid this during resize drag&drop.
 		 */
-		onSelectStartWhileInteractiveResizing : function(oEvent) {
+		onSelectStartWhileInteractiveResizing: function(oEvent) {
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
 			return false;
@@ -443,7 +450,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Handler for the move events while dragging the horizontal resize bar.
 		 */
-		onMouseMoveWhileInteractiveResizing : function(oEvent) {
+		onMouseMoveWhileInteractiveResizing: function(oEvent) {
 			var iLocationY = ExtensionHelper._getEventPosition(oEvent, this).y;
 			var iMin = this.$().offset().top;
 			if (iLocationY > iMin) {
@@ -452,8 +459,6 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		}
 
 	};
-
-
 
 	/*
 	 * Provides drag&drop capabilities for column reordering.
@@ -468,22 +473,21 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 				$Col = oColumn.$(),
 				$Table = oTable.$();
 
-
 			oTable._disableTextSelection();
 			$Table.addClass("sapUiTableDragDrop");
 
 			// Initialize the Ghost
 			var $Ghost = $Col.clone();
-			$Ghost.find('*').addBack($Ghost).removeAttr("id")
-				.removeAttr("data-sap-ui")
-				.removeAttr("tabindex");
+			$Ghost.find("*").addBack($Ghost).removeAttr("id")
+				  .removeAttr("data-sap-ui")
+				  .removeAttr("tabindex");
 			$Ghost.attr("id", oTable.getId() + "-roghost")
-				.addClass("sapUiTableColReorderGhost")
-				.css({
-					"left": -10000,
-					"top": -10000,
-					"z-index": Popup.getNextZIndex()
-				});
+				  .addClass("sapUiTableColReorderGhost")
+				  .css({
+					  "left": -10000,
+					  "top": -10000,
+					  "z-index": Popup.getNextZIndex()
+				  });
 			$Ghost.toggleClass(TableUtils.getContentDensity(oTable), true);
 			$Ghost.appendTo(document.body);
 			oTable._$ReorderGhost = oTable.getDomRef("roghost");
@@ -492,7 +496,8 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			$Table.find("td[data-sap-ui-colid='" + oColumn.getId() + "']").toggleClass("sapUiTableColReorderFade", true);
 
 			// Initialize the Indicator where to insert
-			var $Indicator = jQuery("<div id='" + oTable.getId() + "-roind' class='sapUiTableColReorderIndicator'><div class='sapUiTableColReorderIndicatorArrow'></div><div class='sapUiTableColReorderIndicatorInner'></div></div>");
+			var $Indicator = jQuery("<div id='" + oTable.getId()
+									+ "-roind' class='sapUiTableColReorderIndicator'><div class='sapUiTableColReorderIndicatorArrow'></div><div class='sapUiTableColReorderIndicatorInner'></div></div>");
 			$Indicator.appendTo(oTable.getDomRef("sapUiTableCnt"));
 			oTable._$ReorderIndicator = oTable.getDomRef("roind");
 
@@ -510,7 +515,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		 * Handler for the move events while dragging for reordering.
 		 * Reposition the ghost.
 		 */
-		onMouseMoveWhileReordering : function(oEvent) {
+		onMouseMoveWhileReordering: function(oEvent) {
 			var oEventPosition = ExtensionHelper._getEventPosition(oEvent, this),
 				iLocationX = oEventPosition.x,
 				iLocationY = oEventPosition.y,
@@ -522,7 +527,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 			var oPos = ReorderHelper.findColumnForPosition(this, iLocationX);
 
-			if ( !oPos || !oPos.id ) {
+			if (!oPos || !oPos.id) {
 				//Special handling for dummy column (in case the other columns does not occupy the whole space),
 				//row selectors and row actions
 				this._iNewColPos = iOldColPos;
@@ -540,12 +545,12 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			this._bReorderScroll = false;
 
 			if (iLocationX > oScrollAreaRect.left + iScrollAreaWidth - iScrollTriggerAreaWidth
-					&& iScrollAreaScrollLeft + iScrollAreaWidth < oScrollArea.scrollWidth) {
+				&& iScrollAreaScrollLeft + iScrollAreaWidth < oScrollArea.scrollWidth) {
 				this._bReorderScroll = true;
 				ReorderHelper.doScroll(this, !this._bRtlMode);
 				ReorderHelper.adaptReorderMarkerPosition(this, oPos, false);
 			} else if (iLocationX < oScrollAreaRect.left + iScrollTriggerAreaWidth
-					&& iScrollAreaScrollLeft > 0) {
+					   && iScrollAreaScrollLeft > 0) {
 				this._bReorderScroll = true;
 				ReorderHelper.doScroll(this, this._bRtlMode);
 				ReorderHelper.adaptReorderMarkerPosition(this, oPos, false);
@@ -577,7 +582,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Ends the column reordering process via drag&drop.
 		 */
-		exitReordering : function(oEvent) {
+		exitReordering: function(oEvent) {
 			var iOldIndex = this._iDnDColIndex;
 			var iNewIndex = this._iNewColPos;
 
@@ -626,7 +631,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Finds the column which belongs to the current x position and returns information about this column.
 		 */
-		findColumnForPosition : function(oTable, iLocationX) {
+		findColumnForPosition: function(oTable, iLocationX) {
 			var oHeaderDomRef, $HeaderDomRef, oRect, iWidth, oPos, bBefore, bAfter;
 
 			for (var i = 0; i < oTable._aTableHeaders.length; i++) {
@@ -635,12 +640,12 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 				oRect = oHeaderDomRef.getBoundingClientRect();
 				iWidth = $HeaderDomRef.outerWidth();
 				oPos = {
-					left : oRect.left,
-					center : oRect.left + iWidth / 2,
-					right :  oRect.left + iWidth,
-					width : iWidth,
-					index : parseInt($HeaderDomRef.attr("data-sap-ui-headcolindex"), 10),
-					id : $HeaderDomRef.attr("data-sap-ui-colid")
+					left: oRect.left,
+					center: oRect.left + iWidth / 2,
+					right: oRect.left + iWidth,
+					width: iWidth,
+					index: parseInt($HeaderDomRef.attr("data-sap-ui-headcolindex"), 10),
+					id: $HeaderDomRef.attr("data-sap-ui-colid")
 				};
 
 				bBefore = iLocationX >= oPos.left && iLocationX <= oPos.center;
@@ -648,7 +653,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 				if (bBefore || bAfter) {
 					oPos.before = oTable._bRtlMode ? bAfter : bBefore;
-					oPos.after =  oTable._bRtlMode ? bBefore : bAfter;
+					oPos.after = oTable._bRtlMode ? bBefore : bAfter;
 					return oPos;
 				}
 			}
@@ -659,7 +664,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		/*
 		 * Starts or continues stepwise horizontal scrolling until oTable._bReorderScroll is false.
 		 */
-		doScroll : function(oTable, bForward) {
+		doScroll: function(oTable, bForward) {
 			if (oTable._mTimeouts.horizontalReorderScrollTimerId) {
 				window.clearTimeout(oTable._mTimeouts.horizontalReorderScrollTimerId);
 				oTable._mTimeouts.horizontalReorderScrollTimerId = null;
@@ -677,9 +682,10 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 		},
 
 		/*
-		 * Positions the reorder marker on the column (given by the position information (@see findColumnForPosition)).
+		 * Positions the reorder marker on the column (given by the position information).
+		 * @see findColumnForPosition
 		 */
-		adaptReorderMarkerPosition : function(oTable, oPos, bShow) {
+		adaptReorderMarkerPosition: function(oTable, oPos, bShow) {
 			if (!oPos || !oTable._$ReorderIndicator) {
 				return;
 			}
@@ -690,21 +696,23 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			}
 
 			jQuery(oTable._$ReorderIndicator).css({
-				"left" : iLeft + "px"
+				"left": iLeft + "px"
 			}).toggleClass("sapUiTableColReorderIndicatorActive", bShow);
 		}
 
 	};
-
 
 	/*
 	 * Provides the event handling for the row hover effect.
 	 */
 	var RowHoverHandler = {
 
-		ROWAREAS : [".sapUiTableRowHdr", ".sapUiTableRowAction", ".sapUiTableCtrlFixed > tbody > .sapUiTableTr", ".sapUiTableCtrlScroll > tbody > .sapUiTableTr"],
+		ROWAREAS: [
+			".sapUiTableRowHdr", ".sapUiTableRowAction", ".sapUiTableCtrlFixed > tbody > .sapUiTableTr",
+			".sapUiTableCtrlScroll > tbody > .sapUiTableTr"
+		],
 
-		initRowHovering : function(oTable) {
+		initRowHovering: function(oTable) {
 			var $Table = oTable.$();
 			for (var i = 0; i < RowHoverHandler.ROWAREAS.length; i++) {
 				RowHoverHandler._initRowHoveringForArea($Table, RowHoverHandler.ROWAREAS[i]);
@@ -734,18 +742,20 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 	};
 
-
 	/*
 	 * Event handling of touch and mouse events.
 	 * "this" in the function context is the table instance.
 	 */
 	var ExtensionDelegate = {
 
-		onmousedown : function(oEvent) {
+		onmousedown: function(oEvent) {
 			var oPointerExtension = this._getPointerExtension();
 			var $Cell = TableUtils.getCell(this, oEvent.target);
-			var oCellInfo = TableUtils.getCellInfo($Cell) || {};
+			var oCellInfo = TableUtils.getCellInfo($Cell);
 			var $Target = jQuery(oEvent.target);
+			var oColumn;
+			var oMenu;
+			var bMenuOpen;
 
 			// check whether item navigation should be reapplied from scratch
 			this._getKeyboardExtension().initItemNavigation();
@@ -762,34 +772,34 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 					this._iLastHoveredColumnIndex = parseInt(iColIndex, 10);
 					ColumnResizeHelper.initColumnResizing(this, oEvent);
 
-				} else if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
-					var iIndex = TableUtils.getColumnHeaderCellInfo($Cell).index;
-					var oColumn = this.getColumns()[iIndex];
-					var oMenu = oColumn.getAggregation("menu");
-					var bMenuOpen = oMenu && oMenu.bOpen;
+				} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
+					oColumn = this.getColumns()[oCellInfo.columnIndex];
+					oMenu = oColumn.getAggregation("menu");
+					bMenuOpen = oMenu && oMenu.bOpen;
 
 					if (!bMenuOpen) {
 						// A long click starts column reordering, so it should not also open the menu in the onclick event handler.
 						oPointerExtension._bShowMenu = true;
-						this._mTimeouts.delayedMenuTimerId = jQuery.sap.delayedCall(200, this, function () {
+						this._mTimeouts.delayedMenuTimerId = jQuery.sap.delayedCall(200, this, function() {
 							delete oPointerExtension._bShowMenu;
 						});
 					}
 
 					if (this.getEnableColumnReordering()
-						&& !(this._isTouchEvent(oEvent) && $Target.hasClass("sapUiTableColDropDown")) /*Target is not the mobile column menu button*/) {
+						&& !(this._isTouchEvent(oEvent)
+						&& $Target.hasClass("sapUiTableColDropDown")) /* Target is not the mobile column menu button */) {
 						// Start column reordering
-						this._getPointerExtension().doReorderColumn(iIndex, oEvent);
+						this._getPointerExtension().doReorderColumn(oCellInfo.columnIndex, oEvent);
 					}
 				}
 
 				// In case of FireFox and CTRL+CLICK it selects the target TD
 				//   => prevent the default behavior only in this case (to still allow text selection)
-				// Also prevent default when clicking on ScrollBars to prevent ItemNavigation to re-apply
+				// Also prevent default when clicking on scrollbars to prevent ItemNavigation to re-apply
 				// focus to old position (table cell).
 				if ((Device.browser.firefox && !!(oEvent.metaKey || oEvent.ctrlKey))
-						|| $Target.closest(".sapUiTableHSb", this.getDomRef()).length === 1
-						|| $Target.closest(".sapUiTableVSb", this.getDomRef()).length === 1) {
+					|| $Target.closest(".sapUiTableHSb", this.getDomRef()).length === 1
+					|| $Target.closest(".sapUiTableVSb", this.getDomRef()).length === 1) {
 					oEvent.preventDefault();
 				}
 			}
@@ -800,25 +810,28 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 					return;
 				}
 
-				if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
-					var oColumnHeaderCellInfo = TableUtils.getColumnHeaderCellInfo($Cell);
-					var oColumn = this.getColumns()[oColumnHeaderCellInfo.index];
-					var oMenu = oColumn.getAggregation("menu");
-					var bMenuOpen = oMenu && oMenu.bOpen;
+				if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
+					oColumn = this.getColumns()[oCellInfo.columnIndex];
+					oMenu = oColumn.getAggregation("menu");
+					bMenuOpen = oMenu && oMenu.bOpen;
 
 					if (!bMenuOpen) {
 						oPointerExtension._bShowMenu = true;
 					} else {
 						oPointerExtension._bHideMenu = true;
 					}
-				} else if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
-					var bMenuOpen = this._oCellContextMenu && this._oCellContextMenu.bOpen;
-					var bMenuOpenedAtAnotherDataCell = bMenuOpen && this._oCellContextMenu.oOpenerRef !== $Cell[0];
-
-					if (!bMenuOpen || bMenuOpenedAtAnotherDataCell) {
+				} else if (oCellInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL)) {
+					if (TableUtils.Menu.hasContextMenu(this)) {
 						oPointerExtension._bShowMenu = true;
 					} else {
-						oPointerExtension._bHideMenu = true;
+						bMenuOpen = this._oCellContextMenu && this._oCellContextMenu.bOpen;
+						var bMenuOpenedAtAnotherDataCell = bMenuOpen && this._oCellContextMenu.oOpenerRef !== $Cell[0];
+
+						if (!bMenuOpen || bMenuOpenedAtAnotherDataCell) {
+							oPointerExtension._bShowMenu = true;
+						} else {
+							oPointerExtension._bHideMenu = true;
+						}
 					}
 				} else {
 					oPointerExtension._bShowDefaultMenu = true;
@@ -826,19 +839,19 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			}
 		},
 
-		onmouseup : function(oEvent) {
+		onmouseup: function(oEvent) {
 			// clean up the timer
 			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimerId);
 		},
 
-		ondblclick : function(oEvent) {
+		ondblclick: function(oEvent) {
 			if (Device.system.desktop && oEvent.target === this.getDomRef("rsz")) {
 				oEvent.preventDefault();
 				ColumnResizeHelper.doAutoResizeColumn(this, this._iLastHoveredColumnIndex);
 			}
 		},
 
-		onclick : function(oEvent) {
+		onclick: function(oEvent) {
 			// clean up the timer
 			jQuery.sap.clearDelayedCall(this._mTimeouts.delayedColumnReorderTimerId);
 
@@ -866,9 +879,9 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			}
 
 			var $Cell = TableUtils.getCell(this, oEvent.target);
-			var oCellInfo = TableUtils.getCellInfo($Cell) || {};
+			var oCellInfo = TableUtils.getCellInfo($Cell);
 
-			if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+			if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER)) {
 				var oPointerExtension = this._getPointerExtension();
 				if (oPointerExtension._bShowMenu) {
 					TableUtils.Menu.openContextMenu(this, oEvent.target, false);
@@ -881,7 +894,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 				// forward the event
 				if (!this._findAndfireCellEvent(this.fireCellClick, oEvent)) {
-					if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNROWHEADER) {
+					if (oCellInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER)) {
 						this._toggleSelectAll();
 					} else {
 						ExtensionHelper._handleClickSelection(oEvent, $Cell, this);
@@ -902,7 +915,7 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			} else if (oPointerExtension._bShowMenu) {
 				oEvent.setMarked("handledByPointerExtension");
 				oEvent.preventDefault(); // To prevent opening the default browser context menu.
-				TableUtils.Menu.openContextMenu(this, oEvent.target, false);
+				TableUtils.Menu.openContextMenu(this, oEvent.target, false, null, oEvent);
 				delete oPointerExtension._bShowMenu;
 
 			} else if (oPointerExtension._bHideMenu) {
@@ -915,9 +928,10 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 
 	/**
 	 * Extension for sap.ui.table.Table which handles mouse and touch related things.
+	 * <b>This is an internal class that is only intended to be used inside the sap.ui.table library! Any usage outside the sap.ui.table library is
+	 * strictly prohibited!</b>
 	 *
 	 * @class Extension for sap.ui.table.Table which handles mouse and touch related things.
-	 *
 	 * @extends sap.ui.table.TableExtension
 	 * @author SAP SE
 	 * @version ${version}
@@ -925,13 +939,14 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 	 * @private
 	 * @alias sap.ui.table.TablePointerExtension
 	 */
-	var TablePointerExtension = TableExtension.extend("sap.ui.table.TablePointerExtension", /* @lends sap.ui.table.TablePointerExtension */ {
-
-		/*
-		 * @see TableExtension._init
+	var TablePointerExtension = TableExtension.extend("sap.ui.table.TablePointerExtension",
+		/** @lends sap.ui.table.TablePointerExtension.prototype */ {
+		/**
+		 * @override
+		 * @inheritDoc
+		 * @returns {string} The name of this extension.
 		 */
-		_init : function(oTable, sTableType, mSettings) {
-			this._type = sTableType;
+		_init: function(oTable, sTableType, mSettings) {
 			this._delegate = ExtensionDelegate;
 
 			// Register the delegate
@@ -944,10 +959,11 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			return "PointerExtension";
 		},
 
-		/*
-		 * @see TableExtension._attachEvents
+		/**
+		 * @override
+		 * @inheritDoc
 		 */
-		_attachEvents : function() {
+		_attachEvents: function() {
 			var oTable = this.getTable();
 			if (oTable) {
 				// Initialize the basic event handling for column resizing.
@@ -956,10 +972,11 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			}
 		},
 
-		/*
-		 * @see TableExtension._detachEvents
+		/**
+		 * @override
+		 * @inheritDoc
 		 */
-		_detachEvents : function() {
+		_detachEvents: function() {
 			var oTable = this.getTable();
 			if (oTable) {
 				var $Table = oTable.$();
@@ -973,10 +990,12 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			}
 		},
 
-		/*
-		 * Enables debugging for the extension
+		/**
+		 * Enables debugging for the extension. Internal helper classes become accessible.
+		 *
+		 * @private
 		 */
-		_debug : function() {
+		_debug: function() {
 			this._ExtensionHelper = ExtensionHelper;
 			this._ColumnResizeHelper = ColumnResizeHelper;
 			this._InteractiveResizeHelper = InteractiveResizeHelper;
@@ -986,20 +1005,25 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			this._KNOWNCLICKABLECONTROLS = KNOWNCLICKABLECONTROLS;
 		},
 
-		/*
+		/**
 		 * Resizes the given column to its optimal width if the auto resize feature is available for this column.
+		 *
+		 * @param {int} iColIndex The index of the column to resize.
 		 */
-		doAutoResizeColumn : function(iColIndex) {
+		doAutoResizeColumn: function(iColIndex) {
 			var oTable = this.getTable();
 			if (oTable) {
 				ColumnResizeHelper.doAutoResizeColumn(oTable, iColIndex);
 			}
 		},
 
-		/*
+		/**
 		 * Initialize the basic event handling for column reordering and starts the reordering.
+		 *
+		 * @param {int} iColIndex The index of the column to resize.
+		 * @param {jQuery.Event} oEvent The event object.
 		 */
-		doReorderColumn : function(iColIndex, oEvent) {
+		doReorderColumn: function(iColIndex, oEvent) {
 			var oTable = this.getTable();
 			if (oTable && TableUtils.Column.isColumnMovable(oTable.getColumns()[iColIndex])) {
 				// Starting column drag & drop. We wait 200ms to make sure it is no click on the column to open the menu.
@@ -1009,10 +1033,11 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 			}
 		},
 
-		/*
-		 * @see sap.ui.base.Object#destroy
+		/**
+		 * @override
+		 * @inheritDoc
 		 */
-		destroy : function() {
+		destroy: function() {
 			// Deregister the delegates
 			var oTable = this.getTable();
 			if (oTable) {
@@ -1026,5 +1051,13 @@ sap.ui.define(['./library', 'jquery.sap.global', './TableExtension', './TableUti
 	});
 
 	return TablePointerExtension;
+	});
 
-}, /* bExport= */ true);
+/**
+ * Gets the pointer extension.
+ *
+ * @name sap.ui.table.Table#_getPointerExtension
+ * @function
+ * @returns {sap.ui.table.TablePointerExtension} The pointer extension.
+ * @private
+ */

@@ -24,9 +24,60 @@
 
 		QUnit.config.autostart = false;
 
-		sap.ui.require(['sap/ui/base/DataType'], function(DataType) {
+		sap.ui.require(['sap/ui/base/DataType', 'sap/ui/core/Popup'], function(DataType) {
 
-			var PUBLIC_PRIMITIVE_TYPES = ["any", "boolean", "int", "float", "string", "object"];
+			function random(values) {
+				if ( Array.isArray(values) ) {
+					return values[ Math.floor(values.length * Math.random()) ];
+				}
+				return Math.floor(values * Math.random());
+			}
+			
+			function nonEmptyArray(array) {
+				return Array.isArray(array) && array.length > 0 ? array : null;
+			}
+
+			function makeLiteral(value) {
+				if ( Array.isArray(value) ) {
+					return "[" + value.map(makeLiteral).join(',') + "]";
+				}
+				if ( typeof value === 'string' || value instanceof String ) {
+					return "'" + value.replace(/'/g, "\\'") + "'";
+				}
+				return String(value);
+			}
+			
+			var PRIMITIVE_TYPES = {
+				"any": {
+					valid: [ 0, true, "abc", {}, [[0,true]] ]
+				}, 
+				"boolean": {
+					valid: [false, true],
+					invalid: ["yes", 0]
+				},
+				"int": {
+					valid: [0, -42],
+					invalid: ['0', 0.5]
+				},
+				"float": {
+					valid: [0.5, 0, -1, Math.PI, NaN, Infinity],
+					invalid: [null, undefined, "abc", {}]
+				},
+				"string": {
+					valid: ["a", "", new String("abc")],
+					invalid: [0, true, {}]
+				},
+				"object": {
+					valid: [ {}, [], function(){}, String, document, null, new Object() ],
+					invalid: [ undefined, "abc", 123]
+				},
+				"function": {
+					valid: [ function() {}, String, Object, null, undefined ],
+					invalid: [ {}, "abc", ".abc" ]
+				}
+			};
+
+
 
 			QUnit.module("Basic");
 
@@ -37,24 +88,78 @@
 				}, Error, "DataType constructor must not be called and throws exception");
 			});
 
-			QUnit.test("primitive types", function(assert) {
-
-				PUBLIC_PRIMITIVE_TYPES.forEach(function(type) {
-					var typeObject = DataType.getType(type);
-					assert.ok(typeObject, "primitive type '" + type + "' exists");
-					assert.strictEqual(typeObject.getBaseType(), undefined, "primitive types should have no base type");
-					assert.strictEqual(typeObject.getPrimitiveType(), typeObject, "primitive types should return themeselves as their primitive type");
-					assert.strictEqual(typeObject.getName(), type, "type object should have the correct name");
-					assert.strictEqual(typeObject.isArrayType(), false, "type must not be marked as array type");
-				});
-
+			QUnit.test("static methods", function(assert) {
+				assert.equal(typeof DataType.getType, 'function', "DataType must have a static function 'getType'");
+				assert.equal(typeof DataType.createType, 'function', "DataType must have a static function 'createType'");
+				assert.equal(DataType.getType("array"), undefined, "generic type 'array' should be hidden from 'getType' API");
 			});
 
-			QUnit.test("array types", function(assert) {
 
-				assert.equal(DataType.getType("array"), undefined, "generic type 'array' should be hidden from 'getType' API");
 
-				PUBLIC_PRIMITIVE_TYPES.forEach(function(type) {
+			QUnit.module("Primitive Types");
+
+			Object.keys(PRIMITIVE_TYPES).forEach(function(type) {
+
+				var oTypeSetup = PRIMITIVE_TYPES[type];
+				var valid = nonEmptyArray(oTypeSetup.valid);
+				var invalid = nonEmptyArray(oTypeSetup.invalid);
+
+				QUnit.test("'" + type + "'", function(assert) {
+	
+					var typeObject = DataType.getType(type);
+					assert.ok(typeObject, "type should exist");
+					assert.strictEqual(typeObject.getBaseType(), undefined, "...should have no base type");
+					assert.strictEqual(typeObject.getPrimitiveType(), typeObject, "...should return itself as its primitive type");
+					assert.strictEqual(typeObject.getName(), type, "... should have the correct name");
+					assert.strictEqual(typeObject.isArrayType(), false, "... must not be marked as array type");
+					assert.strictEqual(typeObject.getComponentType(), undefined, "... must not have a component type");
+					assert.strictEqual(typeObject.isEnumType(), false, "... must not be marked as enum type");
+					assert.strictEqual(typeObject.getEnumValues(), undefined, "type should not have enum values");
+
+					if ( valid ) {
+						valid.forEach(function(value) {
+							assert.equal(typeObject.isValid(value), true, makeLiteral(value) + " should be accepted");
+						}.bind(this));
+					}
+					if ( invalid ) {
+						invalid.forEach(function(value) {
+							assert.equal(typeObject.isValid(value), false, makeLiteral(value) + " should not be accepted");
+						}.bind(this));
+					}
+
+					assert['throws'](function() {
+						DataType.createType(type, {});
+					}, Error, "primitive types can't be re-defined");
+
+				});
+	
+			});
+
+
+
+			QUnit.module("Array Types");
+
+			QUnit.test("hidden type 'array'", function(assert) {
+				var orig = window.array;
+				delete window.array;
+				assert.strictEqual(DataType.getType('array'), undefined, "lookup must not return type 'array'");
+				
+				window.array = DataType.createType("dummy", {}, 'any');
+				assert.strictEqual(DataType.getType('array'), undefined, "lookup must not return type 'array' even if it exists as a global name");
+
+				assert['throws'](function() {
+					DataType.createType('array', {});
+				}, Error, "hidden type 'array' can't be re-defined");
+			});
+			
+			Object.keys(PRIMITIVE_TYPES).forEach(function(type) {
+
+				var oTypeSetup = PRIMITIVE_TYPES[type],
+					valid = nonEmptyArray(oTypeSetup.valid),
+					invalid = nonEmptyArray(oTypeSetup.invalid);
+
+				QUnit.test("'" + type + "[]'", function(assert) {
+	
 					var typeObject = DataType.getType(type);
 					var arrayTypeObject = DataType.getType(type + '[]');
 					assert.ok(arrayTypeObject, "type '" + type + "[]' exists");
@@ -64,10 +169,45 @@
 						"array types should have 'array' as base type");
 					assert.strictEqual(arrayTypeObject.getName(), type + '[]', "type object should have the correct name");
 					assert.strictEqual(arrayTypeObject.isArrayType(), true, "type should be marked as array type");
+					assert.strictEqual(arrayTypeObject.isEnumType(), false, "type should not be marked as enum type");
+					assert.strictEqual(arrayTypeObject.getEnumValues(), undefined, "type should not have enum values");
+					
+					// validity checks
+					assert.strictEqual(arrayTypeObject.isValid([]), true, "empty array should be valid");
+	
+					if ( valid ) {
+						var array;
+						
+						// singleton array
+						array = [ random(valid) ];
+						assert.strictEqual(arrayTypeObject.isValid(array), true, "singleton array with a valid components should be valid");
+
+						// 5 valid components
+						array = [];
+						for ( var i = 0; i < 5; i++ ) {
+							array[i] = random(valid);
+						}
+						assert.strictEqual(arrayTypeObject.isValid(array), true, "array with only valid components should be valid");
+						
+						if ( invalid ) {
+							// 1 invalid
+							array = [ random(invalid) ];
+							assert.strictEqual(arrayTypeObject.isValid(array), false, "singleton array with an invalid component should be invalid" + makeLiteral(array));
+
+							// 4 valid, 1 invalid
+							array = [];
+							for ( var i = 0; i < 5; i++ ) {
+								array[i] = random(valid);
+							}
+							array[ random(5) ] = random(invalid);
+							assert.strictEqual(arrayTypeObject.isValid(array), false, "array with one invalid component should be invalid");
+
+						}
+					}
 				});
-
+		
 			});
-
+			
 			QUnit.test("multi-dim array types", function(assert) {
 				var arrayType = DataType.getType('int[]');
 				var twoDimArrayType = DataType.getType('int[][]');
@@ -82,6 +222,10 @@
 
 			});
 
+
+
+			QUnit.module("Type Lookup");
+
 			QUnit.test("non-existing type", function(assert) {
 				var oWarningSpy = this.spy(jQuery.sap.log, "warning");
 				var oErrorSpy = this.spy(jQuery.sap.log, "error");
@@ -93,6 +237,9 @@
 				assert.strictEqual(DataType.getType("nonExistingType"), undefined, "for a non-existing type, undefined is returned");
 				assert.ok(oErrorSpy.calledWith(sinon.match(/data type/).and(sinon.match(/could not be found/))), "access to non-existing type should produce an error message in the log");
 				assert.ok(!oWarningSpy.called, "no warnings should be produced");
+				
+				assert.strictEqual(DataType.getType("toString"), DataType.getType("any"), "'toString' should not resolve to something");
+				assert.strictEqual(DataType.getType("hasOwnProperty"), DataType.getType("any"), "'hasOwnProperty' should not resolve to something");
 			});
 
 			QUnit.test("invalid type", function(assert) {
@@ -110,93 +257,124 @@
 			});
 
 
+
+			QUnit.module("Type Creation");
+
+			QUnit.test("type derived from string", function(assert) {
+				var oWarningSpy = this.spy(jQuery.sap.log, "warning");
+				var oErrorSpy = this.spy(jQuery.sap.log, "error");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+				var oType = DataType.createType("myDerivedType", { 
+					isValid: function(oValue) {
+						return /hello.*world/.test(oValue);
+					}
+				}, DataType.getType("string"));
+				
+				assert.ok(oType instanceof DataType, "type must be returned");
+				assert.strictEqual(oType.getBaseType(), DataType.getType("string"), "base type must be 'string'");
+				assert.equal(oType.isValid('hello world'), true, "validity check for good value should return true");
+				assert.equal(oType.isValid('hello mars'), false, "validity check for bad value should return false");
+				assert.ok(!oErrorSpy.called, "access to non-existing type should produce an error message in the log");
+				assert.ok(!oWarningSpy.called, "no warnings should be produced");
+				assert.strictEqual(DataType.getType("myDerivedType"), oType, "lookup must return the same type object");
+			});
+
+			QUnit.test("derive without base type", function(assert) {
+				var oWarningSpy = this.spy(jQuery.sap.log, "warning");
+				var oErrorSpy = this.spy(jQuery.sap.log, "error");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+				var oType = DataType.createType("myTypeWithoutBase", { 
+					isValid: function(oValue) {
+						return /hello.*world/.test(oValue);
+					}
+				});
+				
+				assert.ok(oType instanceof DataType, "type must be returned");
+				assert.strictEqual(oType.getBaseType(), DataType.getType("any"), "base type must be implicitly 'any'");
+				assert.equal(oType.isValid('hello world'), true, "validity check for good value should return true");
+				assert.equal(oType.isValid('hello mars'), false, "validity check for bad value should return false");
+				assert.ok(!oErrorSpy.called, "no errors should be produced");
+				assert.ok(!oWarningSpy.called, "no warnings should be produced");
+			});
+
+			QUnit.test("logical AND of validity checks", function(assert) {
+				var oWarningSpy = this.spy(jQuery.sap.log, "warning");
+				var oErrorSpy = this.spy(jQuery.sap.log, "error");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+				var oType = DataType.createType("myStrangeBoolean", { 
+					isValid: function(oValue) {
+						return /tr/.test(oValue);
+					}
+				}, DataType.getType("boolean"));
+				
+				assert.ok(oType instanceof DataType, "type must be returned");
+				assert.strictEqual(oType.getBaseType(), DataType.getType("boolean"), "base type must be 'boolean'");
+				assert.equal(oType.isValid(true), true, "combined validity check should accept 'true'");
+				assert.equal(oType.isValid('nice try'), false, "validity check of base type must be applied");
+				assert.equal(oType.isValid('true'), false, "validity check of base type must be applied");
+				assert.equal(oType.isValid(false), false, "validity check of derived type must be applied");
+			});
+
+			QUnit.test("multiple levels of derivation", function(assert) {
+				var oWarningSpy = this.spy(jQuery.sap.log, "warning");
+				var oErrorSpy = this.spy(jQuery.sap.log, "error");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+				var oHelloPrefixType = DataType.createType("myHelloPrefixType", { 
+					isValid: function(oValue) {
+						return /^hello/.test(oValue);
+					}
+				}, DataType.getType("string"));
+				
+				var oWorldSuffixType = DataType.createType("myWorldSuffixType", { 
+					isValid: function(oValue) {
+						return /world$/.test(oValue);
+					}
+				}, oHelloPrefixType);
+				
+				var oType = DataType.getType("myWorldSuffixType");
+				assert.ok(oType instanceof DataType, "type must be returned");
+				assert.strictEqual(oType.getBaseType(), oHelloPrefixType, "base type must be HelloPrefixType");
+				assert.strictEqual(oType.getPrimitiveType().getName(), "string", "primitive type must be 'string'");
+				assert.equal(oType.isValid("hello"), false, "prefix alone is not enough");
+				assert.equal(oType.isValid('world'), false, "suffix alone is not enough");
+				assert.equal(oType.isValid('helloworld'), true, "both together are okay");
+				assert.equal(oType.isValid('hello              world'), true, "both together are okay");
+			});
+
+			QUnit.test("re-defining a type", function(assert) {
+				var oWarningSpy = this.spy(jQuery.sap.log, "warning");
+				var oErrorSpy = this.spy(jQuery.sap.log, "error");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+
+				var oType1 = DataType.createType("myNewType", { 
+					isValid: function(oValue) {
+						return /hello.*world/.test(oValue);
+					}
+				}, DataType.getType("string"));
+				
+				assert.ok(oType1 instanceof DataType, "first creation should succeed");
+				assert.ok(!oErrorSpy.called, "first creation must not log an error");
+				assert.ok(!oWarningSpy.called, "first creation must not log a warning");
+
+				var oType2 = DataType.createType("myNewType", { 
+					isValid: function(oValue) {
+						return /hello.*world/.test(oValue);
+					}
+				}, DataType.getType("string"));
+				assert.ok(!oErrorSpy.called, "re-defining a type must not log an error");
+				assert.ok(oWarningSpy.calledWith(sinon.match(/re-?defined.*unsupported/i)), "re-defining a type must log a warning");
+				assert.ok(oType2 instanceof DataType, "recreation must return a type");
+				assert.notStrictEqual(oType1, oType2, "new type should differ from previous type with same name");
+				assert.strictEqual(DataType.getType("myNewType"), oType2, "lookup returns new type");
+			});
+
+
+
 			QUnit.module("Specific Types");
-
-			QUnit.test("boolean", function(assert) {
-				var _boolean = DataType.getType("boolean");
-				assert.ok(!!_boolean, "type 'boolean' exists");
-				assert.ok(_boolean instanceof DataType, "type is a DataType");
-				assert.equal(_boolean.getName(), "boolean", "type name");
-				assert.equal(_boolean.getDefaultValue(), false, "default value");
-				assert.equal(_boolean.getBaseType(), undefined, "base type is undefined");
-				assert.equal(_boolean.getPrimitiveType().getName(), "boolean", "primitive type is boolean");
-
-				assert.equal(_boolean.isValid(false), true, "accepted value 1");
-				assert.equal(_boolean.isValid(true), true, "accepted value 2");
-				assert.equal(_boolean.isValid("yes"), false, "not accepted value 1");
-				assert.equal(_boolean.isValid(0), false, "not accepted value 2");
-			});
-
-			QUnit.test("int", function(assert) {
-				var _int = DataType.getType("int");
-				assert.ok(!!_int, "type 'int' exists");
-				assert.ok(_int instanceof DataType, "type is a DataType");
-				assert.equal(_int.getName(), 'int', "type name");
-				assert.equal(_int.getDefaultValue(), 0, "default value");
-				assert.equal(_int.getBaseType(), undefined, "base type is undefined");
-				assert.equal(_int.getPrimitiveType().getName(), "int", "primitive type is int");
-
-				assert.equal(_int.isValid(0), true, "accepted value 0");
-				assert.equal(_int.isValid(-42), true, "accepted value -42");
-				assert.equal(_int.isValid('0'), false, "int.isValid('0')");
-				assert.equal(_int.isValid(0.5), false, "int.isValid(0.5)");
-			});
-
-			QUnit.test("object", function(assert) {
-				var _object = DataType.getType("object");
-				assert.ok(!!_object, "type 'object' exists");
-				assert.ok(_object instanceof DataType, "type is a DataType");
-				assert.equal(_object.getName(), 'object', "type name");
-				assert.equal(_object.getDefaultValue(), null, "default value");
-				assert.equal(_object.getBaseType(), undefined, "base type is undefined");
-				assert.equal(_object.getPrimitiveType().getName(), "object", "primitive type is object");
-
-				assert.equal(_object.isValid({}), true, "accepted value {}");
-				assert.equal(_object.isValid([]), true, "accepted value []");
-				assert.equal(_object.isValid(function(){}), true, "accepted value function(){}");
-				assert.equal(_object.isValid(String), true, "accepted value String");
-				assert.equal(_object.isValid(document), true, "accepted value document");
-				assert.equal(_object.isValid(null), true, "accepted value null");
-				assert.equal(_object.isValid(new Object()), true, "accepted value new Object()");
-				assert.equal(_object.isValid(undefined), false, "not accepted value undefined");
-				assert.equal(_object.isValid("abc"), false, "not accepted value \"abc\"");
-				assert.equal(_object.isValid(123), false, "not accepted value 123");
-			});
-
-			QUnit.test("int[]", function(assert) {
-				var _int = DataType.getType("int[]");
-				assert.ok(!!_int, "type 'int[]' exists");
-				assert.ok(_int instanceof DataType, "type is a DataType");
-				assert.equal(_int.getName(), 'int[]', "type name");
-				assert.equal(_int.getDefaultValue(), null, "default value");
-				assert.equal(_int.getBaseType().getName(), "array", "base type is array");
-				assert.equal(_int.getPrimitiveType().getName(), "array", "primitive type is array");
-				assert.equal(_int.getComponentType().getName(), "int", "primitive type is int");
-
-				assert.equal(_int.isValid([1,2,3]), true, "accepted value [1,2,3]");
-				assert.equal(_int.isValid([]), true, "accepted value []");
-				assert.equal(_int.isValid([1,2,"3"]), false, "not accepted value [1,2,\"3\"]");
-				assert.equal(_int.isValid([1,0.2,3]), false, "not accepted value [1,0.2,3]");
-				assert.equal(_int.isValid(0), false, "not accepted value 0");
-				assert.equal(_int.isValid("test"), false, "not accepted value \"test\"");
-			});
-
-			QUnit.test("string[]", function(assert) {
-				var _string = DataType.getType("string[]");
-				assert.ok(!!_string, "type 'string[]' exists");
-				assert.ok(_string instanceof DataType, "type is a DataType");
-				assert.equal(_string.getName(), 'string[]', "type name");
-				assert.equal(_string.getDefaultValue(), null, "default value");
-				assert.equal(_string.getBaseType().getName(), "array", "base type is array");
-				assert.equal(_string.getPrimitiveType().getName(), "array", "primitive type is array");
-				assert.equal(_string.getComponentType().getName(), "string", "primitive type is string");
-
-				assert.equal(_string.isValid(["a","b","c"]), true, "accepted value [\"a\",\"b\",\"c\"]");
-				assert.equal(_string.isValid([]), true, "accepted value []");
-				assert.equal(_string.isValid([true,"b","c"]), false, "not accepted value [true,\"b\",\"c\"]");
-				assert.equal(_string.isValid(0), false, "not accepted value 0");
-				assert.equal(_string.isValid("test"), false, "not accepted value \"test\"");
-			});
 
 			QUnit.test("ID", function(assert) {
 				var type = DataType.getType("sap.ui.core.ID");
@@ -391,6 +569,10 @@
 			});
 
 			QUnit.test("enum sap.ui.core.TextAlign", function(assert) {
+				var oEnum = jQuery.sap.getObject("sap.ui.core.TextAlign");
+				// precondition
+				assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property")
+				
 				var type = DataType.getType("sap.ui.core.TextAlign");
 				assert.ok(!!type, "type 'sap.ui.core.TextAlign' exists");
 				assert.ok(type instanceof DataType, "type is a DataType");
@@ -398,6 +580,8 @@
 				assert.equal(type.getDefaultValue(), "Begin", "default value");
 				assert.equal(type.getBaseType().getName(), "string", "base type is string");
 				assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+				assert.ok(type.isEnumType(), "type should be marked as enum");
+				assert.strictEqual(type.getEnumValues(), oEnum, "type should return the globally defined object with keys and values");
 
 				jQuery.each(sap.ui.core.TextAlign, function(i,v) {
 					assert.equal(type.isValid(v), true, "accepts value " + v);
@@ -408,7 +592,10 @@
 			});
 
 			QUnit.test("enum sap.ui.core.Popup.Dock", function(assert) {
-				jQuery.sap.require("sap.ui.core.Popup");
+				var oEnum = jQuery.sap.getObject("sap.ui.core.Popup.Dock");
+				// precondition
+				assert.ok(oEnum && jQuery.isPlainObject(oEnum), "[precondition] enum object should exist as global property")
+
 				var type = DataType.getType("sap.ui.core.Popup.Dock");
 				assert.ok(!!type, "type 'sap.ui.core.Popup.Dock' exists");
 				assert.ok(type instanceof DataType, "type is a DataType");
@@ -416,6 +603,8 @@
 				assert.equal(type.getDefaultValue(), "begin top", "default value");
 				assert.equal(type.getBaseType().getName(), "string", "base type is string");
 				assert.equal(type.getPrimitiveType().getName(), "string", "primitive type is string");
+				assert.ok(type.isEnumType(), "type should be marked as enum");
+				assert.strictEqual(type.getEnumValues(), oEnum, "type should return the globally defined object with keys and values");
 
 				jQuery.each(sap.ui.core.Popup.Dock, function(i,v) {
 					assert.equal(type.isValid(v), true, "'" + v + "' should be a valid value");

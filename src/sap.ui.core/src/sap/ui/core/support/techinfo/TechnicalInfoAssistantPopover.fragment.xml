@@ -5,14 +5,16 @@
 			id="Popover"
 			title="{i18n>TechInfo.SupportAssistantConfigPopup.Title}"
 			class="sapUiContentPadding"
-			contentMinWidth="400px"
+			contentMinWidth="460px"
 			placement="VerticalPreferredTop">
 		<content>
 			<VBox binding="{/ProductCollection}" >
-				<Label design="Bold" text="{i18n>TechInfo.SupportAssistantConfigPopup.Locations}"></Label>
+				<Label
+					design="Bold"
+					text="{i18n>TechInfo.SupportAssistantConfigPopup.Locations}"/>
 				<RadioButton id="standard" select="onSelectBootstrapOption" groupName="Bootstrap" text="{i18n>TechInfo.SupportAssistantConfigPopup.StandardLocation}"/>
 				<Select
-					items="{path:'view>/SupportAssistantPopoverURLs'}"
+					items="{view>/SupportAssistantPopoverURLs}"
 					id="standardBootstrapURL"
 					class="sapUiMediumMarginBegin"
 					width="85%"
@@ -21,20 +23,24 @@
 					<core:Item key="{view>Value}" text="{view>DisplayName}"/>
 				</Select>
 				<RadioButton id="custom" select="onSelectBootstrapOption" groupName="Bootstrap" text="{i18n>TechInfo.SupportAssistantConfigPopup.CustomLocation}"/>
+				<Label
+					visible="false"
+					text="{i18n>TechInfo.SupportAssistantConfigPopup.CustomLocation}"
+					labelFor="customBootstrapURL"/>
 				<Input
 					id="customBootstrapURL"
 					width="85%"
 					class="sapUiMediumMarginBegin"
-					value="{
-							path : 'view>/CustomBootstrapURL',
-							type : '.CustomTypeURL'
-						}"
-					change="onChangeCustomBootstrapURL"
+					value="{view>/CustomBootstrapURL}"
+					liveChange="onLiveChangeCustomBootstrapURL"
+					valueLiveUpdate="true"
 					valueStateText="{i18n>TechInfo.SupportAssistantConfigPopup.URLValidationMessage}"
 					enabled="false"
 					placeholder="http://&lt;custom&gt;/resources/sap/ui/support/"/>
-
-				<Label design="Bold" text="{i18n>TechInfo.SupportAssistantConfigPopup.Options}" class="sapUiSmallMarginTop"></Label>
+				<Label
+					design="Bold"
+					text="{i18n>TechInfo.SupportAssistantConfigPopup.Options}"
+					class="sapUiSmallMarginTop"/>
 				<CheckBox
 					id="openInNewWindow"
 					selected="{view>/OpenSupportAssistantInNewWindow}"

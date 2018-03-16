@@ -16,7 +16,7 @@ sap.ui.define([
 
 		_generateMsgStrip: function () {
 			var aTypes = ["Information", "Warning", "Error", "Success"],
-				oVC = this.getView().byId("oVerticalContent"),
+				oVC = this.byId("oVerticalContent"),
 
 				oMsgStrip = new MessageStrip("msgStrip", {
 					text: "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua ut enim ad minim veniam, quis nostrud exercitation ullamco.",

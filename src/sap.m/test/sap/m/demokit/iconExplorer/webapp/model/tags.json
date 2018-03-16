@@ -6213,5 +6213,159 @@
 			"library",
 			"find"
 		]
+	},
+	"primary-key": {
+		"tags": [
+			"key",
+			"primary",
+			"data",
+			"lock",
+			"important"
+		]
+	},
+	"two-keys": {
+		"tags": [
+			"key",
+			"primary",
+			"foreign",
+			"data",
+			"lock",
+			"important"
+		]
+	},
+	"strikethrough": {
+		"tags": [
+			"strike",
+			"formatting",
+			"edit",
+			"cross out",
+			"letters",
+			"rich",
+			"rich-text",
+			"options",
+			"review"
+		]
+	},
+	"text": {
+		"tags": [
+			"text",
+			"formatting",
+			"edit",
+			"input",
+			"letters",
+			"rich",
+			"rich-text"
+		]
+	},
+	"responsive": {
+		"tags": [
+			"desktop",
+			"tablet",
+			"mobile",
+			"phone",
+			"adaptive",
+			"cozy",
+			"compact",
+			"web app"
+		]
+	},
+	"desktop-mobile": {
+		"tags": [
+			"desktop",
+			"tablet",
+			"mobile",
+			"phone",
+			"adaptive",
+			"cozy",
+			"compact",
+			"web app",
+			"responsive",
+			"adaptive"
+		]
+	},
+	"table-row": {
+		"tags": [
+			"display",
+			"data",
+			"table",
+			"table row",
+			"grid",
+			"view",
+			"rows"
+		]
+	},
+	"table-column": {
+		"tags": [
+			"display",
+			"data",
+			"table",
+			"table column",
+			"grid",
+			"view",
+			"columns"
+		]
+	},
+	"validate": {
+		"tags": [
+			"message",
+			"check",
+			"validate",
+			"security",
+			"status",
+			"approve",
+			"reject",
+			"decision",
+			"certify"
+		]
+	},
+	"keyboard-and-mouse": {
+		"tags": [
+			"mouse",
+			"desktop",
+			"click",
+			"keyboard",
+			"compact",
+			"condensed",
+			"controls",
+			"devices"
+		]
+	},
+	"touch": {
+		"tags": [
+			"finger",
+			"mobile",
+			"press",
+			"touch",
+			"cozy",
+			"comfortable",
+			"controls",
+			"devices"
+		]
+	},
+	"expand-all": {
+		"tags": [
+			"expand",
+			"all",
+			"open",
+			"open all",
+			"expand all",
+			"arrow",
+			"table",
+			"tree",
+			"list"
+		]
+	},
+	"collapse-all": {
+		"tags": [
+			"collapse",
+			"all",
+			"close",
+			"close all",
+			"collapse all",
+			"arrow",
+			"table",
+			"tree",
+			"list"
+		]
 	}
 }

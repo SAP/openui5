@@ -5,15 +5,19 @@
 
 .sapMSegB {
 	margin: 0; /*To override the native browser margin*/
-	padding: 0;
+	padding: 0.250rem 0;
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	border: none;
 	white-space: nowrap;
 	display: inline-block;
 	box-sizing: border-box;
-	height: 2.5rem;
+	height: 3rem;
 	vertical-align: top;
 	position: relative;
+}
+
+.sapMSegB:focus {
+	outline: none;
 }
 
 .sapMSegB .sapMSegBBtn {
@@ -31,7 +35,6 @@
 	line-height: 2.375rem;
 	padding-left: 0.75rem;
 	padding-right: 0.75rem;
-	text-align: center;
 	text-shadow: none;
 	color: @sapUiSegmentedButtonTextColor;
 	border: 1px solid @sapUiSegmentedButtonBorderColor;
@@ -47,8 +50,7 @@
 
 // Adding margin to be displayed correct in sap.m.Bar
 .sapMBar .sapMSegB {
-	margin-top: 0.250rem;
-	margin-bottom: 0.250rem;
+	margin-left: 0.250rem;
 }
 
 html.sap-desktop .sapMSegBBtnFocusable:hover {
@@ -166,7 +168,8 @@ html[data-sap-ui-os^="iOS"] {
 /* Compact size */
 .sapUiSizeCompact {
 	.sapMSegB {
-		height: 1.625rem;
+		height: 2rem;
+		padding: 0.1875rem 0;
 	}
 
 	.sapMSegB img {
@@ -226,12 +229,6 @@ html[data-sap-ui-os^="iOS"] {
 				padding: 0;
 			}
 		}
-	}
-
-	// Adding margin to be displayed correct in sap.m.Bar
-	.sapMBar .sapMSegB {
-		margin-top: 0.1875rem;
-		margin-bottom: 0.1875rem;
 	}
 }
 

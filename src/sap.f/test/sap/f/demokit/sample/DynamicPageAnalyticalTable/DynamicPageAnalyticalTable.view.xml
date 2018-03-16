@@ -2,6 +2,7 @@
 		xmlns:c="sap.ui.core"
 		controllerName="sap.f.sample.DynamicPageAnalyticalTable.DynamicPageAnalyticalTable"
 		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:u="sap.ui.unified"
 		xmlns="sap.m"
 		xmlns:t="sap.ui.table"
 		xmlns:f="sap.f"
@@ -12,33 +13,31 @@
 			<f:title>
 				<f:DynamicPageTitle>
 					<f:heading>
-						<Title text="My Products"/>
+						<Title text="Header Title"/>
 					</f:heading>
+					<f:expandedContent>
+						<Label text="This is a subheading"/>
+					</f:expandedContent>
+					<f:snappedContent>
+						<Label text="This is a subheading"/>
+					</f:snappedContent>
+					<f:content>
+						<Image src="./test-resources/sap/f/images/KPI.png" tooltip="This is just a placeholder, not a real KPI control."/>
+					</f:content>
 					<f:actions>
 						<ToolbarSpacer/>
-						<ToggleButton
-								pressed="{/headerExpanded}"
-								text="{path:'/headerExpanded', formatter:'.formatToggleButtonText'}"
-								type="Transparent"/>
-						<OverflowToolbarButton
-								icon="sap-icon://add"
-								text="Add"
-								type="Transparent"
-								press="onAddMessage"/>
-						<OverflowToolbarButton
-								icon="sap-icon://edit"
-								text="Edit"
-								type="Transparent"/>
-						<OverflowToolbarButton
-								icon="sap-icon://delete"
-								text="Delete"
-								type="Transparent"
-								press="onDeleteMessages"/>
 						<Button
-								icon="sap-icon://post"
-								text="Toggle Footer"
-								type="Transparent"
-								press="onToggleFooter"/>
+								text="Edit"
+								type="Emphasized"/>
+						<Button
+								text="Delete"
+								type="Transparent"/>
+						<Button
+								text="Copy"
+								type="Transparent"/>
+						<Button
+								icon="sap-icon://action"
+								type="Transparent"/>
 					</f:actions>
 				</f:DynamicPageTitle>
 			</f:title>
@@ -47,74 +46,132 @@
 			<f:header>
 				<f:DynamicPageHeader pinnable="true">
 					<f:content>
-						<layout:Grid defaultSpan="XL4 L6 M6 S12">
-							<layout:VerticalLayout>
-								<Label text="Name:"/>
-								<Select
-										id="slName"
-										width="200px"
-										forceSelection="true"
-										items="{path: '/ProductNames'}">
-									<c:Item key="{key}" text="{name}"/>
-								</Select>
-							</layout:VerticalLayout>
-							<layout:VerticalLayout>
-								<Label text="Category:"/>
-								<Select
-										id="slCategory"
-										width="200px"
-										change="onSelectChange"
-										forceSelection="true"
-										items="{
-                                                    path: '/ProductCategories'
-                                                 }">
-									<c:Item key="{key}" text="{name}"/>
-								</Select>
-							</layout:VerticalLayout>
-							<layout:VerticalLayout>
-								<Label text="SupplierName:"/>
-								<Select
-										id="slSupplierName"
-										width="200px"
-										change="onSelectChange"
-										forceSelection="true"
-										items="{
-                                                    path: '/ProductSuppliers'
-                                                }">
-									<c:Item key="{key}" text="{name}"/>
-								</Select>
-							</layout:VerticalLayout>
-						</layout:Grid>
+						<FlexBox
+								alignItems="Start"
+								justifyContent="SpaceBetween">
+							<items>
+								<Panel
+										backgroundDesign="Transparent"
+										class="sapUiNoContentPadding">
+									<content>
+										<layout:HorizontalLayout
+												allowWrapping="true">
+											<layout:VerticalLayout
+													class="sapUiMediumMarginEnd">
+												<ObjectAttribute title="Location" text="Warehouse A"/>
+												<ObjectAttribute title="Halway" text="23L"/>
+												<ObjectAttribute title="Rack" text="34"/>
+											</layout:VerticalLayout>
+											<layout:VerticalLayout>
+												<ObjectAttribute title="Availability"/>
+												<ObjectStatus text="In Stock" state="Success" />
+											</layout:VerticalLayout>
+										</layout:HorizontalLayout>
+									</content>
+								</Panel>
+							</items>
+						</FlexBox>
 					</f:content>
 				</f:DynamicPageHeader>
 			</f:header>
 
 			<f:content>
-				<t:AnalyticalTable visibleRowCountMode="Auto" selectionMode="MultiToggle" rowHeight="32">
-					<t:toolbar>
-						<OverflowToolbar>
-							<Title text="Title Bar Here"/>
-							<ToolbarSpacer/>
-							<SearchField width="12rem"/>
-							<SegmentedButton>
-								<buttons>
-									<Button icon="sap-icon://table-view"/>
-									<Button icon="sap-icon://bar-chart"/>
-								</buttons>
-							</SegmentedButton>
-							<Button icon="sap-icon://group-2" type="Transparent"/>
-							<Button icon="sap-icon://action-settings" type="Transparent"/>
-						</OverflowToolbar>
-					</t:toolbar>
+				<t:Table
+						rows="{/ProductCollection}"
+						title="Products"
+						selectionMode="MultiToggle">
 					<t:columns>
-						<t:AnalyticalColumn/>
-						<t:AnalyticalColumn/>
-						<t:AnalyticalColumn/>
+						<t:Column width="11rem">
+							<Label text="Product Name" />
+							<t:template>
+								<Text text="{Name}" wrapping="false" />
+							</t:template>
+						</t:Column>
+						<t:Column width="11rem">
+							<Label text="Product Id" />
+							<t:template>
+								<Input value="{ProductId}"/>
+							</t:template>
+						</t:Column>
+						<t:Column width="6rem" hAlign="End">
+							<Label text="Quantity" />
+							<t:template>
+								<Label text="{Quantity}" />
+							</t:template>
+						</t:Column>
+						<t:Column width="9rem">
+							<Label text="Status" />
+							<t:template>
+								<ObjectStatus text="{Status}" state="{
+								path: 'Available',
+								formatter: '.formatAvailableToObjectState'
+							}"/>
+							</t:template>
+						</t:Column>
+						<t:Column width="9rem">
+							<Label text="Price" />
+							<t:template>
+								<u:Currency value="{Price}" currency="{CurrencyCode}"/>
+							</t:template>
+						</t:Column>
+						<t:Column width="12rem">
+							<Label text="Supplier" />
+							<t:template>
+								<ComboBox value="{SupplierName}" items="{/Suppliers}">
+									<c:Item text="{Name}"/>
+								</ComboBox>
+							</t:template>
+						</t:Column>
+						<t:Column width="9rem">
+							<Label text="Image" />
+							<t:template>
+								<Link text="Show Image" href="{ProductPicUrl}" target="_blank"/>
+							</t:template>
+						</t:Column>
+						<t:Column width="9rem">
+							<Label text="Details" />
+							<t:template>
+								<Button text="Show Details" press="handleDetailsPress"/>
+							</t:template>
+						</t:Column>
+						<t:Column width="7rem">
+							<Label text="Heavy Weight" />
+							<t:template>
+								<CheckBox selected="{
+								path: 'Heavy',
+								type: 'sap.ui.model.type.String'
+							}"/>
+							</t:template>
+						</t:Column>
+						<t:Column width="12rem">
+							<Label text="Category" />
+							<t:template>
+								<Select selectedKey="{Category}" items="{/Categories}">
+									<c:Item text="{Name}" key="{Name}"/>
+								</Select>
+							</t:template>
+						</t:Column>
+						<t:Column width="6rem" hAlign="Center">
+							<Label text="Status" />
+							<t:template>
+								<c:Icon src="{
+								path: 'Available',
+								formatter: '.formatAvailableToIcon'
+							}"/>
+							</t:template>
+						</t:Column>
+						<t:Column width="11rem" hAlign="Center">
+							<Label text="Delivery Date" />
+							<t:template>
+								<DatePicker value="{
+								path: 'DeliveryDate',
+								type: 'sap.ui.model.type.Date',
+								formatOptions: {source: {pattern: 'timestamp'}}
+							}"/>
+							</t:template>
+						</t:Column>
 					</t:columns>
-					<t:layoutData>
-						<FlexItemData growFactor="1" baseSize="0%" styleClass="sapUiResponsiveContentPadding"/>
-					</t:layoutData>
-				</t:AnalyticalTable>
+				</t:Table>
 			</f:content>
 			<!-- DynamicPage Footer -->
 			<f:footer>

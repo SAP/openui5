@@ -193,15 +193,27 @@
 
 		QUnit.test("Container", function(assert) {
 			assert.ok(jQuery.sap.domById("C1"), "Container is rendered");
-			assert.ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
 			assert.ok(jQuery('h4:contains("Container1")').get(0), "Title (as text) is renderd");
 			assert.ok(jQuery.sap.domById("C2T"), "Title (as Control) is rendered");
 			assert.ok(jQuery("#C2T").is("h4"), "Container title is rendered as H4 as default");
 			assert.ok(jQuery("#C3T").is("h3"), "Container title is rendered as H3 as set there");
-			assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
 			assert.ok(jQuery.sap.domById("C3-content"), "Container3 contetnt area is rendered");
 			assert.ok(jQuery.sap.byId("C3-content").is(":visible"), "Container3 content area is visible");
 			assert.ok(!jQuery.sap.domById("C5"), "invisible Container is not rendered");
+
+			// as button is loaded async, check if already there and rendered, if not, start test async
+			if (sap.ui.require("sap/ui/commons/Button") && jQuery.sap.domById("C3--Exp")) {
+				assert.ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
+				assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
+			} else {
+				var fnDone = assert.async();
+				sap.ui.require(["sap/ui/commons/Button"], function() {
+					sap.ui.getCore().applyChanges(); // to wait for re-rendering
+					assert.ok(!jQuery.sap.domById("C1--Exp"), "Container1 no expander is rendered");
+					assert.ok(jQuery.sap.domById("C3--Exp"), "Container3 expander is rendered");
+					fnDone();
+				});
+			}
 		});
 
 		QUnit.test("Element", function(assert) {

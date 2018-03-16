@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './DatePickerRenderer'],
-	function(jQuery, Renderer, DatePickerRenderer) {
+sap.ui.define(['sap/ui/core/Renderer', './DatePickerRenderer'],
+	function(Renderer, DatePickerRenderer) {
 	"use strict";
 
 

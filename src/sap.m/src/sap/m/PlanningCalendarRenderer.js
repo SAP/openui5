@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 	"use strict";
 
 	/**
@@ -35,6 +35,14 @@ sap.ui.define(['jquery.sap.global'],
 
 		if (!oPC.getShowRowHeaders()) {
 			oRm.addClass("sapMPlanCalNoHead");
+		}
+
+		if (oPC.getShowWeekNumbers() && oPC._viewAllowsWeekNumbers(oPC.getViewKey())) {
+			oRm.addClass("sapMPlanCalWithWeekNumbers");
+		}
+
+		if (oPC.getShowDayNamesLine() && oPC._viewAllowsDayNamesLine(oPC.getViewKey())) {
+			oRm.addClass("sapMPlanCalWithDayNamesLine");
 		}
 
 		if (sTooltip) {

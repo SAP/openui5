@@ -5,7 +5,7 @@
 	<title>RuntimeAuthoring Test Page With View</title>
 
 	<script id="sap-ui-bootstrap"
-			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-theme="sap_belize"
 			type="text/javascript"
 			data-sap-ui-noConflict="true"
 			data-sap-ui-resourceroots='{"sap.m.test.rta": "./"}'
@@ -18,19 +18,37 @@
 
 		// Create the FakeLrep with localStorage
 		(function _createFakeLrep() {
-			sap.ui.require(["sap/ui/fl/FakeLrepConnector", "sap/ui/rta/util/FakeLrepConnectorLocalStorage"], function (FakeLrepConnector, FakeLrepConnectorLocalStorage) {
+			sap.ui.require(["sap/ui/fl/FakeLrepConnector"], function (FakeLrepConnector) {
 				if (/[&?](sap-rta-clear-cache-lrep=(true|x)[&#]?)+/i.test(window.location.search)) {
 
 					jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
 					FakeLrepConnector.deleteChanges();
 				}
 
-				jQuery.extend(FakeLrepConnector.prototype, FakeLrepConnectorLocalStorage);
+				jQuery.extend(FakeLrepConnector.prototype);
 				FakeLrepConnector.enableFakeConnector(jQuery.sap.getModulePath("sap.m.test.rta.mockdata.FakeLrepConnector") + ".json");
 			});
 		}());
 
 		sap.ui.controller("my.own.controller", {
+			onInit: function(){
+				this.sMockServerBaseUri = "./../../../../sap.ui.core/test/sap/ui/core/demokit/sample/DataStateOData/mockdata/";
+				this.sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
+
+				jQuery.sap.require("sap.ui.core.util.MockServer");
+
+				this.oMockServer = new sap.ui.core.util.MockServer({rootUri : this.sServiceUri});
+				// configure
+
+				this.oMockServer.simulate(this.sMockServerBaseUri + "metadata.xml", {
+					sMockdataBaseUrl : this.sMockServerBaseUri,
+					bGenerateMissingMockData : true
+				});
+				this.oMockServer.start();
+				var oModel = new sap.ui.model.odata.v2.ODataModel (this.sServiceUri, {defaultBindingMode:"TwoWay"});
+				this.getView().setModel(oModel);
+				this.getView().bindElement("/ProductSet('HT-1000')");
+			},
 			onPress: function(oEvent) {
 				alert(oEvent.getSource());
 			},
@@ -45,7 +63,8 @@
 				return "my.own.controller";
 			},
 			createContent: function(oController) {
-				return [new sap.m.Toolbar({
+				return [
+					new sap.m.Toolbar({
 					id: "toolbar1",
 					content: [
 						new sap.m.MenuButton({
@@ -75,70 +94,98 @@
 						})
 					]
 				}),
-					new sap.m.Bar({
-						id: "bar0",
-						contentLeft: [
-							new sap.m.Text({
-								text: "Bar"
+				new sap.m.Bar({
+					id: "bar0",
+					contentLeft: [
+						new sap.m.Text({
+							text: "Bar"
+						})
+					],
+					contentMiddle: [
+						new sap.m.Button({
+							id: "btn1",
+							text: "Button 1",
+							icon: "sap-icon://cart-3",
+							press: oController.onPress
+						}),
+						new sap.m.Button({
+							id: "btn2",
+							text: "Button 2",
+							icon: "sap-icon://cart-4",
+							press: oController.onPress
+						}),
+						new sap.m.Button({
+							id: "btn3",
+							text: "Button 3",
+							icon:"sap-icon://cart-5",
+							press: oController.onPress
+						})
+					]
+				}),
+				new sap.m.OverflowToolbar({
+					id: "overflowtb0",
+					content: [
+						new sap.m.Button({
+							id: "btn4",
+							text: "Button 1",
+							icon: "sap-icon://cart-3",
+							press: oController.onPress
+						}),
+						new sap.m.Button({
+							id: "btn5",
+							text: "Button 2",
+							icon: "sap-icon://cart-4",
+							press: oController.onPress
+						}),
+						new sap.m.Button({
+							id: "btn6",
+							text: "Button 3",
+							icon:"sap-icon://cart-5",
+							press: oController.onPress
+						}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Text({text: "Overflow Toolbar"}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.MenuButton({
+							id: "mbtn1",
+							text: "MenuButton_2",
+							menu: new sap.m.Menu({
+								itemSelected: oController.onItemPress,
+								items: [
+									new sap.m.MenuItem({id: "mitem3", icon:"sap-icon://accept", text: "Item1"}),
+									new sap.m.MenuItem({id: "mitem4", icon:"sap-icon://decline", text: "Item2", press: oController.onPress})
+								]
 							})
-						],
-						contentMiddle: [
-							new sap.m.Button({
-								id: "btn1",
-								text: "Button 1",
-								icon: "sap-icon://cart-3",
-								press: oController.onPress
-							}),
-							new sap.m.Button({
-								id: "btn2",
-								text: "Button 2",
-								icon: "sap-icon://cart-4",
-								press: oController.onPress
-							}),
-							new sap.m.Button({
-								id: "btn3",
-								text: "Button 3",
-								icon:"sap-icon://cart-5",
-								press: oController.onPress
-							})
-						]
-					}),
-					new sap.m.OverflowToolbar({
-						id: "overflowtb0",
-						content: [
-							new sap.m.Button({
-								id: "btn4",
-								text: "Button 1",
-								icon: "sap-icon://cart-3",
-								press: oController.onPress
-							}),
-							new sap.m.Button({
-								id: "btn5",
-								text: "Button 2",
-								icon: "sap-icon://cart-4",
-								press: oController.onPress
-							}),
-							new sap.m.Button({
-								id: "btn6",
-								text: "Button 3",
-								icon:"sap-icon://cart-5",
-								press: oController.onPress
-							}),
-							new sap.m.ToolbarSpacer(),
-							new sap.m.Text({text: "Overflow Toolbar"}),
-							new sap.m.ToolbarSpacer(),
-							new sap.m.MenuButton({
-								id: "mbtn1",
-								text: "MenuButton_2",
-								menu: new sap.m.Menu({
-									itemSelected: oController.onItemPress,
-									items: [
-										new sap.m.MenuItem({id: "mitem3", icon:"sap-icon://accept", text: "Item1"}),
-										new sap.m.MenuItem({id: "mitem4", icon:"sap-icon://decline", text: "Item2", press: oController.onPress})
-									]
-								})
-							})
+						})
 
+					]
+				}),
+					new sap.ui.layout.form.Form({
+						id: "form",
+						title: "Form",
+						layout: new sap.ui.layout.form.GridLayout(),
+						formContainers: [
+							new sap.ui.layout.form.FormContainer({
+								id: "formContainer",
+								formElements: [
+									new sap.ui.layout.form.FormElement({
+										id: "formElement",
+										label: "Name",
+										fields: [new sap.m.Input({
+													value: "{Name}"
+												}
+										)]
+									}),
+									new sap.ui.layout.form.FormElement({
+										id: "formElement2",
+										label: "CompanyId",
+										fields: [new sap.m.Input({
+													value: "{CompanyId}"
+												}
+										)]
+									})
+								]
+							})
 						]
 					})
 				]
@@ -167,6 +214,9 @@
 												layer: "VENDOR"
 											}
 										});
+										oRta.attachStop(function() {
+											oRta.destroy();
+										})
 										oRta.start();
 									}
 								})

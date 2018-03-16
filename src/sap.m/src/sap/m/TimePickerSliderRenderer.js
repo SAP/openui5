@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+sap.ui.define([],
+	function() {
 		"use strict";
 
 		/**
@@ -36,6 +36,9 @@ sap.ui.define(['jquery.sap.global'],
 			}
 			if (!oControl.getIsCyclic()) {
 				oRm.addClass("sapMTimePickerSliderShort");
+			}
+			if (!oControl._getEnabled()) {
+				oRm.addClass("sapMTPDisabled");
 			}
 			oRm.writeClasses();
 

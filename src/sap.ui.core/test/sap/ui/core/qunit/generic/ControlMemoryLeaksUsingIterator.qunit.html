@@ -33,35 +33,68 @@
 				"sap.m.PlanningCalendar", // can be rendered but fails when properties generically filled ("viewKey")
 				"sap.ui.comp.odata.FieldSelector", // has a known leak
 				"sap.ui.comp.valuehelpdialog.ValueHelpDialog",  // has a known leak
-				"sap.ui.mdc.FilterField" // has a known leak
+				"sap.ui.mdc.base.FilterField" // has a known leak
 			];
 
 			sap.ui.getCore().attachInit(function(){
 				'use strict';
 
+				jQuery.sap.require("sap.ui.thirdparty.qunit"); // needed to make the autostart=false work, even though QUnit is loaded anyway by MemoryLeakCheck
+				QUnit.config.autostart = false;
+
 				sap.ui.require(["sap/ui/qunit/utils/ControlIterator", "sap/ui/qunit/utils/MemoryLeakCheck"],
 						function(ControlIterator, MemoryLeakCheck) {
 
-					ControlIterator.run(function(sControlName, oControlClass, oInfo) { // loop over all controls
+					var aControls = [], oLoadingSpan;
 
-						MemoryLeakCheck.checkControl(
-							function() {
-								return new oControlClass();
-							},
-							!oInfo.canRender
-						);
+					function collectControls() {
+						oLoadingSpan = document.getElementById("loadingNow");
 
-					},{
-						excludedControls: aExcludedControls,
-						excludedLibraries: ["sap.viz"],
-						done: function(oResultInfo) {
-							// QUnit is made available by MemoryLeakCheck
-							QUnit.test("Test summary (" + oResultInfo.testedControlCount + " controls in " + oResultInfo.testedLibraryCount + " libraries)", function(assert){
-								assert.ok(true, "Tested Controls: " + oResultInfo.testedControlCount);
-								assert.ok(true, "Tested Libraries: " + oResultInfo.testedLibraryCount);
-							});
+						ControlIterator.run(function(sControlName, oControlClass, oInfo) { // loop over all controls
+							oLoadingSpan.innerText = sControlName; // not really updated visually (except in Firefox), but in therory the info is there  :-)
+							aControls.push({name: sControlName, controlClass: oControlClass, info: oInfo});
+						},{
+							excludedControls: aExcludedControls,
+							excludedLibraries: ["sap.viz"],
+							done: function(oResultInfo) {
+								runTests();
+
+								// QUnit is made available by MemoryLeakCheck
+								QUnit.module("MemoryLeakCheck Summary");
+								QUnit.test("Test summary (" + oResultInfo.testedControlCount + " controls in " + oResultInfo.testedLibraryCount + " libraries)", function(assert){
+									assert.ok(true, "Tested Controls: " + oResultInfo.testedControlCount);
+									assert.ok(true, "Tested Libraries: " + oResultInfo.testedLibraryCount);
+								});
+							}
+						});
+					}
+
+					function runTests() {
+						var oControlClass, sControlName, bCanRender;
+
+						document.getElementById("loading").style.display = "none";
+
+						for (var i = 0; i < aControls.length; i++) {
+							oControlClass = aControls[i].controlClass;
+							sControlName = aControls[i].name;
+							bCanRender = aControls[i].info.canRender;
+
+							(function(oControlClass, sControlName, bCanRender) {
+								MemoryLeakCheck.checkControl(
+									sControlName,
+									function() {
+										return new oControlClass();
+									},
+									!bCanRender
+								);
+							})(oControlClass, sControlName, bCanRender);
+
 						}
-					});
+
+						QUnit.start();
+					}
+
+					collectControls();
 				});
 			});
 
@@ -76,10 +109,14 @@
 			html {
 				overflow: auto !important;
 			}
+			#loading {
+				margin: 16px;
+			}
 		</style>
 
 	</head>
 	<body id="body" class="sapUiBody">
+		<div id="loading">Discovering and loading all libraries and controls... this will take a while... <span id="loadingNow"></span></div>
 		<div id="qunit"></div>
 		<div id="qunit-fixture"></div>
 	</body>

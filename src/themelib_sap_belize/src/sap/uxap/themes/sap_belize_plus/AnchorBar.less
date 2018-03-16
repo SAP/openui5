@@ -5,7 +5,14 @@
 
 .sapUshellShell {
 	.sapUxAPAnchorBar.sapMTB {
-		opacity: 0.6;
+		background: fade(@sapUiObjectHeaderBackground, 60%);
+	}
+
+	.sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft,
+	html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+	.sapUxAPAnchorBar.sapUxAPAnchorBarScrollRight .anchorBarArrowRight,
+	html[dir=rtl] .sapUxAPAnchorBar.sapUxAPAnchorBarScrollLeft .anchorBarArrowLeft {
+		background: none;
 	}
 }
 

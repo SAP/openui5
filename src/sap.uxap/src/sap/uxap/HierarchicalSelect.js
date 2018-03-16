@@ -3,18 +3,26 @@
  */
 
 // Provides control sap.uxap.HierarchicalSelect.
-sap.ui.define(["jquery.sap.global", "sap/m/Select", "sap/ui/Device", "./library"], function (jQuery, Select, Device, library) {
+sap.ui.define([
+    "jquery.sap.global",
+    "sap/m/Select",
+    "sap/ui/Device",
+    "./library",
+    "./HierarchicalSelectRenderer"
+], function(jQuery, Select, Device, library, HierarchicalSelectRenderer) {
 	"use strict";
 
 	/**
-	 * Constructor for a new HierarchicalSelect.
+	 * Constructor for a new <code>HierarchicalSelect</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A select that display items on 2 level of hierarchy.
-	 * If a provided item has a custom data named "secondLevel", then it will be displayed as a second level, otherwise it would be displayed as a first level.
+	 * A select that displays items on a hierarchy of 2 levels.
+	 *
+	 * If a provided item has a custom data named <code>secondLevel</code>, then it will be displayed as a second level,
+	 * otherwise it would be displayed as a first level.
 	 * @extends sap.m.Select
 	 *
 	 * @author SAP SE
@@ -43,8 +51,6 @@ sap.ui.define(["jquery.sap.global", "sap/m/Select", "sap/ui/Device", "./library"
 
 	HierarchicalSelect.prototype.onAfterRendering = function (){
 		Select.prototype.onAfterRendering.apply(this, arguments);
-			/*  incident 1680116122. Redundant tab comes from the select, and it's undesired */
-			this.$().attr("tabindex", "-1");
 	};
 
 	HierarchicalSelect.prototype.onAfterRenderingPicker = function () {
@@ -110,7 +116,7 @@ sap.ui.define(["jquery.sap.global", "sap/m/Select", "sap/ui/Device", "./library"
 	 * We are overriding function from sap.m.Select
 	 * in order to redefine position of popover
 	 *
-	 * @param {sap.m.Popover}
+	 * @param {sap.m.Popover} oPopover The given <code>sap.m.Popover</code>
 	 * @private
 	 */
 	HierarchicalSelect.prototype._decoratePopover = function (oPopover) {

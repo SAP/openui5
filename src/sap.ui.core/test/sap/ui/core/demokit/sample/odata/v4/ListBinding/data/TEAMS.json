@@ -41,6 +41,7 @@
 					"ID" : 1,
 					"Name" : "Office PC",
 					"SupplierIdentifier" : 1,
+					"ProductPicture" : {},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 1,
 						"CategoryName" : "Computer device"
@@ -59,6 +60,7 @@
 					"ID" : 2,
 					"Name" : "Tablet X",
 					"SupplierIdentifier" : 1,
+					"ProductPicture" : {},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 1,
 						"CategoryName" : "Computer device"
@@ -103,6 +105,7 @@
 					"ID" : 5,
 					"Name" : "VW Golf 2.0",
 					"SupplierIdentifier" : 2,
+					"ProductPicture" : {},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 2,
 						"CategoryName" : "Vehicle"
@@ -160,6 +163,7 @@
 					"ID" : 6,
 					"Name" : "Audi A3 2.5",
 					"SupplierIdentifier" : 2,
+					"ProductPicture" : {},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 2,
 						"CategoryName" : "Vehicle"
@@ -204,6 +208,7 @@
 					"ID" : 7,
 					"Name" : "Office PC",
 					"SupplierIdentifier" : 3,
+					"ProductPicture" : {},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 1,
 						"CategoryName" : "Computer device"
@@ -222,6 +227,7 @@
 					"ID" : 8,
 					"Name" : "CLA AMG 45",
 					"SupplierIdentifier" : 4,
+					"ProductPicture" : {},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 2,
 						"CategoryName" : "Vehicle"
@@ -240,6 +246,7 @@
 					"ID" : 9,
 					"Name" : "Tesla Model S",
 					"SupplierIdentifier" : 6,
+					"ProductPicture" : {},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 1,
 						"CategoryName" : "Computer device"
@@ -300,6 +307,7 @@
 					"ID" : 3,
 					"Name" : "Smartphone X",
 					"SupplierIdentifier" : 1,
+					"ProductPicture" : {},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 1,
 						"CategoryName" : "Computer device"
@@ -318,6 +326,7 @@
 					"ID" : 4,
 					"Name" : "Electric Table Model A1",
 					"SupplierIdentifier" : 5,
+					"ProductPicture" : {},
 					"PRODUCT_2_CATEGORY" : [{
 						"CategoryIdentifier" : 1,
 						"CategoryName" : "Computer device"

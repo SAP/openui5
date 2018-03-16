@@ -37,7 +37,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		 * @extends sap.ui.base.Object
 		 * @author SAP SE
 		 * @version ${version}
-		 * @constructor
 		 * @public
 		 * @alias sap.ui.core.Locale
 		 */
@@ -298,10 +297,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object'],
 		var A_RTL_LOCALES = getDesigntimePropertyAsArray("$cldr-rtl-locales:ar,fa,he$") || [];
 
 		/**
-		 * A list of locales for which CLDR data is bundled wit the UI5 runtime.
+		 * A list of locales for which CLDR data is bundled with the UI5 runtime.
 		 * @private
 		 */
-		Locale._cldrLocales = getDesigntimePropertyAsArray("$cldr-locales:ar,ar_EG,ar_SA,bg,br,ca,cs,da,de,de_AT,de_CH,el,el_CY,en,en_AU,en_GB,en_HK,en_IE,en_IN,en_NZ,en_PG,en_SG,en_ZA,es,es_AR,es_BO,es_CL,es_CO,es_MX,es_PE,es_UY,es_VE,et,fa,fi,fr,fr_BE,fr_CA,fr_CH,fr_LU,he,hi,hr,hu,id,it,it_CH,ja,ko,lt,lv,nb,nl,nl_BE,nn,pl,pt,pt_PT,ro,ru,ru_UA,sk,sl,sr,sv,th,tr,uk,vi,zh_CN,zh_HK,zh_SG,zh_TW$");
+		Locale._cldrLocales = getDesigntimePropertyAsArray("$cldr-locales:ar,ar_EG,ar_SA,bg,br,ca,cs,da,de,de_AT,de_CH,el,el_CY,en,en_AU,en_GB,en_HK,en_IE,en_IN,en_NZ,en_PG,en_SG,en_ZA,es,es_AR,es_BO,es_CL,es_CO,es_MX,es_PE,es_UY,es_VE,et,fa,fi,fr,fr_BE,fr_CA,fr_CH,fr_LU,he,hi,hr,hu,id,it,it_CH,ja,kk,ko,lt,lv,ms,nb,nl,nl_BE,nn,pl,pt,pt_PT,ro,ru,ru_UA,sk,sl,sr,sv,th,tr,uk,vi,zh_CN,zh_HK,zh_SG,zh_TW$");
 
 		/**
 		 * List of locales for which translated texts have been bundled with the UI5 runtime.

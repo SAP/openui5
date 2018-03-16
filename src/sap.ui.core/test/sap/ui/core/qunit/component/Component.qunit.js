@@ -117,6 +117,9 @@ sap.ui.define([
 
 		assert.expect(2);
 		return TestDtComp.getMetadata().loadDesignTime().then(function(_oDesignTime) {
+			//module was added
+			oDesignTime.designtimeModule = "test/dtcomp/Component.designtime";
+			oDesignTime._oLib = null;
 			assert.deepEqual(_oDesignTime, oDesignTime, "DesignTime was loaded properly");
 			sinon.assert.callCount(oRequireStub, 1);
 			oRequireStub.restore();
@@ -659,6 +662,66 @@ sap.ui.define([
 			assert.equal(oError.message, "Error from _fnOnInstanceCreated", "Promise should reject with error from hook");
 			delete Component._fnOnInstanceCreated;
 		});
+	});
+
+	QUnit.test("Usage of manifest property in component configuration for URL", function(assert) {
+
+		sap.ui.core.Component._fnOnInstanceCreated = undefined;
+
+		return sap.ui.component({
+			manifest: "/anylocation/manifest.json"
+		}).then(function(oComponent) {
+			assert.ok(true, "Component is loaded properly!");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
+
+	QUnit.test("Usage of manifest property in component configuration for manifest object", function(assert) {
+
+		return sap.ui.component({
+			manifest: {
+				"sap.app" : {
+					"id" : "samples.components.oneview"
+				}
+			}
+		}).then(function(oComponent) {
+			assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview", "The proper component has been loaded!");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
+
+	QUnit.test("Usage of manifest property in component configuration for URL (sync)", function(assert) {
+
+		sap.ui.core.Component._fnOnInstanceCreated = undefined;
+
+		var oComponent = sap.ui.component({
+			manifest: "/anylocation/manifest.json",
+			async: false
+		});
+
+		assert.ok(oComponent instanceof sap.ui.core.UIComponent, "Component is loaded properly!");
+		assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.button", "The proper component has been loaded!");
+
+	});
+
+	QUnit.test("Usage of manifest property in component configuration for manifest object (sync)", function(assert) {
+
+		var oComponent = sap.ui.component({
+			manifest: {
+				"sap.app" : {
+					"id" : "samples.components.oneview"
+				}
+			},
+			async: false
+		});
+
+		assert.ok(oComponent instanceof sap.ui.core.UIComponent, "Component is loaded properly!");
+		assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview", "The proper component has been loaded!");
+
 	});
 
 

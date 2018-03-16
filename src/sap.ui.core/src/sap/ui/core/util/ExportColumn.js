@@ -21,7 +21,6 @@ sap.ui.define(['sap/ui/base/ManagedObject', './ExportCell'],
 	 * @version ${version}
 	 * @since 1.22.0
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.util.ExportColumn
 	 */

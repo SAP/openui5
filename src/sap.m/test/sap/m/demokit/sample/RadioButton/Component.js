@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.RadioButton.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.RadioButton.V",
+			rootView : {
+				"viewName": "sap.m.sample.RadioButton.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

@@ -13,15 +13,18 @@
 			var contextPath = "/" + window.location.pathname.split("/")[1];
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/Bootstrap.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapCustomBootTaskPreloadCss.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapLoadAll.qunit.html");
+			// @evo-todo re-enable or abandon "load-all"
+			// suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapLoadAll.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapMainModule.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapMinimal.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreload.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreloadAsync.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapPreloadAuto.qunit.html");
-			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/Bootstrap.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithCustomBootTask.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithCustomScript.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithinBody.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithinHead.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/BootstrapWithNoJQuery.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/CfgDefaults.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/CfgFromConfigAttribute.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/CfgFromGlobalObject.qunit.html");
@@ -35,6 +38,13 @@
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ThemeVersion-on-sync.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/PegasusEnvironment.qunit.html");
 			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ResourcesURL_Standard.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DebugMode.qunit.html?sap-ui-debug=false");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DebugMode.qunit.html?sap-ui-debug=true");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/DebugMode.qunit.html?sap-ui-debug=sap%2Fm%2FListBase,modules%2Fdebug-mode%2F");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ModuleSystem.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/ModuleSystem_async.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/UI5LoaderNoConflict.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/polyfill/ComputedStyle.qunit.html");
 			// TODO: check why the following tests do not work
 			if (window["sap-ui-bootstrap-tests"]) {
 				suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/bootstrap/ResourceRoot_ConfiguratorURL.qunit.html");

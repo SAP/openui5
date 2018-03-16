@@ -1,0 +1,829 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+<title>sap.m.Button and sap.m.ToggleButton Test</title>
+
+<script src="shared-config.js"></script>
+<script src="../../../resources/sap-ui-core.js"
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+
+</script>
+
+<style type="text/css">
+.ButtonSpace {
+	display: inline;
+	position: relative;
+}
+</style>
+
+<script>
+	jQuery.sap.require("sap.ui.core.HTML");
+	jQuery.sap.require("sap.ui.core.IconPool");
+
+	new sap.ui.core.HTML({content: "<span id='bars1'>Bar</span></br>"}).placeAt("barBtn");
+
+	var b = new sap.m.Bar({
+		contentLeft: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Def",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Def Dis",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Reject",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Reject",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Accept",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Accept",
+				enabled: false,
+				pressed: true
+			})
+		]
+	}).placeAt('barBtn');
+
+	var b2 = new sap.m.Bar({
+		contentLeft: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Button Trans",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Button Trans Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emph",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emph",
+				enabled: true,
+				pressed: true
+			})
+		]
+	}).placeAt('barBtn');
+
+	new sap.ui.core.HTML({content: "</br></br>Transparent OverflowToolbar</br>"}).placeAt("barBtn");
+
+	var b5 = new sap.m.OverflowToolbar({
+		design: "Transparent",
+		content: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Trans",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Trans Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emph",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emph Dis",
+				enabled: false,
+				pressed: true
+			})
+		]
+	}).placeAt('barBtn');
+
+	var b6 = new sap.m.OverflowToolbar({
+		design: "Transparent",
+		content: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Default",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Default Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Reject",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Up,
+				icon: "sap-icon://home",
+				text: "Btn Up",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Up,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Up",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Back,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Back",
+				enabled: true,
+				pressed: false
+			})
+		]
+	}).placeAt('barBtn');
+
+	new sap.ui.core.HTML({content: "</br></br>OverflowToolbar</br>"}).placeAt("barBtn");
+
+	var b5_2 = new sap.m.OverflowToolbar({
+		content: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Trans",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Trans Dis",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Trans Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emph",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emph Dis",
+				enabled: false,
+				pressed: true
+			})
+		]
+	}).placeAt('barBtn');
+
+	new sap.ui.core.HTML({content: "<span id='bars2'>ToolBar</span></br>"}).placeAt("barBtn");
+
+	var b7 = new sap.m.Toolbar({
+		content: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Default",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Default Dis",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "Btn Reject Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Default",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Reject Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Reject",
+				enabled: true,
+				pressed: false
+			})
+		]
+	}).placeAt('barBtn');
+
+	var b8 = new sap.m.Toolbar({
+		content: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Transparent",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Transparent",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emphasized",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emphasized",
+				enabled: true,
+				pressed: true
+			})
+		]
+	}).placeAt('barBtn');
+
+	new sap.ui.core.HTML({content: "</br></br>Transparent ToolBar</br>"}).placeAt("barBtn");
+
+	var b9 = new sap.m.Toolbar({
+		design: sap.m.ToolbarDesign.Transparent,
+		content: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Default",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Default Dis",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "Btn Reject Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Default",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Reject Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Reject",
+				enabled: true,
+				pressed: false
+			})
+		]
+	}).placeAt('barBtn');
+
+	var b10 = new sap.m.Toolbar({
+		design: sap.m.ToolbarDesign.Transparent,
+		content: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Transparent",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Transparent",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emphasized",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emphasized",
+				enabled: true,
+				pressed: true
+			})
+		]
+	}).placeAt('barBtn');
+
+	new sap.ui.core.HTML({content: "</br></br>Solid ToolBar</br>"}).placeAt("barBtn");
+
+	var b11 = new sap.m.Toolbar({
+		design: sap.m.ToolbarDesign.Solid,
+		content: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Default",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "Btn Default Dis",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Accept,
+				icon: "sap-icon://home",
+				text: "Btn Accept",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Default",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def Dis",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Default,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Def Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Reject Dis",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Reject,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Reject",
+				enabled: true,
+				pressed: false
+			})
+		]
+	}).placeAt('barBtn');
+
+	var b12 = new sap.m.Toolbar({
+		design: sap.m.ToolbarDesign.Solid,
+		content: [
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Transparent",
+				enabled: true
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "Btn Transparent",
+				enabled: false
+			}),
+			new sap.m.Button({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "Btn Ghost",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Ghost,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Ghost",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: true,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Transparent,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Transparent",
+				enabled: false,
+				pressed: true
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emphasized",
+				enabled: true,
+				pressed: false
+			}),
+			new sap.m.ToggleButton({
+				type: sap.m.ButtonType.Emphasized,
+				icon: "sap-icon://home",
+				text: "ToggleBtn Emphasized",
+				enabled: true,
+				pressed: true
+			})
+		]
+	}).placeAt('barBtn');
+
+</script>
+
+</head>
+<body id="body" class="sapUiBody">
+<div id="barBtn"></div>
+</body>
+</html>

@@ -2,28 +2,30 @@
 		controllerName="sap.ui.support.supportRules.ui.controllers.Analysis"
 		height="100%"
 		xmlns="sap.ui.table"
-		xmlns:un="sap.ui.unified"
 		xmlns:m="sap.m"
 		xmlns:c="sap.ui.core"
 		xmlns:l="sap.ui.layout"
 		xmlns:f="sap.ui.layout.form"
-		xmlns:tools="sap.ui.codeeditor"
-		xmlns:mvc="sap.ui.core.mvc">
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:t="sap.ui.table">
 	<m:NavContainer
 		id="rulesNavContainer"
 		afterNavigate="onAfterNavigate">
 		<l:Splitter id="rulesDisplayPage">
 			<l:contentAreas>
-				<m:Page showHeader="true">
+				<m:Page
+						showHeader="true">
 					<m:headerContent>
 						<m:Bar>
 							<m:contentLeft>
 								<m:IconTabHeader
+										id="ruleSetsView"
+										select="onSelectedRuleSets"
 										selectedKey="{/selectedSetPreviewKey}"
 										class="customIconTabHeader">
 									<m:items>
 										<m:IconTabFilter key="availableRules" text="Available Rulesets" />
-										<m:IconTabFilter key="availableLibraries" text="Additional Rulesets" />
+										<m:IconTabFilter key="additionalRulesets" text="Additional Rulesets" />
 									</m:items>
 								</m:IconTabHeader>
 							</m:contentLeft>
@@ -35,19 +37,50 @@
 					</m:headerContent>
 					<m:subHeader>
 						<m:Bar >
-							<m:contentLeft>
-								<m:Button  text="Select all" press="selectAll" visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"/>
-								<m:Button  text="Deselect all" press="deselectAll" visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"/>
-							</m:contentLeft>
 							<m:contentRight>
 								<m:Button text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
 								</m:contentRight>
 							</m:Bar>
 							</m:subHeader>
-					<l:VerticalLayout id="ruleSetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'availableRules' }">
-
-					</l:VerticalLayout>
-					<l:VerticalLayout id="librarySetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'availableLibraries' }">
+						<t:TreeTable
+								id="ruleList"
+								collapseRecursive="false"
+								selectionMode="MultiToggle"
+								enableColumnReordering="false"
+								expandFirstLevel="true"
+								rows="{path: '/treeViewModel'}"
+								cellClick="onCellClick"
+								class="sapUiSizeCondensed"
+								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
+								visibleRowCountMode="Auto"
+								selectionBehavior="RowSelector"
+								rowActionCount="1"
+								toggleOpenState="onToggleOpenState"
+								rowSelectionChange="onRowSelectionChange">
+							<t:columns>
+								<t:Column label="Rules">
+									<t:template>
+										<m:Text text="{name}" wrapping="false"/>
+									</t:template>
+								</t:Column>
+								<t:Column label="Categories"
+										  width="10rem">
+									<t:template>
+										<m:Text text="{categories}" wrapping="false"/>
+									</t:template>
+								</t:Column>
+							</t:columns>
+							<t:rowActionTemplate>
+									<t:RowAction>
+										<t:items>
+											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${libName} !== 'temporary' &amp;&amp; ${type} !== 'lib'}" />
+										</t:items>
+									</t:RowAction>
+							</t:rowActionTemplate>
+						</t:TreeTable>
+					<l:VerticalLayout id="librarySetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'additionalRulesets' }">
 						<m:List
 							id="availableLibrariesSet"
 							mode = "MultiSelect"
@@ -61,264 +94,7 @@
 						<m:Button class="customMargin" text="Load" type="Emphasized" press="loadMarkedSupportLibraries" />
 					</l:VerticalLayout>
 				</m:Page>
-				<m:Page showHeader="false">
-					<m:Bar>
-						<m:contentLeft>
-							<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" titleStyle="H6" class="customMarginLeft" />
-						</m:contentLeft>
-						<m:contentMiddle>
-							<m:IconTabHeader
-									selectedKey="{/selectedRulePreviewKey}"
-									class="customIconTabHeader">
-								<m:items>
-									<m:IconTabFilter key="ruleProperties" text="Rule properties" />
-									<m:IconTabFilter key="checkFunction" text="Check function" />
-									<m:IconTabFilter key="jsonOutput" text="Code" />
-								</m:items>
-							</m:IconTabHeader>
-						</m:contentMiddle>
-					</m:Bar>
-					<f:SimpleForm
-							visible="{= ${/selectedRule/type} !== 'library'  &amp;&amp; ${/selectedRulePreviewKey} === 'ruleProperties' }">
-						<f:content>
-							<m:Label text="ID" />
-							<m:Text text="{/selectedRule/id}" />
-							<m:Label text="Title" />
-							<m:Text text="{/selectedRule/title}" />
-							<m:Label text="Audiences" />
-							<m:Text text="{/selectedRule/audiences}" />
-							<m:Label text="Categories" />
-							<m:Text text="{/selectedRule/categories}" />
-							<m:Label text="Min version" />
-							<m:Text text="{/selectedRule/minversion}" />
-							<m:Label text="Description" />
-							<m:Text text="{/selectedRule/description}" />
-							<m:Label text="Resolution" />
-							<m:Text text="{/selectedRule/resolution}" />
-							<m:Label text="Resolution URLs" />
-							<l:VerticalLayout
-									content="{/selectedRule/resolutionurls}">
-								<m:Link text="{text}" />
-							</l:VerticalLayout>
-						</f:content>
-						<f:layoutData><l:SplitterLayoutData size="40%" /></f:layoutData>
-					</f:SimpleForm>
-					<m:Panel
-							width="100%"
-							height="calc(100% - 2rem)"
-							visible="{= ${/selectedRulePreviewKey} === 'checkFunction' }">
-						<tools:CodeEditor
-								id="codeEditorPreview"
-								syntaxHints="false"
-								width="100%"
-								height="100%"
-								value="{/selectedRule/check}"
-								editable="false">
-						</tools:CodeEditor>
-					</m:Panel>
-					<m:Panel
-							 width="100%"
-							 height="calc(100% - 2rem)"
-							 visible="{= ${/selectedRulePreviewKey} === 'jsonOutput' }">
-						<tools:CodeEditor
-								id="codeEditorJson1"
-								syntaxHints="false"
-								width="100%"
-								height="100%"
-								value="{/selectedRuleStringify}"
-								editable="false"
-								type="javascript">
-						</tools:CodeEditor>
-					</m:Panel>
-				</m:Page>
 			</l:contentAreas>
 		</l:Splitter>
-		<m:Page
-				id="ruleUpdatePage"
-				showHeader="false">
-			<m:content>
-				<m:Bar>
-					<m:contentLeft>
-						<m:Button
-								icon="sap-icon://arrow-left"
-								press="goToRuleProperties"
-								text="Back"/>
-					</m:contentLeft>
-					<m:contentMiddle>
-						<m:IconTabHeader
-								select="rulesToolbarEditITHSelect"
-								selectedKey="{/selectedRuleEditKey}"
-								class="customIconTabHeader">
-							<m:items>
-								<m:IconTabFilter key="ruleProperties" text="Rule properties" />
-								<m:IconTabFilter key="checkFunction" text="Check function" />
-								<m:IconTabFilter key="jsonOutput" text="Code" />
-							</m:items>
-						</m:IconTabHeader>
-					</m:contentMiddle>
-				</m:Bar>
-				<f:SimpleForm
-						visible="{= ${/selectedRuleEditKey} === 'ruleProperties' }"
-						editable="true">
-					<f:content>
-						<m:Label text="ID" />
-						<m:Input value="{/editRule/id}" required = "true" />
-						<m:Label text="Categories" />
-						<m:MultiComboBox selectedKeys="{/editRule/categories}" items="{/categories}"  required = "true">
-							<c:Item key="{}" text="{}" />
-						</m:MultiComboBox>
-						<m:Label text="Audiences" />
-						<m:MultiComboBox selectedKeys="{/editRule/audiences}" items="{/audiences}"  required = "true">
-							<c:Item key="{}" text="{}" />
-						</m:MultiComboBox>
-						<m:Label text="Title" />
-						<m:Input type="Text" value="{/editRule/title}"  required = "true" />
-						<m:Label text="Description" />
-						<m:TextArea value="{/editRule/description}"  required = "true"/>
-						<m:Label text="Resolution" />
-						<m:TextArea value="{/editRule/resolution}"  required = "true"/>
-						<m:Label text="Resolution URLS" />
-						<l:VerticalLayout>
-							<l:HorizontalLayout>
-								<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
-								<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
-								<m:Button text="Add" press="addLinkToEditRule" icon="sap-icon://add" />
-							</l:HorizontalLayout>
-							<l:VerticalLayout
-									content="{/editRule/resolutionurls}">
-								<m:Link text="{text}" />
-							</l:VerticalLayout>
-						</l:VerticalLayout>
-					</f:content>
-				</f:SimpleForm>
-				<m:Panel width="100%"
-						 height="calc(100% - 2rem)"
-						 visible="{= ${/selectedRuleEditKey} === 'checkFunction' }">
-					<tools:CodeEditor
-							id="codeEditorUpdate"
-							width="100%"
-							height="100%"
-							value="{/editRule/check}"
-							editable="true">
-					</tools:CodeEditor>
-				</m:Panel>
-				<m:Panel width="100%"
-						 height="calc(100% - 2rem)"
-						 visible="{= ${/selectedRuleEditKey} === 'jsonOutput' }">
-					<tools:CodeEditor
-							syntaxHints="false"
-							width="100%"
-							height="100%"
-							value="{/updateRuleStringified}"
-							editable="false"
-							type="javascript">
-					</tools:CodeEditor>
-				</m:Panel>
-			</m:content>
-			<m:footer>
-				<m:Bar>
-					<m:contentRight>
-						<m:Button
-								press="updateRule"
-								text="Update"
-								type="Emphasized" />
-					</m:contentRight>
-				</m:Bar>
-			</m:footer>
-		</m:Page>
-		<m:Page
-				id="rulesCreatePage"
-				showHeader="false">
-			<m:content>
-				<m:Bar>
-					<m:contentLeft>
-						<m:Button
-								icon="sap-icon://arrow-left"
-								press="goToRuleProperties"
-								text="Back"/>
-					</m:contentLeft>
-					<m:contentMiddle>
-						<m:IconTabHeader
-								select="rulesToolbarITHSelect"
-								selectedKey="{/selectedRuleCreateKey}"
-								class="customIconTabHeader">
-							<m:items>
-								<m:IconTabFilter key="ruleProperties" text="Rule properties" />
-								<m:IconTabFilter key="checkFunction" text="Check function" />
-								<m:IconTabFilter key="jsonOutput" text="Code" />
-							</m:items>
-						</m:IconTabHeader>
-					</m:contentMiddle>
-				</m:Bar>
-				<f:SimpleForm
-						visible="{= ${/selectedRuleCreateKey} === 'ruleProperties' }"
-						editable="true">
-					<f:content>
-						<m:Label text="ID" />
-						<m:Input value="{/newRule/id}"  required = "true"/>
-						<m:Label text="Categories" />
-						<m:MultiComboBox selectedKeys="{/newRule/categories}" items="{/categories}"  required = "true">
-							<c:Item key="{}" text="{}" />
-						</m:MultiComboBox>
-						<m:Label text="Audiences" />
-						<m:MultiComboBox selectedKeys="{/newRule/audiences}" items="{/audiences}"  required = "true">
-							<c:Item key="{}" text="{}" />
-						</m:MultiComboBox>
-						<m:Label text="Title" />
-						<m:Input type="Text" value="{/newRule/title}"  required = "true"/>
-						<m:Label text="Description" />
-						<m:TextArea value="{/newRule/description}"  required = "true"/>
-						<m:Label text="Resolution" />
-						<m:TextArea value="{/newRule/resolution}"  required = "true"/>
-						<m:Label text="Resolution URLS" />
-						<l:VerticalLayout>
-							<l:HorizontalLayout>
-								<m:Input type="text" placeholder="Text" value="{/tempLink/text}" />
-								<m:Input type="text" placeholder="Href" value="{/tempLink/href}" />
-								<m:Button text="Add" press="addLinkToNewRule" icon="sap-icon://add" />
-							</l:HorizontalLayout>
-							<l:VerticalLayout
-									content="{/newRule/resolutionurls}">
-								<m:Link text="{text}" />
-							</l:VerticalLayout>
-						</l:VerticalLayout>
-					</f:content>
-				</f:SimpleForm>
-				<m:Panel width="100%"
-						 height="calc(100% - 2rem)"
-						 visible="{= ${/selectedRuleCreateKey} === 'checkFunction' }">
-					<tools:CodeEditor
-							id="codeEditorCreate"
-							width="100%"
-							height="100%"
-							value="{/newRule/check}"
-							editable="true">
-					</tools:CodeEditor>
-				</m:Panel>
-				<m:Panel width="100%"
-						 height="calc(100% - 2rem)"
-						 visible="{= ${/selectedRuleCreateKey} === 'jsonOutput' }">
-					<tools:CodeEditor
-							id="codeEditorJson"
-							syntaxHints="false"
-							width="100%"
-							height="100%"
-							value="{/newRuleStringified}"
-							editable="false"
-							type="javascript">
-					</tools:CodeEditor>
-				</m:Panel>
-			</m:content>
-			<m:footer>
-				<m:Bar>
-					<m:contentRight>
-						<m:Button
-								press="addNewRule"
-								text="Add Rule"
-								type="Emphasized" />
-					</m:contentRight>
-				</m:Bar>
-			</m:footer>
-		</m:Page>
 	</m:NavContainer>
 </mvc:View>

@@ -3,7 +3,7 @@
 	"languages": {
 		"aa": "Afar",
 		"ab": "Abhazca",
-		"ace": "Achinese",
+		"ace": "Açece",
 		"ach": "Acoli",
 		"ada": "Adangme",
 		"ady": "Adigece",
@@ -16,7 +16,7 @@
 		"ak": "Akan",
 		"akk": "Akad Dili",
 		"akz": "Alabamaca",
-		"ale": "Aleut",
+		"ale": "Aleut dili",
 		"aln": "Gheg Arnavutçası",
 		"alt": "Güney Altayca",
 		"am": "Amharca",
@@ -26,7 +26,7 @@
 		"ar": "Arapça",
 		"ar_001": "Modern Standart Arapça",
 		"arc": "Aramice",
-		"arn": "Araukanya Dili",
+		"arn": "Mapuçe dili",
 		"aro": "Araona",
 		"arp": "Arapaho Dili",
 		"arq": "Cezayir Arapçası",
@@ -45,15 +45,15 @@
 		"az_alt-short": "Azerice",
 		"az_Arab": "Güney Azerice",
 		"ba": "Başkırtça",
-		"bal": "Baluchi",
-		"ban": "Bali Dili",
-		"bar": "Bavyera Dili",
+		"bal": "Beluçça",
+		"ban": "Bali dili",
+		"bar": "Bavyera dili",
 		"bas": "Basa Dili",
 		"bax": "Bamun",
 		"bbc": "Batak Toba",
 		"bbj": "Ghomala",
-		"be": "Beyaz Rusça",
-		"bej": "Beja Dili",
+		"be": "Belarusça",
+		"bej": "Beja dili",
 		"bem": "Bemba",
 		"bew": "Betawi",
 		"bez": "Bena",
@@ -67,7 +67,7 @@
 		"bin": "Bini",
 		"bjn": "Banjar Dili",
 		"bkm": "Kom",
-		"bla": "Siksika",
+		"bla": "Karaayak dili",
 		"bm": "Bambara",
 		"bn": "Bengalce",
 		"bo": "Tibetçe",
@@ -79,61 +79,62 @@
 		"brx": "Bodo",
 		"bs": "Boşnakça",
 		"bss": "Akoose",
-		"bua": "Buryat",
+		"bua": "Buryatça",
 		"bug": "Bugis",
 		"bum": "Bulu",
 		"byn": "Blin",
 		"byv": "Medumba",
 		"ca": "Katalanca",
-		"cad": "Caddo",
+		"cad": "Kado dili",
 		"car": "Carib",
-		"cay": "Cayuga",
+		"cay": "Kayuga dili",
 		"cch": "Atsam",
 		"ce": "Çeçence",
-		"ceb": "Cebuano",
+		"ceb": "Sebuano dili",
 		"cgg": "Kigaca",
-		"ch": "Chamorro",
-		"chb": "Chibcha",
-		"chg": "Çağatay Dili",
+		"ch": "Çamorro dili",
+		"chb": "Çibça dili",
+		"chg": "Çağatayca",
 		"chk": "Chuukese",
-		"chm": "Mari",
-		"chn": "Chinook Jargon",
-		"cho": "Choctaw",
-		"chp": "Chipewyan",
+		"chm": "Mari dili",
+		"chn": "Çinuk dili",
+		"cho": "Çoktav dili",
+		"chp": "Çipevya dili",
 		"chr": "Çerokice",
-		"chy": "Şayen Dili",
+		"chy": "Şayence",
 		"ckb": "Orta Kürtçe",
 		"co": "Korsikaca",
 		"cop": "Kıptice",
 		"cps": "Capiznon",
-		"cr": "Cree",
+		"cr": "Krice",
 		"crh": "Kırım Türkçesi",
+		"crs": "Seselwa Kreole Fransızcası",
 		"cs": "Çekçe",
 		"csb": "Kashubian",
 		"cu": "Kilise Slavcası",
 		"cv": "Çuvaşça",
 		"cy": "Galce",
 		"da": "Danca",
-		"dak": "Dakota",
+		"dak": "Dakotaca",
 		"dar": "Dargince",
 		"dav": "Taita",
 		"de": "Almanca",
 		"de_AT": "Avusturya Almancası",
 		"de_CH": "İsviçre Yüksek Almancası",
 		"del": "Delaware",
-		"den": "Slavey",
+		"den": "Slavey dili",
 		"dgr": "Dogrib",
-		"din": "Dinka",
+		"din": "Dinka dili",
 		"dje": "Zarma",
 		"doi": "Dogri",
 		"dsb": "Aşağı Sorbça",
 		"dtp": "Orta Kadazan",
 		"dua": "Duala",
 		"dum": "Ortaçağ Felemenkçesi",
-		"dv": "Divehi",
+		"dv": "Divehi dili",
 		"dyo": "Jola-Fonyi",
 		"dyu": "Dyula",
-		"dz": "Butan Dili",
+		"dz": "Dzongkha",
 		"dzg": "Dazaga",
 		"ebu": "Embu",
 		"ee": "Ewe",
@@ -147,9 +148,9 @@
 		"en_AU": "Avustralya İngilizcesi",
 		"en_CA": "Kanada İngilizcesi",
 		"en_GB": "İngiliz İngilizcesi",
-		"en_GB-alt-short": "İngilizce (BK)",
+		"en_GB-alt-short": "Birleşik Krallık İngilizcesi",
 		"en_US": "Amerikan İngilizcesi",
-		"en_US-alt-short": "İngilizce (ABD)",
+		"en_US-alt-short": "ABD İngilizcesi",
 		"enm": "Ortaçağ İngilizcesi",
 		"eo": "Esperanto",
 		"es": "İspanyolca",
@@ -164,7 +165,7 @@
 		"fa": "Farsça",
 		"fan": "Fang",
 		"fat": "Fanti",
-		"ff": "Fulah",
+		"ff": "Fula dili",
 		"fi": "Fince",
 		"fil": "Filipince",
 		"fit": "Tornedalin Fincesi",
@@ -180,69 +181,69 @@
 		"frp": "Arpitanca",
 		"frr": "Kuzey Frizce",
 		"frs": "Doğu Frizcesi",
-		"fur": "Friulian",
+		"fur": "Friuli dili",
 		"fy": "Batı Frizcesi",
 		"ga": "İrlandaca",
-		"gaa": "Ga",
+		"gaa": "Ga dili",
 		"gag": "Gagavuzca",
 		"gan": "Gan Çincesi",
-		"gay": "Gayo",
+		"gay": "Gayo dili",
 		"gba": "Gbaya",
 		"gbz": "Zerdüşt Daricesi",
-		"gd": "İskoç Gal Dili",
+		"gd": "İskoç Gaelcesi",
 		"gez": "Geez",
-		"gil": "Kiribati Dili",
+		"gil": "Kiribatice",
 		"gl": "Galiçyaca",
 		"glk": "Gilanice",
 		"gmh": "Ortaçağ Yüksek Almancası",
-		"gn": "Guarani Dili",
+		"gn": "Guarani dili",
 		"goh": "Eski Yüksek Almanca",
 		"gom": "Goa Konkanicesi",
-		"gon": "Gondi",
-		"gor": "Gorontalo",
+		"gon": "Gondi dili",
+		"gor": "Gorontalo dili",
 		"got": "Gotça",
-		"grb": "Grebo",
+		"grb": "Grebo dili",
 		"grc": "Antik Yunanca",
 		"gsw": "İsviçre Almancası",
 		"gu": "Güceratça",
-		"guc": "Wayuu",
+		"guc": "Wayuu dili",
 		"gur": "Frafra",
 		"guz": "Gusii",
-		"gv": "Manks",
-		"gwi": "Gwichʼin",
-		"ha": "Hausa",
-		"hai": "Haida",
+		"gv": "Man dili",
+		"gwi": "Guçince",
+		"ha": "Hausa dili",
+		"hai": "Haydaca",
 		"hak": "Hakka Çincesi",
-		"haw": "Hawaii Dili",
+		"haw": "Hawaii dili",
 		"he": "İbranice",
 		"hi": "Hintçe",
 		"hif": "Fiji Hintçesi",
-		"hil": "Hiligaynon",
+		"hil": "Hiligaynon dili",
 		"hit": "Hititçe",
 		"hmn": "Hmong",
 		"ho": "Hiri Motu",
 		"hr": "Hırvatça",
 		"hsb": "Yukarı Sorbça",
 		"hsn": "Xiang Çincesi",
-		"ht": "Haiti Dili",
+		"ht": "Haiti Kreyolu",
 		"hu": "Macarca",
-		"hup": "Hupa",
+		"hup": "Hupaca",
 		"hy": "Ermenice",
-		"hz": "Herero",
+		"hz": "Herero dili",
 		"ia": "Interlingua",
 		"iba": "Iban",
-		"ibb": "Ibibio",
+		"ibb": "İbibio dili",
 		"id": "Endonezce",
 		"ie": "Interlingue",
-		"ig": "İbo Dili",
+		"ig": "İbo dili",
 		"ii": "Sichuan Yi",
-		"ik": "Inupiak",
+		"ik": "İnyupikçe",
 		"ilo": "Iloko",
 		"inh": "İnguşça",
 		"io": "Ido",
 		"is": "İzlandaca",
 		"it": "İtalyanca",
-		"iu": "Inuktitut",
+		"iu": "İnuktitut dili",
 		"izh": "İngriya Dili",
 		"ja": "Japonca",
 		"jam": "Jamaika Patois Dili",
@@ -256,7 +257,7 @@
 		"ka": "Gürcüce",
 		"kaa": "Karakalpakça",
 		"kab": "Kabiliyece",
-		"kac": "Kaçin",
+		"kac": "Kaçin dili",
 		"kaj": "Jju",
 		"kam": "Kamba",
 		"kaw": "Kawi",
@@ -267,9 +268,9 @@
 		"kea": "Kabuverdianu",
 		"ken": "Kenyang",
 		"kfo": "Koro",
-		"kg": "Kongo",
+		"kg": "Kongo dili",
 		"kgp": "Kaingang",
-		"kha": "Khasi",
+		"kha": "Khasi dili",
 		"kho": "Hotanca",
 		"khq": "Koyra Chiini",
 		"khw": "Çitral Dili",
@@ -278,29 +279,29 @@
 		"kj": "Kuanyama",
 		"kk": "Kazakça",
 		"kkj": "Kako",
-		"kl": "Grönland Dili",
+		"kl": "Grönland dili",
 		"kln": "Kalenjin",
-		"km": "Kmerce",
+		"km": "Khmer dili",
 		"kmb": "Kimbundu",
-		"kn": "Kannada",
+		"kn": "Kannada dili",
 		"ko": "Korece",
 		"koi": "Komi-Permyak",
-		"kok": "Konkani",
+		"kok": "Konkani dili",
 		"kos": "Kosraean",
-		"kpe": "Kpelle",
-		"kr": "Kanuri",
+		"kpe": "Kpelle dili",
+		"kr": "Kanuri dili",
 		"krc": "Karaçay-Balkarca",
 		"kri": "Krio",
 		"krj": "Kinaray-a",
 		"krl": "Karelyaca",
-		"kru": "Kurukh",
-		"ks": "Keşmirce",
+		"kru": "Kurukh dili",
+		"ks": "Keşmir dili",
 		"ksb": "Shambala",
 		"ksf": "Bafia",
-		"ksh": "Köln Diyalekti",
+		"ksh": "Köln lehçesi",
 		"ku": "Kürtçe",
 		"kum": "Kumukça",
-		"kut": "Kutenai",
+		"kut": "Kutenai dili",
 		"kv": "Komi",
 		"kw": "Kernevekçe",
 		"ky": "Kırgızca",
@@ -308,7 +309,7 @@
 		"lad": "Ladino",
 		"lag": "Langi",
 		"lah": "Lahnda",
-		"lam": "Lamba",
+		"lam": "Lamba dili",
 		"lb": "Lüksemburgca",
 		"lez": "Lezgice",
 		"lfn": "Lingua Franca Nova",
@@ -319,8 +320,9 @@
 		"lkt": "Lakotaca",
 		"lmo": "Lombardça",
 		"ln": "Lingala",
-		"lo": "Laoca",
+		"lo": "Lao dili",
 		"lol": "Mongo",
+		"lou": "Louisiana Kreolcesi",
 		"loz": "Lozi",
 		"lrc": "Kuzey Luri",
 		"lt": "Litvanca",
@@ -343,43 +345,41 @@
 		"man": "Mandingo",
 		"mas": "Masai",
 		"mde": "Maba",
-		"mdf": "Mokşa Dili",
-		"mdh": "mdh",
+		"mdf": "Mokşa dili",
 		"mdr": "Mandar",
-		"men": "Mende",
+		"men": "Mende dili",
 		"mer": "Meru",
 		"mfe": "Morisyen",
 		"mg": "Malgaşça",
 		"mga": "Ortaçağ İrlandacası",
 		"mgh": "Makhuwa-Meetto",
 		"mgo": "Meta’",
-		"mh": "Marshall Adaları Dili",
-		"mi": "Maori Dili",
+		"mh": "Marshall Adaları dili",
+		"mi": "Maori dili",
 		"mic": "Micmac",
 		"min": "Minangkabau",
-		"mis": "mis",
 		"mk": "Makedonca",
-		"ml": "Malayalam",
+		"ml": "Malayalam dili",
 		"mn": "Moğolca",
-		"mnc": "Mançurya Dili",
-		"mni": "Manipuri",
-		"moh": "Mohavk Dili",
+		"mnc": "Mançurya dili",
+		"mni": "Manipuri dili",
+		"moh": "Mohavk dili",
 		"mos": "Mossi",
-		"mr": "Marathi",
+		"mr": "Marathi dili",
 		"mrj": "Ova Çirmişçesi",
 		"ms": "Malayca",
 		"mt": "Maltaca",
 		"mua": "Mundang",
 		"mul": "Birden Fazla Dil",
-		"mus": "Creek",
-		"mwl": "Miranda Dili",
+		"mus": "Krikçe",
+		"mwl": "Miranda dili",
 		"mwr": "Marvari",
 		"mwv": "Mentawai",
-		"my": "Burmaca",
+		"my": "Birman dili",
 		"mye": "Myene",
 		"myv": "Erzya",
 		"mzn": "Mazenderanca",
-		"na": "Nauru Dili",
+		"na": "Nauru dili",
 		"nan": "Min Nan Çincesi",
 		"nap": "Napolice",
 		"naq": "Nama",
@@ -391,47 +391,48 @@
 		"new": "Nevari",
 		"ng": "Ndonga",
 		"nia": "Nias",
-		"niu": "Niuean",
+		"niu": "Niue dili",
 		"njo": "Ao Naga",
-		"nl": "Hollandaca",
+		"nl": "Felemenkçe",
 		"nl_BE": "Flamanca",
 		"nmg": "Kwasio",
 		"nn": "Norveççe Nynorsk",
 		"nnh": "Ngiemboon",
 		"no": "Norveççe",
 		"nog": "Nogayca",
-		"non": "Eski Norse",
+		"non": "Eski Nors dili",
 		"nov": "Novial",
 		"nqo": "N’Ko",
 		"nr": "Güney Ndebele",
-		"nso": "Kuzey Sotho",
+		"nso": "Kuzey Sotho dili",
 		"nus": "Nuer",
-		"nv": "Navaho Dili",
+		"nv": "Navaho dili",
 		"nwc": "Klasik Nevari",
 		"ny": "Nyanja",
 		"nym": "Nyamvezi",
 		"nyn": "Nyankole",
 		"nyo": "Nyoro",
-		"nzi": "Nzima",
-		"oc": "Occitan",
-		"oj": "Ojibva Dili",
-		"om": "Oromo",
+		"nzi": "Nzima dili",
+		"oc": "Oksitan dili",
+		"oj": "Ojibva dili",
+		"om": "Oromo dili",
 		"or": "Oriya Dili",
 		"os": "Osetçe",
 		"osa": "Osage",
 		"ota": "Osmanlı Türkçesi",
 		"pa": "Pencapça",
-		"pag": "Pangasinan",
+		"pag": "Pangasinan dili",
 		"pal": "Pehlevi Dili",
 		"pam": "Pampanga",
 		"pap": "Papiamento",
-		"pau": "Palau Dili",
+		"pau": "Palau dili",
 		"pcd": "Picard Dili",
+		"pcm": "Nijerya Pidgin dili",
 		"pdc": "Pensilvanya Almancası",
 		"pdt": "Plautdietsch",
 		"peo": "Eski Farsça",
 		"pfl": "Palatin Almancası",
-		"phn": "Fenike Dili",
+		"phn": "Fenike dili",
 		"pi": "Pali",
 		"pl": "Lehçe",
 		"pms": "Piyemontece",
@@ -443,17 +444,17 @@
 		"pt": "Portekizce",
 		"pt_BR": "Brezilya Portekizcesi",
 		"pt_PT": "Avrupa Portekizcesi",
-		"qu": "Keçuvaca",
+		"qu": "Keçuva dili",
 		"quc": "Kiçece",
 		"qug": "Chimborazo Highland Quichua",
 		"raj": "Rajasthani",
-		"rap": "Rapanui",
+		"rap": "Rapanui dili",
 		"rar": "Rarotongan",
 		"rgn": "Romanyolca",
 		"rif": "Rif Berbericesi",
 		"rm": "Romanşça",
 		"rn": "Kirundi",
-		"ro": "Romence",
+		"ro": "Rumence",
 		"ro_MD": "Moldovaca",
 		"rof": "Rombo",
 		"rom": "Romanca",
@@ -465,7 +466,7 @@
 		"rup": "Ulahça",
 		"rw": "Kinyarwanda",
 		"rwk": "Rwa",
-		"sa": "Sanskritçe",
+		"sa": "Sanskrit",
 		"sad": "Sandave",
 		"sah": "Yakutça",
 		"sam": "Samarit Aramcası",
@@ -475,36 +476,36 @@
 		"saz": "Saurashtra",
 		"sba": "Ngambay",
 		"sbp": "Sangu",
-		"sc": "Sardunya Dili",
+		"sc": "Sardunya dili",
 		"scn": "Sicilyaca",
-		"sco": "Scots",
-		"sd": "Sindhi",
+		"sco": "İskoçça",
+		"sd": "Sindhi dili",
 		"sdc": "Sassari Sarduca",
 		"sdh": "Güney Kürtçesi",
-		"se": "Kuzey Sami",
-		"see": "Seneca",
+		"se": "Kuzey Laponcası",
+		"see": "Seneca dili",
 		"seh": "Sena",
 		"sei": "Seri",
-		"sel": "Selkup",
+		"sel": "Selkup dili",
 		"ses": "Koyraboro Senni",
 		"sg": "Sango",
 		"sga": "Eski İrlandaca",
 		"sgs": "Samogitçe",
 		"sh": "Sırp-Hırvat Dili",
 		"shi": "Taşelhit",
-		"shn": "Shan Dili",
+		"shn": "Shan dili",
 		"shu": "Çad Arapçası",
-		"si": "Seylanca",
-		"sid": "Sidamo",
+		"si": "Sinhali dili",
+		"sid": "Sidamo dili",
 		"sk": "Slovakça",
 		"sl": "Slovence",
 		"sli": "Aşağı Silezyaca",
 		"sly": "Selayar",
-		"sm": "Samoa Dili",
-		"sma": "Güney Sami",
-		"smj": "Lule Sami",
-		"smn": "Inari Sami",
-		"sms": "Skolt Sami",
+		"sm": "Samoa dili",
+		"sma": "Güney Laponcası",
+		"smj": "Lule Laponcası",
+		"smn": "İnari Laponcası",
+		"sms": "Skolt Laponcası",
 		"sn": "Shona",
 		"snk": "Soninke",
 		"so": "Somalice",
@@ -512,17 +513,17 @@
 		"sq": "Arnavutça",
 		"sr": "Sırpça",
 		"srn": "Sranan Tongo",
-		"srr": "Serer",
+		"srr": "Serer dili",
 		"ss": "Sisvati",
 		"ssy": "Saho",
-		"st": "Güney Sotho",
+		"st": "Güney Sotho dili",
 		"stq": "Saterland Frizcesi",
 		"su": "Sunda Dili",
-		"suk": "Sukuma",
+		"suk": "Sukuma dili",
 		"sus": "Susu",
 		"sux": "Sümerce",
 		"sv": "İsveççe",
-		"sw": "Svahili",
+		"sw": "Svahili dili",
 		"sw_CD": "Kongo Svahili",
 		"swb": "Komorca",
 		"syc": "Klasik Süryanice",
@@ -530,26 +531,26 @@
 		"szl": "Silezyaca",
 		"ta": "Tamilce",
 		"tcy": "Tuluca",
-		"te": "Telugu Dili",
+		"te": "Telugu dili",
 		"tem": "Timne",
 		"teo": "Teso",
 		"ter": "Tereno",
 		"tet": "Tetum",
 		"tg": "Tacikçe",
 		"th": "Tayca",
-		"ti": "Tigrinya",
+		"ti": "Tigrinya dili",
 		"tig": "Tigre",
 		"tiv": "Tiv",
 		"tk": "Türkmence",
-		"tkl": "Tokelau",
+		"tkl": "Tokelau dili",
 		"tkr": "Sahurca",
-		"tl": "Takalotça",
+		"tl": "Tagalogca",
 		"tlh": "Klingonca",
 		"tli": "Tlingit",
 		"tly": "Talışça",
 		"tmh": "Tamaşek",
 		"tn": "Setsvana",
-		"to": "Tongaca",
+		"to": "Tonga dili",
 		"tog": "Nyasa Tonga",
 		"tpi": "Tok Pisin",
 		"tr": "Türkçe",
@@ -561,29 +562,29 @@
 		"tt": "Tatarca",
 		"ttt": "Tatça",
 		"tum": "Tumbuka",
-		"tvl": "Tuvalu",
+		"tvl": "Tuvalyanca",
 		"tw": "Tvi",
 		"twq": "Tasawaq",
-		"ty": "Tahiti Dili",
+		"ty": "Tahiti dili",
 		"tyv": "Tuvaca",
-		"tzm": "Orta Fas Tamazigti",
+		"tzm": "Orta Atlas Tamazigti",
 		"udm": "Udmurtça",
 		"ug": "Uygurca",
-		"uga": "Ugarit Dili",
+		"uga": "Ugarit dili",
 		"uk": "Ukraynaca",
 		"umb": "Umbundu",
 		"und": "Bilinmeyen Dil",
 		"ur": "Urduca",
 		"uz": "Özbekçe",
 		"vai": "Vai",
-		"ve": "Venda",
+		"ve": "Venda dili",
 		"vec": "Venedikçe",
-		"vep": "Veps",
+		"vep": "Veps dili",
 		"vi": "Vietnamca",
 		"vls": "Batı Flamanca",
 		"vmf": "Main Frankonya Dili",
 		"vo": "Volapük",
-		"vot": "Votic",
+		"vot": "Votça",
 		"vro": "Võro",
 		"vun": "Vunjo",
 		"wa": "Valonca",
@@ -595,7 +596,7 @@
 		"wo": "Volofça",
 		"wuu": "Wu Çincesi",
 		"xal": "Kalmıkça",
-		"xh": "Zosa",
+		"xh": "Zosa dili",
 		"xmf": "Megrelce",
 		"xog": "Soga",
 		"yao": "Yao",
@@ -606,17 +607,17 @@
 		"yo": "Yorubaca",
 		"yrl": "Nheengatu",
 		"yue": "Kantonca",
-		"za": "Zhuang",
-		"zap": "Zapotek Dili",
+		"za": "Zhuangca",
+		"zap": "Zapotek dili",
 		"zbl": "Blis Sembolleri",
 		"zea": "Zelandaca",
-		"zen": "Zenaga",
-		"zgh": "Standart Berberi Dili Tamazight",
+		"zen": "Zenaga dili",
+		"zgh": "Standart Fas Tamazigti",
 		"zh": "Çince",
 		"zh_Hans": "Basitleştirilmiş Çince",
 		"zh_Hant": "Geleneksel Çince",
 		"zu": "Zuluca",
-		"zun": "Zuni",
+		"zun": "Zunice",
 		"zxx": "Dilbilim içeriği yok",
 		"zza": "Zazaca"
 	},
@@ -663,6 +664,7 @@
 		"Geok": "Hutsuri Gürcü",
 		"Geor": "Gürcü",
 		"Glag": "Glagolit",
+		"Gonm": "Gonm",
 		"Goth": "Gotik",
 		"Gran": "Grantha",
 		"Grek": "Yunan",
@@ -749,55 +751,6 @@
 		"Phnx": "Fenike",
 		"Plrd": "Pollard Fonetik",
 		"Prti": "Partça Kitabe Dili",
-		"Qaaa": "Qaaa",
-		"Qaab": "Qaab",
-		"Qaac": "Qaac",
-		"Qaad": "Qaad",
-		"Qaae": "Qaae",
-		"Qaaf": "Qaaf",
-		"Qaag": "Qaag",
-		"Qaah": "Qaah",
-		"Qaaj": "Qaaj",
-		"Qaak": "Qaak",
-		"Qaal": "Qaal",
-		"Qaam": "Qaam",
-		"Qaan": "Qaan",
-		"Qaao": "Qaao",
-		"Qaap": "Qaap",
-		"Qaaq": "Qaaq",
-		"Qaar": "Qaar",
-		"Qaas": "Qaas",
-		"Qaat": "Qaat",
-		"Qaau": "Qaau",
-		"Qaav": "Qaav",
-		"Qaaw": "Qaaw",
-		"Qaax": "Qaax",
-		"Qaay": "Qaay",
-		"Qaaz": "Qaaz",
-		"Qaba": "Qaba",
-		"Qabb": "Qabb",
-		"Qabc": "Qabc",
-		"Qabd": "Qabd",
-		"Qabe": "Qabe",
-		"Qabf": "Qabf",
-		"Qabg": "Qabg",
-		"Qabh": "Qabh",
-		"Qabi": "Qabi",
-		"Qabj": "Qabj",
-		"Qabk": "Qabk",
-		"Qabl": "Qabl",
-		"Qabm": "Qabm",
-		"Qabn": "Qabn",
-		"Qabo": "Qabo",
-		"Qabp": "Qabp",
-		"Qabq": "Qabq",
-		"Qabr": "Qabr",
-		"Qabs": "Qabs",
-		"Qabt": "Qabt",
-		"Qabu": "Qabu",
-		"Qabv": "Qabv",
-		"Qabw": "Qabw",
-		"Qabx": "Qabx",
 		"Rjng": "Rejang",
 		"Roro": "Rongorongo",
 		"Runr": "Runik",
@@ -812,6 +765,7 @@
 		"Sind": "Khudabadi",
 		"Sinh": "Seylan",
 		"Sora": "Sora Sompeng",
+		"Soyo": "Soyo",
 		"Sund": "Sunda",
 		"Sylo": "Syloti Nagri",
 		"Syrc": "Süryani",
@@ -841,9 +795,10 @@
 		"Xpeo": "Eski Fars",
 		"Xsux": "Sümer-Akad Çivi Yazısı",
 		"Yiii": "Yi",
+		"Zanb": "Zanb",
 		"Zinh": "Kalıtsal",
 		"Zmth": "Matematiksel Gösterim",
-		"Zsye": "Zsye",
+		"Zsye": "Emoji",
 		"Zsym": "Sembol",
 		"Zxxx": "Yazılı Olmayan",
 		"Zyyy": "Ortak",
@@ -857,6 +812,7 @@
 		"151": "Doğu Avrupa",
 		"154": "Kuzey Avrupa",
 		"155": "Batı Avrupa",
+		"202": "202",
 		"419": "Latin Amerika",
 		"001": "Dünya",
 		"002": "Afrika",
@@ -897,7 +853,7 @@
 		"AW": "Aruba",
 		"AX": "Åland Adaları",
 		"AZ": "Azerbaycan",
-		"BA": "Bosna Hersek",
+		"BA": "Bosna-Hersek",
 		"BB": "Barbados",
 		"BD": "Bangladeş",
 		"BE": "Belçika",
@@ -910,18 +866,18 @@
 		"BM": "Bermuda",
 		"BN": "Brunei",
 		"BO": "Bolivya",
-		"BQ": "Karayip Hollanda",
+		"BQ": "Karayip Hollandası",
 		"BR": "Brezilya",
 		"BS": "Bahamalar",
 		"BT": "Butan",
 		"BV": "Bouvet Adası",
 		"BW": "Botsvana",
-		"BY": "Beyaz Rusya",
+		"BY": "Belarus",
 		"BZ": "Belize",
 		"CA": "Kanada",
 		"CC": "Cocos (Keeling) Adaları",
 		"CD": "Kongo - Kinşasa",
-		"CD-alt-variant": "Demokratik Kongo Cumhuriyeti",
+		"CD-alt-variant": "Kongo Demokratik Cumhuriyeti",
 		"CF": "Orta Afrika Cumhuriyeti",
 		"CG": "Kongo - Brazavil",
 		"CG-alt-variant": "Kongo Cumhuriyeti",
@@ -940,7 +896,8 @@
 		"CW": "Curaçao",
 		"CX": "Christmas Adası",
 		"CY": "Kıbrıs",
-		"CZ": "Çek Cumhuriyeti",
+		"CZ": "Çekya",
+		"CZ-alt-variant": "Çek Cumhuriyeti",
 		"DE": "Almanya",
 		"DG": "Diego Garcia",
 		"DJ": "Cibuti",
@@ -952,11 +909,12 @@
 		"EC": "Ekvador",
 		"EE": "Estonya",
 		"EG": "Mısır",
-		"EH": "Batı Sahara",
+		"EH": "Batı Sahra",
 		"ER": "Eritre",
 		"ES": "İspanya",
 		"ET": "Etiyopya",
 		"EU": "Avrupa Birliği",
+		"EZ": "Euro Bölgesi",
 		"FI": "Finlandiya",
 		"FJ": "Fiji",
 		"FK": "Falkland Adaları",
@@ -976,7 +934,7 @@
 		"GL": "Grönland",
 		"GM": "Gambiya",
 		"GN": "Gine",
-		"GP": "Guadalupe",
+		"GP": "Guadeloupe",
 		"GQ": "Ekvator Ginesi",
 		"GR": "Yunanistan",
 		"GS": "Güney Georgia ve Güney Sandwich Adaları",
@@ -984,7 +942,7 @@
 		"GU": "Guam",
 		"GW": "Gine-Bissau",
 		"GY": "Guyana",
-		"HK": "Çin Hong Kong ÖYB",
+		"HK": "Çin Hong Kong ÖİB",
 		"HK-alt-short": "Hong Kong",
 		"HM": "Heard Adası ve McDonald Adaları",
 		"HN": "Honduras",
@@ -1023,7 +981,7 @@
 		"LI": "Liechtenstein",
 		"LK": "Sri Lanka",
 		"LR": "Liberya",
-		"LS": "Lesoto",
+		"LS": "Lesotho",
 		"LT": "Litvanya",
 		"LU": "Lüksemburg",
 		"LV": "Letonya",
@@ -1040,7 +998,7 @@
 		"ML": "Mali",
 		"MM": "Myanmar (Burma)",
 		"MN": "Moğolistan",
-		"MO": "Çin Makao ÖYB",
+		"MO": "Çin Makao ÖİB",
 		"MO-alt-short": "Makao",
 		"MP": "Kuzey Mariana Adaları",
 		"MQ": "Martinik",
@@ -1096,7 +1054,7 @@
 		"SG": "Singapur",
 		"SH": "Saint Helena",
 		"SI": "Slovenya",
-		"SJ": "Svalbard ve Jan Mayen Adaları",
+		"SJ": "Svalbard ve Jan Mayen",
 		"SK": "Slovakya",
 		"SL": "Sierra Leone",
 		"SM": "San Marino",
@@ -1129,8 +1087,10 @@
 		"TZ": "Tanzanya",
 		"UA": "Ukrayna",
 		"UG": "Uganda",
-		"UM": "ABD Uzak Adaları",
-		"US": "ABD",
+		"UM": "ABD Küçük Harici Adaları",
+		"UN": "Birleşmiş Milletler",
+		"UN-alt-short": "BM",
+		"US": "Amerika Birleşik Devletleri",
 		"US-alt-short": "ABD",
 		"UY": "Uruguay",
 		"UZ": "Özbekistan",
@@ -1141,7 +1101,7 @@
 		"VI": "ABD Virjin Adaları",
 		"VN": "Vietnam",
 		"VU": "Vanuatu",
-		"WF": "Wallis ve Futuna Adaları",
+		"WF": "Wallis ve Futuna",
 		"WS": "Samoa",
 		"XK": "Kosova",
 		"YE": "Yemen",
@@ -1171,8 +1131,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "B h",
+				"Bhm": "B h:mm",
+				"Bhms": "B h:mm:ss",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E B h:mm",
+				"EBhms": "E B h:mm:ss",
 				"Ed": "d E",
 				"Ehm": "E a h:mm",
 				"EHm": "E HH:mm",
@@ -1180,7 +1145,7 @@
 				"EHms": "E HH:mm:ss",
 				"Gy": "G y",
 				"GyMMM": "G MMM y",
-				"GyMMMd": "G dd MMM y",
+				"GyMMMd": "G d MMM y",
 				"GyMMMEd": "G d MMM y E",
 				"h": "a h",
 				"H": "HH",
@@ -1193,26 +1158,28 @@
 				"hmv": "a h:mm v",
 				"Hmv": "HH:mm v",
 				"M": "L",
-				"Md": "dd/MM",
-				"MEd": "dd/MM E",
+				"Md": "d/M",
+				"MEd": "d/MM E",
 				"MMM": "LLL",
 				"MMMd": "d MMM",
 				"MMMEd": "d MMMM E",
-				"MMMMd": "dd MMMM",
-				"MMMMEd": "dd MMMM E",
+				"MMMMd": "d MMMM",
+				"MMMMEd": "d MMMM E",
 				"mmss": "mm:ss",
 				"ms": "mm:ss",
 				"y": "y",
 				"yM": "MM/y",
 				"yMd": "dd.MM.y",
-				"yMEd": "dd.MM.y E",
+				"yMEd": "d.M.y E",
 				"yMM": "MM.y",
 				"yMMM": "MMM y",
-				"yMMMd": "dd MMM y",
+				"yMMMd": "d MMM y",
 				"yMMMEd": "d MMM y E",
 				"yMMMM": "MMMM y",
-				"yQQQ": "y/QQQ",
-				"yQQQQ": "y/QQQQ"
+				"yQQQ": "y QQQ",
+				"yQQQQ": "y QQQQ",
+				"MMMMW": "MMMM 'ayının' W. 'haftası'",
+				"yw": "Y 'yılının' w. 'haftası'"
 			},
 			"appendItems": {
 				"Day": "{0} ({2}: {1})",
@@ -1265,15 +1232,15 @@
 					"H": "HH–HH v"
 				},
 				"M": {
-					"M": "MM–MM"
+					"M": "M – M"
 				},
 				"Md": {
-					"d": "dd/MM – dd/MM",
-					"M": "dd/MM – dd/MM"
+					"d": "d.M – d.M",
+					"M": "d.M – d.M"
 				},
 				"MEd": {
-					"d": "dd/MM E – dd/MM E",
-					"M": "dd/MM E – dd/MM E"
+					"d": "d.M E – d.M E",
+					"M": "d.M E – d.M E"
 				},
 				"MMM": {
 					"M": "MMM–MMM"
@@ -1290,8 +1257,8 @@
 					"y": "y–y"
 				},
 				"yM": {
-					"M": "MM/y – MM/y",
-					"y": "MM/y – MM/y"
+					"M": "MM.y – MM.y",
+					"y": "MM.y – MM.y"
 				},
 				"yMd": {
 					"d": "dd.MM.y – dd.MM.y",
@@ -1595,8 +1562,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -1747,15 +1719,15 @@
 		"months": {
 			"format": {
 				"abbreviated": [
-					"Muharrem",
+					"Muhar.",
 					"Safer",
-					"Rebiülevvel",
-					"Rebiülahir",
-					"Cemaziyelevvel",
-					"Cemaziyelahir",
+					"R.evvel",
+					"R.ahir",
+					"C.evvel",
+					"C.ahir",
 					"Recep",
 					"Şaban",
-					"Ramazan",
+					"Ram.",
 					"Şevval",
 					"Zilkade",
 					"Zilhicce"
@@ -1791,15 +1763,15 @@
 			},
 			"stand-alone": {
 				"abbreviated": [
-					"Muharrem",
+					"Muhar.",
 					"Safer",
-					"Rebiülevvel",
-					"Rebiülahir",
-					"Cemaziyelevvel",
-					"Cemaziyelahir",
+					"R.evvel",
+					"R.ahir",
+					"C.evvel",
+					"C.ahir",
 					"Recep",
 					"Şaban",
-					"Ramazan",
+					"Ram.",
 					"Şevval",
 					"Zilkade",
 					"Zilhicce"
@@ -2013,8 +1985,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2440,8 +2417,13 @@
 			"medium": "{1} {0}",
 			"short": "{1} {0}",
 			"availableFormats": {
+				"Bh": "h B",
+				"Bhm": "h:mm B",
+				"Bhms": "h:mm:ss B",
 				"d": "d",
 				"E": "ccc",
+				"EBhm": "E h:mm B",
+				"EBhms": "E h:mm:ss B",
 				"Ed": "d E",
 				"Ehm": "E h:mm a",
 				"EHm": "E HH:mm",
@@ -2841,10 +2823,10 @@
 	},
 	"dateFields": {
 		"era": {
-			"displayName": "Miladi Dönem"
+			"displayName": "çağ"
 		},
 		"year-wide": {
-			"displayName": "Yıl",
+			"displayName": "yıl",
 			"relative-type--1": "geçen yıl",
 			"relative-type-0": "bu yıl",
 			"relative-type-1": "gelecek yıl",
@@ -2886,10 +2868,10 @@
 			}
 		},
 		"quarter-wide": {
-			"displayName": "Çeyrek",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"displayName": "çeyrek",
+			"relative-type--1": "geçen çeyrek",
+			"relative-type-0": "bu çeyrek",
+			"relative-type-1": "gelecek çeyrek",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} çeyrek sonra",
 				"relativeTimePattern-count-other": "{0} çeyrek sonra"
@@ -2901,9 +2883,9 @@
 		},
 		"quarter-short": {
 			"displayName": "çyr.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "geçen çeyrek",
+			"relative-type-0": "bu çeyrek",
+			"relative-type-1": "gelecek çeyrek",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} çyr. sonra",
 				"relativeTimePattern-count-other": "{0} çyr. sonra"
@@ -2915,9 +2897,9 @@
 		},
 		"quarter-narrow": {
 			"displayName": "çyr.",
-			"relative-type--1": "last quarter",
-			"relative-type-0": "this quarter",
-			"relative-type-1": "next quarter",
+			"relative-type--1": "geçen çeyrek",
+			"relative-type-0": "bu çeyrek",
+			"relative-type-1": "gelecek çeyrek",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} çyr. sonra",
 				"relativeTimePattern-count-other": "{0} çyr. sonra"
@@ -2928,7 +2910,7 @@
 			}
 		},
 		"month-wide": {
-			"displayName": "Ay",
+			"displayName": "ay",
 			"relative-type--1": "geçen ay",
 			"relative-type-0": "bu ay",
 			"relative-type-1": "gelecek ay",
@@ -2970,7 +2952,7 @@
 			}
 		},
 		"week-wide": {
-			"displayName": "Hafta",
+			"displayName": "hafta",
 			"relative-type--1": "geçen hafta",
 			"relative-type-0": "bu hafta",
 			"relative-type-1": "gelecek hafta",
@@ -2981,7 +2963,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} hafta önce",
 				"relativeTimePattern-count-other": "{0} hafta önce"
-			}
+			},
+			"relativePeriod": "{0} haftası"
 		},
 		"week-short": {
 			"displayName": "hf.",
@@ -2995,7 +2978,8 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} hf. önce",
 				"relativeTimePattern-count-other": "{0} hf. önce"
-			}
+			},
+			"relativePeriod": "{0} haftası"
 		},
 		"week-narrow": {
 			"displayName": "hf.",
@@ -3009,10 +2993,11 @@
 			"relativeTime-type-past": {
 				"relativeTimePattern-count-one": "{0} hf. önce",
 				"relativeTimePattern-count-other": "{0} hf. önce"
-			}
+			},
+			"relativePeriod": "{0} haftası"
 		},
 		"day-wide": {
-			"displayName": "Gün",
+			"displayName": "gün",
 			"relative-type--2": "evvelsi gün",
 			"relative-type--1": "dün",
 			"relative-type-0": "bugün",
@@ -3060,10 +3045,11 @@
 			}
 		},
 		"weekday": {
-			"displayName": "Haftanın Günü"
+			"displayName": "haftanın günü"
 		},
 		"hour-wide": {
-			"displayName": "Saat",
+			"displayName": "saat",
+			"relative-type-0": "bu saat",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} saat sonra",
 				"relativeTimePattern-count-other": "{0} saat sonra"
@@ -3075,6 +3061,7 @@
 		},
 		"hour-short": {
 			"displayName": "sa.",
+			"relative-type-0": "bu saat",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} sa. sonra",
 				"relativeTimePattern-count-other": "{0} sa. sonra"
@@ -3086,6 +3073,7 @@
 		},
 		"hour-narrow": {
 			"displayName": "sa.",
+			"relative-type-0": "bu saat",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} sa. sonra",
 				"relativeTimePattern-count-other": "{0} sa. sonra"
@@ -3096,7 +3084,8 @@
 			}
 		},
 		"minute-wide": {
-			"displayName": "Dakika",
+			"displayName": "dakika",
+			"relative-type-0": "bu dakika",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} dakika sonra",
 				"relativeTimePattern-count-other": "{0} dakika sonra"
@@ -3108,6 +3097,7 @@
 		},
 		"minute-short": {
 			"displayName": "dk.",
+			"relative-type-0": "bu dakika",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} dk. sonra",
 				"relativeTimePattern-count-other": "{0} dk. sonra"
@@ -3119,6 +3109,7 @@
 		},
 		"minute-narrow": {
 			"displayName": "dk.",
+			"relative-type-0": "bu dakika",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} dk. sonra",
 				"relativeTimePattern-count-other": "{0} dk. sonra"
@@ -3129,7 +3120,7 @@
 			}
 		},
 		"second-wide": {
-			"displayName": "Saniye",
+			"displayName": "saniye",
 			"relative-type-0": "şimdi",
 			"relativeTime-type-future": {
 				"relativeTimePattern-count-one": "{0} saniye sonra",
@@ -3165,7 +3156,7 @@
 			}
 		},
 		"zone": {
-			"displayName": "Saat Dilimi"
+			"displayName": "saat dilimi"
 		}
 	},
 	"decimalFormat": {
@@ -3198,8 +3189,8 @@
 		"100000000000000-other": "000 trilyon"
 	},
 	"decimalFormat-short": {
-		"1000-one": "0",
-		"1000-other": "0",
+		"1000-one": "0 B",
+		"1000-other": "0 B",
 		"10000-one": "00 B",
 		"10000-other": "00 B",
 		"100000-one": "000 B",
@@ -3230,8 +3221,8 @@
 		"standard": "%#,##0"
 	},
 	"currencyFormat": {
-		"standard": "#,##0.00 ¤",
-		"accounting": "#,##0.00 ¤;(#,##0.00 ¤)",
+		"standard": "¤#,##0.00",
+		"accounting": "¤#,##0.00;(¤#,##0.00)",
 		"currencySpacing": {
 			"beforeCurrency": {
 				"currencyMatch": "[:^S:]",
@@ -3244,6 +3235,32 @@
 				"insertBetween": " "
 			}
 		}
+	},
+	"currencyFormat-short": {
+		"1000-one": "0 B ¤",
+		"1000-other": "0 B ¤",
+		"10000-one": "00 B ¤",
+		"10000-other": "00 B ¤",
+		"100000-one": "000 B ¤",
+		"100000-other": "000 B ¤",
+		"1000000-one": "0 Mn ¤",
+		"1000000-other": "0 Mn ¤",
+		"10000000-one": "00 Mn ¤",
+		"10000000-other": "00 Mn ¤",
+		"100000000-one": "000 Mn ¤",
+		"100000000-other": "000 Mn ¤",
+		"1000000000-one": "0 Mr ¤",
+		"1000000000-other": "0 Mr ¤",
+		"10000000000-one": "00 Mr ¤",
+		"10000000000-other": "00 Mr ¤",
+		"100000000000-one": "000 Mr ¤",
+		"100000000000-other": "000 Mr ¤",
+		"1000000000000-one": "0 Tn ¤",
+		"1000000000000-other": "0 Tn ¤",
+		"10000000000000-one": "00 Tn ¤",
+		"10000000000000-other": "00 Tn ¤",
+		"100000000000000-one": "000 Tn ¤",
+		"100000000000000-other": "000 Tn ¤"
 	},
 	"symbols-latn-decimal": ",",
 	"symbols-latn-group": ".",
@@ -3281,6 +3298,745 @@
 		"XOF": "CFA",
 		"XPF": "CFPF"
 	},
+	"rtl": false,
+	"listPattern-standard-wide": {
+		"2": "{0} ve {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ve {1}"
+	},
+	"listPattern-or-wide": {
+		"2": "{0} veya {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} veya {1}"
+	},
+	"listPattern-or-short": {
+		"2": "{0} veya {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} veya {1}"
+	},
+	"listPattern-standard-short": {
+		"2": "{0} ve {1}",
+		"start": "{0}, {1}",
+		"middle": "{0}, {1}",
+		"end": "{0} ve {1}"
+	},
+	"units": {
+		"short": {
+			"per": {
+				"compoundUnitPattern": "{0}/{1}"
+			},
+			"acceleration-g-force": {
+				"displayName": "g kuvveti",
+				"unitPattern-count-one": "{0} G",
+				"unitPattern-count-other": "{0} G"
+			},
+			"acceleration-meter-per-second-squared": {
+				"displayName": "m/sn²",
+				"unitPattern-count-one": "{0} m/sn²",
+				"unitPattern-count-other": "{0} m/sn²"
+			},
+			"angle-revolution": {
+				"displayName": "dev",
+				"unitPattern-count-one": "{0} dev",
+				"unitPattern-count-other": "{0} dev"
+			},
+			"angle-radian": {
+				"displayName": "radyan",
+				"unitPattern-count-one": "{0} rad",
+				"unitPattern-count-other": "{0} rad"
+			},
+			"angle-degree": {
+				"displayName": "derece",
+				"unitPattern-count-one": "{0}°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"angle-arc-minute": {
+				"displayName": "açısal dk.",
+				"unitPattern-count-one": "{0} açısal dk.",
+				"unitPattern-count-other": "{0} açısal dk."
+			},
+			"angle-arc-second": {
+				"displayName": "açısal sn.",
+				"unitPattern-count-one": "{0} açısal sn.",
+				"unitPattern-count-other": "{0} açısal sn."
+			},
+			"area-square-kilometer": {
+				"displayName": "km²",
+				"unitPattern-count-one": "{0} km²",
+				"unitPattern-count-other": "{0} km²",
+				"perUnitPattern": "{0}/km²"
+			},
+			"area-hectare": {
+				"displayName": "hektar",
+				"unitPattern-count-one": "{0} ha",
+				"unitPattern-count-other": "{0} ha"
+			},
+			"area-square-meter": {
+				"displayName": "m²",
+				"unitPattern-count-one": "{0} m²",
+				"unitPattern-count-other": "{0} m²",
+				"perUnitPattern": "{0}/m²"
+			},
+			"area-square-centimeter": {
+				"displayName": "cm²",
+				"unitPattern-count-one": "{0} cm²",
+				"unitPattern-count-other": "{0} cm²",
+				"perUnitPattern": "{0}/cm²"
+			},
+			"area-square-mile": {
+				"displayName": "mi²",
+				"unitPattern-count-one": "{0} mi²",
+				"unitPattern-count-other": "{0} mi²",
+				"perUnitPattern": "{0}/mi²"
+			},
+			"area-acre": {
+				"displayName": "akre",
+				"unitPattern-count-one": "{0} ac",
+				"unitPattern-count-other": "{0} ac"
+			},
+			"area-square-yard": {
+				"displayName": "yd²",
+				"unitPattern-count-one": "{0} yd²",
+				"unitPattern-count-other": "{0} yd²"
+			},
+			"area-square-foot": {
+				"displayName": "ft²",
+				"unitPattern-count-one": "{0} ft²",
+				"unitPattern-count-other": "{0} ft²"
+			},
+			"area-square-inch": {
+				"displayName": "in²",
+				"unitPattern-count-one": "{0} in²",
+				"unitPattern-count-other": "{0} in²",
+				"perUnitPattern": "{0}/in²"
+			},
+			"concentr-karat": {
+				"displayName": "ayar",
+				"unitPattern-count-one": "{0} ayar",
+				"unitPattern-count-other": "{0} ayar"
+			},
+			"concentr-milligram-per-deciliter": {
+				"displayName": "mg/dL",
+				"unitPattern-count-one": "{0} mg/dL",
+				"unitPattern-count-other": "{0} mg/dL"
+			},
+			"concentr-millimole-per-liter": {
+				"displayName": "mmol/L",
+				"unitPattern-count-one": "{0} mmol/L",
+				"unitPattern-count-other": "{0} mmol/L"
+			},
+			"concentr-part-per-million": {
+				"displayName": "ppm",
+				"unitPattern-count-one": "{0} ppm",
+				"unitPattern-count-other": "{0} ppm"
+			},
+			"consumption-liter-per-kilometer": {
+				"displayName": "l/km",
+				"unitPattern-count-one": "{0} l/km",
+				"unitPattern-count-other": "{0} l/km"
+			},
+			"consumption-liter-per-100kilometers": {
+				"displayName": "L/100km",
+				"unitPattern-count-one": "{0} L/100km",
+				"unitPattern-count-other": "{0} L/100km"
+			},
+			"consumption-mile-per-gallon": {
+				"displayName": "mil/galon",
+				"unitPattern-count-one": "{0} mpg",
+				"unitPattern-count-other": "{0} mpg"
+			},
+			"consumption-mile-per-gallon-imperial": {
+				"displayName": "mil/İng. gal",
+				"unitPattern-count-one": "{0} mil/İng. gal",
+				"unitPattern-count-other": "{0} mil/İng. gal"
+			},
+			"digital-terabyte": {
+				"displayName": "TB",
+				"unitPattern-count-one": "{0} TB",
+				"unitPattern-count-other": "{0} TB"
+			},
+			"digital-terabit": {
+				"displayName": "Tbit",
+				"unitPattern-count-one": "{0} Tb",
+				"unitPattern-count-other": "{0} Tb"
+			},
+			"digital-gigabyte": {
+				"displayName": "GB",
+				"unitPattern-count-one": "{0} GB",
+				"unitPattern-count-other": "{0} GB"
+			},
+			"digital-gigabit": {
+				"displayName": "Gbit",
+				"unitPattern-count-one": "{0} Gb",
+				"unitPattern-count-other": "{0} Gb"
+			},
+			"digital-megabyte": {
+				"displayName": "MB",
+				"unitPattern-count-one": "{0} MB",
+				"unitPattern-count-other": "{0} MB"
+			},
+			"digital-megabit": {
+				"displayName": "Mbit",
+				"unitPattern-count-one": "{0} Mb",
+				"unitPattern-count-other": "{0} Mb"
+			},
+			"digital-kilobyte": {
+				"displayName": "kB",
+				"unitPattern-count-one": "{0} kB",
+				"unitPattern-count-other": "{0} kB"
+			},
+			"digital-kilobit": {
+				"displayName": "kbit",
+				"unitPattern-count-one": "{0} kb",
+				"unitPattern-count-other": "{0} kb"
+			},
+			"digital-byte": {
+				"displayName": "bayt",
+				"unitPattern-count-one": "{0} bayt",
+				"unitPattern-count-other": "{0} bayt"
+			},
+			"digital-bit": {
+				"displayName": "bit",
+				"unitPattern-count-one": "{0} bit",
+				"unitPattern-count-other": "{0} bit"
+			},
+			"duration-century": {
+				"displayName": "yy",
+				"unitPattern-count-one": "{0} yy",
+				"unitPattern-count-other": "{0} yy"
+			},
+			"duration-year": {
+				"displayName": "yıl",
+				"unitPattern-count-one": "{0} yıl",
+				"unitPattern-count-other": "{0} yıl",
+				"perUnitPattern": "{0}/y"
+			},
+			"duration-month": {
+				"displayName": "ay",
+				"unitPattern-count-one": "{0} ay",
+				"unitPattern-count-other": "{0} ay",
+				"perUnitPattern": "{0}/ay"
+			},
+			"duration-week": {
+				"displayName": "hafta",
+				"unitPattern-count-one": "{0} hf.",
+				"unitPattern-count-other": "{0} hf.",
+				"perUnitPattern": "{0}/hf."
+			},
+			"duration-day": {
+				"displayName": "gün",
+				"unitPattern-count-one": "{0} gün",
+				"unitPattern-count-other": "{0} gün",
+				"perUnitPattern": "{0}/gün"
+			},
+			"duration-hour": {
+				"displayName": "saat",
+				"unitPattern-count-one": "{0} sa.",
+				"unitPattern-count-other": "{0} sa.",
+				"perUnitPattern": "{0}/sa"
+			},
+			"duration-minute": {
+				"displayName": "dakika",
+				"unitPattern-count-one": "{0} dk.",
+				"unitPattern-count-other": "{0} dk.",
+				"perUnitPattern": "{0}/dk."
+			},
+			"duration-second": {
+				"displayName": "saniye",
+				"unitPattern-count-one": "{0} sn.",
+				"unitPattern-count-other": "{0} sn.",
+				"perUnitPattern": "{0}/sn"
+			},
+			"duration-millisecond": {
+				"displayName": "milisaniye",
+				"unitPattern-count-one": "{0} msn",
+				"unitPattern-count-other": "{0} msn"
+			},
+			"duration-microsecond": {
+				"displayName": "μsn",
+				"unitPattern-count-one": "{0} μsn",
+				"unitPattern-count-other": "{0} μsn"
+			},
+			"duration-nanosecond": {
+				"displayName": "nanosaniye",
+				"unitPattern-count-one": "{0} nsn",
+				"unitPattern-count-other": "{0} nsn"
+			},
+			"electric-ampere": {
+				"displayName": "amper",
+				"unitPattern-count-one": "{0} A",
+				"unitPattern-count-other": "{0} A"
+			},
+			"electric-milliampere": {
+				"displayName": "miliamper",
+				"unitPattern-count-one": "{0} mA",
+				"unitPattern-count-other": "{0} mA"
+			},
+			"electric-ohm": {
+				"displayName": "ohm",
+				"unitPattern-count-one": "{0} Ω",
+				"unitPattern-count-other": "{0} Ω"
+			},
+			"electric-volt": {
+				"displayName": "volt",
+				"unitPattern-count-one": "{0} V",
+				"unitPattern-count-other": "{0} V"
+			},
+			"energy-kilocalorie": {
+				"displayName": "kcal",
+				"unitPattern-count-one": "{0} kcal",
+				"unitPattern-count-other": "{0} kcal"
+			},
+			"energy-calorie": {
+				"displayName": "cal",
+				"unitPattern-count-one": "{0} cal",
+				"unitPattern-count-other": "{0} cal"
+			},
+			"energy-foodcalorie": {
+				"displayName": "kcal",
+				"unitPattern-count-one": "{0} kcal",
+				"unitPattern-count-other": "{0} kcal"
+			},
+			"energy-kilojoule": {
+				"displayName": "kJ",
+				"unitPattern-count-one": "{0} kJ",
+				"unitPattern-count-other": "{0} kJ"
+			},
+			"energy-joule": {
+				"displayName": "jul",
+				"unitPattern-count-one": "{0} J",
+				"unitPattern-count-other": "{0} J"
+			},
+			"energy-kilowatt-hour": {
+				"displayName": "kWh",
+				"unitPattern-count-one": "{0} kWh",
+				"unitPattern-count-other": "{0} kWh"
+			},
+			"frequency-gigahertz": {
+				"displayName": "GHz",
+				"unitPattern-count-one": "{0} GHz",
+				"unitPattern-count-other": "{0} GHz"
+			},
+			"frequency-megahertz": {
+				"displayName": "MHz",
+				"unitPattern-count-one": "{0} MHz",
+				"unitPattern-count-other": "{0} MHz"
+			},
+			"frequency-kilohertz": {
+				"displayName": "kHz",
+				"unitPattern-count-one": "{0} kHz",
+				"unitPattern-count-other": "{0} kHz"
+			},
+			"frequency-hertz": {
+				"displayName": "Hz",
+				"unitPattern-count-one": "{0} Hz",
+				"unitPattern-count-other": "{0} Hz"
+			},
+			"length-kilometer": {
+				"displayName": "km",
+				"unitPattern-count-one": "{0} km",
+				"unitPattern-count-other": "{0} km",
+				"perUnitPattern": "{0}/km"
+			},
+			"length-meter": {
+				"displayName": "metre",
+				"unitPattern-count-one": "{0} m",
+				"unitPattern-count-other": "{0} m",
+				"perUnitPattern": "{0}/m"
+			},
+			"length-decimeter": {
+				"displayName": "dm",
+				"unitPattern-count-one": "{0} dm",
+				"unitPattern-count-other": "{0} dm"
+			},
+			"length-centimeter": {
+				"displayName": "cm",
+				"unitPattern-count-one": "{0} cm",
+				"unitPattern-count-other": "{0} cm",
+				"perUnitPattern": "{0}/cm"
+			},
+			"length-millimeter": {
+				"displayName": "mm",
+				"unitPattern-count-one": "{0} mm",
+				"unitPattern-count-other": "{0} mm"
+			},
+			"length-micrometer": {
+				"displayName": "mikron",
+				"unitPattern-count-one": "{0} µm",
+				"unitPattern-count-other": "{0} µm"
+			},
+			"length-nanometer": {
+				"displayName": "nm",
+				"unitPattern-count-one": "{0} nm",
+				"unitPattern-count-other": "{0} nm"
+			},
+			"length-picometer": {
+				"displayName": "pm",
+				"unitPattern-count-one": "{0} pm",
+				"unitPattern-count-other": "{0} pm"
+			},
+			"length-mile": {
+				"displayName": "mil",
+				"unitPattern-count-one": "{0} mil",
+				"unitPattern-count-other": "{0} mil"
+			},
+			"length-yard": {
+				"displayName": "yarda",
+				"unitPattern-count-one": "{0} yd",
+				"unitPattern-count-other": "{0} yd"
+			},
+			"length-foot": {
+				"displayName": "fit",
+				"unitPattern-count-one": "{0} fit",
+				"unitPattern-count-other": "{0} fit",
+				"perUnitPattern": "{0}/ft"
+			},
+			"length-inch": {
+				"displayName": "inç",
+				"unitPattern-count-one": "{0} inç",
+				"unitPattern-count-other": "{0} inç",
+				"perUnitPattern": "{0}/in"
+			},
+			"length-parsec": {
+				"displayName": "parsek",
+				"unitPattern-count-one": "{0} pc",
+				"unitPattern-count-other": "{0} pc"
+			},
+			"length-light-year": {
+				"displayName": "ışık yılı",
+				"unitPattern-count-one": "{0} IY",
+				"unitPattern-count-other": "{0} IY"
+			},
+			"length-astronomical-unit": {
+				"displayName": "AU",
+				"unitPattern-count-one": "{0} AU",
+				"unitPattern-count-other": "{0} AU"
+			},
+			"length-furlong": {
+				"displayName": "furlong",
+				"unitPattern-count-one": "{0} fur",
+				"unitPattern-count-other": "{0} fur"
+			},
+			"length-fathom": {
+				"displayName": "fathom",
+				"unitPattern-count-one": "{0} fm",
+				"unitPattern-count-other": "{0} fm"
+			},
+			"length-nautical-mile": {
+				"displayName": "nmi",
+				"unitPattern-count-one": "{0} nmi",
+				"unitPattern-count-other": "{0} nmi"
+			},
+			"length-mile-scandinavian": {
+				"displayName": "smi",
+				"unitPattern-count-one": "{0} smi",
+				"unitPattern-count-other": "{0} smi"
+			},
+			"length-point": {
+				"displayName": "pt",
+				"unitPattern-count-one": "{0} pt",
+				"unitPattern-count-other": "{0} pt"
+			},
+			"light-lux": {
+				"displayName": "lüks",
+				"unitPattern-count-one": "{0} lüks",
+				"unitPattern-count-other": "{0} lüks"
+			},
+			"mass-metric-ton": {
+				"displayName": "t",
+				"unitPattern-count-one": "{0} t",
+				"unitPattern-count-other": "{0} t"
+			},
+			"mass-kilogram": {
+				"displayName": "kg",
+				"unitPattern-count-one": "{0} kg",
+				"unitPattern-count-other": "{0} kg",
+				"perUnitPattern": "{0}/kg"
+			},
+			"mass-gram": {
+				"displayName": "gram",
+				"unitPattern-count-one": "{0} g",
+				"unitPattern-count-other": "{0} g",
+				"perUnitPattern": "{0}/g"
+			},
+			"mass-milligram": {
+				"displayName": "mg",
+				"unitPattern-count-one": "{0} mg",
+				"unitPattern-count-other": "{0} mg"
+			},
+			"mass-microgram": {
+				"displayName": "µg",
+				"unitPattern-count-one": "{0} µg",
+				"unitPattern-count-other": "{0} µg"
+			},
+			"mass-ton": {
+				"displayName": "Amerikan tonu",
+				"unitPattern-count-one": "{0} kısa ton",
+				"unitPattern-count-other": "{0} kısa ton"
+			},
+			"mass-stone": {
+				"displayName": "stone",
+				"unitPattern-count-one": "{0} st",
+				"unitPattern-count-other": "{0} st"
+			},
+			"mass-pound": {
+				"displayName": "libre",
+				"unitPattern-count-one": "{0} lb",
+				"unitPattern-count-other": "{0} lb",
+				"perUnitPattern": "{0}/lb"
+			},
+			"mass-ounce": {
+				"displayName": "oz",
+				"unitPattern-count-one": "{0} oz",
+				"unitPattern-count-other": "{0} oz",
+				"perUnitPattern": "{0}/oz"
+			},
+			"mass-ounce-troy": {
+				"displayName": "troy ons",
+				"unitPattern-count-one": "{0} oz t",
+				"unitPattern-count-other": "{0} oz t"
+			},
+			"mass-carat": {
+				"displayName": "karat",
+				"unitPattern-count-one": "{0} ct",
+				"unitPattern-count-other": "{0} ct"
+			},
+			"power-gigawatt": {
+				"displayName": "GW",
+				"unitPattern-count-one": "{0} GW",
+				"unitPattern-count-other": "{0} GW"
+			},
+			"power-megawatt": {
+				"displayName": "MW",
+				"unitPattern-count-one": "{0} MW",
+				"unitPattern-count-other": "{0} MW"
+			},
+			"power-kilowatt": {
+				"displayName": "kW",
+				"unitPattern-count-one": "{0} kW",
+				"unitPattern-count-other": "{0} kW"
+			},
+			"power-watt": {
+				"displayName": "vat",
+				"unitPattern-count-one": "{0} W",
+				"unitPattern-count-other": "{0} W"
+			},
+			"power-milliwatt": {
+				"displayName": "mW",
+				"unitPattern-count-one": "{0} mW",
+				"unitPattern-count-other": "{0} mW"
+			},
+			"power-horsepower": {
+				"displayName": "bg",
+				"unitPattern-count-one": "{0} bg",
+				"unitPattern-count-other": "{0} bg"
+			},
+			"pressure-hectopascal": {
+				"displayName": "hPa",
+				"unitPattern-count-one": "{0} hPa",
+				"unitPattern-count-other": "{0} hPa"
+			},
+			"pressure-millimeter-of-mercury": {
+				"displayName": "mm Hg",
+				"unitPattern-count-one": "{0} mm Hg",
+				"unitPattern-count-other": "{0} mm Hg"
+			},
+			"pressure-pound-per-square-inch": {
+				"displayName": "lb/in²",
+				"unitPattern-count-one": "{0} lb/in²",
+				"unitPattern-count-other": "{0} lb/in²"
+			},
+			"pressure-inch-hg": {
+				"displayName": "inHg",
+				"unitPattern-count-one": "{0} inHg",
+				"unitPattern-count-other": "{0} inHg"
+			},
+			"pressure-millibar": {
+				"displayName": "mbar",
+				"unitPattern-count-one": "{0} mbar",
+				"unitPattern-count-other": "{0} mbar"
+			},
+			"speed-kilometer-per-hour": {
+				"displayName": "km/sa",
+				"unitPattern-count-one": "{0} km/sa",
+				"unitPattern-count-other": "{0} km/sa"
+			},
+			"speed-meter-per-second": {
+				"displayName": "m/sn",
+				"unitPattern-count-one": "{0} m/sn",
+				"unitPattern-count-other": "{0} m/sn"
+			},
+			"speed-mile-per-hour": {
+				"displayName": "mil/saat",
+				"unitPattern-count-one": "{0} mil/sa",
+				"unitPattern-count-other": "{0} mil/sa"
+			},
+			"speed-knot": {
+				"displayName": "kn",
+				"unitPattern-count-one": "{0} kn",
+				"unitPattern-count-other": "{0} kn"
+			},
+			"temperature-generic": {
+				"displayName": "°",
+				"unitPattern-count-one": "{0}°",
+				"unitPattern-count-other": "{0}°"
+			},
+			"temperature-celsius": {
+				"displayName": "°C",
+				"unitPattern-count-one": "{0}°C",
+				"unitPattern-count-other": "{0}°C"
+			},
+			"temperature-fahrenheit": {
+				"displayName": "°F",
+				"unitPattern-count-one": "{0}°F",
+				"unitPattern-count-other": "{0}°F"
+			},
+			"temperature-kelvin": {
+				"displayName": "K",
+				"unitPattern-count-one": "{0}K",
+				"unitPattern-count-other": "{0}K"
+			},
+			"volume-cubic-kilometer": {
+				"displayName": "km³",
+				"unitPattern-count-one": "{0} km³",
+				"unitPattern-count-other": "{0} km³"
+			},
+			"volume-cubic-meter": {
+				"displayName": "m³",
+				"unitPattern-count-one": "{0} m³",
+				"unitPattern-count-other": "{0} m³",
+				"perUnitPattern": "{0}/m³"
+			},
+			"volume-cubic-centimeter": {
+				"displayName": "cm³",
+				"unitPattern-count-one": "{0} cm³",
+				"unitPattern-count-other": "{0} cm³",
+				"perUnitPattern": "{0}/cm³"
+			},
+			"volume-cubic-mile": {
+				"displayName": "mil³",
+				"unitPattern-count-one": "{0} mil³",
+				"unitPattern-count-other": "{0} mil³"
+			},
+			"volume-cubic-yard": {
+				"displayName": "yarda³",
+				"unitPattern-count-one": "{0} yarda³",
+				"unitPattern-count-other": "{0} yarda³"
+			},
+			"volume-cubic-foot": {
+				"displayName": "fit³",
+				"unitPattern-count-one": "{0} fit³",
+				"unitPattern-count-other": "{0} fit³"
+			},
+			"volume-cubic-inch": {
+				"displayName": "inç³",
+				"unitPattern-count-one": "{0} inç³",
+				"unitPattern-count-other": "{0} inç³"
+			},
+			"volume-megaliter": {
+				"displayName": "Ml",
+				"unitPattern-count-one": "{0} Ml",
+				"unitPattern-count-other": "{0} Ml"
+			},
+			"volume-hectoliter": {
+				"displayName": "hl",
+				"unitPattern-count-one": "{0} hl",
+				"unitPattern-count-other": "{0} hl"
+			},
+			"volume-liter": {
+				"displayName": "litre",
+				"unitPattern-count-one": "{0} l",
+				"unitPattern-count-other": "{0} l",
+				"perUnitPattern": "{0}/l"
+			},
+			"volume-deciliter": {
+				"displayName": "dl",
+				"unitPattern-count-one": "{0} dl",
+				"unitPattern-count-other": "{0} dl"
+			},
+			"volume-centiliter": {
+				"displayName": "cl",
+				"unitPattern-count-one": "{0} cl",
+				"unitPattern-count-other": "{0} cl"
+			},
+			"volume-milliliter": {
+				"displayName": "ml",
+				"unitPattern-count-one": "{0} ml",
+				"unitPattern-count-other": "{0} ml"
+			},
+			"volume-pint-metric": {
+				"displayName": "mpt",
+				"unitPattern-count-one": "{0} mpt",
+				"unitPattern-count-other": "{0} mpt"
+			},
+			"volume-cup-metric": {
+				"displayName": "mcup",
+				"unitPattern-count-one": "{0} mc",
+				"unitPattern-count-other": "{0} mc"
+			},
+			"volume-acre-foot": {
+				"displayName": "akre fit",
+				"unitPattern-count-one": "{0} akre fit",
+				"unitPattern-count-other": "{0} akre fit"
+			},
+			"volume-bushel": {
+				"displayName": "buşel",
+				"unitPattern-count-one": "{0} bu",
+				"unitPattern-count-other": "{0} bu"
+			},
+			"volume-gallon": {
+				"displayName": "galon",
+				"unitPattern-count-one": "{0} galon",
+				"unitPattern-count-other": "{0} galon",
+				"perUnitPattern": "{0}/gal"
+			},
+			"volume-gallon-imperial": {
+				"displayName": "İng. gal",
+				"unitPattern-count-one": "{0} İng. gal",
+				"unitPattern-count-other": "{0} İng. gal",
+				"perUnitPattern": "{0}/İng. gal"
+			},
+			"volume-quart": {
+				"displayName": "quart",
+				"unitPattern-count-one": "{0} quart",
+				"unitPattern-count-other": "{0} quart"
+			},
+			"volume-pint": {
+				"displayName": "pint",
+				"unitPattern-count-one": "{0} pint",
+				"unitPattern-count-other": "{0} pint"
+			},
+			"volume-cup": {
+				"displayName": "su b.",
+				"unitPattern-count-one": "{0} sb",
+				"unitPattern-count-other": "{0} sb"
+			},
+			"volume-fluid-ounce": {
+				"displayName": "sıvı ons",
+				"unitPattern-count-one": "{0} sıvı ons",
+				"unitPattern-count-other": "{0} sıvı ons"
+			},
+			"volume-tablespoon": {
+				"displayName": "yk",
+				"unitPattern-count-one": "{0} yk",
+				"unitPattern-count-other": "{0} yk"
+			},
+			"volume-teaspoon": {
+				"displayName": "tk",
+				"unitPattern-count-one": "{0} tk",
+				"unitPattern-count-other": "{0} tk"
+			},
+			"coordinateUnit": {
+				"east": "{0}D",
+				"north": "{0}K",
+				"south": "{0}G",
+				"west": "{0}B"
+			}
+		}
+	},
 	"currencyDigits": {
 		"ADP": 0,
 		"AFN": 0,
@@ -3289,13 +4045,9 @@
 		"BHD": 3,
 		"BIF": 0,
 		"BYR": 0,
-		"CAD": 2,
-		"CHF": 2,
 		"CLF": 4,
 		"CLP": 0,
 		"COP": 0,
-		"CRC": 0,
-		"CZK": 0,
 		"DEFAULT": 2,
 		"DJF": 0,
 		"ESP": 0,
@@ -3348,6 +4100,9 @@
 		"YER": 0,
 		"ZMK": 0,
 		"ZWD": 0
+	},
+	"plurals": {
+		"one": "n = 1"
 	},
 	"weekData-minDays": 1,
 	"weekData-firstDay": 1,

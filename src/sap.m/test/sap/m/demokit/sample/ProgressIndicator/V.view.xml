@@ -6,6 +6,7 @@
 		class="sapUiContentPadding"
 		width="100%">
 		<l:content>
+			<Text text="Regular Mode" class="sapUiSmallMarginBottom" />
 			<ProgressIndicator
 				class="sapUiSmallMarginBottom"
 				percentValue="30"
@@ -29,6 +30,47 @@
 				displayValue="25%"
 				showValue="true"
 				state="Warning" />
+			<Text text="Invalid percent values" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="-20"
+				displayValue="-20"
+				showValue="true"
+				state="None" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="120"
+				displayValue="120"
+				showValue="true"
+				state="None" />
+			<Text text="Display Only Mode" class="sapUiSmallMarginBottom" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="30"
+				displayValue="30%"
+				showValue="true"
+				state="None"
+				displayOnly="true" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="50"
+				showValue="false"
+				state="Error"
+				displayOnly="true" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="99"
+				displayValue="0.99GB of 1GB"
+				showValue="true"
+				state="Success"
+				displayOnly="true" />
+			<ProgressIndicator
+				class="sapUiSmallMarginBottom"
+				percentValue="25"
+				displayValue="25%"
+				showValue="true"
+				state="Warning"
+				displayOnly="true" />
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.NotificationListItem.Component", {
 
 		metadata: {
-			rootView: "sap.m.sample.NotificationListItem.V",
+			rootView: {
+				"viewName": "sap.m.sample.NotificationListItem.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m",

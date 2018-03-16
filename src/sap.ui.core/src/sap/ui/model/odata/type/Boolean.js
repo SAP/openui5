@@ -55,13 +55,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Core',
 	 *   constraints, see {@link #constructor}
 	 */
 	function setConstraints(oType, oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
+		var vNullable;
 
 		oType.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			oType.oConstraints = {nullable : false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		if (oConstraints) {
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
+				oType.oConstraints = {nullable : false};
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+			}
 		}
 	}
 

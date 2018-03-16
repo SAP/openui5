@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.Message.
-sap.ui.define(['jquery.sap.global', './Dialog', './library', 'sap/ui/core/Control'],
-	function(jQuery, Dialog, library, Control) {
+sap.ui.define([
+  'jquery.sap.global',
+  './Dialog',
+  './library',
+  'sap/ui/core/Control',
+  "./MessageRenderer"
+],
+	function(jQuery, Dialog, library, Control, MessageRenderer) {
 	"use strict";
 
 

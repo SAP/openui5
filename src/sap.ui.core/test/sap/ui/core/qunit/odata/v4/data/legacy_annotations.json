@@ -36,11 +36,11 @@
 	"my.schema.2." : {
 		"$kind" : "Schema",
 		"$Annotations" : {
-			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Salary/BASIC_SALARY_CURR" : {
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/SALARY/BASIC_SALARY_CURR" : {
 				"@com.sap.vocabularies.Common.v1.Label": "Currency from annotations",
 				"@com.sap.vocabularies.Common.v1.QuickInfo": "Quickinfo from annotations"
 			},
-			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/ComplexType_Salary/BONUS_CURR" : {
+			"com.sap.gateway.default.iwbep.tea_busi.v0001.Worker/SALARY/BONUS_CURR" : {
 				"@com.sap.vocabularies.Common.v1.Text": "Text from annotations"
 			}
 		}
@@ -48,7 +48,7 @@
 	"another.schema.2." : {
 		"$kind" : "Schema",
 		"$Annotations" : {
-			"another.schema.2.ComplexType_Salary/BASIC_SALARY_CURR" : {
+			"another.schema.2.SALARY/BASIC_SALARY_CURR" : {
 				"@com.sap.vocabularies.Common.v1.Heading" : "Curr",
 				"@com.sap.vocabularies.Common.v1.Label" : "Label from annotations"
 			}

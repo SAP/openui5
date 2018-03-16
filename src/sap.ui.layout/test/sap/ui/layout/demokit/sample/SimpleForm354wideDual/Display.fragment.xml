@@ -23,18 +23,18 @@
 			singleContainerFullSize="false" >
 			<f:content>
 				<core:Title text="Office" />
-				<Label text="Name" />
+				<Label text="Full name of the contact" />
 				<Text id="nameText" text="{SupplierName}" />
-				<Label text="Street/No." />
+				<Label text="Street and number where the contact is located" />
 				<Text text="{Street} {HouseNumber}" />
-				<Label text="ZIP Code/City" />
+				<Label text="ZIP Code and City" />
 				<Text text="{ZIPCode} {City}" />
-				<Label text="Country" />
+				<Label text="Country where the contact is located" />
 				<Text id="countryText" text="{Country}" />
 				<core:Title text="Online" />
-				<Label text="Web" />
+				<Label text="Web page of the contact" />
 				<Text text="{Url}" />
-				<Label text="Twitter" />
+				<Label text="Twitter account of the contact" />
 				<Text text="{Twitter}" />
 			</f:content>
 		</f:SimpleForm>

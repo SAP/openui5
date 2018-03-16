@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.StandardListItem.
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/EnabledPropagator', 'sap/ui/core/IconPool',  'sap/ui/core/Icon'],
-	function(jQuery, ListItemBase, library, EnabledPropagator, IconPool, Icon) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./ListItemBase',
+	'./library',
+	'sap/ui/core/IconPool',
+	'sap/ui/core/Icon',
+	'./TreeItemBaseRenderer',
+	'jquery.sap.keycodes'
+],
+	function(jQuery, ListItemBase, library, IconPool, Icon, TreeItemBaseRenderer) {
 	"use strict";
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
 
 	/**
 	 * Constructor for a new TreeItemBase.
@@ -163,10 +174,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		if (oTree) {
 			oBinding = oTree.getBinding("items");
 			iIndex = oTree.indexOfItem(this);
-			if (oTree.getMode() === sap.m.ListMode.SingleSelect) {
+			if (oTree.getMode() === ListMode.SingleSelect) {
 				oBinding.setSelectedIndex(iIndex);
 			}
-			if (oTree.getMode() === sap.m.ListMode.MultiSelect) {
+			if (oTree.getMode() === ListMode.MultiSelect) {
 				if (bSelected) {
 					oBinding.addSelectionInterval(iIndex, iIndex);
 				} else {
@@ -221,6 +232,13 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 				sSrc = this.getExpanded() ? this.ExpandedIconURI : this.CollapsedIconURI;
 			}
 			this._oExpanderControl.setSrc(sSrc);
+			this.$().attr("aria-expanded", this.getExpanded());
+
+			// update the indentation again
+			var iIndentation = this._getPadding(),
+				sStyleRule = sap.ui.getCore().getConfiguration().getRTL() ? "paddingRight" : "paddingLeft";
+			this.$().css(sStyleRule, iIndentation + "rem");
+
 		}
 	};
 
@@ -340,6 +358,10 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library', 'sap/ui/core/
 		this.destroyControls(["Expander"]);
 	};
 
+	TreeItemBase.prototype.onlongdragover = function(oEvent) {
+		this.informTree("LongDragOver");
+	};
+
 	return TreeItemBase;
 
-}, /* bExport= */ true);
+});

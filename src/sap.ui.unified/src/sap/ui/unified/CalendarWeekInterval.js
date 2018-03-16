@@ -3,9 +3,9 @@
  */
 
 //Provides control sap.ui.unified.CalendarWeekInterval.
-sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', './library',
+sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', './library',
 		'sap/ui/unified/CalendarDateInterval', 'sap/ui/unified/CalendarDateIntervalRenderer'],
-	function (jQuery, CalendarUtils, CalendarDate, library, CalendarDateInterval, CalendarDateIntervalRenderer) {
+	function (CalendarUtils, CalendarDate, library, CalendarDateInterval, CalendarDateIntervalRenderer) {
 		"use strict";
 
 		/*
@@ -25,7 +25,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * Week view is almost the same as days view except the days interval (7 days) and navigation logic.
 		 *
 		 * Navigation logic via keyboard allows for week switch if next available day is outside visible area. In this case
-		 * once the week is switched, the focus is moved to the previous/next day.  For example, if 21st is the start date
+		 * once the week is switched, the focus is moved to the previous/next day.  For example, if 11st is the start date
 		 * for given week(11-17) and it is focused by the keyboard, then arrow left is pressed, this will switch the week (4-10)
 		 * and the focused date would be 10. Respectively if the focused date is 17 and arrow right is pressed, then this will
 		 * switch the week to 18-24 and the focused date would be 18.
@@ -33,9 +33,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * Navigation via previous and forward buttons switches the week one before/after and remains the focus at the same
 		 * week day as before the switch.
 		 *
-		 * Navigation via month picker switches to the beginning of the week where the first date of this month is.
-		 *
-		 * Navigation via year picker switches to the beginning of the same week, but in the chosen year.
+		 * If the user opens the date picker and selects a date from it (optionally a month and an year) the control will change
+		 * its start date to the first date of the same week as the date the user chose.
 		 *
 		 * @extends sap.ui.unified.CalendarDateInterval
 		 * @version ${version}
@@ -44,9 +43,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		 * @private
 		 * @since 1.44.0
 		 * @alias sap.ui.unified.CalendarWeekInterval
-		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
-		var CalendarWeekInterval = CalendarDateInterval.extend("CalendarWeekInterval", /** @lends sap.ui.unified.CalendarWeekInterval.prototype */  {
+		var CalendarWeekInterval = CalendarDateInterval.extend("sap.ui.unified.CalendarWeekInterval", /** @lends sap.ui.unified.CalendarWeekInterval.prototype */  {
 			renderer: CalendarDateIntervalRenderer
 		});
 
@@ -62,7 +60,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 		/**
 		 * Handles focusing on a certain date.
 		 * Special handling is needed if the navigation refers to date that is outside the visible area.
-		 * @param oEvent
+		 * @param {Object} oEvent The fired event
 		 * @private
 		 */
 		CalendarWeekInterval.prototype._handleFocus = function (oEvent) {
@@ -82,83 +80,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 				}
 			}
 			return CalendarDateInterval.prototype._handleFocus.apply(this, arguments);
-		};
-
-		/**
-		 * Overrides the Calendar#_adjustFocusedDateUponMonthChange function.
-		 * Basically does the following:
-		 * - get the week for the 1st date of the chosen month
-		 * - obtains the 1st day of the week above
-		 * - sets this date as both start date and focused date
-		 * @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate the focused date that this function will adjust
-		 * @param {number} iChosenMonth the new month (0-based)
-		 * @private
-		 */
-		CalendarWeekInterval.prototype._adjustFocusedDateUponMonthChange = function (oFocusedDate, iChosenMonth) {
-			var oNextMonth = new CalendarDate(oFocusedDate),
-				bIsTheNextMonthVisibleAsWell;
-
-			oNextMonth.setDate(1);
-			oNextMonth.setMonth(oNextMonth.getMonth() + 1);
-			bIsTheNextMonthVisibleAsWell = this._oPlanningCalendar._dateMatchesVisibleRange(oNextMonth.toLocalJSDate(), sap.ui.unified.CalendarIntervalType.Week);
-
-			//handle the border-case where end of the month and begin of the next month
-			if (bIsTheNextMonthVisibleAsWell && iChosenMonth === oNextMonth.getMonth()) {//this is already calculated
-				return;
-			}
-			oFocusedDate.setMonth(iChosenMonth);
-			oFocusedDate.setDate(1);
-
-			var oFirstWeekDate = CalendarUtils._getFirstDateOfWeek(oFocusedDate);
-			this._setStartDate(oFirstWeekDate, false, true);//renders new week according to the start date
-
-			this._oFocusDateWeek = oFirstWeekDate;
-			oFocusedDate.setYear(oFirstWeekDate.getYear());
-			oFocusedDate.setMonth(oFirstWeekDate.getMonth());
-			oFocusedDate.setDate(oFirstWeekDate.getDate());
-		};
-
-		/**
-		 * Overrides the Calendar#_adjustFocusedDateUponYearChange function.
-		 * @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate the focused date that this function will adjust
-		 * @param {number} iChosenYear The new year
-		 * @desc The purpose of this function is the following:
-		 * 1. Takes the same week of the chosen year (as the passed focused date refers to its own year)
-		 * 2. Calculates its first day in order to display the correct viewport according to the week of interest
-		 * 3. Sets this date as both start date and focused date
-		 * @private
-		 */
-		CalendarWeekInterval.prototype._adjustFocusedDateUponYearChange = function(oFocusedDate, iChosenYear) {
-			if (!(oFocusedDate && oFocusedDate instanceof CalendarDate)) {
-				return;
-			}
-
-			var oWeekNumber = CalendarUtils._getWeek(oFocusedDate),
-				oTempFocusedDate = new CalendarDate(oFocusedDate),
-				oNewWeekNumber;
-
-			//Start one week before and find the first date that is sharing the same week as the current
-			oTempFocusedDate.setYear(iChosenYear);
-			oTempFocusedDate.setDate(oTempFocusedDate.getDate() - 7);
-			oNewWeekNumber = CalendarUtils._getWeek(oTempFocusedDate);
-
-			if (oWeekNumber.week === 52 && CalendarUtils._getNumberOfWeeksForYear(iChosenYear) < 53) {
-				/**
-				 * When we try to navigate from 53rd week of the year to year that don't have 53 weeks in it
-				 * always navigate to the last (52nd) week of the target year
-				 */
-				oWeekNumber.week = 51;
-			}
-
-			while (oWeekNumber.week !== oNewWeekNumber.week) {
-				oTempFocusedDate.setDate(oTempFocusedDate.getDate() + 1);
-				oNewWeekNumber = CalendarUtils._getWeek(oTempFocusedDate);
-			}
-
-			oFocusedDate.setYear(oTempFocusedDate.getYear());
-			oFocusedDate.setMonth(oTempFocusedDate.getMonth());
-			oFocusedDate.setDate(oTempFocusedDate.getDate());
-
 		};
 
 		/**
@@ -213,6 +134,48 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			return oDate.isSameOrAfter(oStartDate) && oDate.isBefore(oEndDate);
 		};
 
+		CalendarWeekInterval.prototype._showCalendarPicker = function() {
+			var oCalNewFocusDate = this._getFocusedDate(),
+				oCalFirstWeekDate = this._getStartDate(),
+				oCalPicker = this._getCalendarPicker(),
+				oSelectedRange = new sap.ui.unified.DateRange(),
+				oCalEndDate;
+
+			oCalEndDate = new CalendarDate(oCalFirstWeekDate);
+			oCalEndDate.setDate(oCalEndDate.getDate() + this._getDays() - 1);
+			oSelectedRange.setStartDate(oCalFirstWeekDate.toLocalJSDate());
+			oSelectedRange.setEndDate(oCalEndDate.toLocalJSDate());
+
+			oCalPicker.displayDate(oCalNewFocusDate.toLocalJSDate(), false);
+			oCalPicker.removeAllSelectedDates();
+			oCalPicker.addSelectedDate(oSelectedRange);
+
+			oCalPicker.setMinDate(this.getMinDate());
+			oCalPicker.setMaxDate(this.getMaxDate());
+
+			this._openPickerPopup(oCalPicker);
+			this._showOverlay();
+		};
+
+		CalendarWeekInterval.prototype._handleCalendarPickerDateSelect = function(oEvent) {
+			var oCalPicker = this._getCalendarPicker(),
+				oFocusedDate = oCalPicker._getFocusedDate(),
+				oFirstWeekDate;
+
+			if (this._dateMatchesVisibleRange(oFocusedDate.toLocalJSDate())) {
+				this._oFocusDateWeek = oCalPicker._getFocusedDate();
+				this._focusDate(this._oFocusDateWeek, false, true); // true means no fire startDateChange event (no start date change)
+			} else {
+				oFirstWeekDate = CalendarUtils._getFirstDateOfWeek(oFocusedDate);
+
+				this._setStartDate(oFirstWeekDate);
+				this._oFocusDateWeek = oCalPicker._getFocusedDate();
+				this._focusDate(this._oFocusDateWeek, false, true); // true means no fire startDateChange event (we already did it in _setStartDate)
+			}
+
+			this._closeCalendarPicker(true);
+		};
+
 		return CalendarWeekInterval;
 
-	}, /* bExport= */ true);
+	});

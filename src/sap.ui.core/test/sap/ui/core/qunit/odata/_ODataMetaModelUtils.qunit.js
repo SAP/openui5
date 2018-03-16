@@ -3,8 +3,9 @@
  */
 sap.ui.require([
 	"jquery.sap.global",
-	'sap/ui/model/odata/_ODataMetaModelUtils'
-], function (jQuery, Utils) {
+	"sap/ui/model/odata/_AnnotationHelperBasics",
+	"sap/ui/model/odata/_ODataMetaModelUtils"
+], function (jQuery, _AnnotationHelperBasics, Utils) {
 	/*global QUnit, sinon */
 	"use strict";
 
@@ -438,14 +439,13 @@ sap.ui.require([
 			this.iOldLogLevel = jQuery.sap.log.getLevel(sLoggingModule);
 			// do not rely on ERROR vs. DEBUG due to minified sources
 			jQuery.sap.log.setLevel(jQuery.sap.log.Level.ERROR, sLoggingModule);
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
-
 		},
+
 		afterEach : function () {
 			jQuery.sap.log.setLevel(this.iOldLogLevel, sLoggingModule);
-			this.oLogMock.verify();
 		}
 	});
 	//*********************************************************************************************
@@ -556,6 +556,7 @@ sap.ui.require([
 		}
 	].forEach(function (oFixture) {
 		var sSemanticsValue = oFixture.sSemantics + ";type=" + oFixture.sTypes;
+
 		QUnit.test("getV4TypesForV2Semantics: " + sSemanticsValue, function (assert) {
 			var bLogExpected = oFixture.sOutput === "" || oFixture.oExpectedMessage,
 				oType = { "name" : "Foo" },
@@ -571,6 +572,33 @@ sap.ui.require([
 			assert.strictEqual(Utils.getV4TypesForV2Semantics(oFixture.sSemantics, oFixture.sTypes,
 				oProperty, oType), oFixture.sOutput, sSemanticsValue);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getV4TypesForV2Semantics: ignores unknown semantic with type", function (assert) {
+		var sSemantic = "tle;type=cell",
+			oProperty = { "name" : "bar", "sap:semantics" : sSemantic },
+			oType = { "name" : "Foo" };
+
+		assert.strictEqual(Utils.getV4TypesForV2Semantics("tle", "cell", oProperty, oType), "",
+			sSemantic);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addSapSemantics: url", function (assert) {
+		var oType = {
+				"name" : "BusinessPartner",
+				"property" : [{
+					"name" : "WebAddress",
+					"sap:semantics" : "url"
+				}]
+			};
+
+		// code under test
+		Utils.addSapSemantics(oType);
+
+		assert.deepEqual(oType.property[0/*WebAddress*/]["Org.OData.Core.V1.IsURL"],
+			{"Bool" : "true"});
 	});
 
 	//*********************************************************************************************
@@ -616,6 +644,51 @@ sap.ui.require([
 						["com.sap.vocabularies.Communication.v1.IsPhoneNumber"],
 					{ "Bool" : "true" });
 			}
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		semantics : "fiscalyear",
+		term : "com.sap.vocabularies.Common.v1.IsFiscalYear"
+	}, {
+		semantics : "fiscalyearperiod",
+		term : "com.sap.vocabularies.Common.v1.IsFiscalYearPeriod"
+	}, {
+		semantics : "year",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarYear"
+	}, {
+		semantics : "yearmonth",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarYearMonth"
+	}, {
+		semantics : "yearmonthday",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarDate"
+	}, {
+		semantics : "yearquarter",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarYearQuarter"
+	}, {
+		semantics : "yearweek",
+		term : "com.sap.vocabularies.Common.v1.IsCalendarYearWeek"
+	}].forEach(function (oFixture) {
+		var sSemantics = oFixture.semantics,
+			sTerm = oFixture.term;
+
+		QUnit.test("addSapSemantics: " + sSemantics, function (assert) {
+			var oType = {
+					"name" : "Type",
+					"property" : [{
+						"name" : "Property",
+						"sap:semantics" : sSemantics,
+						"type" : "Edm.String"
+					}]
+				},
+				oExpectedResult = clone(oType);
+
+			// code under test
+			Utils.addSapSemantics(oType);
+
+			oExpectedResult.property[0][sTerm] = {"Bool" : "true"};
+			assert.deepEqual(oType, oExpectedResult);
 		});
 	});
 
@@ -1095,6 +1168,8 @@ sap.ui.require([
 		role : "dimension", term : "com.sap.vocabularies.Analytics.v1.Dimension"
 	}, {
 		role : "measure", term : "com.sap.vocabularies.Analytics.v1.Measure"
+	}, {
+		role : "foo", term : "must.not.exist"
 	}].forEach(function (oFixture) {
 		var sRole = oFixture.role;
 
@@ -1105,8 +1180,213 @@ sap.ui.require([
 			// code under test
 			Utils.addV4Annotation(oProperty, oExtension, "Property");
 
-			assert.deepEqual(oProperty[oFixture.term], {"Bool" : "true"});
+			assert.deepEqual(oProperty[oFixture.term],
+				sRole === "foo" ? undefined : {"Bool" : "true"});
 		});
 	});
-});
 
+	//*********************************************************************************************
+	QUnit.test("addUnitAnnotations", function (assert) {
+		var oAnnotationHelperBasicsMock = this.mock(_AnnotationHelperBasics),
+			oMetaModel = { getProperty : function () {}},
+			oMetaModelMock = this.mock(oMetaModel),
+			sPathToEntity0 = "/dataServices/schema/0/entityType/0",
+			sPathToEntity1 = "/dataServices/schema/1/entityType/0",
+			sTargetEntityPath = "/dataServices/schema/0/entityType/1",
+			sTargetPropertyCode = sTargetEntityPath + "/property/0",
+			sTargetPropertyMeasure = sTargetEntityPath + "/property/1",
+			aSchemas = [{
+				complexType : [{
+					$path : "/dataServices/schema/0/complexType/0",
+					property : [{
+						name : "Price",
+						"sap:unit" : "currency/Code"
+					}]
+				}, {
+					property : [{
+						name : "Code",
+						"sap:semantics" : "currency-code"
+					}]
+				}],
+				entityType : [{
+					$path : sPathToEntity0,
+					property : [{
+						name : "ID"
+					}, {
+						name : "Currency",
+						"sap:unit" : "toProduct/Code"
+					}, {
+						name : "Price",
+						"sap:unit" : "PriceCode",
+						"Org.OData.Measures.V1.ISOCurrency" : {Path : "AnnotationsPriceCode"}
+					}, {
+						name : "missingTarget",
+						"sap:unit" : "foo/bar"
+					}, {
+						name : "unresolvedTarget",
+						"sap:unit" : "foo2/bar2"
+					}, {
+						name : "PriceCode",
+						"sap:semantics" : "currency-code"
+					}]
+				}, {
+					$path : sTargetEntityPath,
+					property : [{
+						name : "Code",
+						"sap:semantics" : "currency-code"
+					}, {
+						name : "Measure",
+						"sap:semantics" : "unit-of-measure"
+					}]
+				}, {
+					// simulate entity type with no properties
+				}]
+			}, {
+				entityType : [{
+					$path : sPathToEntity1,
+					property : [{
+						name : "Length",
+						"sap:unit" : "toProduct/Measure"
+					}, {
+						name : "Width",
+						"sap:unit" : "WidthUnit",
+						"Org.OData.Measures.V1.Unit" : {Path : "AnnotationsWidthUnit"}
+					}, {
+						name : "WidthUnit",
+						"sap:semantics" : "unit-of-measure"
+					}]
+				}]
+			}, {
+				// schema without entity types
+			}];
+
+		oAnnotationHelperBasicsMock.expects("followPath")
+			.withExactArgs(sinon.match(function (oInterface) {
+				return oInterface.getModel() === oMetaModel
+					&& oInterface.getPath() === "/dataServices/schema/0/complexType/0";
+			}), {Path : "currency/Code"})
+			.returns({resolvedPath : "/dataServices/schema/0/complexType/1/property/0"});
+		oAnnotationHelperBasicsMock.expects("followPath")
+			.withExactArgs(sinon.match(function (oInterface) {
+				return oInterface.getModel() === oMetaModel
+					&& oInterface.getPath() === sPathToEntity0;
+			}), {Path : "toProduct/Code"})
+			.returns({resolvedPath : sTargetPropertyCode});
+		oAnnotationHelperBasicsMock.expects("followPath")
+			.withExactArgs(sinon.match(function (oInterface) {
+				return oInterface.getModel() === oMetaModel
+					&& oInterface.getPath() === sPathToEntity0;
+			}), {Path : "PriceCode"})
+			.returns({resolvedPath : "/dataServices/schema/0/entityType/0/property/5"});
+		oAnnotationHelperBasicsMock.expects("followPath")
+			.withExactArgs(sinon.match(function (oInterface) {
+				return oInterface.getModel() === oMetaModel
+					&& oInterface.getPath() === sPathToEntity1;
+			}), {Path : "toProduct/Measure"})
+			.returns({resolvedPath : sTargetPropertyMeasure});
+		oAnnotationHelperBasicsMock.expects("followPath")
+			.withExactArgs(sinon.match(function (oInterface) {
+				return oInterface.getModel() === oMetaModel
+					&& oInterface.getPath() === sPathToEntity0;
+			}), {Path : "foo/bar"})
+			.returns(undefined);
+		oAnnotationHelperBasicsMock.expects("followPath")
+			.withExactArgs(sinon.match(function (oInterface) {
+				return oInterface.getModel() === oMetaModel
+					&& oInterface.getPath() === sPathToEntity0;
+			}), {Path : "foo2/bar2"})
+			.returns({});
+		oAnnotationHelperBasicsMock.expects("followPath")
+			.withExactArgs(sinon.match(function (oInterface) {
+				return oInterface.getModel() === oMetaModel
+					&& oInterface.getPath() === "/dataServices/schema/1/entityType/0";
+			}), {Path : "WidthUnit"})
+			.returns({resolvedPath : "/dataServices/schema/1/entityType/0/property/2"});
+		oMetaModelMock.expects("getProperty")
+			.withExactArgs("/dataServices/schema/0/complexType/1/property/0")
+			.returns(aSchemas[0].complexType[1].property[0]);
+		oMetaModelMock.expects("getProperty").withExactArgs(sTargetPropertyCode)
+			.returns(aSchemas[0].entityType[1].property[0]);
+		oMetaModelMock.expects("getProperty")
+			.withExactArgs("/dataServices/schema/0/entityType/0/property/5")
+			.returns(aSchemas[0].entityType[0].property[5]);
+		oMetaModelMock.expects("getProperty").withExactArgs(sTargetPropertyMeasure)
+			.returns(aSchemas[0].entityType[1].property[1]);
+		oMetaModelMock.expects("getProperty")
+			.withExactArgs("/dataServices/schema/1/entityType/0/property/2")
+			.returns(aSchemas[1].entityType[0].property[2]);
+
+		// code under test
+		Utils.addUnitAnnotations(aSchemas, oMetaModel);
+
+		assert.deepEqual(
+			aSchemas[0].entityType[0].property[1]["Org.OData.Measures.V1.ISOCurrency"],
+			{Path : "toProduct/Code"});
+		assert.deepEqual(
+			aSchemas[0].entityType[0].property[2]["Org.OData.Measures.V1.ISOCurrency"],
+			{Path : "AnnotationsPriceCode"});
+		assert.deepEqual(
+			aSchemas[1].entityType[0].property[0]["Org.OData.Measures.V1.Unit"],
+			{Path :"toProduct/Measure"});
+		assert.deepEqual(
+			aSchemas[1].entityType[0].property[1]["Org.OData.Measures.V1.Unit"],
+			{Path :"AnnotationsWidthUnit"});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addNavigationFilterRestriction", function (assert) {
+		var oEntitySet = {},
+			oNavigationRestrictions,
+			oProperty0 = {
+				"name" : "Bar"
+				// "sap:filterable" : "false"
+			},
+			oProperty1 = {
+				"name" : "Foo"
+				// "sap:filterable" : "false"
+			};
+
+		// code under test
+		Utils.addNavigationFilterRestriction(oProperty0, oEntitySet);
+		Utils.addNavigationFilterRestriction(oProperty1, oEntitySet);
+
+		oNavigationRestrictions = oEntitySet["Org.OData.Capabilities.V1.NavigationRestrictions"];
+
+		assert.deepEqual(oNavigationRestrictions, {
+			"RestrictedProperties" : [{
+				"NavigationProperty" : {
+					"NavigationPropertyPath" : "Bar"
+				},
+				"FilterRestrictions" : {
+					"Filterable": {"Bool" : "false"}
+				}
+			}, {
+				"NavigationProperty" : {
+					"NavigationPropertyPath" : "Foo"
+				},
+				"FilterRestrictions" : {
+					"Filterable": {"Bool" : "false"}
+				}
+			}]
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("calculateEntitySetAnnotations: calls addNavigationFilterRestriction",
+			function (assert) {
+		var oEntitySet = {},
+			oEntityType = {
+				navigationProperty : [
+					{"sap:filterable" : "false"},
+					{"sap:filterable" : "true"}
+				]
+			};
+
+		this.mock(Utils).expects("addNavigationFilterRestriction")
+			.withExactArgs(sinon.match.same(oEntityType.navigationProperty[0]),
+				sinon.match.same(oEntitySet));
+
+		// code under test
+		Utils.calculateEntitySetAnnotations(oEntitySet, oEntityType);
+	});
+});

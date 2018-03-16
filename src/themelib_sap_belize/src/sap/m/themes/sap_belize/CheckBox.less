@@ -21,8 +21,8 @@
 	}
 }
 
-.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem' ( the focus width) */
-	left: 0.0625rem;
+.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
+	left: 1px; // Must be in pixels to behave correctly in IE
 }
 
 .sapMCbBg.sapMCbMarkChecked:before {
@@ -48,7 +48,7 @@ html.sap-desktop {
 		outline-color: @sapUiContentFocusColor;
 	}
 
-	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel:focus:before {
 		content: "";
 		display: block;
 		position: absolute;
@@ -59,13 +59,8 @@ html.sap-desktop {
 		border: 1px dotted @sapUiContentFocusColor;
 	}
 
-	.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
-		left: -1px; /* Cb in SimpleForm: left and right border adjustment */
-		right: 1px;
-	}
-
-	.sapUiRespGrid .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
-		right: 0; /* in the Grid the outline on the right is not visible */
+	.sapUiForm .sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+		left: -1px; /* Cb in SimpleForm: left border adjustment */
 	}
 }
 
@@ -74,7 +69,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
 		outline-style: dashed;
 	}
-	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbDisplayOnly).sapMCbHasLabel:focus:before {
 		border: 1px dashed @sapUiContentFocusColor;
 	}
 }
@@ -114,21 +109,14 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	color: @sapUiListActiveTextColor;
 }
 
-.sapMActive .sapMCbBg.sapMCbActiveStateOff.sapMCbMarkChecked:before,
-.sapMCbBg:active.sapMCbActiveStateOff.sapMCbMarkChecked:before,
-.sapMActive .sapMCbBg.sapMCbMarkChecked:before,
-.sapMCbBg:active.sapMCbMarkChecked:before {
-	color: @sapUiSelected;
-}
-
 .sapMCbBg.sapMCbBgDis.sapMCbMarkChecked:before {
 	color: fade(@sapUiSelected, 25);
 }
 
 /* Compact size */
 .sapUiSizeCompact{
-	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem' ( the focus width) */
-		left: 0.0625rem;
+	.sapUiForm .sapMCbBg { /* In forms, align left with '0.0625rem(1px)' ( the focus width) */
+		left: 1px; // Must be in pixels to behave correctly in IE
 	}
 }
 
@@ -140,7 +128,7 @@ html.sap-desktop {
 			left: 0.365rem;
 		}
 
-		.sapUiSimpleForm .sapMCb:not(.sapMCbBgDis):focus:before {
+		.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
 			left: -0.0625rem;
 		}
 	}

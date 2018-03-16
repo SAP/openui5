@@ -604,6 +604,40 @@
 
 			QUnit.module("Screen reader");
 
+			QUnit.test("Role presentation should be present", function(assert) {
+				var done = assert.async(),
+					oButton = new sap.m.Button({
+						text : "Open ActionSheet",
+						press : function() {
+							oActionSheet.openBy(this);
+						}
+					}),
+					oActionSheet = new sap.m.ActionSheet({
+						buttons: [
+							new sap.m.Button({
+								id: 'oButton2',
+								type: sap.m.ButtonType.Reject,
+								text: "Reject Action"
+							})
+						]
+					}),
+					oActionSheetContentDivRole;
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				setTimeout(function(){
+					oActionSheetContentDivRole = oActionSheet.getDomRef().getAttribute("role");
+					assert.equal(oActionSheetContentDivRole, "presentation", 'role=presentation should be present');
+
+					oActionSheet.close();
+					oButton.destroy();
+					oActionSheet.destroy();
+					done();
+				});
+			});
+
 			QUnit.test("Popup should have ariaLabelledBy that points to the sPopupHiddenLabelId", function(assert) {
 				var done = assert.async(),
 					oButton = new sap.m.Button({
@@ -734,23 +768,24 @@
 
 				}, 500);
 			});
+
 			QUnit.test('Removing a button and adding it again should not add wrong labels', function(assert) {
 				var done = assert.async();
 				var oButton = new sap.m.Button({
-					text : "Open ActionSheet",
-					press : function() {
-						oActionSheet.openBy(this);
-					}
-				}),
-				button1 = new sap.m.Button({ text: "Button1", id: "asButton1" }),
-				aInvisibleTexts, aButtonLabels,
-				oActionSheet = new sap.m.ActionSheet({
-					cancelButtonText: "Cancel",
-					title: "Title",
-					buttons: [
-						button1
-					]
-				});
+						text : "Open ActionSheet",
+						press : function() {
+							oActionSheet.openBy(this);
+						}
+					}),
+					button1 = new sap.m.Button({ text: "Button1", id: "asButton1" }),
+					aInvisibleTexts, aButtonLabels,
+					oActionSheet = new sap.m.ActionSheet({
+						cancelButtonText: "Cancel",
+						title: "Title",
+						buttons: [
+							button1
+						]
+					});
 
 				oActionSheet.removeButton(button1);
 				oActionSheet.addButton(button1);
@@ -778,6 +813,49 @@
 						oActionSheet.destroy();
 					}, 500);
 
+				}, 500);
+			});
+
+			QUnit.test('Inserting button should not missmatch Aria labels', function (assert) {
+				//Setup
+				var done = assert.async();
+				var oButton = new sap.m.Button({
+						text: "Open ActionSheet",
+						press: function () {
+							oActionSheet.openBy(this);
+						}
+					}),
+					oASButton1 = new sap.m.Button({text: "Button1", id: "asButton1"}),
+					oASButton2 = new sap.m.Button({text: "Button2", id: "asButton2"}),
+					oASButton3 = new sap.m.Button({text: "Button3", id: "asButton3"}),
+					oActionSheet = new sap.m.ActionSheet({
+						cancelButtonText: "Cancel",
+						title: "Title",
+						buttons: [
+							oASButton1, oASButton3
+						]
+					});
+
+				// Act
+				oActionSheet.insertButton(oASButton2, 1);
+
+				page.addContent(oButton);
+				sap.ui.getCore().applyChanges();
+				oButton.firePress();
+
+				setTimeout(function () {
+					var sInvisibleTextId = oASButton2.getAriaLabelledBy()[0],
+						oInvisibleText = sap.ui.getCore().byId(sInvisibleTextId);
+
+					//Assert
+					assert.strictEqual(oActionSheet.indexOfAggregation("buttons", oASButton2), 1, "Inserted button should be correctly placed at the second place.");
+					assert.strictEqual(oInvisibleText.getText().indexOf("2"), 0, "Invisible text should correctly state that the Button is placed at position #2.");
+
+					//Cleanup
+					done();
+					oActionSheet.close();
+					oButton.destroy();
+					oActionSheet.destroy();
 				}, 500);
 			});
 

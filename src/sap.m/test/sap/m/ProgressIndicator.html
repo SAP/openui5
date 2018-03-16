@@ -119,7 +119,7 @@
 				state: sap.ui.core.ValueState.Success
 			});
 
-			var oButton =new sap.m.Button("button", {
+			var oButton = new sap.m.Button("button", {
 				text:"ChangePI",
 				press: function(){
 					var sPercent = sap.ui.getCore().byId("input").getValue();
@@ -128,7 +128,7 @@
 				}
 			});
 
-			var oButton2 =new sap.m.Button("change_pi", {
+			var oButton2 = new sap.m.Button("change_pi", {
 				text:"Change PI to 40%",
 				press: function(){
 					oProgInd8.setPercentValue(40);
@@ -136,24 +136,40 @@
 				}
 			});
 
-			var oButton3 =new sap.m.Button("small_pi", {
+			var oButton3 = new sap.m.Button("small_pi", {
 				text:"Set PI to small size",
 				press: function(){
 					oProgInd8.setHeight("1.375rem");
 				}
 			});
 
-			var oButton4 =new sap.m.Button("disable_pi", {
+			var oButton4 = new sap.m.Button("disable_pi", {
 				text:"Set PI to disable",
 				press: function(){
 					oProgInd8.setEnabled(false);
 				}
 			});
 
-			var oButton5 =new sap.m.Button("state_pi", {
+			var oButton5 = new sap.m.Button("state_pi", {
 				text:"Set state",
 				press: function(){
 					oProgInd8.setState(sap.ui.core.ValueState.Neutral);
+				}
+			});
+
+			var oButton6 = new sap.m.Button("change_pi_empty", {
+				text:"Change PI to -20%",
+				press: function(){
+					oProgInd8.setPercentValue(-20);
+					oProgInd8.setDisplayValue("-20%");
+				}
+			});
+
+			var oButton7 = new sap.m.Button("change_pi_full", {
+				text:"Change PI to 120%",
+				press: function(){
+					oProgInd8.setPercentValue(120);
+					oProgInd8.setDisplayValue("120%");
 				}
 			});
 
@@ -182,7 +198,9 @@
 					oButton2,
 					oButton3,
 					oButton4,
-					oButton5
+					oButton5,
+					oButton6,
+					oButton7
 				]
 			});
 

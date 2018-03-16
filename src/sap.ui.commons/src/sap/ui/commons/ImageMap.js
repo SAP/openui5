@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.ImageMap.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, ItemNavigation) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/delegate/ItemNavigation',
+    "./ImageMapRenderer"
+],
+	function(jQuery, library, Control, ItemNavigation, ImageMapRenderer) {
 	"use strict";
 
 
@@ -24,7 +30,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38.
+	 * @deprecated as of version 1.38. There's not replacement because of the archaic design pattern.
 	 * @alias sap.ui.commons.ImageMap
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

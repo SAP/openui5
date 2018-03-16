@@ -1,0 +1,494 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<title>NumberFormat</title>
+
+	<script id="sap-ui-bootstrap"
+			type="text/javascript"
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-theme="sap_belize"
+			data-sap-ui-xx-bindingSyntax="complex"
+			>
+	</script>
+
+	<style>
+		.large {font-size: 2rem !important}
+		.largeinput {height: 3rem !important }
+		.large .sapMInputBaseInner{font-size: 2rem !important; height: 2.5rem}
+	</style>
+
+	<script>
+	try{
+		sap.ui.getCore().loadLibrary("sap.m");
+		sap.ui.getCore().loadLibrary("sap.ui.layout");
+	}catch(e){
+		alert("This test page requires the library 'sap.m' and 'sap.ui.layout' which are not available.");
+		throw(e);
+	}
+	</script>
+	<script type="text/javascript" src="FormatHelper.js"></script>
+
+	<script>
+	jQuery.sap.require("sap.ui.core.format.NumberFormat");
+
+	var aSamples = [
+			{key: "custom", text: "Custom", type: "Float", sample: {} },
+			{key: "integer", text: "Integer", type: "Integer", sample: {} },
+			{key: "float", text: "Float with precision", type: "Float", sample: {precision: 3} },
+			{key: "short", text: "Short format", type: "Float", sample: {style: "short", precision: 3} },
+			{key: "short2", text: "Short format with limit", type: "Float", sample: {style: "short", precision: 3, shortLimit: 1000000} },
+			{key: "short3", text: "Short format without scale", type: "Float", sample: {style: "short", precision: 3, showScale: false} },
+			{key: "long", text: "Long format", type: "Float", sample: {style: "long"} },
+			{key: "currency", text: "Currency", type: "Currency", sample: {currencyCode: false} },
+			{key: "currency2", text: "Currency short", type: "Currency", sample: {currencyCode: false, style: "short"} },
+			{key: "unit", text: "Unit long format", type: "Unit", sample: {style: "long"} },
+			{key: "unit2", text: "Unit", type: "Unit", sample: {} },
+			{key: "unit3", text: "Unit Custom", type: "Unit", sample: {customUnits:{"electric-inductance": {
+							"unitPattern-count-one": "{0} H",
+							"unitPattern-count-other": "{0} H"}}}, unit: 'electric-inductance' },
+			{key: "pattern", text: "Float Custom pattern", type: "Float", sample: {pattern: "#,##,###.0#"} }
+		],
+		aHashParams = [
+			{name: "formatOptions", default: {}},
+			{name: "type", default: "Integer"},
+			{name: "number", default: 123456.789},
+			{name: "currency", default: "USD"},
+			{name: "unit", default: "speed-knot"}
+		],
+		oSupportedOptions = {
+			minIntegerDigits: {
+				type: "int",
+				min: 0,
+				help: "Integer value defining the minimum number of integer digits"
+			},
+			maxIntegerDigits: {
+				type: "int",
+				min: 0,
+				help: "Integer value defining the maximum number of integer digits"
+			},
+			minFractionDigits: {
+				type: "int",
+				min: 0,
+				help: "Integer value defining the minimum number of fraction digits"
+			},
+			maxFractionDigits: {
+				type: "int",
+				min: 0,
+				help: "Integer value defining the maximum number of fraction digits"
+			},
+			decimals: {
+				type: "int",
+				min: 0,
+				help: "Integer value defining the number of decimals (minimum and maximum fraction digits)"
+			},
+			shortDecimals: {
+				type: "int",
+				min: 0,
+				help: "Integer value defining the number of decimals used in short number format"
+			},
+			shortLimit: {
+				type: "float",
+				min: 0,
+				help: "Float value, the short formatting will only be applied to numbers above this limit"
+			},
+			shortRefNumber: {
+				type: "float",
+				help: "Float value used to chose the scale instead of the value to format. This is useful if you have multiple values which should be comparable"
+			},
+			showScale: {
+				type: "boolean",
+				help: "To hide the scale in the short format set to \"false\""
+			},
+			precision: {
+				type: "int",
+				min: 0,
+				help: "Integer value defining the of valid digits shared across both decimals and fraction digits"
+			},
+			pattern: {
+				type: "string",
+				regex: /^[#0]*(,[#0]+)*(\.[0#]+)?$/,
+				help: "Number pattern consisting of '#' for optional digit, '0' for mandatory digit, ',' as grouping separator, '.' as decimal separator"
+			},
+			groupingEnabled: {
+				type: "boolean",
+				help: "To enable grouping of integer digits set to \"true\""
+			},
+			groupingSeparator: {
+				type: "string",
+				help: "Character used as grouping separator"
+			},
+			groupingSize: {
+				type: "int",
+				min: 0,
+				help: "The size of groups on the integer part"
+			},
+			groupingBaseSize: {
+				type: "int",
+				min: 0,
+				help: "The base group size for grouping on the integer part"
+			},
+			decimalSeparator: {
+				type: "string",
+				help: "Character used as decimal separator"
+			},
+			plusSign: {
+				type: "string",
+				help: "Character used as plus sign"
+			},
+			minusSign: {
+				type: "string",
+				help: "Character used as minus sign"
+			},
+			parseAsString: {
+				type: "boolean",
+				help: "To return a JS string instead of number set this to \"true\""
+			},
+			style: {
+				type: "enum",
+				values: ["short", "long"],
+				help: "Allowed values are \"short\" and \"long\""
+			},
+			roundingMode: {
+				type: "enum",
+				values: ["floor", "ceiling", "towards_zero", "away_from_zero", "half_floor", "half_ceiling", "half_towards_zero", "half_away_from_zero"],
+				help: "Allowed values are \"floor\", \"ceiling\", \"towards_zero\", \"away_from_zero\", \"half_floor\", \"half_ceiling\", \"half_towards_zero\" and \"half_away_from_zero\""
+			},
+			showMeasure: {
+				type: "boolean",
+				help: "To hide the measure/currency on the formatted value, set to \"false\""
+			},
+			currencyCode: {
+				type: "boolean",
+				help: "To show currency symbols instead of three letter currency code, set to \"false\""
+			},
+			customUnits: {
+				type: "object",
+				help: "Custom units"
+			},
+			language: {
+				type: "string",
+				help: "Language to enter"
+			},
+			emptyString: {
+			}
+
+		};
+
+
+	var oCurrentLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+	var sLocale = oCurrentLocale.getLanguage();
+	if(oCurrentLocale.getRegion()) {
+		sLocale += "_" + oCurrentLocale.getRegion();
+	}
+	var oModel = new sap.ui.model.json.JSONModel({
+		number: 123456.789,
+		currency: "USD",
+		unit: "speed-knot",
+		formatOptions: {},
+		type: "Integer",
+		locales: aLocales,
+		localesSuggestions: aLocales.map(function(sLocale) {
+			return {name: sLocale};
+		}),
+		samples: aSamples,
+		sample: "custom",
+		locale: sLocale,
+		editMode: "false",
+		cldrEntries: []
+	});
+
+	oModel.setSizeLimit(Infinity);
+
+	sap.ui.getCore().attachInit(function() {
+		bindHash(oModel, aHashParams, oSupportedOptions);
+	});
+
+	sap.ui.getCore().setModel(oModel);
+
+	sap.ui.require(["sap/ui/core/LocaleData"], function(oLocaleData) {
+		var aValues = Object.keys(oLocaleData.getInstance(oCurrentLocale).getUnitFormats()).map(function(sUnitCode) {
+			return {name: sUnitCode};
+		});
+		oModel.setProperty("/cldrEntries", aValues);
+	});
+
+	var oApp = new sap.m.App({
+		autoFocus: false,
+		pages: [
+			new sap.m.Page({
+				title: "NumberFormat",
+				enableScrolling: false,
+				content: [
+					new sap.m.HBox({
+						fitContainer: true,
+						items: [
+							new sap.m.ScrollContainer({
+								layoutData: new sap.m.FlexItemData({
+									baseSize: "100%"
+								}),
+								width: "100%",
+								height: "100%",
+								horizontal: false,
+								vertical: true,
+								content: [
+									new sap.ui.layout.form.SimpleForm({
+										layout: "ResponsiveGridLayout",
+										columnsL: 1,
+										width: "100%",
+										editable: true,
+										content: [
+											new sap.ui.core.Title({
+												text: "Output"
+											}),
+											new sap.m.Image({
+												src: {
+													parts: ["/locale"],
+													formatter: function(sLocale) {
+														if(sLocale && sLocale.length > 3) {
+															return "flags/" + sLocale.substr(3) + ".png";
+														}
+													}
+												},
+												width: "30px",
+												height: "20px"
+											}),
+											new sap.m.Label({
+												text: ""
+											}),
+											new sap.m.Input({
+												value: {
+													parts: ["/number", "/currency", "/unit", "/type", "/formatOptions", "/locale"],
+													formatter: function(oNumber, sCurrency, sUnitCode, sType, oFormatOptions, sLocale) {
+														var oLocale = new sap.ui.core.Locale(sLocale);
+														var sFunctionName = "get" + sType + "Instance",
+															oOptions = jQuery.extend({}, oFormatOptions),
+															oNumberFormat = sap.ui.core.format.NumberFormat[sFunctionName](oOptions, oLocale);
+														var sMeasure;
+														if (sType == "Currency") {
+															sMeasure = sCurrency
+														} else if (sType == "Unit") {
+															sMeasure = sUnitCode;
+														}
+														return oNumberFormat.format(oNumber, sMeasure);
+													}
+												},
+												editable: {
+													path: "/editMode",
+													formatter: function(sEditMode) {
+														return sEditMode == "true"
+													}
+												},
+												liveChange: function(oEvent) {
+													var sValue = oEvent.getParameter("value");
+													var sLocale = oModel.getProperty("/locale");
+													var oFormatOptions = oModel.getProperty("/formatOptions");
+													var sType = oModel.getProperty("/type");
+													var sFunctionName = "get" + sType + "Instance";
+													var oLocale = new sap.ui.core.Locale(sLocale);
+													var oOptions = jQuery.extend({}, oFormatOptions);
+													var oNumberFormat = sap.ui.core.format.NumberFormat[sFunctionName](oOptions, oLocale);
+													var aParsed = oNumberFormat.parse(sValue);
+													if (Array.isArray(aParsed)) {
+
+														if (aParsed[0]) {
+															oModel.setProperty("/number", aParsed[0]);
+														}
+														if (aParsed[1]) {
+															oModel.setProperty("/unit", aParsed[1]);
+														}
+													} else if (aParsed) {
+														oModel.setProperty("/number", aParsed);
+													}
+
+												}
+											}).addEventDelegate({
+												onsapfocusleave: function() {
+													oModel.setProperty("/editMode", "false");
+												}
+											}).attachBrowserEvent("click", function() {
+												oModel.setProperty("/editMode", "true");
+											}).addStyleClass("large largeinput"),
+											new sap.ui.core.Title({
+												text: "Input"
+											}),
+											new sap.m.Label({
+												text: "Format Options"
+											}),
+											new sap.m.TextArea({
+												rows: 6,
+												value: {
+													path: "/formatOptions",
+													type: new Options(oSupportedOptions)
+												},
+												liveChange: function(oEvent) {
+													var sValue = this.getValue(),
+														oValue;
+													oModel.setProperty("/sample", "custom");
+													try {
+														oValue = jQuery.sap.parseJS(sValue);
+													} catch(e) {
+														this.onChange(oEvent);
+														return;
+													}
+													if (this.getValueState() === "Error" || !jQuery.sap.equal(oValue, this.getBinding("value").getValue())) {
+														this.onChange(oEvent);
+													}
+												}
+											}).addStyleClass("large"),
+											new sap.m.Label({
+												text: "Sample"
+											}),
+											new sap.m.Select({
+												selectedKey: "{/sample}",
+												items: {
+													path: "/samples",
+													template: new sap.ui.core.Item({key: "{key}", text: "{text}"})
+												},
+												change: function() {
+													var oContext = this.getSelectedItem().getBindingContext();
+													oModel.setProperty("/formatOptions", {});
+													oModel.setProperty("/type", oContext.getProperty("type"));
+													if (oContext.getProperty("unit")) {
+														//if unit is specified in sample
+														oModel.setProperty("/unit", oContext.getProperty("unit"));
+													}
+													oModel.setProperty("/formatOptions", oContext.getProperty("sample"));
+												}
+											}),
+											new sap.m.Label({
+												text: "Type"
+											}),
+											new sap.m.Select({
+												selectedKey: "{/type}",
+												items: [
+													new sap.ui.core.Item({key: "Integer", text: "Integer"}),
+													new sap.ui.core.Item({key: "Float", text: "Float"}),
+													new sap.ui.core.Item({key: "Percent", text: "Percent"}),
+													new sap.ui.core.Item({key: "Unit", text: "Unit"}),
+													new sap.ui.core.Item({key: "Currency", text: "Currency"})
+												],
+												change: function() {
+													oModel.setProperty("/sample", "custom");
+												}
+											}),
+
+											new sap.m.Label({
+												text: "Value"
+											}),
+											new sap.m.Input({
+												value: {
+													path: "/number",
+													type: sap.ui.model.type.Float()
+												}
+											}).addStyleClass("large largeinput"),
+											new sap.m.Label({
+												text: "Currency",
+												visible: {
+													path: "/type",
+													formatter: function(sType) {
+														return sType == "Currency"
+													}
+												}
+											}),
+											new sap.m.Input({
+												value: "{/currency}",
+												visible: {
+													path: "/type",
+													formatter: function(sType) {
+														return sType == "Currency"
+													}
+												}
+											}).addStyleClass("large largeinput"),
+											new sap.m.Label({
+												text: "UnitCode",
+												visible: {
+													path: "/type",
+													formatter: function(sType) {
+														return sType == "Unit"
+													}
+												}
+											}),
+											new sap.m.Input({
+												showSuggestion: true,
+												suggestionItems: {path: "/cldrEntries", template: new sap.ui.core.Item({"text":"{name}"})},
+												value: "{/unit}",
+												visible: {
+													path: "/type",
+													formatter: function(sType) {
+														return sType == "Unit"
+													}
+												},
+												change: function() {
+													oModel.setProperty("/sample", "custom");
+												}
+											}).addStyleClass("large largeinput"),
+											new sap.m.Label({
+												text: "Locale"
+											}),
+											new sap.m.Input({
+												showSuggestion: true,
+												suggestionItems: {path: "/localesSuggestions", factory: function(){ return new sap.m.SuggestionItem({"icon":"{path:'name', formatter: 'iconFormatter'}", "text":"{name}"});}},
+												value: "{/locale}",
+												change: function() {
+													oModel.setProperty("/sample", "custom");
+												}
+											}).addStyleClass("large largeinput")
+										]
+									})
+								]
+							}),
+							new sap.m.ScrollContainer({
+								layoutData: new sap.m.FlexItemData({
+									baseSize: "400px"
+								}),
+								width: "400px",
+								height: "100%",
+								horizontal: false,
+								vertical: true,
+								content: [
+									new sap.m.List({
+										items: {
+											path: "/locales",
+											template: new LocaleListItem({
+												locale: "{}",
+												text: {
+													parts: ["/number", "/currency", "/unit", "/formatOptions", "/type", ""],
+													formatter: function(oNumber, sCurrency, sUnitCode, oFormatOptions, sType, sLocale) {
+														var oLocale = new sap.ui.core.Locale(sLocale),
+															sFunctionName = "get" + sType + "Instance",
+															oOptions = jQuery.extend({}, oFormatOptions),
+															oNumberFormat = sap.ui.core.format.NumberFormat[sFunctionName](oOptions, oLocale);
+														var sMeasure;
+														if (sType == "Currency") {
+															sMeasure = sCurrency
+														} else if (sType == "Unit") {
+															sMeasure = sUnitCode;
+														}
+														return oNumberFormat.format(oNumber, sMeasure);
+													}
+												}
+											})
+										}
+									})
+								]
+							})
+						]
+					})
+				]
+			})
+		]
+	}).placeAt("content");
+
+
+	sap.ui.getCore().getMessageManager().registerObject(oApp, true);
+	</script>
+
+</head>
+<body class="sapUiBody" role="application" id="content">
+
+</body>
+</html>

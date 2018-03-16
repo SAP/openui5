@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+<meta http-equiv='Content-Type' content='text/html;charset=UTF-8'>
+<title>Drag and Drop</title>
+<script id='sap-ui-bootstrap'
+	src='../../../../../../resources/sap-ui-core.js'
+	data-sap-ui-xx-bindingSyntax="complex"
+	data-sap-ui-theme="sap_belize"
+	data-sap-ui-libs="sap.m"></script>
+
+<script>
+var oData = {
+	game: [
+		{icon: "favorite", desc: "Star", random: Math.random(), dropped: false, dropped2: false},
+		{icon: "umbrella", desc: "Umbrella", random: Math.random(), dropped: false, dropped2: false},
+		{icon: "flight", desc: "Plane", random: Math.random(), dropped: false, dropped2: false},
+		{icon: "wrench", desc: "Wrench", random: Math.random(), dropped: false, dropped2: false},
+		{icon: "globe", desc: "Globe", random: Math.random(), dropped: false, dropped2: false}
+	],
+	names: [
+		{firstName: "Peter", lastName: "Mueller", birthday: "1968-01-15"},
+		{firstName: "Thomas", lastName: "Smith", birthday: "1968-03-01"},
+		{firstName: "Maria", lastName: "Jones", birthday: "1984-06-01"}
+	]
+};
+
+var oModel = new sap.ui.model.json.JSONModel();
+oModel.setData(oData);
+sap.ui.getCore().setModel(oModel);
+
+var DraggableListItem = sap.m.StandardListItem.extend("my.DraggableListItem", {
+	metadata : {
+		aggregations : {
+			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true}
+		}
+	},
+	renderer: {}
+});
+
+var oIconList = new sap.m.List({
+	headerText: "Icons",
+	noDataText: "Well Done!",
+	width: "25rem",
+	inset: true
+}).bindItems({
+	path: "/game",
+	sorter: new sap.ui.model.Sorter("random"),
+	filters : new sap.ui.model.Filter("dropped", "EQ", false),
+	template: new DraggableListItem({
+		icon: "sap-icon://{icon}",
+		highlight: "Information",
+		dragDropConfig: new sap.ui.core.dnd.DragInfo({
+			groupName: "{icon}"
+		})
+	})
+});
+
+var oDescList = new sap.m.List({
+	headerText: "Descriptions",
+	width: "25rem",
+	inset: true,
+	dragDropConfig: [
+		new sap.ui.core.dnd.DragInfo({
+			groupName: "Descriptions",
+			sourceAggregation: "items"
+		}),
+		new sap.ui.core.dnd.DropInfo({
+			groupName: "Descriptions",
+			targetAggregation: "items",
+			dropPosition: "Between",
+			drop: function(oEvent) {
+				var sDropPosition = oEvent.getParameter("dropPosition");
+				var oDraggedControl = oEvent.getParameter("draggedControl");
+				var oDroppedControl = oEvent.getParameter("droppedControl");
+				sap.m.MessageToast.show(oDraggedControl.getTitle() + " is dropped " + sDropPosition + " the " + oDroppedControl.getTitle());
+			}
+		})
+	]
+}).bindItems({
+	path: "/game",
+	template: new DraggableListItem({
+		title: "{desc}",
+		highlight: {
+			parts: [{path : 'dropped'}],
+			formatter: function(bDropped) {
+				if (bDropped) {
+					return "Success";
+				}
+				return "Warning";
+			}
+		},
+		icon: {
+			parts: [{path : 'icon'}, {path : 'dropped'}],
+			formatter: function(sIcon, bDropped) {
+				return bDropped ? "sap-icon://" + sIcon : "";
+			}
+		},
+		dragDropConfig: new sap.ui.core.dnd.DropInfo({
+			groupName: "{icon}",
+			drop: function(oEvent) {
+				var oDraggedControl = oEvent.getParameter("draggedControl");
+				var oDraggedContext = oDraggedControl.getBindingContext();
+				oModel.setProperty("dropped", true, oDraggedContext);
+				oModel.refresh(true);
+			}
+		})
+	})
+});
+
+var oFileList = new sap.m.List({
+	headerText: "File List",
+	inset: true,
+	noDataText: "Drop some files here!",
+	dragDropConfig: [
+		new sap.ui.core.dnd.DropInfo({
+			dragEnter: function(oEvent) {
+				var oDragSession = oEvent.getParameter("dragSession");
+				var oDraggedControl = oDragSession.getDragControl();
+				if (oDraggedControl) {
+					oEvent.preventDefault();
+				}
+			},
+			drop: function(oEvent) {
+				jQuery.sap.require("sap.ui.core.format.FileSizeFormat");
+				var oFileSizeFormater = sap.ui.core.format.FileSizeFormat.getInstance();
+				var oBrowserEvent = oEvent.getParameter("browserEvent");
+				var aFiles = [].slice.call(oBrowserEvent.dataTransfer.files);
+				var mFileTypes = {
+					"text/plain": "attachment-text-file",
+					"text/html": "attachment-text-file",
+					"application/javascript": "attachment-html",
+					"image/png": "attachment-photo",
+					"image/jpeg": "attachment-photo"
+				};
+
+				aFiles.forEach(function(oFile) {
+					oFileList.addItem(new sap.m.StandardListItem({
+						title: oFile.name,
+						icon : "sap-icon://" + (mFileTypes[oFile.type] || "document"),
+						description: "Modified Date: " + oFile.lastModifiedDate.toLocaleDateString(),
+						info: oFileSizeFormater.format(oFile.size)
+					}));
+				});
+			}
+		})
+	]
+});
+
+var oNamesTable = new sap.m.Table({
+	inset: true,
+	headerText: "Export to Excel - Draggable Columns",
+	columns: [
+		new sap.m.Column({header: new sap.m.Text({text: "Last Name"})}),
+		new sap.m.Column({header: new sap.m.Text({text: "First Name"})}),
+		new sap.m.Column({header: new sap.m.Text({text: "Birthday"}), hAlign: "End"}),
+	],
+	dragDropConfig: [
+		new sap.ui.core.dnd.DragDropInfo({
+			dropPosition: "Between",
+			sourceAggregation: "columns",
+			targetAggregation: "columns",
+			dropLayout: "Horizontal",
+			dragEnter: function(oEvent) {
+				var oDragSession = oEvent.getParameter("dragSession");
+				oDragSession.setIndicatorConfig({
+					height: oNamesTable.getTableDomRef().offsetHeight
+				});
+			},
+			drop: function(oEvent) {
+				var sDropPosition = oEvent.getParameter("dropPosition");
+				var oDraggedColumn = oEvent.getParameter("draggedControl");
+				var oDroppedColumn = oEvent.getParameter("droppedControl");
+				sap.m.MessageToast.show(oDraggedColumn.getHeader().getText() + " is dropped " + sDropPosition + " the " + oDroppedColumn.getHeader().getText());
+			}
+		}),
+		new sap.ui.core.dnd.DragInfo({
+			dragStart: function(oEvent) {
+				var oDragSession = oEvent.getParameter("dragSession");
+				oDragSession.setData("text/html", oNamesTable.$().find("table").clone().find(":empty").remove().end()[0]["outerHTML"]);
+			}
+		})
+	]
+}).bindItems({
+	path : "/names",
+	template : new sap.m.ColumnListItem({
+		cells: [
+			new sap.m.Text({text: "{lastName}"}),
+			new sap.m.Text({text: "{firstName}"}),
+			new sap.m.Text({text: "{birthday}"})
+		]
+	})
+});
+
+var oIconList2 = new sap.m.List({
+	headerText: "Icons",
+	width: "25rem",
+	inset: true,
+	dragDropConfig: new sap.ui.core.dnd.DragInfo({
+		groupName: "icons2descriptions",
+		sourceAggregation : "items"
+	})
+}).bindItems({
+	path: "/game",
+	sorter: new sap.ui.model.Sorter("random"),
+	filters : new sap.ui.model.Filter("dropped2", "EQ", false),
+	template: new DraggableListItem({
+		icon: "sap-icon://{icon}",
+		highlight: "Information"
+	})
+});
+
+var oHeaderToolbar = new sap.m.Toolbar({
+	content: [
+		new sap.m.Title({
+			text: "Descriptions"
+		}),
+		new sap.m.ToolbarSpacer()
+	]
+})
+
+var oDescList2 = new sap.m.List({
+	noDataText: "Drop on Me",
+	width: "25rem",
+	inset: true,
+	headerToolbar: oHeaderToolbar,
+	dragDropConfig: [
+		new sap.ui.core.dnd.DropInfo({
+			groupName: "icons2descriptions",
+			targetAggregation: "items",
+			dragEnter: function(oEvent) {
+				var oDragSession = oEvent.getParameter("dragSession");
+				var oBrowserEvent = oEvent.getParameter("browserEvent");
+				var bCopy = (oBrowserEvent.metaKey || oBrowserEvent.ctrlKey);
+				oEvent.getSource().setDropEffect(bCopy? "Copy": "Move");
+				oDragSession.setDropControl(oHeaderToolbar);
+			},
+			drop: function(oEvent) {
+				var oDraggedItem = oEvent.getParameter("draggedControl");
+				oHeaderToolbar.addContent(new sap.ui.core.Icon({
+					src: oDraggedItem.getIcon()
+				}));
+
+				if (oEvent.getSource().getDropEffect() == "Move") {
+					var oDraggedContext = oDraggedItem.getBindingContext();
+					oModel.setProperty("dropped2", true, oDraggedContext);
+					oModel.refresh(true);
+				}
+			}
+		})
+	]
+});
+
+var oHBox1 = new sap.m.HBox({
+	items : [oIconList, oDescList, oFileList],
+	renderType: "Bare"
+});
+var oHBox2 = new sap.m.HBox({
+	items : [oIconList2, oDescList2, oNamesTable],
+	renderType: "Bare"
+});
+
+var oPage = new sap.m.Page({
+	title: "Drag And Drop Test Page",
+	content : [oHBox1, oHBox2]
+});
+
+var oApp = new sap.m.App({
+	pages: [oPage]
+}).placeAt("content");
+
+</script>
+
+</head>
+<body class="sapUiBody" id="content">
+</body>
+</html>

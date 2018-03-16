@@ -53,13 +53,17 @@
 				<Input value="{Url}" />
 				<Label text="Twitter" />
 				<Input value="{Twitter}" />
-				<core:Title text="Contact data" />
 				<Label text="Email" />
-				<Input value="{EMail}" type="Email" />
+				<Input value="{Email}" type="Email" />
 				<Label text="Tel." />
 				<Input value="{Tel}" type="Tel" />
 				<Label text="SMS" />
 				<Input value="{Sms}" type="Tel" />
+				<core:Title text="Other" />
+				<Label text="Rating" />
+				<RatingIndicator value="{Rating}" />
+				<Label text="Disposable" />
+				<ProgressIndicator percentValue="{Disposable}" />
 			</f:content>
 		</f:SimpleForm>
 	</VBox>

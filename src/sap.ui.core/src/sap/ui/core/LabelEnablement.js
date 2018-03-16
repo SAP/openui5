@@ -15,6 +15,10 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	// Mapping between controls and labels
 	var CONTROL_TO_LABELS_MAPPING = {};
 
+	// The controls which should not be referenced by a "for" attribute (Specified in the HTML standard).
+	// Extend when needed.
+	var NON_LABELABLE_CONTROLS = ["sap.m.Link", "sap.m.Select", "sap.m.Label", "sap.m.Text"];
+
 	// Returns the control for the given id (if available) and invalidates it if desired
 	function toControl(sId, bInvalidate) {
 		if (!sId) {
@@ -31,11 +35,17 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 		return oControl;
 	}
 
+	function findLabelForControl(label) {
+		var sId = label.getLabelFor() || label._sAlternativeId || '';
+
+		return sId;
+	}
+
 	// Updates the mapping tables for the given label, in destroy case only a cleanup is done
 	function refreshMapping(oLabel, bDestroy){
 		var sLabelId = oLabel.getId();
 		var sOldId = oLabel.__sLabeledControl;
-		var sNewId = bDestroy ? null : oLabel.getLabelForRendering();
+		var sNewId = bDestroy ? null : findLabelForControl(oLabel);
 
 		if (sOldId == sNewId) {
 			return;
@@ -104,8 +114,20 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 		//Add more detailed checks here ?
 	}
 
+	// Checks if the control is labelable according to the HTML standard
+	// The labelable HTML elements are: button, input, keygen, meter, output, progress, select, textarea
+	// Related incident 1770049251
+	function isLabelableControl(oControl) {
+		if (!oControl) {
+			return true;
+		}
+
+		var sName = oControl.getMetadata().getName();
+		return NON_LABELABLE_CONTROLS.indexOf(sName) < 0;
+	}
+
 	/**
-	 * Helper functionality for enhancement of a Label with common label functionality.
+	 * Helper functionality for enhancement of a <code>Label</code> with common label functionality.
 	 *
 	 * @see sap.ui.core.LabelEnablement#enrich
 	 *
@@ -119,11 +141,11 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	var LabelEnablement = {};
 
 	/**
-	 * Helper function for the label control to render the html 'for' attribute. This function should be called
-	 * at the desired location in the renderer code of the label control.
+	 * Helper function for the <code>Label</code> control to render the HTML 'for' attribute. This function should be called
+	 * at the desired location in the renderer code of the <code>Label</code> control.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRenderManager The RenderManager that can be used for writing to the render-output-buffer.
-	 * @param {sap.ui.core.Label} oLabel The label for which the 'for' html attribute should be written to the render-output-buffer.
+	 * @param {sap.ui.core.Label} oLabel The <code>Label</code> for which the 'for' HTML attribute should be written to the render-output-buffer.
 	 * @protected
 	 */
 	LabelEnablement.writeLabelForAttribute = function(oRenderManager, oLabel) {
@@ -142,13 +164,14 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 			sControlId = oControl.getIdForLabel();
 		}
 
-		if (sControlId) {
+		// The "for" attribute should only reference labelable HTML elements.
+		if (sControlId && isLabelableControl(oControl)) {
 			oRenderManager.writeAttributeEscaped("for", sControlId);
 		}
 	};
 
 	/**
-	 * Returns an array of ids of the labels referencing the given element
+	 * Returns an array of IDs of the labels referencing the given element.
 	 *
 	 * @param {sap.ui.core.Element} oElement The element whose referencing labels should be returned
 	 * @returns {string[]} an array of ids of the labels referencing the given element
@@ -194,7 +217,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	}
 
 	/**
-	 * This function should be called on a label control to enrich it's functionality.
+	 * This function should be called on a label control to enrich its functionality.
 	 *
 	 * <b>Usage:</b>
 	 * The function can be called with a control prototype:
@@ -210,15 +233,15 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 	 *
 	 * <b>Preconditions:</b>
 	 * The given control must implement the interface sap.ui.core.Label and have an association 'labelFor' with cardinality 0..1.
-	 * This function extends existing API functions. Ensure not to override this extensions AFTER calling this function.
+	 * This function extends existing API functions. Ensure not to override these extensions AFTER calling this function.
 	 *
 	 * <b>What does this function do?</b>
 	 *
-	 * A mechanismn is added that ensures that a bidirectional reference between the label and it's labeled control is established:
-	 * The label references the labeled control via the html 'for' attribute (@see sap.ui.core.LabelEnablement#writeLabelForAttribute).
-	 * If the labeled control supports the aria-labelledby attribute. A reference to the label is added automatically.
+	 * A mechanism is added that ensures that a bidirectional reference between the label and its labeled control is established:
+	 * The label references the labeled control via the HTML 'for' attribute (@see sap.ui.core.LabelEnablement#writeLabelForAttribute).
+	 * If the labeled control supports the aria-labelledby attribute, a reference to the label is added automatically.
 	 *
-	 * In addition an alternative to apply a for reference without influencing the labelFor association of the API is applied (e.g. used by Form).
+	 * In addition an alternative to apply a 'for' reference without influencing the labelFor association of the API is applied (e.g. used by Form).
 	 * For this purpose the functions setAlternativeLabelFor and getLabelForRendering are added.
 	 *
 	 * @param {sap.ui.core.Control} oControl the label control which should be enriched with further label functionality.
@@ -262,7 +285,10 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 
 		// Returns id of the labelled control. The labelFor association is preferred before AlternativeLabelFor.
 		oControl.getLabelForRendering = function() {
-			return this.getLabelFor() || this._sAlternativeId;
+			var sId = this.getLabelFor() || this._sAlternativeId;
+			var oControl = toControl(sId);
+
+			return isLabelableControl(oControl) ? sId : "";
 		};
 
 		if (!oControl.getMetadata().getProperty("required")) {
@@ -283,10 +309,10 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 		};
 
 		/**
-		 * Checks whether the Label itself or the associated control is marked as required (they are mutually exclusive).
+		 * Checks whether the <code>Label</code> itself or the associated control is marked as required (they are mutually exclusive).
 		 *
 		 * @protected
-		 * @returns {Boolean} Returns if the Label or the labeled control are required
+		 * @returns {boolean} Returns if the Label or the labeled control are required
 		 */
 		oControl.isRequired = function(){
 			// the value of the local required flag is ORed with the result of a "getRequired"
@@ -294,6 +320,47 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject'],
 			// have a getRequired method, this is treated like a return value of "false".
 			var oFor = toControl(this.getLabelForRendering(), false);
 			return checkRequired(this) || checkRequired(oFor);
+
+		};
+
+		/**
+		 * Checks whether the <code>Label</code> should be rendered in display only mode.
+		 *
+		 * In the standard case it just uses the DisplayOnly property of the <code>Label</code>.
+		 *
+		 * In the Form another type of logic is used.
+		 * Maybe later on also the labeled controls might be used to determine the rendering.
+		 *
+		 * @protected
+		 * @returns {boolean} Returns if the Label should be rendered in display only mode
+		 */
+		oControl.isDisplayOnly = function(){
+
+			if (this.getDisplayOnly) {
+				return this.getDisplayOnly();
+			} else {
+				return false;
+			}
+
+		};
+
+		/**
+		 * Checks whether the <code>Label</code> should be rendered wrapped instead of trucated.
+		 *
+		 * In the standard case it just uses the <code>Wrapping</code> property of the <code>Label</code>.
+		 *
+		 * In the Form another type of logic is used.
+		 *
+		 * @protected
+		 * @returns {boolean} Returns if the Label should be rendered in display only mode
+		 */
+		oControl.isWrapping = function(){
+
+			if (this.getWrapping) {
+				return this.getWrapping();
+			} else {
+				return false;
+			}
 
 		};
 

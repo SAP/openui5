@@ -8,6 +8,7 @@
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.m"
 		data-sap-ui-language="en-US"
+		data-sap-ui-xx-bindingSyntax='complex'
 		src="../../../../resources/sap-ui-core.js">
 </script>
 <link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
@@ -25,7 +26,61 @@
 		return Date.now();
 	};
 </script>
-
+<script id="dtiView" type="text/xmldata">
+	<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+		<VBox>
+			<DateTimeInput id="typeDate"
+				type="Date"
+				value="{
+					path: '/dateVal',
+					type: 'sap.ui.model.type.Date'
+				}"
+			/>
+			<DateTimeInput id="typeTime"
+				type="Time"
+				value="{
+					path: '/dateVal',
+					type: 'sap.ui.model.type.Time'
+				}"
+			/>
+			<DateTimeInput id="typeDateTime"
+				type="DateTime"
+				value="{
+					path: '/dateVal',
+					type: 'sap.ui.model.type.DateTime'
+				}"
+			/>
+			<DateTimeInput id="dateVSdate"
+				type="Date"
+				value="{
+					path: '/dateVal',
+					type: 'sap.ui.model.type.Date'
+				}"
+			/>
+			<DateTimeInput id="dateVSdatetime"
+				type="Date"
+				value="{
+					path: '/dateVal',
+					type: 'sap.ui.model.type.DateTime'
+				}"
+			/>
+			<DateTimeInput id="datetimeVSdate"
+				type="DateTime"
+				value="{
+					path: '/dateVal',
+					type: 'sap.ui.model.type.Date'
+				}"
+			/>
+			<DateTimeInput id="datetimeVSdatetime"
+				type="DateTime"
+				value="{
+					path: '/dateVal',
+					type: 'sap.ui.model.type.DateTime'
+				}"
+			/>
+		</VBox>
+	</mvc:View>
+</script>
 <script>
 	jQuery.sap.require("sap.ui.model.type.Date");
 
@@ -139,6 +194,28 @@
 		assert.equal(dti4.getValueStateText(), oDatePicker.getValueStateText(), "DatePicker valueStateText");
 	});
 
+	// BCP: 1880065660
+	QUnit.test("setDateValue with iframe's JS date object should set properly the date", function (assert) {
+		// arrange
+		var oDTI = new sap.m.DateTimeInput(),
+				iframe = document.createElement('iframe');
+		document.body.appendChild(iframe);
+		var oWindow = iframe.contentWindow;
+		oWindow.dateObj = new oWindow.Date(2017, 11, 12);
+
+		// act
+		oDTI.setDateValue(oWindow.dateObj);
+
+		// assert
+		assert.ok(true, "setDateValue did not throw an expection with date object from an iframe");
+
+		// cleanup
+		oDTI.destroy();
+		document.body.removeChild(iframe);
+		iframe = null;
+		oDTI = null;
+	});
+
 
 	QUnit.test("Invalid Value", function(assert) {
 		var sInvalidValue = ":)";
@@ -185,6 +262,38 @@
 
 	});
 
+	QUnit.test("Databinding type of 'value' property vs DateTimeInput type", function (assert) {
+		//Prepare
+		var oMyLocalModel = new sap.ui.model.json.JSONModel({dateVal: new Date()}),
+				oView = sap.ui.view({
+					viewContent: document.scripts.dtiView.innerText,
+					type: sap.ui.core.mvc.ViewType.XML
+				}),
+				oDateVSdate = oView.byId("dateVSdate"),
+				oDateVSdatetime = oView.byId("dateVSdatetime"),
+				oDatetimeVSdate = oView.byId("datetimeVSdate"),
+				oDatetimeVSdatetime = oView.byId("datetimeVSdatetime"),
+				aAllDateTimeInputs = [oDateVSdate, oDateVSdatetime, oDatetimeVSdate, oDatetimeVSdatetime];
+
+		oView.setModel(oMyLocalModel);
+		oView.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		aAllDateTimeInputs.forEach(function (oDTI) {
+			//Act
+			oDTI.focus();
+			this.clock.tick(500);
+			jQuery("#" + oDTI.getId() + "-Picker-icon").click();
+
+			//Assert
+			var oPicker = jQuery("#" + oDTI.getId() + "-Picker-cal");
+			assert.ok(oPicker, "There should be a calendar in the DOM");
+		}.bind(this));
+
+		//Cleanup
+		oView.destroy();
+	});
+
 	QUnit.test("Destroy", function(assert) {
 		assert.strictEqual(dti1.$().length, 1, "Before destroy DateTimeInput is available");
 		dti1.destroy();
@@ -210,6 +319,75 @@
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		//Rest is tested in unit tests of inner controls
 		oInput.destroy();
+	});
+
+	QUnit.module("Private");
+	QUnit.test("_getPickerByTypeAndPattern", function(assert) {
+		var sDatePattern = sap.ui.core.format.DateFormat.getDateInstance().oFormatOptions.pattern,
+				sTimePattern = sap.ui.core.format.DateFormat.getTimeInstance().oFormatOptions.pattern,
+				sDateTimePattern = sap.ui.core.format.DateFormat.getDateTimeInstance().oFormatOptions.pattern,
+				oPicker,
+				oNewPicker;
+
+		//1.1 sap.m.DateTimeInput.Date vs date pattern
+		test("typeDate", sDatePattern, "sap.m.DatePicker");
+
+		//1.2. sap.m.DateTimeInput.Date vs datetime pattern
+		test("typeDate", sDateTimePattern, "sap.m.DateTimePicker");
+
+		//1.3. sap.m.DateTimeInput.Date vs time pattern
+		test("typeDate", sTimePattern, "sap.m.TimePicker");
+
+		//2.1. sap.m.DateTimeInput.Time vs date pattern
+		test("typeTime", sDatePattern, "sap.m.DatePicker");
+
+		//2.2. sap.m.DateTimeInput.Time vs datetime pattern
+		test("typeTime", sDateTimePattern, "sap.m.DateTimePicker");
+
+		//2.3. sap.m.DateTimeInput.Time vs time pattern
+		test("typeTime", sTimePattern, "sap.m.TimePicker");
+
+		//3.1. sap.m.DateTimeInput.DateTime vs date pattern
+		test("typeDateTime", sDatePattern, "sap.m.DatePicker");
+
+		//3.2. sap.m.DateTimeInput.DateTime vs datetime pattern
+		test("typeDateTime", sDateTimePattern, "sap.m.DateTimePicker");
+
+		//3.3. sap.m.DateTimeInput.DateTime vs time pattern
+		test("typeDateTime", sTimePattern, "sap.m.TimePicker");
+
+		//helpers
+
+		function prepare() { //creates view with 3 DateTimeInputs where the type and its binding type are equal
+			var oMyLocalModel = new sap.ui.model.json.JSONModel({dateVal: new Date()}),
+					oView = sap.ui.view({
+						viewContent: document.scripts.dtiView.innerText,
+						type: sap.ui.core.mvc.ViewType.XML
+					});
+			oView.setModel(oMyLocalModel);
+			oView.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			return oView;
+		}
+
+		//calls DateTimeInput.prototype._getPickerByTypeAndPattern with pattern that does not corresponds to the
+		//DateTimeInput.prototype.type property and verifies that the picker is of correct type
+		function test(sDateTimeInputId, sPattern, sExpectedCtrType) {
+			//Prepare
+			var oDateTimeInput;
+			oView = prepare();
+			oDateTimeInput = oView.byId(sDateTimeInputId);
+
+			oPicker = oDateTimeInput.getAggregation("_picker");
+			//Act
+			oNewPicker = oDateTimeInput._getPickerByTypeAndPattern(oDateTimeInput.getType(), oPicker, sPattern);
+			//Assert
+			assert.equal(oNewPicker.getMetadata().getName(), sExpectedCtrType, "DateTimeInput.type='" + oDateTimeInput.getType() +
+					"', pattern='" + sPattern + "' should render a '" + sExpectedCtrType + "'");
+			//Cleanup
+			oView.destroy();
+		}
 	});
 </script>
 </head>

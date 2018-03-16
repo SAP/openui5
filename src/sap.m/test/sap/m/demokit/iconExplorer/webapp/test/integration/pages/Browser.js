@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/iconexplorer/test/integration/pages/Common"
-], function(Opa5, Common) {
+	"sap/ui/demo/iconexplorer/test/integration/pages/Common",
+	"sap/ui/core/routing/HashChanger"
+], function(Opa5, Common, HashChanger) {
 	"use strict";
 
 	Opa5.createPageObjects({
@@ -14,7 +15,7 @@ sap.ui.define([
 					return this.waitFor({
 						success: function () {
 							// manipulate history directly for testing purposes
-							Opa5.getWindow().history.back();
+							history.back();
 						}
 					});
 				},
@@ -23,7 +24,7 @@ sap.ui.define([
 					return this.waitFor({
 						success: function () {
 							// manipulate history directly for testing purposes
-							Opa5.getWindow().history.forward();
+							history.forward();
 						}
 					});
 				},
@@ -41,7 +42,9 @@ sap.ui.define([
 				iChangeTheHashToSomethingInvalid: function () {
 					return this.waitFor({
 						success: function () {
-							Opa5.getHashChanger().setHash("/somethingInvalid");
+							var oHashChanger = HashChanger.getInstance();
+
+							oHashChanger.setHash("/somethingInvalid");
 						}
 					});
 				},
@@ -49,7 +52,8 @@ sap.ui.define([
 				iChangeTheHashParameter: function (sKey, sValue) {
 					return this.waitFor({
 						success: function () {
-							var sHash = Opa5.getHashChanger().getHash(),
+							var oHashChanger = HashChanger.getInstance(),
+								sHash = oHashChanger.getHash(),
 								sHashParameter = sKey + "=" + sValue;
 							if (sHash) {
 								var oRegExp = new RegExp(sKey + "=[a-z0-9\-\_]+");
@@ -61,7 +65,7 @@ sap.ui.define([
 							} else {
 								sHash = "/?" + sHashParameter;
 							}
-							Opa5.getHashChanger().setHash(sHash);
+							oHashChanger.setHash(sHash);
 						}
 					});
 				}

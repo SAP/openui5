@@ -279,9 +279,10 @@
 			oPage.addContent(oActionSelect);
 			sap.ui.getCore().applyChanges();
 			oActionSelect.open();
-			this.clock.tick(0);
+			this.clock.tick(500);
 
-			qutils.triggerKeyboardEvent(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB);
+			qutils.triggerKeydown(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB);
+			this.clock.tick(500);
 
 			// assert
 			assert.ok(jQuery.sap.byId('firstEnabledButton').is(":focus"), 'The first enabled button should be focused');
@@ -335,15 +336,108 @@
 			oPage.addContent(oActionSelect);
 			sap.ui.getCore().applyChanges();
 			oActionSelect.open();
-			this.clock.tick(0);
+			this.clock.tick(500);
 
-			qutils.triggerKeyboardEvent(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB, true, false, false);
+			qutils.triggerKeydown(oActionSelect.getDomRef(), jQuery.sap.KeyCodes.TAB, true, false, false);
+			this.clock.tick(500);
 
 			// assert
 			assert.ok(jQuery.sap.byId('lastEnabledButton').is(":focus"), 'The last enabled button should be focused');
 
 			// cleanup
 			oActionSelect.destroy();
+		});
+
+		QUnit.module("Focus handling", {
+			beforeEach: function() {
+				this.oActionSelect = new sap.m.ActionSelect({
+					items: [
+						new sap.ui.core.Item()
+					],
+					buttons: [
+						new sap.m.Button()
+					]
+				});
+				this.oActionSelect.placeAt("actionselect-content");
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oActionSelect.destroy();
+			}
+		});
+
+		QUnit.test("_toggleListFocusIndication should remove focus indication", function(assert) {
+			this.oActionSelect.open();
+			this.clock.tick();
+
+			// act
+			this.oActionSelect._toggleListFocusIndication(true);
+			this.clock.tick();
+
+			// assert
+			assert.ok(this.oActionSelect.getSelectedItem().$().hasClass("sapMActionSelectItemWithoutFocus"), "Item should not be focused");
+		});
+
+		QUnit.module("Accessibility", {
+			beforeEach: function() {
+				this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+				this.oActionSelect = new sap.m.ActionSelect({
+					items: [
+						new sap.ui.core.Item()
+					],
+					buttons: [
+						new sap.m.Button()
+					]
+				});
+				this.oActionSelect.placeAt("actionselect-content");
+				this.oPicker = this.oActionSelect.getPicker();
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oActionSelect.destroy();
+			}
+		});
+
+		QUnit.test("A tutor message should be added if the control has buttons", function(assert) {
+			var iLabelsCountAfter1stMessageUpdate = 0,
+				iLabelsCountAfter2ndMessageUpdate = 0;
+
+			// act
+			this.oActionSelect.open();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var sInvisibleText = sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[1]).getText();
+			assert.strictEqual(sInvisibleText, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"),  "The tutor message is set correctly");
+
+			// act
+			iLabelsCountAfter1stMessageUpdate = this.oPicker.getAriaLabelledBy().length;
+			this.oActionSelect._updateTutorMessage();
+			iLabelsCountAfter2ndMessageUpdate = this.oPicker.getAriaLabelledBy().length;
+
+			// assert
+			assert.strictEqual(iLabelsCountAfter1stMessageUpdate, iLabelsCountAfter2ndMessageUpdate,  "The tutor message is reference only only");
+
+		});
+
+		QUnit.test("A tutor message should be added and removed accordingly if buttons are programmatically added/removed", function(assert) {
+			this.oActionSelect.removeAllButtons();
+			this.oActionSelect.open();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var sInvisibleText = sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[1]);
+			assert.strictEqual(sInvisibleText, undefined,  "The tutor message is not added, when there are no buttons");
+
+			this.oActionSelect.close();
+
+			this.oActionSelect.addButton(new sap.m.Button({text: "text"}));
+			this.oActionSelect.open();
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			var sInvisibleTextMessage = sap.ui.getCore().byId(this.oPicker.getAriaLabelledBy()[1]).getText();
+			assert.strictEqual(sInvisibleTextMessage, this._oRb.getText("ACTION_SELECT_TUTOR_MESSAGE"),  "The tutor message is set correctly when adding buttons");
 		});
 
 		</script>

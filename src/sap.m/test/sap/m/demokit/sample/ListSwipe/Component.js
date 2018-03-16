@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.ListSwipe.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.ListSwipe.List",
+			rootView : {
+				"viewName": "sap.m.sample.ListSwipe.List",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

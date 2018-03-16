@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.commons.PasswordField.
-sap.ui.define(['jquery.sap.global', './TextField', './library'],
-	function(jQuery, TextField, library) {
+sap.ui.define(['jquery.sap.global', './TextField', './library', "./PasswordFieldRenderer"],
+	function(jQuery, TextField, library, PasswordFieldRenderer) {
 	"use strict";
 
 

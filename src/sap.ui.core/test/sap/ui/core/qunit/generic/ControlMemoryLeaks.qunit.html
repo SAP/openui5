@@ -139,7 +139,7 @@
 
 						// checks whether the given property should not be set for this test
 						var shouldIgnoreProperty = function(sControlName, sPropertyName) {
-							if (sControlName === "sap.m.PlanningCalendar" && sPropertyName === "viewKey") { // control fails when key is set where nothing is registered
+							if (sControlName === "sap.m.PlanningCalendar" && (sPropertyName === "viewKey" || sPropertyName === "builtInViews")) { // control fails when key is set where nothing is registered
 								return true;
 							}
 						}
@@ -153,8 +153,8 @@
 								"sap.ui.commons.SearchFieldCB",
 								"sap.ui.commons.Accordion",
 								"sap.ui.core.ComponentContainer",
-								"sap.ui.core.FragmentControl",
 								"sap.ui.core.UIComponent",
+								"sap.ui.core.XMLComposite",
 								"sap.ui.core.mvc.HTMLView",
 								"sap.ui.core.mvc.JSONView",
 								"sap.ui.core.mvc.JSView",
@@ -164,7 +164,6 @@
 								"sap.ui.core.tmpl.Template",
 								"sap.m.DateTimeInput",  // setting an invalid type crashes and only leaks a picker control because of this
 								"sap.m.FacetFilterItem",
-								"sap.m.TabStripSelect",
 								"sap.m.LightBox",
 								"sap.m.NotificationListItem",
 								"sap.m.TimePickerSlider",
@@ -179,14 +178,9 @@
 								"sap.ui.ux3.NotificationBar",
 								"sap.ui.rta.ContextMenu",
 								"sap.ui.rta.AddElementsDialog",
-								"sap.ui.comp.navpopover.SmartLink",
-								"sap.ui.comp.navpopover.SemanticObjectController",
-								"sap.ui.comp.valuehelpdialog.ValueHelpDialog",
 								"sap.chart.Chart",
 								"sap.makit.Chart",
 								"sap.me.TabContainer",
-								"sap.suite.ui.microchart.InteractiveBarChart",
-								"sap.suite.ui.microchart.InteractiveDonutChart",
 								"sap.uxap.AnchorBar",
 								"sap.uxap.BlockBase",
 								"sap.uxap.BreadCrumbs",
@@ -198,6 +192,7 @@
 								"sap.uiext.inbox.InboxToggleTextView",
 								"sap.uiext.inbox.InboxTaskDetails",
 								"sap.viz.ui5.controls.common.BaseControl",
+								"sap.viz.ui5.controls.VizRangeSlider",
 								"sap.viz.ui5.core.BaseChart"
 							   ].indexOf(sControlName) > -1)  { // known to be untestable
 								assert.ok(true, "WARNING: " + sControlName + " cannot be tested and has therefore been EXCLUDED.");
@@ -229,7 +224,7 @@
 
 
 						var aKnownLibraries = ["sap.ui.core","sap.chart","sap.f","sap.m","sap.makit","sap.me","sap.ndc",
-											   "sap.suite.ui.microchart","sap.tnt","sap.ui.commons","sap.ui.comp","sap.ui.dt",
+											   "sap.suite.ui.microchart", "sap.tnt","sap.ui.commons","sap.ui.comp","sap.ui.dt",
 											   "sap.ui.fl","sap.ui.generic.app","sap.ui.generic.template","sap.ui.layout",
 											   "sap.ui.richtexteditor","sap.ui.rta","sap.ui.server.java","sap.ui.suite","sap.ui.table",
 											   "sap.ui.unified","sap.ui.ux3","sap.uiext.inbox","sap.uxap","sap.viz"];

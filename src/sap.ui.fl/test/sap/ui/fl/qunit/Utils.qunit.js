@@ -1,12 +1,26 @@
-/*global QUnit,sinon*/
+/*global QUnit*/
 
-jQuery.sap.require("sap.ui.fl.Utils");
-jQuery.sap.require("sap.ui.layout.VerticalLayout");
-jQuery.sap.require("sap.ui.layout.HorizontalLayout");
-jQuery.sap.require("sap.m.Button");
+QUnit.config.autostart = false;
 
-(function (Utils, HorizontalLayout, VerticalLayout, Button) {
+sap.ui.require([
+	'sap/ui/fl/Utils',
+	'sap/ui/layout/VerticalLayout',
+	'sap/ui/layout/HorizontalLayout',
+	'sap/m/Button',
+	'sap/ui/thirdparty/hasher',
+	// should be last:
+	'sap/ui/thirdparty/sinon'
+],
+function(
+	Utils,
+	VerticalLayout,
+	HorizontalLayout,
+	Button,
+	hasher,
+	sinon
+){
 	"use strict";
+	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 
@@ -18,6 +32,7 @@ jQuery.sap.require("sap.m.Button");
 			aControls.forEach(function (oControl) {
 				oControl.destroy();
 			});
+			sandbox.restore();
 		}
 	});
 
@@ -46,8 +61,8 @@ jQuery.sap.require("sap.m.Button");
 				return sEntryKey === "sap.ui5" ? {} : undefined;
 			}
 		};
-		var oGetComponentIdForControlStub = this.stub(Utils, "_getComponentIdForControl").returns("testId");
-		var oGetComponentStub = this.stub(Utils, "_getComponent").returns(oComponentMock);
+		var oGetComponentIdForControlStub = sandbox.stub(Utils, "_getComponentIdForControl").returns("testId");
+		var oGetComponentStub = sandbox.stub(Utils, "_getComponent").returns(oComponentMock);
 
 		assert.equal(Utils.getComponentClassName(oControl), sComponentName);
 
@@ -83,8 +98,8 @@ jQuery.sap.require("sap.m.Button");
 				};
 			}
 		};
-		var oGetComponentIdForControlStub = this.stub(Utils, "_getComponentIdForControl").returns("testId");
-		var oGetComponentStub = this.stub(Utils, "_getComponent").returns(oComponentMock);
+		var oGetComponentIdForControlStub = sandbox.stub(Utils, "_getComponentIdForControl").returns("testId");
+		var oGetComponentStub = sandbox.stub(Utils, "_getComponent").returns(oComponentMock);
 
 		assert.equal(Utils.getComponentClassName(oControl), sAppVariantName);
 
@@ -126,8 +141,8 @@ jQuery.sap.require("sap.m.Button");
 				return oComponentMock;
 			}
 		};
-		var oGetComponentIdForControlStub = this.stub(Utils, "_getComponentIdForControl").returns("testId");
-		var oGetComponentStub = this.stub(Utils, "_getComponent").returns(oSmartTemplateCompMock);
+		var oGetComponentIdForControlStub = sandbox.stub(Utils, "_getComponentIdForControl").returns("testId");
+		var oGetComponentStub = sandbox.stub(Utils, "_getComponent").returns(oSmartTemplateCompMock);
 
 		assert.equal(Utils.getComponentClassName(oControl), sAppVariantName);
 
@@ -138,6 +153,25 @@ jQuery.sap.require("sap.m.Button");
 		oGetComponentStub.restore();
 	});
 
+	QUnit.test("isVariantByStartupParameter can detect a variant by the startup parameter", function (assert) {
+
+		sandbox.stub(Utils, "getAppComponentForControl").returns({});
+		sandbox.stub(Utils, "_getComponentStartUpParameter").returns("someId");
+
+		var bIsStartupParameterBasedVariant = Utils.isVariantByStartupParameter({});
+
+		assert.ok(bIsStartupParameterBasedVariant, "the variant was detected");
+	});
+
+	QUnit.test("isVariantByStartupParameter returns false if no variant by the startup parameter is present", function (assert) {
+
+		sandbox.stub(Utils, "getAppComponentForControl").returns({});
+		sandbox.stub(Utils, "_getComponentStartUpParameter").returns();
+
+		var bIsStartupParameterBasedVariant = Utils.isVariantByStartupParameter({});
+
+		assert.ok(!bIsStartupParameterBasedVariant);
+	});
 
 	QUnit.test("getCurrentLayer shall return sap-ui-layer parameter", function (assert) {
 		var oUriParams = {
@@ -147,7 +181,7 @@ jQuery.sap.require("sap.m.Button");
 				]
 			}
 		};
-		var getUriParametersStub = this.stub(Utils, "_getUriParameters").returns(oUriParams);
+		var getUriParametersStub = sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
 		var sLayer = Utils.getCurrentLayer();
 		assert.equal(sLayer, "VENDOR");
 		getUriParametersStub.restore();
@@ -161,7 +195,7 @@ jQuery.sap.require("sap.m.Button");
 				]
 			}
 		};
-		var getUriParametersStub = this.stub(Utils, "_getUriParameters").returns(oUriParams);
+		var getUriParametersStub = sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
 		var sLayer = Utils.getCurrentLayer(true);
 		assert.equal(sLayer, "USER");
 		assert.ok(true);
@@ -172,16 +206,33 @@ jQuery.sap.require("sap.m.Button");
 		var oUriParams = {
 			mParams: {}
 		};
-		var getUriParametersStub = this.stub(Utils, "_getUriParameters").returns(oUriParams);
+		var getUriParametersStub = sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
 		var sLayer = Utils.getCurrentLayer(false);
 		assert.equal(sLayer, "CUSTOMER");
 		assert.ok(true);
 		getUriParametersStub.restore();
 	});
 
+	QUnit.test("isLayerAboveCurrentLayer shall return a layer comparision between current (CUSTOMER) and passed layers", function (assert) {
+		var oUriParams = {
+			mParams: {
+				"sap-ui-layer": [
+					"CUSTOMER"
+				]
+			}
+		};
+		var getUriParametersStub = sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
+		assert.equal(Utils.isLayerAboveCurrentLayer(""), -1, "then with VENDOR layer -1 is returned");
+		assert.equal(Utils.isLayerAboveCurrentLayer("VENDOR"), -1, "then with VENDOR layer -1 is returned");
+		assert.equal(Utils.isLayerAboveCurrentLayer("CUSTOMER"), 0, "then with CUSTOMER layer 0 is returned");
+		assert.equal(Utils.isLayerAboveCurrentLayer("USER"), 1, "then with USER layer 1 is returned");
+
+		getUriParametersStub.restore();
+	});
+
 	QUnit.test("doesSharedVariantRequirePackageCustomer", function (assert) {
 		var bDoesSharedVariantRequirePackage;
-		this.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
+		sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
 
 		// Call CUT
 		bDoesSharedVariantRequirePackage = Utils.doesSharedVariantRequirePackage();
@@ -192,7 +243,7 @@ jQuery.sap.require("sap.m.Button");
 
 	QUnit.test("doesSharedVariantRequirePackageCustomerBase", function (assert) {
 		var bDoesSharedVariantRequirePackage;
-		this.stub(Utils, "getCurrentLayer").returns("CUSTOMER_BASE");
+		sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER_BASE");
 
 		// Call CUT
 		bDoesSharedVariantRequirePackage = Utils.doesSharedVariantRequirePackage();
@@ -209,7 +260,7 @@ jQuery.sap.require("sap.m.Button");
 				]
 			}
 		};
-		var getUriParametersStub = this.stub(Utils, "_getUriParameters").returns(oUriParams);
+		var getUriParametersStub = sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
 		var sClient = Utils.getClient();
 		assert.equal(sClient, "123");
 		assert.ok(true);
@@ -225,7 +276,7 @@ jQuery.sap.require("sap.m.Button");
 
 	QUnit.test("_getComponentIdForControl shall return the result of getOwnerIdForControl", function (assert) {
 		var sComponentId;
-		this.stub(Utils, "_getOwnerIdForControl").returns('Rumpelstilzchen');
+		sandbox.stub(Utils, "_getOwnerIdForControl").returns('Rumpelstilzchen');
 		// Call CUT
 		sComponentId = Utils._getComponentIdForControl(null);
 		assert.equal(sComponentId, 'Rumpelstilzchen');
@@ -236,13 +287,13 @@ jQuery.sap.require("sap.m.Button");
 		var sComponentId, oControl1, oControl2, oControl3, fnGetOwnerIdForControl;
 		oControl1 = {};
 		oControl2 = {
-			getParent: this.stub().returns(oControl1)
+			getParent: sandbox.stub().returns(oControl1)
 		};
 		oControl3 = {
-			getParent: this.stub().returns(oControl2)
+			getParent: sandbox.stub().returns(oControl2)
 		};
 
-		fnGetOwnerIdForControl = this.stub(Utils, "_getOwnerIdForControl");
+		fnGetOwnerIdForControl = sandbox.stub(Utils, "_getOwnerIdForControl");
 		fnGetOwnerIdForControl.withArgs(oControl3).returns("");
 		fnGetOwnerIdForControl.withArgs(oControl2).returns("");
 		fnGetOwnerIdForControl.withArgs(oControl1).returns("sodimunk");
@@ -271,7 +322,7 @@ jQuery.sap.require("sap.m.Button");
 		}
 		/*eslint-enable no-loop-func */
 
-		fnGetOwnerIdForControl = this.stub(Utils, "_getOwnerIdForControl").returns("");
+		fnGetOwnerIdForControl = sandbox.stub(Utils, "_getOwnerIdForControl").returns("");
 
 		// Call CUT
 		sComponentId = Utils._getComponentIdForControl(aControls[199]);
@@ -341,7 +392,7 @@ jQuery.sap.require("sap.m.Button");
 			getModel: function () {
 			}
 		};
-		fStub = this.stub(Utils, "_getXSRFTokenFromModel").returns("abc");
+		fStub = sandbox.stub(Utils, "_getXSRFTokenFromModel").returns("abc");
 
 		// Call CUT
 		sXSRFToken = Utils.getXSRFTokenFromControl(oControl);
@@ -410,7 +461,7 @@ jQuery.sap.require("sap.m.Button");
 				]
 			}
 		};
-		var getUriParametersStub = this.stub(Utils, "_getUriParameters").returns(oUriParams);
+		var getUriParametersStub = sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
 		var bIsHotfix = Utils.isHotfixMode();
 		assert.strictEqual(bIsHotfix, true);
 		getUriParametersStub.restore();
@@ -420,7 +471,7 @@ jQuery.sap.require("sap.m.Button");
 		var oUriParams = {
 			mParams: {}
 		};
-		var getUriParametersStub = this.stub(Utils, "_getUriParameters").returns(oUriParams);
+		var getUriParametersStub = sandbox.stub(Utils, "_getUriParameters").returns(oUriParams);
 		var bIsHotfix = Utils.isHotfixMode();
 		assert.strictEqual(bIsHotfix, false);
 		getUriParametersStub.restore();
@@ -559,8 +610,8 @@ jQuery.sap.require("sap.m.Button");
 				};
 			}
 		};
-		var oGetComponentIdForControlStub = this.stub(Utils, "_getComponentIdForControl").returns("testId");
-		var oGetComponentStub = this.stub(Utils, "_getComponent").returns(oComponentMock);
+		var oGetComponentIdForControlStub = sandbox.stub(Utils, "_getComponentIdForControl").returns("testId");
+		var oGetComponentStub = sandbox.stub(Utils, "_getComponent").returns(oComponentMock);
 
 		// Call CUT
 		assert.equal(Utils.getAppDescriptor(oControl), oAppDescriptor);
@@ -595,8 +646,8 @@ jQuery.sap.require("sap.m.Button");
 				};
 			}
 		};
-		var oGetComponentIdForControlStub = this.stub(Utils, "_getComponentIdForControl").returns("testId");
-		var oGetComponentStub = this.stub(Utils, "_getComponent").returns(oComponentMock);
+		var oGetComponentIdForControlStub = sandbox.stub(Utils, "_getComponentIdForControl").returns("testId");
+		var oGetComponentStub = sandbox.stub(Utils, "_getComponent").returns(oComponentMock);
 
 		// Call CUT
 		assert.equal(Utils.getSiteId(oControl), sSiteId);
@@ -681,8 +732,8 @@ jQuery.sap.require("sap.m.Button");
 			return sParameter === "sap.app" ? oSapAppEntry : undefined;
 		};
 
-		var oStub = this.stub(Utils, "getAppComponentForControl");
-		this.stub(Utils, "_getComponentForControl").returns(oParentComponent);
+		var oStub = sandbox.stub(Utils, "getAppComponentForControl");
+		sandbox.stub(Utils, "_getComponentForControl").returns(oParentComponent);
 
 		Utils._getAppComponentForComponent(oComponent);
 
@@ -746,7 +797,7 @@ jQuery.sap.require("sap.m.Button");
 			}
 		};
 
-			var oGetComponentForControlStub = this.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(oComponentMockApp);
+			var oGetComponentForControlStub = sandbox.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(oComponentMockApp);
 
 		assert.equal(Utils.getComponentClassName(oControl), sComponentNameApp, "Check that the type of the component is 'application'");
 
@@ -772,11 +823,199 @@ jQuery.sap.require("sap.m.Button");
 			}
 		};
 
-		var oGetComponentForControlStub = this.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(null);
+		var oGetComponentForControlStub = sandbox.stub(Utils, "_getComponentForControl").onFirstCall().returns(oComponentMockComp).onSecondCall().returns(null);
 
 		assert.equal(Utils.getComponentClassName(oControl), "", "Check that empty string is returned.");
 
 		oGetComponentForControlStub.stub.restore();
+	});
+
+	QUnit.module("get/set URL Technical Parameter values", {
+
+		beforeEach : function(){
+			this.originalUShell = sap.ushell;
+		},
+
+		afterEach : function(){
+			sap.ushell = this.originalUShell;
+			sandbox.restore();
+		}
+
+	});
+
+	QUnit.test("when calling 'getTechnicalParametersForComponent' with a Component containing a valid URL parameter", function(assert){
+		var mParameters = {
+			"first-tech-parameter" : ["value1, value2"],
+			"second-tech-parameter" : ["value3"]
+		};
+
+		var oComponentMock = {
+			getComponentData: function(){
+				return {
+					technicalParameters: mParameters
+				};
+			}
+		};
+
+		assert.deepEqual(Utils.getTechnicalParametersForComponent(oComponentMock),
+			mParameters,
+			"then the function returns the variant reference in the URL parameter");
+	});
+
+	QUnit.test("when calling 'getTechnicalParametersForComponent' with technical parameters not existing", function(assert){
+		var oComponentMock = {
+			getComponentData: function(){
+				return {
+					technicalParameters: {}
+				};
+			}
+		};
+
+		assert.deepEqual(Utils.getTechnicalParametersForComponent(oComponentMock),
+			{},
+			"then the function returns the variant reference in the URL parameter");
+	});
+
+	QUnit.test("when calling 'getTechnicalParametersForComponent' with an invalid component", function(assert){
+		var oComponentMock = {};
+		assert.notOk(Utils.getTechnicalParametersForComponent(oComponentMock), "then the function returns undefined");
+	});
+
+	QUnit.test("when calling 'setTechnicalURLParameterValues' with a component, parameter name and some values", function(assert){
+		var oMockedURLParser = {
+			getHash : function(){
+				return "";
+			},
+			parseShellHash : function(sHash){
+				return {
+					semanticObject : "Action",
+					action : "somestring",
+					params : {
+						"sap-ui-fl-max-layer" : ["CUSTOMER"]
+					}
+				};
+			},
+			constructShellHash : function(oParsedHash){
+				assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
+				assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
+				assert.deepEqual(oParsedHash.params["testParameter"][0], "testValue", "then the new parameter is properly added to the hash");
+				assert.deepEqual(oParsedHash.params["testParameter"][1], "testValue2", "then the new parameter is properly added to the hash");
+				return "hashValue";
+			}
+		};
+
+		var oMockComponent = {
+			oComponentData : {
+				technicalParameters: {}
+			},
+			getComponentData : function () {
+				return this.oComponentData;
+			}
+		};
+
+		// this overrides the ushell globally => it gets restored in afterEach
+		sap.ushell = jQuery.extend(sap.ushell, {
+			Container : {
+				getService : function() {
+					return oMockedURLParser;
+				}
+			}
+		});
+
+		var oReplaceHashSpy = sandbox.spy(hasher, "replaceHash");
+
+		Utils.setTechnicalURLParameterValues(oMockComponent, "testParameter", ["testValue", "testValue2"]);
+
+		assert.equal(oReplaceHashSpy.calledWith("hashValue"), true, "then the 'replaceHash' function of the hasher is called with the right parameter");
+		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
+		assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][0], "testValue", "then the new parameter is properly added to the technical parameter");
+		assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][1], "testValue2", "then the new parameter is properly added to the technical parameter");
+	});
+
+	QUnit.test("when calling 'setTechnicalURLParameterValues' with an invalid component, parameter name and some values", function(assert){
+		var oMockedURLParser = {
+			getHash : function(){
+				return "";
+			},
+			parseShellHash : function(sHash){
+				return {
+					semanticObject : "Action",
+					action : "somestring",
+					params : {
+						"sap-ui-fl-max-layer" : ["CUSTOMER"]
+					}
+				};
+			},
+			constructShellHash : function(oParsedHash){
+				assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
+				assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
+				assert.deepEqual(oParsedHash.params["testParameter"][0], "testValue", "then the new parameter is properly added to the hash");
+				assert.deepEqual(oParsedHash.params["testParameter"][1], "testValue2", "then the new parameter is properly added to the hash");
+				return "hashValue";
+			}
+		};
+
+		// this overrides the ushell globally => it gets restored in afterEach
+		sap.ushell = jQuery.extend(sap.ushell, {
+			Container : {
+				getService : function() {
+					return oMockedURLParser;
+				}
+			}
+		});
+		sandbox.stub(Utils.log, "error");
+		Utils.setTechnicalURLParameterValues({}, "testParameter", ["testValue", "testValue2"]);
+
+		assert.ok(Utils.log.error.calledWith("Component instance not provided, so technical parameters in component data would remain unchanged"), "then error produced as component is invalid");
+		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
+	});
+
+	QUnit.test("when calling 'setTechnicalURLParameterValues' with a component, parameter name (having previously existing values) and no values", function(assert){
+		var oMockedURLParser = {
+			getHash : function(){
+				return "";
+			},
+			parseShellHash : function(sHash){
+				return {
+					semanticObject : "Action",
+					action : "somestring",
+					params : {
+						"sap-ui-fl-max-layer" : ["CUSTOMER"],
+						"testParameter" : ["testValue", "testValue2"]
+					}
+				};
+			},
+			constructShellHash : function(oParsedHash){
+				assert.equal(hasher.changed.active, false, "then the 'active' flag of the hasher is first set to false (to avoid navigation)");
+				assert.deepEqual(oParsedHash.params["sap-ui-fl-max-layer"][0], "CUSTOMER", "then the previous parameters are still present for the hash");
+				assert.notOk(oParsedHash.params["testParameter"], "then the parameter name no longer exists for the hash");
+				return "hashValue";
+			}
+		};
+
+		var oMockComponent = {
+			oComponentData : {
+				technicalParameters: {
+					"testParameter" : ["testValue", "testValue2"]
+				}
+			},
+			getComponentData : function () {
+				return this.oComponentData;
+			}
+		};
+
+		// this overrides the ushell globally => it gets restored in afterEach
+		sap.ushell = jQuery.extend(sap.ushell, {
+			Container : {
+				getService : function() {
+					return oMockedURLParser;
+				}
+			}
+		});
+		assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"].length, 2, "then initially the parameter exists in technical parameters with 2 values");
+		Utils.setTechnicalURLParameterValues(oMockComponent, "testParameter", []);
+		assert.notOk(oMockComponent.getComponentData().technicalParameters["testParameter"], "then the parameter no longer exists as a technical parameter");
+		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
 	});
 
 	QUnit.module("checkControlId and hasLocalIdSuffix", {
@@ -792,6 +1031,7 @@ jQuery.sap.require("sap.m.Button");
 			this.oControlWithGeneratedId.destroy();
 			this.oControlWithPrefix.destroy();
 			this.oControlWithoutPrefix.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -800,13 +1040,13 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 	QUnit.test("checkControlId shall throw an error if the id was generated", function (assert) {
-		var spyLog = this.spy(jQuery.sap.log, "warning");
+		var spyLog = sandbox.spy(jQuery.sap.log, "warning");
 		Utils.checkControlId(this.oControlWithGeneratedId, this.oComponent);
 		assert.ok(spyLog.calledOnce);
 	});
 
 	QUnit.test("checkControlId does not throw an error if the id was generated but the logging was suppressed", function (assert) {
-		var spyLog = this.spy(jQuery.sap.log, "warning");
+		var spyLog = sandbox.spy(jQuery.sap.log, "warning");
 		Utils.checkControlId(this.oControlWithGeneratedId, this.oComponent, true);
 		assert.equal(spyLog.callCount, 0);
 	});
@@ -971,6 +1211,55 @@ jQuery.sap.require("sap.m.Button");
 	});
 
 
+	QUnit.module("Utils.isDebugEnabled", {
+		beforeEach: function () {
+			this.sWindowSapUiDebug = window["sap-ui-debug"];
+		},
+		afterEach: function () {
+			window["sap-ui-debug"] = this.sWindowSapUiDebug;
+			sandbox.restore();
+		}
+	});
+
+
+	QUnit.test("can determine the general debug settings", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		sandbox.stub(oConfig, "getDebug").returns(true);
+
+		assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+	});
+
+	QUnit.test("can determine the fl library debugging is set as the only library", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		sandbox.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "sap.ui.fl";
+
+		assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+	});
+
+	QUnit.test("can determine the fl library debugging is set as part of other libraries", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		sandbox.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "sap.ui.core,sap.m,sap.ui.fl,sap.ui.rta";
+
+		assert.ok(Utils.isDebugEnabled(), "the debugging is detected");
+	});
+
+	QUnit.test("can determine no 'sap.ui.fl'-library debugging is set", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		sandbox.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "sap.ui.rta, sap.m";
+		assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+	});
+
+	QUnit.test("can determine no library debugging is set", function (assert) {
+		var oConfig = sap.ui.getCore().getConfiguration();
+		sandbox.stub(oConfig, "getDebug").returns(false);
+		window["sap-ui-debug"] = "";
+		assert.ok(!Utils.isDebugEnabled(), "no debugging is detected");
+	});
+
+
 	QUnit.module("Utils.getFlexReference", {
 		beforeEach: function () {
 		},
@@ -1015,6 +1304,26 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(Utils.getFlexReference(oManifest), sAppId + ".Component");
 	});
 
+	QUnit.test("getFlexReference returns the value from getComponentName function if neither the sap.ui5.variantId nor the sap.ui5.componentName exist and sap.app.id is at design time", function (assert) {
+
+		var sAppId = Utils.APP_ID_AT_DESIGN_TIME;
+		var sComName = "comName";
+		var oManifest = {
+			"sap.app": {
+				"type": "application",
+				"id": sAppId
+			},
+			getEntry: function (key) {
+				return this[key];
+			},
+			getComponentName: function(){
+				return sComName;
+			}
+		};
+
+		assert.equal(Utils.getFlexReference(oManifest), sComName + ".Component");
+	});
+
 	QUnit.test("isCustomerDependentLayer", function(assert) {
 		assert.ok(Utils.isCustomerDependentLayer("CUSTOMER"), "'CUSTOMER' layer is detected as customer dependent");
 		assert.ok(Utils.isCustomerDependentLayer("CUSTOMER_BASE"), "'CUSTOMER_BASE' layer is detected as customer dependent");
@@ -1047,4 +1356,197 @@ jQuery.sap.require("sap.m.Button");
 		assert.equal(Utils.getAppVersionFromManifest(), "", "if nothing was passed, return empty string");
 	});
 
-}(sap.ui.fl.Utils, sap.ui.layout.HorizontalLayout, sap.ui.layout.VerticalLayout, sap.m.Button));
+	QUnit.module("Utils.execPromiseQueueSequentially", {
+		beforeEach: function (assert) {
+			var fnResolve = function() {
+				return Promise.resolve();
+			};
+			var fnReject = function() {
+				return Promise.reject();
+			};
+
+			//Resolved promises
+			this.fnPromise1 = sandbox.stub().returns(new Utils.FakePromise());
+			this.fnPromise2 = sandbox.stub().returns(fnResolve());
+			this.fnPromise3 = sandbox.stub().returns(fnResolve());
+
+			//Rejected promise without return
+			this.fnPromise4 = sandbox.stub().returns(fnReject());
+
+			this.aPromisesWithoutReject = [this.fnPromise1, this.fnPromise2, this.fnPromise3];
+			this.aPromisesWithReject = [this.fnPromise1, this.fnPromise4];
+			this.aPromisesWithObj = [{}, this.fnPromise1];
+			this.aPromisesResolveAfterReject = [this.fnPromise4, this.fnPromise1];
+
+			this.fnExecPromiseQueueSpy = sandbox.spy(Utils, "execPromiseQueueSequentially");
+			sandbox.spyLog = sandbox.spy(jQuery.sap.log, "error");
+		},
+
+		afterEach: function () {
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when called with a empty array and async 'false' as parameters", function(assert) {
+		var vResult = Utils.execPromiseQueueSequentially([], false, false);
+		assert.ok(vResult instanceof Utils.FakePromise, "then synchronous FakePromise is retured");
+	});
+
+	QUnit.test("when called with a empty array and async 'true' as parameters", function(assert) {
+		var vResult = Utils.execPromiseQueueSequentially([], false, true);
+		assert.ok(vResult instanceof Promise, "then asynchronous Promise is retured");
+		return vResult;
+	});
+
+	QUnit.test("when called with 'async and sync' promises array as parameter", function(assert) {
+		var vResult = Utils.execPromiseQueueSequentially([this.fnPromise2, this.fnPromise1]);
+		assert.ok(vResult instanceof Promise, "then asynchronous Promise is retured");
+		return vResult;
+	});
+
+	QUnit.test("when called with 'sync and async' promises array as parameter", function(assert) {
+		var vResult = Utils.execPromiseQueueSequentially([this.fnPromise1, this.fnPromise2]);
+		assert.ok(vResult instanceof Promise, "then asynchronous Promise is retured");
+		return vResult;
+	});
+
+	QUnit.test("when called with a resolved promises array as parameter", function(assert) {
+		var done = assert.async();
+		Utils.execPromiseQueueSequentially(this.aPromisesWithoutReject).then( function() {
+			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 4, "then execPromiseQueueSequentially called four times");
+			sinon.assert.callOrder(this.fnPromise1, this.fnPromise2, this.fnPromise3);
+			assert.strictEqual(sandbox.spyLog.callCount, 0, "then error log not called");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("when called with an array containing resolved, rejected and rejected without return promises", function(assert) {
+		return Utils.execPromiseQueueSequentially(this.aPromisesWithReject).then( function() {
+			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
+			sinon.assert.callOrder(this.fnPromise1, this.fnPromise4);
+			assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
+		}.bind(this));
+	});
+
+	QUnit.test("when called with an array containing an object and a promise", function(assert) {
+		return Utils.execPromiseQueueSequentially(this.aPromisesWithObj).then( function() {
+			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
+			sinon.assert.callOrder(this.fnPromise1);
+			assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once, as one element (object) was not a function");
+		}.bind(this));
+	});
+
+	QUnit.test("when called with an array containing a rejected followed by a resolved promise", function(assert) {
+		return Utils.execPromiseQueueSequentially(this.aPromisesResolveAfterReject).then( function() {
+			assert.strictEqual(this.fnExecPromiseQueueSpy.callCount, 3, "then execPromiseQueueSequentially called three times");
+			sinon.assert.callOrder(this.fnPromise4, this.fnPromise1);
+			assert.strictEqual(sandbox.spyLog.callCount, 1, "then error log called once inside catch block, for the rejected promise without return");
+		}.bind(this));
+	});
+
+	QUnit.module("Utils.FakePromise", {
+		beforeEach: function (assert) {
+		},
+
+		afterEach: function () {
+		}
+	});
+
+	[42, undefined, {then : 42}, {then : function () {}}]
+	.forEach(function (vResult) {
+		QUnit.test("when instanciated with " + vResult + " value as parameter", function(assert) {
+			var oFakePromise = new Utils.FakePromise(vResult)
+			.then(function(vValue) {
+				assert.strictEqual(vValue, vResult, "then the parameter is passed to the 'then' method");
+			});
+			assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
+		});
+
+		QUnit.test("when instanciated with " + vResult + " error value as second parameter", function(assert) {
+			vResult = vResult || "undefined";
+			var oFakePromise = new Utils.FakePromise(undefined, vResult)
+			.then(function(vValue) {
+				assert.notOk(true, "then the 'then' method shouldn't be called");
+			})
+			.catch(function(vError) {
+				assert.strictEqual(vError, vResult, "then the error parameter is passed to the 'catch' method");
+			});
+			assert.ok(oFakePromise instanceof Utils.FakePromise, "then the FakePromise returns itself");
+		});
+	});
+
+	QUnit.test("when instanciated with Promise.resolved() value as parameter", function(assert) {
+		var oFakePromise = new Utils.FakePromise(Promise.resolve(42));
+		assert.ok(oFakePromise instanceof Promise, "then the FakePromise returns Promise");
+	});
+
+	QUnit.test("when 'then' method returns Promise", function(assert) {
+		var oPromise = new Utils.FakePromise()
+		.then(function() {
+			return Promise.resolve();
+		});
+		assert.ok(oPromise instanceof Promise, "then the returned value of the 'then' method is a Promise");
+	});
+
+	QUnit.test("when 'catch' method returns Promise", function(assert) {
+		var oPromise = new Utils.FakePromise(undefined, true)
+		.catch(function() {
+			return Promise.resolve();
+		});
+		assert.ok(oPromise instanceof Promise, "then the returned value of the 'catch' method is a Promise");
+	});
+
+	QUnit.test("when 'then' method throws an exception", function(assert) {
+		new Utils.FakePromise()
+		.then(function() {
+			throw new Error("Error");
+		})
+		.then(function(vValue) {
+			assert.notOk(true, "then the 'then' method shouldn't be called");
+		})
+		.catch(function(vError) {
+			assert.strictEqual(vError.name, "Error", "then the error parameter is passed to the 'catch' method");
+		});
+	});
+
+	QUnit.module("Utils.getChangeFromChangesMap", {
+		beforeEach: function() {
+			this.oChange1 = {
+				getId: function () {
+					return "fileNameChange1";
+				}
+			};
+			this.oChange2 = {
+				getId: function () {
+					return "fileNameChange2";
+				}
+			};
+			this.oChange3 = {
+				getId: function () {
+					return "fileNameChange3";
+				}
+			};
+			this.oChange4 = {
+				getId: function () {
+					return "fileNameChange4";
+				}
+			};
+			this.mChanges = {
+				"c1": [this.oChange1, this.oChange2, this.oChange4],
+				"c2": [this.oChange3]
+			};
+		}
+	});
+
+	QUnit.test("when called with existing Change keys", function(assert) {
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId()), this.oChange1, "then the correct change is returned");
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange2.getId()), this.oChange2, "then the correct change is returned");
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange3.getId()), this.oChange3, "then the correct change is returned");
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange4.getId()), this.oChange4, "then the correct change is returned");
+	});
+
+	QUnit.test("when called with not existing Change keys", function(assert) {
+		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId() + "foo"), undefined, "then no change is returned");
+	});
+
+});

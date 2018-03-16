@@ -1,7 +1,18 @@
-/*global QUnit,oTable,oTreeTable*/
+/*global QUnit, oTable, oTreeTable */
 
-(function () {
+sap.ui.require([
+	"sap/ui/qunit/QUnitUtils",
+	"sap/ui/table/TableUtils",
+	"sap/ui/table/Table",
+	"sap/ui/table/Column",
+	"sap/ui/table/RowAction",
+	"sap/ui/table/library",
+	"sap/ui/core/Control"
+], function(qutils, TableUtils, Table, Column, RowAction, TableLibrary, Control) {
 	"use strict";
+
+	// Shortcuts
+	var SelectionMode = TableLibrary.SelectionMode;
 
 	// mapping of global function calls
 	var createTables = window.createTables;
@@ -14,17 +25,6 @@
 	var iNumberOfCols = window.iNumberOfCols;
 	var iNumberOfRows = window.iNumberOfRows;
 	var initRowActions = window.initRowActions;
-
-	//************************************************************************
-	// Helper Functions
-	//************************************************************************
-
-	jQuery.sap.require("sap.ui.table.TableUtils");
-	var TableUtils = sap.ui.table.TableUtils;
-
-	//************************************************************************
-	// Test Code
-	//************************************************************************
 
 	QUnit.module("TableUtils", {
 		beforeEach: function() {
@@ -50,6 +50,11 @@
 		assert.ok(TableUtils.Column.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
 	});
 
+	QUnit.test("Binding", function(assert) {
+		assert.ok(!!TableUtils.Binding, "Binding namespace available");
+		assert.ok(TableUtils.Binding.TableUtils === TableUtils, "Dependency forwarding of TableUtils correct");
+	});
+
 	QUnit.test("isRowSelectionAllowed", function(assert) {
 		function check(sSelectionBehavior, sSelectionMode, bGroup, bExpected) {
 			oTreeTable.setSelectionBehavior(sSelectionBehavior);
@@ -57,7 +62,8 @@
 			oTreeTable.setUseGroupMode(bGroup);
 			sap.ui.getCore().applyChanges();
 			var bRes = TableUtils.isRowSelectionAllowed(oTreeTable);
-			assert.ok(bRes && bExpected || !bRes && !bExpected, "isRowSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
+			assert.ok(bRes && bExpected || !bRes && !bExpected,
+				"isRowSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
 		}
 
 		check("RowSelector", "MultiToggle", false, false);
@@ -87,7 +93,8 @@
 			oTreeTable.setUseGroupMode(bGroup);
 			sap.ui.getCore().applyChanges();
 			var bRes = TableUtils.isRowSelectorSelectionAllowed(oTreeTable);
-			assert.ok(bRes && bExpected || !bRes && !bExpected, "isRowSelectorSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
+			assert.ok(bRes && bExpected || !bRes && !bExpected,
+				"isRowSelectorSelectionAllowed: " + sSelectionBehavior + ", " + sSelectionMode + ", Group: " + bGroup);
 		}
 
 		check("RowSelector", "MultiToggle", false, true);
@@ -126,7 +133,7 @@
 		assert.ok(!TableUtils.hasRowActions(oTable), "Table has no row actions");
 		oTable.setRowActionCount(2);
 		assert.ok(!TableUtils.hasRowActions(oTable), "Table has still no row actions");
-		oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+		oTable.setRowActionTemplate(new RowAction());
 		assert.ok(TableUtils.hasRowActions(oTable), "Table has row actions");
 	});
 
@@ -134,7 +141,7 @@
 		assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table has no row actions");
 		oTable.setRowActionCount(2);
 		assert.equal(TableUtils.getRowActionCount(oTable), 0, "Table still has no row actions");
-		oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+		oTable.setRowActionTemplate(new RowAction());
 		assert.equal(TableUtils.getRowActionCount(oTable), 2, "Table has 2 row actions");
 		oTable.setRowActionCount(1);
 		assert.equal(TableUtils.getRowActionCount(oTable), 1, "Table has 1 row action");
@@ -165,53 +172,177 @@
 	});
 
 	QUnit.test("getCellInfo", function(assert) {
-		oTable.setRowActionCount(2);
-		oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+		initRowActions(oTable, 1, 1);
+		oTable.getColumns()[1].setVisible(false);
+		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_1_1"}));
+		oTable.getColumns()[2].addMultiLabel(new sap.ui.table.test.TestControl({text: "a_3_2"}));
+		oTable.getColumns()[2].setHeaderSpan(2);
 		sap.ui.getCore().applyChanges();
+
+		/* Data Cells */
 
 		var oCell = getCell(0, 0);
 		var oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.DATACELL, "DATACELL: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "DATACELL: Cell");
+		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Data Cell: Correct cell object returned");
+		assert.strictEqual(oInfo.isOfType(), false, "No parameter was passed to isOfType() -> Returned false");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is DATACELL");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is not ROWACTION");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is not COLUMNROWHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is ANYCONTENTCELL");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is not ANYCOLUMNHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is not ANYROWHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+		assert.strictEqual(oInfo.columnIndex, 0, "Column Index: 0");
+		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+		oInfo = TableUtils.getCellInfo(getCell(1, 1));
+		assert.strictEqual(oInfo.rowIndex, 1, "Row Index: 1");
+		assert.strictEqual(oInfo.columnIndex, 2, "Column Index: 2");
+		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+		/* Column Header Cells */
 
 		oCell = getColumnHeader(0);
 		oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.COLUMNHEADER, "COLUMNHEADER: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "COLUMNHEADER: Cell");
+		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Column Header Cell: Correct cell object returned");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is COLUMNHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is not ROWACTION");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is not COLUMNROWHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is not ANYCONTENTCELL");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is ANYCOLUMNHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is not ANYROWHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+		assert.strictEqual(oInfo.columnIndex, 0, "Column Index: 0");
+		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+		oCell = getColumnHeader(1);
+		oInfo = TableUtils.getCellInfo(oCell);
+		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+		assert.strictEqual(oInfo.columnIndex, 2, "Column Index: 2");
+		assert.strictEqual(oInfo.columnSpan, 2, "Span Length: 2");
+
+		oCell = getColumnHeader(2);
+		oInfo = TableUtils.getCellInfo(oCell);
+		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+		assert.strictEqual(oInfo.columnIndex, 3, "Column Index: 3");
+		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+		oCell = jQuery.sap.domById(getColumnHeader(2).attr("id") + "_1");
+		oInfo = TableUtils.getCellInfo(oCell);
+		assert.strictEqual(oInfo.rowIndex, 1, "Row Index: 1");
+		assert.strictEqual(oInfo.columnIndex, 3, "Column Index: 3");
+		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+		/* Row Header Cells */
 
 		oCell = getRowHeader(0);
 		oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.ROWHEADER, "ROWHEADER: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "ROWHEADER: Cell");
+		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Row Header Cell: Correct cell object returned");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is ROWHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is not ROWACTION");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is not COLUMNROWHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is ANYCONTENTCELL");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is not ANYCOLUMNHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is ANYROWHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+		assert.strictEqual(oInfo.columnIndex, -1, "Column Index: -1");
+		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+		/* Row Action Cells */
 
 		oCell = getRowAction(0);
 		oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.ROWACTION, "ROWACTION: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "ROWACTION: Cell");
+		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "Row Action Cell: Correct cell object returned");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is ROWACTION");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is not COLUMNROWHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is ANYCONTENTCELL");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is not ANYCOLUMNHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is not ANYROWHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
+		assert.strictEqual(oInfo.columnIndex, -2, "Column Index: -2");
+		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+		/* SelectAll Cell */
 
 		oCell = getSelectAll();
 		oInfo = TableUtils.getCellInfo(oCell);
-		assert.equal(oInfo.type, TableUtils.CELLTYPES.COLUMNROWHEADER, "COLUMNROWHEADER: Type");
-		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "COLUMNROWHEADER: Cell");
+		assert.strictEqual(oInfo.cell.get(0), oCell.get(0), "SelectAll Cell: Correct cell object returned");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.DATACELL), "Is not DATACELL");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.COLUMNHEADER), "Is not COLUMNHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWHEADER), "Is not ROWHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ROWACTION), "Is not ROWACTION");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.COLUMNROWHEADER), "Is COLUMNROWHEADER");
+		assert.ok(!oInfo.isOfType(TableUtils.CELLTYPE.ANYCONTENTCELL), "Is not ANYCONTENTCELL");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYCOLUMNHEADER), "Is ANYCOLUMNHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANYROWHEADER), "Is ANYROWHEADER");
+		assert.ok(oInfo.isOfType(TableUtils.CELLTYPE.ANY), "Is ANY");
+		assert.strictEqual(oInfo.rowIndex, null, "Row Index: null");
+		assert.strictEqual(oInfo.columnIndex, -1, "Column Index: -1");
+		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
+
+		/* Not a table cell */
+
+		var oDefaultInfo = {
+			type: 0,
+			cell: null,
+			rowIndex: null,
+			columnIndex: null,
+			columnSpan: null
+		};
 
 		oInfo = TableUtils.getCellInfo(null);
-		assert.ok(!oInfo, "No info on null");
+		delete oInfo.isOfType;
+		assert.deepEqual(oInfo, oDefaultInfo, "Passed null as parameter -> Returned the info object with default values");
 
 		oInfo = TableUtils.getCellInfo(jQuery.sap.domById("outerelement"));
-		assert.ok(!oInfo, "No info on dom elements which are no table cells");
+		delete oInfo.isOfType;
+		assert.deepEqual(oInfo, oDefaultInfo, "Passed a dom element which is no table cell -> Returned the info object with default values");
 	});
 
 	QUnit.test("hasRowHeader", function(assert) {
 		assert.ok(TableUtils.hasRowHeader(oTable), "Table has row header in selectionMode 'MultiToggle'");
 
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.None);
+		oTable.setSelectionMode(SelectionMode.None);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionMode 'None'");
 
-		oTable.setSelectionMode(sap.ui.table.SelectionMode.MultiToggle);
+		oTable.setSelectionMode(SelectionMode.MultiToggle);
 		oTable.setSelectionBehavior(sap.ui.table.SelectionBehavior.RowOnly);
 		sap.ui.getCore().applyChanges();
 		assert.ok(!TableUtils.hasRowHeader(oTable), "Table has row header in selectionBehavior 'RowOnly'");
+	});
+
+	QUnit.test("hasSelectAll", function(assert) {
+		function test(bEnableSelectAll, sSelectionMode, bShouldHaveSelectAll) {
+			oTable.setEnableSelectAll(bEnableSelectAll);
+			oTable.setSelectionMode(sSelectionMode);
+			assert.strictEqual(TableUtils.hasSelectAll(oTable), bShouldHaveSelectAll,
+				"The table should " + (bShouldHaveSelectAll ? "" : "not ") + "have a SelectAll checkbox"
+			);
+		}
+
+		assert.ok(!TableUtils.hasSelectAll(), "Returned false: No parameter passed");
+		test(false, SelectionMode.None, false);
+		test(false, SelectionMode.Single, false);
+		test(false, SelectionMode.Multi, false);
+		test(false, SelectionMode.MultiToggle, false);
+		test(true, SelectionMode.None, false);
+		test(true, SelectionMode.Single, false);
+		test(true, SelectionMode.Multi, true);
+		test(true, SelectionMode.MultiToggle, true);
 	});
 
 	QUnit.test("hasRowHighlights", function(assert) {
@@ -297,7 +428,7 @@
 			getVisibleRowCount: function() {
 				return 10;
 			},
-			_getRowCount: function() {
+			_getTotalRowCount: function() {
 				return 5;
 			}
 		};
@@ -305,7 +436,7 @@
 			getVisibleRowCount: function() {
 				return 10;
 			},
-			_getRowCount: function() {
+			_getTotalRowCount: function() {
 				return 15;
 			}
 		};
@@ -313,16 +444,17 @@
 			getVisibleRowCount: function() {
 				return 10;
 			},
-			_getRowCount: function() {
+			_getTotalRowCount: function() {
 				return 10;
 			}
 		};
-		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy1), oTableDummy1._getRowCount(), "Number of data rows (#data < #visiblerows)");
-		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy2), oTableDummy2.getVisibleRowCount(), "Number of visible rows (#data > #visiblerows)");
-		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy3), oTableDummy3.getVisibleRowCount(), "Number of visible and data rows (#data = #visiblerows)");
+		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy1), oTableDummy1._getTotalRowCount(),
+			"Number of data rows (#data < #visiblerows)");
+		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy2), oTableDummy2.getVisibleRowCount(),
+			"Number of visible rows (#data > #visiblerows)");
+		assert.equal(TableUtils.getNonEmptyVisibleRowCount(oTableDummy3), oTableDummy3.getVisibleRowCount(),
+			"Number of visible and data rows (#data = #visiblerows)");
 	});
-
-
 
 	QUnit.test("toggleRowSelection", function(assert) {
 		var iCallbackIndex = -1;
@@ -399,9 +531,9 @@
 		assert.ok(!TableUtils.toggleRowSelection(oTable, -1), "Row index out of bound: No selection was performed"); // Toggle
 		assert.ok(!TableUtils.toggleRowSelection(oTable, -1, true), "Row index out of bound: No selection was performed"); // Select
 		assert.ok(!TableUtils.toggleRowSelection(oTable, -1, false), "Row index out of bound: No selection was performed"); // Deselect
-		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getRowCount()), "Row index out of bound: No selection was performed"); // Toggle
-		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getRowCount(), true), "Row index out of bound: No selection was performed"); // Select
-		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getRowCount(), false), "Row index out of bound: No selection was performed"); // Deselect
+		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getTotalRowCount()), "Row index out of bound: No selection was performed"); // Toggle
+		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getTotalRowCount(), true), "Row index out of bound: No selection was performed"); // Select
+		assert.ok(!TableUtils.toggleRowSelection(oTable, oTable._getTotalRowCount(), false), "Row index out of bound: No selection was performed"); // Deselect
 
 		// Selection is not possible when the table has no row binding.
 		oTable.unbindAggregation("rows");
@@ -450,42 +582,6 @@
 		assert.strictEqual(oInfo.cell.getText(), "D3", "Cell 2,2");
 	});
 
-	QUnit.test("getDataCellInfo", function(assert) {
-		oTable.getColumns()[2].setVisible(false);
-		initRowActions(oTable, 1, 1);
-
-		assert.strictEqual(TableUtils.getDataCellInfo(), null, "Returned null: Passed nothing");
-		assert.strictEqual(TableUtils.getDataCellInfo(oTable), null, "Returned null: No cell passed");
-		assert.strictEqual(TableUtils.getDataCellInfo(oTable, getRowHeader(0)), null, "Returned null: Row Header cell passed");
-		assert.strictEqual(TableUtils.getDataCellInfo(oTable, getRowAction(0)), null, "Returned null: Row Action cell passed");
-		assert.strictEqual(TableUtils.getDataCellInfo(oTable, getColumnHeader(0)), null, "Returned null: Column Header cell passed");
-
-		var oInfo = TableUtils.getDataCellInfo(oTable, getCell(0, 0));
-		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
-		assert.strictEqual(oInfo.columnIndex, 0, "Column Index: 0");
-
-		oInfo = TableUtils.getDataCellInfo(oTable, getCell(1, 1));
-		assert.strictEqual(oInfo.rowIndex, 1, "Row Index: 1");
-		assert.strictEqual(oInfo.columnIndex, 1, "Column Index: 1");
-
-		oInfo = TableUtils.getDataCellInfo(oTable, getCell(2, 2));
-		assert.strictEqual(oInfo.rowIndex, 2, "Row Index: 2");
-		assert.strictEqual(oInfo.columnIndex, 3, "Column Index: 3");
-	});
-
-	QUnit.test("getRowActionCellInfo", function(assert) {
-		initRowActions(oTable, 1, 1);
-
-		assert.strictEqual(TableUtils.getRowActionCellInfo(), null, "Returned null: Passed nothing");
-		assert.strictEqual(TableUtils.getRowActionCellInfo(oTable), null, "Returned null: No cell passed");
-		assert.strictEqual(TableUtils.getRowActionCellInfo(oTable, getRowHeader(0)), null, "Returned null: Row Header cell passed");
-		assert.strictEqual(TableUtils.getRowActionCellInfo(oTable, getCell(0, 0)), null, "Returned null: Data cell passed");
-		assert.strictEqual(TableUtils.getRowActionCellInfo(oTable, getColumnHeader(0)), null, "Returned null: Column Header cell passed");
-
-		var oInfo = TableUtils.getRowActionCellInfo(oTable, getRowAction(0));
-		assert.strictEqual(oInfo.rowIndex, 0, "Row Index: 0");
-	});
-
 	QUnit.test("getFirstFixedButtomRowIndex", function(assert) {
 		function initTest(iFixedBottomCount, iRowCount) {
 			oTable.setFixedBottomRowCount(iFixedBottomCount);
@@ -503,9 +599,11 @@
 			initTest(iFixedBottomRows, iVisibleRows);
 
 			if (i <= 3) {
-				assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), iVisibleRows - iFixedBottomRows, "Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
+				assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), iVisibleRows - iFixedBottomRows,
+					"Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
 			} else {
-				assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), iNumberOfRows - iFixedBottomRows, "Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
+				assert.equal(TableUtils.getFirstFixedButtomRowIndex(oTable), iNumberOfRows - iFixedBottomRows,
+					"Fixed buttom rows, VisibleRowCount=" + iVisibleRows);
 			}
 		}
 	});
@@ -571,10 +669,10 @@
 	});
 
 	QUnit.test("getNoDataText", function(assert) {
-		assert.equal(TableUtils.getNoDataText(oTable), oTable._oResBundle.getText("TBL_NO_DATA"));
+		assert.equal(TableUtils.getNoDataText(oTable), TableUtils.getResourceBundle().getText("TBL_NO_DATA"));
 		oTable.setNoData("Foobar");
 		assert.equal(TableUtils.getNoDataText(oTable), "Foobar");
-		oTable.setNoData(new sap.ui.core.Control());
+		oTable.setNoData(new Control());
 		assert.strictEqual(TableUtils.getNoDataText(oTable), null);
 
 		var oString = new String("Some Text");
@@ -588,7 +686,7 @@
 				getShowNoData: function() {
 					return bShowNoData;
 				},
-				_getRowCount: function() {
+				_getTotalRowCount: function() {
 					return iBindingLength;
 				},
 				getBinding: function() {
@@ -608,7 +706,8 @@
 
 		function testNoDataVisibility(bShowNoData, iBindingLength, bAnalytical, bHasTotals, bExpectedResult) {
 			var bResult = TableUtils.isNoDataVisible(createFakeTable(bShowNoData, iBindingLength, bAnalytical, bHasTotals));
-			assert.equal(bResult, bExpectedResult, "ShowNoData: " + bShowNoData + ", Binding Length: " + iBindingLength + ", Analytical: " + bAnalytical + ", Totals: " + bHasTotals);
+			assert.equal(bResult, bExpectedResult,
+				"ShowNoData: " + bShowNoData + ", Binding Length: " + iBindingLength + ", Analytical: " + bAnalytical + ", Totals: " + bHasTotals);
 		}
 
 		testNoDataVisibility(true, 2, false, false, false);
@@ -642,19 +741,77 @@
 
 		oTable.setBusy(true);
 		sap.ui.getCore().applyChanges();
+		assert.ok(TableUtils.isBusyIndicatorVisible(oTable),
+			"The tables busy indicator is visible: Returned true");
 
-		assert.ok(TableUtils.isBusyIndicatorVisible(oTable), "The busy indicator is visible: Returned true");
+		oTable.getRows()[0].getCells()[0].setBusyIndicatorDelay(0);
+		oTable.getRows()[0].getCells()[0].setBusy(true);
+		sap.ui.getCore().applyChanges();
+		assert.ok(TableUtils.isBusyIndicatorVisible(oTable),
+			"The tables busy indicator is visible, and a cells busy indicator is visible: Returned true");
+
+		oTable.setBusy(false);
+		sap.ui.getCore().applyChanges();
+		assert.ok(!TableUtils.isBusyIndicatorVisible(oTable),
+			"The tables busy indicator is not visible, but a cells busy indicator is visible: Returned false");
 	});
 
-	QUnit.test("hasPendingRequest", function(assert) {
-		assert.ok(!TableUtils.hasPendingRequest(), "No parameters passed: Returned false");
-		assert.ok(!TableUtils.hasPendingRequest(null), "Passed 'null': Returned false");
-		oTable._bPendingRequest = 0;
-		assert.ok(!TableUtils.hasPendingRequest(oTable), "The pending request flag has an invalid value: Returned false");
-		oTable._bPendingRequest = false;
-		assert.ok(!TableUtils.hasPendingRequest(oTable), "The binding of the table has no pending request: Returned false");
+	QUnit.test("hasPendingRequests", function(assert) {
+		assert.ok(!TableUtils.hasPendingRequests(), "No parameters passed: Returned false");
+		assert.ok(!TableUtils.hasPendingRequests(null), "Passed 'null': Returned false");
+
+		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
+		assert.ok(!TableUtils.hasPendingRequests(oTable), "Rows not bound: Returned false");
+		oTable.getBinding.restore();
+
+		this.stub(TableUtils, "canUsePendingRequestsCounter").returns(true);
+		oTable._iPendingRequests = -1;
 		oTable._bPendingRequest = true;
-		assert.ok(TableUtils.hasPendingRequest(oTable), "The binding of the table has a pending request: Returned true");
+		assert.ok(!TableUtils.hasPendingRequests(oTable), "(Counter) -1 pending requests: Returned false");
+		oTable._iPendingRequests = 0;
+		assert.ok(!TableUtils.hasPendingRequests(oTable), "(Counter) 0 pending requests: Returned false");
+		oTable._iPendingRequests = 1;
+		oTable._bPendingRequest = false;
+		assert.ok(TableUtils.hasPendingRequests(oTable), "(Counter) 1 pending requests: Returned true");
+		oTable._iPendingRequests = 2;
+		assert.ok(TableUtils.hasPendingRequests(oTable), "(Counter) 2 pending requests: Returned true");
+
+		TableUtils.canUsePendingRequestsCounter.returns(false);
+		oTable._iPendingRequests = 0;
+		oTable._bPendingRequest = true;
+		assert.ok(TableUtils.hasPendingRequests(oTable), "(Flag) Indicates that a request is pending: Returned true");
+		oTable._iPendingRequests = 1;
+		oTable._bPendingRequest = false;
+		assert.ok(!TableUtils.hasPendingRequests(oTable), "(Flag) Indicates that no request is pending: Returned false");
+
+		TableUtils.canUsePendingRequestsCounter.restore();
+	});
+
+	QUnit.test("canUsePendingRequestsCounter", function(assert) {
+		assert.ok(TableUtils.canUsePendingRequestsCounter(), "No parameters passed: Returned true");
+		assert.ok(TableUtils.canUsePendingRequestsCounter(null), "Passed 'null': Returned true");
+
+		this.stub(oTable, "getBinding").withArgs("rows").returns(undefined);
+		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Rows not bound: Returned true");
+		oTable.getBinding.restore();
+
+		this.stub(TableUtils, "isInstanceOf").withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(true);
+		oTable.getBinding("rows").bUseBatchRequests = true;
+		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding using batch requests: Returned true");
+
+		oTable.getBinding("rows").bUseBatchRequests = false;
+		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "AnalyticalBinding not using batch requests: Returned false");
+
+		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/analytics/AnalyticalBinding").returns(false);
+		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(true);
+		assert.ok(!TableUtils.canUsePendingRequestsCounter(oTable), "TreeBinding: Returned false");
+
+		TableUtils.isInstanceOf.withArgs(oTable.getBinding("rows"), "sap/ui/model/TreeBinding").returns(false);
+		oTable.getBinding("rows").bUseBatchRequests = true;
+		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Other binding: Returned true");
+
+		TableUtils.isInstanceOf.restore();
+		delete oTable.getBinding("rows").bUseBatchRequests;
 	});
 
 	QUnit.test("isInstanceOf", function(assert) {
@@ -677,6 +834,7 @@
 		assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded before check");
 		assert.equal(TableUtils.isInstanceOf(oAnalyticalTable, "sap/ui/table/AnalyticalTable"), true, "Is of type sap.ui.table.AnalyticalTable");
 		assert.ok(checkLoaded(sap.ui.table.AnalyticalTable), "sap.ui.table.AnalyticalTable not loaded after check");
+		oAnalyticalTable.destroy();
 	});
 
 	QUnit.test("isFirstScrollableRow / isLastScrollableRow", function(assert) {
@@ -692,24 +850,26 @@
 		for (var j = 0; j < 2; j++) {
 			for (var i = 0; i < iVisibleRowCount; i++) {
 				assert.equal(TableUtils.isFirstScrollableRow(oTable, getCell(i, 0)), i == iFixedTop, "isFirstScrollableRow (" + i + ")");
-				assert.equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i == iVisibleRowCount - iFixedBottom - 1, "isLastScrollableRow (" + i + ")");
+				assert.equal(TableUtils.isLastScrollableRow(oTable, getCell(i, 0)), i == iVisibleRowCount - iFixedBottom - 1,
+					"isLastScrollableRow (" + i + ")");
 			}
-			oTable._getScrollExtension().scroll(true, false);
+			oTable._getScrollExtension().scrollVertically(true, false);
 		}
 	});
 
 	QUnit.test("sanitizeSelectionMode", function(assert) {
-		var SM = sap.ui.table.SelectionMode;
-		assert.equal(TableUtils.sanitizeSelectionMode({}, SM.None), SM.None, "SelectionMode None");
-		assert.equal(TableUtils.sanitizeSelectionMode({}, SM.Single), SM.Single, "SelectionMode Single");
-		assert.equal(TableUtils.sanitizeSelectionMode({}, SM.MultiToggle), SM.MultiToggle, "SelectionMode MultiToggle");
-		assert.equal(TableUtils.sanitizeSelectionMode({}, SM.Multi), SM.MultiToggle, "SelectionMode Multi");
-		assert.equal(TableUtils.sanitizeSelectionMode({_enableLegacyMultiSelection: true}, SM.Multi), SM.MultiToggle, "SelectionMode Multi (legacy)");
+		var mSelectionMode = SelectionMode;
+		assert.equal(TableUtils.sanitizeSelectionMode({}, mSelectionMode.None), mSelectionMode.None, "SelectionMode None");
+		assert.equal(TableUtils.sanitizeSelectionMode({}, mSelectionMode.Single), mSelectionMode.Single, "SelectionMode Single");
+		assert.equal(TableUtils.sanitizeSelectionMode({}, mSelectionMode.MultiToggle), mSelectionMode.MultiToggle, "SelectionMode MultiToggle");
+		assert.equal(TableUtils.sanitizeSelectionMode({}, mSelectionMode.Multi), mSelectionMode.MultiToggle, "SelectionMode Multi");
+		assert.equal(TableUtils.sanitizeSelectionMode({_enableLegacyMultiSelection: true}, mSelectionMode.Multi), mSelectionMode.MultiToggle,
+			"SelectionMode Multi (legacy)");
 	});
 
 	QUnit.test("getCell", function(assert) {
 		oTable.setRowActionCount(2);
-		oTable.setRowActionTemplate(new sap.ui.table.RowAction());
+		oTable.setRowActionTemplate(new RowAction());
 		sap.ui.getCore().applyChanges();
 
 		assert.strictEqual(TableUtils.getCell(), null, "Returned null: Invalid input");
@@ -737,18 +897,69 @@
 		assert.ok(TableUtils.getCell(oTable, oElement.find(":first")).is(oElement), "Returned Data Cell");
 	});
 
-	QUnit.test("getColumnHeaderCellInfo", function(assert) {
-		assert.strictEqual(TableUtils.getColumnHeaderCellInfo(), null, "Returned null: Passed nothing");
-		assert.strictEqual(TableUtils.getColumnHeaderCellInfo(getSelectAll()), null, "Returned null: Passed SelectAll Cell");
-		assert.strictEqual(TableUtils.getColumnHeaderCellInfo(getRowHeader(0)), null, "Returned null: Passed Row Header Cell");
-		assert.strictEqual(TableUtils.getColumnHeaderCellInfo(getCell(0, 0)), null, "Returned null: Passed Data Cell");
+	QUnit.test("getResourceBundle", function(assert) {
+		var pPromise;
+		var oBundle;
+		var oPreviousBundle;
+		var sOriginalLanguage = sap.ui.getCore().getConfiguration().getLanguage();
+		var sTestLanguageA = sOriginalLanguage === "en-US" ? "de-DE" : "en-US";
+		var sTestLanguageB = sOriginalLanguage === "en-US" ? "fr-FR" : "en-US";
+		var fnOnLocalizationChanged = Table.prototype.onlocalizationChanged;
+		var done = assert.async();
 
-		var oActualColumnHeaderInfo = TableUtils.getColumnHeaderCellInfo(getColumnHeader(1));
-		jQuery.sap.log.debug("oActualColumnHeaderInfo", oActualColumnHeaderInfo);
-		assert.strictEqual(oActualColumnHeaderInfo.index, 1, "Correct index information returned");
-		assert.strictEqual(oActualColumnHeaderInfo.span, 1, "Correct span information returned");
+		Table.prototype.onlocalizationChanged = function() {};
+
+		/* Synchronous */
+
+		oBundle = TableUtils.getResourceBundle();
+		assert.ok(jQuery.sap.resources.isBundle(oBundle), "{async: false, reload: false} - Should return a bundle");
+		assert.strictEqual(TableUtils.getResourceBundle(), oBundle, "{async: false, reload: false} - Should return the already loaded bundle");
+
+		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageA);
+
+		oPreviousBundle = oBundle;
+		assert.strictEqual(TableUtils.getResourceBundle(), oBundle,
+			"{async: false, reload: false} (language changed) - Should return the already loaded bundle");
+		oBundle = TableUtils.getResourceBundle({reload: true});
+		assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle),
+			"{async: false, reload: true} - Should return a new bundle");
+		assert.strictEqual(TableUtils.getResourceBundle({reload: true}), oBundle,
+			"{async: false, reload: true} - Should return the already loaded bundle");
+
+		/* Asynchronous */
+
+		sap.ui.getCore().getConfiguration().setLanguage(sTestLanguageB);
+
+		pPromise = TableUtils.getResourceBundle({async: true});
+		assert.ok(pPromise instanceof Promise, "{async: true, reload: false} (language changed) - Should return a Promise");
+		pPromise.then(function(_oBundle) {
+			oPreviousBundle = oBundle;
+			oBundle = _oBundle;
+			assert.strictEqual(oBundle, oPreviousBundle, "Promise should return the already loaded bundle");
+
+			pPromise = TableUtils.getResourceBundle({async: true, reload: true});
+			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Should return a Promise");
+			return pPromise;
+		}).then(function(_oBundle) {
+			oPreviousBundle = oBundle;
+			oBundle = _oBundle;
+			assert.ok(oBundle !== oPreviousBundle && jQuery.sap.resources.isBundle(oBundle), "Promise should return a new bundle");
+
+			pPromise = TableUtils.getResourceBundle({async: true, reload: true});
+			assert.ok(pPromise instanceof Promise, "{async: true, reload: true} - Should return a Promise");
+			return pPromise;
+		}).then(function(_oBundle) {
+			oPreviousBundle = oBundle;
+			oBundle = _oBundle;
+			assert.strictEqual(oBundle, oPreviousBundle, "Promise should return the already loaded bundle");
+		}).then(function() {
+			// Restore
+			sap.ui.getCore().getConfiguration().setLanguage(sOriginalLanguage);
+			Table.prototype.onlocalizationChanged = fnOnLocalizationChanged;
+
+			done();
+		});
 	});
-
 
 	QUnit.module("Cozy", {
 		beforeEach: function() {
@@ -778,11 +989,11 @@
 
 	QUnit.module("Resize Handler", {
 		beforeEach: function() {
-			jQuery("#content").append("<div id='__table-outer' style='height: 500px; width: 500px; overflow: hidden; background: red;'>" +
-				"<div id='__table-inner' style='height: 200px; width: 200px; background: blue;'>" +
-				"<div id='__table-center' style='height: 100px; width: 100px; background: green;'></div>" +
-				"</div>" +
-				"</div>");
+			jQuery("#qunit-fixture").append("<div id='__table-outer' style='height: 500px; width: 500px; overflow: hidden; background: red;'>" +
+											"<div id='__table-inner' style='height: 200px; width: 200px; background: blue;'>" +
+											"<div id='__table-center' style='height: 100px; width: 100px; background: green;'></div>" +
+											"</div>" +
+											"</div>");
 
 			this.oTable = {
 				id: "__table",
@@ -806,9 +1017,6 @@
 					return aKeys.sort();
 				}
 			};
-		},
-		afterEach: function() {
-			jQuery("#content").empty();
 		}
 	});
 
@@ -821,7 +1029,8 @@
 		};
 
 		var fnTestCenterParent = function(oEvent) {
-			assert.equal(oEvent.currentTarget.getAttribute("id"), this.oTable.getId("inner"), "ResizeHandler triggered for parent of 'center', 'inner'");
+			assert.equal(oEvent.currentTarget.getAttribute("id"), this.oTable.getId("inner"),
+				"ResizeHandler triggered for parent of 'center', 'inner'");
 			// size change of center div should have no impact, as there is not ResizeHandler defined for it.
 			jQuery("#" + this.oTable.getId("center")).height("50px");
 
@@ -837,10 +1046,12 @@
 			TableUtils.registerResizeHandler(this.oTable, "center", function() {
 			});
 
-			assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), ["center", "inner", "outer"], "All ResizeHandler IDs correctly stored at table instance");
+			assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), ["center", "inner", "outer"],
+				"All ResizeHandler IDs correctly stored at table instance");
 
 			TableUtils.deregisterResizeHandler(this.oTable, ["center", "outer"]);
-			assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), ["inner"], "All ResizeHandler IDs correctly stored after remove 'center', 'outer'");
+			assert.deepEqual(this.oTable.getResizeHandlerIdKeys(), ["inner"],
+				"All ResizeHandler IDs correctly stored after remove 'center', 'outer'");
 
 			// register new handlers for further testings
 			TableUtils.registerResizeHandler(this.oTable, "outer", function() {
@@ -872,8 +1083,10 @@
 		assert.equal(this.oTable._mResizeHandlerIds.outer, sResizeHandlerId, "ResizeHandler ID correctly stored at table instance (outer)");
 
 		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "center", fnTestCenterParent.bind(this), true);
-		assert.notStrictEqual(sResizeHandlerId, undefined, "ResizeHandler ID was returned for 'inner', registered by parent of 'center': '" + sResizeHandlerId + "'");
-		assert.equal(this.oTable._mResizeHandlerIds.center, sResizeHandlerId, "ResizeHandler ID correctly stored at table instance (parent of center)");
+		assert.notStrictEqual(sResizeHandlerId, undefined,
+			"ResizeHandler ID was returned for 'inner', registered by parent of 'center': '" + sResizeHandlerId + "'");
+		assert.equal(this.oTable._mResizeHandlerIds.center, sResizeHandlerId,
+			"ResizeHandler ID correctly stored at table instance (parent of center)");
 
 		sResizeHandlerId = TableUtils.registerResizeHandler(this.oTable, "doesNotExist", fnTestCenterParent.bind(this), true);
 		assert.strictEqual(sResizeHandlerId, undefined, "No ResizeHandler ID returned for unknown DOM");
@@ -883,12 +1096,11 @@
 
 	QUnit.module("Content Density", {
 		beforeEach: function() {
-			jQuery("#content").append("<div id='__table-outer'>" +
-				"</div>");
+			jQuery("#qunit-fixture").append("<div id='__table-outer'></div>");
 
-			this.oTable = new sap.ui.table.Table();
+			this.oTable = new Table();
 
-			this.TableUtilsDummyControl = sap.ui.core.Control.extend("sap.ui.table.TableUtilsDummyControl", {
+			this.TableUtilsDummyControl = Control.extend("sap.ui.table.TableUtilsDummyControl", {
 				metadata: {
 					library: "sap.ui.table",
 					aggregations: {
@@ -909,7 +1121,6 @@
 		},
 		afterEach: function() {
 			this.oTable.destroy();
-			jQuery("#content").empty();
 		}
 	});
 
@@ -934,17 +1145,20 @@
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed at #Nested");
 		oNested.addStyleClass("sapUiSizeCozy");
 		oCore.applyChanges();
-		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCondensed");
+		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed",
+			"sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCondensed");
 		oNested.addStyleClass("sapUiSizeCompact");
 		oCore.applyChanges();
-		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact", "sapUiSizeCompact, sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCompact");
+		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact",
+			"sapUiSizeCompact, sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCompact");
 
 		this.oTable.addStyleClass("sapUiSizeCozy");
 		oCore.applyChanges();
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
 
 		this.oTable.$().toggleClass("sapUiSizeCondensed", true);
-		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed at table DOM and sapUiSizeCozy at control level. DOM wins.");
+		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed",
+			"sapUiSizeCondensed at table DOM and sapUiSizeCozy at control level. DOM wins.");
 
 		jQuery(document.body).toggleClass("sapUiSizeCozy", false);
 	});
@@ -964,9 +1178,11 @@
 		oNested.addStyleClass("sapUiSizeCondensed");
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed at #Nested");
 		oNested.addStyleClass("sapUiSizeCozy");
-		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed", "sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCondensed");
+		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCondensed",
+			"sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCondensed");
 		oNested.addStyleClass("sapUiSizeCompact");
-		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact", "sapUiSizeCompact, sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCompact");
+		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCompact",
+			"sapUiSizeCompact, sapUiSizeCondensed and sapUiSizeCozy at #Nested -> sapUiSizeCompact");
 
 		this.oTable.addStyleClass("sapUiSizeCozy");
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
@@ -985,8 +1201,6 @@
 		oCore.applyChanges();
 		assert.equal(TableUtils.getContentDensity(this.oTable), "sapUiSizeCozy", "sapUiSizeCozy at table");
 	});
-
-
 
 	QUnit.module("Cell Content", {
 		beforeEach: function() {
@@ -1010,7 +1224,7 @@
 					});
 				}
 
-				oTable.addColumn(new sap.ui.table.Column({
+				oTable.addColumn(new Column({
 					label: sTitle,
 					width: "100px",
 					template: oControlTemplate
@@ -1040,43 +1254,45 @@
 		return $InteractiveElements[0];
 	}
 
-	QUnit.test("getParentDataCell", function(assert) {
-		var oCell = getCell(0, iNumberOfCols - 1);
-		var $ParentDataCell = TableUtils.getParentDataCell(oTable, _getFirstInteractiveElement(oCell));
-		assert.strictEqual($ParentDataCell.length, 1, "A data cell was returned");
-		assert.strictEqual($ParentDataCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
-
-		$ParentDataCell = TableUtils.getParentDataCell(oTable, _getFirstInteractiveElement(oCell[0]));
-		assert.strictEqual($ParentDataCell.length, 1, "A data cell was returned");
-		assert.strictEqual($ParentDataCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
-
-		oCell = getCell(0, iNumberOfCols - 2);
-		$ParentDataCell = TableUtils.getParentDataCell(oTable, _getFirstInteractiveElement(oCell));
-		assert.strictEqual($ParentDataCell.length, 1, "A data cell was returned");
-		assert.strictEqual($ParentDataCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
-
-		$ParentDataCell = TableUtils.getParentDataCell(oTable, _getFirstInteractiveElement(oCell[0]));
-		assert.strictEqual($ParentDataCell.length, 1, "A data cell was returned");
-		assert.strictEqual($ParentDataCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
-
-		$ParentDataCell = TableUtils.getParentDataCell(oTable);
-		assert.strictEqual($ParentDataCell, null, "No element parameter passed: Null was returned");
-	});
-
-	QUnit.test("getParentRowActionCell", function(assert) {
+	QUnit.test("getParentCell", function(assert) {
 		initRowActions(oTable, 1, 1);
 
-		var oCell = getRowAction(0);
-		var $ParentRowActionCell = TableUtils.getParentRowActionCell(oTable, _getFirstInteractiveElement(oCell));
-		assert.strictEqual($ParentRowActionCell.length, 1, "A row action cell was returned");
-		assert.strictEqual($ParentRowActionCell[0], oCell[0], "jQuery object passed: The correct row action cell was returned");
+		/* Data Cell */
 
-		$ParentRowActionCell = TableUtils.getParentRowActionCell(oTable, _getFirstInteractiveElement(oCell[0]));
-		assert.strictEqual($ParentRowActionCell.length, 1, "A row action cell was returned");
-		assert.strictEqual($ParentRowActionCell[0], oCell[0], "DOM element passed: The correct row action cell was returned");
+		var oCell = getCell(0, iNumberOfCols - 1);
+		var $ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
+		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
 
-		$ParentRowActionCell = TableUtils.getParentRowActionCell(oTable);
-		assert.strictEqual($ParentRowActionCell, null, "No element parameter passed: Null was returned");
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell[0]));
+		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
+
+		oCell = getCell(0, iNumberOfCols - 2);
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
+		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "jQuery object passed: The correct data cell was returned");
+
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell[0]));
+		assert.strictEqual($ParentCell.length, 1, "A data cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct data cell was returned");
+
+		/* Row Action Cell */
+		oCell = getRowAction(0);
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell));
+		assert.strictEqual($ParentCell.length, 1, "A row action cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "jQuery object passed: The correct row action cell was returned");
+
+		$ParentCell = TableUtils.getParentCell(oTable, _getFirstInteractiveElement(oCell[0]));
+		assert.strictEqual($ParentCell.length, 1, "A row action cell was returned");
+		assert.strictEqual($ParentCell[0], oCell[0], "DOM element passed: The correct row action cell was returned");
+
+		/* Invalid parameters */
+
+		$ParentCell = TableUtils.getParentCell(oTable);
+		assert.strictEqual($ParentCell, null, "No element passed: Null was returned");
+
+		$ParentCell = TableUtils.getParentCell(null, _getFirstInteractiveElement(getCell(0, iNumberOfCols - 1)));
+		assert.strictEqual($ParentCell, null, "No table passed: Null was returned");
 	});
-
-}());
+});

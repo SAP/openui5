@@ -167,8 +167,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				'multiselect-all': 0x1e224, 'multiselect-none': 0x1e225, 'scissors': 0xe226, 'sound': 0x1e227,
 				'sound-loud': 0x1e228, 'sound-off': 0x1e229, 'date-time': 0x1e22a, 'user-settings': 0xe22b,
 				'key-user-settings': 0xe22c, 'developer-settings': 0xe22d, 'text-formatting': 0x1e22e, 'bold-text': 0x1e22f,
-				'italic-text': 0x1e230, 'underline-text': 0x1e231, 'text-align-justified': 0xe232, 'text-align-left': 0xe233,
-				'text-align-center': 0xe234, 'text-align-right': 0xe235, 'bullet-text': 0x1e236, 'numbered-text': 0x1e237,
+				'italic-text': 0x1e230, 'underline-text': 0x1e231, 'text-align-justified': 0x1e232, 'text-align-left': 0x1e233,
+				'text-align-center': 0x1e234, 'text-align-right': 0x1e235, 'bullet-text': 0x1e236, 'numbered-text': 0x1e237,
 				'co': 0xe238, 'ui-notifications': 0xe239, 'bell': 0xe23a, 'cancel-share': 0xe23b,
 				'write-new-document': 0xe23c, 'write-new': 0xe23d, 'cancel': 0x1e23e, 'screen-split-one': 0xe23f,
 				'screen-split-two': 0xe240, 'screen-split-three': 0xe241, 'customize': 0xe242, 'user-edit': 0xe243,
@@ -180,11 +180,14 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				'master-task-triangle': 0xe258, 'master-task-triangle-2': 0xe259, 'program-triangles': 0xe25a, 'program-triangles-2': 0xe25b,
 				'mirrored-task-circle': 0xe25c, 'mirrored-task-circle-2': 0xe25d, 'checklist-item': 0xe25e, 'checklist-item-2': 0xe25f,
 				'checklist': 0xe260, 'checklist-2': 0xe261, 'chart-table-view': 0xe262, 'filter-analytics': 0xe263, 'filter-facets': 0xe264,
-				'filter-fields': 0xe265, 'indent': 0xe266, 'outdent': 0xe267, 'add-folder': 0xe26e, 'away': 0xe26f,
+				'filter-fields': 0xe265, 'indent': 0xe266, 'outdent': 0xe267, 'heading1': 0x1e268, 'heading2': 0x1e269, 'heading3': 0x1e26a,
+				'decrease-line-height': 0xe26b, 'increase-line-height': 0xe26c, 'fx': 0x1e26d, 'add-folder': 0xe26e, 'away': 0xe26f,
 				'busy': 0xe270, 'appear-offline': 0xe271, 'blur': 0xe272, 'pixelate': 0xe273,
 				'horizontal-combination-chart': 0xe274, 'add-employee': 0xe275, 'text-color': 0x1e276,
-				'browse-folder': 0xe277, 'heading1': 0x1e268, 'heading2': 0x1e269, 'heading3': 0x1e26a,
-				'decrease-line-height': 0xe26b, 'increase-line-height': 0xe26c, 'fx': 0x1e26d
+				'browse-folder': 0xe277, 'primary-key': 0xe278, 'two-keys': 0xe279,
+				'strikethrough': 0xe27a, 'text': 0xe27b, 'responsive': 0xe27c, 'desktop-mobile': 0xe27d,
+				'table-row': 0xe27e, 'table-column': 0xe27f, 'validate': 0x1e280, 'keyboard-and-mouse': 0xe281,
+				'touch': 0xe282, 'expand-all': 0xe283, 'collapse-all': 0xe284
 			}
 		};
 
@@ -471,10 +474,10 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			/* This is the font used in sap.ui.core.Icon */
 			sFontFace = "@font-face {" +
 							"font-family: 'SAP-icons';" +
-							"src: local('SAP-icons')," + /* local installed font when untrusted font is disabled */
-							"url('" + sFontPath + "SAP-icons.woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
+							"src: url('" + sFontPath + "SAP-icons.woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
 							"url('" + sFontPath + "SAP-icons.woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
-							"url('" + sFontPath + "SAP-icons.ttf') format('truetype');" + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
+							"url('" + sFontPath + "SAP-icons.ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
+							"local('SAP-icons');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
 							"font-weight: normal;" +
 							"font-style: normal;" +
 						"}";

@@ -1,0 +1,29 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.m.sample.ToolbarDesign.Toolbar"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m">
+	<Page showHeader="false">
+		<content>
+			<form:SimpleForm editable="true" width="320px">
+				<Label text="Design"/>
+				<Select change="onSelectDesign" items="{/designTypes}">
+					<core:Item key="{key}" text="{key}"/>
+				</Select>
+				<Label text="Style"/>
+				<Select change="onSelectStyle" items="{/styleTypes}">
+					<core:Item key="{key}" text="{key}"/>
+				</Select>
+			</form:SimpleForm>
+
+			<OverflowToolbar id="contentTb" class="sapUiSmallMarginTop">
+				<Label text="Toolbar content "/>
+				<Button text="Action1" visible="{/bActionContext}"/>
+				<Button text="Action2" visible="{/bActionContext}"/>
+			</OverflowToolbar>
+		</content>
+	</Page>
+
+</mvc:View>

@@ -1,0 +1,154 @@
+<mvc:View
+	controllerName="sap.ui.table.sample.DnD.Controller"
+	xmlns="sap.ui.table"
+	xmlns:dnd="sap.ui.core.dnd"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:c="sap.ui.core"
+	xmlns:m="sap.m"
+	height="100%">
+	<m:Page
+		showHeader="false"
+		enableScrolling="false"
+		class="sapUiContentPadding">
+		<m:content>
+			<m:HBox renderType="Bare">
+				<Table
+					id="table1"
+					selectionMode="Single"
+					rows="{
+						path: '/ProductCollection',
+						filters: {path: 'Rank', operator: 'EQ', value1: '0'}
+					}"
+					visibleRowCount="10">
+					<extension>
+						<m:Toolbar>
+							<m:Title text="Available Products" />
+							<m:ToolbarSpacer/>
+							<m:Button
+								icon="sap-icon://hint"
+								tooltip="Show information"
+								press="showInfo"/>
+						</m:Toolbar>
+					</extension>
+					<columns>
+						<Column
+							sortProperty="Name"
+							filterProperty="Name">
+							<m:Text text="Product Name" />
+							<template>
+								<m:Text text="{Name}" wrapping="false" />
+							</template>
+						</Column>
+						<Column
+							sortProperty="Category"
+							filterProperty="Category">
+							<m:Text text="Category" />
+							<template>
+								<m:Text text="{Category}" wrapping="false" />
+							</template>
+						</Column>
+						<Column
+							hAlign="End"
+							width="6rem"
+							sortProperty="Quantity">
+							<m:Text text="Quantity" />
+							<template>
+								<m:Text text="{
+									path: 'Quantity',
+									type: 'sap.ui.model.type.Integer'
+								}" />
+							</template>
+						</Column>
+					</columns>
+					<dragDropConfig>
+						<dnd:DragInfo
+							groupName="moveToTable2"
+							sourceAggregation="rows"
+							dragStart="onDragStart" />
+						<dnd:DropInfo
+							groupName="moveToTable1"
+							drop="onDropTable1" />
+					</dragDropConfig>
+				</Table>
+				<m:VBox justifyContent="Center" class="sapUiTinyMarginBeginEnd">
+					<m:Button
+						class="sapUiTinyMarginBottom"
+						icon="sap-icon://navigation-right-arrow"
+						tooltip="Move to selected"
+						press="moveToTable2"/>
+					<m:Button
+						icon="sap-icon://navigation-left-arrow"
+						tooltip="Move to available"
+						press="moveToTable1"/>
+				</m:VBox>
+				<Table
+					id="table2"
+					selectionMode="Single"
+					rows="{
+						path: '/ProductCollection',
+						filters: {path: 'Rank', operator: 'GT', value1: '0'},
+						sorter: {path: 'Rank', descending: true}
+					}"
+					visibleRowCount="10"
+					noData="Please drag-and-drop products here.">
+					<extension>
+						<m:Toolbar>
+							<m:Title text="Selected Products" />
+							<m:ToolbarSpacer/>
+							<m:Button
+								icon="sap-icon://navigation-up-arrow"
+								tooltip="Move up"
+								press="moveUp"/>
+							<m:Button
+								icon="sap-icon://navigation-down-arrow"
+								tooltip="Move down"
+								press="moveDown"/>
+						</m:Toolbar>
+					</extension>
+					<columns>
+						<Column>
+							<m:Text text="Product Name" />
+							<template>
+								<m:Text text="{Name}" wrapping="false" />
+							</template>
+						</Column>
+						<Column>
+							<m:Text text="Category" />
+							<template>
+								<m:Text text="{Category}" wrapping="false" />
+							</template>
+						</Column>
+						<Column
+							hAlign="End"
+							width="6rem">
+							<m:Text text="Quantity" />
+							<template>
+								<m:Text text="{
+									path: 'Quantity',
+									type: 'sap.ui.model.type.Integer'
+								}" />
+							</template>
+						</Column>
+					</columns>
+					<dragDropConfig>
+						<dnd:DragInfo 
+							groupName="moveToTable1"
+							sourceAggregation="rows"
+							dragStart="onDragStart" />
+						<dnd:DropInfo
+							groupName="moveToTable2"
+							targetAggregation="rows"
+							dropPosition="Between"
+							drop="onDropTable2" />
+						<dnd:DragDropInfo
+							sourceAggregation="rows"
+							targetAggregation="rows"
+							dropPosition="Between"
+							dragStart="onDragStart"
+							drop="onDropTable2" />
+					</dragDropConfig>
+				</Table>
+			</m:HBox>
+		</m:content>
+	</m:Page>
+</mvc:View>

@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'jquery.sap.global', '../Binding', '../json/JSONModel', '../json/JSONPropertyBinding', '../json/JSONListBinding', 'sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', '../Context', '../ChangeReason'
-], function(jQuery, Binding, JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason) {
+	'jquery.sap.global', '../json/JSONModel', '../json/JSONPropertyBinding', '../json/JSONListBinding', 'sap/ui/base/ManagedObject', 'sap/ui/base/ManagedObjectObserver', '../Context', '../ChangeReason'
+], function(jQuery, JSONModel, JSONPropertyBinding, JSONListBinding, ManagedObject, ManagedObjectObserver, Context, ChangeReason) {
 	"use strict";
 
 	var ManagedObjectModelAggregationBinding = JSONListBinding.extend("sap.ui.model.base.ManagedObjectModelAggregationBinding"),
@@ -37,6 +37,7 @@ sap.ui.define([
 				properties: {},
 				aggregations: {}
 			};
+			this.mListBinding = {};
 			JSONModel.apply(this, [oData]);
 
 			this._oObserver = new ManagedObjectObserver(this.observerChanges.bind(this));
@@ -104,7 +105,7 @@ sap.ui.define([
 				if (oProperty) {
 					var sSetter = oProperty._sMutator,
 						sGetter = oProperty._sGetter;
-					if (oObject[sGetter] !== oValue) {
+					if (oObject[sGetter]() !== oValue) {
 						oObject[sSetter](oValue);
 						this.checkUpdate(false, bAsyncUpdate);
 						return true;
@@ -126,15 +127,20 @@ sap.ui.define([
 	 */
 	ManagedObjectModel.prototype.addBinding = function(oBinding) {
 		JSONModel.prototype.addBinding.apply(this, arguments);
-		this.checkUpdate();
+		if (oBinding instanceof ManagedObjectModelAggregationBinding) {
+			var sAggregationName = oBinding.sPath.replace("/","");
+			this.mListBinding[sAggregationName] = oBinding;
+		}
+		oBinding.checkUpdate(false);
 	};
 
 	ManagedObjectModel.prototype.removeBinding = function(oBinding) {
 		JSONModel.prototype.removeBinding.apply(this, arguments);
-		if (oBinding._bAttached) {
-			oBinding._bAttached = false;
-			this._getObject(oBinding.getPath(), oBinding.getContext(), false);
+		if (oBinding instanceof ManagedObjectModelAggregationBinding) {
+			var sAggregationName = oBinding.sPath.replace("/","");
+			delete this.mListBinding[sAggregationName];
 		}
+		this._observeBeforeEvaluating(oBinding, false);
 	};
 
 	/**
@@ -361,6 +367,8 @@ sap.ui.define([
 				}
 			} else if (sSpecial === "id") {
 				return oNode.getId();
+			} else if (sSpecial === "metadataContexts") {
+				return oNode._oProviderData;
 			}
 		} else if (sSpecial === "binding" && oParentNode && sParentPart) {
 			return oParentNode.getBinding(sParentPart);
@@ -390,18 +398,16 @@ sap.ui.define([
 	 * Supported selectors -> see _getSpecialNode
 	 * @private
 	 */
-	ManagedObjectModel.prototype._getObject = function(sPath, oContext, bChangeHandlers) {
+	ManagedObjectModel.prototype._getObject = function(sPath, oContext) {
 		var oNode = this._oObject,
-			sResolvedPath = "";
+			sResolvedPath = "",
+			that = this;
 
-		for (var i = 0; i < this.aBindings.length; i++) {
-			var oBinding = this.aBindings[i],
-				sResolved = this.resolve(oBinding.getPath(), oBinding.getContext());
-			if (sResolved && !oBinding._bAttached) {
-				oBinding._bAttached = true;
-				this._getObject(oBinding.getPath(), oBinding.getContext(), true);
+		this.aBindings.forEach(function(oBinding) {
+			if (!oBinding._bAttached) {
+				that._observeBeforeEvaluating(oBinding, true);
 			}
-		}
+		});
 
 		if (typeof sPath === "string" && sPath.indexOf("/") != 0 && !oContext) {
 			return null;
@@ -436,37 +442,36 @@ sap.ui.define([
 			iIndex++;
 		}
 		var oParentNode = null,
-			sParentPart = null;
+			sParentPart = null,
+			sPart;
 		while (oNode !== null && aParts[iIndex]) {
-			var sPart = aParts[iIndex];
+			sPart = aParts[iIndex];
+
 			if (sPart.indexOf("@") === 0) {
 				// special properties
 				oNode = this._getSpecialNode(oNode, sPart.substring(1), oParentNode, sParentPart);
 			} else if (oNode instanceof ManagedObject) {
-				oParentNode = oNode;
-				sParentPart = sPart;
-				var oNodeMetadata = oNode.getMetadata(), oProperty = oNodeMetadata.getProperty(sPart);
-				if (oProperty) {
-					if (bChangeHandlers === true) {
-						this._observePropertyChange(oNode, oProperty);
-					} else if (bChangeHandlers === false) {
-						this._unobservePropertyChange(oNode, oProperty);
-					}
-					oNode = oNode[oProperty._sGetter]();
+				var oNodeMetadata = oNode.getMetadata();
+
+				// look for the marker interface
+				if (oNodeMetadata.isInstanceOf("sap.ui.core.IDScope") && sPart.indexOf("#") === 0) {
+					oNode = oNode.byId(sPart.substring(1));
 				} else {
-					var oAggregation = oNodeMetadata.getAggregation(sPart) || oNodeMetadata.getAllPrivateAggregations()[sPart];
-					if (oAggregation) {
-						if (bChangeHandlers === true) {
-							this._observeAggregationChange(oNode, oAggregation);
-						} else if (bChangeHandlers === false) {
-							this._unobserveAggregationChange(oNode, oAggregation);
-						}
-						oNode = oNode[oAggregation._sGetter] ? oNode[oAggregation._sGetter]() : oNode.getAggregation(sPart);
+					oParentNode = oNode;
+					sParentPart = sPart;
+					var oProperty = oNodeMetadata.getProperty(sPart);
+					if (oProperty) {
+						oNode = oNode[oProperty._sGetter]();
 					} else {
-						if (oNode && oNode[sPart] && typeof oNode[sPart] === "function") {
-							oNode = oNode[sPart]();
+						var oAggregation = oNodeMetadata.getAggregation(sPart) || oNodeMetadata.getAllPrivateAggregations()[sPart];
+						if (oAggregation) {
+							oNode = oNode[oAggregation._sGetter] ? oNode[oAggregation._sGetter]() : oNode.getAggregation(sPart);
 						} else {
-							oNode = null;
+							if (oNode && oNode[sPart] && typeof oNode[sPart] === "function") {
+								oNode = oNode[sPart]();
+							} else {
+								oNode = null;
+							}
 						}
 					}
 				}
@@ -499,7 +504,88 @@ sap.ui.define([
 		JSONModel.prototype.destroy.apply(this, arguments);
 	};
 
+	ManagedObjectModel.prototype._observeBeforeEvaluating = function(oBinding, bObserve) {
+		if (!oBinding.isResolved()) {
+			return;
+		}
+
+		var sPath = oBinding.getPath();
+		var oContext = oBinding.getContext(), oNode = this._oObject, sResolvedPath;
+
+		if (oContext instanceof ManagedObject) {
+			oNode = oContext;
+			sResolvedPath = sPath;
+		} else if (!oContext || oContext instanceof Context) {
+			sResolvedPath = this.resolve(sPath, oContext);
+			if (!sResolvedPath) {
+				return;
+			}
+			// handling custom data stored in the original this.oData object of the JSONModel
+			if (sResolvedPath.indexOf("/" + CUSTOMDATAKEY) === 0) {
+				return;
+			}
+		} else {
+			return;
+		}
+
+		var aParts = sResolvedPath.split("/");
+
+		if (!aParts[0]) {
+			// absolute path starting with slash
+			aParts.shift();
+		}
+
+		var sPart = aParts[0];
+
+		if (oNode instanceof ManagedObject) {
+			var oNodeMetadata = oNode.getMetadata(), oProperty = oNodeMetadata.getProperty(sPart);
+			if (oProperty) {
+				if (bObserve === true) {
+					this._observePropertyChange(oNode, oProperty);
+				} else if (bObserve === false) {
+					this._unobservePropertyChange(oNode, oProperty);
+				}
+			} else {
+				var oAggregation = oNodeMetadata.getAggregation(sPart) || oNodeMetadata.getAllPrivateAggregations()[sPart];
+				if (oAggregation) {
+					if (bObserve === true) {
+						this._observeAggregationChange(oNode, oAggregation);
+					} else if (bObserve === false) {
+						this._unobserveAggregationChange(oNode, oAggregation);
+					}
+				}
+			}
+
+			oBinding._bAttached = bObserve;
+		}
+	};
+
 	ManagedObjectModel.prototype.observerChanges = function(oChange) {
+		if (oChange.type == "aggregation") {
+			if (oChange.mutation == "insert") {
+				// listen to inner changes
+				this._oObserver.observe(oChange.child, {
+					properties: true,
+					aggegations: true
+				});
+			} else {
+				// stop listening inner changes
+				this._oObserver.unobserve(oChange.child, {
+					properties: true,
+					aggegations: true
+				});
+			}
+
+			if (this.mListBinding[oChange.name]) {
+				var oListBinding = this._oObject.getBinding(oChange.name);
+				var oAggregation = this._oObject.getAggregation(oChange.name);
+
+				if (oListBinding && oListBinding.getLength() != oAggregation.length) {
+					return;
+				}
+			}
+		}
+
 		this.checkUpdate();
 	};
 

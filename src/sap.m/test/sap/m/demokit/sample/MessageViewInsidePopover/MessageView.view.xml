@@ -1,7 +1,7 @@
 <mvc:View height="100%" controllerName="sap.m.sample.MessageViewInsidePopover.MessageView"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m">
-	<Page>
+	<Page showHeader="false">
 		<content>
 			<Button id="mVBtn" text="Messages" class="sapUiLargeMarginTop sapUiLargeMarginBegin" press="handlePopoverPress"/>
 		</content>

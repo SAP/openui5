@@ -3,10 +3,35 @@
  */
 
 //Provides control sap.ui.unified.CalendarMonthInterval.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleData', 'sap/ui/core/delegate/ItemNavigation',
-               'sap/ui/model/type/Date', 'sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar/CalendarDate', 'sap/ui/unified/library'],
-               function(jQuery, Control, LocaleData, ItemNavigation, Date1, CalendarUtils, CalendarDate, library) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/core/Control',
+	'sap/ui/core/LocaleData',
+	'sap/ui/core/delegate/ItemNavigation',
+	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/calendar/CalendarDate',
+	'sap/ui/unified/library',
+	'sap/ui/core/format/DateFormat',
+	'sap/ui/core/library',
+	'sap/ui/core/Locale',
+	"./MonthsRowRenderer"
+], function(
+	jQuery,
+	Control,
+	LocaleData,
+	ItemNavigation,
+	CalendarUtils,
+	CalendarDate,
+	library,
+	DateFormat,
+	coreLibrary,
+	Locale,
+	MonthsRowRenderer
+	) {
 	"use strict";
+
+	// shortcut for sap.ui.core.CalendarType
+	var CalendarType = coreLibrary.CalendarType;
 
 	/*
 	 * <code>CalendarDate</code> objects are used inside the <code>MonthsRow</code>, whereas JavaScript dates are used in the API.
@@ -139,8 +164,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	MonthsRow.prototype.init = function(){
 
 		//need day in pattern because in islamic calendar 2 Month can start in one gregorianic calendar
-		this._oFormatYyyymm = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: sap.ui.core.CalendarType.Gregorian});
-		this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({pattern: "MMMM y"});
+		this._oFormatYyyymm = DateFormat.getInstance({pattern: "yyyyMMdd", calendarType: CalendarType.Gregorian});
+		this._oFormatLong = DateFormat.getInstance({pattern: "MMMM y"});
 
 		this._mouseMoveProxy = jQuery.proxy(this._handleMouseMove, this);
 
@@ -242,7 +267,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	};
 
-	/**
+	/*
 	 * Sets a date for the months row.
 	 * @param {Date} oDate a JavaScript date
 	 * @return {sap.ui.unified.calendar.MonthsRow} <code>this</code> for method chaining
@@ -256,7 +281,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 	/**
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be set to the month row
 	*/
 	MonthsRow.prototype._setDate = function(oDate){
 
@@ -281,9 +306,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	};
 
 
-	/**
+	/*
 	 * Sets a date for a start date of the months row.
-	 * @param {Date} oDate a JavaScript date
+	 * @param {Date} oStartDate A JavaScript date
 	 * @return {sap.ui.unified.calendar.MonthsRow} <code>this</code> for method chaining
 	 */
 	MonthsRow.prototype.setStartDate = function(oStartDate){
@@ -370,7 +395,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 			return oParent._getLocaleData();
 		} else if (!this._oLocaleData) {
 			var sLocale = this._getLocale();
-			var oLocale = new sap.ui.core.Locale(sLocale);
+			var oLocale = new Locale(sLocale);
 			this._oLocaleData = LocaleData.getInstance(oLocale);
 		}
 
@@ -386,8 +411,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 		var sLocale = this._getLocale();
 
 		if (this._oFormatLong.oLocale.toString() != sLocale) {
-			var oLocale = new sap.ui.core.Locale(sLocale);
-			this._oFormatLong = sap.ui.core.format.DateFormat.getInstance({style: "long"} , oLocale);
+			var oLocale = new Locale(sLocale);
+			this._oFormatLong = DateFormat.getInstance({style: "long"} , oLocale);
 		}
 
 		return this._oFormatLong;
@@ -978,8 +1003,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	/**
 	*
-	* @param {object} oEvent
-	* @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate
+	* @param {object} oEvent The fired event
+	* @param {sap.ui.unified.calendar.CalendarDate} oFocusedDate The clicked date
 	* @param {int} iIndex
 	* @private
 	*/
@@ -1010,8 +1035,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	/**
-	 * @param {sap.ui.unified.calendar.CalendarDate} oDate
-	 * @param {boolean} bNoFocus
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be changed
+	 * @param {boolean} bNoFocus Whether the date is focused
 	 */
 	function _changeDate(oDate, bNoFocus){
 
@@ -1044,11 +1069,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	}
 
-   /**
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate the calendar date to focus
-	* @param {boolean} bNoFocus if true, item navigator's focus won't be set, but just the index will so.
-	* @private
-	*/
+	/**
+	 * @param {sap.ui.unified.calendar.CalendarDate} oDate the calendar date to focus
+	 * @param {boolean} bNoFocus if true, item navigator's focus won't be set, but just the index will so.
+	 * @private
+	 */
 	function _focusDate(oDate, bNoFocus){
 
 		var sYyyymm = this._oFormatYyyymm.format(oDate.toUTCJSDate(), true);
@@ -1110,8 +1135,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	/**
-	* @param {sap.ui.unified.calendar.CalendarDate} oDate
-	* @param {boolean} bMove
+	* @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be set to the month and the year in the header
+	* @param {boolean} bMove Whether move event is fired
+	* @returns {boolean} Whether the month is selected
 	* @private
 	*/
 	function _selectMonth(oDate, bMove){
@@ -1158,7 +1184,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 					oEndDate = oStartDate;
 					oStartDate = oDate;
 					if (!bMove) {
-						// in move mode do not set date. this bring broblems if on backward move the start date would be changed
+						// in move mode do not set date. this bring problems if on backward move the start date would be changed
 						oDateRange.setProperty("startDate", oStartDate.toLocalJSDate(), true); // no-rerendering
 						oDateRange.setProperty("endDate", oEndDate.toLocalJSDate(), true); // no-rerendering
 					}
@@ -1223,8 +1249,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 	}
 
 	/**
-	* @param {sap.ui.unified.calendar.CalendarDate} oStartDate
-	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate
+	* @param {sap.ui.unified.calendar.CalendarDate} oStartDate The start date of the selection
+	* @param {sap.ui.unified.calendar.CalendarDate} oEndDate The end date of the selection
 	* @private
 	*/
 	function _updateSelection(oStartDate, oEndDate){
@@ -1468,4 +1494,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/LocaleDa
 
 	return MonthsRow;
 
-}, /* bExport= */ true);
+});

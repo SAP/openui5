@@ -63,8 +63,17 @@ html.sap-desktop {
 	}
 
 	.sapUiForm .sapMCb:not(.sapMCbBgDis):focus:before {
-		left: -1px; /* Cb in SimpleForm: left and right border adjustment */
-		right: 0.125rem;
+		left: -1px; /* Cb in SimpleForm: left border adjustment */
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapMCb:not(.sapMCbBgDis):not(.sapMCbHasLabel):focus > .sapMCbBg {
+		outline-style: dashed;
+	}
+	.sapMCb:not(.sapMCbBgDis).sapMCbHasLabel:focus:before {
+		border: 0.125rem dashed @sapUiContentFocusColor;
 	}
 }
 

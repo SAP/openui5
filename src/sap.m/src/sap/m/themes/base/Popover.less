@@ -72,10 +72,10 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 .sapMPopover .sapMPopoverScroll {
 	/* 	width: 100%;  when set width to 100%, the horizontal scrolling will be disabled and this is done in the end of setArrowPosition method*/
 	display: inline-block;
-	overflow: hidden;
 	vertical-align: middle;
 	min-width: 100%;
 	box-sizing: border-box;
+	overflow-y: hidden;
 }
 
 .sapMPopover.sapUiPopupWithPadding .sapMPopoverScroll {
@@ -127,8 +127,9 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 	background-color: transparent;
 }
 
-.sapMPopover > .sapMBar {
-	position: relative;
+.sapMPopoverHeader > .sapMBar,
+.sapMPopoverSubHeader > .sapMBar,
+.sapMPopoverFooter > .sapMBar {
 	width: auto;
 }
 
@@ -141,7 +142,9 @@ html[data-sap-ui-animation='on'] .sapMPopover {
 	width: auto;
 }
 
-.sapMPopoverWithoutBar .sapMPage footer.sapMIBar {
+.sapMPopoverWithoutBar .sapMPage .sapMPopoverHeader,
+.sapMPopoverWithoutBar .sapMPage .sapMPopoverSubHeader,
+.sapMPopoverWithoutBar .sapMPage .sapMPopoverFooter {
 	position: absolute;
 }
 
@@ -299,38 +302,38 @@ html[data-sap-ui-browser^="ie"] {
 }
 
 /* padding for title in header is removed because of ticket 0120031469 0004432742 2013*/
-.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH {
+.sapMPopoverHeader .sapMBarMiddle > .sapMBarPH {
 	box-sizing: border-box;
 }
 
-.sapMPopoverHeader > .sapMBarMiddle > .sapMBarPH > .sapMLabel {
+.sapMPopoverHeader .sapMBarMiddle > .sapMBarPH > .sapMLabel {
 	display: inline-block;
 }
 
 /*for only two buttons in footer's contentMiddle aggregation*/
-.sapMPopoverSpecialFooter > .sapMBarMiddle {
+.sapMPopoverSpecialFooter .sapMBarMiddle {
 	display: block;
 	height: 100%;
 	//padding: 0 0.25rem;
 	box-sizing: border-box;
 }
 
-.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
+.sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH {
 	display: block;
 	padding: 0;
 }
 
-.sapMPopoverSpecialFooter > .sapMBarLeft,
-.sapMPopoverSpecialFooter > .sapMBarRight {
+.sapMPopoverSpecialFooter .sapMBarLeft,
+.sapMPopoverSpecialFooter .sapMBarRight {
 	display: none;
 }
 
-.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH > .sapMBtn {
+.sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH > .sapMBtn {
 	width: 50%;
 	padding-left: 0.25rem;
 }
 
-.sapMPopoverSpecialFooter > .sapMBarMiddle > .sapMBarPH {
+.sapMPopoverSpecialFooter .sapMBarMiddle > .sapMBarPH {
 
 	.sapMBtn:last-child {
 		margin-left: 0;

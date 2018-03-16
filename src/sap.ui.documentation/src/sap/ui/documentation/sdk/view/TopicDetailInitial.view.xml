@@ -12,64 +12,100 @@
 		  class="sapUiNoContentPadding">
 		<l:BlockLayout>
 			<l:BlockLayoutRow>
-				<l:BlockLayoutCell class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
+				<l:BlockLayoutCell
+						class="sapUiNoContentPadding sapUiDemokitLandingImageCell sapUiNoContentPadding">
 					<Image
-							id="phoneImage"
-							src="./resources/sap/ui/documentation/sdk/images/Docu_S_cropped.jpg"
-							width="100%"
-							densityAware="false"
-							visible="{device>/system/phone}"/>
+						id="phoneImage"
+						src="./resources/sap/ui/documentation/sdk/images/Docu_S_cropped.jpg"
+						width="100%"
+						densityAware="false"
+						class="landingImage"
+						load="handleLandingImageLoad"
+						visible="{device>/system/phone}"/>
+
 					<Image
-							src="./resources/sap/ui/documentation/sdk/images/Docu_M_and_L_cropped.jpg"
-							width="100%"
-							densityAware="false"
-							visible="{=!${device>/system/phone}}"/>
-					<Text
-							class="sapUiDocumentationDocumentationHeaderText sapUiDocumentationDocumentationHeaderTitleText"
+						src="./resources/sap/ui/documentation/sdk/images/Docu_M_and_L_cropped.jpg"
+						width="100%"
+						densityAware="false"
+						class="landingImage"
+						load="handleLandingImageLoad"
+						visible="{=!${device>/system/phone}}"/>
+
+					<l:VerticalLayout
+						id="landingImageHeadline"
+						class="sapUiDocumentationDocumentationHeading"
+						visible="false"
+						width="100%">
+						<Text
 							text="Documentation"
 							width="100%"
 							textAlign="Left"/>
-					<Text
-							class="sapUiDocumentationDocumentationHeaderText sapUiDocumentationDocumentationHeaderSubText"
-							text="Extend your knowledge base"
-							width="100%"
-							textAlign="Left"/>
+						<Button
+							class="actionButton"
+							text="Download"
+							type="Emphasized"
+							press="onDownloadButtonPress"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+
+			<l:BlockLayoutRow id="disclaimerBlock" visible="false">
+				<l:BlockLayoutCell
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA">
+					<MessageStrip
+						id="disclaimerMessage"
+						showIcon="true"/>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow class="sapUiContentPadding">
 				<l:BlockLayoutCell
-						class="largeCell demokitInitialPagesColorPatternB">
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
+					<l:VerticalLayout width="100%">
 					<custom:TitleLink
 							width="100%"
 							text="What's New?"
 							href="#/topic/99ac68a5b1c3416ab5c84c99fefa250d"
 							titleStyle="H1"/>
+						<Text
+								text="Find out about the new features in the latest UI5 versions"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="largeCell demokitInitialPagesColorPatternC">
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
+					<l:VerticalLayout width="100%">
 					<custom:TitleLink
 							width="100%"
 							text="Read Me First"
 							href="#/topic/167193ced54c41c3961d7df3479d7bbe"
 							titleStyle="H1"/>
+						<Text
+								text="Important information before you start using UI5 productively"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
 						width="2"
 						class="largeCell"
-						backgroundColorSet="6"
-						backgroundColorIndex="2">
-					<custom:TitleLink
-							width="100%"
-							text="Get Started"
-							href="#/topic/8b49fc198bf04b2d9800fc37fecbb218"
-							class="demokitInitialPagesWhiteText"
-							titleStyle="H1"/>
-					<Text
-							text="Set Up and Tutorials"
-							class="demokitInitialPagesWhiteText"/>
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeB">
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Get Started"
+								href="#/topic/8b49fc198bf04b2d9800fc37fecbb218"
+								class="demokitInitialPagesWhiteText"
+								titleStyle="H1"/>
+						<Text
+								text="Setup and tutorials"
+								class="demokitInitialPagesWhiteText"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
@@ -77,8 +113,8 @@
 				<l:BlockLayoutCell
 						width="2"
 						class="largeCell"
-						backgroundColorSet="6"
-						backgroundColorIndex="3">
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeC">
 					<l:VerticalLayout width="100%">
 						<custom:TitleLink
 								width="100%"
@@ -92,82 +128,105 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
-						class="largeCell demokitInitialPagesColorPatternC">
-					<custom:TitleLink
-							width="100%"
-							text="Extending Apps"
-							href="#/topic/a264a9abf98d4caabbf9b027bc1005d8"
-							titleStyle="H1"/>
-					<Text
-							text="Adapt apps to your specific requirements"/>
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Extending Apps"
+								href="#/topic/a264a9abf98d4caabbf9b027bc1005d8"
+								titleStyle="H1"/>
+						<Text
+								text="Adapt apps to your specific requirements"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="largeCell demokitInitialPagesColorPatternB">
-					<custom:TitleLink
-							width="100%"
-							text="Developing Content"
-							href="#/topic/8dcab0011d274051808f959800cabf9f"
-							titleStyle="H1"/>
-					<Text
-							text="Create custom controls or contribute to UI5"/>
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Developing Controls"
+								href="#/topic/8dcab0011d274051808f959800cabf9f"
+								titleStyle="H1"/>
+						<Text
+								text="Create custom controls or contribute to UI5"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
-						class="largeCell demokitInitialPagesColorPatternA">
-					<custom:TitleLink
-							width="100%"
-							text="SAP Fiori Elements"
-							href="#/topic/03265b0408e2432c9571d6b3feb6b1fd"
-							titleStyle="H1"/>
-					<Text
-							text="UI patterns and templates for commonly used application patterns"/>
+						class="largeCell demokitInitialPagesColorPatternA"
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA"
+						visible="{=!${versionData>/isOpenUI5}}">
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="SAP Fiori Elements"
+								href="#/topic/03265b0408e2432c9571d6b3feb6b1fd"
+								titleStyle="H1"/>
+						<Text
+								text="UI patterns and templates for commonly used application patterns"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="largeCell demokitInitialPagesColorPatternC">
-					<custom:TitleLink
-							width="100%"
-							text="Analysis Path Framework"
-							href="#/topic/1c457c53595a6655e10000000a423f68"
-							titleStyle="H1"/>
-					<Text
-							text="Build and enhance interactive analytical web applications"/>
+						class="largeCell demokitInitialPagesColorPatternC"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB"
+						visible="{=!${versionData>/isOpenUI5}}">
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Analysis Path Framework"
+								href="#/topic/1c457c53595a6655e10000000a423f68"
+								titleStyle="H1"/>
+						<Text
+								text="Build and enhance interactive analytical web applications"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
 						class="largeCell"
-						backgroundColorSet="6"
-						backgroundColorIndex="4">
-					<custom:TitleLink
-							width="100%"
-							text="Essentials"
-							href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
-							class="demokitInitialPagesWhiteText"
-							titleStyle="H1"/>
-					<Text
-							text="Development concepts, such as MVC, data binding, and components"
-							class="demokitInitialPagesWhiteText"/>
+						backgroundColorSet="ColorSet6"
+						backgroundColorShade="ShadeD">
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="Essentials"
+								href="#/topic/ec699e0817fb46a0817b0fa276a249f8"
+								class="demokitInitialPagesWhiteText"
+								titleStyle="H1"/>
+						<Text
+								text="Development concepts, such as MVC, data binding, and components"
+								class="demokitInitialPagesWhiteText"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 
 				<l:BlockLayoutCell
-						class="largeCell demokitInitialPagesColorPatternD">
-					<custom:TitleLink
-							width="100%"
-							text="More About Controls"
-							href="#/topic/3ec6808ff0f34a75a9f40748cf9989b9"
-							titleStyle="H1"/>
-					<Text
-							text="Addition to the API reference"/>
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
+					<l:VerticalLayout width="100%">
+						<custom:TitleLink
+								width="100%"
+								text="More About Controls"
+								href="#/topic/3ec6808ff0f34a75a9f40748cf9989b9"
+								titleStyle="H1"/>
+						<Text
+								text="Addition to the API reference"/>
+					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 			</l:BlockLayoutRow>
 
 			<l:BlockLayoutRow>
 				<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
 			</l:BlockLayoutRow>
-
 		</l:BlockLayout>
 	</Page>
 </mvc:View>

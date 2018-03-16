@@ -4,9 +4,27 @@
 
 // Provides control sap.m.P13nDimMeasurePanel.
 sap.ui.define([
-	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nDimMeasureItem', './SearchField', './Table', './library', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel'
-], function(jQuery, ColumnListItem, P13nPanel, P13nDimMeasureItem, SearchField, Table, library, Control, JSONModel) {
+	'jquery.sap.global', './ColumnListItem', './P13nPanel', './P13nDimMeasureItem', './SearchField', './Table', './library', 'sap/ui/core/library', 'sap/ui/model/ChangeReason', 'sap/ui/model/json/JSONModel', 'sap/ui/model/BindingMode', 'sap/ui/core/ResizeHandler', 'sap/ui/core/Item', 'sap/ui/core/InvisibleText', 'sap/ui/core/IconPool', 'sap/m/ScrollContainer'
+], function(jQuery, ColumnListItem, P13nPanel, P13nDimMeasureItem, SearchField, Table, library, CoreLibrary, ChangeReason, JSONModel, BindingMode, ResizeHandler, Item, InvisibleText, IconPool, ScrollContainer) {
 	"use strict";
+
+	// shortcut for sap.m.OverflowToolbarPriority
+	var OverflowToolbarPriority = library.OverflowToolbarPriority;
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = library.ButtonType;
+
+	// shortcut for sap.m.ToolbarDesign
+	var ToolbarDesign = library.ToolbarDesign;
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
+
+	// shortcut for sap.m.ListMode
+	var ListMode = library.ListMode;
+
+	// shortcut for sap.m.P13nPanelType
+	var P13nPanelType = library.P13nPanelType;
 
 	/**
 	 * Constructor for a new P13nDimMeasurePanel.
@@ -67,6 +85,20 @@ sap.ui.define([
 					multiple: true,
 					singularName: "availableChartType"
 				}
+			},
+			events: {
+				// TODO
+				/**
+				 * Event raised when one or more <code>DimMeasureItems</code> has been updated.
+				 * Aggregation <code>DimMeasureItems</code> should be updated outside...
+				 * @since 1.50.0
+				 */
+				changeDimMeasureItems: {},
+				/**
+				 * Event raised when a <code>ChartType</code> has been updated.
+				 * @since 1.50.0
+				 */
+				changeChartType: {}
 			}
 		},
 		renderer: function(oRm, oControl) {
@@ -87,50 +119,83 @@ sap.ui.define([
 		}
 	});
 
-	P13nDimMeasurePanel.prototype.getOkPayload = function() {
-		this._syncModel2Panel();
-		return {
-			// We have to return dimMeasureItems as of the fact that new created or deleted dimMeasureItems are not updated in the model via list
-			// binding.
-			dimMeasureItems: this.getDimMeasureItems(),
-			chartTypeKey: this.getChartTypeKey()
-		};
-	};
-
-	// ----------------------- Overwrite Method -----------------
-
 	P13nDimMeasurePanel.prototype.init = function() {
+		// The panel is using internal JSON model which is bound to internal sap.m.Table.
+		// When a table item is selected it reflects in the JSON model. When a table item is moved,
+		// we bring the JSON items in the right order and it reflects in the sap.m.Table.
+		// The JSON model is filled based on 'items' aggregation and is updated afterwards
+		// with information like selection and position of an item based on 'dimMeasureItems' aggregation
+		// (the information is taken from the model of aggregation binding. See _updateInternalModel() for more details).
+		//
+		// This update should be done:
+		//  * before the panel is rendered first time (onBeforeRendering) - with item sorting
+		//
+		//  * after the 'dimMeasureItems' or 'items' aggregation has been changed (via API e.g. addDimMeasureItem or via binding e.g. updateDimMeasureItem) - with item sorting
+		//    Note: the JSON model should not be updated during the 'changeDimMeasureItems' event is fired.
+		//
+		//  * before getOKPayload is called. getOKPayload is called when the user opens the dialog were other panel is
+		//    initially visible and P13nDimMeasurePanel has not yet rendered. For validation the JSON model should be updated - with item sorting
+		//
+		// General note: it is not supposed that control keeps the 'dimMeasureItems' aggregation up-to-date.
+		//  * The usual SAPUI5 wide approach is that the control fires an event (here 'changeDimMeasureItems')
+		//    and the consumer has to update the model data of the aggregation binding. This is the case where user's interaction,
+		//    like set selection or move items, ends up in model data.
+		//  * The case where the consumer pushes changes into model data, like e.g. Restore, is done also via binding update.
+
 		var that = this;
 		this._iLiveChangeTimer = 0;
 		this._iSearchTimer = 0;
-		this._oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+
+		this._bIgnoreUpdateInternalModel = false;
+		this._bUpdateInternalModel = true;
+
 		this._bOnAfterRenderingFirstTimeExecuted = false;
-		this._bOnBeforeRenderingFirstTimeExecuted = false;
+
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this.oAvailableRoleTypes = {
+			Dimension: [
+				{
+					key: "category",
+					text: oRb.getText('COLUMNSPANEL_CHARTROLE_CATEGORY')
+				}, {
+					key: "series",
+					text: oRb.getText('COLUMNSPANEL_CHARTROLE_SERIES')
+				}
+			],
+			Measure: [
+				{
+					key: "axis1",
+					text: oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS1')
+				}, {
+					key: "axis2",
+					text: oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS2')
+				}
+			]
+		};
 
 		var oModel = new JSONModel({
 			availableChartTypes: [],
 			selectedChartTypeKey: null,
 			items: [],
-			indexOfMarkedTableItem: -1,
-			markedTableItem: null,
-			isMoveDownButtonEnabled: false,
-			isMoveUpButtonEnabled: false,
-			showOnlySelectedItems: false,
+			columnKeyOfMarkedItem: undefined,
+			isMoveDownButtonEnabled: undefined,
+			isMoveUpButtonEnabled: undefined,
+			showOnlySelectedItems: undefined,
 			countOfSelectedItems: 0,
 			countOfItems: 0
 		});
-		oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
+		oModel.setDefaultBindingMode(BindingMode.TwoWay);
 		oModel.setSizeLimit(1000);
 		this.setModel(oModel, "$sapmP13nDimMeasurePanel");
 
-		this.setType(sap.m.P13nPanelType.dimeasure);
-		this.setTitle(this._oRb.getText("CHARTPANEL_TITLE"));
+		this.setType(P13nPanelType.dimeasure);
+		this.setTitle(oRb.getText("CHARTPANEL_TITLE"));
 
 		this._createTable();
 		this._createToolbar();
 
 		this.setVerticalScrolling(false);
-		var oScrollContainer = new sap.m.ScrollContainer({
+		var oScrollContainer = new ScrollContainer({
 			horizontal: false,
 			vertical: true,
 			content: [
@@ -139,6 +204,7 @@ sap.ui.define([
 			width: '100%',
 			height: '100%'
 		});
+		this.addAggregation("content", oScrollContainer);
 
 		// Call-back for handling of resizing
 		// TODO: make sure we optimize calculation and respect margins and borders, use e.g.
@@ -149,8 +215,8 @@ sap.ui.define([
 				var $dialogCont = null, iContentHeight, iHeaderHeight;
 				var oParent = that.getParent();
 				var oToolbar = that._getToolbar();
-				if (oParent) {
-					$dialogCont = jQuery("#" + oParent.getId() + "-cont");
+				if (oParent && oParent.$) {
+					$dialogCont = oParent.$("cont");
 					if ($dialogCont.children().length > 0 && oToolbar.$().length > 0) {
 						iScrollContainerHeightOld = oScrollContainer.$()[0].clientHeight;
 
@@ -168,23 +234,19 @@ sap.ui.define([
 			}
 			return bChangeResult;
 		};
-		this.addAggregation("content", oScrollContainer);
-		this._sContainerResizeListener = sap.ui.core.ResizeHandler.register(oScrollContainer, this._fnHandleResize);
+		this._sContainerResizeListener = ResizeHandler.register(oScrollContainer, this._fnHandleResize);
 	};
 
 	P13nDimMeasurePanel.prototype.onBeforeRendering = function() {
-		// Synchronize dimMeasureItems and items when the panel is rendered first time
-		if (!this._bOnBeforeRenderingFirstTimeExecuted) {
-			this._bOnBeforeRenderingFirstTimeExecuted = true;
-			this._syncPanel2Model();
-		}
+		this._updateInternalModel();
 
 		// Set marked item initially to the first table item
-		var oData = this._getInternalModel().getData();
-		if (!oData.markedTableItem) {
-			var aVisibleTableItems = this._getVisibleTableItems();
-			this._switchMarkedTableItemTo(aVisibleTableItems[0]);
+		if (!this._getInternalModel().getProperty("/columnKeyOfMarkedItem")) {
+			this._setColumnKeyOfMarkedItem(this._getColumnKeyByTableItem(this._getVisibleTableItems()[0]));
 		}
+		// After each re-render the 'markedTableItem' is re-created. So we have to set the new table item as marked.
+		this._switchMarkedTableItemTo(this._getTableItemByColumnKey(this._getInternalModel().getProperty("/columnKeyOfMarkedItem")));
+		this._updateControlLogic();
 	};
 
 	P13nDimMeasurePanel.prototype.onAfterRendering = function() {
@@ -203,246 +265,193 @@ sap.ui.define([
 		}
 	};
 
-	// ----------------------- Overwrite Method of chartTypeKey Property --------------------------
+	P13nDimMeasurePanel.prototype.getOkPayload = function() {
+		this._updateInternalModel();
 
-	P13nDimMeasurePanel.prototype.setChartTypeKey = function(sChartTypeKey) {
-		var oModel = this._getInternalModel();
-		this.setProperty("chartTypeKey", sChartTypeKey);
-		// Update model in order to notify the chartTypeKey to ComboBox control
-		oModel.getData().selectedChartTypeKey = sChartTypeKey;
-		return this;
+		// This is very bad practice. As of SAPUI5 directive it is not supposed that control keeps the 'dimMeasureItems' aggregation up-to-date.
+		// The usual SAPUI5 approach is that the control fires an event ('changeDimMeasureItems') and the consumer has to update the model data
+		// of the aggregation binding. This is the case where user's interaction, like set selection or move items, ends up in model data.
+		// But due to backward compatibility we have to keep it.
+		this._getInternalModel().getProperty("/items").forEach(function(oMItem) {
+			if (this._getDimMeasureItemByColumnKey(oMItem.columnKey)) {
+				// Do not update existing dimMeasureItem as it has been just updated in _updateInternalModel method
+				return;
+			}
+			if (!oMItem.persistentSelected) {
+				// Nothing relevant has been changed as item is not selected
+				return;
+			}
+			// Create a new dimMeasureItem if an item have been changed to 'selected'
+			this.addAggregation("dimMeasureItems", new P13nDimMeasureItem({
+				columnKey: oMItem.columnKey,
+				visible: oMItem.persistentSelected,
+				index: oMItem.persistentIndex === -1 ? undefined : oMItem.persistentIndex,
+				role: oMItem.role
+			}));
+		}, this);
+
+		return {
+			// We have to return dimMeasureItems as of the fact that new created or deleted dimMeasureItems are not updated in the model via list
+			// binding.
+			dimMeasureItems: this.getDimMeasureItems(),
+			chartTypeKey: this.getChartTypeKey()
+		};
 	};
 
-	// ----------------------- Overwrite Methods of Item Aggregation ----------------------
+	P13nDimMeasurePanel.prototype.exit = function() {
+
+		ResizeHandler.deregister(this._sContainerResizeListener);
+		this._sContainerResizeListener = null;
+
+		this._getToolbar().destroy();
+
+		this._oTable.destroy();
+		this._oTable = null;
+
+		// destroy model and its data
+		if (this._getInternalModel()) {
+			this._getInternalModel().destroy();
+		}
+
+		if (this.oInvisibleChartTypeText) {
+			this.oInvisibleChartTypeText.destroy();
+			this.oInvisibleChartTypeText = null;
+		}
+
+		window.clearTimeout(this._iLiveChangeTimer);
+		window.clearTimeout(this._iSearchTimer);
+	};
 
 	P13nDimMeasurePanel.prototype.addItem = function(oItem) {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-		this._bOnBeforeRenderingFirstTimeExecuted = false;
-
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
 		this.addAggregation("items", oItem);
-		// Take over item data into model
-		this._includeModelItem(oItem, -1);
-		// 1. Sort the table items when the item has been added programmatically (Note: dimMeasureItems could be already existing)
-		this._sortModelItemsByPersistentIndex(oData.items);
-		// 2. Re-Index the tableIndex
-		this._updateModelItemsTableIndex(oData);
-		this._updateCounts(oData);
 		return this;
 	};
 
 	P13nDimMeasurePanel.prototype.insertItem = function(oItem, iIndex) {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-		this._bOnBeforeRenderingFirstTimeExecuted = false;
-
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
 		this.insertAggregation("items", oItem, iIndex);
-		// Take over item data into model
-		this._includeModelItem(oItem, iIndex);
-		// 1. Sort the table items when the item has been added programmatically (Note: columnsItems could be already existing)
-		this._sortModelItemsByPersistentIndex(oData.items);
-		// 2. Re-Index the tableIndex
-		this._updateModelItemsTableIndex(oData);
-		this._updateCounts(oData);
 		return this;
 	};
 
 	P13nDimMeasurePanel.prototype.removeItem = function(oItem) {
-		var iIndex = this.indexOfItem(oItem);
-		if (iIndex > -1) {
-			var oModel = this._getInternalModel();
-			var oData = oModel.getData();
-			this._bOnBeforeRenderingFirstTimeExecuted = false;
-
-			// Remove item data from model
-			oModel.getData().items.splice(iIndex, 1);
-			// 1. Sort the table items when the item has been removed programmatically (Note: columnsItems could be already existing)
-			this._sortModelItemsByPersistentIndex(oData.items);
-			// 2. Re-Index the tableIndex
-			this._updateModelItemsTableIndex(oData);
-			this._updateCounts(oData);
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
 		}
 		oItem = this.removeAggregation("items", oItem);
 		return oItem;
 	};
 
 	P13nDimMeasurePanel.prototype.removeAllItems = function() {
-		var oModel = this._getInternalModel();
-		this._bOnBeforeRenderingFirstTimeExecuted = false;
-		var aItems = this.removeAllAggregation("items");
-		// Remove items data from model
-		oModel.getData().items = [];
-		return aItems;
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		return this.removeAllAggregation("items");
 	};
 
 	P13nDimMeasurePanel.prototype.destroyItems = function() {
-		var oModel = this._getInternalModel();
-		this._bOnBeforeRenderingFirstTimeExecuted = false;
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
 		this.destroyAggregation("items");
-		// Remove items data from model
-		oModel.getData().items = [];
 		return this;
 	};
 
-	// ----------------------- Overwrite Methods of DimMeasureItem Aggregation ---------------------
-
 	P13nDimMeasurePanel.prototype.addDimMeasureItem = function(oDimMeasureItem) {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-
-		this.addAggregation("dimMeasureItems", oDimMeasureItem);
-		var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-		if (!oModelItem) {
-			return;
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
 		}
-		// Take over dimMeasureItem data
-		oModelItem.persistentIndex = oDimMeasureItem.getIndex();
-		oModelItem.persistentSelected = oDimMeasureItem.getVisible();
-		oModelItem.role = oDimMeasureItem.getRole();
-		// 1. Sort the table only by persistentIndex
-		this._sortModelItemsByPersistentIndex(oData.items);
-		// 2. Re-Index only the tableIndex
-		this._updateModelItemsTableIndex(oData);
-		this._updateCounts(oData);
+		this.addAggregation("dimMeasureItems", oDimMeasureItem);
 		return this;
 	};
 
 	P13nDimMeasurePanel.prototype.insertDimMeasureItem = function(oDimMeasureItem, iIndex) {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-
-		this.insertAggregation("dimMeasureItems", oDimMeasureItem, iIndex);
-		var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-		if (!oModelItem) {
-			return;
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
 		}
-		// Take over dimMeasureItem data
-		oModelItem.persistentIndex = oDimMeasureItem.getIndex();
-		oModelItem.persistentSelected = oDimMeasureItem.getVisible();
-		oModelItem.role = oDimMeasureItem.getRole();
-		// 1. Sort the table only by persistentIndex
-		this._sortModelItemsByPersistentIndex(oData.items);
-		// 2. Re-Index only the tableIndex
-		this._updateModelItemsTableIndex(oData);
-		this._updateCounts(oData);
+		this.insertAggregation("dimMeasureItems", oDimMeasureItem, iIndex);
 		return this;
 	};
 
-	P13nDimMeasurePanel.prototype.removeDimMeasureItem = function(oDimMeasureItem) {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
+	P13nDimMeasurePanel.prototype.updateDimMeasureItems = function(sReason) {
+		this.updateAggregation("dimMeasureItems");
 
-		oDimMeasureItem = this.removeAggregation("dimMeasureItems", oDimMeasureItem);
-		var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-		if (!oModelItem) {
-			return;
+		if (sReason === ChangeReason.Change && !this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
 		}
-		// Remove dimMeasureItem data
-		oModelItem.persistentIndex = -1;
-		oModelItem.persistentSelected = undefined;
-		oModelItem.role = undefined;
-		// 1. Sort the table items when the columnsItem has been removed programmatically
-		this._sortModelItemsByPersistentIndex(oData.items);
-		// 2. Re-Index only tableIndex, keep persistentIndex given by columnsItems
-		this._updateModelItemsTableIndex(oData);
-		this._updateCounts(oData);
-		return oDimMeasureItem;
+	};
+
+	P13nDimMeasurePanel.prototype.removeDimMeasureItem = function(oDimMeasureItem) {
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		return this.removeAggregation("dimMeasureItems", oDimMeasureItem);
 	};
 
 	P13nDimMeasurePanel.prototype.removeAllDimMeasureItems = function() {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-
-		// Remove dimMeasureItem data
-		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
-			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-			if (!oModelItem) {
-				return;
-			}
-			oModelItem.persistentIndex = -1;
-			oModelItem.persistentSelected = undefined;
-			oModelItem.role = undefined;
-		}, this);
-		// 1. Sort the table items when the columnsItem has been removed programmatically
-		this._sortModelItemsByPersistentIndex(oData.items);
-		// 2. Re-Index only tableIndex, keep persistentIndex given by columnsItems
-		this._updateModelItemsTableIndex(oData);
-		this._updateCounts(oData);
-		var aDimMeasureItems = this.removeAllAggregation("dimMeasureItems");
-		return aDimMeasureItems;
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		return this.removeAllAggregation("dimMeasureItems");
 	};
 
 	P13nDimMeasurePanel.prototype.destroyDimMeasureItems = function() {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-
-		// Remove dimMeasureItem data
-		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
-			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-			if (!oModelItem) {
-				return;
-			}
-			oModelItem.persistentIndex = -1;
-			oModelItem.persistentSelected = undefined;
-			oModelItem.role = undefined;
-		}, this);
-		// 1. Sort the table items when the columnsItem has been removed programmatically
-		this._sortModelItemsByPersistentIndex(oData.items);
-		// 2. Re-Index only tableIndex, keep persistentIndex given by columnsItems
-		this._updateModelItemsTableIndex(oData);
-		this._updateCounts(oData);
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
 		this.destroyAggregation("dimMeasureItems");
 		return this;
 	};
 
-	// ----------------------- Overwrite Methods of AvailableChartType Aggregation -----------------
-
-	P13nDimMeasurePanel.prototype.addAvailableChartType = function(oItem) {
-		var oModel = this._getInternalModel();
-		this.addAggregation("availableChartTypes", oItem);
-		oModel.getData().availableChartTypes.push({
-			key: oItem.getKey(),
-			text: oItem.getText()
-		});
-		return this;
-	};
-
-	P13nDimMeasurePanel.prototype.insertAvailableChartType = function(oItem, iIndex) {
-		var oModel = this._getInternalModel();
-		this.insertAggregation("availableChartTypes", oItem, iIndex);
-
-		oModel.getData().availableChartTypes.splice(iIndex, 0, {
-			key: oItem.getKey(),
-			text: oItem.getText()
-		});
-		return this;
-	};
-
-	P13nDimMeasurePanel.prototype.removeAvailableChartType = function(oItem) {
-		var iIndex = this.indexOfAvailableChartTypes(oItem);
-		if (iIndex > -1) {
-			var oModel = this._getInternalModel();
-			oModel.getData().availableChartTypes.splice(iIndex, 1);
+	P13nDimMeasurePanel.prototype.setChartTypeKey = function(sChartTypeKey) {
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
 		}
-		oItem = this.removeAggregation("availableChartTypes", oItem);
-		return oItem;
+		this.setProperty("chartTypeKey", sChartTypeKey);
+		return this;
+	};
+
+	P13nDimMeasurePanel.prototype.addAvailableChartType = function(oAvailableChartType) {
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		this.addAggregation("availableChartTypes", oAvailableChartType);
+		return this;
+	};
+
+	P13nDimMeasurePanel.prototype.insertAvailableChartType = function(oAvailableChartType, iIndex) {
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		this.insertAggregation("availableChartTypes", oAvailableChartType, iIndex);
+		return this;
+	};
+
+	P13nDimMeasurePanel.prototype.removeAvailableChartType = function(oAvailableChartType) {
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		return this.removeAggregation("availableChartTypes", oAvailableChartType);
 	};
 
 	P13nDimMeasurePanel.prototype.removeAllAvailableChartType = function() {
-		var oModel = this._getInternalModel();
-		var aItems = this.removeAllAggregation("availableChartTypes");
-		oModel.getData().availableChartTypes = [];
-		return aItems;
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
+		return this.removeAllAggregation("availableChartTypes");
 	};
 
 	P13nDimMeasurePanel.prototype.destroyAvailableChartType = function() {
-		var oModel = this._getInternalModel();
+		if (!this._bIgnoreUpdateInternalModel) {
+			this._bUpdateInternalModel = true;
+		}
 		this.destroyAggregation("availableChartTypes");
-		oModel.getData().availableChartTypes = [];
 		return this;
 	};
-
-	// ----------------------- Overwrite Method of P13nPanel -----------------
 
 	P13nDimMeasurePanel.prototype.onBeforeNavigationFrom = function() {
 		// Check if chart type fits selected dimensions and measures
@@ -451,13 +460,13 @@ sap.ui.define([
 		var aMeasureItems = [];
 
 		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
-			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-			if (!oModelItem) {
+			var oMItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
+			if (!oMItem) {
 				return;
 			}
-			if (oModelItem.aggregationRole === "Dimension") {
+			if (oMItem.aggregationRole === "Dimension") {
 				aDimensionItems.push(oDimMeasureItem);
-			} else if (oModelItem.aggregationRole === "Measure") {
+			} else if (oMItem.aggregationRole === "Measure") {
 				aMeasureItems.push(oDimMeasureItem);
 			}
 		}, this);
@@ -487,356 +496,329 @@ sap.ui.define([
 		return oResult.errors.length === 0;
 	};
 
-	P13nDimMeasurePanel.prototype.exit = function() {
-
-		sap.ui.core.ResizeHandler.deregister(this._sContainerResizeListener);
-		this._sContainerResizeListener = null;
-
-		this._getToolbar().destroy();
-
-		this._oTable.destroy();
-		this._oTable = null;
-
-		// destroy model and its data
-		if (this._getInternalModel()) {
-			this._getInternalModel().destroy();
-		}
-
-		window.clearTimeout(this._iLiveChangeTimer);
-		window.clearTimeout(this._iSearchTimer);
-	};
-
-	// ----------------------- Private Methods -----------------------------------------
-
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._syncModel2Panel = function() {
-		if (!this._bOnBeforeRenderingFirstTimeExecuted) {
-			// The renderer has not been executed (the dimeasure tab has not been shown in panel). So there is no need to synchronize model to panel.
-			// Keep panel aggregations as it is.
-			return;
-		}
-		var oData = this._getInternalModel().getData();
-
-		// ChartTypeKey
-		this.setChartTypeKey(oData.selectedChartTypeKey);
-
-		// DimMeasureItems
-		oData.items.forEach(function(oModelItem) {
-			var oDimMeasureItem = this._getDimMeasureItemByColumnKey(oModelItem.columnKey);
-			if (oDimMeasureItem) {
-				// Update existing dimMeasureItem if some properties have been changed
-				if (!this._isDimMeasureItemEqualToModelItem(oDimMeasureItem, oModelItem)) {
-					oDimMeasureItem.setVisible(oModelItem.persistentSelected);
-					oDimMeasureItem.setIndex(oModelItem.persistentIndex);
-					oDimMeasureItem.setRole(oModelItem.role);
-				}
-				return;
-			}
-			if (!oModelItem.persistentSelected) {
-				// Nothing relevant has been changed as item is not selected
-				return;
-			}
-			// Create a new dimMeasureItem if an item have been changed to 'selected'
-			oDimMeasureItem = new sap.m.P13nDimMeasureItem({
-				columnKey: oModelItem.columnKey,
-				visible: oModelItem.persistentSelected,
-				index: oModelItem.persistentIndex,
-				role: oModelItem.role
-			});
-			this.addAggregation("dimMeasureItems", oDimMeasureItem, true);
-		}, this);
-	};
-
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._syncPanel2Model = function() {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-
-		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
-			var oModelItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
-			if (!oModelItem || this._isDimMeasureItemEqualToModelItem(oDimMeasureItem, oModelItem)) {
-				return;
-			}
-
-			// Take over dimMeasureItem data
-			oModelItem.persistentIndex = oDimMeasureItem.getIndex();
-			oModelItem.persistentSelected = oDimMeasureItem.getVisible();
-			oModelItem.role = oDimMeasureItem.getRole();
-			// 1. Sort the table items only by persistentIndex
-			this._sortModelItemsByPersistentIndex(oData.items);
-			// 2. Re-Index only the tableIndex
-			// 2. Re-Index only the tableIndex
-			this._updateModelItemsTableIndex(oData);
-			this._updateCounts(oData);
-		}, this);
-		oModel.refresh();
-	};
-
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._moveMarkedTableItem = function(sDirection) {
-		var oData = this._getInternalModel().getData();
-		if (!oData.markedTableItem || oData.indexOfMarkedTableItem < 0) {
-			// No table item is marked
-			return;
-		}
-
-		var aVisibleTableItems = this._getVisibleTableItems();
-		if (aVisibleTableItems.indexOf(oData.markedTableItem) < 0) {
-			// Marked table item is currently not visible in the table
-			return;
-		}
-
-		var fcalculateIndexTo = function() {
-			switch (sDirection) {
-				case "Down":
-					return oData.indexOfMarkedTableItem + 1;
-				case "Bottom":
-					return aVisibleModelItems.length - 1;
-				case "Up":
-					return oData.indexOfMarkedTableItem - 1;
-				case "Top":
-					return 0;
-			}
-		};
-
-		// Note: visible model items are in sync with visible table items. So we can use 'oData.indexOfMarkedTableItem'
-		// in the same manner for visible model items as well as for visible table items.
-		var aVisibleModelItems = this._getVisibleModelItems();
-		var oModelItemFrom = aVisibleModelItems[oData.indexOfMarkedTableItem];
-		var oModelItemTo = aVisibleModelItems[fcalculateIndexTo()];
-
-		if (this._moveModelItems(this._getModelItemIndexByColumnKey(oModelItemFrom.columnKey), this._getModelItemIndexByColumnKey(oModelItemTo.columnKey))) {
-			this._switchMarkedTableItemTo(aVisibleTableItems[fcalculateIndexTo()]);
+	P13nDimMeasurePanel.prototype._notifyChange = function() {
+		var fListener = this.getChangeNotifier();
+		if (fListener) {
+			fListener(this);
 		}
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._filterModelItemsBySearchText = function() {
-		var oModel = this._getInternalModel();
-		var sSearchText = this._getSearchText();
-
-		// Replace white spaces at begin and end of the searchText. Leave white spaces in between.
-		sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
-		// Escape special characters entered by user
-		sSearchText = sSearchText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-		// i = ignore case; g = global; m = multiline
-		var oRegExp = new RegExp(sSearchText, 'igm');
-		if (!oRegExp) {
-			return;
-		}
-
-		this._getVisibleModelItems().forEach(function(oModelItem) {
-			oModelItem.visible = false;
-			// Search in item text
-			if (oModelItem.text && oModelItem.text.match(oRegExp)) {
-				oModelItem.visible = true;
-			}
-			// Search in aggregationRole
-			if (oModelItem.aggregationRole && oModelItem.aggregationRole.match(oRegExp)) {
-				oModelItem.visible = true;
-			}
-			// Search in role
-			if (oModelItem.role && oModelItem.role.match(oRegExp)) {
-				oModelItem.visible = true;
-			}
-			// Search in tooltip
-			if (oModelItem.tooltip && oModelItem.tooltip.match(oRegExp)) {
-				oModelItem.visible = true;
-			}
-		});
-		oModel.refresh();
-	};
-
-	/**
-	 * @private
-	 */
 	P13nDimMeasurePanel.prototype._scrollToSelectedItem = function(oItem) {
-		var oFocusedElement = null;
-		if (oItem) {
-			sap.ui.getCore().applyChanges();
-			// oItem needs to be rendered, otherwise the necessary scroll calculations cannot be performed
-			if (!!oItem.getDomRef()) {
-				// get just focused DOM element
-				oFocusedElement = document.activeElement;
-
-				// focus actual item to get it into the scroll container viewport
-				oItem.focus();
-
-				// reset focus to previous DOM element
-				if (oFocusedElement && oFocusedElement.focus) {
-					oFocusedElement.focus();
-				}
-			}
+		if (!oItem) {
+			return;
 		}
+		sap.ui.getCore().applyChanges();
+		if (!!oItem.getDomRef()) {
+			oItem.focus();
+		}
+	};
+
+	// -------------------------------------------------------------------------------------------------
+	P13nDimMeasurePanel.prototype._getInternalModel = function() {
+		return this.getModel("$sapmP13nDimMeasurePanel");
+	};
+
+	P13nDimMeasurePanel.prototype._createTable = function() {
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+		this._oTable = new Table({
+			mode: ListMode.MultiSelect,
+			rememberSelections: false,
+			itemPress: jQuery.proxy(this._onItemPressed, this),
+			selectionChange: jQuery.proxy(this._onSelectionChange, this),
+			columns: [
+				new sap.m.Column({
+					vAlign: CoreLibrary.VerticalAlign.Middle,
+					header: new sap.m.Text({
+						text: {
+							parts: [
+								{
+									path: '/countOfSelectedItems'
+								}, {
+									path: '/countOfItems'
+								}
+							],
+							formatter: function(iCountOfSelectedItems, iCountOfItems) {
+								return oRb.getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [
+									iCountOfSelectedItems, iCountOfItems
+								]);
+							}
+						}
+					})
+				}), new sap.m.Column({
+					vAlign: CoreLibrary.VerticalAlign.Middle,
+					header: new sap.m.Text({
+						text: oRb.getText('COLUMNSPANEL_COLUMN_TYPE')
+					})
+				}), new sap.m.Column({
+					vAlign: CoreLibrary.VerticalAlign.Middle,
+					header: new sap.m.Text({
+						text: oRb.getText('COLUMNSPANEL_COLUMN_ROLE')
+					})
+				})
+			],
+			items: {
+				path: "/items",
+				templateShareable: false,
+				template: new ColumnListItem({
+					cells: [
+						new sap.m.Text({
+							text: "{text}"
+						}), new sap.m.Text({
+							text: {
+								path: '',
+								formatter: function(oMItem) {
+									if (oMItem.aggregationRole === "Dimension") {
+										return oRb.getText('COLUMNSPANEL_TYPE_DIMENSION');
+									}
+									if (oMItem.aggregationRole === "Measure") {
+										return oRb.getText('COLUMNSPANEL_TYPE_MEASURE');
+									}
+								}
+							}
+						}), new sap.m.Select({
+							selectedKey: "{role}",
+							items: {
+								path: 'availableRoleTypes',
+								// sorter: [
+								// new sap.ui.model.Sorter("/text", false)
+								// ],
+								factory: function(sId, oBindingContext) {
+									var oAvailableRoleType = oBindingContext.getObject();
+									return new Item({
+										key: oAvailableRoleType.key,
+										text: oAvailableRoleType.text
+									});
+								}
+							},
+							change: jQuery.proxy(this._onRoleChange, this)
+						})
+					],
+					visible: "{visible}",
+					selected: "{persistentSelected}",
+					tooltip: "{tooltip}",
+					type: ListType.Active
+				})
+			}
+		});
+		this._oTable.setModel(this._getInternalModel());
 	};
 
 	/**
 	 * @private
 	 */
-	P13nDimMeasurePanel.prototype._includeModelItem = function(oItem, iIndex) {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-
-		if (iIndex < 0) {
-			iIndex = oData.items.length;
-		}
+	P13nDimMeasurePanel.prototype._createToolbar = function() {
 		var that = this;
-		var fGetAvailableRoleTypes = function() {
-			if (oItem.getAggregationRole() === "Dimension") {
-				return [
-					{
-						key: "category",
-						text: that._oRb.getText('COLUMNSPANEL_CHARTROLE_CATEGORY')
-					}, {
-						key: "series",
-						text: that._oRb.getText('COLUMNSPANEL_CHARTROLE_SERIES')
-					}
-				];
-			}
-			if (oItem.getAggregationRole() === "Measure") {
-				return [
-					{
-						key: "axis1",
-						text: that._oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS1')
-					}, {
-						key: "axis2",
-						text: that._oRb.getText('COLUMNSPANEL_CHARTROLE_AXIS2')
-					}
-				];
-			}
-			return [];
-		};
-		var oModelItem = {
-			columnKey: oItem.getColumnKey(),
-			visible: true,
-			text: oItem.getText(),
-			tooltip: oItem.getTooltip(),
-			aggregationRole: oItem.getAggregationRole(),
-			availableRoleTypes: fGetAvailableRoleTypes(),
+		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
-			// default value
-			persistentIndex: -1,
-			persistentSelected: undefined,
-			role: undefined,
+		var oInvisibleChartTypeText = new InvisibleText({
+			text: oRb.getText('COLUMNSPANEL_CHARTTYPE')
+		});
 
-			tableIndex: undefined
-		};
+		// set a reference on the instance so it can be later destroyed
+		this.oInvisibleChartTypeText = oInvisibleChartTypeText;
 
-		oData.items.splice(iIndex, 0, oModelItem);
+		var oChartTypeComboBox = new sap.m.ComboBox({
+			placeholder: oInvisibleChartTypeText.getText(),
+			selectedKey: {
+				path: '/selectedChartTypeKey'
+			},
+			ariaLabelledBy: oInvisibleChartTypeText,
+			items: {
+				path: '/availableChartTypes',
+				templateShareable: false,
+				template: new Item({
+					key: "{key}",
+					text: "{text}"
+				})
+			},
+			selectionChange: jQuery.proxy(this._onChartTypeChange, this),
+			layoutData: new sap.m.OverflowToolbarLayoutData({
+				moveToOverflow: false,
+				stayInOverflow: false
+			})
+		});
+
+		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
+			design: ToolbarDesign.Auto,
+			content: [
+				oInvisibleChartTypeText, oChartTypeComboBox, new sap.m.ToolbarSpacer(), new SearchField(this.getId() + "-searchField", {
+					liveChange: function(oEvent) {
+						var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
+						// execute search after user stops typing for 300ms
+						window.clearTimeout(that._iSearchTimer);
+						if (iDelay) {
+							that._iSearchTimer = window.setTimeout(function() {
+								that._onExecuteSearch();
+							}, iDelay);
+						} else {
+							that._onExecuteSearch();
+						}
+					},
+					// execute the standard search
+					search: jQuery.proxy(this._onExecuteSearch, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						minWidth: "12.5rem",
+						maxWidth: "23.077rem",
+						shrinkable: true,
+						moveToOverflow: false,
+						stayInOverflow: false
+					})
+				}), new sap.m.Button({
+					text: {
+						path: '/showOnlySelectedItems',
+						formatter: function(bShowOnlySelectedItems) {
+							return bShowOnlySelectedItems ? oRb.getText('COLUMNSPANEL_SHOW_ALL') : oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
+						}
+					},
+					tooltip: {
+						path: '/showOnlySelectedItems',
+						formatter: function(bShowOnlySelectedItems) {
+							return bShowOnlySelectedItems ? oRb.getText('COLUMNSPANEL_SHOW_ALL') : oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
+						}
+					},
+					type: ButtonType.Transparent,
+					press: jQuery.proxy(this._onSwitchButtonShowSelected, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.High
+					})
+				}), new sap.m.OverflowToolbarButton({
+					icon: IconPool.getIconURI("collapse-group"),
+					text: oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
+					tooltip: oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
+					type: ButtonType.Transparent,
+					enabled: {
+						path: '/isMoveUpButtonEnabled'
+					},
+					press: jQuery.proxy(this.onPressButtonMoveToTop, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.Low,
+						group: 2
+					})
+				}), new sap.m.OverflowToolbarButton({
+					icon: IconPool.getIconURI("slim-arrow-up"),
+					text: oRb.getText('COLUMNSPANEL_MOVE_UP'),
+					tooltip: oRb.getText('COLUMNSPANEL_MOVE_UP'),
+					type: ButtonType.Transparent,
+					enabled: {
+						path: '/isMoveUpButtonEnabled'
+					},
+					press: jQuery.proxy(this.onPressButtonMoveUp, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.High,
+						group: 1
+					})
+				}), new sap.m.OverflowToolbarButton({
+					icon: IconPool.getIconURI("slim-arrow-down"),
+					text: oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
+					tooltip: oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
+					type: ButtonType.Transparent,
+					enabled: {
+						path: '/isMoveDownButtonEnabled'
+					},
+					press: jQuery.proxy(this.onPressButtonMoveDown, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.High,
+						group: 1
+					})
+				}), new sap.m.OverflowToolbarButton({
+					icon: IconPool.getIconURI("expand-group"),
+					text: oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+					tooltip: oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
+					type: ButtonType.Transparent,
+					enabled: {
+						path: '/isMoveDownButtonEnabled'
+					},
+					press: jQuery.proxy(this.onPressButtonMoveToBottom, this),
+					layoutData: new sap.m.OverflowToolbarLayoutData({
+						moveToOverflow: true,
+						priority: OverflowToolbarPriority.Low,
+						group: 2
+					})
+				})
+			]
+		});
+		oToolbar.setModel(this._getInternalModel());
+		this.addAggregation("content", oToolbar);
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._onItemPressed = function(oEvent) {
-		this._switchMarkedTableItemTo(oEvent.getParameter('listItem'));
+	P13nDimMeasurePanel.prototype.onPressButtonMoveToTop = function() {
+		this._moveMarkedTableItem(this._getMarkedTableItem(), this._getVisibleTableItems()[0]);
 	};
-
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._onSelectionChange = function(oEvent) {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-		var oTableItem = oEvent.getParameter("listItem");
-
-		this._switchMarkedTableItemTo(oTableItem);
-
-		// No update of model items is needed as it is already up-to-date due to binding
-
-		// Do not sort after user interaction as the table should not be sorted once selected items has been rendered
-
-		// Re-Index only the persistentIndex after user interaction
-		this._updateModelItemsPersistentIndex(oData);
-		this._updateCounts(oData);
-		oModel.refresh();
-
-		this._notifyChange();
+	P13nDimMeasurePanel.prototype.onPressButtonMoveUp = function() {
+		var aVisibleTableItems = this._getVisibleTableItems();
+		this._moveMarkedTableItem(this._getMarkedTableItem(), aVisibleTableItems[aVisibleTableItems.indexOf(this._getMarkedTableItem()) - 1]);
 	};
-
-	/**
-	 * Switches 'Show Selected' button to 'Show All' and back.
-	 *
-	 * @private
-	 */
+	P13nDimMeasurePanel.prototype.onPressButtonMoveDown = function() {
+		var aVisibleTableItems = this._getVisibleTableItems();
+		this._moveMarkedTableItem(this._getMarkedTableItem(), aVisibleTableItems[aVisibleTableItems.indexOf(this._getMarkedTableItem()) + 1]);
+	};
+	P13nDimMeasurePanel.prototype.onPressButtonMoveToBottom = function() {
+		var aVisibleTableItems = this._getVisibleTableItems();
+		this._moveMarkedTableItem(this._getMarkedTableItem(), aVisibleTableItems[aVisibleTableItems.length - 1]);
+	};
 	P13nDimMeasurePanel.prototype._onSwitchButtonShowSelected = function() {
-		var oData = this._getInternalModel().getData();
-
-		// Switch the button text
-		oData.showOnlySelectedItems = !oData.showOnlySelectedItems;
+		this._getInternalModel().setProperty("/showOnlySelectedItems", !this._getInternalModel().getProperty("/showOnlySelectedItems"));
 
 		this._switchVisibilityOfUnselectedModelItems();
 		this._filterModelItemsBySearchText();
 
-		this._scrollToSelectedItem(oData.markedTableItem);
+		this._scrollToSelectedItem(this._getMarkedTableItem());
 
 		this._updateControlLogic();
 
-		this._fnHandleResize(); // ER: TODO
+		this._fnHandleResize();
 	};
 
-	/**
-	 * Execute search by filtering columns list based on the given sValue
-	 *
-	 * @private
-	 */
 	P13nDimMeasurePanel.prototype._onExecuteSearch = function() {
-		var oData = this._getInternalModel().getData();
-
 		this._switchVisibilityOfUnselectedModelItems();
 		this._filterModelItemsBySearchText();
 
-		this._scrollToSelectedItem(oData.markedTableItem);
+		this._scrollToSelectedItem(this._getMarkedTableItem());
 
 		this._updateControlLogic();
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._getDimMeasureItemByColumnKey = function(sColumnKey) {
-		for (var i = 0, aDimMeasureItems = this.getDimMeasureItems(), iDimMeasureItemsLength = aDimMeasureItems.length; i < iDimMeasureItemsLength; i++) {
-			if (aDimMeasureItems[i].getColumnKey() === sColumnKey) {
-				return aDimMeasureItems[i];
+	P13nDimMeasurePanel.prototype._switchVisibilityOfUnselectedModelItems = function() {
+		var bShowOnlySelectedItems = this._isFilteredByShowSelected();
+		var aMItems = this._getInternalModel().getProperty("/items");
+		aMItems.forEach(function(oMItem) {
+			if (oMItem.persistentSelected) {
+				oMItem.visible = true;
+				return;
 			}
-		}
-		return null;
+			oMItem.visible = !bShowOnlySelectedItems;
+		});
+		this._getInternalModel().setProperty("/items", aMItems);
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._getModelItemIndexByColumnKey = function(sColumnKey) {
-		var iIndex = -1;
-		this._getInternalModel().getData().items.some(function(oModelItem, iIndex_) {
-			if (oModelItem.columnKey === sColumnKey) {
-				iIndex = iIndex_;
-				return true;
-			}
+	P13nDimMeasurePanel.prototype._getVisibleModelItems = function() {
+		return this._getInternalModel().getProperty("/items").filter(function(oMItem) {
+			return !!oMItem.visible;
 		});
-		return iIndex;
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._getModelItemByColumnKey = function(sColumnKey) {
-		var oModelItem = null;
-		this._getInternalModel().getData().items.some(function(oModelItem_) {
-			if (oModelItem_.columnKey === sColumnKey) {
-				oModelItem = oModelItem_;
-				return true;
-			}
+	P13nDimMeasurePanel.prototype._getVisibleModelItems = function() {
+		return this._getInternalModel().getProperty("/items").filter(function(oMItem) {
+			return !!oMItem.visible;
 		});
-		return oModelItem;
+	};
+
+	P13nDimMeasurePanel.prototype._moveMarkedTableItem = function(oTableItemFrom, oTableItemTo) {
+		var oMItemFrom = this._getModelItemByColumnKey(this._getColumnKeyByTableItem(oTableItemFrom));
+		var oMItemTo = this._getModelItemByColumnKey(this._getColumnKeyByTableItem(oTableItemTo));
+		var iIndexFrom = this._getModelItemIndexByColumnKey(oMItemFrom.columnKey);
+		var iIndexTo = this._getModelItemIndexByColumnKey(oMItemTo.columnKey);
+
+		this._moveModelItems(iIndexFrom, iIndexTo);
+
+		this._scrollToSelectedItem(this._getMarkedTableItem());
+		this._updateControlLogic();
+		this._fireChangeDimMeasureItems();
+		this._notifyChange();
 	};
 
 	/**
@@ -848,134 +830,49 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nDimMeasurePanel.prototype._moveModelItems = function(iIndexFrom, iIndexTo) {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
-		if (iIndexFrom < 0 || iIndexTo < 0 || iIndexFrom > oData.items.length - 1 || iIndexTo > oData.items.length - 1) {
+		var aMItems = this._getInternalModel().getProperty("/items");
+		if (iIndexFrom < 0 || iIndexTo < 0 || iIndexFrom > aMItems.length - 1 || iIndexTo > aMItems.length - 1) {
 			return false;
 		}
+		// Remove the marking style before table items are updated
+		this._removeStyleOfMarkedTableItem();
+
 		// Move items
-		var aModelItems = oData.items.splice(iIndexFrom, 1);
-		oData.items.splice(iIndexTo, 0, aModelItems[0]);
+		var aModelItems = aMItems.splice(iIndexFrom, 1);
+		aMItems.splice(iIndexTo, 0, aModelItems[0]);
 
 		// Do not sort after user action as the table should not be sorted once selected items has been rendered
 
-		// Re-Index the persistentIndex and tableIndex
-		this._updateModelItemsPersistentIndex(oData);
-		this._updateModelItemsTableIndex(oData);
-		this._updateCounts(oData);
-		oModel.refresh();
+		// Re-Index the persistentIndex
+		this._updateModelItemsPersistentIndex(aMItems);
+		this._updateCounts(aMItems);
+		this._getInternalModel().setProperty("/items", aMItems);
 
+		// Set the marking style again after table items are updated
+		this._switchMarkedTableItemTo(this._getMarkedTableItem());
 		return true;
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._switchVisibilityOfUnselectedModelItems = function() {
-		var oModel = this._getInternalModel();
-		var bShowOnlySelectedItems = this._isFilteredByShowSelected();
-		oModel.getData().items.forEach(function(oModelItem) {
-			if (oModelItem.persistentSelected) {
-				oModelItem.visible = true;
-				return;
-			}
-			oModelItem.visible = !bShowOnlySelectedItems;
+	P13nDimMeasurePanel.prototype._getModelItemByColumnKey = function(sColumnKey) {
+		var aMItems = this._getInternalModel().getProperty("/items").filter(function(oMItem) {
+			return oMItem.columnKey === sColumnKey;
 		});
-		oModel.refresh();
+		return aMItems[0];
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._getVisibleTableItems = function() {
-		var aVisibleTableItems = [];
-		this._oTable.getItems().forEach(function(oTableItem) {
-			if (oTableItem.getVisible()) {
-				aVisibleTableItems.push(oTableItem);
+	P13nDimMeasurePanel.prototype._updateCounts = function(aMItems) {
+		var iCountOfItems = 0;
+		var iCountOfSelectedItems = 0;
+		aMItems.forEach(function(oMItem) {
+			iCountOfItems++;
+			if (oMItem.persistentSelected) {
+				iCountOfSelectedItems++;
 			}
 		});
-		return aVisibleTableItems;
+		this._getInternalModel().setProperty("/countOfItems", iCountOfItems);
+		this._getInternalModel().setProperty("/countOfSelectedItems", iCountOfSelectedItems);
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._getVisibleModelItems = function() {
-		var aVisibleModelItems = [];
-		this._getInternalModel().getData().items.forEach(function(oModelItem) {
-			if (oModelItem.visible) {
-				aVisibleModelItems.push(oModelItem);
-			}
-		});
-		return aVisibleModelItems;
-	};
-
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._getSelectedModelItems = function() {
-		var aSelectedModelItems = [];
-		this._getInternalModel().getData().items.forEach(function(oModelItem) {
-			if (oModelItem.persistentSelected) {
-				aSelectedModelItems.push(oModelItem);
-			}
-		});
-		return aSelectedModelItems;
-	};
-
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._getModelItemByTableItem = function(oTableItem) {
-		// Note: visible model items are in sync with visible table items.
-		var iIndex = this._getVisibleTableItems().indexOf(oTableItem);
-		return this._getVisibleModelItems()[iIndex];
-	};
-
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._updateModelItemsTableIndex = function(oData) {
-		oData.items.forEach(function(oModelItem, iTableIndex) {
-			oModelItem.tableIndex = iTableIndex;
-		});
-	};
-
-	/**
-	 * Updates 'persistentIndex' of model items.
-	 *
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._updateModelItemsPersistentIndex = function(oData) {
-		var iPersistentIndex = -1;
-		oData.items.forEach(function(oModelItem) {
-			oModelItem.persistentIndex = -1;
-			if (oModelItem.persistentSelected) {
-				iPersistentIndex++;
-				oModelItem.persistentIndex = iPersistentIndex;
-			}
-		});
-	};
-
-	/**
-	 * Updates count of selected items.
-	 *
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._updateCounts = function(oData) {
-		oData.countOfSelectedItems = 0;
-		oData.countOfItems = 0;
-		oData.items.forEach(function(oModelItem) {
-			oData.countOfItems++;
-			if (oModelItem.persistentSelected) {
-				oData.countOfSelectedItems++;
-			}
-		});
-	};
-
-	/**
-	 * @private
-	 */
 	P13nDimMeasurePanel.prototype._sortModelItemsByPersistentIndex = function(aModelItems) {
 		aModelItems.sort(function(a, b) {
 			if (a.persistentSelected === true && (b.persistentSelected === false || b.persistentSelected === undefined)) {
@@ -983,9 +880,9 @@ sap.ui.define([
 			} else if ((a.persistentSelected === false || a.persistentSelected === undefined) && b.persistentSelected === true) {
 				return 1;
 			} else if (a.persistentSelected === true && b.persistentSelected === true) {
-				if (a.persistentIndex < b.persistentIndex) {
+				if (a.persistentIndex > -1 && a.persistentIndex < b.persistentIndex) {
 					return -1;
-				} else if (a.persistentIndex > b.persistentIndex) {
+				} else if (b.persistentIndex > -1 && a.persistentIndex > b.persistentIndex) {
 					return 1;
 				} else {
 					return 0;
@@ -1002,387 +899,312 @@ sap.ui.define([
 		});
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._switchMarkedTableItemTo = function(oTableItem) {
-		var oData = this._getInternalModel().getData();
-
-		if (oData.markedTableItem === oTableItem) {
-			return;
+	P13nDimMeasurePanel.prototype._getColumnKeyByTableItem = function(oTableItem) {
+		var iIndex = this._oTable.indexOfItem(oTableItem);
+		if (iIndex < 0) {
+			return null;
 		}
-
-		// Remove highlighting from previous table item
-		if (oData.markedTableItem) {
-			oData.markedTableItem.removeStyleClass("sapMP13nColumnsPanelItemSelected");
-		}
-
-		// Set highlighting to new table item
-		oData.indexOfMarkedTableItem = this._getVisibleTableItems().indexOf(oTableItem);
-		oData.markedTableItem = oTableItem;
-		if (oData.markedTableItem) {
-			oData.markedTableItem.addStyleClass("sapMP13nColumnsPanelItemSelected");
-		}
-
-		this._updateControlLogic();
+		return this._oTable.getBinding("items").getContexts()[iIndex].getObject().columnKey;
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._createTable = function() {
-		var that = this;
-		this._oTable = new Table({
-			mode: sap.m.ListMode.MultiSelect,
-			rememberSelections: false,
-			itemPress: jQuery.proxy(this._onItemPressed, this),
-			selectionChange: jQuery.proxy(this._onSelectionChange, this),
-			columns: [
-				new sap.m.Column({
-					header: new sap.m.Text({
-						text: {
-							parts: [
-								{
-									path: '/countOfSelectedItems'
-								}, {
-									path: '/countOfItems'
-								}
-							],
-							formatter: function(iCountOfSelectedItems, iCountOfItems) {
-								return that._oRb.getText('COLUMNSPANEL_SELECT_ALL_WITH_COUNTER', [
-									iCountOfSelectedItems, iCountOfItems
-								]);
-							}
-						}
-					})
-				}), new sap.m.Column({
-					header: new sap.m.Text({
-						text: this._oRb.getText('COLUMNSPANEL_COLUMN_TYPE')
-					})
-				}), new sap.m.Column({
-					header: new sap.m.Text({
-						text: this._oRb.getText('COLUMNSPANEL_COLUMN_ROLE')
-					})
-				})
-			],
-			items: {
-				path: "/items",
-				templateShareable: false,
-				template: new sap.m.ColumnListItem({
-					cells: [
-						new sap.m.Text({
-							text: "{text}"
-						}), new sap.m.Text({
-							text: {
-								path: '',
-								formatter: function(oModelItem) {
-									if (oModelItem.aggregationRole === "Dimension") {
-										return that._oRb.getText('COLUMNSPANEL_TYPE_DIMENSION');
-									}
-									if (oModelItem.aggregationRole === "Measure") {
-										return that._oRb.getText('COLUMNSPANEL_TYPE_MEASURE');
-									}
-								}
-							}
-						}), new sap.m.Select({
-							selectedKey: "{role}",
-							items: {
-								path: 'availableRoleTypes',
-// sorter: [
-// new sap.ui.model.Sorter("/text", false)
-// ],
-								factory: function(sId, oBindingContext) {
-									var oAvailableRoleType = oBindingContext.getObject();
-									return new sap.ui.core.Item({
-										key: oAvailableRoleType.key,
-										text: oAvailableRoleType.text
-									});
-								}
-							}
-						})
-					],
-					visible: "{visible}",
-					selected: "{persistentSelected}",
-					tooltip: "{tooltip}",
-					type: sap.m.ListType.Active
-				})
+	P13nDimMeasurePanel.prototype._getModelItemIndexByColumnKey = function(sColumnKey) {
+		var iIndex = -1;
+		this._getInternalModel().getData().items.some(function(oMItem, iIndex_) {
+			if (oMItem.columnKey === sColumnKey) {
+				iIndex = iIndex_;
+				return true;
 			}
 		});
-// this._oTable.selectAll = function() {
-// // var oData = that._getInternalModel().getData();
-// that._getVisibleTableItems().forEach(function(oTableItem) {
-// if (!oTableItem.getSelected()) {
-// that._oTable.setSelectedItem(oTableItem, true, true);
-// // oData.countOfSelectedItems++;
-// }
-// });
-// this.updateSelectAllCheckbox();
-// };
-// this._oTable.removeSelections = function() {
-// // var oData = that._getInternalModel().getData();
-// that._getVisibleTableItems().forEach(function(oTableItem) {
-// if (oTableItem.getSelected()) {
-// that._oTable.setSelectedItem(oTableItem, false, true);
-// // oData.countOfSelectedItems--;
-// }
-// });
-// this.updateSelectAllCheckbox();
-// };
-		this._oTable.setModel(this._getInternalModel());
+		return iIndex;
 	};
 
-	/**
-	 * @private
-	 */
-	P13nDimMeasurePanel.prototype._createToolbar = function() {
-		var oModel = this._getInternalModel();
-		var that = this;
-		var oMoveDownButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-down"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_DOWN'),
-			type: sap.m.ButtonType.Transparent,
-			enabled: {
-				path: '/isMoveDownButtonEnabled'
-			},
-			press: function() {
-				that._moveMarkedTableItem("Down");
-				var oModelData = this._getInternalModel().getData();
-				if (!oModelData.isMoveDownButtonEnabled) {
-					oModelData.markedTableItem.focus();
-				}
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.High,
-				group: 1
-			})
+	P13nDimMeasurePanel.prototype._getSelectedModelItems = function() {
+		return this._getInternalModel().getProperty("/items").filter(function(oMItem) {
+			return oMItem.persistentSelected;
 		});
-		oMoveDownButton.setModel(oModel);
+	};
 
-		var oMoveUpButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("slim-arrow-up"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_UP'),
-			type: sap.m.ButtonType.Transparent,
-			enabled: {
-				path: '/isMoveUpButtonEnabled'
-			},
-			press: function() {
-				that._moveMarkedTableItem("Up");
-				var oModelData = this._getInternalModel().getData();
-				if (!oModelData.isMoveUpButtonEnabled) {
-					oModelData.markedTableItem.focus();
-				}
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.High,
-				group: 1
-			})
+	P13nDimMeasurePanel.prototype._getVisibleTableItems = function() {
+		return this._oTable.getItems().filter(function(oTableItem) {
+			return oTableItem.getVisible();
 		});
-		oMoveUpButton.setModel(oModel);
+	};
 
-		var oMoveToBottomButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("expand-group"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_BOTTOM'),
-			type: sap.m.ButtonType.Transparent,
-			enabled: {
-				path: '/isMoveDownButtonEnabled'
-			},
-			press: function() {
-				that._moveMarkedTableItem("Bottom");
-				var oModelData = this._getInternalModel().getData();
-				if (!oModelData.isMoveDownButtonEnabled) {
-					oModelData.markedTableItem.focus();
-				}
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.Low,
-				group: 2
-			})
+	P13nDimMeasurePanel.prototype._getTableItemByColumnKey = function(sColumnKey) {
+		var aContext = this._oTable.getBinding("items").getContexts();
+		var aTableItems = this._oTable.getItems().filter(function(oTableItem, iIndex) {
+			return aContext[iIndex].getObject().columnKey === sColumnKey;
 		});
-		oMoveToBottomButton.setModel(oModel);
-
-		var oMoveToTopButton = new sap.m.OverflowToolbarButton({
-			icon: sap.ui.core.IconPool.getIconURI("collapse-group"),
-			text: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
-			tooltip: this._oRb.getText('COLUMNSPANEL_MOVE_TO_TOP'),
-			type: sap.m.ButtonType.Transparent,
-			enabled: {
-				path: '/isMoveUpButtonEnabled'
-			},
-			press: function() {
-				that._moveMarkedTableItem("Top");
-				var oModelData = this._getInternalModel().getData();
-				if (!oModelData.isMoveUpButtonEnabled) {
-					oModelData.markedTableItem.focus();
-				}
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.Low,
-				group: 2
-			})
-		});
-		oMoveToTopButton.setModel(oModel);
-
-		var oShowSelectedButton = new sap.m.Button({
-			text: {
-				path: '/showOnlySelectedItems',
-				formatter: function(bShowOnlySelectedItems) {
-					return bShowOnlySelectedItems ? that._oRb.getText('COLUMNSPANEL_SHOW_ALL') : that._oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
-				}
-			},
-			tooltip: {
-				path: '/showOnlySelectedItems',
-				formatter: function(bShowOnlySelectedItems) {
-					return bShowOnlySelectedItems ? that._oRb.getText('COLUMNSPANEL_SHOW_ALL') : that._oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
-				}
-			},
-			type: sap.m.ButtonType.Transparent,
-			press: jQuery.proxy(this._onSwitchButtonShowSelected, this),
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: true,
-				priority: sap.m.OverflowToolbarPriority.High
-			})
-		});
-		oShowSelectedButton.setModel(oModel);
-
-		var oSearchField = new SearchField(this.getId() + "-searchField", {
-			liveChange: function(oEvent) {
-				var sValue = oEvent.getSource().getValue(), iDelay = (sValue ? 300 : 0); // no delay if value is empty
-				// execute search after user stops typing for 300ms
-				window.clearTimeout(that._iSearchTimer);
-				if (iDelay) {
-					that._iSearchTimer = window.setTimeout(function() {
-						that._onExecuteSearch();
-					}, iDelay);
-				} else {
-					that._onExecuteSearch();
-				}
-			},
-			// execute the standard search
-			search: jQuery.proxy(this._onExecuteSearch, this),
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				minWidth: "12.5rem",
-				maxWidth: "23.077rem",
-				shrinkable: true,
-				moveToOverflow: false,
-				stayInOverflow: false
-			})
-		});
-
-		var oInvisibleChartTypeText = new sap.ui.core.InvisibleText({
-			text: that._oRb.getText('COLUMNSPANEL_CHARTTYPE')
-		});
-		var oChartTypeComboBox = new sap.m.ComboBox({
-			placeholder: oInvisibleChartTypeText.getText(),
-			selectedKey: {
-				path: '/selectedChartTypeKey'
-			},
-			ariaLabelledBy: oInvisibleChartTypeText,
-			items: {
-				path: '/availableChartTypes',
-				templateShareable: false,
-				template: new sap.ui.core.Item({
-					key: "{key}",
-					text: "{text}"
-				})
-			},
-			layoutData: new sap.m.OverflowToolbarLayoutData({
-				moveToOverflow: false,
-				stayInOverflow: false
-			})
-		});
-		oChartTypeComboBox.setModel(oModel);
-
-		var oToolbar = new sap.m.OverflowToolbar(this.getId() + "-toolbar", {
-			design: sap.m.ToolbarDesign.Auto,
-			content: [
-				oInvisibleChartTypeText, oChartTypeComboBox, new sap.m.ToolbarSpacer(), oSearchField, oShowSelectedButton, oMoveToTopButton, oMoveUpButton, oMoveDownButton, oMoveToBottomButton
-			]
-		});
-		this.addAggregation("content", oToolbar);
+		return aTableItems[0];
 	};
 
 	P13nDimMeasurePanel.prototype._getToolbar = function() {
 		return sap.ui.getCore().byId(this.getId() + "-toolbar") || null;
 	};
-
 	P13nDimMeasurePanel.prototype._getSearchField = function() {
 		return sap.ui.getCore().byId(this.getId() + "-searchField") || null;
 	};
-
 	P13nDimMeasurePanel.prototype._getSearchText = function() {
 		var oSearchField = this._getSearchField();
 		return oSearchField ? oSearchField.getValue() : "";
 	};
-
 	P13nDimMeasurePanel.prototype._isFilteredBySearchText = function() {
 		return !!this._getSearchText().length;
 	};
-
 	P13nDimMeasurePanel.prototype._isFilteredByShowSelected = function() {
 		return this._getInternalModel().getData().showOnlySelectedItems;
 	};
-
-	P13nDimMeasurePanel.prototype._isDimMeasureItemEqualToModelItem = function(oDimMeasureItem, oModelItem) {
-		return oModelItem.persistentIndex === oDimMeasureItem.getIndex() && oModelItem.persistentSelected === oDimMeasureItem.getVisible() && oModelItem.role === oDimMeasureItem.getRole();
-	};
-
-	/**
-	 * @private
-	 */
 	P13nDimMeasurePanel.prototype._updateControlLogic = function() {
-		var oModel = this._getInternalModel();
-		var oData = oModel.getData();
 		var bIsSearchActive = this._isFilteredBySearchText();
 		var bShowOnlySelectedItems = this._isFilteredByShowSelected();
 		var aVisibleTableItems = this._getVisibleTableItems();
 
 		// Value in search field has been changed...
-		oData.isMoveUpButtonEnabled = aVisibleTableItems.indexOf(oData.markedTableItem) > -1 && oData.indexOfMarkedTableItem > 0;
-		oData.isMoveDownButtonEnabled = aVisibleTableItems.indexOf(oData.markedTableItem) > -1 && oData.indexOfMarkedTableItem < aVisibleTableItems.length - 1 && oData.indexOfMarkedTableItem > -1;
+		this._getInternalModel().setProperty("/isMoveUpButtonEnabled", aVisibleTableItems.indexOf(this._getMarkedTableItem()) > 0);
+		this._getInternalModel().setProperty("/isMoveDownButtonEnabled", aVisibleTableItems.indexOf(this._getMarkedTableItem()) > -1 && aVisibleTableItems.indexOf(this._getMarkedTableItem()) < aVisibleTableItems.length - 1);
 
 		// Switch off the "Select all (n/m)" checkbox if search
 		var oTableCB = sap.ui.getCore().byId(this._oTable.getId() + '-sa');
 		if (oTableCB) {
 			oTableCB.setEnabled(!bIsSearchActive && !bShowOnlySelectedItems);
 		}
-
-		oModel.refresh();
 	};
 
-	P13nDimMeasurePanel.prototype._getInternalModel = function() {
-		return this.getModel("$sapmP13nDimMeasurePanel");
+	P13nDimMeasurePanel.prototype._updateModelItemsPersistentIndex = function(aMItems) {
+		var iPersistentIndex = -1;
+		aMItems.forEach(function(oMItem) {
+			oMItem.persistentIndex = -1;
+			if (oMItem.persistentSelected) {
+				iPersistentIndex++;
+				oMItem.persistentIndex = iPersistentIndex;
+			}
+		});
 	};
 
-	P13nDimMeasurePanel.prototype._notifyChange = function() {
-		var fListener = this.getChangeNotifier();
-		if (fListener) {
-			fListener(this);
+	P13nDimMeasurePanel.prototype._fireChangeDimMeasureItems = function() {
+		this._bIgnoreUpdateInternalModel = true;
+
+		// var aMItems = this._getInternalModel().getProperty("/items");
+		// aMItems.forEach(function(oMItem) {
+		// 	var oDimMeasureItem = this._getDimMeasureItemByColumnKey(oMItem.columnKey);
+		// 	if (oDimMeasureItem) {
+		// 		oDimMeasureItem.setVisible(oMItem.persistentSelected);
+		// 		oDimMeasureItem.setIndex(oMItem.persistentIndex === -1 ? undefined : oMItem.persistentIndex);
+		// 		if (oMItem.role !== undefined) {
+		// 			oDimMeasureItem.setRole(oMItem.role);
+		// 		}
+		// 	}
+		// }, this);
+
+		this.fireChangeDimMeasureItems({
+			items: this._getInternalModel().getProperty("/items").map(function(oMItem) {
+				return {
+					columnKey: oMItem.columnKey,
+					visible: oMItem.persistentSelected,
+					index: oMItem.persistentIndex === -1 ? undefined : oMItem.persistentIndex,
+					role: oMItem.role
+				};
+			})
+		});
+
+		this._bIgnoreUpdateInternalModel = false;
+	};
+
+	P13nDimMeasurePanel.prototype._fireChangeChartType = function() {
+		this._bIgnoreUpdateInternalModel = true;
+
+		this.fireChangeChartType({
+			chartTypeKey: this._getInternalModel().getProperty("/selectedChartTypeKey")
+		});
+
+		this._bIgnoreUpdateInternalModel = false;
+	};
+
+	P13nDimMeasurePanel.prototype._getDimMeasureItemByColumnKey = function(sColumnKey) {
+		var aDimMeasureItems = this.getDimMeasureItems().filter(function(oDimMeasureItem) {
+			return oDimMeasureItem.getColumnKey() === sColumnKey;
+		});
+		return aDimMeasureItems[0];
+	};
+
+	P13nDimMeasurePanel.prototype._getMarkedTableItem = function() {
+		return this._getTableItemByColumnKey(this._getInternalModel().getProperty("/columnKeyOfMarkedItem"));
+	};
+
+	P13nDimMeasurePanel.prototype._setColumnKeyOfMarkedItem = function(sColumnKey) {
+		this._getInternalModel().setProperty("/columnKeyOfMarkedItem", sColumnKey);
+	};
+
+	P13nDimMeasurePanel.prototype._onItemPressed = function(oEvent) {
+		this._switchMarkedTableItemTo(oEvent.getParameter('listItem'));
+		this._updateControlLogic();
+	};
+
+	P13nDimMeasurePanel.prototype._onChartTypeChange = function(oEvent) {
+		this._fireChangeChartType();
+		this._notifyChange();
+	};
+
+	P13nDimMeasurePanel.prototype._onRoleChange = function(oEvent) {
+		this._fireChangeDimMeasureItems();
+		this._notifyChange();
+	};
+
+	P13nDimMeasurePanel.prototype._onSelectionChange = function(oEvent) {
+		if (!oEvent.getParameter("selectAll") && oEvent.getParameter("listItems").length === 1) {
+			this._switchMarkedTableItemTo(oEvent.getParameter("listItem"));
+		}
+
+		this._selectTableItem();
+	};
+
+	P13nDimMeasurePanel.prototype._selectTableItem = function() {
+		this._updateControlLogic();
+
+		// No update of model items is needed as it is already up-to-date due to binding
+
+		// Do not sort after user interaction as the table should not be sorted once selected items has been rendered
+
+		// Re-Index only the persistentIndex after user interaction
+		var aMItems = this._getInternalModel().getProperty("/items");
+		this._updateModelItemsPersistentIndex(aMItems);
+		this._updateCounts(aMItems);
+		this._getInternalModel().setProperty("/items", aMItems);
+
+		this._fireChangeDimMeasureItems();
+
+		this._notifyChange();
+	};
+
+	P13nDimMeasurePanel.prototype._switchMarkedTableItemTo = function(oTableItem) {
+		this._removeStyleOfMarkedTableItem();
+
+		// When filter is set, the table items are reduced so marked table item can disappear.
+		var sColumnKey = this._getColumnKeyByTableItem(oTableItem);
+		if (sColumnKey) {
+			this._setColumnKeyOfMarkedItem(sColumnKey);
+			oTableItem.addStyleClass("sapMP13nColumnsPanelItemSelected");
+		}
+	};
+
+	/**
+	 * Remove highlighting from the current marked table item
+	 *
+	 * @private
+	 */
+	P13nDimMeasurePanel.prototype._removeStyleOfMarkedTableItem = function() {
+		if (this._getMarkedTableItem()) {
+			this._getMarkedTableItem().removeStyleClass("sapMP13nColumnsPanelItemSelected");
 		}
 	};
 
 	/**
 	 * @private
 	 */
-	P13nDimMeasurePanel.prototype._showAll = function() {
-		jQuery.sap.log.info("ModelItems: visible tableIndex isPersistent        TableItems: current");
-		jQuery.sap.log.info("--------------------------------------------------------------");
-		var oData = this._getInternalModel().getData();
-		var aTableItems = this._oTable.getItems();
-		var iLength = Math.max(oData.items.length, this._oTable.getItems().length);
-		for (var i = 0; i < iLength; i++) {
-			var oModelItem = oData.items[i];
-			var oTableItem = aTableItems[i];
-			jQuery.sap.log.info(oModelItem.columnKey + ": " + oModelItem.visible + " " + oModelItem.tableIndex + " " + oModelItem.persistentSelected + "_" + oModelItem.persistentIndex + ";    " + oTableItem.getId() + " " + oTableItem.getCells()[0].getText() + ": " + oTableItem.getSelected() + " " + oTableItem.getCells()[1].getText());
+	P13nDimMeasurePanel.prototype._filterModelItemsBySearchText = function() {
+		var sSearchText = this._getSearchText();
+		// Replace white spaces at begin and end of the searchText. Leave white spaces in between.
+		sSearchText = sSearchText.replace(/(^\s+)|(\s+$)/g, '');
+		// Escape special characters entered by user
+		sSearchText = sSearchText.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+		// i = ignore case; g = global; m = multiline
+		var oRegExp = new RegExp(sSearchText, 'igm');
+		if (!oRegExp) {
+			return;
 		}
+
+		this._getVisibleModelItems().forEach(function(oMItem) {
+			oMItem.visible = false;
+			// Search in item text
+			if (oMItem.text && oMItem.text.match(oRegExp)) {
+				oMItem.visible = true;
+			}
+			// Search in aggregationRole
+			if (oMItem.aggregationRole && oMItem.aggregationRole.match(oRegExp)) {
+				oMItem.visible = true;
+			}
+			// Search in role
+			if (oMItem.role && oMItem.role.match(oRegExp)) {
+				oMItem.visible = true;
+			}
+			// Search in tooltip
+			if (oMItem.tooltip && oMItem.tooltip.match(oRegExp)) {
+				oMItem.visible = true;
+			}
+		});
+		this._getInternalModel().refresh();
+	};
+
+	// P13nDimMeasurePanel.prototype._isDimMeasureItemEqualToModelItem = function(oDimMeasureItem, oMItem) {
+	// 	return oMItem.persistentIndex === oDimMeasureItem.getIndex() && oMItem.persistentSelected === oDimMeasureItem.getVisible() && oMItem.role === oDimMeasureItem.getRole();
+	// };
+
+	P13nDimMeasurePanel.prototype._updateInternalModel = function() {
+		if (!this._bUpdateInternalModel) {
+			return;
+		}
+		this._bUpdateInternalModel = false;
+
+		// Remove the marking style before table items are updated
+		this._removeStyleOfMarkedTableItem();
+
+		// Items
+		this._getInternalModel().setProperty("/items", this.getItems().map(function(oItem) {
+			return {
+				columnKey: oItem.getColumnKey(),
+				visible: true,
+				text: oItem.getText(),
+				tooltip: oItem.getTooltip(),
+				aggregationRole: oItem.getAggregationRole(),
+				availableRoleTypes: this.oAvailableRoleTypes[oItem.getAggregationRole()],
+				role: oItem.getRole(),
+				// default value
+				persistentIndex: -1,
+				persistentSelected: undefined
+			};
+		}, this));
+
+		// ChartTypeKey
+		this._getInternalModel().setProperty("/selectedChartTypeKey", this.getChartTypeKey());
+
+		// AvailableChartType
+		this._getInternalModel().setProperty("/availableChartTypes", this.getAvailableChartTypes().map(function(oAvailableChartType) {
+			return {
+				key: oAvailableChartType.getKey(),
+				text: oAvailableChartType.getText()
+			};
+		}, this));
+
+		// DimMeasureItems
+		this.getDimMeasureItems().forEach(function(oDimMeasureItem) {
+			var oMItem = this._getModelItemByColumnKey(oDimMeasureItem.getColumnKey());
+			if (!oMItem) {
+				return;
+			}
+			if (oDimMeasureItem.getIndex() !== undefined) {
+				oMItem.persistentIndex = oDimMeasureItem.getIndex();
+			}
+			if (oDimMeasureItem.getVisible() !== undefined) {
+				oMItem.persistentSelected = oDimMeasureItem.getVisible();
+			}
+			if (oDimMeasureItem.getRole() !== undefined) {
+				oMItem.role = oDimMeasureItem.getRole();
+			}
+		}, this);
+
+		this._switchVisibilityOfUnselectedModelItems();
+		this._filterModelItemsBySearchText();
+
+		var aMItems = this._getInternalModel().getProperty("/items");
+		// Sort the table items only by persistentIndex
+		this._sortModelItemsByPersistentIndex(aMItems);
+		this._updateCounts(aMItems);
+		this._getInternalModel().setProperty("/items", aMItems);
+
+		// Set the marking style again after table items are updated
+		this._switchMarkedTableItemTo(this._getMarkedTableItem());
 	};
 
 	return P13nDimMeasurePanel;
 
-}, /* bExport= */true);
+});

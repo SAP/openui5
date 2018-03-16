@@ -4,9 +4,8 @@
 
 /*global location */
 sap.ui.define([
-		"sap/ui/documentation/sdk/controller/BaseController",
-		"sap/ui/Device"
-	], function (BaseController, Device) {
+		"sap/ui/documentation/sdk/controller/BaseController"
+	], function (BaseController) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.Group", {

@@ -33,7 +33,7 @@
 				"use strict";
 				// loadAndIntercept also loads the module.
 				// I cannot load it with the require above because i need to spy during the loading
-				var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.matchers.Properties");
+				var oLogger = loggerInterceptor.loadAndIntercept("sap.ui.test.matchers.Properties")[1];
 				var Properties = sap.ui.test.matchers.Properties;
 
 				QUnit.module("Properties", {
@@ -65,9 +65,8 @@
 						enabled : false
 					})(this.oButton);
 					assert.ok(!bResult, "Should not match non-equal properties");
-					sinon.assert.calledWith(this.fnDebugStub, "The property 'enabled' of the control" +
-							" 'Element sap.m.Button#myButton' is 'true', expected 'false'");
-
+					sinon.assert.calledWith(this.fnDebugStub,
+						"Control 'Element sap.m.Button#myButton' property 'enabled' has value 'true' but should have value 'false'");
 					sinon.assert.notCalled(this.fnErrorStub);
 				});
 
@@ -79,8 +78,8 @@
 					assert.ok(!bResult, "Should not match non-equal properties");
 
 					sinon.assert.calledOnce(this.fnDebugStub);
-					sinon.assert.calledWith(this.fnDebugStub, "The property 'text' of the control" +
-							" 'Element sap.m.Button#myButton' is 'text to test', expected 'foo'");
+					sinon.assert.calledWith(this.fnDebugStub,
+						"Control 'Element sap.m.Button#myButton' property 'text' has value 'text to test' but should have value 'foo'");
 				});
 
 				QUnit.test("With non-existing properties", function(assert) {
@@ -89,7 +88,7 @@
 						notExistingProperty : "not existing value"
 					})(this.oButton);
 					assert.strictEqual(bResult, false, "Should not match non-existing properties");
-					sinon.assert.calledWith(this.fnErrorStub, "Control 'myButton' does not have a property called: 'notExistingProperty'");
+					sinon.assert.calledWith(this.fnErrorStub, "Control 'Element sap.m.Button#myButton' does not have a property 'notExistingProperty'");
 				});
 
 				QUnit.test("With regexp", function(assert) {

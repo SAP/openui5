@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>QUnit Page for sap.m.Table design time and rta enabling</title>
+
+	<script src="../../shared-config.js"></script>
+	<script>
+		window['sap-ui-config'].libs = 'sap.m,sap.ui.rta';
+		window['sap-ui-config'].bindingSyntax = 'complex';
+
+		document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+	</script>
+	<script src="Table.qunit.js"></script>
+</head>
+<body>
+<div id="qunit"></div>
+<div id="content"></div>
+</body>
+</html>

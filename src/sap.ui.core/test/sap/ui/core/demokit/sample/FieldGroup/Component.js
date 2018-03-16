@@ -5,7 +5,11 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 	return UIComponent.extend("sap.ui.core.sample.FieldGroup.Component", {
 
 		metadata: {
-			rootView: "sap.ui.core.sample.FieldGroup.Page",
+			rootView: {
+				"viewName": "sap.ui.core.sample.FieldGroup.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies: {
 				libs: [
 					"sap.m",
@@ -17,7 +21,8 @@ sap.ui.define(["sap/ui/core/UIComponent"],
 					stretch : true,
 					files: [
 						"Page.view.xml",
-						"Page.controller.js"
+						"Page.controller.js",
+						"SampleData.json"
 					]
 				}
 			}

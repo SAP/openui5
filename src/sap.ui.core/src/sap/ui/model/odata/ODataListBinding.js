@@ -520,7 +520,7 @@ sap.ui.define([
 	/**
 	 * Return the length of the list
 	 *
-	 * @return {number} the length
+	 * @return {int} the length
 	 */
 	ODataListBinding.prototype._getLength = function() {
 

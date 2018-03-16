@@ -2,8 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Control', './library'],
-	function(Control, library) {
+sap.ui.define([
+    'sap/ui/core/Control',
+    './library',
+    'jquery.sap.global',
+    'sap/ui/core/ResizeHandler',
+    "./BlockLayoutRenderer"
+],
+	function(Control, library, jQuery, ResizeHandler, BlockLayoutRenderer) {
 		"use strict";
 
 		/**
@@ -30,9 +36,9 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 *
 		 * Special full-width sections of the BlockLayout allow horizontal scrolling through a set of blocks.
 		 *
-		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 10 pre-defined color sets, each with 10 different nuances.
-		 * The main colors of the sets can be changed in Theme Designer. To set the background of a particular cell, set <code>backgroundColorSet</code> (main color)
-		 * and <code>backgroundColorIndex</code> (nuance) to a value between 1 and 10.
+		 * <b>Note:</b> With version 1.48 colors can be set for each individual {@link sap.ui.layout.BlockLayoutCell cell}. There are 10 pre-defined color sets, each with 4 different shades.
+		 * The main colors of the sets can be changed in Theme Designer. To change the background of a particular cell, set <code>backgroundColorSet</code> (main color)
+		 * and <code>backgroundColorShade</code> (shade).
 		 *
 		 * <h3>Usage</h3>
 		 * <h4>When to use</h4>
@@ -42,7 +48,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 * </ul>
 		 * <h4>When not to use</h4>
 		 * <ul>
-		 * <li>You want to display properties or features of one content item. Use a {@link sap.uxap.ObjectPage object page} or {@link sap.f.DynamicPage dynamic page} instead.</li>
+		 * <li>You want to display properties or features of one content item. Use a {@link sap.uxap.ObjectPageLayout object page} or {@link sap.f.DynamicPage dynamic page} instead.</li>
 		 * </ul>
 		 * <h3>Responsive Behavior</h3>
 		 * <ul>
@@ -58,6 +64,7 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 * @public
 		 * @since 1.34
 		 * @alias sap.ui.layout.BlockLayout
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/block-layout/ Block Layout}
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		 */
 		var BlockLayout = Control.extend("sap.ui.layout.BlockLayout", { metadata : {
@@ -68,8 +75,13 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 				 * Determines the background used for the Layout
 				 * @since 1.42
 				 */
-				background: { type: "sap.ui.layout.BlockBackgroundType", group: "Appearance", defaultValue: "Default" }
+				background: { type: "sap.ui.layout.BlockBackgroundType", group: "Appearance", defaultValue: "Default" },
 
+				/**
+				 * Keeps the font-size of the contents as is, independent from the screen size.
+				 * @since 1.52
+				 */
+				keepFontSize: { type: "boolean", group:"Behavior", defaultValue: false}
 			},
 			defaultAggregation : "content",
 			aggregations : {
@@ -77,7 +89,8 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 				 * The Rows to be included in the content of the control
 				 */
 				content: { type: "sap.ui.layout.BlockLayoutRow", multiple: true }
-			}
+			},
+			designtime: "sap/ui/layout/designtime/BlockLayout.designtime"
 		}});
 
 		/**
@@ -85,14 +98,16 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 * @type {{breakPointM: number, breakPointL: number}}
 		 */
 		BlockLayout.CONSTANTS = {
-			breakPointM : 600,
-			breakPointL : 1024,
 			SIZES: {
 				S: 600,  //Phone
 				M: 1024, //Tablet
 				L: 1440, //Desktop
 				XL: null //LargeDesktop
 			}
+		};
+
+		BlockLayout.prototype.init = function () {
+			this._currentBreakpoint = null;
 		};
 
 		BlockLayout.prototype.onBeforeRendering = function () {
@@ -103,13 +118,13 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		 * Resize handler is being attached to the control after the rendering
 		 */
 		BlockLayout.prototype.onAfterRendering = function () {
-			this._parentResizeHandler = sap.ui.core.ResizeHandler.register(this, this._onParentResize.bind(this));
 			this._onParentResize();
+			this._notifySizeListeners();
 		};
-
 		/**
 		 * Changes background type
 		 *
+		 * @public
 		 * @param {string} sNewBackground Background's style of type sap.ui.layout.BlockBackgroundType
 		 * @returns {sap.ui.layout.BlockLayout} BlockLayout instance. Allows method chaining
 		 */
@@ -121,6 +136,8 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 			if (this.hasStyleClass("sapUiBlockLayoutBackground" + sCurBackground)) {
 				this.removeStyleClass("sapUiBlockLayoutBackground" + sCurBackground, true);
 			}
+
+			sNewBackground = sNewBackground ? sNewBackground : "Default";
 			this.addStyleClass("sapUiBlockLayoutBackground" + sNewBackground, true);
 
 			// Invalidate the whole block layout as the background dependencies, row color sets and accent cells should be resolved properly
@@ -139,16 +156,32 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 				iWidth = domRef.clientWidth,
 				mSizes = BlockLayout.CONSTANTS.SIZES;
 
-			this._removeBreakpointClasses();
-
+			this._detachResizeHandler();
 			// Put additional styles according to SAP_STANDARD_EXTENDED from sap.ui.Device.media.RANGESETS
 			// Not possible to use sap.ui.Device directly as it calculates window size, but here is needed parent's size
-			for (sProp in mSizes) {
-				if (mSizes.hasOwnProperty(sProp) && (mSizes[sProp] === null || mSizes[sProp] > iWidth)) {
-					this.addStyleClass("sapUiBlockLayoutSize" + sProp, true);
-					break;
+			if (iWidth > 0){
+				this._removeBreakpointClasses();
+				for (sProp in mSizes) {
+					if (mSizes.hasOwnProperty(sProp) && (mSizes[sProp] === null || mSizes[sProp] > iWidth)) {
+						if (this._currentBreakpoint != sProp) {
+							this._currentBreakpoint = sProp;
+							this._notifySizeListeners();
+						}
+
+						this.addStyleClass("sapUiBlockLayoutSize" + sProp, true);
+						break;
+					}
 				}
 			}
+
+			this._attachResizeHandler();
+		};
+
+		BlockLayout.prototype._notifySizeListeners = function () {
+			var that = this;
+			this.getContent().forEach(function (oRow) {
+				oRow._onParentSizeChange(that._currentBreakpoint);
+			});
 		};
 
 		/**
@@ -166,12 +199,22 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 		};
 
 		/**
+		 * Attaches resize handler to the parent
+		 * @private
+		 */
+		BlockLayout.prototype._attachResizeHandler = function () {
+			if (!this._parentResizeHandler) {
+				this._parentResizeHandler = ResizeHandler.register(this, this._onParentResize.bind(this));
+			}
+		};
+
+		/**
 		 * Detaches the parent resize handler
 		 * @private
 		 */
 		BlockLayout.prototype._detachResizeHandler = function () {
 			if (this._parentResizeHandler) {
-				sap.ui.core.ResizeHandler.deregister(this._parentResizeHandler);
+				ResizeHandler.deregister(this._parentResizeHandler);
 				this._parentResizeHandler = null;
 			}
 		};
@@ -185,4 +228,4 @@ sap.ui.define(['sap/ui/core/Control', './library'],
 
 		return BlockLayout;
 
-	}, /* bExport= */ true);
+	});

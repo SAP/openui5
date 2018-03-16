@@ -1,0 +1,37 @@
+{
+	"1.42.0": {
+		"date": "August 2016",
+		"notes": [
+			{
+				"id": "a183eac1843e55d171144a85af1828df56a271f5",
+				"type": "FIX",
+				"text": "enables Move for SimpleForm also with stable id's for Title or Label; adds tests with stable ids of Title and Label",
+				"references": []
+			},
+			{
+				"id": "003ed0209b9bf507fa19ea9e5e35171faafbfd7b",
+				"type": "FIX",
+				"text": "fixes incident 1680132445, Add dialog not working in UR5",
+				"references": []
+			},
+			{
+				"id": "28469cb4a4f2ad0503e8b34e1124bd5583b53859",
+				"type": "FIX",
+				"text": "preparation for simpleform - changeType change",
+				"references": []
+			},
+			{
+				"id": "0b910f4bc7fda7918ee5bff173b821564e18f35a",
+				"type": "FIX",
+				"text": "remove hard-coded text in toolbar",
+				"references": []
+			},
+			{
+				"id": "4ffaf224549ea6334796b6e17491669c6f321c7a",
+				"type": "FIX",
+				"text": "set Id to page for RuntimeAuthoring.html and fix FlexCommand issue",
+				"references": []
+			}
+		]
+	}
+}

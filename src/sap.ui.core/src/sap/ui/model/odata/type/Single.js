@@ -9,7 +9,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	"use strict";
 
 	// Math.fround polyfill
-	if (!Math.fround) {
+	if (!Math.fround) { // sap-ui-cover-browser msie
 		// IE 10+
 		var aArray = new window.Float32Array(1);
 
@@ -67,13 +67,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   constraints, see {@link #constructor}
 	 */
 	function setConstraints(oType, oConstraints) {
-		var vNullable = oConstraints && oConstraints.nullable;
+		var vNullable;
 
 		oType.oConstraints = undefined;
-		if (vNullable === false || vNullable === "false") {
-			oType.oConstraints = {nullable : false};
-		} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
-			jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+		if (oConstraints) {
+			vNullable = oConstraints.nullable;
+			if (vNullable === false || vNullable === "false") {
+				oType.oConstraints = {nullable : false};
+			} else if (vNullable !== undefined && vNullable !== true && vNullable !== "true") {
+				jQuery.sap.log.warning("Illegal nullable: " + vNullable, null, oType.getName());
+			}
 		}
 
 		oType._handleLocalizationChange();
@@ -128,7 +131,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 	 *   the formatted output value in the target type; <code>undefined</code> or <code>null</code>
 	 *   are formatted to <code>null</code>
 	 * @throws {sap.ui.model.FormatException}
-	 *   if <code>sTargetType</code> is unsupported
+	 *   If <code>sTargetType</code> is not supported or <code>vValue</code> is not a model value
+	 *   for this type.
 	 * @public
 	 */
 	Single.prototype.formatValue = function(vValue, sTargetType) {
@@ -137,7 +141,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat',
 		if (vValue === null || vValue === undefined) {
 			return null;
 		}
-		fValue = typeof vValue !== "number" ? parseFloat(vValue) : vValue;
+		if (typeof vValue === "number") {
+			fValue = vValue;
+		} else if (typeof vValue === "string") {
+			fValue = parseFloat(vValue);
+		} else if (sTargetType !== "any") {
+			throw new FormatException("Illegal " + this.getName() + " value: " + vValue);
+		}
 		switch (this.getPrimitiveType(sTargetType)) {
 		case "any":
 			return vValue;

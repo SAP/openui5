@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.table.ColumnMenu.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/unified/MenuTextFieldItem', 'sap/ui/Device', './TableUtils'],
-	function(jQuery, RenderManager, library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/unified/MenuItem', 'sap/ui/unified/MenuTextFieldItem', 'sap/ui/Device', './TableUtils'],
+	function(jQuery, library, Menu, MenuItem, MenuTextFieldItem, Device, TableUtils) {
 	"use strict";
 
 	/**
@@ -45,7 +45,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 			Menu.prototype.init.apply(this, arguments);
 		}
 		this.addStyleClass("sapUiTableColumnMenu");
-		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		this._bInvalidated = true;
 		this._iPopupClosedTimeoutId = null;
 		this._oColumn = null;
@@ -86,10 +85,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * its old parent.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oParent the object that becomes this object's new parent
+	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
 	 * @see {sap.ui.base.ManagedObject}
-	 *
-	 * @return {sap.ui.base.ManagedObject}
-	 *            Returns <code>this</code> to allow method chaining
 	 * @private
 	 */
 	ColumnMenu.prototype.setParent = function(oParent) {
@@ -142,15 +139,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 */
 	ColumnMenu.prototype._invalidate = function() {
 		this._bInvalidated = true;
-	};
-
-	/**
-	 * Invalidates the column menu control items and refreshes the loaded language bundle.
-	 * @private
-	 */
-	ColumnMenu.prototype._updateResourceBundle = function() {
-		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
-		this._invalidate();
 	};
 
 	/**
@@ -284,7 +272,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	ColumnMenu.prototype._addGroupMenuItem = function() {
 		var oColumn = this._oColumn;
 
-		if (oColumn.isGroupableByMenu()) {
+		if (oColumn.isGroupable()) {
 			var oTable = this._oTable;
 
 			this.addItem(this._createMenuItem(
@@ -386,7 +374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * Factory method for the column visibility menu item.
 	 * @param {string} sId the id of the menu item.
 	 * @param {sap.ui.table.Column} oColumn the associated column to the menu item.
-	 * @return {sap.ui.unified.MenuItem} the created menu item.
+	 * @returns {sap.ui.unified.MenuItem} the created menu item.
 	 * @private
 	 */
 	ColumnMenu.prototype._createColumnVisibilityMenuItem = function(sId, oColumn) {
@@ -435,12 +423,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @param {string} sTextI18nKey the i18n key that should be used for the menu item text.
 	 * @param {string} sIcon the icon name
 	 * @param {function} fHandler the handler function to call when the item gets selected.
-	 * @return {sap.ui.unified.MenuItem} the created menu item.
+	 * @returns {sap.ui.unified.MenuItem} the created menu item.
 	 * @private
 	 */
 	ColumnMenu.prototype._createMenuItem = function(sId, sTextI18nKey, sIcon, fHandler) {
 		return new MenuItem(this.getId() + "-" + sId, {
-			text: this._oResBundle.getText(sTextI18nKey),
+			text: TableUtils.getResourceText(sTextI18nKey),
 			icon: sIcon ? "sap-icon://" + sIcon : null,
 			select: fHandler || function() {}
 		});
@@ -454,13 +442,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	 * @param {string} sIcon the icon name
 	 * @param {string} sValue the default value of the text field
 	 * @param {function} fHandler the handler function to call when the item gets selected.
-	 * @return {sap.ui.unified.MenuTextFieldItem} the created menu text field item.
+	 * @returns {sap.ui.unified.MenuTextFieldItem} the created menu text field item.
 	 * @private
 	 */
 	ColumnMenu.prototype._createMenuTextFieldItem = function(sId, sTextI18nKey, sIcon, sValue, fHandler) {
 		fHandler = fHandler || function() {};
 		return new MenuTextFieldItem(this.getId() + "-" + sId, {
-			label: this._oResBundle.getText(sTextI18nKey),
+			label: TableUtils.getResourceText(sTextI18nKey),
 			icon: sIcon ? "sap-icon://" + sIcon : null,
 			value: sValue,
 			select: fHandler || function() {}
@@ -471,7 +459,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	/**
 	 * sets a new filter value into the filter field
 	 * @param {String} sValue value of the filter input field to be set
-	 * @return {sap.ui.table.ColumnMenu} this reference for chaining
+	 * @returns {sap.ui.table.ColumnMenu} this reference for chaining
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterValue = function(sValue) {
@@ -488,7 +476,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/RenderManager', './library', 's
 	/**
 	 * sets a new filter value into the filter field
 	 * @param {sap.ui.core.ValueState} sFilterState value state for filter text field item
-	 * @return {sap.ui.table.ColumnMenu} this reference for chaining
+	 * @returns {sap.ui.table.ColumnMenu} this reference for chaining
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterState = function(sFilterState) {

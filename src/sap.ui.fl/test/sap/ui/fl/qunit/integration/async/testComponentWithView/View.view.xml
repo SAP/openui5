@@ -1,0 +1,13 @@
+<mvc:View
+xmlns:simpleform="sap.ui.layout.form"
+xmlns="sap.m"
+xmlns:mvc="sap.ui.core.mvc"
+height="100%">
+	<Page id="myPage" title="A Page">
+		<simpleform:SimpleForm id="myForm">
+			<Title id="myGroup" text="a group"/>
+			<Label id="myGroupElement"  text="a element"/>
+			<Input id="myGroupField" />
+		</simpleform:SimpleForm>
+	</Page>
+</mvc:View>

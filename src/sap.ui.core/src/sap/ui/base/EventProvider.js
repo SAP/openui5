@@ -17,7 +17,6 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	 * @extends sap.ui.base.Object
 	 * @author SAP SE
 	 * @version ${version}
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.base.EventProvider
 	 */
@@ -92,7 +91,7 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 
 		// Inform interested parties about changed EventHandlers
 		if ( mEventRegistry[EVENT__LISTENERS_CHANGED] ) {
-			this.fireEvent(EVENT__LISTENERS_CHANGED, {EventId: sEventId, type: 'listenerAttached'});
+			this.fireEvent(EVENT__LISTENERS_CHANGED, {EventId: sEventId, type: 'listenerAttached', listener: oListener, func: fnFunction, data: oData});
 		}
 
 		return this;
@@ -158,15 +157,15 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 			return this;
 		}
 
-		var bListenerDetached = false;
+		var oListener;
 
 		//PERFOPT use array. remember length to not re-calculate over and over again
 		for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
 			//PERFOPT check for identity instead of equality... avoid type conversion
 			if (aEventListeners[i].fFunction === fnFunction && aEventListeners[i].oListener === oListener) {
 				//delete aEventListeners[i];
+				oListener = aEventListeners[i];
 				aEventListeners.splice(i,1);
-				bListenerDetached = true;
 				break;
 			}
 		}
@@ -175,9 +174,9 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 			delete mEventRegistry[sEventId];
 		}
 
-		if (bListenerDetached && mEventRegistry[EVENT__LISTENERS_CHANGED] ) {
+		if (oListener && mEventRegistry[EVENT__LISTENERS_CHANGED] ) {
 			// Inform interested parties about changed EventHandlers
-			this.fireEvent(EVENT__LISTENERS_CHANGED, {EventId: sEventId, type: 'listenerDetached' });
+			this.fireEvent(EVENT__LISTENERS_CHANGED, {EventId: sEventId, type: 'listenerDetached', listener: oListener.listener, func: oListener.fFunction, data: oListener.oData});
 		}
 
 		return this;

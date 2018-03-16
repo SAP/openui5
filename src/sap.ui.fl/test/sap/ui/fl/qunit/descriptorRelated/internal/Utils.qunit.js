@@ -14,7 +14,7 @@ jQuery.sap.require("sap.ui.fl.descriptorRelated.internal.Utils");
 	QUnit.test("getNameAndNameSpace", function(assert) {
 		assert.deepEqual(Utils.getNameAndNameSpace("id", "reference"), {
 			"fileName": "manifest",
-			"namespace": "apps/reference/changes/id/"
+			"namespace": "apps/reference/appVariants/id/"
 			});
 	});
 
@@ -129,5 +129,29 @@ jQuery.sap.require("sap.ui.fl.descriptorRelated.internal.Utils");
 		});
 	});
 
+	QUnit.test("checkPackage", function(assert) {
+		assert.equal(Utils.checkPackage("MYPACKAGE"), undefined);
+		assert.equal(Utils.checkPackage("/UI5/MYPACKAGE"), undefined);
+	});
+
+	QUnit.test("checkPackage failure", function(assert) {
+		assert.throws(function(){
+			Utils.checkPackage("wrong type");
+		});
+		assert.throws(function(){
+			Utils.checkPackage("wrongtype");
+		});
+	});
+
+	QUnit.test("checkTransportRequest", function(assert) {
+		assert.equal(Utils.checkTransportRequest("ATO_NOTIFICATION"), undefined);
+		assert.equal(Utils.checkTransportRequest("ABCK035075"), undefined);
+	});
+
+	QUnit.test("checkTransportRequest failure", function(assert) {
+		assert.throws(function(){
+			Utils.checkTransportRequest("wrong type");
+		});
+	});
 
 }(sap.ui.fl.descriptorRelated.internal.Utils));

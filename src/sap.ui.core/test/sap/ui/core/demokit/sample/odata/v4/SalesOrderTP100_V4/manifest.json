@@ -1,0 +1,73 @@
+{
+	"_version" : "1.1.0",
+	"sap.app" : {
+		"_version" : "1.1.0",
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"description" : "{{sap.app.description}}",
+		"dataSources" : {
+			"default" : {
+				"uri" : "/sap/opu/odata4/sap/sepm_odata_ref/sadl/sap/sepm_c_slsorder_tp_100/0001/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"id" : "sap.ui.core.sample.odata.v4.SalesOrderTP100_V4",
+		"i18n" : "i18n/i18n.properties",
+		"title" : "{{sap.app.title}}",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"_version" : "1.1.0",
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"_version" : "1.1.0",
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"Main.controller.js",
+					"Main.view.xml",
+					"manifest.json"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"minUI5Version" : "1.51",
+			"libs" : {
+				"sap.m" : {}
+			}
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"settings" : {
+					"autoExpandSelect" : true,
+					"operationMode" : "Server",
+					"synchronizationMode" : "None",
+					"updateGroupId" : "UpdateGroup"
+				}
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "Main.view.xml"
+		}
+	}
+}

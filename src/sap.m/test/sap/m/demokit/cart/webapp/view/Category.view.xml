@@ -1,5 +1,4 @@
 <mvc:View
-	id="categoryView"
 	controllerName="sap.ui.demo.cart.controller.Category"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
@@ -7,14 +6,19 @@
 		id="page"
 		title="{CategoryName}"
 		showNavButton="true"
-		navButtonPress="onNavButtonPress"
-		showFooter="{device>/isNoPhone}" >
+		navButtonPress="onNavButtonPress">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Category_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>Category_contentLabel}"
+				footerRole="Region"
+				footerLabel="{i18n>Category_footerLabel}"
+				headerRole="Region"
+				headerLabel="{i18n>Category_headerLabel}"/>
+		</landmarkInfo>
 		<headerContent>
-			<ToggleButton
-				icon="sap-icon://complete"
-				tooltip="{i18n>categoryAvailabilityFilterTooltip}"
-				press="onAvailabilityFilterToggle"
-				pressed="{ui>/availabilityFilterOn}"/>
 			<Button
 				icon="sap-icon://cart"
 				tooltip="{i18n>toCartButtonTooltip}"
@@ -24,7 +28,7 @@
 		<content>
 			<List
 				id="productList"
-				mode="{device>/listMode}"
+				mode="{= ${device>/system/phone} ? 'None' : 'SingleSelectMaster'}"
 				selectionChange="onProductListSelect"
 				noDataText="{i18n>categoryNoData}"
 				busyIndicatorDelay="0"
@@ -35,9 +39,18 @@
 						descending : false
 					}
 				}">
+				<infoToolbar>
+					<Toolbar
+						id="categoryInfoToolbar"
+						visible="false">
+						<content>
+							<Title id="categoryInfoToolbarTitle"/>
+						</content>
+					</Toolbar>
+				</infoToolbar>
 				<items>
 					<ObjectListItem
-						type="{device>/listItemType}"
+						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
 						icon="{
 							path : 'PictureUrl',
 							formatter : '.formatter.pictureUrl'
@@ -68,5 +81,14 @@
 				</items>
 			</List>
 		</content>
+		<footer>
+			<Toolbar>
+				<ToolbarSpacer />
+				<Button
+					id="masterListFilterButton"
+					icon="sap-icon://filter"
+					press="onMasterListFilterPressed"/>
+			</Toolbar>
+		</footer>
 	</Page>
 </mvc:View>

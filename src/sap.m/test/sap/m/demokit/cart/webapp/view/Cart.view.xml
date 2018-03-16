@@ -1,5 +1,4 @@
 <mvc:View
-	id="cartView"
 	controllerName="sap.ui.demo.cart.controller.Cart"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
@@ -9,6 +8,17 @@
 		showNavButton="{cfg>/notInDelete}"
 		navButtonPress="onNavButtonPress"
 		showFooter="true" >
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Cart_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>Cart_contentLabel}"
+				footerRole="Region"
+				footerLabel="{i18n>Cart_footerLabel}"
+				headerRole="Region"
+				headerLabel="{i18n>Cart_headerLabel}"/>
+		</landmarkInfo>
 		<headerContent>
 			<Button
 				id="editButton"
@@ -18,11 +28,13 @@
 					{path: 'cartProducts>/savedForLaterEntries'}
 				 ], formatter : '.formatter.hasItems'}"
 				visible="{cfg>/notInDelete}"
-				press="onEditOrDoneButtonPress" />
+				press="onEditOrDoneButtonPress"
+				tooltip="{i18n>cartEditButtonTooltip}"/>
 		</headerContent>
 		<footer>
 			<Toolbar>
 				<Text
+					id="totalPriceText"
 					text="{
 						path : 'cartProducts>/cartEntries',
 						formatter : '.formatter.totalPrice'
@@ -32,7 +44,6 @@
 					id="proceedButton"
 					type="Accept"
 					text="{i18n>cartProceedButtonText}"
-					tooltip="{i18n>cartProceedButtonTooltip}"
 					enabled="{
 						path: 'cartProducts>/cartEntries',
 						formatter: '.formatter.hasItems'
@@ -42,8 +53,6 @@
 				<Button
 					id="doneButton"
 					text="{i18n>cartDoneButtonText}"
-					tooltip="{i18n>cartDoneButtonTooltip}"
-					icon="sap-icon://accept"
 					enabled="true"
 					visible="{cfg>/inDelete}"
 					press="onEditOrDoneButtonPress" />

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/* global jQuery,QUnit,assert */
+/* global jQuery,QUnit */
 
 // Load synchronously to avoid QUnit issue where tests run before QUnit is loaded
 // Only load QUnit if it has not been loaded via script tag
@@ -13,10 +13,10 @@ if (!window.QUnit) {
 // put qunit-coverage last so library files don't get measured  (we load StepDefinitions, even though we don't have to,
 // so that it doesn't appear in the code coverage list, knowing that the user will need to load it)
 sap.ui.define([
-  'jquery.sap.global', 'sap/ui/base/Object', "sap/ui/test/gherkin/GherkinTestGenerator",
+  "jquery.sap.global", "sap/ui/test/gherkin/GherkinTestGenerator",
   "sap/ui/test/gherkin/StepDefinitions", "sap/ui/qunit/qunit-css", "sap/ui/qunit/qunit-junit",
   "sap/ui/qunit/qunit-coverage"
-], function($, UI5Object, GherkinTestGenerator) {
+], function($, GherkinTestGenerator) {
   'use strict';
 
   /**
@@ -75,7 +75,7 @@ sap.ui.define([
       $.sap.log.info("[GHERKIN] Running feature: '" + oFeatureTest.name + "'");
       oFeatureTest.testScenarios.forEach(function(oTestScenario) {
         var fnTestFunction = (!oFeatureTest.skip && !oTestScenario.skip) ? QUnit.test : QUnit.skip;
-        fnTestFunction(oTestScenario.name, function() {
+        fnTestFunction(oTestScenario.name, function(assert) {
           $.sap.log.info("[GHERKIN] Running scenario: '" + oTestScenario.name + "'");
           oTestScenario.testSteps.forEach(function(oTestStep) {
             $.sap.log.info("[GHERKIN] Running step: text='" + oTestStep.text + "' regex='" + oTestStep.regex + "'");
@@ -83,7 +83,7 @@ sap.ui.define([
             if (oTestStep.isMatch) {
               QUnit.config.current.assertions.pop(); // don't break QUnit expect() behaviour
             }
-            oTestGenerator.execute(oTestStep);
+            oTestGenerator.execute(oTestStep, assert);
           });
         });
       });

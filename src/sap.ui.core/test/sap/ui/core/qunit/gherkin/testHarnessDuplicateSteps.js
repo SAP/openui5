@@ -3,7 +3,6 @@
  */
 
 /* eslint-disable quotes */
-/* global QUnit,sinon */
 
 sap.ui.define([
   "jquery.sap.global",
@@ -15,12 +14,12 @@ sap.ui.define([
     init: function() {
 
       this.register(/^duplicate regex$/i, function() {
-        assert.ok(true);
+        this.assert.ok(true);
       });
 
       // this second call will fail!
       this.register(/^duplicate regex$/i, function() {
-        assert.ok(true);
+        this.assert.ok(true);
       });
     }
   });

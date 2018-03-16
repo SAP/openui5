@@ -23,6 +23,10 @@
 
 	jQuery.sap.require("sap.ui.core.IconPool");
 
+	var eventHandler = function (oEvent) {
+		assert.ok(true, "press event for status was fired");
+	}
+
 	var os1 = new sap.m.ObjectStatus("os1",{
 		text : "    Contract #D1234567890     "
 		});
@@ -48,6 +52,25 @@
 		assert.notEqual(jQuery.sap.domById("os1"), null, "Object Status #1 should be rendered.");
 		assert.notEqual(jQuery.sap.domById("os2"), null, "Object Status #2 should be rendered.");
 		assert.notEqual(jQuery.sap.domById("os3"), null, "Object Status #3 should be rendered.");
+	});
+
+	QUnit.test("render a placeholder if _isEmpty", function(assert) {
+		//arrange
+		var oOS = new sap.m.ObjectStatus(),
+			$OS;
+
+		//act
+		oOS.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		$OS = jQuery("#" + oOS.getId());
+
+		//assert
+		assert.equal($OS.length, 1, "rendered even though it is empty");
+		assert.equal($OS.eq(0).css("display"), "none", "not visible because it is empty");
+
+		//clean
+		oOS.destroy();
 	});
 
 	/******************************************************************/
@@ -443,26 +466,46 @@
 	});
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
-		var oControl = new sap.m.ObjectStatus({text: "Text", title: "Title"});
+		var oControl = new sap.m.ObjectStatus({text: "Text", title: "Title", tooltip: "Tooltip"});
 		assert.ok(!!oControl.getAccessibilityInfo, "ObjectStatus has a getAccessibilityInfo function");
 		var oInfo = oControl.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, undefined, "AriaRole");
 		assert.strictEqual(oInfo.type, undefined, "Type");
-		assert.strictEqual(oInfo.description, "Title Text", "Description");
+		assert.strictEqual(oInfo.description, "Title Text  Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, undefined, "Focusable");
 		assert.strictEqual(oInfo.enabled, undefined, "Enabled");
 		assert.strictEqual(oInfo.editable, undefined, "Editable");
 		oControl.setState("Warning");
 		oControl.setTitle("");
 		oInfo = oControl.getAccessibilityInfo();
-		assert.strictEqual(oInfo.description, "Text " + sap.ui.core.ValueStateSupport.getAdditionalText(oControl.getState()), "Description");
+		assert.strictEqual(oInfo.description, "Text " + sap.ui.core.ValueStateSupport.getAdditionalText(oControl.getState()) + " " + oControl.getTooltip(), "Description");
 		oControl.destroy();
+	});
+
+	QUnit.test("Active ObjectStatus has role 'link'", function(assert) {
+
+		// Arrange
+		var oObjectStatus = new sap.m.ObjectStatus({
+			title: "Title",
+			text: "Contract #D1234567890",
+			active: true
+		});
+
+		// Act
+		oObjectStatus.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oObjectStatus.$().attr("role"), "link", "Active ObjectStatus has link role.");
+
+		// Clean up
+		oObjectStatus.destroy();
+
 	});
 
 	QUnit.module("textDirection");
 
-	QUnit.test("Title has dir set to LTR when Inherit", function (assert) {
+	QUnit.test("Title and Text has dir set to LTR when Inherit", function (assert) {
 		//Arange
 		var oObjectStatus = new sap.m.ObjectStatus({title: "Staus", text: "Success object"});
 		oObjectStatus.placeAt("qunit-fixture");
@@ -470,12 +513,13 @@
 
 		//Act
 		assert.equal(oObjectStatus.$("title").attr("dir"), "ltr", "When the textDirection has the Inherit value, for the title is set LTR when on LTR page");
+		assert.equal(oObjectStatus.$("text").attr("dir"), "ltr", "When the textDirection has the Inherit value, for the text is set LTR when on LTR page");
 
 		//Cleanup
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Title has dir set to RTL when textDirection=RTL", function (assert) {
+	QUnit.test("Title and Text has dir set to RTL when textDirection=RTL", function (assert) {
 		//Arange
 		var oObjectStatus = new sap.m.ObjectStatus({title: "Staus", text: "Success object", textDirection: sap.ui.core.TextDirection.RTL});
 		oObjectStatus.placeAt("qunit-fixture");
@@ -483,8 +527,134 @@
 
 		//Act
 		assert.equal(oObjectStatus.$("title").attr("dir"), "rtl", "When textDirection=RTL, for the title is set also RTL");
+		assert.equal(oObjectStatus.$("text").attr("dir"), "rtl", "When textDirection=RTL, for the text is set also RTL");
 
 		//Cleanup
+		oObjectStatus.destroy();
+	});
+
+	QUnit.module("Active status", {
+		beforeEach: function () {
+			this.oActiveStat = new sap.m.ObjectStatus("oStatus", {
+				title: "Title",
+				text: "Contract #D1234567890",
+				icon: "sap-icon://alert",
+				active: true
+			});
+		},
+		afterEach: function () {
+			this.oActiveStat.destroy();
+		}
+	});
+
+
+	QUnit.test("Active status has 'sapMObjStatusActive' class and icon and text are encapsulated in one span", function(assert) {
+		this.oActiveStat.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.ok(this.oActiveStat.$().hasClass("sapMObjStatusActive"), "Active status has sapMObjStatusActive class.");
+		assert.ok(this.oActiveStat.$().children(1).hasClass("sapMObjStatusLink"), "The span that holds Icon and Text has class sapMObjStatusLink.");
+		assert.strictEqual(this.oActiveStat.$().children().length, 2, "sapMObjStatusLink span has two children");
+		assert.strictEqual(this.oActiveStat.$().children().children(".sapMObjStatusIcon").length, 1, "The icon span has class sapMObjStatusIcon.");
+		assert.strictEqual(this.oActiveStat.$().children().children(".sapMObjStatusText").length, 1, "The text span has class sapMObjStatusText.");
+	});
+
+	QUnit.test("Active status with empty icon and text", function(assert) {
+		this.oActiveStat.setText("");
+		this.oActiveStat.setIcon("");
+		this.oActiveStat.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.ok(!this.oActiveStat.$().hasClass("sapMObjStatusActive"), "Active class is not set when there is no icon and text.");
+		assert.ok(!this.oActiveStat.$().children().hasClass("sapMObjStatusLink"), "There is no class sapMObjStatusLink.");
+	});
+
+	QUnit.module("Events", {
+		beforeEach: function () {
+			this.oActiveStat = new sap.m.ObjectStatus("oStatus", {
+				title: "Title",
+				icon: "sap-icon://alert",
+				text: "Contract #D1234567890",
+				active: true,
+				press: eventHandler
+			});
+		},
+		afterEach: function () {
+			this.oActiveStat.destroy();
+		}
+	});
+
+	QUnit.test("press active ObjectStatus with text and icon", function(assert) {
+		// Act
+		this.oActiveStat.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.expect(3);
+		qutils.triggerEvent("tap", this.oActiveStat.$().children()[1]); // click on a wrapper IconText span, should fire event
+		qutils.triggerEvent("tap", this.oActiveStat.$().children().children(".sapMObjStatusText")); //should fire event
+		qutils.triggerEvent("tap", this.oActiveStat.$().children().children(".sapMObjStatusIcon")); //should fire event
+		qutils.triggerEvent("tap", this.oActiveStat.$().children()[0]);//click on a title should not fire event
+	});
+
+	QUnit.test("press title of active ObjectStatus with no text and icon should not fire event", function(assert) {
+		this.oActiveStat.setText("");
+		this.oActiveStat.setIcon("");
+
+		// Act
+		this.oActiveStat.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.expect(0);
+		qutils.triggerEvent("tap", this.oActiveStat.$().children()[0]);//click on a title should not fire event
+	});
+
+	QUnit.module("Keyboard handling");
+
+	QUnit.test("Enter", function(assert) {
+
+		// Arrange
+		var oObjectStatus = new sap.m.ObjectStatus({
+			title: "Title",
+			text: "Contract #D1234567890",
+			active: true
+		});
+
+		// Act
+		oObjectStatus.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oPressSpy = sinon.spy(sap.m.ObjectStatus.prototype, "firePress");
+		sap.ui.test.qunit.triggerKeydown(oObjectStatus.getFocusDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+		assert.strictEqual(oPressSpy.callCount, 1, "Enter is pressed, press event was fired");
+
+		// Clean up
+		sap.m.ObjectStatus.prototype.firePress.restore();
+		oObjectStatus.destroy();
+	});
+
+	QUnit.test("Space", function(assert) {
+
+		// Arrange
+		var oObjectStatus = new sap.m.ObjectStatus({
+			title: "Title",
+			text: "Contract #D1234567890",
+			active: true
+		});
+
+		// Act
+		oObjectStatus.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oPressSpy = sinon.spy(sap.m.ObjectStatus.prototype, "firePress");
+		sap.ui.test.qunit.triggerKeydown(oObjectStatus.getFocusDomRef(), jQuery.sap.KeyCodes.SPACE);
+
+		assert.strictEqual(oPressSpy.callCount, 1, "Space is pressed, press event was fired");
+
+		// Clean up
+		sap.m.ObjectStatus.prototype.firePress.restore();
 		oObjectStatus.destroy();
 	});
 </script>

@@ -3,13 +3,39 @@
  */
 
 // Provides control sap.ui.core.mvc.XMLView.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/core/library', './View', 'sap/ui/model/resource/ResourceModel', 'sap/ui/base/ManagedObject', 'sap/ui/core/Control', 'sap/ui/core/RenderManager', 'sap/ui/core/cache/CacheManager', 'jquery.sap.xml', 'jquery.sap.script'],
-	function(jQuery, XMLTemplateProcessor, library, View, ResourceModel, ManagedObject, Control, RenderManager, Cache/* , jQuerySap */) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/XMLTemplateProcessor',
+    'sap/ui/core/library',
+    './View',
+    'sap/ui/model/resource/ResourceModel',
+    'sap/ui/base/ManagedObject',
+    'sap/ui/core/Control',
+    'sap/ui/core/RenderManager',
+    'sap/ui/core/cache/CacheManager',
+    "./XMLViewRenderer",
+    'jquery.sap.xml',
+    'jquery.sap.script'
+],
+	function(
+	    jQuery,
+		XMLTemplateProcessor,
+		library,
+		View,
+		ResourceModel,
+		ManagedObject,
+		Control,
+		RenderManager,
+		Cache/* , jQuerySap */,
+		XMLViewRenderer
+	) {
 	"use strict";
 
-	// shortcut for enum(s)
+	// actual constants
 	var RenderPrefixes = RenderManager.RenderPrefixes,
-		ViewType = library.mvc.ViewType;
+		ViewType = library.mvc.ViewType,
+		sXMLViewCacheError = "XMLViewCacheError",
+		notCacheRelevant = {};
 
 
 	/**
@@ -35,7 +61,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 	 * @extends sap.ui.core.mvc.View
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.mvc.XMLView
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -65,7 +90,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			cache : 'Object'
 		},
 
-		designTime: true
+		designtime: "sap/ui/core/designtime/mvc/XMLView.designtime"
 	}});
 
 		/**
@@ -136,7 +161,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		 * @experimental
 		 * @since 1.44
 		 */
-		XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache();
+		XMLView._bUseCache = sap.ui.getCore().getConfiguration().getViewCache() && Cache._isSupportedEnvironment();
 
 		function validatexContent(xContent) {
 			if (xContent.parseError.errorCode !== 0) {
@@ -218,9 +243,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		function getCacheInput(oView, mCacheSettings) {
 			var oRootComponent = getRootComponent(oView),
 				sManifest = oRootComponent ? JSON.stringify(oRootComponent.getManifest()) : null,
-				aFutureKeyParts = getCacheKeyPrefixes(oView, oRootComponent);
+				aFutureKeyParts = [];
 
-			aFutureKeyParts = aFutureKeyParts.concat(getVersionInfo(), getCacheKeyProviders(oView), mCacheSettings.keys);
+			aFutureKeyParts = aFutureKeyParts.concat(
+				getCacheKeyPrefixes(oView, oRootComponent),
+				getVersionInfo(), getCacheKeyProviders(oView),
+				mCacheSettings.keys
+			);
 
 			return validateCacheKey(oView, aFutureKeyParts).then(function(sKey) {
 				return {
@@ -237,10 +266,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 
 		function validateCacheKey(oView, aFutureKeyParts) {
 			return Promise.all(aFutureKeyParts).then(function(aKeys) {
+				aKeys = aKeys.filter(function(oElement) {
+					return oElement !== notCacheRelevant;
+				});
 				if (aKeys.every(isValidKey)) {
 					return aKeys.join('_');
 				} else {
 					var e = new Error("Provided cache keys may not be empty or undefined.");
+					e.name = sXMLViewCacheError;
 					return Promise.reject(e);
 				}
 			});
@@ -256,14 +289,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		}
 
 		function getCacheKeyProviders(oView) {
-			var mPreprocessors = View._mPreprocessors["XML"],
+			var mPreprocessors = oView.getPreprocessors(),
 				oPreprocessorInfo = oView.getPreprocessorInfo(/*bSync =*/false),
 				aFutureCacheKeys = [];
+
 			function pushFutureKey(o) {
-				if (o.preprocessor.getCacheKey) {
-					aFutureCacheKeys.push(o.preprocessor.getCacheKey(oPreprocessorInfo));
-				}
+				aFutureCacheKeys.push(o.preprocessor
+					.then(function(oPreprocessorImpl) {
+						if (oPreprocessorImpl.getCacheKey) {
+							return oPreprocessorImpl.getCacheKey(oPreprocessorInfo);
+						} else {
+							/* We cannot check for the getCacheKey function synchronous, but we later need
+							 * to differentiate whether the result of getCacheKey returns an invalid result
+							 * (null/undefined) or the function simply does not exist.
+							 * Therefore we use the 'notCacheRelevant' token to mark preProcessors that does
+							 * not provide a getCacheKey function and so are not relevant for caching.
+							 * See validateCacheKey function.
+							 */
+							return notCacheRelevant;
+						}
+					})
+				);
 			}
+
 			for (var sType in mPreprocessors) {
 				mPreprocessors[sType].forEach(pushFutureKey);
 			}
@@ -281,6 +329,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 					});
 				}
 				return sTimestamp;
+			}).catch(function(error) {
+				// Do not populate the cache if the version info could not be retrieved.
+				jQuery.sap.log.warning("sap.ui.getVersionInfo could not be retrieved", "sap.ui.core.mvc.XMLView");
+				jQuery.sap.log.debug(error);
+				return "";
 			});
 		}
 
@@ -325,7 +378,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 				// extract the properties of the view from the XML element
 				if ( !that.isSubView() ) {
 					// for a real XMLView, we need to parse the attributes of the root node
-					XMLTemplateProcessor.parseViewAttributes(xContent, that, mSettings);
+					var mSettingsFromXML = {};
+					// enrich mSettingsFromXML
+					XMLTemplateProcessor.parseViewAttributes(xContent, that, mSettingsFromXML);
+					if (!mSettings.async) {
+						// extend mSettings which get applied implicitly during view constructor
+						jQuery.sap.extend(mSettings, mSettingsFromXML);
+					} else {
+						// apply the settings from the loaded view source via an explicit call
+						that.applySettings(mSettingsFromXML);
+					}
 				} else {
 					// when used as fragment: prevent connection to controller, only top level XMLView must connect
 					delete mSettings.controller;
@@ -337,8 +399,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			function runViewxmlPreprocessor(xContent, bAsync) {
 				if (that.hasPreprocessor("viewxml")) {
 					// for the viewxml preprocessor fully qualified ids are provided on the xml source
-					XMLTemplateProcessor.enrichTemplateIds(xContent, that);
-					return that.runPreprocessor("viewxml", xContent, !bAsync);
+					return XMLTemplateProcessor.enrichTemplateIdsPromise(xContent, that, bAsync).then(function() {
+						return that.runPreprocessor("viewxml", xContent, !bAsync);
+					});
 				}
 				return xContent;
 			}
@@ -373,9 +436,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 							return mCacheOutput.xml;
 						}
 					});
-				}).catch(function(e) {
-					jQuery.sap.log.error(e);
-					return processResource(sResourceName);
+				}).catch(function(error) {
+					if (error.name === sXMLViewCacheError) {
+						// no sufficient cache keys, processing can continue
+						jQuery.sap.log.debug(error.message, error.name, "sap.ui.core.mvc.XMLView");
+						jQuery.sap.log.debug("Processing the View without caching.", "sap.ui.core.mvc.XMLView");
+						return processResource(sResourceName);
+					} else {
+						// an unknown error occured and should be exposed
+						return Promise.reject(error);
+					}
 				});
 			}
 
@@ -412,10 +482,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 			}
 
 			if (mSettings.async) {
+				// a normal Promise:
 				return runPreprocessorsAsync(_xContent).then(processView);
 			} else {
+				// a SyncPromise
 				_xContent = this.runPreprocessor("xml", _xContent, true);
-				_xContent = runViewxmlPreprocessor(_xContent);
+				_xContent = runViewxmlPreprocessor(_xContent, false);
+				// if the _xContent is a SyncPromise we have to extract the _xContent
+				// and make sure we throw any occurring errors further
+				if (_xContent && typeof _xContent.then === 'function') {
+					if (_xContent.isRejected()) {
+						// sync promises store the error within the result if they are rejected
+						throw _xContent.getResult();
+					}
+					_xContent = _xContent.getResult();
+				}
 				processView(_xContent);
 			}
 		};
@@ -430,16 +511,28 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		XMLView.prototype.onControllerConnected = function(oController) {
 			var that = this;
 			// unset any preprocessors (e.g. from an enclosing JSON view)
-			ManagedObject.runWithPreprocessors(function() {
-				// parse the XML tree
-				that._aParsedContent = XMLTemplateProcessor.parseTemplate(that._xContent, that);
-				// allow rendering of preserve content
-				if (that.oAsyncState) {
+
+			// create a function, which scopes the instance creation of a class with the corresponding owner ID
+			// XMLView special logic for asynchronous template parsing, when component loading is async but
+			// instance creation is sync.
+			function fnRunWithPreprocessor(fn) {
+				return ManagedObject.runWithPreprocessors(fn, {
+					settings: that._fnSettingsPreprocessor
+				});
+			}
+
+			// parse the XML tree
+			if (!this.oAsyncState) {
+				this._aParsedContent = fnRunWithPreprocessor(XMLTemplateProcessor.parseTemplate.bind(null, this._xContent, this));
+			} else {
+				return XMLTemplateProcessor.parseTemplatePromise(this._xContent, this, true, {
+					fnRunWithPreprocessor: fnRunWithPreprocessor
+				}).then(function(aParsedContent) {
+					that._aParsedContent = aParsedContent;
+					// allow rendering of preserve content
 					delete that.oAsyncState.suppressPreserve;
-				}
-			}, {
-				settings: this._fnSettingsPreprocessor
-			});
+				});
+			}
 		};
 
 		XMLView.prototype.getControllerName = function() {
@@ -512,7 +605,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/XMLTemplateProcessor', 'sap/ui/
 		* either the plain "xml" or the already initialized "controls" , see {@link sap.ui.core.mvc.XMLView.PreprocessorType}.
 		* For each type one preprocessor is executed. If there is a preprocessor passed to or activated at the
 		* view instance already, that one is used. When several preprocessors are registered for one hook, it has to be made
-		* sure, that they do not conflict when beeing processed serially.
+		* sure, that they do not conflict when being processed serially.
 		*
 		* It can be either a module name as string of an implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a
 		* function with a signature according to {@link sap.ui.core.mvc.View.Preprocessor.process}.

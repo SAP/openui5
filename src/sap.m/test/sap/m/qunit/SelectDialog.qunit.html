@@ -302,6 +302,7 @@
 				QUnit.test("Remember Selections false mode", function (assert) {
 					// arrange
 					this.oSelectDialog.setRememberSelections(false);
+					var fnListGetSelectedContexts = sinon.spy(this.oSelectDialog._oList, "getSelectedContexts");
 
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 					sap.ui.getCore().applyChanges();
@@ -310,6 +311,7 @@
 
 					assert.strictEqual(this.oSelectDialog._oList.getSelectedItems().length, 4, '4 items are selected initially');
 					this.oSelectDialog._fireConfirmAndUpdateSelection();
+					assert.ok(!fnListGetSelectedContexts.called, "getSelectedContexts() is no longer called by _fireConfirmAndUpdateSelection()");
 					this.oSelectDialog._oDialog.close();
 
 					this.oSelectDialog.open();
@@ -317,6 +319,7 @@
 					assert.strictEqual(this.oSelectDialog._oList.getSelectedItems().length, 0, '0 items are selected after opening the dialog the second time');
 					this.oSelectDialog._oDialog.close();
 					this.oSelectDialog._fireConfirmAndUpdateSelection();
+					assert.ok(!fnListGetSelectedContexts.called, "getSelectedContexts() is no longer called by _fireConfirmAndUpdateSelection()");
 
 					this.oSelectDialog.open();
 
@@ -328,6 +331,7 @@
 				QUnit.test("Remember Selections true mode", function (assert) {
 					// arrange
 					this.oSelectDialog.setRememberSelections(true);
+					var fnListGetSelectedContexts = sinon.spy(this.oSelectDialog._oList, "getSelectedContexts");
 
 					bindItems(this.oSelectDialog, {oData: this.mockupData, path: "/items", template: createTemplateListItem()});
 					sap.ui.getCore().applyChanges();
@@ -336,6 +340,7 @@
 
 					assert.strictEqual(this.oSelectDialog._oList.getSelectedItems().length, 4, '4 items are selected initially');
 					this.oSelectDialog._fireConfirmAndUpdateSelection();
+					assert.ok(!fnListGetSelectedContexts.called, "getSelectedContexts() is no longer called by _fireConfirmAndUpdateSelection()");
 					this.oSelectDialog._oDialog.close();
 
 					this.oSelectDialog.open();
@@ -343,6 +348,7 @@
 					assert.strictEqual(this.oSelectDialog._oList.getSelectedItems().length, 4, '4 items are selected after opening the dialog the second time');
 					this.oSelectDialog._oDialog.close();
 					this.oSelectDialog._fireConfirmAndUpdateSelection();
+					assert.ok(!fnListGetSelectedContexts.called, "getSelectedContexts() is no longer called by _fireConfirmAndUpdateSelection()");
 
 					this.oSelectDialog.open();
 

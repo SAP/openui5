@@ -6,26 +6,23 @@
  * Provides a private class <code>sap.f.semantic.SemanticShareMenu</code>.
  */
 sap.ui.define([
-	"jquery.sap.global",
 	"sap/ui/core/IconPool",
 	"sap/ui/base/EventProvider",
-	"sap/m/Button",
-	"sap/m/ButtonType",
+	"sap/m/library",
 	"sap/m/OverflowToolbarButton",
 	"sap/m/OverflowToolbarLayoutData",
-	"./SemanticConfiguration",
 	"./SemanticContainer"
 ], function(
-	jQuery,
 	IconPool,
 	EventProvider,
-	Button,
-	ButtonType,
+	mobileLibrary,
 	OverflowToolbarButton,
 	OverflowToolbarLayoutData,
-	SemanticConfiguration,
 	SemanticContainer) {
 	"use strict";
+
+	// shortcut for sap.m.ButtonType
+	var ButtonType = mobileLibrary.ButtonType;
 
 	/**
 	* Constructor for a <code>sap.f.semantic.SemanticShareMenu</code>.
@@ -358,4 +355,4 @@ sap.ui.define([
 
 	return SemanticShareMenu;
 
-}, /* bExport= */ false);
+});

@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon", "./ObjectImageHelper"], function (ObjectPageLayout, Icon, ObjectImageHelper) {
+sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHelper, Device) {
 	"use strict";
 
 	/**
@@ -10,6 +10,11 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon", "./ObjectImageHelper"],
 	 * @static
 	 */
 	var ObjectPageHeaderRenderer = {};
+
+	function lazyInstanceof(o, sModule) {
+		var FNClass = sap.ui.require(sModule);
+		return typeof FNClass === 'function' && (o instanceof FNClass);
+	}
 
 	ObjectPageHeaderRenderer.render = function (oRm, oControl) {
 
@@ -19,8 +24,8 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon", "./ObjectImageHelper"],
 			oExpandButton = oControl.getAggregation("_expandButton"),
 			oObjectImage = oControl._lazyLoadInternalAggregation("_objectImage", true),
 			oPlaceholder,
-			bIsDesktop = sap.ui.Device.system.desktop,
-			bIsHeaderContentVisible = oParent && oParent instanceof ObjectPageLayout && ((oParent.getHeaderContent()
+			bIsDesktop = Device.system.desktop,
+			bIsHeaderContentVisible = oParent && lazyInstanceof(oParent, "sap/uxap/ObjectPageLayout") && ((oParent.getHeaderContent()
 				&& oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent()) ||
 			(oParent.getShowHeaderContent() && oParent.getShowTitleInHeaderContent()));
 
@@ -51,7 +56,7 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon", "./ObjectImageHelper"],
 		oRm.writeClasses();
 		oRm.write(">");
 
-		if (oParent && oParent instanceof ObjectPageLayout && oParent.getIsChildPage()) {
+		if (oParent && lazyInstanceof(oParent, "sap/uxap/ObjectPageLayout") && oParent.getIsChildPage()) {
 			oRm.write("<div");
 			oRm.addClass('sapUxAPObjectChildPage');
 			oRm.writeClasses();
@@ -118,22 +123,20 @@ sap.ui.define(["./ObjectPageLayout", "sap/ui/core/Icon", "./ObjectImageHelper"],
 	/**
 	 * Renders the SelectTitleArrow icon.
 	 *
-	 * @param {sap.ui.core.RenderManager}
-	 *            oRm the RenderManager that can be used for writing to the render output buffer
-	 *
-	 * @param {sap.uxap.ObjecPageHeader}
-	 *            oControl the ObjectPageHeader
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer
+	 * @param {sap.uxap.ObjecPageHeader} oControl The ObjectPageHeader
 	 *
 	 * @private
 	 */
 	ObjectPageHeaderRenderer._renderObjectPageTitle = function (oRm, oControl, bTitleInContent) {
 		var sOHTitle = oControl.getObjectTitle(),
 			bMarkers = (oControl.getShowMarkers() && (oControl.getMarkFavorite() || oControl.getMarkFlagged())),
-			oBreadCrumbs = oControl._lazyLoadInternalAggregation('_breadCrumbs', true);
+			oBreadCrumbsAggregation = oControl._getBreadcrumbsAggregation();
 
-		if (!bTitleInContent && oBreadCrumbs && oBreadCrumbs.getLinks().length) {
-			oRm.renderControl(oBreadCrumbs);
+		if (!bTitleInContent && oBreadCrumbsAggregation) {
+			oRm.renderControl(oBreadCrumbsAggregation);
 		}
+
 		oRm.write("<h1");
 		oRm.addClass('sapUxAPObjectPageHeaderIdentifierTitle');
 		if (oControl.getIsObjectTitleAlwaysVisible()) {

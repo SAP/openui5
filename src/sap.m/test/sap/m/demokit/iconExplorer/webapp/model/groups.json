@@ -177,7 +177,9 @@
 				{ "name" : "it-system" },
 				{ "name" : "it-host" },
 				{ "name" : "it-instance" },
-				{ "name" : "popup-window" }
+				{ "name" : "popup-window" },
+				{ "name" : "responsive" },
+				{ "name" : "desktop-mobile" }
 			]
 		},
 		{
@@ -330,7 +332,9 @@
 				{ "name" : "project-definition-triangle" },
 				{ "name" : "chevron-phase" },
 				{ "name" : "chevron-phase-2" },
-				{ "name" : "program-triangles" }
+				{ "name" : "program-triangles" },
+				{ "name" : "table-row" },
+				{ "name" : "table-column" }
 			]
 		},
 		{
@@ -372,7 +376,9 @@
 				{ "name" : "indent" },
 				{ "name" : "cursor-arrow" },
 				{ "name" : "fx" },
-				{ "name" : "text-color" }
+				{ "name" : "text-color" },
+				{ "name" : "strikethrough" },
+				{ "name" : "text" }
 			]
 		},
 		{
@@ -458,7 +464,9 @@
 				{ "name" : "media-rewind" },
 				{ "name" : "journey-change" },
 				{ "name" : "system-exit" },
-				{ "name" : "resize-vertical" }
+				{ "name" : "resize-vertical" },
+				{ "name" : "expand-all" },
+				{ "name" : "collapse-all" }
 			]
 		},
 		{
@@ -717,7 +725,10 @@
 				{ "name" : "negative" },
 				{ "name" : "fx" },
 				{ "name" : "blur" },
-				{ "name" : "pixelate" }
+				{ "name" : "pixelate" },
+				{ "name" : "validate" },
+				{ "name" : "keyboard-and-mouse" },
+				{ "name" : "touch" }
 			]
 		},
 		{
@@ -843,7 +854,8 @@
 				{ "name" : "permission" },
 				{ "name" : "away" },
 				{ "name" : "busy" },
-				{ "name" : "appear-offline" }
+				{ "name" : "appear-offline" },
+				{ "name" : "validate" }
 			]
 		},
 		{
@@ -1155,7 +1167,13 @@
 				{ "name" : "print" },
 				{ "name" : "web-cam" },
 				{ "name" : "projector" },
-				{ "name" : "phone" }
+				{ "name" : "phone" },
+				{ "name" : "primary-key" },
+				{ "name" : "two-keys" },
+				{ "name" : "table-row" },
+				{ "name" : "table-column" },
+				{ "name" : "keyboard-and-mouse" },
+				{ "name" : "touch" }
 			]
 		},
 		{

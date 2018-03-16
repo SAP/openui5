@@ -9,7 +9,7 @@ sap.ui.define([
 	return BaseController.extend("sap.ui.demo.nav.controller.employee.overview.EmployeeOverviewContent", {
 
 		onInit: function () {
-			this._oTable = this.getView().byId("employeesTable");
+			this._oTable = this.byId("employeesTable");
 			this._oVSD = null;
 			this._sSortField = null;
 			this._bSortDescending = false;

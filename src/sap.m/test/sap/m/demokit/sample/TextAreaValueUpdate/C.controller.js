@@ -11,7 +11,7 @@ sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
 
 		handleLiveChange: function(oEvent) {
 			var sValue = oEvent.getParameter("value");
-			this.getView().byId("getValue").setText(sValue);
+			this.byId("getValue").setText(sValue);
 		}
 	});
 

@@ -13,7 +13,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Control, DateFormat, FormatException, ParseException, ValidateException,
 		ODataType, TimeOfDay, TestUtils) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage();
@@ -37,14 +37,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.TimeOfDay", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
-			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -59,7 +58,17 @@ sap.ui.require([
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.TimeOfDay", "type name");
 		assert.strictEqual(sap.ui.model.odata.type.TimeOfDay, TimeOfDay);
 		assert.strictEqual(oType.oFormatOptions, oFormatOptions, "format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "default constraints");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new TimeOfDay(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
@@ -256,6 +265,7 @@ sap.ui.require([
 				oTypePrecision.validateValue(sValue);
 			});
 		oType.validateValue("23:59:59");
+		oType.validateValue(null);
 	});
 
 	//*********************************************************************************************
@@ -285,6 +295,19 @@ sap.ui.require([
 			assert.throws(oType.validateValue.bind(oType, null),
 				new ValidateException("EnterTime 1:47:26 PM"));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelFormat()", function (assert) {
+		var oType = new TimeOfDay(undefined, {precision : 3}),
+			oFormat = oType.getModelFormat(),
+			sModelValue = "13:53:49.123",
+			oParsedTimeOfDay = oFormat.parse(sModelValue);
+
+		assert.ok(oParsedTimeOfDay instanceof Date, "parse delivers a Date");
+		assert.strictEqual(oParsedTimeOfDay.getTime(), Date.UTC(1970, 0, 1, 13, 53, 49, 123),
+			"parse value");
+		assert.strictEqual(oFormat.format(oParsedTimeOfDay), sModelValue, "format");
 	});
 
 	//*********************************************************************************************

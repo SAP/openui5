@@ -1,222 +1,391 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Legend - sap.ui.unified</title>
-<link rel="shortcut icon" type="image/x-icon"
-	href="images/controls/sap.ui.unified.Calendar.gif">
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Legend - sap.ui.unified</title>
+	<link rel="shortcut icon" type="image/x-icon"
+		  href="images/controls/sap.ui.unified.Calendar.gif">
 
-<script src="shared-config.js"></script>
-<script id="sap-ui-bootstrap"
-	data-sap-ui-trace="false"
-	data-sap-ui-libs="sap.ui.unified, sap.ui.layout"
-	src="../../../../resources/sap-ui-core.js">
+	<script src="shared-config.js"></script>
+	<script id="sap-ui-bootstrap"
+			data-sap-ui-trace="false"
+			data-sap-ui-libs="sap.ui.unified, sap.ui.layout"
+			src="../../../../resources/sap-ui-core.js">
 
-</script>
+	</script>
 
-<script>
-	var oLeg1 = new sap.ui.unified.CalendarLegend("Leg1", {}).placeAt("sample1");
+	<script>
+		var StandardCalendarLegendItem = sap.ui.unified.StandardCalendarLegendItem;
 
-	var oLeg2 = new sap.ui.unified.CalendarLegend("Leg2", {}).placeAt("sample2");
 
-	var oLeg3 = new sap.ui.unified.CalendarLegend("Leg3", {}).placeAt("sample3");
+		var oLeg1 = new sap.ui.unified.CalendarLegend("Leg1", {}).placeAt("sample1");
 
-	var oLeg4 = new sap.ui.unified.CalendarLegend("Leg4", {});
-	for (var i = 0; i < 10; i++) {
-		oLeg4.addItem(new sap.ui.unified.CalendarLegendItem({
-			text : "Placeholder" + (i + 1)
-		}));
-	}
-	oLeg4.placeAt("sample4");
+		var oLeg2 = new sap.ui.unified.CalendarLegend("Leg2", {}).placeAt("sample2");
 
-	jQuery.sap.require("sap.ui.model.type.Date");
+		var oLeg3 = new sap.ui.unified.CalendarLegend("Leg3", {columnWidth: 'auto'}).placeAt("sample3");
 
-	var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({
-		pattern : "yyyyMMdd"
-	});
 
-	var aSpecialDays = [ [ "20140801", undefined, "Placeholder01", 1 ], [ "20140802", undefined, "Some very long Placeholder02, that will be not truncated but will go on couple of rows", 2 ], [ "20140803", undefined, "Placeholder03 ", 3 ], [ "20140804", undefined, "Placeholder04", 4 ], [ "20140805", undefined, "Placeholder05", 5 ], [ "20140806", undefined, "Placeholder06", 6 ], [ "20140807", undefined, "Placeholder07", 7 ], [ "20140808", undefined, "Placeholder08", 8 ], [ "20140809", undefined, "Placeholder09", 9 ], [ "20140810", undefined, "Placeholder10", 10 ] ];
+		var oLeg31 = new sap.ui.unified.CalendarLegend("Leg31", {
+			standardItems: [
+				StandardCalendarLegendItem.NonWorkingDay,
+				StandardCalendarLegendItem.WorkingDay]
+		}).placeAt("sample31");
 
-	var oCal = new sap.ui.unified.Calendar("Cal", {
-		selectedDates: [new sap.ui.unified.DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
-		select : function(oEvent) {
-			alert("Select");
-		},
-		cancel : function(oEvent) {
-			alert("Cancel");
+		var oLeg32 = new sap.ui.unified.CalendarLegend("Leg32", {
+			standardItems: [],
+			items: [new sap.ui.unified.CalendarLegendItem({
+				text: "Holiday",
+				type: sap.ui.unified.CalendarDayType.Type01,
+				tooltip: "Type 01"
+			})]
+		}).placeAt("sample32");
+
+		var oLeg4 = new sap.ui.unified.CalendarLegend("Leg4", {});
+		for (var i = 0; i < 10; i++) {
+			oLeg4.addItem(new sap.ui.unified.CalendarLegendItem({
+				text: "Placeholder" + (i + 1)
+			}));
 		}
-	});
+		oLeg4.placeAt("sample4");
 
-	var oLeg5 = new sap.ui.unified.CalendarLegend("Leg5", {});
+		jQuery.sap.require("sap.ui.model.type.Date");
 
-	//add specialDays
-	for (var i = 0; i < aSpecialDays.length; i++) {
-		var aSpecialDay = aSpecialDays[i];
-		var sType = "";
-		if (aSpecialDay[3] < 10) {
-			sType = "Type0" + aSpecialDay[3];
-		} else {
-			sType = "Type" + aSpecialDay[3];
-		}
-		specialDate = new sap.ui.unified.DateTypeRange({
-			startDate : oFormatYyyymmdd.parse(aSpecialDay[0]),
-			endDate : oFormatYyyymmdd.parse(aSpecialDay[1]),
-			type : sType,
-			tooltip : aSpecialDay[2]
+		var oFormatYyyymmdd = sap.ui.core.format.DateFormat.getInstance({
+			pattern: "yyyyMMdd"
 		});
-		sap.ui.getCore().byId("Cal").addSpecialDate(specialDate);
-		oLeg5.addItem(new sap.ui.unified.CalendarLegendItem({
-			text : aSpecialDay[2]
-		}));
-	}
 
-	var oLayout = new sap.ui.layout.ResponsiveFlowLayout();
-	var oCalLayout = new sap.ui.layout.ResponsiveFlowLayoutData({
-		minWidth : 320,
-		weight : 2,
-		margin : false,
-		linebreakable : false
-	});
-	var oLegLayout = new sap.ui.layout.ResponsiveFlowLayoutData({
-		minWidth : 150,
-		weight : 1,
-		margin : false
-	});
-	oLeg5.setLayoutData(oLegLayout);
-	oCal.setLayoutData(oCalLayout);
-	oLayout.addContent(oCal);
-	oLayout.addContent(oLeg5);
-	oLayout.placeAt("sample5");
+		var aSpecialDays = [
+			["20140801", undefined, "Placeholder01", 11],
+			["20140802", undefined, "Some very long Placeholder02, that will be not truncated but will go on couple of rows", 12],
+			["20140803", undefined, "Placeholder03 ", 13],
+			["20140804", undefined, "Placeholder04", 14],
+			["20140805", undefined, "Placeholder05", 15],
+			["20140806", undefined, "Placeholder06", 16],
+			["20140807", undefined, "Placeholder07", 17],
+			["20140808", undefined, "Placeholder08", 18],
+			["20140809", undefined, "Placeholder09", 19],
+			["20140810", undefined, "Placeholder10", 20]
+		];
 
-	var oCal2 = new sap.ui.unified.Calendar("Cal2", {
-		selectedDates: [new sap.ui.unified.DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
-		select : function(oEvent) {
-			alert("Select");
-		},
-		cancel : function(oEvent) {
-			alert("Cancel");
-		}
-	});
-
-	var oLeg6 = new sap.ui.unified.CalendarLegend("Leg6", {});
-
-	//add specialDays
-	for (var i = 0; i < aSpecialDays.length; i++) {
-		var aSpecialDay = aSpecialDays[i];
-		var sType = "";
-		if (aSpecialDay[3] < 10) {
-			sType = "Type0" + aSpecialDay[3];
-		} else {
-			sType = "Type" + aSpecialDay[3];
-		}
-		specialDate = new sap.ui.unified.DateTypeRange({
-			startDate : oFormatYyyymmdd.parse(aSpecialDay[0]),
-			endDate : oFormatYyyymmdd.parse(aSpecialDay[1]),
-			type : sType,
-			tooltip : aSpecialDay[2]
+		var oCal = new sap.ui.unified.Calendar("Cal", {
+			selectedDates: [new sap.ui.unified.DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
+			select: function (oEvent) {
+				alert("Select");
+			},
+			cancel: function (oEvent) {
+				alert("Cancel");
+			}
 		});
-		sap.ui.getCore().byId("Cal2").addSpecialDate(specialDate);
-		oLeg6.addItem(new sap.ui.unified.CalendarLegendItem({
-			text : aSpecialDay[2]
-		}));
-	}
 
-	var oLayout2 = new sap.ui.layout.ResponsiveFlowLayout();
-	var oCalLayout2 = new sap.ui.layout.ResponsiveFlowLayoutData({
-		minWidth : 280,
-		weight : 2,
-		margin : false,
-		linebreakable : false
-	});
-	var oLegLayout2 = new sap.ui.layout.ResponsiveFlowLayoutData({
-		minWidth : 100,
-		weight : 1,
-		margin : false
-	});
-	oLeg6.setColumnWidth("115px");
-	oLeg6.setLayoutData(oLegLayout2);
-	oCal2.setLayoutData(oCalLayout2);
-	oLayout2.addContent(oCal2);
-	oLayout2.addContent(oLeg6);
-	oLayout2.placeAt("sample6");
+		var oLeg5 = new sap.ui.unified.CalendarLegend("Leg5", {});
 
-	var oLeg7 = new sap.ui.unified.CalendarLegend("Leg7", {
-			items: [ new sap.ui.unified.CalendarLegendItem({text: "Type10", type: sap.ui.unified.CalendarDayType.Type10, tooltip: "Type 10"}),
-			         new sap.ui.unified.CalendarLegendItem({text: "Type09", type: sap.ui.unified.CalendarDayType.Type09, tooltip: "Type 9"}),
-			         new sap.ui.unified.CalendarLegendItem({text: "Type08", type: sap.ui.unified.CalendarDayType.Type08, tooltip: "Type 8"}),
-			         new sap.ui.unified.CalendarLegendItem({text: "no type 1", tooltip: "no type 1"}),
-			         new sap.ui.unified.CalendarLegendItem({text: "Type07", type: sap.ui.unified.CalendarDayType.Type07, tooltip: "Type 7"}),
-			         new sap.ui.unified.CalendarLegendItem({text: "no type 2", tooltip: "no type 2"})
-			        ]
+		//add specialDays
+		for (var i = 0; i < aSpecialDays.length; i++) {
+			var aSpecialDay = aSpecialDays[i];
+			var sType = "";
+			if (aSpecialDay[3] < 10) {
+				sType = "Type0" + aSpecialDay[3];
+			} else {
+				sType = "Type" + aSpecialDay[3];
+			}
+			specialDate = new sap.ui.unified.DateTypeRange({
+				startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
+				endDate: oFormatYyyymmdd.parse(aSpecialDay[1]),
+				type: sType,
+				tooltip: aSpecialDay[2]
+			});
+			sap.ui.getCore().byId("Cal").addSpecialDate(specialDate);
+			oLeg5.addItem(new sap.ui.unified.CalendarLegendItem({
+				text: aSpecialDay[2]
+			}));
+		}
+
+		var oLayout = new sap.ui.layout.ResponsiveFlowLayout();
+		var oCalLayout = new sap.ui.layout.ResponsiveFlowLayoutData({
+			minWidth: 320,
+			weight: 2,
+			margin: false,
+			linebreakable: false
+		});
+		var oLegLayout = new sap.ui.layout.ResponsiveFlowLayoutData({
+			minWidth: 150,
+			weight: 1,
+			margin: false
+		});
+		oLeg5.setLayoutData(oLegLayout);
+		oCal.setLayoutData(oCalLayout);
+		oLayout.addContent(oCal);
+		oLayout.addContent(oLeg5);
+		oLayout.placeAt("sample5");
+
+		var oCal2 = new sap.ui.unified.Calendar("Cal2", {
+			selectedDates: [new sap.ui.unified.DateRange({startDate: oFormatYyyymmdd.parse("20140820")})],
+			select: function (oEvent) {
+				alert("Select");
+			},
+			cancel: function (oEvent) {
+				alert("Cancel");
+			}
+		});
+
+		var oLeg6 = new sap.ui.unified.CalendarLegend("Leg6", {});
+
+		//add specialDays
+		for (var i = 0; i < aSpecialDays.length; i++) {
+			var aSpecialDay = aSpecialDays[i];
+			var sType = "";
+			if (aSpecialDay[3] < 10) {
+				sType = "Type0" + aSpecialDay[3];
+			} else {
+				sType = "Type" + aSpecialDay[3];
+			}
+			specialDate = new sap.ui.unified.DateTypeRange({
+				startDate: oFormatYyyymmdd.parse(aSpecialDay[0]),
+				endDate: oFormatYyyymmdd.parse(aSpecialDay[1]),
+				type: sType,
+				tooltip: aSpecialDay[2]
+			});
+			sap.ui.getCore().byId("Cal2").addSpecialDate(specialDate);
+			oLeg6.addItem(new sap.ui.unified.CalendarLegendItem({
+				text: aSpecialDay[2]
+			}));
+		}
+
+		var oLayout2 = new sap.ui.layout.ResponsiveFlowLayout();
+		var oCalLayout2 = new sap.ui.layout.ResponsiveFlowLayoutData({
+			minWidth: 280,
+			weight: 2,
+			margin: false,
+			linebreakable: false
+		});
+		var oLegLayout2 = new sap.ui.layout.ResponsiveFlowLayoutData({
+			minWidth: 100,
+			weight: 1,
+			margin: false
+		});
+		oLeg6.setColumnWidth("115px");
+		oLeg6.setLayoutData(oLegLayout2);
+		oCal2.setLayoutData(oCalLayout2);
+		oLayout2.addContent(oCal2);
+		oLayout2.addContent(oLeg6);
+		oLayout2.placeAt("sample6");
+
+		var oLeg7 = new sap.ui.unified.CalendarLegend("Leg7", {
+			items: [new sap.ui.unified.CalendarLegendItem({
+				text: "Type10",
+				type: sap.ui.unified.CalendarDayType.Type10,
+				tooltip: "Type 10"
+			}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "Type09",
+					type: sap.ui.unified.CalendarDayType.Type09,
+					tooltip: "Type 9"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "Type08",
+					type: sap.ui.unified.CalendarDayType.Type08,
+					tooltip: "Type 8"
+				}),
+				new sap.ui.unified.CalendarLegendItem({text: "no type 1", tooltip: "no type 1"}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "Type07",
+					type: sap.ui.unified.CalendarDayType.Type07,
+					tooltip: "Type 7"
+				}),
+				new sap.ui.unified.CalendarLegendItem({text: "no type 2", tooltip: "no type 2"})
+			]
 		}).placeAt("sample7");
 
-    var oLeg8 = new sap.ui.unified.CalendarLegend("Leg8", {
-        items: [ new sap.ui.unified.CalendarLegendItem({text: "Red", color: "red", tooltip: "Red"}),
-            new sap.ui.unified.CalendarLegendItem({text: "Green", color: "green", tooltip: "Green"}),
-            new sap.ui.unified.CalendarLegendItem({text: "Blue", color: "blue", tooltip: "Blue"})
-        ]
-    }).placeAt("sample8");
+		var oLeg8 = new sap.ui.unified.CalendarLegend("Leg8", {
+			items: [new sap.ui.unified.CalendarLegendItem({text: "Red", color: "red", tooltip: "Red"}),
+				new sap.ui.unified.CalendarLegendItem({text: "Green", color: "green", tooltip: "Green"}),
+				new sap.ui.unified.CalendarLegendItem({text: "Blue", color: "blue", tooltip: "Blue"})
+			]
+		}).placeAt("sample8");
 
-</script>
+		new sap.ui.unified.CalendarLegend("Leg9", {
+			items: [
+				new sap.ui.unified.CalendarLegendItem({
+					text: "01",
+					type: sap.ui.unified.CalendarDayType.Type01,
+					tooltip: "Type 01"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "02",
+					type: sap.ui.unified.CalendarDayType.Type02,
+					tooltip: "Type 02"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "03",
+					type: sap.ui.unified.CalendarDayType.Type03,
+					tooltip: "Type 03"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "04",
+					type: sap.ui.unified.CalendarDayType.Type04,
+					tooltip: "Type 04"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "05",
+					type: sap.ui.unified.CalendarDayType.Type05,
+					tooltip: "Type 05"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "06",
+					type: sap.ui.unified.CalendarDayType.Type06,
+					tooltip: "Type 06"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "07",
+					type: sap.ui.unified.CalendarDayType.Type07,
+					tooltip: "Type 07"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "08",
+					type: sap.ui.unified.CalendarDayType.Type08,
+					tooltip: "Type 08"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "09",
+					type: sap.ui.unified.CalendarDayType.Type09,
+					tooltip: "Type 09"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "10",
+					type: sap.ui.unified.CalendarDayType.Type10,
+					tooltip: "Type 10"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "11",
+					type: sap.ui.unified.CalendarDayType.Type11,
+					tooltip: "Type 11"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "12",
+					type: sap.ui.unified.CalendarDayType.Type12,
+					tooltip: "Type 12"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "13",
+					type: sap.ui.unified.CalendarDayType.Type13,
+					tooltip: "Type 13"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "14",
+					type: sap.ui.unified.CalendarDayType.Type14,
+					tooltip: "Type 14"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "15",
+					type: sap.ui.unified.CalendarDayType.Type15,
+					tooltip: "Type 15"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "16",
+					type: sap.ui.unified.CalendarDayType.Type16,
+					tooltip: "Type 16"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "17",
+					type: sap.ui.unified.CalendarDayType.Type17,
+					tooltip: "Type 17"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "18",
+					type: sap.ui.unified.CalendarDayType.Type18,
+					tooltip: "Type 18"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "19",
+					type: sap.ui.unified.CalendarDayType.Type19,
+					tooltip: "Type 19"
+				}),
+				new sap.ui.unified.CalendarLegendItem({
+					text: "20",
+					type: sap.ui.unified.CalendarDayType.Type20,
+					tooltip: "Type 20"
+				})
+			]
+		}).placeAt("sample9");
+
+	</script>
 
 </head>
 <body class="sapUiBody" role="application">
 
-	<h1>
-		Test Page for
-		<code>sap.ui.unified.CalendarLegend</code>
-	</h1>
-	<div>Simple Legend example</div>
+<h1>
+	Test Page for
+	<code>sap.ui.unified.CalendarLegend</code>
+</h1>
+<div>Simple Legend example</div>
+<br>
+<div>
+	<div id="sample1"></div>
+</div>
+<br>
+<div>Legend with limited width 150px</div>
+<br>
+<div style="width: 150px">
+	<div id="sample2"></div>
+</div>
+<br>
+<div>Legend with limited width 300px</div>
+<br>
+<div style="width: 300px">
+	<div id="sample3"></div>
+</div>
+<br>
+<div>Legend with 2 standard categories</div>
+<br>
+<div>
+	<div id="sample31"></div>
+</div>
+<br>
+<div>Legend with no standard categories and one custom caterogy</div>
+<br>
+<div>
+	<div id="sample32"></div>
+</div>
+<br>
+<br>
+<div>Legend with custom categories</div>
+<br>
+<div>
+	<div id="sample4"></div>
+</div>
+<br>
+<div>
+	<div>Legend with calendar</div>
 	<br>
-	<div>
-		<div id="sample1"></div>
+	<div style="max-width: 480px;">
+		<div id="sample5"/>
 	</div>
+</div>
+<br>
+<div>
+	<div>Legend with calendar (compact mode)</div>
 	<br>
-	<div>Legend with limited width 150px</div>
-	<br>
-	<div style="width: 150px">
-		<div id="sample2"></div>
+	<div style="max-width: 420px;">
+		<div id="sample6" class="sapUiSizeCompact"/>
 	</div>
-	<br>
-	<div>Legend with limited width 300px</div>
-	<br>
-	<div style="width: 300px">
-		<div id="sample3"></div>
-	</div>
-	<br>
-	<div>Legend with custom categories</div>
-	<br>
-	<div>
-		<div id="sample4"></div>
-	</div>
-	<br>
-	<div>
-		<div>Legend with calendar</div>
-		<br>
-		<div style="max-width: 480px;">
-			<div id="sample5" />
-		</div>
-	</div>
-	<br>
-	<div>
-		<div>Legend with calendar (compact mode)</div>
-		<br>
-		<div style="max-width: 420px;">
-			<div id="sample6" class="sapUiSizeCompact" />
-		</div>
-	</div>
-	<br>
-	<div>Simple Legend example</div>
-	<br>
-	<div>
-		<div id="sample7"></div>
-	</div>
-	<div>Custom colors Legend example</div>
-	<br>
-	<div>
-		<div id="sample8"></div>
-	</div>
-	</body>
+</div>
+<br>
+<div>Simple Legend example</div>
+<br>
+<div>
+	<div id="sample7"></div>
+</div>
+<div>Custom colors Legend example</div>
+<br>
+<div>
+	<div id="sample8"></div>
+</div>
+<div>CalendarLegend with all types example</div>
+<br>
+<div>
+	<div id="sample9"></div>
+</div>
+</body>
 </html>

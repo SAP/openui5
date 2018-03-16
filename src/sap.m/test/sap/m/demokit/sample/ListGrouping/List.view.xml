@@ -1,9 +1,9 @@
 <mvc:View
 	controllerName="sap.m.sample.ListGrouping.List"
-	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<List
+		id="idList"
 		items="{
 			path: '/ProductCollection',
 			sorter: {
@@ -12,8 +12,18 @@
 				group: true
 			},
 			groupHeaderFactory: '.getGroupHeader'
-		}"
-		headerText="Products" >
+		}">
+		<headerToolbar>
+			<OverflowToolbar>
+				<Title
+					text="Products" />
+				<ToolbarSpacer />
+				<ToggleButton
+					icon="sap-icon://menu"
+					tooltip="Enable / Disable Custom Context Menu"
+					press="onToggleContextMenu" />
+			</OverflowToolbar>
+		</headerToolbar>
 		<StandardListItem
 			title="{Name}"
 			description="{ProductId}"

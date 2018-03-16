@@ -19,8 +19,7 @@
 			xmlns:mvc="sap.ui.core.mvc"
 			xmlns:core="sap.ui.core"
 			xmlns="sap.m"
-			xmlns:f="sap.f"
-			controllerName="my.own.controller">
+			xmlns:f="sap.f.semantic">
 
 			<f:SemanticPage id="mySemanticPage" headerPinnable="false">
 				<f:titleHeading>
@@ -56,12 +55,12 @@
 					</VBox>
 				</f:content>
 
-				<f:footerContent>
+				<f:footerCustomActions>
 					<Button text="Footer btn" />
 					<Button text="Footer btn" />
 					<Button text="Footer btn" />
 					<Button text="Footer btn" />
-				</f:footerContent>
+				</f:footerCustomActions>
 			</f:SemanticPage>
 		</core:View>
 	</script>

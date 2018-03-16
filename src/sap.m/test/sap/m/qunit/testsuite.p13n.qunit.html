@@ -1,0 +1,42 @@
+<html>
+	<head>
+		<title>QUnit TestSuite for sap.m</title>
+		<script src="../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+		<script src="../shared-config.js"></script>
+		<script
+			id="sap-ui-bootstrap"
+			src='../../../../resources/sap-ui-core.js'>
+		</script>
+		<script>
+
+		/**
+		 * Add test pages to this test suite function.
+		 *
+		 * note: please order alphabetically.
+		 */
+		function suite() {
+			var suite = new parent.jsUnitTestSuite(),
+				contextPath = "/" + window.location.pathname.split("/")[1];
+
+			// Personalization
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nColumnsPanel.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nConditionPanel.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nFilterPanel.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nSortPanel.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nGroupPanel.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nDialog.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nDimMeasurePanel.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/P13nSelectionPanel.qunit.html");
+
+			// TablePersoDialog/Controller
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TablePersoDialog.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TablePersoController.qunit.html");
+			suite.addTestPage(contextPath + "/test-resources/sap/m/qunit/TablePersoControllerMigrationInComponent.qunit.html");
+
+			return suite;
+		}
+		</script>
+	</head>
+	<body>
+	</body>
+</html>

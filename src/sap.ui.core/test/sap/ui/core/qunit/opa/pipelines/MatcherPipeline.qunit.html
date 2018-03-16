@@ -44,6 +44,10 @@
 					beforeEach: function () {
 						this.fnMatcher = sinon.stub().returns(true);
 						this.oPipeline = new MatcherPipeline();
+						this.oDebugSpy = sinon.spy(oLogger, "debug");
+					},
+					afterEach: function () {
+						this.oDebugSpy.restore();
 					}
 				});
 
@@ -60,6 +64,7 @@
 					// Assert
 					assert.strictEqual(oResult, oControlStub, "Returned the control passed into the pipeline");
 					sinon.assert.calledWith(this.fnMatcher, oControlStub);
+					sinon.assert.calledWith(this.oDebugSpy, "1 out of 1 controls met the matchers pipeline requirements");
 				});
 
 				QUnit.test("Should process multiple matchers", function(assert) {
@@ -81,10 +86,11 @@
 					// Assert
 					assert.strictEqual(sResult, sTruthyString, "Returned the string of the second matcher");
 					sinon.assert.calledWith(fnThirdMatcher, sTruthyString);
+					sinon.assert.calledWith(this.oDebugSpy, "Pipeline input control '' was transformed to 'foo'");
+					sinon.assert.calledWith(this.oDebugSpy, "1 out of 1 controls met the matchers pipeline requirements");
 				});
 
 				QUnit.test("Should return false, if a control is not matching", function (assert) {
-					var fnSpy = sinon.spy(oLogger, "debug");
 					var fnFalsyMatcher = this.stub().returns(false);
 					var bResult = this.oPipeline.process({
 						control: {},
@@ -92,7 +98,7 @@
 					});
 
 					assert.ok(!bResult, "False was returned");
-					sinon.assert.calledWith(fnSpy, "all results were filtered out by the matchers - skipping the check");
+					sinon.assert.calledWith(this.oDebugSpy, "0 out of 1 controls met the matchers pipeline requirements");
 				});
 
 				QUnit.test("Should pass nothing to the first matcher if undefined is given as control", function (assert) {

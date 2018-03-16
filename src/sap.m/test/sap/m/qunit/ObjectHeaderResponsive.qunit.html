@@ -142,6 +142,25 @@
 					// Assert
 					var iconEl = jQuery.sap.domById(sControlId + "-img");
 					assert.ok(iconEl, "Icon is rendered.");
+					assert.ok(!oObjectHeader.$("img").attr("title"), "icon has no tooltip");
+
+					// Clean up
+					oObjectHeader.destroy();
+				});
+
+				QUnit.test("Title Icon has tooltip", function(assert){
+					// Arrange
+					var oObjectHeader = createObjectHeader({
+						icon: sap.ui.core.IconPool.getIconURI("inbox"),
+						iconTooltip: "test tooltip"
+					});
+
+					// System under Test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					var $sImg = oObjectHeader.$("img");
+					assert.equal($sImg.attr("title"), "test tooltip", "icon has tooltip");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -330,7 +349,7 @@
 
 					// Assert
 					var $sTitle = oObjectHeader.$("txt");
-					assert.equal($sTitle.attr("href"), "#", "Title attribute href is not a link.");
+					assert.equal($sTitle.attr("href"), undefined, "Title attribute href is not a link.");
 
 					// Clean up
 					oObjectHeader.destroy();
@@ -421,6 +440,36 @@
 					oObjectHeader.destroy();
 				});
 
+				QUnit.test("Tap on ObjectHeader title arrow span should lead to preventing default action", function(assert){
+					var oEvent_title_arrow,
+						oSpyPreventDefaultTitleArrow,
+						oObjectHeader = createObjectHeader({
+							title: "OH title",
+							responsive: true,
+							titleActive: true
+						});
+
+					// System under test
+					oObjectHeader.placeAt("qunit-fixture");
+					oCore.applyChanges();
+
+					// click on title arrow div
+					oEvent_title_arrow = {
+						setMarked: function(){},
+						preventDefault: function(){},
+						stopPropagation: function(){},
+						target: oObjectHeader.$("title-arrow").get(0)
+					};
+
+					oSpyPreventDefaultTitleArrow = this.spy(oEvent_title_arrow, "preventDefault");
+
+					oObjectHeader.ontap(oEvent_title_arrow);
+					assert.equal(oSpyPreventDefaultTitleArrow.callCount, 1, ".. prevents default browser action");
+
+					// Clean up
+					oSpyPreventDefaultTitleArrow.restore();
+					oObjectHeader.destroy();
+				});
 
 			QUnit.module("Basic aggregations rendering", {
 				afterEach: function () {
@@ -1100,11 +1149,12 @@
 					assert.equal(jQuery(".sapMOHRIcon.sapMPointer").attr("role"), "link", "ActiveIcon has role=link");
 				});
 
-				QUnit.test("Title Image has aria-labelledby", function(assert){
+				QUnit.test("Title Image has aria-labelledby and tooltip", function(assert){
 					// Arrange
 					var oObjectHeader = createObjectHeader({
 						icon: "../images/SAPUI5.jpg",
-						iconAlt: "test image"
+						iconAlt: "test image",
+						iconTooltip: "test tooltip"
 					});
 
 					// System under Test
@@ -1113,6 +1163,7 @@
 
 					var $sImg = oObjectHeader.$("img");
 					assert.ok($sImg.attr("aria-label"), "image has attribute aria-label");
+					assert.equal($sImg.attr("title"), "test tooltip", "image has tooltip");
 				});
 
 				QUnit.test("Title has level H1", function(assert){

@@ -85,7 +85,7 @@
 		var oI18nModel = new sap.ui.model.json.JSONModel();
 		oI18nModel.setData({
 			Name : "Name",
-			Qty : "Qty",
+			Qty : "Quantity",
 			Value : "Value",
 			Price : "Price"
 		});
@@ -122,7 +122,7 @@
 				new sap.m.Input("I4", {type: sap.m.InputType.Tel, change: handleChange}),
 				new sap.m.Label({text: "link", labelFor: "I5"}),
 				new sap.m.Input("I5", {type: sap.m.InputType.Url, change: handleChange}),
-				new sap.m.Label({text: "password", labelFor: "I6"}),
+				new sap.m.Label({text: "password is required", labelFor: "I6"}),
 				new sap.m.Input("I6", {type: sap.m.InputType.Password, change: handleChange}),
 				new sap.m.Label({text: "Name", labelFor: "I7"}),
 				new sap.m.Input("I7", { placeholder: "choose name", showValueHelp: true, valueHelpRequest: handleValueHelp, change: handleChange}),

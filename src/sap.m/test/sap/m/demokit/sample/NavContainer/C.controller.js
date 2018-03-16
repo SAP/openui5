@@ -5,11 +5,11 @@ sap.ui.define(['sap/ui/core/mvc/Controller'],
 	var CController = Controller.extend("sap.m.sample.NavContainer.C", {
 
 		handleNav: function(evt) {
-			var navCon = this.getView().byId("navCon");
+			var navCon = this.byId("navCon");
 			var target = evt.getSource().data("target");
 			if (target) {
-				var animation = this.getView().byId("animationSelect").getSelectedKey();
-				navCon.to(this.getView().byId(target), animation);
+				var animation = this.byId("animationSelect").getSelectedKey();
+				navCon.to(this.byId(target), animation);
 			} else {
 				navCon.back();
 			}

@@ -1,6 +1,7 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core">
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout">
 	<Table
 		id="results"
 		width="auto"
@@ -21,14 +22,15 @@
 			<Column id="iconColumn" width="2rem">
 				<Text id="iconColumnTitle" text="{i18n>tableIconColumnTitle}"/>
 			</Column>
-			<Column id="nameColumn" width="20%">
+			<Column id="nameColumn" width="20%" vAlign="Middle">
 				<Text id="nameColumnTitle" text="{i18n>tableNameColumnTitle}"/>
 			</Column>
 			<Column
 				id="codeColumn"
 				width="20%"
 				minScreenWidth="Tablet"
-				demandPopin="true">
+				demandPopin="true"
+				vAlign="Middle">
 				<Text id="codeColumnTitle" text="{i18n>tableCodeColumnTitle}"/>
 			</Column>
 			<Column
@@ -48,23 +50,26 @@
 					<core:Icon size="2rem" src="sap-icon://{name}" color="Default"/>
 					<Label design="Bold" text="{name}"/>
 					<Text text="sap-icon://{name}"/>
-					<Tokenizer
-						class="sapUiTinyMarginTop"
-						width="100%"
-						tokens="{
-							path: 'tags',
-							templateShareable: true
-						}"
-						editable="false">
-						<Token text="{name}" select="onTagSelect"/>
-					</Tokenizer>
-					<ToggleButton
-						icon="sap-icon://favorite"
-						press="onToggleFavorite"
-						pressed="{
+					<l:HorizontalLayout allowWrapping="true">
+						<Tokenizer
+							class="sapUiTinyMarginTop tagsArea"
+							width="100%"
+							tokens="{
+								path: 'tags',
+								templateShareable: true
+							}"
+							editable="false">
+							<Token text="{name}" select="onTagSelect"/>
+						</Tokenizer>
+					</l:HorizontalLayout>
+					<RatingIndicator
+						iconUnselected="sap-icon://unfavorite"
+						value="{
 							path: 'name',
-							formatter: '.formatter.isFavorite'
-						}"/>
+							formatter: '.formatter.favoriteRating'
+						}"
+						maxValue="1"
+						change="onToggleFavorite"/>
 				</cells>
 			</ColumnListItem>
 		</items>

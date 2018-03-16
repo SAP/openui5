@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target'],
-	function(Target, asyncTarget, syncTarget) {
+sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target', 'jquery.sap.global'],
+	function(Target, asyncTarget, syncTarget, jQuery) {
 		"use strict";
 
 		/**
@@ -50,4 +50,4 @@ sap.ui.define(['sap/ui/core/routing/Target', './async/Target', './sync/Target'],
 
 		return MobileTarget;
 
-	}, /* bExport= */ true);
+	});

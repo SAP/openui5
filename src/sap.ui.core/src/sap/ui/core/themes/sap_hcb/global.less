@@ -185,26 +185,34 @@
 @sapUiTileTextColor: #FFFFFF;
 @sapUiTileIconColor: #FFFFFF;
 
-@sapUiChart1 : #30a7df;
-@sapUiChart2 : #a3ce2f;
-@sapUiChart3 : #f8b033;
-@sapUiChart4 : #cb73b8;
-@sapUiChart5 : #efc619;
-@sapUiChart6 : #b9b088;
-@sapUiChart7 : #30a7df;
-@sapUiChart8 : #a3ce2f;
-@sapUiChart9 : #f8b033;
-@sapUiChart10 : #cb73b8;
-@sapUiChart11 : #efc619;
+@sapUiChart1 : #4da2f6;
+@sapUiChart2 : #e8743b;
+@sapUiChart3 : #19a979;
+@sapUiChart4 : #ed4a7b;
+@sapUiChart5 : #945ecf;
+@sapUiChart6 : #13a4b4;
+@sapUiChart7 : #5c66f5;
+@sapUiChart8 : #c63fa4;
+@sapUiChart9 : #6c8893;
+@sapUiChart10 : #ee6868;
+@sapUiChart11 : #387bb7;
 
 @sapUiChartBad : #ff5e5e;
 @sapUiChartCritical : #ffab1d;
 @sapUiChartGood : #99cc99;
 @sapUiChartNeutral : #ffffff;
 
-@sapUiChartSequence1 : #5cbae5;
-@sapUiChartSequence2 : #c6e17d;
-@sapUiChartSequence3 : #ffab1d;
+@sapUiChartSequence1 : #4da2f6;
+@sapUiChartSequence2 : #e8743b;
+@sapUiChartSequence3 : #19a979;
+@sapUiChartSequence4: #ed4a7b;
+@sapUiChartSequence5: #945ecf;
+@sapUiChartSequence6: #13a4b4;
+@sapUiChartSequence7: #5c66f5;
+@sapUiChartSequence8: #c63fa4;
+@sapUiChartSequence9: #6c8893;
+@sapUiChartSequence10: #ee6868;
+@sapUiChartSequence11: #387bb7;
 @sapUiChartSequenceNeutral : #ffffff;
 
 @sapUiErrorBG: @sapHCStandardBG;
@@ -378,59 +386,126 @@
 @sapUiChartPaletteQualitativeHue9: @sapUiChart9;
 @sapUiChartPaletteQualitativeHue10: @sapUiChart10;
 @sapUiChartPaletteQualitativeHue11: @sapUiChart11;
+@sapUiChartPaletteQualitativeHue12: darken(saturate(@sapUiChartSequence1, 2), 16);
+@sapUiChartPaletteQualitativeHue13: darken(saturate(@sapUiChartSequence2, 15), 12);
+@sapUiChartPaletteQualitativeHue14: darken(saturate(@sapUiChartSequence3, 21), 15);
+@sapUiChartPaletteQualitativeHue15: darken(saturate(@sapUiChartSequence4, 10), 17);
+@sapUiChartPaletteQualitativeHue16: darken(saturate(@sapUiChartSequence5, 12), 11);
+@sapUiChartPaletteQualitativeHue17: darken(saturate(@sapUiChartSequence6, 8), 12);
+@sapUiChartPaletteQualitativeHue18: darken(desaturate(@sapUiChartSequence7, 9), 16);
+@sapUiChartPaletteQualitativeHue19: darken(saturate(@sapUiChartSequence8, 22), 18);
+@sapUiChartPaletteQualitativeHue20: darken(saturate(@sapUiChartSequence9, 16), 16);
+@sapUiChartPaletteQualitativeHue21: darken(desaturate(@sapUiChartSequence10, 13), 16);
+@sapUiChartPaletteQualitativeHue22: darken(saturate(@sapUiChartSequence11, 32), 15);
 
 // semantic palette
 
-@sapUiChartPaletteSemanticBadLight3: desaturate(darken(@sapHCNegative,15),30);
-@sapUiChartPaletteSemanticBadLight2: desaturate(darken(@sapHCNegative,15),30);
-@sapUiChartPaletteSemanticBadLight1: saturate(lighten(@sapHCNegative,5),10);
-@sapUiChartPaletteSemanticBad: saturate(lighten(@sapHCNegative,5),10);
-@sapUiChartPaletteSemanticBadDark1: saturate(lighten(@sapHCNegative,5),10);
-@sapUiChartPaletteSemanticBadDark2: saturate(lighten(@sapHCNegative,5),10);
+@sapUiChartPaletteSemanticBadLight3: darken(desaturate(@sapUiChartBad, 30), 15);
+@sapUiChartPaletteSemanticBadLight2: darken(desaturate(@sapUiChartBad, 30), 15);
+@sapUiChartPaletteSemanticBadLight1: @sapUiChartBad;
+@sapUiChartPaletteSemanticBad: @sapUiChartBad;
+@sapUiChartPaletteSemanticBadDark1: @sapUiChartBad;
+@sapUiChartPaletteSemanticBadDark2: @sapUiChartBad;
 
-@sapUiChartPaletteSemanticCriticalLight3: darken(@sapHCCritical,20);
-@sapUiChartPaletteSemanticCriticalLight2: darken(@sapHCCritical,20);
-@sapUiChartPaletteSemanticCriticalLight1:  @sapHCCritical;
-@sapUiChartPaletteSemanticCritical:  @sapHCCritical;
-@sapUiChartPaletteSemanticCriticalDark1:  @sapHCCritical;
-@sapUiChartPaletteSemanticCriticalDark2:  @sapHCCritical;
+@sapUiChartPaletteSemanticCriticalLight3: darken(@sapUiChartCritical, 20);
+@sapUiChartPaletteSemanticCriticalLight2: darken(@sapUiChartCritical, 20);
+@sapUiChartPaletteSemanticCriticalLight1: @sapUiChartCritical;
+@sapUiChartPaletteSemanticCritical: @sapUiChartCritical;
+@sapUiChartPaletteSemanticCriticalDark1: @sapUiChartCritical;
+@sapUiChartPaletteSemanticCriticalDark2: @sapUiChartCritical;
 
-@sapUiChartPaletteSemanticGoodLight3: desaturate(darken(@sapHCPositive,22),10);
-@sapUiChartPaletteSemanticGoodLight2: desaturate(darken(@sapHCPositive,22),10);
-@sapUiChartPaletteSemanticGoodLight1: saturate(lighten(@sapHCPositive,5),10);
-@sapUiChartPaletteSemanticGood: saturate(lighten(@sapHCPositive,5),10);
-@sapUiChartPaletteSemanticGoodDark1: saturate(lighten(@sapHCPositive,5),10);
-@sapUiChartPaletteSemanticGoodDark2: saturate(lighten(@sapHCPositive,5),10);
+@sapUiChartPaletteSemanticGoodLight3: darken(desaturate(@sapUiChartGood, 10), 22);
+@sapUiChartPaletteSemanticGoodLight2: darken(desaturate(@sapUiChartGood, 10), 22);
+@sapUiChartPaletteSemanticGoodLight1: @sapUiChartGood;
+@sapUiChartPaletteSemanticGood: @sapUiChartGood;
+@sapUiChartPaletteSemanticGoodDark1: @sapUiChartGood;
+@sapUiChartPaletteSemanticGoodDark2: @sapUiChartGood;
 
-@sapUiChartPaletteSemanticNeutralLight3: @sapUiChartNeutral;
-@sapUiChartPaletteSemanticNeutralLight2: @sapUiChartNeutral;
-@sapUiChartPaletteSemanticNeutralLight1: saturate(lighten(@sapUiChartNeutral,30),1);
-@sapUiChartPaletteSemanticNeutral: saturate(lighten(@sapUiChartNeutral,30),1);
-@sapUiChartPaletteSemanticNeutralDark1: saturate(lighten(@sapUiChartNeutral,30),1);
-@sapUiChartPaletteSemanticNeutralDark2: saturate(lighten(@sapUiChartNeutral,30),1);
+@sapUiChartPaletteSemanticNeutralLight3: darken(@sapUiChartNeutral, 45);
+@sapUiChartPaletteSemanticNeutralLight2: darken(@sapUiChartNeutral, 45);
+@sapUiChartPaletteSemanticNeutralLight1: @sapUiChartNeutral;
+@sapUiChartPaletteSemanticNeutral: @sapUiChartNeutral;
+@sapUiChartPaletteSemanticNeutralDark1: @sapUiChartNeutral;
+@sapUiChartPaletteSemanticNeutralDark2: @sapUiChartNeutral;
 
 // sequential palette
 
-@sapUiChartPaletteSequentialHue1Light3: darken(desaturate(@sapUiChartSequence1, 6), 22);
-@sapUiChartPaletteSequentialHue1Light2: darken(desaturate(@sapUiChartSequence1, 6), 22);
-@sapUiChartPaletteSequentialHue1Light1: @sapUiChartSequence1;
+@sapUiChartPaletteSequentialHue1Light3: lighten(desaturate(@sapUiChartSequence1, 2), 21);
+@sapUiChartPaletteSequentialHue1Light2: lighten(saturate(@sapUiChartSequence1, 1), 15);
+@sapUiChartPaletteSequentialHue1Light1: lighten(@sapUiChartSequence1, 7);
 @sapUiChartPaletteSequentialHue1: @sapUiChartSequence1;
-@sapUiChartPaletteSequentialHue1Dark1: @sapUiChartSequence1;
-@sapUiChartPaletteSequentialHue1Dark2: @sapUiChartSequence1;
+@sapUiChartPaletteSequentialHue1Dark1: darken(desaturate(@sapUiChartSequence1, 6), 8);
+@sapUiChartPaletteSequentialHue1Dark2: darken(saturate(@sapUiChartSequence1, 2), 16);
 
-@sapUiChartPaletteSequentialHue2Light3: darken(desaturate(@sapUiChartSequence2, 10), 28);
-@sapUiChartPaletteSequentialHue2Light2: darken(desaturate(@sapUiChartSequence2, 10), 28);
-@sapUiChartPaletteSequentialHue2Light1: @sapUiChartSequence2;
+@sapUiChartPaletteSequentialHue2Light3: lighten(saturate(@sapUiChartSequence2, 14), 25);
+@sapUiChartPaletteSequentialHue2Light2: lighten(saturate(@sapUiChartSequence2, 6), 17);
+@sapUiChartPaletteSequentialHue2Light1: lighten(saturate(@sapUiChartSequence2, 3), 8);
 @sapUiChartPaletteSequentialHue2: @sapUiChartSequence2;
-@sapUiChartPaletteSequentialHue2Dark1: @sapUiChartSequence2;
-@sapUiChartPaletteSequentialHue2Dark2: @sapUiChartSequence2;
+@sapUiChartPaletteSequentialHue2Dark1: darken(desaturate(@sapUiChartSequence2, 1), 6);
+@sapUiChartPaletteSequentialHue2Dark2: darken(saturate(@sapUiChartSequence2, 15), 12);
 
-@sapUiChartPaletteSequentialHue3Light3: darken(@sapUiChartSequence3, 20);
-@sapUiChartPaletteSequentialHue3Light2: darken(@sapUiChartSequence3, 20);
-@sapUiChartPaletteSequentialHue3Light1: @sapUiChartSequence3;
+@sapUiChartPaletteSequentialHue3Light3: lighten(desaturate(@sapUiChartSequence3, 32), 31);
+@sapUiChartPaletteSequentialHue3Light2: lighten(desaturate(@sapUiChartSequence3, 31), 20);
+@sapUiChartPaletteSequentialHue3Light1: lighten(desaturate(@sapUiChartSequence3, 26), 10);
 @sapUiChartPaletteSequentialHue3: @sapUiChartSequence3;
-@sapUiChartPaletteSequentialHue3Dark1: @sapUiChartSequence3;
-@sapUiChartPaletteSequentialHue3Dark2: @sapUiChartSequence3;
+@sapUiChartPaletteSequentialHue3Dark1: darken(saturate(@sapUiChartSequence3, 8), 8);
+@sapUiChartPaletteSequentialHue3Dark2: darken(saturate(@sapUiChartSequence3, 21), 15);
+
+@sapUiChartPaletteSequentialHue4Light3: lighten(saturate(@sapUiChartSequence4, 1), 23);
+@sapUiChartPaletteSequentialHue4Light2: lighten(@sapUiChartSequence4, 15);
+@sapUiChartPaletteSequentialHue4Light1: lighten(@sapUiChartSequence4, 7);
+@sapUiChartPaletteSequentialHue4: @sapUiChartSequence4;
+@sapUiChartPaletteSequentialHue4Dark1: darken(desaturate(@sapUiChartSequence4, 5), 8);
+@sapUiChartPaletteSequentialHue4Dark2: darken(saturate(@sapUiChartSequence4, 10), 17);
+
+@sapUiChartPaletteSequentialHue5Light3: lighten(desaturate(@sapUiChartSequence5, 1), 24);
+@sapUiChartPaletteSequentialHue5Light2: lighten(@sapUiChartSequence5, 16);
+@sapUiChartPaletteSequentialHue5Light1: lighten(@sapUiChartSequence5, 8);
+@sapUiChartPaletteSequentialHue5: @sapUiChartSequence5;
+@sapUiChartPaletteSequentialHue5Dark1: darken(saturate(@sapUiChartSequence5, 4), 5);
+@sapUiChartPaletteSequentialHue5Dark2: darken(saturate(@sapUiChartSequence5, 12), 11);
+
+@sapUiChartPaletteSequentialHue6Light3: lighten(desaturate(@sapUiChartSequence6, 26), 29);
+@sapUiChartPaletteSequentialHue6Light2: lighten(desaturate(@sapUiChartSequence6, 27), 19);
+@sapUiChartPaletteSequentialHue6Light1: lighten(desaturate(@sapUiChartSequence6, 26), 10);
+@sapUiChartPaletteSequentialHue6: @sapUiChartSequence6;
+@sapUiChartPaletteSequentialHue6Dark1: darken(saturate(@sapUiChartSequence6, 4), 6);
+@sapUiChartPaletteSequentialHue6Dark2: darken(saturate(@sapUiChartSequence6, 8), 12);
+
+@sapUiChartPaletteSequentialHue7Light3: lighten(@sapUiChartSequence7, 16);
+@sapUiChartPaletteSequentialHue7Light2: lighten(saturate(@sapUiChartSequence7, 1), 11);
+@sapUiChartPaletteSequentialHue7Light1: lighten(desaturate(@sapUiChartSequence7, 1), 5);
+@sapUiChartPaletteSequentialHue7: @sapUiChartSequence7;
+@sapUiChartPaletteSequentialHue7Dark1: darken(desaturate(@sapUiChartSequence7, 6), 8);
+@sapUiChartPaletteSequentialHue7Dark2: darken(desaturate(@sapUiChartSequence7, 9), 16);
+
+@sapUiChartPaletteSequentialHue8Light3: lighten(saturate(@sapUiChartSequence8, 6), 24);
+@sapUiChartPaletteSequentialHue8Light2: lighten(saturate(@sapUiChartSequence8, 2), 15);
+@sapUiChartPaletteSequentialHue8Light1: lighten(desaturate(@sapUiChartSequence8, 1), 7);
+@sapUiChartPaletteSequentialHue8: @sapUiChartSequence8;
+@sapUiChartPaletteSequentialHue8Dark1: darken(saturate(@sapUiChartSequence8, 9), 10);
+@sapUiChartPaletteSequentialHue8Dark2: darken(saturate(@sapUiChartSequence8, 22), 18);
+
+@sapUiChartPaletteSequentialHue9Light3: lighten(desaturate(@sapUiChartSequence9, 2), 34);
+@sapUiChartPaletteSequentialHue9Light2: lighten(@sapUiChartSequence9, 22);
+@sapUiChartPaletteSequentialHue9Light1: lighten(@sapUiChartSequence9, 11);
+@sapUiChartPaletteSequentialHue9: @sapUiChartSequence9;
+@sapUiChartPaletteSequentialHue9Dark1: darken(saturate(@sapUiChartSequence9, 6), 8);
+@sapUiChartPaletteSequentialHue9Dark2: darken(saturate(@sapUiChartSequence9, 16), 16);
+
+@sapUiChartPaletteSequentialHue10Light3: lighten(saturate(@sapUiChartSequence10, 9), 22);
+@sapUiChartPaletteSequentialHue10Light2: lighten(saturate(@sapUiChartSequence10, 5), 14);
+@sapUiChartPaletteSequentialHue10Light1: lighten(saturate(@sapUiChartSequence10, 2), 7);
+@sapUiChartPaletteSequentialHue10: @sapUiChartSequence10;
+@sapUiChartPaletteSequentialHue10Dark1: darken(desaturate(@sapUiChartSequence10, 8), 8);
+@sapUiChartPaletteSequentialHue10Dark2: darken(desaturate(@sapUiChartSequence10, 13), 16);
+
+@sapUiChartPaletteSequentialHue11Light3: lighten(desaturate(@sapUiChartSequence11, 11), 29);
+@sapUiChartPaletteSequentialHue11Light2: lighten(desaturate(@sapUiChartSequence11, 8), 19);
+@sapUiChartPaletteSequentialHue11Light1: lighten(desaturate(@sapUiChartSequence11, 7), 9);
+@sapUiChartPaletteSequentialHue11: @sapUiChartSequence11;
+@sapUiChartPaletteSequentialHue11Dark1: darken(saturate(@sapUiChartSequence11, 13), 7);
+@sapUiChartPaletteSequentialHue11Dark2: darken(saturate(@sapUiChartSequence11, 32), 15);
 
 @sapUiChartPaletteSequentialNeutralLight3: darken(@sapUiChartSequenceNeutral, 45);
 @sapUiChartPaletteSequentialNeutralLight2: darken(@sapUiChartSequenceNeutral, 45);
@@ -438,6 +513,15 @@
 @sapUiChartPaletteSequentialNeutral: @sapUiChartSequenceNeutral;
 @sapUiChartPaletteSequentialNeutralDark1: @sapUiChartSequenceNeutral;
 @sapUiChartPaletteSequentialNeutralDark2: @sapUiChartSequenceNeutral;
+
+@sapUiChartPaletteNoSemDiv1Light3: #f2e4d7;
+@sapUiChartPaletteNoSemDiv1Light2: #e3d0bf;
+@sapUiChartPaletteNoSemDiv1Light1: #d1baa4;
+@sapUiChartPaletteNoSemDiv1: #bea287;
+@sapUiChartPaletteNoSemDiv1Dark1: #a78b6f;
+@sapUiChartPaletteNoSemDiv1Dark2: #8a6e52;
+
+@sapUiChartPaletteMidArea: desaturate(lighten(@sapUiChartSequenceNeutral, 40), 7);
 
 @sapUiChoroplethBG: @sapHCStandardBG;
 @sapUiChoroplethRegionBorder: @sapHCStandardBG;

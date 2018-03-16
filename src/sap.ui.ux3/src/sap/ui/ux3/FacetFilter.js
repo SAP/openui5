@@ -3,8 +3,13 @@
  */
 
 // Provides control sap.ui.ux3.FacetFilter.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
-	function(jQuery, Control, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/core/Control',
+    './library',
+    "./FacetFilterRenderer"
+],
+	function(jQuery, Control, library, FacetFilterRenderer) {
 	"use strict";
 
 
@@ -24,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library'],
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.FacetFilter</code> control.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.FacetFilter}
 	 * @alias sap.ui.ux3.FacetFilter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */

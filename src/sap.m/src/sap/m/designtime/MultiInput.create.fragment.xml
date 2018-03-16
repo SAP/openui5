@@ -1,0 +1,9 @@
+<core:FragmentDefinition xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<MultiInput value="Value">
+		<tokens>
+			<Token text="Token1" key="0001"/>
+			<Token text="Token2" key="0002"/>
+		</tokens>
+	</MultiInput>
+</core:FragmentDefinition>

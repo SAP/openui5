@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<style type="text/css">
+			body {font-family: Arial, "Helvetica Neue", Helvetica, sans-serif;}
+		</style>
+		<title>Manual Integration Test: Create and Change Sales Orders via Auto/Direct application
+		groups</title>
+	</head>
+	<body>
+		<h1>Manual Integration Test: Create and Change Sales Orders via Auto/Direct application
+		groups</h1>
+		<h2>DESCRIPTION</h2>
+		Test whether POST and PATCH request for application groups with SubmitMode.Auto/.Direct are
+		parked and restarted automatically
+		<h2>PREPARATION</h2>
+		To check console errors open the developer tools before starting the application and check
+		with each step, that there are only expected errors and warnings.
+		<h3>Testing only possible with realOData=true</h3>
+		Start the Sales Orders application with following URL (adjust host and port if necessary):
+		<ul>
+			<li>SubmitMode.Auto <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true&updateGroupId=myAutoGroup">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true&updateGroupId=myAutoGroup</a></li>
+			<li>SubmitMode.Direct <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true&updateGroupId=myDirectGroup">http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&realOData=true&updateGroupId=myDirectGroup</a></li>
+		</ul>
+		<h2>REALIZE and CHECK</h2>
+		<ol>
+			<h3>Create a new Sales Order</h3>
+			<li>Press the <code>Create</code> button for the Sales Order List</li>
+			<li>In the developer tools observe that the POST ($batch with POST inside) request
+			fails because 'Note' property is initial</li>
+			<li>Type in some value for the 'Note' property and <b>observe</b> that the POST request
+			is restarted successfully with the current value</li>
+			<h3>Change the new created or an already existing Sales Order</h3>
+			<li>In the 'Note' field type in the value RAISE_ERROR</li>
+			<li>You should get an error that this value is not allowed</li>
+			<li>Correct the value and <b>observe</b> that a new PATCH request is automatically send
+			when leaving the field.</li>
+		</ol>
+	</body>
+</html>

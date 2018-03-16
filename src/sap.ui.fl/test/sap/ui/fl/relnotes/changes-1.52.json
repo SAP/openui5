@@ -1,0 +1,79 @@
+{
+  "1.52.0": {
+    "date": "October 2017",
+    "notes": [
+      {
+        "id": "e27f8f6254d62ee43d8cc308708d39c82432e39b",
+        "type": "FEATURE",
+        "text": " VariantManagement: design enhancements",
+        "references": []
+      },
+      {
+        "id": "099816fdf40b1711ad51ce0e5fb72448d6c7b6fc",
+        "type": "FEATURE",
+        "text": " VariantManagement: show/hide variant list footer",
+        "references": []
+      },
+      {
+        "id": "dcfd53cfcddcd2c34b8b4fde52b062d1a7eaeedb",
+        "type": "FEATURE",
+        "text": "sap.m: Change handler for add OData properties to sap.m.Table",
+        "references": []
+      },
+      {
+        "id": "98aa762a0b4fdca09081356feff7f89fa2093916",
+        "type": "FEATURE",
+        "text": "sap.ui.rta: Support app descriptor changes in Settings",
+        "references": []
+      },
+      {
+        "id": "fe3486a46717bb329fd48e1e007a15f42390c74c",
+        "type": "FIX",
+        "text": " Fix minor issues for Control Variant Plugin support",
+        "references": []
+      },
+      {
+        "id": "37e87eb29b27ef652822f7e5064388064b511cd5",
+        "type": "FIX",
+        "text": " Support old variant management control in FakeLrepLocalStorage",
+        "references": []
+      },
+      {
+        "id": "8cae2c3dd738de143d4b96b6110e433a62b285ba",
+        "type": "FIX",
+        "text": " VariantManagement- focus indicator with IE",
+        "references": []
+      },
+      {
+        "id": "504569d21ec96f625a54f8725380573f1ae6b2fb",
+        "type": "FIX",
+        "text": " changes are applied on recreation in initial app startup",
+        "references": []
+      },
+      {
+        "id": "1b00121331cbd2ed79e0c4ca78fb89bd84942370",
+        "type": "FIX",
+        "text": " sap.ui.fl - performance improvement",
+        "references": []
+      },
+      {
+        "id": "94935713437c6960c6c8da30b67bd2937d6e4a3a",
+        "type": "FIX",
+        "text": " sap.ui.fl Correctly mark change as being applied changeHandler for xml views",
+        "references": []
+      },
+      {
+        "id": "fd4479c2edffeaebe3de8c0dc1b7f98003622d4c",
+        "type": "FIX",
+        "text": " sap.ui.fl: Support previously implemented VariantManagement functionality in FakeLrepConnectorStorage",
+        "references": []
+      },
+      {
+        "id": "c73b54e406abb0cd98ece89bf007da59ec003402",
+        "type": "FIX",
+        "text": "Remove test dependencies to sap.ui.comp",
+        "references": []
+      }
+    ]
+  }
+}

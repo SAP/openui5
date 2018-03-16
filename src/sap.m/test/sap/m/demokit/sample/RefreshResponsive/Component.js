@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.RefreshResponsive.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.RefreshResponsive.Page",
+			rootView : {
+				"viewName": "sap.m.sample.RefreshResponsive.Page",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

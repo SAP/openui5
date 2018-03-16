@@ -7,135 +7,15 @@
 		<script src="../shared-config.js"></script>
 		<script id="sap-ui-bootstrap"
 			src="../../../../../resources/sap-ui-core.js"
-			data-sap-ui-theme="sap_bluecrystal"
+			data-sap-ui-theme="sap_belize"
 			data-sap-ui-noConflict="true"
-			data-sap-ui-libs="sap.ui.layout" >
+			data-sap-ui-libs="sap.m, sap.ui.layout" >
 		</script>
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script language="javascript">
-			try{
-				sap.ui.getCore().loadLibrary("sap.ui.commons");
-			}catch(e){
-				alert("This test page requires the library 'sap.ui.commons' which is not available.");
-				throw(e);
-			}
-			var oGrid = new sap.ui.layout.Grid("grid1",{
-				hSpacing: 1,	// in rem; default half of the value for gutter, adds to left and right, for corrections
-				vSpacing: 1, 	// in rem; together with horizontalSpacing it generates the .gridSpacingNone, .gridSpacingHalfFull class
-				defaultSpan: "L2",
-				content : [ new sap.ui.commons.Label("label1", {
-					text : 'A very very long Label:',
-					width : "100%",
-					layoutData : new sap.ui.layout.GridData({
-						indent : "L1",
-						visibleOnSmall : false,
-						moveBackwards : "l1 m2" // test if still works correctly with lower case
-					})
-				}),
-				new sap.ui.commons.TextField("tf1", {
-					value : 'text field',
-					width : "100%",
-					layoutData : new sap.ui.layout.GridData({
-						span : "L4 S10"
-					})
-				}),
-				new sap.ui.commons.Button("btn1", {
-					text : 'Button',
-					width : "100%",
-					layoutData : new sap.ui.layout.GridData({
-						indent : "L1"
-					})
-				}),
-				new sap.ui.commons.TextField("tf2", {
-					value : 'Text',
-					width : "100%"
-				}),
-				new sap.ui.commons.Label("label2", {
-					text : 'A very very long Label:',
-					width : "100%",
-					layoutData : new sap.ui.layout.GridData({
-						indent : "L1",
-						moveForward : "L1 M2 S1"
-					})
-				}),
-				new sap.ui.commons.TextField("tf3", {
-					value : 'TextField',
-					width : "100%",
-					layoutData : new sap.ui.layout.GridData({
-						span : "L4 S10"
-					})
-				}),
-				new sap.ui.commons.Button("btn2", {
-					text : 'Button',
-					width : "100%",
-					layoutData : new sap.ui.layout.GridData({
-						indent : "L1"
-					})
-				}),
-				new sap.ui.commons.TextField("tf4", {
-					value : 'One more TextField',
-					width : "100%",
-					layoutData : new sap.ui.layout.GridData({
-						visibleOnLarge : false,
-						visibleOnMedium: false
-					})
-				})
-			]
-			});
-			oGrid.placeAt('content');
-			if (jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-				QUnit.module("CSS class presence check");
-				//check if all css classes are there as required
-				QUnit.test("marginsOK", function(assert) {
-					assert.ok(!!jQuery("#grid1.sapUiGrid.sapUiGridHSpace1.sapUiGridVSpace1"), "CSS classes at root div of grid");
-				});
-				QUnit.test("spanOK", function(assert) {
-					assert.ok(!!jQuery("tf1").parent("sapUiGridSpanL4.sapUiGridSpanM6.sapUiGridSpanS10"), "CSS classes for custom span parameters");
-					assert.ok(!!jQuery("tf2").parent("sapUiGridSpanL1.sapUiGridSpanM6.sapUiGridSpanS12"), "CSS classes for default span values");
-					assert.ok(!!jQuery("tf3").parent("sapUiGridSpanL4.sapUiGridSpanS10"), "CSS classes for custom span parameters without M value");
-				});
-				QUnit.test("indentOK", function(assert) {
-					assert.ok(!!jQuery("#label2").parent(".sapUiGridIndentL1.sapUiGridIndentM0.sapUiGridIndentS0"), "CSS classes for custom indent");
-					assert.ok(!!jQuery("#label2").parent("sapUiGridIndentL0.sapUiGridIndentM0.sapUiGridIndentS0"), "CSS classes for default indent 0");
-				});
-				QUnit.test("moveOK", function(assert) {
-					assert.ok(!!jQuery("#label1").parent("sapUiGridSpanBwdL1.sapUiGridSpanBwdM2"), "CSS classes for moveBackwards parameters");
-					assert.ok(!!jQuery("#label2").parent("sapUiGridSpanFwdL1.sapUiGridSpanFwdM2.sapUiGridSpanFwdS1"), "CSS classes for moveForward parameters");
-				});
-				QUnit.test("visibilityOK", function(assert) {
-					assert.ok(!!jQuery("#tf4").parent(".sapUiGridHiddenM.sapUiGridHiddenL"), "CSS class for hidden on large and medium screens");
-				});
-
-				QUnit.module("Accessibility");
-
-				QUnit.test("getAccessibilityInfo", function(assert) {
-					var oLayout = new sap.ui.layout.Grid({
-						content: [
-							new sap.ui.layout.Grid(),
-							new sap.ui.layout.Grid()
-						]
-					});
-					assert.ok(!!oLayout.getAccessibilityInfo, "Grid has a getAccessibilityInfo function");
-					var oInfo = oLayout.getAccessibilityInfo();
-					assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
-					assert.ok(oInfo.role === undefined || oInfo.editable === null, "AriaRole");
-					assert.ok(oInfo.type === undefined || oInfo.editable === null, "Type");
-					assert.ok(oInfo.description === undefined || oInfo.editable === null, "Description");
-					assert.ok(oInfo.focusable === undefined || oInfo.editable === null, "Focusable");
-					assert.ok(oInfo.enabled === undefined || oInfo.editable === null, "Enabled");
-					assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
-					assert.ok(oInfo.children && oInfo.children.length == 2, "Children");
-					oLayout.destroy();
-				});
-			} else {
-				if (window.console){
-					window.console.log('IE8 is too dumb for the grid');
-				}
-			}
-		</script>
+        <script type="text/javascript" src="./Grid.qunit.js"></script>
 	</head>
 	<body>
 		<h1 id="qunit-header">QUnit Page for sap.ui.layout.Grid</h1>

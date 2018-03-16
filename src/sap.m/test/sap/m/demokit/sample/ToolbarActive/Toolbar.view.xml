@@ -5,8 +5,8 @@
 	xmlns="sap.m">
 	<CheckBox text="Active" selected="true" select="onCheckBoxSelect"/>
 
-	<OverflowToolbar id="toolbar" active="true" design="Info" height="2rem" press="onToolbarPress">
-		<Text text="If you click here, while the OverflowToolbar is active, an event will be fired."/>
+	<OverflowToolbar id="toolbar" active="true" design="Info" height="2rem" press="onToolbarPress" ariaLabelledBy="myText">
+		<Text id="myText" text="If you click here, while the OverflowToolbar is active, an event will be fired."/>
 		<ToolbarSpacer/>
 		<core:Icon src="sap-icon://undo" width="2rem" press="onIconPress"/>
 	</OverflowToolbar>

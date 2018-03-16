@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.Column.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/core/Renderer'],
-	function(jQuery, library, Element, Renderer) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/core/Renderer', 'sap/ui/core/library', 'sap/ui/Device'],
+	function(jQuery, library, Element, Renderer, coreLibrary, Device) {
 	"use strict";
+
+
+
+	// shortcut for sap.m.PopinDisplay
+	var PopinDisplay = library.PopinDisplay;
+
+	// shortcut for sap.ui.core.VerticalAlign
+	var VerticalAlign = coreLibrary.VerticalAlign;
+
+	// shortcut for sap.ui.core.TextAlign
+	var TextAlign = coreLibrary.TextAlign;
 
 
 
@@ -17,6 +28,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 *
 	 * @class
 	 * The <code>sap.m.Column</code> allows to define column specific properties that will be applied when rendering the <code>sap.m.Table</code>.
+	 *
+	 * See section "{@link topic:6f778a805bc3453dbb66e246d8271839 Defining Column Width}"
+	 * in the documentation to understand how to define the <code>width</code> property of the <code>sap.m.Column</code> to render a <code>sap.m.Table</code> control properly.
 	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
@@ -39,17 +53,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Horizontal alignment of the column content. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
+			 * Defines the horizontal alignment of the column content.
 			 *
-			 * NOTE: Control with a "textAlign" property inherits the horizontal alignment.
+			 * NOTE: Text controls with a <code>textAlign</code> property inherits the horizontal alignment.
 			 */
-			hAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin},
+			hAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
 			/**
-			 * Vertical alignment of the cells in a column. Possible values are "Inherit", "Top", "Middle", "Bottom"
+			 * Defines the vertical alignment of the cells in a column.
 			 * This property does not affect the vertical alignment of header and footer.
 			 */
-			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : sap.ui.core.VerticalAlign.Inherit},
+			vAlign : {type : "sap.ui.core.VerticalAlign", group : "Appearance", defaultValue : VerticalAlign.Inherit},
 
 			/**
 			 * CSS class name for column contents(header, cells and footer of column). This property can be used for different column styling. If column is shown as pop-in then this class name is applied to related pop-in row.
@@ -85,13 +99,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			 * @deprecated Since version 1.14.
 			 * Use popinDisplay property instead.
 			 */
-			popinHAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : sap.ui.core.TextAlign.Begin, deprecated: true},
+			popinHAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin, deprecated: true},
 
 			/**
 			 * Defines enumerated display options for the pop-in.
 			 * @since 1.13.2
 			 */
-			popinDisplay : {type : "sap.m.PopinDisplay", group : "Appearance", defaultValue : sap.m.PopinDisplay.Block},
+			popinDisplay : {type : "sap.m.PopinDisplay", group : "Appearance", defaultValue : PopinDisplay.Block},
 
 			/**
 			 * Set "true" to merge repeating cells(duplicates) into one cell block.
@@ -123,7 +137,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			 * Control to be displayed in the column footer.
 			 */
 			footer : {type : "sap.ui.core.Control", multiple : false}
-		}
+		},
+		designtime: "sap/m/designtime/Column.designtime"
 	}});
 
 
@@ -142,7 +157,8 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 
 	Column.prototype._clearMedia = function() {
 		if (this._media && this._minWidth) {
-			sap.ui.Device.media.removeRangeSet(this.getId());
+			this._detachMediaContainerWidthChange(this._notifyResize, this, this.getId());
+			Device.media.removeRangeSet(this.getId());
 			this._media = null;
 		}
 	};
@@ -150,7 +166,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype._addMedia = function() {
 		delete this._bShouldAddMedia;
 		if (this._minWidth) {
-			sap.ui.Device.media.initRangeSet(this.getId(), [parseFloat(this._minWidth)]);
+			Device.media.initRangeSet(this.getId(), [parseFloat(this._minWidth)]);
 			this._attachMediaContainerWidthChange(this._notifyResize, this, this.getId());
 			this._media = this._getCurrentMediaContainerRange(this.getId());
 			if (this._media) {
@@ -192,7 +208,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		if (Object.prototype.toString.call(sWidth) != "[object String]") {
 			throw new Error('expected string for property "minScreenWidth" of ' + this);
 		}
-		if (Object.keys(sap.m.ScreenSizes).indexOf(sWidth.toLowerCase()) != -1) {
+		if (Object.keys(library.ScreenSizes).indexOf(sWidth.toLowerCase()) != -1) {
 			return;
 		}
 		if (!/^\d+(\.\d+)?(px|em|rem)$/i.test(sWidth)) {
@@ -205,9 +221,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype._isWidthPredefined = function(sWidth) {
 		var that = this,
 			unit = sWidth.replace(/[^a-z]/ig, ""),
-			baseFontSize = parseFloat(sap.m.BaseFontSize) || 16;
+			baseFontSize = parseFloat(library.BaseFontSize) || 16;
 
-		jQuery.each(sap.m.ScreenSizes, function(screen, size) {
+		jQuery.each(library.ScreenSizes, function(screen, size) {
 			if (unit != "px") {
 				size /= baseFontSize;
 			}
@@ -230,12 +246,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	};
 
 	/**
-	 * Apply text alignment of the Column to Text/Label/Link...
-	 *
-	 * TODO: This is so ugly to check content functions
-	 * instead we should document how to use our controls
-	 * to inherit text-alignment and we should add a new
-	 * sap.ui.core.TextAlign type called "Inherit"
+	 * Apply text alignment of the Column to the Text controls
 	 *
 	 * @param {sap.ui.core.Control} oControl List control
 	 * @param {String} [sAlign] TextAlign enumeration
@@ -243,8 +254,12 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	 * @protected
 	 */
 	Column.prototype.applyAlignTo = function(oControl, sAlign) {
+		// TODO: This is so ugly to check content functions
+		// instead we should document how to use our controls
+		// to inherit text-alignment and we should add a new
+		// sap.ui.core.TextAlign type called "Inherit"
 		sAlign = sAlign || this.getHAlign();
-		if (sAlign === sap.ui.core.TextAlign.Initial ||
+		if (sAlign === TextAlign.Initial ||
 			!oControl.getMetadata().getProperties().textAlign ||
 			oControl.getTextAlign() === sAlign) {
 			return oControl;
@@ -273,8 +288,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 	Column.prototype.getCssAlign = function(sAlign) {
 		sAlign = sAlign || this.getHAlign();
 
-		var mTextAlign = sap.ui.core.TextAlign;
-		if (sAlign === mTextAlign.Begin || sAlign === mTextAlign.End || sAlign === mTextAlign.Initial) {
+		if (sAlign === TextAlign.Begin || sAlign === TextAlign.End || sAlign === TextAlign.Initial) {
 			sAlign = Renderer.getTextAlign(sAlign);
 		}
 
@@ -459,7 +473,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 		if (sWidth) {
 			// check given width is known screen-size
 			sWidth = sWidth.toLowerCase();
-			var width = sap.m.ScreenSizes[sWidth];
+			var width = library.ScreenSizes[sWidth];
 			if (width) {
 				this._screen = sWidth;
 				this._minWidth = width + "px";
@@ -576,4 +590,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 
 	return Column;
 
-}, /* bExport= */ true);
+});

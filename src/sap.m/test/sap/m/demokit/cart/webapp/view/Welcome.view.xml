@@ -1,15 +1,43 @@
 <mvc:View
-	id="welcomeView"
 	controllerName="sap.ui.demo.cart.controller.Welcome"
 	xmlns="sap.m"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc">
 	<Page
 		id="page"
-		showHeader="{device>/isPhone}"
+		showHeader="true"
+		title="{i18n>welcomeHeadline}"
 		class="customBackground">
+		<landmarkInfo>
+			<PageAccessibleLandmarkInfo
+				rootRole="Region"
+				rootLabel="{i18n>Welcome_rootLabel}"
+				contentRole="Main"
+				contentLabel="{i18n>Welcome_contentLabel}"
+				headerRole="Region"
+				headerLabel="{i18n>Welcome_headerLabel}"/>
+		</landmarkInfo>
 		<customHeader>
-			<Toolbar><Button icon="sap-icon://menu2" press="onShowCategories"/></Toolbar>
+			<Bar>
+				<contentLeft>
+					<Button
+						icon="sap-icon://menu2"
+						press="onShowCategories"
+						visible="{device>/system/phone}"/>
+				</contentLeft>
+				<contentMiddle>
+					<Title
+						level="H2"
+						tooltip="{i18n>welcomeDescription}"
+						text="{i18n>welcomeHeadline}"/>
+				</contentMiddle>
+				<contentRight>
+					<Button
+						icon="sap-icon://customer"
+						press="onAvatarPress"
+						tooltip="{i18n>avatarButtonTooltip}"/>
+				</contentRight>
+			</Bar>
 		</customHeader>
 		<content>
 			<l:BlockLayout background="Light">
@@ -19,9 +47,10 @@
 							id="welcomeCarousel"
 							showPageIndicator="false"
 							loop="true"
-							pageChanged="onCarouselPageChanged">
+							pageChanged="onCarouselPageChanged"
+							visible="{=!${device>/system/phone}}">
 							<pages>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselShipping',
@@ -33,7 +62,7 @@
 										text="{i18n>welcomeCarouselShipping}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselInviteFriend',
@@ -45,7 +74,7 @@
 										text="{i18n>welcomeCarouselInviteFriend}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselTablet',
@@ -57,7 +86,7 @@
 										text="{i18n>welcomeCarouselTablet}"
 										class="welcomeCarouselText"/>
 								</VBox>
-								<VBox>
+								<VBox renderType="Bare">
 									<Image
 										src="{
 											path: 'view>/welcomeCarouselCreditCard',
@@ -74,235 +103,264 @@
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
 			</l:BlockLayout>
-
-			<Title tooltip="{i18n>welcomeDescription}" text="{i18n>welcomeHeadline}" class="welcomeText"/>
-
-			<Title
-				text="{i18n>promotedTitle}"
-				titleStyle="H2"
-				class="sapUiSmallMargin"/>
-
-			<l:BlockLayout background="Dashboard">
-				<l:BlockLayoutRow
-					id="promotedRow"
-					content="{view>/Promoted}">
-					<l:content>
-						<l:BlockLayoutCell>
-							<l:Grid
-								defaultSpan="XL12 L12 M12 S12"
-								vSpacing="0"
-								hSpacing="0">
-								<FlexBox
-									height="3.5rem">
-									<l:VerticalLayout>
-										<ObjectIdentifier
-											title="{view>Product/Name}"
-											titleActive="true"
-											titlePress="onSelectProduct"
-											class="sapUiTinyMarginBottom"/>
-										<ObjectStatus
-											text="{
-												path : 'view>Product/Status',
-												formatter : '.formatter.statusText'
+			<Panel
+				id="panelPromoted"
+				accessibleRole="Region"
+				backgroundDesign="Transparent"
+				class="sapUiNoContentPadding">
+				<headerToolbar >
+					<Toolbar>
+						<Title
+							text="{i18n>promotedTitle}"
+							level="H3"
+							titleStyle="H2"
+							class="sapUiMediumMarginTopBottom"/>
+					</Toolbar>
+				</headerToolbar >
+				<l:BlockLayout background="Dashboard">
+					<l:BlockLayoutRow
+						id="promotedRow"
+						content="{view>/Promoted}">
+						<l:content>
+							<l:BlockLayoutCell>
+								<l:Grid
+									defaultSpan="XL12 L12 M12 S12"
+									vSpacing="0"
+									hSpacing="0">
+									<FlexBox
+										height="3.5rem"
+										renderType="Bare">
+										<l:VerticalLayout>
+											<ObjectIdentifier
+												title="{view>Product/Name}"
+												titleActive="true"
+												titlePress="onSelectProduct"
+												class="sapUiTinyMarginBottom"/>
+											<ObjectStatus
+												text="{
+													path : 'view>Product/Status',
+													formatter : '.formatter.statusText'
+													}"
+												state="{
+													path : 'view>Product/Status',
+													formatter : '.formatter.statusState'}"/>
+										</l:VerticalLayout>
+									</FlexBox>
+									<FlexBox
+										renderType="Bare"
+										justifyContent="Center">
+										<Image
+											src="{
+												path: 'view>Product/PictureUrl',
+												formatter : '.formatter.pictureUrl'
+											}"
+											densityAware="false"
+											press="onPicturePress"
+											width="50%"
+											height="50%"/>
+									</FlexBox>
+									<Button
+										tooltip="{i18n>addToCart}"
+										type="Emphasized"
+										press="onAddButtonPress"
+										icon="sap-icon://cart-3">
+										<layoutData>
+											<l:GridData span="XL4 L4 M4 S4" />
+										</layoutData>
+									</Button>
+									<ObjectListItem
+										class="welcomePrice"
+										number="{
+											parts:[
+												{path:'view>Product/Price'},
+												{path:'view>/Currency'}
+											],
+											type:'sap.ui.model.type.Currency',
+											formatOptions:{showMeasure: false}
+										}"
+										numberUnit="{view>/Currency}">
+										<layoutData>
+											<l:GridData span="XL8 L8 M8 S8" />
+										</layoutData>
+									</ObjectListItem>
+								</l:Grid>
+							</l:BlockLayoutCell>
+						</l:content>
+					</l:BlockLayoutRow>
+				</l:BlockLayout>
+			</Panel>
+			<Panel
+				id="panelViewed"
+				accessibleRole="Region"
+				backgroundDesign="Transparent"
+				class="sapUiNoContentPadding">
+				<headerToolbar >
+					<Toolbar>
+						<Title
+							text="{i18n>viewedTitle}"
+							level="H3"
+							titleStyle="H2"
+							class="sapUiMediumMarginTopBottom"/>
+					</Toolbar>
+				</headerToolbar >
+				<l:BlockLayout background="Dashboard">
+					<l:BlockLayoutRow
+						id="viewedRow"
+						content="{view>/Viewed}">
+						<l:content>
+							<l:BlockLayoutCell class="sapUiContentPadding">
+								<l:Grid
+									defaultSpan="XL12 L12 M12 S12"
+									vSpacing="0"
+									hSpacing="0">
+									<FlexBox
+										height="3.5rem"
+										renderType="Bare">
+										<l:VerticalLayout>
+											<ObjectIdentifier
+												title="{view>Product/Name}"
+												titleActive="true"
+												titlePress="onSelectProduct"
+												class="sapUiTinyMarginBottom"/>
+											<ObjectStatus
+												text="{
+													path : 'view>Product/Status',
+													formatter : '.formatter.statusText'
 												}"
-											state="{
-												path : 'view>Product/Status',
-												formatter : '.formatter.statusState'}"/>
-									</l:VerticalLayout>
-								</FlexBox>
-								<FlexBox
-									renderType="Bare"
-									justifyContent="Center">
-									<Image
-										src="{
-											path: 'view>Product/PictureUrl',
-											formatter : '.formatter.pictureUrl'
-										}"
-										densityAware="false"
-										press="onPicturePress"
-										width="50%"
-										height="50%"/>
-								</FlexBox>
-								<Button
-									tooltip="{i18n>addToCart}"
-									type="Emphasized"
-									press="onAddButtonPress"
-									icon="sap-icon://cart-3">
-									<layoutData>
-										<l:GridData span="XL4 L4 M4 S4" />
-									</layoutData>
-								</Button>
-
-								<ObjectListItem
-									class="welcomePrice"
-									number="{
-										parts:[
-											{path:'view>Product/Price'},
-											{path:'view>/Currency'}
-										],
-										type:'sap.ui.model.type.Currency',
-										formatOptions:{showMeasure: false}
-									}"
-									numberUnit="{view>/Currency}">
-									<layoutData>
-										<l:GridData span="XL8 L8 M8 S8" />
-									</layoutData>
-								</ObjectListItem>
-							</l:Grid>
-						</l:BlockLayoutCell>
-					</l:content>
-				</l:BlockLayoutRow>
-			</l:BlockLayout>
-
-			<Title
-				text="{i18n>viewedTitle}"
-				titleStyle="H2"
-				class="sapUiSmallMargin"/>
-
-			<l:BlockLayout background="Dashboard">
-				<l:BlockLayoutRow
-					id="viewedRow"
-					content="{view>/Viewed}">
-					<l:content>
-						<l:BlockLayoutCell class="sapUiContentPadding">
-							<l:Grid
-								defaultSpan="XL12 L12 M12 S12"
-								vSpacing="0"
-								hSpacing="0">
-								<FlexBox height="3.5rem">
-									<l:VerticalLayout>
-										<ObjectIdentifier
-											title="{view>Product/Name}"
-											titleActive="true"
-											titlePress="onSelectProduct"
-											class="sapUiTinyMarginBottom"/>
-										<ObjectStatus
-											text="{
-												path : 'view>Product/Status',
-												formatter : '.formatter.statusText'
+												state="{
+													path : 'view>Product/Status',
+													formatter : '.formatter.statusState'}"/>
+										</l:VerticalLayout>
+									</FlexBox>
+									<FlexBox
+										renderType="Bare"
+										justifyContent="Center">
+										<Image
+											src="{
+												path: 'view>Product/PictureUrl',
+												formatter : '.formatter.pictureUrl'
 											}"
-											state="{
-												path : 'view>Product/Status',
-												formatter : '.formatter.statusState'}"/>
-									</l:VerticalLayout>
-								</FlexBox>
-								<FlexBox
-									renderType="Bare"
-									justifyContent="Center">
-									<Image
-										src="{
-											path: 'view>Product/PictureUrl',
-											formatter : '.formatter.pictureUrl'
+											densityAware="false"
+											press="onPicturePress"
+											width="100%"
+											height="100%"/>
+									</FlexBox>
+									<Button
+										tooltip="{i18n>addToCart}"
+										press="onAddButtonPress"
+										icon="sap-icon://cart-3"
+										type="Emphasized">
+										<layoutData>
+											<l:GridData span="XL4 L4 M4 S4" />
+										</layoutData>
+									</Button>
+									<ObjectListItem
+										class="welcomePrice"
+										number="{
+											parts:[
+												{path:'view>Product/Price'},
+												{path:'view>/Currency'}
+											],
+											type:'sap.ui.model.type.Currency',
+											formatOptions:{showMeasure: false}
 										}"
-										densityAware="false"
-										press="onPicturePress"
-										width="100%"
-										height="100%"/>
-								</FlexBox>
-								<Button
-									tooltip="{i18n>addToCart}"
-									press="onAddButtonPress"
-									icon="sap-icon://cart-3"
-									type="Emphasized">
-									<layoutData>
-										<l:GridData span="XL4 L4 M4 S4" />
-									</layoutData>
-								</Button>
-								<ObjectListItem
-									class="welcomePrice"
-									number="{
-										parts:[
-											{path:'view>Product/Price'},
-											{path:'view>/Currency'}
-										],
-										type:'sap.ui.model.type.Currency',
-										formatOptions:{showMeasure: false}
-									}"
-									numberUnit="{view>/Currency}">
-									<layoutData>
-										<l:GridData span="XL8 L8 M8 S8"/>
-									</layoutData>
-								</ObjectListItem>
-							</l:Grid>
-						</l:BlockLayoutCell>
-					</l:content>
-				</l:BlockLayoutRow>
-			</l:BlockLayout>
-
-			<Title
-				text="{i18n>favoritTitle}"
-				titleStyle="H2"
-				class="sapUiSmallMargin"/>
-
-			<l:BlockLayout background="Dashboard">
-				<l:BlockLayoutRow
-					id="favoriteRow"
-					content="{view>/Favorite}">
-					<l:content>
-						<l:BlockLayoutCell class="sapUiContentPadding">
-							<l:Grid
-								defaultSpan="XL12 L12 M12 S12"
-								vSpacing="0"
-								hSpacing="0">
-								<FlexBox height="3.5rem">
-									<l:VerticalLayout>
-										<ObjectIdentifier
-											title="{view>Product/Name}"
-											titleActive="true"
-											titlePress="onSelectProduct"
-											class="sapUiTinyMarginBottom"/>
-										<ObjectStatus
-											text="{
-												path : 'view>Product/Status',
-												formatter : '.formatter.statusText'
+										numberUnit="{view>/Currency}">
+										<layoutData>
+											<l:GridData span="XL8 L8 M8 S8"/>
+										</layoutData>
+									</ObjectListItem>
+								</l:Grid>
+							</l:BlockLayoutCell>
+						</l:content>
+					</l:BlockLayoutRow>
+				</l:BlockLayout>
+			</Panel>
+			<Panel
+				id="panelFavorite"
+				accessibleRole="Region"
+				backgroundDesign="Transparent"
+				class="sapUiNoContentPadding">
+				<headerToolbar >
+					<Toolbar>
+						<Title
+							text="{i18n>favoriteTitle}"
+							level="H3"
+							titleStyle="H2"
+							class="sapUiMediumMarginTopBottom"/>
+					</Toolbar>
+				</headerToolbar >
+				<l:BlockLayout background="Dashboard">
+					<l:BlockLayoutRow
+						id="favoriteRow"
+						content="{view>/Favorite}">
+						<l:content>
+							<l:BlockLayoutCell class="sapUiContentPadding">
+								<l:Grid
+									defaultSpan="XL12 L12 M12 S12"
+									vSpacing="0"
+									hSpacing="0">
+									<FlexBox
+										height="3.5rem"
+										renderType="Bare">
+										<l:VerticalLayout>
+											<ObjectIdentifier
+												title="{view>Product/Name}"
+												titleActive="true"
+												titlePress="onSelectProduct"
+												class="sapUiTinyMarginBottom"/>
+											<ObjectStatus
+												text="{
+													path : 'view>Product/Status',
+													formatter : '.formatter.statusText'
+												}"
+												state="{
+													path : 'view>Product/Status',
+													formatter : '.formatter.statusState'}"/>
+										</l:VerticalLayout>
+									</FlexBox>
+									<FlexBox
+										renderType="Bare"
+										justifyContent="Center">
+										<Image
+											src="{
+												path: 'view>Product/PictureUrl',
+												formatter : '.formatter.pictureUrl'
 											}"
-											state="{
-												path : 'view>Product/Status',
-												formatter : '.formatter.statusState'}"/>
-									</l:VerticalLayout>
-								</FlexBox>
-								<FlexBox
-									renderType="Bare"
-									justifyContent="Center">
-									<Image
-										src="{
-											path: 'view>Product/PictureUrl',
-											formatter : '.formatter.pictureUrl'
+											densityAware="false"
+											press="onPicturePress"
+											width="100%"
+											height="100%"/>
+									</FlexBox>
+									<Button
+										tooltip="{i18n>addToCart}"
+										type="Emphasized"
+										press="onAddButtonPress"
+										icon="sap-icon://cart-3">
+										<layoutData>
+											<l:GridData span="XL4 L4 M4 S4" />
+										</layoutData>
+									</Button>
+									<ObjectListItem
+										class="welcomePrice"
+										number="{
+											parts:[
+												{path:'view>Product/Price'},
+												{path:'view>/Currency'}
+											],
+											type:'sap.ui.model.type.Currency',
+											formatOptions:{showMeasure: false}
 										}"
-										densityAware="false"
-										press="onPicturePress"
-										width="100%"
-										height="100%"/>
-								</FlexBox>
-								<Button
-									tooltip="{i18n>addToCart}"
-									type="Emphasized"
-									press="onAddButtonPress"
-									icon="sap-icon://cart-3">
-									<layoutData>
-										<l:GridData span="XL4 L4 M4 S4" />
-									</layoutData>
-								</Button>
-								<ObjectListItem
-									class="welcomePrice"
-									number="{
-										parts:[
-											{path:'view>Product/Price'},
-											{path:'view>/Currency'}
-										],
-										type:'sap.ui.model.type.Currency',
-										formatOptions:{showMeasure: false}
-									}"
-									numberUnit="{view>/Currency}">
-									<layoutData>
-										<l:GridData span="XL8 L8 M8 S8" />
-									</layoutData>
-								</ObjectListItem>
-							</l:Grid>
-						</l:BlockLayoutCell>
-					</l:content>
-				</l:BlockLayoutRow>
-			</l:BlockLayout>
+										numberUnit="{view>/Currency}">
+										<layoutData>
+											<l:GridData span="XL8 L8 M8 S8" />
+										</layoutData>
+									</ObjectListItem>
+								</l:Grid>
+							</l:BlockLayoutCell>
+						</l:content>
+					</l:BlockLayoutRow>
+				</l:BlockLayout>
+			</Panel>
 		</content>
 		<dependents>
 			<LightBox id="lightBox">

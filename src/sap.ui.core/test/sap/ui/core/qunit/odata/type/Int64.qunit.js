@@ -23,13 +23,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Int64", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
-			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -42,12 +41,23 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is an ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Int64", "type name");
 		assert.strictEqual(oType.oFormatOptions, undefined, "default format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "default constraints");
 		assert.strictEqual(oType.oFormat, null, "no formatter preload");
 	});
 
 	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new Int64(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
+	});
+
+	//*********************************************************************************************
 	[
+		{i : {}, o : undefined},
 		{i : {nullable : true}, o : undefined},
 		{i : {nullable : "true"}, o : undefined},
 		{i : {nullable : false}, o : {nullable : false}},
@@ -300,7 +310,7 @@ sap.ui.require([
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
-		assert.strictEqual(oType.formatValue("1234", "string"), "1'234",
+		assert.strictEqual(oType.formatValue("1234", "string"), "1’234",
 			"adjusted to changed language");
 	});
 

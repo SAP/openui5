@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<edmx:Edmx Version="1.0"
+	xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx"
+	xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"
+	xmlns:sap="http://www.sap.com/Protocols/SAPData">
+	<edmx:Reference xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
+		Uri="/sap/bc/ui5_ui5/ui2/ushell/resources/sap/ushell/components/factsheet/vocabularies/UI.xml">
+		<edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1" />
+	</edmx:Reference>
+	<edmx:DataServices m:DataServiceVersion="2.0">
+		<Schema Namespace="AdditionalElementsTest" xml:lang="en"
+			sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+
+			<EntityType Name="EntityType01" sap:content-version="1">
+				<Key>
+					<PropertyRef Name="Property01" />
+					<PropertyRef Name="Property02" />
+					<PropertyRef Name="Property03" />
+				</Key>
+				<Property Name="Property01" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+					sap:label="Entity1-Property01-Label" sap:heading="Entity1-Property01-Heading"
+					sap:creatable="false"
+					sap:quickinfo="sap:quickinfo will be overwritten by annotation based quickinfo"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="Property02" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+					sap:label="Entity1-Property02-Label will be overwritten by annotation based label" sap:heading="Entity1-Property02-Heading"
+					sap:quickinfo="Entity1-Property02-QuickInfo" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="Property03" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:display-format="UpperCase"
+					sap:text="Entity1-Property03-Text" sap:label="Entity1-Property03-Label"
+					sap:heading="Entity1-Property03-Heading" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" />
+				<Property Name="Property04" Type="Edm.String"
+					Nullable="false" MaxLength="60" sap:label="Entity1-Property04-Label"
+					sap:quickinfo="Entity1-Property04-QuickInfo" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" sap:filterable="false" />
+				<Property Name="Property05" Type="Edm.String"
+					Nullable="false" MaxLength="25"
+					sap:label="Entity1-Ignored Property" sap:quickinfo="Entity1-Ignored Property QuickInfo"
+					sap:creatable="false" sap:sortable="false" />
+				<Property Name="Property06" Type="Edm.String"
+					Nullable="false" MaxLength="25"
+					sap:label="Entity1-Property06-Unbound" sap:quickinfo="Unbound Property6"
+					sap:creatable="false" sap:sortable="false" />
+				<Property Name="Property07" Type="Edm.String"
+					Nullable="false" MaxLength="25"
+					sap:label="Entity1-Property07-ignored-unbound" sap:quickinfo="Unbound Property7"
+					sap:creatable="false" sap:sortable="false" />
+				<Property Name="Property08" Type="Edm.String"
+					Nullable="false" MaxLength="25" sap:quickinfo="Property without sap:label"
+					sap:creatable="false" sap:sortable="false" />
+				<Property Name="EntityType01_Complex" Type="AdditionalElementsTest.ComplexType03"
+					Nullable="false" />
+				<Property Name="CommonPropertyName" Type="Edm.String"
+					Nullable="false" MaxLength="25"
+					sap:label="Common Property in EntityType01" sap:quickinfo="Common Property in EntityType01"
+					sap:creatable="false" sap:sortable="false" />
+				<Property Name="EntityType01_TechnicalInvisibleProperty" Type="Edm.String"
+					sap:label="Technical Invisible Property by old Annotations only"/>
+				<NavigationProperty Name="to_EntityType01Nav"
+					Relationship="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FE"
+					FromRole="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"
+					ToRole="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
+				<NavigationProperty Name="to_EntityType02Nav"
+					Relationship="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FA"
+					FromRole="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"
+					ToRole="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
+			</EntityType>
+			<EntityType Name="EntityType02" sap:content-version="1" m:HasStream="true">
+				<Key>
+					<PropertyRef Name="EntityType02_Property01" />
+				</Key>
+				<Property Name="EntityType02_Property01" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+					sap:label="Entity2-Property01-Label" sap:heading="addOData" sap:text="to_EntityType02Nav/NavProperty"
+					sap:quickinfo="Entity2-Property01-QuickInfo" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="UnusualFieldControl" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+					sap:label="this property should not be listed"
+					sap:visible="false" sap:heading="not addOData"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityType02_Complex" Type="AdditionalElementsTest.ComplexType"
+					sap:heading="not addOData" Nullable="false" />
+				<Property Name="EntityType02_SameComplexType" Type="AdditionalElementsTest.ComplexType"
+					sap:heading="addOData"
+					sap:label="Same Complex Type Property with label"
+					Nullable="false" />
+				<Property Name="EntityType02_OtherComplexTypeSameComplexProperties" Type="AdditionalElementsTest.ComplexType02"
+					sap:heading="addOData"
+						  Nullable="false" />
+				<Property Name="EntityType02_Property02" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+					sap:label="EntityType02_Property02" sap:heading="not addOData"
+					sap:quickinfo="Accounting Document Status" sap:creatable="false"
+					sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityType02_Property03" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:display-format="UpperCase"
+					sap:text="AccountingDocumentCategoryName" sap:label="EntityType02_Property03"
+					sap:heading="not addOData" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" />
+				<Property Name="EntityType02_Property04_Dynamically_Invisible_By_FieldControl" Type="Edm.String"
+					Nullable="false"
+					sap:field-control="UxFcThatMakeFieldInvisible"
+					sap:text="Dynamically_Invisible_By_FieldControl" sap:label="EntityType02_Property04_Dynamically_Invisible_By_FieldControl"
+					sap:heading="not addOData" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" />
+				<Property Name="UxFcThatMakeFieldInvisible" Type="Edm.Byte"
+					Nullable="false" sap:label="UI Field Control"
+					sap:quickinfo="UI Field Control Byte (Should be defined centrally)"
+					sap:heading="not addOData"
+					sap:creatable="false" sap:updatable="false" sap:visible="false" />
+				<Property Name="EntityType02_Property05" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:display-format="UpperCase"
+					sap:text="Partially visible" sap:label="EntityType02_Property05-partially-visible"
+					sap:heading="not addOData" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" />
+				<Property Name="EntityType02_Property06" Type="Edm.String"
+					Nullable="false" MaxLength="1" sap:display-format="UpperCase"
+					sap:text="Partially invisible" sap:label="EntityType02_Property06-partially-invisible"
+					sap:heading="not addOData/but reveal" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" />
+				<Property Name="EntityType02_Property07_with_implicit_nav" Type="Edm.String"
+					MaxLength="10" sap:semantics="currency-code"
+					sap:value-list="standard" sap:text="to_EntityType02Nav/EntityTypeNav_Property01" sap:label="EntityType02_Property07_with_implicit_nav"
+				 />
+				 <Property Name="CommonPropertyName" Type="Edm.String"
+					Nullable="false" MaxLength="25"
+					sap:label="Common Property in EntityType02" sap:quickinfo="Common Property in EntityType01"
+					sap:creatable="false" sap:sortable="false" />
+				 <Property Name="TechnicalInvisibleProperty" Type="Edm.String"
+					sap:label="Technical Invisible Property by Annotations only"/>
+				<NavigationProperty Name="to_EntityType02Nav" Relationship="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FD"
+					FromRole="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FD" ToRole="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FD"/>
+			</EntityType>
+			<EntityType Name="EntityTypeNav" sap:content-version="1" m:HasStream="true">
+				<Key>
+					<PropertyRef Name="id" />
+				</Key>
+				<Property Name="id" Type="Edm.Int32"
+						  Nullable="false"
+						  sap:label="ID" sap:heading="ID"
+						  sap:quickinfo="ID" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityTypeNav_Property01" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="Foreign Key (to entity EntityType01)" sap:heading="Doc. No."
+						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityTypeNav_Property02" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="EntityNav-Property02-Label" sap:heading="Doc. No."
+						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityTypeNav_Property03" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="EntityNav-Property03-Label" sap:heading="Doc. No."
+						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityTypeNav_Property04" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="EntityNav-Property04-Label" sap:heading="Doc. No."
+						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="EntityTypeNav_Property05" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="EntityNav-Property05-Label" sap:heading="Doc. No."
+						  sap:quickinfo="EntityNav-PropertyNav-QuickInfo" sap:creatable="false"
+						  sap:updatable="false" sap:sortable="false" />
+				<Property Name="NavProperty" Type="Edm.String"
+						  Nullable="false" MaxLength="10" sap:display-format="UpperCase"
+						  sap:label="this property is navigated"
+						  sap:heading="Doc. No." sap:quickinfo="Navigated Property"
+						  sap:creatable="false" sap:updatable="false" sap:sortable="false" />
+			</EntityType>
+			<ComplexType Name="ComplexType">
+				<Property Name="ComplexProperty01" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:label="ComplexProperty 01"
+					sap:heading="ComplexProperty 01-Heading." sap:quickinfo="ComplexProperty 01-QuickInfo"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false">
+				</Property>
+				<Property Name="ComplexProperty02" Type="Edm.String"
+					Nullable="false" MaxLength="4" sap:label="ComplexProperty 02"
+					sap:quickinfo="ComplexProperty 02-QuickInfo"
+					sap:heading="ComplexProperty 02-Heading" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false">
+				</Property>
+				<Property Name="ComplexProperty03" Type="Edm.String"
+					Nullable="false" MaxLength="4" sap:label="ComplexProperty 03"
+					sap:quickinfo="ComplexProperty 03-QuickInfo"
+					sap:heading="ComplexProperty 03-Heading" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false">
+				</Property>
+				<Property Name="ComplexUxFcThatMakeFieldInvisible" Type="Edm.Byte"
+					Nullable="false" sap:label="UI Field Control"
+					sap:quickinfo="UI Field Control Byte (Should be defined centrally)"
+					sap:creatable="false" sap:updatable="false" sap:visible="false" >
+				</Property>
+			</ComplexType>
+			<ComplexType Name="ComplexType02">
+				<Property Name="ComplexProperty01" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:label="ComplexProperty 01"
+					sap:heading="ComplexProperty 01-Heading." sap:quickinfo="ComplexProperty 01-QuickInfo"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false">
+				</Property>
+				<Property Name="ComplexProperty02" Type="Edm.String"
+					Nullable="false" MaxLength="4" sap:label="ComplexProperty 02"
+					sap:quickinfo="ComplexProperty 02-QuickInfo"
+					sap:heading="ComplexProperty 02-Heading" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false">
+				</Property>
+				<Property Name="ComplexProperty03" Type="Edm.String"
+					Nullable="false" MaxLength="4" sap:label="ComplexProperty 03"
+					sap:quickinfo="ComplexProperty 03-QuickInfo"
+					sap:heading="ComplexProperty 03-Heading" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false">
+				</Property>
+				<Property Name="ComplexUxFcThatMakeFieldInvisible" Type="Edm.Byte"
+					Nullable="false" sap:label="UI Field Control"
+					sap:quickinfo="UI Field Control Byte (Should be defined centrally)"
+					sap:creatable="false" sap:updatable="false" sap:visible="false" >
+				</Property>
+				<Property Name="ComplexProperty05" Type="Edm.String"
+					Nullable="false" MaxLength="4" sap:label="ComplexProperty 05"
+					sap:quickinfo="ComplexProperty 05-QuickInfo"
+					sap:heading="ComplexProperty 05-Heading" sap:creatable="false" sap:updatable="false"
+					sap:sortable="false" sap:filterable="false">
+				</Property>
+			</ComplexType>
+			<ComplexType Name="ComplexType03">
+				<Property Name="ComplexProperty031" Type="Edm.String"
+					Nullable="false" MaxLength="10" sap:label="ComplexProperty 031"
+					sap:heading="ComplexProperty 031-Heading." sap:quickinfo="ComplexProperty 031-QuickInfo"
+					sap:creatable="false" sap:updatable="false" sap:sortable="false"
+					sap:filterable="false">
+				</Property>
+			</ComplexType>
+
+			<Association Name="assoc_CF154B42F01DD8BEC0415968198AF5FD" sap:content-version="1">
+				<End Type="AdditionalElementsTest.EntityType02" Multiplicity="1" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FD"/>
+				<End Type="AdditionalElementsTest.EntityTypeNav" Multiplicity="0..1" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FD"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FD">
+						<PropertyRef Name="EntityType02_Property01"/>
+					</Principal>
+					<Dependent Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FD">
+						<PropertyRef Name="EntityTypeNav_Property01"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+
+			<Association Name="assoc_CF154B42F01DD8BEC0415968198AF5FE" sap:content-version="1">
+				<End Type="AdditionalElementsTest.EntityType01" Multiplicity="1" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
+				<End Type="AdditionalElementsTest.EntityTypeNav" Multiplicity="*" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE">
+						<PropertyRef Name="Property04"/>
+					</Principal>
+					<Dependent Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FE">
+						<PropertyRef Name="EntityTypeNav_Property01"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+
+			<Association Name="assoc_CF154B42F01DD8BEC0415968198AF5FA" sap:content-version="1">
+				<End Type="AdditionalElementsTest.EntityType01" Multiplicity="1" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
+				<End Type="AdditionalElementsTest.EntityTypeNav" Multiplicity="*" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
+				<ReferentialConstraint>
+					<Principal Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FA">
+						<PropertyRef Name="Property05"/>
+					</Principal>
+					<Dependent Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FA">
+						<PropertyRef Name="EntityTypeNav_Property01"/>
+					</Dependent>
+				</ReferentialConstraint>
+			</Association>
+
+			<EntityContainer Name="AdditionalElementsTest_Entities"
+				m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
+				<EntitySet Name="EntityTypes" EntityType="AdditionalElementsTest.EntityType01"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+
+				<EntitySet Name="EntityTypes2" EntityType="AdditionalElementsTest.EntityType02"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false"
+					sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+
+				<EntitySet Name="EntityTypesNav" EntityType="AdditionalElementsTest.EntityTypeNav"
+				   sap:creatable="false" sap:updatable="false" sap:deletable="false"
+				   sap:pageable="false" sap:addressable="false" sap:content-version="1" />
+
+				<AssociationSet Name="assoc_CF154B42F01DD8BEC0415968198AF5FD" Association="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FD"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="EntityType2" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FD"/>
+					<End EntitySet="EntityTypesNav" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FD"/>
+				</AssociationSet>
+
+				<AssociationSet Name="assoc_CF154B42F01DD8BEC0415968198AF5FE" Association="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FE"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="EntityTypes" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
+					<End EntitySet="EntityTypesNav" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FE"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_CF154B42F01DD8BEC0415968198AF5FA" Association="AdditionalElementsTest.assoc_CF154B42F01DD8BEC0415968198AF5FA"
+					sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+					<End EntitySet="EntityTypes" Role="FromRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
+					<End EntitySet="EntityTypesNav" Role="ToRole_assoc_CF154B42F01DD8BEC0415968198AF5FA"/>
+				</AssociationSet>
+			</EntityContainer>
+
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType02/TechnicalInvisibleProperty">
+				<Annotation Term="UI.Hidden"/>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType01/EntityType01_TechnicalInvisibleProperty">
+				<Annotation Term="com.sap.vocabularies.Common.v1.FieldControl">
+					<EnumMember>com.sap.vocabularies.Common.v1.FieldControlType/Hidden</EnumMember>
+				</Annotation>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType01/Property01">
+				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo">
+					<String>EntityType01/Property01 Quickinfo (from annotation)</String>
+				</Annotation>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType01/Property02">
+				<Annotation Term="com.sap.vocabularies.Common.v1.Label">
+					<String>Entity1-Property02-Label (from annotation)</String>
+				</Annotation>
+			</Annotations>
+			<Annotations xmlns="http://docs.oasis-open.org/odata/ns/edm" Target="AdditionalElementsTest.EntityType02/EntityType02_Property03">
+				<Annotation Term="com.sap.vocabularies.Common.v1.QuickInfo">
+					<String>Entity2-EntityType02_Property03-QuickInfo (from annotation)</String>
+				</Annotation>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

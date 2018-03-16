@@ -180,12 +180,10 @@
 
 		QUnit.test("Initialization", function(assert) {
 			oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
-			assert.ok(!jQuery.sap.domById("__dialog0"), "TablePersoDialog is not rendered before it's ever opened.");
-			assert.ok(oTablePersoDialog.getPersoDialogFor(), "TablePersoDialog is linked to a table");
+			assert.ok(!jQuery.sap.domById(oTablePersoDialog.getId()), "TablePersoDialog is not rendered before it's ever opened.");
 			assert.strictEqual(oTablePersoDialog.getPersoDialogFor(), "idRandomDataTable", "TablePersoDialog is linked to the correct table");
 			var oPersData = oTablePersoDialog.retrievePersonalizations();
 			assert.strictEqual(oPersData.aColumns, undefined, "No personalization data until dialog opened");
-			assert.ok(sap.ui.getCore().byId("__dialog1"), "Columns dialog does not yet exist");
 		});
 
 
@@ -196,10 +194,10 @@
 			oTPC.setShowSelectAll(false);
 			//oTPC.setHasGrouping(true);
 			oTPC.openDialog();
-			assert.ok(sap.ui.getCore().byId("__dialog1"), "Columns dialog exists after open() called");
-			assert.ok(jQuery.sap.domById("__dialog1-title"), "Columns dialog has a title rendered");
+			assert.ok(sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog"), "Columns dialog exists after open() called");
+			assert.ok(jQuery.sap.domById(oTablePersoDialog.getId() + "-Dialog-title"), "Columns dialog has a title rendered");
 			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-			assert.strictEqual(sap.ui.getCore().byId("__dialog1").getTitle(), oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");
+			assert.strictEqual(sap.ui.getCore().byId(oTablePersoDialog.getId() + "-Dialog").getTitle(), oRb.getText("PERSODIALOG_COLUMNS_TITLE"), "Columns dialog title is 'Columns'");
 			//Check if Reset ALL Button is invisible
 			assert.ok(jQuery('#'+oTPC.getAggregation("_tablePersoDialog")._oDialog.getId() + '-header-BarRight').children().length == 0, 'Reset All button should be hidden');
 			//Check if Select All is invisible
@@ -236,9 +234,11 @@
 		});
 
 		QUnit.test("En/-disable Arrow Buttons", function(assert) {
+			oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
 			var oDataList = oTablePersoDialog._oDialog.getContent()[1].getContent()[0];
-			var oButtonUp = sap.ui.getCore().byId("__button0");
-			var oButtonDown = sap.ui.getCore().byId("__button1");
+			var oTablePersoDialog = oTPC.getAggregation("_tablePersoDialog");
+			var oButtonUp = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-buttonUp"); 
+			var oButtonDown = sap.ui.getCore().byId(oTablePersoDialog.getId() + "-buttonDown");
 			var length = oDataList.getItems().length;
 
 //			first item is selected => the Down button must be enabled
@@ -270,8 +270,8 @@
 				assert.ok(oButtonUp1.$().hasClass('sapMBtnDisabled'), "One item available(selected): Button Arrow Up is disabled => OK!");
 				assert.ok(oButtonDown1.$().hasClass('sapMBtnDisabled'), "One item available(selected): Button Arrow Down is disabled => OK!");
 			};
-			var oButtonCancel1 = sap.ui.getCore().byId(oTablePersoDialog1._oDialog.getRightButton());
-			oButtonCancel1.firePress();
+			var oButtonCancel = sap.ui.getCore().byId(oTablePersoDialog1._oDialog.getRightButton());
+			oButtonCancel.firePress();
 		});
 
 
@@ -281,17 +281,15 @@
 			oTPC.openDialog();
 
 			// Set the 1st column to invisible and switch the last two around
-			var oButtonUp = sap.ui.getCore().byId("__button0");
-			var oButtonDown = sap.ui.getCore().byId("__button1");
-			var oButtonReset = sap.ui.getCore().byId("__button2");
-			var oButtonOk = sap.ui.getCore().byId("__button3");
-			var oButtonCancel = sap.ui.getCore().byId("__button4");
+			var oButtonUp = sap.ui.getCore().byId("idRandomDataTable-PersoDialog-buttonUp");
+			var oButtonDown = sap.ui.getCore().byId("idRandomDataTable-PersoDialog-buttonDown");
+			var oButtonOk = sap.ui.getCore().byId("idRandomDataTable-PersoDialog-buttonOk");
 
 			// 1st column invisible
-			sap.ui.getCore().byId("__box0-__list0-0").setSelected(false);
+			sap.ui.getCore().byId("idRandomDataTable-PersoDialog-cb-idRandomDataTable-PersoDialog-colList-0").setSelected(false);
 
 			// Switch last two around
-			sap.ui.getCore().byId("__item2-__list0-1").setSelected(true);
+			sap.ui.getCore().byId("idRandomDataTable-PersoDialog-li-idRandomDataTable-PersoDialog-colList-1").setSelected(true);
 			oButtonDown.firePress();
 			sap.ui.getCore().applyChanges();
 

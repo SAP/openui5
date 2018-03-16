@@ -8,50 +8,24 @@
 			contentWidth="350px"
 			id="AppSettingsDialog">
 		<content>
-			<l:Grid
-					class="sapUiSmallMarginTop"
-					hSpacing="0.5"
-					vSpacing="0.5"
-					defaultSpan="L6 M6 S10">
-				<l:content>
-					<Label text="Theme:" design="Standard" labelFor="ThemeSelect">
-						<layoutData>
-							<l:GridData span="L12 M12 S12"/>
-						</layoutData>
-					</Label>
+			<VBox class="sapUiTinyMarginTop">
+					<Label text="Theme:" design="Standard" labelFor="ThemeSelect" />
 					<Select id="ThemeSelect" width="100%">
 						<core:Item key="sap_belize" text="Belize"/>
 						<core:Item key="sap_belize_plus" text="Belize Deep"/>
 						<core:Item key="sap_belize_hcb" text="High Contrast Black"/>
 						<core:Item key="sap_belize_hcw" text="High Contrast White"/>
-						<layoutData>
-							<l:GridData span="L12 M12 S12"/>
-						</layoutData>
 					</Select>
 
-					<Label text="Compact Content Density:" design="Standard"  labelFor="CompactModeSwitch">
-						<layoutData>
-							<l:GridData span="L8 M8 S8"/>
-						</layoutData>
-					</Label>
-					<Switch id="CompactModeSwitch" state="false">
-						<layoutData>
-							<l:GridData span="L4 M4 S4"/>
-						</layoutData>
-					</Switch>
-
-					<Label text="Right To Left Mode:" design="Standard" labelFor="RTLSwitch">
-						<layoutData>
-							<l:GridData span="L8 M8 S8"/>
-						</layoutData>
-					</Label>
-					<Switch id="RTLSwitch" state="false">
-						<layoutData>
-							<l:GridData span="L4 M4 S4"/>
-						</layoutData>
-					</Switch>
-				</l:content>
-			</l:Grid>
+					<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+						<Label text="Compact Content Density:" design="Standard"  labelFor="CompactModeSwitch" />
+						<Switch id="CompactModeSwitch" state="false" />
+					</HBox>
+					<HBox class="sapUiTinyMarginTop" alignItems="Center" justifyContent="SpaceBetween">
+						<Label text="Right To Left Mode:" design="Standard" labelFor="RTLSwitch" />
+						<Switch id="RTLSwitch" state="false" />
+					</HBox>
+			</VBox>
 		</content>
 		<beginButton>
 			<Button text="OK" press="handleSaveAppSettings"/>

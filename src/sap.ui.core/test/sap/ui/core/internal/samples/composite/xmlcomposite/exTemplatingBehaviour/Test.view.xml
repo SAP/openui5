@@ -1,0 +1,23 @@
+<mvc:View height="100%" controllerName="sap.ui.core.internal.samples.composite.xmlcomposite.exTemplatingBehaviour.Test" 
+	xmlns:m="sap.m" 
+	xmlns:mvc="sap.ui.core.mvc" 
+	xmlns:fc="sap.ui.core.internal.samples.composite.xmlcomposite.exTemplatingBehaviour.comp" 
+	xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+	<m:VBox>
+		<m:Text text="Model is not known at runtime !!!!"/>
+		<m:Text text="========================="/>
+		<template:if test="{= ${deviceModel>/desktop}  === 'x'}">
+			<template:then>
+				<m:Text id="View_textIfDesktop" text="This is a Desktop ..." width="10rem" />
+			</template:then>
+		</template:if>
+		<template:if test="{= ${deviceModel>/tablet}  === 'x'}">
+			<template:then>
+				<m:Text id="View_textIfTablet" text="This is a Tablet ..." width="10rem"/>
+			</template:then>
+		</template:if>
+		<m:Text id="View_text0" text="deviceModel-desktop ... {deviceModel>/desktop}" />
+		<m:Text id="View_text1" text="deviceModel-tablet ... {deviceModel>/tablet}" />
+		<fc:field id="FC" text="{/text}" value="{/value}" desktop="{deviceModel>/desktop}" tablet="{deviceModel>/tablet}" />
+	</m:VBox>
+</mvc:View>

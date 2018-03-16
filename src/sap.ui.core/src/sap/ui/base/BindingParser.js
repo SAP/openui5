@@ -320,7 +320,7 @@ sap.ui.define([
 	 *   (append only)
 	 * @param {string} sInput
 	 *   The input string from which to resolve an embedded binding
-	 * @param {number} iStart
+	 * @param {int} iStart
 	 *   The start index for binding resolution in the input string
 	 * @returns {object}
 	 *   An object with the following properties:
@@ -392,7 +392,7 @@ sap.ui.define([
 		 * Parses an expression. Sets the flags accordingly.
 		 *
 		 * @param {string} sInput The input string to parse from
-		 * @param {number} iStart The start index
+		 * @param {int} iStart The start index
 		 * @param {sap.ui.model.BindingMode} oBindingMode the binding mode
 		 * @returns {object} a result object with the binding in <code>result</code> and the index
 		 * after the last character belonging to the expression in <code>at</code>
@@ -408,12 +408,17 @@ sap.ui.define([
 			 *
 			 * @param {object} oBinding
 			 *   a binding which may be composite
-			 * @param {number} [iIndex]
+			 * @param {int} [iIndex]
 			 *   index provided by <code>forEach</code>
 			 */
 			function setMode(oBinding, iIndex) {
 				if (oBinding.parts) {
-					oBinding.parts.forEach(setMode);
+					oBinding.parts.forEach(function (vPart, i) {
+						if (typeof vPart === "string") {
+							vPart = oBinding.parts[i] = {path : vPart};
+						}
+						setMode(vPart, i);
+					});
 					b2ndLevelMergedNeeded = b2ndLevelMergedNeeded || iIndex !== undefined;
 				} else {
 					oBinding.mode = oBindingMode;
@@ -597,8 +602,12 @@ sap.ui.define([
 	 *
 	 * @param {string} sInput
 	 *   the string to be parsed
-	 * @param {number} iStart
+	 * @param {int} iStart
 	 *   the index to start parsing
+	 * @param {object} [oEnv]
+	 *   the "environment" (see resolveEmbeddedBinding function for details)
+	 * @param {object} [mGlobals]
+	 *   global variables allowed in the expression as map of variable name to its value
 	 * @returns {object}
 	 *   the parse result with the following properties
 	 *   <ul>
@@ -613,8 +622,9 @@ sap.ui.define([
 	 *   the error contains the position where parsing failed.
 	 * @private
 	 */
-	BindingParser.parseExpression = function (sInput, iStart) {
-		return ExpressionParser.parse(resolveEmbeddedBinding.bind(null, {}), sInput, iStart);
+	BindingParser.parseExpression = function (sInput, iStart, oEnv, mGlobals) {
+		return ExpressionParser.parse(resolveEmbeddedBinding.bind(null, oEnv || {}), sInput, iStart,
+			mGlobals);
 	};
 
 	return BindingParser;

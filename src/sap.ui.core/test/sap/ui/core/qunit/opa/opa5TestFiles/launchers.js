@@ -1,9 +1,10 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/test/Opa5',
-	"sap/ui/test/launchers/iFrameLauncher",
-	'sap/ui/thirdparty/URI'
-	], function ($, Opa5, IFrameLauncher,URI) {
+	'sap/ui/thirdparty/URI',
+	'sap/ui/test/autowaiter/_autoWaiter',
+	'sap/ui/test/launchers/iFrameLauncher'
+], function ($, Opa5, URI, _autoWaiter, iFrameLauncher) {
 	"use strict";
 
 	QUnit.module("Launchers and teardown");
@@ -20,6 +21,7 @@ sap.ui.define([
 
 		oOpa5.waitFor({
 			success: function () {
+				assert.ok(oOpa5.hasUIComponentStarted() && oOpa5.hasAppStarted(), "UIComponent has started");
 				assert.ok($(".sapUiOpaComponent").is(":visible"), "Component is launched");
 			}
 		});
@@ -27,6 +29,7 @@ sap.ui.define([
 		oOpa5.iTeardownMyApp();
 
 		Opa5.emptyQueue().done(function () {
+			assert.ok(!(oOpa5.hasUIComponentStarted() || oOpa5.hasAppStarted()), "UIComponent has been torn down");
 			assert.ok(!$(".sapUiOpaComponent").length, "Component is gone again");
 			fnDone();
 		});
@@ -41,7 +44,7 @@ sap.ui.define([
 
 		oOpa5.waitFor({
 			success: function () {
-				assert.ok(IFrameLauncher.hasLaunched(), "IFrame has launched");
+				assert.ok(oOpa5.hasAppStartedInAFrame() && oOpa5.hasAppStarted(), "IFrame has launched");
 				assert.ok($(".opaFrame").is(":visible"), "IFrame is visible");
 			}
 		});
@@ -49,6 +52,7 @@ sap.ui.define([
 		oOpa5.iTeardownMyApp();
 
 		Opa5.emptyQueue().done(function () {
+			assert.ok(!(oOpa5.hasAppStartedInAFrame() || oOpa5.hasAppStarted()), "IFrame has been torn down");
 			assert.ok(!$(".opaFrame").length, "IFrame is gone again");
 			fnDone();
 		});
@@ -153,52 +157,79 @@ sap.ui.define([
 		});
 	});
 
-	var aAutoWaiterStubs = [];
-
-	function stubAutoWaiter () {
-		var oAutoWaiter = IFrameLauncher._getAutoWaiter();
-		aAutoWaiterStubs.push(sinon.stub(oAutoWaiter, "hasToWait").returns(false));
-	}
-
 	QUnit.module("Launchers and autoWait", {
 		beforeEach: function () {
-			Opa5.extendConfig({
-				autoWait: true
-			});
+			Opa5.resetConfig();
+			this.fnWindowOnError = window.onerror;
+			window.onerror = function () {
+				// suppress iFrame errors in IE11
+				return true;
+			};
 		},
 		afterEach: function () {
-			aAutoWaiterStubs.forEach(function (oStub) {
-				oStub.restore();
-			});
-			aAutoWaiterStubs = [];
 			Opa5.resetConfig();
+			window.onerror = this.fnWindowOnError;
 		}
 	});
 
-	QUnit.test("Should ignore autosync when starting/tearing down an IFrame", function(assert) {
-		// System under Test
+	QUnit.test("Should use default autoWait:false while starting/tearing down an IFrame", function (assert) {
 		var fnDone = assert.async();
 		var oOpa5 = new Opa5();
+		var fnAutoWaiterSpy = sinon.spy();
+		var fnGetAutoWaiterStub = sinon.stub(iFrameLauncher, "_getAutoWaiter");
+		fnGetAutoWaiterStub.returns({
+			hasToWait: fnAutoWaiterSpy,
+			extendConfig: function () {}
+		});
 
-		// waiter in the outer frame
-		stubAutoWaiter();
+		Opa5.extendConfig({
+			autoWait: true
+		});
 
-		oOpa5.iStartMyAppInAFrame("../testdata/emptySite.html");
+		oOpa5.iStartMyAppInAFrame("../testdata/busyAfterStart.html").done(function () {
+			sinon.assert.notCalled(fnAutoWaiterSpy);
+		});
 
 		oOpa5.iTeardownMyApp();
 
 		Opa5.emptyQueue().done(function () {
 			assert.ok(!$(".opaFrame").length, "IFrame is gone again");
-			sinon.assert.notCalled(aAutoWaiterStubs[0]);
+			fnGetAutoWaiterStub.restore();
 			fnDone();
 		});
 	});
 
-	QUnit.test("Should ignore autosync when starting/tearing down a component", function (assert) {
+	QUnit.test("Should use configured autoWait:true while starting an IFrame", function (assert) {
 		var fnDone = assert.async();
 		var oOpa5 = new Opa5();
+		var fnAutoWaiterSpy = sinon.spy();
+		var fnGetAutoWaiterStub = sinon.stub(iFrameLauncher, "_getAutoWaiter");
+		fnGetAutoWaiterStub.returns({
+			hasToWait: fnAutoWaiterSpy,
+			extendConfig: function () {}
+		});
 
-		stubAutoWaiter();
+		oOpa5.iStartMyAppInAFrame({source: "../testdata/busyAfterStart.html", autoWait: true}).done(function () {
+			sinon.assert.called(fnAutoWaiterSpy);
+		});
+
+		oOpa5.iTeardownMyApp();
+
+		Opa5.emptyQueue().done(function () {
+			assert.ok(!$(".opaFrame").length, "IFrame is gone again");
+			fnGetAutoWaiterStub.restore();
+			fnDone();
+		});
+	});
+
+	QUnit.test("Should use default autoWait:false while starting/tearing down a component", function (assert) {
+		var fnDone = assert.async();
+		var oOpa5 = new Opa5();
+		var fnAutoWaiterSpy = sinon.spy(_autoWaiter, "hasToWait");
+
+		Opa5.extendConfig({
+			autoWait: true // global truthy value should be ignored on next startup
+		});
 
 		oOpa5.iStartMyUIComponent({
 			componentConfig: {
@@ -210,7 +241,37 @@ sap.ui.define([
 
 		Opa5.emptyQueue().done(function () {
 			assert.ok(!$(".sapUiOpaComponent").length, "Component is gone again");
-			sinon.assert.notCalled(aAutoWaiterStubs[0]);
+			// waiter in outer frame and launcher is the same
+			sinon.assert.notCalled(fnAutoWaiterSpy);
+			fnAutoWaiterSpy.restore();
+			fnDone();
+		});
+	});
+
+	QUnit.test("Should use configured autoWait:true while starting a component", function (assert) {
+		var fnDone = assert.async();
+		var oOpa5 = new Opa5();
+		// waiter in outer frame and launcher is the same
+		var fnAutoWaiterStub = sinon.stub(_autoWaiter, "hasToWait");
+		fnAutoWaiterStub.returns(false);
+
+		// simple component with nothing to wait after start
+		oOpa5.iStartMyUIComponent({
+			componentConfig: {
+				name: "samples.components.button"
+			},
+			autoWait: true
+		}).done(function () {
+			// autoWait is true, so hasPending will be called once and will return false immediately
+			sinon.assert.calledOnce(fnAutoWaiterStub);
+		});
+
+		oOpa5.iTeardownMyApp();
+
+		Opa5.emptyQueue().done(function () {
+			assert.ok(!$(".sapUiOpaComponent").length, "Component is gone again");
+			sinon.assert.calledOnce(fnAutoWaiterStub);
+			fnAutoWaiterStub.restore();
 			fnDone();
 		});
 	});
@@ -224,15 +285,39 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Should complain if nothing is launched", function (assert) {
-		var oOpa5 = new Opa5();
+	var aTeardownOptions = [
+		{
+			name: "app",
+			func: "iTeardownMyApp",
+			error: "A teardown was called but there was nothing to tear down use iStartMyComponent or iStartMyAppInAFrame"
+		},
+		{
+			name: "component",
+			func: "iTeardownMyUIComponent",
+			error: "sap.ui.test.launchers.componentLauncher: Teardown was called before start. No component was started."
+		},
+		{
+			name: "iFrame",
+			func: "iTeardownMyAppFrame",
+			error: "sap.ui.test.launchers.iFrameLauncher: Teardown was called before launch. No iFrame was loaded."
+		}
+	];
 
-		oOpa5.iTeardownMyApp();
+	aTeardownOptions.forEach(function (mTeardown) {
+		QUnit.test("Should complain if " + mTeardown.name + " is not launched", function (assert) {
+			var oOpa5 = new Opa5();
+			var fnSpy = this.spy();
 
-		Opa5.emptyQueue();
+			assert.expect(3);
 
-		assert.throws(function () {
+			oOpa5[mTeardown.func].apply(oOpa5).fail(function (oOptions) {
+				assert.ok(true, "Should execute teardown fail callback");
+				QUnit.assert.contains(oOptions.errorMessage, mTeardown.error, "Unexpected teardown error message");
+			});
+
+			oOpa5.emptyQueue().fail(fnSpy);
 			this.clock.tick(500);
-		}.bind(this), "A teardown was called but there was nothing to tear down");
+			assert.ok(fnSpy.calledOnce, "Teardown exception should also be handled by the queue's fail callback");
+		});
 	});
 });

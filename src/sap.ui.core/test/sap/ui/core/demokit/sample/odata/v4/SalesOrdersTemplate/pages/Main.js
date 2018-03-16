@@ -2,14 +2,10 @@
  * ${copyright}
  */
 sap.ui.require([
-	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/actions/Press",
-	"sap/ui/test/matchers/BindingPath",
-	"sap/ui/test/matchers/Interactable",
-	"sap/ui/test/matchers/Properties"
+	"sap/ui/test/actions/Press"
 ],
-function (Helper, Opa5, Press, BindingPath, Interactable, Properties) {
+function (Opa5, Press) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.SalesOrdersTemplate.Main";
 
@@ -22,7 +18,7 @@ function (Helper, Opa5, Press, BindingPath, Interactable, Properties) {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.Input",
-						matchers : new BindingPath({path : "/BusinessPartnerList/0"}),
+						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on CurrencyCode pressed");
 							return this.waitFor({
@@ -40,29 +36,11 @@ function (Helper, Opa5, Press, BindingPath, Interactable, Properties) {
 					return this.waitFor({
 						actions : new Press(),
 						controlType : "sap.m.ComboBox",
-						matchers : new BindingPath({path : "/BusinessPartnerList/0"}),
+						id : /-0-field/,
 						success : function (oValueHelp) {
 							Opa5.assert.ok(true, "ValueHelp on Role pressed");
 						},
 						viewName : sViewName
-					});
-				}
-			},
-			assertions : {
-				checkLog : function () {
-					return this.waitFor({
-						success : function (oControl) {
-							jQuery.sap.log.getLogEntries()
-								.forEach(function (oLog) {
-									if (Helper.isRelevantLog(oLog)) {
-										Opa5.assert.ok(false,
-											"Unexpected warning or error found: " + oLog.component
-											+ " Level: " + oLog.level
-											+ " Message: " + oLog.message );
-									}
-								});
-							Opa5.assert.ok(true, "Log checked");
-						}
 					});
 				}
 			}

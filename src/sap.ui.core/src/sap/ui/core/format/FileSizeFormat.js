@@ -46,6 +46,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 	 * </ul>
 	 *
 	 * @public
+	 * @hideconstructor
 	 * @alias sap.ui.core.format.FileSizeFormat
 	 * @extends sap.ui.base.Object
 	 */

@@ -4,8 +4,9 @@ sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/ui/core/format/DateFormat"
-], function(Controller, JSONModel, MessageToast, Filter, FilterOperator, DateFormat) {
+	"sap/ui/core/format/DateFormat",
+	"sap/ui/table/sample/TableExampleUtils"
+], function(Controller, JSONModel, MessageToast, Filter, FilterOperator, DateFormat, TableExampleUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.table.sample.Filtering.Controller", {
@@ -79,7 +80,7 @@ sap.ui.define([
 				oFilter = this._oPriceFilter;
 			}
 
-			this.getView().byId("table").getBinding("rows").filter(oFilter, "Application");
+			this.byId("table").getBinding("rows").filter(oFilter, "Application");
 		},
 
 		filterGlobally : function(oEvent) {
@@ -98,7 +99,7 @@ sap.ui.define([
 
 		filterPrice : function(oEvent) {
 			var oColumn = oEvent.getParameter("column");
-			if (oColumn != this.getView().byId("price")) {
+			if (oColumn != this.byId("price")) {
 				return;
 			}
 
@@ -134,7 +135,7 @@ sap.ui.define([
 		},
 
 		clearAllFilters : function(oEvent) {
-			var oTable = this.getView().byId("table");
+			var oTable = this.byId("table");
 
 			var oUiModel = this.getView().getModel("ui");
 			oUiModel.setProperty("/globalFilter", "");
@@ -151,7 +152,7 @@ sap.ui.define([
 		},
 
 		toggleAvailabilityFilter : function(oEvent) {
-			this.getView().byId("availability").filter(oEvent.getParameter("pressed") ? "X" : "");
+			this.byId("availability").filter(oEvent.getParameter("pressed") ? "X" : "");
 		},
 
 		formatAvailableToObjectState : function (bAvailable) {
@@ -159,12 +160,7 @@ sap.ui.define([
 		},
 
 		showInfo : function(oEvent) {
-			try {
-				jQuery.sap.require("sap.ui.table.sample.TableExampleUtils");
-				sap.ui.table.sample.TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Filtering", "/info.json"), oEvent.getSource());
-			} catch (e) {
-				// nothing
-			}
+			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.Filtering", "/info.json"), oEvent.getSource());
 		}
 
 	});

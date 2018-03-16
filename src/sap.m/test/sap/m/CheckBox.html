@@ -71,12 +71,47 @@
 						text: "Not editable"
 					}),
 					new sap.m.CheckBox({
+						id:"cb_display_only_checked",
+						visible: true,
+						enabled: true,
+						displayOnly: true,
+						editable: false,
+						selected: true,
+						text: "Display Only Checked"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_display_only",
+						visible: true,
+						enabled: true,
+						displayOnly: true,
+						editable: false,
+						selected: false,
+						text: "Display Only"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_disabled_and_display_only",
+						visible: true,
+						enabled: false,
+						displayOnly: true,
+						editable: true,
+						selected: false,
+						text: "Disabled and Display Only"
+					}),
+					new sap.m.CheckBox({
+						id:"cb_enabled_editable_and_display_only",
+						visible: true,
+						enabled: true,
+						displayOnly: true,
+						editable: true,
+						selected: true,
+						text: "Enabled, Display Only and Editable"
+					}),
+					new sap.m.CheckBox({
 						visible: true,
 						selected: true,
 						enabled: true,
-						width:"100px",
 						textDirection:"RTL",
-						text: "Text direcrtion RTL"
+						text: "Text direction RTL"
 					}),
 					new sap.m.CheckBox({
 						id:"cb_warning_deselected",
@@ -126,10 +161,11 @@
 					}),
 					oToolbar,
 					new sap.ui.layout.form.SimpleForm({
+						title: "Form containing a CheckBox",
 						editable : true,
 						content : [
 							new sap.m.Label({text:"CheckBox in a Form"}),
-							new sap.m.CheckBox({selected:true, text : "I am a label"})
+							new sap.m.CheckBox({selected:true})
 						]
 					}),
 					// RTL sapmple - set page in rtl mode to explore (sap-ui-rtl='true')

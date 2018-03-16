@@ -33,6 +33,7 @@ describe("sap.m.Wizard", function() {
 
 	it("should go to the end of the wizard", function () {
 		element(by.id("branch-wiz-nextButton")).click();
+		element(by.id("Card_Contents-Title")).click(); // Remove the focus from the input field
 		expect(takeScreenshot()).toLookAs("branching-page4");
 
 		element(by.id("branch-wiz-nextButton")).click();

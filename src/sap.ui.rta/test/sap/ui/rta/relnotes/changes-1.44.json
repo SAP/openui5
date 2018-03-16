@@ -1,0 +1,43 @@
+{
+  "1.44.0": {
+    "date": "October 2016",
+    "notes": [
+      {
+        "id": "3a18696e0ecce84da2a060ad4f0ed9bc4158139b",
+        "type": "FIX",
+        "text": "Cleanup stuff",
+        "references": []
+      },
+      {
+        "id": "0a13a8320137115e1fc3c8a62e76bb8f62c19925",
+        "type": "FIX",
+        "text": "RTA: Enablement of Reset button (incident 1670390902)",
+        "references": []
+      },
+      {
+        "id": "c8707ba5bef30aa62722ef3186454f700c57150d",
+        "type": "FIX",
+        "text": "more cleanup in RTA",
+        "references": []
+      },
+      {
+        "id": "bca51162ba9e65eac93e595502c124ededc57c45",
+        "type": "FIX",
+        "text": ": RTA - New Message when no fields are available",
+        "references": []
+      },
+      {
+        "id": "46733aa09edbb717d93a6303ded01cf4d3303c77",
+        "type": "FIX",
+        "text": ": RTA - No button adaptation if no toolbar visible",
+        "references": []
+      },
+      {
+        "id": "c92e949e6085638bcd9c988d1910cbc57ebc28e5",
+        "type": "FIX",
+        "text": ": RTA - change sequence of added fields in add-element dialog",
+        "references": []
+      }
+    ]
+  }
+}

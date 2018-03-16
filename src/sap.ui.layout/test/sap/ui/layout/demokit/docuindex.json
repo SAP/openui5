@@ -31,11 +31,14 @@
 					"sap.ui.layout.sample.Form354wide",
 					"sap.ui.layout.sample.Form354wideDual",
 					"sap.ui.layout.sample.Form471",
-					"sap.ui.layout.sample.Form480",
 					"sap.ui.layout.sample.Form480_12120",
 					"sap.ui.layout.sample.Form480_12120Dual",
 					"sap.ui.layout.sample.Form480_Trial",
-					"sap.ui.layout.sample.FormToolbar"
+					"sap.ui.layout.sample.FormToolbar",
+					"sap.ui.layout.sample.Form_Column_oneGroup",
+					"sap.ui.layout.sample.Form_Column_oneGroup234",
+					"sap.ui.layout.sample.Form_Column_twoGroups234",
+					"sap.ui.layout.sample.Form_Column_threeGroups234"
 				]
 			},
 			{
@@ -49,11 +52,14 @@
 					"sap.ui.layout.sample.SimpleForm354wide",
 					"sap.ui.layout.sample.SimpleForm354wideDual",
 					"sap.ui.layout.sample.SimpleForm471",
-					"sap.ui.layout.sample.SimpleForm480",
 					"sap.ui.layout.sample.SimpleForm480_12120",
 					"sap.ui.layout.sample.SimpleForm480_12120Dual",
 					"sap.ui.layout.sample.SimpleForm480_Trial",
-					"sap.ui.layout.sample.SimpleFormToolbar"
+					"sap.ui.layout.sample.SimpleFormToolbar",
+					"sap.ui.layout.sample.SimpleForm_Column_oneGroup",
+					"sap.ui.layout.sample.SimpleForm_Column_oneGroup234",
+					"sap.ui.layout.sample.SimpleForm_Column_twoGroups234",
+					"sap.ui.layout.sample.SimpleForm_Column_threeGroups234"
 				]
 			},
 			{
@@ -157,48 +163,63 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.Form354",
-				"name": "Fullscreen",
-				"description": "This is an example of a form with one single group on a fullscreen app using the <code>Form</code> control"
+				"name": "Fullscreen – one group",
+				"description": "Form with one single group in a fullscreen app with a label field ratio of 3:5:4 in all sizes besides size S (12:12:0)."
 			},
 			{
 				"id": "sap.ui.layout.sample.Form354wide",
-				"name": "Fullscreen with width adaption on wide screens",
-				"description": "This is an example of a form with one single group on a fullscreen app using the <code>Form</code> control that has longer labels and fields so that some more space is given to them in M size. Even if the form has only one single group, it is possible to give it a two columns layout to avoid too heavy stretching e.g. in XL. In this case also some more space is given to them like in M size."
+				"name": "Fullscreen – one group with long labels ",
+				"description": "Form with one single group in a fullscreen app for long labels and fields, so some more space is available on medium screens (4:7:0). To avoid heavily stretched forms on extra large screens, the form gets a two-column layout in this size (4:7:0)."
 			},
 			{
 				"id": "sap.ui.layout.sample.Form354wideDual",
-				"name": "Fullscreen with width more than one  group arranged in one column up to L",
-				"description": "This is an example of a form with more than one group on a fullscreen app using the <code>Form</code> control that has longer labels and fields so that some more space is given to them in M size."
+				"name": "Fullscreen – two groups (horizontal)",
+				"description": "Form with two groups with long labels and fields in a fullscreen app."
 			},
 			{
 				"id": "sap.ui.layout.sample.Form471",
-				"name": "Splitscreen",
-				"description": "This is an example of a form with more than one group on a split app."
-			},
-			{
-				"id": "sap.ui.layout.sample.Form480",
-				"name": "Fullscreen with width more than one  group arranged in two columns from L",
-				"description": "This is an example of a form with more than one group on a fullscreen app using the <code>Form</code> control that has longer labels and fields so that some more space is given to them in M size. The groups are arranged in up to two columns."
+				"name": "Splitscreen – one group",
+				"description": "Form with one single group in a split app with a label field ratio of 4:7:1 in all sizes besides size S (12:12:0)."
 			},
 			{
 				"id": "sap.ui.layout.sample.Form480_12120",
-				"name": "Fullscreen, one with width more than one group arranged in two columns from L",
-				"description": "This is an example of a two-column layout using the <code>Form</code> control. On large screens a two-column 4:8:0 layout (label:input:emptyspace) is used, on medium screens a two -column 12:12:0 layout is used and on small screens a one-column 12:12:0 layout is used. In the second Form only one Container is used, but an empty column is displayed beside to be aligned with the first Form. The groups in both forms are arranged in up to two columns."
+				"name": "Fullscreen – two groups (vertical)",
+				"description": "Form with two groups. On large screens a two-column layout (4:8:0) is used; on medium screens a one-column layout (12:12:0); on small screens also a one-column layout (12:12:0). In the second form an empty column is displayed next to the group to be aligned with the first form."
 			},
 			{
 				"id": "sap.ui.layout.sample.Form480_12120Dual",
-				"name": "Fullscreen with width more than one  group and 2 columns as early as possible",
-				"description": "This is an example of a form with more than one group on a fullscreen app getting two columns as early as possible."
+				"name": "Fullscreen – two columns of size M",
+				"description": "Form with two groups, gets a two-column layout whenever possible."
 			},
 			{
 				"id": "sap.ui.layout.sample.Form480_Trial",
-				"name": "Fullscreen with width more than one  group arranged in up to three columns",
-				"description": "This is an example of a three-column layout using the <code>Form</code> control. On extra large screens (screen size XL) a three-column 4:8:0 layout (label:input:emptyspace) is used, on large and medium screens a two-column 4:8:0 layout (label:input:emptyspace) is used and on small screens a one-column 12:12:0 layout (label:input:emptyspace) is used."
+				"name": "Fullscreen – three groups (horizontal)",
+				"description": "Form with three groups in a three-column layout. On extra large screens a three-column layout (4:8:0) is used; on large and medium screens a two-column layout (4:8:0); on small screens a one-column layout (12:12:0)."
 			},
 			{
 				"id": "sap.ui.layout.sample.FormToolbar",
-				"name": "With Toolbar",
-				"description": "A <code>Form</code> that uses <code>Toolbar</code>s as <code>Form</code> header and <code>FormContainer</code> headers."
+				"name": "Fullscreen – with toolbar",
+				"description": "A form that uses <code>Toolbar</code>s as <code>Form</code> header and <code>FormContainer</code> headers."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form_Column_oneGroup",
+				"name": "Fullscreen – one group using ColumnLayout",
+				"description": "Form with one single group in a fullscreen app using the <code>ColumnLayout</code> control  with default settings as layout."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form_Column_oneGroup234",
+				"name": "Fullscreen – one group using ColumnLayout with up to 4 columns",
+				"description": "Form with one large single group in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form_Column_twoGroups234",
+				"name": "Fullscreen – two groups using ColumnLayout with up to 4 columns",
+				"description": "Form with two groups in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+			},
+			{
+				"id": "sap.ui.layout.sample.Form_Column_threeGroups234",
+				"name": "Fullscreen – three groups using ColumnLayout with up to 4 columns",
+				"description": "Form with three groups in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
 			},
 			{
 				"id": "sap.ui.layout.sample.HorizontalLayout",
@@ -212,48 +233,63 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm354",
-				"name": "Fullscreen",
-				"description": "This is an example of a form with one single group on a fullscreen app using the <code>SimpleForm</code> control"
+				"name": "Fullscreen – one group",
+				"description": "Form with one single group in a fullscreen app with a label field ratio of 3:5:4 in all sizes besides size S (12:12:0)."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm354wide",
-				"name": "Fullscreen with width adaption on wide screens",
-				"description": "This is an example of a form with one single group on a fullscreen app using the <code>SimpleForm</code> control that has longer labels and fields so that some more space is given to them in M size. Even if the form has only one single group, it is possible to give it a two columns layout to avoid too heavy stretching e.g. in XL. In this case also some more space is given to them like in M size."
+				"name": "Fullscreen – one group with long labels ",
+				"description": "Form with one single group in a fullscreen app for long labels and fields, so some more space is available on medium screens (4:7:0). To avoid heavily stretched forms on extra large screens, the form gets a two-column layout in this size (4:7:0)."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm354wideDual",
-				"name": "Fullscreen with width more than one  group arranged in one column up to L",
-				"description": "This is an example of a form with more than one group on a fullscreen app using the <code>SimpleForm</code> control that has longer labels and fields so that some more space is given to them in M size."
+				"name": "Fullscreen – two groups (horizontal)",
+				"description": "Form with two groups with long labels and fields in a fullscreen app."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm471",
-				"name": "Splitscreen",
-				"description": "This is an example of a single-column 4:7:1 layout (label:input:emptyspace) using the <code>SimpleForm</code> control"
-			},
-			{
-				"id": "sap.ui.layout.sample.SimpleForm480",
-				"name": "Fullscreen with width more than one  group arranged in two columns from L",
-				"description": "This is an example of a form with more than one group on a fullscreen app using the <code>SimpleForm</code> control that has longer labels and fields so that some more space is given to them in M size. The groups are arranged in up to two columns."
-			},
-			{
-				"id": "sap.ui.layout.sample.SimpleForm480_Trial",
-				"name": "Fullscreen with width more than one group arranged in up to three columns",
-				"description": "This is an example of a three-column layout using the <code>SimpleForm</code> control. On extra large screens (screen size XL) a three-column 4:8:0 layout (label:input:emptyspace) is used, on large and medium screens a two-column 4:8:0 layout (label:input:emptyspace) is used and on small screens a one-column 12:12:0 layout (label:input:emptyspace) is used."
+				"name": "Splitscreen – one group",
+				"description": "Form with one single group in a split app with a label field ratio of 4:7:1 in all sizes besides size S (12:12:0)."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm480_12120",
-				"name": "Fullscreen, one with width more than one  group arranged in up to two columns from L",
-				"description": "This is an example of a two-column layout using the <code>SimpleForm</code> control.<br>On large screens a two-column 4:8:0 layout (label:input:emptyspace) is used, on medium screens a two -column 12:12:0 layout is used and on small screens a one-column 12:12:0 layout is used. In the second <code>SimpleForm</code> only one Container is used, but an empty column is displayed beside to be aligned with the first <code>SimpleForm</code>. The groups in both forms are arranged in up to two columns."
+				"name": "Fullscreen – two groups (vertical)",
+				"description": "Form with two groups. On large screens a two-column layout (4:8:0) is used; on medium screens a one-column layout (12:12:0); on small screens also a one-column layout (12:12:0). In the second form an empty column is displayed next to the group to be aligned with the first form."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleForm480_12120Dual",
-				"name": "Fullscreen with width more than one  group and 2 columns as early as possible",
-				"description": "This is an example of a form with more than one group on a fullscreen app getting two columns as early as possible."
+				"name": "Fullscreen – two columns of size M",
+				"description": "Form with two groups, gets a two-column layout whenever possible."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm480_Trial",
+				"name": "Fullscreen – three groups (horizontal)",
+				"description": "Form with three groups in a three-column layout. On extra large screens a three-column layout (4:8:0) is used; on large and medium screens a two-column layout (4:8:0); on small screens a one-column layout (12:12:0)."
 			},
 			{
 				"id": "sap.ui.layout.sample.SimpleFormToolbar",
-				"name": "With Toolbar",
+				"name": "Fullscreen – with toolbar",
 				"description": "A <code>SimpleForm</code> that uses <code>Toolbar</code>s as <code>Form</code> header and <code>FormContainer</code> headers."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm_Column_oneGroup",
+				"name": "Fullscreen – one group using ColumnLayout",
+				"description": "Form with one single group in a fullscreen app using the <code>ColumnLayout</code> control  with default settings as layout."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm_Column_oneGroup234",
+				"name": "Fullscreen – one group using ColumnLayout with up to 4 columns",
+				"description": "Form with one large single group in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm_Column_twoGroups234",
+				"name": "Fullscreen – two groups using ColumnLayout with up to 4 columns",
+				"description": "Form with two groups in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
+			},
+			{
+				"id": "sap.ui.layout.sample.SimpleForm_Column_threeGroups234",
+				"name": "Fullscreen – three groups using ColumnLayout with up to 4 columns",
+				"description": "Form with three groups in a fullscreen app using the <code>ColumnLayout</code> control as layout. 2 columns in medium size, 3 columns in large size and 4 columns in extra-large size are used respectively."
 			},
 			{
 				"id": "sap.ui.layout.sample.FixFlexVertical",
@@ -327,7 +363,7 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutCustomBackground",
-				"name": "BlockLayout with custom backgorund for the cells",
+				"name": "BlockLayout with custom background for the cells",
 				"description": "The BlockLayout could be used with different backgrounds for its cells."
 			},
 			{

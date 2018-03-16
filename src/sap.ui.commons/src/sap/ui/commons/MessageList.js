@@ -3,8 +3,14 @@
  */
 
 // Provides control sap.ui.commons.MessageList.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/Popup'],
-	function(jQuery, library, Control, Popup) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/Popup',
+    "./MessageListRenderer"
+],
+	function(jQuery, library, Control, Popup, MessageListRenderer) {
 	"use strict";
 
 

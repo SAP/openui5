@@ -23,10 +23,10 @@
 			// global variables
 			oPage = sap.ui.getCore().byId(sId);
 			$Page = oPage.$();
-			$PageHeader = $Page.children("header.sapMBar.sapMHeader-CTX");
-			$PageSubHeader = $Page.children("header.sapMBar.sapMSubHeader-CTX");
-			$PageFooter = $Page.children("footer.sapMBar.sapMFooter-CTX");
-			$PageSection = $Page.children("section");
+			$PageHeader = $Page.find(".sapMBar.sapMHeader-CTX");
+			$PageSubHeader = $Page.find(".sapMBar.sapMSubHeader-CTX");
+			$PageFooter = $Page.find(".sapMBar.sapMFooter-CTX");
+			$PageSection = $Page.find("section");
 		};
 
 		/* =========================================================== */
@@ -78,6 +78,10 @@
 					sTop = "0px",
 					sBottom = "0px";
 
+				var oFooter = oPage.getFooter(),
+					bShowFooter = oPage.getShowFooter(),
+					bShouldOffsetTheContent = !!(oFooter && bShowFooter);
+
 				oApp.placeAt("page-content");
 				oApp.addPage(oPage);
 				sap.ui.getCore().applyChanges();
@@ -105,13 +109,13 @@
 					assert.ok(!$Page.hasClass("sapMPageWithSubHeader"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithSubHeader"');
 				}
 
-				if (oPage.getFooter()) {
+				if (oFooter) {
 					assert.ok($PageFooter.length, "The page footer HTML element exists");
-					assert.ok($Page.hasClass("sapMPageWithFooter"), 'The page HTML Div element "must have" the CSS class "sapMPageWithFooter"');
 				} else {
 					assert.ok(!$PageFooter.length, "The page footer HTML element do not exists");
-					assert.ok(!$Page.hasClass("sapMPageWithFooter"), 'The page HTML Div element "must not have" the CSS class "sapMPageWithFooter"');
 				}
+
+				assert.equal($Page.hasClass("sapMPageWithFooter"), bShouldOffsetTheContent, 'The page HTML Div element has the class "sapMPageWithFooter": ' + bShouldOffsetTheContent);
 
 				assert.strictEqual($Page.css("top"), "0px", 'The page HTML Div element is absolute positioned, "top: 0px"');
 				assert.strictEqual($Page.css("left"), "0px", 'The page HTML Div element is absolute positioned, "left: 0px"');
@@ -129,7 +133,7 @@
 					sTop = "96px";
 				}
 
-				if (oPage.getFooter()) {
+				if (oFooter) {
 					sBottom = "48px";
 				}
 

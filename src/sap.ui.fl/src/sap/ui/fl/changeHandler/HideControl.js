@@ -3,8 +3,10 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global', './Base'
-], function(jQuery, Base) {
+	"jquery.sap.global"
+], function(
+	jQuery
+) {
 	"use strict";
 
 	/**
@@ -14,20 +16,49 @@ sap.ui.define([
 	 * @version ${version}
 	 * @experimental Since 1.27.0
 	 */
-	var HideControl = { };
+	var HideControl = {};
 
 	/**
 	 * Hides a control.
 	 *
 	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
 	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
+	 * @param {object} mPropertyBag - map of properties
 	 * @param {object} mPropertyBag.modifier - modifier for the controls
-	 * @param {object} mPropertyBag	- map of properties
 	 * @return {boolean} true - if change could be applied
 	 * @public
 	 */
 	HideControl.applyChange = function(oChange, oControl, mPropertyBag) {
+		oChange.setRevertData({
+			originalValue: mPropertyBag.modifier.getVisible(oControl)
+		});
+
 		mPropertyBag.modifier.setVisible(oControl, false);
+		return true;
+	};
+
+
+	/**
+	 * Reverts previously applied change
+	 *
+	 * @param {sap.ui.fl.Change} oChange change object with instructions to be applied on the control map
+	 * @param {sap.ui.core.Control} oControl control that matches the change selector for applying the change
+	 * @param {object} mPropertyBag	- map of properties
+	 * @param {object} mPropertyBag.modifier - modifier for the controls
+	 * @return {boolean} true - if change has been reverted
+	 * @public
+	 */
+	HideControl.revertChange = function(oChange, oControl, mPropertyBag) {
+		var mRevertData = oChange.getRevertData();
+
+		if (mRevertData) {
+			mPropertyBag.modifier.setVisible(oControl, mRevertData.originalValue);
+			oChange.resetRevertData();
+		} else {
+			jQuery.sap.log.error("Attempt to revert an unapplied change.");
+			return false;
+		}
+
 		return true;
 	};
 
@@ -39,7 +70,6 @@ sap.ui.define([
 	 * @public
 	 */
 	HideControl.completeChangeContent = function(oChange, oSpecificChangeInfo) {
-
 	};
 
 	return HideControl;

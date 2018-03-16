@@ -24,9 +24,9 @@
 				<li> local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders</a></li>
 			</ul>
 
-		<h3>Testing with backend</h3>
-		Configure your IDE to be able to execute the Sales Orders application against an ABAP
-		backend system.  Start the Sales Orders application URL (adjust host and port if necessary):
+		<h3>Testing with back end</h3>
+		Configure your IDE to be able to execute the Sales Orders application against an ABAP back
+		end system.  Start the Sales Orders application URL (adjust host and port if necessary):
 			<ul>
 				<li>local: <a href="http://localhost:8080/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true">http://&lt;host>:&lt;port>/testsuite/test-resources/sap/ui/core/demokit/sample/common/index.html?component=odata.v4.SalesOrders&amp;realOData=true</a></li>
 			</ul>
@@ -39,7 +39,7 @@
 			<li><b>Check:</b> The text <code>HT-1000</code> appears between
 				<code>Favorite product ID</code> and the button you just pressed.</li>
 		</ol>
-		<h3>Sort after filtering (with backend only)</h3>
+		<h3>Sort after filtering (with back end only)</h3>
 		<ol>
 			<li>Enter '1000' in the field <code>Filter by gross amount greater than</code> and press
 				<code>Enter</code>.</li>
@@ -51,7 +51,7 @@
 				The first sales order in the sales orders still has a gross amount
 				greater than 1000.</li>
 		</ol>
-		<h3>Sort via API call changeParameters (with backend only)</h3>
+		<h3>Sort via API call changeParameters (with back end only)</h3>
 		<ol>
 			<li>Press the button <code>Sales Order ID</code> in the header of the respective column
 				of the sales orders table.</li>
@@ -70,7 +70,7 @@
 			<li><b>Check:</b> The contacts shown in the <code>Supplier Contact Information</code>
 				table are different from the ones shown for the first sales order item.</li>
 		</ol>
-		<h3>Filter on relative list binding (with backend only)</h3>
+		<h3>Filter on relative list binding (with back end only)</h3>
 		Note: Test runs on sales order items table which is non-growing and therefore does not use
 		extended change detection.
 		<ol>
@@ -81,7 +81,7 @@
 			<li><b>Check:</b> The <code>Sales Order Line Items</code> table contains exactly one
 				row with the sales order item having the product ID entered as filter.</li>
 		</ol>
-		<h3>Sort on list binding updates or refreshes dependent bindings (with backend only)</h3>
+		<h3>Sort on list binding updates or refreshes dependent bindings (with back end only)</h3>
 		<ol>
 			<li>Select the first sales order</li>
 			<li>Change sort order of sales orders by clicking the <code>Gross Amount</code>

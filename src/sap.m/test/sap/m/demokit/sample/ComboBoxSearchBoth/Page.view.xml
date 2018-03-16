@@ -5,7 +5,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:l="sap.ui.layout"
 	xmlns="sap.m">
-	<Page showHeader="false">
+	<Page showHeader="false" class="sapUiContentPadding">
 		<content>
 			<l:VerticalLayout>
 				<ComboBox
@@ -15,10 +15,10 @@
 					selectedKey="{/comboBoxKey}"
 					width="500px"
 					items="{
-						path: '/ProductCollection',
-						sorter: { path: 'Name' }
+						path: '/CountriesCollection',
+						sorter: { path: 'text' }
 					}">
-					<core:ListItem key="{ProductId}" text="{Name}" additionalText="{ProductId}"/>
+					<core:ListItem key="{key}" text="{text}" additionalText="{key}"/>
 				</ComboBox>
 				<Label text="Formatted value (text and key):" />
 				<Text text="{parts: [{path: '/comboBoxValue'}, {path: '/comboBoxKey'}], formatter: '.fnFormatter'}" />

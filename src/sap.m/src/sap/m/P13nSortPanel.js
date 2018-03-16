@@ -4,9 +4,12 @@
 
 // Provides control sap.m.P13nSortPanel.
 sap.ui.define([
-	'jquery.sap.global', './P13nConditionPanel', './P13nPanel', './library', 'sap/ui/core/Control'
-], function(jQuery, P13nConditionPanel, P13nPanel, library, Control) {
+	'./P13nConditionPanel', './P13nPanel', './library'
+], function(P13nConditionPanel, P13nPanel, library) {
 	"use strict";
+
+	// shortcut for sap.m.P13nPanelType
+	var P13nPanelType = library.P13nPanelType;
 
 	/**
 	 * Constructor for a new P13nSortPanel.
@@ -187,11 +190,11 @@ sap.ui.define([
 	 * setter for the supported operations array
 	 *
 	 * @public
-	 * @param {array} array of operations <code>[sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]</code>
+	 * @param {array} aOperations - array of operations <code>[sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]</code>
 	 * @returns {sap.m.P13nSortPanel} this for chaining
 	 */
-	P13nSortPanel.prototype.setOperations = function(aOperation) {
-		this._aOperations = aOperation;
+	P13nSortPanel.prototype.setOperations = function(aOperations) {
+		this._aOperations = aOperations;
 
 		if (this._oSortPanel) {
 			this._oSortPanel.setOperations(this._aOperations);
@@ -205,13 +208,10 @@ sap.ui.define([
 	 * @private
 	 */
 	P13nSortPanel.prototype.init = function() {
-		this.setType(sap.m.P13nPanelType.sort);
+		this.setType(P13nPanelType.sort);
 		this.setTitle(sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SORTPANEL_TITLE"));
 
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
-		jQuery.sap.require("sap.ui.layout.Grid");
-
-		sap.ui.layout.Grid.prototype.init.apply(this);
 
 		this._aKeyFields = [];
 		this.addStyleClass("sapMSortPanel");
@@ -354,8 +354,9 @@ sap.ui.define([
 	P13nSortPanel.prototype.updateSortItems = function(sReason) {
 		this.updateAggregation("sortItems");
 
-		if (sReason == "change" && !this._bIgnoreBindCalls) {
+		if (sReason === "change" && !this._bIgnoreBindCalls) {
 			this._bUpdateRequired = true;
+            this.invalidate();
 		}
 	};
 
@@ -448,4 +449,4 @@ sap.ui.define([
 
 	return P13nSortPanel;
 
-}, /* bExport= */true);
+});

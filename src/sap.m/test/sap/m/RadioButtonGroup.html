@@ -604,13 +604,46 @@
 						oLabeloRBGroupRBG7, oRadioGroup
 					]});
 
-				var app = new sap.m.App("myApp", {initialPage:"rbg", autoFocus: false});
-
 				var page = new sap.m.Page("rbg", {
-				title:"Test Page for sap.m.RadioButtonGroup",
-				content : [
-					flexBoxRBG1, flexBoxRBG1a, flexBoxRBG2, flexBoxRBG3, flexBoxRBG3a, flexBoxRBG4, flexBoxRBG6, flexBoxRBG7, flexBoxRBG5
-				]});
+					title:"Test Page for sap.m.RadioButtonGroup",
+					content: [
+						new sap.m.IconTabBar("itb1", {
+							expandable: false,
+							showOverflowSelectList: true,
+							items: [
+								new sap.m.IconTabFilter("sample1", {
+									key: "key1",
+									text: "Sample 1",
+									tooltip: "Neutral with long text",
+									content: [
+										flexBoxRBG1,
+										flexBoxRBG1a,
+										flexBoxRBG2,
+										flexBoxRBG3
+									]
+								}),
+								new sap.m.IconTabFilter("sample2", {
+									key: "key2",
+									text: "Sample 2",
+									content: [
+										flexBoxRBG3a,
+										flexBoxRBG4,
+										flexBoxRBG6,
+										flexBoxRBG7
+									]
+								}),
+								new sap.m.IconTabFilter({
+									key: "key3",
+									text: "Sample 3",
+									content: [
+										flexBoxRBG5
+									]
+								})
+							]
+						})
+					]
+				});
+				var app = new sap.m.App("myApp", {initialPage:"rbg", autoFocus: false});
 
 				app.addPage(page);
 				app.placeAt("content");

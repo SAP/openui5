@@ -43,13 +43,14 @@ sap.ui.define([
 			and.iTriggerRefresh();
 
 			// Assertions
-			Then.onTheWorklistPage.theTableHasEntries().and.iTeardownMyAppFrame();
+			Then.onTheWorklistPage.theTableHasEntries().
+				and.iTeardownMyAppFrame();
 		});
 
 	opaTest("Should see the busy indicator on app view while worklist view metadata is loaded", function(Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp({
-			delay: 5000
+			delay: 10000
 		});
 
 		//Actions
@@ -65,7 +66,7 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheWorklistPage.iShouldSeeTheWorklistTableBusyIndicator().
-		and.iTeardownMyAppFrame();
+			and.iTeardownMyAppFrame();
 	});
 
 });

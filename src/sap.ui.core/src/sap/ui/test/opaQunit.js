@@ -14,7 +14,7 @@ sap.ui.define([
 			return !oAssertion.result && oAssertion.message === "Test timed out";
 		});
 		if (bTimedOut) {
-			Opa._stopQueue(false);
+			Opa._stopQueue({qunitTimeout: QUnit.config.testTimeout / 1000});
 		}
 	});
 	/**
@@ -112,8 +112,8 @@ sap.ui.define([
 				Opa.assert = undefined;
 				Opa5.assert = undefined;
 				// let OPA finish before QUnit starts executing the next test
-				// call fnStart only when QUnit did not timeout.
-				if ( oOptions.stoppedManually !== false ) {
+				// call fnStart only if QUnit did not timeout
+				if (!oOptions.qunitTimeout) {
 					setTimeout(fnStart, 0);
 				}
 			});

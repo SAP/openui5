@@ -4,8 +4,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 
 	var DynamicSideContent = Controller.extend("sap.ui.layout.sample.DynamicSideContentProduct.DynamicSideContent", {
 		onInit : function () {
-			this._oDSC = this.getView().byId("DynamicSideContent");
-			this._showSideContentButton = this.getView().byId("showSideContentButton");
+			this._oDSC = this.byId("DynamicSideContent");
+			this._showSideContentButton = this.byId("showSideContentButton");
 
 			// set explored app's demo model on this sample
 			var oImgModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/img.json"));
@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			this.updateControlWidth(iValue);
 		},
 		updateControlWidth: function (iValue) {
-			var $DSCContainer = this.getView().byId("sideContentContainer").$();
+			var $DSCContainer = this.byId("sideContentContainer").$();
 			if (iValue) {
 				$DSCContainer.width(iValue + "%");
 			}
@@ -40,7 +40,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			this.updateShowSideContentButtonVisibility(sCurrentBreakpoint);
 		},
 		updateToggleButtonState: function (sCurrentBreakpoint) {
-			var oToggleButton = this.getView().byId("toggleButton");
+			var oToggleButton = this.byId("toggleButton");
 			oToggleButton.setEnabled(sCurrentBreakpoint === "S");
 		},
 		updateShowSideContentButtonVisibility: function (sCurrentBreakpoint) {
@@ -48,7 +48,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			this._showSideContentButton.setVisible(bShowButton);
 		},
 		handleToggleClick: function (oEvent) {
-			this.getView().byId("DynamicSideContent").toggle();
+			this.byId("DynamicSideContent").toggle();
 		},
 		handleSideContentHide: function (oEvent) {
 			this._oDSC.setShowSideContent(false);

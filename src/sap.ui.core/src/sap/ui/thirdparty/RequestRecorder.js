@@ -17,6 +17,11 @@
 	"use strict";
 	var sModuleName = "RequestRecorder";
 
+	// resolves the given (potentially relative) URL in the same way as the browser would resolve it
+	function resolveURL(url) {
+		return new URI(url).absoluteTo(new URI(document.baseURI).search("")).toString();
+	}
+
 	function _privateObject() { }
 	_privateObject.prototype = {
 
@@ -227,7 +232,7 @@
 				time: this.preciseDateNow() - fStartTimestamp,
 				request: {
 					headers: oXhr._requestParams.headers,
-					url: new URI(oXhr._requestParams.url).absoluteTo(window.location.origin + window.location.pathname).href(),
+					url: resolveURL(oXhr._requestParams.url),
 					method: oXhr._requestParams.method
 				},
 				response: {
@@ -684,7 +689,7 @@
 							var mCustomGroup;
 
 							// Get next entry
-							var sUrl = new URI(oXhr.url).absoluteTo(window.location.origin + window.location.pathname).resource();
+							var sUrl = resolveURL(oXhr.url);
 							sUrl = _private.replaceEntriesUrlByRegex(sUrl);
 							var sUrlGroup = oXhr.method + sUrl;
 

@@ -22,6 +22,7 @@
 		jQuery.sap.require("sap.m.semantic.SemanticPage");
 		jQuery.sap.require("sap.m.semantic.SemanticButton");
 		jQuery.sap.require("sap.m.semantic.ShareMenu");
+		jQuery.sap.require("sap.m.semantic.ShareMenuPage");
 
 		QUnit.module("ShareMenu Control", {
 			beforeEach: function () {
@@ -163,6 +164,72 @@
 			oMenu.destroy();
 		});
 
+		QUnit.test("share menu button visibility", function (assert) {
+			// Arrange
+			var fnGetButton = function(oConfig) {
+				return new sap.m.Button(oConfig || {});
+			},
+			oButton1 = fnGetButton({text: "Custom1", icon: "sap-icon://synchronize"}),
+			oButton2 = fnGetButton({text: "Custom2", icon: "sap-icon://video"}),
+			oButton3 = fnGetButton({text: "Custom3", icon: "sap-icon://task"}),
+			oPage = new sap.m.semantic.ShareMenuPage({
+				customShareMenuContent: [oButton1]
+			}),
+			oShareMenu = oPage._oSegmentedShareMenu.getContainer(),
+			oShareMenuBtn = oShareMenu._getShareMenuButton();
+
+			// Assert: The share menu button should not be visible, when there is one share menu content.
+			assert.strictEqual(oShareMenuBtn.getVisible(), false, "ShareMenu button is not visible initially");
+
+			// Act: Add a second visible item.
+			oPage.addCustomShareMenuContent(oButton2);
+
+			// Assert
+			assert.strictEqual(oShareMenuBtn.getVisible(), true,
+					"ShareMenu button is visible: there are two visible items");
+
+			// Act: Hide both the buttons.
+			oButton1.setVisible(false);
+			oButton2.setVisible(false);
+
+			// Assert
+			assert.strictEqual(oShareMenuBtn.getVisible(), false,
+					"ShareMenu button is not visible: there are no visible items");
+
+			// Act: Add third item - it`s visible.
+			// Although there is a single visible item 1 of 3, the share menu button will be visible.
+			oPage.addCustomShareMenuContent(oButton3);
+			// Assert
+			assert.strictEqual(oShareMenuBtn.getVisible(), true,
+					"ShareMenu button is visible: there are 3 items, at least one visible");
+
+			// Act: Remove the visible item.
+			oPage.removeCustomShareMenuContent(oButton3);
+			// Assert
+			assert.strictEqual(oShareMenuBtn.getVisible(), false,
+					"ShareMenu button is not visible: there are no visible items");
+
+			// Act: Show both the buttons and remove all content.
+			oButton1.setVisible(true);
+			oButton2.setVisible(true);
+			oPage.removeAllCustomShareMenuContent();
+
+			// Assert
+			assert.strictEqual(oShareMenuBtn.getVisible(), false,
+					"ShareMenu button is not visible: there are no items");
+			assert.strictEqual(oButton1._fnOriginalSetVisible, undefined,
+					"button`s setVisible method is recovered.");
+			assert.strictEqual(oButton1._fnOriginalSetVisible, undefined,
+					"button`s setVisible method is recovered.");
+			assert.strictEqual(oButton1._fnOriginalSetVisible, undefined,
+					"button`s setVisible method is recovered.");
+
+			// Cleanup
+			oButton1.destroy();
+			oButton2.destroy();
+			oButton3.destroy();
+			oPage.destroy();
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">

@@ -5,7 +5,7 @@
 	<MessagePage
 		id="page"
 		description=""
-		icon="{sap-icon://product}"
+		icon="sap-icon://product"
 		text="{i18n>noObjectFoundText}"
 		title="{i18n>objectTitle}">
 		<customDescription>

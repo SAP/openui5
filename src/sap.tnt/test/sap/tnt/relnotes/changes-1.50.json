@@ -1,0 +1,46 @@
+{
+  "1.50.0": {
+    "date": "July 2017",
+    "notes": [
+      {
+        "id": "35847319218700ad82e5eef6de42d22474685df9",
+        "type": "FIX",
+        "text": "Corrected shared-config.js path",
+        "references": []
+      },
+      {
+        "id": "47afd46b8398a82f66565a642eccfffd9a78b490",
+        "type": "FIX",
+        "text": "sap.tnt.SideNavigation: Item navigation is now correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400003036242017"
+          }
+        ]
+      },
+      {
+        "id": "45dd08e64c835ccdd5d5c4a142d07b9bf4c36db5",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Count information not now read correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780142782"
+          }
+        ]
+      },
+      {
+        "id": "4eeb21db8867ae73d48a48100c734264ba7b17fb",
+        "type": "FIX",
+        "text": "sap.tnt.ToolPage: Tool page is now correctly displayed, when there is no header",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780211583"
+          }
+        ]
+      }
+    ]
+  }
+}

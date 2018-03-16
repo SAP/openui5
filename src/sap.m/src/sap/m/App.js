@@ -3,21 +3,34 @@
  */
 
 // Provides control sap.m.App.
-sap.ui.define(['jquery.sap.global', './NavContainer', './library'],
-	function(jQuery, NavContainer, library) {
+sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRenderer'],
+	function(jQuery, NavContainer, library, AppRenderer) {
 	"use strict";
 
 
 
 	/**
-	 * Constructor for a new App.
+	 * Constructor for a new <code>App</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * App is the root element of a UI5 mobile application. It inherits from NavContainer and thus provides its navigation capabilities.
-	 * It also adds certain header tags to the HTML page which are considered useful for mobile apps.
+	 * The root element of a UI5 mobile app.
+	 *
+	 * <h3>Overview</h3>
+	 *
+	 * The <code>App</code> inherits from {@link sap.m.NavContainer} and thus provides its navigation capabilities.
+	 * It adds certain header tags to the HTML page which are considered useful for mobile apps.
+	 *
+	 * <h3>Usage</h3>
+	 *
+	 * You can configure the home icon of the <code>App</code>. For more information,
+	 * see the <code>homeIcon</code> property.
+	 *
+	 * There are options for setting the background color and a background image with the use of the
+	 * <code>backgroundColor</code> and <code>backgroundImage</code> properties.
+	 *
 	 * @extends sap.m.NavContainer
 	 *
 	 * @author SAP SE
@@ -188,4 +201,4 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library'],
 
 	return App;
 
-}, /* bExport= */ true);
+});

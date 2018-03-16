@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.Carousel.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/ResizeHandler', 'sap/ui/core/delegate/ItemNavigation'],
-	function(jQuery, library, Control, ResizeHandler, ItemNavigation) {
+sap.ui.define([
+    'jquery.sap.global',
+    './library',
+    'sap/ui/core/Control',
+    'sap/ui/core/ResizeHandler',
+    'sap/ui/core/delegate/ItemNavigation',
+    "./CarouselRenderer"
+],
+	function(jQuery, library, Control, ResizeHandler, ItemNavigation, CarouselRenderer) {
 	"use strict";
 
 

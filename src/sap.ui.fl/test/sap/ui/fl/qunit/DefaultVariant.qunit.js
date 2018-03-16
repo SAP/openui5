@@ -210,11 +210,13 @@ jQuery.sap.require("sap.ui.fl.Change");
 				namespace: 'localchange'
 			})
 		};
+		mChanges.firstChange.setState(Change.states.PERSISTED);
 
 		var oUpdatedChange = this.oDefaultVariant.updateDefaultVariantId(mChanges, newDefaultVariantId);
 
 		assert.strictEqual(oUpdatedChange, mChanges.firstChange);
 		assert.strictEqual(mChanges.firstChange.getContent().defaultVariantName, newDefaultVariantId);
+		assert.equal(mChanges.firstChange.getState(), Change.states.DIRTY);
 	});
 
 	QUnit.test('updateDefaultVariantChange shall return undefined if no default variant change has been found', function(assert) {

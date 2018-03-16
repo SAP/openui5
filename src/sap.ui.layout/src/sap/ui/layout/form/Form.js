@@ -3,18 +3,19 @@
  */
 
 // Provides control sap.ui.layout.form.Form.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/library'],
-	function(jQuery, Control, library) {
+sap.ui.define(['sap/ui/core/Control', 'sap/ui/layout/library', './FormRenderer'],
+	function(Control, library, FormRenderer) {
 	"use strict";
 
 	/**
 	 * Constructor for a new sap.ui.layout.form.Form.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A <code>Form</code> control arranges labels and fields (like input fields) into groups and rows. There are different ways to visualize forms for different screen sizes.
+	 * A <code>Form</code> control arranges labels and fields (like input fields) into groups and rows.
+	 * There are different ways to visualize forms for different screen sizes.
 	 *
 	 * A <code>Form</code> is structured into <code>FormContainers</code>. Each <code>FormContainer</code> consists of <code>FormElements</code>.
 	 * The <code>FormElements</code> consists of a label and the form fields.
@@ -27,8 +28,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 	 * The <code>Form</code> (and its sub-controls) automatically add label and field assignment to enable screen reader support.
 	 * It also adds keyboard support to navigate between the fields and groups inside the form.
 	 *
-	 * <b>Note:</b> Do not put any layout controls into the <code>FormElements</code>. This could destroy the visual layout,
-	 * keyboard support and screen-reader support.
+	 * <b>Warning:</b> Do not put any layout or other container controls into the <code>FormElement</code>.
+	 * Views are also not supported. This could damage the visual layout, keyboard support and screen-reader support.
+	 *
+	 * If editable controls are used as content, the <code>editable</code> property must be set to <code>true</code>,
+	 * otherwise to <code>false</code>. If the <code>editable</code> property is set incorrectly, there will be visual issues
+	 * like wrong label alignment or wrong spacing between the controls.
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -52,12 +57,17 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : null},
 
 			/**
-			 * Applies a device-specific and theme-specific line-height to the form rows if the form has editable content.
+			 * Applies a device-specific and theme-specific line height and label alignment to the form rows if the form has editable content.
 			 * If set, all (not only the editable) rows of the form will get the line height of editable fields.
 			 *
-			 * The accessibility <code>aria-readonly</code> attribute is set according to this property.
+			 * The labels inside the form will be rendered by default in the according mode.
 			 *
-			 * <b>Note:</b> The setting of the property has no influence on the editable functionality of the form's content.
+			 * <b>Note:</b> The setting of this property does not change the content of the form.
+			 * For example, <code>Input</code> controls in a form with <code>editable</code> set to false are still editable.
+			 *
+			 * <b>Warning:</b> If this property is set wrong this could lead to visual issues, the labels are fields could be misaligned,
+			 * the labels could be rendered in the wrong mode, the spacing between the single controls could be wrong and control, not
+			 * fitting to the mode, could be rendered incorrect.
 			 * @since 1.20.0
 			 */
 			editable : {type : "boolean", group : "Misc", defaultValue : false}
@@ -103,7 +113,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 			 */
 			ariaLabelledBy: { type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy" }
 		},
-		designTime : true
+		designtime: "sap/ui/layout/designtime/form/Form.designtime"
 	}});
 
 	Form.prototype.toggleContainerExpanded = function(oContainer){
@@ -161,6 +171,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 				this.$().removeClass("sapUiFormEdit").removeClass("sapUiFormEdit-CTX");
 				this.$().attr("aria-readonly", "true");
 			}
+
+			// invalidate Labels
+			var aFormContainers = this.getFormContainers();
+			for (var i = 0; i < aFormContainers.length; i++) {
+				var oFormContainer = aFormContainers[i];
+				oFormContainer.invalidateLabels();
+			}
+
 		}
 
 		return this;
@@ -170,7 +188,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 	Form.prototype.setToolbar = function(oToolbar) {
 
 		// for sap.m.Toolbar Auto-design must be set to transparent
-		oToolbar = sap.ui.layout.form.FormHelper.setToolbar.call(this, oToolbar);
+		oToolbar = library.form.FormHelper.setToolbar.call(this, oToolbar);
 
 		this.setAggregation("toolbar", oToolbar);
 
@@ -229,6 +247,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/layout/librar
 
 	};
 
+	/**
+	 * Provides an array of all visible <code>FormContainer</code> elements
+	 * that are assigned to the <code>Form</code>
+	 * @return {sap.ui.layout.form.FormContainer[]} Array of visible <code>FormContainer</code>
+	 * @private
+	 */
+	Form.prototype.getVisibleFormContainers = function() {
+
+		var aContainers = this.getFormContainers();
+		var aVisibleContainers = [];
+		for ( var i = 0; i < aContainers.length; i++) {
+			var oContainer = aContainers[i];
+			if (oContainer.isVisible()) {
+				aVisibleContainers.push(oContainer);
+			}
+		}
+
+		return aVisibleContainers;
+
+	};
+
 	return Form;
 
-}, /* bExport= */ true);
+});

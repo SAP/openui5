@@ -30,13 +30,6 @@
 	max-width: 100%;
 }
 
-.sapMLIBTypeNavigation {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
 .sapMLIBFocusable:focus {
 	outline: 1px dotted @sapUiContentFocusColor;
 	outline-offset: -1px;
@@ -271,6 +264,10 @@
 	text-shadow: none;
 }
 
+.sapMListBGTransparent .sapMLIB {
+	background: fade(@sapUiListBackground, 0);
+}
+
 .sapMLIBHoverable:hover {
 	background : @sapUiListHoverBackground;
 }
@@ -279,12 +276,16 @@
 	background: @sapUiListSelectionBackgroundColor;
 }
 
+.sapMLIB.sapMLIBActive {
+	color: @sapUiListActiveTextColor;
+	background: @sapUiListActiveBackground;
+}
+
 .sapMLIBHoverable.sapMLIBSelected:hover {
 	background : @sapUiListSelectionHoverBackground;
 }
 
-.sapMLIB.sapMLIBActive {
-	color: @sapUiListActiveTextColor;
+.sapMLIBHoverable.sapMLIBSelected.sapMLIBActive:hover {
 	background: @sapUiListActiveBackground;
 }
 

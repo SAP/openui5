@@ -13,7 +13,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Control, DateFormat, FormatException, ParseException, ValidateException,
 		ODataType, Time, TestUtils) {
-	/*global QUnit, sinon */
+	/*global QUnit */
 	"use strict";
 
 	var sDefaultLanguage = sap.ui.getCore().getConfiguration().getLanguage(),
@@ -48,13 +48,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Time", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
-			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -67,7 +66,17 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is an ODataType");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Time", "type name");
 		assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.deepEqual(oType.oConstraints, undefined, "default constraints");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new Time(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
@@ -216,6 +225,18 @@ sap.ui.require([
 				assert.strictEqual(e.message, "EnterTime 1:47:26 PM", "ValidateException: message");
 			}
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getModelFormat()", function (assert) {
+		var oModelTime = createTime(13, 54, 49, 567),
+			oType = new Time(),
+			oFormat = oType.getModelFormat(),
+			oParsedTime = oFormat.parse(oModelTime);
+
+		assert.ok(oParsedTime instanceof Date, "parse delivers a Date");
+		assert.strictEqual(oParsedTime.getTime(), oModelTime.ms, "parse value");
+		assert.deepEqual(oFormat.format(oParsedTime), oModelTime, "format");
 	});
 
 	//*********************************************************************************************

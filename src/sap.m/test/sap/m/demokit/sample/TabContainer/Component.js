@@ -3,7 +3,11 @@ jQuery.sap.declare("sap.m.sample.TabContainer.Component");
 sap.ui.core.UIComponent.extend("sap.m.sample.TabContainer.Component", {
 
 	metadata : {
-		rootView : "sap.m.sample.TabContainer.TabContainer",
+		rootView : {
+			"viewName": "sap.m.sample.TabContainer.TabContainer",
+			"type": "XML",
+			"async": true
+		},
 		dependencies : {
 			libs : [
 				"sap.m"

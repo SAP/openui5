@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<title>Test Page for sap.tntInfoLabel</title>
+
+	<style>
+		.vBoxBorder {
+			border: 1px solid black;
+		}
+	</style>
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.tnt, sap.m, sap.ui.layout">
+	</script>
+	<script>
+
+		sap.ui.getCore().attachInit(function () {
+
+			var oData = {
+				infoLabels: [
+					{ text: "default color scheme" },
+					{ text: "color scheme 1", colorScheme: 1 },
+					{ text: "color scheme 2", colorScheme: 2 },
+					{ text: "color scheme 3", colorScheme: 3 },
+					{ text: "color scheme 4", colorScheme: 4 },
+					{ text: "color scheme 5", colorScheme: 5 },
+					{ text: "color scheme 6", colorScheme: 6 },
+					{ text: "color scheme 7", colorScheme: 7 },
+					{ text: "color scheme 8", colorScheme: 8 },
+					{ text: "color scheme 9", colorScheme: 9 },
+					{ text: "width is not set - truncate when text is too long", colorScheme: 5 },
+					{ text: "width: 70%", colorScheme: 6, width: "70%" },
+					{ text: "width: 30%", colorScheme: 7, width: "30%" },
+					{ text: "width: 170px", colorScheme: 8, width: "170px" },
+					{ text: "displayOnly: true", colorScheme: 9, displayOnly: true },
+					{ text: "displayOnly: true, long long long text", colorScheme: 1, displayOnly: true },
+					{ text: "displayOnly: true", colorScheme: 2, displayOnly: true, width:"40%" },
+					{ text: "9:8", renderMode: sap.tnt.RenderMode.Narrow, colorScheme: 1 },
+					{ text: "42k", renderMode: sap.tnt.RenderMode.Narrow, colorScheme: 2 },
+					{ text: "100%", colorScheme: 3, renderMode: sap.tnt.RenderMode.Narrow },
+					{ text: "3.141592653589793238462643383279502884197169399375105820974944592307816406286", colorScheme: 4, renderMode: sap.tnt.RenderMode.Narrow, width: "50%" },
+					{ text: "3.141592653589793238462643383279502884197169399375105820974944592307816406286", colorScheme: 5, renderMode: sap.tnt.RenderMode.Narrow },
+					{ text: "3.1415926535", colorScheme: 6, renderMode: sap.tnt.RenderMode.Narrow, width: "170px" },
+					{ colorScheme: 7 }
+				]
+			};
+
+			var oModel = new sap.ui.model.json.JSONModel();
+			oModel.setData(oData);
+
+			sap.ui.getCore().setModel(oModel);
+
+			var oInfoLabelTemplate = new sap.tnt.InfoLabel({
+				text: "{text}",
+				colorScheme: "{colorScheme}",
+				renderMode: "{renderMode}",
+				width: "{width}",
+				displayOnly: "{displayOnly}"
+			});
+
+			var aColumns = [
+				new sap.m.Column({
+					header: new sap.m.Label({
+						text: "LastName"
+					})
+				}),
+				new sap.m.Column({
+					header: new sap.m.Label({
+						text: "FirstName"
+					})
+				}),
+				new sap.m.Column({
+					hAlign: "Center",
+					header: new sap.m.Label({
+						text: "Availability"
+					})
+				})
+			];
+
+			var Table1 = new sap.m.Table({
+				id: "tbl1",
+				columns: aColumns,
+				items: [
+					new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Text({
+								text: "Tompson",
+								width: "100%"
+							}),
+							new sap.m.Label({
+								text: "Tom",
+								width: "100%"
+							}),
+							new sap.tnt.InfoLabel({
+								text: "at the office",
+								colorScheme: 8
+							})
+						]
+					}),
+					new sap.m.ColumnListItem({
+						cells: [
+							new sap.m.Text({
+								text: "Johnson",
+								width: "100%"
+							}),
+							new sap.m.Label({
+								text: "Joe",
+								width: "100%"
+							}),
+							new sap.tnt.InfoLabel({
+								text: "home office",
+								colorScheme: 2
+							})
+						]
+					})
+				]
+
+			});
+
+
+			var initialPage = new sap.m.Page("infoLabelPage", {
+				title: "sap.tnt.InfoLabel Control Test Page",
+				content: [
+					Table1,
+					new sap.ui.layout.form.SimpleForm("form1", {
+						layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
+						editable: true,
+						title: "InfoLabel in SimpleForm",
+						content: [
+							new sap.m.Label({ text: "First name" }),
+							new sap.m.Input(),
+							new sap.m.Label({ text: "Last name" }),
+							new sap.m.Input(),
+							new sap.m.Label({ text: "Availability" }),
+							new sap.tnt.InfoLabel({ text: "On vacation" }),
+							new sap.m.Label({ text: "Status" }),
+							new sap.tnt.InfoLabel()
+						]
+					}),
+					new sap.ui.layout.form.SimpleForm("form2", {
+						layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
+						editable: false,
+						title: "InfoLabel - displayOnly: TRUE in SimpleForm - editable: FALSE",
+						content: [
+							new sap.m.Label({ text: "First name" }),
+							new sap.m.Text({ text: "Tom"}),
+							new sap.m.Label({ text: "Last name" }),
+							new sap.m.Text({ text: "Tompson"}),
+							new sap.m.Label({ text: "Availability" }),
+							new sap.tnt.InfoLabel({ text: "at the office", displayOnly: true }),
+							new sap.m.Label({ text: "Status" }),
+							new sap.tnt.InfoLabel({ displayOnly: true })
+						]
+					}),
+					new sap.m.VBox("vb1", {
+						items: {
+							path: "/infoLabels",
+							template: oInfoLabelTemplate
+						},
+						width: "200px"
+					}).addStyleClass("vBoxBorder")
+				]
+			});
+
+			var app = new sap.m.App("myApp", { initialPage: "infoLabelPage" });
+			app.placeAt("body");
+			app.addPage(initialPage);
+		});
+	</script>
+</head>
+
+<body id="body" class="sapUiBody" role="application">
+</body>
+
+</html>

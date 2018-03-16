@@ -13,11 +13,11 @@ if (!window.QUnit) {
 
 // put qunit-coverage last so library files don't get measured
 sap.ui.define([
-  "jquery.sap.global", "sap/ui/base/Object", "sap/ui/test/opaQunit", "sap/ui/test/Opa5",
+  "jquery.sap.global", "sap/ui/test/opaQunit", "sap/ui/test/Opa5",
   "sap/ui/test/gherkin/GherkinTestGenerator", "sap/ui/test/gherkin/dataTableUtils", "sap/ui/test/gherkin/StepDefinitions",
   "sap/ui/test/launchers/componentLauncher", "sap/ui/test/launchers/iFrameLauncher", "sap/ui/qunit/qunit-css",
   "sap/ui/qunit/qunit-junit", "sap/ui/qunit/qunit-coverage"
-], function($, UI5Object, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions, componentLauncher,
+], function($, opaTest, Opa5, GherkinTestGenerator, dataTableUtils, StepDefinitions, componentLauncher,
   iFrameLauncher) {
   "use strict";
 
@@ -129,7 +129,7 @@ sap.ui.define([
           oTestGenerator.setUp();
         },
         afterEach: function() {
-          if (componentLauncher.hasLaunched() || iFrameLauncher.hasLaunched()) {
+          if (this._oOpa5.hasAppStarted()) {
             this._oOpa5.iTeardownMyApp();
           }
 
@@ -160,7 +160,7 @@ sap.ui.define([
                   QUnit.config.current.assertions.pop(); // don't break QUnit expect() behaviour
                 }
                 oTestStep.parameters = (oTestStep.parameters || []).concat([Given, When, Then]);
-                oTestGenerator.execute(oTestStep);
+                oTestGenerator.execute(oTestStep, Opa5.assert);
               }
             });
           }.bind(this));

@@ -34,6 +34,17 @@
 		]
 	  },
 	  {
+		"id": "sap.uxap.ObjectPageDynamicHeaderTitle",
+		"name": "Object Page Dynamic Header Title",
+		"category": "Display",
+		"since": "1.52",
+		"formFactors": "-",
+			"samples": [
+			  "sap.uxap.sample.ObjectPageWithDynamicHeader",
+			  "sap.uxap.sample.ObjectPageHeaderActionButtons"
+			]
+	  },
+	  {
 		"id": "sap.uxap.ObjectPageLayout",
 		"name": "Object Page Layout",
 		"category": "Layout",
@@ -41,6 +52,7 @@
 		"since": "1.26",
 		"samples": [
 		  "sap.uxap.sample.ObjectPageOnJSON",
+		  "sap.uxap.sample.ObjectPageDynamicHeader",
 		  "sap.uxap.sample.ObjectPageTabNavigationMode",
 		  "sap.uxap.sample.ObjectPageSelectedSection",
 		  "sap.uxap.sample.ObjectPageTitleOnLeft",
@@ -101,6 +113,16 @@
 	  }
 	],
 	"samples": [
+	  {
+		"id": "sap.uxap.sample.ObjectPageHeaderActionButtons",
+		"name": "Object Page with ObjectPageHeaderActionButtons",
+		"description": "This example demonstrates ObjectPage with ObjectPageHeaderActionButtons in the header."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageDynamicHeader",
+		"name": "Object Page with Dynamic Header",
+		"description": "This example demonstrates the classic ObjectPageLayout achieved by using ObjectPageDynamicHeaderTitle for the headerContent aggregation."
+	  },
 	  {
 		"id": "sap.uxap.sample.ObjectPageSubSection",
 		"name": "Subsection with Expand/Collapse",
@@ -265,6 +287,11 @@
 		"id": "sap.uxap.sample.ObjectPageDynamicSideContentBtn",
 		"name": "ObjectPage with DynamicSideContent Button",
 		"description": "The sample shows Object Page inside a main content of DynamicSideContent. The ObjectPageHeader has property DynamicSideContentButton set to true which is used to show the side panel of DynamicSideContent."
+	  },
+	  {
+		"id": "sap.uxap.sample.ObjectPageBlockViewTypes",
+		"name": "Object Page with blocks of different view types",
+		"description": "ObjectPage sample with blocks that use different view types"
 	  }
 	]
   }

@@ -12,7 +12,8 @@ sap.ui.define([], function () {
 			applyChange: function () {
 			},
 			completeChangeInfo: function () {
-			}
+			},
+			dummyId: "testChangeHandler-doSomething"
 		},
 		"doSomethingElse": {
 			applyChange: function () {

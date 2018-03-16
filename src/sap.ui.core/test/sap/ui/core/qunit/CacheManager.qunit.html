@@ -52,12 +52,13 @@
 					bSupportedBrowserName = oSuppportedEnv.browserName === sap.ui.Device.browser.name,
 					bSupportedBrowserVersion = sap.ui.Device.browser.version >= oSuppportedEnv.browserVersion;
 
-			return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion;
+			return bSupportedSystem && bSupportedBrowserName && bSupportedBrowserVersion && window.indexedDB;
 		});
 
 		if (!bSupportedEnv) {
 			QUnit.test("All tests are skipped, as the CacheManager is not supported on the underlying environment (see assert)", function (assert) {
-				assert.ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " + JSON.stringify(sap.ui.Device.browser));
+				assert.ok(true, "Environment: system [" + JSON.stringify(sap.ui.Device.system) + "],  browser: " +
+					JSON.stringify(sap.ui.Device.browser) + ", window.indexedDB: " + window.indexedDB);
 			});
 		} else {
 			QUnit.module("Instantiation", {
@@ -97,6 +98,7 @@
 				var that = this,
 						aNonSupportedEnv = [];
 
+				// Iterate over all environments and collect those which does not match the supported ones (aSupportedEnv)
 				for (var syst in sap.ui.Device.system.SYSTEMTYPE) {
 					for (var browser in sap.ui.Device.browser.BROWSER) {
 						var oEnv = {};
@@ -116,25 +118,34 @@
 					}
 				}
 
+				// Creates an instance of CacheManager and check if the internal implementation is of expected type
 				function createInstance(env, sExpectedImplementation) {
 					if (oCache._instance) {
 						oCache._instance._db.close();
 						oCache._instance = undefined;
 					}
 					oCache._bSupportedEnvironment = null;
+
+					// Act
 					return oCache._getInstance().then(function (cmImpl) {
+						// Assert
 						assert.equal(cmImpl.name, sExpectedImplementation, "For environment [" + JSON.stringify(env) +
 						"] implementation [" + sExpectedImplementation + "] is required");
 					});
 				}
-
+				// Real cache manager implementation should be used.
 				return Promise.all(aSupportedEnv.map(function (oEnv) {
+					// Arrange
 					that.sandbox.stub(sap.ui.Device.system, oEnv.system, true);
 					that.sandbox.stub(sap.ui.Device.browser, "name", oEnv.browserName);
 					that.sandbox.stub(sap.ui.Device.browser, "version", oEnv.browserVersion);
+
+					// Act && Assert
 					return createInstance(oEnv, "LRUPersistentCache");
 				})).then(function () {
+					// NOP cache manager implementation should be used.
 					return Promise.all(aNonSupportedEnv.map(function (oEnv) {
+						// Arrange
 						for (var systemType in sap.ui.Device.system.SYSTEMTYPE) {
 							if (sap.ui.Device.system.SYSTEMTYPE[systemType] === oEnv.system) {
 								that.sandbox.stub(sap.ui.Device.system, oEnv.system, true);
@@ -144,6 +155,8 @@
 						}
 						that.sandbox.stub(sap.ui.Device.browser, "name", oEnv.browserName);
 						that.sandbox.stub(sap.ui.Device.browser, "version", oEnv.browserVersion);
+
+						// Act && Assert
 						return createInstance(oEnv, "CacheManagerNOP");
 					}));
 				});
@@ -163,9 +176,9 @@
 				},
 				/***
 				 * Executes given method with given arguments and verifies the execution had happened.
-				 * @param sMethod the method
-				 * @param args the arguments to call the method with
-				 * @param resolveValue value that the Promise resolves with
+				 * @param {string} sMethod the method
+				 * @param {string[]} args the arguments to call the method with
+				 * @param {string} resolveValue value that the Promise resolves with
 				 * @returns {*}
 				 */
 				executeMethodSuccessfully: function (sMethod, args, resolveValue) {
@@ -183,7 +196,7 @@
 
 				/***
 				 * Executes given method with given arguments and verifies the execution had happened.
-				 * @param sMethod the method
+				 * @param {string} sMethod the method
 				 * @param args the arguments to call the method with
 				 * @param reject value that the Promise reject with
 				 * @returns {*}

@@ -48,6 +48,9 @@ QUnit.test("Initial getContexts and Thresholding", function(assert){
 
 		function handler1 (oEvent) {
 			oBinding.detachChange(handler1);
+			oBinding.detachDataRequested(oDataRequestedSpy);
+
+			assert.equal(oDataRequestedSpy.callCount, 1, "data requested event is fired");
 
 			// contexts should be now loaded
 			var aContexts = oBinding.getContexts(0, 10, 10);
@@ -67,11 +70,20 @@ QUnit.test("Initial getContexts and Thresholding", function(assert){
 
 			var aContexts = oBinding.getContexts(10, 10, 0);
 			assert.equal(aContexts.length, 10, "second page is loaded via thresholding");
-
-			done();
 		};
 
+		var oDataRequestedSpy = sinon.spy();
+
+		function dataReceived() {
+			oBinding.detachDataReceived(dataReceived);
+
+			assert.ok(true, "dataReceived event is fired");
+			done();
+		}
+
 		oBinding.attachChange(handler1);
+		oBinding.attachDataRequested(oDataRequestedSpy);
+		oBinding.attachDataReceived(dataReceived);
 		oBinding.getContexts(0, 10, 20);
 	});
 });
@@ -718,5 +730,31 @@ QUnit.test("Application Filters are sent", function(assert){
 
 		oBinding.attachChange(changeHandler1);
 		oBinding.getContexts(0, 20, 10);
+	});
+});
+
+QUnit.test("getContexts: length falls back to model size limit", function(assert){
+
+	var done = assert.async();
+	oModel.setSizeLimit(9);
+	oModel.attachMetadataLoaded(function() {
+		createTreeBinding("/orgHierarchy", null, [], {
+			threshold: 0,
+			countMode: "Inline",
+			operationMode: "Server",
+			numberOfExpandedLevels: 2
+		});
+
+		function handler1 (oEvent) {
+			oBinding.detachChange(handler1);
+
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts(0);
+			assert.equal(aContexts.length, 9, "initially loaded context length equals model size limit");
+			done();
+		}
+
+		oBinding.attachChange(handler1);
+		oBinding.getContexts(0);
 	});
 });

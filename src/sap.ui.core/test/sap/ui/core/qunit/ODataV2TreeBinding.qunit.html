@@ -68,14 +68,6 @@
 		aAnnotationsMockdataGUID[i].FinStatementHierarchyLevelVal = parseInt(aAnnotationsMockdataGUID[i].FinStatementHierarchyLevelVal, 10);
 	}
 
-	// create a dummy AMD fdefine to check if shim works for datajs
-	window.define = function() {
-		throw Error("define should not be called");
-	}
-	window.define.amd = { vendor : "SAPUI5 QUnit Test" } ;
-
-
-
 	var oModel, oBinding;
 
 	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
@@ -101,6 +93,26 @@
 		assert.equal(oBinding.getPath(), "/Employees(2)", "TreeBinding path");
 		assert.equal(oBinding.getModel(), oModel, "TreeBinding model");
 		assert.ok(oBinding instanceof sap.ui.model.odata.v2.ODataTreeBinding, "treeBinding class check");
+	});
+
+	QUnit.test("TreeBinding getTreeAnnotation", function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				displayRootNode: true
+			});
+			assert.equal(oBinding.bHasTreeAnnotations, false, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-level-for"), undefined, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-parent-node-for"),undefined, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-node-for"), undefined, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-drill-state-for"), undefined, "TreeAnnotation unavailable");
+			assert.equal(oBinding.getTreeAnnotation("foo"), undefined, "TreeAnnotation property incorrect/unavailable");
+			done();
+		});
 	});
 
 	QUnit.test("getRootContexts getNodeContexts", function(assert){
@@ -347,7 +359,6 @@
 				var aRootContexts = oBinding.getRootContexts();
 				var oContext = aRootContexts[1];
 				var aChildContexts = oBinding.getNodeContexts(oContext);
-				var oContext;
 
 				assert.equal(aChildContexts.length, 5, "TreeBinding rootContexts length");
 
@@ -437,7 +448,7 @@
 				oBinding.attachChange(handler3);
 				var aContexts = oBinding.getRootContexts();
 
-				assert.equal(aContexts.length, 0, "No contexts are avilable, data has been reset");
+				assert.equal(aContexts.length, 0, "No contexts are available, data has been reset");
 
 			}
 
@@ -490,6 +501,97 @@
 		});
 	});
 
+	QUnit.test("Init binding with deferred group ID", 0, function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredGroups(["PONY"]);
+
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				groupId: "PONY"
+			});
+
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+
+				assert.ok(false, "Change event should not get fired");
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+			setTimeout(done, 11);
+		});
+	});
+
+	QUnit.test("Init binding with deferred group ID in Client mode", 0, function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredGroups(["PONY"]);
+
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				},
+				groupId: "PONY",
+				operationMode: sap.ui.model.odata.OperationMode.Client
+			});
+
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+
+				assert.ok(false, "Change event should not get fired");
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+			setTimeout(done, 11);
+		});
+	});
+
+	QUnit.test("Refresh binding with deferred group ID", 2, function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			oModel.setDeferredGroups(["PONY"]);
+
+			createTreeBinding("/Employees(2)", null, [], {
+				navigation: {
+					Employees: "Employees1",
+					Employees1: "Employees1"
+				}
+			});
+
+			var handler1 = function(oEvent) {
+				oBinding.detachChange(handler1);
+				assert.ok(true, "Data loaded");
+
+				oBinding.attachRefresh(handler2);
+				oBinding.refresh("PONY");
+				setTimeout(done, 11);
+			};
+
+			var handler2 = function(oEvent) {
+				oBinding.detachChange(handler2);
+				assert.ok(true, "Refresh fired");
+
+				oBinding.attachRefresh(handler3);
+				oBinding.getRootContexts();
+			};
+
+			var handler3 = function(oEvent) {
+				oBinding.detachChange(handler3);
+
+				assert.ok(false, "Change event should not get fired after refresh");
+			};
+
+			oBinding.attachChange(handler1);
+			oBinding.getRootContexts();
+		});
+	});
+
 	QUnit.test("No navigation object specified", function(assert) {
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
@@ -524,7 +626,7 @@
 
 				assert.equal(aContexts.length, 1, "TreeBinding rootContexts length is 1 after application filtering");
 
-				oContext = aContexts[0];
+				var oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FirstName", oContext), "Nancy", "After refresh: TreeBinding root contexts[0] is correct (Tom)");
 
 				done();
@@ -836,6 +938,22 @@
 		});
 	});
 
+	QUnit.test("TreeBinding getTreeAnnotation", function(assert){
+		var done = assert.async();
+		oModel.attachMetadataLoaded(function() {
+			createTreeBinding("/GLAccountHierarchyInChartOfAccountsSet(P_MANDT='902',P_VERSN='INT',P_KTOPL='INT')/Result", null, [], {
+				navigation: {}
+			});
+			assert.equal(oBinding.bHasTreeAnnotations, true, "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-level-for"), "FinStatementHierarchyLevelVal", "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-parent-node-for"), "ParentNode", "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-node-for"), "HierarchyNode", "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("hierarchy-drill-state-for"), "DrilldownState", "TreeAnnotation available");
+			assert.equal(oBinding.getTreeAnnotation("foo"), undefined, "TreeAnnotation property unavailable/incorrect");
+			done();
+		});
+	});
+
 	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert){
 		var done = assert.async();
 		oModel.attachMetadataLoaded(function() {
@@ -1013,8 +1131,6 @@
 				numberOfExpandedLevels: 2,
 				rootLevel: 1
 			});
-
-			var oContext;
 
 			var handler1 = function(oEvent) {
 				oBinding.detachChange(handler1);
@@ -1443,7 +1559,7 @@
 
 				assert.equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
 
-				oContext = aContexts[0];
+				var oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
 				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
@@ -1663,7 +1779,7 @@
 
 				assert.equal(aContexts.length, 2, "TreeBinding returned rootContexts length");
 
-				oContext = aContexts[0];
+				var oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
 				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");
@@ -1850,7 +1966,7 @@
 				var aContexts = oBinding.getRootContexts(0, 10);
 				assert.equal(aContexts.length, 7, "TreeBinding returned rootContexts length");
 
-				oContext = aContexts[0];
+				var oContext = aContexts[0];
 				assert.equal(oModel.getProperty("FinStatementHierarchyLevelVal", oContext), 2, "Level filter was correct");
 				assert.equal(oModel.getProperty("HierarchyNode", oContext), "000002", "HierachyNode ID is correct");
 				assert.equal(oModel.getProperty("FinancialStatementItemText", oContext)[0], "A", "Item Text filter was correct");

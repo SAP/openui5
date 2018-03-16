@@ -1,0 +1,51 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<!-- Initialization -->
+<script id="sap-ui-bootstrap" type="text/javascript"
+	src="../../../../../resources/sap-ui-core.js"
+	data-sap-ui-theme="sap_bluecrystal"></script>
+<link rel="stylesheet"
+	href="../../../../../resources/sap/ui/thirdparty/qunit.css"
+	type="text/css" media="screen" />
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<script type="text/javascript"
+	src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+<script type="text/javascript"
+	src="treeBinding/ODataTreeBindingFakeService.js"></script>
+
+<!-- Test functions -->
+<script language="javascript">
+	var oModel, oBinding;
+
+	sinon.config.useFakeTimers = false;
+
+	jQuery.sap.require("sap.ui.model.odata.v2.ODataModel");
+
+	// create binding
+	function createTreeBinding(sPath, oContext, aFilters, mParameters, aSorters){
+		oBinding = oModel.bindTree(sPath, oContext, aFilters, mParameters, aSorters).initialize();
+		oModel.addBinding(oBinding);
+	};
+</script>
+
+<script src="ODataV2TreeBindingFlat_ExpansionState.qunit.js"></script>
+
+</head>
+<body>
+	<h1 id="qunit-header">QUnit tests: ODataTreeBindingFlat</h1>
+	<h2 id="qunit-banner"></h2>
+	<h2 id="qunit-userAgent"></h2>
+	<div id="qunit-testrunner-toolbar"></div>
+	<ol id="qunit-tests"></ol>
+</body>
+</html>

@@ -499,6 +499,36 @@
 				oTable.setEnableCellFilter(bValue);
 			}
 		},
+		CONTEXTMENU: {
+			text: "Custom Context Menu",
+			value: function(oTable) {
+				return !!oTable.getContextMenu();
+			},
+			input: "boolean",
+			action: function(oTable, bValue) {
+				if (bValue) {
+					oTable.setContextMenu(
+						new sap.m.Menu({
+							items: [
+								new sap.m.MenuItem({text : "{name}"})
+							]
+						})
+					);
+				} else {
+					oTable.destroyContextMenu();
+				}
+			}
+		},
+		ALTERNATEROWCOLORS: {
+			text: "Alternate Row Colors",
+			value: function(oTable) {
+				return oTable.getAlternateRowColors();
+			},
+			input: "boolean",
+			action: function(oTable, bValue) {
+				oTable.setAlternateRowColors(bValue);
+			}
+		},
 		AREAS: {
 			text: "Areas",
 			group: {
@@ -761,6 +791,16 @@
 			action: function(oTable, bValue) {
 				oTable._bHideStandardTooltips = !bValue;
 				oTable.invalidate();
+			}
+		},
+		COLUMNFREEZE: {
+			text: "Column freeze",
+			value: function(oTable) {
+				return oTable.getEnableColumnFreeze();
+			},
+			input: "boolean",
+			action: function(oTable, bValue) {
+				oTable.setEnableColumnFreeze(bValue);
 			}
 		},
 		EVENTS: {
@@ -1382,6 +1422,8 @@
 	};
 
 	//*************************
+
+	jQuery.sap.require("sap.ui.model.json.JSONModel");
 
 	var oColumnSettingsModel = new sap.ui.model.json.JSONModel();
 

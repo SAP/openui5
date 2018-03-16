@@ -63,7 +63,7 @@ some.lib/
 At runtime (and after the Grunt build) all libraries are merged into one directory tree, but during development libraries are separated, hence the duplication of the library name, once as folder containing the complete library and twice inside as folder structure for the runtime sources as well as for the test pages.
 
 Below the "themes" folder, there is one directory for each supported theme, with sub-folders for image resources if required (including the right-to-left version). Inside the folders for the themes, there can be any CSS files. The convention is to have one CSS file per control and one "shared.css" file for styles that are not specific to one control, but rather valid for the entire library. The library.source.less files are responsible for making LESS aware of all files that should be combined and how parts of the theme are connected. All CSS files should reside at the same directory level to avoid changing image paths when they are combined to one file in the build step.
- Note: themes can also be in separate theme libraries. For the standard UI5 controls sap\_bluecrystal and sap\_goldreflection are such separate theme libraries. Their internal file structure is identical to control libraries, but when they support several control libraries, all their paths are contained.
+ Note: themes can also be in separate theme libraries. For the standard UI5 controls sap\_bluecrystal and sap\_belize are such separate theme libraries. Their internal file structure is identical to control libraries, but when they support several control libraries, all their paths are contained.
 
 The main implementation folder (src/some/lib) contains the implementation of controls and their renderers (they are typically separate when developed in control libraries and resolved by naming convention), the message bundles (translation texts), any other JavaScript files (may be in sub-folders) and two central library files: `.library` contains metadata and `library.js` contains the library declaration, the control list, and any library-level JavaScript.
 
@@ -338,10 +338,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @since 1.12
-	 * @name sap.m.ObjectNumber
+	 * @alias sap.m.ObjectNumber
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectNumber = Control.extend("sap.m.ObjectNumber", /** @lends sap.m.ObjectNumber.prototype */ { metadata : {
@@ -393,9 +392,9 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 	ObjectNumber.prototype._sCSSPrefixObjNumberStatus = 'sapMObjectNumberStatus';
 	
 	/**
-	 * API method to set the object number's value state
+	 * API method to set the object number's value state.
 	 *
-	 * @param {string} sState the Object Number's value state
+	 * @param {string} sState The Object Number's value state
 	 * @public
 	 */
 	ObjectNumber.prototype.setState = function(sState) {
@@ -413,7 +412,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 
 	return ObjectNumber;
 
-}, /* bExport= */ true);
+});
 ```
 
 The ´@ui5-metamodel´ annotation relates to the "old" Maven build, which is internally still used. It means that the legacy `*.control` files should be re-generated for this control, for potential other users in upper layers. This annotation is planned to be removed.

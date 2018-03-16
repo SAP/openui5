@@ -1,11 +1,25 @@
 /*global QUnit*/
-jQuery.sap.require("sap.ui.fl.registry.ChangeRegistry");
-jQuery.sap.require("sap.ui.fl.registry.ChangeTypeMetadata");
-jQuery.sap.require("sap.ui.fl.registry.ChangeRegistryItem");
-jQuery.sap.require("sap.ui.fl.registry.SimpleChanges");
-jQuery.sap.require("sap.ui.fl.registry.Settings");
 
-(function (ChangeRegistry, ChangeTypeMetadata, ChangeRegistryItem, SimpleChanges, Settings) {
+QUnit.config.autostart = false;
+
+sap.ui.require([
+	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/registry/ChangeTypeMetadata",
+	"sap/ui/fl/registry/ChangeRegistryItem",
+	"sap/ui/fl/registry/SimpleChanges",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/changeHandler/MoveControls"
+],
+function(
+	JsControlTreeModifier,
+	ChangeRegistry,
+	ChangeTypeMetadata,
+	ChangeRegistryItem,
+	SimpleChanges,
+	Settings,
+	MoveControlsChangeHandler
+) {
 	"use strict";
 
 	QUnit.module("sap.ui.fl.registry.ChangeRegistry", {
@@ -204,7 +218,7 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		//Assert
 		assert.ok(result);
 		assert.strictEqual(Object.keys(result).length, 1);
-		assert.strictEqual(Object.keys(result["sap.ui.fl.DummyControl1"]).length, 3);
+		assert.strictEqual(Object.keys(result["sap.ui.fl.DummyControl1"]).length, 4);
 		assert.deepEqual(result["sap.ui.fl.DummyControl1"]["myChangeType1"], registryItem1);
 	});
 
@@ -758,4 +772,121 @@ jQuery.sap.require("sap.ui.fl.registry.Settings");
 		assert.equal(oChangeHandler, oChangeRegistryItem, "the explicit registered change handler item was retrieved");
 	});
 
-}(sap.ui.fl.registry.ChangeRegistry, sap.ui.fl.registry.ChangeTypeMetadata, sap.ui.fl.registry.ChangeRegistryItem, sap.ui.fl.registry.SimpleChanges, sap.ui.fl.registry.Settings));
+	QUnit.test("when _getInstanceSpecificChangeRegistryItem is called without flexibility path defined on given control", function (assert) {
+		var oGetChangeHandlerModuleStub = this.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns(null);
+		var oControl = {};
+		var oSimpleChangeObject = {};
+
+		var oChangeRegistryItem = this.instance._getInstanceSpecificChangeRegistryItem(oSimpleChangeObject, oControl, JsControlTreeModifier);
+
+		assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
+		assert.equal(oChangeRegistryItem, undefined, "then no registry item is returned");
+	});
+
+	QUnit.test("when _getInstanceSpecificChangeRegistryItem is called with invalid flexibility path defined on given control", function (assert) {
+		var oGetChangeHandlerModuleStub = this.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("invalid/path/TestChangeHandlers");
+		var oErrorLoggingStub = this.stub(sap.ui.fl.Utils.log, "error");
+		var oControl = {};
+		this.stub(JsControlTreeModifier, "getId").returns("controlId");
+
+		var sPropertyBindingChangeType = "propertyBindingChange";
+		var oExplicitRegisteredChangeHandlerStub = {};
+		var oSimpleChangeObject = {
+			changeType: sPropertyBindingChangeType,
+			changeHandler: oExplicitRegisteredChangeHandlerStub
+		};
+
+		var oChangeRegistryItem = this.instance._getInstanceSpecificChangeRegistryItem(oSimpleChangeObject, oControl, JsControlTreeModifier);
+
+		assert.equal(oGetChangeHandlerModuleStub.callCount, 1, "then getChangeHandlerModule function is called");
+		assert.equal(oErrorLoggingStub.callCount, 1, "then the error was logged");
+		assert.equal(oChangeRegistryItem, undefined, "then no registry item is returned");
+	});
+
+	QUnit.test("when _getInstanceSpecificChangeRegistryItem is called and passed parameter is a valid changeType", function (assert) {
+		var oErrorLoggingStub = this.stub(sap.ui.fl.Utils.log, "error");
+		this.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
+		this.stub(JsControlTreeModifier, "getControlType").returns("controlType");
+		var oControl = {};
+
+		var sChangeType = "doSomething";
+
+		var oChangeRegistryItem = this.instance._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, JsControlTreeModifier);
+
+		assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
+		assert.ok(oChangeRegistryItem instanceof ChangeRegistryItem, "then registry item is returned");
+		assert.equal(oChangeRegistryItem.getChangeTypeName(), sChangeType, "then returned registry item has the correct changeType");
+	});
+
+	QUnit.test("when _getInstanceSpecificChangeRegistryItem is called and passed parameter is a change with a valid changeType", function (assert) {
+		var oErrorLoggingStub = this.stub(sap.ui.fl.Utils.log, "error");
+		this.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
+		this.stub(JsControlTreeModifier, "getControlType").returns("controlType");
+		var oControl = {};
+		var sChangeType = "doSomethingElse";
+		var oChangeRegistryItem = this.instance._getInstanceSpecificChangeRegistryItem(sChangeType, oControl, JsControlTreeModifier);
+
+		assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
+		assert.ok(oChangeRegistryItem instanceof ChangeRegistryItem, "then registry item is returned");
+		assert.equal(oChangeRegistryItem.getChangeTypeName(), sChangeType, "then returned registry item has the correct changeType");
+	});
+
+	QUnit.test("when getChangeHandler is called for a control without instance specific changeHandler", function (assert) {
+		this.instance.registerControlsForChanges({
+			"VerticalLayout" : {
+				"moveControls": "default"
+			}
+		});
+
+		var oErrorLoggingStub = this.stub(sap.ui.fl.Utils.log, "error");
+		var oControl = {};
+		var sChangeType = "moveControls";
+		var sControlType = "VerticalLayout";
+		var sLayer;
+		this.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
+		this.stub(JsControlTreeModifier, "getControlType").returns(sControlType);
+
+		var oChangeHandler = this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer);
+
+		assert.equal(oErrorLoggingStub.callCount, 0, "then no error was logged");
+		assert.equal(oChangeHandler, MoveControlsChangeHandler, "then correct changehandler is returned");
+	});
+
+	QUnit.test("when getChangeHandler is called for a control with instance specific and default changeHandlers", function (assert) {
+		this.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
+		this.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
+		this.instance.registerControlsForChanges({
+			"VerticalLayout" : {
+				"doSomething": "default"
+			}
+		});
+
+		var oControl = {};
+		var sChangeType = "doSomething";
+		var sControlType = "VerticalLayout";
+		var sLayer;
+
+		var oChangeHandler = this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer);
+		assert.equal(oChangeHandler.dummyId, "testChangeHandler-doSomething", "then instance specific changehandler is returned");
+	});
+
+	QUnit.test("when getChangeHandler is called for previously existing changetype and existing instance specific changehandler for another changetype", function (assert) {
+		this.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
+		this.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
+		this.instance.registerControlsForChanges({
+			"VerticalLayout" : {
+				"moveControls": "default"
+			}
+		});
+
+		var oControl = {};
+		var sChangeType = "moveControls";
+		var sControlType = "VerticalLayout";
+		var sLayer;
+
+		var oChangeHandler = this.instance.getChangeHandler(sChangeType, sControlType, oControl, JsControlTreeModifier, sLayer);
+		assert.equal(oChangeHandler, MoveControlsChangeHandler, "then correct default changehandler is returned");
+	});
+
+	QUnit.start();
+});

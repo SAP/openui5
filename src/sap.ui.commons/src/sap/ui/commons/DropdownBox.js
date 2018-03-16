@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.DropdownBox.
-sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/History', 'sap/ui/core/SeparatorItem'],
-	function(jQuery, ComboBox, library, History, SeparatorItem) {
+sap.ui.define([
+    'jquery.sap.global',
+    './ComboBox',
+    './library',
+    'sap/ui/core/History',
+    'sap/ui/core/SeparatorItem',
+    "./DropdownBoxRenderer"
+],
+	function(jQuery, ComboBox, library, History, SeparatorItem, DropdownBoxRenderer) {
 	"use strict";
 
 
@@ -22,7 +29,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.ComboBox</code> control.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.ComboBox}
 	 * @alias sap.ui.commons.DropdownBox
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -708,7 +715,7 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 			iKeyCode = oEvent.keyCode,
 			oKC = jQuery.sap.KeyCodes;
 		if (( ComboBox._isHotKey(oEvent)
-			    || ( !!sap.ui.Device.browser.firefox && iKeyCode === oKC.HOME ) || // IE & webkit fires no keypress on HOME, but "$" has the same keyCode
+				|| ( !!sap.ui.Device.browser.firefox && iKeyCode === oKC.HOME ) || // IE & webkit fires no keypress on HOME, but "$" has the same keyCode
 				iKeyCode === oKC.F4 && oEvent.which === 0 ) /*this is the Firefox case and ensures 's' with same charCode is accepted*/
 				&& !(oEvent.ctrlKey && oEvent.which == 120)/*Ctrl+X*/ ) {
 			return;
@@ -827,8 +834,8 @@ sap.ui.define(['jquery.sap.global', './ComboBox', './library', 'sap/ui/core/Hist
 	 * For IE selecting text by #setSelectedRange method (this is what function _doSelect does)
 	 * provokes focus, so this function makes sure we were not called because of "_doSelect" more than once.
 	 * Edge does not have such behavior.
-	 * @param iStart the 0-based start position for the selection
-	 * @param iEnd the 0-based end position for the selection
+	 * @param {int} iStart The 0-based start position for the selection
+	 * @param {int} iEnd The 0-based end position for the selection
 	 * @private
 	 */
 	DropdownBox.prototype._callDoSelectAfterFocusIn = function(iStart, iEnd) {

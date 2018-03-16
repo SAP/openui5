@@ -10,20 +10,41 @@
 	outline: none;
 
 	.sapMStepInputBtn {
-	outline: none; //needed for IE specially
-	position: absolute;
-	z-index: 1;
-	color: @sapUiButtonIconColor;
+		outline: none; //needed for IE specially
+		position: absolute;
+		z-index: 1;
+		top: -0.25rem;
+		color: @sapUiButtonIconColor;
 
 		&.sapMStepInputBtnDecrease {
 			left: 0;
+			padding-left: 0;
 		}
 
 		&.sapMStepInputBtnIncrease {
 			right: 0;
+			padding-left: 0;
 		}
 	}
+
+	.sapMInputDivWrapper {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
 }
+
+html:not([data-sap-ui-browser^="ie"]):not([data-sap-ui-browser^="ed"]) .sapMStepInputBtn.sapUiIcon:focus {
+	outline: none;
+}
+
+html[data-sap-ui-browser^='ie'],
+html[data-sap-ui-browser^='ed'] {
+	.sapMStepInputBtn.sapUiIcon:focus::after {
+		display: none;
+	}
+}
+
 .sapMStepInput-CTX {
 	.sapMInput {
 		.sapMInputBaseInner:not(.sapMInputBaseReadonlyInner) {
@@ -89,8 +110,8 @@
 	.sapUiIcon.sapMStepInputBtn {
 		height: 1.5rem;
 		width: 1.5rem;
+		padding-left: 0;
 		line-height: 1.5rem;
-		margin-top: 0.25rem;
 		font-size: 0.875rem;
 
 	&:hover {
@@ -100,10 +121,10 @@
 		background-color: @sapUiButtonLiteActiveBackground;
 		color: @sapUiButtonActiveTextColor;
 	}
-  }
+}
 
 	&.sapMStepInputError, &.sapMStepInputWarning {
-		.sapMInput .sapMInputBaseInner {
+		.sapMInputBaseInner {
 			padding: 0 1.625rem;
 		}
 		.sapUiIcon {

@@ -4,24 +4,28 @@
  */
 
 // Provides an abstraction for list bindings
-sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
-	function(jQuery, Binding, Filter, Sorter) {
+sap.ui.define(['./Binding', './Filter', './Sorter'],
+	function(Binding, Filter, Sorter) {
 	"use strict";
 
 
 	/**
-	 * Constructor for ListBinding
+	 * Constructor for ListBinding.
 	 *
+	 * @abstract
 	 * @class
-	 * The ListBinding is a specific binding for lists in the model, which can be used
+	 * ListBinding is a specific binding for lists in the model, which can be used
 	 * to populate Tables or ItemLists.
 	 *
-	 * @param {sap.ui.model.Model} oModel
-	 * @param {string} sPath
-	 * @param {sap.ui.model.Context} oContext
-	 * @param {array} [aSorters] initial sort order (can be either a sorter or an array of sorters)
-	 * @param {array} [aFilters] predefined filter/s (can be either a filter or an array of filters)
-	 * @param {object} [mParameters]
+	 * @param {sap.ui.model.Model} oModel Model instance that this binding belongs to
+	 * @param {string} sPath Binding path for this binding;
+	 *   a relative path will be resolved relative to a given context
+	 * @param {sap.ui.model.Context} oContext Context to be used to resolve a relative path
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]} [aSorters] Initial sort order (can be either a sorter or an array of sorters)
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filter/s (can be either a filter or an array of filters)
+	 * @param {object} [mParameters] Additional, implementation-specific parameters that should be used
+	 *   by the new list binding; this base class doesn't define any parameters, check the API reference
+	 *   for the concrete model implementations to learn about their supported parameters (if any)
 	 *
 	 * @public
 	 * @alias sap.ui.model.ListBinding
@@ -61,8 +65,18 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	/**
 	 * Returns an array of binding contexts for the bound target list.
 	 *
+	 * <h4>Extended Change Detection</h4>
+	 * If extended change detection is enabled using {@link sap.ui.model.ListBinding.prototype.enableExtendedChangeDetection},
+	 * the context array may carry an additional property named <code>diff</code>, which contains an array of actual changes
+	 * on the context array compared to the last call of <code>getContexts()</code>.
+	 * In case no <code>diff</code> property is available on the context array, the list is completely different and needs to
+	 * be recreated. In case the <code>diff</code> property contains an empty array, there have been no changes on the list.
+	 *
+	 * Sample diff array:
+	 * <code>[{index: 1, type: "delete"}, {index: 4, type: "insert}]</code>
+	 *
 	 * <strong>Note:</strong>The public usage of this method is deprecated, as calls from outside of controls will lead
-	 * to unexpected side effects. For avoidance use {@link sap.ui.model.ListBinding.prototype.getCurrentContexts}
+	 * to unexpected side effects. To avoid these side effect, use {@link sap.ui.model.ListBinding.prototype.getCurrentContexts}
 	 * instead.
 	 *
 	 * @function
@@ -75,19 +89,52 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	 */
 
 	/**
-	 * Filters the list according to the filter definitions
+	 * Applies a new set of filters to the list represented by this binding.
+	 *
+	 * Depending on the nature of the model (client or server), the operation might be
+	 * executed locally or on a server and it might execute asynchronously.
+	 *
+	 * <h4>Application and Control Filters</h4>
+	 * Each list binding maintains two separate lists of filters, one for filters defined by the
+	 * control that owns the binding and another list for filters that an application can define
+	 * in addition. When executing the filter operation, both sets of filters are combined.
+	 *
+	 * By using the second parameter <code>sFilterType</code> of method <code>filter</code>,
+	 * the caller can control which set of filters is modified. If no type is given, then the
+	 * behavior depends on the model implementation and should be documented in the API reference
+	 * for that model.
+	 *
+	 * <h4>Auto-Grouping of Filters</h4>
+	 * Filters are first grouped according to their binding path.
+	 * All filters belonging to the same group are ORed and after that the
+	 * results of all groups are ANDed.
+	 * Usually this means, all filters applied to a single table column
+	 * are ORed, while filters on different table columns are ANDed.
+	 * Please either use the automatic grouping of filters (where applicable) or use explicit
+	 * AND/OR filters, a mixture of both is not supported.
+	 *
+	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
+	 * @param {sap.ui.model.FilterType} [sFilterType=undefined] Type of the filter which should
+	 *  be adjusted; if no type is given, the behavior depends on the model implementation
+	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
 	 *
 	 * @function
 	 * @name sap.ui.model.ListBinding.prototype.filter
-	 * @param {object[]} aFilters Array of filter objects
-	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
-	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
-	 *
 	 * @public
 	 */
 
 	/**
-	 * Sorts the list according to the sorter object
+	 * Sorts the list according to the sorter object.
+	 *
+	 * Instead of a single sorter also an array of sorters can be passed to the sort method. In this case they
+	 * are processed in the sequence in which they are contained in the array.
+	 *
+	 * <h4>Grouping</h4>
+	 * Sorting and grouping are closely related, in case a list should be grouped, it must be sorted by the
+	 * property to group with. Grouping is enabled by setting the <code>group</code> property on the sorter object. If it is
+	 * enabled, you can get the current group of an item using {@link sap.ui.model.ListBinding.prototype.getGroup}.
+	 * In case multiple sorters are provided, grouping can only be done on the first sorter, nested grouping is
+	 * not supported.
 	 *
 	 * @function
 	 * @name sap.ui.model.ListBinding.prototype.sort
@@ -238,11 +285,17 @@ sap.ui.define(['jquery.sap.global', './Binding', './Filter', './Sorter'],
 	};
 
 	/**
-	 * Enable extended change detection
+	 * Enable extended change detection.
+	 * When extended change detection is enabled, the list binding provides detailed information about changes, for example
+	 * which entries have been removed or inserted. This can be utilized by a control for fine-grained update of its elements.
+	 * Please see {@link sap.ui.model.ListBinding.prototype.getContexts} for more information.
+	 *
+	 * For models that do not have a unique key on each entry by default, a key property or function can be set which is used to
+	 * identify entries.
 	 *
 	 * @param {boolean} bDetectUpdates Whether changes within the same entity should cause a delete and insert command
 	 * @param {function|string} vKey The path of the property containing the key or a function getting the context as only parameter to calculate a key to identify an entry
-	 * @private
+	 * @protected
 	 */
 	ListBinding.prototype.enableExtendedChangeDetection = function(bDetectUpdates, vKey) {
 		this.bUseExtendedChangeDetection = true;

@@ -17,39 +17,62 @@ sap.ui.define([
 	 */
 	var MoveTableColumns = {};
 
-	// Defines object which contains constants used in the handler
-	var _CONSTANTS = {
-		CHANGE_TYPE: "moveTableColumns",
-		SOURCE_ALIAS: "source",
-		TARGET_ALIAS: "target",
-		MOVED_ELEMENTS_ALIAS: "movedElements"
-	};
+	var CHANGE_TYPE = "moveTableColumns";
+	var SOURCE_ALIAS = "source";
+	var TARGET_ALIAS = "target";
+	var MOVED_ELEMENTS_ALIAS = "movedElements";
+	var COLUMNS_AGGREGATION_NAME = "columns";
+	var CELLS_AGGREGATION_NAME = "cells";
+	var ITEMS_AGGREGATION_NAME = "items";
 
 	/**
 	 * Moves a column from one index to another.
-	 *
 	 * @param {sap.ui.fl.Change} oChange Change object with instructions to be applied on the control
 	 * @param {sap.ui.core.Control} oRelevantContainer Control that matches the change selector for applying the change, which is the source of the move
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.view XML node representing a ui5 view
 	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
+	 * @param {function} fnIterator - Iterator function which is called on each movedElement, as an argument it gets CurrentIndex
+	 *  of the element and may return TargetIndex as a result.
 	 * @return {boolean} true Indicates whether the change can be applied
-	 * @public
-	 * @function
-	 * @name sap.m.changeHandler.MoveTableColumns#applyChange
 	 */
-	MoveTableColumns.applyChange = function (oChange, oRelevantContainer, mPropertyBag) {
+	function _applyChange(oChange, oRelevantContainer, mPropertyBag, fnIterator) {
 		var oModifier = mPropertyBag.modifier,
 			oView = mPropertyBag.view,
 			oAppComponent = mPropertyBag.appComponent,
-			sColumnsAggregationName = "columns",
-			sCellsAggregationName = "cells",
-			sItemsAggregationName = "items",
 			oChangeContent = oChange.getContent(),
-			oTargetSource = oChange.getDependentControl(_CONSTANTS.SOURCE_ALIAS, mPropertyBag),
-			oTable = oChange.getDependentControl(_CONSTANTS.TARGET_ALIAS, mPropertyBag),
-			aColumns = oModifier.getAggregation(oTable, sColumnsAggregationName);
+			oTargetSource = oChange.getDependentControl(SOURCE_ALIAS, mPropertyBag),
+			oTable = oChange.getDependentControl(TARGET_ALIAS, mPropertyBag),
+			aColumns = oModifier.getAggregation(oTable, COLUMNS_AGGREGATION_NAME),
+			switchCells = function (oRow, iSourceIndex, iTargetIndex) {
+				var aCells = oModifier.getAggregation(oRow, CELLS_AGGREGATION_NAME);
+
+				// ColumnListItem and GroupHeaderListItem are only allowed for the tables items aggregation.
+				if (!aCells) {
+					jQuery.sap.log.warning("Aggregation cells to move not found");
+					return;
+				}
+
+				if (iSourceIndex < 0 || iSourceIndex >= aCells.length) {
+					jQuery.sap.log.warning("Move cells in table item called with invalid index: " + iSourceIndex);
+					return;
+				}
+
+				var oMovedCell = aCells[iSourceIndex];
+				oModifier.removeAggregation(oRow, CELLS_AGGREGATION_NAME, oMovedCell);
+				oModifier.insertAggregation(oRow, CELLS_AGGREGATION_NAME, oMovedCell, iTargetIndex, oView);
+			},
+			moveColumns = function (iSourceIndex, iTargetIndex) {
+				oModifier.getAggregation(oTable, ITEMS_AGGREGATION_NAME).forEach(function (oItem) {
+					// We are skipping the GroupHeaderListItems, because they are valid for the whole row and does not have cells to move.
+					if (oModifier.getControlType(oItem) === "sap.m.GroupHeaderListItem") {
+						return;
+					}
+
+					switchCells(oItem, iSourceIndex, iTargetIndex);
+				});
+			};
 
 		if (oTargetSource !== oTable) {
 			jQuery.sap.log.warning("Moving columns between different tables is not yet supported.");
@@ -69,46 +92,82 @@ sap.ui.define([
 
 			iCurrentIndexInAggregation = aColumns.indexOf(oMovedElement);
 			iStoredSourceIndexInChange = mMovedElement.sourceIndex;
-			iTargetIndex = mMovedElement.targetIndex;
+			iTargetIndex = jQuery.isFunction(fnIterator) && fnIterator(iCurrentIndexInAggregation);
+			iTargetIndex = jQuery.isNumeric(iTargetIndex) ? iTargetIndex : mMovedElement.targetIndex;
 
 			if (iCurrentIndexInAggregation !== iTargetIndex) {
-				// By default we are getting the index from the aggregation, because it is possible that the order is already modified and the column that we want to move is not on the passed source index
+				// By default we are getting the index from the aggregation, because it is possible that the order is
+				// already modified and the column that we want to move is not on the passed source index
 				iSourceIndex = iCurrentIndexInAggregation;
 			} else {
-				// In RTA edit mode, the condition will be false, because the aggregation is modified by the drag and drop action. Therefore, we need to use the passed source index
+				// In RTA edit mode, the condition will be false, because the aggregation is modified by the drag and drop action.
+				// Therefore, we need to use the passed source index
 				iSourceIndex = iStoredSourceIndexInChange;
 			}
 
-			oModifier.removeAggregation(oTable, sColumnsAggregationName, oMovedElement);
-			oModifier.insertAggregation(oTable, sColumnsAggregationName, oMovedElement, iTargetIndex);
+			// move children in `columns` aggregation
+			oModifier.removeAggregation(oTable, COLUMNS_AGGREGATION_NAME, oMovedElement);
+			oModifier.insertAggregation(oTable, COLUMNS_AGGREGATION_NAME, oMovedElement, iTargetIndex, oView);
 
-			oModifier.getAggregation(oTable, sItemsAggregationName).forEach(function (oItem) {
-				var aCells = oModifier.getAggregation(oItem, sCellsAggregationName),
-					oMovedCell;
+			// move children in `items` aggregation (actual content)
+			var oTemplate = oModifier.getBindingTemplate(oTable, ITEMS_AGGREGATION_NAME);
 
-				// We are skipping the GroupHeaderListItems, because they are valid for the whole row and does not have cells to move.
-				if (oModifier.getControlType(oItem) === "sap.m.GroupHeaderListItem") {
-					return;
-				}
-
-				// ColumnListItem and GroupHeaderListItem are only allowed for the tables items aggregation.
-				if (!aCells) {
-					jQuery.sap.log.warning("Aggregation cells to move not found");
-					return;
-				}
-
-				if (iSourceIndex < 0 || iSourceIndex >= aCells.length) {
-					jQuery.sap.log.warning("Move cells in table item called with invalid index: " + iSourceIndex);
-					return;
-				}
-
-				oMovedCell = aCells[iSourceIndex];
-				oModifier.removeAggregation(oItem, sCellsAggregationName, oMovedCell);
-				oModifier.insertAggregation(oItem, sCellsAggregationName, oMovedCell, iTargetIndex);
-			});
+			if (oTemplate) {
+				switchCells(oTemplate, iSourceIndex, iTargetIndex);
+				oModifier.updateAggregation(oTable, ITEMS_AGGREGATION_NAME);
+			} else {
+				moveColumns(iSourceIndex, iTargetIndex);
+			}
 		}, this);
 
 		return true;
+	}
+
+	/**
+	 * Moves a column from one index to another.
+	 *
+	 * @param {sap.ui.fl.Change} oChange Change object with instructions to be applied on the control
+	 * @param {sap.ui.core.Control} oRelevantContainer Control that matches the change selector for applying the change, which is the source of the move
+	 * @param {object} mPropertyBag Map of properties
+	 * @param {object} mPropertyBag.view XML node representing a ui5 view
+	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
+	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
+	 * @return {boolean} true Indicates whether the change can be applied
+	 * @public
+	 */
+	MoveTableColumns.applyChange = function (oChange, oRelevantContainer, mPropertyBag) {
+		var aRevertData = [];
+
+		_applyChange(oChange, oRelevantContainer, mPropertyBag, function (iCurrentIndexInAggregation) {
+			aRevertData.unshift({
+				index: iCurrentIndexInAggregation
+			});
+		});
+
+		oChange.setRevertData(aRevertData);
+	};
+
+	/**
+	 * Reverts the change
+	 *
+	 * @param {sap.ui.fl.Change} oChange Change object with instructions to be applied on the control
+	 * @param {sap.ui.core.Control} oRelevantContainer Control that matches the change selector for applying the change, which is the source of the move
+	 * @param {object} mPropertyBag Map of properties
+	 * @param {object} mPropertyBag.view XML node representing a ui5 view
+	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
+	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
+	 * @return {boolean} true Indicates whether the change can be applied
+	 * @public
+	 */
+	MoveTableColumns.revertChange = function (oChange, oRelevantContainer, mPropertyBag) {
+		var aRevertData = oChange.getRevertData();
+
+		_applyChange(oChange, oRelevantContainer, mPropertyBag, function () {
+			var mItem = aRevertData.shift();
+			return mItem && mItem.index;
+		});
+
+		oChange.resetRevertData();
 	};
 
 	/**
@@ -119,8 +178,6 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {sap.ui.core.UiComponent} mPropertyBag.appComponent Component in which the change should be applied
 	 * @public
-	 * @function
-	 * @name sap.m.changeHandler.MoveTableColumns#completeChangeContent
 	 */
 	MoveTableColumns.completeChangeContent = function (oChange, mSpecificChangeInfo, mPropertyBag) {
 		var oModifier = mPropertyBag.modifier,
@@ -149,12 +206,12 @@ sap.ui.define([
 			});
 		});
 
-		mChangeData.changeType = _CONSTANTS.CHANGE_TYPE;
-		oChange.addDependentControl(mSpecificChangeInfo.source.id, _CONSTANTS.SOURCE_ALIAS, mPropertyBag, mAdditionalSourceInfo);
-		oChange.addDependentControl(mSpecificChangeInfo.target.id, _CONSTANTS.TARGET_ALIAS, mPropertyBag, mAdditionalTargetInfo);
+		mChangeData.changeType = CHANGE_TYPE;
+		oChange.addDependentControl(mSpecificChangeInfo.source.id, SOURCE_ALIAS, mPropertyBag, mAdditionalSourceInfo);
+		oChange.addDependentControl(mSpecificChangeInfo.target.id, TARGET_ALIAS, mPropertyBag, mAdditionalTargetInfo);
 		oChange.addDependentControl(mSpecificChangeInfo.movedElements.map(function (element) {
 			return element.id;
-		}), _CONSTANTS.MOVED_ELEMENTS_ALIAS, mPropertyBag);
+		}), MOVED_ELEMENTS_ALIAS, mPropertyBag);
 	};
 
 	return MoveTableColumns;

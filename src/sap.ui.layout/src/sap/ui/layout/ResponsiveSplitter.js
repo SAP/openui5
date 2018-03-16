@@ -3,7 +3,29 @@
 */
 
 // Provides control sap.ui.layout.ResponsiveSplitter.
-sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./ResponsiveSplitterUtilities", "./ResponsiveSplitterPage", "./PaneContainer", "./SplitPane", "sap/ui/core/delegate/ItemNavigation"], function (jQuery, library, Control, RSUtil, ResponsiveSplitterPage, PaneContainer, SplitPane, ItemNavigation) {
+sap.ui.define([
+    "jquery.sap.global",
+    "./library",
+    "sap/ui/core/Control",
+    "./ResponsiveSplitterUtilities",
+    "./ResponsiveSplitterPage",
+    "./PaneContainer",
+    "./SplitPane",
+    "sap/ui/core/delegate/ItemNavigation",
+    "sap/ui/core/ResizeHandler",
+    "./ResponsiveSplitterRenderer"
+], function(
+    jQuery,
+	library,
+	Control,
+	RSUtil,
+	ResponsiveSplitterPage,
+	PaneContainer,
+	SplitPane,
+	ItemNavigation,
+	ResizeHandler,
+	ResponsiveSplitterRenderer
+) {
 	"use strict";
 
 	/**
@@ -13,9 +35,32 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * ResponsiveSplitter is a control that enables responsiveness of normal Splitter.
-	 * ResponsiveSplitter consists of PaneContainers that further  agregate other PaneContainers and SplitPanes.
-	 * SplitPanes can be moved to the pagination when a minimum width of their parent is reached.
+	 * A responsive splitter which divides the application into several areas.
+	 * <h3>Overview</h3>
+	 * The responsive splitter layout structures complex applications into defined areas.
+	 * These areas may be resizable and are either distributed across one or multiple screen areas, some of which may also be off-canvas.
+	 *
+	 * The control is intended for developing administrative tools and applications.
+	 * <h3>Structure</h3>
+	 * The responsive splitter holds the following hierarchy of containers and controls:
+	 * <ul>
+	 * <li>{@link sap.ui.layout.PaneContainer Pane Container} - holds one or more Split Panes and determines the pane orientation. The pane which is stored in <code>rootPaneContainer</code> holds all other pane containers and split panes.</li>
+	 * <li>{@link sap.ui.layout.SplitPane Split Pane} - independent containers that may interact with one another. Each pane can hold only one control.</li>
+	 * </ul>
+	 * <h3>Usage</h3>
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>The application has to display several areas side by side that must be resizable.</li>
+	 * <li>The application must work on a range of different devices in a responsive manner.</li>
+	 * </ul>
+	 * <h3>Responsive Behavior</h3>
+	 * <ul>
+	 * <li>As soon as views are in the off-canvas mode, the pagination bar at the bottom of the application allows the user to switch between them.</li>
+	 * <li>On touch-enabled devices, the splitters show explicit handles with larger touch areas.</li>
+	 * <li>Double-clicking on a splitter will collapse or expand it back to its original position.</li>
+	 * </ul>
+	 *
+	 * <b>Note:</b> We don't recommend dynamically inserting/removing panes into/from the PaneContainer since this might lead to inconsistent layout. If it is necessary, you need to ensure the sum of all sizes of the SplitPanes doesn't exceed the width of the PaneContainer.
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -25,6 +70,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 * @public
 	 * @since 1.38
 	 * @alias sap.ui.layout.ResponsiveSplitter
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/responsive-splitter/ Responsive Splitter}
 	 */
 	var ResponsiveSplitter = Control.extend("sap.ui.layout.ResponsiveSplitter", /** @lends sap.ui.layout.ResponsiveSplitter.prototype */ {
 		metadata: {
@@ -96,7 +142,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	};
 
 	ResponsiveSplitter.prototype.onAfterRendering = function () {
-		this._parentResizeHandler = sap.ui.core.ResizeHandler.register(this, this._onParentResize.bind(this));
+		this._parentResizeHandler = ResizeHandler.register(this, this._onParentResize.bind(this));
 		var oRootContainer = this.getRootPaneContainer();
 		if (oRootContainer) {
 			this._onParentResize();
@@ -314,7 +360,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 	 */
 	ResponsiveSplitter.prototype._detachResizeHandler = function () {
 		if (this._parentResizeHandler) {
-			sap.ui.core.ResizeHandler.deregister(this._parentResizeHandler);
+			ResizeHandler.deregister(this._parentResizeHandler);
 			this._parentResizeHandler = null;
 		}
 	};
@@ -446,7 +492,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	/**
 	 * Sets the indexed page to visible and changes the selected button in the paginator
-	 * @param iPageIndex
+	 * @param {int} iPageIndex
 	 * @private
 	 */
 	ResponsiveSplitter.prototype._activatePage = function (iPageIndex) {
@@ -644,4 +690,4 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "./Respo
 
 	return ResponsiveSplitter;
 
-}, /* bExport= */ true);
+});

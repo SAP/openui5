@@ -2,9 +2,16 @@
  * ${copyright}
  */
 
- sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
+ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/m/library', 'sap/ui/Device'],
+	function(jQuery, coreLibrary, library, Device) {
 	"use strict";
+
+
+	// shortcut for sap.m.BackgroundHelper
+	var BackgroundHelper = library.BackgroundHelper;
+
+	// shortcut for sap.ui.core.TitleLevel
+	var TitleLevel = coreLibrary.TitleLevel;
 
 
 	/**
@@ -22,6 +29,8 @@
 	 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered
 	 */
 	ShellRenderer.render = function(rm, oControl) {
+		var sTitleLevel = (oControl.getTitleLevel() === TitleLevel.Auto) ? TitleLevel.H1 : oControl.getTitleLevel();
+
 		rm.write("<div");
 		rm.writeControlData(oControl);
 		rm.addClass("sapMShell");
@@ -30,7 +39,7 @@
 			rm.addClass("sapMShellAppWidthLimited");
 		}
 
-		sap.m.BackgroundHelper.addBackgroundColorStyles(rm, oControl.getBackgroundColor(),  oControl.getBackgroundImage(), "sapMShellGlobalOuterBackground");
+		BackgroundHelper.addBackgroundColorStyles(rm, oControl.getBackgroundColor(),  oControl.getBackgroundImage(), "sapMShellGlobalOuterBackground");
 
 		rm.writeClasses();
 		rm.writeStyles();
@@ -43,7 +52,7 @@
 		rm.write(">");
 
 		/* The background in "SAP_Belize_Deep" must be dark. The contrast class is set to the element wihout any children to avoid unnecessary propagation. */
-		sap.m.BackgroundHelper.renderBackgroundImageTag(rm, oControl, ["sapContrastPlus", "sapMShellBG", "sapUiGlobalBackgroundImageForce"],  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
+		BackgroundHelper.renderBackgroundImageTag(rm, oControl, ["sapContrastPlus", "sapMShellBG", "sapUiGlobalBackgroundImageForce"],  oControl.getBackgroundImage(), oControl.getBackgroundRepeat(), oControl.getBackgroundOpacity());
 
 		rm.write("<div class='sapMShellBrandingBar'></div>");
 
@@ -64,9 +73,10 @@
 
 		// header title
 		if (oControl.getTitle()) {
-			rm.write("<h1 id='" + oControl.getId() + "-hdrTxt' class='sapMShellHeaderText'>");
+			rm.write("<" + sTitleLevel);
+			rm.write(" id='" + oControl.getId() + "-hdrTxt' class='sapMShellHeaderText'>");
 			rm.writeEscaped(oControl.getTitle());
-			rm.write("</h1>");
+			rm.write("</" + sTitleLevel + ">");
 		}
 
 		// header right area
@@ -91,11 +101,9 @@
 
 
 		// content
-		rm.write("<section class='sapMShellContent sapMShellGlobalInnerBackground' id='" + oControl.getId() + "-content' data-sap-ui-root-content='true'>");
-
+		rm.write("<div class='sapMShellContent sapMShellGlobalInnerBackground' id='" + oControl.getId() + "-content' data-sap-ui-root-content='true'>");
 		rm.renderControl(oControl.getApp());
-
-		rm.write("</section></div></div>");
+		rm.write("</div></div></div>");
 	};
 
 	ShellRenderer.getLogoImageHtml = function(oControl) {
@@ -109,7 +117,7 @@
 		if (sImage) {
 			var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 			result = "<div class='sapMShellLogo'>";
-			if (sap.ui.Device.browser.msie) {
+			if (Device.browser.msie) {
 				result += "<span class='sapMShellLogoImgAligner'></span>";
 			}
 			result += "<img id='" + oControl.getId() + "-logo' class='sapMShellLogoImg' src='";

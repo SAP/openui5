@@ -5,7 +5,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.InputKeyValueTabularSuggestions.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.InputKeyValueTabularSuggestions.V",
+			rootView : {
+				"viewName": "sap.m.sample.InputKeyValueTabularSuggestions.V",
+				"type": "XML",
+				"async": true
+			},
 			config : {
 				sample : {
 					files : [

@@ -3,8 +3,16 @@
  */
 
 // Provides control sap.ui.core.ScrollBar.
-sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'jquery.sap.script', 'jquery.sap.trace'],
-	function(jQuery, Device, Control, library /*, jQuery*/) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/Device',
+    './Control',
+    './library',
+    "./ScrollBarRenderer",
+    'jquery.sap.script',
+    'jquery.sap.trace'
+],
+	function(jQuery, Device, Control, library /*, jQuery*/, ScrollBarRenderer) {
 	"use strict";
 
 
@@ -24,7 +32,6 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 	 * @extends sap.ui.core.Control
 	 * @version ${version}
 	 *
-	 * @constructor
 	 * @public
 	 * @alias sap.ui.core.ScrollBar
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -513,7 +520,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 				this._$OwnerDomRef.unbind(this._getTouchEventType("touchstart"), jQuery.proxy(this.ontouchstart, this));
 				this._$OwnerDomRef.unbind(this._getTouchEventType("touchmove"), jQuery.proxy(this.ontouchmove, this));
 				this._$OwnerDomRef.unbind(this._getTouchEventType("touchend"), jQuery.proxy(this.ontouchend, this));
-				this._$OwnerDomRef.unbind(this._getTouchEventType("touchcancle"), jQuery.proxy(this.ontouchcancle, this));
+				this._$OwnerDomRef.unbind(this._getTouchEventType("touchcancel"), jQuery.proxy(this.ontouchcancel, this));
 			}
 		}
 	};
@@ -537,7 +544,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 				this._$OwnerDomRef.bind(this._getTouchEventType("touchstart"), jQuery.proxy(this.ontouchstart, this));
 				this._$OwnerDomRef.bind(this._getTouchEventType("touchmove"), jQuery.proxy(this.ontouchmove, this));
 				this._$OwnerDomRef.bind(this._getTouchEventType("touchend"), jQuery.proxy(this.ontouchend, this));
-				this._$OwnerDomRef.bind(this._getTouchEventType("touchcancle"), jQuery.proxy(this.ontouchcancle, this));
+				this._$OwnerDomRef.bind(this._getTouchEventType("touchcancel"), jQuery.proxy(this.ontouchcancel, this));
 			}
 		}
 	};
@@ -666,11 +673,11 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 
 	/**
 	 * Process scroll events and fire scroll event
-	 * @param eAction Action type that can be mouse wheel, Drag, Step or Page.
-	 * @param bForward Scroll Direction - forward or back
+	 * @param {sap.ui.core.ScrollBarAction} sAction Action type that can be mouse wheel, Drag, Step or Page.
+	 * @param {boolean} bForward Scroll Direction - forward or back
 	 * @private
 	 */
-	ScrollBar.prototype._doScroll = function(eAction, bForward) {
+	ScrollBar.prototype._doScroll = function(sAction, bForward) {
 
 		// Get new scroll position
 		var iScrollPos = null;
@@ -699,8 +706,8 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 				// Set new scrollposition without the rerendering
 				this.setCheckedScrollPosition(iStep, false);
 
-				jQuery.sap.log.debug("-----STEPMODE-----: New Step: " + iStep + " --- Old Step: " +  iOldStep  + " --- Scroll Pos in px: " + iScrollPos + " --- Action: " + eAction + " --- Direction is forward: " + bForward);
-				this.fireScroll({ action: eAction, forward: bForward, newScrollPos: iStep, oldScrollPos: iOldStep});
+				jQuery.sap.log.debug("-----STEPMODE-----: New Step: " + iStep + " --- Old Step: " +  iOldStep  + " --- Scroll Pos in px: " + iScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
+				this.fireScroll({ action: sAction, forward: bForward, newScrollPos: iStep, oldScrollPos: iOldStep});
 				this._iOldStep = iStep;
 
 			}
@@ -710,8 +717,8 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 			iScrollPos = Math.round(iScrollPos);
 			this.setProperty("scrollPosition", iScrollPos, true);
 
-			jQuery.sap.log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + eAction + " --- Direction is forward: " + bForward);
-			this.fireScroll({ action: eAction, forward: bForward, newScrollPos: iScrollPos, oldScrollPos: this._iOldScrollPos});
+			jQuery.sap.log.debug("-----PIXELMODE-----: New ScrollPos: " + iScrollPos + " --- Old ScrollPos: " +  this._iOldScrollPos + " --- Action: " + sAction + " --- Direction is forward: " + bForward);
+			this.fireScroll({ action: sAction, forward: bForward, newScrollPos: iScrollPos, oldScrollPos: this._iOldScrollPos});
 		}
 		// rounding errors in IE lead to infinite scrolling
 		if (Math.round(this._iFactor) == this._iFactor || !Device.browser.msie) {
@@ -721,7 +728,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/Device', './Control', './library', 'j
 		this._bMouseWheel = false;
 
 		// notify for a scroll event
-		jQuery.sap.interaction.notifyScrollEvent({type: eAction});
+		jQuery.sap.interaction.notifyScrollEvent({type: sAction});
 	};
 
 	ScrollBar.prototype.onThemeChanged = function() {

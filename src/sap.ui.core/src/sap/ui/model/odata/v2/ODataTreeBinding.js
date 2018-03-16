@@ -149,11 +149,11 @@ sap.ui.define(['jquery.sap.global',
 
 			this.sCountMode = (mParameters && mParameters.countMode) || this.oModel.sDefaultCountMode;
 			if (this.sCountMode == CountMode.None) {
-				jQuery.log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
+				jQuery.sap.log.fatal("To use an ODataTreeBinding at least one CountMode must be supported by the service!");
 			}
 
 			if (mParameters) {
-				this.sBatchGroupId = mParameters.groupId || mParameters.batchGroupId;
+				this.sGroupId = mParameters.groupId || mParameters.batchGroupId;
 			}
 
 			this.bInitial = true;
@@ -263,7 +263,9 @@ sap.ui.define(['jquery.sap.global',
 
 				delete that.mRequestHandles[sRequestKey];
 
-				that.fireDataReceived({data: oData});
+				that.oModel.callAfterUpdate(function() {
+					that.fireDataReceived({data: oData});
+				});
 			},
 			error: function (oError) {
 				//Only perform error handling if the request was not aborted intentionally
@@ -484,7 +486,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Gets or loads all contexts for a specified node id (dependent on mode)
 	 *
-	 * @param {String} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
+	 * @param {string} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
 	 * @param {int} iStartIndex start index of the page
 	 * @param {int} iLength length of the page
 	 * @param {int} iThreshold additionally loaded entities
@@ -871,7 +873,7 @@ sap.ui.define(['jquery.sap.global',
 	/**
 	 * Triggers backend requests to load the child nodes of the node with the given sNodeId.
 	 *
-	 * @param {String} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
+	 * @param {string} sNodeId the value of the hierarchy node property on which a parent node filter will be performed
 	 * @param {int} iStartIndex start index of the page
 	 * @param {int} iLength length of the page
 	 * @param {int} iThreshold additionally loaded entities
@@ -964,7 +966,9 @@ sap.ui.define(['jquery.sap.global',
 			delete that.mRequestHandles[sRequestKey];
 			that.bNeedsUpdate = true;
 
-			that.fireDataReceived({data: oData});
+			that.oModel.callAfterUpdate(function() {
+				that.fireDataReceived({data: oData});
+			});
 		}
 
 		function fnError(oError) {
@@ -1107,7 +1111,9 @@ sap.ui.define(['jquery.sap.global',
 				that._applySort();
 			}
 
-			that.fireDataReceived({data: oData});
+			that.oModel.callAfterUpdate(function() {
+				that.fireDataReceived({data: oData});
+			});
 		};
 
 		var fnError = function (oError) {
@@ -1138,7 +1144,8 @@ sap.ui.define(['jquery.sap.global',
 			urlParameters: aURLParams,
 			success: fnSuccess,
 			error: fnError,
-			sorters: this.aSorters
+			sorters: this.aSorters,
+			groupId: this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId
 		});
 	};
 
@@ -1217,9 +1224,9 @@ sap.ui.define(['jquery.sap.global',
 		if (typeof bForceUpdate === "string") {
 			sGroupId = bForceUpdate;
 		}
-		this.sRefreshGroup = sGroupId;
+		this.sRefreshGroupId = sGroupId;
 		this._refresh(bForceUpdate);
-		this.sRefreshGroup = undefined;
+		this.sRefreshGroupId = undefined;
 	};
 
 	/**
@@ -1862,6 +1869,8 @@ sap.ui.define(['jquery.sap.global',
 	 */
 	ODataTreeBinding.prototype._applyAdapter = function () {
 		var sMagnitudeAnnotation = "hierarchy-node-descendant-count-for";
+		var sSiblingRankAnnotation = "hierarchy-sibling-rank-for";
+		var sPreorderRankAnnotation = "hierarchy-preorder-rank-for";
 
 		if (this.bHasTreeAnnotations) {
 
@@ -1881,7 +1890,7 @@ sap.ui.define(['jquery.sap.global',
 				jQuery.each(oProperty.extensions, function(iIndex, oExtension) {
 					var sName = oExtension.name;
 					if (oExtension.namespace === that.oModel.oMetadata.mNamespaces["sap"] &&
-							sName == sMagnitudeAnnotation) {
+							(sName == sMagnitudeAnnotation || sName == sSiblingRankAnnotation || sName == sPreorderRankAnnotation)) {
 						that.oTreeProperties[sName] = oProperty.name;
 					}
 				});
@@ -1895,9 +1904,44 @@ sap.ui.define(['jquery.sap.global',
 			// exception: the binding runs in operation-mode "Client"
 			// In this case there is no need for the advanced auto expand, since everything is loaded anyway.
 			if (this.oTreeProperties[sMagnitudeAnnotation] && this.sOperationMode == OperationMode.Server) {
+				var i, j, sKeyProperty;
+				// Add Flat-specific tree properties
+				this.oTreeProperties[sSiblingRankAnnotation] = this.oTreeProperties[sSiblingRankAnnotation] ||
+					(this.mParameters.treeAnnotationProperties && this.mParameters.treeAnnotationProperties.hierarchySiblingRankFor);
+				this.oTreeProperties[sPreorderRankAnnotation] = this.oTreeProperties[sPreorderRankAnnotation] ||
+					(this.mParameters.treeAnnotationProperties && this.mParameters.treeAnnotationProperties.hierarchyPreorderRankFor);
+
+				if (this.mParameters.restoreTreeStateAfterChange) {
+					if (this.oTreeProperties[sSiblingRankAnnotation] && this.oTreeProperties[sPreorderRankAnnotation]) {
+						this._bRestoreTreeStateAfterChange = true;
+						// Collect entity type key properties
+						this._aTreeKeyProperties = [];
+						for (i = oEntityType.key.propertyRef.length - 1; i >= 0; i--) {
+							this._aTreeKeyProperties.push(oEntityType.key.propertyRef[i].name);
+						}
+					} else {
+						jQuery.sap.log.warning("Tree state restoration not possible: Missing annotation \"hierarchy-sibling-rank-for\" and/or \"hierarchy-preorder-rank-for\"");
+						this._bRestoreTreeStateAfterChange = false;
+					}
+				} else {
+					this._bRestoreTreeStateAfterChange = false;
+				}
+
+
 				// make sure the magnitude is added to the $select if it was not added by the application anyway
-				if (this.mParameters && this.mParameters.select && this.mParameters.select.indexOf(this.oTreeProperties[sMagnitudeAnnotation]) == -1) {
-					this.mParameters.select += ("," + this.oTreeProperties[sMagnitudeAnnotation]);
+				if (this.mParameters && this.mParameters.select) {
+					if (this.mParameters.select.indexOf(this.oTreeProperties[sMagnitudeAnnotation]) === -1) {
+						this.mParameters.select += "," + this.oTreeProperties[sMagnitudeAnnotation];
+					}
+					if (this._bRestoreTreeStateAfterChange) {
+						// Retrieve all key properties to allow filtering on them during tree state restoration (PreorderPosition requests)
+						for (j = this._aTreeKeyProperties.length - 1; j >= 0; j--) {
+							sKeyProperty = this._aTreeKeyProperties[j];
+							if (this.mParameters.select.indexOf(sKeyProperty) === -1) {
+								this.mParameters.select += "," + sKeyProperty;
+							}
+						}
+					}
 					this.sCustomParams = this.oModel.createCustomParams(this.mParameters);
 				}
 				// apply flat paging adapter
@@ -1968,6 +2012,19 @@ sap.ui.define(['jquery.sap.global',
 			jQuery.sap.log.error("Neither navigation paths parameters, nor (complete/valid) tree hierarchy annotations where provided to the TreeBinding.");
 			this.oNavigationPaths = {};
 		}
+	};
+
+	/**
+	 * Returns the value of a given hierarchy annotation.
+	 *
+	 * @param {string} sAttributeName The name of the hierarchy annotation
+	 * @return {string|undefined} The value of the hierarchy annotation
+	 * @since 1.56
+	 * @private
+	 * @ui5-restricted sap.ui.comp
+	 */
+	ODataTreeBinding.prototype.getTreeAnnotation = function(sAttributeName) {
+		return this.bHasTreeAnnotations ? this.oTreeProperties[sAttributeName] : undefined;
 	};
 
 	/**

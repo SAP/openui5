@@ -3,9 +3,16 @@
  */
 
 // Provides class sap.m.GrowingEnablement
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat'],
-	function(jQuery, BaseObject, NumberFormat) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/NumberFormat', 'sap/m/library', 'sap/ui/model/ChangeReason', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui/core/HTML'],
+	function(jQuery, BaseObject, NumberFormat, library, ChangeReason, ManagedObjectMetadata, HTML) {
 	"use strict";
+
+
+	// shortcut for sap.m.ListType
+	var ListType = library.ListType;
+
+	// shortcut for sap.m.ListGrowingDirection
+	var ListGrowingDirection = library.ListGrowingDirection;
 
 
 	/**
@@ -36,6 +43,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			this._sGroupingPath = "";
 			this._bDataRequested = false;
 			this._oContainerDomRef = null;
+			this._iLastItemsCount = 0;
 			this._iTriggerTimer = 0;
 			this._aChunk = [];
 			this._oRM = null;
@@ -68,23 +76,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 		// renders load more trigger
 		render : function(oRm) {
-			oRm.write("<ul");
+			oRm.write("<div");
 			oRm.addClass("sapMListUl");
 			oRm.addClass("sapMGrowingList");
-			oRm.writeAttribute("role", "presentation");
 			oRm.writeAttribute("id", this._oControl.getId() + "-triggerList");
 			oRm.addStyle("display", "none");
 			oRm.writeClasses();
 			oRm.writeStyles();
 			oRm.write(">");
 			oRm.renderControl(this._getTrigger());
-			oRm.write("</ul>");
+			oRm.write("</div>");
 		},
 
 		onAfterRendering : function() {
 			var oControl = this._oControl;
 			if (oControl.getGrowingScrollToLoad()) {
-				var oScrollDelegate = sap.m.getScrollDelegate(oControl);
+				var oScrollDelegate = library.getScrollDelegate(oControl);
 				if (oScrollDelegate) {
 					this._oScrollDelegate = oScrollDelegate;
 					oScrollDelegate.setGrowingList(this.onScrollToLoad.bind(this), oControl.getGrowingDirection());
@@ -94,7 +101,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				this._oScrollDelegate = null;
 			}
 
-			this._updateTriggerDelayed(false);
+			if (!this._bLoading) {
+				this._updateTriggerDelayed(false);
+			}
 		},
 
 		setTriggerText : function(sText) {
@@ -109,7 +118,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		// determines growing reset with binding change reason
 		// according to UX sort/filter/context should reset the growing
 		shouldReset : function(sChangeReason) {
-			var mChangeReason = sap.ui.model.ChangeReason;
+			var mChangeReason = ChangeReason;
 
 			return 	sChangeReason == mChangeReason.Sort ||
 					sChangeReason == mChangeReason.Filter ||
@@ -125,7 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		},
 
 		onScrollToLoad: function() {
-			if (!this._bLoading && this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+			if (!this._bLoading && this._oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
 				var oScrollDelegate = this._oScrollDelegate;
 				this._oScrollPosition = {
 					left : oScrollDelegate.getScrollLeft(),
@@ -145,6 +154,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			// if max item count not reached or if we do not know the count
 			var oBinding = this._oControl.getBinding("items");
 			if (oBinding && !oBinding.isLengthFinal() || this._iLimit < this._oControl.getMaxItemsCount()) {
+				// The GrowingEnablement has its own busy indicator. Do not show the busy indicator, if existing, of the parent control.
+				if (this._oControl.getMetadata().hasProperty("enableBusyIndicator")) {
+					this._bParentEnableBusyIndicator = this._oControl.getEnableBusyIndicator();
+					this._oControl.setEnableBusyIndicator(false);
+				}
+
 				this._iLimit += this._oControl.getGrowingThreshold();
 				this._updateTriggerDelayed(true);
 				this.updateItems("Growing");
@@ -162,6 +177,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			this._bLoading = false;
 			this._updateTriggerDelayed(false);
 			this._oControl.onAfterPageLoaded(this.getInfo(), sChangeReason);
+
+			// After the data has been loaded, restore the busy indicator handling of the parent control.
+			if (this._oControl.setEnableBusyIndicator) {
+				this._oControl.setEnableBusyIndicator(this._bParentEnableBusyIndicator);
+			}
 		},
 
 		// created and returns load more trigger
@@ -177,14 +197,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				return this._oTrigger;
 			}
 
+			// The growing button is changed to span tag as h1 tag was semantically incorrect.
 			this._oTrigger = new sap.m.CustomListItem({
 				id: sTriggerID,
 				busyIndicatorDelay: 0,
-				type: sap.m.ListType.Active,
-				content: new sap.ui.core.HTML({
+				type: ListType.Active,
+				content: new HTML({
 					content:	'<div class="sapMGrowingListTrigger">' +
 									'<div class="sapMSLITitleDiv sapMGrowingListTriggerText">' +
-										'<h1 class="sapMSLITitle" id="' + sTriggerID + 'Text">' + jQuery.sap.encodeHTML(sTriggerText) + '</h1>' +
+										'<span class="sapMSLITitle" id="' + sTriggerID + 'Text">' + jQuery.sap.encodeHTML(sTriggerText) + '</span>' +
 									'</div>' +
 									'<div class="sapMGrowingListDescription sapMSLIDescription" id="' + sTriggerID + 'Info"></div>' +
 								'</div>'
@@ -202,19 +223,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 					this._oTrigger.$().attr({
 						"tabindex": 0,
 						"role": "button",
-						"aria-live": "polite"
+						"aria-labelledby": sTriggerID + "Text" + " " + sTriggerID + "Info"
 					});
 				}
 			}, this);
 
 			// stop the eventing between item and the list
 			this._oTrigger.getList = function() {};
+			// defines the tag name
+			this._oTrigger.TagName = "div";
 
 			return this._oTrigger;
 		},
 
 		// returns the growing information to be shown at the growing button
 		_getListItemInfo : function() {
+			this._iLastItemsCount = this._oControl.getItems(true).length;
 			return ("[ " + this._iRenderedDataItems + " / " + NumberFormat.getFloatInstance().format(this._oControl.getMaxItemsCount()) + " ]");
 		},
 
@@ -249,7 +273,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 			}
 
 			// after growing-button gets hidden scroll container should still be scrollable
-			return this._oScrollDelegate.getMaxScrollTop() > this._oControl.$("triggerList").outerHeight();
+			return this._oScrollDelegate.getMaxScrollTop() > 80;
 		},
 
 		// destroy all items in the list and cleanup
@@ -281,7 +305,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 				if (!oLastItem || oGroupInfo.key !== oBinding.getGroup(oLastItem.getBindingContext(sModelName)).key) {
 					var oGroupHeader = (oBindingInfo.groupHeaderFactory) ? oBindingInfo.groupHeaderFactory(oGroupInfo) : null;
-					if (oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+					if (oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
 						this.applyPendingGroupItem();
 						this._fnAppendGroupItem = this.appendGroupItem.bind(this, oGroupInfo, oGroupHeader, bSuppressInvalidate);
 					} else {
@@ -313,7 +337,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		// creates list item from the factory
 		createListItem : function(oContext, oBindingInfo) {
 			this._iRenderedDataItems++;
-			var oItem = oBindingInfo.factory(sap.ui.base.ManagedObjectMetadata.uid("clone"), oContext);
+			var oItem = oBindingInfo.factory(ManagedObjectMetadata.uid("clone"), oContext);
 			return oItem.setBindingContext(oContext, oBindingInfo.model);
 		},
 
@@ -344,7 +368,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				return;
 			}
 
-			if (this._oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+			if (this._oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
 				this._aChunk.reverse();
 				if (vInsert === true) {
 					vInsert = 0;
@@ -398,7 +422,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 		},
 
 		/**
-		 * refresh items only for oData model.
+		 * refresh items only for OData model.
 		 */
 		refreshItems : function(sChangeReason) {
 			if (!this._bDataRequested) {
@@ -537,7 +561,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 			if (bFromScratch) {
 				this.rebuildListItems(aContexts, oBindingInfo, true);
-			} else if (this._oContainerDomRef && aDiff && aDiff.length) {
+			} else if (this._oContainerDomRef && aDiff) {
 				// set the binding context of items inserting/deleting entries shifts the index of all following items
 				this.updateItemsBindingContext(aContexts, oBindingInfo.model);
 				this.applyChunk(vInsertIndex);
@@ -566,7 +590,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				oControl = this._oControl;
 
 			// If there are no visible columns then also hide the trigger.
-			if (!oTrigger || !oControl || !oControl.shouldRenderItems()) {
+			if (!oTrigger || !oControl || !oControl.shouldRenderItems() || !oControl.getDomRef()) {
 				return;
 			}
 
@@ -587,16 +611,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 					iItemsLength = aItems.length,
 					iBindingLength = oBinding.getLength() || 0,
 					bLengthFinal = oBinding.isLengthFinal(),
-					bHasScrollToLoad = oControl.getGrowingScrollToLoad();
+					bHasScrollToLoad = oControl.getGrowingScrollToLoad(),
+					oTriggerDomRef = oTrigger.getDomRef();
+
+				// put the focus to the newly added item if growing button is pressed
+				if (oTriggerDomRef && oTriggerDomRef.contains(document.activeElement)) {
+					(aItems[this._iLastItemsCount] || oControl).focus();
+				}
 
 				// show, update or hide the growing button
 				if (!iItemsLength || !this._iLimit ||
 					(bLengthFinal && this._iLimit >= iBindingLength) ||
 					(bHasScrollToLoad && this._getHasScrollbars())) {
 					oControl.$("triggerList").css("display", "none");
-					if (document.activeElement === oTrigger.getDomRef()) {
-						oControl.$().focus();
-					}
 				} else {
 					if (bLengthFinal) {
 						oControl.$("triggerInfo").css("display", "block").text(this._getListItemInfo());
@@ -607,7 +634,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 				}
 
 				// at the beginning we should scroll to last item
-				if (bHasScrollToLoad && this._oScrollPosition === undefined && oControl.getGrowingDirection() == sap.m.ListGrowingDirection.Upwards) {
+				if (bHasScrollToLoad && this._oScrollPosition === undefined && oControl.getGrowingDirection() == ListGrowingDirection.Upwards) {
 					this._oScrollPosition = {
 						left : 0,
 						top : 0
@@ -628,4 +655,4 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/format/Nu
 
 	return GrowingEnablement;
 
-}, /* bExport= */ true);
+});

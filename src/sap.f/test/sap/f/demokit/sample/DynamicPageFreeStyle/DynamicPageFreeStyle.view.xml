@@ -12,18 +12,37 @@
 			<f:title>
 				<f:DynamicPageTitle>
 					<f:heading>
-						<Title text="Product group"/>
+						<Title text="Header Title"/>
 					</f:heading>
+					<f:breadcrumbs>
+						<Breadcrumbs>
+							<Link text="Home" />
+							<Link text="Page 1" />
+							<Link text="Page 2" />
+							<Link text="Page 3" />
+							<Link text="Page 4" />
+							<Link text="Page 5" />
+						</Breadcrumbs>
+					</f:breadcrumbs>
 					<f:expandedContent>
-						<Text text="Power Projectors"/>
+						<Label text="This is a subheading"/>
 					</f:expandedContent>
 					<f:snappedContent>
-						<Text text="Power Projectors"/>
+						<Label text="This is a subheading"/>
 					</f:snappedContent>
+					<f:content>
+						<Image src="./test-resources/sap/f/images/KPI.png" tooltip="This is just a placeholder, not a real KPI control." height="2rem" width="3.5rem"/>
+					</f:content>
 					<f:actions>
-						<ToolbarSpacer/>
 						<Button
-								text="Global Action"
+								text="Edit"
+								type="Emphasized"
+								press="toggleAreaPriority"/>
+						<Button
+								text="Delete"
+								type="Transparent"/>
+						<Button
+								text="Copy"
 								type="Transparent"/>
 						<Button
 								text="Toggle Footer"
@@ -33,6 +52,17 @@
 								icon="sap-icon://action"
 								type="Transparent"/>
 					</f:actions>
+					<f:navigationActions>
+						<Button
+								icon="sap-icon://full-screen"
+								type="Transparent" />
+						<Button
+								icon="sap-icon://exit-full-screen"
+								type="Transparent" />
+						<Button
+								icon="sap-icon://decline"
+								type="Transparent" />
+					</f:navigationActions>
 				</f:DynamicPageTitle>
 			</f:title>
 			<!-- DynamicPage Header -->
@@ -40,57 +70,87 @@
 				<f:DynamicPageHeader pinnable="true">
 					<f:content>
 						<FlexBox
-						alignItems="Start"
-						justifyContent="SpaceBetween">
-						<items>
-							<Panel backgroundDesign="Transparent">
-								<content>
-									<ObjectAttribute title="Functional Area" text="Development"/>
-									<ObjectAttribute title="Cost Center" text="PI DFA GD Programs and Product"/>
-									<ObjectAttribute title="Email" text="email@address.com"/>
-								</content>
-							</Panel>
-							<ObjectStatus text="In Stock" state="Success" />
-						</items>
+								alignItems="Start"
+								justifyContent="SpaceBetween">
+							<items>
+								<Panel
+										backgroundDesign="Transparent"
+										class="sapUiNoContentPadding">
+									<content>
+										<layout:HorizontalLayout
+												allowWrapping="true">
+											<layout:VerticalLayout
+													class="sapUiMediumMarginEnd">
+												<ObjectAttribute title="Location" text="Warehouse A"/>
+												<ObjectAttribute title="Halway" text="23L"/>
+												<ObjectAttribute title="Rack" text="34"/>
+											</layout:VerticalLayout>
+											<layout:VerticalLayout>
+												<ObjectAttribute title="Availability"/>
+												<ObjectStatus text="In Stock" state="Success" />
+											</layout:VerticalLayout>
+										</layout:HorizontalLayout>
+									</content>
+								</Panel>
+							</items>
 						</FlexBox>
 					</f:content>
 				</f:DynamicPageHeader>
 			</f:header>
 			<f:content>
-				<Table
-						id="idProductsTable"
-						inset="false"
-						items="{
-                            path: '/ProductCollection'
-                        }">
-
+				<Table id="idProductsTable"
+					   inset="false"
+					   items="{
+							path: '/ProductCollection',
+							sorter: {
+								path: 'Name'
+							}
+						}"
+					   class="sapFDynamicPageAlignContent"
+					   width="auto">
+					<headerToolbar>
+						<Toolbar>
+							<Title text="Products" level="H2"/>
+						</Toolbar>
+					</headerToolbar>
 					<columns>
 						<Column
-								minScreenWidth="Tablet"
-								demandPopin="true">
-							<Text text="Name"/>
+								width="12em">
+							<Text text="Product" />
 						</Column>
 						<Column
 								minScreenWidth="Tablet"
 								demandPopin="true">
-							<Text text="Category"/>
+							<Text text="Supplier" />
 						</Column>
 						<Column
 								minScreenWidth="Tablet"
-								demandPopin="true">
-							<Text text="SupplierName"/>
+								demandPopin="true"
+								hAlign="End">
+							<Text text="Dimensions" />
+						</Column>
+						<Column
+								hAlign="End">
+							<Text text="Price" />
 						</Column>
 					</columns>
-
 					<items>
-						<ColumnListItem
-								vAlign="Middle">
+						<ColumnListItem>
 							<cells>
 								<ObjectIdentifier
 										title="{Name}"
 										text="{ProductId}"/>
-								<Text text="{Category}"/>
-								<Text text="{SupplierName}"/>
+								<Text
+										text="{SupplierName}" />
+								<Text
+										text="{Width} x {Depth} x {Height} {DimUnit}" />
+								<ObjectNumber
+										number="{
+											parts:[{path:'Price'},{path:'CurrencyCode'}],
+											type: 'sap.ui.model.type.Currency',
+											formatOptions: {showMeasure: false}
+										}"
+										unit="{CurrencyCode}" />
 							</cells>
 						</ColumnListItem>
 					</items>

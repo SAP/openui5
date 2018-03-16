@@ -58,6 +58,10 @@
 	background: @sapUiFieldBackground;
 }
 
+.sapMSltMinWidth {
+	min-width: 5.125rem; // enough for one letter, the ellipsis and the Select`s arrow
+}
+
 /* pressed */
 
 .sapMSltPressed:not(.sapMSltDisabled):not(.sapMSltState) {
@@ -123,7 +127,7 @@
 	display: block;
 	font-size: 1.375rem;
 	line-height: 2.375rem;
-	padding: 0 0.625rem;
+	padding: 0 0.4375rem;
 	color: @sapUiContentIconColor;
 
 	/* prevent IE to focus the icon (non-focusable element) */

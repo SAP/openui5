@@ -70,6 +70,7 @@
 	var aUSDSymbols = ["US$", "$", "$", "$", "$", "US$", "$", "US$", "$", "US$", , "$", "$US", "$ US", "$US", "$", "US$", "US$", "$",
 		"US$", "US$", "$", "$", "$", "US$", "US$", "USD", "US$", "US$", "$", "US$", "$", "USD"];
 
+	QUnit.module("Locales");
 	// Run generic test for all supported locales, run custom tests where it is defined
 	jQuery.each(aLocales, function(i, sLocale) {
 		QUnit.test("Locale " + sLocale, function(assert) {
@@ -152,13 +153,10 @@
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("y", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"y\", \"y\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"y\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yMd", "d", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
+			assert.ok(Array.isArray(oLocaleData.getCustomIntervalPattern("yMd", "", aCalendarTypes[i])), "getCustomIntervalPattern(\"yMd\", \"\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("yw", "y", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
 			assert.equal(typeof oLocaleData.getCustomIntervalPattern("Q", "Q", aCalendarTypes[i]), "string", "getCustomIntervalPattern(\"yMd\", \"d\", \"" + aCalendarTypes[i] + "\")");
 			[undefined, "wide", "short", "narrow"].forEach(function(sStyle, index) {
-				if (sLocale === "xx_XX" && (sStyle !== "wide" && sStyle !== undefined)) {
-					return;
-				}
-
 				assert.equal(typeof oLocaleData.getDisplayName("era", sStyle), "string", "getDisplayName(\"era\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 				assert.equal(typeof oLocaleData.getDisplayName("year", sStyle), "string", "getDisplayName(\"year\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
 				assert.equal(typeof oLocaleData.getDisplayName("quarter", sStyle), "string", "getDisplayName(\"quarter\"" + (sStyle === undefined ? "" : ', "' + sStyle + '"') + ")");
@@ -190,6 +188,8 @@
 		assert.equal(typeof oLocaleData.getNumberSymbol("group"), "string", "getNumberSymbol(\"group\")");
 		assert.equal(typeof oLocaleData.getNumberSymbol("plusSign"), "string", "getNumberSymbol(\"plusSign\")");
 		assert.equal(typeof oLocaleData.getNumberSymbol("minusSign"), "string", "getNumberSymbol(\"minusSign\")");
+		assert.equal(typeof oLocaleData.getCurrencySpacing(), "object", "getCurrencySpacing()");
+		assert.equal(typeof oLocaleData.getCurrencySpacing("after"), "object", "getCurrencySpacing(\"after\")");
 		assert.equal(typeof oLocaleData.getFirstDayOfWeek(), "number", "getFirstDayOfWeek()");
 		assert.ok(oLocaleData.getFirstDayOfWeek() >= 0 && oLocaleData.getFirstDayOfWeek() <7, "getFirstDayOfWeek()");
 		assert.equal(typeof oLocaleData.getWeekendStart(), "number", "getWeekendStart()");
@@ -199,12 +199,32 @@
 		assert.ok(oLocaleData.getPreferredCalendarType() in sap.ui.core.CalendarType, "getPreferredCalendar()");
 		assert.equal(typeof oLocaleData.getCalendarWeek("wide", 1), "string", "getCalendarWeek wide");
 		assert.equal(typeof oLocaleData.getCalendarWeek("narrow", 1), "string", "getCalendarWeek narrow");
+		assert.equal(typeof oLocaleData.getPluralCategories(), "object", "getPluralCategories");
+		assert.ok(oLocaleData.getPluralCategories().length >= 1, "object", "getPluralCategories contains at least \"other\"");
+		assert.equal(typeof oLocaleData.getPluralCategory("0"), "string", "getPluralCategory(\"0\")");
+		assert.equal(typeof oLocaleData.getPluralCategory("1"), "string", "getPluralCategory(\"1\")");
+		assert.equal(typeof oLocaleData.getPluralCategory("-2.00"), "string", "getPluralCategory(\"-2.00\")");
+		assert.equal(typeof oLocaleData.getPluralCategory("123.456"), "string", "getPluralCategory(\"123.456\")");
+
 
 		// there's no currency symbol defined for EUR and USD in 'es_MX' locale in CLDR data version 26
 		if (sLocale !== "xx_XX" /*&& sLocale !== "es_MX"*/) {
 			assert.equal(oLocaleData.getCurrencyCodeBySymbol(oLocaleData.getCurrencySymbol("EUR")), "EUR", "Currency Symbol € has currency code EUR");
 			assert.equal(oLocaleData.getCurrencyCodeBySymbol(oLocaleData.getCurrencySymbol("USD")), "USD", "Currency Symbol for US Dollar has currency code USD");
 		}
+	}
+
+	function customTests_ar_SA(oLocaleData) {
+		assert.equal(oLocaleData.getPluralCategories().length, 6, "six plural forms");
+		assert.equal(oLocaleData.getPluralCategories()[0], "zero", "special plural form for zero");
+		assert.equal(oLocaleData.getPluralCategories()[1], "one", "special plural form for one");
+		assert.equal(oLocaleData.getPluralCategories()[2], "two", "special plural form for two");
+		assert.equal(oLocaleData.getPluralCategory("0"), "zero", "plural category zero for 0");
+		assert.equal(oLocaleData.getPluralCategory("1"), "one", "plural category one for 1");
+		assert.equal(oLocaleData.getPluralCategory("2.0"), "two", "plural category two for 2.0");
+		assert.equal(oLocaleData.getPluralCategory("4"), "few", "plural category few for 4");
+		assert.equal(oLocaleData.getPluralCategory("11"), "many", "plural category many for 11");
+		assert.equal(oLocaleData.getPluralCategory("101"), "other", "plural category other for 101");
 	}
 
 	function customTests_de_AT(oLocaleData) {
@@ -247,8 +267,19 @@
 		assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd.–dd. MMM", "interval format \"MMMdd\", \"d\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "HH:mm–HH:mm 'Uhr'", "interval format \"Hm\", \"H\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "HH:mm–HH:mm 'Uhr'", "interval format \"jm\", \"j\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("yw", "y"), "y ('Woche': w) – y ('Woche': w)", "interval format \"yw\", \"y\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yw", "y"), "'Woche' w 'des' 'Jahres' Y – 'Woche' w 'des' 'Jahres' Y", "interval format \"yw\", \"y\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("Q", "Q"), "Q – Q", "interval format \"Q\", \"Q\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("y", { Year: true }), "y–y", "interval format \"y\", { Year: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMd", { Day: true }), "dd.MM.y – dd.MM.y", "interval format \"yMd\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", { Hour: true }), "d.M.y, HH:mm–HH:mm 'Uhr'", "interval format \"yMdjm\", { Hour: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", { Day: true }), "d.–d. MMM", "interval format \"MMMd\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", { Day: true }), "dd.–dd. MMM", "interval format \"MMMdd\", { Day: true}");
+		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", { Hour: true }), "HH:mm–HH:mm 'Uhr'", "interval format \"Hm\", { Hour: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("jm", { Hour: true }), "HH:mm–HH:mm 'Uhr'", "interval format \"jm\", { Hour: true}");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yw", { Year: true }), "'Woche' w 'des' 'Jahres' Y – 'Woche' w 'des' 'Jahres' Y", "interval format \"yw\", { Year: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yw", { Week: true, Day: true }), "'Woche' w 'des' 'Jahres' Y – 'Woche' w 'des' 'Jahres' Y", "interval format \"yw\", { Week: true, Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yw", { Day: true }), "'Woche' w 'des' 'Jahres' Y", "interval format \"yw\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("Q", { Quarter: true }), "Q – Q", "interval format \"Q\", { Quarter: true }");
 		// skeleton "yMMdd" has pattern "dd.MM.y" and
 		// skeleton "yMMMd" has pattern "d. MMM y"
 		// "yMMMMdd"'s best match is "yMMMd" since both "month" and "day" have the same representation category
@@ -259,6 +290,14 @@
 		assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week");
 		assert.equal(oLocaleData.getWeekendStart(), 6, "weekend start");
 		assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
+		assert.equal(oLocaleData.getPluralCategories().length, 2, "two plural forms");
+		assert.equal(oLocaleData.getPluralCategories()[0], "one", "special plural form for one");
+		assert.equal(oLocaleData.getPluralCategory("0"), "other", "plural category other for 0");
+		assert.equal(oLocaleData.getPluralCategory("1"), "one", "plural category one for 1");
+		assert.equal(oLocaleData.getPluralCategory("2.0"), "other", "plural category other for 2.0");
+		assert.equal(oLocaleData.getPluralCategory("4"), "other", "plural category other for 4");
+		assert.equal(oLocaleData.getPluralCategory("10"), "other", "plural category other for 10");
+		assert.equal(oLocaleData.getPluralCategory("101"), "other", "plural category other for 101");
 	}
 
 	function customTests_de_XX(oLocaleData) {
@@ -306,25 +345,35 @@
 		assert.equal(oLocaleData.getCustomDateTimePattern("Km"), "h:mm a", "datetime format \"Km\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("jms"), "HH:mm:ss", "datetime format \"jms\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("Jms"), "HH:mm:ss", "datetime format \"Jms\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y – y", "interval format \"y\", \"y\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("y", "Year"), "y – y", "interval format \"y\", \"y\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y–y", "interval format \"y\", \"y\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "dd/MM/y – dd/MM/y", "interval format \"yMd\", \"d\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("yMd", "Day"), "dd/MM/y – dd/MM/y", "interval format \"yMd\", \"Day\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", "j"), "dd/MM/y, HH:mm – HH:mm", "interval format \"yMdjm\", \"j\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "d – d MMM", "interval format \"MMMd\", \"d\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd – dd MMM", "interval format \"MMMdd\", \"d\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "HH:mm – HH:mm", "interval format \"Hm\", \"H\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "HH:mm – HH:mm", "interval format \"jm\", \"j\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", "j"), "dd/MM/y, HH:mm–HH:mm", "interval format \"yMdjm\", \"j\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "d–d MMM", "interval format \"MMMd\", \"d\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd–dd MMM", "interval format \"MMMdd\", \"d\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "HH:mm–HH:mm", "interval format \"Hm\", \"H\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "HH:mm–HH:mm", "interval format \"jm\", \"j\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "a"), "h:mm a – h:mm a", "interval format \"hm\", \"a\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "h"), "h:mm – h:mm a", "interval format \"hm\", \"h\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "H"), "h:mm a – h:mm a", "interval format \"hm\", \"h\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "j"), "h:mm a – h:mm a", "interval format \"hm\", \"j\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "Hour"), "h:mm – h:mm a", "interval format \"hm\", \"Hour\"");
-		assert.equal(oLocaleData.getCustomIntervalPattern("hm", "Year"), "h:mm a – h:mm a", "interval format \"hm\", \"Year\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "a"), "HH:mm – HH:mm", "interval format \"Hm\", \"a\"");
 		// if the diff field is smaller than the fields in skeleton format, create custom format for a single date
 		assert.equal(oLocaleData.getCustomIntervalPattern("yMMM", "d"), "MMM y", "interval format \"yMMM\", \"d\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", "s"), "dd/MM/y, HH:mm", "interval format \"yMdjm\", \"s\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("y", { Year: true }), "y–y", "interval format \"y\", { Year: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMd", { Day: true }), "dd/MM/y – dd/MM/y", "interval format \"yMd\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", { Hour: true }), "dd/MM/y, HH:mm–HH:mm", "interval format \"yMdjm\", { Hour: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", { Day: true }), "d–d MMM", "interval format \"MMMd\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", { Day: true }), "dd–dd MMM", "interval format \"MMMdd\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", { Hour: true }), "HH:mm–HH:mm", "interval format \"Hm\", { Hour: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("jm", { Hour: true }), "HH:mm–HH:mm", "interval format \"jm\", { Hour: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("hm", { DayPeriod: true, Hour: true }), "h:mm a – h:mm a", "interval format \"hm\", { DayPeriod: true, Hour: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("hm", { Hour: true }), "h:mm – h:mm a", "interval format \"hm\", { Hour: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("hm", { Year: true }), "h:mm a", "interval format \"hm\", { Year: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", { DayPeriod: true, Hour: true }), "HH:mm–HH:mm", "interval format \"Hm\", { DayPeriod: true, Hour: true }");
+		// if the diff field is smaller than the fields in skeleton format, create custom format for a single date
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMMM", { Day: true }), "MMM y", "interval format \"yMMM\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", { Second: true }), "dd/MM/y, HH:mm", "interval format \"yMdjm\", { Second: true }");
 		assert.equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		assert.equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 		assert.equal(oLocaleData.getFirstDayOfWeek(), 1, "first day of week"); // TODO decide 0 or 1
@@ -347,6 +396,7 @@
 		assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdjms"), "EEEE, MMMM d, y 'at' h:mm:ss a", "datetime format \"yMMMMdEEEEjms\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("yMMMMEEEEdJms"), "EEEE, MMMM d, y 'at' h:mm:ss", "datetime format \"yMMMMdEEEEJms\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "h:mm – h:mm a", "interval format \"jm\", \"j\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("jm", { Hour: true }), "h:mm – h:mm a", "interval format \"jm\", { Hour: true }");
 	}
 
 	function customTests_he_IL(oLocaleData) {
@@ -402,6 +452,9 @@
 		assert.equal(oLocaleData.getCustomIntervalPattern("y", "y"), "y年～y年", "interval format \"y\", \"y\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("yMd", "d"), "y/MM/dd～y/MM/dd", "interval format \"yMd\", \"d\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", "d"), "M月d日～d日", "interval format \"MMMd\", \"d\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("y", { Year: true }), "y年～y年", "interval format \"y\", { Year: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMd", { Day: true }), "y/MM/dd～y/MM/dd", "interval format \"yMd\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", { Day: true }), "M月d日～d日", "interval format \"MMMd\", { Day: true }");
 		assert.equal(oLocaleData.getNumberSymbol("decimal"), ".", "decimal separator");
 		assert.equal(oLocaleData.getNumberSymbol("group"), ",", "group separator");
 		assert.ok(oLocaleData.getCalendarWeek("wide", 0).toLowerCase().indexOf("week") === -1, "calendar week should be translated");
@@ -428,7 +481,7 @@
 		assert.equal(oLocaleData.getDateTimePattern("long"), "{1}, {0}", "datetime pattern \"long\"");
 		assert.equal(oLocaleData.getCombinedDateTimePattern("medium", "short"), "d MMM y 'г'., H:mm", "datetime pattern \"medium\", \"short\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("y"), "y", "datetime format \"y\"");
-		assert.equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "y G", "datetime format \"y\"");
+		assert.equal(oLocaleData.getCustomDateTimePattern("y", "Japanese"), "y 'г'. G", "datetime format \"y\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("yMMd"), "dd.MM.y", "datetime format \"yMMd\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("yMMMw"), "LLL y 'г'. ('неделя': w)", "datetime format \"yMMMw\"");
 		assert.equal(oLocaleData.getCustomDateTimePattern("yMdHms"), "dd.MM.y, H:mm:ss", "datetime format \"yMdHms\"");
@@ -441,8 +494,23 @@
 		assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", "d"), "dd–dd MMM", "interval format \"MMMdd\", \"d\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", "H"), "H:mm–H:mm", "interval format \"Hm\", \"H\"");
 		assert.equal(oLocaleData.getCustomIntervalPattern("jm", "j"), "H:mm–H:mm", "interval format \"jm\", \"j\"");
+		assert.equal(oLocaleData.getCustomIntervalPattern("y", { Year: true }), "y–y", "interval format \"y\", { Year: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMd", { Day: true }), "dd.MM.y – dd.MM.y", "interval format \"yMd\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("yMdjm", { Hour: true }), "dd.MM.y, H:mm–H:mm", "interval format \"yMdjm\", { Hour: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("MMMd", { Day: true }), "d–d MMM", "interval format \"MMMd\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("MMMdd", { Day: true }), "dd–dd MMM", "interval format \"MMMdd\", { Day: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("Hm", { Hour: true }), "H:mm–H:mm", "interval format \"Hm\", { Hour: true }");
+		assert.equal(oLocaleData.getCustomIntervalPattern("jm", { Hour: true }), "H:mm–H:mm", "interval format \"jm\", { Hour: true }");
 		assert.equal(oLocaleData.getNumberSymbol("decimal"), ",", "decimal separator");
 		assert.equal(oLocaleData.getNumberSymbol("group"), "\xa0", "group separator");
+		assert.equal(oLocaleData.getPluralCategories().length, 4, "four plural forms");
+		assert.equal(oLocaleData.getPluralCategories()[0], "one", "special plural form for one");
+		assert.equal(oLocaleData.getPluralCategory("0"), "many", "plural category many for 0");
+		assert.equal(oLocaleData.getPluralCategory("1"), "one", "plural category one for 1");
+		assert.equal(oLocaleData.getPluralCategory("2.0"), "other", "plural category other for 2.0");
+		assert.equal(oLocaleData.getPluralCategory("4"), "few", "plural category few for 4");
+		assert.equal(oLocaleData.getPluralCategory("10"), "many", "plural category many for 10");
+		assert.equal(oLocaleData.getPluralCategory("101"), "one", "plural category one for 101");
 	}
 
 	function customTests_pt_BR(oLocaleData) {
@@ -457,15 +525,43 @@
 		assert.equal(oLocaleData.getWeekendEnd(), 0, "weekend end");
 	}
 
+	QUnit.module("Locale data types", {
+		beforeEach: function(assert) {
+
+			//ensure custom unit mappings and custom units are reset
+			this.oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+			this.oFormatSettings.setUnitMappings();
+			this.oFormatSettings.setCustomUnits();
+
+			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+		}, afterEach: function(assert) {
+			//ensure custom unit mappings and custom units are reset
+			this.oFormatSettings.setUnitMappings();
+			this.oFormatSettings.setCustomUnits();
+
+			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
+			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+		}
+	});
+
 	QUnit.test("Currency digits", function(assert) {
 		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US"));
 		assert.equal(oLocaleData.getCurrencyDigits("USD"), 2, "2 digits fuer USD");
 		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "2 digits fuer EUR");
 		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "0 digits fuer JPY");
 		assert.equal(oLocaleData.getCurrencyDigits("BHD"), 3, "3 digits fuer BHD");
-		// Cash digits
+
+		// CZK, CRC, SEK and NOK are explicitly tested
+		// For these currencies the cash digits in the CLDR differ from the standard digits in CLDR,
+		// as well as SAP's TCURX
+		assert.equal(oLocaleData.getCurrencyDigits("CZK"), 2, "2 digits fuer CZK");
+		assert.equal(oLocaleData.getCurrencyDigits("CRC"), 2, "2 digits fuer CRC");
+		assert.equal(oLocaleData.getCurrencyDigits("SEK"), 2, "2 digits fuer SEK");
+		assert.equal(oLocaleData.getCurrencyDigits("NOK"), 2, "2 digits fuer NOK");
+
+		// HUF and TWD are explicitly set to 0 digits
 		assert.equal(oLocaleData.getCurrencyDigits("HUF"), 0, "0 digits fuer HUF");
-		assert.equal(oLocaleData.getCurrencyDigits("CZK"), 0, "0 digits fuer CZK");
 		assert.equal(oLocaleData.getCurrencyDigits("TWD"), 0, "0 digits fuer TWD");
 	});
 
@@ -505,6 +601,213 @@
 		assert.equal(oLocaleData.getDatePattern("medium"), "yyyy/MM/dd", "medium pattern should be the one defined in format settings");
 		assert.equal(oLocaleData.getDatePattern("short", sap.ui.core.CalendarType.Gregorian), "M/d/yy", "short pattern for Gregorian calendar type should be fetched from locale data");
 	});
+
+	QUnit.test("Unit Display Name L10N", function(assert) {
+		var oLocale = new sap.ui.core.Locale("de_DE");
+		var oLocaleData = new sap.ui.core.LocaleData(oLocale);
+
+		assert.equal(oLocaleData.getUnitDisplayName("duration-hour"), "Std.", "display name 'Std.' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("mass-gram"), "Gramm", "display name 'Gramm' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("light-lux"), "Lux", "display name 'Lux' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("length-light-year"), "Lichtjahre", "display name 'Lichtjahre' is correct");
+		// unknown code
+		assert.equal(oLocaleData.getUnitDisplayName("foobar"), "", "display name 'foobar' is correct");
+
+		oLocale = new sap.ui.core.Locale("es_ES");
+		oLocaleData = new sap.ui.core.LocaleData(oLocale);
+
+		assert.equal(oLocaleData.getUnitDisplayName("duration-hour"), "horas", "display name 'horas' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("mass-gram"), "g", "display name 'g' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("light-lux"), "lx", "display name 'lx' is correct");
+		assert.equal(oLocaleData.getUnitDisplayName("length-light-year"), "a. l.", "display name 'a. l.' is correct");
+	});
+
+	QUnit.test("CustomLocaleData with getUnitFormats", function(assert) {
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(new sap.ui.core.Locale("en_US-x-sapufmt"));
+
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		oFormatSettings.setCustomUnits({
+			"cats": {
+				"displayName": "kittens",
+				"unitPattern-count-one": "{0} kitten",
+				"unitPattern-count-other": "{0} kittens"
+			}
+		});
+
+		oFormatSettings.setUnitMappings({
+			"CAT": "cats"
+		});
+
+		assert.equal(oLocaleData.getUnitDisplayName("cats"), "kittens");
+		assert.equal(oLocaleData.getUnitDisplayName("length-meter"), "m");
+		assert.equal(oLocaleData.getUnitDisplayName("CAT"), "", "not found");
+
+		// what format does
+		assert.equal(oLocaleData.getUnitFormat("cats").displayName, "kittens", "name is shown");
+		assert.equal(oLocaleData.getUnitFormat("length-meter").displayName, "m", "name is shown");
+		assert.notOk(oLocaleData.getUnitFormat("CAT"), "not found as it does not take mapping into consideration");
+		assert.equal(oLocaleData.getUnitFromMapping("CAT"), "cats", "cats is the respective mapping");
+		assert.equal(oLocaleData.getResolvedUnitFormat("CAT").displayName, "kittens", "kittens is the displayName");
+
+		//reset unit mappings
+		oFormatSettings.setUnitMappings();
+	});
+
+	QUnit.test("Unit Mappings", function(assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+
+		var mUnitMappings = {
+			"CAT": "cats",
+			"KIT": "cats",
+			"TAS": "volume-cups"
+		};
+		oFormatSettings.setUnitMappings(mUnitMappings);
+		assert.deepEqual(oFormatSettings.getUnitMappings(), mUnitMappings, "units must be all specified");
+
+		// set to undefined
+		oFormatSettings.setUnitMappings();
+		assert.deepEqual(oFormatSettings.getUnitMappings(), undefined, "units must be undefined");
+
+
+		oFormatSettings.addUnitMappings(mUnitMappings);
+		assert.deepEqual(oFormatSettings.getUnitMappings(), mUnitMappings, "units must be all specified");
+
+		oFormatSettings.addUnitMappings(null);
+		oFormatSettings.addUnitMappings(undefined);
+		oFormatSettings.addUnitMappings();
+		oFormatSettings.addUnitMappings({});
+
+		//add should not delete mappings
+		assert.deepEqual(oFormatSettings.getUnitMappings(), mUnitMappings, "units must be all specified");
+		assert.equal(oFormatSettings.getUnitMappings()["CAT"], "cats", "unit mapping is initially defined");
+
+		mUnitMappings = {
+			"CAT": "volume-cups",
+			"KIT": "cats",
+			"RAT": "volume-rat"
+		};
+		oFormatSettings.addUnitMappings(mUnitMappings);
+		assert.deepEqual(Object.keys(oFormatSettings.getUnitMappings()), ["CAT", "KIT", "TAS", "RAT"], "unit mappings must be all specified");
+		assert.equal(oFormatSettings.getUnitMappings()["CAT"], "volume-cups", "unit mappings was overwritten");
+
+		oFormatSettings.setUnitMappings(mUnitMappings);
+		assert.deepEqual(Object.keys(oFormatSettings.getUnitMappings()), ["CAT", "KIT", "RAT"], "unit mappings must be all specified");
+	});
+
+	QUnit.test("Custom Units get/set/add", function(assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+
+		var mUnits = {
+			"cats": {
+				"displayName": "kittens",
+				"unitPattern-count-one": "{0} kitten",
+				"unitPattern-count-other": "{0} kittens"
+			},
+			"dogs": {
+				"displayName": "puppies",
+				"unitPattern-count-one": "{0} puppy",
+				"unitPattern-count-other": "{0} puppies"
+			}
+		};
+		oFormatSettings.setCustomUnits(mUnits);
+
+		assert.deepEqual(oFormatSettings.getCustomUnits(), mUnits, "units must be all specified");
+
+
+		// set to undefined
+		oFormatSettings.setCustomUnits();
+		assert.deepEqual(oFormatSettings.getCustomUnits(), undefined, "units must be all specified");
+
+
+		oFormatSettings.addCustomUnits(mUnits);
+		assert.deepEqual(oFormatSettings.getCustomUnits(), mUnits, "units must be all specified");
+
+		mUnits = {
+			"cats": {
+				"displayName": "kitties",
+				"unitPattern-count-one": "{0} kitty",
+				"unitPattern-count-other": "{0} kitties"
+			},
+			"dogs": {
+				"displayName": "puppets",
+				"unitPattern-count-one": "{0} puppy",
+				"unitPattern-count-other": "{0} puppies"
+			}
+		};
+
+		oFormatSettings.addCustomUnits(mUnits);
+		assert.deepEqual(oFormatSettings.getCustomUnits(), mUnits, "units must be all specified");
+
+
+		oFormatSettings.addCustomUnits({
+			"birds": {
+				"displayName": "birds",
+				"unitPattern-count-one": "{0} bird",
+				"unitPattern-count-other": "{0} birds"
+			}
+		});
+		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
+
+		oFormatSettings.addCustomUnits({});
+		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
+
+		oFormatSettings.addCustomUnits();
+		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs", "birds"], "units must be all specified");
+
+		oFormatSettings.setCustomUnits(mUnits);
+		assert.deepEqual(Object.keys(oFormatSettings.getCustomUnits()), ["cats", "dogs"], "units must be all specified");
+	});
+
+	var aDeprecatedLocales = [
+		"in", // -> id
+		"sh", // -> sr
+		//"ji" -> yi not present
+		"iw" // -> he
+	];
+
+	QUnit.test("Deprecated locales support", function(assert) {
+		aDeprecatedLocales.forEach(function(sLocale) {
+			var oLocale = new sap.ui.core.Locale(sLocale),
+				oLocaleData = new sap.ui.core.LocaleData(oLocale);
+			//check retrieval of languages to see if the localeData was successfully loaded
+			assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present for locale: " + sLocale);
+		});
+	});
+
+	QUnit.test("Currency Digits", function(assert) {
+
+		var oLocaleData = sap.ui.core.LocaleData.getInstance(
+			sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale()
+		);
+
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({"JPY": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({"EUR": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies();
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({"EUR": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().addCustomCurrencies({"JPY": {"digits": 3}});
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 3, "number of digits for Euro");
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 3, "number of digits for Japanese Yen");
+
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies();
+		assert.equal(oLocaleData.getCurrencyDigits("EUR"), 2, "number of digits for Euro");
+		assert.equal(oLocaleData.getCurrencyDigits("JPY"), 0, "number of digits for Japanese Yen");
+	});
+
 </script>
 
 </head>

@@ -13,6 +13,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -165,9 +166,19 @@ public class SimpleProxyServlet extends HttpServlet {
         // workaround for setting not supported HTTP methods by JRE (e.g. PATCH)
         //  - search for "setRequestMethodUsingWorkaroundForJREBug"
         try {
+          HttpURLConnection c = conn;
+          // in case of HttpsUrlConnection the PATCH method needs to be overridden on the delegate
+          // which has been introduced by the JDK to provide an additional level of abstraction
+          // between the javax.net.ssl.HttpURLConnection and com.sun.net.ssl.HttpURLConnection
+          // the delegate is the HttpURLConnection which is just wrapped for HTTPS scenarios
+          if (c instanceof HttpsURLConnection) {
+            Field delegateField = c.getClass().getDeclaredField("delegate");
+            delegateField.setAccessible(true);
+            c = (HttpURLConnection) delegateField.get(c);
+          }
           Field methodField = HttpURLConnection.class.getDeclaredField("method");
           methodField.setAccessible(true);
-          methodField.set(conn, method);
+          methodField.set(c, method);
         } catch (Exception ex) {
           throw new RuntimeException(ex); // NOSONAR
         }

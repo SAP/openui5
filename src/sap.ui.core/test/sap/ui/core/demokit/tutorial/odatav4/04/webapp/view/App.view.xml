@@ -1,0 +1,77 @@
+<mvc:View
+	controllerName="sap.ui.core.tutorial.odatav4.controller.App"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true">
+	<App busy="{appView>/busy}" class="sapUiSizeCompact">
+		<pages>
+			<Page title="{i18n>peoplePageTitle}">
+				<content>
+					<Table
+						id="peopleList"
+						growing="true"
+						growingThreshold="10"
+						items="{
+							path: '/People',
+							parameters: {
+								$count: true
+							}
+						}">
+						<headerToolbar>
+							<OverflowToolbar>
+								<content>
+									<ToolbarSpacer/>
+									<SearchField
+										id="searchField"
+										width="20%"
+										placeholder="{i18n>searchFieldPlaceholder}"
+										search="onSearch"/>
+									<Button
+										id="refreshUsersButton"
+										icon="sap-icon://refresh"
+										tooltip="{i18n>refreshButtonText}"
+										press="onRefresh"/>
+									<Button
+										id="sortUsersButton"
+										press="onSort"
+										tooltip="{i18n>sortButtonText}"
+										icon="sap-icon://sort"/>
+								</content>
+							</OverflowToolbar>
+						</headerToolbar>
+						<columns>
+							<Column id="userNameColumn">
+								<Text text="{i18n>userNameLabelText}"/>
+							</Column>
+							<Column id="firstNameColumn">
+								<Text text="{i18n>firstNameLabelText}"/>
+							</Column>
+							<Column id="lastNameColumn">
+								<Text text="{i18n>lastNameLabelText}"/>
+							</Column>
+							<Column id="ageColumn">
+								<Text text="{i18n>ageLabelText}"/>
+							</Column>
+						</columns>
+						<items>
+							<ColumnListItem>
+								<cells>
+									<Input value="{UserName}"/>
+								</cells>
+								<cells>
+									<Input value="{FirstName}"/>
+								</cells>
+								<cells>
+									<Input value="{LastName}"/>
+								</cells>
+								<cells>
+									<Input value="{Age}"/>
+								</cells>
+							</ColumnListItem>
+						</items>
+					</Table>
+				</content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

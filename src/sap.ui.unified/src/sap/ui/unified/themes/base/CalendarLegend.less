@@ -6,25 +6,29 @@
 .sapUiUnifiedLegend {
 	color: @sapUiContentLabelColor;
 	font-family: @sapUiFontFamily;
-	font-size: @sapUiFontSmallSize;
+	font-size: @sapMFontSmallSize;
 	font-weight: normal;
-	padding: 12px;
-	column-gap: 8px;
-	-moz-column-gap: 8px; /* Firefox */
-	-webkit-column-gap: 8px; /* Safari and Chrome */
-	background-color: @sapUiListBackground;
+	padding: 0.75rem;
+  	background-color: @sapUiListBackground;
+}
+
+.sapUiUnifiedLegendItems {
+	column-gap: 0.5rem;
+	-moz-column-gap: 0.5rem; /* Firefox */
+	-webkit-column-gap: 0.5rem; /* Safari and Chrome */
 }
 
 .sapUiUnifiedLegendDescription {
 	display: inline-block;
-	line-height: 16px;
-	margin-top: 4px;
-	margin-bottom: 4px;
+	line-height: 1rem;
+	margin-top: 0.25rem;
+	margin-bottom: 0.25rem;
 	/* width is 100% without the width and margin of sapUiUnifiedLegendSquare
 	(the square in front of the legend description) */
 	width: calc(100% - 28px);
 	cursor: default;
 }
+
 
 .sapUiUnifiedLegendSquare {
 	display: inline-block;
@@ -40,6 +44,8 @@
 	width: 14px;
 	margin: 1px;
 	background: lighten(@sapUiContentForegroundColor, 5);
+	border: 1px solid @sapUiContentForegroundBorderColor;
+	box-sizing: border-box;
 }
 
 .sapUiUnifiedLegendSquareSelected {
@@ -54,10 +60,14 @@
 
 .sapUiSizeCompact .sapUiUnifiedLegend,
 .sapUiSizeCompact.sapUiUnifiedLegend {
-	padding: 8px;
-	column-gap: 6px;
-	-moz-column-gap: 6px; /* Firefox */
-	-webkit-column-gap: 6px; /* Safari and Chrome */
+	padding: 0.5rem;
+}
+
+.sapUiSizeCompact .sapUiUnifiedLegendItems,
+.sapUiSizeCompact.sapUiUnifiedLegendItems {
+  column-gap: 0.5rem;
+  -moz-column-gap: 0.5rem; /* Firefox */
+  -webkit-column-gap: 0.5rem; /* Safari and Chrome */
 }
 
 .sapUiSizeCompact .sapUiUnifiedLegendSquare {
@@ -75,16 +85,29 @@
 	width: 10px;
 	background-color: @sapUiListBackground;
 	border: 2px solid @sapUiCalendarColorToday;
+  	box-sizing: content-box;
 }
 
 .sapUiUnifiedLegendSelected > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
 	background: @sapUiSelected;
 }
 
-.sapUiUnifiedLegendNormalDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
+.sapUiUnifiedLegendWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
 	background: lighten(@sapUiContentForegroundColor, 5);
 }
 
 .sapUiUnifiedLegendNonWorkingDay > .sapUiUnifiedLegendSquare > .sapUiUnifiedLegendSquareColor {
 	background: @sapUiContentForegroundColor;
+}
+
+.sapUiUnifiedLegend hr {
+  margin-left: -0.5rem;
+  margin-right:  -0.5rem;
+  border-width: 0 0 1px 0;
+}
+
+.sapMDialog-CTX, .sapMPopup-CTX {
+	.sapUiUnifiedLegend {
+		padding: 1rem;
+	}
 }

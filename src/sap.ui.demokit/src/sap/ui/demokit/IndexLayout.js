@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.demokit.IndexLayout.
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/Control', 'sap/ui/core/IntervalTrigger', './library'],
-	function(jQuery, Device, Control, IntervalTrigger, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    'sap/ui/Device',
+    'sap/ui/core/Control',
+    'sap/ui/core/IntervalTrigger',
+    './library',
+    "./IndexLayoutRenderer"
+],
+	function(jQuery, Device, Control, IntervalTrigger, library, IndexLayoutRenderer) {
 	"use strict";
 
 

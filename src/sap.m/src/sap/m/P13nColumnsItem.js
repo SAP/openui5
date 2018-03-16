@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nColumnsItem.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Item'
-], function(jQuery, library, Item) {
+	'./library', 'sap/ui/core/Item'
+], function(library, Item) {
 	"use strict";
 
 	/**
@@ -84,4 +84,4 @@ sap.ui.define([
 
 	return P13nColumnsItem;
 
-}, /* bExport= */true);
+});

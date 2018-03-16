@@ -1,0 +1,48 @@
+{
+	"1.32.0": {
+		"date": "August 2015",
+		"notes": [
+			{
+				"id": "01452ce20c92c8cd8547e68a653e3a8a077a1289",
+				"type": "FEATURE",
+				"text": "sap.ui.rta : added renaming",
+				"references": []
+			},
+			{
+				"id": "35cd762c7128c5b4d070c828d27538d960ebaf97",
+				"type": "FEATURE",
+				"text": "sap.ui.rta : adds adding and removing of groups",
+				"references": []
+			},
+			{
+				"id": "bd022d72b6c03aef6609b160d7e500cad6e3d57a",
+				"type": "FIX",
+				"text": ": RTA High Contrast Black Theme",
+				"references": []
+			},
+			{
+				"id": "2e7c1344b9f4e8c42e6593f8cece12988254cc34",
+				"type": "FIX",
+				"text": ": RTA rename label",
+				"references": []
+			},
+			{
+				"id": "056c79d0424ae77c5f3e07fe9755b36d819c3326",
+				"type": "FIX",
+				"text": "sap.ui.rta - fixes double creation of field repository dialog",
+				"references": []
+			}
+		]
+	},
+	"1.32.2": {
+		"date": "September 2015",
+		"notes": [
+			{
+				"id": "0c894ff8bcc7b14ce59cdc8389072ea6519b68c2",
+				"type": "FIX",
+				"text": "sap.ui.rta - \"add dialog\" takes ignored Fields into consideration",
+				"references": []
+			}
+		]
+	}
+}

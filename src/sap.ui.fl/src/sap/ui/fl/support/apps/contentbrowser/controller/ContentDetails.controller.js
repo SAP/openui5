@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/m/Button",
 	"sap/ui/fl/support/apps/contentbrowser/lrepConnector/LRepConnector",
-	"sap/ui/fl/support/apps/contentbrowser/utils/HtmlEscapeUtils",
 	"sap/ui/fl/support/apps/contentbrowser/utils/DataUtils"
-], function (Controller, Dialog, Text, Button, LRepConnector, HtmlEscapeUtils, DataUtils) {
+], function (Controller, Dialog, Text, Button, LRepConnector, DataUtils) {
 	"use strict";
 
 	/**
@@ -52,7 +51,7 @@ sap.ui.define([
 		 * Handler if a route was matched;
 		 * Obtains information about layer, namespace, filename, and file type from the route's arguments, and then requests content from Layered Repository.
 		 * @param {Object} oRouteMatch - route object which is specified in the router and matched via regexp
-		 * @returns {Promise} - <code>LRepConnector<code> "getContent" promise
+		 * @returns {Promise} - <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
 		_onRouteMatched: function (oRouteMatch) {
@@ -61,7 +60,7 @@ sap.ui.define([
 
 			var oModelData = {};
 			oModelData.layer = mRouteArguments.layer;
-			oModelData.namespace = HtmlEscapeUtils.unescapeSlashes(mRouteArguments.namespace);
+			oModelData.namespace = decodeURIComponent(mRouteArguments.namespace);
 			oModelData.fileName = mRouteArguments.fileName;
 			oModelData.fileType = mRouteArguments.fileType;
 
@@ -87,8 +86,8 @@ sap.ui.define([
 		 * @param {Object} oModelData - model data of current page
 		 * @param {Object} oPage - current page used to set display busy mode on/off
 		 * @param {Object} sContentSuffix - content suffix for sending the metadata request
-		 * @param {Object} oData - data which is received from <code>LRepConnector<code> "getContent" promise
-		 * @returns {Promise} - <code>LRepConnector<code> "getContent" promise
+		 * @param {Object} oData - data which is received from <code>LRepConnector</code> "getContent" promise
+		 * @returns {Promise} - <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
 		_onContentReceived: function (oModelData, oPage, sContentSuffix, oData) {
@@ -112,7 +111,7 @@ sap.ui.define([
 		 * Sets the received data to the current content model, updates the icon tab bar, and releases the busy mode of the current page.
 		 * @param {Object} oModelData - model data of current page
 		 * @param {Object} oPage - current page used to set display busy mode on/off
-		 * @param {Object} oMetadata - metadata which is received from <code>LRepConnector<code> "getContent" promise
+		 * @param {Object} oMetadata - metadata which is received from <code>LRepConnector</code> "getContent" promise
 		 * @private
 		 */
 		_onContentMetadataReceived: function (oModelData, oPage, oMetadata) {
@@ -141,7 +140,7 @@ sap.ui.define([
 
 			oRouter.navTo("ContentDetailsEdit", {
 				"layer": oContentData.layer,
-				"namespace": HtmlEscapeUtils.escapeSlashes(oContentData.namespace),
+				"namespace": encodeURIComponent(oContentData.namespace),
 				"fileName": oContentData.fileName,
 				"fileType": oContentData.fileType
 			});
@@ -185,17 +184,19 @@ sap.ui.define([
 
 		/**
 		 * Handler if a deletion was confirmed.
-		 * @returns {Promise} - <code>LRepConnector<code> "deleteFile" promise
+		 * @returns {Promise} - <code>LRepConnector</code> "deleteFile" promise
 		 * @private
 		 */
 		_deleteFile: function () {
 			var oSelectedContentModel = this.getView().getModel("selectedContent");
 			var oContentData = oSelectedContentModel.getData();
-			var sLayer = "";
+			var sSelectedLayer = oContentData.layer;
+			var sContentLayer = "";
 
-			oContentData.metadata.forEach(function (mMetadata) {
+			oContentData.metadata.some(function (mMetadata) {
 				if (mMetadata.name === "layer") {
-					sLayer = mMetadata.value;
+					sContentLayer = mMetadata.value;
+					return true;
 				}
 			});
 
@@ -205,10 +206,10 @@ sap.ui.define([
 
 			var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
 
-			return LRepConnector.deleteFile(sLayer, sNamespace, sFileName, sFileType).then(function () {
+			return LRepConnector.deleteFile(sContentLayer, sNamespace, sFileName, sFileType).then(function () {
 				oRouter.navTo("LayerContentMaster", {
-					"layer": sLayer,
-					"namespace": HtmlEscapeUtils.escapeSlashes(sNamespace)
+					"layer": sSelectedLayer,
+					"namespace": encodeURIComponent(sNamespace)
 				});
 			});
 		}

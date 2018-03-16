@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+
+	<title>sap.m.TimePickerSliders Test</title>
+
+	<script src="shared-config.js"></script>
+	<script src="../../../resources/sap-ui-core.js"
+	        id="sap-ui-bootstrap"
+	        data-sap-ui-libs="sap.m, sap.ui.layout">
+	</script>
+
+</head>
+<body id="body" class="sapUiBody" role="application">
+<script>
+	jQuery.sap.require("sap.ui.core.HTML");
+	jQuery.sap.require("sap.ui.core.IconPool");
+
+	var oApp = new sap.m.App("myApp"),
+		oPage = new sap.m.Page();
+
+	function fnCreateCell(width, title, content) {
+		return new sap.ui.layout.BlockLayoutCell({
+			content: content,
+			width: width,
+			title: title
+		});
+	};
+
+	var options = [
+		{
+			valueFormat: "mm:ss",
+			value: "13:15",
+			displayFormat: "mm:ss",
+			minutesStep: 15,
+			secondsStep: 15
+		},
+		{
+			support2400: true,
+			valueFormat: "HH:mm:ss",
+			displayFormat: "HH:mm:ss",
+			value: "24:00:00"
+		},
+		{
+			displayFormat: "hh:mm a"
+		},
+		{
+			localeId: "de_DE",
+			displayFormat: "hh:mm a"
+		},
+		{
+			displayFormat: "HH:mm:ss"
+		},
+		{
+			value: "9:12:13"
+		},
+		{
+			value: "09:59"
+		},
+		{
+			value: "21:37",
+			valueFormat: "HH:mm"
+		},
+		{
+			value: {
+				path: "/timeValue",
+				type: new sap.ui.model.type.Time({style: "medium", strictParsing: true})
+			}
+		},
+		{
+			localeId: "zh_CN",
+			displayFormat: "ah:mm:ss",
+			valueFormat: "HH:mm:ss",
+			value: "13:22:52"
+		}
+	];
+
+	function returnIfDefined(oConfig, sKey) {
+		var sValue = oConfig[sKey];
+
+		if (sValue) {
+			return sKey + ": " + sValue + " ";
+		}
+
+		return "";
+	}
+
+	function generateTimePickers() {
+		var i,
+				aCells = [],
+				sInfo,
+				oCell,
+				oTp;
+
+		for (i = 0; i < options.length; i++) {
+			options[i].change = handleChange;
+			options[i].height = "300px";
+			sInfo =  returnIfDefined(options[i], "value") + returnIfDefined(options[i], "valueFormat") + returnIfDefined(options[i], "displayFormat")
+			if (options[i].value && options[i].value.path) { //data binding
+				oCell = fnCreateCell(1, sInfo, [
+						new sap.m.TimePickerSliders(options[i]),
+						new sap.m.Text({
+							text: {
+								path: "/timeValue",
+								type: new sap.ui.model.type.Time({style: "medium", strictParsing: true})
+							}
+						})
+					]);
+			} else {
+				oTp = new sap.m.TimePickerSliders(options[i]);
+				oCell = fnCreateCell(1, sInfo, oTp);
+			}
+
+			aCells.push(oCell);
+		}
+
+		return aCells;
+	}
+
+	function handleChange(oEvent) {
+		sap.m.MessageToast.show("Value is: " + oEvent.getParameter("value"));
+	}
+
+	function generateRows(aCells) {
+	 	var aRows = [];
+
+	 	for (var i = 0; i <= aCells.length - 1; i +=2) {
+			var oRow = new sap.ui.layout.BlockLayoutRow();
+
+			aCells[i] && oRow.addContent(aCells[i]);
+			aCells[i + 1] && oRow.addContent(aCells[i + 1]);
+
+			aRows.push(oRow);
+		}
+
+		return aRows;
+	}
+
+	oPage.addContent(new sap.ui.layout.BlockLayout({
+		id: "layout",
+		content: [
+			generateRows(generateTimePickers())
+		]
+	}));
+
+	var oModel = new sap.ui.model.json.JSONModel();
+	oModel.setData({
+		timeValue: new Date()
+	});
+	sap.ui.getCore().setModel(oModel);
+
+	oApp.addPage(oPage);
+	oApp.placeAt("body");
+</script>
+</body>
+</html>

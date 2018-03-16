@@ -3,8 +3,15 @@
  */
 
 // Provides control sap.ui.commons.DatePicker.
-sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sap/ui/core/date/UniversalDate', './library'],
-	function(jQuery, TextField, Date1, UniversalDate, library) {
+sap.ui.define([
+    'jquery.sap.global',
+    './TextField',
+    'sap/ui/model/type/Date',
+    'sap/ui/core/date/UniversalDate',
+    './library',
+    "./DatePickerRenderer"
+],
+	function(jQuery, TextField, Date1, UniversalDate, library, DatePickerRenderer) {
 	"use strict";
 
 	/**
@@ -26,7 +33,7 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 	 *
 	 * @constructor
 	 * @public
-	 * @deprecated Since version 1.38. Instead, use the <code>sap.m.DatePicker</code> control.
+	 * @deprecated as of version 1.38, replaced by {@link sap.m.DatePicker}
 	 * @alias sap.ui.commons.DatePicker
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -506,6 +513,7 @@ sap.ui.define(['jquery.sap.global', './TextField', 'sap/ui/model/type/Date', 'sa
 
 		/**
 		 * @see sap.ui.core.Control#getAccessibilityInfo
+		 * @returns {Object} Current accessibility state of the control
 		 * @protected
 		 */
 		DatePicker.prototype.getAccessibilityInfo = function() {

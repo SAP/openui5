@@ -15,8 +15,14 @@ sap.ui.define([
 			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 			this.getView().setModel(oModel);
 
+			oModel.attachRequestCompleted(function() {
+				var oData = oModel.getData();
+				oData.ProductCollection.length = 10;
+				oModel.setData(oData);
+			});
+
 			// add buttons with javaScript (yet not possible with XML views)
-			var oHeaderSelect = this.getView().byId("select");
+			var oHeaderSelect = this.byId("select");
 			var fnOnPress = function (oEvt) {
 				MessageToast.show("Executed " + oEvt.getSource().getText());
 				oHeaderSelect.close();

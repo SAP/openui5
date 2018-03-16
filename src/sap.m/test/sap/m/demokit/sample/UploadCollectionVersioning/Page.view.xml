@@ -1,86 +1,80 @@
 <mvc:View
 	height="100%"
 	controllerName="sap.m.sample.UploadCollectionVersioning.Page"
-	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-
 	<Page showHeader="false">
-		<content>
-			<OverflowToolbar>
-				<ToolbarSpacer/>
-				<Select
-					id="tbSelect"
-					items="{/items}"
-					selectedKey="{/selectedKey}"
-					change="onSelectChange" >
-					<core:Item key="{key}" text="{text}"/>
-				</Select>
-				<Label text="File types"></Label>
-				<MultiComboBox
-						id="fileTypesBox"
-						selectionChange="onFileTypeChange"
-						width="250px"
-						placeholder="Choose the valid file types"
-						items="{fileTypes>/items}">
-					<core:Item key="{fileTypes>key}" text="{fileTypes>text}" />
-				</MultiComboBox>
-			</OverflowToolbar>
-			<UploadCollection
-				id="UploadCollection"
-				maximumFilenameLength="55"
-				maximumFileSize="10"
-				multiple="false"
-				change="onChange"
-				fileSizeExceed="onFileSizeExceed"
-				selectionChange="onSelectionChange"
-				typeMissmatch="onTypeMissmatch"
-				uploadComplete="onUploadComplete"
-				beforeUploadStarts="onBeforeUploadStarts"
-				uploadTerminated="onUploadTerminated"
-				items="{path : '/items', templateShareable : false}"
-				mode="MultiSelect">
-				<toolbar>
-					<OverflowToolbar id="myId" >
-						<Title id="attachmentTitle"/>
-						<ToolbarSpacer/>
-						<Button id="downloadButton" text="Download" press="onDownloadItem" enabled="false" type="Transparent"></Button>
-						<Button id="versionButton" text="Upload a new version" press="onVersion" enabled="false" type="Transparent"></Button>
-						<UploadCollectionToolbarPlaceholder></UploadCollectionToolbarPlaceholder>
-					</OverflowToolbar>
-				</toolbar>
-				<items>
-					<UploadCollectionItem
-						documentId="{documentId}"
-						fileName="{fileName}"
-						mimeType="{mimeType}"
-						thumbnailUrl="{thumbnailUrl}"
-						url="{url}"
-						enableEdit="false"
-						enableDelete="false"
-						visibleDelete="false"
-						visibleEdit="false"
-						attributes="{path : 'attributes', templateShareable : false}"
-						statuses="{path : 'statuses', templateShareable : false}"
-						selected="{selected}">
-						<attributes>
-							<ObjectAttribute
-								title="{title}"
-								text="{parts : ['text', 'type'], formatter : '.formatAttribute'}"
-								active="{active}"/>
-						</attributes>
-						<statuses>
-							<ObjectStatus
-								title="{title}"
-								text="{text}"
-								state="{state}"
-								icon="{icon}"
-								iconDensityAware="{iconDensityAware}"
-								textDirection="{textDirection}"/>
-						</statuses>
-					</UploadCollectionItem>
-				</items>
-			</UploadCollection>
-		</content>
+		<UploadCollection
+			id="UploadCollection"
+			maximumFilenameLength="55"
+			maximumFileSize="10"
+			multiple="false"
+			change="onChange"
+			fileSizeExceed="onFileSizeExceed"
+			selectionChange="onSelectionChange"
+			typeMissmatch="onTypeMissmatch"
+			uploadComplete="onUploadComplete"
+			beforeUploadStarts="onBeforeUploadStarts"
+			items="{
+				path: '/items',
+				templateShareable: false
+			}"
+			mode="MultiSelect">
+			<toolbar>
+				<OverflowToolbar id="myId">
+					<Title id="attachmentTitle" />
+					<ToolbarSpacer />
+					<Button
+						id="downloadButton"
+						text="Download"
+						press="onDownloadItem"
+						enabled="false"
+						type="Transparent" />
+					<Button
+						id="versionButton"
+						text="Upload a new version"
+						press="onVersion"
+						enabled="false"
+						type="Transparent" />
+					<UploadCollectionToolbarPlaceholder/>
+				</OverflowToolbar>
+			</toolbar>
+			<items>
+				<UploadCollectionItem
+					documentId="{documentId}"
+					fileName="{fileName}"
+					mimeType="{mimeType}"
+					thumbnailUrl="{thumbnailUrl}"
+					url="{url}"
+					enableEdit="false"
+					enableDelete="false"
+					visibleDelete="false"
+					visibleEdit="false"
+					attributes="{
+						path: 'attributes',
+						templateShareable: false
+					}"
+					statuses="{
+						path: 'statuses',
+						templateShareable: false
+					}"
+					selected="{selected}">
+					<attributes>
+						<ObjectAttribute
+							title="{title}"
+							text="{
+								parts: [ 'text', 'type' ],
+								formatter : '.formatAttribute'
+							}"
+							active="false" />
+					</attributes>
+					<statuses>
+						<ObjectStatus title="{title}"
+							text="{text}"
+							state="{state}" />
+					</statuses>
+				</UploadCollectionItem>
+			</items>
+		</UploadCollection>
 	</Page>
 </mvc:View>

@@ -1,0 +1,69 @@
+{
+  "1.56.0": {
+    "date": "February 2018",
+    "notes": [
+      {
+        "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
+        "type": "FIX",
+        "text": "QUnit Designtime Library tests in Firefox",
+        "references": []
+      },
+      {
+        "id": "46f645da39e7e180c55822dbd4b2825a0750d76e",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPage: Added class for content alignment",
+        "references": []
+      },
+      {
+        "id": "ce322d086b774416f38ca94cf2f1451843e92445",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Inactive focusable header title fixed",
+        "references": []
+      },
+      {
+        "id": "edcadd1fde1d5ccfe0692306e313963f49baa06a",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageTitle: Enable main actions moving in RTA",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880187465"
+          }
+        ]
+      },
+      {
+        "id": "a1c46cc22e724a6bb77fbbe8e8f0fa7ac70f50d6",
+        "type": "FIX",
+        "text": "sap.f.FlexibleColumnLayout: Arrow buttons aligned with VD spec",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880193589"
+          }
+        ]
+      },
+      {
+        "id": "00a945c9ba0b7ec3d680e5b0c75b7238b7a075d2",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Missing documentation fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880228931"
+          }
+        ]
+      },
+      {
+        "id": "c34f38e136c8ebca7551415c055d35ba43390ee0",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Visual indicator visibility corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880210976"
+          }
+        ]
+      }
+    ]
+  }
+}

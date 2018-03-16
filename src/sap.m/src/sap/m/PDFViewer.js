@@ -2,8 +2,6 @@
  * ${copyright}
  */
 
-/* global ActiveXObject:false */
-
 // Provides control sap.m.PDFViewer.
 sap.ui.define([
 		"jquery.sap.global",
@@ -11,20 +9,12 @@ sap.ui.define([
 		"sap/ui/core/Control",
 		"sap/ui/Device",
 		"sap/m/PDFViewerRenderManager",
-		"sap/m/MessageBox"
+		"sap/m/MessageBox",
+		"sap/m/PDFViewerRenderer"
 	],
-	function (jQuery, library, Control, Device, PDFViewerRenderManager, MessageBox) {
+	function (jQuery, library, Control, Device, PDFViewerRenderManager, MessageBox, PDFViewerRenderer) {
 		"use strict";
 
-		var aAllowedMimeTypes = Object.freeze([
-			"application/pdf",
-			"application/x-google-chrome-pdf"
-		]);
-
-		function isSupportedMimeType(sMimeType) {
-			var iFoundIndex = aAllowedMimeTypes.indexOf(sMimeType);
-			return iFoundIndex > -1;
-		}
 
 		/**
 		 * Definition of PDFViewer control
@@ -33,11 +23,15 @@ sap.ui.define([
 		 * @param {object} [mSettings] initial settings for the new control
 		 *
 		 * @class
-		 * Allow displaying of pdf files and provides useful API.
+		 * <p>This control enables you to display PDF documents within your app.
+		 * It can be embedded in your user interface layout, or you can set it to open in a popup dialog.</p>
+		 * <p>Please note that the PDF Viewer control can be fully displayed on desktop devices only. On mobile
+		 * devices, only the toolbar with a download button is visible.</p>
 		 * @extends sap.ui.core.Control
 		 *
 		 * @author SAP SE
 		 * @version ${version}
+		 * @since 1.48
 		 *
 		 * @constructor
 		 * @public
@@ -62,14 +56,17 @@ sap.ui.define([
 						width: {type: "sap.ui.core.CSSSize", group: "Dimension", defaultValue: "100%"},
 						/**
 						 * Specifies the path to the PDF file to display. Can be set to a relative or
-						 * an absolute path.
+						 * an absolute path.<br>
+						 * Optionally, this property can also be set to a data URI path or a blob URL
+						 * in all major web browsers except Internet Explorer and Microsoft Edge, provided
+						 * that this data URI or blob URL is whitelisted in advance.
 						 */
 						source: {type: "sap.ui.core.URI", group: "Misc", defaultValue: null},
 						/**
 						 * A custom error message that is displayed when the PDF file cannot be loaded.
-						 * @deprecated since version 1.50.0
+						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getErrorPlaceholderMessage}.
 						 */
-						errorMessage: {type: "string", group: "Misc", defaultValue: null},
+						errorMessage: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
 						/**
 						 * A custom text that is displayed instead of the PDF file content when the PDF
 						 * file cannot be loaded.
@@ -78,15 +75,19 @@ sap.ui.define([
 						/**
 						 * A custom title for the PDF viewer popup dialog. Works only if the PDF viewer
 						 * is set to open in a popup dialog.
-						 * @deprecated since version 1.50.0
+						 * @deprecated As of version 1.50.0, replaced by {@link sap.m.PDFViewer#getTitle}.
 						 */
-						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null},
+						popupHeaderTitle: {type: "string", group: "Misc", defaultValue: null, deprecated: true},
 
 						/**
-						 * A custom title for the PDF viewer. Works only if the PDF viewer is embedded in
-						 * the layout.
+						 * A custom title for the PDF viewer.
 						 */
-						title: {type: "string", group: "Misc", defaultValue: null}
+						title: {type: "string", group: "Misc", defaultValue: null},
+
+						/**
+						* Shows or hides the download button.
+						*/
+						showDownloadButton: {type: "boolean", group: "Misc", defaultValue: true}
 					},
 					aggregations: {
 						/**
@@ -124,37 +125,6 @@ sap.ui.define([
 				}
 			});
 
-		/**
-		 * @returns {boolean}
-		 * @private
-		 */
-		PDFViewer._isPdfPluginEnabled = function () {
-			var bIsEnabled = true;
-			if (Device.browser.firefox) {
-				// https://bugzilla.mozilla.org/show_bug.cgi?id=1293406
-				// mimeType is missing for firefox even though it is enabled
-				return bIsEnabled;
-			}
-
-			if (Device.browser.internet_explorer) {
-				// hacky code how to recognize that pdf plugin is installed and enabled
-				try {
-					new ActiveXObject("AcroPDF.PDF");
-				} catch (e) {
-					bIsEnabled = false;
-				}
-
-				return bIsEnabled;
-			}
-
-			var aMimeTypes = navigator.mimeTypes;
-			bIsEnabled = aAllowedMimeTypes.some(function (sAllowedMimeType) {
-				var oMimeTypeItem = aMimeTypes.namedItem(sAllowedMimeType);
-				return oMimeTypeItem !== null;
-			});
-
-			return bIsEnabled;
-		};
 
 		/**
 		 * Lifecycle method
@@ -170,7 +140,6 @@ sap.ui.define([
 
 			this._initPopupControl();
 			this._initPopupDownloadButtonControl();
-			this._initPlaceholderLinkControl();
 			this._initPlaceholderMessagePageControl();
 			this._initToolbarDownloadButtonControl();
 			this._initOverflowToolbarControl();
@@ -191,12 +160,6 @@ sap.ui.define([
 			this._bOnBeforeUnloadFired = false;
 		};
 
-		/**
-		 * Sets the width of the PDFViewer.
-		 * @param {sap.ui.core.CSSSize} sWidth The width of the PDFViewer as CSS size.
-		 * @returns {sap.m.PDFViewer} Pointer to the control instance to allow method chaining.
-		 * @public
-		 */
 		PDFViewer.prototype.setWidth = function (sWidth) {
 			this.setProperty("width", sWidth, true);
 			var oDomRef = this.$();
@@ -208,12 +171,6 @@ sap.ui.define([
 			return this;
 		};
 
-		/**
-		 * Sets the height of the PDFViewer.
-		 * @param {sap.ui.core.CSSSize} sHeight The height of the PDFViewer as CSS size.
-		 * @returns {sap.m.PDFViewer} Pointer to the control instance to allow method chaining.
-		 * @public
-		 */
 		PDFViewer.prototype.setHeight = function (sHeight) {
 			this.setProperty("height", sHeight, true);
 			var oDomRef = this.$();
@@ -269,8 +226,12 @@ sap.ui.define([
 					sParametrizedSource = sParametrizedSource.substr(0, iCrossPosition);
 				}
 				sParametrizedSource += "#view=FitH";
+				if (!jQuery.sap.validateUrl(sParametrizedSource)) {
+					sParametrizedSource = encodeURI(sParametrizedSource);
+				}
+
 				if (jQuery.sap.validateUrl(sParametrizedSource)) {
-					oIframeElement.attr("src", encodeURI(sParametrizedSource));
+					oIframeElement.attr("src", sParametrizedSource);
 				} else {
 					this._fireErrorEvent();
 				}
@@ -316,7 +277,12 @@ sap.ui.define([
 		PDFViewer.prototype._fireLoadedEvent = function () {
 			this._bRenderPdfContent = true;
 			this.setBusy(false);
-			this._getIframeDOMElement().removeClass("sapMPDFViewerLoading");
+			try {
+				this._getIframeDOMElement().removeClass("sapMPDFViewerLoading");
+			} catch (err) {
+				jQuery.log.fatal("Iframe not founded in loaded event");
+				jQuery.log.fatal(err);
+			}
 			this.fireEvent("loaded");
 		};
 
@@ -337,7 +303,7 @@ sap.ui.define([
 				try {
 					// browsers render pdf in iframe as html page with embed tag
 					var aEmbeds = oTarget[0].contentWindow.document.embeds;
-					bContinue = aEmbeds.length === 1;
+					bContinue = !!aEmbeds && aEmbeds.length === 1;
 					if (bContinue) {
 						sCurrentContentType = aEmbeds[0].attributes.getNamedItem("type").value;
 					}
@@ -349,8 +315,7 @@ sap.ui.define([
 						return;
 					}
 				}
-
-				if (bContinue && isSupportedMimeType(sCurrentContentType)) {
+				if (bContinue && PDFViewerRenderer._isSupportedMimeType(sCurrentContentType)) {
 					this._fireLoadedEvent();
 				} else {
 					this._fireErrorEvent();
@@ -416,16 +381,17 @@ sap.ui.define([
 				return;
 			}
 
-			if (!isSupportedMimeType(sCurrentContentType)) {
+			if (!PDFViewerRenderer._isSupportedMimeType(sCurrentContentType)) {
 				this._fireErrorEvent();
 			}
 		};
 
 		/**
-		 * @param oEvent
-		 * @private
+		 * Downloads the PDF file.
+		 *
+		 * @public
 		 */
-		PDFViewer.prototype._onDownloadButtonClickListener = function (oEvent) {
+		PDFViewer.prototype.downloadPDF = function () {
 			var oWindow = window.open(this.getSource());
 			oWindow.focus();
 		};
@@ -459,7 +425,7 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._shouldRenderPdfContent = function () {
-			return PDFViewer._isPdfPluginEnabled() && this._bRenderPdfContent && this.getSource() !== null;
+			return PDFViewerRenderer._isPdfPluginEnabled() && this._bRenderPdfContent && this.getSource() !== null;
 		};
 
 		/**
@@ -472,7 +438,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * @param oOrigin
+		 * Triggers rerendering of this element and its children.
+		 *
+		 * @param {sap.ui.base.ManagedObject} [oOrigin] Child control for which the method was called
+		 *
+		 * @public
 		 */
 		PDFViewer.prototype.invalidate = function (oOrigin) {
 			this._initControlState();
@@ -480,13 +450,13 @@ sap.ui.define([
 		};
 
 		/**
-		 * Opens up the dialog with pdf viewer inside it
+		 * Opens the PDF viewer in a popup dialog.
 		 *
 		 * @public
 		 */
 		PDFViewer.prototype.open = function () {
 			if (!this._isSourceValidToDisplay()) {
-				jQuery.sap.assert(false, "The pdf can not be opened with given source. Given source: " + this.getSource());
+				jQuery.sap.assert(false, "The PDF file cannot be opened with the given source. Given source: " + this.getSource());
 				return;
 			}
 
@@ -578,7 +548,15 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._getRenderHeight = function () {
-			return this._bIsPopupOpen ? '100%' : this.getHeight();
+			if (this._bIsPopupOpen) {
+				return '100%';
+			}
+
+			if (!this._isEmbeddedModeAllowed()) {
+				return 'auto';
+			}
+
+			return this.getHeight();
 		};
 
 		/**
@@ -613,4 +591,4 @@ sap.ui.define([
 		PDFViewerRenderManager.extendPdfViewer(PDFViewer);
 
 		return PDFViewer;
-	}, /* bExport= */ true);
+	});

@@ -23,8 +23,8 @@ sap.ui.define([
 
 			// Responsiveness: move the search bar below the pull to refresh on touch devices
 			if (Device.support.touch) {
-				var bar = this.getView().byId("searchBar");
-				var page = this.getView().byId("page");
+				var bar = this.byId("searchBar");
+				var page = this.byId("page");
 				page.insertAggregation("content", bar, 1);
 			}
 
@@ -58,11 +58,11 @@ sap.ui.define([
 			setTimeout(jQuery.proxy(function () {
 
 				this._pushNewProduct();
-				this.getView().byId("pullToRefresh").hide();
+				this.byId("pullToRefresh").hide();
 
 				// Deal with any actual search query
-				var oList = this.getView().byId("list");
-				var oSearchField = this.getView().byId("searchField");
+				var oList = this.byId("list");
+				var oSearchField = this.byId("searchField");
 				var sQuery = oSearchField.getValue();
 				var aFilters = [];
 				if (sQuery && sQuery.length) {

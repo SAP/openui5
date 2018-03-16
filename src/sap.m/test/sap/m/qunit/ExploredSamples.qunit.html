@@ -5,7 +5,7 @@
 	<meta charset="utf-8">
 	<base href="../../../../">
 	<title>Test Page for 'Explored' samples from sap.m</title>
-	<script src="../shared-config.js"></script>
+	<script src="test-resources/sap/m/shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-noConflict="true"
 			src="resources/sap-ui-core.js"
@@ -35,28 +35,6 @@
 			"sap.m.sample.PageListReportToolbar"
 		];
 
-		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 10) {
-			aExcludes = aExcludes.concat([
-				//Flexbox not supported for IE 9
-				"sap.m.sample.FlexBoxBasicAlignment",
-				"sap.m.sample.FlexBoxCols",
-				"sap.m.sample.FlexBoxDirectionOrder",
-				"sap.m.sample.FlexBoxNav",
-				"sap.m.sample.FlexBoxNested",
-				"sap.m.sample.FlexBoxOpposingAlignment",
-				"sap.m.sample.FlexBoxSizeAdjustments"
-			]);
-		}
-
-
-		if (sap.ui.Device.browser.msie && sap.ui.Device.browser.version < 11) {
-			aExcludes = aExcludes.concat([
-				//NotificationListItem is not supported for IE 9 and IE 10
-				"sap.m.sample.NotificationListItem",
-				"sap.m.sample.NotificationListGroup"
-			]);
-		}
-
 		sap.ui.require(['sap/ui/demo/mock/qunit/SampleTester'], function(SampleTester) {
 			new SampleTester('sap.m', aExcludes).placeAt('content');
 		});
@@ -64,8 +42,8 @@
 	</script>
 </head>
 <body class='sapUiBody'>
-	<div id="content"></div>
 	<div id="qunit"></div>
 	<div id="qunit-fixture"></div>
+	<div id="content"></div>
 </body>
 </html>

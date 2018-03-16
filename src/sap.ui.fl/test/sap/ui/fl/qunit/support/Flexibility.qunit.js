@@ -1,10 +1,10 @@
-/*global QUnit,sinon*/
+/*global QUnit*/
 
 sap.ui.require([
 		"sap/ui/core/support/Support",
+		"sap/ui/core/support/Plugin",
 		"sap/ui/fl/support/Flexibility",
-		"sap/ui/fl/Cache",
-		"sap/ui/fl/context/ContextManager",
+		"sap/ui/fl/ChangePersistenceFactory",
 		"jquery.sap.global",
 		"sap/ui/thirdparty/qunit",
 		"sap/ui/qunit/qunit-junit",
@@ -13,305 +13,235 @@ sap.ui.require([
 		"sap/ui/thirdparty/sinon",
 		"sap/ui/thirdparty/sinon-qunit"
 	],
-	function (support, Flexibility, Cache, ContextManager) {
+	function (support, Plugin, Flexibility, ChangePersistenceFactory) {
 		"use strict";
-
-		var sandbox = sinon.sandbox.create();
-
 		var SupportStub = sap.ui.require("sap/ui/core/support/Support").getStub();
 
-		QUnit.module("sap.ui.fl.support.Flexibility - onsapUiSupportFlexibilityGetChanges", {
+		QUnit.module("sap.ui.fl.support.Flexibility - init", {
 			beforeEach: function () {
-				Cache._entries = {};
 				this.oFlexibility = new Flexibility(SupportStub);
 			},
 			afterEach: function () {
-				sandbox.restore();
 			}
 		});
 
-		QUnit.test("sends an empty object to the support window if the flexibility cache is not filled", function (assert) {
+		QUnit.test("sets models and starts rendering for the tool part", function (assert) {
+			var renderingSpy = this.spy(this.oFlexibility, "_renderToolPlugin");
+			this.stub(Plugin.prototype.init, "apply");
+
+			this.oFlexibility.init({
+				isToolStub: function () {return true;}
+			});
+
+			var oView = this.oFlexibility.oView;
+			assert.equal(renderingSpy.callCount, 1, "the rendering was called");
+			assert.ok(oView.getModel("flexApps"));
+			assert.ok(oView.getModel("flexToolSettings"));
+			assert.ok(oView.getModel("flexChanges"));
+			assert.ok(oView.getModel("flexChangeDetails"));
+		});
+
+
+		QUnit.module("sap.ui.fl.support.Flexibility - onRefresh", {
+			beforeEach: function () {
+				this.oFlexibility = new Flexibility(SupportStub);
+			},
+			afterEach: function () {
+			}
+		});
+
+		QUnit.test("sends a new request for apps", function (assert) {
 			var done = assert.async();
-			sandbox.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
-				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
+			this.stub(SupportStub, "sendEvent", function (sEventName) {
+				assert.equal(sEventName, "sapUiSupportFlexibilityGetApps", "the GetChangesMaps event was triggered");
+				done();
+			});
+
+			this.oFlexibility.onRefresh();
+		});
+
+		QUnit.module("sap.ui.fl.support.Flexibility - _onAppSelected", {
+			beforeEach: function () {
+				this.oFlexibility = new Flexibility(SupportStub);
+			},
+			afterEach: function () {
+			}
+		});
+
+		QUnit.test("requests the current data for apps", function (assert) {
+			var done = assert.async();
+			this.stub(SupportStub, "sendEvent", function (sEventName) {
+				assert.equal(sEventName, "sapUiSupportFlexibilityGetChangesMaps", "the GetChangesMaps event was triggered");
+				done();
+			});
+
+			this.oFlexibility._onAppSelected();
+		});
+
+		QUnit.module("sap.ui.fl.support.Flexibility - onsapUiSupportFlexibilityGetApps", {
+			beforeEach: function () {
+				this.oFlexibility = new Flexibility(SupportStub);
+			},
+			afterEach: function () {
+			}
+		});
+		QUnit.test("sends a '" + Flexibility.prototype.sNoDebug + "' flag in case the application side is not debugging the fl-library", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			this.stub(oConfig, "getDebug").returns(false);
+
+			var done = assert.async();
+			this.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
+				assert.equal(typeof oPayload, "string", "a string was passed as a payload");
+				assert.equal(oPayload, Flexibility.prototype.sNoDebug, "the flag was sent");
+				done();
+			});
+
+			this.oFlexibility.onsapUiSupportFlexibilityGetApps();
+
+		});
+
+		QUnit.test("sends an empty object to the support window if the flexibility cache is not filled", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			this.stub(oConfig, "getDebug").returns(true);
+
+			var done = assert.async();
+			this.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 0, "with no data in it");
 				done();
 			});
 
-			this.oFlexibility.onsapUiSupportFlexibilityGetChanges();
+			this.oFlexibility.onsapUiSupportFlexibilityGetApps();
 		});
 
-		QUnit.test("sends the data to the support window for a reference without contexts", function (assert) {
+		QUnit.test("sends the data to the support window for a reference", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			this.stub(oConfig, "getDebug").returns(true);
+
 			var done = assert.async();
 			var sReference = "ref1";
 			var sAppVersion = "1.1.1";
-			var oChange = {};
-			Cache._entries[sReference] = {};
-			Cache._entries[sReference][sAppVersion] = {
-				file: {
-					changes: {
-						changes: [oChange],
-						contexts: []
-					}
-				}
-			};
+			ChangePersistenceFactory.getChangePersistenceForComponent(sReference, sAppVersion); // create instance
 
-
-			sandbox.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
-				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
+			this.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
 				assert.equal(Object.keys(oPayload).length, 1, "one object was passed");
-				var oPassedFlexData = oPayload[0];
-				assert.equal(oPassedFlexData.reference, sReference + " - " + sAppVersion);
-				assert.equal(oPassedFlexData.changes.length, 1, "a change was passed");
-				assert.equal(oPassedFlexData.contexts.length, 0, "no contexts were passed");
+				var oPassedAppData = oPayload[0];
+				assert.equal(oPassedAppData.key, sReference + Flexibility.prototype.sDelimiter + sAppVersion, "the key was passed correct");
+				assert.equal(oPassedAppData.text, sReference, "the app id was passed correct");
+				assert.equal(oPassedAppData.additionalText, sAppVersion, "the app version was passed correct");
 				done();
 			});
 
-			this.oFlexibility.onsapUiSupportFlexibilityGetChanges();
+			this.oFlexibility.onsapUiSupportFlexibilityGetApps();
 		});
 
-		QUnit.test("sends the data to the support window for a reference with contexts", function (assert) {
-			var done = assert.async();
-			var sReference = "ref1";
-			var sAppVersion = "1.1.1";
-			var oChange = {};
-			var oContext1 = {};
-			var oContext2 = {};
-			Cache._entries[sReference] = {};
-			Cache._entries[sReference][sAppVersion] = {
-				file: {
-					changes: {
-						changes: [oChange],
-						contexts: [oContext1, oContext2]
-					}
-				}
-			};
-			sandbox.stub(ContextManager, "getActiveContexts", function () {
-				return Promise.resolve([]);
-			});
+		QUnit.test("sends the data to the support window for  multiple references", function (assert) {
+			var oConfig = sap.ui.getCore().getConfiguration();
+			this.stub(oConfig, "getDebug").returns(true);
 
-			sandbox.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
-				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
-				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
-				assert.equal(Object.keys(oPayload).length, 1, "one object was passed");
-				var oPassedFlexData = oPayload[0];
-				assert.equal(oPassedFlexData.reference, sReference + " - " + sAppVersion);
-				assert.equal(oPassedFlexData.changes.length, 1, "a change was passed");
-				assert.equal(oPassedFlexData.contexts.length, 2, "a context was passed");
-				done();
-			});
-
-			this.oFlexibility.onsapUiSupportFlexibilityGetChanges();
-		});
-
-		QUnit.test("sends the data to the support window for multiple reference with and without contexts", function (assert) {
-			var done = assert.async();
-			var sReference1 = "ref1";
-			var sAppVersion = "1.1.1";
-			var oChange1Action1 = {};
-			var oContext1Action1 = {};
-			var oContext1Action2 = {};
-			Cache._entries[sReference1] = {};
-			Cache._entries[sReference1][sAppVersion] = {
-				file: {
-					changes: {
-						changes: [oChange1Action1],
-						contexts: [oContext1Action1, oContext1Action2]
-					}
-				}
-			};
-			var sReference2 = "ref2";
-			var oChange2Action1 = {};
-			var oChange2Action2 = {};
-			var oContext2Action1 = {};
-			Cache._entries[sReference2] = {};
-			Cache._entries[sReference2][sAppVersion] = {
-				file: {
-					changes: {
-						changes: [oChange2Action1, oChange2Action2],
-						contexts: [oContext2Action1]
-					}
-				}
-			};
-			sandbox.stub(ContextManager, "getActiveContexts", function () {
-				return Promise.resolve([]);
-			});
-
-			sandbox.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
-				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
-				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
-				assert.equal(Object.keys(oPayload).length, 2, "two object were passed");
-				var oPassedFlexData1 = oPayload[0];
-				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + sAppVersion);
-				assert.equal(oPassedFlexData1.changes.length, 1, "a change was passed");
-				assert.equal(oPassedFlexData1.contexts.length, 2, "two contexts were passed");
-				var oPassedFlexData2 = oPayload[1];
-				assert.equal(oPassedFlexData2.reference, sReference2 + " - " + sAppVersion);
-				assert.equal(oPassedFlexData2.changes.length, 2, "two changes were passed");
-				assert.equal(oPassedFlexData2.contexts.length, 1, "a context was passed");
-				done();
-			});
-
-			this.oFlexibility.onsapUiSupportFlexibilityGetChanges();
-		});
-
-		QUnit.test("sends the data to the support window for multiple reference and multiple versions with and without contexts", function (assert) {
 			var done = assert.async();
 			var sReference1 = "ref1";
 			var sAppVersion1 = "1.1.1";
-			var sAppVersion2 = "2.2.2";
-			var oChange1Action1 = {};
-			var oChange1Action2 = {};
-			var oContext1Action1 = {};
-			var oContext1Action2 = {};
-			Cache._entries[sReference1] = {};
-			Cache._entries[sReference1][sAppVersion1] = {
-				file: {
-					changes: {
-						changes: [oChange1Action1],
-						contexts: [oContext1Action1, oContext1Action2]
-					}
-				}
-			};
-			Cache._entries[sReference1][sAppVersion2] = {
-				file: {
-					changes: {
-						changes: [oChange1Action1, oChange1Action2],
-						contexts: []
-					}
-				}
-			};
-
 			var sReference2 = "ref2";
-			var oChange2Action1 = {};
-			var oChange2Action2 = {};
-			var oChange2Action3 = {};
-			var oContext2Action1 = {};
-			Cache._entries[sReference2] = {};
-			Cache._entries[sReference2][sAppVersion1] = {
-				file: {
-					changes: {
-						changes: [oChange2Action1, oChange2Action2],
-						contexts: [oContext2Action1]
-					}
-				}
-			};
-			Cache._entries[sReference2][sAppVersion2] = {
-				file: {
-					changes: {
-						changes: [oChange2Action1, oChange2Action2, oChange2Action3],
-						contexts: [oContext2Action1]
-					}
-				}
-			};
-			sandbox.stub(ContextManager, "getActiveContexts", function () {
-				return Promise.resolve([]);
-			});
+			var sAppVersion2 = "2.1.1";
+			ChangePersistenceFactory.getChangePersistenceForComponent(sReference1, sAppVersion1); // create instance
+			ChangePersistenceFactory.getChangePersistenceForComponent(sReference1, sAppVersion2); // create instance
+			ChangePersistenceFactory.getChangePersistenceForComponent(sReference2, sAppVersion1); // create instance
 
-			sandbox.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
-				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
+			this.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
+				assert.equal(sEventName, "sapUiSupportFlexibilitySetApps", "the SetChanges event was triggered");
 				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
-				assert.equal(Object.keys(oPayload).length, 4, "four object were passed");
-				var oPassedFlexData0 = oPayload[0];
-				assert.equal(oPassedFlexData0.reference, sReference1 + " - " + sAppVersion1);
-				assert.equal(oPassedFlexData0.changes.length, 1, "a change was passed");
-				assert.equal(oPassedFlexData0.contexts.length, 2, "two contexts were passed");
-				var oPassedFlexData1 = oPayload[1];
-				assert.equal(oPassedFlexData1.reference, sReference1 + " - " + sAppVersion2);
-				assert.equal(oPassedFlexData1.changes.length, 2, "two changes was passed");
-				assert.equal(oPassedFlexData1.contexts.length, 0, "no contexts were passed");
-				var oPassedFlexData2 = oPayload[2];
-				assert.equal(oPassedFlexData2.reference, sReference2 + " - " + sAppVersion1);
-				assert.equal(oPassedFlexData2.changes.length, 2, "two changes were passed");
-				assert.equal(oPassedFlexData2.contexts.length, 1, "a context was passed");
-				var oPassedFlexData3 = oPayload[3];
-				assert.equal(oPassedFlexData3.reference, sReference2 + " - " + sAppVersion2);
-				assert.equal(oPassedFlexData3.changes.length, 3, "three changes were passed");
-				assert.equal(oPassedFlexData3.contexts.length, 1, "a context was passed");
+				assert.equal(Object.keys(oPayload).length, 3, "three objects were passed");
+				var oPassedAppData = oPayload[0];
+				assert.equal(oPassedAppData.key, sReference1 + Flexibility.prototype.sDelimiter + sAppVersion1, "the key was passed correct");
+				assert.equal(oPassedAppData.text, sReference1, "the app id was passed correct");
+				assert.equal(oPassedAppData.additionalText, sAppVersion1, "the app version was passed correct");
+				oPassedAppData = oPayload[1];
+				assert.equal(oPassedAppData.key, sReference1 + Flexibility.prototype.sDelimiter + sAppVersion2, "the key was passed correct");
+				assert.equal(oPassedAppData.text, sReference1, "the app id was passed correct");
+				assert.equal(oPassedAppData.additionalText, sAppVersion2, "the app version was passed correct");
+				oPassedAppData = oPayload[2];
+				assert.equal(oPassedAppData.key, sReference2 + Flexibility.prototype.sDelimiter + sAppVersion1, "the key was passed correct");
+				assert.equal(oPassedAppData.text, sReference2, "the app id was passed correct");
+				assert.equal(oPassedAppData.additionalText, sAppVersion1, "the app version was passed correct");
 				done();
 			});
 
-			this.oFlexibility.onsapUiSupportFlexibilityGetChanges();
+			this.oFlexibility.onsapUiSupportFlexibilityGetApps();
 		});
 
-		QUnit.test("sorting works for multiple reference and multiple versions", function (assert) {
-			var done = assert.async();
-			var sReference1 = "ref1";
-			var sAppVersion1 = "1.2.02";
-			var sAppVersion2 = "1.2.1";
-			var sDefaultAppVersion = "DEFAULT_APP_VERSION";
-			var oChange1Action1 = {};
-			var oChange1Action2 = {};
-			Cache._entries[sReference1] = {};
-			Cache._entries[sReference1][sAppVersion1] = {
-				file: {
-					changes: {
-						changes: [oChange1Action1],
-						contexts: []
-					}
-				}
-			};
-			Cache._entries[sReference1][sAppVersion2] = {
-				file: {
-					changes: {
-						changes: [oChange1Action1, oChange1Action2],
-						contexts: []
-					}
-				}
-			};
-			Cache._entries[sReference1][sDefaultAppVersion] = {
-				file: {
-					changes: {
-						changes: [oChange1Action1, oChange1Action2],
-						contexts: []
-					}
-				}
-			};
+		QUnit.module("sap.ui.fl.support.Flexibility - onsapUiSupportFlexibilitySetApps", {
+			beforeEach: function () {
+				this.oFlexibility = new Flexibility(SupportStub);
+			},
+			afterEach: function () {
+			}
+		});
 
-			var sReference2 = "ref02";
-			var oChange2Action1 = {};
-			var oChange2Action2 = {};
-			var oChange2Action3 = {};
-			Cache._entries[sReference2] = {};
-			Cache._entries[sReference2][sAppVersion1] = {
-				file: {
-					changes: {
-						changes: [oChange2Action1, oChange2Action2],
-						contexts: []
-					}
-				}
-			};
-			Cache._entries[sReference2][sAppVersion2] = {
-				file: {
-					changes: {
-						changes: [oChange2Action1, oChange2Action2, oChange2Action3],
-						contexts: []
-					}
-				}
-			};
-			sandbox.stub(ContextManager, "getActiveContexts", function () {
-				return Promise.resolve([]);
+		QUnit.test("sets the data on the apps model and preselects the first entry", function (assert) {
+			this.stub(Plugin.prototype.init, "apply");
+			this.oFlexibility.init({
+				isToolStub: function () {return true;}
 			});
+			var oAppSelection = this.oFlexibility.oView.byId("appSelection");
+			var oFireChangeStub = this.stub(oAppSelection, "fireChange");
+			var oPassedParameters = {dummyKey: "dummyValue"};
+			var oEvent = new sap.ui.base.Event(undefined, undefined, oPassedParameters);
 
-			sandbox.stub(SupportStub, "sendEvent", function (sEventName, oPayload) {
-				assert.equal(sEventName, "sapUiSupportFlexibilitySetChanges", "the SetChanges event was triggered");
-				assert.equal(typeof oPayload, "object", "an object was passed as a payload");
-				assert.equal(Object.keys(oPayload).length, 5, "five object were passed");
-				var oPassedFlexData0 = oPayload[0];
-				assert.equal(oPassedFlexData0.reference, sReference2 + " - " + sAppVersion2);
-				var oPassedFlexData1 = oPayload[1];
-				assert.equal(oPassedFlexData1.reference, sReference2 + " - " + sAppVersion1);
-				var oPassedFlexData2 = oPayload[2];
-				assert.equal(oPassedFlexData2.reference, sReference1 + " - " + "Version independent");
-				var oPassedFlexData3 = oPayload[3];
-				assert.equal(oPassedFlexData3.reference, sReference1 + " - " + sAppVersion2);
-				var oPassedFlexData4 = oPayload[4];
-				assert.equal(oPassedFlexData4.reference, sReference1 + " - " + sAppVersion1);
-				done();
+			this.oFlexibility.onsapUiSupportFlexibilitySetApps(oEvent);
+
+			var oData = this.oFlexibility.oAppModel.getData();
+			assert.deepEqual(oData, oPassedParameters, "the data was set in the apps model");
+			assert.equal(oFireChangeStub.callCount, 1, "the selection of the first entry is triggered");
+		});
+
+		QUnit.module("sap.ui.fl.support.Flexibility - onsapUiSupportFlexibilitySetChangesMaps", {
+			beforeEach: function () {
+				this.oFlexibility = new Flexibility(SupportStub);
+			},
+			afterEach: function () {
+			}
+		});
+
+		QUnit.test("sets the data on the changes model", function (assert) {
+			this.stub(Plugin.prototype.init, "apply");
+			this.oFlexibility.init({
+				isToolStub: function () {return true;}
 			});
+			var oPassedParameters = {dummyKey: "dummyValue"};
+			var oEvent = new sap.ui.base.Event(undefined, undefined, oPassedParameters);
 
-			this.oFlexibility.onsapUiSupportFlexibilityGetChanges();
+			this.oFlexibility.onsapUiSupportFlexibilitySetChangesMaps(oEvent);
+
+			var oData = this.oFlexibility.oChangesModel.getData();
+			assert.deepEqual(oData, oPassedParameters, "the data was set in the changes model");
+		});
+
+		QUnit.module("sap.ui.fl.support.Flexibility - onsapUiSupportFlexibilityGetChangesMaps", {
+			beforeEach: function () {
+				this.oFlexibility = new Flexibility(SupportStub);
+			},
+			afterEach: function () {
+			}
+		});
+
+		QUnit.test("collects and the data correct and sends the response to the toll plugin", function (assert) {
+			var sAppReference = "ref";
+			var sVersion = "ver";
+			var sAppKey = sAppReference + this.oFlexibility.sDelimiter + sVersion;
+			var oEvent = new sap.ui.base.Event(undefined, undefined, {appKey: sAppKey});
+			var oGetChangesMapStub = this.spy(this.oFlexibility, "_getChangesMapForApp");
+
+			this.oFlexibility.onsapUiSupportFlexibilityGetChangesMaps(oEvent);
+
+			assert.equal(oGetChangesMapStub.callCount, 1, "the apps were requested once");
+			var oGetAppsCall = oGetChangesMapStub.getCall(0);
+			var oGetAppsCallParameters = oGetAppsCall.args;
+			assert.equal(oGetAppsCallParameters[0], sAppReference, "the reference was passed correct");
+			assert.equal(oGetAppsCallParameters[1], sVersion, "the version was passed correct");
 		});
 });

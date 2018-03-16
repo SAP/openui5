@@ -4,7 +4,6 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:base="sap.ui.base"
 	xmlns:tool="sap.ui.demo.toolpageapp.control">
-
 	<l:BlockLayout
 		id="statisticsBlockLayout"
 		busy="false"
@@ -14,69 +13,74 @@
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>ovSysUptime}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>orderStatusDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3PieChart data="{view>/PieChartData}">
 					<base:ManagedObject/>
 				</tool:D3PieChart>
 			</l:BlockLayoutCell>
-
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>disUsersMonth}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>customerRatingDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3ColumnChart data="{view>/ColumnChartData}">
 					<base:ManagedObject/>
 				</tool:D3ColumnChart>
 			</l:BlockLayoutCell>
-
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>costUpgStor}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>salesTrendDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3ComparisonChart data="{view>/ComparisonChartData}">
 					<base:ManagedObject/>
 				</tool:D3ComparisonChart>
 			</l:BlockLayoutCell>
-
 		</l:BlockLayoutRow>
 		<l:BlockLayoutRow>
-
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>databaseUsage}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>canceledOrdersDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3ColumnChart data="{view>/ColumnChartData2}">
 					<base:ManagedObject/>
 				</tool:D3ColumnChart>
 			</l:BlockLayoutCell>
-
 			<l:BlockLayoutCell>
 				<Title
 					text="{i18n>impCostCenter}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>netPromoterDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3ComparisonChart data="{view>/ComparisonChartData2}">
@@ -85,18 +89,19 @@
 			</l:BlockLayoutCell>
 			<l:BlockLayoutCell>
 				<Title
-					text="{i18n>maintCompl}"
+					text="{i18n>maintenanceCompletion}"
+					level="H4"
 					titleStyle="H2"
 					width="100%"/>
 				<Title
 					text="{i18n>revenueDate}"
+					level="H5"
 					width="100%"
 					class="sapUiSmallMarginBottom"/>
 				<tool:D3PieChart data="{view>/PieChartData2}">
 					<base:ManagedObject/>
 				</tool:D3PieChart>
 			</l:BlockLayoutCell>
-
 		</l:BlockLayoutRow>
 	</l:BlockLayout>
 </mvc:View>

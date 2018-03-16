@@ -3,8 +3,8 @@
  */
 
 // This is internal control dedicated for Demo Kit application usage
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/Icon'],
-	function(jQuery, Element, Icon) {
+sap.ui.define(['sap/ui/core/Element', 'sap/ui/core/Icon'],
+	function(Element, Icon) {
 		"use strict";
 
 		var SimpleTreeNode = Element.extend("sap.ui.demokit.SimpleTreeNode", { metadata : {

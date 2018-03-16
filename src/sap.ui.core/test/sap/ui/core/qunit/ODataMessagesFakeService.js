@@ -116,6 +116,18 @@ var mPredefinedServiceResponses = {
 			var sAnswer = "Not found";
 
 			switch (sUrl) {
+				case "fakeservice://testdata/odata/northwind/Products(1)?$expand=Supplier":
+					iStatus = 200;
+					mResponseHeaders = jQuery.extend({}, mHeaderTypes["json"]);
+					mResponseHeaders["sap-message"] = JSON.stringify({
+						"code":		"999",
+						"message":	"This is a server test message",
+						"severity":	"error",
+						"target":	"/Suppliers(1)/Name",
+						"details": []
+					});
+					sAnswer = mPredefinedServiceResponses.ProductsExpandSupplier;
+					break;
 				case "fakeservice://testdata/odata/function-imports/":
 					iStatus = 200;
 					mResponseHeaders = jQuery.extend({}, mHeaderTypes["xml"]);
@@ -243,12 +255,34 @@ var mPredefinedServiceResponses = {
 							"code":		Date.now(),
 							"message":	"This is a message for '/Products(1)'.",
 							"severity":	"warning",
-							"target": "/Products(1)/SupplierID",
+							"target": "/Products(1)/SupplierID"
 						}]
 					});
 					mResponseHeaders["location"] = "fakeservice://testdata/odata/northwind/Products(1)";
 					sAnswer = "";
 					break;
+
+				case "fakeservice://testdata/odata/northwind/functionWithInvalidReturnType":
+				iStatus = 204;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		Date.now(),
+					"message":	"This is FunctionImport specific message with an invalid return type.",
+					"severity":	"error"
+				});
+				sAnswer = "";
+				break;
+
+				case "fakeservice://testdata/odata/northwind/functionWithInvalidEntitySet":
+				iStatus = 204;
+				mResponseHeaders = jQuery.extend({}, mHeaderTypes["atom"]);
+				mResponseHeaders["sap-message"] = JSON.stringify({
+					"code":		Date.now(),
+					"message":	"This is FunctionImport specific message with an invalid entityset.",
+					"severity":	"error"
+				});
+				sAnswer = "";
+				break;
 
 				// Special case that delivers transient messages
 				case "fakeservice://testdata/odata/northwind/TransientTest1":
@@ -264,13 +298,13 @@ var mPredefinedServiceResponses = {
 							"code":		iDate + 1,
 							"message":	"This is a transient message using /#TRANSIENT# notation.",
 							"severity":	"error",
-							"target": "/#TRANSIENT#/TransientTest1/SupplierID",
+							"target": "/#TRANSIENT#/TransientTest1/SupplierID"
 						}, {
 							"code":		iDate + 2,
 							"message":	"This is a transient message using transient flag.",
 							"severity":	"error",
 							"transient": true,
-							"target": "/TransientTest1/SupplierID",
+							"target": "/TransientTest1/SupplierID"
 						}]
 					});
 					sAnswer = JSON.stringify({
@@ -571,7 +605,7 @@ var mPredefinedServiceResponses = {
 			sParams = "";
 		}
 
-		aMatches = sPath.match(/^([A-Za-z0-9]+)([\(\)(0-9)]*)\/{0,1}(.*)$/);
+		aMatches = sPath.match(/^([A-Za-z0-9]+)([\(\)(A-Za-z0-9=_%'\-)]*)\/{0,1}(.*)$/);
 		if (aMatches && aMatches.length === 3) {
 			sCollection = aMatches[1];
 			sPostfix = aMatches[2];
@@ -2156,6 +2190,10 @@ mPredefinedServiceResponses.northwindMetadata = '\
 			<EntityContainer Name="FunctionImports">\
 				<FunctionImport Name="functionWithInvalidTarget" m:HttpMethod="POST">\
 				</FunctionImport>\
+				<FunctionImport Name="functionWithInvalidReturnType" ReturnType="InvalidReturnType" m:HttpMethod="POST">\
+				</FunctionImport>\
+				<FunctionImport Name="functionWithInvalidEntitySet" EntitySet="InvalidEntitySet" m:HttpMethod="POST">\
+				</FunctionImport>\
 			</EntityContainer>\
 		</Schema>\
 		<Schema Namespace="ODataWebV3.Northwind.Model" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
@@ -3350,6 +3388,7 @@ mPredefinedServiceResponses.technicalError400Json2 = '\
 		}\
 	}\
 }';
+mPredefinedServiceResponses.expandedData =
 
 mPredefinedServiceResponses.technicalError400Xml2 = '\
 <?xml version="1.0" encoding="utf-8"?>\
@@ -3402,3 +3441,28 @@ mPredefinedServiceResponses.technicalError400Xml2 = '\
 		</errordetails>\
 	</innererror>\
 </error>';
+
+mPredefinedServiceResponses.ProductsExpandSupplier = '\
+{\
+"d" : {\
+"__metadata": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Products(1)", "type": "NorthwindModel.Product"\
+}\, "ProductID": 1, "ProductName": "Chai", "SupplierID": 1, "CategoryID": 1, "QuantityPerUnit": "10 boxes x 20 bags", "UnitPrice": "18.0000", "UnitsInStock": 39, "UnitsOnOrder": 0, "ReorderLevel": 10, "Discontinued": false, "Category": {\
+"__deferred": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Products(1)/Category"\
+}\
+}\, "Order_Details": {\
+"__deferred": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Products(1)/Order_Details"\
+}\
+}\, "Supplier": {\
+"__metadata": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(1)", "type": "NorthwindModel.Supplier"\
+}\, "SupplierID": 1, "CompanyName": "Exotic Liquids", "ContactName": "Charlotte Cooper", "ContactTitle": "Purchasing Manager", "Address": "49 Gilbert St.", "City": "London", "Region": null, "PostalCode": "EC1 4SD", "Country": "UK", "Phone": "(171) 555-2222", "Fax": null, "HomePage": null, "Products": {\
+"__deferred": {\
+"uri": "http://services.odata.org/V2/Northwind/Northwind.svc/Suppliers(1)/Products"\
+}\
+}\
+}\
+}\
+}';

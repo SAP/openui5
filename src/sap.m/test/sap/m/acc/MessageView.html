@@ -134,6 +134,10 @@
                 }
             });
 
+            var oInvisibleText = new sap.ui.core.InvisibleText({
+                text: "Dialog without header"
+            });
+
             var oDialog1 = new sap.m.Dialog({
                 // title: "Dialog with MessageView",
                 content: oMessageViewDialog,
@@ -144,6 +148,7 @@
                     },
                     text: "Close"
                 }),
+                ariaLabelledBy: oInvisibleText,
                 contentHeight: "440px",
                 contentWidth: "640px",
                 verticalScrolling: false
@@ -151,6 +156,7 @@
 
             var page1 = new sap.m.Page("page1", {
                 content: [
+                    oInvisibleText,
                     new sap.m.Button('mView-in-dialog-btn', {
                         text: "MessageView in Dialog",
                         press: function () {
@@ -196,7 +202,7 @@
                     content: [
                         new sap.m.ToolbarSpacer(),
                         oMessageViewPopoverButton,
-                        sap.m.CheckBox("compactMode", {
+                        new sap.m.CheckBox("compactMode", {
                             selected: false,
                             text: "Compact mode",
                             select: function () {

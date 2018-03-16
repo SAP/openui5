@@ -1,0 +1,42 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+
+<title>Unit Formatting</title>
+
+<script id="sap-ui-bootstrap"
+	data-sap-ui-libs="sap.m, sap.ui.table"
+	data-sap-ui-theme="sap_belize"
+	src="../../../../../../resources/sap-ui-core.js"
+	data-sap-ui-compatVersion="edge"
+	data-sap-ui-preload="async"
+	data-sap-ui-resourceroots='{
+		"sap.ui.core.samples": "./"
+	}' >
+</script>
+
+<script>
+	sap.ui.require(["sap/ui/model/type/Unit", "sap/ui/core/format/NumberFormat"], function(UnitType, NumberFormat) {
+
+		sap.ui.getCore().attachInit(function () {
+
+			UnitType.extend("sap.ui.core.samples.MeterType", {
+				constructor: function(oFormatOptions, oConstraints){
+					UnitType.apply(this, [oFormatOptions, oConstraints, ["decimals"]]);
+				}
+			});
+
+			sap.ui.xmlview({
+				viewName : "sap.ui.core.samples.UnitTable"
+			}).placeAt("content");
+		});
+	});
+</script>
+</head>
+<body id="content" class="sapUiBody sapUiSizeCompact" role="application">
+
+</body>
+</html>

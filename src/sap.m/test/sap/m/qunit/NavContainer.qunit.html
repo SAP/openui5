@@ -725,6 +725,33 @@
 			assert.ok(nc._bNavigating === false, "NavContainer should not be navigating");
 		});
 
+		QUnit.test("_safeBackToPage should work with back transition", function(assert) {
+			var nc = new sap.m.NavContainer({
+				pages : [
+					new sap.m.Page("firstPage"),
+					new sap.m.Page("secondPage")
+				],
+				initialPage: "secondPage"
+			}),
+				mySinon = sinon.sandbox.create(),
+				spy;
+
+			nc.placeAt("qunit-fixture");
+
+			sap.ui.getCore().applyChanges();
+
+			spy = mySinon.spy(sap.m.NavContainer.transitions["slide"], "back");
+
+			// act
+			nc._safeBackToPage("firstPage");
+
+			// assert
+			assert.strictEqual(spy.callCount, 1, "Back animation was executed.")
+
+			// clean-up
+			nc.destroy();
+			mySinon.restore();
+		});
 
 		var pageRenderCounter = 0;
 		var realPageRender;
@@ -1751,6 +1778,96 @@
 			localNc.attachAfterNavigate(afterNavigate);
 			localNc.to(page2.getId());
 		});
+
+        QUnit.module("NavContainer in Dialog", {
+            beforeEach: function () {
+                this.iDialogOpeningsCount = 0;
+                this.iDialogOpeningDelay = 1000; //ms.
+                this.oPage = new sap.m.Page("pageId", {
+                    content: [new sap.m.Text({text: "Page"})]
+                });
+                this.oPage2 = new sap.m.Page('page2Id', {
+                    content: [new sap.m.Text({text: "Page2"})]
+                });
+                this.oNavContainer = new sap.m.NavContainer({
+                    height: "300px",
+                    pages: [this.oPage, this.oPage2]
+                });
+                this.fnNavigateToPage = function () {
+                    this.oNavContainer.to(this.oPage);
+                };
+                this.fnNavigateToPage2 = function () {
+                    this.oNavContainer.to(this.oPage2);
+                };
+                this.oDialog = new sap.m.Dialog({
+                    title: "Dialog with NavContainer inside",
+                    content: [this.oNavContainer],
+                    endButton: new sap.m.Button({
+                        text: "Close", press: function () {
+                            this.fnNavigateToPage();
+                            this.oDialog.close();
+                        }.bind(this)
+                    })
+                });
+
+            },
+            afterEach: function () {
+                this.iDialogOpeningsCount = null;
+                this.iDialogOpeningDelay = null;
+                this.oNavContainer.destroy();// the aggregated pages will be destroyed internally
+                this.oDialog.destroy();
+                this.oNavContainer = null;
+                this.oDialog = null;
+                this.oPage = null;
+                this.oPage2 = null;
+                this.fnNavigateToPage = null;
+                this.fnNavigateToPage2 = null;
+            }
+        });
+
+        QUnit.test("Child page is displayed after navigation upon Dialog closing", function(oAssert) {
+            var fnDone = oAssert.async(),
+                oNavContainer = this.oNavContainer,
+                oDialog = this.oDialog;
+
+
+            // Arrange
+            // (1) Attach for NavContainer afterNavigate event.
+            oNavContainer.attachAfterNavigate(function (oEvent) {
+                var oDestinationPage = oEvent.getParameter("to"),
+                    bForwardNavigation = oDestinationPage.getId() === this.oPage2.getId(); // from oPage to oPage2
+
+                if (bForwardNavigation && this.iDialogOpeningsCount === 2) {
+
+                    // Assert: the transition classes are cleaned up
+                    oAssert.strictEqual(oDestinationPage.hasStyleClass("sapMNavItemSliding"), false, " as the transition class is removed");
+                    oAssert.strictEqual(oDestinationPage.hasStyleClass("sapMNavItemCenter"), false, " as the transition class is removed");
+                    oAssert.strictEqual(oDestinationPage.hasStyleClass("sapMNavItemLeft"), false, " as the transition class is removed");
+
+                    fnDone();
+                    return;
+                }
+
+                bForwardNavigation && oDialog.getEndButton().firePress();
+            }.bind(this));
+
+            // (2) Attach for Dialog afterOpen and afterClose events.
+            oDialog.attachAfterOpen(this.fnNavigateToPage2.bind(this));
+            oDialog.attachAfterClose(function () {
+                this.iDialogOpeningsCount ++;
+                // delay the opening to ensure the navigation transition, already triggered, is done when the dialog is in closed state.
+                window.setTimeout(oDialog.open.bind(oDialog), this.iDialogOpeningDelay);
+            }.bind(this));
+
+
+            // Act
+            // (1) Open the dialog.
+            // (2) On Dialog`s afterOpen, navigation to oPage2 is performed.
+            // (3) On NavContainer`s afterNavigate, the dialog is closed and navigation to oPage is performed in the same time.
+            // (4) The dialog is reopened and the same navigation (to oPage2) is performed.
+            this.iDialogOpeningsCount ++;
+            oDialog.open();
+        });
 
 		QUnit.module("Internal methods", {
 			beforeEach: function () {

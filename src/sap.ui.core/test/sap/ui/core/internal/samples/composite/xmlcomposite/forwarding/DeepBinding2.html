@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="UTF-8">
+
+	<title>CompositeSample - sap.ui.core</title>
+
+	<script id="sap-ui-bootstrap" data-sap-ui-libs="sap.m" data-sap-ui-theme="sap_belize" data-sap-ui-bindingSyntax="complex"
+	 src="../../../../../../../../../resources/sap-ui-core.js" data-sap-ui-resourceroots='{"composites": "./composites"}'>
+
+	</script>
+
+	<script>
+		jQuery.sap.require("sap.ui.model.json.JSONModel");
+		jQuery.sap.require("composites.DeepBinding2");
+
+		// create some dummy JSON data
+		var data = {
+			groups:
+			[{
+				title: "Group 0",
+				content: [
+					{ firstName: "Christian", lastName: "Mueller" },
+					{ firstName: "Petra", lastName: "Maier" }
+				]
+			},
+			{
+				title: "Group 1",
+				content: [
+					{ firstName: "Thomas", lastName: "Smith" },
+					{ firstName: "John", lastName: "Williams" },
+					{ firstName: "Maria", lastName: "Jones" }
+				]
+			}]
+
+		};
+		var model = new sap.ui.model.json.JSONModel();
+		model.setData(data);
+		sap.ui.getCore().setModel(model);
+
+		oPanel = new sap.m.Panel({ id: "panel" });
+		oPanel.setHeaderText("Standard control...");
+		oPanel.bindAggregation("content", {
+			path: "/groups",
+			template: new sap.m.Panel({
+				headerText: "{title}",
+				content: new sap.m.HBox({
+					items: {
+						path: "content",
+						template: new sap.m.Button({ text: "{firstName} {lastName}" })
+					}
+				})
+			})
+		});
+
+		oPanel2 = new sap.m.Panel({ id: "panel2" });
+		oPanel2.setHeaderText("XMLComposite control ...");
+		var oDeepBinding = new composites.DeepBinding2({ id: "deepBinding" });
+		oDeepBinding.bindAggregation("fcItems", {
+			path: "/groups",
+			template: new sap.m.Panel({
+				headerText: "{title}",
+				content: new sap.m.HBox({
+					items: {
+						path: "content",
+						template: new sap.m.Button({ text: "{firstName} {lastName}" })
+					}
+				})
+			})
+		});
+
+		var vBox = new sap.m.VBox();
+		vBox.addItem(oPanel);
+		vBox.addItem(oPanel2.addContent(oDeepBinding));
+		vBox.placeAt("content");
+	</script>
+</head>
+
+<body id="content" class="sapUiBody">
+</body>
+
+</html>

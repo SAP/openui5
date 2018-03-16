@@ -1,224 +1,35 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+
 		<title>Test Page for sap.ui.dt.DesignTime and Form with different layouts</title>
+		<script src="../shared-config.js"></script>
+		<script>
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt]');
+
+			jQuery.sap.includeScript('./FormInDesignTime.qunit.js');
+		</script>
 
 		<style>
-			#content {
+			#qunit-fixture {
 				position: absolute;
 				left: 400px;
 				top : 10px;
 				z-index: 1000;
 			}
 		</style>
-
-		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				src="../../../../../resources/sap-ui-core.js">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script>
-
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-			jQuery.sap.require("sap.ui.dt.DesignTime");
-			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
-
-			// ----- ResponsiveLayout -----
-			QUnit.module("Given that overlays are created for a form with ResponsiveLayout with formContainers", {
-				beforeEach : function(assert) {
-					initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.ResponsiveLayout());
-				},
-				afterEach : function() {
-					cleanup.call(this);
-				}
-			});
-
-			QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
-				testFormHierarchyWithDesignTime.call(this);
-			});
-
-			// ----- ResponsiveGridLayout -----
-			QUnit.module("Given that overlays are created for a form with ResponsiveGridLayout with formContainers", {
-				beforeEach : function(assert) {
-					initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.ResponsiveGridLayout());
-				},
-				afterEach : function() {
-					cleanup.call(this);
-				}
-			});
-
-			QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
-				testFormHierarchyWithDesignTime.call(this);
-			});
-
-			// ----- FormLayout -----
-			QUnit.module("Given that overlays are created for a form with FormLayout with formContainers", {
-				beforeEach : function(assert) {
-					initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.FormLayout());
-				},
-				afterEach : function() {
-					cleanup.call(this);
-				}
-			});
-
-			QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
-				testFormHierarchyWithDesignTime.call(this);
-			});
-
-			// ----- GridLayout -----
-			QUnit.module("Given that overlays are created for a form with GridLayout with formContainers", {
-				beforeEach : function(assert) {
-					initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.GridLayout());
-				},
-				afterEach : function() {
-					cleanup.call(this);
-				}
-			});
-
-			QUnit.test("when rendering is finished overlays are visible and ...", function(assert) {
-				testFormHierarchyWithDesignTime.call(this);
-			});
-
-			// ----- Utils -----
-			var initFormWithGivenLayout = function(assert, oLayout) {
-				var that = this;
-				var done = assert.async();
-
-				this.oElement1 = new sap.ui.layout.form.FormElement({
-					label: new sap.m.Label({text:"Label0"}),
-					fields: [new sap.m.Input({required:true})]
-				});
-
-				this.oFormContainer1 = new sap.ui.layout.form.FormContainer({
-					title: "Container1",
-					formElements: [
-						this.oElement1,
-						new sap.ui.layout.form.FormElement({
-							label: new sap.m.Label({text:"Label1"}),
-							fields: [new sap.m.Input({required:true})]
-						})
-					]
-				});
-
-				this.oFormContainer2 = new sap.ui.layout.form.FormContainer({
-					title: "Container2",
-					formElements: [
-						new sap.ui.layout.form.FormElement({
-							label: "Label0",
-							fields: [new sap.m.Input({required:true})]
-						}),
-						new sap.ui.layout.form.FormElement({
-							label: new sap.m.Label({text:"Label1"}),
-							fields: [new sap.m.Input( {required:true})]
-						})
-					]
-				});
-
-				this.oFormContainer3 = new sap.ui.layout.form.FormContainer({
-					title: new sap.ui.core.Title({text: "Container3", level: sap.ui.core.TitleLevel.H3}),
-					tooltip: "Container tooltip",
-					expandable: true,
-					formElements: [
-						new sap.ui.layout.form.FormElement({
-							fields: [new sap.m.CheckBox({text: 'one'}),
-							         new sap.m.CheckBox({text: 'two'})]
-						}),
-						new sap.ui.layout.form.FormElement({
-							fields: [new sap.m.CheckBox({text: 'three'})]
-						})
-					]
-				});
-
-				this.oForm = new sap.ui.layout.form.Form({
-					tooltip: "Form tooltip",
-					layout : oLayout,
-					formContainers: [
-						this.oFormContainer1,
-						this.oFormContainer2,
-						this.oFormContainer3
-					]
-				}).placeAt("content");
-				sap.ui.getCore().applyChanges();
-
-				var aElements = sap.ui.dt.ElementUtil.findAllPublicElements(this.oForm);
-				var aQueue = [];
-				aElements.forEach(function(oElement) {
-					aQueue.push(sap.ui.dt.ElementUtil.loadDesignTimeMetadata(oElement));
-				});
-
-				Promise.all(aQueue).then(function() {
-					that.oFormDesignTime = new sap.ui.dt.DesignTime({
-						rootElements : [that.oForm]
-					});
-					sap.ui.getCore().applyChanges();
-					done();
-				});
-			};
-
-			var cleanup = function() {
-				this.oElement1.destroy();
-				this.oFormContainer1.destroy();
-				this.oFormContainer2.destroy();
-				this.oFormContainer3.destroy();
-				this.oForm.destroy();
-				this.oFormDesignTime.destroy();
-			};
-
-			var testFormHierarchyWithDesignTime = function() {
-				var oFormOverlay = OverlayRegistry.getOverlay(this.oForm.getId());
-				var $FormOverlay = oFormOverlay.$();
-
-				var $FormContainersOverlay = oFormOverlay.getAggregationOverlay("formContainers").$();
-				assert.ok($FormContainersOverlay, "Overlay for aggregation FormContainers exists");
-				assert.ok(isElementChildOf($FormContainersOverlay, $FormOverlay), "... and is a child of a form overlay");
-
-				var oContainerOverlay1 = OverlayRegistry.getOverlay(this.oFormContainer1.getId());
-				var $ContainerOverlay1 = oContainerOverlay1.$();
-				assert.ok($ContainerOverlay1, "Overlay for FormContainer1 exists");
-				assert.ok(isElementChildOf($ContainerOverlay1, $FormContainersOverlay), "... and is a child of a formContainers overlay");
-
-				var $formElementsOverlay1 = oContainerOverlay1.getAggregationOverlay("formElements").$();
-				assert.ok($formElementsOverlay1, "Overlay for aggregation formElements exists");
-				assert.ok(isElementChildOf($formElementsOverlay1, $ContainerOverlay1), "... and is a child of a FormContainer1 overlay");
-
-				var oElementOverlay1 = OverlayRegistry.getOverlay(this.oElement1.getId());
-				var $ElementOverlay1 = oElementOverlay1.$();
-				assert.ok($ElementOverlay1, "Overlay for Element0 exists");
-				assert.ok(isElementChildOf($ElementOverlay1, $formElementsOverlay1), "... and is a child of a FormContainer1 overlay");
-
-				var oContainerOverlay2 = OverlayRegistry.getOverlay(this.oFormContainer2.getId());
-				var $ContainerOverlay2 = oContainerOverlay2.$();
-				assert.ok($ContainerOverlay2, "Overlay for FormContainer2 exists");
-				assert.ok(isElementChildOf($ContainerOverlay2, $FormContainersOverlay), "... and is a child of a formContainers overlay");
-
-
-				var oContainerOverlay3 = OverlayRegistry.getOverlay(this.oFormContainer3.getId());
-				var $ContainerOverlay3 = oContainerOverlay3.$();
-				assert.ok($ContainerOverlay3, "Overlay for FormContainer3 exists");
-				assert.ok(isElementChildOf($ContainerOverlay3, $FormContainersOverlay), "... and is a child of a formContainers overlay");
-			};
-
-			var isElementChildOf = function($child, $parent) {
-				return $child.parent().parent().get(0) === $parent.get(0);
-			};
-
-		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit Page for sap.ui.dt.DesignTime and Form with different layouts</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
+		<div id="qunit"></div>
+		<div id='qunit-fixture'></div>
 	</body>
 </html>

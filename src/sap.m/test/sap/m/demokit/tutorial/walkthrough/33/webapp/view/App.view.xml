@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.demo.wt.controller.App"
+	controllerName="sap.ui.demo.walkthrough.controller.App"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true">

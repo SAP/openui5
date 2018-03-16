@@ -22,13 +22,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.type.Decimal", {
 		beforeEach : function () {
-			this.oLogMock = sinon.mock(jQuery.sap.log);
+			this.oLogMock = this.mock(jQuery.sap.log);
 			this.oLogMock.expects("warning").never();
 			this.oLogMock.expects("error").never();
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 		},
 		afterEach : function () {
-			this.oLogMock.verify();
 			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
 		}
 	});
@@ -41,9 +40,19 @@ sap.ui.require([
 		assert.ok(oType instanceof ODataType, "is an ODataType");
 		assert.ok(!(oType instanceof Float), "is not a Float");
 		assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Decimal", "type name");
+		assert.ok(oType.hasOwnProperty("oConstraints"), "be V8-friendly");
 		assert.strictEqual(oType.oConstraints, undefined, "default constraints");
 		assert.strictEqual(oType.oFormatOptions, undefined, "default format options");
 		assert.strictEqual(oType.oFormat, null, "no formatter preload");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("construct with null values for 'oFormatOptions' and 'oConstraints",
+		function (assert) {
+			var oType = new Decimal(null, null);
+
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
+			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
 	//*********************************************************************************************
@@ -62,6 +71,8 @@ sap.ui.require([
 			warning : "Illegal precision: -1"},
 		{i : {precision : 0, scale : 3}, o : {scale : 3},
 			warning : "Illegal precision: 0"},
+		{i : {precision : true}, o : undefined,
+			warning : "Illegal precision: true"},
 		{i : {precision : 2, scale : 3}, o : {precision : 2, scale : Infinity},
 			warning : "Illegal scale: must be less than precision (precision=2, scale=3)"},
 		{i : {minimum : "foo"}, o : undefined,
@@ -78,7 +89,7 @@ sap.ui.require([
 			warning : "Illegal maximumExclusive: X"}
 	].forEach(function (oFixture) {
 		QUnit.test("setConstraints(" + JSON.stringify(oFixture.i) + ")", function (assert) {
-			var oType = new Decimal();
+			var oType;
 
 			if (oFixture.warning) {
 				this.oLogMock.expects("warning")
@@ -232,7 +243,7 @@ sap.ui.require([
 		assert.strictEqual(oType.parseValue("1K", "string"), "1000", 'style: "short"');
 
 		// error handling with short style
-		sap.ui.test.TestUtils.withNormalizedMessages(function () {
+		TestUtils.withNormalizedMessages(function () {
 			try {
 				oType.parseValue("no number", "string");
 				assert.ok(false, "no error");
@@ -334,7 +345,7 @@ sap.ui.require([
 
 		oControl.bindProperty("tooltip", {path : "/unused", type : oType});
 		sap.ui.getCore().getConfiguration().setLanguage("de-CH");
-		assert.strictEqual(oType.formatValue("1234", "string"), "1'234",
+		assert.strictEqual(oType.formatValue("1234", "string"), "1’234",
 			"adjusted to changed language");
 	});
 

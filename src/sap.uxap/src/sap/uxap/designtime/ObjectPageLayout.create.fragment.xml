@@ -1,0 +1,35 @@
+<core:FragmentDefinition
+		xmlns="sap.uxap"
+		xmlns:m="sap.m"
+		xmlns:core="sap.ui.core">
+
+	<ObjectPageLayout>
+		<headerTitle>
+			<ObjectPageHeader objectTitle="Header Title"/>
+		</headerTitle>
+
+		<headerContent>
+			<m:Text text="Header Content"/>
+		</headerContent>
+
+		<sections>
+			<ObjectPageSection title="First Section">
+				<ObjectPageSubSection>
+					<blocks>
+						<m:Text text="First Section content"/>
+					</blocks>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+
+
+			<ObjectPageSection title="Second Section">
+				<ObjectPageSubSection>
+					<blocks>
+						<m:Text text="Second Section content"/>
+					</blocks>
+				</ObjectPageSubSection>
+			</ObjectPageSection>
+		</sections>
+	</ObjectPageLayout>
+
+</core:FragmentDefinition>

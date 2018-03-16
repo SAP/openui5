@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<title>QUnit Test of sap.ui.rta.command.LREPSerializer: Check if command stack gets serialized to LREP</title>
+
+		<style>
+			html, body, #qunit-tests {
+				height: 100%;
+			}
+
+			.sapUiView {
+				height: 100%;
+			}
+
+			#test-view {
+				border: 1px solid grey;
+				position: fixed;
+				bottom: 0;
+				right: 0;
+				width: 50%;
+				height: 50%;
+			}
+		</style>
+
+		<script src="../shared-config.js"></script>
+		<script>
+			document.write('\
+				<script \
+					id="sap-ui-bootstrap" \
+					data-sap-ui-resourceroots=\'{"sap.ui.rta.test.additionalElements": "../testdata/additionalElements/", "sap.ui.rta.qunit": "../qunit"}\'\
+					data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.comp" \
+					data-sap-ui-xx-bindingSyntax="complex" \
+					src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
+				><' + '/script>'
+			);
+		</script>
+		<script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+			if (window.blanket){
+				window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
+			}
+			jQuery.sap.includeScript('./LREPSerializer.qunit.js');
+		</script>
+
+	</head>
+	<body>
+		<h1 id="qunit-header">QUnit Test of sap.ui.rta.command.LREPSerializer: Check if command stack gets serialized to LREP</h1>
+		<h2 id="qunit-banner"></h2>
+		<h2 id="qunit-userAgent"></h2>
+		<div id="qunit-testrunner-toolbar"></div>
+		<ol id="qunit-tests"></ol>
+		<div id="content"></div>
+	</body>
+</html>

@@ -6,7 +6,11 @@
 		xmlns:m="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:core="sap.ui.core">
-	<DynamicPage id="topicDetailPage" preserveHeaderStateOnScroll="true" fitContent="true">
+	<DynamicPage
+			id="topicDetailPage"
+			preserveHeaderStateOnScroll="true"
+			toggleHeaderOnTitleClick="false"
+			fitContent="true">
 		<title>
 			<DynamicPageTitle class="sapUiDocumentationDynamicPageTitle">
 				<heading>
@@ -19,6 +23,12 @@
 							type="Transparent"
 							press="backToSearch"
 							visible="false"/>
+					<m:Button
+							visible="{device>/system/desktop}"
+							icon="sap-icon://full-screen"
+							type="Transparent"
+							tooltip="Show this document in full screen mode"
+							press="onToggleFullScreen"/>
 				</actions>
 			</DynamicPageTitle>
 		</title>
@@ -34,7 +44,7 @@
 		<content>
 			<core:HTML id="testHTML"
 					   preferDOM="false"
-					   content='&lt;div style="height:100%; overflow-x:auto;"&gt;&lt;iframe style="width:100%;height:99%;" name="content" src="{/topicURL}" frameborder="0""&gt;&lt;/iframe&gt;&lt;/div&gt;'>
+					   content='&lt;div style="height:100%; overflow-x:auto;"&gt;&lt;iframe class="sapUiDocumentationTopicsIframe" name="content" src="{/topicURL}" frameborder="0""&gt;&lt;/iframe&gt;&lt;/div&gt;'>
 			</core:HTML>
 		</content>
 	</DynamicPage>

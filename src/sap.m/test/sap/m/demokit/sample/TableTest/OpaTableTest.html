@@ -1,0 +1,86 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Retrieving message toast elements with OPA5</title>
+
+	<script id="sap-ui-bootstrap" src="../../../../../../resources/sap-ui-core.js"></script>
+
+	<script>
+		jQuery.sap.require("sap.ui.qunit.qunit-css");
+		jQuery.sap.require("sap.ui.thirdparty.qunit");
+		jQuery.sap.require("sap.ui.qunit.qunit-junit");
+		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+
+		QUnit.config.autostart = false;
+
+		sap.ui.require([
+			"sap/ui/test/Opa5",
+			"sap/ui/test/opaQunit",
+			"sap/ui/test/actions/Press",
+			"sap/ui/test/matchers/Properties"
+		], function (Opa5, opaTest, Press, Properties) {
+			QUnit.module("Message Toast");
+
+			Opa5.extendConfig({
+				viewNamespace: "appUnderTest.view.",
+				autoWait: true
+			});
+
+			opaTest("Should click on a list item and see success confirmation", function (Given, When, Then) {
+
+				Given.iStartMyAppInAFrame("applicationUnderTest/index.html");
+
+				When.waitFor({
+					controlType: "sap.m.ColumnListItem",
+					matchers: [function (oCandidateListItem) {
+						var oTableLine = {};
+						oTableLine = oCandidateListItem.getBindingContext().getObject();
+						var sFound = false;
+
+						for (var sName in oTableLine) {
+							if ((sName === "Name") && (oTableLine[sName].toString() === "Astro Phone 6")) {
+								QUnit.ok(true, "Cell has been found");
+								sFound = true;
+								break;
+							}
+						}
+						return sFound;
+					}],
+
+					actions: new Press(),
+					errorMessage: "Cell could not be found in the table"
+				});
+
+				Then.waitFor({
+					controlType: "sap.m.Button",
+					check: function (aButtons) {
+						return aButtons.filter(function (oButton) {
+							if (oButton.getText() !== "OK") {
+								return false;
+							}
+
+							oOKButton = oButton;
+							return true;
+						});
+					},
+					actions: new sap.ui.test.actions.Press(),
+					errorMessage: "Did not find the ОК button",
+				});
+
+				Then.iTeardownMyAppFrame();
+			});
+
+			QUnit.start();
+		});
+	</script>
+
+</head>
+
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+
+</html>

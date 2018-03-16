@@ -454,11 +454,11 @@ html.sap-tablet .sapUiCalYearPicker .sapUiCalItemSel {
 .dayColorMixIn(@class, @color) {
 	.@{class} > .sapUiCalItemText,
 	.sap-desktop .sapUiCalItem.@{class}:hover {
-		box-shadow: inset 0 -0.125rem 0 @color;
+		box-shadow: inset 0 -0.25rem 0 @color;
 	}
 
 	.sap-desktop .@{class}.sapUiCalItem:focus {
-		box-shadow: inset 0 -0.125rem 0 @color;
+		box-shadow: inset 0 -0.25rem 0 @color;
 	}
 
 	.sap-desktop .@{class}.sapUiCalItem:focus:hover {
@@ -470,7 +470,7 @@ html.sap-tablet .sapUiCalYearPicker .sapUiCalItemSel {
 	}
 
 	.@{class}.sapUiCalItemSel > .sapUiCalItemText {
-		box-shadow: inset 0 -0.125rem 0 @color, inset 0 -0.1875rem @sapUiContentForegroundBorderColor;
+		box-shadow: inset 0 -0.25rem 0 @color, inset 0 -0.1875rem @sapUiContentForegroundBorderColor;
 	}
 
 	.sap-desktop .@{class}.sapUiCalFirstWDay.sapUiCalItemSel:focus > .sapUiCalItemText {
@@ -497,3 +497,13 @@ html.sap-tablet .sapUiCalYearPicker .sapUiCalItemSel {
 .dayColorMixIn(sapUiCalItemType08, @sapUiAccent8);
 .dayColorMixIn(sapUiCalItemType09, darken(@sapUiAccent6, 15));
 .dayColorMixIn(sapUiCalItemType10, darken(desaturate(@sapUiAccent4, 40), 2));
+.dayColorMixIn(sapUiCalItemType11, lighten(saturate(@sapUiAccent1,15),20));
+.dayColorMixIn(sapUiCalItemType12, lighten(desaturate(@sapUiAccent2,50),10));
+.dayColorMixIn(sapUiCalItemType13, lighten(saturate(@sapUiAccent3,50),5));
+.dayColorMixIn(sapUiCalItemType14, lighten(saturate(@sapUiAccent2,30),15));
+.dayColorMixIn(sapUiCalItemType15, lighten(saturate(@sapUiAccent4,50),20));
+.dayColorMixIn(sapUiCalItemType16, desaturate(@sapUiAccent1,20));
+.dayColorMixIn(sapUiCalItemType17, lighten(saturate(@sapUiAccent7,30),15));
+.dayColorMixIn(sapUiCalItemType18, darken(desaturate(@sapUiAccent8,50),15));
+.dayColorMixIn(sapUiCalItemType19, lighten(desaturate(@sapUiAccent6,30),10));
+.dayColorMixIn(sapUiCalItemType20, saturate(@sapUiAccent5,70));

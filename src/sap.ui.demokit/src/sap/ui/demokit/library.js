@@ -5,10 +5,12 @@
 /**
  * Initialization Code and shared classes of library sap.ui.demokit.
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/Global', 'sap/ui/core/Core', './js/highlight-query-terms',
-	'sap/ui/core/library',  // library dependency
-	'sap/ui/commons/library'], // library dependency
-	function(jQuery, Global, Core) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/Global',
+	'sap/ui/core/Core',
+	'./js/highlight-query-terms'
+], function(jQuery, Global) {
 
 	"use strict";
 

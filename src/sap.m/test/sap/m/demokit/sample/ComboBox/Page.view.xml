@@ -4,14 +4,14 @@
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<Page showHeader="false">
+	<Page showHeader="false" class="sapUiContentPadding">
 		<content>
 			<ComboBox
 				items="{
-					path: '/ProductCollection',
-					sorter: { path: 'Name' }
+					path: '/CountriesCollection',
+					sorter: { path: 'text' }
 				}">
-				<core:Item key="{ProductId}" text="{Name}" />
+				<core:Item key="{key}" text="{text}" />
 			</ComboBox>
 		</content>
 	</Page>

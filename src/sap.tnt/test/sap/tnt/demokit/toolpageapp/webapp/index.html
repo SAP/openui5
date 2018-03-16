@@ -1,10 +1,10 @@
-<!DOCTYPE html >
+<!DOCTYPE html>
 <html>
-<head>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta charset="utf-8">
-	<title>Shop Administration Tool</title>
-	<script
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Shop Administration Tool</title>
+		<script
 			id="sap-ui-bootstrap"
 			src="../../../../../../resources/sap-ui-core.js"
 			data-sap-ui-theme="sap_belize"
@@ -12,19 +12,23 @@
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-resourceroots='{"sap.ui.demo.toolpageapp": "./"}'
 			data-sap-ui-preload="async">
-	</script>
-	<script>
-		sap.ui.getCore().attachInit(function() {
-			sap.ui.require([
-				"sap/ui/core/ComponentContainer"
-			], function() {
-				new sap.ui.core.ComponentContainer({
-					name: "sap.ui.demo.toolpageapp"
-				}).placeAt("content");
+		</script>
+		<script>
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require([
+					"sap/ui/core/ComponentContainer"
+				], function() {
+					new sap.ui.core.ComponentContainer({
+						name : "sap.ui.demo.toolpageapp",
+						height : "100%",
+						settings : {
+							id : "toolpageapp"
+						}
+					}).placeAt("content");
+				});
 			});
-		});
-	</script>
-</head>
-<body class="sapUiBody" id="content">
-</body>
+		</script>
+	</head>
+	<body class="sapUiBody" id="content">
+	</body>
 </html>

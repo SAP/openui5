@@ -1,4 +1,5 @@
 <mvc:View
+	controllerName="sap.m.sample.ObjectStatus.C"
 	xmlns:l="sap.ui.layout"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
@@ -25,6 +26,20 @@
 			<ObjectStatus
 				class="sapUiSmallMarginBottom"
 				text="Product Damaged"
+				state="Error"
+				icon="sap-icon://alert" />
+			<ObjectStatus
+				class="sapUiSmallMarginBottom"
+				title="Product status"
+				text="Damaged"
+				active="true"
+				state="Error"
+				press="handleStatusPressed"
+				icon="sap-icon://alert" />
+			<ObjectStatus
+				class="sapUiSmallMarginBottom"
+				title="Test"
+				active="true"
 				state="Error"
 				icon="sap-icon://alert" />
 		</l:content>

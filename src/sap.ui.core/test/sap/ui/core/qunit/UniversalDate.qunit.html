@@ -304,6 +304,41 @@
 			assert.equal(ud2.getFullYear(), 2016, "Verify year");
 		});
 
+		QUnit.test("getQuarter", function (assert) {
+			this.dateSpy.restore();
+			var aExpected = [0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3];
+
+			var ud;
+			for (var i = 0; i < 12; i++) {
+				ud =  new sap.ui.core.date.UniversalDate(2017, i);
+				assert.equal(ud.getQuarter(), aExpected[i], "The correct quarter is returned");
+			}
+
+			// Tue, 28 Feb 2017 23:00:00 GMT
+			// getUTCQuarter should return 0, getQuarter may return 1 depends on the running time zone
+			var oDate = new sap.ui.core.date.UniversalDate(1488322800000);
+			assert.equal(oDate.getUTCQuarter(), 0, "getUTCQuarter");
+		});
+
+		QUnit.test("getDayPeriod", function (assert) {
+			this.dateSpy.restore();
+
+			var aExpected = [];
+			for (var i = 0; i < 12; i++) aExpected.push(0);
+			for (var i = 0; i < 12; i++) aExpected.push(1);
+
+			var ud;
+			for (var i = 0; i < 24; i++) {
+				ud =  new sap.ui.core.date.UniversalDate(2017, 1, 1, i);
+				assert.equal(ud.getDayPeriod(), aExpected[i], "The correct DayPeriod is returned");
+			}
+
+			// Wed, 01 Mar 2017 11:30:00 GMT
+			// getUTCDayPeriod should return 0, getDayPeriod may return 1 depends on the running time zone
+			var oDate = new sap.ui.core.date.UniversalDate(1488367800000);
+			assert.equal(oDate.getUTCDayPeriod(), 0, "getUTCDayPeriod");
+		});
+
 		//--- helpers ----------------------------------------------------------------------------------------------
 		function check(iArgsCount) {
 			assert.ok(this.dateSpy.callCount, 1, "InnerDate must be instantiated just ones");

@@ -1,0 +1,65 @@
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.ApiDetailDeprecatedExperimental"
+          xmlns="sap.uxap"
+          xmlns:layout="sap.ui.layout"
+          xmlns:m="sap.m"
+          xmlns:mvc="sap.ui.core.mvc"
+          xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+
+    <m:Page
+            showHeader="false"
+            showSubHeader="false"
+            showFooter="false">
+        <m:content>
+            <ObjectPageLayout enableLazyLoading="false"
+                              showAnchorBarPopover="true"
+                              upperCaseAnchorBar="false"
+                              sections="{path : 'experimentalAPIs>/',
+                                         sorter : {
+                                           path : 'name',
+                                           comparator : '.compareVersions'
+                                         }
+                                        }">
+                <headerTitle>
+                    <ObjectPageHeader id="title" objectTitle="Index of Experimental APIs"/>
+                </headerTitle>
+                <headerContent>
+                    <layout:VerticalLayout id="experimentalAPIStripContainer">
+                        <m:MessageStrip
+                                text="Experimental features are not part of the officially delivered scope that SAP is going to guarantee for future releases – means experimental Features may be changed by SAP at any time for any reason without notice. The Experimental features are NOT FOR PRODUCTION USE. You may not demonstrate, test, examine, evaluate or otherwise use the Experimental Features in a live operating environment or with data that has not been sufficiently backed up. The purpose of Experimental features is to get feedback at an early point of time allowing customers/partners to influence the future product accordingly. Please use the SDN Developer Center http://scn.sap.com/community/developer-center/front-end to provide feedback accepting that Intellectual Property rights of the contributions or derivative works shall remain the exclusive property of SAP. For general information about Experimental features, please check the Compatibility Rules"
+                                type="Warning"
+                                showIcon="true"/>
+                    </layout:VerticalLayout>
+                </headerContent>
+                <sections>
+                    <ObjectPageSection
+                            titleUppercase="false"
+                            title="{parts : [{path : 'experimentalAPIs>name'}],
+                                              formatter : '.formatTitle'}">
+                        <subSections>
+                            <ObjectPageSubSection>
+                                <blocks>
+                                    <m:List id="experimentalList"
+											items="{ path: 'experimentalAPIs>apis', templateShareable: 'false'}"
+                                            showSeparators="Inner">
+                                        <m:items>
+                                            <m:FeedListItem
+                                                    showIcon="false"
+                                                    sender="{parts : [{path : 'experimentalAPIs>control'}, {path : 'experimentalAPIs>entityName'}, {path: 'experimentalAPIs>type'}],
+                                                             formatter : '.formatSenderLink'}"
+                                                    text="{parts : [{path : 'experimentalAPIs>text'}, {path : 'experimentalAPIs>since'}],
+                                                           formatter: '.formatDescription'}"
+                                                    app:control="{experimentalAPIs>control}"
+                                                    app:entity="{experimentalAPIs>entityName}"
+                                                    app:type="{experimentalAPIs>type}"
+                                                    app:static="{experimentalAPIs>static}"/>
+                                        </m:items>
+                                    </m:List>
+                                </blocks>
+                            </ObjectPageSubSection>
+                        </subSections>
+                    </ObjectPageSection>
+                </sections>
+            </ObjectPageLayout>
+        </m:content>
+    </m:Page>
+</mvc:View>

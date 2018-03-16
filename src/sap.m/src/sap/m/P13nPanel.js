@@ -4,8 +4,8 @@
 
 // Provides control sap.m.P13nPanel.
 sap.ui.define([
-	'jquery.sap.global', './library', 'sap/ui/core/Control'
-], function(jQuery, library, Control) {
+	'./library', 'sap/ui/core/Control'
+], function(library, Control) {
 	"use strict";
 
 	/**
@@ -127,6 +127,9 @@ sap.ui.define([
 	 * This method can be overwritten by subclass in order to return a payload for Ok action
 	 *
 	 * @returns {object} Object which describes the state after Ok has been pressed
+	 * @deprecated As of version 1.50, replaced by the event of the respective inherited
+	 * control, for example {@link sap.m.P13nColumnsPanel.html#changeColumnsItems} of
+	 * <code>P13nColumnsPanel</code> control.
 	 * @public
 	 * @since 1.26.7
 	 */
@@ -177,4 +180,4 @@ sap.ui.define([
 
 	return P13nPanel;
 
-}, /* bExport= */true);
+});

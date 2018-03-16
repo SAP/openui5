@@ -1,0 +1,88 @@
+<mvc:View
+	controllerName="sap.ui.rta.appVariant.manageApps.webapp.controller.ManageApps"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m">
+
+	<Table id="Table1"
+		showNoData="false"
+		inset="false"
+		growing="true"
+		growingThreshold="500"
+		items="{/appVariants}">
+		<columns>
+			<Column
+				width="6em"
+				hAlign="Left">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_APP_TYPE}" />
+			</Column>
+			<Column
+				width="2em"
+				minScreenWidth="tablet"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Left">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_ICON}" />
+			</Column>
+			<Column
+				width="12em"
+				minScreenWidth="tablet"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Left">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_TITLE_SUBTITLE}" />
+			</Column>
+			<Column
+				width="12em"
+				minScreenWidth="tablet"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Left">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_DESCRIPTION}" />
+			</Column>
+			<Column
+				width="4em"
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Center">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_COPY_ID_ACTION}" />
+			</Column>
+			<Column
+				width="4em"
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Center">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_ADAPT_UI_ACTION}" />
+			</Column>
+			<Column
+				width="4em"
+				minScreenWidth="Desktop"
+				demandPopin="true"
+				popinDisplay="WithoutHeader"
+				hAlign="Center">
+				<core:InvisibleText text="{i18n>MAA_DIALOG_SAVE_AS_ACTION}" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem highlight="{path: 'currentStatus', formatter:'.formatRowHighlight'}">
+				<cells>
+					<ObjectIdentifier
+						title="{typeOfApp}"
+						text="{currentStatus}" />
+					<core:Icon src="{icon}" class="sapUiListTableIconSize" />
+					<ObjectIdentifier
+						title="{title}"
+						text="{subTitle}" />
+					<Text text="{description}" />
+
+					<Button text="{i18n>MAA_DIALOG_COPY_ID}" press="copyId"/>
+					<Button text="{i18n>MAA_DIALOG_ADAPT_UI}" enabled="{adaptUIButtonVisibility}" press="handleUiAdaptation" visible="{isKeyUser}" />
+					<Button text="{i18n>MAA_DIALOG_SAVE_AS_APP}" tooltip="{i18n>TOOLTIP_MAA_DIALOG_SAVE_AS_APP}" press="saveAsAppVariant" visible="{isKeyUser}" />
+
+				</cells>
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

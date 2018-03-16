@@ -51,9 +51,6 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/semantic
 		}
 	});
 
-	/**
-	 * @Overwrites
-	 */
 	SemanticButton.prototype._getControl = function() {
 
 		var oControl = this.getAggregation('_control');
@@ -85,4 +82,4 @@ sap.ui.define(['sap/m/semantic/SemanticControl', 'sap/m/Button', 'sap/m/semantic
 	};
 
 	return SemanticButton;
-}, /* bExport= */ true);
+});

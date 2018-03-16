@@ -26,9 +26,14 @@
 						new sap.m.Page({
 							title: "simple Planning Calendar",
 							enableScrolling : true,
-							content: [ new sap.ui.core.ComponentContainer({
-								name : "sap.m.sample.PlanningCalendar"
-							})]
+							content: [
+								new sap.ui.core.ComponentContainer({
+									name : "sap.m.sample.PlanningCalendar",
+									settings : {
+										id : "PlanningCalendar"
+									}
+								})
+							]
 						})
 					]
 				}).placeAt("content");

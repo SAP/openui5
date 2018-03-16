@@ -30,7 +30,7 @@
 		}
 
 		if (sBaseUrl === null) {
-			if (jQuery && jQuery.sap &&  jQuery.sap.getModulePath) {
+			if (typeof jQuery !== 'undefined' && jQuery.sap && jQuery.sap.getModulePath) {
 				sFullUrl = jQuery.sap.getModulePath("sap.ui.thirdparty.qunit-reporter-junit", ".js");
 			} else {
 				throw new Error("qunit-junit.js: The script tag seems to be malformed!");
@@ -50,17 +50,27 @@
 		// HACK: insert our hook in front of QUnit's own hook so that we execute first
 		QUnit.config.callbacks.begin.unshift(function() {
 			// ensure proper structure of DOM
-			var $qunit = jQuery("#qunit");
-			var $qunitDetails = jQuery('#qunit-header,#qunit-banner,qunit-userAgent,#qunit-testrunner-toolbar,#qunit-tests');
-			var $qunitFixture = jQuery("#qunit-fixture");
-			if ( $qunit.size() === 0 && $qunitDetails.size() > 0 ) {
+			var qunitNode = document.querySelector("#qunit");
+			var qunitDetailNodes = document.querySelectorAll('#qunit-header,#qunit-banner,#qunit-userAgent,#qunit-testrunner-toolbar,#qunit-tests');
+			var qunitFixtureNode = document.querySelector("#qunit-fixture");
+			if ( qunitNode == null && qunitDetailNodes.length > 0 ) {
 				// create a "qunit" section and place it before the existing detail DOM
-				$qunit = jQuery("<div id='qunit'></div>").insertBefore($qunitDetails[0]);
+				qunitNode = document.createElement('DIV');
+				qunitNode.id = 'qunit';
+				qunitDetailNodes[0].parentNode.insertBefore(qunitNode, qunitDetailNodes[0]);
 				// move the existing DOM into the wrapper
-				$qunit.append($qunitDetails);
+				for ( var i = 0; i < qunitDetailNodes.length; i++) {
+					qunitNode.appendChild(qunitDetailNodes[i]);
+				}
 			}
-			if ( $qunitFixture.size === 0 ) {
-				$qunit.after("<div id='qunit-fixture'></div>");
+			if ( qunitFixtureNode == null ) {
+				qunitFixtureNode = document.createElement('DIV');
+				qunitFixtureNode.id = 'qunit-fixture';
+				if ( qunitNode.nextSibling ) {
+					qunitNode.parentNode.insertBefore(qunitFixtureNode, qunitNode.nextSibling);
+				} else {
+					qunitNode.parentNode.appendChild(qunitFixtureNode);
+				}
 			}
 		});
 
@@ -97,15 +107,6 @@
 				}
 			}
 		});
-		QUnit.log(function(data) {
-			// manipulate data.message for failing tests with source info
-			if (!data.result && data.source) {
-				// save original error message (see QUnit.log below)
-				data.___message = data.message;
-				// add source info to message for detailed reporting
-				data.message += '\n' + 'Source: ' + data.source;
-			}
-		});
 
 		// load and execute qunit-reporter-junit script synchronously via XHR
 		var req = new window.XMLHttpRequest();
@@ -122,22 +123,13 @@
 		};
 		req.send(null);
 
-		// this will be executed after the hooks from qunit-reporter-junit
-		QUnit.log(function(data) {
-			if (!data.result && data.source) {
-				// restore original message to prevent adding the source info to the error message title (see qunit-reporter-junit)
-				data.message = data.___message;
-				data.___message = undefined;
-			}
-		});
-
 		//callback to put results on window object
-		QUnit.jUnitReport = function(oData) {
+		QUnit.jUnitDone(function(oData) {
 
 			window._$jUnitReport.results = oData.results;
 			window._$jUnitReport.xml = oData.xml;
 
-		};
+		});
 
 		// store the information about executed tests
 		QUnit.log(function(oDetails) {

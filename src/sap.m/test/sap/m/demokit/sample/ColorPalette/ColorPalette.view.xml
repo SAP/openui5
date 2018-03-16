@@ -1,0 +1,25 @@
+<mvc:View
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:form="sap.ui.layout.form"
+		controllerName="sap.m.sample.ColorPalette.ColorPalette"
+		xmlns="sap.m">
+
+	<form:SimpleForm
+			maxContainerCols="3"
+			editable="true"
+			backgroundDesign="Transparent">
+		<form:toolbar>
+			<Toolbar>
+				<content>
+					<Title text="Color Palette in a Form"/>
+				</content>
+			</Toolbar>
+		</form:toolbar>
+		<form:content>
+			<Label text="Choose Color"/>
+			<ColorPalette colorSelect="handleColorSelect"/>
+		</form:content>
+	</form:SimpleForm>
+
+
+</mvc:View>

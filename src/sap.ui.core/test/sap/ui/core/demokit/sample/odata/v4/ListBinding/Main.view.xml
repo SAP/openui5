@@ -45,19 +45,15 @@
 						<Button icon="sap-icon://save" press="changeTeamBudget"
 							text="Change" type="Accept"/>
 					</buttons>
-					<content>
-						<form:SimpleForm binding="{/ChangeTeamBudgetByID(...)}" editable="true"
-								id="ChangeTeamBudgetByID" layout="ResponsiveGridLayout">
-							<form:content>
-								<Label text="Team ID" />
-								<!-- <Text text="{$Parameter('TeamID'}" /> -->
-								<Text text="{ui>/TeamID}" />
-								<Label text="Budget" />
-								<!-- <Input value="{$Parameter('Budget'}" /> -->
-								<Input value="{ui>/Budget}" />
-							</form:content>
-						</form:SimpleForm>
-					</content>
+					<form:SimpleForm binding="{/ChangeTeamBudgetByID(...)}" editable="true"
+							id="ChangeTeamBudgetByID" layout="ResponsiveGridLayout">
+						<Label text="Team ID" />
+						<!-- <Text text="{$Parameter('TeamID'}" /> -->
+						<Text text="{ui>/TeamID}" />
+						<Label text="Budget" />
+						<!-- <Input value="{$Parameter('Budget'}" /> -->
+						<Input value="{ui>/Budget}" />
+					</form:SimpleForm>
 				</Dialog>
 			</dependents>
 		</Button>
@@ -65,20 +61,18 @@
 				press="openChangeManagerOfTeamDialog" text="Manager"/>
 	</Toolbar>
 	<form:SimpleForm id="TeamDetails" layout="ResponsiveGridLayout">
-		<form:content>
-			<Label text="Team ID" />
-			<Text id="Team_Id" text="{Team_Id}" />
-			<Label text="Team Name" />
-			<Text text="{Name}" />
-			<Label text="Member Count" />
-			<Text text="{MEMBER_COUNT}" />
-			<Label text="Manager ID" />
-			<Text id="ManagerID" text="{TEAM_2_MANAGER/ID}" />
-			<Label text="Budget" />
-			<Text id="Budget" text="{Budget}" />
-			<Label text="Currency" />
-			<Text text="{BudgetCurrency}" />
-		</form:content>
+		<Label text="Team ID" />
+		<Text id="Team_Id" text="{Team_Id}" />
+		<Label text="Team Name" />
+		<Text text="{Name}" />
+		<Label text="Member Count" />
+		<Text text="{MEMBER_COUNT}" />
+		<Label text="Manager ID" />
+		<Text id="ManagerID" text="{TEAM_2_MANAGER/ID}" />
+		<Label text="Budget" />
+		<Text id="Budget" text="{Budget}" />
+		<Label text="Currency" />
+		<Text text="{BudgetCurrency}" />
 		<form:dependents>
 			<Dialog id="ChangeManagerOfTeamDialog" title="Change Team Manager">
 				<buttons>
@@ -87,18 +81,14 @@
 					<Button icon="sap-icon://save" press="changeManagerOfTeam"
 						text="Change" type="Accept"/>
 				</buttons>
-				<content>
-					<form:SimpleForm
-							binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)}"
-							editable="true" id="ChangeTeamManagerByID"
-							layout="ResponsiveGridLayout">
-						<form:content>
-							<Label text="Manager ID" />
-							<!-- <Input value="{$Parameter('ManagerID'}" /> -->
-							<Input value="{ui>/ManagerID}" />
-						</form:content>
-					</form:SimpleForm>
-				</content>
+				<form:SimpleForm
+						binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)}"
+						editable="true" id="ChangeTeamManagerByID"
+						layout="ResponsiveGridLayout">
+					<Label text="Manager ID" />
+					<!-- <Input value="{$Parameter('ManagerID'}" /> -->
+					<Input value="{ui>/ManagerID}" />
+				</form:SimpleForm>
 			</Dialog>
 		</form:dependents>
 	</form:SimpleForm>
@@ -107,13 +97,13 @@
 		mode="SingleSelectMaster" selectionChange="onEmployeeSelect">
 		<headerToolbar>
 			<Toolbar>
-				<content>
-					<Button icon="sap-icon://sys-cancel-2" text="Cancel"
-						press="onCancel"/>
-					<Button enabled="{ui>/bRealOData}" icon="sap-icon://save" text="Save"
-						press="onSave"/>
-					<Button icon="sap-icon://refresh" id="refreshEmployees" press="onRefresh"/>
-				</content>
+				<Title text="Employees"/>
+				<ToolbarSpacer/>
+				<Button icon="sap-icon://sys-cancel-2" text="Cancel"
+					press="onCancel"/>
+				<Button enabled="{ui>/bRealOData}" icon="sap-icon://save" text="Save"
+					press="onSave"/>
+				<Button icon="sap-icon://refresh" id="refreshEmployees" press="onRefresh"/>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
@@ -122,74 +112,57 @@
 					enabled="{ui>/bRealOData}" icon="{sort>/Employees/Name/icon}" iconFirst="false"
 					press="onSort" text="Employee Name" />
 			</Column>
-			<Column>
+			<Column minScreenWidth="Medium" demandPopin="true">
 				<Text text="Employee ID"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="Large" demandPopin="true">
 				<Text text="Is Manager"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="Small" demandPopin="true">
 				<Button app:sorterPath="AGE" app:sorterControlId="Employees"
 					enabled="{ui>/bRealOData}" icon="{sort>/Employees/AGE/icon}" iconFirst="false"
 					press="onSort" text="Age" />
 			</Column>
-			<Column>
+			<Column minScreenWidth="Medium" demandPopin="true">
 				<Button enabled="false" icon="sap-icon://sort-ascending" iconFirst="false"
 					press="onSort" text="City" />
 			</Column>
-			<Column>
+			<Column minScreenWidth="Large" demandPopin="true">
 				<Text text="Entry Date"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="XXLarge" demandPopin="true">
 				<Text text="ETag"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="XXLarge" demandPopin="true">
 				<Text text="Delete"/>
 			</Column>
-			<Column>
+			<Column minScreenWidth="XXLarge" demandPopin="true">
 				<Text text="Update" tooltip="Make ETag look outdated"/>
 			</Column>
 		</columns>
-		<items>
-			<ColumnListItem>
-				<cells>
-					<Input value="{Name}"/>
-				</cells>
-				<cells>
-					<Text id="Employee_ID" text="{ID}"/>
-				</cells>
-				<cells>
-					<CheckBox selected="{Is_Manager}"/>
-				</cells>
-				<cells>
-					<Input value="{AGE}"/>
-				</cells>
-				<cells>
-					<Text text="{LOCATION/City/CITYNAME}"/>
-				</cells>
-				<cells>
-					<Input value="{ENTRYDATE}"/>
-				</cells>
-				<cells>
-					<!-- Note: automatic type determination cannot work here and triggers a warning
-					  -->
-					<Text text="{path : '@odata.etag', type : 'sap.ui.model.odata.type.String'}"/>
-				</cells>
-				<cells>
-					<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
-				</cells>
-				<cells>
-					<Button enabled="false" icon="sap-icon://edit" text="Update"
-						press="onUpdateEmployee" tooltip="Make ETag look outdated"/>
-				</cells>
-			</ColumnListItem>
-		</items>
+		<ColumnListItem>
+			<Input value="{Name}"/>
+			<Text id="Employee_ID" text="{ID}"/>
+			<CheckBox selected="{Is_Manager}"/>
+			<Input value="{AGE}"/>
+			<Text text="{LOCATION/City/CITYNAME}"/>
+			<Input value="{ENTRYDATE}"/>
+			<!-- Note: automatic type determination cannot work here and triggers a warning
+			  -->
+			<Text text="{path : '@odata.etag', type : 'sap.ui.model.odata.type.String'}"/>
+			<Button icon="sap-icon://delete" text="Delete" press="onDeleteEmployee"/>
+			<Button enabled="false" icon="sap-icon://edit" text="Update"
+				press="onUpdateEmployee" tooltip="Make ETag look outdated"/>
+		</ColumnListItem>
 	</Table>
 	<Table id="EmployeeEquipments" headerText="Employee Equipments"
 		items="{EMPLOYEE_2_EQUIPMENTS}">
 		<columns>
 			<Column>
 				<Text text="Equipment ID"/>
+			</Column>
+			<Column visible="{ui>/bRealOData}">
+				<Text text="Product Image"/>
 			</Column>
 			<Column>
 				<Text text="Product Name"/>
@@ -201,27 +174,18 @@
 				<Text text="Supplier"/>
 			</Column>
 		</columns>
-		<items>
-			<ColumnListItem>
-				<cells>
-					<Text text="{ID}"/>
-				</cells>
-				<cells>
-					<Input value="{EQUIPMENT_2_PRODUCT/Name}"/>
-				</cells>
-				<cells>
-					<HBox>
-						<Text text="{Category} -&#160;"/>
-						<List items="{path : 'EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY', templateShareable : false}">
-							<StandardListItem title="{CategoryName}"/>
-						</List>
-					</HBox>
-				</cells>
-				<cells>
-					<Input value="{EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name}"/>
-				</cells>
-			</ColumnListItem>
-		</items>
+		<ColumnListItem>
+			<Text text="{ID}"/>
+			<Image src="{EQUIPMENT_2_PRODUCT/ProductPicture/Picture}"/>
+			<Input value="{EQUIPMENT_2_PRODUCT/Name}"/>
+			<HBox>
+				<Text text="{Category} -&#160;"/>
+				<List items="{path : 'EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY', templateShareable : false}">
+					<StandardListItem title="{CategoryName}"/>
+				</List>
+			</HBox>
+			<Input value="{EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name}"/>
+		</ColumnListItem>
 	</Table>
 	<VBox>
 		<Toolbar id="GetEmployeeMaxAge" binding="{/GetEmployeeMaxAge(...)}">
@@ -278,16 +242,14 @@
 				}">
 			<headerToolbar>
 				<Toolbar>
-					<content>
-						<Title text="Sort Equipments" titleStyle="H4">
-							<layoutData>
-								<ToolbarLayoutData shrinkable="false" />
-							</layoutData>
-						</Title>
-						<ToolbarSpacer width="1em"/>
-						<Button enabled="false" icon="sap-icon://refresh" text="Refresh"
-							press="onEquipmentsRefresh" />
-					</content>
+					<Title text="Sort Equipments" titleStyle="H4">
+						<layoutData>
+							<ToolbarLayoutData shrinkable="false" />
+						</layoutData>
+					</Title>
+					<ToolbarSpacer width="1em"/>
+					<Button enabled="false" icon="sap-icon://refresh" text="Refresh"
+						press="onEquipmentsRefresh" />
 				</Toolbar>
 			</headerToolbar>
 			<columns>
@@ -312,22 +274,12 @@
 						iconFirst="false" press="onSort" text="EmployeeId" />
 				</Column>
 			</columns>
-			<items>
-				<ColumnListItem>
-					<cells>
-						<Text text="{Category}"/>
-					</cells>
-					<cells>
-						<Text text="{ID}"/>
-					</cells>
-					<cells>
-						<Text text="{Name}"/>
-					</cells>
-					<cells>
-						<Text text="{EmployeeId}"/>
-					</cells>
-				</ColumnListItem>
-			</items>
+			<ColumnListItem>
+				<Text text="{Category}"/>
+				<Text text="{ID}"/>
+				<Text text="{Name}"/>
+				<Text text="{EmployeeId}"/>
+			</ColumnListItem>
 		</Table>
 	</VBox>
 </mvc:View>

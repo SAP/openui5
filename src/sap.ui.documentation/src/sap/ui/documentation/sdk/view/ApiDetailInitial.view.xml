@@ -7,246 +7,267 @@
 		xmlns:custom="sap.ui.documentation.sdk.controls">
 
 	<Page showHeader="false">
+		<l:BlockLayout>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="sapUiNoContentPadding sapUiDemokitLandingImageCell sapUiNoContentPadding">
+					<Image
+						id="phoneImage"
+						src="./resources/sap/ui/documentation/sdk/images/API_ref_S_cropped.jpg"
+						width="100%"
+						densityAware="false"
+						class="landingImage"
+						load="handleLandingImageLoad"
+						visible="{device>/system/phone}"/>
+					<Image
+						src="./resources/sap/ui/documentation/sdk/images/API_ref_M_and_L_cropped.jpg"
+						width="100%"
+						class="landingImage"
+						densityAware="false"
+						load="handleLandingImageLoad"
+						visible="{=!${device>/system/phone}}"/>
 
-		<content>
-			<l:BlockLayout>
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							class="sapUiDemokitLandingImageCell sapUiNoContentPadding">
-						<Image
-								id="phoneImage"
-								src="./resources/sap/ui/documentation/sdk/images/API_ref_S_cropped.jpg"
-								width="100%"
-								densityAware="false"
-								visible="{device>/system/phone}"/>
-						<Image	src="./resources/sap/ui/documentation/sdk/images/API_ref_M_and_L_cropped.jpg"
-								width="100%"
-								visible="{=!${device>/system/phone}}"/>
-						<Text class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderTitleText" text="API Reference" width="100%" textAlign="Left"/>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
+					<Text id="landingImageHeadline"
+						class="sapUiDocumentationApiHeaderText sapUiDocumentationApiHeaderTitleText"
+						text="API Reference"
+						width="100%"
+						textAlign="Left"/>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							title="Featured Namespaces"
-							class="demokitInitialPagesColorPatternA sapUiDemokitLandingBlockHeadline"/>
-				</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="Featured Namespaces"
+						class="sapUiDemokitLandingBlockHeadline"
+						backgroundColorSet="ColorSet9"
+						backgroundColorShade="ShadeA"/>
+			</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							width="2"
-							class ="largeCell demokitInitialPagesColorPatternB" >
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="Main Controls"
-									href="#/api/sap.m"
-									target="_blank"/>
-							<Text
-									text="Responsive controls for touch-enabled devices and desktop browsers"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.m"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						width="2"
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Main Controls"
+								href="#/api/sap.m"/>
+						<Text
+								text="Responsive controls for touch-enabled devices and desktop browsers"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.m"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
 
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternC">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="Layout"
-									href="#/api/sap.ui.layout.form.Form"
-									target="_blank"/>
-							<Label
-									text="Namespace: sap.ui.layout"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Layout"
+								href="#/api/sap.ui.layout.form.Form"/>
+						<Label
+								text="Namespace: sap.ui.layout"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
 
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternE">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="Tables"
-									href="#/api/sap.ui.table"
-									target="_blank"/>
-							<Text
-									text="Tables for desktop-type scenarios"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.ui.table"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Tables"
+								href="#/api/sap.ui.table"/>
+						<Text
+								text="Tables for desktop-type scenarios"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.ui.table"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternD">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="SAP Fiori"
-									href="#/api/sap.f"
-									target="_blank"/>
-							<Text
-									text="Controls specialized for SAP Fiori applications"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.f"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="SAP Fiori"
+								href="#/api/sap.f"/>
+						<Text
+								text="Controls specialized for SAP Fiori applications"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.f"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
 
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternC">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="SAP Fiori for Tools"
-									href="#/api/sap.tnt"
-									target="_blank"/>
-							<Text
-									text="Controls specialized for administrative applications"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.tnt"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="SAP Fiori for Tools"
+								href="#/api/sap.tnt"/>
+						<Text
+								text="Controls specialized for administrative applications"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.tnt"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
 
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternB"
-							width="2">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="UI5 Core Runtime"
-									href="#/api/sap.ui.core"
-									target="_blank"/>
-							<Text
-									text="Boots the core framework and makes it available for the application via method sap.ui.getCore()"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.ui.core"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA"
+						width="2">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="UI5 Core Runtime"
+								href="#/api/sap.ui.core"/>
+						<Text
+								text="Boots the core framework and makes it available for the application via method sap.ui.getCore()"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.ui.core"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow>
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternE"
-							width="2">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="Object Page"
-									href="#/api/sap.uxap"
-									target="_blank"/>
-							<Text
-									text="Controls for displaying, creating and editing objects"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.uxap"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD"
+						width="2">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Object Page"
+								href="#/api/sap.uxap"/>
+						<Text
+								text="Controls for displaying, creating and editing objects"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.uxap"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
 
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternC"
-							width="2">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="Models"
-									href="#/api/sap.ui.model"
-									target="_blank"/>
-							<Text
-									text="Data binding utilities"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.ui.model"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
-				</l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeB"
+						width="2">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Models"
+								href="#/api/sap.ui.model"/>
+						<Text
+								text="Data binding utilities"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.ui.model"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow visible="{= !${appView>/isOpenUI5}}">
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternB"
-							width="2">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="Smart Controls"
-									href="#/api/sap.ui.comp"
-									target="_blank"/>
-							<Text
-									text="Metadata-driven controls"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.ui.comp"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
+			<l:BlockLayoutRow visible="{= !${versionData>/isOpenUI5}}">
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeA"
+						width="2">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Smart Controls"
+								href="#/api/sap.ui.comp"/>
+						<Text
+								text="Metadata-driven controls"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.ui.comp"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
 
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternD">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="Micro Charts"
-									href="#/api/sap.suite.ui.microchart"
-									target="_blank"/>
-							<Text
-									text="Lightweight diagrams"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.suite.ui.microchart"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeC">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Micro Charts"
+								href="#/api/sap.suite.ui.microchart"/>
+						<Text
+								text="Lightweight diagrams"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.suite.ui.microchart"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
 
-					<l:BlockLayoutCell
-							class ="largeCell demokitInitialPagesColorPatternE">
-						<l:VerticalLayout
-								width="100%">
-							<custom:TitleLink
-									level="H1"
-									titleStyle="H1"
-									text="Charts"
-									href="#/api/sap.viz"
-									target="_blank"/>
-							<Text
-									text="Data visualization"
-									class="sapUiSmallMarginBottom"/>
-							<Label
-									text="Namespace: sap.viz"/>
-						</l:VerticalLayout>
-					</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						class="largeCell"
+						backgroundColorSet="ColorSet11"
+						backgroundColorShade="ShadeD">
+					<l:VerticalLayout
+							width="100%">
+						<custom:TitleLink
+								level="H1"
+								titleStyle="H1"
+								text="Charts"
+								href="#/api/sap.viz"/>
+						<Text
+								text="Data visualization"
+								class="sapUiSmallMarginBottom"/>
+						<Label
+								text="Namespace: sap.viz"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
 
 
-				</l:BlockLayoutRow>
+			</l:BlockLayoutRow>
 
-				<l:BlockLayoutRow>
-					<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
-				</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<core:Fragment id="footerFragment" fragmentName="sap.ui.documentation.sdk.view.Footer" type="XML" />
+			</l:BlockLayoutRow>
 
-			</l:BlockLayout>
-		</content>
+		</l:BlockLayout>
 	</Page>
 </mvc:View>

@@ -3,9 +3,20 @@
  */
 
 // Provides control sap.m.Shell.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
-	function(jQuery, library, Control) {
+sap.ui.define([
+	'jquery.sap.global',
+	'./library',
+	'sap/ui/core/Control',
+	'sap/ui/core/library',
+	'sap/m/ShellRenderer'
+],
+	function(jQuery, library, Control, coreLibrary, ShellRenderer) {
 		"use strict";
+
+
+
+		// shortcut for sap.ui.core.TitleLevel
+		var TitleLevel = coreLibrary.TitleLevel;
 
 
 
@@ -105,7 +116,15 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				 * See jQuery.sap.setIcons() for full documentation.
 				 *
 				 */
-				homeIcon : {type : "object", group : "Misc", defaultValue : null}
+				homeIcon : {type : "object", group : "Misc", defaultValue : null},
+
+				/**
+				 * Defines the semantic level of the title.
+				 *
+				 * This information is used by assistive technologies, such as screen readers to create a hierarchical site map for faster navigation.
+				 * Depending on this setting an HTML h1-h6 element is used.
+				 */
+				titleLevel : {type : "sap.ui.core.TitleLevel", group : "Appearance", defaultValue : TitleLevel.H1}
 			},
 			defaultAggregation : "app",
 			aggregations : {
@@ -131,7 +150,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 				var $hdr = this.$("hdr");
 				if ($hdr.length) {
 					$hdr.find(".sapMShellLogo").remove(); // remove old logo, if present
-					var html = sap.m.ShellRenderer.getLogoImageHtml(this);
+					var html = ShellRenderer.getLogoImageHtml(this);
 					$hdr.prepend(jQuery(html)); // insert new logo
 				}
 			}, this));
@@ -211,5 +230,4 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control'],
 		};
 
 		return Shell;
-
-	}, /* bExport= */ true);
+	});

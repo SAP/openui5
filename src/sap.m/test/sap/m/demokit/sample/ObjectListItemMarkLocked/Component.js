@@ -4,7 +4,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 
 	var Component = UIComponent.extend("sap.m.sample.ObjectListItemMarkLocked.Component", {
 		metadata : {
-			rootView : "sap.m.sample.ObjectListItemMarkLocked.List",
+			rootView : {
+				"viewName": "sap.m.sample.ObjectListItemMarkLocked.List",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m",

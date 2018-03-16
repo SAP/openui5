@@ -1,0 +1,48 @@
+<mvc:View
+        xmlns:mvc="sap.ui.core.mvc"
+        xmlns:vp="sap.ui.core.qunit.mvc.viewprocessing"
+        xmlns="sap.m">
+
+    <Label text="testMany2"></Label>
+
+    <vp:ManyAggregationsControl id="myManyAggregationsControl">
+
+        <vp:secondaryContent>
+            <Button id="Button5" />
+            <Button id="Button6" />
+        </vp:secondaryContent>
+
+        <vp:alternativeContent>
+            <vp:ManyAggregationsControl id="myManyAggregationsControl2">
+                <!-- The order of the controls inside the groundControls aggregation has to be 1,2,3,4 -->
+                <Button id="InnerButton1" text="A" />
+
+                <vp:bottomControls>
+                    <Button id="InnerButton2" text="B"/>
+                    <Button id="InnerButton3" text="C"/>
+                </vp:bottomControls>
+
+                <Button id="InnerButton4" text="D" />
+                <!-- see above -->
+            </vp:ManyAggregationsControl>
+
+            <Button id="Button3" />
+            <Button id="Button4" />
+        </vp:alternativeContent>
+
+        <vp:content>
+            <Button id="Button1" />
+            <Button id="Button2" />
+        </vp:content>
+
+        <Button id="Button7" text="inside default aggregation" />
+
+        <vp:groundControls>
+            <Button id="Button8" text="outside default aggregation"/>
+        </vp:groundControls>
+
+    </vp:ManyAggregationsControl>
+
+    <Label text="testMany"></Label>
+
+</mvc:View>
