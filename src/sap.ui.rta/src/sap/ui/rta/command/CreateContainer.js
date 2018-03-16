@@ -30,6 +30,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 				},
 				label : {
 					type : "string"
+				},
+				parentId : {
+					type : "string"
 				}
 			},
 			associations : {},
@@ -43,7 +46,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/rta/command/FlexCommand'], function(
 			changeType : this.getChangeType(),
 			index : this.getIndex(),
 			newControlId : this.getNewControlId(),
-			newLabel : this.getLabel()
+			newLabel : this.getLabel(),
+			parentId : this.getParentId()
 		};
 
 		return mSpecificInfo;
