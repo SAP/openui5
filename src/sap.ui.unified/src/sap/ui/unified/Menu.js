@@ -370,25 +370,37 @@ sap.ui.define([
 
 	/**
 	 * Opens the menu as a context menu.
-	 * @param {jQuery.Event} oEvent The event object
+	 * @param {jQuery.Event | object} oEvent The event object or an object containing offsetX, offsetY
+	 * values and left, top values of the element's position
 	 * @param {sap.ui.core.Element|HTMLElement} oOpenerRef - Might be UI5 Element or DOM Element
 	 */
 	Menu.prototype.openAsContextMenu = function(oEvent, oOpenerRef) {
-		oOpenerRef = oOpenerRef instanceof Element ? oOpenerRef.getDomRef() : oOpenerRef;
+			var iOffsetX, iOffsetY, bRTL, eDock, oOpenerRefOffset;
 
-		var x = oEvent.pageX - jQuery(oOpenerRef).offset().left,
-			y = oEvent.pageY - jQuery(oOpenerRef).offset().top,
-			bRTL = sap.ui.getCore().getConfiguration().getRTL(),
+			oOpenerRef = oOpenerRef instanceof Element ? oOpenerRef.getDomRef() : oOpenerRef;
+
+			if (oEvent instanceof jQuery.Event) {
+				oOpenerRefOffset = jQuery(oOpenerRef).offset();
+				iOffsetX = oEvent.pageX - oOpenerRefOffset.left;
+				iOffsetY = oEvent.pageY - oOpenerRefOffset.top;
+				this._iX = oEvent.clientX;
+				this._iY = oEvent.clientY;
+			} else {
+				// for explicit position coordinates
+				iOffsetX = oEvent.offsetX || 0;
+				iOffsetY = oEvent.offsetY || 0;
+				this._iX = oEvent.left || 0;
+				this._iY = oEvent.top || 0;
+			}
+
+			bRTL = sap.ui.getCore().getConfiguration().getRTL();
 			eDock = Dock;
 
-		if (bRTL) {
-			x = oOpenerRef.clientWidth - x;
-		}
-
-		this._iX = oEvent.clientX;
-		this._iY = oEvent.clientY;
-		this._bOpenedAsContextMenu = true;
-		this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef, x + " " + y, 'fit');
+			if (bRTL) {
+				iOffsetX = oOpenerRef.clientWidth - iOffsetX;
+			}
+			this._bOpenedAsContextMenu = true;
+			this.open(true, oOpenerRef, eDock.BeginTop, eDock.BeginTop, oOpenerRef, iOffsetX + " " + iOffsetY, 'fit');
 	};
 
 	Menu.prototype._handleOpened = function () {
