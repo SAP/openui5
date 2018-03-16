@@ -198,7 +198,7 @@ sap.ui.define([
 			}
 
 			if (this._resizeListenerId) {
-				Device.resize.detachHandler(this._onResize);
+				Device.resize.detachHandler(this._onResizeHandler);
 				ResizeHandler.deregister(this._resizeListenerId);
 				this._resizeListenerId = null;
 			}
