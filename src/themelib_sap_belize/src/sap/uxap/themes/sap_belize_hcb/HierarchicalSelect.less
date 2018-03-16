@@ -64,7 +64,8 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 	width: 3rem;
 }
 
-.sapUiMedia-Std-Phone .sapUxAPHierarchicalSelect.sapMSltHoverable > .sapMSltArrow {
+.sapUiMedia-Std-Phone .sapUxAPHierarchicalSelect.sapMSltHoverable > .sapMSltArrow,
+html .sapUiContainer-Narrow .sapUxAPHierarchicalSelect.sapMSltHoverable > .sapMSltArrow {
 	border-left: none;
 }
 
@@ -102,7 +103,7 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 }
 
 /* styling needed to achieve underline of the select label on phone */
-html.sapUiMedia-Std-Phone, html.sap-phone {
+html.sapUiMedia-Std-Phone, html.sap-phone, html .sapUiContainer-Narrow {
 	.sapMSltPressed > .sapMSltArrow {
 		background: @sapUiFieldActiveBackground;
 	}
