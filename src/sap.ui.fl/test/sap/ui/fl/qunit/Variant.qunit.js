@@ -76,11 +76,19 @@ sap.ui.require([
 		assert.equal(this.oVariant.getId(), this.oVariantDef.content.fileName);
 	});
 
-	QUnit.test("when getContent is called", function(assert) {
+	QUnit.test("when getDefinition is called", function(assert) {
 		this.oVariantDef.content.self = this.oVariantDef.content.namespace + this.oVariantDef.content.fileName + "." + "ctrl_variant";
 		this.oVariantDef.content.support.sapui5Version = sap.ui.version;
 		this.oVariantDef.content.validAppVersions = {};
-		assert.deepEqual(this.oVariant.getContent(), this.oVariantDef.content);
+		assert.deepEqual(this.oVariant.getDefinition(), this.oVariantDef.content);
+	});
+
+	QUnit.test("when getDefinitionWithChanges is called", function(assert) {
+		this.oVariantDef.content.self = this.oVariantDef.content.namespace + this.oVariantDef.content.fileName + "." + "ctrl_variant";
+		this.oVariantDef.content.support.sapui5Version = sap.ui.version;
+		this.oVariantDef.content.validAppVersions = {};
+		this.oVariantDef.variantChanges = {};
+		assert.deepEqual(this.oVariant.getDefinitionWithChanges(), this.oVariantDef);
 	});
 
 	QUnit.test("when setState is called with an incorrect value", function(assert) {
@@ -178,8 +186,8 @@ sap.ui.require([
 		assert.equal(this.oVariant.getPendingAction(), Variant.states.DELETED);
 	});
 
-	QUnit.test("when getDefinition is called", function(assert) {
-		assert.ok(this.oVariant.getDefinition());
+	QUnit.test("when getContent is called", function(assert) {
+		assert.deepEqual(this.oVariant.getContent(), {title: "variant A"}, "then correct content returned");
 	});
 
 	QUnit.test("when createInitialFileContent is called", function(assert) {

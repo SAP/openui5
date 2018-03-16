@@ -668,7 +668,6 @@ sap.ui.require([
 				"content":{
 					"title":"variant A"
 				},
-				"selector":{},
 				"layer":"CUSTOMER",
 				"texts":{
 					"TextDemo": {
@@ -686,7 +685,8 @@ sap.ui.require([
 					"user":""
 				}
 			},
-			"controlChanges": []
+			"controlChanges": [],
+			"variantChanges": {}
 		};
 		sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
 		sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
@@ -697,6 +697,13 @@ sap.ui.require([
 		};
 		return this.oModel._copyVariant(mPropertyBag).then( function (aChanges) {
 			assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
+
+			//Mocking properties set inside Variant.createInitialFileContent
+			oVariantData.content.support.sapui5Version = sap.ui.version;
+			oVariantData.content.self = oVariantData.content.namespace + oVariantData.content.fileName + "." + "ctrl_variant";
+
+			assert.deepEqual(aChanges[0].getDefinitionWithChanges(), oVariantData, "then ctrl_variant change prepared with the correct content");
+			assert.ok(fnAddVariantToControllerStub.calledWith(aChanges[0].getDefinitionWithChanges()), "then function to add variant to VariantController called with the correct parameters");
 			assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
 			assert.equal(aChanges[0].getId(), oVariantData.content.fileName, "then the returned variant is the duplicate variant");
 		}.bind(this));
