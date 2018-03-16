@@ -27,7 +27,9 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
+	var aAllowedBindingParameters = ["$$groupId", "$$operationMode", "$$ownRequest",
+			"$$updateGroupId"],
+		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
 			metadata : {
 				aggregations : {
@@ -318,8 +320,7 @@ sap.ui.require([
 			sUpdateGroupId = "update foo";
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters),
-				["$$groupId", "$$operationMode", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns(mBindingParameters);
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
 			.returns(mQueryOptions);
@@ -370,8 +371,7 @@ sap.ui.require([
 
 		oBinding.mCacheByContext = {}; //mCacheByContext must be reset before fetchCache
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters),
-				["$$groupId", "$$operationMode", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({$$operationMode : OperationMode.Server});
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
@@ -1739,57 +1739,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deregisterChange: absolute binding", function (assert) {
-		var oBinding = this.oModel.bindList("/SalesOrderList"),
-			oListener = {};
-
-		this.mock(_Helper).expects("buildPath").withExactArgs(1, "foo").returns("~");
-		this.mock(oBinding.oCachePromise.getResult()).expects("deregisterChange")
-			.withExactArgs("~", sinon.match.same(oListener));
-
-		oBinding.deregisterChange("foo", oListener, 1);
-	});
-	// TODO deregisterChange from a property binding may arrive after the binding changed or
-	//      activated its cache when a relative binding with cache changed its parent
-	//      context. Find a better way to deal with these registrations.
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChange: cache is not yet available", function (assert) {
-		var oBinding = this.oModel.bindList("/SalesOrderList"),
-			oCache = {
-				deregisterChange : function () {}
-			};
-
-		// simulate pending cache creation
-		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
-		this.mock(oCache).expects("deregisterChange").never();
-
-		oBinding.deregisterChange("foo", {});
-
-		return oBinding.oCachePromise.then();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChange: relative binding resolved", function (assert) {
-		var oBinding,
-			oContext = Context.create(this.oModel, {}, "/foo"),
-			oListener = {};
-
-		oBinding = this.oModel.bindList("SO_2_SOITEM", oContext);
-		this.mock(_Helper).expects("buildPath").withExactArgs("SO_2_SOITEM", 1, "foo").returns("~");
-		this.mock(oContext).expects("deregisterChange")
-			.withExactArgs("~", sinon.match.same(oListener));
-
-		oBinding.deregisterChange("foo", oListener, 1);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChange: relative binding unresolved", function (assert) {
-		this.oModel.bindList("SO_2_SOITEM")
-			.deregisterChange("foo", {}, 1); // nothing must happen
-	});
-
-	//*********************************************************************************************
 	QUnit.test("forbidden", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES");
 
@@ -1834,8 +1783,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("$$groupId, $$updateGroupId, $$operationMode", function (assert) {
-		var aAllowed = ["$$groupId", "$$operationMode", "$$updateGroupId"],
-			oBinding = this.oModel.bindList("/EMPLOYEES"),
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {},
 			oPrototypeMock;
@@ -1844,7 +1792,7 @@ sap.ui.require([
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowed)
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -1853,7 +1801,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getUpdateGroupId(), "bar");
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowed)
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({$$groupId : "foo"});
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -1862,7 +1810,7 @@ sap.ui.require([
 		assert.strictEqual(oBinding.getUpdateGroupId(), "fromModel");
 
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowed)
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({});
 		// code under test
 		oBinding.applyParameters(mParameters);
@@ -1871,7 +1819,7 @@ sap.ui.require([
 
 		// buildBindingParameters also called for relative binding
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowed)
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({$$groupId : "foo", $$operationMode : "Server", $$updateGroupId : "bar"});
 		oPrototypeMock = this.mock(ODataListBinding.prototype);
 		oPrototypeMock.expects("applyParameters").withExactArgs(mParameters); // called by c'tor

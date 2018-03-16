@@ -364,7 +364,8 @@ sap.ui.require([
 					"@odata.etag" : sEtag
 				}
 			},
-			fnCallback = this.spy();
+			fnCallback = this.spy(),
+			oUpdateData = {};
 
 
 		oCache.fetchValue = function () {};
@@ -374,14 +375,16 @@ sap.ui.require([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("DELETE", "TEAMS('23')", "groupId", {"If-Match" : sEtag})
 			.returns(Promise.resolve({}));
+		this.mock(_Cache).expects("makeUpdateData").withExactArgs(["EMPLOYEE_2_TEAM"], null)
+			.returns(oUpdateData);
+		this.mock(_Helper).expects("updateCache")
+			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+				sinon.match.same(oCacheData), sinon.match.same(oUpdateData));
 
 		// code under test
 		return oCache._delete("groupId", "TEAMS('23')", "EMPLOYEE_2_TEAM", fnCallback)
 			.then(function (oResult) {
 				assert.strictEqual(oResult, undefined);
-				assert.deepEqual(oCacheData, {
-					"EMPLOYEE_2_TEAM" : null
-				});
 				sinon.assert.calledOnce(fnCallback);
 				sinon.assert.calledWithExactly(fnCallback);
 			});

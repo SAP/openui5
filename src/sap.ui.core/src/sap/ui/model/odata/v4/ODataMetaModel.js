@@ -9,18 +9,18 @@ sap.ui.define([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ClientListBinding",
-	"sap/ui/model/ClientPropertyBinding",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/Context",
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/Int64",
+	"sap/ui/model/PropertyBinding",
 	"sap/ui/thirdparty/URI",
 	"./lib/_Helper",
 	"./ValueListType"
-], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
-		ClientPropertyBinding, ContextBinding, BaseContext, MetaModel, OperationMode, Int64, URI,
-		_Helper, ValueListType) {
+], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding, ContextBinding,
+		BaseContext, MetaModel, OperationMode, Int64, PropertyBinding, URI, _Helper,
+		ValueListType) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
 
@@ -426,42 +426,56 @@ sap.ui.define([
 	/**
 	 * @class Property binding implementation for the OData metadata model.
 	 *
-	 * @extends sap.ui.model.ClientPropertyBinding
+	 * @extends sap.ui.model.PropertyBinding
 	 * @private
 	 */
 	ODataMetaPropertyBinding
-		= ClientPropertyBinding.extend("sap.ui.model.odata.v4.ODataMetaPropertyBinding", {
+		= PropertyBinding.extend("sap.ui.model.odata.v4.ODataMetaPropertyBinding", {
 			constructor : function () {
-				ClientPropertyBinding.apply(this, arguments);
+				PropertyBinding.apply(this, arguments);
+				this.vValue = undefined;
 			},
-			// @override
-			// @see sap.ui.model.ClientPropertyBinding#_getValue
-			_getValue : function () {
-				var oPromise,
-				that = this;
 
-				oPromise = this.oModel.fetchObject(this.sPath, this.oContext, this.mParameters);
-				if (oPromise.isFulfilled()) {
-					return oPromise.getResult();
-				}
-				// This is the async case
-				oPromise.then(function () {
-					// Now the value is available, fetch it again (now synchronously) and notify
-					// listeners
-					that.checkUpdate();
-				});
-				return undefined;
-			},
+			// Updates the binding's value and sends a change event if the <code>bForceUpdate</code>
+			// parameter is set to <code>true</code> or if the value has changed.
+			//
+			// @param {boolean} [bForceUpdate=false]
+			//   If <code>true</code>, the change event is always fired.
+			// @param {sap.ui.model.ChangeReason} [sChangeReason=ChangeReason.Change]
+			//   The change reason for the change event
 			// @override
 			// @see sap.ui.model.Binding#checkUpdate
-			checkUpdate : function (bForceUpdate) {
-				var vValue = this._getValue();
+			checkUpdate : function (bForceUpdate, sChangeReason) {
+				var that = this;
 
-				if (bForceUpdate || vValue !== this.oValue) {
-					this.oValue = vValue;
-					this._fireChange({reason : ChangeReason.Change});
+				this.oModel.fetchObject(this.sPath, this.oContext, this.mParameters)
+					.then(function (vValue) {
+						if (bForceUpdate || vValue !== that.vValue) {
+							that.vValue = vValue;
+							that._fireChange({
+								reason : sChangeReason || ChangeReason.Change
+							});
+						}
+					});
+			},
+
+			// @override
+			// @see sap.ui.model.PropertyBinding#getValue
+			getValue : function () {
+				return this.vValue;
+			},
+
+			// @override
+			// @see sap.ui.model.Binding#setContext
+			setContext : function (oContext) {
+				if (this.oContext != oContext) {
+					this.oContext = oContext;
+					if (this.bRelative) {
+						this.checkUpdate(false, ChangeReason.Context);
+					}
 				}
 			},
+
 			// @override
 			// @see sap.ui.model.PropertyBinding#setValue
 			setValue : function () {

@@ -21,7 +21,7 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$groupId", "$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$groupId", "$$ownRequest", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataContextBinding";
 
 	//*********************************************************************************************
@@ -111,7 +111,7 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns(mBindingParameters);
 		this.mock(oBinding).expects("fetchCache").withExactArgs(undefined).callsFake(function () {
 			this.oCachePromise = SyncPromise.resolve({});
@@ -145,7 +145,7 @@ sap.ui.require([
 			oModelMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 			oModelMock.expects("buildBindingParameters")
-				.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 				.returns({
 					$$groupId : sGroupId,
 					$$updateGroupId : sUpdateGroupId
@@ -180,7 +180,7 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({
 				$$groupId : sGroupId,
 				$$updateGroupId : sUpdateGroupId
@@ -213,7 +213,7 @@ sap.ui.require([
 		oModelMock.expects("buildQueryOptions")
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), ["$$groupId", "$$updateGroupId"])
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
 			.returns({
 				$$groupId : sGroupId,
 				$$updateGroupId : sUpdateGroupId
@@ -640,55 +640,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deregisterChange: absolute binding", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute"),
-			oListener = {};
-
-		this.mock(oBinding.oCachePromise.getResult()).expects("deregisterChange")
-			.withExactArgs("foo", sinon.match.same(oListener));
-
-		oBinding.deregisterChange("foo", oListener);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChange: cache is not yet available", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute"),
-			oCache = {
-				deregisterChange : function () {}
-			};
-
-		// simulate pending cache creation
-		oBinding.oCachePromise = SyncPromise.resolve(Promise.resolve(oCache));
-		this.mock(oCache).expects("deregisterChange").never();
-
-		oBinding.deregisterChange("foo", {});
-
-		return oBinding.oCachePromise.then();
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChange: relative binding resolved", function (assert) {
-		var oBinding,
-			oContext = Context.create(this.oModel, {}, "/Products('1')"),
-			oListener = {};
-
-		this.mock(_Helper).expects("buildPath").withExactArgs("PRODUCT_2_BP", "foo")
-			.returns("~foo~");
-		this.mock(oContext).expects("deregisterChange")
-			.withExactArgs("~foo~", sinon.match.same(oListener));
-
-		oBinding = this.oModel.bindContext("PRODUCT_2_BP", oContext);
-
-		oBinding.deregisterChange("foo", oListener);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("deregisterChange: relative binding unresolved", function (assert) {
-		this.oModel.bindContext("PRODUCT_2_BP")
-			.deregisterChange("foo", {}); // nothing must happen
-	});
-
-	//*********************************************************************************************
 	QUnit.test("events", function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ContextBinding.prototype),
@@ -710,7 +661,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("$$groupId, $$updateGroupId", function (assert) {
+	QUnit.test("$$groupId, $$ownRequest, $$updateGroupId", function (assert) {
 		var oBinding,
 			oModelMock = this.mock(this.oModel),
 			mParameters = {

@@ -328,6 +328,9 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link #submitBatch}.
+	 * @param {boolean} [mParameters.$$ownRequest]
+	 *   Whether the binding always uses an own service request to read its data; only the value
+	 *   <code>true</code> is allowed.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -423,6 +426,9 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link #submitBatch}.
+	 * @param {boolean} [mParameters.$$ownRequest]
+	 *   Whether the binding always uses an own service request to read its data; only the value
+	 *   <code>true</code> is allowed.
 	 * @param {string} [mParameters.$$updateGroupId]
 	 *   The group ID to be used for <b>update</b> requests triggered by this binding;
 	 *   if not specified, either the parent binding's update group ID (if the binding is relative)
@@ -502,6 +508,7 @@ sap.ui.define([
 	 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
 	 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
 	 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
+	 * <li> '$$ownRequest' with value <code>true</code>
 	 * </ul>
 	 *
 	 * @param {object} mParameters
@@ -521,7 +528,7 @@ sap.ui.define([
 
 		if (mParameters) {
 			Object.keys(mParameters).forEach(function (sKey) {
-				var sValue = mParameters[sKey];
+				var vValue = mParameters[sKey];
 
 				if (sKey.indexOf("$$") !== 0) {
 					return;
@@ -533,18 +540,24 @@ sap.ui.define([
 				switch (sKey) {
 					case "$$groupId":
 					case "$$updateGroupId":
-						that.checkGroupId(sValue, false,
+						that.checkGroupId(vValue, false,
 							"Unsupported value for binding parameter '" + sKey + "': ");
 						break;
 					case "$$operationMode":
-						if (sValue !== OperationMode.Server) {
-							throw new Error("Unsupported operation mode: " + sValue);
+						if (vValue !== OperationMode.Server) {
+							throw new Error("Unsupported operation mode: " + vValue);
+						}
+						break;
+					case "$$ownRequest":
+						if (vValue !== true) {
+							throw new Error("Unsupported value for binding parameter "
+								+ "'$$ownRequest': " + vValue);
 						}
 						break;
 					default:
 						throw new Error("Unknown binding-specific parameter: " + sKey);
 				}
-				mResult[sKey] = sValue;
+				mResult[sKey] = vValue;
 			});
 		}
 		return mResult;
@@ -859,8 +872,7 @@ sap.ui.define([
 
 			return oBinding.isRelative()
 				&& (oContext === oParent
-						|| oContext && oContext.getBinding && oContext.getBinding() === oParent
-					);
+						|| oContext && oContext.getBinding && oContext.getBinding() === oParent);
 		});
 	};
 
@@ -1099,7 +1111,7 @@ sap.ui.define([
 	 *   The name of the class reporting the error
 	 * @param {Error} oError
 	 *   The error
-	 * @param {boolean|"noDebugLog"} [oError.canceled]
+	 * @param {boolean|string} [oError.canceled]
 	 *   A boolean value indicates whether the error is not reported but just logged to the
 	 *   console with level DEBUG; example: errors caused by cancellation of backend requests.
 	 *   For the string value "noDebugLog", the method does nothing; example: errors caused by

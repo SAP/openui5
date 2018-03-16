@@ -79,6 +79,7 @@
 			Device,
 			iFileIndex = aFileNames.length,
 			sFileName = oConfiguration.inputFileName,
+			iNoOfOutputLines,
 			sScriptInput = oConfiguration.inputFile,
 			sScriptOutput;
 
@@ -100,12 +101,18 @@
 		sScriptOutput = "" + falafel(sScriptInput, {
 				attachComment : bComment,
 				comment : bComment,
-				loc : true
-//				range : false,
-//				source : undefined, // would simply be attached to each Location
+				loc : true,
+				range : true,
+				source : sScriptInput // is simply attached to each Location
 //				tokens : false,
 //				tolerant : false
 			}, visit.bind(null, bBranchTracking, iFileIndex, Device));
+
+		iNoOfOutputLines = sScriptOutput.split("\n").length;
+		if (iNoOfOutputLines !== _$blanket[sFileName].source.length) {
+			jQuery.sap.log.warning("Line length mismatch! " + _$blanket[sFileName].source.length
+				+ " vs. " + iNoOfOutputLines, sFileName, "sap.ui.test.BranchTracking");
+		}
 
 		fnSuccess(sScriptOutput);
 	}
@@ -203,8 +210,7 @@
 		var aHits = aStatistics[iFileIndex],
 			aBranchTracking = aHits.branchTracking,
 			iLine = oNode.loc.start.line,
-			sNewSource,
-			sOldSource;
+			sNewSource;
 
 		/*
 		 * Adds line tracking instrumentation to the current node.
@@ -214,8 +220,40 @@
 		 */
 		function addLineTracking() {
 			oNode.update("blanket.$l(" + iFileIndex + ", " + iLine + "); " + oNode.source());
-			aHits[iLine] = 0;
+			initHits();
 			return true;
+		}
+
+		/*
+		 * Initialize hits count for current line, double check for duplicates.
+		 */
+		function initHits() {
+			if (iLine in aHits) {
+				jQuery.sap.log.warning("Duplicate line " + iLine, aFileNames[iFileIndex],
+					"sap.ui.test.BranchTracking");
+			}
+			aHits[iLine] = 0;
+		}
+
+		/*
+		 * Preserve operator's source code incl. comments and line breaks, but avoid leading closing
+		 * or trailing opening parentheses.
+		 *
+		 * Note: outer parentheses are absorbed by operators and do not appear in operand's source!
+		 *
+		 * @returns {string}
+		 */
+		function operator() {
+			var sSource = oNode.loc.source.slice(oNode.left.range[1], oNode.right.range[0]);
+
+			if (sSource[0] === ")") {
+				sSource = sSource.slice(1);
+			}
+			if (sSource.slice(-1) === "(") {
+				sSource = sSource.slice(0, -1);
+			}
+
+			return sSource;
 		}
 
 		if (Device && isChildOfIgnoredNode(Device, oNode)) {
@@ -293,7 +331,7 @@
 					+ (bBranchTracking ? aBranchTracking.length : -1) + ", "
 					+ oNode.test.source() + ", " + iLine + ")"
 				);
-				aHits[iLine] = 0;
+				initHits();
 				if (bBranchTracking) {
 					aBranchTracking.push({
 						// Note: in case of missing "else" we blame it on the condition
@@ -310,10 +348,10 @@
 				}
 				if (oNode.operator === "||" || oNode.operator === "&&") {
 					// Note: (...) around right source!
-					sOldSource = oNode.left.source();
 					sNewSource = "blanket.$b(" + iFileIndex + ", " + aBranchTracking.length + ", "
-						+ sOldSource + ") " + oNode.operator + " (" + oNode.right.source() + ")";
-					if (!rWordChar.test(sOldSource[0])) {
+						+ oNode.left.source() + ") "
+						+ operator() + " (" + oNode.right.source() + ")";
+					if (!rWordChar.test(oNode.loc.source[oNode.range[0]])) {
 						// Note: handle minified code like "return!x||y;"
 						sNewSource = " " + sNewSource;
 					}
@@ -514,6 +552,42 @@
 		sap.ui.require(["sap/ui/base/SyncPromise", "jquery.sap.global"], function (SyncPromise) {
 			bDebug = jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, sClassName);
 			SyncPromise.listener = listener;
+		});
+
+		QUnit.config.autostart = false;
+		sap.ui.require(["sap/ui/core/Core"], function (Core) {
+			var oCore = sap.ui.getCore();
+
+			oCore.attachInit(function () {
+				function start() {
+					try {
+						oCore.detachThemeChanged(start);
+						QUnit.start();
+					} catch (ex) {
+						// no way to tell if QUnit.start() has already been called :-(
+					}
+				}
+
+				if (oCore.isThemeApplied()) {
+					start();
+				} else {
+					oCore.attachThemeChanged(start);
+				}
+			});
+		});
+
+		// allow easier module selection: larger list, one click selection
+		QUnit.begin(function () {
+			jQuery("#qunit-modulefilter-dropdown-list").css("max-height", "none");
+
+			jQuery("#qunit-modulefilter-dropdown").click(function (oMouseEvent) {
+				if (oMouseEvent.target.tagName === "LABEL") {
+					setTimeout(function () {
+						// click on label instead of checkbox triggers "Apply" automatically
+						jQuery("#qunit-modulefilter-actions").children().first().click();
+					});
+				}
+			});
 		});
 	}
 }());

@@ -1098,6 +1098,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$ownRequest", function (assert) {
+		var aAllowedParams = ["$$ownRequest"],
+			oModel = createModel();
+
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$ownRequest : "foo"}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$ownRequest': foo"));
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$ownRequest : false}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$ownRequest': false"));
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$ownRequest : undefined}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$ownRequest': undefined"));
+
+		assert.deepEqual(oModel.buildBindingParameters({$$ownRequest : true},
+				aAllowedParams),
+			{$$ownRequest : true});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("buildBindingParameters, $$updateGroupId", function (assert) {
 		var aAllowedParams = ["$$updateGroupId"],
 			oModel = createModel();

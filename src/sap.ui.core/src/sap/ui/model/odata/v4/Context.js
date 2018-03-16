@@ -178,21 +178,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Deregisters the given change listener.
-	 *
-	 * @param {string} sPath
-	 *   The path
-	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
-	 *   The change listener
-	 *
-	 * @private
-	 */
-	Context.prototype.deregisterChange = function (sPath, oListener) {
-		// Note: iIndex === -2 is OK here, no listener will be found...
-		this.oBinding.deregisterChange(sPath, oListener, this.iIndex);
-	};
-
-	/**
 	 * Destroys this context, that is, it removes this context from all dependent bindings and drops
 	 * references to binding and model, so that the context cannot be used anymore; it keeps path
 	 * and index for debugging purposes.

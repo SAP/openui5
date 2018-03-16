@@ -1389,4 +1389,40 @@ sap.ui.require([
 		// code under test
 		Utils.calculateEntitySetAnnotations(oEntitySet, oEntityType);
 	});
+
+	//*********************************************************************************************
+	[
+		{ aArray : null, vValue : "foo", iResult : -1 },
+		{ aArray : undefined, vValue : "foo", iResult : -1 },
+		{ aArray : [], vValue : "foo", iResult : -1 },
+		{ aArray : [], sPropertyName : "bar", vValue : "foo", iResult : -1 },
+		{ aArray : [{ name : "bar" }, { name : "foo" }], vValue : "foo", iResult : 1 },
+		{
+			aArray : [{
+				bar : "foo"
+			}, {
+				bar : "foo"
+			}],
+			sPropertyName : "bar",
+			vValue : "foo",
+			iResult : 0 // take the first one that matches
+		}
+
+	].forEach(function (oFixture, i) {
+		QUnit.test("findIndex: " + i, function (assert) {
+			// code under test
+			assert.strictEqual(
+				Utils.findIndex(oFixture.aArray, oFixture.vValue, oFixture.sPropertyName),
+				oFixture.iResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("findIndex: vExpectedPropertyValue is same object", function (assert) {
+		var oValue = {},
+			aArray = [{ foo : {} }, { foo : oValue }, { foo : {} }];
+
+		// code under test
+		assert.strictEqual(Utils.findIndex(aArray, oValue, "foo"), 1);
+	});
 });

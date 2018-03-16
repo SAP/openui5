@@ -7,11 +7,11 @@ sap.ui.require([
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/ClientListBinding",
-	"sap/ui/model/ClientPropertyBinding",
 	"sap/ui/model/Context",
 	"sap/ui/model/ContextBinding",
 	"sap/ui/model/Filter",
 	"sap/ui/model/MetaModel",
+	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/Int64",
@@ -24,10 +24,10 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/ValueListType",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/URI"
-], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
-		ClientPropertyBinding, BaseContext, ContextBinding, Filter, MetaModel, Sorter,
-		OperationMode, Int64, Raw, AnnotationHelper, Context, _Helper, ODataMetaModel, ODataModel,
-		ValueListType, TestUtils, URI) {
+], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding, BaseContext,
+		ContextBinding, Filter, MetaModel, PropertyBinding, Sorter, OperationMode, Int64, Raw,
+		AnnotationHelper, Context, _Helper, ODataMetaModel, ODataModel, ValueListType, TestUtils,
+		URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -2464,25 +2464,21 @@ sap.ui.require([
 		var oBinding,
 			oContext = {},
 			mParameters = {},
-			sPath = "foo",
-			oValue = {};
-
-		this.oMetaModelMock.expects("fetchObject")
-			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
-			.returns(SyncPromise.resolve(oValue));
+			sPath = "foo";
 
 		// code under test
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
 
-		assert.ok(oBinding instanceof ClientPropertyBinding);
+		assert.ok(oBinding instanceof PropertyBinding);
+		assert.ok(oBinding.hasOwnProperty("vValue"));
 		assert.strictEqual(oBinding.getContext(), oContext);
 		assert.strictEqual(oBinding.getModel(), this.oMetaModel);
 		assert.strictEqual(oBinding.getPath(), sPath);
 		assert.strictEqual(oBinding.mParameters, mParameters, "mParameters available internally");
-		assert.strictEqual(oBinding.getValue(), oValue);
+		assert.strictEqual(oBinding.getValue(), undefined);
 
 		// code under test: must not call getProperty() again!
-		assert.strictEqual(oBinding.getExternalValue(), oValue);
+		assert.strictEqual(oBinding.getExternalValue(), undefined);
 
 		// code under test
 		assert.throws(function () {
@@ -2491,83 +2487,104 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("ODataMetaPropertyBinding#_getValue (sync)", function (assert) {
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate", function (assert) {
 		var oBinding,
 			oContext = {},
 			mParameters = {},
 			sPath = "foo",
-			oValue = {};
-
-		// Called twice: the first time in the initialization, the second time as code under test
-		this.oMetaModelMock.expects("fetchObject").twice()
-			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
-			.returns(SyncPromise.resolve(oValue));
-		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
-		this.mock(oBinding).expects("_fireChange").never();
-
-		// code under test
-		assert.strictEqual(oBinding._getValue(), oValue);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("ODataMetaPropertyBinding#_getValue (async)", function (assert) {
-		var that = this,
-			oBinding,
-			oContext = {},
-			mParameters = {},
-			sPath = "foo",
 			oValue = {},
-			oPromise = SyncPromise.resolve(Promise.resolve()).then(function () {
-				that.mock(oBinding).expects("checkUpdate").withExactArgs();
-				return oValue;
-			});
+			oPromise = SyncPromise.resolve(Promise.resolve(oValue));
 
-		// respond synchronously during the initialization
-		this.oMetaModelMock.expects("fetchObject").returns(SyncPromise.resolve(oValue));
 		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
 
-		this.mock(oBinding).expects("_fireChange").never();
 		this.oMetaModelMock.expects("fetchObject")
 			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
 			.returns(oPromise);
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
-		assert.strictEqual(oBinding._getValue(), undefined);
+		oBinding.checkUpdate();
+
+		assert.strictEqual(oBinding.getValue(), undefined);
+		oPromise.then(function () {
+			assert.strictEqual(oBinding.getValue(), oValue);
+		});
 
 		return oPromise;
 	});
 
 	//*********************************************************************************************
-	QUnit.test("ODataMetaPropertyBinding#checkUpdate", function (assert) {
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate: no event", function (assert) {
 		var oBinding,
-			oBindingMock,
 			oContext = {},
+			mParameters = {},
 			sPath = "foo",
-			oValue1 = {},
-			oValue2 = {};
+			oValue = {},
+			oPromise = SyncPromise.resolve(Promise.resolve(oValue));
+
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+		oBinding.vValue = oValue;
 
 		this.oMetaModelMock.expects("fetchObject")
-			.withExactArgs(sPath, sinon.match.same(oContext), undefined)
-			.returns(SyncPromise.resolve(oValue1));
-		oBinding = this.oMetaModel.bindProperty(sPath, oContext);
+			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
+			.returns(oPromise);
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		oBinding.checkUpdate();
+
+		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate: bForceUpdate, sChangeReason",
+			function (assert) {
+		var oBinding,
+			oContext = {},
+			mParameters = {},
+			sPath = "foo",
+			oValue = {},
+			oPromise = SyncPromise.resolve(Promise.resolve(oValue));
+
+		oBinding = this.oMetaModel.bindProperty(sPath, oContext, mParameters);
+		oBinding.vValue = oValue;
+
+		this.oMetaModelMock.expects("fetchObject")
+			.withExactArgs(sPath, sinon.match.same(oContext), sinon.match.same(mParameters))
+			.returns(oPromise);
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : "Foo"});
+
+		// code under test
+		oBinding.checkUpdate(true, "Foo");
+
+		return oPromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("ODataMetaPropertyBinding#setContext", function (assert) {
+		var oBinding,
+			oBindingMock,
+			oContext = {};
+
+		oBinding = this.oMetaModel.bindProperty("Foo", oContext);
 		oBindingMock = this.mock(oBinding);
-		oBindingMock.expects("_getValue").withExactArgs().returns(oValue1);
-		oBindingMock.expects("_fireChange").never();
 
-		// code under test: nothing changed -> no event
-		oBinding.checkUpdate();
+		oBindingMock.expects("checkUpdate").never();
 
-		// simulate a changed value; this may happen when a new context was set
-		oBindingMock.expects("_getValue").twice().withExactArgs().returns(oValue2);
-		oBindingMock.expects("_fireChange").twice().withExactArgs({reason : ChangeReason.Change});
+		// code under test
+		oBinding.setContext(oContext);
 
-		// code under test: value changed -> changeEvent expected
-		oBinding.checkUpdate();
+		oBindingMock.expects("checkUpdate").withExactArgs(false, ChangeReason.Context);
 
-		assert.strictEqual(oBinding.getValue(), oValue2);
+		// code under test
+		oBinding.setContext(undefined);
+		assert.strictEqual(oBinding.getContext(), undefined);
 
-		// code under test: value unchanged and bForceUpdate=true -> changeEvent expected
-		oBinding.checkUpdate(true);
+		oBinding = this.oMetaModel.bindProperty("/Foo");
+		this.mock(oBinding).expects("checkUpdate").never();
+
+		// code under test
+		oBinding.setContext(oContext);
 	});
 
 	//*********************************************************************************************

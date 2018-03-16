@@ -372,8 +372,6 @@ function runODataAnnotationTests() {
 		sTestName, sServiceURI, mModelOptions, bServiceValid, bAnnotationsValid, sAnnotationsValid, bSharedMetadata,
 		sTestType, fnTest, mService, oAnnotations, i;
 
-	sap.ui.test.qunit.delayTestStart();
-
 	QUnit.module("Synchronous loading");
 
 	fnTest = function(sServiceURI, mModelOptions, bServiceValid, sAnnotationsValid, bSharedMetadata) {
