@@ -317,16 +317,19 @@ sap.ui.define([
 
 			aValues = Array.prototype.slice.call(aValues);
 			aValues.forEach(function (vValue, i) {
-				if (hasThen(vValue)) {
+				if (vValue !== aValues[i + 1] && hasThen(vValue)) { // do s.th. at end of run only
 					iPending += 1;
-					SyncPromise.resolve(vValue).then(function (vResult0) {
-						aValues[i] = vResult0;
+					vValue.then(function (vResult0) {
+						do {
+							aValues[i] = vResult0;
+							i -= 1;
+						} while (i >= 0 && vValue === aValues[i]);
 						iPending -= 1;
 						checkFulfilled();
 					}, function (vReason) {
 						reject(vReason); // Note: 1st reject/resolve wins!
 					});
-				} // else: not a "thenable"
+				}
 			});
 			bDone = true;
 			checkFulfilled();

@@ -340,13 +340,25 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("SyncPromise.all: sparse array", function (assert) {
-		var aValues = ["4"];
-
 		// Note: aValues[1] is not part of the array's keys and thus not visited by Array#forEach,
 		// but aValues.length === 3
-		aValues[2] = "2";
+		var aValues = ["4",, "2"];
 
-		assertFulfilled(assert, SyncPromise.all(aValues), ["4", undefined, "2"]);
+		assertFulfilled(assert, SyncPromise.all(aValues), ["4",, "2"]);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SyncPromise.all: take advantage of runs of the same thenable", function (assert) {
+		var oPromise = Promise.resolve(42),
+			aValues = [oPromise, oPromise, 23, oPromise, oPromise,, oPromise, Promise.resolve("42"),
+				oPromise];
+
+		this.spy(oPromise, "then");
+
+		return SyncPromise.all(aValues).then(function (aAnswers) {
+			assert.strictEqual(oPromise.then.callCount, 6 - 2);
+			assert.deepEqual(aAnswers, [42, 42, 23, 42, 42,, 42, "42", 42]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -656,8 +668,6 @@ sap.ui.require([
 		var oThenable = {
 				then : function (resolve, reject) {
 					resolve(42);
-					resolve("Unexpected");
-					reject("Unexpected");
 				}
 			},
 			oSyncPromise = new SyncPromise(function (resolve, reject) {
@@ -675,8 +685,6 @@ sap.ui.require([
 		var oThenable = {
 				then : function (resolve, reject) {
 					reject(42);
-					resolve("Unexpected");
-					reject("Unexpected");
 				}
 			},
 			oSyncPromise = new SyncPromise(function (resolve, reject) {
@@ -714,8 +722,6 @@ sap.ui.require([
 
 		fnThenable.then = function (resolve, reject) {
 			resolve(42);
-			resolve("Unexpected");
-			reject("Unexpected");
 		};
 
 		oSyncPromise = new SyncPromise(function (resolve, reject) {
