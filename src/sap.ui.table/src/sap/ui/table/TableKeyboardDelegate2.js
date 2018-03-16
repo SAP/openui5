@@ -831,11 +831,10 @@ sap.ui.define([
 			if (!TableUtils.isNoDataVisible(this)) {
 				TableKeyboardDelegate._restoreFocusOnLastFocusedDataCell(this, oEvent);
 			}
-			/* else {
-			 // If needed and NoData visible, then set the focus to NoData area.
-			 this.$("noDataCnt").focus();
-			 }*/
-		}
+		}/* else {
+			// If needed and NoData visible, then set the focus to NoData area.
+			this.$("noDataCnt").focus();
+		}*/
 
 		var $Cell = TableUtils.getParentCell(this, $Target);
 		var bElementIsInCell = $Cell !== null;
