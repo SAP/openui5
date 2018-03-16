@@ -18,7 +18,8 @@ jQuery.sap.require("sap.ui.fl.Cache");
 				"features": {
 					"addField": ["CUSTOMER", "VENDOR"],
 					"changeTypeOnlyForUser": ["USER"],
-					"completelyDisabledChangeType": []
+					"completelyDisabledChangeType": [],
+					"propertyChange": ["VENDOR", "CUSTOMER_BASE"]
 				}
 			};
 			this.cut = new Settings(oSettings);
@@ -237,6 +238,10 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		QUnit.equal(this.cut.isChangeTypeEnabled("completelyDisabledChangeType", "CUSTOMER"), false);
 		QUnit.equal(this.cut.isChangeTypeEnabled("completelyDisabledChangeType", "USER"), false);
 		QUnit.equal(this.cut.isChangeTypeEnabled("changeTypeOnlyForUser"), true);
+		QUnit.equal(this.cut.isChangeTypeEnabled("propertyChange", "VENDOR"), true);
+		QUnit.equal(this.cut.isChangeTypeEnabled("propertyChange", "CUSTOMER_BASE"), true);
+		QUnit.equal(this.cut.isChangeTypeEnabled("propertyChange", "CUSTOMER"), false);
+		QUnit.equal(this.cut.isChangeTypeEnabled("propertyChange", "USER"), false);
 	});
 
 }(sap.ui.fl.registry.Settings, sap.ui.fl.Cache));
