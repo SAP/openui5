@@ -357,8 +357,9 @@ sap.ui.define([
 		var oMetaModel = this.oModel.getMetaModel(),
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			mAnnotations = oMetaModel.getObject("@", oMetaModel.getMetaContext(sResolvedPath)),
-			oMeasureAnnotation = mAnnotations["@Org.OData.Measures.V1.Unit"]
-				|| mAnnotations["@Org.OData.Measures.V1.ISOCurrency"];
+			oMeasureAnnotation = mAnnotations
+				&& (mAnnotations["@Org.OData.Measures.V1.Unit"]
+					|| mAnnotations["@Org.OData.Measures.V1.ISOCurrency"]);
 
 		return oMeasureAnnotation && oMeasureAnnotation.$Path;
 	};

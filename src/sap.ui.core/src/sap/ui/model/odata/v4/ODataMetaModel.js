@@ -1249,8 +1249,16 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchUpdateData = function (sPropertyPath, oContext) {
-		var sResolvedPath = this.resolve(sPropertyPath, oContext),
+		var oModel = oContext.getModel(),
+			sResolvedPath = oModel.resolve(sPropertyPath, oContext),
 			that = this;
+
+		function error(sMessage) {
+			var oError = new Error(sResolvedPath + ": " + sMessage);
+
+			oModel.reportError(sMessage, sODataMetaModel, oError);
+			throw oError;
+		}
 
 		// First fetch the complete metapath to ensure that everything is in mScope
 		// This also ensures that the metadata is valid
@@ -1298,8 +1306,7 @@ sap.ui.define([
 			sEntitySetName = decodeURIComponent(stripPredicate(aEditUrl[0]));
 			oEntitySet = oEntityContainer[sEntitySetName];
 			if (!oEntitySet) {
-				logAndThrowError("Not an entity set: " + sEntitySetName, sResolvedPath,
-					sODataMetaModel);
+				error("Not an entity set: " + sEntitySetName);
 			}
 			oType = mScope[oEntitySet.$Type];
 			sPropertyPath = "";
@@ -1316,8 +1323,7 @@ sap.ui.define([
 					sNavigationPath = _Helper.buildPath(sNavigationPath, sPropertyName);
 					oProperty = oType[sPropertyName];
 					if (!oProperty) {
-						logAndThrowError("Not a (navigation) property: " + sPropertyName,
-							sResolvedPath, sODataMetaModel);
+						error("Not a (navigation) property: " + sPropertyName);
 					}
 					oType = mScope[oProperty.$Type];
 					if (oProperty.$kind === "NavigationProperty") {
@@ -1352,21 +1358,18 @@ sap.ui.define([
 				// calculate the key predicate asynchronously and append it to the prefix
 				return oContext.fetchValue(vSegment.path).then(function (oEntity) {
 					if (!oEntity) {
-						logAndThrowError("No instance to calculate key predicate at "
-							+ vSegment.path, sResolvedPath, sODataMetaModel);
+						error("No instance to calculate key predicate at " + vSegment.path);
 					}
 					if ("@$ui5._.transient" in oEntity) {
 						bTransient = true;
 						return undefined;
 					}
 					if (!oEntity["@$ui5._.predicate"]) {
-						logAndThrowError("No key predicate known at " + vSegment.path,
-							sResolvedPath, sODataMetaModel);
+						error("No key predicate known at " + vSegment.path);
 					}
 					return vSegment.prefix + oEntity["@$ui5._.predicate"];
 				}, function (oError) { // enrich the error message with the path
-					logAndThrowError(oError.message + " at " + vSegment.path, sResolvedPath,
-						sODataMetaModel);
+					error(oError.message + " at " + vSegment.path);
 				});
 			})).then(function (aFinalEditUrl) {
 				return {

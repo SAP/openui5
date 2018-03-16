@@ -714,6 +714,12 @@ sap.ui.require([
 
 			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
 			this.oMetaModelMock = this.mock(this.oMetaModel);
+			this.oModel = {
+				reportError : function () {
+					throw new Error("Unsupported operation");
+				},
+				resolve : ODataModel.prototype.resolve
+			};
 		},
 
 		/*
@@ -2326,12 +2332,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchUpdateData: fetchObject fails", function(assert) {
-		var oContext = {},
+		var oModel = this.oModel,
+			oContext = {
+				getModel : function () { return oModel; }
+			},
 			oExpectedError = new Error(),
 			oMetaModelMock = this.mock(this.oMetaModel),
 			sPath = "some/invalid/path/to/a/property";
 
-		oMetaModelMock.expects("resolve")
+		this.mock(oModel).expects("resolve")
 			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns("~1");
 		oMetaModelMock.expects("getMetaPath").withExactArgs("~1").returns("~2");
@@ -2386,8 +2395,11 @@ sap.ui.require([
 				this.oLogMock.expects("warning")
 					.withExactArgs(oFixture.warning, oFixture.dataPath, sODataMetaModel);
 			}
-			this.oLogMock.expects("error")
-				.withExactArgs(oFixture.message, oFixture.dataPath, sODataMetaModel);
+			this.mock(this.oModel).expects("reportError")
+				.withExactArgs(oFixture.message, sODataMetaModel, sinon.match({
+					message : oFixture.dataPath + ": " + oFixture.message,
+					name : "Error"
+				}));
 
 			oPromise = this.oMetaModel.fetchUpdateData("", oContext);
 			assert.ok(oPromise.isRejected());
