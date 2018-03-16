@@ -256,6 +256,12 @@ html:not(.sap-phone) {
 	}
 }
 
+html:not(.sap-phone)[data-sap-ui-browser^="ie"], html:not(.sap-phone)[data-sap-ui-browser^="ed"] {
+	.sapMColorPalette .sapMColorPaletteSquare:focus:after {
+		border-style: dashed; // IE, Edge does not display well dotted light(white) border (border looks darker)
+	}
+}
+
 .sap-phone {
 	.sapMColorPalette {
 		&html:not(.sap-phone) .sapMBtnInner {

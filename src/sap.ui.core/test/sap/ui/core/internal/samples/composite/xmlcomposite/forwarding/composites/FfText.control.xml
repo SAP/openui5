@@ -1,8 +1,5 @@
 <core:FragmentDefinition 
-	xmlns="sap.m" 
 	xmlns:core="sap.ui.core" 
 	xmlns:tf="composites">
-		<tf:ForwardText textItems="{$this>items}">
-			<core:AggregationProxy ></core:AggregationProxy>
-		</tf:ForwardText>
+	<tf:ForwardText id="forwardText"/>
 </core:FragmentDefinition>

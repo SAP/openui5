@@ -12,6 +12,7 @@ sap.ui.define([
     "sap/m/ToolbarSeparator",
     "sap/m/OverflowToolbar",
     "sap/m/Button",
+    "sap/ui/core/InvisibleText",
     "./DynamicPageTitleRenderer"
 ], function(
     library,
@@ -22,6 +23,7 @@ sap.ui.define([
 	ToolbarSeparator,
 	OverflowToolbar,
 	Button,
+	InvisibleText,
 	DynamicPageTitleRenderer
 ) {
 	"use strict";
@@ -275,6 +277,10 @@ sap.ui.define([
 		contentAreaShrinkFactor: 1,
 		actionsAreaShrinkFactor: 1.6
 	};
+
+	DynamicPageTitle.TOGGLE_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER");
+	DynamicPageTitle.EXPANDED_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER");
+	DynamicPageTitle.COLLAPSED_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "COLLAPSED_HEADER");
 
 	/**
 	 * Flushes the given control into the given container.
@@ -1036,7 +1042,7 @@ sap.ui.define([
 			headingAreaShrinkFactor: oShrinkFactorsInfo.headingAreaShrinkFactor,
 			contentAreaShrinkFactor: oShrinkFactorsInfo.contentAreaShrinkFactor,
 			actionsAreaShrinkFactor: oShrinkFactorsInfo.actionsAreaShrinkFactor,
-			ariaText: this._oRB.getText("TOGGLE_HEADER"),
+			ariaLabelledByIDs: this._getARIALabelReferences(this._bExpandedState),
 			breadcrumbs: this.getBreadcrumbs(),
 			separator: this._getToolbarSeparator(),
 			hasTopContent: bHasTopContent,
@@ -1141,6 +1147,19 @@ sap.ui.define([
 		} else if ($node.hasClass("sapFDynamicPageTitleMainActions")) {
 			this._sActionsAreaFlexBasis = sFlexBasisCachedValue;
 		}
+	};
+
+	DynamicPageTitle.prototype._updateARIAState = function (bHeaderExpanded) {
+		this.$().attr("aria-labelledby", this._getARIALabelReferences(bHeaderExpanded));
+	};
+
+	DynamicPageTitle.prototype._getARIALabelReferences = function (bHeaderExpanded) {
+		var sReferences = "";
+
+		sReferences += bHeaderExpanded ? DynamicPageTitle.EXPANDED_HEADER_TEXT_ID : DynamicPageTitle.COLLAPSED_HEADER_TEXT_ID;
+		sReferences += " " + DynamicPageTitle.TOGGLE_HEADER_TEXT_ID;
+
+		return sReferences;
 	};
 
 	return DynamicPageTitle;

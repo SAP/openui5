@@ -1,0 +1,51 @@
+<mvc:View controllerName="mvctest.controller.ExtendedXMLViewEventHandlerSyntax"
+		xmlns="sap.m" xmlns:layout="sap.ui.layout" xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc">
+
+	<Button
+		text="Zero-code console.log (press and check!)"
+		press="console.log('### This log statement was written without any controller code. ###')" />
+
+	<Button
+		text="Global function"
+		press="sap.m.MessageToast.show('Directly shown from View')" />
+
+	<Button
+		text="Function in Extension with parameter"
+		press=".someExtension.sayHelloFromExtension('some param')" />
+
+	<Button
+		text="Function in Extension with NO parameter"
+		press=".someExtension.sayHelloFromExtension" />
+
+	<Button
+		text="Just pass a string literal"
+		press=".saySomething('Hello!')" />
+
+	<Button
+		text="Tell me something from the model"
+		press=".saySomething(${/data})" />
+
+	<SearchField
+		placeholder="Use bindings and all that stuff in the 'search' event"
+		search=".saySomethingComplex(${/data}, ${$parameters>query}, ${$source>placeholder}, {static: 'Hello!', query: ${$parameters>query}, placeholder: ${$source>placeholder}, bound: ${/data}})" />
+
+	<Table
+		id="idProductsTable"
+		items="{names>/}">
+		<columns>
+			<Column>
+				<Label text="Name" />
+			</Column>
+			<Column>
+				<Label text="Action" />
+			</Column>
+		</columns>
+		<items>
+			<ColumnListItem>
+				<Text text="{names>name}" />
+				<Button text="Delete" press=".onDelete(${$source>/}.getBindingContext('names'))" />  <!--  looks like a bit too much, but that's the power of expressions... -->
+			</ColumnListItem>
+		</items>
+	</Table>
+</mvc:View>

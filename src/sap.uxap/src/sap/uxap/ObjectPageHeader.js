@@ -790,7 +790,12 @@ sap.ui.define([
 		}
 
 		if (Device.system.phone) {
-			$actionButtons.css("visibility", "visible");
+			// revert the visibility css style only for the actions whose style was modified by _getActionsWidth
+			this.getActions().forEach(function (oAction) {
+				if (oAction instanceof Button) {
+					oAction.$().css("visibility", "visible");
+				}
+			});
 		}
 
 		// verify overflow button visibility

@@ -1,0 +1,49 @@
+{
+  "1.34.0": {
+    "data": "December 2015",
+    "notes": [
+      {
+        "id": "d726155d12cb411f2c16ef8b3e6f35533d1e4498",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Visual improvements",
+        "references": []
+      },
+      {
+        "id": "c9fa2c676fdbf0d1ce01ef0504f941737ba7be9e",
+        "type": "FEATURE",
+        "text": "sap.uxap.AnchorBar Visual Enhancements",
+        "references": []
+      },
+      {
+        "id": "b7d02cc213475f95db51507e0b8e4f726cc3b612",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageHeader: New property markChanges added",
+        "references": []
+      },
+      {
+        "id": "9df7cf229b992e54fc65f789b32cd2a4708fc3fd",
+        "type": "FEATURE",
+        "text": "remove ObjectPageLayout scroll bar when not necessary",
+        "references": []
+      },
+      {
+        "id": "7834dc63c015ed74e21e392361d2ab25987b661d",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageHeader: Action buttons priorities",
+        "references": []
+      },
+      {
+        "id": "6627ab5faff54cd8eaef199e61afb04068298fc2",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageLayout: expand header with a click",
+        "references": []
+      },
+      {
+        "id": "c88a20bc4c86ed9b6aec68789c9b6d86c6c544aa",
+        "type": "FEATURE",
+        "text": "New library added - sap.uxap (Object Page concept)",
+        "references": []
+      }
+    ]
+  }
+}

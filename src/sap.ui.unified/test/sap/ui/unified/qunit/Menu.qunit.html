@@ -969,6 +969,22 @@
 			assert.ok(!oRootMenu.oPopup && bHasPopup, "Internal Popup cleaned up");
 		});
 
+
+		QUnit.test("Destroy detaches resize handler", function(assert) {
+			// Prepare
+			var oMenu = new sap.ui.unified.Menu(),
+				bSpyDestroyHandler;
+
+			oMenu.open();
+			bSpyDestroyHandler = this.spy(sap.ui.Device.resize, "detachHandler");
+
+			// Act
+			oMenu.destroy();
+
+			// Assert
+			assert.equal(bSpyDestroyHandler.callCount, 1, " resize handler should be called");
+		});
+
 		QUnit.test("setRootMenuTopStyle", function(assert) {
 			var oSubMenu = new sap.ui.unified.Menu();
 			var oMenu = new sap.ui.unified.Menu({

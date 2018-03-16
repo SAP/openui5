@@ -4,38 +4,38 @@
 
 // Provides control sap.m.ListBase.
 sap.ui.define([
-	'jquery.sap.global',
-	'./GroupHeaderListItem',
-	'./ListItemBase',
-	'./library',
-	'sap/ui/core/Control',
-	'sap/ui/core/delegate/ItemNavigation',
-	'sap/ui/core/InvisibleText',
-	'sap/ui/core/LabelEnablement',
-	'sap/ui/Device',
-	'sap/m/GrowingEnablement',
-	'./ListBaseRenderer',
-	'jquery.sap.keycodes'
+	"jquery.sap.global",
+	"sap/base/events/KeyCodes",
+	"sap/ui/Device",
+	"sap/ui/core/Control",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/LabelEnablement",
+	"sap/ui/core/delegate/ItemNavigation",
+	"./library",
+	"./GrowingEnablement",
+	"./GroupHeaderListItem",
+	"./ListItemBase",
+	"./ListBaseRenderer"
 ],
 function(
 	jQuery,
-	GroupHeaderListItem,
-	ListItemBase,
-	library,
+	KeyCodes,
+	Device,
 	Control,
-	ItemNavigation,
 	InvisibleText,
 	LabelEnablement,
-	Device,
+	ItemNavigation,
+	library,
 	GrowingEnablement,
+	GroupHeaderListItem,
+	ListItemBase,
 	ListBaseRenderer
 ) {
 	"use strict";
 
 
-
 	// shortcut for sap.m.ListType
-	var ListType = library.ListType;
+	var ListItemType = library.ListType;
 
 	// shortcut for sap.m.ListKeyboardMode
 	var ListKeyboardMode = library.ListKeyboardMode;
@@ -54,7 +54,6 @@ function(
 
 	// shortcut for sap.m.ListHeaderDesign
 	var ListHeaderDesign = library.ListHeaderDesign;
-
 
 
 	/**
@@ -117,7 +116,7 @@ function(
 			/**
 			 * Sets the width of the control.
 			 */
-			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : '100%'},
+			width : {type : "sap.ui.core.CSSSize", group : "Dimension", defaultValue : "100%"},
 
 			/**
 			 * Defines whether the items are selectable by clicking on the item itself (<code>true</code>) rather than having to set the selection control first.
@@ -320,7 +319,7 @@ function(
 			},
 
 			/**
-			 * Fires after user's swipe action and before the <code>swipeContent</code> is shown. On the <code>swipe</code> event handler, <code>swipeContent</code> can be changed according to the swiped item.
+			 * Fires after us"r's swipe action and before the <code>swipeContent</code> is shown. On the <code>swipe</code> event handler, <code>swipeContent</code> can be changed according to the swiped item.
 			 * Calling the <code>preventDefault</code> method of the event cancels the swipe action.
 			 */
 			swipe : {allowPreventDefault : true,
@@ -1283,7 +1282,7 @@ function(
 	ListBase.prototype.onItemPress = function(oListItem, oSrcControl) {
 
 		// do not fire press event for inactive type
-		if (oListItem.getType() == ListType.Inactive) {
+		if (oListItem.getType() == ListItemType.Inactive) {
 			return;
 		}
 
@@ -1497,8 +1496,7 @@ function(
 			oSrcControl = oEvent.srcControl;
 
 		if (oContent && oSrcControl && !this._isSwipeActive && this !== oSrcControl && !this._eventHandledByControl
-				// also enable the swipe feature when runs on Windows 8 device
-				&& (Device.support.touch || (Device.os.windows && Device.os.version >= 8))) {
+				&& Device.support.touch) {
 			// source can be anything so, check parents and find the list item
 			/*eslint-disable no-extra-semi, curly */
 			for (var li = oSrcControl; li && !(li instanceof ListItemBase); li = li.oParent);
@@ -1674,8 +1672,12 @@ function(
 		};
 	};
 
-	// this gets called when items are focused
-	ListBase.prototype.onItemFocusIn = function(oItem) {
+	// this gets called when the focus is on the item or its content
+	ListBase.prototype.onItemFocusIn = function(oItem, oFocusedControl) {
+		if (oItem !== oFocusedControl) {
+			return;
+		}
+
 		if (!sap.ui.getCore().getConfiguration().getAccessibility()) {
 			return;
 		}
@@ -1946,7 +1948,7 @@ function(
 	ListBase.prototype.onsapshow = function(oEvent) {
 		// handle events that are only coming from navigation items and ignore F4
 		if (oEvent.isMarked() ||
-			oEvent.which == jQuery.sap.KeyCodes.F4 ||
+			oEvent.which == KeyCodes.F4 ||
 			oEvent.target.id != this.getId("trigger") &&
 			!jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
@@ -1978,7 +1980,7 @@ function(
 	// Ctrl + A to switch select all/none
 	ListBase.prototype.onkeydown = function(oEvent) {
 
-		var bCtrlA = (oEvent.which == jQuery.sap.KeyCodes.A) && (oEvent.metaKey || oEvent.ctrlKey);
+		var bCtrlA = (oEvent.which == KeyCodes.A) && (oEvent.metaKey || oEvent.ctrlKey);
 		if (oEvent.isMarked() || !bCtrlA || !jQuery(oEvent.target).hasClass(this.sNavItemClass)) {
 			return;
 		}
@@ -2060,7 +2062,7 @@ function(
 	ListBase.prototype.onsapfocusleave = function(oEvent) {
 		if (this._oItemNavigation &&
 			!this.bAnnounceDetails &&
-			!this.getNavigationRoot().contains(jQuery.sap.domById(oEvent.relatedControlId))) {
+			!this.getNavigationRoot().contains(document.activeElement)) {
 			this.bAnnounceDetails = true;
 		}
 	};

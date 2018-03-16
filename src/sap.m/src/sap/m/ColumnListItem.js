@@ -4,28 +4,23 @@
 
 // Provides control sap.m.ColumnListItem.
 sap.ui.define([
-	'jquery.sap.global',
-	'sap/ui/core/Element',
-	'./ListItemBase',
-	'./library',
-	'sap/ui/core/library',
-	'./ColumnListItemRenderer'
+	"jquery.sap.global",
+	"sap/ui/core/Element",
+	"sap/ui/core/library",
+	"./library",
+	"./ListItemBase",
+	"./ColumnListItemRenderer"
 ],
-	function(
-	jQuery,
-	Element,
-	ListItemBase,
-	library,
-	coreLibrary,
-	ColumnListItemRenderer
-	) {
+	function(jQuery, Element, coreLibrary, library, ListItemBase, ColumnListItemRenderer) {
 	"use strict";
 
+
 	// shortcut for sap.m.ListType
-	var ListType = library.ListType;
+	var ListItemType = library.ListType;
 
 	// shortcut for sap.ui.core.VerticalAlign
 	var VerticalAlign = coreLibrary.VerticalAlign;
+
 
 	/**
 	 * Constructor for a new ColumnListItem.
@@ -78,7 +73,7 @@ sap.ui.define([
 	 * TablePopin element that handles own events.
 	 */
 	var TablePopin = Element.extend("sap.m.TablePopin", {
-		onfocusin: function(oEvent) {
+		ontap: function(oEvent) {
 			// focus to the main row if there is nothing to focus in the popin
 			if (oEvent.srcControl === this || !jQuery(oEvent.target).is(":sapFocusable")) {
 				this.getParent().focus();
@@ -124,12 +119,12 @@ sap.ui.define([
 	// returns responsible table control for the item
 	ColumnListItem.prototype.getTable = function() {
 		var oParent = this.getParent();
-		if (oParent instanceof sap.m.Table) {
-			return oParent;
+		if (!oParent) {
+			return;
 		}
 
-		// support old list with columns aggregation
-		if (oParent && oParent.getMetadata().getName() == "sap.m.Table") {
+		var fnTableClass = sap.ui.require("sap/m/Table");
+		if (typeof fnTableClass == "function" && oParent instanceof fnTableClass) {
 			return oParent;
 		}
 	};
@@ -255,14 +250,13 @@ sap.ui.define([
 
 	// determines whether type column for this item is necessary or not
 	ColumnListItem.prototype._needsTypeColumn = function() {
-		var sType = this.getType(),
-			mType = ListType;
+		var sType = this.getType();
 
-		return	this.getVisible() && (
-					sType == mType.Detail ||
-					sType == mType.Navigation ||
-					sType == mType.DetailAndActive
-				);
+		return this.getVisible() && (
+			sType == ListItemType.Detail ||
+			sType == ListItemType.Navigation ||
+			sType == ListItemType.DetailAndActive
+		);
 	};
 
 	// Adds cloned header to the local collection

@@ -2561,6 +2561,57 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Update selected key after bind data is changed", function(assert) {
+		var oModelData = new sap.ui.model.json.JSONModel([{text: "a1"}, {text: "a2"}]),
+			oInput = new sap.m.Input({
+				showSuggestion: true,
+				selectedKey: 'a1',
+				suggestionItems: {
+					path: '/',
+					template: new sap.ui.core.Item({
+						text: '{text}',
+						key: '{text}'
+					})
+				}
+			});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oInput.getValue(), "", "Initially when the input has selected key but no suggestion items it's value has to be empty");
+
+		oInput.setModel(oModelData);
+		assert.equal(oInput.getValue(), "a1", "After a json model is set and one of the items has key that item has to be selected");
+
+		oInput.setSelectedKey("a3");
+		assert.equal(oInput.getValue(), "a1", "After setting new selected key which is not in the list items the value shouldn't change");
+
+		oInput.setValue('');
+		oInput.addSuggestionItem(new sap.ui.core.Item({text: "a3", key: "a3"}));
+
+		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
+
+		oInput.removeAllSuggestionItems();
+		assert.equal(oInput.getValue(), "a3", "The value must be cleared after removing all items");
+
+		oInput.addSuggestionItem(new sap.ui.core.Item({text: "a3", key: "a3"}));
+		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
+
+		oInput.destroySuggestionItems();
+		assert.equal(oInput.getValue(), "a3", "The value must be cleared after destroying all items");
+
+		var oItem = new sap.ui.core.Item({text: "a3", key: "a3"});
+		oInput.addSuggestionItem(oItem);
+		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
+
+		oInput.removeSuggestionItem(oItem);
+		assert.equal(oInput.getValue(), "a3", "The value must be cleared after removing item");
+
+		oItem.destroy();
+		oInput.destroy();
+
+	});
+
 	QUnit.test("Set selection via API", function(assert) {
 		var oInput = createInputWithSuggestions(),
 				fnCallback = this.spy();

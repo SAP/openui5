@@ -215,6 +215,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			"changes" : {
 				"changes": [
 					{
+						fileName: "change0",
 						fileType: "change",
 						selector: {
 							id: "controlId"
@@ -247,6 +248,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 								"variantChanges": {
 									"setTitle": [
 										{
+											"fileName":"variantChange0",
 											"fileType": "ctrl_variant_change",
 											"selector": {
 												"id" : "variant0"
@@ -270,9 +272,60 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 								"variantChanges": {
 									"setTitle": [
 										{
+											"fileName":"variantChange1",
 											"fileType": "ctrl_variant_change",
 											"selector": {
 												"id" : "variant1"
+											}
+										}
+									],
+									"setVisible": [
+										{
+											"fileName":"variantChange2",
+											"fileType": "ctrl_variant_change",
+											"selector": {
+												"id" : "variant2_invisible"
+											},
+											"content": {
+												"visible": false,
+												"createdByReset": false
+											}
+										}
+									]
+								},
+								"changes" : []
+							},
+							{
+								"content" : {
+									"content" : {
+										"title": "variant 2"
+									},
+									"fileName": "variant2_invisible",
+									"fileType": "ctrl_variant",
+									"variantManagementReference": "variantManagementId"
+								},
+								"controlChanges": [
+									{
+										"variantReference":"variant2",
+										"fileName":"controlChange1",
+										"fileType":"change",
+										"content":{},
+										"selector":{
+											"id":"selectorId"
+										}
+									}
+								],
+								"variantChanges": {
+									"setVisible": [
+										{
+											"fileName":"variantChange3",
+											"fileType": "ctrl_variant_change",
+											"selector": {
+												"id" : "variant2_invisible"
+											},
+											"content": {
+												"visible": false,
+												"createdByReset": true
 											}
 										}
 									]
@@ -297,9 +350,20 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			}
 		};
 
+		var oInvisibleVariant = oMockedWrappedContent.changes.variantSection.variantManagementId.variants[2];
+		var aInvisibleChangFileNames = [
+			oInvisibleVariant.content.fileName,
+			oInvisibleVariant.controlChanges[0].fileName,
+			oInvisibleVariant.variantChanges.setVisible[0].fileName
+		];
+
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
 		return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true, includeVariants: true}).then(function(aChanges) {
-			assert.equal(aChanges.length, 8, "then all the variant related changes are part of the response");
+			var aFilteredChanges = aChanges.filter( function (oChange) {
+				return aInvisibleChangFileNames.indexOf(oChange.getId()) > -1;
+			});
+			assert.ok(aFilteredChanges.length === 0, "then no changes belonging to invisible variant returned");
+			assert.equal(aChanges.length, 8, "then all the visible variant related changes are part of the response");
 		});
 	});
 
@@ -344,12 +408,12 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("getChangesForComponent shall return the changes for the component when variantSection is empty", function(assert) {
-
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(
 			{
 				changes: {
 					changes: [
 						{
+							fileName: "change1",
 							fileType: "change",
 							selector: {
 								id: "controlId"
@@ -369,6 +433,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
+				fileName: "change1",
 				layer: "VENDOR",
 				fileType: "change",
 				selector: {
@@ -376,6 +441,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				}
 			},
 			{
+				fileName: "change2",
 				layer: "CUSTOMER",
 				fileType: "change",
 				selector: {
@@ -383,6 +449,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				}
 			},
 			{
+				fileName: "change3",
 				layer: "USER",
 				fileType: "change",
 				selector: {
@@ -401,6 +468,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
+				fileName: "change1",
 				layer: "VENDOR",
 				fileType: "change",
 				selector: {
@@ -408,6 +476,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				}
 			},
 			{
+				fileName: "change2",
 				layer: "CUSTOMER",
 				fileType: "change",
 				selector: {
@@ -415,6 +484,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				}
 			},
 			{
+				fileName: "change3",
 				layer: "USER",
 				fileType: "change",
 				selector: {
@@ -432,35 +502,41 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
+				fileName: "file1",
 				fileType: "change",
 				changeType: "defaultVariant",
 				layer: "CUSTOMER",
 				selector: { persistencyKey: "SmartFilter_Explored" }
 			},
 			{
+				fileName: "file2",
 				fileType: "change",
 				changeType: "renameGroup",
 				layer: "CUSTOMER",
 				selector: { id: "controlId1" }
 			},
 			{
+				fileName: "file3",
 				filetype: "change",
 				changetype: "removeField",
 				layer: "customer",
 				selector: {}
 			},
 			{
+				fileName: "file4",
 				fileType: "variant",
 				changeType: "filterBar",
 				layer: "CUSTOMER",
 				selector: { persistencyKey: "SmartFilter_Explored" }
 			},
 			{
+				fileName: "file6",
 				fileType: "variant",
 				changeType: "filterBar",
 				layer: "CUSTOMER"
 			},
 			{
+				fileName: "file7",
 				fileType: "change",
 				changeType: "codeExt",
 				layer: "CUSTOMER",
@@ -484,55 +560,65 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
 			{
+				fileName: "file1",
 				fileType: "change",
 				changeType: "defaultVariant",
 				layer: "CUSTOMER",
 				selector: { persistencyKey: "SmartFilter_Explored" }
 			},
 			{
+				fileName: "file2",
 				fileType: "change",
 				changeType: "defaultVariant",
 				layer: "CUSTOMER",
 				selector: {}
 			},
 			{
+				fileName: "file3",
 				fileType: "change",
 				changeType: "renameGroup",
 				layer: "CUSTOMER",
 				selector: { id: "controlId1" }
 			},
 			{
+				fileName: "file4",
 				fileType: "variant",
 				changeType: "filterBar",
 				layer: "CUSTOMER",
 				selector: { persistencyKey: "SmartFilter_Explored" }
 			},
 			{
+				fileName: "file5",
 				fileType: "variant",
 				changeType: "filterBar",
 				layer: "CUSTOMER"
 			},
 			{
+				fileName: "file6",
 				fileType: "variant",
 				changeType: "filterBar",
 				layer: "CUSTOMER"
 			},
 			{
+				fileName: "file7",
 				fileType: "change",
 				changeType: "codeExt",
 				layer: "CUSTOMER",
 				selector: { id: "controlId2" }
 			},
 			{
+
 				fileType: "somethingelse"
 			},
 			{
+				fileName: "file8",
 				fileType: "change",
 				changeType: "appdescr_changes",
 				layer: "CUSTOMER"
 			}
 		]}}));
 
+		var fnWarningLogStub = sandbox.stub(jQuery.sap.log, "warning");
 
 		return this.oChangePersistence.getChangesForComponent({includeVariants : true}).then(function(changes) {
 			assert.strictEqual(changes.length, 5, "both standard UI changes and smart variants were returned");
@@ -546,6 +632,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			assert.ok(changes[3].getChangeType() === "codeExt", "and change type codeExt");
 			assert.ok(changes[4]._oDefinition.fileType === "change", "fifth change has file type change");
 			assert.notOk(changes[4].getSelector() , "and does not have selector");
+			assert.ok(fnWarningLogStub.calledOnce, "then the a log for warning is called once");
+			assert.ok(fnWarningLogStub.calledWith, "A change without fileName is detected and excluded from component: MyComponent", "with correct component name");
 		});
 	});
 
@@ -734,64 +822,65 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("getChangesForVariant call getChangesForComponent and filter results after that if entry in variant changes map is not available", function(assert) {
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
-			{
-				fileName: "change1",
-				fileType: "change",
-				changeType: "defaultVariant",
-				layer: "CUSTOMER",
-				selector: { persistencyKey: "SmartFilter_Explored" },
-				originalLanguage: "EN"
-			},
-			{
-				fileName: "change2",
-				fileType: "change",
-				changeType: "defaultVariant",
-				layer: "CUSTOMER",
-				selector: {}
-			},
-			{
-				fileName: "change3",
-				fileType: "change",
-				changeType: "renameGroup",
-				layer: "CUSTOMER",
-				selector: { id: "controlId1" }
-			},
-			{
-				fileName: "variant1",
-				fileType: "variant",
-				changeType: "filterBar",
-				layer: "CUSTOMER",
-				selector: { persistencyKey: "SmartFilter_Explored" },
-				originalLanguage: "EN"
-			},
-			{
-				fileType: "variant",
-				changeType: "filterBar",
-				layer: "CUSTOMER"
-			},
-			{
-				fileType: "change",
-				changeType: "codeExt",
-				layer: "CUSTOMER",
-				selector: { id: "controlId2" }
-			},
-			{
-				fileName: "variant1",
-				fileType: "variant",
-				changeType: "filterBar",
-				layer: "CUSTOMER",
-				selector: { persistencyKey: "SmartFilter_Explored" },
-				originalLanguage: "EN"
-			},
-			{
-				fileType: "change",
-				changeType: "appdescr_changes",
-				layer: "CUSTOMER"
-			}
-		]}}));
-		return this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true}).then(function(oChanges) {
-			assert.deepEqual(Object.keys(oChanges), ["change1", "variant1"]);
+		var oPromise = new Promise(function(resolve, reject){
+			setTimeout(function(){
+				resolve({changes: {changes: [
+							{
+								fileName: "change1",
+								fileType: "change",
+								changeType: "defaultVariant",
+								layer: "CUSTOMER",
+								selector: { persistencyKey: "SmartFilter_Explored" },
+								originalLanguage: "EN"
+							},
+							{
+								fileName: "change2",
+								fileType: "change",
+								changeType: "defaultVariant",
+								layer: "CUSTOMER",
+								selector: {}
+							},
+							{
+								fileName: "change3",
+								fileType: "change",
+								changeType: "renameGroup",
+								layer: "CUSTOMER",
+								selector: { id: "controlId1" }
+							},
+							{
+								fileName: "variant1",
+								fileType: "variant",
+								changeType: "filterBar",
+								layer: "CUSTOMER",
+								selector: { persistencyKey: "SmartFilter_Explored" },
+								originalLanguage: "EN"
+							},
+							{
+								fileName: "variant2",
+								fileType: "variant",
+								changeType: "filterBar",
+								layer: "CUSTOMER"
+							},
+							{
+								fileName: "change4",
+								fileType: "change",
+								changeType: "codeExt",
+								layer: "CUSTOMER",
+								selector: { id: "controlId2" }
+							},
+							{
+								fileType: "change",
+								changeType: "appdescr_changes",
+								layer: "CUSTOMER"
+							}
+						]}});
+			}, 100);
+		});
+		this.stub(Cache, "getChangesFillingCache").returns(oPromise);
+		var oPromise1 = this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
+		var oPromise2 = this.oChangePersistence.getChangesForVariant("persistencyKey", "SmartFilter_Explored", {includeVariants: true});
+		return Promise.all([oPromise1, oPromise2]).then(function(values){
+			assert.deepEqual(values[0], values[1]);
 		});
 	});
 
@@ -2096,9 +2185,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
 	});
 
-	QUnit.test("saveAllChangesForVariant should use the lrep connector to create the change in the backend if pending action is NEW", function(assert) {
-		var oResponse = {};
-		var spy;
+	QUnit.test("saveAllChangesForVariant should use the lrep connector to create the change in the backend if pending action is NEW or delete the change if pending action is DELETE", function(assert) {
 		var mParameters = {
 			id: "changeId",
 			type: "filterBar",
@@ -2121,59 +2208,31 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		};
 		var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
 		assert.ok(sId);
-		var oNewChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
-		spy = sandbox.spy(oNewChange, "getPendingAction");
-		this.lrepConnectorMock.create = sinon.stub().returns(Promise.resolve(oResponse));
+		var oChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
+		assert.equal(oChange.getPendingAction(), "NEW");
+		var oCreateResponse = {response : oChange._oDefinition};
+		var oDeleteResponse = {};
+		this.lrepConnectorMock.create = sinon.stub().returns(Promise.resolve(oCreateResponse));
+		this.lrepConnectorMock.deleteChange = sinon.stub().returns(Promise.resolve(oDeleteResponse));
 
-		this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+		return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
 			assert.ok(jQuery.isArray(aResults));
 			assert.equal(aResults.length, 1);
-			assert.strictEqual(aResults[0], oResponse);
-			assert.equal(spy.returnValues[0], "NEW");
-		});
-	});
-
-	QUnit.test("saveAllChangesForVariant should use the lrep connector to delete the change in the backend as well as in variant changes map", function(assert) {
-		var oResponse = {};
-		var mParameters = {
-			id: "changeId",
-			type: "filterBar",
-			ODataService: "LineItems",
-			texts: {variantName: "myVariantName"},
-			content: {
-				filterBarVariant: {},
-				filterbar: [
-					{
-						group: "CUSTOM_GROUP",
-						name: "MyOwnFilterField",
-						partOfVariant: true,
-						visibleInFilterBar: true
-					}
-				]
-			},
-			isVariant: true,
-			packageName: "",
-			isUserDependend: true
-		};
-		var sId = this.oChangePersistence.addChangeForVariant("persistencyKey", "SmartFilterbar", mParameters);
-		assert.ok(sId);
-		assert.equal(this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"].getPendingAction(), "NEW");
-		var oNewChange = this.oChangePersistence._mVariantsChanges["SmartFilterbar"]["changeId"];
-		oNewChange.markForDeletion();
-		this.lrepConnectorMock.deleteChange = sinon.stub().returns(Promise.resolve(oResponse));
-
-		this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
-			assert.ok(jQuery.isArray(aResults));
-			assert.equal(aResults.length, 1);
-			assert.strictEqual(aResults[0], oResponse);
-			var bIsVariant = true;
-			sinon.assert.calledWith(this.lrepConnectorMock.deleteChange, {
-				sChangeName: "changeId",
-				sChangelist: "",
-				sLayer: "USER",
-				sNamespace: "localchange2"
-			}, bIsVariant);
-			assert.deepEqual(this.oChangePersistence._mVariantsChanges["SmartFilterbar"], {});
+			assert.strictEqual(aResults[0], oCreateResponse);
+			oChange.markForDeletion();
+			return this.oChangePersistence.saveAllChangesForVariant("SmartFilterbar").then(function (aResults) {
+				assert.ok(jQuery.isArray(aResults));
+				assert.equal(aResults.length, 1);
+				assert.strictEqual(aResults[0], oDeleteResponse);
+				var bIsVariant = true;
+				sinon.assert.calledWith(this.lrepConnectorMock.deleteChange, {
+					sChangeName: "changeId",
+					sChangelist: "",
+					sLayer: "CUSTOMER",
+					sNamespace: "apps/saveChangeScenario/changes/"
+				}, bIsVariant);
+				assert.deepEqual(this.oChangePersistence._mVariantsChanges["SmartFilterbar"], {});
+			}.bind(this));
 		}.bind(this));
 	});
 

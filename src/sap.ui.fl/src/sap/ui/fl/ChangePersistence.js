@@ -58,6 +58,7 @@ sap.ui.define([
 		this._oConnector = this._createLrepConnector();
 		this._aDirtyChanges = [];
 		this._oMessagebundle = undefined;
+		this._mChangesEntries = {};
 	};
 
 	/**
@@ -96,7 +97,8 @@ sap.ui.define([
 	/**
 	 * Verifies whether a change fulfils the preconditions.
 	 *
-	 * All changes need to be matched with current active contexts;
+	 * All changes need to have a fileName;
+	 * changes need to be matched with current active contexts;
 	 * only changes whose <code>fileType</code> is 'change' and whose <code>changeType</code> is different from 'defaultVariant' are valid;
 	 * if <code>bIncludeVariants</code> parameter is true, the changes with 'variant' <code>fileType</code> or 'defaultVariant' <code>changeType</code> are also valid
 	 * if it has a selector <code>persistencyKey</code>.
@@ -109,6 +111,11 @@ sap.ui.define([
 	 * @public
 	 */
 	ChangePersistence.prototype._preconditionsFulfilled = function(aActiveContexts, bIncludeVariants, oChangeContent) {
+
+		if (!oChangeContent.fileName) {
+			Utils.log.warning("A change without fileName is detected and excluded from component: " + this._mComponent.name);
+			return false;
+		}
 
 		function _isValidFileType () {
 			if (bIncludeVariants) {
@@ -195,12 +202,12 @@ sap.ui.define([
 				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
 			}
 
+			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants;
 			if (Object.keys(this._oVariantController._getChangeFileContent()).length > 0) {
 				var aVariantChanges = this._oVariantController.loadInitialChanges();
-				aChanges = aChanges.concat(aVariantChanges);
-			}
+				aChanges = bIncludeControlVariants ? aChanges : aChanges.concat(aVariantChanges);
 
-			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants;
+			}
 			if (bIncludeControlVariants && oWrappedChangeFileContent.changes.variantSection) {
 				aChanges = aChanges.concat(this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection));
 			}
@@ -230,15 +237,19 @@ sap.ui.define([
 			var aContextObjects = oWrappedChangeFileContent.changes.contexts || [];
 			return new Promise(function (resolve) {
 				ContextManager.getActiveContexts(aContextObjects).then(function (aActiveContexts) {
-					resolve(aChanges.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants)).map(createChange));
+					resolve(aChanges.filter(this._preconditionsFulfilled.bind(this, aActiveContexts, bIncludeVariants)).map(getChange.bind(this)));
 				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 
-		function createChange(oChangeContent) {
-			var change = new Change(oChangeContent);
-			change.setState(Change.states.PERSISTED);
-			return change;
+		function getChange(oChangeContent) {
+			var oChange;
+			if (!this._mChangesEntries[oChangeContent.fileName]) {
+				this._mChangesEntries[oChangeContent.fileName] = new Change(oChangeContent);
+			}
+			oChange = this._mChangesEntries[oChangeContent.fileName];
+			oChange.setState(Change.states.PERSISTED);
+			return oChange;
 		}
 	};
 
@@ -246,22 +257,33 @@ sap.ui.define([
 		var aCtrlVariantChanges = [];
 		Object.keys(mVariantManagementReference).forEach(function(sVariantManagementReference) {
 			var oVariantManagementContent = mVariantManagementReference[sVariantManagementReference];
-			//variant_management_change
-			Object.keys(oVariantManagementContent.variantManagementChanges).forEach(function(sVariantManagementChange) {
-				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariantManagementContent.variantManagementChanges[sVariantManagementChange].slice(-1)[0]); /*last change*/
-			});
 
 			oVariantManagementContent.variants.forEach( function(oVariant) {
-				//control_change
-				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.controlChanges);
+				if (Array.isArray(oVariant.variantChanges.setVisible) &&
+					oVariant.variantChanges.setVisible.length > 0) {
+					var oActiveChangeContent = oVariant.variantChanges.setVisible.slice(-1)[0];
+					if (!oActiveChangeContent.content.visible && oActiveChangeContent.content.createdByReset) {
+						return;
+					}
+				}
+
 				//variant_change
 				Object.keys(oVariant.variantChanges).forEach(function(sVariantChange) {
 					aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.variantChanges[sVariantChange].slice(-1)[0]); /*last change*/
 				});
+
+				//control_change
+				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.controlChanges);
+
 				//variant - don't copy standard variant
 				aCtrlVariantChanges = (oVariant.content.fileName !== sVariantManagementReference) ?
 											aCtrlVariantChanges.concat([oVariant.content]) :
 											aCtrlVariantChanges;
+			});
+
+			//variant_management_change
+			Object.keys(oVariantManagementContent.variantManagementChanges).forEach(function(sVariantManagementChange) {
+				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariantManagementContent.variantManagementChanges[sVariantManagementChange].slice(-1)[0]); /*last change*/
 			});
 		});
 		return aCtrlVariantChanges;

@@ -4,17 +4,17 @@
 
 // Provides control sap.f.DynamicPage.
 sap.ui.define([
-    "jquery.sap.global",
-    "./library",
-    "sap/ui/core/Control",
-    "sap/ui/core/ScrollBar",
-    "sap/ui/core/ResizeHandler",
-    "sap/ui/core/delegate/ScrollEnablement",
-    "sap/ui/Device",
-    "sap/f/DynamicPageTitle",
-    "./DynamicPageRenderer"
+	"jquery.sap.global",
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/ScrollBar",
+	"sap/ui/core/ResizeHandler",
+	"sap/ui/core/delegate/ScrollEnablement",
+	"sap/ui/Device",
+	"sap/f/DynamicPageTitle",
+	"./DynamicPageRenderer"
 ], function(
-    jQuery,
+	jQuery,
 	library,
 	Control,
 	ScrollBar,
@@ -92,6 +92,7 @@ sap.ui.define([
 	 * @constructor
 	 * @public
 	 * @since 1.42
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/dynamic-page-layout/ Dynamic Page}
 	 * @alias sap.f.DynamicPage
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -171,7 +172,9 @@ sap.ui.define([
 				 *
 				 * Example:
 				 *
-				 * <pre><Panel class=“sapFDynamicPageAlignContent” width=“auto”></Panel></pre>
+				 * <pre>
+				 * <code> &lt;Panel class=“sapFDynamicPageAlignContent” width=“auto”&gt;&lt;/Panel&gt; </code>
+				 * </pre>
 				 *
 				 * Please keep in mind that the alignment is not possible when the controls are placed in
 				 * a {@link sap.ui.layout.Grid} or in other layout controls that use
@@ -533,6 +536,7 @@ sap.ui.define([
 		}
 
 		this._toggleHeaderInTabChain(false);
+		this._updateARIAStates(false);
 	};
 
 	/**
@@ -567,6 +571,7 @@ sap.ui.define([
 		}
 
 		this._toggleHeaderInTabChain(true);
+		this._updateARIAStates(true);
 	};
 
 	/**
@@ -1069,6 +1074,19 @@ sap.ui.define([
 		}
 	};
 
+	DynamicPage.prototype._updateTitleARIAState = function (bExpanded) {
+		var oDynamicPageTitle = this.getTitle();
+
+		if (exists(oDynamicPageTitle)) {
+			oDynamicPageTitle._updateARIAState(bExpanded);
+		}
+	};
+
+	DynamicPage.prototype._updateARIAStates = function (bExpanded) {
+		this._updateHeaderARIAState(bExpanded);
+		this._updateTitleARIAState(bExpanded);
+	};
+
 	/**
 	 * Updates the media size of the control based on its own width, not on the entire screen size (which media query does).
 	 * This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout</code>),
@@ -1182,7 +1200,7 @@ sap.ui.define([
 			oHeader = this.getHeader();
 
 		return exists(oTitle) && oTitle.getVisible()
-			&& exists(oHeader) && oHeader.getVisible();
+			&& exists(oHeader) && oHeader.getVisible() && exists(oHeader.getContent());
 	};
 
 	/**
@@ -1476,13 +1494,11 @@ sap.ui.define([
 
 		if (this._shouldSnap()) {
 			this._snapHeader(true, true /* bUserInteraction */);
-			this._updateHeaderARIAState(false);
 
 		} else if (this._shouldExpand()) {
 
 			this._expandHeader(false, true /* bUserInteraction */);
 			this._toggleHeaderVisibility(true);
-			this._updateHeaderARIAState(true);
 
 		} else if (!this._bPinned && this._bHeaderInTitleArea) {
 			var bDoOffsetContent = (this._getScrollPosition() >= this._getSnappingHeight()); // do not offset if the scroll is transferring between expanded-header-in-title to expanded-header-in-content
@@ -1592,11 +1608,11 @@ sap.ui.define([
 	 * Handles the pin/unpin button press event, which results in the pinning/unpinning of the <code>DynamicPageHeader</code>.
 	 * @private
 	 */
-	DynamicPage.prototype._onPinUnpinButtonPress = function (oEvent) {
+	DynamicPage.prototype._onPinUnpinButtonPress = function () {
 		if (this._bPinned) {
-			this._unPin(oEvent);
+			this._unPin();
 		} else {
-			this._pin(oEvent);
+			this._pin();
 			this._restorePinButtonFocus();
 		}
 	};

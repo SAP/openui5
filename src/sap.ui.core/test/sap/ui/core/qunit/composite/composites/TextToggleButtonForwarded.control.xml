@@ -7,4 +7,3 @@
         <m:Button text="Refresh" press="onPressRefresh"/>
     </m:VBox>
 </FragmentDefinition>
-<!-- <m:VBox><AggregationProxy ref="{$this>textToggleButton}"/><m:Button text="Refresh" press="onPressRefresh"/></m:VBox> -->

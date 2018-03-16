@@ -13,21 +13,31 @@
 @_sap_ui_core_LocalBusyIndicator_SizeMedium: 1rem;
 @_sap_ui_core_LocalBusyIndicator_SizeBig: 2rem;
 
-.sapUiLocalBusyIndicator {
+.sapUiBlockLayer, .sapUiLocalBusyIndicator {
 	background-color: @_sap_ui_core_LocalBusyIndicator_Background;
 	position: absolute;
 	top: 0;
 	left: 0;
 	bottom: 0;
 	right: 0;
+}
 
+.sapUiLocalBusyIndicator {
 	opacity: 0;
 	transition: opacity 0.3s ease-in;
 	-webkit-transition: opacity 0.3s ease-in;
 }
 
-/* Make sure busy indicators are not "nested", and the animations do not overlay each other */
-.sapUiLocalBusy .sapUiLocalBusy .sapUiLocalBusyIndicator {
+.sapUiBlockLayer:not(:last-child) {
+	display: none;
+}
+
+//  Make sure blocked layers are not "nested", and in case of busy indicators the animations do not overlay each other
+.sapUiLocalBusy .sapUiLocalBusy .sapUiBlockLayer {
+	display: none;
+}
+
+.sapUiHiddenBusyIndicatorAnimation .sapUiLocalBusyIndicatorAnimation {
 	display: none;
 }
 

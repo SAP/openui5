@@ -1716,36 +1716,6 @@
 		list.destroy();
 	});
 
-	QUnit.module("List as Table");
-
-	QUnit.test("ListAsTable", function() {
-		var oListAsTable = new sap.m.List({
-			columns: [
-				new sap.m.Column({
-					header: new sap.m.Label({text: "Column 1"})
-				}),
-				new sap.m.Column({
-					header: new sap.m.Label({text: "Column 2"})
-				})
-			],
-			items: [
-				new sap.m.ColumnListItem({
-					cells: [
-						new sap.m.Text({text: "Cell data 1"}),
-						new sap.m.Text({text: "Cell data 2"})
-					]
-				})
-			]
-		});
-
-		oListAsTable.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		assert.equal(oListAsTable.getBackgroundDesign(), "Translucent", "Default backgroundDesign for Tables is Translucent");
-
-		oListAsTable.destroy();
-	});
-
 </script>
 
 

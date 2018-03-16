@@ -141,10 +141,10 @@ sap.ui.require([
 				bundleName: "sap.ui.core.messagebundle"
 			});
 			TechnicalInfo._storage.clear();
-			TechnicalInfo._oDialog = sap.ui.xmlfragment("technicalInfoDialog", "sap.ui.core.support.techinfo.TechnicalInfo", this);
+			TechnicalInfo._oDialog = sap.ui.xmlfragment(TechnicalInfo._TECHNICAL_INFO_DIALOG_ID, "sap.ui.core.support.techinfo.TechnicalInfo", this);
 			TechnicalInfo._oDialog.setModel(oI18nModel, "i18n");
 			TechnicalInfo._oDialog.setModel(TechnicalInfo._createViewModel(), "view");
-			TechnicalInfo._oAssistantPopover = sap.ui.xmlfragment("technicalInfoDialogAssistantPopover", "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", TechnicalInfo);
+			TechnicalInfo._oAssistantPopover = sap.ui.xmlfragment(TechnicalInfo._SUPPORT_ASSISTANT_POPOVER_ID, "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", TechnicalInfo);
 			TechnicalInfo._oDialog.addDependent(TechnicalInfo._oAssistantPopover);
 		},
 		afterEach: function () {
@@ -188,7 +188,7 @@ sap.ui.require([
 			bundleName: "sap.ui.core.messagebundle"
 		});
 		TechnicalInfo._storage.clear();
-		TechnicalInfo._oDialog = sap.ui.xmlfragment("technicalInfoDialog", "sap.ui.core.support.techinfo.TechnicalInfo", this);
+		TechnicalInfo._oDialog = sap.ui.xmlfragment(TechnicalInfo._TECHNICAL_INFO_DIALOG_ID, "sap.ui.core.support.techinfo.TechnicalInfo", this);
 		TechnicalInfo._oDialog.setModel(oI18nModel, "i18n");
 		var oViewModel = TechnicalInfo._createViewModel();
 		var aKeys = Object.keys(oViewModel.getData());
@@ -230,6 +230,26 @@ sap.ui.require([
 		assert.strictEqual(typeof oViewModel.getProperty("/DebugMode"), "boolean", "The debug mode is a boolean");
 		assert.strictEqual(typeof oViewModel.getProperty("/OpenSupportAssistantInNewWindow"), "boolean", "The open support assistant in new window is a boolean");
 		assert.strictEqual(oViewModel.getProperty("/DebugMode"), sap.ui.getCore().getConfiguration().getDebug(), "The debug mode is equal to the UI5 core value");
+
+		TechnicalInfo._oDialog.destroy();
+	});
+
+	QUnit.module("Closing and destroying dialog");
+
+	QUnit.test("After close method is called the dialog should be destroyed", function(assert) {
+		TechnicalInfo._storage.clear();
+		TechnicalInfo._oDialog = sap.ui.xmlfragment(TechnicalInfo._TECHNICAL_INFO_DIALOG_ID, "sap.ui.core.support.techinfo.TechnicalInfo", this);
+		TechnicalInfo._oAssistantPopover = sap.ui.xmlfragment(TechnicalInfo._SUPPORT_ASSISTANT_POPOVER_ID, "sap.ui.core.support.techinfo.TechnicalInfoAssistantPopover", TechnicalInfo);
+		TechnicalInfo._oDialog.addDependent(TechnicalInfo._oAssistantPopover);
+		TechnicalInfo._oDebugPopover = sap.ui.xmlfragment(TechnicalInfo._DEBUG_MODULES_ID, "sap.ui.core.support.techinfo.TechnicalInfoDebugDialog", this);
+		TechnicalInfo._oDialog.addDependent(TechnicalInfo._oDebugPopover);
+
+		TechnicalInfo.close();
+
+		assert.ok(!TechnicalInfo._oDialog, "The dialog is destroyed");
+		assert.ok(!TechnicalInfo._oAssistantPopover, "The Support Assistant popover is destroyed");
+		assert.ok(!TechnicalInfo._oDebugPopover, "The debug popover is destroyed");
+
 	});
 
 });

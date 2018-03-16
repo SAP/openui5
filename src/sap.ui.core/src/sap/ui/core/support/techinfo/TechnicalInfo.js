@@ -71,6 +71,18 @@ sap.ui.define([
 		 */
 		close: function() {
 			this._oDialog.close();
+			this._oDialog.destroy();
+			this._oDialog = null;
+
+			if (this._oAssistantPopover) {
+				this._oAssistantPopover.destroy();
+				this._oAssistantPopover = null;
+			}
+
+			if (this._oDebugPopover) {
+				this._oDebugPopover.destroy();
+				this._oDebugPopover = null;
+			}
 		},
 
 		/* =========================================================== */

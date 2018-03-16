@@ -30,7 +30,12 @@
         "id": "7363858d48c2b2590651add17763f1af05fc9cbd",
         "type": "FEATURE",
         "text": "sap.ui.demokit.CodeViewer: Improve readability of Code samples",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1080"
+          }
+        ]
       },
       {
         "id": "937b7693aa6333dd25da8590490a477a514fe9e7",

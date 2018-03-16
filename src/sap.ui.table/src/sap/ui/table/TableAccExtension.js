@@ -24,7 +24,7 @@ sap.ui.define([
 		 *       and a combined description.
 		 * @see sap.ui.core.Control#getAccessibilityInfo
 		 */
-		getAccInfoOfControl: function(oControl, oBundle) {
+		getAccInfoOfControl: function(oControl) {
 			if (oControl && typeof oControl.getAccessibilityInfo === "function") {
 				if (typeof oControl.getVisible === "function" && !oControl.getVisible()) {
 					return ACCInfoHelper._normalize({});
@@ -32,7 +32,7 @@ sap.ui.define([
 				var oSource = oControl.getAccessibilityInfo();
 				if (oSource) {
 					var oTarget = {};
-					ACCInfoHelper._flatten(oSource, oTarget, oBundle);
+					ACCInfoHelper._flatten(oSource, oTarget);
 					return oTarget;
 				}
 			}
@@ -66,7 +66,7 @@ sap.ui.define([
 		/*
 		 * Merges the focusable flag and the descriptions of the source and its children into the given target.
 		 */
-		_flatten: function(oSourceInfo, oTargetInfo, oBundle, iLevel) {
+		_flatten: function(oSourceInfo, oTargetInfo, iLevel) {
 			iLevel = iLevel ? iLevel : 0;
 
 			ACCInfoHelper._normalize(oSourceInfo);
@@ -76,7 +76,7 @@ sap.ui.define([
 			}
 
 			oTargetInfo.focusable = oTargetInfo.focusable || oSourceInfo.focusable;
-			oTargetInfo._descriptions.push(ACCInfoHelper._getFullDescription(oSourceInfo, oBundle));
+			oTargetInfo._descriptions.push(ACCInfoHelper._getFullDescription(oSourceInfo));
 
 			oSourceInfo.children.forEach(function(oChild) {
 				if (!oChild.getAccessibilityInfo || (oChild.getVisible && !oChild.getVisible())) {
@@ -85,7 +85,7 @@ sap.ui.define([
 
 				var oChildInfo = oChild.getAccessibilityInfo();
 				if (oChildInfo) {
-					ACCInfoHelper._flatten(oChildInfo, oTargetInfo, oBundle, iLevel + 1);
+					ACCInfoHelper._flatten(oChildInfo, oTargetInfo, iLevel + 1);
 				}
 			});
 
@@ -100,12 +100,12 @@ sap.ui.define([
 		 * on the information of the given acc info object
 		 * Note: The description does not include the description of the children (if available).
 		 */
-		_getFullDescription: function(oInfo, oBundle) {
+		_getFullDescription: function(oInfo) {
 			var sDesc = oInfo.type + " " + oInfo.description;
 			if (oInfo.enabled != null && !oInfo.enabled) {
-				sDesc = sDesc + " " + oBundle.getText("TBL_CTRL_STATE_DISABLED");
+				sDesc = sDesc + " " + TableUtils.getResourceText("TBL_CTRL_STATE_DISABLED");
 			} else if (oInfo.editable != null && !oInfo.editable) {
-				sDesc = sDesc + " " + oBundle.getText("TBL_CTRL_STATE_READONLY");
+				sDesc = sDesc + " " + TableUtils.getResourceText("TBL_CTRL_STATE_READONLY");
 			}
 			return sDesc.trim();
 		}
@@ -255,9 +255,9 @@ sap.ui.define([
 				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
 				bIsInitial = !oExtension._iLastRowNumber && !oExtension._iLastColumnNumber;
 
-				oTable.$("rownumberofrows").text(bIsRowChanged ? oTable._oResBundle.getText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : " ");
-				oTable.$("colnumberofcols").text(bIsColChanged ? oTable._oResBundle.getText("TBL_COL_COLCOUNT", [iColumnNumber, iColCount]) : " ");
-				oTable.$("ariacount").text(bIsInitial ? oTable._oResBundle.getText("TBL_DATA_ROWS_COLS", [iRowCount, iColCount]) : " ");
+				oTable.$("rownumberofrows").text(bIsRowChanged ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : " ");
+				oTable.$("colnumberofcols").text(bIsColChanged ? TableUtils.getResourceText("TBL_COL_COLCOUNT", [iColumnNumber, iColCount]) : " ");
+				oTable.$("ariacount").text(bIsInitial ? TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [iRowCount, iColCount]) : " ");
 
 				oExtension._iLastRowNumber = iRowNumber;
 				oExtension._iLastColumnNumber = iColumnNumber;
@@ -380,7 +380,7 @@ sap.ui.define([
 			aLabels = aLabels.concat(aDefaultLabels);
 
 			if (!bHidden) {
-				oInfo = ACCInfoHelper.getAccInfoOfControl(oTableInstances.cell, oTable._oResBundle);
+				oInfo = ACCInfoHelper.getAccInfoOfControl(oTableInstances.cell);
 				aLabels.push(oInfo ? (sTableId + "-cellacc") : oTableInstances.cell.getId());
 
 				// Possible later extension for aria-labelledby and aria-describedby support
@@ -476,7 +476,7 @@ sap.ui.define([
 			if (iSpan > 1) {
 				aLabels.push(oTable.getId() + "-ariacolspan");
 				// Update Span information
-				oTable.$("ariacolspan").text(oTable._oResBundle.getText("TBL_COL_DESC_SPAN", ["" + iSpan]));
+				oTable.$("ariacolspan").text(TableUtils.getResourceText("TBL_COL_DESC_SPAN", ["" + iSpan]));
 			}
 
 			if (sText) {
@@ -803,7 +803,7 @@ sap.ui.define([
 							mAttributes["role"] = "button";
 							if (mParams && mParams.row) {
 								if (mParams.row._bHasChildren) {
-									var sText = oTable._oResBundle.getText(mParams.row._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
+									var sText = TableUtils.getResourceText(mParams.row._bIsExpanded ? "TBL_COLLAPSE" : "TBL_EXPAND");
 									if (oTable._getShowStandardTooltips()) {
 										mAttributes["title"] = sText;
 									} else {
@@ -811,7 +811,7 @@ sap.ui.define([
 									}
 									mAttributes["aria-expanded"] = "" + (!!mParams.row._bIsExpanded);
 								} else {
-									mAttributes["aria-label"] = oTable._oResBundle.getText("TBL_LEAF");
+									mAttributes["aria-label"] = TableUtils.getResourceText("TBL_LEAF");
 								}
 							}
 						}
@@ -1123,7 +1123,7 @@ sap.ui.define([
 			if (bIsSelected && $Ref.rowSelectorText) {
 				var sText = $Ref.rowSelectorText.text();
 				if (sText) {
-					sText = this.getTable()._oResBundle.getText("TBL_ROW_DESC_SELECTED") + " " + sText;
+					sText = TableUtils.getResourceText("TBL_ROW_DESC_SELECTED") + " " + sText;
 				}
 				$Ref.rowSelectorText.text(sText);
 			}
@@ -1246,7 +1246,6 @@ sap.ui.define([
 			sSelectionMode = oTable.getSelectionMode();
 		}
 
-		var oResBundle = oTable._oResBundle;
 		var bShowTooltips = oTable._getShowStandardTooltips();
 		var mTooltipTexts = {
 			mouse: {
@@ -1262,22 +1261,22 @@ sap.ui.define([
 		var iSelectedIndicesCount = oTable._getSelectedIndicesCount();
 
 		if (sSelectionMode === SelectionMode.Single) {
-			mTooltipTexts.mouse.rowSelect = bShowTooltips ? oResBundle.getText("TBL_ROW_SELECT") : "";
-			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? oResBundle.getText("TBL_ROW_DESELECT") : "";
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+			mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";
+			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_DESELECT") : "";
+			mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
+			mTooltipTexts.keyboard.rowDeselect = TableUtils.getResourceText("TBL_ROW_DESELECT_KEY");
 		} else if (sSelectionMode === SelectionMode.MultiToggle) {
-			mTooltipTexts.mouse.rowSelect = bShowTooltips ? oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE") : "";
+			mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT_MULTI_TOGGLE") : "";
 			// text for de-select is the same like for single selection
-			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? oResBundle.getText("TBL_ROW_DESELECT") : "";
-			mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
+			mTooltipTexts.mouse.rowDeselect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_DESELECT") : "";
+			mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_MULTI_TOGGLE_KEY");
 			// text for de-select is the same like for single selection
-			mTooltipTexts.keyboard.rowDeselect = oResBundle.getText("TBL_ROW_DESELECT_KEY");
+			mTooltipTexts.keyboard.rowDeselect = TableUtils.getResourceText("TBL_ROW_DESELECT_KEY");
 
 			if (bConsiderSelectionState === true && iSelectedIndicesCount === 0) {
 				// if there is no row selected yet, the selection is like in single selection case
-				mTooltipTexts.mouse.rowSelect = bShowTooltips ? oResBundle.getText("TBL_ROW_SELECT") : "";
-				mTooltipTexts.keyboard.rowSelect = oResBundle.getText("TBL_ROW_SELECT_KEY");
+				mTooltipTexts.mouse.rowSelect = bShowTooltips ? TableUtils.getResourceText("TBL_ROW_SELECT") : "";
+				mTooltipTexts.keyboard.rowSelect = TableUtils.getResourceText("TBL_ROW_SELECT_KEY");
 			}
 		}
 

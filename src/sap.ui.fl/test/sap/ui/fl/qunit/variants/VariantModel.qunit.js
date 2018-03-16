@@ -307,13 +307,16 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'updateCurrentVariant'", function(assert) {
+		var fnUpdateCurrentVariantInMapStub = sandbox.stub(this.oModel.oVariantController, "updateCurrentVariantInMap");
 		assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant1", "then initially current variant is variant1");
 		assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant1", "then initially original current variant is variant1");
+		this.oModel.oData["variantMgmtId1"].updateVariantInURL = true;
 		return this.oModel.updateCurrentVariant("variantMgmtId1", "variant0")
 		.then(function() {
 			assert.ok(this.fnLoadSwitchChangesStub.calledOnce, "then loadSwitchChangesMapForComponent called once from ChangePersitence");
 			assert.ok(this.fnRevertChangesStub.calledOnce, "then revertChangesOnControl called once in FlexController");
 			assert.ok(this.fnApplyChangesStub.calledOnce, "then applyVariantChanges called once in FlexController");
+			assert.ok(fnUpdateCurrentVariantInMapStub.calledWith("variantMgmtId1", "variant0"), "then variantController.updateCurrentVariantInMap called with the right parameters");
 			assert.equal(this.oModel.oData["variantMgmtId1"].currentVariant, "variant0", "then current variant updated to variant0");
 			assert.equal(this.oModel.oData["variantMgmtId1"].originalCurrentVariant, "variant0", "then original current variant updated to variant0");
 		}.bind(this));
@@ -665,7 +668,6 @@ sap.ui.require([
 				"content":{
 					"title":"variant A"
 				},
-				"selector":{},
 				"layer":"CUSTOMER",
 				"texts":{
 					"TextDemo": {
@@ -683,19 +685,27 @@ sap.ui.require([
 					"user":""
 				}
 			},
-			"controlChanges": []
+			"controlChanges": [],
+			"variantChanges": {}
 		};
 		sandbox.stub(this.oModel, "_duplicateVariant").returns(oVariantData);
 		sandbox.stub(BaseTreeModifier, "getSelector").returns({id: "variantMgmtId1"});
-		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange");
+		sandbox.stub(this.oModel.oFlexController._oChangePersistence, "addDirtyChange").returnsArg(0);
 
 		var mPropertyBag = {
 			variantManagementReference: "variantMgmtId1"
 		};
-		return this.oModel._copyVariant(mPropertyBag).then( function (oVariant) {
+		return this.oModel._copyVariant(mPropertyBag).then( function (aChanges) {
 			assert.ok(fnAddVariantToControllerStub.calledOnce, "then function to add variant to VariantController called");
+
+			//Mocking properties set inside Variant.createInitialFileContent
+			oVariantData.content.support.sapui5Version = sap.ui.version;
+			oVariantData.content.self = oVariantData.content.namespace + oVariantData.content.fileName + "." + "ctrl_variant";
+
+			assert.deepEqual(aChanges[0].getDefinitionWithChanges(), oVariantData, "then ctrl_variant change prepared with the correct content");
+			assert.ok(fnAddVariantToControllerStub.calledWith(aChanges[0].getDefinitionWithChanges()), "then function to add variant to VariantController called with the correct parameters");
 			assert.equal(this.oModel.oData["variantMgmtId1"].variants[3].key, oVariantData.content.fileName, "then variant added to VariantModel");
-			assert.equal(oVariant.getId(), oVariantData.content.fileName, "then the returned variant is the duplicate variant");
+			assert.equal(aChanges[0].getId(), oVariantData.content.fileName, "then the returned variant is the duplicate variant");
 		}.bind(this));
 	});
 

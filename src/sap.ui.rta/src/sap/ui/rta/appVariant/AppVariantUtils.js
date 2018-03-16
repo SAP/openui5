@@ -322,6 +322,7 @@ sap.ui.define([
 			}
 
 			sMessage += AppVariantUtils.getText("MSG_TECHNICAL_ERROR", sErrorMessage);
+			jQuery.sap.log.error("App variant error: ", sErrorMessage);
 
 			return {
 				text: sMessage,
@@ -379,6 +380,12 @@ sap.ui.define([
 
 		AppVariantUtils.publishEventBus = function() {
 			sap.ui.getCore().getEventBus().publish("sap.ui.rta.appVariant.manageApps.controller.ManageApps", "navigate");
+		};
+
+		AppVariantUtils.triggerDeleteAppVariantFromLREP = function(sAppVariantId) {
+			return DescriptorVariantFactory.createDeletion(sAppVariantId).then(function(oAppVariantDescriptor) {
+				return oAppVariantDescriptor.submit();
+			});
 		};
 
 		return AppVariantUtils;

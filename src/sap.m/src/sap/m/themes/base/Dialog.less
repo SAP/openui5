@@ -107,30 +107,30 @@
 	vertical-align: middle;
 }
 
-// Removing borders, shadow, and rounded corners when the dialog is on fullscreen
 .sapMDialog.sapMDialogStretched {
-	border: none;
-	border-radius: 0;
-	box-shadow: 0;
 	transform: none;
-	-webkit-transform: none;
+	-webkit-transform: scale(1); // Chrome does not clip children when transform is not applied resulting in non-visible border-radius
 	top: 5% !important; //this is for preventing inline size/top sizes set the top
 	bottom: 5% !important;
 	left: 3.5% !important; //this is for preventing inline size/top sizes set the top
 	right: 3.5% !important;
 	max-height: none !important;
 	max-width: none !important;
+	height: auto !important; //this is for preventing inline size/width sizes set the width
+	width: auto !important; //this is for preventing inline size/height sizes set the height
 	min-width: 0 !important; //this is for preventing the dialog to hold it's width in small screens
 	min-height: 0 !important; //this is for preventing the dialog to hold it's width in small screens
 }
 
+// Removing borders, shadow, and rounded corners when the dialog is on fullscreen
 html.sap-phone .sapMDialog.sapMDialogStretched {
+	border: none;
+	box-shadow: 0;
+	border-radius: 0;
 	top: 0 !important; // this is for forcing mobile dialog when stretch property is set
 	bottom: 0 !important; // this is for forcing mobile dialog when stretch property is set
 	left: 0 !important; // this is for forcing mobile dialog when stretch property is set
 	right: 0 !important; // this is for forcing mobile dialog when stretch property is set
-	height: auto !important;
-	width: auto !important;
 }
 
 html.sap-phone .sapMDialog {

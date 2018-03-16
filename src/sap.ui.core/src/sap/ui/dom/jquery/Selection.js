@@ -8,31 +8,27 @@
 sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 	"use strict";
 
+	/*
+	 * Disable HTML elements selection.
+	 *
+	 * @return {jQuery} <code>this</code> to allow method chaining.
+	 * @private
+	 */
+	jQuery.fn.disableSelection = function() {
+		return this.on((jQuery.support.selectstart ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
+			oEvent.preventDefault();
+		});
+	};
 
-	jQuery.fn.extend( /** @lends jQuery.prototype */ {
-
-		/*
-		 * Disable HTML elements selection.
-		 *
-		 * @return {jQuery} <code>this</code> to allow method chaining.
-		 * @private
-		 */
-		disableSelection: function() {
-			return this.on((jQuery.support.selectstart ? "selectstart" : "mousedown") + ".ui-disableSelection", function(oEvent) {
-				oEvent.preventDefault();
-			});
-		},
-
-		/*
-		 * Enable HTML elements to get selected.
-		 *
-		 * @return {jQuery} <code>this</code> to allow method chaining.
-		 * @private
-		 */
-		enableSelection: function() {
-			return this.off(".ui-disableSelection");
-		}
-	});
+	/*
+	 * Enable HTML elements to get selected.
+	 *
+	 * @return {jQuery} <code>this</code> to allow method chaining.
+	 * @private
+	 */
+	jQuery.fn.enableSelection = function() {
+		return this.off(".ui-disableSelection");
+	};
 
 	return jQuery;
 

@@ -5,31 +5,31 @@
       {
         "id": "47e90f52b80cd79417ca2ff45daf22d533505762",
         "type": "FEATURE",
-        "text": " sap.f.Avatar: new control added",
+        "text": "sap.f.Avatar: new control added",
         "references": []
       },
       {
         "id": "faf3438651cb89c84fa520eefd91cf0787e77c64",
         "type": "FEATURE",
-        "text": " sap.f.FlexibleColumnLayout: implement screen reader support",
+        "text": "sap.f.FlexibleColumnLayout: implement screen reader support",
         "references": []
       },
       {
         "id": "8ae309fe9632a09925127c7394fd8b176b6f1be2",
         "type": "FEATURE",
-        "text": " sap.f.semantic.SemanticPage: New control added",
+        "text": "sap.f.semantic.SemanticPage: New control added",
         "references": []
       },
       {
         "id": "4a4b7bfb7ae5568ea7b3c67454cbcb4ad76dd629",
         "type": "FIX",
-        "text": " sap.f.Avatar: change sample\u0027s images",
+        "text": "sap.f.Avatar: change sample's images",
         "references": []
       },
       {
         "id": "3648ffc86f31721596d4345047b51e3b8753d06b",
         "type": "FIX",
-        "text": " sap.f.DynamicPage fitContent property added",
+        "text": "sap.f.DynamicPage fitContent property added",
         "references": []
       }
     ]

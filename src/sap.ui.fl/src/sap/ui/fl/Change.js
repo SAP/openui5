@@ -38,7 +38,6 @@ sap.ui.define([
 			}
 
 			this._oDefinition = oFile;
-			this._oOriginDefinition = jQuery.extend(true, {}, oFile);
 			this._sRequest = '';
 			this._bUserDependent = (oFile.layer === "USER");
 			this._vRevertData = null;
@@ -539,7 +538,6 @@ sap.ui.define([
 		var sResponse = JSON.stringify(oResponse);
 		if (sResponse) {
 			this._oDefinition = JSON.parse(sResponse);
-			this._oOriginDefinition = JSON.parse(sResponse);
 			this.setState(Change.states.PERSISTED);
 		}
 	};

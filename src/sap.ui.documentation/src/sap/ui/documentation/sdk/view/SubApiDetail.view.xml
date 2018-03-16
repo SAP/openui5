@@ -28,8 +28,7 @@
 							<ObjectPageHeaderActionButton id="apiDetailBackToSearch" text="Back to search results" hideIcon="true" hideText="false" press="backToSearch" visible="false"/>
 							<ObjectPageHeaderActionButton
 									id="toggleFullScreenBtn"
-									class="sapUiHideOnPhone"
-									visible="{=!${device>/system/phone}}"
+									visible="{device>/system/desktop}"
 									icon="sap-icon://full-screen"
 									tooltip="Show this sample in full screen mode"
 									press="onToggleFullScreen" />
@@ -361,7 +360,7 @@
 																<m:Link text="{parameter>type}"
 																		href="#/api/{parameter>type}"
 																		enabled="{= !!${parameter>linkEnabled} }"/>
-																<custom:JSDocText text="{parameter>description}"/>
+																<custom:JSDocText text="{path: 'parameter>description', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"/>
 															</custom:Row>
 														</template:repeat>
 													</custom:LightTable>

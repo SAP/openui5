@@ -1542,6 +1542,16 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 */
 
 	/**
+	 * Marker interface for a ControllerExtension.
+	 *
+	 * @since 1.56.0
+	 * @name sap.ui.core.mvc.IControllerExtension
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
 	 * Opens the control by given opener ref.
 	 * @param {string} oEvent oncontextmenu event
 	 * @param {sap.ui.core.Element|DOMRef} oOpenerRef The element which will get the focus back again after the menu was closed.

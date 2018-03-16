@@ -445,9 +445,7 @@ function(
 	 * @private
 	 */
 	OverlayUtil.isInOverlayContainer = function(oNode) {
-		if (oNode && jQuery(oNode).closest(".sapUiDtOverlay, #overlay-container").length) {
-			return true;
-		}
+		return oNode && jQuery(oNode).closest(".sapUiDtOverlay, #overlay-container").length > 0;
 	};
 
 	/**

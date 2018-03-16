@@ -2,6 +2,6 @@
 	height="100%"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
-	<MessagePage showHeader="false">
+	<MessagePage showHeader="false" icon="sap-icon://filter">
 	</MessagePage>
 </mvc:View>

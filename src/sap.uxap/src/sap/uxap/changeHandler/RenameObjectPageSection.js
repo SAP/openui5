@@ -28,15 +28,8 @@
 
 			var RenameObjectPageSection = BaseRename.createRenameChangeHandler(mRenameSettings);
 
-			RenameObjectPageSection.applyChange = function (oChange, oControl, mPropertyBag) {
-				var oModifier = mPropertyBag.modifier;
-				var sPropertyName = mRenameSettings.propertyName;
-				var oChangeDefinition = oChange.getDefinition();
-				var sText = oChangeDefinition.texts[mRenameSettings.changePropertyName];
-				var sValue = sText.value;
-				var oControlToBeRenamed = oControl;
+			RenameObjectPageSection._getControlForRename = function(oControl, oModifier) {
 				var aSubSections = oModifier.getAggregation(oControl, "subSections");
-
 				// due to specific logic in the Object Page Layout, the title of the Section is
 				// taken from its SubSection in case it is only one no matter if the Section has title itself.
 				if (aSubSections
@@ -44,25 +37,55 @@
 					&& oModifier.getProperty(aSubSections[0], "title")
 					&& oModifier.getProperty(oModifier.getParent(oControl), "subSectionLayout") === "TitleOnTop"
 				) {
-					oControlToBeRenamed = aSubSections[0];
+					return aSubSections[0];
 				}
+				return oControl;
+			};
+
+			RenameObjectPageSection._getSetterMethodName = function (sValue, sPropertyName, oModifier) {
+				// The value can be a binding - e.g. for translatable values in WebIde
+				return Utils.isBinding(sValue)
+					? "setPropertyBinding"
+					: "setProperty";
+			};
+
+			RenameObjectPageSection.applyChange = function (oChange, oControl, mPropertyBag) {
+				var oModifier = mPropertyBag.modifier;
+				var sPropertyName = mRenameSettings.propertyName;
+				var oChangeDefinition = oChange.getDefinition();
+				var sText = oChangeDefinition.texts[mRenameSettings.changePropertyName];
+				var sValue = sText.value;
+				var oControlToBeRenamed = RenameObjectPageSection._getControlForRename(oControl, oModifier);
 
 				if (oChangeDefinition.texts && sText && typeof (sValue) === "string") {
 					oChange.setRevertData(oModifier.getProperty(oControlToBeRenamed, sPropertyName));
-
-					// The value can be a binding - e.g. for translatable values in WebIde
-					if (Utils.isBinding(sValue)) {
-						oModifier.setPropertyBinding(oControlToBeRenamed, sPropertyName, sValue);
-					} else {
-						oModifier.setProperty(oControlToBeRenamed, sPropertyName, sValue);
-					}
+					var sMethodName = RenameObjectPageSection._getSetterMethodName(sValue);
+					oModifier[sMethodName](oControlToBeRenamed, sPropertyName, sValue);
 					return true;
-
 				} else {
 					Utils.log.error("Change does not contain sufficient information to be applied: [" + oChangeDefinition.layer + "]" + oChangeDefinition.namespace + "/" + oChangeDefinition.fileName + "." + oChangeDefinition.fileType);
 					//however subsequent changes should be applied
 				}
 			};
+
+			RenameObjectPageSection.revertChange = function (oChange, oControl, mPropertyBag) {
+				var sOldText = oChange.getRevertData();
+
+				if (typeof (sOldText) === "string") {
+					var oModifier = mPropertyBag.modifier;
+					var oControlToBeReverted = RenameObjectPageSection._getControlForRename(oControl, oModifier);
+					var sPropertyName = mRenameSettings.propertyName;
+					var sMethodName = RenameObjectPageSection._getSetterMethodName(sOldText);
+					oModifier[sMethodName](oControlToBeReverted, sPropertyName, sOldText);
+
+					oChange.resetRevertData();
+					return true;
+				} else {
+					Utils.log.error("Change doesn't contain sufficient information to be reverted. Most Likely the Change didn't go through applyChange.");
+				}
+			};
+
+
 
 			return RenameObjectPageSection;
 		},

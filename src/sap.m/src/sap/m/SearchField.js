@@ -26,7 +26,12 @@ sap.ui.define([
 	) {
 	"use strict";
 
-
+	var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+	SearchFieldRenderer.oSearchFieldToolTips = {
+		SEARCH_BUTTON_TOOLTIP: oResourceBundle.getText("SEARCHFIELD_SEARCH_BUTTON_TOOLTIP"),
+		RESET_BUTTON_TOOLTIP: oResourceBundle.getText("SEARCHFIELD_RESET_BUTTON_TOOLTIP"),
+		REFRESH_BUTTON_TOOLTIP: oResourceBundle.getText("SEARCHFIELD_REFRESH_BUTTON_TOOLTIP")
+	};
 
 	/**
 	* Constructor for a new SearchField.
@@ -120,7 +125,7 @@ sap.ui.define([
 			showRefreshButton : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Tooltip text of the refresh button. If it is not set, the tooltip of the SearchField (if any) is displayed. Tooltips are not displayed on touch devices.
+			 * Tooltip text of the refresh button. If it is not set, the  Default placeholder text is the word "Refresh" in the current local language (if supported) or in English. Tooltips are not displayed on touch devices.
 			 * @since 1.16
 			 */
 			refreshButtonTooltip : {type : "string", group : "Misc", defaultValue : null},
@@ -243,18 +248,13 @@ sap.ui.define([
 	EnabledPropagator.call(SearchField.prototype);
 
 	IconPool.insertFontFaceStyle();
-
-
-
 	SearchField.prototype.init = function() {
 
 		// IE9 does not fire input event when characters are deleted in an input field, use keyup instead
 		this._inputEvent = Device.browser.internet_explorer && Device.browser.version < 10 ? "keyup" : "input";
 
-		var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
 		// Default placeholder: "Search"
-		this.setProperty("placeholder", oRb.getText("FACETFILTER_SEARCH"),true);
+		this.setProperty("placeholder", oResourceBundle.getText("FACETFILTER_SEARCH"),true);
 
 	};
 
@@ -524,9 +524,10 @@ sap.ui.define([
 
 	/**
 	 * Process the input event (key press or paste). Update value and fire the liveChange event.
+	 * @param {oEvent} jQuery Event
 	 * @private
 	 */
-	SearchField.prototype.onInput = function(event) {
+	SearchField.prototype.onInput = function(oEvent) {
 		var value = this.getInputElement().value;
 
 		// IE fires an input event when an empty input with a placeholder is focused or loses focus.
@@ -623,11 +624,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * highlight the background on focus.
+	 * Highlights the background on focus and sets tooltips
 	 *
-	 * @private
+	 * @param {object} oEvent jQuery event
 	 */
-	SearchField.prototype.onFocus = function(event) {
+	SearchField.prototype.onFocus = function(oEvent) {
 
 		// IE does not really focuses inputs and does not blur them if the document itself is not focused
 		if (Device.browser.internet_explorer && !document.hasFocus()) {
@@ -635,11 +636,6 @@ sap.ui.define([
 		}
 
 		this.$().toggleClass("sapMFocus", true);
-
-		// clear tooltip of the refresh button
-		if (this.getShowRefreshButton()) {
-			this.$("search").removeAttr("title");
-		}
 
 		// Remember the original value for the case when the user presses ESC
 		this._sOriginalValue = this.getValue();
@@ -652,15 +648,15 @@ sap.ui.define([
 				this._bSuggestionSuppressed = false;
 			}
 		}
+		this._setToolTips(oEvent.type);
 	};
 
 	/**
-	 * Restore the background color on blur.
+	 * Restores the background color on blur and sets tooltips
 	 *
-	 * @private
+	 * @param {object} oEvent jQuery event
 	 */
 	SearchField.prototype.onBlur = function(oEvent) {
-		var tooltip;
 
 		this.$().toggleClass("sapMFocus", false);
 
@@ -668,12 +664,39 @@ sap.ui.define([
 			this._bSuggestionSuppressed = false; // void the reset button handling
 		}
 
-		// restore toltip of the refresh button
+		this._setToolTips(oEvent.type);
+	};
+
+	/**
+	 * Sets the tooltip according to the current state of <code>sap.m.SearchField</code>
+	 *
+	 * @param {string} sTypeEvent type of event
+	 * @private
+	 */
+	SearchField.prototype._setToolTips = function(sTypeEvent) {
+
+		var $searchSelector = this.$("search"),
+			$resetSelector = this.$("reset");
+		// restore tooltip of the refresh button
 		if (this.getShowRefreshButton()) {
-			tooltip = this.getRefreshButtonTooltip();
-			if (tooltip) {
-				this.$("search").attr("title", tooltip);
+			//onFocus: only search button is shown
+			if (sTypeEvent === "focus") {
+				$searchSelector.attr("title", SearchFieldRenderer.oSearchFieldToolTips.SEARCH_BUTTON_TOOLTIP);
+			} else if (sTypeEvent === "blur"){
+				//onBlur: 'Search' button becomes 'Refresh' button
+				var sRefreshToolTipValue = this.getRefreshButtonTooltip(),
+					sTooltip = sRefreshToolTipValue === "" ? SearchFieldRenderer.oSearchFieldToolTips.REFRESH_BUTTON_TOOLTIP : sRefreshToolTipValue;
+				if (sTooltip) {
+					$searchSelector.attr("title", sTooltip);
+				}
 			}
+		}
+
+		// "reset" button becomes "search" button on blur
+		if (this.getValue() === "" ) {
+			$resetSelector.attr("title", SearchFieldRenderer.oSearchFieldToolTips.SEARCH_BUTTON_TOOLTIP);
+		} else {
+			$resetSelector.attr("title", SearchFieldRenderer.oSearchFieldToolTips.RESET_BUTTON_TOOLTIP);
 		}
 	};
 
@@ -693,6 +716,7 @@ sap.ui.define([
 		}
 
 		this.setProperty("value", value, true);
+		this._setToolTips();
 		return this;
 	};
 

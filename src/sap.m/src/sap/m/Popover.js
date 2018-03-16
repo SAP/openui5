@@ -98,6 +98,7 @@ sap.ui.define([
 		*
 		* @public
 		* @alias sap.m.Popover
+		* @see {@link fiori:https://experience.sap.com/fiori-design-web/popover/ Popover}
 		* @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 		*/
 		var Popover = Control.extend("sap.m.Popover", /** @lends sap.m.Popover.prototype */ {

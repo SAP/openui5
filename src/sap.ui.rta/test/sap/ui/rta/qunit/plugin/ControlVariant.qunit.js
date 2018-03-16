@@ -784,20 +784,21 @@ sap.ui.require([
 	QUnit.test("when variant rename is stopped and _emitLabelChangeEvent is called with the an existing variant title text", function(assert) {
 		var done = assert.async(),
 			fnMessageBoxShowStub = sandbox.stub(RtaUtils, "_showMessageBox").returns(Promise.resolve()),
-			fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open");
+			fnValueStateMessageOpenStub = sandbox.stub(ValueStateMessage.prototype, "open"),
+			sExistingVariantTitle = "Existing Variant Title";
 
 		this.oModel.setData({
 			"varMgtKey" : {
 				variants: [
 					{
-						title: "Existing Variant Title",
+						title: sExistingVariantTitle,
 						visible: true
 					}
 				]
 			}
 		});
 
-		sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Existing Variant Title");
+		sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sExistingVariantTitle);
 		this.oControlVariantPlugin.setOldValue("Source Variant Title");
 		sap.ui.getCore().applyChanges();
 
@@ -877,10 +878,9 @@ sap.ui.require([
 
 		var sSourceVariantTitle = "Source Variant Title";
 		this.oVariantManagementOverlay._triggerDuplicate = true;
-		sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Source Variant Title Copy");
+		sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sSourceVariantTitle + " Copy");
 		sandbox.stub(this.oModel, "getCurrentVariantReference").returns("varMgtKey");
-		this.oControlVariantPlugin.setOldValue(sSourceVariantTitle);
-		this.oControlVariantPlugin.sCustomTextForDuplicate = "Source Variant Title Copy";
+		this.oControlVariantPlugin.setOldValue(sSourceVariantTitle + " Copy");
 		sap.ui.getCore().applyChanges();
 
 		this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -928,12 +928,10 @@ sap.ui.require([
 			}
 		});
 
-		var sSourceVariantTitle = "Source Variant Title";
 		this.oVariantManagementOverlay._triggerDuplicate = true;
 		sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Modified Source Variant Title Copy");
 		sandbox.stub(this.oModel, "getCurrentVariantReference").returns("varMgtKey");
-		this.oControlVariantPlugin.setOldValue(sSourceVariantTitle);
-		this.oControlVariantPlugin.sCustomTextForDuplicate = "Source Variant Title Copy";
+		this.oControlVariantPlugin.setOldValue(sExistingVariantTitle + " Copy");
 		sap.ui.getCore().applyChanges();
 
 		this.oControlVariantPlugin.attachElementModified(function(oEvent) {
@@ -973,11 +971,16 @@ sap.ui.require([
 
 		var $editableControl = this.oVariantManagementOverlay.getDesignTimeMetadata().getAssociatedDomRef(this.oVariantManagementControl, vDomRef); /* Text control */
 		var $control = jQuery(this.oVariantManagementControl.getDomRef()); /* Main control */
-		var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().innerWidth(), 10);
+		var iOverlayInnerWidth = parseInt(this.oVariantManagementOverlay.$().outerWidth(), 10);
 
 		$control.css({
 			"width": "10px",
 			"max-width": "10px",
+			"position": "fixed"
+		});
+		$editableControl.css({
+			"min-width": "15px",
+			"width": "15px",
 			"position": "fixed"
 		});
 		$editableControl.parent().css({
@@ -990,7 +993,7 @@ sap.ui.require([
 		this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 		var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-		assert.strictEqual($editableWrapper.css("width"), (iOverlayInnerWidth - iWidthDiff) + "px", "then correct with set for the editable field wrapper");
+		assert.strictEqual($editableWrapper.css("width"), (iOverlayInnerWidth - iWidthDiff) + "px", "then correct width set for the editable field wrapper");
 	});
 
 	QUnit.test("when startEdit is called and renamed control's text container has no overflow", function(assert) {
@@ -1028,7 +1031,7 @@ sap.ui.require([
 		this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 
 		var $editableWrapper = this.oVariantManagementOverlay.$().find(".sapUiRtaEditableField");
-		assert.equal($editableWrapper.css("width"), iOverlayInnerWidth + "px", "then correct with set for the editable field wrapper");
+		assert.equal($editableWrapper.css("width"), iOverlayInnerWidth + "px", "then correct width set for the editable field wrapper");
 	});
 
 	QUnit.test("when startEdit is called in duplicate mode", function(assert) {
@@ -1049,8 +1052,6 @@ sap.ui.require([
 		});
 
 		this.oVariantManagementOverlay.attachEventOnce("geometryChanged", function() {
-			assert.strictEqual(this.oControlVariantPlugin.sCustomTextForDuplicate, "Standard Copy", "then text calculated and persisted for variant duplicate");
-			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), "Standard", "then current variant title stored in oldValue property of plugin");
 			assert.strictEqual(this.oVariantManagementControl.getTitle().getText(), "Standard Copy", "then calculated text set as variant control title");
 		}.bind(this));
 		this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
@@ -1059,17 +1060,15 @@ sap.ui.require([
 	QUnit.test("when stopEdit is called in non-error mode on duplicate", function(assert) {
 		var oControl = this.oVariantManagementControl.getTitle();
 		var $oControl = jQuery(oControl.getDomRef("inner"));
+		var sOldText = "Title Old";
 		this.oVariantManagementOverlay._triggerDuplicate = true;
-		this.oControlVariantPlugin.sCustomTextForDuplicate = "Title Copy";
-		this.oControlVariantPlugin.setOldValue("Title Old");
+		this.oControlVariantPlugin.setOldValue(sOldText);
 		this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
-		oControl.setText(this.oControlVariantPlugin.sCustomTextForDuplicate);
 
 		$oControl.css("visibility", "hidden");
 		this.oControlVariantPlugin.stopEdit();
 
-		assert.notOk(this.oControlVariantPlugin.getOldValue(), "then old value is reset");
-		assert.notEqual(oControl.getText(), this.oControlVariantPlugin.sCustomTextForDuplicate, "then control binding refreshed");
+		assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
 		assert.notOk(this.oVariantManagementOverlay._triggerDuplicate, "then Overlay._triggerDuplicate property reset (deleted)");
 		assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
 		assert.notOk(this._$oEditableControlDomRef);
@@ -1079,16 +1078,16 @@ sap.ui.require([
 	QUnit.test("when stopEdit is called in error mode on duplicate", function(assert) {
 		var oControl = this.oVariantManagementControl.getTitle();
 		var $oControl = jQuery(oControl.getDomRef("inner"));
+		var sOldText = "Title Old";
 		this.oVariantManagementOverlay._triggerDuplicate = true;
-		this.oControlVariantPlugin.sCustomTextForDuplicate = "Title Copy";
-		this.oControlVariantPlugin.setOldValue("Title Old");
+		this.oControlVariantPlugin.setOldValue(sOldText);
 		this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
 		sandbox.stub(this.oVariantManagementOverlay, "hasStyleClass").returns(true);
 
 		$oControl.css("visibility", "hidden");
 		this.oControlVariantPlugin.stopEdit();
 
-		assert.notOk(this.oControlVariantPlugin.getOldValue(), "then old value is reset");
+		assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
 		assert.ok(this.oVariantManagementOverlay._triggerDuplicate, "then Overlay._triggerDuplicate property still set");
 		assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
 		assert.notOk(this._$oEditableControlDomRef);

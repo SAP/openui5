@@ -121,7 +121,8 @@
 					"sap.ui.core.sample.OpaWithSupportAssistant",
 					"sap.ui.core.sample.OpaTestLibrary",
 					"sap.ui.core.sample.OpaMessageToast",
-					"sap.ui.core.sample.OpaAutoWaitParams"
+					"sap.ui.core.sample.OpaAutoWaitParams",
+					"sap.ushell.sample.OpaFLPSandbox"
 				]
 			},
 			{

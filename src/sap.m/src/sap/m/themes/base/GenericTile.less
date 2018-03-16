@@ -662,42 +662,40 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 	}
 }
 
-
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
+.sapMTileSmallPhone {
 	.sapMGTHdrTxt .sapMText {
 		line-height: 1.1875rem;
 	}
 
-	.sapMGT:not(.sapMGTLineMode) .sapMGTSubHdrTxt {
+	&.sapMGT:not(.sapMGTLineMode) .sapMGTSubHdrTxt {
 		line-height: 1.1875rem;
 	}
 
-	.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
+	&.sapMGT.sapMGTHeaderMode .sapMGTHdrTxt:nth-last-of-type(2) {
 		max-height: 4.72rem;
 	}
 
-	.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2) {
+	&.sapMGT:not(.sapMGTHeaderMode) .sapMGTHdrTxt:nth-last-of-type(2) {
 		max-height: 2.36rem;
 	}
 
 	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
-		.sapMGT.sapMGTHeaderMode > .sapMGTHdrContent .sapMTextMaxLine {
+		&.sapMGT.sapMGTHeaderMode > .sapMGTHdrContent .sapMTextMaxLine {
 			max-height: 5.9rem !important;
 		}
 	}
 
 	html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-ui-browser*='ff'] {
-		.sapMGT:not(.sapMGTHeaderMode) > .sapMGTHdrContent .sapMTextMaxLine {
+		&.sapMGT:not(.sapMGTHeaderMode) > .sapMGTHdrContent .sapMTextMaxLine {
 			max-height: 3.54rem !important;
 		}
 	}
 
-	.sapMGT.OneByOne {
+	&.sapMGT.OneByOne {
 		width: 9.25rem;
 		height: 9.25rem;
 	}
-	.sapMGT.TwoByOne {
+	&.sapMGT.TwoByOne {
 		width: 19rem;
 		height: 9.25rem;
 	}
@@ -719,10 +717,7 @@ html[data-sap-ui-browser*='ie'], html[data-sap-ui-browser*='ed'], html[data-sap-
 			bottom: 0.313rem;
 		}
 	}
-}
 
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
 	.sapMGTHdrTxt > .sapMText {
 		font-size: @sapMFontHeader6Size;
 	}

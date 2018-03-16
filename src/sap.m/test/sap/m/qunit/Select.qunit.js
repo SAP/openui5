@@ -4082,6 +4082,66 @@
 		oSelect.destroy();
 	});
 
+	QUnit.module("close()");
+
+	QUnit.test("close() on phone restores focus to the select", function (assert) {
+
+		this.stub(sap.ui.Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// system under test
+		var oSelect = new sap.m.Select({
+			items: [
+				new sap.ui.core.Item({
+					key: "0",
+					text: "item 0"
+				}),
+
+				new sap.ui.core.Item({
+					key: "1",
+					text: "item 1"
+				}),
+
+				new sap.ui.core.Item({
+					key: "2",
+					text: "item 2"
+				})
+			]
+		});
+
+		var fnFocusSpy = this.spy(oSelect, "focus");
+
+		// arrange
+		oSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		document.documentElement.style.overflow = "hidden"; // hide scrollbar during test
+
+		// act
+		sap.ui.test.qunit.triggerTouchEvent("tap", oSelect.getDomRef(), {
+			srcControl: oSelect
+		});
+		this.clock.tick(1000);
+
+		// assert
+		assert.ok(oSelect.isOpen(), "Select is open");
+
+		assert.equal(fnFocusSpy.callCount, 1, "Focus was called");
+
+		// act
+		oSelect.close();
+		this.clock.tick(1000);
+
+		// assert
+		assert.strictEqual(document.activeElement, oSelect.getDomRef(), "Focus was successfully restored to the Select");
+
+		// cleanup
+		oSelect.destroy();
+		document.documentElement.style.overflow = ""; // restore scrollbar after test
+	});
+
 	QUnit.module("findFirstEnabledItem()");
 
 	QUnit.test("findFirstEnabledItem()", function (assert) {

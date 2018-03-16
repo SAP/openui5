@@ -4,16 +4,16 @@
 
 // Provides control sap.m.Table.
 sap.ui.define([
-	'jquery.sap.global',
-	'./ListBase',
-	'./ListItemBase',
-	'./library',
-	'sap/ui/Device',
-	'./TableRenderer'
+	"jquery.sap.global",
+	"sap/ui/Device",
+	"./library",
+	"./ListBase",
+	"./ListItemBase",
+	"./CheckBox",
+	"./TableRenderer"
 ],
-	function(jQuery, ListBase, ListItemBase, library, Device, TableRenderer) {
+	function(jQuery, Device, library, ListBase, ListItemBase, CheckBox, TableRenderer) {
 	"use strict";
-
 
 
 	// shortcut for sap.m.ListKeyboardMode
@@ -106,7 +106,7 @@ sap.ui.define([
 			 * <b>Note:</b> There is limited browser support, hence the API is in experimental state.
 			 * Browsers that currently support this feature are Chrome (desktop and mobile), Safari (desktop and mobile) and Edge 41.
 			 *
-			 * There are also some known issues with respect to the scrolling behavior and focus handling. A few are given below:
+			 * There are also some known issues with respect to the scrolling behavior. A few are given below:
 			 *
 			 * If the table is placed in certain layout containers, for example, the <code>sap.ui.layout.Grid</code> control,
 			 * the column headers are not fixed at the top of the viewport. Similar behavior is also observed with the <code>sap.m.ObjectPage</code> control.
@@ -463,10 +463,10 @@ sap.ui.define([
 	 * @return {sap.m.CheckBox} reference to the internal select all checkbox
 	 */
 	Table.prototype._getSelectAllCheckbox = function() {
-		return this._selectAllCheckBox || (this._selectAllCheckBox = new sap.m.CheckBox({
+		return this._selectAllCheckBox || (this._selectAllCheckBox = new CheckBox({
 			id: this.getId("sa"),
 			activeHandling: false
-		}).addStyleClass('sapMLIBSelectM').setParent(this, null, true).attachSelect(function () {
+		}).addStyleClass("sapMLIBSelectM").setParent(this, null, true).attachSelect(function () {
 			if (this._selectAllCheckBox.getSelected()) {
 				this.selectAll(true);
 			} else {
@@ -664,6 +664,30 @@ sap.ui.define([
 		}
 	};
 
+	// check for css sticky support in browsers
+	Table.getStickyTableSupport = function() {
+		var oBrowser = Device.browser;
+		if (oBrowser.safari || (oBrowser.firefox && oBrowser.version >= 59)) {
+			return "TR";
+		}
+
+		if (oBrowser.chrome || (oBrowser.edge && oBrowser.version >= 16)) {
+			return "TH";
+		}
+
+		return "";
+	};
+
+	// returns the class to be added to sticky table for <tr> or <th> elements
+	Table.prototype.getStickyStyleClass = function() {
+		var sStickySupport = Table.getStickyTableSupport();
+		if (!sStickySupport || this.getSticky() === Sticky.None) {
+			return;
+		}
+
+		return "sapMTableStickyColHdr" + sStickySupport;
+	};
+
 	Table.prototype.onfocusin = function(oEvent) {
 		var oTarget = oEvent.target;
 		if (oTarget.id === this.getId("tblHeader")) {
@@ -679,6 +703,37 @@ sap.ui.define([
 		}
 
 		ListBase.prototype.onfocusin.call(this, oEvent);
+	};
+
+	// gets the sticky header position and scrolls the page so that the item is completely visible when focused
+	Table.prototype._handleStickyHeaderItemFocus = function(oItem) {
+		var oScrollDelegate = library.getScrollDelegate(this);
+		if (!oScrollDelegate) {
+			return;
+		}
+
+		var oTblHeader = this.getDomRef("tblHeader"),
+			oTheadRect = oTblHeader.parentElement.getBoundingClientRect(),
+			oTHRect = oTblHeader.firstChild.getBoundingClientRect();
+
+		if (oTheadRect.top != oTHRect.top) {
+			var oItemDomRef = oItem.getDomRef(),
+				oItemRect = oItemDomRef.getBoundingClientRect();
+			if (oTHRect.bottom > oItemRect.top) {
+				window.requestAnimationFrame(function () {
+					oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -oTHRect.height]);
+				});
+			}
+		}
+	};
+
+	// function gets called when the focus is on the item or its content
+	Table.prototype.onItemFocusIn = function(oItem, oFocusedControl) {
+		if (this.getStickyStyleClass()) {
+			this._handleStickyHeaderItemFocus(oItem);
+		}
+
+		ListBase.prototype.onItemFocusIn.apply(this, arguments);
 	};
 
 	// event listener for theme changed

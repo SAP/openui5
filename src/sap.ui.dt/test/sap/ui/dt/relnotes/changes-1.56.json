@@ -5,13 +5,13 @@
       {
         "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
         "type": "FIX",
-        "text": " QUnit Designtime Library tests in Firefox",
+        "text": "QUnit Designtime Library tests in Firefox",
         "references": []
       },
       {
         "id": "012b33628fe2749a95df15befd5163769fbb71aa",
         "type": "FIX",
-        "text": " sap.ui.dt.MiniMenu - various bugfixes \u0026 cleaning (split1)",
+        "text": "sap.ui.dt.MiniMenu - various bugfixes & cleaning (split1)",
         "references": []
       },
       {

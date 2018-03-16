@@ -2377,6 +2377,53 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				});
 			});
 
+			QUnit.test("Batch: ListBinding - create/use preliminary context and propagate context to another Binding", function(assert) {
+				var done = assert.async();
+				var oPanel = new Panel();
+				var oList = new List();
+				var oList2 = new List();
+
+				oModel = new sap.ui.model.odata.v2.ODataModel(sURI, {
+					useBatch: true,
+					preliminaryContext: true
+				});
+
+				oPanel.setModel(oModel);
+
+				oPanel.addContent(oList2);
+				oPanel.addContent(oList);
+
+				oModel.read("/Categories(7)", {
+					expand: "Products",
+					select: "Products/ProductID",
+					success: function() {
+						oPanel.bindElement({
+							path:"/Categories(7)", 
+						});
+
+						oList2.bindElement({
+							path:"/Products(1)"
+						});
+
+						oList.bindElement({
+							path:"Products",
+							parameters: {
+								select: "ProductID"
+							}
+						});
+
+						assert.equal(oPanel.getElementBinding().getBoundContext(), oList2.getElementBinding().oContext, "Context should be the same and was propagated.");
+						assert.ok(oList2.getElementBinding().getBoundContext().isPreliminary(), "ElementContext should be preliminary.");
+
+						oModel.attachBatchRequestCompleted(function(oEvent) {
+							var aRequests = oEvent.getParameter("requests");
+							assert.equal(aRequests.length, 1, "Only one batch request should be completed.")
+							done();
+						});
+					}
+				});
+			});
+
 			QUnit.test("Batch: ListBinding - create preliminary context for non existing entity", function(assert) {
 				var done = assert.async();
 

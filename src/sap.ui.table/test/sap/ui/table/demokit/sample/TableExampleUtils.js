@@ -6,20 +6,7 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 ], function (JSONModel, Popover, List, FeedListItem) {
 	"use strict";
 
-	var Utils = {};
-
-	Utils.showInfo = function(aItems, oBy) {
-		if (typeof (aItems) == "string") {
-			jQuery.ajax(aItems, {
-				dataType: "json",
-				sync: true,
-				success: function (oData) {
-					Utils.showInfo(oData, oBy);
-				}
-			});
-			return;
-		}
-
+	function showInfo(aItems, oBy) {
 		var oPopover = new Popover({
 			showHeader: false,
 			placement: "Auto",
@@ -45,6 +32,21 @@ sap.ui.define("sap/ui/table/sample/TableExampleUtils", [
 		jQuery.sap.syncStyleClass("sapUiSizeCozy", oBy, oPopover);
 		oPopover.setModel(new JSONModel({items: aItems}));
 		oPopover.openBy(oBy, true);
+	}
+
+	var Utils = {};
+
+	Utils.showInfo = function(aItems, oBy) {
+		if (typeof (aItems) == "string") {
+			jQuery.ajax(aItems, {
+				dataType: "json",
+				success: function (oData) {
+					showInfo(oData, oBy);
+				}
+			});
+		} else {
+			showInfo(aItems, oBy);
+		}
 	};
 
 	return Utils;

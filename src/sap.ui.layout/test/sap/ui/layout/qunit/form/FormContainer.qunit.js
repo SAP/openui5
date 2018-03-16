@@ -60,29 +60,34 @@ sap.ui.require([
 		afterEach: afterTest
 	});
 
-	QUnit.test("Expander created", function(assert) {
-		oFormContainer.setExpandable(true);
-		var oButton = oFormContainer.getAggregation("_expandButton");
-
-		// as button is loaded async, check if already there and rendered, if not, start test async
-		if (sap.ui.require("sap/m/Button") && oButton) {
-			assert.ok(oButton, "expander created");
-			assert.equal(oButton.getType(), sap.m.ButtonType.Transparent, "Button type");
+	function asyncExpanderTest(assert, fnTest) {
+		if (sap.ui.require("sap/m/Button") && oFormContainer.getAggregation("_expandButton")) {
+			fnTest(assert);
 		} else {
 			var fnDone = assert.async();
 			sap.ui.require(["sap/m/Button"], function() {
-				oButton = oFormContainer.getAggregation("_expandButton");
-				assert.ok(oButton, "expander created");
-				assert.equal(oButton.getType(), sap.m.ButtonType.Transparent, "Button type");
-				oFormContainer.setExpandable(false);
-				var oButton2 = oButton = oFormContainer.getAggregation("_expandButton");
-				assert.ok(oButton == oButton2, "Expand button still exist");
-				oFormContainer.setExpandable(true);
-				oButton2 = oButton = oFormContainer.getAggregation("_expandButton");
-				assert.ok(oButton == oButton2, "Expand button reused");
+				fnTest(assert);
 				fnDone();
 			});
 		}
+	}
+
+	function expanderCreated(assert) {
+		var oButton = oFormContainer.getAggregation("_expandButton");
+		assert.ok(oButton, "expander created");
+		assert.equal(oButton.getType(), sap.m.ButtonType.Transparent, "Button type");
+		oFormContainer.setExpandable(false);
+		var oButton2 = oButton = oFormContainer.getAggregation("_expandButton");
+		assert.ok(oButton, "Expand button still exist");
+		oFormContainer.setExpandable(true);
+		oButton = oFormContainer.getAggregation("_expandButton");
+		assert.deepEqual(oButton, oButton2, "Expand button reused");
+	}
+
+	QUnit.test("Expander created", function(assert) {
+		oFormContainer.setExpandable(true);
+
+		asyncExpanderTest(assert, expanderCreated);
 	});
 
 	QUnit.test("Expander default", function(assert) {
@@ -91,8 +96,7 @@ sap.ui.require([
 		assert.notOk(oButton, "No expander created per default");
 	});
 
-	QUnit.test("destroy button", function(assert) {
-		oFormContainer.setExpandable(true);
+	function expanderDestroyButton(assert) {
 		var oButton = oFormContainer.getAggregation("_expandButton");
 		var sButtonId = oButton.getId();
 
@@ -101,11 +105,14 @@ sap.ui.require([
 		assert.notOk(sap.ui.getCore().byId(sButtonId), "Button destroyed");
 
 		initTest();
+	}
+
+	QUnit.test("destroy button", function(assert) {
+		oFormContainer.setExpandable(true);
+		asyncExpanderTest(assert, expanderDestroyButton);
 	});
 
-	QUnit.test("Expander icon", function(assert) {
-		oFormContainer.setExpanded(false);
-		oFormContainer.setExpandable(true);
+	function expanderIcon(assert) {
 		var oButton = oFormContainer.getAggregation("_expandButton");
 
 		assert.equal(oButton.getIcon(), "sap-icon://expand-group", "Expander Icon");
@@ -114,10 +121,15 @@ sap.ui.require([
 		oFormContainer.setExpanded(true);
 		assert.equal(oButton.getIcon(), "sap-icon://collapse-group", "Expander Icon");
 		assert.equal(oButton.getTooltip(), "Collapse", "Expander Tooltip");
+	}
+
+	QUnit.test("Expander icon", function(assert) {
+		oFormContainer.setExpanded(false);
+		oFormContainer.setExpandable(true);
+		asyncExpanderTest(assert, expanderIcon);
 	});
 
-	QUnit.test("Expander press", function(assert) {
-		oFormContainer.setExpandable(true);
+	function expanderPress(assert) {
 		var oButton = oFormContainer.getAggregation("_expandButton");
 		var bCalled = false;
 		var oForm = {
@@ -127,12 +139,18 @@ sap.ui.require([
 		};
 
 		// simulate Form
-		sinon.stub(oFormContainer, "getParent", function() {return oForm;});
+		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		// simulate button click
 		oButton.firePress();
 		assert.ok(bCalled, "toggleContainerExpanded called on Form");
 		assert.notOk(oFormContainer.getExpanded(), "FormContainer not expanded");
+	}
+
+	QUnit.test("Expander press", function(assert) {
+		oFormContainer.setExpandable(true);
+
+		asyncExpanderTest(assert, expanderPress);
 	});
 
 	QUnit.module("Title", {
@@ -282,8 +300,8 @@ sap.ui.require([
 				}
 		};
 
-		// simulate FormContainer
-		sinon.stub(oFormContainer, "getParent", function() {return oForm;});
+		// simulate Form
+		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		oFormContainer.onLayoutDataChange();
 		assert.ok(bCalled, "onLayoutDataChange called on Form");
@@ -301,8 +319,8 @@ sap.ui.require([
 				}
 		};
 
-		// simulate FormContainer
-		sinon.stub(oFormContainer, "getParent", function() {return oForm;});
+		// simulate Form
+		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		oFormContainer.contentOnAfterRendering("1", "2");
 		assert.ok(bCalled, "contentOnAfterRendering called on Form");
@@ -319,8 +337,8 @@ sap.ui.require([
 				}
 		};
 
-		// simulate FormContainer
-		sinon.stub(oFormContainer, "getParent", function() {return oForm;});
+		// simulate Form
+		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		assert.equal(oFormContainer.getRenderedDomRef(), "X", "Value returned from Form");
 	});
@@ -334,8 +352,8 @@ sap.ui.require([
 				}
 		};
 
-		// simulate FormContainer
-		sinon.stub(oFormContainer, "getParent", function() {return oForm;});
+		// simulate Form
+		sinon.stub(oFormContainer, "getParent").callsFake(function() {return oForm;});
 
 		assert.equal(oFormContainer.getElementRenderedDomRef(), "X", "Value returned from Form");
 	});

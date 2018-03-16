@@ -108,6 +108,7 @@ sap.ui.define([
 				this.oData[sVariantManagementReference].currentVariant = sNewVariantReference;
 				if (this.oData[sVariantManagementReference].updateVariantInURL) {
 					this._updateVariantInURL(sVariantManagementReference, sNewVariantReference);
+					this.oVariantController.updateCurrentVariantInMap(sVariantManagementReference, sNewVariantReference);
 				}
 				this.checkUpdate();
 			}.bind(this));
@@ -317,17 +318,18 @@ sap.ui.define([
 		//Flex Controller
 		var oVariant = this.oFlexController.createVariant(oDuplicateVariantData, this.oComponent);
 
+		var aChanges = [];
 		[oVariant].concat(oVariant.getControlChanges()).forEach(function(oChange) {
-			this.oFlexController._oChangePersistence.addDirtyChange(oChange);
+			aChanges.push(this.oFlexController._oChangePersistence.addDirtyChange(oChange));
 		}.bind(this));
 
 		//Variant Controller
-		var iIndex = this.oVariantController.addVariantToVariantManagement(oDuplicateVariantData, mPropertyBag.variantManagementReference);
+		var iIndex = this.oVariantController.addVariantToVariantManagement(oVariant.getDefinitionWithChanges(), mPropertyBag.variantManagementReference);
 
 		//Variant Model
 		this.oData[mPropertyBag.variantManagementReference].variants.splice(iIndex, 0, oVariantModelData);
 		return this.updateCurrentVariant(mPropertyBag.variantManagementReference, oVariant.getId()).then( function () {
-			return oVariant;
+			return aChanges;
 		});
 	};
 
@@ -437,6 +439,7 @@ sap.ui.define([
 				break;
 			case "setVisible":
 				mAdditionalChangeContent.visible = mPropertyBag.visible;
+				mAdditionalChangeContent.createdByReset = false; // 'createdbyReset' is used by the backend to distinguish between setVisible change created via reset and delete
 				//Update Variant Model
 				oVariant.visible = mPropertyBag.visible;
 				break;

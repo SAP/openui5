@@ -38,8 +38,11 @@
         suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/designtime/Library.qunit.html");
         //individual controls
         sap.ui.getCore().loadLibrary("sap.ui.rta");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/designtime/ObjectPageLayout.qunit.html");
         suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/designtime/ObjectPageHeader.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/designtime/ObjectPageSection.qunit.html");
         suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/designtime/ObjectPageSubSection.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/uxap/qunit/designtime/ObjectPageDynamicHeaderTitle.qunit.html");
 
         return suite;
     }

@@ -36,7 +36,8 @@ sap.ui.define([
 
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
-	"ui5loader-autoconfig"
+	"ui5loader-autoconfig",
+	"jquery.sap.stubs"
 ], function(now, getObject, getter, Version, extend, assert, log,
 
      Configuration, appendHead, computedStylePolyfill, includeScript,
@@ -47,18 +48,13 @@ sap.ui.define([
 
      Device, URI,
 
-     jQuery /*, jqueryUiPosition, ui5loaderAutoconfig*/) {
+     jQuery /*, jqueryUiPosition, ui5loaderAutoconfig, jquerySapStubs */) {
 
 	"use strict";
 
 
 	if ( !jQuery ) {
 		throw new Error("Loading of jQuery failed");
-	}
-
-	// ensure not to initialize twice
-	if (jQuery.sap) {
-		return;
 	}
 
 	var _ui5loader = sap.ui._ui5loader;
@@ -166,7 +162,7 @@ sap.ui.define([
 	 * @public
 	 * @static
 	 */
-	jQuery.sap = {};
+	jQuery.sap = jQuery.sap || {}; // namespace already created by jquery.sap.stubs
 
 	// -------------------------- VERSION -------------------------------------
 
@@ -854,7 +850,7 @@ sap.ui.define([
 			i;
 
 		if ( syncCallBehavior && oContext === window ) {
-			jQuery.sap.log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
+			log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
 		}
 
 		for (i = 0; oObject && i < l; i++) {
@@ -916,11 +912,11 @@ sap.ui.define([
 	jQuery.sap.measure = extend({}, _ui5loader.measure);
 
 	/**
-	 * Gets the current state of the perfomance measurement functionality
+	 * Gets the current state of the performance measurement functionality
 	 *
 	 * @name jQuery.sap.measure.getActive
 	 * @function
-	 * @return {boolean} current state of the perfomance measurement functionality
+	 * @return {boolean} current state of the performance measurement functionality
 	 * @public
 	 */
 
@@ -928,10 +924,10 @@ sap.ui.define([
 	 * Activates or deactivates the performance measure functionality
 	 * Optionally a category or list of categories can be passed to restrict measurements to certain categories
 	 * like "javascript", "require", "xmlhttprequest", "render"
-	 * @param {boolean} bOn - state of the perfomance measurement functionality to set
+	 * @param {boolean} bOn - state of the performance measurement functionality to set
 	 * @param {string | string[]} aCategories - An optional list of categories that should be measured
 	 *
-	 * @return {boolean} current state of the perfomance measurement functionality
+	 * @return {boolean} current state of the performance measurement functionality
 	 * @name jQuery.sap.measure#setActive
 	 * @function
 	 * @public
@@ -1686,7 +1682,7 @@ sap.ui.define([
 		 * @deprecated
 		 */
 		jQuery.sap.preloadModules = function(sPreloadModule, bAsync, oSyncPoint) {
-			jQuery.sap.log.error("jQuery.sap.preloadModules was never a public API and has been removed. Migrate to Core.loadLibrary()!");
+			log.error("jQuery.sap.preloadModules was never a public API and has been removed. Migrate to Core.loadLibrary()!");
 		};
 
 		/**
@@ -2020,7 +2016,7 @@ sap.ui.define([
 	if ( oJQVersion.compareTo("2.2.3") != 0 ) {
 		// if the loaded jQuery version isn't SAPUI5's default version -> notify
 		// the application
-		_earlyLog("warning", "SAPUI5's default jQuery version is 2.2.3; current version is " + jQuery.fn.jquery + ". Please note that we only support version 2.2.3.");
+		log.warning("SAPUI5's default jQuery version is 2.2.3; current version is " + jQuery.fn.jquery + ". Please note that we only support version 2.2.3.");
 	}
 
 	initjQueryBrowser();

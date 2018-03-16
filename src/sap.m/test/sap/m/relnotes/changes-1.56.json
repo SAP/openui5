@@ -5,164 +5,567 @@
       {
         "id": "0162e96c5452e5045751e400739f7a07d96c7732",
         "type": "FEATURE",
-        "text": " Core: DragInfo/DropInfo are added to configure drag-and-drop",
+        "text": "Core: DragInfo/DropInfo are added to configure drag-and-drop",
         "references": []
       },
       {
         "id": "0756c4618d5544b9357c3642e0992fda9f9a17e6",
         "type": "FEATURE",
-        "text": " sap.m.IconTabBar: Drag\u0026Drop is enabled in overflow",
+        "text": "sap.m.IconTabBar: Drag&Drop is enabled in overflow",
         "references": []
       },
       {
         "id": "6e5c4af6172369f245eebb535ec1fbf3a0ae2ff4",
         "type": "FIX",
-        "text": " QUnit Designtime Library tests in Firefox",
+        "text": "QUnit Designtime Library tests in Firefox",
         "references": []
       },
       {
         "id": "ff75969dbd03279d90a0b5b263fa1e74ec2cb903",
         "type": "FIX",
-        "text": " sap.m.Dialog: correct padding of the subheader when Toolbar is used",
-        "references": []
+        "text": "sap.m.Dialog: correct padding of the subheader when Toolbar is used",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880134146"
+          }
+        ]
       },
       {
         "id": "b6ceba77dd7362cbfaf2ecd73699bd81ad2ed453",
         "type": "FIX",
-        "text": " sap.m.FacetFilter: focus correctly set on a FacetFilterList in SingleSelectMaster mode",
-        "references": []
+        "text": "sap.m.FacetFilter: focus correctly set on a FacetFilterList in SingleSelectMaster mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880117741"
+          }
+        ]
       },
       {
         "id": "f4d502158f2d2cc50e5e48b69e934093ebe78c2e",
         "type": "FIX",
-        "text": " sap.m.ObjectHeader: prevent tap Event when tap is not on a active element",
-        "references": []
+        "text": "sap.m.ObjectHeader: prevent tap Event when tap is not on a active element",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1807"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880015922"
+          }
+        ]
       },
       {
         "id": "8cd6d566b6552d51038925f440ff376c9f8a6d7b",
         "type": "FIX",
-        "text": " sap.m.ObjectNumber: Invisible text for the ValueState updated correctly on setState",
-        "references": []
+        "text": "sap.m.ObjectNumber: Invisible text for the ValueState updated correctly on setState",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880102734"
+          }
+        ]
       },
       {
         "id": "4c97b761a57adca3c04783d18e403249c12184a7",
         "type": "FIX",
-        "text": " sap.m.SegmentedButton: Now the width is consistent in all browsers",
-        "references": []
+        "text": "sap.m.SegmentedButton: Now the width is consistent in all browsers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780531471"
+          }
+        ]
       },
       {
         "id": "a32aa6ee26e95c9b64fdd87461436e4dea6fa5db",
         "type": "FIX",
-        "text": " sap.m.SegmentedButton: native browser focus outline removed",
-        "references": []
+        "text": "sap.m.SegmentedButton: native browser focus outline removed",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1886"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880152226"
+          }
+        ]
       },
       {
         "id": "3fddfcc095f7c31af693fc8b7d38a16a9eb8ce04",
         "type": "FIX",
-        "text": " sap.m.TabContainer: Scrolling issue in RTL on Safari corrected",
-        "references": []
+        "text": "sap.m.TabContainer: Scrolling issue in RTL on Safari corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880027760"
+          }
+        ]
       },
       {
         "id": "0af6bced78e611e7c2285cf265c2e82668cf4520",
         "type": "FIX",
-        "text": " sap.m.BusyDialog: StyleClass methods are now forwarded to the inner Dialog",
-        "references": []
+        "text": "sap.m.BusyDialog: StyleClass methods are now forwarded to the inner Dialog",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780536866"
+          }
+        ]
       },
       {
         "id": "7738af1b94cc40b0dc8922ac9d91b80c068eea81",
         "type": "FIX",
-        "text": " sap.m.DatePicker- change of displayFormat updates the placeholder",
-        "references": []
+        "text": "sap.m.DatePicker- change of displayFormat updates the placeholder",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880148583"
+          }
+        ]
       },
       {
         "id": "9b764cfa92bd4980a759bf2530577f90af94fbec",
         "type": "FIX",
-        "text": " sap.m.MessageBox: improve documentation",
-        "references": []
+        "text": "sap.m.MessageBox: improve documentation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880098494"
+          }
+        ]
       },
       {
         "id": "3873e04c75abf33d192d5463a98e8003b81e08e9",
         "type": "FIX",
-        "text": " sap.m.OverflowToolbar: Reset cached sizes on control reset",
-        "references": []
+        "text": "sap.m.OverflowToolbar: Reset cached sizes on control reset",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005909962017"
+          }
+        ]
       },
       {
         "id": "d77050250cd60be10c307176b0f949a0556af4df",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: Custom appointments sorter",
+        "text": "sap.m.PlanningCalendar: Custom appointments sorter",
         "references": []
       },
       {
         "id": "d5fb02cda239b60c4fb94d6750050fe56b6821af",
         "type": "FIX",
-        "text": " sap.m.PlanningCalendar: appointments have correct legend colors now",
-        "references": []
+        "text": "sap.m.PlanningCalendar: appointments have correct legend colors now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880161005"
+          }
+        ]
       },
       {
         "id": "fbeab16be4eaf0a7c6ba8da3f35fc995e5fc546e",
         "type": "FIX",
-        "text": " sap.m.TimePicker: Value is set correctly on change.",
-        "references": []
+        "text": "sap.m.TimePicker: Value is set correctly on change.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880133502"
+          }
+        ]
       },
       {
         "id": "bb98066ac39dda4abe47113a56643164c1d14e5c",
         "type": "FIX",
-        "text": " sap.m.Wizard: Next button improved accessibility",
-        "references": []
+        "text": "sap.m.Wizard: Next button improved accessibility",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880145837"
+          }
+        ]
       },
       {
         "id": "775bc74085a36133b7d6cc678fec077154e77157",
         "type": "FIX",
-        "text": " sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
-        "references": []
+        "text": "sap.ui.unified.Calendar: nonWorkingDays now can have another type when set using specialDates aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880072218"
+          }
+        ]
       },
       {
         "id": "2c10a012330cf8055bdb6680febacf2d6546b3e0",
         "type": "FIX",
-        "text": " sap.m.Button: Now the icons are with the correct color when Reject/Accept/Emphasized + Disabled",
-        "references": []
+        "text": "sap.m.Button: Now the icons are with the correct color when Reject/Accept/Emphasized + Disabled",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880188519"
+          }
+        ]
       },
       {
         "id": "567a8b4d8448467216bc3476256896bd320be0ab",
         "type": "FIX",
-        "text": " sap.m.GrowingEnablement: Focus shouldn\u0027t jump out of the control.",
-        "references": []
+        "text": "sap.m.GrowingEnablement: Focus shouldn't jump out of the control.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880179777"
+          }
+        ]
       },
       {
         "id": "01ad10ac680971894779560c08cbd26dfeb403a3",
         "type": "FIX",
-        "text": " sap.m.Input: SelectedItem is now correctly set when tap is pressed",
-        "references": []
+        "text": "sap.m.Input: SelectedItem is now correctly set when tap is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880065792"
+          }
+        ]
       },
       {
         "id": "f77ecaaf5c926c88921c2349b716bab22ec36471",
         "type": "FIX",
-        "text": " sap.m.Panel: Control html is now valid",
-        "references": []
+        "text": "sap.m.Panel: Control html is now valid",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780428986"
+          }
+        ]
       },
       {
         "id": "69ca8ceb7bb779ede742a0823390ad2ae16c2c8d",
         "type": "FIX",
-        "text": " sap.m.Popover: Remove unneeded scroll",
-        "references": []
+        "text": "sap.m.Popover: Remove unneeded scroll",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880166534"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770419903"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780475002"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880121599"
+          }
+        ]
       },
       {
         "id": "541f5e5d25e640a219df3226284dd04921ee6403",
         "type": "FIX",
-        "text": " sap.m.QuickView: Auto closing is now fixed",
-        "references": []
+        "text": "sap.m.QuickView: Auto closing is now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780478379"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880190661"
+          }
+        ]
       },
       {
         "id": "1b5088028e5b2d41de6d624bf91d93a122cca695",
         "type": "FIX",
-        "text": " sap.m.StepInput: pressing PageUp or PageDown doesn\u0027t scroll the page now",
-        "references": []
+        "text": "sap.m.StepInput: pressing PageUp or PageDown doesn't scroll the page now",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1902"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880197936"
+          }
+        ]
       },
       {
         "id": "ca656291c9d36fd7f4a5a72fda2e6aebc8428cb2",
         "type": "FIX",
-        "text": " sap.ui.unified.MenuListItem: Arrow positioned correctly in compact mode",
+        "text": "sap.ui.unified.MenuListItem: Arrow positioned correctly in compact mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880171139"
+          }
+        ]
+      },
+      {
+        "id": "5e3c12dd3890894e2762bc8cf22c45fbd106832c",
+        "type": "FEATURE",
+        "text": "Form: new column-based layout",
         "references": []
+      },
+      {
+        "id": "697c90f1d1bdfe591ba786967360372363fb19c4",
+        "type": "FIX",
+        "text": "sap.m.DateTimePicker: properly show TimePicker in Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880179799"
+          }
+        ]
+      },
+      {
+        "id": "b286900b7c48e29a2a2c5c899cbd5e0fef2faf2d",
+        "type": "FIX",
+        "text": "sap.m.Dialog: stretch property when using content size fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880171315"
+          }
+        ]
+      },
+      {
+        "id": "ec73c707b246826444f7efafaf34813a1f0aa734",
+        "type": "FIX",
+        "text": "sap.m.MultiInput: Tokenizer in Safari is no longer cut off",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880165506"
+          }
+        ]
+      },
+      {
+        "id": "4a00c8b8be575c7019ce9ef23844ef12beb8c0e5",
+        "type": "FIX",
+        "text": "sap.m.Page: Escape title properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780233503"
+          }
+        ]
+      },
+      {
+        "id": "a3f56056cdd63ff7a9199af8cbf657d6e54996d5",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: removeItem, removeItems, removeButton and removeButtons return the removed elements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880235141"
+          }
+        ]
+      },
+      {
+        "id": "6769ad14f76f0281656816dcdd79bf76f93b81b9",
+        "type": "FIX",
+        "text": "sap.m.TextArea: Counter text changed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880059999"
+          }
+        ]
+      },
+      {
+        "id": "74dcf456d3dc458607e340d365e6604dc4ac522f",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Tile is initially visible now if TileContainer contains only one tile",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1813"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880151833"
+          }
+        ]
+      },
+      {
+        "id": "de5c07c1c59f3a15601dcd7a2ee1a4f4d57a48af",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: The placeholder now is correctly displayed in IE after focusout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880169725"
+          }
+        ]
+      },
+      {
+        "id": "ce78d481a1b2a9fd3ffc0e4bad412789b9219d38",
+        "type": "FEATURE",
+        "text": "getScrollDelegate: Lookup scroll delegate across components",
+        "references": []
+      },
+      {
+        "id": "775f407ce0388b5871e14516a8271eac83bef15a",
+        "type": "FEATURE",
+        "text": "sap.m.Table: Enhancing the stickiness of the column headers",
+        "references": []
+      },
+      {
+        "id": "39ae08cfe6a97b6a9796f932e1f351b31f9da833",
+        "type": "FIX",
+        "text": "Opa: make polling consistent when using execution delay",
+        "references": []
+      },
+      {
+        "id": "b7cf5e12f5aef16660f3f035a07ce7fbe50d93c3",
+        "type": "FIX",
+        "text": "RatingIndicator: Adapt labeling in ACC test page",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880214711"
+          }
+        ]
+      },
+      {
+        "id": "4e7c941869902ba8b400153438eec3cb1da381ae",
+        "type": "FIX",
+        "text": "sap.m.Button: Combine buttons change handler generates stable ID now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880169443"
+          }
+        ]
+      },
+      {
+        "id": "cca75b0313939b1d480b54068a7181385d048013",
+        "type": "FIX",
+        "text": "sap.m.CheckBox: Test page adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880228149"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880228060"
+          }
+        ]
+      },
+      {
+        "id": "8e730533d27231edb7a6b442fbc8349bea5e9f4a",
+        "type": "FIX",
+        "text": "sap.m.ColorPalette: focus indication for IE, Edge in standard theme is fixed.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880222189"
+          }
+        ]
+      },
+      {
+        "id": "99673f5c9ed25232da651d65f3c9603ffed32df5",
+        "type": "FIX",
+        "text": "sap.m.DateTimePicker: when picker is opened for IE & Edge, input should not be focusable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880193676"
+          }
+        ]
+      },
+      {
+        "id": "cf450adb5ce1b25a4e5385dea9647d4c996bbf46",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: correct navigation with arrow keys",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880240852"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880222185"
+          }
+        ]
+      },
+      {
+        "id": "f242e938f1807d6ca331b358c6cd5274c686b98f",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Focus is lost after growing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880210210"
+          }
+        ]
+      },
+      {
+        "id": "40a16afde58098def3820a5ee7d45c4415dd4e2c",
+        "type": "FIX",
+        "text": "sap.m.Image: Test page adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880228239"
+          }
+        ]
+      },
+      {
+        "id": "ebe87d714d0e8c9d5cd2edc43da06985d12a3073",
+        "type": "FIX",
+        "text": "sap.m.PagingButton: Test page adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880228480"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880228476"
+          }
+        ]
+      },
+      {
+        "id": "0e6894316ed0b4196f16fdf6b013b3695c65b774",
+        "type": "FIX",
+        "text": "sap.m.Select: Select is focused before opening the dialog on mobile",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880062606"
+          }
+        ]
+      },
+      {
+        "id": "da3696f0f0cf38bbcd5e4949a6a2da343c4422e1",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: Custom tiles show now visual indication of deletion",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880221848"
+          }
+        ]
+      },
+      {
+        "id": "52adee2b7b6ed337aca6a06e762f8183b630f7b3",
+        "type": "FIX",
+        "text": "sap.m.Toolbar: Test page adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880228396"
+          }
+        ]
       }
     ]
   }

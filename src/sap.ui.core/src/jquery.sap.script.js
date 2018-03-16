@@ -13,8 +13,9 @@ sap.ui.define([
 	'sap/base/util/arraySymbolDiff',
 	'sap/base/util/JSTokenizer',
 	'sap/base/util/extend',
-	'sap/base/util/UriParameters'
-], function(jQuery, uid, hashCode, unique, equal, each, arraySymbolDiff, JSTokenizer, extend, UriParameters) {
+	'sap/base/util/UriParameters',
+	'sap/base/util/arrayDiff'
+], function(jQuery, uid, hashCode, unique, equal, each, arraySymbolDiff, JSTokenizer, extend, UriParameters, arrayDiff) {
 
 	"use strict";
 
@@ -334,13 +335,7 @@ sap.ui.define([
 	 * @deprecated since 1.48.0 IE8 is not supported anymore, thus no special handling is required. Use native for-in loop instead.
 	 * @since 1.7.1
 	 */
-	jQuery.sap.forIn = function(oObject, fnCallback) {
-		for (var n in oObject) {
-			if ( fnCallback(n, oObject[n]) === false ) {
-				return;
-			}
-		}
-	};
+	jQuery.sap.forIn = each;
 
 	/**
 	 * Calculate delta of old list and new list.
@@ -357,144 +352,7 @@ sap.ui.define([
 	 * @param {boolean} [bUniqueEntries] Whether entries are unique, so no duplicate entries exist
 	 * @return {Array} List of changes
 	 */
-	jQuery.sap.arrayDiff = function(aOld, aNew, fnCompare, bUniqueEntries){
-		fnCompare = fnCompare || function(vValue1, vValue2) {
-			return jQuery.sap.equal(vValue1, vValue2);
-		};
-
-		var aOldRefs = [];
-		var aNewRefs = [];
-
-		//Find references
-		var aMatches = [];
-		for (var i = 0; i < aNew.length; i++) {
-			var oNewEntry = aNew[i];
-			var iFound = 0;
-			var iTempJ;
-			// if entries are unique, first check for whether same index is same entry
-			// and stop searching as soon the first matching entry is found
-			if (bUniqueEntries && fnCompare(aOld[i], oNewEntry)) {
-				iFound = 1;
-				iTempJ = i;
-			} else {
-				for (var j = 0; j < aOld.length; j++) {
-					if (fnCompare(aOld[j], oNewEntry)) {
-						iFound++;
-						iTempJ = j;
-						if (bUniqueEntries || iFound > 1) {
-							break;
-						}
-					}
-				}
-			}
-			if (iFound == 1) {
-				var oMatchDetails = {
-					oldIndex: iTempJ,
-					newIndex: i
-				};
-				if (aMatches[iTempJ]) {
-					delete aOldRefs[iTempJ];
-					delete aNewRefs[aMatches[iTempJ].newIndex];
-				} else {
-					aNewRefs[i] = {
-						data: aNew[i],
-						row: iTempJ
-					};
-					aOldRefs[iTempJ] = {
-						data: aOld[iTempJ],
-						row: i
-					};
-					aMatches[iTempJ] = oMatchDetails;
-				}
-			}
-		}
-
-		//Pass 4: Find adjacent matches in ascending order
-		for (var i = 0; i < aNew.length - 1; i++) {
-			if (aNewRefs[i] &&
-				!aNewRefs[i + 1] &&
-				aNewRefs[i].row + 1 < aOld.length &&
-				!aOldRefs[aNewRefs[i].row + 1] &&
-				fnCompare(aOld[ aNewRefs[i].row + 1 ], aNew[i + 1])) {
-
-				aNewRefs[i + 1] = {
-					data: aNew[i + 1],
-					row: aNewRefs[i].row + 1
-				};
-				aOldRefs[aNewRefs[i].row + 1] = {
-					data: aOldRefs[aNewRefs[i].row + 1],
-					row: i + 1
-				};
-
-			}
-		}
-
-		//Pass 5: Find adjacent matches in descending order
-		for (var i = aNew.length - 1; i > 0; i--) {
-			if (aNewRefs[i] &&
-				!aNewRefs[i - 1] &&
-				aNewRefs[i].row > 0 &&
-				!aOldRefs[aNewRefs[i].row - 1] &&
-				fnCompare(aOld[aNewRefs[i].row - 1], aNew[i - 1])) {
-
-				aNewRefs[i - 1] = {
-					data: aNew[i - 1],
-					row: aNewRefs[i].row - 1
-				};
-				aOldRefs[aNewRefs[i].row - 1] = {
-					data: aOldRefs[aNewRefs[i].row - 1],
-					row: i - 1
-				};
-
-			}
-		}
-
-		//Pass 6: Generate diff data
-		var aDiff = [];
-
-		if (aNew.length == 0) {
-			//New list is empty, all items were deleted
-			for (var i = 0; i < aOld.length; i++) {
-				aDiff.push({
-					index: 0,
-					type: 'delete'
-				});
-			}
-		} else {
-			var iNewListIndex = 0;
-			if (!aOldRefs[0]) {
-				//Detect all deletions at the beginning of the old list
-				for (var i = 0; i < aOld.length && !aOldRefs[i]; i++) {
-					aDiff.push({
-						index: 0,
-						type: 'delete'
-					});
-					iNewListIndex = i + 1;
-				}
-			}
-
-			for (var i = 0; i < aNew.length; i++) {
-				if (!aNewRefs[i] || aNewRefs[i].row > iNewListIndex) {
-					//Entry doesn't exist in old list = insert
-					aDiff.push({
-						index: i,
-						type: 'insert'
-					});
-				} else {
-					iNewListIndex = aNewRefs[i].row + 1;
-					for (var j = aNewRefs[i].row + 1; j < aOld.length && (!aOldRefs[j] || aOldRefs[j].row < i); j++) {
-						aDiff.push({
-							index: i + 1,
-							type: 'delete'
-						});
-						iNewListIndex = j + 1;
-					}
-				}
-			}
-		}
-
-		return aDiff;
-	};
+	jQuery.sap.arrayDiff = arrayDiff;
 
 	return jQuery;
 });

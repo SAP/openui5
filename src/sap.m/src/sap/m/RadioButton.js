@@ -81,6 +81,7 @@ function(
 	 * @constructor
 	 * @public
 	 * @alias sap.m.RadioButton
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/radio-button/ Radio Button}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var RadioButton = Control.extend("sap.m.RadioButton", /** @lends sap.m.RadioButton.prototype */ { metadata : {

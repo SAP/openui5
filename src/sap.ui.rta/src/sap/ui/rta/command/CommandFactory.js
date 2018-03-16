@@ -184,18 +184,6 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 			vElement = mSettings.element;
 		}
 
-		if (oAction && oAction.getState) {
-			mSettings = jQuery.extend(mSettings, {
-				fnGetState : oAction.getState
-			});
-		}
-
-		if (oAction && oAction.restoreState) {
-			mSettings = jQuery.extend(mSettings, {
-				fnRestoreState : oAction.restoreState
-			});
-		}
-
 		var oCommand = new Command(mSettings);
 
 		var bSuccessfullConfigured = true; //configuration is optional

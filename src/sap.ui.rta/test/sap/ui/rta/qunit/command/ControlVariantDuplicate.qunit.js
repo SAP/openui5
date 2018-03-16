@@ -137,6 +137,8 @@ function(
 		assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
 		oControlVariantDuplicateCommand.execute().then( function() {
 			var oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
+			var aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
+			assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
 			assert.ok(fnCreateDefaultFileNameSpy.calledWith("Copy"), "then Copy appended to the fileName of the duplicate variant");
 			assert.notEqual(oDuplicateVariant.getId().indexOf("_Copy"), -1, "then fileName correctly duplicated");
 			assert.equal(oDuplicateVariant.getVariantReference(), oVariant.content.variantReference, "then variant reference correctly duplicated");
@@ -147,6 +149,8 @@ function(
 
 			oControlVariantDuplicateCommand.undo().then( function() {
 				oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
+				aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
+				assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
 				assert.equal(oControlVariantDuplicateCommand.oModel.oFlexController._oChangePersistence.getDirtyChanges().length, 0, "then all dirty changes removed");
 				assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
 				done();

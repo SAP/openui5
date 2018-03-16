@@ -11,14 +11,13 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 					"sap.m"
 				]
 			},
-			includes : [ "style.css" ],
+			includes : [ ],
 			config : {
 				sample : {
 					stretch : true,
 					files : [
 						"V.view.xml",
-						"V.controller.js",
-						"style.css"
+						"V.controller.js"
 					]
 				}
 			}

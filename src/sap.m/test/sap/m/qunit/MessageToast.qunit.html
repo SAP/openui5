@@ -431,6 +431,35 @@
 					}, 7000);
 				}, 0);
 			});
+
+			QUnit.test("Reference call of method", function(assert) {
+				var done = assert.async();
+				setTimeout(function() {
+
+					// arrange
+					var fnCloseSpy = sinon.spy();
+					var fnShow = sap.m.MessageToast.show;
+
+					// act
+					fnShow.call(fnShow, "message toast reference call", {
+						my: "center center",
+						at: "center center",
+						onClose: fnCloseSpy
+					});
+
+					setTimeout(function() {
+
+						// assert
+						assert.ok(fnCloseSpy.calledOn(sap.m.MessageToast), 'onClose callback was called with the correct context');
+						hasEventListeners(window, "resize", false);
+						hasEventListeners(document, "mousedown", false);
+						hasEventListeners(document, "touchstart", false);
+
+						// start the test
+						done();
+					}, 7000);
+				}, 0);
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

@@ -57,31 +57,6 @@
 	outline: none;
 }
 
-/* BREAKPOINT FOR SMALL PHONES */
-@media screen and (max-width: 374px) {
-	.sapMFC {
-		width: 17.75rem;
-		height: 3.438rem;
-	}
-
-	.sapMFCCTxt {
-		max-width: 17.75rem;
-		margin-top: 0.1rem;
-	}
-
-	.sapMFCSbh {
-		max-width: 17.75rem;
-	}
-
-	.sapMFCValue {
-		padding-top: 1.188rem;
-		padding-left: 0.5rem;
-		font-size: 2rem;
-		line-height: 2.25rem;
-		max-width: 17.75rem;
-	}
-}
-
 .sapMFCCTxt .sapMText {
 	font-size: @sapMFontSmallSize;
 	color: @sapUiTileTitleTextColor;
@@ -109,4 +84,28 @@ html.sap-desktop .sapMFC:focus {
 
 html.sap-desktop .sapMFC:focus:not([tabindex]) {
 	outline: none;
+}
+
+.sapMTileSmallPhone {
+	.sapMFC {
+		width: 17.75rem;
+		height: 3.438rem;
+	}
+
+	.sapMFCCTxt {
+		max-width: 17.75rem;
+		margin-top: 0.1rem;
+	}
+
+	.sapMFCSbh {
+		max-width: 17.75rem;
+	}
+
+	.sapMFCValue {
+		padding-top: 1.188rem;
+		padding-left: 0.5rem;
+		font-size: 2rem;
+		line-height: 2.25rem;
+		max-width: 17.75rem;
+	}
 }

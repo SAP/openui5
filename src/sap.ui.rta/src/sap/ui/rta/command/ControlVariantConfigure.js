@@ -46,6 +46,13 @@ sap.ui.define([
 		return true;
 	};
 
+	ControlVariantConfigure.prototype.getPreparedChange = function() {
+		if (!this._aPreparedChanges) {
+			jQuery.sap.log.error("No prepared change available for ControlVariantConfigure");
+		}
+		return this._aPreparedChanges;
+	};
+
 	/**
 	 * @public Triggers the configuration of a variant
 	 * @returns {Promise} Returns resolve after execution
@@ -56,10 +63,10 @@ sap.ui.define([
 		this.oModel = this.oAppComponent.getModel(this.MODEL_NAME);
 		this.sVariantManagementReference = BaseTreeModifier.getSelector(oVariantManagementControl, this.oAppComponent).id;
 
-		this.aChanges = [];
+		this._aPreparedChanges = [];
 		this.getChanges().forEach(function(mChangeProperties) {
 			mChangeProperties.appComponent = this.oAppComponent;
-			this.aChanges.push(this.oModel._setVariantProperties(this.sVariantManagementReference, mChangeProperties, true));
+			this._aPreparedChanges.push(this.oModel._setVariantProperties(this.sVariantManagementReference, mChangeProperties, true));
 		}.bind(this));
 
 		return Promise.resolve().then(function(){
@@ -86,12 +93,13 @@ sap.ui.define([
 					mPropertyBag[sProperty] = mChangeProperties[sProperty];
 				}
 			});
-			mPropertyBag.change = this.aChanges[index];
+			mPropertyBag.change = this._aPreparedChanges[index];
 			this.oModel._setVariantProperties(this.sVariantManagementReference, mPropertyBag, false);
 		}.bind(this));
 
 		return Promise.resolve().then(function(){
 			this.oModel.checkUpdate(true);
+			this._aPreparedChanges = null;
 		}.bind(this));
 	};
 

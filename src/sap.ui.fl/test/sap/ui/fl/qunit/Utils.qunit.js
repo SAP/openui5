@@ -922,12 +922,11 @@ function(
 			}
 		});
 
-		sandbox.stub(hasher, "setHash", function(sHash){
-			assert.equal(sHash, "hashValue", "then the 'setHash' function of the hasher is called with the proper parameter");
-		});
+		var oReplaceHashSpy = sandbox.spy(hasher, "replaceHash");
 
 		Utils.setTechnicalURLParameterValues(oMockComponent, "testParameter", ["testValue", "testValue2"]);
 
+		assert.equal(oReplaceHashSpy.calledWith("hashValue"), true, "then the 'replaceHash' function of the hasher is called with the right parameter");
 		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
 		assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][0], "testValue", "then the new parameter is properly added to the technical parameter");
 		assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][1], "testValue2", "then the new parameter is properly added to the technical parameter");

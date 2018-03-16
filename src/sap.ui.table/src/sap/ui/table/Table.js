@@ -759,7 +759,6 @@ sap.ui.define([
 	Table.prototype.init = function() {
 		this._iBaseFontSize = parseFloat(jQuery("body").css("font-size")) || 16;
 		// create an information object which contains always required infos
-		this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
 		this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 
 		this._attachExtensions();
@@ -922,53 +921,44 @@ sap.ui.define([
 		var oChanges = oEvent.changes || {};
 		var bRtlChanged = oChanges.hasOwnProperty("rtl");
 		var bLangChanged = oChanges.hasOwnProperty("language");
-		if (bRtlChanged || bLangChanged) {
-			this._adaptLocalization(bRtlChanged, bLangChanged);
-			// Trigger rerendering of whole table
+		this._adaptLocalization(bRtlChanged, bLangChanged).then(function() {
 			this.invalidate();
-		}
+		}.bind(this));
 	};
 
 	/**
-	 * Localization changed
+	 * Adapts the table to localization changes. Re-rendering or invalidation of the table needs to be taken care of by the caller.
+	 *
+	 * @param {boolean} bRtlChanged Whether the text direction changed.
+	 * @param {boolean} bLangChanged Whether the language changed.
+	 * @return {Promise} A promise on the adaptation. If no adaptation is required, because text direction and language did not change, the
+	 * promise will be rejected.
 	 * @private
 	 */
 	Table.prototype._adaptLocalization = function(bRtlChanged, bLangChanged) {
+		if (!bRtlChanged && !bLangChanged) {
+			return Promise.reject();
+		}
+
+		var pUpdateLocalizationInfo = Promise.resolve();
+
 		if (bRtlChanged) {
 			this._bRtlMode = sap.ui.getCore().getConfiguration().getRTL();
 		}
 
 		if (bLangChanged) {
-			var aRows = this.getRows();
-			var i;
-
-			// Update the resource bundle.
-			this._oResBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.table");
-
-			// Update the resource bundle of row actions.
-			var oRowAction;
-			for (i = 0; i < aRows.length; i++) {
-				oRowAction = aRows[i].getAggregation("_rowAction");
-				if (oRowAction) {
-					oRowAction._oResBundle = this._oResBundle;
-				}
-			}
-
-			// Update the resource bundle of row settings.
-			var oRowSettings;
-			for (i = 0; i < aRows.length; i++) {
-				oRowSettings = aRows[i].getAggregation("_settings");
-				if (oRowSettings) {
-					oRowSettings._oResBundle = this._oResBundle;
-				}
-			}
-
-			// Clear the cell context menu.
-			TableUtils.Menu.cleanupDataCellContextMenu(this);
-
-			// Update the column menus.
-			this._invalidateColumnMenus(true);
+			pUpdateLocalizationInfo = TableUtils.getResourceBundle({async: true, reload: true});
 		}
+
+		return pUpdateLocalizationInfo.then(function() {
+			if (bLangChanged) {
+				// Clear the cell context menu.
+				TableUtils.Menu.cleanupDataCellContextMenu(this);
+
+				// Update the column menus.
+				this._invalidateColumnMenus();
+			}
+		}.bind(this));
 	};
 
 	/**
@@ -2690,14 +2680,7 @@ sap.ui.define([
 			return this._updateRows(iRows, sReason);
 		} else {
 			var bReturn = !this._mTimeouts.handleRowCountModeAutoAdjustRows;
-			var iBusyIndicatorDelay = this.getBusyIndicatorDelay();
-			var bBusyIndicatorEnabled = this.getEnableBusyIndicator();
 			var that = this;
-
-			if (oBinding && bBusyIndicatorEnabled) {
-				this.setBusyIndicatorDelay(0);
-				this.setBusy(true);
-			}
 
 			if (iTableAvailableSpace) {
 				this._setRowContentHeight(iTableAvailableSpace);
@@ -2710,11 +2693,6 @@ sap.ui.define([
 				}
 
 				delete that._mTimeouts.handleRowCountModeAutoAdjustRows;
-
-				if (oBinding && bBusyIndicatorEnabled) {
-					that.setBusyIndicatorDelay(iBusyIndicatorDelay);
-					that.setBusy(false);
-				}
 			}, 0);
 
 			return bReturn;
@@ -2986,8 +2964,7 @@ sap.ui.define([
 			this._getAccExtension().setSelectAllState(bAllRowsSelected);
 
 			if (this._getShowStandardTooltips()) {
-				var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-				$SelectAll.attr('title', this._oResBundle.getText(sSelectAllResourceTextID));
+				$SelectAll.attr('title', TableUtils.getResourceText(bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL"));
 			}
 		}
 	};
@@ -3384,13 +3361,12 @@ sap.ui.define([
 
 	/**
 	 * Invalidates all column menus.
-	 * @param {boolean} bUpdateLocalization Whether the texts of the menu should be updated too.
 	 * @private
 	 */
-	Table.prototype._invalidateColumnMenus = function(bUpdateLocalization) {
+	Table.prototype._invalidateColumnMenus = function() {
 		var aCols = this.getColumns();
 		for (var i = 0, l = aCols.length; i < l; i++) {
-			aCols[i].invalidateMenu(bUpdateLocalization);
+			aCols[i].invalidateMenu();
 		}
 	};
 
@@ -3742,12 +3718,15 @@ sap.ui.define([
 	 *
 	 * <p><b>Please note: The return value was changed from jQuery Promises to standard ES6 Promises.
 	 * jQuery specific Promise methods ('done', 'fail', 'always', 'pipe' and 'state') are still available but should not be used.
-	 * Please use only the standard methods 'then' and 'catch'!</b></p>
+	 * Please use only the standard methods 'then' and 'catch'!
+	 *
+	 * This method uses synchronous requests. Support and functioning ends with the support for synchronous requests in browsers.</b></p>
 	 *
 	 * @param {object} [mSettings] settings for the new Export, see {@link sap.ui.core.util.Export} <code>constructor</code>
 	 * @returns {Promise} Promise object
 	 *
 	 * @experimental Experimental because the property for the column/cell definitions (sortProperty) could change in future.
+	 * @deprecated As of 1.56, replaced by the <code>sap.ui.export</code> library.
 	 * @public
 	 */
 	Table.prototype.exportData = function(mSettings) {

@@ -67,6 +67,24 @@
         "type": "FIX",
         "text": " sap.ui.rta: fixed tests running out of stack space in IE11",
         "references": []
+      },
+      {
+        "id": "4276d565086f20cd232dc9360c5ac3cd73fbb1ce",
+        "type": "FIX",
+        "text": " sap.ui.rta: check geometry of overlay instead of original element",
+        "references": []
+      },
+      {
+        "id": "ff97aeb09fc61c7bb7b283f30bd5b2b2070a6553",
+        "type": "FIX",
+        "text": " Add getPreparedChange to ctrl variant commands",
+        "references": []
+      },
+      {
+        "id": "28d2646b2dd79a23912750f70b2c82c5b2bc504b",
+        "type": "FIX",
+        "text": " sap.ui.rta: Delete the app variant from the layered repository if",
+        "references": []
       }
     ]
   }

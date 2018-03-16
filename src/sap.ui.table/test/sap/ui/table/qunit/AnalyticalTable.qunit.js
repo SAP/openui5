@@ -8,8 +8,9 @@ sap.ui.require([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/core/qunit/analytics/o4aMetadata",
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
-	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts"
-], function (TableUtils, qutils, ODataModel, ODataModelV2, o4aFakeService) {
+	"sap/ui/core/qunit/analytics/ATBA_Batch_Contexts",
+	"sap/ui/table/AnalyticalTable"
+], function (TableUtils, qutils, ODataModel, ODataModelV2, o4aFakeService, AnalyticalTable) {
 	/*global QUnit,sinon*/
 	"use strict";
 
@@ -453,22 +454,27 @@ sap.ui.require([
 			assert.ok(!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item does not exist");
 			assert.ok(!oTable._oGroupHeaderMoveUpItem, "Group header menu up item does not exist");
 			assert.ok(!oTable._oGroupHeaderMoveDownItem, "Group header menu down item does not exist");
+
 			oTable._getGroupHeaderMenu();
 			assert.ok(!!oTable._oGroupHeaderMenu, "Group header menu exists");
 			assert.ok(!!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item exists");
 			assert.ok(!!oTable._oGroupHeaderMoveUpItem, "Group header menu up item exists");
 			assert.ok(!!oTable._oGroupHeaderMoveDownItem, "Group header menu down item exists");
-			oTable._adaptLocalization(true, false);
-			assert.ok(!!oTable._oGroupHeaderMenu, "Group header menu exists");
-			assert.ok(!!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item exists");
-			assert.ok(!!oTable._oGroupHeaderMoveUpItem, "Group header menu up item exists");
-			assert.ok(!!oTable._oGroupHeaderMoveDownItem, "Group header menu down item exists");
-			oTable._adaptLocalization(false, true);
-			assert.ok(!oTable._oGroupHeaderMenu, "Group header menu does not exist");
-			assert.ok(!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item does not exist");
-			assert.ok(!oTable._oGroupHeaderMoveUpItem, "Group header menu up item does not exist");
-			assert.ok(!oTable._oGroupHeaderMoveDownItem, "Group header menu down item does not exist");
-			done();
+
+			oTable._adaptLocalization(true, false).then(function() {
+				assert.ok(!!oTable._oGroupHeaderMenu, "Group header menu exists");
+				assert.ok(!!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item exists");
+				assert.ok(!!oTable._oGroupHeaderMoveUpItem, "Group header menu up item exists");
+				assert.ok(!!oTable._oGroupHeaderMoveDownItem, "Group header menu down item exists");
+			}).then(function() {
+				return oTable._adaptLocalization(false, true);
+			}).then(function() {
+				assert.ok(!oTable._oGroupHeaderMenu, "Group header menu does not exist");
+				assert.ok(!oTable._oGroupHeaderMenuVisibilityItem, "Group header menu visibility item does not exist");
+				assert.ok(!oTable._oGroupHeaderMoveUpItem, "Group header menu up item does not exist");
+				assert.ok(!oTable._oGroupHeaderMoveDownItem, "Group header menu down item does not exist");
+				done();
+			});
 		}
 
 		performTestAfterTableIsUpdated.call(this, doTest);

@@ -30,6 +30,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		// Clear cashed header row count
 		delete oTable._iHeaderRowCount;
 
+		// The resource bundle is required for rendering. In case it is not already loaded, it should be loaded synchronously.
+		TableUtils.getResourceBundle();
+
 		// basic table div
 		rm.write("<div");
 		oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROOT");
@@ -212,6 +215,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderTable = function(rm, oTable) {
+		this.renderTabElement(rm, "sapUiTableCtrlBefore");
 		rm.write("<div");
 		rm.writeAttribute("id", oTable.getId() + "-tableCCnt");
 		rm.addClass("sapUiTableCCnt");
@@ -220,16 +224,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 		this.renderTableCCnt(rm, oTable);
 		rm.write("</div>");
+		this.renderTabElement(rm, "sapUiTableCtrlAfter");
 		this.renderVSb(rm, oTable);
 		this.renderHSb(rm, oTable);
 	};
 
 	TableRenderer.renderTableCCnt = function(rm, oTable) {
-		this.renderTabElement(rm, "sapUiTableCtrlBefore");
 		this.renderTableCtrl(rm, oTable);
 		this.renderRowHdr(rm, oTable);
 		this.renderRowActions(rm, oTable);
-		this.renderTabElement(rm, "sapUiTableCtrlAfter");
 
 		rm.write("<div");
 		rm.addClass("sapUiTableCtrlEmpty");
@@ -338,7 +341,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.write("<div class='sapUiTableRowActionHeader' id='" + oTable.getId() + "-rowacthdr'");
 			oTable._getAccRenderExtension().writeAriaAttributesFor(rm, oTable, "ROWACTIONHEADER");
 			rm.write("><span>");
-			rm.writeEscaped(oTable._oResBundle.getText("TBL_ROW_ACTION_COLUMN_LABEL"));
+			rm.writeEscaped(TableUtils.getResourceText("TBL_ROW_ACTION_COLUMN_LABEL"));
 			rm.write("</span></div>");
 		}
 
@@ -358,7 +361,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 			if (oTable._getShowStandardTooltips()) {
 				var sSelectAllResourceTextID = bAllRowsSelected ? "TBL_DESELECT_ALL" : "TBL_SELECT_ALL";
-				rm.writeAttributeEscaped("title", oTable._oResBundle.getText(sSelectAllResourceTextID));
+				rm.writeAttributeEscaped("title", TableUtils.getResourceText(sSelectAllResourceTextID));
 			}
 			if (!bAllRowsSelected) {
 				rm.addClass("sapUiTableSelAll");

@@ -20,9 +20,47 @@
 	.sapUiIcon {
 		text-shadow: 1px 1px rgba(0, 0, 0, 0.3);
 	}
+
+	.sapCoreSampleControl {
+		background: #FFFFFF;
+		margin: 5px;
+		padding: 5px;
+		text-align: center;
+	}
+
+	.sapCoreSampleControl .sapUiBlockLayerOnly {
+		background: rgba(255, 0, 132, 0.214);
+	}
 </style>
 
 <script>
+
+	/**
+	 * Sample Control.
+	 * Renders a text and has a marker class for styling the Blocking Layer.
+	 */
+	sap.ui.define("sap.ui.core.SampleControl", ["sap/ui/core/Control"], function (Control) {
+		var SampleControl = Control.extend("sap.ui.core.SampleControl", {
+			metadata: {
+				properties: {
+					text : {type : "string", defaultValue : ""},
+				}
+			},
+			renderer: function (oRm, oControl) {
+				oRm.write("<div class='sapCoreSampleControl'");
+				oRm.writeControlData(oControl);
+				oRm.write(">");
+				var sText = oControl.getText().replace(/\\t/g,"\t");
+				oRm.writeEscaped(sText);
+				oRm.write("</div>");
+			}
+		});
+
+		return SampleControl;
+	}, true);
+
+	var oSC = new sap.ui.core.SampleControl({text: "Styled Block Layer"});
+	oSC.placeAt("uiArea0");
 
 	var oMyListBox = new sap.ui.commons.ListBox({
 		tooltip : "Country",
@@ -116,7 +154,7 @@
 	 * Toggle All button
 	 */
 	var oToggleAllButton = new sap.m.Button({
-		text: "Toggle Busy All",
+		text: "Toggle All - Busy",
 		press: function () {
 			oMyListBox.setBusy(!oMyListBox.getBusy());
 			oMyTable.setBusy(!oMyTable.getBusy());
@@ -124,9 +162,27 @@
 			oMButton.setBusy(!oMButton.getBusy());
 			oPanel.setBusy(!oPanel.getBusy());
 			oPanel2.setBusy(!oPanel2.getBusy());
+			oSC.setBusy(!oSC.getBusy());
 		}
 	});
 	oToggleAllButton.placeAt("toggleAll");
+
+	/*
+	 * Toggle All Blocked Button
+	 */
+	 var oToggleAllBlockedButton = new sap.m.Button({
+		text: "Toggle All - Blocked",
+		press: function () {
+			oMyListBox.setBlocked(!oMyListBox.getBlocked());
+			oMyTable.setBlocked(!oMyTable.getBlocked());
+			oIcon.setBlocked(!oIcon.getBlocked());
+			oMButton.setBlocked(!oMButton.getBlocked());
+			oPanel.setBlocked(!oPanel.getBlocked());
+			oPanel2.setBlocked(!oPanel2.getBlocked(), "header");
+			oSC.setBlocked(!oSC.getBlocked());
+		}
+	});
+	oToggleAllBlockedButton.placeAt("toggleAll");
 
 	/**
 	 * Binding Test
@@ -162,6 +218,8 @@
 
 	<div id="toggleAll"></div>
 	<hr/>
+	<div id="uiArea0"></div>
+	<hr />
 	<div>Call with a delay of 1000ms (default)</div>
 	<div id="button1"></div>
 	<div id="uiArea1"></div>

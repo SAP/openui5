@@ -103,9 +103,9 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		// enrich prototype
 		oPrototype = this._oClass.prototype;
 		for ( var n in oClassInfo ) {
-			if ( n !== "metadata" && n !== "constructor" ) {
+			if ( n !== "metadata" && n !== "constructor") {
 				oPrototype[n] = oClassInfo[n];
-				if ( !n.match(/^_|^on|^init$|^exit$/) ) {
+				if ( !n.match(/^_|^on|^init$|^exit$/)) {
 					// TODO hard coded knowledge about event handlers ("on") and about init/exit hooks is not nice....
 					that._aPublicMethods.push(n);
 				}
@@ -374,8 +374,6 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 
 		return fnClass;
 	};
-
-
 
 	return Metadata;
 

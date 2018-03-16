@@ -71,6 +71,7 @@ sap.ui.define([
 		 * @public
 		 * @since 1.22
 		 * @alias sap.m.ComboBox
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/combo-box/ Combo Box}
 		 * @ui5-metamodel This control will also be described in the UI5 (legacy) design time meta model.
 		 */
 		var ComboBox = ComboBoxBase.extend("sap.m.ComboBox", /** @lends sap.m.ComboBox.prototype */ {

@@ -86,9 +86,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 			mMeasurements = {};
 
 		/**
-		 * Gets the current state of the perfomance measurement functionality.
+		 * Gets the current state of the performance measurement functionality.
 		 *
-		 * @return {boolean} current state of the perfomance measurement functionality
+		 * @return {boolean} current state of the performance measurement functionality
 		 * @name getActive
 		 * @function
 		 * @private
@@ -102,9 +102,9 @@ sap.ui.define(['sap/base/log', 'sap/ui/thirdparty/URI', 'sap/base/util/now'
 		 *
 		 * Optionally a category or list of categories can be passed to restrict measurements to certain categories
 		 * like "javascript", "require", "xmlhttprequest", "render"
-		 * @param {boolean} bOn - state of the perfomance measurement functionality to set
+		 * @param {boolean} bOn - state of the performance measurement functionality to set
 		 * @param {string | string[]} aCategories - An optional list of categories that should be measured
-		 * @return {boolean} current state of the perfomance measurement functionality
+		 * @return {boolean} current state of the performance measurement functionality
 		 * @name setActive
 		 * @function
 		 * @private

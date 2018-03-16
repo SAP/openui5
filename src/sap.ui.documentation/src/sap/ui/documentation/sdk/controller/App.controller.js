@@ -13,12 +13,17 @@ sap.ui.define([
 		"sap/ui/core/IconPool",
 		"sap/m/SplitAppMode",
 		"sap/m/MessageBox",
-		"sap/m/library"
-	], function (jQuery, BaseController, JSONModel, ResizeHandler, Device, Fragment, library, IconPool, SplitAppMode, MessageBox, mobileLibrary) {
+		"sap/m/library",
+		"sap/base/log"
+	], function (jQuery, BaseController, JSONModel, ResizeHandler, Device, Fragment, library, IconPool, SplitAppMode, MessageBox, mobileLibrary, Log) {
 		"use strict";
 
 		// shortcut for sap.m.URLHelper
-		var URLHelper = mobileLibrary.URLHelper;
+		var URLHelper = mobileLibrary.URLHelper,
+			sNeoAppJsonPath = "neo-app.json",
+			ABOUT_TEXT = "About",
+			FEEDBACK_TEXT = "Feedback",
+			CHANGE_VERSION_TEXT = "Change version";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			onInit : function () {
@@ -28,6 +33,8 @@ sap.ui.define([
 					busy : false,
 					delay : 0,
 					bPhoneSize: false,
+					bShowVersionSwitchInHeader: false,
+					bShowVersionSwitchInMenu: false,
 					bLandscape: Device.orientation.landscape,
 					bHasMaster: false,
 					bSearchMode: false,
@@ -76,7 +83,7 @@ sap.ui.define([
 
 				// the unstashed control is added as **last child** => correct its position in parent container
 				this.oHeader.removeContent(this.oTabNavigation);
-				this.oHeader.insertContent(this.oTabNavigation, 1);
+				this.oHeader.insertContent(this.oTabNavigation, 2);
 
 				this.oRouter = this.getRouter();
 
@@ -94,6 +101,8 @@ sap.ui.define([
 
 				// register Feedback rating icons
 				this._registerFeedbackRatingIcons();
+
+				this._requestVersionInfo();
 
 				// attach to the afterMasterClose event of the splitApp to be able to toggle the hamburger button state on clicking anywhere
 				this.byId("splitApp").attachEvent("afterMasterClose", function (oEvent) {
@@ -264,10 +273,12 @@ sap.ui.define([
 				var sTargetText = oEvent.getParameter("item").getText(),
 					sTarget = this.MENU_LINKS_MAP[sTargetText];
 
-				if (sTargetText === "About") {
+				if (sTargetText === ABOUT_TEXT) {
 					this.aboutDialogOpen();
-				} else if (sTargetText === "Feedback") {
+				} else if (sTargetText === FEEDBACK_TEXT) {
 					this.feedbackDialogOpen();
+				} else if (sTargetText === CHANGE_VERSION_TEXT) {
+					this.onChangeVersionButtonPress();
 				} else if (sTarget) {
 					URLHelper.redirect(sTarget, true);
 				}
@@ -398,6 +409,96 @@ sap.ui.define([
 			onAboutNavBack: function (oEvent) {
 				var oNavCon = Fragment.byId("aboutDialogFragment", "aboutNavCon");
 				oNavCon.back();
+			},
+
+			onChangeVersionButtonPress: function () {
+				this.getVersionSwitchDialog().open();
+			},
+
+			onCloseVersionDialog: function () {
+				this.getVersionSwitchDialog().close();
+			},
+
+			onChangeVersionDialogSearch: function (oEvent) {
+				var sSearchedValue = oEvent.getParameter("newValue"),
+					oFilter = new sap.ui.model.Filter("version", sap.ui.model.FilterOperator.Contains, sSearchedValue),
+					oBinding = sap.ui.getCore().byId("versionList").getBinding("items");
+
+				oBinding.filter([oFilter]);
+			},
+
+			onVersionItemPress: function (oEvent) {
+				var oSelectedItem = oEvent.getParameter("listItem"),
+					sSelectedVersion = oSelectedItem ? oSelectedItem.getTitle() : null;
+
+				sSelectedVersion && this._changeVersionURL(sSelectedVersion);
+			},
+
+			getVersionSwitchDialog: function () {
+				if (!this._oChangeVersionDialog) {
+					this._createVersionDialog();
+				}
+
+				return this._oChangeVersionDialog;
+			},
+
+			/**
+			 * Custom comparison function, which is used when sorting group titles by minor version in the change version dialog
+			 *
+			 * @param sGroupTitleA
+			 * @param sGroupTitleB
+			 * @returns {number}
+			 */
+			versionSwitchCustomComparator: function (sGroupTitleA, sGroupTitleB) {
+				return jQuery.sap.Version(sGroupTitleA).compareTo(jQuery.sap.Version(sGroupTitleB));
+			},
+
+			/**
+			 * Determines whether or not to show the version change button.
+			 *
+			 * @private
+			 */
+			_updateVersionSwitchVisibility: function() {
+				var oViewModel = this.getModel("appView"),
+					bPhoneSize = oViewModel.getProperty("/bPhoneSize");
+
+				// Version switch should not be shown on phone sizes or when no versions are found
+				oViewModel.setProperty("/bShowVersionSwitchInHeader", !bPhoneSize && !!this._aNeoAppVersions);
+				oViewModel.setProperty("/bShowVersionSwitchInMenu", bPhoneSize && !!this._aNeoAppVersions);
+			},
+
+			_createVersionDialog: function () {
+				this._oChangeVersionDialog = new sap.ui.xmlfragment("sap.ui.documentation.sdk.view.ChangeVersionDialog", this);
+				this._oChangeVersionDialog.setModel(this._buildVersionDialogModel());
+				this._oView.addDependent(this._oChangeVersionDialog);
+			},
+
+			_buildVersionDialogModel: function() {
+				var oChangeVersionDialogModel = new JSONModel();
+
+				oChangeVersionDialogModel.setSizeLimit(1000);
+				oChangeVersionDialogModel.setData(this._aNeoAppVersions);
+
+				return oChangeVersionDialogModel;
+			},
+
+			_changeVersionURL: function (sVersion) {
+				var sHref = window.location.href,
+					sOrigin = window.location.origin,
+					rPattern = /\d\.\d{2}\.\d{1,2}/, // Matches x.xx.x && x.xx.xx
+					bURLVersionExists = sHref.match(rPattern) !== null,
+					sNewHref;
+
+				// Version should be inserted after the location origin
+				// E.g: https://ui5.sap.com/1.50.5/#/api/sap.f.DynamicPage
+				// If there was already a version in the URL, just replace it with the new one
+				if (bURLVersionExists) {
+					sNewHref = sHref.replace(rPattern, sVersion);
+				} else {
+					sNewHref = sOrigin + "/" + sVersion + sHref.slice(sOrigin.length);
+				}
+
+				window.location.href = sNewHref;
 			},
 
 			/**
@@ -612,6 +713,7 @@ sap.ui.define([
 				this.getModel("appView").setProperty("/bPhoneSize", bPhoneSize);
 
 				this._toggleTabHeaderClass();
+				this._updateVersionSwitchVisibility();
 			},
 
 			_onOrientationChange: function() {
@@ -665,6 +767,42 @@ sap.ui.define([
 					content: "E08C",
 					suppressMirroring: true
 				});
+			},
+
+			_requestVersionInfo: function () {
+				Promise.resolve(jQuery.ajax(sNeoAppJsonPath)).then(
+					// Success
+					function(oNeoAppJson) {
+						if (!(oNeoAppJson && oNeoAppJson.routes)) {
+							Log.warning("No versions were found");
+							return;
+						}
+
+						// Current version would be displayed for a second time as the last element,
+						// therefore we should skip it to avoid duplicate items in the dialog.
+						oNeoAppJson.routes.pop();
+
+						// Store needed data
+						this._aNeoAppVersions = oNeoAppJson.routes.map(function(oRoute) {
+							var oVersion = jQuery.sap.Version(oRoute.target.version),
+								oVersionSummary = {};
+
+							// Add the following properties, in order use them for grouping later
+							oVersionSummary.patchVersion = oVersion.getPatch(); // E.g: Extract 5 from "1.52.5"
+							oVersionSummary.groupTitle = oVersion.getMajor() + "." + oVersion.getMinor(); // E.g: Extract "1.52" from "1.52.5"
+							oVersionSummary.version = oVersion.toString();
+
+							return oVersionSummary;
+						});
+
+						// Make version select visible
+						this._updateVersionSwitchVisibility();
+					}.bind(this),
+					// Error
+					function() {
+						Log.warning("No neo-app.json was detected");
+					}
+				);
 			},
 
 			_getUI5Version: function () {

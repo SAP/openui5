@@ -1641,6 +1641,9 @@ sap.ui.define([
 						},
 						parse: function(sValue) {
 							try {
+								if (sValue === "") {
+									return "";
+								}
 								this.oType.validateValue(sValue, "string");
 							} catch (err) {
 								return NaN;

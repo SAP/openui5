@@ -1,9 +1,8 @@
 /*!
  * ${copyright}
  */
-
-sap.ui.define(['./ListItemBaseRenderer', 'sap/m/library', 'sap/ui/Device'],
-	function(ListItemBaseRenderer, library, Device) {
+sap.ui.define(["sap/m/library", "sap/ui/Device", "./ListItemBaseRenderer"],
+	function(library, Device, ListItemBaseRenderer) {
 	"use strict";
 
 
@@ -18,7 +17,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/m/library', 'sap/ui/Device'],
 
 
 	/**
-	 * List renderer.
+	 * ListBase renderer.
 	 * @namespace
 	 */
 	var ListBaseRenderer = {};
