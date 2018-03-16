@@ -101,6 +101,8 @@ sap.ui.define([
 	 *            to share an <code>SID</code> between different browser windows
 	 * @param {string[]} [mParameters.bindableResponseHeaders=null]
 	 *            Set this array to make custom response headers bindable via the entity's "__metadata/headers" property
+         * @param {boolean} [mParameters.doNotDeleteNavigationPropertiesInChangeRequest=false]
+         *            Keep the navigation properties so that they are send to the server
 	 *
 	 * @class
 	 * Model implementation based on the OData protocol.
@@ -144,6 +146,7 @@ sap.ui.define([
 				bSequentializeRequests,
 				bDisableSoftStateHeader,
 				aBindableResponseHeaders,
+                                bDoNotDeleteNavigationPropertiesInChangeRequest,
 				that = this;
 
 			if (typeof (sServiceUrl) === "object") {
@@ -177,6 +180,7 @@ sap.ui.define([
 				bSequentializeRequests = mParameters.sequentializeRequests;
 				bDisableSoftStateHeader = mParameters.disableSoftStateHeader;
 				aBindableResponseHeaders = mParameters.bindableResponseHeaders;
+                                bDoNotDeleteNavigationPropertiesInChangeRequest = mParameters.doNotDeleteNavigationPropertiesInChangeRequest;
 			}
 			this.mSupportedBindingModes = {"OneWay": true, "OneTime": true, "TwoWay":true};
 			this.mUnsupportedFilterOperators = {"Any": true, "All": true};
@@ -212,6 +216,7 @@ sap.ui.define([
 			this.bDisableSoftStateHeader = !!bDisableSoftStateHeader;
 			this.aBindableResponseHeaders = aBindableResponseHeaders ? aBindableResponseHeaders : null;
 			this.bPreliminaryContext = bPreliminaryContext || false;
+                        this.bDoNotDeleteNavigationPropertiesInChangeRequest = bDoNotDeleteNavigationPropertiesInChangeRequest || false;
 
 
 			if (oMessageParser) {
@@ -3608,8 +3613,8 @@ sap.ui.define([
 			}
 		}
 
-		// delete nav props
-		if (oPayload && oEntityType) {
+		// delete nav props if we should delete them
+		if (oPayload && oEntityType && !this.bDoNotDeleteNavigationPropertiesInChangeRequest) {
 			var aNavProps = this.oMetadata._getNavigationPropertyNames(oEntityType);
 			aNavProps.forEach(function(sNavPropName) {
 				delete oPayload[sNavPropName];

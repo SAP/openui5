@@ -2640,6 +2640,35 @@
 		}.bind(this))
 	});
 
+        QUnit.test("createEntry with complex types and doNotDeleteNavigationPropertiesInChangeRequest which have namespace with . characters", function(assert) {
+                var done = assert.async();
+                var oModel = initModel(sURI, {doNotDeleteNavigationPropertiesInChangeRequest: true, useBatch: true});
+                oModel.metadataLoaded().then(function() {
+                        var oContext = oModel.createEntry("Products", {
+                             "properties": {
+                                 "Category": {
+                                     "__deferred": {
+                                         "uri": "Categories('MY-CATEGORY')"
+                                     }
+                                 }
+                             }
+                        });
+                        assert.ok(oContext, "context should be created");
+                       
+                        var fnSpyProcessChanges = sinon.spy(oModel, "_processChange");
+			oModel.attachBatchRequestCompleted(function() { 
+			    var oExpectedRequest = {};
+			    console.log(JSON.stringify(fnSpyProcessChanges.returnValues));
+			    assert.ok(fnSpyProcessChanges.returnValues[0].data.Category !== undefined);
+			    fnSpyProcessChanges.restore();
+			    oModel.destroy();
+			    done();
+                        });
+                        oModel.submitChanges();
+                }.bind(this))
+        });
+
+
 	QUnit.test("metadata check", function(assert){
 		var done = assert.async();
 
