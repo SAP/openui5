@@ -128,21 +128,21 @@
 		 * Tests that <code>sap.ui.getCore().notifiyContentDensityChanged()</code> calls each control's #onThemeChanged method
 		 */
 		QUnit.test("test #notifiyContentDensityChanged", function(assert) {
+			assert.expect(4);
+
 			var oBtn = new sap.ui.testlib.TestButton("testMyButton", {text:"Hallo JSUnit"});
-			var oEvent = false;
-			var oCtrlEvent = false;
-			oBtn.onThemeChanged = function(oCtrlEvt) {
-				oCtrlEvent = oCtrlEvt;
+			oBtn.onThemeChanged = function(oCtrlEvent) {
+				assert.ok(oCtrlEvent, "TestButton#onThemeChanged is called");
+				assert.equal(oCtrlEvent.theme, sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along control event");
 			};
-			sap.ui.getCore().attachThemeChanged(function(oEvt){
-				oEvent = oEvt;
+
+			sap.ui.getCore().attachThemeChanged(function(oEvent) {
+				assert.ok(oEvent, "attachThemeChanged is called");
+				assert.equal(oEvent.getParameter("theme"), sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along Core event");
 			});
 
 			//call to #notifyContentDensityChanged
 			sap.ui.getCore().notifyContentDensityChanged();
-			assert.ok(oEvent, "attachThemeChanged is called");
-			assert.ok(oCtrlEvent, "TestButton#onThemeChanged is called");
-			assert.equal(oCtrlEvent.theme, sap.ui.getCore().getConfiguration().getTheme(), "Default theme is passed along");
 		});
 
 		QUnit.test("testGetControl", function(assert) {
