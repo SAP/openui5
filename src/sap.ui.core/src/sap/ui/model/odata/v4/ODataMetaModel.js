@@ -1357,14 +1357,14 @@ sap.ui.define([
 					if (!oEntity) {
 						error("No instance to calculate key predicate at " + vSegment.path);
 					}
-					if ("@$ui5.transient" in oEntity) {
+					if ("@$ui5._.transient" in oEntity) {
 						bTransient = true;
 						return undefined;
 					}
-					if (!oEntity["@$ui5.predicate"]) {
+					if (!oEntity["@$ui5._.predicate"]) {
 						error("No key predicate known at " + vSegment.path);
 					}
-					return vSegment.prefix + oEntity["@$ui5.predicate"];
+					return vSegment.prefix + oEntity["@$ui5._.predicate"];
 				}, function (oError) { // enrich the error message with the path
 					error(oError.message + " at " + vSegment.path);
 				});

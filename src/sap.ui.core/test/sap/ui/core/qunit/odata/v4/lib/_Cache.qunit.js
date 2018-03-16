@@ -239,7 +239,7 @@ sap.ui.require([
 					aCacheData = [{
 						"@odata.etag" : "before"
 					}, {
-						"@$ui5.predicate" : "('42')",
+						"@$ui5._.predicate" : "('42')",
 						"@odata.etag" : sEtag
 					}, {
 						"@odata.etag" : "after"
@@ -506,11 +506,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#resetChangesForPath: POSTs", function (assert) {
-		var oBody0 = {"@$ui5.transient" : "update"},
-			oBody1 = {"@$ui5.transient" : "update2"},
-			oBody2 = {"@$ui5.transient" : "update"},
-			oBody3 = {"@$ui5.transient" : "update"},
-			oBody4 = {"@$ui5.transient" : "update"},
+		var oBody0 = {"@$ui5._.transient" : "update"},
+			oBody1 = {"@$ui5._.transient" : "update2"},
+			oBody2 = {"@$ui5._.transient" : "update"},
+			oBody3 = {"@$ui5._.transient" : "update"},
+			oBody4 = {"@$ui5._.transient" : "update"},
 			oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCall1,
 			oCall2;
@@ -1125,7 +1125,7 @@ sap.ui.require([
 		// code under test
 		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
-		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate);
+		assert.strictEqual(oEntity["@$ui5._.predicate"], sPredicate);
 	});
 
 	//*********************************************************************************************
@@ -1175,12 +1175,12 @@ sap.ui.require([
 		// code under test
 		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
-		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate1);
-		assert.strictEqual(oEntity.bar["@$ui5.predicate"], sPredicate2);
-		assert.strictEqual(oEntity.bar.baz["@$ui5.predicate"], sPredicate3);
-		assert.strictEqual(oEntity.property["@$ui5.predicate"], undefined);
-		assert.strictEqual(oEntity.property.navigation["@$ui5.predicate"], sPredicate4);
-		assert.strictEqual(oEntity.noType["@$ui5.predicate"], undefined);
+		assert.strictEqual(oEntity["@$ui5._.predicate"], sPredicate1);
+		assert.strictEqual(oEntity.bar["@$ui5._.predicate"], sPredicate2);
+		assert.strictEqual(oEntity.bar.baz["@$ui5._.predicate"], sPredicate3);
+		assert.strictEqual(oEntity.property["@$ui5._.predicate"], undefined);
+		assert.strictEqual(oEntity.property.navigation["@$ui5._.predicate"], sPredicate4);
+		assert.strictEqual(oEntity.noType["@$ui5._.predicate"], undefined);
 	});
 
 	//*********************************************************************************************
@@ -1212,9 +1212,9 @@ sap.ui.require([
 		// code under test
 		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
-		assert.strictEqual(oEntity["@$ui5.predicate"], sPredicate1);
-		assert.strictEqual(oEntity.bar[0]["@$ui5.predicate"], sPredicate2);
-		assert.strictEqual(oEntity.bar[1]["@$ui5.predicate"], undefined);
+		assert.strictEqual(oEntity["@$ui5._.predicate"], sPredicate1);
+		assert.strictEqual(oEntity.bar[0]["@$ui5._.predicate"], sPredicate2);
+		assert.strictEqual(oEntity.bar[1]["@$ui5._.predicate"], undefined);
 		assert.strictEqual(oEntity.bar.$byPredicate[sPredicate2], oEntity.bar[0]);
 		assert.notOk(undefined in oEntity.bar.$byPredicate);
 	});
@@ -1280,7 +1280,7 @@ sap.ui.require([
 
 				if (oFixture.types) {
 					oFixture.result.forEach(function (oItem) {
-						oItem["@$ui5.predicate"] = "('" + oItem.key + "')";
+						oItem["@$ui5._.predicate"] = "('" + oItem.key + "')";
 					});
 				}
 				if (oFixture.count) {
@@ -1293,7 +1293,7 @@ sap.ui.require([
 				if (oFixture.types) {
 					oFixture.result.forEach(function (oItem, i) {
 						assert.strictEqual(
-							oCache.aElements.$byPredicate[oItem["@$ui5.predicate"]],
+							oCache.aElements.$byPredicate[oItem["@$ui5._.predicate"]],
 							oCache.aElements[oFixture.index + i]);
 					});
 				} else {
@@ -2108,7 +2108,7 @@ sap.ui.require([
 		this.spy(oCache, "removeByPath");
 		return oCreatePromise.then(function () {
 			assert.strictEqual(aCollection[-1].ID, "7", "from Server");
-			assert.strictEqual(aCollection[-1]["@$ui5.predicate"], "(~)");
+			assert.strictEqual(aCollection[-1]["@$ui5._.predicate"], "(~)");
 			assert.strictEqual(aCollection.$count, 1);
 			sinon.assert.calledWithExactly(oCache.removeByPath,
 				sinon.match.same(oCache.mPostRequests), sPathInCache,
@@ -2288,7 +2288,7 @@ sap.ui.require([
 		assert.notStrictEqual(oCache.aElements[-1], oEntityData, "'create' copies initial data");
 		assert.deepEqual(oCache.aElements[-1], {
 			name : "John Doe",
-			"@$ui5.transient" : "updateGroup"
+			"@$ui5._.transient" : "updateGroup"
 		});
 
 		// code under test
@@ -2305,7 +2305,7 @@ sap.ui.require([
 					+ "'updateGroup'. Cannot patch via group 'anotherGroup'");
 			}),
 			oPostPromise.then(function () {
-				assert.notOk("@$ui5.transient" in oCache.aElements[-1]);
+				assert.notOk("@$ui5._.transient" in oCache.aElements[-1]);
 				assert.strictEqual(oCache.hasPendingChangesForPath(""), false,
 					"no more pending changes");
 			}),
@@ -2354,7 +2354,7 @@ sap.ui.require([
 			return oCache.update("updateGroup", "foo", sWhen, that.spy(), "Employees", "-1")
 				.then(function () {
 					assert.ok(true, "Update works " + sWhen);
-					assert.strictEqual(oCache.aElements[-1]["@$ui5.transient"], "updateGroup");
+					assert.strictEqual(oCache.aElements[-1]["@$ui5._.transient"], "updateGroup");
 				});
 		}
 
@@ -2485,7 +2485,7 @@ sap.ui.require([
 		oPromise = oCache.create("updateGroup", "Employees", "");
 
 		assert.deepEqual(oCache.aElements[-1], {
-			"@$ui5.transient" : "updateGroup"
+			"@$ui5._.transient" : "updateGroup"
 		});
 		return oPromise;
 	});
@@ -2536,7 +2536,7 @@ sap.ui.require([
 		// code under test
 		return oCache.read(-1, 3, 0, "$direct").then(function (oResult) {
 			assert.strictEqual(oResult.value.length, 3);
-			assert.ok(oResult.value[0]["@$ui5.transient"]);
+			assert.ok(oResult.value[0]["@$ui5._.transient"]);
 			assert.strictEqual(oResult.value[1], oReadResult.value[0]);
 			assert.strictEqual(oResult.value[2], oReadResult.value[1]);
 
@@ -3168,7 +3168,7 @@ sap.ui.require([
 	QUnit.test("CollectionCache#refreshSingle", function(assert) {
 		var fnDataRequested = this.spy(),
 			sKeyPredicate = "('13')",
-			oElement = {"@$ui5.predicate" : sKeyPredicate},
+			oElement = {"@$ui5._.predicate" : sKeyPredicate},
 			aElements = [{}, oElement],
 			sResourcePath = "Employees",
 			mQueryOptionsCopy = {$filter: "foo", $count: true, $sort: "bar", $select: "Name"},

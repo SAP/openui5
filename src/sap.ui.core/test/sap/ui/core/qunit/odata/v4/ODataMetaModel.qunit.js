@@ -2158,7 +2158,7 @@ sap.ui.require([
 			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 			oFixture.requests.forEach(function (oRequest) {
-				var oEntityInstance = {"@$ui5.predicate" : oRequest.predicate};
+				var oEntityInstance = {"@$ui5._.predicate" : oRequest.predicate};
 
 				oContextMock.expects("fetchValue")
 					.withExactArgs(oRequest.path || oFixture.dataPath)
@@ -2279,7 +2279,7 @@ sap.ui.require([
 					that.oMetaModelMock.expects("fetchEntityContainer")
 						.returns(SyncPromise.resolve(mScope));
 					Object.keys(oFixture.fetchPredicates || {}).forEach(function (sPath, i) {
-						var oEntityInstance = {"@$ui5.predicate" : "(~" + i + ")"};
+						var oEntityInstance = {"@$ui5._.predicate" : "(~" + i + ")"};
 
 						// Note: the entity instance is delivered asynchronously
 						oContextMock.expects("fetchValue")
@@ -2312,7 +2312,7 @@ sap.ui.require([
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
 		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS/-1")
-			.returns(SyncPromise.resolve({"@$ui5.transient" : "update"}));
+			.returns(SyncPromise.resolve({"@$ui5._.transient" : "update"}));
 
 		// code under test
 		return this.oMetaModel.fetchUpdateData(sPropertyPath, oContext).then(function (oResult) {
