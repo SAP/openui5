@@ -217,7 +217,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
 		var oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-				["$$groupId", "$$operationMode", "$$updateGroupId"]),
+				["$$groupId", "$$operationMode", "$$ownRequest", "$$updateGroupId"]),
 			sOperationMode;
 
 		sOperationMode = oBindingParameters.$$operationMode || this.oModel.sOperationMode;
@@ -227,7 +227,6 @@ sap.ui.define([
 			throw new Error("Unsupported operation mode: " + sOperationMode);
 		}
 		this.sOperationMode = sOperationMode;
-
 		this.sGroupId = oBindingParameters.$$groupId;
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
@@ -464,34 +463,6 @@ sap.ui.define([
 			bChanged = true;
 		}
 		return bChanged;
-	};
-
-	/**
-	 * Deregisters the given change listener.
-	 *
-	 * @param {string} sPath
-	 *   The path
-	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} oListener
-	 *   The change listener
-	 * @param {number} iIndex
-	 *   Index corresponding to some current context of this binding
-	 *
-	 * @private
-	 */
-	ODataListBinding.prototype.deregisterChange = function (sPath, oListener, iIndex) {
-		var oCache = this.oCachePromise.getResult();
-
-		if (!this.oCachePromise.isFulfilled()) {
-			// Be prepared for late deregistrations by dependents of parked contexts
-			return;
-		}
-
-		if (oCache) {
-			oCache.deregisterChange(_Helper.buildPath(iIndex, sPath), oListener);
-		} else if (this.oContext) {
-			this.oContext.deregisterChange(_Helper.buildPath(this.sPath, iIndex, sPath),
-				oListener);
-		}
 	};
 
 	/**
@@ -786,9 +757,15 @@ sap.ui.define([
 			fetchArrayFilter(this.aApplicationFilters, /*bAnd*/true, {}),
 			fetchArrayFilter(this.aFilters, /*bAnd*/true, {})
 		]).then(function (aFilterValues) {
-			if (aFilterValues[0]) { aNonEmptyFilters.push(aFilterValues[0]); }
-			if (aFilterValues[1]) { aNonEmptyFilters.push(aFilterValues[1]); }
-			if (sStaticFilter) { aNonEmptyFilters.push(sStaticFilter); }
+			if (aFilterValues[0]) {
+				aNonEmptyFilters.push(aFilterValues[0]);
+			}
+			if (aFilterValues[1]) {
+				aNonEmptyFilters.push(aFilterValues[1]);
+			}
+			if (sStaticFilter) {
+				aNonEmptyFilters.push(sStaticFilter);
+			}
 
 			return combineFilterValues(aNonEmptyFilters, ") and (");
 		});

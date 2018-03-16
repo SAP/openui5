@@ -452,6 +452,17 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 						viewName : sViewName
 					});
 				},
+				pressDeleteBusinessPartnerButton : function () {
+					return this.waitFor({
+						actions : new Press(),
+						controlType : "sap.m.Button",
+						id : "deleteBusinessPartner",
+						success : function (oDeleteBusinessPartnerButton) {
+							Opa5.assert.ok(true, "Delete Business Partner button pressed");
+						},
+						viewName : sViewName
+					});
+				},
 				pressRefreshAllButton : function () {
 					return this.waitFor({
 						actions : new Press(),
@@ -754,6 +765,17 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 								},
 								viewName : sViewName
 							});
+						},
+						viewName : sViewName
+					});
+				},
+				checkInputValue : function (sID, sValue) {
+					return this.waitFor({
+						controlType : "sap.m.Input",
+						id : sID,
+						success : function (oInput) {
+							Opa5.assert.strictEqual(oInput.getValue(),
+								sValue, "checkInputValue('" + sID + "', '" + sValue + "')");
 						},
 						viewName : sViewName
 					});

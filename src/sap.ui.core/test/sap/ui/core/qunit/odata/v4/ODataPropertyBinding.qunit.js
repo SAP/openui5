@@ -696,7 +696,7 @@ sap.ui.require([
 
 		assert.strictEqual(oBinding.getContext(), oContext, "stored nevertheless");
 
-		this.mock(oContext).expects("deregisterChange").never();
+		this.mock(oBinding).expects("deregisterChange").never();
 		oBinding.setContext(null);
 	});
 
@@ -1580,7 +1580,6 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("destroy", function (assert) {
 		var oContext = {
-				deregisterChange : function () {},
 				getPath : function () {return "Name";}
 			},
 			oPromise = Promise.resolve(),

@@ -171,6 +171,9 @@
 				<Text text="Category"/>
 			</Column>
 			<Column>
+				<Text text="Product Categories"/>
+			</Column>
+			<Column>
 				<Text text="Supplier"/>
 			</Column>
 		</columns>
@@ -178,12 +181,12 @@
 			<Text text="{ID}"/>
 			<Image src="{EQUIPMENT_2_PRODUCT/ProductPicture/Picture}"/>
 			<Input value="{EQUIPMENT_2_PRODUCT/Name}"/>
-			<HBox>
-				<Text text="{Category} -&#160;"/>
-				<List items="{path : 'EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY', templateShareable : false}">
-					<StandardListItem title="{CategoryName}"/>
-				</List>
-			</HBox>
+			<Text text="{Category}"/>
+			<SelectList enabled="false"
+				items="{path : 'EQUIPMENT_2_PRODUCT/PRODUCT_2_CATEGORY',
+					templateShareable : false}">
+				<core:Item text="{CategoryName}" key="{CategoryName}"/>
+			</SelectList>
 			<Input value="{EQUIPMENT_2_PRODUCT/PRODUCT_2_SUPPLIER/Supplier_Name}"/>
 		</ColumnListItem>
 	</Table>
