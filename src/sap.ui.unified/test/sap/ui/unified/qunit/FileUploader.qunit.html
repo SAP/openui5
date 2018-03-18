@@ -290,6 +290,25 @@
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Test setTooltip with none-string tooltip", function (assert) {
+		// Set up
+		var oTooltip = new sap.ui.core.TooltipBase({text: "test"});
+		var oFileUploader = createFileUploader({
+			tooltip: oTooltip
+		});
+
+		// act
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// assert (only tooltip type of string are added via the 'title' attribute)
+		assert.equal(oFileUploader.oFileUpload.getAttribute("title"), null, "The title attribute is not set");
+		assert.equal(oFileUploader.$().find(".sapUiFupInputMask")[0].getAttribute("title"), null, "The title attribute is not set");
+
+		// cleanup
+		oFileUploader.destroy();
+	});
+
 	QUnit.test("Test associated label interaction", function (assert) {
 		//Set up
 		var oFileUploader = createFileUploader({}),
