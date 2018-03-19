@@ -4917,6 +4917,20 @@
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("MultiComboBox with accessibility=false", function(assert) {
+		var oStub =  sinon.stub(sap.ui.getCore().getConfiguration(), "getAccessibility").returns(false),
+			oMultiComboBox = new sap.m.MultiComboBox();
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(!!oMultiComboBox.getDomRef(), "The MultiComboBox should be rendered, when accessibility is off.");
+
+		oStub.restore();
+		oMultiComboBox.destroy();
+	});
+
+
 	QUnit.module("Keyboard handling", {
 		beforeEach: function(){
 			this.oFirstItem = new sap.ui.core.Item({key: "Item1", text: "Item1"});
