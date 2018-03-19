@@ -27,6 +27,8 @@
 
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
@@ -162,6 +164,97 @@
 				done();
 			});
 			sap.ui.getCore().applyTheme("sap_hcb");
+		});
+
+		QUnit.module("CORS", {
+			beforeEach: function() {
+
+				// Apply Object.getOwnPropertyDescriptor fix for PhantomJS
+				if (sap.ui.Device.browser.phantomJS) {
+					var fnOriginalGetOwnPropertyDescriptor = this.fnOriginalGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+					Object.getOwnPropertyDescriptor = function(obj, prop) {
+						var descriptor = fnOriginalGetOwnPropertyDescriptor.apply(this, arguments);
+						if (!descriptor && obj instanceof Node) {
+							descriptor = {
+								get: function() {
+									return this.val;
+								},
+								set: function(val) {
+									this.val = val;
+								},
+								enumerable: true,
+								configurable: true
+							};
+							Object.defineProperty(obj, prop, descriptor);
+						}
+						return descriptor;
+					};
+				}
+
+				this.descLinkSheet = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, "sheet");
+
+				Object.defineProperty(HTMLLinkElement.prototype, "sheet", {
+					get: function() {
+						var obj = {
+							href: this.href
+						};
+						Object.defineProperty(obj, "cssRules", {
+							get: function() {
+								throw new Error();
+							},
+							set: function() {}
+						});
+						return obj;
+					},
+					set: function() {},
+					configurable: true
+				});
+
+				sinon.spy(jQuery.sap.log, "error");
+			},
+			afterEach: function() {
+
+				// Reset Object.getOwnPropertyDescriptor fix for PhantomJS
+				if (sap.ui.Device.browser.phantomJS) {
+					Object.getOwnPropertyDescriptor = this.fnOriginalGetOwnPropertyDescriptor;
+				}
+
+				Object.defineProperty(HTMLLinkElement.prototype, "sheet", this.descLinkSheet);
+
+				jQuery.sap.log.error.restore();
+			}
+		})
+
+		QUnit.test("Accessing HTMLLinkElement#sheet.cssRules throws exception", function(assert) {
+			var done = assert.async();
+
+			themeChanged().then(function() {
+
+				// Check if the declared sap.ui.core stylesheet has been fully loaded
+				var oCoreLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.core");
+				var sCoreSheetHref = getSheetHref(oCoreLibraryCss);
+				assert.equal(sCoreSheetHref, oCoreLibraryCss.href, "href of loaded sap.ui.core stylesheet should be equal with link href.");
+
+				// Check that the declared sap.ui.testlib stylesheet has been included but not loaded as it does not exist for "customcss" theme
+				var oTestLibraryCss = jQuery.sap.domById("sap-ui-theme-sap.ui.testlib");
+				var sTestSheetHref = getSheetHref(oTestLibraryCss);
+				assert.equal(sTestSheetHref, oTestLibraryCss.href, "href of loaded sap.ui.testlib stylesheet should be equal with link href.");
+
+				// Check if the custom.css has been included
+				var oCustomCss = jQuery.sap.domById("sap-ui-core-customcss");
+				if (!oCustomCss) {
+					assert.ok(false, "Custom CSS file hasn't been included");
+					return;
+				}
+				var oCustomCssHref = oCustomCss.getAttribute("href");
+				var sExpectedCustomCssPath = "./testdata/customcss/sap/ui/core/themes/customcss/custom.css";
+				assert.equal(oCustomCssHref, sExpectedCustomCssPath, "Custom CSS file gets loaded from the correct location.");
+
+				sinon.assert.neverCalledWithMatch(jQuery.sap.log.error, sinon.match("Error during check styles"));
+
+				done();
+			});
+			sap.ui.getCore().applyTheme("customcss");
 		});
 
 		</script>
