@@ -174,17 +174,22 @@
 			"target": ["apiMaster", "apiDetailInitial"]
 		  },
 		  {
-		    "pattern": "api/deprecated",
+			"pattern": "api/deprecated",
 			"name": "deprecated",
 			"target": ["apiMaster", "apiDetailDeprecated"]
 		  },
 		  {
-		    "pattern": "api/experimental",
+			"pattern": "api/experimental",
 			"name": "experimental",
 			"target": ["apiMaster", "apiDetailExperimental"]
 		  },
 		  {
-		    "pattern": "api/{id}/:entityType:/:entityId:",
+			"pattern": "api/since",
+			"name": "since",
+			"target": ["apiMaster", "apiDetailSince"]
+		  },
+		  {
+			"pattern": "api/{id}/:entityType:/:entityId:",
 			"name": "apiId",
 			"target": ["apiMaster", "apiDetail"]
 		  },
@@ -329,6 +334,11 @@
 				"viewId": "apiDetailExperimental",
 				"viewLevel": 2
 			},
+			"apiDetailSince": {
+			  "viewName": "ApiDetailSince",
+			  "viewId": "apiDetailSince",
+			  "viewLevel": 2
+			},
 			"topicMaster": {
 				"viewName": "TopicMaster",
 				"viewLevel": 1,
@@ -361,7 +371,7 @@
 				"viewId": "releaseNotes",
 				"controlAggregation": "detailPages"
 			},
-		  	"license": {
+			"license": {
 				"viewName": "License",
 				"viewLevel": 2,
 				"viewId": "releaseNotes",

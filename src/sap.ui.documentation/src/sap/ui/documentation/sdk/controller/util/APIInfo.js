@@ -91,6 +91,29 @@ sap.ui.define(['jquery.sap.global'],
 
 		}
 
+		function getSincePromise() {
+
+			if (oLibraryDataCache["since"]) {
+				return Promise.resolve(oLibraryDataCache["since"]);
+			}
+
+			return new Promise(function (resolve, reject) {
+				jQuery.ajax({
+					async: true,
+					url : "./docs/api/api-index-since.json",
+					dataType : 'json',
+					success : function(vResponse) {
+						oLibraryDataCache["since"] = vResponse;
+						resolve(vResponse);
+					},
+					error : function () {
+						reject();
+					}
+				});
+			});
+
+		}
+
 		function getLibraryElementsJSONSync(sLibraryName) {
 			var oResponse = [];
 
@@ -194,6 +217,7 @@ sap.ui.define(['jquery.sap.global'],
 			getIndexJsonPromise: getIndexJsonPromise,
 			getDeprecatedPromise: getDeprecatedPromise,
 			getExperimentalPromise: getExperimentalPromise,
+			getSincePromise: getSincePromise,
 			getLibraryElementsJSONSync : getLibraryElementsJSONSync,
 			getLibraryElementsJSONPromise: getLibraryElementsJSONPromise,
 			getAllLibrariesElementsJSONPromise: getAllLibrariesElementsJSONPromise
