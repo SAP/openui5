@@ -21,7 +21,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 	 * <li>System defined defaults</li>
 	 * <li>Server wide defaults, read from /sap-ui-config.json</li>
 	 * <li>Properties of the global configuration object window["sap-ui-config"]</li>
-	 * <li>A configuration string in the data-sap-ui-config attribute of the bootstrap tag</li>
+	 * <li>A configuration string in the data-sap-ui-config attribute of the bootstrap tag.</li>
 	 * <li>Individual data-sap-ui-<i>xyz</i> attributes of the bootstrap tag</li>
 	 * <li>Using URL parameters</li>
 	 * <li>Setters in this Configuration object (only for some parameters)</li>

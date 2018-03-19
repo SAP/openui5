@@ -83,9 +83,18 @@ sap.ui.define(["sap/ui/bootstrap/Info", "sap/base/util/extend", "sap/base/log"],
 		var sConfig = oScriptTag.getAttribute("data-sap-ui-config");
 		if ( sConfig ) {
 			try {
-				/*eslint-disable no-new-func */
-				extend(oCfg, normalize((new Function("return {" + sConfig + "};"))())); // TODO jQuery.parseJSON would be better but imposes unwanted restrictions on valid syntax
-				/*eslint-enable no-new-func */
+				var oParsedConfig;
+				try {
+					// first try to parse the config as a plain JSON
+					oParsedConfig = JSON.parse("{" + sConfig + "}");
+				} catch (e) {
+					// if the JSON.parse fails, we fall back to the more lenient "new Function" eval for compatibility reasons
+					log.error("JSON.parse on the data-sap-ui-config attribute failed. Please check the config for JSON syntax violations.");
+					/*eslint-disable no-new-func */
+					oParsedConfig = (new Function("return {" + sConfig + "};"))();
+					/*eslint-enable no-new-func */
+				}
+				extend(oCfg, normalize(oParsedConfig));
 			} catch (e) {
 				// no log yet, how to report this error?
 				log.error("failed to parse data-sap-ui-config attribute: " + (e.message || e));
