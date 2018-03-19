@@ -47,14 +47,14 @@ sap.ui.define([
 		 * Opens a <code>ColorPalette</code> in a <code>sap.m.ResponsivePopover</code>, where:
 		 *  - defaultColor is given
 		 *  - colors are given
-		 *  - "More Colors..." button is not visible
+		 *  - "Default Color" button is not visible
 		 * @param oEvent
 		 */
 		openCustomColorsSample: function (oEvent) {
 			if (!this.oColorPalettePopoverCustom) {
 				this.oColorPalettePopoverCustom = new ColorPalettePopover("oColorPalettePopoverCustom", {
 					defaultColor: "white",
-					showMoreColorsButton: false,
+					showDefaultColorButton: false,
 					colors: ["#292f36", "#4ecdc4", "#3a506b", "hsl(0,100%,71%)", "white", "lightcyan", "rgb(255,234,234)"],
 					colorSelect: this.handleColorSelect
 				});
@@ -66,13 +66,13 @@ sap.ui.define([
 		/**
 		 * Opens a <code>ColorPalette</code> in a responsive popover, where:
 		 *  - the minimum (2) colors are given
-		 *  - "Default Color" button is not visible
+		 *  - "More Colors.." button is not visible
 		 * @param oEvent
 		 */
 		openMinimalSampleWithDefaultColorButton: function (oEvent) {
 			if (!this.oColorPalettePopoverMinDefautButton) {
 				this.oColorPalettePopoverMinDefautButton = new ColorPalettePopover("oColorPalettePopoverMinDef", {
-					showDefaultColorButton: false,
+					showMoreColorsButton: false,
 					colors: ["red", "#ffff00"],
 					colorSelect: this.handleColorSelect
 				});
