@@ -308,10 +308,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.hasPendingChangesForPath = function (sPath) {
-		var oPromise = this.withCache(function (oCache, sCachePath) {
+		var that = this,
+			oPromise = this.withCache(function (oCache, sCachePath) {
 				return oCache.hasPendingChangesForPath(sCachePath);
 			}, sPath).catch(function (oError) {
-				jQuery.sap.log.error("Error in hasPendingChangesForPath", oError, sClassName);
+				that.oModel.reportError("Error in hasPendingChangesForPath", sClassName, oError);
 				return false;
 			});
 
@@ -477,10 +478,11 @@ sap.ui.define([
 	ODataBinding.prototype.resetChangesForPath = function (sPath) {
 		var oPromise = this.withCache(function (oCache, sCachePath) {
 				oCache.resetChangesForPath(sCachePath);
-			}, sPath);
+			}, sPath),
+			that = this;
 
 		oPromise.catch(function (oError) {
-			jQuery.sap.log.error("Error in resetChangesForPath", oError, sClassName);
+			that.oModel.reportError("Error in resetChangesForPath", sClassName, oError);
 		});
 		if (oPromise.isRejected()) {
 			throw oPromise.getResult();

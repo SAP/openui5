@@ -274,9 +274,11 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitBatch = function (sGroupId) {
+		var that = this;
+
 		return this.oRequestor.submitBatch(sGroupId)
 			["catch"](function (oError) {
-				jQuery.sap.log.error("$batch failed", oError.message, sClassName);
+				that.reportError("$batch failed", sClassName, oError.message);
 				throw oError;
 			});
 	};

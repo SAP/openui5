@@ -1758,7 +1758,7 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
 		this.mock(this.oModel).expects("reportError")
-			.withExactArgs("Error in deregisterChange", sClassName, oError);
+			.withExactArgs("Error in deregisterChange", sClassName, sinon.match.same(oError));
 
 		// code under test
 		oBinding.deregisterChange();

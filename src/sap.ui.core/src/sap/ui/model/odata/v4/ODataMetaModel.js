@@ -1252,11 +1252,6 @@ sap.ui.define([
 		var sResolvedPath = this.resolve(sPropertyPath, oContext),
 			that = this;
 
-		function error(sMessage) {
-			jQuery.sap.log.error(sMessage, sResolvedPath, sODataMetaModel);
-			throw new Error(sResolvedPath + ": " + sMessage);
-		}
-
 		// First fetch the complete metapath to ensure that everything is in mScope
 		// This also ensures that the metadata is valid
 		return this.fetchObject(this.getMetaPath(sResolvedPath)).then(function () {
@@ -1303,7 +1298,8 @@ sap.ui.define([
 			sEntitySetName = decodeURIComponent(stripPredicate(aEditUrl[0]));
 			oEntitySet = oEntityContainer[sEntitySetName];
 			if (!oEntitySet) {
-				error("Not an entity set: " + sEntitySetName);
+				logAndThrowError("Not an entity set: " + sEntitySetName, sResolvedPath,
+					sODataMetaModel);
 			}
 			oType = mScope[oEntitySet.$Type];
 			sPropertyPath = "";
@@ -1320,7 +1316,8 @@ sap.ui.define([
 					sNavigationPath = _Helper.buildPath(sNavigationPath, sPropertyName);
 					oProperty = oType[sPropertyName];
 					if (!oProperty) {
-						error("Not a (navigation) property: " + sPropertyName);
+						logAndThrowError("Not a (navigation) property: " + sPropertyName,
+							sResolvedPath, sODataMetaModel);
 					}
 					oType = mScope[oProperty.$Type];
 					if (oProperty.$kind === "NavigationProperty") {
@@ -1355,18 +1352,21 @@ sap.ui.define([
 				// calculate the key predicate asynchronously and append it to the prefix
 				return oContext.fetchValue(vSegment.path).then(function (oEntity) {
 					if (!oEntity) {
-						error("No instance to calculate key predicate at " + vSegment.path);
+						logAndThrowError("No instance to calculate key predicate at "
+							+ vSegment.path, sResolvedPath, sODataMetaModel);
 					}
 					if ("@$ui5._.transient" in oEntity) {
 						bTransient = true;
 						return undefined;
 					}
 					if (!oEntity["@$ui5._.predicate"]) {
-						error("No key predicate known at " + vSegment.path);
+						logAndThrowError("No key predicate known at " + vSegment.path,
+							sResolvedPath, sODataMetaModel);
 					}
 					return vSegment.prefix + oEntity["@$ui5._.predicate"];
 				}, function (oError) { // enrich the error message with the path
-					error(oError.message + " at " + vSegment.path);
+					logAndThrowError(oError.message + " at " + vSegment.path, sResolvedPath,
+						sODataMetaModel);
 				});
 			})).then(function (aFinalEditUrl) {
 				return {

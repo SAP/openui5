@@ -565,8 +565,8 @@ sap.ui.require([
 		this.mock(oModel.oRequestor).expects("submitBatch")
 			.withExactArgs("groupId")
 			.returns(Promise.reject(oExpectedError));
-		this.oLogMock.expects("error")
-			.withExactArgs("$batch failed", oExpectedError.message, sClassName);
+		this.mock(oModel).expects("reportError")
+			.withExactArgs("$batch failed", sClassName, oExpectedError.message);
 
 		// code under test
 		return oModel._submitBatch("groupId").then(function () {
