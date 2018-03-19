@@ -1300,34 +1300,22 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getRelativePath", function (assert) {
-		var oAbsoluteBinding = new ODataBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "/foo"
-			}),
-			oRelativeBinding = new ODataBinding({
+		var oBinding = new ODataBinding({
 				oContext : {},
 				oModel : {resolve : function () {}},
 				sPath : "bar",
 				bRelative : true
 			});
 
-		this.mock(oRelativeBinding.oModel).expects("resolve").exactly(5)
-			.withExactArgs("bar", sinon.match.same(oRelativeBinding.oContext)).returns("/foo/bar");
+		assert.strictEqual(oBinding.getRelativePath("baz"), "baz");
 
-		assert.strictEqual(oRelativeBinding.getRelativePath("baz"), "baz");
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo/bar/baz"), "baz");
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo/bar('baz')"), "('baz')");
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo"), undefined);
-		assert.strictEqual(oRelativeBinding.getRelativePath("/foo"), undefined);
-		assert.strictEqual(oRelativeBinding.getRelativePath("/wrong/foo/bar"), undefined,
-			"no error, binding must pass on to the parent binding for a better error message");
+		this.mock(oBinding.oModel).expects("resolve").exactly(4)
+			.withExactArgs("bar", sinon.match.same(oBinding.oContext)).returns("/foo/bar");
 
-		this.mock(oAbsoluteBinding.oModel).expects("resolve")
-			.withExactArgs("/foo", sinon.match.same(oAbsoluteBinding.oContext)).returns("/foo");
-		assert.throws(function () {
-			oAbsoluteBinding.getRelativePath("/wrong");
-		}, new Error("/wrong: invalid path, must start with /foo"));
+		assert.strictEqual(oBinding.getRelativePath("/foo/bar/baz"), "baz");
+		assert.strictEqual(oBinding.getRelativePath("/foo/bar('baz')"), "('baz')");
+		assert.strictEqual(oBinding.getRelativePath("/foo"), undefined);
+		assert.strictEqual(oBinding.getRelativePath("/wrong/foo/bar"), undefined);
 	});
 
 	//*********************************************************************************************
