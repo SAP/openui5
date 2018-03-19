@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>QUnit Page for sap.m.Tree</title>
+<title>QUnit Page for sap.m.Tree - odata</title>
 
 <script src="../shared-config.js"></script>
 <script id="sap-ui-bootstrap"
@@ -166,6 +166,52 @@ QUnit.test("collapse", function(assert) {
 
 		var aItems = that.oTree.getItems();
 		assert.equal(aItems.length, 3, "collapsing is done.");
+		done();
+};
+
+	that.oTree.attachUpdateFinished(fn1);
+
+});
+
+QUnit.test("expand/collapse multiple nodes", function(assert) {
+	var done= assert.async();
+
+	var that = this;
+	var fn1 = function() {
+		that.oTree.detachUpdateFinished(fn1);
+
+		that.oTree.attachUpdateFinished(fn2);
+
+		// trigger expand
+		that.oTree.expand([0,1]);
+	};
+
+	var fn2 = function() {
+		that.oTree.detachUpdateFinished(fn2);
+
+		// expand fires change event before data of children nodes is loaded
+		// to render the expand icon immediately and not wait for the data loaded
+		that.oTree.attachUpdateFinished(fn3);
+	};
+
+	var fn3 = function() {
+		// expanded
+		that.oTree.detachUpdateFinished(fn3);
+
+		var aItems = that.oTree.getItems();
+		assert.equal(aItems.length, 8, "expanding multiple nodes is done.");
+
+		that.oTree.attachUpdateFinished(fn4);
+
+		// trigger collapse
+		that.oTree.collapse([0,3]);
+	};
+
+	var fn4 = function() {
+		that.oTree.detachUpdateFinished(fn4);
+
+		var aItems = that.oTree.getItems();
+		assert.equal(aItems.length, 3, "collapsing multiple nodes is done.");
 		done();
 };
 

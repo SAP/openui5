@@ -2,11 +2,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.TreeInitialExpandState.Component", {
+	var Component = UIComponent.extend("sap.m.sample.TreedExpandTo.Component", {
 
 		metadata : {
 			rootView : {
-				"viewName": "sap.m.sample.TreeInitialExpandState.Page",
+				"viewName": "sap.m.sample.TreedExpandTo.Page",
 				"type": "XML",
 				"async": true
 			},

@@ -308,6 +308,64 @@ function(
 		return this;
 	};
 
+	/**
+	 *
+	 * Expands one item or multiple items.
+	 *
+	 * @return {sap.m.Tree} A reference to the Tree control
+	 * @public
+	 * @param {int|[int]} vParam The index or indices of the item to be expanded
+	 * @since 1.54.0
+	 */
+	Tree.prototype.expand = function(vParam) {
+		var aIndices = [];
+		if (typeof vParam === "number") {
+			aIndices.push(vParam);
+		} else if ( typeof vParam === "object") {
+			//sort
+			aIndices = vParam.sort().reverse();
+		}
+
+		var oBinding = this.getBinding("items"),
+			i = 0;
+
+		for (i = 0; i < aIndices.length - 1; i++) {
+			oBinding.expand(aIndices[i], true);
+		}
+		// trigger change
+		oBinding.expand(aIndices[i], false);
+
+		return this;
+	};
+
+	/**
+	 *
+	 * Collapses one item or multiple items.
+	 *
+	 * @return {sap.m.Tree} A reference to the Tree control
+	 * @public
+	 * @param {int|[int]} vParam The index or indices of the tree items to be collapsed
+	 * @since 1.54.0
+	 */
+	Tree.prototype.collapse = function(vParam) {
+		var aIndices = [];
+		if (typeof vParam === "number") {
+			aIndices.push(vParam);
+		} else if ( typeof vParam === "object") {
+			aIndices = vParam.sort().reverse();
+		}
+		var oBinding = this.getBinding("items"),
+			i = 0;
+
+		for (i = 0; i < aIndices.length - 1; i++) {
+			oBinding.collapse(aIndices[i], true);
+		}
+		// trigger change
+		oBinding.collapse(aIndices[i], false);
+
+		return this;
+	};
+
 	Tree.prototype.getAccessibilityType = function() {
 		return sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_TREE");
 	};
