@@ -65,13 +65,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global', 'sap/ui/ba
 			// Firefox throws a SecurityError or InvalidAccessError if "sheet.cssRules"
 			// is accessed on a stylesheet with 404 response code.
 			// Most browsers also throw when accessing from a different origin (CORS).
-
-			// Only rethrow if the error is different
-			if (e.name !== 'SecurityError' && e.name !== 'InvalidAccessError') {
-				throw e;
-			} else {
-				return null;
-			}
+			return null;
 		}
 	}
 	function hasSheetCssRules(sheet) {
