@@ -2580,7 +2580,6 @@ sap.ui.define([
 		}
 
 		if ( this._observer ) {
-			// TODO notify observer to cleanup bookkeeping?
 			this._observer.objectDestroyed(this);
 		}
 
