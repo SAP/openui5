@@ -4138,6 +4138,28 @@ sap.ui.require([
 		}],
 		sApply : "groupby((BillToParty,TransactionCurrency,UnitProperty,TextProperty)"
 			+ ",aggregate(GrossAmountInTransactionCurrency,NetAmountInTransactionCurrency))"
+	}, {
+		aColumns : [{
+			"grouped" : false,
+			"inResult" : true,
+			"name" : "BillToParty"
+		}, {
+			"as" : "GrossAmountSum",
+			"name" : "GrossAmount",
+			"total" : false,
+			"with" : "sum"
+		}, {
+			"as" : "NetAmountAggregate",
+			"name" : "NetAmount",
+			"total" : false
+		}, {
+			// spec requires "as", but we don't care
+			"name" : "Amount",
+			"total" : false,
+			"with" : "average"
+		}],
+		sApply : "groupby((BillToParty),aggregate(GrossAmount with sum as GrossAmountSum"
+			+ ",NetAmount as NetAmountAggregate,Amount with average))"
 	}].forEach(function (oFixture) {
 		QUnit.test("updateAnalyticalInfo with " + oFixture.sApply, function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES");
