@@ -67,6 +67,18 @@
         "type": "FIX",
         "text": " sap.m.Toolbar: Focus indication for active toolbars fixed",
         "references": []
+      },
+      {
+        "id": "9bf315bec3750ae9aaf349dc550a2addb73a8c41",
+        "type": "FIX",
+        "text": " sapContent_ContrastTextThreshold in sap_belize_plus 0.5",
+        "references": []
+      },
+      {
+        "id": "7d6a0dd4c77cd62d2b40ebd2f04293a2a0a9f4c2",
+        "type": "FIX",
+        "text": " uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
+        "references": []
       }
     ]
   }

@@ -37,6 +37,30 @@
         "type": "FIX",
         "text": " GridTable: Scrollbar styling in base theme",
         "references": []
+      },
+      {
+        "id": "d7107838933ef324c87a99d732fd4c092b99841a",
+        "type": "FIX",
+        "text": " GridTable: Fix up/down navigation with arrow keys",
+        "references": []
+      },
+      {
+        "id": "a7065e379c9302573cddce834def7e80de2b59ca",
+        "type": "FIX",
+        "text": " GridTable: Move before/after tab elements out of scrollable CCnt",
+        "references": []
+      },
+      {
+        "id": "618ab18a3b7170347c1653cfbe5022b395526730",
+        "type": "FIX",
+        "text": " Table: Removed setBusy handling for \"Auto\" row count mode",
+        "references": []
+      },
+      {
+        "id": "e2a80ae0ebf1d2551ba39ea0985cc9423fbd255d",
+        "type": "FIX",
+        "text": " Table: Scroll position stabilized",
+        "references": []
       }
     ]
   }

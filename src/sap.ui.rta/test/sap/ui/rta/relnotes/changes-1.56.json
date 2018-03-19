@@ -85,6 +85,12 @@
         "type": "FIX",
         "text": " sap.ui.rta: Delete the app variant from the layered repository if",
         "references": []
+      },
+      {
+        "id": "e5e8245c53e7fad45a373bef94354f49e5c2df9c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Add parentId to create container action",
+        "references": []
       }
     ]
   }

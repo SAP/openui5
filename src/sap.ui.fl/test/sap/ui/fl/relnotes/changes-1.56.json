@@ -37,6 +37,12 @@
         "type": "FIX",
         "text": " Add getPreparedChange to ctrl variant commands",
         "references": []
+      },
+      {
+        "id": "a1632670edb941c451dfb819e0dfcb1975008215",
+        "type": "FIX",
+        "text": " sap.ui.fl: Variant selection in URL should not change history",
+        "references": []
       }
     ]
   }
