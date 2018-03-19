@@ -273,6 +273,41 @@ sap.ui.define(['jquery.sap.global', './Event', './Object', './ObjectPool'],
 	};
 
 	/**
+	 * Checks whether the given event provider has the given listener registered for the given event.
+	 *
+	 * Returns true if function and listener object both match the corresponding parameters of
+	 * at least one listener registered for the named event.
+	 *
+	 * @param {sap.ui.base.EventProvider}
+	 *            oEventProvider The event provider to get the registered events for
+	 * @param {string}
+	 *            sEventId The identifier of the event to check listeners for
+	 * @param {function}
+	 *            fnFunction The handler function to check for
+	 * @param {object}
+	 *            [oListener] The listener object to check for
+	 * @return {boolean} Returns whether a listener with the same parameters exists
+	 * @private
+	 * @ui5-restricted sap.ui.base, sap.ui.core
+	 */
+	EventProvider.hasListener = function (oEventProvider, sEventId, fnFunction, oListener) {
+		jQuery.sap.assert(typeof (sEventId) === "string" && sEventId, "EventProvider.hasListener: sEventId must be a non-empty string" );
+		jQuery.sap.assert(typeof (fnFunction) === "function", "EventProvider.hasListener: fnFunction must be a function");
+		jQuery.sap.assert(!oListener || typeof (oListener) === "object", "EventProvider.hasListener: oListener must be empty or an object");
+
+		var aEventListeners = oEventProvider && oEventProvider.mEventRegistry[sEventId];
+		if ( aEventListeners ) {
+			for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
+				if (aEventListeners[i].fFunction === fnFunction && aEventListeners[i].oListener === oListener) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	};
+
+	/**
 	 * Returns the parent in the eventing hierarchy of this object.
 	 *
 	 * Per default this returns null, but if eventing is used in objects, which are hierarchically

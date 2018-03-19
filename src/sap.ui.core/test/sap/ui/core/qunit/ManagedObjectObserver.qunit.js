@@ -280,6 +280,8 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 
 		assert.equal(bDestroyed,true,"The object was destroyed");
 
+		assert.equal(false, oObserver.isObserved(this.obj),"The object is not observed anymore since it was destroyed");
+
 		oObserver.disconnect();
 	});
 
@@ -386,6 +388,9 @@ sap.ui.require(['sap/ui/base/ManagedObjectObserver', 'sap/ui/model/json/JSONMode
 
 		this.obj.setProperty("intValue", -1);
 		this.checkExpected("Set 'intValue' to '-1'. Observer called successfully");
+
+		this.obj.destroy();
+		assert.equal(false, oObserver.isObserved(this.obj),"The object is not observed anymore since it was destroyed");
 
 		oObserver.disconnect();
 	});
