@@ -2332,6 +2332,23 @@
 			assert.strictEqual(oWeekView.getIntervalsL(), 7, "Correct number (7) intervals for L screen sizes");
 		});
 
+		QUnit.test("'_onRowDeselectAppointment' behaves correctly when deselecting not existing appointments", function (assert) {
+			//prepare
+			var oSetPropertySpy;
+			this.sut.getRows()[0].getCalendarRow().aSelectedAppointments.push("dummy appointment");
+			oSetPropertySpy = this.spy(sap.ui.base.ManagedObject.prototype, "setProperty");
+
+			//act
+			this.sut._onRowDeselectAppointment();
+
+			//assert
+			assert.strictEqual(oSetPropertySpy.callCount, 0, "If the appointment does not exist, setProperty is not called");
+
+			//cleanup
+			oSetPropertySpy.restore();
+
+		});
+
 		QUnit.module("Interaction", {
 			beforeEach: function() {
 				var oSearchField = new sap.m.SearchField(),
