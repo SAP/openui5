@@ -715,6 +715,7 @@ var oData = [
 	var oLabel3 = new sap.m.Label({text:"*********************Tree*********************"});
 	var oTree = new sap.m.Tree({
 		headerText: "Data in Tree Structure",
+		'delete': deleteItem,
 		dragDropConfig: new sap.ui.core.dnd.DragDropInfo({
 			sourceAggregation: "items",
 			targetAggregation: "items",
@@ -736,6 +737,10 @@ var oData = [
 	oTree.bindItems("/", oStandardTreeItem);
 	//oTree.expandToLevel(3);
 	var oBinding = oTree.getBinding("items");
+
+	function deleteItem(oEvent) {
+		alert("delete event fired");
+	};
 
 	function onDragStart(oEvent) {
 		var oDragSession = oEvent.getParameter("dragSession");
