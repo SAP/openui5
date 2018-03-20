@@ -16,29 +16,23 @@
 			}
 		</style>
 
-		<script src="../shared-config.js"></script>
+		<script src="../../shared-config.js"></script>
 		<script>
-			document.write('\
-			<script \
-				id="sap-ui-bootstrap" \
-				data-sap-ui-noConflict="true" \
-				data-sap-ui-resourceroots=\'{"rta.performance": "./"}\'\
-				data-sap-ui-libs="sap.m, sap.ui.layout, sap.ui.fl, sap.ui.rta" \
-				src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
-			><' + '/script>'
-			);
+			window['sap-ui-config'].noConflict = 'true';
+			window['sap-ui-config'].libs = 'sap.ui.fl, sap.m, sap.ui.layout';
+			window['sap-ui-config'].resourceroots = { "fl.performance": "./" };
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 
 		<script>
 			sap.ui.require([
-				'sap/ui/rta/RuntimeAuthoring',
 				'sap/ui/core/mvc/JSView',
 				"sap/ui/core/ComponentContainer",
 				'sap/ui/layout/VerticalLayout',
 				'sap/ui/layout/HorizontalLayout',
 				'sap/m/Label'
 			],
-			function(RuntimeAuthoring, JSView, ComponentContainer, VerticalLayout, HorizontalLayout, Label) {
+			function(JSView, ComponentContainer, VerticalLayout, HorizontalLayout, Label) {
 
 				jQuery.sap.measure.setActive(true);
 

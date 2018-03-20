@@ -22,7 +22,7 @@ sap.ui.define([
 
 	"use strict";
 
-	return UIComponent.extend("rta.performance.flexApplyChanges.Component", {
+	return UIComponent.extend("fl.performance.flexApplyChanges.Component", {
 
 		metadata: {
 			manifest: "json"
@@ -43,7 +43,7 @@ sap.ui.define([
 		_createFakeLrep: function () {
 			var mAppManifest = this.getManifestEntry("sap.app");
 			var mSettings = {};
-			mSettings.sInitialComponentJsonPath = jQuery.sap.getModulePath("sap.ui.rta.internal.performance.flexData").replace('resources', 'test-resources') + "/FakeLrepMassiveChanges.json";
+			mSettings.sInitialComponentJsonPath = jQuery.sap.getModulePath("sap.ui.fl.internal.performance.flexData").replace('resources', 'test-resources') + "/FakeLrepMassiveChanges.json";
 			FakeLrepConnectorLocalStorage.enableFakeConnector(
 				mSettings,
 				mAppManifest.id + '.Component',

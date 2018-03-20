@@ -2,7 +2,7 @@
 	"_version": "1.1.0",
 
 	"sap.app" : {
-		"id" : "rta.performance",
+		"id" : "fl.performance",
 		"type": "application",
 		"title": "Flex - ApplyChanges",
 		"description": "mass applyChanges test",
@@ -30,7 +30,6 @@
 				"sap.ui.core": {},
 				"sap.m": {},
 				"sap.ui.dt": {},
-				"sap.ui.rta": {},
 				"sap.ui.fl": {}
 			}
 		}
