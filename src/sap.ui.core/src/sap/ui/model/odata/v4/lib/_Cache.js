@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.model.odata.v4.lib.Cache
+//Provides class sap.ui.model.odata.v4.lib._Cache
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",

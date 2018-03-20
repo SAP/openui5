@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.model.odata.v4.lib.Requestor
+//Provides class sap.ui.model.odata.v4.lib._Requestor
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
