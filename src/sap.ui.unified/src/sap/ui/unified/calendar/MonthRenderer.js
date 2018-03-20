@@ -370,7 +370,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 		//oDay is an internal date object so each and every field should be obtained via its corresponding <UTC> getter.
 		//oMonth.getDate() is a public date object, so it is always considered local timezones.
-		if (oMonth.getParent() && oMonth.getParent().getMetadata().getName() === "CalendarOneMonthInterval" && oDay.getUTCMonth() !== oMonth.getStartDate().getMonth()){
+		if (oMonth.getParent() && oMonth.getParent().getMetadata().getName() === "sap.ui.unified.CalendarOneMonthInterval" && oDay.getUTCMonth() !== oMonth.getStartDate().getMonth()){
 			oRm.addClass("sapUiCalItemOtherMonth");
 		}
 

@@ -126,10 +126,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 			oOneMonthDatesRow.setDate(oLocalFocusDate);//really focus the given date
 			oOneMonthDatesRow._bNoRangeCheck = false;
 
-			//we need this to notify the planning calendar to update its rows
-			if (this.getSelectedDates().length) {//renders the appointments for the selected date, not focused one
-				this._setRowsStartDate(this.getSelectedDates()[0].getStartDate());
-			}
+			/* Planning Calendar is already notified about startDateChange event, so no need to manually update its
+			 row's startDate like we previously did  */
 
 			this._oFocusDateOneMonth = null;
 
