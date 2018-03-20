@@ -929,7 +929,6 @@ function(
 			var bSliderFocused = jQuery.contains(this.getDomRef(), oEvent.relatedTarget),
 				bTooltipFocused = jQuery.contains(this.getAggregation("_tooltipContainer").getDomRef(), oEvent.relatedTarget);
 
-
 			if (bSliderFocused || bTooltipFocused) {
 				return;
 			}
@@ -1007,11 +1006,6 @@ function(
 			var fValue,
 				fNewValue;
 
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
-
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
 
@@ -1038,14 +1032,14 @@ function(
 		 */
 		Slider.prototype.onsapincreasemodifiers = function(oEvent) {
 
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this || oEvent.altKey) {
+			if (oEvent.altKey) {
 				return;
 			}
 
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
+
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1061,11 +1055,6 @@ function(
 		Slider.prototype.onsapdecrease = function(oEvent) {
 			var fValue,
 				fNewValue;
-
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
 
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
@@ -1093,14 +1082,14 @@ function(
 		 */
 		Slider.prototype.onsapdecreasemodifiers = function(oEvent) {
 
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this || oEvent.altKey) {
+			if (oEvent.altKey) {
 				return;
 			}
 
 			// note: prevent document scrolling when arrow keys are pressed
 			oEvent.preventDefault();
 			oEvent.stopPropagation();
+
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1117,11 +1106,6 @@ function(
 		Slider.prototype.onsapplus = function(oEvent) {
 			var fValue,
 				fNewValue;
-
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -1148,11 +1132,6 @@ function(
 		Slider.prototype.onsapminus = function(oEvent) {
 			var fValue,
 				fNewValue;
-
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
@@ -1204,11 +1183,6 @@ function(
 		 */
 		Slider.prototype.onsaphome = function(oEvent) {
 
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
-
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
 
@@ -1231,11 +1205,6 @@ function(
 		 * @param {jQuery.Event} oEvent The event object.
 		 */
 		Slider.prototype.onsapend = function(oEvent) {
-
-			// process the event if the target is not a composite control e.g.: a tooltip
-			if (oEvent.srcControl !== this) {
-				return;
-			}
 
 			// mark the event for components that needs to know if the event was handled
 			oEvent.setMarked();
