@@ -2504,11 +2504,16 @@ sap.ui.define([
 	 */
 	PlanningCalendar.prototype._onRowDeselectAppointment = function() {
 		var rows = this.getRows();
+
 		for (var i = 0; i < rows.length; i++) {
 			var aApps = rows[i].getCalendarRow().aSelectedAppointments;
 			for (var j = 0; j < aApps.length; j++) {
-				sap.ui.getCore().byId(aApps[j]).setProperty("selected", false, true);
-				sap.ui.getCore().byId(aApps[j]).$().removeClass("sapUiCalendarAppSel");
+				var oApp = sap.ui.getCore().byId(aApps[j]);
+				if (oApp) {
+					oApp.setProperty("selected", false, true);
+					oApp.$().removeClass("sapUiCalendarAppSel");
+				}
+
 			}
 			rows[i].getCalendarRow().aSelectedAppointments = [];
 		}
