@@ -23,7 +23,7 @@
 		// prevent QUnit from starting
 		QUnit.config.autostart = false;
 
-		sap.ui.require(['sap/base/log'], function(log) {
+		sap.ui.require(['sap/base/Log'], function(Log) {
 
 			QUnit.start();
 
@@ -345,7 +345,7 @@
 			QUnit.test('Passing a NavigationListItem for selectedItem', function(assert) {
 				// arrange
 				var result;
-				var logSpy = sinon.spy(log, 'warning');
+				var logSpy = sinon.spy(Log, 'warning');
 				var listItem = this.navigationList.getItems()[2];
 
 				// act
@@ -358,13 +358,13 @@
 				assert.strictEqual(this.navigationList, result, 'The setSelectedItem should return this pointer');
 
 				// clean
-				log.warning.restore();
+				Log.warning.restore();
 			});
 
 			QUnit.test('Passing a NavigationListItem\'s ID for selectedItem', function(assert) {
 				// arrange
 				var result;
-				var logSpy = sinon.spy(log, 'warning');
+				var logSpy = sinon.spy(Log, 'warning');
 				var listItem = this.navigationList.getItems()[2].getId();
 
 				// act
@@ -377,7 +377,7 @@
 				assert.strictEqual(this.navigationList, result, 'The setSelectedItem should return this pointer');
 
 				// clean
-				log.warning.restore();
+				Log.warning.restore();
 			});
 
 			QUnit.test('Passing a null should deselect the selected item', function(assert) {
@@ -407,7 +407,7 @@
 			QUnit.test('Passing an unexpected parameter type should trigger a warning', function(assert) {
 				// arrange
 				var result;
-				var logSpy = sinon.spy(log, 'warning');
+				var logSpy = sinon.spy(Log, 'warning');
 
 				// act
 				result = this.navigationList.setSelectedItem(1234);
@@ -418,13 +418,13 @@
 				assert.strictEqual(logSpy.callCount, 1, 'A warning should be raised');
 
 				// clean
-				log.warning.restore();
+				Log.warning.restore();
 			});
 
 			QUnit.test('Passing an unexpected parameter type should trigger a warning', function(assert) {
 				// arrange
 				var result;
-				var logSpy = sinon.spy(log, 'warning');
+				var logSpy = sinon.spy(Log, 'warning');
 
 				// act
 				result = this.navigationList.setSelectedItem(new sap.m.Text());
@@ -435,7 +435,7 @@
 				assert.strictEqual(logSpy.callCount, 1, 'A warning should be raised');
 
 				// clean
-				log.warning.restore();
+				Log.warning.restore();
 			});
 
 
