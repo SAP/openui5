@@ -115,6 +115,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './library', 'sap/u
 			 */
 			resizable: {type: "boolean", group: "Dimension", defaultValue: false}
 		},
+		defaultAggregation: "content",
 		aggregations : {
 
 			/**
