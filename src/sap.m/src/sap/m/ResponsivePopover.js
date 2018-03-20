@@ -144,6 +144,7 @@ sap.ui.define([
 			 */
 			resizable: {type: "boolean", group: "Dimension", defaultValue: false}
 		},
+		defaultAggregation: "content",
 		aggregations : {
 
 			/**
