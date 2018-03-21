@@ -48,7 +48,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 				"displayName": "henry",
 				"unitPattern-count-one": "{0} H",
 				"unitPattern-count-other": "{0} H",
-				"perUnitPattern": "{0}/H"
+				"perUnitPattern": "{0}/H",
+				"decimals": 2,
+				"precision": 4
 			}}
 	 * @param {array} [oFormatOptions.allowedUnits] defines the allowed units for formatting and parsing, e.g. ["size-meter", "volume-liter", ...]
 	 * @param {string} [oFormatOptions.plusSign] defines the used plus symbol
@@ -636,12 +638,29 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			aPatternParts,
 			oShortFormat,
 			nShortRefNumber,
-			sPluralCategory;
+			sPluralCategory,
+			mUnitPatterns,
+			sLookupMeasure;
 
 		if (vValue === oOptions.emptyString || (isNaN(vValue) && isNaN(oOptions.emptyString))) {
 			// if the value equals the 'emptyString' format option, return empty string.
 			// the NaN case has to be checked by using isNaN because NaN !== NaN
 			return "";
+		}
+
+		// Recognize the correct unit definition (either custom unit or CLDR unit)
+		if (oOptions.type === mNumberType.UNIT) {
+			if (oOptions.customUnits && typeof oOptions.customUnits === "object") {
+				//custom units are exclusive (no fallback to LocaleData)
+				mUnitPatterns = oOptions.customUnits[sMeasure];
+			} else {
+				//check if there is a unit mapping for the given unit
+				sLookupMeasure = this.oLocaleData.getUnitFromMapping(sMeasure) || sMeasure;
+				mUnitPatterns = this.oLocaleData.getUnitFormat(sLookupMeasure);
+			}
+
+			oOptions.decimals = (mUnitPatterns && (typeof mUnitPatterns.decimals === "number" && mUnitPatterns.decimals >= 0)) ? mUnitPatterns.decimals : oOptions.decimals;
+			oOptions.precision = (mUnitPatterns && (typeof mUnitPatterns.precision === "number" && mUnitPatterns.precision >= 0)) ? mUnitPatterns.precision : oOptions.precision;
 		}
 
 		if (oOptions.decimals !== undefined) {
@@ -844,16 +863,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/core/Locale', 
 			if (!bUnitTypeAllowed) {
 				jQuery.sap.assert(bUnitTypeAllowed, "The given unit '" + sMeasure + "' is not part of the allowed unit types: [" + oOptions.allowedUnits.join(",") + "].");
 				return "";
-			}
-
-			var mUnitPatterns, sLookupMeasure;
-			if (oOptions.customUnits && typeof oOptions.customUnits === "object") {
-				//custom units are exclusive (no fallback to LocaleData)
-				mUnitPatterns = oOptions.customUnits[sMeasure];
-			} else {
-				//check if there is a unit mapping for the given unit
-				sLookupMeasure = this.oLocaleData.getUnitFromMapping(sMeasure) || sMeasure;
-				mUnitPatterns = this.oLocaleData.getUnitFormat(sLookupMeasure);
 			}
 
 			if (mUnitPatterns) {
