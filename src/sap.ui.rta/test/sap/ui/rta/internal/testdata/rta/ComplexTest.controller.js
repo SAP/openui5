@@ -76,8 +76,10 @@
 							var oSmartFilterModel = new sap.ui.model.odata.ODataModel("/foo", true);
 							oSmartFilterModel.setCountSupported(false);
 							var oSmartFilterLayout = this.byId("smartFilterLayout");
-							oSmartFilterLayout.unbindElement();
-							oSmartFilterLayout.setModel(oSmartFilterModel);
+							if (oSmartFilterLayout) {
+								oSmartFilterLayout.unbindElement();
+								oSmartFilterLayout.setModel(oSmartFilterModel);
+							}
 						}
 					} else {
 						jQuery.sap.log.error("Running the app with mock data for " + property);
