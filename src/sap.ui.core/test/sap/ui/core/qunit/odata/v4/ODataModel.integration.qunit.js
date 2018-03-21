@@ -3865,8 +3865,99 @@ sap.ui.require([
 		});
 	});
 	//TODO support also "version 2.0 JSON representation of a property"?
-	//TODO support "version 2.0 JSON representation of a collection of EDMSimpleType values"!
 
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET" ReturnType="Collection(Edm.DateTime)"> in V2
+	// Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	QUnit.test("V2 Adapter: FunctionImport returns Collection(Edm.DateTime)", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			that = this;
+
+		// code under test
+		return this.createView(assert, '', oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/__FAKE__GetAllFlightDates(...)");
+
+			that.expectRequest("__FAKE__GetAllFlightDates", {
+				"d" : { // Note: DataServiceVersion : 2.0
+					"results" : [
+						"/Date(1502323200000)/",
+						"/Date(1502323201000)/",
+						"/Date(1502323202000)/"
+					]
+				}
+			});
+
+			oContextBinding.execute();
+
+			return that.waitForChanges(assert).then(function () {
+				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
+					aContexts = oListBinding.getContexts(0, Infinity);
+
+				aContexts.forEach(function (oContext, i) {
+					// Note: This just illustrates the status quo. It is not meant to say this must
+					// be kept stable.
+					assert.strictEqual(oContext.getPath(),
+						"/__FAKE__GetAllFlightDates(...)/value/" + i);
+					assert.strictEqual(oContext.getProperty(""), "2017-08-10T00:00:0" + i + "Z");
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET" ReturnType="Collection(FlightDetails)"> in V2
+	// Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	QUnit.test("V2 Adapter: FunctionImport returns Collection(ComplexType)", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			that = this;
+
+		// code under test
+		return this.createView(assert, '', oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/__FAKE__GetFlightDetailsByCarrier(...)");
+
+			that.expectRequest("__FAKE__GetFlightDetailsByCarrier?carrid='AA'", {
+				"d" : { // Note: DataServiceVersion : 2.0
+					"results" : [{
+						"__metadata" : { // just like result of GetFlightDetails
+							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+						},
+						"arrivalTime" : "PT14H00M00S",
+						"departureTime" : "PT11H00M00S"
+					}, {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+						},
+						"arrivalTime" : "PT14H00M01S",
+						"departureTime" : "PT11H00M01S"
+					}, {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+						},
+						"arrivalTime" : "PT14H00M02S",
+						"departureTime" : "PT11H00M02S"
+					}]
+				}
+			});
+
+			oContextBinding.setParameter("carrid", "AA").execute();
+
+			return that.waitForChanges(assert).then(function () {
+				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
+					aContexts = oListBinding.getContexts(0, Infinity);
+
+				aContexts.forEach(function (oContext, i) {
+					// Note: This just illustrates the status quo. It is not meant to say this must
+					// be kept stable.
+					assert.strictEqual(oContext.getPath(),
+						"/__FAKE__GetFlightDetailsByCarrier(...)/value/" + i);
+					assert.strictEqual(oContext.getProperty("arrivalTime"), "14:00:0" + i);
+					assert.strictEqual(oContext.getProperty("departureTime"), "11:00:0" + i);
+				});
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="GET" sap:action-for="..."> in V2 Adapter

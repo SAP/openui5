@@ -209,31 +209,31 @@ sap.ui.define([
 	/**
 	 * Recursively calculates the key predicates for all entities in the result.
 	 *
-	 * @param {object} oRootInstance A single top-level instance
+	 * @param {*} vRootInstance A single top-level instance (or even a simple value)
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
 	 *
 	 * @private
 	 */
-	Cache.prototype.calculateKeyPredicates = function (oRootInstance, mTypeForMetaPath) {
+	Cache.prototype.calculateKeyPredicates = function (vRootInstance, mTypeForMetaPath) {
 
 		/**
 		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
 		 * from predicate to entity.
 		 *
-		 * @param {object[]} aInstances The collection
+		 * @param {*[]} aInstances The collection
 		 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
 		 */
 		function visitArray(aInstances, sMetaPath) {
-			var i, oInstance, sPredicate;
+			var i, vInstance, sPredicate;
 
 			aInstances.$byPredicate = {};
 			for (i = 0; i < aInstances.length; i++) {
-				oInstance = aInstances[i];
-				visitInstance(oInstance, sMetaPath);
-				sPredicate = oInstance["@$ui5._.predicate"];
+				vInstance = aInstances[i];
+				visitInstance(vInstance, sMetaPath);
+				sPredicate = vInstance["@$ui5._.predicate"];
 				if (sPredicate) {
-					aInstances.$byPredicate[sPredicate] = oInstance;
+					aInstances.$byPredicate[sPredicate] = vInstance;
 				}
 			}
 		}
@@ -241,19 +241,23 @@ sap.ui.define([
 		/**
 		 * Adds a predicate to the given instance if it is an entity.
 		 *
-		 * @param {object} oInstance The instance
+		 * @param {*} vInstance The instance
 		 * @param {string} sMetaPath The meta path of the instance in mTypeForMetaPath
 		 */
-		function visitInstance(oInstance, sMetaPath) {
+		function visitInstance(vInstance, sMetaPath) {
 			var oType = mTypeForMetaPath[sMetaPath];
 
-			if (oType && oType.$Key) {
-				oInstance["@$ui5._.predicate"] =
-					_Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath);
+			if (typeof vInstance !== "object") {
+				return;
 			}
 
-			Object.keys(oInstance).forEach(function (sProperty) {
-				var vPropertyValue = oInstance[sProperty],
+			if (oType && oType.$Key) {
+				vInstance["@$ui5._.predicate"] =
+					_Helper.getKeyPredicate(vInstance, sMetaPath, mTypeForMetaPath);
+			}
+
+			Object.keys(vInstance).forEach(function (sProperty) {
+				var vPropertyValue = vInstance[sProperty],
 					sPropertyPath = sMetaPath + "/" + sProperty;
 
 				if (Array.isArray(vPropertyValue)) {
@@ -264,7 +268,7 @@ sap.ui.define([
 			});
 		}
 
-		visitInstance(oRootInstance, this.sMetaPath);
+		visitInstance(vRootInstance, this.sMetaPath);
 	};
 
 	/**
