@@ -109,16 +109,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Opens a lightbox when clicking on the picture
-		 * @param {sap.ui.base.Event} oEvent the press event of the image
-		 */
-		onPicturePress: function (oEvent) {
-			var sPath = "view>" + oEvent.getSource().getBindingContext("view").getPath() + "/Product";
-			this.byId("lightBox").bindElement({path: sPath});
-			this.byId("lightBox").open();
-		},
-
-		/**
 		 * Event handler to determine which button was clicked
 		 * @param {sap.ui.base.Event} oEvent the button press event
 		 */
