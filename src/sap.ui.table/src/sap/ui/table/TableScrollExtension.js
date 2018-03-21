@@ -465,29 +465,38 @@ sap.ui.define([
 		},
 
 		onfocusin: function(oEvent) {
-			var $ctrlScr;
-			var $FocusedDomRef = jQuery(oEvent.target);
-			if ($FocusedDomRef.parent('.sapUiTableTr').length > 0) {
-				$ctrlScr = jQuery(this.getDomRef("sapUiTableCtrlScr"));
-			} else if ($FocusedDomRef.parent('.sapUiTableColHdr').length > 0) {
-				$ctrlScr = jQuery(this.getDomRef("sapUiTableColHdrScr"));
+			// Many browsers do not scroll the focused element into the viewport if it is partially visible. With this logic we ensure that the
+			// focused cell always gets scrolled into the viewport. If the cell is wider than the row container, no action is performed.
+			var oRowContainer;
+			var oCellInfo = TableUtils.getCellInfo(oEvent.target);
+			var iColumnIndex;
+
+			if (oCellInfo === null) {
+				return;
 			}
 
-			// Firefox and Chrome do not always scroll the focused element into the viewport if it is partially visible.
-			// With this logic we ensure that the focused element always gets scrolled into the viewport in a similar way.
-			if ((Device.browser.firefox || Device.browser.chrome) && $ctrlScr && $ctrlScr.length > 0) {
-				var iCtrlScrScrollLeft = $ctrlScr.scrollLeft();
-				var iCtrlScrWidth = $ctrlScr.width();
-				var iCellLeft = $FocusedDomRef.position().left;
-				var iCellRight = iCellLeft + $FocusedDomRef.width();
-				var iOffsetLeft = iCellLeft - iCtrlScrScrollLeft;
-				var iOffsetRight = iCellRight - iCtrlScrWidth - iCtrlScrScrollLeft;
+			if (oCellInfo.type === TableUtils.CELLTYPES.DATACELL) {
+				oRowContainer = this.getDomRef("sapUiTableCtrlScr");
+				iColumnIndex = TableUtils.getDataCellInfo(this, oCellInfo.cell).columnIndex;
+			} else if (oCellInfo.type === TableUtils.CELLTYPES.COLUMNHEADER) {
+				oRowContainer = this.getDomRef("sapUiTableColHdrScr");
+				iColumnIndex = TableUtils.getColumnHeaderCellInfo(oCellInfo.cell).index;
+			}
 
-				var oHsb = this._getScrollExtension().getHorizontalScrollbar();
-				if (iOffsetRight > 0) {
-					oHsb.scrollLeft = oHsb.scrollLeft + iOffsetRight + 1;
-				} else if (iOffsetLeft < 0) {
-					oHsb.scrollLeft = oHsb.scrollLeft + iOffsetLeft - 1;
+			if (oRowContainer != null && iColumnIndex >= this.getFixedColumnCount()) {
+				var oCell = oCellInfo.cell[0];
+				var iScrollLeft = oRowContainer.scrollLeft;
+				var iRowContainerWidth = oRowContainer.clientWidth;
+				var iCellLeft = oCell.offsetLeft;
+				var iCellRight = iCellLeft + oCell.offsetWidth;
+				var iOffsetLeft = iCellLeft - iScrollLeft;
+				var iOffsetRight = iCellRight - iRowContainerWidth - iScrollLeft;
+				var oHSb = this._getScrollExtension().getHorizontalScrollbar();
+
+				if (iOffsetLeft < 0 && iOffsetRight < 0) {
+					oHSb.scrollLeft = iScrollLeft + iOffsetLeft;
+				} else if (iOffsetRight > 0 && iOffsetLeft > 0) {
+					oHSb.scrollLeft = iScrollLeft + iOffsetRight;
 				}
 			}
 		}
@@ -579,7 +588,8 @@ sap.ui.define([
 		 * Scrolls the data in the table forward or backward by setting the property <code>firstVisibleRow</code>.
 		 *
 		 * @param {boolean} [bDown=false] Whether to scroll down or up.
-		 * @param {boolean} [bPage=false] If <code>true</code>, the amount of visible scrollable rows (a page) is scrolled, otherwise a single row is scrolled.
+		 * @param {boolean} [bPage=false] If <code>true</code>, the amount of visible scrollable rows (a page) is scrolled, otherwise a single row is
+		 *     scrolled.
 		 * @param {boolean} [bIsKeyboardScroll=false] Indicates whether scrolling is initiated by a keyboard action.
 		 * @return {boolean} Returns <code>true</code>, if scrolling was actually performed.
 		 * @private

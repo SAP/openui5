@@ -539,6 +539,113 @@ QUnit.asyncTest("Imitating touch", function(assert) {
 	});
 });
 
+QUnit.test("On focus", function(assert) {
+	var oHSb, oRowContainer;
+	var done = assert.async();
+
+	function getHeaderCellDomRef(iColumnIndex) {
+		return oTable.getColumns()[iColumnIndex].getDomRef();
+	}
+
+	function getDataCellDomRef(iColumnIndex, iRowIndex) {
+		return sap.ui.table.TableUtils.getCell(oTable, getCellContentDomRef(iColumnIndex, iRowIndex))[0];
+	}
+
+	function getCellContentDomRef(iColumnIndex, iRowIndex) {
+		return oTable.getRows()[iRowIndex].getCells()[iColumnIndex].getDomRef();
+	}
+
+	function isScrolledIntoView(oCell) {
+		var iScrollLeft = oRowContainer.scrollLeft;
+		var iRowContainerWidth = oRowContainer.clientWidth;
+		var iCellLeft = oCell.offsetLeft;
+		var iCellRight = iCellLeft + oCell.offsetWidth;
+		var iOffsetLeft = iCellLeft - iScrollLeft;
+		var iOffsetRight = iCellRight - iRowContainerWidth - iScrollLeft;
+
+		return iOffsetLeft >= 0 && iOffsetRight <= 0;
+	}
+
+	function test(sTestTitle, oDomElementToFocus, iInitialScrollLeft, bScrollPositionShouldNotChange) {
+		return new Promise(function(resolve) {
+			document.body.focus();
+			oHSb.scrollLeft = iInitialScrollLeft;
+
+			window.setTimeout(function() {
+				oDomElementToFocus.focus();
+
+				window.setTimeout(function() {
+					if (bScrollPositionShouldNotChange) {
+						assert.strictEqual(oHSb.scrollLeft, iInitialScrollLeft,
+							sTestTitle + ": The horizontal scroll position should not change");
+					} else {
+						assert.notStrictEqual(oHSb.scrollLeft, iInitialScrollLeft,
+							sTestTitle + ": The horizontal scroll position should have changed");
+						assert.ok(isScrolledIntoView(oDomElementToFocus),
+							sTestTitle + ": The focused cell should be fully visible");
+					}
+					resolve();
+				}, 50);
+			}, 50);
+		});
+	}
+
+	document.getElementById("content").style.width = "1000px";
+	oTable.getColumns()[1].setWidth("800px");
+	oTable.getColumns()[2].setWidth("100px");
+	oTable.getColumns()[3].setWidth("800px");
+	oTable.getColumns()[4].setWidth("100px");
+	sap.ui.getCore().applyChanges();
+	oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+	oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
+
+	test("Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 0).then(function() {
+		return test("Focus header cell in column 1 (fixed column)", getHeaderCellDomRef(0), 70, true);
+	}).then(function() {
+		return test("Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 70);
+	}).then(function() {
+		return test("Focus header cell in column 3 (scrollable column)", getHeaderCellDomRef(2), 850);
+	}).then(function() {
+		return test("Focus header cell in column 4 (scrollable column)", getHeaderCellDomRef(3), 200);
+	}).then(function() {
+		return test("Focus data cell in column 3, row 1 (scrollable column)", getDataCellDomRef(2, 0), 0);
+	}).then(function() {
+		return test("Focus data cell in column 1, row 1 (fixed column)", getDataCellDomRef(0, 0), 70, true);
+	}).then(function() {
+		return test("Focus data cell in column 2, row 1 (scrollable column)", getDataCellDomRef(1, 0), 70);
+	}).then(function() {
+		return test("Focus data cell in column 3, row 1 (scrollable column)", getDataCellDomRef(2, 0), 850);
+	}).then(function() {
+		return test("Focus data cell in column 4, row 1 (scrollable column)", getDataCellDomRef(3, 0), 200);
+	}).then(function() {
+		oTable.getColumns()[1].setWidth("1000px");
+		oTable.getColumns()[2].setWidth("100px");
+		oTable.getColumns()[3].setWidth("1000px");
+		oTable.getColumns()[4].setWidth("100px");
+		sap.ui.getCore().applyChanges();
+		oHSb = oTable._getScrollExtension().getHorizontalScrollbar();
+		oRowContainer = oTable.getDomRef("sapUiTableCtrlScr");
+		if (Device.browser.msie) {
+			// The following tests do not make sense in IE. IE scrolls when a cell that is wider than the row container is focused.
+			return Promise.reject();
+		} else {
+			return Promise.resolve();
+		}
+	}).then(function() {
+		return test("Focus header cell in column 2 (scrollable column)", getHeaderCellDomRef(1), 50, true);
+	}).then(function() {
+		return test("Focus header cell in column 4 (scrollable column)", getHeaderCellDomRef(3), 1150, true);
+	}).then(function() {
+		return test("Focus data cell in column 2, row 1 (scrollable column)", getDataCellDomRef(1, 0), 50, true);
+	}).then(function() {
+		return test("Focus data cell in column 2, row 2 (scrollable column)", getDataCellDomRef(1, 1), 50, true);
+	}).then(function() {
+		return test("Focus data cell in column 4, row 1 (scrollable column)", getDataCellDomRef(3, 0), 1150, true);
+	}).then(function() {
+		return test("Focus data cell in column 4, row 2 (scrollable column)", getDataCellDomRef(3, 1), 1150, true);
+	}).then(done).catch(done);
+});
+
 QUnit.module("Public methods", {
 	beforeEach: function() {
 		this.sOriginalWidth = document.getElementById("content").style.width;
