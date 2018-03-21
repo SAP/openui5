@@ -43,7 +43,7 @@ sap.ui.define([
 		 */
 		_manageClickEvent : function (vEventOrElement) {
 			var oOverlay = vEventOrElement.getSource ? vEventOrElement.getSource() : vEventOrElement;
-			if (oOverlay.isSelected() && this.isRenameAvailable(oOverlay)) {
+			if (oOverlay.isSelected() && this.isRenameAvailable(oOverlay) && this.isRenameEnabled(oOverlay)) {
 				oOverlay.attachBrowserEvent("click", RenameHandler._onClick, this);
 			} else {
 				oOverlay.detachBrowserEvent("click", RenameHandler._onClick, this);
