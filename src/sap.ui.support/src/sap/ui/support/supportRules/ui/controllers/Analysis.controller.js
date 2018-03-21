@@ -19,13 +19,16 @@ sap.ui.define([
 	"sap/ui/support/supportRules/WindowCommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/ui/models/SharedModel",
-	"sap/ui/support/supportRules/ui/models/SelectionUtils",
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/RuleSet",
-	"sap/ui/support/supportRules/Storage"
+	"sap/ui/support/supportRules/Storage",
+	"sap/ui/support/supportRules/ui/models/SelectionUtils",
+	"sap/m/Dialog",
+	"sap/ui/unified/FileUploader"
 ], function ($, BaseController, JSONModel, Panel, List, ListItemBase, StandardListItem, InputListItem, Button, Toolbar, ToolbarSpacer,
-	Label, MessageToast, CommunicationBus, channelNames, SharedModel, SelectionUtils, RuleSerializer, constants, Ruleset, storage) {
+             Label, MessageToast, CommunicationBus, channelNames, SharedModel, RuleSerializer, constants, Ruleset, storage,
+						 SelectionUtils, Dialog, FileUploader) {
 	"use strict";
 
 
@@ -34,22 +37,22 @@ sap.ui.define([
 			this.model = SharedModel;
 			this.setCommunicationSubscriptions();
 
-			this.tempRulesLoaded = false;
+					this.tempRulesLoaded = false;
 
 			this.getView().setModel(this.model);
 			this.treeTable = SelectionUtils.treeTable = this.byId("ruleList");
 			this.ruleSetView = this.byId("ruleSetsView");
 			this.rulesViewContainer = this.byId("rulesNavContainer");
 
-			this.bAdditionalViewLoaded = false;
-			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
-				if (!this.bAdditionalViewLoaded) {
-					CommunicationBus.publish(channelNames.RESIZE_FRAME, { bigger: true });
+					this.bAdditionalViewLoaded = false;
+					CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, function () {
+						if (!this.bAdditionalViewLoaded) {
+							CommunicationBus.publish(channelNames.RESIZE_FRAME, { bigger: true });
 
-					this.bAdditionalViewLoaded = true;
-					this.loadAdditionalUI();
+							this.bAdditionalViewLoaded = true;
+							this.loadAdditionalUI();
 
-				}
+						}
 			}, this);
 
 		},
@@ -144,6 +147,7 @@ sap.ui.define([
 		setCommunicationSubscriptions: function () {
 			CommunicationBus.subscribe(channelNames.UPDATE_SUPPORT_RULES, this.updatesupportRules, this);
 
+			// Temporary rules are validated and ready to be loaded in view
 			CommunicationBus.subscribe(channelNames.VERIFY_RULE_CREATE_RESULT, function (data) {
 				var result = data.result,
 					newRule = RuleSerializer.deserialize(data.newRule, true),
@@ -153,6 +157,7 @@ sap.ui.define([
 
 				if (result == "success") {
 					tempLib.rules.push(newRule);
+
 					treeTableTempLibrary = this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
 
 					this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
@@ -320,7 +325,7 @@ sap.ui.define([
 
 		/**
 		 * On selecting "Additional RuleSet" tab, start loading Additional RuleSets by brute search.
-		 * @param {Event} oEvent
+		 * @param {Event} oEvent TreeTable event
 		 */
 		onSelectedRuleSets: function (oEvent) {
 			if (oEvent.getParameter("selectedKey") === "additionalRulesets") {
@@ -359,6 +364,7 @@ sap.ui.define([
 		 * Keeps in sync the TreeViewModel for temporary library that we use for visualisation of sap.m.TreeTable and the model that we use in the Suppport Assistant
 		 * @param {Object} tempLib  temporary library model from Support Assistant
 		 * @param {Object} treeTable Model for sap.m.TreeTable visualization
+		 * @returns {Object} The temp library
 		 */
 		_syncTreeTableVieModelTempRulesLib: function (tempLib, treeTable) {
 			var innerIndex = 0,
@@ -501,6 +507,109 @@ sap.ui.define([
 			this.goToCreateRule();
 		},
 
+		exportSelectedRules: function () {
+			var input = new sap.m.Input();
+			var textArea = new sap.m.TextArea({
+				width: "100%"
+			});
+
+			var dialog = new Dialog({
+				title: "Export Rulesets",
+				content: [
+					new sap.m.VBox({
+						items: [
+							new sap.m.Label({text: "Title", labelFor: input }),
+							input,
+							new sap.m.Label({ text: "Description", labelFor: textArea }),
+							textArea
+						]
+					})
+				],
+				beginButton: new sap.m.Button({
+					text: "Cancel",
+					press: function (oEvent) {
+						dialog.close();
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: "Export",
+					press: function (oEvent) {
+						dialog.close();
+						SelectionUtils.exportSelectedRules(input.getValue(), textArea.getValue());
+					}
+				})
+
+			});
+
+			dialog.open();
+		},
+
+		importSelectedRules: function () {
+			var that = this;
+
+			var fileup = new FileUploader({ //fileType should be discussed
+				uploadComplete: function(oEvent) {
+					/* global FileReader */
+					var reader = new FileReader();
+
+					reader.onloadend = importSettings;
+
+					function importSettings(file) {
+						var fileAsString = file.target.result;
+						var oOptionsToImport =  JSON.parse(fileAsString);
+
+						if (SelectionUtils.isValidSelectionImport(oOptionsToImport)) {
+							var bOriginalPersistingSettingsValue = that.model.getProperty("/persistingSettings");
+
+							that.model.setProperty("/persistingSettings", true);
+
+							// deselects all rows in model only
+							SelectionUtils.selectAllRows(false);
+
+							// resets persisted selections
+							storage.setSelectedRules(oOptionsToImport.selections);
+
+							// selects rows in model based on persisted selections
+							SelectionUtils.initializeSelection();
+
+							// updates table from model selections
+							SelectionUtils.syncModelAndTreeTable();
+
+							that.model.setProperty("/persistingSettings", bOriginalPersistingSettingsValue);
+						}
+
+						if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
+							SelectionUtils.persistSelection();
+						}
+					}
+
+					reader.readAsText(oEvent.oSource.oFileUpload.files[0], "UTF-8");
+				}
+			});
+
+			var dialog = new Dialog({
+				title: "Upload rule settings",
+				content: [
+					fileup,
+					new sap.m.Button({
+						text: "Upload File",
+						press: function(oEvent) {
+							fileup.upload();
+							dialog.close();
+						}
+					})
+				],
+				endButton: new sap.m.Button({
+					text: "Close",
+					press: function (oEvent) {
+						dialog.close();
+					}
+				})
+			});
+
+			dialog.open();
+		},
+
 		goToRuleProperties: function () {
 			var navCont = this.byId("rulesNavContainer");
 			navCont.to(this.byId("rulesDisplayPage"), "show");
@@ -551,6 +660,7 @@ sap.ui.define([
 				});
 			}
 		},
+
 
 		updatesupportRules: function (data) {
 			data = RuleSerializer.deserialize(data);
@@ -792,7 +902,7 @@ sap.ui.define([
 
 		/**
 		* Gets rule from selected row
-		* @param {Object} Event
+		* @param {Object} event Event
 		* @returns {Object} ISelected rule from row
 		***/
 		getObjectOnTreeRow: function (event) {
