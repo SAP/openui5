@@ -1436,8 +1436,9 @@ function(
 	 *
 	 * @protected
 	 */
-	MultiInput.prototype.updateInputField = function() {
-		Input.prototype.updateInputField.call(this, '');
+	MultiInput.prototype.updateInputField = function(sNewValue) {
+		Input.prototype.updateInputField.call(this, sNewValue);
+		this.setDOMValue('');
 	};
 
 	/**
