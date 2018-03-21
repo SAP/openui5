@@ -35,6 +35,11 @@
 					</m:headerContent>
 					<m:subHeader>
 						<m:Bar >
+							<m:contentLeft>
+								<m:Label text="Rule Selections:" />
+								<m:Button text="Export" press="exportSelectedRules"/>
+								<m:Button text="Import" press="importSelectedRules"/>
+							</m:contentLeft>
 							<m:contentRight>
 								<m:Button text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
 								</m:contentRight>

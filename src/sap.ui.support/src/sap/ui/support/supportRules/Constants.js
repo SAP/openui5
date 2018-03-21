@@ -104,7 +104,12 @@ sap.ui.define([],
 			/**
 			 * Initial value of all filters in Support Assistant views
 			 */
-			FILTER_VALUE_ALL: "All"
+			FILTER_VALUE_ALL: "All",
+
+			/**
+			 * Name of file produced by selection export
+			 */
+			RULE_SELECTION_EXPORT_FILE_NAME: "sa-rule-selections"
 
 		};
 
