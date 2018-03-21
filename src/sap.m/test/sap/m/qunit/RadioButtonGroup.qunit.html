@@ -207,8 +207,7 @@
 		QUnit.test("'keyboard handling'", function(assert) {
 			//setup RadioButtonGroups
 			var iRadiosCount = 4;
-			var columnsCount = 2,
-            	fnFireSelectSpyRB0, fnFireSelectSpyRB1, fnFireSelectSpyRB2, fnFireSelectSpyRB3;
+			var columnsCount = 2;
 			var oRBGroup = new sap.m.RadioButtonGroup("RBG1", {
 				columns : columnsCount
 			});
@@ -227,32 +226,23 @@
 			qutils.triggerMouseEvent("RBG1-0", "click");
 			sap.ui.getCore().applyChanges();
 
-			fnFireSelectSpyRB0 = this.spy(oRBGroup.aRBs[0], "fireSelect");
-			fnFireSelectSpyRB1 = this.spy(oRBGroup.aRBs[1], "fireSelect");
-			fnFireSelectSpyRB2 = this.spy(oRBGroup.aRBs[2], "fireSelect");
-			fnFireSelectSpyRB3 = this.spy(oRBGroup.aRBs[3], "fireSelect");
-
 			assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 			// Test arrow pressing
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_RIGHT");
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(fnFireSelectSpyRB1.callCount, 1, "The selection change event should be fired");
 			assert.equal(oRBGroup.getSelectedIndex(), 1, "Selected index should be 1");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_DOWN");
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(fnFireSelectSpyRB3.callCount, 1, "The selection change event should be fired");
 			assert.equal(oRBGroup.getSelectedIndex(), 3, "Selected index should be 3");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_LEFT");
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(fnFireSelectSpyRB2.callCount, 1, "The selection change event should be fired");
 			assert.equal(oRBGroup.getSelectedIndex(), 2, "Selected index should be 2");
 
 			qutils.triggerKeyboardEvent("RBG1", "ARROW_UP");
 			sap.ui.getCore().applyChanges();
-			assert.strictEqual(fnFireSelectSpyRB0.callCount, 1, "The selection change event should be fired");
 			assert.equal(oRBGroup.getSelectedIndex(), 0, "Selected index should be 0");
 
 			qutils.triggerKeyboardEvent("RBG1", "END");
