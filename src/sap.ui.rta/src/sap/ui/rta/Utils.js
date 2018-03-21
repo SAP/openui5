@@ -490,7 +490,7 @@ function(
 	 * @returns {Object|null} Plain object with entity description
 	 */
 	Utils.getEntityTypeByPath = function (oModel, sPath) {
-		return oModel.oMetadata._getEntityTypeByPath(sPath);
+		return oModel.oMetadata && oModel.oMetadata._getEntityTypeByPath(sPath);
 	};
 
 	/**
