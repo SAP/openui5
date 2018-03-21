@@ -74,6 +74,7 @@ sap.ui.define([
 				this.oCachePromise = SyncPromise.resolve();
 				this.fetchCache(oContext);
 				this.oContext = oContext;
+				this.bHasDeclaredType = undefined; // whether the binding info declares a type
 				this.bInitial = true;
 				this.sPathWithFetchTypeError = undefined;
 				this.vValue = undefined;
@@ -189,89 +190,73 @@ sap.ui.define([
 	 */
 	// @override
 	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason, sGroupId) {
-		var oCallToken = {},
-			oChangeReason = {reason : sChangeReason || ChangeReason.Change},
-			bDataRequested = false,
-			bFire = false,
-			oMetaModel = this.oModel.getMetaModel(),
-			mParametersForDataReceived = {data : {}},
-			oPromise,
-			aPromises = [],
-			oReadPromise,
-			sResolvedMetaPath,
+		var bDataRequested = false,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			oCallToken = {
+				// a resolved binding fires a change event if checkUpdate is called at least once
+				// with bForceUpdate=true; an unresolved binding only fires if it had a value before
+				forceUpdate : sResolvedPath
+					&& (bForceUpdate
+						|| this.oCheckUpdateCallToken && this.oCheckUpdateCallToken.forceUpdate)
+			},
+			mParametersForDataReceived = {data : {}},
+			vType = this.oType, // either the type or a promise resolving with it
+			oValuePromise,
 			that = this;
 
 		this.oCheckUpdateCallToken = oCallToken;
-		if (!sResolvedPath) {
-			oPromise = Promise.resolve();
-			if (that.vValue !== undefined) {
-				oPromise = oPromise.then(function () {
-					that._fireChange(oChangeReason);
-				});
-			}
-			that.vValue = undefined; // ensure value is reset
-			return oPromise;
+		if (this.bHasDeclaredType === undefined) {
+			this.bHasDeclaredType = !!vType;
 		}
-		sResolvedMetaPath = oMetaModel.getMetaPath(sResolvedPath);
-		if (sResolvedMetaPath !== this.sPathWithFetchTypeError
-				&& !this.oType && this.sInternalType !== "any") {
-			// request type only once
-			aPromises.push(oMetaModel.fetchUI5Type(sResolvedPath)
-				.then(function (oType) {
-					that.setType(oType, that.sInternalType);
-				})["catch"](function (oError) {
-					that.sPathWithFetchTypeError = sResolvedMetaPath;
-					jQuery.sap.log.warning(oError.message, sResolvedPath, sClassName);
-				})
-			);
-		}
-		oReadPromise = this.oCachePromise.then(function (oCache) {
-			if (oCache) {
-				sGroupId = sGroupId || that.getGroupId();
-				return oCache.fetchValue(sGroupId, /*sPath*/undefined, function () {
-					bDataRequested = true;
-					that.fireDataRequested();
-				}, that);
-			}
-			if (!that.oContext) { // context may have been reset by another call to checkUpdate
-				return undefined;
-			}
-			if (that.oContext.getIndex() === -2) {
-				bForceUpdate = false; // no "change" event for virtual parent context
-			}
-			return that.oContext.fetchValue(that.sPath, that, sGroupId);
-		});
-		aPromises.push(oReadPromise.then(function (vValue) {
-			if (vValue && typeof vValue === "object"
-					&& (that.sInternalType !== "any"
-						|| that.sPath[that.sPath.lastIndexOf("/") + 1] !== "#")) {
-				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
-				vValue = undefined;
-			}
-			bFire = that.vValue !== vValue;
-			that.vValue = vValue;
-		})["catch"](function (oError) {
-			// do not rethrow, ManagedObject doesn't react on this either
-			// throwing an exception would cause "Uncaught (in promise)" in Chrome
-			that.oModel.reportError("Failed to read path " + sResolvedPath, sClassName, oError);
-			if (!oError.canceled) { // error was not caused by refresh
-				mParametersForDataReceived = {error : oError};
-				if (that.oCheckUpdateCallToken === oCallToken) { // latest call to checkUpdate
-					bFire = that.vValue !== undefined;
-					that.vValue = undefined;
+		if (sResolvedPath) {
+			oValuePromise = this.oCachePromise.then(function (oCache) {
+				if (oCache) {
+					sGroupId = sGroupId || that.getGroupId();
+					return oCache.fetchValue(sGroupId, /*sPath*/undefined, function () {
+						bDataRequested = true;
+						that.fireDataRequested();
+					}, that);
 				}
+				if (!that.oContext) { // context may have been reset by another call to checkUpdate
+					return undefined;
+				}
+				if (that.oContext.getIndex() === -2) { // virtual parent context: no change event
+					oCallToken.forceUpdate = false;
+				}
+				return that.oContext.fetchValue(that.sPath, that, sGroupId);
+			}).then(function (vValue) {
+				if (!vValue || typeof vValue !== "object"
+					|| (that.sInternalType === "any"
+						&& that.sPath[that.sPath.lastIndexOf("/") + 1] === "#")) {
+					return vValue;
+				}
+				jQuery.sap.log.error("Accessed value is not primitive", sResolvedPath, sClassName);
+			}, function (oError) {
+				// do not rethrow, ManagedObject doesn't react on this either
+				// throwing an exception would cause "Uncaught (in promise)" in Chrome
+				that.oModel.reportError("Failed to read path " + sResolvedPath, sClassName, oError);
+				if (oError.canceled) { // canceled -> value remains unchanged
+					oCallToken.forceUpdate = false;
+					return that.vValue;
+				}
+				mParametersForDataReceived = {error : oError};
+			});
+			if (!this.bHasDeclaredType && this.sInternalType !== "any") {
+				vType = this.oModel.getMetaModel().fetchUI5Type(sResolvedPath);
 			}
-			return oError.canceled;
-		}));
+		}
+		// Note: Use Promise to become async so that only the latest sync call to checkUpdate wins
+		return Promise.all([oValuePromise, vType]).then(function (aResults) {
+			var oType = aResults[1],
+				vValue = aResults[0];
 
-		return Promise.all(aPromises).then(function (aResults) {
-			var bCanceled = aResults[aPromises.length - 1];
-
-			if (!bCanceled) {
-				that.bInitial = false;
-				if (bForceUpdate || bFire) {
-					that._fireChange(oChangeReason);
+			if (oCallToken === that.oCheckUpdateCallToken) { // latest call to checkUpdate
+				that.oCheckUpdateCallToken = undefined;
+				that.setType(oType, that.sInternalType);
+				if (oCallToken.forceUpdate || that.vValue !== vValue) {
+					that.bInitial = false;
+					that.vValue = vValue;
+					that._fireChange({reason : sChangeReason || ChangeReason.Change});
 				}
 			}
 			if (bDataRequested) {
@@ -405,8 +390,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.onChange = function (vValue) {
-		this.vValue = vValue;
-		this._fireChange({reason : ChangeReason.Change});
+		this.checkUpdate();
 	};
 
 	/**

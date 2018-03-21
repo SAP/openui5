@@ -14,12 +14,13 @@ sap.ui.define([
 	"sap/ui/model/MetaModel",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/type/Int64",
+	"sap/ui/model/odata/type/Raw",
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/thirdparty/URI",
 	"./lib/_Helper",
 	"./ValueListType"
 ], function (jQuery, SyncPromise, BindingMode, ChangeReason, ClientListBinding, ContextBinding,
-		BaseContext, MetaModel, OperationMode, Int64, PropertyBinding, URI, _Helper,
+		BaseContext, MetaModel, OperationMode, Int64, Raw, PropertyBinding, URI, _Helper,
 		ValueListType) {
 	"use strict";
 	/*eslint max-nested-callbacks: 0 */
@@ -31,6 +32,7 @@ sap.ui.define([
 		sODataMetaModel = "sap.ui.model.odata.v4.ODataMetaModel",
 		ODataMetaPropertyBinding,
 		rNumber = /^-?\d+$/,
+		oRawType = new Raw(),
 		mSupportedEvents = {
 			messageChange : true
 		},
@@ -1163,8 +1165,8 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
-	 *   {@link sap.ui.model.odata.type} or rejected with an error; if no specific type can be
-	 *   determined, a warning is logged and {@link sap.ui.model.odata.type.Raw} is used
+	 *   {@link sap.ui.model.odata.type}; if no specific type can be determined, a warning is logged
+	 *   and {@link sap.ui.model.odata.type.Raw} is used
 	 *
 	 * @private
 	 * @see #requestUI5Type
@@ -1181,9 +1183,9 @@ sap.ui.define([
 		return this.fetchObject(undefined, oMetaContext).then(function (oProperty) {
 			var mConstraints,
 				sConstraintPath,
-				oType = oProperty["$ui5.type"],
+				oType,
 				oTypeInfo,
-				sTypeName = "sap.ui.model.odata.type.Raw";
+				sTypeName = oRawType.getName();
 
 			function setConstraint(sKey, vValue) {
 				if (vValue !== undefined) {
@@ -1192,6 +1194,13 @@ sap.ui.define([
 				}
 			}
 
+			if (!oProperty) {
+				jQuery.sap.log.warning("No metadata for path '" + sPath + "', using " + sTypeName,
+					undefined, sODataMetaModel);
+				return oRawType;
+			}
+
+			oType = oProperty["$ui5.type"];
 			if (oType) {
 				return oType;
 			}
@@ -1219,11 +1228,15 @@ sap.ui.define([
 				}
 			}
 
-			oProperty["$ui5.type"] = that.fetchModule(sTypeName).then(function (Type) {
-				oType = new Type(undefined, mConstraints);
-				oProperty["$ui5.type"] = oType;
-				return oType;
-			});
+			if (sTypeName === oRawType.getName()) {
+				oProperty["$ui5.type"] = oRawType;
+			} else {
+				oProperty["$ui5.type"] = that.fetchModule(sTypeName).then(function (Type) {
+					oType = new Type(undefined, mConstraints);
+					oProperty["$ui5.type"] = oType;
+					return oType;
+				});
+			}
 			return oProperty["$ui5.type"];
 		});
 	};
@@ -1677,8 +1690,7 @@ sap.ui.define([
 	 *   metadata to calculate this type is already available; if no specific type can be
 	 *   determined, a warning is logged and {@link sap.ui.model.odata.type.Raw} is used
 	 * @throws {Error}
-	 *   If the UI5 type cannot be determined synchronously (due to a pending metadata request) or
-	 *   cannot be determined at all (due to a wrong data path)
+	 *   If the UI5 type cannot be determined synchronously (due to a pending metadata request)
 	 *
 	 * @function
 	 * @public
@@ -1928,7 +1940,7 @@ sap.ui.define([
 	 *   An absolute path to an OData property within the OData data model
 	 * @returns {Promise}
 	 *   A promise that gets resolved with the corresponding UI5 type from
-	 *   {@link sap.ui.model.odata.type} or rejected with an error; if no specific type can be
+	 *   {@link sap.ui.model.odata.type}; if no specific type can be
 	 *   determined, a warning is logged and {@link sap.ui.model.odata.type.Raw} is used
 	 *
 	 * @function

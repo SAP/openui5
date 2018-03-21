@@ -1982,15 +1982,14 @@ sap.ui.require([
 		this.oLogMock.expects("warning").withExactArgs(
 			"Unsupported collection type, using sap.ui.model.odata.type.Raw",
 			sPath, sODataMetaModel);
-		this.oMetaModelMock.expects("fetchModule") // must only be called once
-			.withExactArgs("sap.ui.model.odata.type.Raw")
-			.returns(SyncPromise.resolve(Promise.resolve(Raw)));
 
 		return Promise.all([
+			// code under test
 			this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
 				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
 				assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "cached");
 			}),
+			// code under test
 			this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
 				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
 			})
@@ -2013,14 +2012,33 @@ sap.ui.require([
 			this.oLogMock.expects("warning").withExactArgs(
 				"Unsupported type '" + sQualifiedName + "', using sap.ui.model.odata.type.Raw",
 				sPath, sODataMetaModel);
-			this.oMetaModelMock.expects("fetchModule")
-				.withExactArgs("sap.ui.model.odata.type.Raw")
-				.returns(SyncPromise.resolve(Raw));
 
+			// code under test
 			return this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
 				assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
 				assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "cached");
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchUI5Type: invalid path", function (assert) {
+		var sPath = "/EMPLOYEES/0/invalid",
+			that = this;
+
+		this.oMetaModelMock.expects("fetchObject").twice()
+			.withExactArgs(undefined, this.oMetaModel.getMetaContext(sPath))
+			.returns(SyncPromise.resolve(/*no property metadata for path*/));
+		this.oLogMock.expects("warning").twice().withExactArgs(
+			"No metadata for path '" + sPath + "', using sap.ui.model.odata.type.Raw",
+			undefined, sODataMetaModel);
+
+		// code under test
+		return this.oMetaModel.fetchUI5Type(sPath).then(function (oType) {
+			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+
+			// code under test
+			assert.strictEqual(that.oMetaModel.getUI5Type(sPath), oType, "Type is cached");
 		});
 	});
 

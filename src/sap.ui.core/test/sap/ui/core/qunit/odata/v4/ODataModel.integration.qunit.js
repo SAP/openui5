@@ -977,9 +977,7 @@ sap.ui.require([
 						+ "&$filter=(AGE%20gt%2042)%20and%20ID%20eq%20'0'"
 						+ "&$select=AGE,ID,Name", {"value" : []})
 					.expectChange("text", ["Jonathan Smith", "Peter Burke"])
-					.expectChange("text", ["Jonathan Smith"]) //TODO unexpected change
-					.expectChange("age", ["50", "77"])
-					.expectChange("age", ["50"]); //TODO unexpected change
+					.expectChange("age", ["50", "77"]);
 
 				// code under test
 				oContext.refresh(undefined, true);
@@ -1053,8 +1051,7 @@ sap.ui.require([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectChange("id", "1") //TODO unexpected change
-				.expectChange("id", "1");
+			that.expectChange("id", "1");
 
 			// code under test
 			that.oView.byId("form").setBindingContext(
@@ -1642,7 +1639,6 @@ sap.ui.require([
 			var oTable = that.oView.byId("table");
 
 			that.expectChange("note", "foo", 1)
-				.expectChange("note", "baz", 0) //TODO unexpected change
 				.expectChange("note", "baz", 0);
 
 			oTable.getBinding("items").create({Note : "bar"});
@@ -1691,8 +1687,6 @@ sap.ui.require([
 				"Note" : "Note",
 				"SalesOrderId" : "42"
 			})
-			.expectChange("note", "Note") //TODO unexpected change
-			.expectChange("amount", "1,000.00") //TODO unexpected change
 			.expectChange("note", "Note")
 			.expectChange("amount", "1,000.00");
 
@@ -1737,9 +1731,7 @@ sap.ui.require([
 				"LOCATION" : {"City" : {"CITYNAME" : "Walldorf"}}
 			})
 			.expectChange("name", "Frederic Fall")
-			.expectChange("city", "Walldorf")
-			.expectChange("name", "Frederic Fall") //TODO unexpected change
-			.expectChange("city", "Walldorf"); //TODO unexpected change
+			.expectChange("city", "Walldorf");
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -1758,7 +1750,6 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')?$select=AGE,ID,Name", {
 				"Name" : "Jonathan Smith"
 			})
-			.expectChange("name", "Jonathan Smith") //TODO unexpected change
 			.expectChange("name", "Jonathan Smith");
 
 		return this.createView(
@@ -1938,9 +1929,7 @@ sap.ui.require([
 					}
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
-			.expectChange("TEAM_ID", "TEAM_03")
-			.expectChange("name", "SAP NetWeaver Gateway Content") //TODO unexpected change
-			.expectChange("TEAM_ID", "TEAM_03"); //TODO unexpected change
+			.expectChange("TEAM_ID", "TEAM_03");
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -1975,8 +1964,7 @@ sap.ui.require([
 						"Name": "SAP NetWeaver Gateway Content"
 					}
 				})
-			.expectChange("name", "SAP NetWeaver Gateway Content")
-			.expectChange("name", "SAP NetWeaver Gateway Content"); //TODO unexpected change
+			.expectChange("name", "SAP NetWeaver Gateway Content");
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -2057,9 +2045,7 @@ sap.ui.require([
 				assert.ok(oTeamBinding.hasPendingChanges(), "parent has pending changes");
 				return that.waitForChanges(assert);
 			}).then(function () {
-				that.expectChange("id", "2", 0) //TODO unexpected change
-					.expectChange("text", "Frederic Fall", 0) //TODO unexpected change
-					.expectChange("id", "2", 0)
+				that.expectChange("id", "2", 0)
 					.expectChange("text", "Frederic Fall", 0);
 
 				// code under test
@@ -2139,7 +2125,7 @@ sap.ui.require([
 				"@odata.etag" : "eTag"
 			})
 			.expectChange("name", "Jonathan Smith")
-			.expectChange("isManager", null); //TODO unexpected change
+			.expectChange("isManager", null);
 
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
@@ -2173,14 +2159,13 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-		this.expectChange("name");
+		this.expectChange("name", null);
 		return this.createView(assert, sView, oModel).then(function () {
 //TODO the query options for the function import are not enhanced
 //			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=ID,Name", {
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 
 			that.oView.byId("function").getObjectBinding()
@@ -2204,8 +2189,7 @@ sap.ui.require([
 		this.expectRequest("EMPLOYEES('2')", {
 				"@odata.etag" : "ETagValue"
 			})
-			.expectChange("ETag", "ETagValue")
-			.expectChange("ETag", "ETagValue"); //TODO unexpected change
+			.expectChange("ETag", "ETagValue");
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -2269,9 +2253,7 @@ sap.ui.require([
 					}
 				})
 			.expectChange("name", "SAP NetWeaver Gateway Content")
-			.expectChange("age", "32")
-			.expectChange("name", "SAP NetWeaver Gateway Content") //TODO unexpected change
-			.expectChange("age", "32"); //TODO unexpected change
+			.expectChange("age", "32");
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}));
 	});
@@ -2361,7 +2343,6 @@ sap.ui.require([
 				}
 			)
 			.expectChange("name", "Team 2")
-			.expectChange("name", "Team 2") //TODO unexpected change
 			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"]);
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
 			.then(function () {
@@ -2887,8 +2868,6 @@ sap.ui.require([
 				}
 			})
 			.expectChange("url",
-				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')")
-			.expectChange("url", //TODO unexpected change
 				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/ProductPicture('42')");
 		return this.createView(assert, sView, oModel);
 	});
@@ -2910,9 +2889,7 @@ sap.ui.require([
 				"Quantity" : "10.000",
 				"QuantityUnit" : "EA"
 			})
-			.expectChange("quantity", "10.000") //TODO unexpected change
 			.expectChange("quantity", "10.000")
-			.expectChange("quantityUnit", "EA") //TODO unexpected change
 			.expectChange("quantityUnit", "EA");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -3033,7 +3010,6 @@ sap.ui.require([
 					}
 				}
 			})
-			.expectChange("id", "0500000001") //TODO unexpected change
 			.expectChange("id", "0500000001")
 			.expectChange("item", ["0000000010", "0000000020", "0000000030"]);
 
@@ -3214,9 +3190,6 @@ sap.ui.require([
 						{"Name" : "Jonathan Smith"}
 					]
 				})
-				//TODO The below null's are: Text has binding context null and its initial value is
-				// undefined (formatted to null by String type). (How) can we get rid of this?
-				.expectChange("text", null, null) //TODO unexpected change
 				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
 			return that.waitForChanges(assert);
 		});
@@ -3246,8 +3219,7 @@ sap.ui.require([
 			}
 		})
 			// Note: sap.m.Text#text turns value into string!
-			.expectChange("text", oText.validateProperty("text", 42))
-			.expectChange("text", oText.validateProperty("text", 42)); //TODO unexpected change
+			.expectChange("text", oText.validateProperty("text", 42));
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -3271,8 +3243,7 @@ sap.ui.require([
 			}
 		})
 		// Note: sap.m.Text#text turns value into string!
-			.expectChange("text", oText.validateProperty("text", 42))
-			.expectChange("text", oText.validateProperty("text", 42)); //TODO unexpected change
+			.expectChange("text", oText.validateProperty("text", 42));
 
 		return this.createView(assert, sView, oModel);
 	});
@@ -3417,14 +3388,13 @@ sap.ui.require([
 </VBox>',
 			that = this;
 
-		this.expectChange("status"); // no event initially
+		this.expectChange("status", null);
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest("EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
 					+ ".FuGetEmployeeSalaryForecast()",
 				{
 					"STATUS" : "42"
 				})
-				.expectChange("status", null) //TODO unexpected change
 				.expectChange("status", "42");
 
 			that.oView.byId("function").getObjectBinding().execute();
@@ -3442,7 +3412,7 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-		this.expectChange("name");
+		this.expectChange("name", null);
 		return this.createView(assert, sView).then(function () {
 			var oFunctionBinding = that.oView.byId("function").getObjectBinding();
 
@@ -3451,7 +3421,6 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
@@ -3497,7 +3466,7 @@ sap.ui.require([
 </FlexBox>',
 			that = this;
 
-		this.expectChange("name");
+		this.expectChange("name", null);
 		return this.createView(assert, sView).then(function () {
 			var oFunctionBinding = that.oView.byId("function").getObjectBinding();
 
@@ -3506,7 +3475,6 @@ sap.ui.require([
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')?$select=Name", {
 					"Name" : "Jonathan Smith"
 				})
-				.expectChange("name", null) //TODO unexpected change
 				.expectChange("name", "Jonathan Smith");
 			oFunctionBinding.setParameter("EmployeeID", "1").execute();
 
@@ -3563,7 +3531,6 @@ sap.ui.require([
 					"ID" : "1"
 				}
 			})
-			.expectChange("id", "1") //TODO unexpected change
 			.expectChange("id", "1");
 
 		return this.createView(assert, sView, oModel).then(function () {
@@ -3775,9 +3742,6 @@ sap.ui.require([
 			"adAction1" : "",
 			"adAction2" : "set to available",
 			"name" : "Frederic Fall"
-		}, {
-			"adAction2" : "set to available",
-			"name" : "Frederic Fall"
 		}], createTeaBusiModel({autoExpandSelect : true})
 	);
 
@@ -3927,10 +3891,8 @@ sap.ui.require([
 					"updated" : "/Date(1502323200000)/"
 				}
 			})
-			.expectChange("updated", "2017-08-10T00:00:00Z") //TODO unexpected change
 			.expectChange("updated", "2017-08-10T00:00:00Z")
-			.expectChange("value", undefined); //TODO unexpected change
-
+			.expectChange("value", undefined);
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
@@ -4068,8 +4030,7 @@ sap.ui.require([
 				}
 			})
 			.expectChange("carrid", "AA")
-			.expectChange("carrid", "AA") //TODO unexpected change
-			.expectChange("distance", null); //TODO unexpected change
+			.expectChange("distance", null);
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
@@ -4178,7 +4139,7 @@ sap.ui.require([
 				}
 			})
 			.expectChange("id0", "0815")
-			.expectChange("id1", null); //TODO unexpected change
+			.expectChange("id1", null);
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
@@ -4197,7 +4158,6 @@ sap.ui.require([
 						"CreatedAt" : "/Date(1502323200000)/"
 					}
 				})
-				.expectChange("id0", "0815") //TODO unexpected change
 				.expectChange("id1", "08/15");
 
 			oPromise = oContextBinding.execute();
@@ -4237,8 +4197,7 @@ sap.ui.require([
 				}
 			})
 			.expectChange("oldPhone", "+49 2102 69555")
-			.expectChange("oldPhone", "+49 2102 69555") //TODO unexpected change
-			.expectChange("newPhone", null); //TODO unexpected change
+			.expectChange("newPhone", null);
 
 		// code under test
 		return this.createView(assert, sView, oModel).then(function () {
@@ -4416,9 +4375,7 @@ sap.ui.require([
 				"ID" : 1
 			})
 			.expectChange("idCategory", "Electronics")
-			.expectChange("idEmployeeId", "0001")
-			.expectChange("idCategory", "Electronics") // TODO unexpected change
-			.expectChange("idEmployeeId", "0001"); // TODO unexpected change
+			.expectChange("idEmployeeId", "0001");
 		return this.createView(assert, sView, oModel).then(function () {
 			var oForm = that.oView.byId("form"),
 				sId;
@@ -4533,10 +4490,7 @@ sap.ui.require([
 			})
 			.expectChange("idEquipmentName", "Office PC")
 			.expectChange("idEmployeeName", "Frederic Fall")
-			.expectChange("idManagerId", "5")
-			.expectChange("idEquipmentName", "Office PC") // TODO unexpected change
-			.expectChange("idEmployeeName", "Frederic Fall") // TODO unexpected change
-			.expectChange("idManagerId", "5"); // TODO unexpected change
+			.expectChange("idManagerId", "5");
 		return this.createView(assert, sView, oModel).then(function () {
 			var oOuterForm = that.oView.byId("outerForm"),
 				oInnerForm = that.oView.byId("innerForm"),
@@ -4603,7 +4557,6 @@ sap.ui.require([
 				}]
 			})
 			.expectChange("idMemberCount", "2")
-			.expectChange("idMemberCount", "2") // TODO unexpected change
 			.expectChange("idAge", ["52", "56"])
 			.expectChange("idName", ["Frederic Fall", "Jonathan Smith"]);
 
@@ -4716,7 +4669,7 @@ sap.ui.require([
 				}
 			})
 			.expectChange("salary", "100")
-			.expectChange("forecastSalary", null); //TODO unexpected change
+			.expectChange("forecastSalary", null);
 		return this.createView(assert, sView).then(function () {
 			var oEmployeeBinding = that.oView.byId("employee").getObjectBinding();
 
@@ -5029,8 +4982,6 @@ sap.ui.require([
 					"PhoneNumber" : "06227747474"
 				}
 			})
-			.expectChange("companyName", "SAP") //TODO unexpected change
-			.expectChange("phoneNumber", "06227747474") //TODO unexpected change
 			.expectChange("companyName", "SAP")
 			.expectChange("phoneNumber", "06227747474");
 
@@ -5097,7 +5048,8 @@ sap.ui.require([
 						"SalesOrderID" : "0500000001"
 					}]
 				})
-				.expectChange("position", null, null) //TODO unexpected change
+				// "position" temporarily loses its binding context and thus fires a change event
+				.expectChange("position", null, null)
 				.expectChange("position", ["20"]);
 
 			that.oView.byId("form").bindElement("/SalesOrderList('0500000001')");
