@@ -9,14 +9,14 @@
 							alwaysShowContentHeader="true"
 							upperCaseAnchorBar="false">
 		<op:headerTitle>
-			<op:ObjectPageHeader objectTitle='Search Results for "{/searchTerm}"'>
+			<op:ObjectPageHeader id="searchTitle" objectTitle='Search Results for "{/searchTerm}"'>
 			</op:ObjectPageHeader>
 		</op:headerTitle>
 		<op:headerContent>
 			<ObjectAttribute title="" text="Search results are displayed in categories."/>
 		</op:headerContent>
  		<op:sections>
-			<op:ObjectPageSection title="All ({/AllLength})">
+			<op:ObjectPageSection id="allSummaryTitle" title="All ({/AllLength})">
 			<op:subSections>
 				<op:ObjectPageSubSection>
 					<op:blocks>
