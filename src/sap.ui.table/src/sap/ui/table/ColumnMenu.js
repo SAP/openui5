@@ -298,7 +298,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/
 
 		if (bColumnFreezeEnabled) {
 			var iColumnIndex = oColumn.getIndex();
-			var bIsFixedColumn = iColumnIndex + TableUtils.Column.getHeaderSpan(oColumn) == oTable.getFixedColumnCount();
+			var bIsFixedColumn = iColumnIndex + TableUtils.Column.getHeaderSpan(oColumn) == oTable.getComputedFixedColumnCount();
 
 			this.addItem(this._createMenuItem(
 				"freeze",

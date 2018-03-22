@@ -385,7 +385,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 
 				var iCurrentIndex = oTable.indexOfColumn(oColumn);
 
-				if (iCurrentIndex < oTable.getFixedColumnCount() || iCurrentIndex < oTable._iFirstReorderableIndex) {
+				if (iCurrentIndex < oTable.getComputedFixedColumnCount() || iCurrentIndex < oTable._iFirstReorderableIndex) {
 					// No movement of fixed columns or e.g. the first column in the TreeTable
 					return false;
 				}
@@ -444,7 +444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 
 				iNewIndex = TableColumnUtils._normalizeColumnMoveTargetIndex(oColumn, iNewIndex);
 
-				if (iNewIndex < oTable.getFixedColumnCount() || iNewIndex < oTable._iFirstReorderableIndex) {
+				if (iNewIndex < oTable.getComputedFixedColumnCount() || iNewIndex < oTable._iFirstReorderableIndex) {
 					// No movement of fixed columns or e.g. the first column in the TreeTable
 					return false;
 				}
@@ -703,13 +703,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './library'],
 			 * Returns the number of fixed columns depending on the parameter <code>bConsiderVisibility</code>.
 			 *
 			 * @param {sap.ui.table.Table} oTable Instance of the table.
-			 * @param {boolean} bConsiderVisibility If <code>false</code> the result of the <code>getFixedColumnCount</code> function of the table is returned.
+			 * @param {boolean} bConsiderVisibility If <code>false</code> the result of the <code>getComputedFixedColumnCount</code> function of the table is returned.
 			 * 										If <code>true</code> the visibility is included into the determination of the count.
 			 * @returns {int} Returns the number of fixed columns depending on the parameter <code>bConsiderVisibility</code>.
 			 * @private
 			 */
 			getFixedColumnCount: function(oTable, bConsiderVisibility) {
-				var iFixed = oTable.getFixedColumnCount();
+				var iFixed = oTable.getComputedFixedColumnCount();
 
 				if (!bConsiderVisibility) {
 					return iFixed;

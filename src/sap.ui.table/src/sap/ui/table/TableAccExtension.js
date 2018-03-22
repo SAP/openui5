@@ -663,7 +663,7 @@ sap.ui.define([
 					}
 					mAttributes["aria-labelledby"] = aLabels;
 
-					if (mParams && (mParams.index < oTable.getFixedColumnCount())) {
+					if (mParams && (mParams.index < oTable.getComputedFixedColumnCount())) {
 						mAttributes["aria-labelledby"].push(sTableId + "-ariafixedcolumn");
 					}
 
@@ -749,7 +749,7 @@ sap.ui.define([
 					break;
 
 				case TableAccExtension.ELEMENTTYPES.TH: //The "technical" column headers
-					var bHasFixedColumns = oTable.getFixedColumnCount() > 0;
+					var bHasFixedColumns = oTable.getComputedFixedColumnCount() > 0;
 					if (!bHasFixedColumns) {
 						mAttributes["role"] = "presentation";
 					}

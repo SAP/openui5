@@ -118,7 +118,7 @@ sap.ui.define([
 					TableUtils.getResourceText(oSelectionMode == SelectionMode.MultiToggle ? "TBL_TABLE_SELECTION_MULTI" : "TBL_TABLE_SELECTION_SINGLE"));
 			}
 
-			if (oTable.getFixedColumnCount() > 0) {
+			if (oTable.getComputedFixedColumnCount() > 0) {
 				// aria description for fixed columns
 				_writeAccText(oRm, sTableId, "ariafixedcolumn", TableUtils.getResourceText("TBL_FIXED_COLUMN"));
 			}
