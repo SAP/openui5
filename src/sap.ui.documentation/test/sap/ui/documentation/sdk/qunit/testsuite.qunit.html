@@ -1,0 +1,22 @@
+<html>
+<head>
+	<title>Global TestSuite for sap.ui.documentation library</title>
+	<script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+	<!--<script src="../../shared-config.js"></script>-->
+	<script id="sap-ui-bootstrap" src='../../../../../../resources/sap-ui-core.js'></script>
+</head>
+<body>
+<script language="javascript">
+	function suite() {
+		var suite = new top.jsUnitTestSuite();
+        var contextPath = "/" + window.location.pathname.split("/")[1];
+
+        suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/ApiDetailDeprecatedExperimentalController.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/ApiMasterController.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/Forwarding.qunit.html");
+
+		return suite;
+	}
+</script>
+</body>
+</html>
