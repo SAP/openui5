@@ -1297,9 +1297,9 @@
         "references": []
       },
       {
-        "id": "851227936ed23551580b28376b820ad9a83cf597",
+        "id": "cef958f9d3e0d9c63b33561a5e1b429af60f5b86",
         "type": "FIX",
-        "text": " sap.m.GrowingEnablement: Focus is lost after growing",
+        "text": " sap.m.FacetFilter: correct navigation with arrow keys",
         "references": []
       },
       {
