@@ -1,6 +1,8 @@
 /*!
  * ${copyright}
  */
+
+//Provides class sap.ui.model.odata.v4.AnnotationHelper
 sap.ui.define([
 	"./_AnnotationHelperExpression"
 ], function (Expression) {

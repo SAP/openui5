@@ -2,6 +2,7 @@
  * ${copyright}
  */
 
+//Provides class sap.ui.model.odata.v4.Context
 sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
