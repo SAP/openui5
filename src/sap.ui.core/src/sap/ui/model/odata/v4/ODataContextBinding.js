@@ -142,8 +142,9 @@ sap.ui.define([
 	/**
 	 * Deletes the entity in <code>this.oElementContext</code>, identified by the edit URL.
 	 *
-	 * @param {string} [sGroupId=getUpdateGroupId()]
-	 *   The group ID to be used for the DELETE request
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the DELETE request; if no group ID is specified, it
+	 *   defaults to <code>getUpdateGroupId()</code>
 	 * @param {string} sEditUrl
 	 *   The edit URL to be used for the DELETE request
 	 * @returns {Promise}
@@ -152,21 +153,71 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype._delete = function (sGroupId, sEditUrl) {
+	ODataContextBinding.prototype._delete = function (oGroupLock, sEditUrl) {
 		var that = this;
 
 		// a context binding without path can simply delegate to its parent context.
 		if (this.sPath === "" && this.oContext["delete"]) {
-			return this.oContext["delete"](sGroupId);
+			return this.oContext._delete(oGroupLock);
 		}
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
-		return this.deleteFromCache(sGroupId, sEditUrl, "", function () {
+		return this.deleteFromCache(oGroupLock, sEditUrl, "", function () {
 			that.oElementContext.destroy();
 			that.oElementContext = null;
 			that._fireChange({reason : ChangeReason.Remove});
 		});
+	};
+
+	/**
+	 * Calls the OData operation that corresponds to this operation binding.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the request; defaults to this binding's group ID
+	 * @returns {Promise}
+	 *   A promise that is resolved without data when the operation call succeeded, or rejected
+	 *   with an instance of <code>Error</code> in case of failure
+	 *
+	 * @private
+	 * @see #execute for details
+	 */
+	ODataContextBinding.prototype._execute = function (oGroupLock) {
+		var oMetaModel = this.oModel.getMetaModel(),
+			oPromise,
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			that = this;
+
+		oGroupLock.setGroupId(this.getGroupId());
+		oPromise = oMetaModel.fetchObject(oMetaModel.getMetaPath(sResolvedPath) + "/@$ui5.overload")
+			.then(function (aOperationMetadata) {
+				var fnGetEntity, iIndex, sPath;
+
+				if (!aOperationMetadata) {
+					throw new Error("Unknown operation: " + sResolvedPath);
+				}
+				if (aOperationMetadata.length !== 1) {
+					throw new Error("Unsupported overloads for " + sResolvedPath);
+				}
+				if (that.bRelative && that.oContext.getBinding) {
+					iIndex = that.sPath.lastIndexOf("/");
+					sPath = iIndex >= 0 ? that.sPath.slice(0, iIndex) : "";
+					fnGetEntity = that.oContext.getObject.bind(that.oContext, sPath);
+				}
+				return that.createCacheAndRequest(oGroupLock, sResolvedPath, aOperationMetadata[0],
+					fnGetEntity);
+			}).then(function (oResult) {
+				that._fireChange({reason : ChangeReason.Change});
+				that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+					oDependentBinding.refreshInternal(oGroupLock.getGroupId(), true);
+				});
+				// do not return anything
+			})["catch"](function (oError) {
+			that.oModel.reportError("Failed to execute " + sResolvedPath, sClassName, oError);
+			throw oError;
+		});
+
+		return Promise.resolve(oPromise);
 	};
 
 	/**
@@ -295,8 +346,8 @@ sap.ui.define([
 	/**
 	 * Creates a single cache and sends a GET/POST request.
 	 *
-	 * @param {string} sGroupId
-	 *   The group ID to be used for the request
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the request
 	 * @param {string} sPath
 	 *   The absolute binding path to the bound operation or operation import, e.g.
 	 *   "/Entity('0815')/bound.Operation(...)" or "/OperationImport(...)"
@@ -313,7 +364,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.createCacheAndRequest = function (sGroupId, sPath,
+	ODataContextBinding.prototype.createCacheAndRequest = function (oGroupLock, sPath,
 		oOperationMetadata, fnGetEntity) {
 		var bAction = oOperationMetadata.$kind === "Action",
 			oCache,
@@ -340,8 +391,8 @@ sap.ui.define([
 			bAction, sMetaPath);
 		this.oCachePromise = SyncPromise.resolve(oCache);
 		return bAction
-			? oCache.post(sGroupId, mParameters, sETag)
-			: oCache.fetchValue(sGroupId);
+			? oCache.post(oGroupLock, mParameters, sETag)
+			: oCache.fetchValue(oGroupLock);
 	};
 
 	/**
@@ -422,14 +473,10 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.execute = function (sGroupId) {
-		var oMetaModel = this.oModel.getMetaModel(),
-			oPromise,
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
-			that = this;
+		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 
 		this.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
-		sGroupId = sGroupId || this.getGroupId();
 		if (!this.oOperation) {
 			throw new Error("The binding must be deferred: " + this.sPath);
 		}
@@ -446,35 +493,7 @@ sap.ui.define([
 			}
 		}
 
-		oPromise = oMetaModel.fetchObject(oMetaModel.getMetaPath(sResolvedPath) + "/@$ui5.overload")
-			.then(function (aOperationMetadata) {
-				var fnGetEntity, iIndex, sPath;
-
-				if (!aOperationMetadata) {
-					throw new Error("Unknown operation: " + sResolvedPath);
-				}
-				if (aOperationMetadata.length !== 1) {
-					throw new Error("Unsupported overloads for " + sResolvedPath);
-				}
-				if (that.bRelative && that.oContext.getBinding) {
-					iIndex = that.sPath.lastIndexOf("/");
-					sPath = iIndex >= 0 ? that.sPath.slice(0, iIndex) : "";
-					fnGetEntity = that.oContext.getObject.bind(that.oContext, sPath);
-				}
-				return that.createCacheAndRequest(sGroupId, sResolvedPath, aOperationMetadata[0],
-					fnGetEntity);
-			}).then(function (oResult) {
-				that._fireChange({reason : ChangeReason.Change});
-				that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-					oDependentBinding.refreshInternal(sGroupId, true);
-				});
-				// do not return anything
-			})["catch"](function (oError) {
-				that.oModel.reportError("Failed to execute " + sResolvedPath, sClassName, oError);
-				throw oError;
-			});
-
-		return Promise.resolve(oPromise);
+		return this._execute(this.oModel.lockGroup(sGroupId));
 	};
 
 	/**
@@ -486,16 +505,16 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for the request; defaults to this binding's group ID in case this
-	 *   binding's cache is used
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used for the request; defaults to this binding's group ID in
+	 *   case this binding's cache is used
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 * @throws {Error} If the binding's root binding is suspended, a "canceled" error is thrown
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.fetchValue = function (sPath, oListener, sGroupId) {
+	ODataContextBinding.prototype.fetchValue = function (sPath, oListener, oGroupLock) {
 		var oError,
 			oRootBinding = this.getRootBinding(),
 			that = this;
@@ -513,8 +532,11 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					sGroupId = sGroupId || that.getGroupId();
-					return oCache.fetchValue(sGroupId, sRelativePath, function () {
+					// Unless there is a refresh, a lock is not required here, only set the group ID
+					oGroupLock = that.oModel.lockGroup(that.getGroupId(),
+						that.oRefreshGroupLock || oGroupLock);
+					that.oRefreshGroupLock = undefined;
+					return oCache.fetchValue(oGroupLock, sRelativePath, function () {
 						bDataRequested = true;
 						that.fireDataRequested();
 					}, oListener).then(function (vValue) {
@@ -533,7 +555,7 @@ sap.ui.define([
 				}
 			}
 			if (!that.oOperation && that.oContext && that.oContext.fetchValue) {
-				return that.oContext.fetchValue(sPath, oListener, sGroupId);
+				return that.oContext.fetchValue(sPath, oListener, oGroupLock);
 			}
 		});
 	};
@@ -557,6 +579,7 @@ sap.ui.define([
 	ODataContextBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
 		var that = this;
 
+		this.oRefreshGroupLock = this.oModel.lockGroup(sGroupId);
 		this.oCachePromise.then(function (oCache) {
 			if (!that.oElementContext) { // refresh after delete
 				that.oElementContext = Context.create(that.oModel, that,
@@ -576,8 +599,9 @@ sap.ui.define([
 					oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
 				});
 			} else if (that.oOperation.bAction === false) {
-				// ignore returned promise, error handling takes place in execute
-				that.execute(sGroupId);
+				// ignore returned promise, error handling takes place in _execute
+				that._execute(that.oRefreshGroupLock);
+				that.oRefreshGroupLock = undefined;
 			}
 		});
 	};

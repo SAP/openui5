@@ -90,12 +90,14 @@ function (Helper, Opa5, TestUtils, Properties) {
 						success : function (oSalesOrderTable) {
 							var aPromises = [],
 								bCleanUpFinished = false,
+								oModel = oSalesOrderTable.getModel(),
 								// use private requestor to prevent additional read requests(ETag)
 								// which need additional mockdata
-								oRequestor = oSalesOrderTable.getModel().oRequestor;
+								oRequestor = oModel.oRequestor;
 							sap.ui.test.Opa.getContext().aOrderIds.forEach(function (sOrderId) {
 								aPromises.push(oRequestor.request("DELETE",
-									"SalesOrderList('" + sOrderId + "')", "Cleanup",
+									"SalesOrderList('" + sOrderId + "')",
+									oModel.lockGroup("Cleanup"),
 									{"If-Match" : "*"}));
 								Opa5.assert.ok(true, "Cleanup; delete SalesOrder:" + sOrderId);
 							});

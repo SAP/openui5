@@ -211,11 +211,11 @@ sap.ui.define([
 		if (sResolvedPath) {
 			oValuePromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
-					sGroupId = sGroupId || that.getGroupId();
-					return oCache.fetchValue(sGroupId, /*sPath*/undefined, function () {
-						bDataRequested = true;
-						that.fireDataRequested();
-					}, that);
+					return oCache.fetchValue(that.oModel.lockGroup(sGroupId || that.getGroupId()),
+						/*sPath*/undefined, function () {
+							bDataRequested = true;
+							that.fireDataRequested();
+						}, that);
 				}
 				if (!that.oContext) { // context may have been reset by another call to checkUpdate
 					return undefined;
@@ -223,7 +223,7 @@ sap.ui.define([
 				if (that.oContext.getIndex() === -2) { // virtual parent context: no change event
 					oCallToken.forceUpdate = false;
 				}
-				return that.oContext.fetchValue(that.sPath, that, sGroupId);
+				return that.oContext.fetchValue(that.sPath, that, that.oModel.lockGroup(sGroupId));
 			}).then(function (vValue) {
 				if (!vValue || typeof vValue !== "object"
 					|| (that.sInternalType === "any"
@@ -586,7 +586,8 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataPropertyBinding.prototype.setValue = function (vValue, sGroupId) {
-		var that = this;
+		var oGroupLock,
+			that = this;
 
 		function reportError(oError) {
 			that.oModel.reportError("Failed to update path "
@@ -596,15 +597,16 @@ sap.ui.define([
 		}
 
 		this.checkSuspended();
+		this.oModel.checkGroupId(sGroupId);
 		if (typeof vValue === "function" || (vValue && typeof vValue === "object")) {
 			throw reportError(new Error("Not a primitive value"));
 		}
 		if (this.vValue === undefined) {
 			throw reportError(new Error("Must not change a property before it has been read"));
 		}
-		this.oModel.checkGroupId(sGroupId);
 
 		if (this.vValue !== vValue) {
+			oGroupLock = that.oModel.lockGroup(sGroupId);
 			this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					reportError(new Error("Cannot set value on this binding"));
@@ -613,7 +615,8 @@ sap.ui.define([
 					that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)
 						.then(function (oResult) {
 							return that.withCache(function (oCache, sCachePath, oBinding) {
-								return oCache.update(sGroupId || oBinding.getUpdateGroupId(),
+								oGroupLock.setGroupId(oBinding.getUpdateGroupId());
+								return oCache.update(oGroupLock,
 									oResult.propertyPath, vValue, reportError, oResult.editUrl,
 									sCachePath, that.getUnitOrCurrencyPath());
 							}, oResult.entityPath);

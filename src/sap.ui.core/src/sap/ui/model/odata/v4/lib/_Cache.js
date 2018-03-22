@@ -6,8 +6,9 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
+	"./_GroupLock",
 	"./_Helper"
-], function (jQuery, SyncPromise, _Helper) {
+], function (jQuery, SyncPromise, _GroupLock, _Helper) {
 	"use strict";
 
 		// Matches two cases:  segment with predicate or simply predicate:
@@ -105,8 +106,8 @@ sap.ui.define([
 	/**
 	 * Deletes an entity on the server and in the cached data.
 	 *
-	 * @param {string} sGroupId
-	 *   The group ID
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
 	 * @param {string} sEditUrl
 	 *   The entity's edit URL
 	 * @param {string} sPath
@@ -120,13 +121,13 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype._delete = function (sGroupId, sEditUrl, sPath, fnCallback) {
+	Cache.prototype._delete = function (oGroupLock, sEditUrl, sPath, fnCallback) {
 		var aSegments = sPath.split("/"),
 			vDeleteProperty = aSegments.pop(),
 			sParentPath = aSegments.join("/"),
 			that = this;
 
-		return this.fetchValue(sGroupId, sParentPath).then(function (vCacheData) {
+		return this.fetchValue(oGroupLock, sParentPath).then(function (vCacheData) {
 			var oEntity = vDeleteProperty
 					? vCacheData[vDeleteProperty]
 					: vCacheData, // deleting at root level
@@ -146,7 +147,7 @@ sap.ui.define([
 			oEntity["$ui5.deleting"] = true;
 			mHeaders = {"If-Match" : oEntity["@odata.etag"]};
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
-			return that.oRequestor.request("DELETE", sEditUrl, sGroupId, mHeaders)
+			return that.oRequestor.request("DELETE", sEditUrl, oGroupLock, mHeaders)
 				["catch"](function (oError) {
 					if (oError.status !== 404) {
 						delete oEntity["$ui5.deleting"];
@@ -293,9 +294,9 @@ sap.ui.define([
 	 * group (for SubmitMode.API) or parked (for SubmitMode.Auto or SubmitMode.Direct). Parked POST
 	 * requests are repeated with the next update of the entity data.
 	 *
-	 * @param {string} sGroupId
-	 *   The group ID
-	 * @param {string|SyncPromise} vPostPath
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
+	 * @param {string|sap.ui.base.SyncPromise} vPostPath
 	 *   The path for the POST request or a SyncPromise that resolves with that path
 	 * @param {string} sPath
 	 *   The entity's path within the cache
@@ -311,7 +312,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.create = function (sGroupId, vPostPath, sPath, oEntityData,
+	Cache.prototype.create = function (oGroupLock, vPostPath, sPath, oEntityData,
 			fnCancelCallback, fnErrorCallback) {
 		var aCollection, that = this;
 
@@ -327,10 +328,12 @@ sap.ui.define([
 			oEntityData["@$ui5._.transient"] = true;
 		}
 
-		function request(sPostPath, sPostGroupId) {
+		function request(sPostPath, oPostGroupLock) {
+			var sPostGroupId = oPostGroupLock.getGroupId();
+
 			oEntityData["@$ui5._.transient"] = sPostGroupId; // mark as transient (again)
 			that.addByPath(that.mPostRequests, sPath, oEntityData);
-			return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
+			return that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oEntityData,
 					setCreatePending, cleanUp)
 				.then(function (oResult) {
 					delete oEntityData["@$ui5._.transient"];
@@ -358,14 +361,14 @@ sap.ui.define([
 					}
 					return request(sPostPath,
 						that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
-							sPostGroupId : "$parked." + sPostGroupId);
+							oPostGroupLock : new _GroupLock("$parked." + sPostGroupId));
 			});
 		}
 
 		// clone data to avoid modifications outside the cache
 		oEntityData = jQuery.extend(true, {}, oEntityData);
 
-		aCollection = this.fetchValue("$cached", sPath).getResult();
+		aCollection = this.fetchValue(_GroupLock.$cached, sPath).getResult();
 		if (!Array.isArray(aCollection)) {
 			throw new Error("Create is only supported for collections; '" + sPath
 					+ "' does not reference a collection");
@@ -374,7 +377,7 @@ sap.ui.define([
 
 		return SyncPromise.resolve(vPostPath).then(function (sPostPath) {
 			sPostPath += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
-			return request(sPostPath, sGroupId);
+			return request(sPostPath, oGroupLock);
 		});
 	};
 
@@ -699,8 +702,8 @@ sap.ui.define([
 	 * response), using the given group ID for batch control and the given edit URL to send a PATCH
 	 * request.
 	 *
-	 * @param {string} sGroupId
-	 *   The group ID
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
 	 * @param {string} sPropertyPath
 	 *   Path of the property to update, relative to the entity
 	 * @param {any} vValue
@@ -718,14 +721,15 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Cache.prototype.update = function (sGroupId, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
+	Cache.prototype.update = function (oGroupLock, sPropertyPath, vValue, fnErrorCallback, sEditUrl,
 			sEntityPath, sUnitOrCurrencyPath) {
 		var aPropertyPath = sPropertyPath.split("/"),
 			aUnitOrCurrencyPath,
 			that = this;
 
-		return this.fetchValue(sGroupId, sEntityPath).then(function (oEntity) {
+		return this.fetchValue(oGroupLock, sEntityPath).then(function (oEntity) {
 			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
+				sGroupId = oGroupLock.getGroupId(),
 				vOldValue,
 				oPatchPromise,
 				sParkedGroup,
@@ -745,7 +749,7 @@ sap.ui.define([
 			}
 
 			function patch() {
-				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, sGroupId,
+				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oGroupLock,
 					{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return oPatchPromise.then(function (oPatchResult) {
@@ -852,9 +856,9 @@ sap.ui.define([
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
-	 * @param {string} [sGroupId]
-	 *   ID of the group to associate the request with;
-	 *   see {@link sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group to associate the request with; unused in CollectionCache since no
+	 *   request will be created
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [fnDataRequested]
@@ -872,7 +876,8 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	CollectionCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
+	CollectionCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
+			oListener) {
 		var aElements,
 			that = this;
 
@@ -987,8 +992,8 @@ sap.ui.define([
 	 *   is available left and right of the requested range without a further request. If data is
 	 *   missing on one side, the full prefetch length is added at this side.
 	 *   <code>Infinity</code> is supported
-	 * @param {string} [sGroupId]
-	 *   ID of the group to associate the requests with
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group to associate the requests with
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before a back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
@@ -1007,7 +1012,7 @@ sap.ui.define([
 	 * @public
 	 * @see sap.ui.model.odata.v4.lib._Requestor#request
 	 */
-	CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, sGroupId,
+	CollectionCache.prototype.read = function (iIndex, iLength, iPrefetchLength, oGroupLock,
 			fnDataRequested) {
 		var i, n,
 			aElementsRange,
@@ -1027,7 +1032,7 @@ sap.ui.define([
 
 		if (this.aElements.$tail) {
 			return this.aElements.$tail.then(function () {
-				return that.read(iIndex, iLength, iPrefetchLength, sGroupId, fnDataRequested);
+				return that.read(iIndex, iLength, iPrefetchLength, oGroupLock, fnDataRequested);
 			});
 		}
 
@@ -1038,7 +1043,7 @@ sap.ui.define([
 		for (i = oRange.start; i < n; i++) {
 			if (this.aElements[i] !== undefined) {
 				if (iGapStart >= 0) {
-					this.requestElements(iGapStart, i, sGroupId, fnDataRequested);
+					this.requestElements(iGapStart, i, oGroupLock, fnDataRequested);
 					fnDataRequested = undefined;
 					iGapStart = -1;
 				}
@@ -1047,7 +1052,7 @@ sap.ui.define([
 			}
 		}
 		if (iGapStart >= 0) {
-			this.requestElements(iGapStart, iEnd, sGroupId, fnDataRequested);
+			this.requestElements(iGapStart, iEnd, oGroupLock, fnDataRequested);
 		}
 
 		// Note: this.aElements[-1] cannot be a promise...
@@ -1080,14 +1085,15 @@ sap.ui.define([
 	 *   The index of the first element to request ($skip)
 	 * @param {number} iEnd
 	 *   The position of the last element to request ($skip + $top)
-	 * @param {string} sGroupId
-	 *   The group ID
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
 	 * @param {function} [fnDataRequested]
 	 *   The function is called when the back-end requests have been sent.
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.requestElements = function (iStart, iEnd, sGroupId, fnDataRequested) {
+	CollectionCache.prototype.requestElements = function (iStart, iEnd, oGroupLock,
+			fnDataRequested) {
 		var sDelimiter = this.sQueryString ? "&" : "?",
 			iExpectedLength = iEnd - iStart,
 			oPromise,
@@ -1103,7 +1109,7 @@ sap.ui.define([
 		}
 
 		oPromise = SyncPromise.all([
-			this.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
+			this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
 				fnDataRequested),
 			this.fetchTypes()
 		]).then(function (aResult) {
@@ -1159,8 +1165,8 @@ sap.ui.define([
 	/**
 	 * Refreshes a single entity within a collection cache.
 	 *
-	 * @param {string} sGroupId
-	 *   The group ID
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
 	 * @param {number} iIndex
 	 *   The index of the element to be refreshed
 	 * @param {function} [fnDataRequested]
@@ -1172,7 +1178,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	CollectionCache.prototype.refreshSingle = function (sGroupId, iIndex, fnDataRequested) {
+	CollectionCache.prototype.refreshSingle = function (oGroupLock, iIndex, fnDataRequested) {
 		var sPredicate = this.aElements[iIndex]["@$ui5._.predicate"],
 			oPromise,
 			sReadUrl = this.sResourcePath + sPredicate,
@@ -1188,7 +1194,7 @@ sap.ui.define([
 
 		oPromise = SyncPromise.all([
 			this.oRequestor
-				.request("GET", sReadUrl, sGroupId, undefined, undefined, fnDataRequested),
+				.request("GET", sReadUrl, oGroupLock, undefined, undefined, fnDataRequested),
 			this.fetchTypes()
 		]).then(function (aResult) {
 			var oElement = aResult[0];
@@ -1206,8 +1212,8 @@ sap.ui.define([
 	 * Refreshes a single entity within a collection cache and removes it from the cache if the
 	 * filter does not match anymore.
 	 *
-	 * @param {string} sGroupId
-	 *   The group ID
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID
 	 * @param {number} iIndex
 	 *   The index of the element to be refreshed
 	 * @param {function} [fnDataRequested]
@@ -1222,8 +1228,8 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	CollectionCache.prototype.refreshSingleWithRemove = function (sGroupId, iIndex, fnDataRequested,
-			fnOnRemove) {
+	CollectionCache.prototype.refreshSingleWithRemove = function (oGroupLock, iIndex,
+			fnDataRequested, fnOnRemove) {
 		var that = this;
 
 		return this.fetchTypes().then(function (mTypeForMetaPath) {
@@ -1249,7 +1255,7 @@ sap.ui.define([
 
 			that.bSentReadRequest = true;
 			return that.oRequestor
-				.request("GET", sReadUrl, sGroupId, undefined, undefined, fnDataRequested)
+				.request("GET", sReadUrl, oGroupLock, undefined, undefined, fnDataRequested)
 				.then(function (oResult) {
 					if (that.aElements[iIndex] !== oEntity) {
 						// oEntity might have moved due to parallel insert/delete
@@ -1330,8 +1336,8 @@ sap.ui.define([
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
-	 * @param {string} [sGroupId]
-	 *   ID of the group to associate the request with;
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   ignored for property caches, should be empty
@@ -1349,13 +1355,13 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	PropertyCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
+	PropertyCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener) {
 		var that = this;
 
 		that.registerChange("", oListener);
 		if (!this.oPromise) {
 			this.oPromise = SyncPromise.resolve(this.oRequestor.request("GET",
-				this.sResourcePath + this.sQueryString, sGroupId, undefined, undefined,
+				this.sResourcePath + this.sQueryString, oGroupLock, undefined, undefined,
 				fnDataRequested, undefined, this.sMetaPath));
 			this.bSentReadRequest = true;
 		}
@@ -1418,8 +1424,8 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for the requested data. Calculates
 	 * the key predicates for all entities in the result before the promise is resolved.
 	 *
-	 * @param {string} [sGroupId]
-	 *   ID of the group to associate the request with;
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
@@ -1440,7 +1446,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested, oListener) {
+	SingleCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener) {
 		var sResourcePath = this.sResourcePath + this.sQueryString,
 			that = this;
 
@@ -1450,7 +1456,7 @@ sap.ui.define([
 				throw new Error("Cannot fetch a value before the POST request");
 			}
 			this.oPromise = SyncPromise.all([
-				this.oRequestor.request("GET", sResourcePath, sGroupId, undefined, undefined,
+				this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
 					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
@@ -1473,8 +1479,8 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for a POST request with the given data.
 	 * Calculates the key predicates for all entities in the result before the promise is resolved.
 	 *
-	 * @param {string} [sGroupId]
-	 *   ID of the group to associate the request with;
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]
 	 *   A copy of the data to be sent with the POST request; may be used to tunnel a different
@@ -1488,7 +1494,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	SingleCache.prototype.post = function (sGroupId, oData, sETag) {
+	SingleCache.prototype.post = function (oGroupLock, oData, sETag) {
 		var sHttpMethod = "POST",
 			that = this;
 
@@ -1510,7 +1516,7 @@ sap.ui.define([
 		}
 		this.oPromise = SyncPromise.resolve(
 			this.oRequestor
-				.request(sHttpMethod, this.sResourcePath + this.sQueryString, sGroupId,
+				.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
 					{"If-Match" : sETag}, oData)
 				.then(function (oResult) {
 					that.bPosting = false;

@@ -1685,7 +1685,7 @@ sap.ui.require([
 				"@odata.etag" : "ETag",
 				"GrossAmount" : "1000.00",
 				"Note" : "Note",
-				"SalesOrderId" : "42"
+				"SalesOrderID" : "42"
 			})
 			.expectChange("note", "Note")
 			.expectChange("amount", "1,000.00");
@@ -5053,6 +5053,176 @@ sap.ui.require([
 				.expectChange("position", ["20"]);
 
 			that.oView.byId("form").bindElement("/SalesOrderList('0500000001')");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.skip("delayed create", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '<FlexBox id="form" binding="{/SalesOrderList(\'0500000000\')}"/>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oParentBinding = that.oView.byId("form").getElementBinding(),
+				oListBinding = that.oModel.bindList("SO_2_SOITEM", oParentBinding.getBoundContext(),
+					undefined, undefined, {$$updateGroupId : "update"});
+
+			that.expectRequest({
+				method : "POST",
+				url : "SalesOrderList('0500000000')/SO_2_SOITEM",
+				payload : {}
+			}, {
+				"SalesOrderID" : "0500000000",
+				"ItemPosition" : "0010"
+			});
+
+			oListBinding.create();
+			that.oModel.submitBatch("update");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.skip("delayed execute", function (assert) {
+		var sAction = "SalesOrderList('0500000000')/"
+				+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Cancel",
+			oModel = createSalesOrdersModel(),
+			sView = '<FlexBox id="form" binding="{/' + sAction + '(...)}"/>',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+
+			that.expectRequest({
+				method : "POST",
+				url : sAction,
+				payload : {}
+			}, {
+				"SalesOrderID" : "0500000000"
+			});
+
+			that.oView.byId("form").getElementBinding().execute("update");
+			that.oModel.submitBatch("update");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Refresh using a group with submit mode 'API'. The view contains one context binding
+	// without children. Hence the binding doesn't trigger a request, but its lock must be released.
+	QUnit.test("ODCB: delayed refresh", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox binding="{/BusinessPartnerList(\'0100000000\')}">\
+	<Text id="company" text="{CompanyName}"/>\
+</FlexBox>\
+<FlexBox binding="{/SalesOrderList}"/>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('0100000000')"
+			+ "?$select=BusinessPartnerID,CompanyName", {
+				"BusinessPartnerID" : "0100000000",
+				"CompanyName" : "SAP AG"
+			})
+			.expectChange("company", "SAP AG");
+
+		return this.createView(assert, sView, oModel).then(function () {
+
+			that.expectRequest("BusinessPartnerList('0100000000')"
+				+ "?$select=BusinessPartnerID,CompanyName", {
+					"BusinessPartnerID" : "0100000000",
+					"CompanyName" : "SAP SE"
+				})
+				.expectChange("company", "SAP SE");
+
+			that.oModel.refresh("update");
+			that.oModel.submitBatch("update");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Refresh using a group with submit mode 'API'. The model contains one list binding
+	// without a control. Hence getContexts() is not called and no request is triggered. But the
+	// lock must be released.
+	QUnit.test("ODLB: delayed refresh", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="note" text="{Note}"/>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					"SalesOrderID" : "0500000000",
+					"Note" : "Note"
+				}]
+			})
+			.expectChange("note", ["Note"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.oModel.bindList("/BusinessPartnerList"); // a list binding w/ no control behind
+
+			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=100", {
+					value : [{
+						"SalesOrderID" : "0500000000",
+						"Note" : "Note updated"
+					}]
+				})
+				.expectChange("note", ["Note updated"]);
+
+			that.oModel.refresh("update");
+			that.oModel.submitBatch("update");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.skip("ODLB: delayed filter", function (assert) {
+		var sView = '\
+<Table id="table" items="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectChange("name", false);
+
+		return this.createView(assert, sView).then(function () {
+
+			that.expectRequest("Equipments?$skip=0&$top=100", {
+					value : [{
+						"Category" : "1",
+						"ID" : "2",
+						"Name" : "Foo"
+					}]
+				})
+				.expectChange("name", ["Foo"]);
+
+			that.oModel.submitBatch("api");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Equipments?"
+				+ "$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=100", {
+					value : [{
+						"Name" : "Bar"
+					}]
+				})
+				.expectChange("name", ["Bar"]);
+
+			that.oView.byId("table").getBinding("items")
+				.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
+			that.oModel.submitBatch("api");
+
 			return that.waitForChanges(assert);
 		});
 	});

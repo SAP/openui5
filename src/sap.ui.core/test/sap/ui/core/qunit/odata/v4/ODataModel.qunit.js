@@ -13,6 +13,7 @@ sap.ui.require([
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_MetadataRequestor",
+	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/model/odata/v4/ODataContextBinding",
@@ -23,7 +24,7 @@ sap.ui.require([
 	"sap/ui/model/odata/v4/SubmitMode",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Message, Binding, BindingMode, BaseContext, Model, TypeString,
-		ODataUtils, OperationMode, Context, _MetadataRequestor, _Parser, _Requestor,
+		ODataUtils, OperationMode, Context, _MetadataRequestor, _GroupLock, _Parser, _Requestor,
 		ODataContextBinding, ODataListBinding, ODataMetaModel, ODataModel, ODataPropertyBinding,
 		SubmitMode, TestUtils) {
 	/*global QUnit, sinon */
@@ -1467,6 +1468,30 @@ sap.ui.require([
 
 		// code under test
 		oModel.initializeSecurityToken();
+	});
+
+	//*********************************************************************************************
+	QUnit.test("lockGroup", function (assert) {
+		var oGroupLock1,
+			oGroupLock2,
+			oModel = createModel("");
+
+		// code under test
+		oGroupLock1 = oModel.lockGroup("foo");
+
+		assert.ok(oGroupLock1 instanceof _GroupLock);
+		assert.strictEqual(oGroupLock1.getGroupId(), "foo");
+
+		// code under test
+		oGroupLock1 = oModel.lockGroup();
+
+		assert.strictEqual(oGroupLock1.getGroupId(), undefined);
+
+		// code under test
+		oGroupLock2 = oModel.lockGroup("foo", oGroupLock1);
+
+		assert.strictEqual(oGroupLock1, oGroupLock2);
+		assert.strictEqual(oGroupLock1.getGroupId(), "foo");
 	});
 });
 //TODO constructor: test that the service root URL is absolute?
