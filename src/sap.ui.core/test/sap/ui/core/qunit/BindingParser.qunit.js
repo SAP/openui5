@@ -819,6 +819,22 @@ sap.ui.require([
 		assert.strictEqual(BindingParser.parseExpression(sInput, iStart), oResult);
 	});
 
+	QUnit.test("parseExpression: oEnv, mGlobals", function (assert) {
+		var oEnv = {},
+			mGlobals = {},
+			sInput = "foo",
+			iStart = 0,
+			oResult = {};
+
+		this.mock(ExpressionParser).expects("parse")
+			.withExactArgs(sinon.match.func, sInput, iStart, sinon.match.same(mGlobals))
+			.returns(oResult);
+
+		// code under test
+		assert.strictEqual(BindingParser.parseExpression(sInput, iStart, oEnv, mGlobals), oResult);
+	});
+	//TODO how to really test that oEnv is passed to resolveEmbeddedBinding.bind?
+
 	QUnit.test("parseExpression: resolving", function (assert) {
 		var sExpression = "[${/blue}?'blue':'red']",
 			oIcon = new Icon(),
