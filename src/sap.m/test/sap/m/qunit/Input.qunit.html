@@ -3037,6 +3037,59 @@
 		assert.equal(oInputClone.getValue(), "The selected item: Auch ein gutes Ding", "The selectedRow association should be cloned");
 	});
 
+	QUnit.module("ValueHelpDialog");
+
+	QUnit.test("Change event", function(assert) {
+
+		var oDialog,
+			oInput = new sap.m.Input({
+			showValueHelp: true,
+			valueHelpRequest: function(evt) {
+				oDialog = new sap.m.Dialog({
+					content:[
+						new sap.m.Button({
+							text: 'close',
+							press: function() {
+								oDialog.close();
+							}
+						})
+					]
+				});
+
+				oDialog.open();
+			}
+		}).placeAt('content');
+
+		sap.ui.getCore().applyChanges();
+
+		var fnChangeCallback = this.spy();
+		oInput.attachChange(fnChangeCallback);
+
+		oInput._$input.focus().val("abc").trigger("input");
+
+		var oValueHelpIcon = oInput._getValueHelpIcon();
+
+		oValueHelpIcon.firePress();
+
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(2000);
+
+		assert.equal(fnChangeCallback.callCount, 0, "change event is not fired");
+
+		oDialog.close();
+		this.clock.tick(500);
+
+		oDialog.open();
+
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		assert.equal(fnChangeCallback.callCount, 1, "change event is fired once");
+
+		oDialog.destroy();
+		oInput.destroy();
+	});
+
 </script>
 
 </head>
