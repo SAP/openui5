@@ -1,0 +1,186 @@
+{
+	"1.42.0": {
+		"data": "",
+		"notes": [
+			{
+				"id": "ac7f82e2c1ae2f411e8764f0cf0ef57bd1466a4c",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: calling scrollToSection before the control is rendered caused an error",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680204848"
+					}
+				]
+			},
+			{
+				"id": "8a4af17f3c9394d4f300077465f8a45151f29552",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeader: placeholder stays hidden when no image URI",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680188741"
+					}
+				]
+			},
+			{
+				"id": "74c658e4ea9fddfeb87982d84762014450579f80",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout - footer animation issues fixed",
+				"references": []
+			},
+			{
+				"id": "943097ba507fb84f9d3a6a863f3d15be58980253",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageSectionBase - RTL keyboard handling bug fixed",
+				"references": []
+			},
+			{
+				"id": "2951fff481ea42af6583573c6eb4b2bac5bf7306",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageHeader: Reorder markers",
+				"references": []
+			},
+			{
+				"id": "69914a6a963ebf356c7feafaf12f6350ec5c704d",
+				"type": "FIX",
+				"text": "sap.uxap.AnchorBar - right arrow position on tablet fixed",
+				"references": []
+			},
+			{
+				"id": "d869882269cef02280512b1fad33a8a399eb8494",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeaderContent: not responsive when in ResponsiveSplitter",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680147601"
+					}
+				]
+			},
+			{
+				"id": "e4ce1dd2b0bd65ce31a29ad74f88cd7d8d5ac999",
+				"type": "FIX",
+				"text": "sap.uxap.AnchorBar - RTL keyboard handling bug fixed",
+				"references": []
+			},
+			{
+				"id": "06719040ae9b2dd32bdb4075a1d893330da43d52",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageSubSection - grid data memory leak fixed",
+				"references": []
+			},
+			{
+				"id": "d327d1840b34ce439d814c9c4a8eb3f6cae18c92",
+				"type": "FIX",
+				"text": "sap.uxap.HierarchicalSelect: there was a redundant tab stop",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680116122"
+					}
+				]
+			},
+			{
+				"id": "40ba16f5f264fa1f86c7e47d4bb47c06197e174d",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout - floating footer visibility fixed",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680119127"
+					}
+				]
+			},
+			{
+				"id": "bea3c6411e659bb4ec90facd7d66d482307650b7",
+				"type": "FIX",
+				"text": "sap.uxap.HierarchicalSelect: error occurred when no custom header",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680121052"
+					}
+				]
+			},
+			{
+				"id": "35c63a0a9c80f4afde4ef161b84f1431eddc5759",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageSubSection: proxied aggregations weren't cloned correctly",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670276645"
+					}
+				]
+			},
+			{
+				"id": "3ff9248b3ee37b292b4b1d93894dd569475139e4",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: an error occurred if there was not scroll",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680116227"
+					}
+				]
+			},
+			{
+				"id": "599915ffb45b6d3f58f8e6c8d96e328b1e6d58be",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeader: couldn't rerender the favIcon since it has moved",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680086039"
+					}
+				]
+			},
+			{
+				"id": "755731c1653e5a57285792a4aa6095770ed9bb17",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: would cause an error because _$contentContainer was undefined",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680037307"
+					}
+				]
+			},
+			{
+				"id": "da02b5bda5e12da34d5b8817aed58230e9dc34f1",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: proxied aggregation weren't copied in templates",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1670276645"
+					}
+				]
+			},
+			{
+				"id": "9a385a1cdc4fae1c3b27dbe124b2377742acd2c5",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeader: proxied aggregation needs to invalidate its parent",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680041065"
+					}
+				]
+			},
+			{
+				"id": "56808b4fa59e33487edc15b306f22b461272509e",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageHeaderActionButton: Wrong padding when no text",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1680061875"
+					}
+				]
+			}
+		]
+	}
+}

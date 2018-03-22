@@ -23,7 +23,7 @@
       {
         "id": "f0240eecfee4a607c954942c1a2af9bf5b8ea5e9",
         "type": "FEATURE",
-        "text": "Extended predefined CSS margin classes; Added responsive CSS margin classes; Introduced tiny CSS margin sizes; Added \u0027no margin\u0027 classes",
+        "text": "Extended predefined CSS margin classes; Added responsive CSS margin classes; Introduced tiny CSS margin sizes; Added 'no margin' classes",
         "references": []
       },
       {
@@ -408,7 +408,12 @@
         "id": "b34ef4e8bbdc884212b411bc8bfb6aab5ba6ee4d",
         "type": "FEATURE",
         "text": "sap.m.Page: showSubHeader property implemented",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "256"
+          }
+        ]
       },
       {
         "id": "186a1d759d5ff42038ea3759313d77378c8ebd4e",
@@ -491,7 +496,7 @@
       {
         "id": "44e4f8c1a1ed7d175a1a5174bfa35b069c90c13a",
         "type": "FIX",
-        "text": "Missing margins to css class \u0027sapUIFioriObjectPage\u0027 added",
+        "text": "Missing margins to css class 'sapUIFioriObjectPage' added",
         "references": []
       },
       {
@@ -504,7 +509,12 @@
         "id": "c21d50496ed8c9f69ed786855790f19e26eb1203",
         "type": "FIX",
         "text": "Core: Restoring focus after rendering in databinding scenario corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482010103"
+          }
+        ]
       },
       {
         "id": "afec4b2a372e89192d5f24c4496e8005a84eb0f7",
@@ -556,7 +566,12 @@
         "id": "aca1c65d32ba1c542be90062f8670e20e86968aa",
         "type": "FIX",
         "text": "Placeholders in MultiComboBox in Internet Explorer 10 no longer missing",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482007105"
+          }
+        ]
       },
       {
         "id": "c805c5ed21aeed6d2e32db0b1029d6cb84515372",
@@ -627,7 +642,12 @@
         "id": "4dea3e8af03d99856d78a9b0a944d4e770bf1d9b",
         "type": "FIX",
         "text": "sap.m.DatePicker: Unnecessary change event if value is set to null removed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482023605"
+          }
+        ]
       },
       {
         "id": "e1253b5f142649274478e1795e4b1ee89ace62af",
@@ -639,13 +659,23 @@
         "id": "492d36184d5184dc28a23db74d20c577f0812c14",
         "type": "FIX",
         "text": "sap.m.Label: In Form, \":\" now set if text is updated",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482023936"
+          }
+        ]
       },
       {
         "id": "26657edb9f7dc8f945cc59c3e8280b00d0ac3e57",
         "type": "FIX",
         "text": "sap.m.ListItemBase: Clickable contents made not shrinkable",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570008273"
+          }
+        ]
       },
       {
         "id": "dcd99262f064d350f79eeb201361ec8eddde97b8",
@@ -657,7 +687,12 @@
         "id": "bcbec1d49759df76540aefa23ce98bfa57b6912e",
         "type": "FIX",
         "text": "sap.m.MultiComboBox: Selection by checkbox corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472014366"
+          }
+        ]
       },
       {
         "id": "d9e508df3ee698acdbce77000686f62164fa97cc",
@@ -681,7 +716,16 @@
         "id": "71556621db72cedff3cf187b32df0c9206a5d250",
         "type": "FIX",
         "text": "sap.m.Select: key up/down triggers the change without press enter key corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472015530"
+          },
+          {
+            "type": "BCP",
+            "reference": "1482027000"
+          }
+        ]
       },
       {
         "id": "47a162be6f4c014bf17bac68274d80c7ef24e5d4",
@@ -705,25 +749,45 @@
         "id": "7b0d87a8341ce70777697cb47651304ec61495fe",
         "type": "FIX",
         "text": "sap.m.Switch: Odd state issue for double click/tap event corrected",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "234"
+          }
+        ]
       },
       {
         "id": "a4db80699357d961d30230e222ed47c5eca92aef",
         "type": "FIX",
         "text": "sap.m.Table: Invisible selected items when deselect all is checked or triggered with keyboard handling (CTRL + A) now cleared",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700011941382014"
+          }
+        ]
       },
       {
         "id": "8c85c886dd5f3544ebf034c7398e0a7b209ec0ac",
         "type": "FIX",
         "text": "sap.m.Table: Cell content now determines overflow handling",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472017782"
+          }
+        ]
       },
       {
         "id": "1098ed93f2d60b1785ded8f9d26478ce107f5ed7",
         "type": "FIX",
         "text": "sap.m.Table: Header outline is now visible in High Contrast Black (HCB) theme",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472002581"
+          }
+        ]
       },
       {
         "id": "4907156dcb15154569a36008640564aa05578180",
@@ -758,7 +822,12 @@
         "id": "3b4edfbdd024d14b2c12af463710e1de2e97bcc4",
         "type": "FIX",
         "text": "sap.m.Button: Icon alignment in tables",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482010963"
+          }
+        ]
       },
       {
         "id": "2cb440a06e4d26f28df3e9de4e31908517912c6a",
@@ -832,43 +901,78 @@
         "id": "5fb108dcd12d29bda4aa4d085688052cf41ecaaf",
         "type": "FIX",
         "text": "sap.m.Dialog: Horizontal scrolling is now kept after dialog reposition",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "260"
+          }
+        ]
       },
       {
         "id": "f48998e929c8abe7751d89c69672f29962ffc6d0",
         "type": "FIX",
         "text": "sap.m.Dialog: Re-rendering suppressed when initialFocus is set",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472001215"
+          }
+        ]
       },
       {
         "id": "395792c15ce14c80392893195b664865b87544f2",
         "type": "FIX",
         "text": "sap.m.FeedListItem: Buttons not visible on iOS edited and deleted",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472012996"
+          }
+        ]
       },
       {
         "id": "f8cfa40af9b1b4742124b5de4714a16edf917640",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Scrolling arrows appearance on mobile devices changed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472000788"
+          }
+        ]
       },
       {
         "id": "a87acab3fd6d48bcc797a4b40f92c806ae42dc0c",
         "type": "FIX",
-        "text": "sap.m.IconTabBar: Persisting of the selected tab when the tab doesn\u0027t have a key is corrected",
-        "references": []
+        "text": "sap.m.IconTabBar: Persisting of the selected tab when the tab doesn't have a key is corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482007468"
+          }
+        ]
       },
       {
         "id": "cdb11e5f890728f81a672f469a8c26531b6be96d",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Mobile arrows click is no longer throwing an exception",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570005088"
+          }
+        ]
       },
       {
         "id": "ef4556f1f05871222ae2a6735501e4fed4604a7a",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Null error prevented when the IconTabBar is destroyed soon after the rendering",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570003632"
+          }
+        ]
       },
       {
         "id": "dad45d1d397a69930ae7422a475bf270861b0838",
@@ -880,13 +984,27 @@
         "id": "13e2ddb490dfca36808ce11543a0d34ded8cb4f0",
         "type": "FIX",
         "text": "sap.m.IconTabHeader: The IconTabHeader no longer throws an exception when used standalone",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "275"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570008503"
+          }
+        ]
       },
       {
         "id": "3b2b99897cb8f601fe56a6cc9a0f7518ae236c2c",
         "type": "FIX",
         "text": "sap.m.Image: Density fallback now works correctly after re-rendering",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482015591"
+          }
+        ]
       },
       {
         "id": "21a17f6465ed5a6500e132f3dc3ec9341926da5e",
@@ -898,7 +1016,12 @@
         "id": "1b857fffd1a9a8fb156894e4b1cbd26f549ba226",
         "type": "FIX",
         "text": "sap.m.Input: suggestionItemSelected event handling improvement",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482017037"
+          }
+        ]
       },
       {
         "id": "5688e789f7d14232d574a495b3e816dcd648024a",
@@ -939,13 +1062,23 @@
         "id": "c25d2d96f89bfd77573cf7a9267897736ef83b56",
         "type": "FIX",
         "text": "sap.m.Link: Error when set to non-subtle/non-emphasized solved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472023641"
+          }
+        ]
       },
       {
         "id": "a568dbf54ee181c42041927bb9e6ec6105049796",
         "type": "FIX",
         "text": "sap.m.Link: Mark events as handled, fix typo, improve performance",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472008421"
+          }
+        ]
       },
       {
         "id": "99a85a629c7d18b933858e347309453a5074d2ca",
@@ -962,31 +1095,56 @@
         "id": "52c8cf5d1932e3b5efed96b974b14b5fa6795bbc",
         "type": "FIX",
         "text": "sap.m.MessageBox: MessageBox now displays text containing curly brackets",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482027787"
+          }
+        ]
       },
       {
         "id": "aa52ffecbc877312b43bbfbab712a79c0c06692c",
         "type": "FIX",
         "text": "sap.m.MessageBox: @alias documentation to fix the missing API documentation added",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482012224"
+          }
+        ]
       },
       {
         "id": "411e06055ce1e9257207b279dc31fbe38496295a",
         "type": "FIX",
         "text": "sap.m.MultiComboBox: Editable state is now initially rendered",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472010633"
+          }
+        ]
       },
       {
         "id": "28699a06294fe1772424dd3bcfeb8df809487fb3",
         "type": "FIX",
         "text": "sap.m.MultiComboBox: Shrinking width corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472020740"
+          }
+        ]
       },
       {
         "id": "af695b37d1f1021f2e36533967f7cbbdd4de3890",
         "type": "FIX",
         "text": "sap.m.MultiInput: String no longer disappears if no matched suggestion item is found",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482011295"
+          }
+        ]
       },
       {
         "id": "1513e4514539b101cb0e82672718186c3e0781b1",
@@ -1003,7 +1161,16 @@
         "id": "c829bd3027f67d6c2ee141f0552d74ec9a27b976",
         "type": "FIX",
         "text": "sap.m.ObjectHeader: Alignment issue in Internet Explorer. ObjectNumber displayed incorrectly.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482026526"
+          },
+          {
+            "type": "BCP",
+            "reference": "1472009254"
+          }
+        ]
       },
       {
         "id": "75a179f71293d11eca4a0928d2ba75713a868cb7",
@@ -1015,13 +1182,23 @@
         "id": "7d8bead60b7510192c3255e445ed20e5d1481499",
         "type": "FIX",
         "text": "sap.m.ObjectIdentifier: Empty text node will not be rendered",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482029021"
+          }
+        ]
       },
       {
         "id": "acc0c49224d42579c05a27287fcb8ad90ae894ad",
         "type": "FIX",
         "text": "sap.m.ObjectIdentifier: Tooltip rendering",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482023240"
+          }
+        ]
       },
       {
         "id": "38c84d6b6cfd412f629d992ddbb96012f1652025",
@@ -1072,13 +1249,13 @@
       {
         "id": "43215e2e5866720d958bb20a2f8b2953204a9989",
         "type": "FIX",
-        "text": "sap.m.Popover: Popover can\u0027t handle the content resize when popover go beyond the right border of screen",
+        "text": "sap.m.Popover: Popover can't handle the content resize when popover go beyond the right border of screen",
         "references": []
       },
       {
         "id": "3ad0759e4aa2ebdf44ec2e3656474d974d59b01c",
         "type": "FIX",
-        "text": "sap.m.Popover: Popover shouldn\u0027t be closed when the right border of openby control stays",
+        "text": "sap.m.Popover: Popover shouldn't be closed when the right border of openby control stays",
         "references": [
           {
             "type": "BCP",
@@ -1089,8 +1266,13 @@
       {
         "id": "439a9a130f0f5754442759a4ab6b5686eca94189",
         "type": "FIX",
-        "text": "sap.m.Popover: Popover shouldn\u0027t change the scroll left of window when runs on desktop",
-        "references": []
+        "text": "sap.m.Popover: Popover shouldn't change the scroll left of window when runs on desktop",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570012916"
+          }
+        ]
       },
       {
         "id": "be465c9d79c9763efd23a07e6d583a03a13d1f48",
@@ -1107,13 +1289,23 @@
         "id": "0be41978a1d80b048198f7ed49fb6e2360ce7ede",
         "type": "FIX",
         "text": "sap.m.Popover: No error should be logged when popover is autoclosed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482023101"
+          }
+        ]
       },
       {
         "id": "d3cdeee07bd79baec03e9082e0894d35ea9df92c",
         "type": "FIX",
         "text": "sap.m.RatingIndicator: Fixed value setter for null/undefined values",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570007893"
+          }
+        ]
       },
       {
         "id": "a4d3b786bd4db70f390a9c88c5a873b3e6b41869",
@@ -1123,6 +1315,10 @@
           {
             "type": "BCP",
             "reference": "767643"
+          },
+          {
+            "type": "GitHub",
+            "reference": "180"
           }
         ]
       },
@@ -1160,7 +1356,12 @@
         "id": "580240a6af4e1a757c56cd65a96f8b4bdf44f1ac",
         "type": "FIX",
         "text": "sap.m.SelectDialog: Changing of focus after liveChange event fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472004019"
+          }
+        ]
       },
       {
         "id": "05f2c34cf276d0bb258bcdc157f321f232d1f9e2",
@@ -1212,7 +1413,7 @@
       {
         "id": "613437ddd2f2ad8ca1f7e010646f508bae705cc8",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: Replacement of \u0027internet_explorer\u0027 with \u0027msie\u0027",
+        "text": "sap.m.UploadCollection: Replacement of 'internet_explorer' with 'msie'",
         "references": []
       },
       {
@@ -1248,7 +1449,7 @@
       {
         "id": "5e7c744c5d781e64e8d3709b48ffb5e7be09d89b",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: Incorrect display of list with list separator \u0027None\u0027",
+        "text": "sap.m.UploadCollection: Incorrect display of list with list separator 'None'",
         "references": []
       },
       {
@@ -1297,13 +1498,23 @@
         "id": "a2eb1d674e389b1b4f3bc70717faa26c6fff1452",
         "type": "FIX",
         "text": "sap.m.ViewSettingsDialog: Fixed multiple selection with ctrl+a",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472017637"
+          }
+        ]
       },
       {
         "id": "83a483bcd208af67aa43f831819e509b6d7d18ad",
         "type": "FIX",
         "text": "sap.m.ViewSettingsDialog: Dynamic model update not working fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472016941"
+          }
+        ]
       },
       {
         "id": "1fc326a03756fe92210846faf648f1a8ca0f85bf",
@@ -1326,7 +1537,12 @@
         "id": "797b45c29f8b6c7086a4a4a91fbe05f6ad3e705f",
         "type": "FIX",
         "text": "sap.m.Column: box-sizing must be content-box",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482026782"
+          }
+        ]
       },
       {
         "id": "fecc653553edcc20534118e78776c7af12d5b6c8",
@@ -1338,13 +1554,23 @@
         "id": "abeb724c805401570873ef2f3775aa2d30665a48",
         "type": "FIX",
         "text": "sap.m.GrowingDelegate: Should respect growing threshold.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472014848"
+          }
+        ]
       },
       {
         "id": "cf562683bbbffd0cc9dc6019e6a5c8e9bf5c1a7f",
         "type": "FIX",
         "text": "sap.m.List: Long no data text should show ellipsis.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482022699"
+          }
+        ]
       },
       {
         "id": "56483dc1e809f04b6630a19043693e1caaf3110f",
@@ -1397,7 +1623,7 @@
       {
         "id": "a612ba8cf2119695584309a6c12144f7a727af4b",
         "type": "FEATURE",
-        "text": "sap.m.DatePicker: ARIA support implemented \u0026 Calendar",
+        "text": "sap.m.DatePicker: ARIA support implemented & Calendar",
         "references": []
       },
       {
@@ -1409,7 +1635,7 @@
       {
         "id": "48858fdf5b6415c03cf9b639587a2c0b3da9deb5",
         "type": "FEATURE",
-        "text": "Demokit: Master-Detail demo app added; \u0027Approve Purchase Orders\u0027 and \u0027Split App Demo\u0027 removed",
+        "text": "Demokit: Master-Detail demo app added; 'Approve Purchase Orders' and 'Split App Demo' removed",
         "references": []
       },
       {
@@ -1506,7 +1732,12 @@
         "id": "80246ac696e356e45d88ac21fe7908049ca6a875",
         "type": "FEATURE",
         "text": "sap.m.SegmentedButton: New bindable aggregation and selectedKey property added",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472019388"
+          }
+        ]
       },
       {
         "id": "9fe0d21855027b9945e109ccb46f9e8d2347be08",
@@ -1524,7 +1755,12 @@
         "id": "10542cb1cb9f4e2d454e053f219b31d30554d76e",
         "type": "FIX",
         "text": "Explored app: TableOutdated sample updated",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "294"
+          }
+        ]
       },
       {
         "id": "76c38d4fca4c38fe893a837dc3dbe590f1b7c4b2",
@@ -1536,7 +1772,16 @@
         "id": "ded61e22b1303a7c005ad8b02147a2d65b4f851f",
         "type": "FIX",
         "text": "Input: Home and End key no longer brings error",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "287"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570021310"
+          }
+        ]
       },
       {
         "id": "a5a043e26b65846d7e2e5b9858e1d07c899893da",
@@ -1554,31 +1799,56 @@
         "id": "0f47f62203fa894af0ab704abd3b8833abed6a7d",
         "type": "FIX",
         "text": "sap.m.ComboBox: Arrow button is no longer rendered in read-only mode",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570011983"
+          }
+        ]
       },
       {
         "id": "6a2342baa0fda00ce12da3a11d5d69e9a24cfffa",
         "type": "FIX",
         "text": "sap.m.ListBase: ItemNavigation is now invalidated when items DOM is updated",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580005158"
+          }
+        ]
       },
       {
         "id": "1a19dbcd21b1d89794c28798f5d5fdc8e9f66ab2",
         "type": "FIX",
         "text": "sap.m.Bar/Shell: Marker CSS class to suppress branding bar added",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570014641"
+          }
+        ]
       },
       {
         "id": "eea01d6f25810e2121f24a869303c0a37b48c62d",
         "type": "FIX",
         "text": "sap.m.Button: In HCB (High-Contrast-Black) theme and Compact mode, line height is now correct",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472013878"
+          }
+        ]
       },
       {
         "id": "7f37ec6f2e6c39811a8abc1ddce671467822b494",
         "type": "FIX",
         "text": "sap.m.Dialog: Repositioning problem when data is dynamically inserted into table instance as content corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1482026280"
+          }
+        ]
       },
       {
         "id": "8f10453a08919a83686a189b07bcab25961b3b51",
@@ -1590,19 +1860,33 @@
         "id": "30dd85650e44f8a30cc799a8b44ce03ecbd5368f",
         "type": "FIX",
         "text": "sap.m.FeedInput: \"...\" from placeholder text removed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570016525"
+          }
+        ]
       },
       {
         "id": "b656f448c27da15d64ba53b7189a84a556743271",
         "type": "FIX",
-        "text": "sap.m.FeedListItem: Link color for sender\u0027s name (including \u0027:\u0027) adapted",
+        "text": "sap.m.FeedListItem: Link color for sender's name (including ':') adapted",
         "references": []
       },
       {
         "id": "fd45859990b5000129e0be07a2692193d10db350",
         "type": "FIX",
         "text": "sap.m.FeedListItem: Linebreaks disappear at expanding text corrected",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "282"
+          },
+          {
+            "type": "BCP",
+            "reference": "1472002904"
+          }
+        ]
       },
       {
         "id": "8d21e2d20f082f3bca1a3a927369ef6ce4b7cae8",
@@ -1620,13 +1904,31 @@
         "id": "0a0f3182600532be178761cc398395582073941e",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Invalidation flow corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570015898"
+          },
+          {
+            "type": "BCP",
+            "reference": "1580001653"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570021076"
+          }
+        ]
       },
       {
         "id": "6ce91fc2be7501613886a88902c937340312a59e",
         "type": "FIX",
-        "text": "sap.m.Input: Suggestion item can\u0027t be used when selected corrected",
-        "references": []
+        "text": "sap.m.Input: Suggestion item can't be used when selected corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570019651"
+          }
+        ]
       },
       {
         "id": "b77b6d50370ffc9a7c3bcf52b3b2e9c60b4b04de",
@@ -1644,49 +1946,89 @@
         "id": "0a1271a2ba2ec80299b257911ba826c9452cf8aa",
         "type": "FIX",
         "text": "sap.m.MessageToast: CSS class checking corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580007832"
+          }
+        ]
       },
       {
         "id": "9ccd7e14029189f120893c5a4a2934acb8f0311c",
         "type": "FIX",
         "text": "sap.m.MultiComboBox: Placeholder overlays token corrected in Internet Explorer",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570018697"
+          }
+        ]
       },
       {
         "id": "6bcf160a7f02840fb0667207a1ab25881a4aaacc",
         "type": "FIX",
         "text": "sap.m.Page: Double initial rendering avoided",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570014242"
+          }
+        ]
       },
       {
         "id": "a5a07ead28b9bb50009093612d4df7de01d205aa",
         "type": "FIX",
-        "text": "sap.m.Popover: Update the openBy DOM ref after it\u0027s regenerated",
-        "references": []
+        "text": "sap.m.Popover: Update the openBy DOM ref after it's regenerated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580004683"
+          }
+        ]
       },
       {
         "id": "1e03a0603ac222eb33c11981f750354506ed67d2",
         "type": "FIX",
         "text": "sap.m.ResponsePopover: getDomRef call to internal control forwarded",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570003504"
+          }
+        ]
       },
       {
         "id": "e02dcac2dde32fce93867d85cb5af3f06a290e6b",
         "type": "FIX",
         "text": "sap.m.SegmentedButton: Width calculation when mixed content buttons are used is now correct",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570006375"
+          }
+        ]
       },
       {
         "id": "91c44f0d1ff9a04fa029ad388d9add2009f1bda4",
         "type": "FIX",
         "text": "sap.m.Select: synchronizeSelection() no longer overrides selection",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580006106"
+          }
+        ]
       },
       {
         "id": "5368c7d144b6b8431ddb6efac3c0d383420b355b",
         "type": "FIX",
         "text": "sap.m.SplitContainer: Master button when nav container is added to detail area managed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580003409"
+          }
+        ]
       },
       {
         "id": "67e726ece3a07c74eca7cb7b3190f6e4478045b1",
@@ -1703,7 +2045,12 @@
         "id": "0f8d21f6d4dd0e6fd1fe019b75ccff42a0cb2e68",
         "type": "FIX",
         "text": "sap.m.Text: The CSS class \"sapMTextBreakWord\" is now properly updated on text change",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472006246"
+          }
+        ]
       },
       {
         "id": "5647929a361b18a1825fa0b5f2905f04871cb590",
@@ -1733,18 +2080,23 @@
         "id": "6650b81f3142183b4448add0a3f75dade6d0df56",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Links are now opened in new tab",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580001165"
+          }
+        ]
       },
       {
         "id": "f88fead20cf5e9baa241e7a652c1f504d939cd77",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: qUnits replaced \u0027Display\u0027 by\u0027display\u0027",
+        "text": "sap.m.UploadCollection: qUnits replaced 'Display' by'display'",
         "references": []
       },
       {
         "id": "b3b8b1f54117806fc7d5e2a8d79f319e343b5122",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: \u0027fileName\u0027 and \u0027files\u0027 are now used instead of value",
+        "text": "sap.m.UploadCollection: 'fileName' and 'files' are now used instead of value",
         "references": []
       },
       {
@@ -1845,7 +2197,12 @@
         "id": "e4d23ffdcb48b7892ab8ad2c63b4b57038ccfc41",
         "type": "FIX",
         "text": "sap.m.Input: ValueHelp icon is no longer on incorrect position if description is used",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580012098"
+          }
+        ]
       },
       {
         "id": "ac22d1d59e57279c36ddfd622feffbd595f455f2",
@@ -1863,13 +2220,23 @@
         "id": "65d0d2a86271e8fd97148d96d295faefbc1ac3f5",
         "type": "FIX",
         "text": "sap.m.MultiComboBox: Usage of empty strings as selected key allowed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580012329"
+          }
+        ]
       },
       {
         "id": "a8b09df5e1898b46cc6bec283667c7e1b04b4442",
         "type": "FIX",
         "text": "sap.m.MultiInput: Focus setting for tokenChange event improved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570008072"
+          }
+        ]
       },
       {
         "id": "318e63fd718c1b732faf6c9dfb11380ac042cddf",
@@ -1887,7 +2254,12 @@
         "id": "7a974ca8e7e0b9b3a5b4db479014961ff81be925",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Buttons no longer positioned over text at resizing",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580012961"
+          }
+        ]
       }
     ]
   },
@@ -1922,37 +2294,71 @@
         "id": "551d37d6d5f440f42b44906e45ffdaf4bd752e54",
         "type": "FIX",
         "text": "sap.m.DateRangeSelection: No longer fires change if not changed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580015349"
+          }
+        ]
       },
       {
         "id": "ea387946e3f60ec99512c4f66fb2f43842491490",
         "type": "FIX",
         "text": "sap.m.IconTabBar: The first text is no longer clipped on mobile devices when the first filter is \"showAll:true\"",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570009305"
+          },
+          {
+            "type": "BCP",
+            "reference": "1580008364"
+          }
+        ]
       },
       {
         "id": "51ce1200e3788e78c99d13388c179d2552798288",
         "type": "FIX",
         "text": "sap.m.Input: Selection remembering disabled",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570019246"
+          }
+        ]
       },
       {
         "id": "f46da6a3f6e6e89b35f88d091da164d46a44b942",
         "type": "FIX",
         "text": "sap.m.MultiInput: MultiInput improved with suggestion in phone mode",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580019335"
+          }
+        ]
       },
       {
         "id": "2276b93e3a03b8c0087c8e834fd6ae63892095b7",
         "type": "FIX",
         "text": "sap.m.MultiInput: Placeholder covering ValueHelp button in Internet Explorer corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580007145"
+          }
+        ]
       },
       {
         "id": "67f16a0e956d874442f4e76f695b354a38afbe4d",
         "type": "FIX",
         "text": "sap.m.Popover: Minimum width of the content wrapper is now 100%",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570008271"
+          }
+        ]
       },
       {
         "id": "fbdb19001993ef8a6bd8c470135136e033d3535c",
@@ -1975,20 +2381,30 @@
       {
         "id": "b287e23d0c9e0304fcafd7695bcd6ac833240ddb",
         "type": "FIX",
-        "text": "sap.m.UploadCollection: Files from \u0027linkedDocuments\u0027 folder added to metadata of demokit example",
+        "text": "sap.m.UploadCollection: Files from 'linkedDocuments' folder added to metadata of demokit example",
         "references": []
       },
       {
         "id": "f427e302f3b552a9907f24e761a2f4ddc77e5165",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Property sameFileNameAllowed corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580001167"
+          }
+        ]
       },
       {
         "id": "9d093ab957150b7da5810d62d6ca9145ac8be1cc",
         "type": "FIX",
         "text": "sap.m.ViewSettingsDialog: Initial focus in filter details page corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580019358"
+          }
+        ]
       },
       {
         "id": "c26c2631d49dbc1aacbb8c5e958242db7f01dbb7",
@@ -2011,13 +2427,23 @@
         "id": "d11c801d49c7296b69a3af5a2e1eae6080920db3",
         "type": "FIX",
         "text": "ComboBox: Input events of read-only fields suppressed (Internet Explorer 11)",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580015527"
+          }
+        ]
       },
       {
         "id": "ab36fdec1062696f8a3f74c77e89931b505b4884",
         "type": "FIX",
         "text": "ComboBoxBase: Overlapping issue of the text on Internet explorer 10 (sap_bluecrystal theme) corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570024996"
+          }
+        ]
       },
       {
         "id": "9bcca5f17792d09453278800fde2d51f2dacebb2",
@@ -2029,37 +2455,67 @@
         "id": "84a691847ed6062efbffe25b7b99cd79f8f83fd7",
         "type": "FIX",
         "text": "Input: Width of F4 button on compact mode adjusted",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570027193"
+          }
+        ]
       },
       {
         "id": "d000a3c6ee50a039ce55e0f0cac398eadb7a875b",
         "type": "FIX",
         "text": "Input: Suggestion is now opened only if minimal input was made",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580025447"
+          }
+        ]
       },
       {
         "id": "e467c37a54054e39ad56b02db4f2ba8576e86221",
         "type": "FIX",
         "text": "Label: Aria-required attribute set",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580026261"
+          }
+        ]
       },
       {
         "id": "046771c1717cde615ccc4b97229126160c60bbeb",
         "type": "FIX",
         "text": "ListBase: ItemNavigation is no longer destroyed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570030881"
+          }
+        ]
       },
       {
         "id": "3e32e5e9ec6a6b9e11bacffb79f842f7d0d2e60b",
         "type": "FIX",
         "text": "MultiComboBox: Popup is now closed on first chosen token",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580008350"
+          }
+        ]
       },
       {
         "id": "618eb1feddfbdac00d7d5379e43ab69564e316a0",
         "type": "FIX",
         "text": "MultiInput: Token multi-line display in popup dialog improved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580015824"
+          }
+        ]
       },
       {
         "id": "e156ab5e7b36d6cd858ebd7fd9b4e0b2443ade38",
@@ -2070,14 +2526,24 @@
       {
         "id": "21f68eb290262401cb6c0d4d555d9bd69f818caa",
         "type": "FIX",
-        "text": "Popover: Closed if virtual keyboard is open and \u0027of\u0027 element is out of viewport",
-        "references": []
+        "text": "Popover: Closed if virtual keyboard is open and 'of' element is out of viewport",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570002501"
+          }
+        ]
       },
       {
         "id": "38535da70f7288c2b7590fa137f8a25e73a8a807",
         "type": "FIX",
         "text": "Popover: Arrow color corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580011045"
+          }
+        ]
       },
       {
         "id": "71e61e1367ffee72c2186b52d48efa4105aba65f",
@@ -2089,7 +2555,12 @@
         "id": "b0653a8acd10aecd9be29ceaabc8fb818cf330a1",
         "type": "FIX",
         "text": "Text: Min-height is added when text in editable form is empty",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580019297"
+          }
+        ]
       },
       {
         "id": "d0ff99b734ba79384ec5e48bb4db8e0fd473c1b3",
@@ -2118,13 +2589,23 @@
         "id": "4c64c8afa360e87e8bd96b57da60fde3ca0abb51",
         "type": "FIX",
         "text": "ResponsivePopover: Title is now binded at first opening of the sample application in the DemoKit",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570056043"
+          }
+        ]
       },
       {
         "id": "5b26c46ff54760f51ca4a7618f2bc7276c68431c",
         "type": "FIX",
         "text": "ListBase: Swipe content changes no longer invalidate the list",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700002313502015"
+          }
+        ]
       },
       {
         "id": "e13adf5301b8caa00c9114bb6ee6158902e5500e",
@@ -2142,13 +2623,23 @@
         "id": "79f48e077f9ccfa3599c1e0dbcabf1a9849d9665",
         "type": "FIX",
         "text": "FeedListItem: Delete and Edit buttons are no longer displayed at the end of line",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570034741"
+          }
+        ]
       },
       {
         "id": "5bd081f938e0f9843f2f03fc64ddee9c8027d78a",
         "type": "FIX",
         "text": "IconTabBar: Left padding is now correct",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570023260"
+          }
+        ]
       },
       {
         "id": "62fd754f2b29b977d3e8058fc9263728b1fad9fd",
@@ -2160,7 +2651,12 @@
         "id": "6d62931db47486c9bbb8b957113841e148239866",
         "type": "FIX",
         "text": "Panel: Support for nested panels added",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570040810"
+          }
+        ]
       },
       {
         "id": "27b2708a40109904c000ea2572249de1f3d36d61",
@@ -2172,19 +2668,34 @@
         "id": "142e4faaaa34f74c4f1e234a59de27130ee607d5",
         "type": "FIX",
         "text": "PullToRefresh: No focus indicator on HCB corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570028546"
+          }
+        ]
       },
       {
         "id": "9a2da8d318b74b1ce389ace46f2709ae5063e64d",
         "type": "FIX",
         "text": "SelectDialog: Remember selection after cancel button pressed issue solved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570001425"
+          }
+        ]
       },
       {
         "id": "f4ffd57debdab5343b6e5ad04c386eb8e0b4b421",
         "type": "FIX",
         "text": "Title, Label: Margin in transparent toolbar context for Bluecrystal and HCB theme corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570022275"
+          }
+        ]
       }
     ]
   },
@@ -2195,43 +2706,78 @@
         "id": "7a0f576df1d5f052efeecf7c488e88920d46cf28",
         "type": "FIX",
         "text": "sap.m.routing.RouteMatchedHandler - setCloseDialogs correctly forwards the property to the targetHandler",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570077531"
+          }
+        ]
       },
       {
         "id": "7e2da4ea4f28ec9c60ced238371080533e76852d",
         "type": "FIX",
         "text": "Focus on pull-to-refresh button now works correctly for Internet Explorer",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570028546"
+          }
+        ]
       },
       {
         "id": "d141237a6e56f0ab6852622e652f28ac82b49298",
         "type": "FIX",
         "text": "sap.m.DatePicker: Long text no longer covers picker icon in Internet Explorer 9/10",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570148595"
+          }
+        ]
       },
       {
         "id": "319573726e54ad4442f0b14ff689386cee239e74",
         "type": "FIX",
         "text": "sap.m.GrowingEnablement: Now built from scratch when there is no data",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570142738"
+          }
+        ]
       },
       {
         "id": "ba678ee9487a9af5992af9673a2b72bf6eb26902",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Bubble IconTabHeader selectedKey update up to parent IconTabBar",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "405"
+          }
+        ]
       },
       {
         "id": "9d1346510536d922173458b6ea377abfe1552cc9",
         "type": "FIX",
         "text": "sap.m.Input:  Changed ValueHelp icon size in compact mode",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570145998"
+          }
+        ]
       },
       {
         "id": "239c165c946b4dc6c73025ad2cfa3b50c98633ae",
         "type": "FIX",
         "text": "sap.m.List: Added support for old columns aggregation",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570156373"
+          }
+        ]
       },
       {
         "id": "127d99f76b4e64ef4b5ead2af0ba59c09d699c9c",
@@ -2243,7 +2789,12 @@
         "id": "0de7538f1455c9630639d9a14bc39cf3aa53b7e2",
         "type": "FIX",
         "text": "sap.m.NavContainer: Deleted removed pages from its navigation stack",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1472010761"
+          }
+        ]
       },
       {
         "id": "3e293f6236d423ebf548de4c349d58e0a12e0704",
@@ -2267,43 +2818,82 @@
         "id": "5c7b9ff78519e98b643f06c6d4142fc0f2881eeb",
         "type": "FIX",
         "text": "sap.m.SegmentedButton: API property selectedKey is now updated correctly",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570141715"
+          }
+        ]
       },
       {
         "id": "b0b64579c7edb2fdf420a5653523e6378e830e6e",
         "type": "FIX",
         "text": "sap.m.SplitContainer: Hamburger button adapted when page shows/hides back button",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570035840"
+          }
+        ]
       },
       {
         "id": "671006b61f22976f0fcc1f16f56a9e6d01b1ddc7",
         "type": "FIX",
         "text": "sap.m.SplitContainer: Master area can still be closed when switched from ShowHide to Hide",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570146231"
+          }
+        ]
       },
       {
         "id": "79759a66333eb62dd5596260818092428c53c4f5",
         "type": "FIX",
         "text": "sap.m.SplitContainer: preventDefault cancels navigation",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "388"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570136743"
+          }
+        ]
       },
       {
         "id": "b3bc32cf5001bcead526b6055869731ea3f08d02",
         "type": "FIX",
         "text": "sap.m.Tile: Handling of events onsapspace and onsapenter improved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570036436"
+          }
+        ]
       },
       {
         "id": "151eb7374958d55c15d665ca0ae53051f5874e11",
         "type": "FIX",
         "text": "sap.m.Tokenizer: Token truncation only affects token text",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570024389"
+          }
+        ]
       },
       {
         "id": "ac11996e56680690b5b72307b3aec5812050fc3c",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Fixed rendering of attributes in LESS file",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570142462"
+          }
+        ]
       },
       {
         "id": "6adcde82cc7daa283dfd7bcfa93e0fe2c459e491",
@@ -2327,7 +2917,12 @@
         "id": "df29cb9c92497fde2dbf7cebd48041a036d8a1a9",
         "type": "FIX",
         "text": "sap.m.ComboBox: Input field text overflow over arrow button in Internet Explorer 10 fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570148595"
+          }
+        ]
       }
     ]
   },
@@ -2350,67 +2945,121 @@
         "id": "9f895fb08971121030ed1f1524a006b37419735b",
         "type": "FIX",
         "text": "Existence of namespace during Core.initLibrary() ensured",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570295165"
+          }
+        ]
       },
       {
         "id": "bb8824f170e00e0e8a694825aec914226bd5854e",
         "type": "FIX",
         "text": "ActionSheet: The control no longer reacts to content size change",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570012289"
+          }
+        ]
       },
       {
         "id": "d95cf430fef975f64c7f92036630ecdc8b253355",
         "type": "FIX",
-        "text": "BusyDialog: BusyDialog now gets the focus after it\u0027s open",
-        "references": []
+        "text": "BusyDialog: BusyDialog now gets the focus after it's open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570173272"
+          }
+        ]
       },
       {
         "id": "04f6aa5c81890b8c8b30f6f2d097f7d7f0aca199",
         "type": "FIX",
         "text": "Button: Tooltip is now shown on disabled buttons",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570293121"
+          }
+        ]
       },
       {
         "id": "b26c1c6c426c5be6deee72f593db9c024f20872d",
         "type": "FIX",
         "text": "Button: The unstyled icon is no longer outside of the button",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570290835"
+          }
+        ]
       },
       {
         "id": "680f5303d5798adc931e97eb5177e13f44548e07",
         "type": "FIX",
         "text": "Column: Unit conversion fixed for demand popin",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570292571"
+          }
+        ]
       },
       {
         "id": "c5f3a6b02d41c5a03c6728df4b555ccf350228af",
         "type": "FIX",
         "text": "Dialog: The dialog now repositions itself after content change",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570173676"
+          }
+        ]
       },
       {
         "id": "d2345dd5a5f285bbe7b1c3ed9b3876730afc58d7",
         "type": "FIX",
-        "text": "FeedListItem: \u0027More\u0027 or \u0027Less\u0027 links work now as expected after re-render",
+        "text": "FeedListItem: 'More' or 'Less' links work now as expected after re-render",
         "references": []
       },
       {
         "id": "9306860e47a290107ab5fe0af1b352cd666cf3a8",
         "type": "FIX",
         "text": "IconTabBar: The selected tab now gets the focus",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570034646"
+          }
+        ]
       },
       {
         "id": "c29af328cd02d46df48f56468076b37288f5edbf",
         "type": "FIX",
-        "text": "IconTabBar: \u0027setText\u0027 is now working correctly when the IconTabBar is within the ObjectHeader",
-        "references": []
+        "text": "IconTabBar: 'setText' is now working correctly when the IconTabBar is within the ObjectHeader",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570148375"
+          }
+        ]
       },
       {
         "id": "a9930a83a2a78d045fc4dd63d4a0ebbde3c619e7",
         "type": "FIX",
         "text": "Input: FireFox validation visualization removed",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "411"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570172514"
+          }
+        ]
       },
       {
         "id": "9f91041a00cf4a465054e9b587c71cc0adc41eff",
@@ -2422,7 +3071,12 @@
         "id": "db9f3c7c458e03762e136e0aba739a08ca24e84a",
         "type": "FIX",
         "text": "ListBase: Focus info is now correctly applied after re-render",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570143514"
+          }
+        ]
       },
       {
         "id": "20cd8f24a86663ec60e927eb84cf21306c84c4ff",
@@ -2434,79 +3088,148 @@
         "id": "7a5a07674cd032c2762c3e17b9b22a65ddbcdde9",
         "type": "FIX",
         "text": "Panel: The focused icon now has proper border placement",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570034007"
+          }
+        ]
       },
       {
         "id": "258064397e6b9128364ea5741086adda44b39f9c",
         "type": "FIX",
         "text": "TablePersoDialog: Tooltips to up and down buttons added",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570150694"
+          }
+        ]
       },
       {
         "id": "5c61faf8582658491be57ec3660126d3236859e8",
         "type": "FIX",
         "text": "Popover: Focus is now kept inside the Popover in Firefox",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "406"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570151848"
+          }
+        ]
       },
       {
         "id": "cbc6425008fbd0873157bfcc9c80bb60b74ad40e",
         "type": "FIX",
         "text": "RadioButton: RadioButton is now removed from old group when setGroupName is called",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570290836"
+          }
+        ]
       },
       {
         "id": "020475e0f717f5a376685869a4ab2d37e37bc6d9",
         "type": "FIX",
         "text": "RadioButtonGroup: RadioButtonGroup issues corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570156057"
+          }
+        ]
       },
       {
         "id": "e4d0fed8b81fbc16b6c7b3f5a2a93234312981b0",
         "type": "FIX",
         "text": "Select: Infinite loop in change event corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570150535"
+          }
+        ]
       },
       {
         "id": "cf9d2c4d85eb9e27f97910499867000f15eac952",
         "type": "FIX",
         "text": "Select: Selected item is now updated when calling setters on items",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570296493"
+          }
+        ]
       },
       {
         "id": "6d271c2da347cd99e9bf4bcfe7928a1f7eea6438",
         "type": "FIX",
         "text": "SplitContainer: Hamburger button is now displayed when back button in detail header is invisible",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570156827"
+          }
+        ]
       },
       {
         "id": "bc9ccb22238e713b21481284b974f3b81a6a5b3c",
         "type": "FIX",
         "text": "Table: Popin focus is now reflected to main row",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570144515"
+          }
+        ]
       },
       {
         "id": "43fff42e6d6ae249169706a01ab541e5113e0ccb",
         "type": "FIX",
         "text": "Token: Token delete in combi device fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580029365"
+          }
+        ]
       },
       {
         "id": "3df1a73aa1fa88c359c218713bdf6d2b7b801de5",
         "type": "FIX",
         "text": "UploadCollection: File extension in edit mode is now displayed correctly",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570181957"
+          }
+        ]
       },
       {
         "id": "ed15f5849f49c0499b42e90d12f171fc8e184b96",
         "type": "FIX",
         "text": "UploadCollection: Fixed display in upload and delete",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570149750"
+          }
+        ]
       },
       {
         "id": "8c25c46edf79338fcb7558dac985b111b08073a7",
         "type": "FIX",
         "text": "UploadCollection: Link to open the attachment is now triggered",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570260023"
+          }
+        ]
       }
     ]
   },
@@ -2517,19 +3240,34 @@
         "id": "afa107d280743f7d8baa29f60d767a3e614da15c",
         "type": "FEATURE",
         "text": "Templateapps removed the getEventBus from BaseController",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570429379"
+          }
+        ]
       },
       {
         "id": "df4b6aa8cb09c4ee4d91dea520109bff85f06e1b",
         "type": "FIX",
         "text": "Popover: Passes the click event through the Popover arrow",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570317326"
+          }
+        ]
       },
       {
         "id": "adc1839f6a09cdae5bd06b4da060de7aae08c92e",
         "type": "FIX",
         "text": "SegmentedButton: The screen reader now works correct when you have sap icon in a button or all buttons contain only sap icons",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570027826"
+          }
+        ]
       },
       {
         "id": "a74edf7ad7ae8b6858477a66784047c47fee80db",
@@ -2546,61 +3284,115 @@
         "id": "1d3dcf2bbe0e8e503cee432425ce996cf5ea818a",
         "type": "FIX",
         "text": "ActionSheet: It is now possible to scroll the whole page when running on Android stock browser",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570143033"
+          }
+        ]
       },
       {
         "id": "20b991a50de7cb42bc14468f9a2525ed086ba481",
         "type": "FIX",
         "text": "Button: Focus outline drawn on mobile devices corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570443396"
+          }
+        ]
       },
       {
         "id": "e9116bb293c17dbe152c55e18b3c386591f5a3ec",
         "type": "FIX",
         "text": "Button: Press event is no longer fired after the focusin event",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570014897"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570015968"
+          }
+        ]
       },
       {
         "id": "bb0ee856bc3b8f88acc9a24d3505f5d9c0206591",
         "type": "FIX",
         "text": "ComboBox: BlackBerry 10 typeahead issue solved (browser bug)",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570308825"
+          }
+        ]
       },
       {
         "id": "1dc0bdda5cdaa7c9f185f8342223066857fdf839",
         "type": "FIX",
         "text": "ComboBox: Arrow button height corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570452524"
+          }
+        ]
       },
       {
         "id": "8fbaf893b81f2f2e03708631c07109dd3cee103c",
         "type": "FIX",
         "text": "ComboBox: Picker and input widths on resize event are now synchronized",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570308534"
+          }
+        ]
       },
       {
         "id": "d8d77b5baedc58a96b9d323b1639ecc734fc02e2",
         "type": "FIX",
         "text": "IconTabBar: Scrolling arrows are now updated properly when using keyboard navigation",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570308836"
+          }
+        ]
       },
       {
         "id": "0ef0ab99ef5e4231d534ae8b8ba17a73c658d31b",
         "type": "FIX",
         "text": "MultiComboBox: Placeholder is no longer visible when tokens are chosen",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570293537"
+          }
+        ]
       },
       {
         "id": "539f3dffcc427c810007b1869a1a975dd5e88ed2",
         "type": "FIX",
         "text": "Panel: Header is now displayed even without text specified",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570449624"
+          }
+        ]
       },
       {
         "id": "f6eb800e58bb597c73ec9598125f5eae8a2a7fe7",
         "type": "FIX",
         "text": "UploadCollection: Correct icon preview is displayed in case of capitalized file extensions",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570447544"
+          }
+        ]
       },
       {
         "id": "1f386d60e555742d3f7506d2bd2ed9082fbaa759",
@@ -2623,13 +3415,23 @@
         "id": "0f712ccc0dec1bca5c30a76c1359c5f317bd95ec",
         "type": "FIX",
         "text": "sap.m.ListBase: Active state should not be affected from list mode.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580020235"
+          }
+        ]
       },
       {
         "id": "9eeca7135d2d9a88c4c27d139460dc9efd0e4a58",
         "type": "FIX",
         "text": "sap.m.ObjectHeader: ObjectHeader and IconTabBar 2-Way-Binding issue fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570298188"
+          }
+        ]
       }
     ]
   },
@@ -2652,67 +3454,121 @@
         "id": "0fdcd1bc36dd9240b9c11fac4c79112a50cf2b02",
         "type": "FIX",
         "text": "sap.m.Dialog: initial width and height is set in the render",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570146497"
+          }
+        ]
       },
       {
         "id": "53c950ddc0bf3ad2901fe3150d71cf94f04362ad",
         "type": "FIX",
         "text": "sap.m.ListBase: No data text should only be visible when there is no items after loading.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570474096"
+          }
+        ]
       },
       {
         "id": "814f5647fee2b30bea599ae42dcf5331535b8671",
         "type": "FIX",
         "text": "sap.m.MessagePopover: Adding classes now works",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570473659"
+          }
+        ]
       },
       {
         "id": "c5e2eb6d7276aeab80831c0b18d4d2e9a1fa2498",
         "type": "FIX",
         "text": "sap.m.ObjectAttribute: Popover position corrected when opened from ObjectAttribute active text",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570462782"
+          }
+        ]
       },
       {
         "id": "7f738a181767505ad2287651f190e5faf8052573",
         "type": "FIX",
         "text": "sap.m.Panel: Show header when no headerText only when expandable",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "459"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570464158"
+          }
+        ]
       },
       {
         "id": "cecef11e7435c7f17ab4cdb6028e20d553bf3e80",
         "type": "FIX",
         "text": "sap.m.Popover: Content is shown properly when device change its orientation",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570449349"
+          }
+        ]
       },
       {
         "id": "f0d0fc2a9e07bc3017bd98059ccf5973ca1748b6",
         "type": "FIX",
         "text": "sap.m.Popover: Correctly show ResponsiveGridLayout when visibility is binded",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570454730"
+          }
+        ]
       },
       {
         "id": "68d874b2a3e39b2291e6d2a7c181d27752e766f5",
         "type": "FIX",
         "text": "sap.m.Popover: beforeClose event was fired but Popover was not closed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570460654"
+          }
+        ]
       },
       {
         "id": "5eebd596a7172c2b7e7541b7320bcac865a57591",
         "type": "FIX",
-        "text": "sap.m.SplitContainer: infinite loop occurs after a page in splitcontainer moved to another control\u0027s aggregation",
-        "references": []
+        "text": "sap.m.SplitContainer: infinite loop occurs after a page in splitcontainer moved to another control's aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570461902"
+          }
+        ]
       },
       {
         "id": "a55fc02aba03e7f6767bf944816caa1ce6d57f92",
         "type": "FIX",
-        "text": "sap.m.SplitContainer: master can\u0027t be open again after switching modes",
+        "text": "sap.m.SplitContainer: master can't be open again after switching modes",
         "references": []
       },
       {
         "id": "edf4c73713334dd6df6607d8268da66dc05e53f5",
         "type": "FIX",
         "text": "sap.m.Table: Should respect selection mode while calculation colspan of group headers",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570452321"
+          }
+        ]
       },
       {
         "id": "de26eac1552f43c7d87dae5900c7e64a0a010372",
@@ -2748,7 +3604,12 @@
         "id": "4c21ce21cbd08c1e4487f9730729988aa06550f3",
         "type": "FIX",
         "text": ": sap.m.TextArea: should convert carriage returns correctly.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570462703"
+          }
+        ]
       }
     ]
   },
@@ -2765,19 +3626,34 @@
         "id": "daafddc40d38be9703233eaf7348642d16594621",
         "type": "FIX",
         "text": "sap.m.Button: Fix wrong style of the focus state on mobile (HCB Theme)",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570455900"
+          }
+        ]
       },
       {
         "id": "60b3628eddc77c0e5b9b5738245c69cdc7adc046",
         "type": "FIX",
         "text": "sap.m.ComboBox: Fix name clashes issue in xml view",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570467282"
+          }
+        ]
       },
       {
         "id": "eb016e1e94dde6231ebd346de00d76f620062da0",
         "type": "FIX",
         "text": "sap.m.GrowingEnablement: Multiple services should not be called when binding is refreshed.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570475871"
+          }
+        ]
       },
       {
         "id": "988a4698034b4efcc4dac327c29f24123acb05d1",
@@ -2795,25 +3671,45 @@
         "id": "6c503a76d5bb4fc9f7918e3e863528cdc3be4a20",
         "type": "FIX",
         "text": "sap.m.ObjectNumber: Number unit position corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570147815"
+          }
+        ]
       },
       {
         "id": "34aacdf153a0dfb370e4e30e80bd0eff6d90d29b",
         "type": "FIX",
-        "text": "sap.m.ResponsivePopover: Clone method should clone internal popup\u0027s content aggregation",
-        "references": []
+        "text": "sap.m.ResponsivePopover: Clone method should clone internal popup's content aggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570445915"
+          }
+        ]
       },
       {
         "id": "88631d3f568ad1f92d97d006bc4061b8375d0e33",
         "type": "FIX",
         "text": "sap.m.SegmentedButton: Buttons positioning in HCB theme",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570446692"
+          }
+        ]
       },
       {
         "id": "28dd9dcc9e2c98c1e526071444ae537f38d0aaf5",
         "type": "FIX",
         "text": "sap.m.TileContainer: Upon theme or orientation change tile dimensions are updated now.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570417656"
+          }
+        ]
       },
       {
         "id": "23354fb74b0bb64dc1fc60606aaa6a509f7fa001",
@@ -2848,31 +3744,56 @@
         "id": "93fd2f9d998bb9470b99017ad982f1a4c5b9c225",
         "type": "FIX",
         "text": "sap.m.DateRangeSelection: Control key should be allowed.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570476369"
+          }
+        ]
       },
       {
         "id": "ce6b0dd8b897fcd95f0827ca012f2ca4172488d1",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Fix left paddings",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570158035"
+          }
+        ]
       },
       {
         "id": "b3b7e1d8ac9514cacca1c1fdcafe69463c107c57",
         "type": "FIX",
-        "text": "sap.m.IconTabBar: Item text can\u0027t be selected accidentally any more",
-        "references": []
+        "text": "sap.m.IconTabBar: Item text can't be selected accidentally any more",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570467088"
+          }
+        ]
       },
       {
         "id": "215edb981a5bd58a3f27977a8defb517bd25d29e",
         "type": "FIX",
         "text": "sap.m.Input: Custom suggestion value is ignored",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100005507042015"
+          }
+        ]
       },
       {
         "id": "964945fb76563ba871c5bae09099a9a1dea66d92",
         "type": "FIX",
         "text": "sap.m.InputBase: Do not try to retain value when DOM is not exist.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570476658"
+          }
+        ]
       },
       {
         "id": "4ba64927f8cf5b47a9fe885a9ed9ba375d78630b",
@@ -2884,31 +3805,56 @@
         "id": "8662463f6f42f8bd81176c2b2e1ebf4887644a27",
         "type": "FIX",
         "text": "sap.m.Select: Fix auto close issue of the picker popup",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570472488"
+          }
+        ]
       },
       {
         "id": "c85f6e51613777913dd9a19d3ffddd366dc8797e",
         "type": "FIX",
         "text": "sap.m.Switch: Extending the switch should not throw an error",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570633670"
+          }
+        ]
       },
       {
         "id": "bfb6b913d6f261186c36d752a95e15d5b13ed427",
         "type": "FIX",
         "text": "sap.m.TableSelectDialog: Data forwarding when dialog is open from fragment corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570535038"
+          }
+        ]
       },
       {
         "id": "5a307c4fa79eb66c73fe57f23fbad28cc69da961",
         "type": "FIX",
         "text": "sap.m.Text: Issue with newline displaying as an escaped character fixed.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570532024"
+          }
+        ]
       },
       {
         "id": "dea567decc99e326cf5080c972deaa682522bfbd",
         "type": "FIX",
         "text": "sap.m.UploadCollection: The implementation of passing on models to sub controls has been enhanced.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570723464"
+          }
+        ]
       },
       {
         "id": "369251a190655519c6b173f928036b2b29304a00",
@@ -2932,7 +3878,12 @@
         "id": "698ce1bdf5bd98ae0e6ce2c11e1a8e1e8614020b",
         "type": "FIX",
         "text": "ux3.NotificationBar: Notifications are not shown",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570528949"
+          }
+        ]
       }
     ]
   },
@@ -2943,7 +3894,16 @@
         "id": "7ebca11f1d5c729927e6c615cfec05564d8fafa3",
         "type": "FIX",
         "text": "LocalBusyIndicator: Remove of \"tabindex\" Fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570474254"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570527842"
+          }
+        ]
       },
       {
         "id": "43b6b2bd40630b9663275be20e6b3d881706b7aa",
@@ -2955,19 +3915,34 @@
         "id": "fc037cf61030cf0b70c29178bc1726afd625b007",
         "type": "FIX",
         "text": "sap.m.ComboBox: Add missing text in resource bundle",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570749691"
+          }
+        ]
       },
       {
         "id": "7d79c9b864ea660d678d30badfeb3048479a2fd3",
         "type": "FIX",
         "text": "sap.m.ComboBox: Fix error value state in compact mode",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570763824"
+          }
+        ]
       },
       {
         "id": "0b2345f712c2ce7ec7ba3f732d67a80b7f5c694e",
         "type": "FIX",
         "text": "sap.m.ComboBox: Value is updated when calling setters on items",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570460580"
+          }
+        ]
       },
       {
         "id": "84d098cfa7a0500a56e03e238da7d137c5e3b1b6",
@@ -2979,73 +3954,128 @@
         "id": "e51314009b92734718304df5409684e8746b2cd8",
         "type": "FIX",
         "text": "sap.m.DatePicker: Disabled - right border missing in Internet Explorer",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570770560"
+          }
+        ]
       },
       {
         "id": "3f071276f61cfac448e1518d23ea41024256a0e3",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Items are now rendered correctly in List",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570531239"
+          }
+        ]
       },
       {
         "id": "c5371d62daf3677dfb626ed8cc6d3a3f116ac4ba",
         "type": "FIX",
         "text": "sap.m.IconTabBar: UI Consistency on \"showAll\" filter with horizontal design is fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570071073"
+          }
+        ]
       },
       {
         "id": "97b27f8a10e3e45b61763d6b8c872c4d1bd8b43e",
         "type": "FIX",
         "text": "sap.m.InputBase: Placeholder is show incorrectly in tables",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570742514"
+          }
+        ]
       },
       {
         "id": "092347052b1fd52d41604b493df3f24b6daf2b31",
         "type": "FIX",
         "text": "sap.m.MultiInput: Click value help icon in multiline multiinput",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570616498"
+          }
+        ]
       },
       {
         "id": "80295b85e2080666e8565a48acfed7e17df4e488",
         "type": "FIX",
         "text": "sap.m.MultiInput: Scroll to top after focus out of multiline multiinput",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570616498"
+          }
+        ]
       },
       {
         "id": "6d15d8e750fd8c68c4c5bac433a6b1d2c2f12a8d",
         "type": "FIX",
         "text": "sap.m.Page: NavButton should have a tooltip",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570740340"
+          }
+        ]
       },
       {
         "id": "7ca174b119485d141ac4a98180e9692010b2c3b0",
         "type": "FIX",
         "text": "sap.m.Popover: Now registers itself as a child popup correctly",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570771012"
+          }
+        ]
       },
       {
         "id": "f09aaa2c7e6a7b20e5aa5f84d329a4a36ad3d6f6",
         "type": "FIX",
         "text": "sap.m.SplitContainer: No separator between master and detail areas",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570764862"
+          }
+        ]
       },
       {
         "id": "534a12f6dba204ed4254d60fe3461f34e899cc54",
         "type": "FIX",
-        "text": "sap.m.Switch: Fix border issue at zoom in \u003c 100%",
+        "text": "sap.m.Switch: Fix border issue at zoom in < 100%",
         "references": []
       },
       {
         "id": "e5ca4a545c034f08388127a093f1afe0b81ad3bb",
         "type": "FIX",
         "text": "sap.m.Title: Fixed alignments begin/end in IE and Edge browser in RTL case",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570775360"
+          }
+        ]
       },
       {
         "id": "cf1d16542763483196ff536a397ddf029289b900",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Display of attachment after renaming corrected.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570758482"
+          }
+        ]
       },
       {
         "id": "d878463fa88455389643f7c30ceae3ca6a4e3477",
@@ -3068,19 +4098,34 @@
         "id": "95763e3436595ceb3a0635560d0344a06ba6eb92",
         "type": "FIX",
         "text": "Scrolling performance on BlackBerry 10",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100005635282015"
+          }
+        ]
       },
       {
         "id": "227405d9673a0c87756b4b46b036965a405cf31a",
         "type": "FIX",
         "text": "sap.m.Button: run time assigned icon is not visible",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570783362"
+          }
+        ]
       },
       {
         "id": "5e70be5a61147044fbd746e029e4cf31fcc18302",
         "type": "FIX",
         "text": "sap.m.Combobox: Correctly opens the Popover with control instance",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570529341"
+          }
+        ]
       },
       {
         "id": "5a202b5ea766e2b09337c7cf815f88ede9d83397",
@@ -3098,19 +4143,34 @@
         "id": "bbdf9de7ff691a3cdc52188f0f480a28efc46767",
         "type": "FIX",
         "text": "sap.m.Select: select type \"IconOnly\" is announced as button",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570777090"
+          }
+        ]
       },
       {
         "id": "010ad211a82ae2c51e7eeacf0211b510c719a409",
         "type": "FIX",
         "text": "sap.m.TextArea: removed double line breaks",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570782779"
+          }
+        ]
       },
       {
         "id": "f5424043f00d0cf4960d43d68fae4c3ce4cc1b08",
         "type": "FIX",
         "text": "sap.ui.unified.FileUploader: GoldReflection styling repaired",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570445096"
+          }
+        ]
       },
       {
         "id": "a8895867911372546e78a23d99b9f2588583b371",
@@ -3133,43 +4193,78 @@
         "id": "93808cc13991c396d7421ccb4006378ce1279cb2",
         "type": "FIX",
         "text": "sap.m.ComboBox: do not override the selection when the data is not available from the model (part 2)",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570460580"
+          }
+        ]
       },
       {
         "id": "8c4d0b0c19795547076e237e4c2733b360d963bd",
         "type": "FIX",
         "text": "sap.m.ComboBox: it should correctly set the selection if the items aggregation is bounded to an OData model",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570460580"
+          }
+        ]
       },
       {
         "id": "deba1dd4e7f0b2a36d3a6dce3ea833bff62674fa",
         "type": "FIX",
         "text": "sap.m.DatePicker: error message shortly appears by closing",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570786560"
+          }
+        ]
       },
       {
         "id": "b31274fdf560c7adb07c8aeed0376ae8d0a28417",
         "type": "FIX",
         "text": "sap.m.Dialog: fix combo box button positioning issue in IE11",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570573944"
+          }
+        ]
       },
       {
         "id": "680759460fe0e3c5f74979c59aa0d9fa54e7554b",
         "type": "FIX",
         "text": "sap.m.Dialog: initial focus will now be able to focus elements in the subheader too",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570789857"
+          }
+        ]
       },
       {
         "id": "4d94c140b57ac3bb93403063400022479bfb05fd",
         "type": "FIX",
         "text": "sap.m.InputBase: correctly restore the value in case of invalidation",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570778270"
+          }
+        ]
       },
       {
         "id": "5e66b31232a95e159f0581ab8658dd5ff5561ad6",
         "type": "FIX",
         "text": "sap.m.MultiComboBox: fix default value of the selectedKeys property",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700006139142015"
+          }
+        ]
       },
       {
         "id": "f626dda7bf1d41fc9cdcce331b79b9dd25cc5156",
@@ -3181,19 +4276,34 @@
         "id": "923b60194452a978941664407f62246881fe1c02",
         "type": "FIX",
         "text": "sap.m.TextArea: new line is ignored in IE11 in TextArea.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570780235"
+          }
+        ]
       },
       {
         "id": "a489b75dd0adf28602d0ecf8bb79446d9de0de0d",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Control state will stabilized if the uploading fails.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700004602622015"
+          }
+        ]
       },
       {
         "id": "f7d307157b930bfdc7a9679090675a5ad3c6c82c",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Improve control state in case of edit is done twice.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570786394"
+          }
+        ]
       },
       {
         "id": "d5b81a66a732443bfdeda531bde29d8bb84d6205",
@@ -3228,61 +4338,115 @@
         "id": "c140439b0ac95c5e7e988dd4fa89305e45eabc07",
         "type": "FIX",
         "text": "sap.m.ComboBox: fix custom placeholder alignment issue in IE10",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570749082"
+          }
+        ]
       },
       {
         "id": "067928c3ad3d9cdccefe3c17b440466c570d5c43",
         "type": "FIX",
         "text": "sap.m.ComboBox: missing outline issue fixed (HCB theme + IE11)",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570810588"
+          }
+        ]
       },
       {
         "id": "c0d88868827b24a6b1f88f26c6b5347c5e08d038",
         "type": "FIX",
         "text": "sap.m.ComboBox: prevent the change event from firing when an item is pressed (downport)",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570522570"
+          }
+        ]
       },
       {
         "id": "8ab0cce1c0e5260c24a4ce2632c8be6977875c27",
         "type": "FIX",
         "text": "sap.m.Dialog: the resize handler will be created for each rerender",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570796905"
+          }
+        ]
       },
       {
         "id": "b6e230c7fb8959b757c7e270eae99dcdf2ebae02",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Selection is changed when selected filter is removed",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "570"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570813475"
+          }
+        ]
       },
       {
         "id": "b9a9b93916b3c67ab053ce0787ab6b5ff0e141c5",
         "type": "FIX",
         "text": "sap.m.MultiInput: enhance inner input width calculation",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570793302"
+          }
+        ]
       },
       {
         "id": "0a49a96ef51ea699bd6d90037ec9df98b27571d2",
         "type": "FIX",
         "text": "sap.m.MultiInput: enhance tokenchange event",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570788688"
+          }
+        ]
       },
       {
         "id": "26c44b99ae871aa8c9e222593dc47148cf2a4a1c",
         "type": "FIX",
         "text": "sap.m.MultiInput: set the focus back to input after deleting token",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570804190"
+          }
+        ]
       },
       {
         "id": "d00b0d5e8bb517532da3a992c48b3eb762f4924b",
         "type": "FIX",
         "text": "sap.m.SearchField: improper focusing in IE",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570799171"
+          }
+        ]
       },
       {
         "id": "2378159872697c0441f4ab406a9e10755c5d7115",
         "type": "FIX",
         "text": "sap.m.Tokenizer: use destroy token instead of remove token in delete event",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570738831"
+          }
+        ]
       }
     ]
   },
@@ -3299,43 +4463,82 @@
         "id": "a5bba61a4d3bbdaaa53159bf5469b65ac6fc2290",
         "type": "FIX",
         "text": "sap.MultiInput: validate text after suggestion item is selected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570738831"
+          }
+        ]
       },
       {
         "id": "5ccfbfd3f8fd0e221cdbbf131238cd63d504470e",
         "type": "FIX",
         "text": "sap.m.Button has incorrect width in a popover",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580066672"
+          }
+        ]
       },
       {
         "id": "8d9c1ad0f479bf6a7cfbf94e0cee855ee60ff291",
         "type": "FIX",
         "text": "sap.m.Button: scroll bar is incorrectly shown in IE",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580046130"
+          }
+        ]
       },
       {
         "id": "1ed036c631f2944a91f5ccc02c43132a362db25d",
         "type": "FIX",
         "text": "sap.m.IconTabBar: IconTabHeader is not invalidated when the same value is set to a property",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570788658"
+          }
+        ]
       },
       {
         "id": "f7500ff8cae3c44d5ac3dc7cece082c75ef9625c",
         "type": "FIX",
         "text": "sap.m.MultiInput: fix tokentruncation width calculation in compact mode",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570777224"
+          }
+        ]
       },
       {
         "id": "9f5545905b930adaaf25ea0f169531288f55d5da",
         "type": "FIX",
         "text": "sap.m.MultiInput: recaculate tokenizer width in edit mode",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570532569"
+          }
+        ]
       },
       {
         "id": "4346b83f13c6fda413e8694251e134ff40500109",
         "type": "FIX",
         "text": "sap.m.ObjectIdentifier: Display of long text improved in IE9",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570801021"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570742635"
+          }
+        ]
       },
       {
         "id": "410b755566c11f6a0070521e361c4369d3e980c8",
@@ -3347,19 +4550,34 @@
         "id": "96d82af37d364383f93865e30816c46c4203fe33",
         "type": "FIX",
         "text": "sap.m.Select: fix change event issue when selected item is removed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570819144"
+          }
+        ]
       },
       {
         "id": "08c488e6b783dd34baf15a5f436f49ee4dcc5ead",
         "type": "FIX",
         "text": "sap.m.Tokenizer: fix line height issue for IE",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "582"
+          }
+        ]
       },
       {
         "id": "2b76d938b308343cb848046889cecfa0852840c1",
         "type": "FIX",
         "text": "sap.m.ViewSettingsDialog - fixed freezing of the control",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580045867"
+          }
+        ]
       }
     ]
   },
@@ -3376,49 +4594,89 @@
         "id": "9ee9af6ca451c5550303ba4b39e095a89f77890b",
         "type": "FIX",
         "text": "sap.m.App - rerendering issue fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570825925"
+          }
+        ]
       },
       {
         "id": "ce418cbd1e832260f1564a25ec9d129d064b1b9c",
         "type": "FIX",
         "text": "sap.m.ComboBox: should correctly restore the selection of the text after re-rendering",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570441294"
+          }
+        ]
       },
       {
         "id": "2794e59e88b12a9ae6518f00cb85ee935f34175b",
         "type": "FIX",
         "text": "sap.m.DateTimeInput: Backspace should not trigger browsers back navigation.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100007682322015"
+          }
+        ]
       },
       {
         "id": "51e6754597b59402b38fa19be3edbfeca12312d2",
         "type": "FIX",
         "text": "sap.m.PullToRefresh on combi devices",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570791045"
+          }
+        ]
       },
       {
         "id": "c64b44fb80e572e879ff79383e6dbc1b2cc58244",
         "type": "FIX",
         "text": "sap.m.QuickView: Add stable IDs support",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580091981"
+          }
+        ]
       },
       {
         "id": "7ff3b6e868feb62c6c9c76a08085477bc6b5ff9f",
         "type": "FIX",
         "text": "sap.m.Select: cannot filter binding in change event handler",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570825099"
+          }
+        ]
       },
       {
         "id": "6c40c904a95f8d7c6de5ba92f1d55719601f8002",
         "type": "FIX",
         "text": "sap.m.Select: disable item can be selected in IE10",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580100175"
+          }
+        ]
       },
       {
         "id": "3a15234474514a9f9cae85683eab2f344139aeb2",
         "type": "FIX",
         "text": "sap.m.UploadCollection: improved delete function in case of JSON MOdel is used",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580039257"
+          }
+        ]
       }
     ]
   },
@@ -3435,7 +4693,12 @@
         "id": "ca8fdcf3dc392ff2e972d3b68579e9133d73a0f4",
         "type": "FIX",
         "text": "sap.m.ActionSheet: ActionSheet not flicker on Windows Phone 8.1",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580128149"
+          }
+        ]
       },
       {
         "id": "efe475abba6ddd023e6247403427c7cc9e6e919b",
@@ -3446,7 +4709,7 @@
       {
         "id": "c1ce0bc04be2f399a3ce1b1a24ccc8a78ddf198f",
         "type": "FIX",
-        "text": "sap.m.ComboBox: binding for property selectedKey doesn\u0027t work",
+        "text": "sap.m.ComboBox: binding for property selectedKey doesn't work",
         "references": []
       },
       {
@@ -3459,31 +4722,56 @@
         "id": "a2ff19fb956380f1937e7960de065da1feab6921",
         "type": "FIX",
         "text": "sap.m.FeedListItem: should expand to content width if used in Popover",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580082148"
+          }
+        ]
       },
       {
         "id": "947889cb378a895bd889f2f3da7f8b26635e2ea5",
         "type": "FIX",
-        "text": "sap.m.IconTabBar: When .setSelectedKey(\u0027\u0027) is used, the first filter is now selected.",
-        "references": []
+        "text": "sap.m.IconTabBar: When .setSelectedKey('') is used, the first filter is now selected.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580057012"
+          }
+        ]
       },
       {
         "id": "f5de6f5e93679634976c830479dec59f0167c1b5",
         "type": "FIX",
         "text": "sap.m.ObjectListItem: Identical DOM element IDs",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580076678"
+          }
+        ]
       },
       {
         "id": "c69335f3bac81e682d95663cfe46a08b780407b0",
         "type": "FIX",
         "text": "sap.m.ObjectNumber: ARIA attribute refers to elements which are not in the DOM",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580076908"
+          }
+        ]
       },
       {
         "id": "ef4f1bbbca71b689e6f6c6a0290bd720e47f9502",
         "type": "FIX",
-        "text": "sap.m.Select: binding for property selectedKey doesn\u0027t work",
-        "references": []
+        "text": "sap.m.Select: binding for property selectedKey doesn't work",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580102355"
+          }
+        ]
       },
       {
         "id": "313b1139f7607e1cb989c25b85c37ae98fd4a4b3",
@@ -3512,7 +4800,12 @@
         "id": "057958fc2bbf02e6536c7e277eb257b0cb7b47d9",
         "type": "FIX",
         "text": "sap.m.ViewSettingsDialog - fixed button tooltip in example.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570028858"
+          }
+        ]
       },
       {
         "id": "3d9e97d39926ad11b76134a625a68f19c30fd565",
@@ -3529,7 +4822,12 @@
         "id": "15c191dce35b8107debfb853db8b9d336118a5c4",
         "type": "FIX",
         "text": "sap.m.routing.RouteMatchedHandler - now works with sap.m.routing.Router",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580118943"
+          }
+        ]
       }
     ]
   },
@@ -3552,43 +4850,86 @@
         "id": "a1b5a02e52676e2498c9af9c0fba2304e85b8d00",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Tabs are not selected on mouse hover any more",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700007371352015"
+          }
+        ]
       },
       {
         "id": "c8e1072bacc069636044b746aee52e5e8db1c372",
         "type": "FIX",
         "text": "sap.m.InputBase: raises error \"getDescribedByAnnouncement is not a function\" after UI5 upgrade",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580163935"
+          }
+        ]
       },
       {
         "id": "40ce0e5392c0ac5359a3b15fb0589ae4afb59474",
         "type": "FIX",
         "text": "sap.m.NavContainer: Mark optional params as optional in JsDoc",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "644"
+          },
+          {
+            "type": "GitHub",
+            "reference": "652"
+          }
+        ]
       },
       {
         "id": "b7633e7bee02f37c05767a72ef989ab0aa2c92ac",
         "type": "FIX",
         "text": "sap.m.Page: SubHeader overlaps the content",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580140392"
+          }
+        ]
       },
       {
         "id": "332797c8c18a1abfcc94ad19675889e7f503e968",
         "type": "FIX",
         "text": "sap.m.Popover: beforeClose event is fired on touch devices",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580142721"
+          }
+        ]
       },
       {
         "id": "66632c3865f1e3480b229faa43a9227c93fb34dc",
         "type": "FIX",
         "text": "sap.m.ProgressIndicator: tooltip is now rendered",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580137778"
+          }
+        ]
       },
       {
         "id": "64d2ca2a7fd8847a98d93321df400c39901ca858",
         "type": "FIX",
         "text": "sap.m.SplitContainer: Events processing on phones fixed",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "596"
+          },
+          {
+            "type": "BCP",
+            "reference": "1580082770"
+          }
+        ]
       },
       {
         "id": "ae42cef70e2a51de32b4865a49e1d0cf35158b94",
@@ -3605,67 +4946,126 @@
         "id": "3e1899953e5849400ba26c8dcbb601df439c563e",
         "type": "FIX",
         "text": "MessagePopover/ResponsivePopover: add implementation for busy and visible methods",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580197116"
+          }
+        ]
       },
       {
         "id": "42164b511949f14635ee6d8621673737e998af8f",
         "type": "FIX",
         "text": "sap.m.DatePicker: tooltip shows null and undefined",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580094855"
+          }
+        ]
       },
       {
         "id": "842c5538a18577ab9c7ad241b93523c744ee5e13",
         "type": "FIX",
         "text": "sap.m.FeedListItem: enhanced click handling for inactive senders",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580186426"
+          }
+        ]
       },
       {
         "id": "5bc4625a337ca35d2db4f0c7b506f83771f0b199",
         "type": "FIX",
         "text": "sap.m.InputBase: Close valueState message synchronously.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580149642"
+          },
+          {
+            "type": "BCP",
+            "reference": "1580075747"
+          }
+        ]
       },
       {
         "id": "3f49dd251a37bc2e0fefdbc7a128ec615fcfa8a0",
         "type": "FIX",
         "text": "sap.m.ObjectIdentifier - removed control invalidation on setting of internal aggregation _textControl",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580187061"
+          }
+        ]
       },
       {
         "id": "383f9b6faf84c238600883358137dee80ec9873c",
         "type": "FIX",
         "text": "sap.m.Popover: close virtual keyboard when popover closes",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580062754"
+          }
+        ]
       },
       {
         "id": "6b69a1973fd819863067f2f4187591df01c420c4",
         "type": "FIX",
         "text": "sap.m.Popover: prevents setting negative value for bottom position",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580074347"
+          }
+        ]
       },
       {
         "id": "89bb3d578f7aa2f4435f6c71c9925dc7580dd189",
         "type": "FIX",
         "text": "sap.m.ScrollContainer: now can expand children with flex in IE10 and 11",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580135628"
+          }
+        ]
       },
       {
         "id": "bff07f6a43329c375c7e50c32921150076fd1fd7",
         "type": "FIX",
         "text": "sap.m.SelectList: synchronize the selection after the properties (models and bindingContext) are propagated",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580101530"
+          }
+        ]
       },
       {
         "id": "87ffae20ecedc029faec97a84fec5c107e942df3",
         "type": "FIX",
         "text": "sap.m.Tokenizer: add tabindex to tokenizer",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580097480"
+          }
+        ]
       },
       {
         "id": "e993e923a8798ba75662b8c665969f323d99360c",
         "type": "FIX",
         "text": "sap.ui.layout.form.Form: use Label style only for direct labels",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580178200"
+          }
+        ]
       }
     ]
   },
@@ -3676,55 +5076,104 @@
         "id": "2333dc2127747e066145554bda15651da88cb5fe",
         "type": "FIX",
         "text": "sap.m.Carousel: Focusin event checks if the current focused element is in the active page",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580196215"
+          }
+        ]
       },
       {
         "id": "c62d27a1bc107cc6260484eee7d4315f6a6968d2",
         "type": "FIX",
-        "text": "sap.m.ComboBox: Fix selection issue when the selectedKey property has the default value and the items\u0027 properties (models and bindingContext) are not propagated",
-        "references": []
+        "text": "sap.m.ComboBox: Fix selection issue when the selectedKey property has the default value and the items' properties (models and bindingContext) are not propagated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580158561"
+          }
+        ]
       },
       {
         "id": "4cc6e31ea0a28f565ff474296e09d9658350b99d",
         "type": "FIX",
         "text": "sap.m.DatePicker: Error messages stays after choosing date",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580227997"
+          }
+        ]
       },
       {
         "id": "5894870788cb21080a117fa6188f5887efa3face",
         "type": "FIX",
         "text": "sap.m.DatePicker: Opens by scrolling on Win8 phone",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580127998"
+          }
+        ]
       },
       {
         "id": "4884011222586fedccce3ea51ce686e20297543b",
         "type": "FIX",
         "text": "sap.m.FacetFilterList: Set min content width",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580216445"
+          }
+        ]
       },
       {
         "id": "623581f292ba347f3ce1d09a21addde6f86e57db",
         "type": "FIX",
         "text": "sap.m.Input: Value state on Windows Phones not visible",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580128081"
+          }
+        ]
       },
       {
         "id": "27d4ac886670167617ef2ff4bc7962d67c80740e",
         "type": "FIX",
         "text": "sap.m.Popover: Begin and end button keeps its semantic",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580212014"
+          }
+        ]
       },
       {
         "id": "86a70b191625f9b26f84657347d24c06eedc577c",
         "type": "FIX",
         "text": "sap.m.ResponsivePopover: Begin and end buttons now are with type transparent",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "708"
+          },
+          {
+            "type": "BCP",
+            "reference": "1580222699"
+          }
+        ]
       },
       {
         "id": "cd0c21cdddcfe1245bef8f34c35afe28eed5f544",
         "type": "FIX",
         "text": "sap.m.SearchField, focus is lost on Windows Phone",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580128083"
+          }
+        ]
       },
       {
         "id": "f2195e7ce0c9abfdc8e523e8eece05249a8032e1",
@@ -3741,20 +5190,30 @@
       {
         "id": "ba2a860084e00f99c41c4b0e98ab14f916903a26",
         "type": "FIX",
-        "text": "sap.m.Slider: don\u0027t round the model value, but only the DOM value",
+        "text": "sap.m.Slider: don't round the model value, but only the DOM value",
         "references": []
       },
       {
         "id": "eb2d1190a781832f59e7f6c827c32fd0b6f9f7c8",
         "type": "FIX",
         "text": "sap.m.Slider: Fix a bug in the stepUp/stepDown method that prevents keyboard navigation",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580185288"
+          }
+        ]
       },
       {
         "id": "63b0d989781ed5ac4b111116d37167809ebee619",
         "type": "FIX",
         "text": "sap.m.Slider: Fix escaping issue of IDs contains dots",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580215885"
+          }
+        ]
       },
       {
         "id": "ee2b4bfb9b0e223b44dae95e71a1e6938475c0b3",
@@ -3766,7 +5225,12 @@
         "id": "246d5ed57514541d5ac58ed4f684426c1b9ad2c4",
         "type": "FIX",
         "text": "sap.m.Slider: Fix rounding issue of floating-point numbers using e-notation",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580227338"
+          }
+        ]
       }
     ]
   },
@@ -3777,43 +5241,82 @@
         "id": "81bfbb0f8e87188f9190e3e6c0713009df045bee",
         "type": "FIX",
         "text": "focused TextArea is hidden in Fiori Client for Windows Phone",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100009181012015"
+          }
+        ]
       },
       {
         "id": "0cdad306e37d83ca52050614566cde987ab2d81c",
         "type": "FIX",
         "text": "sap.m.ActionSheet: set correct height on phone when buttons are added after opening of the ActionSheet",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580199954"
+          }
+        ]
       },
       {
         "id": "bdc1b0a0f7c5d02ee9e2b48f7782125725567d9b",
         "type": "FIX",
-        "text": "sap.m.Carousel: TextArea inside a Carousel can accept \u0027-\u0027 and \u0027+\u0027 now",
-        "references": []
+        "text": "sap.m.Carousel: TextArea inside a Carousel can accept '-' and '+' now",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "718"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570831901"
+          }
+        ]
       },
       {
         "id": "a41ff7ac4e9c8e0db2a24a381083852f3f3d5fd8",
         "type": "FIX",
         "text": "sap.m.Carousel: the arrows are now visible when the control is in focus",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580196900"
+          }
+        ]
       },
       {
         "id": "7c1f40fd13dc904158a59a8032c6494f8d74df03",
         "type": "FIX",
         "text": "sap.m.FeedListItem: Unread property disabled",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570837640"
+          }
+        ]
       },
       {
         "id": "7c0bd0cb02377407b8dca9c11309456528bba4ce",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Arrows position in Win8 is correct now",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580193892"
+          }
+        ]
       },
       {
         "id": "3f47047ec3f6fc914bebf52c470a0e656338d327",
         "type": "FIX",
         "text": "sap.m.IconTabBar: Fixed selecting new element when selected element is removed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570830608"
+          }
+        ]
       },
       {
         "id": "f653fff964b218084b62a8d569366997577271e2",
@@ -3837,37 +5340,67 @@
         "id": "c710212bc74d845dafa9674149f5a2619ae05e79",
         "type": "FIX",
         "text": "sap.m.ObjectStatus: Vertical alignment inside forms corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580155978"
+          }
+        ]
       },
       {
         "id": "16e2b740b0415af60a1322aa6390992d98d59df1",
         "type": "FIX",
         "text": "sap.m.Popover: Popover places itself with correct offset when Left or Top placement is used.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570843705"
+          }
+        ]
       },
       {
         "id": "fc13f3b398d6999450b94023b4f3734c17f33ea6",
         "type": "FIX",
         "text": "sap.m.RadioButtonGroup: Area attribute should not be set to invisible buttons",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570838885"
+          }
+        ]
       },
       {
         "id": "fb02994dc85f8c2e006b256d69816e3652e6d855",
         "type": "FIX",
         "text": "sap.m.SegmentedButton: refresh of items is correctly handled.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700007980462015"
+          }
+        ]
       },
       {
         "id": "85ecb60a04ac5dbdc29022286317fc08e97a2f32",
         "type": "FIX",
         "text": "sap.m.Select: fix auto close issue of the dropdown list in IE",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100009800712015"
+          }
+        ]
       },
       {
         "id": "260fe28ed11bbdc41bc97ec2303d5c2d9a302de0",
         "type": "FIX",
         "text": "sap.m.Select: prevent IE to focus non-focusable elements",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580233802"
+          }
+        ]
       },
       {
         "id": "78e5442162f5daeabfad889f465a2c097a4f82a8",
@@ -3879,19 +5412,34 @@
         "id": "cc92d7d9fd13bf492fcb2cda49b0beb3c5b9d11b",
         "type": "FIX",
         "text": "sap.m.Table: Loading message should not be shown if re-rendering happens.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580240970"
+          }
+        ]
       },
       {
         "id": "d5d6a61949df2f1302ff7af7c041ef3bc97a4590",
         "type": "FIX",
         "text": "sap.ui.layout.form.Form: Label not visible on iOS devices",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100008088922015"
+          }
+        ]
       },
       {
         "id": "f5f9ecc46b438232d8da55c15adc58366132fb34",
         "type": "FIX",
         "text": ": sap.m.InputBase: Buggy event detection.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700007712602015"
+          }
+        ]
       }
     ]
   },
@@ -3902,37 +5450,71 @@
         "id": "df07a77a8b0ff890a597f1e064481bfe48bb80e7",
         "type": "FIX",
         "text": "SAP Fiori Client for Windows Phone 10: hidden text area",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100009181012015"
+          }
+        ]
       },
       {
         "id": "3bbc336fe6d7d6c886ed18a4751a2d5a45d7afc6",
         "type": "FIX",
         "text": "sap.m.FeedInput: CSS focus offset on IE improved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570854078"
+          }
+        ]
       },
       {
         "id": "ae01dd7602ef1b6a39219e676a1e2f79388647ca",
         "type": "FIX",
         "text": "sap.m.FeedInput: Css class improved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570854081"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570854082"
+          }
+        ]
       },
       {
         "id": "28f59ad1d5f6c28f4abe71d21905bcf63afd5f02",
         "type": "FIX",
         "text": "sap.m.ObjectAttribute: Click outside the text does not count as click",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570521605"
+          }
+        ]
       },
       {
         "id": "2f4e2c7866a8914f0848b14cc7eb2bc5832eba73",
         "type": "FIX",
         "text": "sap.m.ObjectNumber: ValueStateSupport used to enrich the tooltip",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570859892"
+          }
+        ]
       },
       {
         "id": "675019711bfe264c135ec86b992bd50955d9d580",
         "type": "FIX",
         "text": "sap.m.TextArea: escaping in IE10 is fixed.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100009139682015"
+          }
+        ]
       }
     ]
   },
@@ -3949,13 +5531,23 @@
         "id": "555a7712b77841b5a629aec9cde524a5f82e9259",
         "type": "FIX",
         "text": "sap.m.ObjectHeader: Active ObjectAttribute works on IE",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570899394"
+          }
+        ]
       },
       {
         "id": "ac3523519134450fb5f2ca21576f5404cdc018c1",
         "type": "FIX",
         "text": "sap.m.ObjectHeader: RemoveAllAggregations now works properly",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100010356542015"
+          }
+        ]
       },
       {
         "id": "89de8308ad3bf1adb1fa56e685ffedac492d9bde",
@@ -3984,13 +5576,31 @@
         "id": "57c6fcb83c24c8b974daa1528858337d808a5f64",
         "type": "FIX",
         "text": "sap.m.ComboBox: Exclude disable items from the auto-complete suggestion list",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670033530"
+          }
+        ]
       },
       {
         "id": "1d9bd61242bb65410538a58425abff580b678130",
         "type": "FIX",
         "text": "sap.m.ComboBox: Fix dropdown button alignment issue",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580238488"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570752892"
+          },
+          {
+            "type": "BCP",
+            "reference": "002007974700000254572016"
+          }
+        ]
       },
       {
         "id": "1462bff72e388a9a4076115b096aa6883b6f97f4",
@@ -4008,13 +5618,23 @@
         "id": "0fea4c653d49eaccf9610695d0e5c0160dbf3de3",
         "type": "FIX",
         "text": "sap.m.Popover: Preventing arrow from rerendering in Select when there is  a scrollbar",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570831543"
+          }
+        ]
       },
       {
         "id": "2c180a17893e64d7f1500fc45db7da25a1acb8ae",
         "type": "FIX",
         "text": "sap.m.QuickViewCard: Scrolling position when navigate is correct now",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570899704"
+          }
+        ]
       }
     ]
   },
@@ -4025,25 +5645,45 @@
         "id": "c6a6d594d49aabeac86e274eb7e53f20305a9454",
         "type": "FIX",
         "text": "Support Dialog: Fixed opening the support dialog on Windows Phone",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570867982"
+          }
+        ]
       },
       {
         "id": "3c406296fd5479b7f28ed1f1af8b9a41d0c7dad1",
         "type": "FIX",
         "text": "TextArea placement in Fiori Client Windows Phone",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100000204222016"
+          }
+        ]
       },
       {
         "id": "91353862ebbff638503d525875e81e4a1eba98e3",
         "type": "FIX",
         "text": "sap.m.Carousel - Content scrolling in IE and FF is now correct",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570896901"
+          }
+        ]
       },
       {
         "id": "a95f262b14664613898c72f89d0130c3785697b6",
         "type": "FIX",
         "text": "sap.m.Carousel: Keyboard handling in IE is correct now",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670008915"
+          }
+        ]
       },
       {
         "id": "2ba6b213acb42f3255b4ff7f6c3dc7db7cd9c9bb",
@@ -4055,31 +5695,56 @@
         "id": "50ef06984184963c11e09740b34284a8fcb974ad",
         "type": "FIX",
         "text": "sap.m.Checkbox fixed position in form on compact size",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670056525"
+          }
+        ]
       },
       {
         "id": "f03d9f56f7ebbd985c7c4bd8e0de47be8e888360",
         "type": "FIX",
         "text": "sap.m.ComboBox: dropdown list should not be opened on page load",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700000254572016"
+          }
+        ]
       },
       {
         "id": "cdf5003552d0bff16c8c08eea0ca46c51fafcba5",
         "type": "FIX",
         "text": "sap.m.DatePicker: if date is deleted open calendar on today",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100000591562016"
+          }
+        ]
       },
       {
         "id": "560f61771b64d2f9aad733538532dc11314cbca5",
         "type": "FIX",
         "text": "sap.m.IconTabBar scroll arrow shows correct on phone",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670015602"
+          }
+        ]
       },
       {
         "id": "79ffff62fd17ab5e92cd3a75055c1009db49cc77",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: cursor pointer over icon is set to \u0027pointer\u0027 instead of \u0027default\u0027.",
-        "references": []
+        "text": "sap.m.SegmentedButton: cursor pointer over icon is set to 'pointer' instead of 'default'.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670034214"
+          }
+        ]
       }
     ]
   },
@@ -4096,19 +5761,34 @@
         "id": "af1790b0c3ec746ff774dc2470a5afd51cb771c2",
         "type": "FIX",
         "text": "sap.m.IconTabBar: setSelectedItem method is working correctly now",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670027268"
+          }
+        ]
       },
       {
         "id": "f802f844482de508df24cc27dd9b272993582314",
         "type": "FIX",
         "text": "sap.m.ObjectHeader: Image preserves aspect ratio",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670062067"
+          }
+        ]
       },
       {
         "id": "7349859e8d4f0a51a6bf1139ff0c16f0cb10ea25",
         "type": "FIX",
         "text": "sap.m.ObjectListItem: Attribute and Statuses columns take equal space",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670083910"
+          }
+        ]
       }
     ]
   },
@@ -4119,13 +5799,23 @@
         "id": "c6d4c38701a91d4cc0789ab201546df61bd52b24",
         "type": "FIX",
         "text": "sap.m.Button: press event survives re-rendering",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100000363052016"
+          }
+        ]
       },
       {
         "id": "18a47fb9ba8284bfdc396cb9753317799564401d",
         "type": "FIX",
         "text": "sap.m.Carousel: Control is now rendered correctly inside a dialog",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680011585"
+          }
+        ]
       },
       {
         "id": "82a0a89b7c03b3dc2b5f9cfa591f5f4b1942a8a6",
@@ -4148,7 +5838,12 @@
         "id": "4a077acfddbbdd576d9696339eb4161b1868fba4",
         "type": "FIX",
         "text": "sap.m.Carousel: Fixed nav arrows on combi devices",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670121451"
+          }
+        ]
       },
       {
         "id": "3243ac23f655306a820437a4d6bc5b38c9448a13",
@@ -4160,13 +5855,23 @@
         "id": "9a4dd68bec511818f8903a9f8ce449350a6b4e2b",
         "type": "FIX",
         "text": "sap.m.MessageToast: autoClose not called on mouseLeave",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1570870123"
+          }
+        ]
       },
       {
         "id": "231a02266d096774bba0f0c19130fef25e7be274",
         "type": "FIX",
         "text": "sap.m.QuickView: Content width is set correctly now",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670105039"
+          }
+        ]
       }
     ]
   },
@@ -4177,31 +5882,56 @@
         "id": "8bbfd8ca4d5df8fbb58d62567889e10f8bfb7299",
         "type": "FIX",
         "text": "sap.m.Carousel: Displaying large images is now fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670164661"
+          }
+        ]
       },
       {
         "id": "0e6ba60cc0302af4116044ef8efee482a20aba0c",
         "type": "FIX",
         "text": "sap.m.IconTabBar: IconTabBar unexpected shrink issue is now fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670186825"
+          }
+        ]
       },
       {
         "id": "2af386f711399395e7502a35ff5a0f2c3f20d4d2",
         "type": "FIX",
         "text": "sap.m.Popover: Arrow position calculated wrong on RTL and IE",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670124850"
+          }
+        ]
       },
       {
         "id": "8b0003aab285512ffc5b9f1b5646477f40acef02",
         "type": "FIX",
         "text": "sap.m.PullToRefresh - encode description field",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670205059"
+          }
+        ]
       },
       {
         "id": "ba22b336c66c88910132563d844b4b166bb89d74",
         "type": "FIX",
         "text": "sap.m.Select: fix change event behavior when both mouse and keyboard are used",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002007974700001940792016"
+          }
+        ]
       }
     ]
   },
@@ -4212,7 +5942,12 @@
         "id": "3c1d07fa1110f0961fdfc1cd5e87f112a2a1c5f6",
         "type": "FIX",
         "text": "sap.m.FeedInput: Setting focus before firing Post event to make",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670169200"
+          }
+        ]
       },
       {
         "id": "38e4e4ea49ea4a7d74f746111896094ca704ba2d",
@@ -4224,7 +5959,12 @@
         "id": "02c743a9fa72ea47cde070348a7084054b734c06",
         "type": "FIX",
         "text": "sap.m.MessagePopover: First page is always rendered as initial after open",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100001717982016"
+          }
+        ]
       }
     ]
   },
@@ -4235,7 +5975,12 @@
         "id": "0ee7297ca8b03034befe6bbb8594476aa282d4de",
         "type": "FIX",
         "text": "sap.m.FeedListItem: Screen reader support improved",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670191758"
+          }
+        ]
       },
       {
         "id": "c76b543e067dce79fd2bc6945ed3a9b59dbe6047",
@@ -4247,7 +5992,12 @@
         "id": "90dd8408f173012a78ad35c6f5d26578c552522a",
         "type": "FIX",
         "text": "sap.m.ObjectHeader: Active title link fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670243145"
+          }
+        ]
       },
       {
         "id": "61c4a214022ab203e8253e6f7e33182563571145",
@@ -4264,31 +6014,64 @@
         "id": "f3155faaeceb0191fe7b32ba007c26308b680a8c",
         "type": "FIX",
         "text": "sap.m.FeedInput: Disable Button when FeedInput is disabled",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "983"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670298759"
+          }
+        ]
       },
       {
         "id": "411c85f5d46eecf1c23d728226e9aeac95a92098",
         "type": "FIX",
         "text": "sap.m.FeedListItem: JSDoc syntax corrected",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "012002523100002624622016"
+          }
+        ]
       },
       {
         "id": "4b570fecca71a59790d051a1a82852442ff53171",
         "type": "FIX",
         "text": "sap.m.ObjectHeader: Update documantation of fullScreenOptimized and condensed property",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670286460"
+          }
+        ]
       },
       {
         "id": "d43c8ae8dab999a13d94e00bce8891eed9ee3aa7",
         "type": "FIX",
         "text": "sap.m.Popover: addStyleClass(sapUiSizeCompact) does not render the Popover in compact mode",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670231174"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670114097"
+          }
+        ]
       },
       {
         "id": "8a500dac7e52eed0a5eee5ff1f7c82a059b9ea08",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Attachment list correctly refreshed now",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1580195099"
+          }
+        ]
       }
     ]
   },
@@ -4299,25 +6082,45 @@
         "id": "9ea96811d64bc9ff3315e59a48a9fa56baea8108",
         "type": "FIX",
         "text": "sap.m.FeedListItem: Improve consumer handling of senderPress and iconPress events",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680026425"
+          }
+        ]
       },
       {
         "id": "12695eb790388e25147bc40219054fb9a8b0c11a",
         "type": "FIX",
         "text": "sap.m.SegmentedButton: Button with icon have tooltip",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670172025"
+          }
+        ]
       },
       {
         "id": "743ba9133c41f502dfee1265b11047c09d8024aa",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Determining the list item instance given its id independently of its DOM representation.",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670332087"
+          }
+        ]
       },
       {
         "id": "b4b53108b27cda245825e8718dd881308cc58cef",
         "type": "FIX",
         "text": "sap.m.UploadCollection: Exiting edit mode after an attemt to save an empty file in case same file names are allowed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670342934"
+          }
+        ]
       },
       {
         "id": "1150b53c4013f8b09af0f00390f5e64c64c932f7",
@@ -4340,7 +6143,12 @@
         "id": "4dd4da027a450da8791d896f27c136eee4c49e26",
         "type": "FIX",
         "text": "sap.m.SelectDialog Remove disabling of SearchField on first search",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002134172016"
+          }
+        ]
       }
     ]
   },
@@ -4351,7 +6159,12 @@
         "id": "d3a10c75bbdb16f9534cca2e5963d0eb3dd22414",
         "type": "FIX",
         "text": "sap.m.RatingIndicator: Fix failing QUnit tests",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680241234"
+          }
+        ]
       }
     ]
   },
@@ -4361,13 +6174,18 @@
       {
         "id": "607f449065d061795925d031378567cae975ec35",
         "type": "FIX",
-        "text": " sap.m.FeedListItem: Screenreader support improved",
-        "references": []
+        "text": "sap.m.FeedListItem: Screenreader support improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004436442016"
+          }
+        ]
       },
       {
         "id": "b425f5d9c14fde62e63499aefda4097c15500fa1",
         "type": "FIX",
-        "text": " sap.m.UploadCollectionItem: JSDoc for property enableDelete fixed",
+        "text": "sap.m.UploadCollectionItem: JSDoc for property enableDelete fixed",
         "references": []
       }
     ]
@@ -4378,8 +6196,13 @@
       {
         "id": "aef3ab24e39c50e1da3693a51b695362ad383f32",
         "type": "FIX",
-        "text": " sap.m.Switch: extend translation field in messagebundle",
-        "references": []
+        "text": "sap.m.Switch: extend translation field in messagebundle",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670217210"
+          }
+        ]
       }
     ]
   },
@@ -4389,20 +6212,30 @@
       {
         "id": "200e7a3985aefb174e263a770cc910683c36f295",
         "type": "FIX",
-        "text": " sap.m.DateTimeInput: works correct on combi devices",
-        "references": []
+        "text": "sap.m.DateTimeInput: works correct on combi devices",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500004492692016"
+          }
+        ]
       },
       {
         "id": "8be21cb1c34f1298ceba9f15ba31f547380bf858",
         "type": "FIX",
-        "text": " sap.m.FlexBox: qUnits under Chrome have been fixed",
+        "text": "sap.m.FlexBox: qUnits under Chrome have been fixed",
         "references": []
       },
       {
         "id": "4fc3c2080cd5c73d52cbfee01f82583cf0b9e704",
         "type": "FIX",
-        "text": " sap.m.Page: Avoid rendering issue IE 11 when in RTL mode",
-        "references": []
+        "text": "sap.m.Page: Avoid rendering issue IE 11 when in RTL mode",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770102455"
+          }
+        ]
       }
     ]
   },
@@ -4412,8 +6245,13 @@
       {
         "id": "7da08c0dd9ee2dfdc347b8cebddd4a48bb15003c",
         "type": "FIX",
-        "text": " sap.m.Input: Method for hiding the arrow of the Popover moved to the Popover control",
-        "references": []
+        "text": "sap.m.Input: Method for hiding the arrow of the Popover moved to the Popover control",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770103267"
+          }
+        ]
       }
     ]
   },
@@ -4423,8 +6261,17 @@
       {
         "id": "72751b5a9f90aea8c9a501fc6bb0c1199b20338f",
         "type": "FIX",
-        "text": " sap.m.ObjectHeader: qunit checking background color is corrected",
-        "references": []
+        "text": "sap.m.ObjectHeader: qunit checking background color is corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780252829"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780357292"
+          }
+        ]
       }
     ]
   }
