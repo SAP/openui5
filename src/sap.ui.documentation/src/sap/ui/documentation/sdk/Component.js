@@ -280,8 +280,10 @@ sap.ui.define([
 					jQuery.ajax({
 						url: "versionoverview.json"
 					}).done(function(data) {
-						if (data.versions && data.versions[0] && data.versions[0].beta && data.versions[0].beta.indexOf(oVersionInfoData.openUi5Version) > -1) {
-							oVersionInfoData.isBetaVersion = true;
+						if (data.versions && data.versions.length) {
+							oVersionInfoData.isBetaVersion = data.versions.some(function (element) {
+								return element.beta && element.beta.indexOf(oVersionInfoData.openUi5Version + '-beta') > -1;
+							});
 						}
 						this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
 					}.bind(this)).fail(function () {
