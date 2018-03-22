@@ -189,30 +189,39 @@ xhr.onCreate = function(request) {
 				break;
 
 			case "fakeService://testdata/odata/valuelists/$metadata":
+				var sMetadataString = sNorthwindMetadataWithValueListPlaceholder.replace("{{ValueLists}}", "");
+				mHeaders = mMetaDataHeaders;
+				sAnswer = sMetadataString;
+				break;
+
+			case "fakeService://testdata/odata/valuelists/$metadata?testToken=test":
 				sMetadataString = sNorthwindMetadataWithValueListPlaceholder.replace("{{ValueLists}}", "");
 				mHeaders = mMetaDataHeaders;
 				sAnswer = sMetadataString;
 				break;
+
 			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=none":
 			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=all":
 			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=1":
 			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=2":
 			case "fakeService://testdata/odata/valuelists/$metadata?sap-value-list=3":
+			case "fakeService://testdata/odata/valuelists/$metadata?testToken=test&sap-value-list=none":
+			case "fakeService://testdata/odata/valuelists/$metadata?testToken=test&sap-value-list=all":
+			case "fakeService://testdata/odata/valuelists/$metadata?testToken=test&sap-value-list=1":
+			case "fakeService://testdata/odata/valuelists/$metadata?testToken=test&sap-value-list=2":
+			case "fakeService://testdata/odata/valuelists/$metadata?testToken=test&sap-value-list=3":
 				var sValueList = request.url.replace(/^.*?sap-value-list=(.*)$/, "$1");
 				var sAnnotations = "";
 				switch (sValueList) {
 					case "all":
 						sAnnotations = aValueListStrings.join("\n");
 						break;
-
 					case "1":
 						sAnnotations = aValueListStrings[0];
 						break;
-
 					case "2":
 						sAnnotations = aValueListStrings[1];
 						break;
-
 					case "3":
 						sAnnotations = aValueListStrings[2];
 						break;

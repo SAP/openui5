@@ -4419,7 +4419,7 @@ function runODataAnnotationTests() {
 		expect(40);
 
 		var mTest = mAdditionalTestsServices["Cached Value Lists"];
-		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations);
+		var oModel = fnCreateModel(iModelVersion, mTest.service, mTest.annotations, {"testToken":"test"});
 
 		new Promise(function(fnResolve) {
 			// Only react to annotationsLoaded once...
