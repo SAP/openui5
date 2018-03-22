@@ -732,6 +732,127 @@
 
 	});
 
+	QUnit.test("Unit: Dynamic values & unit overdefiniton via Configuration (decimals)", function(assert) {
+
+		// overwrite the length-meter unit, and define a decimals value
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"length-meter": {
+				"unitPattern-count-one": "{0} m",
+				"unitPattern-count-many": "{0} m",
+				"unitPattern-count-other": "{0} m",
+				"decimals": 3
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+
+		// new Meter type
+		var MeterType = sap.ui.model.type.Unit.extend("sap.ui.core.test.MeterType", {
+			constructor: function(oFormatOptions, oConstraints){
+				sap.ui.model.type.Unit.apply(this, [oFormatOptions, oConstraints, ["decimals"]]);
+			},
+		});
+
+		var oMeterType = new MeterType();
+		var oMeterTypeInstanceSpy = this.spy(oMeterType, "_createInstance");
+
+		// zero
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 0], "string"), "123 m", "format with decimals 3 expected");
+		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 1, "1 instance because one decimal value is used");
+
+		// empty
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", undefined], "string"), "123.123 m", "format with decimals 3 expected");
+		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 decimal value is used");
+
+		//4 digits
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 4], "string"), "123.1231 m", "format 4 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse 4 digits meters expected");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 3, "3 instance because 3 decimal option is provided (4)");
+
+		// 5 digits
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 5], "string"), "123.12312 m", "format 5 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.12312 m", "string"), [123.12312, "length-meter"], "parse 5 digits meters expected");
+
+		assert.equal(oMeterType.formatValue([123.1, "length-meter", 5], "string"), "123.10000 m", "small number format 5 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.10000 m", "string"), [123.1, "length-meter"], "small number parse 5 digits meters expected");
+
+		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instances because 4 different decimal options are provided");
+
+		// 6 digits
+		assert.equal(oMeterType.formatValue([123.1231236, "length-meter", 6], "string"), "123.123124 m", "format 6 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.12312345 m", "string"), [123.12312345, "length-meter"], "parse 6 digits meters expected");
+
+		assert.equal(oMeterType.formatValue([123.1, "length-meter", 6], "string"), "123.100000 m", "small number format 6 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.100000 m", "string"), [123.1, "length-meter"], "small number parse 6 digits meters expected");
+
+		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 5, "5 instances because 5 different decimal options are provided");
+
+	});
+
+	QUnit.test("Unit: Dynamic values & unit overdefiniton via Configuration (precision)", function(assert) {
+
+		// overwrite the length-meter unit, and define a decimals value
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"length-meter": {
+				"unitPattern-count-one": "{0} m",
+				"unitPattern-count-many": "{0} m",
+				"unitPattern-count-other": "{0} m",
+				"precision": 4
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+
+		// new Meter type
+		var MeterType = sap.ui.model.type.Unit.extend("sap.ui.core.test.MeterType", {
+			constructor: function(oFormatOptions, oConstraints){
+				sap.ui.model.type.Unit.apply(this, [oFormatOptions, oConstraints, ["precision"]]);
+			},
+		});
+
+		var oMeterType = new MeterType();
+		var oMeterTypeInstanceSpy = this.spy(oMeterType, "_createInstance");
+
+		// empty
+		assert.equal(oMeterType.formatValue([123.163123, "length-meter", 0], "string"), "123 m", "format with precision 4 expected");
+		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 1, "1 instance because one precision value is used");
+
+		// empty
+		assert.equal(oMeterType.formatValue([123.163123, "length-meter", undefined], "string"), "123.2 m", "format with precision 4 expected");
+		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 2, "2 instance because 2 precision value is used");
+
+		//4 digits
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 3], "string"), "123 m", "format with precision 3 expected");
+		assert.deepEqual(oMeterType.parseValue("123.1231 m", "string"), [123.1231, "length-meter"], "parse correct");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 3, "3 instances because 3 different precision values are used");
+
+		// 5 digits
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 2], "string"), "123 m", "format 5 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.12312 m", "string"), [123.12312, "length-meter"], "parse 5 digits meters expected");
+
+		assert.equal(oMeterType.formatValue([123.1, "length-meter", 2], "string"), "123 m", "small number format 5 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.10000 m", "string"), [123.1, "length-meter"], "small number parse 5 digits meters expected");
+
+		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 4, "4 instances because 4 different precision options are provided");
+
+		// 6 digits
+		assert.equal(oMeterType.formatValue([123.123123, "length-meter", 1], "string"), "123 m", "format 6 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.123123 m", "string"), [123.123123, "length-meter"], "parse 6 digits meters expected");
+
+		assert.equal(oMeterType.formatValue([123.1, "length-meter", 1], "string"), "123 m", "small number format 6 digits meters expected");
+		assert.deepEqual(oMeterType.parseValue("123.100000 m", "string"), [123.1, "length-meter"], "small number parse 6 digits meters expected");
+
+		assert.deepEqual(oMeterType.parseValue("123.100000000001 m", "string"), [123.100000000001, "length-meter"], " number with too many digits parse 5 digits meters expected");
+		assert.equal(oMeterTypeInstanceSpy.callCount, 5, "5 instances because 5 different precision options are provided");
+
+	});
 
 
 	// date type tests
