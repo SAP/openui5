@@ -216,6 +216,9 @@ sap.ui.define([
 	 * @param {array}
 	 *            [aFilters=null] predefined filter/s contained in an array
 	 * @param {object} [mParameters=null] a map which contains additional control parameters.
+	 * @param {sap.ui.model.TreeAutoExpandMode} [mParameters.autoExpandMode=sap.ui.model.TreeAutoExpandMode.Bundled]
+	 *            the auto expand mode; applying sorters to groups is only possible with auto expand
+	 *            mode {@link sap.ui.model.TreeAutoExpandMode.Sequential}
 	 * @param [mParameters.entitySet] if set, it explicitly specifies the entity set addressed by
 	 *            the last segment of the given binding path
 	 * @param [mParameters.useBatchRequests] if true, multiple OData requests will be wrapped into a
