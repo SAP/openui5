@@ -1001,40 +1001,41 @@ sap.ui.define([
 	 *
 	 * The section can either be given by itself or by its id.
 	 *
-	 * Note that <code>null</code> or <code>undefined</code> are not valid arguments and will be discarded.
-	 * This is because the <code>sap.uxap.ObjectPageLayout</code> should always have one of its sections selected (unless it has 0 sections).
+	 * Note that an argument of <code>null</code> will cause the first visible section be set as <code>selectedSection</code>.
+	 * This is because the <code>sap.uxap.ObjectPageLayout</code> should always have one of its sections selected (unless it has 0 visible sections).
 	 *
-	 * @param {string | sap.uxap.ObjectPageSection} vSectionBase
+	 * @param {string | sap.uxap.ObjectPageSection} sId
 	 *            The ID or the section instance that should be selected
 	 *            Note that <code>null</code> or <code>undefined</code> are not valid arguments
 	 * @return {sap.uxap.ObjectPageLayout} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
-	ObjectPageLayout.prototype.setSelectedSection = function (vSectionBase) {
-		var sSelectedSectionId,
-			vClosestSection,
+	ObjectPageLayout.prototype.setSelectedSection = function (sId) {
+		var vClosestSection,
 			sSectionIdToSet;
 
-		if (vSectionBase instanceof ObjectPageSectionBase) {
-			sSelectedSectionId = vSectionBase.getId();
-		} else if (typeof vSectionBase === "string") {
-			sSelectedSectionId = vSectionBase;
-		}
-
-		if (!sSelectedSectionId) {
-			jQuery.sap.log.warning("section or sectionID expected", this);
-			return;
-		}
-
-		if (sSelectedSectionId === this.getSelectedSection()){
+		if (sId instanceof ObjectPageSectionBase) {
+			sId = sId.getId();
+		} else if (sId != null && typeof sId !== "string") {
+			jQuery.sap.assert(false, "setSelectedSection(): sId must be a string, an instance of sap.uxap.ObjectPageSection or null");
 			return this;
 		}
 
-		this.scrollToSection(sSelectedSectionId);
+		if (sId === this.getSelectedSection()){
+			return this; // no change
+		}
+
+		if (sId === null) {
+			// unset the currently selectedSection and allow the page to invalidate
+			// so upon rerendering the first visible section  will be set as selected
+			return this.setAssociation("selectedSection", null);
+		}
+
+		this.scrollToSection(sId);
 		//note there was no validation whether oSection was child of ObjectPage/visible/non-empty,
 		//because at the point of calling this setter, the sections setup may not be complete yet
 		//but we still need to save the selectedSection value
-		vClosestSection = ObjectPageSection._getClosestSection(sSelectedSectionId);
+		vClosestSection = ObjectPageSection._getClosestSection(sId);
 		sSectionIdToSet = (vClosestSection instanceof ObjectPageSection) ? vClosestSection.getId() : vClosestSection;
 		return this.setAssociation("selectedSection", sSectionIdToSet, true);
 	};
