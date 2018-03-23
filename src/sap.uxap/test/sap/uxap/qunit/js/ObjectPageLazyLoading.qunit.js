@@ -103,16 +103,19 @@
 		var oComponentContainer = oView
 			.byId("objectPageContainer");
 		var oObjectPageLayout = oComponentContainer
-			.getObjectPageLayoutInstance();
+			.getObjectPageLayoutInstance(),
+			oThirdSubSection = oObjectPageLayout.getSections()[3].getSubSections()[0];
 
+		assert.strictEqual(oThirdSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded yet");
+
+		//act
 		oObjectPageLayout.scrollToSection(oObjectPageLayout.getSections()[5].getId());
 		sap.ui.getCore().applyChanges();
 
 		var done = assert.async();
 		setTimeout(function() {
 
-			var oThirdSubSection = oObjectPageLayout.getSections()[3].getSubSections()[0];
-			assert.strictEqual(oThirdSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport not loaded");
+			assert.strictEqual(oThirdSubSection.getBlocks()[0]._bConnected, false, "block data outside viewport still not loaded");
 
 			var oLastSubSection = oObjectPageLayout.getSections()[5].getSubSections()[0];
 			assert.strictEqual(oLastSubSection.getBlocks()[0]._bConnected, true, "block data if target section loaded");
