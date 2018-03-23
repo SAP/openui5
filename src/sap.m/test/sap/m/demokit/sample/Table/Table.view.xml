@@ -16,9 +16,6 @@
 				<content>
 					<Title text="Products" level="H2"/>
 					<ToolbarSpacer />
-					<ToggleButton id="stickyColHdr"
-						text="Sticky Column Headers"
-						press="onToggleStickyColHdr" />
 					<ComboBox id="idPopinLayout"
 						placeholder="Popin layout options"
 						change="onPopinLayoutChanged">
@@ -31,9 +28,30 @@
 								key="GridSmall"/>
 						</items>
 					</ComboBox>
+					<MultiComboBox id="idSticky"
+						placeholder="Sticky options"
+						selectionFinish="onSelectionFinish"
+						width="15%">
+						<items>
+							<core:Item  text="Column headers"
+								key="ColumnHeaders"/>
+							<core:Item  text="Header Toolbar"
+								key="HeaderToolbar"/>
+							<core:Item  text="Info Toolbar"
+								key="InfoToolbar"/>
+						</items>
+					</MultiComboBox>
+					<ToggleButton id="toggleInfoToolbar"
+						text="Hide/Show InfoToolbar"
+						press="onToggleInfoToolbar" />
 				</content>
 			</Toolbar>
 		</headerToolbar>
+		<infoToolbar>
+			<Toolbar active="ture">
+				<Label text="Wide range of available products"/>
+			</Toolbar>
+		</infoToolbar>
 		<columns>
 			<Column
 				width="12em">
