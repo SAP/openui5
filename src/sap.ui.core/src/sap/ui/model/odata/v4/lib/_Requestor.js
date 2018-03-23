@@ -159,7 +159,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sMetaPath
 	 *   The meta path corresponding to the resource path
-	 * @param {object} mQueryOptions
+	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
@@ -342,12 +342,12 @@ sap.ui.define([
 	 *
 	 * @param {string} sMetaPath
 	 *   The meta path corresponding to the resource path
-	 * @param {object} mQueryOptions The query options
+	 * @param {object} [mQueryOptions] The query options
 	 * @param {boolean} [bDropSystemQueryOptions=false]
 	 *   Whether all system query options are dropped (useful for non-GET requests)
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the query string
-	 * @returns {object} The converted query options
+	 * @returns {object} The converted query options or undefined if there are no query options
 	 */
 	Requestor.prototype.convertQueryOptions = function (sMetaPath, mQueryOptions,
 			bDropSystemQueryOptions, bSortExpandSelect) {

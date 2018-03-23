@@ -490,7 +490,7 @@ sap.ui.define([
 		/*
 		 * Recursively calls fetchType for all (sub)paths in $expand.
 		 * @param {string} sBaseMetaPath The resource meta path + entity path
-		 * @param {object} mQueryOptions The corresponding query options
+		 * @param {object} [mQueryOptions] The corresponding query options
 		 */
 		function fetchExpandedTypes(sBaseMetaPath, mQueryOptions) {
 			if (mQueryOptions && mQueryOptions.$expand) {
@@ -663,7 +663,7 @@ sap.ui.define([
 	 * Updates query options of the cache which has not yet sent a read request with the given
 	 * options.
 	 *
-	 * @param {object} mQueryOptions
+	 * @param {object} [mQueryOptions]
 	 *   The new query options
 	 * @throws {Error} If the cache has already sent a read request
 	 *
@@ -1455,7 +1455,7 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL; it must not contain a query string<br>
 	 *   Example: Products
-	 * @param {object} mQueryOptions
+	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
 	 *   repeats the key for each array value.
