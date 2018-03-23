@@ -5,7 +5,7 @@
       {
         "id": "575330a7789489107d5a3448cb58ab18c2580cba",
         "type": "FEATURE",
-        "text": " sap.ui.rta: Dynamic plugin registration on context menu",
+        "text": "sap.ui.rta: Dynamic plugin registration on context menu",
         "references": []
       },
       {
@@ -17,61 +17,71 @@
       {
         "id": "884552f9d7d1e44281247bbfeb9661ba103b710f",
         "type": "FIX",
-        "text": " - performance test - applyChange",
+        "text": "- performance test - applyChange",
         "references": []
       },
       {
         "id": "eeb7419409f0b42c7b7e922a13b394cbd06f5c9a",
         "type": "FIX",
-        "text": " sap.ui.dt - fixed exception for empty aggregations in DT Metadata",
+        "text": "sap.ui.dt - fixed exception for empty aggregations in DT Metadata",
         "references": []
       },
       {
         "id": "c758bfff0c138c0305ad152c0ff97915a3b90454",
         "type": "FIX",
-        "text": " sap.ui.dt: IE doesn\u0027t support document.contains()",
+        "text": "sap.ui.dt: IE doesn't support document.contains()",
         "references": []
       },
       {
         "id": "3a4e90828231fbe874a67fd142f08a68f1a55871",
         "type": "FIX",
-        "text": " sap.ui.dt: remove \"enabled\" property from sap.ui.dt.Overlay",
+        "text": "sap.ui.dt: remove \"enabled\" property from sap.ui.dt.Overlay",
         "references": []
       },
       {
         "id": "f17f387c7080a8d2a5593c4c7af6e50c57fe7554",
         "type": "FIX",
-        "text": " sap.ui.rta - First rename with double-click not working",
+        "text": "sap.ui.rta - First rename with double-click not working",
         "references": []
       },
       {
         "id": "3337f07716d4e6f2c177592c8a4ea9516a01db27",
         "type": "FIX",
-        "text": " sap.ui.rta - Fix simpleform reveal",
+        "text": "sap.ui.rta - Fix simpleform reveal",
         "references": []
       },
       {
         "id": "0e268ced8ad40868702ca1dac74be86d133e90d5",
         "type": "FIX",
-        "text": " sap.ui.rta: Paste without cut doesn\u0027t cause an error anymore",
-        "references": []
+        "text": "sap.ui.rta: Paste without cut doesn't cause an error anymore",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780353206"
+          }
+        ]
       },
       {
         "id": "b0a65978d503ea454dedf60842d8c7f2befe02fd",
         "type": "FIX",
-        "text": " sap.ui.rta: Test fixes for Internet Explorer",
+        "text": "sap.ui.rta: Test fixes for Internet Explorer",
         "references": []
       },
       {
         "id": "b6185cf9af8d2699772c231e4963efda25a49cd5",
         "type": "FIX",
-        "text": " sap.ui.rta: fixed reveal for elements that are not Controls",
-        "references": []
+        "text": "sap.ui.rta: fixed reveal for elements that are not Controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770469740"
+          }
+        ]
       },
       {
         "id": "894007b038ecde7b8dbe33ee1b75793acdfd2c24",
         "type": "FIX",
-        "text": " sap.ui.rta: prevent remove action when pressing DELETE button if it\u0027s unavailable",
+        "text": "sap.ui.rta: prevent remove action when pressing DELETE button if it's unavailable",
         "references": []
       },
       {
@@ -94,20 +104,35 @@
       {
         "id": "602f025599963f10b3ae19bd91df985955de9d9e",
         "type": "FIX",
-        "text": " Combine on the wrong element",
-        "references": []
+        "text": "Combine on the wrong element",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492991"
+          }
+        ]
       },
       {
         "id": "2542461e997ba1cebb080c5565eac3838b5dd4e2",
         "type": "FIX",
-        "text": " sap.ui.dt: added missing parentheses for ElementUtil.isVisible",
-        "references": []
+        "text": "sap.ui.dt: added missing parentheses for ElementUtil.isVisible",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770506683"
+          }
+        ]
       },
       {
         "id": "69db4774e0223c589661ba06e8942355bb813aa3",
         "type": "FIX",
-        "text": " sap.ui.rta - Settings dialog don’t open",
-        "references": []
+        "text": "sap.ui.rta - Settings dialog don’t open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770516043"
+          }
+        ]
       }
     ]
   },
@@ -117,20 +142,35 @@
       {
         "id": "a5fd5f7b699dc49ecdf3d2a2e91b32c490a73152",
         "type": "FIX",
-        "text": " sap.ui.dt:added isVisible function to designtime and visible check",
-        "references": []
+        "text": "sap.ui.dt:added isVisible function to designtime and visible check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770492781"
+          }
+        ]
       },
       {
         "id": "dfd2844f8069985c30d6226a95f86082cec9026b",
         "type": "FIX",
         "text": "sap.ui.dt: QUnit test fix - CSS filter not supported by IE",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770584012"
+          }
+        ]
       },
       {
         "id": "7b09286cf02d7708c41de2bb1d1842a3ebfe8709",
         "type": "FIX",
         "text": "sap.ui.rta: DT Metadata ignore() called for destroyed element",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770557200"
+          }
+        ]
       }
     ]
   },
@@ -140,8 +180,13 @@
       {
         "id": "90d1baea9e7212055bf0357c9d406c0161c48717",
         "type": "FIX",
-        "text": " Stabilize test case by rounding numbers",
-        "references": []
+        "text": "Stabilize test case by rounding numbers",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880043833"
+          }
+        ]
       }
     ]
   }

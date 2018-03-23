@@ -22,8 +22,13 @@
       {
         "id": "4f6537be439d7f74c2c03aad740c6ddb2a7fd4b2",
         "type": "FIX",
-        "text": "Explored app: Samples tab \u003ccode\u003e tag visualization corrected",
-        "references": []
+        "text": "Explored app: Samples tab <code> tag visualization corrected",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670249493"
+          }
+        ]
       }
     ]
   },
@@ -45,7 +50,12 @@
         "id": "aeb28668f6623c6f69d39982a5fde1a7e30e6d1b",
         "type": "FIX",
         "text": "Explored App: Tutorial description is \"undefined\"",
-        "references": []
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1005"
+          }
+        ]
       }
     ]
   },
@@ -55,8 +65,13 @@
       {
         "id": "ebd220c9b45affe652117aa25cb5cd7eda0e3c1c",
         "type": "FIX",
-        "text": " SDK: accept hash for LICENSE.txt",
-        "references": []
+        "text": "SDK: accept hash for LICENSE.txt",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1320"
+          }
+        ]
       }
     ]
   }

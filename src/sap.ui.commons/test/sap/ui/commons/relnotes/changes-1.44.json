@@ -12,13 +12,31 @@
         "id": "930bead3bea70fd7e642b837a08b78e8f5da6384",
         "type": "FIX",
         "text": "commons.Dialog: Center dialog according the view point size",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680225299"
+          }
+        ]
       },
       {
         "id": "4bb1e01257ac8f6fb854548dcac26059a7dd4f65",
         "type": "FIX",
         "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670187459"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570632712"
+          },
+          {
+            "type": "GitHub",
+            "reference": "917"
+          }
+        ]
       },
       {
         "id": "5b8ea08d2f1cd2d0d70fc48d1f162d03affbf322",
@@ -42,43 +60,82 @@
         "id": "a44cab29e9a2db93774d05b9e5ab8880e530ee22",
         "type": "FIX",
         "text": "sap.ui.commons.InPlaceEdit: Theme image URLs",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427408"
+          }
+        ]
       },
       {
         "id": "1b00943760b608c7674e9918d308d26ece9dc699",
         "type": "FIX",
         "text": "sap.ui.commons.ListBox: Scroll should not have special handling on mobile device",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002364902016"
+          }
+        ]
       },
       {
         "id": "9b774c4e3da1ee0699b699d2647a4a9fa02def9b",
         "type": "FIX",
         "text": "sap.ui.commons.Paginator: onsapenter is now handled",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670431542"
+          }
+        ]
       },
       {
         "id": "2329a7fe67a3f9a9d342b05020b0d2487ad08b6b",
         "type": "FIX",
         "text": "sap.ui.commons.RatingIndicator: Theme image URLs",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670427766"
+          }
+        ]
       },
       {
         "id": "d6dcb0f701f17e0b82087e23ddca51ec1721ecd6",
         "type": "FIX",
         "text": "sap.ui.commons.SearchField: On Mac OS after 53 update cursor position in an input is fixed",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670408273"
+          }
+        ]
       },
       {
         "id": "d003442f4422a0ad2cda6644edcb652f3c092be2",
         "type": "FIX",
         "text": "sap.ui.commons.TabStrip: Destroying tabs is now correct",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670428783"
+          }
+        ]
       },
       {
         "id": "31021f51f9de7037a29e0a4cbee05aba437eccdc",
         "type": "FIX",
         "text": "sap.ui.table.*: Fix inner controls after CSS cleanup",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670483619"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670483618"
+          }
+        ]
       }
     ]
   },
@@ -89,25 +146,45 @@
         "id": "da12fddc8a6da4b29e10bba52929e4e9bad00f12",
         "type": "FIX",
         "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670517437"
+          }
+        ]
       },
       {
         "id": "1a3f719e840acfff5e56dcfc4aa322a8f650dc93",
         "type": "FIX",
         "text": "sap.ui.commons semantic colors for TextField and ProgressIndicator",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670517437"
+          }
+        ]
       },
       {
         "id": "32fec09dbe194475263514c2d1e72d3914ceb671",
         "type": "FIX",
         "text": "sap.ui.commons.Link: Focus visualization in sap.ui.table.Table Cell",
-        "references": []
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1680175114"
+          }
+        ]
       },
       {
         "id": "f4a5f3d18dbd08f5e68de8ffb01020ff5b76bb52",
         "type": "FIX",
-        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
-        "references": []
+        "text": "sap.ui.core.Popup: keep blocklayer when there's still modal popup open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1670449871"
+          }
+        ]
       }
     ]
   },
@@ -117,8 +194,13 @@
       {
         "id": "f99dedc303bce26985c6896315fba308096fd570",
         "type": "FIX",
-        "text": " sap.ui.commons.Slider: Setting of limit values work correctly",
-        "references": []
+        "text": "sap.ui.commons.Slider: Setting of limit values work correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780124586"
+          }
+        ]
       }
     ]
   },
@@ -128,8 +210,13 @@
       {
         "id": "299b85f34bfe864dc012c3f132d8d57c24cecead",
         "type": "FIX",
-        "text": " sap.ui.commons.TextField - paste of text with line endings on IE works.",
-        "references": []
+        "text": "sap.ui.commons.TextField - paste of text with line endings on IE works.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1730434255"
+          }
+        ]
       }
     ]
   },
@@ -139,8 +226,13 @@
       {
         "id": "533af265dcc5bfac73c15c62a9a11cf376c4014c",
         "type": "FIX",
-        "text": " sap.ui.commons.MatrixLayout: Render calculations corrected for Edge",
-        "references": []
+        "text": "sap.ui.commons.MatrixLayout: Render calculations corrected for Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000745792018"
+          }
+        ]
       }
     ]
   }

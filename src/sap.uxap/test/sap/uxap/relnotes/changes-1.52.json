@@ -1,0 +1,71 @@
+{
+	"1.52.0": {
+		"data": "",
+		"notes": [
+			{
+				"id": "6c930aa98f401c8fc8c6c774010601cafe5d3600",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageLayout: Added visual indicator for ObjectPageDynamicHeaderTitle",
+				"references": []
+			},
+			{
+				"id": "ded0200946b8224accd6befde9b31a02b7cfd8df",
+				"type": "FIX",
+				"text": "sap.ui.rta - call for action without element as parameter",
+				"references": []
+			},
+			{
+				"id": "464d493e81bc82e426278e4f6e4a15215c7abffe",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageLayout: Enabled preserveHeaderStateOnScroll",
+				"references": []
+			},
+			{
+				"id": "4f55a9b43b01094011772b329831ed11278e8d94",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageLayout: Enabled toggle header on title press",
+				"references": []
+			},
+			{
+				"id": "92c8c774f25e33903dbdc216d19cda26d0cc4672",
+				"type": "FEATURE",
+				"text": "sap.uxap.ObjectPageLayout: Enabled pinnable header",
+				"references": []
+			},
+			{
+				"id": "94935713437c6960c6c8da30b67bd2937d6e4a3a",
+				"type": "FIX",
+				"text": "sap.ui.fl Correctly mark change as being applied changeHandler for xml views",
+				"references": []
+			},
+			{
+				"id": "df769ee1af7f87f025e89ed0393f79c195102a3f",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: Control responsive behavior fix",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1780382804"
+					}
+				]
+			},
+			{
+				"id": "4528c44b967403c89f8c34b1c55feacde8de1fc3",
+				"type": "FIX",
+				"text": "sap.uxap.ObjectPageLayout: Header expand on zoomed browser fixed",
+				"references": [
+					{
+						"type": "BCP",
+						"reference": "1780309606"
+					}
+				]
+			},
+			{
+				"id": "b1f483f9235fb6564e800053dad6caf7551580c8",
+				"type": "FIX",
+				"text": "Flexibility: ObjectPageLayoutSection not movable to header",
+				"references": []
+			}
+		]
+	}
+}
