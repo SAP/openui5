@@ -8,6 +8,8 @@ sap.ui.define([
 	'./ComboBoxTextField',
 	'./ComboBoxBase',
 	'./Input',
+	'./Tokenizer',
+	'./Token',
 	'./ToggleButton',
 	'./List',
 	'./Popover',
@@ -17,6 +19,7 @@ sap.ui.define([
 	'sap/ui/core/library',
 	'sap/ui/Device',
 	'sap/ui/core/Item',
+	'sap/ui/core/ResizeHandler',
 	'./MultiComboBoxRenderer',
 	'jquery.sap.xml',
 	'jquery.sap.keycodes'
@@ -27,6 +30,8 @@ function(
 	ComboBoxTextField,
 	ComboBoxBase,
 	Input,
+	Tokenizer,
+	Token,
 	ToggleButton,
 	List,
 	Popover,
@@ -36,6 +41,7 @@ function(
 	coreLibrary,
 	Device,
 	Item,
+	ResizeHandler,
 	MultiComboBoxRenderer
 	) {
 	"use strict";
@@ -51,6 +57,8 @@ function(
 
 	// shortcut for sap.ui.core.OpenState
 	var OpenState = coreLibrary.OpenState;
+
+	var PlacementType = library.PlacementType;
 
 	/**
 	 * Constructor for a new MultiComboBox.
@@ -334,6 +342,23 @@ function(
 	};
 
 	/**
+	 * Function calculates the available space for the tokenizer
+	 *
+	 * @private
+	 * @return {String | null} CSSSize in px
+	 */
+	MultiComboBox.prototype._calculateSpaceForTokenizer = function () {
+		if (this.getDomRef()) {
+			var iWidth = this.getDomRef().offsetWidth,
+				iArrowButtonWidth = parseInt(this.getDomRef("arrow").offsetWidth, 10),
+				iInputWidth = parseInt(this.$().find(".sapMMultiComboBoxInputContainer").css("min-width"), 10);
+
+			return iWidth - (iArrowButtonWidth + iInputWidth) + "px";
+		} else {
+			return null;
+		}
+	};
+	/**
 	 * Handle when enter is pressed.
 	 *
 	 * @param {jQuery.Event} oEvent The event object
@@ -393,8 +418,13 @@ function(
 			}
 
 			// If focus is outside of the MultiComboBox
-			if (!(oControl instanceof sap.m.Token)) {
+			if (!(oControl instanceof Token || oEvent.srcControl instanceof Token)) {
 				this._oTokenizer.scrollToEnd();
+			}
+
+			// if the focus is outside the MultiComboBox, the tokenizer should be collapsed
+			if (!jQuery.contains(this.getDomRef(), document.activeElement)) {
+				this._oTokenizer._useCollapsedMode(true);
 			}
 		}
 
@@ -415,8 +445,12 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onfocusin = function(oEvent) {
-
 		var bDropdownPickerType = this.getPickerType() === "Dropdown";
+
+		if (this.getEditable()) {
+			this._oTokenizer._useCollapsedMode(false);
+			this._oTokenizer.scrollToEnd();
+		}
 
 		if (oEvent.target === this.getFocusDomRef()) {
 			this.getEditable() && this.addStyleClass("sapMMultiComboBoxFocus");
@@ -654,6 +688,35 @@ function(
 	};
 
 	/**
+	 * Returns a modified instance type of <code>sap.m.Popover</code> used in read-only mode.
+	 *
+	 * @returns {sap.m.Popover} The Popover instance
+	 * @private
+	 */
+	MultiComboBox.prototype._getReadOnlyPopover = function() {
+		if (!this._oReadOnlyPopover) {
+			this._oReadOnlyPopover = this._createReadOnlyPopover();
+		}
+
+		return this._oReadOnlyPopover;
+	};
+
+	/**
+	 * Creates an instance type of <code>sap.m.Popover</code> used in read-only mode.
+	 *
+	 * @returns {sap.m.Popover} The Popover instance
+	 * @private
+	 */
+	MultiComboBox.prototype._createReadOnlyPopover = function() {
+		return new Popover({
+			showArrow: true,
+			placement: PlacementType.Auto,
+			showHeader: false,
+			contentMinWidth: "auto"
+		}).addStyleClass("sapMMultiComboBoxReadOnlyPopover");
+	};
+
+	/**
 	 * Creates a picker. To be overwritten by subclasses.
 	 *
 	 * @param {string} sPickerType The picker type
@@ -719,6 +782,44 @@ function(
 			// Re-apply editable state to make sure tokens are rendered in right state.
 			this.setEditable(this.getEditable());
 		}
+
+		this._deregisterResizeHandler();
+	};
+
+	MultiComboBox.prototype.onAfterRendering = function() {
+		ComboBoxBase.prototype.onAfterRendering.apply(this, arguments);
+		this._registerResizeHandler();
+	};
+
+	/**
+	 * Registers resize handler
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._registerResizeHandler = function () {
+		jQuery.sap.assert(!this._iResizeHandlerId, "Resize handler already registered");
+		this._iResizeHandlerId = ResizeHandler.register(this, this._onResize.bind(this));
+	};
+
+	/**
+	 * Deregisters resize handler
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._deregisterResizeHandler = function () {
+		if (this._iResizeHandlerId) {
+			ResizeHandler.deregister(this._iResizeHandlerId);
+			this._iResizeHandlerId = null;
+		}
+	};
+
+	/**
+	 * Handler for resizing
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._onResize = function () {
+		this._tokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 	};
 
 	/**
@@ -796,6 +897,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onAfterClose = function() {
+		var bUseCollapsed = !jQuery.contains(this.getDomRef(), document.activeElement) || this.isPickerDialog();
 		// remove the active state of the MultiComboBox's field
 		this.removeStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "Pressed");
 
@@ -808,12 +910,14 @@ function(
 
 		if (this.isPickerDialog()) {
 			this.getPickerTextField().setValue("");
-			this._getFilterSelectedButton().setPressed(false);
+			this._getFilterSelectedButton() && this._getFilterSelectedButton().setPressed(false);
 		}
 
 		this.fireSelectionFinish({
 			selectedItems: this.getSelectedItems()
 		});
+
+		this._oTokenizer._useCollapsedMode(bUseCollapsed);
 	};
 
 	/**
@@ -899,15 +1003,15 @@ function(
 	 * @returns {void}
 	 * @private
 	 */
-	MultiComboBox.prototype._filterSelectedItems = function (oEvent) {
-		var oButton = oEvent.oSource, oListItem, bMatch,
-			sValue = this.getPickerTextField().getValue(),
-			bPressed = oButton.getPressed(),
+	MultiComboBox.prototype._filterSelectedItems = function (oEvent, bForceShowSelected) {
+		var oSource = oEvent.oSource, oListItem, bMatch,
+			sValue = this.getPickerTextField() ? this.getPickerTextField().getValue() :  "",
+			bShowSelectedOnly = (oSource && oSource.getPressed && oSource.getPressed()) || bForceShowSelected,
 			aVisibleItems = this.getVisibleItems(),
 			aItems = this.getItems(),
 			aSelectedItems = this.getSelectedItems();
 
-		if (bPressed) {
+		if (bShowSelectedOnly) {
 			aVisibleItems.forEach(function(oItem) {
 				bMatch = aSelectedItems.indexOf(oItem) > -1 ? true : false;
 				oListItem = this.getListItem(oItem);
@@ -1530,6 +1634,29 @@ function(
 	};
 
 	/**
+	 * Handler for the press event on the N-more label
+	 *
+	 * @private
+	 */
+	MultiComboBox.prototype._handleIndicatorPress = function(oEvent) {
+		this._filterSelectedItems(oEvent, true);
+		this.focus();
+
+		if (this.getEditable()) {
+			this.getPicker().open();
+		} else {
+			this._getReadOnlyPopover().openBy(this._oTokenizer._oIndicator);
+		}
+
+		if (this.isPickerDialog()) {
+			this._getFilterSelectedButton().setPressed(true);
+			this.bOpenedByKeyboardOrButton = true;
+		} else {
+			jQuery.sap.delayedCall(0, this._oTokenizer, "scrollToEnd");
+		}
+	};
+
+	/**
 	 * Create an instance type of <code>sap.m.Tokenizer</code>.
 	 *
 	 * @returns {sap.m.Tokenizer} The tokenizer instance
@@ -1540,12 +1667,22 @@ function(
 			tokens: []
 		}).attachTokenChange(this._handleTokenChange, this);
 
+		oTokenizer._handleNMoreIndicatorPress(this._handleIndicatorPress.bind(this));
+
 		// Set parent of Tokenizer, otherwise the Tokenizer renderer is not called.
 		// Control.prototype.invalidate -> this.getUIArea() is null
 		oTokenizer.setParent(this);
 
 		oTokenizer.addEventDelegate({
-			onAfterRendering: this._onAfterRenderingTokenizer
+			onAfterRendering: this._onAfterRenderingTokenizer,
+			onfocusin: function (oEvent) {
+
+				// if a token is selected, the tokenizer should not scroll
+				if (this.getEditable() && jQuery(oEvent.target).hasClass("sapMToken")) {
+					oTokenizer._useCollapsedMode(false);
+					jQuery.sap.delayedCall(0, oTokenizer, "scrollToEnd");
+				}
+			}
 		}, this);
 
 		return oTokenizer;
@@ -1555,7 +1692,11 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._onAfterRenderingTokenizer = function() {
-		this._oTokenizer.scrollToEnd();
+		var bCollapse = !(this.isOpen() || this._bTokenDeleted);
+		this._oTokenizer._useCollapsedMode(bCollapse);
+
+		this._bTokenDeleted = false;
+		jQuery.sap.delayedCall(0, this._oTokenizer, "scrollToEnd");
 	};
 
 	MultiComboBox.prototype._handleTokenChange = function(oEvent) {
@@ -1568,6 +1709,7 @@ function(
 		}
 
 		if (sType === sap.m.Tokenizer.TokenChangeType.Removed) {
+			this._bTokenDeleted = true;
 
 			oItem = (oToken && this._getItemByToken(oToken));
 
@@ -1624,6 +1766,8 @@ function(
 		var oDomRef = jQuery(this.getDomRef());
 		var oBorder = oDomRef.find(this.getRenderer().DOT_CSS_CLASS_MULTICOMBOBOX + "Border");
 		oPicker._oOpenBy = oBorder[0];
+
+		this._oTokenizer.setMaxWidth(this._calculateSpaceForTokenizer());
 	};
 
 	/**
@@ -2289,8 +2433,17 @@ function(
 	// ----------------------- Inheritance ---------------------
 
 	MultiComboBox.prototype.setEditable = function(bEditable) {
+		var oList = this.getList();
 		ComboBoxBase.prototype.setEditable.apply(this, arguments);
 		this._oTokenizer.setEditable(bEditable);
+
+		if (bEditable) {
+			oList.setMode(ListMode.MultiSelect);
+			this.getPicker().addContent(oList);
+		} else {
+			oList.setMode(ListMode.None);
+			this._getReadOnlyPopover().addContent(oList);
+		}
 		return this;
 	};
 
@@ -2711,6 +2864,7 @@ function(
 
 	MultiComboBox.prototype.exit = function() {
 		ComboBoxBase.prototype.exit.apply(this, arguments);
+		this._deregisterResizeHandler();
 
 		if (this.getList()) {
 			this.getList().destroy();

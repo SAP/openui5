@@ -2119,11 +2119,6 @@ function(
 
 				}).attachAfterClose(function() {
 
-					if (oInput instanceof sap.m.MultiInput && oInput._isMultiLineMode) {
-
-						oInput._showIndicator();
-					}
-
 					// only destroy items in simple suggestion mode
 					if (oInput._oList) {
 						if (Table && !(oInput._oList instanceof Table)) {

@@ -9,6 +9,20 @@
 .sapMMultiInput {
 	min-width: 7rem; //9.5rem;
 
+	.sapMTokenizer {
+		flex: 0 1 auto;
+	}
+}
+
+.sapMMultiInputReadOnlyPopover {
+	.sapMLIB{
+		pointer-events: none;
+		border-bottom: 0;
+
+		&.sapMLIBHoverable:hover {
+			background: none;
+		}
+	}
 }
 
 .sapMMultiInput.sapMInputVH {
@@ -71,12 +85,6 @@ html.sap-desktop .sapMMultiInputBorder {
 	position: static;
 	min-width: 2.375rem;
 	min-height: 2.375rem;
-}
-
-// in general tokens in multi-line or on phone are not visible
-.sapMMultiInput.sapMMultiInputMultiLine .sapMToken,
-html.sap-phone .sapMMultiInput .sapMToken {
-	display: none;
 }
 
 // however tokens in multi-line or phone in read-only multiinput are visible
@@ -179,14 +187,6 @@ html.sap-tablet .sapMMultiInputMultiModeBorder {
 .sapMMultiInputMultiModeBorder .sapMTokenizerEmpty {
 	height: 0;
 	display: block;
-}
-
-.sapMMultiInputIndicator {
-	display: inline-block;
-	font-size: @sapMFontMediumSize;
-	line-height: 2.375rem;
-	width: 100%;
-	overflow: hidden;
 }
 
 .sapMMultiInputMultiModeBorder .sapMInputBaseInner {
@@ -298,10 +298,6 @@ html.sap-phone .sapMTokenizerMultiLine > .sapMTokenizerScrollContainer > .sapMTo
 	width: calc(100% - 1.5rem);
 }
 
-.sapUiSizeCompact .sapMMultiInputIndicator {
-	line-height: 1.5rem;
-}
-
 .sapUiSizeCompact .sapMMultiInputMultiModeBorder .sapMTokenizer {
 	white-space: normal;
 }
@@ -354,5 +350,21 @@ html.sap-phone .sapMTokenizerMultiLine > .sapMTokenizerScrollContainer > .sapMTo
 @media screen and (min-width:768px) {
 	.sapMMultiInput .sapMTokenizer {
 		min-width: auto;
+	}
+}
+
+.sapMPickerSelectedItemsPicker {
+	.sapMCbMark {
+		display: none
+	}
+
+	.sapMSLITitle {
+		font-size: 0.90rem;
+		color: cornflowerblue;
+		padding: 0.375rem;
+	}
+
+	.sapMLIBContent {
+		text-align: right;
 	}
 }

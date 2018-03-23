@@ -13,6 +13,17 @@
 	}
 }
 
+.sapMMultiComboBoxReadOnlyPopover {
+	.sapMLIB {
+		pointer-events: none;
+		border-bottom: 0;
+
+		&.sapMLIBHoverable:hover {
+			background: none;
+		}
+	}
+}
+
 .sapMMultiComboBoxFocus .sapMMultiComboBoxBorder::after {
 	border: 1px dotted @sapUiContentFocusColor;
 	content: "";
