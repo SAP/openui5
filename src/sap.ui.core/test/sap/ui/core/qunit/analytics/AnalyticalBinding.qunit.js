@@ -1818,15 +1818,16 @@ sap.ui.require([
 	[{
 		// input
 		bApplySortersToGroups: false,
+		sAutoExpandMode : TreeAutoExpandMode.Sequential,
 		// output
 		bResult : false
 	}, {
 		// input
-		bApplySortersToGroups: false,
-		sAutoExpandMode : TreeAutoExpandMode.Sequential,
-		aSorter : [{}],
+		bApplySortersToGroups: true,
+		sAutoExpandMode : undefined,
 		// output
-		bResult : false
+		bResult : false,
+		bWarning : false // no warning as there are no sorters, sLastAutoExpandMode does not change
 	}, {
 		// input
 		bApplySortersToGroups: true,
@@ -1840,6 +1841,13 @@ sap.ui.require([
 		// input
 		bApplySortersToGroups: true,
 		sAutoExpandMode : TreeAutoExpandMode.Bundled,
+		// output
+		bResult : false,
+		bWarning : false // no warning as there are no sorters, sLastAutoExpandMode does not change
+	}, {
+		// input
+		bApplySortersToGroups: true,
+		sAutoExpandMode : TreeAutoExpandMode.Bundled,
 		aSorter : [{}],
 		// output
 		sLastAutoExpandMode : TreeAutoExpandMode.Bundled,
@@ -1849,16 +1857,8 @@ sap.ui.require([
 		// input
 		bApplySortersToGroups: true,
 		sAutoExpandMode : TreeAutoExpandMode.Sequential,
-		aSorter : undefined,
 		// output
-		bResult : false
-	}, {
-		// input
-		bApplySortersToGroups: true,
-		sAutoExpandMode : TreeAutoExpandMode.Sequential,
-		aSorter : [],
-		// output
-		bResult : false
+		bResult : true // there are no sorters, so do not change sLastAutoExpandMode
 	}, {
 		// input
 		bApplySortersToGroups: true,
@@ -1881,7 +1881,7 @@ sap.ui.require([
 				oBinding.bApplySortersToGroups = oFixture.bApplySortersToGroups;
 				oBinding._autoExpandMode = oFixture.sAutoExpandMode;
 				oBinding.sLastAutoExpandMode = sOldLastAutoExpandMode;
-				oBinding.aSorter = oFixture.aSorter;
+				oBinding.aSorter = oFixture.aSorter || [];
 
 				if (oFixture.bWarning) {
 					that.oLogMock.expects("warning")
@@ -1984,9 +1984,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[true, false].forEach(function (bApplySorters) {
-		var sTitle = "_prepareGroupMembersQueryRequest: " + (bApplySorters ? "" : "do not ")
-				+ "trigger grand total request";
+	[{
+		bApplySorters : true,
+		aSorter : [],
+		bExpectGrandTotalRequest : false
+	}, {
+		bApplySorters : true,
+		aSorter : [{}],
+		bExpectGrandTotalRequest : true
+	}, {
+		bApplySorters : false,
+		aSorter : [],
+		bExpectGrandTotalRequest : false
+	}, {
+		bApplySorters : false,
+		aSorter : [{}],
+		bExpectGrandTotalRequest : false
+	}].forEach(function (oFixture) {
+		var sTitle = "_prepareGroupMembersQueryRequest: grand total request if needed"
+				+ JSON.stringify(oFixture);
 
 		QUnit.test(sTitle, function (assert) {
 			var done = assert.async();
@@ -1996,18 +2012,19 @@ sap.ui.require([
 					oQueryResultRequestSpy = sinon.spy(odata4analytics.QueryResultRequest.prototype,
 						"setMeasures");
 
+				oBinding.aSorter = oFixture.aSorter;
 				oBindingMock.expects("_addSorters")
 					.withExactArgs(sinon.match.instanceOf(odata4analytics.SortExpression), []);
 				oBindingMock.expects("_canApplySortersToGroups")
 					.withExactArgs()
-					.returns(bApplySorters);
+					.returns(oFixture.bApplySorters);
 
 				// code under test
 				oBinding._prepareGroupMembersQueryRequest(iGroupMembersQueryType, null);
 
 				assert.strictEqual(oQueryResultRequestSpy.callCount,
-					bApplySorters ? 1 : 0);
-				if (bApplySorters) {
+					oFixture.bExpectGrandTotalRequest ? 1 : 0);
+				if (oFixture.bExpectGrandTotalRequest) {
 					assert.ok(oQueryResultRequestSpy.calledWithExactly(["ActualCosts"]));
 				}
 				oBindingMock.verify();
@@ -2020,8 +2037,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("_processGroupMembersQueryResponse: calls refresh in multi-unit case if sorters"
 			+ " have been applyed to groups", function (assert) {
-		var done = assert.async(),
-			that = this;
+		var done = assert.async();
 
 		setupAnalyticalBinding(2, {}, function (oBinding) {
 			var bApplySortersToGroups = {/* true or false*/},
@@ -2041,12 +2057,12 @@ sap.ui.require([
 					aSelectedUnitPropertyName : ["Currency"]
 				};
 
+			oBinding.aSorter = [{}];
 			oBinding.bApplySortersToGroups = bApplySortersToGroups;
 			oBindingMock.expects("_canApplySortersToGroups").withExactArgs().returns(true);
 			oBindingMock.expects("_getServiceKeys").never();
-			that.oLogMock.expects("warning")
-				.withExactArgs("Detected a multi-unit case, so sorting is only possible on leaves;"
-					+ " binding is refreshed", sPath, sClassName);
+			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs("binding is refreshed");
+
 			oBinding.attachRefresh(function (oEvent) {
 				assert.strictEqual(oRefreshSpy.callCount, 1);
 				assert.ok(oRefreshSpy.calledWithExactly());
@@ -2059,8 +2075,6 @@ sap.ui.require([
 
 			// code under test
 			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
-
-			assert.strictEqual(oBinding.bApplySortersToGroups, false);
 		});
 	});
 
@@ -2070,8 +2084,7 @@ sap.ui.require([
 		var done = assert.async();
 
 		setupAnalyticalBinding(2, {}, function (oBinding) {
-			var bApplySortersToGroups = {/* true or false*/},
-				oBindingMock = sinon.mock(oBinding),
+			var oBindingMock = sinon.mock(oBinding),
 				oData = {
 					"__count" : "2",
 					"results":[{
@@ -2100,15 +2113,17 @@ sap.ui.require([
 					aSelectedUnitPropertyName : ["Currency"]
 				};
 
-			oBinding.bApplySortersToGroups = bApplySortersToGroups;
-			oBindingMock.expects("_canApplySortersToGroups").withExactArgs().returns(false);
+			oBinding.aSorter = [];
+			oBindingMock.expects("_canApplySortersToGroups").withExactArgs().returns(true);
 			oBindingMock.expects("refresh").withExactArgs().never();
 			oBindingMock.expects("_getServiceKeys").withExactArgs(null, -1);
+			// once in global check for group null
+			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs(undefined);
+			// and once while processing the data
+			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs();
 
 			// code under test
 			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
-
-			assert.strictEqual(oBinding.bApplySortersToGroups, bApplySortersToGroups);
 
 			oBindingMock.verify();
 			done();
@@ -2161,8 +2176,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_processGroupMembersQueryResponse: _canApplySortersToGroups is not called if called"
-			+ " for a group different to null", function (assert) {
+	QUnit.test("_processGroupMembersQueryResponse: _canApplySortersToGroups is not called for a"
+			+ " group different to null", function (assert) {
 		var done = assert.async();
 
 		setupAnalyticalBinding(2, {}, function (oBinding) {
@@ -2173,13 +2188,13 @@ sap.ui.require([
 					"results":[{
 						ActualCosts : "1588416",
 						CostCenter : "100-1000",
-						Currency : "USD",
+						Currency : "EUR",
 						__metadata : {
 							uri : "foo"
 						}
 					}, {
 						ActualCosts : "1398408",
-						CostCenter : "100-1100",
+						CostCenter : "100-1000",
 						Currency : "USD",
 						__metadata : {
 							uri : "bar"
@@ -2201,6 +2216,7 @@ sap.ui.require([
 			oBinding.bApplySortersToGroups = bApplySortersToGroups;
 			oBindingMock.expects("_canApplySortersToGroups").never();
 			oBindingMock.expects("refresh").withExactArgs().never();
+			oBindingMock.expects("_warnNoSortingOfGroups").withExactArgs();
 
 			// code under test
 			oBinding._processGroupMembersQueryResponse(oRequestDetails, oData);
@@ -2273,6 +2289,40 @@ sap.ui.require([
 				oModelMock.verify();
 				done();
 			}, [], "~");
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		bApplySortersToGroups : false
+	}, {
+		bApplySortersToGroups : true,
+		sWarning : "Detected a multi-unit case, so sorting is only possible on leaves"
+	}, {
+		bApplySortersToGroups : false,
+		sDetails : "foo"
+	}, {
+		bApplySortersToGroups : true,
+		sDetails : "foo",
+		sWarning : "Detected a multi-unit case, so sorting is only possible on leaves; foo"
+	}].forEach(function (oFixture) {
+		QUnit.test("_warnNoSortingOfGroups: " + JSON.stringify(oFixture), function (assert) {
+			var done = assert.async(),
+			that = this;
+
+			setupAnalyticalBinding(2, {}, function (oBinding) {
+				oBinding.bApplySortersToGroups = oFixture.bApplySortersToGroups;
+				that.oLogMock.expects("warning")
+					.withExactArgs(oFixture.sWarning, sPath, sClassName)
+					.exactly("sWarning" in oFixture ? 1 : 0);
+
+				// code under test
+				oBinding._warnNoSortingOfGroups(oFixture.sDetails);
+
+				assert.strictEqual(oBinding.bApplySortersToGroups, false);
+
+				done();
+			});
 		});
 	});
 });
