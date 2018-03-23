@@ -748,6 +748,12 @@
 			dateType =  new sap.ui.model.type.Date({pattern: "yy-MM-dd"});
 			assert.equal(dateType.formatValue(dateValue, "string"), "03-02-01", "format test with pattern");
 
+			dateType =  new sap.ui.model.type.Date({pattern: "yy-MM-dd EEE"});
+			assert.equal(dateType.formatValue(dateValue, "string"), "03-02-01 Sat", "format test with pattern including dayName");
+
+			dateType =  new sap.ui.model.type.Date({pattern: "yy 'week' w, EEE"});
+			assert.equal(dateType.formatValue(dateValue, "string"), "03 week 5, Sat", "format test with pattern with week");
+
 			dateType = new sap.ui.model.type.Date({source: {pattern: "yyyy/MM/dd"}, pattern: "dd.MM.yyyy"});
 			assert.equal(dateType.formatValue("2012/01/23", "string"), "23.01.2012", "format test with source pattern");
 
@@ -769,6 +775,12 @@
 
 			dateType =  new sap.ui.model.type.Date({pattern: "yy-MM-dd"});
 			assert.equal(dateType.parseValue("03-02-01", "string").getTime(), dateValue.getTime(), "parse test with pattern");
+
+			dateType =  new sap.ui.model.type.Date({pattern: "yy-MM-dd EEE"});
+			assert.equal(dateType.parseValue("03-02-01 Sat", "string").getTime(), dateValue.getTime(), "parse test with pattern including dayName");
+
+			dateType =  new sap.ui.model.type.Date({pattern: "yy 'week' w, EEE"});
+			assert.equal(dateType.parseValue("03 week 5, Sat", "string").getTime(), dateValue.getTime(), "parse test with week pattern");
 
 			dateType = new sap.ui.model.type.Date({source: {pattern: "yyyy/MM/dd"}, pattern: "dd.MM.yyyy"});
 			assert.equal(dateType.parseValue("01.02.2003", "string"), "2003/02/01", "parse test with source pattern");
