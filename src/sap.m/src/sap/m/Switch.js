@@ -466,14 +466,10 @@ function(
 			return this;
 		};
 
-		Switch.prototype.getAccessibilityInfo = function(bState) {
-			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
-
-			var sDesc = "";
-
-			if (this.getState()) {
+		Switch.prototype.getAccessibilityInfo = function() {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+				bState = this.getState(),
 				sDesc = oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + this.getInvisibleElementText(bState);
-			}
 
 			return {
 				role: "checkbox",
