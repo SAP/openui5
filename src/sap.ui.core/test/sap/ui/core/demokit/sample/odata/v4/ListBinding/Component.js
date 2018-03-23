@@ -109,7 +109,10 @@ sap.ui.define([
 				models : {
 					undefined : oModel,
 					ui : new JSONModel({
-						bRealOData : bRealOData
+						Budget : null,
+						ManagerID : null,
+						bRealOData : bRealOData,
+						TeamID : null
 					})
 				}
 			});
