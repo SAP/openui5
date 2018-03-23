@@ -335,6 +335,47 @@
 		}, this.iLoadingDelay);
 	});
 
+	QUnit.module("Content resize", {
+		beforeEach: function () {
+			this.NUMBER_OF_SECTIONS = 3;
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, false);
+			this.iLoadingDelay = 2000;
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.iLoadingDelay = 0;
+		}
+	});
+
+	QUnit.test("adjust selected section", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oHhtmBlock,
+			oFirstSection = oObjectPage.getSections()[0],
+			oSecondSection = oObjectPage.getSections()[1],
+			done = assert.async();
+
+		// setup step1: add content with defined height
+		oHhtmBlock = new sap.ui.core.HTML("b1", { content: '<div class="innerDiv" style="height:300px"></div>'});
+		oFirstSection.getSubSections()[0].addBlock(oHhtmBlock);
+
+		// setup step2
+		oObjectPage.setSelectedSection(oSecondSection.getId());
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+
+			// Act: change height without invalidating any control => on the the resize handler will be responsible for re-adjusting the selection
+			sap.ui.getCore().byId("b1").getDomRef().style.height = "200px";
+
+			setTimeout(function() {
+				assert.equal(oObjectPage.getSelectedSection(), oSecondSection.getId(), "selected section is correct");
+				done();
+			}, this.iLoadingDelay);
+
+		});
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("test setSelectedSection functionality");
 
 	QUnit.test("test setSelectedSection with initially empty ObjectPage", function (assert) {
