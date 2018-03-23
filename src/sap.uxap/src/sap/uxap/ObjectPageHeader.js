@@ -555,7 +555,9 @@ sap.ui.define([
 
 		var aActions = this.getActions() || [];
 		this._oOverflowActionSheet.removeAllButtons();
-		this._oActionSheetButtonMap = {};
+
+		// BCP: 1870085555 - Ensure all buttons from previous rendering are being destroyed
+		this._resetActionSheetMap();
 
 		//display overflow if there are more than 1 item or only 1 item and it is showing its text
 		if (aActions.length > 1 || this._hasOneButtonShowText(aActions)) {
@@ -611,6 +613,17 @@ sap.ui.define([
 		this._oFlagIcon.setVisible(this.getMarkFlagged());
 		this._attachDetachActionButtonsHandler(false);
 		this._bFirstRendering = false;
+	};
+
+	/**
+	 * Destroys all created action sheet buttons contained in _oActionSheetButtonMap and empty the object
+	 * @private
+	 */
+	ObjectPageHeader.prototype._resetActionSheetMap = function () {
+		Object.keys(this._oActionSheetButtonMap).forEach(function (sButton) {
+			this._oActionSheetButtonMap[sButton].destroy();
+		}.bind(this));
+		this._oActionSheetButtonMap = {};
 	};
 
 	/**
@@ -996,6 +1009,9 @@ sap.ui.define([
 		if (this._iResizeId) {
 			ResizeHandler.deregister(this._iResizeId);
 		}
+
+		// BCP: 1870085555 - Ensure all action sheet buttons are destroyed
+		this._resetActionSheetMap();
 	};
 
 	/* Fiori 2.0 adaptation */
