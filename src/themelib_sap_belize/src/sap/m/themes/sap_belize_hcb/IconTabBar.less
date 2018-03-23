@@ -80,6 +80,19 @@ html.sap-desktop .sapMITBItem:focus.sapMITBAll {
 	}
 }
 
+html.sap-desktop .sapMITH.sapUiSizeCompact {
+	.sapMITBItem:focus.sapMITBAll {
+		&::after {
+			bottom: 1.5rem;
+		}
+	}
+	.sapMITBTextOnly .sapMITBItem:focus .sapMITBText{
+		&::after {
+			top: 0.25rem;
+		}
+	}
+}
+
 html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
 html[data-sap-ui-browser^="ed"].sap-desktop .sapMITBItem:focus .sapMITBFilterIcon,
 html[data-sap-ui-browser^="ie"].sap-desktop .sapMITBTextOnly .sapMITBItem:focus .sapMITBText,

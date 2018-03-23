@@ -2752,6 +2752,60 @@
 				assert.strictEqual(this.oIconTabHeader.$().find('.sapMITBFilter').length, 1, "1 tab are displayed");
 			});
 
+			QUnit.module("IconTabHeader Tab density mode");
+			QUnit.test("Classes should respond to the mode", function(assert) {
+				// Arrange
+				var oIconTabHeader = new sap.m.IconTabHeader({
+					items: [
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager",
+							text : 'Open',
+							count: '5545'
+						}),
+						new sap.m.IconTabSeparator({
+							icon: "sap-icon://manager"
+						}),
+						new sap.m.IconTabFilter({
+							icon: "sap-icon://manager"
+						})
+					]
+				});
+
+				// System under Test
+				oIconTabHeader.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				// Assert
+				assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header is in Cozy mode by default");
+
+				oIconTabHeader.setTabDensityMode(sap.m.IconTabDensityMode.Compact);
+				sap.ui.getCore().applyChanges();
+				assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header is in Compact mode");
+
+				oIconTabHeader.setTabDensityMode(sap.m.IconTabDensityMode.Default);
+				sap.ui.getCore().applyChanges();
+				assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the global mode which is Cozy");
+
+				jQuery('body').addClass("sapUiSizeCompact");
+				sap.ui.getCore().notifyContentDensityChanged();
+				sap.ui.getCore().applyChanges();
+				assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the Compact mode from global scope");
+
+				jQuery('body').removeClass("sapUiSizeCompact");
+				sap.ui.getCore().applyChanges();
+				jQuery('body').addClass("sapUiSizeCozy");
+				sap.ui.getCore().notifyContentDensityChanged();
+				sap.ui.getCore().applyChanges();
+				assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the Cozy mode from global scope");
+
+				oIconTabHeader.setTabDensityMode(sap.m.IconTabDensityMode.Compact);
+				sap.ui.getCore().applyChanges();
+				assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has forced Compact density mode independent of global scope");
+
+				// Clean up
+				oIconTabHeader.destroy();
+			});
+
 			QUnit.module("Drag&Drop", {
 				beforeEach: function() {
 					this.oIconTabBar = new sap.m.IconTabBar({
