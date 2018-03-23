@@ -245,4 +245,31 @@ function(
 			assert.deepEqual(Util.castArray(), [], "the correct empty array is returned");
 		});
 	});
+
+	QUnit.module('wrapIntoPromise()', function () {
+		QUnit.test("basic functionality", function (assert) {
+			assert.ok(jQuery.isFunction(Util.wrapIntoPromise(function () {})));
+			assert.ok(Util.wrapIntoPromise(function () {})() instanceof Promise);
+			assert.ok(Util.wrapIntoPromise(function () {})() instanceof Promise);
+		});
+		QUnit.test("promise resolve with certain value", function (assert) {
+			return Util.wrapIntoPromise(function () {
+				return 'value';
+			})().then(function (vValue) {
+				assert.strictEqual(vValue, 'value');
+			});
+		});
+		QUnit.test("nested promises resolve with certain value", function (assert) {
+			return Util.wrapIntoPromise(function () {
+				return Promise.resolve('value');
+			})().then(function (vValue) {
+				assert.strictEqual(vValue, 'value');
+			});
+		});
+		QUnit.test("non-function is passed", function (assert) {
+			assert.throws(function () {
+				Util.wrapIntoPromise({});
+			});
+		});
+	});
 });

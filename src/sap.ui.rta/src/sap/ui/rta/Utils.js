@@ -7,7 +7,6 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/fl/Utils',
 	'sap/ui/dt/OverlayUtil',
-	'sap/ui/dt/OverlayRegistry',
 	'sap/ui/fl/registry/Settings',
 	'sap/m/MessageBox'
 ],
@@ -15,7 +14,6 @@ function(
 	jQuery,
 	FlexUtils,
 	OverlayUtil,
-	OverlayRegistry,
 	Settings,
 	MessageBox
 ) {

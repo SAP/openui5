@@ -52,7 +52,7 @@ function(
 	Group,
 	GroupElement,
 	SmartForm,
-    sinon
+	sinon
 ) {
 	'use strict';
 	QUnit.start();
@@ -77,7 +77,7 @@ function(
 		oView.getModel().refresh(true);
 	});
 
-	//will render only if SAPUI5 core init is done.
+	// will render only if SAPUI5 core init is done.
 	sap.ui.getCore().applyChanges();
 
 	QUnit.module("Given that a SmartForm with OData Binding is given...", {

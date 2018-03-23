@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Test Page for sap.ui.rta.RuntimeAuthoring</title>
+		<script src="../shared-config.js"></script>
+		<script>
+			window['sap-ui-config'].resourceroots = {
+				"fixture": "./",
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
+			sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
+			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
+
+			window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/rta/RuntimeAuthoring.js]");
+
+			jQuery.sap.includeScript('./RuntimeAuthoring-3.qunit.js');
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+	</body>
+</html>
