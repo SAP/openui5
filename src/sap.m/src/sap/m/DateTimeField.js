@@ -201,16 +201,6 @@ sap.ui.define([
 		return null;
 	};
 
-	/**
-	 * Handles the displayed value in the placeholder
-	 *
-	 * @returns {string} The visible placeholder
-	 * @public
-	 */
-	DateTimeField.prototype.getDisplayedPlaceholder = function () {
-		return this._getPlaceholder();
-	};
-
 	DateTimeField.prototype._dateValidation = function (oDate) {
 		this._bValid = true;
 		this.setProperty("dateValue", oDate);
@@ -387,8 +377,8 @@ sap.ui.define([
 
 
 	/**
-	 * Updates the placeholder of the input element with a given value
-	 * @param {string} sValue The new value
+	 * Updates the placeholder of the input element with a given valye
+	 * @param {string} sValue the new value
 	 * @private
 	 * @returns void
 	 */
