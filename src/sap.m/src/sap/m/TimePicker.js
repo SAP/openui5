@@ -97,10 +97,8 @@ function(
 		 * valid value string is "10-30-15 AM", which leads to an output of "10:30:15 AM".
 		 *
 		 * If no placeholder is set to the <code>TimePicker</code>, the used
-		 * <code>displayFormat</code> is displayed as a placeholder. This is only a visual
-		 * representation and the value is not set to the placeholder property. To get the placeholder,
-		 * you can use the <code>getDisplayedPlaceholder</code> method. If another placeholder is needed,
-		 * it must be set.
+		 * <code>displayFormat</code> is displayed as a placeholder. If another placeholder
+		 * is needed, it must be set.
 		 *
 		 * <b>Note:</b> If the string does NOT match the <code>displayFormat</code>
 		 * (from user input) or the <code>valueFormat</code> (on app level), the
