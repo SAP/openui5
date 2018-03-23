@@ -250,9 +250,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 * @param {sap.ui.table.Table} oTable Instance of the table
 		 * @param {number} iLevel the hierarchy level
 		 * @param {boolean} bChildren whether the row is a group (has children) or not
+		 * @param {boolean} bSum whether the row is a summary row
 		 * @private
 		 */
-		_calcGroupIndent : function(oTable, iLevel, bChildren) {
+		_calcGroupIndent : function(oTable, iLevel, bChildren, bSum) {
 			if (TableGrouping.TableUtils.isInstanceOf(oTable, "sap/ui/table/TreeTable")) {
 				var iIndent = 0;
 				for (var i = 0; i < iLevel; i++) {
@@ -262,7 +263,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 			} else if (TableGrouping.TableUtils.isInstanceOf(oTable, "sap/ui/table/AnalyticalTable")) {
 				var iIndent = 0;
 				iLevel = iLevel - 1;
-				iLevel = !bChildren ? iLevel - 1 : iLevel;
+				iLevel = !bChildren && !bSum ? iLevel - 1 : iLevel;
 				iLevel = Math.max(iLevel, 0);
 				for (var i = 0; i < iLevel; i++) {
 					if (iIndent == 0) {
@@ -315,7 +316,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 		 * @param {boolean} bChildren whether the row is a group (has children) or not
 		 * @param {boolean} bExpanded whether the row should be expanded
 		 * @param {boolean} bExpanded whether the row content should be hidden
-		 * @param {boolean} bChildren whether the row should be a summary row
+		 * @param {boolean} bSum whether the row should be a summary row
 		 * @param {number} iLevel the hierarchy level
 		 * @param {string} sGroupHeaderText the title of the group header
 		 * @private
@@ -346,7 +347,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/model/Sorter'
 					.attr("title", oTable._getShowStandardTooltips() && sGroupHeaderText ? sGroupHeaderText : null)
 					.text(sGroupHeaderText || "");
 
-				TableGrouping._setIndent(oTable, $Row, $RowHdr, TableGrouping._calcGroupIndent(oTable, iLevel, bChildren));
+				TableGrouping._setIndent(oTable, $Row, $RowHdr, TableGrouping._calcGroupIndent(oTable, iLevel, bChildren, bSum));
 			}
 
 			var $TreeIcon = null;

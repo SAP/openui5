@@ -312,16 +312,21 @@ sap.ui.require([
 		assert.equal(Grouping._calcGroupIndent(oTable, 4, false), 40, "sap.ui.table.TreeTable, Level 4, !Group Header");
 
 		oTable = new sap.ui.table.AnalyticalTable();
-		assert.equal(Grouping._calcGroupIndent(oTable, 0, true), 0, "sap.ui.table.TreeTable, Level 0, Group Header");
-		assert.equal(Grouping._calcGroupIndent(oTable, 0, false), 0, "sap.ui.table.TreeTable, Level 0, !Group Header");
-		assert.equal(Grouping._calcGroupIndent(oTable, 1, true), 0, "sap.ui.table.TreeTable, Level 1, Group Header");
-		assert.equal(Grouping._calcGroupIndent(oTable, 1, false), 0, "sap.ui.table.TreeTable, Level 1, !Group Header");
-		assert.equal(Grouping._calcGroupIndent(oTable, 2, true), 24, "sap.ui.table.TreeTable, Level 2, Group Header");
-		assert.equal(Grouping._calcGroupIndent(oTable, 2, false), 0, "sap.ui.table.TreeTable, Level 2, !Group Header");
-		assert.equal(Grouping._calcGroupIndent(oTable, 3, true), 36, "sap.ui.table.TreeTable, Level 3, Group Header");
-		assert.equal(Grouping._calcGroupIndent(oTable, 3, false), 24, "sap.ui.table.TreeTable, Level 3, !Group Header");
-		assert.equal(Grouping._calcGroupIndent(oTable, 4, true), 44, "sap.ui.table.TreeTable, Level 4, Group Header");
-		assert.equal(Grouping._calcGroupIndent(oTable, 4, false), 36, "sap.ui.table.TreeTable, Level 4, !Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 0, true), 0, "sap.ui.table.AnalyticalTable, Level 0, Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 0, false), 0, "sap.ui.table.AnalyticalTable, Level 0, !Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 0, false, true), 0, "sap.ui.table.AnalyticalTable, Level 0, Sum");
+		assert.equal(Grouping._calcGroupIndent(oTable, 1, true), 0, "sap.ui.table.AnalyticalTable, Level 1, Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 1, false), 0, "sap.ui.table.AnalyticalTable, Level 1, !Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 1, false, true), 0, "sap.ui.table.AnalyticalTable, Level 1, Sum");
+		assert.equal(Grouping._calcGroupIndent(oTable, 2, true), 24, "sap.ui.table.AnalyticalTable, Level 2, Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 2, false), 0, "sap.ui.table.AnalyticalTable, Level 2, !Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 2, false, true), 24, "sap.ui.table.AnalyticalTable, Level 2, Sum");
+		assert.equal(Grouping._calcGroupIndent(oTable, 3, true), 36, "sap.ui.table.AnalyticalTable, Level 3, Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 3, false), 24, "sap.ui.table.AnalyticalTable, Level 3, !Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 3, false, true), 36, "sap.ui.table.AnalyticalTable, Level 3, Sum");
+		assert.equal(Grouping._calcGroupIndent(oTable, 4, true), 44, "sap.ui.table.AnalyticalTable, Level 4, Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 4, false), 36, "sap.ui.table.AnalyticalTable, Level 4, !Group Header");
+		assert.equal(Grouping._calcGroupIndent(oTable, 4, false, true), 44, "sap.ui.table.AnalyticalTable, Level 4, Sum");
 	});
 
 	QUnit.test("Tree Mode", function(assert) {
