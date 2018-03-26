@@ -656,6 +656,84 @@
         "type": "FIX",
         "text": " sap.m.TileContainer: after new page is added, scrollers remain visible.",
         "references": []
+      },
+      {
+        "id": "e2c33696fe1a5cacc1af8ca0d121b7d302053274",
+        "type": "FEATURE",
+        "text": " sap.m.Tree: API to expand/collapse multiple nodes is added",
+        "references": []
+      },
+      {
+        "id": "b821aec01b05e103f812f63ab5fb8888c72dafb7",
+        "type": "FIX",
+        "text": " Reverts commit c71ae11fe2718cbb2043bfe9be8306314514b262",
+        "references": []
+      },
+      {
+        "id": "c5af24ddbc9af0ebb76c378ff36cdbb90cf9b9e1",
+        "type": "FIX",
+        "text": " reverts commit 683d922825b46df730c9d9a13596806e7842a0a5.",
+        "references": []
+      },
+      {
+        "id": "683d922825b46df730c9d9a13596806e7842a0a5",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: new method getDisplayedPlaceholder introduced",
+        "references": []
+      },
+      {
+        "id": "73703cc30ff3aafcadfcfa61429b691b46897035",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Link wrapping and sizing improved",
+        "references": []
+      },
+      {
+        "id": "1722524e618ba6fd1d1d3243481e4bdea8a51310",
+        "type": "FIX",
+        "text": " sap.m.Image: Ensured image change in case of detailBox",
+        "references": []
+      },
+      {
+        "id": "5d71ddee91640f5a6987db51dd07647a89a2167e",
+        "type": "FIX",
+        "text": " sap.m.Input: Change event is now fired correctly with HelpDialog",
+        "references": []
+      },
+      {
+        "id": "24e6ba2326bfe606b11190cecaccf47a48d1f54a",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Change event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "430f550fa90900630f39781a797b43ac4dee3b47",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "ced1e18f0ed13d8d5567d29e404f13abd4c969ed",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now the deselection of a non-existing element is handled correctly",
+        "references": []
+      },
+      {
+        "id": "600a83ed47fa81070bc07cbcb675dbe27c71957f",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Parent container is not re-rendered any more",
+        "references": []
+      },
+      {
+        "id": "18057aa0075455d158cc16846fd774002fbe7868",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: getAccessibilityInfo method added",
+        "references": []
+      },
+      {
+        "id": "b753718772785388ad194328f97f086b225ff744",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: select event is no longer fired twice",
+        "references": []
       }
     ]
   }

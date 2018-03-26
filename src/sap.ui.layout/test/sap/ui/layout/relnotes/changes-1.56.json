@@ -19,6 +19,18 @@
         "type": "FEATURE",
         "text": " Form: new column-based layout",
         "references": []
+      },
+      {
+        "id": "ca42d07d2c68bad5da762509454514fcfa9cd215",
+        "type": "FIX",
+        "text": " sap.ui.layout - domRef function fixed",
+        "references": []
+      },
+      {
+        "id": "d1d44f6e85fbd2ca51c619e9d583f70631a34a51",
+        "type": "FIX",
+        "text": " ui.layout.Grid: Control visibility properties behavior fixed",
+        "references": []
       }
     ]
   }

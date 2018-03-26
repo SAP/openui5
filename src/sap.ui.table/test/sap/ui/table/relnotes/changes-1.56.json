@@ -61,6 +61,18 @@
         "type": "FIX",
         "text": " Table: Scroll position stabilized",
         "references": []
+      },
+      {
+        "id": "731989ed01a94bc30cce9fba12a87e14b41eaf90",
+        "type": "FIX",
+        "text": " GridTable: Attribute headers for gridcell corrected",
+        "references": []
+      },
+      {
+        "id": "ef9bf614657bfa890d1fa62255501e8ed3416330",
+        "type": "FIX",
+        "text": " Table: Correct number of rows in visibleRowCountMode\u003dAuto",
+        "references": []
       }
     ]
   }

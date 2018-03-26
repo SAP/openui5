@@ -57,6 +57,12 @@
         "type": "FIX",
         "text": " uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
         "references": []
+      },
+      {
+        "id": "fd1a98eaa2742459701a4aafc60ed04cfd5e38f9",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Memory leak fix",
+        "references": []
       }
     ]
   }

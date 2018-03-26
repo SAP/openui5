@@ -43,6 +43,12 @@
         "type": "FIX",
         "text": " sap.ui.fl: Variant selection in URL should not change history",
         "references": []
+      },
+      {
+        "id": "2a068931696783ba988122b2fdfb47fa2fc7737d",
+        "type": "FIX",
+        "text": " fl.VariantManagement: change display from inline to inline-block",
+        "references": []
       }
     ]
   }

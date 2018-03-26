@@ -97,6 +97,24 @@
         "type": "FIX",
         "text": " unified.FileUploader: accessing length of undefined fixed",
         "references": []
+      },
+      {
+        "id": "b821aec01b05e103f812f63ab5fb8888c72dafb7",
+        "type": "FIX",
+        "text": " Reverts commit c71ae11fe2718cbb2043bfe9be8306314514b262",
+        "references": []
+      },
+      {
+        "id": "430f550fa90900630f39781a797b43ac4dee3b47",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "307d93eda2af5adeef61ae860f4e6dd898f0593b",
+        "type": "FIX",
+        "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
+        "references": []
       }
     ]
   }

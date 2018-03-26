@@ -12,6 +12,12 @@
             "reference": "1880204175"
           }
         ]
+      },
+      {
+        "id": "307d93eda2af5adeef61ae860f4e6dd898f0593b",
+        "type": "FIX",
+        "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
+        "references": []
       }
     ]
   }
