@@ -214,7 +214,7 @@
 					"controlId": "splitContainer",
 					"controlAggregation": "masterPages",
 					"viewId": "homeView",
-					"title": "{i18n>homeTitle}"
+					"title": "{i18n>appTitle}"
 				},
 				"homeSlide": {
 					"viewName": "Home",
