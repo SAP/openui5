@@ -229,6 +229,16 @@ sap.ui.define([
 			if (mSettings.autoPrefixId === true && mSettings.settings && mSettings.settings.id) {
 				mSettings.settings.id = this.getId() + "-" + mSettings.settings.id;
 			}
+
+			// The "manifest" property has type "any" to be able to handle string|boolean|object.
+			// When using the ComponentContainer in a declarative way (e.g. XMLView), boolean values
+			// are passed as string. Therefore this type conversion needs to be done manually.
+			// As this use-case is only relevant initially the handling is done in "applySettings"
+			// instead of overriding "setManifest".
+			if (mSettings.manifest === "true" || mSettings.manifest === "false") {
+				mSettings.manifest = mSettings.manifest === "true";
+			}
+
 			// a truthy value for the manifest property will set the property
 			// async to true if not provided initially
 			if (mSettings.manifest && mSettings.async === undefined) {
@@ -245,13 +255,13 @@ sap.ui.define([
 	function createComponentConfig(oComponentContainer) {
 		var sName = oComponentContainer.getName();
 		var sUsage = oComponentContainer.getUsage();
-		var sManifest = oComponentContainer.getManifest();
+		var vManifest = oComponentContainer.getManifest();
 		var sUrl = oComponentContainer.getUrl();
 		var mSettings = oComponentContainer.getSettings();
 		var mConfig = {
 			name: sName ? sName : undefined,
 			usage: sUsage ? sUsage : undefined,
-			manifest: sManifest !== null ? sManifest : undefined,
+			manifest: vManifest !== null ? vManifest : undefined,
 			async: oComponentContainer.getAsync(),
 			url: sUrl ? sUrl : undefined,
 			handleValidation: oComponentContainer.getHandleValidation(),
