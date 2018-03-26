@@ -349,6 +349,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/
 
 			var oBinding = oTable.getBinding();
 			var bAnalyticalBinding = TableUtils.isInstanceOf(oBinding, "sap/ui/model/analytics/AnalyticalBinding");
+			var aVisibleColumns = oTable._getVisibleColumns();
 
 			for (var i = 0, l = aColumns.length; i < l; i++) {
 				var oColumn = aColumns[i];
@@ -365,6 +366,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/unified/Menu', 'sap/ui/
 				}
 				var oMenuItem = this._createColumnVisibilityMenuItem(oColumnVisibiltyMenu.getId() + "-item-" + i, oColumn);
 				oColumnVisibiltyMenu.addItem(oMenuItem);
+
+				if (aVisibleColumns.length == 1 && aVisibleColumns[0] === oColumn) {
+					oMenuItem.setEnabled(false); // Indicate to the user that changing the visibility of the least visible column is not allowed
+				}
 			}
 		}
 	};
