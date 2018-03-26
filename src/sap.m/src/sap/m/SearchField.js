@@ -272,7 +272,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 		return this.getProperty("width") || "100%";
 	};
 
-	SearchField.prototype._hasPlacehoder = (function () {
+	SearchField.prototype._hasPlaceholder = (function () {
 		return "placeholder" in document.createElement("input");
 	}());
 
