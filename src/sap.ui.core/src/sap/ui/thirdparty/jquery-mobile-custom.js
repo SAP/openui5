@@ -2049,7 +2049,16 @@ if ( eventCaptureSupported ) {
 				function checkAndClearTapHandlers( event ) {
 					// if the mouseup event occurs out of the origin target of the mousedown event,
 					// unbind all of the listeners
-					if ( event.target !== origTarget && !$.contains(origTarget, event.target) ) {
+					if (event.target !== origTarget && !$.contains(origTarget, event.target) &&
+						// SAP Modification: Workaround for an Edge browser issue which occurs with EdgeHTML 15 and higher.
+						// The root cause are inconsistent event targets of fired events, when a button is tapped.
+						// E.g. the inconsistent targets for the sap.m.Button control:
+						// - mousedown: SPAN
+						// - mouseup: BUTTON
+						// - click: SPAN
+						!(sap.ui.Device.browser.edge && sap.ui.Device.browser.version >= 15
+							&& event.target.tagName.toLowerCase() === "button"
+							&& event.target.contains(origTarget))) {
 						clearTapHandlers();
 					}
 				}
