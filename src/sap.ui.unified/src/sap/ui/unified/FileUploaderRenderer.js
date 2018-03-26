@@ -107,7 +107,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/library'],
 		// hidden pure input type file (surrounded by a div which is responsible for giving the input the correct size)
 		var sName = oFileUploader.getName() || oFileUploader.getId();
 		oRm.write('<div class="sapUiFupInputMask"');
-		if (sTooltip.length) {
+		if (sTooltip && sTooltip.length) {
 			oRm.writeAttributeEscaped('title', sTooltip);
 		}
 		oRm.write('>');
