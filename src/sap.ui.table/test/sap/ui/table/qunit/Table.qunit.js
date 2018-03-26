@@ -1037,41 +1037,48 @@ sap.ui.require([
 
 	QUnit.module("VisibleRowCountMode Auto", {
 		beforeEach: function() {
+			sinon.spy(sap.ui.table.Table.prototype, "_computeRequestLength");
 			createTable({
 				visibleRowCountMode: VisibleRowCountMode.Auto
 			});
+			this.iExpectedVisibleRowCountInitial = Device.browser.msie ? 18 : 19;
+			this.iExpectedVisibleRowCountAfterResize = 14;
 		},
 		afterEach: function() {
 			destroyTable();
 			document.getElementById("qunit-fixture").removeAttribute("style");
+			sap.ui.table.Table.prototype._computeRequestLength.restore(); // Unwraps the spy
 		}
 	});
 
-	QUnit.test("After initialization", function(assert) {
+	QUnit.test("Check initialization and resize", function(assert) {
 		var done = assert.async();
 
 		oTable.attachEvent("_rowsUpdated", function(oEvent) {
-			if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Render) {
-				var iExpectedVisibleRowCount = Device.browser.msie ? 18 : 19;
-				assert.strictEqual(oTable.getVisibleRowCount(), iExpectedVisibleRowCount, "The visible row count after initialization is correct");
-				done();
-			}
-		});
-	});
+			var spy = sap.ui.table.Table.prototype._computeRequestLength;
 
-	QUnit.test("Resize", function(assert) {
-		var done = assert.async();
-
-		oTable.attachEvent("_rowsUpdated", function(oEvent) {
 			if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Render) {
+				assert.strictEqual(oTable.getVisibleRowCount(), this.iExpectedVisibleRowCountInitial, "The visible row count after initialization is correct");
+				assert.equal(spy.args[0], this.iExpectedVisibleRowCountInitial, "The length in call getContexts after initialization is correct");
+
+				if (Device.resize.height <= 25 * this.iExpectedVisibleRowCountInitial) {
+					assert.ok(spy.args[0] == spy.returnValues[0], "On first getContexts the estimate is equal to the given length on small screens: " + spy.args[0] + " == " + spy.returnValues[0] + " (" + Device.resize.height + ")");
+				} else {
+					assert.ok(spy.args[0] < spy.returnValues[0], "On first getContexts the estimate is larger than the given length on bigger screens: " + spy.args[0] + " < " + spy.returnValues[0] + " (" + Device.resize.height + ")");
+				}
+
+				spy.reset();
 				document.getElementById("qunit-fixture").style.height = "756px";
 			}
 
 			if (oEvent.getParameter("reason") === TableUtils.RowsUpdateReason.Resize) {
-				assert.strictEqual(oTable.getVisibleRowCount(), 14, " The visible row count after a resize is correct");
+				assert.strictEqual(oTable.getVisibleRowCount(), this.iExpectedVisibleRowCountAfterResize, " The visible row count after a resize is correct");
+				assert.equal(spy.args[0], this.iExpectedVisibleRowCountAfterResize, " The length in call getContexts after a resize is correct");
+				assert.ok(spy.args[0] == spy.returnValues[0], "On followup getContexts no estimate is performed: " + spy.args[0] + " == " + spy.returnValues[0]);
+				spy.reset();
 				done();
 			}
-		});
+		}.bind(this));
 	});
 
 	QUnit.module("Fixed columns", {
