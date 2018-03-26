@@ -1,18 +1,30 @@
-/*global QUnit, sinon*/
-jQuery.sap.require("sap.ui.fl.PreprocessorImpl");
-jQuery.sap.require("sap.ui.core.Component");
-jQuery.sap.require("sap.ui.base.ManagedObject");
-jQuery.sap.require("sap.ui.fl.FlexControllerFactory");
-jQuery.sap.require("sap.ui.fl.Cache");
-jQuery.sap.require("sap.ui.fl.ChangePersistenceFactory");
-jQuery.sap.require("sap.ui.fl.ChangePersistence");
-jQuery.sap.require("sap.ui.fl.Utils");
+/* global QUnit*/
 
-(function(PreprocessorImpl, Component, ManagedObject, FlexControllerFactory, Cache, ChangePersistenceFactory, ChangePersistence, Utils) {
+QUnit.config.autostart = false;
+
+sap.ui.require([
+	"sap/ui/fl/PreprocessorImpl",
+	"sap/ui/core/Component",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/fl/Cache",
+	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/ChangePersistence",
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/sinon-4"
+],
+function(
+	PreprocessorImpl,
+	Component,
+	ManagedObject,
+	FlexControllerFactory,
+	Cache,
+	ChangePersistenceFactory,
+	ChangePersistence,
+	Utils,
+	sinon
+) {
 	"use strict";
-	sinon.config.useFakeTimers = false;
-
-	jQuery.sap.registerModulePath("sap.ui.fl.PreprocessorImpl.testResources", "./testResources");
 
 	var sandbox = sinon.sandbox.create();
 	var controls = [];
@@ -37,7 +49,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		sandbox.stub(Utils, "getAppComponentClassNameForComponent").returns("<sap-app-id> or <component name>");
 
 		// encode
-		var sCodeContent = "{extHookOnInit:function(){ \n// Place your hook implementation code here \nalert(\"S2controllerhookextension-oninit\"); \n}, \nonInit: function() { \nalert(\"This is onInit on S2\"); \n}}";
+		var sCodeContent = "sap.ui.define('ui.s2p.mm.purchorder.approve.Extension', ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {extHookOnInit:function(){ \n// Place your hook implementation code here \nalert(\"S2controllerhookextension-oninit\"); \n}, \nonInit: function() { \nalert(\"This is onInit on S2\"); \n}});});";
 		var sAsciiCodeContent = sap.ui.fl.Utils.stringToAscii(sCodeContent);
 		var oChange = {
 			fileName: "id_1436877480596_108",
@@ -48,10 +60,11 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			changeType: "codeExt",
 			reference: "<sap-app-id> or <component name>",
 			content: {
-				code: sAsciiCodeContent
+				code: sAsciiCodeContent,
+				extensionName: "ui.s2p.mm.purchorder.approve.Extension"
 			},
 			selector: {
-				id: sControllerName
+				controllerName: sControllerName
 			},
 			conditions: {},
 			support: {
@@ -108,10 +121,10 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			spy.restore();
 			oCodeExtensionsPromise.then(function (aCodeExtensions) {
 				assert.equal(aCodeExtensions.length, 1, "one code extension should be returned");
-				assert.ok(aCodeExtensions[0].onInit, "onInit is in the code extension");
-				assert.ok(typeof aCodeExtensions[0].onInit === "function", "onInit is a function");
-				assert.ok(aCodeExtensions[0].extHookOnInit, "extHookOnInit is in the code extension");
-				assert.ok(typeof aCodeExtensions[0].extHookOnInit === "function", "extHookOnInit is a function");
+				// assert.ok(aCodeExtensions[0].onInit, "onInit is in the code extension");
+				// assert.ok(typeof aCodeExtensions[0].onInit === "function", "onInit is a function");
+				assert.equal(aCodeExtensions[0].getMetadata().getPublicMethods()[0], "extHookOnInit", "extHookOnInit is in the code extension");
+				// assert.ok(typeof aCodeExtensions[0].extHookOnInit === "function", "extHookOnInit is a function");
 				done();
 			});
 		});
@@ -127,7 +140,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 		ManagedObject._sOwnerId = "<component name>";
 
 		// perparation of the changes
-		var sCodeContent1 = "{onInit: function() { \nassert.ok(this.getView().getViewName() === \"sap.ui.fl.PreprocessorImpl.testResources.view1\", \"the extension of the first controller was applied and executed\"); \nthis.getView().callDone();}}";
+		var sCodeContent1 = "sap.ui.define('sap.ui.fl.PreprocessorImpl.testResources.Extension1', ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {\nonInit: function() {\nthis.base.getView().callDone();\n}\n});\n});";
 		var sAsciiCodeContent1 = sap.ui.fl.Utils.stringToAscii(sCodeContent1);
 		var oCodingChange1 = {
 			fileName: "id_1436877480596_108",
@@ -138,10 +151,11 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			changeType: "codeExt",
 			reference: "<sap-app-id> or <component name>",
 			content: {
-				code: sAsciiCodeContent1
+				code: sAsciiCodeContent1,
+				extensionName: "sap.ui.fl.PreprocessorImpl.testResources.Extension1"
 			},
 			selector: {
-				id: "sap.ui.fl.PreprocessorImpl.testResources.view1"
+				controllerName: "sap.ui.fl.PreprocessorImpl.testResources.view1"
 			},
 			conditions: {},
 			support: {
@@ -150,7 +164,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		};
 
-		var sCodeContent2 = "{onInit: function() { \nassert.ok(this.getView().getViewName() === \"sap.ui.fl.PreprocessorImpl.testResources.view2\", \"the extension of the second controller was applied and executed\"); \nthis.getView().callDone(); \n}}";
+		var sCodeContent2 = "sap.ui.define('sap.ui.fl.PreprocessorImpl.testResources.Extension2', ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) { \n'use strict'; \nreturn ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension2', {\nonInit: function() {\nthis.base.getView().callDone();\n}\n});\n});";
 		var sAsciiCodeContent2 = sap.ui.fl.Utils.stringToAscii(sCodeContent2);
 		var oCodingChange2 = {
 			fileName: "id_1436877480596_109",
@@ -161,10 +175,11 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			changeType: "codeExt",
 			reference: "<sap-app-id> or <component name>",
 			content: {
-				code: sAsciiCodeContent2
+				code: sAsciiCodeContent2,
+				extensionName: "sap.ui.fl.PreprocessorImpl.testResources.Extension2"
 			},
 			selector: {
-				id: "sap.ui.fl.PreprocessorImpl.testResources.view2"
+				controllerName: "sap.ui.fl.PreprocessorImpl.testResources.view2"
 			},
 			conditions: {},
 			support: {
@@ -202,6 +217,7 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		});
 		view1.callDone = function () {
+			assert.ok(true, "the extension of the first controller was applied and executed");
 			done1();
 		};
 
@@ -214,13 +230,15 @@ jQuery.sap.require("sap.ui.fl.Utils");
 			}
 		});
 		view2.callDone = function () {
+			assert.ok(true, "the extension of the second controller was applied and executed");
 			done2();
 		};
 
 		var oCompCont = new sap.ui.core.ComponentContainer({
 			component: oComp
 		});
-		oCompCont.placeAt("content");
+		oCompCont.placeAt("qunit-fixture");
 	});
 
-}(sap.ui.fl.PreprocessorImpl, sap.ui.core.Component, sap.ui.base.ManagedObject, sap.ui.fl.FlexControllerFactory, sap.ui.fl.Cache, sap.ui.fl.ChangePersistenceFactory, sap.ui.fl.ChangePersistence, sap.ui.fl.Utils));
+	QUnit.start();
+});
