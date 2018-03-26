@@ -24,7 +24,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/
 				"switches" : "sap/ui/fl/context/SwitchContextProvider"
 			}
 		}),
-		_oLrepConnector: new LrepConnector(),
+		_oLrepConnector: LrepConnector.createConnector(),
 
 		/**
 		 * Helper to check if a passed change is free of contexts or in a matching context.
