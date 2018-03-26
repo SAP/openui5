@@ -100,17 +100,21 @@
 			sf1 = sap.ui.getCore().getControl("sf1");
 			sf2 = sap.ui.getCore().getControl("sf2");
 			sf3 = sap.ui.getCore().getControl("sf3");
+			sf4 = sap.ui.getCore().getControl("sf4");
 			sf1Dom = sf1.getFocusDomRef();
 			sf2Dom = sf2.getFocusDomRef();
 			sf3Dom = sf3.getFocusDomRef();
+			sf4Dom = sf4.getFocusDomRef();
 		},
 		afterEach : function() {
 			sf1 = null;
 			sf2 = null;
 			sf3 = null;
+			sf4 = null;
 			sf1Dom = null;
 			sf2Dom = null;
 			sf3Dom = null;
+			sf4Dom = null;
 			aEvents = [];
 		}
 	});
@@ -139,13 +143,37 @@
 	});
 
 	QUnit.test("Screen Reader", function(assert) {
+		// arrange
+		var lbl = new sap.m.Label("lbl", {
+			text: "Label",
+			labelFor: "sf6"
+		});
+		lbl.placeAt("content");
+		var sf = new sap.m.SearchField("sf6", {
+			placeholder: sPlaceholder
+		});
+		sf.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
 		var describedById = sf3Dom.getAttribute("aria-describedby");
+		var labelledByIdSf3 = sf3Dom.getAttribute("aria-labelledby");
+		var sf6Dom = sap.ui.getCore().getControl("sf6").getFocusDomRef();
+		var labelledByIdSf6 = sf6Dom.getAttribute("aria-labelledby");
 		var aLabels = describedById.split(' ');
 		var bLabelsExist = aLabels.every(function(id){
 			return !!document.getElementById(id);
 		});
+
+		// assert
 		assert.ok(!!describedById, "Described by ID is set");
 		assert.ok(bLabelsExist, "All descriptions are rendered in DOM");
+		assert.strictEqual(labelledByIdSf3,"sf3-I-labelledby",  "LabelledBy ID is set correctly");
+		// when label is set the id of the label also should be present
+		assert.strictEqual(labelledByIdSf6,"lbl sf6-I-labelledby",  "LabelledBy ID is set correctly when there is label");
+
+		// clean up
+		lbl.destroy();
+		sf.destroy();
 	});
 
 	// test the "reset" button
@@ -192,7 +220,7 @@
 
 	QUnit.module("Rendering", {
 		beforeEach: function () {
-			this.SearchField = new sap.m.SearchField({
+			this.SearchField = new sap.m.SearchField("sf5", {
 				placeholder: sPlaceholder,
 				value: sValue,
 				enabled: true,
@@ -240,6 +268,13 @@
 
 		// assert
 		assert.strictEqual(isF5TextSet, true, 'The "Press F5 to refresh" text should be set as aria-describedby');
+	});
+
+	QUnit.test("Invisible text for the placeholder should be rendered", function (assert) {
+		var sf5 = jQuery("#sf5-I-labelledby");
+		assert.ok(sf5, 'Invisible text for the placeholder is rendered');
+		assert.strictEqual(sf5.text(), sPlaceholder, 'Text of the invisible element is correct');
+		assert.strictEqual(sf5.hasClass("sapUiInvisibleText"), true, 'Invisible text has class sapUiInvisibleText');
 	});
 
 	QUnit.module("SearchField tooltip:", {
