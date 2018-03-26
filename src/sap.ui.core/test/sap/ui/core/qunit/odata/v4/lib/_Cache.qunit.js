@@ -1112,6 +1112,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache#calculateKeyPredicates: ignore simple values", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('42')/Name");
+
+		this.mock(_Helper).expects("getKeyPredicate").never();
+
+		// code under test
+		oCache.calculateKeyPredicates("Business Suite", {});
+
+		// code under test
+		oCache.calculateKeyPredicates({results : ["Business Suite"]}, {});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Cache#calculateKeyPredicates: simple entity", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
 			oEntity = {},
