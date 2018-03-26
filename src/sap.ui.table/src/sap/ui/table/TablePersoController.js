@@ -413,7 +413,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 							return that._getCurrentTablePersoData(true).aColumns;
 						},
 						confirm: function() {
-							that._adjustTable(that.retrievePersonalizations());
+							that._adjustTable(this.retrievePersonalizations());
 							if (that.getAutoSave()) {
 								that.savePersonalizations();
 							}
