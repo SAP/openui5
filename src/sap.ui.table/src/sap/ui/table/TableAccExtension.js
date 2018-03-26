@@ -677,15 +677,14 @@ sap.ui.define([
 
 				case TableAccExtension.ELEMENTTYPES.DATACELL:
 					mAttributes["role"] = "gridcell";
-					if (mParams && typeof mParams.index === "number") {
-						mAttributes["headers"] = sTableId + "_col" + mParams.index;
-					}
 
 					var aLabels = [],
 						oColumn = mParams && mParams.column ? mParams.column : null;
 
 					if (oColumn) {
 						aLabels = ExtensionHelper.getRelevantColumnHeaders(oTable, oColumn);
+						mAttributes["headers"] = aLabels.join(" ");
+
 						for (var i = 0; i < aLabels.length; i++) {
 							aLabels[i] = aLabels[i] + "-inner";
 						}
