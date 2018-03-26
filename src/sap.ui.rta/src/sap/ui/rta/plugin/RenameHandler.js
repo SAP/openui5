@@ -123,7 +123,6 @@ sap.ui.define([
 			this._$editableField.children().remove();
 			this._$editableField.css('visibility', 'hidden');
 
-
 			// TODO : for all browsers
 			this._$editableField.css({
 				"-moz-user-modify": "read-write",
@@ -131,7 +130,8 @@ sap.ui.define([
 				"-ms-user-modify": "read-write",
 				"user-modify": "read-write",
 				"text-overflow": "clip",
-				"white-space": "nowrap"
+				"white-space": "nowrap",
+				"line-height": "normal" //to avoid incorrectly sized field in Edge
 			});
 
 			Overlay.getMutationObserver().ignoreOnce({
