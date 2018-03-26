@@ -1239,9 +1239,18 @@ sap.ui.require([
 		assert.ok(!bFocusTriggered, "No sync refocus of cell done");
 
 		setTimeout(function() {
+			assert.ok(!!$Cell.attr("aria-busy"), "Cell is temporarily set in busy mode");
+			if (sap.ui.Device.browser.chrome) {
+				assert.ok(!!$Cell.attr("aria-hidden"), "Cell is temporarily hidden");
+			}
+		}, oTable._iBindingTimerDelay + 10);
+
+		setTimeout(function() {
 			oTable.removeEventDelegate(oDelegate);
-			assert.ok(bFocusTriggered, "Refocus of cell done after " + (iDelay + 10) + " ms");
+			assert.ok(!bFocusTriggered, "No Refocus of cell done after " + (iDelay + 10) + " ms");
 			testAriaLabelsForFocusedDataCell($Cell, 2, 0, assert, {rowChange: true});
+			assert.ok(!$Cell.attr("aria-busy"), "Cell is not in busy mode anymore");
+			assert.ok(!$Cell.attr("aria-hidden"), "Cell is not hidden anymore");
 			assert.ok((oTable.$("cellacc").html() || "").indexOf("A4") >= 0, "Acc Text after scrolling");
 			setFocusOutsideOfTable(assert);
 			oTable.setFirstVisibleRow(0);
