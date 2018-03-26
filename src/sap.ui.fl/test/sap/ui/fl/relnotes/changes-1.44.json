@@ -84,5 +84,16 @@
         "references": []
       }
     ]
+  },
+  "1.44.30": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "8ed9f5ddd1f76d6073d178c4e1a54eb3fc52fd4d",
+        "type": "FIX",
+        "text": " sap.ui.fl: enable propertyChange for CUSTOMER_BASE layer",
+        "references": []
+      }
+    ]
   }
 }

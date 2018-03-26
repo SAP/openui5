@@ -28,13 +28,8 @@
       {
         "id": "4fdc7774e733fec753821d6d45820a628d7ff2b8",
         "type": "FIX",
-        "text": "Explored app: Samples tab <code> tag visualization corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670249493"
-          }
-        ]
+        "text": "Explored app: Samples tab \u003ccode\u003e tag visualization corrected",
+        "references": []
       }
     ]
   }

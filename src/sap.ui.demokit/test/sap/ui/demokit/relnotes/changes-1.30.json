@@ -64,23 +64,13 @@
         "id": "160d0ad43a53c3a5b98d6bbbb15463697c957ecd",
         "type": "FIX",
         "text": "Api Reference Tree clipping issue",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "585"
-          }
-        ]
+        "references": []
       },
       {
         "id": "f244b1e51fae74ef7d06569698d3dff57a93e5eb",
         "type": "FIX",
         "text": "Demokit About dialog is all visible now in small resolutions",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1580049309"
-          }
-        ]
+        "references": []
       },
       {
         "id": "458fdaae9c6f3ac452258793ec88802d35663414",

@@ -113,7 +113,7 @@
       {
         "id": "8512215ae4f6d68ff1e8c7e8d776de368786bd99",
         "type": "FEATURE",
-        "text": "sap.ui.test.Opa - slow OPA added a URL parameter 'opaExecutionDelay' to slow down OPA",
+        "text": "sap.ui.test.Opa - slow OPA added a URL parameter \u0027opaExecutionDelay\u0027 to slow down OPA",
         "references": []
       },
       {
@@ -225,7 +225,7 @@
       {
         "id": "1ba92a56bad16790976a3a3d97a2f270cd3c421a",
         "type": "FIX",
-        "text": "ManagedObject: the type 'string[]' should cast anything to string",
+        "text": "ManagedObject: the type \u0027string[]\u0027 should cast anything to string",
         "references": []
       },
       {
@@ -317,7 +317,7 @@
       {
         "id": "4ba0fb4ae1d1dfca58fdf5cd6cfcf2b6f3198d38",
         "type": "FIX",
-        "text": "base.ManagedObject: don't ignore wrong context",
+        "text": "base.ManagedObject: don\u0027t ignore wrong context",
         "references": [
           {
             "type": "BCP",
@@ -364,7 +364,7 @@
       {
         "id": "b9b8c09dbbd71db9354b85c45f5b585533aad3fd",
         "type": "FIX",
-        "text": "core.Popup: new position isn't applied in RTL after popup is opened",
+        "text": "core.Popup: new position isn\u0027t applied in RTL after popup is opened",
         "references": [
           {
             "type": "BCP",
@@ -592,13 +592,13 @@
       {
         "id": "31b35fe9da3bffe47295d4d6744212897ba0eeac",
         "type": "FIX",
-        "text": "sap.ui.test.actions.Press - m.Input's value help is triggered",
+        "text": "sap.ui.test.actions.Press - m.Input\u0027s value help is triggered",
         "references": []
       },
       {
         "id": "202fdd1c0419986375c586fd95d9bde3a6edfc3b",
         "type": "FIX",
-        "text": "sap.ui.test.gherkin - don't load QUnit if it is already loaded via script",
+        "text": "sap.ui.test.gherkin - don\u0027t load QUnit if it is already loaded via script",
         "references": []
       },
       {
@@ -681,7 +681,7 @@
       {
         "id": "f4a5f3d18dbd08f5e68de8ffb01020ff5b76bb52",
         "type": "FIX",
-        "text": "sap.ui.core.Popup: keep blocklayer when there's still modal popup open",
+        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
         "references": [
           {
             "type": "BCP",
@@ -829,7 +829,7 @@
       {
         "id": "b7df6b12bdd4dab49f040a7de00d7c0386e8cf4c",
         "type": "FIX",
-        "text": "v2.ODataModel: Don't try to reload created entities",
+        "text": "v2.ODataModel: Don\u0027t try to reload created entities",
         "references": [
           {
             "type": "BCP",
@@ -923,7 +923,7 @@
       {
         "id": "eed898933e2e702bb40000253840e00abc9e0101",
         "type": "FIX",
-        "text": "sap.ui.core.util.ExportTypeCSV: Don't escape number only formulas",
+        "text": "sap.ui.core.util.ExportTypeCSV: Don\u0027t escape number only formulas",
         "references": [
           {
             "type": "BCP",
@@ -1246,7 +1246,7 @@
       {
         "id": "d8ffee171ff1ee356e5edead5f19176e8bd1d14c",
         "type": "FIX",
-        "text": "core.NumberFormat: adapt decimals when number of integer isn't sufficient",
+        "text": "core.NumberFormat: adapt decimals when number of integer isn\u0027t sufficient",
         "references": [
           {
             "type": "BCP",
@@ -1299,7 +1299,7 @@
       {
         "id": "3ced108b162f07f1a37df1f8f5c9cafa5a2cef32",
         "type": "FIX",
-        "text": "MessageMixin - Ignore Message with type 'Information'",
+        "text": "MessageMixin - Ignore Message with type \u0027Information\u0027",
         "references": [
           {
             "type": "BCP",
@@ -1321,7 +1321,7 @@
       {
         "id": "24401d9208e626db8c1ee87ecf5e755e4509496b",
         "type": "FIX",
-        "text": "core.NumberFormat: consider 'decimals' for style 'short' format",
+        "text": "core.NumberFormat: consider \u0027decimals\u0027 for style \u0027short\u0027 format",
         "references": [
           {
             "type": "BCP",
@@ -1332,7 +1332,7 @@
       {
         "id": "3fc11e807e8babfc48eb42c73675a2a1fe512fbe",
         "type": "FIX",
-        "text": "v2.ODataModel: Don't cache failed metadata object",
+        "text": "v2.ODataModel: Don\u0027t cache failed metadata object",
         "references": [
           {
             "type": "BCP",
@@ -1760,7 +1760,7 @@
       {
         "id": "954ca8753d621f739fda4f4033d97085e43ffff8",
         "type": "FIX",
-        "text": "core.Popup: use the 'deactivate' event on autoclose area in IE",
+        "text": "core.Popup: use the \u0027deactivate\u0027 event on autoclose area in IE",
         "references": [
           {
             "type": "BCP",
@@ -1951,7 +1951,7 @@
       {
         "id": "e79bb23ee1c8644dfeef9477ada15c091ea4d67e",
         "type": "FIX",
-        "text": "jquery-mobile-custom: avoid the possible duplicate 'tap' event",
+        "text": "jquery-mobile-custom: avoid the possible duplicate \u0027tap\u0027 event",
         "references": [
           {
             "type": "GitHub",
@@ -2008,7 +2008,7 @@
       {
         "id": "2cc57bc550b70cbe36f62f375708601dfadec857",
         "type": "FIX",
-        "text": "jQuery.sap.global: open the TechnicalInfo only when left 'alt' is pressed",
+        "text": "jQuery.sap.global: open the TechnicalInfo only when left \u0027alt\u0027 is pressed",
         "references": [
           {
             "type": "GitHub",
@@ -2083,7 +2083,7 @@
       {
         "id": "f97860429881bc58600a173e33d64e02edc47819",
         "type": "FIX",
-        "text": "jquery-mobile-custom: avoid duplicate 'tap' event (continued)",
+        "text": "jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
         "references": [
           {
             "type": "BCP",
@@ -2139,6 +2139,23 @@
             "reference": "1880232395"
           }
         ]
+      }
+    ]
+  },
+  "1.44.30": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "bceb1bed6e6ace5075a67c4f34a9d978221e406f",
+        "type": "FIX",
+        "text": " crossroads.js: correctly handle the parse of skipped optional param",
+        "references": []
+      },
+      {
+        "id": "196e626a878763a11183983b3c904ebb1254a225",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: Edge button events",
+        "references": []
       }
     ]
   }
