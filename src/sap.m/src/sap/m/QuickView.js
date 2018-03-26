@@ -261,6 +261,14 @@ sap.ui.define([
 	};
 
 	/**
+	 * Invalidates the control.
+	 */
+	QuickView.prototype.invalidate = function() {
+		// nothing this control should do here
+		// changes are handled manually
+	};
+
+	/**
 	 * Creates a new {@link sap.m.Page} that can be inserted in a QuickView.
 	 * @param {sap.m.QuickViewPage} oQuickViewPage The object that contains the data to be displayed.
 	 * @returns {sap.m.Page} The created page

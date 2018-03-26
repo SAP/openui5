@@ -699,6 +699,51 @@
 			assert.strictEqual(fnQuickViewPopoverInvalidate.callCount, 0, "QuickView.Popover.invalidate should not be called");
 		});
 
+		QUnit.test("InvalidationOfParentContainer", function (assert) {
+
+			// the QuickView shouldn't be used as a child in any control,
+			// but for historical reasons we need to handle this case
+			oPage.addContent(this.oQuickView);
+
+			var fnPageInvalidate = sinon.spy(oPage, "invalidate");
+
+			var data = this.oQuickView.getModel().getData();
+			data.pages.push({
+				pageId: "newPageId",
+				header: "New Page",
+				title: "Page",
+				icon: "",
+				description: "Department Manager1",
+				groups: [
+					{
+						heading: "Job",
+						elements: [
+							{
+								label: "Company",
+								value: "SAP AG",
+								url: "http://sap.com",
+								elementType: sap.m.QuickViewGroupElementType.pageLink,
+								pageLinkId: "customPageId4"
+							},
+							{
+								label: "Company address",
+								value: "Sofia, Boris III, 136A"
+							}
+						]
+					}
+				]
+			});
+
+			var newData = {};
+			jQuery.extend(true, newData, data);
+
+			this.oQuickView.getModel().setData(newData);
+
+			this.oQuickView.getPages()[0].setTitle('New Title');
+
+			assert.strictEqual(fnPageInvalidate.callCount, 0, "Page.invalidate should not be called");
+		});
+
 	</script>
 </head>
 <body class="sapUiBody">
