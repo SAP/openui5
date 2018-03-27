@@ -424,12 +424,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for flexSettings
+	 * Setter for flexSettings. Checks the Uri for parameters that override the layer.
+	 * builds the rootNamespace and namespace parameters from the other parameters
 	 *
 	 * @param {Object} [mFlexSettings] property bag
 	 * @param {String} [mFlexSettings.layer] The Layer in which RTA should be started. Default: "CUSTOMER"
 	 * @param {Boolean} [mFlexSettings.developerMode] Whether RTA is started in DeveloperMode Mode. Whether RTA is started in DeveloperMode Mode
-	 * @param {String} [mFlexSettings.namespace] Namespace for changes inside LREP
+	 * @param {String} [mFlexSettings.baseId] base ID of the app
+	 * @param {String} [mFlexSettings.projectId] project ID
+	 * @param {String} [mFlexSettings.scenario] Key representing the current scenario
 	 */
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
@@ -440,6 +443,13 @@ sap.ui.define([
 
 		if (aUriLayer && aUriLayer.length > 0) {
 			mFlexSettings.layer = aUriLayer[0];
+		}
+
+		// TODO: this will lead to incorrect information if this function is first called with scenario or baseId and then called again without.
+		if (mFlexSettings.scenario || mFlexSettings.baseId) {
+			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(mFlexSettings.baseId, mFlexSettings.scenario, mFlexSettings.projectId);
+			mFlexSettings.rootNamespace = sLRepRootNamespace;
+			mFlexSettings.namespace = sLRepRootNamespace + "changes/";
 		}
 
 		Utils.setRtaStyleClassName(mFlexSettings.layer);

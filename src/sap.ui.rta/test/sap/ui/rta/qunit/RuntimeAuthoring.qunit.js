@@ -120,42 +120,6 @@ function(
 		assert.strictEqual(jQuery(".sapUiRtaToolbar").length, 1, "then Toolbar is visible.");
 	});
 
-	QUnit.test("when the uri-parameter sap-ui-layer is set,", function(assert) {
-		assert.equal(this.oRta.getLayer(), "CUSTOMER", "then the layer is the default 'CUSTOMER'");
-
-		sandbox.stub(jQuery.sap, "getUriParameters").returns(
-			{
-				mParams: {
-					"sap-ui-layer": ["VENDOR"]
-			}
-		});
-
-		this.oRta.setFlexSettings(this.oRta.getFlexSettings());
-		assert.equal(this.oRta.getLayer("CUSTOMER"), "VENDOR", "then the function reacts to the URL parameter and sets the layer to VENDOR");
-	});
-
-	QUnit.test("when setFlexSettings is called", function(assert) {
-		assert.deepEqual(
-			this.oRta.getFlexSettings(),
-			{
-				layer: "CUSTOMER",
-				developerMode: true
-			}
-		);
-
-		this.oRta.setFlexSettings({
-			layer: "USER",
-			namespace: "namespace"
-		});
-
-		assert.deepEqual(this.oRta.getFlexSettings(), {
-			layer: "USER",
-			developerMode: true,
-			namespace: "namespace"
-		});
-
-	});
-
 	QUnit.test("when command stack is changed,", function(assert) {
 		var oInitialCommandStack = this.oRta.getCommandStack();
 		assert.ok(oInitialCommandStack, "the command stack is automatically created");
@@ -997,6 +961,68 @@ function(
 		return this.oRta._deleteChanges().then(function() {
 			assert.equal(this.oReloadPageStub.callCount, 0, "then page reload is not triggered");
 		}.bind(this));
+	});
+
+	QUnit.module("Given that RuntimeAuthoring is created without flexSettings", {
+		beforeEach : function(assert) {
+			sandbox.stub(Utils, "buildLrepRootNamespace").returns("rootNamespace/");
+			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
+			this.oRta = new RuntimeAuthoring({
+				rootControl : this.oRootControl,
+				showToolbars : false
+			});
+		},
+		afterEach : function(assert) {
+			this.oRta.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("when the uri-parameter sap-ui-layer is set,", function(assert) {
+		assert.equal(this.oRta.getLayer(), "CUSTOMER", "then the layer is the default 'CUSTOMER'");
+
+		sandbox.stub(jQuery.sap, "getUriParameters").returns(
+			{
+				mParams: {
+					"sap-ui-layer": ["VENDOR"]
+			}
+		});
+
+		this.oRta.setFlexSettings(this.oRta.getFlexSettings());
+		assert.equal(this.oRta.getLayer("CUSTOMER"), "VENDOR", "then the function reacts to the URL parameter and sets the layer to VENDOR");
+	});
+
+	QUnit.test("when setFlexSettings is called", function(assert) {
+		assert.deepEqual(
+			this.oRta.getFlexSettings(),
+			{
+				layer: "CUSTOMER",
+				developerMode: true
+			}
+		);
+
+		this.oRta.setFlexSettings({
+			layer: "USER",
+			namespace: "namespace"
+		});
+
+		assert.deepEqual(this.oRta.getFlexSettings(), {
+			layer: "USER",
+			developerMode: true,
+			namespace: "namespace"
+		});
+
+		this.oRta.setFlexSettings({
+			scenario: "scenario"
+		});
+
+		assert.deepEqual(this.oRta.getFlexSettings(), {
+			layer: "USER",
+			developerMode: true,
+			namespace: "rootNamespace/changes/",
+			rootNamespace: "rootNamespace/",
+			scenario: "scenario"
+		});
 	});
 
 	QUnit.done(function( details ) {
