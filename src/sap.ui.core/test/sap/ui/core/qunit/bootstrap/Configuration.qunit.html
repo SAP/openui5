@@ -103,6 +103,10 @@
 			assert.equal(oCfg.getCalendarType(), CalendarType.Islamic, "The legacy date format 'A' changes the calendar type to islamic");
 			oFormatSettings.setLegacyDateFormat("9");
 			assert.equal(oCfg.getCalendarType(), CalendarType.Japanese, "The legacy date format '9' changes the calendar type to japanese");
+			
+			oFormatSettings.setLegacyDateFormat("C");
+			assert.equal(oCfg.getCalendarType(), CalendarType.Persian, "The legacy date format 'C' changes the calendar type to persian");
+
 		});
 
 
@@ -474,10 +478,10 @@
 				{ param: '9', expected: '9' },
 				{ param: 'A', expected: 'A' },
 				{ param: 'B', expected: 'B' },
-				{ param: 'C', expected: undefined }, // Note: C is currently ignored
+				{ param: 'C', expected: 'C' },
 				{ param: 'a', expected: 'A' },
 				{ param: 'b', expected: 'B' },
-				{ param: 'c', expected: undefined }, // Note: C is currently ignored
+				{ param: 'c', expected: 'C' },
 			].forEach(function (data) {
 
 				var oParams = jQuery.sap.getUriParameters('?sap-ui-legacy-date-format=' + encodeURIComponent(data.param));
