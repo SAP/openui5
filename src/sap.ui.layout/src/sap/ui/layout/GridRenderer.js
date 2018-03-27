@@ -300,31 +300,24 @@ sap.ui.define(["sap/ui/Device", "sap/ui/layout/library"],
 				}
 
 
-
-
 				// Visibility
-				var
-				l = oLay.getVisibleL(),
-				m = oLay.getVisibleM(),
-				s = oLay.getVisibleS();
 
-				// TODO: visibility of XL different to L
-
-				if (!l && m && s) {
-					oRm.addClass("sapUiRespGridHiddenL");
+				if (!oLay.getVisibleXL()) {
 					oRm.addClass("sapUiRespGridHiddenXL");
-				} else if (!l && !m && s) {
-					oRm.addClass("sapUiRespGridVisibleS");
-				} else if (l && !m && !s) {
-					oRm.addClass("sapUiRespGridVisibleL");
-					oRm.addClass("sapUiRespGridVisibleXL");
-				} else if (!l && m && !s) {
-					oRm.addClass("sapUiRespGridVisibleM");
-				} else if (l && !m && s) {
+				}
+
+				if (!oLay.getVisibleL()) {
+					oRm.addClass("sapUiRespGridHiddenL");
+				}
+
+				if (!oLay.getVisibleM()) {
 					oRm.addClass("sapUiRespGridHiddenM");
-				} else if (l && m && !s) {
+				}
+
+				if (!oLay.getVisibleS()) {
 					oRm.addClass("sapUiRespGridHiddenS");
 				}
+
 
 				// Move - moveBackwards shifts a grid element to the left in LTR mode and
 				// opposite in RTL mode
