@@ -38,7 +38,8 @@ sap.ui.define([
 					bLandscape: Device.orientation.landscape,
 					bHasMaster: false,
 					bSearchMode: false,
-					bHideEmptySections: window['sap-ui-documentation-hideEmptySections'],
+					bHideTopicSection: !!window['sap-ui-documentation-hideTopicSection'],
+					bHideApiSection: !!window['sap-ui-documentation-hideApiSection'],
 					sAboutInfoSAPUI5: "Looking for the Demo Kit for a specific SAPUI5 version? " +
 					"Check at <a href = 'https://sapui5.hana.ondemand.com/versionoverview.html'>https://sapui5.hana.ondemand.com/versionoverview.html</a> " +
 					"which versions are available. " +
@@ -84,7 +85,15 @@ sap.ui.define([
 				// the unstashed control is added as **last child** => correct its position in parent container
 				this.oHeader.removeContent(this.oTabNavigation);
 				this.oHeader.insertContent(this.oTabNavigation, 2);
-
+				if (Device.system.phone) {
+					// items in Select control can't be hidden via visible property
+					if (window['sap-ui-documentation-hideTopicSection']) {
+						this.byId("topicMasterTab").destroy();
+					}
+					if (window['sap-ui-documentation-hideApiSection']) {
+						this.byId("apiMasterTab").destroy();
+					}
+				}
 				this.oRouter = this.getRouter();
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));

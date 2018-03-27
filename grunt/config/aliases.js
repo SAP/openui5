@@ -262,6 +262,51 @@ module.exports = function(grunt, config) {
 
 		},
 
+		// Build task
+		'docs': function() {
+
+			var sapUiBuildtime = config.buildtime;
+			var version = config.package && config.package.version;
+			var useDefaultTemplate = grunt.option('default-template');
+			
+			if (!useDefaultTemplate) {
+				var sapUiVersionJson = {
+					name: "openui5",
+					version: version,
+					buildTimestamp: sapUiBuildtime,
+					scmRevision: '',
+					gav: 'com.sap.openui5:openui5:' + version,
+					libraries: config.allLibraries.map(function(library) {
+						return {
+							name: library.name,
+							version: version,
+							buildTimestamp: sapUiBuildtime,
+							scmRevision: ''
+						};
+					})
+				};
+				grunt.file.write("target/openui5-sdk/resources/sap-ui-version.json", JSON.stringify(sapUiVersionJson, null, '\t'));
+			}
+
+			var aTasks = [];
+
+			config.libraries.forEach(function(library) {
+				// ignore theme libs
+				if ( library.type === 'theme' ) {
+					return;
+				}
+				aTasks.push('jsdoc:library-' + library.name);
+				if (!useDefaultTemplate) {
+					aTasks.push('ui5docs-preprocess:library-' + library.name);
+				}
+			});
+			if (!useDefaultTemplate) {
+				aTasks.push('ui5docs-api-index:openui5-sdk');
+			}
+
+			grunt.task.run(aTasks);
+		},
+
 		// CLDR modules are not added to package.json/devDependencies to avoid bloating of the node_modules folder
 		'cldr': [
 		    'cldr-download',

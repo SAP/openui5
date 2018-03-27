@@ -1,0 +1,23 @@
+{
+	"source": {
+		"excludePattern": "(/|\\\\)library-all\\.js|(/|\\\\).*-preload\\.js|^jquery-.*\\.js|^sap-.*\\.js"
+	},
+	"opts" : {
+		"recurse": true,
+		"template" : "lib/jsdoc/ui5/template"
+	},
+	"plugins": [
+		"lib/jsdoc/ui5/plugin.js"
+	],
+	"templates" : {
+		"ui5" : {
+			"variants": [
+				"apijson"
+			],
+			"version": "${version}",
+			"apiJsonFolder": "${apiJsonFolder}",
+			"apiJsonFile": "${apiJsonFile}",
+			"includeSettingsInConstructor": false
+		}
+	}
+}
