@@ -201,18 +201,14 @@ sap.ui.define([
 		}
 	};
 
-	// See class documentation
-	// @override
-	// @public
-	// @see sap.ui.base.EventProvider#attachEvent
-	// @since 1.37.0
-	ODataContextBinding.prototype.attachEvent = function (sEventId) {
-		if (!(sEventId in mSupportedEvents)) {
-			throw new Error("Unsupported event '" + sEventId
-				+ "': v4.ODataContextBinding#attachEvent");
-		}
-		return ContextBinding.prototype.attachEvent.apply(this, arguments);
-	};
+	/**
+	 * The 'AggregatedDataStateChange' event is not supported by this binding.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#AggregatedDataStateChange
+	 * @public
+	 * @since 1.37.0
+	 */
 
 	/**
 	 * The 'change' event is fired when the binding is initialized or its parent context is changed.
@@ -230,9 +226,71 @@ sap.ui.define([
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataContextBinding#change
 	 * @public
-	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
+
+	/**
+	 * The 'dataReceived' event is fired after the back-end data has been processed. It is to be
+	 * used by applications for example to switch off a busy indicator or to process an error.
+	 *
+	 * If back-end requests are successful, the event has almost no parameters. For compatibility
+	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
+	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
+	 * is not. Use the binding's bound context via
+	 * {@link #getBoundContext oEvent.getSource().getBoundContext()} to access the response data.
+	 * Note that controls bound to this data may not yet have been updated, meaning it is not safe
+	 * for registered event handlers to access data via control APIs.
+	 *
+	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
+	 * 'error' event parameter.
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {object} [oEvent.getParameters.data]
+	 *   An empty data object if a back-end request succeeds
+	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
+	 *   If there are multiple failed back-end requests, the error of the first one is provided.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataReceived
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
+	 * It is to be used by applications for example to switch on a busy indicator. Registered event
+	 * handlers are called without parameters.
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataRequested
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'DataStateChange' event is not supported by this binding.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataContextBinding#DataStateChange
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	// See class documentation
+	// @override
+	// @public
+	// @see sap.ui.base.EventProvider#attachEvent
+	// @since 1.37.0
+	ODataContextBinding.prototype.attachEvent = function (sEventId) {
+		if (!(sEventId in mSupportedEvents)) {
+			throw new Error("Unsupported event '" + sEventId
+				+ "': v4.ODataContextBinding#attachEvent");
+		}
+		return ContextBinding.prototype.attachEvent.apply(this, arguments);
+	};
 
 	/**
 	 * Creates a single cache and sends a GET/POST request.
@@ -285,49 +343,6 @@ sap.ui.define([
 			? oCache.post(sGroupId, mParameters, sETag)
 			: oCache.fetchValue(sGroupId);
 	};
-
-	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
-	 * It is to be used by applications for example to switch on a busy indicator. Registered event
-	 * handlers are called without parameters.
-	 *
-	 * @param {sap.ui.base.Event} oEvent
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataRequested
-	 * @public
-	 * @see sap.ui.base.Event
-	 * @since 1.37.0
-	 */
-
-	/**
-	 * The 'dataReceived' event is fired after the back-end data has been processed. It is to be
-	 * used by applications for example to switch off a busy indicator or to process an error.
-	 *
-	 * If back-end requests are successful, the event has almost no parameters. For compatibility
-	 * with {@link sap.ui.model.Binding#event:dataReceived}, an event parameter
-	 * <code>data : {}</code> is provided: "In error cases it will be undefined", but otherwise it
-	 * is not. Use the binding's bound context via
-	 * {@link #getBoundContext oEvent.getSource().getBoundContext()} to access the response data.
-	 * Note that controls bound to this data may not yet have been updated, meaning it is not safe
-	 * for registered event handlers to access data via control APIs.
-	 *
-	 * If a back-end request fails, the 'dataReceived' event provides an <code>Error</code> in the
-	 * 'error' event parameter.
-	 *
-	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
-	 * @param {object} [oEvent.getParameters.data]
-	 *   An empty data object if a back-end request succeeds
-	 * @param {Error} [oEvent.getParameters.error] The error object if a back-end request failed.
-	 *   If there are multiple failed back-end requests, the error of the first one is provided.
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataReceived
-	 * @public
-	 * @see sap.ui.base.Event
-	 * @since 1.37.0
-	 */
 
 	/**
 	 * Destroys the object. The object must not be used anymore after this function was called.

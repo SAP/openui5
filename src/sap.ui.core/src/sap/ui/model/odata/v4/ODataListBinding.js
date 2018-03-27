@@ -169,40 +169,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * The 'change' event is fired when the binding is initialized or new contexts are created or
-	 * its parent context is changed. It is to be used by controls to get notified about changes to
-	 * the binding contexts of this list binding. Registered event handlers are called with the
-	 * change reason as parameter.
-	 *
-	 * @param {sap.ui.base.Event} oEvent
-	 * @param {object} oEvent.getParameters
-	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
-	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
-	 *   binding is initialized and or a new context is created, or
-	 *   {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#change
-	 * @public
-	 * @see sap.ui.base.Event
-	 * @since 1.37.0
-	 */
-
-	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
-	 * It is to be used by applications for example to switch on a busy indicator.
-	 * Registered event handlers are called without parameters.
-	 *
-	 * @param {sap.ui.base.Event} oEvent
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
-	 * @public
-	 * @see sap.ui.base.Event
-	 * @since 1.37.0
-	 */
-
-	/**
 	 * Applies the given map of parameters to this binding's parameters and triggers the
 	 * creation of a new cache if called with a change reason.
 	 *
@@ -238,6 +204,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * The 'AggregatedDataStateChange' event is not supported by this binding.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#AggregatedDataStateChange
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'change' event is fired when the binding is initialized or new contexts are created or
+	 * its parent context is changed. It is to be used by controls to get notified about changes to
+	 * the binding contexts of this list binding. Registered event handlers are called with the
+	 * change reason as parameter.
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 * @param {object} oEvent.getParameters
+	 * @param {sap.ui.model.ChangeReason} oEvent.getParameters.reason
+	 *   The reason for the 'change' event: {@link sap.ui.model.ChangeReason.Change} when the
+	 *   binding is initialized and or a new context is created, or
+	 *   {@link sap.ui.model.ChangeReason.Context} when the parent context is changed
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#change
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	/**
 	 * The 'dataReceived' event is fired after the back-end data has been processed and the
 	 * registered 'change' event listeners have been notified.
 	 * It is to be used by applications for example to switch off a busy indicator or to process an
@@ -263,7 +257,28 @@ sap.ui.define([
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
 	 * @public
-	 * @see sap.ui.base.Event
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
+	 * It is to be used by applications for example to switch on a busy indicator.
+	 * Registered event handlers are called without parameters.
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'DataStateChange' event is not supported by this binding.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataListBinding#DataStateChange
+	 * @public
 	 * @since 1.37.0
 	 */
 
