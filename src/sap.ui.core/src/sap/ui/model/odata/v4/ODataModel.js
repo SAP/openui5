@@ -507,6 +507,9 @@ sap.ui.define([
 	 * binding parameters are not contained in the map. The following parameters and parameter
 	 * values are supported, if the parameter is contained in the given 'aAllowed' parameter:
 	 * <ul>
+	 * <li> '$$aggregation' with allowed values as specified in
+	 *      {@link sap.ui.model.odata.v4.ODataListBinding#updateAnalyticalInfo} (but without
+	 *      validation here)
 	 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
 	 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
 	 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
@@ -540,6 +543,9 @@ sap.ui.define([
 				}
 
 				switch (sKey) {
+					case "$$aggregation":
+						// no validation here
+						break;
 					case "$$groupId":
 					case "$$updateGroupId":
 						that.checkGroupId(vValue, false,

@@ -27,8 +27,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$groupId", "$$operationMode", "$$ownRequest",
-			"$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$aggregation", "$$groupId", "$$operationMode",
+			"$$ownRequest", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
 			metadata : {
@@ -299,7 +299,9 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("applyParameters: simulate call from c'tor", function (assert) {
-		var mBindingParameters = {
+		var aAggregation = [],
+			mBindingParameters = {
+				$$aggregation : aAggregation,
 				$$groupId : "foo",
 				$$operationMode : OperationMode.Server,
 				$$updateGroupId : "update foo"
@@ -307,8 +309,10 @@ sap.ui.require([
 			sGroupId = "foo",
 			oModelMock = this.mock(this.oModel),
 			oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
 			sOperationMode = "Server",
 			mParameters = {
+				$$aggregation : aAggregation,
 				$$groupId : "foo",
 				$$operationMode : OperationMode.Server,
 				$$updateGroupId : "update foo",
@@ -324,13 +328,14 @@ sap.ui.require([
 			.returns(mBindingParameters);
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
 			.returns(mQueryOptions);
-		this.mock(oBinding).expects("reset").withExactArgs(undefined);
+		oBindingMock.expects("reset").withExactArgs(undefined);
+		oBindingMock.expects("updateAnalyticalInfo").withExactArgs(sinon.match.same(aAggregation));
 
-		//Stub is needed to test, if mCacheByContext is set to undefined before fetchCache is called
 		oBinding.mCacheByContext = {
-				"/Products" : {}
+			"/Products" : {}
 		};
 		this.mock(oBinding).expects("fetchCache").callsFake(function () {
+			// test if mCacheByContext is set to undefined before fetchCache is called
 			assert.strictEqual(oBinding.mCacheByContext, undefined, "mCacheByContext");
 		});
 
@@ -361,6 +366,7 @@ sap.ui.require([
 	QUnit.test("applyParameters: simulate call from changeParameters", function (assert) {
 		var oContext = Context.create(this.oModel, {}, "/TEAMS"),
 			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
+			oBindingMock = this.mock(oBinding),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {
 				$filter : "bar"
@@ -377,7 +383,8 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oBinding.oContext));
-		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change);
+		oBindingMock.expects("reset").withExactArgs(ChangeReason.Change);
+		oBindingMock.expects("updateAnalyticalInfo").never();
 
 		//code under test
 		oBinding.applyParameters(mParameters, ChangeReason.Change);

@@ -1,0 +1,72 @@
+{
+	"_version" : "1.8.0",
+	"sap.app" : {
+		"ach" : "CA-UI5-COR",
+		"applicationVersion" : {
+			"version" : "${version}"
+		},
+		"dataSources" : {
+			"default" : {
+				"uri" : "/testsuite/proxy/sap/opu/odata4/sap/zgk_c_salesorderitem_rd_v4_sb/srvd/sap/zgk_c_salesorderitem_rd_v4_sd/0001/",
+				"type" : "OData",
+				"settings" : {
+					"odataVersion" : "4.0"
+				}
+			}
+		},
+		"description" : "{{sap.app.description}}",
+		"id" : "sap.ui.core.sample.odata.v4.DataAggregation",
+		"i18n" : "i18n/i18n.properties",
+		"title" : "{{sap.app.title}}",
+		"type" : "application"
+	},
+	"sap.ui" : {
+		"deviceTypes" : {
+			"desktop" : true,
+			"phone" : true,
+			"tablet" : true
+		},
+		"technology" : "UI5"
+	},
+	"sap.ui5" : {
+		"config" : {
+			"sample" : {
+				"files" : [
+					"Component.js",
+					"DataAggregation.controller.js",
+					"DataAggregation.view.xml",
+					"manifest.json"
+				]
+			}
+		},
+		"contentDensities" : {
+			"compact" : true,
+			"cozy" : true
+		},
+		"dependencies" : {
+			"libs" : {
+				"sap.m" : {}
+			},
+			"minUI5Version" : "1.55"
+		},
+		"handleValidation" : true,
+		"models" : {
+			"" : {
+				"dataSource" : "default",
+				"preload" : true,
+				"settings" : {
+					"autoExpandSelect" : false,
+					"earlyRequests": true,
+					"groupId" : "$direct",
+					"operationMode" : "Server",
+					"synchronizationMode" : "None"
+				}
+			}
+		},
+		"rootView" : {
+			"async" : true,
+			"type" : "XML",
+			"viewName" : "sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation"
+		}
+	}
+}

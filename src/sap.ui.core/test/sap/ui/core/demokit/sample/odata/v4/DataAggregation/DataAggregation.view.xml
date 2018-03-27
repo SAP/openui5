@@ -1,0 +1,78 @@
+<mvc:View
+	class="sapUiSizeCompact"
+	controllerName="sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation"
+	xmlns="sap.ui.table"
+	xmlns:m="sap.m"
+	xmlns:mvc="sap.ui.core.mvc">
+
+	<!-- TODO: unit : 'DisplayCurrency' -->
+	<!-- TODO: unit : 'TransactionCurrency' -->
+	<!-- TODO: enable sorting in table -->
+	<!-- TODO: enhance auto type detection for @$ui5.node.*? -->
+	<Table id="table"
+		rows="{path : '/ZGK_C_SalesOrderItem_RD_V4(P_DateFunction=\'PREVIOUSYEAR\')/Set',
+			parameters : {
+				$$aggregation : [{
+					name : 'ProductCategory',
+					grouped : true,
+					visible : true
+				}, {
+					name : 'DisplayCurrency',
+					grouped : false,
+					visible : true
+				}, {
+					name : 'TransactionCurrency',
+					grouped : false,
+					visible : true
+				}, {
+					name : 'NetAmountInDisplayCurrency',
+					total : true
+				}, {
+					name : 'NetAmountInTransactionCurrency',
+					total : false
+				}],
+				$count : true,
+				$orderby : 'ProductCategory desc'
+			}}" selectionMode="None"
+			title="Net Sales Volume by Product Category ({headerContext>$count})">
+		<Column hAlign="End" width="5em">
+			<m:Label text="Level"/>
+			<template>
+				<m:Text text="{= %{@$ui5.node.level} }"/><!-- Note: type not really useful here -->
+			</template>
+		</Column>
+		<Column width="3em">
+			<template>
+				<m:ToggleButton enabled="{= %{@$ui5.node.isExpanded} !== undefined}"
+					icon="{= %{@$ui5.node.isExpanded} === true
+						? 'sap-icon://collapse'
+						: (%{@$ui5.node.isExpanded} === false
+							? 'sap-icon://expand' : 'sap-icon://e-care')}"
+					tooltip="{= %{@$ui5.node.isExpanded} === true ? 'Collapse' : 'Expand'}"
+					/>
+			</template>
+		</Column>
+		<Column template="ProductCategory">
+			<m:Label text="Product Category"/>
+		</Column>
+		<Column hAlign="End" template="NetAmountInDisplayCurrency">
+			<m:Label text="Net Amount"/>
+		</Column>
+		<Column template="DisplayCurrency">
+			<m:Label text="Display Currency"/>
+		</Column>
+		<Column hAlign="End"
+			template="{= %{@$ui5.node.isTotal} ? 'NetAmountInTransactionCurrency' : undefined}">
+			<m:Label text="Net Amount"/>
+		</Column>
+		<Column template="{= %{@$ui5.node.isTotal} ? 'TransactionCurrency' : undefined}">
+			<m:Label text="Transaction Currency"/>
+		</Column>
+		<Column hAlign="Center" width="5em">
+			<m:Label text="Subtotal"/>
+			<template>
+				<m:CheckBox selected="{= %{@$ui5.node.isTotal} }" editable="false"/>
+			</template>
+		</Column>
+	</Table>
+</mvc:View>

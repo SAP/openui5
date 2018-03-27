@@ -5023,5 +5023,97 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
+	QUnit.test("Analytics by V4: $$aggregation", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{path : \'/SalesOrderList\',\
+		parameters : {\
+			$$aggregation : [{\
+				grouped : true,\
+				name : \'LifecycleStatus\',\
+				visible : true\
+			}, {\
+				grouped : false,\
+				name : \'CurrencyCode\',\
+				visible : true\
+			}, {\
+				total : false,\
+				name : \'GrossAmount\'\
+			}],\
+			$count : true,\
+			$orderby : \'LifecycleStatus desc\'\
+		}}" threshold="0" visibleRowCount="3">\
+	<t:Column>\
+		<t:template>\
+			<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="currencyCode" text="{CurrencyCode}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			oModel = createSalesOrdersModel(),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$count=true&$orderby=LifecycleStatus%20desc"
+				+ "&$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount))"
+				+ "&$skip=0&$top=3", {
+				"@odata.count" : "26",
+				"value" : [
+					{"CurrencyCode" : "EUR", "GrossAmount" : 1, "LifecycleStatus" : "Z"},
+					{"CurrencyCode" : "EUR", "GrossAmount" : 2, "LifecycleStatus" : "Y"},
+					{"CurrencyCode" : "EUR", "GrossAmount" : 3, "LifecycleStatus" : "X"}
+				]
+			})
+			.expectChange("currencyCode", ["EUR", "EUR", "EUR"])
+			.expectChange("grossAmount", [1, 2, 3])
+			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList?$count=true&$orderby=LifecycleStatus%20desc"
+					+ "&$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount))"
+					+ "&$skip=23&$top=3", {
+					"@odata.count" : "26",
+					"value" : [
+						{"CurrencyCode" : "EUR", "GrossAmount" : 24, "LifecycleStatus" : "C"},
+						{"CurrencyCode" : "EUR", "GrossAmount" : 25, "LifecycleStatus" : "B"},
+						{"CurrencyCode" : "EUR", "GrossAmount" : 26, "LifecycleStatus" : "A"}
+					]
+				})
+				//TODO The below null's are: Text has binding context null and its initial value is
+				// undefined (formatted to null by String type). (How) can we get rid of this?
+				.expectChange("currencyCode", null, null)
+				.expectChange("currencyCode", null, null)
+				.expectChange("currencyCode", null, null)
+				.expectChange("grossAmount", undefined, null)
+				.expectChange("grossAmount", undefined, null)
+				.expectChange("grossAmount", undefined, null)
+				.expectChange("lifecycleStatus", null, null)
+				.expectChange("lifecycleStatus", null, null)
+				.expectChange("lifecycleStatus", null, null)
+				.expectChange("currencyCode", "EUR", 23)
+				.expectChange("currencyCode", "EUR", 24)
+				.expectChange("currencyCode", "EUR", 25)
+				.expectChange("grossAmount", 24, 23)
+				.expectChange("grossAmount", 25, 24)
+				.expectChange("grossAmount", 26, 25)
+				.expectChange("lifecycleStatus", "C", 23)
+				.expectChange("lifecycleStatus", "B", 24)
+				.expectChange("lifecycleStatus", "A", 25);
+
+			that.oView.byId("table").setFirstVisibleRow(23);
+
+			return that.waitForChanges(assert);
+		});
+	});
 });
 //TODO test delete

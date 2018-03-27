@@ -217,7 +217,8 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
 		var oBindingParameters = this.oModel.buildBindingParameters(mParameters,
-				["$$groupId", "$$operationMode", "$$ownRequest", "$$updateGroupId"]),
+				["$$aggregation", "$$groupId", "$$operationMode", "$$ownRequest",
+					"$$updateGroupId"]),
 			sOperationMode;
 
 		sOperationMode = oBindingParameters.$$operationMode || this.oModel.sOperationMode;
@@ -231,6 +232,9 @@ sap.ui.define([
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
+		if ("$$aggregation" in oBindingParameters) {
+			this.updateAnalyticalInfo(oBindingParameters.$$aggregation);
+		}
 
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
