@@ -3134,8 +3134,18 @@ sap.ui.define([
 	 * @returns {*}
 	 */
 	ObjectPageLayout.prototype.clone = function () {
+		var oClone,
+			oHeaderContent;
+
 		Object.keys(this.mAggregations).forEach(this._cloneProxiedAggregations, this);
-		return Control.prototype.clone.apply(this, arguments);
+
+		oClone = Control.prototype.clone.apply(this, arguments);
+		oHeaderContent = this._getHeaderContent();
+
+		// "_headerContent" aggregation is hidden and it is not cloned by default
+		oClone.setAggregation("_headerContent", oHeaderContent.clone(), true);
+
+		return oClone;
 	};
 
 	ObjectPageLayout.prototype._cloneProxiedAggregations = function (sAggregationName) {
