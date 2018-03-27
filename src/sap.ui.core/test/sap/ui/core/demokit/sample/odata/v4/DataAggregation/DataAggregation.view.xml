@@ -5,8 +5,6 @@
 	xmlns:m="sap.m"
 	xmlns:mvc="sap.ui.core.mvc">
 
-	<!-- TODO: unit : 'DisplayCurrency' -->
-	<!-- TODO: unit : 'TransactionCurrency' -->
 	<!-- TODO: enable sorting in table -->
 	<!-- TODO: enhance auto type detection for @$ui5.node.*? -->
 	<Table id="table"
@@ -14,22 +12,15 @@
 			parameters : {
 				$$aggregation : [{
 					name : 'ProductCategory',
-					grouped : true,
-					visible : true
-				}, {
-					name : 'DisplayCurrency',
-					grouped : false,
-					visible : true
-				}, {
-					name : 'TransactionCurrency',
-					grouped : false,
-					visible : true
+					grouped : true
 				}, {
 					name : 'NetAmountInDisplayCurrency',
-					total : true
+					total : true,
+					unit : 'DisplayCurrency'
 				}, {
 					name : 'NetAmountInTransactionCurrency',
 					total : false
+					unit : 'TransactionCurrency'
 				}],
 				$count : true,
 				$orderby : 'ProductCategory desc'

@@ -522,7 +522,7 @@ sap.ui.require([
 		 *                                 // do not expect a change (in createView). To be used if
 		 *                                 // the control is a template within a table.
 		 * this.expectChange("foo", ["a", "b"]); // expect values for two rows of the control with
-		 *                                       // ID "foo"
+		 *                                       // ID "foo"; may be combined with an offset vRow
 		 * this.expectChange("foo", "c", 2); // expect value "c" for control with ID "foo" in row 2
 		 * this.expectChange("foo", "d", "/MyEntitySet/ID");
 		 *                                 // expect value "d" for control with ID "foo" in a
@@ -546,14 +546,22 @@ sap.ui.require([
 				return oObject[vProperty];
 			}
 
-			if (Array.isArray(vValue)) {
+			if (arguments.length === 3) {
+				aExpectations = array(this.mListChanges, sControlId);
+				if (Array.isArray(vValue)) {
+					for (i = 0; i < vValue.length; i += 1) {
+						// This may create a sparse array this.mListChanges[sControlId]
+						array(aExpectations, vRow + i).push(vValue[i]);
+					}
+				} else {
+					// This may create a sparse array this.mListChanges[sControlId]
+					array(aExpectations, vRow).push(vValue);
+				}
+			} else if (Array.isArray(vValue)) {
 				aExpectations = array(this.mListChanges, sControlId);
 				for (i = 0; i < vValue.length; i += 1) {
 					array(aExpectations, i).push(vValue[i]);
 				}
-			} else if (arguments.length === 3) {
-				// This may create a sparse array this.mListChanges[sControlId]
-				array(array(this.mListChanges, sControlId), vRow).push(vValue);
 			} else if (vValue === false) {
 				array(this.mListChanges, sControlId);
 			} else {
@@ -5032,19 +5040,34 @@ sap.ui.require([
 		parameters : {\
 			$$aggregation : [{\
 				grouped : true,\
-				name : \'LifecycleStatus\',\
-				visible : true\
+				name : \'LifecycleStatus\'\
 			}, {\
-				grouped : false,\
-				name : \'CurrencyCode\',\
-				visible : true\
+				name : \'GrossAmount\',\
+				total : true,\
+				unit : \'CurrencyCode\'\
 			}, {\
+				name : \'NetAmount\',\
 				total : false,\
-				name : \'GrossAmount\'\
+				unit : \'CurrencyCode\'\
 			}],\
 			$count : true,\
 			$orderby : \'LifecycleStatus desc\'\
 		}}" threshold="0" visibleRowCount="3">\
+	<t:Column>\
+		<t:template>\
+			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="level" text="{= %{@$ui5.node.level} }" />\
+		</t:template>\
+	</t:Column>\
 	<t:Column>\
 		<t:template>\
 			<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
@@ -5074,6 +5097,9 @@ sap.ui.require([
 					{"CurrencyCode" : "EUR", "GrossAmount" : 3, "LifecycleStatus" : "X"}
 				]
 			})
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [true, true, true])
+			.expectChange("level", [1, 1, 1])
 			.expectChange("currencyCode", ["EUR", "EUR", "EUR"])
 			.expectChange("grossAmount", [1, 2, 3])
 			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
@@ -5088,27 +5114,23 @@ sap.ui.require([
 						{"CurrencyCode" : "EUR", "GrossAmount" : 25, "LifecycleStatus" : "B"},
 						{"CurrencyCode" : "EUR", "GrossAmount" : 26, "LifecycleStatus" : "A"}
 					]
-				})
+				});
+			for (var i = 0; i < 3; i += 1) {
 				//TODO The below null's are: Text has binding context null and its initial value is
 				// undefined (formatted to null by String type). (How) can we get rid of this?
-				.expectChange("currencyCode", null, null)
-				.expectChange("currencyCode", null, null)
-				.expectChange("currencyCode", null, null)
-				.expectChange("grossAmount", undefined, null)
-				.expectChange("grossAmount", undefined, null)
-				.expectChange("grossAmount", undefined, null)
-				.expectChange("lifecycleStatus", null, null)
-				.expectChange("lifecycleStatus", null, null)
-				.expectChange("lifecycleStatus", null, null)
-				.expectChange("currencyCode", "EUR", 23)
-				.expectChange("currencyCode", "EUR", 24)
-				.expectChange("currencyCode", "EUR", 25)
-				.expectChange("grossAmount", 24, 23)
-				.expectChange("grossAmount", 25, 24)
-				.expectChange("grossAmount", 26, 25)
-				.expectChange("lifecycleStatus", "C", 23)
-				.expectChange("lifecycleStatus", "B", 24)
-				.expectChange("lifecycleStatus", "A", 25);
+				that.expectChange("isExpanded", undefined, null)
+					.expectChange("isTotal", undefined, null)
+					.expectChange("level", undefined, null)
+					.expectChange("currencyCode", null, null)
+					.expectChange("grossAmount", undefined, null)
+					.expectChange("lifecycleStatus", null, null);
+			}
+			that.expectChange("isExpanded", [false, false, false], 23)
+				.expectChange("isTotal", [true, true, true], 23)
+				.expectChange("level", [1, 1, 1], 23)
+				.expectChange("currencyCode", ["EUR", "EUR", "EUR"], 23)
+				.expectChange("grossAmount", [24, 25, 26], 23)
+				.expectChange("lifecycleStatus", ["C", "B", "A"], 23);
 
 			that.oView.byId("table").setFirstVisibleRow(23);
 

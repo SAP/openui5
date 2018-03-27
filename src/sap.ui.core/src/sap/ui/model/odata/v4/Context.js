@@ -11,13 +11,6 @@ sap.ui.define([
 	"use strict";
 
 	/*
-	 * Clones the object.
-	 */
-	function clone(o) {
-		return o && JSON.parse(JSON.stringify(o));
-	}
-
-	/*
 	 * Fetches and formats the primitive value at the given path.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext The context
@@ -333,7 +326,7 @@ sap.ui.define([
 		if (!oSyncPromise.isFulfilled()) {
 			return undefined;
 		}
-		return clone(oSyncPromise.getResult());
+		return _Helper.clone(oSyncPromise.getResult());
 	};
 
 	/**
@@ -504,7 +497,7 @@ sap.ui.define([
 		this.oBinding.checkSuspended();
 
 		return Promise.resolve(this.fetchValue(sPath)).then(function (vResult) {
-			return clone(vResult);
+			return _Helper.clone(vResult);
 		});
 	};
 

@@ -14,11 +14,12 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
 	"./Context",
+	"./lib/_AggregationCache",
 	"./lib/_Cache",
 	"./lib/_Helper",
 	"./ODataParentBinding"
 ], function (jQuery, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
-		Sorter, OperationMode, Context, _Cache, _Helper, asODataParentBinding) {
+		Sorter, OperationMode, Context, _AggregationCache, _Cache, _Helper, asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -76,6 +77,7 @@ sap.ui.define([
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
+				this.aAggregation = null;
 				this.mAggregatedQueryOptions = {};
 				this.bAggregatedQueryOptionsInitial = true;
 				this.aApplicationFilters = _Helper.toArray(vFilters);
@@ -232,8 +234,9 @@ sap.ui.define([
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
-		if ("$$aggregation" in oBindingParameters) {
-			this.updateAnalyticalInfo(oBindingParameters.$$aggregation);
+		if ("$$aggregation" in oBindingParameters) { // via c'tor only!
+			this.mQueryOptions.$apply = _Helper.buildApply(oBindingParameters.$$aggregation);
+			this.aAggregation = oBindingParameters.$$aggregation;
 		}
 
 		this.mCacheByContext = undefined;
@@ -501,30 +504,25 @@ sap.ui.define([
 	 * @param {object} mQueryOptions
 	 *   The query options
 	 * @param {sap.ui.model.Context} [oContext]
-	 *   The context instance to be used, must be undefined for absolute bindings
+	 *   The context instance to be used, must be <code>undefined</code> for absolute bindings
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
-	 *   The new cache instance
+	 *   The new cache instance, either a collection cache or an aggregation cache
 	 *
 	 * @private
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
-		var mInheritedQueryOptions;
+		var bGrouped = this.aAggregation && this.aAggregation.some(function (oAggregation) {
+				return oAggregation.grouped;
+			});
 
-		if (!Object.keys(this.mParameters).length) {
-			// mQueryOptions can contain only dynamic filter and sorter AND model options;
-			// mix-in inherited static query options
-			mInheritedQueryOptions = this.getQueryOptionsForPath("", oContext);
-			if (mQueryOptions.$orderby && mInheritedQueryOptions.$orderby) {
-				mQueryOptions.$orderby += "," + mInheritedQueryOptions.$orderby;
-			}
-			if (mQueryOptions.$filter && mInheritedQueryOptions.$filter) {
-				mQueryOptions.$filter = "(" + mQueryOptions.$filter + ") and ("
-					+ mInheritedQueryOptions.$filter + ")";
-			}
-			mQueryOptions = jQuery.extend({}, mInheritedQueryOptions, mQueryOptions);
-		}
-		return _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
-			this.oModel.bAutoExpandSelect);
+		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
+
+		// w/o grouping, $apply is sufficient; else _AggregationCache is needed
+		return bGrouped
+			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.aAggregation,
+				mQueryOptions, this.oModel.bAutoExpandSelect)
+			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
+				this.oModel.bAutoExpandSelect);
 	};
 
 	/**
@@ -1208,6 +1206,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Enhance the inherited query options by the given query options if this binding does not have
+	 * any binding parameters. If both have a '$orderby', the resulting '$orderby' is the
+	 * concatenation of both '$orderby' with the given one first. If both have a '$filter', the
+	 * resulting '$filter' is the conjunction of both '$filter'.
+	 *
+	 * @param {object} mQueryOptions
+	 *   The query options
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context instance to be used, must be <code>undefined</code> for absolute bindings
+	 * @returns {object} The merged query options
+	 *
+	 * @private
+	 */
+	ODataListBinding.prototype.inheritQueryOptions = function (mQueryOptions, oContext) {
+		var mInheritedQueryOptions;
+
+		if (!Object.keys(this.mParameters).length) {
+			// mQueryOptions can contain only dynamic filter and sorter AND model options;
+			// mix-in inherited static query options
+			mInheritedQueryOptions = this.getQueryOptionsForPath("", oContext);
+			if (mQueryOptions.$orderby && mInheritedQueryOptions.$orderby) {
+				mQueryOptions.$orderby += "," + mInheritedQueryOptions.$orderby;
+			}
+			if (mQueryOptions.$filter && mInheritedQueryOptions.$filter) {
+				mQueryOptions.$filter = "(" + mQueryOptions.$filter + ") and ("
+					+ mInheritedQueryOptions.$filter + ")";
+			}
+			mQueryOptions = jQuery.extend({}, mInheritedQueryOptions, mQueryOptions);
+		}
+
+		return mQueryOptions;
+	};
+
+	/**
 	 * Returns <code>true</code> if the length has been determined by the data returned from
 	 * server. If the length is a client side estimation <code>false</code> is returned.
 	 *
@@ -1245,7 +1277,7 @@ sap.ui.define([
 		function set(sProperty, sValue) {
 			if (sValue && (!mQueryOptions || mQueryOptions[sProperty] !== sValue)) {
 				if (!mResult) {
-					mResult = mQueryOptions ? JSON.parse(JSON.stringify(mQueryOptions)) : {};
+					mResult = mQueryOptions ? _Helper.clone(mQueryOptions) : {};
 				}
 				mResult[sProperty] = sValue;
 			}
@@ -1506,26 +1538,26 @@ sap.ui.define([
 	 * aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))" where the
 	 * "aggregate" part is only present if measures are given and both "with" and "as" are optional.
 	 *
-	 * @param {object[]} aAggregationInfos
+	 * @param {object[]} aAggregation
 	 *   An array with objects holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData Extension
 	 *   for Data Aggregation Version 4.0</a>
-	 * @param {string} aAggregationInfos[].name
+	 * @param {string} aAggregation[].name
 	 *   The name of an OData property. A property which is neither a dimension nor a measure, but
 	 *   for instance a text property or in some cases a unit property, has no further details.
-	 * @param {boolean} [aAggregationInfos[].grouped]
+	 * @param {boolean} [aAggregation[].grouped]
 	 *   Its presence is used to detect a dimension; the dimension is ignored unless at least one of
 	 *   <code>inResult</code> and <code>visible</code> is <code>true</code>
-	 * @param {boolean} [aAggregationInfos[].inResult]
+	 * @param {boolean} [aAggregation[].inResult]
 	 *   Dimensions only: see above
-	 * @param {boolean} [aAggregationInfos[].visible]
+	 * @param {boolean} [aAggregation[].visible]
 	 *   Dimensions only: see above
-	 * @param {boolean} [aAggregationInfos[].total]
+	 * @param {boolean} [aAggregation[].total]
 	 *   Its presence is used to detect a measure
-	 * @param {string} [aAggregationInfos[].with]
+	 * @param {string} [aAggregation[].with]
 	 *   Measures only: The name of the method (for example "sum") used for aggregation of this
 	 *   measure; see "3.1.2 Keyword with" (since 1.55.0)
-	 * @param {string} [aAggregationInfos[].as]
+	 * @param {string} [aAggregation[].as]
 	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
 	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
 	 * @throws {Error}
@@ -1536,37 +1568,21 @@ sap.ui.define([
 	 * @see #changeParameters
 	 * @since 1.53.0
 	 */
-	ODataListBinding.prototype.updateAnalyticalInfo = function (aAggregationInfos) {
-		var aAggregate = [],
-			aGroupBy = [],
-			aGroupByNoDimension = [];
+	ODataListBinding.prototype.updateAnalyticalInfo = function (aAggregation) {
+		aAggregation = _Helper.clone(aAggregation).filter(function (oAggregation) {
+			var bInclude = !("grouped" in oAggregation) || oAggregation.inResult
+					|| oAggregation.visible;
 
-		aAggregationInfos.forEach(function (oAggregationInfo) {
-			var sAggregate;
+			delete oAggregation.inResult;
+			delete oAggregation.visible;
 
-			if ("total" in oAggregationInfo) { // measure
-				if ("grouped" in oAggregationInfo) {
-					throw new Error("Both dimension and measure: " + oAggregationInfo.name);
-				}
-				sAggregate = oAggregationInfo.name;
-				if ("with" in oAggregationInfo) {
-					sAggregate += " with " + oAggregationInfo.with;
-				}
-				if ("as" in oAggregationInfo) {
-					sAggregate += " as " + oAggregationInfo.as;
-				}
-				aAggregate.push(sAggregate);
-			} else if ("grouped" in oAggregationInfo) { // dimension
-				if (oAggregationInfo.inResult || oAggregationInfo.visible) {
-					aGroupBy.push(oAggregationInfo.name);
-				}
-			} else {
-				aGroupByNoDimension.push(oAggregationInfo.name);
+			if (!("grouped" in oAggregation || "total" in oAggregation)) {
+				oAggregation.grouped = false;
 			}
-		});
 
-		this.changeParameters({$apply : "groupby((" + aGroupBy.concat(aGroupByNoDimension).join(",")
-			+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))")});
+			return bInclude;
+		});
+		this.changeParameters({$apply : _Helper.buildApply(aAggregation)});
 	};
 
 	return ODataListBinding;

@@ -9,6 +9,7 @@ sap.ui.require([
 	"sap/ui/core/qunit/odata/v4/_AnnotationHelperExpression.qunit",
 	"sap/ui/core/qunit/odata/v4/AnnotationHelper.qunit",
 	"sap/ui/core/qunit/odata/v4/Context.qunit",
+	"sap/ui/core/qunit/odata/v4/lib/_AggregationCache.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_Batch.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_Cache.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_Helper.qunit",
