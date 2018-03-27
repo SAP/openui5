@@ -36,6 +36,18 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * Available Scenarios
+	 *
+	 * @enum {string}
+	 */
+	sap.ui.fl.Scenario = {
+		AppVariant: "APP_VARIANT",
+		AdaptationProject: "ADAPTATION_PROJECT",
+		FioriElementsFromScratch: "FE_FROM_SCRATCH",
+		UiAdaptation: "UI_ADAPTATION"
+	};
+
 	RegistrationDelegator.registerAll();
 
 	return sap.ui.fl;
