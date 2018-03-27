@@ -1516,6 +1516,7 @@ sap.ui.define([
 		Popover.prototype._getPositionParams = function ($popover, $arrow, $content, $scrollArea) {
 			var oComputedStyle = window.getComputedStyle($popover[0]),
 				oContentComputedStyle = window.getComputedStyle($content[0]),
+				fScrollWidth = this.getDomRef().clientHeight != this.getDomRef().scrollHeight ? jQuery.sap.scrollbarSize().width : 0,
 				oPosParams = {};
 
 			oPosParams._$popover = $popover;
@@ -1539,7 +1540,7 @@ sap.ui.define([
 
 			oPosParams._fArrowHeight = $arrow.outerHeight(true);
 			oPosParams._fWidth = Popover.outerWidth($popover[0]);
-            oPosParams._fWidthInner = oPosParams._$scrollArea ? (oPosParams._$scrollArea.width() + jQuery.sap.scrollbarSize().width || 0) : 0;
+			oPosParams._fWidthInner = oPosParams._$scrollArea ? (oPosParams._$scrollArea.width() + fScrollWidth) : 0;
 			oPosParams._fHeight = Popover.outerHeight($popover[0]);
 			oPosParams._fHeaderHeight = oPosParams._$header.length > 0 ? oPosParams._$header.outerHeight(true) : 0;
 			oPosParams._fSubHeaderHeight = oPosParams._$subHeader.length > 0 ? oPosParams._$subHeader.outerHeight(true) : 0;
