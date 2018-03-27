@@ -773,19 +773,19 @@ sap.ui.define([
 
 	/*--- update Aria Label when Generic Tile change. Used while navigate using Tab Key and focus is on Generic Tile  ---*/
 
-        GenericTile.prototype._updateAriaLabel = function () {
+	GenericTile.prototype._updateAriaLabel = function () {
 
-            var sAriaText = this._getAriaText(),
-                $Tile = this.$(),
-                bIsAriaUpd = false;
-            if ($Tile.attr("aria-label") !== sAriaText) {
-                $Tile.attr("aria-label", sAriaText);
-                bIsAriaUpd = true;                  // Aria Label Updated
-            }
-            return bIsAriaUpd;
-        };
+		var sAriaText = this._getAriaText(),
+			$Tile = this.$(),
+			bIsAriaUpd = false;
+		if ($Tile.attr("aria-label") !== sAriaText) {
+			$Tile.attr("aria-label", sAriaText);
+			bIsAriaUpd = true;                  // Aria Label Updated
+		}
+		return bIsAriaUpd;
+	};
 
-        GenericTile.prototype.onkeyup = function (event) {
+	GenericTile.prototype.onkeyup = function (event) {
 		var oParams,
 			bFirePress = false,
 			sScope = this.getScope(),
@@ -811,7 +811,7 @@ sap.ui.define([
 			event.preventDefault();
 		}
 
-            this._updateAriaLabel();  // To update the Aria Label for Generic Tile on change.
+		this._updateAriaLabel();  // To update the Aria Label for Generic Tile on change.
 	};
 
 	/* --- Getters and Setters --- */
@@ -959,7 +959,9 @@ sap.ui.define([
 	 * @returns {String} The ARIA label text
 	 */
 	GenericTile.prototype._getAriaAndTooltipText = function () {
-		var sAriaText = (this.getTooltip_AsString() && !this._isTooltipSuppressed()) ? this.getTooltip_AsString() : (this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText());
+		var sAriaText = (this.getTooltip_AsString() && !this._isTooltipSuppressed())
+			? this.getTooltip_AsString()
+			: (this._getHeaderAriaAndTooltipText() + "\n" + this._getContentAriaAndTooltipText());
 		switch (this.getState()) {
 			case library.LoadState.Disabled:
 				return "";
