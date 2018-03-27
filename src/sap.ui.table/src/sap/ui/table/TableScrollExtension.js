@@ -720,7 +720,7 @@ sap.ui.define([
 				oRowContainer = this.getDomRef("sapUiTableColHdrScr");
 			}
 
-			if (oRowContainer != null && oCellInfo.columnIndex >= this.getFixedColumnCount()) {
+			if (oRowContainer != null && oCellInfo.columnIndex >= this.getComputedFixedColumnCount()) {
 				var oCell = oCellInfo.cell[0];
 				var iScrollLeft = oRowContainer.scrollLeft;
 				var iRowContainerWidth = oRowContainer.clientWidth;
@@ -1087,7 +1087,7 @@ sap.ui.define([
 		var $Table = oTable.$();
 		var iColsWidth = oTableSizes.tableCtrlScrollWidth;
 		if (Device.browser.safari) {
-			iColsWidth = Math.max(iColsWidth, oTable._getColumnsWidth(oTable.getFixedColumnCount()));
+			iColsWidth = Math.max(iColsWidth, oTable._getColumnsWidth(oTable.getComputedFixedColumnCount()));
 		}
 
 		var bHorizontalScrollbarRequired = iColsWidth > oTableSizes.tableCtrlScrWidth;

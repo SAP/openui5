@@ -1112,6 +1112,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var $table = oTable.$();
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+		assert.equal(oTable.getComputedFixedColumnCount(), 2, "Computed Fixed column count correct");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 2, "Fixed tabled has 2 Columns");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 7, "Scroll tabled has 7 Columns");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(2),
@@ -1123,6 +1124,7 @@ sap.ui.require([
 		sap.ui.getCore().applyChanges();
 		var $table = oTable.$();
 		assert.equal(oTable.getFixedColumnCount(), 2, "Fixed column count correct");
+		assert.equal(oTable.getComputedFixedColumnCount(), 2, "Computed Fixed column count correct");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlFixed .sapUiTableCtrlCol th").length, 3, "Fixed tabled has 6 Columns");
 		assert.equal($table.find(".sapUiTableCCnt .sapUiTableCtrlScroll .sapUiTableCtrlCol th").length, 6, "Scroll tabled has 3 Columns");
 		assert.equal(jQuery(oTable._getScrollExtension().getHorizontalScrollbar()).css("margin-left"), getExpectedHScrollLeftMargin(3),
@@ -1135,14 +1137,15 @@ sap.ui.require([
 
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oTable.getFixedColumnCount(), 0, "No Fixed Columns used");
-		assert.equal(oTable.getProperty("fixedColumnCount"), 3, "Orignal fixed column count is 3");
+		assert.equal(oTable.getComputedFixedColumnCount(), 0, "Computed Fixed column count correct - No Fixed Columns used");
+		assert.equal(oTable.getFixedColumnCount(), 3, "Orignal fixed column count is 3");
 
 		oTable.setWidth("500px");
 
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oTable.getFixedColumnCount(), 3, "Fixed Column Count is 3 again");
+		assert.equal(oTable.getComputedFixedColumnCount(), 3, "Computed Fixed column count correct");
 	});
 
 	QUnit.module("API assertions", {
