@@ -675,6 +675,10 @@ sap.ui.define([
 			}
 		}
 
+		if (Device.browser.msie) {
+			this.getDomRef().focus();
+		}
+
 		this._openSubMenuDelayed(oItem);
 
 	};
