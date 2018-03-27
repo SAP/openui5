@@ -45,7 +45,7 @@ sap.ui.define([
 		"sap/ui/rta/util/UrlParser",
 		"sap/ui/rta/appVariant/Feature",
 		"sap/ui/Device",
-		"sap/ui/rta/services/index"
+		"sap/ui/rta/service/index"
 	],
 	function(
 		jQuery,
@@ -1410,34 +1410,11 @@ sap.ui.define([
 	}
 
 	/**
-	 * Stops a service
-	 * @param {string} sName - Started service name
-	 */
-	RuntimeAuthoring.prototype.stopService = function (sName) {
-		var oService = this._mServices[sName];
-
-		if (oService) {
-			if (oService.status === SERVICE_STARTED) {
-				if (jQuery.isFunction(oService.service.destroy)) {
-					oService.service.destroy();
-				}
-			}
-			delete this._mServices[sName];
-		} else {
-			throw DtUtil.createError(
-				"RuntimeAuthoring#stopService",
-				DtUtil.printf("Can't destroy service: unable to find service with name '{0}'", sName),
-				"sap.ui.rta"
-			);
-		}
-	};
-
-	/**
-	 * Starts and returns a service
+	 * Starts a service
 	 * @param {string} sName - Registered service name
 	 * @return {Promise} - promise is resolved with service api or rejected in case of any error.
 	 */
-	RuntimeAuthoring.prototype.getService = function (sName) {
+	RuntimeAuthoring.prototype.startService = function (sName) {
 		var sServiceLocation = resolveServiceLocation(sName);
 		var mService;
 
@@ -1546,6 +1523,38 @@ sap.ui.define([
 				return mService.initPromise;
 			}
 		}
+	};
+
+	/**
+	 * Stops a service
+	 * @param {string} sName - Started service name
+	 */
+	RuntimeAuthoring.prototype.stopService = function (sName) {
+		var oService = this._mServices[sName];
+
+		if (oService) {
+			if (oService.status === SERVICE_STARTED) {
+				if (jQuery.isFunction(oService.service.destroy)) {
+					oService.service.destroy();
+				}
+			}
+			delete this._mServices[sName];
+		} else {
+			throw DtUtil.createError(
+				"RuntimeAuthoring#stopService",
+				DtUtil.printf("Can't destroy service: unable to find service with name '{0}'", sName),
+				"sap.ui.rta"
+			);
+		}
+	};
+
+	/**
+	 * Gets a service by name (and starts it if it's not running)
+	 * @param {string} sName - Registered service name
+	 * @return {Promise} - promise is resolved with service api or rejected in case of any error.
+	 */
+	RuntimeAuthoring.prototype.getService = function (sName) {
+		return this.startService(sName);
 	};
 
 	return RuntimeAuthoring;
