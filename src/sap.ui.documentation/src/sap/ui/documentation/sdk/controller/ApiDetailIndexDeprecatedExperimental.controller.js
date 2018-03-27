@@ -12,7 +12,7 @@ sap.ui.define([
 	], function (jQuery, BaseController, JSONModel, JSDocUtil, APIInfo) {
 		"use strict";
 
-		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetailDeprecatedExperimental", {
+		return BaseController.extend("sap.ui.documentation.sdk.controller.ApiDetailIndexDeprecatedExperimental", {
 
 			/* =========================================================== */
 			/* lifecycle methods										   */
@@ -21,9 +21,11 @@ sap.ui.define([
 			onInit: function () {
 				this.setModel(new JSONModel(), "deprecatedAPIs");
 				this.setModel(new JSONModel(), "experimentalAPIs");
+				this.setModel(new JSONModel(), "sinceAPIs");
 
 				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicDeprecatedMatched, this);
 				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicExperimentalMatched, this);
+				this.getRouter().getRoute("since").attachPatternMatched(this._onTopicSinceMatched, this);
 
 				this._currentMedia = this.getView()._getCurrentMediaContainerRange();
 
@@ -69,6 +71,24 @@ sap.ui.define([
 
 				APIInfo.getExperimentalPromise().then(function (oData) {
 					this.getModel("experimentalAPIs").setData(oData);
+					jQuery.sap.delayedCall(0, this, this._prettify);
+				}.bind(this));
+			},
+
+			_onTopicSinceMatched: function (oEvent) {
+				if (this._hasMatched) {
+					return;
+				}
+
+				this._hasMatched = true;
+
+				this.getView().byId("sinceList").attachUpdateFinished(this._modifyLinks, this);
+
+				APIInfo.getSincePromise().then(function (oData) {
+					if (!oData['noVersion'].apis.length) {
+						delete oData['noVersion'];
+					}
+					this.getModel("sinceAPIs").setData(oData);
 					jQuery.sap.delayedCall(0, this, this._prettify);
 				}.bind(this));
 			},

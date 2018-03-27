@@ -227,7 +227,7 @@ sap.ui.define([
 				var treeModel = this.getModel("treeData");
 				treeModel.setSizeLimit(iTreeModelLimit);
 
-				// Inject Deprecated and Experimental links
+				// Inject Deprecated, Experimental and Since links
 				if (aTreeContent.length > 0) {
 					aTreeContent.push({
 						isSelected: false,
@@ -239,6 +239,11 @@ sap.ui.define([
 						name : "deprecated",
 						ref: "#/api/deprecated",
 						text: "Deprecated APIs"
+					}, {
+						isSelected: false,
+						name : "since",
+						ref: "#/api/since",
+						text: "Index by Version"
 					});
 				}
 
