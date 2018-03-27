@@ -467,7 +467,7 @@ sap.ui.define([
 		/**
 		 * Returns the properties that have been selected for the given path.
 		 *
-		 * @param {object} mQueryOptions
+		 * @param {object} [mQueryOptions]
 		 *   A map of query options as returned by
 		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
 		 * @param {string} sPath
