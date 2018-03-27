@@ -933,6 +933,16 @@
 		assert.strictEqual(oHeaderSpy.callCount, 1, "ObjectPageHeader _toggleFocusableState is called");
 	});
 
+	QUnit.test("Should copy _headerContent hidden aggregation to the ObjectPage clone", function (assert) {
+		var oObjectPage = this.oSampleView.byId("objectPage13"),
+			oObjectPageClone = oObjectPage.clone(),
+			oHeaderContent = oObjectPage.getHeaderContent(),
+			oHeaderContentClone = oObjectPageClone.getHeaderContent();
+
+		assert.strictEqual(oHeaderContentClone !== null, true, "HeaderContent aggregation should exist in the clone");
+		assert.strictEqual(oHeaderContent.length, oHeaderContentClone.length, "HeaderContent and it's clone should have the same nubmer of elements");
+	});
+
 	QUnit.module("ObjectPage API", {
 		beforeEach: function () {
 			this.appControl = new sap.m.App();
