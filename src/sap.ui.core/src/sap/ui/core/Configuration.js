@@ -834,6 +834,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 				case "A":
 				case "B":
 					return CalendarType.Islamic;
+				case "C":
+					return CalendarType.Persian;
 				case "7":
 				case "8":
 				case "9":
@@ -1511,7 +1513,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		"9": {pattern: "Gyy-MM-dd"},
 		"A": {pattern: "yyyy/MM/dd"},
 		"B": {pattern: "yyyy/MM/dd"},
-		"C": {pattern: "yyyy/MM/dd", ignore:true}
+		"C": {pattern: "yyyy/MM/dd"}
 	};
 
 	var M_ABAP_TIME_FORMAT_PATTERN = {
@@ -1776,10 +1778,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 * specific parts of the UI. See the documentation of {@link sap.ui.core.Configuration#setLanguage}
 		 * for details and restrictions.
 		 *
-		 * Note: Iranian date format 'C' is NOT yet supported by UI5. It's accepted by this method for convenience
-		 * (user settings from ABAP system can be used without filtering), but it's ignored. Instead, the formats
-		 * from the current format locale will be used and a warning will be logged.
-		 *
 		 * @param {string} sFormatId id of the ABAP data format (one of '1','2','3','4','5','6','7','8','9','A','B','C')
 		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
 		 * @public
@@ -1787,10 +1785,6 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		setLegacyDateFormat : function(sFormatId) {
 			sFormatId = sFormatId ? String(sFormatId).toUpperCase() : "";
 			check(!sFormatId || M_ABAP_DATE_FORMAT_PATTERN.hasOwnProperty(sFormatId), "sFormatId must be one of ['1','2','3','4','5','6','7','8','9','A','B','C'] or empty");
-			if ( M_ABAP_DATE_FORMAT_PATTERN[sFormatId].ignore ) {
-				jQuery.sap.log.warning("The ABAP date format '" + sFormatId + "' (" + M_ABAP_DATE_FORMAT_PATTERN[sFormatId].pattern + ") is not supported yet. Falling back to locale specific date formats.");
-				sFormatId = "";
-			}
 			var mChanges = this.oConfiguration._collect();
 			this.sLegacyDateFormat = mChanges.legacyDateFormat = sFormatId;
 			this.setDatePattern("short", M_ABAP_DATE_FORMAT_PATTERN[sFormatId].pattern);
