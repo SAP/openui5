@@ -12,9 +12,8 @@
 		<l:contentAreas>
 			<Page class="sapUiSupportToolIssuesPage">
 				<customHeader>
-					<Toolbar id="filtersBar" height="{/filterBarHeight}">
-						<l:VerticalLayout width="100%">
-							<tnt:ToolHeader id="toolHeader" class="sapUiSupportToolIssueHeader" height="4rem">
+					<Toolbar id="filtersBar" height="{/filterBarHeight}" class="sapUiSupportToolToolbar">
+							<tnt:ToolHeader id="toolHeader" class="sapUiSupportToolIssueHeader" height="4rem"  width="100%">
 								<l:VerticalLayout>
 									<l:layoutData>
 										<OverflowToolbarLayoutData priority="Low" />
@@ -62,22 +61,20 @@
 									<Button icon="sap-icon://clear-filter"  press="clearFiltersAndElementSelection"></Button>
 								</l:VerticalLayout>
 								<ToolbarSpacer />
-								<tnt:ToolHeaderUtilitySeparator />
-								<l:VerticalLayout>
-									<Label text="" class="customMargin" />
-									<MenuButton text="Report" icon="sap-icon://order-status" visible="{= ${/analyzePressed}}">
-										<menu>
-											<Menu itemSelected="onReportPress">
-												<items>
-													<MenuItem text="View" press="onViewReport"/>
-													<MenuItem text="Download" press="onDownloadReport"/>
-												</items>
-											</Menu>
-										</menu>
-									</MenuButton>
-								</l:VerticalLayout>
 							</tnt:ToolHeader>
-						</l:VerticalLayout>
+							<l:VerticalLayout>
+								<Label text="" class="customMargin" />
+								<MenuButton id='ReportMenuButton' text="Report" icon="sap-icon://order-status" visible="{= ${/analyzePressed}}">
+											<menu>
+												<Menu itemSelected="onReportPress">
+													<items>
+														<MenuItem text="View" press="onViewReport"/>
+														<MenuItem text="Download" press="onDownloadReport"/>
+													</items>
+												</Menu>
+											</menu>
+								</MenuButton>
+							</l:VerticalLayout>
 					</Toolbar>
 				</customHeader>
 				<subHeader>
