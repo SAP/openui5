@@ -6,12 +6,14 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/dt/DesignTimeMetadata',
-	'sap/ui/dt/AggregationDesignTimeMetadata'
+	'sap/ui/dt/AggregationDesignTimeMetadata',
+	'sap/ui/dt/ElementUtil'
 ],
 function(
 	jQuery,
 	DesignTimeMetadata,
-	AggregationDesignTimeMetadata
+	AggregationDesignTimeMetadata,
+	ElementUtil
 ) {
 	"use strict";
 
@@ -219,6 +221,17 @@ function(
 	 */
 	ElementDesignTimeMetadata.prototype.getScrollContainers = function() {
 		return this.getData().scrollContainers || [];
+	};
+
+	/**
+	 * Returns "label" from element designtime metadata or present in a metadata property
+	 * @param {sap.ui.core.Element} oElement element for which label has to retrieved
+	 *
+	 * @return {string|undefined} Returns the label as string or undefined
+	 * @public
+	 */
+	ElementDesignTimeMetadata.prototype.getLabel = function(oElement) {
+		return DesignTimeMetadata.prototype.getLabel.apply(this, arguments) || ElementUtil.getLabelForElement(oElement);
 	};
 
 	return ElementDesignTimeMetadata;

@@ -83,47 +83,6 @@ function(
 	QUnit.module("Given that a SmartForm with OData Binding is given...", {
 	});
 
-	QUnit.test("when getLabelForElement is called with a function", function(assert) {
-		var oPlainObject =  {};
-		var fnFunction = function() {return "functionReturn";};
-		assert.equal(Utils.getLabelForElement(oPlainObject, fnFunction), "functionReturn", "then it executes the function");
-	});
-
-	QUnit.test("when getLabelForElement is called with a label", function(assert) {
-		var oPlainObject = new Label("id", {text: "label"});
-		assert.equal(Utils.getLabelForElement(oPlainObject), "label", "then it returns the label (getText())");
-	});
-
-	QUnit.test("when getLabelForElement is called with a Button", function(assert) {
-		var oButton = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.BoundButton");
-		assert.equal(Utils.getLabelForElement(oButton), "One-Bound-Field", "then it returns the label (getLabelText())");
-	});
-
-	QUnit.test("when getLabelForElement is called with a Group", function(assert) {
-		var oGroupElement = sap.ui.getCore().byId("__group0");
-		assert.equal(Utils.getLabelForElement(oGroupElement), "Group without stable Id", "then it returns the label (getLabel())");
-	});
-
-	QUnit.test("when getLabelForElement is called with a SimpleForm", function(assert) {
-		var oSimpleForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
-		assert.equal(Utils.getLabelForElement(oSimpleForm), "SimpleForm with titles", "then it returns the label (getTitle())");
-	});
-
-	QUnit.test("when getLabelForElement is called with a Label without text property set", function(assert) {
-		var oPlainObject =  new Label("labelId");
-		assert.equal(Utils.getLabelForElement(oPlainObject), "labelId", "then it returns the Id (getId())");
-	});
-
-	QUnit.test("when getLabelForElement is called with a form element (withouth getLabelText) with Label as control", function(assert) {
-		var oFormElementWithLabel =  new FormElement({ label : new Label({text: "label"})});
-		assert.equal(Utils.getLabelForElement(oFormElementWithLabel), "label", "then it returns the labels text (getLabel().getText())");
-	});
-
-	QUnit.test("when getLabelForElement is called with a component that does not behave like a label", function(assert) {
-		var oPlainObject =  {};
-		assert.ok(Utils.getLabelForElement(oPlainObject) === undefined, "then it returns undefined");
-	});
-
 	QUnit.test("when getBoundEntityType is called for ", function(assert) {
 		//ensure core init with its first rendering is done
 		var done = assert.async();

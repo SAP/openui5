@@ -216,8 +216,8 @@
 		var mAction = mData.action;
 		return {
 			selected : false,
-			label : RtaUtils.getLabelForElement(oElement, mAction.getLabel),
-			tooltip : oElement.quickInfoFromOData || oElement.name || RtaUtils.getLabelForElement(oElement, mAction.getLabel),
+			label : ElementUtil.getLabelForElement(oElement, mAction.getLabel),
+			tooltip : oElement.quickInfoFromOData || oElement.name || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
 			referencedComplexPropertyName: oElement.referencedComplexPropertyName ? oElement.referencedComplexPropertyName : "",
 			duplicateComplexName: oElement.duplicateComplexName ? oElement.duplicateComplexName : false,
 			bindingPaths: oElement.bindingPaths,
@@ -479,7 +479,7 @@
 						if (_getBindingPath(oElement, sAggregationName) === _getBindingPath(oInvisibleElement, sAggregationName)) {
 							//TODO fix with stashed type support
 							oInvisibleElement = _collectBindingPaths(oInvisibleElement, oModel);
-							oInvisibleElement.fieldLabel = RtaUtils.getLabelForElement(oInvisibleElement, mAction.getLabel);
+							oInvisibleElement.fieldLabel = ElementUtil.getLabelForElement(oInvisibleElement, mAction.getLabel);
 							oInvisibleElement.duplicateComplexName = _checkForDuplicateLabels(oInvisibleElement, aODataProperties);
 
 							//Add information from the oDataProperty to the InvisibleProperty if available;

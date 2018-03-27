@@ -11,6 +11,8 @@ sap.ui.require([
 	"sap/m/Label",
 	"sap/m/IconTabFilter",
 	"sap/m/IconTabBar",
+	"sap/m/InputListItem",
+	"sap/m/ObjectAttribute",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/layout/HorizontalLayout",
 	"sap/ui/layout/form/Form",
@@ -19,6 +21,7 @@ sap.ui.require([
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
+	"sap/ui/dt/Util",
 	"sap/ui/thirdparty/sinon"
 	],
 function(
@@ -30,6 +33,8 @@ function(
 	Label,
 	IconTabFilter,
 	IconTabBar,
+	InputListItem,
+	ObjectAttribute,
 	VerticalLayout,
 	HorizontalLayout,
 	Form,
@@ -38,6 +43,7 @@ function(
 	Component,
 	ComponentContainer,
 	Element,
+	DtUtil,
 	sinon
 ) {
 	"use strict";
@@ -164,7 +170,6 @@ function(
 	var fnDestroyCustomControl = function(){
 		this.oCustomControl.destroy();
 	};
-
 
 	QUnit.module("hasInterface()", {
 		beforeEach : function() {
@@ -701,8 +706,80 @@ function(
 		});
 	});
 
-	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
+	QUnit.module("Given getLabelForElement()", {
+		beforeEach : function() {
+		},
+		afterEach : function() {
+			if (this.oLabelControl) {
+				this.oLabelControl.destroy();
+			}
+		}
+	}, function() {
+		QUnit.test("when getLabelForElement is called with a function", function (assert) {
+			var fnFunction = function (oElement) {
+				return oElement.getId();
+			};
+			var oButton = new Button("testButton");
+			assert.equal(ElementUtil.getLabelForElement(oButton, fnFunction), "testButton", "then it executes the function with the desired return value");
+			oButton.destroy();
+		});
+
+		QUnit.test("when getLabelForElement is called with a label", function (assert) {
+			this.oLabelControl = new Label("id", {
+				text: "label"
+			});
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the label (getText())");
+		});
+
+		QUnit.test("when getLabelForElement is called with a Button", function (assert) {
+			this.oLabelControl = new Button("id", {
+				text: "Button text"
+			});
+			this.oLabelControl.getLabelText = function(){
+				return this.getText();
+			};
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Button text", "then it returns the label (getLabelText())");
+		});
+
+		QUnit.test("when getLabelForElement is called with a Group", function (assert) {
+			this.oLabelControl = new InputListItem("id", {
+				label: "Input list item label"
+			});
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Input list item label", "then it returns the label (getLabel())");
+		});
+
+		QUnit.test("when getLabelForElement is called with a SimpleForm", function (assert) {
+			this.oLabelControl = new ObjectAttribute("id", {
+				title: "Object attribute title"
+			});
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Object attribute title", "then it returns the label (getTitle())");
+		});
+
+		QUnit.test("when getLabelForElement is called with a Label without text property set", function (assert) {
+			this.oLabelControl = new Label("id");
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "id", "then it returns the Id (getId())");
+		});
+
+		QUnit.test("when getLabelForElement is called with a form element (withouth getLabelText) with Label as control", function (assert) {
+			this.oLabelControl = new FormElement("id", {
+				label: new Label({
+					text: "label"
+				})
+			});
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the labels text (getLabel().getText())");
+		});
+
+		QUnit.test("when getLabelForElement is called with a component that does not behave like a label", function (assert) {
+			assert.throws(
+				ElementUtil.getLabelForElement.bind(null, {}),
+				DtUtil.createError("ElementUtil#getLabelForElement", "A valid element instance should be passed as parameter", "sap.ui.dt"),
+				"then the correct error is thrown"
+			);
+		});
+
+		QUnit.done(function () {
+			jQuery("#qunit-fixture").hide();
+		});
 	});
 
 });

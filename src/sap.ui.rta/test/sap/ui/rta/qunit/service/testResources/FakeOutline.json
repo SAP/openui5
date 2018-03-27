@@ -1,0 +1,226 @@
+[{
+	"id": "mainPage",
+	"displayName": "mainPage",
+	"className": "Page",
+	"classType": "sap.m.Page",
+	"editable": true,
+	"icon": "sap/m/designtime/Page.icon.svg",
+	"type": "element",
+	"children": [{
+		"id": "mainPage",
+		"displayName": "content",
+		"className": "Page",
+		"classType": "sap.m.Page",
+		"editable": false,
+		"icon": "",
+		"type": "aggregation",
+		"children": [{
+			"id": "objPage",
+			"displayName": "objPage",
+			"className": "ObjectPageLayout",
+			"classType": "sap.uxap.ObjectPageLayout",
+			"editable": true,
+			"icon": "",
+			"type": "element",
+			"children": [{
+				"id": "objPage",
+				"displayName": "sections",
+				"className": "ObjectPageLayout",
+				"classType": "sap.uxap.ObjectPageLayout",
+				"editable": false,
+				"icon": "",
+				"type": "aggregation",
+				"children": [{
+					"id": "objSection",
+					"displayName": "objSection",
+					"className": "ObjectPageSection",
+					"classType": "sap.uxap.ObjectPageSection",
+					"editable": true,
+					"icon": "sap/uxap/designtime/ObjectPageSection.icon.svg",
+					"type": "element",
+					"children": [{
+						"id": "objSection",
+						"displayName": "customAnchorBarButton",
+						"className": "ObjectPageSection",
+						"classType": "sap.uxap.ObjectPageSection",
+						"editable": false,
+						"icon": "",
+						"type": "aggregation"
+					}, {
+						"id": "objSection",
+						"displayName": "subSections",
+						"className": "ObjectPageSection",
+						"classType": "sap.uxap.ObjectPageSection",
+						"editable": false,
+						"icon": "",
+						"type": "aggregation",
+						"children": [{
+							"id": "objSubSection",
+							"displayName": "objSubSection",
+							"className": "ObjectPageSubSection",
+							"classType": "sap.uxap.ObjectPageSubSection",
+							"editable": true,
+							"icon": "sap/uxap/designtime/ObjectPageSubSection.icon.svg",
+							"type": "element",
+							"children": [{
+								"id": "objSubSection",
+								"displayName": "customAnchorBarButton",
+								"className": "ObjectPageSubSection",
+								"classType": "sap.uxap.ObjectPageSubSection",
+								"editable": false,
+								"icon": "",
+								"type": "aggregation"
+							}, {
+								"id": "objSubSection",
+								"displayName": "blocks",
+								"className": "ObjectPageSubSection",
+								"classType": "sap.uxap.ObjectPageSubSection",
+								"editable": false,
+								"icon": "",
+								"type": "aggregation",
+								"children": [{
+									"id": "layout1",
+									"displayName": "Vertical Layout Label",
+									"className": "VerticalLayout",
+									"classType": "sap.ui.layout.VerticalLayout",
+									"editable": true,
+									"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+									"type": "element",
+									"children": [{
+										"id": "layout1",
+										"displayName": "content",
+										"className": "VerticalLayout",
+										"classType": "sap.ui.layout.VerticalLayout",
+										"editable": false,
+										"icon": "",
+										"type": "aggregation",
+										"children": [{
+											"id": "button1",
+											"displayName": "button1",
+											"className": "Button",
+											"classType": "sap.m.Button",
+											"editable": true,
+											"icon": "sap/m/designtime/Button.icon.svg",
+											"type": "element"
+										}
+										]
+									}
+									]
+								}
+								]
+							}, {
+								"id": "objSubSection",
+								"displayName": "moreBlocks",
+								"className": "ObjectPageSubSection",
+								"classType": "sap.uxap.ObjectPageSubSection",
+								"editable": false,
+								"icon": "",
+								"type": "aggregation"
+							}, {
+								"id": "objSubSection",
+								"displayName": "actions",
+								"className": "ObjectPageSubSection",
+								"classType": "sap.uxap.ObjectPageSubSection",
+								"editable": false,
+								"icon": "",
+								"type": "aggregation"
+							}
+							]
+						}
+						]
+					}
+					]
+				}
+				]
+			}, {
+				"id": "objPage",
+				"displayName": "headerTitle",
+				"className": "ObjectPageLayout",
+				"classType": "sap.uxap.ObjectPageLayout",
+				"editable": false,
+				"icon": "",
+				"type": "aggregation"
+			}, {
+				"id": "objPage",
+				"displayName": "headerContent",
+				"className": "ObjectPageLayout",
+				"classType": "sap.uxap.ObjectPageLayout",
+				"editable": false,
+				"icon": "",
+				"type": "aggregation"
+			}, {
+				"id": "objPage",
+				"displayName": "footer",
+				"className": "ObjectPageLayout",
+				"classType": "sap.uxap.ObjectPageLayout",
+				"editable": false,
+				"icon": "",
+				"type": "aggregation"
+			}
+			]
+		}
+		]
+	}, {
+		"id": "mainPage",
+		"displayName": "customHeader",
+		"className": "Page",
+		"classType": "sap.m.Page",
+		"editable": false,
+		"icon": "",
+		"type": "aggregation"
+	}, {
+		"id": "mainPage",
+		"displayName": "footer",
+		"className": "Page",
+		"classType": "sap.m.Page",
+		"editable": false,
+		"icon": "",
+		"type": "aggregation"
+	}, {
+		"id": "mainPage",
+		"displayName": "subHeader",
+		"className": "Page",
+		"classType": "sap.m.Page",
+		"editable": false,
+		"icon": "",
+		"type": "aggregation"
+	}, {
+		"id": "mainPage",
+		"displayName": "headerContent",
+		"className": "Page",
+		"classType": "sap.m.Page",
+		"editable": false,
+		"icon": "",
+		"type": "aggregation"
+	}
+	]
+}, {
+	"id": "layout2",
+	"displayName": "layout2",
+	"className": "VerticalLayout",
+	"classType": "sap.ui.layout.VerticalLayout",
+	"editable": true,
+	"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+	"type": "element",
+	"children": [{
+		"id": "layout2",
+		"displayName": "content",
+		"className": "VerticalLayout",
+		"classType": "sap.ui.layout.VerticalLayout",
+		"editable": false,
+		"icon": "",
+		"type": "aggregation",
+		"children": [{
+			"id": "button2",
+			"displayName": "button2",
+			"className": "Button",
+			"classType": "sap.m.Button",
+			"editable": true,
+			"icon": "sap/m/designtime/Button.icon.svg",
+			"type": "element"
+		}
+		]
+	}
+	]
+}
+]
