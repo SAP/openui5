@@ -962,7 +962,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			}
 		},
 		"E": {
-			name: "dayNameInWeek",
+			name: "dayNameInWeek", //Day of week name, format style.
 			format: function(oField, oDate, bUTC, oFormat) {
 				var iDay = bUTC ? oDate.getUTCDay() : oDate.getDay();
 				if (oField.digits < 4) {
@@ -982,8 +982,15 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					var aVariants = aDaysVariants[i];
 					var oFound = oParseHelper.findEntry(sValue, aVariants);
 					if (oFound.index !== -1) {
+						var iFirstDayOfWeek = oFormat.oLocaleData.getFirstDayOfWeek();
+						var iDayNumberOfWeek = oFound.index - (iFirstDayOfWeek - 1);
+
+						if (iDayNumberOfWeek <= 0) {
+							iDayNumberOfWeek += 7;
+						}
 						return {
-							day: oFound.index,
+							// gets translated to dayNumberOfWeek as the day of week is relative to the week
+							dayNumberOfWeek: iDayNumberOfWeek,
 							length: oFound.value.length
 						};
 					}
