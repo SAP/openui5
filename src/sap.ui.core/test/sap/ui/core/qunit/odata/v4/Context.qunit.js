@@ -725,17 +725,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh", function (assert) {
-		var oBinding = {
+	QUnit.test("refresh allow removal", function (assert) {
+		var bAllowRemoval = {/*false, true, undefined*/},
+			oBinding = {
 				refreshSingle : function () {}
 			},
 			oContext = Context.create({}, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oBinding).expects("refreshSingle")
-			.withExactArgs(sinon.match.same(oContext), "myGroup");
+			.withExactArgs(sinon.match.same(oContext), "myGroup",
+				sinon.match.same(bAllowRemoval));
 
 		// code under test
-		oContext.refresh("myGroup");
+		oContext.refresh("myGroup", bAllowRemoval);
 	});
 
 	//*********************************************************************************************

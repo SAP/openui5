@@ -1167,7 +1167,7 @@ sap.ui.define([
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which which resolves with <code>undefined</code> when the entity is updated in
+	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
 	 *   the cache.
 	 *
 	 * @public
@@ -1182,7 +1182,7 @@ sap.ui.define([
 		// drop collection related system query options
 		delete mQueryOptions["$count"];
 		delete mQueryOptions["$filter"];
-		delete mQueryOptions["$sort"];
+		delete mQueryOptions["$orderby"];
 		sReadUrl += this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
 			this.bSortExpandSelect);
 
@@ -1200,6 +1200,84 @@ sap.ui.define([
 
 		this.bSentReadRequest = true;
 		return oPromise;
+	};
+
+	/**
+	 * Refreshes a single entity within a collection cache and removes it from the cache if the
+	 * filter does not match anymore.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {number} iIndex
+	 *   The index of the element to be refreshed
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
+	 * @param {function} [fnOnRemove]
+	 *   A function which is called after an entity does not match the binding's filter anymore,
+	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
+	 *   the cache.
+	 *
+	 * @private
+	 */
+	CollectionCache.prototype.refreshSingleWithRemove = function (sGroupId, iIndex, fnDataRequested,
+			fnOnRemove) {
+		var that = this;
+
+		return this.fetchTypes().then(function (mTypeForMetaPath) {
+			var sKey,
+				aKeyFilters = [],
+				oEntity = that.aElements[iIndex],
+				mKeyProperties = _Helper.getKeyProperties(oEntity,
+					"/" + that.sResourcePath, mTypeForMetaPath),
+				sPredicate = oEntity["@$ui5._.predicate"],
+				mQueryOptions = jQuery.extend({}, that.mQueryOptions),
+				sFilterOptions = mQueryOptions["$filter"],
+				sReadUrl = that.sResourcePath;
+
+			for (sKey in mKeyProperties) {
+				aKeyFilters.push(sKey + " eq " + mKeyProperties[sKey]);
+			}
+
+			mQueryOptions["$filter"] = (sFilterOptions ? "(" + sFilterOptions + ") and " : "")
+				+ aKeyFilters.join(" and ");
+
+			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
+				that.bSortExpandSelect);
+
+			that.bSentReadRequest = true;
+			return that.oRequestor
+				.request("GET", sReadUrl, sGroupId, undefined, undefined, fnDataRequested)
+				.then(function (oResult) {
+					if (that.aElements[iIndex] !== oEntity) {
+						// oEntity might have moved due to parallel insert/delete
+						iIndex = that.aElements.indexOf(oEntity);
+					}
+					if (oResult.value.length > 1) {
+						throw new Error(
+							"Unexpected server response, more than one entity returned.");
+					} else if (oResult.value.length === 0) {
+						if (iIndex === -1) {
+							delete that.aElements[-1];
+						} else {
+							that.aElements.splice(iIndex, 1);
+						}
+						delete that.aElements.$byPredicate[sPredicate];
+						addToCount(that.mChangeListeners, "", that.aElements, -1);
+						that.iLimit -= 1;
+						fnOnRemove(iIndex);
+					} else {
+						oResult = oResult.value[0];
+						// _Helper.updateCache cannot be used because navigation properties cannot
+						// be handled
+						that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oResult;
+						that.calculateKeyPredicates(oResult, mTypeForMetaPath);
+						Cache.computeCount(oResult);
+					}
+				});
+		});
 	};
 
 	//*********************************************************************************************

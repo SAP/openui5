@@ -929,6 +929,79 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Refresh single row after it has been updated with a value which doesn't match the table's
+	// filter anymore. In this case we expect the single row to disappear.
+	QUnit.test("Context#refresh(undefined, true)", function (assert) {
+		var sView = '\
+<Table id="table"\
+		items="{\
+			path : \'/EMPLOYEES\',\
+			filters: {path: \'AGE\', operator: \'GT\', value1: \'42\'},\
+			sorter : {path : \'AGE\'},\
+			parameters : {foo : \'bar\'}\
+		}">\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+		<Text id="age" text="{AGE}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE&$filter=AGE%20gt%2042"
+				+ "&$select=AGE,ID,Name&$skip=0&$top=100", {
+				"value" : [
+					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
+					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
+					{"ID" : "2", "Name" : "Peter Burke", "AGE" : 77}]})
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
+			.expectChange("age", ["70", "50", "77"]);
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+			.then(function () {
+				that.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('0')?foo=bar",
+						headers : {},
+						payload : {
+							"AGE" : 10
+						}
+					}, {"AGE" : 10})
+					.expectChange("age", "10", 0);
+
+				that.oView.byId("table").getItems()[0].getCells()[1].getBinding("text")
+					.setValue(10);
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+				that.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE"
+						+ "&$filter=(AGE%20gt%2042)%20and%20ID%20eq%20'0'"
+						+ "&$select=AGE,ID,Name", {"value" : []})
+					.expectChange("text", ["Jonathan Smith", "Peter Burke"])
+					.expectChange("text", ["Jonathan Smith"]) //TODO unexpected change
+					.expectChange("age", ["50", "77"])
+					.expectChange("age", ["50"]); //TODO unexpected change
+
+				// code under test
+				oContext.refresh(undefined, true);
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+				that.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE"
+						+ "&$filter=(AGE%20gt%2042)%20and%20ID%20eq%20'1'"
+						+ "&$select=AGE,ID,Name", {
+						"value" : [{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 51}]})
+					.expectChange("age", "51", 0);
+
+				// code under test
+				oContext.refresh(undefined, true);
+
+				return that.waitForChanges(assert);
+			});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Sort a list and select a list entry to see details
 	// See SalesOrders application:
 	// * Start the application with realOData=true so that sorting by "Gross Amount" is enabled
