@@ -6,14 +6,14 @@
 	<script id="sap-ui-bootstrap" src='../../../../../../resources/sap-ui-core.js'></script>
 </head>
 <body>
-<script language="javascript">
+<script>
 	function suite() {
 		var suite = new top.jsUnitTestSuite();
         var contextPath = "/" + window.location.pathname.split("/")[1];
 
-        suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/ApiDetailDeprecatedExperimentalController.qunit.html");
+        suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/ApiDetailIndexDeprecatedExperimentalController.qunit.html");
         suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/ApiMasterController.qunit.html");
-        suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/Forwarding.qunit.html");
+        //suite.addTestPage(contextPath + "/test-resources/sap/ui/documentation/sdk/qunit/Forwarding.qunit.html");
 
 		return suite;
 	}
