@@ -482,7 +482,7 @@ sap.ui.define(["jquery.sap.global"],
 
 			if (target.nodeName === "ARROW") {
 				this._toggleCollapse(target);
-			} else {
+			} else if (jQuery(event.srcElement).hasClass("showNumbOfIssues")){
 				this._selectTreeElement(target, true);
 			}
 		};

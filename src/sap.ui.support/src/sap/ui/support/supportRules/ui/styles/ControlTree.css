@@ -268,11 +268,6 @@ control-tree .showNumbOfIssues {
 	cursor: pointer;
 }
 
-control-tree .showNumbOfIssues:hover,
-control-tree .showNumbOfIssues::selection {
-	color: white;
-}
-
 control-tree .hideNumbOfIssues {
 	display: none;
 }
