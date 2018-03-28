@@ -17,7 +17,7 @@
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner:not(.sapMBtnText) {
 	padding-right: 1.4375rem;
 }
-	
+
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner::after {
 	position: absolute;
 	top: 0;
@@ -58,11 +58,6 @@
 	}
 }
 
-//type Default, Transparent(header)
-.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnActive::after {
-	color: @sapUiButtonActiveTextColor;
-}
-
 //type Emphasized
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnEmphasized::after {
 	color: @sapUiButtonEmphasizedTextColor;
@@ -82,6 +77,11 @@
 //type Reject
 .sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnReject::after {
 	color: @sapUiButtonRejectTextColor;
+}
+
+//type Default, Transparent(header)
+.sapMMenuBtn.sapMMenuBtnRegular .sapMBtnInner.sapMBtnActive::after {
+  color: @sapUiButtonActiveTextColor;
 }
 
 //Transparent(footer)

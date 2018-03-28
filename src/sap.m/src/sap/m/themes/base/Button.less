@@ -203,7 +203,12 @@ html[data-sap-ui-browser*='ie'] .sapMBtnContentWithIcon {
 		margin-right:     0.4375rem;
 	}
 	.sapMBtnIconLeft + .sapMBtnIconLeft {
+		left: 0;
+	}
+	.sapMBtnText {
+	  .sapMBtnIconLeft + .sapMBtnIconLeft {
 		left: 1.875rem;
+	  }
 	}
 	.sapMBtnInner > img {
 		height:           1.500rem;
@@ -494,7 +499,6 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 }
 
 .sapMIBar-CTX .sapMBtnTransparent:not(.sapMBtnDisabled):not(.sapMToggleBtnPressed) {
-	color:            @sapUiButtonLiteTextColor;
 	text-shadow:      none;
 	border-color:     @sapUiButtonLiteBorderColor;
 }
@@ -533,16 +537,6 @@ html.sap-desktop .sapMFooter-CTX .sapMBtnInner :not(.sapMBtnDisabled) {
 
 .sapMTB-Transparent-CTX .sapMBtn:not(.sapMBtnDisabled) > .sapMBtnInner:not(.sapMToggleBtnPressed):not(.sapMBtnEmphasized):not(.sapMBtnAccept):not(.sapMBtnReject):not(.sapMBtnGhost):not(.sapMBtnActive):hover {
 	background: @sapUiButtonLiteHoverBackground;
-}
-
-/* overwrite list's default active state color */
-.sapMLIBActive span.sapMBtnInner {
-	color: @sapUiButtonTextColor;
-}
-
-/* overwrite the sapContrast rule for button in an active state list */
-.sapMLIBActive .sapContrast span.sapMBtnInner {
-	color: @sapUiButtonLiteTextColor;
 }
 
 /* ------------------------------------------------ */
