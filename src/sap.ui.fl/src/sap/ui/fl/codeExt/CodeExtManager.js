@@ -20,7 +20,7 @@ sap.ui.define([
 
 	CodeExtManager = {
 
-		_oLrepConnector: new LrepConnector(),
+		_oLrepConnector: LrepConnector.createConnector(),
 
 		/**
 		 * @param {string} oPropertyBag.id - change Id if not present it will be generated
