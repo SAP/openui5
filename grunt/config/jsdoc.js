@@ -25,7 +25,7 @@ module.exports = function(grunt, config) {
 			return;
 		}
 
-		const srcPath = path.join(library.path, 'src');
+		const srcPath = library.src;
 		const libraryPath = library.name.replace(/\./g,"/");
 		const apiJsonFolder = path.join(targetPathSDK, 'test-resources');
 		const apiJsonFile = path.join(targetPathSDK, 'test-resources', libraryPath, 'designtime/api.json');
@@ -35,7 +35,7 @@ module.exports = function(grunt, config) {
 		// create jsdoc configuration from template (grunt-jsdoc doesn't support the necessary configuration options)
 		const jsdocConfig = JSON.parse(JSON.stringify(jsdocConfigTemplate));
 		if ( library.jsdoc && Array.isArray(library.jsdoc.exclude) ) {
-			jsdocConfig.source.exclude = library.jsdoc.exclude.map( exclude => path.join(library.path, 'src', exclude) );
+			jsdocConfig.source.exclude = library.jsdoc.exclude.map( exclude => path.join(library.src, exclude) );
 		}
 		jsdocConfig.templates[UI5_TEMPLATE_NAME].version = version;
 		jsdocConfig.templates[UI5_TEMPLATE_NAME].apiJsonFolder = apiJsonFolder;
