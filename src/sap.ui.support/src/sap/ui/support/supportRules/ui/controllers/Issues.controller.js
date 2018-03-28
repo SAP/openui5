@@ -40,6 +40,7 @@ sap.ui.define([
 			this.issueTable = this.byId("issueTable");
 			this.toolHeader = this.byId('toolHeader');
 			this.toolHeader.removeStyleClass('sapTntToolHeader sapContrast sapContrastPlus');
+			this.model.setProperty("/bEnabledFilterButton", false);
 
 			var toolHeaderPopover = this.toolHeader._getPopover();
 			toolHeaderPopover.removeStyleClass('sapTntToolHeaderPopover sapContrast sapContrastPlus');
@@ -117,16 +118,17 @@ sap.ui.define([
 			this.elementTree.setContainerId(this.byId("elementTreeContainer").getId());
 		},
 		clearFilters: function () {
-			this.model.setProperty("/severityFilter", "All");
-			this.model.setProperty("/categoryFilter", "All");
-			this.model.setProperty("/elementFilter", "All");
-			this.model.setProperty("/audienceFilter", "All");
+			this.model.setProperty("/severityFilter", constants.FILTER_VALUE_ALL);
+			this.model.setProperty("/categoryFilter", constants.FILTER_VALUE_ALL);
+			this.model.setProperty("/elementFilter", constants.FILTER_VALUE_ALL);
+			this.model.setProperty("/audienceFilter", constants.FILTER_VALUE_ALL);
 
 			if (this.data) {
 				this.model.setProperty("/issues", this.data.issues);
 				this.setToolbarHeight();
 			}
 
+			this.model.setProperty("/bEnabledFilterButton", false);
 			this.updateIssuesVisibility();
 		},
 		clearFiltersAndElementSelection: function () {
@@ -172,15 +174,18 @@ sap.ui.define([
 		},
 		filterIssueListItems: function (issue) {
 			var sevFilter = this.model.getProperty("/severityFilter"),
-				sevFilterApplied = issue.severity === sevFilter || sevFilter === 'All',
+				sevFilterApplied = issue.severity === sevFilter || sevFilter === constants.FILTER_VALUE_ALL,
 				catFilter = this.model.getProperty("/categoryFilter"),
-				catFilterApplied = $.inArray( catFilter, issue.categories ) > -1 || catFilter === 'All',
+				catFilterApplied = $.inArray( catFilter, issue.categories ) > -1 || catFilter === constants.FILTER_VALUE_ALL,
 				elementFilter = this.model.getProperty("/elementFilter"),
-				elementFilterApplied =  elementFilter ===  issue.context.id || elementFilter === 'All',
+				elementFilterApplied =  elementFilter ===  issue.context.id || elementFilter === constants.FILTER_VALUE_ALL,
 				audFilter = this.model.getProperty("/audienceFilter"),
-				audienseFilterApplied =  $.inArray( audFilter, issue.audiences ) > -1 || audFilter === 'All';
+				audienceFilterApplied =  $.inArray( audFilter, issue.audiences ) > -1 || audFilter === constants.FILTER_VALUE_ALL,
+				bEnabledFilterButton = sevFilter === constants.FILTER_VALUE_ALL && catFilter === constants.FILTER_VALUE_ALL && audFilter === constants.FILTER_VALUE_ALL && elementFilter === constants.FILTER_VALUE_ALL;
 
-			return sevFilterApplied && catFilterApplied && elementFilterApplied && audienseFilterApplied;
+			this.model.setProperty("/bEnabledFilterButton", !bEnabledFilterButton);
+
+			return sevFilterApplied && catFilterApplied && elementFilterApplied && audienceFilterApplied;
 		},
 		setToolbarHeight: function() {
 				this.model.setProperty("/filterBarHeight", "4rem");
