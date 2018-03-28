@@ -168,6 +168,9 @@ sap.ui.define([
 		}
 		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(sGroupId, sCanonicalPath.slice(1), that);
+		}).catch(function (oError) {
+			that.oModel.reportError("Failed to delete " + that, sClassName, oError);
+			throw oError;
 		});
 	};
 
