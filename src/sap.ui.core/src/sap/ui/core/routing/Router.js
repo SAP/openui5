@@ -641,6 +641,10 @@ sap.ui.define([
 			 */
 			fireRouteMatched : function(mArguments) {
 				this.fireEvent("routeMatched", mArguments);
+
+				if (Router._trackRouteMatched) {
+					Router._trackRouteMatched(this._oConfig.controlId, this, mArguments);
+				}
 				return this;
 			},
 
@@ -1077,6 +1081,22 @@ sap.ui.define([
 			BYPASSED: "bypassed",
 			TITLE_CHANGED: "titleChanged"
 		};
+
+		/**
+		 * Tracks <code>routeMatched</code> event.
+		 * This method is meant for private usages. Apps are not supposed to used it.
+		 * It is created for an experimental purpose.
+		 * Implementation should be injected by outside(i.e. sap.ui.core.delegate.UsageAnalytics).
+		 *
+		 * @param {string} sControlId the name of the control
+		 * @param {sap.ui.core.routing.Router} oRouter The instance of the router
+		 * @param {object} [mArguments] the arguments passed along with the event.
+		 * @function
+		 * @private
+		 * @experimental Since 1.58
+		 * @ui5-restricted
+		 */
+		Router._trackRouteMatched = undefined;
 
 		/**
 		 * Get a registered router
