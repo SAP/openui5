@@ -97,7 +97,7 @@
 		this.oImageContent.setSrc("sap-icon://travel-expense");
 		sap.ui.getCore().applyChanges();
 		var sAltText = this.oImageContent.getAltText();
-		assert.ok(sAltText.length > 0, "Default is returned");
+		assert.equal(sAltText, "", "Inner control's text should be ignored for decorative images.");
 	});
 
 	QUnit.module("Event tests", {
