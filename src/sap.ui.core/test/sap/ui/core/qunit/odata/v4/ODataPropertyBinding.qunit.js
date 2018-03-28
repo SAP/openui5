@@ -1693,6 +1693,10 @@ sap.ui.require([
 		sExpectedPath : undefined,
 		sPathInEntity : "Quantity"
 	}, {
+		mAnnotations : undefined,
+		sExpectedPath : undefined,
+		sPathInEntity : "@$ui5.foo"
+	}, {
 		mAnnotations : {
 			"@Org.OData.Measures.V1.Unit" : {$Path : "QuantityUnit"}
 		},

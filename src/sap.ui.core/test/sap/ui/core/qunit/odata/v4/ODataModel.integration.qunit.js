@@ -5210,5 +5210,47 @@ sap.ui.require([
 			return that.waitForChanges(assert);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Application tries to overwrite client-side instance annotations.
+	QUnit.test("@$ui5.* is write-protected", function (assert) {
+		var oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/MANAGERS(\'1\')}" id="form">\
+	<Text id="foo" text="{= %{@$ui5.foo} }" />\
+	<Text id="id" text="{ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("MANAGERS('1')", {
+				"@$ui5.foo" : 42,
+				"ID" : "1"
+			})
+			.expectChange("foo", 42)
+			.expectChange("id", "1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext(),
+				oMatcher = sinon.match(
+					"/MANAGERS('1')/@$ui5.foo: Not a (navigation) property: @$ui5.foo"),
+				oPropertyBinding = that.oView.byId("foo").getBinding("text");
+
+			assert.strictEqual(oPropertyBinding.getValue(), 42);
+			that.oLogMock.expects("error")
+				.withExactArgs("Not a (navigation) property: @$ui5.foo", oMatcher,
+					"sap.ui.model.odata.v4.ODataMetaModel");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to update path /MANAGERS('1')/@$ui5.foo", oMatcher,
+					"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+			// code under test
+			oPropertyBinding.setValue(0);
+
+			// code under test
+			oContext.getObject()["@$ui5.foo"] = 1; // just changing a clone
+
+			assert.strictEqual(oContext.getProperty("@$ui5.foo"), 42);
+		});
+	});
 });
 //TODO test delete
