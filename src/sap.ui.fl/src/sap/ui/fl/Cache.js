@@ -310,7 +310,7 @@ sap.ui.define(["sap/ui/fl/LrepConnector", "sap/ui/fl/Utils"], function (LrepConn
 			jQuery.sap.log.warning("Not all parameters were passed to determine a flexibility cache key.");
 			return Promise.resolve(Cache.NOTAG);
 		}
-		return this.getChangesFillingCache(new LrepConnector(), mComponent).then(function (oWrappedChangeFileContent) {
+		return this.getChangesFillingCache(LrepConnector.createConnector(), mComponent).then(function (oWrappedChangeFileContent) {
 			if (oWrappedChangeFileContent && oWrappedChangeFileContent.etag) {
 				return oWrappedChangeFileContent.etag;
 			} else {
