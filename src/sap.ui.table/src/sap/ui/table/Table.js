@@ -1146,6 +1146,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 		if (this._iScrollLeft) {
 			this.getDomRef(SharedDomRef.HorizontalScrollBar).scrollLeft = this._iScrollLeft;
 		}
+		this.getDomRef(SharedDomRef.VerticalScrollBar).style.maxHeight = this._getVSbHeight() + "px";
+		this._updateVSbRange();
 
 		this._updateGroupHeader();
 
