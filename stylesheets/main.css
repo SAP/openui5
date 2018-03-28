@@ -707,7 +707,7 @@ Simple Syntax Highlighter
   width: 30%;
 	position: absolute;
 	right:0%;
-	top:80%;
+	top:75%;
   }
 }
 
@@ -727,7 +727,7 @@ Simple Syntax Highlighter
 	width: 20%;
 	position: absolute;
 	right:35%;
-	top: 19%;
+	top: 17%;
   }
 }
 
@@ -736,7 +736,7 @@ Simple Syntax Highlighter
 .ostern {
 	position: absolute;
 	right:43%;
-	top: 10%;
+	top: 17%;
   }
 }
 
@@ -754,7 +754,7 @@ Simple Syntax Highlighter
   .ostern {
     position: absolute;
     right:43%;
-    top: 12%;
+    top: 17%;
   }
 }
 
