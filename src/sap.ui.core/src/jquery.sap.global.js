@@ -140,8 +140,8 @@ sap.ui.define([
 	if ( oCfgData['xx-nosync'] === true || oCfgData['xx-nosync'] === 'true' || /(?:\?|&)sap-ui-xx-nosync=(?:x|X|true)/.exec(window.location.search) ) {
 		syncCallBehavior = 2;
 	}
+
 	_ui5loader.config({
-		async: String(oCfgData['xx-async']) === 'true' || /(?:^|\?|&)sap-ui-xx-async=(?:x|X|true)(?:&|$)/.test(location.search),
 		reportSyncCalls: syncCallBehavior
 	});
 

@@ -1,0 +1,23 @@
+<html>
+    <head>
+        <title>TestSuite for sap.ui.core: Content Security Policy Checks</title>
+        <script src="../../../../../../resources/sap/ui/qunit/qunit-redirect.js"></script>
+        <script>
+
+            /**
+             * Add test pages to this test suite function.
+             * Please order alphabetically
+             */
+            function suite() {
+                var suite = new parent.jsUnitTestSuite();
+                var contextPath = "/" + window.location.pathname.split("/")[1];
+                suite.addTestPage(contextPath + "/test-resources/sap/ui/core/qunit/csp/ContentSecurityPolicy.qunit.html" +
+                        "?sap-ui-xx-libraryPreloadFiles=none&sap-ui-xx-csp-policy=almost-default:report-only");
+                return suite;
+            }
+
+        </script>
+    </head>
+    <body>
+    </body>
+</html>
