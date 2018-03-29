@@ -74,8 +74,6 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 		});
 	}
 
-	Opa5.extendConfig({autoWait : true});
-
 	Opa5.createPageObjects({
 		/*
 		 * Actions and assertions for the "Create Sales Order" dialog

@@ -5,13 +5,14 @@ sap.ui.require([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
-	"sap/ui/test/Opa5"
+	"sap/ui/test/Opa5",
+	"sap/ui/test/TestUtils"
 ],
-function (Helper, EnterText, Press, Opa5) {
+function (Helper, EnterText, Press, Opa5, TestUtils) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.ViewTemplate.types.Types";
 
-	Opa5.extendConfig({autoWait : true});
+	Opa5.extendConfig({autoWait : true, timeout : TestUtils.isRealOData() ? 30 : 5});
 
 	Opa5.createPageObjects({
 		onTheMainPage : {

@@ -4,9 +4,10 @@
 sap.ui.require([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
 ],
-function (Helper, Opa5, Properties) {
+function (Helper, Opa5, TestUtils, Properties) {
 	"use strict";
 
 	/*
@@ -69,7 +70,11 @@ function (Helper, Opa5, Properties) {
 		Opa5.assert.ok(true, "Log checked");
 	}
 
-	Opa5.extendConfig({autoWait : true});
+	// Note: The default OPA timeout for waitFor() is 15 sec. Nevertheless from time to time we get
+	// timeouts when the backend system is busy with other processes at the same time. To overcome
+	// this we increased the default timeout for realOData=true. For testing with mockdata we
+	// decreased it to get the timeout earlier.
+	Opa5.extendConfig({autoWait : true, timeout : TestUtils.isRealOData() ? 30 : 5});
 
 	Opa5.createPageObjects({
 		/*
@@ -165,7 +170,7 @@ function (Helper, Opa5, Properties) {
 							Opa5.assert.ok(rMessage.test(sText),
 								"Message text '" + sText + "' matches " + rMessage);
 						}
-					})
+					});
 				}
 			}
 		}
