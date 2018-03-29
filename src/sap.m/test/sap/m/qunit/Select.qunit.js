@@ -3486,6 +3486,41 @@
 		oSelect.destroy();
 	});
 
+	QUnit.test("it should contain the value state text id in the aria-labelledby attribute", function (assert) {
+		var oSuccessSelect = new sap.m.Select({ valueState: sap.ui.core.ValueState.Success }),
+			oWarningSelect = new sap.m.Select({ valueState: sap.ui.core.ValueState.Warning }),
+			oErrorSelect = new sap.m.Select({ valueState: sap.ui.core.ValueState.Error }),
+			sCoreLib = "sap.ui.core";
+
+		// arrange
+		oSuccessSelect.placeAt("content");
+		oWarningSelect.placeAt("content");
+		oErrorSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.ui.core.InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "success select is labelled by invisible text");
+		assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.ui.core.InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING")) > -1, "warning select is labelled by invisible text");
+		assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.ui.core.InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) > -1, "error select is labelled by invisible text");
+
+		// act
+		oSuccessSelect.setValueState("None");
+
+		// assert
+		assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.ui.core.InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) < 0, "success select is no longer labelled by success invisible text");
+
+		// act
+		oErrorSelect.setValueState("Success");
+
+		// assert
+		assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.ui.core.InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "error select is now labelled by success invisible text");
+
+		// cleanup
+		oSuccessSelect.destroy();
+		oWarningSelect.destroy();
+		oErrorSelect.destroy();
+	});
+
 	QUnit.module("setTooltip()");
 
 	// BCP 1580232802
@@ -3508,6 +3543,39 @@
 
 		// cleanup
 		oSelect.destroy();
+	});
+
+	QUnit.test("it should display the control tooltip when the select has value state", function (assert) {
+		// system under test
+		var sSampleText = "lorem ipsum",
+			oSuccessSelect = new sap.m.Select({
+				tooltip: sSampleText,
+				valueState: sap.ui.core.ValueState.Success
+			}),
+			oWarningSelect = new sap.m.Select({
+				tooltip: sSampleText,
+				valueState: sap.ui.core.ValueState.Warning
+			}),
+			oErrorSelect = new sap.m.Select({
+				tooltip: sSampleText,
+				valueState: sap.ui.core.ValueState.Error
+			});
+
+		// arrange
+		oSuccessSelect.placeAt("content");
+		oWarningSelect.placeAt("content");
+		oErrorSelect.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.strictEqual(oSuccessSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+		assert.strictEqual(oWarningSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+		assert.strictEqual(oErrorSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+
+		// cleanup
+		oSuccessSelect.destroy();
+		oWarningSelect.destroy();
+		oErrorSelect.destroy();
 	});
 
 	QUnit.module("removeItem()");
