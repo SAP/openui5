@@ -2,6 +2,7 @@
  * ${copyright}
  */
 
+//Provides class sap.ui.model.odata.v4.lib._MetadataConverter
 sap.ui.define([
 	"./_Helper"
 ], function (_Helper) {

@@ -2,6 +2,7 @@
  * ${copyright}
  */
 
+//Provides class sap.ui.model.odata.v4.ODataUtils
 sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/model/odata/ODataUtils",

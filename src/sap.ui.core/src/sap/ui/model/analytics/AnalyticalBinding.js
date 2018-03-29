@@ -216,6 +216,9 @@ sap.ui.define([
 	 * @param {array}
 	 *            [aFilters=null] predefined filter/s contained in an array
 	 * @param {object} [mParameters=null] a map which contains additional control parameters.
+	 * @param {sap.ui.model.TreeAutoExpandMode} [mParameters.autoExpandMode=sap.ui.model.TreeAutoExpandMode.Bundled]
+	 *            the auto expand mode; applying sorters to groups is only possible with auto expand
+	 *            mode {@link sap.ui.model.TreeAutoExpandMode.Sequential}
 	 * @param [mParameters.entitySet] if set, it explicitly specifies the entity set addressed by
 	 *            the last segment of the given binding path
 	 * @param [mParameters.useBatchRequests] if true, multiple OData requests will be wrapped into a
@@ -1875,8 +1878,9 @@ sap.ui.define([
 
 		if (sGroupId != null || this.bProvideGrandTotals
 				// get also grand total for group ID "null" (virtual root), independent of
-				// bProvideGrandTotals, if this.aSorter needs to be applied to groups
-				|| this._canApplySortersToGroups()) {
+				// bProvideGrandTotals, if there are sorters in this.aSorter and they need to be
+				// applied to groups
+				|| (this._canApplySortersToGroups() && this.aSorter.length > 0)) {
 			// select measures if the requested group is not the root context i.e. the grand totals row, or grand totals shall be determined
 			oAnalyticalQueryRequest.setMeasures(this.aMeasureName);
 
@@ -2959,6 +2963,7 @@ sap.ui.define([
 	AnalyticalBinding.prototype._processGroupMembersQueryResponse = function(oRequestDetails, oData) {
 		var sEntryGroupId,
 			sGroupId = oRequestDetails.sGroupId,
+			bHasSorters = this.aSorter.length > 0, // this.aSorter is always an array
 			aSelectedUnitPropertyName = oRequestDetails.aSelectedUnitPropertyName,
 			aAggregationLevel = oRequestDetails.aAggregationLevel,
 			iStartIndex = oRequestDetails.oKeyIndexMapping.iIndex,
@@ -2980,14 +2985,13 @@ sap.ui.define([
 		var iODataResultsLength = oData.results.length;
 
 		if (sGroupId === null && iODataResultsLength > 1 && this._canApplySortersToGroups()) {
-			this.bApplySortersToGroups = false;
-			jQuery.sap.log.warning("Detected a multi-unit case, so sorting is only possible on"
-					+ " leaves; binding is refreshed",
-				this.sPath, sClassName);
-			// do refresh after _executeQueryRequest is finished to avoid an error while cleaning
-			// the pending request queue (see _deregisterCompletedRequest)
-			setTimeout(this.refresh.bind(this), 0);
-			return;
+			this._warnNoSortingOfGroups(bHasSorters ? "binding is refreshed" : undefined);
+			if (bHasSorters) {
+				// do refresh after _executeQueryRequest is finished to avoid an error while
+				// cleaning the pending request queue (see _deregisterCompletedRequest)
+				setTimeout(this.refresh.bind(this), 0);
+				return;
+			}
 		}
 
 		var aPreviousEntryServiceKey = this._getServiceKeys(sGroupId, oKeyIndexMapping.iIndex - 1);
@@ -3020,6 +3024,7 @@ sap.ui.define([
 					sDimensionKeyString += oEntry[aAggregationLevel[g]] + "|";
 				}
 				if (sPreviousEntryDimensionKeyString == sDimensionKeyString) {
+					this._warnNoSortingOfGroups();
 					if (iFirstMatchingEntryIndex === undefined) {
 						if (h == 0) { // adjust indexes such that the entry at position before is covered
 							iFirstMatchingEntryIndex = -aPreviousEntryServiceKey.length;
@@ -4985,28 +4990,50 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns whether there are sorters in 'this.aSorter' and whether to apply them to the groups.
-	 * This feature is only enabled if binding's auto expand mode is set to 'Sequential'.
+	 * Returns whether sorters in 'this.aSorter' can be applied to the groups. This feature is only
+	 * enabled if binding's auto expand mode is set to 'Sequential'.
 	 * Logs a warning if applying sorters to groups is not possible because of auto expand mode.
 	 * Do not log the warning twice if auto expand mode does not change.
 	 *
-	 * @returns {boolean} Whether to apply 'this.aSorter' to the groups
+	 * @returns {boolean} Whether 'this.aSorter' can be applied to the groups
 	 * @private
 	 */
 	AnalyticalBinding.prototype._canApplySortersToGroups = function () {
 		var sCurrentAutoExpandMode = this._autoExpandMode;
 
-		if (this.bApplySortersToGroups && this.aSorter && this.aSorter.length > 0) {
-			if (sCurrentAutoExpandMode !== this.sLastAutoExpandMode
-					&& sCurrentAutoExpandMode !== TreeAutoExpandMode.Sequential) {
-				jQuery.sap.log.warning("Applying sorters to groups is only possible with auto"
+		if (this.bApplySortersToGroups) {
+			if (this.aSorter.length > 0) {
+				// check whether to log a warning and update sLastAutoExpandMode
+				if (sCurrentAutoExpandMode !== this.sLastAutoExpandMode
+						&& sCurrentAutoExpandMode !== TreeAutoExpandMode.Sequential) {
+					jQuery.sap.log.warning("Applying sorters to groups is only possible with auto"
 						+ " expand mode 'Sequential'; current mode is: " + sCurrentAutoExpandMode,
-					this.sPath, sClassName);
+						this.sPath, sClassName);
+				}
+				this.sLastAutoExpandMode = sCurrentAutoExpandMode;
 			}
-			this.sLastAutoExpandMode = this._autoExpandMode;
-			return this._autoExpandMode === TreeAutoExpandMode.Sequential;
+			return sCurrentAutoExpandMode === TreeAutoExpandMode.Sequential;
 		}
 		return false;
+	};
+
+	/**
+	 * Resets the flag that sorters can be applied to groups and logs a warning if not yet done.
+	 *
+	 * @param {string} sDetails Details for the warning
+	 * @private
+	 */
+	AnalyticalBinding.prototype._warnNoSortingOfGroups = function (sDetails) {
+		var sMessage;
+
+		if (this.bApplySortersToGroups) {
+			sMessage = "Detected a multi-unit case, so sorting is only possible on leaves";
+			if (sDetails) {
+				sMessage += "; " + sDetails;
+			}
+			jQuery.sap.log.warning(sMessage, this.sPath, sClassName);
+		}
+		this.bApplySortersToGroups = false;
 	};
 
 	return AnalyticalBinding;

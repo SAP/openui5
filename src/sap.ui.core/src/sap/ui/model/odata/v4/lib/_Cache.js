@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-//Provides class sap.ui.model.odata.v4.lib.Cache
+//Provides class sap.ui.model.odata.v4.lib._Cache
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
@@ -131,7 +131,7 @@ sap.ui.define([
 					? vCacheData[vDeleteProperty]
 					: vCacheData, // deleting at root level
 				mHeaders,
-				sTransientGroup = oEntity["@$ui5.transient"];
+				sTransientGroup = oEntity["@$ui5._.transient"];
 
 			if (sTransientGroup === true) {
 				throw new Error("No 'delete' allowed while waiting for server response");
@@ -162,8 +162,8 @@ sap.ui.define([
 						if (vDeleteProperty === "-1") {
 							delete vCacheData[-1];
 						} else {
-							if (oEntity["@$ui5.predicate"]) {
-								delete vCacheData.$byPredicate[oEntity["@$ui5.predicate"]];
+							if (oEntity["@$ui5._.predicate"]) {
+								delete vCacheData.$byPredicate[oEntity["@$ui5._.predicate"]];
 							}
 							vCacheData.splice(vDeleteProperty, 1);
 						}
@@ -209,31 +209,31 @@ sap.ui.define([
 	/**
 	 * Recursively calculates the key predicates for all entities in the result.
 	 *
-	 * @param {object} oRootInstance A single top-level instance
+	 * @param {*} vRootInstance A single top-level instance (or even a simple value)
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
 	 *
 	 * @private
 	 */
-	Cache.prototype.calculateKeyPredicates = function (oRootInstance, mTypeForMetaPath) {
+	Cache.prototype.calculateKeyPredicates = function (vRootInstance, mTypeForMetaPath) {
 
 		/**
 		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
 		 * from predicate to entity.
 		 *
-		 * @param {object[]} aInstances The collection
+		 * @param {*[]} aInstances The collection
 		 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
 		 */
 		function visitArray(aInstances, sMetaPath) {
-			var i, oInstance, sPredicate;
+			var i, vInstance, sPredicate;
 
 			aInstances.$byPredicate = {};
 			for (i = 0; i < aInstances.length; i++) {
-				oInstance = aInstances[i];
-				visitInstance(oInstance, sMetaPath);
-				sPredicate = oInstance["@$ui5.predicate"];
+				vInstance = aInstances[i];
+				visitInstance(vInstance, sMetaPath);
+				sPredicate = vInstance["@$ui5._.predicate"];
 				if (sPredicate) {
-					aInstances.$byPredicate[sPredicate] = oInstance;
+					aInstances.$byPredicate[sPredicate] = vInstance;
 				}
 			}
 		}
@@ -241,19 +241,23 @@ sap.ui.define([
 		/**
 		 * Adds a predicate to the given instance if it is an entity.
 		 *
-		 * @param {object} oInstance The instance
+		 * @param {*} vInstance The instance
 		 * @param {string} sMetaPath The meta path of the instance in mTypeForMetaPath
 		 */
-		function visitInstance(oInstance, sMetaPath) {
+		function visitInstance(vInstance, sMetaPath) {
 			var oType = mTypeForMetaPath[sMetaPath];
 
-			if (oType && oType.$Key) {
-				oInstance["@$ui5.predicate"] =
-					_Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath);
+			if (typeof vInstance !== "object") {
+				return;
 			}
 
-			Object.keys(oInstance).forEach(function (sProperty) {
-				var vPropertyValue = oInstance[sProperty],
+			if (oType && oType.$Key) {
+				vInstance["@$ui5._.predicate"] =
+					_Helper.getKeyPredicate(vInstance, sMetaPath, mTypeForMetaPath);
+			}
+
+			Object.keys(vInstance).forEach(function (sProperty) {
+				var vPropertyValue = vInstance[sProperty],
 					sPropertyPath = sMetaPath + "/" + sProperty;
 
 				if (Array.isArray(vPropertyValue)) {
@@ -264,7 +268,7 @@ sap.ui.define([
 			});
 		}
 
-		visitInstance(oRootInstance, this.sMetaPath);
+		visitInstance(vRootInstance, this.sMetaPath);
 	};
 
 	/**
@@ -320,16 +324,16 @@ sap.ui.define([
 
 		// Sets a marker that the create request is pending, so that update and delete fail.
 		function setCreatePending() {
-			oEntityData["@$ui5.transient"] = true;
+			oEntityData["@$ui5._.transient"] = true;
 		}
 
 		function request(sPostPath, sPostGroupId) {
-			oEntityData["@$ui5.transient"] = sPostGroupId; // mark as transient (again)
+			oEntityData["@$ui5._.transient"] = sPostGroupId; // mark as transient (again)
 			that.addByPath(that.mPostRequests, sPath, oEntityData);
 			return that.oRequestor.request("POST", sPostPath, sPostGroupId, null, oEntityData,
 					setCreatePending, cleanUp)
 				.then(function (oResult) {
-					delete oEntityData["@$ui5.transient"];
+					delete oEntityData["@$ui5._.transient"];
 					// now the server has one more element
 					addToCount(that.mChangeListeners, sPath, aCollection, 1);
 					that.removeByPath(that.mPostRequests, sPath, oEntityData);
@@ -339,7 +343,7 @@ sap.ui.define([
 						_Helper.getSelectForPath(that.mQueryOptions, sPath));
 					// determine and save the key predicate
 					that.fetchTypes().then(function (mTypeForMetaPath) {
-						oEntityData["@$ui5.predicate"] = _Helper.getKeyPredicate(
+						oEntityData["@$ui5._.predicate"] = _Helper.getKeyPredicate(
 							oEntityData,
 							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
 							mTypeForMetaPath);
@@ -490,7 +494,7 @@ sap.ui.define([
 		/*
 		 * Recursively calls fetchType for all (sub)paths in $expand.
 		 * @param {string} sBaseMetaPath The resource meta path + entity path
-		 * @param {object} mQueryOptions The corresponding query options
+		 * @param {object} [mQueryOptions] The corresponding query options
 		 */
 		function fetchExpandedTypes(sBaseMetaPath, mQueryOptions) {
 			if (mQueryOptions && mQueryOptions.$expand) {
@@ -634,7 +638,7 @@ sap.ui.define([
 			if (isSubPath(sRequestPath, sPath)) {
 				aEntities = that.mPostRequests[sRequestPath];
 				for (i = aEntities.length - 1; i >= 0; i--) {
-					sTransientGroup = aEntities[i]["@$ui5.transient"];
+					sTransientGroup = aEntities[i]["@$ui5._.transient"];
 					that.oRequestor.removePost(sTransientGroup, aEntities[i]);
 				}
 				delete that.mPostRequests[sRequestPath];
@@ -663,7 +667,7 @@ sap.ui.define([
 	 * Updates query options of the cache which has not yet sent a read request with the given
 	 * options.
 	 *
-	 * @param {object} mQueryOptions
+	 * @param {object} [mQueryOptions]
 	 *   The new query options
 	 * @throws {Error} If the cache has already sent a read request
 	 *
@@ -765,7 +769,7 @@ sap.ui.define([
 				throw new Error("Cannot update '" + sPropertyPath + "': '" + sEntityPath
 					+ "' does not exist");
 			}
-			sTransientGroup = oEntity["@$ui5.transient"];
+			sTransientGroup = oEntity["@$ui5._.transient"];
 			if (sTransientGroup) {
 				if (sTransientGroup === true) {
 					throw new Error("No 'update' allowed while waiting for server response");
@@ -801,7 +805,7 @@ sap.ui.define([
 				// When updating a transient entity, _Helper.updateCache has already updated the
 				// POST request, because the request body is a reference into the cache.
 				if (sParkedGroup) {
-					oEntity["@$ui5.transient"] = sTransientGroup;
+					oEntity["@$ui5._.transient"] = sTransientGroup;
 					that.oRequestor.relocate(sParkedGroup, oEntity, sTransientGroup);
 				}
 				return Promise.resolve({});
@@ -1125,7 +1129,7 @@ sap.ui.define([
 				oElement = oResult.value[i];
 				that.aElements[iStart + i] = oElement;
 				that.calculateKeyPredicates(oElement, aResult[1]);
-				sPredicate = oElement["@$ui5.predicate"];
+				sPredicate = oElement["@$ui5._.predicate"];
 				if (sPredicate) {
 					that.aElements.$byPredicate[sPredicate] = oElement;
 				}
@@ -1163,13 +1167,13 @@ sap.ui.define([
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise which which resolves with <code>undefined</code> when the entity is updated in
+	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
 	 *   the cache.
 	 *
 	 * @public
 	 */
 	CollectionCache.prototype.refreshSingle = function (sGroupId, iIndex, fnDataRequested) {
-		var sPredicate = this.aElements[iIndex]["@$ui5.predicate"],
+		var sPredicate = this.aElements[iIndex]["@$ui5._.predicate"],
 			oPromise,
 			sReadUrl = this.sResourcePath + sPredicate,
 			mQueryOptions = jQuery.extend({}, this.mQueryOptions),
@@ -1178,7 +1182,7 @@ sap.ui.define([
 		// drop collection related system query options
 		delete mQueryOptions["$count"];
 		delete mQueryOptions["$filter"];
-		delete mQueryOptions["$sort"];
+		delete mQueryOptions["$orderby"];
 		sReadUrl += this.oRequestor.buildQueryString(this.sMetaPath, mQueryOptions, false,
 			this.bSortExpandSelect);
 
@@ -1196,6 +1200,84 @@ sap.ui.define([
 
 		this.bSentReadRequest = true;
 		return oPromise;
+	};
+
+	/**
+	 * Refreshes a single entity within a collection cache and removes it from the cache if the
+	 * filter does not match anymore.
+	 *
+	 * @param {string} sGroupId
+	 *   The group ID
+	 * @param {number} iIndex
+	 *   The index of the element to be refreshed
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back-end request is sent.
+	 *   If no back-end request is needed, the function is not called.
+	 * @param {function} [fnOnRemove]
+	 *   A function which is called after an entity does not match the binding's filter anymore,
+	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise which resolves with <code>undefined</code> when the entity is updated in
+	 *   the cache.
+	 *
+	 * @private
+	 */
+	CollectionCache.prototype.refreshSingleWithRemove = function (sGroupId, iIndex, fnDataRequested,
+			fnOnRemove) {
+		var that = this;
+
+		return this.fetchTypes().then(function (mTypeForMetaPath) {
+			var sKey,
+				aKeyFilters = [],
+				oEntity = that.aElements[iIndex],
+				mKeyProperties = _Helper.getKeyProperties(oEntity,
+					"/" + that.sResourcePath, mTypeForMetaPath),
+				sPredicate = oEntity["@$ui5._.predicate"],
+				mQueryOptions = jQuery.extend({}, that.mQueryOptions),
+				sFilterOptions = mQueryOptions["$filter"],
+				sReadUrl = that.sResourcePath;
+
+			for (sKey in mKeyProperties) {
+				aKeyFilters.push(sKey + " eq " + mKeyProperties[sKey]);
+			}
+
+			mQueryOptions["$filter"] = (sFilterOptions ? "(" + sFilterOptions + ") and " : "")
+				+ aKeyFilters.join(" and ");
+
+			sReadUrl += that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false,
+				that.bSortExpandSelect);
+
+			that.bSentReadRequest = true;
+			return that.oRequestor
+				.request("GET", sReadUrl, sGroupId, undefined, undefined, fnDataRequested)
+				.then(function (oResult) {
+					if (that.aElements[iIndex] !== oEntity) {
+						// oEntity might have moved due to parallel insert/delete
+						iIndex = that.aElements.indexOf(oEntity);
+					}
+					if (oResult.value.length > 1) {
+						throw new Error(
+							"Unexpected server response, more than one entity returned.");
+					} else if (oResult.value.length === 0) {
+						if (iIndex === -1) {
+							delete that.aElements[-1];
+						} else {
+							that.aElements.splice(iIndex, 1);
+						}
+						delete that.aElements.$byPredicate[sPredicate];
+						addToCount(that.mChangeListeners, "", that.aElements, -1);
+						that.iLimit -= 1;
+						fnOnRemove(iIndex);
+					} else {
+						oResult = oResult.value[0];
+						// _Helper.updateCache cannot be used because navigation properties cannot
+						// be handled
+						that.aElements[iIndex] = that.aElements.$byPredicate[sPredicate] = oResult;
+						that.calculateKeyPredicates(oResult, mTypeForMetaPath);
+						Cache.computeCount(oResult);
+					}
+				});
+		});
 	};
 
 	//*********************************************************************************************
@@ -1455,7 +1537,7 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL; it must not contain a query string<br>
 	 *   Example: Products
-	 * @param {object} mQueryOptions
+	 * @param {object} [mQueryOptions]
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
 	 *   repeats the key for each array value.

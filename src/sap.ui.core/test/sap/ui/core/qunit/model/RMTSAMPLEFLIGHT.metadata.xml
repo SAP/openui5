@@ -345,6 +345,10 @@
 				<FunctionImport Name="__FAKE__FunctionImport" ReturnType="Edm.DateTime" m:HttpMethod="GET" sap:action-for="RMTSAMPLEFLIGHT.Notification">
 					<Parameter Name="ID" Type="Edm.String"/>
 				</FunctionImport>
+				<FunctionImport Name="__FAKE__GetAllFlightDates" ReturnType="Collection(Edm.DateTime)" m:HttpMethod="GET"/>
+				<FunctionImport Name="__FAKE__GetFlightDetailsByCarrier" ReturnType="Collection(RMTSAMPLEFLIGHT.FlightDetails)" m:HttpMethod="GET">
+					<Parameter Name="carrid" Type="Edm.String"/>
+				</FunctionImport>
 			</EntityContainer>
 			<Annotations Target="RMTSAMPLEFLIGHT.VL_BOOK_SMOKER/ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
 				<Annotation Term="Common.ValueList"/>

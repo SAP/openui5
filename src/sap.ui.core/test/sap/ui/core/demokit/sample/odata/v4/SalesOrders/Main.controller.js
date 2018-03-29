@@ -109,25 +109,27 @@ sap.ui.define([
 		},
 
 		onConfirmSalesOrder : function () {
-			var oModel = this.getView().getModel(),
-				oTable = this.byId("SalesOrders"),
+			var oTable = this.byId("SalesOrders"),
 				oSalesOrderContext = oTable.getSelectedItem().getBindingContext(),
-				oAction = oModel.bindContext(sServiceNamespace + "SalesOrder_Confirm(...)",
-					oSalesOrderContext),
-				that = this;
+				sSalesOrderID = oSalesOrderContext.getProperty("SalesOrderID"),
+				oView = this.getView(),
+				oAction = oView.getModel().bindContext(
+					sServiceNamespace + "SalesOrder_Confirm(...)", oSalesOrderContext);
 
-			oAction.execute("actionGroup").then(
-				function () {
-					MessageToast.show("Sales order "
-						+ oSalesOrderContext.getProperty("SalesOrderID") + " confirmed");
-					that.refresh(that.byId("SalesOrders").getBinding("items"),
-						"all sales orders");
-				},
-				function (oError) {
+			if (oSalesOrderContext.hasPendingChanges()) {
+				MessageToast.show("Sales order " + oSalesOrderContext.getProperty("SalesOrderID")
+					+ " cannot be confirmed due to pending changes");
+			} else {
+				oView.setBusy(true);
+				oAction.execute().then(function () {
+					oView.setBusy(false);
+					MessageToast.show("Sales order " + sSalesOrderID + " confirmed");
+				}, function (oError) {
+					oView.setBusy(false);
 					MessageBox.error(oError.message);
-				}
-			);
-			oModel.submitBatch("actionGroup");
+				});
+				oSalesOrderContext.refresh(undefined, true);
+			}
 		},
 
 		onCloseSalesOrderDialog : function (oEvent) {

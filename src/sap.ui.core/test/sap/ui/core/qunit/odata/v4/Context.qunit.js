@@ -624,7 +624,9 @@ sap.ui.require([
 				checkSuspended : function () {}
 			},
 			oError = new Error(),
-			oModel = {},
+			oModel = {
+				reportError : function () {}
+			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oContext).expects("fetchCanonicalPath")
@@ -632,6 +634,8 @@ sap.ui.require([
 		this.mock(oBinding).expects("_delete")
 			.withExactArgs(undefined, "EMPLOYEES('1')", sinon.match.same(oContext))
 			.returns(Promise.reject(oError));
+		this.mock(oModel).expects("reportError")
+			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context", oError);
 
 		// code under test
 		return oContext.delete().then(function () {
@@ -651,10 +655,15 @@ sap.ui.require([
 				checkSuspended : function () {}
 			},
 			oError = new Error(),
-			oContext = Context.create(null, oBinding, "/EMPLOYEES/42", 42);
+			oModel = {
+				reportError : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.reject(oError));
+		this.mock(oModel).expects("reportError")
+			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context", oError);
 
 		// code under test
 		return oContext.delete().then(function () {
@@ -725,17 +734,19 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh", function (assert) {
-		var oBinding = {
+	QUnit.test("refresh allow removal", function (assert) {
+		var bAllowRemoval = {/*false, true, undefined*/},
+			oBinding = {
 				refreshSingle : function () {}
 			},
 			oContext = Context.create({}, oBinding, "/EMPLOYEES/42", 42);
 
 		this.mock(oBinding).expects("refreshSingle")
-			.withExactArgs(sinon.match.same(oContext), "myGroup");
+			.withExactArgs(sinon.match.same(oContext), "myGroup",
+				sinon.match.same(bAllowRemoval));
 
 		// code under test
-		oContext.refresh("myGroup");
+		oContext.refresh("myGroup", bAllowRemoval);
 	});
 
 	//*********************************************************************************************

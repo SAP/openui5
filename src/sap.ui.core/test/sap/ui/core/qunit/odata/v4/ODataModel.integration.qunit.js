@@ -522,7 +522,7 @@ sap.ui.require([
 		 *                                 // do not expect a change (in createView). To be used if
 		 *                                 // the control is a template within a table.
 		 * this.expectChange("foo", ["a", "b"]); // expect values for two rows of the control with
-		 *                                       // ID "foo"
+		 *                                       // ID "foo"; may be combined with an offset vRow
 		 * this.expectChange("foo", "c", 2); // expect value "c" for control with ID "foo" in row 2
 		 * this.expectChange("foo", "d", "/MyEntitySet/ID");
 		 *                                 // expect value "d" for control with ID "foo" in a
@@ -546,14 +546,22 @@ sap.ui.require([
 				return oObject[vProperty];
 			}
 
-			if (Array.isArray(vValue)) {
+			if (arguments.length === 3) {
+				aExpectations = array(this.mListChanges, sControlId);
+				if (Array.isArray(vValue)) {
+					for (i = 0; i < vValue.length; i += 1) {
+						// This may create a sparse array this.mListChanges[sControlId]
+						array(aExpectations, vRow + i).push(vValue[i]);
+					}
+				} else {
+					// This may create a sparse array this.mListChanges[sControlId]
+					array(aExpectations, vRow).push(vValue);
+				}
+			} else if (Array.isArray(vValue)) {
 				aExpectations = array(this.mListChanges, sControlId);
 				for (i = 0; i < vValue.length; i += 1) {
 					array(aExpectations, i).push(vValue[i]);
 				}
-			} else if (arguments.length === 3) {
-				// This may create a sparse array this.mListChanges[sControlId]
-				array(array(this.mListChanges, sControlId), vRow).push(vValue);
 			} else if (vValue === false) {
 				array(this.mListChanges, sControlId);
 			} else {
@@ -918,6 +926,79 @@ sap.ui.require([
 				.filter(new Filter("AGE", FilterOperator.GT, 42));
 			return that.waitForChanges(assert);
 		});
+	});
+
+	//*********************************************************************************************
+	// Refresh single row after it has been updated with a value which doesn't match the table's
+	// filter anymore. In this case we expect the single row to disappear.
+	QUnit.test("Context#refresh(undefined, true)", function (assert) {
+		var sView = '\
+<Table id="table"\
+		items="{\
+			path : \'/EMPLOYEES\',\
+			filters: {path: \'AGE\', operator: \'GT\', value1: \'42\'},\
+			sorter : {path : \'AGE\'},\
+			parameters : {foo : \'bar\'}\
+		}">\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+		<Text id="age" text="{AGE}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE&$filter=AGE%20gt%2042"
+				+ "&$select=AGE,ID,Name&$skip=0&$top=100", {
+				"value" : [
+					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
+					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
+					{"ID" : "2", "Name" : "Peter Burke", "AGE" : 77}]})
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
+			.expectChange("age", ["70", "50", "77"]);
+		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}))
+			.then(function () {
+				that.expectRequest({
+						method : "PATCH",
+						url : "EMPLOYEES('0')?foo=bar",
+						headers : {},
+						payload : {
+							"AGE" : 10
+						}
+					}, {"AGE" : 10})
+					.expectChange("age", "10", 0);
+
+				that.oView.byId("table").getItems()[0].getCells()[1].getBinding("text")
+					.setValue(10);
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+				that.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE"
+						+ "&$filter=(AGE%20gt%2042)%20and%20ID%20eq%20'0'"
+						+ "&$select=AGE,ID,Name", {"value" : []})
+					.expectChange("text", ["Jonathan Smith", "Peter Burke"])
+					.expectChange("text", ["Jonathan Smith"]) //TODO unexpected change
+					.expectChange("age", ["50", "77"])
+					.expectChange("age", ["50"]); //TODO unexpected change
+
+				// code under test
+				oContext.refresh(undefined, true);
+
+				return that.waitForChanges(assert);
+			}).then(function () {
+				var oContext = that.oView.byId("table").getItems()[0].getBindingContext();
+
+				that.expectRequest("EMPLOYEES?foo=bar&$orderby=AGE"
+						+ "&$filter=(AGE%20gt%2042)%20and%20ID%20eq%20'1'"
+						+ "&$select=AGE,ID,Name", {
+						"value" : [{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 51}]})
+					.expectChange("age", "51", 0);
+
+				// code under test
+				oContext.refresh(undefined, true);
+
+				return that.waitForChanges(assert);
+			});
 	});
 
 	//*********************************************************************************************
@@ -3865,8 +3946,99 @@ sap.ui.require([
 		});
 	});
 	//TODO support also "version 2.0 JSON representation of a property"?
-	//TODO support "version 2.0 JSON representation of a collection of EDMSimpleType values"!
 
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET" ReturnType="Collection(Edm.DateTime)"> in V2
+	// Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	QUnit.test("V2 Adapter: FunctionImport returns Collection(Edm.DateTime)", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			that = this;
+
+		// code under test
+		return this.createView(assert, '', oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/__FAKE__GetAllFlightDates(...)");
+
+			that.expectRequest("__FAKE__GetAllFlightDates", {
+				"d" : { // Note: DataServiceVersion : 2.0
+					"results" : [
+						"/Date(1502323200000)/",
+						"/Date(1502323201000)/",
+						"/Date(1502323202000)/"
+					]
+				}
+			});
+
+			oContextBinding.execute();
+
+			return that.waitForChanges(assert).then(function () {
+				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
+					aContexts = oListBinding.getContexts(0, Infinity);
+
+				aContexts.forEach(function (oContext, i) {
+					// Note: This just illustrates the status quo. It is not meant to say this must
+					// be kept stable.
+					assert.strictEqual(oContext.getPath(),
+						"/__FAKE__GetAllFlightDates(...)/value/" + i);
+					assert.strictEqual(oContext.getProperty(""), "2017-08-10T00:00:0" + i + "Z");
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="GET" ReturnType="Collection(FlightDetails)"> in V2
+	// Adapter
+	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
+	QUnit.test("V2 Adapter: FunctionImport returns Collection(ComplexType)", function (assert) {
+		var oModel = this.createModelForV2FlightService(),
+			that = this;
+
+		// code under test
+		return this.createView(assert, '', oModel).then(function () {
+			var oContextBinding = oModel.bindContext("/__FAKE__GetFlightDetailsByCarrier(...)");
+
+			that.expectRequest("__FAKE__GetFlightDetailsByCarrier?carrid='AA'", {
+				"d" : { // Note: DataServiceVersion : 2.0
+					"results" : [{
+						"__metadata" : { // just like result of GetFlightDetails
+							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+						},
+						"arrivalTime" : "PT14H00M00S",
+						"departureTime" : "PT11H00M00S"
+					}, {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+						},
+						"arrivalTime" : "PT14H00M01S",
+						"departureTime" : "PT11H00M01S"
+					}, {
+						"__metadata" : {
+							"type" : "RMTSAMPLEFLIGHT.FlightDetails"
+						},
+						"arrivalTime" : "PT14H00M02S",
+						"departureTime" : "PT11H00M02S"
+					}]
+				}
+			});
+
+			oContextBinding.setParameter("carrid", "AA").execute();
+
+			return that.waitForChanges(assert).then(function () {
+				var oListBinding = oModel.bindList("value", oContextBinding.getBoundContext()),
+					aContexts = oListBinding.getContexts(0, Infinity);
+
+				aContexts.forEach(function (oContext, i) {
+					// Note: This just illustrates the status quo. It is not meant to say this must
+					// be kept stable.
+					assert.strictEqual(oContext.getPath(),
+						"/__FAKE__GetFlightDetailsByCarrier(...)/value/" + i);
+					assert.strictEqual(oContext.getProperty("arrivalTime"), "14:00:0" + i);
+					assert.strictEqual(oContext.getProperty("departureTime"), "11:00:0" + i);
+				});
+			});
+		});
+	});
 
 	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="GET" sap:action-for="..."> in V2 Adapter
@@ -4880,6 +5052,204 @@ sap.ui.require([
 			oContext.delete();
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: BCP 1870017061
+	// Master/Detail, object page with a table.Table: When changing the entity for the object page
+	// the property bindings below the table's list binding complained about an invalid path in
+	// deregisterChange. This scenario only simulates the object page, the contexts from the master
+	// list are hardcoded to keep the test small.
+	QUnit.test("deregisterChange", function (assert) {
+		var oModel = createSalesOrdersModel(),
+			sView = '\
+<FlexBox id="form">\
+	<t:Table rows="{path: \'SO_2_SOITEM\', parameters : {$$updateGroupId:\'update\'}}">\
+		<t:Column>\
+			<t:template>\
+				<Text id="position" text="{ItemPosition}" />\
+			</t:template>\
+		</t:Column>\
+	</t:Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("position", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList('0500000000')/SO_2_SOITEM?$skip=0&$top=110", {
+					"value" : [{
+						"ItemPosition" : "10",
+						"SalesOrderID" : "0500000000"
+					}]
+				})
+				.expectChange("position", ["10"]);
+
+			// table.Table must render to call getContexts on its row aggregation's list binding
+			that.oView.placeAt("qunit-fixture");
+			that.oView.byId("form").bindElement("/SalesOrderList('0500000000')");
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('0500000001')/SO_2_SOITEM?$skip=0&$top=110", {
+					"value" : [{
+						"ItemPosition" : "20",
+						"SalesOrderID" : "0500000001"
+					}]
+				})
+				.expectChange("position", null, null) //TODO unexpected change
+				.expectChange("position", ["20"]);
+
+			that.oView.byId("form").bindElement("/SalesOrderList('0500000001')");
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
+	QUnit.test("Analytics by V4: $$aggregation", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{path : \'/SalesOrderList\',\
+		parameters : {\
+			$$aggregation : [{\
+				grouped : true,\
+				name : \'LifecycleStatus\'\
+			}, {\
+				name : \'GrossAmount\',\
+				total : true,\
+				unit : \'CurrencyCode\'\
+			}, {\
+				name : \'NetAmount\',\
+				total : false,\
+				unit : \'CurrencyCode\'\
+			}],\
+			$count : true,\
+			$orderby : \'LifecycleStatus desc\'\
+		}}" threshold="0" visibleRowCount="3">\
+	<t:Column>\
+		<t:template>\
+			<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="level" text="{= %{@$ui5.node.level} }" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="lifecycleStatus" text="{LifecycleStatus}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="currencyCode" text="{CurrencyCode}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			oModel = createSalesOrdersModel(),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$count=true&$orderby=LifecycleStatus%20desc"
+				+ "&$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount))"
+				+ "&$skip=0&$top=3", {
+				"@odata.count" : "26",
+				"value" : [
+					{"CurrencyCode" : "EUR", "GrossAmount" : 1, "LifecycleStatus" : "Z"},
+					{"CurrencyCode" : "EUR", "GrossAmount" : 2, "LifecycleStatus" : "Y"},
+					{"CurrencyCode" : "EUR", "GrossAmount" : 3, "LifecycleStatus" : "X"}
+				]
+			})
+			.expectChange("isExpanded", [false, false, false])
+			.expectChange("isTotal", [true, true, true])
+			.expectChange("level", [1, 1, 1])
+			.expectChange("currencyCode", ["EUR", "EUR", "EUR"])
+			.expectChange("grossAmount", [1, 2, 3])
+			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("SalesOrderList?$count=true&$orderby=LifecycleStatus%20desc"
+					+ "&$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount))"
+					+ "&$skip=23&$top=3", {
+					"@odata.count" : "26",
+					"value" : [
+						{"CurrencyCode" : "EUR", "GrossAmount" : 24, "LifecycleStatus" : "C"},
+						{"CurrencyCode" : "EUR", "GrossAmount" : 25, "LifecycleStatus" : "B"},
+						{"CurrencyCode" : "EUR", "GrossAmount" : 26, "LifecycleStatus" : "A"}
+					]
+				});
+			for (var i = 0; i < 3; i += 1) {
+				//TODO The below null's are: Text has binding context null and its initial value is
+				// undefined (formatted to null by String type). (How) can we get rid of this?
+				that.expectChange("isExpanded", undefined, null)
+					.expectChange("isTotal", undefined, null)
+					.expectChange("level", undefined, null)
+					.expectChange("currencyCode", null, null)
+					.expectChange("grossAmount", undefined, null)
+					.expectChange("lifecycleStatus", null, null);
+			}
+			that.expectChange("isExpanded", [false, false, false], 23)
+				.expectChange("isTotal", [true, true, true], 23)
+				.expectChange("level", [1, 1, 1], 23)
+				.expectChange("currencyCode", ["EUR", "EUR", "EUR"], 23)
+				.expectChange("grossAmount", [24, 25, 26], 23)
+				.expectChange("lifecycleStatus", ["C", "B", "A"], 23);
+
+			that.oView.byId("table").setFirstVisibleRow(23);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Application tries to overwrite client-side instance annotations.
+	QUnit.test("@$ui5.* is write-protected", function (assert) {
+		var oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/MANAGERS(\'1\')}" id="form">\
+	<Text id="foo" text="{= %{@$ui5.foo} }" />\
+	<Text id="id" text="{ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("MANAGERS('1')", {
+				"@$ui5.foo" : 42,
+				"ID" : "1"
+			})
+			.expectChange("foo", 42)
+			.expectChange("id", "1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext(),
+				oMatcher = sinon.match(
+					"/MANAGERS('1')/@$ui5.foo: Not a (navigation) property: @$ui5.foo"),
+				oPropertyBinding = that.oView.byId("foo").getBinding("text");
+
+			assert.strictEqual(oPropertyBinding.getValue(), 42);
+			that.oLogMock.expects("error")
+				.withExactArgs("Not a (navigation) property: @$ui5.foo", oMatcher,
+					"sap.ui.model.odata.v4.ODataMetaModel");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to update path /MANAGERS('1')/@$ui5.foo", oMatcher,
+					"sap.ui.model.odata.v4.ODataPropertyBinding");
+
+			// code under test
+			oPropertyBinding.setValue(0);
+
+			// code under test
+			oContext.getObject()["@$ui5.foo"] = 1; // just changing a clone
+
+			assert.strictEqual(oContext.getProperty("@$ui5.foo"), 42);
 		});
 	});
 });

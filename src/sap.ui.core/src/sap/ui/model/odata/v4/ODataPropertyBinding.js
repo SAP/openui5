@@ -102,21 +102,6 @@ sap.ui.define([
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#change
 	 * @public
-	 * @see sap.ui.base.Event
-	 * @since 1.37.0
-	 */
-
-	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
-	 * It is to be used by applications for example to switch on a busy indicator. Registered event
-	 * handlers are called without parameters.
-	 *
-	 * @param {sap.ui.base.Event} oEvent
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataRequested
-	 * @public
-	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
 
@@ -145,7 +130,19 @@ sap.ui.define([
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataReceived
 	 * @public
-	 * @see sap.ui.base.Event
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
+	 * It is to be used by applications for example to switch on a busy indicator. Registered event
+	 * handlers are called without parameters.
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataRequested
+	 * @public
 	 * @since 1.37.0
 	 */
 
@@ -294,7 +291,7 @@ sap.ui.define([
 		this.withCache(function (oCache, sPath) {
 			oCache.deregisterChange(sPath, that);
 		}).catch(function (oError) {
-			jQuery.sap.log.error("Error in deregisterChange", oError, sClassName);
+			that.oModel.reportError("Error in deregisterChange", sClassName, oError);
 		});
 	};
 
@@ -357,8 +354,9 @@ sap.ui.define([
 		var oMetaModel = this.oModel.getMetaModel(),
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			mAnnotations = oMetaModel.getObject("@", oMetaModel.getMetaContext(sResolvedPath)),
-			oMeasureAnnotation = mAnnotations["@Org.OData.Measures.V1.Unit"]
-				|| mAnnotations["@Org.OData.Measures.V1.ISOCurrency"];
+			oMeasureAnnotation = mAnnotations
+				&& (mAnnotations["@Org.OData.Measures.V1.Unit"]
+					|| mAnnotations["@Org.OData.Measures.V1.ISOCurrency"]);
 
 		return oMeasureAnnotation && oMeasureAnnotation.$Path;
 	};

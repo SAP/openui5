@@ -1693,6 +1693,10 @@ sap.ui.require([
 		sExpectedPath : undefined,
 		sPathInEntity : "Quantity"
 	}, {
+		mAnnotations : undefined,
+		sExpectedPath : undefined,
+		sPathInEntity : "@$ui5.foo"
+	}, {
 		mAnnotations : {
 			"@Org.OData.Measures.V1.Unit" : {$Path : "QuantityUnit"}
 		},
@@ -1757,8 +1761,8 @@ sap.ui.require([
 			oError = new Error("fail intentionally");
 
 		this.mock(oBinding).expects("withCache").returns(SyncPromise.reject(oError));
-		this.oLogMock.expects("error").withExactArgs("Error in deregisterChange", oError,
-			sClassName);
+		this.mock(this.oModel).expects("reportError")
+			.withExactArgs("Error in deregisterChange", sClassName, sinon.match.same(oError));
 
 		// code under test
 		oBinding.deregisterChange();

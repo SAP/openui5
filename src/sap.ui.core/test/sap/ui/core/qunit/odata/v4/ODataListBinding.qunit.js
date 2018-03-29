@@ -15,20 +15,21 @@ sap.ui.require([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/lib/_AggregationCache",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding"
 ], function (jQuery, ManagedObject, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
-		FilterType, ListBinding, Model, Sorter, OperationMode, Context, _Cache, _Helper,
-		ODataListBinding, ODataModel, asODataParentBinding) {
+		FilterType, ListBinding, Model, Sorter, OperationMode, Context, _AggregationCache, _Cache,
+		_Helper, ODataListBinding, ODataModel, asODataParentBinding) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$groupId", "$$operationMode", "$$ownRequest",
-			"$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$aggregation", "$$groupId", "$$operationMode",
+			"$$ownRequest", "$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataListBinding",
 		TestControl = ManagedObject.extend("test.sap.ui.model.odata.v4.ODataListBinding", {
 			metadata : {
@@ -50,7 +51,7 @@ sap.ui.require([
 	 * @param {number} [iCount]
 	 *   the  value for "$count", remains unset if undefined
 	 * @param {boolean} [bKeyPredicates]
-	 *   add a property "@$ui5.predicate" with a key predicate
+	 *   add a property "@$ui5._.predicate" with a key predicate
 	 * @return {object}
 	 *   the data
 	 */
@@ -71,7 +72,7 @@ sap.ui.require([
 				NullValue : null
 			};
 			if (bKeyPredicates) {
-				oData.value[i]["@$ui5.predicate"] = "('" + (iStart + i) + "')";
+				oData.value[i]["@$ui5._.predicate"] = "('" + (iStart + i) + "')";
 			}
 		}
 		return bDrillDown ? oData.value : oData;
@@ -227,6 +228,7 @@ sap.ui.require([
 	QUnit.test("be V8-friendly", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES");
 
+		assert.ok(oBinding.hasOwnProperty("aAggregation"));
 		assert.ok(oBinding.hasOwnProperty("aApplicationFilters"));
 		assert.ok(oBinding.hasOwnProperty("oCachePromise"));
 		assert.ok(oBinding.hasOwnProperty("sChangeReason"));
@@ -299,49 +301,54 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("applyParameters: simulate call from c'tor", function (assert) {
-		var mBindingParameters = {
-				$$groupId : "foo",
-				$$operationMode : OperationMode.Server,
-				$$updateGroupId : "update foo"
-			},
+		var aAggregation = [],
+			sApply = "A.P.P.L.E.",
 			sGroupId = "foo",
 			oModelMock = this.mock(this.oModel),
 			oBinding = this.oModel.bindList("/EMPLOYEES"),
-			sOperationMode = "Server",
+			oBindingMock = this.mock(oBinding),
 			mParameters = {
+				$$aggregation : aAggregation,
 				$$groupId : "foo",
 				$$operationMode : OperationMode.Server,
 				$$updateGroupId : "update foo",
 				$filter : "bar"
-			},
-			mQueryOptions = {
-				$filter : "bar"
-			},
-			sUpdateGroupId = "update foo";
+			};
+
+		assert.strictEqual(oBinding.aAggregation, null, "initial value");
 
 		oModelMock.expects("buildBindingParameters")
 			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-			.returns(mBindingParameters);
+			.returns({
+				$$aggregation : aAggregation,
+				$$groupId : "foo",
+				$$operationMode : OperationMode.Server,
+				$$updateGroupId : "update foo"
+			});
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
-			.returns(mQueryOptions);
-		this.mock(oBinding).expects("reset").withExactArgs(undefined);
-
-		//Stub is needed to test, if mCacheByContext is set to undefined before fetchCache is called
+			.returns({$filter : "bar"});
+		this.mock(_Helper).expects("buildApply").withExactArgs(aAggregation).returns(sApply);
 		oBinding.mCacheByContext = {
-				"/Products" : {}
+			"/Products" : {}
 		};
-		this.mock(oBinding).expects("fetchCache").callsFake(function () {
+		oBindingMock.expects("fetchCache").callsFake(function () {
+			// test if mCacheByContext is set to undefined before fetchCache is called
 			assert.strictEqual(oBinding.mCacheByContext, undefined, "mCacheByContext");
 		});
+		oBindingMock.expects("reset").withExactArgs(undefined);
 
 		//code under test
 		oBinding.applyParameters(mParameters);
 
-		assert.strictEqual(oBinding.sOperationMode, sOperationMode, "sOperationMode");
+		assert.strictEqual(oBinding.sOperationMode, "Server", "sOperationMode");
 		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
-		assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
-		assert.deepEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
+		assert.strictEqual(oBinding.sUpdateGroupId, "update foo", "sUpdateGroupId");
+		assert.deepEqual(oBinding.mQueryOptions, {
+			$apply : sApply,
+			$filter : "bar"
+		}, "mQueryOptions");
 		assert.deepEqual(oBinding.mParameters, mParameters);
+		assert.strictEqual(oBinding.aAggregation, aAggregation, "$$aggregation");
 	});
 
 	//*********************************************************************************************
@@ -361,6 +368,7 @@ sap.ui.require([
 	QUnit.test("applyParameters: simulate call from changeParameters", function (assert) {
 		var oContext = Context.create(this.oModel, {}, "/TEAMS"),
 			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
+			oBindingMock = this.mock(oBinding),
 			oModelMock = this.mock(this.oModel),
 			mParameters = {
 				$filter : "bar"
@@ -377,7 +385,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
 		this.mock(oBinding).expects("fetchCache")
 			.withExactArgs(sinon.match.same(oBinding.oContext));
-		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Change);
+		oBindingMock.expects("reset").withExactArgs(ChangeReason.Change);
 
 		//code under test
 		oBinding.applyParameters(mParameters, ChangeReason.Change);
@@ -2354,7 +2362,7 @@ sap.ui.require([
 
 			if (bUsePredicates) {
 				aResults.forEach(function (vValue, i) {
-					vValue["@$ui5.predicate"] = "('" + i + "')";
+					vValue["@$ui5._.predicate"] = "('" + i + "')";
 				});
 			}
 			this.mock(oBinding.oModel).expects("resolve").twice()
@@ -2362,7 +2370,7 @@ sap.ui.require([
 				.returns("~resolved~");
 			for (i = oRange.start; i < oRange.start + aResults.length; i += 1) {
 				sPath = "~resolved~" +
-					(bUsePredicates ? aResults[i - oRange.start]["@$ui5.predicate"] : "/" + i);
+					(bUsePredicates ? aResults[i - oRange.start]["@$ui5._.predicate"] : "/" + i);
 				oContextMock.expects("create")
 					.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
 						sPath, i)
@@ -2508,11 +2516,11 @@ sap.ui.require([
 
 		// code under test
 		oBinding.createContexts(0, 3, [{
-			"@$ui5.predicate" : "('1')"
+			"@$ui5._.predicate" : "('1')"
 		}, {
-			"@$ui5.predicate" : "('2')"
+			"@$ui5._.predicate" : "('2')"
 		}, {
-			"@$ui5.predicate" : "('3')"
+			"@$ui5._.predicate" : "('3')"
 		}]);
 
 		assert.strictEqual(oBinding.aContexts[0], oContext1);
@@ -2839,7 +2847,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("create: relative binding", function (assert) {
-		var aCacheResult = [{}, {}, {"@$ui5.predicate" : "('foo')"}, {}],
+		var aCacheResult = [{}, {}, {"@$ui5._.predicate" : "('foo')"}, {}],
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/1", 1),
 			oContext2 = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/2", 2),
 			aContexts,
@@ -3639,8 +3647,12 @@ sap.ui.require([
 			sFilter : "bar,baz",
 			oResult : {$filter : "bar,baz", $orderby : "foo,bar", $select : "Name"}
 		}].forEach(function (oFixture, i) {
-			var oResult = oBinding.mergeQueryOptions(oFixture.mQueryOptions,
+			var sQueryOptionsJSON = JSON.stringify(oFixture.mQueryOptions),
+				// code under test
+				oResult = oBinding.mergeQueryOptions(oFixture.mQueryOptions,
 					oFixture.sOrderBy, oFixture.sFilter);
+
+			assert.strictEqual(JSON.stringify(oFixture.mQueryOptions), sQueryOptionsJSON);
 			if ("oResult" in oFixture) {
 				assert.deepEqual(oResult, oFixture.oResult, i);
 			} else {
@@ -3758,24 +3770,77 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[true, false].forEach(function (bAutoExpandSelect, i) {
-		QUnit.test("doCreateCache - binding with parameters, " + i, function (assert) {
-			var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
-					$$operationMode : OperationMode.Server}),
-				oCache = {},
-				mCacheQueryOptions = {};
+	QUnit.test("doCreateCache", function (assert) {
+		var aAggregation = [{
+				grouped : false,
+				name : "Dimension"
+			}],
+			bAutoExpandSelect = {/*false, true*/},
+			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null, {
+				$$aggregation : aAggregation
+			}),
+			oCache = {},
+			oContext = {},
+			mMergedQueryOptions = {},
+			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
+			mQueryOptions = {};
 
-			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
 
-			this.mock(oBinding).expects("getQueryOptionsForPath").never();
-			this.mock(_Cache).expects("create")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor), "EMPLOYEES",
-					sinon.match.same(mCacheQueryOptions), bAutoExpandSelect)
-				.returns(oCache);
+		this.mock(oBinding).expects("inheritQueryOptions")
+			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
+			.returns(mMergedQueryOptions);
+		this.mock(_Cache).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
+				sinon.match.same(mMergedQueryOptions), sinon.match.same(bAutoExpandSelect))
+			.returns(oCache);
 
-			// code under test
-			assert.strictEqual(oBinding.doCreateCache("EMPLOYEES", mCacheQueryOptions), oCache);
-		});
+		// code under test
+		assert.strictEqual(oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext),
+			oCache);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doCreateCache: AggregationCache", function (assert) {
+		var aAggregation = [{
+				grouped : true,
+				name : "Dimension"
+			}],
+			bAutoExpandSelect = {/*false, true*/},
+			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null, {
+				$$aggregation : aAggregation
+			}),
+			oCache = {},
+			oContext = {},
+			mMergedQueryOptions = {},
+			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
+			mQueryOptions = {};
+
+		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+
+		this.mock(oBinding).expects("inheritQueryOptions")
+			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
+			.returns(mMergedQueryOptions);
+		this.mock(_AggregationCache).expects("create")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath, aAggregation,
+				sinon.match.same(mMergedQueryOptions), sinon.match.same(bAutoExpandSelect))
+			.returns(oCache);
+
+		// code under test
+		assert.strictEqual(oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext),
+			oCache);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritQueryOptions - binding with parameters", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
+				{$$operationMode : OperationMode.Server}),
+			mQueryOptions = {};
+
+		this.mock(oBinding).expects("getQueryOptionsForPath").never();
+
+		// code under test
+		assert.strictEqual(oBinding.inheritQueryOptions(mQueryOptions), mQueryOptions);
 	});
 
 	//*********************************************************************************************
@@ -3835,23 +3900,18 @@ sap.ui.require([
 			$select : "ID,Name,Age"
 		}
 	}].forEach(function (oFixture, i) {
-		QUnit.test("doCreateCache - inherit query options - Test " + i, function (assert) {
-			var oContext = Context.create(this.oModel, {}, "/TEAMS", 0),
-			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES"),
-			oCache = {};
+		QUnit.test("inheritQueryOptions: Test " + i, function (assert) {
+			var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES"),
+				oContext = {};
 
 			this.mock(oBinding).expects("getQueryOptionsForPath")
 				.withExactArgs("", sinon.match.same(oContext))
 				.returns(oFixture.mInheritedQueryOptions);
-			this.mock(_Cache).expects("create")
-				.withExactArgs(sinon.match.same(this.oModel.oRequestor),
-					"/TEAMS('4711')/TEAM_2_EMPLOYEES", oFixture.mExpectedQueryOptions, false)
-				.returns(oCache);
 
 			// code under test
-			assert.strictEqual(oBinding.doCreateCache("/TEAMS('4711')/TEAM_2_EMPLOYEES",
+			assert.deepEqual(oBinding.inheritQueryOptions(
 					oFixture.mDynamicQueryOptionsWithModelOptions, oContext),
-				oCache);
+				oFixture.mExpectedQueryOptions);
 		});
 	});
 
@@ -4090,77 +4150,69 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{
-		aColumns : [{
-			"grouped" : false,
-			"inResult" : true,
-			"name" : "BillToParty",
-			"visible" : true
-		}],
-		sApply : "groupby((BillToParty))"
-	}, {
-		aColumns : [{
-			"grouped" : false,
-			"inResult" : true,
-			"name" : "BillToParty",
-			"visible" : false
-		}, {
-			"grouped" : false,
-			"inResult" : false,
-			"name" : "TransactionCurrency",
-			"visible" : true
-		}],
-		sApply : "groupby((BillToParty,TransactionCurrency))"
-	}, {
-		aColumns : [{
-			"grouped" : false,
-			"inResult" : true,
-			"name" : "BillToParty"
-		}, {
-			"name" : "UnitProperty"
-		}, {
-			"name" : "GrossAmountInTransactionCurrency",
-			"total" : false
-		}, {
-			"name" : "TextProperty"
-		}, {
-			"grouped" : false,
-			"name" : "TransactionCurrency",
-			"visible" : true
-		}, {
-			"name" : "NetAmountInTransactionCurrency",
-			"total" : false
-		}, {
-			"grouped" : false,
-			"inResult" : false,
-			"name" : "IgnoreThisDimension",
-			"visible" : false
-		}],
-		sApply : "groupby((BillToParty,TransactionCurrency,UnitProperty,TextProperty)"
-			+ ",aggregate(GrossAmountInTransactionCurrency,NetAmountInTransactionCurrency))"
-	}].forEach(function (oFixture) {
-		QUnit.test("updateAnalyticalInfo with " + oFixture.sApply, function (assert) {
-			var oBinding = this.oModel.bindList("/EMPLOYEES");
+	QUnit.test("updateAnalyticalInfo: invalid input", function (assert) {
+		var aAggregation = [],
+			oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oError = new Error();
 
-			this.mock(oBinding).expects("changeParameters")
-				.withExactArgs({$apply : oFixture.sApply});
+		this.mock(_Helper).expects("buildApply").withExactArgs(aAggregation).throws(oError);
+		this.mock(oBinding).expects("changeParameters").never();
 
-			oBinding.updateAnalyticalInfo(oFixture.aColumns);
-		});
+		assert.throws(function () {
+			// code under test
+			oBinding.updateAnalyticalInfo(aAggregation);
+		}, oError);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("updateAnalyticalInfo: both dimension and measure", function (assert) {
-		var oBinding = this.oModel.bindList("/EMPLOYEES");
+	QUnit.test("updateAnalyticalInfo: inResult and visible", function (assert) {
+		var aAggregation = [{
+				grouped : false,
+				inResult : true,
+				name : "BillToParty"
+			}, {
+				name : "UnitProperty"
+			}, {
+				name : "GrossAmountInTransactionCurrency",
+				total : false
+			}, {
+				grouped : false,
+				name : "TransactionCurrency",
+				visible : true
+			}, {
+				grouped : false,
+				inResult : false,
+				name : "IgnoreThisDimension",
+				visible : false
+			}],
+			sAggregation = JSON.stringify(aAggregation),
+			aFilteredAggregation = [{
+				grouped : false,
+				name : "BillToParty"
+			}, {
+				// Note: this is added for properties which are neither dimension nor measure
+				grouped : false,
+				name : "UnitProperty"
+			}, {
+				name : "GrossAmountInTransactionCurrency",
+				total : false
+			}, {
+				grouped : false,
+				name : "TransactionCurrency"
+			}],
+			sApply = "A.P.P.L.E.",
+			oBinding = this.oModel.bindList("/EMPLOYEES");
 
-		assert.throws(function () {
-			oBinding.updateAnalyticalInfo([{
-				"grouped" : false,
-				"inResult" : true,
-				"name" : "BothDimensionAndMeasure",
-				"total" : false
-			}]);
-		}, new Error("Both dimension and measure: BothDimensionAndMeasure"));
+		this.mock(_Helper).expects("buildApply")
+			.withExactArgs(aFilteredAggregation)
+			.returns(sApply);
+		this.mock(oBinding).expects("changeParameters")
+			.withExactArgs({$apply : sApply});
+
+		// code under test
+		oBinding.updateAnalyticalInfo(aAggregation);
+
+		assert.strictEqual(JSON.stringify(aAggregation), sAggregation, "unchanged");
 	});
 
 	//*********************************************************************************************
@@ -4227,6 +4279,102 @@ sap.ui.require([
 		// Find a way to use _Helper.updateCache in _Cache.refreshSingle to do the
 		// notification for the changeListeners, currently it would fail because the lookup
 		// for the changeListener fails because of different paths (index versus key predicate)
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bOnRemoveCalled) {
+		["group", undefined].forEach(function (sGroupId) {
+			[true, false].forEach(function (bTransient) {
+				var sTitle = "refreshSingle with allow remove: " + bOnRemoveCalled + ", groupId: "
+					+ sGroupId + ", transient: " + bTransient;
+
+				QUnit.test(sTitle, function (assert) {
+					var oBinding = this.oModel.bindList("/EMPLOYEES"),
+						oBindingMock = this.mock(oBinding),
+						oCache = {
+							hasPendingChangesForPath : function () {return false;},
+							refreshSingleWithRemove : function () {}
+						},
+						oCacheRequestPromise,
+						oContext,
+						oDependent0 = {refreshInternal : function () {}},
+						oDependent1 = {refreshInternal : function () {}},
+						oExpectation,
+						sExpectedGroupId = sGroupId || "$auto",
+						iIndex = bTransient ? -1 : 1,
+						that = this;
+
+					// initialize with 6 contexts, bLengthFinal===true and bKeyPredicates===true
+					// [-1, 0, 1, 2, undefined, 4, 5]
+					oBinding.createContexts(0, 3, createData(3, 0, true, 3, true));
+					if (bTransient) {
+						oBinding.aContexts[-1] =
+							Context.create(this.oModel, oBinding, "/EMPLOYEES/-1", -1);
+					}
+					oBinding.createContexts(4, 10, createData(2, 4, true, 6, true));
+					oContext = oBinding.aContexts[iIndex];
+					oBinding.oCachePromise = SyncPromise.resolve(oCache);
+
+					oCacheRequestPromise = SyncPromise.resolve(Promise.resolve().then(function () {
+						// fnOnRemove Test
+						if (bOnRemoveCalled) {
+							that.mock(oContext).expects("destroy")
+								.withExactArgs()
+								.callsFake(function () {
+									oContext.oBinding = undefined;
+								});
+							oBindingMock.expects("_fireChange")
+								.withExactArgs({reason : ChangeReason.Remove});
+							that.mock(that.oModel).expects("getDependentBindings").never();
+
+							// code under test
+							oExpectation.firstCall.args[3](oContext.iIndex);
+
+							if (iIndex === -1) {
+								assert.strictEqual(oBinding.aContexts.length, 6);
+								assert.notOk(3 in oBinding.aContexts);
+								assert.strictEqual(oBinding.aContexts[4].iIndex, 4);
+								assert.strictEqual(oBinding.aContexts[5].iIndex, 5);
+							} else {
+								assert.strictEqual(oBinding.aContexts.length, 5);
+								assert.notOk(2 in oBinding.aContexts);
+								assert.strictEqual(oBinding.aContexts[3].iIndex, 3);
+								assert.strictEqual(oBinding.aContexts[4].iIndex, 4);
+							}
+							assert.strictEqual(oBinding.aContexts[0].iIndex, 0);
+							assert.strictEqual(oBinding.aContexts[1].iIndex, 1);
+							assert.strictEqual(oBinding.iMaxLength, 5);
+						} else {
+							that.mock(that.oModel).expects("getDependentBindings")
+								.withExactArgs(sinon.match.same(oContext))
+								.returns([oDependent0, oDependent1]);
+							that.mock(oDependent0).expects("refreshInternal")
+								.withExactArgs(sExpectedGroupId, false);
+							that.mock(oDependent1).expects("refreshInternal")
+								.withExactArgs(sExpectedGroupId, false);
+						}
+					}));
+
+					oBindingMock.expects("isRefreshable").withExactArgs().returns(true);
+					oBindingMock.expects("hasPendingChangesForPath")
+						.withExactArgs(bTransient ? "/EMPLOYEES/-1" : "/EMPLOYEES('1')")
+						.returns(false);
+					oExpectation = this.mock(oCache).expects("refreshSingleWithRemove")
+						.withExactArgs(sExpectedGroupId, oContext.iIndex, sinon.match.func,
+							sinon.match.func)
+						.callsArg(2)
+						.returns(oCacheRequestPromise);
+					oBindingMock.expects("fireDataRequested").withExactArgs();
+					oBindingMock.expects("fireDataReceived").withExactArgs({data : {}});
+					this.mock(oContext).expects("checkUpdate")
+						.exactly(bOnRemoveCalled ? 0 : 1)
+						.withExactArgs();
+
+					// code under test
+					return oBinding.refreshSingle(oContext, sGroupId, true);
+				});
+			});
+		});
 	});
 
 	//*********************************************************************************************

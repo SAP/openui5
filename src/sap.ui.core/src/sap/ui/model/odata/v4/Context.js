@@ -2,19 +2,13 @@
  * ${copyright}
  */
 
+//Provides class sap.ui.model.odata.v4.Context
 sap.ui.define([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
 	"./lib/_Helper"
 ], function (SyncPromise, BaseContext, _Helper) {
 	"use strict";
-
-	/*
-	 * Clones the object.
-	 */
-	function clone(o) {
-		return o && JSON.parse(JSON.stringify(o));
-	}
 
 	/*
 	 * Fetches and formats the primitive value at the given path.
@@ -174,6 +168,9 @@ sap.ui.define([
 		}
 		return this.fetchCanonicalPath().then(function (sCanonicalPath) {
 			return that.oBinding._delete(sGroupId, sCanonicalPath.slice(1), that);
+		}).catch(function (oError) {
+			that.oModel.reportError("Failed to delete " + that, sClassName, oError);
+			throw oError;
 		});
 	};
 
@@ -332,7 +329,7 @@ sap.ui.define([
 		if (!oSyncPromise.isFulfilled()) {
 			return undefined;
 		}
-		return clone(oSyncPromise.getResult());
+		return _Helper.clone(oSyncPromise.getResult());
 	};
 
 	/**
@@ -438,6 +435,12 @@ sap.ui.define([
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the refresh; if not specified, the group ID for the context's
 	 *   binding is used, see {@link sap.ui.model.odata.v4.ODataModel#bindList}.
+	 * @param {boolean} [bAllowRemoval=false]
+	 *   Allows the list binding to remove this context from its collection because the entity does
+	 *   not match the binding's filter anymore,
+	 *   see {@link sap.ui.model.odata.v4.ODataListBinding#filter}; a removed context is
+	 *   destroyed, see {@link #destroy}.
+	 *   Supported since 1.55.0
 	 * @throws {Error}
 	 *   If <code>refresh</code> is called on a context not created by a
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding}, if the group ID is not valid, if the
@@ -446,11 +449,11 @@ sap.ui.define([
 	 * @public
 	 * @since 1.53.0
 	 */
-	Context.prototype.refresh = function (sGroupId) {
+	Context.prototype.refresh = function (sGroupId, bAllowRemoval) {
 		if (!this.oBinding.refreshSingle) {
 			throw new Error("Refresh is only supported for contexts of a list binding");
 		}
-		this.oBinding.refreshSingle(this, sGroupId);
+		this.oBinding.refreshSingle(this, sGroupId, bAllowRemoval);
 	};
 
 	/**
@@ -503,7 +506,7 @@ sap.ui.define([
 		this.oBinding.checkSuspended();
 
 		return Promise.resolve(this.fetchValue(sPath)).then(function (vResult) {
-			return clone(vResult);
+			return _Helper.clone(vResult);
 		});
 	};
 

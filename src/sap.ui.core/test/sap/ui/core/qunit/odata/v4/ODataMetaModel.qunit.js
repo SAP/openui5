@@ -714,6 +714,12 @@ sap.ui.require([
 
 			this.oMetaModel = new ODataMetaModel(oMetadataRequestor, sUrl);
 			this.oMetaModelMock = this.mock(this.oMetaModel);
+			this.oModel = {
+				reportError : function () {
+					throw new Error("Unsupported operation");
+				},
+				resolve : ODataModel.prototype.resolve
+			};
 		},
 
 		/*
@@ -2158,7 +2164,7 @@ sap.ui.require([
 			this.oMetaModelMock.expects("fetchEntityContainer")
 				.returns(SyncPromise.resolve(mScope));
 			oFixture.requests.forEach(function (oRequest) {
-				var oEntityInstance = {"@$ui5.predicate" : oRequest.predicate};
+				var oEntityInstance = {"@$ui5._.predicate" : oRequest.predicate};
 
 				oContextMock.expects("fetchValue")
 					.withExactArgs(oRequest.path || oFixture.dataPath)
@@ -2279,7 +2285,7 @@ sap.ui.require([
 					that.oMetaModelMock.expects("fetchEntityContainer")
 						.returns(SyncPromise.resolve(mScope));
 					Object.keys(oFixture.fetchPredicates || {}).forEach(function (sPath, i) {
-						var oEntityInstance = {"@$ui5.predicate" : "(~" + i + ")"};
+						var oEntityInstance = {"@$ui5._.predicate" : "(~" + i + ")"};
 
 						// Note: the entity instance is delivered asynchronously
 						oContextMock.expects("fetchValue")
@@ -2312,7 +2318,7 @@ sap.ui.require([
 		this.oMetaModelMock.expects("fetchEntityContainer").twice()
 			.returns(SyncPromise.resolve(mScope));
 		this.mock(oContext).expects("fetchValue").withExactArgs("/TEAMS/-1")
-			.returns(SyncPromise.resolve({"@$ui5.transient" : "update"}));
+			.returns(SyncPromise.resolve({"@$ui5._.transient" : "update"}));
 
 		// code under test
 		return this.oMetaModel.fetchUpdateData(sPropertyPath, oContext).then(function (oResult) {
@@ -2326,12 +2332,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchUpdateData: fetchObject fails", function(assert) {
-		var oContext = {},
+		var oModel = this.oModel,
+			oContext = {
+				getModel : function () { return oModel; }
+			},
 			oExpectedError = new Error(),
 			oMetaModelMock = this.mock(this.oMetaModel),
 			sPath = "some/invalid/path/to/a/property";
 
-		oMetaModelMock.expects("resolve")
+		this.mock(oModel).expects("resolve")
 			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns("~1");
 		oMetaModelMock.expects("getMetaPath").withExactArgs("~1").returns("~2");
@@ -2386,8 +2395,11 @@ sap.ui.require([
 				this.oLogMock.expects("warning")
 					.withExactArgs(oFixture.warning, oFixture.dataPath, sODataMetaModel);
 			}
-			this.oLogMock.expects("error")
-				.withExactArgs(oFixture.message, oFixture.dataPath, sODataMetaModel);
+			this.mock(this.oModel).expects("reportError")
+				.withExactArgs(oFixture.message, sODataMetaModel, sinon.match({
+					message : oFixture.dataPath + ": " + oFixture.message,
+					name : "Error"
+				}));
 
 			oPromise = this.oMetaModel.fetchUpdateData("", oContext);
 			assert.ok(oPromise.isRejected());

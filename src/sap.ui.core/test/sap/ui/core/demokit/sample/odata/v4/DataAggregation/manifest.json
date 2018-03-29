@@ -5,17 +5,17 @@
 		"applicationVersion" : {
 			"version" : "${version}"
 		},
-		"description" : "{{sap.app.description}}",
 		"dataSources" : {
 			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/?custom-option=value",
+				"uri" : "/testsuite/proxy/sap/opu/odata4/sap/zgk_c_salesorderitem_rd_v4_sb/srvd/sap/zgk_c_salesorderitem_rd_v4_sd/0001/",
 				"type" : "OData",
 				"settings" : {
 					"odataVersion" : "4.0"
 				}
 			}
 		},
-		"id" : "sap.ui.core.sample.odata.v4.SalesOrders",
+		"description" : "{{sap.app.description}}",
+		"id" : "sap.ui.core.sample.odata.v4.DataAggregation",
 		"i18n" : "i18n/i18n.properties",
 		"title" : "{{sap.app.title}}",
 		"type" : "application"
@@ -33,10 +33,9 @@
 			"sample" : {
 				"files" : [
 					"Component.js",
-					"Main.controller.js",
-					"Main.view.xml",
-					"manifest.json",
-					"../../../common/ValueHelp.js"
+					"DataAggregation.controller.js",
+					"DataAggregation.view.xml",
+					"manifest.json"
 				]
 			}
 		},
@@ -45,10 +44,10 @@
 			"cozy" : true
 		},
 		"dependencies" : {
-			"minUI5Version" : "1.37",
 			"libs" : {
 				"sap.m" : {}
-			}
+			},
+			"minUI5Version" : "1.55"
 		},
 		"handleValidation" : true,
 		"models" : {
@@ -56,28 +55,18 @@
 				"dataSource" : "default",
 				"preload" : true,
 				"settings" : {
-					"autoExpandSelect" : true,
+					"autoExpandSelect" : false,
 					"earlyRequests": true,
-					"groupProperties" : {
-						"FavoriteProductGroup" : {"submit" : "Auto"},
-						"myAutoGroup" : {"submit" : "Auto"},
-						"myDirectGroup" : {"submit" : "Direct"}
-					},
+					"groupId" : "$direct",
 					"operationMode" : "Server",
-					"synchronizationMode" : "None",
-					"updateGroupId" : "UpdateGroup"
+					"synchronizationMode" : "None"
 				}
 			}
 		},
 		"rootView" : {
 			"async" : true,
 			"type" : "XML",
-			"viewName" : "Main.view.xml"
-		},
-		"resources": {
-			"js": [{
-				"uri": "SalesOrdersSandbox.js"
-			}]
+			"viewName" : "sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation"
 		}
 	}
 }

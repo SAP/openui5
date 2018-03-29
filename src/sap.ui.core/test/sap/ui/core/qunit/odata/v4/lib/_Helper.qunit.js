@@ -1041,4 +1041,134 @@ sap.ui.require([
 	//    same return type." --> We can find the return type (from the binding parameter type).
 	//    If it comes to annotations, the signature might make a difference, but then "unordered
 	//    set of (non-binding) parameter names" is unique.
+
+	//*********************************************************************************************
+	[{
+		aAggregation : [{
+			grouped : false,
+			name : "BillToParty"
+		}],
+		sApply : "groupby((BillToParty))"
+	}, {
+		aAggregation : [{
+			grouped : false,
+			name : "BillToParty"
+		}, {
+			grouped : false,
+			name : "TransactionCurrency"
+		}],
+		sApply : "groupby((BillToParty,TransactionCurrency))"
+	}, {
+		aAggregation : [{
+			grouped : false,
+			name : "BillToParty"
+		}, {
+			as : "GrossAmountSum",
+			name : "GrossAmount",
+			total : false,
+			"with" : "sum"
+		}, {
+			as : "NetAmountAggregate",
+			name : "NetAmount",
+			total : false
+		}, {
+			// spec requires "as", but we don't care
+			name : "Amount",
+			total : false,
+			"with" : "average"
+		}],
+		sApply : "groupby((BillToParty),aggregate(GrossAmount with sum as GrossAmountSum"
+			+ ",NetAmount as NetAmountAggregate,Amount with average))"
+	}, {
+		aAggregation : [{
+			name : "GrossAmountInTransactionCurrency",
+			total : false,
+			unit : "TransactionCurrency"
+		}, {
+			grouped : false,
+			name : "BillToParty"
+		}, {
+			grouped : false,
+			name : "TextProperty"
+		}, {
+			name : "NetAmountInTransactionCurrency",
+			total : false,
+			unit : "TransactionCurrency"
+		}],
+		sApply : "groupby((BillToParty,TextProperty,TransactionCurrency)"
+			+ ",aggregate(GrossAmountInTransactionCurrency,NetAmountInTransactionCurrency))"
+	}, {
+		aAggregation : [{
+			grouped : true, // some use case where unit appears as "standalone" dimension
+			name : "TransactionCurrency"
+		}, {
+			name : "GrossAmountInTransactionCurrency",
+			total : false,
+			unit : "TransactionCurrency"
+		}, {
+			grouped : false,
+			name : "BillToParty"
+		}],
+		sApply : "groupby((TransactionCurrency,BillToParty)"
+			+ ",aggregate(GrossAmountInTransactionCurrency))"
+	}, {
+		aAggregation : [{
+			name : "GrossAmountInTransactionCurrency",
+			total : false,
+			unit : "TransactionCurrency"
+		}, {
+			grouped : true, // some use case where unit appears as "standalone" dimension
+			name : "TransactionCurrency"
+		}, {
+			grouped : false,
+			name : "BillToParty"
+		}],
+		sApply : "groupby((TransactionCurrency,BillToParty)"
+			+ ",aggregate(GrossAmountInTransactionCurrency))"
+	}].forEach(function (oFixture) {
+		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
+			assert.strictEqual(_Helper.buildApply(oFixture.aAggregation), oFixture.sApply);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply: both dimension and measure", function (assert) {
+		assert.throws(function () {
+			_Helper.buildApply([{
+				grouped : false,
+				name : "BothDimensionAndMeasure",
+				total : false
+			}]);
+		}, new Error("Both dimension and measure: BothDimensionAndMeasure"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply: neither dimension nor measure", function (assert) {
+		assert.throws(function () {
+			_Helper.buildApply([{
+				name : "NeitherDimensionNorMeasure"
+			}]);
+		}, new Error("Neither dimension nor measure: NeitherDimensionNorMeasure"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("clone", function (assert) {
+		var vClone = {},
+			oJsonMock = this.mock(JSON),
+			sStringified = "{}",
+			vValue = {};
+
+		// code under test
+		assert.strictEqual(_Helper.clone(null), null);
+
+		oJsonMock.expects("stringify").withExactArgs(sinon.match.same(vValue))
+			.returns(sStringified);
+		oJsonMock.expects("parse").withExactArgs(sStringified).returns(vClone);
+
+		// code under test
+		assert.strictEqual(_Helper.clone(vValue), vClone);
+
+		// code under test
+		assert.strictEqual(_Helper.clone(undefined), undefined);
+	});
 });

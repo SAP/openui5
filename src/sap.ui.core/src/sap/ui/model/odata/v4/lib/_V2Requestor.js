@@ -512,14 +512,15 @@ sap.ui.define([
 	 * @param {string} [sMetaPath]
 	 *   The meta path corresponding to the resource path; needed in case V2 response does not
 	 *   contain <code>__metadata.type</code>, for example "2.2.7.2.4 RetrievePrimitiveProperty
-	 *   Request"
+	 *   Request" or "2.2.7.5 Invoke Request" for "a Function Import which returns a collection of
+	 *   primitives"
 	 * @returns {object}
 	 *   The OData V4 response payload
 	 * @throws {Error}
 	 *   If the OData V2 response payload cannot be converted
 	 */
 	_V2Requestor.prototype.doConvertResponse = function (oResponsePayload, sMetaPath) {
-		var oCandidate, bIsArray, aKeys, oPayload;
+		var oCandidate, bIsArray, aKeys, oPayload, oPropertyMetadata, that = this;
 
 		oResponsePayload = oResponsePayload.d;
 		// 'results' may be an array of entities in case of a collection request or the value when
@@ -528,6 +529,8 @@ sap.ui.define([
 		bIsArray = Array.isArray(oResponsePayload.results);
 
 		if (!bIsArray && !oResponsePayload.__metadata) {
+			// Special cases for handling of objects (for arrays, see below).
+			// Note: If oResponsePayload has __metadata, just call convertNonPrimitive() below.
 			aKeys = Object.keys(oResponsePayload);
 			oCandidate = oResponsePayload[aKeys[0]];
 			if (aKeys.length === 1) {
@@ -548,7 +551,16 @@ sap.ui.define([
 			}
 		}
 
-		oPayload = this.convertNonPrimitive(oResponsePayload);
+		if (bIsArray && !oResponsePayload.results.length) {
+			oPayload = []; // no conversion needed
+		} else if (bIsArray && !oResponsePayload.results[0].__metadata) {
+			oPropertyMetadata = this.oModelInterface.fnFetchMetadata(sMetaPath).getResult();
+			oPayload = oResponsePayload.results.map(function (vValue) {
+				return that.convertPrimitive(vValue, oPropertyMetadata, sMetaPath, "");
+			});
+		} else {
+			oPayload = this.convertNonPrimitive(oResponsePayload);
+		}
 
 		if (bIsArray) {
 			oPayload = {value : oPayload};

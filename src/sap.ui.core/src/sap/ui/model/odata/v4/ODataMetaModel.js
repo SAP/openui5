@@ -1249,12 +1249,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataMetaModel.prototype.fetchUpdateData = function (sPropertyPath, oContext) {
-		var sResolvedPath = this.resolve(sPropertyPath, oContext),
+		var oModel = oContext.getModel(),
+			sResolvedPath = oModel.resolve(sPropertyPath, oContext),
 			that = this;
 
 		function error(sMessage) {
-			jQuery.sap.log.error(sMessage, sResolvedPath, sODataMetaModel);
-			throw new Error(sResolvedPath + ": " + sMessage);
+			var oError = new Error(sResolvedPath + ": " + sMessage);
+
+			oModel.reportError(sMessage, sODataMetaModel, oError);
+			throw oError;
 		}
 
 		// First fetch the complete metapath to ensure that everything is in mScope
@@ -1357,14 +1360,14 @@ sap.ui.define([
 					if (!oEntity) {
 						error("No instance to calculate key predicate at " + vSegment.path);
 					}
-					if ("@$ui5.transient" in oEntity) {
+					if ("@$ui5._.transient" in oEntity) {
 						bTransient = true;
 						return undefined;
 					}
-					if (!oEntity["@$ui5.predicate"]) {
+					if (!oEntity["@$ui5._.predicate"]) {
 						error("No key predicate known at " + vSegment.path);
 					}
-					return vSegment.prefix + oEntity["@$ui5.predicate"];
+					return vSegment.prefix + oEntity["@$ui5._.predicate"];
 				}, function (oError) { // enrich the error message with the path
 					error(oError.message + " at " + vSegment.path);
 				});

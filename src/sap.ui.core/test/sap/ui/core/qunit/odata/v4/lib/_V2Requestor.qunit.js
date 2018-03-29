@@ -68,23 +68,35 @@ sap.ui.require([
 			"d" : {
 				"__count" : "3",
 				"__next" : "...?$skiptoken=12",
-				"results" : [{"String" : "foo"}, {"Boolean" : true}]
+				"results" : [{
+					"__metadata" : {},
+					"String" : "foo"
+				}, {
+//					"__metadata" : {},
+					"Boolean" : true
+				}]
 			}
 		},
 		oExpectedResult : {
 			"@odata.count" : "3", // Note: v4.ODataModel uses IEEE754Compatible=true
 			"@odata.nextLink" : "...?$skiptoken=12",
-			"value" : [{"String" : "foo"}, {"Boolean" : true}]
+			"value" : [{"__metadata" : {}, "String" : "foo"}, {"Boolean" : true}]
 		}
 	}, {
 		bIsCollection : true,
 		oResponsePayload : {
 			"d" : {
-				"results" : [{"String" : "foo"}, {"Boolean" : true}]
+				"results" : [{
+					"__metadata" : {},
+					"String" : "foo"
+				}, {
+//					"__metadata" : {},
+					"Boolean" : true
+				}]
 			}
 		},
 		oExpectedResult : {
-			"value" : [{"String" : "foo"}, {"Boolean" : true}]
+			"value" : [{"__metadata" : {}, "String" : "foo"}, {"Boolean" : true}]
 		}
 	}, {
 		bIsCollection : false,
@@ -226,6 +238,64 @@ sap.ui.require([
 		assert.deepEqual(
 			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
 			{value : null});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.5 collection of primitives", function (assert) {
+		var sMetaPath = "/__FAKE__GetAllFlightDates/@$ui5.overload/0/$ReturnType",
+			sOutput0 = "2017-08-10T00:00:00Z",
+			sOutput1 = "2017-08-10T00:00:01Z",
+			oProperty = {},
+			oRequestor = {
+				oModelInterface : {fnFetchMetadata : function () {}}
+			},
+			oRequestorMock = this.mock(oRequestor),
+			oResponsePayload = {
+				"d" : { // Note: DataServiceVersion : 2.0
+					"results" : [
+						"/Date(1502323200000)/",
+						"/Date(1502323201000)/"
+					]
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		this.mock(oRequestor.oModelInterface).expects("fnFetchMetadata").withExactArgs(sMetaPath)
+			.returns(SyncPromise.resolve(oProperty));
+		oRequestorMock.expects("convertNonPrimitive").never();
+		oRequestorMock.expects("convertPrimitive").withExactArgs(oResponsePayload.d.results[0],
+				sinon.match.same(oProperty), sMetaPath, "")
+			.returns(sOutput0);
+		oRequestorMock.expects("convertPrimitive").withExactArgs(oResponsePayload.d.results[1],
+				sinon.match.same(oProperty), sMetaPath, "")
+			.returns(sOutput1);
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : [sOutput0, sOutput1]});
+	});
+	//TODO test with __count/__next?
+
+	//*********************************************************************************************
+	QUnit.test("doConvertResponse, 2.2.7.5 empty collection", function (assert) {
+		var sMetaPath = "/__FAKE__GetAllFlightDates/@$ui5.overload/0/$ReturnType",
+			oRequestor = {},
+			oRequestorMock = this.mock(oRequestor),
+			oResponsePayload = {
+				"d" : { // Note: DataServiceVersion : 2.0
+					"results" : []
+				}
+			};
+
+		asV2Requestor(oRequestor);
+		oRequestorMock.expects("convertNonPrimitive").never();
+		oRequestorMock.expects("convertPrimitive").never();
+
+		// code under test
+		assert.deepEqual(
+			oRequestor.doConvertResponse(oResponsePayload, sMetaPath),
+			{value : []});
 	});
 
 	//*********************************************************************************************

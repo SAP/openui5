@@ -24,6 +24,78 @@ sap.ui.define([
 
 	Helper = {
 		/**
+		 * Builds the value for a "$apply" system query option based on the given data aggregation
+		 * information. The value is "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,
+		 * unit_or_text_K>),aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))" where the
+		 * "aggregate" part is only present if measures are given and both "with" and "as" are
+		 * optional.
+		 *
+		 * @param {object[]} aAggregation
+		 *   An array with objects holding the information needed for data aggregation; see also
+		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+		 *   Extension for Data Aggregation Version 4.0</a>
+		 * @param {string} aAggregation[].name
+		 *   The name of an OData property. Each property must be either a dimension or a measure,
+		 *   see below.
+		 * @param {boolean} [aAggregation[].grouped]
+		 *   Its presence is used to detect a dimension
+		 * @param {boolean} [aAggregation[].total]
+		 *   Its presence is used to detect a measure
+		 * @param {string} [aAggregation[].unit]
+		 *   Measures only: The name of this measure's unit property
+		 * @param {string} [aAggregation[].with]
+		 *   Measures only: The name of the method (for example "sum") used for aggregation of this
+		 *   measure; see "3.1.2 Keyword with"
+		 * @param {string} [aAggregation[].as]
+		 *   Measures only: The alias, that is the name of the dynamic property used for
+		 *   aggregation of this measure; see "3.1.1 Keyword as"
+		 * @returns {string}
+		 *   The value for a "$apply" system query option
+		 * @throws {Error}
+		 *   In case a property is both a dimension and a measure, or neither a dimension nor a
+		 *   measure
+		 */
+		buildApply : function (aAggregation) {
+			var aAggregate = [],
+				aGroupBy = [],
+				aGroupByNoDimension = [];
+
+			aAggregation.forEach(function (oAggregation) {
+				var sAggregate, iIndex;
+
+				if ("total" in oAggregation) { // measure
+					if ("grouped" in oAggregation) {
+						throw new Error("Both dimension and measure: " + oAggregation.name);
+					}
+					sAggregate = oAggregation.name;
+					if ("with" in oAggregation) {
+						sAggregate += " with " + oAggregation.with;
+					}
+					if ("as" in oAggregation) {
+						sAggregate += " as " + oAggregation.as;
+					}
+					aAggregate.push(sAggregate);
+					if ("unit" in oAggregation
+							&& aGroupBy.indexOf(oAggregation.unit) < 0
+							&& aGroupByNoDimension.indexOf(oAggregation.unit) < 0) {
+						aGroupByNoDimension.push(oAggregation.unit);
+					}
+				} else if ("grouped" in oAggregation) { // dimension
+					aGroupBy.push(oAggregation.name);
+					iIndex = aGroupByNoDimension.indexOf(oAggregation.name);
+					if (iIndex >= 0) {
+						aGroupByNoDimension.splice(iIndex, 1);
+					}
+				} else {
+					throw new Error("Neither dimension nor measure: " + oAggregation.name);
+				}
+			});
+
+			return "groupby((" + aGroupBy.concat(aGroupByNoDimension).join(",")
+				+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))");
+		},
+
+		/**
 		 * Builds a relative path from the given arguments. Iterates over the arguments and appends
 		 * them to the path if defined and non-empty. The arguments are expected to be strings or
 		 * integers, but this is not checked.
@@ -98,6 +170,19 @@ sap.ui.define([
 			});
 
 			return "?" + aQuery.join("&");
+		},
+
+		/**
+		 * Returns a clone of the given value, according to the rules of
+		 * <code>JSON.stringify</code>.
+		 *
+		 * @param {*} vValue - Any value, including <code>undefined</code>
+		 * @returns {*} - A clone
+		 */
+		clone : function clone(vValue) {
+			return vValue === undefined
+				? vValue
+				: JSON.parse(JSON.stringify(vValue));
 		},
 
 		/**
@@ -467,7 +552,7 @@ sap.ui.define([
 		/**
 		 * Returns the properties that have been selected for the given path.
 		 *
-		 * @param {object} mQueryOptions
+		 * @param {object} [mQueryOptions]
 		 *   A map of query options as returned by
 		 *   {@link sap.ui.model.odata.v4.ODataModel#buildQueryOptions}
 		 * @param {string} sPath

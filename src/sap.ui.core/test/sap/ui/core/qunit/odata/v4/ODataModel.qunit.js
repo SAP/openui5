@@ -565,8 +565,8 @@ sap.ui.require([
 		this.mock(oModel.oRequestor).expects("submitBatch")
 			.withExactArgs("groupId")
 			.returns(Promise.reject(oExpectedError));
-		this.oLogMock.expects("error")
-			.withExactArgs("$batch failed", oExpectedError.message, sClassName);
+		this.mock(oModel).expects("reportError")
+			.withExactArgs("$batch failed", sClassName, oExpectedError.message);
 
 		// code under test
 		return oModel._submitBatch("groupId").then(function () {
@@ -1048,6 +1048,21 @@ sap.ui.require([
 				oModel.checkDeferredGroupId(sGroupId);
 			}, new Error("Group ID is not deferred: " + sGroupId));
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$aggregation", function (assert) {
+		var aAggregation = [],
+			aAllowed = ["$$aggregation"],
+			oModel = createModel(),
+			mParameters = {$$aggregation : aAggregation},
+			mResult;
+
+		// code under test
+		mResult = oModel.buildBindingParameters(mParameters, aAllowed);
+
+		assert.deepEqual(mResult, mParameters);
+		assert.strictEqual(mResult.$$aggregation, aAggregation);
 	});
 
 	//*********************************************************************************************

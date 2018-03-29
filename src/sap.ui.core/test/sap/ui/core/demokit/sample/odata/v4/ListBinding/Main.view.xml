@@ -7,8 +7,8 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1"
 	>
-	<Toolbar>
-		<Label text="Teams" labelFor="TeamSelect"/>
+	<Toolbar id="TeamDetailsToolbar">
+		<Title text="Team" titleStyle="H3"/>
 		<Select id="TeamSelect" change="onTeamSelect" autoAdjustWidth="true"
 			items="{
 				path : '/TEAMS',
@@ -45,14 +45,15 @@
 						<Button icon="sap-icon://save" press="changeTeamBudget"
 							text="Change" type="Accept"/>
 					</buttons>
-					<form:SimpleForm binding="{/ChangeTeamBudgetByID(...)}" editable="true"
+					<form:SimpleForm ariaLabelledBy="ChangeTeamBudgetDialog"
+							binding="{/ChangeTeamBudgetByID(...)}" editable="true"
 							id="ChangeTeamBudgetByID" layout="ResponsiveGridLayout">
 						<Label text="Team ID" />
 						<!-- <Text text="{$Parameter('TeamID'}" /> -->
 						<Text text="{ui>/TeamID}" />
-						<Label text="Budget" />
+						<Label labelFor="ChangeBudget" text="Budget" />
 						<!-- <Input value="{$Parameter('Budget'}" /> -->
-						<Input value="{ui>/Budget}" />
+						<Input id="ChangeBudget" value="{ui>/Budget}" />
 					</form:SimpleForm>
 				</Dialog>
 			</dependents>
@@ -60,7 +61,8 @@
 		<Button enabled="{ui>/bRealOData}" icon="sap-icon://edit"
 				press="openChangeManagerOfTeamDialog" text="Manager"/>
 	</Toolbar>
-	<form:SimpleForm id="TeamDetails" layout="ResponsiveGridLayout">
+	<form:SimpleForm ariaLabelledBy="TeamDetailsToolbar" id="TeamDetails"
+			layout="ResponsiveGridLayout">
 		<Label text="Team ID" />
 		<Text id="Team_Id" text="{Team_Id}" />
 		<Label text="Team Name" />
@@ -81,13 +83,13 @@
 					<Button icon="sap-icon://save" press="changeManagerOfTeam"
 						text="Change" type="Accept"/>
 				</buttons>
-				<form:SimpleForm
+				<form:SimpleForm ariaLabelledBy="ChangeManagerOfTeamDialog"
 						binding="{com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeManagerOfTeam(...)}"
 						editable="true" id="ChangeTeamManagerByID"
 						layout="ResponsiveGridLayout">
-					<Label text="Manager ID" />
+					<Label labelFor="ChangeManagerOfTeamInput" text="Manager ID" />
 					<!-- <Input value="{$Parameter('ManagerID'}" /> -->
-					<Input value="{ui>/ManagerID}" />
+					<Input id="ChangeManagerOfTeamInput" value="{ui>/ManagerID}" />
 				</form:SimpleForm>
 			</Dialog>
 		</form:dependents>
@@ -103,7 +105,8 @@
 					press="onCancel"/>
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://save" text="Save"
 					press="onSave"/>
-				<Button icon="sap-icon://refresh" id="refreshEmployees" press="onRefresh"/>
+				<Button icon="sap-icon://refresh" id="refreshEmployees" press="onRefresh"
+					text="Refresh"/>
 			</Toolbar>
 		</headerToolbar>
 		<columns>
@@ -179,7 +182,7 @@
 		</columns>
 		<ColumnListItem>
 			<Text text="{ID}"/>
-			<Image src="{EQUIPMENT_2_PRODUCT/ProductPicture/Picture}"/>
+			<Image densityAware="false" src="{EQUIPMENT_2_PRODUCT/ProductPicture/Picture}"/>
 			<Input value="{EQUIPMENT_2_PRODUCT/Name}"/>
 			<Text text="{Category}"/>
 			<SelectList enabled="false"
@@ -200,7 +203,7 @@
 	</VBox>
 	<VBox>
 		<Toolbar>
-			<Title text="Employee Search" titleStyle="H4">
+			<Title id="EmployeeSearch" text="Employee Search" titleStyle="H4">
 				<layoutData>
 					<ToolbarLayoutData shrinkable="false" />
 				</layoutData>
@@ -215,8 +218,8 @@
 				width="4em" />
 			<Button text="Search" enabled="{ui>/bRealOData}" press="getEmployeeByID"/>
 		</Toolbar>
-		<form:SimpleForm id="GetEmployeeByID" binding="{/GetEmployeeByID(...)}"
-				layout="ResponsiveGridLayout">
+		<form:SimpleForm ariaLabelledBy="EmployeeSearch" binding="{/GetEmployeeByID(...)}"
+				id="GetEmployeeByID" layout="ResponsiveGridLayout">
 			<Label text="Name"/>
 			<Text text="{Name}"/>
 			<Label text="Age"/>
