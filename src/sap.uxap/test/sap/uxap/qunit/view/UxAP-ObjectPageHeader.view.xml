@@ -23,6 +23,7 @@
 							  isObjectSubtitleAlwaysVisible="true"
 							  isActionAreaAlwaysVisible="true"
 							  showPlaceholder="true"
+							  titleSelectorTooltip="Custom Tooltip"
 					>
 				<actions>
 					<ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://show"/>

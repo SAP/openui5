@@ -94,6 +94,31 @@
 		oPage.setShowTitleInHeaderContent(false);
 	});
 
+	QUnit.test("titleSelectorTooltip aggregation validation", function (assert) {
+		var oHeader = core.byId("UxAP-ObjectPageHeader--header"),
+			oLibraryResourceBundleOP = oHeader.oLibraryResourceBundleOP,
+			oTitleArrowIconAggr = oHeader.getAggregation("_titleArrowIcon"),
+			oTitleArrowIconContAggr = oHeader.getAggregation("_titleArrowIconCont");
+
+		assert.strictEqual(oHeader.getTitleSelectorTooltip(), "Custom Tooltip", "titleSelectorTooltip aggregation is initially set");
+		assert.strictEqual(oTitleArrowIconAggr.getTooltip(), "Custom Tooltip", "_titleArrowIcon aggregation tooltip is initially set");
+		assert.strictEqual(oTitleArrowIconContAggr.getTooltip(), "Custom Tooltip", "_titleArrowIconCont aggregation tooltip is initially set");
+
+		oHeader.setTitleSelectorTooltip("Test tooltip");
+		core.applyChanges();
+
+		assert.strictEqual(oHeader.getTitleSelectorTooltip(), "Test tooltip", "titleSelectorTooltip aggregation is updated with the new value");
+		assert.strictEqual(oTitleArrowIconAggr.getTooltip(), "Test tooltip", "_titleArrowIcon aggregation tooltip is updated with the new value");
+		assert.strictEqual(oTitleArrowIconContAggr.getTooltip(), "Test tooltip", "_titleArrowIconCont aggregation tooltip is updated with the new value");
+
+		oHeader.destroyTitleSelectorTooltip();
+		core.applyChanges();
+
+		assert.strictEqual(oHeader.getTitleSelectorTooltip(), null, "titleSelectorTooltip aggregation is destroyed");
+		assert.strictEqual(oTitleArrowIconAggr.getTooltip(), oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"), "_titleArrowIcon aggregation tooltip is set to default");
+		assert.strictEqual(oTitleArrowIconContAggr.getTooltip(), oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP"), "_titleArrowIconCont aggregation tooltip is set to default");
+	});
+
 	QUnit.module("image rendering", {
 		beforeEach: function () {
 			this._oPage = oHeaderView.byId("ObjectPageLayout");

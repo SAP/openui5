@@ -26,7 +26,8 @@
 							  markLockedPress="handleMarkLockedPress"
 							  objectSubtitle="Long subtitle that wraps and goes over more lines"
 							  objectImageShape="Circle"
-							  objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png">
+							  objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
+							  titleSelectorTooltip="Custom Tooltip">
 				<actions>
 					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" importance="Low"/>
 					<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" importance="Low"/>

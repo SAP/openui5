@@ -268,7 +268,20 @@ sap.ui.define([
 				 * A button that is used for opening the side content of the page or some additional content.
 				 * @since 1.38.0
 				 */
-				sideContentButton: {type: "sap.m.Button", multiple: false}
+				sideContentButton: {type: "sap.m.Button", multiple: false},
+
+				/**
+				 * A custom tooltip for the title selector button.
+				 *
+				 * The custom tooltip will be visible if the <code>showTitleSelector</code>
+				 * property is set to <code>true</code>.
+				 *
+				 * <b>Note:</b> If the aggregation is destroyed or set to invalid value, the
+				 * default tooltip will be set. The default tooltip text is "Related options".
+				 *
+				 * @since 1.56
+				 */
+				titleSelectorTooltip: {type: "sap.ui.core.TooltipBase", altTypes: ["string"], multiple: false}
 			},
 			events: {
 
@@ -472,6 +485,26 @@ sap.ui.define([
 				this._notifyParentOfChanges(true);
 			}
 		}
+
+		return this;
+	};
+
+	ObjectPageHeader.prototype._setAggregationTooltip = function (sAggregationName, vTooltip) {
+		var oAggregation = this.getAggregation(sAggregationName);
+
+	   if (oAggregation) {
+		   oAggregation.setTooltip(vTooltip);
+	   }
+
+	   return this;
+	};
+
+	ObjectPageHeader.prototype._setTitleSelectorTooltip = function(vTooltip) {
+		if (vTooltip === null || vTooltip === undefined) {
+			vTooltip = this.oLibraryResourceBundleOP.getText("OP_SELECT_ARROW_TOOLTIP");
+		}
+		this._setAggregationTooltip("_titleArrowIcon", vTooltip);
+		this._setAggregationTooltip("_titleArrowIconCont", vTooltip);
 
 		return this;
 	};
@@ -1003,6 +1036,22 @@ sap.ui.define([
 		if (oParent && typeof oParent._headerTitleChangeHandler === "function") {
 			oParent._headerTitleChangeHandler(bIsObjectImageChange);
 		}
+	};
+
+	ObjectPageHeader.prototype.setTitleSelectorTooltip = function (vTooltip) {
+		this._setTitleSelectorTooltip(vTooltip);
+
+		this.setAggregation("titleSelectorTooltip", vTooltip, true);
+
+		return this;
+	};
+
+	ObjectPageHeader.prototype.destroyTitleSelectorTooltip = function () {
+		this._setTitleSelectorTooltip(null);
+
+		this.destroyAggregation("titleSelectorTooltip", true);
+
+		return this;
 	};
 
 	ObjectPageHeader.prototype.exit = function () {
