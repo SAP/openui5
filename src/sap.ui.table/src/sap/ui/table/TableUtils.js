@@ -635,7 +635,7 @@ sap.ui.define([
 		 * @private
 		 */
 		isFixedColumn : function(oTable, iColIdx) {
-			return iColIdx < oTable.getFixedColumnCount();
+			return iColIdx < oTable.getComputedFixedColumnCount();
 		},
 
 		/**
@@ -645,7 +645,7 @@ sap.ui.define([
 		 * @private
 		 */
 		hasFixedColumns : function(oTable) {
-			return oTable.getFixedColumnCount() > 0;
+			return oTable.getComputedFixedColumnCount() > 0;
 		},
 
 		/**

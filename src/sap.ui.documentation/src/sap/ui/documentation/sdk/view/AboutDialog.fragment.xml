@@ -118,7 +118,7 @@
 			</Page>
 		</NavContainer>
 		<beginButton>
-			<Button text="Close" press="aboutDialogClose"/>
+			<Button id="aboutDialogCloseButton" text="Close" press="aboutDialogClose"/>
 		</beginButton>
 	</Dialog>
 

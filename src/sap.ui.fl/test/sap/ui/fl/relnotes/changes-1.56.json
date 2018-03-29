@@ -37,6 +37,18 @@
         "type": "FIX",
         "text": " Add getPreparedChange to ctrl variant commands",
         "references": []
+      },
+      {
+        "id": "a1632670edb941c451dfb819e0dfcb1975008215",
+        "type": "FIX",
+        "text": " sap.ui.fl: Variant selection in URL should not change history",
+        "references": []
+      },
+      {
+        "id": "2a068931696783ba988122b2fdfb47fa2fc7737d",
+        "type": "FIX",
+        "text": " fl.VariantManagement: change display from inline to inline-block",
+        "references": []
       }
     ]
   }

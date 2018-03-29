@@ -181,7 +181,7 @@ sap.ui.require([
 
 		assert.strictEqual(
 			($Cell.attr("headers") || "").trim(),
-			oTable.getId() + "_col" + iCol,
+			oColumn.getId(),
 			"headers attribute of cell [" + iRow + ", " + iCol + "]"
 		);
 
@@ -221,7 +221,7 @@ sap.ui.require([
 
 		assert.strictEqual(
 			($Cell.attr("headers") || "").trim(),
-			oTable.getId() + "_col" + iCol,
+			oColumn.getId(),
 			"headers attribute of cell [" + iRow + ", " + iCol + "]"
 		);
 	}

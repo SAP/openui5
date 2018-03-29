@@ -61,9 +61,9 @@
 					<items>
 						<IconTabFilter id="welcomeTab" text="Home" key="home" visible="{=${appView>/bPhoneSize}}">
 						</IconTabFilter>
-						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic" visible="{= !${appView>/bHideEmptySections}}">
+						<IconTabFilter id="topicMasterTab" text="Documentation" key="topic" visible="{= !${appView>/bHideTopicSection}}">
 						</IconTabFilter>
-						<IconTabFilter id="apiMasterTab" text="API Reference" key="api" visible="{= !${appView>/bHideEmptySections}}">
+						<IconTabFilter id="apiMasterTab" text="API Reference" key="api" visible="{= !${appView>/bHideApiSection}}">
 						</IconTabFilter>
 						<IconTabFilter id="controlsMasterTab" text="Samples" key="controls">
 						</IconTabFilter>
@@ -90,24 +90,24 @@
 
 				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
-				<Button press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
+				<Button id="feedBackDialogButton" press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
 
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 				</Button>
 
-				<MenuButton icon="sap-icon://hint" type="Transparent" visible="{=!${appView>/bSearchMode}}">
+				<MenuButton id="aboutMenuButton" icon="sap-icon://hint" type="Transparent" visible="{=!${appView>/bSearchMode}}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
 					<menu>
-						<Menu class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
+						<Menu id="aboutMenu" class="sapContrast sapContrastPlus" itemSelected="handleMenuItemClick">
 							<items>
 								<MenuItem text="{= ${versionData>/isBetaVersion} ? 'Beta' : ''} Version {versionData>/version} {=${versionData>/isDevVersion} ? '- development in progress!' : ''}" visible="{appView>/bPhoneSize}" />
 								<MenuItem text="Change version" visible="{appView>/bShowVersionSwitchInMenu}" />
 								<MenuItem text="Feedback" visible="{appView>/bPhoneSize}" />
-								<MenuItem text="About" />
+								<MenuItem id="aboutMenuItem" text="About" />
 								<MenuItem text="Legal" />
 								<MenuItem text="Privacy" />
 								<MenuItem text="Terms of Use" visible="{=!${versionData>/isOpenUI5}}">

@@ -85,6 +85,7 @@ sap.ui.define([
 		// Assertions
 		Then.onTheCart.iShouldSeeTheEditButtonDisabled().
 		and.iShouldSeeTheProceedButtonDisabled().
+		// Cleanup
 		and.iTeardownMyApp();
 	});
 

@@ -596,7 +596,7 @@ sap.ui.require([
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" :
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode.xml"},
-			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode,FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
+			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode%2CFAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCompanyCode_ItemCustomer.xml"},
 			"/FAR_CUSTOMER_LINE_ITEMS/$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer" :
 				{source : "FAR_CUSTOMER_LINE_ITEMS.metadata_ItemCustomer.xml"},

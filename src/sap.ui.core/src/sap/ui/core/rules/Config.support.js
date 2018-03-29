@@ -305,10 +305,9 @@ sap.ui.define([
 					if (mModel.dataSource) {
 						mDataSource = mDataSources[mModel.dataSource];
 					}
-					if ((mModel.type && mModel.type === "sap.ui.model.odata.v2.ODataModel") ||
-						mDataSource && mDataSource.type === "OData" && (mDataSource.settings === undefined ||
-						(mDataSource.settings && (mDataSource.settings.odataVersion === undefined ||
-						mDataSource.settings.odataVersion && mDataSource.settings.odataVersion === "2.0")))) {
+					if (mModel.type === "sap.ui.model.odata.v2.ODataModel"
+						|| mModel.type === "sap.ui.model.odata.v4.ODataModel"
+						|| mDataSource && mDataSource.type === "OData") {
 						mComponentsWithRelevantModels[sComponentId] = true;
 						if (mModel.preload !== undefined) {
 							bModelPreloadKnown = true;
@@ -320,7 +319,7 @@ sap.ui.define([
 				Object.keys(mComponentsWithRelevantModels).forEach(function(sComponentId) {
 					oIssueManager.addIssue({
 						severity: Severity.High,
-						details: "The used V2 ODataModels don't make use of the preloading feature.",
+						details: "The used OData models don't make use of the preloading feature.",
 						context: {
 							id: sComponentId
 						}

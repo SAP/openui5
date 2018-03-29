@@ -5,11 +5,13 @@
 // Provides object sap.ui.dt.ElementUtil.
 sap.ui.define([
 	'jquery.sap.global',
-	'sap/ui/base/ManagedObject'
+	'sap/ui/base/ManagedObject',
+	'sap/ui/dt/Util'
 ],
 function(
 	jQuery,
-	ManagedObject
+	ManagedObject,
+	Util
 ) {
 	"use strict";
 
@@ -30,27 +32,6 @@ function(
 	 */
 
 	var ElementUtil = {};
-
-	ElementUtil.sACTION_MOVE = 'move';
-	ElementUtil.sACTION_CUT = 'cut';
-	ElementUtil.sACTION_PASTE = 'paste';
-	ElementUtil.sREORDER_AGGREGATION = 'reorder_aggregation';
-
-	/**
-	 *
-	 */
-	ElementUtil.iterateOverElements = function(vElement, fnCallback) {
-		if (vElement && vElement.length) {
-			for (var i = 0; i < vElement.length; i++) {
-				var oElement = vElement[i];
-				if (oElement instanceof sap.ui.base.ManagedObject) {
-					fnCallback(oElement);
-				}
-			}
-		} else if (vElement instanceof sap.ui.base.ManagedObject) {
-			fnCallback(vElement);
-		}
-	};
 
 	/**
 	 *
@@ -103,26 +84,6 @@ function(
 	};
 
 	/**
-	 * ! Please, use this method only if OverlayUtil.getClosestOverlayForType is not available in your case ! find the
-	 * closest element of the given type
-	 *
-	 * @param {sap.ui.core.Element}
-	 *          oSourceElement to start search for
-	 * @param {string}
-	 *          sType to check instance of
-	 * @return {sap.ui.core.Element} element of the given type, if found
-	 */
-	ElementUtil.getClosestElementOfType = function(oSourceElement, sType) {
-		var oElement = oSourceElement;
-
-		while (oElement && !this.isInstanceOf(oElement, sType)) {
-			oElement = oElement.getParent();
-		}
-
-		return oElement;
-	};
-
-	/**
 	 *
 	 */
 	ElementUtil.fixComponentParent = function(oElement) {
@@ -154,27 +115,6 @@ function(
 	/**
 	 *
 	 */
-	ElementUtil.findAllPublicElements = function(oElement) {
-		var aFoundElements = [];
-
-		var internalFind = function (oElement) {
-			oElement = this.fixComponentContainerElement(oElement);
-			if (oElement) {
-				aFoundElements.push(oElement);
-				this.iterateOverAllPublicAggregations(oElement, function(oAggregation, vElements) {
-					this.iterateOverElements(vElements, internalFind);
-				}.bind(this));
-			}
-		}.bind(this);
-
-		internalFind(oElement);
-
-		return aFoundElements;
-	};
-
-	/**
-	 *
-	 */
 	ElementUtil.getDomRef = function(oElement) {
 		if (oElement) {
 			var oDomRef;
@@ -185,51 +125,6 @@ function(
 				oDomRef = oElement.getRenderedDomRef();
 			}
 			return oDomRef;
-		}
-	};
-
-	/**
-	 *
-	 */
-	ElementUtil.findAllPublicChildren = function(oElement) {
-		var aFoundElements = this.findAllPublicElements(oElement);
-		var iIndex = aFoundElements.indexOf(oElement);
-		if (iIndex > -1) {
-			aFoundElements.splice(iIndex, 1);
-		}
-		return aFoundElements;
-
-	};
-
-	/**
-	 *
-	 */
-	ElementUtil.isElementFiltered = function(oControl, aType) {
-		// TODO: Is this method still needed?
-		aType = aType || this.getControlFilter();
-		var bFiltered = false;
-
-		aType.forEach(function(sType) {
-			bFiltered = this.isInstanceOf(oControl, sType);
-			if (bFiltered) {
-				return false;
-			}
-		}, this);
-
-		return bFiltered;
-	};
-
-	/**
-	 *
-	 */
-	ElementUtil.findClosestControlInDom = function(oNode) {
-		// TODO: Is this method still needed?
-		if (oNode && oNode.getAttribute("data-sap-ui")) {
-			return sap.ui.getCore().byId(oNode.getAttribute("data-sap-ui"));
-		} else if (oNode.parentNode) {
-			this.findClosestControlInDom(oNode.parentNode);
-		} else {
-			return null;
 		}
 	};
 
@@ -419,12 +314,7 @@ function(
 	};
 
 	ElementUtil.getAssociationInstances = function(oElement, sAssociationName) {
-		var vValue = this.getAssociation(oElement, sAssociationName);
-
-		if (!Array.isArray(vValue)) {
-			vValue = vValue ? [vValue] : [];
-		}
-
+		var vValue = Util.castArray(this.getAssociation(oElement, sAssociationName));
 		return vValue
 			.map(function (sId) {
 				return this.getElementInstance(sId);
@@ -449,79 +339,6 @@ function(
 		} else {
 			return false;
 		}
-	};
-
-	/**
-	 * .* Executes an array of actions. An action is a JSON object having the following structure: .* .* <action> = { .*
-	 * 'element' : <ui5 id of element to be moved>, .* 'source' : { .* 'index': <source index>, .* 'parent' : <ui5 id
-	 * of element actual parent>, .* 'aggregation' : <name of aggregation> .* }, .* 'target' : { .* 'index': <target
-	 * index>, .* 'parent' : <ui5 id of element future parent>, .* 'aggregation' : <name of aggregation> .* }, .*
-	 * 'changeType' : <name of change type e.g "Move" .* })
-	 */
-	ElementUtil.executeActions = function(aActions) {
-		var oTargetParent, oMovedElement;
-
-		for (var i = 0; i < aActions.length; i++) {
-			var oAction = aActions[i];
-			switch (oAction.changeType) {
-				case ElementUtil.sACTION_MOVE :
-					oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
-					oMovedElement = sap.ui.getCore().byId(oAction.element);
-					ElementUtil.insertAggregation(oTargetParent, oAction.target.aggregation, oMovedElement,
-							oAction.target.index);
-					break;
-				case ElementUtil.sACTION_CUT :
-					oTargetParent = sap.ui.getCore().byId(oAction.source.parent);
-					oMovedElement = sap.ui.getCore().byId(oAction.element);
-					ElementUtil.removeAggregation(oTargetParent, oAction.source.aggregation, oMovedElement);
-					break;
-				case ElementUtil.sACTION_PASTE :
-					oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
-					oMovedElement = sap.ui.getCore().byId(oAction.element);
-					ElementUtil.insertAggregation(oTargetParent, oAction.target.aggregation, oMovedElement,
-							oAction.target.index);
-					break;
-				case ElementUtil.sREORDER_AGGREGATION :
-					oTargetParent = sap.ui.getCore().byId(oAction.target.parent);
-					var sAggregationRemoveAllMutator = this
-							.getAggregationAccessors(oTargetParent, oAction.target.aggregation).removeAll;
-					oTargetParent[sAggregationRemoveAllMutator]();
-					var sAggregationAddMutator = this.getAggregationAccessors(oTargetParent, oAction.target.aggregation).add;
-					for (var j = 0; j < oAction.source.elements.length; j++) {
-						var oElement = sap.ui.getCore().byId(oAction.source.elements[j]);
-						oTargetParent[sAggregationAddMutator](oElement);
-					}
-					break;
-				default :
-			}
-		}
-
-	};
-
-	/**
-	 * Checks if the Element is in the dom (jQuery.is(":visible")) and if it is not hidden / opacity > 0.
-	 *
-	 * @param {jQuery} $Element jQuery object
-	 * @returns {boolean} Returns true if any of the jQuery objects is jQuery-visible, bot hidden and opacity > 0
-	 */
-	ElementUtil.isVisible = function($Element) {
-		var bVisible = false;
-		var $CurrentElement;
-		// check every jQuery object for itself
-		for (var i = 0, n = $Element.length; i < n; i++) {
-			$CurrentElement = $Element.eq(i);
-			// $().is("visible") returns true even if opacity = 0 or visibility = hidden,
-			// so we need to check it seperately
-			var bFilterOpacity = $CurrentElement.css("filter").match(/opacity\(([^)]*)\)/);
-			bVisible = $CurrentElement.is(":visible")
-				&& $CurrentElement.css("visibility") !== "hidden"
-				&& $CurrentElement.css("opacity") > 0
-				&& (bFilterOpacity ? parseFloat(bFilterOpacity[1]) > 0 : true);
-			if (bVisible) {
-				break;
-			}
-		}
-		return bVisible;
 	};
 
 	/**

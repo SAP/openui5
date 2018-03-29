@@ -39,6 +39,7 @@ sap.ui.define([
 				this.getRouter().getRoute("apiId").attachPatternMatched(this._onTopicMatched, this);
 				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicMatched, this);
 				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicMatched, this);
+				this.getRouter().getRoute("since").attachPatternMatched(this._onTopicMatched, this);
 			},
 
 			/* =========================================================== */

@@ -48,7 +48,8 @@
 							showPageIndicator="false"
 							loop="true"
 							pageChanged="onCarouselPageChanged"
-							visible="{=!${device>/system/phone}}">
+							visible="{=!${device>/system/phone}}"
+							tooltip="{i18n>welcomeDescription}">
 							<pages>
 								<VBox renderType="Bare">
 									<Image
@@ -135,6 +136,7 @@
 												title="{view>Product/Name}"
 												titleActive="true"
 												titlePress="onSelectProduct"
+												tooltip="{i18n>openProductDetails} {view>Product/Name}"
 												class="sapUiTinyMarginBottom"/>
 											<ObjectStatus
 												text="{
@@ -155,9 +157,11 @@
 												formatter : '.formatter.pictureUrl'
 											}"
 											densityAware="false"
-											press="onPicturePress"
 											width="50%"
-											height="50%"/>
+											height="50%"
+											press="onSelectProduct"
+											tooltip="{i18n>openProductDetails} {view>Product/Name}"
+											alt="{i18n>alternativeImageText} {view>Product/Name}"/>
 									</FlexBox>
 									<Button
 										tooltip="{i18n>addToCart}"
@@ -219,6 +223,7 @@
 										<l:VerticalLayout>
 											<ObjectIdentifier
 												title="{view>Product/Name}"
+												tooltip="{i18n>openProductDetails} {view>Product/Name}"
 												titleActive="true"
 												titlePress="onSelectProduct"
 												class="sapUiTinyMarginBottom"/>
@@ -236,14 +241,12 @@
 										renderType="Bare"
 										justifyContent="Center">
 										<Image
-											src="{
-												path: 'view>Product/PictureUrl',
-												formatter : '.formatter.pictureUrl'
-											}"
-											densityAware="false"
-											press="onPicturePress"
+											src="{view>Product/PictureUrl}"
 											width="100%"
-											height="100%"/>
+											height="100%"
+											press="onSelectProduct"
+											tooltip="{i18n>openProductDetails} {view>Product/Name}"
+											alt="{i18n>alternativeImageText} {view>Product/Name}"/>
 									</FlexBox>
 									<Button
 										tooltip="{i18n>addToCart}"
@@ -305,6 +308,7 @@
 										<l:VerticalLayout>
 											<ObjectIdentifier
 												title="{view>Product/Name}"
+												tooltip="{i18n>openProductDetails} {view>Product/Name}"
 												titleActive="true"
 												titlePress="onSelectProduct"
 												class="sapUiTinyMarginBottom"/>
@@ -322,14 +326,12 @@
 										renderType="Bare"
 										justifyContent="Center">
 										<Image
-											src="{
-												path: 'view>Product/PictureUrl',
-												formatter : '.formatter.pictureUrl'
-											}"
-											densityAware="false"
-											press="onPicturePress"
+											src="{view>Product/PictureUrl}"
 											width="100%"
-											height="100%"/>
+											height="100%"
+											press="onSelectProduct"
+											tooltip="{i18n>openProductDetails} {view>Product/Name}"
+											alt="{i18n>alternativeImageText} {view>Product/Name}"/>
 									</FlexBox>
 									<Button
 										tooltip="{i18n>addToCart}"
@@ -362,17 +364,5 @@
 				</l:BlockLayout>
 			</Panel>
 		</content>
-		<dependents>
-			<LightBox id="lightBox">
-				<imageContent>
-					<LightBoxItem
-						imageSrc="{
-							path: 'view>PictureUrl',
-							formatter : '.formatter.pictureUrl'
-						}"
-						title="{view>Name}"/>
-				</imageContent>
-			</LightBox>
-		</dependents>
 	</Page>
 </mvc:View>

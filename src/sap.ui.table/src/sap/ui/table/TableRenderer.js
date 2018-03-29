@@ -284,7 +284,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	TableRenderer.renderColHdr = function(rm, oTable) {
 		var nRows = TableUtils.getHeaderRowCount(oTable);
 		var aCols = oTable.getColumns();
-		var iFixedColumnCount = oTable.getFixedColumnCount();
+		var iFixedColumnCount = oTable.getComputedFixedColumnCount();
 
 		rm.write("<div");
 		rm.addClass("sapUiTableColHdrCnt");
@@ -587,7 +587,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 
 	TableRenderer.renderTableCtrl = function(rm, oTable) {
 
-		if (oTable.getFixedColumnCount() > 0) {
+		if (oTable.getComputedFixedColumnCount() > 0) {
 			rm.write("<div");
 			rm.writeAttribute("id", oTable.getId() + "-sapUiTableCtrlScrFixed");
 			rm.addClass("sapUiTableCtrlScrFixed");
@@ -603,7 +603,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		rm.writeAttribute("id", oTable.getId() + "-sapUiTableCtrlScr");
 		rm.addClass("sapUiTableCtrlScr");
 		rm.writeClasses();
-		if (oTable.getFixedColumnCount() > 0) {
+		if (oTable.getComputedFixedColumnCount() > 0) {
 			if (oTable._bRtlMode) {
 				rm.addStyle("margin-right", "0");
 			} else {
@@ -638,9 +638,9 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 		var iStartColumn, iEndColumn;
 		if (bFixedTable) {
 			iStartColumn = 0;
-			iEndColumn = oTable.getFixedColumnCount();
+			iEndColumn = oTable.getComputedFixedColumnCount();
 		} else {
-			iStartColumn = oTable.getFixedColumnCount();
+			iStartColumn = oTable.getComputedFixedColumnCount();
 			iEndColumn = oTable.getColumns().length;
 		}
 		var iFixedRows = oTable.getFixedRowCount();

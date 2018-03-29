@@ -401,7 +401,7 @@ sap.ui.require([
 			});
 		},
 		afterEach : function(assert) {
-			this.oRta.exit();
+			this.oRta.destroy();
 			sap.ushell = this.originalUShell;
 			sandbox.restore();
 		}
@@ -522,7 +522,7 @@ sap.ui.require([
 				sandbox.spy(this.oRta, "_reloadWithoutPersonalizationChanges");
 		},
 		afterEach : function(assert) {
-			this.oRta.exit();
+			this.oRta.destroy();
 			sandbox.restore();
 		}
 	}, function() {

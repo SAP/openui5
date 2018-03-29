@@ -165,9 +165,9 @@ sap.ui.define([
 	CreateContainer.prototype.handleCreate = function(bSibling, oOverlay) {
 		var vAction = this.getCreateAction(bSibling, oOverlay);
 		var oParentOverlay = this._getParentOverlay(bSibling, oOverlay);
+		var oParent = oParentOverlay.getElement();
 		var oDesignTimeMetadata = oParentOverlay.getDesignTimeMetadata();
-		var oTargetElement = oParentOverlay.getElement();
-		var oView = FlexUtils.getViewForControl(oTargetElement);
+		var oView = FlexUtils.getViewForControl(oParent);
 
 		var oSiblingElement;
 		if (bSibling) {
@@ -177,14 +177,15 @@ sap.ui.define([
 		var sNewControlID = oView.createId(jQuery.sap.uid());
 
 		var fnGetIndex = oDesignTimeMetadata.getAggregation(vAction.aggregation).getIndex;
-		var iIndex = this._determineIndex(oTargetElement, oSiblingElement, vAction.aggregation, fnGetIndex);
+		var iIndex = this._determineIndex(oParent, oSiblingElement, vAction.aggregation, fnGetIndex);
 
 		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay, vAction);
 
-		var oCommand = this.getCommandFactory().getCommandFor(oTargetElement, "createContainer", {
+		var oCommand = this.getCommandFactory().getCommandFor(oParent, "createContainer", {
 			newControlId : sNewControlID,
-			label : this._getContainerTitle(vAction, oTargetElement, oDesignTimeMetadata),
-			index : iIndex
+			label : this._getContainerTitle(vAction, oParent, oDesignTimeMetadata),
+			index : iIndex,
+			parentId : oParent.getId()
 		}, oDesignTimeMetadata, sVariantManagementReference);
 
 		this.fireElementModified({

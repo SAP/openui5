@@ -81,6 +81,7 @@ sap.ui.define([
 			When.onTheCategory.iRemoveTheSupplierFilter();
 			//Assertions
 			Then.onTheCategory.iShouldSeeAllProductsAndNoInfoToolbar();
+			// Cleanup
 			Then.onTheCategory.iTeardownMyApp();
 		});
 

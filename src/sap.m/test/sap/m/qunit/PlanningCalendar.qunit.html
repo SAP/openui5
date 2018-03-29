@@ -15,7 +15,7 @@
 			data-sap-ui-noConflict="true"
 			data-sap-ui-libs="sap.m, sap.ui.unified"
 			data-sap-ui-language="en_GB">
-		//Make sure that changing the sap-ui-language is reflected into the tests as well, as the tests are bound to en_GB
+	//Make sure that changing the sap-ui-language is reflected into the tests as well, as the tests are bound to en_GB
 	</script>
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
@@ -2332,6 +2332,23 @@
 			assert.strictEqual(oWeekView.getIntervalsL(), 7, "Correct number (7) intervals for L screen sizes");
 		});
 
+		QUnit.test("'_onRowDeselectAppointment' behaves correctly when deselecting not existing appointments", function (assert) {
+			//prepare
+			var oSetPropertySpy;
+			this.sut.getRows()[0].getCalendarRow().aSelectedAppointments.push("dummy appointment");
+			oSetPropertySpy = this.spy(sap.ui.base.ManagedObject.prototype, "setProperty");
+
+			//act
+			this.sut._onRowDeselectAppointment();
+
+			//assert
+			assert.strictEqual(oSetPropertySpy.callCount, 0, "If the appointment does not exist, setProperty is not called");
+
+			//cleanup
+			oSetPropertySpy.restore();
+
+		});
+
 		QUnit.module("Interaction", {
 			beforeEach: function() {
 				var oSearchField = new sap.m.SearchField(),
@@ -2432,7 +2449,11 @@
 			_navFocusNext.call(this, $1stOct);
 
 			// Assert
+			aDays = this.oPC2IntervalRow.$("days").children();
+			$1stOct = aDays[0];
+
 			assert.ok(oApp1stOct2016.getDomRef(), "Once moved to October, the 1st appoint. should be visible");
+			assert.equal($1stOct.getAttribute("data-sap-day"), "20161001", "Once moved to October, the first day of the month is moved to the beginning of the CalendarOneMonthInterval");
 
 		});
 

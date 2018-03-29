@@ -53,6 +53,7 @@ this.oODataModel = new sap.ui.model.odata.v2.ODataModel(sServiceURI, {
 	tokenHandling: true,
 	sizeLimit: 20
 });
+
 oTree.setModel(this.oODataModel, "odata");
 
 oTree.bindItems({
@@ -73,6 +74,14 @@ oTree.bindItems({
 
 var oBinding = oTree.getBinding("items");
 
+function onChange (oEvent) {
+	oBinding.detachChange(onChange);
+	oTree.expand([2,3,4]);
+}
+oBinding.attachChange(onChange);
+
+//oTree.expand([2,3,4]);
+
 function onDragStart(oEvent) {
 	var oDragSession = oEvent.getParameter("dragSession");
 	var oDraggedItem = oEvent.getParameter("target");
@@ -81,7 +90,7 @@ function onDragStart(oEvent) {
 	var aSelectedIndices = oTree.getBinding("items").getSelectedIndices();
 	var aSelectedItems = oTree.getSelectedItems();
 	var aDraggedItemContexts = [];
-	
+
 	if (aSelectedItems.length >0) {
 		if (aSelectedIndices.indexOf(iDraggedItemIndex) === -1) {
 				oEvent.preventDefault();

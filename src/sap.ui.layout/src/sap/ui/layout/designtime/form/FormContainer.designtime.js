@@ -45,15 +45,20 @@ sap.ui.define(['sap/ui/fl/changeHandler/ChangeHandlerMediator'],
 					plural : "FIELD_CONTROL_NAME_PLURAL"
 				},
 				domRef: function (oFormContainer) {
-					var oDomRef = oFormContainer.getDomRef();
+					var oDomRef = oFormContainer.getRenderedDomRef();
 					var oHeader = oFormContainer.getTitle() || oFormContainer.getToolbar();
-					if (!oDomRef && (oFormContainer.getFormElements().length === 0 || _allFormElementsInvisible(oFormContainer)) && oHeader instanceof sap.ui.core.Element) {
-						return oHeader.getDomRef();
-					} else if (typeof oHeader === "string") {
-						return jQuery(oDomRef).find(".sapUiFormTitle").get(0);
-					} else {
+					if (oDomRef) {
 						return oDomRef;
 					}
+					if (oFormContainer.getFormElements().length === 0 || _allFormElementsInvisible(oFormContainer)) {
+						if (oHeader instanceof sap.ui.core.Element) {
+							return oHeader.getDomRef();
+						}
+						if (typeof oHeader === "string") {
+							return jQuery(oDomRef).find(".sapUiFormTitle").get(0);
+						}
+					}
+					return undefined;
 				},
 				actions: {
 					move: "moveControls",

@@ -796,6 +796,27 @@
 
 	QUnit.module("Bug fixes");
 
+		QUnit.test("Change image src in case detailBox is present", function(assert){
+			var oImage = createImage();
+			var oLightBox = new sap.m.LightBox();
+
+			// Arrange
+			oImage.setDetailBox(oLightBox);
+			oImage.placeAt("qunit-fixture");
+			oCore.applyChanges();
+
+			// Assert
+			assert.ok(oImage._getDomImg().attr("src"), sSrc, "Image src attribute is properly set");
+
+			// Act
+			oImage.setSrc(sSrc3)
+
+			// Assert
+			assert.ok(oImage._getDomImg().attr("src"), sSrc3, "Image src attribute was properly changed");
+
+			oImage.destroy();
+		});
+
 		QUnit.test("Image with valid src under densityAware turned off", function(assert) {
 			var done = assert.async();
 			var oLoadSpy = sinon.spy(function() {

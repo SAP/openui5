@@ -1549,4 +1549,72 @@ function(
 		assert.equal(Utils.getChangeFromChangesMap(this.mChanges, this.oChange1.getId() + "foo"), undefined, "then no change is returned");
 	});
 
+	QUnit.module("Utils.buildLrepRootNamespace", {
+		beforeEach: function() {
+			this.sErrorText = "Error in sap.ui.fl.Utils#buildLrepRootNamespace: ";
+			this.sNoBaseIdErrorText = "Error in sap.ui.fl.Utils#buildLrepRootNamespace: for every scenario you need a base ID";
+		}
+	}, function() {
+		QUnit.test("scenario APP_VARIANT: AppVariant", function(assert) {
+			this.sErrorText += "in an app variant scenario you additionaly need a project ID";
+			var sLrepRootNamespace = "apps/baseId/appVariants/projectId/";
+			assert.equal(Utils.buildLrepRootNamespace("baseId", "APP_VARIANT", "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("", "APP_VARIANT", "projectId");},
+				Error(this.sNoBaseIdErrorText),
+				"without base id calling 'buildLrepRootNamespace' for app variants throws an error"
+			);
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("baseId", "APP_VARIANT", "");},
+				Error(this.sErrorText),
+				"without project id calling 'buildLrepRootNamespace' for app variants throws an error"
+			);
+		});
+
+		QUnit.test("scenario ADAPTATION_PROJECT: Customer adapts existing app", function(assert) {
+			this.sErrorText += "in a adaptation project scenario you additionaly need a project ID";
+			var sLrepRootNamespace = "apps/baseId/adapt/projectId/";
+			assert.equal(Utils.buildLrepRootNamespace("baseId", "ADAPTATION_PROJECT", "projectId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("", "ADAPTATION_PROJECT", "projectId");},
+				Error(this.sNoBaseIdErrorText),
+				"without base id calling 'buildLrepRootNamespace' for customer adaptations throws an error"
+			);
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("baseId", "ADAPTATION_PROJECT", "");},
+				Error(this.sErrorText),
+				"without project id calling 'buildLrepRootNamespace' for customer adaptations throws an error"
+			);
+		});
+
+		QUnit.test("scenario FE_FROM_SCRATCH: Customer adapts new Fiori elements app", function(assert) {
+			var sLrepRootNamespace = "apps/baseId/";
+			assert.equal(Utils.buildLrepRootNamespace("baseId", "FE_FROM_SCRATCH"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("", "FE_FROM_SCRATCH");},
+				Error(this.sNoBaseIdErrorText),
+				"without base id calling 'buildLrepRootNamespace' for adaptations on a new app throws an error"
+			);
+		});
+
+		QUnit.test("scenario UI_ADAPTATION: Customer adapts existing app using RTA", function(assert) {
+			var sLrepRootNamespace = "apps/baseId/";
+			assert.equal(Utils.buildLrepRootNamespace("baseId", "UI_ADAPTATION"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("", "UI_ADAPTATION");},
+				Error(this.sNoBaseIdErrorText),
+				"without base id calling 'buildLrepRootNamespace' for adaptations on a new app throws an error"
+			);
+		});
+
+		QUnit.test("no scenario specified", function(assert) {
+			var sLrepRootNamespace = "apps/baseId/";
+			assert.equal(Utils.buildLrepRootNamespace("baseId"), sLrepRootNamespace, "then the root namespace got build correctly");
+			assert.throws(
+				function() {Utils.buildLrepRootNamespace("");},
+				Error(this.sNoBaseIdErrorText),
+				"without base id calling 'buildLrepRootNamespace' for no specific scenario throws an error"
+			);
+		});
+	});
 });

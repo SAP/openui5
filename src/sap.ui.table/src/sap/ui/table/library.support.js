@@ -169,6 +169,26 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 
 
 	/*
+	 * Validates sap.m.Link column templates.
+	 */
+	createRule({
+		id : "ColumnTemplateLinkWrapping",
+		categories: [Categories.Usage],
+		title : "Column template validation - 'sap.m.Link'",
+		description : "The 'wrapping' property of the control 'sap.m.Link' is set to 'true' although the control is used as a column template.",
+		resolution : "Set the 'wrapping' property of the control 'sap.m.Link' to 'false' if the control is used as a column template.",
+		check : function(oIssueManager, oCoreFacade, oScope) {
+			checkColumnTemplate(function(oTable, oColumn, oMLinkTemplate) {
+				if (oMLinkTemplate.isBound("wrapping") || (!oMLinkTemplate.isBound("wrapping") && oMLinkTemplate.getWrapping())) {
+					var sColumnId = oColumn.getId();
+					SupportHelper.reportIssue(oIssueManager, "Column '" + sColumnId + "' of table '" + oTable.getId() + "' uses an 'sap.m.Link' control with wrapping enabled.", Severity.High, sColumnId);
+				}
+			}, oScope, "sap/m/Link");
+		}
+	});
+
+
+	/*
 	 * Checks for No Deviating units issue in AnalyticalBinding
 	 */
 	createRule({

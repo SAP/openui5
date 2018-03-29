@@ -30,7 +30,7 @@ sap.ui.define([
 
 	/**
 	 * Wraps specified error into an Error object
-	 * @param {string|Error} - Accepts error string or Error object
+	 * @param {string|Error} vError - Accepts error string or Error object
 	 * @return {Error} - An Error object with error message inside
 	 */
 	Util.wrapError = function (vError) {
@@ -46,11 +46,12 @@ sap.ui.define([
 	/**
 	 * Checks whether specified Error object belongs to the sap.ui.dt library
 	 * @param {Error} oError - Standard browser Error object
+	 * @param {string} sLibraryName - Library name which is considered as "home" library
 	 * @return {boolean} - true if specified error doesn't belong to the library
 	 */
-	Util.isForeignError = function (oError) {
+	Util.isForeignError = function (oError, sLibraryName) {
 		if (oError instanceof Error) {
-			return oError.name.indexOf(S_LIBRARY_NAME) === -1;
+			return oError.name.indexOf(sLibraryName || S_LIBRARY_NAME) === -1;
 		} else {
 			throw Util.createError('Util#isForeignError', 'Wrong parameter specified');
 		}
@@ -72,11 +73,12 @@ sap.ui.define([
 	 *
 	 * @param {string} sLocation - Should indicate file name followed by function name separated by "#", e.g. "DesignTime#createOverlay"
 	 * @param {string} sMessage - Any text message describing the error
+	 * @param {string} sLibraryName - Library name to which created error belong
 	 * @return {Error} - An Error object
 	 */
-	Util.createError = function (sLocation, sMessage) {
+	Util.createError = function (sLocation, sMessage, sLibraryName) {
 		var oError = new Error();
-		var sLocationFull = S_LIBRARY_NAME + (sLocation ? '.' + sLocation : '');
+		var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + (sLocation ? '.' + sLocation : '');
 		oError.name = 'Error in ' + sLocationFull;
 		oError.message = sMessage;
 
@@ -108,14 +110,15 @@ sap.ui.define([
 	 * @param {string|Error} vError - Can be a string or an Error object. String will be wrapped into Error object via Util.wrapError()
 	 * @param {string} sLocation - Should indicate file name followed by function name separated by "#", e.g. "DesignTime#createOverlay"
 	 * @param {string} sMessage - Any text message describing the error
+	 * @param {string} sLibraryName - Library name to which created error belong
 	 * @return {Error} - always an Error object with adjusted error message if necessary
 	 */
-	Util.propagateError = function (vError, sLocation, sMessage) {
+	Util.propagateError = function (vError, sLocation, sMessage, sLibraryName) {
 		var oError = Util.wrapError(vError);
 
 		// Adding payload only if it wasn't added before explicitly.
-		if (Util.isForeignError(oError)) {
-			var sLocationFull = S_LIBRARY_NAME + '.' + sLocation;
+		if (Util.isForeignError(oError, sLibraryName)) {
+			var sLocationFull = (sLibraryName || S_LIBRARY_NAME) + '.' + sLocation;
 			oError.name = 'Error in ' + sLocationFull;
 			oError.message = Util.printf('{0}. Original error: {1}', sMessage, oError.message || '¯\\_(ツ)_/¯');
 		}
@@ -129,7 +132,7 @@ sap.ui.define([
 	 * Util.printf('Hello, {0}! The {1} is blue!', 'world', 'sky')
 	 * => 'Hello, world! The sky is blue!'
 	 *
-	 * @param sString - Template string with placeholders {0}, {1}, ...
+	 * @param {string} sString - Template string with placeholders {0}, {1}, ...
 	 * @param {...*} var_args - Values for placeholders
 	 * @return {string} - Concatenated string
 	 */
@@ -208,7 +211,7 @@ sap.ui.define([
 	/**
 	 * Wraps specified value into an array if it's not an array already
 	 * @param {*} vValue - can be an any value
-	 * @return [*] - an array of value
+	 * @return {[*]} - an array of value
 	 */
 	Util.castArray = function(vValue) {
 		var aResult = [];
@@ -220,6 +223,27 @@ sap.ui.define([
 			}
 		}
 		return aResult;
+	};
+
+	/**
+	 * Wraps function handler into a Promise object
+	 * @param {Function} fnHandler - Function to be wrapped
+	 * @return {Function} - function which returns Promise object and call original function inside
+	 */
+	Util.wrapIntoPromise = function (fnHandler) {
+		if (!jQuery.isFunction(fnHandler)) {
+			throw Util.createError(
+				"Util#wrapIntoPromise",
+				Util.printf("Invalid argument specified. Function is expected, but '{0}' is given", typeof fnHandler),
+				"sap.ui.dt"
+			);
+		}
+		return function () {
+			var aArguments = Array.prototype.slice.call(arguments);
+			return Promise.resolve().then(function () {
+				return fnHandler.apply(null, aArguments);
+			});
+		};
 	};
 
 	return Util;

@@ -385,6 +385,10 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 * @public
 	 */
 	Element.prototype.destroy = function(bSuppressInvalidate) {
+		// ignore repeated calls
+		if (this.bIsDestroyed) {
+			return;
+		}
 
 		// update the focus information (potentionally) stored by the central UI5 focus handling
 		Element._updateFocusInfo(this);

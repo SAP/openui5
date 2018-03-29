@@ -1,4 +1,4 @@
-<mvc:View controllerName="sap.ui.documentation.sdk.controller.ApiDetailDeprecatedExperimental"
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.ApiDetailIndexDeprecatedExperimental"
           xmlns="sap.uxap"
           xmlns:m="sap.m"
           xmlns:mvc="sap.ui.core.mvc"

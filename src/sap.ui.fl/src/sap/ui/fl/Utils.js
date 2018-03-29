@@ -964,6 +964,48 @@ sap.ui.define([
 			return sNamespace;
 		},
 
+		/**
+		 * builds the root namespace with a given base ID and project ID for the following scenarios:
+		 * App Variants, adaptation project, adapting new fiori elements app and UI adaptation
+		 *
+		 * @param {string} sBaseId base ID
+		 * @param {string} sScenario current scenario
+		 * @param {string} sProjectId project ID
+		 * @returns {string} Returns the root LRep namespace
+		 */
+		buildLrepRootNamespace: function(sBaseId, sScenario, sProjectId) {
+			var sRootNamespace = "apps/";
+			var oError = new Error("Error in sap.ui.fl.Utils#buildLrepRootNamespace: ");
+
+			if (!sBaseId) {
+				oError.message += "for every scenario you need a base ID";
+				throw oError;
+			}
+
+			switch (sScenario) {
+				case "APP_VARIANT":
+					if (!sProjectId) {
+						oError.message += "in an app variant scenario you additionaly need a project ID";
+						throw oError;
+					}
+					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
+					break;
+				case "ADAPTATION_PROJECT":
+					if (!sProjectId) {
+						oError.message += "in a adaptation project scenario you additionaly need a project ID";
+						throw oError;
+					}
+					sRootNamespace += sBaseId + "/adapt/" + sProjectId + "/";
+					break;
+				case "FE_FROM_SCRATCH":
+				case "UI_ADAPTATION":
+				default:
+					sRootNamespace += sBaseId + "/";
+			}
+
+			return sRootNamespace;
+		},
+
 		isApplication: function (oManifest) {
 			return (oManifest && oManifest.getEntry("sap.app") && oManifest.getEntry("sap.app").type === "application");
 		},

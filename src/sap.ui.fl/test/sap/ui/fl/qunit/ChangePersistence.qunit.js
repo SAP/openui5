@@ -821,6 +821,34 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
+	QUnit.test("getChangesForVariant return promise reject when flexibility service is not available", function() {
+		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+		var oStubGetServiceAvailabilityStatus = this.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(false));
+		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).catch(function() {
+			sinon.assert.calledOnce(oStubGetChangesForComponent);
+			sinon.assert.calledOnce(oStubGetServiceAvailabilityStatus);
+		});
+	});
+
+	QUnit.test("getChangesForVariant return promise reject when flexibility service availability is not definied", function() {
+		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+		var oStubGetServiceAvailabilityStatus = this.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(undefined));
+		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function() {
+			sinon.assert.calledOnce(oStubGetChangesForComponent);
+			sinon.assert.calledOnce(oStubGetServiceAvailabilityStatus);
+		});
+	});
+
+	QUnit.test("getChangesForVariant return promise resolve with empty object when flexibility service is available", function(assert) {
+		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+		var oStubGetServiceAvailabilityStatus = this.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(true));
+		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function(aChanges) {
+			assert.deepEqual(aChanges, {});
+			sinon.assert.calledOnce(oStubGetChangesForComponent);
+			sinon.assert.calledOnce(oStubGetServiceAvailabilityStatus);
+		});
+	});
+
 	QUnit.test("getChangesForVariant call getChangesForComponent and filter results after that if entry in variant changes map is not available", function(assert) {
 		var oPromise = new Promise(function(resolve, reject){
 			setTimeout(function(){
@@ -1621,7 +1649,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 
 		// check in case the life cycle of flexibility processing changes (possibly incompatible)
-		assert.equal(aRegisteredFlexPropagationListeners.length, 0, "bo propagation listener is present at startup");
+		assert.equal(aRegisteredFlexPropagationListeners.length, 0, "to propagation listener is present at startup");
 
 		var oChangeContent = {
 			fileName: "Gizorillus",
@@ -1667,6 +1695,12 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 	});
 
 	QUnit.test("also adds the flexibility propagation listener in case the application component does not have one yet (but other listeners)", function (assert) {
+		var fnAssertFlPropagationListenerCount = function (nNumber, sAssertionText) {
+			var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
+				return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
+			});
+			assert.equal(aRegisteredFlexPropagationListeners.length, nNumber, sAssertionText);
+		}.bind(this);
 
 		var fnGetChangesMap = function () {
 			return this.oChangePersistence._mChanges;
@@ -1675,6 +1709,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		var fnPropagationListener = oFlexController.getBoundApplyChangesOnControl(fnGetChangesMap, this._oComponentInstance);
 
 		this._oComponentInstance.addPropagationListener(fnPropagationListener);
+
+		fnAssertFlPropagationListenerCount(1, "one propagation listener was added");
 
 		var oChangeContent = {
 			fileName: "Gizorillus",
@@ -1688,11 +1724,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 
 		this.oChangePersistence.addChange(oChangeContent, this._oComponentInstance);
 
-		var aRegisteredFlexPropagationListeners = this._oComponentInstance.getPropagationListeners().filter(function (fnListener) {
-			return fnListener._bIsSapUiFlFlexControllerApplyChangesOnControl;
-		});
-
-		assert.equal(aRegisteredFlexPropagationListeners.length, 1, "one propagation listener is added");
+		fnAssertFlPropagationListenerCount(1, "no additional propagation listener was added");
 	});
 
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {

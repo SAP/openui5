@@ -415,7 +415,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/unified/calendar/CalendarUtils', 'sa
 
 
 		//oMonth.getDate() is a public date object, so it is always considered local timezones.
-		if (oMonth.getParent() && oMonth.getParent().getMetadata().getName() === "CalendarOneMonthInterval" && oDay.getMonth() !== oMonth.getStartDate().getMonth()){
+		if (oMonth.getParent() && oMonth.getParent().getMetadata().getName() === "sap.ui.unified.CalendarOneMonthInterval" && oDay.getMonth() !== oMonth.getStartDate().getMonth()){
 			oRm.addClass("sapUiCalItemOtherMonth");
 		}
 

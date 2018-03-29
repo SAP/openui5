@@ -38,5 +38,7 @@ sap.ui.define([
 		Then.onTheCategory.iShouldBeTakenToTheFlatScreensCategory().
 		and.iShouldSeeTheProductList().
 		and.iShouldSeeSomeEntriesInTheProductList();
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 });

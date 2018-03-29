@@ -70,7 +70,7 @@
 						}"
 						numberUnit="EUR"
 						press="onProductListItemPress"
-						iconDensityAware="false" >
+						iconDensityAware="false">
 						<attributes>
 							<ObjectAttribute text="{SupplierName}"/>
 						</attributes>
@@ -105,7 +105,8 @@
 						title="{CategoryName}"
 						type="Active"
 						counter="{NumberOfProducts}"
-						press="onCategoryListItemPress" >
+						press="onCategoryListItemPress"
+						tooltip="{i18n>openCategoryProducts} {CategoryName}">
 						<customData>
 							<core:CustomData
 								key="id"

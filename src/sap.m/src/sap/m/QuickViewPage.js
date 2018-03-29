@@ -652,6 +652,8 @@ sap.ui.define([
 					// which delays the simple form re-arranging and an unwanted scrollbar might appear.
 					mNavContext.popover.$().css('display', 'block');
 
+					mNavContext.quickView._adjustContainerHeight();
+
 					mNavContext.quickView._restoreFocus();
 				}
 			};

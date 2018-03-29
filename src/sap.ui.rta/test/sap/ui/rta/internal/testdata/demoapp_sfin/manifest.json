@@ -47,7 +47,7 @@
 			"viewName": "sap.ui.rta.test.Demo.view.App",
 			"type": "XML",
 			"async": true,
-			"id": "rtaDemoApp"
+			"id": "app"
 		},
 
 		"dependencies": {
@@ -82,6 +82,7 @@
 				"viewType": "XML",
 				"viewPath": "sap.ui.rta.test.Demo.view",
 				"controlId": "app",
+				"async": true,
 				"controlAggregation": "pages",
 				"bypassed": {
 					"target": "notFound"
@@ -91,7 +92,9 @@
 				{
 					"pattern": "",
 					"name": "detail",
-					"target": "detail"
+					"target": [
+						"detail"
+					]
 				}
 			],
 			"targets": {

@@ -22,9 +22,9 @@
 						liveChange="handleListFilter">
 				</SearchField>
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://drop-down-list" press="handleListSettings" />
+				<Button id="listFilterSettings" icon="sap-icon://drop-down-list" press="handleListSettings" />
 				<ToolbarSpacer/>
-				<Button icon="sap-icon://action-settings" press="handleSettings" />
+				<Button id="sampleSettings" icon="sap-icon://action-settings" press="handleSettings" />
 			</Toolbar>
 		</subHeader>
 

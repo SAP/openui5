@@ -14,10 +14,6 @@ sap.ui.define([
 				value: {
 					type: "string",
 					defaultValue: "Default Value Input",
-				},
-				textFirst: {
-					type: "string",
-					defaultValue: "x"
 				}
 			}
 		},

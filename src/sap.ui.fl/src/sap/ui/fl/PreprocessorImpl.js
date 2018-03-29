@@ -4,8 +4,21 @@
 
 // Provides object sap.ui.fl.ProcessorImpl
 sap.ui.define([
-	'jquery.sap.global', 'sap/ui/core/Component', 'sap/ui/fl/FlexControllerFactory', 'sap/ui/fl/Utils', 'sap/ui/fl/LrepConnector', 'sap/ui/fl/ChangePersistenceFactory'
-], function(jQuery, Component, FlexControllerFactory, Utils, LrepConnector, ChangePersistenceFactory) {
+	'jquery.sap.global',
+	'sap/ui/core/Component',
+	'sap/ui/fl/FlexControllerFactory',
+	'sap/ui/fl/Utils',
+	'sap/ui/fl/LrepConnector',
+	'sap/ui/fl/ChangePersistenceFactory'
+],
+function(
+	jQuery,
+	Component,
+	FlexControllerFactory,
+	Utils,
+	LrepConnector,
+	ChangePersistenceFactory
+) {
 	'use strict';
 
 	/**
@@ -53,12 +66,14 @@ sap.ui.define([
 
 				jQuery.each(oChanges, function (index, oChange) {
 					var oChangeDefinition = oChange.getDefinition();
-					if (oChangeDefinition.changeType === "codeExt" && oChangeDefinition.content && sControllerName === oChangeDefinition.selector.id) {
+					if (oChangeDefinition.changeType === "codeExt" && oChangeDefinition.content &&
+						sControllerName === oChangeDefinition.selector.controllerName
+					) {
 						aExtensionProviders.push(PreprocessorImpl.getExtensionProvider(oChangeDefinition));
 					}
 				});
 
-				return aExtensionProviders;
+				return Promise.all(aExtensionProviders);
 			});
 		} else {
 			jQuery.sap.log.warning("Synchronous extensions are not supported by sap.ui.fl.PreprocessorImpl");
@@ -67,14 +82,21 @@ sap.ui.define([
 	};
 
 	PreprocessorImpl.getExtensionProvider = function(oChange) {
-		var sConvertedAsciiCodeContent = oChange.content.code || {};
-		var sConvertedCodeContent = Utils.asciiToString(sConvertedAsciiCodeContent);
-		var oExtensionProvider;
-		/*eslint-disable */
-		eval("oExtensionProvider = " + sConvertedCodeContent);
-		/*eslint-enable */
-
-		return oExtensionProvider;
+		return new Promise(function(resolve, reject) {
+			var sConvertedAsciiCodeContent = oChange.content.code || {};
+			var sConvertedCodeContent = Utils.asciiToString(sConvertedAsciiCodeContent);
+			try {
+				/*eslint-disable */
+				new Function(sConvertedCodeContent)();
+				/*eslint-enable */
+			} catch (oError) {
+				Utils.log.error("Error occured while executing the code extension: ", oError.message);
+				resolve({});
+			}
+			sap.ui.require([oChange.content.extensionName], function(Extension) {
+				resolve(Extension);
+			}, reject);
+		});
 	};
 
 	 return PreprocessorImpl;

@@ -335,7 +335,7 @@ function(
 			// is overlay a targetZone AggregationOverlay
 			if (ElementUtil.isInstanceOf(oElement, "sap.ui.dt.AggregationOverlay") && oElement.getTargetZone()) {
 				oTargetOverlay = oElement;
-			} else if (OverlayUtil.isInTargetZoneAggregation(oElement)) {
+			} else if (ElementUtil.isInstanceOf(oElement, "sap.ui.dt.ElementOverlay") && OverlayUtil.isInTargetZoneAggregation(oElement)) {
 				oTargetOverlay = oElement;
 			}
 

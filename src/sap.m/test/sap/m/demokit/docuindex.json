@@ -1225,8 +1225,8 @@
 			"sap.m.sample.Tree",
 			"sap.m.sample.TreeIcon",
 			"sap.m.sample.TreeSelection",
-			"sap.m.sample.TreeInitialExpandState",
-			"sap.m.sample.TreeCollapseAll",
+			"sap.m.sample.TreedExpandTo",
+			"sap.m.sample.TreeExpandMulti",
 			"sap.m.sample.TreeOData",
 			"sap.m.sample.TreeJSONLazyLoading",
 			"sap.m.sample.TreeDnD"
@@ -2089,40 +2089,40 @@
 		  "description": "Tree displays data in hierarchical structure."
 		},
 		{
-		  "id": "sap.m.sample.TreeSelection",
-		  "name": "Tree - Selection",
-		  "description": "Different selection modes of Tree."
+		  "id": "sap.m.sample.TreedExpandTo",
+		  "name": "Tree - InitialExpand & CollapseAll",
+		  "description": "This example shows setting initial expand state and collapse all nodes functions."
 		},
+		{
+		  "id": "sap.m.sample.TreeDnD",
+		  "name": "Tree - Drag and Drop",
+		  "description": "This example shows drag-and-drop capability."
+        },
 		{
 		  "id": "sap.m.sample.TreeIcon",
 		  "name": "Tree - Icon & Context Menu",
 		  "description": "Tree item with icon. This example also shows the context menu for the items in the Tree control."
 		},
 		{
-		  "id": "sap.m.sample.TreeInitialExpandState",
-		  "name": "Tree - InitialExpandState",
-		  "description": "Initial expand state can be set to Tree."
+		  "id": "sap.m.sample.TreeExpandMulti",
+		  "name": "Tree - Multi Expand & Collapse",
+		  "description": "This example shows how to expand/collapse multiple nodes."
 		},
 		{
-		  "id": "sap.m.sample.TreeCollapseAll",
-		  "name": "Tree - CollapseAll",
-		  "description": "Collapse all nodes."
-		},
-		{
-		  "id": "sap.m.sample.TreeOData",
-		  "name": "Tree - OData",
-		  "description": "This example shows tree with odata service."
-		},
-        {
           "id": "sap.m.sample.TreeJSONLazyLoading",
           "name": "Tree - Lazy loading with a JSON model",
           "description": "Shows how lazy loading with a JSON model can be done using the toggleOpenState event."
         },
         {
-          "id": "sap.m.sample.TreeDnD",
-          "name": "Tree - Drag and Drop",
-          "description": "This example shows drag-and-drop capability."
-        },
+		  "id": "sap.m.sample.TreeOData",
+		  "name": "Tree - OData",
+		  "description": "This example shows tree with odata service."
+		},
+		{
+		  "id": "sap.m.sample.TreeSelection",
+		  "name": "Tree - Selection",
+		  "description": "Different selection modes of Tree."
+		},
 		{
 			"id": "sap.m.sample.RangeSlider",
 			"name": "RangeSlider",

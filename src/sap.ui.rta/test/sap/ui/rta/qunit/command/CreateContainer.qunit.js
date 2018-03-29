@@ -1,23 +1,32 @@
-/* global QUnit sinon */
+/* global QUnit */
 
 QUnit.config.autostart = false;
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-jQuery.sap.require("sap.ui.thirdparty.sinon");
-jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-
-sap.ui.define([ "sap/ui/rta/command/CommandFactory",
-		"sap/ui/rta/command/CreateContainer",
-		"sap/ui/dt/ElementDesignTimeMetadata",
-		"sap/ui/core/Popup",
-		"sap/ui/layout/form/Form",
-		"sap/ui/layout/form/FormContainer",
-		"sap/ui/fl/registry/ChangeRegistry"],
-	function(CommandFactory, CreateContainer, ElementDesignTimeMetadata, Popup, Form, FormContainer, ChangeRegistry) {
+sap.ui.require([
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/rta/command/CreateContainer",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/core/Popup",
+	"sap/ui/layout/form/Form",
+	"sap/ui/layout/form/FormContainer",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/Utils",
+	"sap/ui/thirdparty/sinon-4",
+	"jquery.sap.global"
+],
+function(
+	CommandFactory,
+	CreateContainer,
+	ElementDesignTimeMetadata,
+	Popup,
+	Form,
+	FormContainer,
+	ChangeRegistry,
+	Utils,
+	sinon,
+	jQuery
+) {
 		"use strict";
-
-		QUnit.start();
 
 		var oMockedAppComponent = {
 			getLocalId: function () {
@@ -44,9 +53,8 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			},
 			getModel: function () {}
 		};
-		sinon.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
-
+		sinon.stub(Utils, "getAppComponentForControl").returns(oMockedAppComponent);
 
 		QUnit.module("Given a popup with empty designtime metadata is created...", {
 			beforeEach : function(assert) {
@@ -61,16 +69,17 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 			afterEach : function(assert) {
 				this.oPopup.destroy();
 			}
-		});
+		}, function(){
+			QUnit.test("when getting a createContainer command for popup ...", function(assert) {
+				var oCreateContainerCommand = CommandFactory.getCommandFor(this.oPopup, "CreateContainer", {
+					index : 0,
+					newControlId : this.NEW_CONTROL_ID,
+					label : this.NEW_CONTROL_LABEL,
+					parentId : this.oPopup.getId()
+				}, this.oPopupDesignTimeMetadata);
 
-		QUnit.test("when getting a createContainer command for popup ...", function(assert) {
-			var oCreateContainerCommand = CommandFactory.getCommandFor(this.oPopup, "CreateContainer", {
-				index : 0,
-				newControlId : this.NEW_CONTROL_ID,
-				label : this.NEW_CONTROL_LABEL
-			}, this.oPopupDesignTimeMetadata);
-
-			assert.notOk(oCreateContainerCommand, "no createContainer command for popup exists");
+				assert.notOk(oCreateContainerCommand, "no createContainer command for popup exists");
+			});
 		});
 
 		QUnit.module("Given a form and it's designtime metadata are created...", {
@@ -119,7 +128,8 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 				this.oCreateContainerCommand = CommandFactory.getCommandFor(this.oForm, "createContainer", {
 					index : 0,
 					newControlId : this.NEW_CONTROL_ID,
-					label : this.NEW_CONTROL_LABEL
+					label : this.NEW_CONTROL_LABEL,
+					parentId : this.oForm.getId()
 				}, this.oCreateContainerDesignTimeMetadata);
 
 			},
@@ -127,19 +137,21 @@ sap.ui.define([ "sap/ui/rta/command/CommandFactory",
 				this.oForm.destroy();
 				this.oCreateContainerCommand.destroy();
 			}
+		}, function(){
+			QUnit.test("when getting a createContainer command for form", function(assert) {
+				var done = assert.async();
+				var sChangeType = this.oCreateContainerDesignTimeMetadata.getActionDataFromAggregations("createContainer", this.oForm)[0].changeType;
+				assert.ok(this.oCreateContainerCommand, "createContainer command for form exists");
+				assert.equal(this.oCreateContainerCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
+
+				this.oCreateContainerCommand.execute().then( function() {
+					assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
+					assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
+					done();
+				}.bind(this));
+			});
 		});
 
-		QUnit.test("when getting a createContainer command for form", function(assert) {
-			var done = assert.async();
-			var sChangeType = this.oCreateContainerDesignTimeMetadata.getActionDataFromAggregations("createContainer", this.oForm)[0].changeType;
-			assert.ok(this.oCreateContainerCommand, "createContainer command for form exists");
-			assert.equal(this.oCreateContainerCommand.getChangeType(), sChangeType, "correct change type is assigned to a command");
-
-			this.oCreateContainerCommand.execute().then( function() {
-				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
-				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
-				done();
-			}.bind(this));
-		});
+		QUnit.start();
 
 	});
