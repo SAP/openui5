@@ -61,7 +61,7 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 		        "appdescr_app_addNewDataSource", "appdescr_app_changeDataSource", "appdescr_app_removeDataSource",
 		        "appdescr_app_addAnnotationsToOData", "appdescr_app_addTechnicalAttributes", "appdescr_app_removeTechnicalAttributes",
 		        "appdescr_app_setTitle", "appdescr_app_setSubTitle", "appdescr_app_setShortTitle", "appdescr_app_setDescription", "appdescr_app_setInfo",
-		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_ui5_addNewModel", "appdescr_ui5_replaceComponentUsage",
+		        "appdescr_app_setDestination", "appdescr_app_setKeywords", "appdescr_app_setAch", "appdescr_flp_setConfig", "appdescr_ui5_addNewModel", "appdescr_ui5_replaceComponentUsage",
 		        "appdescr_smb_addNamespace", "appdescr_smb_changeNamespace", "appdescr_ui_generic_app_setMainPage", "appdescr_ui_setIcon", "appdescr_ui_setDeviceTypes",
 		        "appdescr_ui5_addLibraries", "appdescr_url_setUri"];
 	};
@@ -642,6 +642,22 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes = function(mParameters) {
 		Utils.checkParameterAndType(mParameters, "technicalAttributes", "array");
 		return this._createDescriptorInlineChange('appdescr_app_removeTechnicalAttributes', mParameters);
+	};
+
+	/**
+	 * Creates an inline change of change type appdescr_flp_setConfig
+	 *
+	 * @param {object} mParameters parameters of the change type
+	 * @param {array} mParameters.config the config settings
+	 *
+	 * @return {Promise} resolving when creating the descriptor inline change was successful (without backend access)
+	 *
+	 * @private
+	 * @sap-restricted
+	 */
+	DescriptorInlineChangeFactory.create_flp_setConfig = function(mParameters) {
+		Utils.checkParameterAndType(mParameters, "config", "object");
+		return this._createDescriptorInlineChange('appdescr_flp_setConfig', mParameters);
 	};
 
 	/**
