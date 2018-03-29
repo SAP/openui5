@@ -12,6 +12,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/EnabledPropagator',
 	'sap/ui/core/library',
+	'sap/ui/core/Popup',
+	'sap/m/Menu',
 	"./MenuButtonRenderer"
 ], function(
 	jQuery,
@@ -22,6 +24,8 @@ sap.ui.define([
 	Device,
 	EnabledPropagator,
 	coreLibrary,
+	Popup,
+	Menu,
 	MenuButtonRenderer
 	) {
 		"use strict";
@@ -34,6 +38,12 @@ sap.ui.define([
 
 		// shortcut for sap.m.ButtonType
 		var ButtonType = library.ButtonType;
+
+		// shortcut for sap.ui.core.Popup.Dock
+		var Dock = Popup.Dock;
+
+		// properties which shouldn't be applied on inner Button or SplitButton control since they don't have such properties
+		var aNoneForwardableProps = ["buttonMode", "useDefaultActionOnly", "width", "menuPosition"];
 
 		/**
 		 * Constructor for a new MenuButton.
@@ -113,6 +123,18 @@ sap.ui.define([
 				 * Defines whether the <code>MenuButton</code> is set to <code>Regular</code> or <code>Split</code> mode.
 				 */
 				buttonMode : { type : "sap.m.MenuButtonMode", group : "Misc", defaultValue : MenuButtonMode.Regular },
+
+				/**
+				 * Specifies the position of the popup menu with enumerated options.
+				 * By default, the control opens the menu at its bottom left side.
+				 *
+				 * <b>Note:</b> In the case that the menu has no space to show itself in the view port
+				 * of the current window it tries to open itself to
+				 * the inverted direction.
+				 *
+				 * @since 1.56.0
+				 */
+				menuPosition : {type : "sap.ui.core.Popup.Dock", group : "Misc", defaultValue : Dock.BeginBottom},
 
 				/**
 				 * Controls whether the default action handler is invoked always or it is invoked only until a menu item is selected.
@@ -235,12 +257,7 @@ sap.ui.define([
 
 			//update all properties
 			for (var key in this.mProperties) {
-				if (
-					this.mProperties.hasOwnProperty(key) &&
-					key !== "buttonMode" &&
-					key !== "useDefaultActionOnly" &&
-					key !== "width"
-				) {
+				if (this.mProperties.hasOwnProperty(key) && aNoneForwardableProps.indexOf(key) < 0) {
 					this._getButtonControl().setProperty(key, this.mProperties[key], true);
 				}
 			}
@@ -328,7 +345,14 @@ sap.ui.define([
 		 * @private
 		 */
 		MenuButton.prototype._handleButtonPress = function(bWithKeyboard) {
-			var oMenu = this.getMenu();
+			var oMenu = this.getMenu(),
+				oOffset = {
+					zero: "0 0",
+					plus2_right: "0 +2",
+					minus2_right: "0 -2",
+					plus2_left: "+2 0",
+					minus2_left: "-2 0"
+				};
 
 			if (!oMenu) {
 				return;
@@ -337,7 +361,56 @@ sap.ui.define([
 			if (!oMenu.getTitle()) {
 				oMenu.setTitle(this.getText());
 			}
-			oMenu.openBy(this, bWithKeyboard);
+			var aParam = [this, bWithKeyboard];
+			switch (this.getMenuPosition()) {
+				case Dock.BeginTop:
+					aParam.push(Dock.BeginBottom, Dock.BeginTop, oOffset.plus2_right);
+					break;
+				case Dock.BeginCenter:
+					aParam.push(Dock.BeginCenter, Dock.BeginCenter, oOffset.zero);
+					break;
+				case Dock.LeftTop:
+					aParam.push(Dock.RightBottom, Dock.LeftBottom, oOffset.plus2_left);
+					break;
+				case Dock.LeftCenter:
+					aParam.push(Dock.RightCenter, Dock.LeftCenter, oOffset.plus2_left);
+					break;
+				case Dock.LeftBottom:
+					aParam.push(Dock.RightTop, Dock.LeftTop, oOffset.plus2_left);
+					break;
+				case Dock.CenterTop:
+					aParam.push(Dock.CenterBottom, Dock.CenterTop, oOffset.plus2_left);
+					break;
+				case Dock.CenterCenter:
+					aParam.push(Dock.CenterCenter, Dock.CenterCenter, oOffset.zero);
+					break;
+				case Dock.CenterBottom:
+					aParam.push(Dock.CenterTop, Dock.CenterBottom, oOffset.minus2_right);
+					break;
+				case Dock.RightTop:
+					aParam.push(Dock.LeftBottom, Dock.RightBottom, oOffset.minus2_left);
+					break;
+				case Dock.RightCenter:
+					aParam.push(Dock.LeftCenter, Dock.RightCenter, oOffset.minus2_left);
+					break;
+				case Dock.RightBottom:
+					aParam.push(Dock.LeftTop, Dock.RightTop, oOffset.minus2_left);
+					break;
+				case Dock.EndTop:
+					aParam.push(Dock.EndBottom, Dock.EndTop, oOffset.plus2_right);
+					break;
+				case Dock.EndCenter:
+					aParam.push(Dock.EndCenter, Dock.EndCenter, oOffset.zero);
+					break;
+				case Dock.EndBottom:
+					aParam.push(Dock.EndTop, Dock.EndBottom, oOffset.minus2_right);
+					break;
+				default:
+				case Dock.BeginBottom:
+					aParam.push(Dock.BeginTop, Dock.BeginBottom, oOffset.minus2_right);
+					break;
+			}
+			Menu.prototype.openBy.apply(oMenu, aParam);
 
 			this._writeAriaAttributes();
 
