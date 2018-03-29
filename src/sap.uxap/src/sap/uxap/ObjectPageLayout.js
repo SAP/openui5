@@ -3035,7 +3035,7 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._storeScrollLocation = function () {
 
-		if (!this._bDomReady) {
+		if (!this.getDomRef() || !this._bDomReady) {
 			return;
 		}
 		this._iStoredScrollPosition = this._oScroller.getScrollTop(); //TODO: compute the position RELATIVE to the subsection
