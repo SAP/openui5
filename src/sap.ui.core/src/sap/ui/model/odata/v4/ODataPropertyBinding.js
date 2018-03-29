@@ -102,21 +102,6 @@ sap.ui.define([
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#change
 	 * @public
-	 * @see sap.ui.base.Event
-	 * @since 1.37.0
-	 */
-
-	/**
-	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
-	 * It is to be used by applications for example to switch on a busy indicator. Registered event
-	 * handlers are called without parameters.
-	 *
-	 * @param {sap.ui.base.Event} oEvent
-	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataRequested
-	 * @public
-	 * @see sap.ui.base.Event
 	 * @since 1.37.0
 	 */
 
@@ -145,7 +130,19 @@ sap.ui.define([
 	 * @event
 	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataReceived
 	 * @public
-	 * @see sap.ui.base.Event
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'dataRequested' event is fired directly after data has been requested from a backend.
+	 * It is to be used by applications for example to switch on a busy indicator. Registered event
+	 * handlers are called without parameters.
+	 *
+	 * @param {sap.ui.base.Event} oEvent
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataRequested
+	 * @public
 	 * @since 1.37.0
 	 */
 

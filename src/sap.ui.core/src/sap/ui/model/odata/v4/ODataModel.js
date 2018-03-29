@@ -145,7 +145,8 @@ sap.ui.define([
 	 *   binding and do not access data with their own service requests unless parameters are
 	 *   provided.
 	 *
-	 *   The model does not support any public events; attaching an event handler leads to an error.
+	 *   <b>Note: The model does not support any public events; attaching an event handler
+	 *   leads to an error.</b>
 	 * @extends sap.ui.model.Model
 	 * @public
 	 * @since 1.37.0
@@ -282,6 +283,51 @@ sap.ui.define([
 				throw oError;
 			});
 	};
+
+	/**
+	 * The 'parseError' event is not supported by this model.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataModel#parseError
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'propertyChange' event is not supported by this model.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataModel#propertyChange
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'requestCompleted' event is not supported by this model.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataModel#requestCompleted
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'requestFailed' event is not supported by this model.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataModel#requestFailed
+	 * @public
+	 * @since 1.37.0
+	 */
+
+	/**
+	 * The 'requestSent' event is not supported by this model.
+	 *
+	 * @event
+	 * @name sap.ui.model.odata.v4.ODataModel#requestSent
+	 * @public
+	 * @since 1.37.0
+	 */
 
 	// See class documentation
 	// @override
