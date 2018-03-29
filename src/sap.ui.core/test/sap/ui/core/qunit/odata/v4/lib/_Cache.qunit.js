@@ -748,6 +748,7 @@ sap.ui.require([
 				oError = new Error(),
 				sFullPath = "path/to/entity/Address/City",
 				oGroupLock = new _GroupLock("group"),
+				oGroupLockClone = new _GroupLock("group"),
 				oHelperMock = this.mock(_Helper),
 				oOldData = {},
 				oPatchResult = {},
@@ -758,8 +759,9 @@ sap.ui.require([
 
 			oError.canceled = bCanceled;
 			oCache.fetchValue = function () {};
+			this.mock(oGroupLock).expects("getUnlockedCopy").returns(oGroupLockClone);
 			oCacheMock.expects("fetchValue")
-				.withExactArgs(sinon.match.same(oGroupLock), "path/to/entity")
+				.withExactArgs(sinon.match.same(oGroupLockClone), "path/to/entity")
 				.returns(SyncPromise.resolve(oEntity));
 			oHelperMock.expects("buildPath").withExactArgs("path/to/entity", "Address/City")
 				.returns(sFullPath);
@@ -843,7 +845,7 @@ sap.ui.require([
 
 			oCache.fetchValue = function () {};
 			oCacheMock.expects("fetchValue")
-				.withExactArgs(sinon.match.same(oGroupLock), "path/to/entity")
+				.withExactArgs(new _GroupLock("group"), "path/to/entity")
 				.returns(SyncPromise.resolve(oEntity));
 			this.oRequestorMock.expects("buildQueryString")
 				.withExactArgs("/ProductList", sinon.match.same(mQueryOptions), true)
@@ -908,6 +910,7 @@ sap.ui.require([
 				oError2 = new Error(),
 				sFullPath = "path/to/entity/Address/City",
 				oGroupLock = new _GroupLock("group"),
+				oGroupLock2 = new _GroupLock("group"),
 				oHelperMock = this.mock(_Helper),
 				oOldData = {},
 				oPatchResult = {},
@@ -923,7 +926,7 @@ sap.ui.require([
 			oError2.canceled = true;
 			oCache.fetchValue = function () {};
 			oCacheMock.expects("fetchValue")
-				.withExactArgs(sinon.match.same(oGroupLock), "path/to/entity")
+				.withExactArgs(new _GroupLock("group"), "path/to/entity")
 				.returns(SyncPromise.resolve(oEntity));
 			oHelperMock.expects("buildPath").withExactArgs("path/to/entity", "Address/City")
 				.returns(sFullPath);
@@ -949,9 +952,10 @@ sap.ui.require([
 				oCacheMock.expects("removeByPath")
 					.withExactArgs(sinon.match.same(oCache.mPatchRequests), sFullPath,
 						sinon.match.same(oPatchPromise));
+				that.mock(oGroupLock).expects("getUnlockedCopy").returns(oGroupLock2);
 				oRequestCall = that.oRequestorMock.expects("request")
 					.withExactArgs("PATCH", "/~/BusinessPartnerList('0')?foo=bar",
-						sinon.match.same(oGroupLock), {
+						sinon.match.same(oGroupLock2), {
 							"If-Match" : sETag
 						}, sinon.match.same(oUpdateData), undefined, sinon.match.func)
 					.returns(oPatchPromise2);
@@ -1026,7 +1030,7 @@ sap.ui.require([
 
 			oCache.fetchValue = function () {};
 			oCacheMock.expects("fetchValue")
-				.withExactArgs(sinon.match.same(oGroupLock), "path/to/entity")
+				.withExactArgs(new _GroupLock(sGroupId), "path/to/entity")
 				.returns(SyncPromise.resolve(oEntity));
 			this.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "/~/BusinessPartnerList('0')",
@@ -1052,17 +1056,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#update: invalid entity path", function (assert) {
-		var oCache = new _Cache(this.oRequestor, "BusinessPartnerList", {}),
-			oGroupLock = new _GroupLock("groupId");
+		var oCache = new _Cache(this.oRequestor, "BusinessPartnerList", {});
 
 		oCache.fetchValue = function () {};
 		this.mock(oCache).expects("fetchValue")
-			.withExactArgs(sinon.match.same(oGroupLock), "path/to/entity")
+			.withExactArgs(new _GroupLock("groupId"), "path/to/entity")
 			.returns(SyncPromise.resolve(undefined));
 
 		return oCache.update(
-			oGroupLock, "foo", "bar", this.mock().never(), "/~/BusinessPartnerList('0')",
-			"path/to/entity"
+			new _GroupLock("groupId"), "foo", "bar", this.mock().never(),
+			"/~/BusinessPartnerList('0')", "path/to/entity"
 		).then(function () {
 			assert.ok(false);
 		}, function (oError) {
@@ -2423,7 +2426,7 @@ sap.ui.require([
 			oRequestExpectation2 = that.oRequestorMock.expects("request");
 			// immediately add the POST request again into queue
 			oRequestExpectation2.withExactArgs("POST", "Employees?sap-client=111",
-					sinon.match.same(oGroupLock), null, sinon.match.object, sinon.match.func,
+					new _GroupLock("updateGroup"), null, sinon.match.object, sinon.match.func,
 					sinon.match.func)
 				.returns(new Promise(function (resolve) {
 						fnResolvePost = resolve;
@@ -3026,7 +3029,7 @@ sap.ui.require([
 			oReadResult = {};
 
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath, sinon.match.same(oGroupLock), undefined, undefined,
+			.withExactArgs("GET", sResourcePath, new _GroupLock("groupId"), undefined, undefined,
 				undefined, undefined, "/SalesOrderList")
 			.returns(Promise.resolve(oReadResult));
 		this.mock(oCache).expects("drillDown")

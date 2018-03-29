@@ -764,6 +764,9 @@ sap.ui.define([
 			throw new Error("Unexpected request: " + sMethod + " " + sResourcePath);
 		}
 
+		if (oGroupLock) {
+			oGroupLock.unlock();
+		}
 		sResourcePath = this.convertResourcePath(sResourcePath);
 		if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
 			oPromise = new Promise(function (fnResolve, fnReject) {

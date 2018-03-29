@@ -361,7 +361,7 @@ sap.ui.define([
 			});
 		}
 
-		oGroupLock = this.oModel.lockGroup(this.getUpdateGroupId());
+		oGroupLock = this.oModel.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
 		oCreatePromise = this.createInCache(oGroupLock, vCreatePath, "", oInitialData,
 			function () {
 				// cancel callback
@@ -380,6 +380,9 @@ sap.ui.define([
 				}
 				return that.refreshSingle(oContext, that.oModel.lockGroup(sGroupId));
 			}
+		}, function (oError) {
+			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
+			throw oError;
 		});
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1, oCreatePromise);
 
