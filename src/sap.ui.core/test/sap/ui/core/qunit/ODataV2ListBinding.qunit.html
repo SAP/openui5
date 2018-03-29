@@ -883,6 +883,51 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 
 	});
 
+	QUnit.test("ListBinding Client Mode - value list", function(assert){
+		var done = assert.async();
+		oLogChecker.init();
+		var oSpy = sinon.spy(oModel, "_request");
+		oModel.oMetadata.mEntitySets = undefined;
+		var oBinding = oModel.bindContext("/Categories(1)", null, {expand: "Products"});
+
+		var oAddRes = oModel.addAnnotationUrl("$metadata?sap-value-list=Test");
+			assert.ok(!oModel.oMetadata.mEntitySets, "entity set cache should be invalidated");
+			//invalid Binding to empty path
+			var oListBinding = oModel.bindList("Products", null, null,  null, {
+				operationMode: sap.ui.model.odata.OperationMode.Client
+			});
+			var handler = function() {
+				
+				oAddRes.then(function() {
+					assert.ok(oSpy.calledOnce, "Request sent for entity with expand");
+					oSpy.reset();
+					//Timeout needed to avoid checkUpdate of context binding request to update the listbinding
+					setTimeout(function() {
+						oListBinding.initialize();
+						oBinding.detachChange(handler);
+						oListBinding.attachRefresh(function() {oListBinding.getContexts();});
+						oListBinding.attachChange(listhandler);
+						oListBinding.setContext(oBinding.getBoundContext());
+					}, 0);
+				});
+			};
+			var aExpandRefs;
+			var listhandler = function(oEvent) {
+				assert.ok(oModel.oMetadata.mEntitySets, "entity set cache should be filled");
+				assert.equal(Object.keys(oModel.oMetadata.mEntitySets).length, 26, "entity set should contain 5 entries");
+	
+				assert.equal(oEvent.sId, "change");
+	
+				var aContexts = oListBinding.getContexts();
+				assert.equal(aContexts.length, 12, "12 entries contained");
+				aExpandRefs = jQuery.extend({}, oListBinding.aExpandRefs);
+				oListBinding.detachChange(listhandler);
+				done();
+			};
+			oBinding.attachChange(handler);
+
+	});
+
 	QUnit.test("ListBinding expand", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Categories", null, null, null, {expand: "Products"});
