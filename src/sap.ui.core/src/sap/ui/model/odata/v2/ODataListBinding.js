@@ -887,14 +887,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 				var oTypeSet, oEntityType;
 				if (iIndex > 1) {
 					oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sPath.substring(0, iIndex));
-					oTypeSet = this.oModel.oMetadata._getEntityAssociationEnd(oEntityType, sPath.substring(iIndex + 1));
-					//multiplicity can only be one of the following:
-					// 0..1 at most one
-					// 1    exactly one
-					// *    one or more
-					if (oTypeSet && oTypeSet.multiplicity === "*") {
-						this._mPathType[sPath] = true;
 
+					if (oEntityType) {
+						oTypeSet = this.oModel.oMetadata._getEntityAssociationEnd(oEntityType, sPath.substring(iIndex + 1));
+						//multiplicity can only be one of the following:
+						// 0..1 at most one
+						// 1    exactly one
+						// *    one or more
+						if (oTypeSet && oTypeSet.multiplicity === "*") {
+							this._mPathType[sPath] = true;
+						}
 					}
 				} else if (iIndex === 0) {
 					var oMatchingSet, sName = sPath.substring(1);
@@ -909,7 +911,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 					}
 				}
 			}
-			return this._mPathType[sPath];
+			return !!this._mPathType[sPath];
 		}
 		return true;
 	};
