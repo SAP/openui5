@@ -33,6 +33,7 @@ sap.ui.define([
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
 		"sap/ui/rta/Utils",
+		"sap/ui/dt/Util",
 		"sap/ui/fl/Utils",
 		"sap/ui/fl/registry/Settings",
 		"sap/m/MessageBox",
@@ -43,7 +44,8 @@ sap.ui.define([
 		"sap/ui/rta/util/StylesLoader",
 		"sap/ui/rta/util/UrlParser",
 		"sap/ui/rta/appVariant/Feature",
-		"sap/ui/Device"
+		"sap/ui/Device",
+		"sap/ui/rta/service/index"
 	],
 	function(
 		jQuery,
@@ -75,6 +77,7 @@ sap.ui.define([
 		TabHandlingPlugin,
 		FlexControllerFactory,
 		Utils,
+		DtUtil,
 		FlexUtils,
 		FlexSettings,
 		MessageBox,
@@ -85,7 +88,8 @@ sap.ui.define([
 		StylesLoader,
 		UrlParser,
 		RtaAppVariantFeature,
-		Device
+		Device,
+		ServicesIndex
 	) {
 	"use strict";
 
@@ -218,6 +222,8 @@ sap.ui.define([
 			ManagedObject.apply(this, arguments);
 
 			this._dependents = {};
+			this._mServices = {};
+			this._mCustomServicesDictinary = {};
 			this.iEditableOverlaysCount = 0;
 
 			this.addDependent(new PopupManager(), 'popupManager');
@@ -339,12 +345,19 @@ sap.ui.define([
 	};
 
 
-	RuntimeAuthoring.prototype.addDependent = function (oObject, sName) {
+	RuntimeAuthoring.prototype.addDependent = function (oObject, sName, bCreateGetter) {
+		bCreateGetter = typeof bCreateGetter === 'undefined' ? true : !!bCreateGetter;
 		if (!(sName in this._dependents)) {
-			if (sName) {
+			if (sName && bCreateGetter) {
 				this['get' + jQuery.sap.charToUpperCase(sName, 0)] = this.getDependent.bind(this, sName);
 			}
 			this._dependents[sName || oObject.getId()] = oObject;
+		} else {
+			throw DtUtil.createError(
+				"RuntimeAuthoring#addDependent",
+				DtUtil.printf("Can't add dependency with same key '{0}'", sName),
+				"sap.ui.rta"
+			);
 		}
 	};
 
@@ -352,8 +365,12 @@ sap.ui.define([
 		return this._dependents[sName];
 	};
 
-	RuntimeAuthoring.prototype.getDependents = function() {
+	RuntimeAuthoring.prototype.getDependents = function () {
 		return this._dependents;
+	};
+
+	RuntimeAuthoring.prototype.removeDependent = function (sName) {
+		delete this._dependents[sName];
 	};
 
 	/**
@@ -407,12 +424,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Setter for flexSettings
+	 * Setter for flexSettings. Checks the Uri for parameters that override the layer.
+	 * builds the rootNamespace and namespace parameters from the other parameters
 	 *
 	 * @param {Object} [mFlexSettings] property bag
 	 * @param {String} [mFlexSettings.layer] The Layer in which RTA should be started. Default: "CUSTOMER"
 	 * @param {Boolean} [mFlexSettings.developerMode] Whether RTA is started in DeveloperMode Mode. Whether RTA is started in DeveloperMode Mode
-	 * @param {String} [mFlexSettings.namespace] Namespace for changes inside LREP
+	 * @param {String} [mFlexSettings.baseId] base ID of the app
+	 * @param {String} [mFlexSettings.projectId] project ID
+	 * @param {String} [mFlexSettings.scenario] Key representing the current scenario
 	 */
 	RuntimeAuthoring.prototype.setFlexSettings = function(mFlexSettings) {
 		// Check URI-parameters for sap-ui-layer
@@ -423,6 +443,13 @@ sap.ui.define([
 
 		if (aUriLayer && aUriLayer.length > 0) {
 			mFlexSettings.layer = aUriLayer[0];
+		}
+
+		// TODO: this will lead to incorrect information if this function is first called with scenario or baseId and then called again without.
+		if (mFlexSettings.scenario || mFlexSettings.baseId) {
+			var sLRepRootNamespace = FlexUtils.buildLrepRootNamespace(mFlexSettings.baseId, mFlexSettings.scenario, mFlexSettings.projectId);
+			mFlexSettings.rootNamespace = sLRepRootNamespace;
+			mFlexSettings.namespace = sLRepRootNamespace + "changes/";
 		}
 
 		Utils.setRtaStyleClassName(mFlexSettings.layer);
@@ -884,11 +911,16 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	RuntimeAuthoring.prototype.exit = function() {
-		jQuery.map(this._dependents, function (oDependent) {
-			//Destroy should be called with supress invalidate = true here to prevent static UI Area invalidation
+	RuntimeAuthoring.prototype.destroy = function() {
+		jQuery.map(this._dependents, function (oDependent, sName) {
+			this.removeDependent(sName);
+			// Destroy should be called with suppress invalidate = true here to prevent static UI Area invalidation
 			oDependent.destroy(true);
-		});
+		}.bind(this));
+
+		Object.keys(this._mServices).forEach(function (sServiceName) {
+			this.stopService(sServiceName);
+		}, this);
 
 		if (this._oDesignTime) {
 			this._oDesignTime.destroy();
@@ -915,6 +947,8 @@ sap.ui.define([
 		}
 
 		window.onbeforeunload = this._oldUnloadHandler;
+
+		ManagedObject.prototype.destroy.apply(this, arguments);
 	};
 
 	/**
@@ -1363,6 +1397,164 @@ sap.ui.define([
 		}
 
 		this.setProperty('metadataScope', sScope);
+	};
+
+	var SERVICE_STARTING = 'starting';
+	var SERVICE_STARTED = 'started';
+	var SERVICE_FAILED = 'failed';
+
+	function resolveServiceLocation(sName) {
+		if (ServicesIndex.hasOwnProperty(sName)) {
+			return ServicesIndex[sName].replace(/\./g, '/');
+		}
+	}
+
+	/**
+	 * Starts a service
+	 * @param {string} sName - Registered service name
+	 * @return {Promise} - promise is resolved with service api or rejected in case of any error.
+	 */
+	RuntimeAuthoring.prototype.startService = function (sName) {
+		var sServiceLocation = resolveServiceLocation(sName);
+		var mService;
+
+		if (!sServiceLocation) {
+			return Promise.reject(
+				DtUtil.createError(
+					"RuntimeAuthoring#stopService",
+					DtUtil.printf("Unknown service. Can't find any registered service by name '{0}'", sName),
+					"sap.ui.rta"
+				)
+			);
+		} else {
+			mService = this._mServices[sName];
+			if (mService) {
+				switch (mService.status) {
+					case 'started': {
+						return Promise.resolve(mService.publicApi);
+					}
+					case 'starting': {
+						return mService.initPromise;
+					}
+					case 'failed': {
+						return mService.initPromise;
+					}
+					default: {
+						return Promise.reject(
+							DtUtil.createError(
+								"RuntimeAuthoring#getService",
+								DtUtil.printf("Unknown service status. Service name = '{0}'", sName),
+								"sap.ui.rta"
+							)
+						);
+					}
+				}
+			} else {
+				mService = {
+					status: SERVICE_STARTING,
+					location: sServiceLocation,
+					initPromise: new Promise(function (fnResolve, fnReject) {
+						sap.ui.require(
+							[ sServiceLocation ],
+							function (fnServiceFactory) {
+								mService.factory = fnServiceFactory;
+
+								DtUtil.wrapIntoPromise(fnServiceFactory)(this)
+									.then(function (oService) {
+											if (this.bIsDestroyed) {
+												throw DtUtil.createError(
+													"RuntimeAuthoring#getService",
+													DtUtil.printf("RuntimeAuthoring instance is destroyed while initialising the service '{0}'", sName),
+													"sap.ui.rta"
+												);
+											}
+											if (!jQuery.isPlainObject(oService)) {
+												throw DtUtil.createError(
+													"RuntimeAuthoring#getService",
+													DtUtil.printf("Invalid service format. Service should return simple javascript object after initialisation. Service name = '{0}'", sName),
+													"sap.ui.rta"
+												);
+											}
+
+											mService.service = oService;
+
+											// Expose public API
+											var mExports = oService.exports || {};
+											mService.publicApi = Object.freeze(
+												Object.keys(mExports).reduce(function (mResult, sKey) {
+													mResult[sKey] = jQuery.isFunction(mExports[sKey]) ?  DtUtil.wrapIntoPromise(mExports[sKey]) : mExports[sKey];
+													return mResult;
+												}, {})
+											);
+
+											mService.status = SERVICE_STARTED;
+											fnResolve(mService.publicApi);
+									}.bind(this))
+									.catch(fnReject);
+							}.bind(this),
+							function (vError) {
+								mService.status = SERVICE_FAILED;
+								fnReject(
+									DtUtil.propagateError(
+										vError,
+										"RuntimeAuthoring#getService",
+										DtUtil.printf("Can't load service '{0}' by its name: {1}", sName, sServiceLocation),
+										"sap.ui.rta"
+									)
+								);
+							}
+						);
+					}.bind(this))
+						.catch(function (vError) {
+							mService.status = SERVICE_FAILED;
+							return Promise.reject(
+								DtUtil.propagateError(
+									vError,
+									"RuntimeAuthoring#getService",
+									DtUtil.printf("Error during service '{0}' initialisation.", sName),
+									"sap.ui.rta"
+								)
+							);
+						})
+				};
+
+				this._mServices[sName] = mService;
+
+				return mService.initPromise;
+			}
+		}
+	};
+
+	/**
+	 * Stops a service
+	 * @param {string} sName - Started service name
+	 */
+	RuntimeAuthoring.prototype.stopService = function (sName) {
+		var oService = this._mServices[sName];
+
+		if (oService) {
+			if (oService.status === SERVICE_STARTED) {
+				if (jQuery.isFunction(oService.service.destroy)) {
+					oService.service.destroy();
+				}
+			}
+			delete this._mServices[sName];
+		} else {
+			throw DtUtil.createError(
+				"RuntimeAuthoring#stopService",
+				DtUtil.printf("Can't destroy service: unable to find service with name '{0}'", sName),
+				"sap.ui.rta"
+			);
+		}
+	};
+
+	/**
+	 * Gets a service by name (and starts it if it's not running)
+	 * @param {string} sName - Registered service name
+	 * @return {Promise} - promise is resolved with service api or rejected in case of any error.
+	 */
+	RuntimeAuthoring.prototype.getService = function (sName) {
+		return this.startService(sName);
 	};
 
 	return RuntimeAuthoring;

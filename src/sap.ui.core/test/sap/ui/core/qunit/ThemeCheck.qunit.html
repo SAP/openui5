@@ -28,6 +28,8 @@
 
 		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen" />
 		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
@@ -201,7 +203,85 @@
 				var oOldLibraryCss = document.querySelectorAll("link[data-sap-ui-foucmarker='sap-ui-theme-" + lib + "']");
 				assert.equal(oOldLibraryCss && oOldLibraryCss.length || 0, 0, "Old stylesheet for library " + lib + " has been removed.");
 			});
+			sap.ui.getCore().getConfiguration().setRTL(false);
 
+		});
+
+		QUnit.module("CORS", {
+			beforeEach: function() {
+
+				// Apply Object.getOwnPropertyDescriptor fix for PhantomJS
+				if (sap.ui.Device.browser.phantomJS) {
+					var fnOriginalGetOwnPropertyDescriptor = this.fnOriginalGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+					Object.getOwnPropertyDescriptor = function(obj, prop) {
+						var descriptor = fnOriginalGetOwnPropertyDescriptor.apply(this, arguments);
+						if (!descriptor && obj instanceof Node) {
+							descriptor = {
+								get: function() {
+									return this.val;
+								},
+								set: function(val) {
+									this.val = val;
+								},
+								enumerable: true,
+								configurable: true
+							};
+							Object.defineProperty(obj, prop, descriptor);
+						}
+						return descriptor;
+					};
+				}
+
+				this.descLinkSheet = Object.getOwnPropertyDescriptor(HTMLLinkElement.prototype, "sheet");
+
+				Object.defineProperty(HTMLLinkElement.prototype, "sheet", {
+					get: function() {
+						var obj = {
+							href: this.href
+						};
+						Object.defineProperty(obj, "cssRules", {
+							get: function() {
+								throw new Error();
+							},
+							set: function() {}
+						});
+						return obj;
+					},
+					set: function() {},
+					configurable: true
+				});
+
+				sinon.spy(jQuery.sap.log, "error");
+			},
+			afterEach: function() {
+
+				// Reset Object.getOwnPropertyDescriptor fix for PhantomJS
+				if (sap.ui.Device.browser.phantomJS) {
+					Object.getOwnPropertyDescriptor = this.fnOriginalGetOwnPropertyDescriptor;
+				}
+
+				Object.defineProperty(HTMLLinkElement.prototype, "sheet", this.descLinkSheet);
+
+				jQuery.sap.log.error.restore();
+			}
+		})
+
+		QUnit.test("Accessing HTMLLinkElement#sheet.cssRules throws exception", function(assert) {
+			var done = assert.async();
+
+			themeChanged().then(function() {
+
+				// Check if the declared library stylesheets have been fully loaded
+				testThemeLoaded(assert);
+
+				// Check if the old stylesheets have been removed again
+				testThemeCheckCleanup(assert);
+
+				sinon.assert.neverCalledWithMatch(jQuery.sap.log.error, sinon.match("Error during check styles"));
+
+				done();
+			});
+			testApplyTheme(assert, "customcss");
 		});
 
 		</script>

@@ -6,9 +6,6 @@
 		<script src="../shared-config.js"></script>
 		<script>
 			window['sap-ui-config'].libs = "sap.ui.dt";
-			window['sap-ui-config'].resourceroots = {
-				'dt.view': 'testdata/designtime/'
-			};
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 		<script>
@@ -17,7 +14,7 @@
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/DesignTime.js]');
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt/OverlayUtil.js]');
 
 			jQuery.sap.includeScript('./OverlayUtil.qunit.js');
 		</script>

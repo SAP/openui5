@@ -6,6 +6,14 @@
 	vertical-align: bottom;
 }
 
+.aboutDialog .sapMMsgStrip .sapMFT {
+    word-break: break-word;
+}
+
+.aboutDialog .sapMMsgStrip .sapMFT .sapMLnk {
+    white-space: initial;
+}
+
 .rateButton.sapMBtn span {
 	border-radius: 0;
 }

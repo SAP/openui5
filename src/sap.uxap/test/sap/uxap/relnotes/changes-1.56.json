@@ -1,6 +1,5 @@
 {
   "1.56.0": {
-    "data": "undefined NaN",
     "notes": [
       {
         "id": "6d0cb905e31859353f65052e67965cdbf3faa194",
@@ -46,6 +45,24 @@
             "reference": "1880028962"
           }
         ]
+      },
+      {
+        "id": "f93eb97269f54ac5fff0be5ad97e2ce3c2ed2a49",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Fixed action button disappearing",
+        "references": []
+      },
+      {
+        "id": "7d6a0dd4c77cd62d2b40ebd2f04293a2a0a9f4c2",
+        "type": "FIX",
+        "text": " uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
+        "references": []
+      },
+      {
+        "id": "fd1a98eaa2742459701a4aafc60ed04cfd5e38f9",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Memory leak fix",
+        "references": []
       }
     ]
   }

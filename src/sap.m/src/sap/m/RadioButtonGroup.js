@@ -647,7 +647,6 @@ sap.ui.define([
 					this.fireSelect({
 						selectedIndex : iIndex
 					});
-					this.aRBs[iIndex].fireSelect({ selected: true });
 				}
 			};
 

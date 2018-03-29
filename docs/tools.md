@@ -89,6 +89,29 @@ grunt test --browsers=<browsers>
 #  grunt test --browsers="safari,firefox"   # run tests of all libraries on safari and firefox
 ```
 
+## docs
+
+Argument               | Description                                                                       | Default
+---------------------- | --------------------------------------------------------------------------------- | -------------
+libs                   | Library name(s) to build documentation for (comma-separated)                      | All libraries
+default-template       | `boolean` whether to use the JSDoc default template instead of the UI5 template   | `false`
+
+Creates documentation from the source files that can be displayed in the SDK. If option ```default-template``` is set, 
+HTML output will be generated instead of the api.json files.
+ 
+```
+grunt docs [--libs=<library-1>,<library-n>]
+
+# examples
+#  grunt docs                            # build documentation preview for all libraries
+#  grunt docs --libs=sap.ui.core,sap.m   # only build documentation preview for sap.ui.core and sap.m
+#  grunt docs --default-template         # produce HTML output using the default JSDoc template
+
+grunt serve
+
+open http://localhost:8080/testsuite/documentation.html#/api
+```
+
 ## cldr
 
 Install required npm modules and regenerate CLDR files contained in sap.ui.core.cldr.

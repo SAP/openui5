@@ -181,6 +181,65 @@
 					</form:content>
 				</form:SimpleForm>
 			</sap.ui.layout:VerticalLayout>
+
+			<sap.ui.layout:VerticalLayout>
+				<VBox class="sapUiSmallMargin">
+					<form:SimpleForm id="SimpleFormChangeColumn_twoGroups234"
+						editable="true"
+						layout="ColumnLayout"
+						title="SimpleForm with two groups using ColumnLayout with up to 4 columns"
+						columnsM="2"
+						columnsL="3"
+						columnsXL="4">
+						<form:content>
+							<core:Title id="TTitle0" text="Address" />
+							<Label id="TLabel0" text="Name" />
+							<Input id="name" value="" />
+							<Label id="TLabel1" text="Street/No." />
+							<Input id="TInput1" value="">
+							</Input>
+							<Input id="TInput0" value="">
+								<layoutData>
+									<form:ColumnElementData cellsSmall="2" cellsLarge="1" />
+								</layoutData>
+							</Input>
+							<Label id="TLabel2" text="ZIP Code/City" />
+							<Input id="TInput2" value="">
+								<layoutData>
+									<form:ColumnElementData cellsSmall="3" cellsLarge="2" />
+								</layoutData>
+							</Input>
+							<Input id="TInput3" value="" />
+							<Label id="TLabel3" text="Country" />
+							<Select id="country" selectedKey="">
+								<items>
+									<core:Item text="England" key="England"/>
+									<core:Item text="Germany" key="Germany"/>
+									<core:Item text="USA" key="USA"/>
+								</items>
+							</Select>
+							<Label id="TLabel4" text="Web" />
+							<Input id="TInput4" value="" type="Url" />
+							<core:Title id="TTitle1" text="Contact" />
+							<Label id="TLabel5" text="Twitter" />
+							<Input id="TInput5" value="" />
+							<Label id="TLabel6" text="Email" />
+							<Input id="TInput6" value="" type="Email" />
+							<Label id="TLabel7" text="Tel." />
+							<Input id="TInput7" value="" type="Tel" />
+							<Label id="TLabel8" text="SMS" />
+							<Input id="TInput8" value="" type="Tel" />
+							<Label id="TLabel9" text="Mobile" />
+							<Input id="TInput9" value="" type="Tel" />
+							<Label id="TLabel10" text="Pager" />
+							<Input id="TInput10" value="" type="Tel" />
+							<Label id="TLabel11" text="Fax" />
+							<Input id="TInput11" value="" type="Tel" />
+						</form:content>
+					</form:SimpleForm>
+				</VBox>
+			</sap.ui.layout:VerticalLayout>
+
 			<sap.ui.layout:VerticalLayout width="100%">
 				<smartForm:SmartForm title="SmartForm without stable ids" entityType="Header, Tax">
 					<smartForm:layout>

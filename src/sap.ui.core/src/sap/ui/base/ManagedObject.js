@@ -2644,6 +2644,11 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.destroy = function(bSuppressInvalidate) {
+		// ignore repeated calls
+		if (this.bIsDestroyed) {
+			return;
+		}
+
 		var that = this;
 
 		// avoid binding update/propagation
@@ -2704,7 +2709,6 @@ sap.ui.define([
 		}
 
 		if ( this._observer ) {
-			// TODO notify observer to cleanup bookkeeping?
 			this._observer.objectDestroyed(this);
 		}
 

@@ -76,28 +76,26 @@
 			<VBox
 				alignItems="Center"
 				renderType="Div">
-					<Image
-						id = "productImage"
-						src= "{
-							path : 'PictureUrl',
-							formatter : '.formatter.pictureUrl'
-						}"
-						decorative="true"
-						class="sapUiSmallMargin"
-						press="onPicturePress"
-						width="100%"
-					/>
+				<Image
+					id="productImage"
+					src="{PictureUrl}"
+					decorative="true"
+					densityAware="false"
+					class="sapUiSmallMargin"
+					width="100%"
+					height="100%">
+					<detailBox>
+						<LightBox id="lightBox">
+							<imageContent>
+								<LightBoxItem
+									imageSrc="{PictureUrl}"
+									title="{Name}"/>
+							</imageContent>
+						</LightBox>
+					</detailBox>
+				</Image>
 			</VBox>
 		</content>
 
-		<dependents>
-			<LightBox id="lightBox">
-				<imageContent>
-					<LightBoxItem
-						imageSrc="{PictureUrl}"
-						title="{Name}"/>
-				</imageContent>
-			</LightBox>
-		</dependents>
 	</Page>
 </mvc:View>

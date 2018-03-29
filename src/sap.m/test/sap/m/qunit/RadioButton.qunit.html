@@ -1062,6 +1062,24 @@
 
 		});
 
+		QUnit.test("getAccessibilityInfo", function(assert) {
+			var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m"),
+					oRadioButton = new sap.m.RadioButton({ text: "testLabel", selected: true }),
+					sExpectedType = oBundle.getText("ACC_CTR_TYPE_RADIO"),
+					sExpectedRole = 'radio',
+					sExpectedDescription = oRadioButton.getText() + " " + oBundle.getText("ACC_CTR_STATE_CHECKED"),
+					oAccInfo = oRadioButton.getAccessibilityInfo();
+
+			oRadioButton.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.strictEqual(oAccInfo.type, sExpectedType, "input type set correctly");
+			assert.strictEqual(oAccInfo.role, sExpectedRole, "role set correctly");
+			assert.strictEqual(oAccInfo.description, sExpectedDescription, "description set correctly");
+
+			oRadioButton.destroy();
+		});
+
 		</script>
 	</head>
 	<body>

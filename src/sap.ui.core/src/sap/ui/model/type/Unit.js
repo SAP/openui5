@@ -3,8 +3,8 @@
  */
 
 // Provides the base implementation for all model implementations
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/CompositeType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException'],
-	function(jQuery, NumberFormat, CompositeType, FormatException, ParseException, ValidateException) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/model/CompositeType', 'sap/ui/model/FormatException', 'sap/ui/model/ParseException', 'sap/ui/model/ValidateException', 'sap/ui/core/LocaleData'],
+	function(jQuery, NumberFormat, CompositeType, FormatException, ParseException, ValidateException, LocaleData) {
 	"use strict";
 
 
@@ -48,8 +48,38 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		return NumberFormat.getUnitInstance(oFormatArgs);
 	};
 
-	Unit.prototype._getInstance = function(aArgs) {
+	/**
+	 * Retrieves a new NumberFormat instance for the given dynamic format options.
+	 * If a Unit is already known during formatting, we also pass it along to construct
+	 * an optimal NumberFormat instance.
+	 *
+	 * @param {*} aArgs an array containing the parsed dynamic format options
+	 * @param {*} sUnitToBeFormatted
+	 */
+	Unit.prototype._getInstance = function(aArgs, sUnitToBeFormatted) {
 		var oFormatArgs = this.createFormatOptions(aArgs);
+
+		// If the unit is known during formatting, we resolve the unit.
+		// This way we ensure that the bound dynamic format options (e.g. decimals, precision)
+		// are taken into account with priority. Otherwise the format options defined for units on the Configuration
+		// might overwrite the given dynamic format options of the type.
+		if (sUnitToBeFormatted) {
+			// checks the global Configuration and CLDR for Units/UnitMappings
+			var oLocale = sap.ui.getCore().getConfiguration().getFormatSettings().getFormatLocale();
+			var oLocaleData = LocaleData.getInstance(oLocale);
+			var sLookupMeasure = oLocaleData.getUnitFromMapping(sUnitToBeFormatted) || sUnitToBeFormatted;
+			var mUnitPatterns = oLocaleData.getUnitFormat(sLookupMeasure);
+
+			// we have a unit pattern, so we create a customUnit definition for the format options
+			if (mUnitPatterns) {
+				var mUnitClone = jQuery.extend({}, mUnitPatterns);
+				mUnitClone.decimals = (oFormatArgs.decimals != undefined) ? oFormatArgs.decimals : mUnitClone.decimals;
+				mUnitClone.precision = (oFormatArgs.precision != undefined) ? oFormatArgs.precision : mUnitClone.precision;
+				oFormatArgs.customUnits = {};
+				oFormatArgs.customUnits[sUnitToBeFormatted] = mUnitClone;
+			}
+		}
+
 		// Only subclasses of the Unit type use a NumberFormat instance cache.
 		// By default a new NumberFormat instance is created everytime.
 		if (this.getMetadata().getClass() !== Unit) {
@@ -114,7 +144,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 	 *
 	 * @function
 	 * @name sap.ui.model.type.Unit.prototype.formatValue
-	 * @param {array|string} vValue the array of values or string value to be formatted
+	 * @param {array|string} vValue the array of values or string value to be formatted.
+	 *                              If an array is given, index 0 is the number value,
+	 *                              and index 1 is the Unit code (CLDR or custom).
+	 *                              Indices 2+ are the bound values for the dynamic format options.
 	 * @param {string} sInternalType the target type
 	 * @return {any} the formatted output value
 	 *
@@ -137,7 +170,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/NumberFormat', 'sap/ui/m
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				this.aDynamicValues = this.extractArguments(aValues);
-				this.oOutputFormat = this._getInstance(this.aDynamicValues);
+				// retrieve a new NumberFormat (Unit) instance for the dynamic values and the given unit
+				this.oOutputFormat = this._getInstance(this.aDynamicValues, aValues[1]);
 				return this.oOutputFormat.format(aValues);
 			case "int":
 			case "float":

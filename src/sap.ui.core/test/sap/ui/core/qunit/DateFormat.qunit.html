@@ -704,7 +704,7 @@
 		var sFormatted = "2016/47/1";
 
 		assert.equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the first day of week 46 in en-US");
-		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
 
 		sap.ui.getCore().getConfiguration().setLanguage("de_DE");
 		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
@@ -713,6 +713,56 @@
 		sFormatted = "2016/45/7";
 
 		assert.equal(oDateFormat.format(oDate), sFormatted, "13th, November 2016 Sunday is the 7th day of week 45 in de-DE");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
+
+	QUnit.test("format and parse dayName", function(assert) {
+		var oDate = new Date(2018, 2, 23); // 23th, March, 2018, Friday
+		var sPattern = "yyyy-MM-dd EEEE";
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		});
+		var sFormatted = "2018-03-23 Friday";
+
+		assert.equal(oDateFormat.format(oDate), sFormatted, "23th, March, 2018, Friday in en-US");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
+
+		sap.ui.getCore().getConfiguration().setLanguage("de_DE");
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		});
+		sFormatted = "2018-03-23 Freitag";
+
+		assert.equal(oDateFormat.format(oDate), sFormatted, "2018-03-23 Freitag in de-DE");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed to the same date");
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+	});
+
+	QUnit.test("format and parse week and dayName", function(assert) {
+		var oDate = new Date(2018, 2, 23); // 23th, March, 2018, Friday
+		var sPattern = "yyyy 'Week' ww EEEE";
+
+		sap.ui.getCore().getConfiguration().setLanguage("en_US");
+		var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		});
+		var sFormatted = "2018 Week 12 Friday";
+
+		assert.equal(oDateFormat.format(oDate), sFormatted, "2018-12 Friday, Friday in en-US");
+		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
+
+		sap.ui.getCore().getConfiguration().setLanguage("de_DE");
+		oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+			pattern: sPattern
+		});
+		sFormatted = "2018 Week 12 Freitag";
+
+		assert.equal(oDateFormat.format(oDate), sFormatted, "2018-12 Freitag in de-DE");
 		assert.equal(oDateFormat.parse(sFormatted).getTime(), oDate.getTime(), "The formatted string can be correctly parsed");
 
 		sap.ui.getCore().getConfiguration().setLanguage("en_US");

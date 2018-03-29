@@ -62,7 +62,8 @@
 						}"
 						numberUnit="{CurrencyCode}"
 						press="onProductListItemPress"
-						iconDensityAware="false" >
+						iconDensityAware="false"
+						tooltip="{i18n>openProductDetails} {Name}">
 						<attributes>
 							<ObjectAttribute text="{SupplierName}"/>
 						</attributes>

@@ -1095,6 +1095,8 @@
 			text: '1 Item 1'
 		});
 
+		var oSpyChangeEvent = sinon.spy(this.multiInput1, "fireChange");
+
 		this.multiInput1.addSuggestionItem(oItem);
 		sap.ui.getCore().applyChanges();
 
@@ -1104,6 +1106,8 @@
 
 		// assert
 		assert.strictEqual(this.multiInput1.getValue(), "", "Value of the input should be empty");
+
+		assert.strictEqual(oSpyChangeEvent.callCount, 1, "Change event should be fired once");
 	});
 
 	QUnit.module("Mobile", {});

@@ -38,17 +38,18 @@ sap.ui.define([
 					bLandscape: Device.orientation.landscape,
 					bHasMaster: false,
 					bSearchMode: false,
-					bHideEmptySections: window['sap-ui-documentation-hideEmptySections'],
+					bHideTopicSection: !!window['sap-ui-documentation-hideTopicSection'],
+					bHideApiSection: !!window['sap-ui-documentation-hideApiSection'],
 					sAboutInfoSAPUI5: "Looking for the Demo Kit for a specific SAPUI5 version? " +
 					"Check at <a href = 'https://sapui5.hana.ondemand.com/versionoverview.html'>https://sapui5.hana.ondemand.com/versionoverview.html</a> " +
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
-					"<a href='https://sapui5.hana.ondemand.com/1.44.16/'>https://sapui5.hana.ondemand.com/1.44.16/</a>",
+					"<a href='https://sapui5.hana.ondemand.com/1.52.4/'>https://sapui5.hana.ondemand.com/1.52.4/</a>",
 					sAboutInfoOpenUI5: "Looking for the Demo Kit for a specific OpenUI5 version? " +
 					"Check at <a href = 'https://openui5.hana.ondemand.com/versionoverview.html'>https://openui5.hana.ondemand.com/versionoverview.html</a> " +
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
-					"<a href='https://openui5.hana.ondemand.com/1.44.16/'>https://openui5.hana.ondemand.com/1.44.16/</a>"
+					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>"
 				}),
 				oHeaderModel = new JSONModel({
 					bShowSubHeader: Device.system.phone
@@ -84,7 +85,15 @@ sap.ui.define([
 				// the unstashed control is added as **last child** => correct its position in parent container
 				this.oHeader.removeContent(this.oTabNavigation);
 				this.oHeader.insertContent(this.oTabNavigation, 2);
-
+				if (Device.system.phone) {
+					// items in Select control can't be hidden via visible property
+					if (window['sap-ui-documentation-hideTopicSection']) {
+						this.byId("topicMasterTab").destroy();
+					}
+					if (window['sap-ui-documentation-hideApiSection']) {
+						this.byId("apiMasterTab").destroy();
+					}
+				}
 				this.oRouter = this.getRouter();
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));

@@ -14,9 +14,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version 1.37.0-SNAPSHOT
 	 * @experimental Since 1.25.0
-	 * @param {object} mComponent - Component data to initiate <code>ChangePersistence</code> instance
-	 * @param {string} mComponent.name - Name of the component this instance is responsible for
-	 * @param {string} mComponent.appVersion - Version of application
+	 * @param {object} mComponent Component data to initiate <code>ChangePersistence</code> instance
+	 * @param {string} mComponent.name Name of the component this instance is responsible for
+	 * @param {string} mComponent.appVersion Version of application
 	 */
 	var ChangePersistence = function(mComponent) {
 		this._mComponent = mComponent;
@@ -103,9 +103,9 @@ sap.ui.define([
 	 * if <code>bIncludeVariants</code> parameter is true, the changes with 'variant' <code>fileType</code> or 'defaultVariant' <code>changeType</code> are also valid
 	 * if it has a selector <code>persistencyKey</code>.
 	 *
-	 * @param {sap.ui.fl.context.Context[]} aActiveContexts - Array of current active contexts
-	 * @param {boolean} [bIncludeVariants] - Indicates that smart variants shall be included
-	 * @param {object} oChangeContent - Content of the change
+	 * @param {sap.ui.fl.context.Context[]} aActiveContexts Array of current active contexts
+	 * @param {boolean} [bIncludeVariants] Indicates that smart variants shall be included
+	 * @param {object} oChangeContent Content of the change
 	 *
 	 * @returns {boolean} <code>true</code> if all the preconditions are fulfilled
 	 * @public
@@ -324,6 +324,14 @@ sap.ui.define([
 		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
 			return aChanges.filter(isChangeValidForVariant);
 		}).then(function(aChanges) {
+			if (aChanges && aChanges.length === 0) {
+				return LRepConnector.isFlexServiceAvailable().then(function (bStatus) {
+					if (bStatus === false) {
+						return Promise.reject();
+					}
+					return Promise.resolve({});
+				});
+			}
 			var sId;
 			this._mVariantsChanges[sStableId] = {};
 			aChanges.forEach(function (oChange){
@@ -483,10 +491,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * @param {sap.ui.core.UIComponent} oComponent - component containing the control for which the change should be added
-	 * @param {sap.ui.fl.Change} oChange - change which should be added into the mapping
+	 * @param {sap.ui.core.UIComponent} oComponent component containing the control for which the change should be added
+	 * @param {sap.ui.fl.Change} oChange change which should be added into the mapping
 	 * @see sap.ui.fl.Change
-	 * @returns {map} mChanges - map with added change
+	 * @returns {map} mChanges map with added change
 	 * @private
 	 */
 	ChangePersistence.prototype._addChangeIntoMap = function (oComponent, oChange) {
@@ -560,10 +568,10 @@ sap.ui.define([
 	/**
 	 * Calls the back end asynchronously and fetches all changes for the component
 	 * New changes (dirty state) that are not yet saved to the back end won't be returned.
-	 * @param {object} oComponent - Component instance used to prepare the IDs (e.g. local)
-	 * @param {map} mPropertyBag - Contains additional data needed for reading changes
-	 * @param {object} mPropertyBag.appDescriptor - Manifest belonging to the current running component
-	 * @param {string} mPropertyBag.siteId - ID of the site belonging to the current running component
+	 * @param {object} oComponent Component instance used to prepare the IDs (e.g. local)
+	 * @param {map} mPropertyBag Contains additional data needed for reading changes
+	 * @param {object} mPropertyBag.appDescriptor Manifest belonging to actual component
+	 * @param {string} mPropertyBag.siteId ID of the site belonging to actual component
 	 * @see sap.ui.fl.Change
 	 * @returns {Promise} Promise resolving with a getter for the changes map
 	 * @public
@@ -642,10 +650,10 @@ sap.ui.define([
 	 * view1
 	 * view1--view2--view3
 	 *
-	 * @param {string} sViewId - the id of the view, changes should be retrieved for
-	 * @param {map} mPropertyBag - contains additional data that are needed for reading of changes
-	 * @param {object} mPropertyBag.appDescriptor - Manifest that belongs to actual component
-	 * @param {string} mPropertyBag.siteId - id of the site that belongs to actual component
+	 * @param {string} sViewId the id of the view, changes should be retrieved for
+	 * @param {map} mPropertyBag contains additional data that are needed for reading of changes
+	 * @param {object} mPropertyBag.appDescriptor Manifest that belongs to actual component
+	 * @param {string} mPropertyBag.siteId id of the site that belongs to actual component
 	 * @returns {Promise} resolving with an array of changes
 	 * @public
 	 */
@@ -717,11 +725,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * In case the first changes were created it is possible that the propagationListener of sap.ui.fl is not yet attached
-	 * to the application component.
-	 * In this case it has to be added.
+	 * If the first changes were created, the <code>propagationListener</code> of <code>sap.ui.fl</code> might not yet
+	 * be attached to the application component and must be added then.
 	 *
-	 * @param {sap.ui.core.UiComponent} oComponent - application component which possibly not yet have a propagationListener
+	 * @param {sap.ui.core.UiComponent} oComponent Application component that might not have a propagation listener yet
 	 * @private
 	 */
 	ChangePersistence.prototype._addPropagationListener = function (oComponent) {
@@ -874,7 +881,7 @@ sap.ui.define([
 	 *
 	 * Otherwise it will be marked for deletion.
 	 *
-	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
+	 * @param {sap.ui.fl.Change} oChange the change to be deleted
 	 */
 	ChangePersistence.prototype.deleteChange = function(oChange) {
 		var nIndexInDirtyChanges = this._aDirtyChanges.indexOf(oChange);
@@ -949,7 +956,7 @@ sap.ui.define([
 	/**
 	 * TODO!!!
 	 *
-	 * @param {sap.ui.fl.Change} oChange - the change to be deleted
+	 * @param {sap.ui.fl.Change} oChange the change to be deleted
 	 */
 	ChangePersistence.prototype.loadSwitchChangesMapForComponent = function(sVariantManagementId, sCurrentVariant, sNewVariant) {
 		return this._oVariantController.getChangesForVariantSwitch(sVariantManagementId, sCurrentVariant, sNewVariant, this._mChanges.mChanges);

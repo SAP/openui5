@@ -259,6 +259,39 @@
 
 	});
 
+	QUnit.test("unset selected section", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oFirstSection = this.oObjectPage.getSections()[0],
+			oSecondSection = this.oSecondSection,
+			oExpected,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		setTimeout(function () {
+
+			// initially, the second section is selected (from the module setup)
+			oExpected = {
+				oSelectedSection: oSecondSection,
+				sSelectedTitle: oSecondSection.getSubSections()[0].getTitle()
+			};
+			sectionIsSelected(oObjectPage, assert, oExpected);
+
+
+			// Act: unset the currently selected section
+			oObjectPage.setSelectedSection(null);
+
+			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+				// Check: the selection moved to the first visible section
+				oExpected = {
+					oSelectedSection: oFirstSection,
+					sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
+				};
+				sectionIsSelected(oObjectPage, assert, oExpected);
+			done();
+		});
+		}, this.iLoadingDelay);
+	});
+
 	QUnit.module("test setSelectedSection functionality");
 
 	QUnit.test("test setSelectedSection with initially empty ObjectPage", function (assert) {
@@ -931,6 +964,16 @@
 
 		// assert
 		assert.strictEqual(oHeaderSpy.callCount, 1, "ObjectPageHeader _toggleFocusableState is called");
+	});
+
+	QUnit.test("Should copy _headerContent hidden aggregation to the ObjectPage clone", function (assert) {
+		var oObjectPage = this.oSampleView.byId("objectPage13"),
+			oObjectPageClone = oObjectPage.clone(),
+			oHeaderContent = oObjectPage.getHeaderContent(),
+			oHeaderContentClone = oObjectPageClone.getHeaderContent();
+
+		assert.strictEqual(oHeaderContentClone !== null, true, "HeaderContent aggregation should exist in the clone");
+		assert.strictEqual(oHeaderContent.length, oHeaderContentClone.length, "HeaderContent and it's clone should have the same nubmer of elements");
 	});
 
 	QUnit.module("ObjectPage API", {

@@ -165,6 +165,9 @@ module.exports = function(grunt) {
 							'!sap/ui/core/cldr/**',
 							'!sap/ui/core/messagebundle*'
 						]
+					},
+					jsdoc: {
+						exclude: [ 'sap/ui/qunit', 'sap/ui/thirdparty' ]
 					}
 			},
 			{
@@ -221,7 +224,16 @@ module.exports = function(grunt) {
 			},
 			{
 					name: 'sap.ui.codeeditor',
-					path: 'src/sap.ui.codeeditor'
+					path: 'src/sap.ui.codeeditor',
+					preload: {
+						src: [
+							'**/*.js',
+							'!sap/ui/codeeditor/js/**'
+						]
+					},
+					jsdoc: {
+						exclude: [ 'sap/ui/codeeditor/js' ]
+					}
 			},
 			{
 					name: 'sap.ui.support',
@@ -283,7 +295,8 @@ module.exports = function(grunt) {
 				'gitadd': 'grunt-git',
 				'gitcommit': 'grunt-git',
 				'gittag': 'grunt-git',
-				'gitpush': 'grunt-git'
+				'gitpush': 'grunt-git',
+				'jsdoc': 'grunt-jsdoc'
 			}
 		},
 

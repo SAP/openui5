@@ -14,7 +14,14 @@
 var oData = [
 			{
 				text: "Node0",
-				ref: "sap-icon://action"
+				ref: "sap-icon://action",
+				state: "Success",
+				nodes: [{
+					text: "Node0-1",
+					ref: "sap-icon://action",
+					state: "Success"
+				}
+				]
 			},
  			{
  				text: "Node1 text text text text text text text text text text text text text text text text text text text text",
@@ -120,15 +127,34 @@ var oData = [
  			},
  			{
  				text: "Node2",
- 				ref: "sap-icon://action"
+ 				ref: "sap-icon://action",
+ 				state: "Error",
+				nodes: [{
+					text: "Node2-1",
+					ref: "sap-icon://action",
+					state: "Warning"
+				}
+				]
  			},
  			{
 				text: "Node3",
-				ref: "sap-icon://action"
+				ref: "sap-icon://action",
+				state: "Success",
+				nodes: [{
+					text: "Node3-1",
+					ref: "sap-icon://action",
+					state: "Success"
+				}]
 			},
 			{
  				text: "Node4",
- 				ref: "sap-icon://action"
+ 				ref: "sap-icon://action",
+ 				state: "Success",
+				nodes: [{
+					text: "Node4-1",
+					ref: "sap-icon://action",
+					state: "Success"
+				}]
  			},
  			{
 				text: "Node5",
@@ -715,6 +741,7 @@ var oData = [
 	var oLabel3 = new sap.m.Label({text:"*********************Tree*********************"});
 	var oTree = new sap.m.Tree({
 		headerText: "Data in Tree Structure",
+		'delete': deleteItem,
 		dragDropConfig: new sap.ui.core.dnd.DragDropInfo({
 			sourceAggregation: "items",
 			targetAggregation: "items",
@@ -731,11 +758,16 @@ var oData = [
 	// set the data to the model
 	oModel.setData(oData);
 	var oStandardTreeItem = new sap.m.StandardTreeItem({
-		title: "{text}"
+		title: "{text}",
+		highlight: "{state}"
 	});
 	oTree.bindItems("/", oStandardTreeItem);
-	//oTree.expandToLevel(3);
 	var oBinding = oTree.getBinding("items");
+	//oTree.expandToLevel(3);
+
+	function deleteItem(oEvent) {
+		alert("delete event fired");
+	};
 
 	function onDragStart(oEvent) {
 		var oDragSession = oEvent.getParameter("dragSession");
@@ -797,6 +829,29 @@ var oData = [
 	};
 
 	// footer funxtions
+	function expandMulti(){
+		return new sap.m.Button({
+			text:"expand multiple nodes",
+			tooltip: "expand[0,2,3,4,1,5]",
+			press: function(evt) {
+				var oBinding = oTree.getBinding("items");
+				// expand multiple nodes
+				oTree.expand([0,2,3,4,1,5]);
+			}
+		});
+	};
+
+	function collapseMulti(){
+		return new sap.m.Button({
+			text:"collapse multiple nodes",
+			tooltip:"collapse[5,0,2]",
+			press: function(evt) {
+				// collapse multiple nodes
+				oTree.collapse([5,0,2,9,7]);
+			}
+		});
+	};
+
 	function addSelectionMode(){
 		return new sap.m.Select({
 			tooltip: "Selection Mode",
@@ -957,6 +1012,8 @@ var oData = [
 		content : [oTree],
 		footer : new sap.m.Bar({
 			contentMiddle : [
+				expandMulti(),
+				collapseMulti(),
 				addSizeMode(),
 				addSelectionMode(),
 				addExpandToLevel(),

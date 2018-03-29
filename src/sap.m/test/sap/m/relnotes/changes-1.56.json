@@ -11,7 +11,7 @@
       {
         "id": "0756c4618d5544b9357c3642e0992fda9f9a17e6",
         "type": "FEATURE",
-        "text": "sap.m.IconTabBar: Drag&Drop is enabled in overflow",
+        "text": "sap.m.IconTabBar: Drag\u0026Drop is enabled in overflow",
         "references": []
       },
       {
@@ -213,7 +213,7 @@
       {
         "id": "567a8b4d8448467216bc3476256896bd320be0ab",
         "type": "FIX",
-        "text": "sap.m.GrowingEnablement: Focus shouldn't jump out of the control.",
+        "text": "sap.m.GrowingEnablement: Focus shouldn\u0027t jump out of the control.",
         "references": [
           {
             "type": "BCP",
@@ -284,7 +284,7 @@
       {
         "id": "1b5088028e5b2d41de6d624bf91d93a122cca695",
         "type": "FIX",
-        "text": "sap.m.StepInput: pressing PageUp or PageDown doesn't scroll the page now",
+        "text": "sap.m.StepInput: pressing PageUp or PageDown doesn\u0027t scroll the page now",
         "references": [
           {
             "type": "GitHub",
@@ -474,7 +474,7 @@
       {
         "id": "99673f5c9ed25232da651d65f3c9603ffed32df5",
         "type": "FIX",
-        "text": "sap.m.DateTimePicker: when picker is opened for IE & Edge, input should not be focusable",
+        "text": "sap.m.DateTimePicker: when picker is opened for IE \u0026 Edge, input should not be focusable",
         "references": [
           {
             "type": "BCP",
@@ -566,6 +566,174 @@
             "reference": "1880228396"
           }
         ]
+      },
+      {
+        "id": "fa19fecf56c80aca714f2132f7b0214eabe9a425",
+        "type": "FIX",
+        "text": " Opa: revert make polling consistent when using execution delay",
+        "references": []
+      },
+      {
+        "id": "651bfa8212206fff7ce7c43815e9c3b7a22df5ea",
+        "type": "FIX",
+        "text": " sap.m.Dialog: Problem with positioning on IOS devices is now fixed",
+        "references": []
+      },
+      {
+        "id": "bc08063bbdd2062d02d28a0f5488f2d4042d4497",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Disabled tabs are no longer selectable",
+        "references": []
+      },
+      {
+        "id": "891f5461a4ba55f40c8ea511aca639f931f9c09a",
+        "type": "FIX",
+        "text": " sap.m.Input: SelectedKey is lost if oData is used as data source",
+        "references": []
+      },
+      {
+        "id": "7e4a7a0b07f63feafb2f2520452abeda02db609a",
+        "type": "FIX",
+        "text": " sap.m.LightBox: correctly remove resize listener",
+        "references": []
+      },
+      {
+        "id": "1c3de934572e9e14a0d35b4f6855688179c80c4d",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Accessibility\u003dfalse doesn\u0027t throw an error",
+        "references": []
+      },
+      {
+        "id": "411c0e2770f7bb4c0c92f8d8cf6124c4105d7504",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: marks Event ontouchstart",
+        "references": []
+      },
+      {
+        "id": "c71ae11fe2718cbb2043bfe9be8306314514b262",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: 1 Month view navigation between months is fixed.",
+        "references": []
+      },
+      {
+        "id": "7acf3a9857a3eea1afb23121d3ab85a3ee99d069",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: customData for PlanningCalendarRow is fully supported.",
+        "references": []
+      },
+      {
+        "id": "8e3185c1c2f160d50bdd6dab69fd033cfae19393",
+        "type": "FIX",
+        "text": " sap.m.SearchField: Buttons now have default tooltips",
+        "references": []
+      },
+      {
+        "id": "9ac36f9f4a75a81bab37e5a00bb0b7250f168aa8",
+        "type": "FIX",
+        "text": " sap.m.Slider, sap.m.RangeSlider: AriaLabelledBy is now forwarded to handles",
+        "references": []
+      },
+      {
+        "id": "d216f51f8b0863edf1d210280ef4a44497024ab6",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: correct tab  close button size",
+        "references": []
+      },
+      {
+        "id": "581754ef798404a790139442cff2c90ab1b610ac",
+        "type": "FIX",
+        "text": " sap.m.TextArea: The focus and the background are now correct",
+        "references": []
+      },
+      {
+        "id": "3371443c09e2329b00cc2469114e268c0b6d04d2",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: active page is displayed correct now.",
+        "references": []
+      },
+      {
+        "id": "c3296c685651c79c44629b3cbc605ed6d4596be5",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: after new page is added, scrollers remain visible.",
+        "references": []
+      },
+      {
+        "id": "e2c33696fe1a5cacc1af8ca0d121b7d302053274",
+        "type": "FEATURE",
+        "text": " sap.m.Tree: API to expand/collapse multiple nodes is added",
+        "references": []
+      },
+      {
+        "id": "b821aec01b05e103f812f63ab5fb8888c72dafb7",
+        "type": "FIX",
+        "text": " Reverts commit c71ae11fe2718cbb2043bfe9be8306314514b262",
+        "references": []
+      },
+      {
+        "id": "c5af24ddbc9af0ebb76c378ff36cdbb90cf9b9e1",
+        "type": "FIX",
+        "text": " reverts commit 683d922825b46df730c9d9a13596806e7842a0a5.",
+        "references": []
+      },
+      {
+        "id": "683d922825b46df730c9d9a13596806e7842a0a5",
+        "type": "FIX",
+        "text": " sap.m.DateTimeField: new method getDisplayedPlaceholder introduced",
+        "references": []
+      },
+      {
+        "id": "73703cc30ff3aafcadfcfa61429b691b46897035",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: Link wrapping and sizing improved",
+        "references": []
+      },
+      {
+        "id": "1722524e618ba6fd1d1d3243481e4bdea8a51310",
+        "type": "FIX",
+        "text": " sap.m.Image: Ensured image change in case of detailBox",
+        "references": []
+      },
+      {
+        "id": "5d71ddee91640f5a6987db51dd07647a89a2167e",
+        "type": "FIX",
+        "text": " sap.m.Input: Change event is now fired correctly with HelpDialog",
+        "references": []
+      },
+      {
+        "id": "24e6ba2326bfe606b11190cecaccf47a48d1f54a",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Change event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "430f550fa90900630f39781a797b43ac4dee3b47",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "ced1e18f0ed13d8d5567d29e404f13abd4c969ed",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now the deselection of a non-existing element is handled correctly",
+        "references": []
+      },
+      {
+        "id": "600a83ed47fa81070bc07cbcb675dbe27c71957f",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Parent container is not re-rendered any more",
+        "references": []
+      },
+      {
+        "id": "18057aa0075455d158cc16846fd774002fbe7868",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: getAccessibilityInfo method added",
+        "references": []
+      },
+      {
+        "id": "b753718772785388ad194328f97f086b225ff744",
+        "type": "FIX",
+        "text": " sap.m.RadioButtonGroup: select event is no longer fired twice",
+        "references": []
       }
     ]
   }

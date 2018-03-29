@@ -27,26 +27,40 @@
 	<script src="resources/sap/ui/documentation/sdk/thirdparty/google-code-prettify/lang-css.js"></script>
 
 	<script>
+
+		// when documentation-config.js doesn't exist or doesn't define a configuration, probe for api-index.json
+		if ( window['sap-ui-documentation-config'] == null ) {
+			window['sap-ui-documentation-config'] = {};
+			jQuery.ajax({
+				method: "HEAD",
+				url: "./docs/api/api-index.json",
+				async:false,
+				success: function() {
+					window['sap-ui-documentation-config'].apiInfoRoot = "./test-resources";
+				}
+			});
+		}
+	
 		sap.ui.getCore().attachInit(function () {
-
-
-			if (typeof window['sap-ui-documentation-config'] === "object") {
-				sap.ui.require(['sap/ui/documentation/sdk/controller/util/APIInfo'], function (APIInfo) {
-					APIInfo._setRoot(window['sap-ui-documentation-config'].apiInfoRoot);
-				});
-
-				sap.ui.require(['sap/ui/documentation/sdk/Component'], function (Comp) {
-					Comp.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = window['sap-ui-documentation-config'].docuPath;
-				});
-			} else {
-				jQuery.sap.log.info("No local documentation configuration found");
-				window['sap-ui-documentation-hideEmptySections'] = true;
-			}
 
 			sap.ui.require([
 				"sap/m/Page",
-				"sap/ui/core/ComponentContainer"
-			], function (Page, ComponentContainer) {
+				"sap/ui/core/ComponentContainer",
+				"sap/ui/documentation/sdk/controller/util/APIInfo",
+				"sap/ui/documentation/sdk/Component"
+			], function (Page, ComponentContainer, APIInfo, SDKComponent) {
+				
+				if ( typeof window['sap-ui-documentation-config'].apiInfoRoot === 'string' ) {
+					APIInfo._setRoot(window['sap-ui-documentation-config'].apiInfoRoot);
+				} else {
+					window['sap-ui-documentation-hideApiSection'] = true;
+				}
+				if ( typeof window['sap-ui-documentation-config'].docuPath === 'string' ) {
+					SDKComponent.getMetadata().getManifest()["sap.ui5"]["config"]["docuPath"] = window['sap-ui-documentation-config'].docuPath;
+				} else {
+					window['sap-ui-documentation-hideTopicSection'] = true;
+				}
+
 				// initialize the UI component
 				new Page({
 					showHeader : false,

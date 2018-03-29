@@ -2419,5 +2419,17 @@ function(
 			return oInfo;
 		};
 
+		/**
+		 * Returns the DOMNode Id to be used for the "labelFor" attribute of the label.
+		 *
+		 * By default, this is the Id of the control itself.
+		 *
+		 * @return {string} Id to be used for the <code>labelFor</code>
+		 * @public
+		 */
+		Select.prototype.getIdForLabel = function () {
+			return this.getId() + "-hiddenInput";
+		};
+
 		return Select;
 	});

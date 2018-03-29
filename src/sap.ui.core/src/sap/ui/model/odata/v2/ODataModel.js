@@ -15,12 +15,12 @@ sap.ui.define([
 		'jquery.sap.global',
 		'sap/ui/model/BindingMode', 'sap/ui/model/Context', 'sap/ui/model/Model',
 		'sap/ui/model/odata/v2/ODataAnnotations', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/UpdateMethod', 'sap/ui/model/odata/OperationMode',
-		'./ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', './ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/core/message/MessageParser', 'sap/ui/model/odata/ODataMessageParser', 'sap/ui/thirdparty/datajs'
+		'./ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', './ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/core/message/MessageParser', 'sap/ui/model/odata/ODataMessageParser', 'sap/ui/thirdparty/datajs', 'jquery.sap.script'
 	], function(
 		jQuery,
 		BindingMode, Context, Model,
 		ODataAnnotations, ODataUtils, CountMode, UpdateMethod, OperationMode,
-		ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, MessageParser, ODataMessageParser, OData) {
+		ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, MessageParser, ODataMessageParser, OData /*,jquery*/) {
 
 	"use strict";
 
@@ -135,7 +135,6 @@ sap.ui.define([
 				mMetadataNamespaces,
 				mServiceUrlParams,
 				mMetadataUrlParams,
-				aMetadataUrlParams,
 				bJSON,
 				oMessageParser,
 				bSkipMetadataAnnotationParsing,
@@ -212,7 +211,7 @@ sap.ui.define([
 			this.bDisableSoftStateHeader = !!bDisableSoftStateHeader;
 			this.aBindableResponseHeaders = aBindableResponseHeaders ? aBindableResponseHeaders : null;
 			this.bPreliminaryContext = bPreliminaryContext || false;
-
+			this.mMetadataUrlParams = mMetadataUrlParams || {};
 
 			if (oMessageParser) {
 				oMessageParser.setProcessor(this);
@@ -264,8 +263,7 @@ sap.ui.define([
 				this.mCustomHeaders["sap-contextid-accept"] = "header";
 			}
 			// Get/create service specific data container
-			aMetadataUrlParams = ODataUtils._createUrlParamsArray(mMetadataUrlParams);
-			var sMetadataUrl = this._createRequestUrl("/$metadata", undefined, aMetadataUrlParams);
+			var sMetadataUrl = this._createMetadataUrl("/$metadata");
 			this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 			if (!this.oServiceData) {
 				ODataModel.mServiceData[sMetadataUrl] = {};
@@ -1149,6 +1147,61 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a $metadata request URL.
+	 * @param {string} sUrl The metadata url
+	 * @returns {string} The request URL
+	 * @private
+	 */
+	ODataModel.prototype._createMetadataUrl = function(sUrl) {
+		if (sUrl.indexOf(this.sServiceUrl) == -1) {
+			if (!sUrl.startsWith("/")) {
+				sUrl = "/" + sUrl;
+			}
+			sUrl = this.sServiceUrl + sUrl;
+		}
+
+		var mUriParameters = jQuery.sap.getUriParameters(sUrl).mParams || {};
+		//UriParameters returns an array of values - we use the first one as
+		//we assume only one per key should be passed
+		Object.keys(mUriParameters).forEach(function(sKey) {
+			mUriParameters[sKey] = mUriParameters[sKey][0];
+		});
+		var mAllParams = jQuery.extend({}, this.mMetadataUrlParams, mUriParameters);
+		var aMetadataUrlParams = ODataUtils._createUrlParamsArray(mAllParams);
+		var aUrlParts = sUrl.split("?");
+		if (aUrlParts.length > 1) {
+			sUrl = aUrlParts[0];
+		}
+		return this._addUrlParams(sUrl, aMetadataUrlParams);
+	};
+
+	/**
+	 * Adds the passed url parameters to the url. If bMeta set to true
+	 * also the metadata url params are added. In all other cases the
+	 * global defined url parameters are added.
+	 *
+	 * @param {string} sUrl The metadata url
+	 * @param {array} aUrlParams An array of url params
+	 * @returns {boolean} Wether consider metadata url params or the not metadata ones
+	 * @returns {string} The request URL
+	 * @private
+	 */
+	ODataModel.prototype._addUrlParams = function(sUrl, aUrlParams) {
+		var aAllUrlParameters = [];
+
+		if (this.aUrlParams) {
+			aAllUrlParameters = aAllUrlParameters.concat(this.aUrlParams);
+		}
+		if (aUrlParams) {
+			aAllUrlParameters = aAllUrlParameters.concat(aUrlParams);
+		}
+		if (aAllUrlParameters && aAllUrlParameters.length > 0) {
+			sUrl += "?" + aAllUrlParameters.join("&");
+		}
+		return sUrl;
+	};
+
+	/**
 	 * Creates a request URL.
 	 * @param {string} sPath Binding path
 	 * @param {object} [oContext] Binding context
@@ -1158,10 +1211,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._createRequestUrl = function(sPath, oContext, aUrlParams, bBatch) {
-
 		// create the url for the service
 		var sNormalizedPath,
-			aAllUrlParameters = [],
 			sUrl = "";
 
 		sNormalizedPath = this._normalizePath(sPath, oContext);
@@ -1172,17 +1223,7 @@ sap.ui.define([
 			sUrl = sNormalizedPath.substr(sNormalizedPath.indexOf('/') + 1);
 		}
 
-		if (this.aUrlParams) {
-			aAllUrlParameters = aAllUrlParameters.concat(this.aUrlParams);
-		}
-		if (aUrlParams) {
-			aAllUrlParameters = aAllUrlParameters.concat(aUrlParams);
-		}
-
-		if (aAllUrlParameters && aAllUrlParameters.length > 0) {
-			sUrl += "?" + aAllUrlParameters.join("&");
-		}
-		return sUrl;
+		return this._addUrlParams(sUrl, aUrlParams);
 	};
 
 	/**
@@ -4567,10 +4608,7 @@ sap.ui.define([
 		aUrls.forEach(function(sUrl) {
 			var iIndex = sUrl.indexOf("$metadata");
 			if (iIndex >= 0) {
-				//add serviceUrl for relative metadata urls
-				if (iIndex == 0) {
-					sUrl = that.sServiceUrl + '/' + sUrl;
-				}
+				sUrl = that._createMetadataUrl(sUrl);
 				aMetadataUrls.push(sUrl);
 			} else {
 				aAnnotationUrls.push(sUrl);
@@ -4968,7 +5006,6 @@ sap.ui.define([
 		default:
 			return false;
 		}
-		return false;
 	};
 
 	/**

@@ -1,0 +1,58 @@
+<mvc:View controllerName="sap.ui.documentation.sdk.controller.ApiDetailIndexDeprecatedExperimental"
+		  xmlns="sap.uxap"
+		  xmlns:layout="sap.ui.layout"
+		  xmlns:m="sap.m"
+		  xmlns:mvc="sap.ui.core.mvc"
+		  xmlns:app="http://schemas.sap.com/sapui5/extension/sap.ui.core.CustomData/1">
+
+	<m:Page
+			showHeader="false"
+			showSubHeader="false"
+			showFooter="false">
+		<m:content>
+			<ObjectPageLayout enableLazyLoading="false"
+							  showAnchorBarPopover="true"
+							  upperCaseAnchorBar="false"
+							  sections="{path : 'sinceAPIs>/',
+										 sorter : {
+										   path : 'name',
+										   comparator : '.compareVersions'
+										 }
+										}">
+				<headerTitle>
+					<ObjectPageHeader id="title" objectTitle="Index by Version"/>
+				</headerTitle>
+
+				<sections>
+					<ObjectPageSection
+							titleUppercase="false"
+							title="{parts : [{path : 'sinceAPIs>name'}],
+											  formatter : '.formatTitle'}">
+						<subSections>
+							<ObjectPageSubSection>
+								<blocks>
+									<m:List id="sinceList"
+											items="{ path: 'sinceAPIs>apis', templateShareable: 'false'}"
+											showSeparators="Inner">
+										<m:items>
+											<m:FeedListItem
+													showIcon="false"
+													sender="{parts : [{path : 'sinceAPIs>control'}, {path : 'sinceAPIs>entityName'}, {path: 'sinceAPIs>type'}],
+															 formatter : '.formatSenderLink'}"
+													text="{parts : [{path : 'sinceAPIs>text'}, {path : 'sinceAPIs>since'}],
+														   formatter: '.formatDescription'}"
+													app:control="{sinceAPIs>control}"
+													app:entity="{sinceAPIs>entityName}"
+													app:type="{sinceAPIs>type}"
+													app:static="{experimentalAPIs>static}"/>
+										</m:items>
+									</m:List>
+								</blocks>
+							</ObjectPageSubSection>
+						</subSections>
+					</ObjectPageSection>
+				</sections>
+			</ObjectPageLayout>
+		</m:content>
+	</m:Page>
+</mvc:View>

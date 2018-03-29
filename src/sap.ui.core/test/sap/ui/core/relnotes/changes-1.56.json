@@ -51,7 +51,7 @@
       {
         "id": "607d3d28d71afe3ba32c2e47184f027de06cf73f",
         "type": "FEATURE",
-        "text": "sap.ui.core: support for <base> tag",
+        "text": "sap.ui.core: support for \u003cbase\u003e tag",
         "references": []
       },
       {
@@ -356,6 +356,108 @@
             "reference": "1880186163"
           }
         ]
+      },
+      {
+        "id": "53091b6f374b9a855526f378e33667177f8c551b",
+        "type": "FEATURE",
+        "text": " Blocking Layer for reuse in LocalBusyIndicator",
+        "references": []
+      },
+      {
+        "id": "93bb2ec77a9ed84b66d66348b353c806dd543ca5",
+        "type": "FEATURE",
+        "text": " NumberFormat: UOM CurrencyDigits",
+        "references": []
+      },
+      {
+        "id": "168bea65c84b7efe82f6db13531d6683f9ad4750",
+        "type": "FIX",
+        "text": " Core#notifyContentDensityChanged: Missing \"theme\" event parameter",
+        "references": []
+      },
+      {
+        "id": "ad1a86cf2e5fd3c27ccdfd3f529f845568a3f443",
+        "type": "FIX",
+        "text": " MessageManager: Memory leak",
+        "references": []
+      },
+      {
+        "id": "1964aa586d0be066202789311a66d0f605c84e48",
+        "type": "FIX",
+        "text": " ODataMetadata: duplicate annotations",
+        "references": []
+      },
+      {
+        "id": "73a967fa6f27aab69bf8853b0ad8e730644486b3",
+        "type": "FIX",
+        "text": " ODataTreeBinding: Correct jQuery.sap.log call",
+        "references": []
+      },
+      {
+        "id": "fa19fecf56c80aca714f2132f7b0214eabe9a425",
+        "type": "FIX",
+        "text": " Opa: revert make polling consistent when using execution delay",
+        "references": []
+      },
+      {
+        "id": "4f996c8bc19fe2822dca895c9f1d5d1533c154b3",
+        "type": "FIX",
+        "text": " Use AggregationFragments multiple times",
+        "references": []
+      },
+      {
+        "id": "7138621ed188597024a4ca642aa4804094f44c2f",
+        "type": "FIX",
+        "text": " sap.ui.core.LocaleData: CZK digits",
+        "references": []
+      },
+      {
+        "id": "07ff6aa9b9822a91f8b87eabc2677c5fb3cd75db",
+        "type": "FIX",
+        "text": ": Opa: option for async polling in success case",
+        "references": []
+      },
+      {
+        "id": "7a67a71cc28ef15aa9233370e8616d5ef31c84f4",
+        "type": "FEATURE",
+        "text": " core.NumberFormat: Support precision \u0026 decimals per unit of measure",
+        "references": []
+      },
+      {
+        "id": "91bc54d917b051c17bab5f8272f5332d2d63e4e8",
+        "type": "FIX",
+        "text": " Gherkin: removed duplicate code coverage",
+        "references": []
+      },
+      {
+        "id": "47d5317ce6deafb297f76ba4e6f01715771d3867",
+        "type": "FIX",
+        "text": " Testing: use newest release of sinon to fix sinon issue #1534",
+        "references": []
+      },
+      {
+        "id": "3fc41743eff88cc82b0b4cf627a522c650923457",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": []
+      },
+      {
+        "id": "30a6edaf36496cb4ae8e0538ab5e4e7c22e05fb2",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: Edge button events",
+        "references": []
+      },
+      {
+        "id": "eb2026c0e95b1b69d14a58b6ddfb82f7c328a993",
+        "type": "FIX",
+        "text": " mvc/XMLViewRenderer: create DOM string before dummy placeholders",
+        "references": []
+      },
+      {
+        "id": "1e06db10365bcab3e67d70a713e6db67a9ec573b",
+        "type": "FIX",
+        "text": " v2.ODataModel: metadata url params missing",
+        "references": []
       }
     ]
   }

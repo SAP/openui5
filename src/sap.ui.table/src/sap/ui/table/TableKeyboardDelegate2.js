@@ -1560,7 +1560,7 @@ sap.ui.define([
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedIndex = oFocusedItemInfo.cell;
 			var iFocusedCellInRow = oFocusedItemInfo.cellInRow;
-			var iFixedColumnCount = this.getFixedColumnCount();
+			var iFixedColumnCount = this.getComputedFixedColumnCount();
 			var bHasRowHeader = TableUtils.hasRowHeader(this);
 			var iRowHeaderOffset = bHasRowHeader ? 1 : 0;
 
@@ -1599,7 +1599,7 @@ sap.ui.define([
 			var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
 			var iFocusedIndex = oFocusedItemInfo.cell;
 			var iColumnCount = oFocusedItemInfo.columnCount;
-			var iFixedColumnCount = this.getFixedColumnCount();
+			var iFixedColumnCount = this.getComputedFixedColumnCount();
 			var iFocusedCellInRow = oFocusedItemInfo.cellInRow;
 			var bHasRowHeader = TableUtils.hasRowHeader(this);
 			var iRowHeaderOffset = bHasRowHeader ? 1 : 0;

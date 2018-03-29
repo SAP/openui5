@@ -67,6 +67,54 @@
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: appointments\u0027 container has no tab stop anymore.",
         "references": []
+      },
+      {
+        "id": "c71ae11fe2718cbb2043bfe9be8306314514b262",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: 1 Month view navigation between months is fixed.",
+        "references": []
+      },
+      {
+        "id": "7acf3a9857a3eea1afb23121d3ab85a3ee99d069",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: customData for PlanningCalendarRow is fully supported.",
+        "references": []
+      },
+      {
+        "id": "5a64bc12a15e17be78f68dbe75f1000a9afe5a64",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: closes when switch from one submenu to another",
+        "references": []
+      },
+      {
+        "id": "9cd8366eed18a7fd482018de7010c3243d2c1ec7",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: resize handler is removed on exit.",
+        "references": []
+      },
+      {
+        "id": "8a77a98a0a30d1d1821c66e283b83a1e8bff6cfb",
+        "type": "FIX",
+        "text": " unified.FileUploader: accessing length of undefined fixed",
+        "references": []
+      },
+      {
+        "id": "b821aec01b05e103f812f63ab5fb8888c72dafb7",
+        "type": "FIX",
+        "text": " Reverts commit c71ae11fe2718cbb2043bfe9be8306314514b262",
+        "references": []
+      },
+      {
+        "id": "430f550fa90900630f39781a797b43ac4dee3b47",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "307d93eda2af5adeef61ae860f4e6dd898f0593b",
+        "type": "FIX",
+        "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
+        "references": []
       }
     ]
   }

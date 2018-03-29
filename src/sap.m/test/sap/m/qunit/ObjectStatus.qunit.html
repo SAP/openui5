@@ -20,7 +20,6 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
-
 	jQuery.sap.require("sap.ui.core.IconPool");
 
 	var eventHandler = function (oEvent) {
@@ -571,6 +570,71 @@
 		assert.ok(!this.oActiveStat.$().children().hasClass("sapMObjStatusLink"), "There is no class sapMObjStatusLink.");
 	});
 
+	QUnit.module("Private function _isClickable", {
+		beforeEach: function () {
+			this.oActiveStat = new sap.m.ObjectStatus("oStatus", {
+				title: "Title",
+				text: "Contract #D1234567890",
+				icon: "sap-icon://alert",
+				active: true
+			});
+			this.oActiveStat.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oStub = sinon.stub(sap.m.ObjectStatus.prototype, "_isActive");
+		},
+		afterEach: function () {
+			this.oStub.restore();
+
+			this.oActiveStat.destroy();
+		}
+	});
+
+	QUnit.test("When _isActive is true and target click is on text", function(assert) {
+		// Arrange
+		var oEvent = new jQuery.Event();
+
+		this.oStub.withArgs().returns(true);
+		oEvent.target = this.oActiveStat.$().children().children(".sapMObjStatusText")[0];
+
+		// Act
+		assert.ok(this.oActiveStat._isClickable(oEvent), "The 'Status' is clickable");
+	});
+
+	QUnit.test("When _isActive is true and target click is on icon", function(assert) {
+		// Arrange
+		var oEvent = new jQuery.Event();
+
+		this.oStub.withArgs().returns(true);
+		oEvent.target = this.oActiveStat.$().children().children(".sapMObjStatusIcon")[0];
+
+		// Act
+		assert.ok(this.oActiveStat._isClickable(oEvent), "The 'Status' is clickable");
+	});
+
+	QUnit.test("When _isActive is true and target click is on wrapper IconText", function(assert) {
+		// Arrange
+		var oEvent = new jQuery.Event();
+
+		this.oStub.withArgs().returns(true);
+		oEvent.target = this.oActiveStat.$().children()[1];
+
+		// Act
+		assert.ok(this.oActiveStat._isClickable(oEvent), "The 'Status' is clickable");
+	});
+
+	QUnit.test("When _isActive is false", function(assert) {
+		// Arrange
+		var oEvent = new jQuery.Event();
+
+		this.oStub.withArgs().returns(false);
+		oEvent.target = this.oActiveStat.$().children().children(".sapMObjStatusText")[0];
+
+		// Act
+		assert.ok(!this.oActiveStat._isClickable(oEvent), "The 'Status' is not clickable");
+	});
+
+
 	QUnit.module("Events", {
 		beforeEach: function () {
 			this.oActiveStat = new sap.m.ObjectStatus("oStatus", {
@@ -608,6 +672,21 @@
 
 		assert.expect(0);
 		qutils.triggerEvent("tap", this.oActiveStat.$().children()[0]);//click on a title should not fire event
+	});
+
+
+	QUnit.test("ObjectStatus marks the Event on touchstart", function(assert) {
+		// Arrange
+		var oEvent = new jQuery.Event();
+
+		// Act
+		this.oActiveStat.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oEvent.target = this.oActiveStat.$().children().children(".sapMObjStatusText")[0];
+		this.oActiveStat.ontouchstart(oEvent);
+
+		assert.strictEqual(oEvent.getMark(), true, "Event was marked so the parent control will know that it will be handled by the ObjectStatus");
 	});
 
 	QUnit.module("Keyboard handling");

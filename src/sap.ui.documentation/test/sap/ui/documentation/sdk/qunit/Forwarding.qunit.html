@@ -31,7 +31,7 @@
 		var done = assert.async();
 
 		iframe.onload = function() {
-			assert.equal(this.contentWindow.location, sRedirectURL, "forward is correct");
+			assert.equal(this.contentWindow.location.href, sRedirectURL, "forward is correct");
 			done();
 		};
 

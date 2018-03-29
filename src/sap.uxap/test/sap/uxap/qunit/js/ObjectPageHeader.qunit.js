@@ -408,4 +408,68 @@
 		assert.ok(this._oHeader.getBreadcrumbs().$().length > 0, "the New breadcrumbs aggregation should be rendered");
 	});
 
+	QUnit.module("Lifecycle", {
+		beforeEach: function () {
+			this.oOPH = new sap.uxap.ObjectPageHeader();
+		},
+		afterEach: function () {
+			this.oOPH.destroy();
+			this.oOPH = null;
+		},
+		/**
+		 * Fill internal object with mock buttons to simulate rendered control with buttons
+		 */
+		generateMockedASButtons: function () {
+			this.mockButton1 = new sap.m.Button();
+			this.mockButton2 = new sap.m.Button();
+
+			this.oOPH._oActionSheetButtonMap = {
+				__button1: this.mockButton1,
+				__button2: this.mockButton2
+			};
+		},
+		/**
+		 * Assert that there are no available buttons in the map and all mock buttons are destroyed
+		 * @param {object} assert qUnit "assert" reference
+		 */
+		assertAllButtonsAreDestroyed: function (assert) {
+			assert.strictEqual(this.mockButton1._bIsBeingDestroyed, true, "Mock button 1 is destroyed");
+			assert.strictEqual(this.mockButton2._bIsBeingDestroyed, true, "Mock button 2 is destroyed");
+			assert.deepEqual(this.oOPH._oActionSheetButtonMap, {}, "Internal _oActionSheetButtonMap should be empty");
+		}
+	});
+
+	QUnit.test("_oActionSheetButtonMap contained buttons are destroyed on re-rendering", function (assert) {
+		// Arrange
+		this.generateMockedASButtons();
+
+		// Act - call onBeforeRendering to simulate control invalidation
+		this.oOPH.onBeforeRendering.call(this.oOPH);
+
+		// Assert
+		this.assertAllButtonsAreDestroyed(assert);
+	});
+
+	QUnit.test("_oActionSheetButtonMap contained buttons are destroyed on control destruction", function (assert) {
+		// Arrange
+		this.generateMockedASButtons();
+
+		// Act - destroy the control
+		this.oOPH.destroy();
+
+		// Assert
+		this.assertAllButtonsAreDestroyed(assert);
+	});
+
+	QUnit.test("_resetActionSheetMap method destroys all buttons and empty's the object", function (assert) {
+		// Arrange
+		this.generateMockedASButtons();
+
+		// Act
+		this.oOPH._resetActionSheetMap.call(this.oOPH);
+
+		// Assert
+		this.assertAllButtonsAreDestroyed(assert);
+	});
+
 }(jQuery, QUnit));

@@ -85,6 +85,30 @@
         "type": "FIX",
         "text": " sap.ui.rta: Delete the app variant from the layered repository if",
         "references": []
+      },
+      {
+        "id": "e5e8245c53e7fad45a373bef94354f49e5c2df9c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Add parentId to create container action",
+        "references": []
+      },
+      {
+        "id": "ca42d07d2c68bad5da762509454514fcfa9cd215",
+        "type": "FIX",
+        "text": " sap.ui.layout - domRef function fixed",
+        "references": []
+      },
+      {
+        "id": "935af7067b354fbb3af766d55c2b1b9a25ca4bd6",
+        "type": "FIX",
+        "text": " sap.ui.rta - demo app objectpage removed \u0026\u0026 fix sfin app",
+        "references": []
+      },
+      {
+        "id": "154253e42fb847cd55c25d2832a46b22eea6ab1e",
+        "type": "FIX",
+        "text": "sap.ui.rta: Incorrect positioning of rename field on EDGE",
+        "references": []
       }
     ]
   }

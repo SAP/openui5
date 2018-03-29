@@ -1573,6 +1573,153 @@
 
 	});
 
+	QUnit.test("Unit format with decimals", function() {
+		var oLocale = new sap.ui.core.Locale("cs");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"steven": {
+					"displayName": "cgal",
+					"unitPattern-count-one": "{0} cgal",
+					"unitPattern-count-few": "{0} cgal",
+					"unitPattern-count-many": "{0} cgal",
+					"unitPattern-count-other": "{0} cgal",
+					"decimals": 2
+				}
+			}
+		}, oLocale);
+
+		assert.equal(oFormat.format(1, "steven"), "1,00 cgal", "1,00 cgal");
+		assert.equal(oFormat.format(1.1, "steven"), "1,10 cgal", "1,10 cgal");
+		assert.equal(oFormat.format(1.12, "steven"), "1,12 cgal", "1,12 cgal");
+		assert.equal(oFormat.format(1.123, "steven"), "1,12 cgal", "1,12 cgal");
+		assert.equal(oFormat.format(1.125, "steven"), "1,13 cgal", "1,13 cgal");
+	});
+
+	QUnit.test("Unit format with precision", function() {
+		var oLocale = new sap.ui.core.Locale("cs");
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"steven": {
+					"displayName": "cgal",
+					"unitPattern-count-one": "{0} cgal",
+					"unitPattern-count-few": "{0} cgal",
+					"unitPattern-count-many": "{0} cgal",
+					"unitPattern-count-other": "{0} cgal",
+					"precision": 4
+				}
+			}
+		}, oLocale);
+
+		assert.equal(oFormat.format(1, "steven"), "1 cgal", "1,00 cgal");
+		assert.equal(oFormat.format(1.1, "steven"), "1,1 cgal", "1,10 cgal");
+		assert.equal(oFormat.format(1.12, "steven"), "1,12 cgal", "1,12 cgal");
+		assert.equal(oFormat.format(1.123, "steven"), "1,123 cgal", "1,12 cgal");
+		assert.equal(oFormat.format(1.125, "steven"), "1,125 cgal", "1,125 cgal");
+	});
+
+	QUnit.test("Unit format with global configuration overwritten by format instance", function() {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"steven": {
+				"unitPattern-count-one": "{0} tylr",
+				"unitPattern-count-few": "{0} tylrs",
+				"unitPattern-count-many": "{0} tylrs",
+				"unitPattern-count-other": "{0} tylrs",
+				"decimals": 8
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+
+		var oFormat = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"steven": {
+					"displayName": "cgal",
+					"unitPattern-count-one": "{0} cgal",
+					"unitPattern-count-few": "{0} cgals",
+					"unitPattern-count-many": "{0} cgals",
+					"unitPattern-count-other": "{0} cgals",
+					"decimals": 4
+				}
+			}
+		});
+
+		var oFormat2 = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"steven": {
+					"displayName": "cgal",
+					"unitPattern-count-one": "{0} cgal",
+					"unitPattern-count-few": "{0} cgals",
+					"unitPattern-count-many": "{0} cgals",
+					"unitPattern-count-other": "{0} cgals",
+					"precision": 3
+				}
+			}
+		});
+
+		var oFormat3 = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"steven": {
+					"displayName": "cgal",
+					"unitPattern-count-one": "{0} cgal",
+					"unitPattern-count-few": "{0} cgals",
+					"unitPattern-count-many": "{0} cgals",
+					"unitPattern-count-other": "{0} cgals",
+					"decimals": 0
+				}
+			}
+		});
+
+		var oFormat4 = sap.ui.core.format.NumberFormat.getUnitInstance({
+			customUnits: {
+				"steven": {
+					"displayName": "cgal",
+					"unitPattern-count-one": "{0} cgal",
+					"unitPattern-count-few": "{0} cgals",
+					"unitPattern-count-many": "{0} cgals",
+					"unitPattern-count-other": "{0} cgals",
+					"precision": 0
+				}
+			}
+		});
+
+		var oFormatFallback = sap.ui.core.format.NumberFormat.getUnitInstance();
+
+		// custom decimals
+		assert.equal(oFormat.format(1, "steven"), "1.0000 cgals", "1.0000 cgals");
+		assert.equal(oFormat.format(1.1, "steven"), "1.1000 cgals", "1.1000 cgals");
+		assert.equal(oFormat.format(1.12, "steven"), "1.1200 cgals", "1.1200 cgals");
+		assert.equal(oFormat.format(1.123, "steven"), "1.1230 cgals", "1.1230 cgals");
+		assert.equal(oFormat.format(1.125, "steven"), "1.1250 cgals", "1.1250 cgals");
+
+		// custom precision
+		assert.equal(oFormat2.format(1, "steven"), "1 cgal", "1 cgal");
+		assert.equal(oFormat2.format(1.1, "steven"), "1.1 cgals", "1.1 cgals");
+		assert.equal(oFormat2.format(1.12, "steven"), "1.12 cgals", "1.12 cgals");
+		assert.equal(oFormat2.format(1.123, "steven"), "1.12 cgals", "1.12 cgals");
+		assert.equal(oFormat2.format(1.125, "steven"), "1.13 cgals", "1.13 cgals");
+
+		// custom decimals
+		assert.equal(oFormat3.format(1, "steven"), "1 cgal", "1 cgal");
+		assert.equal(oFormat3.format(1.1, "steven"), "1 cgal", "1 cgal");
+		assert.equal(oFormat3.format(1.12, "steven"), "1 cgal", "1 cgal");
+		assert.equal(oFormat3.format(1.123, "steven"), "1 cgal", "1 cgal");
+		assert.equal(oFormat3.format(1.525, "steven"), "2 cgals", "1 cgal");
+
+		// custom precision
+		assert.equal(oFormat4.format(1, "steven"), "1 cgal", "1 cgal");
+		assert.equal(oFormat4.format(1.1, "steven"), "1 cgal", "1 cgal");
+		assert.equal(oFormat4.format(1.12, "steven"), "1 cgal", "1 cgal");
+		assert.equal(oFormat4.format(1.123, "steven"), "1 cgal", "1 cgal");
+		assert.equal(oFormat4.format(1.525, "steven"), "2 cgals", "1 cgal");
+
+		// fallback to Configuration
+		assert.equal(oFormatFallback.format(1, "steven"), "1.00000000 tylrs", "1.00000000 tylrs");
+		assert.equal(oFormatFallback.format(1.1, "steven"), "1.10000000 tylrs", "1.10000000 tylrs");
+		assert.equal(oFormatFallback.format(1.12, "steven"), "1.12000000 tylrs", "1.12000000 tylrs");
+		assert.equal(oFormatFallback.format(1.123, "steven"), "1.12300000 tylrs", "1.12300000 tylrs");
+		assert.equal(oFormatFallback.format(1.125, "steven"), "1.12500000 tylrs", "1.12500000 tylrs");
+	});
+
 	QUnit.test("Unit parse with sMeasure", function(assert) {
 
 		var oLocale = new sap.ui.core.Locale("en");

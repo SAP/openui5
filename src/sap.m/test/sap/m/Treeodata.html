@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<title>sap.m.Tree</title>
+<title>sap.m.Tree - odata</title>
 
 <script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js" data-sap-ui-xx-bindingSyntax="complex"
@@ -50,11 +50,24 @@ oTree.bindItems({
 	}
 });
 
+
+function onChange (oEvent) {
+	oBinding.detachChange(onChange);
+	oTree.expand([0,1]);
+}
+
+var oBinding = oTree.getBinding("items");
+oBinding.attachChange(onChange);
+
+//oTree.expand([0,1]);
+
+
+//***************
 var oApp = new sap.m.App();
 var oLabel3 = new sap.m.Label({text:"*********************Tree*********************"});
 
 var oPage = new sap.m.Page("TreeTest", {
-	title : "Test Page for sap.m.Tree",
+	title : "Test Page for sap.m.Tree - odata",
 	content : [oTree]
 });
 

@@ -13,7 +13,7 @@
 			}
 
 			.sapUiDtOverlay {
-        		background-color: rgba(255,0,0,0.1);
+				background-color: rgba(255,0,0,0.1);
 			}
 			#overlay-container {
 				background-color: rgba(255,0,255,0.5);
@@ -21,28 +21,40 @@
 		</style>
 
 		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-				src="../../../../../resources/sap-ui-core.js"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				data-sap-ui-resourceroots='{"dt.performance": "./"}'
-				>
+		<script>
+			window['sap-ui-config'].noConflict = 'true';
+			window['sap-ui-config'].libs = 'sap.ui.dt, sap.m, sap.ui.layout';
+			window['sap-ui-config'].resourceroots = {
+				"dt.performance": "./",
+				"rta.performance": "../../../../sap/ui/rta/internal/performance/"
+			};
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 
 		<script>
 			jQuery(function() {
-				sap.ui.require(["dt/performance/PerformanceTestUtil"], function(PerformanceTestUtil){
+				sap.ui.require([
+					"dt/performance/PerformanceTestUtil",
+					"rta/performance/RtaPerformanceTestUtil",
+					"sap/ui/layout/VerticalLayout",
+					"sap/ui/layout/HorizontalLayout"
+				], function(
+					PerformanceTestUtil,
+					RtaPerformanceTestUtil,
+					VerticalLayout,
+					HorizontalLayout
+				){
 					//create Vertical Layout
-					var oLayout = new sap.ui.layout.VerticalLayout("visibleLayout", {});
+					var oLayout = new VerticalLayout("visibleLayout", {});
 					PerformanceTestUtil.addMixedControlsTo(oLayout, 1, 200, true /*visible*/);
 					PerformanceTestUtil.addMixedControlsTo(oLayout, 201, 500, false /*invisible*/);
 
-					oInvisibleLayout = new sap.ui.layout.VerticalLayout("invisibleLayout", {
+					oInvisibleLayout = new VerticalLayout("invisibleLayout", {
 						visible : false
 					});
 					PerformanceTestUtil.addMixedControlsTo(oInvisibleLayout, 2001, 3000, true /*visible*/);
 
-					var oHorizontalLayout = new sap.ui.layout.HorizontalLayout("HorizontalLayout", {
+					var oHorizontalLayout = new HorizontalLayout("HorizontalLayout", {
 						content : [oLayout, oInvisibleLayout]
 					});
 					oHorizontalLayout.placeAt("content");

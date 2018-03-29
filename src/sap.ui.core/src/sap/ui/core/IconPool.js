@@ -2,8 +2,8 @@
  * ${copyright}
  */
 sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
-	function(jQuery, core, URI) {
-	"use strict";
+	function (jQuery, core, URI) {
+		"use strict";
 
 		/**
 		 * CSS font family used for the icons provided by SAP.
@@ -14,6 +14,25 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 * Protocol that is used to identify icon URIs.
 		 */
 		var ICON_PROTOCOL = 'sap-icon';
+
+		/*
+		 * A map of registered fonts
+		 * key: collection name
+		 * value: configuration object containing
+		 *   key: config,
+		 *   value: object, the configuration passed to registerFont
+		 *   key: metadataLoaded
+		 *   value: Promise while loading font metadata, true after resolved, false when failed
+		 *   key: inserted
+		 *   value: boolean
+		 */
+		var mFontRegistry = {
+			"SAP-icons": {
+				config: [],
+				metadataLoaded: true,
+				inserted: false
+			}
+		};
 
 		var mRegistry = {
 			/*
@@ -189,9 +208,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				'table-row': 0xe27e, 'table-column': 0xe27f, 'validate': 0x1e280, 'keyboard-and-mouse': 0xe281,
 				'touch': 0xe282, 'expand-all': 0xe283, 'collapse-all': 0xe284
 			}
-		};
 
-		var bFontFaceInserted = false;
+		};
 
 		var oCoreResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.core");
 
@@ -228,7 +246,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 * @static
 		 * @public
 		 */
-		IconPool.createControlByURI = function(setting, constructor){
+		IconPool.createControlByURI = function (setting, constructor) {
 			if (typeof setting === "string") {
 				setting = {src: setting};
 			}
@@ -269,7 +287,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 * @static
 		 * @public
 		 */
-		IconPool.addIcon = function(iconName, collectionName, iconInfo){
+		IconPool.addIcon = function(iconName, collectionName, iconInfo) {
 			// OLD API Compatibility fontFamily, content, overWrite, suppressMirroring
 			if (typeof iconInfo === "string") {
 				iconInfo = {
@@ -280,8 +298,8 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				};
 			}
 
+			// if collectionName isn't a string, convert it to string
 			if (typeof collectionName !== "string") {
-				// if collectionName isn't a string, convert it to string
 				collectionName = String(collectionName);
 			}
 
@@ -313,7 +331,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				path: collectionName ? iconName : undefined
 			};
 
-			if ( Array.isArray(iconInfo.content) ) {
+			if (Array.isArray(iconInfo.content)) {
 				sContent = iconInfo.content.map(makeChar).join('');
 			} else {
 				sContent = makeChar(iconInfo.content);
@@ -341,7 +359,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			return icon;
 		};
 
-
 		/**
 		 * Returns the URI of the icon in the pool which has the given <code>iconName</code> and <code>collectionName</code>.
 		 *
@@ -351,7 +368,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 * @static
 		 * @public
 		 */
-		IconPool.getIconURI = function(iconName, collectionName){
+		IconPool.getIconURI = function (iconName, collectionName) {
 			var icon = this.getIconInfo(iconName, collectionName);
 			return icon && icon.uri;
 		};
@@ -374,20 +391,57 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 * <li><code>boolean: suppressMirroring</code> Whether the icon needs no mirroring in right-to-left mode</li>
 		 * </ul>
 		 *
-		 * @param {string} iconName Name of the icon, must not be empty
-		 * @param {string} [collectionName] Name of the icon collection; to access built-in icons, omit the collection name
-		 * @return {object} Info object for the icon or <code>undefined</code> when the icon can't be found.
+		 * @param {string} iconName Name of the icon, or a complete icon-URI with icon collection and icon name;
+		 *   must not be empty
+		 * @param {string} [collectionName] Name of the icon collection; to access built-in icons,
+		 *   omit the collection name
+		 * @param {string} [loadingMode] The approach for loading the icon info, if it is not already available:
+		 *   sync (default) - font metadata is loaded synchronously and the icon info is returned immediately
+		 *   async - a promise is returned that returns the icon info when the font metadata is loaded
+		 *   mixed - until the font metadata is loaded a promise is returned, afterwards the icon info
+		 * @return {object|Promise|undefined} Info object or Promise for the icon depending on the loadingMode
+		 *   or <code>undefined</code> when the icon can't be found or no icon name was given.
 		 * @static
 		 * @public
 		 */
-		IconPool.getIconInfo = function(iconName, collectionName){
-			IconPool.insertFontFaceStyle();
-
+		IconPool.getIconInfo = function (iconName, collectionName, loadingMode) {
 			var parts,
-				collection,
-				info;
+				info,
+				async,
+				nameIsURI = IconPool.isIconURI(iconName);
 
-			if (IconPool.isIconURI(iconName)) {
+			if (!iconName) {
+				return;
+			}
+
+			// handle optional parameters
+			if (!loadingMode && nameIsURI) {
+				loadingMode = collectionName;
+			}
+			loadingMode = loadingMode || "sync";
+			async = (loadingMode === "async" || loadingMode === "mixed");
+
+			// retrieves the icon info from the internal registry
+			function getInfo() {
+				var collection = mRegistry[collectionName];
+				var info = collection && collection[iconName];
+
+				// convert raw data lazily to the icon info
+				if (typeof info === 'number') {
+					mRegistry[collectionName][iconName] = undefined; // avoid duplicate icon warning
+					info = IconPool.addIcon(iconName, collectionName, {
+						fontFamily: (collectionName ? mFontRegistry[collectionName].config.fontFamily : SAP_ICON_FONT_FAMILY),
+						content: info & 0xFFFF,
+						suppressMirroring: !!(info & 0x10000),
+						resourceBundle: oCoreResourceBundle
+					});
+				}
+
+				return info;
+			}
+
+			// parse icon URI
+			if (nameIsURI) {
 				parts = URI.parse(iconName);
 
 				if (parts.path.length === 1) {
@@ -397,23 +451,69 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 					collectionName = parts.hostname;
 					iconName = parts.path.slice(1);
 				}
+
+				if (!iconName) {
+					return;
+				}
 			}
 
-			collection = mRegistry[collectionName];
-			info = collection && collection[iconName];
-
-			if ( typeof info === 'number' ) {
-				// still raw data: lazily create the icon info
-				collection[iconName] = undefined; // avoid duplicate icon warning
-				info = IconPool.addIcon(iconName, undefined, {
-					fontFamily: SAP_ICON_FONT_FAMILY,
-					content: info & 0xFFFF,
-					suppressMirroring: !!(info & 0x10000),
-					resourceBundle: oCoreResourceBundle
-				});
+			// insert default font face
+			if (!collectionName && !mFontRegistry[SAP_ICON_FONT_FAMILY].inserted) {
+				IconPool.insertFontFaceStyle();
 			}
 
+			// fetch the info from the registry
+			info = getInfo();
+
+			// load icon metadata if not available (except for default collection)
+			if (info === undefined && collectionName !== undefined) {
+				var oLoaded = IconPool._loadFontMetadata(collectionName, async);
+			}
+			if (async) {
+				if (oLoaded) {
+					// wait for the icon metadata to be loaded
+					return oLoaded.then(function () {
+						info = getInfo();
+						if (!info) {
+							jQuery.sap.log.warning("Icon info for icon '" + iconName + "' in collection '" + collectionName + "' could not be fetched");
+						}
+						return info;
+					});
+				} else {
+					if (loadingMode === "async") {
+						return Promise.resolve(info);
+					} else {
+						info = getInfo();
+					}
+				}
+			} else {
+				// refresh info if needed and return it
+				info = getInfo();
+			}
+
+			// show a warning when the icon could not be found
+			if (!info) {
+				jQuery.sap.log.warning("Icon info for icon '" + iconName + "' in collection '" + collectionName + "' could not be fetched");
+			}
 			return info;
+		};
+
+		/**
+		 * Checks if the icon font is loaded
+		 * @param {string} sCollectionName icon collection name
+		 * @returns {Promise|undefined} a Promise that resolves when the icon font is loaded;
+		 *   or <code>undefined</code> if the icon font has not been registered yet
+		 * @public
+		 * @since 1.56.0
+		 */
+		IconPool.fontLoaded = function (sCollectionName){
+			if (mFontRegistry[sCollectionName]) {
+				if (mFontRegistry[sCollectionName].metadataLoaded instanceof Promise) {
+					return mFontRegistry[sCollectionName].metadataLoaded;
+				} else if (mFontRegistry[sCollectionName].metadataLoaded === true) {
+					return Promise.resolve();
+				}
+			}
 		};
 
 		/**
@@ -431,13 +531,13 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 * @static
 		 * @public
 		 */
-		IconPool.isIconURI = function(uri){
+		IconPool.isIconURI = function (uri) {
 			if (!uri) {
 				return false;
 			}
 			var parts = URI.parse(uri);
 
-			return (parts.protocol === ICON_PROTOCOL) && !!parts.hostname;
+			return parts.protocol === ICON_PROTOCOL && !!parts.hostname;
 		};
 
 		/**
@@ -447,44 +547,235 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 * @static
 		 * @public
 		 */
-		IconPool.getIconCollectionNames = function(){
+		IconPool.getIconCollectionNames = function () {
 			return Object.keys(mRegistry);
 		};
 
 		/**
 		 * Returns all name of icons that are registered under the given collection.
+		 *
 		 * @param {string} collectionName the name of collection where icon names are retrieved.
 		 * @return {array} An array contains all of the registered icon names under the given collection.
 		 * @static
 		 * @public
 		 */
-		IconPool.getIconNames = function(collectionName){
+		IconPool.getIconNames = function (collectionName) {
 			var collection = mRegistry[collectionName];
 			return collection ? Object.keys(collection) : [];
 		};
 
+		/**
+		 * Adds CSS code to load an icon font to the DOM
+		 *
+		 * @param {string} [sFontFace] the file name of the font face, if not specified SAP-icons will be inserted
+		 * @param {string} [sPath] the path to the font, if not specified the base theme folder will be used
+		 * @param {string} [sCollectionName] the collection name, if not specified the font face is used
+		 */
+		IconPool.insertFontFaceStyle = function (sFontFace, sPath, sCollectionName) {
+			sFontFace = sFontFace || SAP_ICON_FONT_FAMILY;
+			sCollectionName = sCollectionName || sFontFace;
 
-		IconPool.insertFontFaceStyle = function(){
-			if (bFontFaceInserted) {
+			// check if the font has not been registered yet
+			if (!mFontRegistry[sCollectionName]) {
+				jQuery.sap.log.error("Icon font '" + sCollectionName + "' has not been registered yet.");
+				return;
+			}
+			// check if font face has already been inserted
+			if (mFontRegistry[sCollectionName].inserted) {
+				jQuery.sap.log.info("Icon font '" + sCollectionName + "' was already inserted.");
+				return;
+			}
+			// do nothing if the default font is about to be overwritten
+			if (sFontFace === SAP_ICON_FONT_FAMILY && sCollectionName !== sFontFace) {
+				jQuery.sap.log.error("Must not overwrite 'SAP-icons' with '" + sCollectionName + "'.");
 				return;
 			}
 
-			var sFontPath = jQuery.sap.getModulePath("sap.ui.core.themes.base", "/fonts/"), sFontFace;
+			// use default font path or the one passed in by argument
+			var sFontPath = sPath || jQuery.sap.getModulePath("sap.ui.core.themes.base", "/fonts/");
 
-			/* This is the font used in sap.ui.core.Icon */
-			sFontFace = "@font-face {" +
-							"font-family: 'SAP-icons';" +
-							"src: url('" + sFontPath + "SAP-icons.woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
-							"url('" + sFontPath + "SAP-icons.woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
-							"url('" + sFontPath + "SAP-icons.ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
-							"local('SAP-icons');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
-							"font-weight: normal;" +
-							"font-style: normal;" +
-						"}";
+			// load the font asynchronously via CSS
+			var sFontFaceCSS = "@font-face {" +
+					"font-family: '" + sFontFace + "';" +
+					"src: url('" + sFontPath + sFontFace + ".woff2') format('woff2')," + /* Chrome 36+, Firefox 39+, Safari 10+, Edge 14+, Chrome 51+ for Android, PhantomJS 2.1.1+ */
+					"url('" + sFontPath + sFontFace + ".woff') format('woff')," + /* IE9+, Safari 5.1+, iOS 5.1+, Android Browser 4.4+, IE Mobile 11+ */
+					"url('" + sFontPath + sFontFace + ".ttf') format('truetype')," + /* Fallback for any older browser (except IE8 and below which are not supported anyway) */
+					"local('" + sFontFace + "');" + /* fallback to local installed font in case it can't be loaded (e.g. font download is disabled due to browser security settings) */
+					"font-weight: normal;" +
+					"font-style: normal;" +
+				"}";
+			jQuery('head').append('<style type="text/css">' + sFontFaceCSS + '</style>');
 
-			jQuery('head').append('<style type="text/css">' + sFontFace + '</style>');
+			mFontRegistry[sCollectionName].inserted = true;
+			mFontRegistry[sCollectionName].fontFace = sFontFace;
+		};
 
-			bFontFaceInserted = true;
+		/**
+		 * Registers an additional icon font to the icon pool
+		 *
+		 * @param {object} oConfig configuration object for registering the font
+		 * @param {string} oConfig.fontFamily the file name of the font face
+		 * @param {string} [oConfig.collectionName] a collection name for the font, if not specified the font face will be used
+		 * @param {URI} oConfig.fontURI the location where the font files are physically located
+		 * @param {Object} [oConfig.metadata] a configuration object mapping the icon name to the hexadecimal icon address in the font
+		 * @param {Object} [oConfig.metadataURI] an URI to a file containing the configuration object specified with oConfig.metadata
+		 * @param {boolean} [oConfig.lazy] load the icon font metadata only when an icon is requested with {@link getIconInfo}
+		 *   if not specified a JSON file with the name oConfig.fontFamily will be loaded from the location specified in oConfig.fontURI
+		 * @public
+		 * @since 1.56.0
+		 */
+		IconPool.registerFont = function (oConfig) {
+			oConfig.collectionName = oConfig.collectionName || oConfig.fontFamily;
+
+			// check for mandatory fontURI parameter
+			if (!oConfig.fontURI) {
+				jQuery.sap.log.error("The configuration parameter fontURI is missing, cannot register the font '" + oConfig.collectionName + "'!");
+				return;
+			}
+
+			// protect the default font family
+			if (oConfig.fontFamily === SAP_ICON_FONT_FAMILY) {
+				jQuery.sap.log.error("The font family" + SAP_ICON_FONT_FAMILY + " is already registered");
+				return;
+			}
+
+			// add trailing slash if necessary for more convenience
+			if (oConfig.fontURI.substr(oConfig.fontURI.length - 1) !== "/") {
+				oConfig.fontURI += "/";
+			}
+
+			// create an initial configuration for the font
+			if (!mFontRegistry[oConfig.collectionName] || mFontRegistry[oConfig.collectionName].metadataLoaded === false) {
+				mFontRegistry[oConfig.collectionName] = {
+					config: oConfig,
+					inserted: false
+				};
+			} else {
+				jQuery.sap.log.warning("The font '" + oConfig.collectionName + "' is already registered");
+			}
+
+			// load font metadata immediately
+			if (!oConfig.lazy) {
+				IconPool._loadFontMetadata(oConfig.collectionName, true);
+			}
+		};
+
+		/**
+		 * Loads the icon font metadata based on the configuration specified with {@link registerFont}
+		 *
+		 * @param {string} collectionName collection name for the font
+		 * @param {boolean} [async] metadata is loaded asynchronously when true
+		 * @private
+		 * @returns {Promise|undefined} a Promise that is resolved after loading the metadata in async mode
+		 *   or undefined when the font is loaded in sync mode or has already been loaded in either mode.
+		 */
+		IconPool._loadFontMetadata = function (collectionName, async) {
+			var oConfig;
+
+			if (mFontRegistry[collectionName]) {
+				// early out for subsequent tries of loading a font that failed or is finished loading
+				if (typeof mFontRegistry[collectionName].metadataLoaded === "boolean") {
+					return;
+				}
+
+				if (async && mFontRegistry[collectionName].metadataLoaded instanceof Promise) {
+					return mFontRegistry[collectionName].metadataLoaded;
+				}
+				// fetch font config
+				oConfig = mFontRegistry[collectionName].config;
+			} else {
+				// only display an error when the collection has not been manually registered by calling addIcon
+				if (!mRegistry[collectionName]) {
+					jQuery.sap.log.error("The font configuration for collection '" + collectionName + "' is not registered");
+				}
+				// register an entry indicating the font loading failed
+				mFontRegistry[collectionName] = {
+					metadataLoaded: false
+				};
+			}
+
+			// add icons to registry and insert the font style
+			function loadFont(oFontMetadata) {
+				for (var sKey in oFontMetadata) {
+					oFontMetadata[sKey] = parseInt(oFontMetadata[sKey], 16);
+				}
+				mRegistry[collectionName] = oFontMetadata;
+				IconPool.insertFontFaceStyle(oConfig.fontFamily, oConfig.fontURI, collectionName);
+				mFontRegistry[collectionName].metadataLoaded = true;
+			}
+
+			if (oConfig) {
+				// search for a metadata file with the font family name in the same folder
+				if (oConfig.metadataURI === undefined) {
+					oConfig.metadataURI = oConfig.fontURI + oConfig.fontFamily + ".json";
+				}
+				if (async && !oConfig.metadata) {
+					// while loading is pending return the promise
+					if (mFontRegistry[collectionName].metadataLoaded instanceof Promise) {
+						return mFontRegistry[collectionName].metadataLoaded;
+					}
+					// the first time create a metadataLoaded promise
+					var oPromise = new Promise(function (fnResolve) {
+						if (mRegistry[collectionName] === undefined) {
+							// store fnResolve to call it from outside the Promise
+							mFontRegistry[collectionName].metadataLoadedResolve = fnResolve;
+							// load the metadata asynchronously and save the XHR object
+							mFontRegistry[collectionName].metadataXhr = jQuery.ajax(oConfig.metadataURI, {
+								dataType: "json",
+								success: function (oJSON) {
+									loadFont(oJSON);
+									delete mFontRegistry[collectionName].metadataXhr;
+									delete mFontRegistry[collectionName].metadataLoadedResolve;
+									fnResolve();
+								},
+								error: function (jqXHR, sStatus) {
+									if (sStatus !== "abort") { // log an error if it isn't aborted
+										jQuery.sap.log.error("An error occurred loading the font metadata for collection '" + collectionName + "'");
+										mFontRegistry[collectionName].metadataLoaded = false;
+										fnResolve();
+									}
+								}
+							});
+						}
+					});
+
+					mFontRegistry[collectionName].metadataLoaded = oPromise;
+					return oPromise;
+				} else {
+					if (oConfig.metadataURI) {
+						if (mFontRegistry[collectionName].metadataXhr) { // there is an async request ongoing
+							// the async request is aborted before the sync request is sent
+							mFontRegistry[collectionName].metadataXhr.abort("Replaced by sync request");
+							mFontRegistry[collectionName].metadataXhr = null;
+						}
+						// load the metadata synchronously
+						jQuery.ajax(oConfig.metadataURI, {
+							dataType: "json",
+							async: false,
+							success: function (oJSON) {
+								loadFont(oJSON);
+								if (mFontRegistry[collectionName].metadataLoadedResolve) {
+									// resolve the Promise for the async request
+									mFontRegistry[collectionName].metadataLoadedResolve();
+									delete mFontRegistry[collectionName].metadataLoadedResolve;
+								}
+							},
+							error: function () {
+								if (mFontRegistry[collectionName].metadataLoadedResolve) {
+									// resolve the Promise for the async request
+									mFontRegistry[collectionName].metadataLoadedResolve();
+									delete mFontRegistry[collectionName].metadataLoadedResolve;
+								}
+								jQuery.sap.log.error("An error occurred loading the font metadata for collection '" + collectionName + "'");
+								mFontRegistry[collectionName].metadataLoaded = false;
+							}
+						});
+					} else {
+						// pass on the configuration object
+						loadFont(oConfig.metadata);
+					}
+				}
+			}
 		};
 
 		var mIconForMimeType = {
@@ -544,7 +835,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 * @public
 		 * @since 1.25.0
 		 */
-		IconPool.getIconForMimeType = function(sMimeType) {
+		IconPool.getIconForMimeType = function (sMimeType) {
 			return mIconForMimeType[sMimeType] || "sap-icon://document";
 		};
 
@@ -553,6 +844,6 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			return String.fromCharCode(typeof code === 'number' ? code : parseInt(code, 16));
 		}
 
-	return IconPool;
+		return IconPool;
 
-}, /* bExport= */ true);
+	}, /* bExport= */ true);

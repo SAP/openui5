@@ -1,16 +1,16 @@
 /*global QUnit, sinon*/
-(function() {
+sap.ui.define([
+	"sap/ui/fl/LrepConnector", "sap/ui/fl/Utils", "sap/ui/fl/context/ContextManager"
+], function(LrepConnector, Utils, ContextManager) {
 	"use strict";
-	jQuery.sap.require("sap.ui.fl.LrepConnector");
-	jQuery.sap.require("sap.ui.fl.Utils");
-	jQuery.sap.require("sap.ui.fl.context.ContextManager");
 	sinon.config.useFakeTimers = false;  //required for jQuery.ajax
 	var sandbox = sinon.sandbox.create();
 
-	QUnit.module("sap.ui.fl.LrepConnector", {
+	QUnit.module("LrepConnector", {
 		beforeEach: function() {
-			this.oLrepConnector = sap.ui.fl.LrepConnector.createConnector();
-			sandbox.stub(sap.ui.fl.context.ContextManager, "getActiveContexts", function () {
+			LrepConnector._bServiceAvailability = undefined;
+			this.oLrepConnector = LrepConnector.createConnector();
+			sandbox.stub(ContextManager, "getActiveContexts", function () {
 				return [];
 			});
 		},
@@ -20,15 +20,32 @@
 				this.server.restore();
 			}
 
-			sap.ui.fl.LrepConnector.prototype._aSentRequestListeners = [];
-			sap.ui.fl.LrepConnector.prototype._sRequestUrlPrefix = "";
+			LrepConnector.prototype._aSentRequestListeners = [];
+			LrepConnector.prototype._sRequestUrlPrefix = "";
 		}
+	});
+
+	QUnit.test("isFlexServiceAvailable return value of availability flag if it was defined", function(assert) {
+		LrepConnector._bServiceAvailability = true;
+		return LrepConnector.isFlexServiceAvailable().then(function(bStatus){
+			assert.equal(bStatus, true);
+		});
+	});
+
+	QUnit.test("isFlexServiceAvailable send flex settings request if availability flag is undefined", function(assert) {
+		var oLoadSettingsStub = sandbox.stub(LrepConnector.prototype, "loadSettings").returns(Promise.resolve().then(function (){
+			LrepConnector._bServiceAvailability = true;
+		}));
+		return LrepConnector.isFlexServiceAvailable().then(function(bStatus){
+			assert.ok(oLoadSettingsStub.calledOnce);
+			assert.equal(bStatus, true);
+		});
 	});
 
 	QUnit.test("The XSRF Token can be injected in the constructor", function(assert) {
 		var oConnector, mParams;
 		mParams = {XsrfToken: "jingabuhr"};
-		oConnector = new sap.ui.fl.LrepConnector(mParams);
+		oConnector = new LrepConnector(mParams);
 
 		assert.equal(oConnector._sXsrfToken, "jingabuhr");
 	});
@@ -49,7 +66,7 @@
 
 	QUnit.test("_resolveUrl with request url prefix", function(assert) {
 
-		sap.ui.fl.LrepConnector.prototype.setRequestUrlPrefix("/newprefix");
+		LrepConnector.prototype.setRequestUrlPrefix("/newprefix");
 
 		//Arrange
 		assert.ok(this.oLrepConnector);
@@ -275,7 +292,7 @@
 	QUnit.test("attachSentRequest adds a function listening to all connectors", function (assert) {
 		var fFunction = function () {};
 
-		sap.ui.fl.LrepConnector.attachSentRequest(fFunction);
+		LrepConnector.attachSentRequest(fFunction);
 
 		assert.equal(this.oLrepConnector._aSentRequestListeners.length, 1, "one listener should be attached");
 		assert.equal(this.oLrepConnector._aSentRequestListeners[0], fFunction, "the function passed to attachSentRequest shoud be the attached one");
@@ -284,7 +301,7 @@
 	QUnit.test("attachSentRequest adds nothing if a non-function was passed", function (assert) {
 		var iNoFunction = 123;
 
-		sap.ui.fl.LrepConnector.attachSentRequest(iNoFunction);
+		LrepConnector.attachSentRequest(iNoFunction);
 
 		assert.equal(this.oLrepConnector._aSentRequestListeners.length, 0, "nothing should be attached");
 	});
@@ -293,9 +310,9 @@
 		var fFunction = function () {};
 
 		//simulates an registered call
-		sap.ui.fl.LrepConnector.prototype._aSentRequestListeners = [fFunction];
+		LrepConnector.prototype._aSentRequestListeners = [fFunction];
 
-		sap.ui.fl.LrepConnector.detachSentRequest(fFunction);
+		LrepConnector.detachSentRequest(fFunction);
 
 		assert.equal(this.oLrepConnector._aSentRequestListeners.length, 0, "the listener should be detached");
 	});
@@ -304,11 +321,11 @@
 		var fAnotherFunction = function () {};
 
 		//simulates an registered call
-		sap.ui.fl.LrepConnector.prototype._aSentRequestListeners = [fAnotherFunction];
+		LrepConnector.prototype._aSentRequestListeners = [fAnotherFunction];
 
 		var fFunction = function () {};
 
-		sap.ui.fl.LrepConnector.detachSentRequest(fFunction);
+		LrepConnector.detachSentRequest(fFunction);
 
 		assert.equal(this.oLrepConnector._aSentRequestListeners.length, 1, "the listener should not be detached");
 		assert.equal(this.oLrepConnector._aSentRequestListeners[0], fAnotherFunction, "the inital attached function should still be attached");
@@ -320,16 +337,16 @@
 		var fFunction3 = function () {};
 
 		//simulates an registered call
-		sap.ui.fl.LrepConnector.prototype._aSentRequestListeners = [fFunction1, fFunction2, fFunction3];
+		LrepConnector.prototype._aSentRequestListeners = [fFunction1, fFunction2, fFunction3];
 
-		sap.ui.fl.LrepConnector.detachSentRequest(fFunction2);
+		LrepConnector.detachSentRequest(fFunction2);
 
 		assert.equal(this.oLrepConnector._aSentRequestListeners.length, 2, "two functions should remain");
 		assert.equal(this.oLrepConnector._aSentRequestListeners[0], fFunction1, "the first function should be still in the list of attached functions");
 		assert.equal(this.oLrepConnector._aSentRequestListeners[1], fFunction3, "the third function should be still in the list of attached functions");
 	});
 
-	QUnit.test("loadSettings", function(assert) {
+	QUnit.test("loadSettings succeed", function(assert) {
 		this.oLrepConnector._sClient = "123";
 		var sExpectedCallUrl = "/sap/bc/lrep/flex/settings" + "?sap-client=" + this.oLrepConnector._sClient;
 
@@ -344,6 +361,59 @@
 			var oCall = oSendStub.getCall(0);
 			var aCallArguments = oCall.args;
 			assert.equal(aCallArguments[0], sExpectedCallUrl, "the call url was correctly built");
+			assert.equal(LrepConnector._bServiceAvailability, true, "service availability flag is set to true");
+		});
+	});
+
+	QUnit.test("loadSettings failed with 404 error code", function(assert) {
+		var oError = {
+			code: 404
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+
+		return this.oLrepConnector.loadSettings().then(function() {
+			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+			assert.equal(LrepConnector._bServiceAvailability, false, "service availability flag is set to false");
+		});
+	});
+
+	QUnit.test("loadSettings failed with error code differs from 404", function(assert) {
+		var oError = {
+			code: 403
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+
+		return this.oLrepConnector.loadSettings().then(function() {
+			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+			assert.equal(LrepConnector._bServiceAvailability, undefined, "service availability flag is undefined");
+		});
+	});
+
+	QUnit.test("loadChanges failed with 404 error code", function(assert) {
+		var oError = {
+			code: 404
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+
+		return this.oLrepConnector.loadChanges({name: 'something'}).catch(function() {
+			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+			assert.equal(LrepConnector._bServiceAvailability, false, "service availability flag is set to false");
+		});
+	});
+
+	QUnit.test("loadChanges failed with error code differs from 404", function(assert) {
+		var oError = {
+			code: 403
+		};
+
+		var oSendStub = this.stub(this.oLrepConnector, "send").returns(Promise.reject(oError));
+
+		return this.oLrepConnector.loadChanges({name: 'something'}).catch(function() {
+			assert.equal(oSendStub.callCount, 1, "the backend request was triggered");
+			assert.equal(LrepConnector._bServiceAvailability, undefined, "service availability flag is undefined");
 		});
 	});
 
@@ -396,7 +466,6 @@
 	});
 
 	QUnit.test("loadChanges shall enrich ajax call (header properties) with X-LRep-Site-Id", function(assert) {
-		var sComponentClassName = null;
 		this.server = sinon.fakeServer.create();
 		this.server.respondWith([200,
 			{"Content-Type": "application/json", "Content-Length": 13, "X-CSRF-Token": "0987654321"},
@@ -405,7 +474,7 @@
 		this.server.autoRespond = true;
 
 		var that = this;
-		sComponentClassName = "smartFilterBar.Component";
+		var sComponentClassName = "smartFilterBar.Component";
 		var mPropertyBag = {
 				siteId: "dummyId4711"
 			};
@@ -509,7 +578,7 @@
 
 	QUnit.test("loadChanges ignores appVersion parameter to the request URL in case of default app version", function(assert) {
 		var sComponentClassName = "smartFilterBar.Component";
-		var sAppVersion = sap.ui.fl.Utils.DEFAULT_APP_VERSION;
+		var sAppVersion = Utils.DEFAULT_APP_VERSION;
 
 		var sExpectedCallUrl = "/sap/bc/lrep/flex/data/" + sComponentClassName;
 
@@ -560,7 +629,7 @@
 
 	QUnit.test("loadChanges uses a passed url if provided", function(assert) {
 		var sComponentClassName = "smartFilterBar.Component";
-		var sAppVersion = sap.ui.fl.Utils.DEFAULT_APP_VERSION;
+		var sAppVersion = Utils.DEFAULT_APP_VERSION;
 
 		var sExpectedCallUrl = "/a/complete/different/url/abc";
 
@@ -1153,5 +1222,4 @@
 			assert.equal(error.messages[0].severity, "Error");
 		});
 	});
-
-}());
+});

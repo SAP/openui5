@@ -632,6 +632,7 @@ sap.ui.define([
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
+
             // Should be prevent as in Safari while dragging the handle everything else gets selection.
             // As part of the RangeSlider, Inputs in the tooltips should be excluded
             if (oEvent.target.className.indexOf("sapMInput") === -1) {
@@ -701,6 +702,7 @@ sap.ui.define([
 
             // note: prevent native document scrolling
             oEvent.preventDefault();
+
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
@@ -726,11 +728,14 @@ sap.ui.define([
             bRangesEquality = aRange.every(function (fValue, iIndex) {return fValue === aRangeTemp[iIndex];});
             bRangeInBoudaries = aRange.every(function (fValue) {return (fValue >= fMin && fValue <= fMax );});
             bRangeOnBoudaries = aRangeTemp.indexOf(fMin) > -1 || aRangeTemp.indexOf(fMax) > -1;
+
             if (!bRangesEquality) {
+
                 //check the need to update the handle depending of number of the selected handles and the handles position
                 if ((aHandles.length === 1) || bRangeInBoudaries || !bRangeOnBoudaries) {
                     aHandles.map(function (oHandle) {this._updateHandle(oHandle, aInitialRange[this._getIndexOfHandle(oHandle)] + fOffset);}, this);
                 }
+
                 this._adjustTooltipsContainer();
                 aRangeTemp = this._getNormalizedRange(this.getRange(), aInitialRange, aHandles);
             }
@@ -784,17 +789,19 @@ sap.ui.define([
             for (i = 0; i < aRange.length; i++) {
                 aRangeNormalized[i] = (aRange[i] < fMin ? fMin : aRange[i]);
                 aRangeNormalized[i] = (aRange[i] > fMax ? fMax : aRangeNormalized[i]);
+
                 if (aHandles.length === 2) {
+
                     if (aRangeNormalized[0] == fMin) {
                         aRangeNormalized[1] = aRangeNormalized[0] + iSelectedRange;
                     } else {
                         iOtherElementIndex = Math.abs(i - 1);
                         aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] <= fMin ? aRangeNormalized[i] + iSelectedRange : aRangeNormalized[iOtherElementIndex]);
                         aRangeNormalized[iOtherElementIndex] = (aRangeNormalized[i] >= fMax ? aRangeNormalized[i] - iSelectedRange : aRangeNormalized[iOtherElementIndex]);
-
                     }
                 }
             }
+
             return aRangeNormalized;
         };
 
@@ -854,7 +861,6 @@ sap.ui.define([
         /* Keyboard handling                                           */
         /* ----------------------------------------------------------- */
 
-
         /**
          * Moves handle / entire slider by specified offset
          *
@@ -908,9 +914,6 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapincrease = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
-                return;
-            }
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
@@ -939,13 +942,16 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapincreasemodifiers = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
+
+            if (oEvent.altKey) {
                 return;
             }
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
+
             oEvent.stopPropagation();
+
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
@@ -970,9 +976,6 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapdecrease = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
-                return;
-            }
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
@@ -1001,13 +1004,16 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapdecreasemodifiers = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1 || oEvent.altKey) {
+
+            if (oEvent.altKey) {
                 return;
             }
 
             // note: prevent document scrolling when arrow keys are pressed
             oEvent.preventDefault();
+
             oEvent.stopPropagation();
+
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
 
@@ -1034,9 +1040,6 @@ sap.ui.define([
         RangeSlider.prototype.onsaphome = function (oEvent) {
             var iHandleIndex = 0,
                 fRangeValue, oHandle, fMin;
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
-                return;
-            }
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
@@ -1062,9 +1065,6 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapend = function (oEvent) {
-            if (["number", "text"].indexOf(oEvent.target.type) > -1) {
-                return;
-            }
 
             // mark the event for components that needs to know if the event was handled
             oEvent.setMarked();
@@ -1083,6 +1083,7 @@ sap.ui.define([
          * @override
          */
         RangeSlider.prototype.onsapescape = function () {
+
             // reset the slider back to the value
             // which it had when it got the focus
             this.setRange(this._aInitialFocusRange);

@@ -5,8 +5,8 @@
 
 
 // Provides class sap.ui.model.odata.ODataMetadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs', 'sap/ui/core/cache/CacheManager'],
-	function(jQuery, EventProvider, OData, CacheManager) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs', 'sap/ui/core/cache/CacheManager', './_ODataMetaModelUtils'],
+	function(jQuery, EventProvider, OData, CacheManager, Utils) {
 	"use strict";
 
 	/**
@@ -371,6 +371,77 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		return this;
 	};
 
+	/**
+	 * Retrieves the association end which contains the multiplicity
+	 * @param {object} oEntityType the entity type
+	 * @param {string} sName the name
+	 * @returns {*} entity association end
+	 * @private
+	 */
+	ODataMetadata.prototype._getEntityAssociationEnd = function(oEntityType, sName) {
+
+		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
+			jQuery.sap.assert(undefined, "No metadata loaded!");
+			return null;
+		}
+		// fill the cache
+		if (!this._mGetEntityAssociationEndCache || !this._mGetEntityAssociationEndCache[oEntityType.name + "|" + sName]) {
+			this._mGetEntityAssociationEndCache = {};
+			var oNavigationProperty = oEntityType
+				? Utils.findObject(oEntityType.navigationProperty, sName)
+				: null,
+				oAssociation = oNavigationProperty
+					? Utils.getObject(this.oMetadata.dataServices.schema, "association", oNavigationProperty.relationship)
+					: null,
+				oAssociationEnd = oAssociation
+					? Utils.findObject(oAssociation.end, oNavigationProperty.toRole, "role")
+					: null;
+
+			this._mGetEntityAssociationEndCache[oEntityType.name + "|" + sName] = oAssociationEnd;
+		}
+
+		// return the value from the cache
+		return this._mGetEntityAssociationEndCache[oEntityType.name + "|" + sName];
+	};
+
+
+	/**
+	 * Iterates over the entity sets and executes the function given as argument.
+	 *
+	 * @param {function} fnEach gets as argument the entity set, if the result of the function invocation is <code>false</code> the iteration is aborted
+	 * @private
+	 */
+	ODataMetadata.prototype._iterateEntitySets = function(fnEach) {
+		if (!fnEach || typeof fnEach !== "function") {
+			jQuery.sap.log.debug("[ODataMetadata] argument is not a function");
+			return;
+		}
+
+		// fill the cache
+		if (!this.mEntitySets) {
+			this.mEntitySets = [];
+			for (var i = 0; i < this.oMetadata.dataServices.schema.length; i++) {
+				var oSchema = this.oMetadata.dataServices.schema[i];
+				if (oSchema.entityContainer) {
+					for (var j = 0; j < oSchema.entityContainer.length; j++) {
+						var oEntityContainer = oSchema.entityContainer[j];
+						if (oEntityContainer.entitySet) {
+							this.mEntitySets = this.mEntitySets.concat(oEntityContainer.entitySet);
+						}
+					}
+				}
+			}
+		}
+
+		// iterate over the entitySets within the cache
+		for (var k = 0; k < this.mEntitySets.length; k++) {
+			var oEntitySet = this.mEntitySets[k];
+			var bFnEach = fnEach(oEntitySet);
+			if (typeof bFnEach === "boolean" && !bFnEach) {
+				return;
+			}
+		}
+	};
 
 	/**
 	 * Extract the entity type name of a given sPath. Also navigation properties in the path will be followed to get the right entity type for that property.
@@ -701,19 +772,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	*/
 	ODataMetadata.prototype._getEntityTypeName = function(sCollection) {
 		var sEntityTypeName;
+
 		if (sCollection) {
-			jQuery.each(this.oMetadata.dataServices.schema, function(i, oSchema) {
-				if (oSchema.entityContainer) {
-					jQuery.each(oSchema.entityContainer, function(k, oEntityContainer) {
-						if (oEntityContainer.entitySet) {
-							jQuery.each(oEntityContainer.entitySet, function(j, oEntitySet) {
-								if (oEntitySet.name === sCollection) {
-									sEntityTypeName = oEntitySet.entityType;
-									return false;
-								}
-							});
-						}
-					});
+			this._iterateEntitySets(function(oEntitySet) {
+				if (oEntitySet.name === sCollection) {
+					sEntityTypeName = oEntitySet.entityType;
+					return false;
 				}
 			});
 		}

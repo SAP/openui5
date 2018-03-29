@@ -332,6 +332,16 @@ QUnit.test("Collapse all", function(assert){
 	assert.equal(oTree.getItems().length, 2, "node is collapsed");
 });
 
+QUnit.test("Expand/collapse multiple nodes", function(assert){
+	oTree.expand([0,1]);
+	this.clock.tick(100);
+	assert.equal(oTree.getItems().length, 5, "multiple expanding success.");
+
+	oTree.collapse([0,3]);
+	this.clock.tick(100);
+	assert.equal(oTree.getItems().length, 2, "multiple collapsing success.");
+});
+
 QUnit.module("Node structure");
 
 QUnit.test("ParentNode", function(assert){

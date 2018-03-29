@@ -1,0 +1,37 @@
+{
+	"_version": "1.1.0",
+
+	"sap.app" : {
+		"id" : "fl.performance",
+		"type": "application",
+		"title": "Flex - ApplyChanges",
+		"description": "mass applyChanges test",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"ach": "CA-UI5-FL-RTA"
+	},
+
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": false
+		}
+	},
+
+	"sap.ui5": {
+		"rootView": "idMain1",
+		"handleValidation": true,
+		"dependencies": {
+			"minUI5Version": "${project.version}",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {},
+				"sap.ui.dt": {},
+				"sap.ui.fl": {}
+			}
+		}
+	}
+}

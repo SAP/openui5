@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset='UTF-8'>
+
+		<script src="../../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m">
+		</script>
+
+		<link rel="stylesheet"
+			href="../../../../../../resources/sap/ui/thirdparty/qunit.css"
+			media="screen" />
+
+		<!-- QUnit libraries -->
+		<script src="../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+		<script src="../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+
+		<script>
+			sap.ui.require(["sap/ui/documentation/sdk/controller/ApiDetailIndexDeprecatedExperimental.controller"], function(ApiDetailIndexDeprecatedExperimentalController) {
+				"use strict";
+
+				QUnit.module("Helper and Formatter functions", {
+					beforeEach: function () {
+						this.controller = new ApiDetailIndexDeprecatedExperimentalController();
+					},
+					afterEach: function () {
+						this.controller.destroy();
+						this.controller = null;
+					}
+				});
+
+				QUnit.test("Test compareVersions", function (assert) {
+					assert.strictEqual(this.controller.compareVersions("WITHOUT VERSION", "1.54.3"), -1, "Without version is always first");
+					assert.strictEqual(this.controller.compareVersions("1.54.3", "WITHOUT VERSION"), 1, "Without version is always first");
+					assert.strictEqual(this.controller.compareVersions("1.50", "1.52"), 1, "1.52 is displayed before 1.50");
+					assert.strictEqual(this.controller.compareVersions("1.7", "1.38"), 1, "1.38 is displayed before 1.7");
+					assert.strictEqual(this.controller.compareVersions("1.54", "1.38"), -1, "1.54 is displayed before 1.38");
+					assert.strictEqual(this.controller.compareVersions("1.50.2", "1.50.3"), 0, "1.50.2 is equal to 1.50.3");
+				});
+
+				QUnit.test("Test formatDescription", function (assert) {
+					var sTextWithLinkAndHash = "Please use {@link sap.chart.Chart#setVizProperties} to set related formatStrings instead.",
+						sSince = "1.50.3";
+
+					assert.ok(this.controller.formatDescription(sTextWithLinkAndHash).indexOf("<p>") < 0, "Formatted description does not contain <p> tags");
+					assert.ok(this.controller.formatDescription(sTextWithLinkAndHash).indexOf("</p>") < 0, "Formatted description does not contain </p> tags");
+					assert.strictEqual(this.controller.formatDescription(sTextWithLinkAndHash, sSince).indexOf("As of version " + sSince + ","), 0, "Formatted description starts with since information");
+				});
+
+				QUnit.test("Test formatLinks", function (assert) {
+					var sTextWithLink = "Has been renamed, use {@link jQuery.sap.encodeHTML} instead.",
+						sFormattedTextWithLink = "<p>Has been renamed, use <a class=\"jsdoclink\" href=\"#/api/jQuery.sap/methods/encodeHTML\" target=\"_self\">jQuery.sap.encodeHTML</a> instead.</p>",
+						sTextWithHash = "please use {@link #getProperty} instead",
+						sFormattedTextWithHash = "<p>please use <code>getProperty</code> instead</p>",
+						sTextWithLinkAndHash = "Please use {@link sap.chart.Chart#setVizProperties} to set related formatStrings instead.",
+						sFormattedTextWithLinkAndHash = "<p>Please use <a class=\"jsdoclink\" href=\"#/api/sap.chart.Chart/methods/setVizProperties\" target=\"_self\">sap.chart.Chart#setVizProperties</a> to set related formatStrings instead.</p>",
+						sTextWithTopicLink = "As of version 1.52, UI5 modules and their dependencies should be defined using {@link sap.ui.define}. For more details see {@link topic:91f23a736f4d1014b6dd926db0e91070 Modules and Dependencies} in the documentation.",
+						sFormattedTextWithTopicLink = "<p>As of version 1.52, UI5 modules and their dependencies should be defined using <a class=\"jsdoclink\" href=\"#/api/sap.ui/methods/define\" target=\"_self\">sap.ui.define</a>. For more details see <a class=\"jsdoclink\" href=\"#/topic/91f23a736f4d1014b6dd926db0e91070\" target=\"_self\">Modules and Dependencies</a> in the documentation.</p>",
+						sTextWithoutLink = "As of version 1.42, replaced by <code>getSelectedFilterCompoundKeys</code> method";
+
+					assert.strictEqual(this.controller.formatLinks(sTextWithLink), sFormattedTextWithLink, "Links were formatted properly.");
+					assert.strictEqual(this.controller.formatLinks(sTextWithHash), sFormattedTextWithHash, "Links were formatted properly.");
+					assert.strictEqual(this.controller.formatLinks(sTextWithLinkAndHash), sFormattedTextWithLinkAndHash, "Links were formatted properly.");
+					//assert.strictEqual(this.controller.formatLinks(sTextWithTopicLink), sFormattedTextWithTopicLink, "Links were formatted properly.");
+					assert.strictEqual(this.controller.formatLinks(sTextWithoutLink), "<p>" + sTextWithoutLink + "</p>", "Links were formatted properly.");
+				});
+			});
+		</script>
+	</head>
+	<body class="sapUiBody" role="application">
+		<div id="qunit"></div>
+		<div id="qunit-fixture"></div>
+		<div id="content"></div>
+	</body>
+</html>
