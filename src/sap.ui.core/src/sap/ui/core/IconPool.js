@@ -27,8 +27,10 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 *   value: boolean
 		 */
 		var mFontRegistry = {
-			"SAP-icons": {
-				config: [],
+			undefined: {
+				config: {
+					fontFamily: SAP_ICON_FONT_FAMILY
+				},
 				metadataLoaded: true,
 				inserted: false
 			}
@@ -430,7 +432,7 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				if (typeof info === 'number') {
 					mRegistry[collectionName][iconName] = undefined; // avoid duplicate icon warning
 					info = IconPool.addIcon(iconName, collectionName, {
-						fontFamily: (collectionName ? mFontRegistry[collectionName].config.fontFamily : SAP_ICON_FONT_FAMILY),
+						fontFamily: mFontRegistry[collectionName].config.fontFamily,
 						content: info & 0xFFFF,
 						suppressMirroring: !!(info & 0x10000),
 						resourceBundle: oCoreResourceBundle
@@ -457,8 +459,17 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 				}
 			}
 
+			// if collectionName isn't a string, convert it to string
+			if (typeof collectionName !== "string") {
+				collectionName = String(collectionName);
+			}
+
+			// normalize "undefined" back to undefined because the default
+			// icon collection should have name undefined
+			collectionName = collectionName === 'undefined' ? undefined : collectionName;
+
 			// insert default font face
-			if (!collectionName && !mFontRegistry[SAP_ICON_FONT_FAMILY].inserted) {
+			if (collectionName === undefined && !mFontRegistry[collectionName].inserted) {
 				IconPool.insertFontFaceStyle();
 			}
 
@@ -573,7 +584,14 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 */
 		IconPool.insertFontFaceStyle = function (sFontFace, sPath, sCollectionName) {
 			sFontFace = sFontFace || SAP_ICON_FONT_FAMILY;
-			sCollectionName = sCollectionName || sFontFace;
+
+			if (sCollectionName === undefined && sFontFace !== SAP_ICON_FONT_FAMILY) {
+				// when the collection name isn't given
+				// set the collection name with sFontFace only when the icon font
+				// isn't the standard icon font. The collectionName of the standard icon font
+				// should always be set with undefined
+				sCollectionName = sFontFace;
+			}
 
 			// check if the font has not been registered yet
 			if (!mFontRegistry[sCollectionName]) {
@@ -582,12 +600,16 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 			}
 			// check if font face has already been inserted
 			if (mFontRegistry[sCollectionName].inserted) {
-				jQuery.sap.log.info("Icon font '" + sCollectionName + "' was already inserted.");
+				if (sCollectionName === undefined) {
+					jQuery.sap.log.info("The font face style of standard icon font was already inserted.");
+				} else {
+					jQuery.sap.log.info("The font face style of icon font '" + sCollectionName + "' was already inserted.");
+				}
 				return;
 			}
 			// do nothing if the default font is about to be overwritten
-			if (sFontFace === SAP_ICON_FONT_FAMILY && sCollectionName !== sFontFace) {
-				jQuery.sap.log.error("Must not overwrite 'SAP-icons' with '" + sCollectionName + "'.");
+			if (sFontFace === SAP_ICON_FONT_FAMILY && sCollectionName !== undefined) {
+				jQuery.sap.log.error("Must not overwrite the standard icon set with '" + sCollectionName + "'.");
 				return;
 			}
 
