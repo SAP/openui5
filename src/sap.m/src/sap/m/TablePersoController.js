@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 		if (!this._mDelegateMap[oTable]) {
 			// Use 'jQuery.proxy' to conveniently use 'this' within the
 			// delegate function
-			var oTableOnBeforeRenderingDel = {onBeforeRendering : jQuery.proxy(function () {
+			var oTableOnBeforeRenderingDel = {onBeforeRendering : function () {
 				// Try to retrieve existing persisted personalizations
 				// and adjust the table
 				// SUGGESTED IMPROVEMENT: column order and visibility does not need to be set
@@ -236,12 +236,15 @@ sap.ui.define(['jquery.sap.global', './TablePersoDialog', 'sap/ui/base/ManagedOb
 					// table it is since they should all have the same columns.
 					this._createTablePersoDialog(oTable);
 				}
-			}, this)};
+			}.bind(this)};
 			// By adding our function as a delegate to the table's 'beforeRendering' event,
 			// this._fnTableOnBeforeRenderingDel will be executed whenever the table is
-			// rendered or re-rendered
-
+			// rendered or re-rendered.
 			oTable.addDelegate(oTableOnBeforeRenderingDel);
+
+			// Call the function also one time initially - as maybe the table is already rendered.
+			oTableOnBeforeRenderingDel.onBeforeRendering();
+
 			// Finally add delegate to map to enable proper housekeeping, i.e. cleaning
 			// up delegate when TablePersoController instance is destroyed
 			this._mDelegateMap[oTable] = oTableOnBeforeRenderingDel;
