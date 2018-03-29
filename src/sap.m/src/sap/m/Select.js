@@ -1853,6 +1853,33 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 		};
 
+		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
+			var aIDs = this.$().attr("aria-labelledby").split(" "),
+				sNewIDs,
+				ValueState = sap.ui.core.ValueState;
+
+			if (sOldValueState !== ValueState.None) {
+				aIDs.pop();
+			}
+
+			switch (sValueState) {
+				case ValueState.Success:
+					aIDs.push(Select._oStaticSuccessText.getId());
+					break;
+				case ValueState.Warning:
+					aIDs.push(Select._oStaticWarningText.getId());
+					break;
+				case ValueState.Error:
+					aIDs.push(Select._oStaticErrorText.getId());
+					break;
+				default:
+					break;
+			}
+
+			sNewIDs = aIDs.join(" ");
+			this.$().attr("aria-labelledby", sNewIDs);
+		};
+
 		/**
 		 * Gets the labels referencing this control.
 		 *
@@ -2138,6 +2165,40 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 				return this;
 			}
 
+			var mValueState = sap.ui.core.ValueState,
+				oRb,
+				sValueStateText,
+				sCoreLib = "sap.ui.core";
+
+			switch (sValueState) {
+				case mValueState.Success:
+					if (!Select._oStaticSuccessText) {
+						oRb = sap.ui.getCore().getLibraryResourceBundle(sCoreLib);
+						sValueStateText = oRb.getText("VALUE_STATE_SUCCESS");
+						Select._oStaticSuccessText = new sap.ui.core.InvisibleText({text: sValueStateText});
+						Select._oStaticSuccessText.toStatic(); //Put to Static UiArea
+					}
+					break;
+				case mValueState.Warning:
+					if (!Select._oStaticWarningText) {
+						oRb = sap.ui.getCore().getLibraryResourceBundle(sCoreLib);
+						sValueStateText = oRb.getText("VALUE_STATE_WARNING");
+						Select._oStaticWarningText = new sap.ui.core.InvisibleText({text: sValueStateText});
+						Select._oStaticWarningText.toStatic(); //Put to Static UiArea
+					}
+					break;
+				case mValueState.Error:
+					if (!Select._oStaticErrorText) {
+						oRb = sap.ui.getCore().getLibraryResourceBundle(sCoreLib);
+						sValueStateText = oRb.getText("VALUE_STATE_ERROR");
+						Select._oStaticErrorText = new sap.ui.core.InvisibleText({text: sValueStateText});
+						Select._oStaticErrorText.toStatic(); //Put to Static UiArea
+					}
+					break;
+				default:
+					break;
+			}
+
 			var oDomRef = this.getDomRefForValueState();
 
 			if (!oDomRef) {
@@ -2159,6 +2220,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 
 			this.updateValueStateClasses(sValueState, sOldValueState);
+			this.updateAriaLabelledBy(sValueState, sOldValueState);
 			return this;
 		};
 
