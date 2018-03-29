@@ -9,7 +9,7 @@
 	<m:Page showHeader="false">
 		<m:Bar>
 			<m:contentLeft >
-				<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined}" titleStyle="H6" class="customMarginLeft" />
+				<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}" titleStyle="H6" class="customMarginLeft" />
 			</m:contentLeft>
 			<m:contentMiddle>
 				<m:IconTabHeader
@@ -24,7 +24,7 @@
 			</m:contentMiddle>
 		</m:Bar>
 		<f:SimpleForm
-				visible="{= ${/selectedRule/type} !== 'library'  &amp;&amp; ${/selectedRulePreviewKey} === 'ruleProperties' &amp;&amp; ${/selectedRule} !== undefined}">
+				visible="{= ${/selectedRule/type} !== 'library'  &amp;&amp; ${/selectedRulePreviewKey} === 'ruleProperties' &amp;&amp; ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}">
 			<f:content>
 				<m:Label text="ID" />
 				<m:Text text="{/selectedRule/id}" />

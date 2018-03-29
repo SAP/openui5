@@ -3,9 +3,7 @@
 		height="100%"
 		xmlns="sap.ui.table"
 		xmlns:m="sap.m"
-		xmlns:c="sap.ui.core"
 		xmlns:l="sap.ui.layout"
-		xmlns:f="sap.ui.layout.form"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:t="sap.ui.table">
 	<m:NavContainer
@@ -81,6 +79,9 @@
 							</t:rowActionTemplate>
 						</t:TreeTable>
 					<l:VerticalLayout id="librarySetContainer" width="100%" visible="{= ${/selectedSetPreviewKey} === 'additionalRulesets' }">
+						<m:Text class="sapUiSupportToolAdditionRuleSetNote" text="The list of available rules is dynamic and changes based on the libraries currently required by your application.
+								In the table below, you can select and load rulesets from the additional libraries."/>
+						<m:Link class="sapUiSupportToolAdditionRuleSetNote" text="See more here" href="https://ui5.sap.com/#/topic/3fc864acf926406194744375aa464fe7" target="_blank"/>
 						<m:List
 							id="availableLibrariesSet"
 							mode = "MultiSelect"
