@@ -1891,7 +1891,7 @@ function(
 		 */
 		Input.prototype.insertSuggestionRow = function(oItem, iIndex) {
 			oItem.setType(ListType.Active);
-			this.insertAggregation("suggestionRows", iIndex, oItem);
+			this.insertAggregation("suggestionRows", oItem, iIndex);
 			this._synchronizeSuggestions();
 			createSuggestionPopupContent(this);
 			return this;
