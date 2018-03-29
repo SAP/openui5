@@ -21,7 +21,7 @@
 	"use strict";
 
 	var _ui5loader = window.sap && window.sap.ui && window.sap.ui._ui5loader,
-		oCfg = window['sap-ui-config'],
+		oCfg = window['sap-ui-config'] || {},
 		sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
 		oBootstrapScript, sBootstrapUrl, bNoConflict = false;
@@ -59,15 +59,6 @@
 				break;
 			}
 		}
-	}
-
-	var sNoConflictBootstrapValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-noloaderconflict");
-	if (sNoConflictBootstrapValue) {
-		bNoConflict = /^(?:true|x|X)$/.test(sNoConflictBootstrapValue);
-	}
-	var aNoConflictURLMatches = window.location.search.match(/(?:^\?|&)sap-ui-noLoaderConflict=(true|x|X|false)(?:&|$)/);
-	if (aNoConflictURLMatches) {
-		bNoConflict = aNoConflictURLMatches[1] != "false";
 	}
 
 	// configuration via window['sap-ui-config'] always overrides an auto detected base URL
@@ -182,6 +173,20 @@
 
 	})();
 
+	if ( oCfg['xx-async'] === true || /(?:^|\?|&)sap-ui-xx-async=(?:x|X|true)(?:&|$)/.test(window.location.search) ) {
+		_ui5loader.config({
+			async: true
+		});
+	}
+
+	var sNoConflictBootstrapValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-noloaderconflict");
+	if (sNoConflictBootstrapValue) {
+		bNoConflict = /^(?:true|x|X)$/.test(sNoConflictBootstrapValue);
+	}
+	var aNoConflictURLMatches = window.location.search.match(/(?:^\?|&)sap-ui-noLoaderConflict=(true|x|X|false)(?:&|$)/);
+	if (aNoConflictURLMatches) {
+		bNoConflict = aNoConflictURLMatches[1] != "false";
+	}
 
 	_ui5loader.config({
 		baseUrl: sBaseUrl,
@@ -396,6 +401,11 @@
 				return jQuery;
 			});
 		}
+	}
+
+	var sMainModule = oBootstrapScript && oBootstrapScript.getAttribute('data-sap-ui-main');
+	if ( sMainModule ) {
+		sap.ui.require(sMainModule.trim().split(/\s*,\s*/));
 	}
 
 }());
