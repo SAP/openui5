@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool'],
-	function(jQuery, Renderer, ValueStateSupport, IconPool) {
+sap.ui.define(['jquery.sap.global', './Select', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
+	function(jQuery, Select, Renderer, IconPool, InvisibleText, coreLibrary) {
 		"use strict";
 
 		/**
@@ -26,7 +26,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.render = function(oRm, oSelect) {
-			var	sTooltip = ValueStateSupport.enrichTooltip(oSelect, oSelect.getTooltip_AsString()),
+			var	sTooltip = oSelect.getTooltip_AsString(),
 				sType = oSelect.getType(),
 				bAutoAdjustWidth = oSelect.getAutoAdjustWidth(),
 				bEnabled = oSelect.getEnabled(),
@@ -284,6 +284,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		};
 
 		/**
+		 * Returns the id of the InvisibleText containing information about the value state of the Select
+		 * @param oSelect
+		 * @returns {string}
+		 * @private
+		 */
+		SelectRenderer._getValueStateString = function(oSelect) {
+			var ValueState = coreLibrary.ValueState;
+
+			switch (oSelect.getValueState()) {
+				case ValueState.Success:
+					return Select._oStaticSuccessText.getId();
+				case ValueState.Warning:
+					return Select._oStaticWarningText.getId();
+				case ValueState.Error:
+					return Select._oStaticErrorText.getId();
+			}
+
+			return "";
+		};
+
+		/**
 		 * Writes the accessibility state.
 		 * To be overwritten by subclasses.
 		 *
@@ -291,13 +312,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', 'sap/ui/core/ValueSt
 		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
+			var sValueState = this._getValueStateString(oSelect);
+
+			if (sValueState) {
+				sValueState = " " + sValueState;
+			}
+
 			oRm.writeAccessibilityState(oSelect, {
 				role: this.getAriaRole(oSelect),
 				expanded: oSelect.isOpen(),
 				live: "polite",
 				invalid: (oSelect.getValueState() === sap.ui.core.ValueState.Error) ? true : undefined,
 				labelledby: {
-					value: oSelect.getId() + "-label",
+					value: oSelect.getId() + "-label" + sValueState,
 					append: true
 				},
 				haspopup: (oSelect.getType() === sap.m.SelectType.IconOnly) ? true : undefined

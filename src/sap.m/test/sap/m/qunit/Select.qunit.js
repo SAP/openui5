@@ -3363,7 +3363,7 @@ QUnit.test("it should remove the value state CSS classes", function(assert) {
 
 	// assert
 	assert.strictEqual(oSelect.$().attr("aria-invalid"), undefined);
-	assert.notOk(oSelect.$().hasClass(CSS_CLASS + "State"))
+	assert.notOk(oSelect.$().hasClass(CSS_CLASS + "State"));
 	assert.notOk(oSelect.$().hasClass(CSS_CLASS + "Error"));
 	assert.notOk(oSelect.$("label").hasClass(CSS_CLASS + "LabelState"));
 	assert.notOk(oSelect.$("label").hasClass(CSS_CLASS + "LabelError"));
@@ -3371,6 +3371,41 @@ QUnit.test("it should remove the value state CSS classes", function(assert) {
 
 	// cleanup
 	oSelect.destroy();
+});
+
+QUnit.test("it should contain the value state text id in the aria-labelledby attribute", function (assert) {
+	var oSuccessSelect = new sap.m.Select({ valueState: sap.ui.core.ValueState.Success }),
+		oWarningSelect = new sap.m.Select({ valueState: sap.ui.core.ValueState.Warning }),
+		oErrorSelect = new sap.m.Select({ valueState: sap.ui.core.ValueState.Error }),
+		sCoreLib = "sap.ui.core";
+
+	// arrange
+	oSuccessSelect.placeAt("content");
+	oWarningSelect.placeAt("content");
+	oErrorSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	// assert
+	assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.m.Select._oStaticSuccessText.getId()) > -1, "success select is labelled by invisible text");
+	assert.ok(oWarningSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.m.Select._oStaticWarningText.getId()) > -1, "warning select is labelled by invisible text");
+	assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.m.Select._oStaticErrorText.getId()) > -1, "error select is labelled by invisible text");
+
+	// act
+	oSuccessSelect.setValueState("None");
+
+	// assert
+	assert.ok(oSuccessSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.m.Select._oStaticSuccessText.getId()) < 0, "success select is no longer labelled by success invisible text");
+
+	// act
+	oErrorSelect.setValueState("Success");
+
+	// assert
+	assert.ok(oErrorSelect.$().attr("aria-labelledby").split(" ").indexOf(sap.m.Select._oStaticSuccessText.getId()) > -1, "error select is now labelled by success invisible text");
+
+	// cleanup
+	oSuccessSelect.destroy();
+	oWarningSelect.destroy();
+	oErrorSelect.destroy();
 });
 
 QUnit.module("setTooltip()");
@@ -3395,6 +3430,39 @@ QUnit.test("it should display the control tooltip instead of the default tooltip
 
 	// cleanup
 	oSelect.destroy();
+});
+
+QUnit.test("it should display the control tooltip when the select has value state", function (assert) {
+	// system under test
+	var sSampleText = "lorem ipsum",
+		oSuccessSelect = new sap.m.Select({
+			tooltip: sSampleText,
+			valueState: sap.ui.core.ValueState.Success
+		}),
+		oWarningSelect = new sap.m.Select({
+			tooltip: sSampleText,
+			valueState: sap.ui.core.ValueState.Warning
+		}),
+		oErrorSelect = new sap.m.Select({
+			tooltip: sSampleText,
+			valueState: sap.ui.core.ValueState.Error
+		});
+
+	// arrange
+	oSuccessSelect.placeAt("content");
+	oWarningSelect.placeAt("content");
+	oErrorSelect.placeAt("content");
+	sap.ui.getCore().applyChanges();
+
+	// assert
+	assert.strictEqual(oSuccessSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+	assert.strictEqual(oWarningSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+	assert.strictEqual(oErrorSelect.$().attr("title"), sSampleText, "select title attribute is correct");
+
+	// cleanup
+	oSuccessSelect.destroy();
+	oWarningSelect.destroy();
+	oErrorSelect.destroy();
 });
 
 QUnit.module("removeItem()");
