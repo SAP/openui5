@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', "sap/ui/core/InvisibleText", 'sap/ui/core/library'],
-	function(Renderer, ValueStateSupport, IconPool, library, Device, InvisibleText, coreLibrary) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
+	function(Renderer, IconPool, library, Device, InvisibleText, coreLibrary) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection
