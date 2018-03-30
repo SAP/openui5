@@ -96,6 +96,8 @@
 		// arrange
 		var oImageContent = this.LightBox.getImageContent()[0];
 		var sSource = '../images/demo/nature/elephant.jpg';
+		var image = new window.Image();
+		image.src = sSource;
 
 		// act
 		var result = oImageContent.setImageSrc(sSource);
@@ -103,7 +105,11 @@
 		// assert
 		assert.strictEqual(result, oImageContent, 'Setter should return a reference to the object.');
 		assert.strictEqual(oImageContent.getImageSrc(), sSource, 'The source should be set correctly.');
-		assert.strictEqual(oImageContent._oImage.src, '', 'The native js image source should not be set because LightBox is not open.');
+
+		this.LightBox.open();
+		this.clock.tick(500);
+
+		assert.strictEqual(oImageContent._oImage.src, image.src, 'The native js image source should be set after the LightBox is open.');
 	});
 
 	//================================================================================
@@ -230,7 +236,6 @@
 			});
 		},
 		afterEach: function() {
-			this.LightBox.close();
 			this.LightBox.destroy();
 		}
 	});
