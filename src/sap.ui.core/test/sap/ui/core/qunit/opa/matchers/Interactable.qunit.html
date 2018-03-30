@@ -22,12 +22,7 @@
 			jQuery.sap.require("sap.ui.thirdparty.sinon");
 			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
 
-			(function () {
-				QUnit.config.autostart = false;
-				// HACK to have noglobals active - in phantom js this introduces XMLHttpRequest
-				var XHR = sinon.useFakeXMLHttpRequest();
-				XHR.restore();
-			})();
+			QUnit.config.autostart = false;
 
 			sap.ui.require([
 					'sap/ui/test/matchers/Interactable',
@@ -41,7 +36,8 @@
 					'sap/ui/test/opaQunit',
 					'sap/ui/test/Opa5',
 					'sap/ui/test/_LogCollector',
-					'unitTests/utils/customQUnitAssertions'
+					'unitTests/utils/phantomJS',
+					'unitTests/utils/customQUnitAssertions',
 				], function (Interactable,
 							 $,
 							 Button,
@@ -52,8 +48,11 @@
 							 Toolbar,
 							 opaTest,
 			 				 Opa5,
-							 _LogCollector) {
+							 _LogCollector,
+							phantomJSUtils) {
 					"use strict";
+
+					phantomJSUtils.introduceSinonXHR();
 
 					[NavContainer, App].forEach(function (fnConstructor) {
 

@@ -9,8 +9,9 @@ sap.ui.define([
 	'./_LogCollector',
 	'./_OpaLogger',
 	'./_ParameterValidator',
-	'sap/ui/thirdparty/URI'
-], function ($, Device, _LogCollector, _OpaLogger, _ParameterValidator,URI) {
+	'sap/ui/thirdparty/URI',
+	'sap/ui/test/_UsageReport'
+], function ($, Device, _LogCollector, _OpaLogger, _ParameterValidator, URI, _UsageReport) {
 	"use strict";
 
 	///////////////////////////////
@@ -467,6 +468,8 @@ sap.ui.define([
 
 	//create the default config
 	Opa.resetConfig();
+
+	Opa._usageReport = new _UsageReport(Opa.config);
 
 	// set the maximum level for OPA logs
 	_OpaLogger.setLevel(Opa.config.logLevel);
