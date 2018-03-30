@@ -77,4 +77,31 @@
 		assert.strictEqual(actualResult, imageSubtitle, 'Shoud set correct image subtitle');
 	});
 
+	QUnit.test('Setting image when state is loading', function (assert) {
+		// arrange
+		sinon.stub(this.LightBoxItem, 'getParent', function() {
+			return {
+				_oPopup: {
+					getOpenState: function () {
+						return 'LOADING';
+					}
+				}
+			};
+		});
+
+		var imageSrc = 'test.jpg';
+		var image = new window.Image();
+		image.src = imageSrc;
+
+
+		// act
+		this.LightBoxItem.setImageSrc(imageSrc);
+
+		// assert
+		assert.strictEqual(this.LightBoxItem.getAggregation("_image").getSrc(), imageSrc, 'setImageSrc should set the image src despite the loading state of the LightBoxImage');
+
+		// clean
+		this.LightBoxItem.getParent.restore();
+	});
+
 })();
