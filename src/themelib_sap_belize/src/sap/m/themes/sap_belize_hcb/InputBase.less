@@ -126,10 +126,14 @@
 	}
 }
 
+.sapMInputBaseState .sapMInputBaseInner.sapMInputBaseStateInner,
+.sapMInputBaseStateInner {
+	border-width: 1px;
+}
+
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
 	.sapMFocus .sapMInputDivWrapper:not(.sapMInputBaseDisabledInner)::before {
 		border: 2px dashed @sapUiContentFocusColor;
 	}
 }
-
