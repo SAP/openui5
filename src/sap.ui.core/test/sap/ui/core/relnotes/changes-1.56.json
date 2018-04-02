@@ -458,6 +458,24 @@
         "type": "FIX",
         "text": " v2.ODataModel: metadata url params missing",
         "references": []
+      },
+      {
+        "id": "867c4c69984835d514d5a507c8f8701f915fa8a6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.IconPool - API for loading of additional fonts",
+        "references": []
+      },
+      {
+        "id": "63ffdd8ecfcfb4dfc194e82057283147fc2b9172",
+        "type": "FIX",
+        "text": " CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
+        "references": []
+      },
+      {
+        "id": "a957e4e7303ed6db47109c75923087742107fc3f",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Parsing name of day",
+        "references": []
       }
     ]
   }

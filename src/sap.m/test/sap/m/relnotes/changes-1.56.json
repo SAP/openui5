@@ -734,6 +734,54 @@
         "type": "FIX",
         "text": " sap.m.RadioButtonGroup: select event is no longer fired twice",
         "references": []
+      },
+      {
+        "id": "677e4b69d7f0a0f59dca63be2325c0c4fd959569",
+        "type": "FEATURE",
+        "text": " sap.m.MenuButton: now supports positioning of the menu",
+        "references": []
+      },
+      {
+        "id": "68eb1b431da8c73d7ac3d430dd27fe291a40d730",
+        "type": "FIX",
+        "text": " sap.m.Button, sap.m.MenuButton, sap.m.ToggleButton: press state inside Toolbar and List fixed",
+        "references": []
+      },
+      {
+        "id": "7eb746e59ac5e8fcbd3063f92aee06933b10ec41",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: sap.m.SegmentedButton is now correctly alligned",
+        "references": []
+      },
+      {
+        "id": "d80f92aa1c823fea83b8b32eae6f7755f043971f",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: Images on tiles go decorative, no \u0027undefined\u0027 in Aria",
+        "references": []
+      },
+      {
+        "id": "976f84ad2bfe1e83c63290cbb5e54d5b0e07a485",
+        "type": "FIX",
+        "text": " sap.m.SearchField: screen reader announce the placeholder text when there is label or tooltip",
+        "references": []
+      },
+      {
+        "id": "9ed98479b7ec32ed7a963a37f7f2283ab3a8cd49",
+        "type": "FIX",
+        "text": " sap.m.Select: Value state information is now read",
+        "references": []
+      },
+      {
+        "id": "55b449e2380a7c6d7fa93430841d1a886699007f",
+        "type": "FIX",
+        "text": " sap.m.TablePersoController: works now also with \"late attachment\"",
+        "references": []
+      },
+      {
+        "id": "faa839b8194783b70d3d53abfd899a16d8dcace1",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: correct filter examples",
+        "references": []
       }
     ]
   }

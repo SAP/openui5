@@ -63,6 +63,12 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageHeader: Memory leak fix",
         "references": []
+      },
+      {
+        "id": "4a08c4f6eaa6c67f422875b983cb9161fa6ed6be",
+        "type": "FIX",
+        "text": " uxap.ObjectPage: _headerContent aggregation cloning fixed",
+        "references": []
       }
     ]
   }
