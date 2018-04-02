@@ -32,7 +32,8 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 				library: "sap.ui.layout",
 				properties: {
 					/**
-					 * Defines the title of the cell
+					 * Defines the title of the cell.
+					 * <b>Note:</b> When the <code>titleLink</code> aggregation is provided, the title of the cell will be replaced with the text from the <code>titleLink</code>.
 					 */
 					title: {type: "string", group: "Appearance", defaultValue: null},
 
@@ -82,7 +83,13 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 					/**
 					 * The content to be included inside the cell
 					 */
-					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"}
+					content: {type: "sap.ui.core.Control", multiple: true, singularName: "content"},
+					/**
+					 * The link that will replace the title of the cell.
+					 * <b>Note:</b> The only possible value is the <code>sap.m.Link</code> control.
+					 * @since 1.56
+					 */
+					titleLink: {type: "sap.ui.core.Control", multiple : false}
 				},
 				designtime: "sap/ui/layout/designtime/BlockLayoutCell.designtime"
 			}
@@ -103,6 +110,18 @@ sap.ui.define(['sap/ui/core/Control', './library', "./BlockLayoutCellRenderer"],
 
 			return this;
 		};
+
+		BlockLayoutCell.prototype.setTitleLink = function(oObject) {
+				if (oObject && oObject.getMetadata().getName() !== "sap.m.Link") {
+					jQuery.sap.log.warning("sap.ui.layout.BlockLayoutCell " + this.getId() + ": Can't add value for titleLink aggregation different than sap.m.Link.");
+					return;
+				}
+
+				this.setAggregation("titleLink", oObject);
+
+			return this;
+		};
+
 		BlockLayoutCell.prototype._setParentRowScrollable = function (scrollable) {
 			this._parentRowScrollable = scrollable;
 		};

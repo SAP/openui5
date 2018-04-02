@@ -104,7 +104,7 @@
 				});
 			};
 
-			var fnCreateCell = function (width, title, content, alignment) {
+			var fnCreateCell = function (width, title, content, alignment, titleLink) {
 				content = content || new sap.m.Text({
 							text: sTextLorem
 						});
@@ -113,7 +113,8 @@
 					content: content,
 					width: width,
 					title: title,
-					titleAlignment: alignment
+					titleAlignment: alignment,
+					titleLink: titleLink
 				});
 			};
 
@@ -123,7 +124,7 @@
 						oCell3 = fnCreateCell(1, "Tomato Heading", [
 							new sap.m.Text({text: sText.substr(0, 20)})
 						], "Center"),
-						oCell4 = fnCreateCell(3, null, fnCreateForm());
+						oCell4 = fnCreateCell(3, null, fnCreateForm(), null, new sap.m.Link({text:"Test link", href:"http://www.sap.com"}));
 
 				return new sap.ui.layout.BlockLayout({
 					id: "layout-" + sBackground.toLowerCase(),
@@ -140,7 +141,7 @@
 							content: [
 								oCell1,
 								oCell2,
-								fnCreateCell(2, "Custom", null, "Right")
+								fnCreateCell(2, "Custom", null, "Right", new sap.m.Link({text:"Custom - test link", href:"http://www.sap.com"}))
 							],
 							accentCells: [oCell1, oCell2]
 						}),
@@ -148,7 +149,7 @@
 							content: [
 								fnCreateCell(1, null, new sap.m.Text({text: sText + sText})),
 								oCell3,
-								fnCreateCell(1),
+								fnCreateCell(1, null, null, null, new sap.m.Link({text:"Test link", href:"http://www.sap.com"})),
 								fnCreateCell(1, "<Escaped?>")
 							],
 							accentCells: [oCell3]
@@ -157,7 +158,7 @@
 							scrollable: true,
 							content: [
 								fnCreateCell(null, null, new sap.m.Text({text: sText + sText})),
-								fnCreateCell(null, "Scrolling Row Heading"),
+								fnCreateCell(null, "Scrolling Row Heading", null,null, new sap.m.Text({text:"Test text - should not be visualized"})),
 								fnCreateCell(),
 								fnCreateCell(),
 								fnCreateCell(),

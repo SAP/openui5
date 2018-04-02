@@ -33,10 +33,15 @@
 
 	.sapUiBlockCellTitle {
 		font-size: @sapMFontHeader3Size;
+
+		.sapMLnk {
+			text-shadow: @sapUiShadowText;
+		}
 	}
 }
 
-.sapUiBlockCellTitle {
+.sapUiBlockCellTitle,
+.sapUiBlockCellTitle .sapMLnk {
 	font-size: 1.25rem;
 }
 
@@ -77,7 +82,8 @@
 		}
 	}
 
-	.sapUiBlockCellTitle {
+	.sapUiBlockCellTitle,
+	.sapUiBlockCellTitle .sapMLnk {
 		font-size: @sapMFontHeader1Size;
 	}
 }
@@ -100,7 +106,8 @@
 		}
 	}
 
-	.sapUiBlockCellTitle {
+	.sapUiBlockCellTitle,
+	.sapUiBlockCellTitle .sapMLnk {
 		font-size: @sapMFontHeader1Size;
 	}
 }
