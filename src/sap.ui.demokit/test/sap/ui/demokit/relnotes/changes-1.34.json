@@ -18,34 +18,19 @@
         "id": "62684e83c2f9101d36c98a32e5ce3b9deeb9ef52",
         "type": "FIX",
         "text": "Api Reference Tree clipping issue",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "585"
-          }
-        ]
+        "references": []
       },
       {
         "id": "5d46c13e574b27c7c999d95cd42c664f5f506e86",
         "type": "FIX",
         "text": "Code samples in Explored app are now displayed with monospace font",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "717"
-          }
-        ]
+        "references": []
       },
       {
         "id": "6f6631379db0939d52d60be6d0a3490eec916852",
         "type": "FIX",
         "text": "Demokit About dialog is all visible now in small resolutions",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1580049309"
-          }
-        ]
+        "references": []
       },
       {
         "id": "b29b06a7d20daa4093688a613692ff35d9d3d3c4",

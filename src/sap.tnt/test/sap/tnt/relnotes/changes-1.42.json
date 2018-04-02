@@ -6,23 +6,13 @@
         "id": "6064be9a4770e39ce594d4a18311c5acf30a91a1",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: The texts in the Popup are no longer cut off in IE",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680090969"
-          }
-        ]
+        "references": []
       },
       {
         "id": "02fb8a9004fde53c9988fd204a273de2a41c10f0",
         "type": "FIX",
         "text": "sap.tnt.NavigationListItem: Icon tooltip corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1680108841"
-          }
-        ]
+        "references": []
       }
     ]
   },
@@ -44,12 +34,7 @@
         "id": "5ff66fbedb82e7517a6664e7d2ceefc270740908",
         "type": "FIX",
         "text": "sap.tnt. ToolPage: SideNavigation is initially expanded  on laptop with touch",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670424167"
-          }
-        ]
+        "references": []
       }
     ]
   },
@@ -60,12 +45,7 @@
         "id": "49f391732830321932dceb2b2f90051527ae0896",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Popover not closing in collapsed mode issue fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670453591"
-          }
-        ]
+        "references": []
       },
       {
         "id": "48cc110e7e1c69a7eeb40386cbef0d50cc8f4876",
@@ -81,13 +61,8 @@
       {
         "id": "5fa802590c0d09da6159deddf3ab833a92c5ab87",
         "type": "FIX",
-        "text": "sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670554554"
-          }
-        ]
+        "text": " sap.tnt.ToolPage: SideNavigation overlapping the content in combi devices now corrected",
+        "references": []
       }
     ]
   }

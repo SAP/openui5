@@ -369,12 +369,12 @@
         "text": "BusyIndicator: Supress 'touchmove' on Control Level",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1670061185"
-          },
-          {
             "type": "GitHub",
             "reference": "788"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670061185"
           }
         ]
       },
@@ -801,12 +801,12 @@
         "text": "ODataModelV2: enhance documentation for submitChanges parameter",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1670214368"
-          },
-          {
             "type": "GitHub",
             "reference": "620"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670214368"
           }
         ]
       },
@@ -1258,12 +1258,12 @@
         "text": "v2.OData(List|Tree)Binding: Correctly sort according to Edm type",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1570881701"
-          },
-          {
             "type": "GitHub",
             "reference": "725"
+          },
+          {
+            "type": "BCP",
+            "reference": "1570881701"
           }
         ]
       },
@@ -2349,16 +2349,16 @@
         "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
         "references": [
           {
+            "type": "GitHub",
+            "reference": "917"
+          },
+          {
             "type": "BCP",
             "reference": "1670187459"
           },
           {
             "type": "BCP",
             "reference": "1570632712"
-          },
-          {
-            "type": "GitHub",
-            "reference": "917"
           }
         ]
       },
@@ -3178,12 +3178,12 @@
         "text": "core.IconPool: Use local SAP-icons font as fallback only",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1780184004"
-          },
-          {
             "type": "GitHub",
             "reference": "1508"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780184004"
           }
         ]
       },

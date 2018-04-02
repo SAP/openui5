@@ -370,12 +370,12 @@
         "text": "sap.ui.commond.DropdownBox: select text by opening",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1670303053"
-          },
-          {
             "type": "GitHub",
             "reference": "979"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670303053"
           }
         ]
       },
@@ -385,12 +385,12 @@
         "text": "sap.ui.commons.MessageBox: Setting title issue fixed.",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1580199951"
-          },
-          {
             "type": "GitHub",
             "reference": "681"
+          },
+          {
+            "type": "BCP",
+            "reference": "1580199951"
           }
         ]
       }
@@ -443,16 +443,16 @@
         "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
         "references": [
           {
+            "type": "GitHub",
+            "reference": "917"
+          },
+          {
             "type": "BCP",
             "reference": "1670187459"
           },
           {
             "type": "BCP",
             "reference": "1570632712"
-          },
-          {
-            "type": "GitHub",
-            "reference": "917"
           }
         ]
       },
