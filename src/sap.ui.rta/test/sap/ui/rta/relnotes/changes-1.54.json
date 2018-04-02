@@ -319,5 +319,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "9a0c672a70f15e98c47e86c85fc65159a8fa4233",
+        "type": "FIX",
+        "text": "sap.ui.rta: Incorrect positioning of rename field on EDGE",
+        "references": []
+      }
+    ]
   }
 }

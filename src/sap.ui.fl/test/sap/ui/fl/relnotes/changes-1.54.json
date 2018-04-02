@@ -145,5 +145,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "0341c611eb8263a158dd653cc319a4d69b93f355",
+        "type": "FIX",
+        "text": " sap.ui.fl: Variant selection in URL should not change history",
+        "references": []
+      }
+    ]
   }
 }

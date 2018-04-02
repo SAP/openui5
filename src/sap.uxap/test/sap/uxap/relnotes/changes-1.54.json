@@ -1,195 +1,204 @@
 {
-	"1.54.0": {
-		"data": "",
-		"notes": [
-			{
-				"id": "6aae96fe4fb2e3153790141326c3cc9f182d3520",
-				"type": "FIX",
-				"text": "uxap.ObjectPageHeader: Title Selection Icon aligned with VD",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1770464521"
-					}
-				]
-			},
-			{
-				"id": "46c1e57203bfcc43adc96638f3ebe721fec345d6",
-				"type": "FEATURE",
-				"text": "sap.uxap.AnchorBar: Dependencies",
-				"references": []
-			},
-			{
-				"id": "a40de7ce68a33740e837aac4fd707b55b2da4939",
-				"type": "FIX",
-				"text": "sap.uxap.ObjectPageLayout: Scroll position is now calculated correctly",
-				"references": []
-			},
-			{
-				"id": "12c4bf2d0b6e44c65a568968566488ee5d62f563",
-				"type": "FEATURE",
-				"text": "sap.uxap.ObjectPageHeader: Dependencies",
-				"references": []
-			},
-			{
-				"id": "ca8c697fcf8f276979f0d7237fb7e4d39a9b2a41",
-				"type": "FIX",
-				"text": "uxap.BlockBase: blocks outside the ObjectPageSubSection are loaded",
-				"references": [
-					{
-						"type": "GitHub",
-						"reference": "1853"
-					},
-					{
-						"type": "BCP",
-						"reference": "1880061546"
-					}
-				]
-			},
-			{
-				"id": "a6508ca2619cad5d585655f547a302dba8365157",
-				"type": "FIX",
-				"text": "uxap.ObjectPageLayout: Ensured setting selectedSection is correct",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1780508217"
-					}
-				]
-			},
-			{
-				"id": "fcc721c3e0a9c608e0a9f67b11fde3c34987ffae",
-				"type": "FEATURE",
-				"text": "sap.uxap.ObjectPageHeaderActionButton usage in OverflowToolbar",
-				"references": []
-			},
-			{
-				"id": "debbd0d4be0e977d73814d1c575f2235cb1c5baf",
-				"type": "FIX",
-				"text": "uxap.AnchorBar: Navigation accessibility improved",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1770353244"
-					}
-				]
-			},
-			{
-				"id": "fe2db615a9e5308365e06fc3eac7dba2ef14a7a7",
-				"type": "FIX",
-				"text": "uxap.ObjectPageLayout: Expand header button behavior fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1770560595"
-					}
-				]
-			},
-			{
-				"id": "d6bf18cc08c96a05f970cc8bd5ba525b9eb3e4ff",
-				"type": "FIX",
-				"text": "uxap.ObjectPageLayout: Closest section check fixed",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1780435324"
-					}
-				]
-			},
-			{
-				"id": "689a818c2583b300739affd752157b52603a7117",
-				"type": "FEATURE",
-				"text": "ManagedObject(-Metadata): aggregation forwarding",
-				"references": []
-			},
-			{
-				"id": "db21afbd4303372797e870eaa5bd44027c5959d3",
-				"type": "FIX",
-				"text": "sap.uxap.AnchorBar: Corrected focus handling on F6 press",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1770583125"
-					}
-				]
-			},
-			{
-				"id": "469a2111baa7bbdd036152fe381c02a1c8a394b3",
-				"type": "FEATURE",
-				"text": "sap.f.DynamicPageTitle: Added new property areaShrinkRatio",
-				"references": []
-			},
-			{
-				"id": "6d621cbbbd0c1d9d374876a1ab74c416d8e855bd",
-				"type": "FIX",
-				"text": "sap.f.DynamicPageHeader: Fixed toggle header indicator size",
-				"references": []
-			}
-		]
-	},
-	"1.54.1": {
-		"data": "",
-		"notes": [
-			{
-				"id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
-				"type": "FIX",
-				"text": "QUnit Designtime Library tests in Firefox",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1880133369"
-					}
-				]
-			}
-		]
-	},
-	"1.54.2": {
-		"data": "",
-		"notes": [
-			{
-				"id": "1798278b82b350e1954d52f3704cefc53ce0123d",
-				"type": "FIX",
-				"text": "sap.uxap.ObjectPageSubSection: Fixed JS error in removeAggregation",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1780191583"
-					}
-				]
-			},
-			{
-				"id": "d0f4334890f21033b429e39089dfbfddf1153f62",
-				"type": "FIX",
-				"text": "sap.uxap.ObjectPageLayout: Flickering issue",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1880028962"
-					}
-				]
-			},
-			{
-				"id": "c3922084608b57890d4fdc4b1444db1a3b1a3392",
-				"type": "FIX",
-				"text": "sap.uxap.AnchorBar: Select icon aligned with visual design",
-				"references": [
-					{
-						"type": "BCP",
-						"reference": "1880193567"
-					}
-				]
-			},
-			{
-				"id": "e36badf6f0cd3d2cf0c60b5f23367d556763ecda",
-				"type": "FIX",
-				"text": "sap.f.DynamicPage: Inactive focusable header title fixed",
-				"references": []
-			}
-		]
-	},
-	"1.54.3": {
-		"data": "",
-		"notes": [],
-		"date": "March 2018"
-	}
+  "1.54.0": {
+    "notes": [
+      {
+        "id": "6aae96fe4fb2e3153790141326c3cc9f182d3520",
+        "type": "FIX",
+        "text": "uxap.ObjectPageHeader: Title Selection Icon aligned with VD",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770464521"
+          }
+        ]
+      },
+      {
+        "id": "46c1e57203bfcc43adc96638f3ebe721fec345d6",
+        "type": "FEATURE",
+        "text": "sap.uxap.AnchorBar: Dependencies",
+        "references": []
+      },
+      {
+        "id": "a40de7ce68a33740e837aac4fd707b55b2da4939",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Scroll position is now calculated correctly",
+        "references": []
+      },
+      {
+        "id": "12c4bf2d0b6e44c65a568968566488ee5d62f563",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageHeader: Dependencies",
+        "references": []
+      },
+      {
+        "id": "ca8c697fcf8f276979f0d7237fb7e4d39a9b2a41",
+        "type": "FIX",
+        "text": "uxap.BlockBase: blocks outside the ObjectPageSubSection are loaded",
+        "references": [
+          {
+            "type": "GitHub",
+            "reference": "1853"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880061546"
+          }
+        ]
+      },
+      {
+        "id": "a6508ca2619cad5d585655f547a302dba8365157",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Ensured setting selectedSection is correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780508217"
+          }
+        ]
+      },
+      {
+        "id": "fcc721c3e0a9c608e0a9f67b11fde3c34987ffae",
+        "type": "FEATURE",
+        "text": "sap.uxap.ObjectPageHeaderActionButton usage in OverflowToolbar",
+        "references": []
+      },
+      {
+        "id": "debbd0d4be0e977d73814d1c575f2235cb1c5baf",
+        "type": "FIX",
+        "text": "uxap.AnchorBar: Navigation accessibility improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770353244"
+          }
+        ]
+      },
+      {
+        "id": "fe2db615a9e5308365e06fc3eac7dba2ef14a7a7",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Expand header button behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770560595"
+          }
+        ]
+      },
+      {
+        "id": "d6bf18cc08c96a05f970cc8bd5ba525b9eb3e4ff",
+        "type": "FIX",
+        "text": "uxap.ObjectPageLayout: Closest section check fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780435324"
+          }
+        ]
+      },
+      {
+        "id": "689a818c2583b300739affd752157b52603a7117",
+        "type": "FEATURE",
+        "text": "ManagedObject(-Metadata): aggregation forwarding",
+        "references": []
+      },
+      {
+        "id": "db21afbd4303372797e870eaa5bd44027c5959d3",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Corrected focus handling on F6 press",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1770583125"
+          }
+        ]
+      },
+      {
+        "id": "469a2111baa7bbdd036152fe381c02a1c8a394b3",
+        "type": "FEATURE",
+        "text": "sap.f.DynamicPageTitle: Added new property areaShrinkRatio",
+        "references": []
+      },
+      {
+        "id": "6d621cbbbd0c1d9d374876a1ab74c416d8e855bd",
+        "type": "FIX",
+        "text": "sap.f.DynamicPageHeader: Fixed toggle header indicator size",
+        "references": []
+      }
+    ]
+  },
+  "1.54.1": {
+    "notes": [
+      {
+        "id": "c7e11b718c7e385daa17d5553d32e1b0203ab1e9",
+        "type": "FIX",
+        "text": "QUnit Designtime Library tests in Firefox",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880133369"
+          }
+        ]
+      }
+    ]
+  },
+  "1.54.2": {
+    "notes": [
+      {
+        "id": "1798278b82b350e1954d52f3704cefc53ce0123d",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageSubSection: Fixed JS error in removeAggregation",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780191583"
+          }
+        ]
+      },
+      {
+        "id": "d0f4334890f21033b429e39089dfbfddf1153f62",
+        "type": "FIX",
+        "text": "sap.uxap.ObjectPageLayout: Flickering issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880028962"
+          }
+        ]
+      },
+      {
+        "id": "c3922084608b57890d4fdc4b1444db1a3b1a3392",
+        "type": "FIX",
+        "text": "sap.uxap.AnchorBar: Select icon aligned with visual design",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880193567"
+          }
+        ]
+      },
+      {
+        "id": "e36badf6f0cd3d2cf0c60b5f23367d556763ecda",
+        "type": "FIX",
+        "text": "sap.f.DynamicPage: Inactive focusable header title fixed",
+        "references": []
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "0458c0ca6ce4b77c966e7bba06776104799662f4",
+        "type": "FIX",
+        "text": " uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
+        "references": []
+      },
+      {
+        "id": "2eb3f968b9537348028e7c8a7388b77df644338d",
+        "type": "FIX",
+        "text": " uxap.ObjectPage: _headerContent aggregation cloning fixed",
+        "references": []
+      }
+    ]
+  }
 }

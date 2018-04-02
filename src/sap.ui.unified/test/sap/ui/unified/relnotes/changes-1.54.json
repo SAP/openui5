@@ -205,5 +205,52 @@
         "references": []
       }
     ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "fa072c55803e376dd8ef79140787998bdeddc806",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "aba737509431f7758a23d663e7d45a4374d85524",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: appointments\u0027 container has no tab stop anymore.",
+        "references": []
+      },
+      {
+        "id": "7532fbeac99f96cf735b4a672f3f3d8ee6bc2a28",
+        "type": "FIX",
+        "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
+        "references": []
+      },
+      {
+        "id": "34591c1a76046ec5edf4948e99126f68e00c0a07",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Update aria-label for the year button",
+        "references": []
+      },
+      {
+        "id": "a2d0d4a06f8ea836a1d4c7940dd125262b7cf2d8",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: closes when switch from one submenu to another",
+        "references": []
+      },
+      {
+        "id": "aa5d12645283d6102e91c41cc870870724034192",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: resize handler is removed on exit.",
+        "references": []
+      },
+      {
+        "id": "2455c1d5b1f304aa0bfd900a4faf4efb1cfceb46",
+        "type": "FIX",
+        "text": " unified.FileUploader: accessing length of undefined fixed",
+        "references": []
+      }
+    ]
   }
 }

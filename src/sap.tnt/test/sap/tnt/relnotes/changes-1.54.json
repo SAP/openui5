@@ -64,5 +64,16 @@
         ]
       }
     ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "7532fbeac99f96cf735b4a672f3f3d8ee6bc2a28",
+        "type": "FIX",
+        "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
+        "references": []
+      }
+    ]
   }
 }

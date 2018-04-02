@@ -25,16 +25,16 @@
         "text": "core.TooltipBase: show parent control tooltip if no tooltip on child",
         "references": [
           {
+            "type": "GitHub",
+            "reference": "917"
+          },
+          {
             "type": "BCP",
             "reference": "1670187459"
           },
           {
             "type": "BCP",
             "reference": "1570632712"
-          },
-          {
-            "type": "GitHub",
-            "reference": "917"
           }
         ]
       },

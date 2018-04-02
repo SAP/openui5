@@ -6,12 +6,7 @@
         "id": "229509a7e5a8c4dd10ffce0acb61a25627564e73",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Focus is now styled correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1570874790"
-          }
-        ]
+        "references": []
       }
     ]
   },
@@ -22,12 +17,7 @@
         "id": "d7b638444989c9f281403a0d3cfc1e0bf8c23808",
         "type": "FIX",
         "text": "sap.tnt.SideNavigation: Blinking effect on collapse is not visible anymore",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670074223"
-          }
-        ]
+        "references": []
       }
     ]
   },
@@ -44,12 +34,7 @@
         "id": "8e210acf0914758eddd0f4a7c63fbc1bcf991598",
         "type": "FIX",
         "text": "sap.tnt.SideNavigation: Window scrolling in iOS is now prevented",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670250764"
-          }
-        ]
+        "references": []
       }
     ]
   },
@@ -60,12 +45,7 @@
         "id": "f428cfc9618876f5cd087d60fae24badddfd9acb",
         "type": "FIX",
         "text": "sap.tnt.NavigationList: Icon rendering issue solved",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1670303055"
-          }
-        ]
+        "references": []
       }
     ]
   }

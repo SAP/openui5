@@ -146,5 +146,82 @@
         "references": []
       }
     ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "4c4fc65a89f419fdeb2b6a3c28f87fae3a606cc1",
+        "type": "FIX",
+        "text": " AnalyticalTable: Sum Row indent and hover effect corrected",
+        "references": []
+      },
+      {
+        "id": "cedbf4fba43b63b557720e34b62d968c4126c269",
+        "type": "FIX",
+        "text": " GridTable: Attribute headers for gridcell corrected",
+        "references": []
+      },
+      {
+        "id": "153f1b86c658ad113ed410cbca109b182c548d10",
+        "type": "FIX",
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
+      },
+      {
+        "id": "cdee04d06d45e490b4d9429cdf5d397f1a82b066",
+        "type": "FIX",
+        "text": " GridTable: Disable visibility menu item of last visible column",
+        "references": []
+      },
+      {
+        "id": "501cb9a8c31e44d87431de5943245e921e6da703",
+        "type": "FIX",
+        "text": " GridTable: Fix up/down navigation with arrow keys",
+        "references": []
+      },
+      {
+        "id": "c18e79e39464eca95b3eadd73d6e4bdaf2368d28",
+        "type": "FIX",
+        "text": " GridTable: Fix update of firstVisibleRow on scrolling",
+        "references": []
+      },
+      {
+        "id": "aff5fb61e241593d6ba15bcebdffad8d997aaffe",
+        "type": "FIX",
+        "text": " GridTable: Move before/after tab elements out of scrollable CCnt",
+        "references": []
+      },
+      {
+        "id": "09c239c70f63c98790c9ac0dc1719c4ced0471ec",
+        "type": "FIX",
+        "text": " GridTable: Scrollbar styling in base theme",
+        "references": []
+      },
+      {
+        "id": "61a0232f0042023652aafd0b15b55136391c8e42",
+        "type": "FIX",
+        "text": " Table: Correct number of rows in visibleRowCountMode\u003dAuto",
+        "references": []
+      },
+      {
+        "id": "6c8715a00d0e5c318eec2f9073ebec27096c99c9",
+        "type": "FIX",
+        "text": " Table: Removed setBusy handling for \"Auto\" row count mode",
+        "references": []
+      },
+      {
+        "id": "87188c63698d65179797fb3a22d1467551999f42",
+        "type": "FIX",
+        "text": " Table: Scroll position stabilized",
+        "references": []
+      },
+      {
+        "id": "a0b087a7380ab64c9448e39ab5b9dc584b263583",
+        "type": "FIX",
+        "text": " Table: Stabilized scroll position on cell focus",
+        "references": []
+      }
+    ]
   }
 }

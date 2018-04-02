@@ -123,12 +123,12 @@
         "text": "sap.tnt.NavigationList: Memory leak when closing popover is now fixed",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1770384722"
-          },
-          {
             "type": "GitHub",
             "reference": "1684"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770384722"
           }
         ]
       }

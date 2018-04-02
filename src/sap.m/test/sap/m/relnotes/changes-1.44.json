@@ -401,12 +401,12 @@
         "text": "sap.m.Dialog: Memory leak is fixed",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1680238726"
-          },
-          {
             "type": "GitHub",
             "reference": "1112"
+          },
+          {
+            "type": "BCP",
+            "reference": "1680238726"
           }
         ]
       },
@@ -2147,12 +2147,12 @@
         "text": "sap.m.TimePicker: displayFormat now correctly ignored when value is bound",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1670558955"
-          },
-          {
             "type": "GitHub",
             "reference": "1185"
+          },
+          {
+            "type": "BCP",
+            "reference": "1670558955"
           }
         ]
       },
@@ -3218,12 +3218,12 @@
         "text": "sap.m.UploadCollection: selectionChange event call corrected",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1770060178"
-          },
-          {
             "type": "GitHub",
             "reference": "1366"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770060178"
           }
         ]
       }
@@ -3364,12 +3364,12 @@
         "text": "sap.m.Bar fix the styling",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1770008151"
-          },
-          {
             "type": "GitHub",
             "reference": "1328"
+          },
+          {
+            "type": "BCP",
+            "reference": "1770008151"
           }
         ]
       },
@@ -3628,16 +3628,16 @@
         "text": "sap.m.Table: Wrong colspan calculation is fixed for nodata cases.",
         "references": [
           {
+            "type": "GitHub",
+            "reference": "1452"
+          },
+          {
             "type": "BCP",
             "reference": "1770174652"
           },
           {
             "type": "BCP",
             "reference": "1770190734"
-          },
-          {
-            "type": "GitHub",
-            "reference": "1452"
           }
         ]
       },
@@ -3960,12 +3960,12 @@
         "text": "sap.m.FeedListItem: Special characters in the sender property are displayed correctly",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1780301433"
-          },
-          {
             "type": "GitHub",
             "reference": "1595"
+          },
+          {
+            "type": "BCP",
+            "reference": "1780301433"
           }
         ]
       },
@@ -4838,6 +4838,55 @@
           {
             "type": "BCP",
             "reference": "002075129500000511882018"
+          }
+        ]
+      }
+    ]
+  },
+  "1.44.29": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "449dfcef7694f403069862bbd2eae0321e9ade80",
+        "type": "FIX",
+        "text": "sap.m.DateTimePicker: properly show TimePicker in Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880179799"
+          }
+        ]
+      },
+      {
+        "id": "26b69a219d8311d9a15f7e3b6203e4f6b58b4c25",
+        "type": "FIX",
+        "text": "sap.m.Page: Escape title properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780233503"
+          }
+        ]
+      },
+      {
+        "id": "4e75a3e6e663ee53773f5fb47c4fe8fbc3d5a1f8",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: removeItem, removeItems, removeButton and removeButtons return the removed elements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880235141"
+          }
+        ]
+      },
+      {
+        "id": "59a81e8308def4daf0915694858fc738c702bc80",
+        "type": "FIX",
+        "text": "sap.m.TimePicker: The placeholder now is correctly displayed in IE after focusout",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880169725"
           }
         ]
       }

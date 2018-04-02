@@ -211,5 +211,28 @@
         "references": []
       }
     ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "153f1b86c658ad113ed410cbca109b182c548d10",
+        "type": "FIX",
+        "text": " GridTable: Color contrast of Information Highlight fixed in HCB/W",
+        "references": []
+      },
+      {
+        "id": "5858073d25821d250bb46a30c64c9cc148108121",
+        "type": "FIX",
+        "text": " sap.m.ColorPalette: focus indication for IE, Edge in standard theme is fixed.",
+        "references": []
+      },
+      {
+        "id": "0458c0ca6ce4b77c966e7bba06776104799662f4",
+        "type": "FIX",
+        "text": " uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
+        "references": []
+      }
+    ]
   }
 }

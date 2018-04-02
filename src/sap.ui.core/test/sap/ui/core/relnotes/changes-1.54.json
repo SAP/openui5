@@ -93,7 +93,7 @@
       {
         "id": "8d6dfaeda6a6ffbe6824666fc1a4a0322a9aaeac",
         "type": "FEATURE",
-        "text": "Element: support 'selector' for properties and aggregations",
+        "text": "Element: support \u0027selector\u0027 for properties and aggregations",
         "references": []
       },
       {
@@ -277,7 +277,7 @@
       {
         "id": "23a88f99d5bfd03d62a6b6db001b93b3451e1664",
         "type": "FEATURE",
-        "text": "Add '72' font and use as default in all Belize themes",
+        "text": "Add \u002772\u0027 font and use as default in all Belize themes",
         "references": []
       },
       {
@@ -559,7 +559,7 @@
       {
         "id": "a06e0a96aea5413c682e666311ec9f73d42574ce",
         "type": "FIX",
-        "text": "sap.ui.model: fix documentation, visibility of Client- & JSONModel",
+        "text": "sap.ui.model: fix documentation, visibility of Client- \u0026 JSONModel",
         "references": []
       },
       {
@@ -621,7 +621,7 @@
       {
         "id": "d054bc161c0bac4e762c9e7c51e85ba59d1b2d43",
         "type": "FIX",
-        "text": "core.routing: wait for the root view in case it's loaded async",
+        "text": "core.routing: wait for the root view in case it\u0027s loaded async",
         "references": [
           {
             "type": "BCP",
@@ -799,7 +799,7 @@
       {
         "id": "5abc860bc0d8f75fa0d93c10b17584b30208b690",
         "type": "FIX",
-        "text": "sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property 'getEntityType' of null",
+        "text": "sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property \u0027getEntityType\u0027 of null",
         "references": [
           {
             "type": "BCP",
@@ -923,7 +923,7 @@
       {
         "id": "a6bf7dff0b90d172dd877a6a9ba67f0159c191c8",
         "type": "FIX",
-        "text": "jquery-mobile-custom: avoid duplicate 'tap' event (continued)",
+        "text": "jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
         "references": [
           {
             "type": "BCP",
@@ -951,7 +951,7 @@
       {
         "id": "d20446c66f0547329de83acbd65ba1c747fc7cf1",
         "type": "FIX",
-        "text": "sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property 'getEntityType' of null",
+        "text": "sap.ui.model.analytics.AnalyticalBinding: avoid Error: Cannot read property \u0027getEntityType\u0027 of null",
         "references": [
           {
             "type": "BCP",
@@ -1129,6 +1129,89 @@
             "reference": "1880170185"
           }
         ]
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "07b9467b3c8c054e061fb0e81098d460d94d5674",
+        "type": "FIX",
+        "text": " Controller: wrong error log",
+        "references": []
+      },
+      {
+        "id": "39a98aef2257f65b6cd8c23c03d14bdd4dc0045f",
+        "type": "FIX",
+        "text": " Core#notifyContentDensityChanged: Missing \"theme\" event parameter",
+        "references": []
+      },
+      {
+        "id": "f12e3180e5bb642bad6d49f028a2c60077103721",
+        "type": "FIX",
+        "text": " ODataModel(V2) docs: add since information for invalidate* methods",
+        "references": []
+      },
+      {
+        "id": "43e978f21974119ec7c4f40eb39298eaca582d9e",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": []
+      },
+      {
+        "id": "95fc4a3242f2d0a67e855bb82abc1df67e2ce852",
+        "type": "FIX",
+        "text": " crossroads.js: correctly handle the parse of skipped optional param",
+        "references": []
+      },
+      {
+        "id": "712d1d82e82b55b5188b54b283ba0e2675b2e326",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: Edge button events",
+        "references": []
+      },
+      {
+        "id": "e00e7239d7af22ea7b77776aaf450c1b44dee44b",
+        "type": "FIX",
+        "text": " mvc/XMLView: expose errors from template parsing",
+        "references": []
+      },
+      {
+        "id": "0589f6b1bdc10a96a7baa3d85db2d3815e1a4380",
+        "type": "FIX",
+        "text": " mvc/XMLViewRenderer: create DOM string before dummy placeholders",
+        "references": []
+      },
+      {
+        "id": "8b9dde931adb4fda21dd69d334d9e261b0e95077",
+        "type": "FIX",
+        "text": " sap.ui.base.SyncPromise.all: support sparse arrays",
+        "references": []
+      },
+      {
+        "id": "2e3903442bc48f37f70120b1355975604b5cf5e9",
+        "type": "FIX",
+        "text": " sap.ui.core.LocaleData: CZK digits",
+        "references": []
+      },
+      {
+        "id": "f356e6f9bf3d4d5fa91e6bb1c8594cc066940952",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Parsing name of day",
+        "references": []
+      },
+      {
+        "id": "47464fe4f3af4d794fe9d9cce46fcd83c2501319",
+        "type": "FIX",
+        "text": " v2.ODataContextBinding: Preliminary check for Propagated Contexts",
+        "references": []
+      },
+      {
+        "id": "a13236d685c3553078099e259a8b402ab671e5cc",
+        "type": "FIX",
+        "text": " v2.ODataModel: metadata url params missing",
+        "references": []
       }
     ]
   }

@@ -5,19 +5,14 @@
       {
         "id": "62f9cd0d55d859ecf0230910c939959e64826a09",
         "type": "FIX",
-        "text": "Explored App: better Search Tag creation for list search",
+        "text": " Explored App: better Search Tag creation for list search",
         "references": []
       },
       {
         "id": "a80020352e503f31decb13b3eeeb67ba4bdb51c0",
         "type": "FIX",
-        "text": "SDK: accept hash for LICENSE.txt",
-        "references": [
-          {
-            "type": "GitHub",
-            "reference": "1320"
-          }
-        ]
+        "text": " SDK: accept hash for LICENSE.txt",
+        "references": []
       }
     ]
   },
@@ -27,13 +22,8 @@
       {
         "id": "324824b1ec76ec74bdeaf5e23ce1b4ffbf436c73",
         "type": "FIX",
-        "text": "RTA - Incorrect selectable overlays in OpenUI5 Explored",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780142405"
-          }
-        ]
+        "text": " RTA - Incorrect selectable overlays in OpenUI5 Explored",
+        "references": []
       }
     ]
   },
@@ -43,13 +33,8 @@
       {
         "id": "ef4ac1045905013bb64e12f87ae77962e589fc0e",
         "type": "FIX",
-        "text": "developerMode for RTA in exploredApp",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1770333504"
-          }
-        ]
+        "text": " developerMode for RTA in exploredApp",
+        "references": []
       }
     ]
   }

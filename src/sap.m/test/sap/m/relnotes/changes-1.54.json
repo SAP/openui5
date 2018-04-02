@@ -39,7 +39,7 @@
       {
         "id": "27986c5ac106507fc872a7ae47e9162e47130223",
         "type": "FIX",
-        "text": "sap.m.MessageView: Header's visibility adjusted",
+        "text": "sap.m.MessageView: Header\u0027s visibility adjusted",
         "references": [
           {
             "type": "BCP",
@@ -451,7 +451,7 @@
       {
         "id": "0f8a660ba97f0016fb120365b380ca938e5f798d",
         "type": "FIX",
-        "text": "sap.m.DateTimePicker-when picker is opened for IE & Edge, input should not be focusable",
+        "text": "sap.m.DateTimePicker-when picker is opened for IE \u0026 Edge, input should not be focusable",
         "references": [
           {
             "type": "BCP",
@@ -561,7 +561,7 @@
       {
         "id": "a30688b35ee9a1db2539caa3f4f9d73d7da1cedb",
         "type": "FIX",
-        "text": "sap.m.MultiInput: tokenUpdate is now fired before a token's insertion",
+        "text": "sap.m.MultiInput: tokenUpdate is now fired before a token\u0027s insertion",
         "references": [
           {
             "type": "BCP",
@@ -717,7 +717,7 @@
       {
         "id": "a8d453853d5de293e7519ea850888cf18a18c6cb",
         "type": "FIX",
-        "text": "sap.m.MessageView: Link's properties are now forwarded in detailsPage",
+        "text": "sap.m.MessageView: Link\u0027s properties are now forwarded in detailsPage",
         "references": [
           {
             "type": "BCP",
@@ -898,7 +898,7 @@
       {
         "id": "9501528f6b0ef60815c2123d342b37f4156db31c",
         "type": "FIX",
-        "text": "sap.m.Button: fire press event on keydown for 'enter' and keyup for 'space'",
+        "text": "sap.m.Button: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
         "references": []
       },
       {
@@ -943,7 +943,7 @@
       {
         "id": "1a5ee7fad6feb892f40cdbbc0246577da2b2a08b",
         "type": "FIX",
-        "text": "sap.m.Link: fire press event on keydown for 'enter' and keyup for 'space'",
+        "text": "sap.m.Link: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
         "references": []
       },
       {
@@ -1082,7 +1082,7 @@
       {
         "id": "9a3d3667ad9e328a1debd4b5a917b1d83eb1c74f",
         "type": "FIX",
-        "text": "sap.m.SearchField: 'search' event is now correctly fired",
+        "text": "sap.m.SearchField: \u0027search\u0027 event is now correctly fired",
         "references": [
           {
             "type": "BCP",
@@ -1529,7 +1529,7 @@
       {
         "id": "daff09d58236810b62986c676528b0ffb08b1c7a",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar: OneMonthView in compact mode doesn't overlap dates",
+        "text": "sap.m.PlanningCalendar: OneMonthView in compact mode doesn\u0027t overlap dates",
         "references": [
           {
             "type": "BCP",
@@ -1540,7 +1540,7 @@
       {
         "id": "23440ad8ace02d24bf68cc233cd03be013ff268d",
         "type": "FIX",
-        "text": "sap.m.Popover: beforeClose event is not fired when the Popover's closing animation is running or is already closed.",
+        "text": "sap.m.Popover: beforeClose event is not fired when the Popover\u0027s closing animation is running or is already closed.",
         "references": [
           {
             "type": "BCP",
@@ -2061,7 +2061,7 @@
       {
         "id": "e39f646e45ef493772e0e412e98317e1cefa4221",
         "type": "FIX",
-        "text": "sap.m.GrowingEnablement: Focus shouldn't jump out of the control.",
+        "text": "sap.m.GrowingEnablement: Focus shouldn\u0027t jump out of the control.",
         "references": [
           {
             "type": "BCP",
@@ -2140,7 +2140,7 @@
       {
         "id": "b0c82cfac07da826ea47cc552c6c21f53c0d5ae8",
         "type": "FIX",
-        "text": "sap.m.StepInput: pressing PageUp or PageDown doesn't scroll the page now",
+        "text": "sap.m.StepInput: pressing PageUp or PageDown doesn\u0027t scroll the page now",
         "references": [
           {
             "type": "GitHub",
@@ -2199,32 +2199,155 @@
             "reference": "1880171139"
           }
         ]
+      }
+    ]
+  },
+  "1.54.3": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "609a622af12bac4d307b81440b19207bdef3137f",
+        "type": "FIX",
+        "text": " sap.m.Button: Combine buttons change handler generates stable ID now",
+        "references": []
       },
       {
-        "id": "add9fa3cb58f3b5d7cea2754243ab95d5a57d2c4",
+        "id": "5858073d25821d250bb46a30c64c9cc148108121",
         "type": "FIX",
-        "text": "sap.m.GrowingEnablement: Focus shouldn't jump out of the control.",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1880179777"
-          }
-        ]
+        "text": " sap.m.ColorPalette: focus indication for IE, Edge in standard theme is fixed.",
+        "references": []
       },
       {
-        "id": "4ac182506fe517a7d86ba458392c9e769328d045",
+        "id": "9475d241dcd873c3f08ebbf44d1d63912aeed88b",
         "type": "FIX",
-        "text": "sap.m.QuickView: Auto closing is now fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "1780478379"
-          },
-          {
-            "type": "BCP",
-            "reference": "1880190661"
-          }
-        ]
+        "text": " sap.m.DateTimePicker: properly show TimePicker in Edge",
+        "references": []
+      },
+      {
+        "id": "1f237e621e214f472cbd4f5e742e2a20868d7c05",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: when picker is opened for IE \u0026 Edge, input should not be focusable",
+        "references": []
+      },
+      {
+        "id": "6038662a0fa7d31c33fc5c2ac0a28285fd232afe",
+        "type": "FIX",
+        "text": " sap.m.Dialog: stretch property when using content size fixed",
+        "references": []
+      },
+      {
+        "id": "c4617415228993dbcce7fe7e4e383054e9527500",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: correct navigation with arrow keys",
+        "references": []
+      },
+      {
+        "id": "0d3b5702a27bfea9d9d591072bb41b7044495828",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Disabled tabs are no longer selectable",
+        "references": []
+      },
+      {
+        "id": "e3f8803c6a7981f97e2eaeca4764cc69e098a4b6",
+        "type": "FIX",
+        "text": " sap.m.Input: Change event is now fired correctly with HelpDialog",
+        "references": []
+      },
+      {
+        "id": "05a06e038b1465d44cfccbd6e47e23c1de4d7dd8",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: marks Event ontouchstart",
+        "references": []
+      },
+      {
+        "id": "a9c4799bb755bb6e765fec593210f624501c9de9",
+        "type": "FIX",
+        "text": " sap.m.Page: Escape title properly",
+        "references": []
+      },
+      {
+        "id": "fa072c55803e376dd8ef79140787998bdeddc806",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "0e69f2e3ee8d1a1044f35e2d942091d589992d93",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Now the deselection of a non-existing element is handled correctly",
+        "references": []
+      },
+      {
+        "id": "71ea5ee08b933862f203c0048d6e159a0e8f19f3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: customData for PlanningCalendarRow is fully supported.",
+        "references": []
+      },
+      {
+        "id": "a22250a50c80bf154f780f485fb0e768ab638569",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Parent container is not re-rendered any more",
+        "references": []
+      },
+      {
+        "id": "450878c5cadf90c2654dbcedec089b87d476e032",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: getAccessibilityInfo method added",
+        "references": []
+      },
+      {
+        "id": "c8a14536b5e2b308ea16feae29f04e3bac84b772",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: removeItem, removeItems, removeButton and removeButtons return the removed elements",
+        "references": []
+      },
+      {
+        "id": "ab47d8fad22cd1955af2e251dda353b61de7c63d",
+        "type": "FIX",
+        "text": " sap.m.Select: Value state information is now read",
+        "references": []
+      },
+      {
+        "id": "72b9b9a99b6e556ef7c9d1fb4aaaed7e7a6d8847",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: correct tab  close button size",
+        "references": []
+      },
+      {
+        "id": "78baa3d72c32defaba720e6cf74e180ec8fa61be",
+        "type": "FIX",
+        "text": " sap.m.TextArea: The focus and the background are now correct",
+        "references": []
+      },
+      {
+        "id": "4462a45e79f58ed93f91751cffbc364517fb52d9",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Custom tiles show now visual indication of deletion",
+        "references": []
+      },
+      {
+        "id": "1b12427aef633087d3220335b1773c03194b8e4d",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: active page is displayed correct now.",
+        "references": []
+      },
+      {
+        "id": "9c18f0e0b48ad729992bc9d8fee7ccb6120e0a20",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: after new page is added, scrollers remain visible.",
+        "references": []
+      },
+      {
+        "id": "f2a339848a102e972d3b6a0794c118f2bca9d75c",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: correct filter examples",
+        "references": []
+      },
+      {
+        "id": "506511559c39182fb36ae7f1735ecd70b6525057",
+        "type": "FIX",
+        "text": " sap.m: downport missing translations for 1.54",
+        "references": []
       }
     ]
   }

@@ -2652,12 +2652,12 @@
         "text": "sap.m.StepInput: pressing PageUp or PageDown doesn't scroll the page now",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1880197936"
-          },
-          {
             "type": "GitHub",
             "reference": "1902"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880197936"
           }
         ]
       },
@@ -2667,12 +2667,12 @@
         "text": "sap.m.TileContainer: Tile is initially visible now if TileContainer contains only one tile",
         "references": [
           {
-            "type": "BCP",
-            "reference": "1880151833"
-          },
-          {
             "type": "GitHub",
             "reference": "1813"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880151833"
           }
         ]
       },
@@ -2706,6 +2706,140 @@
           {
             "type": "BCP",
             "reference": "1880171139"
+          }
+        ]
+      }
+    ]
+  },
+  "1.52.9": {
+    "date": "March 2018",
+    "notes": [
+      {
+        "id": "30f6cd93f135b0c12cb799f4afd2692629be6e8c",
+        "type": "FIX",
+        "text": "sap.m.Button: Combine buttons change handler generates stable ID now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880169443"
+          }
+        ]
+      },
+      {
+        "id": "539d81d45bd3c08815cc365e1cb80e0ba4b82ac8",
+        "type": "FIX",
+        "text": "sap.m.DateTimePicker: properly show TimePicker in Edge",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880179799"
+          }
+        ]
+      },
+      {
+        "id": "79be47e62abe57a87726aace22f15d492387ac0e",
+        "type": "FIX",
+        "text": "sap.m.Dialog: stretch property when using content size fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880171315"
+          }
+        ]
+      },
+      {
+        "id": "76f23550bbddc593f60b6e43fbc05ad73c6a2b4b",
+        "type": "FIX",
+        "text": "sap.m.FacetFilter: correct navigation with arrow keys",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880240852"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880222185"
+          }
+        ]
+      },
+      {
+        "id": "81eb6c998bc95434ce8bdab0af63a49bd2151b8b",
+        "type": "FIX",
+        "text": "sap.m.GrowingEnablement: Focus is lost after growing",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880210210"
+          }
+        ]
+      },
+      {
+        "id": "4d0d1d983072b23cda2e66522d9c9a4a6acc94e3",
+        "type": "FIX",
+        "text": "sap.m.IconTabBar: Disabled tabs are no longer selectable",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870011039"
+          }
+        ]
+      },
+      {
+        "id": "f608a0d169969831796f785217d2c91451126331",
+        "type": "FIX",
+        "text": "sap.m.Page: Escape title properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780233503"
+          }
+        ]
+      },
+      {
+        "id": "9e5664f1959b71e91b09745ae609d53246435ce5",
+        "type": "FIX",
+        "text": "sap.m.PlanningCalendar: customData for PlanningCalendarRow is fully supported.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1870027607"
+          }
+        ]
+      },
+      {
+        "id": "3abc71b11b9930957f4dd0cc99f198122acba6cd",
+        "type": "FIX",
+        "text": "sap.m.SegmentedButton: removeItem, removeItems, removeButton and removeButtons return the removed elements",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880235141"
+          }
+        ]
+      },
+      {
+        "id": "865007b6f6e6740953df47c796e8ae47e20cdeb1",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: active page is displayed correct now.",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1880199566"
+          }
+        ]
+      },
+      {
+        "id": "ff5a13c5c24c142ffaad190465fa69b2bad49734",
+        "type": "FIX",
+        "text": "sap.m.TileContainer: fix failing unit tests",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780504518"
+          },
+          {
+            "type": "BCP",
+            "reference": "1880230812"
           }
         ]
       }
