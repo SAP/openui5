@@ -416,7 +416,6 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 				oPopover.setShowArrow(false);
 			}
 
-			this._oPopup.attachBeforeOpen(_handleBeforeOpen, this);
 			this._oPopup.attachAfterOpen(_handleAfterOpen, this);
 			this._oPopup.attachAfterClose(_handleAfterClose, this);
 
@@ -452,6 +451,8 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 		if (!this._oPopup) {
 			return;
 		}
+
+		this._storeInputSelection(this._$input.get(0));
 
 		var oPopover = this._oPopup.getAggregation("_popup");
 		oPopover.oPopup.setAutoCloseAreas([this.getDomRef()]);
@@ -565,10 +566,6 @@ sap.ui.define(['jquery.sap.global', './DatePicker', 'sap/ui/model/type/Date', '.
 
 		this.onsaphide(oEvent);
 
-	}
-
-	function _handleBeforeOpen(){
-		this._storeInputSelection(this._$input.get(0));
 	}
 
 	function _handleAfterOpen(oEvent){

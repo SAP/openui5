@@ -915,6 +915,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 			return;
 		}
 
+		this._storeInputSelection(this._$input.get(0));
+
 		this._oPopup.setAutoCloseAreas([this.getDomRef()]);
 
 		var eDock = sap.ui.core.Popup.Dock;
@@ -1176,8 +1178,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', './InputBase', './DateTimeF
 	}
 
 	function _handleOpened(oEvent) {
-		this._storeInputSelection(this._$input.get(0));
-
 		this._renderedDays = this._oCalendar.$("-Month0-days").find(".sapUiCalItem").length;
 
 		this.$("inner").attr("aria-owns", this.getId() + "-cal");

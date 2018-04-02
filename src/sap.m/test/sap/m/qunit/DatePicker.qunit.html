@@ -1245,6 +1245,30 @@
 				this.clock.tick(1000);//"waits" for close popup animation to complete
 			});
 
+			// BCP: 1880193676
+			QUnit.test("For IE & Edge the input selection is stored and cleared from _openPopup method (before opening the Popover)", function (assert) {
+				// Arrange
+				var fn = function () {},
+					oStub = this.stub(sap.ui.Device, "browser", { msie: true }),
+					oDP = new sap.m.DatePicker(),
+					oDPStoreInputSelectionSpy = this.spy(oDP, "_storeInputSelection");
+
+				oDP._oPopup = { setAutoCloseAreas: fn, open: fn, isOpen: fn }; // simulate that there is a popup
+				oDP.placeAt("uiArea2");
+				sap.ui.getCore().applyChanges();
+
+				// Act
+				oDP._openPopup();
+
+				// Arrange
+				assert.equal(oDPStoreInputSelectionSpy.callCount, 1, "_storeInputSelection is called once on _openPopup");
+
+				// Cleanup
+				oStub.restore();
+				oDPStoreInputSelectionSpy.restore();
+				oDP.destroy();
+			});
+
 			QUnit.module("ARIA");
 
 			QUnit.test("aria-ownes and aria-expanded correctly set", function(assert) {
