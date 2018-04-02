@@ -1693,6 +1693,7 @@ function(
 			 */
 			Dialog.prototype.ondblclick = function (e) {
 				if (isHeaderClicked(e.target)) {
+					var $dialogContent = this.$('cont');
 					this._bDisableRepositioning = false;
 					this._oManuallySetPosition = null;
 					this._oManuallySetSize = null;
@@ -1700,6 +1701,11 @@ function(
 					//call the reposition
 					this.oPopup && this.oPopup._applyPosition(this.oPopup._oLastPosition, true);
 					this._$dialog.removeClass('sapMDialogTouched');
+
+					//BCP: 1880238929
+					$dialogContent.css({
+						height: '100%'
+					});
 				}
 			};
 
