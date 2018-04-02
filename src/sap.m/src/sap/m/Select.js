@@ -1782,7 +1782,9 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 		};
 
 		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
-			var aIDs = this.$().attr("aria-labelledby").split(" "),
+			var $this = this.$(),
+                            sAttr = $this.attr("aria-labelledby"),
+				aIDs = sAttr ? sAttr.split(" ") : [],
 				sNewIDs,
 				ValueState = sap.ui.core.ValueState;
 
@@ -1805,7 +1807,7 @@ sap.ui.define(['jquery.sap.global', './Dialog', './Popover', './SelectList', './
 			}
 
 			sNewIDs = aIDs.join(" ");
-			this.$().attr("aria-labelledby", sNewIDs);
+			$this.attr("aria-labelledby", sNewIDs);
 		};
 
 		/**
