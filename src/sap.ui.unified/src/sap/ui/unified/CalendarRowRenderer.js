@@ -223,6 +223,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		}
 	};
 
+	CalendarRowRenderer.writeCustomAttributes = function (oRm, oRow) {
+	};
+
 	CalendarRowRenderer.renderInterval = function(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, aNonWorkingDates, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType){
 
 		var sId = oRow.getId() + "-AppsInt" + iInterval;
@@ -292,6 +295,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 
 		oRm.writeClasses();
 		oRm.writeStyles();
+		this.writeCustomAttributes(oRm, oRow);
 		oRm.write(">"); // div element
 
 		if (bShowIntervalHeaders) {

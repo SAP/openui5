@@ -29,6 +29,7 @@ sap.ui.define(['jquery.sap.global',
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
 	var DRAG_DROP_CONFIG_NAME = "DragDropConfig";
 	var RESIZE_CONFIG_NAME = "ResizeConfig";
+	var CREATE_CONFIG_NAME = "CreateConfig";
 
 	/**
 	 * Constructor for a new <code>PlanningCalendarRow</code>.
@@ -170,7 +171,20 @@ sap.ui.define(['jquery.sap.global',
 			 *
 			 * @since 1.56
 			 */
-			enableAppointmentsResize : {type : "boolean", group : "Misc", defaultValue : false}
+			enableAppointmentsResize : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * Determines whether the appointments can be created by dragging on empty cells.
+			 *
+			 * See {@link #property:enableAppointmentsResize enableAppointmentsResize} for the specific points for events snapping
+			 *
+			 * <b>Notes:</b>
+			 * In "One month" view, the appointments cannot be created on small screen (as there they are
+			 * displayed as a list below the dates).
+			 *
+			 * @since 1.56
+			 */
+			enableAppointmentsCreate : {type : "boolean", group : "Misc", defaultValue : false}
 
 		},
 		aggregations : {
@@ -294,6 +308,29 @@ sap.ui.define(['jquery.sap.global',
 					 */
 					endDate : {type : "object"}
 				}
+			},
+
+			/**
+			 * Fired if an appointment is created.
+			 * @since 1.56
+			 */
+			appointmentCreate : {
+				parameters : {
+					/**
+					 * Start date of the created appointment, as a JavaScript date object.
+					 */
+					startDate : {type : "object"},
+
+					/**
+					 * End date of the created appointment, as a JavaScript date object.
+					 */
+					endDate : {type : "object"},
+
+					/**
+					 * The row of the appointment.
+					 */
+					calendarRow : {type : "sap.m.PlanningCalendarRow"}
+				}
 			}
 		}
 	}});
@@ -378,7 +415,8 @@ sap.ui.define(['jquery.sap.global',
 	CalendarRowInPCRenderer.renderBeforeAppointments = function (oRm, oRow) {
 		var intervalPlaceholders;
 
-		if ((!oRow._oPlanningCalendarRow.getEnableAppointmentsDragAndDrop() && !oRow._oPlanningCalendarRow.getEnableAppointmentsResize()) || oRow._isOneMonthIntervalOnSmallSizes()) {
+		if (!oRow._oPlanningCalendarRow.getEnableAppointmentsDragAndDrop() && !oRow._oPlanningCalendarRow.getEnableAppointmentsResize() && !oRow._oPlanningCalendarRow.getEnableAppointmentsCreate() ||
+			oRow._isOneMonthIntervalOnSmallSizes()) {
 			return;
 		}
 
@@ -405,6 +443,12 @@ sap.ui.define(['jquery.sap.global',
 		oRm.writeClasses();
 		oRm.write(">");
 		oRm.write("</span>");
+	};
+
+	CalendarRowInPCRenderer.writeCustomAttributes = function (oRm, oRow) {
+		if (oRow._oPlanningCalendarRow.getEnableAppointmentsCreate()) {
+			oRm.writeAttribute("draggable", "true");
+		}
 	};
 
 	var CalendarRowInPlanningCalendar = CalendarRow.extend("CalendarRowInPlanningCalendar", {
@@ -439,16 +483,23 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	CalendarRowInPlanningCalendar.prototype.onmousedown = function (oEvent) {
-		this._bIsResizing = oEvent.target.classList.contains("sapUiCalendarAppResizeHandle");
+		var oClassList = oEvent.target.classList;
+		this._isResizeHandleMouseDownTarget = oClassList.contains("sapUiCalendarAppResizeHandle");
+		this._isRowAppsIntervalMouseDownTarget = oClassList.contains("sapUiCalendarRowAppsInt");
 	};
 
 	CalendarRowInPlanningCalendar.prototype._isResizingPerformed = function () {
-		return this._bIsResizing;
+		return this._isResizeHandleMouseDownTarget;
 	};
 
 	CalendarRowInPlanningCalendar.prototype._isDraggingPerformed = function () {
-		return !this._bIsResizing;
+		return !this._isResizeHandleMouseDownTarget && !this._isRowAppsIntervalMouseDownTarget;
 	};
+
+	CalendarRowInPlanningCalendar.prototype._isCreatingPerformed = function () {
+		return this._isRowAppsIntervalMouseDownTarget;
+	};
+
 
 	var IntervalPlaceholder = Control.extend("IntervalPlaceholder", {
 		metadata: {
@@ -513,7 +564,7 @@ sap.ui.define(['jquery.sap.global',
 						$CalendarRowAppsOverlay.removeClass("sapUiCalendarRowAppsOverlayDragging");
 					});
 				};
-				if (oCalendarRow._isOneMonthIntervalOnSmallSizes() || oCalendarRow._isResizingPerformed()) {
+				if (oCalendarRow._isOneMonthIntervalOnSmallSizes() || !oCalendarRow._isDraggingPerformed()) {
 					oEvent.preventDefault();
 					return;
 				}
@@ -723,6 +774,61 @@ sap.ui.define(['jquery.sap.global',
 		};
 	};
 
+	PlanningCalendarRow.prototype._calcCreateNewAppHours = function(oRowStartDate, iStartIndex, iEndIndex) {
+		var iMinutesStep = 30 * 60 * 1000,  // 30 min
+			oAppStartDate,
+			oAppEndDate;
+
+		if (iStartIndex <= iEndIndex) {
+			oAppStartDate = new Date(oRowStartDate.getTime() + (iStartIndex *  iMinutesStep));
+			oAppEndDate = new Date(oRowStartDate.getTime() + ((iEndIndex + 1) *  iMinutesStep));
+		} else {
+			oAppStartDate = new Date(oRowStartDate.getTime() + (iEndIndex *  iMinutesStep));
+			oAppEndDate = new Date(oRowStartDate.getTime() + (iStartIndex *  iMinutesStep));
+		}
+
+		return {
+			startDate: oAppStartDate,
+			endDate: oAppEndDate
+		};
+	};
+
+	PlanningCalendarRow.prototype._calcCreateNewAppDays = function(oRowStartDate, iStartIndex, iEndIndex) {
+		var oAppStartDate = new Date(oRowStartDate),
+			oAppEndDate = new Date(oRowStartDate);
+
+		if (iStartIndex <= iEndIndex) {
+			oAppStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate() + iStartIndex);
+			oAppEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate() + iEndIndex + 1);
+		} else {
+			oAppStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate() + iEndIndex);
+			oAppEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate() + iStartIndex);
+		}
+
+		return {
+			startDate: oAppStartDate,
+			endDate: oAppEndDate
+		};
+	};
+
+	PlanningCalendarRow.prototype._calcCreateNewAppMonths = function(oRowStartDate, iStartIndex, iEndIndex) {
+		var oAppStartDate = new Date(oRowStartDate),
+			oAppEndDate = new Date(oRowStartDate);
+
+		if (iStartIndex <= iEndIndex) {
+			oAppStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth() + iStartIndex, 1);
+			oAppEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth() + iEndIndex + 1, 1);
+		} else {
+			oAppStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth() + iEndIndex, 1);
+			oAppEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth() + iStartIndex, 1);
+		}
+
+		return {
+			startDate: oAppStartDate,
+			endDate: oAppEndDate
+		};
+	};
+
 	PlanningCalendarRow.prototype.init = function(){
 
 		var sId = this.getId();
@@ -759,7 +865,6 @@ sap.ui.define(['jquery.sap.global',
 					 oCalendarRow],
 			planningCalendarRow: this
 		});
-
 	};
 
 	PlanningCalendarRow.prototype.exit = function(){
@@ -867,17 +972,35 @@ sap.ui.define(['jquery.sap.global',
 	};
 
 	PlanningCalendarRow.prototype.setEnableAppointmentsResize = function (bEnable) {
-		var oOldResizeConfig = this._getResizeConfigFromDragDropConfig(),
-			oNewResizeConfig = this._getResizeConfig();
+		var oOldConfig = this._getConfigFromDragDropConfigAggregation(this.getAggregation("dragDropConfig"), RESIZE_CONFIG_NAME),
+			oNewConfig = this._getResizeConfig();
 
 		this.setProperty("enableAppointmentsResize", bEnable, true); // do not invalidate
 
-		if (bEnable && !oOldResizeConfig) {
-			this.addAggregation("dragDropConfig", oNewResizeConfig, true); // do not invalidate
+		if (bEnable && !oOldConfig) {
+			this.addAggregation("dragDropConfig", oNewConfig, true); // do not invalidate
 		}
 
 		if (!bEnable) {
-			this.removeAggregation("dragDropConfig", oOldResizeConfig, true); // do not invalidate
+			this.removeAggregation("dragDropConfig", oOldConfig, true); // do not invalidate
+		}
+
+		return this;
+	};
+
+	PlanningCalendarRow.prototype.setEnableAppointmentsCreate = function (bEnable) {
+		var oCalendarRow = this.getCalendarRow(),
+			oOldConfig = this._getConfigFromDragDropConfigAggregation(oCalendarRow.getAggregation("dragDropConfig"), CREATE_CONFIG_NAME),
+			oNewConfig = this._getAppointmentsCreateConfig();
+
+		this.setProperty("enableAppointmentsCreate", bEnable, true); // do not invalidate
+
+		if (bEnable && !oOldConfig) {
+			oCalendarRow.addAggregation("dragDropConfig", oNewConfig, true); // do not invalidate
+		}
+
+		if (!bEnable) {
+			oCalendarRow.removeAggregation("dragDropConfig", oOldConfig, true); // do not invalidate
 		}
 
 		return this;
@@ -1075,7 +1198,7 @@ sap.ui.define(['jquery.sap.global',
 				 * Fired when the user starts dragging an appointment.
 				 */
 				dragStart: function (oEvent) {
-					if (!oPlanningCalendarRow.getEnableAppointmentsResize() || oCalendarRow._isOneMonthIntervalOnSmallSizes() || oCalendarRow._isDraggingPerformed()) {
+					if (!oPlanningCalendarRow.getEnableAppointmentsResize() || oCalendarRow._isOneMonthIntervalOnSmallSizes() || !oCalendarRow._isResizingPerformed()) {
 						oEvent.preventDefault();
 						return;
 					}
@@ -1187,17 +1310,111 @@ sap.ui.define(['jquery.sap.global',
 		return oResizeConfig;
 	};
 
-	PlanningCalendarRow.prototype._getResizeConfigFromDragDropConfig = function () {
-		var aDragDropConfigs = this.getAggregation("dragDropConfig"),
+	PlanningCalendarRow.prototype._getConfigFromDragDropConfigAggregation = function (aAggregation, sConfigName) {
+		var aDragDropConfigs = aAggregation,
 			iDragDropConfigsLength = aDragDropConfigs && aDragDropConfigs.length;
 
 		for (var i = 0; i < iDragDropConfigsLength; i++) {
-			if (aDragDropConfigs[i].getGroupName() === RESIZE_CONFIG_NAME) {
+			if (aDragDropConfigs[i].getGroupName() === sConfigName) {
 				return aDragDropConfigs[i];
 			}
 		}
 
 		return null;
+	};
+
+	PlanningCalendarRow.prototype._getAppointmentsCreateConfig = function () {
+		var oPlanningCalendarRow = this,
+			oCalendarRow = this.getCalendarRow(),
+			oCreateConfig = new DragDropInfo({
+				targetAggregation: "_intervalPlaceholders",
+
+				dragStart: function (oEvent) {
+					if (!oPlanningCalendarRow.getEnableAppointmentsCreate() || oCalendarRow._isOneMonthIntervalOnSmallSizes() || !oCalendarRow._isCreatingPerformed()) {
+						oEvent.preventDefault();
+						return;
+					}
+
+					var oDragSession = oEvent.getParameter("dragSession"),
+						$CalendarRowAppsOverlay = oCalendarRow.$().find(".sapUiCalendarRowAppsOverlay"),
+						$Indicator = jQuery(oDragSession.getIndicator());
+
+					setTimeout(function () {
+						$CalendarRowAppsOverlay.addClass("sapUiCalendarRowAppsOverlayDragging");
+					});
+
+					jQuery(document).one("dragend", function () {
+						$CalendarRowAppsOverlay.removeClass("sapUiCalendarRowAppsOverlayDragging");
+						$Indicator.html("");
+						$Indicator.removeClass("sapUiCalendarApp sapUiCalendarAppType01 sapUiAppCreate");
+					});
+
+					if (!Device.browser.msie && !Device.browser.edge) {
+						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+					}
+				},
+
+				dragEnter: function (oEvent) {
+					var oDragSession = oEvent.getParameter("dragSession"),
+						oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
+						fnAlignIndicator = function () {
+							var $Indicator = jQuery(oDragSession.getIndicator());
+
+							$Indicator.addClass("sapUiCalendarApp sapUiCalendarAppType01 sapUiAppCreate");
+
+						};
+
+					var iStartXPosition = oDragSession.getData("text") ? parseFloat(oDragSession.getData("text").split("|")[0]) : 0;
+					if (iStartXPosition) {
+						if (iStartXPosition <= oDropRects.left) {
+							oDragSession.setIndicatorConfig({ left: iStartXPosition, width: Math.max((oDropRects.left + oDropRects.width - iStartXPosition), oDropRects.width) });
+						} else {
+							oDragSession.setIndicatorConfig({ left: oDropRects.left, width: iStartXPosition - oDropRects.left });
+						}
+					} else {
+						oDragSession.setData("text", oDropRects.left + "|" + oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()));
+					}
+
+					if (!oDragSession.getIndicator()) {
+						jQuery.sap.delayedCall(0, null, fnAlignIndicator);
+					} else {
+						fnAlignIndicator();
+					}
+				},
+
+				drop: function (oEvent) {
+					var oDragSession = oEvent.getParameter("dragSession"),
+						$Indicator = jQuery(oDragSession.getIndicator()),
+						sIntervalType = oCalendarRow.getIntervalType(),
+						oRowStartDate = oPlanningCalendarRow.getCalendarRow().getStartDate(),
+						iStartIndex = parseInt(oDragSession.getData("text").split("|")[1], 10),
+						iEndIndex = oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
+						oNewPos;
+
+					if (sIntervalType === CalendarIntervalType.Hour) {
+						oNewPos = this._calcCreateNewAppHours(oRowStartDate, iStartIndex, iEndIndex);
+					} else if (sIntervalType === CalendarIntervalType.Day
+						|| sIntervalType === CalendarIntervalType.Week
+						|| (sIntervalType === CalendarIntervalType.OneMonth && !oCalendarRow._isOneMonthIntervalOnSmallSizes())) {
+						oNewPos = this._calcCreateNewAppDays(oRowStartDate, iStartIndex, iEndIndex);
+					} else if (sIntervalType === CalendarIntervalType.Month) {
+						oNewPos = this._calcCreateNewAppMonths(oRowStartDate, iStartIndex, iEndIndex);
+					}
+
+					this.fireAppointmentCreate({
+						startDate: oNewPos.startDate,
+						endDate: oNewPos.endDate,
+						calendarRow: oCalendarRow._oPlanningCalendarRow
+					});
+
+					$Indicator.html("");
+					$Indicator.removeClass("sapUiCalendarApp sapUiCalendarAppType01 sapUiAppCreate");
+				}.bind(this)
+			});
+
+		oCreateConfig.setProperty("groupName", CREATE_CONFIG_NAME);
+
+		return oCreateConfig;
 	};
 
 	function getResizeGhost() {

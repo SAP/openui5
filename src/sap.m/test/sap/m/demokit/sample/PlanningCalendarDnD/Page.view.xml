@@ -34,9 +34,11 @@
 						text="{role}"
 						enableAppointmentsDragAndDrop="{path:'name', formatter:'.canModifyAppointments'}"
 						enableAppointmentsResize="{path:'name', formatter:'.canModifyAppointments'}"
+						enableAppointmentsCreate="{path:'name', formatter:'.canModifyAppointments'}"
 						appointmentDrop="handleAppointmentDrop"
 						appointmentDragEnter="handleAppointmentDragEnter"
 						appointmentResize="handleAppointmentResize"
+						appointmentCreate="handleAppointmentCreate"
 						appointments="{path : 'appointments', templateShareable: 'true'}">
 					<appointments>
 						<unified:CalendarAppointment
