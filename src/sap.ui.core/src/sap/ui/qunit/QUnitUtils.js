@@ -858,7 +858,7 @@ sap.ui.define('sap/ui/qunit/QUnitUtils', ['jquery.sap.global', 'sap/ui/Device', 
 				 * Calculates a cost function for the case where for
 				 * property 'a' the value 'va' is taken.
 				 *
-				 * The calculated cost consists of two informations:
+				 * The calculated cost consists of two parts:
 				 * - pairs : number of newly addressed unique pairs
 				 * - redundant : number of redundantly added pairs
 				 *
