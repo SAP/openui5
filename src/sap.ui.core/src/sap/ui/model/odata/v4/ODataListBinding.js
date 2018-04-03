@@ -532,14 +532,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
-		var bGrouped = this.aAggregation && this.aAggregation.some(function (oAggregation) {
-				return oAggregation.grouped;
+		var bAggregate = this.aAggregation && this.aAggregation.some(function (oAggregation) {
+				return oAggregation.grouped || oAggregation.min || oAggregation.max;
 			});
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
-		// w/o grouping, $apply is sufficient; else _AggregationCache is needed
-		return bGrouped
+		// w/o grouping or min/max, $apply is sufficient; else _AggregationCache is needed
+		return bAggregate
 			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.aAggregation,
 				mQueryOptions, this.oModel.bAutoExpandSelect)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
@@ -1614,12 +1614,25 @@ sap.ui.define([
 	 *   Dimensions only: see above
 	 * @param {boolean} [aAggregation[].total]
 	 *   Its presence is used to detect a measure
+	 * @param {boolean} [aAggregation[].max]
+	 *   Measures only: Whether the maximum value for this measure is needed (since 1.55.0);
+	 *   <b>filtering and sorting is not supported in this case</b>
+	 * @param {boolean} [aAggregation[].min]
+	 *   Measures only: Whether the minimum value for this measure is needed (since 1.55.0);
+	 *   <b>filtering and sorting is not supported in this case</b>
 	 * @param {string} [aAggregation[].with]
 	 *   Measures only: The name of the method (for example "sum") used for aggregation of this
 	 *   measure; see "3.1.2 Keyword with" (since 1.55.0)
 	 * @param {string} [aAggregation[].as]
 	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
 	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
+	 * @returns {object}
+	 *   The return object contains a property <code>measureRangePromise</code> if and only if at
+	 *   least one measure has requested a minimum or maximum value; its value is a
+	 *   promise which resolves with the measure range map as soon as data has been received; the
+	 *   measure range map contains measure names as keys and objects as values which have a
+	 *   <code>min</code> and <code>max</code> property as requested above.
+	 *   <code>undefined</code> is returned instead of an empty object.
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended or a property is both a dimension and a measure
 	 *
@@ -1629,7 +1642,9 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	ODataListBinding.prototype.updateAnalyticalInfo = function (aAggregation) {
-		aAggregation = _Helper.clone(aAggregation).filter(function (oAggregation) {
+		var bHasMinMax = false;
+
+		this.aAggregation = _Helper.clone(aAggregation).filter(function (oAggregation) {
 			var bInclude = !("grouped" in oAggregation) || oAggregation.inResult
 					|| oAggregation.visible;
 
@@ -1638,11 +1653,19 @@ sap.ui.define([
 
 			if (!("grouped" in oAggregation || "total" in oAggregation)) {
 				oAggregation.grouped = false;
+			} else if (oAggregation.min || oAggregation.max) {
+				bHasMinMax = true;
 			}
-
 			return bInclude;
 		});
-		this.changeParameters({$apply : _Helper.buildApply(aAggregation)});
+		this.changeParameters({$apply : _Helper.buildApply(this.aAggregation)});
+		if (bHasMinMax) {
+			return {
+				measureRangePromise : Promise.resolve(this.oCachePromise.then(function (oCache) {
+					return oCache.getMeasureRangePromise();
+				}))
+			};
+		}
 	};
 
 	return ODataListBinding;

@@ -990,6 +990,82 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the resource path including the query string with $skip and $top if needed.
+	 *
+	 * @param {number} iStart
+	 *   The index of the first element to request ($skip)
+	 * @param {number} iEnd
+	 *   The index after the last element to request ($skip + $top)
+	 * @returns {string} The resource path including the query string
+	 *
+	 * @private
+	 */
+	CollectionCache.prototype.getResourcePath = function (iStart, iEnd) {
+		var sDelimiter = this.sQueryString ? "&" : "?",
+			iExpectedLength = iEnd - iStart,
+			sResourcePath = this.sResourcePath + this.sQueryString;
+
+		if (iStart > 0 || iExpectedLength < Infinity) {
+			sResourcePath += sDelimiter + "$skip=" + iStart;
+		}
+		if (iExpectedLength < Infinity) {
+			sResourcePath += "&$top=" + iExpectedLength;
+		}
+		return sResourcePath;
+	};
+
+	/**
+	 * Handles a GET response by updating the cache data and the $count-values recursively.
+	 *
+	 * @param {number} iStart
+	 *   The index of the first element to request ($skip)
+	 * @param {number} iEnd
+	 *   The index after the last element to request ($skip + $top)
+	 * @param {object} oResult The result of the GET request
+	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
+	 *   {@link #fetchTypes})
+	 *
+	 * @private
+	 */
+	CollectionCache.prototype.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
+		var iCount,
+			sCount,
+			oElement,
+			i,
+			sPredicate,
+			iResultLength = oResult.value.length;
+
+		Cache.computeCount(oResult);
+		this.sContext = oResult["@odata.context"];
+		sCount = oResult["@odata.count"];
+		if (sCount) {
+			this.iLimit = parseInt(sCount, 10);
+			setCount(this.mChangeListeners, "", this.aElements, this.iLimit);
+		}
+		for (i = 0; i < iResultLength; i++) {
+			oElement = oResult.value[i];
+			this.aElements[iStart + i] = oElement;
+			this.calculateKeyPredicates(oElement, mTypeForMetaPath);
+			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+			if (sPredicate) {
+				this.aElements.$byPredicate[sPredicate] = oElement;
+			}
+		}
+		if (iResultLength < iEnd - iStart) { // a short read
+			iCount = Math.min(getCount(this.aElements), iStart + iResultLength);
+			this.aElements.length = iCount;
+			// If the server did not send a count, the calculated count is greater than 0
+			// and the element before has not been read yet, we do not know the count:
+			// The element might or might not exist.
+			if (!sCount && iCount > 0 && !this.aElements[iCount - 1]){
+				iCount = undefined;
+			}
+			setCount(this.mChangeListeners, "", this.aElements, iCount);
+			this.iLimit = iCount;
+		}
+	};
+
+	/**
 	 * Returns a promise to be resolved with an OData object for a range of the requested data.
 	 *
 	 * @param {number} iIndex
@@ -1094,7 +1170,7 @@ sap.ui.define([
 	 * @param {number} iStart
 	 *   The index of the first element to request ($skip)
 	 * @param {number} iEnd
-	 *   The position of the last element to request ($skip + $top)
+	 *   The index after the last element to request ($skip + $top)
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
 	 * @param {function} [fnDataRequested]
@@ -1104,64 +1180,18 @@ sap.ui.define([
 	 */
 	CollectionCache.prototype.requestElements = function (iStart, iEnd, oGroupLock,
 			fnDataRequested) {
-		var sDelimiter = this.sQueryString ? "&" : "?",
-			iExpectedLength = iEnd - iStart,
-			oPromise,
-			sResourcePath = this.sResourcePath + this.sQueryString,
+		var oPromise,
 			that = this;
 
-		if (iStart > 0 || iExpectedLength < Infinity) {
-			sResourcePath += sDelimiter + "$skip=" + iStart;
-			sDelimiter = "&";
-		}
-		if (iExpectedLength < Infinity) {
-			sResourcePath += sDelimiter + "$top=" + iExpectedLength;
-		}
-
 		oPromise = SyncPromise.all([
-			this.oRequestor.request("GET", sResourcePath, oGroupLock, undefined, undefined,
-				fnDataRequested),
+			this.oRequestor.request("GET", this.getResourcePath(iStart, iEnd), oGroupLock,
+				undefined, undefined, fnDataRequested),
 			this.fetchTypes()
 		]).then(function (aResult) {
-			var iCount,
-				sCount,
-				oElement,
-				i,
-				sPredicate,
-				oResult = aResult[0],
-				iResultLength = oResult.value.length;
-
 			if (that.aElements.$tail === oPromise) {
 				that.aElements.$tail = undefined;
 			}
-			Cache.computeCount(oResult);
-			that.sContext = oResult["@odata.context"];
-			sCount = oResult["@odata.count"];
-			if (sCount) {
-				that.iLimit = parseInt(sCount, 10);
-				setCount(that.mChangeListeners, "", that.aElements, that.iLimit);
-			}
-			for (i = 0; i < iResultLength; i++) {
-				oElement = oResult.value[i];
-				that.aElements[iStart + i] = oElement;
-				that.calculateKeyPredicates(oElement, aResult[1]);
-				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-				if (sPredicate) {
-					that.aElements.$byPredicate[sPredicate] = oElement;
-				}
-			}
-			if (iResultLength < iExpectedLength) { // a short read
-					iCount = Math.min(getCount(that.aElements), iStart + iResultLength);
-					that.aElements.length = iCount;
-					// If the server did not send a count, the calculated count is greater than 0
-					// and the element before has not been read yet, we do not know the count:
-					// The element might or might not exist.
-					if (!sCount && iCount > 0 && !that.aElements[iCount - 1]) {
-						iCount = undefined;
-					}
-				setCount(that.mChangeListeners, "", that.aElements, iCount);
-				that.iLimit = iCount;
-			}
+			that.handleResponse(iStart, iEnd, aResult[0], aResult[1]);
 		})["catch"](function (oError) {
 			that.fill(undefined, iStart, iEnd);
 			throw oError;

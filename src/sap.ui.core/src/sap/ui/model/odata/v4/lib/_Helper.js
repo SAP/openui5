@@ -28,7 +28,11 @@ sap.ui.define([
 		 * information. The value is "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,
 		 * unit_or_text_K>),aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))" where the
 		 * "aggregate" part is only present if measures are given and both "with" and "as" are
-		 * optional.
+		 * optional. If at least one measure requesting a "min" or "max" value is contained, the
+		 * resulting $apply looks like: "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,
+		 * ...,unit_or_text_K>),aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))
+		 * /concat(aggregate(&lt;measure> with min as UI5min__&lt;measure>,&lt;measure_1> with max
+		 * as UI5max__&lt;measure_1>,),identity)"
 		 *
 		 * @param {object[]} aAggregation
 		 *   An array with objects holding the information needed for data aggregation; see also
@@ -41,6 +45,10 @@ sap.ui.define([
 		 *   Its presence is used to detect a dimension
 		 * @param {boolean} [aAggregation[].total]
 		 *   Its presence is used to detect a measure
+		 * @param {boolean} [aAggregation[].max]
+		 *   Measures only: Whether the maximum value for this measure is needed
+		 * @param {boolean} [aAggregation[].min]
+		 *   Measures only: Whether the minimum value for this measure is needed
 		 * @param {string} [aAggregation[].unit]
 		 *   Measures only: The name of this measure's unit property
 		 * @param {string} [aAggregation[].with]
@@ -49,16 +57,38 @@ sap.ui.define([
 		 * @param {string} [aAggregation[].as]
 		 *   Measures only: The alias, that is the name of the dynamic property used for
 		 *   aggregation of this measure; see "3.1.1 Keyword as"
+		 * @param {object} [mAlias2MeasureAndMethod]
+		 *   An optional map which is filled in case a measure requests minimum or maximum values;
+		 *   the alias for that value becomes the key; an object with "measure" and "method" becomes
+		 *   the corresponding value
 		 * @returns {string}
 		 *   The value for a "$apply" system query option
 		 * @throws {Error}
 		 *   In case a property is both a dimension and a measure, or neither a dimension nor a
 		 *   measure
 		 */
-		buildApply : function (aAggregation) {
+		buildApply : function (aAggregation, mAlias2MeasureAndMethod) {
 			var aAggregate = [],
 				aGroupBy = [],
-				aGroupByNoDimension = [];
+				aGroupByNoDimension = [],
+				aMinMax = [];
+
+			// adds the min/max expression for /concat term and adds corresponding entry to the
+			// alias map
+			function processMinOrMax(oAggregation, sMinOrMax) {
+				var sAlias;
+
+				if (oAggregation[sMinOrMax]) {
+					sAlias = "UI5" + sMinOrMax + "__" + oAggregation.name;
+					aMinMax.push(oAggregation.name + " with " + sMinOrMax + " as " + sAlias);
+					if (mAlias2MeasureAndMethod) {
+						mAlias2MeasureAndMethod[sAlias] = {
+							measure : oAggregation.name,
+							method : sMinOrMax
+						};
+					}
+				}
+			}
 
 			aAggregation.forEach(function (oAggregation) {
 				var sAggregate, iIndex;
@@ -80,6 +110,8 @@ sap.ui.define([
 							&& aGroupByNoDimension.indexOf(oAggregation.unit) < 0) {
 						aGroupByNoDimension.push(oAggregation.unit);
 					}
+					processMinOrMax(oAggregation, "min");
+					processMinOrMax(oAggregation, "max");
 				} else if ("grouped" in oAggregation) { // dimension
 					aGroupBy.push(oAggregation.name);
 					iIndex = aGroupByNoDimension.indexOf(oAggregation.name);
@@ -92,7 +124,10 @@ sap.ui.define([
 			});
 
 			return "groupby((" + aGroupBy.concat(aGroupByNoDimension).join(",")
-				+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))");
+				+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))")
+				+ (aMinMax.length
+					? "/concat(aggregate(" + aMinMax.join(",") + "),identity)"
+					: "");
 		},
 
 		/**

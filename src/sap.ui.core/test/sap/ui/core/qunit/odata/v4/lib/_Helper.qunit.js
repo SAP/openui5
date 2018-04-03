@@ -1163,10 +1163,69 @@ sap.ui.require([
 		}],
 		sApply : "groupby((TransactionCurrency,BillToParty)"
 			+ ",aggregate(GrossAmountInTransactionCurrency))"
+	}, {
+		aAggregation : [{
+			max : true,
+			name : "Amount",
+			total : false
+		}, {
+			grouped : false,
+			name : "BillToParty"
+		}],
+		sApply : "groupby((BillToParty)"
+			+ ",aggregate(Amount))"
+			+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5max__Amount" : {measure : "Amount", method : "max"}
+		}
+	}, {
+		aAggregation : [{
+			min : true,
+			name : "Amount",
+			total : false
+		}, {
+			max : true,
+			min : true,
+			name : "Amount2",
+			total : false
+		}, {
+			grouped : false,
+			name : "BillToParty"
+		}],
+		sApply : "groupby((BillToParty)"
+			+ ",aggregate(Amount,Amount2))"
+			+ "/concat(aggregate(Amount with min as UI5min__Amount,"
+			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5min__Amount" : {measure : "Amount", method : "min"},
+			"UI5min__Amount2" : {measure : "Amount2", method : "min"},
+			"UI5max__Amount2" : {measure : "Amount2", method : "max"}
+		}
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
-			assert.strictEqual(_Helper.buildApply(oFixture.aAggregation), oFixture.sApply);
+			var mAlias2MeasureAndMethod = {};
+
+			assert.strictEqual(_Helper.buildApply(oFixture.aAggregation, mAlias2MeasureAndMethod),
+				oFixture.sApply);
+			if (oFixture.mExpectedAlias2MeasureAndMethod) {
+				assert.deepEqual(mAlias2MeasureAndMethod, oFixture.mExpectedAlias2MeasureAndMethod);
+			}
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply: optional mAlias2MeasureAndMethod", function (assert) {
+		// mAlias2MeasureAndMethod is optional in _Helper.buildApply
+		assert.strictEqual(_Helper.buildApply([{
+				max : true,
+				name : "Amount",
+				total : false
+			}, {
+				grouped : false,
+				name : "BillToParty"
+			}]),
+			"groupby((BillToParty),aggregate(Amount))/concat(aggregate(Amount with max as"
+				+ " UI5max__Amount),identity)");
 	});
 
 	//*********************************************************************************************
