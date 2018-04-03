@@ -149,8 +149,8 @@
 						<Text text="{/selectedIssue/description}" class="sapUiTinyMarginBeginEnd sapUiTinyMarginBottom" />
 						<t:Table
 							rows="{path: '/selectedIssue/issues'}"
-							rowHeight="24"
 							selectionMode="Single"
+							rowHeight="24"
 							selectionBehavior="RowOnly"
 							enableColumnReordering="false"
 							visibleRowCount="{/visibleRowCount}"
@@ -158,7 +158,7 @@
 							id="issueTable">
 							<t:columns>
 								<t:Column
-									width="35px"
+									width="36px"
 									resizable="false">
 									<t:template>
 										<c:Icon class="issuesSeverityIcon"
