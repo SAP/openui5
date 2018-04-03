@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="UI"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="Core"/>
+		<edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+	</edmx:Reference>
+	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
+		<edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+	</edmx:Reference>
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.srvd.zgk_c_salesorderitem_rd_v4_sd.v0001" Alias="SAP__self">
+			<EntityType Name="ZGK_C_SalesOrderItem_RD_V4Type">
+				<Key>
+					<PropertyRef Name="Product"/>
+					<PropertyRef Name="CreationDateTime"/>
+					<PropertyRef Name="SalesOrder"/>
+					<PropertyRef Name="SalesOrderItem"/>
+				</Key>
+				<Property Name="Product" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Nullable="false" Precision="7"/>
+				<Property Name="SalesOrder" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="SalesOrderItem" Type="Edm.String" Nullable="false" MaxLength="10"/>
+				<Property Name="ProductName" Type="Edm.String" MaxLength="255"/>
+				<Property Name="CreationDate" Type="Edm.Date"/>
+				<Property Name="CreationMonth" Type="Edm.String" MaxLength="2"/>
+				<Property Name="CreationYearMonth" Type="Edm.String" MaxLength="6"/>
+				<Property Name="CreationQuarter" Type="Edm.String" MaxLength="1"/>
+				<Property Name="CreationYearQuarter" Type="Edm.String" MaxLength="5"/>
+				<Property Name="CreationYear" Type="Edm.String" MaxLength="4"/>
+				<Property Name="FiscalYearVariant" Type="Edm.String" MaxLength="2"/>
+				<Property Name="CreationFiscalPeriod" Type="Edm.String" MaxLength="3"/>
+				<Property Name="CreationFiscalYearPeriod" Type="Edm.String" MaxLength="7"/>
+				<Property Name="CreationFiscalYear" Type="Edm.String" MaxLength="4"/>
+				<Property Name="ProductCategory" Type="Edm.String" MaxLength="40"/>
+				<Property Name="Customer" Type="Edm.String" MaxLength="10"/>
+				<Property Name="CustomerName" Type="Edm.String" MaxLength="80"/>
+				<Property Name="CustomerCountry" Type="Edm.String" MaxLength="3"/>
+				<Property Name="CustomerCountryName" Type="Edm.String" MaxLength="50"/>
+				<Property Name="Supplier" Type="Edm.String" MaxLength="10"/>
+				<Property Name="TransactionCurrency" Type="Edm.String" MaxLength="5"/>
+				<Property Name="NetAmountInTransactionCurrency" Type="Edm.Decimal" Precision="16" Scale="variable"/>
+				<Property Name="Quantity" Type="Edm.Decimal" Precision="13" Scale="3"/>
+				<Property Name="QuantityUnit" Type="Edm.String" MaxLength="3"/>
+				<Property Name="DisplayCurrency" Type="Edm.String" MaxLength="5"/>
+				<Property Name="NetAmountInDisplayCurrency" Type="Edm.Decimal" Precision="16" Scale="variable"/>
+				<NavigationProperty Name="Parameters" Type="com.sap.gateway.srvd.zgk_c_salesorderitem_rd_v4_sd.v0001.ZGK_C_SalesOrderItem_RD_V4Parameters" Nullable="false"/>
+			</EntityType>
+			<EntityType Name="ZGK_C_SalesOrderItem_RD_V4Parameters">
+				<Key>
+					<PropertyRef Name="P_DateFunction"/>
+				</Key>
+				<Property Name="P_DateFunction" Type="Edm.String" Nullable="false" MaxLength="32"/>
+				<NavigationProperty Name="Set" Type="Collection(com.sap.gateway.srvd.zgk_c_salesorderitem_rd_v4_sd.v0001.ZGK_C_SalesOrderItem_RD_V4Type)" Partner="Parameters" ContainsTarget="true"/>
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="ZGK_C_SalesOrderItem_RD_V4" EntityType="com.sap.gateway.srvd.zgk_c_salesorderitem_rd_v4_sd.v0001.ZGK_C_SalesOrderItem_RD_V4Parameters">
+					<NavigationPropertyBinding Path="Set/Parameters" Target="ZGK_C_SalesOrderItem_RD_V4"/>
+				</EntitySet>
+			</EntityContainer>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/Product">
+				<Annotation Term="SAP__common.Text" Path="ProductName"/>
+				<Annotation Term="SAP__common.Label" String="Product ID"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CreationDateTime">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly"/>
+				<Annotation Term="SAP__common.Label" String="Created At"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Created At"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/SalesOrder">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly"/>
+				<Annotation Term="SAP__common.Label" String="Sales Order ID"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Sales Order Number"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CreationMonth">
+				<Annotation Term="SAP__common.IsCalendarYearMonth"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CreationYearMonth">
+				<Annotation Term="SAP__common.IsCalendarYearMonth"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CreationQuarter">
+				<Annotation Term="SAP__common.IsCalendarQuarter"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CreationYearQuarter">
+				<Annotation Term="SAP__common.IsCalendarYearQuarter"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CreationYear">
+				<Annotation Term="SAP__common.IsCalendarYear"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/FiscalYearVariant">
+				<Annotation Term="SAP__common.IsFiscalYearVariant"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CreationFiscalPeriod">
+				<Annotation Term="SAP__common.IsFiscalPeriod"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CreationFiscalYearPeriod">
+				<Annotation Term="SAP__common.IsFiscalYearPeriod"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CreationFiscalYear">
+				<Annotation Term="SAP__common.IsFiscalYear"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/Supplier">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly"/>
+				<Annotation Term="SAP__common.Label" String="Business Partner ID"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Business Partner ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type">
+				<Annotation Term="SAP__common.Label" String="EPM Sales Order Items"/>
+				<Annotation Term="UI.HeaderInfo">
+					<Record>
+						<PropertyValue Property="TypeName" String="Sales Order Item"/>
+						<PropertyValue Property="TypeNamePlural" String="Sales Order Items"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.LineItem">
+					<Collection>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="ProductCategory"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Product"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="Customer"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+						<Record Type="UI.DataField">
+							<PropertyValue Property="Value" Path="NetAmountInDisplayCurrency"/>
+							<Annotation Term="UI.Importance" EnumMember="UI.ImportanceType/High"/>
+						</Record>
+					</Collection>
+				</Annotation>
+				<Annotation Term="UI.PresentationVariant" Qualifier="InitialPresentation">
+					<Record>
+						<PropertyValue Property="Text" String="Initial Presentation"/>
+						<PropertyValue Property="ID" String="InitialPresentation"/>
+						<PropertyValue Property="SortOrder">
+							<Collection>
+								<Record Type="SAP__common.SortOrderType">
+									<PropertyValue Property="Property" PropertyPath="ProductCategory"/>
+									<PropertyValue Property="Descending" Bool="true"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="GroupBy">
+							<Collection>
+								<PropertyPath>Customer</PropertyPath>
+							</Collection>
+						</PropertyValue>
+						<PropertyValue Property="Visualizations">
+							<Collection>
+								<AnnotationPath>@UI.LineItem</AnnotationPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="UI.SelectionFields">
+					<Collection>
+						<PropertyPath>ProductCategory</PropertyPath>
+						<PropertyPath>Product</PropertyPath>
+						<PropertyPath>Customer</PropertyPath>
+					</Collection>
+				</Annotation>
+				<Annotation Term="Communication.Contact">
+					<Record>
+						<PropertyValue Property="adr">
+							<Collection>
+								<Record>
+									<PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+									<PropertyValue Property="country" Path="CustomerCountry"/>
+								</Record>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+				<Annotation Term="Communication.Address">
+					<Record>
+						<PropertyValue Property="type" EnumMember="Communication.ContactInformationType/preferred"/>
+						<PropertyValue Property="country" Path="CustomerCountry"/>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Parameters/P_DateFunction">
+				<Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/ReadOnly"/>
+				<Annotation Term="SAP__common.Label" String="Rel Date Function"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Relative Date Function ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.Container/ZGK_C_SalesOrderItem_RD_V4">
+				<Annotation Term="Capabilities.SearchRestrictions">
+					<Record>
+						<PropertyValue Property="Searchable" Bool="false"/>
+					</Record>
+				</Annotation>
+				<Annotation Term="Capabilities.SortRestrictions">
+					<Record>
+						<PropertyValue Property="NonSortableProperties">
+							<Collection>
+								<PropertyPath>P_Language</PropertyPath>
+								<PropertyPath>P_DateFunction</PropertyPath>
+							</Collection>
+						</PropertyValue>
+					</Record>
+				</Annotation>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/SalesOrderItem">
+				<Annotation Term="SAP__common.Label" String="Item Position"/>
+				<Annotation Term="SAP__common.Heading" String="Sales Order Item Position"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Sales Order Item Position"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/ProductName">
+				<Annotation Term="SAP__common.Label" String="Name"/>
+				<Annotation Term="SAP__common.Heading" String="Product Name"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Name"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/ProductCategory">
+				<Annotation Term="SAP__common.Label" String="Category"/>
+				<Annotation Term="SAP__common.Heading" String="Product Category"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Product Category"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/Customer">
+				<Annotation Term="SAP__common.Label" String="Customer"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Customer ID"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CustomerName">
+				<Annotation Term="SAP__common.Label" String="Company"/>
+				<Annotation Term="SAP__common.Heading" String="Company Name"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Company Name"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CustomerCountry">
+				<Annotation Term="SAP__common.Label" String="Country"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Country Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/CustomerCountryName">
+				<Annotation Term="SAP__common.Label" String="Long name"/>
+				<Annotation Term="SAP__common.QuickInfo" String="Country Name (Max. 50 Characters)"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/TransactionCurrency">
+				<Annotation Term="SAP__common.Label" String="Currency Code"/>
+				<Annotation Term="SAP__common.Heading" String="ISO Currency Code"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Currency Code"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/NetAmountInTransactionCurrency">
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="NetAmountInTransactionCurrency" String="Edm.Decimal"/>
+				<Annotation Term="SAP__common.Label" String="Net Amount"/>
+				<Annotation Term="SAP__common.Heading" String="Total Net Amount"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Total Net Amount"/>
+				<Annotation Term="Measures.ISOCurrency" Path="TransactionCurrency"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/Quantity">
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="Quantity" String="Edm.Decimal"/>
+				<Annotation Term="SAP__common.Label" String="Quantity"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Quantity"/>
+				<Annotation Term="Measures.Unit" Path="QuantityUnit"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/QuantityUnit">
+				<Annotation Term="SAP__common.Label" String="Unit of Measure"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Quantity Unit"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/DisplayCurrency">
+				<Annotation Term="SAP__common.Label" String="Currency Key"/>
+			</Annotations>
+			<Annotations Target="SAP__self.ZGK_C_SalesOrderItem_RD_V4Type/NetAmountInDisplayCurrency">
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="NetAmountInDisplayCurrency" String="Edm.Decimal"/>
+				<Annotation Term="SAP__common.Label" String="Net Amount"/>
+				<Annotation Term="SAP__common.Heading" String="Total Net Amount"/>
+				<Annotation Term="SAP__common.QuickInfo" String="EPM: Total Net Amount"/>
+				<Annotation Term="Measures.ISOCurrency" Path="DisplayCurrency"/>
+			</Annotations>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>

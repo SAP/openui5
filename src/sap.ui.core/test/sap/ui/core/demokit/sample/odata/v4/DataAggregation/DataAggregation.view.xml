@@ -19,7 +19,7 @@
 					unit : 'DisplayCurrency'
 				}, {
 					name : 'NetAmountInTransactionCurrency',
-					total : false
+					total : false,
 					unit : 'TransactionCurrency'
 				}],
 				$count : true,
@@ -52,13 +52,15 @@
 		<Column template="DisplayCurrency">
 			<m:Label text="Display Currency"/>
 		</Column>
+<!-- TODO how can we influence the cell content PER ROW?
 		<Column hAlign="End"
-			template="{= %{@$ui5.node.isTotal} ? 'NetAmountInTransactionCurrency' : undefined}">
+			template="{= %{@$ui5.node.isTotal} ? undefined : 'NetAmountInTransactionCurrency'}">
 			<m:Label text="Net Amount"/>
 		</Column>
-		<Column template="{= %{@$ui5.node.isTotal} ? 'TransactionCurrency' : undefined}">
+		<Column template="{= %{@$ui5.node.isTotal} ? undefined : 'TransactionCurrency'}">
 			<m:Label text="Transaction Currency"/>
 		</Column>
+-->
 		<Column hAlign="Center" width="5em">
 			<m:Label text="Subtotal"/>
 			<template>

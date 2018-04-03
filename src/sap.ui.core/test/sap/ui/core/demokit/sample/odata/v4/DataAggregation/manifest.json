@@ -7,7 +7,7 @@
 		},
 		"dataSources" : {
 			"default" : {
-				"uri" : "/testsuite/proxy/sap/opu/odata4/sap/zgk_c_salesorderitem_rd_v4_sb/srvd/sap/zgk_c_salesorderitem_rd_v4_sd/0001/",
+				"uri" : "/sap/opu/odata4/sap/zgk_c_salesorderitem_rd_v4_sb/srvd/sap/zgk_c_salesorderitem_rd_v4_sd/0001/",
 				"type" : "OData",
 				"settings" : {
 					"odataVersion" : "4.0"
@@ -62,6 +62,11 @@
 					"synchronizationMode" : "None"
 				}
 			}
+		},
+		"resources": {
+			"js": [{
+				"uri": "Sandbox.js"
+			}]
 		},
 		"rootView" : {
 			"async" : true,
