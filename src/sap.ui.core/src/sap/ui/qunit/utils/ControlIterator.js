@@ -75,6 +75,7 @@ sap.ui.define([ 'jquery.sap.global', 'sap/ui/core/Core', 'sap/ui/base/Object', '
 		"sap.m.Menu",
 		"sap.m.NotificationListItem",
 		"sap.m.NotificationListBase",
+		"sap.m.internal.NumericInput",
 		"sap.m.QuickViewBase",
 		"sap.m.QuickViewGroup",
 		"sap.m.QuickViewGroupElement",
