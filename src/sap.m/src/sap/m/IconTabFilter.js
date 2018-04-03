@@ -66,6 +66,10 @@ sap.ui.define(['./library', 'sap/ui/core/Item',
 
 			/**
 			 * Enables special visualization for disabled filter (show all items).
+			 * <b>Note:</b> You can use this property when you use <code>IconTabBar</code> as a filter.
+			 * In order for it to be displayed correctly, the other tabs in the filter should consist of an icon, text and an optional count.
+			 * It can be set to true for the first tab filter.
+			 * You can find more detailed guidelines at https://experience.sap.com/fiori-design-web/icontabbar/#tabs-as-filters.
 			 */
 			showAll : {type : "boolean", group : "Misc", defaultValue : false},
 
