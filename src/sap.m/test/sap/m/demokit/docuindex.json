@@ -1225,7 +1225,7 @@
 			"sap.m.sample.Tree",
 			"sap.m.sample.TreeIcon",
 			"sap.m.sample.TreeSelection",
-			"sap.m.sample.TreedExpandTo",
+			"sap.m.sample.TreeExpandTo",
 			"sap.m.sample.TreeExpandMulti",
 			"sap.m.sample.TreeOData",
 			"sap.m.sample.TreeJSONLazyLoading",
@@ -2089,9 +2089,9 @@
 		  "description": "Tree displays data in hierarchical structure."
 		},
 		{
-		  "id": "sap.m.sample.TreedExpandTo",
+		  "id": "sap.m.sample.TreeExpandTo",
 		  "name": "Tree - InitialExpand & CollapseAll",
-		  "description": "This example shows setting initial expand state and collapse all nodes functions."
+		  "description": "This example shows the initial expand state and how to collapse all nodes."
 		},
 		{
 		  "id": "sap.m.sample.TreeDnD",
@@ -2116,12 +2116,12 @@
         {
 		  "id": "sap.m.sample.TreeOData",
 		  "name": "Tree - OData",
-		  "description": "This example shows tree with odata service."
+		  "description": "This example shows Tree with OData service."
 		},
 		{
 		  "id": "sap.m.sample.TreeSelection",
 		  "name": "Tree - Selection",
-		  "description": "Different selection modes of Tree."
+		  "description": "This example shows different selection modes of Tree."
 		},
 		{
 			"id": "sap.m.sample.RangeSlider",
