@@ -161,16 +161,97 @@ sap.ui.define([
 
 			},
 
+			roles: {
+				donna: "Donna Moore",
+				manager: "manager",
+				admin: "admin"
+			},
+
+			handleRoleChange: function () {
+				this.getView().getModel().refresh(true);
+			},
+
+			getUserRole: function() {
+				return this.roles[this.byId("userRole").getSelectedKey()];
+			},
+
+			isDraggable: function(sRole) {
+				var sUserRole = this.getUserRole();
+
+				if (sUserRole === this.roles.manager || sUserRole === this.roles.admin || sUserRole === sRole) {
+					return true;
+				}
+			},
+
+			handleAppointmentDragEnter: function(oEvent) {
+				var oAppointment = oEvent.getParameter("appointment"),
+					oStartDate = oEvent.getParameter("startDate"),
+					oEndDate = oEvent.getParameter("endDate"),
+					oCalendarRow = oEvent.getParameter("calendarRow"),
+					bAppointmentOverlapped;
+
+				if (this.getUserRole() === this.roles.donna && oAppointment.getParent() !== oCalendarRow) {
+					oEvent.preventDefault();
+				}
+
+				if (this.getUserRole() === this.roles.manager) {
+					bAppointmentOverlapped = oCalendarRow.getAppointments().some(function (oCurrentAppointment) {
+						if (oCurrentAppointment === oAppointment) {
+							return;
+						}
+
+						var oAppStartTime = oCurrentAppointment.getStartDate().getTime(),
+							oAppEndTime = oCurrentAppointment.getEndDate().getTime();
+
+						if (oAppStartTime <= oStartDate.getTime() && oStartDate.getTime() < oAppEndTime) {
+							return true;
+						}
+						if (oAppStartTime < oEndDate.getTime() && oEndDate.getTime() <= oAppEndTime) {
+							return true;
+						}
+
+						if (oStartDate.getTime() <= oAppStartTime && oAppStartTime < oEndDate.getTime()) {
+							return true;
+						}
+					});
+
+					if (bAppointmentOverlapped) {
+						oEvent.preventDefault();
+					}
+				}
+			},
+
 			handleAppointmentDrop: function (oEvent) {
 				var oAppointment = oEvent.getParameter("appointment"),
-					startDate = oEvent.getParameter("startDate"),
-					endDate = oEvent.getParameter("endDate");
+					oStartDate = oEvent.getParameter("startDate"),
+					oEndDate = oEvent.getParameter("endDate"),
+					oCalendarRow = oEvent.getParameter("calendarRow"),
+					oModel = this.getView().getModel(),
+					oAppBindingContext = oAppointment.getBindingContext(),
+					oRowBindingContext = oCalendarRow.getBindingContext(),
 
-				MessageToast.show("Appointment '" + oAppointment.getTitle() + "' now starts at " + startDate + ".");
+					handleAppointmentDropBetweenRows = function () {
+						var aPath = oAppBindingContext.getPath().split("/"),
+							iIndex = aPath.pop(),
+							sRowAppointmentsPath = aPath.join("/");
 
-				oAppointment
-					.setStartDate(startDate)
-					.setEndDate(endDate);
+						oRowBindingContext.getObject().appointments.push(
+							oModel.getProperty(oAppointment.getBindingContext().getPath())
+						);
+
+						oModel.getProperty(sRowAppointmentsPath).splice(iIndex, 1);
+					};
+
+				oModel.setProperty("start", oStartDate, oAppBindingContext);
+				oModel.setProperty("end", oEndDate, oAppBindingContext);
+
+				if (oAppointment.getParent() !== oCalendarRow) {
+					handleAppointmentDropBetweenRows();
+				}
+
+				oModel.refresh(true);
+
+				MessageToast.show(oCalendarRow.getTitle() + "'s '" + oAppointment.getTitle() + "' now starts at " + oStartDate + ".");
 			}
 
 		});

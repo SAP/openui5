@@ -4211,6 +4211,71 @@
 			oPCRow.destroy();
 		});
 
+		QUnit.test("setEnableAppointmentsDragAndDrop", function(assert) {
+			//arrange
+			var oPC = new sap.m.PlanningCalendar(),
+				oPCRow1 = new sap.m.PlanningCalendarRow("row1"),
+				oPCRow2 = new sap.m.PlanningCalendarRow("row2");
+
+			oPC.addRow(oPCRow1);
+			oPC.addRow(oPCRow2);
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(true);
+
+			var oDragConfig = oPCRow1.getDragDropConfig();
+			var oDropConfig = oPCRow1.getCalendarRow().getDragDropConfig();
+
+			//assert
+			assert.equal(oDragConfig.length, 1, "One DragInfo found");
+			assert.equal(oDragConfig[0].getSourceAggregation(), "appointments", "Source aggregation is correct");
+			assert.equal(oDropConfig[0].getTargetAggregation(), "_intervalPlaceholders", "Target aggregation is correct");
+			assert.equal(oDragConfig[0].getGroupName(), "DragDropConfig", "Group name is correct");
+			assert.equal(oDropConfig[0].getGroupName(), "DragDropConfig", "Group name is correct");
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(true);
+
+			//assert
+			assert.equal(oPCRow1.getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow2.getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(false);
+
+			//assert
+			assert.equal(oPCRow1.getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow2.getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(true);
+			oPCRow2.setEnableAppointmentsDragAndDrop(true);
+
+			//assert
+			assert.equal(oPCRow1.getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow2.getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(false);
+			oPCRow2.setEnableAppointmentsDragAndDrop(true);
+
+			//assert
+			assert.equal(oPCRow1.getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow2.getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+
+			//clean
+			oPC.destroy();
+		});
+
 		function _getAppointmentsCount(oPC) {
 			var aRows = oPC.getRows(),
 				iAppointments = 0;
