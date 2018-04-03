@@ -689,7 +689,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 		};
 
 		/**
-		 * Returns all support informations optionally filtered by a caller name
+		 * Returns all support information optionally filtered by a caller name
 		 * @experimental
 		 * @private
 		 */

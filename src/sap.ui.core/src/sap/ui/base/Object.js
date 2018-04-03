@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * Creates a subclass of class sap.ui.base.Object with name <code>sClassName</code>
 	 * and enriches it with the information contained in <code>oClassInfo</code>.
 	 *
-	 * <code>oClassInfo</code> might contain three kinds of informations:
+	 * <code>oClassInfo</code> might contain three kinds of information:
 	 * <ul>
 	 * <li><code>metadata:</code> an (optional) object literal with metadata about the class.
 	 * The information in the object literal will be wrapped by an instance of {@link sap.ui.base.Metadata Metadata}
@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * metadata for a new class hierarchy they introduce (e.g. {@link sap.ui.core.Element.extend Element}).
 	 *
 	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] structured object with informations about the class
+	 * @param {object} [oClassInfo] structured object with information about the class
 	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.base.Metadata.
 	 * @return {function} the created class / constructor function
 	 * @public

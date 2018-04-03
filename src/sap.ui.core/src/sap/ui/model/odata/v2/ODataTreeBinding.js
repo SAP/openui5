@@ -1661,7 +1661,7 @@ sap.ui.define(['jquery.sap.global',
 	 * The property mapping describing the tree will be placed in "this.oTreeProperties".
 	 * Also checks if clientside property mappings are given.
 	 *
-	 * The extracted hierarchy informations will be stored in "this.oTreeProperties" (if any)
+	 * The extracted hierarchy information will be stored in "this.oTreeProperties" (if any)
 	 *
 	 * @private
 	 */

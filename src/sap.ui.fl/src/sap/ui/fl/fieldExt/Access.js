@@ -552,9 +552,9 @@ sap.ui.define(["jquery.sap.storage"], function(Storage) {
 	};
 
 	/**
-	 * Returns informations about the current backend system
+	 * Returns information about the current backend system
 	 *
-	 * @return {map}	System informations
+	 * @return {map}	System information
 	 */
 	Access._getSystemInfo = function() {
 		return sap.ushell.Container.getLogonSystem();
