@@ -28,13 +28,17 @@ sap.ui.define(['sap/base/util/equal'], function(equal) {
 
 	QUnit.test("contains test", function(assert) {
 		assert.equal(equal([1, 2], [1, 2], true), true, "equal array");
+		assert.equal(equal([1, NaN, 3], [1, NaN, 3], true), true, "equal array with NaN");
 		assert.equal(equal([1, 2], [2, 1], true), false, "different array");
 		assert.equal(equal([1, 2], [1, 2, 3], true), true, "contained array");
+		assert.equal(equal([NaN, 2], [NaN, 2, 3], true), true, "contained array with NaN");
 		assert.equal(equal([1, 2, 3, 4], [1, 2, 3], true), false, "not contained array");
 		assert.equal(equal({a:1, b:2}, {a:1, b:2}, true), true, "equal object");
+		assert.equal(equal({a:NaN, b:2}, {a:NaN, b:2}, true), true, "equal object with NaN");
 		assert.equal(equal({a:1, b:2}, {a:2, b:1}, true), false, "different object values");
 		assert.equal(equal({a:1, b:2}, {a:1, c:2}, true), false, "different property names");
 		assert.equal(equal({a:1, b:2}, {a:1, b:2, c:3}, true), true, "contained object");
+		assert.equal(equal({a:1, b:NaN}, {a:1, b:NaN, c:3}, true), true, "contained object with NaN");
 		assert.equal(equal({a:1, b:2, c:3, d:4}, {a:1, b:2, c:3}, true), false, "not contained object");
 	});
 
@@ -58,11 +62,13 @@ sap.ui.define(['sap/base/util/equal'], function(equal) {
 		assert.equal(equal(false, 0), false, "false, 0");
 		assert.equal(equal(0, null), false, "0, null");
 		assert.equal(equal(1, []), false, "1, []");
+		assert.equal(equal(NaN, NaN), true, "NaN is equal to itself");
 	});
 
 	QUnit.test("string test", function(assert) {
 		assert.equal(equal("test", "test"), true, "\"test\", \"test\"");
 		assert.equal(equal("foo", "bar"), false, "\"foo\", \"bar\"");
+		assert.equal(equal("NaN", NaN), false, "\"NaN\", NaN");
 		assert.equal(equal("test", ""), false, "\"test\", \"\"");
 		assert.equal(equal("", ""), true, "\"\", \"\"");
 		assert.equal(equal("", null), false, "\"\", null");
@@ -88,7 +94,9 @@ sap.ui.define(['sap/base/util/equal'], function(equal) {
 	QUnit.test("object", function(assert) {
 		assert.equal(equal({a:1, b:2}, {a:1, b:2}), true, "{a:1, b:2}, {a:1, b:2}");
 		assert.equal(equal({a:1, b:2}, {b:2, a:1}), true, "{a:1, b:2}, {b:2, a:1}");
+		assert.equal(equal({a:1, b:NaN}, {b:NaN, a:1}), true, "{a:1, b:NaN}, {b:NaN, a:1}");
 		assert.equal(equal({a:1, b:2}, {b:1, a:2}), false, "{a:1, b:2}, {b:1, a:2}");
+		assert.equal(equal({a:1, b:2}, {b:1, a:NaN}), false, "{a:1, b:2}, {b:1, a:NaN}");
 		assert.equal(equal({a:1, b:2}, {a:1, b:2, c:3}), false, "{a:1, b:2}, {a:1, b:2, c:3}");
 		assert.equal(equal({a:1, b:2}, {a:1}), false, "{a:1, b:2}, {a:1}");
 		assert.equal(equal({a:1, b:2}, {}), false, "{a:1, b:2}, {}");
