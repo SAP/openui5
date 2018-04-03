@@ -205,5 +205,14 @@
 			"owner": "handy-man", 
 			"license": "Apache 2.0", 
 			"type": "Tool" 
+		},
+		"oui5lib": {
+			"name": "OpenUI5 Library",
+			"description": "Library to speed up development with OpenUI5. Includes UIComponent generator.",
+			"githubLink": "https://github.com/cahein/oui5lib",
+			"documentationLink": "https://github.com/cahein/oui5lib",
+			"owner": "cahein",
+			"licence": "MIT",
+			"type": "JS Library"
 		}
 	}
