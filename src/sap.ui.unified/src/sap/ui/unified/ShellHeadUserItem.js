@@ -66,7 +66,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/core/IconPool
 		}
 	}});
 
-	IconPool.getIconInfo("", ""); //Ensure Icon Font is loaded
+	IconPool.insertFontFaceStyle(); //Ensure Icon Font is loaded
 
 	ShellHeadUserItem.prototype.onclick = function(oEvent){
 		this.firePress();
