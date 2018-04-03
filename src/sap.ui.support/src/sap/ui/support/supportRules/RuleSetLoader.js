@@ -60,9 +60,10 @@ sap.ui.define([
 		 * Gets all rulesets from the SupportAssistant
 		 *
 		 * @private
+		 * @param {function} [fnReadyCbk] the function to be called after all rules are loaded.
 		 * @returns {Promise<CommunicationBus>} mainPromise Has promises for all libraries regarding rulesets in the SupportAssistant
 		 */
-		RuleSetLoader._fetchSupportRuleSets = function () {
+		RuleSetLoader._fetchSupportRuleSets = function (fnReadyCbk) {
 			var that = this,
 				mLoadedLibraries = sap.ui.getCore().getLoadedLibraries(),
 				oLibNamesWithRulesPromise = this._fetchLibraryNamesWithSupportRules(mLoadedLibraries);
@@ -81,8 +82,11 @@ sap.ui.define([
 					Promise.all(libFetchPromises).then(function () {
 						that._bRulesCreated = true;
 						CommunicationBus.publish(channelNames.UPDATE_SUPPORT_RULES, RuleSerializer.serialize(that._mRuleSets));
-
 						resolve();
+
+						if (fnReadyCbk && typeof fnReadyCbk === "function") {
+							fnReadyCbk();
+						}
 					});
 				});
 			});
@@ -404,9 +408,11 @@ sap.ui.define([
 
 		/**
 		 * Updates the RuleSets of the SupportAssistant
+		 *
+		 * @param {function} fnReadyCbk the function to be called after the rules are loaded initially.
 		 */
-		RuleSetLoader.updateRuleSets = function () {
-			this._oMainPromise = RuleSetLoader._fetchSupportRuleSets();
+		RuleSetLoader.updateRuleSets = function (fnReadyCbk) {
+			this._oMainPromise = RuleSetLoader._fetchSupportRuleSets(fnReadyCbk);
 		};
 
 		/**
