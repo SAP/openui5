@@ -1889,7 +1889,9 @@ function(
 		};
 
 		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
-			var aIDs = this.$().attr("aria-labelledby").split(" "),
+			var $this = this.$(),
+                            sAttr = $this.attr("aria-labelledby"),
+				aIDs = sAttr ? sAttr.split(" ") : [],
 				sNewIDs;
 
 			if (sOldValueState !== ValueState.None) {
@@ -1901,7 +1903,7 @@ function(
 			}
 
 			sNewIDs = aIDs.join(" ");
-			this.$().attr("aria-labelledby", sNewIDs);
+			$this.attr("aria-labelledby", sNewIDs);
 		};
 
 		/**
