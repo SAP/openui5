@@ -702,7 +702,7 @@ sap.ui.define([
 			}
 		];
 		this._oButtonGroupSpan = {
-			"SpanFilter": "L1 M2 S2",
+			"SpanFilter": "L2 M2 S2",
 			"SpanSort": Device.system.phone ? "L2 M2 S4" : "L2 M2 S3",
 			"SpanGroup": "L2 M2 S3"
 		};
