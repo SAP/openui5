@@ -898,12 +898,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 					}
 				} else if (iIndex === 0) {
 					var oMatchingSet, sName = sPath.substring(1);
-					this.oModel.oMetadata._iterateEntitySets(function(oEntitySet) {
-						if (oEntitySet.name === sName) {
-							oMatchingSet = oEntitySet;
-							return false;
-						}
-					});
+					oMatchingSet = this.oModel.oMetadata._findEntitySetByName(sName);
 					if (oMatchingSet) {
 						this._mPathType[sPath] = true;
 					}
