@@ -91,7 +91,21 @@
 			});
 		});
 
+		QUnit.test("Dependency names with leading Slash '/'", function(assert) {
+			var done = assert.async();
 
+			var sErrorLog = "Module names that start with a slash should not be used, as they are reserved for future use.";
+
+			var fnOriginalLog = sap.ui._ui5loader.logger.error;
+			sap.ui._ui5loader.logger.error = function (sMsg) {
+				assert.equal(sMsg, sErrorLog, "Correct Error logged for leading Slash");
+			}
+
+			sap.ui.require(["/sap/ui/core/Control"], function (Icon) {
+				sap.ui._ui5loader.logger.error = fnOriginalLog;
+				done();
+			});
+		});
 
 		// ========================================================================================
 		// Special Dependencies require/module/exports

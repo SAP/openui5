@@ -1158,6 +1158,13 @@
 			throw new Error("can only require Javascript module, not " + sModuleName);
 		}
 
+		// Module names should not start with a "/"
+		if ( bLoggable ) {
+			if (sModuleName[0] == "/") {
+				log.error("Module names that start with a slash should not be used, as they are reserved for future use.");
+			}
+		}
+
 		oModule = Module.get(sModuleName);
 
 		// when there's a shim with dependencies for the module
@@ -1437,7 +1444,8 @@
 				if ( oRequestingModule ) {
 					switch ( sDepModName ) {
 					case 'require.js':
-						aModules[i] = createContextualRequire(sBaseName);
+						// the injected local require should behave like the Standard require (2nd argument = true)
+						aModules[i] = createContextualRequire(sBaseName, true);
 						break;
 					case 'module.js':
 						aModules[i] = oRequestingModule.api();
@@ -1472,6 +1480,22 @@
 				return fnCallback(aModules);
 			}
 		}
+	}
+
+	/**
+	 * The amdDefine() function is closer to the AMD spec, as opposed to sap.ui.define.
+	 * It's later assigned as the global define() if the loader is running in noConflict = false mode (default).
+	 */
+	function amdDefine (sModuleName, aDependencies, vFactory) {
+		var oArgs = arguments;
+		var bExportIsSet = typeof oArgs[oArgs.length - 1] === "boolean";
+
+		// bExport parameter is proprietary and should not be used in noConflict mode for an AMD compliant define()
+		if (bExportIsSet) {
+			oArgs = Array.prototype.slice.call(oArgs, 0, oArgs.length - 1);
+		}
+
+		define.apply(this, oArgs);
 	}
 
 	function define(sModuleName, aDependencies, vFactory, bExport) {
@@ -1533,7 +1557,6 @@
 	}
 
 	function defineModule(sResourceName, aDependencies, vFactory, bExport, bAsync) {
-
 		var bLoggable = log.isLoggable();
 		sResourceName = normalize(sResourceName);
 
@@ -1614,9 +1637,10 @@
 	 * Create a require() function which acts in the context of the given resource.
 	 *
 	 * @param {string|null} sContextName Name of the context resource (module) in URN syntax, incl. extension
+	 * @param {boolean} bAMDCompliance If set to true, the behavior of the require() function is closer to the AMD specification.
 	 * @returns {function} Require function.
 	 */
-	function createContextualRequire(sContextName) {
+	function createContextualRequire(sContextName, bAMDCompliance) {
 		var fnRequire = function(vDependencies, fnCallback, fnErrCallback) {
 			var sModuleName;
 
@@ -1624,9 +1648,23 @@
 			assert(fnCallback == null || typeof fnCallback === 'function', "callback must be a function or null/undefined");
 			assert(fnErrCallback == null || typeof fnErrCallback === 'function', "error callback must be a function or null/undefined");
 
+			// Probing for existing module
 			if ( typeof vDependencies === 'string' ) {
 				sModuleName = getMappedName(vDependencies + '.js', sContextName);
-				return Module.get(sModuleName).value();
+				var oModule = Module.get(sModuleName);
+				if (bAMDCompliance) {
+					// check the modules internal state
+					// everything from PRELOADED to LOADED (incl. FAILED) is considered erroneous
+					if (oModule.state !== EXECUTING && oModule.state !== READY) {
+						throw new Error(
+							"Module '" + sModuleName + "' has not been loaded yet. " +
+							"Use require(['" + sModuleName + "']) to load it."
+						);
+					}
+				}
+				// Module is in state READY or EXECUTING; or require() was called from sap.ui.require().
+				// A modules value might be undefined (no return statement) even though the state is READY.
+				return oModule.value();
 			}
 
 			requireAll(sContextName, vDependencies, function(aModules) {
@@ -1714,7 +1752,14 @@
 	 * @experimental Since 1.27.0 - not all aspects of sap.ui.require are settled yet. E.g. the return value
 	 * of the asynchronous use case might change (currently it is undefined).
 	 */
-	var require = createContextualRequire(null);
+	var require = createContextualRequire(null, false);
+
+	/**
+	 * difference between require (sap.ui.require) and amdRequire (window.require):
+	 * - require("my/module"), returns undefined if the module was not loaded yet
+	 * - amdRequire("my/module"), throws an error if the module was not loaded yet
+	 */
+	var amdRequire = createContextualRequire(null, true);
 
 	function requireSync(sModuleName) {
 		sModuleName = getMappedName(sModuleName + '.js');
@@ -1899,6 +1944,9 @@
 			mShims[module + '.js'] = shim;
 		},
 		async: function(async) {
+			if (bGlobalAsyncMode && !async) {
+				throw new Error("Changing the ui5loader config from async to sync is not supported. Only a change from sync to async is allowed.");
+			}
 			bGlobalAsyncMode = !!async;
 		},
 		debugSources: function(debug) {
@@ -1939,8 +1987,8 @@
 				__global.define = vOriginalDefine;
 				__global.require = vOriginalRequire;
 			} else {
-				__global.define = define;
-				__global.require = require;
+				__global.define = amdDefine;
+				__global.require = amdRequire;
 			}
 		}
 	};
@@ -1966,8 +2014,8 @@
 	};
 
 	var ui5loader = {
-		amdDefine: define,
-		amdRequire: require,
+		amdDefine: amdDefine,
+		amdRequire: amdRequire,
 		config: config,
 		declareModule: function(sResourceName) {
 			/* void */ declareModule( normalize(sResourceName) );
@@ -2049,8 +2097,8 @@
 	vOriginalDefine = __global.define;
 	vOriginalRequire = __global.require;
 
-	__global.define = define;
-	__global.require = require;
+	__global.define = amdDefine;
+	__global.require = amdRequire;
 
 	__global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};
