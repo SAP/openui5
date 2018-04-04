@@ -760,7 +760,7 @@ function(
 		 */
 		Select.prototype._onBeforeRenderingPopover = function() {
 			var oPopover = this.getPicker(),
-				sWidth = (this.$().outerWidth() / parseFloat(library.BaseFontSize)) + "rem";
+				sWidth = this.$().outerWidth() + "px"; // set popover content min-width in px due to rendering issue in Chrome and small %
 
 			if (oPopover) {
 				oPopover.setContentMinWidth(sWidth);
