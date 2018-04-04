@@ -852,7 +852,7 @@ sap.ui.define([
 	};
 
 	DatePicker.prototype._storeInputSelection = function (oInput) {
-		if (Device.browser.msie || Device.browser.edge) {
+		if ((Device.browser.msie || Device.browser.edge) && !Device.support.touch) {
 			//For IE & Edge, any selection of the underlying input must be removed before opening the picker popup,
 			//otherwise the input will receive focus via TAB during the picker is opened. The selection is restored back
 			//when the popup is closed
@@ -866,7 +866,7 @@ sap.ui.define([
 	};
 
 	DatePicker.prototype._restoreInputSelection = function (oInput) {
-		if (Device.browser.msie || Device.browser.edge) {
+		if ((Device.browser.msie || Device.browser.edge) && !Device.support.touch) {
 			//The selection is restored back due to issue with IE & Edge. See _handleBeforeOpen
 			oInput.selectionStart = this._oInputSelBeforePopupOpen.iStart;
 			oInput.selectionEnd = this._oInputSelBeforePopupOpen.iEnd;
