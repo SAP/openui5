@@ -139,6 +139,20 @@
 		assert.ok(bChanged && bDataRequested, "dataRecieved fired");
 	};
 
+	QUnit.test("test metadata and 'complex' namespace - 'some.name.space'", function(assert){
+		var done = assert.async();
+		var oModel = initModel(sURI, {metadataUrlParams:{"test-namespace": true}}, true);
+		oModel.metadataLoaded().then(function() {
+			var oEntityType = oModel.oMetadata._getEntityTypeByName("Category");
+			assert.ok(oEntityType, "EntityType definition found!");
+			assert.equal(oEntityType.namespace, "North.wind.Model", "EntityType definition has correct namespace!");
+			oEntityType = oModel.oMetadata._getEntityTypeByName("North.wind.Model.Category");
+			assert.ok(oEntityType, "EntityType definition found!");
+			assert.equal(oEntityType.namespace, "North.wind.Model", "EntityType definition has correct namespace!");
+			done();
+		});
+	});
+
 	QUnit.test("test oDataModel - oMetadata shared across models", function(assert){
 		var done = assert.async();
 		var that = this;
