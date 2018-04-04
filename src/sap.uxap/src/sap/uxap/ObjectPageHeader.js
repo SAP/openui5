@@ -869,14 +869,10 @@ sap.ui.define([
 	 */
 	ObjectPageHeader.prototype._adaptActions = function (iAvailableSpaceForActions) {
 		var bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange()) || Device.system.phone,
-			sOverflowButtonDisplay = this._oOverflowButton.$().css("display"),
 			iVisibleActionsWidth = this._oOverflowButton.$().show().width(), // overflowButton is now visible
 			aActions = this.getActions(),
 			iActionsLength = aActions.length,
 			oActionSheetButton;
-
-		// reset overflowButton's visibility
-		this._oOverflowButton.$().css("display", sOverflowButtonDisplay);
 
 		for (var i = 0; i < iActionsLength; i++) {
 			aActions[i].position = i;
