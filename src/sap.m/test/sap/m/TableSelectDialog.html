@@ -923,6 +923,66 @@
 			}
 		});
 
+		var oButton10 = new sap.m.Button("Button10", {
+			text: "Open TableSelectDialog with default property growing (true)",
+			press: function () {
+				oTableSelectDialog10.open();
+			}
+		});
+
+		var oButton11 = new sap.m.Button("Button11", {
+			text: "Open TableSelectDialog with property growing false",
+			press: function () {
+				oTableSelectDialog11.open();
+			}
+		});
+
+		var aData = [];
+		for (var i = 0; i < 50; i++) {
+			aData.push({text : "Item" + i, selected : i>20 || i === 5});
+		}
+
+		//create TableSelectDialog with default growing (true), search is not implemented to work
+		var oTableSelectDialog10 = new sap.m.TableSelectDialog({
+			columns : [
+				new sap.m.Column({
+					header : new sap.m.Label({text : "Item"})
+				})
+			],
+			multiSelect : true,
+			rememberSelections: true,
+			contentWidth: "200px"
+		});
+
+		oTableSelectDialog10.setModel(new sap.ui.model.json.JSONModel(aData));
+		oTableSelectDialog10.bindItems("/", new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({text : "{text}"})
+			],
+			selected : "{selected}"
+		}));
+
+		//create TableSelectDialog with growing false, search is not implemented to work
+		var oTableSelectDialog11 = new sap.m.TableSelectDialog({
+			columns : [
+				new sap.m.Column({
+					header : new sap.m.Label({text : "Item"})
+				})
+			],
+			multiSelect : true,
+			rememberSelections: true,
+			contentWidth: "200px",
+			growing: false
+		});
+
+		oTableSelectDialog11.setModel(new sap.ui.model.json.JSONModel(aData));
+		oTableSelectDialog11.bindItems("/", new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({text : "{text}"})
+			],
+			selected : "{selected}"
+		}));
+
 		// create the application page
 		var oPage = new sap.m.Page("page", {
 			title:"Mobile TableSelectDialog Control",
@@ -937,7 +997,9 @@
 						oButton6,
 						oButton7,
 						oButton8,
-						oButton9
+						oButton9,
+						oButton10,
+						oButton11
 					]
 				})
 			]

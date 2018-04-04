@@ -1126,7 +1126,9 @@
 		  "name": "Table Select Dialog",
 		  "category": "Popup",
 		  "since": "1.16",
-		  "samples": ["sap.m.sample.TableSelectDialog"]
+		  "samples": ["sap.m.sample.TableSelectDialog",
+			"sap.m.sample.TableSelectDialogGrowing"
+		  ]
 		},
 		{
 		  "id": "sap.m.Text",
@@ -2562,6 +2564,11 @@
 		  "name": "Table Select Dialog",
 		  "description": "Similar to the Select Dialog, the Table Select Dialog presents selectable items in a table-based dialog, with filter functions. You can have single select or multi select mode. The dialog can remember the selections previously set on the dialog."
 		},
+		{
+			"id": "sap.m.sample.TableSelectDialogGrowing",
+			"name": "Table Select Dialog Growing",
+			"description": "Table Select Dialog can be created with property growing set to true or false."
+		  },
 		{
 		  "id": "sap.m.sample.NotificationListItem",
 		  "name": "Notification List Item",
