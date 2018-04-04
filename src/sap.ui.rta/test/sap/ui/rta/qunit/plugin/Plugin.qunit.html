@@ -9,12 +9,10 @@
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
 		<script>
-			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
-			jQuery.sap.require('sap.ui.thirdparty.qunit');
-			jQuery.sap.require('sap.ui.qunit.qunit-junit');
-			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
-			jQuery.sap.require('sap.ui.thirdparty.sinon');
-			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+			sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
+			sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
+			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
 			// code coverage report only for sap.ui.rta namespace
 			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/rta,sap/ui/dt]');
@@ -23,9 +21,7 @@
 		</script>
 	</head>
 	<body>
-		<h2 id='qunit-banner'></h2>
-		<div id='qunit-testrunner-toolbar'></div>
-		<ol id='qunit-tests'></ol>
-		<div id="content"></div>
+		<div id='qunit'></div>
+		<div id="qunit-fixture"></div>
 	</body>
 </html>
