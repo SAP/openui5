@@ -15,6 +15,32 @@ sap.ui.define([
 			]
 		},
 
+		/**
+		 * When the application under test is started in a UIComponent container instead of an iframe
+		 * the Support Assistant is not loaded because the application doesn't start a separate instance of the Core
+		 * to start in Support Mode. In such cases manually start the Support Assistant in the current instance of the Core.
+		 *
+		 * @returns {jQuery.promise} A promise that gets resolved when the Support Assistant is ready.
+		 */
+		onAfterInit : function () {
+			var bLoaded = sap.ui.getCore().getLoadedLibraries()["sap.ui.support"],
+				deferred = jQuery.Deferred();
+
+			if (!bLoaded) {
+				sap.ui.require(["sap/ui/support/Bootstrap"], function (bootstrap) {
+					bootstrap.initSupportRules(["true", "silent"], {
+						onReady: function () {
+							deferred.resolve();
+						}
+					});
+				});
+			} else {
+				deferred.resolve();
+			}
+
+			return deferred.promise();
+		},
+
 		getAssertions : function () {
 
 			var fnShouldSkipRulesIssues = function () {
