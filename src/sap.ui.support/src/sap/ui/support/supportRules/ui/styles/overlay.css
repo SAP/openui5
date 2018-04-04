@@ -133,6 +133,7 @@ body {
 
 .sapUiSupportToolIssuesTreeTable .sapMFT {
 	overflow: hidden;
+	font-size: 0.875rem;
 }
 
 .selectedRuleTitle {
@@ -143,6 +144,9 @@ body {
 	padding: 0;
 }
 
+.issuesSeverityIcon.sapUiIcon {
+	vertical-align: middle;
+}
 .sapUiSupportToolIssuesPage .sapMIBar.sapMHeader-CTX.sapUiSupportToolToolbar {
 	border-bottom: 1px solid #cccccc;
 }
