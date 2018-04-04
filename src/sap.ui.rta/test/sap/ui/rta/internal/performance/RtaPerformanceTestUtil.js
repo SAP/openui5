@@ -100,7 +100,6 @@ sap.ui.define([
 			})
 			.then(function() {
 				sinon.restore();
-				oRuntimeAuthoring.destroy();
 			});
 		},
 
