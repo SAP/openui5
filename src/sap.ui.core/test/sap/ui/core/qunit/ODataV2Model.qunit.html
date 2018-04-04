@@ -2986,11 +2986,12 @@
 		var oBinding = oModel.bindList("/Categories");
 		oModel.setDeferredBatchGroups(["myId"]);
 		var handler = function() { // delay the following test
-			var oContext = oModel.createEntry("Categories",{properties:{CategoryID:99,CategoryName:"Food",Description:"Food Desc"},
-				batchGroupId : "myId"});
+			var oProperties = {CategoryID:99,CategoryName:"Food",Description:"Food Desc"};
+			var oContext = oModel.createEntry("Categories",{properties: oProperties, batchGroupId : "myId"});
 			assert.ok(oContext, "context check");
 			var oEntry = oModel.getProperty("", oContext);
 			assert.ok(oEntry, "entry check");
+			assert.notDeepEqual(oEntry, oProperties, "object should be cloned and therefore not deep equal");
 
 			assert.equal(oEntry.CategoryName, "Food", "category name check");
 			assert.equal(oEntry.CategoryID, 99, "category ID check");
