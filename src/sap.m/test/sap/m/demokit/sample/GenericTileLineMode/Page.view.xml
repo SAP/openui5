@@ -1,108 +1,125 @@
 <mvc:View
-	controllerName="sap.m.sample.GenericTileLineMode.Page"
-	height="100%"
-	xmlns="sap.m"
-	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:l="sap.ui.layout"
-	xmlns:html="http://www.w3.org/1999/xhtml">
-	<Page
-		showHeader="true">
+		controllerName="sap.m.sample.GenericTileLineMode.Page"
+		height="100%"
+		xmlns="sap.m"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:l="sap.ui.layout"
+		xmlns:html="http://www.w3.org/1999/xhtml">
+	<Page showHeader="true">
 		<customHeader>
 			<OverflowToolbar>
-				<ToolbarSpacer />
-				<Label text="Tile Actions:" />
-				<Switch state="{/actionsScope}" />
+				<ToolbarSpacer/>
+				<Label text="Enforce small size:"/>
+				<Switch id="enforceSmallSwitch" change="changeEnforceSmall" state="false"/>
+				<Label text="Tile Actions:"/>
+				<Switch state="{/actionsScope}"/>
 			</OverflowToolbar>
 		</customHeader>
 		<content>
-			<MessageStrip showIcon="true" type="Information" text="Compare same content of Generic Tiles in regular and in line mode; no line mode equivalent for Slide Tile." class="sapUiTinyMargin"> </MessageStrip>
-			<l:HorizontalLayout
-				id="TileContainerExpanded"
-				allowWrapping="true"
-				content="{/tiles}">
-				<GenericTile
-					header="{title}"
-					subheader="{subtitle}"
-					state="{=${state} || 'Loaded'}"
-					scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
-					press="press"
-					class="sapUiTinyMarginBegin sapUiTinyMarginTop">
-					<TileContent unit="{unit}" footer="{footer}">
-						<NumericContent
-							value="{kpivalue}"
-							valueColor="{color}"
-							indicator="{trend}"
-							scale="{scale}" />
-					</TileContent>
-				</GenericTile>
-			</l:HorizontalLayout>
-			<l:HorizontalLayout
-				id="SlideTileContainer"
-				allowWrapping="true">
-				<SlideTile
-					tiles="{/slideTile1}"
-					scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
-					tooltip="SlideTile 1"
-					press="pressSlideTile"
-					class="sapUiTinyMarginBegin sapUiTinyMarginTop">
-					<GenericTile
-						backgroundImage="{backgroundImage}"
-						state="{=${state} || 'Loaded'}"
-						tooltip="{tooltip}"
-						frameType="TwoByOne"
-						press="press">
-						<TileContent footer="{footer}">
-							<NewsContent
-								contentText="{contentText}"
-								subheader="{subtitle}" />
-						</TileContent>
-					</GenericTile>
-				</SlideTile>
-				<SlideTile
-					tiles="{/slideTile2}"
-					scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
-					tooltip="SlideTile 2"
-					press="pressSlideTile"
-					transitionTime="250" displayTime="2500"
-					class="sapUiTinyMarginBegin sapUiTinyMarginTop">
-					<GenericTile
-						backgroundImage="{backgroundImage}"
-						state="{=${state} || 'Loaded'}"
-						tooltip="{tooltip}"
-						frameType="TwoByOne"
-						press="press">
-						<TileContent footer="{footer}">
-							<NewsContent
-								contentText="{contentText}"
-								subheader="{subtitle}" />
-						</TileContent>
-					</GenericTile>
-				</SlideTile>
-			</l:HorizontalLayout>
-			<html:div class="sapUiTinyMarginBegin sapUiTinyMarginTop">
+			<MessageStrip showIcon="true"
+						  type="Information"
+						  text="Compare same content of Generic Tiles in regular and in line mode; no line mode equivalent for Slide Tile."
+						  class="sapUiTinyMargin"/>
+			<l:VerticalLayout>
 				<l:HorizontalLayout
-					id="tileContainerCollapsed"
-					allowWrapping="true"
-					content="{/tiles}"
-					class="sapMSampleTileContainer">
+						id="TileContainerExpanded"
+						allowWrapping="true"
+						content="{/tiles}">
 					<GenericTile
-						header="{title}"
-						subheader="{subtitle}"
-						state="{=${state} || 'Loaded'}"
-						scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
-						mode="LineMode"
-						press="press"
-						class="sapUiTinyMarginEnd">
-						<TileContent footer="{footer}">
+							header="{title}"
+							subheader="{subtitle}"
+							state="{=${state} || 'Loaded'}"
+							scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+							press="press"
+							class="sapUiTinyMarginBegin sapUiTinyMarginTop"
+							sizeBehavior="{/sizeBehavior}">
+						<TileContent unit="{unit}" footer="{footer}">
 							<NumericContent
-								value="{kpivalue}"
-								valueColor="{color}"
-								indicator="{trend}"
-								scale="{scale}" />
+									value="{kpivalue}"
+									valueColor="{color}"
+									indicator="{trend}"
+									scale="{scale}"/>
 						</TileContent>
 					</GenericTile>
 				</l:HorizontalLayout>
-			</html:div>
+				<l:HorizontalLayout
+						id="SlideTileContainer"
+						allowWrapping="true">
+					<SlideTile
+							id="slideTile1"
+							tiles="{/slideTile1}"
+							scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+							tooltip="SlideTile 1"
+							press="pressSlideTile"
+							class="sapUiTinyMarginBegin sapUiTinyMarginTop"
+							sizeBehavior="{/sizeBehavior}">
+						<GenericTile
+								id="tile6"
+								backgroundImage="{backgroundImage}"
+								state="{=${state} || 'Loaded'}"
+								tooltip="{tooltip}"
+								frameType="TwoByOne"
+								press="press"
+								sizeBehavior="{/sizeBehavior}">
+							<TileContent footer="{footer}">
+								<NewsContent
+										contentText="{contentText}"
+										subheader="{subtitle}"/>
+							</TileContent>
+						</GenericTile>
+					</SlideTile>
+					<SlideTile
+							id="slideTile2"
+							tiles="{/slideTile2}"
+							scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+							tooltip="SlideTile 2"
+							press="pressSlideTile"
+							transitionTime="250" displayTime="2500"
+							class="sapUiTinyMarginBegin sapUiTinyMarginTop"
+							sizeBehavior="{/sizeBehavior}">
+						<GenericTile
+								id="tile7"
+								backgroundImage="{backgroundImage}"
+								state="{=${state} || 'Loaded'}"
+								tooltip="{tooltip}"
+								frameType="TwoByOne"
+								press="press"
+								sizeBehavior="{/sizeBehavior}">
+							<TileContent footer="{footer}">
+								<NewsContent
+										contentText="{contentText}"
+										subheader="{subtitle}"/>
+							</TileContent>
+						</GenericTile>
+					</SlideTile>
+				</l:HorizontalLayout>
+				<html:div class="sapUiTinyMarginBegin sapUiTinyMarginTop">
+					<l:HorizontalLayout
+							id="tileContainerCollapsed"
+							allowWrapping="true"
+							content="{/tiles}"
+							class="sapMSampleTileContainer">
+						<GenericTile
+								id="tile4"
+								header="{title}"
+								subheader="{subtitle}"
+								state="{=${state} || 'Loaded'}"
+								scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+								mode="LineMode"
+								press="press"
+								class="sapUiTinyMarginEnd"
+								sizeBehavior="{/sizeBehavior}">
+							<TileContent footer="{footer}">
+								<NumericContent
+										value="{kpivalue}"
+										valueColor="{color}"
+										indicator="{trend}"
+										scale="{scale}"/>
+							</TileContent>
+						</GenericTile>
+					</l:HorizontalLayout>
+				</html:div>
+			</l:VerticalLayout>
 		</content>
 	</Page>
 </mvc:View>

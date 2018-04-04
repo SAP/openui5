@@ -87,6 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.TimePickerMaskMode",
+			"sap.m.TileSizeBehaviour",
 			"sap.m.ToolbarDesign",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
@@ -1300,6 +1301,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * @public
 		 */
 		Actions: "Actions"
+	};
+
+	/**
+	 * Describes the behavior of tiles when displayed on a small-screened phone (374px wide and lower).
+	 *
+	 * @enum {string}
+	 * @since 1.56.0
+	 * @ui5-metamodel This enumeration will also be described in the SAPUI5 (legacy) designtime metamodel
+	 * @public
+	 */
+	sap.m.TileSizeBehavior = {
+		/**
+		 * Default behavior: tiles adapt to the size of the screen, getting smaller on small screens.
+		 * @public
+		 */
+		Responsive: "Responsive",
+		/**
+		 * Tiles are small all the time, regardless of the actual screen size.
+		 * @public
+		 */
+		Small: "Small"
 	};
 
 	/**

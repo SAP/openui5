@@ -20,20 +20,12 @@ sap.ui.define([
 			 ResizeHandler) {
 	"use strict";
 
-	// shortcut for sap.m.GenericTileScope
-	var GenericTileScope = library.GenericTileScope;
-
-	// shortcut for sap.m.LoadState
-	var LoadState = library.LoadState;
-
-	// shortcut for sap.m.FrameType
-	var FrameType = library.FrameType;
-
-	// shortcut for sap.m.Size
-	var Size = library.Size;
-
-	// shortcut for sap.m.GenericTileMode
-	var GenericTileMode = library.GenericTileMode;
+	var GenericTileScope = library.GenericTileScope,
+		LoadState = library.LoadState,
+		FrameType = library.FrameType,
+		Size = library.Size,
+		GenericTileMode = library.GenericTileMode,
+		TileSizeBehavior = library.TileSizeBehavior;
 
 	var DEVICE_SET = "GenericTileDeviceSet";
 
@@ -107,10 +99,11 @@ sap.ui.define([
 				 */
 				scope: {type: "sap.m.GenericTileScope", group: "Misc", defaultValue: GenericTileScope.Display},
 				/**
-				 * If set to <code>true</code>, the tile size is the same as it would be on a small-screened phone (374px wide and lower),
-				 * regardless of the screen size of the actual device being used.
+				 *  If set to <code>TileSizeBehavior.Small</code>, the tile size is the same as it would be on a small-screened phone (374px wide and lower),
+				 *  regardless of the screen size of the actual device being used.
+				 *  If set to <code>TileSizeBehavior.Responsive</code>, the tile size adapts to the size of the screen.
 				 */
-				enforceMobileSize: {type: "boolean", defaultValue: false},
+				sizeBehavior: {type: "sap.m.TileSizeBehavior", defaultValue: TileSizeBehavior.Responsive},
 				/**
 				 * Additional description for aria-label. The aria-label is rendered before the standard aria-label.
 				 * @since 1.50.0
@@ -405,7 +398,7 @@ sap.ui.define([
 	 */
 	GenericTile.prototype._setupResizeClassHandler = function () {
 		var fnCheckMedia = function () {
-			if (this.getEnforceMobileSize() || window.matchMedia("(max-width: 374px)").matches) {
+			if (this.getSizeBehavior() === TileSizeBehavior.Small || window.matchMedia("(max-width: 374px)").matches) {
 				this.$().addClass("sapMTileSmallPhone");
 			} else {
 				this.$().removeClass("sapMTileSmallPhone");
@@ -603,7 +596,7 @@ sap.ui.define([
 			var $Target = jQuery(oEvent.target);
 
 			if ($Target.is(".sapMGT, .sapMGT *")) { //exclude other GenericTiles and all of their contents
-				return false; //stop bubbling and prevent default behaviour
+				return false; //stop bubbling and prevent default behavior
 			}
 		}
 
