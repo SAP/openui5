@@ -2192,15 +2192,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 	 * @private
 	 */
 	Table.prototype._toggleVSb = function() {
-		var $this = this.$();
-		if (this.getDomRef()) {
+		var oTableDomRef = this.getDomRef();
+		if (oTableDomRef) {
 			// in case of Scrollbar Mode show/hide the scrollbar depending whether it is needed.
 			var isVSbRequired = this._isVSbRequired();
-			if (!isVSbRequired) {
-				// reset scroll position to zero when Scroll Bar disappe
+			var isVSbVisible = this._getScrollExtension().isVerticalScrollbarVisible();
+
+			if (isVSbRequired && !isVSbVisible) {
+				oTableDomRef.classList.add("sapUiTableVScr");
 				this._updateVSbScrollTop(0);
 			}
-			$this.toggleClass("sapUiTableVScr", isVSbRequired);
+
+			if (!isVSbRequired && isVSbVisible) {
+				oTableDomRef.classList.remove("sapUiTableVScr");
+			}
 		}
 	};
 
