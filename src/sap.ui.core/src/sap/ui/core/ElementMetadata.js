@@ -83,7 +83,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 		var oStaticInfo = oClassInfo.metadata;
 
-		this._sVisibility = oStaticInfo["visibility"] || "public";
+		this._sVisibility = oStaticInfo.visibility || "public";
+		this.dnd = jQuery.extend({}, {draggable: true, droppable: true}, oStaticInfo.dnd);
 
 		// remove renderer stuff before calling super.
 		var vRenderer = oClassInfo.hasOwnProperty("renderer") ? (oClassInfo.renderer || "") : undefined;
@@ -124,6 +125,47 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObjectMetadata', 'sap/ui
 
 	ElementMetadata.prototype.isHidden = function() {
 		return this._sVisibility === "hidden";
+	};
+
+
+	// ---- Aggregation -----------------------------------------------------------------------
+
+	var fnMetaFactoryAggregation = ElementMetadata.prototype.metaFactoryAggregation;
+
+	function Aggregation(oClass, name, info) {
+		fnMetaFactoryAggregation.apply(this, arguments);
+		this.dnd = jQuery.extend({
+			draggable: !this.multiple,
+			droppable: !this.multiple,
+			layout: "Vertical"
+		}, (typeof info.dnd == "boolean") ? {
+			draggable: info.dnd,
+			droppable: info.dnd
+		} : info.dnd);
+	}
+
+	Aggregation.prototype = Object.create(fnMetaFactoryAggregation.prototype);
+	ElementMetadata.prototype.metaFactoryAggregation = Aggregation;
+
+	/**
+	 * Returns an info object describing the drag-and-drop behavior.
+	 *
+	 * @param {string} [sAggregationName] name of the aggregation or empty.
+	 * @returns {Object} An info object about the drag-and-drop behavior.
+	 * @public
+	 * @since 1.56
+	 */
+	ElementMetadata.prototype.getDragDropInfo = function(sAggregationName) {
+		if (!sAggregationName) {
+			return this.dnd;
+		}
+
+		var oAggregation = this._mAllAggregations[sAggregationName] || this._mAllPrivateAggregations[sAggregationName];
+		if (!oAggregation) {
+			return {};
+		}
+
+		return oAggregation.dnd;
 	};
 
 	return ElementMetadata;
