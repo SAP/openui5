@@ -386,6 +386,8 @@ sap.ui.define([
 				this.resetData();
 				this._initialize(); // triggers metadata/annotation check
 				this._fireChange({ reason: ChangeReason.Context });
+			} else {
+				this.bInitial = true;
 			}
 		}
 	};
