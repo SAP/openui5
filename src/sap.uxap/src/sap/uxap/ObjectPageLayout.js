@@ -362,6 +362,16 @@ sap.ui.define([
 		return ObjectPageLayout.TITLE_LEVEL_AS_ARRAY[bHasNextTitleLevel ? iCurrentTitleLevelIndex + 1 : iCurrentTitleLevelIndex];
 	};
 
+	/**
+	 * Retrieves the resource bundle for the <code>sap.uxap</code> library.
+	 * @static
+	 * @private
+	 * @returns {Object} the resource bundle object
+	 */
+	ObjectPageLayout._getLibraryResourceBundle = function () {
+		return library.i18nModel.getResourceBundle();
+	};
+
 	/*************************************************************************************
 	 * life cycle management
 	 ************************************************************************************/
@@ -3400,6 +3410,30 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._getWidth = function (oControl) {
 		return !(oControl instanceof Control) ? 0 : oControl.$().outerWidth() || 0;
+	};
+
+
+	ObjectPageLayout.prototype._getRootAriaLabelText = function () {
+		var oHeader = this.getHeaderTitle(),
+			sTitleText = oHeader ? oHeader.getTitleText() : null,
+			sAriaLabelText;
+
+		if (oHeader && sTitleText) {
+			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText("ROOT_ARIA_LABEL_WITH_TITLE") + " " + sTitleText;
+		} else {
+			sAriaLabelText = ObjectPageLayout._getLibraryResourceBundle().getText("ROOT_ARIA_LABEL_WITHOUT_TITLE");
+		}
+
+		return sAriaLabelText;
+	};
+
+	ObjectPageLayout.prototype._updateRootAriaLabel = function () {
+		var sNewText = this._getRootAriaLabelText(),
+			sCurrentText = this.$().attr("aria-label");
+
+		if (sNewText !== sCurrentText) {
+			this.$().attr("aria-label", sNewText);
+		}
 	};
 
 	function exists(vObject) {
