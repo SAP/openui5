@@ -291,7 +291,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/Icon", "./Input", "./InputRende
 			return "inner";
 		};
 
-		var NumericInput = Input.extend("NumericInput", {
+		var NumericInput = Input.extend("sap.m.internal.NumericInput", {
 			constructor: function(sId, mSettings) {
 				return Input.apply(this, arguments);
 			},
