@@ -18,7 +18,7 @@ function (
 	 *
 	 * @class
 	 * The AggregationDesignTimeMetadata is a wrapper for the AggregationDesignTimeMetadata of the associated element
-	 * @extends sap.ui.core.DesignTimeMetadata
+	 * @extends sap.ui.dt.DesignTimeMetadata
 	 *
 	 * @author SAP SE
 	 * @version ${version}

@@ -1914,8 +1914,8 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 *
 		 * @public
 		 * @param {object} mCurrencies adds to the currency map
-		 * @return {sap.ui.core.Configuration.FormatSettings}
-		 * @see sap.ui.core.Configuration#setCustomCurrencies
+		 * @returns {sap.ui.core.Configuration.FormatSettings}
+		 * @see sap.ui.core.Configuration.FormatSettings#setCustomCurrencies
 		 */
 		addCustomCurrencies: function (mCurrencies) {
 			// add custom units, or remove the existing ones if none are given
