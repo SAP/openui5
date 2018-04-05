@@ -699,7 +699,8 @@ code {
 	margin-left: 0.25rem;
 }
 
-.sapUiDocumentationHeaderNavLinks .sapMText {
+.sapUiDocumentationHeaderNavLinks .sapMText,
+.sapUxAPObjectPageHeaderContent .sapUxAPObjectPageHeaderContentItem .sapUiDocumentationHeaderNavLinks .sapMText {
 	line-height: 1.25rem;
 	margin-left: 0.25rem;
 	color: #666666;
