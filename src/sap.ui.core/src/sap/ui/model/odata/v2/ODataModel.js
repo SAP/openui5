@@ -5263,7 +5263,7 @@ sap.ui.define([
 				return undefined;
 			}
 			if (typeof vProperties === "object" && !Array.isArray(vProperties)) {
-				oEntity = jQuery.extend(true, {}, vProperties);
+				oEntity = jQuery.sap.extend(true, {}, vProperties);
 			} else {
 				for (var i = 0; i < oEntityMetadata.property.length; i++) {
 					var oPropertyMetadata = oEntityMetadata.property[i];
