@@ -464,7 +464,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			aParts = sCandidate.split("/"),
 			iLength = aParts.length,
 			oParentEntityType,
-			aEntityTypeName,
+			oEntityTypeInfo,
 			oEntityType,
 			oResultEntityType,
 			that = this;
@@ -500,8 +500,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			}
 		} else {
 			// if only one part exists it should be the name of the collection and we can get the entity type for it
-			aEntityTypeName = this._splitName(this._getEntityTypeName(aParts[0]));
-			oEntityType = this._getObjectMetadata("entityType", aEntityTypeName[0], aEntityTypeName[1]);
+			oEntityTypeInfo = this._splitName(this._getEntityTypeName(aParts[0]));
+			oEntityType = this._getObjectMetadata("entityType", oEntityTypeInfo.name, oEntityTypeInfo.namespace);
 			if (oEntityType) {
 				// store the type name also in the oEntityType
 				oEntityType.entityType = this._getEntityTypeName(aParts[0]);
@@ -541,19 +541,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * @return {object} the entity type or null if not found
 	 */
 	ODataMetadata.prototype._getEntityTypeByName = function(sName) {
-		var oEntityType, that = this, sEntityName, sNamespace, iSeparator;
+		var oEntityType, that = this, sEntityName, sNamespace, oEntityTypeInfo;
 
 		if (!sName) {
 			jQuery.sap.assert(undefined, "sName not defined!");
 			return null;
 		}
-		iSeparator = sName.indexOf(".");
-		if (iSeparator > 0) {
-			sNamespace = sName.substr(0, iSeparator);
-			sEntityName = sName.substr(iSeparator + 1);
-		} else {
-			sEntityName = sName;
-		}
+		oEntityTypeInfo = this._splitName(sName);
+		sNamespace = oEntityTypeInfo.namespace;
+		sEntityName = oEntityTypeInfo.name;
+
 		if (!this.oMetadata || jQuery.isEmptyObject(this.oMetadata)) {
 			jQuery.sap.assert(undefined, "No metadata loaded!");
 			return null;
@@ -752,13 +749,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * splits a name e.g. Namespace.Name into [Name, Namespace]
 	 */
 	ODataMetadata.prototype._splitName = function(sFullName) {
-		var aParts = [];
+		var oInfo = {};
 		if (sFullName) {
 			var iSepIdx = sFullName.lastIndexOf(".");
-			aParts[0] = sFullName.substr(iSepIdx + 1);
-			aParts[1] = sFullName.substr(0, iSepIdx);
+			oInfo.name = sFullName.substr(iSepIdx + 1);
+			oInfo.namespace = sFullName.substr(0, iSepIdx);
 		}
-		return aParts;
+		return oInfo;
 	};
 
 
@@ -900,8 +897,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	ODataMetadata.prototype._getEntityTypeByNavPropertyObject = function(mNavProperty) {
 		var mToEntityType;
 
-		var aAssociationName = this._splitName(mNavProperty.relationship);
-		var mAssociation = this._getObjectMetadata("association", aAssociationName[0], aAssociationName[1]);
+		var oAssociationInfo = this._splitName(mNavProperty.relationship);
+		var mAssociation = this._getObjectMetadata("association", oAssociationInfo.name, oAssociationInfo.namespace);
 
 		// get association for navigation property and then the collection name
 		if (mAssociation) {
@@ -909,8 +906,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			if (mEnd.role !== mNavProperty.toRole) {
 				mEnd = mAssociation.end[1];
 			}
-			var aEntityTypeName = this._splitName(mEnd.type);
-			mToEntityType = this._getObjectMetadata("entityType", aEntityTypeName[0], aEntityTypeName[1]);
+			var oEntityTypeInfo = this._splitName(mEnd.type);
+			mToEntityType = this._getObjectMetadata("entityType", oEntityTypeInfo.name, oEntityTypeInfo.namespace);
 			if (mToEntityType) {
 				// store the type name also in the oEntityType
 				mToEntityType.entityType = mEnd.type;
@@ -964,8 +961,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					oPropertyMetadata = that._getPropertyMetadata(oEntityType, aParts[0]);
 				}
 			} else if (!jQuery.sap.startsWith(oPropertyMetadata.type.toLowerCase(), "edm.")) {
-				var aName = this._splitName(oPropertyMetadata.type);
-				oPropertyMetadata = this._getPropertyMetadata(this._getObjectMetadata("complexType", aName[0], aName[1]), aParts[1]);
+				var oNameInfo = this._splitName(oPropertyMetadata.type);
+				oPropertyMetadata = this._getPropertyMetadata(this._getObjectMetadata("complexType", oNameInfo.name, oNameInfo.namespace), aParts[1]);
 			}
 		}
 
