@@ -198,5 +198,22 @@ function(
 		return aTriggers;
 	};
 
+	/**
+	 * Returns "label" from designtime metadata
+	 * @return {string|undefined} Returns the label if present, calculated from a function or string
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.getLabel = function() {
+		var vLabel = this.getData().label;
+
+		switch (typeof vLabel) {
+			case "function":
+				return vLabel.apply(this, arguments);
+			case "string":
+				return vLabel;
+				//no default case
+		}
+	};
+
 	return DesignTimeMetadata;
 }, /* bExport= */ true);

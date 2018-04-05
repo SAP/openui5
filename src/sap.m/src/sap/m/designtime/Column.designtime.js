@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/Utils"
+	"sap/ui/dt/ElementUtil"
 ], function (Utils) {
 	"use strict";
 

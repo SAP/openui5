@@ -1,19 +1,27 @@
 /*global QUnit*/
+QUnit.config.autostart = false;
 
-(function(){
+sap.ui.require([
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/core/Core",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/core/Element",
+	"sap/ui/thirdparty/sinon-4"
+
+],function(
+	ElementDesignTimeMetadata,
+	Core,
+	ElementUtil,
+	Element,
+	sinon
+){
 	"use strict";
 
-	jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-	jQuery.sap.require("sap.ui.dt.ElementDesignTimeMetadata");
-
-	jQuery.sap.require("sap.ui.thirdparty.sinon");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-	jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that an ElementDesignTimeMetadata is created for a control", {
 		beforeEach : function() {
-			this.oElementDesignTimeMetadata = new sap.ui.dt.ElementDesignTimeMetadata({
+			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
 				libraryName : "fake.lib",
 				data : {
 					name : {
@@ -74,6 +82,7 @@
 		},
 		afterEach : function() {
 			this.oElementDesignTimeMetadata.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -105,10 +114,10 @@
 
 	QUnit.test("when getAggregationText is called", function(assert) {
 		var oFakeLibBundle = {
-			getText : this.stub().returnsArg(0), //just return i18n keys
-			hasText : this.stub().returns(false)
+			getText : sandbox.stub().returnsArg(0), //just return i18n keys
+			hasText : sandbox.stub().returns(false)
 		};
-		this.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
+		sandbox.stub(Core,"getLibraryResourceBundle").returns(oFakeLibBundle);
 
 		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation"), {
 			singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
@@ -123,15 +132,39 @@
 
 	QUnit.test("when getText is called", function(assert) {
 		var oFakeLibBundle = {
-			getText : this.stub().returnsArg(0), //just return i18n keys
-			hasText : this.stub().returns(false)
+			getText : sandbox.stub().returnsArg(0), //just return i18n keys
+			hasText : sandbox.stub().returns(false)
 		};
-		this.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
+		sandbox.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
 
 		assert.deepEqual(this.oElementDesignTimeMetadata.getName(), {
 			singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 			plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 		}, "then the translated texts are returned for static keys");
+	});
+
+	QUnit.test("when getLabel is called with label property available in the DesignTimeMetadata as a function", function(assert) {
+		this.oElementDesignTimeMetadata.getData().label = function(oElement) {
+			return oElement.getId();
+		};
+		var oTestElement = new Element("testId");
+		assert.strictEqual(this.oElementDesignTimeMetadata.getLabel(oTestElement), oTestElement.getId(), "then the correct element is received");
+		oTestElement.destroy();
+		delete this.oElementDesignTimeMetadata.getData().label;
+	});
+
+	QUnit.test("when getLabel is called with label property available in the DesignTimeMetadata as a string", function(assert) {
+		this.oElementDesignTimeMetadata.getData().label = "testLabel";
+		assert.strictEqual(this.oElementDesignTimeMetadata.getLabel(), "testLabel", "then the correct string value is received");
+		delete this.oElementDesignTimeMetadata.getData().label;
+	});
+
+	QUnit.test("when getLabel is called with label property not available in the DesignTimeMetadata", function(assert) {
+		var fnLabelForElementStub = sandbox.stub(ElementUtil, "getLabelForElement");
+		var aMockArguments = ["testArg1", "testArg2"];
+		this.oElementDesignTimeMetadata.getLabel(aMockArguments);
+		assert.ok(fnLabelForElementStub.calledOnce, "then ElementUtil.getLabelForElement() called once");
+		assert.ok(fnLabelForElementStub.calledWith(aMockArguments), "then ElementUtil.getLabelForElement() called with the correct arguments");
 	});
 
 	QUnit.test("when getAggregations method is called and DT Metadata has no aggregations nor associations", function(assert){
@@ -140,4 +173,5 @@
 		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregations(), {}, "then an empty object is returned");
 	});
 
-})();
+	QUnit.start();
+});

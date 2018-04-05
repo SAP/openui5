@@ -7,6 +7,7 @@ sap.ui.define(function () {
 
 	return Object.freeze({
 		selection: 'sap.ui.rta.service.Selection',
-		controllerExtension: 'sap.ui.rta.service.ControllerExtension'
+		controllerExtension: 'sap.ui.rta.service.ControllerExtension',
+		outline: 'sap.ui.rta.service.Outline'
 	});
 });

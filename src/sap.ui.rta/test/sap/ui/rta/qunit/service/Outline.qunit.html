@@ -1,7 +1,7 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<title>Test Page for sap.ui.dt.ElementDesignTimeMetadata</title>
+		<title>Test Page for sap.ui.rta.service.Outline</title>
 		<script src="../shared-config.js"></script>
 		<script>
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
@@ -12,13 +12,12 @@
 			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
 			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
-			window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/dt]");
+			window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
 
-			jQuery.sap.includeScript("./ElementDesignTimeMetadata.qunit.js");
+			jQuery.sap.includeScript("./Outline.qunit.js");
 		</script>
 	</head>
 	<body>
 		<div id="qunit"></div>
 	</body>
 </html>
-

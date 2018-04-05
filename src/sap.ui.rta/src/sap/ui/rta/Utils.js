@@ -380,39 +380,6 @@ function(
 	};
 
 	/**
-	 * Secure extract a label from an element
-	 *
-	 * @param {sap.ui.core.Element} oElement - Any Object
-	 * @param {Function} [fnFunction] - Custom function for retrieving label
-	 * @return {String|undefined} Label string or undefined
-	 */
-	Utils.getLabelForElement = function(oElement, fnFunction) {
-		// if there is a function, only the function is executed
-		if (fnFunction) {
-			return fnFunction(oElement);
-		} else {
-			// first try getText(), then getlabelText(), if not available try getLabel().getText(), then getTitle(), then getId()
-			var sFieldLabel = oElement.getText && oElement.getText();
-			if (!sFieldLabel) {
-				sFieldLabel = oElement.getLabelText && oElement.getLabelText();
-			}
-			if (!sFieldLabel) {
-				sFieldLabel = oElement.getLabel && oElement.getLabel();
-				if (sFieldLabel && sFieldLabel.getText){
-					sFieldLabel = sFieldLabel.getText();
-				}
-			}
-			if (!sFieldLabel) {
-				sFieldLabel = oElement.getTitle && oElement.getTitle();
-			}
-			if (!sFieldLabel) {
-				sFieldLabel = oElement.getId && oElement.getId();
-			}
-			return (typeof sFieldLabel) === "string" ? sFieldLabel : undefined;
-		}
-	};
-
-	/**
 	 * Get the entity type based on the binding of a control
 	 *
 	 * @param {sap.ui.core.Element} oElement - Any Object
