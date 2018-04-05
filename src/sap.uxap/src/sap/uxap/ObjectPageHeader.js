@@ -483,10 +483,12 @@ sap.ui.define([
 
 	ObjectPageHeader.prototype.setObjectTitle = function (sNewTitle) {
 
-		var sOldTitle = this.getProperty("objectTitle"),
+		var oParent = this.getParent(),
+			sOldTitle = this.getProperty("objectTitle"),
 			bChanged = sOldTitle !== sNewTitle;
 
 		this._applyActionProperty("objectTitle", Array.prototype.slice.call(arguments));
+		oParent && oParent._updateRootAriaLabel();
 
 		if (bChanged && this.mEventRegistry["_titleChange"]) {
 			this.fireEvent("_titleChange", {
