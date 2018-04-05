@@ -1226,7 +1226,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 
 		var CustomSelectRenderer = Renderer.extend(sap.m.SelectRenderer);
 
-		var CustomSelect = Select.extend("CustomSelect", {
+		var CustomSelect = Select.extend("sap.m.internal.TabStripSelect", {
 			renderer: CustomSelectRenderer
 		});
 
@@ -1317,7 +1317,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/IconPool
 			oRm.write("</li>");
 		};
 
-		var CustomSelectList = SelectList.extend("CustomSelectList", {
+		var CustomSelectList = SelectList.extend("sap.m.internal.TabStripSelectList", {
 			renderer: CustomSelectListRenderer
 		});
 
