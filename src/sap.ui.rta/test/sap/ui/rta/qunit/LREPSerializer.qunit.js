@@ -8,6 +8,7 @@ sap.ui.require([
 	'sap/ui/dt/DesignTimeMetadata',
 	'sap/ui/rta/command/LREPSerializer',
 	'sap/ui/rta/command/Stack',
+	'sap/ui/rta/command/Settings',
 	'sap/ui/fl/FakeLrepLocalStorage',
 	'sap/ui/fl/FakeLrepConnectorLocalStorage',
 	'sap/ui/fl/registry/ChangeRegistry',
@@ -18,6 +19,8 @@ sap.ui.require([
 	'sap/ui/fl/Change',
 	'sap/ui/fl/variants/VariantModel',
 	'sap/ui/fl/variants/VariantManagement',
+	'sap/m/Input',
+	'sap/m/Panel',
 	//should be last:
 	'sap/ui/thirdparty/sinon',
 	'sap/ui/thirdparty/sinon-ie',
@@ -27,6 +30,7 @@ sap.ui.require([
 	DesignTimeMetadata,
 	CommandSerializer,
 	CommandStack,
+	Settings,
 	FakeLrepLocalStorage,
 	FakeLrepConnectorLocalStorage,
 	ChangeRegistry,
@@ -37,6 +41,8 @@ sap.ui.require([
 	Change,
 	VariantModel,
 	VariantManagement,
+	Input,
+	Panel,
 	sinon
 ) {
 	"use strict";
@@ -105,7 +111,7 @@ sap.ui.require([
 	var oFlexController = FlexControllerFactory.createForControl(oMockedAppComponent);
 	var oModel = new VariantModel(oData, oFlexController, oMockedAppComponent);
 
-	QUnit.module("Given a command serializer loaded with an RTA command stack containing commands", {
+	QUnit.module("Given a command serializer loaded with an RTA command stack", {
 		beforeEach : function(assert) {
 			// Prepare fake LRep
 			FakeLrepLocalStorage.deleteChanges();
@@ -116,16 +122,17 @@ sap.ui.require([
 				"sap.m.Input": {
 					"hideControl" : {
 						completeChangeContent: function() {},
-						applyChange: function() {return Promise.resolve();}
+						applyChange: function() {return Promise.resolve();},
+						revertChange: function(){}
 					}
 				}
 			});
 
 			// Create command stack with some commands
 			this.oCommandStack = new CommandStack();
-			this.oInput1 = new sap.m.Input({id : "input1"});
-			this.oInput2 = new sap.m.Input({id : "input2"});
-			this.oPanel = new sap.m.Panel({
+			this.oInput1 = new Input("input1");
+			this.oInput2 = new Input("input2");
+			this.oPanel = new Panel({
 				id : "panel",
 				content : [this.oInput1, this.oInput2]});
 
@@ -153,6 +160,59 @@ sap.ui.require([
 			FakeLrepLocalStorage.deleteChanges();
 			sandbox.restore();
 		}
+	});
+
+	QUnit.test("when two commands get undone, redone and saved while the element of one command is not available", function(assert) {
+		// then two changes are expected to be written in LREP
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(2, assert, "save");
+
+		var oInput3 = new Input("input3");
+		// Create commands
+		var oSettingsCommand1 = CommandFactory.getCommandFor(this.oInput1, "Settings", {
+			changeType: "hideControl"
+		}, this.oInputDesignTimeMetadata);
+		var oSettingsCommand2 = CommandFactory.getCommandFor(oInput3, "Settings", {
+			changeType: "hideControl"
+		}, this.oInputDesignTimeMetadata);
+
+		var oDeleteChangeSpy = sandbox.spy(oFlexController, "deleteChange");
+		var oAddPreparedChangeSpy = sandbox.spy(oFlexController, "addPreparedChange");
+
+		return this.oCommandStack.pushAndExecute(oSettingsCommand1)
+		.then(function(){
+			return this.oCommandStack.pushAndExecute(oSettingsCommand2);
+		}.bind(this))
+		.then(function(){
+			// destroy element for 2nd command
+			oInput3.destroy();
+			assert.equal(oAddPreparedChangeSpy.callCount, 2, "until now 2 changes got added");
+			assert.equal(oDeleteChangeSpy.callCount, 0, "until now no changes got deleted");
+			return this.oCommandStack.undo();
+		}.bind(this))
+		.then(function() {
+			return this.oCommandStack.undo();
+		}.bind(this))
+		.then(function() {
+			return this.oCommandStack.redo();
+		}.bind(this))
+		.then(function() {
+			return this.oCommandStack.redo();
+		}.bind(this))
+		.then(function() {
+			assert.equal(oAddPreparedChangeSpy.callCount, 3, "only one more change got added");
+			assert.equal(oDeleteChangeSpy.callCount, 1, "only one change got deleted");
+
+			return this.oSerializer.saveCommands();
+		}.bind(this))
+		.then(function() {
+			assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
+			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+			fnCleanUp();
+		}.bind(this))
+		.catch(function(oError) {
+			fnCleanUp();
+			return Promise.reject(oError);
+		});
 	});
 
 	QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory", function(assert) {
@@ -183,7 +243,6 @@ sap.ui.require([
 			fnCleanUp();
 			return Promise.reject(oError);
 		});
-
 	});
 
 	QUnit.test("when the LREPSerializer.saveCommands gets called with 2 remove commands created via CommandFactory, but one is relevant for runtime only", function(assert) {
@@ -215,7 +274,6 @@ sap.ui.require([
 			fnCleanUp();
 			return Promise.reject(oError);
 		});
-
 	});
 
 	QUnit.test("when the LREPSerializer.saveCommands gets called with a command stack with 1 'remove' command for a destroyed control", function(assert) {
@@ -593,7 +651,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.module("Given a command serializer loaded with an RTA command stack containing ctrl variant commands", {
+	QUnit.module("Given a command serializer loaded with an RTA command stack and ctrl variant commands", {
 		beforeEach : function(assert) {
 			// Prepare fake LRep
 			FakeLrepLocalStorage.deleteChanges();

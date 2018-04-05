@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/rta/command/AppDescriptorCommand',
 	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Utils',
+	'sap/ui/fl/Change',
 	'sap/ui/rta/ControlTreeModifier',
 	'sap/ui/fl/registry/Settings'
 ], function(
@@ -19,6 +20,7 @@ sap.ui.define([
 	AppDescriptorCommand,
 	FlexControllerFactory,
 	FlexUtils,
+	Change,
 	RtaControlTreeModifier,
 	Settings
 ) {
@@ -85,12 +87,14 @@ sap.ui.define([
 						}
 						var oChange = oCommand.getPreparedChange();
 						var oAppComponent = oCommand.getAppComponent();
-						oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-						if (oCommand instanceof FlexCommand){
-							var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-							oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+						if (oAppComponent && oCommand.getElement()) {
+							oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+							if (oCommand instanceof FlexCommand){
+								var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+								oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+							}
+							oFlexController.deleteChange(oChange, oAppComponent);
 						}
-						oFlexController.deleteChange(oChange, oAppComponent);
 					});
 				} else {
 					var aDescriptorCreateAndAdd = [];
@@ -101,8 +105,14 @@ sap.ui.define([
 						}
 						if (oCommand instanceof FlexCommand){
 							var oAppComponent = oCommand.getAppComponent();
-							var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-							oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
+							if (oAppComponent && oCommand.getElement()) {
+								var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+								var oPreparedChange = oCommand.getPreparedChange();
+								if (oPreparedChange.getState() === Change.states.DELETED) {
+									oPreparedChange.setState(Change.states.NEW);
+								}
+								oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
+							}
 						} else if (oCommand instanceof AppDescriptorCommand) {
 							aDescriptorCreateAndAdd.push(oCommand.createAndStoreChange());
 						}
