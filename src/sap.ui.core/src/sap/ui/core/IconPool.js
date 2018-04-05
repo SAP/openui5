@@ -638,10 +638,10 @@ sap.ui.define(['jquery.sap.global', './Core', 'sap/ui/thirdparty/URI'],
 		 * @param {object} oConfig configuration object for registering the font
 		 * @param {string} oConfig.fontFamily the file name of the font face
 		 * @param {string} [oConfig.collectionName] a collection name for the font, if not specified the font face will be used
-		 * @param {URI} oConfig.fontURI the location where the font files are physically located
-		 * @param {Object} [oConfig.metadata] a configuration object mapping the icon name to the hexadecimal icon address in the font
-		 * @param {Object} [oConfig.metadataURI] an URI to a file containing the configuration object specified with oConfig.metadata
-		 * @param {boolean} [oConfig.lazy] load the icon font metadata only when an icon is requested with {@link getIconInfo}
+		 * @param {sap.ui.core.URI} oConfig.fontURI the location where the font files are physically located
+		 * @param {object} [oConfig.metadata] a configuration object mapping the icon name to the hexadecimal icon address in the font
+		 * @param {object} [oConfig.metadataURI] an URI to a file containing the configuration object specified with oConfig.metadata
+		 * @param {boolean} [oConfig.lazy] load the icon font metadata only when an icon is requested with {@link #.getIconInfo}
 		 *   if not specified a JSON file with the name oConfig.fontFamily will be loaded from the location specified in oConfig.fontURI
 		 * @public
 		 * @since 1.56.0

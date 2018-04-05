@@ -39,7 +39,7 @@ function(
 	 *
 	 * @class
 	 * The Overlay allows to create an absolute positioned DIV above the associated element.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
 	 * @version ${version}

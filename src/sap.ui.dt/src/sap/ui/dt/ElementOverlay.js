@@ -40,7 +40,7 @@ function(
 	 * @class
 	 * The ElementOverlay allows to create an absolute positioned DIV above the associated element.
 	 * It also creates AggregationOverlays for every public aggregation of the associated element.
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.dt.Overlay
 	 *
 	 * @author SAP SE
 	 * @version ${version}

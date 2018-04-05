@@ -314,7 +314,7 @@ function(
 	 *
 	 * @return {sap.m.Tree} A reference to the Tree control
 	 * @public
-	 * @param {int|[]} vParam The index or indices of the item to be expanded
+	 * @param {int|int[]} vParam The index or indices of the item to be expanded
 	 * @since 1.56.0
 	 */
 	Tree.prototype.expand = function(vParam) {
@@ -344,7 +344,7 @@ function(
 	 *
 	 * @return {sap.m.Tree} A reference to the Tree control
 	 * @public
-	 * @param {int|[]} vParam The index or indices of the tree items to be collapsed
+	 * @param {int|int[]} vParam The index or indices of the tree items to be collapsed
 	 * @since 1.56.0
 	 */
 	Tree.prototype.collapse = function(vParam) {

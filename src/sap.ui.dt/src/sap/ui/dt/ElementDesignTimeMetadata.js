@@ -23,7 +23,7 @@ function(
 	 *
 	 * @class
 	 * The ElementDesignTimeMetadata is a wrapper for the ElementDesignTimeMetadata of the associated element
-	 * @extends sap.ui.core.DesignTimeMetadata
+	 * @extends sap.ui.dt.DesignTimeMetadata
 	 *
 	 * @author SAP SE
 	 * @version ${version}
