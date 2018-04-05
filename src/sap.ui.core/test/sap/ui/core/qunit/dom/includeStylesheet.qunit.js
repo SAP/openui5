@@ -79,6 +79,18 @@ sap.ui.define(["sap/ui/dom/includeStylesheet", "sap/ui/thirdparty/jquery"], func
 		assert.equal($link.length, 1, "after includeStylesheet with absolute URL, there still should be exactly one matching link");
 		assert.equal($link.attr("data-marker"), "42", "after includeStylesheet with absolute URL, the link object still should be the old one");
 
+		// Creates a URL like
+		// http://example.com/dom/testdata/../../dom/testdata/lib.css
+		// which should be normalized to
+		// http://example.com/dom/testdata/lib.css
+		var sAbsoluteStylesheetUrlUnnormalized = sAbsoluteStylesheetUrl.replace(/lib\.css$/, "../../dom/testdata/lib.css");
+
+		includeStyleSheet(sAbsoluteStylesheetUrlUnnormalized, "sap-ui-theme-sap.ui.layout");
+
+		$link = jQuery(document.getElementById("sap-ui-theme-sap.ui.layout"));
+		assert.equal($link.length, 1, "after includeStylesheet with unnormalized absolute URL, there still should be exactly one matching link");
+		assert.equal($link.attr("data-marker"), "42", "after includeStylesheet with unnormalized absolute URL, the link object still should be the old one");
+
 		/*
 		// @TODO-evo: How to handle this without a booted core?
 		sap.ui.getCore().loadLibrary("sap.ui.layout");
