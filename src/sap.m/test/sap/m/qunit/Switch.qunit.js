@@ -316,25 +316,25 @@
 			customTextOff: "CustomOff"
 		});
 		assert.ok(!!oSwitch.getAccessibilityInfo, "Switch has a getAccessibilityInfo function");
-		var oInfo = oSwitch.getAccessibilityInfo(true);
+		var oInfo = oSwitch.getAccessibilityInfo();
 		assert.ok(!!oInfo, "getAccessibilityInfo returns a info object");
 		assert.strictEqual(oInfo.role, "checkbox", "AriaRole");
 		assert.strictEqual(oInfo.type, oBundle.getText("ACC_CTR_TYPE_CHECKBOX"), "Type");
-		assert.strictEqual(oInfo.description, "", "Description");
+		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oSwitch.getCustomTextOff(), "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
 		assert.strictEqual(oInfo.enabled, true, "Enabled");
 		assert.ok(oInfo.editable === undefined || oInfo.editable === null, "Editable");
 
 		oSwitch.setState(true);
-		oInfo = oSwitch.getAccessibilityInfo(true);
-		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " CustomON", "Description");
+		oInfo = oSwitch.getAccessibilityInfo();
+		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oSwitch.getCustomTextOn(), "Description");
 
 		oSwitch.setCustomTextOn("");
-		oInfo = oSwitch.getAccessibilityInfo(true);
+		oInfo = oSwitch.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ON"), "Description");
 
 		oSwitch.setType("AcceptReject");
-		oInfo = oSwitch.getAccessibilityInfo(true);
+		oInfo = oSwitch.getAccessibilityInfo();
 		assert.strictEqual(oInfo.description, oBundle.getText("ACC_CTR_STATE_CHECKED") + " " + oBundle.getText("SWITCH_ARIA_ACCEPT"), "Description");
 
 		oSwitch.setEnabled(false);
