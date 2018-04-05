@@ -3009,6 +3009,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	/**
 	 * Types of the Toolbar Design.
 	 *
+	 * To preview the different combinations of <code>sap.m.ToolbarDesign</code> and <code>sap.m.ToolbarStyle</code>,
+	 * see the {@link sap.m.sample.ToolbarDesign sample}.
+	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.16.8
@@ -3048,6 +3051,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * <b>Note:</b> Keep in mind that the styles are theme-dependent and can differ based on the currently used theme.
 	 *
+	 * To preview the different combinations of <code>sap.m.ToolbarStyle</code> and <code>sap.m.ToolbarDesign</code>,
+	 * see the {@link sap.m.sample.ToolbarDesign sample}.
+	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.54
@@ -3063,6 +3069,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Simplified visual style dependent on the used theme.
+		 *
+		 * <b>Note:</b> For the Belize themes, the <code>sap.m.Toolbar</code> is displayed with no border.
 		 * @public
 		 */
 		Clear : "Clear"
