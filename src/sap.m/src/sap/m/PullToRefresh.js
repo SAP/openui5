@@ -31,6 +31,9 @@ sap.ui.define([
 	 * PullToRefresh control. Put it as the first control in contents of a scroll container or a scrollable page. Do not place it into a page with disabled scrolling.
 	 * On touch devices it gets hidden by default and when the user pulls down the page far enough, it gets visible and triggers the "refresh" event.
 	 * In non-touch browsers where scrollbars are used for scrolling, it is always visible and triggers the "refresh" event when clicked.
+	 *
+	 * @see {@link topic:fde40159afce478eb488ee4d0f9ebb99 Pull to Refresh}
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

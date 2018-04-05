@@ -31,6 +31,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRendere
 	 * There are options for setting the background color and a background image with the use of the
 	 * <code>backgroundColor</code> and <code>backgroundImage</code> properties.
 	 *
+	 * @see {@link topic:a4afb138acf64a61a038aa5b91a4f082 App}
+	 *
 	 * @extends sap.m.NavContainer
 	 *
 	 * @author SAP SE
