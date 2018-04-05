@@ -25,8 +25,6 @@
 
 		sap.ui.require(['sap/base/log'], function(log) {
 
-			QUnit.start();
-
 			sinon.config.useFakeTimers = true;
 
 			//create JSON model instance
@@ -553,6 +551,11 @@
 
 				assert.ok(popover.bIsDestroyed, "popover should be destroyed");
 				assert.ok(!this.navigationList._popover, "should clean popover reference");
+			});
+
+			// start qunit tests after all tests have been defined and once the dom is ready
+			jQuery(document).ready(function() {
+				QUnit.start();
 			});
 
 		});
