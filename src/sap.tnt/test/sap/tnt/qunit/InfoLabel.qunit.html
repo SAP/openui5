@@ -23,8 +23,6 @@
 
 		sap.ui.require(['sap/base/log'], function(log) {
 
-			QUnit.start();
-
 			QUnit.module("Properties", {
 				beforeEach: function () {
 					this.InfoLabel = new sap.tnt.InfoLabel("iLabel1").placeAt("qunit-fixture");
@@ -285,6 +283,10 @@
 	
 			QUnit.test("testing initially not empty InfoLabel", function (assert) {
 				assert.strictEqual(this.InfoLabelNotEmpty.getDomRef().getElementsByClassName("sapUiPseudoInvisibleText")[0].textContent, "Info label", "InfoLabel initially should have invisible text \"Info label\"");
+			});
+
+			jQuery(document).ready(function() {
+				QUnit.start();
 			});
 		});
 
