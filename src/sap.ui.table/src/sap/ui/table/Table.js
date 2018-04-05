@@ -347,7 +347,7 @@ sap.ui.define([
 			/**
 			 * Rows of the Table
 			 */
-			rows : {type : "sap.ui.table.Row", multiple : true, singularName : "row", bindable : "bindable"},
+			rows : {type : "sap.ui.table.Row", multiple : true, singularName : "row", bindable : "bindable", selector : "#{id}-tableCCnt"},
 
 			/**
 			 * The value for the noData aggregation can be either a string value or a control instance.
@@ -1216,16 +1216,6 @@ sap.ui.define([
 		}
 
 		return oSizes;
-	};
-
-	/**
-	 * Returns the aggregation containers DOM reference.
-	 * @private
-	 */
-	Table.prototype.getAggregationDomRef = function(sAggregationName) {
-		if (sAggregationName == "rows") {
-			return this.getDomRef("tableCCnt");
-		}
 	};
 
 	/**

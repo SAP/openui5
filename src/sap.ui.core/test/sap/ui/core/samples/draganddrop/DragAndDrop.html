@@ -9,6 +9,13 @@
 	data-sap-ui-xx-bindingSyntax="complex"
 	data-sap-ui-theme="sap_belize"
 	data-sap-ui-libs="sap.m"></script>
+	
+<style>
+.highlight {
+	outline: 2px solid darkmagenta;
+	outline-offset: -2px;
+}
+</style>
 
 <script>
 var oData = {
@@ -52,7 +59,13 @@ var oIconList = new sap.m.List({
 		icon: "sap-icon://{icon}",
 		highlight: "Information",
 		dragDropConfig: new sap.ui.core.dnd.DragInfo({
-			groupName: "{icon}"
+			groupName: "{icon}",
+			dragStart: function() {
+				oDescList.addStyleClass("highlight");
+			},
+			dragEnd: function() {
+				oDescList.removeStyleClass("highlight");
+			}
 		})
 	})
 });
@@ -231,10 +244,12 @@ var oDescList2 = new sap.m.List({
 			targetAggregation: "items",
 			dragEnter: function(oEvent) {
 				var oDragSession = oEvent.getParameter("dragSession");
+				oDragSession.setDropControl(oHeaderToolbar);
+			},
+			dragOver: function(oEvent) {
 				var oBrowserEvent = oEvent.getParameter("browserEvent");
 				var bCopy = (oBrowserEvent.metaKey || oBrowserEvent.ctrlKey);
 				oEvent.getSource().setDropEffect(bCopy? "Copy": "Move");
-				oDragSession.setDropControl(oHeaderToolbar);
 			},
 			drop: function(oEvent) {
 				var oDraggedItem = oEvent.getParameter("draggedControl");

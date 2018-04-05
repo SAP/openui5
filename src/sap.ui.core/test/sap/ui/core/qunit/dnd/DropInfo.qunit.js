@@ -15,7 +15,28 @@ sap.ui.define([
 		assert.strictEqual(oDropInfo.getDropEffect(), "Move", "Default value of dropEffect is correct");
 		assert.strictEqual(oDropInfo.getDropPosition(), "On", "Default value of dropPosition is correct");
 		assert.strictEqual(oDropInfo.getDropLayout(), "Vertical", "Default value of dropLayout is correct");
+		assert.strictEqual(oDropInfo.getEnabled(), true, "Default value of enabled is correct");
 		assert.strictEqual(oDropInfo.isDraggable(), false, "DropInfo is not draggable.");
+		oDropInfo.destroy();
+	});
+
+	QUnit.test("invalidation", function(assert) {
+		var oDropInfo = new DropInfo();
+		var fnInvalidateSpy = sinon.spy(oDropInfo, "invalidate");
+
+		oDropInfo.setEnabled(false);
+		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation is not happened for enabled property");
+
+		oDropInfo.destroy();
+	});
+
+	QUnit.test("TemporaryDropPosition", function(assert) {
+		var oDropInfo = new DropInfo();
+		oDropInfo.sTemporaryDropPosition = "Between";
+
+		assert.strictEqual(oDropInfo.getDropPosition(), "On", "Public API returns the correct DropPosition value");
+		assert.strictEqual(oDropInfo.getDropPosition(true), "Between", "Temporary DropPosition is returned when 1st param is true");
+
 		oDropInfo.destroy();
 	});
 
@@ -85,8 +106,12 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oEvent.target = oControl.getDomRef("children");
+		assert.notOk(oDropInfo.isDroppable(oControl, oEvent), "Not Droppable: event target is the defined targetAggregation DOM");
+		assert.strictEqual(oEvent.getMark("DragWithin"), undefined, "Event is not marked as found aggregation name");
+
+		oEvent.target = oControl.getDomRef("children").firstChild;
 		assert.ok(oDropInfo.isDroppable(oControl, oEvent), "Droppable: event target is in the defined targetAggregation DOM");
-		assert.strictEqual(oEvent.getMark("DragWithin"), "children", "Droppable: event is marked for found aggregation name");
+		assert.strictEqual(oEvent.getMark("DragWithin"), "children", "Event is not marked for the found aggregation name");
 
 		oEvent.target = oControl.getDomRef("title");
 		assert.notOk(oDropInfo.isDroppable(oControl, oEvent), "Not Droppable: event target is in the valid targetAggregation DOM");
@@ -97,6 +122,21 @@ sap.ui.define([
 		oControl.destroy();
 	});
 
+	QUnit.test("isDroppable - Enabled", function(assert) {
+		var oDropInfo = new DropInfo({
+			enabled: false
+		});
+		var oControl = new TestControl({
+			dragDropConfig: oDropInfo
+		});
+
+		assert.notOk(oDropInfo.isDroppable(oControl), "Not droppable: DropInfo is not enabled");
+
+		oDropInfo.setEnabled(true);
+		assert.ok(oDropInfo.isDroppable(oControl), "Droppable: DropInfo is enabled and drop target is the control itself");
+
+		oControl.destroy();
+	});
 
 	QUnit.test("fireDragEnter - invalid parameters", function(assert) {
 		var oDragEnterEvent = new jQuery.Event("dragenter");
@@ -146,6 +186,54 @@ sap.ui.define([
 
 		bEventValue = oDropInfo.fireDragEnter(oDragEnterEvent);
 		assert.notOk(bEventValue, "default is prevented for dragEnter event");
+
+		oControl.destroy();
+	});
+
+	QUnit.test("fireDragOver - invalid parameters", function(assert) {
+		var oDragOverEvent = new jQuery.Event("dragover");
+		var fnDragOverSpy = sinon.spy();
+		var oDropInfo = new DropInfo({
+			dragOver: fnDragOverSpy
+		});
+
+		oDropInfo.fireDragOver();
+		assert.ok(fnDragOverSpy.notCalled, "dragOver event is not fired, there is no parameter");
+
+		oDropInfo.fireDragOver(oDragOverEvent);
+		assert.ok(fnDragOverSpy.notCalled, "dragOver event is not fired, dragSession does not exist");
+
+		oDropInfo.destroy();
+	})
+
+	QUnit.test("fireDragOver - event parameters", function(assert) {
+		var fnDragOverSpy = sinon.spy(function(oEvent) {
+			var mParameters = oEvent.getParameters();
+			assert.ok(mParameters.dragSession, "dragSession exists");
+			assert.strictEqual(mParameters.target, oControl, "target is valid");
+			assert.strictEqual(mParameters.dropPosition, "On", "dropPosition is valid");
+			assert.strictEqual(mParameters.browserEvent, oDragOverEvent.originalEvent, "browserEvent is valid");
+		});
+		var oDropInfo = new DropInfo({
+			dragOver: fnDragOverSpy
+		});
+		var oControl = new TestControl({
+			title: "Control",
+			dragDropConfig: oDropInfo
+		});
+		var oDragOverEvent = new jQuery.Event("dragstart");
+		oDragOverEvent.dragSession = {
+			getDropControl: function() {
+				return oControl;
+			},
+			getDropPosition: function() {
+				return "On";
+			},
+		};
+
+		var bEventValue = oDropInfo.fireDragOver(oDragOverEvent);
+		assert.ok(fnDragOverSpy.calledOnce, "dragOver event is fired once");
+		assert.ok(bEventValue, "dragOver event is returned true");
 
 		oControl.destroy();
 	});
