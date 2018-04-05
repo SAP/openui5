@@ -336,9 +336,21 @@ html.sap-desktop .sapUiCalendarApp.sapUiCalendarAppSel:focus:not(:active) > .sap
 .sapUiCalendarRowAppsOverlay {
 	position: absolute;
 	height: 100%;
-	width: 100%
+	width: 100%;
+	display: none;
 }
 
 .sapUiCalendarRowAppsOverlayDragging {
-	z-index: 1;
+	z-index: 2;
+	display: block;
+}
+
+.sapUiCalendarAppResizeHandle {
+	width: 10px;
+	height: 100%;
+	cursor: col-resize;
+	display: block;
+	position: absolute;
+	top: 0;
+	right: 0;
 }

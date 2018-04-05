@@ -32,9 +32,11 @@
 						icon="{pic}"
 						title="{name}"
 						text="{role}"
-						enableAppointmentsDragAndDrop="{path:'name', formatter:'.isDraggable'}"
+						enableAppointmentsDragAndDrop="{path:'name', formatter:'.canModifyAppointments'}"
+						enableAppointmentsResize="{path:'name', formatter:'.canModifyAppointments'}"
 						appointmentDrop="handleAppointmentDrop"
 						appointmentDragEnter="handleAppointmentDragEnter"
+						appointmentResize="handleAppointmentResize"
 						appointments="{path : 'appointments', templateShareable: 'true'}">
 					<appointments>
 						<unified:CalendarAppointment
