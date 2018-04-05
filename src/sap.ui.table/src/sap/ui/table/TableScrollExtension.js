@@ -100,7 +100,7 @@ sap.ui.define([
 			var oScrollExtension = oTable._getScrollExtension();
 			var oHSb = oScrollExtension.getHorizontalScrollbar();
 
-			if (oHSb !== null && oScrollExtension._iHorizontalScrollPosition !== null) {
+			if (oHSb && oScrollExtension._iHorizontalScrollPosition !== null) {
 				var aScrollTargets = HorizontalScrollingHelper.getScrollAreas(oTable);
 
 				for (var i = 0; i < aScrollTargets.length; i++) {
@@ -127,7 +127,7 @@ sap.ui.define([
 			var oScrollExtension = oTable._getScrollExtension();
 			var aScrollAreas = HorizontalScrollingHelper.getScrollAreas(oTable);
 
-			if (oScrollExtension._onHorizontalScrollEventHandler == null) {
+			if (!oScrollExtension._onHorizontalScrollEventHandler) {
 				oScrollExtension._onHorizontalScrollEventHandler = HorizontalScrollingHelper.onScroll.bind(oTable);
 			}
 
@@ -145,7 +145,7 @@ sap.ui.define([
 			var oScrollExtension = oTable._getScrollExtension();
 			var aScrollAreas = HorizontalScrollingHelper.getScrollAreas(oTable);
 
-			if (oScrollExtension._onHorizontalScrollEventHandler != null) {
+			if (oScrollExtension._onHorizontalScrollEventHandler) {
 				for (var i = 0; i < aScrollAreas.length; i++) {
 					aScrollAreas[i].removeEventListener("scroll", oScrollExtension._onHorizontalScrollEventHandler);
 					delete aScrollAreas[i]._scrollLeft;
@@ -328,7 +328,7 @@ sap.ui.define([
 			var aScrollAreas = VerticalScrollingHelper.getScrollAreas(oTable);
 			var oVSb = oScrollExtension.getVerticalScrollbar();
 
-			if (oScrollExtension._onVerticalScrollEventHandler == null) {
+			if (!oScrollExtension._onVerticalScrollEventHandler) {
 				oScrollExtension._onVerticalScrollEventHandler = VerticalScrollingHelper.onScroll.bind(oTable);
 			}
 
@@ -336,8 +336,8 @@ sap.ui.define([
 				aScrollAreas[i].addEventListener("scroll", oScrollExtension._onVerticalScrollEventHandler);
 			}
 
-			if (oVSb !== null) {
-				if (oScrollExtension._onVerticalScrollbarMouseDownEventHandler == null) {
+			if (oVSb) {
+				if (!oScrollExtension._onVerticalScrollbarMouseDownEventHandler) {
 					oScrollExtension._onVerticalScrollbarMouseDownEventHandler = VerticalScrollingHelper.onScrollbarMouseDown.bind(oTable);
 				}
 				oVSb.addEventListener("mousedown", oScrollExtension._onVerticalScrollbarMouseDownEventHandler);
@@ -356,14 +356,14 @@ sap.ui.define([
 			var aScrollAreas = VerticalScrollingHelper.getScrollAreas(oTable);
 			var oVSb = oScrollExtension.getVerticalScrollbar();
 
-			if (oScrollExtension._onVerticalScrollEventHandler != null) {
+			if (oScrollExtension._onVerticalScrollEventHandler) {
 				for (var i = 0; i < aScrollAreas.length; i++) {
 					aScrollAreas[i].removeEventListener("scroll", oScrollExtension._onVerticalScrollEventHandler);
 				}
 				delete oScrollExtension._onVerticalScrollEventHandler;
 			}
 
-			if (oVSb !== null && oScrollExtension._onVerticalScrollbarMouseDownEventHandler != null) {
+			if (oVSb && oScrollExtension._onVerticalScrollbarMouseDownEventHandler) {
 				oVSb.removeEventListener("mousedown", oScrollExtension._onVerticalScrollbarMouseDownEventHandler);
 				delete oScrollExtension._onVerticalScrollbarMouseDownEventHandler;
 			}
@@ -378,9 +378,8 @@ sap.ui.define([
 		 * @return {boolean} Returns <code>true</code>, if an update is pending.
 		 */
 		isUpdatePending: function(oTable) {
-			return oTable != null
-				   && (oTable._mAnimationFrames.verticalScrollUpdate != null
-					   || oTable._mTimeouts.verticalScrollUpdate != null);
+			return !!(oTable && (oTable._mAnimationFrames.verticalScrollUpdate
+								 || oTable._mTimeouts.verticalScrollUpdate));
 		},
 
 		/**
@@ -516,8 +515,8 @@ sap.ui.define([
 				oScrollExtension._mTouchSessionData = {
 					initialPageX: oTouchObject.pageX,
 					initialPageY: oTouchObject.pageY,
-					initialScrollTop: oVSb == null ? 0 : oVSb.scrollTop,
-					initialScrollLeft: oHSb == null ? 0 : oHSb.scrollLeft,
+					initialScrollTop: oVSb ? oVSb.scrollTop : 0,
+					initialScrollLeft: oHSb ? oHSb.scrollLeft : 0,
 					initialScrolledToEnd: null,
 					touchMoveDirection: null
 				};
@@ -534,7 +533,7 @@ sap.ui.define([
 				var oScrollExtension = this._getScrollExtension();
 				var mTouchSessionData = oScrollExtension._mTouchSessionData;
 
-				if (mTouchSessionData == null) {
+				if (!mTouchSessionData) {
 					return;
 				}
 
@@ -544,7 +543,7 @@ sap.ui.define([
 				var bScrolledToEnd = false;
 				var bScrollingPerformed = false;
 
-				if (mTouchSessionData.touchMoveDirection === null) {
+				if (!mTouchSessionData.touchMoveDirection) {
 					if (iTouchDistanceX === 0 && iTouchDistanceY === 0) {
 						return;
 					}
@@ -555,14 +554,14 @@ sap.ui.define([
 					case "horizontal":
 						var oHSb = oScrollExtension.getHorizontalScrollbar();
 
-						if (oHSb != null) {
+						if (oHSb) {
 							if (iTouchDistanceX < 0) { // Scrolling to the right.
 								bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.offsetWidth;
 							} else { // Scrolling to the left.
 								bScrolledToEnd = oHSb.scrollLeft === 0;
 							}
 
-							if (mTouchSessionData.initialScrolledToEnd === null) {
+							if (!mTouchSessionData.initialScrolledToEnd) {
 								mTouchSessionData.initialScrolledToEnd = bScrolledToEnd;
 							}
 
@@ -576,14 +575,14 @@ sap.ui.define([
 					case "vertical":
 						var oVSb = oScrollExtension.getVerticalScrollbar();
 
-						if (oVSb != null) {
+						if (oVSb) {
 							if (iTouchDistanceY < 0) { // Scrolling down.
 								bScrolledToEnd = oVSb.scrollTop === oVSb.scrollHeight - oVSb.offsetHeight;
 							} else { // Scrolling up.
 								bScrolledToEnd = oVSb.scrollTop === 0;
 							}
 
-							if (mTouchSessionData.initialScrolledToEnd === null) {
+							if (!mTouchSessionData.initialScrolledToEnd) {
 								mTouchSessionData.initialScrolledToEnd = bScrolledToEnd;
 							}
 
@@ -611,13 +610,13 @@ sap.ui.define([
 			var oScrollExtension = oTable._getScrollExtension();
 			var aEventListenerTargets = ScrollingHelper.getEventListenerTargets(oTable);
 
-			if (oScrollExtension._onMouseWheelEventHandler == null) {
+			if (!oScrollExtension._onMouseWheelEventHandler) {
 				oScrollExtension._onMouseWheelEventHandler = ScrollingHelper.onMouseWheelScrolling.bind(oTable);
 			}
-			if (oScrollExtension._onTouchStartEventHandler == null) {
+			if (!oScrollExtension._onTouchStartEventHandler) {
 				oScrollExtension._onTouchStartEventHandler = ScrollingHelper.onTouchStart.bind(oTable);
 			}
-			if (oScrollExtension._onTouchMoveEventHandler == null) {
+			if (!oScrollExtension._onTouchMoveEventHandler) {
 				oScrollExtension._onTouchMoveEventHandler = ScrollingHelper.onTouchMoveScrolling.bind(oTable);
 			}
 
@@ -648,11 +647,11 @@ sap.ui.define([
 			var aEventTargets = ScrollingHelper.getEventListenerTargets(oTable);
 
 			for (var i = 0; i < aEventTargets.length; i++) {
-				if (oScrollExtension._onMouseWheelEventHandler != null) {
+				if (oScrollExtension._onMouseWheelEventHandler) {
 					aEventTargets[i].removeEventListener("wheel", oScrollExtension._onMouseWheelEventHandler);
 				}
 
-				if (oScrollExtension._onTouchStartEventHandler != null && oScrollExtension._onTouchMoveEventHandler != null) {
+				if (oScrollExtension._onTouchStartEventHandler && oScrollExtension._onTouchMoveEventHandler) {
 					/* Touch events */
 					if (Device.support.pointer && Device.system.desktop) {
 						aEventTargets[i].removeEventListener("pointerdown", oScrollExtension._onTouchStartEventHandler);
@@ -720,7 +719,7 @@ sap.ui.define([
 				oRowContainer = this.getDomRef("sapUiTableColHdrScr");
 			}
 
-			if (oRowContainer != null && oCellInfo.columnIndex >= this.getComputedFixedColumnCount()) {
+			if (oRowContainer && oCellInfo.columnIndex >= this.getComputedFixedColumnCount()) {
 				var oCell = oCellInfo.cell[0];
 				var iScrollLeft = oRowContainer.scrollLeft;
 				var iRowContainerWidth = oRowContainer.clientWidth;
@@ -743,11 +742,11 @@ sap.ui.define([
 			// prevented, only reverted.
 			var $ParentCell = TableUtils.getParentCell(this, oEvent.target);
 
-			if ($ParentCell != null) {
+			if ($ParentCell) {
 				Promise.resolve().then(function() {
 					var oInnerCellElement = $ParentCell.find(".sapUiTableCell")[0];
 
-					if (oInnerCellElement != null) {
+					if (oInnerCellElement) {
 						oInnerCellElement.scrollLeft = 0;
 						oInnerCellElement.scrollTop = 0;
 					}
@@ -904,7 +903,7 @@ sap.ui.define([
 		destroy: function() {
 			var oTable = this.getTable();
 
-			if (oTable != null) {
+			if (oTable) {
 				oTable.removeEventDelegate(this._delegate);
 			}
 			this._delegate = null;
@@ -926,7 +925,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.scrollVertically = function(bDown, bPage, bIsKeyboardScroll) {
 		var oTable = this.getTable();
 
-		if (oTable == null) {
+		if (!oTable) {
 			return false;
 		}
 
@@ -974,7 +973,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.scrollVerticallyMax = function(bDown, bIsKeyboardScroll) {
 		var oTable = this.getTable();
 
-		if (oTable == null) {
+		if (!oTable) {
 			return false;
 		}
 
@@ -1014,7 +1013,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.getHorizontalScrollbar = function() {
 		var oTable = this.getTable();
 
-		if (oTable != null && this._oHorizontalScrollbar === null) {
+		if (oTable && !this._oHorizontalScrollbar) {
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
 			this._oHorizontalScrollbar = oTable.getDomRef(SharedDomRef.HorizontalScrollBar);
 		}
@@ -1030,7 +1029,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.getVerticalScrollbar = function() {
 		var oTable = this.getTable();
 
-		if (oTable != null && this._oVerticalScrollbar === null) {
+		if (oTable && !this._oVerticalScrollbar) {
 			// Table#getDomRef (document#getElementById) returns null if the element does not exist in the DOM.
 			this._oVerticalScrollbar = oTable.getDomRef(SharedDomRef.VerticalScrollBar);
 		}
@@ -1045,9 +1044,9 @@ sap.ui.define([
 	 */
 	TableScrollExtension.prototype.isHorizontalScrollbarVisible = function() {
 		var oTable = this.getTable();
-		var oTableElement = oTable == null ? null : oTable.getDomRef();
+		var oTableElement = oTable ? oTable.getDomRef() : null;
 
-		if (oTableElement == null) {
+		if (!oTableElement) {
 			return false;
 		}
 
@@ -1061,9 +1060,9 @@ sap.ui.define([
 	 */
 	TableScrollExtension.prototype.isVerticalScrollbarVisible = function() {
 		var oTable = this.getTable();
-		var oTableElement = oTable == null ? null : oTable.getDomRef();
+		var oTableElement = oTable ? oTable.getDomRef() : null;
 
-		if (oTableElement == null) {
+		if (!oTableElement) {
 			return false;
 		}
 
@@ -1079,7 +1078,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var oHSb = this.getHorizontalScrollbar();
 
-		if (oTable == null || oHSb == null || oTableSizes == null) {
+		if (!oTable || !oHSb || !oTableSizes) {
 			return;
 		}
 
@@ -1144,7 +1143,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var oVSb = this.getVerticalScrollbar();
 
-		if (oTable == null || oVSb == null) {
+		if (!oTable || !oVSb) {
 			return;
 		}
 
@@ -1170,7 +1169,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.getVerticalScrollbarHeight = function() {
 		var oTable = this.getTable();
 
-		if (oTable == null) {
+		if (!oTable) {
 			return 0;
 		}
 
@@ -1185,7 +1184,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var oVSb = this.getVerticalScrollbar();
 
-		if (oTable == null || oVSb == null) {
+		if (!oTable || !oVSb) {
 			return;
 		}
 
@@ -1213,7 +1212,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var oVSb = this.getVerticalScrollbar();
 
-		if (oTable == null || oVSb == null || !this.isVerticalScrollbarRequired()) {
+		if (!oTable || !oVSb || !this.isVerticalScrollbarRequired()) {
 			return;
 		}
 
@@ -1256,7 +1255,7 @@ sap.ui.define([
 		}
 
 		if (oVSb.scrollTop !== iNewScrollTop) {
-			if (oTable._mAnimationFrames.verticalScrollUpdate != null) {
+			if (oTable._mAnimationFrames.verticalScrollUpdate) {
 				window.cancelAnimationFrame(oTable._mAnimationFrames.verticalScrollUpdate);
 			}
 			jQuery.sap.clearDelayedCall(oTable._mTimeouts.verticalScrollUpdate);
@@ -1284,7 +1283,7 @@ sap.ui.define([
 				}
 			});
 		} else if (this._nVerticalScrollPosition !== nOldScrollPosition) {
-			if (oTable._mAnimationFrames.verticalScrollUpdate != null) {
+			if (oTable._mAnimationFrames.verticalScrollUpdate) {
 				window.cancelAnimationFrame(oTable._mAnimationFrames.verticalScrollUpdate);
 				delete oTable._mAnimationFrames.verticalScrollUpdate;
 			}
@@ -1311,9 +1310,9 @@ sap.ui.define([
 	 */
 	TableScrollExtension.prototype.updateVerticalScrollHeight = function() {
 		var oTable = this.getTable();
-		var oVSbContent = oTable == null ? null : oTable.getDomRef("vsb-content");
+		var oVSbContent = oTable ? oTable.getDomRef("vsb-content") : null;
 
-		if (oVSbContent == null) {
+		if (!oVSbContent) {
 			return;
 		}
 
@@ -1340,7 +1339,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.getVerticalScrollHeight = function(bBoundless) {
 		var oTable = this.getTable();
 
-		if (oTable == null) {
+		if (!oTable) {
 			return 0;
 		}
 
@@ -1370,10 +1369,10 @@ sap.ui.define([
 	 */
 	TableScrollExtension.prototype.updateVerticalScrollbarVisibility = function() {
 		var oTable = this.getTable();
-		var oTableElement = oTable == null ? null : oTable.getDomRef();
+		var oTableElement = oTable ? oTable.getDomRef() : null;
 		var oVSb = this.getVerticalScrollbar();
 
-		if (oTableElement == null || oVSb == null) {
+		if (!oTableElement || !oVSb) {
 			return;
 		}
 
@@ -1397,7 +1396,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.isVerticalScrollbarRequired = function() {
 		var oTable = this.getTable();
 
-		if (oTable == null) {
+		if (!oTable) {
 			return false;
 		}
 
@@ -1412,7 +1411,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.getRowIndexAtCurrentScrollPosition = function() {
 		var oTable = this.getTable();
 
-		if (oTable == null) {
+		if (!oTable) {
 			return -1;
 		}
 
@@ -1469,7 +1468,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.getVerticalScrollRangeBuffer = function() {
 		var oTable = this.getTable();
 
-		if (oTable == null || !TableUtils.isVariableRowHeightEnabled(oTable)) {
+		if (!oTable || !TableUtils.isVariableRowHeightEnabled(oTable)) {
 			return 0;
 		}
 
@@ -1500,7 +1499,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.getVerticalScrollRangeRowFraction = function() {
 		var oTable = this.getTable();
 
-		if (oTable == null) {
+		if (!oTable) {
 			return 0;
 		}
 
@@ -1530,9 +1529,9 @@ sap.ui.define([
 	 */
 	TableScrollExtension.prototype.updateInnerVerticalScrollPosition = function() {
 		var oTable = this.getTable();
-		var oContentDomRef = oTable == null ? null : oTable.getDomRef("tableCCnt");
+		var oContentDomRef = oTable ? oTable.getDomRef("tableCCnt") : null;
 
-		if (oContentDomRef == null || VerticalScrollingHelper.isUpdatePending(oTable)) {
+		if (!oContentDomRef || VerticalScrollingHelper.isUpdatePending(oTable)) {
 			return;
 		}
 
@@ -1632,7 +1631,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.isVerticalScrollPositionInBuffer = function() {
 		var oTable = this.getTable();
 
-		if (oTable == null || !TableUtils.isVariableRowHeightEnabled(oTable)) {
+		if (!oTable || !TableUtils.isVariableRowHeightEnabled(oTable)) {
 			return false;
 		}
 
@@ -1647,7 +1646,7 @@ sap.ui.define([
 	TableScrollExtension.prototype.getInnerVerticalScrollRange = function() {
 		var oTable = this.getTable();
 
-		if (oTable == null || oTable._aRowHeights == null) {
+		if (!oTable || !oTable._aRowHeights) {
 			return 0;
 		}
 

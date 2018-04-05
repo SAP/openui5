@@ -875,7 +875,7 @@
 				if (bIsBoolean) {
 					sValue = oActionValue ? "X" : null;
 				} else {
-					sValue = oActionValue != null ? (oActionValue + "") : null;
+					sValue = oActionValue ? (oActionValue + "") : null;
 				}
 				oItem = new sap.ui.unified.MenuTextFieldItem({value: sValue, label: mActions[item].text, visible: !mActions[item].hidden, enabled: !mActions[item].disabled});
 				oItem._action = mActions[item].action;
@@ -938,7 +938,7 @@
 				}
 			} else if (oAction.input === "boolean") {
 				oClass = sap.m.CheckBox;
-				mSettings.selected = oActionValue != null ? !!oActionValue : false;
+				mSettings.selected = oActionValue ? !!oActionValue : false;
 				mSettings.select = function(oEvent) {
 					if (oEvent.getSource()._action) {
 						oEvent.getSource()._action(TABLESETTINGS.table, !!oEvent.getParameter("selected"));
@@ -946,7 +946,7 @@
 				};
 			} else if (oAction.input) {
 				oClass = sap.m.Input;
-				mSettings.value = oActionValue != null ? (oActionValue + "") : null;
+				mSettings.value = oActionValue ? (oActionValue + "") : null;
 				mSettings.change = function(oEvent) {
 					if (oEvent.getSource()._action) {
 						oEvent.getSource()._action(TABLESETTINGS.table, oEvent.getParameter("value"));

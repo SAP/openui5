@@ -102,9 +102,9 @@ sap.ui.define([
 		 */
 		_getFullDescription: function(oInfo) {
 			var sDesc = oInfo.type + " " + oInfo.description;
-			if (oInfo.enabled != null && !oInfo.enabled) {
+			if (oInfo.enabled === false) {
 				sDesc = sDesc + " " + TableUtils.getResourceText("TBL_CTRL_STATE_DISABLED");
-			} else if (oInfo.editable != null && !oInfo.editable) {
+			} else if (oInfo.editable === false) {
 				sDesc = sDesc + " " + TableUtils.getResourceText("TBL_CTRL_STATE_READONLY");
 			}
 			return sDesc.trim();
@@ -1199,12 +1199,12 @@ sap.ui.define([
 	 * @public
 	 */
 	TableAccExtension.prototype.updateAriaStateOfRowHighlight = function(oRowSettings) {
-		if (!this._accMode || oRowSettings == null) {
+		if (!this._accMode || !oRowSettings) {
 			return;
 		}
 
 		var oRow = oRowSettings._getRow();
-		if (oRow != null) {
+		if (oRow) {
 			var oHighlightTextElement = oRow.getDomRef("highlighttext");
 			oHighlightTextElement.innerText = oRowSettings._getHighlightText();
 		}
