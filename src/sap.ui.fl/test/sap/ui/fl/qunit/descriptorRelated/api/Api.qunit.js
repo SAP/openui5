@@ -1193,6 +1193,28 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("appdescr_ui5_addNewModelEnhanceWith", function(assert) {
+		return DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
+			"modelId" : "customer.existingModelId"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addNewModelEnhanceWith");
+		});
+	});
+
+	QUnit.test("appdescr_ui5_addNewModelEnhanceWith failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
+				"modelId" : {}
+			});
+		});
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
+				"model" : "a.id"
+			});
+		});
+	});
+
 	QUnit.test("appdescr_ui5_replaceComponentUsage", function(assert) {
 		return DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
 			"componentUsageId": "usageAttachment",
