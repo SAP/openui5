@@ -2098,10 +2098,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				sLibName = sLibName.substring(0, sLibName.indexOf(":"));
 			}
 
+			// use the special FOUC handling for initially existing stylesheets
+			// to ensure that they are not just replaced when using the
+			// jQuery.sap.includeStyleSheet API and to be removed later
+			var sLinkId = "sap-ui-theme-" + sLibId,
+				oLink = document.getElementById(sLinkId);
+			if (oLink) {
+				oLink.setAttribute("data-sap-ui-foucmarker", sLinkId);
+			}
+
 			// log and include
 			var cssPathAndName = this._getThemePath(sLibName, this.sTheme) + sLibFileName + ".css" + (sQuery ? sQuery : "");
 			jQuery.sap.log.info("Including " + cssPathAndName + " -  sap.ui.core.Core.includeLibraryTheme()");
-			jQuery.sap.includeStyleSheet(cssPathAndName, "sap-ui-theme-" + sLibId);
+			jQuery.sap.includeStyleSheet(cssPathAndName, sLinkId);
 
 			// if parameters have been used, update them with the new style sheet
 			var Parameters = sap.ui.require("sap/ui/core/theming/Parameters");
