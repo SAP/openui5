@@ -321,7 +321,7 @@ sap.ui.define([
 			getEventDelegates: function(oContext) {
 				return {
 					onAfterRendering: function () {
-						this.$().attr({"aria-haspopup": true, "role": ""});
+						this.$().attr({"aria-haspopup": true});
 					}.bind(oContext)
 				};
 			},
@@ -379,7 +379,7 @@ sap.ui.define([
 			getEventDelegates: function(oContext) {
 				return {
 					onAfterRendering: function () {
-						this.$().attr({"aria-haspopup": true, "role": ""});
+						this.$().attr({"aria-haspopup": true});
 					}.bind(oContext)
 				};
 			},
