@@ -95,7 +95,7 @@
 										<file name="ui5loader-autoconfig.js"/>
 									</filelist>
 								</concat>
-								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core.js" append="true" encoding="UTF-8" eol="lf" fixlastline="true"><![CDATA[jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();]]></concat>
+								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core.js" append="true" encoding="UTF-8" eol="lf" fixlastline="true"><![CDATA[sap.ui.requireSync("sap/ui/core/Core").boot();]]></concat>
 								<echo>Merging module: sap-ui-nojQuery.js</echo>
 								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core-nojQuery.js" overwrite="true" encoding="UTF-8"  eol="lf" fixlastline="true">
 									<filelist dir="${project.build.outputDirectory}/META-INF/resources/">
@@ -106,7 +106,7 @@
 										<file name="ui5loader-autoconfig.js"/>
 									</filelist>
 								</concat>
-								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core-nojQuery.js" append="true" encoding="UTF-8" eol="lf" fixlastline="true"><![CDATA[jQuery.sap.require("sap.ui.core.Core"); sap.ui.getCore().boot && sap.ui.getCore().boot();]]></concat>
+								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-core-nojQuery.js" append="true" encoding="UTF-8" eol="lf" fixlastline="true"><![CDATA[sap.ui.requireSync("sap/ui/core/Core").boot();]]></concat>
 								<echo>Merging module: sap-ui-debug.js</echo>
 								<concat destfile="${project.build.outputDirectory}/META-INF/resources/sap-ui-debug.js" overwrite="true" encoding="UTF-8"  eol="lf" fixlastline="true">
 									<filelist dir="${project.build.outputDirectory}/META-INF/resources/">
