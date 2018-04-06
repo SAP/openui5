@@ -124,7 +124,15 @@
 					sDebugUrl = ensureSlash(sBaseUrl) + 'sap-ui-core.js';
 				}
 				window["sap-ui-optimized"] = false;
-				document.write("<script src=\"" + sDebugUrl + "\"></script>");
+
+				if (sap.ui.loader.config().async) {
+					var script = document.createElement("script");
+					script.src = sDebugUrl;
+					document.head.appendChild(script);
+				} else {
+					document.write("<script src=\"" + sDebugUrl + "\"></script>");
+				}
+
 				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
 				oRestart.name = "Restart";
 				throw oRestart;

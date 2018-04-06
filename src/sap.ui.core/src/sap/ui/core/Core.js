@@ -292,6 +292,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 			var bAsync = sPreloadMode === "async";
 
+			// If UI5 has been booted asynchronously, bAsync can be also set to true.
+			if (sap.ui.loader.config().async) {
+				bAsync = true;
+			}
+
 			// evaluate configuration for library preload file types
 			this.oConfiguration['xx-libraryPreloadFiles'].forEach(function(v){
 				var fields = String(v).trim().split(/\s*:\s*/),
