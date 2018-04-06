@@ -115,8 +115,8 @@
 		// prevent QUnit.start() call in blanket
 		blanket.options("existingRequireJS", true);
 
-		if ( typeof sap === 'object' && sap.ui && sap.ui._ui5loader ) {
-			sap.ui._ui5loader.translate = translate;
+		if ( typeof sap === 'object' && sap.ui && sap.ui.loader && sap.ui.loader._ ) {
+			sap.ui.loader._.translate = translate;
 		} else if (jQuery && jQuery.sap) {
 			jQuery.sap.require._hook = translate;
 		} else {

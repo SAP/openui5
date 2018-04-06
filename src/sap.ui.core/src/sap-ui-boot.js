@@ -62,7 +62,7 @@
 			"ui5loader.js"
 		], function() {
 			// cascade 3: the loader configuration script
-			sap.ui._ui5loader.config({
+			sap.ui.loader.config({
 				async:true
 			});
 			loadScripts([

@@ -168,6 +168,14 @@
 	 */
 	var bGlobalAsyncMode = false;
 
+
+	/**
+	 * Whether another AMD loader can make use of global define/require.
+	 * @type {boolean}
+	 * @private
+	 */
+	var bNoConflict = false;
+
 	/**
 	 * How the loader should react to calls of sync APIs or when global names are accessed:
 	 * 0: tolerate
@@ -1983,6 +1991,7 @@
 			}
 		},
 		noConflict: function(bValue) {
+			bNoConflict = bValue;
 			if (bValue) {
 				__global.define = vOriginalDefine;
 				__global.require = vOriginalRequire;
@@ -1993,8 +2002,24 @@
 		}
 	};
 
-	function config(oConfig) {
-		forEach(oConfig, function(key, value) {
+	/**
+	 * Sets the configuration of the UI5 loader. If no parameter is given, a partial copy of UI5 loader configuration in use is returned.
+	 *
+	 * @public
+	 * @param {object|undefined} [cfg] is merged with UI5 loader configuration in use.
+	 * @returns {object|undefined} UI5 loader configuration in use.
+	 * @since 1.56.0
+	 * @name sap.ui.loader.config
+	 */
+	function config(cfg) {
+		if ( cfg === undefined ) {
+			return {
+				noConflict: bNoConflict,
+				async: bGlobalAsyncMode
+			};
+		}
+
+		forEach(cfg, function(key, value) {
 			var handler = mConfigHandlers[key];
 			if ( typeof handler === 'function' ) {
 				if ( handler.length === 1) {
@@ -2008,12 +2033,13 @@
 		});
 	}
 
+
 	// @evo-todo really use this hook for loading. But how to differentiate between sync and async?
 	// for now, it is only a notification hook to attach load tests
 	require.load = function(context, url, id) {
 	};
 
-	var ui5loader = {
+	var privateAPI = {
 		amdDefine: amdDefine,
 		amdRequire: amdRequire,
 		config: config,
@@ -2033,7 +2059,7 @@
 		toUrl: getResourcePath,
 		unloadResources: unloadResources
 	};
-	Object.defineProperties(ui5loader, {
+	Object.defineProperties(privateAPI, {
 		logger: {
 			get: function() {
 				return log;
@@ -2104,12 +2130,21 @@
 	sap.ui = sap.ui || {};
 
 	/**
+	 * Provides access to UI5 loader configuration. The configuration is used by {@link sap.ui.require} and {@link sap.ui.define}.
+	 *
+	 * @namespace sap.ui.loader
+	 */
+	sap.ui.loader = {
+		config: config
+	};
+
+	/**
 	 * Internal API of the UI5 loader.
 	 *
 	 * Must not be used by code outside sap.ui.core.
 	 * @private
 	 */
-	sap.ui._ui5loader = ui5loader;
+	sap.ui.loader._ = privateAPI;
 
 	/**
 	 * Defines a Javascript module with its name, its dependencies and a module value or factory.

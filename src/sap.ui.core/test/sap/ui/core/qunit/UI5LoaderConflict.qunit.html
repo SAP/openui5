@@ -18,7 +18,7 @@
 
 	<script>
 
-		sap.ui._ui5loader.config({
+		sap.ui.loader.config({
 			baseUrl: "./"
 		});
 
@@ -193,12 +193,12 @@
 
 		QUnit.test("ui5loader config - async", function(assert) {
 
-			sap.ui._ui5loader.config({
+			sap.ui.loader.config({
 				async: true
 			});
 
 			assert.throws(function () {
-				sap.ui._ui5loader.config({
+				sap.ui.loader.config({
 					async: false
 				});
 			},

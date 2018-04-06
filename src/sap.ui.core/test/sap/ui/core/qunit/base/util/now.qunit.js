@@ -22,7 +22,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 		} catch (e) {/*ignore if window performance cannot be stubbed*/
 		}
 		if (bCanStub) {
-			sap.ui._ui5loader.unloadResources("sap/base/util/now.js", false, true, true);
+			sap.ui.loader._.unloadResources("sap/base/util/now.js", false, true, true);
 			var done = assert.async();
 			sap.ui.require(["sap/base/util/now"], function(now) {
 

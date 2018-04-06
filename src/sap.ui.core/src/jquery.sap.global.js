@@ -57,11 +57,13 @@ sap.ui.define([
 		throw new Error("Loading of jQuery failed");
 	}
 
-	var _ui5loader = sap.ui._ui5loader;
+	var ui5loader = sap.ui.loader;
 
-	if ( !_ui5loader ) {
+	if ( !ui5loader || !ui5loader._ ) {
 		throw new Error("The UI5 compatilbility module requires a UI5 specific AMD implementation");
 	}
+
+	var _ui5loader = ui5loader._;
 
 	// early logging support
 	var _earlyLogs = [];
@@ -141,7 +143,7 @@ sap.ui.define([
 		syncCallBehavior = 2;
 	}
 
-	_ui5loader.config({
+	ui5loader.config({
 		reportSyncCalls: syncCallBehavior
 	});
 
@@ -1433,7 +1435,7 @@ sap.ui.define([
 						paths: {}
 					};
 					oConfig.paths[sResourceNamePrefix] = sUrlPrefix;
-					_ui5loader.config(oConfig);
+					ui5loader.config(oConfig);
 
 					oLog.info("jQuery.sap.registerResourcePath ('" + sResourceNamePrefix + "', '" + sUrlPrefix + "')" + (vUrlPrefix['final'] ? " (final)" : ""));
 				}
@@ -1467,7 +1469,7 @@ sap.ui.define([
 		 */
 		jQuery.sap.registerModuleShims = function(mShims) {
 			jQuery.sap.assert( typeof mShims === 'object', "mShims must be an object");
-			_ui5loader.config({
+			ui5loader.config({
 				shim: mShims
 			});
 		};

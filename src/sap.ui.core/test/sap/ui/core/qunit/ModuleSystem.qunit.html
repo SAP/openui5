@@ -265,12 +265,12 @@
 					assert.strictEqual(typeof result.outerModule, "object", "outer module should have got a module object");
 					assert.strictEqual(result.outerModule.id, "modules/exotic-use-cases/nested-anonymous-define-with-relative-dependencies",
 							"module object for the outer module should report the expected ID");
-					assert.strictEqual(result.outerUrl, sap.ui._ui5loader.toUrl("modules/exotic-use-cases/data.json"),
+					assert.strictEqual(result.outerUrl, sap.ui.loader._.toUrl("modules/exotic-use-cases/data.json"),
 							"contextual require for the outer module should resolve relative URLs as expected");
 					assert.strictEqual(typeof result.innerModule, "object", "outer module should have got a module object");
 					assert.strictEqual(result.innerModule.id, "modules/exotic-use-cases/~anonymous~1",
 							"module object for the inner module should report an anonymous ID");
-					assert.strictEqual(result.innerUrl, sap.ui._ui5loader.toUrl("modules/exotic-use-cases/data.json"),
+					assert.strictEqual(result.innerUrl, sap.ui.loader._.toUrl("modules/exotic-use-cases/data.json"),
 							"contextual require for the inner module should resolve relative URLs as expected");
 					done();
 				});
