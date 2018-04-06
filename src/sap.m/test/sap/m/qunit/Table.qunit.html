@@ -8,6 +8,7 @@
 		<script id="sap-ui-bootstrap"
 			src="../../../../resources/sap-ui-core.js"
 			data-sap-ui-noConflict="true"
+			data-sap-ui-language="en"
 			data-sap-ui-libs="sap.m">
 		</script>
 
@@ -616,51 +617,75 @@
 		});
 
 		QUnit.test("Popin Layout Grid", function(assert) {
-			// stub for non-mircosft browsers
-			this.stub(sap.ui.Device, "browser", {"msie": false, "edge": false});
-			var sut = createSUT("idPopinLayoutGrid", true);
-			var oColumn = sut.getColumns()[2];
-			sut.setPopinLayout(sap.m.PopinLayout.GridSmall);
-			oColumn.setDemandPopin(true);
-			oColumn.setMinScreenWidth("400000px");
-			sut.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+			var aBrowsers = [
+				{browser: "msie", version: null, supported: false},
+				{browser: "edge", version: 15, supported: false},
+				{browser: "edge", version: 16, supported: true},
+				{browser: "chrome", version: null, supported: true},
+				{browser: "firefox", version: null, supported: true},
+				{browser: "safari", version: null, supported: true}
+			];
+			var oOrigDeviceBrowser = sap.ui.Device.browser;
 
-			assert.equal(sut.getPopinLayout(), "GridSmall", "popinLayout=GridSmall, property is set correctly");
-			assert.ok(jQuery(".sapMListTblSubCntGridSmall").length > 0, "DOM classes updated correctly");
+			for (var i = 0; i < aBrowsers.length; i++) {
+				var oStub = {};
+				var bNative = !!sap.ui.Device.browser[aBrowsers[i].browser];
 
-			sut.setPopinLayout(sap.m.PopinLayout.GridLarge);
-			sap.ui.getCore().applyChanges();
+				if (aBrowsers[i].version) {
+					if (Math.floor(sap.ui.Device.browser.version) != aBrowsers[i].version) {
+						bNative = false;
+						oStub.version = aBrowsers[i].version;
+					}
+				}
+				if (!bNative) {
+					for (var j = 0; j < aBrowsers.length; j++) {
+						oStub[aBrowsers[j].browser] = aBrowsers[j].browser === aBrowsers[i].browser;
+					}
+					sap.ui.Device.browser = oStub;
+				}
 
-			assert.equal(sut.getPopinLayout(), "GridLarge", "popinLayout=GridLarge, property is set correctly");
-			assert.ok(jQuery(".sapMListTblSubCntGridLarge").length > 0, "DOM classes updated correctly");
+				var sMessagePrefix = "[Browser = " + aBrowsers[i].browser + (aBrowsers[i].version ? "[" + aBrowsers[i].version + "]" : "") + (bNative ? " (Native)" : "") + ", Popin Layout Grid Support expected = " + aBrowsers[i].supported + "] ";
 
-			sut.setPopinLayout(sap.m.PopinLayout.Block);
-			sap.ui.getCore().applyChanges();
+				var sut = createSUT("idPopinLayoutGrid", true);
+				var oColumn = sut.getColumns()[2];
+				sut.setPopinLayout(sap.m.PopinLayout.GridSmall);
+				oColumn.setDemandPopin(true);
+				oColumn.setMinScreenWidth("400000px");
+				sut.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			assert.equal(sut.getPopinLayout(), "Block", "popinLayout=Block, property is set correctly");
-			assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, "Grid style class not added");
-			assert.equal(jQuery(".sapMListTblSubCntGridLarge").length, 0, "Grid style class not added");
+				assert.equal(sut.getPopinLayout(), "GridSmall", sMessagePrefix + "popinLayout=GridSmall, property is set correctly");
+				if (aBrowsers[i].supported) {
+					assert.ok(jQuery(".sapMListTblSubCntGridSmall").length > 0, sMessagePrefix + "DOM classes updated correctly");
+				} else {
+					assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, sMessagePrefix + "GridSmall style class not added");
+					assert.equal(jQuery(".sapMListTblSubCntGridLarge").length, 0, sMessagePrefix + "GridLarge style class not added");
+				}
 
-			sut.destroy();
+				sut.setPopinLayout(sap.m.PopinLayout.GridLarge);
+				sap.ui.getCore().applyChanges();
 
-			// stub for msie and edge
-			this.stub(sap.ui.Device, "browser", {"msie": true, "edge": true});
-			var sut1 = createSUT("idPopinLayoutMSbrowsers", true);
-			var oColumn1 = sut1.getColumns()[2];
-			oColumn1.setDemandPopin(true);
-			oColumn1.setMinScreenWidth("400000px");
-			sut1.placeAt("qunit-fixture");
+				assert.equal(sut.getPopinLayout(), "GridLarge", sMessagePrefix + "popinLayout=GridLarge, property is set correctly");
+				if (aBrowsers[i].supported) {
+					assert.ok(jQuery(".sapMListTblSubCntGridLarge").length > 0, sMessagePrefix + "DOM classes updated correctly");
+				} else {
+					assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, sMessagePrefix + "GridSmall style class not added");
+					assert.equal(jQuery(".sapMListTblSubCntGridLarge").length, 0, sMessagePrefix + "GridLarge style class not added");
+				}
 
-			sut1.setPopinLayout(sap.m.PopinLayout.GridSmall);
-			sap.ui.getCore().applyChanges();
-			assert.ok(jQuery(".sapMListTblSubCntBlock").length > 0, "GridSmall style class not added");
+				sut.setPopinLayout(sap.m.PopinLayout.Block);
+				sap.ui.getCore().applyChanges();
 
-			sut1.setPopinLayout(sap.m.PopinLayout.GridLarge);
-			sap.ui.getCore().applyChanges();
-			assert.ok(jQuery(".sapMListTblSubCntBlock").length > 0, "GridLarge style class not added");
+				assert.equal(sut.getPopinLayout(), "Block", sMessagePrefix + "popinLayout=Block, property is set correctly");
+				assert.equal(jQuery(".sapMListTblSubCntGridSmall").length, 0, sMessagePrefix + "GridSmall style class not added");
+				assert.equal(jQuery(".sapMListTblSubCntGridLarge").length, 0, sMessagePrefix + "GridLarge style class not added");
 
-			sut1.destroy();
+				sut.destroy();
+
+				if (!bNative) {
+					sap.ui.Device.browser = oOrigDeviceBrowser;
+				}
+			}
 		});
 
 		QUnit.test("Sticky Column Headers property check", function(assert) {
