@@ -781,7 +781,7 @@ sap.ui.define([
 	 * to ensure the correct order, the methods are called sequentially;
 	 * after a change was saved successfully, it is removed from the dirty changes and the cache is updated.
 	 *
-	 * @param {sap.ui.fl.Change[] || sap.ui.fl.Variant[]} aDirtyChanges - Array of dirty changes to be saved.
+	 * @param {sap.ui.fl.Change[] | sap.ui.fl.Variant[]} aDirtyChanges - Array of dirty changes to be saved.
 	 * @param {boolean} [bSkipUpdateCache] If true, then the dirty change shall be saved for the new created app variant, but not for the current app;
 	 * therefore, the cache update of the current app is skipped because the dirty change is not saved for the running app.
 	 * @returns {Promise} resolving after all changes have been saved
