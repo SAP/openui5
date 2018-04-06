@@ -202,7 +202,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			var oLayout    = sap.ui.getCore().byId(this.getLayout());
 			var oLD;
 			if (oLayout && oContainer) {
-				oLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/GridData");
+				oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 			}
 			if (oLD) {
 				return oLD;
@@ -664,7 +664,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 		oGrid._getLayoutDataForControl = function(oControl) {
 			var oLayout = this.__myParentLayout;
-			var oLD = oLayout.getLayoutDataForElement(oControl, "sap/ui/layout/GridData");
+			var oLD = oLayout.getLayoutDataForElement(oControl, "sap.ui.layout.GridData");
 
 			var oElement = oControl.getParent();
 			var oLabel = oElement.getLabelControl();
@@ -676,7 +676,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			} else {
 				// calculate Layout Data for control
 				var oContainer = sap.ui.getCore().byId(this.__myParentContainerId);
-				var oContainerLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/GridData");
+				var oContainerLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 				var oForm = oContainer.getParent();
 				var oSize;
 				var s = 0;
@@ -722,7 +722,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 				} else {
 					var oLabelLD;
 					if (oLabel) {
-						oLabelLD = oLayout.getLayoutDataForElement(oLabel, "sap/ui/layout/GridData");
+						oLabelLD = oLayout.getLayoutDataForElement(oLabel, "sap.ui.layout.GridData");
 					}
 					var aFields = oElement.getFields();
 					var iLength = aFields.length;
@@ -756,7 +756,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 						oField = aFields[i];
 						if (oField != oControl) {
 							// check if other fields have layoutData
-							oFieldLD = oLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData");
+							oFieldLD = oLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData");
 							// is Spans are too large - ignore in calculation....
 							if (oFieldLD) {
 								for (s = 0; s < aSizes.length; s++) {
@@ -801,7 +801,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 							oField = aFields[i];
 							oFieldLD = undefined;
 							if (oField != oControl) {
-								oFieldLD = oLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData");
+								oFieldLD = oLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData");
 							}
 
 							for (s = 0; s < aMultiLine.length; s++) {
@@ -1004,7 +1004,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 
 				var oLD;
 				if (oContainer) {
-					oLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/GridData");
+					oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 				}
 
 				if (oLD) {
@@ -1028,7 +1028,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			oLayout = oControl.__myParentLayout;
 		}
 
-		var oLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/GridData");
+		var oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.GridData");
 		if (!oLD) {
 			// only needed if container has no own LayoutData
 			var iColumnsM = oLayout.getColumnsM();
@@ -1057,7 +1057,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/Grid', 'sap/ui/layout/GridDat
 			}
 
 			if (oContainerNext) {
-				var oLDNext = oLayout.getLayoutDataForElement(oContainerNext, "sap/ui/layout/GridData");
+				var oLDNext = oLayout.getLayoutDataForElement(oContainerNext, "sap.ui.layout.GridData");
 				if (oLDNext && ( oLDNext.getLinebreak() || oLDNext.getLinebreakXL() )) {
 					bLastXL = true;
 					bLastRowXL = false;
