@@ -25,9 +25,16 @@
 						<a href="index.html#section-info">INFO</a>
 					</div>
 				</div>
+
 				<div class="b-list__item">
 					<div class="b-font size_18">
-						<a href="index.html#section-impressions">IMPRESSIONS</a>
+						<a href="index.html#section-lineup">LINE-UP</a>
+					</div>
+				</div>
+
+				<div class="b-list__item">
+					<div class="b-font size_18">
+						<a href="material.html#section-impressions">IMPRESSIONS 2017</a>
 					</div>
 				</div>
 				<div class="b-list__item">
@@ -79,6 +86,87 @@
 		</div>
 		<div class="b-section-h">
 			<div class="b-list mod_material" id="material">
+			</div>
+		</div>
+	</div>
+
+	<div class="b-section mod_agenda flex-container flex-wrap">
+		<div id="section-impressions" class="b-font size_36 b-ui align_center color_white margin_20_0_30 grid-col--12">
+			IMPRESSIONS 2017
+		</div>
+		<script id="slide-template" type="text/template">
+			<div class="b-slide b-slide--fade">
+				<img class="b-slide__image" src="./data/impressions/{{src}}">
+			</div>
+		</script>
+		<script id="gallery-item-template" type="text/template">
+			<div class="b-list__item">
+				<div class="b-topic mod_gallery">
+					<div
+							class="b-topic__picture"
+							style="background-image:url('./data/impressions/{{src}}');"
+							onclick="showSlide({{index}})">
+					</div>
+				</div>
+			</div>
+		</script>
+
+		<script id="video-template" type="text/template">
+			<div class="b-slide b-slide--fade">
+				<div class="flex-container">
+					<div class="b-slide__video b-ui margin-bottom_10_5_percent">
+						<iframe
+								width="100%"
+								height="100%"
+								src="https://www.youtube.com/embed/mQkjAyoGfwI">
+						</iframe>
+					</div>
+				</div>
+			</div>
+		</script>
+		<script id="dot-template" type="text/template">
+			<span class="b-slideshow__dot" onclick="showSlide({{index}})"></span>
+		</script>
+		<div class="grid-col--m-12 grid-col--6 flex-item">
+			<div class="b-section-h mod_slideshow mod_column">
+				<div class="b-slideshow">
+					<div id="slide-container" class="b-slideshow__container">
+						<!-- Dots below slide show -->
+						<div id="dots-container" class="b-slideshow__dots">
+						</div>
+						<a class="b-slideshow__prevLink mod_inside" onclick="showPrevSlide()">&#10094;</a>
+						<a class="b-slideshow__nextLink mod_inside" onclick="showNextSlide()">&#10095;</a>
+						<!-- Slides come here -->
+					</div>
+				</div>
+			</div>
+			<div class="b-section-h mod_column">
+				<div id="galleryElement" class="b-list mod_gallery">
+				</div>
+			</div>
+		</div>
+		<div class="grid-col--m-12 grid-col--6 flex-item">
+			<div class="b-section-h mod_column b-font size_18 color_white">
+				<div class="b-text">
+					<p>
+						UI5con 2017 was all about the great Community around UI5 and their mind-blowing ideas
+						paving the path of the framework’s future. With UI5 Evolution and the new SAPUI5 Demo Kit,
+						the UI5 Development teams announced to target modularization, increase performance and
+						leverage emerging Technologies. Community projects such as the custom control library UI5Lab
+						and custom built features playing around with modern trends like mixed and augmented reality
+						complemented the conference agenda. As a final Highlight, a toast was given with the particularly for
+						UI5con@SAP brewed delicious "PullToRefresh IPA" which wowed the crowd!
+					</p>
+					<p>
+						This so far biggest UI5con ever thrived on the fun, open-minded atmosphere typical for UI5cons:
+						enthusiastic people, rich discussions and entertaining "Anki Overdrive" races in the breaks.
+						Originally initiated by the UI5 Community in March 2016, UI5con is meant to give UI5 developers
+						and enthusiasts a common platform to meet face-to-face and discuss the latest innovations.
+					</p>
+					<p>
+						Now we’re looking forward to a breathtaking UI5con 2018, with loads of Community driven sessions – Call for Papers starting soon!
+					</p>
+				</div>
 			</div>
 		</div>
 	</div>
