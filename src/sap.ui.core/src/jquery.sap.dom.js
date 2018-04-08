@@ -350,7 +350,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/dom/focus', 'sap/ui/dom/containsOrEq
 	/**
 	 * Get the z-index for an element.
 	 *
-	 * @param {Integer} zIndex The z-index to set
+	 * @param {int} zIndex The z-index to set
 	 * @returns {number} The z-index
 	 * @public
 	 * @name jQuery#zIndex

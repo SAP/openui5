@@ -29,7 +29,7 @@ function(
 	 *
 	 * @class
 	 * The DragDrop plugin adds functionality/styling required for RTA.
-	 * @extends sap.ui.dt.ControlDragDrop
+	 * @extends sap.ui.dt.plugin.ControlDragDrop
 	 *
 	 * @author SAP SE
 	 * @version ${version}

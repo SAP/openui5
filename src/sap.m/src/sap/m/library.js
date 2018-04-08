@@ -614,28 +614,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one hour.
+		 * @public
 		 */
 		Hour : "Hour",
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one day.
+		 * @public
 		 */
 		Day : "Day",
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one month.
+		 * @public
 		 */
 		Month : "Month",
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one day
 		 * where 7 days are displayed, starting with the first day of the week.
+		 * @public
 		 */
 		Week : "Week",
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one day
 		 * where 31 days are displayed, starting with the first day of the month.
+		 * @public
 		 */
 		OneMonth : "One Month"
 
@@ -1538,11 +1543,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Standard. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in two separate lines.
+		 * @public
 		 */
 		Standard : "Standard",
 
 		/**
 		 * Inline. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in one line.
+		 * @public
 		 */
 		Inline : "Inline"
 	};
@@ -3183,6 +3190,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 *
 		 * For more information, see {@link sap.m.StepInput}'s <code>step</code>,
 		 * <code>largerStep</code> and <code>stepMode</code> properties.
+		 * @public
 		 */
 		AdditionAndSubtraction: "AdditionAndSubtraction",
 		 /**
@@ -3206,6 +3214,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 *
 		 * For more information, see {@link sap.m.StepInput}'s <code>step</code>,
 		 * <code>largerStep</code> and <code>stepMode</code> properties.
+		 * @public
 		 */
 		Multiple: "Multiple"
 	};
