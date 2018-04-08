@@ -1565,11 +1565,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Standard. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in two separate lines.
+		 * @public
 		 */
 		Standard : "Standard",
 
 		/**
 		 * Inline. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in one line.
+		 * @public
 		 */
 		Inline : "Inline"
 	};
