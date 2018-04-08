@@ -482,7 +482,7 @@ function(
 			var N1 = capitalize(this.singularName);
 			this._sMutator = 'add' + N1;
 			this._sRemoveMutator = 'remove' + N1;
-			this._sRemoveAllMutator = 'removeAll' + N1;
+			this._sRemoveAllMutator = 'removeAll' + N;
 		} else {
 			this._sMutator = 'set' + N;
 			this._sRemoveMutator =
@@ -505,6 +505,14 @@ function(
 			add(that._sMutator, function(a) { this.addAssociation(n,a); return this; }, that);
 			add(that._sRemoveMutator, function(a) { return this.removeAssociation(n,a); });
 			add(that._sRemoveAllMutator, function() { return this.removeAllAssociation(n); });
+			if ( n !== that.singularName ) {
+				add('removeAll' + capitalize(that.singularName), function() {
+					jQuery.sap.log.warning("Usage of deprecated method " +
+						that._oParent.getName() + ".prototype." + 'removeAll' + capitalize(that.singularName) + "," +
+						" use method " + that._sRemoveAllMutator  + " (plural) instead.");
+					return this[that._sRemoveAllMutator]();
+				});
+			}
 		}
 	};
 
