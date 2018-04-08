@@ -284,7 +284,7 @@ sap.ui.define([
 	 * Returns the variants for a given variant management Ref
 	 * @param {String} sVariantManagementReference The variant management Ref
 	 * @param {String} sNewVariantReference The newly selected variant Ref
-	 * @returns {promise} Returns Promise that resolves after reverting of old variants and applying of new variants is completed
+	 * @returns {Promise} Returns Promise that resolves after reverting of old variants and applying of new variants is completed
 	 * @public
 	 */
 	VariantModel.prototype._switchToVariant = function(sVariantManagementReference, sNewVariantReference) {

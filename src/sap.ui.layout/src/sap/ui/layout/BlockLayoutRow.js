@@ -232,7 +232,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './library', 'sap/ui/
 		 * @private
 		 * @method
 		 * @param {string} sSizeName The size that needs to be calculated
-		 * @returns {[*]}
+		 * @returns {Array.<*>}
 		 */
 		BlockLayoutRow.prototype._calcArrangementForSize = function (sSizeName) {
 			var aContent = this.getContent();

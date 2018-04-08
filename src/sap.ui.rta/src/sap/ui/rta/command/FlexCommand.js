@@ -118,7 +118,7 @@ sap.ui.define(['sap/ui/rta/command/BaseCommand', "sap/ui/fl/FlexControllerFactor
 
 	/**
 	 * @override
-	 * @returns {promise} empty promise after finishing execution
+	 * @returns {Promise} empty promise after finishing execution
 	 */
 	FlexCommand.prototype.execute = function() {
 		var vChange = this.getPreparedChange();

@@ -20,7 +20,7 @@ function(jQuery, Overlay) {
 	 * @class
 	 * The AggregationOverlay allows to create an absolute positioned DIV above the aggregation
 	 * of an element.
-	 * @extends sap.ui.core.Overlay
+	 * @extends sap.ui.dt.Overlay
 	 *
 	 * @author SAP SE
 	 * @version ${version}

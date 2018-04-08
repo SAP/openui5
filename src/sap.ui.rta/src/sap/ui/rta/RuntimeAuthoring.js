@@ -1187,7 +1187,7 @@ sap.ui.define([
 	 * Function to handle modification of an element
 	 *
 	 * @param {sap.ui.base.Event} oEvent Event object
-	 * @returns {promise} Returns promise that resolves after command was executed sucessfully
+	 * @returns {Promise} Returns promise that resolves after command was executed sucessfully
 	 * @private
 	 */
 	RuntimeAuthoring.prototype._handleElementModified = function(oEvent) {

@@ -27,6 +27,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 	 * <h4>When to use:</h4>
 	 * The tokenizer can only be used as part of {@link sap.m.MultiComboBox MultiComboBox},{@link sap.m.MultiInput MultiInput} or {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog ValueHelpDialog}
 	 *
+	 * @extends sap.ui.core.Control
 	 * @author SAP SE
 	 * @version ${version}
 	 *

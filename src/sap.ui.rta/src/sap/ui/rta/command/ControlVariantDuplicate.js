@@ -48,7 +48,7 @@ sap.ui.define([
 
 	/**
 	 * @public Triggers the duplication of a variant
-	 * @returns {promise} Returns resolve after execution
+	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantDuplicate.prototype.execute = function() {
 		var oVariantManagementControl = this.getElement(),
@@ -80,7 +80,7 @@ sap.ui.define([
 
 	/**
 	 * @public Undo logic for the execution
-	 * @returns {promise} Returns resolve after undo
+	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantDuplicate.prototype.undo = function() {
 		if (this._oVariantChange) {

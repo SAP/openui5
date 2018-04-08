@@ -20,7 +20,7 @@ sap.ui.define(['sap/ui/unified/CalendarLegend', './library', 'sap/ui/unified/lib
 		 * A legend for the {@link sap.m.PlanningCalendar} that displays the special dates and appointments in colors with their corresponding description.
 		 * The <code>PlanningCalendarLegend</code> extends {@link sap.ui.unified.CalendarLegend} and
 		 * overwrites the default value for property <code>columnWidth</code> to <code>auto</code>
-		 * @extends sap.ui.core.Control
+		 * @extends sap.ui.unified.CalendarLegend
 		 *
 		 * @author SAP SE
 		 * @version ${version}

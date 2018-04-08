@@ -40,7 +40,7 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 	/**
 	 * Execute this composite command
 	 *
-	 * @returns {promise} empty promise
+	 * @returns {Promise} empty promise
 	 */
 	CompositeCommand.prototype.execute = function() {
 		var aPromises = [];

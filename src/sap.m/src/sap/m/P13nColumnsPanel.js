@@ -96,7 +96,7 @@ sap.ui.define([
 
 				/**
 				 * Event raised when a <code>columnsItem</code> is added.
-				 * @deprecated As of version 1.50, replaced by extended event {@link sap.m.P13nColumnsPanel.html#changeColumnsItems}
+				 * @deprecated As of version 1.50, replaced by extended event {@link sap.m.P13nColumnsPanel#event:changeColumnsItems}
 				 * @since 1.26.0
 				 */
 				addColumnsItem: {
