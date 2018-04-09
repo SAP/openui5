@@ -1,275 +1,31 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Test Page for sap.ui.dt.DesignTimeMetadata</title>
-
 		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				src="../../../../../resources/sap-ui-core.js">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
-			jQuery.sap.require("sap.ui.thirdparty.sinon");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-ie");
-			jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			window["sap-ui-config"].resourceroots = {
+				"dt.view": "testdata/designtime/"
+			};
 
-			jQuery.sap.require("sap.ui.dt.DesignTimeMetadata");
+			window["sap-ui-config"].libs = "sap.ui.dt,sap.m,sap.ui.layout";
+			window["sap-ui-config"].noConflict = "true";
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
+			sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
+			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
-			QUnit.module("Given that the DesignTimeMetadata is created for a fake control", {
-				beforeEach : function() {
-					this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-						libraryName : "my.fake.lib",
-						data : {
-							testField : "testValue",
-							domRef : "domRef",
-							actions : {
-								action1 : "firstChangeType",
-								action2 : {
-									changeType : "secondChangeType"
-								},
-								action3 : function(oElement) {
-									return {changeType: oElement.name};
-								}
-							}
-						}
-					});
-				},
-				afterEach : function() {
-					this.oDesignTimeMetadata.destroy();
-				}
-			});
-			QUnit.test("when the DesignTimeMetadata is initialized", function(assert) {
-				assert.strictEqual(this.oDesignTimeMetadata.getData().testField, "testValue", "then the field is returned right");
-				assert.strictEqual(this.oDesignTimeMetadata.getDomRef(), "domRef", "then the domRef is returned right");
-				assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
-			});
+			window.blanket && window.blanket.options("sap-ui-cover-only", "DesignTimeMetadata.js");
 
-			QUnit.test("when getAction is called...", function(assert) {
-				assert.propEqual(this.oDesignTimeMetadata.getAction("action1"), {changeType : "firstChangeType"}, "...for string action, the string is returned");
-				assert.propEqual(this.oDesignTimeMetadata.getAction("action2"), {changeType : "secondChangeType"}, "...for object action, the object is returned");
-				assert.propEqual(this.oDesignTimeMetadata.getAction("action3", {name:"thirdChangeType"}), {changeType : "thirdChangeType"}, "...for function action, the correct string is returned");
-			});
-
-			QUnit.test("when getLibraryText is called", function(assert) {
-				var oFakeLibBundle = {
-					getText : this.stub().returns("translated text"),
-					hasText : this.stub().returns(false)
-				};
-				this.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
-				assert.equal(this.oDesignTimeMetadata.getLibraryText("I18N_KEY"), "translated text", "then you get the text from the resource bundle of the corresponding library");
-
-			});
-
-			QUnit.test("when ignore is false", function(assert) {
-				this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-					data : {
-						ignore : false
-					}
-				});
-				assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
-			});
-			QUnit.test("when ignore is true", function(assert) {
-				this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-					data : {
-						ignore : true
-					}
-				});
-				assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), true, "then ignore property is returned right");
-			});
-
-			QUnit.test("when ignore is a function returning false", function(assert) {
-				this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-					data : {
-						ignore : function(){return false; }
-					}
-				});
-				assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
-			});
-
-			QUnit.test("when ignore is a function returning true", function(assert) {
-				this.oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-					data : {
-						ignore : function(){return true; }
-					}
-				});
-				assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), true, "then ignore property is returned right");
-			});
-
-			jQuery.sap.require("sap.m.Button");
-
-			QUnit.module("Given a dedicated rendered control and designtime metadata is created", {
-				beforeEach : function() {
-
-					this.oButton = new sap.m.Button({
-						text : "myButton"
-					});
-
-					this.oButton.placeAt("content");
-					sap.ui.getCore().applyChanges();
-				},
-				afterEach : function() {
-					this.oButton.destroy();
-				}
-			});
-
-			QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function", function(assert) {
-				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-					data : {
-						actions : {
-							rename : {
-								domRef : function (oElement){
-									return oElement.getDomRef();
-								}
-							}
-						}
-					}
-				});
-
-				var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
-				assert.ok(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), "then the domRef of the control is returned");
-				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).get(0), this.oButton.getDomRef(), "then the value of domRef is correct");
-			});
-
-			QUnit.test("when getAssociatedDomRef is called on an action with domRef as a string", function(assert) {
-				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-					data : {
-						actions : {
-							rename : {
-								domRef : ".sapMBtnContent"
-							}
-						}
-					}
-				});
-
-				var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
-				assert.ok(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), "then the domRef of the control is returned");
-				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).get(0).textContent, "myButton", "then the text of the button is correct");
-			});
-
-			QUnit.test("when getAssociatedDomRef is called on an action with domRef as undefined", function(assert) {
-				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-					data : {
-						actions : {
-							rename : {
-								domRef : undefined
-							}
-						}
-					}
-				});
-
-				var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
-				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), undefined, "then the domRef of the control is undefined ");
-			});
-
-			QUnit.test("when getAssociatedDomRef is called on an action with no domRef at all", function(assert) {
-				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-					data : {
-						actions : {
-							rename : {
-							}
-						}
-					}
-				});
-
-				var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
-				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef), undefined, "then the domRef of the control is undefined ");
-			});
-
-			QUnit.test("when getAssociatedDomRef is called on an action with an invalid/not available selector", function(assert) {
-				var oDesignTimeMetadata = new sap.ui.dt.DesignTimeMetadata({
-					data : {
-						actions : {
-							rename : {
-								domRef: ""
-							}
-						}
-					}
-				});
-
-				var vDomRef = oDesignTimeMetadata.getAction("rename", this.oButton).domRef;
-				assert.strictEqual(oDesignTimeMetadata.getAssociatedDomRef(this.oButton, vDomRef).length, 0, "then the domRef of the control is undefined ");
-			});
-
-			jQuery.sap.require("sap.ui.layout.form.SimpleForm");
-			jQuery.sap.require("sap.ui.core.Title");
-			jQuery.sap.require("sap.m.Label");
-			jQuery.sap.require("sap.m.Input");
-			jQuery.sap.require("sap.ui.dt.AggregationDesignTimeMetadata");
-
-			QUnit.module("Given a dedicated rendered control and an AggregationDesignTimeMetadata is created for a control", {
-				beforeEach : function() {
-					this.oTitle0 = new sap.ui.core.Title({id : "Title0",  text : "Title 0"});
-					this.oLabel0 = new sap.m.Label({id : "Label0",  text : "Label 0"});
-					this.oInput0 = new sap.m.Input({id : "Input0"});
-
-					this.oSimpleForm = new sap.ui.layout.form.SimpleForm("form", {
-						id : "SimpleForm",
-						title : "Simple Form",
-						content : [this.oTitle0, this.oLabel0, this.oInput0]
-					});
-
-					this.oSimpleForm.placeAt("content");
-					sap.ui.getCore().applyChanges();
-				},
-				afterEach : function() {
-					this.oSimpleForm.destroy();
-				}
-			});
-
-			QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function", function(assert) {
-				var oAggregationDesignTimeMetadata = new sap.ui.dt.AggregationDesignTimeMetadata({
-					data : {
-						actions : {
-							rename : function() {
-								return {
-                                    domRef : function (oElement){
-                                        return oElement.getDomRef();
-                                    }
-								};
-							}
-						}
-					}
-				});
-
-				var vDomRef = oAggregationDesignTimeMetadata.getAction("rename", this.oSimpleForm).domRef;
-				assert.ok(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef), "then the domRef of the control is returned");
-				assert.strictEqual(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef).get(0), this.oSimpleForm.getDomRef(), "then the domRef is correct");
-			});
-
-			QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function", function(assert) {
-				var oAggregationDesignTimeMetadata = new sap.ui.dt.AggregationDesignTimeMetadata({
-					data : {
-						actions : {
-							rename : function() {
-								return {
-									domRef : ":sap-domref"
-								};
-							}
-						}
-					}
-				});
-
-				var vDomRef = oAggregationDesignTimeMetadata.getAction("rename", this.oButton).domRef;
-				assert.ok(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef), "then the domRef of the content is returned");
-				assert.strictEqual(oAggregationDesignTimeMetadata.getAssociatedDomRef(this.oSimpleForm, vDomRef).get(0).textContent, "Simple FormTitle 0Label 0", "then the title of the content is correct");
-			});
-
+			jQuery.sap.includeScript("./DesignTimeMetadata.qunit.js");
 		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for sap.ui.dt.DesignTimeMetadata</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
+		<div id="qunit"></div>
+		<div id="qunit-fixture" style="position: fixed; top: auto; right: 0; bottom: 0; left: auto; width: 600px; height: 600px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);"></div>
 	</body>
 </html>
