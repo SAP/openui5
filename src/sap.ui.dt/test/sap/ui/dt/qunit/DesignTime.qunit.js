@@ -78,7 +78,7 @@ function(
 
 				assert.ok(OverlayRegistry.getOverlay(this.oButton), "overlay for button exists");
 				var oButtonDTMetadata = OverlayRegistry.getOverlay(this.oButton).getDesignTimeMetadata();
-				assert.equal(oButtonDTMetadata.getLibraryName(), "sap.m", "the DesignTimeMetadata containing the libraryName");
+				assert.ok(oButtonDTMetadata, "the DesignTimeMetadata is available");
 
 				fnDone();
 			}.bind(this));

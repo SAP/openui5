@@ -129,7 +129,8 @@ sap.ui.require([
 			this.oRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 			var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
 			var oFakeLibBundle = {
-				getText : sandbox.stub().returnsArg(0)
+				getText : sandbox.stub().returnsArg(0),
+				hasText : sandbox.stub().returns(true)
 			};
 			sandbox.stub(sap.ui.getCore(),"getLibraryResourceBundle", function(sLibraryName) {
 				if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m"){
@@ -160,7 +161,7 @@ sap.ui.require([
 		},
 		ON_CHILD),
 		sibling : false,
-		msg : "when the control's dt metadata has NO addODataProperty and an reveal action"
+		msg : "when the control's dt metadata has NO addODataProperty and a reveal action"
 	},
 	{
 		overlay : createOverlayWithAggregationActions.bind(null, {
@@ -170,7 +171,7 @@ sap.ui.require([
 		},
 		ON_SIBLING),
 		sibling : true,
-		msg : " when the control's dt metadata has NO addODataProperty and an reveal action"
+		msg : " when the control's dt metadata has NO addODataProperty and a reveal action"
 	},
 	{
 		overlay : createOverlayWithAggregationActions.bind(null, {
@@ -352,7 +353,7 @@ sap.ui.require([
 		}
 	].forEach(function(test){
 		var sPrefix = test.sibling ? "On sibling: " : "On child: ";
-		QUnit.test(sPrefix + "when the control's dt metadata has NO addODataProperty and an reveal action", function(assert) {
+		QUnit.test(sPrefix + "when the control's dt metadata has NO addODataProperty and a reveal action", function(assert) {
 			var done = assert.async();
 			oPlugin.attachEventOnce("elementModified", function(oEvent){
 				var oCompositeCommand = oEvent.getParameter("command");
@@ -485,7 +486,7 @@ sap.ui.require([
 		});
 	});
 
-	QUnit.test("when when the control's dt metadata has NO addODataProperty and an reveal action and we call showAvailableElements with an index", function(assert) {
+	QUnit.test("when when the control's dt metadata has NO addODataProperty and a reveal action and we call showAvailableElements with an index", function(assert) {
 		var done = assert.async();
 		oPlugin.attachEventOnce("elementModified", function(oEvent){
 			var oCompositeCommand = oEvent.getParameter("command");
@@ -529,7 +530,8 @@ sap.ui.require([
 		var oOrignalRTATexts = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var fnOriginalGetLibraryResourceBundle = sap.ui.getCore().getLibraryResourceBundle;
 		var oFakeLibBundle = {
-			getText : sandbox.stub().returnsArg(0)
+			getText : sandbox.stub().returnsArg(0),
+			hasText : sandbox.stub().returns(true)
 		};
 		sandbox.stub(sap.ui.getCore(),"getLibraryResourceBundle", function(sLibraryName) {
 			if (sLibraryName === "sap.ui.layout" || sLibraryName === "sap.m"){

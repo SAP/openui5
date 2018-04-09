@@ -98,7 +98,7 @@ sap.ui.define([
 		if (mActions.reveal){
 			Object.keys(mActions.reveal.types).forEach(function(sType){
 				var mType = mActions.reveal.types[sType];
-				mControlType = mType.designTimeMetadata.getName(oParentElement);
+				mControlType = mType.name;
 				if (mControlType) {
 					sControlType = bSingular ? mControlType.singular : mControlType.plural;
 					aNames.push(sControlType);
@@ -263,6 +263,7 @@ sap.ui.define([
 						var oOverlay = OverlayRegistry.getOverlay(oElement);
 						if (oOverlay) {
 							var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+							//first element should be representative for all of its type in this relevant container
 							var mRevealAction = oDesignTimeMetadata && oDesignTimeMetadata.getAction("reveal", oElement);
 							if (mRevealAction && mRevealAction.changeType) {
 								if (mRevealAction.changeOnRelevantContainer) {
@@ -274,7 +275,8 @@ sap.ui.define([
 									}
 									mTypes[sType] = {
 										designTimeMetadata : oDesignTimeMetadata,
-										action : mRevealAction
+										action : mRevealAction,
+										name: oDesignTimeMetadata.getName(oElement)
 									};
 								}
 							}
