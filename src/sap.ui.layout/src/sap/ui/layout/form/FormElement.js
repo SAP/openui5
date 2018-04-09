@@ -351,7 +351,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Element', 'sap/ui/base/ManagedO
 	function _fieldChanged(oField, sMutation) {
 
 		if (sMutation == "insert") {
-			if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
+			if (!oField.isA("sap.ui.core.IFormContent")) {
 				jQuery.sap.log.warning(oField + " is not valid Form content", this);
 			}
 			_attachDelegate.call(this, oField);

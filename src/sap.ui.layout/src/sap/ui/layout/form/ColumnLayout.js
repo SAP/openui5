@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 	ColumnLayout.prototype._getContainerSize = function(oContainer) {
 
 		var oForm = this.getParent();
-		var oLD = this.getLayoutDataForElement(oContainer, "sap/ui/layout/form/ColumnContainerData");
+		var oLD = this.getLayoutDataForElement(oContainer, "sap.ui.layout.form.ColumnContainerData");
 		var aContainers = oForm.getVisibleFormContainers();
 		var iContainers = aContainers.length;
 		var iColumnsM = this.getColumnsM();
@@ -258,7 +258,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 					iContainer = i;
 					oOtherLD = oLD;
 				} else {
-					oOtherLD = this.getLayoutDataForElement(aContainers[i], "sap/ui/layout/form/ColumnContainerData");
+					oOtherLD = this.getLayoutDataForElement(aContainers[i], "sap.ui.layout.form.ColumnContainerData");
 				}
 
 				if (!oOtherLD) {
@@ -334,7 +334,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 					if (oContainer === aContainers[i]) {
 						oOtherLD = oLD;
 					} else {
-						oOtherLD = this.getLayoutDataForElement(aContainers[i], "sap/ui/layout/form/ColumnContainerData");
+						oOtherLD = this.getLayoutDataForElement(aContainers[i], "sap.ui.layout.form.ColumnContainerData");
 					}
 
 					calculateLineBreak(oSizes.M, iColumnsM, (oOtherLD ? oOtherLD.getColumnsM() : 0));
@@ -374,7 +374,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 	ColumnLayout.prototype._getFieldSize = function(oField) {
 
 		var iColumns = 12;
-		var oLD = this.getLayoutDataForElement(oField, "sap/ui/layout/form/ColumnElementData");
+		var oLD = this.getLayoutDataForElement(oField, "sap.ui.layout.form.ColumnElementData");
 		var oOptions = {S: {Size: iColumns, Break: false, Space: 0}, L: {Size: iColumns, Break: false, Space: 0}};
 		var iLabelSizeS = iColumns;
 		var iLabelSizeL = this.getLabelCellsLarge();
@@ -399,7 +399,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 			var iColumnsL = iColumns - this.getEmptyCellsLarge();
 
 			if (oLabel) {
-				var oLabelLD = this.getLayoutDataForElement(oLabel, "sap/ui/layout/form/ColumnElementData");
+				var oLabelLD = this.getLayoutDataForElement(oLabel, "sap.ui.layout.form.ColumnElementData");
 				if (oLabelLD) {
 					iLabelSizeS = oLabelLD.getCellsSmall();
 					iLabelSizeL = oLabelLD.getCellsLarge();
@@ -481,7 +481,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/library', './FormLayout',
 				// determine rows and available cells
 				for (i = 0; i < iFields; i++) {
 					if (oField !== aFields[i]) {
-						oOtherLD = this.getLayoutDataForElement(aFields[i], "sap/ui/layout/form/ColumnElementData");
+						oOtherLD = this.getLayoutDataForElement(aFields[i], "sap.ui.layout.form.ColumnElementData");
 					} else {
 						oOtherLD = oLD;
 						iField = i;
