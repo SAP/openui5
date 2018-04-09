@@ -5,8 +5,8 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/base/util/now", "sap/base/log", "sap/ui/thirdparty/URI"
-], function(Measurement, ResourceTimings, XHRInterceptor, now, log, URI) {
+sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/base/util/now", "sap/base/Log", "sap/ui/thirdparty/URI"
+], function(Measurement, ResourceTimings, XHRInterceptor, now, Log, URI) {
 
 	"use strict";
 
@@ -157,7 +157,7 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 			oPendingInteraction.processing = iProcessing > -1 ? iProcessing : 0;
 
 			aInteractions.push(oPendingInteraction);
-			log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "Interaction.js");
+			Log.info("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "Interaction.js");
 			oPendingInteraction = null;
 		}
 	}
@@ -371,7 +371,7 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 			if (oSrcElement && oSrcElement.getId) {
 				oPendingInteraction.trigger = oSrcElement.getId();
 			}
-			log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "Interaction.js");
+			Log.info("Interaction step started: trigger: " + oPendingInteraction.trigger + "; type: " + oPendingInteraction.event, "Interaction.js");
 		},
 
 		/**

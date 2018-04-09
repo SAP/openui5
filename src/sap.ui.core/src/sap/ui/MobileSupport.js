@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["sap/ui/initjQuerySupport", 'sap/ui/Device', 'sap/base/log'], function(initjQuerySupport, Device, log) {
+sap.ui.define(["sap/ui/initjQuerySupport", 'sap/ui/Device', 'sap/base/Log'], function(initjQuerySupport, Device, Log) {
 	"use strict";
 
 	var jQuery = initjQuerySupport();
@@ -25,7 +25,7 @@ sap.ui.define(["sap/ui/initjQuerySupport", 'sap/ui/Device', 'sap/base/log'], fun
 			var resultUA = result && result[1] || jQuery("#sap-ui-bootstrap").attr("data-sap-ui-xx-fakeOS");
 
 			if (resultUA) {
-				log.error("The experimental parameter 'sap-ui-xx-fakeOS' must NOT be used. The results are unreliable. The parameter will be removed in one of the next versions of UI5!");
+				Log.error("The experimental parameter 'sap-ui-xx-fakeOS' must NOT be used. The results are unreliable. The parameter will be removed in one of the next versions of UI5!");
 				oMobileSupport.simulateMobileOnDesktop = true;
 
 				var ua = { // for "ios"/"android"/"blackberry" we have defined fake user-agents; these will affect all other browser/platform
@@ -308,7 +308,7 @@ sap.ui.define(["sap/ui/initjQuerySupport", 'sap/ui/Device', 'sap/base/log'], fun
 	oMobileSupport.setIcons = function(oIcons) {
 
 		if (!oIcons || (typeof oIcons !== "object")) {
-			log.warning("Call to sap/ui/MobileSupport.setIcons() has been ignored because there were no icons given or the argument was not an object.");
+			Log.warning("Call to sap/ui/MobileSupport.setIcons() has been ignored because there were no icons given or the argument was not an object.");
 			return;
 		}
 

@@ -6,8 +6,8 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 sap.ui.define(['sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2ETrace/Passport', './Interaction',
-	'./XHRInterceptor', 'sap/base/log', 'sap/base/Version'
-], function (URI, Device, Passport, Interaction, XHRInterceptor, log, Version) {
+	'./XHRInterceptor', 'sap/base/Version'
+], function (URI, Device, Passport, Interaction, XHRInterceptor, Version) {
 	"use strict";
 
 	// activation by meta tag or url parameter as fallback

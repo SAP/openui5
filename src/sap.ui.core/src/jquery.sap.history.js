@@ -3,10 +3,10 @@
  */
 sap.ui.define([
 	"jquery.sap.global",
-	"sap/base/log",
+	"sap/base/Log",
 	"sap/base/util/uid",
 	"sap/base/strings/escapeRegExp"
-], function(jQuery, log, uid, escapeRegExp) {
+], function(jQuery, Log, uid, escapeRegExp) {
 	"use strict";
 
 	(function(window){ // TODO remove inner scope function
@@ -277,7 +277,7 @@ sap.ui.define([
 				if (iSteps < 0) {
 					window.history.go(iSteps);
 				} else {
-					log.error("jQuery.sap.history.backToHash: " + sHash + "is not in the history stack or it's after the current hash");
+					Log.error("jQuery.sap.history.backToHash: " + sHash + "is not in the history stack or it's after the current hash");
 				}
 			}
 		};
@@ -307,7 +307,7 @@ sap.ui.define([
 				if (iSteps < 0) {
 					window.history.go(iSteps);
 				} else {
-					log.error("jQuery.sap.history.backThroughPath: there's no history state which has the " + sPath + " identifier in the history stack before the current hash");
+					Log.error("jQuery.sap.history.backThroughPath: there's no history state which has the " + sPath + " identifier in the history stack before the current hash");
 				}
 			}
 		};
@@ -660,7 +660,7 @@ sap.ui.define([
 							oRoute.action.apply(null, [oParsedHash.oStateData, sNavType]);
 						}
 					} else {
-						log.error("hash format error! The current Hash: " + sHash);
+						Log.error("hash format error! The current Hash: " + sHash);
 					}
 
 				}

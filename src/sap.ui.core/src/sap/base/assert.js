@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["./log"], function(log) {
+sap.ui.define(["./Log"], function(Log) {
 	"use strict";
 
 	// TODO-evo:assert on node throws an error if the assertion is violated
@@ -35,7 +35,7 @@ sap.ui.define(["./log"], function(log) {
 				console.assert(bResult, sMessage);
 			} else {
 				// console is not always available (IE, FF) and IE doesn't support console.assert
-				log.debug("[Assertions] " + sMessage);
+				Log.debug("[Assertions] " + sMessage);
 			}
 			/*eslint-enable no-console */
 		}

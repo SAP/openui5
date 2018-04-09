@@ -5,8 +5,8 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(['sap/base/log'],
-	function(log) {
+sap.ui.define(['sap/base/Log'],
+	function(Log) {
 
 	// @evo-todo module should be deprecated and not be used in evo
 	"use strict";
@@ -43,7 +43,7 @@ sap.ui.define(['sap/base/log'],
 				iFailures++;
 			}
 			if ( iOpenTasks === 0 ) {
-				log.info("Sync point '" + sName + "' finished (tasks:" + aTasks.length + ", open:" + iOpenTasks + ", failures:" + iFailures + ")");
+				Log.info("Sync point '" + sName + "' finished (tasks:" + aTasks.length + ", open:" + iOpenTasks + ", failures:" + iFailures + ")");
 				if ( sTimer ) {
 					clearTimeout(sTimer);
 					sTimer = null;
@@ -61,11 +61,11 @@ sap.ui.define(['sap/base/log'],
 
 		if ( !isNaN(iTimeout) ) {
 			sTimer = setTimeout(function() {
-				log.info("Sync point '" + sName + "' timed out (tasks:" + aTasks.length + ", open:" + iOpenTasks + ", failures:" + iFailures + ")");
+				Log.info("Sync point '" + sName + "' timed out (tasks:" + aTasks.length + ", open:" + iOpenTasks + ", failures:" + iFailures + ")");
 				finish();
 			}, iTimeout);
 		}
 
-		log.info("Sync point '" + sName + "' created" + (iTimeout ? "(timeout after " + iTimeout + " ms)" : ""));
+		Log.info("Sync point '" + sName + "' created" + (iTimeout ? "(timeout after " + iTimeout + " ms)" : ""));
 	};
 });

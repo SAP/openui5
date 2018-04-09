@@ -7,12 +7,12 @@
  */
 sap.ui.define([
 		'sap/base/assert',
-		'sap/base/log',
+		'sap/base/Log',
 		'sap/base/strings/formatMessage',
 		'sap/base/util/extend',
 		'sap/ui/Properties'
 	],
-	function(assert, log, formatMessage, extend, Properties) {
+	function(assert, Log, formatMessage, extend, Properties) {
 	"use strict";
 
 	/* global Promise */
@@ -325,7 +325,7 @@ sap.ui.define([
 			this.aCustomBundles.push(oCustomBundle);
 		} else {
 			// we report the error but do not break the execution
-			log.error("Custom resource bundle is either undefined or not an instanceof sap/ui/Resources/Bundle. Therefore this custom resource bundle will be ignored!");
+			Log.error("Custom resource bundle is either undefined or not an instanceof sap/ui/Resources/Bundle. Therefore this custom resource bundle will be ignored!");
 		}
 	};
 

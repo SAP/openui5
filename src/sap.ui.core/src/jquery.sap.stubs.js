@@ -3,8 +3,8 @@
  */
 
 /* global console */
-sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/jquery"],
-	function(log, lazyProperty, jQuery) {
+sap.ui.define(["sap/base/Log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/jquery"],
+	function(Log, lazyProperty, jQuery) {
 	"use strict";
 
 	// Make sure to initialize the jQuery.sap namespace to apply stubs
@@ -243,7 +243,7 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 
 	function lazyLoad(sModule, oTarget, sProperty, sTargetName) {
 		return function() {
-			log.debug("Lazy loading module \"" + sModule + "\" triggered by usage of " + sTargetName + sProperty, "jquery.sap.stubs");
+			Log.debug("Lazy loading module \"" + sModule + "\" triggered by usage of " + sTargetName + sProperty, "jquery.sap.stubs");
 			sap.ui.requireSync(sModule);
 			return oTarget[sProperty];
 		};
@@ -265,7 +265,7 @@ sap.ui.define(["sap/base/log", "sap/base/util/lazyProperty", "sap/ui/thirdparty/
 		});
 	}
 
-	log.debug("Applying lazy loading stubs for legacy APIs", "jquery.sap.stubs");
+	Log.debug("Applying lazy loading stubs for legacy APIs", "jquery.sap.stubs");
 	Object.keys(mStubs).forEach(function(sStubName) {
 		var oStub = mStubs[sStubName];
 		applyLazyProperties(sStubName, oStub.target, oStub.stubs);
