@@ -12,7 +12,7 @@ sap.ui.require([
 	"sap/ui/core/Manifest",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-	"sap/ui/fl/variants/ControlVariantsAPI"
+	"sap/ui/fl/ControlPersonalizationAPI"
 ], function(
 	VariantController,
 	VariantModel,
@@ -23,7 +23,7 @@ sap.ui.require([
 	Manifest,
 	UIComponent,
 	ComponentContainer,
-	ControlVariantsAPI
+	ControlPersonalizationAPI
 ) {
 	"use strict";
 //	sinon.config.useFakeTimers = false;
@@ -38,7 +38,7 @@ sap.ui.require([
 		beforeEach : function(assert) {
 			var done = assert.async();
 
-			jQuery.get("../testResources/VariantManagementTestApp.view.xml", null,
+			jQuery.get("./testResources/VariantManagementTestApp.view.xml", null,
 			function(viewContent) {
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
@@ -140,20 +140,20 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'hasVariantManagement' with a control that belong to a variant management control", function(assert) {
-		var bVariantManagementReference1 = ControlVariantsAPI.hasVariantManagement(this.mMoveChangeData1.selectorControl);
-		var bVariantManagementReference2 = ControlVariantsAPI.hasVariantManagement(this.mRenameChangeData2.selectorControl);
+		var bVariantManagementReference1 = ControlPersonalizationAPI.hasVariantManagement(this.mMoveChangeData1.selectorControl);
+		var bVariantManagementReference2 = ControlPersonalizationAPI.hasVariantManagement(this.mRenameChangeData2.selectorControl);
 		assert.ok(bVariantManagementReference1, "true is returned for the first variant management control");
 		assert.ok(bVariantManagementReference2, "true is returned for the second variant management control");
 	});
 
 	QUnit.test("when calling 'hasVariantManagement' with a control that doesn't belong to a variant management control", function(assert) {
-		var bVariantManagementReference = ControlVariantsAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--Button"));
+		var bVariantManagementReference = ControlPersonalizationAPI.hasVariantManagement(sap.ui.getCore().byId("testComponent---mockview--Button"));
 		assert.notOk(bVariantManagementReference, "false is returned");
 	});
 
 	QUnit.test("when calling 'addPersonalizationChanges' with two valid variant changes", function(assert) {
 		var done = assert.async();
-		ControlVariantsAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mMoveChangeData2])
+		ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mMoveChangeData2])
 		.then(function() {
 			assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no errors ocurred");
 			assert.equal(this.fnAddPreparedChangeSpy.callCount, 2, "addDirtyChange has been called twice");
@@ -164,7 +164,7 @@ sap.ui.require([
 	QUnit.test("when calling 'addPersonalizationChanges' with a change without selector control", function(assert) {
 		var done = assert.async();
 		this.mMoveChangeData1.selectorControl = undefined;
-		ControlVariantsAPI.addPersonalizationChanges([this.mMoveChangeData1])
+		ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1])
 		.then(function() {
 			assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error ocurred");
 			assert.equal(this.fnUtilsLogErrorSpy.args[0][0], "Error during execPromiseQueueSequentially processing occured: No valid selectorControl", "error message: No valid selectorControl");
@@ -176,7 +176,7 @@ sap.ui.require([
 	QUnit.test("when calling 'addPersonalizationChanges' with a change without changeSpecificData", function(assert) {
 		var done = assert.async();
 		this.mMoveChangeData1.changeSpecificData = undefined;
-		ControlVariantsAPI.addPersonalizationChanges([this.mMoveChangeData1])
+		ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1])
 		.then(function() {
 			assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error ocurred");
 			assert.equal(this.fnUtilsLogErrorSpy.args[0][0], "Error during execPromiseQueueSequentially processing occured: No changeSpecificData available", "error message: No changeSpecificData available");
@@ -188,7 +188,7 @@ sap.ui.require([
 	QUnit.test("when calling 'addPersonalizationChanges' with a change without valid changeType", function(assert) {
 		var done = assert.async();
 		this.mMoveChangeData1.changeSpecificData.changeType = undefined;
-		ControlVariantsAPI.addPersonalizationChanges([this.mMoveChangeData1])
+		ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1])
 		.then(function() {
 			assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error ocurred");
 			assert.equal(this.fnUtilsLogErrorSpy.args[0][0], "Error during execPromiseQueueSequentially processing occured: No valid changeType", "error message: No valid changeType");
@@ -200,7 +200,7 @@ sap.ui.require([
 	QUnit.test("when calling 'addPersonalizationChanges' with a change without a valid change handler", function(assert) {
 		var done = assert.async();
 		this.mMoveChangeData1.changeSpecificData.changeType = "noChangeHandlerForThisType";
-		ControlVariantsAPI.addPersonalizationChanges([this.mMoveChangeData1])
+		ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1])
 		.then(function() {
 			assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error ocurred");
 			assert.equal(this.fnUtilsLogErrorSpy.args[0][0], "Error during execPromiseQueueSequentially processing occured: No valid ChangeHandler", "error message: No valid ChangeHandler");
@@ -215,7 +215,7 @@ sap.ui.require([
 		var oChangeHandler = jQuery.extend(true, {}, ChangeRegistry.getInstance().getChangeHandler("moveControls", oControl.getMetadata().getName(), oControl, sap.ui.fl.changeHandler.JsControlTreeModifier,"CUSTOMER"));
 		oChangeHandler.revertChange = undefined;
 		sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(oChangeHandler);
-		ControlVariantsAPI.addPersonalizationChanges([this.mMoveChangeData1])
+		ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1])
 		.then(function() {
 			assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error ocurred");
 			assert.equal(this.fnUtilsLogErrorSpy.args[0][0], "Error during execPromiseQueueSequentially processing occured: ChangeHandler has no revertChange function", "error message: ChangeHandler has no revertChange function");
@@ -227,7 +227,7 @@ sap.ui.require([
 	QUnit.test("when calling 'addPersonalizationChanges' with two valid variant changes and an invalid change", function(assert) {
 		var done = assert.async();
 		this.mRenameChangeData1.selectorControl = undefined;
-		ControlVariantsAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2])
+		ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2])
 		.then(function() {
 			assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error ocurred");
 			assert.equal(this.fnAddPreparedChangeSpy.callCount, 2, "addDirtyChange has been called twice");
@@ -238,7 +238,7 @@ sap.ui.require([
 	QUnit.test("when calling 'addPersonalizationChanges' with variant changes for different variant management controls", function(assert) {
 		var done = assert.async();
 		sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER"); //needed as some ChangeHandlers are not available for USER layer
-		ControlVariantsAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2])
+		ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1, this.mRenameChangeData1, this.mMoveChangeData2, this.mRenameChangeData2])
 		.then(function() {
 			assert.equal(this.fnUtilsLogErrorSpy.callCount, 0, "no error ocurred");
 			assert.equal(this.fnAddPreparedChangeSpy.callCount, 4, "addDirtyChange has been called four times");
@@ -263,7 +263,7 @@ sap.ui.require([
 				value : "Personalized Text"
 			}
 		};
-		ControlVariantsAPI.addPersonalizationChanges([oChangeData])
+		ControlPersonalizationAPI.addPersonalizationChanges([oChangeData])
 		.then(function() {
 			assert.equal(this.fnUtilsLogErrorSpy.callCount, 1, "one error ocurred");
 			assert.equal(this.fnUtilsLogErrorSpy.args[0][0], "Error during execPromiseQueueSequentially processing occured: No Variant Management Control available for change", "error message: No Variant Management Control available for change");
