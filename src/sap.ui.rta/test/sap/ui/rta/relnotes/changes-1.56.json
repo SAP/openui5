@@ -109,6 +109,18 @@
         "type": "FIX",
         "text": "sap.ui.rta: Incorrect positioning of rename field on EDGE",
         "references": []
+      },
+      {
+        "id": "ad202bd33f5d9feb39e2a4fa2f320bd34fe5fb47",
+        "type": "FEATURE",
+        "text": " sap.m.Button: enable hide/unhide actions for RTA",
+        "references": []
+      },
+      {
+        "id": "8ef21d711585b70db32226db4038e5f5598708a4",
+        "type": "FIX",
+        "text": " sap.ui.rta - Performance test fix",
+        "references": []
       }
     ]
   }

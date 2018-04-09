@@ -476,6 +476,72 @@
         "type": "FIX",
         "text": " sap.ui.core.format.DateFormat: Parsing name of day",
         "references": []
+      },
+      {
+        "id": "24708933272e8e2159553d6f1eb9183a54df23ea",
+        "type": "FEATURE",
+        "text": " sap.ui.base.Object: instanceof which covers extends/implements",
+        "references": []
+      },
+      {
+        "id": "b005ea19025529a6df79a6b27a3355cc9e642a3b",
+        "type": "FIX",
+        "text": " Controller: Enhance onInit documentation",
+        "references": []
+      },
+      {
+        "id": "10bd37cc332cabbcf8c25aefec57ab1a0a0c7533",
+        "type": "FIX",
+        "text": " JSONModel: log error when loadData fails",
+        "references": []
+      },
+      {
+        "id": "b140cf498dc7f5d6074091662ef4d4bd5393117c",
+        "type": "FIX",
+        "text": " ODataMetadata: Namespace handling",
+        "references": []
+      },
+      {
+        "id": "1ec5318d955ad81c19e5ca756900217d946796a2",
+        "type": "FIX",
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
+      },
+      {
+        "id": "3a803d285c1e90c15315637518012dfbda2d6050",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODateMetadata: cache invalidation",
+        "references": []
+      },
+      {
+        "id": "d4d30cf134e87b7334fc407e312fbf40bdc933ba",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.ODateMetadata: type check",
+        "references": []
+      },
+      {
+        "id": "c0357dde4cbc7f999e03b0ffea354c25b82a6b32",
+        "type": "FIX",
+        "text": " sap/base/util/equal: Support for NaN values",
+        "references": []
+      },
+      {
+        "id": "304b633b6b3f982aa48c315c904d1ab25cf87374",
+        "type": "FIX",
+        "text": " sap/ui/dom/includeStylesheet: Correct comparison with existing href",
+        "references": []
+      },
+      {
+        "id": "7297fae262c0826a3894307b16edc15e1ad84e6f",
+        "type": "FIX",
+        "text": " v2.ODataModel.createEntry: clone properties",
+        "references": []
+      },
+      {
+        "id": "8f0c27b99a963286670225a2752b6575398593ea",
+        "type": "FIX",
+        "text": " v2.OdataModel: createEntry",
+        "references": []
       }
     ]
   }

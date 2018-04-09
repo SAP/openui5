@@ -69,6 +69,18 @@
         "type": "FIX",
         "text": " uxap.ObjectPage: _headerContent aggregation cloning fixed",
         "references": []
+      },
+      {
+        "id": "d97151a9307e23c00802b99b2ef092adc57c6154",
+        "type": "FIX",
+        "text": " ObjectPageLayout: Demokit samples updated",
+        "references": []
+      },
+      {
+        "id": "f31c352733941b95fda5449cc64f8fce9808bdca",
+        "type": "FIX",
+        "text": " uxap.ObjectPageLayout: footer content alingment fixed",
+        "references": []
       }
     ]
   }
