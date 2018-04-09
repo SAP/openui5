@@ -118,12 +118,22 @@ sap.ui.define([
 		},
 
 		/**
+		 * Will be called if the horizontal scrollbar is clicked.
+		 *
+		 * @param {jQuery.Event} oEvent The mouse event object.
+		 */
+		onScrollbarMouseDown: function(oEvent) {
+			this._getKeyboardExtension().setActionMode(false);
+		},
+
+		/**
 		 * Adds a horizontal <code>scroll</code> event listener to all horizontal scroll areas of a table.
 		 *
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 */
 		addEventListeners: function(oTable) {
 			var oScrollExtension = oTable._getScrollExtension();
+			var oHSb = oScrollExtension.getHorizontalScrollbar();
 			var aScrollAreas = HorizontalScrollingHelper.getScrollAreas(oTable);
 
 			if (!oScrollExtension._onHorizontalScrollEventHandler) {
@@ -132,6 +142,13 @@ sap.ui.define([
 
 			for (var i = 0; i < aScrollAreas.length; i++) {
 				aScrollAreas[i].addEventListener("scroll", oScrollExtension._onHorizontalScrollEventHandler);
+			}
+
+			if (oHSb) {
+				if (!oScrollExtension._onHorizontalScrollbarMouseDownEventHandler) {
+					oScrollExtension._onHorizontalScrollbarMouseDownEventHandler = HorizontalScrollingHelper.onScrollbarMouseDown.bind(oTable);
+				}
+				oHSb.addEventListener("mousedown", oScrollExtension._onHorizontalScrollbarMouseDownEventHandler);
 			}
 		},
 
@@ -142,6 +159,7 @@ sap.ui.define([
 		 */
 		removeEventListeners: function(oTable) {
 			var oScrollExtension = oTable._getScrollExtension();
+			var oHSb = oScrollExtension.getHorizontalScrollbar();
 			var aScrollAreas = HorizontalScrollingHelper.getScrollAreas(oTable);
 
 			if (oScrollExtension._onHorizontalScrollEventHandler) {
@@ -150,6 +168,11 @@ sap.ui.define([
 					delete aScrollAreas[i]._scrollLeft;
 				}
 				delete oScrollExtension._onHorizontalScrollEventHandler;
+			}
+
+			if (oHSb && oScrollExtension._onHorizontalScrollbarMouseDownEventHandler) {
+				oHSb.removeEventListener("mousedown", oScrollExtension._onHorizontalScrollbarMouseDownEventHandler);
+				delete oScrollExtension._onHorizontalScrollbarMouseDownEventHandler;
 			}
 		},
 
@@ -440,6 +463,7 @@ sap.ui.define([
 				}
 
 				if (oScrollExtension.isHorizontalScrollbarVisible() && !bScrolledToEnd) {
+					this._getKeyboardExtension().setActionMode(false);
 					oHSb.scrollLeft = oHSb.scrollLeft + iScrollDelta;
 				}
 
@@ -554,6 +578,8 @@ sap.ui.define([
 						var oHSb = oScrollExtension.getHorizontalScrollbar();
 
 						if (oHSb) {
+							this._getKeyboardExtension().setActionMode(false);
+
 							if (iTouchDistanceX < 0) { // Scrolling to the right.
 								bScrolledToEnd = oHSb.scrollLeft === oHSb.scrollWidth - oHSb.offsetWidth;
 							} else { // Scrolling to the left.
