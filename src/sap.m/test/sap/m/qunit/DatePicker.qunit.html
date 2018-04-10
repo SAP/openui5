@@ -1272,7 +1272,8 @@
 			QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {
 				// Arrange
 				var done = assert.async(),
-					oStub = this.stub(sap.ui.Device, "browser", {msie: true});
+					oBrowserStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+					oTouchStub = this.stub(sap.ui.Device, "support", {touch: false});
 
 				this.clock = sinon.useFakeTimers();
 				var oDP = new sap.m.DatePicker("DTP6", {
@@ -1299,7 +1300,8 @@
 					assert.equal(oDP._$input.get(0).selectionEnd, 3, "selection end must be restored");
 
 					//Cleanup
-					oStub.restore();
+					oBrowserStub.restore();
+					oTouchStub.restore();
 					this.clock.restore();
 					done();
 				}.bind(this), 1000);
@@ -1610,11 +1612,12 @@
 			// BCP: 1880193676
 			QUnit.test("_storeInputSelection should store the selectionStart and End position of the Input and set it to 0", function (assert) {
 				// Arrange
-				var oStub = this.stub(sap.ui.Device, "browser", {msie: true}),
-						iExpectedSelectionStart = 2,
-						iExpectedSelectionEnd = 3,
-						oMockedInput = { selectionStart: iExpectedSelectionStart, selectionEnd: iExpectedSelectionEnd },
-						oDP = new sap.m.DatePicker();
+				var oBrowserStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+					oTouchStub = this.stub(sap.ui.Device, "support", {touch: false}),
+					iExpectedSelectionStart = 2,
+					iExpectedSelectionEnd = 3,
+					oMockedInput = { selectionStart: iExpectedSelectionStart, selectionEnd: iExpectedSelectionEnd },
+					oDP = new sap.m.DatePicker();
 
 				// Act
 				oDP._storeInputSelection(oMockedInput);
@@ -1627,12 +1630,15 @@
 
 				// Cleanup
 				oDP.destroy();
+				oTouchStub.restore();
+				oBrowserStub.restore();
 			});
 
 			// BCP: 1880193676
 			QUnit.test("_restoreInputSelection should restore the selectionStart and End position of the Input", function (assert) {
 				// Arrange
-				var oStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+				var oBrowserStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+					oTouchStub = this.stub(sap.ui.Device, "support", {touch: false}),
 					iExpectedSelectionStart = 2,
 					iExpectedSelectionEnd = 3,
 					oMockedInput = { selectionStart: iExpectedSelectionStart, selectionEnd: iExpectedSelectionEnd },
@@ -1650,6 +1656,8 @@
 				assert.equal(oMockedInput.selectionEnd, iExpectedSelectionEnd, "Input's sectionEnd should be restored to " + iExpectedSelectionEnd);
 
 				// Cleanup
+				oBrowserStub.restore();
+				oTouchStub.restore();
 				oDP.destroy();
 			});
 

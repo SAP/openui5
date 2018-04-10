@@ -464,7 +464,8 @@
 
 			QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {
 				var done = assert.async(),
-						oStub = this.stub(sap.ui.Device, "browser", {msie: true});
+					oBrowserStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+					oTouchStub = this.stub(sap.ui.Device, "support", {touch: false});
 
 				this.clock = sinon.useFakeTimers();
 				var oDTP = new sap.m.DateTimePicker("DTP6", {
@@ -491,7 +492,8 @@
 					assert.equal(oDTP._$input.get(0).selectionEnd, 3, "selection end must be restored");
 
 					//Cleanup
-					oStub.restore();
+					oBrowserStub.restore(),
+					oTouchStub.restore();
 					this.clock.restore();
 					done();
 				}.bind(this), 1000);
