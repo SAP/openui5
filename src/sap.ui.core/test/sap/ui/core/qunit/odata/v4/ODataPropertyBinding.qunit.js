@@ -111,6 +111,7 @@ sap.ui.require([
 					assert.strictEqual(oControl.getText(), "value", "initialized");
 					assert.strictEqual(oBinding.vValue, "value",
 						"vValue contains the value and can be used to mock a checkUpdate");
+					assert.strictEqual(oBinding.bInitial, false);
 					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Change);
 					assert.strictEqual(fnFetchValue.args[0][1], oBinding,
 						"The binding passed itself to fetchValue");
@@ -454,92 +455,10 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Unit test for scenario in
-	// ODataModel.integration.qunit, @Relative object binding
-	// fetchUI5Type is either sync or async for *both* the wrong and correct context, fetchValue
-	// is async for both: we hence just need to vary the test regarding metadata availability
-	[true, false].forEach(function (bMetadataAsync, i) {
-		QUnit.test("checkUpdate: two calls, first one with invalid path, " + i, function (assert) {
-			var iChange = 0,
-				oCheckUpdateSpy,
-				oCurrentType,
-				oFetchValueError = new Error("Resource not found for segment 'SupplierIdentifier'"),
-				vCurrentValue,
-				oModel = new ODataModel({
-					serviceUrl : "/service/?sap-client=111",
-					synchronizationMode : "None"
-				}),
-				oMetaModelMock = this.mock(oModel.getMetaModel()),
-				oParent = {
-					fetchValue : function () {}
-				},
-				oParentMock = this.mock(oParent),
-				oType = {
-					getName : function () {}
-				},
-				oTypeError = new Error("Cannot read property '$ui5.type' of undefined"),
-				oCorrectContext = Context.create(oModel, oParent,
-					"/Equipments(1)/EQUIPMENT_2_PRODUCT"),
-				oWrongContext = Context.create(oModel, oParent, "/Equipments(1)"),
-				oBinding = oModel.bindProperty("SupplierIdentifier", oWrongContext);
-
-			// ManagedObject initializes the property binding with the wrong context which
-			// does not yet contain the element binding
-			oMetaModelMock.expects("fetchUI5Type")
-				.withExactArgs("/Equipments(1)/SupplierIdentifier")
-				.returns(bMetadataAsync
-					? Promise.reject(oTypeError) : SyncPromise.reject(oTypeError));
-			this.oLogMock.expects("warning")
-				.withExactArgs(oTypeError.message, "/Equipments(1)/SupplierIdentifier", sClassName);
-			oParentMock.expects("fetchValue").withExactArgs("/Equipments(1)/SupplierIdentifier",
-					sinon.match.same(oBinding), undefined)
-				.returns(Promise.reject(oFetchValueError));
-			this.mock(oModel).expects("reportError")
-				.withExactArgs("Failed to read path /Equipments(1)/SupplierIdentifier", sClassName,
-					oFetchValueError);
-			// On element binding creation, ManagedObject updates the property binding with the
-			// correct context
-			oMetaModelMock.expects("fetchUI5Type")
-				.withExactArgs("/Equipments(1)/EQUIPMENT_2_PRODUCT/SupplierIdentifier")
-				.returns(bMetadataAsync ? Promise.resolve(oType) : SyncPromise.resolve(oType));
-			oParentMock.expects("fetchValue")
-				.withExactArgs("/Equipments(1)/EQUIPMENT_2_PRODUCT/SupplierIdentifier",
-					sinon.match.same(oBinding), undefined)
-				.returns(Promise.resolve(42));
-			oBinding.attachChange(function (oEvent) {
-				var sExpectedReason = iChange ? ChangeReason.Context : ChangeReason.Change;
-
-				assert.strictEqual(oEvent.mParameters.reason, sExpectedReason, sExpectedReason);
-				oCurrentType = oBinding.oType;
-				vCurrentValue = oBinding.vValue;
-				iChange += 1;
-			});
-			// avoid that deregisterChange stumbles over the parent binding mock
-			this.mock(oBinding).expects("deregisterChange");
-
-			oCheckUpdateSpy = this.spy(oBinding, "checkUpdate");
-
-			oBinding.sInternalType = "internalType"; // set in ManagedObject#_bindProperty
-
-			// code under test
-			oBinding.initialize();
-
-			// code under test
-			oBinding.setContext(oCorrectContext);
-
-			// wait for promises from all checkUpdate calls
-			return Promise.all(oCheckUpdateSpy.returnValues).then(function () {
-				assert.strictEqual(iChange, 2);
-				assert.strictEqual(oCurrentType, oType, "final type");
-				assert.strictEqual(vCurrentValue, 42, "final value");
-			});
-		});
-	});
-
-	//*********************************************************************************************
 	QUnit.test("checkUpdate(): unresolved path after setContext", function (assert) {
 		var done = assert.async(),
 			fnChangeHandler = function () {
+				assert.strictEqual(this.getValue(), undefined, "value after context reset");
 				done();
 			},
 			that = this;
@@ -547,9 +466,8 @@ sap.ui.require([
 		this.createTextBinding(assert).then(function (oBinding) {
 			that.mock(oBinding).expects("deregisterChange").withExactArgs();
 			assert.strictEqual(oBinding.getValue(), "value", "value before context reset");
-			oBinding.attachChange(fnChangeHandler);
+			oBinding.attachChange(fnChangeHandler, oBinding);
 			oBinding.setContext(); // reset context triggers checkUpdate
-			assert.strictEqual(oBinding.getValue(), undefined, "value after context reset");
 		});
 	});
 
@@ -807,14 +725,16 @@ sap.ui.require([
 				done = assert.async(),
 				oControl = new TestControl({models : this.oModel}),
 				sPath = "/path",
-				oSpy = this.spy(ODataPropertyBinding.prototype, "checkUpdate"),
-				oTypeError = new Error("Unsupported EDM type...");
+				oRawType = {
+					formatValue : function (vValue) { return vValue; },
+					getName : function () { return "foo"; }
+				},
+				oSpy = this.spy(ODataPropertyBinding.prototype, "checkUpdate");
 
 			oCacheMock.expects("createProperty").returns(oCache);
 			this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
 				.withExactArgs(sPath)
-				.returns(SyncPromise.reject(oTypeError));
-			this.oLogMock.expects("warning").withExactArgs(oTypeError.message, sPath, sClassName);
+				.returns(SyncPromise.resolve(oRawType));
 			this.oLogMock.expects("error").withExactArgs("Accessed value is not primitive", sPath,
 				sClassName);
 
@@ -822,7 +742,7 @@ sap.ui.require([
 			oControl.bindProperty("text", {path : sPath, events : {
 				dataReceived : function (oEvent) {
 					var oBinding = oControl.getBinding("text");
-					assert.strictEqual(oBinding.getType(), undefined);
+					assert.strictEqual(oBinding.getType(), oRawType);
 					assert.strictEqual(oBinding.getValue(), undefined);
 					assert.deepEqual(oEvent.getParameter("data"), {});
 					assert.strictEqual(oEvent.getParameter("error"), undefined, "no read error");
@@ -832,7 +752,7 @@ sap.ui.require([
 
 			oBinding = oControl.getBinding("text");
 			return oSpy.returnValues[0].then(function () {
-				assert.strictEqual(oBinding.getType(), undefined);
+				assert.strictEqual(oBinding.getType(), oRawType);
 				assert.strictEqual(oBinding.getValue(), undefined);
 			});
 		});
@@ -985,11 +905,14 @@ sap.ui.require([
 		QUnit.test("automaticTypes: failed type, bForceUpdate = " + bForceUpdate,
 			function (assert) {
 				var oBinding,
-					oError = new Error("failed type"),
 					done = assert.async(),
 					oCacheMock = this.getPropertyCacheMock(),
 					oControl = new TestControl({models : this.oModel}),
-					sPath = "/EMPLOYEES(ID='42')/Name";
+					sPath = "/EMPLOYEES(ID='42')/Name",
+					oRawType = {
+						formatValue : function (vValue) { return vValue; },
+						getName : function () { return "foo"; }
+					};
 
 				oCacheMock.expects("fetchValue")
 					.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
@@ -997,11 +920,10 @@ sap.ui.require([
 				oCacheMock.expects("fetchValue")
 					.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
 					.returns(SyncPromise.resolve("update")); // 2nd read gets an update
-				this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
+
+				this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").twice()
 					.withExactArgs(sPath) // always requested only once
-					.returns(SyncPromise.reject(oError)); // UI5 type not found
-				this.oLogMock.expects("warning")
-					.withExactArgs("failed type", sPath, sClassName);
+					.returns(SyncPromise.resolve(oRawType));
 
 				function onChange() {
 					oBinding.detachChange(onChange);
@@ -1154,16 +1076,18 @@ sap.ui.require([
 	QUnit.test("onChange", function (assert) {
 		var oBinding = this.oModel.bindProperty("/absolute");
 
-		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+		this.mock(oBinding).expects("checkUpdate").withExactArgs();
 
 		// code under test
 		oBinding.onChange("foo");
-		assert.strictEqual(oBinding.getValue(), "foo");
 	});
+	//TODO pass vValue to checkUpdate to prevent fetchValue there (performance): separate change
 
 	//*********************************************************************************************
 	QUnit.test("setValue (absolute binding): forbidden", function (assert) {
-		var oControl;
+		var oControl,
+			done = assert.async(),
+			that = this;
 
 		this.getPropertyCacheMock().expects("fetchValue")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
@@ -1173,22 +1097,30 @@ sap.ui.require([
 			text : "{path : '/ProductList(\\'HT-1000\\')/Name'"
 				+ ", type : 'sap.ui.model.odata.type.String'}"
 		});
-		this.mock(oControl.getBinding("text").oCachePromise.getResult())
-			.expects("update").never();
-		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
-		this.mock(this.oModel).expects("reportError")
-			.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
-				sinon.match({message : "Cannot set value on this binding"}));
 
-		// code under test
-		oControl.setText("foo");
+		// Wait until control received value from service before calling setText
+		oControl.getBinding("text").attachChange(function (oEvent) {
+			that.mock(oControl.getBinding("text").oCachePromise.getResult())
+				.expects("update").never();
+			// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
+			that.mock(that.oModel).expects("reportError")
+				.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
+					sinon.match({message : "Cannot set value on this binding"}));
 
-		assert.strictEqual(oControl.getText(), "HT-1000's Name", "control change is rolled back");
+			// code under test
+			oControl.setText("foo");
+
+			assert.strictEqual(oControl.getText(), "HT-1000's Name",
+				"control change is rolled back");
+			done();
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("setValue (binding with V2 context): forbidden", function (assert) {
-		var oControl;
+		var oControl,
+			done = assert.async(),
+			that = this;
 
 		this.getPropertyCacheMock().expects("fetchValue")
 			.withExactArgs("$auto", undefined, sinon.match.func, sinon.match.object)
@@ -1200,17 +1132,22 @@ sap.ui.require([
 		});
 		oControl.setBindingContext(this.oModel.createBindingContext("/ProductList('HT-1000')"));
 
-		this.mock(oControl.getBinding("text").oCachePromise.getResult())
-			.expects("update").never();
-		// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
-		this.mock(this.oModel).expects("reportError")
-			.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
-				sinon.match({message : "Cannot set value on this binding"}));
+		// Wait until control received value from service before calling setText
+		oControl.getBinding("text").attachChange(function (oEvent) {
+			that.mock(oControl.getBinding("text").oCachePromise.getResult())
+				.expects("update").never();
+			// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
+			that.mock(that.oModel).expects("reportError")
+				.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,
+					sinon.match({message : "Cannot set value on this binding"}));
 
-		// code under test
-		oControl.setText("foo");
+			// code under test
+			oControl.setText("foo");
 
-		assert.strictEqual(oControl.getText(), "HT-1000's Name", "control change is rolled back");
+			assert.strictEqual(oControl.getText(), "HT-1000's Name",
+				"control change is rolled back");
+			done();
+		});
 	});
 
 	//*********************************************************************************************
