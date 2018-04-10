@@ -228,11 +228,13 @@
 		var oHeader = core.byId("UxAP-ObjectPageHeader--header"),
 			$overflowButton = oHeader._oOverflowButton.$();
 
-		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden");
+		oHeader._adaptActions(100);
+
+		assert.strictEqual($overflowButton.css("display"), "inline-block", "OverflowButton is shown");
 
 		oHeader._adaptActions(1000);
 
-		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden");
+		assert.strictEqual($overflowButton.css("display"), "none", "OverflowButton is hidden when not needed");
 	});
 
 	QUnit.module("Action buttons", {
