@@ -543,8 +543,17 @@
 					oDRS.$().find(".sapUiIcon").click(); //to open the calendar popoup
 					//Simulate the user has selected 10 - 20 Dec 2017.
 					oCalendar = oDRS._oPopup.getContent();
-					oCalendar.$().find("[data-sap-day='20171210']").mousedown().mouseup();
-					oCalendar.$().find("[data-sap-day='20171220']").mousedown().mouseup();
+					var $EventTarget1 = oCalendar.$().find("[data-sap-day='20171210']"),
+						$EventTarget2 = oCalendar.$().find("[data-sap-day='20171220']"),
+						oEvent1 = { clientX: 100, clientY: 100, target: $EventTarget1.children().get(0) },
+						oEvent2 = { clientX: 100, clientY: 100, target: $EventTarget2.children().get(0) },
+						oMouseDownEvent1 = jQuery.Event("mousedown", oEvent1),
+						oMouseUpEvent1 = jQuery.Event("mouseup", oEvent1),
+						oMouseDownEvent2 = jQuery.Event("mousedown", oEvent2),
+						oMouseUpEvent2 = jQuery.Event("mouseup", oEvent2);
+
+					$EventTarget1.trigger(oMouseDownEvent1).trigger(oMouseUpEvent1);
+					$EventTarget2.trigger(oMouseDownEvent2).trigger(oMouseUpEvent2);
 
 					oDateInterval = oDRS.getBinding("value").getType();
 
@@ -853,7 +862,8 @@
 			QUnit.test("For IE & Edge the input selection is cleared before opening the picker and restoring back when picker is closed", function(assert) {
 				// Arrange
 				var done = assert.async(),
-						oStub = this.stub(sap.ui.Device, "browser", {msie: true});
+					oBrowserStub = this.stub(sap.ui.Device, "browser", {msie: true}),
+					oTouchStub = this.stub(sap.ui.Device, "support", {touch: false});
 
 				this.clock = sinon.useFakeTimers();
 				var oDateRangeSelection = new sap.m.DateRangeSelection("DTP6", {
@@ -880,7 +890,8 @@
 					assert.equal(oDateRangeSelection._$input.get(0).selectionEnd, 3, "selection end must be restored");
 
 					//Cleanup
-					oStub.restore();
+					oBrowserStub.restore();
+					oTouchStub.restore();
 					this.clock.restore();
 					done();
 				}.bind(this), 1000);
@@ -892,7 +903,8 @@
 			QUnit.test("For IE & Edge the input selection is stored and cleared from _openPopup method (before opening the Popover)", function (assert) {
 				// Arrange
 				var fn = function () {},
-					oStub = this.stub(sap.ui.Device, "browser", { msie: true }),
+					oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true }),
+					oTouchStub = this.stub(sap.ui.Device, "support", {touch: false}),
 					oDP = new sap.m.DateRangeSelection(),
 					oDPStoreInputSelectionSpy = this.spy(oDP, "_storeInputSelection");
 
@@ -907,7 +919,8 @@
 				assert.equal(oDPStoreInputSelectionSpy.callCount, 1, "_storeInputSelection is called once on _openPopup");
 
 				// Cleanup
-				oStub.restore();
+				oBrowserStub.restore();
+				oTouchStub.restore();
 				oDPStoreInputSelectionSpy.restore();
 				oDP.destroy();
 			});
