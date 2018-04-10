@@ -302,5 +302,34 @@
         "references": []
       }
     ]
+  },
+  "1.52.10": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "df114377a25e3a3a040e72f57641660ae48ed91c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "415f4a0617c6c04162b4c59eda26fbe4cda4268b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: closes when switch from one submenu to another",
+        "references": []
+      },
+      {
+        "id": "cf3232a87a09e18402580c7b6aeeb70f07fbf198",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: resize handler is removed on exit.",
+        "references": []
+      },
+      {
+        "id": "71a213c6044317e57290672396bd51b095d9cbc5",
+        "type": "FIX",
+        "text": " unified.FileUploader: accessing length of undefined fixed",
+        "references": []
+      }
+    ]
   }
 }

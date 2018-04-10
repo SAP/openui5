@@ -46,7 +46,7 @@
       {
         "id": "61e3b44693289556eb26f0a9b6d8a11cd170b7cd",
         "type": "FEATURE",
-        "text": "jQuery.sap.events: Map 'taphold' to 'contextmenu' for iOS",
+        "text": "jQuery.sap.events: Map \u0027taphold\u0027 to \u0027contextmenu\u0027 for iOS",
         "references": []
       },
       {
@@ -287,7 +287,7 @@
       {
         "id": "d2930b4a579c3aa769e8b8071f8020d199df0a10",
         "type": "FIX",
-        "text": "core.ODataTreeBindingFlat: correctly fire 'dataReceived' for loading nodes",
+        "text": "core.ODataTreeBindingFlat: correctly fire \u0027dataReceived\u0027 for loading nodes",
         "references": [
           {
             "type": "BCP",
@@ -331,7 +331,7 @@
       {
         "id": "c7e3fc822fdd1887881de0a6b0d8f70775036b80",
         "type": "FIX",
-        "text": "core.Popup: use the 'deactivate' event on autoclose area in IE",
+        "text": "core.Popup: use the \u0027deactivate\u0027 event on autoclose area in IE",
         "references": [
           {
             "type": "BCP",
@@ -368,7 +368,7 @@
       {
         "id": "1f00b0c5d5fc92ccdac2133e06a7c248e51b61b2",
         "type": "FIX",
-        "text": "core.samples: fix list of files for 'RoutingMasterDetail' sample",
+        "text": "core.samples: fix list of files for \u0027RoutingMasterDetail\u0027 sample",
         "references": [
           {
             "type": "GitHub",
@@ -449,7 +449,7 @@
       {
         "id": "9ca5af13fb0a1147c7bec174b6d9066659ff171d",
         "type": "FIX",
-        "text": "sap.ui.model.analytics.AnalyticalBinding: getGroupName: avoid cannot read property 'formatter' of undefined",
+        "text": "sap.ui.model.analytics.AnalyticalBinding: getGroupName: avoid cannot read property \u0027formatter\u0027 of undefined",
         "references": [
           {
             "type": "BCP",
@@ -506,7 +506,7 @@
       {
         "id": "672f3fec07a5b177f48b325d349da468bd5efe77",
         "type": "FIX",
-        "text": "sap.ui.models.analytics.AnalyticalBinding: no warning if analytical info does not contain a measure's currency",
+        "text": "sap.ui.models.analytics.AnalyticalBinding: no warning if analytical info does not contain a measure\u0027s currency",
         "references": []
       },
       {
@@ -559,7 +559,7 @@
       {
         "id": "fa2ef1d9b7f832311bbf14501cb85dc4adb81078",
         "type": "FIX",
-        "text": "sap.ui.test.actions.Action: remove unused setting of element's position for MouseEvent",
+        "text": "sap.ui.test.actions.Action: remove unused setting of element\u0027s position for MouseEvent",
         "references": []
       },
       {
@@ -639,7 +639,7 @@
       {
         "id": "be305778d80c67d9de680ab7e170e346c7aa26e6",
         "type": "FIX",
-        "text": "v4.ODataModel: auto-$expand/$select with sap.ui.table.Table and visibleRowCountMode=\"Auto\" sends single requests for table cells",
+        "text": "v4.ODataModel: auto-$expand/$select with sap.ui.table.Table and visibleRowCountMode\u003d\"Auto\" sends single requests for table cells",
         "references": [
           {
             "type": "BCP",
@@ -1010,7 +1010,7 @@
       {
         "id": "10d45dcaf5b274361ea9d9818544b8e121a0bb54",
         "type": "FIX",
-        "text": "core.routing: wait for the root view in case it's loaded async",
+        "text": "core.routing: wait for the root view in case it\u0027s loaded async",
         "references": [
           {
             "type": "BCP",
@@ -1104,7 +1104,7 @@
       {
         "id": "9da163839f938bab1f38fe74aaf72193bbb3af60",
         "type": "FIX",
-        "text": "jquery-mobile-custom: avoid duplicate 'tap' event (continued)",
+        "text": "jquery-mobile-custom: avoid duplicate \u0027tap\u0027 event (continued)",
         "references": [
           {
             "type": "BCP",
@@ -1137,7 +1137,7 @@
       {
         "id": "cdf8ad18874687327ef9134c0d24167d060ba63d",
         "type": "FIX",
-        "text": "sap.ui.model: fix documentation, visibility of Client- & JSONModel",
+        "text": "sap.ui.model: fix documentation, visibility of Client- \u0026 JSONModel",
         "references": [
           {
             "type": "BCP",
@@ -1153,7 +1153,7 @@
       {
         "id": "d33bcc6c7f2914317c1a320f048f35357157df2e",
         "type": "FIX",
-        "text": "AppCacheBuster: take <base> tag into account when resolving URLs",
+        "text": "AppCacheBuster: take \u003cbase\u003e tag into account when resolving URLs",
         "references": []
       },
       {
@@ -1278,6 +1278,53 @@
             "reference": "1880145828"
           }
         ]
+      }
+    ]
+  },
+  "1.52.10": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "bc87c45d6dbde8d5e673fb2d31edf0953a9275c3",
+        "type": "FIX",
+        "text": " CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
+        "references": []
+      },
+      {
+        "id": "74498f7c9f6080db3e4953aa76351c1c2bf1a713",
+        "type": "FIX",
+        "text": " Core#notifyContentDensityChanged: Missing \"theme\" event parameter",
+        "references": []
+      },
+      {
+        "id": "de94bc1ffafed6c09aefa251ee5d4ba0c31a9b06",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": []
+      },
+      {
+        "id": "09a67f2763032b32677b478434d37f89dc60536e",
+        "type": "FIX",
+        "text": " crossroads.js: correctly handle the parse of skipped optional param",
+        "references": []
+      },
+      {
+        "id": "b4c3856c5238aed4f09e1dea32685ff801698a84",
+        "type": "FIX",
+        "text": " jquery-mobile-custom: Edge button events",
+        "references": []
+      },
+      {
+        "id": "fff9c06c758621a15b6d4edfe244d8059ac18396",
+        "type": "FIX",
+        "text": " sap.ui.core.format.DateFormat: Parsing name of day",
+        "references": []
+      },
+      {
+        "id": "e15ac0d5cb1b9edb1f7a96d99bd1cbcea3b90420",
+        "type": "FIX",
+        "text": " v2.ODataModel: metadata url params missing",
+        "references": []
       }
     ]
   }
