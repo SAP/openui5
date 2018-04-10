@@ -12,7 +12,8 @@ sap.ui.define(function () {
 	var ObjectPageSectionRenderer = {};
 
 	ObjectPageSectionRenderer.render = function (oRm, oControl) {
-		var sTitle, bTitleVisible;
+		var sTitle, bTitleVisible,
+			bAccessibilityOn = sap.ui.getCore().getConfiguration().getAccessibility();
 
 		if (!oControl.getVisible() || !oControl._getInternalVisible()) {
 			return;
@@ -30,7 +31,15 @@ sap.ui.define(function () {
 
 		oRm.writeClasses();
 		oRm.writeAttribute("role", "region");
-		oRm.writeAttributeEscaped("aria-labelledby", oControl.getAggregation("ariaLabelledBy").getId());
+
+		if (bAccessibilityOn) {
+			if (sTitle) {
+				oRm.writeAttributeEscaped("aria-labelledby", oControl.getAggregation("ariaLabelledBy").getId());
+			} else {
+				oRm.writeAttribute("aria-label", sap.uxap.ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME"));
+			}
+		}
+
 		oRm.writeControlData(oControl);
 		oRm.write(">");
 
