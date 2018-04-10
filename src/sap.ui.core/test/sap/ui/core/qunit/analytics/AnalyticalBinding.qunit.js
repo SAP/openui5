@@ -2230,13 +2230,20 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
+		oContext : {},
 		bRelative : false
 	}, {
+		oContext : {},
 		bRelative : true,
 		bResolved : false
 	}, {
+		oContext : {},
 		bRelative : true,
 		bResolved : true
+	}, {
+		oContext : undefined,
+		bRelative : true,
+		bResolved : false
 	}].forEach(function (oFixture) {
 		QUnit.test("setContext: " + JSON.stringify(oFixture), function (assert) {
 			var done = assert.async();
@@ -2244,16 +2251,17 @@ sap.ui.require([
 			setupAnalyticalBinding(2, {}, function (oBinding, oModel) {
 				var bApplySortersToGroups = {/* true or false*/},
 					oBindingMock = sinon.mock(oBinding),
-					oContext = {},
 					oDataState = {},
+					bInitial = {/*true or false*/},
 					oModelMock = sinon.mock(oModel),
 					sResolvedPath = "/~";
 
 				oBinding.bApplySortersToGroups = bApplySortersToGroups;
 				oBinding.oDataState = oDataState;
+				oBinding.bInitial = bInitial;
 				oBindingMock.expects("isRelative").withExactArgs().returns(oFixture.bRelative);
 				oModelMock.expects("resolve")
-					.withExactArgs("~", sinon.match.same(oContext))
+					.withExactArgs("~", sinon.match.same(oFixture.oContext))
 					.exactly(oFixture.bRelative ? 1 : 0)
 					.returns(oFixture.bResolved ? sResolvedPath : undefined);
 				if (oFixture.bResolved) {
@@ -2266,24 +2274,26 @@ sap.ui.require([
 				assert.strictEqual(oBinding.oContext, null, "no context set");
 
 				// code under test
-				oBinding.setContext(oContext);
+				oBinding.setContext(oFixture.oContext);
 
-				assert.strictEqual(oBinding.oContext, oContext, "new context set");
+				assert.strictEqual(oBinding.oContext, oFixture.oContext, "new context set");
 				assert.strictEqual(oBinding.oDataState, null, "oDataState reset");
 				assert.strictEqual(oBinding.bApplySortersToGroups, true);
+				assert.strictEqual(oBinding.bInitial,
+					oFixture.bRelative && !oFixture.bResolved ? true : bInitial);
 
 				// ********** set same context again - no changes and no additional function calls
 				oBinding.bApplySortersToGroups = bApplySortersToGroups;
 				oBinding.oDataState = oDataState;
 
 				// code under test
-				oBinding.setContext(oContext);
+				oBinding.setContext(oFixture.oContext);
 
 				assert.strictEqual(oBinding.bApplySortersToGroups, bApplySortersToGroups,
 					"bApplySortersToGroups not reset if context is the same as already set");
 				assert.strictEqual(oBinding.oDataState, oDataState,
 					"oDataState not reset if context is the same as already set");
-				assert.strictEqual(oBinding.oContext, oContext, "context not changed");
+				assert.strictEqual(oBinding.oContext, oFixture.oContext, "context not changed");
 
 				oBindingMock.verify();
 				oModelMock.verify();
@@ -2325,4 +2335,5 @@ sap.ui.require([
 			});
 		});
 	});
+
 });
