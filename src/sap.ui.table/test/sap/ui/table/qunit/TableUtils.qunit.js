@@ -1,4 +1,4 @@
-/*global QUnit, oTable, oTreeTable */
+/*global QUnit, sinon, oTable, oTreeTable */
 
 sap.ui.require([
 	"sap/ui/qunit/QUnitUtils",
@@ -959,6 +959,65 @@ sap.ui.require([
 
 			done();
 		});
+	});
+
+	QUnit.test("dynamicCall", function(assert) {
+		var bCallbackCalled = false;
+		var oTestObject = {prop: "value", funcA: sinon.spy(), funcB: sinon.spy()};
+		var oTestContext = {};
+
+		function reset() {
+			bCallbackCalled = false;
+			oTestObject.funcA.reset();
+			oTestObject.funcB.reset();
+		}
+
+		TableUtils.dynamicCall(oTestObject, function(vObject) {
+			bCallbackCalled = true;
+			assert.strictEqual(this, oTestObject, "Callback should be called with the default context");
+			assert.strictEqual(vObject, oTestObject, "The object should be passed to the callback");
+		});
+		assert.ok(bCallbackCalled, "Callback should be called, if the object exists");
+		reset();
+
+		TableUtils.dynamicCall(undefined, function() {
+			bCallbackCalled = true;
+		});
+		assert.ok(!bCallbackCalled, "Callback should not be called, if the object does not exist");
+		reset();
+
+		TableUtils.dynamicCall(function() {return oTestObject;}, function(vObject) {
+			bCallbackCalled = true;
+			assert.strictEqual(this, oTestContext, "Callback should be called with the specified context");
+			assert.strictEqual(vObject, oTestObject, "The object should be passed to the callback");
+		}, oTestContext);
+		assert.ok(bCallbackCalled, "Callback should be called, if the object getter returns an object");
+		reset();
+
+		TableUtils.dynamicCall(function() {return undefined;}, function() {
+			bCallbackCalled = true;
+		});
+		assert.ok(!bCallbackCalled, "Callback should not be called, if the object getter does not return an object");
+		reset();
+
+		TableUtils.dynamicCall(oTestObject, {
+			prop: undefined, // not a function
+			funcA: [1, "2", undefined],
+			funcB: [],
+			funcC: [""] // does not exist
+		});
+		assert.ok(oTestObject.funcA.calledOnce, "The function \"funcA\" should be called once");
+		assert.ok(oTestObject.funcA.calledWith(1, "2", undefined), "The function \"funcA\" should be called with the specified arguments");
+		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestObject, "The function \"funcA\" should be called with the default context");
+		assert.ok(oTestObject.funcB.calledOnce, "The function \"funcB\" should be called once");
+		assert.ok(oTestObject.funcB.calledWith(), "The function \"funcB\" should be called with the specified arguments");
+		assert.strictEqual(oTestObject.funcB.thisValues[0], oTestObject, "The function \"funcB\" should be called with the default context");
+		reset();
+
+		TableUtils.dynamicCall(oTestObject, {
+			funcA: undefined
+		}, oTestContext);
+		assert.strictEqual(oTestObject.funcA.thisValues[0], oTestContext, "The function should be called with the specified context");
 	});
 
 	QUnit.module("Cozy", {
