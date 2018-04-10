@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(['sap/base/events/KeyCodes'], function(KeyCodes) {
+sap.ui.define(['sap/base/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(KeyCodes, jQuery) {
 	"use strict";
 
 	/**
