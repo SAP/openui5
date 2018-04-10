@@ -29,6 +29,7 @@ module.exports = [
 	"MultiInput.spec.js",
 	"NotificationListGroup.spec.js",
 	"NotificationListItem.spec.js",
+	"ObjectAttribute.spec.js",
 	"ObjectHeaderVisualTest.spec.js",
 	"ObjectNumberVisualTest.spec.js",
 	"OverflowToolbar.spec.js",
