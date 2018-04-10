@@ -522,8 +522,10 @@ sap.ui.define([
 		if (bInputMode) { // we only support full selection of stars
 			if (fValue < 0.25) { // to be able to also select 0 stars
 				fValue = 0;
-			} else if (fValue < this.getMaxValue() - 0.25) { // to optimize selection behaviour
-				fValue += 0.25;
+			} else if (fValue < this.getMaxValue() - 0.4) { // to optimize selection behaviour
+				//threshold is increased to take into account the font's stroke width
+				// BCP: 1870119890
+				fValue += 0.4;
 			}
 			fValue = Math.round(fValue);
 		} else { // for display we round to the correct behavior

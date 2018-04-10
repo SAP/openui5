@@ -414,6 +414,14 @@
 			oRating.destroy();
 		});
 
+		test("_roundValueToVisualMode", function () {
+			var oRating = new RatingIndicator({
+				value: 5
+			});
+			 assert.strictEqual(oRating._roundValueToVisualMode(3.14, true), 4,
+				"The function returns large enough value, so that a star can be selected by clicking on its left edge");
+		});
+
 		QUnit.module("Events");
 
 		QUnit.test("Firing events", function (assert) {
@@ -481,7 +489,7 @@
 			assert.strictEqual(oRating4.getValue(), 0, "On touch start/end at " + oEventTap.pageX + "px  the rating value is 0 on control " + oRating4);
 
 			// special case - when the value is one and the first star is selected again the value should toggle to 0
-			setEventValue(20);
+			setEventValue(18);
 			oRating4.setValue(1);
 			oRating4.ontouchstart(oEventTouchStart);
 			oRating4._ontouchmove(oEventTouchStart);
