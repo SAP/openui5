@@ -100,7 +100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 			var oLayout    = sap.ui.getCore().byId(this.getLayout());
 			var oLD;
 			if (oLayout && oContainer) {
-				oLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/ResponsiveFlowLayoutData");
+				oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.ResponsiveFlowLayoutData");
 			}
 			return oLD;
 
@@ -658,9 +658,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 
 				var oLD;
 				if (oElement) {
-					oLD = oLayout.getLayoutDataForElement(oElement, "sap/ui/layout/ResponsiveFlowLayoutData");
+					oLD = oLayout.getLayoutDataForElement(oElement, "sap.ui.layout.ResponsiveFlowLayoutData");
 				} else if (oContainer) {
-					oLD = oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/ResponsiveFlowLayoutData");
+					oLD = oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.ResponsiveFlowLayoutData");
 				}
 
 				if (oLD) {
@@ -684,7 +684,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/layout/ResponsiveFlowLayout', 'sap/u
 		var iWeight = 0;
 		for ( var i = 0; i < aFields.length; i++) {
 			var oField = aFields[i];
-			oLD = this.getLayoutDataForElement(oField, "sap/ui/layout/ResponsiveFlowLayoutData");
+			oLD = this.getLayoutDataForElement(oField, "sap.ui.layout.ResponsiveFlowLayoutData");
 			if (oLD) {
 				iWeight = iWeight + oLD.getWeight();
 			} else {

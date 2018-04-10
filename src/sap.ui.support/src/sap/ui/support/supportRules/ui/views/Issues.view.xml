@@ -12,9 +12,8 @@
 		<l:contentAreas>
 			<Page class="sapUiSupportToolIssuesPage">
 				<customHeader>
-					<Toolbar id="filtersBar" height="{/filterBarHeight}">
-						<l:VerticalLayout width="100%">
-							<tnt:ToolHeader id="toolHeader" class="sapUiSupportToolIssueHeader" height="4rem">
+					<Toolbar id="filtersBar" height="{/filterBarHeight}" class="sapUiSupportToolToolbar">
+							<tnt:ToolHeader id="toolHeader" class="sapUiSupportToolIssueHeader" height="4rem"  width="100%">
 								<l:VerticalLayout>
 									<l:layoutData>
 										<OverflowToolbarLayoutData priority="Low" />
@@ -59,31 +58,27 @@
 										<OverflowToolbarLayoutData priority="Low" />
 									</l:layoutData>
 									<Label text="" class="customMargin" />
-									<Button icon="sap-icon://clear-filter"  press="clearFiltersAndElementSelection"></Button>
 								</l:VerticalLayout>
 								<ToolbarSpacer />
-								<tnt:ToolHeaderUtilitySeparator />
-								<l:VerticalLayout>
-									<Label text="" class="customMargin" />
-									<MenuButton text="Report" icon="sap-icon://order-status" visible="{= ${/analyzePressed}}">
-										<menu>
-											<Menu itemSelected="onReportPress">
-												<items>
-													<MenuItem text="View" press="onViewReport"/>
-													<MenuItem text="Download" press="onDownloadReport"/>
-												</items>
-											</Menu>
-										</menu>
-									</MenuButton>
-								</l:VerticalLayout>
 							</tnt:ToolHeader>
-						</l:VerticalLayout>
+							<l:VerticalLayout>
+								<Label text="" class="customMargin" />
+								<MenuButton id='ReportMenuButton' text="Report" icon="sap-icon://order-status" visible="{= ${/analyzePressed}}">
+											<menu>
+												<Menu itemSelected="onReportPress">
+													<items>
+														<MenuItem text="View" press="onViewReport"/>
+														<MenuItem text="Download" press="onDownloadReport"/>
+													</items>
+												</Menu>
+											</menu>
+								</MenuButton>
+							</l:VerticalLayout>
 					</Toolbar>
 				</customHeader>
 				<subHeader>
 					<Toolbar
-						id="messegeStrip"
-						height="{/messegeStripHeight}">
+						id="messegeStrip">
 						<FlexBox
 							alignItems="Center"
 							justifyContent="Start">
@@ -95,25 +90,51 @@
 						</FlexBox>
 					</Toolbar>
 				</subHeader>
-				<t:TreeTable
-					id="issuesList"
-					class="sapUiSupportToolIssuesTreeTable"
-					selectionMode="Single"
-					selectionBehavior="RowOnly"
-					enableColumnReordering="false"
-					expandFirstLevel="true"
-					rows="{path: '/issues'}"
-					rowSelectionChange="onRowSelectionChanged"
-					rowHeight="24"
-					visibleRowCountMode="Auto">
-					<t:columns>
-						<t:Column label="Issues" resizable="false">
-							<t:template>
-								<FormattedText htmlText="{formatedName}"/>
-							</t:template>
-						</t:Column>
-					</t:columns>
-				</t:TreeTable>
+				<content>
+					<FlexBox
+						alignItems="Center"
+						justifyContent="End">
+						<items>
+							<Text text="{
+								parts: [
+								'/severityFilter',
+								'/categoryFilter',
+								'/audienceFilter',
+								'/elementFilter'
+								],
+								formatter: '.formatter.filteredText'
+								}">
+									<layoutData>
+										<FlexItemData growFactor="2" />
+									</layoutData>
+								</Text>
+								<Button icon="sap-icon://clear-filter"  press="clearFiltersAndElementSelection" enabled="{/bEnabledFilterButton}">
+									<layoutData>
+										<FlexItemData growFactor="0" />
+									</layoutData>
+								</Button>
+						</items>
+					</FlexBox>
+					<t:TreeTable
+							id="issuesList"
+							class="sapUiSupportToolIssuesTreeTable"
+							selectionMode="Single"
+							selectionBehavior="RowOnly"
+							enableColumnReordering="false"
+							expandFirstLevel="true"
+							rows="{path: '/issues'}"
+							rowSelectionChange="onRowSelectionChanged"
+							rowHeight="24"
+							visibleRowCountMode="Auto">
+						<t:columns>
+							<t:Column label="Issues" resizable="false">
+								<t:template>
+									<FormattedText htmlText="{formatedName}"/>
+								</t:template>
+							</t:Column>
+						</t:columns>
+					</t:TreeTable>
+				</content>
 			</Page>
 			<Page enableScrolling="false">
 				<customHeader>
@@ -128,8 +149,8 @@
 						<Text text="{/selectedIssue/description}" class="sapUiTinyMarginBeginEnd sapUiTinyMarginBottom" />
 						<t:Table
 							rows="{path: '/selectedIssue/issues'}"
-							rowHeight="24"
 							selectionMode="Single"
+							rowHeight="24"
 							selectionBehavior="RowOnly"
 							enableColumnReordering="false"
 							visibleRowCount="{/visibleRowCount}"
@@ -137,7 +158,7 @@
 							id="issueTable">
 							<t:columns>
 								<t:Column
-									width="35px"
+									width="36px"
 									resizable="false">
 									<t:template>
 										<c:Icon class="issuesSeverityIcon"

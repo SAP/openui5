@@ -15,7 +15,7 @@ sap.ui.define(["./DragInfo", "./DropInfo", "../Element"],
 	 * @class
 	 * Provides the configuration for drag-and-drop operations.
 	 *
-	 * @extends sap.ui.core.dnd.DragInfo
+	 * @extends sap.ui.core.dnd.DropInfo
 	 *
 	 * @author SAP SE
 	 * @version ${version}

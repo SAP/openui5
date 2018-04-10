@@ -44,6 +44,9 @@ sap.ui.define([
 		 * <li>{@link topic:0fecbce45e39406aa939bd25e89823f4 Object Page Classic Header}</li>
 		 * </ul>
 		 *
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/ Object Page Header}
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-page/ Object Page}
+		 *
 		 * @extends sap.ui.core.Control
 		 * @implements sap.uxap.IHeaderContent
 		 *

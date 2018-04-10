@@ -19,7 +19,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery'], function(jQuery) {
 		 * Get the z-index for an element.
 		 *
 		 * @function
-		 * @param {Integer} zIndex The z-index to set
+		 * @param {int} zIndex The z-index to set
 		 * @returns {number} The z-index
 		 * @exports sap/ui/dom/jquery/zIndex
 		 * @private

@@ -491,14 +491,30 @@ if (typeof window.sap.ui !== "object") {
 	 * @type boolean
 	 * @public
 	 */
+
 	/**
 	 * If this flag is set to <code>true</code>, a browser featuring a Webkit engine is used.
+	 *
+	 * <b>Note:</b>
+	 * This flag is also <code>true</code> when the used browser was based on the Webkit engine, but
+	 * uses another rendering engine in the meantime. For example the Chrome browser started from version 28 and above
+	 * uses the Blink rendering engine.
 	 *
 	 * @name sap.ui.Device.browser.webkit
 	 * @type boolean
 	 * @since 1.20.0
 	 * @public
 	 */
+
+	/**
+	 * If this flag is set to <code>true</code>, a browser featuring a Blink rendering engine is used.
+	 *
+	 * @name sap.ui.Device.browser.blink
+	 * @type boolean
+	 * @since 1.56.0
+	 * @public
+	 */
+
 	/**
 	 * If this flag is set to <code>true</code>, the Safari browser runs in standalone fullscreen mode on iOS.
 	 *
@@ -642,141 +658,151 @@ if (typeof window.sap.ui !== "object") {
 	}
 
 	function getBrowser(customUa, customNav) {
-		var b = calcBrowser(customUa);
-		var _ua = customUa || ua;
-		var _navigator = customNav || window.navigator;
+		var oBrowser = calcBrowser(customUa);
+		var sUserAgent = customUa || ua;
+		var oNavigator = customNav || window.navigator;
 
 		// jQuery checks for user agent strings. We differentiate between browsers
 		var oExpMobile;
-		if ( b.mozilla ) {
+		var oResult;
+
+		if (oBrowser.mozilla) {
 			oExpMobile = /Mobile/;
-			if ( _ua.match(/Firefox\/(\d+\.\d+)/) ) {
-				var version = parseFloat(RegExp.$1);
-				return {
+			if (sUserAgent.match(/Firefox\/(\d+\.\d+)/)) {
+				var sVersion = parseFloat(RegExp.$1);
+				oResult = {
 					name: BROWSER.FIREFOX,
-					versionStr: "" + version,
-					version: version,
+					versionStr: "" + sVersion,
+					version: sVersion,
 					mozilla: true,
-					mobile: oExpMobile.test(_ua)
+					mobile: oExpMobile.test(sUserAgent)
 				};
 			} else {
 				// unknown mozilla browser
-				return {
-					mobile: oExpMobile.test(_ua),
+				oResult = {
+					mobile: oExpMobile.test(sUserAgent),
 					mozilla: true,
 					version: -1
 				};
 			}
-		} else if ( b.webkit ) {
+		} else if (oBrowser.webkit) {
 			// webkit version is needed for calculation if the mobile android device is a tablet (calculation of other mobile devices work without)
-			var regExpWebkitVersion = _ua.toLowerCase().match(/webkit[\/]([\d.]+)/);
+			var regExpWebkitVersion = sUserAgent.toLowerCase().match(/webkit[\/]([\d.]+)/);
 			var webkitVersion;
 			if (regExpWebkitVersion) {
 				webkitVersion = regExpWebkitVersion[1];
 			}
 			oExpMobile = /Mobile/;
-			if ( _ua.match(/(Chrome|CriOS)\/(\d+\.\d+).\d+/)) {
-				var version = parseFloat(RegExp.$2);
-				return {
-					name: BROWSER.CHROME,
-					versionStr: "" + version,
-					version: version,
-					mobile: oExpMobile.test(_ua),
+			var aChromeMatch = sUserAgent.match(/(Chrome|CriOS)\/(\d+\.\d+).\d+/);
+			var aFirefoxMatch = sUserAgent.match(/FxiOS\/(\d+\.\d+)/);
+			var aAndroidMatch = sUserAgent.match(/Android .+ Version\/(\d+\.\d+)/);
+
+			if (aChromeMatch || aFirefoxMatch || aAndroidMatch) {
+				var sName, sVersion, bMobile;
+				if (aChromeMatch) {
+					sName = BROWSER.CHROME;
+					bMobile = oExpMobile.test(sUserAgent);
+					sVersion = parseFloat(aChromeMatch[2]);
+				} else if (aFirefoxMatch) {
+					sName = BROWSER.FIREFOX;
+					bMobile = true;
+					sVersion = parseFloat(aFirefoxMatch[1]);
+				} else if (aAndroidMatch) {
+					sName = BROWSER.ANDROID;
+					bMobile = oExpMobile.test(sUserAgent);
+					sVersion = parseFloat(aAndroidMatch[1]);
+				}
+
+				oResult = {
+					name: sName,
+					mobile: bMobile,
+					versionStr: "" + sVersion,
+					version: sVersion,
 					webkit: true,
 					webkitVersion: webkitVersion
 				};
-			} else if ( _ua.match(/FxiOS\/(\d+\.\d+)/)) {
-				var version = parseFloat(RegExp.$1);
-				return {
-					name: BROWSER.FIREFOX,
-					versionStr: "" + version,
-					version: version,
-					mobile: true,
-					webkit: true,
-					webkitVersion: webkitVersion
-				};
-			} else if ( _ua.match(/Android .+ Version\/(\d+\.\d+)/) ) {
-				var version = parseFloat(RegExp.$1);
-				return {
-					name: BROWSER.ANDROID,
-					versionStr: "" + version,
-					version: version,
-					mobile: oExpMobile.test(_ua),
-					webkit: true,
-					webkitVersion: webkitVersion
-				};
+
 			} else { // Safari might have an issue with _ua.match(...); thus changing
 				var oExp = /(Version|PhantomJS)\/(\d+\.\d+).*Safari/;
-				var bStandalone = _navigator.standalone;
-				if (oExp.test(_ua)) {
-					var aParts = oExp.exec(_ua);
-					var version = parseFloat(aParts[2]);
-					return {
+				var bStandalone = oNavigator.standalone;
+				if (oExp.test(sUserAgent)) {
+					var aParts = oExp.exec(sUserAgent);
+					var sVersion = parseFloat(aParts[2]);
+					oResult = {
 						name: BROWSER.SAFARI,
-						versionStr: "" + version,
+						versionStr: "" + sVersion,
 						fullscreen: false,
 						webview: false,
-						version: version,
-						mobile: oExpMobile.test(_ua),
+						version: sVersion,
+						mobile: oExpMobile.test(sUserAgent),
 						webkit: true,
 						webkitVersion: webkitVersion,
 						phantomJS: aParts[1] === "PhantomJS"
 					};
-				} else if (/iPhone|iPad|iPod/.test(_ua) && !(/CriOS/.test(_ua)) && !(/FxiOS/.test(_ua)) && (bStandalone === true || bStandalone === false)) {
+				} else if (/iPhone|iPad|iPod/.test(sUserAgent) && !(/CriOS/.test(sUserAgent)) && !(/FxiOS/.test(sUserAgent)) && (bStandalone === true || bStandalone === false)) {
 					//WebView or Standalone mode on iOS
-					return {
+					oResult = {
 						name: BROWSER.SAFARI,
 						version: -1,
 						fullscreen: bStandalone,
 						webview: !bStandalone,
-						mobile: oExpMobile.test(_ua),
+						mobile: oExpMobile.test(sUserAgent),
 						webkit: true,
 						webkitVersion: webkitVersion
 					};
 				} else { // other webkit based browser
-					return {
-						mobile: oExpMobile.test(_ua),
+					oResult = {
+						mobile: oExpMobile.test(sUserAgent),
 						webkit: true,
 						webkitVersion: webkitVersion,
 						version: -1
 					};
 				}
 			}
-		} else if ( b.msie || b.trident ) {
-			var version;
+		} else if (oBrowser.msie || oBrowser.trident) {
+			var sVersion;
 			// recognize IE8 when running in compat mode (only then the documentMode property is there)
 			if (document.documentMode && !customUa) { // only use the actual documentMode when no custom user-agent was given
 				if (document.documentMode === 7) { // OK, obviously we are IE and seem to be 7... but as documentMode is there this cannot be IE7!
-					version = 8.0;
+					sVersion = 8.0;
 				} else {
-					version = parseFloat(document.documentMode);
+					sVersion = parseFloat(document.documentMode);
 				}
 			} else {
-				version = parseFloat(b.version);
+				sVersion = parseFloat(oBrowser.version);
 			}
-			return {
+			oResult = {
 				name: BROWSER.INTERNET_EXPLORER,
-				versionStr: "" + version,
-				version: version,
+				versionStr: "" + sVersion,
+				version: sVersion,
 				msie: true,
 				mobile: false // TODO: really?
 			};
-		} else if ( b.edge ) {
-			var version = version = parseFloat(b.version);
-			return {
+		} else if (oBrowser.edge) {
+			var sVersion = sVersion = parseFloat(oBrowser.version);
+			oResult = {
 				name: BROWSER.EDGE,
-				versionStr: "" + version,
-				version: version,
+				versionStr: "" + sVersion,
+				version: sVersion,
 				edge: true
 			};
+		} else {
+			oResult = {
+				name: "",
+				versionStr: "",
+				version: -1,
+				mobile: false
+			};
 		}
-		return {
-			name: "",
-			versionStr: "",
-			version: -1,
-			mobile: false
-		};
+
+		// Check for Blink rendering engine (https://stackoverflow.com/questions/20655470/how-to-detect-blink-in-chrome)
+		if ((window.chrome || (window.Intl && window.Intl.v8BreakIterator)) && 'CSS' in window) {
+			oResult.blink = true;
+		}
+
+		return oResult;
 	}
+
 	device._testUserAgent = getBrowser; // expose the user-agent parsing (mainly for testing), but don't let it be overwritten
 
 	function setBrowser() {

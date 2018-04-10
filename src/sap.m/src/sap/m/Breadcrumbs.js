@@ -34,15 +34,18 @@ sap.ui.define([
 	var SelectType = library.SelectType;
 
 	/**
-	 * Constructor for a new Breadcrumbs
+	 * Constructor for a new <code>Breadcrumbs</code>.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
 	 * Enables users to navigate between items by providing a list of links to previous steps in the user's
-	 * navigation path. The last three steps can be accessed as links directly The remaining links prior to them
+	 * navigation path. The last three steps can be accessed as links directly, while the remaining links prior to them
 	 * are available in a drop-down menu.
+	 *
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/breadcrumb/ Breadcrumbs}
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+
+<!--
+  This QUnit test checks whether Core bootstrap including the test preparation is CSP (Content Security Policy) compliant.
+-->
+
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>QUnit test: CSP Compliance of bootstrapping the Core and test preparation logic</title>
+		<script src="CSPEventListenerRegistration.js"></script>
+		<script src="../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../resources/sap-ui-boot.js"
+				data-sap-ui-libs="sap.m"
+				data-sap-ui-language="en"
+				data-sap-ui-noConflict="true"
+				data-sap-ui-preload="async"
+				data-sap-ui-resourceroots='{
+					"local": "./"
+				}'
+				data-sap-ui-main="sap/ui/test/unit-test-loader"
+				data-sap-ui-unittest='{
+					"coverage": {
+						"only":[],
+						"never":[]
+					},
+					"qunit": {
+						"reorder": false
+					},
+					"sinon": {
+						"useFakeTimer": false,
+						"qunitBridge": true
+					},
+					"waitForCore": true,
+					"tests": ["local/ContentSecurityPolicy.qunit"]
+				}'
+		></script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>

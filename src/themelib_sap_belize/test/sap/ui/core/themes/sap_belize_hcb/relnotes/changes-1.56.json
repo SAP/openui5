@@ -79,6 +79,18 @@
         "type": "FIX",
         "text": " uxap.HierarchicalSelect: Alignment in FlexibleColumnLayout fixed",
         "references": []
+      },
+      {
+        "id": "68eb1b431da8c73d7ac3d430dd27fe291a40d730",
+        "type": "FIX",
+        "text": " sap.m.Button, sap.m.MenuButton, sap.m.ToggleButton: press state inside Toolbar and List fixed",
+        "references": []
+      },
+      {
+        "id": "b35ec2496e38bbcb0d44a8127e26616fb57da4ca",
+        "type": "FIX",
+        "text": " sap.m.Input: Focus border is now correct",
+        "references": []
       }
     ]
   }

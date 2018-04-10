@@ -229,7 +229,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 
 			this.pSequentialImportCompleted = this.pSequentialImportCompleted.then(function() {
 				//must always resolve
-				return pImportCompleted.then(fnSuccess, fnError).catch(function() {});
+				return pImportCompleted.then(fnSuccess, fnError).catch(function(oError) {
+					jQuery.sap.log.error("Loading of data failed: " + oError.stack);
+				});
 			});
 		} else {
 			_loadData(fnSuccess, fnError);

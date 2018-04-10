@@ -211,7 +211,7 @@ sap.ui.define([
 	/**
 	 * Wraps specified value into an array if it's not an array already
 	 * @param {*} vValue - can be an any value
-	 * @return {[*]} - an array of value
+	 * @return {Array.<*>} - an array of value
 	 */
 	Util.castArray = function(vValue) {
 		var aResult = [];

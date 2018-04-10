@@ -311,6 +311,17 @@ var oMenu22 = new sap.m.Menu({
             }
         });
 
+		var oMenuButton4 = new sap.m.MenuButton({
+			text: "Accept",
+			buttonMode: sap.m.MenuButtonMode.Regular,
+			type: sap.m.ButtonType.Accept,
+			useDefaultActionOnly: true,
+			menu: oMenu3,
+			defaultAction: function() {
+				sap.m.MessageToast.show("Accepted");
+			}
+		});
+
         var oMenu6 = new sap.m.Menu({
             title: "random 6",
             itemSelected: function(oEvent) {
@@ -606,6 +617,7 @@ var oMenu22 = new sap.m.Menu({
             items: [
                 oLabel3,
                 oMenuButton3,
+				oMenuButton4,
 
                 oLabel6,
                 oMenuButton6,
@@ -627,6 +639,134 @@ var oMenu22 = new sap.m.Menu({
             ]
         });
 
+        var oList = new sap.m.List({
+            headerText : "Dynamic Button",
+            items: [
+                new sap.m.CustomListItem({
+                    id: "customListItem1",
+                    type: "Active",
+                    content: [
+                        new sap.m.Text({id:"textInListItem1", text:"MenuButtons in List"}),
+                        new sap.m.OverflowToolbar({
+                            id:"overflowToolbarInListItem1",
+                            design: "Solid",
+                            content: [
+                                new sap.m.ToolbarSpacer(),
+                                new sap.m.MenuButton({
+                                    text: "MenuButton",
+                                    icon: "sap-icon://thumb-up",
+                                    type: "Reject"
+                                }),
+                                new sap.m.MenuButton({
+                                    text: "MenuButton",
+                                    icon: "sap-icon://thumb-up",
+                                    buttonMode: "Split",
+                                    type: "Accept"
+                                }),
+                                new sap.m.MenuButton({
+                                    text: "MenuButton",
+                                    icon: "sap-icon://thumb-up",
+                                    type: "Reject"
+                                }),
+                                new sap.m.MenuButton({
+                                    text: "MenuButton",
+                                    icon: "sap-icon://thumb-up",
+                                    buttonMode:"Split",
+                                    type: "Reject"
+                                }),
+                                new sap.m.ToggleButton({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "ToggleButton",
+                                    type: "Accept"
+                                }),
+                                new sap.m.ToggleButton({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "ToggleButton",
+                                    type: "Reject"
+                                }),
+                                new sap.m.Button({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "Button",
+                                    type: "Accept"
+                                }),
+                                new sap.m.Button({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "Button",
+                                    type: "Reject"
+                                }),
+                                new sap.m.Button({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "Button",
+                                    type: "Transparent"
+                                })
+                            ]
+                        })
+                    ]
+                }),
+                new sap.m.CustomListItem({
+                    id: "customListItem2",
+                    type: "Active",
+                    content: [
+                        new sap.m.Text({id:"textInListItem2", text:"MenuButtons in List"}),
+                        new sap.m.OverflowToolbar({
+                            id:"overflowToolbarInListItem2",
+                            design: "Solid",
+                            content: [
+                                new sap.m.ToolbarSpacer(),
+                                new sap.m.MenuButton({
+                                    text: "MenuButton",
+                                    icon: "sap-icon://thumb-up",
+                                    type: "Reject"
+                                }),
+                                new sap.m.MenuButton({
+                                    text: "MenuButton",
+                                    icon: "sap-icon://thumb-up",
+                                    buttonMode: "Split",
+                                    type: "Accept"
+                                }),
+                                new sap.m.MenuButton({
+                                    text: "MenuButton",
+                                    icon: "sap-icon://thumb-up",
+                                    type: "Reject"
+                                }),
+                                new sap.m.MenuButton({
+                                    text: "MenuButton",
+                                    icon: "sap-icon://thumb-up",
+                                    buttonMode:"Split",
+                                    type: "Reject"
+                                }),
+                                new sap.m.ToggleButton({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "ToggleButton",
+                                    type: "Accept"
+                                }),
+                                new sap.m.ToggleButton({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "ToggleButton",
+                                    type: "Reject"
+                                }),
+                                new sap.m.Button({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "Button",
+                                    type: "Accept"
+                                }),
+                                new sap.m.Button({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "Button",
+                                    type: "Reject"
+                                }),
+                                new sap.m.Button({
+                                    icon: "sap-icon://thumb-up",
+                                    text: "Button",
+                                    type: "Transparent"
+                                })
+                            ]
+                        }).addStyleClass("sapContrast")
+                    ]
+                })
+            ]
+        });
+
         var oPage = new sap.m.Page("page0", {
             customHeader: new sap.m.Toolbar({
                 content: [
@@ -641,7 +781,8 @@ var oMenu22 = new sap.m.Menu({
                 ]
             }),
             content: [
-                oVBox
+                oVBox,
+                oList
             ],
             footer: new sap.m.Toolbar({
                 content: [

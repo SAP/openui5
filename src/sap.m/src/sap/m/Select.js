@@ -71,6 +71,9 @@ function(
 		 *
 		 * @class
 		 * The <code>sap.m.Select</code> control provides a list of items that allows users to select an item.
+		 *
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/select/ Select}
+		 *
 		 * @extends sap.ui.core.Control
 		 * @implements sap.ui.core.IFormContent
 		 *
@@ -760,7 +763,7 @@ function(
 		 */
 		Select.prototype._onBeforeRenderingPopover = function() {
 			var oPopover = this.getPicker(),
-				sWidth = (this.$().outerWidth() / parseFloat(library.BaseFontSize)) + "rem";
+				sWidth = this.$().outerWidth() + "px"; // set popover content min-width in px due to rendering issue in Chrome and small %
 
 			if (oPopover) {
 				oPopover.setContentMinWidth(sWidth);
@@ -1888,6 +1891,24 @@ function(
 			}
 		};
 
+		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
+			var $this = this.$(),
+                            sAttr = $this.attr("aria-labelledby"),
+				aIDs = sAttr ? sAttr.split(" ") : [],
+				sNewIDs;
+
+			if (sOldValueState !== ValueState.None) {
+				aIDs.pop();
+			}
+
+			if (sValueState !== ValueState.None) {
+				aIDs.push(InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_" + sValueState.toUpperCase()));
+			}
+
+			sNewIDs = aIDs.join(" ");
+			$this.attr("aria-labelledby", sNewIDs);
+		};
+
 		/**
 		 * Gets the labels referencing this control.
 		 *
@@ -2194,6 +2215,7 @@ function(
 			}
 
 			this.updateValueStateClasses(sValueState, sOldValueState);
+			this.updateAriaLabelledBy(sValueState, sOldValueState);
 			return this;
 		};
 

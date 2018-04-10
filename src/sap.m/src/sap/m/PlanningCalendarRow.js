@@ -16,14 +16,18 @@ sap.ui.define(['jquery.sap.global',
 		'sap/ui/unified/CalendarRowRenderer',
 		'sap/m/ColumnListItem',
 		'sap/m/ColumnListItemRenderer',
+		'sap/ui/core/dnd/DragInfo',
+		'sap/ui/core/dnd/DropInfo',
 		'sap/ui/core/dnd/DragDropInfo'],
 	function (jQuery, Element, Control, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary, DateRange,
-			  CalendarRow, CalendarRowRenderer, ColumnListItem, ColumnListItemRenderer, DragDropInfo) {
+			  CalendarRow, CalendarRowRenderer, ColumnListItem, ColumnListItemRenderer, DragInfo, DropInfo, DragDropInfo) {
 	"use strict";
 
 
 	// shortcut for sap.ui.unified.CalendarIntervalType
 	var CalendarIntervalType = unifiedLibrary.CalendarIntervalType;
+	var DRAG_DROP_CONFIG_NAME = "DragDropConfig";
+	var RESIZE_CONFIG_NAME = "ResizeConfig";
 
 	/**
 	 * Constructor for a new <code>PlanningCalendarRow</code>.
@@ -103,11 +107,16 @@ sap.ui.define(['jquery.sap.global',
 			 * The drag and drop interaction is visualized by a placeholder highlighting the area where the
 			 * appointment can be dropped by the user.
 			 *
+			 * By default, appointments can be dragged only within their original <code>PlanningCalendarRow</code>. When
+			 * <code>enableAppointmentsDragAndDrop</code> is set to true, attaching the
+			 * {@link #event:appointmentDragEnter appointmentDragEnter} event can change the default behavior and allow
+			 * appointments to be dragged between calendar rows.
+			 *
 			 * Specifics based on the intervals (hours, days or months) displayed in the <code>PlanningCalendar</code> views:
 			 *
 			 * Hours:<br>
 			 * For views where the displayed intervals are hours, the placeholder snaps on every interval
-			 * of 30 minutes. After the appointment is dropped, the appointmentDrop event is fired, containing
+			 * of 30 minutes. After the appointment is dropped, the {@link #event:appointmentDrop appointmentDrop} event is fired, containing
 			 * the new start and end JavaScript date objects.<br>
 			 * For example, an appointment with start date "Nov 13 2017 12:17:00" and end date "Nov 13 2017 12:45:30"
 			 * lasts for 27 minutes and 30 seconds. After dragging and dropping to a new time, the possible new
@@ -117,24 +126,50 @@ sap.ui.define(['jquery.sap.global',
 			 *
 			 * Days:<br>
 			 * For views where intervals are days, the placeholder highlights the whole day and after the
-			 * appointment is dropped the appointmentDrop event is fired. The event contains the new start and
+			 * appointment is dropped the {@link #event:appointmentDrop appointmentDrop} event is fired. The event contains the new start and
 			 * end JavaScript date objects with changed date but the original time (hh:mm:ss) is preserved.
 			 *
 			 * Months:<br>
 			 * For views where intervals are months, the placeholder highlights the whole month and after the
-			 * appointment is dropped the appointmentDrop event is fired. The event contains the new start and
+			 * appointment is dropped the {@link #event:appointmentDrop appointmentDrop} event is fired. The event contains the new start and
 			 * end JavaScript date objects with changed month but the original date and time is preserved.
 			 *
-			 * <b>Notes:</b>
-			 * <ul>
-			 * <li>In "One month" view, the appointments are not draggable on small screen (as there they are
-			 * displayed as a list below the dates). Group appointments are also not draggable</li>
-			 * <li>Appointments can be dragged only within their original PlanningCalendarRow</li>
-			 * </ul>
+			 * <b>Note:</b> In "One month" view, the appointments are not draggable on small screen (as there they are
+			 * displayed as a list below the dates). Group appointments are also not draggable.
 			 *
 			 * @since 1.54
 			 */
-			enableAppointmentsDragAndDrop : {type : "boolean", group : "Misc", defaultValue : false}
+			enableAppointmentsDragAndDrop : {type : "boolean", group : "Misc", defaultValue : false},
+
+			/**
+			 * Determines whether the appointments in the row are resizable.
+			 *
+			 * The resize interaction is visualized by making the appointment transparent.
+			 *
+			 * Specifics based on the intervals (hours, days or months) displayed in the <code>PlanningCalendar</code> views:
+			 *
+			 * Hours:
+			 * For views where the displayed intervals are hours, the appointment snaps on every interval
+			 * of 30 minutes. After the resize is finished, the {@link #event:appointmentResize appointmentResize} event is fired, containing
+			 * the new start and end JavaScript date objects.
+			 *
+			 * Days:
+			 * For views where intervals are days, the appointment snaps to the end of the day. After the resize is finished,
+			 * the {@link #event:appointmentResize appointmentResize} event is fired, containing the new start and end JavaScript date objects.
+			 * The <code>endDate</code> time is changed to 00:00:00
+			 *
+			 * Months:
+			 * For views where intervals are months, the appointment snaps to the end of the month.
+			 * The {@link #event:appointmentResize appointmentResize} event is fired, containing the new start and end JavaScript date objects.
+			 * The <code>endDate</code> is set to the 00:00:00 and first day of the following month.
+			 *
+			 * <b>Notes:</b>
+			 * In "One month" view, the appointments are not resizable on small screen (as there they are
+			 * displayed as a list below the dates). Group appointments are also not resizable
+			 *
+			 * @since 1.56
+			 */
+			enableAppointmentsResize : {type : "boolean", group : "Misc", defaultValue : false}
 
 		},
 		aggregations : {
@@ -186,119 +221,75 @@ sap.ui.define(['jquery.sap.global',
 					/**
 					 * Dropped appointment end date as a JavaScript date object.
 					 */
+					endDate : {type : "object"},
+
+					/**
+					 * The row of the appointment.
+					 */
+					calendarRow : {type : "sap.m.PlanningCalendarRow"}
+				}
+			},
+
+			/**
+			 * Fired if an appointment is dropped.
+			 *
+			 * When this event handler is attached, the default behavior of the <code>enableAppointmentsDragAndDrop</code>
+			 * property to move appointments only within their original calendar row is no longer valid. You can move
+			 * the appointment around all rows for which <code>enableAppointmentsDragAndDrop</code> is set to true.
+			 * In this case, the drop target area is indicated by a placeholder. In the event handler you can call the
+			 * <code>preventDefault</code> method of the event to prevent this default behavior. In this case,
+			 * the placeholder will no longer be available and it will not be possible to drop the appointment in the row.
+			 *
+			 * @since 1.56
+			 */
+			appointmentDragEnter : {
+				allowPreventDefault : true,
+				parameters : {
+					/**
+					 * The dropped appointment.
+					 */
+					appointment : {type : "sap.ui.unified.CalendarAppointment"},
+
+					/**
+					 * Start date of the dropped appointment, as a JavaScript date object.
+					 */
+					startDate : {type : "object"},
+
+					/**
+					 * Dropped appointment end date as a JavaScript date object.
+					 */
+					endDate : {type : "object"},
+
+					/**
+					 * The row of the appointment.
+					 */
+					calendarRow : {type : "sap.m.PlanningCalendarRow"}
+				}
+			},
+
+			/**
+			 * Fired if an appointment is resized.
+			 * @since 1.56
+			 */
+			appointmentResize : {
+				parameters : {
+					/**
+					 * The resized appointment.
+					 */
+					appointment : {type : "sap.ui.unified.CalendarAppointment"},
+
+					/**
+					 * Start date of the resized appointment, as a JavaScript date object.
+					 */
+					startDate : {type : "object"},
+
+					/**
+					 * End date of the resized appointment, as a JavaScript date object.
+					 */
 					endDate : {type : "object"}
 				}
 			}
 		}
-	},
-	applySettings: function(mSettings, oScope) {
-		Control.prototype.applySettings.apply(this, arguments);
-		var oCalendarRow = this.getCalendarRow();
-
-		if (!this.getEnableAppointmentsDragAndDrop()) {
-			return;
-		}
-
-		this.removeAllDragDropConfig();
-
-		this.addDragDropConfig(new DragDropInfo({
-			sourceAggregation: "appointments",
-			targetAggregation: "_intervalPlaceholders",
-			targetElement: oCalendarRow,
-
-			/**
-			 * Fired when the user starts dragging an appointment.
-			 */
-			dragStart: function (oEvent) {
-				var fnHandleAppsOverlay = function() {
-						var $CalendarRowAppsOverlay = oCalendarRow.$().find(".sapUiCalendarRowAppsOverlay");
-
-						setTimeout(function () {
-							$CalendarRowAppsOverlay.addClass("sapUiCalendarRowAppsOverlayDragging");
-						});
-
-						jQuery(document).one("dragend", function () {
-							$CalendarRowAppsOverlay.removeClass("sapUiCalendarRowAppsOverlayDragging");
-						});
-					};
-
-				if (oCalendarRow._isOneMonthIntervalOnSmallSizes()) {
-					oEvent.preventDefault();
-					return;
-				}
-
-				fnHandleAppsOverlay();
-			},
-
-			/**
-			 * Fired when a dragged appointment enters a drop target.
-			 */
-			dragEnter: function (oEvent) {
-				var oDragSession = oEvent.getParameter("dragSession"),
-					sTargetElementId = this.getTargetElement(),
-					fnAlignIndicator = function () {
-						var $Indicator = jQuery(oDragSession.getIndicator()),
-							oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
-							oRowRects = sap.ui.getCore().byId(sTargetElementId).getDomRef().getBoundingClientRect(),
-							iAppWidth = oDragSession.getDragControl().$().outerWidth(),
-							bRTL = sap.ui.getCore().getConfiguration().getRTL(),
-							iAvailWidth = bRTL ? Math.ceil(oDropRects.right) - oRowRects.left : oRowRects.right - Math.ceil(oDropRects.left);
-
-						$Indicator
-							.css("min-width", (iAppWidth < iAvailWidth) ? iAppWidth : iAvailWidth)
-							.css(bRTL ? "border-left-width" : "border-right-width", (iAppWidth > iAvailWidth) ? "0" : "")
-							.css("margin-left", bRTL ? -($Indicator.outerWidth() - parseFloat($Indicator.context.style.width)) : "");
-					};
-
-				if (oCalendarRow.getIntervalType() !== CalendarIntervalType.Hour) {
-					return;
-				}
-
-				if (!oDragSession.getIndicator()) {
-					setTimeout(function () {
-						fnAlignIndicator();
-					}, 0);
-				} else {
-					fnAlignIndicator();
-				}
-			},
-
-			/**
-			 * Fired when an appointment is dropped.
-			 */
-			drop: function (oEvent) {
-				var oDragSession = oEvent.getParameter("dragSession"),
-					oAppointment = oDragSession.getDragControl(),
-					sIntervalType = oCalendarRow.getIntervalType(),
-					oRowStartDate = oCalendarRow.getStartDate(),
-					iIndex = oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
-					newPos;
-
-				if (sIntervalType === CalendarIntervalType.Hour) {
-					newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
-				} else if (sIntervalType === CalendarIntervalType.Day
-					|| sIntervalType === CalendarIntervalType.Week
-					|| (sIntervalType === CalendarIntervalType.OneMonth && !oCalendarRow._isOneMonthIntervalOnSmallSizes())) {
-
-					newPos = this._calcNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
-				} else if (sIntervalType === CalendarIntervalType.Month) {
-
-					newPos = this._calcNewMonthsAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
-				}
-
-				oCalendarRow.$().find(".sapUiCalendarRowAppsOverlay").removeClass("sapUiCalendarRowAppsOverlayDragging");
-
-				if (oAppointment.getStartDate().getTime() === newPos.startDate.getTime()) {
-					return;
-				}
-
-				this.fireAppointmentDrop({
-					appointment: oAppointment,
-					startDate: newPos.startDate,
-					endDate: newPos.endDate
-				});
-			}.bind(this)
-		}));
 	}});
 
 	/**
@@ -381,7 +372,7 @@ sap.ui.define(['jquery.sap.global',
 	CalendarRowInPCRenderer.renderBeforeAppointments = function (oRm, oRow) {
 		var intervalPlaceholders;
 
-		if (!oRow._oPlanningCalendarRow.getEnableAppointmentsDragAndDrop() || oRow._isOneMonthIntervalOnSmallSizes()) {
+		if (!oRow._oPlanningCalendarRow.getEnableAppointmentsDragAndDrop() || !oRow._oPlanningCalendarRow.getEnableAppointmentsResize() || oRow._isOneMonthIntervalOnSmallSizes()) {
 			return;
 		}
 
@@ -398,9 +389,22 @@ sap.ui.define(['jquery.sap.global',
 		oRm.write("</div>");
 	};
 
+	CalendarRowInPCRenderer.renderResizeHandle = function (oRm, oRow, oAppointment) {
+		if (!oRow._oPlanningCalendarRow.getEnableAppointmentsResize() || oRow._isOneMonthIntervalOnSmallSizes() || (oAppointment._aAppointments && oAppointment._aAppointments.length > 0)) {
+			return;
+		}
+
+		oRm.write("<span");
+		oRm.addClass("sapUiCalendarAppResizeHandle");
+		oRm.writeClasses();
+		oRm.write(">");
+		oRm.write("</span>");
+	};
+
 	var CalendarRowInPlanningCalendar = CalendarRow.extend("CalendarRowInPlanningCalendar", {
 		metadata: {
 			aggregations : {
+				dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true},
 				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden"}
 			}
 		},
@@ -426,6 +430,18 @@ sap.ui.define(['jquery.sap.global',
 	CalendarRowInPlanningCalendar.prototype.onBeforeRendering = function() {
 		CalendarRow.prototype.onBeforeRendering.call(this);
 		this._updatePlaceholders();
+	};
+
+	CalendarRowInPlanningCalendar.prototype.onmousedown = function (oEvent) {
+		this._bIsResizing = oEvent.target.classList.contains("sapUiCalendarAppResizeHandle");
+	};
+
+	CalendarRowInPlanningCalendar.prototype._isResizingPerformed = function () {
+		return this._bIsResizing;
+	};
+
+	CalendarRowInPlanningCalendar.prototype._isDraggingPerformed = function () {
+		return !this._bIsResizing;
 	};
 
 	var IntervalPlaceholder = Control.extend("IntervalPlaceholder", {
@@ -470,6 +486,150 @@ sap.ui.define(['jquery.sap.global',
 	// ************************************* PRIVATE CLASSES END *******************************************************
 
 
+	PlanningCalendarRow.prototype._addDragDropInfo = function (oCalendarRow) {
+
+		this.addDragDropConfig(new DragInfo({
+			groupName: DRAG_DROP_CONFIG_NAME,
+			sourceAggregation: "appointments",
+
+			/**
+			 * Fired when the user starts dragging an appointment.
+			 */
+			dragStart: function (oEvent) {
+				var fnHandleAppsOverlay = function () {
+					var $CalendarRowAppsOverlay = jQuery(".sapUiCalendarRowAppsOverlay");
+
+					setTimeout(function () {
+						$CalendarRowAppsOverlay.addClass("sapUiCalendarRowAppsOverlayDragging");
+					});
+
+					jQuery(document).one("dragend", function () {
+						$CalendarRowAppsOverlay.removeClass("sapUiCalendarRowAppsOverlayDragging");
+					});
+				};
+				if (oCalendarRow._isOneMonthIntervalOnSmallSizes() || oCalendarRow._isResizingPerformed()) {
+					oEvent.preventDefault();
+					return;
+				}
+
+				fnHandleAppsOverlay();
+			}
+		}));
+
+		oCalendarRow.addDragDropConfig(new DropInfo({
+			groupName: DRAG_DROP_CONFIG_NAME,
+			targetAggregation: "_intervalPlaceholders",
+
+			/**
+			 * Fired when a dragged appointment enters a drop target.
+			 */
+			dragEnter: function (oEvent) {
+				var oDragSession = oEvent.getParameter("dragSession"),
+					oAppointment = oDragSession.getDragControl(),
+					sIntervalType = oCalendarRow.getIntervalType(),
+					oRowStartDate = oCalendarRow.getStartDate(),
+					iIndex = oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
+					sTargetElementId = oCalendarRow.getId(),
+					newPos,
+					fnAlignIndicator = function () {
+						var $Indicator = jQuery(oDragSession.getIndicator()),
+							oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
+							oRowRects = sap.ui.getCore().byId(sTargetElementId).getDomRef().getBoundingClientRect(),
+							iAppWidth = oDragSession.getDragControl().$().outerWidth(),
+							bRTL = sap.ui.getCore().getConfiguration().getRTL(),
+							iAvailWidth = bRTL ? Math.ceil(oDropRects.right) - oRowRects.left : oRowRects.right - Math.ceil(oDropRects.left);
+
+						$Indicator
+							.css("min-width", (iAppWidth < iAvailWidth) ? iAppWidth : iAvailWidth)
+							.css(bRTL ? "border-left-width" : "border-right-width", (iAppWidth > iAvailWidth) ? "0" : "")
+							.css("margin-left", bRTL ? -($Indicator.outerWidth() - parseFloat($Indicator.context.style.width)) : "");
+					};
+
+				if (this.hasListeners("appointmentDragEnter")) {
+
+					if (sIntervalType === CalendarIntervalType.Hour) {
+						newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+					} else if (sIntervalType === CalendarIntervalType.Day
+						|| sIntervalType === CalendarIntervalType.Week
+						|| (sIntervalType === CalendarIntervalType.OneMonth && !oCalendarRow._isOneMonthIntervalOnSmallSizes())) {
+
+						newPos = this._calcNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+					} else if (sIntervalType === CalendarIntervalType.Month) {
+
+						newPos = this._calcNewMonthsAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+					}
+
+					var bDropabbleArea = this.fireAppointmentDragEnter({
+						appointment: oAppointment,
+						startDate: newPos.startDate,
+						endDate: newPos.endDate,
+						calendarRow: oCalendarRow._oPlanningCalendarRow
+					});
+
+					if (!bDropabbleArea) {
+						oEvent.preventDefault();
+						return;
+					}
+
+				} else if (oAppointment.getParent().getCalendarRow() !== oCalendarRow) {
+					oEvent.preventDefault();
+					return;
+				}
+
+				if (oCalendarRow.getIntervalType() !== CalendarIntervalType.Hour) {
+					return;
+				}
+
+				if (!oDragSession.getIndicator()) {
+					setTimeout(function () {
+						fnAlignIndicator();
+					}, 0);
+				} else {
+					fnAlignIndicator();
+				}
+			}.bind(this),
+
+			/**
+			 * Fired when an appointment is dropped.
+			 */
+			drop: function (oEvent) {
+				var oDragSession = oEvent.getParameter("dragSession"),
+					oAppointment = oDragSession.getDragControl(),
+					sIntervalType = oCalendarRow.getIntervalType(),
+					oRowStartDate = oCalendarRow.getStartDate(),
+					iIndex = oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
+					newPos;
+
+				if (sIntervalType === CalendarIntervalType.Hour) {
+					newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+				} else if (sIntervalType === CalendarIntervalType.Day
+					|| sIntervalType === CalendarIntervalType.Week
+					|| (sIntervalType === CalendarIntervalType.OneMonth && !oCalendarRow._isOneMonthIntervalOnSmallSizes())) {
+
+					newPos = this._calcNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+				} else if (sIntervalType === CalendarIntervalType.Month) {
+
+					newPos = this._calcNewMonthsAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+				}
+
+				oCalendarRow.$().find(".sapUiCalendarRowAppsOverlay").removeClass("sapUiCalendarRowAppsOverlayDragging");
+
+				if (oAppointment.getStartDate().getTime() === newPos.startDate.getTime()
+					&& oAppointment.getParent() === oCalendarRow._oPlanningCalendarRow) {
+
+					return;
+				}
+
+				this.fireAppointmentDrop({
+					appointment: oAppointment,
+					startDate: newPos.startDate,
+					endDate: newPos.endDate,
+					calendarRow: oCalendarRow._oPlanningCalendarRow
+				});
+			}.bind(this)
+		}));
+	};
+
 	PlanningCalendarRow.prototype._calcNewHoursAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
 		var oStartDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate(), oRowStartDate.getHours());
 		oStartDate = new Date(oStartDate.getTime() + (iIndex * 30 * 60 * 1000)); // 30 min
@@ -501,6 +661,56 @@ sap.ui.define(['jquery.sap.global',
 		return {
 			startDate: oStartDate,
 			endDate: new Date(oStartDate.getTime() + oAppEndDate.getTime() - oAppStartDate.getTime())
+		};
+	};
+
+	PlanningCalendarRow.prototype._calcResizeNewHoursAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
+		var oEndDate = new Date(oRowStartDate.getFullYear(), oRowStartDate.getMonth(), oRowStartDate.getDate(), oRowStartDate.getHours()),
+			iMinutesStep = 30 * 60 * 1000; // 30 min
+
+		oEndDate = new Date(oEndDate.getTime() + ((iIndex + 1) *  iMinutesStep));
+
+		if (oEndDate.getTime() <= oAppStartDate.getTime()) {
+			oEndDate = new Date(oAppStartDate.getTime() + iMinutesStep);
+		}
+
+		return {
+			startDate: oAppStartDate,
+			endDate: oEndDate
+		};
+	};
+
+	PlanningCalendarRow.prototype._calcResizeNewDaysAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
+		var oEndDate = new Date(oRowStartDate),
+			iNewEndDate = oEndDate.getDate() + iIndex + 1;
+
+		if (iNewEndDate <= oAppEndDate.getDate()) {
+			iNewEndDate = oAppStartDate.getDate() + 1;
+		}
+
+		oEndDate.setDate(iNewEndDate);
+		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate(), 0, 0, 0);
+
+		return {
+			startDate: oAppStartDate,
+			endDate: oEndDate
+		};
+	};
+
+	PlanningCalendarRow.prototype._calcResizeNewMonthsAppPos = function(oRowStartDate, oAppStartDate, oAppEndDate, iIndex) {
+		var oEndDate = new Date(oRowStartDate),
+			iNewEndMonth = oEndDate.getMonth() + iIndex + 1;
+
+		if (iNewEndMonth <= oAppEndDate.getMonth()) {
+			iNewEndMonth = oAppStartDate.getMonth() + 1;
+		}
+
+		oEndDate.setMonth(iNewEndMonth);
+		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), 1, 0, 0, 0);
+
+		return {
+			startDate: oAppStartDate,
+			endDate: oEndDate
 		};
 	};
 
@@ -550,6 +760,40 @@ sap.ui.define(['jquery.sap.global',
 		}
 		this._oColumnListItem.destroy();
 		this._oColumnListItem = undefined;
+
+	};
+
+	PlanningCalendarRow.prototype.setEnableAppointmentsDragAndDrop = function (bEnable) {
+
+		this.setProperty("enableAppointmentsDragAndDrop", bEnable, true);
+
+		if (bEnable) {
+
+			var bConfigExists = this.getDragDropConfig().some(function (oDragDropInfo) {
+				return oDragDropInfo.getGroupName() === DRAG_DROP_CONFIG_NAME;
+			});
+
+			if (!bConfigExists) {
+				this._addDragDropInfo(this.getCalendarRow());
+			}
+
+		} else {
+
+			this.getDragDropConfig().forEach(function (oDragDropInfo) {
+				if (oDragDropInfo.getGroupName() === DRAG_DROP_CONFIG_NAME) {
+					this.removeDragDropConfig(oDragDropInfo);
+				}
+			}, this);
+
+			this.getCalendarRow().getDragDropConfig().forEach(function (oDragDropInfo) {
+				if (oDragDropInfo.getGroupName() === DRAG_DROP_CONFIG_NAME) {
+					this.getCalendarRow().removeDragDropConfig(oDragDropInfo);
+				}
+			}, this);
+
+		}
+
+		return this;
 
 	};
 
@@ -611,6 +855,23 @@ sap.ui.define(['jquery.sap.global',
 
 		return this;
 
+	};
+
+	PlanningCalendarRow.prototype.setEnableAppointmentsResize = function (bEnable) {
+		var oOldResizeConfig = this._getResizeConfigFromDragDropConfig(),
+			oNewResizeConfig = this._getResizeConfig();
+
+		this.setProperty("enableAppointmentsResize", bEnable, true); // do not invalidate
+
+		if (bEnable && !oOldResizeConfig) {
+			this.addAggregation("dragDropConfig", oNewResizeConfig, true); // do not invalidate
+		}
+
+		if (!bEnable) {
+			this.removeAggregation("dragDropConfig", oOldResizeConfig, true); // do not invalidate
+		}
+
+		return this;
 	};
 
 	PlanningCalendarRow.prototype.invalidate = function(oOrigin) {
@@ -792,6 +1053,150 @@ sap.ui.define(['jquery.sap.global',
 
 		return oRangeCopy;
 	};
+
+	PlanningCalendarRow.prototype._getResizeConfig = function () {
+		var oPlanningCalendarRow = this,
+			oCalendarRow = this.getCalendarRow(),
+			oResizeConfig = new DragDropInfo({
+				sourceAggregation: "appointments",
+				targetAggregation: "_intervalPlaceholders",
+				targetElement: this.getCalendarRow(),
+
+				/**
+				 * Fired when the user starts dragging an appointment.
+				 */
+				dragStart: function (oEvent) {
+					if (!oPlanningCalendarRow.getEnableAppointmentsResize() || oCalendarRow._isOneMonthIntervalOnSmallSizes() || oCalendarRow._isDraggingPerformed()) {
+						oEvent.preventDefault();
+						return;
+					}
+
+					var oDragSession = oEvent.getParameter("dragSession"),
+						$CalendarRowAppsOverlay = oCalendarRow.$().find(".sapUiCalendarRowAppsOverlay"),
+						$Indicator = jQuery(oDragSession.getIndicator()),
+						$DraggedControl = oDragSession.getDragControl().$();
+
+					$Indicator.addClass("sapUiDnDIndicatorHide");
+					setTimeout(function () {
+						$CalendarRowAppsOverlay.addClass("sapUiCalendarRowAppsOverlayDragging");
+					});
+
+					jQuery(document).one("dragend", function () {
+						$CalendarRowAppsOverlay.removeClass("sapUiCalendarRowAppsOverlayDragging");
+						$Indicator.removeClass("sapUiDnDIndicatorHide");
+						$DraggedControl.css({
+							width: "auto",
+							"min-width": "auto",
+							"z-index": "auto",
+							opacity: 1
+						});
+					});
+
+					oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+				},
+
+				/**
+				 * Fired when a dragged appointment enters a drop target.
+				 */
+				dragEnter: function (oEvent) {
+					var oDragSession = oEvent.getParameter("dragSession"),
+						sTargetElementId = this.getTargetElement(),
+						fnHideIndicator = function () {
+							var $Indicator = jQuery(oDragSession.getIndicator());
+
+							$Indicator.addClass("sapUiDnDIndicatorHide");
+						},
+						oDropRects = oDragSession.getDropControl().getDomRef().getBoundingClientRect(),
+						oRowRects = sap.ui.getCore().byId(sTargetElementId).getDomRef().getBoundingClientRect(),
+						mDraggedControlConfig = {
+							width: oDropRects.left + oDropRects.width - (oDragSession.getDragControl().$().position().left + oRowRects.left),
+							"min-width": Math.min(oDragSession.getDragControl().$().outerWidth(), oDragSession.getDropControl().$().outerWidth()),
+							"z-index": 1,
+							opacity: 0.8
+						};
+
+					oDragSession.getDragControl().$().css(mDraggedControlConfig);
+
+					if (!oDragSession.getIndicator()) {
+						jQuery.sap.delayedCall(0, null, fnHideIndicator);
+					} else {
+						fnHideIndicator();
+					}
+				},
+
+				/**
+				 * Fired when an appointment is dropped.
+				 */
+				drop: function (oEvent) {
+					var oCalendarRow = oPlanningCalendarRow.getCalendarRow();
+					var oDragSession = oEvent.getParameter("dragSession"),
+						oAppointment = oDragSession.getDragControl(),
+						sIntervalType = oCalendarRow.getIntervalType(),
+						oRowStartDate = oCalendarRow.getStartDate(),
+						iIndex = oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
+						newPos;
+
+					if (sIntervalType === CalendarIntervalType.Hour) {
+						newPos = this._calcResizeNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+					} else if (sIntervalType === CalendarIntervalType.Day
+						|| sIntervalType === CalendarIntervalType.Week
+						|| (sIntervalType === CalendarIntervalType.OneMonth && !oCalendarRow._isOneMonthIntervalOnSmallSizes())) {
+
+						newPos = this._calcResizeNewDaysAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+					} else if (sIntervalType === CalendarIntervalType.Month) {
+
+						newPos = this._calcResizeNewMonthsAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
+					}
+
+					oCalendarRow.$().find(".sapUiCalendarRowAppsOverlay").removeClass("sapUiCalendarRowAppsOverlayDragging");
+					jQuery(oDragSession.getIndicator()).removeClass("sapUiDnDIndicatorHide");
+
+					oAppointment.$().css({
+						width: "auto",
+						"min-width": "auto",
+						"z-index": "auto",
+						opacity: 1
+					});
+
+					if (oAppointment.getEndDate().getTime() === newPos.endDate.getTime() ) {
+						return;
+					}
+
+					this.fireAppointmentResize({
+						appointment: oAppointment,
+						startDate: newPos.startDate,
+						endDate: newPos.endDate,
+						calendarRow: oCalendarRow._oPlanningCalendarRow
+					});
+				}.bind(this)
+			});
+
+		oResizeConfig.setProperty("groupName", RESIZE_CONFIG_NAME);
+
+		return oResizeConfig;
+	};
+
+	PlanningCalendarRow.prototype._getResizeConfigFromDragDropConfig = function () {
+		var aDragDropConfigs = this.getAggregation("dragDropConfig"),
+			iDragDropConfigsLength = aDragDropConfigs && aDragDropConfigs.length;
+
+		for (var i = 0; i < iDragDropConfigsLength; i++) {
+			if (aDragDropConfigs[i].getGroupName() === RESIZE_CONFIG_NAME) {
+				return aDragDropConfigs[i];
+			}
+		}
+
+		return null;
+	};
+
+	function getResizeGhost() {
+		var $ghost = jQuery("<span></span>").addClass("sapUiCalAppResizeGhost");
+		$ghost.appendTo(document.body);
+
+		jQuery.sap.delayedCall(0, null, function() { $ghost.remove(); });
+
+		return $ghost.get(0);
+	}
 
 	return PlanningCalendarRow;
 

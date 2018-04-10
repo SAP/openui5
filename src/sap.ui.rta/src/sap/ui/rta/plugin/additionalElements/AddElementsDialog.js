@@ -54,7 +54,7 @@ sap.ui.define([
 	 * Constructor for a new sap.ui.rta.plugin.additionalElements.AddElementsDialog control.
 	 *
 	 * @class Context - Dialog for available Fields in Runtime Authoring
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor

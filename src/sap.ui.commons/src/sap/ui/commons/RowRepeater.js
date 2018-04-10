@@ -1425,7 +1425,7 @@ sap.ui.define([
 	*/
 	RowRepeater.prototype.refreshRows = function() {
 
-		// collect the relevant informations
+		// collect the relevant information
 		var oBindingInfo = this.getBindingInfo("rows"),
 			oBinding = oBindingInfo.binding,
 			iRowCount = this._getRowCount(),
@@ -1447,7 +1447,7 @@ sap.ui.define([
 	 */
 	RowRepeater.prototype.updateRows = function(bViaAPI) {
 
-		// collect the relevant informations
+		// collect the relevant information
 		var oBindingInfo = this.getBindingInfo("rows"),
 		    fnFactory = oBindingInfo.factory,
 		    oBinding = oBindingInfo.binding,

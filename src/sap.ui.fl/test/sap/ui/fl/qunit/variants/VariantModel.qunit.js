@@ -838,16 +838,17 @@ sap.ui.require([
 
 		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
 		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
-		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve(oCopiedVariant));
+		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
+		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
 		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges").returns(Promise.resolve());
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
-		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
+		var fnSaveSequenceOfDirtyChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveSequenceOfDirtyChanges");
 
 		return this.oModel._handleSave(oEvent).then(function() {
 			assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
 			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
 			assert.ok(fnSetVariantPropertiesStub.calledOnce, "SetVariantProperties is called");
-			assert.ok(fnSaveAllStub.calledOnce, "SaveAll is called");
+			assert.ok(fnSaveSequenceOfDirtyChangesStub.calledOnce, "SaveSequenceOfDirtyChanges is called");
 			assert.notOk(this.oModel.getData()["variantMgmtId1"].modified, "finally the model property 'modified' is set to false");
 			oVariantManagement.destroy();
 			done();
@@ -886,16 +887,17 @@ sap.ui.require([
 
 		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
 		sandbox.stub(this.oModel.oVariantController, "getVariantChanges").returns([{fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
-		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve(oCopiedVariant));
+		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
+		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
 		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges").returns(Promise.resolve());
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
-		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
+		var fnSaveSequenceOfDirtyChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveSequenceOfDirtyChanges");
 
 		return this.oModel._handleSave(oEvent).then(function() {
 			assert.ok(fnCopyVariantStub.calledOnce, "CopyVariant is called");
 			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
 			assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
-			assert.ok(fnSaveAllStub.calledOnce, "SaveAll is called");
+			assert.ok(fnSaveSequenceOfDirtyChangesStub.calledOnce, "SaveSequenceOfDirtyChanges is called");
 			assert.notOk(this.oModel.getData()["variantMgmtId1"].modified, "finally the model property 'modified' is set to false");
 			oVariantManagement.destroy();
 			done();
@@ -926,13 +928,13 @@ sap.ui.require([
 		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant");
 		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges");
 		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
-		var fnSaveAllStub = sandbox.stub(this.oFlexController, "saveAll");
+		var fnSaveSequenceOfDirtyChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveSequenceOfDirtyChanges");
 
 		return this.oModel._handleSave(oEvent).then(function() {
 			assert.equal(fnCopyVariantStub.callCount, 0, "CopyVariant is not called");
 			assert.equal(fnRemoveDirtyChangesStub.callCount, 0, "RemoveDirtyChanges is not called");
 			assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
-			assert.ok(fnSaveAllStub.calledOnce, "SaveAll is called");
+			assert.ok(fnSaveSequenceOfDirtyChangesStub.calledOnce, "SaveAll is called");
 			assert.notOk(this.oModel.getData()["variantMgmtId1"].modified, "finally the model property 'modified' is set to false");
 			oVariantManagement.destroy();
 			done();

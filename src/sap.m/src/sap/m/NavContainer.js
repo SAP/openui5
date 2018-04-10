@@ -16,15 +16,19 @@ sap.ui.define([
 
 
 	/**
-	 * Constructor for a new NavContainer.
+	 * Constructor for a new <code>NavContainer</code>.
 	 *
-	 * @param {string} [sId] id for the new control, generated automatically if no id is given
-	 * @param {object} [mSettings] initial settings for the new control
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * The NavContainer control handles hierarchic navigation between Pages or other fullscreen controls.
+	 * Handles hierarchical navigation between Pages or other fullscreen controls.
 	 *
-	 * All children of this control will receive navigation events like {@link sap.m.NavContainerChild#beforeShow beforeShow}, they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}
+	 * All children of this control receive navigation events, such as {@link sap.m.NavContainerChild#beforeShow beforeShow},
+	 * they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
+	 *
+	 * @see {@link topic:a4afb138acf64a61a038aa5b91a4f082 Nav Container}
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE

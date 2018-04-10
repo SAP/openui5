@@ -1142,6 +1142,30 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 	});
 
+	QUnit.test("create_flp_setConfig", function(assert) {
+		return DescriptorInlineChangeFactory.create_flp_setConfig({
+			"config" : { "property1" : "value1",
+										"property2" : "value2",
+										"propertyList" : [ "a", "b"]
+									}
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+		});
+	});
+
+	QUnit.test("create_flp_setConfig failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_flp_setConfig({
+				"configs" : { }
+			});
+		});
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_flp_setConfig({
+				"config" : "wrongType"
+			});
+		});
+	});
+
 	QUnit.test("appdescr_ui5_addNewModel", function(assert) {
 		return DescriptorInlineChangeFactory.create_ui5_addNewModel({
 			"model" : {
@@ -1164,6 +1188,28 @@ jQuery.sap.require('sap.ui.fl.registry.Settings');
 		});
 		assert.throws(function(){
 			DescriptorInlineChangeFactory.create_ui5_addNewModel({
+				"model" : "a.id"
+			});
+		});
+	});
+
+	QUnit.test("appdescr_ui5_addNewModelEnhanceWith", function(assert) {
+		return DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
+			"modelId" : "customer.existingModelId"
+		}).then(function(oDescriptorInlineChange) {
+			assert.notEqual(oDescriptorInlineChange, null);
+			assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addNewModelEnhanceWith");
+		});
+	});
+
+	QUnit.test("appdescr_ui5_addNewModelEnhanceWith failure", function (assert) {
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
+				"modelId" : {}
+			});
+		});
+		assert.throws(function(){
+			DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
 				"model" : "a.id"
 			});
 		});

@@ -45,6 +45,13 @@ sap.ui.define([], function() {
 		if (a === b) {
 			return true;
 		}
+
+		// Number.isNaN is not supported by IE11, so we need to fall back on the verbose implementation
+		var bIsReallyNaN = (typeof a === "number" && typeof b === "number" && isNaN(a) && isNaN(b));
+		if (bIsReallyNaN) {
+			return true;
+		}
+
 		if (Array.isArray(a) && Array.isArray(b)) {
 			if (!contains && a.length !== b.length) {
 				return false;

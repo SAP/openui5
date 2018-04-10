@@ -54,12 +54,12 @@ sap.ui.define([
 		this.setProperty("highlight", sHighlight, true);
 
 		oRow = this._getRow();
-		if (oRow == null) {
+		if (!oRow) {
 			return this;
 		}
 
 		oHighlightElement = oRow.getDomRef("highlight");
-		if (oHighlightElement == null) {
+		if (!oHighlightElement) {
 			return this;
 		}
 
@@ -73,9 +73,9 @@ sap.ui.define([
 
 		// Update the accessibility information.
 		var oTable = oRow.getParent();
-		var oAccessibilityExtension = oTable != null ? oTable._getAccExtension() : null;
+		var oAccessibilityExtension = oTable ? oTable._getAccExtension() : null;
 
-		if (oAccessibilityExtension != null) {
+		if (oAccessibilityExtension) {
 			oAccessibilityExtension.updateAriaStateOfRowHighlight(this);
 		}
 

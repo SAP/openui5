@@ -4211,6 +4211,71 @@
 			oPCRow.destroy();
 		});
 
+		QUnit.test("setEnableAppointmentsDragAndDrop", function(assert) {
+			//arrange
+			var oPC = new sap.m.PlanningCalendar(),
+				oPCRow1 = new sap.m.PlanningCalendarRow("row1"),
+				oPCRow2 = new sap.m.PlanningCalendarRow("row2");
+
+			oPC.addRow(oPCRow1);
+			oPC.addRow(oPCRow2);
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(true);
+
+			var oDragConfig = oPCRow1.getDragDropConfig();
+			var oDropConfig = oPCRow1.getCalendarRow().getDragDropConfig();
+
+			//assert
+			assert.equal(oDragConfig.length, 1, "One DragInfo found");
+			assert.equal(oDragConfig[0].getSourceAggregation(), "appointments", "Source aggregation is correct");
+			assert.equal(oDropConfig[0].getTargetAggregation(), "_intervalPlaceholders", "Target aggregation is correct");
+			assert.equal(oDragConfig[0].getGroupName(), "DragDropConfig", "Group name is correct");
+			assert.equal(oDropConfig[0].getGroupName(), "DragDropConfig", "Group name is correct");
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(true);
+
+			//assert
+			assert.equal(oPCRow1.getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow2.getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(false);
+
+			//assert
+			assert.equal(oPCRow1.getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow2.getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(true);
+			oPCRow2.setEnableAppointmentsDragAndDrop(true);
+
+			//assert
+			assert.equal(oPCRow1.getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow2.getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+
+			//act
+			oPCRow1.setEnableAppointmentsDragAndDrop(false);
+			oPCRow2.setEnableAppointmentsDragAndDrop(true);
+
+			//assert
+			assert.equal(oPCRow1.getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+			assert.equal(oPCRow2.getDragDropConfig().length, 1, "One config found");
+			assert.equal(oPCRow2.getCalendarRow().getDragDropConfig().length, 1, "One config found");
+
+			//clean
+			oPC.destroy();
+		});
+
 		function _getAppointmentsCount(oPC) {
 			var aRows = oPC.getRows(),
 				iAppointments = 0;
@@ -4221,6 +4286,111 @@
 
 			return iAppointments;
 		}
+
+		QUnit.module("Resize Appointments", {
+			beforeEach: function () {
+				this.oPCRow = new sap.m.PlanningCalendarRow();
+			},
+
+			afterEach: function () {
+				this.oPCRow.destroy();
+				this.oPCRow = null;
+			}
+		});
+
+		QUnit.test("setEnableAppointmentsResize", function(assert) {
+			//arrange
+			var oPC = new sap.m.PlanningCalendar(),
+				oPCRow1 = new sap.m.PlanningCalendarRow("row1");
+
+			oPC.addRow(oPCRow1);
+
+			//act
+			oPCRow1.setEnableAppointmentsResize(true);
+
+			var oDragConfig = oPCRow1.getDragDropConfig();
+
+			//assert
+			assert.equal(oDragConfig.length, 1, "One DragInfo found");
+			assert.equal(oDragConfig[0].getSourceAggregation(), "appointments", "Source aggregation is correct");
+			assert.equal(oDragConfig[0].getTargetAggregation(), "_intervalPlaceholders", "Source aggregation is correct");
+			assert.equal(oDragConfig[0].getGroupName(), "ResizeConfig", "Group name is correct");
+
+			//act
+			oPCRow1.setEnableAppointmentsResize(false);
+
+			//assert
+			assert.equal(oPCRow1.getDragDropConfig().length, 0, "Zero configs found");
+
+			//clean
+			oPC.destroy();
+		});
+
+		QUnit.test("_calcResizeNewHoursAppPos: Calculate new size of the appointment in 'Hours' view", function (assert) {
+			// arrange
+			var oRowStartDate = new Date(2017, 10, 13, 0, 0, 0),
+				oAppStartDate = new Date(2017, 10, 13, 1, 0, 0),
+				oAppEndDate = new Date(2017, 10, 13, 2, 0, 0),
+				newAppPos;
+
+			// act - resize appointment's end with 5 hours (10 x 30 mins) from the beginning of the line
+			newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 9);
+
+			// assert
+			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 5, 0, 0), "End date hour is correct");
+
+			// act - resize appointment's if end time is less than the start time than use just 30 mins from the beggining
+			newAppPos = this.oPCRow._calcResizeNewHoursAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
+
+			// assert
+			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 13, 1, 30, 0), "End date hour is correct");
+		});
+
+		QUnit.test("_calcResizeNewDaysAppPos: Calculate new size of the appointment in 'Days' view", function (assert) {
+			// arrange
+			var oRowStartDate = new Date(2017, 10, 13, 0, 0, 0),
+				oAppStartDate = new Date(2017, 10, 13, 1, 0, 0),
+				oAppEndDate = new Date(2017, 10, 13, 2, 0, 0),
+				newAppPos;
+
+			// act - resize appointment's end with 4 days from the beginning of the line
+			newAppPos = this.oPCRow._calcResizeNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+
+			// assert
+			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 17, 0, 0, 0), "End date day is correct");
+
+			// act - resize appointment's if end time is less than the start time than use just 1 day from the beggining
+			newAppPos = this.oPCRow._calcResizeNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
+
+			// assert
+			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 14, 0, 0, 0), "End date day is correct");
+		});
+
+		QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in 'Months' view", function (assert) {
+			// arrange
+			var oRowStartDate = new Date(2017, 6, 13, 0, 0, 0),
+					oAppStartDate = new Date(2017, 6, 13, 1, 0, 0),
+					oAppEndDate = new Date(2017, 6, 13, 2, 0, 0),
+					newAppPos;
+
+			// act - resize appointment's end with 4 Months from the beginning of the line
+			newAppPos = this.oPCRow._calcResizeNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+
+			// assert
+			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 1, 0, 0, 0), "End date month is correct");
+
+			// act - resize appointment's if end time is less than the start time than use just 1 month from the beggining
+			newAppPos = this.oPCRow._calcResizeNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
+
+			// assert
+			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 7, 1, 0, 0, 0), "End date month is correct");
+		});
 	</script>
 
 </head>

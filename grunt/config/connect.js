@@ -1,4 +1,6 @@
 var fs = require('fs');
+var cspMiddleware = require('../../lib/csp/middleware.js');
+
 
 module.exports = function(grunt, config) {
 
@@ -88,6 +90,19 @@ module.exports = function(grunt, config) {
 						res.end();
 
 					} ]);
+
+					var oCspConfig = {
+						allowDynamicPolicySelection: true,
+						allowDynamicPolicyDefinition: true,
+						defaultPolicyIsReportOnly: true,
+						definedPolicies: {
+							"detailed-directives": "default-src 'none'; script-src 'self'; frame-src 'self'; connect-src 'self'; font-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';",
+							"almost-default": "default-src 'self'; script-src 'self'; style-src 'unsafe-inline' *;",
+							"ui5-working": "default-src 'self'; script-src 'unsafe-eval' * ; style-src 'unsafe-inline' * ;"
+						}
+					};
+					middlewares.unshift(cspMiddleware("sap-ui-xx-csp-policy", oCspConfig));
+
 					return middlewares;
 				}
 

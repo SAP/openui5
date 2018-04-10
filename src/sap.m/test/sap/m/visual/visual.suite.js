@@ -19,6 +19,7 @@ module.exports = [
 	"Label.spec.js",
 	"LightBox.spec.js",
 	"Link.spec.js",
+	"MenuButtonMenuPosition.spec.js",
 	"MessageBox.spec.js",
 	"MessagePage.spec.js",
 	"MessagePopover.spec.js",

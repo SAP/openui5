@@ -6,7 +6,7 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 /*global XMLHttpRequest */
-sap.ui.define(['sap/base/log'], function(log) {
+sap.ui.define(['sap/base/Log'], function(Log) {
 
 	"use strict";
 
@@ -34,9 +34,9 @@ sap.ui.define(['sap/base/log'], function(log) {
 
 		this.iTimer = setTimeout(function() {
 			if (that.bRunnable && that.bParentResponded && !that.bParentUnlocked) {
-				log.error("Reached timeout of " + that.iTimeout + "ms waiting for the parent to be unlocked", "", "sap/ui/security/FrameOptions");
+				Log.error("Reached timeout of " + that.iTimeout + "ms waiting for the parent to be unlocked", "", "sap/ui/security/FrameOptions");
 			} else {
-				log.error("Reached timeout of " + that.iTimeout + "ms waiting for a response from parent window", "", "sap/ui/security/FrameOptions");
+				Log.error("Reached timeout of " + that.iTimeout + "ms waiting for a response from parent window", "", "sap/ui/security/FrameOptions");
 			}
 			that._callback(false);
 		}, this.iTimeout);
@@ -57,7 +57,7 @@ sap.ui.define(['sap/base/log'], function(log) {
 
 			// "deny" mode blocks embedding page from all origins
 			if (this.sMode === FrameOptions.Mode.DENY) {
-				log.error("Embedding blocked because configuration mode is set to 'DENY'", "", "sap/ui/security/FrameOptions");
+				Log.error("Embedding blocked because configuration mode is set to 'DENY'", "", "sap/ui/security/FrameOptions");
 				this._callback(false);
 				return;
 			}
@@ -273,7 +273,7 @@ sap.ui.define(['sap/base/log'], function(log) {
 			xmlhttp.setRequestHeader('Accept', 'application/json');
 			xmlhttp.send();
 		} else {
-			log.error("Embedding blocked because the whitelist or the whitelist service is not configured correctly", "", "sap/ui/security/FrameOptions");
+			Log.error("Embedding blocked because the whitelist or the whitelist service is not configured correctly", "", "sap/ui/security/FrameOptions");
 			this._callback(false);
 		}
 	};
@@ -292,12 +292,12 @@ sap.ui.define(['sap/base/log'], function(log) {
 					bTrusted = oRuleSet.framing;
 				}
 				if (!bTrusted) {
-					log.error("Embedding blocked because the whitelist service does not allow framing", "", "sap/ui/security/FrameOptions");
+					Log.error("Embedding blocked because the whitelist service does not allow framing", "", "sap/ui/security/FrameOptions");
 				}
 				this._applyTrusted(bTrusted);
 			}
 		} else {
-			log.error("The configured whitelist service is not available: " + xmlhttp.status, "", "sap/ui/security/FrameOptions");
+			Log.error("The configured whitelist service is not available: " + xmlhttp.status, "", "sap/ui/security/FrameOptions");
 			this._callback(false);
 		}
 	};

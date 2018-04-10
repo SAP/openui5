@@ -106,6 +106,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 	CalendarRowRenderer.renderAfterAppointments = function(oRm, oRow) {
 	};
 
+	/**
+	 * This hook method is reserved for derived classes to render resize handles in the appointment.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.unified.CalendarRow} oRow An object representation of the control that should be rendered.
+	 * @param {sap.ui.unified.CalendarAppointment} oAppointment An object representation of the control that should be rendered.
+	 */
+	CalendarRowRenderer.renderResizeHandle = function (oRm, oRow, oAppointment) {
+	};
+
 	CalendarRowRenderer.renderAppointments = function(oRm, oRow, aTypes){
 
 		var aAppointments = oRow._getVisibleAppointments();
@@ -607,6 +617,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/date/UniversalDate', 'sap/ui/un
 		oRm.write("<span id=\"" + sId + "-Descr\" class=\"sapUiInvisibleText\">" + sAriaText + "</span>");
 
 		oRm.write("</div>");
+
+		this.renderResizeHandle(oRm, oRow, oAppointment);
+
 		oRm.write("</div>");
 	};
 

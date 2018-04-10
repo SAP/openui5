@@ -6,7 +6,7 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 /*global localStorage */
-sap.ui.define(['sap/base/log'], function(log) {
+sap.ui.define(['sap/base/Log'], function(Log) {
 
 	"use strict";
 
@@ -27,7 +27,7 @@ sap.ui.define(['sap/base/log'], function(log) {
 				value = localStorage.getItem(key);
 				return type === 'boolean' ? value === 'X' : value;
 			} catch (e) {
-				log.warning("Could not access localStorage while accessing '" + key + "' (value: '" + value + "', are cookies disabled?): " + e.message);
+				Log.warning("Could not access localStorage while accessing '" + key + "' (value: '" + value + "', are cookies disabled?): " + e.message);
 			}
 		};
 	}

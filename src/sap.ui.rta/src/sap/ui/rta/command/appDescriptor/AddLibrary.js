@@ -12,7 +12,7 @@ sap.ui.define([
 	 * Implementation of a command for Add Library change on App Descriptor
 	 *
 	 * @class
-	 * @extends sap.ui.rta.command.appDescriptor.AppDescriptorCommand
+	 * @extends sap.ui.rta.command.AppDescriptorCommand
 	 *
 	 * @author SAP SE
 	 * @version ${version}

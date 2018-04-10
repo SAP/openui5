@@ -14,7 +14,7 @@ sap.ui.define(['./SemanticToggleButton'], function(SemanticToggleButton) {
 	* A semantic-specific button, eligible for the <code>favoriteAction</code> aggregation of the
 	* {@link sap.f.semantic.SemanticPage} to be placed in its title.
 	*
-	* @extends sap.f.semantic.SemanticButton
+	* @extends sap.f.semantic.SemanticToggleButton
 	*
 	* @author SAP SE
 	* @version ${version}

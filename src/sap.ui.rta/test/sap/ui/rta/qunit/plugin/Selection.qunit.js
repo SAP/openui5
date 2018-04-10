@@ -66,16 +66,20 @@ sap.ui.require([
 						changeHandler : {}
 					}
 				],
-				"sap.m.Button": [
-				],
+				"sap.m.Button": [],
 				"sap.m.Text": [
 					SimpleChanges.hideControl
 				]
 			});
 
 			this.oCommandFactory = new CommandFactory(
-					{flexSettings: {layer:"CUSTOMER", developerMode: false}}
-					);
+				{
+					flexSettings: {
+						layer:"CUSTOMER",
+						developerMode: false
+					}
+				}
+			);
 
 			this.oSelectionPlugin = new Selection({
 				commandFactory :this.oCommandFactory,
@@ -162,7 +166,8 @@ sap.ui.require([
 							combine : {
 								changeType: "combineChange",
 								changeOnRelevantContainer : true
-							}
+							},
+							remove: null
 						}
 					},
 					"sap.m.Text" : {
@@ -200,7 +205,6 @@ sap.ui.require([
 			assert.ok(oOverlay.isSelected(), "then single overlay is selected");
 		});
 
-
 		QUnit.test("when trying to select the 2. compatible (removable/combinable) control", function(assert){
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
@@ -210,7 +214,6 @@ sap.ui.require([
 			assert.ok(oOverlay1.isSelected(), "then innerBtn11 overlay is selected");
 			assert.ok(oOverlay2.isSelected(), "then innerBtn12 overlay is selected");
 		});
-
 
 		QUnit.test("when trying to select the 2. control not multiselection enabled control (removable/combinable)", function(assert){
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("container1"));
@@ -418,9 +421,7 @@ sap.ui.require([
 		});
 	});
 
-
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
-
 });

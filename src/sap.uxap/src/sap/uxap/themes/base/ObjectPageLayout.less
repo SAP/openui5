@@ -171,6 +171,15 @@ body > .sapUxAPObjectPageLayout,
 .sapUiSizeCompact .sapUxAPObjectPageLayout .sapUxAPObjectPageFooter {
 	.sapUxAPObjectPageFloatingFooter {
 		height: 2.5rem;
+
+		&.sapMBar-CTX {
+			// BCP: 1870106645 
+			// When sap.m.Bar is used as footer (in compact) setting 2.5rem height 
+			// breaks the Bar`s content vertical alignment.
+			// Fixing this internally in the sap.m.Bar (in the context of flaoting footer)
+			// will require significant effort, so we set height of 2rem (the expected Bar height by the visual spec).
+			height: 2rem;
+		}
 	}
 	height: 2.5rem;
 }

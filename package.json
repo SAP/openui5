@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "start": "grunt serve",
-    "test": "grunt lint"
+    "test": "grunt lint",
+    "link-all": "wsrun link"
   },
   "keywords": [
     "openui5",
@@ -57,9 +58,10 @@
     "rimraf": "^2.3.2",
     "selenium-webdriver": "^3.0.1",
     "semver": "^4.3.0",
-    "status-bar": "^2.0.2"
+    "status-bar": "^2.0.2",
+    "wsrun": "^3.0.0"
   },
   "workspaces": [
-    "src/*"
+    "src/!(testsuite-utils)"
   ]
 }

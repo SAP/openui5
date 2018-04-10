@@ -63,7 +63,7 @@
 				<m:ObjectNumber number="219" numberUnit="K"></m:ObjectNumber>
 			</layout:VerticalLayout>
 			<m:ObjectAttribute title="Label" text="In Stock"/>
-			<m:Button icon="sap-icon://nurse"/>
+			<m:Button icon="sap-icon://nurse" tooltip="nurse"/>
 			<m:Tokenizer>
 				<m:Token text="Wayne Enterprises"/>
 				<m:Token text="Big's Caramels"/>

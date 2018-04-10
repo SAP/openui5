@@ -328,7 +328,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	};
 
 	AnalyticalTable.prototype._applyODataModelAnalyticalAdapter = function (oModel) {
-		if (oModel != null) {
+		if (oModel) {
 			ODataModelAdapter.apply(oModel);
 		}
 	};
@@ -515,7 +515,7 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 				select: function() {
 					var oGroupColumnInfo = getGroupColumnInfo();
 
-					if (oGroupColumnInfo != null && oGroupColumnInfo.column != null) {
+					if (oGroupColumnInfo && oGroupColumnInfo.column) {
 						var oUngroupedColumn = oGroupColumnInfo.column;
 
 						oUngroupedColumn.setGrouped(false);
@@ -994,12 +994,12 @@ sap.ui.define(['jquery.sap.global', './AnalyticalColumn', './Table', './TreeTabl
 	AnalyticalTable.prototype._getSelectableRowCount = function() {
 		var oBinding = this.getBinding("rows");
 
-		if (oBinding == null) {
+		if (!oBinding) {
 			return 0;
 		}
 
 		var oRootNode = oBinding.getGrandTotalContextInfo();
-		return oRootNode == null ? 0 : oRootNode.totalNumberOfLeafs;
+		return oRootNode ? oRootNode.totalNumberOfLeafs : 0;
 	};
 
 	/**

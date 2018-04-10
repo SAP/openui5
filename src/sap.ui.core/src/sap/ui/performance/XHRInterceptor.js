@@ -5,7 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["sap/base/util/getObject", "sap/base/log"], function(getObject, log) {
+sap.ui.define(["sap/base/util/getObject", "sap/base/Log"], function(getObject, Log) {
 	"use strict";
 
 	/**
@@ -102,7 +102,7 @@ sap.ui.define(["sap/base/util/getObject", "sap/base/log"], function(getObject, l
 		 * @private
 		 */
 		register: function(sName, sXHRMethod, fnCallback) {
-			log.debug("Register '" + sName + "' for XHR function '" + sXHRMethod + "'", XHRINTERCEPTOR);
+			Log.debug("Register '" + sName + "' for XHR function '" + sXHRMethod + "'", XHRINTERCEPTOR);
 
 			// initially the override needs to be placed per XHR method
 			if (!mOverrides[sXHRMethod]) {
@@ -135,7 +135,7 @@ sap.ui.define(["sap/base/util/getObject", "sap/base/log"], function(getObject, l
 					delete mRegistry[sName];
 				}
 			}
-			log.debug("Unregister '" + sName + "' for XHR function '" + sXHRMethod + (bRemove ? "'" : "' failed"), XHRINTERCEPTOR);
+			Log.debug("Unregister '" + sName + "' for XHR function '" + sXHRMethod + (bRemove ? "'" : "' failed"), XHRINTERCEPTOR);
 			return bRemove;
 		},
 

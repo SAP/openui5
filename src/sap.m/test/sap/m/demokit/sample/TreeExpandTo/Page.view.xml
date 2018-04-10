@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.m.sample.TreedExpandTo.Page"
+	controllerName="sap.m.sample.TreeExpandTo.Page"
 	xmlns:l="sap.ui.layout"
 	xmlns:core="sap.ui.core"
 	xmlns:mvc="sap.ui.core.mvc"

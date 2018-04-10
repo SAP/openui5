@@ -87,6 +87,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
 			"sap.m.TimePickerMaskMode",
+			"sap.m.TileSizeBehaviour",
 			"sap.m.ToolbarDesign",
 			"sap.m.VerticalPlacementType",
 			"sap.m.semantic.SemanticRuleSetType"
@@ -614,28 +615,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one hour.
+		 * @public
 		 */
 		Hour : "Hour",
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one day.
+		 * @public
 		 */
 		Day : "Day",
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one month.
+		 * @public
 		 */
 		Month : "Month",
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one day
 		 * where 7 days are displayed, starting with the first day of the week.
+		 * @public
 		 */
 		Week : "Week",
 
 		/**
 		 * Represents the key of the built-in view, in which the intervals have the size of one day
 		 * where 31 days are displayed, starting with the first day of the month.
+		 * @public
 		 */
 		OneMonth : "One Month"
 
@@ -1303,6 +1309,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	};
 
 	/**
+	 * Describes the behavior of tiles when displayed on a small-screened phone (374px wide and lower).
+	 *
+	 * @enum {string}
+	 * @since 1.56.0
+	 * @ui5-metamodel This enumeration will also be described in the SAPUI5 (legacy) designtime metamodel
+	 * @public
+	 */
+	sap.m.TileSizeBehavior = {
+		/**
+		 * Default behavior: tiles adapt to the size of the screen, getting smaller on small screens.
+		 * @public
+		 */
+		Responsive: "Responsive",
+		/**
+		 * Tiles are small all the time, regardless of the actual screen size.
+		 * @public
+		 */
+		Small: "Small"
+	};
+
+	/**
 	 * Different levels for headers.
 	 *
 	 * @enum {string}
@@ -1538,11 +1565,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Standard. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in two separate lines.
+		 * @public
 		 */
 		Standard : "Standard",
 
 		/**
 		 * Inline. In this mode when the <code>count</code> and the <code>text</code> are set, they are displayed in one line.
+		 * @public
 		 */
 		Inline : "Inline"
 	};
@@ -2565,7 +2594,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * The grid width for each table popin is small, hence this allows more content to be rendered in a single popin row.
 		 * This value defines small grid width for the table popins.
 		 *
-		 * <b>Note:</b> This feature is currently not supported with IE and Edge browsers.
+		 * <b>Note:</b> This feature is currently not supported with Internet Explorer and Edge (version lower than 16) browsers.
 		 * @public
 		 * @since 1.52
 		 */
@@ -2575,7 +2604,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 * Sets grid layout for rendering the table popins.
 		 * The grid width for each table popin is comparatively larger than <code>GridSmall</code>, hence this allows less content to be rendered in a single popin row.
 		 *
-		 * <b>Note:</b> This feature is currently not supported with IE and Edge browsers.
+		 * <b>Note:</b> This feature is currently not supported with Internet Explorer and Edge (version lower than 16) browsers.
 		 * @public
 		 * @since 1.52
 		 */
@@ -2987,6 +3016,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	/**
 	 * Types of the Toolbar Design.
 	 *
+	 * To preview the different combinations of <code>sap.m.ToolbarDesign</code> and <code>sap.m.ToolbarStyle</code>,
+	 * see the {@link sap.m.sample.ToolbarDesign sample}.
+	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.16.8
@@ -3026,6 +3058,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * <b>Note:</b> Keep in mind that the styles are theme-dependent and can differ based on the currently used theme.
 	 *
+	 * To preview the different combinations of <code>sap.m.ToolbarStyle</code> and <code>sap.m.ToolbarDesign</code>,
+	 * see the {@link sap.m.sample.ToolbarDesign sample}.
+	 *
 	 * @enum {string}
 	 * @public
 	 * @since 1.54
@@ -3041,6 +3076,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 		/**
 		 * Simplified visual style dependent on the used theme.
+		 *
+		 * <b>Note:</b> For the Belize themes, the <code>sap.m.Toolbar</code> is displayed with no border.
 		 * @public
 		 */
 		Clear : "Clear"
@@ -3183,6 +3220,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 *
 		 * For more information, see {@link sap.m.StepInput}'s <code>step</code>,
 		 * <code>largerStep</code> and <code>stepMode</code> properties.
+		 * @public
 		 */
 		AdditionAndSubtraction: "AdditionAndSubtraction",
 		 /**
@@ -3206,6 +3244,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		 *
 		 * For more information, see {@link sap.m.StepInput}'s <code>step</code>,
 		 * <code>largerStep</code> and <code>stepMode</code> properties.
+		 * @public
 		 */
 		Multiple: "Multiple"
 	};

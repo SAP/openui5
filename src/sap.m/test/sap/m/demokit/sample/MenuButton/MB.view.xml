@@ -90,5 +90,40 @@
 				</Menu>
 			</menu>
 		</MenuButton>
+
+		<Label text = "Menu button with menuPosition set to Right Bottom which in RTL will stay on the Right"/>
+		<MenuButton text="File Menu" defaultAction="onDefaultAction" useDefaultActionOnly="true" menuPosition="RightBottom">
+			<menu>
+				<Menu itemSelected="onMenuAction">
+					<items>
+						<MenuItem text="Edit" icon="sap-icon://edit" />
+						<MenuItem text="Save" icon="sap-icon://save" />
+						<MenuItem text="Open" icon="sap-icon://open-folder" />
+					</items>
+				</Menu>
+			</menu>
+		</MenuButton>
+
+	<Label text = "Menu button with menuPosition set to Begin Bottom. This way the menu in LTR will be positioned on the left and in RTL on the Right."/>
+		<MenuButton text="Calculator" useDefaultActionOnly="true" menuPosition="BeginBottom">
+			<menu>
+				<Menu itemSelected="onMenuAction">
+					<items>
+						<MenuItem text="basic" icon="sap-icon://chalkboard">
+							<items>
+								<MenuItem text="add" icon="sap-icon://add" />
+								<MenuItem text="subtract" icon="sap-icon://less" />
+								<MenuItem text="multiply" icon="sap-icon://decline" />
+							</items>
+						</MenuItem>
+						<MenuItem text="complex" icon="sap-icon://display">
+							<items>
+								<MenuItem text="square" icon="sap-icon://status-completed" />
+							</items>
+						</MenuItem>
+					</items>
+				</Menu>
+			</menu>
+		</MenuButton>
 	</VBox>
 </mvc:View>

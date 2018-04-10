@@ -518,7 +518,7 @@
 					sap.ui.getCore().applyChanges();
 
 					assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe000), "Icon content has been set properly after the font is loaded");
-					assert.strictEqual(this.oIcon.$().css("font-family"), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
+					assert.strictEqual(this.oIcon.$().css("font-family").replace(/"|'/g, ""), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
 
 					oLoadFontMetadataSpy.restore();
 					done();
@@ -539,14 +539,14 @@
 				this.createIcon({src: "sap-icon://tnt/technicalsystem"});
 
 				assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe000), "The icon content attribute is not set yet while the font is loading");
-				assert.strictEqual(this.oIcon.$().css("font-family"), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
+				assert.strictEqual(this.oIcon.$().css("font-family").replace(/"|'/g, ""), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
 			});
 
 			QUnit.test("A different icon is displayed immediately after font was loaded lazily", function (assert) {
 				this.createIcon({src: "sap-icon://tnt/python"});
 
 				assert.strictEqual(this.oIcon.$().attr("data-sap-ui-icon-content"), String.fromCharCode(0xe00f), "The icon content attribute is not set yet while the font is loading");
-				assert.strictEqual(this.oIcon.$().css("font-family"), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
+				assert.strictEqual(this.oIcon.$().css("font-family").replace(/"|'/g, ""), "SAP-icons-TNT", "Icon font family has been set properly after the font is loaded");
 			});
 
 		</script>

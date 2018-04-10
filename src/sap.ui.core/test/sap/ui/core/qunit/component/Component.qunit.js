@@ -11,31 +11,6 @@ sap.ui.define([
 	"use strict";
 	/*global sinon, QUnit, foo*/
 
-	var oCompCont1 = new ComponentContainer("CompCont1", {
-		name: "samples.components.button",
-		id: "myButton",
-		settings: {
-			text: "Text changed through settings",
-			componentData: {
-				"foo": "bar"
-			}
-		}
-	});
-	oCompCont1.placeAt("comparea1");
-
-	var oComp = sap.ui.getCore().createComponent({
-		name: "samples.components.verticalLayout",
-		id: "vLayout",
-		componentData: {
-			"foo": "bar"
-		}
-	});
-
-	var oCompCont = new ComponentContainer("ContVLayout", {
-		component : oComp
-	});
-	oCompCont.placeAt("comparea2");
-
 	//******************************************************
 	//Test preparation for custom component configuration
 	var TestComp1 = Component.extend("test.comp1.Component", {
@@ -59,7 +34,43 @@ sap.ui.define([
 	//******************************************************
 
 
-	QUnit.module("Basic Components");
+	QUnit.module("Basic Components", {
+		beforeEach: function(assert) {
+			var that = this;
+			var doneComp1 = assert.async();
+			this.oCompCont1 = new ComponentContainer("CompCont1", {
+				name: "samples.components.button",
+				id: "myButton",
+				async:true,
+				settings: {
+					text: "Text changed through settings",
+					componentData: {
+						"foo": "bar"
+					}
+				},
+				componentCreated: function() {
+					doneComp1();
+				}
+			}).placeAt("comparea1");
+			return sap.ui.getCore().createComponent({
+				name: "samples.components.verticalLayout",
+				id: "vLayout",
+				componentData: {
+					"foo": "bar"
+				},
+				async: true
+			}).then(function(oComp) {
+				that.oComp = oComp;
+				that.oCompCont = new ComponentContainer("ContVLayout", {
+					component : oComp
+				}).placeAt("comparea2");
+			});
+		},
+		afterEach: function() {
+			this.oCompCont1.destroy();
+			this.oCompCont.destroy();
+		}
+	});
 
 	QUnit.test("Simple Component Instance", function(assert){
 		assert.ok(document.getElementById("CompCont1"));
@@ -81,6 +92,7 @@ sap.ui.define([
 	QUnit.test("Components Metadata", function(assert){
 		var includes = ["css/vlayout.css","/js/includeme.js"];
 		var components =  ["samples.components.styledbutton"];
+		var oComp = this.oComp;
 		assert.equal(oComp.getMetadata().getVersion(), "1.0", "Version retrieved");
 		assert.deepEqual(oComp.getMetadata().getIncludes(), includes, "Includes Array retrieved");
 		assert.notEqual(oComp.getMetadata().getDependencies(), null, "Dependencies retrieved");
@@ -143,6 +155,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Factory Function", function(assert){
+		var oComp = this.oComp;
 		var oComponent = sap.ui.component(oComp.getId());
 		assert.equal(oComponent, oComp, "Factory function returns the same instance!");
 		oComponent = sap.ui.component({
@@ -154,6 +167,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("Component Data", function(assert){
+		var oComp = this.oComp;
+		var oCompCont1 = this.oCompCont1;
 		assert.ok(!!oComp.getComponentData(), "Component has component data");
 		assert.equal(oComp.getComponentData().foo, "bar", "Component data is correct");
 		var oComponent = sap.ui.getCore().getComponent(oCompCont1.getComponent());
@@ -161,15 +176,31 @@ sap.ui.define([
 		assert.equal(oComponent.getComponentData().foo, "bar", "Component data is correct");
 	});
 
-	QUnit.module("Creation Context");
+	QUnit.module("Creation Context", {
+		beforeEach: function() {
+			return sap.ui.getCore().createComponent({
+				name: "samples.components.verticalLayout",
+				id: "vLayout",
+				componentData: {
+					"foo": "bar"
+				},
+				async: true
+			}).then(function(oComp) {
+				this.oComp = oComp;
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oComp.destroy();
+		}
+	});
 
 	QUnit.test("Basic Test", function(assert){
 		// check that the layout has the reference to the component
-		var oLayout = oComp.byId("myLayout");
+		var oLayout = this.oComp.byId("myLayout");
 		var sRefComponentId = oLayout._sOwnerId; // INTERNAL ONLY!
-		assert.equal(oComp.getId(), sRefComponentId, "The nested control has the correct component context");
+		assert.equal(this.oComp.getId(), sRefComponentId, "The nested control has the correct component context");
 		// check the nested component having the ID of the parent component
-		var oNestedComponentContainer = oComp.byId("ContButton");
+		var oNestedComponentContainer = this.oComp.byId("ContButton");
 		var sNestedComponentId = oNestedComponentContainer.getComponent();
 		var oNestedComponent = sap.ui.component(sNestedComponentId);
 		assert.equal(sRefComponentId, Component.getOwnerIdFor(oNestedComponent), "The nested component has the correct component context");
@@ -202,10 +233,16 @@ sap.ui.define([
 	QUnit.module("Routing", {
 		beforeEach : function () {
 			// System under test
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "samples.components.routing"
-			});
-			this.oComponent.init();
+			return sap.ui.getCore().createComponent({
+				name: "samples.components.routing",
+				async: true
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+				this.oComponent.init();
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oComponent.destroy();
 		}
 	});
 
@@ -238,12 +275,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("Routing", {
-		beforeEach : function () {
-			// System under test
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "samples.components.targets"
+		beforeEach : function (assert) {
+			var done = assert.async();
+			var that = this;
+			sap.ui.require(["sap/m/routing/Targets"], function() {
+				// System under test
+				sap.ui.getCore().createComponent({
+					name: "samples.components.targets",
+					async: true
+				}).then(function(oComponent) {
+					that.oComponent = oComponent;
+					that.oComponent.init();
+					done();
+				});
 			});
-			this.oComponent.init();
+		},
+		afterEach: function() {
+			this.oComponent.destroy();
 		}
 	});
 
@@ -268,9 +316,15 @@ sap.ui.define([
 	QUnit.module("Root control", {
 		beforeEach : function () {
 			// System under test
-			this.oComponent = sap.ui.getCore().createComponent({
-				name: "samples.components.routing"
-			});
+			return sap.ui.getCore().createComponent({
+				name: "samples.components.routing",
+				async: true
+			}).then(function(oComponent) {
+				this.oComponent = oComponent;
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.oComponent.destroy();
 		}
 	});
 
@@ -310,7 +364,9 @@ sap.ui.define([
 				}
 			};
 
-			var oServer = this.oServer = sinon.sandbox.useFakeServer();
+			// workaround sinon gh #1534
+			this._oSandbox.serverPrototype = null;
+			var oServer = this.oServer = this._oSandbox.useFakeServer();
 
 			oServer.xhr.useFilters = true;
 			oServer.xhr.filters = [];
@@ -525,7 +581,7 @@ sap.ui.define([
 		var oCallbackComponent;
 
 		// set the instance created callback hook
-		sap.ui.core.Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
+		Component._fnOnInstanceCreated = function(oComponent, vCallbackConfig) {
 			oCallbackComponent = oComponent;
 
 			assert.ok(true, "sap.ui.core.Component._fnOnInstanceCreated called!");

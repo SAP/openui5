@@ -65,6 +65,8 @@ function(
 	 * If the <code>wrapping</code> property is set to <code>true</code>, the text will be
 	 * displayed on several lines, instead of being truncated.
 	 *
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/link/ Link}
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent
 	 *
@@ -124,7 +126,7 @@ function(
 			 * If validation fails, the value of the <code>href</code> property will still be set, but will not be applied to the DOM.
 			 *
 			 * <b>Note:</b> Additional whitelisting of URLs is allowed through
-			 * {@link jQuery.sap/methods/jQuery.sap.addUrlWhitelist jQuery.sap.addUrlWhitelist}.
+			 * {@link jQuery.sap.addUrlWhitelist}.
 			 *
 			 * @since 1.54.0
 			 */

@@ -43,28 +43,27 @@ sap.ui.define(['sap/ui/performance/Interaction', 'sap/ui/performance/ResourceTim
 
 	QUnit.test("set component name", function(assert) {
 
-		assert.expect(4);
+		assert.expect(5);
 		Interaction.start();
 		var oPendingInteraction = Interaction.getPending();
-		var sComponentName = oPendingInteraction.component;
+		var sComponentName = oPendingInteraction.stepComponent;
 
-		assert.strictEqual(sComponentName, "undetermined", "component name should not be set");
 
-		//busy indicator adds busy duration - everything is fine
+		assert.strictEqual(oPendingInteraction.component, "undetermined", "component name should not be set");
+		assert.strictEqual(sComponentName, undefined, "step component name should not be set");
+
 		Interaction.setStepComponent("foo");
-		sComponentName = oPendingInteraction.component;
+		sComponentName = oPendingInteraction.stepComponent;
 		assert.strictEqual(sComponentName, "foo", "component name should be set");
 
 
-		// interaction is ended because a key was pressed (busy indicator still shows)
 		Interaction.end(true);
 		assert.notOk(Interaction.getPending(), "interaction is ended because a key was pressed");
 
-		//BusyIndicator#hide uis triggered which calls #addBusyDuration, this call should not fail
 		try {
 			Interaction.setStepComponent("bar");
 		} catch (e) {
-			assert.notOk(e, "addBusyDuration should not fail");
+			assert.notOk(e, "setStepComponent should not fail");
 		}
 		assert.strictEqual(sComponentName, "foo", "no additional duration is added");
 

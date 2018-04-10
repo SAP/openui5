@@ -99,7 +99,12 @@ sap.ui.define([],
 			/**
 			 * Copy text for ruleset loading indicator
 			 */
-			RULESET_LOADING: "Loading ruleset files:"
+			RULESET_LOADING: "Loading ruleset files:",
+
+			/**
+			 * Initial value of all filters in Support Assistant views
+			 */
+			FILTER_VALUE_ALL: "All"
 
 		};
 

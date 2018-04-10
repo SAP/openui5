@@ -60,6 +60,8 @@ sap.ui.define([
 		 * <b>Note:</b> The <code>MessagePage</code> is not intended to be used as a top-level control,
 		 * but rather used within controls such as <code>NavContainer</code>, <code>App</code>, <code>Shell</code> or other container controls.
 		 *
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/message-page/ Message Page}
+		 *
 		 * @extends sap.ui.core.Control
 		 * @version ${version}
 		 *

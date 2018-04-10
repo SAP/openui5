@@ -3,8 +3,8 @@
  */
 
 // Provides class sap.ui.base.Metadata
-sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
-	function(jQuery/* , jQuerySap */) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.script'],
+	function(jQuery, Device /* , jQuerySap */) {
 	"use strict";
 
 
@@ -246,6 +246,101 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.script'],
 		return false;
 	};
 
+	/*
+	 * Yet another PhantomJS issue:
+	 * Under certain circumstances, PhantomJS continues to call the previously defined getter,
+	 * although the property meanwhile has been reconfigured to a fixed value.
+	 * To avoid errors like "trying to write non-writable property", the property is redefined
+	 * as 'writable:true' in PhantomJS.
+	 */
+	var WRITABLE_IFF_PHANTOM = !!Device.browser.phantomJS;
+
+	/*
+	 * Lazy calculation of the set of implemented types.
+	 *
+	 * A calculation function is configured as getter for the <code>_mImplementedTypes</code>
+	 * on the prototype object. On first call for a metadata instance, it collects
+	 * the implemented types (classes, interfaces) from the described class and
+	 * any base classes and writes it to the property <code>_mImplementedTypes</code> of the
+	 * current instance of metadata. Future read access to the property will immediately
+	 * return the instance property and not call the calculation function again.
+	 */
+	Object.defineProperty(Metadata.prototype, "_mImplementedTypes", {
+		get: function() {
+
+			if ( this === Metadata.prototype ) {
+				throw new Error("sap.ui.base.Metadata: The '_mImplementedTypes' property must not be accessed on the prototype");
+			}
+
+			// create map of types, including inherited types
+			// Note: to save processing time and memory, the inherited types are merged via the prototype chain of 'result'
+			var result = Object.create(this._oParent ? this._oParent._mImplementedTypes : null);
+			/*
+			 * Flat alternative:
+			 * var result = Object.create(null);
+			 * if ( this._oParent ) {
+			 *   Object.assign(result, this._oParent._mImplementedTypes);
+			 * }
+			 */
+
+			// add own class
+			result[this._sClassName] = true;
+
+			// additionally collect interfaces
+			var aInterfaces = this.getInterfaces(),
+				i = aInterfaces.length;
+			while ( i-- > 0 ) {
+				if ( !result[aInterfaces[i]] ) {
+					// take care to write property only if it hasn't been set already
+					result[aInterfaces[i]] = true;
+				}
+			}
+
+			// write instance property, hiding the getter on the prototype
+			Object.defineProperty(this, "_mImplementedTypes", {
+				value: Object.freeze(result),
+				writable: WRITABLE_IFF_PHANTOM,
+				configurable: false
+			});
+
+			return result;
+		},
+		configurable: true
+	});
+
+	/**
+	 * Checks whether the class described by this metadata object is of the named type.
+	 *
+	 * This check is solely based on the type names as declared in the class metadata.
+	 * It compares the given <code>vTypeName</code> with the name of this class, with the
+	 * names of any base class of this class and with the names of all interfaces
+	 * implemented by any of the aforementioned classes.
+	 *
+	 * Instead of a single type name, an array of type names can be given and the method
+	 * will check if this class is of any of the listed types (logical or).
+	 *
+	 * Should the UI5 class system in future implement additional means of associating classes
+	 * with type names (e.g. by introducing mixins), then this method might detect matches
+	 * for those names as well.
+	 *
+	 * @param {string|string[]} vTypeName Type or types to check for
+	 * @returns {boolean} Whether this class is of the given type or of any of the given types
+	 * @public
+	 * @since 1.56
+	 */
+	Metadata.prototype.isA = function(vTypeName) {
+		var mTypes = this._mImplementedTypes;
+		if ( Array.isArray(vTypeName) ) {
+			for ( var i = 0; i < vTypeName.length; i++ ) {
+				if ( vTypeName[i] in mTypes ) {
+					return true;
+				}
+			}
+			return false;
+		}
+		// Note: the check with 'in' also finds inherited types via the prototype chain of mTypes
+		return vTypeName in mTypes;
+	};
 
 	/**
 	 * Returns whether the described class is abstract

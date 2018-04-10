@@ -59,6 +59,7 @@
                 <module>sap/m/HeaderContainer</module>
                 <module>sap/m/GenericTileMode</module>
                 <module>sap/m/GenericTileScope</module>
+                <module>sap/m/TileSizeBehavior</module>
                 <module>sap/m/Size</module>
                 <module>sap/m/ValueColor</module>
                 <module>sap/m/ValueCSSColor</module>

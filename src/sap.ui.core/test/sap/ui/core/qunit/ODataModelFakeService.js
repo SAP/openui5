@@ -42,6 +42,8 @@ xhr.onCreate = function(request) {
 		"GET": {
 			"$metadata":
 				[200, oMetaDataHeaders, sMetaData],
+      "$metadata?test-namespace=true":
+				[200, oMetaDataHeaders, sMetaData4],
       "$metadata?sap-context-token=test-token":
 				[200, oMetaDataHeaders, sMetaData],
 			"$metadata?sap-value-list=none":
@@ -1290,6 +1292,46 @@ var sMetaData = '\
 		<FunctionImport Name="GetProductsByRating" EntitySet="Products" ReturnType="Collection(NorthwindModel.Product)" m:HttpMethod="PUT">\
 			<Parameter Name="rating" Type="Edm.Int32" Mode="In"/>\
 		</FunctionImport>\
+      </EntityContainer>\
+    </Schema>\
+  </edmx:DataServices>\
+</edmx:Edmx>\
+	';
+
+var sMetaData4 = '\
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>\
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">\
+  <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="1.0">\
+    <Schema Namespace="North.wind.Model" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+      <EntityType Name="Category">\
+        <Key>\
+          <PropertyRef Name="CategoryID" />\
+        </Key>\
+        <Property Name="CategoryID" Type="Edm.Int32" Nullable="false" p8:StoreGeneratedPattern="Identity" xmlns:p8="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />\
+        <Property Name="CategoryName" Type="Edm.String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />\
+        <Property Name="Description" Type="Edm.String" Nullable="true" MaxLength="Max" Unicode="true" FixedLength="false" />\
+        <NavigationProperty Name="Products" Relationship="NorthwindModel.FK_Products_Categories" FromRole="Categories" ToRole="Products" />\
+      </EntityType>\
+     <Association Name="FK_Products_Categories">\
+        <End Role="Categories" Type="North.wind.Model.Category" Multiplicity="0..1" />\
+        <End Role="Products" Type="North.wind.Model.Product" Multiplicity="*" />\
+        <ReferentialConstraint>\
+          <Principal Role="Categories">\
+            <PropertyRef Name="CategoryID" />\
+          </Principal>\
+          <Dependent Role="Products">\
+            <PropertyRef Name="CategoryID" />\
+          </Dependent>\
+        </ReferentialConstraint>\
+      </Association>\
+    </Schema>\
+    <Schema Namespace="ODataWeb.Northwind.Model" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">\
+      <EntityContainer Name="NorthwindEntities" p7:LazyLoadingEnabled="true" m:IsDefaultEntityContainer="true" xmlns:p7="http://schemas.microsoft.com/ado/2009/02/edm/annotation">\
+        <EntitySet Name="Categories" EntityType="North.wind.Model.Category" />\
+        <AssociationSet Name="FK_Products_Categories" Association="North.wind.Model.FK_Products_Categories">\
+          <End Role="Categories" EntitySet="Categories" />\
+          <End Role="Products" EntitySet="Products" />\
+        </AssociationSet>\
       </EntityContainer>\
     </Schema>\
   </edmx:DataServices>\

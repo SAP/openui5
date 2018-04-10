@@ -115,6 +115,18 @@
         "type": "FIX",
         "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
         "references": []
+      },
+      {
+        "id": "a67e65ac5ebe57c76cb58c45e8a224e27ed489ce",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Resizing of appointments is now possible",
+        "references": []
+      },
+      {
+        "id": "f5791b7b8ba4214635d5e0a4c55e72ecfdd4aaab",
+        "type": "FIX",
+        "text": " sap.ui.unified.MenuItem|ShellHeadUserItem: insert font face",
+        "references": []
       }
     ]
   }

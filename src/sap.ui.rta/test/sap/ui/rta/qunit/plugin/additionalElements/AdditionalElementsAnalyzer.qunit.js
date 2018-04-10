@@ -499,7 +499,7 @@ function(
 			assert.equal(aAdditionalElements.length, 4, "then the 3 invisible elements with oData + the element without binding are returned");
 			assert.equal(aAdditionalElements[0].label, "Invisible 1", "then the label is set correctly");
 			assert.equal(aAdditionalElements[1].label, "Complex Invisible oData Property", "then the label is set correctly");
-			assert.ok(aAdditionalElements[2].label, "the element without binding is assigned a label");
+			assert.ok(typeof aAdditionalElements[2].label === 'string', "the element without binding is assigned a label");
 			assert.equal(aAdditionalElements[3].label, "Invisible Property04", "then the label is set correctly");
 			assert.equal(aAdditionalElements[0].type, "invisible", "then the type is set correctly");
 			assert.equal(aAdditionalElements[1].type, "invisible", "then the type is set correctly");

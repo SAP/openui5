@@ -592,18 +592,18 @@ sap.ui.require([
 		var oRD = new ResponsiveFlowLayoutData("RD1");
 		var oVD = new VariantLayoutData("VD1");
 
-		assert.notOk(oFormLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData"), "no LayoutData");
+		assert.notOk(oFormLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData"), "no LayoutData");
 
 		oField.setLayoutData(oRD);
-		assert.notOk(oFormLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData"), "no LayoutData");
+		assert.notOk(oFormLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData"), "no LayoutData");
 
 		oField.setLayoutData(oGD);
-		assert.equal(oFormLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData"), oGD, "LayoutData found");
+		assert.equal(oFormLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData"), oGD, "LayoutData found");
 
 		oField.setLayoutData(oVD);
 		oVD.addMultipleLayoutData(oRD);
 		oVD.addMultipleLayoutData(oGD);
-		assert.equal(oFormLayout.getLayoutDataForElement(oField, "sap/ui/layout/GridData"), oGD, "LayoutData found");
+		assert.equal(oFormLayout.getLayoutDataForElement(oField, "sap.ui.layout.GridData"), oGD, "LayoutData found");
 
 		oField.destroy();
 	});

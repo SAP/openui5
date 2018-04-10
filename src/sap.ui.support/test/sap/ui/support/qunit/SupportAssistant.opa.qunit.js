@@ -215,6 +215,5 @@
 				Then.iTeardownMyAppFrame();
 			});
 
-			QUnit.start();
 		});
 })();
