@@ -701,63 +701,6 @@ Simple Syntax Highlighter
   color: #c26230;
 }
 
-/* SmartPhones (landscape) ----------- */
-@media only screen and (min-width : 321px) and (orientation : landscape) {
-.ostern {
-  width: 30%;
-	position: absolute;
-	right:0%;
-	top:75%;
-  }
-}
-
-/* SmartPhones (portrait) ----------- */
-@media only screen and (max-width : 415px) {
-.ostern {
-	width: 35%;
-	position: absolute;
-	right:1%;
-	top: 92%;
-  }
-}
-
-/* SmartPhones - iPhoneX (landscape) ----------- */
-@media only screen and (min-width : 740px) and (orientation : landscape) {
-.ostern {
-	width: 20%;
-	position: absolute;
-	right:35%;
-	top: 17%;
-  }
-}
-
-/* SmartPhones - tablets (landscape) ----------- */
-@media only screen and (min-width : 1024px) and (orientation : landscape) {
-.ostern {
-	position: absolute;
-	right:43%;
-	top: 17%;
-  }
-}
-
-/* SmartPhones - iPad (portrait) ----------- */
-@media only screen and (min-height : 900px) and (orientation : portrait) {
-.ostern {
-	position: absolute;
-	right:1%;
-	top: 75%;
-  }
-}
-
-/* SmartPhones - iPad pro (portrait) ----------- */
-@media only screen and (min-height : 1360px) and (orientation : portrait) {
-  .ostern {
-    position: absolute;
-    right:43%;
-    top: 17%;
-  }
-}
-
 
 
 
