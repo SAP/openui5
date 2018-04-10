@@ -6,7 +6,7 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 sap.ui.define([
-	'sap/base/log',
+	'sap/base/Log',
 	'sap/base/util/getObject'
 ], function(Log, getObject) {
 	"use strict";

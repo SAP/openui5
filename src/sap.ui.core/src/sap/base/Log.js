@@ -12,13 +12,13 @@
  * {@link sap.base.log.debug}, {@link sap.base.log.info}, {@link sap.base.log.warning},
  * {@link sap.base.log.error} and {@link sap.base.log.fatal} creates and records a log entry,
  * containing a timestamp, a log level, a message with details and a component info.
- * The log level will be one of {@link module:sap/base/log.Level} and equals the name of the concrete logging method.
+ * The log level will be one of {@link module:sap/base/Log.Level} and equals the name of the concrete logging method.
  *
  * By using the {@link sap.base.log.setLevel} method, consumers can determine the least important
  * log level which should be recorded. Less important entries will be filtered out. (Note that higher numeric
  * values represent less important levels). The initially set level depends on the mode that UI5 is running in.
- * When the optimized sources are executed, the default level will be {@link module:sap/base/log.Level.ERROR}.
- * For normal (debug sources), the default level is {@link module:sap/base/log.Level.DEBUG}.
+ * When the optimized sources are executed, the default level will be {@link module:sap/base/Log.Level.ERROR}.
+ * For normal (debug sources), the default level is {@link module:sap/base/Log.Level.DEBUG}.
  *
  * All logging methods allow to specify a <b>component</b>. These components are simple strings and
  * don't have a special meaning to the UI5 framework. However they can be used to semantically group
@@ -45,19 +45,19 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	"use strict";
 
 	/**
-	 * @exports sap/base/log
+	 * @exports sap/base/Log
 	 */
-	var oLogger = {};
+	var Log = {};
 
 	/**
 	 * Enumeration of the configurable log levels that a Logger should persist to the log.
 	 *
-	 * Only if the current LogLevel is higher than the level {@link module:sap/base/log.Level} of the currently added log entry,
+	 * Only if the current LogLevel is higher than the level {@link module:sap/base/Log.Level} of the currently added log entry,
 	 * then this very entry is permanently added to the log. Otherwise it is ignored.
 	 * @enum {int}
 	 * @private
 	 */
-	oLogger.Level = {
+	Log.Level = {
 		/**
 		 * Do not log anything
 		 * @private
@@ -110,7 +110,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	/**
 	 * Maximum log level to be recorded (per component).
 	 */
-	mMaxLevel = { '' : oLogger.Level.ERROR },
+	mMaxLevel = { '' : Log.Level.ERROR },
 
 	/**
 	 * Registered listener to be informed about new log entries.
@@ -145,19 +145,19 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 						}
 					}
 				},
-				attach: function(oLogger, oLstnr){
+				attach: function(oLog, oLstnr){
 					if (oLstnr) {
 						oListener.listeners.push(oLstnr);
 						if (oLstnr.onAttachToLog) {
-							oLstnr.onAttachToLog(oLogger);
+							oLstnr.onAttachToLog(oLog);
 						}
 					}
 				},
-				detach: function(oLogger, oLstnr){
+				detach: function(oLog, oLstnr){
 					for (var i = 0; i < oListener.listeners.length; i++) {
 						if (oListener.listeners[i] === oLstnr) {
 							if (oLstnr.onDetachFromLog) {
-								oLstnr.onDetachFromLog(oLogger);
+								oLstnr.onDetachFromLog(oLog);
 							}
 							oListener.listeners.splice(i,1);
 							return;
@@ -181,8 +181,8 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @private
 	 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 	 */
-	oLogger.fatal = function(sMessage, sDetails, sComponent, fnSupportInfo) {
-		log(oLogger.Level.FATAL, sMessage, sDetails, sComponent, fnSupportInfo);
+	Log.fatal = function(sMessage, sDetails, sComponent, fnSupportInfo) {
+		log(Log.Level.FATAL, sMessage, sDetails, sComponent, fnSupportInfo);
 	};
 
 	/**
@@ -198,8 +198,8 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @private
 	 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 	 */
-	oLogger.error = function(sMessage, sDetails, sComponent, fnSupportInfo) {
-		log(oLogger.Level.ERROR, sMessage, sDetails, sComponent, fnSupportInfo);
+	Log.error = function(sMessage, sDetails, sComponent, fnSupportInfo) {
+		log(Log.Level.ERROR, sMessage, sDetails, sComponent, fnSupportInfo);
 	};
 
 	/**
@@ -215,8 +215,8 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @private
 	 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 	 */
-	oLogger.warning = function(sMessage, sDetails, sComponent, fnSupportInfo) {
-		log(oLogger.Level.WARNING, sMessage, sDetails, sComponent, fnSupportInfo);
+	Log.warning = function(sMessage, sDetails, sComponent, fnSupportInfo) {
+		log(Log.Level.WARNING, sMessage, sDetails, sComponent, fnSupportInfo);
 	};
 
 	/**
@@ -232,8 +232,8 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @private
 	 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 	 */
-	oLogger.info = function(sMessage, sDetails, sComponent, fnSupportInfo) {
-		log(oLogger.Level.INFO, sMessage, sDetails, sComponent, fnSupportInfo);
+	Log.info = function(sMessage, sDetails, sComponent, fnSupportInfo) {
+		log(Log.Level.INFO, sMessage, sDetails, sComponent, fnSupportInfo);
 	};
 
 	/**
@@ -249,8 +249,8 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @private
 	 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 	 */
-	oLogger.debug = function(sMessage, sDetails, sComponent, fnSupportInfo) {
-		log(oLogger.Level.DEBUG, sMessage, sDetails, sComponent, fnSupportInfo);
+	Log.debug = function(sMessage, sDetails, sComponent, fnSupportInfo) {
+		log(Log.Level.DEBUG, sMessage, sDetails, sComponent, fnSupportInfo);
 	};
 
 	/**
@@ -266,8 +266,8 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @private
 	 * @SecSink {0 1 2|SECRET} Could expose secret data in logs
 	 */
-	oLogger.trace = function(sMessage, sDetails, sComponent, fnSupportInfo) {
-		log(oLogger.Level.TRACE, sMessage, sDetails, sComponent, fnSupportInfo);
+	Log.trace = function(sMessage, sDetails, sComponent, fnSupportInfo) {
+		log(Log.Level.TRACE, sMessage, sDetails, sComponent, fnSupportInfo);
 	};
 
 	/**
@@ -280,21 +280,21 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * <b>Note</b>: Setting a global default log level has no impact on already defined
 	 * component log levels. They always override the global default log level.
 	 *
-	 * @param {module:sap/base/log.Level} iLogLevel The new log level
+	 * @param {module:sap/base/Log.Level} iLogLevel The new log level
 	 * @param {string} [sComponent] The log component to set the log level for
 	 * @private
 	 */
-	oLogger.setLevel = function(iLogLevel, sComponent, _bDefault) {
+	Log.setLevel = function(iLogLevel, sComponent, _bDefault) {
 		sComponent = sComponent || sDefaultComponent || '';
 		if (!_bDefault || mMaxLevel[sComponent] == null) {
 			mMaxLevel[sComponent] = iLogLevel;
 			var sLogLevel;
-			Object.keys(oLogger.Level).forEach(function(sLevel) {
-				if (oLogger.Level[sLevel] === iLogLevel) {
+			Object.keys(Log.Level).forEach(function(sLevel) {
+				if (Log.Level[sLevel] === iLogLevel) {
 					sLogLevel = sLevel;
 				}
 			});
-			log(oLogger.Level.INFO, "Changing log level " + (sComponent ? "for '" + sComponent + "' " : "") + "to " + sLogLevel, "", "sap.base.log");
+			log(Log.Level.INFO, "Changing log level " + (sComponent ? "for '" + sComponent + "' " : "") + "to " + sLogLevel, "", "sap.base.log");
 		}
 	};
 
@@ -304,10 +304,10 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * given component, the log level for the default component of this logger is returned.
 	 *
 	 * @param {string} [sComponent] Name of the component to retrieve the log level for
-	 * @returns {module:sap/base/log.Level} The log level for the given component or the default log level
+	 * @returns {module:sap/base/Log.Level} The log level for the given component or the default log level
 	 * @private
 	 */
-	oLogger.getLevel = function(sComponent) {
+	Log.getLevel = function(sComponent) {
 		return level(sComponent || sDefaultComponent);
 	};
 
@@ -317,13 +317,13 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 *
 	 * If no component is given, the default component of this logger will be taken into account.
 	 *
-	 * @param {module:sap/base/log.Level} [iLevel=Level.DEBUG] The log level in question
+	 * @param {module:sap/base/Log.Level} [iLevel=Level.DEBUG] The log level in question
 	 * @param {string} [sComponent] Name of the component to check the log level for
 	 * @returns {boolean} Whether logging is enabled or not
 	 * @private
 	 */
-	oLogger.isLoggable = function(iLevel, sComponent) {
-		return (iLevel == null ? oLogger.Level.DEBUG : iLevel) <= level(sComponent || sDefaultComponent);
+	Log.isLoggable = function(iLevel, sComponent) {
+		return (iLevel == null ? Log.Level.DEBUG : iLevel) <= level(sComponent || sDefaultComponent);
 	};
 
 	/**
@@ -334,7 +334,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @param {boolean} bEnabled true if the support information should be logged
 	 * @private
 	 */
-	oLogger.logSupportInfo = function(bEnabled) {
+	Log.logSupportInfo = function(bEnabled) {
 		bLogSupportInfo = bEnabled;
 	};
 
@@ -345,7 +345,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * (or higher than the global level, if no component is given),
 	 * then no entry is created and <code>undefined</code> is returned.
 	 *
-	 * @param {module:sap/base/log.Level} iLevel One of the log levels FATAL, ERROR, WARNING, INFO, DEBUG, TRACE
+	 * @param {module:sap/base/Log.Level} iLevel One of the log levels FATAL, ERROR, WARNING, INFO, DEBUG, TRACE
 	 * @param {string} sMessage The message to be logged
 	 * @param {string} [sDetails] The optional details for the message
 	 * @param {string} [sComponent] The log component under which the message should be logged
@@ -408,12 +408,12 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 			if (console) { // in IE and FF, console might not exist; in FF it might even disappear
 				var logText = oLogEntry.date + " " + oLogEntry.time + " " + oLogEntry.message + " - " + oLogEntry.details + " " + oLogEntry.component;
 				switch (iLevel) {
-				case oLogger.Level.FATAL:
-				case oLogger.Level.ERROR: console.error(logText); break;
-				case oLogger.Level.WARNING: console.warn(logText); break;
-				case oLogger.Level.INFO: console.info ? console.info(logText) : console.log(logText); break;    // info not available in iOS simulator
-				case oLogger.Level.DEBUG: console.debug ? console.debug(logText) : console.log(logText); break; // debug not available in IE, fallback to log
-				case oLogger.Level.TRACE: console.trace ? console.trace(logText) : console.log(logText); break; // trace not available in IE, fallback to log (no trace)
+				case Log.Level.FATAL:
+				case Log.Level.ERROR: console.error(logText); break;
+				case Log.Level.WARNING: console.warn(logText); break;
+				case Log.Level.INFO: console.info ? console.info(logText) : console.log(logText); break;    // info not available in iOS simulator
+				case Log.Level.DEBUG: console.debug ? console.debug(logText) : console.log(logText); break; // debug not available in IE, fallback to log
+				case Log.Level.TRACE: console.trace ? console.trace(logText) : console.log(logText); break; // trace not available in IE, fallback to log (no trace)
 				// no default
 				}
 				if (console.info && oLogEntry.supportInfo) {
@@ -431,14 +431,14 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * Log entries are plain JavaScript objects with the following properties
 	 * <ul>
 	 * <li>timestamp {number} point in time when the entry was created
-	 * <li>level {module:sap/base/log.Level} LogLevel level of the entry
+	 * <li>level {module:sap/base/Log.Level} LogLevel level of the entry
 	 * <li>message {string} message text of the entry
 	 * </ul>
 	 * @returns {object[]} an array containing the recorded log entries
 	 * @private
 	 * @static
 	 */
-	oLogger.getLog = function() {
+	Log.getLog = function() {
 		return aLog.slice();
 	};
 
@@ -451,7 +451,7 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @private
 	 * @static
 	 */
-	oLogger.addLogListener = function(oListener) {
+	Log.addLogListener = function(oListener) {
 		getLogEntryListenerInstance().attach(this, oListener);
 	};
 
@@ -461,9 +461,48 @@ sap.ui.define(["sap/base/util/now"], function(now) {
 	 * @private
 	 * @static
 	 */
-	oLogger.removeLogListener = function(oListener) {
+	Log.removeLogListener = function(oListener) {
 		getLogEntryListenerInstance().detach(this, oListener);
 	};
 
-	return oLogger;
+	/**
+	 * @private
+	 */
+	function Logger(sComponent) {
+		this.fatal = function(msg,detail,comp,support) { Log.fatal(msg, detail, comp || sComponent, support); return this; };
+		this.error = function(msg,detail,comp,support) { Log.error(msg, detail, comp || sComponent, support); return this; };
+		this.warning = function(msg,detail,comp,support) { Log.warning(msg, detail, comp || sComponent, support); return this; };
+		this.info = function(msg,detail,comp,support) { Log.info(msg, detail, comp || sComponent, support); return this; };
+		this.debug = function(msg,detail,comp,support) { Log.debug(msg, detail, comp || sComponent, support); return this; };
+		this.trace = function(msg,detail,comp,support) { Log.trace(msg, detail, comp || sComponent, support); return this; };
+		this.setLevel = function(level, comp) { Log.setLevel(level, comp || sComponent); return this; };
+		this.getLevel = function(comp) { return Log.getLevel(comp || sComponent); };
+		this.isLoggable = function(level,comp) { return Log.isLoggable(level, comp || sComponent); };
+	}
+
+	/**
+	 * Returns a dedicated logger for a component
+	 * @param {string} sComponent Name of the component which should be logged
+	 * @param {module:sap/base/Log.Level} [iLogLevel] The default log level
+	 * @private
+	 * @static
+	 * @return {object} Logger A logger with a specified component
+	 * @return {function} {Logger.fatal} @see sap/base/Log.fatal
+	 * @return {function} {Logger.error} @see sap/base/Log.error
+	 * @return {function} {Logger.warning} @see sap/base/Log.warning
+	 * @return {function} {Logger.info} @see sap/base/Log.info
+	 * @return {function} {Logger.debug} @see sap/base/Log.debug
+	 * @return {function} {Logger.trace} @see sap/base/Log.trace
+	 * @return {function} {Logger.setLevel} @see sap/base/Log.setLevel
+	 * @return {function} {Logger.getLevel} @see sap/base/Log.getLevel
+	 * @return {function} {Logger.isLoggable} @see sap/base/Log.isLoggable
+	 */
+	Log.getLogger = function(sComponent, iDefaultLogLevel) {
+		if ( !isNaN(iDefaultLogLevel) && mMaxLevel[sComponent] == null ) {
+			mMaxLevel[sComponent] = iDefaultLogLevel;
+		}
+		return new Logger(sComponent);
+	};
+
+	return Log;
 });

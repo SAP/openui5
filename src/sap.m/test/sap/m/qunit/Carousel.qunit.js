@@ -908,4 +908,53 @@
 		// Cleanup
 		oContainer.destroy();
 	});
+
+	QUnit.test("Non touch devices in Popup: Navigating clicking on arrows", function (assert) {
+		var oCarousel = new sap.m.Carousel({
+			pages:[
+				new sap.m.Image("image1", {src:"https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"}),
+				new sap.m.Image("image2", {src:"https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"}),
+				new sap.m.Image("image3", {src:"https://www.sap.com/dam/application/shared/logos/sap-logo-svg.svg"})
+			]
+		});
+		 var oPopup = new sap.m.ResponsivePopover({
+			contentWidth:"400px",
+			contentHeight:"300px",
+			showHeader:false,
+			content:[ oCarousel ]
+		});
+		var oButton = new sap.m.Button({
+			text: "Open Carousel"
+		});
+		oButton.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
+		// Arrange
+		var done = assert.async(),
+			oSystem = {
+			desktop: true,
+			phone: false,
+			tablet: false,
+			touch: false
+		};
+
+		this.stub(sap.ui.Device, "system", oSystem);
+		oCarousel.setActivePage("image2");
+
+		// Wait for CSS animation caused by setActivePage to complete
+		setTimeout(function () {
+			// Act
+			oPopup.openBy(oButton);
+			assert.strictEqual(oCarousel.getActivePage(), "image2", "active page is with id 'image2'");
+			oCarousel.$().find('a.sapMCrslNext').focus();
+			oCarousel._changePage(3);
+			// Assert
+			assert.strictEqual(oCarousel.getActivePage(), "image3", "active page is with id 'image3'");
+
+			// Cleanup
+			oCarousel.destroy();
+			oPopup.destroy();
+			oButton.destroy();
+			done();
+		}, sinonClockTickValue);
+	});
 })();

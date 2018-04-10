@@ -310,18 +310,18 @@ function(
 
 	/**
 	 *
-	 * Expands one item or multiple items.
+	 * Expands one or multiple items.
 	 *
 	 * @return {sap.m.Tree} A reference to the Tree control
 	 * @public
-	 * @param {int|[int]} vParam The index or indices of the item to be expanded
-	 * @since 1.54.0
+	 * @param {int|int[]} vParam The index or indices of the item to be expanded
+	 * @since 1.56.0
 	 */
 	Tree.prototype.expand = function(vParam) {
 		var aIndices = [];
 		if (typeof vParam === "number") {
 			aIndices.push(vParam);
-		} else if ( typeof vParam === "object") {
+		} else if ( Array.isArray(vParam) ) {
 			//sort
 			aIndices = vParam.sort().reverse();
 		}
@@ -340,18 +340,18 @@ function(
 
 	/**
 	 *
-	 * Collapses one item or multiple items.
+	 * Collapses one or multiple items.
 	 *
 	 * @return {sap.m.Tree} A reference to the Tree control
 	 * @public
-	 * @param {int|[int]} vParam The index or indices of the tree items to be collapsed
-	 * @since 1.54.0
+	 * @param {int|int[]} vParam The index or indices of the tree items to be collapsed
+	 * @since 1.56.0
 	 */
 	Tree.prototype.collapse = function(vParam) {
 		var aIndices = [];
 		if (typeof vParam === "number") {
 			aIndices.push(vParam);
-		} else if ( typeof vParam === "object") {
+		} else if ( Array.isArray(vParam) ) {
 			aIndices = vParam.sort().reverse();
 		}
 		var oBinding = this.getBinding("items"),

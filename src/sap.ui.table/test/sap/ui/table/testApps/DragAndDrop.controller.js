@@ -40,7 +40,7 @@ sap.ui.define([
 			var oRow = oEvent.getParameter("target");
 			var oRowContext = oRow.getBindingContext();
 			var oModelProperty = oRowContext.getModel().getProperty(oRowContext.getPath());
-			var sStatus = oModelProperty == null || oModelProperty.objStatusState == null ? "" : oModelProperty.objStatusState;
+			var sStatus = oModelProperty && oModelProperty.objStatusState != null ? oModelProperty.objStatusState : "";
 
 			if (sStatus !== "Success") {
 				oEvent.preventDefault();
@@ -53,7 +53,7 @@ sap.ui.define([
 			var oRow = oEvent.getParameter("target");
 			var oRowContext = oRow.getBindingContext();
 			var oModelProperty = oRowContext.getModel().getProperty(oRowContext.getPath());
-			var sStatus = oModelProperty == null || oModelProperty.objStatusState == null ? "" : oModelProperty.objStatusState;
+			var sStatus = oModelProperty && oModelProperty.objStatusState != null ? oModelProperty.objStatusState : "";
 
 			if (sStatus !== "Success") {
 				oEvent.preventDefault();

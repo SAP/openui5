@@ -28,7 +28,7 @@ sap.ui.define(['sap/ui/core/Renderer', './FormLayoutRenderer', 'sap/ui/Device'],
 
 		if (iContainers > 0) {
 			// if more that one container render a DIV around containers
-			if (iContainers > 1 || oLayout.getLayoutDataForElement(aContainers[0], "sap/ui/layout/form/ColumnContainerData")) {
+			if (iContainers > 1 || oLayout.getLayoutDataForElement(aContainers[0], "sap.ui.layout.form.ColumnContainerData")) {
 				oRm.write("<div");
 				oRm.addClass("sapUiFormCLContent");
 				oRm.addClass("sapUiFormCLColumnsM" + iColumnsM);
@@ -162,7 +162,7 @@ sap.ui.define(['sap/ui/core/Renderer', './FormLayoutRenderer', 'sap/ui/Device'],
 		if (aFields && aFields.length > 0) {
 			for (var k = 0, kl = aFields.length; k < kl; k++) {
 				var oField = aFields[k];
-				if (!oField.getMetadata().isInstanceOf("sap.ui.core.IFormContent")) {
+				if (!oField.isA("sap.ui.core.IFormContent")) {
 					throw new Error(oField + " is not a valid Form content! Only use valid content in " + oLayout);
 				}
 				oOptions = oLayout._getFieldSize(oField);

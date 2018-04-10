@@ -261,7 +261,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library", "sap/ui/support/su
 				for (var j = 0; j < aVisibleRows.length; j++) {
 					oRowElement = aVisibleRows[j].getDomRef();
 
-					if (oRowElement != null) {
+					if (oRowElement) {
 						fActualRowHeight = oRowElement.getBoundingClientRect().height;
 
 						if (bIsZoomedInChrome) {

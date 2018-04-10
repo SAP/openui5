@@ -88,7 +88,7 @@ sap.ui.define([
 	 */
 	TemplateControl.prototype.init = function() {
 
-		// list of binding informations to cleanup once the
+		// list of binding information to cleanup once the
 		// control is destroyed or re-rendering happens
 		this._aBindingInfos = [];
 

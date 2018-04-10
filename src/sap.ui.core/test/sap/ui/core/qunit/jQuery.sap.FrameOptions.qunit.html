@@ -129,8 +129,8 @@ function testDirectUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin)
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
-		var log = sap.ui.require('sap/base/log'); // jQuery.sap.log
-		var oErrorLogSpy = this.spy(log, "error");
+		var Log = sap.ui.require('sap/base/Log'); // jQuery.sap.log
+		var oErrorLogSpy = this.spy(Log, "error");
 		var fnCallback = this.spy();
 
 		// actions
@@ -162,8 +162,8 @@ function testDirectLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrigin, a
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
-		var log = sap.ui.require('sap/base/log'); // jQuery.sap.log
-		var oErrorLogSpy = this.spy(log, "error");
+		var Log = sap.ui.require('sap/base/Log'); // jQuery.sap.log
+		var oErrorLogSpy = this.spy(Log, "error");
 		var fnCallback = this.spy();
 
 		// actions
@@ -199,8 +199,8 @@ function testPostMessageLock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
-		var log = sap.ui.require('sap/base/log'); // jQuery.sap.log
-		var oErrorLogSpy = this.spy(log, "error");
+		var Log = sap.ui.require('sap/base/Log'); // jQuery.sap.log
+		var oErrorLogSpy = this.spy(Log, "error");
 		var fnCallback = this.spy();
 
 		// actions
@@ -244,8 +244,8 @@ function testWhitelistUnlock(sName, sEnvMode, sParentMode, sMode, bAllowSameOrig
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
-		var log = sap.ui.require('sap/base/log'); // jQuery.sap.log
-		var oErrorLogSpy = this.spy(log, "error");
+		var Log = sap.ui.require('sap/base/Log'); // jQuery.sap.log
+		var oErrorLogSpy = this.spy(Log, "error");
 		var fnCallback = this.spy();
 
 		// actions
@@ -286,8 +286,8 @@ function testWhitelistService(sName, sEnvMode, sParentMode, sMode, bAllowSameOri
 			mode: sEnvMode,
 			parentMode: sParentMode
 		});
-		var log = sap.ui.require('sap/base/log'); // jQuery.sap.log
-		var oErrorLogSpy = this.spy(log, "error");
+		var Log = sap.ui.require('sap/base/Log'); // jQuery.sap.log
+		var oErrorLogSpy = this.spy(Log, "error");
 
 		var oServer = this.sandbox.useFakeServer(),
 			oResponse = {

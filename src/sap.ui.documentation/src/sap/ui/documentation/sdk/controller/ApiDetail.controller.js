@@ -11,7 +11,7 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
 		"sap/ui/core/library",
-		"sap/base/log"
+		"sap/base/Log"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo, CoreLibrary, Log) {
 		"use strict";
 

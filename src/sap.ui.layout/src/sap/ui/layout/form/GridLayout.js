@@ -219,7 +219,7 @@ sap.ui.define(['jquery.sap.global', './FormLayout', 'sap/ui/layout/library', './
 		if (this.getDomRef()) {
 			var bSingleColumn = this.getSingleColumn();
 			var oContainer = oElement.getParent();
-			var oContainerData = this.getLayoutDataForElement(oContainer, "sap/ui/layout/form/GridContainerData");
+			var oContainerData = this.getLayoutDataForElement(oContainer, "sap.ui.layout.form.GridContainerData");
 
 			if ((bSingleColumn || !oContainerData || !oContainerData.getHalfGrid()) && !this.getRenderer().checkFullSizeElement(this, oElement) ) {
 				return jQuery.sap.domById(oElement.getId());

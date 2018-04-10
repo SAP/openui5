@@ -70,6 +70,12 @@ sap.ui.define([
 	 * <b>Note:</b> The <code>ObjectPageHeader</code> is meant to be used inside the <code>ObjectPageLayout</code>
 	 * control. Any other usage is not supported and can lead to unexpected behavior.
 	 *
+	 * @see {@link topic:0fecbce45e39406aa939bd25e89823f4 Object Page Classic Header}
+	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
+	 * @see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/ Object Page Header}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-page/ Object Page}
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.uxap.IHeaderTitle
 	 *
@@ -79,9 +85,6 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.uxap.ObjectPageHeader
 	 * @since 1.26
-	 * @see {@link topic:0fecbce45e39406aa939bd25e89823f4 Object Page Classic Header}
-	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
-	 * @see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var ObjectPageHeader = Control.extend("sap.uxap.ObjectPageHeader", /** @lends sap.uxap.ObjectPageHeader.prototype */ {
@@ -869,14 +872,10 @@ sap.ui.define([
 	 */
 	ObjectPageHeader.prototype._adaptActions = function (iAvailableSpaceForActions) {
 		var bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange()) || Device.system.phone,
-			sOverflowButtonDisplay = this._oOverflowButton.$().css("display"),
 			iVisibleActionsWidth = this._oOverflowButton.$().show().width(), // overflowButton is now visible
 			aActions = this.getActions(),
 			iActionsLength = aActions.length,
 			oActionSheetButton;
-
-		// reset overflowButton's visibility
-		this._oOverflowButton.$().css("display", sOverflowButtonDisplay);
 
 		for (var i = 0; i < iActionsLength; i++) {
 			aActions[i].position = i;

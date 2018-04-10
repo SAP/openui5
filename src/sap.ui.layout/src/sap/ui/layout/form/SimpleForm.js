@@ -520,9 +520,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			var aContent = this.getContent();
 			for (var i = 0; i < aContent.length; i++) {
 				var oElement = aContent[i];
-				if (oElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
+				if (oElement.isA("sap.ui.core.Label")) {
 					var oLayoutData = _getFieldLayoutData.call(this, oElement);
-					if (_isLazyInstance(oLayoutData, "sap/ui/layout/ResponsiveFlowLayoutData") && _isMyLayoutData.call(this, oLayoutData)) {
+					if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") && _isMyLayoutData.call(this, oLayoutData)) {
 						oLayoutData.setMinWidth(iLabelMinWidth);
 					}
 				}
@@ -575,12 +575,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		var oParent;
 		var oLayoutData;
 
-		if (_isLazyInstance(oElement, "sap/ui/core/Title") || oElement.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
+		if (oElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
 			//start a new container with a title
 			oFormContainer = _createFormContainer.call(this, oElement);
 			oForm.addFormContainer(oFormContainer);
 			this._changedFormContainers.push(oFormContainer);
-		} else if (oElement.getMetadata().isInstanceOf("sap.ui.core.Label")) { // if the control implements the label interface
+		} else if (oElement.isA("sap.ui.core.Label")) { // if the control implements the label interface
 			// new label -> create new FormElement
 			// determine Container from last Content element
 			if (iLength > 0) {
@@ -608,7 +608,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 					oFormContainer = oParent.getParent();
 					oFormElement = oParent;
 					oLayoutData = _getFieldLayoutData.call(this, oElement);
-					if (_isLazyInstance(oLayoutData, "sap/ui/layout/ResponsiveFlowLayoutData") &&
+					if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
 							!_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak()) {
 						oFormElement = _addFormElement.call(this, oFormContainer);
 					}
@@ -688,19 +688,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		var oField;
 		var oLayoutData;
 
-		if (_isLazyInstance(oElement, "sap/ui/core/Title") || oElement.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
+		if (oElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
 			//start a new container with a title
-			if (iIndex == 0 && !(_isLazyInstance(oOldElement, "sap/ui/core/Title") || oOldElement.getMetadata().isInstanceOf("sap.ui.core.Toolbar"))) {
+			if (iIndex == 0 && !(oOldElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"]))) {
 				// special case - index==0 and first container has no title -> just add title to Container
 				oFormContainer = oOldElement.getParent().getParent();
-				if (_isLazyInstance(oElement, "sap/ui/core/Title")) {
+				if (oElement.isA("sap.ui.core.Title")) {
 					oFormContainer.setTitle(oElement);
 				} else {
 					oFormContainer.setToolbar(oElement);
 				}
 			} else {
 				oFormContainer = _createFormContainer.call(this, oElement);
-				if (_isLazyInstance(oOldElement, "sap/ui/core/Title") || oOldElement.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
+				if (oOldElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
 					// insert before old container
 					oOldFormContainer = oOldElement.getParent();
 					iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer);
@@ -712,7 +712,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 					iElementIndex = oOldFormContainer.indexOfFormElement(oOldFormElement);
 
 					// check if old FormElement must be splited
-					if (!oOldElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
+					if (!oOldElement.isA("sap.ui.core.Label")) {
 						iFieldIndex = oOldFormElement.indexOfField(oOldElement);
 						if (iFieldIndex > 0 || oOldFormElement.getLabel()) {
 							// split FormElement
@@ -737,8 +737,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 				oForm.insertFormContainer(oFormContainer, iContainerIndex);
 			}
 			this._changedFormContainers.push(oFormContainer);
-		} else if (oElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
-			if (_isLazyInstance(oOldElement, "sap/ui/core/Title") || oOldElement.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
+		} else if (oElement.isA("sap.ui.core.Label")) {
+			if (oOldElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
 				// add new FormElement to previous container
 				oOldFormContainer = oOldElement.getParent();
 				iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer);
@@ -752,7 +752,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 					oFormContainer = aFormContainers[iContainerIndex - 1];
 				}
 				oFormElement = _addFormElement.call(this, oFormContainer, oElement);
-			} else if (oOldElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
+			} else if (oOldElement.isA("sap.ui.core.Label")) {
 				// insert new form element before this one
 				oOldFormContainer = oOldElement.getParent().getParent();
 				iElementIndex = oOldFormContainer.indexOfFormElement(oOldElement.getParent());
@@ -784,7 +784,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			this._changedFormElements.push(oFormElement);
 		} else { // new field
 			oLayoutData = _getFieldLayoutData.call(this, oElement);
-			if (_isLazyInstance(oOldElement, "sap/ui/core/Title") || oOldElement.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
+			if (oOldElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
 				// add new Field to last FormElement of previous FormContainer
 				oOldFormContainer = oOldElement.getParent();
 				iContainerIndex = oForm.indexOfFormContainer(oOldFormContainer);
@@ -803,7 +803,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 				if (aFormElements.length == 0) {
 					// FormContainer has no FormElements -> create one
 					oFormElement = _addFormElement.call(this, oFormContainer);
-				} else if (_isLazyInstance(oLayoutData, "sap/ui/layout/ResponsiveFlowLayoutData") &&
+				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
 									 !_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak()) {
 					oFormElement = _addFormElement.call(this, oFormContainer);
 				} else {
@@ -811,7 +811,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 				}
 
 				oFormElement.addField(oElement);
-			} else if (oOldElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
+			} else if (oOldElement.isA("sap.ui.core.Label")) {
 				// add new field to previous FormElement
 				oOldFormElement = oOldElement.getParent();
 				oFormContainer = oOldFormElement.getParent();
@@ -820,7 +820,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 				if (iElementIndex == 0) {
 					// it's already the first FormElement -> insert a new one before
 					oFormElement = _insertFormElement.call(this, oFormContainer, null, 0);
-				} else if (_isLazyInstance(oLayoutData, "sap/ui/layout/ResponsiveFlowLayoutData") &&
+				} else if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
 									 !_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak()) {
 					oFormElement = _insertFormElement.call(this, oFormContainer, null, iElementIndex);
 				} else {
@@ -832,7 +832,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 				// insert new field into same FormElement before old field
 				oFormElement = oOldElement.getParent();
 				iFieldIndex = oFormElement.indexOfField(oOldElement);
-				if (_isLazyInstance(oLayoutData, "sap/ui/layout/ResponsiveFlowLayoutData") &&
+				if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
 						!_isMyLayoutData.call(this, oLayoutData) && oLayoutData.getLinebreak() && iFieldIndex > 0) {
 					// split FormElement
 					oFormContainer = oFormElement.getParent();
@@ -902,7 +902,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			var aFormElements;
 			var aFields;
 
-			if (_isLazyInstance(oElement, "sap/ui/core/Title") || oElement.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
+			if (oElement.isA(["sap.ui.core.Title", "sap.ui.core.Toolbar"])) {
 				oFormContainer = oElement.getParent();
 				oFormContainer.setTitle(null);
 				oFormContainer.setToolbar(null);
@@ -936,7 +936,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 					oForm.removeFormContainer(oFormContainer);
 					oFormContainer.destroy();
 				}
-			} else if (oElement.getMetadata().isInstanceOf("sap.ui.core.Label")) {
+			} else if (oElement.isA("sap.ui.core.Label")) {
 				oFormElement = oElement.getParent();
 				oFormContainer = oFormElement.getParent();
 				oFormElement.setLabel(null);
@@ -1100,7 +1100,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			this._oObserver.observe(oElement, {properties: ["visible"]});
 			if (oLayoutData) {
 				// mark private LayoutData
-				if (_isLazyInstance(oLayoutData, "sap/ui/core/VariantLayoutData")) {
+				if (oLayoutData.isA("sap.ui.core.VariantLayoutData")) {
 					var aLayoutData = oLayoutData.getMultipleLayoutData();
 					for ( var j = 0; j < aLayoutData.length; j++) {
 						if (_isMyLayoutData.call(this, aLayoutData[j])) {
@@ -1426,16 +1426,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 
 		switch (this.getLayout()) {
 		case SimpleFormLayout.ResponsiveLayout:
-			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap/ui/layout/ResponsiveFlowLayoutData");
+			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.ResponsiveFlowLayoutData");
 			break;
 		case SimpleFormLayout.GridLayout:
-			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap/ui/layout/form/GridElementData");
+			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.form.GridElementData");
 			break;
 		case SimpleFormLayout.ResponsiveGridLayout:
-			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap/ui/layout/GridData");
+			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.GridData");
 			break;
 		case SimpleFormLayout.ColumnLayout:
-			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap/ui/layout/form/ColumnElementData");
+			oLayoutData = FormLayout.prototype.getLayoutDataForElement(oField, "sap.ui.layout.form.ColumnElementData");
 			break;
 			// no default
 		}
@@ -1483,7 +1483,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		var oLayoutData = _getFieldLayoutData.call(this, oField);
 		if (!oLayoutData || !_isMyLayoutData.call(this, oLayoutData)) {
 			oLayoutData = oField.getLayoutData();
-			if (_isLazyInstance(oLayoutData, "sap/ui/core/VariantLayoutData")) {
+			if (oLayoutData && oLayoutData.isA("sap.ui.core.VariantLayoutData")) {
 				oLayoutData.addMultipleLayoutData(_createRFLayoutData.call(this, iWeight, bLinebreak, bLinebreakable, iMinWidth));
 			} else if (!oLayoutData) {
 				oField.setLayoutData(_createRFLayoutData.call(this, iWeight, bLinebreak, bLinebreakable, iMinWidth));
@@ -1648,9 +1648,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		};
 
 		if (oTitle) {
-			if (_isLazyInstance(oTitle, "sap/ui/core/Title")) {
+			if (oTitle.isA("sap.ui.core.Title")) {
 				oContainer.setTitle(oTitle);
-			} else if (oTitle.getMetadata().isInstanceOf("sap.ui.core.Toolbar")) {
+			} else if (oTitle.isA("sap.ui.core.Toolbar")) {
 				oContainer.setToolbar(oTitle);
 			}
 		}
@@ -1683,7 +1683,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		for (i = 0; i < aFields.length; i++) {
 			oField = aFields[i];
 			oLayoutData = _getFieldLayoutData.call(this, oField);
-			if (_isLazyInstance(oLayoutData, "sap/ui/layout/ResponsiveFlowLayoutData") &&
+			if (oLayoutData && oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData") &&
 					!_isMyLayoutData.call(this, oLayoutData)) {
 				iMaxWeight = iMaxWeight - oLayoutData.getWeight();
 				iLength--;
@@ -1701,7 +1701,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			if (!oLayoutData) {
 				_createFieldLayoutData.call(this, oField, iCurrentWeight, false, i == 0);
 			} else if (_isMyLayoutData.call(this, oLayoutData) &&
-					_isLazyInstance(oLayoutData, "sap/ui/layout/ResponsiveFlowLayoutData")) {
+					oLayoutData.isA("sap.ui.layout.ResponsiveFlowLayoutData")) {
 				// devide rest to first fields (not only to last one) (fist because to ignore manual set weigths)
 				if (iRest > 0) {
 					iCurrentWeight++;
@@ -1939,11 +1939,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		}
 
 	};
-
-	function _isLazyInstance(oObj, sModule) {
-		var fnClass = sap.ui.require(sModule);
-		return oObj && typeof fnClass === 'function' && (oObj instanceof fnClass);
-	}
 
 	return SimpleForm;
 

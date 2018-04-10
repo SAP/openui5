@@ -734,6 +734,144 @@
         "type": "FIX",
         "text": " sap.m.RadioButtonGroup: select event is no longer fired twice",
         "references": []
+      },
+      {
+        "id": "677e4b69d7f0a0f59dca63be2325c0c4fd959569",
+        "type": "FEATURE",
+        "text": " sap.m.MenuButton: now supports positioning of the menu",
+        "references": []
+      },
+      {
+        "id": "68eb1b431da8c73d7ac3d430dd27fe291a40d730",
+        "type": "FIX",
+        "text": " sap.m.Button, sap.m.MenuButton, sap.m.ToggleButton: press state inside Toolbar and List fixed",
+        "references": []
+      },
+      {
+        "id": "7eb746e59ac5e8fcbd3063f92aee06933b10ec41",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: sap.m.SegmentedButton is now correctly alligned",
+        "references": []
+      },
+      {
+        "id": "d80f92aa1c823fea83b8b32eae6f7755f043971f",
+        "type": "FIX",
+        "text": " sap.m.NumericContent: Images on tiles go decorative, no \u0027undefined\u0027 in Aria",
+        "references": []
+      },
+      {
+        "id": "976f84ad2bfe1e83c63290cbb5e54d5b0e07a485",
+        "type": "FIX",
+        "text": " sap.m.SearchField: screen reader announce the placeholder text when there is label or tooltip",
+        "references": []
+      },
+      {
+        "id": "9ed98479b7ec32ed7a963a37f7f2283ab3a8cd49",
+        "type": "FIX",
+        "text": " sap.m.Select: Value state information is now read",
+        "references": []
+      },
+      {
+        "id": "55b449e2380a7c6d7fa93430841d1a886699007f",
+        "type": "FIX",
+        "text": " sap.m.TablePersoController: works now also with \"late attachment\"",
+        "references": []
+      },
+      {
+        "id": "faa839b8194783b70d3d53abfd899a16d8dcace1",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: correct filter examples",
+        "references": []
+      },
+      {
+        "id": "b4d1cd7190d345f9f296f30ae400bd317fa8e461",
+        "type": "FEATURE",
+        "text": " ResponsiveTable: Support of Grid Layout Popin for Edge \u003e\u003d 16",
+        "references": []
+      },
+      {
+        "id": "ad202bd33f5d9feb39e2a4fa2f320bd34fe5fb47",
+        "type": "FEATURE",
+        "text": " sap.m.Button: enable hide/unhide actions for RTA",
+        "references": []
+      },
+      {
+        "id": "409b1fe6bbdeb1777eac55a36118efd37940ad21",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: Drag\u0026Drop between header and overflow list is now enabled",
+        "references": []
+      },
+      {
+        "id": "20e064387a667db9d5c0a73e0dc871b68e3b2646",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Drag and drop of appointments between rows is now enabled",
+        "references": []
+      },
+      {
+        "id": "a67e65ac5ebe57c76cb58c45e8a224e27ed489ce",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Resizing of appointments is now possible",
+        "references": []
+      },
+      {
+        "id": "a0ec05036a71d7500540188cd47dfa742cf93b13",
+        "type": "FIX",
+        "text": " m.IconTabHeaderMode: allowed values should be @public",
+        "references": []
+      },
+      {
+        "id": "4552a20d7dda2011e774f556de69783b0f414b10",
+        "type": "FIX",
+        "text": " sap.m.Carousel: In popup Carousel doesn\u0027t closes any more",
+        "references": []
+      },
+      {
+        "id": "29ad772b9311cdfcebfba6634e4da229c00194ff",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Now in IE \u0026 touch devices the focus is correct after closing the picker",
+        "references": []
+      },
+      {
+        "id": "2e45e0c03f68a806b1c4138d974ce5015cc76a99",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: when picker is opened for IE \u0026 Edge, input should not be focusable",
+        "references": []
+      },
+      {
+        "id": "7597e4b1c129f398f27ec67d12d3e644e7ce155d",
+        "type": "FIX",
+        "text": " sap.m.GenericTile/SlideTile: API property for enforcing small size changes from boolean to new enum, tile sample extended",
+        "references": []
+      },
+      {
+        "id": "5a6e545eda0a9d9b406a81e6969f2962e790740a",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header icon size",
+        "references": []
+      },
+      {
+        "id": "c295d9d5cf12814288ba8615f4281ad22649faf5",
+        "type": "FIX",
+        "text": " sap.m.Select: Popover width on zoom out fixed",
+        "references": []
+      },
+      {
+        "id": "1ec5318d955ad81c19e5ca756900217d946796a2",
+        "type": "FIX",
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
+      },
+      {
+        "id": "769e5727b2f73342983629ef5c24148da146d426",
+        "type": "FIX",
+        "text": " sap.m.Switch: Description when checked off fixed",
+        "references": []
+      },
+      {
+        "id": "5ca49664d678479fd392bb0db818fdbb8cf99fc4",
+        "type": "FIX",
+        "text": " sap.m.TabStrip: do not create global CustomSelectList and CustomSelect",
+        "references": []
       }
     ]
   }

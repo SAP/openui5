@@ -81,7 +81,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * Creates a subclass of class sap.ui.base.Object with name <code>sClassName</code>
 	 * and enriches it with the information contained in <code>oClassInfo</code>.
 	 *
-	 * <code>oClassInfo</code> might contain three kinds of informations:
+	 * <code>oClassInfo</code> might contain three kinds of information:
 	 * <ul>
 	 * <li><code>metadata:</code> an (optional) object literal with metadata about the class.
 	 * The information in the object literal will be wrapped by an instance of {@link sap.ui.base.Metadata Metadata}
@@ -122,7 +122,7 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 	 * metadata for a new class hierarchy they introduce (e.g. {@link sap.ui.core.Element.extend Element}).
 	 *
 	 * @param {string} sClassName name of the class to be created
-	 * @param {object} [oClassInfo] structured object with informations about the class
+	 * @param {object} [oClassInfo] structured object with information about the class
 	 * @param {function} [FNMetaImpl] constructor function for the metadata object. If not given, it defaults to sap.ui.base.Metadata.
 	 * @return {function} the created class / constructor function
 	 * @public
@@ -169,6 +169,46 @@ sap.ui.define(['jquery.sap.global', './Interface', './Metadata'],
 		return oMetadata;
 	};
 
+	/**
+	 * Checks whether this object is an instance of the named type.
+	 *
+	 * This check is solely based on the type names as declared in the class metadata.
+	 * It compares the given <code>vTypeName</code> with the name of the class of this object,
+	 * with the names of any base class of that class and with the names of all interfaces
+	 * implemented by any of the aforementioned classes.
+	 *
+	 * Instead of a single type name, an array of type names can be given and the method
+	 * will check if this object is an instance of any of the listed types (logical or).
+	 *
+	 * Should the UI5 class system in future implement additional means of associating classes
+	 * with type names (e.g. by introducing mixins), then this method might detect matches
+	 * for those names as well.
+	 *
+	 * @param {string|string[]} vTypeName Type or types to check for
+	 * @returns {boolean} Whether this object is an instance of the given type or of any of the given types
+	 * @public
+	 * @since 1.56
+	 */
+	BaseObject.prototype.isA = function(vTypeName) {
+		return this.getMetadata().isA(vTypeName);
+	};
+
+	/**
+	 * Checks whether the given object is an instance of the named type.
+	 * This function is a short-hand convenience for {@link sap.ui.base.Object#isA}.
+	 *
+	 * Please see the API documentation of {@link sap.ui.base.Object#isA} for more details.
+	 *
+	 * @param {object} oObject Object which will be checked whether it is an instance of the given type
+	 * @param {string|string[]} vTypeName Type or types to check for
+	 * @returns {boolean} Whether the given object is an instance of the given type or of any of the given types
+	 * @public
+	 * @since 1.56
+	 * @static
+	 */
+	BaseObject.isA = function(oObject, vTypeName) {
+		return oObject instanceof BaseObject && oObject.isA(vTypeName);
+	};
 
 	return BaseObject;
 

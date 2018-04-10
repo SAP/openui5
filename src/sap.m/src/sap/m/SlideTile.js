@@ -16,6 +16,8 @@ sap.ui.define([
 	function(jQuery, library, Control, GenericTile, Device, Icon, SlideTileRenderer) {
 	"use strict";
 
+	var TileSizeBehavior = library.TileSizeBehavior;
+
 	/**
 	 * Constructor for a new sap.m.SlideTile control.
 	 *
@@ -51,10 +53,13 @@ sap.ui.define([
 				 */
 				scope: {type: "sap.m.GenericTileScope", group: "Misc", defaultValue: "Display"},
 				/**
-				 * If set to <code>true</code>, the tile size is the same as it would be on a small-screened phone (374px wide and lower),
-				 * regardless of the screen size of the actual device being used.
+				 *  If set to <code>TileSizeBehavior.Small</code>, the tile size is the same as it would be on a small-screened phone (374px wide and lower),
+				 *  regardless of the screen size of the actual device being used.
+				 *  If set to <code>TileSizeBehavior.Responsive</code>, the tile size adapts to the size of the screen.
+				 *  This property has to be set consistently for the <code>SlideTile</code> along with all its inner <code>GenericTile</code>
+				 *  elements, so that they match one another visually.
 				 */
-				enforceMobileSize: {type: "boolean", defaultValue: false}
+				sizeBehavior: {type: "sap.m.TileSizeBehavior", defaultValue: TileSizeBehavior.Responsive}
 			},
 			defaultAggregation: "tiles",
 			aggregations: {
@@ -348,7 +353,7 @@ sap.ui.define([
 	 */
 	SlideTile.prototype._setupResizeClassHandler = function () {
 		var fnCheckMedia = function () {
-			if (this.getEnforceMobileSize() || window.matchMedia("(max-width: 374px)").matches) {
+			if (this.getSizeBehavior() === TileSizeBehavior.Small || window.matchMedia("(max-width: 374px)").matches) {
 				this.$().addClass("sapMTileSmallPhone");
 			} else {
 				this.$().removeClass("sapMTileSmallPhone");

@@ -71,6 +71,7 @@
 			assert.equal(this.sut.getText(), "", "Default 'title':");
 			assert.equal(this.sut.getMenu(), null, "Default 'menu':");
 			assert.strictEqual(this.sut.getAggregation('_button').getMetadata().getName() === 'sap.m.Button', true, 'Normal sap m button.');
+			assert.equal(this.sut.getMenuPosition(), sap.ui.core.Popup.Dock.BeginBottom, "Default value is BeginBottom");
 		});
 		QUnit.test("Property - Custom Values", function(assert) {
 			assert.equal(this.sut.getTooltip(), "This is a test tooltip", "Custom 'tooltip':");
@@ -491,6 +492,9 @@
 			assert.ok(oSpySetArrowState.calledWith(true), "SplitButton's setArrowState(true) called");
 			assert.ok(oSpyMenuOpenBy.calledOnce, "Menu's openBy called exactly once");
 			assert.ok(oSpyMenuOpenBy.calledWith(this.sut, false), "Menu's openBy(menubutton, false) called");
+			assert.ok(oSpyMenuOpenBy.args[0][2], sap.ui.core.Popup.Dock.BeginTop, "Menu's openBy default parameter sDockMy is BeginTop");
+			assert.ok(oSpyMenuOpenBy.args[0][3], sap.ui.core.Popup.Dock.BeginBottom, "Menu's openBy default parameter sDockAt is BeginBottom");
+			assert.ok(oSpyMenuOpenBy.args[0][4], "0 -2", "Menu's openBy default parameter sOffset is '0 -2'");
 
 			this.sut.destroyMenu();
 			oSpySetArrowState.reset();
@@ -502,6 +506,22 @@
 			//Assert
 			assert.ok(!oSpySetArrowState.called, "SplitButton's setArrowState not called");
 			assert.ok(!oSpyMenuOpenBy.called, "Menu's openBy not called");
+		});
+
+		QUnit.test("open menu with correct params", function(assert) {
+			var oSpyMenuOpenBy = this.spy(sap.m.Menu.prototype, "openBy");
+
+			this.sut.setMenuPosition(sap.ui.core.Popup.Dock.EndTop)
+
+			//Act
+			this.sut._handleButtonPress(false);
+
+			//Assert
+			assert.equal(oSpyMenuOpenBy.args[0][2], sap.ui.core.Popup.Dock.EndBottom, "Menu's openBy default parameter sDockMy is EndBottom");
+			assert.equal(oSpyMenuOpenBy.args[0][3], sap.ui.core.Popup.Dock.EndTop, "Menu's openBy default parameter sDockAt is EndTop");
+			assert.equal(oSpyMenuOpenBy.args[0][4], "0 +2", "Menu's openBy default parameter sOffset is '0 +2'");
+
+			oSpyMenuOpenBy.reset();
 		});
 
 		QUnit.test("_menuClosed", function(assert) {

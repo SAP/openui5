@@ -256,7 +256,7 @@ sap.ui.define([
 
 		var sPopinLayout = oTable.getPopinLayout();
 		// overwrite sPopinLayout=Block to avoid additional margin-top in IE and Edge
-		if (Device.browser.msie || Device.browser.edge) {
+		if (Device.browser.msie || (Device.browser.edge && Device.browser.version < 16)) {
 			sPopinLayout = PopinLayout.Block;
 		}
 		rm.write("><div");

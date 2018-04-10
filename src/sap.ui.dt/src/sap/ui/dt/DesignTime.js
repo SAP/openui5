@@ -69,7 +69,7 @@ function(
 				},
 
 				/**
-				 * DesignTime metadata for classses to use with overlays (will overwrite default DTMetadata fields)
+				 * DesignTime metadata for classes to use with overlays (will overwrite default DTMetadata fields)
 				 * should have a map structure { "sClassName" : oDesignTimeMetadata, ... }
 				 */
 				designTimeMetadata: {

@@ -530,7 +530,7 @@ sap.ui.define([
 					scope: this.getMetadataScope(),
 					plugins: aPlugins
 				});
-				//add root control is triggereing overlay creation, so we need to wait for the scope to be set.
+				//add root control is triggering overlay creation, so we need to wait for the scope to be set.
 				this._oDesignTime.addRootElement(this._oRootControl);
 
 				jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");

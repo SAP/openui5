@@ -6,11 +6,13 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/base/ManagedObject',
+	'sap/ui/core/Element',
 	'sap/ui/dt/Util'
 ],
 function(
 	jQuery,
 	ManagedObject,
+	Element,
 	Util
 ) {
 	"use strict";
@@ -364,6 +366,39 @@ function(
 		return this.isInstanceOf(oElement, 'sap.ui.core.Component')
 			? oElement.oContainer
 			: oElement.getParent();
+	};
+
+	/**
+	 * Extract potential label part from the passed element
+	 *
+	 * @param {sap.ui.core.Element} oElement - element instance for which label has to be extracted
+	 * @param {Function} [fnFunction] - custom function for retrieving label
+	 * @return {String|undefined} label string or undefined when no label can be extracted
+	 */
+	ElementUtil.getLabelForElement = function(oElement, fnFunction) {
+		if (!(oElement instanceof Element)) {
+			throw Util.createError("ElementUtil#getLabelForElement", "A valid element instance should be passed as parameter", "sap.ui.dt");
+		}
+		// if there is a function, only the function is executed
+		if (typeof fnFunction === "function") {
+			return fnFunction(oElement);
+		} else {
+
+			var vFieldLabel = (
+				typeof oElement.getText === "function" && oElement.getText()
+				|| typeof oElement.getLabelText === "function" && oElement.getLabelText()
+				|| typeof oElement.getLabel === "function" && oElement.getLabel()
+				|| typeof oElement.getTitle === "function" && oElement.getTitle()
+				|| typeof oElement.getId === "function" && oElement.getId()
+				);
+
+			// to check getLabel().getText()
+			if (vFieldLabel instanceof Element && typeof vFieldLabel.getText === "function") {
+				return vFieldLabel.getText();
+			} else {
+				return vFieldLabel;
+			}
+		}
 	};
 
 	return ElementUtil;

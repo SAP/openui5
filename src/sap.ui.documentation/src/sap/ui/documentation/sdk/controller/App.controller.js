@@ -14,7 +14,7 @@ sap.ui.define([
 		"sap/m/SplitAppMode",
 		"sap/m/MessageBox",
 		"sap/m/library",
-		"sap/base/log"
+		"sap/base/Log"
 	], function (jQuery, BaseController, JSONModel, ResizeHandler, Device, Fragment, library, IconPool, SplitAppMode, MessageBox, mobileLibrary, Log) {
 		"use strict";
 

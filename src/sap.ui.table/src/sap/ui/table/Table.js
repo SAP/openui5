@@ -881,7 +881,7 @@ sap.ui.define([
 		this._detachExtensions();
 
 		// cleanup
-		if (this._dataReceivedHandlerId != null) {
+		if (this._dataReceivedHandlerId) {
 			jQuery.sap.clearDelayedCall(this._dataReceivedHandlerId);
 			delete this._dataReceivedHandlerId;
 		}
@@ -992,8 +992,8 @@ sap.ui.define([
 		var bIsZoomedInChrome = Device.browser.chrome && window.devicePixelRatio != 1;
 
 		for (var i = 0; i < iRowCount; i++) {
-			var nFixedColumnsAreaRowHeight = aRowsInFixedColumnsArea[i] == null ? 0 : aRowsInFixedColumnsArea[i].getBoundingClientRect().height;
-			var nScrollableColumnsAreaRowHeight = aRowsInScrollableColumnsArea[i] == null ? 0 : aRowsInScrollableColumnsArea[i].getBoundingClientRect().height;
+			var nFixedColumnsAreaRowHeight = aRowsInFixedColumnsArea[i] ? aRowsInFixedColumnsArea[i].getBoundingClientRect().height : 0;
+			var nScrollableColumnsAreaRowHeight = aRowsInScrollableColumnsArea[i] ? aRowsInScrollableColumnsArea[i].getBoundingClientRect().height : 0;
 			var nRowHeight = Math.max(nFixedColumnsAreaRowHeight, nScrollableColumnsAreaRowHeight);
 
 			if (bIsZoomedInChrome) {
@@ -1083,7 +1083,7 @@ sap.ui.define([
 				var oScrollExtension = this._getScrollExtension();
 				var oHSb = oScrollExtension.getHorizontalScrollbar();
 
-				if (oHSb == null || !oScrollExtension.isHorizontalScrollbarVisible()) {
+				if (!oHSb || !oScrollExtension.isHorizontalScrollbarVisible()) {
 					var mDefaultScrollbarHeight = {};
 					mDefaultScrollbarHeight[Device.browser.BROWSER.CHROME] = 16;
 					mDefaultScrollbarHeight[Device.browser.BROWSER.FIREFOX] = 16;
@@ -1784,9 +1784,9 @@ sap.ui.define([
 
 		var oBinding = this.getBinding("rows");
 
-		if (sName === "rows" && oBinding != null) {
+		if (sName === "rows" && oBinding) {
 			var oModel = oBinding.getModel();
-			if (oModel != null && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
+			if (oModel && oModel.getDefaultBindingMode() === BindingMode.OneTime) {
 				jQuery.sap.log.error("The binding mode of the model is set to \"OneTime\"."
 									 + " This binding mode is not supported for the \"rows\" aggregation!"
 									 + " Scrolling can not be performed.", this);
@@ -1841,11 +1841,11 @@ sap.ui.define([
 	};
 
 	Table._addBindingListener = function(oBindingInfo, sEventName, fHandler) {
-		if (oBindingInfo.events == null) {
+		if (!oBindingInfo.events) {
 			oBindingInfo.events = {};
 		}
 
-		if (oBindingInfo.events[sEventName] == null) {
+		if (!oBindingInfo.events[sEventName]) {
 			oBindingInfo.events[sEventName] = fHandler;
 		} else {
 			// Wrap the event handler of the other party to add our handler.
@@ -1933,7 +1933,7 @@ sap.ui.define([
 		}
 
 		iVisibleRowCount = this.validateProperty("visibleRowCount", iVisibleRowCount);
-		if (this.getBinding("rows") != null && this._getTotalRowCount() <= iVisibleRowCount) {
+		if (this.getBinding("rows") && this._getTotalRowCount() <= iVisibleRowCount) {
 			this.setProperty("firstVisibleRow", 0);
 		}
 		this.setProperty("visibleRowCount", iVisibleRowCount);
@@ -2165,7 +2165,7 @@ sap.ui.define([
 
 		var oBinding = this.getBinding("rows");
 		var iCurrentTotalRowCount = this._getTotalRowCount();
-		var iNewTotalRowCount = oBinding == null ? 0 : oBinding.getLength();
+		var iNewTotalRowCount = oBinding ? oBinding.getLength() : 0;
 
 		if (iCurrentTotalRowCount !== iNewTotalRowCount) {
 			this._iBindingLength = iNewTotalRowCount;
@@ -2180,7 +2180,7 @@ sap.ui.define([
 				oScrollExtension.updateVerticalScrollbarVisibility();
 				oScrollExtension.updateVerticalScrollHeight();
 
-				if (oBinding == null || bClientBinding) {
+				if (!oBinding || bClientBinding) {
 					// A client binding does not fire dataReceived events. Therefore we need to update the no data area here.
 					// When the binding has been removed, the table might not be completely re-rendered (just the content). But the cached binding
 					// length changes. In this case the no data area needs to be updated.
@@ -2400,7 +2400,7 @@ sap.ui.define([
 		bSuppressUpdate = bSuppressUpdate === true;
 
 		// Get the contexts from the binding.
-		if (oBinding != null) {
+		if (oBinding) {
 			aContexts = this._getRowContexts(iRowCount, bSuppressUpdate);
 		}
 
@@ -2522,7 +2522,7 @@ sap.ui.define([
 	Table.prototype._getTotalRowCount = function(bIgnoreCache) {
 		if (this._iBindingLength === null || bIgnoreCache === true) {
 			var oBinding = this.getBinding("rows");
-			return oBinding == null ? 0 : oBinding.getLength();
+			return oBinding ? oBinding.getLength() : 0;
 		} else {
 			return this._iBindingLength;
 		}
@@ -2825,7 +2825,7 @@ sap.ui.define([
 		// Focus is handled by the item navigation. It's not the root element of the table which may get the focus but
 		// the last focused column header or cell.
 		var oFocusedItemInfo = TableUtils.getFocusedItemInfo(this);
-		if (oFocusedItemInfo !== null) {
+		if (oFocusedItemInfo) {
 			return oFocusedItemInfo.domRef || Control.prototype.getFocusDomRef.apply(this, arguments);
 		}
 
@@ -3186,7 +3186,7 @@ sap.ui.define([
 		// only for columns we do the full handling here - otherwise the method
 		// setAssociation will fail below with a specific fwk error message
 		var bReset = false;
-		if (oGroupByColumn != null && oGroupByColumn instanceof Column && oGroupByColumn !== oOldGroupByColumn) {
+		if (oGroupByColumn instanceof Column && oGroupByColumn !== oOldGroupByColumn) {
 
 			// check for column being part of the columns aggregation
 			if (jQuery.inArray(oGroupByColumn, this.getColumns()) === -1) {
@@ -3197,7 +3197,7 @@ sap.ui.define([
 			var bExecuteDefault = this.fireGroup({column: oGroupByColumn, groupedColumns: [oGroupByColumn.getId()], type: GroupEventType.group});
 
 			// first we reset the grouping indicator of the old column (will show the column)
-			if (oOldGroupByColumn != null) {
+			if (oOldGroupByColumn) {
 				oOldGroupByColumn.setGrouped(false);
 				bReset = true;
 			}
@@ -3211,8 +3211,8 @@ sap.ui.define([
 
 		// reset the binding when no value is given or the binding needs to be reseted
 		// TODO: think about a better handling to recreate the group binding
-		if (oGroupByColumn == null || bReset) {
-			if (oOldGroupByColumn != null) {
+		if (!oGroupByColumn || bReset) {
+			if (oOldGroupByColumn) {
 				oOldGroupByColumn.setGrouped(false);
 			}
 
@@ -3236,7 +3236,7 @@ sap.ui.define([
 
 		this.setProperty("enableGrouping", bEnableGrouping);
 
-		if (oGroupedByColumn != null) {
+		if (oGroupedByColumn) {
 			oGroupedByColumn.setGrouped(bEnableGrouping);
 		}
 
@@ -3398,7 +3398,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._isTouchEvent = function(oEvent) {
-		return oEvent != null && oEvent.originalEvent != null && oEvent.originalEvent.touches != null;
+		return !!(oEvent && oEvent.originalEvent && oEvent.originalEvent.touches);
 	};
 
 	Table.prototype._getRowClone = function(iIndex) {

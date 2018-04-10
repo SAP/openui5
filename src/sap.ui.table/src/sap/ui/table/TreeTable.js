@@ -21,7 +21,6 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 	 * @constructor
 	 * @public
 	 * @alias sap.ui.table.TreeTable
-	 * @see {@link topic:a05fe0659b9c49729168a48697ce0000 Tree Table}
 	 * @see {@link topic:148892ff9aea4a18b912829791e38f3e Tables: Which One Should I Choose?}
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -117,8 +116,8 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 	TreeTable.prototype.bindRows = function(oBindingInfo) {
 		oBindingInfo = Table._getSanitizedBindingInfo(arguments);
 
-		if (oBindingInfo != null) {
-			if (oBindingInfo.parameters == null) {
+		if (oBindingInfo) {
+			if (!oBindingInfo.parameters) {
 				oBindingInfo.parameters = {};
 			}
 
@@ -144,7 +143,7 @@ sap.ui.define(['jquery.sap.global', './Table', 'sap/ui/model/ClientTreeBindingAd
 
 		var oBinding = this.getBinding("rows");
 
-		if (sName === "rows" && oBinding != null) {
+		if (sName === "rows" && oBinding) {
 			// Table._addBindingListener can not be used here, as the selectionChanged event will be added by an adapter applied in #getBinding.
 			oBinding.attachEvents({
 				selectionChanged: this._onSelectionChanged.bind(this)

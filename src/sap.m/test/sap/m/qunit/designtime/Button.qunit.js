@@ -132,7 +132,6 @@
 						};
 					}
 				},
-				layer : "VENDOR",
 				afterAction: fnConfirmButtonIsInvisible,
 				afterUndo: fnConfirmButtonIsVisible,
 				afterRedo: fnConfirmButtonIsInvisible
@@ -150,7 +149,6 @@
 						return {};
 					}
 				},
-				layer : "VENDOR",
 				afterAction: fnConfirmButtonIsVisible,
 				afterUndo: fnConfirmButtonIsInvisible,
 				afterRedo: fnConfirmButtonIsVisible

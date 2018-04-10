@@ -14,7 +14,7 @@ sap.ui.define([
 	 * Basic implementation for the command pattern.
 	 *
 	 * @class
-	 * @extends sap.ui.base.ManagedObject
+	 * @extends sap.ui.rta.command.FlexCommand
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor

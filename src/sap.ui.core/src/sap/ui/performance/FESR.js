@@ -6,8 +6,8 @@
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
 sap.ui.define(['sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2ETrace/Passport', './Interaction',
-	'./XHRInterceptor', 'sap/base/log', 'sap/base/Version'
-], function (URI, Device, Passport, Interaction, XHRInterceptor, log, Version) {
+	'./XHRInterceptor', 'sap/base/Version'
+], function (URI, Device, Passport, Interaction, XHRInterceptor, Version) {
 	"use strict";
 
 	// activation by meta tag or url parameter as fallback
@@ -62,11 +62,18 @@ sap.ui.define(['sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2E
 
 			// only use FESR for non CORS requests
 			if (!isCORSRequest(arguments[1])) {
+
+				// remember the TransactionId of the first request when FESR is active
+				if (!sFESRTransactionId) {
+					sFESRTransactionId = Passport.getTransactionId();
+				}
+
 				if (sFESR) {
 					this.setRequestHeader("SAP-Perf-FESRec", sFESR);
 					this.setRequestHeader("SAP-Perf-FESRec-opt", sFESRopt);
 					sFESR = null;
 					sFESRopt = null;
+					sFESRTransactionId = Passport.getTransactionId();
 					iStepCounter++;
 				}
 			}
@@ -92,9 +99,10 @@ sap.ui.define(['sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2E
 
 	// creates optional FESR header string
 	function createFESRopt(oInteraction) {
+		var sComponent = oInteraction.stepComponent || oInteraction.component;
 		return [
-			format(oInteraction.component, 20, true), // application_name
-			format(oInteraction.trigger + "_" + Interaction.getPending().event, 20, true), // step_name
+			format(sComponent, 20, true), // application_name
+			format(oInteraction.trigger + "_" + oInteraction.event, 20, true), // step_name
 			"", // 1 empty field
 			format(CLIENT_MODEL, 20), // client_model
 			format(oInteraction.bytesSent, 16), // client_data_sent
@@ -105,7 +113,7 @@ sap.ui.define(['sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2E
 			"", "", "", "", // 4 empty fields
 			format(oInteraction.busyDuration, 16), // busy duration
 			"", "", "", "", // 4 empty fields
-			format(oInteraction.component, 70, true) // application_name with 70 characters, trimmed from left
+			format(sComponent, 70, true) // application_name with 70 characters, trimmed from left
 		].join(",");
 	}
 
@@ -174,7 +182,6 @@ sap.ui.define(['sap/ui/thirdparty/URI', 'sap/ui/Device', 'sap/ui/performance/E2E
 				// only send FESR when requests have occured
 				if (oFinishedInteraction.requests.length > 0) {
 					createHeader(oFinishedInteraction);
-					sFESRTransactionId = Passport.createGUID();
 				}
 			};
 		} else if (!bActive && bFesrActive) {

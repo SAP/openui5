@@ -2190,6 +2190,57 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		}.bind(this));
 	});
 
+	QUnit.test("saveSequenceOfDirtyChanges shall save a sequence of the dirty changes in a bulk", function (assert) {
+		assert.expect(3);
+		// REVISE There might be more elegant implementation
+		var oChangeContent1, oChangeContent2, oChangeContent3, oCreateStub;
+
+		oCreateStub = this.lrepConnectorMock.create;
+
+		oChangeContent1 = {
+			fileName: "Gizorillus1",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		oChangeContent2 = {
+			fileName: "Gizorillus2",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		oChangeContent3 = {
+			fileName: "Gizorillus3",
+			layer: "VENDOR",
+			fileType: "change",
+			changeType: "addField",
+			selector: { "id": "control1" },
+			content: { },
+			originalLanguage: "DE"
+		};
+
+		this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+		this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
+		this.oChangePersistence.addChange(oChangeContent3, this._oComponentInstance);
+
+		var aDirtyChanges = [this.oChangePersistence._aDirtyChanges[0], this.oChangePersistence._aDirtyChanges[2]];
+
+		//Call CUT
+		return this.oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges).then(function(){
+			assert.ok(oCreateStub.calledTwice, "the create method of the connector is called for each selected change");
+			assert.deepEqual(oCreateStub.getCall(0).args[0], oChangeContent1, "the first change was processed first");
+			assert.deepEqual(oCreateStub.getCall(1).args[0], oChangeContent3, "the second change was processed afterwards");
+		});
+	});
+
 	QUnit.test("addChangeForVariant should add a new change object into variants changes mapp with pending action is NEW", function(assert) {
 		var mParameters = {
 			id: "changeId",

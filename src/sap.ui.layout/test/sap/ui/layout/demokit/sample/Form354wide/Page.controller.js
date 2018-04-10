@@ -22,7 +22,7 @@ sap.ui.define([
 
 		onExit : function () {
 			for (var sPropertyName in this._formFragments) {
-				if (!this._formFragments.hasOwnProperty(sPropertyName)) {
+				if (!this._formFragments.hasOwnProperty(sPropertyName) || this._formFragments[sPropertyName] == null) {
 					return;
 				}
 

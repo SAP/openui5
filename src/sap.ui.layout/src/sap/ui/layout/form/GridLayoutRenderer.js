@@ -560,13 +560,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './FormLayoutRendere
 
 	GridLayoutRenderer.getContainerData = function(oLayout, oContainer){
 
-		return oLayout.getLayoutDataForElement(oContainer, "sap/ui/layout/form/GridContainerData");
+		return oLayout.getLayoutDataForElement(oContainer, "sap.ui.layout.form.GridContainerData");
 
 	};
 
 	GridLayoutRenderer.getElementData = function(oLayout, oControl){
 
-		return oLayout.getLayoutDataForElement(oControl, "sap/ui/layout/form/GridElementData");
+		return oLayout.getLayoutDataForElement(oControl, "sap.ui.layout.form.GridElementData");
 
 	};
 

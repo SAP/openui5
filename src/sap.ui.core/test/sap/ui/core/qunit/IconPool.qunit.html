@@ -198,6 +198,12 @@
 					assert.equal(IconPool.getIconForMimeType("text/x-foo-bar"), "sap-icon://document", "Should return 'document' icon URI as fallback.");
 				});
 
+				QUnit.test("getIconInfo with sap-icon://undefined/wrench", function(assert) {
+					var oIconInfo = IconPool.getIconInfo("sap-icon://undefined/wrench");
+					assert.strictEqual(oIconInfo.collectionName, undefined, "the string undefined is converted back");
+					assert.strictEqual(oIconInfo.name, "wrench", "iconName is correctly parsed");
+				});
+
 				QUnit.module("Loading of additional icon fonts");
 
 				QUnit.test("insertFontFaceStyle", function(assert) {

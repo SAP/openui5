@@ -216,18 +216,34 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUi
 }
 
 .sapMPlanCal {
-  .sapMListTbl .sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
-	font-size: 1.375rem;
-	height: 2rem;
-	width: 2rem;
-	line-height: 2rem;
-	margin: 0.5rem 0.75rem 0.5rem 0;
-  }
-  .sapMSLIImg {
-	height: 2rem;
-	width: 2rem;
-	margin: 0.5rem 0.75rem 0.5rem 0;
-  }
+	.sapMListTbl .sapMSLIImgIcon.sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
+		font-size: 1.375rem;
+		height: 2rem;
+		width: 2rem;
+		line-height: 2rem;
+		margin: 0.5rem 0.75rem 0.5rem 0;
+	}
+
+	.sapMPlanCalRowHead {
+		.sapMLIBContent {
+			position: relative;
+		}
+
+		.sapMSLIImg {
+			max-width: 3rem;
+			max-height: 3rem;
+			width: auto;
+			height: auto;
+			margin: 0;
+		}
+
+		.sapMSLIDiv {
+			box-sizing: border-box;
+			position: absolute;
+			padding-left: calc(3rem + 0.75rem); // Width of the image + right margin
+			width: 100%;
+		}
+	}
 }
 
 .sapMPlanCal .sapUiCalDateInt .sapUiCalHeadB1 {
@@ -242,4 +258,19 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUi
 	.sapUiCalHeadNext {
 		position: static;
 	}
+}
+
+.sapUiCalAppResizeGhost {
+	position: absolute;
+	top: 0;
+	left: 0;
+	display: inline-block;
+	width: 1px;
+	height: 1px;
+	visibility: hidden;
+	opacity: 0.01;
+}
+
+.sapUiDnDIndicatorHide {
+	display: none !important;
 }

@@ -77,6 +77,8 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> Disabled and read-only states shouldn't be used together.
 	 *
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/checkbox/ Check Box}
+	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IFormContent
 	 *

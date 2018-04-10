@@ -23,7 +23,7 @@ sap.ui.define([
 	// new sap/base/* modules
 	"sap/base/util/now",
 	"sap/base/util/getObject", "sap/base/util/getter", "sap/base/Version",
-	"sap/base/util/extend", "sap/base/assert", "sap/base/log",
+	"sap/base/util/extend", "sap/base/assert", "sap/base/Log",
 
 	// new sap/ui/* modules
 	"sap/ui/Configuration", "sap/ui/dom/appendHead", "sap/ui/dom/computedStylePolyfill", "sap/ui/dom/includeScript",
@@ -38,7 +38,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jqueryui/jquery-ui-position",
 	"ui5loader-autoconfig",
 	"jquery.sap.stubs"
-], function(now, getObject, getter, Version, extend, assert, log,
+], function(now, getObject, getter, Version, extend, assert, Log,
 
      Configuration, appendHead, computedStylePolyfill, includeScript,
      includeStylesheet, initjQuerySupport, initSupportHooks, initjQueryBrowser,
@@ -140,8 +140,8 @@ sap.ui.define([
 	if ( oCfgData['xx-nosync'] === true || oCfgData['xx-nosync'] === 'true' || /(?:\?|&)sap-ui-xx-nosync=(?:x|X|true)/.exec(window.location.search) ) {
 		syncCallBehavior = 2;
 	}
+
 	_ui5loader.config({
-		async: String(oCfgData['xx-async']) === 'true' || /(?:^|\?|&)sap-ui-xx-async=(?:x|X|true)(?:&|$)/.test(location.search),
 		reportSyncCalls: syncCallBehavior
 	});
 
@@ -312,25 +312,6 @@ sap.ui.define([
 	jQuery.sap.statistics = StoredConfig.statistics;
 
 	// -------------------------- Logging -------------------------------------
-
-	function Logger(sComponent) {
-		this.fatal = function(msg,detail,comp,support) { log.fatal(msg, detail, comp || sComponent, support); return this; };
-		this.error = function(msg,detail,comp,support) { log.error(msg, detail, comp || sComponent, support); return this; };
-		this.warning = function(msg,detail,comp,support) { log.warning(msg, detail, comp || sComponent, support); return this; };
-		this.info = function(msg,detail,comp,support) { log.info(msg, detail, comp || sComponent, support); return this; };
-		this.debug = function(msg,detail,comp,support) { log.debug(msg, detail, comp || sComponent, support); return this; };
-		this.trace = function(msg,detail,comp,support) { log.trace(msg, detail, comp || sComponent, support); return this; };
-		this.setLevel = function(level, comp) { log.setLevel(level, comp || sComponent); return this; };
-		this.getLevel = function(comp) { return log.getLevel(comp || sComponent); };
-		this.isLoggable = function(level,comp) { return log.isLoggable(level, comp || sComponent); };
-	}
-
-	function getLogger(sComponent, iDefaultLogLevel) {
-		if (!isNaN(iDefaultLogLevel)) {
-			log.setLevel(iDefaultLogLevel, sComponent, true);
-		}
-		return new Logger(sComponent);
-	}
 
 	/**
 	 * Creates a new Logger instance which will use the given component string
@@ -537,7 +518,7 @@ sap.ui.define([
 	 * @borrows jQuery.sap.log.Logger#setLevel as setLevel
 	 * @borrows jQuery.sap.log.Logger#isLoggable as isLoggable
 	 */
-	jQuery.sap.log = extend(getLogger(), /** @lends jQuery.sap.log */ {
+	jQuery.sap.log = extend(Log.getLogger(), /** @lends jQuery.sap.log */ {
 
 		/**
 		 * Enumeration of the configurable log levels that a Logger should persist to the log.
@@ -548,7 +529,7 @@ sap.ui.define([
 		 * @enum {int}
 		 * @public
 		 */
-		Level: log.Level,
+		Level: Log.Level,
 
 		/**
 		 * Do not log anything
@@ -621,7 +602,7 @@ sap.ui.define([
 		 * @since 1.1.2
 		 * @function
 		 */
-		getLogger: getLogger,
+		getLogger: Log.getLogger,
 
 		/**
 		 * Returns the logged entries recorded so far as an array.
@@ -639,7 +620,7 @@ sap.ui.define([
 		 * @since 1.1.2
 		 * @function
 		 */
-		getLogEntries: log.getLog,
+		getLogEntries: Log.getLog,
 
 		/**
 		 * Allows to add a new LogListener that will be notified for new log entries.
@@ -652,7 +633,7 @@ sap.ui.define([
 		 * @static
 		 * @function
 		 */
-		addLogListener: log.addLogListener,
+		addLogListener: Log.addLogListener,
 
 		/**
 		 * Allows to remove a registered LogListener.
@@ -662,7 +643,7 @@ sap.ui.define([
 		 * @static
 		 * @function
 		 */
-		removeLogListener: log.removeLogListener,
+		removeLogListener: Log.removeLogListener,
 
 		/**
 		 * Enables or disables whether additional support information is logged in a trace.
@@ -675,7 +656,7 @@ sap.ui.define([
 		 * @since 1.46.0
 		 * @function
 		 */
-		logSupportInfo: log.logSupportInfo,
+		logSupportInfo: Log.logSupportInfo,
 
 		/**
 		 * Enumeration of levels that can be used in a call to {@link jQuery.sap.log.Logger#setLevel}(iLevel, sComponent).
@@ -685,7 +666,7 @@ sap.ui.define([
 		 * @enum
 		 * @public
 		 */
-		LogLevel: log.Level,
+		LogLevel: Log.Level,
 
 		/**
 		 * Retrieves the currently recorded log entries.
@@ -693,7 +674,7 @@ sap.ui.define([
 		 * @function
 		 * @public
 		 */
-		getLog: log.getLog
+		getLog: Log.getLog
 
 	});
 
@@ -723,7 +704,7 @@ sap.ui.define([
 	};
 
 	// against all our rules: use side effect of assert to differentiate between optimized and productive code
-	jQuery.sap.assert( log.setLevel(log.Level.DEBUG) || 1, "will be removed in optimized version");
+	jQuery.sap.assert( Log.setLevel(Log.Level.DEBUG) || 1, "will be removed in optimized version");
 
 	// evaluate configuration
 	oCfgData.loglevel = (function() {
@@ -731,13 +712,13 @@ sap.ui.define([
 		return m && m[1];
 	}()) || oCfgData.loglevel;
 	if ( oCfgData.loglevel ) {
-		log.setLevel(log.Level[oCfgData.loglevel.toUpperCase()] || parseInt(oCfgData.loglevel,10));
+		Log.setLevel(Log.Level[oCfgData.loglevel.toUpperCase()] || parseInt(oCfgData.loglevel,10));
 	}
 
-	log.info("SAP Logger started.");
+	Log.info("SAP Logger started.");
 	// log early logs
 	jQuery.each(_earlyLogs, function(i,e) {
-		log[e.level](e.message);
+		Log[e.level](e.message);
 	});
 	_earlyLogs = null;
 
@@ -850,7 +831,7 @@ sap.ui.define([
 			i;
 
 		if ( syncCallBehavior && oContext === window ) {
-			log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
+			Log.error("[nosync] getObject called to retrieve global name '" + sName + "'");
 		}
 
 		for (i = 0; oObject && i < l; i++) {
@@ -1216,8 +1197,8 @@ sap.ui.define([
 		 * Local logger, by default only logging errors. Can be configured to DEBUG via config parameter.
 		 * @private
 		 */
-		var oLog = _ui5loader.logger = getLogger("sap.ui.ModuleSystem",
-				(/sap-ui-xx-debug(M|-m)odule(L|-l)oading=(true|x|X)/.test(location.search) || oCfgData["xx-debugModuleLoading"]) ? log.Level.DEBUG : log.Level.INFO
+		var oLog = _ui5loader.logger = Log.getLogger("sap.ui.ModuleSystem",
+				(/sap-ui-xx-debug(M|-m)odule(L|-l)oading=(true|x|X)/.test(location.search) || oCfgData["xx-debugModuleLoading"]) ? Log.Level.DEBUG : Log.Level.INFO
 			),
 
 			FRAGMENT = "fragment",
@@ -1682,7 +1663,7 @@ sap.ui.define([
 		 * @deprecated
 		 */
 		jQuery.sap.preloadModules = function(sPreloadModule, bAsync, oSyncPoint) {
-			log.error("jQuery.sap.preloadModules was never a public API and has been removed. Migrate to Core.loadLibrary()!");
+			Log.error("jQuery.sap.preloadModules was never a public API and has been removed. Migrate to Core.loadLibrary()!");
 		};
 
 		/**
@@ -2016,7 +1997,7 @@ sap.ui.define([
 	if ( oJQVersion.compareTo("2.2.3") != 0 ) {
 		// if the loaded jQuery version isn't SAPUI5's default version -> notify
 		// the application
-		log.warning("SAPUI5's default jQuery version is 2.2.3; current version is " + jQuery.fn.jquery + ". Please note that we only support version 2.2.3.");
+		Log.warning("SAPUI5's default jQuery version is 2.2.3; current version is " + jQuery.fn.jquery + ". Please note that we only support version 2.2.3.");
 	}
 
 	initjQueryBrowser();

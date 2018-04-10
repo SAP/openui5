@@ -73,6 +73,30 @@
         "type": "FIX",
         "text": " Table: Correct number of rows in visibleRowCountMode\u003dAuto",
         "references": []
+      },
+      {
+        "id": "ff963b1155ce98c7baf7b10efdb9fad9b44f5c67",
+        "type": "FIX",
+        "text": " AnalyticalTable: Sum Row indent and hover effect corrected",
+        "references": []
+      },
+      {
+        "id": "69489ac64644a73a091268888fc75db504e2dfb1",
+        "type": "FIX",
+        "text": " GridTable: Avoid refocus of cell while scrolling for ACC",
+        "references": []
+      },
+      {
+        "id": "73fc28de950ff7057390feea1b11356771811597",
+        "type": "FIX",
+        "text": " GridTable: Disable visibility menu item of last visible column",
+        "references": []
+      },
+      {
+        "id": "6736bd4b8122912d2504a910469aea108d4983cb",
+        "type": "FIX",
+        "text": " GridTable: Ensure getFixColumnCount to return the property value",
+        "references": []
       }
     ]
   }
