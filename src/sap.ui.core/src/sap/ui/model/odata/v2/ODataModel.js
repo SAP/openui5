@@ -68,7 +68,7 @@ sap.ui.define([
 	 *            Sets the default binding mode for the model
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
 	 *            Sets the default count mode for the model
-	 * @param {string} [mParameters.preliminaryContext=false]
+	 * @param {boolean} [mParameters.preliminaryContext=false]
 	 *            Whether a preliminary Context will be created/used by a binding
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
 	 *            Sets the default operation mode for the model

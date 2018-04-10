@@ -29,7 +29,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 	 * @param {int} [mParameters.threshold] Threshold that defines how many entries should be fetched at least
 	 *                                      by the binding if <code>operationMode</code> is set to <code>Auto</code>
 	 *                                      (See documentation for {@link sap.ui.model.odata.OperationMode.Auto})
-	 *
+	 * @param {boolean} [mParameters.usePreliminaryContext] Whether a preliminary Context will be used
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataListBinding
 	 * @extends sap.ui.model.ListBinding
