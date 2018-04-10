@@ -5022,7 +5022,7 @@
 		var oLink = _createLink(sUrl, mAttributes, fnLoadCallback, fnErrorCallback);
 		if (oOld && oOld.tagName === "LINK" && oOld.rel === "stylesheet") {
 			// link exists, so we replace it - but only if a callback has to be attached or if the href will change. Otherwise don't touch it
-			if (fnLoadCallback || fnErrorCallback || oOld.href !== resolveURL(sUrl)) {
+			if (fnLoadCallback || fnErrorCallback || oOld.href !== oLink.href) {
 				// if the attribute "data-sap-ui-foucmarker" exists and the value
 				// matches the id of the new link the new link will be put
 				// before the old link into the document and the id attribute

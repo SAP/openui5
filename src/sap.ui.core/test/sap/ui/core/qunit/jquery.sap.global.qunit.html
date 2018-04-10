@@ -278,6 +278,18 @@
 				assert.equal($link.length, 1, "after includeStylesheet with absolute URL, there still should be exactly one matching link");
 				assert.equal($link.attr("data-marker"), "42", "after includeStylesheet with absolute URL, the link object still should be the old one");
 
+				// Creates a URL like
+				// http://example.com/resources/sap/ui/layout/themes/sap_belize/../../themes/sap_belize/library.css
+				// which should be normalized to
+				// http://example.com/resources/sap/ui/layout/themes/sap_belize/library.css
+				var sAbsoluteStylesheetUrlUnnormalized = sAbsoluteStylesheetUrl.replace(/library\.css$/, "../../themes/sap_belize/library.css");
+
+				jQuery.sap.includeStyleSheet(sAbsoluteStylesheetUrlUnnormalized, "sap-ui-theme-sap.ui.layout");
+
+				$link = jQuery(document.getElementById("sap-ui-theme-sap.ui.layout"));
+				assert.equal($link.length, 1, "after includeStylesheet with unnormalized absolute URL, there still should be exactly one matching link");
+				assert.equal($link.attr("data-marker"), "42", "after includeStylesheet with unnormalized absolute URL, the link object still should be the old one");
+
 				sap.ui.getCore().loadLibrary("sap.ui.layout");
 
 				var $link = jQuery.sap.byId("sap-ui-theme-sap.ui.layout");
