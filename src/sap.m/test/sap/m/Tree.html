@@ -831,23 +831,30 @@ var oData = [
 	// footer funxtions
 	function expandMulti(){
 		return new sap.m.Button({
-			text:"expand multiple nodes",
-			tooltip: "expand[0,2,3,4,1,5]",
+			text:"expand selected nodes",
+			tooltip: "expand selected nodes",
 			press: function(evt) {
-				var oBinding = oTree.getBinding("items");
-				// expand multiple nodes
-				oTree.expand([0,2,3,4,1,5]);
+				var oBinding = oTree.getBinding("items"),
+					aSelectedItems = oTree.getSelectedItems(),
+					aSelectedIndices = aSelectedItems.map( function(oSelectedItem) {
+					return oTree.indexOfItem(oSelectedItem);
+				});
+				oTree.expand(aSelectedIndices);
 			}
 		});
 	};
 
 	function collapseMulti(){
 		return new sap.m.Button({
-			text:"collapse multiple nodes",
-			tooltip:"collapse[5,0,2]",
+			text:"collapse selected nodes",
+			tooltip: "collapse selected nodes",
 			press: function(evt) {
-				// collapse multiple nodes
-				oTree.collapse([5,0,2,9,7]);
+				var oBinding = oTree.getBinding("items"),
+					aSelectedItems = oTree.getSelectedItems(),
+					aSelectedIndices = aSelectedItems.map( function(oSelectedItem) {
+					return oTree.indexOfItem(oSelectedItem);
+				});
+				oTree.collapse(aSelectedIndices);
 			}
 		});
 	};

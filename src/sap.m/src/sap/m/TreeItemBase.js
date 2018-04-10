@@ -63,13 +63,15 @@ sap.ui.define([
 	 */
 	TreeItemBase.prototype.getItemNodeContext = function() {
 		var oTree = this.getTree();
-		var oContext = null;
-		var oBinding = null;
-		if (oTree) {
+		var oNode = null;
+		var oBinding = oTree ? oTree.getBinding("items") : null;
+
+		if (oTree && oBinding) {
 			oBinding = oTree.getBinding("items");
-			oContext = oBinding.getNodeByIndex(oTree.indexOfItem(this));
+			oNode = oBinding.getNodeByIndex(oTree.indexOfItem(this));
 		}
-		return oContext;
+
+		return oNode;
 	};
 
 	/**
@@ -123,7 +125,10 @@ sap.ui.define([
 	 * @since 1.42.0
 	 */
 	TreeItemBase.prototype.isLeaf = function() {
-		return (this.getItemNodeContext() || {}).isLeaf;
+		var oTree = this.getTree(),
+			oNode = this.getItemNodeContext();
+
+		return oNode ? !oTree.getBinding("items").nodeHasChildren(oNode) : false;
 	};
 
 	/**
@@ -156,11 +161,14 @@ sap.ui.define([
 	 * @since 1.42.0
 	 */
 	TreeItemBase.prototype.getExpanded = function() {
-		var bExpanded = false;
-		if (this.getItemNodeContext() && this.getItemNodeContext().nodeState) {
-			bExpanded = this.getItemNodeContext().nodeState.expanded;
+		var oTree = this.getTree();
+		if (!oTree) {
+			return false;
 		}
-		return bExpanded;
+
+		var iIndex = oTree.indexOfItem(this);
+		var oBinding = oTree.getBinding("items");
+		return (oBinding && oBinding.isExpanded(iIndex));
 	};
 
 	TreeItemBase.prototype.setSelected = function (bSelected) {
