@@ -266,5 +266,46 @@
         "references": []
       }
     ]
+  },
+  "1.52.10": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "16d51d3f352906264a3b7e2fb135b7af112678f2",
+        "type": "FIX",
+        "text": " AnalyticalTable: Sum Row indent and hover effect corrected",
+        "references": []
+      },
+      {
+        "id": "5e7285fdc5ad609ac8cc8d4552ef5a0d4de29c1e",
+        "type": "FIX",
+        "text": " GridTable: Attribute headers for gridcell corrected",
+        "references": []
+      },
+      {
+        "id": "7cad63b6569b31899d4ececedaed2b79cc10e179",
+        "type": "FIX",
+        "text": " GridTable: Disable visibility menu item of last visible column",
+        "references": []
+      },
+      {
+        "id": "c1ccb85d96b1fd1497b8619444262022910271c8",
+        "type": "FIX",
+        "text": " GridTable: Move before/after tab elements out of scrollable CCnt",
+        "references": []
+      },
+      {
+        "id": "3cb6fad0012179ebb510d97e94afb0165706eccc",
+        "type": "FIX",
+        "text": " Table: Correct number of rows in visibleRowCountMode\u003dAuto",
+        "references": []
+      },
+      {
+        "id": "e965d9a8ab350d19ec0bbb8010ea27bf6dfed56f",
+        "type": "FIX",
+        "text": " Table: Stabilized scroll position on cell focus",
+        "references": []
+      }
+    ]
   }
 }

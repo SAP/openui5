@@ -17,7 +17,7 @@
       {
         "id": "6657e51f2ce2456faeb7e3fb1985c501b83ca84b",
         "type": "FEATURE",
-        "text": "PlanningCalendar-accessibility for special dates & appointments",
+        "text": "PlanningCalendar-accessibility for special dates \u0026 appointments",
         "references": []
       },
       {
@@ -252,7 +252,7 @@
       {
         "id": "a5022f7d99b978d2a9dc9be4e3a4724195f04a1c",
         "type": "FIX",
-        "text": "sap.m.BarInPageEnabler: Bars no longer care about the context they're used in (i.e. header, footer, etc.)",
+        "text": "sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
         "references": [
           {
             "type": "BCP",
@@ -931,7 +931,7 @@
       {
         "id": "a3a5722f891643510e4de089485475dbebd36f5f",
         "type": "FIX",
-        "text": "sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black & High Contrast White themes.",
+        "text": "sap.m.PlanningCalendar - appointment row focus outline covers all 4 sides for High Contrast Black \u0026 High Contrast White themes.",
         "references": [
           {
             "type": "BCP",
@@ -1110,7 +1110,7 @@
       {
         "id": "ffce4bcd29542a8dcdc01bbd340a3a86ff1bcd9e",
         "type": "FIX",
-        "text": "sap.m.SearchField: Unnecessary 'suggest' events are not fired any more",
+        "text": "sap.m.SearchField: Unnecessary \u0027suggest\u0027 events are not fired any more",
         "references": [
           {
             "type": "BCP",
@@ -1176,7 +1176,7 @@
       {
         "id": "c3f2ab10357d1c94ceaa6580decdffc8eeb43465",
         "type": "FIX",
-        "text": "sap.m.Slider: Focus should not be called manually when tooltip's value is updated",
+        "text": "sap.m.Slider: Focus should not be called manually when tooltip\u0027s value is updated",
         "references": [
           {
             "type": "BCP",
@@ -1615,7 +1615,7 @@
       {
         "id": "dd4c0f3327c01cd324a64aec3c63a641b78e24b2",
         "type": "FIX",
-        "text": "sap.m.MessageView: Header's visibility adjusted",
+        "text": "sap.m.MessageView: Header\u0027s visibility adjusted",
         "references": [
           {
             "type": "BCP",
@@ -1760,7 +1760,7 @@
       {
         "id": "e1d50753cd082f264c310b45d436ba3ce9bf9fd9",
         "type": "FIX",
-        "text": "sap.m.DateTimePicker-when picker is opened for IE & Edge, input should not be focusable",
+        "text": "sap.m.DateTimePicker-when picker is opened for IE \u0026 Edge, input should not be focusable",
         "references": [
           {
             "type": "BCP",
@@ -1860,7 +1860,7 @@
       {
         "id": "14a5f6d5259dbaa593111af1ab20cc36a7a24ebc",
         "type": "FIX",
-        "text": "sap.m.MessageView: Link's properties are now forwarded in detailsPage",
+        "text": "sap.m.MessageView: Link\u0027s properties are now forwarded in detailsPage",
         "references": [
           {
             "type": "BCP",
@@ -1959,7 +1959,7 @@
       {
         "id": "83719240bb87c964b812c27333a3714b5b1a5a52",
         "type": "FIX",
-        "text": "sap.m.SearchField: 'search' event is now correctly fired",
+        "text": "sap.m.SearchField: \u0027search\u0027 event is now correctly fired",
         "references": [
           {
             "type": "BCP",
@@ -2030,7 +2030,7 @@
       {
         "id": "eede502c64b7e664e4f3e60b127147526aaaa210",
         "type": "FIX",
-        "text": "sap.m.Button: fire press event on keydown for 'enter' and keyup for 'space'",
+        "text": "sap.m.Button: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
         "references": [
           {
             "type": "BCP",
@@ -2590,7 +2590,7 @@
       {
         "id": "a86265725719360e12ffe994ce550661338d8035",
         "type": "FIX",
-        "text": "sap.m.GrowingEnablement: Focus shouldn't jump out of the control.",
+        "text": "sap.m.GrowingEnablement: Focus shouldn\u0027t jump out of the control.",
         "references": [
           {
             "type": "BCP",
@@ -2649,7 +2649,7 @@
       {
         "id": "1346370d95e3885e275d786ee423da4f19a9093f",
         "type": "FIX",
-        "text": "sap.m.StepInput: pressing PageUp or PageDown doesn't scroll the page now",
+        "text": "sap.m.StepInput: pressing PageUp or PageDown doesn\u0027t scroll the page now",
         "references": [
           {
             "type": "GitHub",
@@ -2842,6 +2842,71 @@
             "reference": "1880230812"
           }
         ]
+      }
+    ]
+  },
+  "1.52.10": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "8497b6c9a2f39d23cd62c7e4b851fc7b78f7e4cf",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: when picker is opened for IE \u0026 Edge, input should not be focusable",
+        "references": []
+      },
+      {
+        "id": "46d3a5668dd8ae3654ea1d46bf1b9c92bbb61917",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: fix extra space in translations",
+        "references": []
+      },
+      {
+        "id": "df114377a25e3a3a040e72f57641660ae48ed91c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "f4ffdd144b976c05c1f79a3777bad576bd3e5c5c",
+        "type": "FIX",
+        "text": " sap.m.QuickView: Parent container is not re-rendered any more",
+        "references": []
+      },
+      {
+        "id": "b0af995de469a8698090a090164e9398879328bd",
+        "type": "FIX",
+        "text": " sap.m.Select: Value state information is now read",
+        "references": []
+      },
+      {
+        "id": "c11c160ac9c9f3d3b207fcfa2fbed4db2c314fda",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: correct tab  close button size",
+        "references": []
+      },
+      {
+        "id": "a9fd70715af41159f9ab7a0909fbef3bfe175a3f",
+        "type": "FIX",
+        "text": " sap.m.TextArea: The focus and the background are now correct",
+        "references": []
+      },
+      {
+        "id": "4f6e45aed9a94bffa35aace0ce746fca3a6ccdc1",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Custom tiles show now visual indication of deletion",
+        "references": []
+      },
+      {
+        "id": "f4b249af8591be619beefaff972b696e8d11a96d",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: after new page is added, scrollers remain visible.",
+        "references": []
+      },
+      {
+        "id": "c3f5e29c79dcabdc2edafd098daaff50ccb94158",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: correct filter examples",
+        "references": []
       }
     ]
   }
