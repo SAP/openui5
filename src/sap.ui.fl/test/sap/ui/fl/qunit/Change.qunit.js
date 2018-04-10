@@ -18,6 +18,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 			this.oChangeDef = {
 				fileName: "0815_1",
 				namespace: "apps/smartFilterBar/changes/",
+				projectId: "myProject",
 				packageName: "$TMP",
 				fileType: "variant",
 				layer: "VENDOR",
@@ -102,6 +103,17 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		var oInstance = new Change(this.oChangeDef);
 		oInstance.setNamespace("apps/ReferenceAppId/changes/");
 		assert.strictEqual(oInstance.getNamespace(), "apps/ReferenceAppId/changes/");
+	});
+
+	QUnit.test("getProjectId should return the projectId in the definition", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.strictEqual(oInstance.getProjectId(), "myProject");
+	});
+
+	QUnit.test("setProjectId should set the projectId in the definition", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		oInstance.setProjectId("otherProject");
+		assert.strictEqual(oInstance.getProjectId(), "otherProject");
 	});
 
 	QUnit.test("setComponent should set the reference of the definition", function(assert) {
@@ -235,7 +247,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 	QUnit.test("createInitialFileContent", function(assert) {
 		var oInfo = {
 			service: "someService",
-			reference: "smartFilterBar",
+			reference: "smartFilterBar.Component",
 			componentName: "smartFilterBar",
 			changeType: "filterVariant",
 			texts: {
@@ -269,11 +281,12 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 
 		var oCreatedFile = Change.createInitialFileContent(oInfo);
 
-		assert.equal(oCreatedFile.reference, "smartFilterBar");
+		assert.equal(oCreatedFile.reference, "smartFilterBar.Component");
 		assert.equal(oCreatedFile.fileName, "0815_1");
 		assert.equal(oCreatedFile.changeType, "filterVariant");
 		assert.equal(oCreatedFile.fileType, "variant");
 		assert.equal(oCreatedFile.namespace, "apps/smartFilterBar/adapt/oil/changes/");
+		assert.equal(oCreatedFile.projectId, "smartFilterBar");
 		assert.equal(oCreatedFile.packageName, "/UIF/LREP");
 		assert.equal(oCreatedFile.support.generator, "Change.createInitialFileContent");
 		assert.deepEqual(oCreatedFile.content, {something: "createNewVariant"});
@@ -307,6 +320,19 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		var oCreatedFile = Change.createInitialFileContent(oInfo);
 
 		assert.equal(oCreatedFile.fileType, "newFileType");
+	});
+
+	QUnit.test("createInitialFileContent when project id is pre-set", function(assert) {
+		var oInfo = {
+			changeType: "change",
+			content: {},
+			namespace: "apps/smartFilterBar/adapt/oil/changes/",
+			projectId: "myProject"
+		};
+
+		var oCreatedFile = Change.createInitialFileContent(oInfo);
+
+		assert.equal(oCreatedFile.projectId, "myProject");
 	});
 
 	QUnit.test("_isReadOnlyDueToOriginalLanguage shall compare the original language with the current language", function(assert) {
