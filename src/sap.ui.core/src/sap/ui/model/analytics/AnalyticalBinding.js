@@ -369,19 +369,21 @@ sap.ui.define([
 	 * @param {Object} oContext the new context object
 	 */
 	AnalyticalBinding.prototype.setContext = function (oContext) {
+		var sResolvedPath;
+
 		if (this.oContext !== oContext) {
 			this.oContext = oContext;
-			this.oDataState = null;
-			this.bApplySortersToGroups = true;
 
-			// If binding is not a relative binding, nothing to do here
 			if (!this.isRelative()) {
+				// If binding is not a relative binding, nothing to do here
 				return;
 			}
 
+			this.oDataState = null;
+			this.bApplySortersToGroups = true;
 			// resolving the path makes sure that we can safely analyze the metadata,
 			// as we have a resourcepath for the QueryResult
-			var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
 			if (sResolvedPath) {
 				this.resetData();
 				this._initialize(); // triggers metadata/annotation check

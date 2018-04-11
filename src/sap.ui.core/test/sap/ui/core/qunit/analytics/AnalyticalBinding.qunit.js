@@ -2277,8 +2277,9 @@ sap.ui.require([
 				oBinding.setContext(oFixture.oContext);
 
 				assert.strictEqual(oBinding.oContext, oFixture.oContext, "new context set");
-				assert.strictEqual(oBinding.oDataState, null, "oDataState reset");
-				assert.strictEqual(oBinding.bApplySortersToGroups, true);
+				assert.strictEqual(oBinding.oDataState, oFixture.bRelative ? null : oDataState);
+				assert.strictEqual(oBinding.bApplySortersToGroups,
+					oFixture.bRelative ? true : bApplySortersToGroups);
 				assert.strictEqual(oBinding.bInitial,
 					oFixture.bRelative && !oFixture.bResolved ? true : bInitial);
 
