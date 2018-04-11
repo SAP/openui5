@@ -420,7 +420,8 @@
 						jQuery.sap.interaction.notifyStepStart(null, true);
 
 						var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
-						assert.strictEqual(oMeasurement.component, sName);
+						assert.strictEqual(oMeasurement.component, "undetermined");
+						assert.strictEqual(oMeasurement.stepComponent, sName);
 
 						oReq = new XMLHttpRequest();
 						var spy = fnSpy(oReq, "setRequestHeader");
