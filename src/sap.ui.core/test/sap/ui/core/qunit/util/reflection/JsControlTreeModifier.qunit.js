@@ -2,16 +2,17 @@
 
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-// Restrict coverage to sap.ui.rta library
+// Restrict coverage to sap/ui/core/util/reflection/
 if (window.blanket){
-	window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
+	window.blanket.options("sap-ui-cover-only", "[sap/ui/core/util/reflection/]");
 }
+QUnit.config.autostart = false;
 
 sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Page',
 	'sap/f/DynamicPageTitle',
-	'sap/ui/fl/changeHandler/JsControlTreeModifier'
+	'sap/ui/core/util/reflection/JsControlTreeModifier'
 ],
 function(
 	Button,
@@ -24,14 +25,10 @@ function(
 	QUnit.module("Using the JsControlTreeModifier...", {
 		beforeEach: function () {
 
-			jQuery.sap.registerModulePath("testComponent", "../testComponent");
-
+			jQuery.sap.registerModulePath("sap.ui.test", "../../component/testdata");
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: "testComponent",
-				id: "testComponent",
-				"metadata": {
-					"manifest": "json"
-				}
+				name: "sap.ui.test.other",
+				id: "testComponent"
 			});
 
 		},
@@ -110,14 +107,10 @@ function(
 	QUnit.module("Given the JsControlTreeModifier...", {
 		beforeEach: function () {
 
-			jQuery.sap.registerModulePath("testComponent", "../testComponent");
-
+			jQuery.sap.registerModulePath("sap.ui.test", "../../component/testdata");
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: "testComponent",
-				id: "testComponent",
-				"metadata": {
-					"manifest": "json"
-				}
+				name: "sap.ui.test.other",
+				id: "testComponent"
 			});
 
 		},
@@ -156,4 +149,6 @@ function(
 
 		assert.equal(sChangeHandlerModulePath, undefined, "then 'undefined' is returned");
 	});
+
+	QUnit.start();
 });
