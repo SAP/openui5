@@ -2867,9 +2867,14 @@
 			this._createCalendar();
 			oPCInterval = this._oPC.getAggregation('table').getAggregation('infoToolbar').getContent()[1];
 			oPCIntervalMonth = oPCInterval.getAggregation('month')[0];
+			var $EventTarget = oPCIntervalMonth.$('days').children().eq(0),
+				oEvent = { clientX: 100, clientY: 100, target: $EventTarget.children().get(0) },
+				oMouseDownEvent = jQuery.Event("mousedown", oEvent),
+				oMouseUpEvent = jQuery.Event("mouseup", oEvent);
+
 			//Calendar selection is implemented on 'mouseup' event so to test this you have to simulate 'mousedown' + 'mouseup' event sequence
-			oPCIntervalMonth.$('days').children().eq(0).trigger('mousedown');
-			oPCIntervalMonth.$('days').children().eq(0).trigger('mouseup');
+			$EventTarget.trigger(oMouseDownEvent);
+			$EventTarget.trigger(oMouseUpEvent);
 			//assert
 			strictEqual(oHandleCalendarSelectSpy.callCount, 1, "'_handleStartDateChange()' event handler is called once");
 			//clean
