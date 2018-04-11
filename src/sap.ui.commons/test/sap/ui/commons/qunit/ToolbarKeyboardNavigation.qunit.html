@@ -159,7 +159,7 @@
 		});
 
 		// BCP: 1580009795
-		QUnit.test("Right item retain its tabindex attribute after visibility switch", function (assert) {
+		QUnit.skip("Right item retain its tabindex attribute after visibility switch", function () {
 			var done = assert.async();
 			var oButtonRightItem = new sap.ui.commons.Button({text: 'Right Item'});
 			oCtrl.addRightItem(oButtonRightItem);
