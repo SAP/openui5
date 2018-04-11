@@ -458,7 +458,6 @@ function(
 	});
 
 	QUnit.test("when mergeWith is called with a customizer function", function(assert){
-
 		var fnCustomizer = function(vDestinationValue, vSourceValue, sProperty, mDestination, mSource){
 			return function(){ return "mergedProperty"; };
 		};
@@ -466,6 +465,28 @@ function(
 		assert.equal(this.oObject1.function11(), "function11Object1", "at first the function returns 'function11Object1'");
 		Utils.mergeWith(this.oObject1, this.oObject2, fnCustomizer);
 		assert.equal(this.oObject1.function11(), "mergedProperty", "then the merged function returns 'mergedProperty'");
+	});
+
+	QUnit.test("when omit is called with an object and some properties", function(assert){
+		var oSourceObject = {'a' : 1, 'b' : 2, 'c' : 3, 'd' : 4};
+
+		assert.deepEqual(Utils.omit(oSourceObject, ['b', 'd']), {'a' : 1, 'c' : 3}, "then a new object is returned without the properties");
+	});
+
+	QUnit.test("when omit is called with an object containing a property with undefined value and the other properties are removed", function(assert){
+		var oSourceObject = {'a' : 1, 'b' : undefined, 'c' : 3};
+
+		assert.deepEqual(Utils.omit(oSourceObject, ['a', 'c']), {'b' : undefined}, "then the new object returned has only the property that has undefined value");
+	});
+
+	QUnit.test("when omit is called with a deep object and some properties", function(assert){
+		var oSourceObject = {'a' : 1, 'b' : { 'd': 4, 'e': 5 }, 'c' : 3};
+		var oNewObject = Utils.omit(oSourceObject, ['a', 'c', 'd']);
+
+		assert.deepEqual(oNewObject, {'b' : { 'd': 4, 'e': 5 }},  "then a new object is returned without the properties");
+
+		oSourceObject.b = 0;
+		assert.deepEqual(oNewObject.b, { 'd': 4, 'e': 5 }, "then modifying the old object does not change the new object");
 	});
 
 	QUnit.done(function() {

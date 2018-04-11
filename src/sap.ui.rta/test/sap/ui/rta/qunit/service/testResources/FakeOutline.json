@@ -1,164 +1,189 @@
-[{
-	"id": "mainPage",
-	"name": "Page",
-	"technicalName": "sap.m.Page",
-	"editable": true,
-	"icon": "sap/m/designtime/Page.icon.svg",
-	"type": "element",
-	"elements": [{
+[
+	{
 		"id": "mainPage",
-		"technicalName": "content",
-		"editable": false,
-		"type": "aggregation",
-		"elements": [{
-			"id": "objPage",
-			"name": "LAYOUT_CONTROL_NAME",
-			"technicalName": "sap.uxap.ObjectPageLayout",
-			"editable": true,
-			"type": "element",
-			"elements": [{
-				"id": "objPage",
-				"technicalName": "sections",
+		"name": "Page",
+		"technicalName": "sap.m.Page",
+		"editable": true,
+		"icon": "sap/m/designtime/Page.icon.svg",
+		"type": "element",
+		"elements": [
+			{
+				"id": "mainPage",
+				"technicalName": "content",
 				"editable": false,
 				"type": "aggregation",
-				"elements": [{
-					"id": "objSection",
-					"name": "Section",
-					"technicalName": "sap.uxap.ObjectPageSection",
-					"editable": true,
-					"icon": "sap/uxap/designtime/ObjectPageSection.icon.svg",
-					"type": "element",
-					"elements": [{
-						"id": "objSection",
-						"technicalName": "customAnchorBarButton",
-						"editable": false,
-						"type": "aggregation"
-					}, {
-						"id": "objSection",
-						"technicalName": "subSections",
-						"editable": false,
-						"type": "aggregation",
-						"elements": [{
-							"id": "objSubSection",
-							"technicalName": "sap.uxap.ObjectPageSubSection",
-							"editable": true,
-							"icon": "sap/uxap/designtime/ObjectPageSubSection.icon.svg",
-							"type": "element",
-							"elements": [{
-								"id": "objSubSection",
-								"technicalName": "customAnchorBarButton",
-								"editable": false,
-								"type": "aggregation"
-							}, {
-								"id": "objSubSection",
-								"technicalName": "blocks",
+				"elements": [
+					{
+						"id": "objPage",
+						"name": "LAYOUT_CONTROL_NAME",
+						"technicalName": "sap.uxap.ObjectPageLayout",
+						"editable": true,
+						"type": "element",
+						"elements": [
+							{
+								"id": "objPage",
+								"technicalName": "sections",
 								"editable": false,
 								"type": "aggregation",
-								"elements": [{
-									"id": "layout1",
-									"instanceName": "Vertical Layout Label",
-									"name": "Vertical Container",
-									"technicalName": "sap.ui.layout.VerticalLayout",
-									"editable": true,
-									"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
-									"type": "element",
-									"elements": [{
-										"id": "layout1",
-										"technicalName": "content",
-										"editable": false,
-										"type": "aggregation",
-										"elements": [{
-											"id": "button1",
-											"technicalName": "sap.m.Button",
-											"editable": true,
-											"icon": "sap/m/designtime/Button.icon.svg",
-											"type": "element"
-										}
+								"elements": [
+									{
+										"id": "objSection",
+										"name": "Section",
+										"technicalName": "sap.uxap.ObjectPageSection",
+										"editable": true,
+										"icon": "sap/uxap/designtime/ObjectPageSection.icon.svg",
+										"type": "element",
+										"elements": [
+											{
+												"id": "objSection",
+												"technicalName": "customAnchorBarButton",
+												"editable": false,
+												"type": "aggregation"
+											},
+											{
+												"id": "objSection",
+												"technicalName": "subSections",
+												"editable": false,
+												"type": "aggregation",
+												"elements": [
+													{
+														"id": "objSubSection",
+														"technicalName": "sap.uxap.ObjectPageSubSection",
+														"editable": true,
+														"icon": "sap/uxap/designtime/ObjectPageSubSection.icon.svg",
+														"type": "element",
+														"elements": [
+															{
+																"id": "objSubSection",
+																"technicalName": "customAnchorBarButton",
+																"editable": false,
+																"type": "aggregation"
+															},
+															{
+																"id": "objSubSection",
+																"technicalName": "blocks",
+																"editable": false,
+																"type": "aggregation",
+																"elements": [
+																	{
+																		"id": "layout1",
+																		"instanceName": "Vertical Layout Label",
+																		"name": "Vertical Container",
+																		"technicalName": "sap.ui.layout.VerticalLayout",
+																		"editable": true,
+																		"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+																		"type": "element",
+																		"elements": [
+																			{
+																				"id": "layout1",
+																				"technicalName": "content",
+																				"editable": false,
+																				"type": "aggregation",
+																				"elements": [
+																					{
+																						"id": "button1",
+																						"technicalName": "sap.m.Button",
+																						"editable": true,
+																						"icon": "sap/m/designtime/Button.icon.svg",
+																						"type": "element"
+																					}
+																				]
+																			}
+																		]
+																	}
+																]
+															},
+															{
+																"id": "objSubSection",
+																"technicalName": "moreBlocks",
+																"editable": false,
+																"type": "aggregation"
+															},
+															{
+																"id": "objSubSection",
+																"technicalName": "actions",
+																"editable": false,
+																"type": "aggregation"
+															}
+														]
+													}
+												]
+											}
 										]
 									}
-									]
-								}
 								]
-							}, {
-								"id": "objSubSection",
-								"technicalName": "moreBlocks",
+							},
+							{
+								"id": "objPage",
+								"technicalName": "headerTitle",
 								"editable": false,
 								"type": "aggregation"
-							}, {
-								"id": "objSubSection",
-								"technicalName": "actions",
+							},
+							{
+								"id": "objPage",
+								"technicalName": "headerContent",
+								"editable": false,
+								"type": "aggregation"
+							},
+							{
+								"id": "objPage",
+								"technicalName": "footer",
 								"editable": false,
 								"type": "aggregation"
 							}
-							]
-						}
 						]
 					}
-					]
-				}
 				]
-			}, {
-				"id": "objPage",
-				"technicalName": "headerTitle",
+			},
+			{
+				"id": "mainPage",
+				"technicalName": "customHeader",
 				"editable": false,
 				"type": "aggregation"
-			}, {
-				"id": "objPage",
-				"technicalName": "headerContent",
-				"editable": false,
-				"type": "aggregation"
-			}, {
-				"id": "objPage",
+			},
+			{
+				"id": "mainPage",
 				"technicalName": "footer",
 				"editable": false,
 				"type": "aggregation"
+			},
+			{
+				"id": "mainPage",
+				"technicalName": "subHeader",
+				"editable": false,
+				"type": "aggregation"
+			},
+			{
+				"id": "mainPage",
+				"technicalName": "headerContent",
+				"editable": false,
+				"type": "aggregation"
 			}
-			]
-		}
 		]
-	}, {
-		"id": "mainPage",
-		"technicalName": "customHeader",
-		"editable": false,
-		"type": "aggregation"
-	}, {
-		"id": "mainPage",
-		"technicalName": "footer",
-		"editable": false,
-		"type": "aggregation"
-	}, {
-		"id": "mainPage",
-		"technicalName": "subHeader",
-		"editable": false,
-		"type": "aggregation"
-	}, {
-		"id": "mainPage",
-		"technicalName": "headerContent",
-		"editable": false,
-		"type": "aggregation"
-	}
-	]
-}, {
-	"id": "layout2",
-	"name": "Vertical Container",
-	"technicalName": "sap.ui.layout.VerticalLayout",
-	"editable": true,
-	"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
-	"type": "element",
-	"elements": [{
+	},
+	{
 		"id": "layout2",
-		"technicalName": "content",
-		"editable": false,
-		"type": "aggregation",
-		"elements": [{
-			"id": "button2",
-			"technicalName": "sap.m.Button",
-			"editable": true,
-			"icon": "sap/m/designtime/Button.icon.svg",
-			"type": "element"
-		}
+		"name": "Vertical Container",
+		"technicalName": "sap.ui.layout.VerticalLayout",
+		"editable": true,
+		"icon": "sap/ui/layout/designtime/VerticalLayout.icon.svg",
+		"type": "element",
+		"elements": [
+			{
+				"id": "layout2",
+				"technicalName": "content",
+				"editable": false,
+				"type": "aggregation",
+				"elements": [
+					{
+						"id": "button2",
+						"technicalName": "sap.m.Button",
+						"editable": true,
+						"icon": "sap/m/designtime/Button.icon.svg",
+						"type": "element"
+					}
+				]
+			}
 		]
 	}
-	]
-}
 ]

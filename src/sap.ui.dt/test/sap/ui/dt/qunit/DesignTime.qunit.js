@@ -185,6 +185,79 @@ function(
 			this.oDesignTime._onAddAggregation(oNewButton, this.oInnerLayout, "content");
 		});
 
+		QUnit.test("when a new control is added to an existing control aggregation", function (assert) {
+			var fnDone = assert.async();
+			var oNewButton = new Button("newButton");
+			var oExpectedResponse;
+
+			this.oDesignTime.attachEventOnce("elementOverlayAdded", function(oEvent) {
+				oExpectedResponse = {
+					id: OverlayRegistry.getOverlay(oNewButton).getId(),
+					targetAggregation: "content",
+					targetId: OverlayRegistry.getOverlay(oNewButton).getParentAggregationOverlay().getId(),
+					targetIndex: 1
+				};
+				assert.deepEqual(oEvent.getParameters(), oExpectedResponse, "then event 'elementOverlayAdded' was fired with the required parameters");
+				fnDone();
+			});
+
+			this.oOuterLayout.addContent(oNewButton);
+		});
+
+		QUnit.test("when an existing control is moved from one control's aggregation to another control's aggregation", function (assert) {
+			var fnDone = assert.async();
+
+			this.oDesignTime.attachEventOnce("elementOverlayMoved", function(oEvent) {
+				var oExpectedResponse = {
+					id: OverlayRegistry.getOverlay(this.oButton1).getId(),
+					targetAggregation: "content",
+					targetId: OverlayRegistry.getOverlay(this.oButton1).getParentAggregationOverlay().getId(),
+					targetIndex: 1
+				};
+				assert.deepEqual(oEvent.getParameters(), oExpectedResponse, "then event 'elementOverlayMoved' was fired with the required parameters");
+				fnDone();
+			}.bind(this));
+
+			this.oInnerLayout.removeContent(this.oButton1);
+			this.oOuterLayout.addContent(this.oButton1);
+		});
+
+		QUnit.test("when an existing element overlay's editable property is changed", function (assert) {
+			var fnDone = assert.async();
+			var oElementOverlay = OverlayRegistry.getOverlay(this.oOuterLayout);
+
+			var oExpectedResponse = {
+				editable: true,
+				id: oElementOverlay.getId()
+			};
+
+			this.oDesignTime.attachEventOnce("elementOverlayEditableChanged", function(oEvent) {
+				assert.deepEqual(oEvent.getParameters(), oExpectedResponse, "then event 'elementOverlayEditableChanged' was fired with the required parameters");
+				fnDone();
+			});
+
+			oElementOverlay.setEditable(!oElementOverlay.getEditable());
+		});
+
+		QUnit.test("when a property on an element with an overlay is changed", function (assert) {
+			var fnDone = assert.async();
+			var oElementOverlay = OverlayRegistry.getOverlay(this.oOuterLayout);
+
+			var oExpectedResponse = {
+				id: oElementOverlay.getId(),
+				name: "visible",
+				oldValue: true,
+				value: false
+			};
+
+			this.oDesignTime.attachEventOnce("elementPropertyChanged", function(oEvent) {
+				assert.deepEqual(oEvent.getParameters(), oExpectedResponse, "then event 'elementPropertyChanged' was fired with the required parameters");
+				fnDone();
+			});
+
+			this.oOuterLayout.setVisible(false);
+		});
+
 		QUnit.test("when a new control without overlay is added to a root control aggregation", function (assert) {
 			var fnDone = assert.async();
 
@@ -748,14 +821,17 @@ function(
 
 		QUnit.test("when the overlay for a root element cannot be created", function(assert) {
 			var fnDone = assert.async();
+			var sErrorMessage = "ErrorMessage";
 			sandbox.stub(DesignTime.prototype, "createOverlay", function(){
-				return Promise.reject("Error");
+				return Promise.reject({ message: sErrorMessage });
 			});
 
-			var spyLog = sandbox.stub(jQuery.sap.log, "error", function(){
-				assert.equal(spyLog.callCount, 1, "then an error is raised");
+			var spyLog = sandbox.stub(Util, "createError", function(){
+				var sErrorText = Util.printf('sap.ui.dt: root element with id = "{0}" initialization is failed due to: {1}', this.oLayout2.getId(), sErrorMessage);
+				assert.equal(spyLog.callCount, 1, "then an error is created");
+				assert.ok(spyLog.calledWith("DesignTime#createOverlay", sErrorText, "sap.ui.dt"), "then the correct error is created");
 				fnDone();
-			});
+			}.bind(this));
 
 			this.oDesignTime.addRootElement(this.oLayout2);
 		});

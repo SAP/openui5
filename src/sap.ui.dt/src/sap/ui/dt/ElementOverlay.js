@@ -672,7 +672,9 @@ function(
 			this.toggleStyleClass("sapUiDtOverlayEditable", bEditable);
 
 			this.setProperty("editable", bEditable);
-			this.fireEditableChange({editable : bEditable});
+			this.fireEditableChange({
+				editable : bEditable
+			});
 		}
 
 		return this;
@@ -734,8 +736,10 @@ function(
 		var oParams = oEvent.getParameters();
 		var sName = oParams.name;
 
-		if (oParams.type === "propertyChanged" && sName === "visible") {
-			this.setRelevantOverlays([]);
+		if (oParams.type === "propertyChanged") {
+			if (sName === "visible") {
+				this.setRelevantOverlays([]);
+			}
 			this.fireElementModified(oParams);
 		} else if (sName) {
 			var oAggregationOverlay = this.getAggregationOverlay(sName);

@@ -157,6 +157,67 @@ function(
 				},
 
 				/**
+				 * Fires when element overlay is added to an aggregation
+				 */
+				elementOverlayAdded: {
+					parameters: {
+						// id of the added overlay
+						id: {type: "string"},
+
+						// index of element overlay in the target aggregation overlay
+						targetIndex: {type: "integer"},
+
+						// id of target aggregation overlay
+						targetId: {type: "string"},
+
+						// aggregation where element overlay is inserted
+						targetAggregation: {type: "string"}
+					}
+				},
+
+				/**
+				 * Fires when element overlay is moved inside an aggregation
+				 */
+				elementOverlayMoved: {
+					parameters: {
+						// id of the moved overlay
+						id: {type: "string"},
+
+						// index of element overlay in the target aggregation overlay
+						targetIndex: {type: "integer"},
+
+						// id of target aggregation overlay
+						targetId: {type: "string"},
+
+						// aggregation where element overlay is inserted
+						targetAggregation: {type: "string"}
+					}
+				},
+
+				/**
+				 * Fires the "editable" property of an overlay changes
+				 */
+				elementOverlayEditableChanged : {
+					parameters: {
+						id: {type: "string"},
+						elementId: {type: "string"},
+						editable: {type: "boolean"}
+					}
+				},
+
+				/**
+				 * Fires when a property of an element with an overlay changes
+				 */
+				elementPropertyChanged : {
+					parameters : {
+						id: {type: "string"},
+						name: {type: "string"},
+						oldValue: {type: "any"},
+						value: {type: "any"}
+					}
+				},
+
+				/**
 				 * Fires when an overlays selection is changed
 				 */
 				selectionChange: {
@@ -472,10 +533,12 @@ function(
 					return oElementOverlay;
 				}.bind(this),
 				function (oError) {
-					var sErrorText = 'sap.ui.dt: root element with id = "' + vRootElement.getId() + '" initialization is failed';
-					sErrorText = oError ? sErrorText + ' due to: ' + oError.message : sErrorText;
-					jQuery.sap.log.error(sErrorText);
+					var sErrorText = 'sap.ui.dt: root element with id = "{0}" initialization is failed';
+					sErrorText = oError
+						? Util.printf(sErrorText + ' due to: {1}', vRootElement.getId(), oError.message)
+						: Util.printf(sErrorText, vRootElement.getId());
 					this._oTaskManager.cancel(iTaskId);
+					throw Util.createError("DesignTime#createOverlay", sErrorText, "sap.ui.dt");
 				}.bind(this)
 			);
 	};
@@ -693,7 +756,8 @@ function(
 				destroyed: this._onElementOverlayDestroyed,
 				elementDestroyed: this._onElementDestroyed.bind(this),
 				selectionChange: this._onElementOverlaySelectionChange.bind(this),
-				elementModified: this._onElementModified.bind(this)
+				elementModified: this._onElementModified.bind(this),
+				editableChange: this._onEditableChanged.bind(this)
 			});
 		}.bind(this));
 	};
@@ -858,18 +922,39 @@ function(
 	 * @private
 	 */
 	DesignTime.prototype._onElementModified = function(oEvent) {
-		var oParams = oEvent.getParameters();
-		if (oParams.type === "addOrSetAggregation" || oParams.type === "insertAggregation") {
-			this._onAddAggregation(oParams.value, oParams.target, oParams.name);
-		} else if (oParams.type === "setParent") {
-			// timeout is needed because UI5 controls & apps can temporary "dettach" controls from control tree
-			// and add them again later, so the check if the control is dettached from root element's tree is delayed
-			setTimeout(function() {
-				if (!this.bIsDestroyed) {
-					this._checkIfOverlayShouldBeDestroyed(oParams.target);
-				}
-			}.bind(this), 0);
+		var oParams = jQuery.extend(true, {}, oEvent.getParameters());
+		oParams.type = !oParams.type ? oEvent.getId() : oParams.type;
+		switch (oParams.type) {
+			case "addOrSetAggregation":
+			case "insertAggregation":
+				this._onAddAggregation(oParams.value, oParams.target, oParams.name);
+				break;
+			case "setParent":
+				// timeout is needed because UI5 controls & apps can temporary "dettach" controls from control tree
+				// and add them again later, so the check if the control is dettached from root element's tree is delayed
+				setTimeout(function () {
+					if (!this.bIsDestroyed) {
+						this._checkIfOverlayShouldBeDestroyed(oParams.target);
+					}
+				}.bind(this), 0);
+				break;
+			case "propertyChanged":
+				oParams.id = oEvent.getSource().getId();
+				delete oParams.type;
+				delete oParams.target;
+				this.fireElementPropertyChanged(oParams);
+				break;
 		}
+	};
+
+	/**
+	 * @param {sap.ui.baseEvent} oEvent event object
+	 * @private
+	 */
+	DesignTime.prototype._onEditableChanged = function(oEvent) {
+		var oParams = jQuery.extend(true, {}, oEvent.getParameters());
+		oParams.id = oEvent.getSource().getId();
+		this.fireElementOverlayEditableChanged(oParams);
 	};
 
 	/**
@@ -892,10 +977,19 @@ function(
 					element: oElement,
 					parentMetadata: oParentAggregationOverlay.getDesignTimeMetadata().getData()
 				})
-					.then(
-						function (oElementOverlay) {
+					.then(function (oElementOverlay) {
 							oParentAggregationOverlay.insertChild(null, oElementOverlay);
 							oElementOverlay.applyStyles(); // TODO: remove after Task Manager implementation
+
+							var iOverlayPosition = oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay);
+
+							this.fireElementOverlayAdded({
+								id: oElementOverlay.getId(),
+								targetIndex: iOverlayPosition,
+								targetId: oParentAggregationOverlay.getId(),
+								targetAggregation: oParentAggregationOverlay.getAggregationName()
+							});
+
 							this._oTaskManager.complete(iTaskId);
 						}.bind(this),
 						function (vError) {
@@ -944,9 +1038,15 @@ function(
 						oElement
 					)
 				);
+
+				this.fireElementOverlayMoved({
+					id: oElementOverlay.getId(),
+					targetIndex: oParentAggregationOverlay.indexOfAggregation('children', oElementOverlay),
+					targetId: oParentAggregationOverlay.getId(),
+					targetAggregation: oParentAggregationOverlay.getAggregationName()
+				});
 			}
 		}
-
 	};
 
 	/**
