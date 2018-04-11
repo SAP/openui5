@@ -3017,7 +3017,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * Types of the Toolbar Design.
 	 *
 	 * To preview the different combinations of <code>sap.m.ToolbarDesign</code> and <code>sap.m.ToolbarStyle</code>,
-	 * see the {@link sap.m.sample.ToolbarDesign sample}.
+	 * see the <b>OverflowToolbar - Design and styling</b> sample of the {@link sap.m.OverflowToolbar} control.
 	 *
 	 * @enum {string}
 	 * @public
@@ -3058,8 +3058,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * <b>Note:</b> Keep in mind that the styles are theme-dependent and can differ based on the currently used theme.
 	 *
-	 * To preview the different combinations of <code>sap.m.ToolbarStyle</code> and <code>sap.m.ToolbarDesign</code>,
-	 * see the {@link sap.m.sample.ToolbarDesign sample}.
+	 * To preview the different combinations of <code>sap.m.ToolbarDesign</code> and <code>sap.m.ToolbarStyle</code>,
+	 * see the <b>OverflowToolbar - Design and styling</b> sample of the {@link sap.m.OverflowToolbar} control.
 	 *
 	 * @enum {string}
 	 * @public
