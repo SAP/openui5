@@ -35,7 +35,7 @@ sap.ui.define([
 	var DragAndDropControl = Control.extend("sap.ui.core.dnd.test.DragAndDropControl", {
 		metadata: {
 			properties : {
-				showNoData : {type : "boolean", defaultValue : false},
+				showNoData : {type : "boolean", defaultValue : false}
 			},
 			aggregations: {
 				topItems: {
@@ -613,8 +613,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("cleanup", function(assert) {
-		var oEvent, $Indicator, mIndicatorOffset, mTargetOffset;
-		var oBottomItemsDomRef = this.oControl.getDomRef("bottomItems");
+		var done = assert.async();
+		var oEvent, $Indicator;
 		var oTargetDomRef = this.oControl.getDomRef("bottomNoData");
 		var oSourceControl = this.oControl.getTopItems()[0];
 		var oSourceDomRef = oSourceControl.getDomRef();
@@ -631,15 +631,14 @@ sap.ui.define([
 		assert.ok($Indicator.is(":visible"), "Indicator is visible after dragenter");
 
 		// drop handling indicator
-		this.clock = sinon.useFakeTimers();
-		this.stub(window, "requestAnimationFrame", window.setTimeout);
-		this.stub(window, "cancelAnimationFrame", window.clearTimeout);
 		oTargetDomRef.focus();
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
-		this.clock.tick(0);
 
 		// assert
-		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop without dragend");
+		window.requestAnimationFrame(function() {
+			assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop without dragend");
+			done();
+		});
 	});
 
 	QUnit.module("dragSession", {
