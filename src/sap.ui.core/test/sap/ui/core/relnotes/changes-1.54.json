@@ -1212,6 +1212,18 @@
         "type": "FIX",
         "text": " v2.ODataModel: metadata url params missing",
         "references": []
+      },
+      {
+        "id": "d92623c4b57272ab26f04cc6ed453b17c8069880",
+        "type": "FIX",
+        "text": " ComponentContainer: Convert \"manifest\" string to boolean",
+        "references": []
+      },
+      {
+        "id": "eaa2182b67f54a8aa41aa5ab82e0342c2aef661c",
+        "type": "FIX",
+        "text": " MessageManager: Memory leak",
+        "references": []
       }
     ]
   }
