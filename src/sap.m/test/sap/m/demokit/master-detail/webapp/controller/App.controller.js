@@ -23,8 +23,11 @@ sap.ui.define([
 					oViewModel.setProperty("/delay", iOriginalBusyDelay);
 				};
 
-				this.getOwnerComponent().getModel().metadataLoaded()
-						.then(fnSetAppNotBusy);
+				// since then() has no "reject"-path attach to the MetadataFailed-Event to disable the busy indicator in case of an error
+				this.getOwnerComponent().getModel().metadataLoaded().
+						then(fnSetAppNotBusy);
+				this.getOwnerComponent().getModel().attachMetadataFailed(fnSetAppNotBusy);
+
 
 				// Makes sure that master view is hidden in split app
 				// after a new list entry has been selected.
