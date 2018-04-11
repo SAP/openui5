@@ -15,6 +15,7 @@ sap.ui.require([
 	//*****************************************************************************
 	opaTest("Start sales orders template app and check log", function (Given, When, Then) {
 		Given.iStartMyUIComponent({
+			autoWait : true,
 			componentConfig : {
 				name : "sap.ui.core.sample.odata.v4.SalesOrdersTemplate"
 			}

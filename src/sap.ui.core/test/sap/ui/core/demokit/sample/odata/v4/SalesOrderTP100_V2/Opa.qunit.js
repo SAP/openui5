@@ -33,6 +33,7 @@ sap.ui.require([
 		}
 
 		Given.iStartMyUIComponent({
+			autoWait : true,
 			componentConfig : {
 				name : "sap.ui.core.sample.odata.v4.SalesOrderTP100_V2"
 			}
