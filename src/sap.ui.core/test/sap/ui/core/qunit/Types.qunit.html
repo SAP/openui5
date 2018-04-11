@@ -911,7 +911,7 @@
 
 			raises(function() { dateType.parseValue(true, "untype") }, sap.ui.model.ParseException, "parse test");
 			raises(function() { dateType.parseValue(true, "boolean") }, sap.ui.model.ParseException, "parse test");
-			// TODO: This test does not throw an exception. Please fix it
+			// TODO: This test does not throw an exception
 			//raises(function() { dateType.parseValue("test", "string") }, sap.ui.model.ParseException, "parse test");
 		});
 
