@@ -375,6 +375,13 @@ function(
 		};
 	};
 
+	/*
+	 * RadioButton without label must not be stretched in Form.
+	 */
+	RadioButton.prototype.getFormDoNotAdjustWidth = function() {
+		return this.getText() ? false : true;
+	};
+
 	/**
 	 * Determines next focusable item
 	 *
