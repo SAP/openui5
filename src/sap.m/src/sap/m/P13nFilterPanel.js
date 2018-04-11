@@ -28,8 +28,7 @@ sap.ui.define([
 	 * @alias sap.m.P13nFilterPanel
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var P13nFilterPanel = P13nPanel.extend("sap.m.P13nFilterPanel", /** @lends sap.m.P13nFilterPanel.prototype */
-	{
+	var P13nFilterPanel = P13nPanel.extend("sap.m.P13nFilterPanel", /** @lends sap.m.P13nFilterPanel.prototype */ {
 		metadata: {
 
 			library: "sap.m",
@@ -121,15 +120,15 @@ sap.ui.define([
 						/**
 						 * reason for the changeFilterItem event. Value can be added, updated or removed.
 						 */
-						reason: { type :"string" },
+						reason: { type: "string" },
 						/**
 						 * key of the changed filterItem
 						 */
-						key: { type : "string" },
+						key: { type: "string" },
 						/**
 						 * index of the changed filterItem
 						 */
-						index: { type : "int" },
+						index: { type: "int" },
 						/**
 						 * JSON object of the changed filterItem instance (in case of reason=="removed" the itemData parameter does not exist)
 						 */
@@ -290,7 +289,7 @@ sap.ui.define([
 	 * Getter for the include operations.
 	 *
 	 * @public
-	 * @param {string} the type for which the operations are defined
+	 * @param {string} sType for which the operations are defined
 	 * @returns {sap.m.P13nConditionOperation} array of operations [<code>sap.m.P13nConditionOperation.BT</code>,
 	 *          <code>sap.m.P13nConditionOperation.EQ</code>]
 	 */
@@ -475,7 +474,7 @@ sap.ui.define([
 		});
 		this._oIncludeFilterPanel._sAddRemoveIconTooltipKey = "FILTER";
 
-		for ( var sType in this._aIncludeOperations) {
+		for (var sType in this._aIncludeOperations) {
 			this._oIncludeFilterPanel.setOperations(this._aIncludeOperations[sType], sType);
 		}
 
@@ -499,7 +498,7 @@ sap.ui.define([
 		});
 		this._oExcludeFilterPanel._sAddRemoveIconTooltipKey = "FILTER";
 
-		for ( var sType in this._aExcludeOperations) {
+		for (var sType in this._aExcludeOperations) {
 			this._oExcludeFilterPanel.setOperations(this._aExcludeOperations[sType], sType);
 		}
 
