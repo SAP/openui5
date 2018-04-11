@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragInfo", "./DropInfo", "../Element"],
-	function(DragInfo, DropInfo, Element) {
+sap.ui.define(["./DragInfo", "./DropInfo"],
+	function(DragInfo, DropInfo) {
 	"use strict";
 
 	/**
@@ -25,25 +25,27 @@ sap.ui.define(["./DragInfo", "./DropInfo", "../Element"],
 	 * @alias sap.ui.core.dnd.DragDropInfo
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var DragDropInfo = DropInfo.extend("sap.ui.core.dnd.DragDropInfo", /** @lends sap.ui.core.dnd.DragDropInfo.prototype */ { metadata : {
+	var DragDropInfo = DropInfo.extend("sap.ui.core.dnd.DragDropInfo", /** @lends sap.ui.core.dnd.DragDropInfo.prototype */ { metadata: {
 
-		library : "sap.ui.core",
+		library: "sap.ui.core",
 		interfaces: [
 			"sap.ui.core.dnd.IDragInfo",
 			"sap.ui.core.dnd.IDropInfo"
 		],
-		properties : {
+		properties: {
 			/**
 			 * The name of the aggregation from which all children can be dragged. If undefined, the control itself can be dragged.
+			 *
+			 * <b>Note:</b> This property might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 			 */
-			sourceAggregation: {type: "string", defaultValue : null}
+			sourceAggregation: {type: "string", defaultValue: null}
 		},
-		associations : {
+		associations: {
 			/**
 			 * The target element for this drag and drop action. If undefined, the control with this drag and drop configuration itself is the target.
 			 * Leaving this empty, but defining source and target aggregation, allows you to reorder the children within a control, for example.
 			 */
-			targetElement: {type : "sap.ui.core.Element", multiple : false, invalidate: false}
+			targetElement: {type: "sap.ui.core.Element", multiple: false}
 		},
 		events: {
 			/**
@@ -60,7 +62,7 @@ sap.ui.define(["./DragInfo", "./DropInfo", "../Element"],
 			 * @public
 			 */
 			dragStart: {
-				allowPreventDefault : true
+				allowPreventDefault: true
 			},
 
 			/**

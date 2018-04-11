@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragDropBase", "../Element"],
-	function(DragDropBase, Element) {
+sap.ui.define(["jquery.sap.global", "./DragDropBase"],
+	function(jQuery, DragDropBase) {
 	"use strict";
 
 	/**
@@ -25,17 +25,19 @@ sap.ui.define(["./DragDropBase", "../Element"],
 	 * @alias sap.ui.core.dnd.DragInfo
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var DragInfo = DragDropBase.extend("sap.ui.core.dnd.DragInfo", /** @lends sap.ui.core.dnd.DragInfo.prototype */ { metadata : {
+	var DragInfo = DragDropBase.extend("sap.ui.core.dnd.DragInfo", /** @lends sap.ui.core.dnd.DragInfo.prototype */ { metadata: {
 
-		library : "sap.ui.core",
+		library: "sap.ui.core",
 		interfaces: [
 			"sap.ui.core.dnd.IDragInfo"
 		],
-		properties : {
+		properties: {
 			/**
 			 * The name of the aggregation from which all children can be dragged. If undefined, the control itself can be dragged.
+			 *
+			 * <b>Note:</b> This property might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 			 */
-			sourceAggregation: {type: "string", defaultValue : null}
+			sourceAggregation: {type: "string", defaultValue: null}
 		},
 
 		events: {
@@ -53,7 +55,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * @public
 			 */
 			dragStart: {
-				allowPreventDefault : true
+				allowPreventDefault: true
 			},
 
 			/**
@@ -85,8 +87,15 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			return false;
 		}
 
-		// control itself is the drag source
+		// draggable by default
 		var sSourceAggregation = this.getSourceAggregation();
+		var oMetadata = oDragSource.getMetadata().getDragDropInfo(sSourceAggregation);
+		if (!oMetadata.draggable) {
+			jQuery.sap.log.warning((sSourceAggregation ? sSourceAggregation + " aggregation of " : "") + oDragSource + " is not configured to be draggable");
+			return false;
+		}
+
+		// control itself is the drag source
 		if (oDragSource === oControl && !sSourceAggregation) {
 			return true;
 		}
@@ -99,7 +108,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 		return false;
 	};
 
-	DragInfo.prototype.fireDragStart = function (oEvent) {
+	DragInfo.prototype.fireDragStart = function(oEvent) {
 		if (!oEvent || !oEvent.dragSession) {
 			return;
 		}
@@ -112,7 +121,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 		}, true);
 	};
 
-	DragInfo.prototype.fireDragEnd = function (oEvent) {
+	DragInfo.prototype.fireDragEnd = function(oEvent) {
 		if (!oEvent || !oEvent.dragSession) {
 			return;
 		}

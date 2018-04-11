@@ -1759,6 +1759,11 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	thisLib.dnd.DropLayout = {
+		/**
+		 * Default {@link sap.ui.core.Element.extend layout} definition of the aggregations.
+		 * @public
+		 */
+		Default: "Default",
 
 		/**
 		 * Droppable controls are arranged vertically.

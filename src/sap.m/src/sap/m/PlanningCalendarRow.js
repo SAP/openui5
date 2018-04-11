@@ -180,7 +180,7 @@ sap.ui.define(['jquery.sap.global',
 			 *
 			 * <b>Note:</b> For performance reasons, only appointments in the visible time range or nearby should be assigned.
 			 */
-			appointments : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "appointment"},
+			appointments : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "appointment", dnd : {draggable: true}},
 
 			/**
 			 * The appointments to be displayed at the top of the intervals (for example, for public holidays).
@@ -192,12 +192,6 @@ sap.ui.define(['jquery.sap.global',
 			 * <b>Note:</b> For performance reasons, only appointments in the visible time range or nearby should be assigned.
 			 */
 			intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "intervalHeader"},
-
-			/**
-			 * Defines the drag-and-drop configuration via {@link sap.ui.core.dnd.DragDropInfo}
-			 * @since 1.54
-			 */
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true},
 
 			_nonWorkingDates : {type : "sap.ui.unified.DateRange", multiple : true, visibility : "hidden"}
 
@@ -410,8 +404,7 @@ sap.ui.define(['jquery.sap.global',
 	var CalendarRowInPlanningCalendar = CalendarRow.extend("CalendarRowInPlanningCalendar", {
 		metadata: {
 			aggregations : {
-				dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true},
-				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden"}
+				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}}
 			}
 		},
 		constructor: function() {

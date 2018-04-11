@@ -150,14 +150,7 @@ function(
 			/**
 			 * The items displayed in the IconTabHeader.
 			 */
-			items : {type : "sap.m.IconTab", multiple : true, singularName : "item"},
-
-			/**
-			 * Defines the drag-and-drop configuration via {@link sap.ui.core.dnd.DragDropInfo}
-			 * This configuration is set internally by the control
-			 * FOR INTERNAL USE ONLY
-			 */
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true}
+			items : {type : "sap.m.IconTab", multiple : true, singularName : "item", dnd : {draggable: true, droppable: true, layout: "Horizontal"} }
 		},
 		events : {
 

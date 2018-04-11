@@ -408,7 +408,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 
 		return aDragDropConfigs.filter(function(oDragOrDropInfo) {
 			// DragDropInfo defined at the drop target is irrelevant we only need DropInfos
-			return !oDragOrDropInfo.getMetadata().isInstanceOf("sap.ui.core.dnd.IDragInfo");
+			return !oDragOrDropInfo.isA("sap.ui.core.dnd.IDragInfo");
 		}).concat(aDragInfos).filter(function(oDropInfo) {
 			if (!oDropInfo.isDroppable(oDropControl, oEvent)) {
 				return false;
@@ -453,7 +453,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		oTargetDomRef = oTargetDomRef || oValidDropControl.getDomRef();
 
 		// let the user know the drop position
-		return showDropIndicator(oEvent, oTargetDomRef, oDropInfo.getDropPosition(true), oDropInfo.getDropLayout());
+		return showDropIndicator(oEvent, oTargetDomRef, oDropInfo.getDropPosition(true), oDropInfo.getDropLayout(true));
 	}
 
 	// before controls handle UIArea events
@@ -549,7 +549,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		oValidDropControl = oControl;
 
 		// find the first valid drop control and corresponding valid DropInfos at the control hierarchy
-		for (var i = 0; i < 10 && oValidDropControl; i++, oValidDropControl = oValidDropControl.getParent()) {
+		for (var i = 0; i < 20 && oValidDropControl; i++, oValidDropControl = oValidDropControl.getParent()) {
 			aDropInfos = getValidDropInfos(oValidDropControl, aValidDragInfos, oEvent);
 			if (aDropInfos.length) {
 				break;

@@ -90,11 +90,6 @@ sap.ui.define([
 				}
 			}
 
-			if (TableUtils.isInstanceOf(oDraggedControl, "sap/ui/table/Column")) {
-				oEvent.preventDefault();
-				return;
-			}
-
 			ExtensionHelper.setInstanceSessionData(oDragSession, this, oSessionData);
 		},
 
@@ -151,8 +146,6 @@ sap.ui.define([
 						});
 					}
 				}
-			} else if (TableUtils.isInstanceOf(oDropControl, "sap/ui/table/Column")) {
-				oEvent.setMarked("NonDroppable");
 			} else if (oDraggedControl === oDropControl) {
 				oEvent.setMarked("NonDroppable");
 			}

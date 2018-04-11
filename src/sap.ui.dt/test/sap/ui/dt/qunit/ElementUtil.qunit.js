@@ -407,7 +407,7 @@ function(
 			ElementUtil.iterateOverAllPublicAggregations(this.oVerticalLayout, function(oAggregation) {
 				aFoundAggregations.push(oAggregation.name);
 			});
-			assert.deepEqual(aFoundAggregations, ["tooltip","customData","layoutData","dependents", "content"], 'then the static method "iterateOverAllPublicAggregations" finds all public aggregations');
+			assert.deepEqual(aFoundAggregations, ["tooltip","customData","layoutData","dependents","dragDropConfig","content"], 'then the static method "iterateOverAllPublicAggregations" finds all public aggregations');
 		});
 	});
 

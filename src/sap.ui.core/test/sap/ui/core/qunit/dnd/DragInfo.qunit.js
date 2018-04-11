@@ -21,8 +21,11 @@ sap.ui.define([
 		var oDragInfo = new DragInfo();
 		var fnInvalidateSpy = sinon.spy(oDragInfo, "invalidate");
 
+		oDragInfo.setGroupName("abc");
+		assert.strictEqual(fnInvalidateSpy.callCount, 0, "Invalidation has not happened for groupName property");
+
 		oDragInfo.setEnabled(false);
-		assert.strictEqual(fnInvalidateSpy.callCount, 1, "Invalidation is happened for enabled property");
+		assert.strictEqual(fnInvalidateSpy.callCount, 1, "Invalidation has happened for enabled property");
 
 		oDragInfo.destroy();
 	});
@@ -94,6 +97,26 @@ sap.ui.define([
 		assert.ok(oDragInfo.isDraggable(oControl), "Draggable: DragInfo is enabled and drag source is the control itself");
 
 		oControl.destroy();
+	});
+
+	QUnit.test("isDraggable - metadata disallows", function(assert) {
+		var oDragInfo = new DragInfo();
+		var oChild = new TestControl();
+		var oParent = new TestControl({
+			dragDropConfig: oDragInfo,
+			children: oChild
+		});
+
+		var fnLogSpy = this.spy(jQuery.sap.log, "warning");
+		this.stub(sap.ui.core.ElementMetadata.prototype, "getDragDropInfo").returns({draggable: false});
+		assert.notOk(oDragInfo.isDraggable(oParent), "Not draggable: Element metadata does not allow dragging");
+		assert.strictEqual(fnLogSpy.callCount, 1, "Not draggable is logged");
+
+		oDragInfo.setSourceAggregation("children");
+		assert.notOk(oDragInfo.isDraggable(oChild), "Not draggable: Aggregation metadata does not allow dragging");
+		assert.strictEqual(fnLogSpy.callCount, 2, "Not draggable is logged again");
+
+		oParent.destroy();
 	});
 
 	QUnit.test("fireDragStart - invalid parameters", function(assert) {

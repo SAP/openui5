@@ -216,7 +216,7 @@ function(
 			/**
 			 * Defines the items contained within this control.
 			 */
-			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item", bindable : "bindable", selector: "#{id} .sapMListItems"},
+			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item", bindable : "bindable", selector: "#{id} .sapMListItems", dnd : true},
 
 			/**
 			 * User can swipe to bring in this control on the right hand side of an item.
@@ -236,13 +236,6 @@ function(
 			 * @since 1.16
 			 */
 			infoToolbar : {type : "sap.m.Toolbar", multiple : false},
-
-			/**
-			 * Defines the drag-and-drop configuration.
-			 *
-			 * @since 1.54
-			 */
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"},
 
 			/**
 			 * Defines the context menu of the items.

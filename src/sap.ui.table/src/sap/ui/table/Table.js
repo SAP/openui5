@@ -347,7 +347,7 @@ sap.ui.define([
 			/**
 			 * Rows of the Table
 			 */
-			rows : {type : "sap.ui.table.Row", multiple : true, singularName : "row", bindable : "bindable", selector : "#{id}-tableCCnt"},
+			rows : {type : "sap.ui.table.Row", multiple : true, singularName : "row", bindable : "bindable", selector : "#{id}-tableCCnt", dnd : true},
 
 			/**
 			 * The value for the noData aggregation can be either a string value or a control instance.
@@ -369,37 +369,6 @@ sap.ui.define([
 			 * <code>setRowSettingsTemplate</code> for the changes to take effect.
 			 */
 			rowSettingsTemplate : {type : "sap.ui.table.RowSettings", multiple : false},
-
-			/**
-			 * Defines the drag-and-drop configuration via {@link sap.ui.core.dnd.DragDropInfo}
-			 *
-			 * The following restrictions apply:
-			 * <ul>
-			 *   <li>Drag and drop is not supported on mobile devices and there is no accessible alternative.</li>
-			 *   <li>Columns cannot be configured to be draggable.</li>
-			 *   <li>The following rows are not draggable:
-			 *     <ul>
-			 *       <li>Empty rows</li>
-			 *       <li>Group header rows</li>
-			 *       <li>Sum rows</li>
-			 *     </ul>
-			 *   </li>
-			 *   <li>Columns cannot be configured to be droppable.</li>
-			 *   <li>The following rows are not droppable:
-			 *     <ul>
-			 *       <li>The dragged row itself</li>
-			 *       <li>Empty rows</li>
-			 *       <li>Group header rows</li>
-			 *       <li>Sum rows</li>
-			 *     </ul>
-			 *   </li>
-			 *   <li>Texts in draggable rows cannot be selected.</li>
-			 *   <li>The text of input fields in draggable rows can be selected, but not dragged.</li>
-			 * </ul>
-			 *
-			 * @since 1.52
-			 */
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"},
 
 			/**
 			 * Defines the context menu for the table.
@@ -748,6 +717,40 @@ sap.ui.define([
 		},
 		designtime:  "sap/ui/table/designtime/Table.designtime"
 	}});
+
+	/**
+	 * Gets content of aggregation <code>dragDropConfig</code> which defines the drag-and-drop configuration.
+	 *
+	 * The following restrictions apply:
+	 * <ul>
+	 *   <li>Drag and drop is not supported on mobile devices and there is no accessible alternative.</li>
+	 *   <li>Columns cannot be configured to be draggable.</li>
+	 *   <li>The following rows are not draggable:
+	 *     <ul>
+	 *       <li>Empty rows</li>
+	 *       <li>Group header rows</li>
+	 *       <li>Sum rows</li>
+	 *     </ul>
+	 *   </li>
+	 *   <li>Columns cannot be configured to be droppable.</li>
+	 *   <li>The following rows are not droppable:
+	 *     <ul>
+	 *       <li>The dragged row itself</li>
+	 *       <li>Empty rows</li>
+	 *       <li>Group header rows</li>
+	 *       <li>Sum rows</li>
+	 *     </ul>
+	 *   </li>
+	 *   <li>Texts in draggable rows cannot be selected.</li>
+	 *   <li>The text of input fields in draggable rows can be selected, but not dragged.</li>
+	 * </ul>
+	 *
+	 * @name sap.ui.table.Table#getDragDropConfig
+	 * @returns sap.ui.core.dnd.DragDropBase[]
+	 * @function
+	 * @public
+	 * @since 1.52
+	 */
 
 
 	// =============================================================================

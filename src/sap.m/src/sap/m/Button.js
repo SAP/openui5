@@ -204,6 +204,16 @@ sap.ui.define([
 			// now, this._bActive may be false if the button was disabled
 			this._bRenderActive = this._bActive;
 		}
+
+		// button element is not draggable on Firefox so make the inner draggable
+		// https://bugzilla.mozilla.org/show_bug.cgi?id=568313
+		if (Device.browser.firefox) {
+			var oDomRef = this.getDomRef();
+			if (oDomRef.draggable) {
+				oDomRef.draggable = false;
+				oDomRef.firstChild.draggable = true;
+			}
+		}
 	};
 
 	/**
