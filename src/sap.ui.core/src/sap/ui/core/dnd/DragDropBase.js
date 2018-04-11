@@ -42,7 +42,19 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	var DragDropBase = Element.extend("sap.ui.core.dnd.DragDropBase", /** @lends sap.ui.core.dnd.DragDropBase.prototype */ {
 		metadata : {
 			"abstract" : true,
-			library : "sap.ui.core"
+			library : "sap.ui.core",
+			properties : {
+				/**
+				 * Defines the name of the group to which this object belongs. If <code>groupName</code> is specified, then this object will only interacts with other drag-and-drop objects within the same group.
+				 */
+				groupName: {type: "string", defaultValue : null, invalidate: false},
+
+				/**
+				 * Indicates whether this configuration is active or not.
+				 * @since 1.56
+				 */
+				enabled: {type: "boolean", defaultValue: true}
+			}
 		}
 	});
 
@@ -58,6 +70,13 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	 */
 	DragDropBase.prototype.isDroppable = function(oControl, oEvent) {
 		return false;
+	};
+
+	/**
+	 * Enabled property should only invalidate for DragInfos
+	 */
+	DragDropBase.prototype.setEnabled = function(bEnabled) {
+		return this.setProperty("enabled", bEnabled, !this.getMetadata().isInstanceOf("sap.ui.core.dnd.IDragInfo"));
 	};
 
 	return DragDropBase;

@@ -910,6 +910,7 @@ sap.ui.define([
 
 		if (bDraggable) {
 			this.writeAttribute("draggable", "true");
+			this.writeAttribute("data-sap-ui-draggable", "true");
 		}
 
 		return this;

@@ -211,11 +211,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	TableRenderer.renderListHeadAttributes = function(rm, oControl) {
 		this.renderColumns(rm, oControl, "Head");
 		rm.write("<tbody");
+		rm.addClass("sapMListItems");
 		rm.writeAttribute("id", oControl.addNavSection(oControl.getId("tblBody")));
 		if (oControl.getAlternateRowColors()) {
 			rm.addClass(oControl._getAlternateRowColorsClass());
-			rm.writeClasses();
 		}
+		rm.writeClasses();
 		rm.write(">");
 	};
 
