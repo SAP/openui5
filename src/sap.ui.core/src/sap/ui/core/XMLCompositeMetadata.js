@@ -35,7 +35,9 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.50.0
 	 * @alias sap.ui.core.XMLCompositeMetadata
-	 * @private
+	 *
+	 * @public
+	 * @experimental
 	 */
 	var XMLCompositeMetadata = function (sClassName, oClassInfo) {
 		if (!oClassInfo.hasOwnProperty("renderer")) {
