@@ -589,10 +589,10 @@
 				}, DELAY_SUBMENU_TIMER);
 				function checkMenuFocusing() {
 					var iExpectedFocusFnCall = 1;
-					if (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge) {
+					if (sap.ui.Device.browser.edge) {
 						iExpectedFocusFnCall = 0;
 					}
-					assert.equal(oSpyMenuFocusFn.callCount, iExpectedFocusFnCall, "Menu should not be directly focused for IE and Edge, but so it should for the rest");
+					assert.equal(oSpyMenuFocusFn.callCount, iExpectedFocusFnCall, "Menu should not be directly focused for Edge, but so it should for the rest");
 				}
 			});
 		}
@@ -1013,6 +1013,22 @@
 
 			// Assert
 			assert.equal(bSpyDestroyHandler.callCount, 1, " resize handler should be called");
+		});
+
+		QUnit.test("Calling close and destroy detaches resize handler only once", function(assert) {
+			// Prepare
+			var oMenu = new sap.ui.unified.Menu(),
+				bSpyDestroyHandler;
+
+			oMenu.open();
+			bSpyDestroyHandler = this.spy(sap.ui.Device.resize, "detachHandler");
+
+			// Act
+			oMenu.close();
+			oMenu.destroy();
+
+			// Assert
+			assert.ok(bSpyDestroyHandler.calledOnce, " resize handler should be called only once");
 		});
 
 		QUnit.test("setRootMenuTopStyle", function(assert) {
