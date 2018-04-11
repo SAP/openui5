@@ -74,7 +74,7 @@ sap.ui.define([
 	 * @see {@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}
 	 * @see {@link topic:9c9d94fd28284539a9a5a57e9caf82a8 Object Page Headers Comparison}
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/ Object Page Header}
-	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-page/ Object Page}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-page/ UX Guidelines: Object Page}
 	 *
 	 * @extends sap.ui.core.Control
 	 * @implements sap.uxap.IHeaderTitle

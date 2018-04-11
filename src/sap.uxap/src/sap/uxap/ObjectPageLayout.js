@@ -105,7 +105,7 @@ sap.ui.define([
 	 * @see {@link topic:2978f6064742456ebed31c5ccf4d051d Creating Blocks}
 	 * @see {@link topic:bc410e94e46540efa02857e15aae583f Object Page Scrolling}
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-page/ Object Page Layout}
-	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/ Object Page – Snapping Header}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/ UX Guidelines: Object Page - Snapping Header}
 	 *
 	 * @extends sap.ui.core.Control
 	 *
