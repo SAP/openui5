@@ -65,7 +65,8 @@ sap.ui.require([
 					type: "sap.m.HBox"
 				},
 				changeType: "addXML",
-				fileName: "addXMLChange"
+				fileName: "addXMLChange",
+				projectId: "projectId"
 			};
 
 			this.oChangeSpecificContent = {
@@ -136,7 +137,8 @@ sap.ui.require([
 					type: "sap.m.HBox"
 				},
 				changeType: "addXML",
-				fileName: "addXMLChange"
+				fileName: "addXMLChange",
+				projectId: "projectId"
 			};
 
 			this.oChangeSpecificContent = {
@@ -146,15 +148,15 @@ sap.ui.require([
 				index: 1
 			};
 
-			this.oAppComponent = {
-				getMetadata: function() {
-					return {
-						getName: function() {
-							return "namespace";
-						}
-					};
-				}
-			};
+			// this.oAppComponent = {
+			// 	getMetadata: function() {
+			// 		return {
+			// 			getName: function() {
+			// 				return "namespace";
+			// 			}
+			// 		};
+			// 	}
+			// };
 
 			this.oChange = new Change(oChangeJson);
 		},
@@ -169,6 +171,7 @@ sap.ui.require([
 			addFragmentContentLikeBackend(this.oChange);
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: JsControlTreeModifier, appComponent: this.oAppComponent});
 			assert.equal(this.oHBox.getItems().length, 2, "after the change there are 2 items in the hbox");
+			assert.equal(this.oHBox.getItems()[1].getId(), "projectId.button", "the fragments control id is prefixed with project id");
 		});
 
 		QUnit.test("When applying the change on a js control tree without setting the fragment", function(assert) {
@@ -222,9 +225,9 @@ sap.ui.require([
 
 			var oItems = this.oHBox.getItems();
 			assert.equal(oItems.length, 4, "after the change there are 4 items in the hbox");
-			assert.equal(oItems[1].getId(), "namespace.button1", "then the first button in the fragment has the correct index and ID");
-			assert.equal(oItems[2].getId(), "namespace.button2", "then the second button in the fragment has the correct index and ID");
-			assert.equal(oItems[3].getId(), "namespace.button3", "then the third button in the fragment has the correct index and ID");
+			assert.equal(oItems[1].getId(), "projectId.button1", "then the first button in the fragment has the correct index and ID");
+			assert.equal(oItems[2].getId(), "projectId.button2", "then the second button in the fragment has the correct index and ID");
+			assert.equal(oItems[3].getId(), "projectId.button3", "then the third button in the fragment has the correct index and ID");
 		});
 
 		QUnit.test("When applying the change on a js control tree with multiple root elements and one invalid type inside", function(assert) {
@@ -312,7 +315,8 @@ sap.ui.require([
 					type: "sap.m.HBox"
 				},
 				changeType: "addXML",
-				fileName: "addXMLChange"
+				fileName: "addXMLChange",
+				projectId: "projectId"
 			};
 
 			this.oChangeSpecificContent = {
@@ -400,11 +404,10 @@ sap.ui.require([
 				this.oChangeHandler.completeChangeContent(this.oChange, this.oChangeSpecificContent);
 				addFragmentContentLikeBackend(this.oChange, oFragmentMultiple);
 				this.oChangeHandler.applyChange(this.oChange, this.oHBox, {modifier: XmlTreeModifier, view: this.oXmlView, appComponent: this.oComponent});
-
 				assert.equal(oHBoxItems.childNodes.length, 4, "after the change there are 4 items in the hbox");
-				assert.equal(oHBoxItems.childNodes[1].getAttribute("id"), "testComponent.Component.button1", "then the first button in the fragment has the correct index and ID");
-				assert.equal(oHBoxItems.childNodes[2].getAttribute("id"), "testComponent.Component.button2", "then the second button in the fragment has the correct index and ID");
-				assert.equal(oHBoxItems.childNodes[3].getAttribute("id"), "testComponent.Component.button3", "then the third button in the fragment has the correct index and ID");
+				assert.equal(oHBoxItems.childNodes[1].getAttribute("id"), "projectId.button1", "then the first button in the fragment has the correct index and ID");
+				assert.equal(oHBoxItems.childNodes[2].getAttribute("id"), "projectId.button2", "then the second button in the fragment has the correct index and ID");
+				assert.equal(oHBoxItems.childNodes[3].getAttribute("id"), "projectId.button3", "then the third button in the fragment has the correct index and ID");
 			});
 		}
 
