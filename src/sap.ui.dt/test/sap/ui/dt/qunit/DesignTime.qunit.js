@@ -39,7 +39,7 @@ function(
 	DesignTime,
 	ElementUtil,
 	TabHandling,
-	ContextMenu,
+	ContextMenuPlugin,
 	DragDrop,
 	ElementDesignTimeMetadata,
 	Util,
@@ -344,7 +344,7 @@ function(
 
 		QUnit.test("when plugins are inserted and removed", function(assert) {
 			var oTabHandlingPlugin = new TabHandling();
-			var oContextMenuPlugin = new ContextMenu();
+			var oContextMenuPlugin = new ContextMenuPlugin();
 			var oDragDropPlugin = new DragDrop();
 
 			assert.equal(this.oDesignTime.getPlugins().length, 0, "initially there are no plugins on the design time");
