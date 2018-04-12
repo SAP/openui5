@@ -1,0 +1,17 @@
+.sapTntBox {
+	border-width: 1px;
+	border-style: solid;
+	border-color: @sapUiListBorderColor;
+
+	& > .sapMLIBContent {
+		height: 100%;
+	}
+}
+
+html[data-sap-ui-browser^="ie"] {
+	.sapTntBox {
+		display: inline-block;
+		vertical-align: top;
+		margin: 0 0.5rem 0.5rem 0;
+	}
+}
