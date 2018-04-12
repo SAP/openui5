@@ -63,6 +63,58 @@ sap.ui.require([
 	//TODO filterAggregationForFirstLevel has to return only the first grouped dimension
 
 	//*********************************************************************************************
+	QUnit.test("filterOrderby", function (assert) {
+		var aAggregation = [{
+				grouped : true,
+				name : "Dimension"
+			}, {
+				name : "Measure",
+				total : true
+			}];
+
+		// code under test
+		assert.strictEqual(
+			_AggregationCache.filterOrderby("Dimension  desc%2CSecondDimension asc", aAggregation),
+			"Dimension  desc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationCache.filterOrderby("Dimension\tdesc,SecondDimension asc", aAggregation),
+			"Dimension\tdesc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationCache.filterOrderby("Measure desc%2cDimension", aAggregation),
+			"Measure desc,Dimension");
+
+		// code under test
+		assert.strictEqual(_AggregationCache.filterOrderby(undefined, []), undefined);
+
+		// code under test
+		assert.strictEqual(
+			_AggregationCache.filterOrderby("NavigationProperty/$count", []),
+			"NavigationProperty/$count");
+	});
+	//TODO Also support orderbyItems that start with a type cast?
+	// See "11.2.5.2 System Query Option $orderby":
+	// "A special case of such an expression is a property path terminating on a primitive property.
+	// A type cast using the qualified entity type name is required to order by a property defined
+	// on a derived type."
+	//
+	// ABNF:
+	// orderby     = '$orderby' EQ orderbyItem *( COMMA orderbyItem )
+	// orderbyItem = commonExpr [ RWS ( 'asc' / 'desc' ) ]
+	// commonExpr = (... / firstMemberExpr / ...)[...]
+	// firstMemberExpr = memberExpr / inscopeVariableExpr [ "/" memberExpr ]
+	// memberExpr = [ qualifiedEntityTypeName "/" ] ( propertyPathExpr / boundFunctionExpr )
+	// inscopeVariableExpr : not supported
+	// boundFunctionExpr : not supported
+	// qualifiedEntityTypeName = odataIdentifier 1*( "." odataIdentifier )
+	// propertyPathExpr : /-separated path of odataIdentifier or qualified names;
+	//   otherwise not supported (e.g. $count)
+	// complexProperty : probably not supported by current service implementations
+
+	//*********************************************************************************************
 	QUnit.test("create", function (assert) {
 		var aAggregation = [],
 			oCache,
@@ -98,6 +150,7 @@ sap.ui.require([
 			sGroupId = "group",
 			iIndex = 17,
 			iLength = 4,
+			sOrderby = "~orderby~",
 			iPrefetchLength = 42,
 			mQueryOptions = {$count : false, $orderby : "FirstDimension", "sap-client" : "123"},
 			sResourcePath = "Foo",
@@ -113,13 +166,19 @@ sap.ui.require([
 		this.mock(_Helper).expects("buildApply")
 			.withExactArgs(sinon.match.same(aAggregationForFirstLevel))
 			.returns(sApply);
+		this.mock(_AggregationCache).expects("filterOrderby")
+			.withExactArgs(mQueryOptions.$orderby, sinon.match.same(aAggregationForFirstLevel))
+			.returns(sOrderby);
 		this.mock(_Cache).expects("create")
 			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath,
-				{$apply : sApply, $count : true, $orderby : "FirstDimension", "sap-client" : "123"},
+				{$apply : sApply, $count : true, $orderby : sOrderby, "sap-client" : "123"},
 				sinon.match.same(bSortExpandSelect))
 			.returns(oFirstLevelCache);
+
+		// code under test
 		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, aAggregation,
 			mQueryOptions, bSortExpandSelect);
+
 		this.mock(oFirstLevelCache).expects("read").on(oFirstLevelCache)
 			.withExactArgs(iIndex, iLength, iPrefetchLength, sGroupId,
 				sinon.match.same(fnDataRequested))

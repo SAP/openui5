@@ -875,6 +875,11 @@ sap.ui.define([
 		 */
 		parseSystemQueryOption : function (sOption) {
 			return new SystemQueryOptionParser().parse(sOption);
-		}
+		},
+
+		// ABNF rule oDataIdentifier
+		sODataIdentifier : sODataIdentifier,
+		// a whitespace character
+		sWhitespace : sWhitespace
 	};
 }, /* bExport= */false);

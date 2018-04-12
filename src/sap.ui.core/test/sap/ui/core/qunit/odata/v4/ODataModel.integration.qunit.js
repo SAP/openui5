@@ -5237,6 +5237,9 @@ sap.ui.require([
 				grouped : true,\
 				name : \'LifecycleStatus\'\
 			}, {\
+				grouped : false,\
+				name : \'CurrencyCode\'\
+			}, {\
 				name : \'GrossAmount\',\
 				total : true,\
 				unit : \'CurrencyCode\'\
@@ -5246,7 +5249,7 @@ sap.ui.require([
 				unit : \'CurrencyCode\'\
 			}],\
 			$count : true,\
-			$orderby : \'LifecycleStatus desc\'\
+			$orderby : \'LifecycleStatus desc,CurrencyCode\'\
 		}}" threshold="0" visibleRowCount="3">\
 	<t:Column>\
 		<t:template>\

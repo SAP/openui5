@@ -11,8 +11,11 @@
 		rows="{path : '/ZGK_C_SalesOrderItem_RD_V4(P_DateFunction=\'PREVIOUSYEAR\')/Set',
 			parameters : {
 				$$aggregation : [{
-					name : 'ProductCategory',
-					grouped : true
+					grouped : true,
+					name : 'ProductCategory'
+				}, {
+					grouped : false,
+					name : 'TransactionCurrency'
 				}, {
 					name : 'NetAmountInDisplayCurrency',
 					total : true,
@@ -23,7 +26,7 @@
 					unit : 'TransactionCurrency'
 				}],
 				$count : true,
-				$orderby : 'ProductCategory desc'
+				$orderby : 'ProductCategory desc,TransactionCurrency'
 			}}" selectionMode="None"
 			title="Net Sales Volume by Product Category ({headerContext>$count})">
 		<Column hAlign="End" width="5em">
