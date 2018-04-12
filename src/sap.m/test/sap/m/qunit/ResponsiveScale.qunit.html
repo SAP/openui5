@@ -27,24 +27,10 @@
 				var oScale = new sap.m.ResponsiveScale();
 
 				// Assert
-				assert.strictEqual(oScale.calcNumTickmarks(100, 1, 100), 100, "Should calculate a tickmark for every possible step.");
-				assert.strictEqual(oScale.calcNumTickmarks(100, 0.5, 100), 100, "Do not allow more than 100 tickmarks per scale. Performance reasons.");
-				assert.strictEqual(oScale.calcNumTickmarks(100, 5, 100), 20, "Should calculate a tickmark for every possible step.");
-				assert.strictEqual(oScale.calcNumTickmarks(499 /* prime number */, 1, 100), 1, "For prime numbers calculations are not possible. Can't spread tickmarks evenly in such edge case.");
-
-				// Cleanup
-				oScale.destroy();
-			});
-
-			QUnit.test("Calculate the distance between tickmarks.", function (assert) {
-				// Setup
-				var oScale = new sap.m.ResponsiveScale();
-
-				// Assert
-				assert.strictEqual(oScale.calcTickmarksDistance(10, 0, 100, 1), 10, "The distance between 10 tickmarks should be 10 units.");
-				assert.strictEqual(oScale.calcTickmarksDistance(100, 0, 100, 1), 1, "The distance between 100 tickmarks should be 1 units.");
-				assert.strictEqual(oScale.calcTickmarksDistance(20, 0, 100, 1), 5, "The distance between 20 tickmarks should be 5 units.");
-				assert.strictEqual(oScale.calcTickmarksDistance(50, 0, 100, 1), 2, "The distance between 50 tickmarks should be 2 units.");
+				assert.strictEqual(oScale.calcNumberOfTickmarks(100, 1, 100), 100, "Should calculate a tickmark for every possible step.");
+				assert.strictEqual(oScale.calcNumberOfTickmarks(100, 0.5, 100), 100, "Do not allow more than 100 tickmarks per scale. Performance reasons.");
+				assert.strictEqual(oScale.calcNumberOfTickmarks(100, 5, 100), 20, "Should calculate a tickmark for every possible step.");
+				assert.strictEqual(oScale.calcNumberOfTickmarks(499 /* prime number */, 1, 100), 1, "For prime numbers calculations are not possible. Can't spread tickmarks evenly in such edge case.");
 
 				// Cleanup
 				oScale.destroy();

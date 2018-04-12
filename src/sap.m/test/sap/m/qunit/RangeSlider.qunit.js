@@ -1121,4 +1121,115 @@
 		oRangeSlider.destroy();
 		oRangeSlider = null;
 	});
+
+	QUnit.module("Scale");
+
+	QUnit.test("RangeSlider with custom scale, should fallback to default one, after the scale is destroyed", function(assert) {
+		var oSlider, oDefaultScale,
+			oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+
+		oSlider = new sap.m.RangeSlider({
+			enableTickmarks: true,
+			scale: oScale
+		});
+
+		// arrange
+		oSlider.placeAt(DOM_RENDER_LOCATION);
+
+		assert.strictEqual(oScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the user defined scale.");
+
+		oScale.destroy();
+		sap.ui.getCore().applyChanges();
+		oDefaultScale = oSlider.getAggregation('_defaultScale');
+
+		// assert
+		assert.ok(oDefaultScale, "The default scale should be set");
+		assert.strictEqual(oDefaultScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the default scale.");
+
+		// cleanup
+		oSlider.destroy();
+	});
+
+	QUnit.test("RangeSlider with enabled tickmarks and not set scale, should remove the default one, after 'scale' aggregation is set", function(assert) {
+		var oSlider, oDefaultScale,
+			oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+
+		oSlider = new sap.m.RangeSlider({
+			enableTickmarks: true
+		});
+
+		// arrange
+		oSlider.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+
+		oDefaultScale = oSlider.getAggregation('_defaultScale');
+
+		// assert
+		assert.ok(oDefaultScale ,"The default scale should be set");
+		assert.strictEqual(oDefaultScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the default scale.");
+
+		// arrange
+		oSlider.setAggregation('scale', oScale);
+		sap.ui.getCore().applyChanges();
+		oDefaultScale = oSlider.getAggregation('_defaultScale');
+
+		// assert
+		assert.notOk(oDefaultScale ,"The default scale, should not be present");
+		assert.strictEqual(oScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the new scale.");
+
+		// cleanup
+		oSlider.destroy();
+	});
+
+	QUnit.module("Accessibility");
+
+	QUnit.test("RangeSlider with custom scale should change handle title html attribute accordingly", function(assert) {
+		var clock = sinon.useFakeTimers(),
+			oSlider,
+			oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1}),
+			oHandleDomRef, oProgressHandle, aRange, oSecondHandleDomRef;
+
+		oScale.getLabel = function (fCurValue, oSlider) {
+			var monthList = ["Zero", "One", "2", "3"];
+
+			return monthList[fCurValue];
+		};
+
+		oSlider = new sap.m.RangeSlider({
+			step: 1,
+			min: 0,
+			max: 3,
+			range: [0,1],
+			enableTickmarks: true,
+			scale: oScale
+		});
+
+		// arrange
+		oSlider.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+		oHandleDomRef = oSlider.getDomRef("handle1");
+		oSecondHandleDomRef = oSlider.getDomRef("handle2");
+		oProgressHandle = oSlider.getDomRef("progress");
+		aRange = oSlider.getRange();
+
+		// assert
+		assert.strictEqual(oHandleDomRef.getAttribute("title"), "Zero", "The title should be Zero.");
+		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "0", "The aria-valuenow should be 0.");
+		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuetext"), "Zero", "The aria-valuetext should be Zero.");
+		assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), aRange.join('-'), "The aria-valuenow of the progress handle should be 0-1.");
+		assert.strictEqual(oProgressHandle.getAttribute("aria-valuetext"), oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', ["Zero", "One"]),
+			"The aria-valuetext of the progress handle should be From Zero to One.");
+
+		oSlider.setValue2(2);
+		sap.ui.getCore().applyChanges();
+		clock.tick(1000);
+
+		assert.strictEqual(oSecondHandleDomRef.getAttribute("title"), "2", "The title should be 2.");
+		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuenow"), "2", "The aria-valuenow should be 2, since the label is numeric.");
+		assert.notOk(oSecondHandleDomRef.getAttribute("aria-valuetext"), "The aria-valuetext should not be defined.");
+
+		// cleanup
+		clock.restore();
+		oSlider.destroy();
+	});
 }());

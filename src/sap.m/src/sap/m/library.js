@@ -1402,14 +1402,58 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	/**
 	 *
-	 *   Interface for controls which are suitable as a Scale for the Slider/RangeSlider.
-	 *
+	 * Interface for controls which are suitable as a Scale for the Slider/RangeSlider.
+	 * Implementation of this interface should implement <li><code>getTickmarksBetweenLabels</code></li>
+	 * , <li><code>calcNumberOfTickmarks</code></li> <li><code>handleResize</code></li> methods.
+	 * Optionally, <li><code>getLabel</code></li> method, could also be provided.
 	 *
 	 * @since 1.46
 	 * @name sap.m.IScale
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+	/**
+	 * Returns the number of tickmarks, which should be placed between labels.
+	 * <b>Note:</b> There would always be a tickmark in the begining and in the end of the slider,
+	 * regardless of the value this method returns.
+	 *
+	 * @param {object} mOptions The option array
+	 * @returns {integer} The number of tickmarks
+	 *
+	 * @function
+	 * @name sap.ui.core.IScale.getTickmarksBetweenLabels
+	 */
+
+	/**
+	 * Returns How many tickmarks would be drawn on the screen.
+	 * @param {object} mOptions The option array
+	 * @returns {integer} The number of tickmarks
+	 *
+	 * @function
+	 * @name sap.ui.core.IScale.calcNumberOfTickmarks
+	 */
+
+	/**
+	 * Called, when the slider is getting resized.
+	 * The Slider/RangeSlider control, could be accessed via the oEvent.control parameter.
+	 * @param {jQuery.Event} oEvent The event object passed.
+	 *
+	 * @function
+	 * @name sap.ui.core.IScale.handleResize
+	 */
+
+	/**
+	 * Provides a custom tickmark label.
+	 * This method is optional. If it is not provided, the slider values will be placed as labels.
+	 * If provided, the value of the tickmark labels and accessibility attributes
+	 * (aria-valuenow and aria-valuetext) of the slider are changed accordingly.
+	 *
+	 * @returns {string | number} The label that should be placed in the current position.
+	 *
+	 * @function
+	 * @name sap.ui.core.IScale.getLabel
 	 */
 
 	/**

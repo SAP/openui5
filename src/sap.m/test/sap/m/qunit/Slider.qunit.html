@@ -1901,6 +1901,199 @@
 				assert.equal(this.oSlider.$().find(".sapMSliderLabel:eq(1)").parent()[0].style.right, "100%", "The max label should be shown on the left side");
 			});
 
+		QUnit.module('Scale');
+
+		QUnit.test("Slider with scale, should fallback to default one, after the scale is destroyed", function(assert) {
+				var oSlider, oDefaultScale, oHandleLabelsDomRef,
+					oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+
+				oScale.getLabel = function (fCurValue, oSlider) {
+					var monthList = ["Zero", "One", "2"];
+
+					return monthList[fCurValue];
+				};
+
+				oSlider = new sap.m.Slider({
+					step: 1,
+					min: 0,
+					max: 2,
+					enableTickmarks: true,
+					scale: oScale
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oHandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
+
+				// assert
+				assert.strictEqual(oScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the user defined scale.");
+				assert.strictEqual(oHandleLabelsDomRef.size(), 3, "There should be 3 labels created");
+				assert.strictEqual(oHandleLabelsDomRef.eq(0).text(), "Zero", "The labels should be added correspondingly");
+				assert.strictEqual(oHandleLabelsDomRef.eq(2).text(), "2", "The labels should be added correspondingly");
+
+				// arrange
+				oScale.destroy();
+				sap.ui.getCore().applyChanges();
+				oDefaultScale = oSlider.getAggregation('_defaultScale');
+				oHandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
+
+				// assert
+				assert.ok(oDefaultScale,"The default scale should be set");
+				assert.strictEqual(oDefaultScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the default scale.");
+				assert.strictEqual(oHandleLabelsDomRef.size(), 2, "There should be 2 labels created");
+				assert.strictEqual(oHandleLabelsDomRef.eq(0).text(), "0", "The first label should be equal to the min");
+				assert.strictEqual(oHandleLabelsDomRef.eq(1).text(), "2", "The second label should be equal to the max.");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			QUnit.test("Slider with default scale", function(assert) {
+				var oSlider;
+
+				oSlider = new sap.m.Slider({
+					enableTickmarks: true
+				});
+
+				// arrange
+				oSlider.placeAt('content');
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				assert.ok(oSlider.getAggregation('_defaultScale'), "The default scale should be created.");
+
+				// arrange
+				oSlider.setEnableTickmarks(false);
+				sap.ui.getCore().applyChanges();
+
+				// assert
+				assert.notOk(oSlider.getAggregation('_defaultScale'), "The default scale should be destroyed.");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			QUnit.test("Slider with enabled tickmarks and not set scale, should remove the default one, after 'scale' aggregation is set", function(assert) {
+				var oSlider, oDefaultScale,
+					oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+
+				oSlider = new sap.m.Slider({
+					enableTickmarks: true
+				});
+
+				// arrange
+				oSlider.placeAt('content');
+				sap.ui.getCore().applyChanges();
+				oDefaultScale = oSlider.getAggregation('_defaultScale');
+
+				// assert
+				assert.ok(oDefaultScale ,"The default scale should be set");
+				assert.strictEqual(oDefaultScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the user defined scale.");
+
+				// arrange
+				oSlider.setAggregation('scale', oScale);
+				sap.ui.getCore().applyChanges();
+				oDefaultScale = oSlider.getAggregation('_defaultScale');
+
+				// assert
+				assert.notOk(oDefaultScale ,"The default scale, should not be present");
+				assert.strictEqual(oScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the new scale.");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			QUnit.test("Slider with custom Scale", function(assert) {
+				var oSlider, oDefaultScale, oCustonScale, CustomScale,
+				oSliderTickmarksDomRef, oSliderLabelsDomRef, oSliderTicksDomRef;
+
+				CustomScale = sap.ui.core.Element.extend("sap.test.CustomScale", {
+					metadata: {
+						interfaces: [
+							"sap.m.IScale"
+						]
+					}
+				});
+
+				CustomScale.prototype.calcNumberOfTickmarks = function (mOptions) {
+					return 5;
+				};
+				CustomScale.prototype.getTickmarksBetweenLabels = function (mOptions) {
+					return 1;
+				};
+				CustomScale.prototype.handleResize = function (oEvent) {};
+
+				oSlider = new sap.m.Slider({
+					min: 0,
+					max: 5,
+					step: 1,
+					enableTickmarks: true,
+					scale: new CustomScale()
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oSliderTickmarksDomRef = oSlider.$().find('.sapMSliderTickmarks');
+				oSliderLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
+				oSliderTicksDomRef = oSlider.$().find(".sapMSliderTick");
+
+				// assert
+				assert.ok(oSliderTickmarksDomRef.size(), "The tickmarks should be rendered.");
+				assert.strictEqual(oSliderLabelsDomRef.size(), 6, "There should be labels for each tickmark.");
+				assert.strictEqual(oSliderTicksDomRef.size(), 6, "There should be 6 tickmarks.");
+
+				// cleanup
+				oSlider.destroy();
+			});
+
+			QUnit.module("Accessibility");
+
+			QUnit.test("Slider with custom scale should change handle title html attribute accordingly", function(assert) {
+				var oSlider,
+					oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1}),
+					oHandleDomRef;
+
+				oScale.getLabel = function (fCurValue, oSlider) {
+					var monthList = ["Zero", "One", "2"];
+
+					return monthList[fCurValue];
+				};
+
+				oSlider = new sap.m.Slider({
+					step: 1,
+					min: 0,
+					max: 2,
+					enableTickmarks: true,
+					scale: oScale
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
+
+				// assert
+				assert.strictEqual(oHandleDomRef.attr("title"), "Zero", "The title should be Zero.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuenow"), "0", "The aria-valuenow should be 0.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuetext"), "Zero", "The aria-valuetext should be Zero.");
+
+				oSlider.setValue(1);
+
+				assert.strictEqual(oHandleDomRef.attr("title"), "One", "The title should be One.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuenow"), "1", "The aria-valuenow should be 1.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuetext"), "One", "The aria-valuetext should be One.");
+
+				oSlider.setValue(2);
+
+				assert.strictEqual(oHandleDomRef.attr("title"), "2", "The title should be 2.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuenow"), "2", "The aria-valuenow should be 2, since the label is numeric.");
+				assert.notOk(oHandleDomRef.attr("aria-valuetext"), "The aria-valuetext should not be defined.");
+
+				// cleanup
+				oSlider.destroy();
+		});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
