@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, SyncPromise, BaseContext, Context, _Helper) {
+], function (jQuery, SyncPromise, BaseContext, Context, _GroupLock, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -577,7 +578,7 @@ sap.ui.require([
 			var oBinding = {
 					checkSuspended : function () {}
 				},
-				oGroupLock = {},
+				oGroupLock = new _GroupLock(),
 				oModel = {
 					checkGroupId : function () {},
 					lockGroup : function () {},
@@ -588,10 +589,12 @@ sap.ui.require([
 
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
-			this.mock(oModel).expects("lockGroup").withExactArgs("myGroup").returns(oGroupLock);
+			this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true)
+				.returns(oGroupLock);
 			this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
 				.returns(bFailure ? Promise.reject(oError) : Promise.resolve());
 			if (bFailure) {
+				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 				this.mock(oModel).expects("reportError")
 					.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
 						oError);

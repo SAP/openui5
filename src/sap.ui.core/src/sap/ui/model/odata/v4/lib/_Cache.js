@@ -127,7 +127,7 @@ sap.ui.define([
 			sParentPath = aSegments.join("/"),
 			that = this;
 
-		return this.fetchValue(oGroupLock, sParentPath).then(function (vCacheData) {
+		return this.fetchValue(_GroupLock.$cached, sParentPath).then(function (vCacheData) {
 			var oEntity = vDeleteProperty
 					? vCacheData[vDeleteProperty]
 					: vCacheData, // deleting at root level
@@ -138,6 +138,7 @@ sap.ui.define([
 				throw new Error("No 'delete' allowed while waiting for server response");
 			}
 			if (sTransientGroup) {
+				oGroupLock.unlock();
 				that.oRequestor.removePost(sTransientGroup, oEntity);
 				return Promise.resolve();
 			}
