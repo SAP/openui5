@@ -557,6 +557,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	["foo", false, undefined].forEach(function (vValue) {
+		QUnit.test("checkUpdate(): with vValue parameter: " + vValue, function (assert) {
+			var oBinding = this.oModel.bindProperty("/absolute"),
+				done = assert.async();
+
+			oBinding.vValue = ""; // simulate a read
+			oBinding.setType(null, "any"); // avoid fetchUI5Type()
+			oBinding.attachChange(function () {
+				assert.strictEqual(oBinding.getValue(), vValue);
+				done();
+			});
+			this.mock(oBinding.oCachePromise).expects("then").never();
+
+			// code under test
+			return oBinding.checkUpdate(undefined, undefined, undefined, vValue);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("ManagedObject.bindProperty w/ relative path, then bindObject", function (assert) {
 		var oCacheMock = this.mock(_Cache),
 			done = assert.async(),
@@ -1066,14 +1085,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("onChange", function (assert) {
-		var oBinding = this.oModel.bindProperty("/absolute");
+		var oBinding = this.oModel.bindProperty("/absolute"),
+			vValue = "foo";
 
-		this.mock(oBinding).expects("checkUpdate").withExactArgs();
+		this.mock(oBinding).expects("checkUpdate")
+			.withExactArgs(undefined, undefined, undefined, vValue);
 
 		// code under test
-		oBinding.onChange("foo");
+		oBinding.onChange(vValue);
 	});
-	//TODO pass vValue to checkUpdate to prevent fetchValue there (performance): separate change
 
 	//*********************************************************************************************
 	QUnit.test("setValue (absolute binding): forbidden", function (assert) {
