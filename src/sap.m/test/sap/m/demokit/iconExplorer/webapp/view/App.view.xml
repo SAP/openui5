@@ -2,6 +2,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	controllerName="sap.ui.demo.iconexplorer.controller.App"
 	displayBlock="true"
+	height="100%"
 	xmlns="sap.m">
 
 	<App id="app"

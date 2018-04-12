@@ -1,0 +1,488 @@
+{
+	"technicalsystem": {
+		"tags": [
+			"system",
+			"hexagon"
+		]
+	},
+	"systemjava": {
+		"tags": [
+			"system",
+			"java"
+		]
+	},
+	"systemabap": {
+		"tags": [
+			"abap",
+			"system"
+		]
+	},
+	"systemrecommendations": {
+		"tags": [
+			"system",
+			"star",
+			"favorite"
+		]
+	},
+	"system": {
+		"tags": [
+			"system"
+		]
+	},
+	"systemtrex": {
+		"tags": [
+			"system",
+			"trex",
+			"settings"
+		]
+	},
+	"systemtracks": {
+		"tags": [
+			"system",
+			"arrow"
+		]
+	},
+	"technicalscenario": {
+		"tags": [
+			"hexagon",
+			"connection",
+			"scenario"
+		]
+	},
+	"technicalinstance": {
+		"tags": [
+			"hexagon",
+			"connection",
+			"instance"
+		]
+	},
+	"throughput-backlog": {
+		"tags": [
+			"arrow",
+			"bar",
+			"chart",
+			"up"
+		]
+	},
+	"batch-processing": {
+		"tags": [
+			"process",
+			"document",
+			"settings",
+			"double",
+			"multiple"
+		]
+	},
+	"database-consistency": {
+		"tags": [
+			"data",
+			"indicator",
+			"warning"
+		]
+	},
+	"intermediate-message": {
+		"tags": [
+			"email",
+			"e-mail",
+			"electronic mail",
+			"envelope",
+			"mail",
+			"correspondence",
+			"message",
+			"arrow"
+		]
+	},
+	"exceptions": {
+		"tags": [
+			"warning",
+			"status",
+			"exclamation"
+		]
+	},
+	"system-HANA": {
+		"tags": [
+			"hana",
+			"system",
+			"chip"
+		]
+	},
+	"python": {
+		"tags": [
+			"system",
+			"python"
+		]
+	},
+	"raise-fault": {
+		"tags": [
+			"lightning",
+			"flash",
+			"status"
+		]
+	},
+	"code1": {
+		"tags": [
+			"source",
+			"code",
+			"develop",
+			"write"
+		]
+	},
+	"code2": {
+		"tags": [
+			"source",
+			"code",
+			"develop",
+			"write"
+		]
+	},
+	"spike-arrest": {
+		"tags": [
+			"chart",
+			"line",
+			"performance",
+			"cancel",
+			"data",
+			"analytics",
+			"x"
+		]
+	},
+	"verify-API": {
+		"tags": [
+			"wrench",
+			"question mark",
+			"status",
+			"tool"
+		]
+	},
+	"user": {
+		"tags": [
+			"person",
+			"individual",
+			"user",
+			"customer",
+			"human",
+			"profile",
+			"me"
+		]
+	},
+	"note": {
+		"tags": [
+			"notes",
+			"draft",
+			"text",
+			"write",
+			"letter"
+		]
+	},
+	"throwing-message": {
+		"tags": [
+			"envelope",
+			"email",
+			"e-mail",
+			"electronic mail",
+			"mail",
+			"correspondence",
+			"throwing"
+		]
+	},
+	"catching-message": {
+		"tags": [
+			"envelope",
+			"email",
+			"e-mail",
+			"electronic mail",
+			"mail",
+			"correspondence",
+			"catching"
+		]
+	},
+	"start-event": {
+		"tags": [
+			"circle",
+			"start",
+			"event",
+			"display",
+			"data",
+			"task"
+		]
+	},
+	"end-event": {
+		"tags": [
+			"circle",
+			"end",
+			"event",
+			"display",
+			"data",
+			"task"
+		]
+	},
+	"gateway": {
+		"tags": [
+			"shape",
+			"indicator",
+			"check"
+		]
+	},
+	"sub-process-marker": {
+		"tags": [
+			"add",
+			"square",
+			"shape",
+			"process",
+			"plus",
+			"marker"
+		]
+	},
+	"ad-hoc-marker": {
+		"tags": [
+			"tilde",
+			"marker"
+		]
+	},
+	"manual-task": {
+		"tags": [
+			"activity",
+			"manual",
+			"task",
+			"process",
+			"hand"
+		]
+	},
+	"send-task": {
+		"tags": [
+			"envelope",
+			"email",
+			"e-mail",
+			"electronic mail",
+			"mail",
+			"correspondence",
+			"catching",
+			"send"
+		]
+	},
+	"receive-task": {
+		"tags": [
+			"envelope",
+			"email",
+			"e-mail",
+			"electronic mail",
+			"mail",
+			"correspondence",
+			"catching",
+			"receive"
+		]
+	},
+	"script-task": {
+		"tags": [
+			"script",
+			"activity",
+			"task",
+			"process"
+		]
+	},
+	"marquee": {
+		"tags": [
+			"mark",
+			"select",
+			"lines",
+			"dashed line"
+		]
+	},
+	"data-input-arrow": {
+		"tags": [
+			"out",
+			"arrow",
+			"data",
+			"arrow right",
+			"filled"
+		]
+	},
+	"data-output-arrow": {
+		"tags": [
+			"out",
+			"arrow",
+			"data",
+			"arrow right",
+			"empty"
+		]
+	},
+	"more": {
+		"tags": [
+			"dropdown",
+			"list",
+			"arrow"
+		]
+	},
+	"pattern": {
+		"tags": [
+			"squares",
+			"shape",
+			"check"
+		]
+	},
+	"task": {
+		"tags": [
+			"task",
+			"steps",
+			"project",
+			"shape"
+		]
+	},
+	"arrow": {
+		"tags": [
+			"arrow up",
+			"direction",
+			"up",
+			"right"
+		]
+	},
+	"data": {
+		"tags": [
+			"document",
+			"page",
+			"file",
+			"attachment",
+			"blank",
+			"new"
+		]
+	},
+	"data-store": {
+		"tags": [
+			"data",
+			"store",
+			"storage",
+			"files",
+			"barrel",
+			"cylinder"
+		]
+	},
+	"pool": {
+		"tags": [
+			"collect",
+			"double",
+			"pool",
+			"lanes"
+		]
+	},
+	"swimlane": {
+		"tags": [
+			"collect",
+			"single",
+			"pool",
+			"lane"
+		]
+	},
+	"select": {
+		"tags": [
+			"arrow",
+			"selection",
+			"select",
+			"cursor",
+			"arrow",
+			"pointer",
+			"mouse",
+			"filled"
+		]
+	},
+	"cursor": {
+		"tags": [
+			"arrow",
+			"selection",
+			"select",
+			"cursor",
+			"arrow",
+			"pointer",
+			"mouse"
+		]
+	},
+	"api": {
+		"tags": [
+			"api",
+			"program",
+			"application"
+		]
+	},
+	"o-data": {
+		"tags": [
+			"o data",
+			"data",
+			"protocol"
+		]
+	},
+	"java": {
+		"tags": [
+			"java",
+			"coffee"
+		]
+	},
+	"value-mapping": {
+		"tags": [
+			"value",
+			"exchange"
+		]
+	},
+	"terminate-end-event": {
+		"tags": [
+			"circle",
+			"end",
+			"event",
+			"terminate",
+			"data",
+			"task"
+		]
+	},
+	"parallel-gateway": {
+		"tags": [
+			"shape",
+			"indicator",
+			"add",
+			"check"
+		]
+	},
+	"exclusive-gateway": {
+		"tags": [
+			"shape",
+			"indicator",
+			"cancel",
+			"check"
+		]
+	},
+	"service-task": {
+		"tags": [
+			"service",
+			"task",
+			"setting",
+			"cogwheels",
+			"configuration",
+			"customize"
+		]
+	},
+	"workflow-editor": {
+		"tags": [
+			"connection",
+			"flow",
+			"workflow",
+			"square",
+			"circle",
+			"lines"
+		]
+	},
+	"boundary-interrupting": {
+		"tags": [
+			"indicator",
+			"clock",
+			"event",
+			"time",
+			"boundary"
+		]
+	},
+	"boundary-non-interrupting": {
+		"tags": [
+			"indicator",
+			"clock",
+			"event",
+			"time",
+			"boundary"
+		]
+	}
+}

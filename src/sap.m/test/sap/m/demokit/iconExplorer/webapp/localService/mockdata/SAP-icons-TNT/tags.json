@@ -1,0 +1,22 @@
+{
+	"api": {
+		"tags": [
+			"api",
+			"program",
+			"application"
+		]
+	},
+	"o-data": {
+		"tags": [
+			"o data",
+			"data",
+			"protocol"
+		]
+	},
+	"java": {
+		"tags": [
+			"java",
+			"coffee"
+		]
+	}
+}
