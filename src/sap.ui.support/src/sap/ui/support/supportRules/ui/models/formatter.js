@@ -22,10 +22,10 @@ sap.ui.define([
 		filteredText: function (severityFilter, categoryFilter, audienceFilter, elementFilter) {
 			var sResultText = "Filtered by: ";
 
-			sResultText += severityFilter === constants.FILTER_VALUE_ALL ? "" : "Severity - " + severityFilter;
-			sResultText += categoryFilter === constants.FILTER_VALUE_ALL ? "" : "Category    - " + categoryFilter;
-			sResultText += audienceFilter === constants.FILTER_VALUE_ALL ? "" : "Audience - " + audienceFilter;
-			sResultText += elementFilter === constants.FILTER_VALUE_ALL ? "" : "Control Element - " + elementFilter;
+			sResultText += severityFilter === constants.FILTER_VALUE_ALL ? "" : "Severity - " + severityFilter + ";";
+			sResultText += categoryFilter === constants.FILTER_VALUE_ALL ? "" : " Category    - " + categoryFilter + ";";
+			sResultText += audienceFilter === constants.FILTER_VALUE_ALL ? "" : " Audience - " + audienceFilter + ";";
+			sResultText += elementFilter === constants.FILTER_VALUE_ALL ? "" : " Control Element - " + elementFilter + ";";
 
 			return sResultText;
 		}
