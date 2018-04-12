@@ -223,6 +223,7 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "./ListItemBaseRenderer"],
 	 */
 	ListBaseRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.write("<ul");
+		rm.addClass("sapMListItems");
 		oControl.addNavSection(oControl.getId("listUl"));
 	};
 

@@ -85,7 +85,6 @@ sap.ui.define([
 				}
 
 				oScrollExtension._iHorizontalScrollPosition = iNewScrollLeft;
-				this._determineVisibleCols(this._collectTableSizes());
 			}
 		},
 

@@ -11,11 +11,6 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 	 */
 	var ObjectPageHeaderRenderer = {};
 
-	function lazyInstanceof(o, sModule) {
-		var FNClass = sap.ui.require(sModule);
-		return typeof FNClass === 'function' && (o instanceof FNClass);
-	}
-
 	ObjectPageHeaderRenderer.render = function (oRm, oControl) {
 
 		var oNavigationBar = oControl.getNavigationBar(),
@@ -25,7 +20,7 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 			oObjectImage = oControl._lazyLoadInternalAggregation("_objectImage", true),
 			oPlaceholder,
 			bIsDesktop = Device.system.desktop,
-			bIsHeaderContentVisible = oParent && lazyInstanceof(oParent, "sap/uxap/ObjectPageLayout") && ((oParent.getHeaderContent()
+			bIsHeaderContentVisible = oParent && oParent.isA("sap.uxap.ObjectPageLayout") && ((oParent.getHeaderContent()
 				&& oParent.getHeaderContent().length > 0 && oParent.getShowHeaderContent()) ||
 			(oParent.getShowHeaderContent() && oParent.getShowTitleInHeaderContent()));
 
@@ -56,7 +51,7 @@ sap.ui.define(["./ObjectImageHelper", "sap/ui/Device"], function (ObjectImageHel
 		oRm.writeClasses();
 		oRm.write(">");
 
-		if (oParent && lazyInstanceof(oParent, "sap/uxap/ObjectPageLayout") && oParent.getIsChildPage()) {
+		if (oParent && oParent.isA("sap.uxap.ObjectPageLayout") && oParent.getIsChildPage()) {
 			oRm.write("<div");
 			oRm.addClass('sapUxAPObjectChildPage');
 			oRm.writeClasses();

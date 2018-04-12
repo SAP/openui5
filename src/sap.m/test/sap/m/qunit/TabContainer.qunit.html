@@ -544,6 +544,100 @@
 			oTabStripDestroySpy.restore();
 		});
 
+			QUnit.module("Others");
+
+			QUnit.test("Closing the only item, resets the selected item", function(assert) {
+				//arrange
+				var oTabContainer = new sap.m.TabContainer({
+					items: [
+						new sap.m.TabContainerItem({
+							id: 'test1',
+							name: 'test1',
+							content: [
+								new sap.m.Text({text: 'test text'})
+							]
+						})
+					]
+				}),
+					oTabStripItemToRemove;
+
+				oTabContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				//act
+				oTabStripItemToRemove = oTabContainer._toTabStripItem(oTabContainer.getItems()[0]);
+				oTabContainer._getTabStrip()._removeItem(oTabStripItemToRemove);
+				sap.ui.getCore().applyChanges();
+
+				//assert
+				assert.equal(oTabContainer.getSelectedItem(), undefined, "content is empty after the last tab is closed");
+
+				//clean
+				oTabContainer.destroy();
+				oTabContainer = null;
+			});
+
+			QUnit.test("Removing several items from the model keeps a selected item", function(assert) {
+				//arrange
+				var oModel = new sap.ui.model.json.JSONModel();
+				oModel.setData({
+					employees: [
+						{
+							id: 1,
+							name: "Jean Doe",
+							empFirstName: "Jean",
+							empLastName: "Doe",
+							salary: 1455.22
+						},
+						{
+							id: 2,
+							name: "John Smith",
+							empFirstName: "John",
+							empLastName: "Smith",
+							salary: 1390.77,
+							modified: true
+						},
+						{
+							id: 3,
+							name: "Particia Clark",
+							empFirstName: "Particia",
+							empLastName: "Clark",
+							salary: 1189.00
+						},
+
+					]
+				});
+				var oTabContainer = new sap.m.TabContainer({
+					items: {
+						path: '/employees',
+						template: new sap.m.TabContainerItem({
+							key: '{id}',
+							text: '{name}'
+						})
+					}
+				});
+
+				oTabContainer.setModel(oModel);
+				oTabContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				oTabContainer.setSelectedItem(oTabContainer.getItems()[2]);
+				var sFirstItemDomId = oTabContainer.getItems()[0].getId();
+				sap.ui.getCore().applyChanges();
+
+				//act
+				var data = oModel.getData();
+				data.employees.splice(1, 2); //remove the 2nd and 3rd items
+				oModel.setData(data);
+				sap.ui.getCore().applyChanges();
+
+				//assert
+				assert.equal(oTabContainer.getSelectedItem(), sFirstItemDomId, "there is a selected and existing item after removing several items from the model");
+
+				//clean
+				oTabContainer.destroy();
+				oTabContainer = null;
+				oModel = null;
+			});
 	</script>
 </head>
 <body id="body" class="sapUiBody">

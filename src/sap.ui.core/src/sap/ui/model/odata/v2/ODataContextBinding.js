@@ -21,6 +21,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Contex
 	 * @param {string} [mParameters.expand] For the OData <code>$expand</code> query option parameter which should be included in the request
 	 * @param {string} [mParameters.select] For the OData <code>$select</code> query option parameter which should be included in the request
 	 * @param {map} [mParameters.custom] An optional map of custom query parameters. Custom parameters must not start with <code>$</code>.
+	 * @param {boolean} [mParameters.createPreliminaryContext] Whether a preliminary Context will be created
+	 * @param {boolean} [mParameters.usePreliminaryContext] Whether a preliminary Context will be used
 	 * @abstract
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataContextBinding

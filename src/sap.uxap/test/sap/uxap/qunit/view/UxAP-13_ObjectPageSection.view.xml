@@ -39,6 +39,46 @@
 
 			</ObjectPageSection>
 
+			<ObjectPageSection id="SectionWithNoTitleAndTwoSubSections">
+				<subSections>
+					<ObjectPageSubSection id="subsection4" title="My first SubSection title" class="mysubsectiontotest">
+						<blocks>
+							<sample:MultiViewBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection id="subsection5" title="My second SubSection title" class="mysubsectiontotest">
+						<blocks>
+							<sample:MultiViewBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="SectionWithTwoSubsectionsWithoutTitles" title="Section with subsections without titles">
+				<subSections>
+					<ObjectPageSubSection id="subsection6">
+						<blocks>
+							<sample:MultiViewBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+					<ObjectPageSubSection id="subsection7">
+						<blocks>
+							<sample:MultiViewBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
+			<ObjectPageSection id="SectionWithNoTitleAndOneSubSection">
+				<subSections>
+					<ObjectPageSubSection id="subsection8" title="My last subSection Title" class="mysubsectiontotest">
+						<blocks>
+							<sample:MultiViewBlock/>
+						</blocks>
+					</ObjectPageSubSection>
+				</subSections>
+			</ObjectPageSection>
+
 
 		</sections>
 

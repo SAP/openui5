@@ -10,12 +10,9 @@ sap.ui.define([
 				showNoData : {type : "boolean", defaultValue : false}
 			},
 			aggregations: {
-				children: { type: "test.TestControl", multiple: true },
+				children: { type: "test.TestControl", multiple: true, selector : "#{id}-children"},
 				dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true},
 			}
-		},
-		getAggregationDomRef: function(sAggregationName) {
-			return this.getDomRef(sAggregationName);
 		},
 		renderer: function(rm, oControl) {
 			rm.write("<div");

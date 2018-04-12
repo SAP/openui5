@@ -690,9 +690,9 @@ sap.ui.define(["sap/ui/fl/descriptorRelated/internal/Utils"
 	 * @private
 	 * @sap-restricted
 	 */
-	DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith = function(mParameters) {
+	DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith = function(mParameters, mTexts) {
 		Utils.checkParameterAndType(mParameters, "modelId", "string");
-		return this._createDescriptorInlineChange('appdescr_ui5_addNewModelEnhanceWith', mParameters);
+		return this._createDescriptorInlineChange('appdescr_ui5_addNewModelEnhanceWith', mParameters, mTexts);
 	};
 
 	/**

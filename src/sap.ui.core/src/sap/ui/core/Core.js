@@ -18,11 +18,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 	/*global Promise */
 
-	function lazyInstanceof(o, sModule) {
-		var FNClass = sap.ui.require(sModule);
-		return typeof FNClass === 'function' && (o instanceof FNClass);
-	}
-
 	// share the rendering log with the UIArea
 	var oRenderLog = UIArea._oRenderLog;
 
@@ -1147,7 +1142,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			this.oRootComponent = oComponent;
 
 			var sRootNode = oConfig["xx-rootComponentNode"];
-			if (sRootNode && lazyInstanceof(oComponent, 'sap/ui/core/UIComponent')) {
+			if (sRootNode && oComponent.isA('sap.ui.core.UIComponent')) {
 				var oRootNode = jQuery.sap.domById(sRootNode);
 				if (oRootNode) {
 					log.info("Creating ComponentContainer for Root Component: " + sRootComponent,null,METHOD);
@@ -1172,7 +1167,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 				var oClass = jQuery.sap.getObject(sApplication);
 				jQuery.sap.assert(oClass !== undefined, "The specified application \"" + sApplication + "\" could not be found!");
 				var oApplication = new oClass();
-				jQuery.sap.assert(lazyInstanceof(oApplication, 'sap/ui/app/Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
+				jQuery.sap.assert(BaseObject.isA(oApplication, 'sap.ui.app.Application'), "The specified application \"" + sApplication + "\" must be an instance of sap.ui.app.Application!");
 
 			}
 
@@ -3289,7 +3284,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @public
 	 */
 	Core.prototype.setModel = function(oModel, sName) {
-		jQuery.sap.assert(oModel == null || lazyInstanceof(oModel, 'sap/ui/model/Model'), "oModel must be an instance of sap.ui.model.Model, null or undefined");
+		jQuery.sap.assert(oModel == null || BaseObject.isA(oModel, 'sap.ui.model.Model'), "oModel must be an instance of sap.ui.model.Model, null or undefined");
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		var that = this,
 			oProperties;

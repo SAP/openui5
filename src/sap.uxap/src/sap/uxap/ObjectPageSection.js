@@ -105,6 +105,16 @@ sap.ui.define([
 		return (oSectionBase instanceof ObjectPageSubSection) ? oSectionBase.getParent() : oSectionBase;
 	};
 
+	/**
+	 * Retrieves the resource bundle for the <code>sap.uxap</code> library.
+	 * @static
+	 * @private
+	 * @returns {Object} the resource bundle object
+	 */
+	ObjectPageSection._getLibraryResourceBundle = function() {
+		return library.i18nModel.getResourceBundle();
+	};
+
 	ObjectPageSection.prototype._expandSection = function () {
 		ObjectPageSectionBase.prototype._expandSection.call(this)
 			._updateShowHideAllButton(!this._thereAreHiddenSubSections());
@@ -117,6 +127,16 @@ sap.ui.define([
 
 	ObjectPageSection.prototype.exit = function () {
 		this._detachMediaContainerWidthChange(this._updateImportance, this);
+	};
+
+	ObjectPageSection.prototype.setTitle = function (sValue) {
+		ObjectPageSectionBase.prototype.setTitle.call(this, sValue);
+
+		var oAriaLabelledBy = this.getAggregation("ariaLabelledBy");
+
+		if (oAriaLabelledBy) {
+			sap.ui.getCore().byId(oAriaLabelledBy.getId()).setText(sValue);
+		}
 	};
 
 	ObjectPageSection.prototype._getImportanceLevelToHide = function (oCurrentMedia) {
@@ -306,11 +326,11 @@ sap.ui.define([
 	};
 
 	ObjectPageSection.prototype._getShowHideButtonText = function (bHide) {
-		return library.i18nModel.getResourceBundle().getText(bHide ? "HIDE" : "SHOW");
+		return ObjectPageSection._getLibraryResourceBundle().getText(bHide ? "HIDE" : "SHOW");
 	};
 
 	ObjectPageSection.prototype._getShowHideAllButtonText = function (bHide) {
-		return library.i18nModel.getResourceBundle().getText(bHide ? "HIDE_ALL" : "SHOW_ALL");
+		return ObjectPageSection._getLibraryResourceBundle().getText(bHide ? "HIDE_ALL" : "SHOW_ALL");
 	};
 
 	ObjectPageSection.prototype._updateShowHideButton = function (bHide) {

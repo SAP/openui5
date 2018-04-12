@@ -444,22 +444,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 		}
 
 		// whether the current DOM element corresponds to the configured aggregation
-		var oTargetDomRef, sDropPosition = oDropInfo.getDropPosition();
-		if (oValidDropControl.getAggregationDomRef) {
-			var oAggregationDomRef = oValidDropControl.getAggregationDomRef(sTargetAggregation);
-			if (oAggregationDomRef && oAggregationDomRef.contains(oEvent.target)) {
-				oTargetDomRef = oAggregationDomRef;
-				sDropPosition = "On";
-			}
+		var oTargetDomRef;
+		if (oEvent.getMark("DragWithin") == sTargetAggregation) {
+			oTargetDomRef = oValidDropControl.getDomRefForSetting(sTargetAggregation);
 		}
 
 		// not dragging over an aggregated child of the element
-		if (!oTargetDomRef) {
-			oTargetDomRef = oValidDropControl.getDomRef();
-		}
+		oTargetDomRef = oTargetDomRef || oValidDropControl.getDomRef();
 
 		// let the user know the drop position
-		return showDropIndicator(oEvent, oTargetDomRef, sDropPosition, oDropInfo.getDropLayout());
+		return showDropIndicator(oEvent, oTargetDomRef, oDropInfo.getDropPosition(true), oDropInfo.getDropLayout());
 	}
 
 	// before controls handle UIArea events
@@ -618,11 +612,16 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			return;
 		}
 
+		// fire dragover events of valid DropInfos
+		aValidDropInfos.forEach(function(oDropInfo) {
+			oDropInfo.fireDragOver(oEvent);
+		});
+
 		// browsers drop effect must be set on dragover always
 		setDropEffect(oEvent, oValidDropInfo);
 
 		// drop position is set already at dragenter it should not be changed for DropPosition=On
-		if (oValidDropInfo && oValidDropInfo.getDropPosition() == "On") {
+		if (oValidDropInfo && oValidDropInfo.getDropPosition(true) == "On") {
 			return;
 		}
 
@@ -632,20 +631,30 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 
 	DnD.onbeforedrop = function(oEvent) {
 		// prevent default action
-		oEvent.preventDefault();
+		if (aValidDropInfos.length) {
+			oEvent.preventDefault();
+		}
 	};
 
 	DnD.onafterdrop = function(oEvent) {
-		// finally fire drop events of valid DropInfos
+		// fire drop events of valid DropInfos
 		aValidDropInfos.forEach(function(oDropInfo) {
-			return oDropInfo.fireDrop(oEvent);
+			oDropInfo.fireDrop(oEvent);
 		});
 
-		// finalize drag session
-		closeDragSession();
+		// dragend event is not dispatched if the dragged element is removed
+		this.iDragEndTimer = window.requestAnimationFrame(this.onafterdragend.bind(this, oEvent));
 	};
 
 	DnD.onafterdragend = function(oEvent) {
+		// cleanup the timer if there is a waiting job on the queue
+		this.iDragEndTimer = window.cancelAnimationFrame(this.iDragEndTimer);
+
+		// fire dragend event of valid DragInfos
+		aValidDragInfos.forEach(function(oDragInfo) {
+			oDragInfo.fireDragEnd(oEvent);
+		});
+
 		// finalize drag session
 		closeDragSession();
 	};

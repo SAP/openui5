@@ -26,6 +26,19 @@ sap.ui.define([
 		oDragDropInfo.destroy();
 	});
 
+	QUnit.test("invalidation", function(assert) {
+		var oDragDropInfo = new DragDropInfo();
+		var fnInvalidateSpy = sinon.spy(oDragDropInfo, "invalidate");
+
+		oDragDropInfo.setEnabled(false);
+		assert.strictEqual(fnInvalidateSpy.callCount, 1, "Invalidation is happened for enabled property");
+
+		oDragDropInfo.setGroupName("abc");
+		assert.strictEqual(fnInvalidateSpy.callCount, 1, "Invalidation is not happened for groupName property");
+
+		oDragDropInfo.destroy();
+	});
+
 	QUnit.test("isDroppable - targetElement itself", function(assert) {
 		var oControl = new TestControl();
 		var oDragDropInfo = new DragDropInfo({

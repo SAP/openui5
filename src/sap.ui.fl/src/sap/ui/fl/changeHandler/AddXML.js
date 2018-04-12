@@ -60,7 +60,7 @@ sap.ui.define([
 		var oView = mPropertyBag.view;
 		var oViewInstance = Utils.getViewForControl(oControl);
 		var oController = oViewInstance && oViewInstance.getController();
-		var sNamespace = mPropertyBag.appComponent.getMetadata().getName();
+		var sNamespace = oChange.getProjectId();
 
 		var aNewControls;
 		try {

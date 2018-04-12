@@ -13,16 +13,11 @@ sap.ui.define([
 	 */
 	var ObjectPageHeaderContentRenderer = {};
 
-	function lazyInstanceof(o, sModule) {
-		var FNClass = sap.ui.require(sModule);
-		return typeof FNClass === 'function' && (o instanceof FNClass);
-	}
-
 	ObjectPageHeaderContentRenderer.render = function (oRm, oControl) {
 		var oParent = oControl.getParent(),
-			bParentLayout = lazyInstanceof(oParent, "sap/uxap/ObjectPageLayout"),
+			bParentLayout = oParent && oParent.isA("sap.uxap.ObjectPageLayout"),
 			oHeader = (oParent && bParentLayout) ? oParent.getHeaderTitle() : undefined,
-			bRenderTitle = (oParent && bParentLayout) ? (lazyInstanceof(oParent, "sap/uxap/ObjectPageLayout")
+			bRenderTitle = (oParent && bParentLayout) ? (oParent.isA("sap.uxap.ObjectPageLayout")
 				&& oParent.getShowTitleInHeaderContent()) : false,
 			bRenderEditBtn = bParentLayout && oParent.getShowEditHeaderButton() && oControl.getContent() && oControl.getContent().length > 0;
 

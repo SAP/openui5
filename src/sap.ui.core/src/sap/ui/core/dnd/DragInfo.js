@@ -35,12 +35,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			/**
 			 * The name of the aggregation from which all children can be dragged. If undefined, the control itself can be dragged.
 			 */
-			sourceAggregation: {type: "string", defaultValue : null},
-
-			/**
-			 * Defines the name of the group to which this <code>DragInfo</code> belongs. If <code>groupName</code> is specified, then this <code>DragInfo</code> object will only interact with other <code>DropInfo</code> objects within the same group.
-			 */
-			groupName: {type: "string", defaultValue : null}
+			sourceAggregation: {type: "string", defaultValue : null}
 		},
 
 		events: {
@@ -59,12 +54,29 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 */
 			dragStart: {
 				allowPreventDefault : true
+			},
+
+			/**
+			 * This event is fired when a drag operation is being ended.
+			 *
+			 * @name sap.ui.core.dnd.DragInfo#dragEnd
+			 * @event
+			 * @param {sap.ui.base.Event} oControlEvent
+			 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+			 * @param {object} oControlEvent.getParameters
+			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that is being dragged
+			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
+			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @public
+			 * @since 1.56
+			 */
+			dragEnd: {
 			}
 		}
 	}});
 
 	DragInfo.prototype.isDraggable = function(oControl) {
-		if (!(oControl instanceof Element)) {
+		if (!this.getEnabled()) {
 			return false;
 		}
 
@@ -98,6 +110,19 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			browserEvent: oEvent.originalEvent,
 			target: oDragSession.getDragControl()
 		}, true);
+	};
+
+	DragInfo.prototype.fireDragEnd = function (oEvent) {
+		if (!oEvent || !oEvent.dragSession) {
+			return;
+		}
+
+		var oDragSession = oEvent.dragSession;
+		return this.fireEvent("dragEnd", {
+			dragSession: oDragSession,
+			browserEvent: oEvent.originalEvent,
+			target: oDragSession.getDragControl()
+		});
 	};
 
 	return DragInfo;

@@ -336,6 +336,42 @@
 
 		assert.equal(fnGetClosestSection(oFirstSubSection).getId(), oSectionWithTwoSubSection.getId());
 		assert.equal(fnGetClosestSection(oSectionWithTwoSubSection).getId(), oSectionWithTwoSubSection.getId());
+
+		ObjectPageSectionView.destroy();
+	});
+
+	QUnit.module("Accessibility", {
+		beforeEach: function() {
+			this.ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
+				viewName: "view.UxAP-13_ObjectPageSection"
+			});
+
+			this.ObjectPageSectionView.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.ObjectPageSectionView.destroy();
+		}
+	});
+
+	QUnit.test("Test aria-labelledby attribute", function (assert) {
+		var oFirstSection = this.ObjectPageSectionView.byId("SectionWithSubSection"),
+			sFirstSectionAriaLabelledBy = oFirstSection.$().attr("aria-labelledby"),
+			oSectionWithoutTitle = this.ObjectPageSectionView.byId("SectionWithNoTitleAndTwoSubSections"),
+			sSectionWithoutTitleAriaLabel = oSectionWithoutTitle.$().attr("aria-label"),
+			oLastSection = this.ObjectPageSectionView.byId("SectionWithNoTitleAndOneSubSection"),
+			sLastSectionAriaLabelledBy = oLastSection.$().attr("aria-labelledby");
+
+		// assert
+		assert.strictEqual(oFirstSection._getTitle(), sap.ui.getCore().byId(sFirstSectionAriaLabelledBy).getText(), "aria-labelledby is set properly");
+		assert.strictEqual(sSectionWithoutTitleAriaLabel, sap.uxap.ObjectPageSection._getLibraryResourceBundle().getText("SECTION_CONTROL_NAME"), "sections without title have aria-label='Section'");
+		assert.strictEqual(oLastSection._getTitle(), sap.ui.getCore().byId(sLastSectionAriaLabelledBy).getText(), "aria-labelledby is set properly");
+
+		// act
+		oFirstSection.setTitle("New title");
+
+		// assert
+		assert.strictEqual(oFirstSection._getTitle(), sap.ui.getCore().byId(sFirstSectionAriaLabelledBy).getText(), "aria-labelledby is updated properly");
 	});
 
 }(jQuery, QUnit, sinon, sap.uxap.Importance));

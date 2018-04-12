@@ -43,7 +43,7 @@ sap.ui.define(["./DragInfo", "./DropInfo", "../Element"],
 			 * The target element for this drag and drop action. If undefined, the control with this drag and drop configuration itself is the target.
 			 * Leaving this empty, but defining source and target aggregation, allows you to reorder the children within a control, for example.
 			 */
-			targetElement: {type : "sap.ui.core.Element", multiple : false}
+			targetElement: {type : "sap.ui.core.Element", multiple : false, invalidate: false}
 		},
 		events: {
 			/**
@@ -61,12 +61,30 @@ sap.ui.define(["./DragInfo", "./DropInfo", "../Element"],
 			 */
 			dragStart: {
 				allowPreventDefault : true
+			},
+
+			/**
+			 * This event is fired when a drag operation is being ended.
+			 *
+			 * @name sap.ui.core.dnd.DragInfo#dragEnd
+			 * @event
+			 * @param {sap.ui.base.Event} oControlEvent
+			 * @param {sap.ui.base.EventProvider} oControlEvent.getSource
+			 * @param {object} oControlEvent.getParameters
+			 * @param {sap.ui.core.Element} oControlEvent.getParameters.target The target element that is being dragged
+			 * @param {sap.ui.core.dnd.DragSession} oControlEvent.getParameters.dragSession The UI5 <code>dragSession</code> object that exists only during drag and drop
+			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
+			 * @public
+			 * @since 1.56
+			 */
+			dragEnd: {
 			}
 		}
 	}});
 
 	// Mixin the DragInfo implementation
 	DragDropInfo.prototype.isDraggable = DragInfo.prototype.isDraggable;
+	DragDropInfo.prototype.fireDragEnd = DragInfo.prototype.fireDragEnd;
 	DragDropInfo.prototype.fireDragStart = DragInfo.prototype.fireDragStart;
 
 	DragDropInfo.prototype.getDropTarget = function() {
