@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>OpenUI5 SDK - Demo Kit v2.0</title>
+
+    <link rel="stylesheet" href="redirect-page-resources/css/style.css">
+    <link rel="icon" href="redirect-page-resources/img/favicon.png">
+</head>
+<body>
+    <nav id="navigation">
+        <ul id="navigation-list">
+            <li id="navigation-logo-item" class="navigation-list-item">
+				<img id="navigation-logo" src="redirect-page-resources/img/logo_ui5.png" alt="UI5 logo" onclick="redirectTo('https://ui5.sap.com/')">
+			</li>
+            <li class="navigation-list-item">
+				<a class="navigation-link" href="https://ui5.sap.com/#/topic">Documentation</a>
+			</li>
+            <li class="navigation-list-item">
+				<a class="navigation-link" href="https://ui5.sap.com/#/api">API Reference</a>
+			</li>
+            <li class="navigation-list-item">
+				<a class="navigation-link" href="https://ui5.sap.com/#/controls">Samples</a>
+			</li>
+            <li class="navigation-list-item">
+				<a class="navigation-link" href="https://ui5.sap.com/#/demoapps">Demo Apps</a>
+			</li>
+            <li class="navigation-list-item">
+				<a class="navigation-link" href="https://ui5.sap.com/#/tools">Tools</a>
+			</li>
+			<li id="hamburger-menu-item" class="navigation-list-item">
+				<span id="hamburger-icon" onclick="onHamburgerIconClick()"></span>
+			</li>
+        </ul>
+    </nav>
+
+	<!-- Scrollbar should appear only for the content in this wrapper  -->
+	<div id="scrollable-content">
+		<header id="main-header">
+			<div id="main-headline-wrapper">
+				<p id="main-headline-text">Discover New Enterprise-Grade Horizons</p>
+				<button id="get-started-button" class="headline-button" onclick="redirectTo('https://ui5.sap.com/#/topic/8b49fc198bf04b2d9800fc37fecbb218')">Get Started with UI5</button>
+				<button id="download-button" class="headline-button" onclick="redirectTo('https://tools.hana.ondemand.com/#sapui5')">Download</button>
+			</div>
+		</header>
+
+		<div id="demokit-moved-information">
+			<div id="disclaimer-message">
+				<p id="disclaimer-message-text">We’ve moved the Demo Kit to the cloud to make sure that the latest version is always available to you. Go to <a href="http://ui5.sap.com">http://ui5.sap.com</a> directly or select a category and you will be redirected automatically. For options to work offline with SAPUI5, select Download.</p>
+			</div>
+		</div>
+
+		<section>
+			<header class="section-headline">
+				<h2 class="section-headline-text">Key Features</h2>
+			</header>
+
+			<div class="two-column-grid">
+				<article id="responsiveness-cell" class="grid-cell">
+					<header class="grid-cell-header">
+						<h3>
+							<a class="grid-cell-link" href="https://ui5.sap.com/#/topic/50eadaac8d2e49ee8996dc2b560cb76b">Responsive Across Browsers and Devices</a>
+						</h3>
+					</header>
+					<p>No need to worry about device specifics! UI5 apps run on smartphones, tablets, and desktops. The UI controls automatically adapt themselves to each device's capabilities and make the most of the available real estate.</p>
+				</article>
+
+				<article id="concepts-cell" class="grid-cell">
+					<header class="grid-cell-header">
+						<h3>
+							<a class="grid-cell-link" href="https://ui5.sap.com/#/topic/ec699e0817fb46a0817b0fa276a249f8">Powerful Development Concepts</a>
+						</h3>
+					</header>
+					<p>The UI5 core offers a solid foundation that simplifies your work by managing many aspects of modern development behind the scenes. It comes with built-in support for architectural concepts like MVC, two-way data binding, and routing.</p>
+					<ul class="grid-cell-list">
+						<li class="grid-cell-list-item">Includes standards like MVC and various data-binding types</li>
+						<li class="grid-cell-list-item">Choose between different view formats (XML, HTML, JavaScript, JSON)</li>
+						<li class="grid-cell-list-item">Binding with OData, JSON, XML and other data formats</li>
+						<li class="grid-cell-list-item">Built-in support tool for exploring the object tree and binding status</li>
+					</ul>
+				</article>
+
+				<article id="toolkit-cell" class="grid-cell">
+					<header class="grid-cell-header">
+						<h3>
+							<a class="grid-cell-link" href="https://ui5.sap.com/#/topic/23cfd955f58142389fa7c9097e11559c">Enterprise-Ready Web Toolkit</a>
+						</h3>
+					</header>
+					<p>Created by professionals, for modern developers building state of the art web applications. It comes with all features needed to cover most current application requirements, with standards high enough to be delivered in standard SAP solutions.</p>
+					<ul class="grid-cell-list">
+						<li class="grid-cell-list-item">Translation and internationalization support</li>
+						<li class="grid-cell-list-item">Extensibility concepts at code and application level</li>
+						<li class="grid-cell-list-item">High Contrast theme to aid visually impaired users</li>
+					</ul>
+				</article>
+
+				<article id="design-cell" class="grid-cell">
+					<header class="grid-cell-header">
+						<h3>
+							<a class="grid-cell-link" href="https://experience.sap.com/fiori-design/">Award-Winning SAP Fiori Design in Action</a>
+						</h3>
+					</header>
+					<p>UI5 applications benefit from a consistent design language and predefined UX patterns across all frontend features. Use a predefined theme or try our online theming tool to create a custom theme.</p>
+				</article>
+			</div>
+		</section>
+
+		<section>
+			<header class="section-headline">
+				<h2 class="section-headline-text">Choose Your Scenario</h2>
+			</header>
+
+			<div class="four-column-grid">
+				<article id="cloud-platform-cell" class="grid-cell">
+					<header class="grid-cell-header">
+						<h3>
+							<a class="grid-cell-link" href="https://www.sap.com/developer/tutorials/hcp-create-trial-account.html">SAPUI5 on SAP Cloud Platform</a>
+						</h3>
+					</header>
+					<p>Sign up for the free SAP Cloud Platform developer edition to test the platform and build cloud-based UI5 apps.</p>
+					<ul class="grid-cell-list">
+						<li class="grid-cell-list-item">Easy-to-use development environment with SAP Web IDE</li>
+						<li class="grid-cell-list-item">Free trial for development use</li>
+					</ul>
+				</article>
+
+				<article id="on-premise-cell" class="grid-cell">
+					<header class="grid-cell-header">
+						<h3>
+							<a class="grid-cell-link" href="https://ui5.sap.com/#/topic/91f346786f4d1014b6dd926db0e91070">SAPUI5 On-Premise</a>
+						</h3>
+					</header>
+					<p>SAPUI5 is part of the user interface technologies in SAP HANA, NetWeaver ABAP or Java systems.</p>
+					<ul class="grid-cell-list">
+						<li class="grid-cell-list-item">Ready to use for SAP Customers</li>
+						<li class="grid-cell-list-item">Integrates with existing system landscapes</li>
+					</ul>
+				</article>
+
+				<article id="open-source-cell" class="grid-cell">
+					<header class="grid-cell-header">
+						<h3>
+							<a class="grid-cell-link" href="http://openui5.org/">OpenUI5 - Free and Open Source</a>
+						</h3>
+					</header>
+					<p>Try the open source variant of UI5. It contains all core UI5 features and is available on GitHub under the Apache 2.0 license.</p>
+					<ul class="grid-cell-list">
+						<li class="grid-cell-list-item">Supported by the open source community</li>
+						<li class="grid-cell-list-item">Managed on GitHub - contributions welcome!</li>
+					</ul>
+				</article>
+
+				<article id="cdn-cell" class="grid-cell">
+					<header class="grid-cell-header">
+						<h3>
+							<a class="grid-cell-link" href="https://ui5.sap.com/#/topic/2d3eb2f322ea4a82983c1c62a33ec4ae">UI5 on Content Delivery Network</a>
+						</h3>
+					</header>
+					<p>Develop and run UI5 apps with the flexibility of a robust CDN. Files are loaded from the location closest to the user for optimal performance.</p>
+					<ul class="grid-cell-list">
+						<li class="grid-cell-list-item">Multi-version CDN to maintain a custom lifecycle</li>
+						<li class="grid-cell-list-item">For any on-premise and cloud development scenario</li>
+					</ul>
+				</article>
+			</div>
+		</section>
+
+		<section>
+			<header class="section-headline">
+				<h2 class="section-headline-text">Join the Community</h2>
+			</header>
+
+			<div class="four-column-grid">
+				<article id="sap-community-cell" class="grid-cell social-cell">
+					<span id="icon-placeholder"></span>
+					<h3 class="social-cell-title">
+						<a class="grid-cell-link" href="https://www.sap.com/community/topic/ui5.html?">SAP Community</a>
+					</h3>
+				</article>
+
+				<article id="stackoverflow-cell" class="grid-cell social-cell">
+					<img class="social-cell-logo" src="redirect-page-resources/img/logo_stackoverflow.png" alt="Stackoverflow logo">
+					<h3 class="social-cell-title">
+						<a class="grid-cell-link" href="http://stackoverflow.com/search?q=sapui5">StackOverflow</a>
+					</h3>
+				</article>
+
+				<article id="youtube-cell" class="grid-cell social-cell">
+					<img class="social-cell-logo" src="redirect-page-resources/img/logo_youtube.png" alt="Youtube logo">
+					<h3 class="social-cell-title">
+						<a class="grid-cell-link" href="https://youtube.com/openui5videos">YouTube</a>
+					</h3>
+				</article>
+
+				<article id="twitter-cell" class="grid-cell social-cell">
+					<img class="social-cell-logo" src="redirect-page-resources/img/logo_twitter.png" alt="Twitter logo">
+					<h3 class="social-cell-title">
+						<a class="grid-cell-link" href="https://twitter.com/@openui5">Twitter</a>
+					</h3>
+				</article>
+			</div>
+		</section>
+
+		<footer id="page-footer">
+			<img id="page-footer-logo" src="redirect-page-resources/img/logo_sap.png" alt="SAP logo">
+			<div id="footer-links-wrapper">
+				<a class="page-footer-link" href="https://www.sap.com/corporate/en/legal/impressum.html">Legal Disclosure</a>
+				<a class="page-footer-link" href="https://www.sap.com/corporate/en/legal/privacy.html">Privacy</a>
+				<a class="page-footer-link" href="https://www.sap.com/corporate/en/legal/terms-of-use.html">Terms of Use</a>
+			</div>
+		</footer>
+	</div>
+
+	<script>
+		'use strict';
+
+		function redirectTo(sSrc) {
+			window.location = sSrc;
+		}
+
+		function onHamburgerIconClick() {
+			var navigationList = document.getElementById('navigation-list');
+
+			navigationList.classList.toggle("responsive-menu-opened");
+		}
+	</script>
+</body>
+</html>
