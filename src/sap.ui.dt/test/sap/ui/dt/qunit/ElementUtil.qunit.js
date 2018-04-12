@@ -422,7 +422,7 @@ function(
 				"add":"addElement",
 				"remove":"removeElement",
 				"insert": undefined,
-				"removeAll": "removeAllElement"
+				"removeAll": "removeAllElements"
 			}, 'then the static method "getAssociationAccessors" returns all accessors of an existing association');
 		});
 
