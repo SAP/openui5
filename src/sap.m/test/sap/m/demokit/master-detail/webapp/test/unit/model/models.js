@@ -59,5 +59,4 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.oDeviceModel.getDefaultBindingMode(), "OneWay", "Binding mode is correct");
 	});
-
 });

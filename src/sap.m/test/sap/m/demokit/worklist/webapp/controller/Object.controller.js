@@ -133,8 +133,8 @@ sap.ui.define([
 					sObjectId = oObject.ObjectID,
 					sObjectName = oObject.Name;
 
-				// Everything went fine.
 				oViewModel.setProperty("/busy", false);
+
 				oViewModel.setProperty("/shareSendEmailSubject",
 				oResourceBundle.getText("shareSendEmailObjectSubject", [sObjectId]));
 				oViewModel.setProperty("/shareSendEmailMessage",

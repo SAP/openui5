@@ -314,12 +314,14 @@ sap.ui.define([
 							id : sTableId,
 							viewName : sViewName,
 							success : function (oTable) {
-								Opa5.assert.strictEqual(oTable.getNoDataText(), oTable.getModel("i18n").getProperty("worklistNoDataWithSearchText"), "the table should show the no data text for search");
+								Opa5.assert.strictEqual(
+									oTable.getNoDataText(),
+									oTable.getModel("i18n").getProperty("worklistNoDataWithSearchText"),
+									"the table should show the no data text for search");
 							},
 							errorMessage : "table does not show the no data text for search"
 						});
 					}
-
 				}, shareOptions.createAssertions(sViewName))
 
 			}
