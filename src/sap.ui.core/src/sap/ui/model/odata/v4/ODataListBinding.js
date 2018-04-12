@@ -939,6 +939,7 @@ sap.ui.define([
 		}
 
 		if (this.bRelative && !oContext) { // unresolved relative binding
+			this.aPreviousData = []; // compute diff from scratch when binding is resolved again
 			return [];
 		}
 

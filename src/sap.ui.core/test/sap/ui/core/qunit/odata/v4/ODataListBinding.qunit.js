@@ -1071,7 +1071,8 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("nested listbinding (context not yet set)", function (assert) {
-		var oControl = new TestControl({models : this.oModel}),
+		var oBinding,
+			oControl = new TestControl({models : this.oModel}),
 			oRange = {startIndex : 1, length : 3};
 
 		// change event handler for initial read for list binding
@@ -1081,13 +1082,19 @@ sap.ui.require([
 
 		// code under test
 		oControl.bindAggregation("items", jQuery.extend({
-				path : "TEAM_2_EMPLOYEES",
-				template : new TestControl()
-			}, oRange));
+			path : "TEAM_2_EMPLOYEES",
+			template : new TestControl()
+		}, oRange));
 
-		oControl.getBinding("items").attachChange(onChange);
+		oBinding = oControl.getBinding("items");
+		oBinding.aPreviousData = [{}];
+		oBinding.attachChange(onChange);
+
+		// code under test
 		assert.deepEqual(oControl.getBinding("items").getContexts(), [],
 			"list binding contexts not set");
+
+		assert.deepEqual(oBinding.aPreviousData, []);
 	});
 
 	//*********************************************************************************************
