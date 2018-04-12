@@ -15,6 +15,7 @@
 		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 		<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -366,6 +367,76 @@
 		QUnit.test("Bindings", function(assert) {
 			assert.strictEqual(oTableSelectDialog.getBinding("items").iLength, 5 , 'TableSelectDialog should have 5 items bound');
 			assert.strictEqual(oTableSelectDialog1.getBinding("items").iLength, 5 , 'TableSelectDialog1 should have 5 items bound');
+		});
+
+		QUnit.module("Growing property check");
+
+		QUnit.test("true (default)", function(assert) {
+			// arrange
+			var aData = [];
+			for (var i = 0; i < 50; i++) {
+				aData.push({text : "Item" + i});
+			}
+
+			var oTableSelectDialog23 = new sap.m.TableSelectDialog({
+				columns : [
+					new sap.m.Column({
+						header : new sap.m.Label({text : "Item"})
+					})
+				],
+				growingThreshold: 20
+			});
+
+			oTableSelectDialog23.setModel(new sap.ui.model.json.JSONModel(aData));
+			oTableSelectDialog23.bindItems("/", new sap.m.ColumnListItem({
+				cells : [
+					new sap.m.Label({text : "{text}"})
+				]
+			}));
+
+			// act
+			oTableSelectDialog23.open();
+
+			// assert
+			assert.strictEqual(oTableSelectDialog23.getItems().length, 20 , 'There should be only 20 items loaded (out of 50).');
+			oTableSelectDialog23._onCancel();
+
+			// cleanup
+			oTableSelectDialog23.destroy();
+		});
+
+		QUnit.test("false", function(assert) {
+			// arrange
+			var aData = [];
+			for (var i = 0; i < 50; i++) {
+				aData.push({text : "Item" + i});
+			}
+
+			var oTableSelectDialog24 = new sap.m.TableSelectDialog({
+				columns : [
+					new sap.m.Column({
+						header : new sap.m.Label({text : "Item"})
+					})
+				],
+				growing: false
+			});
+
+			oTableSelectDialog24.setModel(new sap.ui.model.json.JSONModel(aData));
+			oTableSelectDialog24.bindItems("/", new sap.m.ColumnListItem({
+				cells : [
+					new sap.m.Label({text : "{text}"})
+				]
+			}));
+
+			// act
+			oTableSelectDialog24.open();
+
+			// assert
+			assert.strictEqual(oTableSelectDialog24.getItems().length, 50 , 'There should be loaded all 50 items.');
+			oTableSelectDialog24._onCancel();
+
+			// cleanup
+			oTableSelectDialog24.destroy();
 		});
 
 		QUnit.module("MultiSelect proper selection reset");
