@@ -10,18 +10,18 @@
 			editable="true"
 			title="Text Properties"
 			adjustLabelSpan="false"
-			labelSpanXL="1"
-			labelSpanL="1"
-			labelSpanM="1"
+			labelSpanXL="2"
+			labelSpanL="2"
+			labelSpanM="2"
 			labelSpanS="4"
-			emptySpanXL="7"
-			emptySpanL="7"
-			emptySpanM="1"
+			emptySpanXL="4"
+			emptySpanL="4"
+			emptySpanM="2"
 			emptySpanS="0"
-			columnsXL="1"
-			columnsL="1"
-			columnsM="1"
-			columnsS="1">
+			columnsXL="2"
+			columnsL="2"
+			columnsM="2"
+			columnsS="2">
 		<Label text="Wrapping" />
 		<Switch state="true" change="onWrappingChange" />
 		<Label text="RenderWhitespace" />
@@ -35,6 +35,6 @@
 		<Text id="text"
 			   renderWhitespace="true"
 			   wrapping="true"
-			   text="Lorem ipsum dolor sit amet,(1 line break follows)\nconsetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt (2 line breaks follow)\n\nut labore et dolore magna aliquyam erat, (4 tabs follow)\t\t\t\tsed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (1 line break follows)\nStet clita kasd gubergren, no sea takimata sanctus est (7 spaces follow)       Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,(7 spaces follow)       sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (7 spaces follow)       Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem (6 tabs follow)\t\t\t\t\t\t\tipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet:"/>
+			   text="Lorem ipsum dolor sit amet,(1 line break follows)&#xA;consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt (2 line breaks follow)&#xA;&#xA;ut labore et dolore magna aliquyam erat, (4 tabs follow)&#x9;&#x9;&#x9;&#x9;sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (1 line break follows)&#xA;Stet clita kasd gubergren, no sea takimata sanctus est (7 spaces follow)       Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,(7 spaces follow)       sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (7 spaces follow)       Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem (6 tabs follow)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet:"/>
 	</Panel>
 </mvc:View>
