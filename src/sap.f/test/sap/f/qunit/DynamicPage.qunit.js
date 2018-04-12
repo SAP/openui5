@@ -685,7 +685,7 @@
 			oSetPropertySpy = this.spy(oDynamicPage, "setProperty"),
 			sExpandedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER")
 				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER"),
-			sCollapsedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "COLLAPSED_HEADER")
+			sCollapsedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "SNAPPED_HEADER")
 				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER");
 
 		this.oDynamicPage._bHeaderInTitleArea = true;
@@ -732,7 +732,7 @@
 			},
 			sExpandedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER")
 				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER"),
-			sCollapsedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "COLLAPSED_HEADER")
+			sCollapsedHeaderARIAReferences = sap.ui.core.InvisibleText.getStaticId("sap.f", "SNAPPED_HEADER")
 				+ " " + sap.ui.core.InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER");
 
 		this.oDynamicPage._bHeaderInTitleArea = true;
@@ -756,8 +756,7 @@
 		assert.equal(oDynamicPage.getHeaderExpanded(), false, "The header is still collapsed, because toggleHeaderOnTitleClick = false");
 		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be still excluded from the tab chain");
 		assert.equal($oDynamicPageTitle.attr("tabindex"), undefined, "The header title is not focusable");
-		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
-			sCollapsedHeaderARIAReferences, "aria-labelledby should still indicate that the header is collapsed");
+		assert.notOk(oDynamicPage.getTitle().$().attr("aria-labelledby"), "aria-labelledby should still indicate that the header is collapsed");
 
 		oDynamicPage.setToggleHeaderOnTitleClick(true);
 
@@ -2602,7 +2601,7 @@
 			"DynamicPage Header aria-label is 'Header expanded'");
 
 		sAriaExpandedValue = "false";
-		sAriaLabelValue = oFactory.getResourceBundle().getText("COLLAPSED_HEADER");
+		sAriaLabelValue = oFactory.getResourceBundle().getText("SNAPPED_HEADER");
 		this.oDynamicPage._toggleHeaderOnScroll();
 
 		assert.equal($header.attr("aria-expanded"), sAriaExpandedValue,
