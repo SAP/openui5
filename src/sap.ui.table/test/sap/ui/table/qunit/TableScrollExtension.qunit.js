@@ -18,6 +18,128 @@ sap.ui.require([
 	var getSelectAll = window.getSelectAll;
 	var iNumberOfRows = window.iNumberOfRows;
 
+	var MouseWheelDeltaMode = {
+		PIXEL: 0,
+		LINE: 1,
+		PAGE: 2
+	};
+
+	function createMouseWheelEvent(iScrollDelta, iDeltaMode, bShift) {
+		var oWheelEvent;
+
+		if (typeof Event === "function") {
+			oWheelEvent = new window.WheelEvent("wheel", {
+				deltaY: bShift ? iScrollDelta : 0,
+				deltaX: bShift ? 0 : iScrollDelta,
+				deltaMode: iDeltaMode,
+				shiftKey: bShift,
+				bubbles: true,
+				cancelable: true
+			});
+		} else { // IE or PhantomJS
+			oWheelEvent = document.createEvent("Event");
+			oWheelEvent.deltaY = bShift ? iScrollDelta : 0;
+			oWheelEvent.deltaX = bShift ? 0 : iScrollDelta;
+			oWheelEvent.deltaMode = iDeltaMode;
+			oWheelEvent.shiftKey = bShift;
+			oWheelEvent.initEvent("wheel", true, true);
+
+			if (Device.browser.msie) {
+				var fnOriginalPreventDefault = oWheelEvent.preventDefault;
+				oWheelEvent.preventDefault = function() {
+					fnOriginalPreventDefault.apply(this, arguments);
+					Object.defineProperty(this, "defaultPrevented", {get: function() {return true;}});
+				};
+			}
+		}
+
+		return oWheelEvent;
+	}
+
+	var iTouchPosition;
+	var iTouchYPosition;
+
+	function initTouchScrolling(oTargetElement, iPageX, iPageY) {
+		var oTouchEvent;
+
+		iTouchPosition = iPageX;
+		iTouchYPosition = iPageY || 0;
+
+		if (typeof Event === "function" && typeof window.Touch === "function") {
+			var oTouchObject = new window.Touch({
+				identifier: Date.now(),
+				target: oTargetElement,
+				pageX: iTouchPosition,
+				pageY: iTouchYPosition
+			});
+
+			oTouchEvent = new window.TouchEvent("touchstart", {
+				bubbles: true,
+				cancelable: true,
+				touches: [oTouchObject]
+			});
+		} else { // Firefox, Edge, IE, PhantomJS
+			oTouchEvent = document.createEvent("Event");
+			oTouchEvent.touches = [
+				{
+					pageX: iTouchPosition,
+					pageY: iTouchYPosition
+				}
+			];
+			oTouchEvent.initEvent("touchstart", true, true);
+		}
+
+		oTargetElement.dispatchEvent(oTouchEvent);
+
+		return oTouchEvent;
+	}
+
+	function doTouchScrolling(oTargetElement, iScrollDelta) {
+		var oTouchEvent;
+
+		iTouchPosition -= iScrollDelta;
+
+		if (typeof Event === "function" && typeof window.Touch === "function") {
+			var oTouchObject = new window.Touch({
+				identifier: Date.now(),
+				target: oTargetElement,
+				pageX: iTouchPosition,
+				pageY: iTouchYPosition
+			});
+
+			oTouchEvent = new window.TouchEvent("touchmove", {
+				bubbles: true,
+				cancelable: true,
+				touches: [oTouchObject]
+			});
+		} else { // Firefox, Edge, IE, PhantomJS
+			oTouchEvent = document.createEvent("Event");
+			oTouchEvent.touches = [
+				{
+					pageX: iTouchPosition,
+					pageY: iTouchYPosition
+				}
+			];
+			oTouchEvent.initEvent("touchmove", true, true);
+
+			if (Device.browser.msie) {
+				var fnOriginalPreventDefault = oTouchEvent.preventDefault;
+				oTouchEvent.preventDefault = function() {
+					fnOriginalPreventDefault.apply(this, arguments);
+					Object.defineProperty(this, "defaultPrevented", {get: function() {return true;}});
+				};
+			}
+		}
+
+		oTargetElement.dispatchEvent(oTouchEvent);
+
+		return oTouchEvent;
+	}
+
+
+	//*******************************************************************
+
+
 	QUnit.module("Initialization", {
 		beforeEach: function() {
 			createTables();
@@ -1166,11 +1288,7 @@ sap.ui.require([
 		var iAssertionDelay = 100;
 		var iCurrentScrollPosition = this.oHSb.scrollLeft;
 		var iMinColumnWidth = sap.ui.table.TableUtils.Column.getMinColumnWidth();
-		var DeltaMode = {
-			PIXEL: 0,
-			LINE: 1,
-			PAGE: 2
-		};
+		var DeltaMode = MouseWheelDeltaMode;
 
 		function scrollForwardAndBackToBeginning(oTargetElement) {
 			that.oHSb.scrollLeft = 0;
@@ -1214,33 +1332,7 @@ sap.ui.require([
 
 		function scrollWithMouseWheel(oTargetElement, iScrollDelta, iDeltaMode, bShift, iExpectedScrollPosition, bValidTarget) {
 			return new Promise(function(resolve) {
-				var oWheelEvent;
-
-				if (typeof Event === "function") {
-					oWheelEvent = new window.WheelEvent("wheel", {
-						deltaY: bShift ? iScrollDelta : 0,
-						deltaX: bShift ? 0 : iScrollDelta,
-						deltaMode: iDeltaMode,
-						shiftKey: bShift,
-						bubbles: true,
-						cancelable: true
-					});
-				} else { // IE or PhantomJS
-					oWheelEvent = document.createEvent("Event");
-					oWheelEvent.deltaY = bShift ? iScrollDelta : 0;
-					oWheelEvent.deltaX = bShift ? 0 : iScrollDelta;
-					oWheelEvent.deltaMode = iDeltaMode;
-					oWheelEvent.shiftKey = bShift;
-					oWheelEvent.initEvent("wheel", true, true);
-
-					if (Device.browser.msie) {
-						var fnOriginalPreventDefault = oWheelEvent.preventDefault;
-						oWheelEvent.preventDefault = function() {
-							fnOriginalPreventDefault.apply(this, arguments);
-							Object.defineProperty(this, "defaultPrevented", {get: function() {return true;}});
-						};
-					}
-				}
+				var oWheelEvent = createMouseWheelEvent(iScrollDelta, iDeltaMode, bShift);
 
 				var oStopPropagationSpy = sinon.spy(oWheelEvent, "stopPropagation");
 
@@ -1293,6 +1385,7 @@ sap.ui.require([
 
 		oTable._getKeyboardExtension()._suspendItemNavigation(); // Touch can set the focus, which can lead to scrolling. Prevent it!
 		oTable.setFixedRowCount(1);
+		oTable.setEnableColumnReordering(false);
 		initRowActions(oTable, 1, 1);
 		this.oHSb = this.oScrollExtension.getHorizontalScrollbar();
 		this.oHeaderScroll = oTable.getDomRef("sapUiTableColHdrScr");
@@ -1301,7 +1394,6 @@ sap.ui.require([
 		var done = assert.async();
 		var that = this;
 		var iAssertionDelay = 100;
-		var iTouchPosition;
 		var iCurrentScrollPosition = this.oHSb.scrollLeft;
 
 		function scrollForwardAndBackToBeginning(oTargetElement) {
@@ -1339,77 +1431,9 @@ sap.ui.require([
 			});
 		}
 
-		function initTouchScrolling(oTargetElement, iPageX) {
-			var oTouchEvent;
-
-			iTouchPosition = iPageX;
-
-			if (typeof Event === "function" && typeof window.Touch === "function") {
-				var oTouchObject = new window.Touch({
-					identifier: Date.now(),
-					target: oTargetElement,
-					pageX: iTouchPosition,
-					pageY: 0
-				});
-
-				oTouchEvent = new window.TouchEvent("touchstart", {
-					bubbles: true,
-					cancelable: true,
-					touches: [oTouchObject]
-				});
-			} else { // Firefox, Edge, IE, PhantomJS
-				oTouchEvent = document.createEvent("Event");
-				oTouchEvent.touches = [
-					{
-						pageX: iTouchPosition,
-						pageY: 0
-					}
-				];
-				oTouchEvent.initEvent("touchstart", true, true);
-			}
-
-			oTargetElement.dispatchEvent(oTouchEvent);
-		}
-
 		function scrollWithTouch(oTargetElement, iScrollDelta, iExpectedScrollPosition, bValidTarget) {
 			return new Promise(function(resolve) {
-				var oTouchEvent;
-
-				iTouchPosition -= iScrollDelta;
-
-				if (typeof Event === "function" && typeof window.Touch === "function") {
-					var oTouchObject = new window.Touch({
-						identifier: Date.now(),
-						target: oTargetElement,
-						pageX: iTouchPosition,
-						pageY: 0
-					});
-
-					oTouchEvent = new window.TouchEvent("touchmove", {
-						bubbles: true,
-						cancelable: true,
-						touches: [oTouchObject]
-					});
-				} else { // Firefox, Edge, IE, PhantomJS
-					oTouchEvent = document.createEvent("Event");
-					oTouchEvent.touches = [
-						{
-							pageX: iTouchPosition,
-							pageY: 0
-						}
-					];
-					oTouchEvent.initEvent("touchmove", true, true);
-
-					if (Device.browser.msie) {
-						var fnOriginalPreventDefault = oTouchEvent.preventDefault;
-						oTouchEvent.preventDefault = function() {
-							fnOriginalPreventDefault.apply(this, arguments);
-							Object.defineProperty(this, "defaultPrevented", {get: function() {return true;}});
-						};
-					}
-				}
-
-				oTargetElement.dispatchEvent(oTouchEvent);
+				var oTouchEvent = doTouchScrolling(oTargetElement, iScrollDelta);
 
 				window.setTimeout(function() {
 					that.assertSynchronization(assert, iExpectedScrollPosition);
@@ -1762,4 +1786,62 @@ sap.ui.require([
 			done();
 		});
 	});
+
+	QUnit.module("Leave action mode on horizontal scrolling", {
+		beforeEach: function() {
+			createTables(false, true);
+			oTable.setFixedColumnCount(0);
+			oTable.setEnableColumnReordering(false);
+			oTable.setWidth("500px");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			destroyTables();
+		}
+	});
+
+	QUnit.test("Scrollbar", function(assert) {
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		oTable.getRows()[0].getCells()[0].focus();
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		var oEvent = document.createEvent('MouseEvents');
+		oEvent.initEvent("mousedown", true, true);
+		oTable.getDomRef("hsb").dispatchEvent(oEvent);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode again");
+		assert.ok(getCell(0, 0, false, null, oTable).get(0) === document.activeElement, "Cell has focus now");
+	});
+
+	QUnit.test("MouseWheel", function(assert) {
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		oTable.getRows()[0].getCells()[0].focus();
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		var oWheelEvent = createMouseWheelEvent(150, MouseWheelDeltaMode.PIXEL, true);
+		getCell(0, 0, false, null, oTable).get(0).dispatchEvent(oWheelEvent);
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode again");
+		assert.ok(getCell(0, 0, false, null, oTable).get(0) === document.activeElement, "Cell has focus now");
+	});
+
+	QUnit.test("Touch", function(assert) {
+		var bOriginalPointerSupport = Device.support.pointer;
+		var bOriginalTouchSupport = Device.support.touch;
+		Device.support.pointer = false;
+		Device.support.touch = true;
+		oTable.invalidate();
+		sap.ui.getCore().applyChanges();
+		oTable._getKeyboardExtension()._suspendItemNavigation(); // Touch can set the focus, which can lead to scrolling. Prevent it!
+
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
+		oTable.getRows()[0].getCells()[0].focus();
+		assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+		var oTargetElement = oTable.getDomRef("tableCCnt");
+		initTouchScrolling(oTargetElement, 200);
+		doTouchScrolling(oTargetElement, 150);
+
+		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode again");
+		assert.ok(getCell(0, 0, false, null, oTable).get(0) === document.activeElement, "Cell has focus now");
+
+		Device.support.pointer = bOriginalPointerSupport;
+		Device.support.touch = bOriginalTouchSupport;
+	});
+
 });
