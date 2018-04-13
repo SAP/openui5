@@ -485,7 +485,6 @@ function(
 			}
 
 			oDesignTimeMetadata = new ElementDesignTimeMetadata({
-				libraryName: this.getElement().getMetadata().getLibraryName(),
 				data: mDesignTimeMetadata
 			});
 		}

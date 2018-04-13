@@ -45,12 +45,7 @@ function(
 				data: {
 					type: "any",
 					defaultValue: {}
-				},
-
-				/**
-				* Name of the library the control belongs to
-				*/
-				libraryName: "string"
+				}
 			}
 		}
 	});
@@ -161,6 +156,7 @@ function(
 	 * For more details on this replacement mechanism refer also:
 	 * @see jQuery.sap.formatMessage
 	 *
+	 * @param {sap.ui.core.Element} oElement Element for which the text is being retrieved
 	 * @param {string} sKey Key
 	 * @param {string[]} [aArgs] List of parameters which should replace the place holders "{n}" (n is the index) in the found locale-specific string value.
 	 * @return {string} The value belonging to the key, if found; otherwise the key itself.
@@ -168,18 +164,44 @@ function(
 	 * @function
 	 * @public
 	 */
-	DesignTimeMetadata.prototype.getLibraryText = function(sKey, aArgs) {
-		var oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(this.getLibraryName() + ".designtime"),
-			sResult = oLibResourceBundle.getText(sKey, aArgs);
+	DesignTimeMetadata.prototype.getLibraryText = function(oElement, sKey, aArgs) {
+		var oElementMetadata = oElement.getMetadata();
+		return this._lookForLibraryTextInHierarchy(oElementMetadata, sKey, aArgs);
+	};
 
-		//Fallback to old logic that tries to get the text from the libraries resource bundle
-		//TODO: remove the fallback after all libraries have introduced a library.designtime.js that will provide the resource bundle and texts
-		if (!oLibResourceBundle.hasText(sKey)) {
-			oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(this.getLibraryName());
-			sResult = oLibResourceBundle.getText(sKey, aArgs);
+	DesignTimeMetadata.prototype._lookForLibraryTextInHierarchy = function(oMetadata, sKey, aArgs){
+		var sLibraryName;
+		var oParentMetadata;
+		var sResult;
+
+		sLibraryName = oMetadata.getLibraryName();
+		sResult = this._getTextFromLibrary(sLibraryName, sKey, aArgs);
+		if (!sResult){
+			oParentMetadata = oMetadata.getParent();
+			if (oParentMetadata && oParentMetadata.getLibraryName){ // Parents from the core library don't have Library Name
+				// If the control is inheriting from another library, the text must be searched in the hierarchy
+				sResult = this._lookForLibraryTextInHierarchy(oParentMetadata, sKey, aArgs);
+			} else {
+				// Nothing was found -> return the key
+				sResult = sKey;
+			}
 		}
 
 		return sResult;
+	};
+
+	DesignTimeMetadata.prototype._getTextFromLibrary = function(sLibraryName, sKey, aArgs){
+		var oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(sLibraryName + ".designtime");
+		if (oLibResourceBundle && oLibResourceBundle.hasText(sKey)){
+			return oLibResourceBundle.getText(sKey, aArgs);
+		} else {
+			//Fallback to old logic that tries to get the text from the libraries resource bundle
+			//TODO: remove the fallback after all libraries have introduced a library.designtime.js that will provide the resource bundle and texts
+			oLibResourceBundle = sap.ui.getCore().getLibraryResourceBundle(sLibraryName);
+			if (oLibResourceBundle && oLibResourceBundle.hasText(sKey)) {
+				return oLibResourceBundle.getText(sKey, aArgs);
+			}
+		}
 	};
 
 	/**
