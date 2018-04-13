@@ -4,15 +4,16 @@ sap.ui.define([
 	], function (BaseObject, GroupHeaderListItem) {
 		"use strict";
 
-		return BaseObject.extend("sap.ui.demo.masterdetail.model.ListSelector", {
+		return BaseObject.extend("sap.ui.demo.masterdetail.controller.ListSelector", {
 
 			/**
 			 * Provides a convenience API for selecting list items. All the functions will wait until the initial load of the a List passed to the instance by the setBoundMasterList
 			 * function.
 			 * @class
 			 * @public
-			 * @alias sap.ui.demo.masterdetail.model.ListSelector
+			 * @alias sap.ui.demo.masterdetail.controller.ListSelector
 			 */
+
 			constructor : function () {
 				this._oWhenListHasBeenSet = new Promise(function (fnResolveListHasBeenSet) {
 					this._fnResolveListHasBeenSet = fnResolveListHasBeenSet;

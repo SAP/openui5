@@ -1,4 +1,5 @@
 /*global QUnit,sinon*/
+/*eslint-env browser*/
 
 sap.ui.define([
 	"sap/ui/demo/masterdetail/controller/ListSelector",

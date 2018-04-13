@@ -199,8 +199,14 @@ sap.ui.define([
 			 * @public
 			 */
 			onSelectionChange : function (oEvent) {
-				// get the list item, either from the listItem parameter or from the event's source itself (will depend on the device-dependent mode).
-				this._showDetail(oEvent.getParameter("listItem") || oEvent.getSource());
+				var oList = oEvent.getSource(),
+					bSelected = oEvent.getParameter("selected");
+
+				// skip navigation when deselecting an item in multi selection mode
+				if (!(oList.getMode() === "MultiSelect" && !bSelected)) {
+					// get the list item, either from the listItem parameter or from the event's source itself (will depend on the device-dependent mode).
+					this._showDetail(oEvent.getParameter("listItem") || oEvent.getSource());
+				}
 			},
 
 			/**
