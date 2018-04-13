@@ -513,6 +513,10 @@ sap.ui.define([
 			return;
 		}
 
+		if (!this.getSelectedSection()) {
+			this._bHeaderExpanded = true; // enforce to expanded header whenever selectedSection is reset
+		}
+
 		this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
 		this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
