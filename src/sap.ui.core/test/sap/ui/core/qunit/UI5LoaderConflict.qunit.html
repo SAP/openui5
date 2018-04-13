@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta charset="utf-8">
+	<title>QUnit tests: UI5 Loader Conflict Mode (global define/require)</title>
+
+	<script src="../shared-config.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/baseuri.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/es6-promise.js"></script>
+	<script src="../../../../../resources/ui5loader.js" id="sap-ui-bootstrap"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/jquery.js"></script>
+	<link href="../../../../../resources/sap/ui/thirdparty/qunit-2.css" rel="stylesheet" media="screen">
+	<script src="../../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-4.js"></script>
+	<script src="../../../../../resources/sap/ui/qunit/sinon-qunit-bridge.js"></script>
+
+	<script>
+
+		sap.ui._ui5loader.config({
+			baseUrl: "./"
+		});
+
+		QUnit.module("noConflict=false mode");
+
+		QUnit.test("noConflict - bExport - error message", function(assert) {
+			var done = assert.async();
+			var that = this;
+
+			require(["testdata/modules/error-handling-standard-api/amdModule"], function () {
+				// ------ ALL parameters -------
+				define("sap/test/MockModule", [], function () {
+					return {};
+				}, /* bExport = */ true);
+
+				assert.throws(
+					function() {
+						var x = sap.test.MockModule;
+					},
+					TypeError,
+					"sap.test.MockModule was not exported"
+				);
+
+				define("sap/test/MockModule2", [], function () {
+					return {};
+				}, /* bExport = */ false);
+
+				assert.throws(
+					function() {
+						var x = sap.test.MockModule2;
+					},
+					TypeError,
+					"sap.test.MockModule2 was not exported"
+				);
+
+				// ------ Optional dependencies -------
+				define("sap/test/MockModule3", function () {
+					return {};
+				}, /* bExport = */ true);
+
+				assert.throws(
+					function() {
+						var x = sap.test.MockModule3;
+					},
+					TypeError,
+					"sap.test.MockModule3 was not exported"
+				);
+
+				define("sap/test/MockModule4", function () {
+					return {};
+				}, /* bExport = */ false);
+
+				assert.throws(
+					function() {
+						var x = sap.test.MockModule4;
+					},
+					TypeError,
+					"sap.test.MockModule4 was not exported"
+				);
+
+				// ------ No Modulename -------
+				assert.throws(
+					function() {
+						var x = testdata.modules["error-handling-standard-api"].amdModule.x;
+					},
+					ReferenceError,
+					"testdata.modules.error-handling-standard-api.amdModule was not exported"
+				);
+
+				done();
+			});
+		});
+
+		QUnit.test("noConflict - require string probing - simple", function(assert) {
+			var that = this;
+
+			var oTable = sap.ui.require("sap/m/Table");
+			assert.strictEqual(oTable, undefined, "ui5 require returns undefined for not loaded modules");
+
+			assert.throws(
+				function() {
+					require("testdata/modules/basic/amdModule");
+				},
+				new Error("Module 'testdata/modules/basic/amdModule.js' has not been loaded yet. Use require(['testdata/modules/basic/amdModule.js']) to load it."),
+				"testdata.modules.error-handling-standard-api.amdModule was not exported"
+			);
+
+		});
+
+		QUnit.test("noConflict - require string probing - no return value", function (assert) {
+			var done = assert.async();
+
+			// inline module with no return value
+			define("sap/test/A", function () {
+				return undefined;
+			});
+
+			var x = require("sap/test/A");
+
+			assert.strictEqual(x, undefined, "undefined is returned");
+			assert.ok(true, "require('...') for empty inline Module in READY state does not fail");
+
+			// loading a module with no return value
+			define("sap/test/B", ["testdata/modules/error-handling-standard-api/amdModule_undef"], function (amdModule_undef) {
+				var y = require("testdata/modules/error-handling-standard-api/amdModule_undef");
+
+				assert.strictEqual(y, undefined, "undefined is returned");
+				assert.ok(true, "require('...') for empty loaded Module in READY state does not fail");
+
+				done();
+			});
+		});
+
+		QUnit.test("noConflict - local require string probing", function(assert) {
+			var done = assert.async();
+			var that = this;
+
+			sap.ui.define("sap/test/localRequire", ["require"], function (require) {
+
+				assert.throws(
+					function() {
+						require("testdata/modules/error-handling-standard-api/amdModule2");
+					},
+					new Error("Module 'testdata/modules/error-handling-standard-api/amdModule2.js' has not been loaded yet. Use require(['testdata/modules/error-handling-standard-api/amdModule2.js']) to load it."),
+					"Module 'testdata/modules/error-handling-standard-api/amdModule2.js' has not been loaded yet"
+				);
+
+				define("sap/test/2ndRequire", ["require"], function (require) {
+					// local require should fail with an error if the module was not loaded yet
+					assert.throws(
+						function() {
+							require("testdata/modules/error-handling-standard-api/amdModule2");
+						},
+						new Error("Module 'testdata/modules/error-handling-standard-api/amdModule2.js' has not been loaded yet. Use require(['testdata/modules/error-handling-standard-api/amdModule2.js']) to load it."),
+						"Module 'testdata/modules/error-handling-standard-api/amdModule2.js' has not been loaded yet"
+					);
+
+					done();
+				});
+			});
+		});
+
+		QUnit.test("noConflict - local require - loaded modules", function(assert) {
+			var done = assert.async();
+			var that = this;
+
+			sap.ui.define("sap/test/localRequire", ["require"], function (require) {
+				// local require should fail with an error if the module was not loaded yet
+				assert.throws(
+					function() {
+						require("testdata/modules/error-handling-standard-api/amdModule2");
+					},
+					new Error("Module 'testdata/modules/error-handling-standard-api/amdModule2.js' has not been loaded yet. Use require(['testdata/modules/error-handling-standard-api/amdModule2.js']) to load it."),
+					"Module 'testdata/modules/error-handling-standard-api/amdModule2.js' has not been loaded yet"
+				);
+
+				var oSapReturn = sap.ui.require("testdata/modules/error-handling-standard-api/amdModule2");
+				assert.strictEqual(oSapReturn, undefined, "sap.ui.require(): returns undefined for missing module");
+
+				define("sap/test/2ndRequire", ["require", "testdata/modules/error-handling-standard-api/amdModule2"], function (require, amdModule) {
+					// local require should return the module if it was already loaded
+					var oAmdReturn = require("testdata/modules/error-handling-standard-api/amdModule2");
+					assert.strictEqual(oAmdReturn, amdModule, "require(): Module was correctly returned");
+
+					var oSapReturn = sap.ui.require("testdata/modules/error-handling-standard-api/amdModule2");
+					assert.strictEqual(oSapReturn, amdModule, "sap.ui.require returns undefined for missing module");
+
+					done();
+				});
+			});
+		});
+
+		QUnit.test("ui5loader config - async", function(assert) {
+
+			sap.ui._ui5loader.config({
+				async: true
+			});
+
+			assert.throws(function () {
+				sap.ui._ui5loader.config({
+					async: false
+				});
+			},
+			new Error("Changing the ui5loader config from async to sync is not supported. Only a change from sync to async is allowed."),
+			"Changing from async to sync leads to an error")
+		});
+
+	</script>
+
+</head>
+<body>
+	<div id="qunit"></div>
+</body>
+</html>
