@@ -111,6 +111,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
 	 * @param {sap.ui.model.Filter} [vFilterInfo.condition] A <code>Filter</code> instance which will be used as the condition for the lambda operator
 	 * @param {sap.ui.model.Filter[]} vFilterInfo.filters Array of filters on which logical conjunction is applied
 	 * @param {boolean} vFilterInfo.and Indicates whether an "AND" logical conjunction is applied on the filters. If it's set to <code>false</code>, an "OR" conjunction is applied
+	 * @param {boolean} vFilterInfo.caseSensitive Indicates whether a string value should be compared case sensitive or not.
 	 * @param {sap.ui.model.FilterOperator|function|boolean} [vOperator] Either a filter operator or a custom filter function or a Boolean flag that defines how to combine multiple filters
 	 * @param {any} [vValue1] First value to use with the given filter operator
 	 * @param {any} [vValue2] Second value to use with the given filter operator (only for some operators)
@@ -133,6 +134,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
 				this.bAnd = vFilterInfo.and || vFilterInfo.bAnd; // support legacy name 'bAnd' (intentionally not documented)
 				this.fnTest = vFilterInfo.test;
 				this.fnCompare = vFilterInfo.comparator;
+				this.bCaseSensitive = !!vFilterInfo.caseSensitive;
 			} else {
 				//If parameters are used we have to check whether a regular or a multi filter is specified
 				if (Array.isArray(vFilterInfo)) {
