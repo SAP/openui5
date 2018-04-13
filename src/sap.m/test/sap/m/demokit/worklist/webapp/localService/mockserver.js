@@ -2,6 +2,7 @@ sap.ui.define([
 		"sap/ui/core/util/MockServer"
 	], function (MockServer) {
 		"use strict";
+
 		var oMockServer,
 			_sAppModulePath = "sap/ui/demo/worklist/",
 			_sJsonFilesModulePath = _sAppModulePath + "localService/mockdata";
@@ -14,6 +15,7 @@ sap.ui.define([
 			 * The local mock data in this folder is returned instead of the real data for testing.
 			 * @public
 			 */
+
 			init : function () {
 				var oUriParameters = jQuery.sap.getUriParameters(),
 					sJsonFilesUrl = jQuery.sap.getModulePath(_sJsonFilesModulePath),
@@ -28,8 +30,7 @@ sap.ui.define([
 					sMockServerUrl = /.*\/$/.test(oMainDataSource.uri) ? oMainDataSource.uri : oMainDataSource.uri + "/";
 
 				oMockServer = new MockServer({
-					rootUri : sMockServerUrl,
-					recordRequests: false
+					rootUri : sMockServerUrl
 				});
 
 				// configure mock server with a delay of 1s
@@ -38,7 +39,7 @@ sap.ui.define([
 					autoRespondAfter : (oUriParameters.get("serverDelay") || 1000)
 				});
 
-				// load local mock data
+				// Simulate a manual back-end call
 				oMockServer.simulate(sMetadataUrl, {
 					sMockdataBaseUrl : sJsonFilesUrl,
 					bGenerateMissingMockData : true
@@ -68,6 +69,7 @@ sap.ui.define([
 						}
 					});
 				}
+				oMockServer.setRequests(aRequests);
 				oMockServer.start();
 
 				jQuery.sap.log.info("Running the app with mock data");

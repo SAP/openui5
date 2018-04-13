@@ -2,34 +2,34 @@
 	controllerName="sap.ui.demo.worklist.controller.Object"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:semantic="sap.m.semantic">
+	xmlns:semantic="sap.f.semantic">
 
-	<semantic:FullscreenPage
+	<semantic:SemanticPage
 		id="page"
-		semanticRuleSet="Optimized"
-		navButtonPress="onNavBack"
-		showNavButton="true"
-		title="{i18n>objectTitle}"
+		headerPinnable="false"
+		toggleHeaderOnTitleClick="false"
 		busy="{objectView>/busy}"
 		busyIndicatorDelay="{objectView>/delay}">
 
-		<semantic:content>
-			<ObjectHeader
-				id="objectHeader"
-				title="{Name}"
+		<semantic:titleHeading>
+			<Title text="{Name}" />
+		</semantic:titleHeading>
+
+		<semantic:headerContent>
+			<ObjectNumber
 				number="{
-							path: 'UnitNumber',
-							formatter: '.formatter.numberUnit'
+					path: 'UnitNumber',
+					formatter: '.formatter.numberUnit'
 				}"
-				numberUnit="{UnitOfMeasure}">
-			</ObjectHeader>
- 		</semantic:content>
+				numberUnit="{UnitOfMeasure}"
+			/>
+		</semantic:headerContent>
 
 		<semantic:sendEmailAction>
 			<semantic:SendEmailAction id="shareEmail" press="onShareEmailPress"/>
 		</semantic:sendEmailAction>
 
 
-	</semantic:FullscreenPage>
+	</semantic:SemanticPage>
 
 </mvc:View>

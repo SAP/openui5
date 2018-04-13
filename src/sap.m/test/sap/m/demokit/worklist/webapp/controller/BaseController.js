@@ -55,7 +55,6 @@ sap.ui.define([
 					oViewModel.getProperty("/shareSendEmailMessage")
 				);
 			}
-
 		});
 
 	}
