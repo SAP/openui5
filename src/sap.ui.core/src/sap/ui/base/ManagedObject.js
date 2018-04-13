@@ -6,14 +6,14 @@
 sap.ui.define([
 		'jquery.sap.global',
 		'./BindingParser', './DataType', './EventProvider', './ManagedObjectMetadata', './Object',
-		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException', '../model/ListBinding',
-		'../model/Model', '../model/ParseException', '../model/TreeBinding', '../model/Type', '../model/ValidateException',
+		'../model/BindingMode', '../model/CompositeBinding', '../model/Context', '../model/FormatException',
+		'../model/ParseException', '../model/Type', '../model/ValidateException',
 		'jquery.sap.act', 'jquery.sap.script', 'jquery.sap.strings'
 	], function(
 		jQuery,
 		BindingParser, DataType, EventProvider, ManagedObjectMetadata, BaseObject,
-		BindingMode, CompositeBinding, Context, FormatException, ListBinding,
-		Model, ParseException, TreeBinding, Type, ValidateException
+		BindingMode, CompositeBinding, Context, FormatException,
+		ParseException, Type, ValidateException
 		/* , jQuerySap2, jQuerySap, jQuerySap1 */) {
 
 	"use strict";
@@ -1028,7 +1028,7 @@ sap.ui.define([
 			if ( typeof mSettings.models !== "object" ) {
 				throw new Error("models must be a simple object");
 			}
-			if ( mSettings.models instanceof Model) {
+			if ( BaseObject.isA(mSettings.models, "sap.ui.model.Model") ) {
 				this.setModel(mSettings.models);
 			} else {
 				for (sKey in mSettings.models ) {
@@ -3791,7 +3791,7 @@ sap.ui.define([
 			});
 		}
 
-		if (oBinding instanceof ListBinding) {
+		if (BaseObject.isA(oBinding, "sap.ui.model.ListBinding")) {
 			aContexts = oBinding.getContexts(oBindingInfo.startIndex, oBindingInfo.length);
 			bGrouped = oBinding.isGrouped() && that[sGroupFunction];
 			if (bGrouped || oBinding.bWasGrouped) {
@@ -3809,7 +3809,7 @@ sap.ui.define([
 				update(this, aContexts);
 			}
 			oBinding.bWasGrouped = bGrouped;
-		} else if (oBinding instanceof TreeBinding) {
+		} else if (BaseObject.isA(oBinding, "sap.ui.model.TreeBinding")) {
 			// Destroy all children in case a factory function is used
 			if (!oBindingInfo.template) {
 				this[oAggregationInfo._sDestructor]();
@@ -4311,7 +4311,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ManagedObject.prototype.setModel = function(oModel, sName) {
-		jQuery.sap.assert(oModel == null || oModel instanceof Model, "oModel must be an instance of sap.ui.model.Model, null or undefined");
+		jQuery.sap.assert(oModel == null || BaseObject.isA(oModel, "sap.ui.model.Model"), "oModel must be an instance of sap.ui.model.Model, null or undefined");
 		jQuery.sap.assert(sName === undefined || (typeof sName === "string" && !/^(undefined|null)?$/.test(sName)), "sName must be a string or omitted");
 		if (!oModel && this.oModels[sName]) {
 			delete this.oModels[sName];
