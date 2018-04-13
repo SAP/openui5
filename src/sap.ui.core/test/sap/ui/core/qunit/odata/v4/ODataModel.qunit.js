@@ -1513,36 +1513,60 @@ sap.ui.require([
 	QUnit.test("_submitBatch: group locks", function (assert) {
 		var oBarGroupLock,
 			oBarPromise,
+			oBazPromise,
 			oFooGroupLock,
 			oFooPromise,
 			oModel = createModel(""),
-			oRequestorMock = this.mock(oModel.oRequestor);
+			oRequestorMock = this.mock(oModel.oRequestor),
+			that = this;
 
 		oRequestorMock.expects("submitBatch").never();
 
 		oFooGroupLock = oModel.lockGroup("foo", true);
 		oBarGroupLock = oModel.lockGroup("bar", true);
+
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('foo') is waiting for locks", null, sClassName);
+
+		// code under test
 		oFooPromise = oModel._submitBatch("foo");
-		oBarPromise = oModel._submitBatch("bar");
 
 		assert.ok(oFooPromise instanceof Promise);
 
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('bar') is waiting for locks", null, sClassName);
+
+		// code under test
+		oBarPromise = oModel._submitBatch("bar");
+
+		oRequestorMock.expects("submitBatch").withExactArgs("baz").returns(Promise.resolve());
+
+		// code under test
+		oBazPromise = oModel._submitBatch("baz");
+
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('foo') continues", null, sClassName);
 		oRequestorMock.expects("submitBatch").withExactArgs("foo").returns(Promise.resolve());
 
+		// code under test
 		oFooGroupLock.unlock();
 
 		return Promise.all([
 			oFooPromise.then(function () {
 				assert.deepEqual(oModel.aLockedGroupLocks, [oBarGroupLock]);
 
+				that.oLogMock.expects("info")
+					.withExactArgs("submitBatch('bar') continues", null, sClassName);
 				oRequestorMock.expects("submitBatch").withExactArgs("bar")
 					.returns(Promise.resolve());
 
+				// code under test
 				oBarGroupLock.unlock();
 			}),
 			oBarPromise.then(function () {
 				assert.deepEqual(oModel.aLockedGroupLocks, []);
-			})
+			}),
+			oBazPromise
 		]);
 	});
 });
