@@ -194,27 +194,35 @@ sap.ui.define([
 					oStartDate = oEvent.getParameter("startDate"),
 					oEndDate = oEvent.getParameter("endDate"),
 					oCalendarRow = oEvent.getParameter("calendarRow"),
+					bCopy = oEvent.getParameter("copy"),
 					oModel = this.getView().getModel(),
 					oAppBindingContext = oAppointment.getBindingContext(),
 					oRowBindingContext = oCalendarRow.getBindingContext(),
-
 					handleAppointmentDropBetweenRows = function () {
 						var aPath = oAppBindingContext.getPath().split("/"),
 							iIndex = aPath.pop(),
 							sRowAppointmentsPath = aPath.join("/");
 
 						oRowBindingContext.getObject().appointments.push(
-							oModel.getProperty(oAppointment.getBindingContext().getPath())
+							oModel.getProperty(oAppBindingContext.getPath())
 						);
 
 						oModel.getProperty(sRowAppointmentsPath).splice(iIndex, 1);
 					};
 
-				oModel.setProperty("start", oStartDate, oAppBindingContext);
-				oModel.setProperty("end", oEndDate, oAppBindingContext);
+				if (bCopy) { // "copy" appointment
+					var oProps = jQuery.extend({}, oModel.getProperty(oAppointment.getBindingContext().getPath()));
+					oProps.start = oStartDate;
+					oProps.end = oEndDate;
 
-				if (oAppointment.getParent() !== oCalendarRow) {
-					handleAppointmentDropBetweenRows();
+					oRowBindingContext.getObject().appointments.push(oProps);
+				} else { // "move" appointment
+					oModel.setProperty("start", oStartDate, oAppBindingContext);
+					oModel.setProperty("end", oEndDate, oAppBindingContext);
+
+					if (oAppointment.getParent() !== oCalendarRow) {
+						handleAppointmentDropBetweenRows();
+					}
 				}
 
 				oModel.refresh(true);

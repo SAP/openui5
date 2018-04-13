@@ -226,7 +226,12 @@ sap.ui.define(['jquery.sap.global',
 					/**
 					 * The row of the appointment.
 					 */
-					calendarRow : {type : "sap.m.PlanningCalendarRow"}
+					calendarRow : {type : "sap.m.PlanningCalendarRow"},
+
+					/**
+					 * The drop type. If true - it's "Copy", if false - it's "Move".
+					 */
+					copy : {type : "boolean"}
 				}
 			},
 
@@ -598,7 +603,9 @@ sap.ui.define(['jquery.sap.global',
 					sIntervalType = oCalendarRow.getIntervalType(),
 					oRowStartDate = oCalendarRow.getStartDate(),
 					iIndex = oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
-					newPos;
+					newPos,
+					oBrowserEvent = oEvent.getParameter("browserEvent"),
+					bCopy = (oBrowserEvent.metaKey || oBrowserEvent.ctrlKey);
 
 				if (sIntervalType === CalendarIntervalType.Hour) {
 					newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
@@ -624,7 +631,8 @@ sap.ui.define(['jquery.sap.global',
 					appointment: oAppointment,
 					startDate: newPos.startDate,
 					endDate: newPos.endDate,
-					calendarRow: oCalendarRow._oPlanningCalendarRow
+					calendarRow: oCalendarRow._oPlanningCalendarRow,
+					copy: bCopy
 				});
 			}.bind(this)
 		}));
