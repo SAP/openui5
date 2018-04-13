@@ -1332,6 +1332,27 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getRelativePath, operation binding with return value context", function (assert) {
+		var oBinding = new ODataBinding({
+			oContext : {},
+			oModel : {resolve : function () {}},
+			sPath : "special.cases.EditAction(...)",
+			bRelative : true,
+			oReturnValueContext : {
+				getPath : function () { return "/Artists(ArtistID='42',IsActiveEntity=false)"; }
+			}
+		});
+
+		this.mock(oBinding.oModel).expects("resolve")
+			.withExactArgs("special.cases.EditAction(...)", sinon.match.same(oBinding.oContext))
+			.returns("/Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction(...)");
+
+		// code under test
+		assert.strictEqual(
+			oBinding.getRelativePath("/Artists(ArtistID='42',IsActiveEntity=false)/Name"), "Name");
+	});
+
+	//*********************************************************************************************
 	[false, true].forEach(function (bAsync) {
 		QUnit.test("withCache: cache hit, async=" + bAsync, function (assert) {
 			var oCache = {},

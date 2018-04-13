@@ -218,10 +218,12 @@ sap.ui.define([
 	 * @param {*} vRootInstance A single top-level instance (or even a simple value)
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
+	 * @param {string} [sRootMetaPath=this.sMetaPath] The meta path for the cache root entity
 	 *
 	 * @private
 	 */
-	Cache.prototype.calculateKeyPredicates = function (vRootInstance, mTypeForMetaPath) {
+	Cache.prototype.calculateKeyPredicates = function (vRootInstance, mTypeForMetaPath,
+			sRootMetaPath) {
 
 		/*
 		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
@@ -274,7 +276,7 @@ sap.ui.define([
 			});
 		}
 
-		visitInstance(vRootInstance, this.sMetaPath);
+		visitInstance(vRootInstance, sRootMetaPath || this.sMetaPath);
 	};
 
 	/**
@@ -552,6 +554,9 @@ sap.ui.define([
 			aPromises = [];
 			mTypeForMetaPath = {};
 			fetchType(this.sMetaPath);
+			if (this.bFetchOperationReturnType) {
+				fetchType(this.sMetaPath + "/$Type");
+			}
 			fetchExpandedTypes(this.sMetaPath, this.mQueryOptions);
 			this.oTypePromise = SyncPromise.all(aPromises).then(function () {
 				return mTypeForMetaPath;
@@ -1447,13 +1452,17 @@ sap.ui.define([
 	 *   error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
+	 * @param {boolean} [bFetchOperationReturnType]
+	 *   Whether the entity type of the operation return value must be fetched in
+	 *   {@link #fetchTypes}
 	 *
 	 * @private
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
-			sMetaPath) {
+			sMetaPath, bFetchOperationReturnType) {
 		Cache.apply(this, arguments);
 
+		this.bFetchOperationReturnType = bFetchOperationReturnType;
 		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
 		this.bPost = bPost;
 		this.bPosting = false;
@@ -1503,7 +1512,8 @@ sap.ui.define([
 					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
-				that.calculateKeyPredicates(aResult[0], aResult[1]);
+				that.calculateKeyPredicates(aResult[0], aResult[1],
+					that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
 				Cache.computeCount(aResult[0]);
 				return aResult[0];
 			});
@@ -1539,6 +1549,7 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.post = function (oGroupLock, oData, sETag) {
 		var sHttpMethod = "POST",
+			aPromises,
 			that = this;
 
 		if (!this.bPost) {
@@ -1557,18 +1568,23 @@ sap.ui.define([
 				oData = undefined;
 			}
 		}
-		this.oPromise = SyncPromise.resolve(
-			this.oRequestor
-				.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
-					{"If-Match" : sETag}, oData)
-				.then(function (oResult) {
-					that.bPosting = false;
-					return oResult;
-				}, function (oError) {
-					that.bPosting = false;
-					throw oError;
-				})
-		);
+		aPromises = [
+			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
+				{"If-Match" : sETag}, oData)
+		];
+		if (this.bFetchOperationReturnType) {
+			aPromises.push(this.fetchTypes());
+		}
+		this.oPromise = SyncPromise.all(aPromises).then(function (aResult) {
+			that.bPosting = false;
+			if (that.bFetchOperationReturnType) {
+				that.calculateKeyPredicates(aResult[0], aResult[1], that.sMetaPath + "/$Type");
+			}
+			return aResult[0];
+		}, function (oError) {
+			that.bPosting = false;
+			throw oError;
+		});
 		this.bPosting = true;
 		return this.oPromise;
 	};
@@ -1651,15 +1667,18 @@ sap.ui.define([
 	 *   throws an error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
+	 * @param {boolean} [bFetchOperationReturnType]
+	 *   Whether the entity type of the operation return value must be fetched in
+	 *   {@link #fetchTypes}
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
 	 * @public
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bPost, sMetaPath) {
+			bPost, sMetaPath, bFetchOperationReturnType) {
 		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
-			sMetaPath);
+			sMetaPath, bFetchOperationReturnType);
 	};
 
 	/**

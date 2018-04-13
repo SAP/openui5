@@ -72,6 +72,7 @@ sap.ui.require([
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 		assert.strictEqual(oBinding.aChildCanUseCachePromises.length, 0);
+		assert.strictEqual(oBinding.oReturnValueContext, null);
 	});
 
 	//*********************************************************************************************
@@ -247,42 +248,49 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setContext, relative path", function (assert) {
-		var oBinding = this.oModel.bindContext("relative"),
-			oContext = {
-				getBinding : function () {},
-				getPath : function () {}
-			},
-			oModelMock = this.mock(this.oModel),
-			oSetContextSpy = this.spy(Binding.prototype, "setContext");
+	[null, {destroy : function () {}}].forEach(function (oReturnValueContext, i) {
+		QUnit.test("setContext, relative path, " + i, function (assert) {
+			var oBinding = this.oModel.bindContext("relative"),
+				oContext = {
+					getBinding : function () {},
+					getPath : function () {}
+				},
+				oModelMock = this.mock(this.oModel),
+				oSetContextSpy = this.spy(Binding.prototype, "setContext");
 
-		oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
-			.returns("/absolute1");
-		this.mock(oBinding).expects("_fireChange").twice()
-			.withExactArgs({reason : ChangeReason.Context});
+			oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
+				.returns("/absolute1");
+			this.mock(oBinding).expects("_fireChange").twice()
+				.withExactArgs({reason : ChangeReason.Context});
 
-		// code under test
-		oBinding.setContext(oContext);
+			// code under test
+			oBinding.setContext(oContext);
 
-		assert.strictEqual(oBinding.oContext, oContext);
-		assert.strictEqual(oBinding.getBoundContext().getPath(), "/absolute1");
-		assert.strictEqual(oSetContextSpy.callCount, 1);
+			assert.strictEqual(oBinding.oContext, oContext);
+			assert.strictEqual(oBinding.getBoundContext().getPath(), "/absolute1");
+			assert.strictEqual(oSetContextSpy.callCount, 1);
 
-		this.mock(oBinding.getBoundContext()).expects("destroy").withExactArgs();
+			oBinding.oReturnValueContext = oReturnValueContext;
+			this.mock(oBinding.getBoundContext()).expects("destroy").withExactArgs();
+			if (oReturnValueContext) {
+				this.mock(oBinding.oReturnValueContext).expects("destroy").withExactArgs();
+			}
 
-		// code under test: reset parent binding fires change
-		oBinding.setContext(undefined);
+			// code under test: reset parent binding fires change
+			oBinding.setContext(undefined);
 
-		assert.strictEqual(oBinding.oContext, undefined);
-		assert.strictEqual(oBinding.getBoundContext(), null);
-		assert.strictEqual(oSetContextSpy.callCount, 2);
+			assert.strictEqual(oBinding.oContext, undefined);
+			assert.strictEqual(oBinding.getBoundContext(), null);
+			assert.strictEqual(oBinding.oReturnValueContext, null);
+			assert.strictEqual(oSetContextSpy.callCount, 2);
 
-		// code under test: setting to null doesn't change the bound context -> no change event
-		oBinding.setContext(null);
+			// code under test: setting to null doesn't change the bound context -> no change event
+			oBinding.setContext(null);
 
-		assert.strictEqual(oBinding.oContext, null);
-		assert.strictEqual(oBinding.getBoundContext(), null);
-		assert.strictEqual(oSetContextSpy.callCount, 2, "no addt'l change event");
+			assert.strictEqual(oBinding.oContext, null);
+			assert.strictEqual(oBinding.getBoundContext(), null);
+			assert.strictEqual(oSetContextSpy.callCount, 2, "no addt'l change event");
+		});
 	});
 
 	//*********************************************************************************************
@@ -946,7 +954,7 @@ sap.ui.require([
 				that.mock(oChild1).expects("refreshInternal").withExactArgs("groupId", true);
 			}
 
-			this.mock(oBinding).expects("getGroupId").returns("groupId");
+			oBindingMock.expects("getGroupId").returns("groupId");
 			this.mock(oGroupLock).expects("setGroupId").withExactArgs("groupId");
 			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 				.withExactArgs("/OperationImport/@$ui5.overload")
@@ -1019,6 +1027,9 @@ sap.ui.require([
 				this.mock(this.oModel.getMetaModel()).expects("fetchObject").twice()
 					.withExactArgs("/EntitySet/navigation1/" + sOperation + "/@$ui5.overload")
 					.returns(SyncPromise.resolve([oOperationMetadata]));
+				oBindingMock.expects("hasReturnValueContext").twice()
+					.withExactArgs(sinon.match.same(oOperationMetadata))
+					.returns(false);
 
 				// code under test - must not ask its context
 				assert.strictEqual(oBinding.fetchValue().getResult(), undefined);
@@ -1039,7 +1050,8 @@ sap.ui.require([
 				expectChangeAndRefreshDependent();
 
 				// code under test
-				return oBinding._execute(oGroupLock).then(function () {
+				return oBinding._execute(oGroupLock).then(function (oReturnValueContext) {
+					assert.strictEqual(oReturnValueContext, undefined);
 					if (oExpectation) {
 						//TODO avoid to trigger a request via getObject, which does not wait for
 						// results anyway!
@@ -1071,11 +1083,86 @@ sap.ui.require([
 
 					// code under test: execute creates a new cache with the new path
 					return oBinding.setParameter("foo", "bar")._execute(oGroupLock)
-						.then(function () {
+						.then(function (oReturnValueContext) {
+							assert.strictEqual(oReturnValueContext, undefined);
 							if (oExpectation) {
 								assert.strictEqual(oExpectation.args[0][3](), oEntity);
 							}
 						});
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_execute: bound operation with return value context", function (assert) {
+		var oContextMock = this.mock(Context),
+			oError = {},
+			oGroupLock = new _GroupLock("groupId"),
+			oOperationMetadata = {},
+			oRootBinding = {
+				getRootBinding : function () { return oRootBinding; },
+				isSuspended : function () { return false; }
+			},
+			oParentContext = Context.create(this.oModel, oRootBinding, "/TEAMS('42')"),
+			oBinding = this.oModel.bindContext("name.space.Operation(...)", oParentContext,
+				{$$groupId : "groupId"}),
+			oBindingMock = this.mock(oBinding),
+			oModelMock = this.mock(this.oModel),
+			oResponseEntity = {},
+			oReturnValueContextFirstExecute = {destroy : function () {}},
+			oReturnValueContextSecondExecute = {destroy : function () {}},
+			that = this;
+
+		this.mock(oGroupLock).expects("setGroupId").withExactArgs("groupId").thrice();
+		this.mock(this.oModel.getMetaModel()).expects("fetchObject").thrice()
+			.withExactArgs("/TEAMS/name.space.Operation/@$ui5.overload")
+			.returns(SyncPromise.resolve([oOperationMetadata]));
+		_Helper.setPrivateAnnotation(oResponseEntity, "predicate", "('77')");
+		oBindingMock.expects("createCacheAndRequest").twice()
+			.withExactArgs(sinon.match.same(oGroupLock),
+				"/TEAMS('42')/name.space.Operation(...)",
+				sinon.match.same(oOperationMetadata), sinon.match.func)
+			.returns(Promise.resolve(oResponseEntity));
+		oBindingMock.expects("_fireChange").twice().withExactArgs({reason : ChangeReason.Change});
+		oModelMock.expects("getDependentBindings").twice()
+			.withExactArgs(sinon.match.same(oBinding)).returns([]);
+		oBindingMock.expects("hasReturnValueContext").twice()
+			.withExactArgs(sinon.match.same(oOperationMetadata))
+			.returns(true);
+		oContextMock.expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+				"/TEAMS('77')")
+			.returns(oReturnValueContextFirstExecute);
+		oContextMock.expects("create")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
+				"/TEAMS('77')")
+			.returns(oReturnValueContextSecondExecute);
+
+		// code under test
+		return oBinding._execute(oGroupLock).then(function (oReturnValueContext0) {
+			assert.strictEqual(oReturnValueContext0, oReturnValueContextFirstExecute);
+
+			that.mock(oReturnValueContextFirstExecute).expects("destroy").withExactArgs();
+
+			// code under test
+			return oBinding._execute(oGroupLock).then(function (oReturnValueContext1) {
+				assert.strictEqual(oReturnValueContext1, oReturnValueContextSecondExecute);
+
+				oBindingMock.expects("createCacheAndRequest")
+					.withExactArgs(sinon.match.same(oGroupLock),
+						"/TEAMS('42')/name.space.Operation(...)",
+						sinon.match.same(oOperationMetadata), sinon.match.func)
+					.returns(Promise.reject(oError));
+				oModelMock.expects("reportError");
+				that.mock(oReturnValueContextSecondExecute).expects("destroy").withExactArgs();
+
+				// code under test
+				return oBinding._execute(oGroupLock).then(function () {
+					assert.ok(false, "unexpected success");
+				}, function (oError0) {
+					assert.strictEqual(oError0, oError);
+					assert.strictEqual(oBinding.oReturnValueContext, null);
 				});
 			});
 		});
@@ -1148,6 +1235,7 @@ sap.ui.require([
 		var bAutoExpandSelect = {/*false, true*/},
 			oBinding = this.oModel.bindContext("n/a(...)"),
 			oGroupLock = {},
+			bHasReturnValueContext = {},
 			oJQueryMock = this.mock(jQuery),
 			oOperationMetadata = {$kind : "Function"},
 			mParameters = {},
@@ -1171,10 +1259,14 @@ sap.ui.require([
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
 				sinon.match.same(mQueryOptions), undefined)
 			.returns(sResourcePath);
+		this.mock(oBinding).expects("hasReturnValueContext")
+			.withExactArgs(sinon.match.same(oOperationMetadata))
+			.returns(bHasReturnValueContext);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false,
-				"/FunctionImport/@$ui5.overload/0/$ReturnType")
+				"/FunctionImport/@$ui5.overload/0/$ReturnType",
+				sinon.match.same(bHasReturnValueContext))
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
@@ -1193,6 +1285,7 @@ sap.ui.require([
 			oBinding = this.oModel.bindContext("n/a(...)"),
 			fnGetEntity = {}, // do not call!
 			oGroupLock = {},
+			bHasReturnValueContext = {},
 			oJQueryMock = this.mock(jQuery),
 			oOperationMetadata = {$kind : "Function"},
 			mParameters = {},
@@ -1216,10 +1309,14 @@ sap.ui.require([
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
 				sinon.match.same(mQueryOptions), sinon.match.same(fnGetEntity))
 			.returns(sResourcePath);
+		this.mock(oBinding).expects("hasReturnValueContext")
+			.withExactArgs(sinon.match.same(oOperationMetadata))
+			.returns(bHasReturnValueContext);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), false,
-				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType")
+				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType",
+				sinon.match.same(bHasReturnValueContext))
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
@@ -1237,6 +1334,7 @@ sap.ui.require([
 		var bAutoExpandSelect = {/*false, true*/},
 			oBinding = this.oModel.bindContext("n/a(...)"),
 			oGroupLock = {},
+			bHasReturnValueContext = {},
 			oJQueryMock = this.mock(jQuery),
 			oOperationMetadata = {$kind : "Action"},
 			mParameters = {},
@@ -1260,10 +1358,14 @@ sap.ui.require([
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
 				sinon.match.same(mQueryOptions), undefined)
 			.returns(sResourcePath);
+		this.mock(oBinding).expects("hasReturnValueContext")
+			.withExactArgs(sinon.match.same(oOperationMetadata))
+			.returns(bHasReturnValueContext);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
-				"/ActionImport/@$ui5.overload/0/$ReturnType")
+				"/ActionImport/@$ui5.overload/0/$ReturnType",
+				sinon.match.same(bHasReturnValueContext))
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters), undefined)
@@ -1286,6 +1388,7 @@ sap.ui.require([
 				return oEntity;
 			}),
 			oGroupLock = {},
+			bHasReturnValueContext = {},
 			oJQueryMock = this.mock(jQuery),
 			oOperationMetadata = {$kind : "Action"},
 			mParameters = {},
@@ -1309,10 +1412,14 @@ sap.ui.require([
 				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
 				sinon.match.same(mQueryOptions), sinon.match.same(oEntity))
 			.returns(sResourcePath);
+		this.mock(oBinding).expects("hasReturnValueContext")
+			.withExactArgs(sinon.match.same(oOperationMetadata))
+			.returns(bHasReturnValueContext);
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
 				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
-				"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType")
+				"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType",
+				sinon.match.same(bHasReturnValueContext))
 			.returns(oSingleCache);
 		this.mock(oSingleCache).expects("post")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters), "ETag")
@@ -1378,7 +1485,8 @@ sap.ui.require([
 		var oBinding = this.oModel.bindContext("relative"),
 			oBindingMock = this.mock(ContextBinding.prototype),
 			oContext = Context.create(this.oModel, {}, "/foo"),
-			oModelMock = this.mock(this.oModel);
+			oModelMock = this.mock(this.oModel),
+			oReturnValueContext = Context.create(this.oModel, {}, "/bar");
 
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
@@ -1401,6 +1509,17 @@ sap.ui.require([
 
 		oBinding = this.oModel.bindContext("/absolute", oContext);
 		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
+		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
+		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
+
+		// code under test
+		oBinding.destroy();
+
+		oBinding = this.oModel.bindContext("relative");
+		oBinding.setContext(oContext);
+		oBinding.oReturnValueContext = oReturnValueContext;
+		this.mock(oBinding.oElementContext).expects("destroy").withExactArgs();
+		this.mock(oBinding.oReturnValueContext).expects("destroy").withExactArgs();
 		oBindingMock.expects("destroy").on(oBinding).withExactArgs();
 		oModelMock.expects("bindingDestroyed").withExactArgs(sinon.match.same(oBinding));
 
@@ -1709,6 +1828,96 @@ sap.ui.require([
 
 			// code under test
 			oBinding.resumeInternal();
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		$kind : "Action"
+	}, {
+		$kind : "Action",
+		$IsBound : true
+	}, {
+		$kind : "Action",
+		$IsBound : true,
+		$ReturnType : {
+			$isCollection : true
+		}
+	}, {
+		$kind : "Action",
+		$IsBound : true,
+		$ReturnType : {
+			//$isCollection : false is default
+		}
+	}, {
+		$kind : "Action",
+		$IsBound : true,
+		$ReturnType : {},
+		$Parameter : [{
+			$Name : "_it"
+		}],
+		$EntitySetPath : "_it/navigation_or_typecast"
+	}].forEach(function (oOperationMetadata, i) {
+		QUnit.test("hasReturnValueContext returns false due to metadata, " + i, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+				oBinding = this.oModel.bindContext("name.space.Operation(...)", oContext);
+
+			// code under test
+			assert.notOk(oBinding.hasReturnValueContext(oOperationMetadata));
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		binding : "name.space.Operation(...)",
+		context : "/TEAMS('42')",
+		contextMetaPath : "/TEAMS",
+		$kind : "EntitySet",
+		result : true
+	}, { // operation binding's context must not address entity via navigation property
+		binding : "name.space.Operation(...)",
+		context : "/TEAMS('42')/TEAM_2_MANAGER",
+		result : false
+	}, { // operation binding must have a context
+		binding : "/TEAMS('42')/name.space.Operation(...)",
+		result : false
+	}, { // operation binding must be relative
+		binding : "/TEAMS('42')/name.space.Operation(...)",
+		context : "/DOES_NOT_MATTER",
+		result : false
+	}, { // operation binding's context must not address a function import's return value
+		binding : "name.space.Operation(...)",
+		context : "/FunctionImport()",
+		contextMetaPath : "/FunctionImport",
+		$kind : "Function",
+		result : false
+	}].forEach(function (oFixture, i) {
+		QUnit.test("hasReturnValueContext for context and binding path, " + i, function (assert) {
+			var oContext = oFixture.context && Context.create(this.oModel, {}, oFixture.context),
+				oBinding = this.oModel.bindContext(oFixture.binding, oContext),
+				oOperationMetadata = {
+					$kind : "Action",
+					$IsBound : true,
+					$EntitySetPath : "_it",
+					$Parameter : [{
+						$Type : "special.cases.ArtistsType",
+						$Name : "_it",
+						$Nullable : false
+					}],
+					$ReturnType: {
+						$Type : "special.cases.ArtistsType"
+					}
+				};
+
+			if (oFixture.contextMetaPath) {
+				this.mock(this.oModel.oMetaModel).expects("getObject")
+					.withExactArgs(oFixture.contextMetaPath)
+					.returns({$kind : oFixture.$kind});
+			}
+
+			// code under test
+			assert.strictEqual(!!oBinding.hasReturnValueContext(oOperationMetadata),
+				oFixture.result);
 		});
 	});
 
