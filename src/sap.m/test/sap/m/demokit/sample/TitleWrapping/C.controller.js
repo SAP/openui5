@@ -1,25 +1,24 @@
-sap.ui.define(['sap/ui/core/mvc/Controller','sap/ui/model/json/JSONModel'],
-	function(Controller, JSONModel) {
+sap.ui.define(['sap/ui/core/mvc/Controller'],
+	function(Controller) {
 	"use strict";
 
-	var VController = Controller.extend("sap.m.sample.TitleWrapping.V", {
+	var CController = Controller.extend("sap.m.sample.TitleWrapping.C", {
 
-		onInit: function (oEvent) {
+		onInit: function () {
 			this.getView();
 		},
 		onSliderMoved: function (event) {
 			var value = event.getParameter("value");
-			value = value - 30;
 			this.byId("containerLayout").setWidth(value + "%");
 		},
-		onWrappingChange: function(oEvent) {
+		onWrappingChange: function() {
 
 			var title = sap.ui.getCore().byId("__xmlview0--WrappingTitle");
 			title.setWrapping(!title.getWrapping());
 		}
 	});
 
-	return VController;
+	return CController;
 
 });
 
