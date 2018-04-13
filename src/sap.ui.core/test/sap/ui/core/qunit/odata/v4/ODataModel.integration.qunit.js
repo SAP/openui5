@@ -5374,5 +5374,67 @@ sap.ui.require([
 			assert.strictEqual(oContext.getProperty("@$ui5.foo"), 42);
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: bindElement is called twice for the items aggregation of a sap.m.Table.
+	// ManagedObject#bindObject (which is the same as #bindElement) first unbinds and then binds
+	// the element again if an element binding exists. The second bindElement on "unbind" calls
+	// ODLB#getContexts which must reset the previous data needed for ECD so that the diff is
+	// properly computed.
+	// BCP 1870081505
+	QUnit.test("bindElement called twice on table", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oTable,
+			// Note: table must be "growing" otherwise it does not use ECD
+			sView = '\
+<Table id="table" items="{TEAM_2_EMPLOYEES}" growing="true">\
+	<columns>\
+		<Column><Text text="Employee Name"/></Column>\
+	</columns>\
+	<ColumnListItem>\
+		<Text id="name" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectChange("name", false);
+		return this.createView(assert, sView, oModel).then(function () {
+			// table must be rendered, as GrowingEnablement#updateItems only performs ECD if
+			// the associated control's method getItemsContainerDomRef returns a truthy value
+			that.oView.placeAt("qunit-fixture");
+			oTable = that.oView.byId("table");
+			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
+				+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+					"Team_Id": "TEAM_01",
+					TEAM_2_EMPLOYEES : [{
+						"ID": "3",
+						"Name": "Jonathan Smith"
+					}]
+				})
+				.expectChange("name", ["Jonathan Smith"]);
+
+			// code under test
+			oTable.bindElement("/TEAMS('TEAM_01')");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')?$select=Team_Id"
+						+ "&$expand=TEAM_2_EMPLOYEES($select=ID,Name)", {
+					"Team_Id": "TEAM_01",
+					TEAM_2_EMPLOYEES : [{
+						"ID": "3",
+						"Name": "Jonathan Smith"
+					}]
+				})
+				.expectChange("name", ["Jonathan Smith"]);
+
+			// code under test
+			oTable.bindElement("/TEAMS('TEAM_01')");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(oTable.getItems().length, 1, "The one entry is still displayed");
+		});
+	});
 });
 //TODO test delete
