@@ -14,7 +14,6 @@ sap.ui.define([
 				baseClass : Common,
 
 				actions : jQuery.extend({
-
 					iPressTheBackButton : function () {
 						return this.waitFor({
 							id : "page",
@@ -102,9 +101,9 @@ sap.ui.define([
 					},
 
 					theObjectViewShouldContainOnlyFormattedUnitNumbers : function () {
-						return this.theUnitNumbersShouldHaveTwoDecimals("sap.m.ObjectHeader",
+						return this.theUnitNumbersShouldHaveTwoDecimals("sap.m.ObjectNumber",
 							sViewName,
-							"Object header are properly formatted",
+							"Object numbers are properly formatted",
 							"Object view has no entries which can be checked for their formatting");
 					},
 

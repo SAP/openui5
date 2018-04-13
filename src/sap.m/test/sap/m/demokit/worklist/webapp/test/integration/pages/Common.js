@@ -30,10 +30,6 @@ sap.ui.define([
 				this.iStartMyAppInAFrame(getFrameUrl(oOptions.hash, sUrlParameters));
 			},
 
-			iLookAtTheScreen : function () {
-				return this;
-			},
-
 			createAWaitForAnEntitySet : function  (oOptions) {
 				return {
 					success: function () {
