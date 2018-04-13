@@ -13,6 +13,7 @@ sap.ui.define([
 			 * @public
 			 * @alias sap.ui.demo.masterdetail.controller.ListSelector
 			 */
+
 			constructor : function () {
 				this._oWhenListHasBeenSet = new Promise(function (fnResolveListHasBeenSet) {
 					this._fnResolveListHasBeenSet = fnResolveListHasBeenSet;
