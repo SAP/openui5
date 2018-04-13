@@ -66,6 +66,12 @@
 				{word: "Fussel"},
 				{word: "Funzel"}
 			],
+			caseSensitive:[
+				{firstName:"Andreas", lastName:"Klark", gender:"male"},
+				{firstName:"Peter", lastName:"Miller", gender:"male"},
+				{firstName:"ANDREAS", lastName:"KLARK", gender:"MALE"},
+				{firstName:"PETER", lastName:"MILLER", gender:"MALE"},
+			],
 			"root":[
 				{
 					"name": "item1",
@@ -868,6 +874,55 @@
 			jQuery.each(mFilters, fnTest);
 		});
 	}
+
+	QUnit.module("Listbinding filter case sensitive", {
+		beforeEach: function() {
+			setup();
+			createListBinding("/caseSensitive", "");
+		}
+	});
+
+	QUnit.test("Simple Filter with case sensitive", function(assert) {
+		var oFilter = new sap.ui.model.Filter({
+			path: "firstName", 
+			operator: sap.ui.model.FilterOperator.EQ,
+			value1: "Andreas",
+			caseSensitive: true
+		});
+		var oListBinding = bindings[0];
+
+		oListBinding.filter(oFilter);
+		assert.equal(oListBinding.getContexts().length, 1, "One filtered item should be returned");
+
+		var oData = oListBinding.getContexts()[0].getObject();
+		assert.strictEqual(oData.firstName, "Andreas", "FirstName should be the same");
+	});
+
+	QUnit.test("Simple Filter with comparator and case sensitive", function(assert) {
+		var fnTest = function(oValue1) {
+			var mNames = {
+				"Peter": true,
+				"Andreas": true,
+			}
+			return oValue1 in mNames;
+		};
+		var oFilter = new sap.ui.model.Filter({
+			path: "firstName", 
+			operator: sap.ui.model.FilterOperator.EQ,
+			test: fnTest,
+			caseSensitive: true
+		});
+		var oListBinding = bindings[0];
+
+		oListBinding.filter(oFilter);
+		assert.equal(oListBinding.getContexts().length, 2, "Two filtered item should be returned");
+
+		var oData = oListBinding.getContexts()[0].getObject();
+		assert.strictEqual(oData.firstName, "Andreas", "FirstName should be the same");
+		
+		oData = oListBinding.getContexts()[1].getObject();
+		assert.strictEqual(oData.firstName, "Peter", "FirstName should be the same");
+	});
 
 	QUnit.module("Unsupported Filters", {
 		getErrorWithMessage: function(sFilter) {
