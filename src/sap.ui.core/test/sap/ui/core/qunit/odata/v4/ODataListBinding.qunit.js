@@ -476,12 +476,15 @@ sap.ui.require([
 			.returns(createSyncResult(10));
 		oBinding = this.oModel.bindList("/EMPLOYEES");
 		oBinding.getContexts(0, 10);
+		this.mock(this.oModel).expects("lockGroup").never();
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
 		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
 		oBinding.reset(ChangeReason.Change);
 
 		assert.strictEqual(oBinding.sChangeReason, ChangeReason.Change);
+		assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
 	});
 
 	//*********************************************************************************************
@@ -495,6 +498,38 @@ sap.ui.require([
 
 		// code under test
 		oBinding.reset(ChangeReason.Change);
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bGetContexts) {
+		QUnit.test("reset with lock, bGetContexts=" + bGetContexts, function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES"),
+				oExpectation,
+				oGroupLock = new _GroupLock();
+
+			this.mock(this.oModel).expects("lockGroup")
+				.withExactArgs(undefined, true)
+				.returns(oGroupLock);
+			oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+				.withExactArgs(sinon.match.func);
+
+			// code under test
+			oBinding.reset(ChangeReason.Filter, true);
+
+			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock);
+
+			if (bGetContexts) {
+				// simulate getContexts which uses and removes this lock
+				oBinding.oRefreshGroupLock = undefined;
+			} else {
+				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+			}
+
+			// code under test
+			oExpectation.callArg(0);
+
+			assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
+		});
 	});
 
 	//*********************************************************************************************
@@ -856,7 +891,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{$count : 10}, {$count : undefined}].forEach(function (oFixture) {
-		QUnit.test("getLength: $count=" + oFixture.$count, function(assert) {
+		QUnit.test("getLength: $count=" + oFixture.$count, function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
 				oCacheMock = this.mock(oBinding.oCachePromise.getResult()),
 				oContext,
@@ -1630,11 +1665,14 @@ sap.ui.require([
 				+ bCanceled, function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
 				oError = new Error("Expected Error"),
-				oReadPromise = SyncPromise.reject(oError);
+				oReadPromise = SyncPromise.reject(oError),
+				oRefreshGroupLock = new _GroupLock();
 
 			if (bCanceled) {
 				oError.canceled = true;
 			}
+			oBinding.oRefreshGroupLock = oRefreshGroupLock;
+			this.mock(oRefreshGroupLock).expects("unlock").withExactArgs(true);
 			this.mock(this.oModel).expects("reportError").withExactArgs(
 				"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 3",
 				sClassName, sinon.match.same(oError));
@@ -1869,13 +1907,38 @@ sap.ui.require([
 	QUnit.test("getContexts uses refresh group lock", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
 				{$$groupId : "$direct"}),
-			oGroupLock = new _GroupLock();
+			oCache = {
+				read : function () {}
+			},
+			oCachePromise = SyncPromise.resolve(Promise.resolve(oCache)),
+			oRefreshGroupLock = new _GroupLock();
 
-		this.mock(oBinding.oCachePromise.getResult()).expects("read")
-			.withExactArgs(0, 10, 0, sinon.match.same(oGroupLock), sinon.match.func)
+		oBinding.oCachePromise = oCachePromise;
+		this.mock(oCache).expects("read")
+			.withExactArgs(0, 10, 0, sinon.match.same(oRefreshGroupLock), sinon.match.func)
 			.returns(createResult(0));
-		oBinding.oRefreshGroupLock = oGroupLock;
+		oBinding.oRefreshGroupLock = oRefreshGroupLock;
 
+		oBinding.getContexts(0, 10);
+
+		assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
+		return oCachePromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts() relative + uses refresh group lock", function (assert) {
+		var oParentContext = Context.create(this.oModel, {}, "/TEAMS('4711')"),
+			oBinding = this.oModel.bindList("EMPLOYEES", oParentContext),
+			oRefreshGroupLock = new _GroupLock();
+
+		oBinding.oRefreshGroupLock = oRefreshGroupLock;
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oParentContext).expects("fetchValue").withExactArgs("EMPLOYEES")
+			.returns(SyncPromise.resolve(createData(10, 0, true, 10)));
+		this.mock(oRefreshGroupLock).expects("unlock").withExactArgs();
+
+		// code under test
 		oBinding.getContexts(0, 10);
 
 		assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
@@ -2065,7 +2128,7 @@ sap.ui.require([
 			oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 			this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
 				.returns(aFilters);
-			oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter);
+			oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter, true);
 
 			// Code under test
 			assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
@@ -2316,7 +2379,7 @@ sap.ui.require([
 
 		assert.strictEqual(aContexts.length, 2);
 		assert.strictEqual(oBinding.getLength(), 10);
-		aContexts.forEach(function(oContext, i) {
+		aContexts.forEach(function (oContext, i) {
 			assert.strictEqual(oContext.getIndex(), i + oRange.start);
 		});
 	});
@@ -2366,7 +2429,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function(bUsePredicates) {
+	[false, true].forEach(function (bUsePredicates) {
 		QUnit.test("createContexts, bUsePredicates = " + bUsePredicates, function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES", {}/*oContext*/),
 				aContexts = [null, {}, {}, {}],

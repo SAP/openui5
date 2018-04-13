@@ -1044,7 +1044,8 @@ sap.ui.define([
 		for (i = oRange.start; i < n; i++) {
 			if (this.aElements[i] !== undefined) {
 				if (iGapStart >= 0) {
-					this.requestElements(iGapStart, i, oGroupLock, fnDataRequested);
+					this.requestElements(iGapStart, i, oGroupLock.getUnlockedCopy(),
+						fnDataRequested);
 					fnDataRequested = undefined;
 					iGapStart = -1;
 				}
@@ -1053,8 +1054,10 @@ sap.ui.define([
 			}
 		}
 		if (iGapStart >= 0) {
-			this.requestElements(iGapStart, iEnd, oGroupLock, fnDataRequested);
+			this.requestElements(iGapStart, iEnd, oGroupLock.getUnlockedCopy(), fnDataRequested);
 		}
+
+		oGroupLock.unlock();
 
 		// Note: this.aElements[-1] cannot be a promise...
 		aElementsRange = this.aElements.slice(iStart, iEnd);

@@ -875,7 +875,7 @@ sap.ui.define([
 		}
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
-		this.reset(ChangeReason.Filter);
+		this.reset(ChangeReason.Filter, true);
 
 		return this;
 	};
@@ -973,18 +973,22 @@ sap.ui.define([
 		}
 		iStartInModel = this.aContexts[-1] ? iStart - 1 : iStart;
 
+		oGroupLock = this.oRefreshGroupLock;
+		this.oRefreshGroupLock = undefined;
 		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
 			oPromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					// getContexts needs no lock, only the group ID (or re-use the refresh lock)
-					oGroupLock = that.oModel.lockGroup(that.getGroupId(), that.oRefreshGroupLock);
-					that.oRefreshGroupLock = undefined;
+					oGroupLock = that.oModel.lockGroup(that.getGroupId(), oGroupLock);
 					return oCache.read(iStartInModel, iLength, iMaximumPrefetchSize, oGroupLock,
 						function () {
 							bDataRequested = true;
 							that.fireDataRequested();
 						});
 				} else {
+					if (oGroupLock) {
+						oGroupLock.unlock();
+					}
 					return oContext.fetchValue(that.sPath).then(function (aResult) {
 						var iCount;
 
@@ -1039,6 +1043,9 @@ sap.ui.define([
 				}
 				throw oError;
 			})["catch"](function (oError) {
+				if (oGroupLock) {
+					oGroupLock.unlock(true);
+				}
 				that.oModel.reportError("Failed to get contexts for "
 						+ that.oModel.sServiceUrl
 						+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
@@ -1446,10 +1453,12 @@ sap.ui.define([
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
 	 *   getContexts() fires a change event with this reason. Change reason "change" is ignored
 	 *   as long as the binding is still empty.
+	 * @param {boolean} [bLock=false]
+	 *   Whether a locked group lock is created for the following getContexts
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.reset = function (sChangeReason) {
+	ODataListBinding.prototype.reset = function (sChangeReason, bLock) {
 		var bEmpty = this.iCurrentEnd === 0,
 			that = this;
 
@@ -1473,6 +1482,16 @@ sap.ui.define([
 		this.bLengthFinal = false;
 		if (sChangeReason && !(bEmpty && sChangeReason === ChangeReason.Change)) {
 			this.sChangeReason = sChangeReason;
+			if (bLock) {
+				this.oRefreshGroupLock = this.oModel.lockGroup(undefined, true);
+				sap.ui.getCore().addPrerenderingTask(function () {
+					if (that.oRefreshGroupLock) {
+						// The lock is still unused, i.e. no getContexts was called
+						that.oRefreshGroupLock.unlock(true);
+						that.oRefreshGroupLock = undefined;
+					}
+				});
+			}
 			this._fireRefresh({reason : sChangeReason});
 		}
 		// Update after the refresh event, otherwise $count is fetched before the request
