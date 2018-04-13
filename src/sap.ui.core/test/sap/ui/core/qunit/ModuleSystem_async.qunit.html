@@ -101,7 +101,7 @@
 				assert.equal(sMsg, sErrorLog, "Correct Error logged for leading Slash");
 			}
 
-			sap.ui.require(["/sap/ui/core/Control"], function (Icon) {
+			sap.ui.require(["/sap/ui/base/Exception"], function (Icon) {
 				sap.ui.loader._.logger.error = fnOriginalLog;
 				done();
 			});
@@ -276,7 +276,7 @@
 
 		// skip all tests in IE11 that require handling of global errors (IE11 doesn't support document.currentScript)
 		var Device = sap.ui.requireSync("sap/ui/Device");
-		var SKIP_ASYNC_ERROR_HANDLING = Device.browser.msie ? "execution errors for asynchronoulsy executed legacy modules can't be associated with the executing module in IE11 " : false;
+		var SKIP_ASYNC_ERROR_HANDLING = Device.browser.msie || Device.browser.firefox ? "execution errors for asynchronoulsy executed legacy modules can't be associated with the executing module in IE11 " : false;
 
 		[
 			{
@@ -304,6 +304,7 @@
 			{
 				caption: "a UI5 legacy module with a dependency to a failing AMD module",
 				module: 'ui5-legacy/module-with-dependency-to-failing-amd-module',
+				skipAsync: SKIP_ASYNC_ERROR_HANDLING
 			},
 			{
 				caption: "a UI5 legacy module with a dependency to a failing UI5 legacy module",
