@@ -6,8 +6,8 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/rta/RuntimeAuthoring",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/variants/ControlVariantsAPI"
-], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring, Utils, ControlVariantsAPI) {
+	"sap/ui/fl/ControlPersonalizationAPI"
+], function(Controller, MockServer, ResourceModel, ODataModel, JSONModel, RuntimeAuthoring, Utils, ControlPersonalizationAPI) {
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.test.variantManagement.controller.Main", {
@@ -138,7 +138,7 @@ sap.ui.define([
 										value : "Change for the inner variant"
 									}
 								};
-								ControlVariantsAPI.addPersonalizationChanges([mMoveChangeData, mRenameChangeData1, mRenameChangeData2]);
+								ControlPersonalizationAPI.addPersonalizationChanges([mMoveChangeData, mRenameChangeData1, mRenameChangeData2]);
 
 								this.iCounter++;
 							} else if (this.iCounter === 1) {
@@ -152,7 +152,7 @@ sap.ui.define([
 										value : "Personalization Test (2. Change)"
 									}
 								};
-								ControlVariantsAPI.addPersonalizationChanges([mRenameChangeData3]);
+								ControlPersonalizationAPI.addPersonalizationChanges([mRenameChangeData3]);
 
 								oButton.setEnabled(false);
 								this.iCounter++;

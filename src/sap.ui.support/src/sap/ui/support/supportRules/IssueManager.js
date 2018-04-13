@@ -320,7 +320,14 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 
 						oSortedSeverityCount = this._sortSeverityIssuesByPriority(issuesModel[libName][rule]);
 						treeTableModel[index][innerIndex] = {
-							formatedName: issuesModel[libName][rule][0].name + " (<span style=\"color:" + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR +  ";\"> " +  oSortedSeverityCount.high + " H, </span> " + "<span style=\"color:" + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR +  ";\"> " +  oSortedSeverityCount.medium + " M, </span> " + "<span style=\"color:" + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR +  ";\"> " +  oSortedSeverityCount.low + " L) </span>",
+							formattedName: this._getFormattedName({
+								name: issuesModel[libName][rule][0].name,
+								highCount: oSortedSeverityCount.high,
+								mediumCount: oSortedSeverityCount.medium,
+								lowCount: oSortedSeverityCount.low,
+								highName: 'H',
+								mediumName: 'M',
+								lowName: 'L'}),
 							name: issuesModel[libName][rule][0].name,
 							showAudiences: true,
 							showCategories: true,
@@ -346,7 +353,15 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 					}
 
 
-					treeTableModel[index].formatedName = treeTableModel[index].name + " (" + "<span style=\"color: " + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR +  "; \"> " +  iHighSeverityCount + " High, </span> " + "<span style=\"color:  " + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR +  ";\"> " +  iMediumSeverityCount + " Medium, </span> " + "<span style=\"color " + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR +  ";\"> " +  iLowSeverityCount + " Low </span>)";
+					treeTableModel[index].formattedName = this._getFormattedName({
+						name: treeTableModel[index].name,
+						highCount: iHighSeverityCount,
+						mediumCount: iMediumSeverityCount,
+						lowCount: iLowSeverityCount,
+						highName: 'High',
+						mediumName: 'Medium',
+						lowName: 'Low'
+					});
 					treeTableModel[index].name += " (" + issueCount + " issues)";
 					treeTableModel[index].issueCount = issueCount;
 					issueCount = 0;
@@ -358,6 +373,36 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Object", "sap/ui/support/suppor
 				}
 
 				return treeTableModel;
+			},
+
+			/**
+			 * Builds a string containing the formatted name e.g. (1 H, 0 M, 0 L ).
+			 * @private
+			 * @param {object} oValues
+			 * @name sap.ui.support.IssueManager._getFormattedName
+			 * @returns {string} String containing the formatted name.
+			 */
+			_getFormattedName: function(oValues) {
+				var sHighColor = "",
+					sMediumColor = "",
+					sLowColor = "";
+
+				if (oValues.highCount > 0) {
+					sHighColor = "color: " + constants.SUPPORT_ASSISTANT_SEVERITY_HIGH_COLOR + ";";
+				}
+
+				if (oValues.mediumCount > 0) {
+					sMediumColor = "color: " + constants.SUPPORT_ASSISTANT_SEVERITY_MEDIUM_COLOR + ";";
+				}
+
+				if (oValues.lowCount > 0) {
+					sLowColor = "color: " + constants.SUPPORT_ASSISTANT_SEVERITY_LOW_COLOR + ";";
+				}
+
+				return oValues.name +
+					" (<span style=\"" + sHighColor + "\"> " + oValues.highCount + " " + oValues.highName + ", </span> " +
+					"<span style=\"" + sMediumColor + "\"> " + oValues.mediumCount + " " + oValues.mediumName + ", </span> " +
+					"<span style=\"" + sLowColor + "\"> " + oValues.lowCount + " " + oValues.lowName + "</span> )";
 			},
 
 			/**

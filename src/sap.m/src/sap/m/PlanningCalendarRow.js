@@ -372,7 +372,7 @@ sap.ui.define(['jquery.sap.global',
 	CalendarRowInPCRenderer.renderBeforeAppointments = function (oRm, oRow) {
 		var intervalPlaceholders;
 
-		if (!oRow._oPlanningCalendarRow.getEnableAppointmentsDragAndDrop() || !oRow._oPlanningCalendarRow.getEnableAppointmentsResize() || oRow._isOneMonthIntervalOnSmallSizes()) {
+		if ((!oRow._oPlanningCalendarRow.getEnableAppointmentsDragAndDrop() && !oRow._oPlanningCalendarRow.getEnableAppointmentsResize()) || oRow._isOneMonthIntervalOnSmallSizes()) {
 			return;
 		}
 

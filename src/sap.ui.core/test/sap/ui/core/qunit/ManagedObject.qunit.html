@@ -35,7 +35,7 @@
 					// ---- control specific ----
 					library : "sap.ui.core",
 					properties : {
-						value : {type: "string", group: "Appearance", defaultValue: ""},
+						value : {type: "string", group: "Appearance", defaultValue: "", "bindable": true },
 						stringValue : {type: "string", group: "Appearance", defaultValue: ""},
 						floatValue : {type: "float", group: "Appearance", defaultValue: 0},
 						intValue : {type: "int", group: "Appearance", defaultValue: 0},
@@ -49,8 +49,9 @@
 					},
 					aggregations : {
 						singleAggr : { type : "sap.ui.core.TestManagedObject", multiple : false },
+						singleBindableAggr : { type : "sap.ui.core.TestManagedObject", multiple : false, bindable: "bindable" },
 						subObjects : { type : "sap.ui.core.TestManagedObject", multiple : true, singularName : "subObj"},
-						elements : { type : "sap.ui.core.Element", multiple : true}
+						elements : { type : "sap.ui.core.Element", multiple : true, bindable: "bindable"}
 					},
 					associations : {
 						selectedObject : { type : "sap.ui.core.TestManagedObject", multiple : false},
@@ -260,6 +261,11 @@
 				}
 			});
 
+			QUnit.test("Accessor / Mutator functions", function(assert) {
+				assert.equal(typeof this.obj.getValue, "function", "there should be a named 'get' function for a public property");
+				assert.equal(typeof this.obj.setValue, "function", "there should be a named 'set' function for a public property");
+			});
+
 			QUnit.test("Set properties with different types", function(assert) {
 				var that = this;
 				var oDate = new Date();
@@ -390,6 +396,13 @@
 
 				sap.ui.base.ManagedObject.escapeSettingsValue(41);
 				assert.equal(sap.ui.base.ManagedObject.bindingParser.escape.callCount, 1, "non-strings should not be escaped by escapeSettingsValue");
+			});
+
+			QUnit.test("Bind / Unbind functions", function(assert) {
+				assert.equal(typeof this.obj.bindValue, "function", "Named bind function for bindable property available");
+				assert.equal(typeof this.obj.unbindValue, "function", "Named unbind function for bindable property available");
+				assert.equal(typeof this.obj.bindStringValue, "undefined", "No named bind function for non-bindable property available");
+				assert.equal(typeof this.obj.unbindStringValue, "undefined", "No named unbind function for non-bindable property available");
 			});
 
 			QUnit.test("Bind property", function(assert) {
@@ -630,18 +643,16 @@
 				}
 			});
 
-			QUnit.test("Accessor / Mutator functions", function(assert) {
-				assert.ok(typeof(this.obj.getSubObjects) === "function", "Typed get function for multiple public aggregation available");
-				assert.ok(typeof(this.obj.addSubObj) === "function", "Typed add function for multiple public aggregation available");
-				assert.ok(typeof(this.obj.removeSubObj) === "function", "Typed remove function for multiple public aggregation available");
-				assert.ok(typeof(this.obj.removeAllSubObjects) === "function", "Typed removeAll function for multiple public aggregation available");
-				assert.ok(typeof(this.obj.destroySubObjects) === "function", "Typed destroy function for multiple public aggregation available");
-				assert.ok(typeof(this.obj.indexOfSubObj) === "function", "Typed indexOf function for multiple public aggregation available");
-				assert.ok(typeof(this.obj.insertSubObj) === "function", "Typed insert function for multiple public aggregation available");
-
-				assert.ok(typeof(this.obj.getSingleAggr) === "function", "Typed get function for single public aggregation available");
-				assert.ok(typeof(this.obj.setSingleAggr) === "function", "Typed set function for single public aggregation available");
-				assert.ok(typeof(this.obj.destroySingleAggr) === "function", "Typed destroy function for single public aggregation available");
+			QUnit.test("Accessor / Mutator functions single aggregation", function(assert) {
+				assert.ok(typeof this.obj.getSingleAggr, "function", "there should be a named get function for a public 0..1 aggregation");
+				assert.ok(typeof this.obj.setSingleAggr, "function", "there should be a named set function for a public 0..1 aggregation");
+				assert.ok(typeof this.obj.destroySingleAggr, "function", "there should be a named destroy function for a public 0..1 aggregation");
+				// no 0..n methods
+				assert.ok(typeof this.obj.addSingleAggr, "undefined", "there must be no named add function for a public 0..1 aggregation");
+				assert.ok(typeof this.obj.insertSingleAggr, "undefined", "there must be no named insert function for a public 0..1 aggregation");
+				assert.ok(typeof this.obj.removeSingleAggr, "undefined", "there must be no named remove function for a public 0..1 aggregation");
+				assert.ok(typeof this.obj.removeAllSingleAggr, "undefined", "there must be no named removeAll function for a public 0..1 aggregation");
+				assert.ok(typeof this.obj.indexOfSingleAggr, "undefined", "there must be no named indexOf function for a public 0..1 aggregation");
 			});
 
 			QUnit.test("Set, get, unset and destroy single aggregation", function(assert) {
@@ -669,7 +680,7 @@
 				assert.checkIfDestroyed(this.subObj);
 			});
 
-			QUnit.test("invalidation of multiple aggregation", function(assert) {
+			QUnit.test("invalidation of single aggregation", function(assert) {
 				var obj;
 
 				sinon.spy(this.obj, "invalidate");
@@ -714,6 +725,18 @@
 				assert.throws(function() {
 					this.subObj.setAggregation("singleAggr", this.obj);
 				}, /cycle/i);
+			});
+
+			QUnit.test("Accessor / Mutator functions multiple aggregation", function(assert) {
+				assert.equal(typeof this.obj.getSubObjects, "function", "there should be a named get function for a public 0..n aggregation");
+				assert.equal(typeof this.obj.addSubObj, "function", "there should be a named add function for a public 0..n aggregation");
+				assert.equal(typeof this.obj.removeSubObj, "function", "there should be a named remove function for a public 0..n aggregation");
+				assert.equal(typeof this.obj.removeAllSubObjects, "function", "there should be a named removeAll function for a public 0..n aggregation");
+				assert.equal(typeof this.obj.destroySubObjects, "function", "there should be a named destroy function for a public 0..n aggregation");
+				assert.equal(typeof this.obj.indexOfSubObj, "function", "there should be a named indexOf function for a public 0..n aggregation");
+				assert.equal(typeof this.obj.insertSubObj, "function", "there should be a named insert function for a public 0..n aggregation");
+				// no 0..1 methods
+				assert.equal(typeof this.obj.setSubObj, "undefined", "there must be no named set function for a public 0..n aggregation");
 			});
 
 			QUnit.test("Add, Get, Remove and Destroy multiple aggregation", function(assert) {
@@ -859,6 +882,13 @@
 				}, null, "Must throw error on unknown aggregation setter");
 			});
 
+			QUnit.test("Bind / Unbind functions multiple aggregation", function(assert) {
+				assert.equal(typeof this.obj.bindElements, "function", "Named bind function for bindable multiple aggregation available");
+				assert.equal(typeof this.obj.unbindElements, "function", "Named unbind function for bindable multiple aggregation available");
+				assert.equal(typeof this.obj.bindSubObjects, "undefined", "No named bind function for non-bindable multiple aggregation available");
+				assert.equal(typeof this.obj.unbindSubObjects, "undefined", "No named unbind function for non-bindable multiple aggregation available");
+			});
+
 			QUnit.test("Bind aggregation", function(assert) {
 				this.obj.bindAggregation("subObjects", "/list", this.template);
 				assert.equal(this.obj.isBound("subObjects"), true, "isBound must return true for bound aggregations");
@@ -969,6 +999,13 @@
 				assert.ok(aOldObjects[1] === aNewObjects[1], "Second SubObject is reused after update");
 				assert.ok(aOldObjects[2] === aNewObjects[4], "Third SubObject is reused after update");
 				this.obj.bUseExtendedChangeDetection = false;
+			});
+
+			QUnit.test("Bind / Unbind functions", function(assert) {
+				assert.equal(typeof this.obj.bindSingleBindableAggr, "function", "Named bind function for bindable single aggregation available");
+				assert.equal(typeof this.obj.unbindSingleBindableAggr, "function", "Named unbind function for bindable single aggregation available");
+				assert.equal(typeof this.obj.bindSingleAggr, "undefined", "No named bind function for non-bindable single aggregation available");
+				assert.equal(typeof this.obj.unbindSingleAggr, "undefined", "No named unbind function for non-bindable single aggregation available");
 			});
 
 			QUnit.test("Bind single aggregation", function(assert) {
@@ -1357,17 +1394,17 @@
 			});
 
 			QUnit.test("Accessor / Mutator functions", function(assert) {
-				assert.ok(!this.testObj.getMultipleHiddenItems, "Typed get function for multiple private aggregation not available");
-				assert.ok(!this.testObj.addMultipleHiddenItem, "Typed add function for multiple private aggregation not available");
-				assert.ok(!this.testObj.removeMultipleHiddenItem, "Typed remove function for multiple private aggregation not available");
-				assert.ok(!this.testObj.removeAllMultipleHiddenItems, "Typed removeAll function for multiple private aggregation not available");
-				assert.ok(!this.testObj.destroyMultipleHiddenItems, "Typed destroy function for multiple private aggregation not available");
-				assert.ok(!this.testObj.indexOfMultipleHiddenItem, "Typed indexOf function for multiple private aggregation not available");
-				assert.ok(!this.testObj.insertMultipleHiddenItem, "Typed insert function for multiple private aggregation not available");
+				assert.ok(!this.testObj.getMultipleHiddenItems, "there must be no named get function for a hidden 0..n aggregation");
+				assert.ok(!this.testObj.addMultipleHiddenItem, "there must be no named add function for a hidden 0..n aggregation");
+				assert.ok(!this.testObj.removeMultipleHiddenItem, "there must be no named remove function for a hidden 0..n aggregation");
+				assert.ok(!this.testObj.removeAllMultipleHiddenItems, "there must be no named removeAll function for a hidden 0..n aggregation");
+				assert.ok(!this.testObj.destroyMultipleHiddenItems, "there must be no named destroy function for a hidden 0..n aggregation");
+				assert.ok(!this.testObj.indexOfMultipleHiddenItem, "there must be no named indexOf function for a hidden 0..n aggregation");
+				assert.ok(!this.testObj.insertMultipleHiddenItem, "there must be no named insert function for a hidden 0..n aggregation");
 
-				assert.ok(!this.testObj.getSingleHiddenItem, "Typed get function for single private aggregation not available");
-				assert.ok(!this.testObj.setSingleHiddenItem, "Typed set function for single private aggregation not available");
-				assert.ok(!this.testObj.destroySingleHiddenItem, "Typed destroy function for single private aggregation not available");
+				assert.ok(!this.testObj.getSingleHiddenItem, "there must be no named get function for a hidden 0..1 aggregation");
+				assert.ok(!this.testObj.setSingleHiddenItem, "there must be no named set function for a hidden 0..1 aggregation");
+				assert.ok(!this.testObj.destroySingleHiddenItem, "there must be no named destroy function for a hidden 0..1 aggregation");
 			});
 
 			QUnit.test("Parent Relationship", function(assert) {
@@ -1402,6 +1439,39 @@
 					this.assocElement = new sap.ui.core.TestManagedObject();
 					this.assocElement2 = new sap.ui.core.TestManagedObject();
 				}
+			});
+
+			QUnit.test("Accessor / Mutator functions 0..1 Association", function(assert) {
+				assert.equal(typeof this.obj.getSelectedObject, "function", "there should be a named get function for a public 0..1 association");
+				assert.equal(typeof this.obj.setSelectedObject, "function", "there should be a named set function for a public 0..1 association ");
+				// no 0..n methods
+				assert.equal(typeof this.obj.addSelectedObject, "undefined", "there must be no named add function for a public 0..1 association ");
+				assert.equal(typeof this.obj.removeSelectedObject, "undefined", "there must be no named remove function for a public 0..1 association ");
+				assert.equal(typeof this.obj.removeAllSelectedObject, "undefined", "there must be no named removeAll function for a public 0..1 association");
+				// no aggregation methods
+				assert.equal(typeof this.obj.destroySelectedObject, "undefined", "there must be no named destroy function for a public 0..1 association ");
+				assert.equal(typeof this.obj.indexOfSelectedObject, "undefined", "there must be no named indexOf function for a public 0..1 association ");
+				assert.equal(typeof this.obj.insertSelectedObject, "undefined", "there must be no named insert function for a public 0..1 association ");
+			});
+
+			QUnit.test("Accessor / Mutator functions 0..n Associations", function(assert) {
+				assert.equal(typeof this.obj.getAssociatedObjects, "function", "there should be a named get function for a public 0..n association");
+				assert.equal(typeof this.obj.addAssociatedObj, "function", "there should be a named add function for a public 0..n association");
+				assert.equal(typeof this.obj.removeAssociatedObj, "function", "there should be a named remove function for a public 0..n association");
+				assert.equal(typeof this.obj.removeAllAssociatedObjects, "function", "there should be a named removeAll function for a public 0..n association");
+				assert.equal(typeof this.obj.removeAllAssociatedObj, "function", "wrongly named removeAll function must exist for compatibility reasons")
+				var oLogSpy = this.spy(jQuery.sap.log, "warning");
+				jQuery.sap.log.setLevel(jQuery.sap.log.Level.DEBUG);
+				this.obj.removeAllAssociatedObj();
+				assert.ok(oLogSpy.calledWith(sinon.match(/deprecated/)), "calling the wrongly named function should log a warning message");
+				oLogSpy.restore();
+
+				// no 0..1 methods
+				assert.equal(typeof this.obj.setAssociatedObj, "undefined", "there must be no named set function for a public 0..n association");
+				// no association methods
+				assert.equal(typeof this.obj.destroyAssociatedObj, "undefined", "there must be no named destroy function for a public 0..n association");
+				assert.equal(typeof this.obj.indexOfAssociatedObj, "undefined", "there must be no named indexOf function for a public 0..n association");
+				assert.equal(typeof this.obj.insertAssociatedObj, "undefined", "there must be no named insert function for a public 0..n association");
 			});
 
 			QUnit.test("Get from to 0..n Association", function(assert) {

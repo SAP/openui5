@@ -330,7 +330,7 @@ sap.ui.define([
 					};
 
 			// Selection (causes invalidation)
-			if (bSetAsSelected && oNextItem) {
+			if (bSetAsSelected) {
 				this.setSelectedItem(oNextItem);
 				// Notify the subscriber
 				this.fireItemSelect({item: oNextItem});

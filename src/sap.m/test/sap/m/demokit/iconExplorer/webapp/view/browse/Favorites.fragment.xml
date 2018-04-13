@@ -1,59 +1,94 @@
 <core:FragmentDefinition
 	xmlns="sap.m"
-	xmlns:core="sap.ui.core">
+	xmlns:core="sap.ui.core"
+	xmlns:l="sap.ui.layout">
 	<Table
 		id="results"
 		width="auto"
 		class="sapUiSmallMargin"
 		mode="SingleSelectMaster"
 		selectionChange="onSelectionChange"
-		items="{fav>/icons}"
+		items="{
+			path: 'fav>/icons',
+			sorter: {
+				path: 'name',
+				descending: false
+			},
+			templateShareable: true
+		}"
 		noDataText="{view>/overviewNoDataText}"
 		growing="true"
 		growingThreshold="{view>/growingThreshold}"
 		updateFinished="onUpdateFinished">
-
 		<columns>
-			<Column id="iconColumn" width="2rem">
-				<Text id="iconColumnTitle" text="{i18n>tableIconColumnTitle}"/>
+			<Column
+				id="iconColumn"
+				width="2rem"
+				vAlign="Middle">
+				<Text
+					id="iconColumnTitle"
+					text="{i18n>tableIconColumnTitle}"/>
 			</Column>
-			<Column id="nameColumn" width="20%">
-				<Text id="nameColumnTitle" text="{i18n>tableNameColumnTitle}"/>
+			<Column
+				id="nameColumn"
+				width="20%"
+				vAlign="Middle">
+				<Text
+					id="nameColumnTitle"
+					text="{i18n>tableNameColumnTitle}"/>
 			</Column>
 			<Column
 				id="codeColumn"
 				width="20%"
 				minScreenWidth="Desktop"
-				demandPopin="true">
-				<Text id="codeColumnTitle" text="{i18n>tableCodeColumnTitle}"/>
+				demandPopin="true"
+				vAlign="Middle">
+				<Text
+					id="codeColumnTitle"
+					text="{i18n>tableCodeColumnTitle}"/>
 			</Column>
 			<Column
 				id="tagsColumn"
 				width="35%"
 				minScreenWidth="Desktop"
-				demandPopin="true">
-				<Text id="tagsColumnTitle" text="{i18n>tableTagsColumnTitle}"/>
+				demandPopin="true"
+				vAlign="Middle">
+				<Text
+					id="tagsColumnTitle"
+					text="{i18n>tableTagsColumnTitle}"/>
 			</Column>
-			<Column id="favColumn" width="2rem"/>
+			<Column
+				id="favColumn"
+				width="2rem"
+				vAlign="Middle"/>
 		</columns>
-
 		<items>
 			<ColumnListItem
 				type="Active">
 				<cells>
-					<core:Icon size="2rem" src="sap-icon://{fav>name}" color="Default"/>
-					<Label design="Bold" text="{fav>name}"/>
-					<Text text="sap-icon://{fav>name}"/>
-					<Tokenizer
-						class="sapUiTinyMarginTop"
-						width="100%"
-						tokens="{
-							path: 'fav>tags',
-							templateShareable: true
-						}"
-						editable="false">
-						<Token text="{fav>name}" select="onTagSelect"/>
-					</Tokenizer>
+					<core:Icon
+						size="2rem"
+						src="sap-icon://{fav>iconPath}{fav>name}"
+						color="Default"
+						useIconTooltip="false"/>
+					<Label
+						design="Bold"
+						text="{fav>name}"/>
+					<Text
+						text="sap-icon://{fav>iconPath}{fav>name}"/>
+					<l:HorizontalLayout
+							class="tagsArea"
+							content="{
+								path: 'fav>tags',
+								templateShareable: true
+							}"
+							allowWrapping="true">
+						<Token
+							text="{fav>name}"
+							select="onTagSelect"
+							editable="false"
+							class="tagsToken"/>
+					</l:HorizontalLayout>
 					<RatingIndicator
 						iconUnselected="sap-icon://unfavorite"
 						value="{

@@ -3,6 +3,8 @@
 (function ($, QUnit, sinon, testData) {
 	"use strict";
 
+	jQuery.sap.registerModulePath("view", "./view");
+	jQuery.sap.registerModulePath("sap.uxap.testblocks", "./blocks");
 	jQuery.sap.require("sap.uxap.ObjectPageSubSection");
 
 	var ObjectPageSubSection = sap.uxap.ObjectPageSubSection.prototype,
@@ -454,5 +456,29 @@
 
         assert.ok(!oSubSection._getUseTitleOnTheLeft(), "falsy value is returned");
     });
+
+	QUnit.module("Accessibility", {
+		beforeEach: function() {
+			this.ObjectPageSectionView = sap.ui.xmlview("UxAP-13_objectPageSection", {
+				viewName: "view.UxAP-13_ObjectPageSection"
+			});
+
+			this.ObjectPageSectionView.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.ObjectPageSectionView.destroy();
+		}
+	});
+
+    QUnit.test("Test aria-labelledby attribute", function(assert) {
+		var oSubSectionWithoutTitle = this.ObjectPageSectionView.byId("subsection6"),
+			oSubSectionWithTitle = this.ObjectPageSectionView.byId("subsection1"),
+			sSubSectionWithTitleAriaLabelledBy = oSubSectionWithTitle.$().attr("aria-labelledby"),
+			sSubSectionControlName = sap.uxap.ObjectPageSubSection._getLibraryResourceBundle().getText("SUBSECTION_CONTROL_NAME");
+
+		assert.strictEqual(oSubSectionWithoutTitle.$().attr("aria-label"), sSubSectionControlName, "Subsections without titles should have aria-label='Subsection'");
+		assert.strictEqual(oSubSectionWithTitle.getTitle(), document.getElementById(sSubSectionWithTitleAriaLabelledBy).innerText, "Subsection title is properly labelled");
+	});
 
 }(jQuery, QUnit, sinon, window.testData));

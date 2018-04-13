@@ -24,7 +24,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
 
 		// Assertions
-		Then.onTheOverviewPage.theTableContainsTheIcon("activate");
+		Then.onTheOverviewPage.theTableShouldContainTheIcon("activate");
 	});
 
 	opaTest("The icon is marked as favorite on the details tab", function (Given, When, Then) {
@@ -32,7 +32,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("details");
 
 		// Assertions
-		Then.onTheOverviewPage.theIconIsMarkedAsFavorite("activate");
+		Then.onTheOverviewPage.theIconShouldBeMarkedAsFavorite("activate");
 	});
 
 	opaTest("Unmarking an icon as a favorite should display a message toast", function (Given, When, Then) {
@@ -49,6 +49,7 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
 
 		// Assertions
-		Then.onTheOverviewPage.theTableDoesNotContainTheIcon("activate");
+		Then.onTheOverviewPage.theTableShouldNotContainTheIcon("activate").
+			and.iTeardownMyApp();
 	});
 });

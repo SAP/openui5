@@ -35,20 +35,22 @@ sap.ui.define([
 	var DragAndDropControl = Control.extend("sap.ui.core.dnd.test.DragAndDropControl", {
 		metadata: {
 			properties : {
-				showNoData : {type : "boolean", defaultValue : false},
+				showNoData : {type : "boolean", defaultValue : false}
 			},
 			aggregations: {
 				topItems: {
 					name: "topItems",
 					type: "sap.ui.core.dnd.test.DivControl",
 					multiple: true,
-					singularName: "topItem"
+					singularName: "topItem",
+					selector : "#{id}-topItems"
 				},
 				bottomItems: {
 					name: "bottomItems",
 					type: "sap.ui.core.dnd.test.DivControl",
 					multiple: true,
-					singularName: "bottomItem"
+					singularName: "bottomItem",
+					selector : "#{id}-bottomItems"
 				},
 				dragDropConfig: {
 					name: "dragDropConfig",
@@ -57,9 +59,6 @@ sap.ui.define([
 					singularName: "dragDropConfig"
 				}
 			}
-		},
-		getAggregationDomRef: function(sAggregationName) {
-			return this.getDomRef(sAggregationName);
 		},
 		renderer: function(rm, oControl) {
 			var aTopItems = oControl.getTopItems();
@@ -217,12 +216,12 @@ sap.ui.define([
 		oEvent = createjQueryDragEventDummy("drop", this.oControl, false);
 		DragAndDrop.preprocessEvent(oEvent);
 		assert.ok(oEvent.dragSession === oDragSession, "drop: Drag session was preserved");
-		assert.ok(oEvent.isDefaultPrevented(), "drop: Default is prevented");
+		assert.notOk(oEvent.isDefaultPrevented(), "drop: Default is not prevented since there is no valid drop info");
 
-		DragAndDrop.postprocessEvent(oEvent); // Postprocessing "drop" destroys the drag session.
+		DragAndDrop.postprocessEvent(oEvent); // Postprocessing "drop" should not destroy the drag session.
 		oEvent = createjQueryDragEventDummy("dragenter", this.oControl, false);
 		DragAndDrop.preprocessEvent(oEvent);
-		assert.ok(oEvent.dragSession == null, "Drag session was destroyed");
+		assert.ok(oEvent.dragSession != null, "Drag session is not destroyed on drop");
 
 		oEvent = createjQueryDragEventDummy("dragstart", this.oControl);
 		DragAndDrop.preprocessEvent(oEvent);
@@ -328,8 +327,8 @@ sap.ui.define([
 		oEventTarget.dispatchEvent(createNativeDragEventDummy("dragenter"));
 		oEventTarget.dispatchEvent(createNativeDragEventDummy("dragover"));
 		oEventTarget.dispatchEvent(createNativeDragEventDummy("dragleave"));
-		oEventTarget.dispatchEvent(createNativeDragEventDummy("dragend"));
 		oEventTarget.dispatchEvent(createNativeDragEventDummy("drop"));
+		oEventTarget.dispatchEvent(createNativeDragEventDummy("dragend"));
 
 		assert.deepEqual(aEventSequence, [
 			{processor: "dnd-preprocessor", eventType: "dragstart"},
@@ -344,12 +343,12 @@ sap.ui.define([
 			{processor: "dnd-preprocessor", eventType: "dragleave"},
 			{processor: "control", eventType: "dragleave"},
 			{processor: "dnd-postprocessor", eventType: "dragleave"},
-			{processor: "dnd-preprocessor", eventType: "dragend"},
-			{processor: "control", eventType: "dragend"},
-			{processor: "dnd-postprocessor", eventType: "dragend"},
 			{processor: "dnd-preprocessor", eventType: "drop"},
 			{processor: "control", eventType: "drop"},
-			{processor: "dnd-postprocessor", eventType: "drop"}
+			{processor: "dnd-postprocessor", eventType: "drop"},
+			{processor: "dnd-preprocessor", eventType: "dragend"},
+			{processor: "control", eventType: "dragend"},
+			{processor: "dnd-postprocessor", eventType: "dragend"}
 		], "The drag-and-drop events have been processed before and after they where dispatched to the controls");
 
 		// Restore original dnd event preprocessor.
@@ -545,9 +544,13 @@ sap.ui.define([
 		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
 		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left + oDiv2.$().width(), "Indicator's left position is equal to dropped item's right position.");
 
-		// clean up
+		// drop
 		oDiv2.$().trigger("drop");
-		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop");
+		assert.ok($Indicator.is(":visible"), "Indicator is still visible after drop");
+
+		// cleanup
+		oDiv2.$().trigger("dragend");
+		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after dragend");
 	});
 
 	QUnit.module("Drop on empty aggregation", {
@@ -559,7 +562,7 @@ sap.ui.define([
 					new DragDropInfo({
 						sourceAggregation: "topItems",
 						targetAggregation: "bottomItems",
-						dropPosition: "Between"
+						dropPosition: "OnOrBetween"
 					})
 				]
 			});
@@ -605,8 +608,37 @@ sap.ui.define([
 		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left , "Indicator's left position is equal to dropped item's left position.");
 
 		// clean up
+		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragend"));
+		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after dragend");
+	});
+
+	QUnit.test("cleanup", function(assert) {
+		var done = assert.async();
+		var oEvent, $Indicator;
+		var oTargetDomRef = this.oControl.getDomRef("bottomNoData");
+		var oSourceControl = this.oControl.getTopItems()[0];
+		var oSourceDomRef = oSourceControl.getDomRef();
+
+		// init drag session
+		oSourceDomRef.focus();
+		oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
+
+		// validation
+		oEvent = jQuery.Event("dragenter");
+		oEvent.originalEvent = createNativeDragEventDummy("dragenter");
+		jQuery(oTargetDomRef).trigger(oEvent);
+		$Indicator = jQuery(oEvent.dragSession.getIndicator());
+		assert.ok($Indicator.is(":visible"), "Indicator is visible after dragenter");
+
+		// drop handling indicator
+		oTargetDomRef.focus();
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
-		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop");
+
+		// assert
+		window.requestAnimationFrame(function() {
+			assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop without dragend");
+			done();
+		});
 	});
 
 	QUnit.module("dragSession", {
@@ -652,15 +684,24 @@ sap.ui.define([
 		});
 		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
 
-		this.oLastTargetDomRef.focus();
-		this.oDropInfo.attachDragEnter(function(oEvent) {
+		function sessionTest(oEvent) {
 			var oSession = oEvent.getParameter("dragSession");
 			assert.strictEqual(oSession.getData("data"), oDataTransfer.data, "data is transfered over drag session");
 			assert.strictEqual(oSession.getTextData(), oDataTransfer.textData, "text data is transfered over drag session");
 			assert.strictEqual(oSession.getComplexData("complexData"), oDataTransfer.complexData, "complex data is transfered over drag session");
-		});
+		}
+
+		this.oLastTargetDomRef.focus();
+		this.oDropInfo.attachDragEnter(sessionTest);
+		this.oDropInfo.attachDragOver(sessionTest);
+		this.oDropInfo.attachDrop(function() {
+			this.oSourceControl.destroy();
+		}.bind(this));
+		this.oDragInfo.attachDragEnd(sessionTest);
 		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragover"));
 		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
+		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragend"));
 	});
 
 	QUnit.test("dragged from outside the browser", function(assert) {

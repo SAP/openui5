@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- Initialization -->
+<script src="../shared-config.js"></script>
+<script id="sap-ui-bootstrap" src="../../../../../resources/sap-ui-core.js"
+data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.m"></script>
+
+<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
+<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+<!--[if IE]>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-ie.js"></script>
+<![endif]-->
+<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
+<!-- This test is not running against the real Northwind service, but a fake service based on
+     Sinon.SJ FakeXHR. To run on the real service instead please comment out the following line. -->
+<script src="ODataModelFakeService.js"></script>
+
+<!-- Test functions -->
+<script>
+
+	// time to wait for server responses
+	var oModel;
+	var sURI = "http://services.odata.org/V3/Northwind/Northwind.svc/";
+		sURI = "../../../../../proxy/http/" + sURI.replace("http://","");
+
+	function removeSharedMetadata() {
+		var sServiceURI = sURI.replace(/\/$/, "");
+		if (sap.ui.model.odata.v2.ODataModel.mServiceData
+				&& sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI]) {
+			delete sap.ui.model.odata.v2.ODataModel.mServiceData[sServiceURI].oMetadata;
+		}
+	}
+
+	function initModel(bJSON) {
+		return new sap.ui.model.odata.v2.ODataModel(sURI, {
+			json: bJSON,
+			useBatch: true
+		});
+	}
+	// Request security token to avoid later HEAD requests
+	initModel().refreshSecurityToken();
+
+	QUnit.module("v2.ODataPropertyBinding", {
+		beforeEach : function() {
+			oModel = initModel(false);
+			this.oText = new sap.m.Text();
+		},
+		afterEach : function() {
+			oModel = undefined;
+			this.oText.destroy();
+			removeSharedMetadata();
+		}
+	});
+
+	QUnit.test("PropertyBinding refresh model with forced flag", function(assert){
+		var done = assert.async();
+		var that = this;
+		var handlerSpy = this.spy(function() {
+			if(handlerSpy.callCount === 4) {
+				assert.equal(that.oText.getText(), "2");
+				done();
+			} else if (handlerSpy.callCount === 3) {
+				assert.equal(that.oText.getText(), "changed");
+			}
+		});
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindProperty("/Products(2)/ProductID");
+			//oModel.addBinding(oBinding);
+			oBinding.attachChange(handlerSpy);
+			// 1 call to change
+			oBinding.initialize();
+
+			// use text
+			that.oText.setModel(oModel);
+			that.oText.bindElement("/Products(2)");
+			that.oText.bindProperty("text", {path: "ProductID", mode: "OneWay"});
+
+
+			// 2 calls to change
+			oModel.refresh(true);
+			that.oText.setText("changed");
+			oModel.refresh(true);
+		});
+	});
+
+	QUnit.test("PropertyBinding get value", function(assert){
+		var done = assert.async();
+		var that = this;
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindProperty("/Products(2)/ProductID");
+			// 1 call to change
+			oBinding.initialize();
+
+			// use text
+			that.oText.setModel(oModel);
+			that.oText.bindElement("/Products(2)");
+			that.oText.bindProperty("text", {path: "ProductID", mode: "OneWay"});
+
+			oBinding.attachChange(function() {
+
+				assert.equal(oBinding.getValue(), 2);
+				done();
+			});
+		});
+	});
+
+	QUnit.test("PropertyBinding set value", function(assert){
+		var done = assert.async();
+		var that = this;
+		oModel.metadataLoaded().then(function(){
+			var oBinding = oModel.bindProperty("/Products(2)/ProductID");
+			// 1 call to change
+			oBinding.initialize();
+
+			// use text
+			that.oText.setModel(oModel);
+			that.oText.bindElement("/Products(2)");
+			that.oText.bindProperty("text", {path: "ProductID", mode: "OneWay"});
+
+			oBinding.attachChange(function() {
+
+				assert.equal(oBinding.getValue(), 2);
+				// 2 calls to change
+				oBinding.setValue(4711);
+
+				assert.equal(oBinding.getValue(), 4711);
+				done();
+			});
+		});
+	});
+
+
+	</script>
+</head>
+<body>
+<h1 id="qunit-header">QUnit tests: OData Property Binding</h1>
+<h2 id="qunit-banner"></h2>
+<h2 id="qunit-userAgent"></h2>
+<div id="qunit-testrunner-toolbar"></div>
+<ol id="qunit-tests"></ol>
+</body>
+</html>

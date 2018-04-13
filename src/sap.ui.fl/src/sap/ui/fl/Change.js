@@ -126,7 +126,7 @@ sap.ui.define([
 
 	/**
 	 * Returns if the change is of type variant
-	 * @returns {boolean} fileType of the change document is a variant
+	 * @returns {boolean} fileType of the change file is a variant
 	 *
 	 * @public
 	 */
@@ -203,7 +203,7 @@ sap.ui.define([
 	 * Returns the namespace. The changes' namespace is
 	 * also the namespace of the change file in the repository.
 	 *
-	 * @returns {String} Namespace of the change document
+	 * @returns {String} Namespace of the change file
 	 *
 	 * @public
 	 */
@@ -214,7 +214,7 @@ sap.ui.define([
 	/**
 	 * Sets the namespace.
 	 *
-	 * @param {string} sNamespace Namespace of the change document
+	 * @param {string} sNamespace Namespace of the change file
 	 *
 	 * @public
 	 */
@@ -223,8 +223,33 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the id of the change
-	 * @returns {string} Id of the change document
+	 * Returns the project ID of the change. There might be multiple projects
+	 * adapting a base application. The project ID helps to see where the
+	 * change is coming from. If no projectIDid is specified, it is the
+	 * sap.app/id
+	 *
+	 * @returns {String} Project id of the change file
+	 *
+	 * @public
+	 */
+	Change.prototype.getProjectId = function () {
+		return this._oDefinition.projectId;
+	};
+
+	/**
+	 * Sets the project ID.
+	 *
+	 * @param {string} sProjectId Project ID of the change file
+	 *
+	 * @public
+	 */
+	Change.prototype.setProjectId = function (sProjectId) {
+		this._oDefinition.projectId = sProjectId;
+	};
+
+	/**
+	 * Returns the ID of the change
+	 * @returns {string} Id of the change file
 	 *
 	 * @public
 	 */
@@ -234,7 +259,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the content section of the change
-	 * @returns {string} Content of the change document. The content structure can be any JSON.
+	 * @returns {string} Content of the change file. The content structure can be any JSON.
 	 *
 	 * @public
 	 */
@@ -245,7 +270,7 @@ sap.ui.define([
 	/**
 	 * Sets the object of the content attribute
 	 *
-	 * @param {object} oContent The content of the change document. Can be any JSON object.
+	 * @param {object} oContent The content of the change file. Can be any JSON object.
 	 *
 	 * @public
 	 */
@@ -343,7 +368,7 @@ sap.ui.define([
 	 * Returns true if the current layer is the same as the layer
 	 * in which the change was created or the change is from the
 	 * end-user layer and for this user created.
-	 * @returns {boolean} is the change document read only
+	 * @returns {boolean} is the change file read only
 	 *
 	 * @public
 	 */
@@ -377,7 +402,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns true if the label is read only. The label might be read only because of the current layer or because the logon language differs from the original language of the change document.
+	 * Returns true if the label is read only. The label might be read only because of the current layer or because the logon language differs from the original language of the change file.
 	 *
 	 * @returns {boolean} is the label read only
 	 *
@@ -407,7 +432,7 @@ sap.ui.define([
 	 * Returns false if the current language does not equal the original language of the change file.
 	 * Returns false if the original language is initial.
 	 *
-	 * @returns {boolean} flag whether the current logon language differs from the original language of the change document
+	 * @returns {boolean} flag whether the current logon language differs from the original language of the change file
 	 *
 	 * @private
 	 */
@@ -458,7 +483,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the layer type for the change
-	 * @returns {string} The layer of the change document
+	 * @returns {string} The layer of the change file
 	 *
 	 * @public
 	 */
@@ -520,7 +545,7 @@ sap.ui.define([
 
 	/**
 	 * Gets the JSON definition of the change
-	 * @returns {object} the content of the change document
+	 * @returns {object} the content of the change file
 	 *
 	 * @public
 	 */
@@ -530,7 +555,7 @@ sap.ui.define([
 
 	/**
 	 * Set the response from the back end after saving the change
-	 * @param {object} oResponse the content of the change document
+	 * @param {object} oResponse the content of the change file
 	 *
 	 * @public
 	 */
@@ -756,6 +781,7 @@ sap.ui.define([
 	 * @param {Object}  [oPropertyBag.validAppVersions] Application versions where the change is active
 	 * @param {String}  [oPropertyBag.reference] Application component name
 	 * @param {String}  [oPropertyBag.namespace] The namespace of the change file
+	 * @param {String}  [oPropertyBag.projectId] The project id of the change file
 	 * @param {String}  [oPropertyBag.generator] The tool which is used to generate the change file
 	 *
 	 * @returns {Object} The content of the change file
@@ -775,6 +801,8 @@ sap.ui.define([
 			sFileType = oPropertyBag.isVariant ? "variant" : "change";
 		}
 
+		var sBaseId = oPropertyBag.reference && oPropertyBag.reference.replace(".Component", "") ||  "";
+
 		var oNewFile = {
 			fileName: oPropertyBag.id || Utils.createDefaultFileName(oPropertyBag.changeType),
 			fileType: sFileType,
@@ -787,6 +815,7 @@ sap.ui.define([
 			layer: oPropertyBag.layer || Utils.getCurrentLayer(oPropertyBag.isUserDependent),
 			texts: oPropertyBag.texts || {},
 			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "changes"), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
+			projectId: oPropertyBag.projectId || sBaseId,
 			creation: "",
 			originalLanguage: Utils.getCurrentLanguage(),
 			conditions: {},

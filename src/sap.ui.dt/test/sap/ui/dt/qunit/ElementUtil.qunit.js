@@ -22,6 +22,7 @@ sap.ui.require([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/dt/Util",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/sinon"
 	],
 function(
@@ -44,6 +45,7 @@ function(
 	ComponentContainer,
 	Element,
 	DtUtil,
+	ManagedObject,
 	sinon
 ) {
 	"use strict";
@@ -420,7 +422,7 @@ function(
 				"add":"addElement",
 				"remove":"removeElement",
 				"insert": undefined,
-				"removeAll": "removeAllElement"
+				"removeAll": "removeAllElements"
 			}, 'then the static method "getAssociationAccessors" returns all accessors of an existing association');
 		});
 
@@ -755,6 +757,11 @@ function(
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "Object attribute title", "then it returns the label (getTitle())");
 		});
 
+		QUnit.test("when getLabelForElement is called with a ManagedObject", function (assert) {
+			this.oLabelControl = new ManagedObject("managedObjectId");
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "managedObjectId", "then it returns the Id for a managed object");
+		});
+
 		QUnit.test("when getLabelForElement is called with a Label without text property set", function (assert) {
 			this.oLabelControl = new Label("id");
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "id", "then it returns the Id (getId())");
@@ -769,10 +776,10 @@ function(
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the labels text (getLabel().getText())");
 		});
 
-		QUnit.test("when getLabelForElement is called with a component that does not behave like a label", function (assert) {
+		QUnit.test("when getLabelForElement is called with an object which is not a managed object", function (assert) {
 			assert.throws(
 				ElementUtil.getLabelForElement.bind(null, {}),
-				DtUtil.createError("ElementUtil#getLabelForElement", "A valid element instance should be passed as parameter", "sap.ui.dt"),
+				DtUtil.createError("ElementUtil#getLabelForElement", "A valid managed object instance should be passed as parameter", "sap.ui.dt"),
 				"then the correct error is thrown"
 			);
 		});

@@ -10,7 +10,6 @@ sap.ui.define([
 			baseClass: Common,
 
 			actions: {
-
 				iPressOnTheBackwardsButton: function () {
 					return this.waitFor({
 						success: function () {

@@ -59,6 +59,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 			this.references = mParameters.references || {};
 			this.validation = !!mParameters.validation;
 			this.date = mParameters.date || Date.now();
+			this.controlId = undefined;
 		}
 	});
 
@@ -90,6 +91,34 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './MessageProcessor'],
 	 */
 	Message.prototype.getMessage = function() {
 		return this.message;
+	};
+
+	/**
+	 * Set control id
+	 *
+	 * @param {string} sControlId The Message as text
+	 * @private
+	 */
+	Message.prototype.setControlId = function(sControlId) {
+		this.controlId = sControlId;
+	};
+
+	/**
+	 * Returns the control ID if set.
+	 *
+	 * NOTE: The control ID is only set for Controls based on <code>sap.m.InputBase</code>
+	 * The Control must be bound to a Model so the Message could be propagated to this Control.
+	 * The propagation happens only if the Control is created and visible on the screen.
+	 * Is this the case the control ID is set.
+	 * The ID is not set in all other cases and cannot be set manually.
+	 *
+	 * If a Message is propagated to multiple Controls bound to the same target the last Control wins.
+	 *
+	 * @returns {string} sControlId
+	 * @public
+	 */
+	Message.prototype.getControlId = function() {
+		return this.controlId;
 	};
 
 	/**

@@ -1,0 +1,335 @@
+<mvc:View
+	controllerName="sap.ui.demo.iconexplorer.controller.Home"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout"
+	xmlns:core="sap.ui.core"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:custom="sap.ui.demo.iconexplorer.controls">
+	<Page
+		showHeader="false"
+		id="page"
+		class="IconExplorerHomeBackground">
+		<l:BlockLayout class="BlockLayoutFlex">
+			<l:BlockLayoutRow class="BlockLayoutFirstRow">
+				<l:BlockLayoutCell class="sapUiNoContentPadding sapUiResponsiveContentPadding">
+					<l:VerticalLayout
+						width="100%"
+						class="VerticalLayout">
+						<Text
+							class="HomeHeaderText sapUiTinyMarginTop sapUiSmallMarginBottom"
+							text="{i18n>iconExplorerTitle}"
+							width="100%"
+							textAlign="Center"/>
+						<Input
+							class="sapUiLargeMarginTop sapContrastPlus sapContrast sapUiMediumMarginBottom inputSearch"
+							width="50%"
+							id="search"
+							placeholder="{i18n>searchPlaceholder}"
+							type="Text"
+							showSuggestion="true"
+							showValueHelp="true"
+							submit="onEnter"
+							showTableSuggestionValueHelp="false"
+							suggestionRows="{
+								path: '/AllIcons'
+							}"
+							suggestionItemSelected="onSuggestionSelect"
+							valueLiveUpdate="true"
+							startSuggestion="2"
+							liveChange="onSearch">
+							<suggestionColumns>
+								<Column
+									hAlign="Begin"
+									popinDisplay="Inline"
+									demandPopin="true"
+									width="2em">
+									<Label text="{i18n>SuggestionIconColumn}"/>
+								</Column>
+								<Column
+									hAlign="Begin"
+									vAlign="Middle"
+									popinDisplay="Inline"
+									demandPopin="true">
+									<Label text="{i18n>SuggestionNameColumn}"/>
+								</Column>
+								<Column
+									id="tagsColumn"
+									minScreenWidth="Desktop"
+									vAlign="Middle"
+									demandPopin="false">
+									<Text
+										id="tagsColumnTitle"
+										text="{i18n>tableTagsColumnTitle}"/>
+								</Column>
+								<Column
+									hAlign="Begin"
+									vAlign="Middle"
+									popinDisplay="Inline"
+									demandPopin="true">
+									<Label text="{i18n>SuggestionResourceColumn}"/>
+								</Column>
+								<Column
+									demandPopin="false"
+									minScreenWidth="Tablet"
+									hAlign="Begin"
+									vAlign="Middle"
+									popinDisplay="Inline">
+									<Label text="{i18n>SuggestionAvailabilityColumn}"/>
+								</Column>
+							</suggestionColumns>
+							<suggestionRows>
+								<ColumnListItem type="Navigation">
+									<cells>
+										<core:Icon
+											size="1.2rem"
+											src="sap-icon://{iconPath}{name}"
+											color="Default"/>
+										<Label text="{name}"/>
+										<l:HorizontalLayout
+											content="{
+												path: 'tags',
+												templateShareable: true
+											}"
+											class="tagsArea">
+											<Token
+												text="{name}"
+												select="onTagSelect"
+												class="tagsToken"
+												editable="false"/>
+										</l:HorizontalLayout>
+										<Label text="{font}"/>
+										<ObjectNumber
+											number="{path: 'delivery'}"
+											state="{
+												path: 'delivery',
+												formatter: '.formatter.deliveryState'
+											}"/>
+									</cells>
+								</ColumnListItem>
+							</suggestionRows>
+						</Input>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+					backgroundColorSet="ColorSet6"
+					backgroundColorShade="ShadeB"
+					class="BlockLayoutCellHeight">
+					<l:VerticalLayout>
+						<core:Icon
+							src="sap-icon://sap-ui5"
+							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
+						</core:Icon>
+						<custom:TitleLink
+							press="onTitleLinkPress"
+							text="{i18n>fontName_SAPIcons}"
+							class="TitleLink "
+							titleStyle="H2"
+							target="_blank">
+							<custom:customData>
+								<core:CustomData key="font" value="SAP-icons"/>
+							</custom:customData>
+						</custom:TitleLink>
+						<Text
+							text="{i18n>sapIconsDescription}"
+							class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
+						<Label
+							text="{i18n>iconNamespace}"
+							class="sapUiSmallMarginTop "/>
+						<Text
+							text="sap-icon://"
+							class="sapUiMediumMarginBottom"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					backgroundColorSet="ColorSet6"
+					backgroundColorShade="ShadeC"
+					class="BlockLayoutCellHeight">
+					<l:VerticalLayout>
+						<core:Icon
+							src="sap-icon://SAP-icons-TNT/code1"
+							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
+						</core:Icon>
+						<custom:TitleLink
+							press="onTitleLinkPress"
+							text="{i18n>fontName_SAPIconsTNT}"
+							class="TitleLink"
+							titleStyle="H2"
+							target="_blank">
+							<custom:customData>
+								<core:CustomData key="font" value="SAP-icons-TNT"/>
+							</custom:customData>
+						</custom:TitleLink>
+						<Text
+							text="{i18n>technologyAppIconsDescription}"
+							class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
+						<Label
+							text="{i18n>iconNamespace}"
+							class="sapUiSmallMarginTop "/>
+						<Text
+							text="sap-icon://SAP-icons-TNT"
+							class=" sapUiMediumMarginBottom "/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					backgroundColorSet="ColorSet6"
+					backgroundColorShade="ShadeD"
+					class="BlockLayoutCellHeight">
+					<l:VerticalLayout>
+						<core:Icon
+							src="sap-icon://course-book"
+							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
+						</core:Icon>
+						<custom:TitleLink
+							text="{i18n>sapIconGuidelines}"
+							class="TitleLink"
+							href="https://experience.sap.com/fiori-design-web/icons/"
+							titleStyle="H2"
+							target="_blank"/>
+						<Text
+							text="{i18n>sapIconGuidelinesDescription}"
+							class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
+						<Link
+							text="{i18n>developmentDocumentation}"
+							target="_blank"
+							href="#/topic/21ea0ea94614480d9a910b2e93431291"
+							class="sapUiSmallMarginTop IconDescriptionLink"/>
+						<Link
+							text="{i18n>SAPFioriDesignGuidelines}"
+							href="https://experience.sap.com/fiori-design-web/icons/"
+							class="IconDescriptionLink sapUiMediumMarginBottom"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					visible="{= !${version>/isOpenUI5} }"
+					backgroundColorSet="ColorSet6"
+					backgroundColorShade="ShadeB">
+					<l:VerticalLayout>
+						<core:Icon
+							src="sap-icon://globe"
+							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
+						</core:Icon>
+						<custom:TitleLink
+							press="onTitleLinkPress"
+							text="{i18n>fontName_S4AndIotAppIcons}"
+							class="TitleLink"
+							titleStyle="H2"
+							target="_blank"/>
+						<Text
+							text="{i18n>s4AndIotAppIconsDescription}"
+							class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
+						<Label
+							text="{i18n>iconNamespace}"
+							class="sapUiSmallMarginTop "/>
+						<Text
+							text="sap-icon://BusinessSuiteInAppSymbols"
+							class=" sapUiMediumMarginBottom "/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+					visible="{= !${version>/isOpenUI5} }"
+					backgroundColorSet="ColorSet6"
+					backgroundColorShade="ShadeC">
+					<l:VerticalLayout>
+						<core:Icon
+							src="sap-icon://BusinessSuiteInAppSymbols/icon-display-ads"
+							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
+						</core:Icon>
+						<custom:TitleLink
+							press="onTitleLinkPress"
+							text="{i18n>fontName_BusinessSuiteInAppSymbols}"
+							class="TitleLink"
+							titleStyle="H2"
+							target="_blank">
+							<custom:customData>
+								<core:CustomData key="font" value="BusinessSuiteInAppSymbols"/>
+							</custom:customData>
+						</custom:TitleLink>
+						<Text
+							text="{i18n>fioriAppIconsDescription}"
+							class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
+						<Label
+							text="{i18n>iconNamespace}"
+							class="sapUiSmallMarginTop "/>
+						<Text
+							text="sap-icon://BusinessSuiteInAppSymbols"
+							class=" sapUiMediumMarginBottom "/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					visible="{= !${version>/isOpenUI5} }"
+					backgroundColorSet="ColorSet6"
+					backgroundColorShade="ShadeD">
+					<l:VerticalLayout>
+						<core:Icon
+							src="sap-icon://sap-ui5"
+							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
+						</core:Icon>
+						<custom:TitleLink
+							press="onTitleLinkPress"
+							text="{i18n>fioriLaunchIcons}"
+							class="TitleLink"
+							titleStyle="H2"
+							target="_blank"/>
+						<Text
+							text="{i18n>fioriLaunchIconsDescription}"
+							class="sapUiTinyMarginTop  sapUiLargeMarginEnd"/>
+						<Label
+							text="{i18n>iconNamespace}"
+							class="sapUiSmallMarginTop "/>
+						<Text
+							text="sap-icon://Fiori7/"
+							class=" sapUiMediumMarginBottom "/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					visible="{= !${version>/isOpenUI5} }"
+					backgroundColorSet="ColorSet7"
+					backgroundColorShade="ShadeB">
+					<l:VerticalLayout>
+						<core:Icon
+							src="sap-icon://sap-ui5"
+							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
+						</core:Icon>
+						<custom:TitleLink
+							press="onTitleLinkPress"
+							text="{i18n>sapWebIdeIcons}"
+							class="TitleLink"
+							titleStyle="H2"
+							target="_blank"/>
+						<Text
+							text="{i18n>sapWebIdeIconsDescription}"
+							class="sapUiTinyMarginTop sapUiLargeMarginEnd sapUiMediumMarginBottom"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					visible="{= !${version>/isOpenUI5} }"
+					backgroundColorSet="ColorSet7"
+					backgroundColorShade="ShadeC">
+					<l:VerticalLayout>
+						<core:Icon
+							src="sap-icon://sap-ui5"
+							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
+						</core:Icon>
+						<custom:TitleLink
+							press="onTitleLinkPress"
+							text="{i18n>sapGuiIcons}"
+							class="TitleLink"
+							titleStyle="H2"
+							target="_blank"/>
+						<Text
+							text="{i18n>sapGuiIconsDescription}"
+							class="sapUiTinyMarginTop sapUiLargeMarginEnd sapUiMediumMarginBottom"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow class="BlockLayoutFooter IconExplorerBackgroundColor IconExplorerHomeBackground">
+				<l:BlockLayoutCell>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+		</l:BlockLayout>
+	</Page>
+</mvc:View>

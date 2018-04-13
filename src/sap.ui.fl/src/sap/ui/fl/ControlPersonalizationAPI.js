@@ -19,7 +19,7 @@ sap.ui.define([
 
 	var sVariantTechnicalParameterName = "sap-ui-fl-control-variant-id";
 
-	var ControlVariantsAPI = {
+	var ControlPersonalizationAPI = {
 
 		/**
 		 * Returns a map of parameters used in public functions
@@ -32,11 +32,13 @@ sap.ui.define([
 		_determineParameters : function(oControl) {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var oRootControl = oAppComponent.getRootControl();
+			var oView = Utils.getViewForControl(oControl);
 			var oVariantModel = oAppComponent.getModel("$FlexVariants");
 
 			var mParams = {
 				appComponent : oAppComponent,
 				rootControl : oRootControl,
+				view : oView,
 				variantModel : oVariantModel,
 				variantManagement : {}
 			};
@@ -260,6 +262,7 @@ sap.ui.define([
 
 						mPropertyBag = {
 							appComponent : mParams.appComponent,
+							view : mParams.view,
 							modifier : JsControlTreeModifier
 						};
 
@@ -281,5 +284,5 @@ sap.ui.define([
 		}
 
 	};
-	return ControlVariantsAPI;
+	return ControlPersonalizationAPI;
 }, true);

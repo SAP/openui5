@@ -46,7 +46,7 @@ sap.ui.define(['./SliderUtilities'],
 			oRm.writeControlData(oSlider);
 
 			if (sTooltip && oSlider.getShowHandleTooltip()) {
-				oRm.writeAttributeEscaped("title", sTooltip);
+				oRm.writeAttributeEscaped("title", oSlider._formatValueByScale(sTooltip));
 			}
 
 			oRm.write(">");
@@ -145,7 +145,7 @@ sap.ui.define(['./SliderUtilities'],
 		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
 		 */
 		SliderRenderer.writeHandleTooltip = function(oRm, oSlider) {
-			oRm.writeAttribute("title", oSlider.toFixed(oSlider.getValue()));
+			oRm.writeAttribute("title", oSlider._formatValueByScale(oSlider.toFixed(oSlider.getValue())));
 		};
 
 		SliderRenderer.renderInput = function(oRm, oSlider) {
@@ -159,7 +159,7 @@ sap.ui.define(['./SliderUtilities'],
 
 			oRm.writeClasses();
 			oRm.writeAttributeEscaped("name", oSlider.getName());
-			oRm.writeAttribute("value", oSlider.toFixed(oSlider.getValue()));
+			oRm.writeAttribute("value", oSlider._formatValueByScale(oSlider.toFixed(oSlider.getValue())));
 			oRm.write("/>");
 		};
 
@@ -171,18 +171,35 @@ sap.ui.define(['./SliderUtilities'],
 		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
 		 */
 		SliderRenderer.writeAccessibilityState = function(oRm, oSlider) {
+			var fSliderValue = oSlider.getValue(),
+				bNotNumericalLabel = oSlider._isScaleLabelNotNumerical(fSliderValue),
+				sScaleLabel = oSlider._formatValueByScale(fSliderValue),
+				sValueNow;
+
+			if (oSlider._getUsedScale() && !bNotNumericalLabel) {
+				sValueNow = sScaleLabel;
+			} else {
+				sValueNow = oSlider.toFixed(fSliderValue);
+			}
+
 			oRm.writeAccessibilityState(oSlider, {
 				role: "slider",
 				orientation: "horizontal",
 				valuemin: oSlider.toFixed(oSlider.getMin()),
 				valuemax: oSlider.toFixed(oSlider.getMax()),
-				valuenow: oSlider.toFixed(oSlider.getValue())
+				valuenow: sValueNow
 			});
+
+			if (bNotNumericalLabel) {
+				oRm.writeAccessibilityState(oSlider, {
+					valuetext: sScaleLabel
+				});
+			}
 		};
 
 		SliderRenderer.renderTickmarks = function (oRm, oSlider) {
 			var i, iTickmarksToRender, fTickmarksDistance, iLabelsCount, fStep, fSliderSize,fSliderStep,
-				oScale = oSlider.getAggregation("scale");
+				oScale = oSlider._getUsedScale();
 
 			if (!oSlider.getEnableTickmarks() || !oScale) {
 				return;
@@ -192,9 +209,9 @@ sap.ui.define(['./SliderUtilities'],
 			fSliderStep = oSlider.getStep();
 
 			iLabelsCount = oScale.getTickmarksBetweenLabels();
-			iTickmarksToRender = oScale.calcNumTickmarks(fSliderSize, fSliderStep, SliderUtilities.CONSTANTS.TICKMARKS.MAX_POSSIBLE);
+			iTickmarksToRender = oScale.calcNumberOfTickmarks(fSliderSize, fSliderStep, SliderUtilities.CONSTANTS.TICKMARKS.MAX_POSSIBLE);
 			fTickmarksDistance = oSlider._getPercentOfValue(
-				oScale.calcTickmarksDistance(iTickmarksToRender, oSlider.getMin(), oSlider.getMax(), fSliderStep));
+				this._calcTickmarksDistance(iTickmarksToRender, oSlider.getMin(), oSlider.getMax(), fSliderStep));
 
 
 			oRm.write("<ul class=\"" + SliderRenderer.CSS_CLASS + "Tickmarks\">");
@@ -217,7 +234,11 @@ sap.ui.define(['./SliderUtilities'],
 		SliderRenderer.renderTickmarksLabel = function (oRm, oSlider, fValue) {
 			var fOffset = oSlider._getPercentOfValue(fValue);
 			var sLeftOrRightPosition = sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left";
+			var sValue;
 			fValue = oSlider.toFixed(fValue, oSlider.getDecimalPrecisionOfNumber(oSlider.getStep()));
+
+			// Call Scale's callback or use the plain value. Cast to string
+			sValue = oSlider._formatValueByScale(fValue);
 
 			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "TickLabel\"");
 
@@ -226,9 +247,30 @@ sap.ui.define(['./SliderUtilities'],
 
 			oRm.write(">");
 			oRm.write("<div class=\"" + SliderRenderer.CSS_CLASS + "Label\">");
-			oRm.writeEscaped("" + fValue);
+			oRm.writeEscaped(sValue);
 			oRm.write("</div>");
 			oRm.write("</li>");
+		};
+
+		/**
+		 * Calculate the distance between tickmarks.
+		 *
+		 * Actually this calculates the distance between the first and the second tickmark, but as it's
+		 * assumed that the tickmarks are spread evenly, it doesn't matter.
+		 *
+		 * @param {int} iTickmarksCount Number of tickmarks that'd be drawn
+		 * @param {float} fStart The start value of the scale.
+		 * @param {float} fEnd The end value of the scale.
+		 * @param {float} fStep The step walking from start to end.
+		 * @returns {float} The distance between tickmarks
+		 * @private
+		 */
+		SliderRenderer._calcTickmarksDistance = function (iTickmarksCount, fStart, fEnd, fStep) {
+			var fScaleSize = Math.abs(fStart - fEnd),
+				iMaxPossibleTickmarks = Math.floor(fScaleSize / fStep),
+				iStepsCount = Math.ceil(iMaxPossibleTickmarks / iTickmarksCount);
+
+			return fStart + (iStepsCount * fStep);
 		};
 
 		/**

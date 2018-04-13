@@ -89,13 +89,29 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
      * @param {string} fValue The current value for the accessibility state
      */
     RangeSliderRenderer.writeAccessibilityState = function(oRm, oSlider, fValue) {
+        var bNotNumericalLabel = oSlider._isScaleLabelNotNumerical(fValue),
+            sScaleLabel = oSlider._formatValueByScale(fValue),
+            sValueNow;
+
+        if (oSlider._getUsedScale() && !bNotNumericalLabel) {
+            sValueNow = sScaleLabel;
+        } else {
+            sValueNow = oSlider.toFixed(fValue);
+        }
+
         oRm.writeAccessibilityState(oSlider, {
             role: "slider",
             orientation: "horizontal",
             valuemin: oSlider.toFixed(oSlider.getMin()),
             valuemax: oSlider.toFixed(oSlider.getMax()),
-            valuenow: fValue
+            valuenow: sValueNow
         });
+
+        if (bNotNumericalLabel) {
+            oRm.writeAccessibilityState(oSlider, {
+                valuetext: sScaleLabel
+            });
+        }
     };
 
     /**
@@ -172,8 +188,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
             valuemin: oSlider.toFixed(oSlider.getMin()),
             valuemax: oSlider.toFixed(oSlider.getMax()),
             valuenow: aRange.join("-"),
-            valuetext: oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange),
-            labelledby: (sForwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[2].getId()).trim()//  range label
+            valuetext: oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(oSlider._formatValueByScale, oSlider)),
+            labelledby: (sForwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[2].getId()).trim() // range label
         });
 
         oRm.write('></div>');

@@ -46,9 +46,9 @@
 				</subSections>
 			</ObjectPageSection>
 
-			<ObjectPageSection title="Section 4">
+			<ObjectPageSection>
 				<subSections>
-					<ObjectPageSubSection title="Subsection 4.1 ">
+					<ObjectPageSubSection>
 						<blocks>
 							<blockcolor:BlockBlueT4 id="bbt4"/>
 						</blocks>

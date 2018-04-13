@@ -314,7 +314,8 @@ sap.ui.define([
 		var oChange = this.addChange(oChangeSpecificData, oControl);
 		var mPropertyBag = {
 			modifier: JsControlTreeModifier,
-			appComponent: Utils.getAppComponentForControl(oControl)
+			appComponent: Utils.getAppComponentForControl(oControl),
+			view: Utils.getViewForControl(oControl)
 		};
 		return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 
@@ -939,14 +940,16 @@ sap.ui.define([
 		var mDependencies = mChangesMap.mDependencies;
 		var mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
 		var aChangesForControl = mChanges[oControl.getId()] || [];
+		var mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent,
+			view: Utils.getViewForControl(oControl)
+		};
 		aChangesForControl.forEach(function (oChange) {
 			if (!mDependencies[oChange.getId()]) {
 				oChange.QUEUED = true;
 				aPromiseStack.push(function() {
-					return this.checkTargetAndApplyChange(oChange, oControl, {
-						modifier: JsControlTreeModifier,
-						appComponent: oAppComponent
-					})
+					return this.checkTargetAndApplyChange(oChange, oControl, mPropertyBag)
 					.then(function(bUpdate) {
 						if (bUpdate) {
 							this._updateDependencies(mDependencies, mDependentChangesOnMe, oChange.getId());
@@ -957,7 +960,7 @@ sap.ui.define([
 			} else {
 				//saves the information whether a change was already processed but not applied.
 				mDependencies[oChange.getId()][FlexController.PENDING] =
-					this.checkTargetAndApplyChange.bind(this, oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent});
+					this.checkTargetAndApplyChange.bind(this, oChange, oControl, mPropertyBag);
 			}
 		}.bind(this));
 

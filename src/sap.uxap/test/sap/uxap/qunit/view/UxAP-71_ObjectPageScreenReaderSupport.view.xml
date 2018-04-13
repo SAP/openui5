@@ -6,6 +6,9 @@
 		height="100%">
 
     <ObjectPageLayout id="ObjectPageLayout" enableLazyLoading="false" subSectionLayout="TitleOnLeft">
+		<headerTitle>
+			<ObjectPageHeader id="objectPageHeader" objectTitle="Header title" />
+		</headerTitle>
         <sections>
             <ObjectPageSection id="testSection" title="Anchor1">
                 <ObjectPageSubSection id="testSubSection" title="Anchor summary">

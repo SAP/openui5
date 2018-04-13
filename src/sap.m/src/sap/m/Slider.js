@@ -192,6 +192,12 @@ function(
 				 * @since 1.46
 				 */
 				scale: { type: "sap.m.IScale", multiple: false, singularName: "scale" },
+				/**
+				 * Default scale for visualisation of tickmarks, if scale aggregation is not provided
+				 *
+				 * @since 1.56
+				 */
+				_defaultScale: { type: "sap.m.ResponsiveScale", multiple: false, visibility: "hidden" },
 
 				/**
 				 * Multiple Aggregation for Tooltips
@@ -255,6 +261,39 @@ function(
 		/* ----------------------------------------------------------- */
 		/* Private methods                                             */
 		/* ----------------------------------------------------------- */
+
+		/**
+		 * Returns the scale control that is used when tickmarks are enabled
+		 *
+		 * @private
+		 * @returns {sap.m.IScale|undefined} The scale that is used or undefined,
+		 * if tickmarks are not enabled
+		 */
+		Slider.prototype._getUsedScale = function () {
+			if (!this.getEnableTickmarks()) {
+				return;
+			}
+
+			return this.getAggregation('scale') || this.getAggregation('_defaultScale');
+		};
+
+		Slider.prototype._syncScaleUsage = function () {
+			var bEnabledTickmarks = this.getEnableTickmarks(),
+				oUserDefinedScale = this.getAggregation('scale'),
+				oDefaultScale = this.getAggregation("_defaultScale");
+
+
+			// if the default scale was set, but later on the user adds a scale
+			// or set the enableTickmarks property to false, we should destroy the default one
+			if ((oDefaultScale && !bEnabledTickmarks) || (oUserDefinedScale && oDefaultScale)) {
+				this.destroyAggregation("_defaultScale", true);
+			}
+
+			// if there is no scale set, fall back to the default scale
+			if (bEnabledTickmarks && !oUserDefinedScale && !oDefaultScale) {
+				this.setAggregation("_defaultScale", new ResponsiveScale(), true);
+			}
+		};
 
 		Slider.prototype._showTooltipsIfNeeded = function () {
 			if (this.getShowAdvancedTooltip()) {
@@ -380,46 +419,16 @@ function(
 		 *
 		 * @private
 		 */
-		Slider.prototype._handleSliderResize = function () {
-			if (this.getEnableTickmarks()) {
-				this._handleTickmarksResponsiveness();
+		Slider.prototype._handleSliderResize = function (oEvent) {
+			var oScale = this._getUsedScale();
+
+			if (this.getEnableTickmarks() && oScale) {
+				oScale.handleResize(oEvent);
 			}
 
 			if (this.getShowAdvancedTooltip()) {
 				this._handleTooltipContainerResponsiveness();
 			}
-		};
-
-		/**
-		 * Shows/hides tickmarks when some limitations are met.
-		 *
-		 * @private
-		 */
-		Slider.prototype._handleTickmarksResponsiveness = function () {
-			var aLabelsInDOM, fOffsetLeftPct, fOffsetLeftPx, aHiddenLabels,
-				oScale = this.getAggregation("scale"),
-				aTickmarksInDOM = this.$().find(".sapMSliderTick"),
-				iScaleWidth = this.$().find(".sapMSliderTickmarks").width(),
-				bShowTickmarks = (iScaleWidth / aTickmarksInDOM.size()) >= SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL;
-
-			//Small tickmarks should get hidden if their width is less than _SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL
-			if (this._bTickmarksLastVisibilityState !== bShowTickmarks) {
-				aTickmarksInDOM.toggle(bShowTickmarks);
-				this._bTickmarksLastVisibilityState = bShowTickmarks;
-			}
-
-			// Tickmarks with labels responsiveness
-			aLabelsInDOM = this.$().find(".sapMSliderTickLabel").toArray();
-			// The distance between the first and second label in % of Scale's width
-			fOffsetLeftPct = parseFloat(aLabelsInDOM[1].style.left);
-			// Convert to PX
-			fOffsetLeftPx = iScaleWidth * fOffsetLeftPct / 100;
-			// Get which labels should become hidden
-			aHiddenLabels = oScale.getHiddenTickmarksLabels(iScaleWidth, aLabelsInDOM.length, fOffsetLeftPx, SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.WITH_LABEL);
-
-			aLabelsInDOM.forEach(function (oElem, iIndex) {
-				oElem.style.display = aHiddenLabels[iIndex] ? "none" : "inline-block";
-			});
 		};
 
 		Slider.prototype._handleTooltipContainerResponsiveness = function () {
@@ -492,7 +501,8 @@ function(
 		};
 
 		Slider.prototype.setDomValue = function(sNewValue) {
-			var oDomRef = this.getDomRef();
+			var oDomRef = this.getDomRef(),
+				sScaleLabel = this._formatValueByScale(sNewValue);
 
 			if (!oDomRef) {
 				return;
@@ -503,7 +513,7 @@ function(
 				oHandleDomRef = this.getDomRef("handle");
 
 			if (!!this.getName()) {
-				this.getDomRef("input").setAttribute("value", sNewValue);
+				this.getDomRef("input").setAttribute("value", sScaleLabel);
 			}
 
 			if (this.getProgress()) {
@@ -523,11 +533,67 @@ function(
 			if (this.getShowHandleTooltip() && !this.getShowAdvancedTooltip()) {
 
 				// update the tooltip
-				oHandleDomRef.title = sNewValue;
+				oHandleDomRef.title = sScaleLabel;
 			}
 
+			this._updateHandleAriaAttributeValues(oHandleDomRef, sNewValue, sScaleLabel);
+		};
+
+		/**
+		 * Updates the aria-valuenow and aria-valuetext.
+		 *
+		 * @param {object} oHandleDomRef The DOM reference of the slider handle
+		 * @param {string} sValue The current value
+		 * @param {string} sScaleLabel The label of the tickmark label
+		 * @private
+		 */
+		Slider.prototype._updateHandleAriaAttributeValues = function (oHandleDomRef, sValue, sScaleLabel) {
 			// update the ARIA attribute value
-			oHandleDomRef.setAttribute("aria-valuenow", sNewValue);
+			if (this._isScaleLabelNotNumerical(sValue)) {
+				oHandleDomRef.setAttribute("aria-valuenow", sValue);
+				oHandleDomRef.setAttribute("aria-valuetext", sScaleLabel);
+			} else {
+				oHandleDomRef.setAttribute("aria-valuenow", sScaleLabel);
+				oHandleDomRef.removeAttribute("aria-valuetext");
+			}
+		};
+
+		/**
+		 * Format the value from the scale callback.
+		 *
+		 * As the scale might want to display something else, but not numbers, we need to ensure that the format
+		 * would be populated to the relevant parts of the Slider:
+		 * - Handle tooltips
+		 * - Accessibility values
+		 * - Advanced tooltips are not taken into consideration as they need to implement their own formatting function.
+		 * That way we'd keep components as loose as possible.
+		 *
+		 * @param fValue The value to be formatted
+		 * @returns {string} The formatted value
+		 * @private
+		 */
+		Slider.prototype._formatValueByScale = function (fValue) {
+			var oScale = this._getUsedScale(),
+				sFormattedValue = "" + fValue;
+
+			if (this.getEnableTickmarks() && oScale && oScale.getLabel) {
+				sFormattedValue = "" + oScale.getLabel(fValue, this);
+			}
+
+			return sFormattedValue;
+		};
+
+		/**
+		 * Checks whether the scale has a numerical label defined for a certain value
+		 * of the slider.
+		 *
+		 * @param fValue
+		 * @returns {boolean} Returns true, when the scale has a not numerical label defined.
+		 * @private
+		 */
+		Slider.prototype._isScaleLabelNotNumerical = function (fValue) {
+			var oScale = this._getUsedScale();
+			return oScale && oScale.getLabel && isNaN(oScale.getLabel(fValue));
 		};
 
 		/**
@@ -689,10 +755,8 @@ function(
 				this._forwardPropertiesToTooltip(this.getAggregation("_tooltips")[0]);
 			}
 
-			// For backwards compatibility when tickmarks are enabled, should be visible
-			if (this.getEnableTickmarks() && !this.getAggregation("scale")) {
-				this.setAggregation("scale", new ResponsiveScale(), true);
-			}
+			// set the correct scale aggregation, if needed
+			this._syncScaleUsage();
 		};
 
 		Slider.prototype._forwardProperties = function (aProperties, oControl) {

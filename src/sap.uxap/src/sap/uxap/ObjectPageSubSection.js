@@ -119,6 +119,16 @@ sap.ui.define([
 	ObjectPageSubSection.MEDIA_RANGE = Device.media.RANGESETS.SAP_STANDARD;
 
 	/**
+	 * Retrieves the resource bundle for the <code>sap.uxap</code> library.
+	 * @static
+	 * @private
+	 * @returns {Object} the resource bundle object
+	 */
+	ObjectPageSubSection._getLibraryResourceBundle = function() {
+		return library.i18nModel.getResourceBundle();
+	};
+
+	/**
 	 * @private
 	 */
 	ObjectPageSubSection.prototype.init = function () {
@@ -875,10 +885,10 @@ sap.ui.define([
 
 		if (sSwitchToMode === ObjectPageSubSectionMode.Collapsed) {
 			this.setProperty("mode", ObjectPageSubSectionMode.Collapsed, true);
-			this._getSeeMoreButton().setText(library.i18nModel.getResourceBundle().getText("SEE_MORE"));
+			this._getSeeMoreButton().setText(ObjectPageSubSection._getLibraryResourceBundle().getText("SEE_MORE"));
 		} else {
 			this.setProperty("mode", ObjectPageSubSectionMode.Expanded, true);
-			this._getSeeMoreButton().setText(library.i18nModel.getResourceBundle().getText("SEE_LESS"));
+			this._getSeeMoreButton().setText(ObjectPageSubSection._getLibraryResourceBundle().getText("SEE_LESS"));
 		}
 	};
 

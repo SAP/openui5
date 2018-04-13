@@ -14,38 +14,34 @@ sap.ui.define([
 		 */
 		init: function () {
 			var oUriParameters = jQuery.sap.getUriParameters();
+			this._oMockModels = {
 
-			var sGroupsUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/groups.json");
-			var sTagsUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/tags.json");
+			};
 
-			var sGroupsMockUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/localService/mockdata/groups.json");
-			var sTagsMockUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/localService/mockdata/tags.json");
+			// load the mock fonts before initializing the mock server
+			this._mockFont("SAP-icons");
+			this._mockFont("SAP-icons-TNT");
 
-			// we need to load the models before configuring the fakeserver
-			// faking the real call and load the real models (we just want to use a timer for opa tests)
-			// at the same time is just impossible
-			var oGroupsModel = this._loadModelFromDisk(sGroupsMockUrl);
-			var oTagsModel = this._loadModelFromDisk(sTagsMockUrl);
-
+			// create a fake server with configurable delay
 			this.oServer = sinon.fakeServer.create();
 			this.oServer.autoRespond = true;
-			this.oServer.autoRespondAfter = (oUriParameters.get("serverDelay") || iAutoRespondAfterDefault);
+			this.oServer.autoRespondAfter = parseInt(oUriParameters.get("serverDelay") || iAutoRespondAfterDefault, 10);
 
+			// set up the filters for the mocked URLs
 			sinon.fakeServer.xhr.useFilters = true;
 			this.oServer.xhr.addFilter(function (method, url) {
-				// we can only fake our own url, otherwise ui5 source are not loaded correctly
-				return !(url.match(sGroupsUrl) || url.match(sTagsUrl));
-			});
+				var bMockUrl = Object.keys(this._oMockModels).some(function (sMockUrl) {
+					return url.match(sMockUrl);
+				});
+				return !bMockUrl;
+			}.bind(this));
 
-			// icon groups request
-			this.oServer.respondWith("GET", sGroupsUrl,
-				[200, {"Content-Type": "application/json"}, oGroupsModel.getJSON()]
-			);
-
-			// icon tags request
-			this.oServer.respondWith("GET", sTagsUrl,
-				[200, {"Content-Type": "application/json"}, oTagsModel.getJSON()]
-			);
+			// set up the responses for the mocked URLs
+			Object.keys(this._oMockModels).forEach(function (sName) {
+				this.oServer.respondWith("GET", sName,
+					[200, {"Content-Type": "application/json"}, this._oMockModels[sName].getJSON()]
+				);
+			}.bind(this));
 
 			jQuery.sap.log.info("Running the app with mock data");
 		},
@@ -54,11 +50,41 @@ sap.ui.define([
 			return this;
 		},
 
+		/**
+		 * Sets the path and loads the mock data models for the current icon font
+		 * @param {string} sName the font name to be mocked
+		 * @private
+		 */
+		_mockFont: function (sName) {
+			var sGroupsUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/" + sName + "/groups.json");
+			var sTagsUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/" + sName + "/tags.json");
+
+			var sGroupsMockUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/localService/mockdata/" + sName + "/groups.json");
+			var sTagsMockUrl = jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/localService/mockdata/" + sName + "/tags.json");
+
+			// we need to load the models before configuring the fakeserver
+			// faking the real call and load the real models (we just want to use a timer for opa tests)
+			// at the same time is just impossible
+			var oGroupsModel = this._loadModelFromDisk(sGroupsMockUrl);
+			var oTagsModel = this._loadModelFromDisk(sTagsMockUrl);
+
+			this._oMockModels[sGroupsUrl] = oGroupsModel;
+			this._oMockModels[sTagsUrl] = oTagsModel;
+		},
+
+		/**
+		 * Loads the mock data models from the given path
+		 * @param {string} sPath path to the mock data
+		 * @returns {sap.ui.model.json.JSONModel} JSONModel containing the mock data
+		 * @private
+		 */
 		_loadModelFromDisk: function (sPath) {
 			var aNoParams = [];
 			var oModel = new JSONModel();
 			var bLoadSync = false;
+
 			oModel.loadData(sPath, aNoParams, bLoadSync);
+
 			return oModel;
 		}
 	};

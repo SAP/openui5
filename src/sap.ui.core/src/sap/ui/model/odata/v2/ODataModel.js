@@ -68,7 +68,7 @@ sap.ui.define([
 	 *            Sets the default binding mode for the model
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
 	 *            Sets the default count mode for the model
-	 * @param {string} [mParameters.preliminaryContext=false]
+	 * @param {boolean} [mParameters.preliminaryContext=false]
 	 *            Whether a preliminary Context will be created/used by a binding
 	 * @param {sap.ui.model.odata.OperationMode} [mParameters.defaultOperationMode=Default]
 	 *            Sets the default operation mode for the model
@@ -2184,8 +2184,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._getEntity = function(sKey) {
-		sKey = sKey && ODataUtils._normalizeKey(sKey);
-		return this.oData[sKey];
+		var oEntity = this.oData[sKey];
+		if (!oEntity) {
+			sKey = sKey && ODataUtils._normalizeKey(sKey);
+			oEntity = this.oData[sKey];
+		}
+		return oEntity;
 	};
 
 	/**
@@ -2206,7 +2210,10 @@ sap.ui.define([
 		} else if (typeof vValue === 'string') {
 			sKey = vValue.substr(vValue.lastIndexOf("/") + 1);
 		}
-		return sKey && ODataUtils._normalizeKey(sKey);
+		if (!this.oData[sKey]) {
+			sKey = sKey && ODataUtils._normalizeKey(sKey);
+		}
+		return sKey;
 	};
 
 	/**

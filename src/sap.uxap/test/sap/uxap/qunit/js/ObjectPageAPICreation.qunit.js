@@ -1128,6 +1128,20 @@
 		});
 	});
 
+	QUnit.module("ObjectPage HeaderContent");
+
+	QUnit.test("test getHeaderContent returns array if empty", function (assert) {
+		// setup: object page without header content
+		var oPage = new sap.uxap.ObjectPageLayout(),
+			aHeaderContent = oPage.getHeaderContent();
+
+		// check
+		assert.ok(Array.isArray(aHeaderContent), "array is returned");
+		assert.strictEqual(aHeaderContent.length, 0, "empty array is returned");
+
+		// cleanup
+		oPage.destroy();
+	});
 
 	QUnit.module("ObjectPage API: sections removal", {
 		beforeEach: function () {

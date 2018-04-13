@@ -369,15 +369,15 @@ function(
 	};
 
 	/**
-	 * Extract potential label part from the passed element
+	 * Extract potential label part from the passed managed object instance
 	 *
-	 * @param {sap.ui.core.Element} oElement - element instance for which label has to be extracted
+	 * @param {sap.ui.base.ManagedObject} oElement - managed object class instance for which label has to be extracted
 	 * @param {Function} [fnFunction] - custom function for retrieving label
 	 * @return {String|undefined} label string or undefined when no label can be extracted
 	 */
 	ElementUtil.getLabelForElement = function(oElement, fnFunction) {
-		if (!(oElement instanceof Element)) {
-			throw Util.createError("ElementUtil#getLabelForElement", "A valid element instance should be passed as parameter", "sap.ui.dt");
+		if (!ElementUtil.isElementValid(oElement)) {
+			throw Util.createError("ElementUtil#getLabelForElement", "A valid managed object instance should be passed as parameter", "sap.ui.dt");
 		}
 		// if there is a function, only the function is executed
 		if (typeof fnFunction === "function") {

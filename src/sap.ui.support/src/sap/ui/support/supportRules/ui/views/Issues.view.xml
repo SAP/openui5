@@ -129,7 +129,7 @@
 						<t:columns>
 							<t:Column label="Issues" resizable="false">
 								<t:template>
-									<FormattedText htmlText="{formatedName}"/>
+									<FormattedText htmlText="{formattedName}"/>
 								</t:template>
 							</t:Column>
 						</t:columns>

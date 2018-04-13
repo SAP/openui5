@@ -29,16 +29,13 @@
 			},
 			items: [
 				new sap.m.MenuItem({
-					text: "responde now",
-					icon: "sap-icon://accept"
+					text: "responde now"
 				}),
 				new sap.m.MenuItem({
-					text: "before sending",
-					icon: "sap-icon://accept"
+					text: "before sending"
 				}),
 				new sap.m.MenuItem({
-					text: "Do not send",
-					icon: "sap-icon://accept"
+					text: "Do not send"
 				})
 			]
 		});
@@ -190,11 +187,12 @@
 			}
 		});
 
+		oButton.addStyleClass("sapUiLargeMargin").placeAt("ctr_cont");
+		oSelect.addStyleClass("sapUiLargeMargin").placeAt("ctr_cont");
+
 		var oPage = new sap.m.Page("page0", {
 			showHeader: false,
 			content: [
-				oSelect.addStyleClass("sapUiTinyMargin"),
-				oButton.addStyleClass("sapUiTinyMargin"),
 				oMenuButton.addStyleClass("sapUiLargeMargin")
 			]
 		});
@@ -206,10 +204,11 @@
 			]
 		});
 
-	oApp.placeAt("body");
+	oApp.addStyleClass("sapUiLargeMargin").placeAt("menu_cont");
 	</script>
 </head>
 <body id="body" class="sapUiBody" role="application">
-<div style="height: 100px"></div>
+<div id="ctr_cont" style="height: 100px"></div>
+<div id="menu_cont"></div>
 </body>
 </html>

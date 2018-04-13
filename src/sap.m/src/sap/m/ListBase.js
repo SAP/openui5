@@ -216,7 +216,7 @@ function(
 			/**
 			 * Defines the items contained within this control.
 			 */
-			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item", bindable : "bindable"},
+			items : {type : "sap.m.ListItemBase", multiple : true, singularName : "item", bindable : "bindable", selector: "#{id} .sapMListItems"},
 
 			/**
 			 * User can swipe to bring in this control on the right hand side of an item.
@@ -2088,12 +2088,6 @@ function(
 		$Element[0] ? $Element.focus() : oItem.focus();
 		oEvent.preventDefault();
 		oEvent.setMarked();
-	};
-
-	ListBase.prototype.getAggregationDomRef = function(sAggregationName) {
-		if (sAggregationName == "items") {
-			return this.getItemsContainerDomRef();
-		}
 	};
 
 	ListBase.prototype.onItemContextMenu = function(oLI, oEvent) {

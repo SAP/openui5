@@ -58,7 +58,7 @@ sap.ui.define([
 	 * The table select dialog consists of the following elements:
 	 * <ul>
 	 * <li> Search field - used to search enter search terms for a specific item.</li>
-	 * <li> Infobar (optional) - shows additional information for the current selection (i.e. total number of selected items).</li>
+	 * <li> Info toolbar (only in multi-select mode) - displays the number of currently selected items.</li>
 	 * <li> Content - the table with the items.</li>
 	 * <li> Footer (optional) - a toolbar for actions.</li>
 	 * </ul>
@@ -77,6 +77,9 @@ sap.ui.define([
 	 * <li>You need to select items within a query-based range. Use a {@link sap.ui.comp.valuehelpdialog.ValueHelpDialog value help} control instead.</li>
 	 * <li>You need to only filter a set of items. Use a {@link sap.ui.comp.filterbar.FilterBar filter bar} control instead.</li>
 	 * </ul>
+	 * <h4>Note:</h4>
+	 * The property <code>growing</code> determines the progressive loading. If it's set to true (the default value), the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, will work only for the currently loaded items.
+	 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
 	 * <h3>Responsive Behavior</h3>
 	 * <ul>
 	 * <li>On smaller screens, the columns of the table wrap and build a list that shows all the information.</li>
@@ -113,7 +116,17 @@ sap.ui.define([
 			multiSelect : {type : "boolean", group : "Dimension", defaultValue : false},
 
 			/**
-			 * Determines the number of items initially displayed in the table.
+			 * If set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the bound model (progressive loading).
+			 * <b>Note:</b> This feature only works when an <code>items</code> aggregation is bound. Growing must not be used together with two-way binding.
+			 * <b>Note:</b> If the property is set to true, the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, will work only for the currently loaded items.
+	 		 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
+			 * @since 1.56
+			 */
+			growing : {type : "boolean", group : "Behavior", defaultValue : true},
+
+			/**
+			 * Determines the number of items initially displayed in the table and defines the number of items to be requested from the model for each grow.
+			 * This property can only be used if the property <code>growing</code> is set to <code>true</code>.
 			 */
 			growingThreshold : {type : "int", group : "Misc", defaultValue : null},
 
@@ -252,8 +265,8 @@ sap.ui.define([
 
 		// store a reference to the table for binding management
 		this._oTable = new Table(this.getId() + "-table", {
-			growing: true,
-			growingScrollToLoad: true,
+			growing: that.getGrowing(),
+			growingScrollToLoad: that.getGrowing(),
 			mode: ListMode.SingleSelectMaster,
 			modeAnimationOn: false,
 			infoToolbar: new Toolbar({
@@ -479,6 +492,20 @@ sap.ui.define([
 	};
 
 	/**
+	* Sets the growing  to the internal table
+	* @public
+	* @param {boolean} bValue Value for the table's growing.
+	* @returns {sap.m.TableSelectDialog} this pointer for chaining
+	*/
+	TableSelectDialog.prototype.setGrowing = function (bValue) {
+		this._oTable.setGrowing(bValue);
+		this._oTable.setGrowingScrollToLoad(bValue);
+		this.setProperty("growing", bValue, true);
+
+		return this;
+	};
+
+	/**
 	* Sets the growing threshold to the internal table
 	* @public
 	* @param {int} iValue Value for the table's growing threshold.
@@ -490,6 +517,7 @@ sap.ui.define([
 
 		return this;
 	};
+
 	/**
 	 * Enables/Disables busy state.
 	 * @overwrite
