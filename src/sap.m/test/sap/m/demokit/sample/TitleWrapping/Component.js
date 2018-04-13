@@ -5,19 +5,21 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	var Component = UIComponent.extend("sap.m.sample.TitleWrapping.Component", {
 
 		metadata : {
-			rootView : "sap.m.sample.TitleWrapping.V",
+			rootView : {
+				"viewName": "sap.m.sample.TitleWrapping.V",
+				"type": "XML",
+				"async": true
+			},
 			dependencies : {
 				libs : [
 					"sap.m"
 				]
 			},
-			includes : [ ],
 			config : {
 				sample : {
-					stretch : true,
 					files : [
 						"V.view.xml",
-						"V.controller.js"
+						"C.controller.js"
 					]
 				}
 			}
