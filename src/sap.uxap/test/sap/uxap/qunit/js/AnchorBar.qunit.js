@@ -79,6 +79,22 @@
 		assert.strictEqual(oFirstSectionButton.$().attr("aria-checked"), "false", "ARIA checked state should be false for the unselected button");
 	});
 
+	QUnit.test("Custom button", function (assert) {
+		//select button programatically
+		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
+			oCustomButton = this.oObjectPage.getSections()[0].getCustomAnchorBarButton(),
+			aAnchorBarContent = oAnchorBar.getContent(),
+			oFirstSectionButton = aAnchorBarContent[0];
+
+		oCustomButton.setEnabled(false);
+
+		// allow for scroling
+		this.clock.tick(iRenderingDelay);
+
+		assert.strictEqual(oFirstSectionButton.$().hasClass("sapUxAPAnchorBarButtonSelected"), true, "selection is preserved");
+		assert.strictEqual(oFirstSectionButton.getEnabled(), false, "property change is propagated");
+	});
+
 	QUnit.test("Submenu button accessibility", function (assert) {
 		var	oButton = this.oObjectPage.getAggregation("_anchorBar").getContent()[1],
 			sSubSectionId = this.oObjectPage.getSections()[1].getSubSections()[0].getId();
