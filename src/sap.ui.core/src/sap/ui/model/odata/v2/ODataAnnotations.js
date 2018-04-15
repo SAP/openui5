@@ -132,12 +132,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/odata/AnnotationParser', 'sap/
 	};
 
 	/**
-	 * V1 API Compatibility method. @see sap.ui.model.odata.v2.ODataAnnotations#getData
-	 * Returns the parsed and merged annotation data object
+	 * Returns the parsed and merged annotation data object.
 	 *
 	 * @public
 	 * @returns {object} returns annotations data
-	 * @deprecated
+	 * @deprecated As of version 1.37.0, only kept for compatibility with V1 API, use {@link #getData} instead.
 	 */
 	ODataAnnotations.prototype.getAnnotationsData = function() {
 		return this._mAnnotations;

@@ -197,7 +197,7 @@ function(
 	/**
 	 * The <code>growing</code> property is not supported for control <code>Tree</code>.
 	 * @public
-	 * @deprecated
+	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowing = function() {
 		jQuery.sap.log.error("Growing feature of " + this + " is not supported!");
@@ -207,7 +207,7 @@ function(
 	/**
 	 * The <code>growingThreshold</code> property is not supported for control <code>Tree</code>.
 	 * @public
-	 * @deprecated
+	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowingThreshold = function() {
 		jQuery.sap.log.error("GrowingThreshold of " + this + " is not supported!");
@@ -217,7 +217,7 @@ function(
 	/**
 	 * The <code>growingTriggerText</code> property is not supported for control <code>Tree</code>.
 	 * @public
-	 * @deprecated
+	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowingTriggerText = function() {
 		jQuery.sap.log.error("GrowingTriggerText of " + this + " is not supported!");
@@ -227,7 +227,7 @@ function(
 	/**
 	 * The <code>growingScrollToLoad</code> property is not supported for control <code>Tree</code>.
 	 * @public
-	 * @deprecated
+	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowingScrollToLoad = function() {
 		jQuery.sap.log.error("GrowingScrollToLoad of " + this + " is not supported!");
@@ -237,7 +237,7 @@ function(
 	/**
 	 * The <code>growingDirection</code> property is not supported for control <code>Tree</code>.
 	 * @public
-	 * @deprecated
+	 * @deprecated As of version 1.46.
 	 */
 	Tree.prototype.setGrowingDirection = function() {
 		jQuery.sap.log.error("GrowingDirection of " + this + " is not supported!");

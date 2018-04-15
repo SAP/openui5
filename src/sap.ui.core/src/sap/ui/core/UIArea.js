@@ -254,7 +254,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 * @param {sap.ui.base.Interface | sap.ui.core.Control}
 	 *            oRootControl the Control that should be the Root for this <code>UIArea</code>.
 	 * @public
-	 * @deprecated use functions <code>removeAllContent</code> and <code>addContent</code> instead
+	 * @deprecated As of version 1.1, use {@link #removeAllContent} and {@link #addContent} instead
 	 */
 	UIArea.prototype.setRootControl = function(oRootControl) {
 		this.removeAllContent();
@@ -268,7 +268,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Element', '.
 	 * @param {int} idx index of the control in the content of this <code>UIArea</code>
 	 * @return {sap.ui.core.Control} the content control of this <code>UIArea</code> at the specified index.
 	 * @public
-	 * @deprecated use function <code>getContent</code> instead
+	 * @deprecated As of version 1.1, use function {@link #getContent} instead
 	 */
 	UIArea.prototype.getRootControl = function(idx) {
 		var aContent = this.getContent();

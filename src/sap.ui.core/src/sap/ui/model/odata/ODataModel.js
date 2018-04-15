@@ -49,7 +49,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 * @version ${version}
 	 *
 	 * @public
-	 * @deprecated Please use {@link sap.ui.model.odata.v2.ODataModel} instead.
+	 * @deprecated As of version 1.48, please use {@link sap.ui.model.odata.v2.ODataModel} instead.
 	 * @alias sap.ui.model.odata.ODataModel
 	 * @extends sap.ui.model.Model
 	 */
@@ -1275,10 +1275,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 
 	/**
 	 * Sets whether this OData service supports $count on its collections.
-	 * This method is deprecated, please use setDefaultCountMode instead.
 	 *
 	 * @param {boolean} bCountSupported
-	 * @deprecated
+	 * @deprecated As of version 1.20, please use {@link #setDefaultCountMode} instead.
 	 * @public
 	 */
 	ODataModel.prototype.setCountSupported = function(bCountSupported) {
@@ -1287,10 +1286,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 
 	/**
 	 * Returns whether this model supports the $count on its collections
-	 * This method is deprecated, please use getDefaultCountMode instead.
 	 *
 	 * @returns {boolean}
-	 * @deprecated
+	 * @deprecated As of version 1.20, please use {@link #getDefaultCountMode} instead.
 	 * @public
 	 */
 	ODataModel.prototype.isCountSupported = function() {
@@ -1911,7 +1909,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 *
 	 * @return {object} oData Object containing the requested data if the path is valid.
 	 * @public
-	 * @deprecated please use {@link #getProperty} instead
+	 * @deprecated As of version 1.6.0, please use {@link #getProperty} instead
 	 */
 	ODataModel.prototype.getData = function(sPath, oContext, bIncludeExpandEntries) {
 		return this.getProperty(sPath, oContext, bIncludeExpandEntries);
@@ -3019,7 +3017,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/BindingMode', 'sap/ui/model/Co
 	 * Force no caching
 	 * @param {boolean} [bForceNoCache=false] whether to force no caching
 	 * @public
-	 * @deprecated The caching should be controlled by the backend by setting the correct cache control header
+	 * @deprecated As of version 1.13, the caching should be controlled by the backend by setting the correct cache control header
 	 */
 	ODataModel.prototype.forceNoCache = function(bForceNoCache) {
 		this.bCache = !bForceNoCache;

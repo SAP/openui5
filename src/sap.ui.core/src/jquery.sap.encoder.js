@@ -47,7 +47,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @return The escaped string
 	 * @type {string}
 	 * @public
-	 * @deprecated Has been renamed, use {@link jQuery.sap.encodeHTML} instead.
+	 * @deprecated As of version 1.4.0, has been renamed, use {@link jQuery.sap.encodeHTML} instead.
 	 * @function
 	 */
 	jQuery.sap.escapeHTML = encodeXML;

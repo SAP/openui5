@@ -201,7 +201,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @deprecated use the change event. It now contains a parameter (reason : "sort") when a sorter event is fired.
+	 * @deprecated As of version 1.11, use the change event. It now contains a parameter (reason : "sort") when a sorter event is fired.
 	 */
 	ListBinding.prototype.attachSort = function(fnFunction, oListener) {
 		this.attachEvent("sort", fnFunction, oListener);
@@ -212,7 +212,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @deprecated use the change event.
+	 * @deprecated As of version 1.11, use the change event.
 	 */
 	ListBinding.prototype.detachSort = function(fnFunction, oListener) {
 		this.detachEvent("sort", fnFunction, oListener);
@@ -222,7 +222,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * Fire event _sort to attached listeners.
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @private
-	 * @deprecated use the change event. It now contains a parameter (reason : "sort") when a sorter event is fired.
+	 * @deprecated As of version 1.11, use the change event. It now contains a parameter (reason : "sort") when a sorter event is fired.
 	 */
 	ListBinding.prototype._fireSort = function(mArguments) {
 		this.fireEvent("sort", mArguments);
@@ -233,7 +233,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
+	 * @deprecated As of version 1.11, use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
 	 */
 	ListBinding.prototype.attachFilter = function(fnFunction, oListener) {
 		this.attachEvent("filter", fnFunction, oListener);
@@ -244,7 +244,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @deprecated use the change event.
+	 * @deprecated As of version 1.11, use the change event.
 	 */
 	ListBinding.prototype.detachFilter = function(fnFunction, oListener) {
 		this.detachEvent("filter", fnFunction, oListener);
@@ -254,7 +254,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * Fire event _filter to attached listeners.
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @private
-	 * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
+	 * @deprecated As of version 1.11, use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
 	 */
 	ListBinding.prototype._fireFilter = function(mArguments) {
 		this.fireEvent("filter", mArguments);

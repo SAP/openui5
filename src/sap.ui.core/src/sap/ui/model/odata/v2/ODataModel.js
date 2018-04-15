@@ -112,6 +112,7 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.ui.model.odata.v2.ODataModel
 	 * @extends sap.ui.model.Model
+	 * @since 1.24.0
 	 */
 	var ODataModel = Model.extend("sap.ui.model.odata.v2.ODataModel", /** @lends sap.ui.model.odata.v2.ODataModel.prototype */ {
 
@@ -812,7 +813,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} A promise on metadata loaded state or <code>null</code> if metadata is not initialized or currently refreshed.
 	 *
-	 * @deprecated
+	 * @deprecated As of version 1.42.
 	 *
 	 * @public
 	 */
@@ -3819,7 +3820,7 @@ sap.ui.define([
 	 *
 	 * @return {object} Object containing the requested data if the path is valid.
 	 * @public
-	 * @deprecated please use {@link #getProperty} instead
+	 * @deprecated As of version 1.24, please use {@link #getProperty} instead
 	 */
 	ODataModel.prototype.getData = function(sPath, oContext, bIncludeExpandEntries) {
 		return this.getProperty(sPath, oContext, bIncludeExpandEntries);

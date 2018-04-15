@@ -793,7 +793,7 @@ sap.ui.define([
 
 	/**
 	 * @param {string} sKey
-	 * @deprecated Not implemented - DO NOT USE
+	 * @deprecated As of version 1.1, never has been implemented - DO NOT USE
 	 * @public
 	 */
 	RenderManager.prototype.translate = function(sKey) {
@@ -801,7 +801,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * @deprecated Not implemented - DO NOT USE
+	 * @deprecated As of version 1.1, never has been implemented - DO NOT USE
 	 * @return {sap.ui.core.RenderManager} this render manager instance to allow chaining
 	 * @public
 	 */

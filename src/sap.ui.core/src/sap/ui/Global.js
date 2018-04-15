@@ -209,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * @return {object} the innermost namespace of the hierarchy
 	 * @public
 	 * @static
-	 * @deprecated Use jQuery.sap.declare or jQuery.sap.getObject(...,0) instead
+	 * @deprecated As of version 1.1, see {@link topic:c78c07c094e04ccfaab659378a1707c7 Creating Control and Class Modules}.
 	 */
 	sap.ui.namespace = function(sNamespace){
 
