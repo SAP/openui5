@@ -2,8 +2,9 @@ sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/test/Opa',
 	'sap/ui/test/Opa5',
-	"sap/m/Button"
-], function ($, Opa, Opa5, Button) {
+	"sap/m/Button",
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function ($, Opa, Opa5, Button, PropertyStrictEquals) {
 	"use strict";
 
 	var iExecutionDelay = Opa.config.executionDelay;
@@ -380,5 +381,4 @@ sap.ui.define([
 
 		assert.strictEqual(aCheckText, aText, "Check got same value as success");
 	});
-
 });
