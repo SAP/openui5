@@ -2124,7 +2124,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._registerOnContentResize = function () {
 
-		var $container = this._$sectionsContainer.length && this._$sectionsContainer[0];
+		var $container = this._$contentContainer.length && this._$contentContainer[0];
 		if (!$container) {
 			return;
 		}

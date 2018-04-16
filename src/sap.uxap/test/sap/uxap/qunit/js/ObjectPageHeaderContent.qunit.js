@@ -149,4 +149,39 @@
 		oObjectPage.destroy();
 	});
 
+	QUnit.module("ObjectPageLayout content resize");
+
+	QUnit.test("addHeaderContent", function (assert) {
+		var contentView = sap.ui.xmlview("UxAP-ObjectPageHeaderContent", {
+			viewName: "view.UxAP-ObjectPageHeaderContent"
+		}),
+		oObjectPageLayout = contentView.byId("ObjectPageLayout"),
+		oResizableControl = new sap.ui.core.HTML({content: "<div style='height:100px'></div>"}),
+		done = assert.async(),
+		bResizeListenerCalled = false;
+
+		oObjectPageLayout.addHeaderContent(oResizableControl);
+
+		// proxy the resize listener to check if called
+		var fnOrig = oObjectPageLayout._onUpdateContentSize;
+		oObjectPageLayout._onUpdateContentSize = function() {
+			bResizeListenerCalled = true;
+			fnOrig.apply(this, arguments);
+		};
+
+		// wait for the point where the listener is internally attached
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// act
+			oResizableControl.getDomRef().style.height = "10px"; //decrease height of content
+			setTimeout(function() {
+				// check
+				assert.ok(bResizeListenerCalled, "_onUpdateContentSize method is called");
+				contentView.destroy();
+				done();
+			}, 500 /* wait for resizeHandler to be triggered */);
+		});
+
+		contentView.placeAt('qunit-fixture');
+	});
+
 }(jQuery, QUnit));
