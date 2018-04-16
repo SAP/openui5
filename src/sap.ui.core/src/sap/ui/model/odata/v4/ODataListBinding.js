@@ -203,7 +203,7 @@ sap.ui.define([
 		this.mParameters = mParameters; // store mParameters at binding after validation
 		if ("$$aggregation" in oBindingParameters) { // via c'tor only!
 			this.mQueryOptions.$apply = _Helper.buildApply(oBindingParameters.$$aggregation);
-			this.aAggregation = oBindingParameters.$$aggregation;
+			this.aAggregation = _Helper.clone(oBindingParameters.$$aggregation);
 		}
 
 		this.mCacheByContext = undefined;
