@@ -74,12 +74,12 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(
-			_AggregationCache.filterOrderby("Dimension  desc%2CSecondDimension asc", aAggregation),
-			"Dimension  desc");
+			_AggregationCache.filterOrderby("Dimension %20desc%2COtherDimension asc", aAggregation),
+			"Dimension %20desc");
 
 		// code under test
 		assert.strictEqual(
-			_AggregationCache.filterOrderby("Dimension\tdesc,SecondDimension asc", aAggregation),
+			_AggregationCache.filterOrderby("Dimension\tdesc,OtherDimension asc", aAggregation),
 			"Dimension\tdesc");
 
 		// code under test
@@ -137,6 +137,35 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("calculateKeyPredicate", function (assert) {
+		var aAggregation = [{
+				grouped : true,
+				name : "First=Dimension" // Note: unrealistic example to test encoding
+			}],
+			oGroupNode = {"First=Dimension" : "A/B&C"},
+			sMetaPath = "/Set",
+			mTypeForMetaPath = {
+				"/Set" : {
+					$kind : "EntityType",
+					// Note: $Key does not play a role here!
+					"First=Dimension" : {
+						$kind : "Property",
+						$Type : "Edm.String"
+					}
+				}
+			};
+
+		this.mock(_Helper).expects("formatLiteral").withExactArgs("A/B&C", "Edm.String")
+			.returns("'A/B&C'");
+
+		// code under test
+		_AggregationCache.calculateKeyPredicate(aAggregation, sMetaPath, oGroupNode,
+			mTypeForMetaPath);
+
+		assert.strictEqual(oGroupNode["@$ui5._.predicate"], "(First%3DDimension='A%2FB%26C')");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchValue, read", function (assert) {
 		var aAggregation = [],
 			aAggregationForFirstLevel = [],
@@ -144,7 +173,9 @@ sap.ui.require([
 			oCache,
 			fnDataRequested = {}, //TODO
 			oFirstLevelCache = {
+				fetchTypes : function () {},
 				fetchValue : function () {},
+				sMetaPath : {/*placeholder for string*/},
 				read : function () {}
 			},
 			sGroupId = "group",
@@ -158,6 +189,7 @@ sap.ui.require([
 				value : [{}, {}]
 			},
 			bSortExpandSelect = {/*false, true*/},
+			mTypeForMetaPath = {},
 			that = this;
 
 		this.mock(_AggregationCache).expects("filterAggregationForFirstLevel")
@@ -174,10 +206,20 @@ sap.ui.require([
 				{$apply : sApply, $count : true, $orderby : sOrderby, "sap-client" : "123"},
 				sinon.match.same(bSortExpandSelect))
 			.returns(oFirstLevelCache);
+		this.mock(_AggregationCache).expects("calculateKeyPredicate").on(null)
+			.withExactArgs(sinon.match.same(aAggregationForFirstLevel),
+				sinon.match.same(oFirstLevelCache.sMetaPath), sinon.match.same(oResult.value[0]),
+				sinon.match.same(mTypeForMetaPath))
+			.callsFake(function (aAggregation, sMetaPath, oGroupNode, mTypeForMetaPath) {
+				oGroupNode["@$ui5._.predicate"] = "(FirstDimension='A')";
+			});
 
 		// code under test
 		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, aAggregation,
 			mQueryOptions, bSortExpandSelect);
+
+		// code under test (this normally happens inside read's handleResponse method)
+		oFirstLevelCache.calculateKeyPredicates(oResult.value[0], mTypeForMetaPath);
 
 		this.mock(oFirstLevelCache).expects("read").on(oFirstLevelCache)
 			.withExactArgs(iIndex, iLength, iPrefetchLength, sGroupId,
@@ -199,6 +241,8 @@ sap.ui.require([
 				assert.strictEqual(oResult.value[1]["@$ui5.node.isTotal"], true);
 				assert.strictEqual(oResult.value[0]["@$ui5.node.level"], 1);
 				assert.strictEqual(oResult.value[1]["@$ui5.node.level"], 1);
+				// Note: called above for index 0 only
+				assert.strictEqual(oResult.value[0]["@$ui5._.predicate"], "(FirstDimension='A')");
 
 				that.mock(oFirstLevelCache).expects("fetchValue").on(oFirstLevelCache)
 					.withExactArgs(sGroupId, sPath, sinon.match.same(fnDataRequested),
@@ -212,5 +256,4 @@ sap.ui.require([
 					});
 			});
 	});
-	//TODO drop unused dimensions from $orderby
 });
