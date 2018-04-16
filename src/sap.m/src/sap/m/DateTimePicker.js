@@ -122,7 +122,21 @@ sap.ui.define([
 	var DateTimePicker = DatePicker.extend("sap.m.DateTimePicker", /** @lends sap.m.DateTimePicker.prototype */ { metadata : {
 
 		library : "sap.m",
+		properties: {
+			/**
+			 * Sets the minutes slider step. If the step is less than 1, it will be automatically converted back to 1.
+			 * The minutes slider is populated only by multiples of the step.
+			 * @since 1.56
+			 */
+			minutesStep: {type: "int", group: "Misc", defaultValue: 1 },
 
+			/**
+			 * Sets the seconds slider step. If the step is less than 1, it will be automatically converted back to 1.
+			 * The seconds slider is populated only by multiples of the step.
+			 * @since 1.56
+			 */
+			secondsStep: {type: "int", group: "Misc", defaultValue: 1 }
+		},
 		aggregations: {
 			/**
 			 * Internal aggregation that contains the inner _picker pop-up.
@@ -311,6 +325,30 @@ sap.ui.define([
 
 		if (this._oSliders) {
 			this._oSliders.setDisplayFormat(_getTimePattern.call(this));
+		}
+
+		return this;
+
+	};
+
+	DateTimePicker.prototype.setMinutesStep = function(iMinutesStep) {
+
+		this.setProperty('minutesStep', iMinutesStep, true);
+
+		if (this._oSliders) {
+			this._oSliders.setMinutesStep(iMinutesStep);
+		}
+
+		return this;
+
+	};
+
+	DateTimePicker.prototype.setSecondsStep = function(iSecondsStep) {
+
+		this.setProperty('secondsStep', iSecondsStep, true);
+
+		if (this._oSliders) {
+			this._oSliders.setSecondsStep(iSecondsStep);
 		}
 
 		return this;
@@ -527,6 +565,8 @@ sap.ui.define([
 		if (!this._oSliders) {
 			jQuery.sap.require("sap.m.TimePickerSliders");
 			this._oSliders = new sap.m.TimePickerSliders(this.getId() + "-Sliders", {
+				minutesStep: this.getMinutesStep(),
+				secondsStep: this.getSecondsStep(),
 				displayFormat: _getTimePattern.call(this),
 				localeId: this.getLocaleId()
 			})._setShouldOpenSliderAfterRendering(true);

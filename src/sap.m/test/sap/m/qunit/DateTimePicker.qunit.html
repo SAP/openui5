@@ -586,6 +586,27 @@
 				oDateTimePicker.destroy();
 			});
 
+			QUnit.test("setMinutesStep, setSecondsStep set the steps to the sliders", function(assert) {
+				//arrange, act
+				var oDTP = new sap.m.DateTimePicker({
+					minutesStep: 5,
+					secondsStep: 4
+				}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				oDTP._createPopup();
+				oDTP._createPopupContent();
+				oDTP._openPopup();
+
+				//asert
+				assert.equal(oDTP._oSliders.getMinutesStep(), 5, "sliders has the correct minutes step");
+				assert.equal(oDTP._oSliders.getSecondsStep(), 4, "sliders has the correct seconds step");
+
+				//clean
+				oDTP.destroy();
+			});
+
 		</script>
 
 	</head>

@@ -45,5 +45,7 @@
 			id="T2"
 			text="{path:'/dateValue', type:'sap.ui.model.type.DateTime', formatOptions: { style: 'long'}}"
 			/>
+		<Label text="DateTimePicker with steps for minutes and seconds sliders" />
+		<DateTimePicker minutesStep="3" secondsStep="5" />
 	</VBox>
 </mvc:View>
