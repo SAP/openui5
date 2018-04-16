@@ -1573,6 +1573,42 @@
 		assert.ok(!this.oObjectPage._isFirstVisibleSectionBase(oSectionToSelectSecondSubSection), "the first visible subSection is correct");
 	});
 
+	QUnit.module("ScrollDelegate", {
+
+		beforeEach: function () {
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, 5);
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("getScrollDelegate", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			iInitScrollTop,
+			iNewScrollTop,
+			done = assert.async();
+
+		assert.expect(1);
+
+		// wait for the event when the page is rendered and ready
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+			// Setup: save init scroll position
+			iInitScrollTop = oObjectPage._$opWrapper.scrollTop();
+
+			// Act: call scrolling while scrolling is suppressed
+			iNewScrollTop = iInitScrollTop + 10;
+			oObjectPage.getScrollDelegate().scrollTo(0 /* x */, iNewScrollTop /* y */);
+
+			// Check if scroll was effective
+			assert.strictEqual(oObjectPage._$opWrapper.scrollTop(), iNewScrollTop, "scroll top is changed");
+			done();
+		});
+
+		// Act: render page to test scrolling behavior
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("RTA util functions", {
 
 		beforeEach: function () {
