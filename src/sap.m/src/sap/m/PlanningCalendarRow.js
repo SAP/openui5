@@ -684,12 +684,12 @@ sap.ui.define(['jquery.sap.global',
 		var oEndDate = new Date(oRowStartDate),
 			iNewEndDate = oEndDate.getDate() + iIndex + 1;
 
-		if (iNewEndDate <= oAppEndDate.getDate()) {
+		if (iNewEndDate <= oAppStartDate.getDate()) {
 			iNewEndDate = oAppStartDate.getDate() + 1;
 		}
 
 		oEndDate.setDate(iNewEndDate);
-		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate(), 0, 0, 0);
+		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate());
 
 		return {
 			startDate: oAppStartDate,
@@ -701,12 +701,12 @@ sap.ui.define(['jquery.sap.global',
 		var oEndDate = new Date(oRowStartDate),
 			iNewEndMonth = oEndDate.getMonth() + iIndex + 1;
 
-		if (iNewEndMonth <= oAppEndDate.getMonth()) {
+		if (iNewEndMonth <= oAppStartDate.getMonth()) {
 			iNewEndMonth = oAppStartDate.getMonth() + 1;
 		}
 
 		oEndDate.setMonth(iNewEndMonth);
-		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), 1, 0, 0, 0);
+		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), 1);
 
 		return {
 			startDate: oAppStartDate,
