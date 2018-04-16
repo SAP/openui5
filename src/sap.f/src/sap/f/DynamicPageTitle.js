@@ -280,7 +280,7 @@ sap.ui.define([
 
 	DynamicPageTitle.TOGGLE_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "TOGGLE_HEADER");
 	DynamicPageTitle.EXPANDED_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "EXPANDED_HEADER");
-	DynamicPageTitle.COLLAPSED_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "COLLAPSED_HEADER");
+	DynamicPageTitle.COLLAPSED_HEADER_TEXT_ID = InvisibleText.getStaticId("sap.f", "SNAPPED_HEADER");
 
 	/**
 	 * Flushes the given control into the given container.
@@ -1009,7 +1009,9 @@ sap.ui.define([
 			bHasTopContent = oBreadcrumbs || bHasNavigationActions,
 			bHasOnlyBreadcrumbs = !!(oBreadcrumbs && !bHasNavigationActions),
 			bHasOnlyNavigationActions = bHasNavigationActions && !oBreadcrumbs,
-			sAreaShrinkRatioDefaultValue = this.getMetadata().getProperty("areaShrinkRatio").getDefaultValue();
+			sAreaShrinkRatioDefaultValue = this.getMetadata().getProperty("areaShrinkRatio").getDefaultValue(),
+			oParent = this.getParent(),
+			bIsToggleable = isFunction(oParent.getToggleHeaderOnTitleClick) ? oParent.getToggleHeaderOnTitleClick() : false;
 
 		// if areaShrinkRatio is set to default value (or not set at all) and primaryArea is set,
 		// use shrink factors defined for primaryArea
@@ -1042,7 +1044,7 @@ sap.ui.define([
 			headingAreaShrinkFactor: oShrinkFactorsInfo.headingAreaShrinkFactor,
 			contentAreaShrinkFactor: oShrinkFactorsInfo.contentAreaShrinkFactor,
 			actionsAreaShrinkFactor: oShrinkFactorsInfo.actionsAreaShrinkFactor,
-			ariaLabelledByIDs: this._getARIALabelReferences(this._bExpandedState),
+			ariaLabelledByIDs: bIsToggleable ? this._getARIALabelReferences(this._bExpandedState) : "",
 			breadcrumbs: this.getBreadcrumbs(),
 			separator: this._getToolbarSeparator(),
 			hasTopContent: bHasTopContent,
@@ -1149,8 +1151,11 @@ sap.ui.define([
 		}
 	};
 
-	DynamicPageTitle.prototype._updateARIAState = function (bHeaderExpanded) {
-		this.$().attr("aria-labelledby", this._getARIALabelReferences(bHeaderExpanded));
+	DynamicPageTitle.prototype._updateARIAState = function (bHeaderExpanded, bToggleHeaderOnTitleClick) {
+		var sARIAText = bToggleHeaderOnTitleClick ? this._getARIALabelReferences(bHeaderExpanded) : "";
+
+		this.$().attr("aria-labelledby", sARIAText);
+		return this;
 	};
 
 	DynamicPageTitle.prototype._getARIALabelReferences = function (bHeaderExpanded) {

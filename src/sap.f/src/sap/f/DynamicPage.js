@@ -364,11 +364,13 @@ sap.ui.define([
 
 	DynamicPage.prototype.setToggleHeaderOnTitleClick = function (bToggleHeaderOnTitleClick) {
 		var oDynamicPageTitle = this.getTitle(),
+			bHeaderExpanded = this.getHeaderExpanded(),
 			vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
 
 		bToggleHeaderOnTitleClick = this.getProperty("toggleHeaderOnTitleClick");
 		this.$().toggleClass("sapFDynamicPageTitleClickEnabled", bToggleHeaderOnTitleClick);
 		this._updateToggleHeaderVisualIndicators();
+		this._updateARIAStates(bHeaderExpanded);
 
 		if (exists(oDynamicPageTitle)) {
 			oDynamicPageTitle._toggleFocusableState(bToggleHeaderOnTitleClick);
@@ -1075,10 +1077,11 @@ sap.ui.define([
 	};
 
 	DynamicPage.prototype._updateTitleARIAState = function (bExpanded) {
-		var oDynamicPageTitle = this.getTitle();
+		var oDynamicPageTitle = this.getTitle(),
+			bToggleHeaderOnTitleClick = this.getToggleHeaderOnTitleClick();
 
 		if (exists(oDynamicPageTitle)) {
-			oDynamicPageTitle._updateARIAState(bExpanded);
+			oDynamicPageTitle._updateARIAState(bExpanded, bToggleHeaderOnTitleClick);
 		}
 	};
 
