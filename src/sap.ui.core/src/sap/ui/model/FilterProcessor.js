@@ -99,7 +99,9 @@ sap.ui.define(['./Filter', 'jquery.sap.global', 'jquery.sap.unicode'],
 	 */
 	FilterProcessor.normalizeFilterValue = function(oValue, bCaseSensitive){
 		if (typeof oValue == "string") {
-
+			if (bCaseSensitive === undefined) {
+				bCaseSensitive = false;
+			}
 			if (!bCaseSensitive) {
 				// Internet Explorer and Edge cannot uppercase properly on composed characters
 				if (String.prototype.normalize && (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge)) {
