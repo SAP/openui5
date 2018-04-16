@@ -23,7 +23,7 @@
 			id="DTP3"
 			displayFormat="short"
 			change="handleChange"/>
-		<Label text="DateTimePicker with islamic date and secondray gregorian date in calendar" labelFor="DTP4"/>
+		<Label text="DateTimePicker with Islamic date and secondary Gregorian date in calendar" labelFor="DTP4"/>
 		<DateTimePicker
 			id="DTP4"
 			value="2016-02-18-10-32-30"
