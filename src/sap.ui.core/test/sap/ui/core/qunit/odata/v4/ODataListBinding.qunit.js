@@ -303,8 +303,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("applyParameters: simulate call from c'tor", function (assert) {
 		var aAggregation = [],
+			aAggregationCloned = [],
 			sApply = "A.P.P.L.E.",
 			sGroupId = "foo",
+			oHelperMock = this.mock(_Helper),
 			oModelMock = this.mock(this.oModel),
 			oBinding = this.oModel.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
@@ -328,7 +330,8 @@ sap.ui.require([
 			});
 		oModelMock.expects("buildQueryOptions").withExactArgs(sinon.match.same(mParameters), true)
 			.returns({$filter : "bar"});
-		this.mock(_Helper).expects("buildApply").withExactArgs(aAggregation).returns(sApply);
+		oHelperMock.expects("buildApply").withExactArgs(aAggregation).returns(sApply);
+		oHelperMock.expects("clone").withExactArgs(aAggregation).returns(aAggregationCloned);
 		oBinding.mCacheByContext = {
 			"/Products" : {}
 		};
@@ -349,7 +352,7 @@ sap.ui.require([
 			$filter : "bar"
 		}, "mQueryOptions");
 		assert.deepEqual(oBinding.mParameters, mParameters);
-		assert.strictEqual(oBinding.aAggregation, aAggregation, "$$aggregation");
+		assert.strictEqual(oBinding.aAggregation, aAggregationCloned, "$$aggregation");
 	});
 
 	//*********************************************************************************************
