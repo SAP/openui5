@@ -3,8 +3,19 @@
  */
 
 // Provides base class for controllers (part of MVC concept)
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/ManagedObject', 'sap/ui/core/mvc/ControllerExtension'],
-	function(jQuery, EventProvider, ManagedObject, ControllerExtension) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/base/util/extend',
+	'sap/ui/base/EventProvider',
+	'sap/ui/base/ManagedObject',
+	'sap/ui/core/mvc/ControllerExtension'
+	], function(
+		jQuery,
+		extend,
+		EventProvider,
+		ManagedObject,
+		ControllerExtension
+	) {
 	"use strict";
 
 
@@ -444,6 +455,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		};
 
 		/**
+		 * Creates an instance of controller class.
+		 *
+		 * @param {object} mOptions  A map containing the controller configuration options.
+		 * @param {string} mOptions.name The controller name that corresponds to a JS module that can be loaded
+	 	 * via the module system (mOptions.name + suffix ".controller.js")
+		 * @return {Promise} the Promise resolves with a new instance of the controller
+		 * @public
+		 * @static
+		 * @since 1.56.0
+		 */
+		Controller.create = function (mOptions) {
+			return controllerFactory(mOptions.name, undefined, true);
+		};
+
+		/**
 		 * Defines a controller class or creates an instance of an already defined controller class.
 		 *
 		 * When a name and a controller implementation object is given, a new controller class
@@ -459,9 +485,27 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 		 * @param {boolean} bAsync Decides whether the controller gets loaded asynchronously or not
 		 * @return {void | sap.ui.core.mvc.Controller | Promise} void, the new controller instance or a Promise
 		 * 	resolving with the controller in async case
+		 * @static
+		 * @deprecated since 1.56:
+		 * <ul>
+		 * <li>For controller instance creation use <code>Controller.create</code> instead.</li>
+		 * <li>For defining controllers use <code>Controller.extend</code> instead.
+		 * </ul>
 		 * @public
 		 */
 		sap.ui.controller = function (sName, oControllerImpl, bAsync) {
+			if (bAsync) {
+				jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.controller(" + sName + ")'. Use 'sap.ui.core.mvc.Controller.create(...)' instead.");
+			} else {
+				jQuery.sap.log.warning("Do not use synchronous controller creation for controller '" + sName + "'! Use the new asynchronous factory 'sap.ui.core.mvc.Controller.create(...)' instead.");
+			}
+			return controllerFactory.apply(this, arguments);
+		};
+
+		/*
+		 * Old controller factory implementation
+		 */
+		function controllerFactory(sName, oControllerImpl, bAsync) {
 			var oController,
 				ControllerClass,
 				sOwnerId = ManagedObject._sOwnerId;
@@ -493,8 +537,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/base/Ma
 			} else {
 				// controller *definition*
 				mRegistry[sName] = oControllerImpl;
+				jQuery.sap.log.info("For defining controllers use Controller.extend instead");
 			}
-		};
+		}
 
 		/**
 		 * Returns a list of public methods of the controller. If <code>bWithExtensions</code> is
