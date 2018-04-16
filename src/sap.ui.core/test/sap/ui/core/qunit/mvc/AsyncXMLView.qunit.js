@@ -88,6 +88,55 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("XMLView.create API");
+
+	QUnit.test("Simple View + Databinding", function (assert) {
+		var done = assert.async();
+		sap.ui.require(["sap/ui/model/json/JSONModel"], function (JSONModel) {
+			var oModel1 = new JSONModel({
+				booleanValue : true,
+				integerValue: "8015px",
+				stringValue : 'Text1',
+				data: {
+					booleanValue : true,
+					integerValue: 8015,
+					stringValue : 'Text1'
+				}
+			});
+			var oModel2 = new JSONModel({
+				booleanValue : false,
+				integerValue: "4711px",
+				stringValue : '1txeT'
+			});
+
+			var xmlWithBindings = [
+				'<core:View xmlns:core="sap.ui.core" xmlns:m="sap.m">',
+				'  <m:Button id="btn" enabled="{/booleanValue}" text="{/stringValue}" width="{/integerValue}" />',
+				'</core:View>'
+			].join('');
+
+			XMLView.create({definition:xmlWithBindings}).then(function (oViewWithBindings1) {
+				oViewWithBindings1.setModel(oModel1);
+				assert.equal(oViewWithBindings1.byId("btn").getEnabled(), oModel1.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+				assert.equal(oViewWithBindings1.byId("btn").getText(), oModel1.getData().stringValue, "Check 'text' property of button 'btn'");
+				assert.equal(oViewWithBindings1.byId("btn").getWidth(), oModel1.getData().integerValue, "Check 'width' property of button 'btn'");
+
+				// same view with ID
+				XMLView.create({id: "create", definition:xmlWithBindings}).then(function (oViewWithBindings2) {
+					oViewWithBindings2.setModel(oModel2);
+					assert.equal(oViewWithBindings2.byId("btn").getEnabled(), oModel2.getData().booleanValue, "Check 'enabled' property of button 'btn'");
+					assert.equal(oViewWithBindings2.byId("btn").getText(), oModel2.getData().stringValue, "Check 'text' property of button 'btn'");
+					assert.equal(oViewWithBindings2.byId("btn").getWidth(), oModel2.getData().integerValue, "Check 'width' property of button 'btn'");
+
+					// check for correct ID handover
+					assert.strictEqual(oViewWithBindings2.byId("create--btn"), oViewWithBindings2.byId("btn"), "Button is adressable by fully qualified ID");
+
+					done();
+				});
+			});
+		});
+	});
+
 
 	// ==== Cache-relevant test cases ===================================================
 

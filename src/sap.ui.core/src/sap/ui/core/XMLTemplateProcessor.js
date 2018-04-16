@@ -246,10 +246,10 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 		// the output of the template parsing, containing strings and promises which resolve to control or control arrays
 		// later this intermediate state with promises gets resolved to a flat array containing only strings and controls
 		var aResult = [],
-			pResultChain = SyncPromise.resolve();
+			pResultChain = SyncPromise.resolve(),
+			sProcessingMode = oView._sProcessingMode || sap.ui.getCore().getConfiguration().getXMLProcessingMode();
 
-
-		bAsync = bAsync && sap.ui.getCore().getConfiguration().getXMLProcessingMode() === "sequential";
+		bAsync = bAsync && sProcessingMode === "sequential";
 		jQuery.sap.log.debug("XML processing mode is " + (bAsync ? "sequential" : "default"), "", "XMLTemplateProcessor");
 
 		var bDesignMode = sap.ui.getCore().getConfiguration().getDesignMode();

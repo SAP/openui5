@@ -5,29 +5,31 @@
 // Provides control sap.ui.core.mvc.XMLView.
 sap.ui.define([
     'jquery.sap.global',
+    './View',
+    "./XMLViewRenderer",
+	"sap/base/util/extend",
+    'sap/ui/base/ManagedObject',
     'sap/ui/core/XMLTemplateProcessor',
     'sap/ui/core/library',
-    './View',
-    'sap/ui/model/resource/ResourceModel',
-    'sap/ui/base/ManagedObject',
     'sap/ui/core/Control',
     'sap/ui/core/RenderManager',
     'sap/ui/core/cache/CacheManager',
-    "./XMLViewRenderer",
+    'sap/ui/model/resource/ResourceModel',
     'jquery.sap.xml',
     'jquery.sap.script'
 ],
 	function(
 	    jQuery,
+		View,
+		XMLViewRenderer,
+		extend,
+		ManagedObject,
 		XMLTemplateProcessor,
 		library,
-		View,
-		ResourceModel,
-		ManagedObject,
 		Control,
 		RenderManager,
-		Cache/* , jQuerySap */,
-		XMLViewRenderer
+		Cache,
+		ResourceModel /* , jQuerySap */
 	) {
 	"use strict";
 
@@ -87,7 +89,14 @@ sap.ui.define([
 			/**
 			 * Configuration for the XMLView caching.
 			 */
-			cache : 'Object'
+			cache : 'Object',
+
+			/**
+			 * The processing mode of the XMLView.
+			 * If the async view is created with the XMLView.create API.
+			 * The default value is "sequential".
+			 */
+			processingMode: { type: "string", defaultValue: "", visibility: "hidden" }
 		},
 
 		designtime: "sap/ui/core/designtime/mvc/XMLView.designtime"
@@ -134,10 +143,57 @@ sap.ui.define([
 		 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view
 		 * @public
 		 * @static
+		 * @deprecated since 1.56: Use sap.ui.core.mvc.XMLView.create instead
 		 * @return {sap.ui.core.mvc.XMLView} the created XMLView instance
 		 */
 		sap.ui.xmlview = function(sId, vView) {
 			return sap.ui.view(sId, vView, ViewType.XML);
+		};
+
+		/**
+		 * Instantiates an XMLView of the given configuration object.
+		 *
+		 * <strong>Note:</strong><br>
+		 * On root level, you can only define content for the default aggregation, e.g. without adding the <code>&lt;content&gt;</code> tag. If
+		 * you want to specify content for another aggregation of a view like <code>dependents</code>, place it in a child
+		 * control's dependents aggregation or add it by using {@link sap.ui.core.mvc.XMLView#addDependent}.
+		 *
+		 * <strong>Note</strong>: if you enable caching, you need to take care of the invalidation via keys. Automatic
+		 * invalidation takes only place if the UI5 version or the component descriptor (manifest.json) change. This is
+		 * still an experimental feature and may experience slight changes of the invalidation parameters or the cache
+		 * key format.
+		 *
+		 * @param {map} mOptions A map containing the view configuration options.
+		 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
+		 * @param {string} [mOptions.viewName] corresponds to an XML module that can be loaded via the module system (mOptions.viewName + suffix ".view.xml")
+		 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view. The given controller instance overrides
+		 * the controller defined in the view definition. Sharing a controller instance between multiple views is not supported.
+		 * @param {string|Document} [mOptions.definition] XML string or XML document that defines the view. If not given, the view content
+		 * definition is loaded by the module system.
+		 * @param {object} [mOptions.cache] Cache configuration; caching gets active when this object is provided
+		 * with vView.cache.keys array; keys are used to store data in the cache and for invalidation of the cache.
+		 * @param {Array.<(string|Promise)>} [mOptions.cache.keys] Array with strings or Promises resolving with strings
+		 * @param {object} [mOptions.preprocessors] Preprocessors configuration, see {@link sap.ui.core.mvc.View}
+		 * <strong>Note</strong>: These preprocessors are only available to this instance. For global or
+		 * on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
+		 * @public
+		 * @static
+		 * @return {Promise} a Promise that resolves with the view instance and rejects with any thrown error.
+		 */
+		XMLView.create = function (mOptions) {
+			var mParameters = extend(true, {}, mOptions);
+
+			// mapping renamed parameters
+			mParameters.viewContent = mParameters.definition;
+
+			// defaults for the async API
+			mParameters.async = true;
+			mParameters.type = ViewType.XML;
+
+			// for now the processing mode is always set to default, might be changeable later, e.g. "parallel"
+			mParameters.processingMode = mParameters.processingMode || "sequential";
+
+			return View.create(mParameters);
 		};
 
 		/**
@@ -450,6 +506,8 @@ sap.ui.define([
 			}
 
 			this._oContainingView = mSettings.containingView || this;
+
+			this._sProcessingMode = mSettings.processingMode;
 
 			if (this.oAsyncState) {
 				// suppress rendering of preserve content
