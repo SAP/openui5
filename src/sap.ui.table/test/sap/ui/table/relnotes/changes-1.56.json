@@ -97,6 +97,24 @@
         "type": "FIX",
         "text": " GridTable: Ensure getFixColumnCount to return the property value",
         "references": []
+      },
+      {
+        "id": "d17fdac9dbc1fc0b58b2346972b36638e00981c6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.dnd: dragEnd and dragOver events are added",
+        "references": []
+      },
+      {
+        "id": "8ab042ebe772e118cf4762604461248ca1de8095",
+        "type": "FIX",
+        "text": " GridTable: Leave action mode on horizontal scroll",
+        "references": []
+      },
+      {
+        "id": "05e8a6a5dd139c2eec283587e449012d2c523820",
+        "type": "FIX",
+        "text": " Table: Layout correction with row actions",
+        "references": []
       }
     ]
   }

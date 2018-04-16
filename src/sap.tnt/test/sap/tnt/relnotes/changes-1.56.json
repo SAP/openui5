@@ -18,6 +18,12 @@
         "type": "FIX",
         "text": " sap.tnt, sap.ui.uinified.designtime: UUID added to the messagebundle files",
         "references": []
+      },
+      {
+        "id": "e608b163b2a34c1aef5654345123845a0e3a31bd",
+        "type": "FIX",
+        "text": " sap.tnt.InfoLabel: fix failing unit test",
+        "references": []
       }
     ]
   }

@@ -542,6 +542,54 @@
         "type": "FIX",
         "text": " v2.OdataModel: createEntry",
         "references": []
+      },
+      {
+        "id": "c0ae7b93a34b10c1e5f07cd7b9132f75e6f081a2",
+        "type": "FEATURE",
+        "text": " core.ElementMetadata: drag-and-drop configuration",
+        "references": []
+      },
+      {
+        "id": "64e185fdbf152c085d475e94b582719d242c8efb",
+        "type": "FEATURE",
+        "text": " sap.ui.Device: Introduce Blink flag",
+        "references": []
+      },
+      {
+        "id": "d17fdac9dbc1fc0b58b2346972b36638e00981c6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.dnd: dragEnd and dragOver events are added",
+        "references": []
+      },
+      {
+        "id": "f626a8007cffc664460aebe218789890b1985b94",
+        "type": "FIX",
+        "text": " ComponentContainer: Convert \"manifest\" string to boolean",
+        "references": []
+      },
+      {
+        "id": "b81674a564dca891aff4474be885b0a1d7bda05c",
+        "type": "FIX",
+        "text": " FESR: correctly set values for initial interaction",
+        "references": []
+      },
+      {
+        "id": "fa7705ba0d15be021cd22a7d7d7e5b9ce4f497f9",
+        "type": "FIX",
+        "text": " ManagedObject: fix \u0027off by 1\u0027 bug in generated association methods",
+        "references": []
+      },
+      {
+        "id": "1be0e17fd57372a757cf2869e953b8673149172a",
+        "type": "FIX",
+        "text": " databinding Documentation",
+        "references": []
+      },
+      {
+        "id": "3dfe64355e9a77786e3dbb48a2788d93e26735d6",
+        "type": "FIX",
+        "text": " jquery.sap.trace.qunit: adapted to different component name",
+        "references": []
       }
     ]
   }

@@ -11,7 +11,7 @@
       {
         "id": "012b33628fe2749a95df15befd5163769fbb71aa",
         "type": "FIX",
-        "text": "sap.ui.dt.MiniMenu - various bugfixes & cleaning (split1)",
+        "text": "sap.ui.dt.MiniMenu - various bugfixes \u0026 cleaning (split1)",
         "references": []
       },
       {
@@ -30,6 +30,18 @@
         "id": "bcecb61ee50e6ce23d8987147c2048e87e2fa260",
         "type": "FIX",
         "text": "sap.ui.rta - Handling of sync failed event + overlay creation error",
+        "references": []
+      },
+      {
+        "id": "fa7705ba0d15be021cd22a7d7d7e5b9ce4f497f9",
+        "type": "FIX",
+        "text": " ManagedObject: fix \u0027off by 1\u0027 bug in generated association methods",
+        "references": []
+      },
+      {
+        "id": "4f1c6d67dc13346a4ced9abfc0d87fde43ae929c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Retrieve control name with inter-library inheritance",
         "references": []
       }
     ]

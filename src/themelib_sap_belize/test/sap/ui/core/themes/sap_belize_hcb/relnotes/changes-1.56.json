@@ -91,6 +91,12 @@
         "type": "FIX",
         "text": " sap.m.Input: Focus border is now correct",
         "references": []
+      },
+      {
+        "id": "d17fdac9dbc1fc0b58b2346972b36638e00981c6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.dnd: dragEnd and dragOver events are added",
+        "references": []
       }
     ]
   }

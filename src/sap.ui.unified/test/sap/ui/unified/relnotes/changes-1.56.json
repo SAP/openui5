@@ -127,6 +127,12 @@
         "type": "FIX",
         "text": " sap.ui.unified.MenuItem|ShellHeadUserItem: insert font face",
         "references": []
+      },
+      {
+        "id": "a9984e032f3fcd17e0bdd9d7c9cb2b0c5e00c4ba",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: tests no longer fail on IE",
+        "references": []
       }
     ]
   }
