@@ -223,5 +223,22 @@
         "references": []
       }
     ]
+  },
+  "1.54.4": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "33b97fe2e8ee952c0899ec651fe62058b18da271",
+        "type": "FIX",
+        "text": " GridTable: Avoid refocus of cell while scrolling for ACC",
+        "references": []
+      },
+      {
+        "id": "13c85f0c53ac6834d92c805163586da5eda91c91",
+        "type": "FIX",
+        "text": " Table: Layout correction with row actions",
+        "references": []
+      }
+    ]
   }
 }

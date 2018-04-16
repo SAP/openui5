@@ -2350,5 +2350,88 @@
         "references": []
       }
     ]
+  },
+  "1.54.4": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "0d8284d624ce069441a38e7b9a61cd7df27d8e69",
+        "type": "FIX",
+        "text": " sap.m.Button, sap.m.MenuButton, sap.m.ToggleButton: press state inside Toolbar and List fixed",
+        "references": []
+      },
+      {
+        "id": "a2d84aa52a0c8d684ac2fc2a62a90f1f4632e23f",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Now in IE \u0026 touch devices the focus is correct after closing the picker",
+        "references": []
+      },
+      {
+        "id": "d209baeb6527a0837487a5e368c327915a625bb4",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: fix failing unit tests",
+        "references": []
+      },
+      {
+        "id": "af70dfde5b0fc485b27ee611ce198da4c91b0a0f",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: sap.m.SegmentedButton is now correctly alligned",
+        "references": []
+      },
+      {
+        "id": "d258df12ddd5dc948dd674624c646691a4b33758",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Summary text is correct when a list is filtered",
+        "references": []
+      },
+      {
+        "id": "7ff400b796858e28f9b7a39d80e0235bfd64bba0",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Change event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "c34b916ab41c0649919f4c1312ef14a2939a33cb",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header icon size",
+        "references": []
+      },
+      {
+        "id": "c50d2f9a8ee47b0dc568c2cbbcf91694610d9237",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix failing unit test on combi devices",
+        "references": []
+      },
+      {
+        "id": "b1085feab6fde2b6a8fa8684d6f32e9b9cf3f562",
+        "type": "FIX",
+        "text": " sap.m.Select: Popover width on zoom out fixed",
+        "references": []
+      },
+      {
+        "id": "c77025067264d33fd1a1b598365eba8dba7cff7c",
+        "type": "FIX",
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
+      },
+      {
+        "id": "b4dd2bd6d588c50d1bbe6585bcca9635fc918657",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Selected items are correct after closing or removing items",
+        "references": []
+      },
+      {
+        "id": "549c4a5f067fc6a9d13a31f9f7e9bdee05f9b400",
+        "type": "FIX",
+        "text": " sap.m.TabStrip: do not create global CustomSelectList and CustomSelect",
+        "references": []
+      },
+      {
+        "id": "369f0fcd1494b03e81f9bd73d37b2c143b8be5b8",
+        "type": "FIX",
+        "text": " sap.m.TablePersoController: works now also with \"late attachment\"",
+        "references": []
+      }
+    ]
   }
 }

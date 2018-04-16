@@ -1226,5 +1226,34 @@
         "references": []
       }
     ]
+  },
+  "1.54.4": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "3b72d997d635f5ccdab96922fe91d06fcba55db3",
+        "type": "FIX",
+        "text": " CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
+        "references": []
+      },
+      {
+        "id": "c77025067264d33fd1a1b598365eba8dba7cff7c",
+        "type": "FIX",
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
+      },
+      {
+        "id": "e7ee9ca3c261127a21df79d986b04302ec8b3122",
+        "type": "FIX",
+        "text": " sap/base/utils/equal: Support for NaN values",
+        "references": []
+      },
+      {
+        "id": "4efc9c56f96a8592f445f160d76c0b540c83a6a6",
+        "type": "FIX",
+        "text": " sap/ui/dom/includeStylesheet: Correct comparison with existing href",
+        "references": []
+      }
+    ]
   }
 }

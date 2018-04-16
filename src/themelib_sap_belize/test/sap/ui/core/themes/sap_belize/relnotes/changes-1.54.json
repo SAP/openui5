@@ -234,5 +234,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.4": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "0d8284d624ce069441a38e7b9a61cd7df27d8e69",
+        "type": "FIX",
+        "text": " sap.m.Button, sap.m.MenuButton, sap.m.ToggleButton: press state inside Toolbar and List fixed",
+        "references": []
+      }
+    ]
   }
 }
