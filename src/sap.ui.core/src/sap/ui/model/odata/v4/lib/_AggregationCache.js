@@ -7,9 +7,16 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
 	"./_Cache",
-	"./_Helper"
-], function (jQuery, SyncPromise, _Cache, _Helper) {
+	"./_Helper",
+	"./_Parser"
+], function (jQuery, SyncPromise, _Cache, _Helper, _Parser) {
 	"use strict";
+
+	var rComma = /,|%2C|%2c/,
+		rODataIdentifier = new RegExp("^" + _Parser.sODataIdentifier
+			+ "(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
+		// "required white space"
+		rRws = new RegExp(_Parser.sWhitespace + "+");
 
 	//*********************************************************************************************
 	// _AggregationCache
@@ -34,14 +41,18 @@ sap.ui.define([
 	 * @private
 	 */
 	function _AggregationCache(oRequestor, sResourcePath, aAggregation, mQueryOptions,
-		bSortExpandSelect) {
-		var sApply = _Helper.buildApply(
-				_AggregationCache.filterAggregationForFirstLevel(aAggregation));
+			bSortExpandSelect) {
+		var aFirstLevelAggregation = _AggregationCache.filterAggregationForFirstLevel(aAggregation);
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
 
 		this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
-			jQuery.extend({}, mQueryOptions, {$apply : sApply, $count : true}), bSortExpandSelect);
+			jQuery.extend({}, mQueryOptions, {
+				$apply : _Helper.buildApply(aFirstLevelAggregation),
+				$count : true,
+				$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
+					aFirstLevelAggregation)
+			}), bSortExpandSelect);
 	}
 
 	// make _AggregationCache a _Cache
@@ -176,6 +187,42 @@ sap.ui.define([
 		return aAggregation.filter(function (oAggregation) {
 			return oAggregation.grouped === true || oAggregation.total === true;
 		});
+	};
+
+	/**
+	 * Returns the "$orderby" system query option filtered in such a way that only dimensions
+	 * contained in the given aggregation information are used.
+	 *
+	 * @param {string} [sOrderby]
+	 *   The original "$orderby" system query option
+	 * @param {object[]} aAggregation
+	 *   An array with objects holding the information needed for data aggregation; see also
+	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+	 *   Extension for Data Aggregation Version 4.0</a>
+	 * @returns {string}
+	 *   The filtered "$orderby" system query option
+	 *
+	 * @private
+	 */
+	_AggregationCache.filterOrderby = function (sOrderby, aAggregation) {
+		var mNames; // hash set of all dimension/measure names
+
+		if (sOrderby) {
+			mNames = {};
+			aAggregation.forEach(function (oAggregation) {
+				mNames[oAggregation.name] = true;
+			});
+
+			return sOrderby.split(rComma).filter(function (sOrderbyItem) {
+				var sName;
+
+				if (rODataIdentifier.test(sOrderbyItem)) {
+					sName = sOrderbyItem.split(rRws)[0]; // drop optional asc/desc
+					return mNames[sName];
+				}
+				return true;
+			}).join(",");
+		}
 	};
 
 	return _AggregationCache;
