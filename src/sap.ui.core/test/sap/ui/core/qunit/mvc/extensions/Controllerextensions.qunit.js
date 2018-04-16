@@ -8,38 +8,53 @@ sap.ui.define([
 	"use-strict";
 
 	var mAllPublicMethods = {
-		"byId":{},
-		"callbackMethod":{},
-		"extension1":{},
-		"getLifecycleCalls":{},
-		"getLifecycleCallsFromArray":{},
-		"getView":{},
-		"publicMethod":{},
-		"publicWithCallbackMethod":{},
-		"extension1.byId":{"reloadNeeded":true},
-		"extension1.getView":{"reloadNeeded":true},
-		"extension1.callingPublicAndPrivateMethod":{"reloadNeeded":true},
-		"extension1.getBase":{"reloadNeeded":true},
-		"extension1.getLifecycleCalls":{"reloadNeeded":true},
-		"extension1.getLifecycleCallsFromArray":{"reloadNeeded":true},
-		"extension1.publicMethod":{"reloadNeeded":true},
-		"extension1.publicMethodToOverride":{"reloadNeeded":true},
-		"extension.example.ProviderExt1.byId":{"reloadNeeded":true},
-		"extension.example.ProviderExt1.getView":{"reloadNeeded":true},
-		"extension.example.ProviderExt1.callingPublicAndPrivateMethod":{"reloadNeeded":true},
-		"extension.example.ProviderExt1.getBase":{"reloadNeeded":true},
-		"extension.example.ProviderExt1.getLifecycleCalls":{"reloadNeeded":true},
-		"extension.example.ProviderExt1.getLifecycleCallsFromArray":{"reloadNeeded":true},
-		"extension.example.ProviderExt1.publicMethod":{"reloadNeeded":true},
-		"extension.example.ProviderExt1.publicMethodToOverride":{"reloadNeeded":true},
-		"extension.example.ProviderExt2.byId":{"reloadNeeded":true},
-		"extension.example.ProviderExt2.getView":{"reloadNeeded":true},
-		"extension.example.ProviderExt2.callingPublicAndPrivateMethod":{"reloadNeeded":true},
-		"extension.example.ProviderExt2.getBase":{"reloadNeeded":true},
-		"extension.example.ProviderExt2.getLifecycleCalls":{"reloadNeeded":true},
-		"extension.example.ProviderExt2.getLifecycleCallsFromArray":{"reloadNeeded":true},
-		"extension.example.ProviderExt2.publicMethod":{"reloadNeeded":true},
-		"extension.example.ProviderExt2.publicMethodToOverride":{"reloadNeeded":true}
+		"byId":{"public":true, "final":false, "reloadNeeded": false},
+		"callbackMethod":{"public":true, "final":false, "reloadNeeded": false},
+		"getLifecycleCalls":{"public":true, "final":false, "reloadNeeded": false},
+		"getLifecycleCallsFromArray":{"public":true, "final":false, "reloadNeeded": false},
+		"getView":{"public":true, "final":false, "reloadNeeded": false},
+		"publicMethod":{"public":true, "final":false, "reloadNeeded": false},
+		"publicWithCallbackMethod":{"public":true, "final":false, "reloadNeeded": false},
+		"extension1.byId":{"public":true,"final":true,"reloadNeeded":true},
+		"extension1.callingPublicAndPrivateMethod":{"public":true,"final":false,"reloadNeeded":true},
+		"extension1.finalMethod":{"public":true,"final":true,"reloadNeeded":true},
+		"extension1.checkInterface":{"public":true,"final":false,"reloadNeeded":true},
+		"extension1.getBase":{"public":true,"final":false,"reloadNeeded":true},
+		"extension1.getLifecycleCalls":{"public":true,"final":false,"reloadNeeded":true},
+		"extension1.getLifecycleCallsFromArray":{"public":true,"final":false,"reloadNeeded":true},
+		"extension1.getView":{"public":true,"final":true,"reloadNeeded":true},
+		"extension1.publicMethod":{"public":true,"final":false,"reloadNeeded":true},
+		"extension1.publicMethodToOverride":{"public":true,"final":false,"reloadNeeded":true},
+		"extension2.byId":{"public":true,"final":true,"reloadNeeded":true},
+		"extension2.callingPublicAndPrivateMethod":{"public":true,"final":false,"reloadNeeded":true},
+		"extension2.finalMethod":{"public":true,"final":true,"reloadNeeded":true},
+		"extension2.checkInterface":{"public":true,"final":false,"reloadNeeded":true},
+		"extension2.getBase":{"public":true,"final":false,"reloadNeeded":true},
+		"extension2.getLifecycleCalls":{"public":true,"final":false,"reloadNeeded":true},
+		"extension2.getLifecycleCallsFromArray":{"public":true,"final":false,"reloadNeeded":true},
+		"extension2.getView":{"public":true,"final":true,"reloadNeeded":true},
+		"extension2.publicMethod":{"public":true,"final":false,"reloadNeeded":true},
+		"extension2.publicMethodToOverride":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt1.byId":{"public":true,"final":true,"reloadNeeded":true},
+		"extension.example.ProviderExt1.callingPublicAndPrivateMethod":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt1.finalMethod":{"public":true,"final":true,"reloadNeeded":true},
+		"extension.example.ProviderExt1.checkInterface":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt1.getBase":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt1.getLifecycleCalls":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt1.getLifecycleCallsFromArray":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt1.getView":{"public":true,"final":true,"reloadNeeded":true},
+		"extension.example.ProviderExt1.publicMethod":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt1.publicMethodToOverride":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt2.byId":{"public":true,"final":true,"reloadNeeded":true},
+		"extension.example.ProviderExt2.callingPublicAndPrivateMethod":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt2.finalMethod":{"public":true,"final":true,"reloadNeeded":true},
+		"extension.example.ProviderExt2.checkInterface":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt2.getBase":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt2.getLifecycleCalls":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt2.getLifecycleCallsFromArray":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt2.getView":{"public":true,"final":true,"reloadNeeded":true},
+		"extension.example.ProviderExt2.publicMethod":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt2.publicMethodToOverride":{"public":true,"final":false,"reloadNeeded":true}
 	};
 
 	//all methods available
@@ -48,6 +63,8 @@ sap.ui.define([
 		"getLifecycleCallsFromArray",
 		"publicMethod",
 		"publicMethodToOverride",
+		"finalMethod",
+		"checkInterface",
 		"callingPublicAndPrivateMethod",
 		"byId",
 		"getView",
@@ -56,6 +73,11 @@ sap.ui.define([
 
 	//controller extension
 	var ControllerExt1 = ControllerExtension.extend("example.ControllerExt1", {
+		metadata: {
+			methods: {
+				"finalMethod" : {"public": true, "final" : true}
+			}
+		},
 		mLifecycle: {init:0, exit: 0, beforeRendering: 0, afterRendering: 0},
 		aLifecycle: [0,0,0,0],
 		_increaseLifecycleCall: function(sName) {
@@ -94,6 +116,12 @@ sap.ui.define([
 		},
 		getBase: function() {
 			return this.base;
+		},
+		finalMethod: function() {
+			return "I am final";
+		},
+		checkInterface: function() {
+			return this;
 		},
 		override: {
 			callbackMethod: function() {
@@ -140,13 +168,23 @@ sap.ui.define([
 		callbackMethod: function() {
 			return "callbackOfBase";
 		},
-		extension1: ControllerExt1
+		extension1: ControllerExt1,
+		extension2: ControllerExt1.override({
+			finalMethod: function() {
+				return "overridden by myExtension2";
+			}
+		})
 	});
 	//Provider extensions
 	sap.ui.define("example/ProviderExt1",
 		["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
 
 		return ControllerExtension.extend("example.ProviderExt1", {
+			metadata: {
+				methods: {
+					finalMethod: {"public": true, "final": true}
+				}
+			},
 			mLifecycle: {init:0, exit: 0, beforeRendering: 0, afterRendering: 0},
 			aLifecycle: [0,0,0,0],
 			_increaseLifecycleCall: function(sName) {
@@ -186,11 +224,17 @@ sap.ui.define([
 			publicMethodToOverride: function() {
 				return "If you see this text the method is not overidden correctly";
 			},
+			finalMethod: function() {
+				return "I am final";
+			},
+			checkInterface: function() {
+				return this;
+			},
 			override: {
 				callbackMethod: function() {
 					return "callbackOfProviderExt1";
 				},
-				extension1: {
+				"extension1": {
 					publicMethodToOverride: function() {
 						assert.strictEqual(this.getMetadata().getName(), "example.ProviderExt1", "Context of override function set to ProviderExt1 extension");
 						return "overridden by ProviderExt1";
@@ -203,6 +247,11 @@ sap.ui.define([
 		["sap/ui/core/mvc/ControllerExtension"], function(ControllerExtension) {
 
 		return ControllerExtension.extend("example.ProviderExt2", {
+			metadata: {
+				methods: {
+					finalMethod: {"public": true, "final": true}
+				}
+			},
 			mLifecycle: {init:0, exit: 0, beforeRendering: 0, afterRendering: 0},
 			aLifecycle: [0,0,0,0],
 			_increaseLifecycleCall: function(sName) {
@@ -242,12 +291,21 @@ sap.ui.define([
 			publicMethodToOverride: function() {
 				return "for the public method check";
 			},
+			finalMethod: function() {
+				return "I am final";
+			},
+			checkInterface: function() {
+				return this;
+			},
 			override: {
 				extension: {
 					"example.ProviderExt1": {
 						publicMethodToOverride: function() {
 							assert.strictEqual(this.getMetadata().getName(), "example.ProviderExt2", "Context of override function set to ProviderExt2 extension");
 							return "overridden by ProviderExt2";
+						},
+						finalMethod: function() {
+							assert.ok(false, "Original method flagged final. Never should happen");
 						}
 					}
 				},
@@ -338,6 +396,8 @@ sap.ui.define([
 			}
 		);
 		assert.strictEqual(aPublicExpected.length, Object.keys(oExtension).length, "extension: has the right amount of public functions");
+		//check method returning this: Should be the interface
+		assert.ok(jQuery.sap.equal(Object.keys(oExtension), Object.keys(oExtension.checkInterface())), "If method returns 'this' we should also return the interface");
 
 
 		//methods with _ throw private error if called
@@ -358,6 +418,7 @@ sap.ui.define([
 			oExtension = oController.extension1;
 		assert.strictEqual(oController.publicWithCallbackMethod(), "callbackOfControllerExt1", "controller.publicWithCallbackMethod returns 'callbackOfControllerExt1'");
 		assert.strictEqual(oExtension.getBase().publicWithCallbackMethod(), "callbackOfControllerExt1", "extension.getBase().publicWithCallbackMethod returns 'callbackOfControllerExt1'");
+		assert.strictEqual(oExtension.finalMethod(), "I am final", "Shouldn't be overridden by extension2");
 	});
 
 	/* ------------------------------------------------------------------------------------------------- */
@@ -471,7 +532,6 @@ sap.ui.define([
 
 	QUnit.test("public methods checks", function(assert) {
 		var oController = this.view.getController();
-
 		assert.ok(jQuery.sap.equal(oController.getPublicMethods(true), mAllPublicMethods), "Public Methods exposed correctly");
 	});
 
