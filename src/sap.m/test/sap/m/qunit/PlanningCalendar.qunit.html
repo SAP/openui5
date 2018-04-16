@@ -4136,6 +4136,25 @@
 			oPCRow.destroy();
 		});
 
+		QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view when row start day is different than the appointment's day", function (assert) {
+			//arrange
+			var oPCRow = new sap.m.PlanningCalendarRow(),
+					oRowStartDate = new Date(2017, 10, 13),
+					oAppStartDate = new Date(2017, 11, 14, 1, 0, 0),
+					oAppEndDate = new Date(2017, 11, 14, 2, 0, 0),
+					newAppPos;
+
+			//act
+			newAppPos = oPCRow._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2018, 1, 14, 1, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2018, 1, 14, 2, 0, 0), "Correct new end position");
+
+			//clean
+			oPCRow.destroy();
+		});
+
 		function _getAppointmentsCount(oPC) {
 			var aRows = oPC.getRows(),
 				iAppointments = 0;
