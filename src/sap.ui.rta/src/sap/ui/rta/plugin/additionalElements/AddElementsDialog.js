@@ -54,7 +54,7 @@ sap.ui.define([
 	 * Constructor for a new sap.ui.rta.plugin.additionalElements.AddElementsDialog control.
 	 *
 	 * @class Context - Dialog for available Fields in Runtime Authoring
-	 * @extends sap.ui.core.Control
+	 * @extends sap.ui.base.ManagedObject
 	 * @author SAP SE
 	 * @version ${version}
 	 * @constructor
@@ -271,7 +271,7 @@ sap.ui.define([
 	 * Open the Field Repository Dialog
 	 *
 	 * @param {sap.ui.core.Control} oControl Currently selected control
-	 * @returns {promise} empty promise
+	 * @returns {Promise} empty promise
 	 * @public
 	 */
 	AddElementsDialog.prototype.open = function(oControl) {

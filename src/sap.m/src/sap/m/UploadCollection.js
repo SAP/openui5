@@ -892,7 +892,7 @@ sap.ui.define([
 
 	/**
 	 * Downloads the given item.
-	 * This function delegates to {@link sap.m.UploadCollectionItem.download UploadCollectionItem.download}.
+	 * This function delegates to {@link sap.m.UploadCollectionItem#download UploadCollectionItem#download}.
 	 * @param {sap.m.UploadCollectionItem} uploadCollectionItem The item to download. This parameter is mandatory.
 	 * @param {boolean} askForLocation Decides whether to ask for a location to download or not.
 	 * @returns {boolean} True if the download has started successfully. False if the download couldn't be started.

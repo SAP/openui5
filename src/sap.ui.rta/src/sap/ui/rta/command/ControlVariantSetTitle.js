@@ -51,7 +51,7 @@ sap.ui.define([
 
 	/**
 	 * @public Template Method to implement execute logic, with ensure precondition Element is available
-	 * @returns {promise} Returns resolve after execution
+	 * @returns {Promise} Returns resolve after execution
 	 */
 	ControlVariantSetTitle.prototype.execute = function() {
 		var oVariantManagementControl = this.getRenamedElement(),
@@ -81,7 +81,7 @@ sap.ui.define([
 
 	/**
 	 * @public Template Method to implement undo logic
-	 * @returns {promise} Returns resolve after undo
+	 * @returns {Promise} Returns resolve after undo
 	 */
 	ControlVariantSetTitle.prototype.undo = function() {
 		var oVariantManagementControlBinding = this.getRenamedElement().getTitle().getBinding("text"),

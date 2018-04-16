@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @param  {function} fnIsReady             To be called once FLP customizing is ready: As a first parameter the IamAppId is given.
 	 * @param  {integer}  [iCheckIntervallMsec] Check intervall
 	 * @param  {integer}  [iMaxNumberOfChecks]  Maximum number of checks
-	 * @return {promise}  Either resolves with { iamAppId : sIamAppId, flpCustomizingIsReady : true | false }
+	 * @return {Promise}  Either resolves with { iamAppId : sIamAppId, flpCustomizingIsReady : true | false }
 	 *                    or rejects if the required ODATA service /sap/opu/odata/sap/APS_IAM_APP_SRV is not there
 	 * @async
 	 */

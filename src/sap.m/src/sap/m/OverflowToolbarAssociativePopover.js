@@ -25,7 +25,7 @@ sap.ui.define(['./Popover', './PopoverRenderer', './OverflowToolbarAssociativePo
 	 *
 	 * @class
 	 * OverflowToolbarAssociativePopover is a version of Popover that uses an association in addition to the aggregation
-	 * @extends sap.ui.core.Popover
+	 * @extends sap.m.Popover
 	 *
 	 * @author SAP SE
 	 * @version ${version}
