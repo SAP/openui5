@@ -16,6 +16,7 @@ sap.ui.require([
 		opaTest("POST/PATCH SalesOrder via group: " + sGroupId, function (Given, When, Then) {
 
 			Given.iStartMyUIComponent({
+				autoWait : true,
 				componentConfig : {
 					name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest"
 				}

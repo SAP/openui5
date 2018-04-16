@@ -15,10 +15,12 @@ sap.ui.require([
 	opaTest("Type Determination, Delete Sales Orders", function (Given, When, Then) {
 
 		Given.iStartMyUIComponent({
+			autoWait : true,
 			componentConfig : {
 				name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest"
 			}
 		});
+
 		TypeDeterminationAndDeleteTest.typeDeterminationAndDelete(Given, When, Then);
 
 		Then.iTeardownMyUIComponent();

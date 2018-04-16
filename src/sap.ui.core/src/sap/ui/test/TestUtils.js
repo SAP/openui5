@@ -579,6 +579,20 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns default timeout for Opa5.waitFor() assertions
+		 *
+		 * Note: The default OPA timeout for waitFor() is 15 sec. Nevertheless from time to time we
+		 * get timeouts when the backend system is busy with other processes at the same time. To
+		 * overcome this we increased the default timeout for realOData=true. For testing with
+		 * mockdata we decreased it to get the timeout earlier.
+
+		 * @returns {number} The timeout in seconds
+		 */
+		getDefaultOpaTimeout : function () {
+			return TestUtils.isRealOData() ? 30 : 5;
+		},
+
+		/**
 		 * Adjusts the given absolute path so that (in case of "realOData=proxy" or
 		 * "realOData=true") the request is passed through the SimpleProxyServlet.
 		 *
