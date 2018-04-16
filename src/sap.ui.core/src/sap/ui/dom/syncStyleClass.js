@@ -5,17 +5,8 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(['sap/base/assert', 'sap/ui/dom/jquery/byId'], function(assert, byId) {
+sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', 'sap/base/assert', 'sap/ui/dom/jquery/byId'], function(jQuery, BaseObject, assert, byId) {
 	"use strict";
-
-
-	// @evo-todo: deal with weak dependency / lazy require
-	// handle weak dependency to sap/ui/core/Control
-	var _Control;
-
-	function getControl() {
-		return _Control || (_Control = sap.ui.require('sap/ui/core/Control'));
-	}
 
 	/**
 	 * Search ancestors of the given source DOM element for the specified CSS class name.
@@ -37,9 +28,8 @@ sap.ui.define(['sap/base/assert', 'sap/ui/dom/jquery/byId'], function(assert, by
 			return vDestination;
 		}
 
-		var Control = getControl();
 
-		if (Control && vSource instanceof Control) {
+		if (BaseObject.isA(vSource, 'sap/ui/core/Control')) {
 			vSource = vSource.$();
 		} else if (typeof vSource === "string") {
 			vSource = byId(vSource);
@@ -52,7 +42,7 @@ sap.ui.define(['sap/base/assert', 'sap/ui/dom/jquery/byId'], function(assert, by
 
 		if (vDestination instanceof jQuery) {
 			vDestination.toggleClass(sStyleClass, bClassFound);
-		} else if (Control && vDestination instanceof Control) {
+		} else if (BaseObject.isA(vDestination, 'sap/ui/core/Control')) {
 			vDestination.toggleStyleClass(sStyleClass, bClassFound);
 		} else {
 			assert(false, 'sap/ui/dom/syncStyleClass(): vDestination must be a jQuery object or a Control');
