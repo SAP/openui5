@@ -29,7 +29,7 @@
 		};
 
 		function removeUi5Loader() {
-			sap.ui._ui5loader.config({
+			sap.ui.loader.config({
 				noConflict: true
 			});
 			aScripts.forEach(function(oScript) {
@@ -39,7 +39,35 @@
 			aScripts = [];
 		};
 
-		QUnit.module("Mutiple AMD loader scenario", {
+		QUnit.module("Configuration API");
+
+		QUnit.test("config ui5loader", function(assert){
+			var done = assert.async();
+			appendScript("../../../../../resources/ui5loader.js", function() {
+					appendScript("../../../../../resources/ui5loader-autoconfig.js", function(){
+
+						assert.deepEqual(sap.ui.loader.config(), {"async": false, "noConflict": false}, "Async and noConflict flags are returned. Both flags should be false.");
+
+						sap.ui.loader.config({
+							noConflict: true,
+							async : true,
+							map: {
+								"*": {
+								'prop1': 'should not be exposed'
+								}
+							},
+							baseUrl: "baseUrl"
+						});
+
+						assert.deepEqual(sap.ui.loader.config(), {"async": true, "noConflict": true}, "Async and noConflict flags are returned. Both flags should be true.");
+						removeUi5Loader();
+						done();
+					});
+				}, "sap-ui-bootstrap");
+			});
+
+
+		QUnit.module("Multiple AMD loader scenario", {
 			afterEach: function() {
 				removeUi5Loader();
 			}
@@ -52,13 +80,13 @@
 			assert.expect(5);
 
 			function useUi5Loader() {
-				sap.ui._ui5loader.config({
+				sap.ui.loader.config({
 					baseUrl: "./"
 				});
 				require(['testdata/modules/basic/ui5Module'], function(ui5LoadedModule) {
 
 					// Activate compatibility mode
-					sap.ui._ui5loader.config({
+					sap.ui.loader.config({
 						noConflict: true
 					});
 
@@ -70,7 +98,7 @@
 					assert.strictEqual(requirejsLoadedModule, requirejsLoadedModuleAgain, "Loaded modules are same.");
 
 					// Deactivate compatibility mode
-					sap.ui._ui5loader.config({
+					sap.ui.loader.config({
 						noConflict: false
 					});
 

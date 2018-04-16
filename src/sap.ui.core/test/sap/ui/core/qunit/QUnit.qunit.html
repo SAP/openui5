@@ -36,12 +36,12 @@
 
 		QUnit.test("overridden by external script (requirejs)", function(assert) {
 			var done = assert.async();
-			sap.ui._ui5loader.config({noConflict: true});
+			sap.ui.loader.config({noConflict: true});
 			jQuery.sap.require("sap.ui.thirdparty.require");
 
 			require(["QUnitExt"], function(QUnitExt) {
 				assert.ok(typeof window.assert === "function", "window.assert is a function!");
-				sap.ui._ui5loader.config({noConflict: false});
+				sap.ui.loader.config({noConflict: false});
 				done();
 			});
 		});
