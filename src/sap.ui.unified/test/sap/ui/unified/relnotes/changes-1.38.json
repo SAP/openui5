@@ -478,5 +478,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.34": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "b7282b8feb5505954ba252fcd4806128413aeba6",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: closes when switch from one submenu to another",
+        "references": []
+      }
+    ]
   }
 }
