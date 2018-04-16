@@ -22,8 +22,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
 	 * An error will be logged to the console if an invalid combination of parameters is provided.
 	 * Please note that a model implementation may not support a custom filter function, e.g. if the model does not perform client side filtering.
 	 * It also depends on the model implementation if the filtering is case sensitive or not.
-	 * See particular model documentation for details.
-	 *
+	 * See particular model documentation for details
 	 * The filter operators <code>Any</code> and <code>All</code> are only supported in V4 OData models.
 	 * When creating a filter instance with these filter operators, the argument <code>variable</code> only accepts a string identifier and <code>condition</code> needs to be another filter instance.
 	 *
@@ -134,7 +133,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', './FilterOperator'],
 				this.bAnd = vFilterInfo.and || vFilterInfo.bAnd; // support legacy name 'bAnd' (intentionally not documented)
 				this.fnTest = vFilterInfo.test;
 				this.fnCompare = vFilterInfo.comparator;
-				this.bCaseSensitive = !!vFilterInfo.caseSensitive;
+				this.bCaseSensitive = vFilterInfo.caseSensitive;
 			} else {
 				//If parameters are used we have to check whether a regular or a multi filter is specified
 				if (Array.isArray(vFilterInfo)) {

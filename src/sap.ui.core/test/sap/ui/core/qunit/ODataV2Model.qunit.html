@@ -4483,6 +4483,31 @@
 		});
 	});
 
+	QUnit.test("new caseSensitive filter syntax", function(assert) {
+		var done = assert.async();
+		var that = this;
+		var aFilters = [
+			new sap.ui.model.Filter({
+				path: "CategoryName",
+				operator: sap.ui.model.FilterOperator.EQ,
+				value1: "Beverages",
+				caseSensitive: false
+			})
+		];
+		that.oModel.read("/Categories", {
+			filters: aFilters,
+			success: function(oData, oResponse) {
+				assert.ok(true, "success handler called");
+				assert.equal(oResponse.requestUri, sURI + "Categories?$filter=toupper(CategoryName)%20eq%20%27BEVERAGES%27", "request uri contains toupper filter");
+				done();
+			},
+			error: function() {
+				assert.ok(false, "error handler shouldn't be called");
+				done();
+			}
+		});
+	});
+
 	QUnit.test("test metadata loading: sap-value-list",function(assert){
 		var done = assert.async();
 		var oModel = initModel(sURI, {skipMetadataAnnotationParsing: true, useBatch : true, metadataUrlParams: {"sap-value-list": "none"}});
