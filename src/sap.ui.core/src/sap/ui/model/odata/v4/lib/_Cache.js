@@ -218,7 +218,7 @@ sap.ui.define([
 	 */
 	Cache.prototype.calculateKeyPredicates = function (vRootInstance, mTypeForMetaPath) {
 
-		/**
+		/*
 		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
 		 * from predicate to entity.
 		 *
@@ -239,7 +239,7 @@ sap.ui.define([
 			}
 		}
 
-		/**
+		/*
 		 * Adds a predicate to the given instance if it is an entity.
 		 *
 		 * @param {*} vInstance The instance
