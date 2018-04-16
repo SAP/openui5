@@ -22,6 +22,9 @@
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 	<script>
+		if (window.blanket) {
+			blanket.options("sap-ui-cover-only", "sap/m/UploadCollectionItem.js");
+		}
 
 		QUnit.config.autostart = false;
 		/* --------------------------------------- */

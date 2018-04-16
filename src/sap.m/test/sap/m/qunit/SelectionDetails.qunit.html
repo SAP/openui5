@@ -19,6 +19,12 @@
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
+	if (window.blanket) {
+		blanket.options("sap-ui-cover-only", [
+			"sap/m/SelectionDetails.js",
+			"sap/m/SelectionDetailsRenderer.js"
+		]);
+	}
 	var aDependencies = [
 		'sap/m/NavContainer', 'sap/m/ResponsivePopover', 'sap/m/Page', "sap/m/Toolbar", 'sap/m/OverflowToolbar',
 		'sap/m/ToolbarSpacer', 'sap/m/Button', 'sap/m/List', 'sap/m/StandardListItem',

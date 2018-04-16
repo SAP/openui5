@@ -22,6 +22,10 @@
     <script src="resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
     <script>
+	    if (window.blanket) {
+		    blanket.options("sap-ui-cover-only", /sap\/m\/HeaderContainer.*/);
+	    }
+
         jQuery.sap.initMobile();
         (function() {
             QUnit.module("Default Property Values", {

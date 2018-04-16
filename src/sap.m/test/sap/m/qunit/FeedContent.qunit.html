@@ -19,6 +19,9 @@
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 
 <script>
+	if (window.blanket) {
+		blanket.options("sap-ui-cover-only", /sap\/m\/FeedContent.*/);
+	}
 
 	QUnit.module("Rendering test - sap.m.FeedContent", {
 		beforeEach : function() {

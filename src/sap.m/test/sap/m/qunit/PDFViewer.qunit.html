@@ -19,9 +19,12 @@
 				type="text/css" media="screen"/>
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/thirdparty/qunit-reporter-junit.js"></script>
+	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script type="text/javascript" src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script>
-		jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+		if (window.blanket) {
+			blanket.options("sap-ui-cover-only", /sap\/m\/PDF.*/);
+		}
 		QUnit.jUnitReport = function(report) {
 			if (typeof console !== 'undefined') {
 				jQuery("#qunit_results").text(report.xml);

@@ -22,6 +22,14 @@
 	<script src="UploadCollectionOpenFileDialog.qunit.js"></script>
 
 	<script>
+		if (window.blanket) {
+			blanket.options("sap-ui-cover-only", [
+					"sap/m/UploadCollection.js",
+					"sap/m/UploadCollectionParameter.js",
+					"sap/m/UploadCollectionToolbarPlaceholder.js",
+					"sap/m/UploadCollectionRenderer.js"
+			]);
+		}
 		QUnit.config.autostart = false;
 		jQuery.sap.require("sap.m.UploadCollection");
 

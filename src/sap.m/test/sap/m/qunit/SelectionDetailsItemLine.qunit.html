@@ -21,6 +21,10 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
+	if (window.blanket) {
+		blanket.options("sap-ui-cover-only", "sap/m/SelectionDetailsItemLine.js");
+	}
+
 	sinon.config.useFakeTimers = true;
 	QUnit.config.autostart = false;
 	sap.ui.test.qunit.delayTestStart();
