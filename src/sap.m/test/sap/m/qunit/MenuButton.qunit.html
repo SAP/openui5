@@ -658,6 +658,27 @@
 			assert.strictEqual(oSpyTextButtonPress.callCount, 2, "Main button firePress not called");
 			assert.strictEqual(oSpyArrowButtonPress.callCount, 5, "Arrow button firePress called");
 		});
+
+		QUnit.module("Other");
+
+		QUnit.test("split mode default width", function(assert) {
+			//arrange
+			var mb = new sap.m.MenuButton({
+				text: 'File Menu',
+				buttonMode: sap.m.MenuButtonMode.Split
+			});
+
+			//act
+			mb.placeAt('content');
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.ok(mb._getButtonControl()._getTextButton().getDomRef("content").style.width, 'text button content has initial width');
+
+			//clean
+			mb.destroy();
+			mb = null;
+		});
 	</script>
 </head>
 <body class="sapUiBody" role="application">
