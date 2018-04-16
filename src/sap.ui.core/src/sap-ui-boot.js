@@ -11,6 +11,7 @@
 (function() {
 
 	"use strict";
+
 	//extract base URL from script tag
 	var oScriptTag, mMatch, sBaseUrl;
 
