@@ -125,7 +125,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 								sFilterParam += "%20or%20";
 							}
 						}
-						sFilterParam = that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilterSegment.operator, oFilterSegment.value1, oFilterSegment.value2, sFilterParam);
+						sFilterParam = that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilterSegment.operator, oFilterSegment.value1, oFilterSegment.value2, sFilterParam, oFilter.bCaseSensitive);
 					});
 					if (oFilter.aValues.length > 1) {
 						sFilterParam += ')';
@@ -133,7 +133,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 				} else if (oFilter._bMultiFilter) {
 					sFilterParam += that._resolveMultiFilter(oFilter, oMetadata, oEntityType);
 				} else {
-					sFilterParam = that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator, oFilter.oValue1, oFilter.oValue2, sFilterParam);
+					sFilterParam = that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator, oFilter.oValue1, oFilter.oValue2, sFilterParam, oFilter.bCaseSensitive);
 				}
 				if (i < aFilterGroup.length - 1) {
 					sFilterParam += "%20or%20";
@@ -359,7 +359,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 				if (oFilter._bMultiFilter) {
 					sFilterParam += that._resolveMultiFilter(oFilter, oMetadata, oEntityType);
 				} else if (oFilter.sPath) {
-					sFilterParam += that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator, oFilter.oValue1, oFilter.oValue2, "");
+					sFilterParam += that._createFilterSegment(oFilter.sPath, oMetadata, oEntityType, oFilter.sOperator, oFilter.oValue1, oFilter.oValue2, "", oFilter.bCaseSensitive);
 				}
 				if (i < (aFilters.length - 1)) {
 					if (oMultiFilter.bAnd) {
@@ -380,9 +380,14 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 	 *
 	 * @private
 	 */
-	ODataUtils._createFilterSegment = function(sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2, sFilterParam) {
+	ODataUtils._createFilterSegment = function(sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2, sFilterParam, bCaseSensitive) {
 
 		var oPropertyMetadata, sType;
+
+		if (bCaseSensitive === undefined) {
+			bCaseSensitive = true;
+		}
+
 		if (oEntityType) {
 			oPropertyMetadata = oMetadata._getPropertyMetadata(oEntityType, sPath);
 			sType = oPropertyMetadata && oPropertyMetadata.type;
@@ -390,8 +395,8 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 		}
 
 		if (sType) {
-			oValue1 = this.formatValue(oValue1, sType);
-			oValue2 = (oValue2 != null) ? this.formatValue(oValue2, sType) : null;
+			oValue1 = this.formatValue(oValue1, sType, bCaseSensitive);
+			oValue2 = (oValue2 != null) ? this.formatValue(oValue2, sType, bCaseSensitive) : null;
 		} else {
 			jQuery.sap.assert(null, "Type for filter property could not be found in metadata!");
 		}
@@ -411,6 +416,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 			case "GE":
 			case "LT":
 			case "LE":
+				sPath = bCaseSensitive ? sPath : "toupper(" + sPath + ")";
 				sFilterParam += sPath + "%20" + sOperator.toLowerCase() + "%20" + oValue1;
 				break;
 			case "BT":
@@ -438,10 +444,16 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 	 *
 	 * @param {any} vValue the value to format
 	 * @param {string} sType the EDM type (e.g. Edm.Decimal)
+	 * @param {boolean} bCaseSensitive Wether strings gets compared case sensitive or not
 	 * @return {string} the formatted value
 	 * @public
 	 */
-	ODataUtils.formatValue = function(vValue, sType) {
+	ODataUtils.formatValue = function(vValue, sType, bCaseSensitive) {
+
+		if (bCaseSensitive === undefined) {
+			bCaseSensitive = true;
+		}
+
 		// Lazy creation of format objects
 		if (!this.oDateTimeFormat) {
 			this.oDateTimeFormat = DateFormat.getDateInstance({
@@ -468,6 +480,7 @@ sap.ui.define(['jquery.sap.global', './Filter', 'sap/ui/model/Sorter', 'sap/ui/c
 		switch (sType) {
 			case "Edm.String":
 				// quote
+				vValue = bCaseSensitive ? vValue : vValue.toUpperCase();
 				sValue = "'" + String(vValue).replace(/'/g, "''") + "'";
 				break;
 			case "Edm.Time":
