@@ -8,6 +8,7 @@
 	jQuery.sap.require("sap.uxap.ObjectPageSubSection");
 	jQuery.sap.require("sap.uxap.ObjectPageSection");
 	jQuery.sap.require("sap.uxap.ObjectPageSectionBase");
+	jQuery.sap.require("sap.uxap.ObjectPageDynamicHeaderTitle");
 
 
 	var oFactory = {
@@ -32,12 +33,22 @@
 		},
 		getObjectPage: function () {
 			return new sap.uxap.ObjectPageLayout();
+		},
+		getDynamicPageTitle: function () {
+			return new sap.uxap.ObjectPageDynamicHeaderTitle({
+				heading:  this.getTitle()
+			});
+		},
+		getTitle: function () {
+			return new sap.m.Title({
+				text: "Anna Maria Luisa"
+			});
 		}
 	},
 
 	helpers = {
-		generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar) {
-			var oObjectPage = bUseIconTabBar ? oFactory.getObjectPageLayoutWithIconTabBar() : oFactory.getObjectPage(),
+		generateObjectPageWithContent: function (oFactory, iNumberOfSection) {
+			var oObjectPage = oFactory.getObjectPage(),
 				oSection,
 				oSubSection;
 
@@ -49,6 +60,19 @@
 			}
 
 			return oObjectPage;
+		},
+		generateObjectPageWithDynamicBigHeaderContent: function() {
+			var oBigHeaderContent = new sap.m.Panel({ height: "900px"}),
+				oObjectPage = this.generateObjectPageWithContent(oFactory, 2);
+
+			oObjectPage.setHeaderTitle(oFactory.getDynamicPageTitle());
+			oObjectPage.addHeaderContent(oBigHeaderContent);
+			return oObjectPage;
+		},
+		renderObject: function (oSapUiObject) {
+			oSapUiObject.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			return oSapUiObject;
 		}
 	};
 
@@ -353,6 +377,75 @@
 		// arrange
 		oObjectPageLayout.placeAt('qunit-fixture');
 		sap.ui.getCore().applyChanges();
+	});
+
+	QUnit.module("ObjectPage On Title Press when Header height bigger than page height", {
+		beforeEach: function () {
+			this.oObjectPage = helpers.generateObjectPageWithDynamicBigHeaderContent();
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.oObjectPage = null;
+		}
+	});
+
+	QUnit.test("ObjectPage On Title Press", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oTitle = oObjectPage.getHeaderTitle(),
+			done = assert.async();
+
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// check setup:
+			assert.equal(oObjectPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+			// setup: scroll to a position where the header is snapped
+			oObjectPage._scrollTo(950);
+			setTimeout(function() {
+				//act
+				oTitle.fireEvent("_titlePress");
+				assert.equal(oObjectPage._bHeaderInTitleArea, false, "Header is not added to the title");
+				assert.equal(oObjectPage._$opWrapper[0].scrollTop, 0, "scroll position is correct");
+				done();
+			}, 0); // put at the end of queue chain to allow onScroll to be called before it
+		});
+
+		helpers.renderObject(oObjectPage);
+		oObjectPage.$().outerHeight("800px"); // set page height smaller than header height
+	});
+
+	QUnit.test("expand shows the visual indicator", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oExpandButton = oObjectPage.getHeaderTitle()._getExpandButton(),
+			oCollapseButton = oObjectPage._getHeaderContent()._getCollapseButton(),
+			iCollapseButtonBottom,
+			iDynamicPageBottom,
+			done = assert.async();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// check setup:
+			assert.equal(oObjectPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+			// setup: scroll to a position where the header is snapped
+			oObjectPage._scrollTo(950);
+			setTimeout(function() {
+				//act: expand via the 'expand' visual indicator
+				oExpandButton.firePress();
+
+				// check position
+				iCollapseButtonBottom = oCollapseButton.getDomRef().getBoundingClientRect().bottom;
+				iDynamicPageBottom = oObjectPage.getDomRef().getBoundingClientRect().bottom;
+
+				// check position
+				assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page");
+				done();
+			}, 0); // put at the end of queue chain to allow onScroll to be called before it
+		});
+
+		helpers.renderObject(oObjectPage);
+		oObjectPage.$().outerHeight("800px"); // set page height smaller than header height
 	});
 
 	function isObjectPageHeaderStickied(oObjectPage) {

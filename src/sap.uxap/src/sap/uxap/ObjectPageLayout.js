@@ -685,8 +685,11 @@ sap.ui.define([
 
 		if (bExpand) {
 			bIsPageTop = (this._$opWrapper.scrollTop() <= (this._getSnapPosition() + 1));
-			bAppendHeaderToTitle = this._shouldPreserveHeaderInTitleArea() || !bIsPageTop;
+			bAppendHeaderToTitle = !this._headerBiggerThanAllowedToBeExpandedInTitleArea() && (this._shouldPreserveHeaderInTitleArea() || !bIsPageTop);
 			this._expandHeader(bAppendHeaderToTitle);
+			if (!bAppendHeaderToTitle) {
+				this._scrollTo(0, 0);
+			}
 		} else {
 			bAppendHeaderToContent = !this._shouldPreserveHeaderInTitleArea();
 			this._snapHeader(bAppendHeaderToContent);
@@ -1772,6 +1775,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Scrolls to bring the 'collapse' visual indicator into view.
+	 * @private
+	 */
+	ObjectPageLayout.prototype._scrollBelowCollapseVisualIndicator = function () {
+		var oHeader = this._getHeaderContent(),
+			$collapseButton,
+			iCollapseButtonHeight,
+			iViewportHeight,
+			offset;
+
+		if (!exists(oHeader) || !exists(this._$opWrapper)) {
+			return;
+		}
+
+		$collapseButton = oHeader._getCollapseButton().getDomRef();
+		iCollapseButtonHeight = $collapseButton.getBoundingClientRect().height;
+		iViewportHeight = this._$opWrapper[0].getBoundingClientRect().height; // height of the div that contains all the *scrollable* content
+
+		// compute the amount we need to scroll in order to show the $collapseButton [right at the bottom of the viewport]
+		offset = $collapseButton.offsetTop + iCollapseButtonHeight - iViewportHeight;
+
+		this._scrollTo(offset);
+	};
+
+	/**
 	* Updates the media style class of the control, based on its own width, not on the entire screen size (which media query does).
 	* This is necessary, because the control will be embedded in other controls (like the <code>sap.f.FlexibleColumnLayout</code>),
 	* thus it will not be using all of the screen width, but despite that the paddings need to be appropriate.
@@ -2298,6 +2326,11 @@ sap.ui.define([
 
 			if (bIsAlwaysShowContentHeaderEnabled && (this._bHeaderInTitleArea != this._checkAlwaysShowContentHeader())) {
 				this.invalidate();
+			}
+
+			if (this._bHeaderInTitleArea && this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+				this._expandHeader(false);
+				this._scrollTo(0, 0);
 			}
 
 			// Let the dynamic header know size changed first, because this might lead to header dimensions changes
@@ -3276,6 +3309,10 @@ sap.ui.define([
 		return this._getEntireHeaderHeight() > ObjectPageLayout.HEADER_MAX_ALLOWED_NON_SROLLABLE_PERCENTAGE * iControlHeight;
 	};
 
+	ObjectPageLayout.prototype._headerBiggerThanAllowedToBeExpandedInTitleArea = function () {
+		return this._getEntireHeaderHeight() >= this._getOwnHeight();
+	};
+
 	ObjectPageLayout.prototype._getOwnHeight = function () {
 		return this._getHeight(this);
 	};
@@ -3417,6 +3454,12 @@ sap.ui.define([
 		if (exists(oTitle) && !this._bAlreadyAttachedTitleIndicatorPressHandler) {
 			oTitle.attachEvent(ObjectPageLayout.EVENTS.TITLE_VISUAL_INDICATOR_PRESS, function () {
 				fnPress.call(oContext);
+				if (this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+					// scroll to show the 'collapse' visual-indicator before focusing it
+					// this is needed in order to specify the **exact** position (scrollTop) of the visual-indicator
+					// because the default position (from the browser default auto-scroll to newly-focused item) is not UX-compliant
+					this._scrollBelowCollapseVisualIndicator();
+				}
 				this._focusCollapseVisualIndicator();
 			}, this);
 			this._bAlreadyAttachedTitleIndicatorPressHandler = true;
