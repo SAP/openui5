@@ -22,6 +22,8 @@ sap.ui.require([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/Element",
 	"sap/ui/dt/Util",
+	"sap/f/DynamicPage",
+	"sap/f/DynamicPageTitle",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/sinon"
 	],
@@ -45,6 +47,8 @@ function(
 	ComponentContainer,
 	Element,
 	DtUtil,
+	DynamicPage,
+	DynamicPageTitle,
 	ManagedObject,
 	sinon
 ) {
@@ -774,6 +778,28 @@ function(
 				})
 			});
 			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the labels text (getLabel().getText())");
+		});
+
+		QUnit.test("when getLabelForElement is called with a sap.f.DynamicPage (containing an sap.f.DynamicPageTitle, further containing an sap.m.Text)", function (assert) {
+			this.oLabelControl = new DynamicPage({
+				title: new DynamicPageTitle({
+					heading: new Text({
+						text: "label"
+					})
+				})
+			});
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the dynamic page's title (getTitle().getHeading().getText())");
+		});
+
+		QUnit.test("when getLabelForElement is called with a sap.f.DynamicPage (containing an sap.f.DynamicPageTitle, further containing an sap.m.Label)", function (assert) {
+			this.oLabelControl = new DynamicPage({
+				title: new DynamicPageTitle({
+					heading: new Label({
+						text: "label"
+					})
+				})
+			});
+			assert.equal(ElementUtil.getLabelForElement(this.oLabelControl), "label", "then it returns the dynamic page's title (getTitle().getHeading().getLabel().getText())");
 		});
 
 		QUnit.test("when getLabelForElement is called with an object which is not a managed object", function (assert) {
