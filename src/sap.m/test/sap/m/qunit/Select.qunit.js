@@ -7546,6 +7546,47 @@
 		oSelect.destroy();
 	});
 
+	QUnit.test("it checks if _handleFocusout works as expected", function (assert) {
+
+		// arrange
+		var oSelect = new sap.m.Select(),
+				oPicker = oSelect.getPicker(),
+				oCheckSelectionChangeSpy = this.spy(oSelect, "_checkSelectionChange"),
+				oRevertSelectionSpy = this.spy(oSelect, "_revertSelection"),
+				oMockEventPickerTarget = {
+					target: oPicker
+				},
+				oMockEventRandomTarget = {
+					target: false
+				};
+
+		// we are mocking the isOpen function
+		oPicker.isOpen = function() {
+			return true;
+		};
+
+		// act - call the function with picker target
+		oSelect._bProcessChange = true; // Force processing of focus out
+		oSelect._handleFocusout(oMockEventPickerTarget);
+
+		// assert
+		assert.strictEqual(oCheckSelectionChangeSpy.callCount, 1);
+		assert.strictEqual(oRevertSelectionSpy.callCount, 0);
+
+		// act - call the function with random target
+		oSelect._bProcessChange = true; // Force processing of focus out
+		oCheckSelectionChangeSpy.reset();
+		oRevertSelectionSpy.reset();
+		oSelect._handleFocusout(oMockEventRandomTarget);
+
+		// assert
+		assert.strictEqual(oCheckSelectionChangeSpy.callCount, 0);
+		assert.strictEqual(oRevertSelectionSpy.callCount, 1);
+
+		// cleanup
+		oSelect.destroy();
+	});
+
 	QUnit.test("it should fire the change event", function (assert) {
 
 		// system under test
