@@ -13,15 +13,8 @@ sap.ui.require([
 	//*****************************************************************************
 	opaTest("Create, modify and delete within relative listbinding", function (Given, When, Then) {
 
-		Given.iStartMyUIComponent({
-			autoWait : true,
-			componentConfig : {
-				name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest"
-			}
-		});
+		CreateRelativeTest.createRelative(Given, When, Then,
+			"sap.ui.core.sample.odata.v4.SalesOrdersRTATest");
 
-		CreateRelativeTest.createRelative(Given, When, Then);
-
-		Then.iTeardownMyUIComponent();
 	});
 });

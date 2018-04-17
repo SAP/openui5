@@ -8,7 +8,7 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		writeNonDeferredGroup : function (Given, When, Then, sGroupId) {
+		writeNonDeferredGroup : function (Given, When, Then, sGroupId, sUIComponent) {
 			var aExpectedLogs = [{
 					component : "sap.ui.model.odata.v4.ODataParentBinding",
 					level : jQuery.sap.log.Level.ERROR,
@@ -25,6 +25,12 @@ sap.ui.define([
 			Opa5.assert.ok(true, "Test runs only with realOData=true");
 			return;
 		}
+
+		Given.iStartMyUIComponent({
+			componentConfig : {
+				name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
+			}
+		});
 
 		TestUtils.setData("sap.ui.core.sample.odata.v4.SalesOrders.updateGroupId", sGroupId);
 
@@ -53,5 +59,7 @@ sap.ui.define([
 		Then.onTheMainPage.checkID(0);
 
 		Then.onAnyPage.checkLog(aExpectedLogs);
+
+		Then.iTeardownMyUIComponent();
 	}};
 });

@@ -15,16 +15,9 @@ sap.ui.require([
 	["myAutoGroup", "$auto", "myDirectGroup", "$direct"].forEach(function (sGroupId) {
 		opaTest("POST/PATCH SalesOrder via group: " + sGroupId, function (Given, When, Then) {
 
-			Given.iStartMyUIComponent({
-				autoWait : true,
-				componentConfig : {
-					name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest"
-				}
-			});
+			WriteNonDeferredGroupTest.writeNonDeferredGroup(Given, When, Then, sGroupId,
+				"sap.ui.core.sample.odata.v4.SalesOrdersRTATest");
 
-			WriteNonDeferredGroupTest.writeNonDeferredGroup(Given, When, Then, sGroupId);
-
-			Then.iTeardownMyUIComponent();
 		});
 	});
 });
