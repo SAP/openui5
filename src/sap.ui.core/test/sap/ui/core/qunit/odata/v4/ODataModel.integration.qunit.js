@@ -5439,5 +5439,39 @@ sap.ui.require([
 			assert.strictEqual(oTable.getItems().length, 1, "The one entry is still displayed");
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: Update a property via a control and check that the control contains the value
+	// afterwards. Reason: ManagedObject#updateModelProperty fetches the updated model value and
+	// sets it in the control after setting it in the model. ODataPropertyBinding#setValue must not
+	// become asynchronous in this case; otherwise the control gets the old value.
+	//
+	// We need two text fields: The one used to observe change events cannot be used for setText
+	// because our test framework attaches a formatter.
+	QUnit.test("Update model property via control", function (assert) {
+		var oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/TEAMS(\'1\')}" id="form">\
+	<Text id="Team_Id" text="{Team_Id}" />\
+	<Text id="Name" text="{Name}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('1')", {"Team_Id" : "1", "Name" : "Old Name"})
+			.expectChange("Team_Id", "1");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oText = that.oView.byId("Name");
+
+			that.expectRequest({
+					method : "PATCH",
+					url : "TEAMS('1')",
+					payload : {"Name" : "New Name"}
+				}, {"Team_Id" : "1", "Name" : "New Name"});
+
+			oText.setText("New Name");
+			assert.strictEqual(oText.getText(), "New Name");
+		});
+	});
 });
 //TODO test delete
