@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8" >
+		<title>activeElementFix</title>
+
+		<link  href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" rel="stylesheet" media="screen" />
+		<script src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+		<script src="../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"
+			data-cover-flags="branchTracking">
+		</script>
+		<script>
+
+			QUnit.test("After loading the minimal bootstrap code...", function(assert) {
+				var done = assert.async();
+
+				var iframe = document.createElement('iframe');
+				iframe.src = "activeElementFixIFrame.html";
+				iframe.onload = function (o) {
+					var iframeWindow = o.target.contentWindow;
+
+					assert.ok(iframeWindow.sapUiDomActiveElementAccessSucceeded, "iframe successfully loaded");
+					if (!iframeWindow.sapUiDomActiveElementAccessSucceeded) {
+						assert.ok(false, "Error: " + iframeWindow.sapUiDomActiveElementAccessError);
+					}
+					// do not remove iframe to prevent exceptions from async operations accessing its DOM
+					done();
+				};
+
+				document.getElementById("iframe").appendChild(iframe);
+			});
+
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+		<div id="iframe"></div>
+	</body>
+</html>
