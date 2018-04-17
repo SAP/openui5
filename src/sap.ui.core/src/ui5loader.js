@@ -1270,7 +1270,7 @@
 				}
 
 				// call notification hook
-				require.load({ completeLoad:noop, async: false }, oModule.url, oSplitName.baseID);
+				ui5Require.load({ completeLoad:noop, async: false }, oModule.url, oSplitName.baseID);
 
 				loadSyncXHR(oModule);
 			}
@@ -1302,7 +1302,7 @@
 			// @evo-todo support debug mode also in async mode
 			oModule.url = getResourcePath(oSplitName.baseID, oSplitName.subType);
 			// call notification hook
-			require.load({ completeLoad:noop, async: true }, oModule.url, oSplitName.baseID);
+			ui5Require.load({ completeLoad:noop, async: true }, oModule.url, oSplitName.baseID);
 			loadScript(oModule, /* bRetryOnFailure= */ true);
 
 			// process dep cache info
@@ -1349,7 +1349,7 @@
 				if ( typeof oModule.data === "function" ) {
 					oModule.data.call(__global);
 				} else if ( Array.isArray(oModule.data) ) {
-					define.apply(null, oModule.data);
+					ui5Define.apply(null, oModule.data);
 				} else {
 
 					sScript = oModule.data;
@@ -1498,15 +1498,15 @@
 		var oArgs = arguments;
 		var bExportIsSet = typeof oArgs[oArgs.length - 1] === "boolean";
 
-		// bExport parameter is proprietary and should not be used in noConflict mode for an AMD compliant define()
+		// bExport parameter is proprietary and should not be used for an AMD compliant define()
 		if (bExportIsSet) {
 			oArgs = Array.prototype.slice.call(oArgs, 0, oArgs.length - 1);
 		}
 
-		define.apply(this, oArgs);
+		ui5Define.apply(this, oArgs);
 	}
 
-	function define(sModuleName, aDependencies, vFactory, bExport) {
+	function ui5Define(sModuleName, aDependencies, vFactory, bExport) {
 		var sResourceName,
 			oCurrentExecInfo;
 
@@ -1660,16 +1660,16 @@
 			if ( typeof vDependencies === 'string' ) {
 				sModuleName = getMappedName(vDependencies + '.js', sContextName);
 				var oModule = Module.get(sModuleName);
-				if (bAMDCompliance) {
-					// check the modules internal state
-					// everything from PRELOADED to LOADED (incl. FAILED) is considered erroneous
-					if (oModule.state !== EXECUTING && oModule.state !== READY) {
-						throw new Error(
-							"Module '" + sModuleName + "' has not been loaded yet. " +
-							"Use require(['" + sModuleName + "']) to load it."
-						);
-					}
+
+				// check the modules internal state
+				// everything from PRELOADED to LOADED (incl. FAILED) is considered erroneous
+				if (bAMDCompliance && oModule.state !== EXECUTING && oModule.state !== READY) {
+					throw new Error(
+						"Module '" + sModuleName + "' has not been loaded yet. " +
+						"Use require(['" + sModuleName + "']) to load it."
+					);
 				}
+
 				// Module is in state READY or EXECUTING; or require() was called from sap.ui.require().
 				// A modules value might be undefined (no return statement) even though the state is READY.
 				return oModule.value();
@@ -1760,7 +1760,7 @@
 	 * @experimental Since 1.27.0 - not all aspects of sap.ui.require are settled yet. E.g. the return value
 	 * of the asynchronous use case might change (currently it is undefined).
 	 */
-	var require = createContextualRequire(null, false);
+	var ui5Require = createContextualRequire(null, false);
 
 	/**
 	 * difference between require (sap.ui.require) and amdRequire (window.require):
@@ -2036,7 +2036,7 @@
 
 	// @evo-todo really use this hook for loading. But how to differentiate between sync and async?
 	// for now, it is only a notification hook to attach load tests
-	require.load = function(context, url, id) {
+	ui5Require.load = function(context, url, id) {
 	};
 
 	var privateAPI = {
@@ -2095,9 +2095,9 @@
 		}
 	});
 
-	require.sync = requireSync;
+	ui5Require.sync = requireSync;
 
-	require.predefine = function(sModuleName, aDependencies, vFactory, bExport) {
+	ui5Require.predefine = function(sModuleName, aDependencies, vFactory, bExport) {
 		if ( typeof sModuleName !== 'string' ) {
 			throw new Error("predefine requires a module name");
 		}
@@ -2105,7 +2105,7 @@
 		Module.get(sModuleName + '.js').preload("<unknown>/" + sModuleName, [sModuleName, aDependencies, vFactory, bExport], null);
 	};
 
-	require.preload = function(modules, group, url) {
+	ui5Require.preload = function(modules, group, url) {
 		group = group || null;
 		url = url || "<unknown>";
 		for ( var name in modules ) {
@@ -2385,12 +2385,12 @@
 	 *        constraints and limitations are obeyed, SAP-owned code might use it. If the fourth parameter
 	 *        is not used and if the asynchronous contract is respected, even Non-SAP code might use it.
 	 */
-	sap.ui.define = define;
+	sap.ui.define = ui5Define;
 
 	/**
 	 * @private
 	 */
-	sap.ui.predefine = require.predefine;
+	sap.ui.predefine = ui5Require.predefine;
 
 	/**
 	 * Resolves one or more module dependencies.
@@ -2442,7 +2442,7 @@
 	 * @experimental Since 1.27.0 - not all aspects of sap.ui.require are settled yet. E.g. the return value
 	 * of the asynchronous use case might change (currently it is undefined).
 	 */
-	sap.ui.require = require;
+	sap.ui.require = ui5Require;
 
 	/**
 	 * Load a single module synchronously and return its module value.
@@ -2467,6 +2467,6 @@
 	 * @returns {any} value of the loaded module or undefined
 	 * @private
 	 */
-	sap.ui.requireSync = require.sync;
+	sap.ui.requireSync = ui5Require.sync;
 
 }(window));
