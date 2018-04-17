@@ -190,7 +190,7 @@ function(
 	 */
 	AggregationOverlay.prototype._getRenderingParent = function () {
 		if (Util.isInteger(this.getScrollContainerId())) {
-			return this.getParent().getScrollContainerByIndex(this.getScrollContainerId());
+			return this.getParent().getScrollContainerById(this.getScrollContainerId());
 		} else {
 			return Overlay.prototype._getRenderingParent.apply(this, arguments);
 		}

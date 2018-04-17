@@ -446,6 +446,10 @@ function(
 		return this.$().get(0);
 	};
 
+	Overlay.prototype.getChildrenDomRef = function () {
+		return this._$children.get(0);
+	};
+
 	/**
 	 * Retrieves reference to the DOM Element wrapped into jQuery object
 	 * @return {jQuery} - jQuery with DOM Element inside
