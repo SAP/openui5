@@ -11,19 +11,22 @@
 		rows="{path : '/ZGK_C_SalesOrderItem_RD_V4(P_DateFunction=\'PREVIOUSYEAR\')/Set',
 			parameters : {
 				$$aggregation : [{
-					name : 'ProductCategory',
-					grouped : true
+					grouped : true,
+					name : 'ProductCategory'
+				}, {
+					grouped : false,
+					name : 'TransactionCurrency'
 				}, {
 					name : 'NetAmountInDisplayCurrency',
 					total : true,
 					unit : 'DisplayCurrency'
 				}, {
 					name : 'NetAmountInTransactionCurrency',
-					total : false
+					total : false,
 					unit : 'TransactionCurrency'
 				}],
 				$count : true,
-				$orderby : 'ProductCategory desc'
+				$orderby : 'ProductCategory desc,TransactionCurrency'
 			}}" selectionMode="None"
 			title="Net Sales Volume by Product Category ({headerContext>$count})">
 		<Column hAlign="End" width="5em">
@@ -52,13 +55,15 @@
 		<Column template="DisplayCurrency">
 			<m:Label text="Display Currency"/>
 		</Column>
+<!-- TODO how can we influence the cell content PER ROW?
 		<Column hAlign="End"
-			template="{= %{@$ui5.node.isTotal} ? 'NetAmountInTransactionCurrency' : undefined}">
+			template="{= %{@$ui5.node.isTotal} ? undefined : 'NetAmountInTransactionCurrency'}">
 			<m:Label text="Net Amount"/>
 		</Column>
-		<Column template="{= %{@$ui5.node.isTotal} ? 'TransactionCurrency' : undefined}">
+		<Column template="{= %{@$ui5.node.isTotal} ? undefined : 'TransactionCurrency'}">
 			<m:Label text="Transaction Currency"/>
 		</Column>
+-->
 		<Column hAlign="Center" width="5em">
 			<m:Label text="Subtotal"/>
 			<template>

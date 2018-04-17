@@ -7,10 +7,11 @@ sap.ui.require([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataParentBinding"
-], function (jQuery, SyncPromise, Binding, ChangeReason, Context, _Helper, ODataModel,
+], function (jQuery, SyncPromise, Binding, ChangeReason, Context, _GroupLock, _Helper, ODataModel,
 		asODataParentBinding) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
@@ -1484,31 +1485,30 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	["$auto", undefined].forEach(function (sGroupId) {
-		QUnit.test("deleteFromCache(" + sGroupId + ") : binding w/ cache", function (assert) {
-			var oCache = {
-					_delete : function () {}
-				},
-				oBinding = new ODataParentBinding({
-					oCachePromise : SyncPromise.resolve(oCache),
-					getUpdateGroupId : function () {},
-					oModel : {isAutoGroup : function () {return true;}}
-				}),
-				fnCallback = {},
-				oResult = {};
+	QUnit.test("deleteFromCache: binding w/ cache", function (assert) {
+		var oCache = {
+				_delete : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oCachePromise : SyncPromise.resolve(oCache),
+				getUpdateGroupId : function () {},
+				oModel : {isAutoGroup : function () {return true;}}
+			}),
+			fnCallback = {},
+			oGroupLock = new _GroupLock("groupId"),
+			oResult = {};
 
-			this.mock(oBinding).expects("getUpdateGroupId").exactly(sGroupId ? 0 : 1)
-				.withExactArgs().returns("$auto");
-			this.mock(oCache).expects("_delete")
-				.withExactArgs("$auto", "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-					sinon.match.same(fnCallback))
-				.returns(SyncPromise.resolve(oResult));
+		this.mock(oBinding).expects("getUpdateGroupId").withExactArgs().returns("updateGroup");
+		this.mock(oGroupLock).expects("setGroupId").withExactArgs("updateGroup");
+		this.mock(oCache).expects("_delete")
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
+				"1/EMPLOYEE_2_EQUIPMENTS/3", sinon.match.same(fnCallback))
+			.returns(SyncPromise.resolve(oResult));
 
-			assert.strictEqual(
-				oBinding.deleteFromCache(sGroupId, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
-					fnCallback).getResult(),
-				oResult);
-		});
+		assert.strictEqual(
+			oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+				fnCallback).getResult(),
+			oResult);
 	});
 
 	//*********************************************************************************************
@@ -1530,50 +1530,47 @@ sap.ui.require([
 				sPath : "TEAM_2_EMPLOYEES"
 			}),
 			fnCallback = {},
+			oGroupLock = new _GroupLock("$auto"),
 			oResult = {};
 
 		this.mock(_Helper).expects("buildPath")
 			.withExactArgs(42, "TEAM_2_EMPLOYEES", "1/EMPLOYEE_2_EQUIPMENTS/3")
 			.returns("~");
 		this.mock(oParentBinding).expects("deleteFromCache")
-			.withExactArgs("$auto", "EQUIPMENTS('3')", "~", sinon.match.same(fnCallback))
+			.withExactArgs(sinon.match.same(oGroupLock), "EQUIPMENTS('3')", "~",
+				sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
-			oBinding.deleteFromCache("$auto", "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3",
+			oBinding.deleteFromCache(oGroupLock, "EQUIPMENTS('3')", "1/EMPLOYEE_2_EQUIPMENTS/3",
 				fnCallback).getResult(),
 			oResult);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deleteFromCache: check group ID", function (assert) {
+	QUnit.test("deleteFromCache: check submit mode", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oCachePromise : SyncPromise.resolve({_delete : function () {}}),
 				getUpdateGroupId : function () {},
 				oModel : {isAutoGroup : function () {}, isDirectGroup : function () {}}
 			}),
+			oGroupLock = new _GroupLock("$direct"),
 			oModelMock = this.mock(oBinding.oModel),
 			fnCallback = {};
 
 		oModelMock.expects("isAutoGroup").withExactArgs("myGroup").returns(false);
 		assert.throws(function () {
-			oBinding.deleteFromCache("myGroup");
-		}, new Error("Illegal update group ID: myGroup"));
-
-		this.mock(oBinding).expects("getUpdateGroupId").returns("myGroup");
-		oModelMock.expects("isAutoGroup").withExactArgs("myGroup").returns(false);
-
-		assert.throws(function () {
-			oBinding.deleteFromCache();
+			oBinding.deleteFromCache(new _GroupLock("myGroup"));
 		}, new Error("Illegal update group ID: myGroup"));
 
 		this.mock(oBinding.oCachePromise.getResult()).expects("_delete")
-			.withExactArgs("$direct", "EMPLOYEES('1')", "42", sinon.match.same(fnCallback))
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')", "42",
+				sinon.match.same(fnCallback))
 			.returns(SyncPromise.resolve());
 		oModelMock.expects("isAutoGroup").withExactArgs("$direct").returns(false);
 		oModelMock.expects("isDirectGroup").withExactArgs("$direct").returns(true);
 
-		return oBinding.deleteFromCache("$direct", "EMPLOYEES('1')", "42", fnCallback).then();
+		return oBinding.deleteFromCache(oGroupLock, "EMPLOYEES('1')", "42", fnCallback).then();
 	});
 
 	//*********************************************************************************************
@@ -1846,16 +1843,18 @@ sap.ui.require([
 			}),
 			oCreateResult = {},
 			oCreatePromise = SyncPromise.resolve(oCreateResult),
+			oGroupLock = new _GroupLock("updateGroupId"),
 			fnCancel = function () {},
 			oInitialData = {};
 
 		this.mock(oCache).expects("create")
-			.withExactArgs("updateGroupId", "EMPLOYEES", "", sinon.match.same(oInitialData),
-				sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "",
+				sinon.match.same(oInitialData), sinon.match.same(fnCancel),
+				/*fnErrorCallback*/sinon.match.func)
 			.returns(oCreatePromise);
 
 		// code under test
-		return oBinding.createInCache("updateGroupId", "EMPLOYEES", "", oInitialData, fnCancel)
+		return oBinding.createInCache(oGroupLock, "EMPLOYEES", "", oInitialData, fnCancel)
 			.then(function (oResult) {
 				assert.strictEqual(oResult, oCreateResult);
 			});
@@ -1879,6 +1878,7 @@ sap.ui.require([
 				sPath : "SO_2_SCHEDULE"
 			}),
 			fnCancel = {},
+			oGroupLock = new _GroupLock("updateGroupId"),
 			oResult = {},
 			oCreatePromise = SyncPromise.resolve(oResult),
 			oInitialData = {};
@@ -1887,11 +1887,11 @@ sap.ui.require([
 			.withExactArgs(42, "SO_2_SCHEDULE", "")
 			.returns("~");
 		this.mock(oParentBinding).expects("createInCache")
-			.withExactArgs("updateGroupId", "SalesOrderList('4711')/SO_2_SCHEDULE", "~",
-				oInitialData, sinon.match.same(fnCancel))
+			.withExactArgs(sinon.match.same(oGroupLock), "SalesOrderList('4711')/SO_2_SCHEDULE",
+				"~", oInitialData, sinon.match.same(fnCancel))
 			.returns(oCreatePromise);
 
-		assert.strictEqual(oBinding.createInCache("updateGroupId",
+		assert.strictEqual(oBinding.createInCache(oGroupLock,
 			"SalesOrderList('4711')/SO_2_SCHEDULE", "", oInitialData, fnCancel).getResult(),
 			oResult);
 	});
@@ -1914,16 +1914,18 @@ sap.ui.require([
 				fnCancel = function () {},
 				oError = new Error(),
 				oExpectation,
+				oGroupLock = new _GroupLock("updateGroupId"),
 				oInitialData = {};
 
 			oExpectation = this.mock(oCache).expects("create")
-				.withExactArgs("updateGroupId", vPostPath, "", sinon.match.same(oInitialData),
-					sinon.match.same(fnCancel), /*fnErrorCallback*/sinon.match.func)
+				.withExactArgs(sinon.match.same(oGroupLock), vPostPath, "",
+					sinon.match.same(oInitialData), sinon.match.same(fnCancel),
+					/*fnErrorCallback*/sinon.match.func)
 				// we only want to observe fnErrorCallback, hence we neither resolve, nor reject
 				.returns(new SyncPromise(function () {}));
 
 			// code under test
-			oBinding.createInCache("updateGroupId", vPostPath, "", oInitialData, fnCancel);
+			oBinding.createInCache(oGroupLock, vPostPath, "", oInitialData, fnCancel);
 
 			this.mock(oBinding.oModel).expects("reportError")
 				.withExactArgs("POST on 'EMPLOYEES' failed; will be repeated automatically",

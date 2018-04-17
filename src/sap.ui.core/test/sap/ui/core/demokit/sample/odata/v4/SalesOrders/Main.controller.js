@@ -10,10 +10,11 @@ sap.ui.define([
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/Filter',
 		'sap/ui/model/FilterOperator',
+		'sap/ui/model/FilterType',
 		'sap/ui/model/json/JSONModel',
 		'sap/ui/model/Sorter'
 ], function (Dialog, MessageBox, MessageToast, DateFormat, Item, Controller, Filter, FilterOperator,
-		JSONModel, Sorter) {
+		FilterType, JSONModel, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
@@ -348,9 +349,10 @@ sap.ui.define([
 					+ "; save or reset changes before filtering");
 				return;
 			}
-			oBinding.filter(sQuery
-				? new Filter("GrossAmount", FilterOperator.GT, sQuery)
-				: null);
+			oBinding.filter(sQuery ? new Filter("GrossAmount", FilterOperator.GT, sQuery) : null,
+				// FilterType.Control simulates a custom control; it combines the filter on
+				// GrossAmount with the existing filter with a logical "and"
+				FilterType.Control);
 		},
 
 		onFilterItems : function (oEvent) {

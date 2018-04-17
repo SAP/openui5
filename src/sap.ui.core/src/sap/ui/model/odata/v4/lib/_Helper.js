@@ -738,14 +738,14 @@ sap.ui.define([
 						}
 					} else if (vOldValue && typeof vOldValue === "object") {
 						// a structural property was removed
-						Helper.fireChanges(mChangeListeners, sPropertyPath, vOldValue, true);
 						oCacheValue[sProperty] = vNewValue;
+						Helper.fireChanges(mChangeListeners, sPropertyPath, vOldValue, true);
 					} else {
 						// a primitive property
+						oCacheValue[sProperty] = vNewValue;
 						if (vOldValue !== vNewValue) {
 							Helper.fireChange(mChangeListeners, sPropertyPath, vNewValue);
 						}
-						oCacheValue[sProperty] = vNewValue;
 					}
 				}
 			});

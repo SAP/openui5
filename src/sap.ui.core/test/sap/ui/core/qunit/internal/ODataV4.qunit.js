@@ -12,6 +12,7 @@ sap.ui.require([
 	"sap/ui/core/qunit/odata/v4/lib/_AggregationCache.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_Batch.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_Cache.qunit",
+	"sap/ui/core/qunit/odata/v4/lib/_GroupLock.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_Helper.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_MetadataConverter.qunit",
 	"sap/ui/core/qunit/odata/v4/lib/_MetadataRequestor.qunit",

@@ -180,7 +180,7 @@ sap.ui.define([
 	 * Creates the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting <code>sPathInCache</code>.
 	 *
-	 * @param {string} sUpdateGroupId
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oUpdateGroupLock
 	 *   The group ID to be used for the POST request
 	 * @param {string|SyncPromise} vCreatePath
 	 *   The path for the POST request or a SyncPromise that resolves with that path
@@ -196,13 +196,13 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.createInCache = function (sUpdateGroupId, vCreatePath,
+	ODataParentBinding.prototype.createInCache = function (oUpdateGroupLock, vCreatePath,
 			sPathInCache, oInitialData, fnCancelCallback) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
 			if (oCache) {
-				return oCache.create(sUpdateGroupId, vCreatePath, sPathInCache, oInitialData,
+				return oCache.create(oUpdateGroupLock, vCreatePath, sPathInCache, oInitialData,
 					fnCancelCallback, function (oError) {
 						// error callback
 						that.oModel.reportError("POST on '" + vCreatePath
@@ -217,7 +217,7 @@ sap.ui.define([
 					return oResult;
 				});
 			}
-			return that.oContext.getBinding().createInCache(sUpdateGroupId, vCreatePath,
+			return that.oContext.getBinding().createInCache(oUpdateGroupLock, vCreatePath,
 				_Helper.buildPath(that.oContext.iIndex, that.sPath, sPathInCache), oInitialData,
 				fnCancelCallback);
 		});
@@ -297,8 +297,9 @@ sap.ui.define([
 	 * Deletes the entity in the cache. If the binding doesn't have a cache, it forwards to the
 	 * parent binding adjusting the path.
 	 *
-	 * @param {string} sGroupId
-	 *   The group ID to be used for the DELETE request
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the DELETE request; if no group ID is specified, it
+	 *   defaults to <code>getUpdateGroupId()</code>()
 	 * @param {string} sEditUrl
 	 *   The edit URL to be used for the DELETE request
 	 * @param {string} sPath
@@ -316,9 +317,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.deleteFromCache = function (sGroupId, sEditUrl, sPath,
+	ODataParentBinding.prototype.deleteFromCache = function (oGroupLock, sEditUrl, sPath,
 			fnCallback) {
-		var oCache = this.oCachePromise.getResult();
+		var oCache = this.oCachePromise.getResult(),
+			sGroupId;
 
 		if (this.oOperation) {
 			throw new Error("Cannot delete a deferred operation");
@@ -329,13 +331,14 @@ sap.ui.define([
 		}
 
 		if (oCache) {
-			sGroupId = sGroupId || this.getUpdateGroupId();
+			oGroupLock.setGroupId(this.getUpdateGroupId());
+			sGroupId = oGroupLock.getGroupId();
 			if (!this.oModel.isAutoGroup(sGroupId) && !this.oModel.isDirectGroup(sGroupId)) {
 				throw new Error("Illegal update group ID: " + sGroupId);
 			}
-			return oCache._delete(sGroupId, sEditUrl, sPath, fnCallback);
+			return oCache._delete(oGroupLock, sEditUrl, sPath, fnCallback);
 		}
-		return this.oContext.getBinding().deleteFromCache(sGroupId, sEditUrl,
+		return this.oContext.getBinding().deleteFromCache(oGroupLock, sEditUrl,
 			_Helper.buildPath(this.oContext.iIndex, this.sPath, sPath), fnCallback);
 	};
 

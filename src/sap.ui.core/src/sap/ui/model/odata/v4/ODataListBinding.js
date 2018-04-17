@@ -90,7 +90,7 @@ sap.ui.define([
 				this.aFilters = [];
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
-				this.sRefreshGroupId = undefined;
+				this.oRefreshGroupLock = undefined;
 				this.aSorters = _Helper.toArray(vSorters);
 
 				this.applyParameters(jQuery.extend(true, {}, mParameters));
@@ -107,8 +107,9 @@ sap.ui.define([
 	/**
 	 * Deletes the entity identified by the edit URL.
 	 *
-	 * @param {string} [sGroupId=getUpdateGroupId()]
-	 *   The group ID to be used for the DELETE request
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for the DELETE request; if no group ID is specified, it
+	 *   defaults to <code>getUpdateGroupId()</code>()
 	 * @param {string} sEditUrl
 	 *   The edit URL to be used for the DELETE request
 	 * @param {number} oContext
@@ -121,13 +122,13 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype._delete = function (sGroupId, sEditUrl, oContext) {
+	ODataListBinding.prototype._delete = function (oGroupLock, sEditUrl, oContext) {
 		var that = this;
 
 		if (!oContext.isTransient() && this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
-		return this.deleteFromCache(sGroupId, sEditUrl, String(oContext.iIndex),
+		return this.deleteFromCache(oGroupLock, sEditUrl, String(oContext.iIndex),
 			function (iIndex, aEntities) {
 				var sContextPath, i, sPredicate, sResolvedPath;
 
@@ -202,7 +203,7 @@ sap.ui.define([
 		this.mParameters = mParameters; // store mParameters at binding after validation
 		if ("$$aggregation" in oBindingParameters) { // via c'tor only!
 			this.mQueryOptions.$apply = _Helper.buildApply(oBindingParameters.$$aggregation);
-			this.aAggregation = oBindingParameters.$$aggregation;
+			this.aAggregation = _Helper.clone(oBindingParameters.$$aggregation);
 		}
 
 		this.mCacheByContext = undefined;
@@ -341,6 +342,7 @@ sap.ui.define([
 		var oContext,
 			vCreatePath, // {string|SyncPromise}
 			oCreatePromise,
+			oGroupLock,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			that = this;
 
@@ -359,7 +361,8 @@ sap.ui.define([
 			});
 		}
 
-		oCreatePromise = this.createInCache(this.getUpdateGroupId(), vCreatePath, "", oInitialData,
+		oGroupLock = this.oModel.lockGroup(this.getUpdateGroupId());
+		oCreatePromise = this.createInCache(oGroupLock, vCreatePath, "", oInitialData,
 			function () {
 				// cancel callback
 				oContext.destroy();
@@ -372,10 +375,10 @@ sap.ui.define([
 			that.iMaxLength += 1;
 			if (that.isRefreshable()) {
 				sGroupId = that.getGroupId();
-				return that.refreshSingle(oContext,
-					that.oModel.isDirectGroup(sGroupId) || that.oModel.isAutoGroup(sGroupId)
-						? sGroupId
-						: "$auto");
+				if (!that.oModel.isDirectGroup(sGroupId) && !that.oModel.isAutoGroup(sGroupId)) {
+					sGroupId = "$auto";
+				}
+				return that.refreshSingle(oContext, that.oModel.lockGroup(sGroupId));
 			}
 		});
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1, oCreatePromise);
@@ -796,15 +799,14 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for the request; it is hard-coded to "$cached" in case this
-	 *   binding's cache is used because requests must only be triggered via {@link #getContexts}
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group ID to be used for the request
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fetchValue = function (sPath, oListener, sGroupId) {
+	ODataListBinding.prototype.fetchValue = function (sPath, oListener, oGroupLock) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
@@ -813,11 +815,11 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					return oCache.fetchValue("$cached", sRelativePath, undefined, oListener);
+					return oCache.fetchValue(oGroupLock, sRelativePath, undefined, oListener);
 				}
 			}
 			if (that.oContext) {
-				return that.oContext.fetchValue(sPath, oListener, sGroupId);
+				return that.oContext.fetchValue(sPath, oListener, oGroupLock);
 			}
 		});
 	};
@@ -912,7 +914,7 @@ sap.ui.define([
 			aContexts,
 			bDataRequested = false,
 			bFireChange = false,
-			sGroupId,
+			oGroupLock,
 			oPromise,
 			bRefreshEvent = !!this.sChangeReason,
 			iStartInModel, // in model coordinates
@@ -937,6 +939,7 @@ sap.ui.define([
 		}
 
 		if (this.bRelative && !oContext) { // unresolved relative binding
+			this.aPreviousData = []; // compute diff from scratch when binding is resolved again
 			return [];
 		}
 
@@ -970,9 +973,10 @@ sap.ui.define([
 		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
 			oPromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
-					sGroupId = that.sRefreshGroupId || that.getGroupId();
-					that.sRefreshGroupId = undefined;
-					return oCache.read(iStartInModel, iLength, iMaximumPrefetchSize, sGroupId,
+					// getContexts needs no lock, only the group ID (or re-use the refresh lock)
+					oGroupLock = that.oModel.lockGroup(that.getGroupId(), that.oRefreshGroupLock);
+					that.oRefreshGroupLock = undefined;
+					return oCache.read(iStartInModel, iLength, iMaximumPrefetchSize, oGroupLock,
 						function () {
 							bDataRequested = true;
 							that.fireDataRequested();
@@ -1310,7 +1314,7 @@ sap.ui.define([
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
 		var that = this;
 
-		this.sRefreshGroupId = sGroupId;
+		this.oRefreshGroupLock = this.oModel.lockGroup(sGroupId);
 		this.oCachePromise.then(function (oCache) {
 			if (oCache) {
 				that.mCacheByContext = undefined;
@@ -1333,8 +1337,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context object for the entity to be refreshed
-	 * @param {string} [sGroupId]
-	 *   The group ID to be used for refresh
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group ID to be used for refresh
 	 * @param {boolean} [bAllowRemoval=false]
 	 *   Allows the list binding to remove the given context from its collection because the
 	 *   entity does not match the binding's filter anymore,
@@ -1344,15 +1348,11 @@ sap.ui.define([
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which resolves with <code>undefined</code> when the entity is updated in the
 	 *   cache.
-	 * @throws {Error}
-	 *   For invalid group IDs, if the binding is not refreshable or has pending changes.
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.refreshSingle = function (oContext, sGroupId, bAllowRemoval) {
+	ODataListBinding.prototype.refreshSingle = function (oContext, oGroupLock, bAllowRemoval) {
 		var that = this;
-
-		this.oModel.checkGroupId(sGroupId);
 
 		if (!this.isRefreshable()) {
 			throw new Error("Binding is not refreshable; cannot refresh entity: " + oContext);
@@ -1380,7 +1380,7 @@ sap.ui.define([
 			function refreshDependentBindings() {
 				that.oModel.getDependentBindings(oContext).forEach(function (oDependentBinding) {
 					// with bCheckUpdate = false because it is done after data is received
-					oDependentBinding.refreshInternal(sGroupId, false);
+					oDependentBinding.refreshInternal(oGroupLock.getGroupId(), false);
 				});
 			}
 
@@ -1403,12 +1403,12 @@ sap.ui.define([
 				that._fireChange({reason : ChangeReason.Remove});
 			}
 
-			sGroupId = sGroupId || that.getGroupId();
+			oGroupLock.setGroupId(that.getGroupId());
 			oPromise =
 				(bAllowRemoval
-					? oCache.refreshSingleWithRemove(sGroupId, oContext.iIndex, fireDataRequested,
+					? oCache.refreshSingleWithRemove(oGroupLock, oContext.iIndex, fireDataRequested,
 						onRemove)
-					: oCache.refreshSingle(sGroupId, oContext.iIndex, fireDataRequested))
+					: oCache.refreshSingle(oGroupLock, oContext.iIndex, fireDataRequested))
 				.then(function () {
 					fireDataReceived({data : {}});
 					if (oContext.oBinding) { // do not update destroyed context

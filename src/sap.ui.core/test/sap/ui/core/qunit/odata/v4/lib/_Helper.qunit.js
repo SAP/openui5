@@ -619,6 +619,44 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("updateCache: check cache value in change handler", function (assert) {
+		var oCacheData = {
+				BusinessPartnerID : "42",
+				Address : {
+					City : "Walldorf",
+					Foo : {
+						Bar : "Baz"
+					}
+				}
+			},
+			mChangeListeners = {
+				"SO_2_BP/Address/City" : [{onChange : function () {
+					assert.strictEqual(oCacheData.Address.City, "St. Ingbert");
+				}}],
+				"SO_2_BP/Address/Foo/Bar" : [{onChange : function () {
+					assert.strictEqual(oCacheData.Address.Foo, null);
+				}}]
+			};
+
+		// code under test
+		_Helper.updateCache(mChangeListeners, "SO_2_BP", oCacheData, {
+			BusinessPartnerID : "42",
+			Address : {
+				City : "St. Ingbert",
+				Foo : null
+			}
+		});
+
+		assert.deepEqual(oCacheData, {
+			BusinessPartnerID : "42",
+			Address : {
+				City : "St. Ingbert",
+				Foo :  null
+			}
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("updateCache: empty value from PATCH response", function (assert) {
 		var oCacheData = {
 				SalesOrderItemID : "000100"

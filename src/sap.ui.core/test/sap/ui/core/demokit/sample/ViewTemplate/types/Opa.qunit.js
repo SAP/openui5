@@ -16,6 +16,7 @@ sap.ui.require([
 	opaTest("OData Types", function (Given, When, Then) {
 
 		Given.iStartMyUIComponent({
+			autoWait : true,
 			componentConfig : {
 				name : "sap.ui.core.sample.ViewTemplate.types"
 			}

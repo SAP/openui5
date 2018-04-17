@@ -14,6 +14,7 @@ sap.ui.require([
 	opaTest("Create, modify and delete", function (Given, When, Then) {
 
 		Given.iStartMyUIComponent({
+			autoWait : true,
 			componentConfig : {
 				name : "sap.ui.core.sample.odata.v4.SalesOrders"
 			}

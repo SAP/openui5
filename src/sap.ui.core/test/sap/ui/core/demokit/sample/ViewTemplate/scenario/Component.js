@@ -84,8 +84,6 @@ sap.ui.define([
 			sServiceUri = "/sap/opu/odata/IWBEP/GWSAMPLE_BASIC/";
 
 			if (oUriParameters.get("realOData") === "true") {
-				sAnnotationUri = this.proxy(sAnnotationUri);
-				sAnnotationUri2 = this.proxy(sAnnotationUri2);
 				sServiceUri = this.proxy(sServiceUri);
 			} else {
 				this.aMockServers.push(new MockServer({rootUri : sServiceUri}));
@@ -95,28 +93,27 @@ sap.ui.define([
 					bGenerateMissingMockData : true
 				});
 				this.aMockServers[0].start();
-				// yet another mock server to handle annotations
-				this.aMockServers.push(new MockServer({
-					requests : [{
-						method : "GET",
-						//TODO have MockServer fixed and pass just the URL!
-						path : new RegExp(MockServer.prototype
-							._escapeStringForRegExp(sAnnotationUri)),
-						response : function(oXHR) {
-							oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations.xml");
-						}
-					}, {
-						method : "GET",
-						//TODO have MockServer fixed and pass just the URL!
-						path : new RegExp(MockServer.prototype
-							._escapeStringForRegExp(sAnnotationUri2)),
-						response : function(oXHR) {
-							oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations2.xml");
-						}
-					}]
-				}));
-				this.aMockServers[1].start();
 			}
+
+			// yet another mock server to handle annotations
+			this.aMockServers.push(new MockServer({
+				requests : [{
+					method : "GET",
+					//TODO have MockServer fixed and pass just the URL!
+					path : new RegExp(MockServer.prototype._escapeStringForRegExp(sAnnotationUri)),
+					response : function(oXHR) {
+						oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations.xml");
+					}
+				}, {
+					method : "GET",
+					//TODO have MockServer fixed and pass just the URL!
+					path : new RegExp(MockServer.prototype._escapeStringForRegExp(sAnnotationUri2)),
+					response : function(oXHR) {
+						oXHR.respondFile(200, {}, sMockServerBaseUri + "annotations2.xml");
+					}
+				}]
+			}));
+			this.aMockServers[this.aMockServers.length - 1].start();
 
 			oModel = new fnModel(sServiceUri, {
 				annotationURI : [sAnnotationUri, sAnnotationUri2],
