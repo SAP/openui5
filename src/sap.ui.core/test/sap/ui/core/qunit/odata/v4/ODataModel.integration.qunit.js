@@ -7,6 +7,7 @@ sap.ui.require([
 	"sap/m/CustomListItem",
 	"sap/m/Text",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/core/mvc/View",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
@@ -18,7 +19,7 @@ sap.ui.require([
 	"sap/ui/test/TestUtils",
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (jQuery, ColumnListItem, CustomListItem, Text, Controller, ChangeReason, Filter,
+], function (jQuery, ColumnListItem, CustomListItem, Text, Controller, View, ChangeReason, Filter,
 		FilterOperator, OperationMode, AnnotationHelper, ODataListBinding, ODataModel, Sorter,
 		TestUtils) {
 	/*global QUnit, sinon */
@@ -476,31 +477,34 @@ sap.ui.require([
 				this.oModel.oRequestor.sendRequest = checkRequest;
 			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
-			this.oView = sap.ui.xmlview({
+			return View.create({
+				type: "XML",
 				controller : oController
 					&& new (Controller.extend(jQuery.sap.uid(), oController))(),
-				viewContent :
+				definition :
 					'<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.ui.table">'
 						+ sViewXML
 						+ '</mvc:View>'
-			});
-			Object.keys(this.mChanges).forEach(function (sControlId) {
-				var oControl = that.oView.byId(sControlId);
+			}).then(function(oView) {
+				Object.keys(that.mChanges).forEach(function (sControlId) {
+					var oControl = oView.byId(sControlId);
 
-				if (oControl) {
-					that.setFormatter(assert, oControl, sControlId);
-				}
-			});
-			Object.keys(this.mListChanges).forEach(function (sControlId) {
-				var oControl = that.oView.byId(sControlId);
+					if (oControl) {
+						that.setFormatter(assert, oControl, sControlId);
+					}
+				});
+				Object.keys(that.mListChanges).forEach(function (sControlId) {
+					var oControl = oView.byId(sControlId);
 
-				if (oControl) {
-					that.setFormatterInList(assert, oControl, sControlId);
-				}
-			});
+					if (oControl) {
+						that.setFormatterInList(assert, oControl, sControlId);
+					}
+				});
 
-			this.oView.setModel(that.oModel);
-			return this.waitForChanges(assert);
+				oView.setModel(that.oModel);
+				that.oView = oView;
+				return that.waitForChanges(assert);
+			});
 		},
 
 		/**
