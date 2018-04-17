@@ -405,6 +405,67 @@ sap.ui.define([
 		afterEach : function() {}
 	});
 
+	QUnit.test("Component.create - manifest with URL", function(assert) {
+
+		sap.ui.core.Component._fnOnInstanceCreated = undefined;
+
+		return Component.create({
+			manifest: "/anylocation/manifest.json"
+		}).then(function(oComponent) {
+			assert.ok(true, "Component is loaded properly!");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
+
+	QUnit.test("Component.get - manifest with URL", function(assert) {
+
+		sap.ui.core.Component._fnOnInstanceCreated = undefined;
+
+		return Component.create({
+			id: "myTestComp",
+			manifest: "/anylocation/manifest.json"
+		}).then(function(oComponent) {
+			assert.ok(true, "Component is loaded properly!");
+			assert.equal(oComponent, Component.get("myTestComp"), "Component.get returns right component");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
+
+
+	QUnit.test("Component.load - manifest with URL", function(assert) {
+
+		sap.ui.core.Component._fnOnInstanceCreated = undefined;
+
+		return Component.load({
+			manifest: "/anylocation/manifest.json"
+		}).then(function(ComponentClass) {
+			assert.ok(true, "Component is loaded properly!");
+			assert.ok(ComponentClass.constructor && !(ComponentClass instanceof Component), "Component class loaded");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
+
+	QUnit.test("Component.create - manifest as object", function(assert) {
+
+		return Component.create({
+			manifest: {
+				"sap.app" : {
+					"id" : "samples.components.oneview"
+				}
+			}
+		}).then(function(oComponent) {
+			assert.equal(oComponent.getManifestObject().getComponentName(), "samples.components.oneview", "The proper component has been loaded!");
+		}, function(oError) {
+			assert.ok(false, "Component should be loaded!");
+		});
+
+	});
 
 	QUnit.test("Manifest delegation to component instance (sync)", function(assert) {
 
@@ -947,6 +1008,62 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Component.create - Async creation of component usage", function(assert) {
+
+		var done = (function() {
+			var asyncDone = assert.async();
+			return function cleanup(oComponent, oSpy) {
+				oSpy.restore();
+				oComponent.destroy();
+				asyncDone();
+			};
+		})();
+
+		Component.create({
+			name : "my.usage",
+			manifest: false
+		}).then(function (oComponent) {
+			var oSpy = sinon.spy(oComponent, "_createComponent");
+
+			sap.ui.require([
+				"my/used/Component"
+			], function(UsedComponent) {
+
+				var mConfig = {
+					usage: "myUsage",
+					settings: {
+						"key1": "value1"
+					},
+					componentData: {
+						"key2": "value2"
+					},
+					asyncHints: {},
+					anything: "else"
+				};
+				var mSettings = jQuery.extend(true, {}, mConfig.settings, { componentData: mConfig.componentData });
+				oComponent.createComponent(mConfig).then(function(oComponentUsage) {
+					assert.ok(oComponentUsage instanceof Component, "ComponentUsage must be type of sap.ui.core.Component");
+					assert.ok(oComponentUsage instanceof UsedComponent, "ComponentUsage must be type of my.used.Component");
+					assert.equal(oComponent.getId(), Component.getOwnerIdFor(oComponentUsage), "ComponentUsage must be created with the creator Component as owner");
+					assert.equal(1, oSpy.callCount, "Nested component created with instance factory function");
+					assert.equal("myUsage", oSpy.args[0][0].usage, "Nested component created with config 'usage: \"myUsage\"'");
+					assert.equal(true, oSpy.args[0][0].async, "Nested component created with config 'async: true'");
+					assert.deepEqual(mConfig.settings, oSpy.args[0][0].settings, "ComponentUsage must receive the correct settings");
+					assert.deepEqual(mSettings, oComponentUsage._mSettings, "ComponentUsage must receive the correct settings");
+					assert.deepEqual(mConfig.componentData, oSpy.args[0][0].componentData, "ComponentUsage must receive the correct componentData");
+					assert.equal(undefined, oSpy.args[0][0].asyncHints, "ComponentUsage must not receive \"asyncHints\"");
+					assert.equal(undefined, oSpy.args[0][0].anything, "ComponentUsage must not receive \"anything\"");
+					done(oComponent, oSpy);
+				}).catch(function(oError) {
+					assert.ok(false, "createComponent must not be failing!");
+					done(oComponent, oSpy);
+				});
+
+			});
+		});
+
+	});
+
 	QUnit.test("Sync creation of component usage", function(assert) {
 
 		var oComponent = sap.ui.component({
@@ -1034,7 +1151,7 @@ sap.ui.define([
 			var oManifest = this.oManifest = {
 				"sap.app" : {
 					"id" : "samples.components.button"
-				}, 
+				},
 				"sap.ui5": {
 					"models": {
 						"i18n-component": {
@@ -1131,5 +1248,4 @@ sap.ui.define([
 		oModelConfigSpy.restore();
 
 	});
-
 });
