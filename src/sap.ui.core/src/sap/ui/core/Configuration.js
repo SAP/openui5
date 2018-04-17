@@ -132,6 +132,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
 					"xx-xml-processing"     : { type : "string",  defaultValue : "" },
+					"xx-avoidAriaApplicationRole" : { type : "boolean",  defaultValue : false}, // Avoid ACC role 'application'
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -955,6 +956,13 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getAutoAriaBodyRole : function () {
 			return this.autoAriaBodyRole;
+		},
+
+		/**
+		 * @experimental
+		 */
+		getAvoidAriaApplicationRole : function() {
+			return this.getAutoAriaBodyRole() && this["xx-avoidAriaApplicationRole"];
 		},
 
 		/**

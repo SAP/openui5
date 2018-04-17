@@ -148,7 +148,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/m/library'],
 			rm.addClass("sapMPopoverCont");
 			rm.writeClasses();
 
-			if (sap.ui.getCore().getConfiguration().getAccessibility()) {
+			if (sap.ui.getCore().getConfiguration().getAccessibility() && !sap.ui.getCore().getConfiguration().getAvoidAriaApplicationRole()) {
 				rm.writeAttribute("role", "application");
 			}
 
