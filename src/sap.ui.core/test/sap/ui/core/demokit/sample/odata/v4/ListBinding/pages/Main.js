@@ -11,8 +11,6 @@ function (Helper, Opa5, Press, Properties) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.ListBinding.Main";
 
-	Opa5.extendConfig({autoWait : true});
-
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {

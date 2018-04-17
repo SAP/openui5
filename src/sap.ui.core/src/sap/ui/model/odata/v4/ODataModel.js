@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/OperationMode",
 	"sap/ui/thirdparty/URI",
+	"./lib/_GroupLock",
 	"./lib/_MetadataRequestor",
 	"./lib/_Requestor",
 	"./lib/_Parser",
@@ -28,7 +29,7 @@ sap.ui.define([
 	"./ODataMetaModel",
 	"./ODataPropertyBinding",
 	"./SubmitMode"
-], function (jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI,
+], function (jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI, _GroupLock,
 		_MetadataRequestor, _Requestor, _Parser, ODataContextBinding, ODataListBinding,
 		ODataMetaModel, ODataPropertyBinding, SubmitMode) {
 
@@ -1116,6 +1117,31 @@ sap.ui.define([
 	ODataModel.prototype.isDirectGroup = function (sGroupId) {
 		return this.mGroupProperties[sGroupId]
 			&& this.mGroupProperties[sGroupId].submit === SubmitMode.Direct;
+	};
+
+	/**
+	 * Creates or modifies a lock for a group.
+	 *
+	 * It is possible to create a lock without giving a group ID initially and set the group ID
+	 * later. Once a group ID has been set, it cannot be changed anymore.
+	 *
+	 * Currently a group lock doesn't lock. All non-API functions use this group lock instead of the
+	 * group ID so that a lock is possible.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID. If not given here, it can be set later on the created lock.
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   If a group lock is given, it is modified and returned; otherwise a lock is created
+	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
+	 *   The group lock
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.lockGroup = function (sGroupId, oGroupLock) {
+		oGroupLock = oGroupLock || new _GroupLock(sGroupId);
+		oGroupLock.setGroupId(sGroupId);
+
+		return oGroupLock;
 	};
 
 	/**

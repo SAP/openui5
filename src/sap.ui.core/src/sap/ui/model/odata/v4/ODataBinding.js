@@ -217,7 +217,7 @@ sap.ui.define([
 	 * baz -> baz
 	 * /foo/bar/baz -> baz
 	 * /foo/bar('baz') -> ('baz')
-	 * /foo -> undefined if the binding is relative, an Error is thrown otherwise
+	 * /foo -> undefined if the binding is relative
 	 *
 	 * @param {string} sPath
 	 *   A path

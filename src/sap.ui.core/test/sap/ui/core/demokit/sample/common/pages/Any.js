@@ -4,9 +4,10 @@
 sap.ui.require([
 	"sap/ui/core/sample/common/Helper",
 	"sap/ui/test/Opa5",
+	"sap/ui/test/TestUtils",
 	"sap/ui/test/matchers/Properties"
 ],
-function (Helper, Opa5, Properties) {
+function (Helper, Opa5, TestUtils, Properties) {
 	"use strict";
 
 	/*
@@ -69,7 +70,7 @@ function (Helper, Opa5, Properties) {
 		Opa5.assert.ok(true, "Log checked");
 	}
 
-	Opa5.extendConfig({autoWait : true});
+	Opa5.extendConfig({autoWait : true, timeout : TestUtils.getDefaultOpaTimeout()});
 
 	Opa5.createPageObjects({
 		/*
@@ -85,12 +86,14 @@ function (Helper, Opa5, Properties) {
 						success : function (oSalesOrderTable) {
 							var aPromises = [],
 								bCleanUpFinished = false,
+								oModel = oSalesOrderTable.getModel(),
 								// use private requestor to prevent additional read requests(ETag)
 								// which need additional mockdata
-								oRequestor = oSalesOrderTable.getModel().oRequestor;
+								oRequestor = oModel.oRequestor;
 							sap.ui.test.Opa.getContext().aOrderIds.forEach(function (sOrderId) {
 								aPromises.push(oRequestor.request("DELETE",
-									"SalesOrderList('" + sOrderId + "')", "Cleanup",
+									"SalesOrderList('" + sOrderId + "')",
+									oModel.lockGroup("Cleanup"),
 									{"If-Match" : "*"}));
 								Opa5.assert.ok(true, "Cleanup; delete SalesOrder:" + sOrderId);
 							});
@@ -165,7 +168,7 @@ function (Helper, Opa5, Properties) {
 							Opa5.assert.ok(rMessage.test(sText),
 								"Message text '" + sText + "' matches " + rMessage);
 						}
-					})
+					});
 				}
 			}
 		}

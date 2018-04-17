@@ -7,9 +7,10 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
 	"./_Batch",
+	"./_GroupLock",
 	"./_Helper",
 	"./_V2Requestor"
-], function (jQuery, SyncPromise, _Batch, _Helper, asV2Requestor) {
+], function (jQuery, SyncPromise, _Batch, _GroupLock, _Helper, asV2Requestor) {
 	"use strict";
 
 	var mBatchHeaders = { // headers for the $batch request
@@ -722,10 +723,11 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL for which this requestor has been created;
 	 *   use "$batch" to send a batch request
-	 * @param {string} [sGroupId="$direct"]
-	 *   Identifier of the group to associate the request with; if '$direct', the request is
-	 *   sent immediately; for all other group ID values, the request is added to the given group
-	 *   and you can use {@link #submitBatch} to send all requests in that group.
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 *   A lock for the group to associate the request with; if no lock is given or its group ID has
+	 *   {@link sap.ui.model.odata.v4.SubmitMode.Direct}, the request is sent immediately; for all
+	 *   other group ID values, the request is added to the given group and you can use
+	 *   {@link #submitBatch} to send all requests in that group.
 	 * @param {object} [mHeaders]
 	 *   Map of request-specific headers, overriding both the mandatory OData V4 headers and the
 	 *   default headers given to the factory. This map of headers must not contain
@@ -751,9 +753,10 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Requestor.prototype.request = function (sMethod, sResourcePath, sGroupId, mHeaders, oPayload,
+	Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
 			fnSubmit, fnCancel, sMetaPath) {
-		var oPromise,
+		var sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
+			oPromise,
 			oRequest,
 			that = this;
 
@@ -762,7 +765,6 @@ sap.ui.define([
 		}
 
 		sResourcePath = this.convertResourcePath(sResourcePath);
-		sGroupId = sGroupId || "$direct";
 		if (this.getGroupSubmitMode(sGroupId) !== "Direct") {
 			oPromise = new Promise(function (fnResolve, fnReject) {
 				var aRequests = that.mBatchQueue[sGroupId];
@@ -828,8 +830,9 @@ sap.ui.define([
 			that = this,
 			bFound = aRequests && aRequests[0].some(function (oChange, i) {
 				if (oChange.body === oBody) {
-					that.request(oChange.method, oChange.url, sNewGroupId, oChange.headers, oBody,
-						oChange.$submit, oChange.$cancel).then(oChange.$resolve, oChange.$reject);
+					that.request(oChange.method, oChange.url, new _GroupLock(sNewGroupId),
+							oChange.headers, oBody, oChange.$submit, oChange.$cancel)
+						.then(oChange.$resolve, oChange.$reject);
 					aRequests[0].splice(i, 1);
 					deleteEmptyGroup(that, sCurrentGroupId);
 					return true;

@@ -10,8 +10,6 @@ function (Opa5, Press, Interactable) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.odata.v4.SalesOrderTP100_V4.Main";
 
-	Opa5.extendConfig({autoWait : true});
-
 	Opa5.createPageObjects({
 		onTheMainPage : {
 			actions : {

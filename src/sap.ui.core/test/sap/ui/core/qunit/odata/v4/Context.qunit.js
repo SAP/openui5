@@ -572,23 +572,59 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: success", function (assert) {
+	[false, true].forEach(function (bFailure) {
+		QUnit.test("delete: " + (bFailure ? "failure" : "success"), function (assert) {
+			var oBinding = {
+					checkSuspended : function () {}
+				},
+				oGroupLock = {},
+				oModel = {
+					checkGroupId : function () {},
+					lockGroup : function () {},
+					reportError : function () {}
+				},
+				oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
+				oError = new Error();
+
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
+			this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
+			this.mock(oModel).expects("lockGroup").withExactArgs("myGroup").returns(oGroupLock);
+			this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
+				.returns(bFailure ? Promise.reject(oError) : Promise.resolve());
+			if (bFailure) {
+				this.mock(oModel).expects("reportError")
+					.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
+						oError);
+			}
+
+			// code under test
+			return oContext["delete"]("myGroup").then(function () {
+				assert.notOk(bFailure);
+			}, function (oError0) {
+				assert.ok(bFailure);
+				assert.strictEqual(oError0, oError);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_delete: success", function (assert) {
 		var oBinding = {
-				_delete : function () {},
-				checkSuspended : function () {}
+				_delete : function () {}
 			},
+			oGroupLock = {},
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
-		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs("myGroup", "EMPLOYEES('1')", sinon.match.same(oContext))
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
+				sinon.match.same(oContext))
 			.returns(Promise.resolve());
 
 		// code under test
-		return oContext["delete"]("myGroup").then(function (oResult) {
+		return oContext._delete(oGroupLock).then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.strictEqual(oContext.oBinding, oBinding);
 			assert.strictEqual(oContext.oModel, oModel);
@@ -596,21 +632,21 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: transient", function (assert) {
+	QUnit.test("_delete: transient", function (assert) {
 		var oBinding = {
-				_delete : function () {},
-				checkSuspended : function () {}
+				_delete : function () {}
 			},
+			oGroupLock = {},
 			oModel = {},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/-1", -1,
 				new Promise(function () {}));
 
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs("myGroup", "n/a", sinon.match.same(oContext))
+			.withExactArgs(sinon.match.same(oGroupLock), "n/a", sinon.match.same(oContext))
 			.returns(Promise.resolve());
 
 		// code under test
-		return oContext["delete"]("myGroup").then(function (oResult) {
+		return oContext._delete(oGroupLock).then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 			assert.strictEqual(oContext.oBinding, oBinding);
 			assert.strictEqual(oContext.oModel, oModel);
@@ -618,12 +654,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: failure", function (assert) {
+	QUnit.test("_delete: failure", function (assert) {
 		var oBinding = {
-				_delete : function () {},
-				checkSuspended : function () {}
+				_delete : function () {}
 			},
 			oError = new Error(),
+			oGroupLock = {},
 			oModel = {
 				reportError : function () {}
 			},
@@ -632,13 +668,12 @@ sap.ui.require([
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.resolve("/EMPLOYEES('1')"));
 		this.mock(oBinding).expects("_delete")
-			.withExactArgs(undefined, "EMPLOYEES('1')", sinon.match.same(oContext))
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES('1')",
+				sinon.match.same(oContext))
 			.returns(Promise.reject(oError));
-		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context", oError);
 
 		// code under test
-		return oContext.delete().then(function () {
+		return oContext._delete(oGroupLock).then(function () {
 			assert.ok(false);
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
@@ -650,10 +685,8 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("delete: failure in fetchCanonicalPath", function (assert) {
-		var oBinding = {
-				checkSuspended : function () {}
-			},
+	QUnit.test("_delete: failure in fetchCanonicalPath", function (assert) {
+		var oBinding = {},
 			oError = new Error(),
 			oModel = {
 				reportError : function () {}
@@ -662,11 +695,9 @@ sap.ui.require([
 
 		this.mock(oContext).expects("fetchCanonicalPath")
 			.withExactArgs().returns(SyncPromise.reject(oError));
-		this.mock(oModel).expects("reportError")
-			.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context", oError);
 
 		// code under test
-		return oContext.delete().then(function () {
+		return oContext._delete({}).then(function () {
 			assert.ok(false);
 		}, function (oError0) {
 			assert.strictEqual(oError0, oError);
@@ -739,10 +770,17 @@ sap.ui.require([
 			oBinding = {
 				refreshSingle : function () {}
 			},
-			oContext = Context.create({}, oBinding, "/EMPLOYEES/42", 42);
+			oGroupLock = {},
+			oModel = {
+				checkGroupId : function () {},
+				lockGroup : function () {}
+			},
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
 
+		this.mock(oModel).expects("checkGroupId");
+		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup").returns(oGroupLock);
 		this.mock(oBinding).expects("refreshSingle")
-			.withExactArgs(sinon.match.same(oContext), "myGroup",
+			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
 				sinon.match.same(bAllowRemoval));
 
 		// code under test
@@ -753,8 +791,27 @@ sap.ui.require([
 	QUnit.test("refresh, error, no list binding", function (assert) {
 		assert.throws(function () {
 			// code under test
-			Context.create({}, {}, "/EMPLOYEES/42", 42).refresh();
+			Context.create({}, {}, "/EMPLOYEES/42").refresh();
 		}, new Error("Refresh is only supported for contexts of a list binding"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh, error handling: invalid group", function (assert) {
+		var oBinding = {
+				refreshSingle : function () {}
+			},
+			oError = new Error(),
+			sGroupId = "$foo",
+			oModel = {
+				checkGroupId : function () {}
+			};
+
+		this.mock(oModel).expects("checkGroupId").withExactArgs(sGroupId).throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			Context.create(oModel, oBinding, "/EMPLOYEES", 42).refresh(sGroupId);
+		}, oError);
 	});
 
 	//*********************************************************************************************
