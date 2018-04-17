@@ -39,8 +39,7 @@
 													showIcon="false"
 													sender="{parts : [{path : 'sinceAPIs>control'}, {path : 'sinceAPIs>entityName'}, {path: 'sinceAPIs>type'}],
 															 formatter : '.formatSenderLink'}"
-													text="{parts : [{path : 'sinceAPIs>text'}, {path : 'sinceAPIs>since'}],
-														   formatter: '.formatDescription'}"
+													text="{path : 'sinceAPIs>text'}, formatter: '.formatDescription'}"
 													app:control="{sinceAPIs>control}"
 													app:entity="{sinceAPIs>entityName}"
 													app:type="{sinceAPIs>type}"

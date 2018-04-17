@@ -46,8 +46,7 @@
                                                     showIcon="false"
                                                     sender="{parts : [{path : 'experimentalAPIs>control'}, {path : 'experimentalAPIs>entityName'}, {path: 'experimentalAPIs>type'}],
                                                              formatter : '.formatSenderLink'}"
-                                                    text="{parts : [{path : 'experimentalAPIs>text'}, {path : 'experimentalAPIs>since'}],
-                                                           formatter: '.formatDescription'}"
+                                                    text="{path : 'experimentalAPIs>text'}, formatter: '.formatDescription'}"
                                                     app:control="{experimentalAPIs>control}"
                                                     app:entity="{experimentalAPIs>entityName}"
                                                     app:type="{experimentalAPIs>type}"
