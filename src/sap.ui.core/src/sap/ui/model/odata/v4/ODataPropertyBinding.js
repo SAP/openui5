@@ -182,6 +182,8 @@ sap.ui.define([
 	 *   The change reason for the change event
 	 * @param {string} [sGroupId=getGroupId()]
 	 *   The group ID to be used for the read.
+	 * @param {any} [vValue]
+	 *   The new value obtained from the cache, see {@link #onChange}
 	 * @returns {Promise}
 	 *   A Promise to be resolved when the check is finished
 	 *
@@ -189,7 +191,8 @@ sap.ui.define([
 	 * @see sap.ui.model.Binding#checkUpdate
 	 */
 	// @override
-	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason, sGroupId) {
+	ODataPropertyBinding.prototype.checkUpdate = function (bForceUpdate, sChangeReason, sGroupId,
+			vValue) {
 		var bDataRequested = false,
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			oCallToken = {
@@ -201,15 +204,14 @@ sap.ui.define([
 			},
 			mParametersForDataReceived = {data : {}},
 			vType = this.oType, // either the type or a promise resolving with it
-			oValuePromise,
 			that = this;
 
 		this.oCheckUpdateCallToken = oCallToken;
 		if (this.bHasDeclaredType === undefined) {
 			this.bHasDeclaredType = !!vType;
 		}
-		if (sResolvedPath) {
-			oValuePromise = this.oCachePromise.then(function (oCache) {
+		if (sResolvedPath && arguments.length < 4) {
+			vValue = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					return oCache.fetchValue(that.oModel.lockGroup(sGroupId || that.getGroupId()),
 						/*sPath*/undefined, function () {
@@ -246,7 +248,7 @@ sap.ui.define([
 			}
 		}
 		// Note: Use Promise to become async so that only the latest sync call to checkUpdate wins
-		return Promise.all([oValuePromise, vType]).then(function (aResults) {
+		return Promise.all([vValue, vType]).then(function (aResults) {
 			var oType = aResults[1],
 				vValue = aResults[0];
 
@@ -390,7 +392,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataPropertyBinding.prototype.onChange = function (vValue) {
-		this.checkUpdate();
+		this.checkUpdate(undefined, undefined, undefined, vValue);
 	};
 
 	/**
