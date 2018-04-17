@@ -69,7 +69,7 @@ function(
 	 * to create sorters and filters for the table.
 	 *
 	 * <b>Note:</b> If the app does not offer all three sorting, filtering, and grouping
-	 * functionalities, but only one of these (such as sort), we recommend placing the
+	 * operations, but only one of these (such as sort), we recommend placing the
 	 * icon button directly in the toolbar. Do not place sort, filter, or group buttons in
 	 * the footer toolbar if they refer to a table. Place group, sort, and filter buttons
 	 * in the footer toolbar if they refer to a master list.

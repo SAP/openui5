@@ -39,7 +39,7 @@ sap.ui.define(["sap/ui/performance/XHRInterceptor", "sap/ui/thirdparty/URI"], fu
 	/**
 	 * Passport implementation, former EppLib.js <br>
 	 *
-	 * Provides functionalities which where formerly located in the EppLib.js, but as the PASSPORT header is mandatory
+	 * Provides functionality which was formerly located in the EppLib.js, but as the PASSPORT header is mandatory
 	 * for correct assignment of the FESR headers, some functionality had to be moved to here. The actual tracing
 	 * functionality of EppLib.js remained in the original file.
 	 *
