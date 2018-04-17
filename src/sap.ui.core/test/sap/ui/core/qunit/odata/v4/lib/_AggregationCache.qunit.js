@@ -162,7 +162,8 @@ sap.ui.require([
 		_AggregationCache.calculateKeyPredicate(aAggregation, sMetaPath, oGroupNode,
 			mTypeForMetaPath);
 
-		assert.strictEqual(oGroupNode["@$ui5._.predicate"], "(First%3DDimension='A%2FB%26C')");
+		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "predicate"),
+			"(First%3DDimension='A%2FB%26C')");
 	});
 
 	//*********************************************************************************************
@@ -211,7 +212,7 @@ sap.ui.require([
 				sinon.match.same(oFirstLevelCache.sMetaPath), sinon.match.same(oResult.value[0]),
 				sinon.match.same(mTypeForMetaPath))
 			.callsFake(function (aAggregation, sMetaPath, oGroupNode, mTypeForMetaPath) {
-				oGroupNode["@$ui5._.predicate"] = "(FirstDimension='A')";
+				_Helper.setPrivateAnnotation(oGroupNode, "predicate", "(FirstDimension='A')");
 			});
 
 		// code under test
@@ -242,7 +243,8 @@ sap.ui.require([
 				assert.strictEqual(oResult.value[0]["@$ui5.node.level"], 1);
 				assert.strictEqual(oResult.value[1]["@$ui5.node.level"], 1);
 				// Note: called above for index 0 only
-				assert.strictEqual(oResult.value[0]["@$ui5._.predicate"], "(FirstDimension='A')");
+				assert.strictEqual(_Helper.getPrivateAnnotation(oResult.value[0], "predicate"),
+					"(FirstDimension='A')");
 
 				that.mock(oFirstLevelCache).expects("fetchValue").on(oFirstLevelCache)
 					.withExactArgs(sGroupId, sPath, sinon.match.same(fnDataRequested),

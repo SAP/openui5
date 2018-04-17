@@ -226,49 +226,56 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{value : 42}, undefined].forEach(function (oData) {
-		QUnit.test("requestObject " + JSON.stringify(oData), function (assert) {
+	[undefined, null, {"@$ui5._" : {}}].forEach(function (oClone, i) {
+		QUnit.test("requestObject: " + i, function (assert) {
 			var oBinding = {
 					checkSuspended : function () {}
 				},
 				oContext = Context.create(null, oBinding, "/foo"),
+				oData = {},
 				oPromise,
 				oSyncPromise = SyncPromise.resolve(Promise.resolve(oData));
 
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
+			this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(oData))
+				.returns(oClone);
 
-			//code under test
+			// code under test
 			oPromise = oContext.requestObject("bar");
 
 			assert.ok(oPromise instanceof Promise);
 
 			return oPromise.then(function (oResult) {
-				assert.deepEqual(oResult, oData);
-				if (oResult) {
-					assert.notStrictEqual(oResult, oData);
+				assert.strictEqual(oResult, oClone);
+				if (oClone) {
+					assert.notOk("@$ui5._" in oClone,
+						"private namespace object deleted from clone");
 				}
 			});
 		});
 	});
 
 	//*********************************************************************************************
-	[{value : 42}, undefined].forEach(function (oData) {
-		QUnit.test("getObject: " + JSON.stringify(oData), function (assert) {
+	[undefined, null, {"@$ui5._" : {}}].forEach(function (oClone, i) {
+		QUnit.test("getObject: " + i, function (assert) {
 			var oContext = Context.create(null, null, "/foo"),
+				oData = {},
 				oResult,
 				oSyncPromise = SyncPromise.resolve(oData);
 
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
+			this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(oData))
+				.returns(oClone);
 
-			//code under test
+			// code under test
 			oResult = oContext.getObject("bar");
 
-			assert.deepEqual(oResult, oData);
-			if (oResult) {
-				assert.notStrictEqual(oResult, oData);
+			assert.strictEqual(oResult, oClone);
+			if (oClone) {
+				assert.notOk("@$ui5._" in oClone, "private namespace object deleted from clone");
 			}
 		});
 	});

@@ -149,7 +149,7 @@ sap.ui.define([
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
 						if (that.aContexts[i]) {
 							// calculate the context path and try to re-use the context for it
-							sPredicate = aEntities[i]["@$ui5._.predicate"];
+							sPredicate = _Helper.getPrivateAnnotation(aEntities[i], "predicate");
 							sContextPath = sResolvedPath + (sPredicate || "/" + i);
 							oContext = that.mPreviousContextsByPath[sContextPath];
 							if (oContext) {
@@ -443,7 +443,7 @@ sap.ui.define([
 		for (i = iStart; i < iStart + aResults.length; i += 1) {
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
-				sPredicate = aResults[i - iStart]["@$ui5._.predicate"];
+				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate");
 				sContextPath = sPath + (sPredicate || "/" + i);
 				if (sContextPath in this.mPreviousContextsByPath) {
 					this.aContexts[i] = this.mPreviousContextsByPath[sContextPath];
