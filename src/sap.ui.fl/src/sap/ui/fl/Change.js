@@ -765,7 +765,7 @@ sap.ui.define([
 	/**
 	 * Returns the undo operations
 	 *
-	 * @returns {*[]} Returns array of undo operations
+	 * @returns {Array<*>} Returns array of undo operations
 	 * @public
 	 */
 	Change.prototype.getUndoOperations = function() {
@@ -775,7 +775,7 @@ sap.ui.define([
 	/**
 	 * Sets the undo operations
 	 *
-	 * @param {*[]} aData undo operations
+	 * @param {Array<*>} aData undo operations
 	 * @public
 	 */
 	Change.prototype.setUndoOperations = function(aData) {

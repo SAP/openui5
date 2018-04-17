@@ -436,7 +436,7 @@ sap.ui.define([
 
 			/**
 			 * Retrieves the <code>sap.m.Page</code>, based on its ID.
-			 * @returns {sap.m.Page || undefined}
+			 * @returns {sap.m.Page | undefined}
 			 */
 			_getPage : function() {
 				if (!this.oPage) {
@@ -448,7 +448,7 @@ sap.ui.define([
 
 			/**
 			 * Retrieves the <code>sap.m.List</code>, based on its ID.
-			 * @returns {sap.m.List || undefined}
+			 * @returns {sap.m.List | undefined}
 			 */
 			_getList : function() {
 				if (!this.oList) {
