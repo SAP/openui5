@@ -144,6 +144,15 @@ body {
 	padding: 0;
 }
 
+.sapUiSupportToolAdditionRuleSetNote.sapMText {
+	padding-top: 0.5rem;
+	padding-left: 1rem;
+}
+
+.sapUiSupportToolAdditionRuleSetNote.sapMLnk {
+	padding-bottom: 0.5rem;
+	padding-left: 1rem;
+}
 .issuesSeverityIcon.sapUiIcon {
 	vertical-align: middle;
 }

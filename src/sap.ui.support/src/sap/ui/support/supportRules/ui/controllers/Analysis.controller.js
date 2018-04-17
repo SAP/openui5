@@ -345,8 +345,6 @@ sap.ui.define([
 		 */
 		onSelectedRuleSets: function (oEvent) {
 			if (oEvent.getParameter("selectedKey") === "additionalRulesets") {
-				//To perserve selection after loading additional rulesets table rows should not be collapsed
-				// this.treeTable.expandToLevel(1);
 				this.rulesViewContainer.setBusyIndicatorDelay(0);
 				this.rulesViewContainer.setBusy(true);
 				CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS);
