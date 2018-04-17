@@ -1,9 +1,10 @@
 sap.ui.define([
 	"sap/ui/test/gherkin/StepDefinitions",
-	"sap/ui/demo/cart/test/arrangement/iframe/Arrangement"
+	"Arrangement"
 ], function(StepDefinitions, Arrangement) {
 	"use strict";
 	Arrangement = new Arrangement();
+
 	var Steps = StepDefinitions.extend("GherkinWithOPA5.Steps", {
 		init: function() {
 			this.register(/^I start my App with the hash "(.*)" (.*)/i,

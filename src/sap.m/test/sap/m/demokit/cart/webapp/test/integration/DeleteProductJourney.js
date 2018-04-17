@@ -6,7 +6,11 @@
  */
 sap.ui.define([
 	'sap/ui/test/opaQunit',
-	'sap/ui/test/Opa5'
+	'./pages/Home',
+	'./pages/Category',
+	'./pages/Product',
+	'./pages/Cart',
+	'./pages/Dialog'
 ], function (opaTest) {
 	"use strict";
 
@@ -84,9 +88,9 @@ sap.ui.define([
 		When.onTheCart.iPressOnTheSaveChangesButton();
 		// Assertions
 		Then.onTheCart.iShouldSeeTheEditButtonDisabled().
-		and.iShouldSeeTheProceedButtonDisabled().
+		and.iShouldSeeTheProceedButtonDisabled();
 		// Cleanup
-		and.iTeardownMyApp();
+		Then.iTeardownMyApp();
 	});
 
 });

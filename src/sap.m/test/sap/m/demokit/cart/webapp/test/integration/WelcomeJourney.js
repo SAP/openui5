@@ -2,7 +2,12 @@
  global QUnit
  */
 sap.ui.define([
-	'sap/ui/test/opaQunit'
+	'sap/ui/test/opaQunit',
+	'./pages/Home',
+	'./pages/Welcome',
+	'./pages/Product',
+	'./pages/Category',
+	'./pages/Cart'
 ], function (opaTest) {
 	"use strict";
 

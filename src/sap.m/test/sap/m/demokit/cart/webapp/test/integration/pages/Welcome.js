@@ -18,11 +18,6 @@ sap.ui.define([
 		onTheWelcomePage: {
 			viewName: "Welcome",
 			actions: {
-
-				iLookAtTheScreen : function () {
-					return this;
-				},
-
 				iPressTheMenuButton : function () {
 					return this.waitFor({
 						matchers: new Properties({ icon : "sap-icon://menu2" }),
