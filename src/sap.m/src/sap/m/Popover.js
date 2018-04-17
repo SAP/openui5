@@ -944,7 +944,7 @@ sap.ui.define([
 			//	recalculate the arrow position when the size of the popover changes.
 			if (!Device.support.touch) {
 				setTimeout(function () {
-					Device.resize.attachHandler(that._fnOrientationChange);
+					!that.bIsDestroyed && Device.resize.attachHandler(that._fnOrientationChange);
 				}, 0);
 			}
 
