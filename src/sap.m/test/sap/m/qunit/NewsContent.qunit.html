@@ -19,6 +19,9 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 <script>
+	if (window.blanket) {
+		blanket.options("sap-ui-cover-only", /sap\/m\/NewsContent.*/);
+	}
 
 	QUnit.module("Basic rendering", {
 		beforeEach : function() {
