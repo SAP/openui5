@@ -17,8 +17,8 @@
 				data-sap-ui-libs="sap.m"
 				src="../../../../resources/sap-ui-core.js">
 		</script>
-		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit-2.css" type="text/css" media="screen">
+		<script src="../../../../resources/sap/ui/thirdparty/qunit-2.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 		<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
@@ -651,7 +651,8 @@
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
-				var fnErrorSpy = this.spy(jQuery.sap.log, "error");
+				var log = sap.ui.require('sap/base/Log'),
+					fnErrorSpy = this.spy(log, "error");
 
 				// act
 				var oReturnedValue = oSlider.setValue("96");	// string
@@ -661,7 +662,7 @@
 				oSlider.setValue(-1e+309);	// infinite negative number
 
 				// assert
-				assert.strictEqual(fnErrorSpy.callCount, 0, "jQuery.sap.log.error() method was not called");
+				assert.strictEqual(fnErrorSpy.callCount, 0, "sap.base.log.error method was not called");
 				assert.strictEqual(oSlider.getValue(), 90);
 				assert.equal(oReturnedValue, oSlider);
 
@@ -909,13 +910,14 @@
 				});
 
 				// arrange
-				var fnWarningSpy = this.spy(jQuery.sap.log, "warning");
+				var log = sap.ui.require('sap/base/Log'),
+					fnWarningSpy = this.spy(log, "warning");
 
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
 
 				// assert
-				assert.strictEqual(fnWarningSpy.callCount, 1, "jQuery.sap.log.warning() method was called");
+				assert.strictEqual(fnWarningSpy.callCount, 1, "sap.base.log.Warning method was called");
 
 				// cleanup
 				oSlider.destroy();
@@ -1156,12 +1158,13 @@
 				var oSlider = new sap.m.Slider({
 					value: 50,
 					step: 1
-				});
+				}),
+					log = sap.ui.require('sap/base/Log'),
+					fnWarningSpy = this.spy(log, "warning");
 
 				// arrange
 				oPage.addContent(oSlider);
 				sap.ui.getCore().applyChanges();
-				var fnLogWarning = this.spy(jQuery.sap.log, "warning");
 
 				// act
 				oSlider.setStep(-1);
@@ -1170,7 +1173,7 @@
 				// assert
 				assert.strictEqual(oSlider.getStep(), -1);
 				assert.strictEqual(oSlider.getValue(), 50);
-				assert.strictEqual(fnLogWarning.callCount, 1);
+				assert.strictEqual(fnWarningSpy.callCount, 1);
 
 				// cleanup
 				oSlider.destroy();
@@ -1862,7 +1865,7 @@
 				sap.ui.getCore().applyChanges();
 
 				oSlider.getAggregation("_tooltipContainer").show(oSlider);
-				oSlider.getAggregation("_tooltips")[0].fireChange({ value: 0.45 });
+				oSlider.getAggregation("_defaultTooltips")[0].fireChange({ value: 0.45 });
 
 				// assert
 				assert.strictEqual(oSlider.getValue(), 0.45, "The slider value must be decreased to 0.45");
@@ -1901,53 +1904,53 @@
 				assert.equal(this.oSlider.$().find(".sapMSliderLabel:eq(1)").parent()[0].style.right, "100%", "The max label should be shown on the left side");
 			});
 
-		QUnit.module('Scale');
+			QUnit.module('Scale');
 
-		QUnit.test("Slider with scale, should fallback to default one, after the scale is destroyed", function(assert) {
-				var oSlider, oDefaultScale, oHandleLabelsDomRef,
-					oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+			QUnit.test("Slider with scale, should fallback to default one, after the scale is destroyed", function(assert) {
+					var oSlider, oDefaultScale, oHandleLabelsDomRef,
+						oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
 
-				oScale.getLabel = function (fCurValue, oSlider) {
-					var monthList = ["Zero", "One", "2"];
+					oScale.getLabel = function (fCurValue, oSlider) {
+						var monthList = ["Zero", "One", "2"];
 
-					return monthList[fCurValue];
-				};
+						return monthList[fCurValue];
+					};
 
-				oSlider = new sap.m.Slider({
-					step: 1,
-					min: 0,
-					max: 2,
-					enableTickmarks: true,
-					scale: oScale
+					oSlider = new sap.m.Slider({
+						step: 1,
+						min: 0,
+						max: 2,
+						enableTickmarks: true,
+						scale: oScale
+					});
+
+					// arrange
+					oSlider.placeAt("content");
+					sap.ui.getCore().applyChanges();
+					oHandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
+
+					// assert
+					assert.strictEqual(oScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the user defined scale.");
+					assert.strictEqual(oHandleLabelsDomRef.size(), 3, "There should be 3 labels created");
+					assert.strictEqual(oHandleLabelsDomRef.eq(0).text(), "Zero", "The labels should be added correspondingly");
+					assert.strictEqual(oHandleLabelsDomRef.eq(2).text(), "2", "The labels should be added correspondingly");
+
+					// arrange
+					oScale.destroy();
+					sap.ui.getCore().applyChanges();
+					oDefaultScale = oSlider.getAggregation('_defaultScale');
+					oHandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
+
+					// assert
+					assert.ok(oDefaultScale,"The default scale should be set");
+					assert.strictEqual(oDefaultScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the default scale.");
+					assert.strictEqual(oHandleLabelsDomRef.size(), 2, "There should be 2 labels created");
+					assert.strictEqual(oHandleLabelsDomRef.eq(0).text(), "0", "The first label should be equal to the min");
+					assert.strictEqual(oHandleLabelsDomRef.eq(1).text(), "2", "The second label should be equal to the max.");
+
+					// cleanup
+					oSlider.destroy();
 				});
-
-				// arrange
-				oSlider.placeAt("content");
-				sap.ui.getCore().applyChanges();
-				oHandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
-
-				// assert
-				assert.strictEqual(oScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the user defined scale.");
-				assert.strictEqual(oHandleLabelsDomRef.size(), 3, "There should be 3 labels created");
-				assert.strictEqual(oHandleLabelsDomRef.eq(0).text(), "Zero", "The labels should be added correspondingly");
-				assert.strictEqual(oHandleLabelsDomRef.eq(2).text(), "2", "The labels should be added correspondingly");
-
-				// arrange
-				oScale.destroy();
-				sap.ui.getCore().applyChanges();
-				oDefaultScale = oSlider.getAggregation('_defaultScale');
-				oHandleLabelsDomRef = oSlider.$().find(".sapMSliderLabel");
-
-				// assert
-				assert.ok(oDefaultScale,"The default scale should be set");
-				assert.strictEqual(oDefaultScale.sId, oSlider._getUsedScale().sId, "The _getUsedScale function, should return the default scale.");
-				assert.strictEqual(oHandleLabelsDomRef.size(), 2, "There should be 2 labels created");
-				assert.strictEqual(oHandleLabelsDomRef.eq(0).text(), "0", "The first label should be equal to the min");
-				assert.strictEqual(oHandleLabelsDomRef.eq(1).text(), "2", "The second label should be equal to the max.");
-
-				// cleanup
-				oSlider.destroy();
-			});
 
 			QUnit.test("Slider with default scale", function(assert) {
 				var oSlider;
@@ -2048,6 +2051,134 @@
 				oSlider.destroy();
 			});
 
+			QUnit.module("Tooltips", function (hooks) {
+				hooks.before(function () {
+					jQuery.sap.require("sap/m/SliderTooltipBase");
+					// dummy class
+					sap.m.SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
+				});
+
+				hooks.beforeEach(function () {
+					this.oSlider = new sap.m.Slider({
+						showAdvancedTooltip: true
+					});
+
+					this.oSlider.placeAt('content');
+					sap.ui.getCore().applyChanges();
+				});
+
+				hooks.afterEach(function () {
+					this.oSlider.destroy();
+				});
+
+				QUnit.test("Default tooltips: should be set if no custom are provided", function (assert) {
+					assert.strictEqual(this.oSlider.getCustomTooltips().length, 0, "Custom Tooltips should be 0");
+					assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips").length, 1, "Default Tooltips should be 1")
+				});
+
+				QUnit.test("Custom tooltips: should be set if provided", function (assert) {
+					var aDefaultTooltips;
+
+					this.oSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+					sap.ui.getCore().applyChanges();
+
+					aDefaultTooltips = this.oSlider.getAggregation("_defaultTooltips") || [];
+
+					assert.strictEqual(this.oSlider.getCustomTooltips().length, 1, "Custom tooltip is set");
+					assert.strictEqual(aDefaultTooltips.length, 0, "No default tooltip show be set");
+				});
+
+				QUnit.test("Custom tooltips: Adding more than 1 tooltip should log an error and ignore the additional tooltips", function (assert) {
+					var log = sap.ui.require('sap/base/Log'),
+						fnWarningSpy = this.spy(log, "warning");
+
+					this.oSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+					this.oSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+					this.oSlider.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					assert.strictEqual(this.oSlider.getCustomTooltips().length, 2, "Custom tooltips are set");
+					assert.strictEqual(this.oSlider.getAggregation("_tooltipContainer").getAssociatedTooltips().length, 1, "TooltipContainer should render 1 Tooltip");
+					assert.strictEqual(fnWarningSpy.callCount, 1, "sap.base.log.Warning is called");
+				});
+
+				QUnit.test("TooltipContainer: Should be initialized on demand", function (assert) {
+					var oSlider = new sap.m.Slider();
+
+					assert.notOk(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer should not be initialized on init");
+
+					oSlider.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					assert.notOk(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer should not be initialized if advancedTooltips is false");
+
+					oSlider.setShowAdvancedTooltip(true);
+					sap.ui.getCore().applyChanges();
+
+					assert.ok(oSlider.getAggregation("_tooltipContainer"), "TooltipContainer is initialized after advanced tooltips are on");
+
+					oSlider.destroy();
+				});
+
+				QUnit.test("Tooltips: Removing all custom tooltips should fallback the defaults", function (assert) {
+					var oTooltip = new sap.xx.SliderTooltipCustom(),
+						oSliderTooltipContainer = this.oSlider.getAggregation("_tooltipContainer");
+
+					// act
+					this.oSlider.addCustomTooltip(oTooltip);
+					sap.ui.getCore().applyChanges();
+
+					// assert
+					assert.strictEqual(this.oSlider.getCustomTooltips()[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Custom tooltip should be used");
+
+					// act
+					this.oSlider.removeAllCustomTooltips();
+					sap.ui.getCore().applyChanges();
+
+					// assert
+					assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips")[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Default tooltip should be used");
+				});
+
+				QUnit.test("Tooltips: Should be initialized on demand", function (assert) {
+					var oSlider = new sap.m.Slider(),
+						aDefaultTooltips;
+
+					oSlider.placeAt("content");
+					sap.ui.getCore().applyChanges();
+
+					aDefaultTooltips = oSlider.getAggregation("_defaultTooltips") || [];
+
+					assert.strictEqual(oSlider.getCustomTooltips().length, 0, "No custom tooltips are added initially");
+					assert.strictEqual(aDefaultTooltips.length, 0, "No default tooltips are added initially");
+
+					oSlider.setShowAdvancedTooltip(true);
+					sap.ui.getCore().applyChanges();
+
+					aDefaultTooltips = oSlider.getAggregation("_defaultTooltips") || [];
+
+					assert.strictEqual(oSlider.getCustomTooltips().length, 0, "No custom tooltips are being added");
+					assert.strictEqual(aDefaultTooltips.length, 1, "Default tooltips are added after invalidation and showAdvanedTooltips set to true");
+
+					oSlider.destroy();
+				});
+
+				QUnit.test("Tooltips: Destroying Custom tooltip should fallback to default", function (assert) {
+					var oCustomTooltip = new sap.xx.SliderTooltipCustom(),
+						oSliderTooltipContainer = this.oSlider.getAggregation("_tooltipContainer");
+
+					this.oSlider.addCustomTooltip(oCustomTooltip);
+					sap.ui.getCore().applyChanges();
+
+					// act
+					oCustomTooltip.destroy();
+					sap.ui.getCore().applyChanges();
+
+					// assert
+					assert.ok(true, "No exception have been thrown");
+					assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips")[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Default tooltip should be used");
+				});
+			});
+
 			QUnit.module("Accessibility");
 
 			QUnit.test("Slider with custom scale should change handle title html attribute accordingly", function(assert) {
@@ -2093,7 +2224,7 @@
 
 				// cleanup
 				oSlider.destroy();
-		});
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

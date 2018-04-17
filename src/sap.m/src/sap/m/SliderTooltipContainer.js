@@ -60,7 +60,7 @@ function(
 					 *
 					 * @since 1.54
 					 */
-					associatedTooltips: { type: "sap.m.ISliderTooltip", multiple: true }
+					associatedTooltips: { type: "sap.m.SliderTooltipBase", multiple: true }
 				}
 			}
 		});
@@ -147,15 +147,16 @@ function(
 		 * @public
 		 */
 		SliderTooltipContainer.prototype.repositionTooltips = function () {
-			var bParentRangeSlider;
+			var bParentRangeSlider = (this._oParentSlider.getMetadata().getName() ===  SliderUtilities.CONSTANTS.RANGE_SLIDER_NAME),
+				aTooltips = this._oParentSlider.getUsedTooltips(),
+				// we are considering that both tooltips have the same rendering
+				fTooltipHeight = this.getAssociatedTooltipsAsControls()[0].$().outerHeight(true);
 
-			if (this.getDomRef() && this._oParentSlider) {
-				bParentRangeSlider = (this._oParentSlider.getMetadata().getName() ===  SliderUtilities.CONSTANTS.RANGE_SLIDER_NAME);
-				this[bParentRangeSlider ? "_positionRangeTooltips" : "_positionTooltip"].call(this, this._oParentSlider.getAggregation("_tooltips"), arguments[0], arguments[1]);
-				this.getDomRef().style["top"] = (this._$ParentSlider.offset().top - SliderUtilities.CONSTANTS.TOOLTIP_CONTAINER_HEIGHT) + "px";
+			if (this.getDomRef()) {
+				this[bParentRangeSlider ? "_positionRangeTooltips" : "_positionTooltip"].call(this, aTooltips, arguments[0], arguments[1]);
+				this.getDomRef().style["top"] = (this._$ParentSlider.offset().top - fTooltipHeight) + "px";
 				this._handleOverflow();
 			}
-
 		};
 
 		/**
