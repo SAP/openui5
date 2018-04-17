@@ -1552,8 +1552,8 @@ sap.ui.define([
 	 *   of "cross-service references" (see parameter <code>supportReferences</code> of
 	 *   {@link sap.ui.model.odata.v4.ODataModel#constructor}).
 	 *
-	 * @deprecated Use {@link #getETags} instead because modifications to old files may be
-	 *   shadowed by a new file in certain scenarios.
+	 * @deprecated As of 1.51.0, use {@link #getETags} instead because modifications to old files
+	 *   may be shadowed by a new file in certain scenarios.
 	 * @public
 	 * @since 1.47.0
 	 */
@@ -1670,7 +1670,7 @@ sap.ui.define([
 	ODataMetaModel.prototype.getObject = _Helper.createGetMethod("fetchObject");
 
 	/**
-	 * @deprecated Use {@link #getObject}.
+	 * @deprecated As of 1.37.0, use {@link #getObject}.
 	 * @function
 	 * @public
 	 * @see sap.ui.model.Model#getProperty
