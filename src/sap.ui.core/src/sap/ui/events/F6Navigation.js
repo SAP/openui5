@@ -8,8 +8,9 @@
 sap.ui.define([
 	'sap/base/events/KeyCodes',
 	'sap/ui/dom/focus',
-	'sap/ui/thirdparty/jquery'
-], function(KeyCodes, focus /*,jQuery*/) {
+	'sap/ui/thirdparty/jquery',
+	'sap/ui/dom/jquery/Selectors'
+], function(KeyCodes, focus, jQuery /*, sapTabbable */) {
 	"use strict";
 
 
