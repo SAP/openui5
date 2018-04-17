@@ -1624,17 +1624,15 @@
 		// Arrange
 		oUtil.renderObject(this.oDynamicPage);
 
-		var oDetachScrollHandlerSpy = this.spy(sap.f.DynamicPage.prototype, "_detachScrollHandler"),
-			oAttachScrollHandlerSpy = this.spy(sap.f.DynamicPage.prototype, "_attachScrollHandler");
-
 		// Act
 		this.oDynamicPage._titleExpandCollapseWhenAllowed();
 
+		// Assert
+		assert.strictEqual(this.oDynamicPage._bSuppressToggleHeaderOnce, true, "suppress flag is enabled");
+
 		this.clock.tick(1);
 
-		// Assert
-		assert.strictEqual(oDetachScrollHandlerSpy.callCount, 1, "detachScrollHandler was called");
-		assert.strictEqual(oAttachScrollHandlerSpy.callCount, 1, "attachScrollHandler was called");
+		assert.strictEqual(this.oDynamicPage._bSuppressToggleHeaderOnce, false, "suppress flag is disabled");
 	});
 
 	QUnit.test("DynamicPage On Collapse Button MouseOver", function (assert) {
@@ -1798,6 +1796,34 @@
 		assert.equal(oDynamicPage.getHeaderExpanded(), true, "Header is expanded");
 		assert.equal(oDynamicPage._getScrollPosition(), 0, "scroll position is correct");
 	});
+
+	QUnit.test("Expand header updates scrollbar", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oTitle = oDynamicPage.getTitle(),
+			oScrollSpy = this.spy(oDynamicPage, "_onWrapperScroll"),
+			done = assert.async();
+
+		assert.expect(2);
+
+		oDynamicPage.setHeaderExpanded(false);
+		oUtil.renderObject(oDynamicPage);
+
+		oDynamicPage.$().outerHeight("800px"); // set page height smaller than header height
+
+		oDynamicPage._setScrollPosition(100);
+
+		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+		oScrollSpy.reset();
+
+		//act
+		oTitle.fireEvent("_titlePress");
+		setTimeout(function() {
+			assert.equal(oScrollSpy.callCount, 1, "listener for updating the custom scrollBar position is called");
+			done();
+		}, 0);
+	});
+
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
 	QUnit.module("DynamicPage - Private functions", {

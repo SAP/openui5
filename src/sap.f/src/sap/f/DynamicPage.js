@@ -1573,7 +1573,7 @@ sap.ui.define([
 		}
 		var bAllowAppendHeaderToTitle;
 
-		this._detachScrollHandler();
+		this._bSuppressToggleHeaderOnce = true;
 		// Header scrolling is not allowed or there is no enough content scroll bar to appear
 		if (this._preserveHeaderStateOnScroll() || !this._canSnapHeaderOnScroll() || !this.getHeader()) {
 			if (!this.getHeaderExpanded()) {
@@ -1604,7 +1604,9 @@ sap.ui.define([
 			}
 		}
 
-		jQuery.sap.delayedCall(0, this, this._attachScrollHandler);
+		jQuery.sap.delayedCall(0, this, function() {
+			this._bSuppressToggleHeaderOnce = false;
+		}.bind(this));
 	};
 
 	/**
