@@ -4,6 +4,7 @@
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
 sap.ui.define(['jquery.sap.global',
+		'sap/ui/Device',
 		'sap/ui/core/Element',
 		'sap/ui/core/Control',
 		'./StandardListItem',
@@ -19,7 +20,7 @@ sap.ui.define(['jquery.sap.global',
 		'sap/ui/core/dnd/DragInfo',
 		'sap/ui/core/dnd/DropInfo',
 		'sap/ui/core/dnd/DragDropInfo'],
-	function (jQuery, Element, Control, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary, DateRange,
+	function (jQuery, Device, Element, Control, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary, DateRange,
 			  CalendarRow, CalendarRowRenderer, ColumnListItem, ColumnListItemRenderer, DragInfo, DropInfo, DragDropInfo) {
 	"use strict";
 
@@ -1100,7 +1101,9 @@ sap.ui.define(['jquery.sap.global',
 						});
 					});
 
-					oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+					if (!Device.browser.msie && !Device.browser.edge) {
+						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+					}
 				},
 
 				/**
