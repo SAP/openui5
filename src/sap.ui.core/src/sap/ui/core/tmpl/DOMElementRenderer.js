@@ -25,6 +25,7 @@ sap.ui.define(['jquery.sap.global'],
 	 * @param {sap.ui.core.Control}
 	 *            oElement Object representation of the DOM element that should be
 	 *            rendered
+	 * @deprecated since 1.56
 	 */
 	DOMElementRenderer.render = function(oRM, oElement) {
 
