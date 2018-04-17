@@ -2803,10 +2803,10 @@ sap.ui.define([
 	ObjectPageLayout.prototype.getHeaderContent = function () {
 		// If header content not resolved yet - use local aggregation until it is
 		if (!this._getHeaderContent()) {
-			return this.getAggregation("headerContent");
+			return this.getAggregation("headerContent", []);
 		}
 
-		return this._getHeaderContent().getAggregation("content");
+		return this._getHeaderContent().getAggregation("content", []);
 	};
 
 	ObjectPageLayout.prototype.insertHeaderContent = function (oObject, iIndex, bSuppressInvalidate) {
