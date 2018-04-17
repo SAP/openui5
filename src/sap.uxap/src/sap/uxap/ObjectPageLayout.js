@@ -495,6 +495,8 @@ sap.ui.define([
 		this._iAfterRenderingDomReadyTimeout = null;
 
 		this._oABHelper = new ABHelper(this);
+
+		this._initializeScroller();
 	};
 
 	/**
@@ -521,8 +523,6 @@ sap.ui.define([
 		this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
 		this._bHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea();
-
-		this._initializeScroller();
 
 		this._createHeaderContent();
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
