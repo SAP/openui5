@@ -560,6 +560,7 @@ sap.ui.require([
 	["foo", false, undefined].forEach(function (vValue) {
 		QUnit.test("checkUpdate(): with vValue parameter: " + vValue, function (assert) {
 			var oBinding = this.oModel.bindProperty("/absolute"),
+				oPromise,
 				done = assert.async();
 
 			oBinding.vValue = ""; // simulate a read
@@ -571,7 +572,10 @@ sap.ui.require([
 			this.mock(oBinding.oCachePromise).expects("then").never();
 
 			// code under test
-			return oBinding.checkUpdate(undefined, undefined, undefined, vValue);
+			oPromise = oBinding.checkUpdate(undefined, undefined, undefined, vValue);
+
+			assert.ok(oPromise.isFulfilled());
+			assert.strictEqual(oBinding.getValue(), vValue);
 		});
 	});
 

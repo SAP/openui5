@@ -210,8 +210,9 @@ sap.ui.define([
 		if (this.bHasDeclaredType === undefined) {
 			this.bHasDeclaredType = !!vType;
 		}
-		if (sResolvedPath && arguments.length < 4) {
-			vValue = this.oCachePromise.then(function (oCache) {
+		if (arguments.length < 4) {
+			// Use Promise to become async so that only the latest sync call to checkUpdate wins
+			vValue = Promise.resolve(this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					return oCache.fetchValue(that.oModel.lockGroup(sGroupId || that.getGroupId()),
 						/*sPath*/undefined, function () {
@@ -219,7 +220,8 @@ sap.ui.define([
 							that.fireDataRequested();
 						}, that);
 				}
-				if (!that.oContext) { // context may have been reset by another call to checkUpdate
+				if (!that.oContext) {
+					// binding is unresolved or context was reset by another call to checkUpdate
 					return undefined;
 				}
 				if (that.oContext.getIndex() === -2) { // virtual parent context: no change event
@@ -242,13 +244,12 @@ sap.ui.define([
 					return that.vValue;
 				}
 				mParametersForDataReceived = {error : oError};
-			});
-			if (!this.bHasDeclaredType && this.sInternalType !== "any") {
+			}));
+			if (sResolvedPath && !this.bHasDeclaredType && this.sInternalType !== "any") {
 				vType = this.oModel.getMetaModel().fetchUI5Type(sResolvedPath);
 			}
 		}
-		// Note: Use Promise to become async so that only the latest sync call to checkUpdate wins
-		return Promise.all([vValue, vType]).then(function (aResults) {
+		return SyncPromise.all([vValue, vType]).then(function (aResults) {
 			var oType = aResults[1],
 				vValue = aResults[0];
 
