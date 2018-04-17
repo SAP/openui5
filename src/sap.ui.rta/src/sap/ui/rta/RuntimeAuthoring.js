@@ -570,6 +570,8 @@ sap.ui.define([
 				}
 			}.bind(this))
 			.then(function () {
+				// this is needed to initially check if undo is available, e.g. when the stack gets initialized with changes
+				this._onStackModified();
 				this.fnKeyDown = this._onKeyDown.bind(this);
 				jQuery(document).on("keydown", this.fnKeyDown);
 			}.bind(this))

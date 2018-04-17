@@ -141,18 +141,30 @@
 		switchToAdaptionMode : function() {
 
 			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
-			var oRta = new sap.ui.rta.RuntimeAuthoring({
-				rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
-				customFieldUrl : this._sResourcePath + "/testdata/rta/CustomField.html",
-				showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") == "true"),
-				flexSettings: {
-					developerMode: false
-				}
+			jQuery.sap.require("sap.m.MessageToast");
+			var aFileNames = [];
+			sap.ui.fl.FakeLrepLocalStorage.getChanges().forEach(function(oChange) {
+				aFileNames.push(oChange.fileName);
 			});
-			oRta.attachEvent('stop', function() {
-				oRta.destroy();
+
+			sap.ui.rta.command.Stack.initializeWithChanges(sap.ui.getCore().byId("Comp1---idMain1"), aFileNames)
+			.then(function(oStack) {
+				var oRta = new sap.ui.rta.RuntimeAuthoring({
+					rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
+					commandStack: oStack,
+					flexSettings: {
+						developerMode: false
+					}
+				});
+				oRta.attachEvent('stop', function() {
+					oRta.destroy();
+				});
+				oRta.attachEvent('start', function() {
+					sap.m.MessageToast.show("Rta is started with all changes from local storage added to the command stack. Undo might already by enabled.", {duration : 10000});
+				});
+
+				oRta.start();
 			});
-			oRta.start();
 		},
 
 		openSmartFormDialog : function() {

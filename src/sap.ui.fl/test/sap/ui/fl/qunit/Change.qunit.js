@@ -74,6 +74,20 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.ok(oInstance instanceof EventProvider, "Shall inherit from event provider");
 	});
 
+	QUnit.test("Change.get/set/resetUndoOperations", function(assert) {
+		var oInstance = new Change(this.oChangeDef);
+		assert.equal(oInstance.getUndoOperations(), null, "initially undoOperations is null");
+
+		oInstance.setUndoOperations([1, 2]);
+		assert.equal(oInstance.getUndoOperations().length, 2, "an array with length 2 was set");
+
+		oInstance.setUndoOperations([1, 2, 3]);
+		assert.equal(oInstance.getUndoOperations().length, 3, "an array with length 3 was set");
+
+		oInstance.resetUndoOperations();
+		assert.equal(oInstance.getUndoOperations(), null, "the undoOperations were reset to null");
+	});
+
 	QUnit.test("Change.isVariant", function(assert) {
 		var oInstance = new Change(this.oChangeDef);
 		assert.equal(oInstance.isVariant(), true);
