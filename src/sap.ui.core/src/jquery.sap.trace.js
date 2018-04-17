@@ -126,7 +126,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	/**
 	 * @namespace FESR API, consumed by E2eTraceLib instead of former EppLib.js <br>
 	 *<p>
-	 * Provides functionalities for creating the headers for the frontend-subrecords which will be sent with each
+	 * Provides functionality for creating the headers for the frontend-subrecords which will be sent with each
 	 * first request of an interaction. The headers have a specific format, you may have a look at the createFESR
 	 * methods.<br>
 	 *</p><p>
@@ -188,7 +188,7 @@ function(jQuery, URI, Device, Passport, Interaction, FESR, Log) {
 	/**
 	 * @namespace Passport implementation, former EppLib.js <br>
 	 *
-	 * Provides functionalities which where former located in the EppLib.js, but as the PASSPORT header is mandatory
+	 * Provides functionality which was former located in the EppLib.js, but as the PASSPORT header is mandatory
 	 * for correct assignment of the FESR headers some functionality had to be moved to here. The actual tracing
 	 * functionality of EppLib.js remained in the original file.
 	 *

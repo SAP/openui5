@@ -2280,7 +2280,7 @@
 	 * there will be a transition phase where UI5 enables AMD modules and local references to module
 	 * values in parallel to the old global names. The fourth parameter of <code>sap.ui.define</code>
 	 * has been added to support that transition phase. When this parameter is set to true, the framework
-	 * provides two additional functionalities
+	 * provides two additional features
 	 *
 	 * <ol>
 	 * <li>Before the factory function is called, the existence of the global parent namespace for
