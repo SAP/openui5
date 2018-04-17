@@ -127,7 +127,12 @@ sap.ui.define([
 
 									if (oExpressionParserResult.result) { // a binding info
 										// we need to trigger evaluation (but we don't need the result, evaluation already calls the event handler)
-										getBindingValue(oExpressionParserResult.result, oEvent.getSource(), oController, oParametersModel, oSourceModel);
+										try {
+											getBindingValue(oExpressionParserResult.result, oEvent.getSource(), oController, oParametersModel, oSourceModel);
+										} catch (e) {
+											e.message = "Error when evaluating event handler '" + sName + "': " + e.message;
+											throw e;
+										}
 									}
 
 									if ( oParametersModel ) {
@@ -185,6 +190,10 @@ sap.ui.define([
 				if (typeof oPart == "string") {
 					oPart = { path: oPart };
 					oBindingInfo.parts[i] = oPart;
+				}
+
+				if (!oPart.path && oPart.parts) {
+					throw new Error("Bindings in event handler parameters cannot use parts. Just use one single path.");
 				}
 
 				// if a model separator is found in the path, extract model name and path
