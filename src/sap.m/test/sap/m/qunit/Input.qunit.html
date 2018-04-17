@@ -2960,6 +2960,34 @@
 		oInput.destroy();
 
 	});
+
+	QUnit.module("API", {
+		beforeEach: function () {
+			this.input = new sap.m.Input().placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.input.destroy();
+			this.input = null;
+		}
+	});
+
+	QUnit.test('Calling insertSuggestionRow', function (assert) {
+		// arrange
+		var fnInsertAggregation = sinon.spy(this.input, "insertAggregation");
+		this.input._synchronizeSuggestions = function() {};
+		var oColumnListItem = new sap.m.ColumnListItem();
+
+		// act
+		this.input.insertSuggestionRow(oColumnListItem, 1);
+
+		// assert
+		assert.strictEqual(fnInsertAggregation.called, true, 'should call insertAggregation');
+		assert.strictEqual(fnInsertAggregation.calledWithExactly("suggestionRows", oColumnListItem, 1), true, 'should call insertAggregation with correct parameters');
+
+		// clean
+		this.input.insertAggregation.restore();
+	});
+
 </script>
 
 </head>

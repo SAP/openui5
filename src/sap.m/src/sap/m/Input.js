@@ -2012,7 +2012,7 @@ sap.ui.define(['jquery.sap.global', './Bar', './Dialog', './InputBase', './List'
 		 */
 		Input.prototype.insertSuggestionRow = function(oItem, iIndex) {
 			oItem.setType(ListType.Active);
-			this.insertAggregation("suggestionRows", iIndex, oItem);
+			this.insertAggregation("suggestionRows", oItem, iIndex);
 			this._bShouldRefreshListItems = true;
 			this._refreshItemsDelayed();
 			createSuggestionPopupContent(this);
