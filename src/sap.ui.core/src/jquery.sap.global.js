@@ -328,6 +328,33 @@
 		};
 	}
 
+	// document.activeElement iframe fix
+	if (Device.browser.msie || Device.browser.edge) {
+		var activeElementDescriptor = Object.getOwnPropertyDescriptor(Document.prototype, 'activeElement');
+		if (!activeElementDescriptor) {
+			jQuery.sap.log.warning("activeElementFix: Unable to retrieve property descriptor for 'Document.prototype.activeElement'");
+			return;
+		}
+
+		var getActiveElement = activeElementDescriptor.get;
+		if (!getActiveElement) {
+			jQuery.sap.log.warning("activeElementFix: Unable to retrieve getter of property 'Document.prototype.activeElement'");
+			return;
+		}
+
+		Object.defineProperty(Document.prototype, 'activeElement', {
+			configurable: true,
+			enumerable: true,
+			get: function() {
+				try {
+					return getActiveElement.call(this);
+				} catch (e) {
+					return null;
+				}
+			}
+		});
+	}
+
 	// XHR proxy for Firefox
 	if ( Device.browser.firefox && window.Proxy ) {
 
