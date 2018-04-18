@@ -5,12 +5,14 @@
 // Provides object sap.ui.dt.ElementUtil.
 sap.ui.define([
 	'jquery.sap.global',
+	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/Element',
 	'sap/ui/dt/Util'
 ],
 function(
 	jQuery,
+	BaseObject,
 	ManagedObject,
 	Element,
 	Util
@@ -89,7 +91,7 @@ function(
 	 *
 	 */
 	ElementUtil.fixComponentParent = function(oElement) {
-		if (this.isInstanceOf(oElement, "sap.ui.core.UIComponent")) {
+		if (BaseObject.isA(oElement, "sap.ui.core.UIComponent")) {
 			var oComponentContainer = oElement.oContainer;
 			if (oComponentContainer) {
 				return oComponentContainer.getParent();
@@ -103,7 +105,7 @@ function(
 	 *
 	 */
 	ElementUtil.fixComponentContainerElement = function(oElement) {
-		if (this.isInstanceOf(oElement, "sap.ui.core.ComponentContainer")) {
+		if (BaseObject.isA(oElement, "sap.ui.core.ComponentContainer")) {
 			// This happens when the compontentContainer has not been rendered yet
 			if (!oElement.getComponentInstance()) {
 				return;
@@ -280,7 +282,7 @@ function(
 					this.getAggregation(oParent, sAggregationName).length > 0) {
 				return false;
 			}
-			return this.isInstanceOf(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
+			return BaseObject.isA(oElement, sTypeOrInterface) || this.hasInterface(oElement, sTypeOrInterface);
 		}
 
 	};
@@ -332,18 +334,6 @@ function(
 	};
 
 	/**
-	 *
-	 */
-	ElementUtil.isInstanceOf = function(oElement, sType) {
-		var oInstance = jQuery.sap.getObject(sType);
-		if (typeof oInstance === "function") {
-			return oElement instanceof oInstance;
-		} else {
-			return false;
-		}
-	};
-
-	/**
 	 * Checks whether specified Element is a ManagedObject
 	 * @param oElement
 	 * @param sElementType
@@ -363,7 +353,7 @@ function(
 	};
 
 	ElementUtil.getParent = function (oElement) {
-		return this.isInstanceOf(oElement, 'sap.ui.core.Component')
+		return BaseObject.isA(oElement, 'sap.ui.core.Component')
 			? oElement.oContainer
 			: oElement.getParent();
 	};

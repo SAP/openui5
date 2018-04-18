@@ -199,27 +199,6 @@ function(
 		});
 	});
 
-	QUnit.module("isInstanceOf()", {
-		beforeEach : function() {
-			fnCreateMinimumControls.call(this);
-		},
-		afterEach : function() {
-			fnDestroyMinimumControls.call(this);
-		}
-	}, function(){
-		QUnit.test("when the type of the instance is checked based on the control type", function(assert) {
-			assert.equal(ElementUtil.isInstanceOf(this.oButton, "sap.m.Button"), true, 'then the static method "isInstanceOf" returns true');
-		});
-
-		QUnit.test("when the type of the instance is checked based on the base type", function(assert) {
-			assert.equal(ElementUtil.isInstanceOf(this.oButton, "sap.ui.core.Control"), true, 'then the static method "isInstanceOf" returns true');
-		});
-
-		QUnit.test("when the type of the instance is checked based on a wrong type", function(assert) {
-			assert.equal(ElementUtil.isInstanceOf(this.oButton, "sap.ui.layout.VerticalLayout"), false, 'then the static method "isInstanceOf" returns false');
-		});
-	});
-
 	QUnit.module("getElementInstance()", {
 		beforeEach : function() {
 			fnCreateMinimumControls.call(this);
