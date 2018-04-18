@@ -85,11 +85,12 @@ sap.ui.define(["sap/m/library", "sap/ui/Device", "./ListItemBaseRenderer"],
 		var oHeaderTBar = oControl.getHeaderToolbar();
 		if (oHeaderTBar) {
 			oHeaderTBar.setDesign(ToolbarDesign.Transparent, true);
+			oHeaderTBar.addStyleClass("sapMListHdr");
 			oHeaderTBar.addStyleClass("sapMListHdrTBar");
 			oHeaderTBar.addStyleClass("sapMTBHeader-CTX");
 			rm.renderControl(oHeaderTBar);
 		} else if (sHeaderText) {
-			rm.write("<header class='sapMListHdr'");
+			rm.write("<header class='sapMListHdr sapMListHdrText'");
 			rm.writeAttribute("id", oControl.getId("header"));
 			rm.write(">");
 			rm.writeEscaped(sHeaderText);

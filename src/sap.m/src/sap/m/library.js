@@ -2650,19 +2650,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.m.Sticky = {
-
 		/**
-		 * No area remains in a fixed position.
+		 * The column headers remain in a fixed position.
 		 * @public
 		 */
-		None: "None",
+		ColumnHeaders: "ColumnHeaders",
 
 		/**
-		 * Only column headers remain in a fixed position.
-		 * If no column headers are available, this option behaves the same as <code>None</code>.
+		 * The header toolbar remains in a fixed position.
 		 * @public
+		 * @since 1.56
 		 */
-		ColumnHeaders: "ColumnHeaders"
+		HeaderToolbar: "HeaderToolbar",
+
+		/**
+		 * The info toolbar remains in a fixed position.
+		 * @public
+		 * @since 1.56
+		 */
+		InfoToolbar: "InfoToolbar"
 	};
 
 	/**
