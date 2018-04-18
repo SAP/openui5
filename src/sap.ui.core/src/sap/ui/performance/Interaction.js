@@ -22,13 +22,13 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 		return sHost && sHost !== HOST;
 	}
 
-	function createMeasurement() {
+	function createMeasurement(iTime) {
 		return {
 			event: "startup", // event which triggered interaction - default is startup interaction
 			trigger: "undetermined", // control which triggered interaction
 			component: "undetermined", // component or app identifier
 			appVersion: "undetermined", // application version as from app descriptor
-			start : 0, // interaction start
+			start : iTime || window.performance.timing.fetchStart, // interaction start - page fetchstart if initial
 			end: 0, // interaction end
 			navigation: 0, // sum over all navigation times
 			roundtrip: 0, // time from first request sent to last received response end - without gaps and ignored overlap
@@ -363,7 +363,7 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 			var oComponentInfo = createOwnerComponentInfo(oSrcElement);
 
 			// setup new pending interaction
-			oPendingInteraction = createMeasurement();
+			oPendingInteraction = createMeasurement(iTime);
 			oPendingInteraction.event = sType;
 			oPendingInteraction.component = oComponentInfo.id;
 			oPendingInteraction.appVersion = oComponentInfo.version;
@@ -522,13 +522,15 @@ sap.ui.define(["./Measurement", "./ResourceTimings", "./XHRInterceptor", "sap/ba
 		onInteractionFinished: null,
 
 		/**
-		 * This method sets the component name for an interaction.
+		 * This method sets the component name for an interaction once. This respects the case, where a new
+		 * component is created in an interaction step while for example navigating to a new page. Differs
+		 * from the actual owner component of the trigger control, which is still the previous component.
 		 *
 		 * @private
 		 */
 		setStepComponent : function(sComponentName) {
-			if (bInteractionActive && oPendingInteraction && sComponentName) {
-				oPendingInteraction.component = sComponentName;
+			if (bInteractionActive && oPendingInteraction && sComponentName && !oPendingInteraction.stepComponent) {
+				oPendingInteraction.stepComponent = sComponentName;
 			}
 		},
 
