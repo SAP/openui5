@@ -750,7 +750,8 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
-		this.mock(this.oModel).expects("lockGroup").withExactArgs("groupId").returns(oGroupLock);
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("groupId", true)
+			.returns(oGroupLock);
 		this.mock(oBinding).expects("_execute")
 			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
 
@@ -774,7 +775,7 @@ sap.ui.require([
 			}
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
-			this.mock(this.oModel).expects("lockGroup").withExactArgs("groupId")
+			this.mock(this.oModel).expects("lockGroup").withExactArgs("groupId", true)
 				.returns(oGroupLock);
 			this.mock(oBinding).expects("_execute")
 				.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
@@ -855,14 +856,17 @@ sap.ui.require([
 		error : "Unsupported overloads for /EntitySet(ID='1')/schema.OverloadedFunction(...)"
 	}].forEach(function (oFixture) {
 		QUnit.test("_execute: " + oFixture.error, function (assert) {
+			var oGroupLock = new _GroupLock();
+
 			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 				.withExactArgs(oFixture.request)
 				.returns(Promise.resolve(oFixture.metadata));
 			this.mock(this.oModel).expects("reportError").withExactArgs(
 				"Failed to execute " + oFixture.path, sClassName, sinon.match.instanceOf(Error));
+			this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 
 			return this.oModel.bindContext(oFixture.path)
-				._execute(new _GroupLock()) // code under test
+				._execute(oGroupLock) // code under test
 				.then(function () {
 					assert.ok(false);
 				}, function (oError) {
@@ -1097,6 +1101,7 @@ sap.ui.require([
 		oModelMock.expects("getDependentBindings").never();
 		oModelMock.expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, sinon.match.same(oError));
+		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 
 		// code under test
 		return oBinding._execute(oGroupLock).then(function () {

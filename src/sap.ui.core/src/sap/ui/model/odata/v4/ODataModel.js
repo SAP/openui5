@@ -14,6 +14,7 @@
 //Provides class sap.ui.model.odata.v4.ODataModel
 sap.ui.define([
 	"jquery.sap.global",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/Context",
@@ -29,8 +30,8 @@ sap.ui.define([
 	"./ODataMetaModel",
 	"./ODataPropertyBinding",
 	"./SubmitMode"
-], function (jQuery, Message, BindingMode, BaseContext, Model, OperationMode, URI, _GroupLock,
-		_MetadataRequestor, _Requestor, _Parser, ODataContextBinding, ODataListBinding,
+], function (jQuery, SyncPromise, Message, BindingMode, BaseContext, Model, OperationMode, URI,
+		_GroupLock, _MetadataRequestor, _Requestor, _Parser, ODataContextBinding, ODataListBinding,
 		ODataMetaModel, ODataPropertyBinding, SubmitMode) {
 
 	"use strict";
@@ -212,6 +213,7 @@ sap.ui.define([
 					this.checkGroupId(mParameters.updateGroupId, false,
 						"Invalid update group ID: ");
 					this.sUpdateGroupId = mParameters.updateGroupId || this.getGroupId();
+					this.aLockedGroupLocks = [];
 					this.mGroupProperties = {};
 					for (sGroupId in mParameters.groupProperties) {
 						that.checkGroupId(sGroupId, true);
@@ -265,7 +267,8 @@ sap.ui.define([
 			});
 
 	/**
-	 * Submits the requests associated with the given group ID in one batch request.
+	 * Waits until all group locks for the given group ID have been unlocked and submits the
+	 * requests associated with this group ID in one batch request.
 	 *
 	 * @param {string} sGroupId
 	 *   The group ID
@@ -278,11 +281,21 @@ sap.ui.define([
 	ODataModel.prototype._submitBatch = function (sGroupId) {
 		var that = this;
 
-		return this.oRequestor.submitBatch(sGroupId)
-			["catch"](function (oError) {
-				that.reportError("$batch failed", sClassName, oError.message);
-				throw oError;
-			});
+		return Promise.resolve(
+			// Use SyncPromise.all to call the requestor synchronously when there is no lock -> The
+			// batch is sent before the rendering. Rendering and server processing run in parallel.
+			SyncPromise.all(this.aLockedGroupLocks.map(function (oGroupLock) {
+				return oGroupLock.waitFor(sGroupId);
+			})).then(function () {
+				that.aLockedGroupLocks = that.aLockedGroupLocks.filter(function (oGroupLock) {
+					return oGroupLock.isLocked();
+				});
+				return that.oRequestor.submitBatch(sGroupId).catch(function (oError) {
+					that.reportError("$batch failed", sClassName, oError.message);
+					throw oError;
+				});
+			})
+		);
 	};
 
 	/**
@@ -1120,27 +1133,42 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates or modifies a lock for a group.
+	 * Creates or modifies a lock for a group. {@link #_submitBatch} has to wait until all locks for
+	 * <code>sGroupId</code> are unlocked. The goal of such a lock is to allow the user of the
+	 * ODataModel to call an API that creates a request in a batch group and immediately call
+	 * {@link #submitBatch} for this group. In such cases the request has to be sent with this
+	 * submitBatch, even if the request is created later asynchronously. To achieve this, the API
+	 * function creates a lock that blocks _submitBatch until the request is created.
 	 *
-	 * It is possible to create a lock without giving a group ID initially and set the group ID
-	 * later. Once a group ID has been set, it cannot be changed anymore.
+	 * It is possible to create a lock without giving a group ID initially. In this case all queues
+	 * for all group IDs are locked until a group ID is given. Once a group ID has been set, it
+	 * cannot be changed anymore.
 	 *
-	 * Currently a group lock doesn't lock. All non-API functions use this group lock instead of the
-	 * group ID so that a lock is possible.
+	 * For performance reasons it is possible to create a group lock that actually doesn't lock. All
+	 * non-API functions use this group lock instead of the group ID so that a lock is possible. But
+	 * not in every case a lock is necessary and suitable.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID. If not given here, it can be set later on the created lock.
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   If a group lock is given, it is modified and returned; otherwise a lock is created
+	 * @param {boolean|sap.ui.model.odata.v4.lib._GroupLock} [vLock]
+	 *   If vLock is a group lock, it is modified and returned. Otherwise a lock is created which
+	 *   locks if vLock is truthy.
 	 * @returns {sap.ui.model.odata.v4.lib._GroupLock}
 	 *   The group lock
 	 *
 	 * @private
 	 */
-	ODataModel.prototype.lockGroup = function (sGroupId, oGroupLock) {
-		oGroupLock = oGroupLock || new _GroupLock(sGroupId);
-		oGroupLock.setGroupId(sGroupId);
+	ODataModel.prototype.lockGroup = function (sGroupId, vLock) {
+		var oGroupLock;
 
+		if (vLock instanceof _GroupLock) {
+			vLock.setGroupId(sGroupId);
+			return vLock;
+		}
+		oGroupLock = new _GroupLock(sGroupId, vLock);
+		if (oGroupLock.isLocked()) {
+			this.aLockedGroupLocks.push(oGroupLock);
+		}
 		return oGroupLock;
 	};
 

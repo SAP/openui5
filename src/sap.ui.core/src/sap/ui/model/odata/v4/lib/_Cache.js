@@ -359,9 +359,9 @@ sap.ui.define([
 					if (fnErrorCallback) {
 						fnErrorCallback(oError);
 					}
-					return request(sPostPath,
+					return request(sPostPath, new _GroupLock(
 						that.oRequestor.getGroupSubmitMode(sPostGroupId) === "API" ?
-							oPostGroupLock : new _GroupLock("$parked." + sPostGroupId));
+							sPostGroupId : "$parked." + sPostGroupId));
 			});
 		}
 
@@ -727,7 +727,7 @@ sap.ui.define([
 			aUnitOrCurrencyPath,
 			that = this;
 
-		return this.fetchValue(oGroupLock, sEntityPath).then(function (oEntity) {
+		return this.fetchValue(oGroupLock.getUnlockedCopy(), sEntityPath).then(function (oEntity) {
 			var sFullPath = _Helper.buildPath(sEntityPath, sPropertyPath),
 				sGroupId = oGroupLock.getGroupId(),
 				vOldValue,
@@ -748,8 +748,8 @@ sap.ui.define([
 					Cache.makeUpdateData(aPropertyPath, vOldValue));
 			}
 
-			function patch() {
-				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oGroupLock,
+			function patch(oPatchGroupLock) {
+				oPatchPromise = that.oRequestor.request("PATCH", sEditUrl, oPatchGroupLock,
 					{"If-Match" : oEntity["@odata.etag"]}, oUpdateData, undefined, onCancel);
 				that.addByPath(that.mPatchRequests, sFullPath, oPatchPromise);
 				return oPatchPromise.then(function (oPatchResult) {
@@ -762,7 +762,7 @@ sap.ui.define([
 					if (!oError.canceled) {
 						fnErrorCallback(oError);
 						if (that.oRequestor.getGroupSubmitMode(sGroupId) === "API") {
-							return patch();
+							return patch(oPatchGroupLock.getUnlockedCopy());
 						}
 					}
 					throw oError;
@@ -816,7 +816,7 @@ sap.ui.define([
 			}
 			// send and register the PATCH request
 			sEditUrl += that.oRequestor.buildQueryString(that.sMetaPath, that.mQueryOptions, true);
-			return patch();
+			return patch(oGroupLock);
 		});
 	};
 

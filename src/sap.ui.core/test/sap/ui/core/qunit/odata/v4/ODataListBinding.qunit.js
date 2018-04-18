@@ -2726,11 +2726,14 @@ sap.ui.require([
 				{$$updateGroupId : "update"}),
 			oContext,
 			oExpectation,
-			oInitialData = {};
+			oInitialData = {},
+			oGroupLock;
 
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("update", true)
+			.returns(oGroupLock);
 		oExpectation = this.mock(oBinding.oCachePromise.getResult()).expects("create")
-			.withExactArgs(new _GroupLock("update"), "EMPLOYEES", "",
-				sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+			.withExactArgs(oGroupLock, "EMPLOYEES", "", sinon.match.same(oInitialData),
+				sinon.match.func, sinon.match.func)
 			// we only want to observe fnCancelCallback, hence we neither resolve, nor reject
 			.returns(new SyncPromise(function () {}));
 
@@ -2776,6 +2779,7 @@ sap.ui.require([
 				bChangeFired,
 				oContext,
 				oCreatePromise = SyncPromise.resolve(Promise.resolve()),
+				oGroupLock = {},
 				oModelMock = this.mock(this.oModel),
 				bRefreshSingleFinished = false,
 				oRefreshSinglePromise = new Promise(function (resolve) {
@@ -2797,8 +2801,10 @@ sap.ui.require([
 				.exactly(oFixture.sGroupId === "$direct" ? 0 : 1)
 				.returns(oFixture.sGroupId === "$auto");
 			oBindingMock.expects("getUpdateGroupId").returns(oFixture.sUpdateGroupId);
+			oModelMock.expects("lockGroup").withExactArgs(oFixture.sUpdateGroupId, true)
+				.returns(oGroupLock);
 			oCacheMock.expects("create")
-				.withExactArgs(new _GroupLock(oFixture.sUpdateGroupId), "EMPLOYEES", "",
+				.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "",
 					sinon.match.same(oFixture.oInitialData), sinon.match.func, sinon.match.func)
 				.returns(oCreatePromise);
 			oBinding.attachEventOnce("change", function (oEvent) {
@@ -2810,9 +2816,11 @@ sap.ui.require([
 
 			oBindingMock.expects("refreshSingle").never();
 			oCreatePromise.then(function () {
+				oModelMock.expects("lockGroup")
+					.withExactArgs(oFixture.sGroupId === "$direct" ? "$direct" : "$auto")
+					.returns(oGroupLock);
 				oBindingMock.expects("refreshSingle")
-					.withExactArgs(sinon.match.same(oContext),
-						new _GroupLock(oFixture.sGroupId === "$direct" ? "$direct" : "$auto"))
+					.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock))
 					.returns(oRefreshSinglePromise);
 			});
 			oRefreshSinglePromise.then(function () {
@@ -2870,6 +2878,7 @@ sap.ui.require([
 			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
 			oInitialData = {},
 			oExpectation,
+			oGroupLock = {},
 			that = this;
 
 		this.mock(_Helper).expects("buildPath")
@@ -2881,8 +2890,10 @@ sap.ui.require([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs()
 			.thrice(); // from create and twice getContexts
 		this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("updateGroup", true)
+			.returns(oGroupLock);
 		oExpectation = this.mock(oBinding).expects("createInCache")
-			.withExactArgs(new _GroupLock("updateGroup"), /*vPostPath*/sinon.match.object, "",
+			.withExactArgs(sinon.match.same(oGroupLock), /*vPostPath*/sinon.match.object, "",
 				sinon.match.same(oInitialData), sinon.match.func)
 			.returns(Promise.resolve());
 
@@ -2930,6 +2941,7 @@ sap.ui.require([
 			aContexts,
 			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
 			aDiffData,
+			oGroupLock = {},
 			oInitialData = {},
 			that = this;
 
@@ -2943,8 +2955,10 @@ sap.ui.require([
 			.withExactArgs()
 			.returns(SyncPromise.resolve("/TEAMS('02')"));
 		this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("updateGroup", true)
+			.returns(oGroupLock);
 		this.mock(oBinding).expects("createInCache")
-			.withExactArgs(new _GroupLock("updateGroup"), /*vPostPath*/sinon.match.object, "",
+			.withExactArgs(oGroupLock, /*vPostPath*/sinon.match.object, "",
 				sinon.match.same(oInitialData), sinon.match.func)
 			.returns(SyncPromise.resolve());
 
@@ -2980,6 +2994,39 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: failure", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			oCacheMock,
+			oContext,
+			oError = new Error(),
+			oCreatePromise = SyncPromise.resolve(Promise.reject(oError)),
+			oGroupLock = new _GroupLock(),
+			oInitialData = {};
+
+		oCacheMock = this.mock(oBinding.oCachePromise.getResult());
+		oBindingMock.expects("getUpdateGroupId").returns("update");
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("update", true)
+			.returns(oGroupLock);
+		oCacheMock.expects("create")
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "",
+				sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+			.returns(oCreatePromise);
+
+		oBindingMock.expects("refreshSingle").never();
+		this.mock(oGroupLock).expects("unlock");
+
+		// code under test
+		oContext = oBinding.create(oInitialData);
+
+		return oContext.created().then(function () {
+			assert.ok(false);
+		},function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getContexts after create", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 				$$updateGroupId : "update"
@@ -2989,8 +3036,8 @@ sap.ui.require([
 			aContexts;
 
 		this.mock(oBinding.oCachePromise.getResult()).expects("create")
-			.withExactArgs(new _GroupLock("update"), "EMPLOYEES", "", undefined, sinon.match.func,
-				sinon.match.func)
+			.withExactArgs(new _GroupLock("update", true), "EMPLOYEES", "", undefined,
+				sinon.match.func, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 		this.mock(oBinding).expects("refreshSingle").returns(SyncPromise.resolve());
@@ -3047,8 +3094,8 @@ sap.ui.require([
 		oBinding.createContexts(0, 3, 3);
 
 		oCacheMock.expects("create")
-			.withExactArgs(new _GroupLock("update"), "EMPLOYEES", "", undefined, sinon.match.func,
-				sinon.match.func)
+			.withExactArgs(new _GroupLock("update", true), "EMPLOYEES", "", undefined,
+				sinon.match.func, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 

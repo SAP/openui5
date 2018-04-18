@@ -164,12 +164,20 @@ sap.ui.require([
 			this.aRequests = [];
 		},
 
-		afterEach : function () {
+		afterEach : function (assert) {
+			var iLocks;
+
 			if (this.oView) {
 				// avoid calls to formatters by UI5 localization changes in later tests
 				this.oView.destroy();
 			}
 			if (this.oModel) {
+				if (this.oModel.aLockedGroupLocks) {
+					iLocks = this.oModel.aLockedGroupLocks.filter(function (oGroupLock) {
+						return oGroupLock.isLocked();
+					}).length;
+					assert.strictEqual(iLocks, 0, "No remaining locks");
+				}
 				this.oModel.destroy();
 			}
 			// reset the language
@@ -407,7 +415,8 @@ sap.ui.require([
 		 *   values for controls have been set
 		 */
 		createView : function (assert, sViewXML, oModel, oController) {
-			var that = this;
+			var fnLockGroup,
+				that = this;
 
 			/*
 			 * Stub function for _Requestor#sendBatch. Checks that all requests in the batch are as
@@ -470,10 +479,26 @@ sap.ui.require([
 				return Promise.resolve({body : oResponse});
 			}
 
+			// A wrapper for ODataModel#lockGroup that attaches a stack trace to the lock
+			function lockGroup() {
+				var oError,
+					oLock = fnLockGroup.apply(this, arguments);
+
+				if (!oLock.sStack) {
+					oError = new Error();
+					if (oError.stack) {
+						oLock.sStack = oError.stack.split("\n").slice(2).join("\n");
+					}
+				}
+				return oLock;
+			}
+
 			this.oModel = oModel || createTeaBusiModel();
 			if (this.oModel.submitBatch) {
 				this.oModel.oRequestor.sendBatch = checkBatch;
 				this.oModel.oRequestor.sendRequest = checkRequest;
+				fnLockGroup = this.oModel.lockGroup;
+				this.oModel.lockGroup = lockGroup;
 			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			this.oView = sap.ui.xmlview({
@@ -5058,7 +5083,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("delayed create", function (assert) {
+	QUnit.test("delayed create", function (assert) {
 		var oModel = createSalesOrdersModel(),
 			sView = '<FlexBox id="form" binding="{/SalesOrderList(\'0500000000\')}"/>',
 			that = this;
@@ -5084,7 +5109,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("delayed execute", function (assert) {
+	QUnit.test("delayed execute", function (assert) {
 		var sAction = "SalesOrderList('0500000000')/"
 				+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Cancel",
 			oModel = createSalesOrdersModel(),
@@ -5092,7 +5117,6 @@ sap.ui.require([
 			that = this;
 
 		return this.createView(assert, sView, oModel).then(function () {
-
 			that.expectRequest({
 				method : "POST",
 				url : sAction,
