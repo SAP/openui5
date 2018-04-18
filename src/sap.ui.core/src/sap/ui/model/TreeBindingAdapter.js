@@ -888,7 +888,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/TreeBinding', 'sap/ui/model/Cl
 						rowIndices: []
 					};
 					// Collect the changed indices
-					var iNodeCounter = 0;
+					var iNodeCounter = -1;
 					this._map(this._oRootNode, function (oNode) {
 						if (!oNode || !oNode.isArtificial) {
 							iNodeCounter++;
