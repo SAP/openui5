@@ -6,17 +6,13 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'sap/ui/core/Component',
-	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Utils',
-	'sap/ui/fl/LrepConnector',
 	'sap/ui/fl/ChangePersistenceFactory'
 ],
 function(
 	jQuery,
 	Component,
-	FlexControllerFactory,
 	Utils,
-	LrepConnector,
 	ChangePersistenceFactory
 ) {
 	'use strict';
@@ -60,45 +56,76 @@ function(
 			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sFlexReference, sAppVersion);
-			return oChangePersistence.getChangesForComponent().then(function(oChanges) {
+			return oChangePersistence.getChangesForComponent().then(function(aChanges) {
+				if (!this._mPreloaded) {
+					this._mPreloaded = {};
+				}
+
+				if (!this._mPreloaded[sComponentId]) {
+					this.aCodeExtChanges = [];
+					this._preloadExtensions(aChanges);
+					this._mPreloaded[sComponentId] = true;
+				}
 
 				var aExtensionProviders = [];
-
-				jQuery.each(oChanges, function (index, oChange) {
+				this.aCodeExtChanges.forEach(function (oChange) {
 					var oChangeDefinition = oChange.getDefinition();
-					if (oChangeDefinition.changeType === "codeExt" && oChangeDefinition.content &&
-						sControllerName === oChangeDefinition.selector.controllerName
-					) {
+					if (oChangeDefinition.content && sControllerName === oChangeDefinition.selector.controllerName) {
 						aExtensionProviders.push(PreprocessorImpl.getExtensionProvider(oChangeDefinition));
 					}
 				});
 
 				return Promise.all(aExtensionProviders);
-			});
+			}.bind(this));
 		} else {
 			jQuery.sap.log.warning("Synchronous extensions are not supported by sap.ui.fl.PreprocessorImpl");
 			return [];
 		}
 	};
 
-	PreprocessorImpl.getExtensionProvider = function(oChange) {
-		return new Promise(function(resolve, reject) {
-			var sConvertedAsciiCodeContent = oChange.content.code || {};
-			var sConvertedCodeContent = Utils.asciiToString(sConvertedAsciiCodeContent);
-			try {
+	/**
+	 * creates an object with all the code extensions and the codeRef as a key, calls sap.ui.require.preload with that object.
+	 *
+	 * @param {sap.ui.fl.Change[]} aChanges array with all changes for the current component
+	 */
+	PreprocessorImpl.prototype._preloadExtensions = function(aChanges) {
+		var oCodeExtensions = {};
+		var oExtensionProvider;
+		aChanges.forEach(function(oChange) {
+			var sChangeType = oChange.getChangeType();
+			var oContent = oChange.getContent();
+			if (sChangeType === "codeExt" && oContent.code) {
+				var sConvertedCodeContent = Utils.asciiToString(oContent.code);
 				/*eslint-disable */
-				new Function(sConvertedCodeContent)();
+				eval("oExtensionProvider = function() {" + sConvertedCodeContent + "}");
 				/*eslint-enable */
-			} catch (oError) {
-				Utils.log.error("Error occured while executing the code extension: ", oError.message);
-				resolve({});
+				oCodeExtensions[oContent.codeRef] = oExtensionProvider;
+				this.aCodeExtChanges.push(oChange);
 			}
-			sap.ui.require([oChange.content.extensionName], function(Extension) {
-				resolve(Extension);
-			}, reject);
+		}.bind(this));
+
+		if (Object.keys(oCodeExtensions).length > 0) {
+			sap.ui.require.preload(oCodeExtensions);
+		}
+	};
+
+	PreprocessorImpl.getExtensionProvider = function(oChangeDefinition) {
+		return new Promise(function(resolve) {
+			var sCodeRef = oChangeDefinition.content.codeRef;
+			var sFileId = sCodeRef.substr(0, sCodeRef.lastIndexOf("."));
+			sap.ui.require(
+				[sFileId],
+				function(oExtension) {
+					resolve(oExtension);
+				},
+				function(oError) {
+					Utils.log.error("Code Extension not found", oError.message);
+					resolve({});
+				}
+			);
 		});
 	};
 
-	 return PreprocessorImpl;
+	return PreprocessorImpl;
 
 }, /* bExport= */true);
