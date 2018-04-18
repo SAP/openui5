@@ -30,7 +30,7 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 		var oType = DataType.getType(sType);
 		if (oType) {
 			if (oType instanceof DataType) {
-				vValue = oType.parseValue(sValue);
+				vValue = oType.parseValue(sValue, {context: oController});
 			}
 			// else keep original sValue (e.g. for enums)
 		} else {

@@ -427,8 +427,42 @@ sap.ui.define(['jquery.sap.global'],
 				isValid : function(vValue) {
 					return vValue == null || typeof vValue === 'function';
 				},
-				parseValue: function(sValue) {
-					throw new TypeError("values of type function can't be parsed from a string");
+				/*
+				 * Note: the second parameter <code>_oOptions</code> is a hidden feature for internal use only.
+				 * Its structure is subject to change. No code other than the XMLTemplateProcessor must use it.
+				 */
+				parseValue: function(sValue, _oOptions) {
+					if ( sValue === "" ) {
+						return undefined;
+					}
+
+					if ( !/^\.?[A-Z_\$][A-Z0-9_\$]*(\.[A-Z_\$][A-Z0-9_\$]*)*$/i.test(sValue) ) {
+						throw new Error(
+							"Function references must consist of dot separated " +
+							"simple identifiers (A-Z, 0-9, _ or $) only, but was '" + sValue + "'");
+					}
+
+					// TODO implementation should be moved to / shared with EventHandlerResolver
+					var fnResult,
+						bLocal,
+						contextObj = _oOptions && _oOptions.context;
+
+					if ( sValue[0] === '.' ) {
+						// starts with a dot, must be a controller local function
+						// usage of jQuery.sap.getObject to allow addressing functions in properties
+						if ( contextObj ) {
+							fnResult = jQuery.sap.getObject(sValue.slice(1), undefined, contextObj);
+							bLocal = true;
+						}
+					} else {
+						fnResult = jQuery.sap.getObject(sValue);
+					}
+
+					if ( fnResult && this.isValid(fnResult) ) {
+						return bLocal ? fnResult.bind(contextObj) : fnResult;
+					}
+
+					throw new TypeError("The string '" + sValue + "' couldn't be resolved to a function");
 				}
 			})
 
