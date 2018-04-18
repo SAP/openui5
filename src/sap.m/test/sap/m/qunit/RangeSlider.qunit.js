@@ -1371,5 +1371,22 @@
 			assert.strictEqual(oAssociatedTooltips[0], oFirstCustomTooltip, "The first tooltip should be associated with TooltipContainer");
 			assert.strictEqual(oAssociatedTooltips[1], oThirdCustomTooltip, "The third tooltip should be associated with TooltipContainer");
 		});
+
+		QUnit.test("Tooltips: Rendering when advanced tooltips are not used", function (assert) {
+			// setup
+			var oRangeSlider = new sap.m.RangeSlider({
+				showAdvancedTooltip: false,
+				inputsAsTooltips: true
+			});
+
+			oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(oRangeSlider.getDomRef(), true, "The rangeslider was successfully rendered.");
+
+			// clean up
+			oRangeSlider.destroy();
+		});
 	});
 }());
