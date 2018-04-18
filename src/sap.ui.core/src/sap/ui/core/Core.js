@@ -1184,8 +1184,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		//Add ARIA role 'application'
 		var $body = jQuery("body");
-		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole() && !$body.attr("role")) {
-			$body.attr("role", "application");
+		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole()) {
+			var sBodyRole = $body.attr("role");
+			if (!sBodyRole && !oConfig.getAvoidAriaApplicationRole()) {
+				$body.attr("role", "application");
+			} else if (sBodyRole === "application" && oConfig.getAvoidAriaApplicationRole()) {
+				$body.removeAttr("role");
+			}
 		}
 	};
 
@@ -3022,13 +3027,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 
 			var oAttributes = {id:STATIC_UIAREA_ID};
+			var oConfig = this.getConfiguration();
 
-			if (jQuery("body").attr("role") != "application") {
+			if (jQuery("body").attr("role") != "application" && !oConfig.getAvoidAriaApplicationRole()) {
 				// Only set ARIA application role if not available on html body (see configuration entry "autoAriaBodyRole")
 				oAttributes.role = "application";
 			}
 
-			var leftRight = this.getConfiguration().getRTL() ? "right" : "left";
+			var leftRight = oConfig.getRTL() ? "right" : "left";
 			oStatic = jQuery("<DIV/>", oAttributes).css({
 				"height"   : "0",
 				"width"    : "0",
