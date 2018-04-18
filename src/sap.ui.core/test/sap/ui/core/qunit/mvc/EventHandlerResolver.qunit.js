@@ -7,6 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	var oController;
+	var thisContext;
 	var oDummySource;
 
 	var DummyControl = Control.extend("test.DummyControl", {
@@ -28,16 +29,27 @@ sap.ui.define([
 
 
 
+
 	QUnit.module("sap.ui.core.mvc.EventHandlerResolver - handler function", {
 		beforeEach: function() {
+			thisContext = null;
+
 			oController = {
-				fnControllerMethod: function(){}
+				fnControllerMethod: function(){
+					thisContext = this;
+				}
 			};
 
 			window.testEventHandlerResolver = {
 				subobject: {
-					someGlobalMethod: function(){}
+					someGlobalMethod: function(){
+						thisContext = this;
+					}
 				}
+			};
+
+			window.someGlobalMethodOnWindow = function(){
+				thisContext = this;
 			};
 
 			oDummySource = new DummyControl();
@@ -65,11 +77,56 @@ sap.ui.define([
 		fnFromController(oDummyEvent);
 		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method should be called");
 
+		oController.fnControllerMethod.reset();
+		var fnFromController = EventHandlerResolver.resolveEventHandler("fnControllerMethod()", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method without dot should be called");
+
 		sinon.spy(testEventHandlerResolver.subobject, "someGlobalMethod");
 		var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
 		fnFromGlobal(oDummyEvent);
 		assert.equal(testEventHandlerResolver.subobject.someGlobalMethod.callCount, 1, "Global method should be called once");
+
+		sinon.spy(window, "someGlobalMethodOnWindow");
+		fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
+		fnFromGlobal(oDummyEvent);
+		assert.equal(someGlobalMethodOnWindow.callCount, 1, "Global method without dot should be called once");
 	});
+
+	QUnit.test("'this' context when parentheses are present", function(assert) {
+		// controller functions
+		var fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod()", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.equal(thisContext, oController, "Controller method should be called with controller as 'this' context");
+		thisContext = "wrong"; // to make sure non-calls don't accidentally get the correct value
+
+		// controller functions without dot
+		fnFromController = EventHandlerResolver.resolveEventHandler("fnControllerMethod()", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.equal(thisContext, oController, "Controller method without dot should be called with controller as 'this' context");
+		thisContext = "wrong";
+
+		// global functions
+		var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
+		fnFromGlobal(oDummyEvent);
+		assert.equal(thisContext, testEventHandlerResolver.subobject, "Global method should be called with testEventHandlerResolver.subobject as 'this' context");
+		thisContext = "wrong";
+
+		// global functions without dot
+		fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
+		fnFromGlobal(oDummyEvent);
+		assert.equal(thisContext, undefined, "Global method without dot should be called with undefined as 'this' context");
+		thisContext = "wrong";
+
+		// global functions with .call()
+		/* bug in expression parser, already being fixed in v4 branch   TODO
+		fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod.call($controller)", oController)[0];
+		fnFromGlobal(oDummyEvent);
+		assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when set using .call($controller)");
+		thisContext = "wrong";
+		*/
+	});
+
 
 
 
@@ -139,6 +196,22 @@ sap.ui.define([
 			fnFromController(oDummyEvent);
 			assert.deepEqual(spy.args[i], [aTests[i].expected], aTests[i].message);
 		}
+	});
+
+
+	QUnit.test("Special value: $controller", function(assert) {
+		var spy = sinon.spy(oController, "fnControllerMethod");
+		var fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod($controller)", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.deepEqual(spy.args[0], [oController], "Parameter $controller should be given as the controller instance");
+	});
+
+
+	QUnit.test("Special value: $event", function(assert) {
+		var spy = sinon.spy(oController, "fnControllerMethod");
+		var fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod($event)", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.deepEqual(spy.args[0], [oDummyEvent], "Parameter $event should be given as the event object");
 	});
 
 
