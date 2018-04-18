@@ -744,14 +744,20 @@ sap.ui.define([
 			bInitialized = false;
 		if (mSettings && sAggregationName) {
 			var oNode = mSettings[sAggregationName];
-			if (oNode && oNode.localName === "FragmentDefinition") {
+			if (oNode instanceof ManagedObject) {
 				this._destroyCompositeAggregation();
-				this._setCompositeAggregation(sap.ui.xmlfragment({
-					sId: this.getId(),
-					fragmentContent: mSettings[sAggregationName],
-					oController: this
-				}));
+				this._setCompositeAggregation(oNode);
 				bInitialized = true;
+			} else {
+				if (oNode && oNode.localName === "FragmentDefinition") {
+					this._destroyCompositeAggregation();
+					this._setCompositeAggregation(sap.ui.xmlfragment({
+						sId: this.getId(),
+						fragmentContent: mSettings[sAggregationName],
+						oController: this
+					}));
+					bInitialized = true;
+				}
 			}
 			delete mSettings[sAggregationName];
 		}
