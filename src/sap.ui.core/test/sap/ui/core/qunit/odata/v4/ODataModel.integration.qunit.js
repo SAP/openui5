@@ -5327,6 +5327,13 @@ sap.ui.require([
 			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding = that.oView.byId("table").getBinding("rows");
+
+			oListBinding.getCurrentContexts().forEach(function (oContext, i) {
+				assert.strictEqual(oContext.getPath(),
+					"/SalesOrderList(LifecycleStatus='" + "ZYX"[i] + "')");
+			});
+
 			that.expectRequest("SalesOrderList?$count=true&$orderby=LifecycleStatus%20desc"
 					+ "&$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount))"
 					+ "&$skip=23&$top=3", {

@@ -53,6 +53,8 @@ sap.ui.define([
 				$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
 					aFirstLevelAggregation)
 			}), bSortExpandSelect);
+		this.oFirstLevel.calculateKeyPredicates = _AggregationCache.calculateKeyPredicate
+			.bind(null, aFirstLevelAggregation, this.oFirstLevel.sMetaPath);
 	}
 
 	// make _AggregationCache a _Cache
@@ -138,6 +140,31 @@ sap.ui.define([
 	//*********************************************************************************************
 	// "static" functions
 	//*********************************************************************************************
+
+	/**
+	 * Calculates the virtual key predicate for the given group node on level 1, based on the first
+	 * dimension's value.
+	 *
+	 * @param {object[]} aAggregation
+	 *   An array with objects holding the information needed for data aggregation; see also
+	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+	 *   Extension for Data Aggregation Version 4.0</a>; the grouped dimensions must come first
+	 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
+	 * @param {object} oGroupNode A 1st level group node
+	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
+	 *   {@link #fetchTypes})
+	 *
+	 * @private
+	 */
+	_AggregationCache.calculateKeyPredicate = function (aAggregation, sMetaPath, oGroupNode,
+			mTypeForMetaPath) {
+		var sFirstLevelDimension = aAggregation[0].name,
+			sLiteral = _Helper.formatLiteral(oGroupNode[sFirstLevelDimension],
+				mTypeForMetaPath[sMetaPath][sFirstLevelDimension].$Type);
+
+		oGroupNode["@$ui5._.predicate"] = "(" + encodeURIComponent(sFirstLevelDimension) + "="
+			+ encodeURIComponent(sLiteral) + ")";
+	};
 
 	/**
 	 * Creates a cache for data aggregation that performs requests using the given requestor.
