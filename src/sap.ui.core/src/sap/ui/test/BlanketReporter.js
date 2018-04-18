@@ -62,6 +62,16 @@ sap.ui.define([
 		.blanket-source .miss span.highlight {\
 			background-color: #e6c3c7\
 		}\
+		.simpleMessage {\
+			background-color: #0D3349;\
+			border-radius: 0 0 5px 5px;\
+			color: #C6E746;\
+			font-size: 1.5em;\
+			font-family: Calibri, Helvetica, Arial, sans-serif;\
+			line-height: 1em;\
+			font-weight: 400;\
+			padding: 0.5em 0 0.5em 1em;\
+		}\
 	';
 
 	Controller.extend("sap.ui.test.BlanketReporterUI", {
@@ -419,24 +429,6 @@ sap.ui.define([
 		return sap.ui.xmlview({viewName: "sap.ui.test.BlanketReporterUI", models: oModel});
 	}
 
-	/**
-	 * Places the view into a new <div> at the end of the body.
-	 *
-	 * @param {sap.ui.core.mvc.XMLView} oView The view
-	 */
-	function placeView(oView) {
-		var oDiv = document.createElement("div"),
-			oStyle = document.createElement("style");
-
-		oDiv.setAttribute("id", "blanket-view");
-		oDiv.setAttribute("class", "sapUiBody");
-		document.body.appendChild(oDiv);
-		oView.placeAt(oDiv);
-
-		oStyle.innerHTML = sStyle;
-		document.head.appendChild(oStyle);
-	}
-
 	function convertToFile(sModule) {
 		var aMatches = rModule.exec(sModule);
 
@@ -445,16 +437,54 @@ sap.ui.define([
 			: jQuery.sap.getResourceName(aMatches[1]);
 	}
 
+	/**
+	 * Creates a new <div> at the end of the body and includes our style.
+	 *
+	 * @returns {object}
+	 *   The new <div>
+	 */
+	function getDiv() {
+		var oDiv = document.createElement("div"),
+			oStyle = document.createElement("style");
+
+		oDiv.setAttribute("id", "blanket-view");
+		oDiv.setAttribute("class", "sapUiBody");
+		document.body.appendChild(oDiv);
+
+		oStyle.innerHTML = sStyle;
+		document.head.appendChild(oStyle);
+
+		return oDiv;
+	}
+
 	return function (oScript, fnGetTestedModules, oCoverageData) {
-		var iLinesOfContext, aTestedModules, iThreshold;
+		var oDiv, iLinesOfContext, oModel, aTestedModules, iThreshold;
+
 
 		// Sometimes, when refreshing, this function is called twice. Ignore the 2nd call.
 		if (!document.getElementById("blanket-view")) {
 			iLinesOfContext = getAttributeAsInteger(oScript, "data-lines-of-context", 3);
 			iThreshold = Math.min(getAttributeAsInteger(oScript, "data-threshold", 0), 100);
 			aTestedModules = fnGetTestedModules();
-			placeView(createView(createModel(oCoverageData, iLinesOfContext, iThreshold,
-				aTestedModules && aTestedModules.map(convertToFile))));
+			oModel = createModel(oCoverageData, iLinesOfContext, iThreshold,
+				aTestedModules && aTestedModules.map(convertToFile));
+			oDiv = getDiv();
+
+			// make QUnit fail (indirectly) and show UI
+			if (oModel.getProperty("/lines/coverage") < iThreshold) {
+				createView(oModel).placeAt(oDiv);
+				throw new Error("Line coverage too low! "
+					+ oModel.getProperty("/lines/coverage") + " < " + iThreshold);
+			}
+			if (oModel.getProperty("/branches/coverage") < iThreshold) {
+				createView(oModel).placeAt(oDiv);
+				throw new Error("Branch coverage too low! "
+					+ oModel.getProperty("/branches/coverage") + " < " + iThreshold);
+			}
+
+			oDiv.setAttribute("class", "simpleMessage"); //TODO what is a good class name here?
+			oDiv.innerHTML = "Blanket Code Coverage: OK";
+			//TODO checkbox to show/hide details UI
 		}
 	};
 }, /* bExport= */ false);
