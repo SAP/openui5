@@ -191,13 +191,11 @@
 				]
 			});
 
-			var oRatingTable = new sap.m.List("items", {
+			var oRatingTable = new sap.m.Table("items", {
 					inset: true,
-					threshold: 2,
 					mode: "MultiSelect",
 					showUnread : true,
-					scrollToLoad : true,
-					headerText : "Rating List",
+					headerText : "Rating Table",
 					columns : [
 						new sap.m.Column({
 							header: new sap.m.Label({
