@@ -3,8 +3,8 @@
  */
 
 // Provides ControllerExtensionMetadata
-sap.ui.define(['sap/ui/base/Metadata'],
-	function(Metadata) {
+sap.ui.define(['sap/ui/base/Metadata', 'sap/ui/core/mvc/OverrideExecution'],
+	function(Metadata, OverrideExecution) {
 	"use strict";
 
     var ControllerExtensionMetadata = function(sClassName, oClassInfo) {
@@ -18,15 +18,16 @@ sap.ui.define(['sap/ui/base/Metadata'],
     ControllerExtensionMetadata.prototype = Object.create(Metadata.prototype);
 
     ControllerExtensionMetadata.prototype.applySettings = function(oClassInfo) {
+        Metadata.prototype.applySettings.call(this, oClassInfo);
+
         var oStaticInfo = oClassInfo.metadata;
 
-        // define call order of lifecycle methods for extensions
-        // "true" means original before, "false" means original afterwards
+        //default call order of lifecycle methods for extensions
         this.mExtensionLifecycleMethods = {
-            "onInit": true,
-            "onExit": false,
-            "onBeforeRendering": false,
-            "onAfterRendering": true
+            "onInit": OverrideExecution.After,
+            "onExit": OverrideExecution.Before,
+            "onBeforeRendering": OverrideExecution.Before,
+            "onAfterRendering": OverrideExecution.After
         };
 
         this._defaultMethodMetadata = {"public": true, "final": false};
@@ -36,7 +37,7 @@ sap.ui.define(['sap/ui/base/Metadata'],
         this._aPublicMethods = [];
         for ( var n in oClassInfo ) {
             if ( n !== "metadata" && n !== "constructor") {
-                if ( !n.match(/^_/)) {
+                if ( !n.match(/^_/) && !(n in this.mExtensionLifecycleMethods)) {
                     this._aPublicMethods.push(n);
                     // default medata for methods
                     if (!(n in this._mMethods)) {
@@ -45,11 +46,13 @@ sap.ui.define(['sap/ui/base/Metadata'],
                 }
             }
         }
+        for ( var m in this._mMethods) {
+            this._aPublicMethods.push(m);
+        }
         if (oClassInfo['override']) {
             this._override = oClassInfo['override'];
             delete oClassInfo['override'];
         }
-        Metadata.prototype.applySettings.call(this, oClassInfo);
     };
 
 	/**
@@ -127,6 +130,31 @@ sap.ui.define(['sap/ui/base/Metadata'],
         return this._override;
     };
 
+     /**
+     * Returns the 'static' override definition registered by the override function for this extension
+     *
+     * @return {object} oOverrides The overrides
+     * @private
+     */
+    ControllerExtensionMetadata.prototype.getStaticOverrides = function() {
+        return this._staticOverride;
+    };
+
+     /**
+     * Returns the override execution strategy for the given method
+     *
+     * @param {string} sMethod Name of the method
+     * @return {sap.ui.core.mvc.OverrideExecution} sOverrideExecution The override execution strategy
+     */
+    ControllerExtensionMetadata.prototype.getOverrideExecution = function(sMethod) {
+        var oMethodMetadata = this._mAllMethods[sMethod];
+        var sOverrideExecution = this.mExtensionLifecycleMethods[sMethod] || OverrideExecution.Instead;
+        if (oMethodMetadata) {
+            sOverrideExecution = oMethodMetadata.overrideExecution;
+        }
+        return sOverrideExecution;
+    };
+
     /**
      * Checks wether override definitions exists
      *
@@ -134,7 +162,7 @@ sap.ui.define(['sap/ui/base/Metadata'],
      * @private
      */
     ControllerExtensionMetadata.prototype.hasOverrides = function() {
-        return !!this._override;
+        return !!this._override || !!this._staticOverride;
     };
 
     /**
