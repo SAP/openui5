@@ -308,12 +308,12 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 								.replace(/{/gi, "\\{") + "</pre>";
 						}
 						// html text is set by purpose with setter. If is set in the constructor there are issues with binding
-						var oFT = new FormattedText().setVisible(false).setHtmlText(mOptions.details);
+						var oFT = new FormattedText().setHtmlText(mOptions.details);
 
 						var oShowLink = new Link({
 							text: that._rb.getText("MSGBOX_LINK_TITLE"),
 							press: function () {
-								oFT.setVisible(true);
+								oDialog.addContent(oFT);
 								this.setVisible(false);
 								oDialog._setInitialFocus();
 							}
@@ -325,8 +325,7 @@ sap.ui.define(['jquery.sap.global', './Button', './Dialog', './Text', './Formatt
 						return new VBox({
 							items: [
 								oMessageText,
-								oShowLink,
-								oFT
+								oShowLink
 							]
 						});
 					}

@@ -490,6 +490,38 @@
 			assert.ok(oMessageBox.$().hasClass(sClassName));
 			oMessageBox.destroy();
 		});
+
+		QUnit.test("Show details: Dialog integration", function (assert) {
+			// setup
+			var sDetails = "Lorem ipsum dolor sit amet.",
+				oSpy, oMessageBox, sLinkText;
+			sap.m.MessageBox.show("No connection can be established to the backend system ABC", {
+				id: "messagedialog1",
+				title: sMessageTitle,
+				type: sap.m.MessageBox.Icon.ERROR,
+				details: sDetails,
+				styleClass: sClassName,
+				initialFocus: "OK"
+			});
+			sap.ui.getCore().applyChanges();
+
+			oMessageBox = sap.ui.getCore().byId("messagedialog1");
+			sLinkText = oMessageBox.$().find('a.sapMMessageBoxLinkText');
+
+			// act
+			if (sap.ui.Device.support.touch) {
+				sLinkText.tap();
+			} else {
+				sLinkText.click();
+			}
+			oSpy = this.spy(sap.m.Dialog.prototype, "onAfterRendering");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.strictEqual(oSpy.callCount, 1, "The dialog was rerendered after the details link was clicked");
+			oMessageBox.destroy();
+		});
+
 		jQuery.sap.require("sap.ui.layout.VerticalLayout");
 
 		QUnit.test("add details within control content", function (assert) {
