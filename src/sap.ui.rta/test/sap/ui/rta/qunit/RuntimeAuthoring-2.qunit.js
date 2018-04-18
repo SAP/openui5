@@ -30,7 +30,7 @@ sap.ui.require([
 	Button,
 	MessageBox,
 	MessageToast,
-	ContextMenu,
+	ContextMenuPlugin,
 	OverlayRegistry,
 	Settings,
 	Change,
@@ -88,7 +88,7 @@ sap.ui.require([
 			FakeLrepLocalStorage.deleteChanges();
 			var oCommandFactory = new CommandFactory();
 
-			this.oContextMenuPlugin = new ContextMenu("nonDefaultContextMenu");
+			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
 			this.oRemovePlugin = new Remove({
 				id : "nonDefaultRemovePlugin",
 				commandFactory : oCommandFactory
@@ -195,7 +195,7 @@ sap.ui.require([
 			var done = assert.async();
 			FakeLrepLocalStorage.deleteChanges();
 
-			this.oContextMenuPlugin = new ContextMenu("nonDefaultContextMenu");
+			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
@@ -216,7 +216,7 @@ sap.ui.require([
 				assert.equal(this.oRta.getPlugins()['rename'], undefined, " and a custom rename plugin does not exist");
 				assert.ok(this.oRta.getDefaultPlugins()['rename'].bIsDestroyed, " and the default rename plugin has been destroyed");
 				assert.ok(this.oRta.getDefaultPlugins()['contextMenu'].bIsDestroyed, " and the default context menu plugin has been destroyed");
-				assert.equal(this.oRta.getPlugins()['contextMenu'].getId(), this.oContextMenuPlugin.getId(), " and the custom context menu plugin is used");
+				assert.equal(this.oRta.getPlugins()['contextMenu'].getId(), this.oContextMenuPlugin.getId(), " and the context menu plugin is used");
 				done();
 			}.bind(this));
 

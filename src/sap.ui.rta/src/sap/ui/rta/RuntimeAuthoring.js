@@ -29,7 +29,6 @@ sap.ui.define([
 		"sap/ui/rta/plugin/Settings",
 		"sap/ui/rta/plugin/ControlVariant",
 		"sap/ui/dt/plugin/ContextMenu",
-		"sap/ui/dt/plugin/MiniMenu",
 		"sap/ui/dt/plugin/TabHandling",
 		"sap/ui/fl/FlexControllerFactory",
 		"sap/ui/rta/Utils",
@@ -73,7 +72,6 @@ sap.ui.define([
 		SettingsPlugin,
 		ControlVariantPlugin,
 		ContextMenuPlugin,
-		MiniMenuPlugin,
 		TabHandlingPlugin,
 		FlexControllerFactory,
 		Utils,
@@ -321,16 +319,10 @@ sap.ui.define([
 				commandFactory: oCommandFactory
 			});
 
-			// Context Menu
-			if (UrlParser.getParam('sap-ui-rta-minimenu') === true) {
-				this._mDefaultPlugins["contextMenu"] = new MiniMenuPlugin({
-					styleClass: Utils.getRtaStyleClassName()
-				});
-			} else {
-				this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin({
-					styleClass: Utils.getRtaStyleClassName()
-				});
-			}
+			// Context Menu (context menu)
+			this._mDefaultPlugins["contextMenu"] = new ContextMenuPlugin({
+				styleClass: Utils.getRtaStyleClassName()
+			});
 
 			// Tab Handling
 			this._mDefaultPlugins["tabHandling"] = new TabHandlingPlugin();

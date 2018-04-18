@@ -48,7 +48,7 @@ function(
 	SmartForm,
 	BusyIndicator,
 	Device,
-	ContextMenu,
+	ContextMenuPlugin,
 	DesignTimeMetadata,
 	OverlayRegistry,
 	Overlay,
@@ -731,7 +731,7 @@ function(
 			FakeLrepLocalStorage.deleteChanges();
 			var oCommandFactory = new CommandFactory();
 
-			this.oContextMenuPlugin = new ContextMenu("nonDefaultContextMenu");
+			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
 			this.oRemovePlugin = new Remove({
 				id : "nonDefaultRemovePlugin",
 				commandFactory : oCommandFactory

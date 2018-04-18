@@ -181,7 +181,56 @@ sap.ui.require([
 		$groupOverlay.click();
 	});
 
-	QUnit.test("when renaming a group element (via context menu) and setting a new label to Test...", function(assert) {
+	var fnPressRenameAndEnsureFunctionality = function(assert, oChangePersistence, oRenameButton) {
+		var $fieldOverlay = this.oFieldOverlay.$();
+
+		return new Promise(function(fnResolve, fnReject) {
+			oRenameButton.firePress();
+
+			sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
+				if (mParams.overlay === this.oFieldOverlay) {
+					var $editableField = $fieldOverlay.find(".sapUiRtaEditableField");
+
+					assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
+					assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
+
+					Promise.all([
+						new Promise(function (fnResolve) {
+							var oCommandStack = this.oRta.getCommandStack();
+							oCommandStack.attachModified(function(oEvent) {
+								var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
+								if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
+									fnWaitForLrepSerialization.call(this).then(function() {
+										assert.strictEqual(this.oField._getLabel().getText(), "Test", "then label of the group element is Test");
+										assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
+										fnResolve();
+									}.bind(this));
+								}
+							}.bind(this));
+						}.bind(this)),
+						new Promise(function (fnResolve) {
+							sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
+								if (mParams.overlay === this.oFieldOverlay) {
+									assert.strictEqual(document.activeElement, this.oFieldOverlay.getDomRef(), " and focus is on field overlay");
+									$editableField = $fieldOverlay.find(".sapUiRtaEditableField");
+									assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
+									fnResolve();
+								}
+							}, this);
+						}.bind(this))
+					]).then(function () {
+						return this.oRta.stop();
+					}.bind(this))
+					.then(fnResolve);
+
+					document.activeElement.innerHTML = "Test";
+					sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				}
+			}, this);
+		}.bind(this));
+	};
+
+	QUnit.test("when renaming a group element via Context menu (compact context menu) and setting a new label to Test...", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
 		var done = assert.async();
 
@@ -189,55 +238,36 @@ sap.ui.require([
 		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
 		this.oFieldOverlay.focus();
-		var $fieldOverlay = this.oFieldOverlay.$();
 
-		sap.ui.test.qunit.triggerKeydown(this.oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+		var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+		oContextMenuControl.attachOpened(function() {
+			assert.ok(oContextMenuControl.bOpen, "ContextMenu should be opened");
+			// press rename button
+			var oRenameButton = oContextMenuControl.getButtons()[0];
+			fnPressRenameAndEnsureFunctionality.call(this, assert, oChangePersistence, oRenameButton)
+				.then(done);
+		}.bind(this));
 
-		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[0];
-		oContextMenuItem.getDomRef().click();
-
-		sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.startEdit', function (sChannel, sEvent, mParams) {
-			if (mParams.overlay === this.oFieldOverlay) {
-				var $editableField = $fieldOverlay.find(".sapUiRtaEditableField");
-
-				assert.strictEqual($editableField.length, 1, " then the rename input field is rendered");
-				assert.strictEqual($editableField.find(document.activeElement).length, 1, " and focus is in it");
-
-				Promise.all([
-					new Promise(function (fnResolve) {
-						var oCommandStack = this.oRta.getCommandStack();
-						oCommandStack.attachModified(function(oEvent) {
-							var oFirstExecutedCommand = oCommandStack.getAllExecutedCommands()[0];
-							if (oFirstExecutedCommand && oFirstExecutedCommand.getName() === "rename") {
-								fnWaitForLrepSerialization.call(this).then(function() {
-									assert.strictEqual(this.oField._getLabel().getText(), "Test", "then label of the group element is Test");
-									assert.equal(oChangePersistence.getDirtyChanges().length, 1, "then there is 1 dirty change in the FL ChangePersistence");
-									fnResolve();
-								}.bind(this));
-							}
-						}.bind(this));
-					}.bind(this)),
-					new Promise(function (fnResolve) {
-						sap.ui.getCore().getEventBus().subscribeOnce('sap.ui.rta', 'plugin.Rename.stopEdit', function (sChannel, sEvent, mParams) {
-							if (mParams.overlay === this.oFieldOverlay) {
-								assert.strictEqual(document.activeElement, this.oFieldOverlay.getDomRef(), " and focus is on field overlay");
-								$editableField = $fieldOverlay.find(".sapUiRtaEditableField");
-								assert.strictEqual($editableField.length, 0, " and the editable field is removed from dom");
-								fnResolve();
-							}
-						}, this);
-					}.bind(this))
-				]).then(function () {
-					this.oRta.stop().then(done);
-				}.bind(this));
-
-				document.activeElement.innerHTML = "Test";
-				sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ENTER, false, false, false);
-			}
-		}, this);
+		// open context menu (compact menu)
+		sap.ui.test.qunit.triggerMouseEvent(this.oFieldOverlay.getDomRef(), "click");
 	});
 
-	QUnit.test("when adding a group element (via context menu) - addODataProperty", function(assert) {
+	QUnit.test("when renaming a group element via context menu (expanded context menu) and setting a new label to Test...", function(assert) {
+		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(1, assert);
+
+		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(this.oField);
+		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
+
+		this.oFieldOverlay.focus();
+
+		// open context menu (expanded menu) and press rename button
+		sap.ui.test.qunit.triggerKeydown(this.oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+		var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
+
+		return fnPressRenameAndEnsureFunctionality.call(this, assert, oChangePersistence, oContextMenuButton);
+	});
+
+	QUnit.test("when adding a group element via context menu (expanded context menu - addODataProperty", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(2, assert);
 		var done = assert.async();
 
@@ -247,11 +277,15 @@ sap.ui.require([
 		var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
 		this.oFieldOverlay.focus();
 
+		// open context menu (context menu) and press rename button
 		sap.ui.test.qunit.triggerKeydown(this.oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
-
-		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[1];
-		oContextMenuItem.getDomRef().click();
-		sap.ui.getCore().applyChanges();
+		var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+		oContextMenuControl.attachEventOnce("Opened", function() {
+			var oContextMenuButton = oContextMenuControl.getButtons()[1];
+			assert.equal(oContextMenuButton.getText(), "Add Field", "the the add field action button is available in the menu");
+			oContextMenuButton.firePress();
+			sap.ui.getCore().applyChanges();
+		});
 
 		oDialog.attachOpened(function() {
 			var oFieldToAdd = oDialog._oList.getItems()[1];
@@ -280,7 +314,7 @@ sap.ui.require([
 		}.bind(this));
 	});
 
-	QUnit.test("when adding a group element (via context menu) - reveal", function(assert) {
+	QUnit.test("when adding a group element via context menu (expanded context menu - reveal", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
 		var done = assert.async();
 		var oFieldToHide;
@@ -294,11 +328,11 @@ sap.ui.require([
 				// remove field is executed, reveal should be available
 				var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
 				this.oFieldOverlay.focus();
-				sap.ui.test.qunit.triggerKeydown(this.oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
 
 				// open context menu dialog
-				var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[1];
-				oContextMenuItem.getDomRef().click();
+				sap.ui.test.qunit.triggerKeydown(this.oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+				var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
+				oContextMenuButton.firePress();
 				sap.ui.getCore().applyChanges();
 
 				oDialog.attachOpened(function() {
@@ -341,7 +375,7 @@ sap.ui.require([
 		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
 	});
 
-	QUnit.test("when adding a SimpleForm Field (via context menu) - reveal", function(assert) {
+	QUnit.test("when adding a SimpleForm Field via context menu (expanded context menu) - reveal", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
 		var done = assert.async();
 
@@ -362,14 +396,18 @@ sap.ui.require([
 				var oField = oFormContainer.getFormElements()[1];
 				var oFieldOverlay = OverlayRegistry.getOverlay(oField);
 				oFieldOverlay.focus();
+
+				// open context menu (compact context menu)
 				sap.ui.test.qunit.triggerKeydown(oFieldOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
-				// oFieldOverlay2.getDomRef().triggerHandler("contextmenu");
+				var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+				oContextMenuControl.attachOpened(function() {
+					var oContextMenuButton = oContextMenuControl.getButtons()[1];
+					assert.equal(oContextMenuButton.getText(), "Add Field", "the the add field action button is available in the menu");
+					oContextMenuButton.firePress();
+					sap.ui.getCore().applyChanges();
+				});
 
-				// open context menu dialog
-				var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[1];
-				oContextMenuItem.getDomRef().click();
-				sap.ui.getCore().applyChanges();
-
+				// wait for opening additional Elements dialog
 				oDialog.attachOpened(function() {
 					var oFieldToAdd = oDialog.getElements().filter(function(oField) {return oField.type === "invisible";})[0];
 					oCommandStack.attachModified(function(oEvent) {
@@ -396,12 +434,18 @@ sap.ui.require([
 
 		// to reveal we have to remove the field first (otherwise it would be addODataProperty)
 		oFieldToHideOverlay.focus();
-		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.ENTER, false, false, false);
-		oFieldToHideOverlay.focus();
-		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+		sap.ui.test.qunit.triggerKeydown(oFieldToHideOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
+		var oContextMenuControl = this.oRta.getPlugins()["contextMenu"].oContextMenuControl;
+		oContextMenuControl.attachEventOnce("Opened", function() {
+			var oContextMenuButton = oContextMenuControl.getButtons()[2];
+			assert.equal(oContextMenuButton.getText(), "Remove", "the the add field action button is available in the menu");
+			oContextMenuButton.firePress();
+			sap.ui.getCore().applyChanges();
+		});
+
 	});
 
-	QUnit.test("when splitting a combined SmartForm GroupElement (via context menu) - split", function(assert) {
+	QUnit.test("when splitting a combined SmartForm GroupElement via context menu (expanded context menu) - split", function(assert) {
 		RtaQunitUtils.waitForChangesToReachedLrepAtTheEnd(3, assert);
 		var done = assert.async();
 
@@ -412,7 +456,6 @@ sap.ui.require([
 		assert.equal(oChangePersistence.getDirtyChanges().length, 0, "then there is no dirty change in the FL ChangePersistence");
 
 		var oCommandStack = this.oRta.getCommandStack();
-
 		oCommandStack.attachModified(function(oEvent) {
 			var aCommands = oCommandStack.getAllExecutedCommands();
 			if (aCommands &&
@@ -427,13 +470,13 @@ sap.ui.require([
 			}
 		}.bind(this));
 
-		// open context menu on fucused overlay
+		// open context menu (expanded context menu) on fucused overlay
 		oCombinedElementOverlay.focus();
 		sap.ui.test.qunit.triggerKeydown(oCombinedElementOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
 
 		// trigger split event
-		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[5];
-		oContextMenuItem.getDomRef().click();
+		var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[5];
+		oContextMenuButton.firePress();
 		sap.ui.getCore().applyChanges();
 
 	});

@@ -217,16 +217,15 @@ sap.ui.require([
 
 		this.oElementOverlay.focus();
 		sap.ui.test.qunit.triggerKeydown(this.oElementOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
-		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[1];
-		oContextMenuItem.getDomRef().click();
+		var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[1];
+		oContextMenuButton.firePress();
 		sap.ui.getCore().applyChanges();
 
 		var oDialog = this.oRta.getPlugins()["additionalElements"].getDialog();
 		oDialog.attachOpened(function() {
-		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Z, false, false, true);
+			sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Z, false, false, true);
 			assert.equal(this.fnUndoSpy.callCount, 0, "then _onUndo was not called");
-
-		sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Y, false, false, true);
+			sap.ui.test.qunit.triggerKeydown(document, jQuery.sap.KeyCodes.Y, false, false, true);
 			assert.equal(this.fnRedoSpy.callCount, 0, "then _onRedo was not called");
 			sap.ui.qunit.QUnitUtils.triggerEvent("tap", oDialog._oOKButton.getDomRef());
 			sap.ui.getCore().applyChanges();
@@ -249,8 +248,8 @@ sap.ui.require([
 
 		this.oElementOverlay.focus();
 		sap.ui.test.qunit.triggerKeydown(this.oElementOverlay.getDomRef(), jQuery.sap.KeyCodes.F10, true, false, false);
-		var oContextMenuItem = this.oRta.getPlugins()["contextMenu"]._oContextMenuControl.getItems()[0];
-		oContextMenuItem.getDomRef().click();
+		var oContextMenuButton = this.oRta.getPlugins()["contextMenu"].oContextMenuControl.getButtons()[0];
+		oContextMenuButton.firePress();
 	});
 
 	RtaQunitUtils.removeTestViewAfterTestsWhenCoverageIsRequested();
