@@ -812,6 +812,7 @@ sap.ui.define([
 					oEntity["@$ui5._.transient"] = sTransientGroup;
 					that.oRequestor.relocate(sParkedGroup, oEntity, sTransientGroup);
 				}
+				oGroupLock.unlock();
 				return Promise.resolve({});
 			}
 			// send and register the PATCH request

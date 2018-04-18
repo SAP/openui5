@@ -2338,6 +2338,9 @@ sap.ui.require([
 			"@$ui5._.transient" : "updateGroup"
 		});
 
+		// The lock must be unlocked although no request is created
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
+
 		// code under test
 		oPatchPromise1 = oCache.update(oGroupLock, "bar", "baz", this.spy(), "n/a", "-1");
 		oPatchPromise2 = oCache.update(new _GroupLock("anotherGroup"), "bar", "qux", this.spy(),
@@ -2367,11 +2370,11 @@ sap.ui.require([
 	QUnit.test("CollectionCache: pending create forces update/_delete to fail", function (assert) {
 		var mQueryOptions = {},
 			oCache = this.createCache("Employees", mQueryOptions),
+			oCreateGroupLock = new _GroupLock("updateGroup"),
 			oCreatePromise,
 			oError = new Error(),
 			fnErrorCallback = this.spy(),
 			oFailedPostPromise,
-			oGroupLock = new _GroupLock("updateGroup"),
 			fnRejectPost,
 			oRequestExpectation1,
 			oRequestExpectation2,
@@ -2380,15 +2383,16 @@ sap.ui.require([
 
 		function checkUpdateAndDeleteFailure() {
 			// code under test
-			oCache.update(oGroupLock, "foo", "baz", that.spy(), "n/a", "-1").then(function () {
-				assert.ok(false, "unexpected success - update");
-			}, function (oError) {
-				assert.strictEqual(oError.message,
-					"No 'update' allowed while waiting for server response",
-					oError.message);
+			oCache.update(new _GroupLock("updateGroup"), "foo", "baz", that.spy(), "n/a", "-1")
+				.then(function () {
+					assert.ok(false, "unexpected success - update");
+				}, function (oError) {
+					assert.strictEqual(oError.message,
+						"No 'update' allowed while waiting for server response",
+						oError.message);
 
-			});
-			oCache._delete(oGroupLock, "n/a", "-1").then(function () {
+				});
+			oCache._delete(new _GroupLock("updateGroup"), "n/a", "-1").then(function () {
 				assert.ok(false, "unexpected success - _delete");
 			}, function (oError) {
 				assert.strictEqual(oError.message,
@@ -2400,7 +2404,8 @@ sap.ui.require([
 
 		function checkUpdateSuccess(sWhen) {
 			// code under test
-			return oCache.update(oGroupLock, "foo", sWhen, that.spy(), "Employees", "-1")
+			return oCache.update(new _GroupLock("updateGroup"), "foo", sWhen, that.spy(),
+					"Employees", "-1")
 				.then(function () {
 					assert.ok(true, "Update works " + sWhen);
 					assert.strictEqual(oCache.aElements[-1]["@$ui5._.transient"], "updateGroup");
@@ -2412,15 +2417,15 @@ sap.ui.require([
 			.returns("?sap-client=111");
 		oRequestExpectation1 = this.oRequestorMock.expects("request");
 		oRequestExpectation1.withExactArgs("POST", "Employees?sap-client=111",
-				sinon.match.same(oGroupLock), null, sinon.match.object, sinon.match.func,
-				sinon.match.func)
+				sinon.match.same(oCreateGroupLock), null, sinon.match.object,
+				sinon.match.func, sinon.match.func)
 			.returns(oFailedPostPromise = new Promise(function (resolve, reject) {
 				fnRejectPost = reject;
 			}));
 		this.mock(_Helper).expects("getKeyPredicate").returns("('foo')");
 
-		oCreatePromise = oCache.create(oGroupLock, "Employees", "", {}, undefined,
-			fnErrorCallback);
+		oCreatePromise = oCache.create(oCreateGroupLock, "Employees", "", {},
+			undefined, fnErrorCallback);
 
 		checkUpdateSuccess("before submitBatch").then(function () {
 			oRequestExpectation2 = that.oRequestorMock.expects("request");
@@ -2453,6 +2458,8 @@ sap.ui.require([
 		});
 
 		return oCreatePromise.then(function () {
+			var oGroupLock = new _GroupLock("updateGroup");
+
 			that.oRequestorMock.expects("request")
 				.withExactArgs("PATCH", "Employees?sap-client=111", sinon.match.same(oGroupLock),
 					{"If-Match" : undefined}, {foo : "baz2"}, undefined,
@@ -2460,7 +2467,7 @@ sap.ui.require([
 				.returns(Promise.resolve({}));
 
 			// code under test
-			return oCache.update(oGroupLock, "foo", "baz2", that.spy(), "Employees", "-1");
+			return oCache.update(oGroupLock, "foo", "baz2", that.spy(),"Employees", "-1");
 		});
 	});
 
@@ -2513,12 +2520,12 @@ sap.ui.require([
 						sUpdateGroupId);
 
 				// code under test - first update -> relocate
-				aPromises.push(oCache.update(oGroupLock, "Name", "John Doe", that.spy(), "n/a",
-					"-1"));
+				aPromises.push(oCache.update(new _GroupLock(sUpdateGroupId), "Name", "John Doe",
+					that.spy(), "n/a", "-1"));
 
 				// code under test - second update -> do not relocate again
-				aPromises.push(oCache.update(oGroupLock, "Name", "John Doe1", that.spy(),
-					"n/a", "-1"));
+				aPromises.push(oCache.update(new _GroupLock(sUpdateGroupId), "Name", "John Doe1",
+					that.spy(), "n/a", "-1"));
 
 				return Promise.all(aPromises);
 			});
