@@ -513,7 +513,8 @@ function(
 
 		Slider.prototype.setDomValue = function(sNewValue) {
 			var oDomRef = this.getDomRef(),
-				sScaleLabel = this._formatValueByScale(sNewValue);
+				sScaleLabel = this._formatValueByScale(sNewValue),
+				oTooltipContainer = this.getAggregation("_tooltipContainer");
 
 			if (!oDomRef) {
 				return;
@@ -537,7 +538,7 @@ function(
 			oHandleDomRef.style[sap.ui.getCore().getConfiguration().getRTL() ? "right" : "left"] = sPerValue;
 
 			// update the position of the advanced tooltip
-			if (this.getShowAdvancedTooltip()) {
+			if (this.getShowAdvancedTooltip() && oTooltipContainer.getDomRef()) {
 				this.updateAdvancedTooltipDom(sNewValue);
 			}
 
