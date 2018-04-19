@@ -103,19 +103,20 @@ sap.ui.define([
 			/**
 			 * Defines the section of the <code>sap.m.Table</code> control that remains fixed at the top of the page during vertical scrolling as long as the table is in the viewport.
 			 *
-			 * <b>Note:</b> There is limited browser support, hence the API is in experimental state.
-			 * Browsers that currently support this feature are Chrome (desktop and mobile), Safari (desktop and mobile) and Edge 41.
+			 * <b>Note:</b> There is limited browser support.
+			 * Browsers that do not support this feature are listed below:
+			 * <ul>
+			 * <li>IE.</li>
+			 * <li>Edge lower than version 41 (EdgeHTML 16).</li>
+			 * <li>Firefox lower than version 59.</li>
+			 * </ul>
 			 *
-			 * There are also some known issues with respect to the scrolling behavior. A few are given below:
+			 * There are also some known limitations with respect to the scrolling behavior. A few are given below:
 			 * <ul>
 			 * <li>If the table is placed in certain layout containers, for example, the <code>sap.ui.layout.Grid</code> control,
 			 * the column headers are not fixed at the top of the viewport. The table behaves in a similar way when placed within the <code>sap.m.ObjectPage</code> control.</li>
 			 * <li>If the sticky column headers are enabled in the table, setting focus on the column headers will let the table scroll to the top.</li>
 			 * </ul>
-			 *
-			 * This API should not be used in a productive environment.
-			 *
-			 * @experimental As of 1.54
 			 * @since 1.54
 			 */
 			sticky : {type : "sap.m.Sticky[]", group : "Appearance"}
@@ -782,23 +783,40 @@ sap.ui.define([
 			return;
 		}
 
-		// check the last sticky element of the control
-		var oLastStickyDomRef;
+		// check the all the sticky element and get their height
+		var iTHRectHeight = 0,
+			iTHRectBottom = 0,
+			iInfoToolbarRectHeight = 0,
+			iInfoToolbarRectBottom = 0,
+			iHeaderToolbarRectHeight = 0,
+			iHeaderToolbarRectBottom = 0;
+
 		if (this._iStickyValue & 4 /* ColumnHeaders */) {
-			oLastStickyDomRef = this.getDomRef("tblHeader").firstChild;
-		} else if (this._iStickyValue & 2 /* InfoToolbar */) {
-			oLastStickyDomRef = this.getInfoToolbar().getDomRef();
-		} else if (this._iStickyValue & 1 /* HeaderToolbar */) {
-			oLastStickyDomRef = this.getDomRef().querySelector(".sapMListHdr");
+			var oTblHeaderDomRef = this.getDomRef("tblHeader").firstChild;
+			var oTblHeaderRect = oTblHeaderDomRef.getBoundingClientRect();
+			iTHRectBottom = oTblHeaderRect.bottom;
+			iTHRectHeight = oTblHeaderRect.height;
+		}
+
+		if (this._iStickyValue & 2 /* InfoToolbar */) {
+			var oInfoToolbarDomRef = this.getInfoToolbar().getDomRef();
+			var oInfoToolbarRect = oInfoToolbarDomRef.getBoundingClientRect();
+			iInfoToolbarRectBottom = oInfoToolbarRect.bottom;
+			iInfoToolbarRectHeight = oInfoToolbarRect.height;
+		}
+
+		if (this._iStickyValue & 1 /* HeaderToolbar */) {
+			var oHeaderToolbarDomRef = this.getDomRef().querySelector(".sapMListHdr");
+			var oHeaderToolbarRect = oHeaderToolbarDomRef.getBoundingClientRect();
+			iHeaderToolbarRectBottom = oHeaderToolbarRect.bottom;
+			iHeaderToolbarRectHeight = oHeaderToolbarRect.height;
 		}
 
 		var iItemTop = oItemDomRef.getBoundingClientRect().top;
-		var iLastStickyBottom = oLastStickyDomRef.getBoundingClientRect().bottom;
 
-		if (iLastStickyBottom > iItemTop) {
-			var iTableTop = this.getDomRef().getBoundingClientRect().top;
+		if (iTHRectBottom > iItemTop || iInfoToolbarRectBottom > iItemTop || iHeaderToolbarRectBottom > iItemTop) {
 			window.requestAnimationFrame(function () {
-				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, iTableTop + oScrollDelegate.getScrollTop() - iLastStickyBottom]);
+				oScrollDelegate.scrollToElement(oItemDomRef, 0, [0, -iTHRectHeight - iInfoToolbarRectHeight - iHeaderToolbarRectHeight]);
 			});
 		}
 

@@ -218,6 +218,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 		this.renderColumns(rm, oControl, "Head");
 		rm.write("<tbody");
 		rm.addClass("sapMListItems");
+		rm.addClass("sapMTableTBody");
 		rm.writeAttribute("id", oControl.addNavSection(oControl.getId("tblBody")));
 		if (oControl.getAlternateRowColors()) {
 			rm.addClass(oControl._getAlternateRowColorsClass());
