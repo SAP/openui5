@@ -134,11 +134,7 @@ sap.ui.define([
 				return sTitle ? "As of " + sTitle : "Version N/A";
 			},
 
-			formatDescription: function (sText, sSince) {
-				if (sSince) {
-					sText = "As of version " + sSince + ", " + sText;
-				}
-
+			formatDescription: function (sText) {
 				sText = this.formatLinks(sText);
 				sText = sText.replace("<p>", '');
 				sText = sText.replace("</p>", '');
