@@ -1388,5 +1388,12 @@
 			// clean up
 			oRangeSlider.destroy();
 		});
+
+		QUnit.test("Tooltips: Setting a value when TooltipContainer is not visible", function (assert) {
+			this.oRangeSlider.setValue(4);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(true, "should not throw an error");
+		});
 	});
 }());

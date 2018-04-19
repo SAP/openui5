@@ -2177,6 +2177,13 @@
 					assert.ok(true, "No exception have been thrown");
 					assert.strictEqual(this.oSlider.getAggregation("_defaultTooltips")[0], oSliderTooltipContainer.getAssociatedTooltipsAsControls()[0], "Default tooltip should be used");
 				});
+
+				QUnit.test("Tooltips: Setting a value when TooltipContainer is not visible", function (assert) {
+					this.oSlider.setValue(4);
+					sap.ui.getCore().applyChanges();
+
+					assert.ok(true, "should not throw an error");
+				});
 			});
 
 			QUnit.module("Accessibility");
