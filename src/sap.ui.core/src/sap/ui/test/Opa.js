@@ -219,7 +219,8 @@ sap.ui.define([
 	 * 		<li>assertions: A new Opa instance</li>
 	 * 		<li>timeout : 15 seconds, 0 for infinite timeout</li>
 	 * 		<li>pollingInterval: 400 milliseconds</li>
-	 * 		<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
+	 *		<li>debugTimeout: 0 seconds, infinite timeout by default. This will be used instead of timeout if running in debug mode.</li>
+	 * 		<li>asyncPolling: false</li>
 	 * </ul>
 	 * You can either directly manipulate the config, or extend it using {@link sap.ui.test.Opa.extendConfig}
 	 * @public
@@ -368,6 +369,7 @@ sap.ui.define([
 	 * 			Use this parameter to slow down OPA when you want to watch your test during development or checking the UI of your app.
 	 * 			It is not recommended to use this parameter in any automated test executions.
 	 * 		</li>
+	 * 		<li>asyncPolling: false</li>
 	 * </ul>
 	 *
 	 * @public
@@ -500,6 +502,7 @@ sap.ui.define([
 		 * @param {int} [options.timeout] default: 15 - (seconds) Specifies how long the waitFor function polls before it fails.O means it will wait forever.
 		 * @param {int} [options.debugTimeout] @since 1.47 default: 0 - (seconds) Specifies how long the waitFor function polls before it fails in debug mode.O means it will wait forever.
 		 * @param {int} [options.pollingInterval] default: 400 - (milliseconds) Specifies how often the waitFor function polls.
+		 * @param {boolean} [options.asyncPolling] @since 1.55 default: false Enable asynchronous polling after success() call. This allows more stable autoWaiter synchronization with event flows originating from within success(). Especially usefull to stabilize synchronization with overflow toolbars.
 		 * @param {function} [options.check] Will get invoked in every polling interval.
 		 * If it returns true, the check is successful and the polling will stop.
 		 * The first parameter passed into the function is the same value that gets passed to the success function.

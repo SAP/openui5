@@ -112,7 +112,7 @@ sap.ui.require([
 		assert.strictEqual(oDoneSpy.callCount, 1, "Did resolve the deferred");
 	});
 
-	QUnit.test("Should resolve after 0ms if the conditions are met", function(assert) {
+	QUnit.test("Should resolve in first poll if the conditions are met", function(assert) {
 		// System under Test
 		var oOpa = new Opa();
 
@@ -128,6 +128,27 @@ sap.ui.require([
 
 		Opa.emptyQueue();
 		this.clock.tick(iExecutionDelay);
+	});
+
+	QUnit.test("Should resolve in next poll if the conditions are met and asyncPolling is requested", function(assert) {
+		// System under Test
+		var oOpa = new Opa();
+		oOpa.extendConfig({
+			asyncPolling: true
+		});
+
+		// Act
+		oOpa.waitFor({
+			check : function () {
+				return true;
+			},
+			success : function () {
+				assert.ok(true, "Success is called synchronously");
+			}
+		});
+
+		Opa.emptyQueue();
+		this.clock.tick(iExecutionDelay + 400);
 	});
 
 	QUnit.test("Should wait for additional waitFor's declared in the success handler before continuing the queue", function(assert) {
