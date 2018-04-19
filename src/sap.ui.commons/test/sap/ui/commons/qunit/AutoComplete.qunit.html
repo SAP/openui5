@@ -307,10 +307,17 @@
 		};
 
 		QUnit.test("Focusout", function(assert) {
-			var done = assert.async();
+			var done = assert.async(),
+					oButton = jQuery("#focusDummy");
+
 			assert.expect(3);
 			popupClosingTest(this.oAuto1, function(oAuto){
-				jQuery("#focusDummy").focus();
+				if (sap.ui.Device.system.combi) {
+					oButton.click().mousedown().mouseup();
+				} else {
+					oButton.focus();
+				}
+
 			});
 		});
 
