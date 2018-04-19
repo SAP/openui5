@@ -59,7 +59,8 @@ sap.ui.define([
 					aFirstLevelAggregation)
 			}), bSortExpandSelect);
 		this.oFirstLevel.calculateKeyPredicates = _AggregationCache.calculateKeyPredicate
-			.bind(null, aFirstLevelAggregation, this.oFirstLevel.sMetaPath);
+			.bind(null, aFirstLevelAggregation, this.oFirstLevel.sMetaPath,
+				this.oFirstLevel.aElements.$byPredicate);
 	}
 
 	// make _AggregationCache a _Cache
@@ -155,21 +156,39 @@ sap.ui.define([
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>; the grouped dimensions must come first
 	 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
+	 * @param {object} mByPredicate A map of group nodes by key predicates, used to detect
+	 *   collisions
 	 * @param {object} oGroupNode A 1st level group node
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
+	 * @throws {Error}
+	 *   In case a multi-unit situation is detected via a collision of key predicates
 	 *
 	 * @private
 	 */
-	_AggregationCache.calculateKeyPredicate = function (aAggregation, sMetaPath, oGroupNode,
-			mTypeForMetaPath) {
+	_AggregationCache.calculateKeyPredicate = function (aAggregation, sMetaPath, mByPredicate,
+			oGroupNode, mTypeForMetaPath) {
 		var sFirstLevelDimension = aAggregation[0].name,
 			sLiteral = _Helper.formatLiteral(oGroupNode[sFirstLevelDimension],
-				mTypeForMetaPath[sMetaPath][sFirstLevelDimension].$Type);
+				mTypeForMetaPath[sMetaPath][sFirstLevelDimension].$Type),
+			sPredicate = "(" + encodeURIComponent(sFirstLevelDimension) + "="
+				+ encodeURIComponent(sLiteral) + ")";
 
-		_Helper.setPrivateAnnotation(oGroupNode, "predicate",
-			"(" + encodeURIComponent(sFirstLevelDimension) + "="
-			+ encodeURIComponent(sLiteral) + ")" );
+		/*
+		 * Returns a JSON string representation of the given object, but w/o the private namespace.
+		 *
+		 * @param {object} o
+		 * @returns {string}
+		 */
+		function stringify(o) {
+			return JSON.stringify(_Helper.publicClone(o));
+		}
+
+		if (sPredicate in mByPredicate) {
+			throw new Error("Multi-unit situation detected: " + stringify(oGroupNode) + " vs. "
+				+ stringify(mByPredicate[sPredicate]));
+		}
+		_Helper.setPrivateAnnotation(oGroupNode, "predicate", sPredicate);
 	};
 
 	/**

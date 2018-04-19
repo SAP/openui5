@@ -175,7 +175,7 @@ sap.ui.define([
 		/**
 		 * Returns a clone of the given value, according to the rules of
 		 * <code>JSON.stringify</code>.
-		 * <b>Warning: date objects will be turned into strings</b>
+		 * <b>Warning: <code>Date</code> objects will be turned into strings</b>
 		 *
 		 * @param {*} vValue - Any value, including <code>undefined</code>
 		 * @returns {*} - A clone
@@ -308,8 +308,6 @@ sap.ui.define([
 		 * @param {string} sAnnotation
 		 *   The unqualified name of a private client-side instance annotation (hidden inside
 		 *   namespace "@$ui5._")
-		 *
-		 * @private
 		 */
 		deletePrivateAnnotation : function (oObject, sAnnotation) {
 			var oPrivateNamespace = oObject["@$ui5._"];
@@ -583,8 +581,6 @@ sap.ui.define([
 		 * @returns {any}
 		 *   The annotation's value or <code>undefined</code> if no such annotation exists (e.g.
 		 *   because the private namespace object does not exist)
-		 *
-		 * @private
 		 */
 		getPrivateAnnotation : function (oObject, sAnnotation) {
 			var oPrivateNamespace = oObject["@$ui5._"];
@@ -628,8 +624,6 @@ sap.ui.define([
 		 *   namespace "@$ui5._")
 		 * @returns {boolean}
 		 *   Whether such an annotation exists
-		 *
-		 * @private
 		 */
 		hasPrivateAnnotation : function (oObject, sAnnotation) {
 			var oPrivateNamespace = oObject["@$ui5._"];
@@ -744,6 +738,25 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns a clone of the given value where the private namespace object has been deleted.
+		 *
+		 * @param {any} vValue
+		 *   Any value, including <code>undefined</code>
+		 * @returns {any}
+		 *   A public clone
+		 *
+		 * @see sap.ui.model.odata.v4.lib._Helper.clone
+		 */
+		publicClone : function (vValue) {
+			var vClone = Helper.clone(vValue);
+
+			if (vClone) {
+				delete vClone["@$ui5._"];
+			}
+			return vClone;
+		},
+
+		/**
 		 * Sets the new value of the private client-side instance annotation with the given
 		 * unqualified name at the given object.
 		 *
@@ -754,8 +767,6 @@ sap.ui.define([
 		 *   namespace "@$ui5._")
 		 * @param {any} vValue
 		 *   The annotation's new value; <code>undefined</code> is a valid value
-		 *
-		 * @private
 		 */
 		setPrivateAnnotation : function (oObject, sAnnotation, vValue) {
 			var oPrivateNamespace = oObject["@$ui5._"];
