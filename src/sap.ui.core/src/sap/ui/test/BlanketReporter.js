@@ -62,7 +62,7 @@ sap.ui.define([
 		.blanket-source .miss span.highlight {\
 			background-color: #e6c3c7\
 		}\
-		.simpleMessage {\
+		.coverageSummary {\
 			background-color: #0D3349;\
 			border-radius: 0 0 5px 5px;\
 			color: #C6E746;\
@@ -460,6 +460,17 @@ sap.ui.define([
 	return function (oScript, fnGetTestedModules, oCoverageData) {
 		var oDiv, iLinesOfContext, oModel, aTestedModules, iThreshold;
 
+		/*
+		 * Tells whether the given module corresponds 1:1 to a single class.
+		 *
+		 * @param {string} sModule
+		 * @return {boolean}
+		 */
+		function isSingleClass(sModule) {
+			var aMatches = rModule.exec(sModule);
+
+			return aMatches && !aMatches[2];
+		}
 
 		// Sometimes, when refreshing, this function is called twice. Ignore the 2nd call.
 		if (!document.getElementById("blanket-view")) {
@@ -469,6 +480,13 @@ sap.ui.define([
 			oModel = createModel(oCoverageData, iLinesOfContext, iThreshold,
 				aTestedModules && aTestedModules.map(convertToFile));
 			oDiv = getDiv();
+
+			if (jQuery.sap.getUriParameters().get("testId")
+				|| aTestedModules && !aTestedModules.every(isSingleClass)) {
+				// do not fail due to coverage
+				createView(oModel).placeAt(oDiv);
+				return;
+			}
 
 			// make QUnit fail (indirectly) and show UI
 			if (oModel.getProperty("/lines/coverage") < iThreshold) {
@@ -482,7 +500,7 @@ sap.ui.define([
 					+ oModel.getProperty("/branches/coverage") + " < " + iThreshold);
 			}
 
-			oDiv.setAttribute("class", "simpleMessage"); //TODO what is a good class name here?
+			oDiv.setAttribute("class", "coverageSummary");
 			oDiv.innerHTML = "Blanket Code Coverage: OK";
 			//TODO checkbox to show/hide details UI
 		}
