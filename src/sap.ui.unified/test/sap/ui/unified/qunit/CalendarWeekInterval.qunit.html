@@ -483,6 +483,32 @@
 				oCalP.destroy();
 			});
 
+			QUnit.module("Private API");
+
+			QUnit.test("_calculateStartDate should call _getMaxDateAlignedToMinDate and _getStartDateAlignedToMinAndMaxDate with correct params", function (assert) {
+				// Arrange
+				var iDays = 6,
+						oExpectedCalculatedMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 11, 20),
+						oStartDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+						oCalendarWeekInterval = new sap.ui.unified.CalendarWeekInterval({ maxDate: new Date(2018, 11, 20) }),
+						ogetMaxDateAlignedToMinDateSpy = this.spy(oCalendarWeekInterval, "_getMaxDateAlignedToMinDate"),
+						oAlignStartDateToMinAndMaxSpy = this.spy(oCalendarWeekInterval, "_getStartDateAlignedToMinAndMaxDate"),
+						oGetDaysStub = this.stub(oCalendarWeekInterval, "_getDays", function () { return iDays });
+
+				// Act
+				oCalendarWeekInterval._calculateStartDate(oCalendarWeekInterval._oMaxDate, oCalendarWeekInterval._oMinDate, oStartDate);
+
+				// Assert
+				assert.equal(ogetMaxDateAlignedToMinDateSpy.getCall(0).args[0].toString(), oExpectedCalculatedMaxDate.toString(), "_getMaxDateAlignedToMinDate is called with right maxDate");
+				assert.equal(oAlignStartDateToMinAndMaxSpy.getCall(0).args[0].toString(), oExpectedCalculatedMaxDate.toString(), "_getStartDateAlignedToMinAndMaxDate is called with right maxDate");
+
+				// Cleanup
+				ogetMaxDateAlignedToMinDateSpy.restore();
+				oAlignStartDateToMinAndMaxSpy.restore();
+				oGetDaysStub.restore();
+				oCalendarWeekInterval.destroy();
+			});
+
 		</script>
 	</head>
 	<body class="sapUiBody" role="application">
