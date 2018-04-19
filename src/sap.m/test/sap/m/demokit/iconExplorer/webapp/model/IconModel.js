@@ -55,12 +55,19 @@ sap.ui.define([
 			// initialize icon array for global search
 			this.setProperty("/AllIcons", []);
 			this.setProperty("/AllFonts", []);
+			// add new array to model to check whether fonts are loaded or not
+			this.setProperty("/AllFontsLoaded", []);
 
 			var aPromises = [];
 			for (var i = 0; i < aIconFonts.length; i++){
 				aPromises.push(this._loadIcons(aIconFonts[i]));
 			}
 			this._pIconsLoaded = Promise.all(aPromises);
+
+			// add the BusinessSuiteInAppSymbols font to the AllFontsLoaded array
+			// to avoid problems with visibility because the json file is in OpenUI5 not requested
+			var aAllFontsLoaded = this.getProperty("/AllFontsLoaded");
+			aAllFontsLoaded["BusinessSuiteInAppSymbols"] = false;
 		},
 
 		/**
@@ -215,6 +222,17 @@ sap.ui.define([
 		 * @private
 		 */
 		_onMetadataLoaded : function(sFontName, oGroups, oTags)  {
+			var aAllFontsLoaded = this.getProperty("/AllFontsLoaded");
+			// store in model which fonts are loaded (IconPool.fontLoaded returns promise if font was loaded, undefined otherwise)
+			if (sFontName === "SAP-icons" || IconPool.fontLoaded(sFontName)) {
+				aAllFontsLoaded[sFontName] = true;
+			} else {
+				aAllFontsLoaded[sFontName] = false;
+			}
+
+			this.setProperty("/AllFontsLoaded", aAllFontsLoaded);
+
+
 			// process groups and tags
 			this._processGroups(oGroups);
 			this._processTags(sFontName, oTags, oGroups);
