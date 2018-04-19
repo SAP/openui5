@@ -1547,7 +1547,7 @@ sap.ui.require([
 				assert.equal(oEvent.mParameters.oldIndex, 55, "Event: oldIndex should still be 55");
 				assert.equal(oEvent.mParameters.rowIndices.length, 7, "Event: length of changedIndices should be 7");
 
-				assert.deepEqual(oEvent.mParameters.rowIndices, [3, 4, 5, 6, 7, 8, 9], "Changed indices after collapse is correct");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [2, 3, 4, 5, 6, 7, 8], "Changed indices after collapse is correct");
 				done();
 			};
 
@@ -1568,10 +1568,10 @@ sap.ui.require([
 			var fnSelectionChangeHandler1 = function(oEvent) {
 				oBinding.detachChange(fnSelectionChangeHandler1);
 				assert.equal(oEvent.mParameters.leadIndex, -1, "Event: leadIndex should be -1 (no lead selection)");
-				assert.equal(oEvent.mParameters.oldIndex, 3, "Event: oldIndex should be 3");
+				assert.equal(oEvent.mParameters.oldIndex, 2, "Event: oldIndex should be 3");
 				assert.equal(oEvent.mParameters.rowIndices.length, 1, "Event: length of changedIndices should be 1");
 
-				assert.deepEqual(oEvent.mParameters.rowIndices, [3], "Changed indices after collapse is correct");
+				assert.deepEqual(oEvent.mParameters.rowIndices, [2], "Changed indices after collapse is correct");
 				done();
 			};
 
