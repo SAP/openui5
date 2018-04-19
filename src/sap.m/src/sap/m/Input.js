@@ -560,14 +560,10 @@ function(
 	 *
 	 * @private
 	 */
-	Input.prototype._resizePopup = function(bForceResize) {
+	Input.prototype._resizePopup = function() {
 		var that = this;
 
-		if (bForceResize) {
-			this._shouldResizePopup = true;
-		}
-
-		if (this._oList && this._oSuggestionPopup && this._shouldResizePopup) {
+		if (this._oList && this._oSuggestionPopup) {
 
 			if (this.getMaxSuggestionWidth()) {
 				this._oSuggestionPopup.setContentWidth(this.getMaxSuggestionWidth());
@@ -614,15 +610,8 @@ function(
 	 * @public
 	 */
 	Input.prototype.onAfterRendering = function() {
-		var that = this;
 
 		InputBase.prototype.onAfterRendering.call(this);
-
-		if (!this._bFullScreen) {
-			this._sPopupResizeHandler = ResizeHandler.register(this.getDomRef(), function() {
-				that._resizePopup();
-			});
-		}
 
 		if (this._bUseDialog && this.getEditable() && this.getEnabled()) {
 			// click event has to be used in order to focus on the input in dialog
@@ -633,7 +622,6 @@ function(
 				}
 
 				if (this.getShowSuggestion() && this._oSuggestionPopup && oEvent.target.id != this.getId() + "-vhi") {
-					this._resizePopup(true);
 					this._oSuggestionPopup.open();
 				}
 			}, this));
@@ -1521,15 +1509,34 @@ function(
 	};
 
 	/**
+	 * Registers resize handler
+	 *
+	 * @private
+	 */
+	Input.prototype._registerResize = function() {
+		if (!this._bFullScreen) {
+			this._sPopupResizeHandler = ResizeHandler.register(this, this._resizePopup.bind(this));
+		}
+	};
+
+	/**
+	 * Removes resize handler
+	 *
+	 * @private
+	 */
+	Input.prototype._deregisterResize = function() {
+		if (this._sPopupResizeHandler) {
+			this._sPopupResizeHandler = ResizeHandler.deregister(this._sPopupResizeHandler);
+		}
+	};
+
+	/**
 	 * Removes events from the input.
 	 *
 	 * @private
 	 */
 	Input.prototype._deregisterEvents = function() {
-		if (this._sPopupResizeHandler) {
-			ResizeHandler.deregister(this._sPopupResizeHandler);
-			this._sPopupResizeHandler = null;
-		}
+		this._deregisterResize();
 
 		if (this._bUseDialog && this._oSuggestionPopup) {
 			this.$().off("click");
@@ -2068,9 +2075,11 @@ function(
 					} else {
 						oInput._oList.destroyItems();
 					}
-					oInput._shouldResizePopup = false;
+					oInput._deregisterResize();
 				}).attachBeforeOpen(function() {
 					oInput._sBeforeSuggest = oInput.getValue();
+					oInput._resizePopup();
+					oInput._registerResize();
 				}))
 			:
 				(new Dialog(oInput.getId() + "-popup", {
@@ -2389,7 +2398,6 @@ function(
 
 					if (!oPopup.isOpen() && !oInput._sOpenTimer && (this.getValue().length >= this.getStartSuggestion())) {
 						oInput._sOpenTimer = setTimeout(function() {
-							oInput._resizePopup(true);
 							oInput._sOpenTimer = null;
 							oPopup.open();
 						}, 0);
