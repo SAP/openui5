@@ -279,23 +279,32 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._submitBatch = function (sGroupId) {
-		var that = this;
+		var bBlocked,
+			oPromise,
+			that = this;
 
-		return Promise.resolve(
-			// Use SyncPromise.all to call the requestor synchronously when there is no lock -> The
-			// batch is sent before the rendering. Rendering and server processing run in parallel.
-			SyncPromise.all(this.aLockedGroupLocks.map(function (oGroupLock) {
-				return oGroupLock.waitFor(sGroupId);
-			})).then(function () {
-				that.aLockedGroupLocks = that.aLockedGroupLocks.filter(function (oGroupLock) {
-					return oGroupLock.isLocked();
-				});
-				return that.oRequestor.submitBatch(sGroupId).catch(function (oError) {
-					that.reportError("$batch failed", sClassName, oError.message);
-					throw oError;
-				});
-			})
-		);
+		// Use SyncPromise.all to call the requestor synchronously when there is no lock -> The
+		// batch is sent before the rendering. Rendering and server processing run in parallel.
+		oPromise = SyncPromise.all(this.aLockedGroupLocks.map(function (oGroupLock) {
+			return oGroupLock.waitFor(sGroupId);
+		}));
+		bBlocked = oPromise.isPending();
+		if (bBlocked) {
+			jQuery.sap.log.info("submitBatch('" + sGroupId + "') is waiting for locks", null,
+				sClassName);
+		}
+		return Promise.resolve(oPromise.then(function () {
+			if (bBlocked) {
+				jQuery.sap.log.info("submitBatch('" + sGroupId + "') continues", null, sClassName);
+			}
+			that.aLockedGroupLocks = that.aLockedGroupLocks.filter(function (oGroupLock) {
+				return oGroupLock.isLocked();
+			});
+			return that.oRequestor.submitBatch(sGroupId).catch(function (oError) {
+				that.reportError("$batch failed", sClassName, oError.message);
+				throw oError;
+			});
+		}));
 	};
 
 	/**
