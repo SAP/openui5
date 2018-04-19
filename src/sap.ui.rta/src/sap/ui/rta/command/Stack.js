@@ -6,12 +6,14 @@ sap.ui.define([
 	'sap/ui/fl/ChangePersistenceFactory',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/command/Settings',
+	'sap/ui/rta/command/CompositeCommand',
 	'sap/ui/rta/ControlTreeModifier'
 ], function(
 	ManagedObject,
 	ChangePersistenceFactory,
 	FlUtils,
 	Settings,
+	CompositeCommand,
 	ControlTreeModifier
 ) {
 	"use strict";
@@ -61,6 +63,7 @@ sap.ui.define([
 	 */
 	Stack.initializeWithChanges = function(oControl, aFileNames) {
 		var oStack = new Stack();
+		var mComposite = {};
 		if (aFileNames && aFileNames.length > 0) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
 			var oComponent = FlUtils.getComponentForControl(oControl);
@@ -88,7 +91,17 @@ sap.ui.define([
 						oCommand._aRecordedUndo = oChange.getUndoOperations();
 						oChange.resetUndoOperations();
 					}
-					oStack.pushExecutedCommand(oCommand);
+					// check if change belongs to a composite command
+					var sCompositeId = oChange.getDefinition().compositeCommand;
+					if (sCompositeId) {
+						if (!mComposite[sCompositeId]) {
+							mComposite[sCompositeId] = new CompositeCommand();
+							oStack.pushExecutedCommand(mComposite[sCompositeId]);
+						}
+						mComposite[sCompositeId].addCommand(oCommand);
+					} else {
+						oStack.pushExecutedCommand(oCommand);
+					}
 				});
 				return oStack;
 			});

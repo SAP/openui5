@@ -111,52 +111,107 @@ sap.ui.require([
 		this.oCommandStack.pushAndExecute(this.oRemoveCommand2);
 	});
 
-	QUnit.module("Given an array of two dirty changes...", {
+	QUnit.module("Given an array of dirty changes...", {
 		beforeEach : function(assert) {
-			var oComponent = new sap.ui.core.UIComponent("MyComponent");
+			this.oComponent = new sap.ui.core.UIComponent("MyComponent");
 			var mComponentProperties = {
 					name: "MyComponent",
 					appVersion: "1.2.3"
 				};
-			var oChangePersistence = new ChangePersistence(mComponentProperties);
+			this.oChangePersistence = new ChangePersistence(mComponentProperties);
 
-			var oChangeContent1 = {
+			this.oChangeContent1 = {
 				"fileName": "fileName1",
 				"selector": {
 					"id": "field1",
 					"idIsLocal": true
 				}
 			};
-			var oChangeContent2 = {
+			this.oChangeContent2 = {
 				"fileName": "fileName2",
 				"selector": {
 					"id": "field2",
 					"idIsLocal": true
 				}
 			};
-			this.aChanges = [new Change(oChangeContent1), new Change(oChangeContent2)];
-			this.aChanges[1].setUndoOperations(["undoStack"]);
+			this.oChangeContentForComposite11 = {
+				"fileName": "fileName11",
+				"selector": {
+					"id": "field1",
+					"idIsLocal": true
+				},
+				"compositeCommand": "unique_1"
+			};
+			this.oChangeContentForComposite12 = {
+				"fileName": "fileName12",
+				"selector": {
+					"id": "field2",
+					"idIsLocal": true
+				},
+				"compositeCommand": "unique_1"
+			};
+			this.oChangeContentForComposite21 = {
+				"fileName": "fileName21",
+				"selector": {
+					"id": "field1",
+					"idIsLocal": true
+				},
+				"compositeCommand": "unique_2"
+			};
+			this.oChangeContentForComposite22 = {
+				"fileName": "fileName22",
+				"selector": {
+					"id": "field2",
+					"idIsLocal": true
+				},
+				"compositeCommand": "unique_2"
+			};
+
 			this.oControl = {id : "a Control"};
-			sandbox.stub(sap.ui.fl.ChangePersistenceFactory, "getChangePersistenceForControl").returns(oChangePersistence);
-			sandbox.stub(FlUtils, "getComponentForControl").returns(oComponent);
+			sandbox.stub(sap.ui.fl.ChangePersistenceFactory, "getChangePersistenceForControl").returns(this.oChangePersistence);
+			sandbox.stub(FlUtils, "getComponentForControl").returns(this.oComponent);
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app" : {id: "someApp"}});
-			sandbox.stub(oChangePersistence, "getChangesForComponent").returns(Promise.resolve(this.aChanges));
 		},
 		afterEach : function(assert) {
+			this.oComponent.destroy();
 			sandbox.restore();
 		}
 	});
 
 	QUnit.test("when calling function 'initializeWithChanges' with the array...", function(assert) {
+		var aChanges = [new Change(this.oChangeContent1), new Change(this.oChangeContent2)];
+		aChanges[1].setUndoOperations(["undoStack"]);
+		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
+
 		return CommandStack.initializeWithChanges(this.oControl, ["fileName1", "fileName2"]).then(function(oStack){
 			var aCommands = oStack.getCommands();
 			assert.ok(oStack, "an instance of the CommandStack has been created");
 			assert.equal(aCommands.length, 2, "the CommandStack contains two commands");
-			assert.equal(aCommands[0]._oPreparedChange, this.aChanges[1], "the first command contains the last change");
+			assert.equal(aCommands[0]._oPreparedChange, aChanges[1], "the first command contains the last change");
 			assert.ok(aCommands[0]._aRecordedUndo, "the first command has a recorded undo stack");
-			assert.equal(aCommands[1]._oPreparedChange, this.aChanges[0], "the last command contains the first change");
+			assert.equal(aCommands[1]._oPreparedChange, aChanges[0], "the last command contains the first change");
 			assert.notOk(aCommands[1]._aRecordedUndo, "the last command has no recorded undo stack");
-		}.bind(this));
+		});
+	});
+
+	QUnit.test("when calling function 'initializeWithChanges' with the array containing changes from a composite command...", function(assert) {
+		var aCompositeChanges = [new Change(this.oChangeContentForComposite11), new Change(this.oChangeContentForComposite12),
+		                         new Change(this.oChangeContentForComposite21), new Change(this.oChangeContentForComposite22)];
+		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aCompositeChanges));
+
+		return CommandStack.initializeWithChanges(this.oControl, ["fileName11", "fileName12", "fileName21", "fileName22"]).then(function(oStack){
+			var aCommands = oStack.getCommands();
+			var aSubCommands1 = oStack.getSubCommands(aCommands[0]);
+			var aSubCommands2 = oStack.getSubCommands(aCommands[1]);
+			assert.ok(oStack, "an instance of the CommandStack has been created");
+			assert.equal(aCommands.length, 2, "the CommandStack contains two commands");
+			assert.equal(aSubCommands1.length, 2, "the first command contains two sub-commands");
+			assert.equal(aSubCommands2.length, 2, "the second command contains two sub-commands");
+			assert.equal(aSubCommands1[0]._oPreparedChange, aCompositeChanges[2], "the first sub-command of the first composite command contains the last change");
+			assert.equal(aSubCommands1[1]._oPreparedChange, aCompositeChanges[3], "the second sub-command of the first composite command contains the last change");
+			assert.equal(aSubCommands2[0]._oPreparedChange, aCompositeChanges[0], "the first sub-command of the second composite command contains the last change");
+			assert.equal(aSubCommands2[1]._oPreparedChange, aCompositeChanges[1], "the second sub-command of the second composite command contains the last change");
+		});
 	});
 
 });
