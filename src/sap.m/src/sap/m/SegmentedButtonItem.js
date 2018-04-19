@@ -106,12 +106,8 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/m/Button', 'sap/ui/core/Cus
 		 * @protected
 		 */
 		SegmentedButtonItem.prototype.exit = function () {
-			// Destroy button only in case of standalone use
-			// In case the element is set as aggregation of the SegmentedButton the latter one takes care for the cleanup
-			if (this.oButton && !(this.oButton.getParent() instanceof sap.m.SegmentedButton)) {
-				this.oButton.destroy();
-				this.oButton = null;
-			}
+			this.oButton.destroy();
+			this.oButton = null;
 		};
 
 		SegmentedButtonItem.prototype.setText = function (sValue) {
