@@ -72,8 +72,6 @@ If you use opaQunit, OPA gives you the following three objects in your QUnit:
 - When = actions
 - Then = assertions
 
-You have to define these functions, so that OPA knows what they are.
-
 ## Given: Defining Arrangements
 Let's start by defining arrangements. In the following example, we assume that the app runs in a page called index.html. Our OPA test is located in the test/opa5.html folder.
 

@@ -96,7 +96,7 @@ iShouldSeeMessageToastAppearance: function () {
                         autoWait: false,
                         check: function () {
                             // Locate the message toast using its class name in a jQuery function
-                            return $(".sapMMessageToast");
+                            return $(".sapMMessageToast") .length > 0;
                         },
                         success: function () {
                             Opa5.assert.ok(true, "The message toast was shown");
