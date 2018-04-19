@@ -2892,7 +2892,7 @@
 		{
 		  "id": "sap.m.sample.PlanningCalendarWithLegend",
 		  "name": "Planning Calendar - with legend",
-		  "description": "PlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part. The legend includes calendar and appointments sections."
+		  "description": "PlanningCalendar inside the main part of a sap.ui.layout.DynamicSideContent and a sap.m.PlanningCalendarLegend inside the side part. The legend includes calendar and appointments sections. For each sap.m.PlanningCalendarRow in the sap.m.PlanningCalendar some specific special dates of type non-working are set."
 		},
 		{
 		  "id": "sap.m.sample.PlanningCalendarDnD",

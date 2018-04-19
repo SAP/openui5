@@ -467,25 +467,6 @@
 				}
 			}).placeAt("event1");
 
-			var oDate = new Date();
-
-			oButton = new sap.ui.commons.ToggleButton("NWD", {
-				text: "NonWorkingDates",
-				press: function(oEvent){
-					var bPressed = oEvent.getParameter("pressed");
-					if (bPressed) {
-						oRow1.addAggregation("_nonWorkingDates", new sap.ui.unified.DateRange({
-							startDate: new Date(oDate.getFullYear(), oDate.getMonth(), oDate.getDate())
-						}));
-						oRow1.addAggregation("_nonWorkingDates", new sap.ui.unified.DateRange({
-							startDate: new Date(oDate.getFullYear(), oDate.getMonth(), oDate.getDate() + 5)
-						}));
-					} else {
-						oRow1.removeAllAggregation("_nonWorkingDates");
-					}
-				}
-			}).placeAt("event1");
-
 			// sample with fix start date and fixed sizes
 			var oRow2 = new sap.ui.unified.CalendarRow("Row2",  {
 					select: handleSelect,

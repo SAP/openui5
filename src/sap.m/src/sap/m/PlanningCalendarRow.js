@@ -38,10 +38,12 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * Row in the {@link sap.m.PlanningCalendar}.
+	 * Represents a row in the {@link sap.m.PlanningCalendar}.
 	 *
-	 * This element holds the data of one row in the {@link sap.m.PlanningCalendar}. Once the header information (for example, person information)
-	 * is assigned, the appointments are assigned.
+	 * This element holds the data of one row in the {@link sap.m.PlanningCalendar}. Once the header information
+	 * (for example, person information) is assigned, the appointments are assigned.
+	 * The <code>sap.m.PlanningCalendarRow</code> allows you to modify appointments at row level.
+	 *
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 *
@@ -206,6 +208,16 @@ sap.ui.define(['jquery.sap.global',
 			 * <b>Note:</b> For performance reasons, only appointments in the visible time range or nearby should be assigned.
 			 */
 			intervalHeaders : {type : "sap.ui.unified.CalendarAppointment", multiple : true, singularName : "intervalHeader"},
+
+			/**
+			 * Holds the special dates in the context of a row. A single date or a date range can be set.
+			 *
+			 * <b>Note</> Only date or date ranges of type <code>sap.ui.unified.CalendarDayType.NonWorking</code> will
+			 * be visualized in the <code>PlanningCalendarRow</code>. If the aggregation is set as another type,
+			 * the date or date range will be ignored and will not be displayed in the control.
+			 * @since 1.56
+			 */
+			specialDates : {type : "sap.ui.unified.DateTypeRange", multiple : true, singularName : "specialDate"},
 
 			_nonWorkingDates : {type : "sap.ui.unified.DateRange", multiple : true, visibility : "hidden"}
 
@@ -445,10 +457,63 @@ sap.ui.define(['jquery.sap.global',
 		}
 	};
 
+	CalendarRowInPCRenderer.renderInterval = function (oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType) {
+
+		var sIntervalType = oRow.getIntervalType();
+		if (sIntervalType === CalendarIntervalType.Day || sIntervalType === CalendarIntervalType.Week || sIntervalType === CalendarIntervalType.OneMonth) {
+			var aPlanningCalendarNonWorkingDates = oRow._oPlanningCalendarRow.getSpecialDates(),
+				aNonWorkingDates = oRow.getAggregation("_nonWorkingDates"),
+				oRowStartDate = oRow.getStartDate(),
+				oCurrentDate,
+				oNonWorkingStartDate,
+				oNonWorkingEndDate;
+
+			if (aPlanningCalendarNonWorkingDates) {
+				aPlanningCalendarNonWorkingDates.filter(function (oRow) {
+					return oRow.getType() === sap.ui.unified.CalendarDayType.NonWorking;
+				});
+			}
+			if (aNonWorkingDates && aPlanningCalendarNonWorkingDates) {
+				aNonWorkingDates = aNonWorkingDates.concat(aPlanningCalendarNonWorkingDates);
+			} else if (aPlanningCalendarNonWorkingDates) {
+				aNonWorkingDates = aPlanningCalendarNonWorkingDates;
+			}
+
+			if (aNonWorkingDates && aNonWorkingDates.length) {
+				var fnDayMatchesCurrentDate = function (iDay) {
+					return iDay === oCurrentDate.getDay();
+				};
+				oCurrentDate = new Date(oRowStartDate.getTime());
+				oCurrentDate.setHours(0, 0, 0);
+				oCurrentDate.setDate(oRowStartDate.getDate() + iInterval);
+
+				for (var i = 0; i < aNonWorkingDates.length; i++) {
+					if (aNonWorkingDates[i].getStartDate()) {
+						oNonWorkingStartDate = new Date(aNonWorkingDates[i].getStartDate().getTime());
+					}
+					if (aNonWorkingDates[i].getEndDate()) {
+						oNonWorkingEndDate = new Date(aNonWorkingDates[i].getEndDate().getTime());
+					} else {
+						oNonWorkingEndDate = new Date(aNonWorkingDates[i].getStartDate().getTime());
+						oNonWorkingEndDate.setHours(23, 59, 59);
+					}
+					if (oCurrentDate.getTime() >= oNonWorkingStartDate.getTime() && oCurrentDate.getTime() <= oNonWorkingEndDate.getTime()) {
+						var bAlreadyNonWorkingDate = aNonWorkingItems.some(fnDayMatchesCurrentDate);
+						if (!bAlreadyNonWorkingDate) {
+							oRm.addClass("sapUiCalendarRowAppsNoWork");
+						}
+					}
+				}
+			}
+		}
+		CalendarRowRenderer.renderInterval(oRm, oRow, iInterval, iWidth,  aIntervalHeaders, aNonWorkingItems, iStartOffset, iNonWorkingMax, aNonWorkingSubItems, iSubStartOffset, iNonWorkingSubMax, bFirstOfType, bLastOfType);
+	};
+
 	var CalendarRowInPlanningCalendar = CalendarRow.extend("CalendarRowInPlanningCalendar", {
 		metadata: {
 			aggregations : {
-				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}}
+				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden"},
+				_nonWorkingDates: {type : "sap.ui.unified.DateRange", multiple : true, visibility : "hidden"}
 			}
 		},
 		constructor: function() {
@@ -456,6 +521,18 @@ sap.ui.define(['jquery.sap.global',
 		},
 		renderer: CalendarRowInPCRenderer
 	});
+
+	/**
+	 * Used to link the items (DateRange) in aggregation _nonWorkingDates to any PlanningCalendarRow _nonWorkingDates
+	 * @private
+	 */
+	CalendarRowInPlanningCalendar.PCROW_FOREIGN_KEY_NAME = "relatedToPCRowDateRange";
+
+	/**
+	 * Holds the name of the aggregation corresponding to non working dates
+	 * @private
+	 */
+	CalendarRowInPlanningCalendar.AGGR_NONWORKING_DATES_NAME = "_nonWorkingDates";
 
 	CalendarRowInPlanningCalendar.prototype._updatePlaceholders = function() {
 		var iPlaceholders = this.getProperty("intervals");
@@ -492,7 +569,6 @@ sap.ui.define(['jquery.sap.global',
 	CalendarRowInPlanningCalendar.prototype._isCreatingPerformed = function () {
 		return this._isRowAppsIntervalMouseDownTarget;
 	};
-
 
 	var IntervalPlaceholder = Control.extend("IntervalPlaceholder", {
 		metadata: {
@@ -1105,9 +1181,9 @@ sap.ui.define(['jquery.sap.global',
 
 
 	PlanningCalendarRow.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-		if (CalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName) {
+		if (PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName) {
 			// forward to CalendarRow
-			this.getCalendarRow().addAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME, this._buildCalendarRowDateRange(oObject),
+			this.getCalendarRow().addAggregation(CalendarRowInPlanningCalendar.AGGR_NONWORKING_DATES_NAME, this._buildCalendarRowDateRange(oObject),
 				bSuppressInvalidate);
 		}
 		return Element.prototype.addAggregation.apply(this, arguments);
@@ -1116,9 +1192,9 @@ sap.ui.define(['jquery.sap.global',
 	PlanningCalendarRow.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
 		if (PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName) {
 			// forward to CalendarRow
-			this.getCalendarRow().insertAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME, this._buildCalendarRowDateRange(oObject),
+			this.getCalendarRow().insertAggregation(CalendarRowInPlanningCalendar.AGGR_NONWORKING_DATES_NAME, this._buildCalendarRowDateRange(oObject),
 				iIndex, bSuppressInvalidate);
-		 }
+		}
 
 		return Element.prototype.insertAggregation.apply(this, arguments);
 	 };
@@ -1127,8 +1203,8 @@ sap.ui.define(['jquery.sap.global',
 		var aRemovableNonWorkingDate;
 
 		if (PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName && this.getAggregation(PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME)) {
-			aRemovableNonWorkingDate = this.getCalendarRow().getAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME).filter(function(oNonWorkingDate) {
-				return oNonWorkingDate.data(CalendarRow.PCROW_FOREIGN_KEY_NAME) === oObject.getId();
+			aRemovableNonWorkingDate = this.getCalendarRow().getAggregation(CalendarRowInPlanningCalendar.AGGR_NONWORKING_DATES_NAME).filter(function(oNonWorkingDate) {
+				return oNonWorkingDate.data(CalendarRowInPlanningCalendar.PCROW_FOREIGN_KEY_NAME) === oObject.getId();
 			});
 			if (aRemovableNonWorkingDate.length) {
 				jQuery.sap.assert(aRemovableNonWorkingDate.length == 1, "Inconsistency between PlanningCalendarRow " +
@@ -1143,7 +1219,7 @@ sap.ui.define(['jquery.sap.global',
 	PlanningCalendarRow.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
 		if (PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName) {
 			// forward to CalendarRow
-			this.getCalendarRow().removeAllAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME, bSuppressInvalidate);
+			this.getCalendarRow().removeAllAggregation(CalendarRowInPlanningCalendar.AGGR_NONWORKING_DATES_NAME, bSuppressInvalidate);
 		}
 
 		return Element.prototype.removeAllAggregation.apply(this, arguments);
@@ -1153,7 +1229,7 @@ sap.ui.define(['jquery.sap.global',
 		if (PlanningCalendarRow.AGGR_NONWORKING_DATES_NAME === sAggregationName) {
 			// forward to CalendarRow
 			if (this.getCalendarRow()) {
-				this.getCalendarRow().destroyAggregation(CalendarRow.AGGR_NONWORKING_DATES_NAME, bSuppressInvalidate);
+				this.getCalendarRow().destroyAggregation(CalendarRowInPlanningCalendar.AGGR_NONWORKING_DATES_NAME, bSuppressInvalidate);
 			}
 		}
 		return Element.prototype.destroyAggregation.apply(this, arguments);
@@ -1174,7 +1250,7 @@ sap.ui.define(['jquery.sap.global',
 		if (oSource.getEndDate()) {
 			oRangeCopy.setEndDate(new Date(oSource.getEndDate().getTime()));
 		}
-		oRangeCopy.data(CalendarRow.PCROW_FOREIGN_KEY_NAME, oSource.getId());
+		oRangeCopy.data(CalendarRowInPlanningCalendar.PCROW_FOREIGN_KEY_NAME, oSource.getId());
 
 		return oRangeCopy;
 	};
