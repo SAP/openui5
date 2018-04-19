@@ -443,6 +443,48 @@ sap.ui.require([
 		});
 	});
 
+
+
+	QUnit.test("Execute undo and redo on 1 App Descriptor 'add library' command and call saveCommands", function(assert) {
+		// then one change is expected to be written in LREP
+		var fnCleanUp = RtaQunitUtils.waitForExactNumberOfChangesInLrep(1, assert, "save");
+
+		// Create commands
+		this.oAddLibraryCommand = CommandFactory.getCommandFor(this.oInput1, "addLibrary", {
+			reference : "someName",
+			parameters: {
+					libraries : {
+					"sap.ui.rta" : {
+						lazy:false,
+						minVersion:"1.48"
+					}
+				}
+			},
+			appComponent : oMockedAppComponent
+		}, {}, {"layer" : "CUSTOMER"});
+
+		return this.oCommandStack.pushAndExecute(this.oAddLibraryCommand)
+		.then(function(){
+			return this.oCommandStack.undo();
+		}.bind(this))
+		.then(function(){
+			return this.oCommandStack.redo();
+		}.bind(this))
+		.then(function(){
+			return this.oSerializer.saveCommands();
+		}.bind(this))
+		.then(function() {
+			assert.ok(true, "then the promise for LREPSerializer.saveCommands() gets resolved");
+			assert.equal(this.oCommandStack.getCommands().length, 0, "and the command stack has been cleared");
+			fnCleanUp();
+		}.bind(this))
+		.catch(function(oError) {
+			fnCleanUp();
+			return Promise.reject(oError);
+		});
+	});
+
+
 	QUnit.test(	"Execute 1 'remove' command and 1 App Descriptor 'add library' command," +
 				"undo the 'add library' command and call saveCommands which rejects", function(assert) {
 		var oSaveAllStub = sandbox.stub(oFlexController, "saveAll").returns(Promise.reject());
