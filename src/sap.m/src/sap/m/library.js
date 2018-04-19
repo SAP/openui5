@@ -1402,9 +1402,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	/**
 	 *
 	 * Interface for controls which are suitable as a Scale for the Slider/RangeSlider.
-	 * Implementation of this interface should implement <li><code>getTickmarksBetweenLabels</code></li>
-	 * , <li><code>calcNumberOfTickmarks</code></li> <li><code>handleResize</code></li> methods.
-	 * Optionally, <li><code>getLabel</code></li> method, could also be provided.
+	 * Implementation of this interface should implement the following methods:
+	 * <ul>
+	 * <li><code>getTickmarksBetweenLabels</code></li>
+	 * <li><code>calcNumberOfTickmarks</code></li>
+	 * <li><code>handleResize</code></li>
+	 * <li><code>getLabel</code></li>
+	 * </ul>
 	 *
 	 * @since 1.46
 	 * @name sap.m.IScale
