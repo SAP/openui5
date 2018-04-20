@@ -6,9 +6,9 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 	"use strict";
 
 	/**
-	 * AggregationLengthEquals - checks if an aggregation contains at least one entry.
+	 * AggregationLengthEquals - checks if an aggregation contains a specified number of entries.
 	 *
-	 * @class AggregationLengthEquals - checks if an aggregation contains at least one entry
+	 * @class AggregationLengthEquals - checks if an aggregation contains a specified number of entries.
 	 * @param {object} [mSettings] optional map/JSON-object with initial settings for the new AggregationLengthEqualsMatcher
 	 * @extends sap.ui.test.matchers.Matcher
 	 * @public
@@ -51,7 +51,9 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 				this._oLogger.error("Control '" + oControl + "' does not have an aggregation called '" + sAggregationName + "'");
 				return false;
 			}
-			var iAggregationLength = fnAggregation.call(oControl).length;
+			var vAggregation = fnAggregation.call(oControl);
+			var aAggregation = $.isArray(vAggregation) ? vAggregation : [vAggregation];
+			var iAggregationLength = aAggregation.length;
 			var iExpectedLength = this.getLength();
 			var bIsMatch = iAggregationLength === iExpectedLength;
 			if (!bIsMatch) {
