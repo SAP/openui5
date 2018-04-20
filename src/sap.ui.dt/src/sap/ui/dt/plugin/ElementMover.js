@@ -4,12 +4,14 @@
 
 // Provides class sap.ui.dt.plugin.ElementMover.
 sap.ui.define([
+	'sap/ui/base/Object',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/dt/ElementUtil',
 	'sap/ui/dt/OverlayUtil',
 	'sap/ui/dt/OverlayRegistry'
 ], function
-(	ManagedObject,
+(	BaseObject,
+	ManagedObject,
 	ElementUtil,
 	OverlayUtil,
 	OverlayRegistry
@@ -67,7 +69,7 @@ sap.ui.define([
 		var aMovableTypes = this._getMovableTypes();
 
 		return aMovableTypes.some(function(sType) {
-			return ElementUtil.isInstanceOf(oElement, sType);
+			return BaseObject.isA(oElement, sType);
 		});
 	};
 

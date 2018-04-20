@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	'sap/ui/base/Object',
 	'sap/ui/dt/Plugin',
 	'sap/ui/dt/DOMUtil',
 	'sap/ui/dt/OverlayUtil',
@@ -10,6 +11,7 @@ sap.ui.define([
 	'sap/ui/dt/OverlayRegistry'
 ],
 function(
+	BaseObject,
 	Plugin,
 	DOMUtil,
 	OverlayUtil,
@@ -328,14 +330,14 @@ function(
 	};
 
 	DragDrop.prototype._getTargetOverlay = function(oElement) {
-		if (oElement && ElementUtil.isInstanceOf(oElement, "sap.ui.dt.Overlay")) {
+		if (BaseObject.isA(oElement, "sap.ui.dt.Overlay")) {
 
 			// target overlay is the overlay that we could drop on and therefore have to fire events for
 			var oTargetOverlay;
 			// is overlay a targetZone AggregationOverlay
-			if (ElementUtil.isInstanceOf(oElement, "sap.ui.dt.AggregationOverlay") && oElement.getTargetZone()) {
+			if (BaseObject.isA(oElement, "sap.ui.dt.AggregationOverlay") && oElement.getTargetZone()) {
 				oTargetOverlay = oElement;
-			} else if (ElementUtil.isInstanceOf(oElement, "sap.ui.dt.ElementOverlay") && OverlayUtil.isInTargetZoneAggregation(oElement)) {
+			} else if (BaseObject.isA(oElement, "sap.ui.dt.ElementOverlay") && OverlayUtil.isInTargetZoneAggregation(oElement)) {
 				oTargetOverlay = oElement;
 			}
 
@@ -371,7 +373,7 @@ function(
 
 		if (oTargetOverlay !== oPreviosTargetOverlayForTouch) {
 			if (oPreviosTargetOverlayForTouch) {
-				if (ElementUtil.isInstanceOf(oPreviosTargetOverlayForTouch, "sap.ui.dt.AggregationOverlay")) {
+				if (BaseObject.isA(oPreviosTargetOverlayForTouch, "sap.ui.dt.AggregationOverlay")) {
 					this.onAggregationDragLeave(oPreviosTargetOverlayForTouch);
 				} else {
 					this.onDragLeave(oPreviosTargetOverlayForTouch);
@@ -379,14 +381,14 @@ function(
 			}
 			oPreviosTargetOverlayForTouch = oTargetOverlay;
 
-			if (ElementUtil.isInstanceOf(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
+			if (BaseObject.isA(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
 				this.onAggregationDragEnter(oTargetOverlay);
 			} else {
 				this.onDragEnter(oTargetOverlay);
 			}
 		}
 
-		if (ElementUtil.isInstanceOf(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
+		if (BaseObject.isA(oTargetOverlay, "sap.ui.dt.AggregationOverlay")) {
 			this.onAggregationDragOver(oTargetOverlay);
 		} else {
 			this.onDragOver(oTargetOverlay);
@@ -396,7 +398,7 @@ function(
 	};
 
 	DragDrop.prototype._getValidTargetZoneAggregationOverlay = function(oOverlay) {
-		if (ElementUtil.isInstanceOf(oOverlay, "sap.ui.dt.AggregationOverlay") && oOverlay.getTargetZone()) {
+		if (BaseObject.isA(oOverlay, "sap.ui.dt.AggregationOverlay") && oOverlay.getTargetZone()) {
 			return oOverlay;
 		} else {
 			return this._getValidTargetZoneAggregationOverlay(oOverlay.getParent());
@@ -782,7 +784,7 @@ function(
 	 */
 	DragDrop.prototype._attachDragScrollHandler = function(oEventOrAggregationOverlay) {
 		var oAggregationOverlay;
-		if (ElementUtil.isInstanceOf(oEventOrAggregationOverlay, "sap.ui.dt.AggregationOverlay")) {
+		if (BaseObject.isA(oEventOrAggregationOverlay, "sap.ui.dt.AggregationOverlay")) {
 			oAggregationOverlay = oEventOrAggregationOverlay;
 		} else {
 			oAggregationOverlay = oEventOrAggregationOverlay.srcControl;
@@ -799,7 +801,7 @@ function(
 	 */
 	DragDrop.prototype._removeDragScrollHandler = function(oEventOrAggregationOverlay) {
 		var oAggregationOverlay;
-		if (ElementUtil.isInstanceOf(oEventOrAggregationOverlay, "sap.ui.dt.AggregationOverlay")) {
+		if (BaseObject.isA(oEventOrAggregationOverlay, "sap.ui.dt.AggregationOverlay")) {
 			oAggregationOverlay = oEventOrAggregationOverlay;
 		} else {
 			oAggregationOverlay = oEventOrAggregationOverlay.srcControl;
