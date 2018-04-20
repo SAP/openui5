@@ -139,7 +139,7 @@ sap.ui.define([
 			if (oOptions.source && typeof oOptions.source !== "string") {
 				oOptions.source = oOptions.source.toString();
 			}
-			var uri = new URI(oOptions.source);
+			var uri = new URI(oOptions.source ? oOptions.source : '');
 			uri.search($.extend(
 				uri.search(true),Opa.config.appParams));
 
