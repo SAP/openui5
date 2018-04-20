@@ -137,17 +137,8 @@ sap.ui.define([
 		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
 		oChangeSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
 
-		//fallback in case no application descriptor is available (e.g. during unit testing)
-		var sAppVersion = this.getAppVersion();
-		var oValidAppVersions = {
-			creation: sAppVersion,
-			from: sAppVersion
-		};
-		if (sAppVersion && oChangeSpecificData.developerMode) {
-			oValidAppVersions.to = sAppVersion;
-		}
-
-		oChangeSpecificData.validAppVersions = oValidAppVersions;
+		// fallback in case no application descriptor is available (e.g. during unit testing)
+		oChangeSpecificData.validAppVersions = this._getValidAppVersions(oChangeSpecificData);
 
 		oChangeFileContent = Change.createInitialFileContent(oChangeSpecificData);
 		oChange = new Change(oChangeFileContent);
@@ -241,22 +232,28 @@ sap.ui.define([
 		oVariantSpecificData.content.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
 		oVariantSpecificData.content.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
 
-		//fallback in case no application descriptor is available (e.g. during unit testing)
-		var sAppVersion = this.getAppVersion();
-		var oValidAppVersions = {
-			creation: sAppVersion,
-			from: sAppVersion
-		};
-		if (sAppVersion && oVariantSpecificData.developerMode) {
-			oValidAppVersions.to = sAppVersion;
-		}
-
-		oVariantSpecificData.content.validAppVersions = oValidAppVersions;
+		// fallback in case no application descriptor is available (e.g. during unit testing)
+		oVariantSpecificData.content.validAppVersions = this._getValidAppVersions(oVariantSpecificData);
 
 		oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
 		oVariant = new Variant(oVariantFileContent);
 
 		return oVariant;
+	};
+
+	FlexController.prototype._getValidAppVersions = function(oChangeSpecificData) {
+		var sAppVersion = this.getAppVersion();
+		var oValidAppVersions = {
+			creation: sAppVersion,
+			from: sAppVersion
+		};
+		if (sAppVersion &&
+			oChangeSpecificData.developerMode &&
+			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AdaptationProject
+		) {
+			oValidAppVersions.to = sAppVersion;
+		}
+		return oValidAppVersions;
 	};
 
 	/**
