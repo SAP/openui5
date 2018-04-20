@@ -41,7 +41,6 @@ sap.ui.define([
 	 * @param {object} mPropertyBag Property bag
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
 	 * @param {object} mPropertyBag.view Root view
-	 * @param {object} mPropertyBag.appComponent App component
 	 * @returns {boolean} Returns true if the change got applied successfully
 	 * @public
 	 * @name sap.ui.fl.changeHandler.AddXML#applyChange
@@ -100,6 +99,8 @@ sap.ui.define([
 	 * @param {object} oControl Control which has been determined by the selector id
 	 * @param {object} mPropertyBag Property bag
 	 * @param {object} mPropertyBag.modifier Modifier for the controls
+	 * @param {object} mPropertyBag.appComponent App component
+	 * @param {object} mPropertyBag.view Root view
 	 * @return {boolean} Returns true if change has been reverted successfully
 	 * @public
 	 * @name sap.ui.fl.changeHandler.AddXML#revertChange
@@ -108,11 +109,12 @@ sap.ui.define([
 		var oModifier = mPropertyBag.modifier;
 		var oChangeDefinition = oChange.getDefinition();
 		var sAggregationName = oChangeDefinition.content.targetAggregation;
-		var oView = mPropertyBag.view;
+		var oView = mPropertyBag.view || Utils.getViewForControl(oControl);
 		var oAppComponent = mPropertyBag.appComponent;
 		var aRevertData = oChange.getRevertData() || [];
 		var aControlsToRemove = aRevertData.map(function(sId) {
-			return oModifier.bySelector(sId, oAppComponent, oView);
+			// when we apply the change in XML and revert in JS, the saved ID is not yet concatinated with the view
+			return oModifier.bySelector(sId, oAppComponent, oView) || oView && oView.createId && oModifier.bySelector(oView.createId(sId));
 		});
 
 		aControlsToRemove.forEach(function(oControlToRemove) {
