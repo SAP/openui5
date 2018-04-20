@@ -382,6 +382,10 @@
 			},
 			'sap/viz/controls/libs/sap-viz-vizservices': {
 				amd: true
+			},
+			'sap/ui/thirdparty/bignumber': {
+				amd: true,
+				exports: 'BigNumber'
 			}
 		}
 	});
