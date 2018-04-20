@@ -869,6 +869,69 @@ sap.ui.define([
 	};
 
 	/**
+	 * Align maxDate to the Interval's minDate.
+	 * If maxDate is before the minDate number of days to display minus one are added to the maxDate
+	 *
+	 * @param {sap.ui.unified.calendar.CalendarDate} oMaxDate calculated maxDate with the days offset
+	 * @param {sap.ui.unified.calendar.CalendarDate} oMinDate minDate of the Interval
+	 * @returns {sap.ui.unified.calendar.CalendarDate} new calculated date
+	 * @private
+	 */
+	CalendarDateInterval.prototype._getMaxDateAlignedToMinDate = function (oMaxDate, oMinDate) {
+		var oNewDate = new CalendarDate(oMaxDate, this.getPrimaryCalendarType());
+
+		if (oNewDate.isBefore(oMinDate)) {
+			// min and max smaller than interval
+			oNewDate = new CalendarDate(oMinDate);
+			oNewDate.setDate(oNewDate.getDate() + this._getDays() - 1);
+		}
+
+		return oNewDate;
+	};
+
+	/**
+	 * Align startDate to the Interval's start and min dates.
+	 *
+	 * If startDate is before the minDate we just return the minDate.
+	 * If startDate is not before the minDate and is after the MaxDate then we just return the maxDate
+	 *
+	 * @param {sap.ui.unified.calendar.CalendarDate} oMaxDate calculated maxDate with the days offset
+	 * @param {sap.ui.unified.calendar.CalendarDate} oMinDate min date of the Interval
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate initial startDate
+	 * @returns {sap.ui.unified.calendar.CalendarDate} new calculated startDate
+	 * @private
+	 */
+	CalendarDateInterval.prototype._getStartDateAlignedToMinAndMaxDate = function (oMaxDate, oMinDate, oStartDate) {
+		var oNewDate = new CalendarDate(oStartDate, this.getPrimaryCalendarType());
+
+		if (oNewDate.isBefore(oMinDate)) {
+			oNewDate = new CalendarDate(oMinDate, this.getPrimaryCalendarType());
+		} else if (oNewDate.isAfter(oMaxDate)) {
+			oNewDate = oMaxDate;
+		}
+
+		return oNewDate;
+	};
+
+	/**
+	 * Calculates the startDate of the interval, corrected to the minDate and maxDate
+	 *
+	 * @param {sap.ui.unified.calendar.CalendarDate} oMaxDate maxDate of the Interval
+	 * @param {sap.ui.unified.calendar.CalendarDate} oMinDate minDate of the Interval
+	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate initial startDate
+	 * @private
+	 */
+	CalendarDateInterval.prototype._calculateStartDate = function (oMaxDate, oMinDate, oStartDate) {
+		var oNewMaxDate = new CalendarDate(oMaxDate, this.getPrimaryCalendarType());
+		oNewMaxDate.setDate(oNewMaxDate.getDate() - this._getDays() + 1);
+
+		oNewMaxDate = this._getMaxDateAlignedToMinDate(oNewMaxDate, oMinDate);
+		oStartDate = this._getStartDateAlignedToMinAndMaxDate(oNewMaxDate, oMinDate, oStartDate);
+
+		return oStartDate;
+	};
+
+	/**
 	 * Sets given start date as date in local.
 	 *
 	 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate Date that should be taken to create the local JavaScript date.
@@ -878,20 +941,7 @@ sap.ui.define([
 	 * @private
 	*/
 	CalendarDateInterval.prototype._setStartDate = function (oStartDate, bSetFocusDate, bNoEvent) {
-
-		var oMaxDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
-		oMaxDate.setDate(oMaxDate.getDate() - this._getDays() + 1);
-		if (oMaxDate.isBefore(this._oMinDate)) {
-			// min and max smaller than interval
-			oMaxDate = new CalendarDate(this._oMinDate);
-			oMaxDate.setDate(oMaxDate.getDate() + this._getDays() - 1);
-		}
-
-		if (oStartDate.isBefore(this._oMinDate)) {
-			oStartDate = new CalendarDate(this._oMinDate, this.getPrimaryCalendarType());
-		}else if (oStartDate.isAfter(oMaxDate)) {
-			oStartDate = oMaxDate;
-		}
+		oStartDate = this._calculateStartDate(this._oMaxDate, this._oMinDate, oStartDate);
 
 		var oLocaleDate = oStartDate.toLocalJSDate();
 		this.setProperty("startDate", oLocaleDate, true);

@@ -345,7 +345,7 @@
 				oCal2.setStartDate(new Date(2015, 1, 2));
 			});
 
-			QUnit.module("Focus private API");
+			QUnit.module("Private API");
 			QUnit.test("_getFocusedDate()", function(assert) {
 				var oOldFocusedDate = oCal4._oFocusedDate;
 
@@ -373,6 +373,121 @@
 
 				assert.ok(oSpy.getCall(0).args[0],
 						"When .setStartDate is called, _getFocusedDate is always forcing recalculation");
+			});
+
+			QUnit.test("_getMaxDateAlignedToMinDate should return provided maxDate if it is after the minDate", function (assert) {
+				// Arrange
+				var oResult,
+					oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+					oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
+					oCalendarDateInterval = new sap.ui.unified.CalendarDateInterval();
+
+				// Act
+				oResult = oCalendarDateInterval._getMaxDateAlignedToMinDate(oMaxDate, oMinDate);
+
+				// Assert
+				assert.deepEqual(oResult, oMaxDate, "new date should be same as the maxDate");
+
+				// Cleanup
+				oCalendarDateInterval.destroy();
+			});
+
+			QUnit.test("_getMaxDateAlignedToMinDate should return maxDate plus number of days to show minus one if it is before the minDate", function (assert) {
+				// Arrange
+				var oResult,
+					iDays = 6,
+					oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
+					oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+					oCalendarDateInterval = new sap.ui.unified.CalendarDateInterval(),
+					oGetDaysStub = this.stub(oCalendarDateInterval, "_getDays", function () { return iDays });
+
+				// Act
+				oResult = oCalendarDateInterval._getMaxDateAlignedToMinDate(oMaxDate, oMinDate);
+
+				// Assert
+				assert.deepEqual(oResult.getDate(), oMaxDate.getDate() + iDays - 1, "new date should be calculated correctly");
+
+				// Cleanup
+				oGetDaysStub.restore();
+				oCalendarDateInterval.destroy();
+			});
+
+			QUnit.test("_getStartDateAlignedToMinAndMaxDate should return the startDate if it is between max and min dates", function (assert) {
+				// Arrange
+				var oResult,
+					oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
+					oStartDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+					oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 11, 20),
+					oCalendarDateInterval = new sap.ui.unified.CalendarDateInterval();
+
+				// Act
+				oResult = oCalendarDateInterval._getStartDateAlignedToMinAndMaxDate(oMaxDate, oMinDate, oStartDate);
+
+				// Assert
+				assert.deepEqual(oResult, oStartDate, "startDate should be returned");
+
+				// Cleanup
+				oCalendarDateInterval.destroy();
+			});
+
+			QUnit.test("_getStartDateAlignedToMinAndMaxDate should return the minDate if startDate is before it", function (assert) {
+				// Arrange
+				var oResult,
+						oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+						oStartDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
+						oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 11, 20),
+						oCalendarDateInterval = new sap.ui.unified.CalendarDateInterval();
+
+				// Act
+				oResult = oCalendarDateInterval._getStartDateAlignedToMinAndMaxDate(oMaxDate, oMinDate, oStartDate);
+
+				// Assert
+				assert.deepEqual(oResult, oMinDate, "minDate should be returned");
+
+				// Cleanup
+				oCalendarDateInterval.destroy();
+			});
+
+			QUnit.test("_getStartDateAlignedToMinAndMaxDate should return the maxDate if startDate is after it", function (assert) {
+				// Arrange
+				var oResult,
+						oMinDate = new sap.ui.unified.calendar.CalendarDate(2018, 9, 20),
+						oStartDate = new sap.ui.unified.calendar.CalendarDate(2018, 11, 20),
+						oMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+						oCalendarDateInterval = new sap.ui.unified.CalendarDateInterval();
+
+				// Act
+				oResult = oCalendarDateInterval._getStartDateAlignedToMinAndMaxDate(oMaxDate, oMinDate, oStartDate);
+
+				// Assert
+				assert.deepEqual(oResult, oMaxDate, "maxDate should be returned");
+
+				// Cleanup
+				oCalendarDateInterval.destroy();
+			});
+
+			QUnit.test("_calculateStartDate should call _getMaxDateAlignedToMinDate and _getStartDateAlignedToMinAndMaxDate with correct params", function (assert) {
+				// Arrange
+				var iDays = 6,
+					oExpectedCalculatedMaxDate = new sap.ui.unified.calendar.CalendarDate(2018, 11, 20 - iDays + 1),
+					oStartDate = new sap.ui.unified.calendar.CalendarDate(2018, 10, 20),
+					oCalendarDateInterval = new sap.ui.unified.CalendarDateInterval({ maxDate: new Date(2018, 11, 20) }),
+					ogetMaxDateAlignedToMinDateSpy = this.spy(oCalendarDateInterval, "_getMaxDateAlignedToMinDate"),
+					oAlignStartDateToMinAndMaxSpy = this.spy(oCalendarDateInterval, "_getStartDateAlignedToMinAndMaxDate"),
+					oGetDaysStub = this.stub(oCalendarDateInterval, "_getDays", function () { return iDays });
+
+				// Act
+				oCalendarDateInterval._calculateStartDate(oCalendarDateInterval._oMaxDate, oCalendarDateInterval._oMinDate, oStartDate);
+
+				// Assert
+				assert.equal(ogetMaxDateAlignedToMinDateSpy.getCall(0).args[0].toString(), oExpectedCalculatedMaxDate.toString(), "_getMaxDateAlignedToMinDate is called with right maxDate");
+				assert.equal(oAlignStartDateToMinAndMaxSpy.getCall(0).args[0].toString(), oExpectedCalculatedMaxDate.toString(), "_getStartDateAlignedToMinAndMaxDate is called with right maxDate");
+
+				// Cleanup
+				ogetMaxDateAlignedToMinDateSpy.restore();
+				oAlignStartDateToMinAndMaxSpy.restore();
+				oGetDaysStub.restore();
+				oCalendarDateInterval.destroy();
 			});
 
 			QUnit.module("Calendar Picker");
