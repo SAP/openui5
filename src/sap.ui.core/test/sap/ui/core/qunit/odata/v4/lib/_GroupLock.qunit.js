@@ -149,5 +149,9 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("constants", function (assert) {
 		assert.strictEqual(_GroupLock.$cached.getGroupId(), "$cached");
+
+		// ensure that $cached can be unlocked several times
+		_GroupLock.$cached.unlock();
+		_GroupLock.$cached.unlock();
 	});
 });

@@ -185,11 +185,14 @@ sap.ui.define([
 	 * @since 1.41.0
 	 */
 	Context.prototype["delete"] = function (sGroupId) {
-		var that = this;
+		var oGroupLock,
+			that = this;
 
 		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
-		return this._delete(this.oModel.lockGroup(sGroupId)).catch(function (oError) {
+		oGroupLock = this.oModel.lockGroup(sGroupId, true);
+		return this._delete(oGroupLock).catch(function (oError) {
+			oGroupLock.unlock(true);
 			that.oModel.reportError("Failed to delete " + that, sClassName, oError);
 			throw oError;
 		});

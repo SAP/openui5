@@ -145,5 +145,8 @@ sap.ui.define([
 	 */
 	_GroupLock.$cached = new _GroupLock("$cached");
 
+	// avoid "unlocked twice" for this instance
+	_GroupLock.$cached.unlock = function () {};
+
 	return _GroupLock;
 }, /* bExport= */false);
