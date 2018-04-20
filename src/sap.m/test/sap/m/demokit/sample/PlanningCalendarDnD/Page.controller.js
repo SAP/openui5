@@ -246,6 +246,24 @@ sap.ui.define([
 				}
 			},
 
+			handleAppointmentCreate: function (oEvent) {
+				var oStartDate = oEvent.getParameter("startDate"),
+					oEndDate = oEvent.getParameter("endDate"),
+					oPlanningCalendarRow = oEvent.getParameter("calendarRow"),
+					oModel = this.getView().getModel(),
+					sPath = oPlanningCalendarRow.getBindingContext().getPath();
+
+				oModel.getProperty(sPath).appointments.push({
+					title: "New Appointment",
+					start: oStartDate,
+					end: oEndDate
+				});
+
+				MessageToast.show("New Appointment is created at \n" + oStartDate + "\n and end at \n" + oEndDate + ".");
+
+				oModel.refresh(true);
+			},
+
 			isAppointmentOverlap: function (oEvent, oCalendarRow) {
 				var oAppointment = oEvent.getParameter("appointment"),
 					oStartDate = oEvent.getParameter("startDate"),
