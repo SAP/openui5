@@ -35,7 +35,9 @@ sap.ui.define([
 	 * @version ${version}
 	 * @since 1.50.0
 	 * @alias sap.ui.core.XMLCompositeMetadata
-	 * @private
+	 *
+	 * @public
+	 * @experimental
 	 */
 	var XMLCompositeMetadata = function (sClassName, oClassInfo) {
 		if (!oClassInfo.hasOwnProperty("renderer")) {
@@ -178,6 +180,11 @@ sap.ui.define([
 		}
 
 		return mFragmentCache[sFragmentName];
+	};
+
+	XMLCompositeMetadata.prototype.hasAggregation = function(sName) {
+		//needed for copy
+		return !!this._mAllAggregations[sName] || !!this._mAllPrivateAggregations[sName];
 	};
 
 	return XMLCompositeMetadata;

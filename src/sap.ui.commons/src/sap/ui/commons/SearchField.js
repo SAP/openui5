@@ -616,7 +616,7 @@ sap.ui.define([
 
 
 	var isMobile = function() {
-		return sap.ui.Device.browser.mobile;
+		return sap.ui.Device.browser.mobile && !sap.ui.Device.system.desktop;
 	};
 
 

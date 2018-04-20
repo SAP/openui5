@@ -105,7 +105,7 @@ sap.ui.define([
 	 * @see {@link topic:2978f6064742456ebed31c5ccf4d051d Creating Blocks}
 	 * @see {@link topic:bc410e94e46540efa02857e15aae583f Object Page Scrolling}
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-page/ Object Page Layout}
-	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/ Object Page – Snapping Header}
+	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/ UX Guidelines: Object Page - Snapping Header}
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -495,6 +495,8 @@ sap.ui.define([
 		this._iAfterRenderingDomReadyTimeout = null;
 
 		this._oABHelper = new ABHelper(this);
+
+		this._initializeScroller();
 	};
 
 	/**
@@ -513,12 +515,14 @@ sap.ui.define([
 			return;
 		}
 
+		if (!this.getSelectedSection()) {
+			this._bHeaderExpanded = true; // enforce to expanded header whenever selectedSection is reset
+		}
+
 		this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
 		this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
 		this._bHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea();
-
-		this._initializeScroller();
 
 		this._createHeaderContent();
 		this._getHeaderContent().setContentDesign(this._getHeaderDesign());
@@ -2207,7 +2211,7 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._registerOnContentResize = function () {
 
-		var $container = this._$sectionsContainer.length && this._$sectionsContainer[0];
+		var $container = this._$contentContainer.length && this._$contentContainer[0];
 		if (!$container) {
 			return;
 		}

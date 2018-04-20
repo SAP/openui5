@@ -148,6 +148,10 @@ xhr.onCreate = function(request) {
 				[200, oXMLHeaders, sProducts1XML],
 			"Categories/$count":
 				[200, oCountHeaders, "8"],
+			"Categories/$count?$filter=toupper(CategoryName)%20eq%20%27BEVERAGES%27":
+				[200, oCountHeaders, "1"],
+			"Categories?$filter=toupper(CategoryName)%20eq%20%27BEVERAGES%27":
+				[200, oXMLHeaders, sCategoriesFilter1XML],
 			"Categories/$count?$filter=CategoryName%20eq%20%27Beverages%27":
 				[200, oCountHeaders, "1"],
 			"Categories?$skip=0&$top=1&$filter=CategoryName%20eq%20%27Beverages%27":

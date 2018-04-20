@@ -8,6 +8,7 @@ sap.ui.define([
 			_sJsonFilesModulePath = _sAppModulePath + "localService/mockdata";
 
 		return {
+
 			/**
 			 * Initializes the mock server.
 			 * You can configure the delay with the URL parameter "serverDelay".
@@ -29,8 +30,7 @@ sap.ui.define([
 					sMockServerUrl = /.*\/$/.test(oMainDataSource.uri) ? oMainDataSource.uri : oMainDataSource.uri + "/";
 
 				oMockServer = new MockServer({
-					rootUri : sMockServerUrl,
-					recordRequests: false
+					rootUri : sMockServerUrl
 				});
 
 				// configure mock server with a delay of 1s
@@ -39,6 +39,7 @@ sap.ui.define([
 					autoRespondAfter : (oUriParameters.get("serverDelay") || 1000)
 				});
 
+				// Simulate a manual back-end call
 				oMockServer.simulate(sMetadataUrl, {
 					sMockdataBaseUrl : sJsonFilesUrl,
 					bGenerateMissingMockData : true
@@ -68,6 +69,7 @@ sap.ui.define([
 						}
 					});
 				}
+				oMockServer.setRequests(aRequests);
 				oMockServer.start();
 
 				jQuery.sap.log.info("Running the app with mock data");

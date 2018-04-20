@@ -394,9 +394,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 	 * @experimental since 1.21.2 - API might change / feature requires the sap.m library!
 	 */
 	TablePersoController.prototype.openDialog = function(mSettings) {
-		if (!this._oDialog) {
-			var that = this;
+		var that = this;
 
+		function _open() {
+			if (that._oDialog) {
+				jQuery.sap.syncStyleClass("sapUiSizeCompact", that._getTable(), that._oDialog._oDialog);
+				that._oDialog.open();
+			}
+		}
+
+		if (!this._oDialog) {
 			// include the mobile library to re-use the sap.m.TablePersoDialog
 			sap.ui.getCore().loadLibrary("sap.m", {async: true}).then(function() {
 				sap.ui.require(["sap/m/TablePersoDialog"], function(TablePersoDialog) {
@@ -420,11 +427,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 						}
 					});
 					that._oDialog._oDialog.removeStyleClass("sapUiPopupWithPadding"); // otherwise height calculation doesn't work properly!
-					jQuery.sap.syncStyleClass("sapUiSizeCompact", that._getTable(), that._oDialog._oDialog);
 
-					that._oDialog.open();
+					_open();
 				});
 			});
+		} else {
+			_open();
 		}
 	};
 

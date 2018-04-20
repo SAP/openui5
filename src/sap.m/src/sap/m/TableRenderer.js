@@ -179,6 +179,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	 */
 	TableRenderer.renderContainerAttributes = function(rm, oControl) {
 		rm.addClass("sapMListTblCnt");
+
+		// add sticky style classes
+		var iStickyValue = oControl.getStickyStyleValue();
+		if (iStickyValue) {
+			rm.addClass("sapMSticky");
+			rm.addClass("sapMSticky" + iStickyValue);
+		}
 	};
 
 	/**
@@ -187,7 +194,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Renderer', './ListBaseRenderer'
 	TableRenderer.renderListStartAttributes = function(rm, oControl) {
 		rm.write("<table");
 		rm.addClass("sapMListTbl");
-		rm.addClass(oControl.getStickyStyleClass());
 		if (oControl.getFixedLayout() === false) {
 			rm.addStyle("table-layout", "auto");
 		}

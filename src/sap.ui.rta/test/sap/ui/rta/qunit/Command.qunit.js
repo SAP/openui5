@@ -18,6 +18,7 @@ sap.ui.require([
 	'sap/ui/fl/changeHandler/HideControl',
 	'sap/ui/fl/registry/ChangeRegistry',
 	'sap/ui/fl/registry/SimpleChanges',
+	'sap/ui/fl/Change',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/fl/Utils',
 	'sap/ui/rta/ControlTreeModifier',
@@ -44,6 +45,7 @@ function(
 	HideControl,
 	ChangeRegistry,
 	SimpleChanges,
+	Change,
 	JSONModel,
 	FlexUtils,
 	RtaControlTreeModifier,
@@ -593,6 +595,7 @@ function(
 			this.command2 = new BaseCommand();
 			this.command3 = new BaseCommand();
 			this.command4 = new FlexCommand();
+			this.command5 = new FlexCommand();
 			this.compositeCommand = new CompositeCommand();
 		},
 		afterEach : function(assert) {
@@ -600,6 +603,8 @@ function(
 			this.command.destroy();
 			this.command2.destroy();
 			this.command3.destroy();
+			this.command4.destroy();
+			this.command5.destroy();
 			this.compositeCommand.destroy();
 			this.stack.destroy();
 		}
@@ -658,6 +663,62 @@ function(
 
 			assert.ok(!this.stack._getCommandToBeExecuted(), " no command to be executed by the stack");
 
+		});
+
+		QUnit.test("when inserting a command into a composite command, ", function(assert) {
+			var oChangeContent1 = {
+				"fileName": "fileName1",
+				"selector": {
+					"id": "field1",
+					"idIsLocal": true
+				}
+			};
+			var oChangeContent2 = {
+					"fileName": "fileName2",
+					"selector": {
+						"id": "field2",
+						"idIsLocal": true
+					}
+				};
+			var oChange1 = new Change(oChangeContent1);
+			var oChange2 = new Change(oChangeContent2);
+			this.command4._oPreparedChange = oChange1;
+			this.command5._oPreparedChange = oChange2;
+
+			assert.notOk(this.compositeCommand._sCompositeId, "there is no private composite id set initially");
+			this.compositeCommand.insertCommand(this.command4, 0);
+			assert.ok(this.compositeCommand._sCompositeId, "there is a private composite id set after adding the first command");
+			assert.equal(this.command4._oPreparedChange.getDefinition().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
+			this.compositeCommand.insertCommand(this.command5, 0);
+			assert.equal(this.command5._oPreparedChange.getDefinition().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
+		});
+
+		QUnit.test("when adding a command to a composite command, ", function(assert) {
+			var oChangeContent1 = {
+				"fileName": "fileName1",
+				"selector": {
+					"id": "field1",
+					"idIsLocal": true
+				}
+			};
+			var oChangeContent2 = {
+					"fileName": "fileName2",
+					"selector": {
+						"id": "field2",
+						"idIsLocal": true
+					}
+				};
+			var oChange1 = new Change(oChangeContent1);
+			var oChange2 = new Change(oChangeContent2);
+			this.command4._oPreparedChange = oChange1;
+			this.command5._oPreparedChange = oChange2;
+
+			assert.notOk(this.compositeCommand._sCompositeId, "there is no private composite id set initially");
+			this.compositeCommand.addCommand(this.command4);
+			assert.ok(this.compositeCommand._sCompositeId, "there is a private composite id set after adding the first command");
+			assert.equal(this.command4._oPreparedChange.getDefinition().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
+			this.compositeCommand.addCommand(this.command5);
+			assert.equal(this.command5._oPreparedChange.getDefinition().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
 		});
 
 		QUnit.test("After adding commands to composite command, when executing the composite and undoing it", function(assert) {

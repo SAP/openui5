@@ -20,7 +20,7 @@
 	/*global console, document, jQuery, sap, window */
 	"use strict";
 
-	var _ui5loader = window.sap && window.sap.ui && window.sap.ui._ui5loader,
+	var ui5loader = window.sap && window.sap.ui && window.sap.ui.loader,
 		oCfg = window['sap-ui-config'] || {},
 		sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
@@ -42,7 +42,7 @@
 		return path && path[path.length] !== '/' ? path + '/' : path;
 	}
 
-	if (_ui5loader == null) {
+	if (ui5loader == null) {
 		throw new Error("ui5loader-autoconfig.js: ui5loader is needed, but could not be found");
 	}
 
@@ -124,7 +124,15 @@
 					sDebugUrl = ensureSlash(sBaseUrl) + 'sap-ui-core.js';
 				}
 				window["sap-ui-optimized"] = false;
-				document.write("<script src=\"" + sDebugUrl + "\"></script>");
+
+				if (sap.ui.loader.config().async) {
+					var script = document.createElement("script");
+					script.src = sDebugUrl;
+					document.head.appendChild(script);
+				} else {
+					document.write("<script src=\"" + sDebugUrl + "\"></script>");
+				}
+
 				var oRestart = new Error("This is not a real error. Aborting UI5 bootstrap and restarting from: " + sDebugUrl);
 				oRestart.name = "Restart";
 				throw oRestart;
@@ -154,7 +162,7 @@
 				return rFilter.test(sModuleName);
 			};
 
-			_ui5loader.logger.debug("Modules that should be excluded from preload: '" + sPattern + "'");
+			ui5loader._.logger.debug("Modules that should be excluded from preload: '" + sPattern + "'");
 
 		} else if (vDebugInfo === true) {
 
@@ -162,11 +170,11 @@
 				return true;
 			};
 
-			_ui5loader.logger.debug("All modules should be excluded from preload");
+			ui5loader._.logger.debug("All modules should be excluded from preload");
 
 		}
 
-		_ui5loader.config({
+		ui5loader.config({
 			debugSources: !!window['sap-ui-loaddbg'],
 			ignoreBundledResources: fnIgnorePreload
 		});
@@ -174,7 +182,7 @@
 	})();
 
 	if ( oCfg['xx-async'] === true || /(?:^|\?|&)sap-ui-xx-async=(?:x|X|true)(?:&|$)/.test(window.location.search) ) {
-		_ui5loader.config({
+		ui5loader.config({
 			async: true
 		});
 	}
@@ -188,7 +196,7 @@
 		bNoConflict = aNoConflictURLMatches[1] != "false";
 	}
 
-	_ui5loader.config({
+	ui5loader.config({
 		baseUrl: sBaseUrl,
 
 		noConflict: bNoConflict,

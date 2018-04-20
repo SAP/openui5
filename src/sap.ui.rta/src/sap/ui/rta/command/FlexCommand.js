@@ -237,7 +237,12 @@ sap.ui.define([
 
 		.then(function(bSuccess) {
 			if (!bRevertible){
-				this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
+				if (!oChange.getUndoOperations()) {
+					this._aRecordedUndo = RtaControlTreeModifier.stopRecordingUndo();
+				} else {
+					this._aRecordedUndo = oChange.getUndoOperations();
+					oChange.resetUndoOperations();
+				}
 			}
 			if (!bSuccess) {
 				return Promise.reject();

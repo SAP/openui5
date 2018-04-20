@@ -20,6 +20,9 @@
 <script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 <script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 <script>
+	if (window.blanket) {
+		blanket.options("sap-ui-cover-only", /sap\/m\/SlideTile.*/);
+	}
 
 	QUnit.module("Property scope values", {
 		beforeEach: function() {

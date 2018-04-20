@@ -5,20 +5,11 @@
 /**
  * This class provides the possibility to declare the "view" part of a composite control
  * in an XML fragment which will automatically define the rendering accordingly.
- * Additionally, the <code>XMLComposite</code> control allows aggregations defined on the control
- * to be forwarded (on an instance level) to the inner controls used in the
- * XML fragment.
  *
  * <b>Note:</b> If you use aggregation forwarding with <code>idSuffix</<code> as defined
  * in {@link sap.ui.base.ManagedObject ManagedObject} and refer to IDs defined in the XML fragment
  * of the XML composite control, then these types of <code>idSuffix</<code> have the form
  * "--ID" where ID is the ID that you have defined in the XML fragment.
- *
- * CAUTION: Naming, location and APIs of this entity will possibly change and should
- * therefore be considered experimental
- *
- * @private
- * @sap-restricted
  *
  */
 sap.ui.define([
@@ -401,9 +392,8 @@ sap.ui.define([
 	 * @alias sap.ui.core.XMLComposite
 	 *
 	 * @abstract
+ 	 * @public
 	 * @experimental
-	 * @private
-	 * @sap-restricted sap.fe
 	 */
 	var XMLComposite = Control.extend("sap.ui.core.XMLComposite", {
 		metadata: {
@@ -754,14 +744,20 @@ sap.ui.define([
 			bInitialized = false;
 		if (mSettings && sAggregationName) {
 			var oNode = mSettings[sAggregationName];
-			if (oNode && oNode.localName === "FragmentDefinition") {
+			if (oNode instanceof ManagedObject) {
 				this._destroyCompositeAggregation();
-				this._setCompositeAggregation(sap.ui.xmlfragment({
-					sId: this.getId(),
-					fragmentContent: mSettings[sAggregationName],
-					oController: this
-				}));
+				this._setCompositeAggregation(oNode);
 				bInitialized = true;
+			} else {
+				if (oNode && oNode.localName === "FragmentDefinition") {
+					this._destroyCompositeAggregation();
+					this._setCompositeAggregation(sap.ui.xmlfragment({
+						sId: this.getId(),
+						fragmentContent: mSettings[sAggregationName],
+						oController: this
+					}));
+					bInitialized = true;
+				}
 			}
 			delete mSettings[sAggregationName];
 		}

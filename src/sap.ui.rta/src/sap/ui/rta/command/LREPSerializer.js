@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/rta/command/AppDescriptorCommand',
 	'sap/ui/fl/FlexControllerFactory',
 	'sap/ui/fl/Utils',
+	'sap/ui/fl/Change',
 	'sap/ui/rta/ControlTreeModifier',
 	'sap/ui/fl/registry/Settings'
 ], function(
@@ -19,6 +20,7 @@ sap.ui.define([
 	AppDescriptorCommand,
 	FlexControllerFactory,
 	FlexUtils,
+	Change,
 	RtaControlTreeModifier,
 	Settings
 ) {
@@ -74,9 +76,8 @@ sap.ui.define([
 				// _lastPromise chain must not be interupted
 			}).then(function() {
 				var aCommands = this.getCommandStack().getSubCommands(oParams.command);
-
+				var oFlexController;
 				if (oParams.undo) {
-					var oFlexController;
 					aCommands.forEach(function(oCommand) {
 						// for revertable changes which don't belong to LREP (variantSwitch) or runtime only changes
 						if (!(oCommand instanceof FlexCommand || oCommand instanceof AppDescriptorCommand)
@@ -85,13 +86,18 @@ sap.ui.define([
 						}
 						var oChange = oCommand.getPreparedChange();
 						var oAppComponent = oCommand.getAppComponent();
-						oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-						if (oCommand instanceof FlexCommand){
-							var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-							oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+						if (oAppComponent && oCommand.getElement()) {
+							if (oCommand instanceof FlexCommand){
+								oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+								var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
+								oFlexController.removeFromAppliedChangesOnControl(oChange, oAppComponent, oControl);
+							} else if (oCommand instanceof AppDescriptorCommand) {
+								//other flex controller!
+								oFlexController = this._getAppDescriptorFlexController(oAppComponent);
+							}
+							oFlexController.deleteChange(oChange, oAppComponent);
 						}
-						oFlexController.deleteChange(oChange, oAppComponent);
-					});
+					}.bind(this));
 				} else {
 					var aDescriptorCreateAndAdd = [];
 					aCommands.forEach(function(oCommand) {
@@ -101,8 +107,14 @@ sap.ui.define([
 						}
 						if (oCommand instanceof FlexCommand){
 							var oAppComponent = oCommand.getAppComponent();
-							var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
-							oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
+							if (oAppComponent && oCommand.getElement()) {
+								var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
+								var oPreparedChange = oCommand.getPreparedChange();
+								if (oPreparedChange.getState() === Change.states.DELETED) {
+									oPreparedChange.setState(Change.states.NEW);
+								}
+								oFlexController.addPreparedChange(oCommand.getPreparedChange(), oAppComponent);
+							}
 						} else if (oCommand instanceof AppDescriptorCommand) {
 							aDescriptorCreateAndAdd.push(oCommand.createAndStoreChange());
 						}
@@ -133,12 +145,10 @@ sap.ui.define([
 		}.bind(this))
 
 		// needed because the AppDescriptorChanges are stored with a different ComponentName (without ".Component" at the end)
-		// -> two different ChangePersistences
+		// -> two different ChangePersistence
 		.then(function() {
-			var sComponentName = FlexUtils.getComponentClassName(sap.ui.getCore().byId(this.getRootControl())).replace(".Component", "");
 			var oRootControl = sap.ui.getCore().byId(this.getRootControl());
-			var sAppVersion = FlexUtils.getAppVersionFromManifest(FlexUtils.getAppComponentForControl(oRootControl).getManifest());
-			var oFlexController = FlexControllerFactory.create(sComponentName, sAppVersion);
+			var oFlexController = this._getAppDescriptorFlexController(oRootControl);
 			return oFlexController.saveAll();
 		}.bind(this))
 
@@ -148,6 +158,18 @@ sap.ui.define([
 		}.bind(this));
 
 		return this._lastPromise;
+	};
+
+	/**
+	 * needed because the AppDescriptorChanges are stored with a different ComponentName (without ".Component" at the end)
+	 * -> two different ChangePersistence
+	 * @param {sap.ui.base.ManagedObject} oControl control or app component for which the flex controller should be instantiated
+	 */
+	LREPSerializer.prototype._getAppDescriptorFlexController = function(oControl) {
+		var oAppComponent = FlexUtils.getAppComponentForControl(oControl);
+		var sComponentName = FlexUtils.getComponentClassName(oAppComponent).replace(".Component", "");
+		var sAppVersion = FlexUtils.getAppVersionFromManifest(oAppComponent.getManifest());
+		return FlexControllerFactory.create(sComponentName, sAppVersion);
 	};
 
 	LREPSerializer.prototype._moveChangeToAppVariant = function(sReferenceAppIdForChanges, oFlexController) {

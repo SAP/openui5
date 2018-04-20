@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": " fl.VariantManagement: change display from inline to inline-block",
         "references": []
+      },
+      {
+        "id": "eb6e8a23450b47097826583f48825986efabe5d5",
+        "type": "FIX",
+        "text": " Rename and move API for Control Personalization",
+        "references": []
       }
     ]
   }

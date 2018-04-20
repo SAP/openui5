@@ -16,7 +16,7 @@
 		<script >
 
 		QUnit.config.autostart = false;
-		sap.ui._ui5loader.logger = {
+		sap.ui.loader._.logger = {
 			debug: function() {
 				console.log.apply(console, arguments);
 			},
@@ -31,8 +31,8 @@
 			},
 			isLoggable: function() { return true; }
 		};
-		sap.ui._ui5loader.config({
-			async: 'mixed',
+		sap.ui.loader.config({
+			async: true,
 			paths: {
 				'modules': 'testdata/modules/'
 			}
@@ -91,7 +91,21 @@
 			});
 		});
 
+		QUnit.test("Dependency names with leading Slash '/'", function(assert) {
+			var done = assert.async();
 
+			var sErrorLog = "Module names that start with a slash should not be used, as they are reserved for future use.";
+
+			var fnOriginalLog = sap.ui.loader._.logger.error;
+			sap.ui.loader._.logger.error = function (sMsg) {
+				assert.equal(sMsg, sErrorLog, "Correct Error logged for leading Slash");
+			}
+
+			sap.ui.require(["/sap/ui/core/Control"], function (Icon) {
+				sap.ui.loader._.logger.error = fnOriginalLog;
+				done();
+			});
+		});
 
 		// ========================================================================================
 		// Special Dependencies require/module/exports
@@ -212,20 +226,20 @@
 
 		QUnit.test("Simple access to a resource", function(assert) {
 			assert.strictEqual(
-				sap.ui._ui5loader.getModuleContent('modules/resource-preload/Main.view.xml'),
+				sap.ui.loader._.getModuleContent('modules/resource-preload/Main.view.xml'),
 				this.EXPECTED_VIEW_CONTENT,
 				"reading a preloaded non-JS resource should return the expected text result");
 		});
 
 		QUnit.test("Access via a denormalized name", function(assert) {
 			assert.strictEqual(
-				sap.ui._ui5loader.getModuleContent('modules/resource-preload/dummy/../Main.view.xml'),
+				sap.ui.loader._.getModuleContent('modules/resource-preload/dummy/../Main.view.xml'),
 				this.EXPECTED_VIEW_CONTENT,
 				"reading a preloaded non-JS resource by a denormalized name should return the expected text result");
 		});
 
 		QUnit.test("Access via a mapped name", function(assert) {
-			sap.ui._ui5loader.config({
+			sap.ui.loader.config({
 				map: {
 					'resource-preload-alias': 'modules/resource-preload',
 					'resource-preload-alias-Main.view': 'modules/resource-preload/Main.view'
@@ -233,11 +247,11 @@
 				}
 			});
 			assert.strictEqual(
-				sap.ui._ui5loader.getModuleContent('resource-preload-alias/Main.view.xml'),
+				sap.ui.loader._.getModuleContent('resource-preload-alias/Main.view.xml'),
 				this.EXPECTED_VIEW_CONTENT,
 				"reading a preloaded non-JS resource by a prefixed-mapped module ID should return the expected text result");
 			assert.strictEqual(
-				sap.ui._ui5loader.getModuleContent('resource-preload-alias-Main.view.xml'),
+				sap.ui.loader._.getModuleContent('resource-preload-alias-Main.view.xml'),
 				this.EXPECTED_VIEW_CONTENT,
 				"reading a preloaded non-JS resource by a name-mapped module ID should return the expected text result");
 		});
@@ -385,7 +399,7 @@
 
 		QUnit.test("map ID prefix for any context", function(assert) {
 			var done = assert.async();
-			sap.ui._ui5loader.config({
+			sap.ui.loader.config({
 				map: {
 					'*': {
 						'dependencies-generally-prefix-mapped-alias': 'modules/dependencies-generally-prefix-mapped'
@@ -414,7 +428,7 @@
 
 		QUnit.test("map full ID for any context", function(assert) {
 			var done = assert.async();
-			sap.ui._ui5loader.config({
+			sap.ui.loader.config({
 				map: {
 					'*': {
 						'modules/dependencies-generally-full-id-mapped/module-alias1': 'modules/dependencies-generally-full-id-mapped/module1',
@@ -439,7 +453,7 @@
 
 		QUnit.test("map full ID with UI5 subtypes for any context", function(assert) {
 			var done = assert.async();
-			sap.ui._ui5loader.config({
+			sap.ui.loader.config({
 				map: {
 					'*': {
 						'modules/general-mapping-with-subtypes/module-alias1': 'modules/general-mapping-with-subtypes/module1',
@@ -469,7 +483,7 @@
 
 		QUnit.test("map ID to different targets, depending on context", function(assert) {
 			var done = assert.async();
-			sap.ui._ui5loader.config({
+			sap.ui.loader.config({
 				map: {
 					'*': {
 						'modules/dependencies-with-contextual-mapping/module3': 'modules/dependencies-with-contextual-mapping/module3-v3'
@@ -497,7 +511,7 @@
 
 		QUnit.test("cycle detection in case of module-ID mapping", function(assert) {
 			var done = assert.async();
-			sap.ui._ui5loader.config({
+			sap.ui.loader.config({
 				map: {
 					'*': {
 						'cyclic-dependency-with-mapping-alias': 'modules/cyclic-dependency-with-mapping'

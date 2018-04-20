@@ -2151,6 +2151,46 @@
 			oButton = null;
 			oPopover = null;
 		});
+
+		QUnit.test("Do not attach orientationChange handler on destroyed popover", function (assert){
+			// setup
+			 var oDeviceParams = {
+				system: {
+					desktop: true,
+					phone: false,
+					tablet: false
+				},
+				support: {
+					touch: false
+				}
+			};
+
+			this.stub(sap.ui.Device, "system", oDeviceParams.system);
+			this.stub(sap.ui.Device, "support", oDeviceParams.support);
+
+			var oResizeHandlerSpy = this.spy(sap.ui.Device.resize, "attachHandler");
+				oButton = new sap.m.Button().placeAt("content");
+				oPopover = new sap.m.Popover({
+					contentWidth: "300px",
+					contentHeight: "300px",
+					content: new sap.ui.core.HTML({
+						content: "<div style='width: 500px; height: 600px'></div>"
+					}),
+					afterOpen: function(oEvent) {
+						oPopover.destroy();
+					}
+				});
+
+			// act
+			oPopover.openBy(oButton);
+			this.clock.tick(500);
+
+			// assert
+			assert.equal(oResizeHandlerSpy.callCount, 0, "The resize handler is not attached to a destroyed popover");
+
+			// clean up
+			oButton.destroy();
+		});
 	</script>
 </head>
 <body id="body" class="sapUiBody">

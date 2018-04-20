@@ -141,7 +141,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
+	 * @deprecated As of version 1.11, use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
 	 */
 	TreeBinding.prototype.attachFilter = function(fnFunction, oListener) {
 		this.attachEvent("_filter", fnFunction, oListener);
@@ -152,7 +152,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * @param {function} fnFunction The function to call, when the event occurs.
 	 * @param {object} [oListener] object on which to call the given function.
 	 * @protected
-	 * @deprecated use the change event.
+	 * @deprecated As of version 1.11, use the change event.
 	 */
 	TreeBinding.prototype.detachFilter = function(fnFunction, oListener) {
 		this.detachEvent("_filter", fnFunction, oListener);
@@ -162,7 +162,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 * Fire event _filter to attached listeners.
 	 * @param {Map} [mArguments] the arguments to pass along with the event.
 	 * @private
-	 * @deprecated use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
+	 * @deprecated As of version 1.11, use the change event. It now contains a parameter (reason : "filter") when a filter event is fired.
 	 */
 	TreeBinding.prototype._fireFilter = function(mArguments) {
 		this.fireEvent("_filter", mArguments);

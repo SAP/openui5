@@ -4216,6 +4216,25 @@
 			oPCRow.destroy();
 		});
 
+		QUnit.test("_calcNewMonthsAppPos: Calculate new position of the appointment in 'Months' view when row start day is different than the appointment's day", function (assert) {
+			//arrange
+			var oPCRow = new sap.m.PlanningCalendarRow(),
+					oRowStartDate = new Date(2017, 10, 13),
+					oAppStartDate = new Date(2017, 11, 14, 1, 0, 0),
+					oAppEndDate = new Date(2017, 11, 14, 2, 0, 0),
+					newAppPos;
+
+			//act
+			newAppPos = oPCRow._calcNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+
+			//assert
+			assert.deepEqual(newAppPos.startDate, new Date(2018, 1, 14, 1, 0, 0), "Correct new start position");
+			assert.deepEqual(newAppPos.endDate, new Date(2018, 1, 14, 2, 0, 0), "Correct new end position");
+
+			//clean
+			oPCRow.destroy();
+		});
+
 		QUnit.test("setEnableAppointmentsDragAndDrop", function(assert) {
 			//arrange
 			var oPC = new sap.m.PlanningCalendar(),
@@ -4355,9 +4374,9 @@
 
 		QUnit.test("_calcResizeNewDaysAppPos: Calculate new size of the appointment in 'Days' view", function (assert) {
 			// arrange
-			var oRowStartDate = new Date(2017, 10, 13, 0, 0, 0),
-				oAppStartDate = new Date(2017, 10, 13, 1, 0, 0),
-				oAppEndDate = new Date(2017, 10, 13, 2, 0, 0),
+			var oRowStartDate = new Date(2017, 10, 13),
+				oAppStartDate = new Date(2017, 10, 13),
+				oAppEndDate = new Date(2017, 10, 14),
 				newAppPos;
 
 			// act - resize appointment's end with 4 days from the beginning of the line
@@ -4365,21 +4384,36 @@
 
 			// assert
 			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 17, 0, 0, 0), "End date day is correct");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 17), "End date day is correct");
 
 			// act - resize appointment's if end time is less than the start time than use just 1 day from the beggining
 			newAppPos = this.oPCRow._calcResizeNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
 
 			// assert
 			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 14, 0, 0, 0), "End date day is correct");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 14), "End date day is correct");
+		});
+
+		QUnit.test("_calcResizeNewDaysAppPos: Calculate new size of the appointment in 'Days' view - shrink event", function (assert) {
+			// arrange
+			var oRowStartDate = new Date(2017, 6, 13),
+				oAppStartDate = new Date(2017, 6, 13),
+				oAppEndDate = new Date(2017, 6, 20),
+				newAppPos;
+
+			// act - resize appointment's end with 5 days from the beginning of the line
+			newAppPos = this.oPCRow._calcResizeNewDaysAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 4);
+
+			// assert
+			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 6, 18), "End date day is correct");
 		});
 
 		QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in 'Months' view", function (assert) {
 			// arrange
-			var oRowStartDate = new Date(2017, 6, 13, 0, 0, 0),
-					oAppStartDate = new Date(2017, 6, 13, 1, 0, 0),
-					oAppEndDate = new Date(2017, 6, 13, 2, 0, 0),
+			var oRowStartDate = new Date(2017, 6, 13),
+					oAppStartDate = new Date(2017, 6, 13),
+					oAppEndDate = new Date(2017, 7, 13),
 					newAppPos;
 
 			// act - resize appointment's end with 4 Months from the beginning of the line
@@ -4387,14 +4421,29 @@
 
 			// assert
 			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 1, 0, 0, 0), "End date month is correct");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 1), "End date month is correct");
 
 			// act - resize appointment's if end time is less than the start time than use just 1 month from the beggining
 			newAppPos = this.oPCRow._calcResizeNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 0);
 
 			// assert
 			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
-			assert.deepEqual(newAppPos.endDate, new Date(2017, 7, 1, 0, 0, 0), "End date month is correct");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 7, 1), "End date month is correct");
+		});
+
+		QUnit.test("_calcResizeNewMonthsAppPos: Calculate new size of the appointment in 'Months' view - shrink event", function (assert) {
+			// arrange
+			var oRowStartDate = new Date(2017, 6, 13),
+					oAppStartDate = new Date(2017, 6, 13),
+					oAppEndDate = new Date(2017, 11, 13),
+					newAppPos;
+
+			// act - resize appointment's end with 4 Months from the beginning of the line
+			newAppPos = this.oPCRow._calcResizeNewMonthsAppPos(oRowStartDate, oAppStartDate, oAppEndDate, 3);
+
+			// assert
+			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
+			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 1), "End date month is correct");
 		});
 	</script>
 

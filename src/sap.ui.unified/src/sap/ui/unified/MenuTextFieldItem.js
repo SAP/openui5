@@ -234,7 +234,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	 * @return {sap.ui.unified.Menu}
 	 * @public
 	 * @name sap.ui.unified.MenuTextFieldItem#getSubmenu
-	 * @deprecated The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
+	 * @deprecated As of version 1.21, the aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * @function
 	 */
 
@@ -244,7 +244,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	 * @return {sap.ui.unified.MenuTextFieldItem} <code>this</code> to allow method chaining
 	 * @public
 	 * @name sap.ui.unified.MenuTextFieldItem#destroySubmenu
-	 * @deprecated The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
+	 * @deprecated As of version 1.21, the aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 * @function
 	 */
 
@@ -254,7 +254,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 	 * @param {sap.ui.unified.Menu} oMenu The menu to which the sap.ui.unified.Submenu should be set
 	 * @return {sap.ui.unified.MenuTextFieldItem} <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated The aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
+	 * @deprecated As of version 1.21, the aggregation <code>submenu</code> (inherited from parent class) is not supported for this type of menu item.
 	 */
 	MenuTextFieldItem.prototype.setSubmenu = function(oMenu){
 		jQuery.sap.log.warning("The aggregation 'submenu' is not supported for this type of menu item.", "", "sap.ui.unified.MenuTextFieldItem");

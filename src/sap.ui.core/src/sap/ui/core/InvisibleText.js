@@ -78,7 +78,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	/**
 	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Local BusyIndicator is not supported by control.
+	 * @deprecated As of version 1.27, local BusyIndicator is not supported by control.
 	 * @function
 	 */
 	InvisibleText.prototype.setBusy = makeNotSupported("Property busy");
@@ -86,7 +86,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	/**
 	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Local BusyIndicator is not supported by control.
+	 * @deprecated As of version 1.27, local BusyIndicator is not supported by control.
 	 * @function
 	 */
 	InvisibleText.prototype.setBusyIndicatorDelay = makeNotSupported("Property busy");
@@ -94,7 +94,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	/**
 	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Local BusyIndicator is not supported by control.
+	 * @deprecated As of version 1.54, local BusyIndicator is not supported by control.
 	 * @function
 	 */
 	InvisibleText.prototype.setBusyIndicatorSize = makeNotSupported("Property busy");
@@ -102,7 +102,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	/**
 	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Property visible is not supported by control.
+	 * @deprecated As of version 1.27, property <code>visible</code> is not supported by control.
 	 * @function
 	 */
 	InvisibleText.prototype.setVisible = makeNotSupported("Property visible");
@@ -110,7 +110,7 @@ sap.ui.define(['jquery.sap.global', './Control', './library', 'jquery.sap.encode
 	/**
 	 * @return {sap.ui.core.InvisibleText} Returns <code>this</code> to allow method chaining
 	 * @public
-	 * @deprecated Tooltip is not supported by control.
+	 * @deprecated As of version 1.27, tooltip is not supported by control.
 	 * @function
 	 */
 	InvisibleText.prototype.setTooltip = makeNotSupported("Aggregation tooltip");

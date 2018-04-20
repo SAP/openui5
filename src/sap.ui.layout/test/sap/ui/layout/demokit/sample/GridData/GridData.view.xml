@@ -1,0 +1,363 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:core="sap.ui.core"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		controllerName="sap.ui.layout.sample.GridData.GridData">
+
+	<l:VerticalLayout
+			width="100%">
+
+		<MessageStrip
+				class="sapUiTinyMargin"
+				text="Use the sliders to resize the grids and observe their behaviour."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+
+
+
+		<!--								-->
+		<!--  INDIVIDUAL SPAN SIZING DEMOS	-->
+		<!-- 								-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Individual span sizing"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="The second child will be always 6 columns wide, regardless of the screen size."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true">
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+								&lt;p&gt;span: XL6 L6 M6 S6&lt;/p&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData span="XL6 L6 M6 S6"/>
+					</core:layoutData>
+				</core:HTML>
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+
+		<!--											-->
+		<!--  OVERRIDING INDIVIDUAL SPAN SIZING DEMOS	-->
+		<!-- 											-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Overriding individual span sizing"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="Set both children to be always 6 columns wide and then reset the second one."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true">
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+								&lt;p&gt;span: XL6 L6 M6 S6&lt;/p&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData span="XL6 L6 M6 S6"/>
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+									&lt;div class=&quot;propertiesDisplay&quot;&gt;
+										&lt;p&gt;span: XL6 L6 M6 S6&lt;/p&gt;
+										&lt;p&gt;spanL/XL: 3&lt;/p&gt;
+										&lt;p&gt;spanM: 6&lt;/p&gt;
+										&lt;p&gt;spanS: 12&lt;/p&gt;
+									&lt;/div&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData
+								span="XL6 L6 M6 S6"
+								spanXL="3"
+								spanL="3"
+								spanM="6"
+								spanS="12"/>
+					</core:layoutData>
+				</core:HTML>
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+
+		<!--								-->
+		<!--  INDIVIDUAL INDENTATION DEMOS	-->
+		<!-- 								-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Individual indentation"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="The second child will be indented by 2 columns on XL screens and by 6 on L screens."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true">
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+								&lt;p&gt;indent: XL2 L6&lt;/p&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData indent="XL2 L6"/>
+					</core:layoutData>
+				</core:HTML>
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+
+		<!--											-->
+		<!--  OVERRIDING INDIVIDUAL INDENTATION DEMOS	-->
+		<!-- 											-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Overriding individual indentation"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="Add indentation on the first child for M screens initially and then modify it to apply for larger screens too."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true">
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+									&lt;div class=&quot;propertiesDisplay&quot;&gt;
+										&lt;p&gt;indent: M4&lt;/p&gt;
+										&lt;p&gt;indentL/XL: 4&lt;/p&gt;
+									&lt;/div&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData
+								indent="M4"
+								indentXL="4"
+								indentL="4"/>
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+
+		<!--											-->
+		<!--  			LINEBREAKING DEMOS				-->
+		<!-- 											-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Linebreaking"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="The second child will cause a linebreak, regardless of other children's width."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true">
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+								&lt;p&gt;linebreak: true&lt;/p&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData
+								linebreak="true"/>
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+			</l:Grid>
+		</l:VerticalLayout>
+
+		<FormattedText
+				htmlText="&lt;pre&gt;defaultSpan: XL4 L4 M4 S4&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin sapUiLargeMarginTop">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="Grid children will be 4 columns wide on all screen sizes for demo purposes."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="The middle child will cause a linebreak only on M screens."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					defaultSpan="XL4 L4 M4 S4">
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+								&lt;p&gt;linebreakM: true&lt;/p&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData
+								linebreakM="true"/>
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+
+		<!--											-->
+		<!--  			VISIBILITY DEMOS				-->
+		<!-- 											-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Visibility"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin sapUiLargeMarginTop"
+				text="This example shows three children, the middle of which is hidden.
+						When it disappears from the screen, the next child will take it's place"
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true">
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+									&lt;div class=&quot;propertiesDisplay&quot;&gt;
+										&lt;p&gt;visibleS: false&lt;/p&gt;
+										&lt;p&gt;visibleM: false&lt;/p&gt;
+										&lt;p&gt;visibleL: false&lt;/p&gt;
+										&lt;p&gt;visibleXL: false&lt;/p&gt;
+									&lt;/div&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData
+								visibleS="false"
+								visibleM="false"
+								visibleL="false"
+								visibleXL="false"/>
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+			</l:Grid>
+		</l:VerticalLayout>
+
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin sapUiLargeMarginTop"
+				text="The children will be hidden one by one while the screen size gets smaller."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true">
+				<core:HTML content="&lt;div class=&quot;exampleDiv&quot;&gt;&lt;/div&gt;" />
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+								&lt;p&gt;visibleS: false&lt;/p&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData
+								visibleS="false"/>
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+									&lt;div class=&quot;propertiesDisplay&quot;&gt;
+										&lt;p&gt;visibleS: false&lt;/p&gt;
+										&lt;p&gt;visibleM: false&lt;/p&gt;
+									&lt;/div&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData
+								visibleS="false"
+								visibleM="false"/>
+					</core:layoutData>
+				</core:HTML>
+				<core:HTML
+						content="&lt;div class=&quot;exampleDiv&quot;&gt;
+									&lt;div class=&quot;propertiesDisplay&quot;&gt;
+										&lt;p&gt;visibleS: false&lt;/p&gt;
+										&lt;p&gt;visibleM: false&lt;/p&gt;
+										&lt;p&gt;visibleL: false&lt;/p&gt;
+									&lt;/div&gt;
+								&lt;/div&gt;">
+					<core:layoutData>
+						<l:GridData
+								visibleS="false"
+								visibleM="false"
+								visibleL="false"/>
+					</core:layoutData>
+				</core:HTML>
+			</l:Grid>
+		</l:VerticalLayout>
+	</l:VerticalLayout>
+</mvc:View>

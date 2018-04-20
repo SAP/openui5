@@ -3,9 +3,9 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m">
 	<MessagePage showHeader="false"
-				 text="Warning (this is a sample)"
+				 text="Your browser can't load this page properly."
 				 enableFormattedText="true"
-				 description="This page might not behave as expected because your browser isn't &lt;em&gt;&lt;u&gt;configured to load unsigned&lt;/u&gt;&lt;/em&gt; third party controls. Allow this page to install an unsigned control? &lt;em&gt;&lt;strong&gt;Doing so from untrusted sources&lt;/strong&gt; may harm your computer.&lt;/em&gt; &lt;a target='_self'&gt;Learn more&lt;/a&gt;&lt;ul&gt;&lt;li&gt;Your current security settings prohibit running third party controls on this page, or&lt;/li&gt;&lt;li&gt;You have blocked a publisher of one of the controls.&lt;/li&gt;&lt;li&gt;Learn about using third party controls &lt;a target='_self'&gt;here&lt;/a&gt;.&lt;/li&gt;&lt;/ul&gt;"
+				 description="This page might not behave as expected because your browser isn't configured to load unsigned &lt;a target='_self' &gt;third-party controls&lt;/a&gt;.&lt;br&gt;&lt;br&gt;Possible reasons:&lt;ul&gt;&lt;li&gt;Your current security settings prohibit running third party controls on this page.&lt;/li&gt;&lt;li&gt;You have blocked a publisher of one of the controls.&lt;/li&gt;&lt;/ul&gt;You can change your security settings to allow unsigned controls.However, &lt;strong&gt;installing unsigned controls from untrusted sources may harm your computer&lt;/strong&gt;."
 				 icon="sap-icon://message-warning">
 		<buttons>
 			<Button text="Change security settings"/>

@@ -83,6 +83,7 @@ sap.ui.define(['jquery.sap.global', './CustomStyleClassSupport', './Element', '.
 				 * <code>sap.ui.core.BusyIndicatorSize.Auto</code> option could be used.
 				 * The default is set to <code>sap.ui.core.BusyIndicatorSize.Medium</code>
 				 * For a full screen BusyIndicator use <code>sap.ui.core.BusyIndicatorSize.Large</code>.
+				 * @since 1.54
 				 */
 				"busyIndicatorSize" : {type: "sap.ui.core.BusyIndicatorSize", defaultValue: 'Medium'},
 

@@ -22,7 +22,6 @@ sap.ui.require([
 	QUnit.module("Given that an ElementDesignTimeMetadata is created for a control", {
 		beforeEach : function() {
 			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
-				libraryName : "fake.lib",
 				data : {
 					name : {
 						singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
@@ -62,11 +61,11 @@ sap.ui.require([
 								return {
 									singular : function(){
 										//fake own resource bundle handling
-										return "I18N_KEY" + oElement;
+										return "I18N_KEY" + oElement.getText();
 									},
 									plural :  function(){
 										//fake own resource bundle handling
-										return "I18N_KEY_PLURAL" + oElement;
+										return "I18N_KEY_PLURAL" + oElement.getText();
 									}
 								};
 							}
@@ -99,7 +98,6 @@ sap.ui.require([
 	QUnit.test("when creating aggregation dt metadata", function(assert){
 		var oAggregationDesignTimeMetadata = this.oElementDesignTimeMetadata.createAggregationDesignTimeMetadata({testData: "TestData"});
 		assert.equal(oAggregationDesignTimeMetadata.getMetadata().getName(), "sap.ui.dt.AggregationDesignTimeMetadata", "then aggregation designtime metadata class is created");
-		assert.equal(oAggregationDesignTimeMetadata.getLibraryName(), "fake.lib", "then the elements libraryName is passed to the AggregationDesignTimeMetadata");
 	});
 
 	QUnit.test("when getActionDataFromAggregations is called", function(assert) {
@@ -112,32 +110,46 @@ sap.ui.require([
 		assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action4", {name:"fourthChangeType"}, ["foo", "bar"]), [{changeType : "fourthChangeTypefoobar", aggregation : "testAggregation"}], "for function action with parameters , the correct object is returned");
 	});
 
-	QUnit.test("when getAggregationText is called", function(assert) {
+	QUnit.test("when getAggregationDescription is called", function(assert) {
+		var oFakeElement = {
+			getMetadata : sandbox.stub().returns({
+				getLibraryName : sandbox.stub().returns("fakeLibrary"),
+				getParent : sandbox.stub().returns(undefined)
+			}),
+			getText : sandbox.stub().returns("simulateElement")
+		};
 		var oFakeLibBundle = {
 			getText : sandbox.stub().returnsArg(0), //just return i18n keys
 			hasText : sandbox.stub().returns(false)
 		};
 		sandbox.stub(Core,"getLibraryResourceBundle").returns(oFakeLibBundle);
 
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation"), {
+		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation", oFakeElement), {
 			singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 			plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 		}, "then the translated texts are returned for static keys");
-		assert.notOk(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation2"), "then undefined is returned missing childNames");
-		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation3", "simulateElement"), {
+		assert.notOk(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation2", oFakeElement), "then undefined is returned missing childNames");
+		assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation3", oFakeElement, "simulateElement"), {
 			singular : "I18N_KEYsimulateElement",
 			plural :  "I18N_KEY_PLURALsimulateElement"
 		}, "then the translated texts are returned for variable texts/keys");
 	});
 
 	QUnit.test("when getText is called", function(assert) {
+		var oFakeElement = {
+			getMetadata : sandbox.stub().returns({
+				getLibraryName : sandbox.stub().returns("fakeLibrary"),
+				getParent : sandbox.stub().returns(undefined)
+			})
+		};
+
 		var oFakeLibBundle = {
 			getText : sandbox.stub().returnsArg(0), //just return i18n keys
 			hasText : sandbox.stub().returns(false)
 		};
 		sandbox.stub(sap.ui.getCore(),"getLibraryResourceBundle").returns(oFakeLibBundle);
 
-		assert.deepEqual(this.oElementDesignTimeMetadata.getName(), {
+		assert.deepEqual(this.oElementDesignTimeMetadata.getName(oFakeElement), {
 			singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 			plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 		}, "then the translated texts are returned for static keys");

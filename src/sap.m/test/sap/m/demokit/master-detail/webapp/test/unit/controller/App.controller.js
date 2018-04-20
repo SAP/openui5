@@ -33,7 +33,10 @@ sap.ui.define([
 				then : jQuery.noop
 			};
 		};
-		oComponentStub.setModel(oODataModelStub);
+		oODataModelStub.attachMetadataFailed = function () {
+			jQuery.noop();
+        };
+        oComponentStub.setModel(oODataModelStub);
 
 		// System under Test
 		var oAppController = new AppController();

@@ -82,6 +82,8 @@
 				"since" : "1.12",
 				"formFactors" : "-",
 				"samples" : [
+				  	"sap.ui.layout.sample.GridProperties",
+				  	"sap.ui.layout.sample.GridData",
 					"sap.ui.layout.sample.GridInfo",
 					"sap.ui.layout.sample.GridTasks",
 					"sap.ui.layout.sample.GridTiles",
@@ -310,6 +312,16 @@
 			  "id": "sap.ui.layout.sample.FixFlexMinFlexSize",
 			  "name": "Fix Flex - Vertical Direction with minFlexSize",
 			  "description": "Shows a FixFlex control where the minFlexSize is set to 400px."
+			},
+		  	{
+			  "id": "sap.ui.layout.sample.GridProperties",
+			  "name": "Grid - Own properties",
+			  "description": "You can see how the different properties of the sap.ui.layout.Grid affect it's final appearance."
+			},
+			{
+			  "id": "sap.ui.layout.sample.GridData",
+			  "name": "Grid - Using GridData",
+			  "description": "Take advantage of sap.ui.layout.GridData to control individual Grid children."
 			},
 			{
 				"id": "sap.ui.layout.sample.GridInfo",

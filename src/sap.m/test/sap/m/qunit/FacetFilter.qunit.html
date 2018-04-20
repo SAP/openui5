@@ -3932,6 +3932,35 @@
 			});
 		});
 
+		//BCP: 144850 / 2018
+		QUnit.test("Do not update selectedKeys cache in a non-growing list when filtering", function(assert) {
+			//arrange
+			var oFF = oSCHelper.createFFWithModel(true);
+			var oFFL = oFF.getLists()[0];
+
+			oFF.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			//act
+			oFFL._search("Val1", true);
+			sap.ui.getCore().applyChanges();
+
+			oFFL.getItems()[0].setSelected(true);
+			sap.ui.getCore().applyChanges();
+
+			oFFL._search("Val3", true);
+			sap.ui.getCore().applyChanges();
+
+			oFFL.getItems()[0].setSelected(true);
+			sap.ui.getCore().applyChanges();
+
+			//assert
+			assert.equal(oFF._getSelectedItemsText(oFFL).join(","), "Val3,Val1", "Summary text is correct");
+
+			//clean
+			destroyFF(oFF);
+		});
+
 		QUnit.test("'All' checkbox to be unchecked when items are preselected and model is assigned later", function(assert) {
 			var done = assert.async();
 			var oFF = oSCHelper.createFFWithBinding();

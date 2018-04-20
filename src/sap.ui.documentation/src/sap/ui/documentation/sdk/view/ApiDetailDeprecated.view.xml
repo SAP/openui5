@@ -44,8 +44,7 @@
                                                     showIcon="false"
                                                     sender="{parts : [{path : 'deprecatedAPIs>control'}, {path : 'deprecatedAPIs>entityName'}, {path: 'deprecatedAPIs>type'}],
                                                               formatter : '.formatSenderLink'}"
-                                                    text="{parts : [{path : 'deprecatedAPIs>text'}, {path : 'deprecatedAPIs>since'}],
-                                                           formatter: '.formatDescription'}"
+                                                    text="{path : 'deprecatedAPIs>text', formatter: '.formatDescription'}"
                                                     app:control="{deprecatedAPIs>control}"
                                                     app:entity="{deprecatedAPIs>entityName}"
                                                     app:type="{deprecatedAPIs>type}"

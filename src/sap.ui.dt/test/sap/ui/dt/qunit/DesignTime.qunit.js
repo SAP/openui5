@@ -39,7 +39,7 @@ function(
 	DesignTime,
 	ElementUtil,
 	TabHandling,
-	ContextMenu,
+	ContextMenuPlugin,
 	DragDrop,
 	ElementDesignTimeMetadata,
 	Util,
@@ -78,7 +78,7 @@ function(
 
 				assert.ok(OverlayRegistry.getOverlay(this.oButton), "overlay for button exists");
 				var oButtonDTMetadata = OverlayRegistry.getOverlay(this.oButton).getDesignTimeMetadata();
-				assert.equal(oButtonDTMetadata.getLibraryName(), "sap.m", "the DesignTimeMetadata containing the libraryName");
+				assert.ok(oButtonDTMetadata, "the DesignTimeMetadata is available");
 
 				fnDone();
 			}.bind(this));
@@ -344,7 +344,7 @@ function(
 
 		QUnit.test("when plugins are inserted and removed", function(assert) {
 			var oTabHandlingPlugin = new TabHandling();
-			var oContextMenuPlugin = new ContextMenu();
+			var oContextMenuPlugin = new ContextMenuPlugin();
 			var oDragDropPlugin = new DragDrop();
 
 			assert.equal(this.oDesignTime.getPlugins().length, 0, "initially there are no plugins on the design time");

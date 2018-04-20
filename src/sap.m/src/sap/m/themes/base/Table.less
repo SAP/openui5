@@ -253,32 +253,86 @@ html[data-sap-ui-browser='ie11'] .sapMListTblHighlightCell > .sapMLIBHighlight {
 	background-clip: padding-box;
 }
 
-/* table sticky column headers */
-/* to make the focus oultine borders visible on the left and right */
-.sapMTableStickyColHdrTH {
-	padding: 0 1px;
-}
-
-.sapMTableStickyColHdrTR .sapMListTblHeader,
-.sapMTableStickyColHdrTH .sapMTableTH {
+/* sticky headerToolbar, infoToolbar and column headers */
+.sapMSticky > .sapMListHdr,
+.sapMSticky > .sapMListInfoTBar,
+.sapMSticky .sapMTableTH {
 	position: sticky;
 	position: -webkit-sticky;
+}
+
+.sapMSticky > .sapMListHdr {
+	z-index: 3;
+}
+
+.sapMSticky > .sapMListInfoTBar {
+	z-index: 2;
+}
+
+.sapMSticky .sapMTableTH {
+	z-index: 1;
+}
+
+/* .sapMSticky7 denotes that the headerToolbar, infoToolbar and column headers are sticky */
+/* .sapMSticky6 denotes that the infoToolbar and column headers are sticky */
+/* .sapMSticky5 denotes that the headerToolbar and column headers are sticky */
+/* .sapMSticky4 denotes that only the column headers are sticky */
+/* .sapMSticky3 denotes that the headerToolbar/headerText and the infoToolbar are sticky */
+/* .sapMSticky2 denotes that only the infoToolbar is sticky */
+/* .sapMSticky1 denotes that only the headerToolbar/headerText is sticky */
+/* top: 0 sticky conditions */
+.sapMSticky1 > .sapMListHdr,
+.sapMSticky2 > .sapMListInfoTBar,
+.sapMSticky3 > .sapMListHdr,
+.sapMSticky4 .sapMTableTH,
+.sapMSticky5 > .sapMListHdr,
+.sapMSticky6 > .sapMListInfoTBar,
+.sapMSticky7 > .sapMListHdr {
 	top: 0;
+}
+
+/* top: 2rem sticky conditions */
+.sapMSticky6 .sapMTableTH {
+	top: 2rem;
+}
+
+/* top: 3rem sticky conditions */
+.sapMSticky3 > .sapMListInfoTBar,
+.sapMSticky5 .sapMTableTH,
+.sapMSticky7 > .sapMListInfoTBar,
+.sapMSticky7 > .sapMListInfoTBar {
+	top: 3rem;
+}
+
+/* top: 5rem conditions */
+.sapMSticky7 .sapMTableTH {
+	top: 5rem;
+}
+
+/* to make the focus outline visible on the all sides */
+.sapMSticky > .sapMListTbl {
+	padding: 1px 1px 0 1px;
+}
+
+/* sticky headerToolbar/headerText background color when toolbar is transparent */
+.sapMSticky > .sapMTB-Transparent-CTX,
+.sapMSticky > .sapMListHdrText {
+	background: @sapUiListHeaderBackground;
+}
+
+/* busyIndicator should not overlapped by the sticky elements */
+.sapMSticky > .sapUiLocalBusyIndicator {
+	z-index: 3;
+}
+
+/* busyIndicator should not block the toolbars if <table> is set busy */
+.sapMSticky > .sapMListTbl > .sapUiLocalBusyIndicator {
 	z-index: 1;
 }
 
-/* the focus borders are overlapped by the th elements, */
-/* hence to make the focus outline border visible, the below style needs to be applied */
-.sapMTableStickyColHdrTH .sapMListTblHeader:focus {
+/* make the focus outline border visible on all sides of the column header row */
+.sapMSticky .sapMListTblHeader:focus {
 	outline-offset: 0;
-}
-
-/* busyIndicator should not overlapped by the sticky column headers */
-.sapMTableStickyColHdrTR ~ .sapUiLocalBusyIndicator,
-.sapMTableStickyColHdrTR > .sapUiLocalBusyIndicator,
-.sapMTableStickyColHdrTH ~ .sapUiLocalBusyIndicator,
-.sapMTableStickyColHdrTH > .sapUiLocalBusyIndicator {
-	z-index: 1;
 }
 
 /* table footer */

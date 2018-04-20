@@ -3,7 +3,7 @@
  */
 
 /**
- * Provides Unicode related functionalities. This module is not public, as the feature may only be temporarily and
+ * Provides Unicode related functionality. This module is not public, as the feature may only be temporarily and
  * could removed as soon as the thirdparty lib unorm offers a quickcheck for normalization forms.
  *
  * <strong>Note</strong>: This module does not support mobile browsers

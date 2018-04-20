@@ -132,6 +132,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 					"xx-nosync"             : { type : "string",   defaultValue : "" },
 					"xx-waitForTheme"       : { type : "boolean",  defaultValue : false},
 					"xx-xml-processing"     : { type : "string",  defaultValue : "" },
+					"xx-avoidAriaApplicationRole" : { type : "boolean",  defaultValue : false}, // Avoid ACC role 'application'
 					"statistics"            : { type : "boolean",  defaultValue : false }
 			};
 
@@ -798,7 +799,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Returns the calendar type which is being used in locale dependent functionalities.
+		 * Returns the calendar type which is being used in locale dependent functionality.
 		 *
 		 * When it's explicitly set by calling <code>setCalendar</code>, the set calendar type is returned.
 		 * Otherwise, the calendar type is determined by checking the format settings and current locale.
@@ -846,7 +847,7 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		},
 
 		/**
-		 * Sets the new calendar type to be used from now on in locale dependent functionalities (for example,
+		 * Sets the new calendar type to be used from now on in locale dependent functionality (for example,
 		 * formatting, translation texts, etc.).
 		 *
 		 * @param {sap.ui.core.CalendarType|null} sCalendarType the new calendar type. Set it with null to clear the calendar type
@@ -955,6 +956,13 @@ sap.ui.define(['jquery.sap.global', '../Device', '../Global', '../base/Object', 
 		 */
 		getAutoAriaBodyRole : function () {
 			return this.autoAriaBodyRole;
+		},
+
+		/**
+		 * @experimental
+		 */
+		getAvoidAriaApplicationRole : function() {
+			return this.getAutoAriaBodyRole() && this["xx-avoidAriaApplicationRole"];
 		},
 
 		/**

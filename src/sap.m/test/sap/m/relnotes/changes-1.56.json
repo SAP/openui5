@@ -872,6 +872,54 @@
         "type": "FIX",
         "text": " sap.m.TabStrip: do not create global CustomSelectList and CustomSelect",
         "references": []
+      },
+      {
+        "id": "db1973f3f189a79523e5d44decaca466ec12a7ed",
+        "type": "FEATURE",
+        "text": " sap.m.TableSelectDialog: New property growing added",
+        "references": []
+      },
+      {
+        "id": "d17fdac9dbc1fc0b58b2346972b36638e00981c6",
+        "type": "FEATURE",
+        "text": " sap.ui.core.dnd: dragEnd and dragOver events are added",
+        "references": []
+      },
+      {
+        "id": "23cc26f9f295758cef1b61893bd84068d1d59d9c",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: fix failing unit tests",
+        "references": []
+      },
+      {
+        "id": "53a897d9c5f5ba0cd229183f2c0937e73ff9a4da",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Summary text is correct when a list is filtered",
+        "references": []
+      },
+      {
+        "id": "11fb3a56304d787c877312676f209d75181b11db",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix failing unit test on combi devices",
+        "references": []
+      },
+      {
+        "id": "0906a553058d1171d34ba3595cb84f2bd84361c9",
+        "type": "FIX",
+        "text": " sap.m.TabContainer: Selected items are correct after closing or removing items",
+        "references": []
+      },
+      {
+        "id": "7ab3d91ec07ab4f90434e2023ff6969031a92fc7",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: In compact mode zoomed out sliders are aligned",
+        "references": []
+      },
+      {
+        "id": "7f6c88313b716e9c41648dfaf6b2b07ed0e3317e",
+        "type": "FIX",
+        "text": " sap.m.semantic.SelectConfiguration: Role overriding removed",
+        "references": []
       }
     ]
   }

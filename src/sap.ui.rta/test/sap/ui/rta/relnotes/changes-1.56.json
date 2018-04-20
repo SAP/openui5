@@ -121,6 +121,18 @@
         "type": "FIX",
         "text": " sap.ui.rta - Performance test fix",
         "references": []
+      },
+      {
+        "id": "eb6e8a23450b47097826583f48825986efabe5d5",
+        "type": "FIX",
+        "text": " Rename and move API for Control Personalization",
+        "references": []
+      },
+      {
+        "id": "4f1c6d67dc13346a4ced9abfc0d87fde43ae929c",
+        "type": "FIX",
+        "text": "sap.ui.rta - Retrieve control name with inter-library inheritance",
+        "references": []
       }
     ]
   }

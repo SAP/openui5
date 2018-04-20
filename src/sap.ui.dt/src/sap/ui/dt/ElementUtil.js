@@ -376,6 +376,7 @@ function(
 	 * @return {String|undefined} label string or undefined when no label can be extracted
 	 */
 	ElementUtil.getLabelForElement = function(oElement, fnFunction) {
+
 		if (!ElementUtil.isElementValid(oElement)) {
 			throw Util.createError("ElementUtil#getLabelForElement", "A valid managed object instance should be passed as parameter", "sap.ui.dt");
 		}
@@ -384,20 +385,24 @@ function(
 			return fnFunction(oElement);
 		} else {
 
-			var vFieldLabel = (
-				typeof oElement.getText === "function" && oElement.getText()
-				|| typeof oElement.getLabelText === "function" && oElement.getLabelText()
-				|| typeof oElement.getLabel === "function" && oElement.getLabel()
-				|| typeof oElement.getTitle === "function" && oElement.getTitle()
-				|| typeof oElement.getId === "function" && oElement.getId()
+			var fnCalculateLabel = function(oElement) {
+
+				var vFieldLabel = (
+					typeof oElement.getText === "function" && oElement.getText()
+					|| typeof oElement.getLabelText === "function" && oElement.getLabelText()
+					|| typeof oElement.getLabel === "function" && oElement.getLabel()
+					|| typeof oElement.getTitle === "function" && oElement.getTitle()
+					|| typeof oElement.getHeading === "function" && oElement.getHeading()
 				);
 
-			// to check getLabel().getText()
-			if (vFieldLabel instanceof Element && typeof vFieldLabel.getText === "function") {
-				return vFieldLabel.getText();
-			} else {
-				return vFieldLabel;
-			}
+				if (ElementUtil.isElementValid(vFieldLabel)) {
+					return fnCalculateLabel(vFieldLabel);
+				} else {
+					return vFieldLabel;
+				}
+			};
+			var vCalculatedLabel = fnCalculateLabel(oElement);
+			return typeof vCalculatedLabel !== "string" ? oElement.getId() : vCalculatedLabel;
 		}
 	};
 

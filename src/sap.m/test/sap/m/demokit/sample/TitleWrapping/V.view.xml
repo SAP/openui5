@@ -1,9 +1,7 @@
-<mvc:View xmlns:core="sap.ui.core"
-		  xmlns:mvc="sap.ui.core.mvc"
+<mvc:View xmlns:mvc="sap.ui.core.mvc"
 		  xmlns="sap.m"
 		  xmlns:f="sap.ui.layout.form"
-		  xmlns:l="sap.ui.layout"
-		  controllerName="sap.m.sample.TitleWrapping.V"
+		  controllerName="sap.m.sample.TitleWrapping.C"
 		  displayBlock="true">
 	<f:SimpleForm
 			layout="ResponsiveGridLayout"
@@ -29,9 +27,9 @@
 	</f:SimpleForm>
 	<Panel id="containerLayout"
 		   headerText="Rendered Title in container"
-		   width="70%">
+		   width="100%">
 		<Title id="WrappingTitle"
 			   wrapping="true"
-			   text="The Persecution and Assassination of Jean-Paul Marat as Performed by the Inmates of the Asylum of Charenton Under the Direction of the Marquis de Sade."/>
+			   text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."/>
 	</Panel>
 </mvc:View>

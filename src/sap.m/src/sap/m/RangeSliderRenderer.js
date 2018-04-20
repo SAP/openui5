@@ -40,6 +40,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
         var fValue,
             aRange = oControl.getRange(),
             bEnabled = oControl.getEnabled(),
+            oHandleTooltip = oControl._mHandleTooltip[mOptions.position].tooltip,
             bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
         oRM.write("<span");
@@ -53,8 +54,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
             oRM.writeAttribute("data-range-val", mOptions.position);
             oRM.writeAttribute("aria-labelledby", (mOptions.forwardedLabels + " " + oControl._mHandleTooltip[mOptions.position].label.getId()).trim());
 
-            if (oControl.getInputsAsTooltips()) {
-                oRM.writeAttribute("aria-controls", oControl._mHandleTooltip[mOptions.position].tooltip.getId());
+            if (oControl.getInputsAsTooltips() && oHandleTooltip) {
+                oRM.writeAttribute("aria-controls", oHandleTooltip.getId());
             }
         }
         if (oControl.getShowHandleTooltip()) {

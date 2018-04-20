@@ -21,6 +21,9 @@
 <script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 <script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 <script>
+	if (window.blanket) {
+		blanket.options("sap-ui-cover-only", /sap\/m\/GenericTile.*/);
+	}
 	jQuery.sap.require("sap.m.GenericTile");
 	QUnit.config.autostart = false;
 

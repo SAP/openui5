@@ -4,6 +4,7 @@
 
 //Provides control sap.ui.unified.PlanningCalendarRow.
 sap.ui.define(['jquery.sap.global',
+		'sap/ui/Device',
 		'sap/ui/core/Element',
 		'sap/ui/core/Control',
 		'./StandardListItem',
@@ -19,7 +20,7 @@ sap.ui.define(['jquery.sap.global',
 		'sap/ui/core/dnd/DragInfo',
 		'sap/ui/core/dnd/DropInfo',
 		'sap/ui/core/dnd/DragDropInfo'],
-	function (jQuery, Element, Control, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary, DateRange,
+	function (jQuery, Device, Element, Control, StandardListItem, StandardListItemRenderer, Renderer, library, unifiedLibrary, DateRange,
 			  CalendarRow, CalendarRowRenderer, ColumnListItem, ColumnListItemRenderer, DragInfo, DropInfo, DragDropInfo) {
 	"use strict";
 
@@ -226,7 +227,12 @@ sap.ui.define(['jquery.sap.global',
 					/**
 					 * The row of the appointment.
 					 */
-					calendarRow : {type : "sap.m.PlanningCalendarRow"}
+					calendarRow : {type : "sap.m.PlanningCalendarRow"},
+
+					/**
+					 * The drop type. If true - it's "Copy", if false - it's "Move".
+					 */
+					copy : {type : "boolean"}
 				}
 			},
 
@@ -598,7 +604,9 @@ sap.ui.define(['jquery.sap.global',
 					sIntervalType = oCalendarRow.getIntervalType(),
 					oRowStartDate = oCalendarRow.getStartDate(),
 					iIndex = oCalendarRow.indexOfAggregation("_intervalPlaceholders", oDragSession.getDropControl()),
-					newPos;
+					newPos,
+					oBrowserEvent = oEvent.getParameter("browserEvent"),
+					bCopy = (oBrowserEvent.metaKey || oBrowserEvent.ctrlKey);
 
 				if (sIntervalType === CalendarIntervalType.Hour) {
 					newPos = this._calcNewHoursAppPos(oRowStartDate, oAppointment.getStartDate(), oAppointment.getEndDate(), iIndex);
@@ -624,7 +632,8 @@ sap.ui.define(['jquery.sap.global',
 					appointment: oAppointment,
 					startDate: newPos.startDate,
 					endDate: newPos.endDate,
-					calendarRow: oCalendarRow._oPlanningCalendarRow
+					calendarRow: oCalendarRow._oPlanningCalendarRow,
+					copy: bCopy
 				});
 			}.bind(this)
 		}));
@@ -656,7 +665,7 @@ sap.ui.define(['jquery.sap.global',
 		var oStartDate = new Date(oRowStartDate);
 
 		oStartDate.setMonth(oStartDate.getMonth() + iIndex);
-		oStartDate = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate(), oAppStartDate.getHours(), oAppStartDate.getMinutes(), oAppStartDate.getSeconds());
+		oStartDate = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oAppStartDate.getDate(), oAppStartDate.getHours(), oAppStartDate.getMinutes(), oAppStartDate.getSeconds());
 
 		return {
 			startDate: oStartDate,
@@ -684,12 +693,12 @@ sap.ui.define(['jquery.sap.global',
 		var oEndDate = new Date(oRowStartDate),
 			iNewEndDate = oEndDate.getDate() + iIndex + 1;
 
-		if (iNewEndDate <= oAppEndDate.getDate()) {
+		if (iNewEndDate <= oAppStartDate.getDate()) {
 			iNewEndDate = oAppStartDate.getDate() + 1;
 		}
 
 		oEndDate.setDate(iNewEndDate);
-		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate(), 0, 0, 0);
+		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), oEndDate.getDate());
 
 		return {
 			startDate: oAppStartDate,
@@ -701,12 +710,12 @@ sap.ui.define(['jquery.sap.global',
 		var oEndDate = new Date(oRowStartDate),
 			iNewEndMonth = oEndDate.getMonth() + iIndex + 1;
 
-		if (iNewEndMonth <= oAppEndDate.getMonth()) {
+		if (iNewEndMonth <= oAppStartDate.getMonth()) {
 			iNewEndMonth = oAppStartDate.getMonth() + 1;
 		}
 
 		oEndDate.setMonth(iNewEndMonth);
-		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), 1, 0, 0, 0);
+		oEndDate = new Date(oEndDate.getFullYear(), oEndDate.getMonth(), 1);
 
 		return {
 			startDate: oAppStartDate,
@@ -1092,7 +1101,9 @@ sap.ui.define(['jquery.sap.global',
 						});
 					});
 
-					oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+					if (!Device.browser.msie && !Device.browser.edge) {
+						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+					}
 				},
 
 				/**

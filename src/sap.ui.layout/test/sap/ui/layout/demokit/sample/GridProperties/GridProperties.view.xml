@@ -1,0 +1,415 @@
+<mvc:View
+		xmlns="sap.m"
+		xmlns:l="sap.ui.layout"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:html="http://www.w3.org/1999/xhtml"
+		controllerName="sap.ui.layout.sample.GridProperties.GridProperties">
+
+	<l:VerticalLayout
+			width="100%">
+
+		<MessageStrip
+				class="sapUiTinyMargin"
+				text="Use the sliders to resize the grids and observe their behaviour."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+
+
+		<!--								-->
+		<!--		SIZING DEMOS			-->
+		<!-- 								-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Children's size"
+				class="sapUiMediumMarginTopBottom sapUiSmallMarginBegin"/>
+
+		<FormattedText
+				htmlText="&lt;pre&gt;defaultSpan: XL3 L3 M6 S12 (Default)&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="Each child should take 3 columns on extra large and large screens, 6 on medium and 12 on small ones."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+		<FormattedText
+				htmlText="&lt;pre&gt;defaultSpan: XL2 L4&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin sapUiMediumMarginTop">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="Modify children's size for only XL and L screens."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					defaultSpan="XL2 L4">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+		<!--								-->
+		<!--		EMPTY COLUMNS DEMOS		-->
+		<!-- 								-->
+
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Empty columns before each child"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<FormattedText
+				htmlText="&lt;pre&gt;defaultIndent: L1 M4 S6&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiSmallMarginBottom sapUiSmallMarginBegin"
+				text="Insert 1 empty column before each child on XL and L screens, 4 on medium and 6 on small ones."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<FormattedText
+				htmlText="&lt;pre&gt;defaultSpan: L6 M6 S6&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="For demo purposes children take 6 columns on all screens."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					defaultIndent="L1 M4 S6"
+					defaultSpan="L6 M6 S6">
+				<html:div class="exampleDiv"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+		<FormattedText
+				htmlText="&lt;pre&gt;defaultIndent: L1 M3&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin sapUiMediumMarginTop">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiSmallMarginBottom sapUiSmallMarginBegin"
+				text="Insert 1 empty column on larger screens and 3 on medium ones."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<FormattedText
+				htmlText="&lt;pre&gt;defaultSpan: L3 M3 S3&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="For demo purposes, children take 3 columns on all screens."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					defaultIndent="L1 M3"
+					defaultSpan="L3 M3 S3">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+		<!--								-->
+		<!--	HORIZONTAL SPACING DEMOS	-->
+		<!-- 								-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Horizontal Spacing"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<FormattedText
+				htmlText="&lt;pre&gt;hSpacing: 0&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="Removes any horizontal spacing between children."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					hSpacing="0">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv contrastColor"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv contrastColor"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+		<FormattedText
+				htmlText="&lt;pre&gt;hSpacing: 2&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin sapUiMediumMarginTop">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="Increase the horizontal spacing between children."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					hSpacing="2">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+		<!--								-->
+		<!--	VERTICAL SPACING DEMOS		-->
+		<!-- 								-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Vertical Spacing"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<FormattedText
+				htmlText="&lt;pre&gt;vSpacing: 0&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiSmallMarginBottom sapUiSmallMarginBegin"
+				text="Removes any vertical spacing between children."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<FormattedText
+				htmlText="&lt;pre&gt;defaultSpan: L12 M12 S12&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="For demo purposes, children take 12 columns on all screen sizes."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					vSpacing="0"
+					defaultSpan="L12 M12 S12">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv contrastColor"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+		<FormattedText
+				htmlText="&lt;pre&gt;vSpacing: 2&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin sapUiMediumMarginTop">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiSmallMarginBottom sapUiSmallMarginBegin"
+				text="Increase the vertical spacing between children."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<FormattedText
+				htmlText="&lt;pre&gt;defaultSpan: L12 M12 S12&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="For demo purposes, children take 12 columns on all screen sizes."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					vSpacing="2"
+					defaultSpan="L12 M12 S12">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+		<!--								-->
+		<!--		WIDTH DEMOS				-->
+		<!-- 								-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Explicit width"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<FormattedText
+				htmlText="&lt;pre&gt;width: 65%&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="The grid's width will be 65% of the parent container."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					width="65%">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+
+		<!--								-->
+		<!--		POSITIONING DEMOS		-->
+		<!-- 								-->
+
+		<Title
+				level="H1"
+				titleStyle="H1"
+				text="Positioning"
+				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
+		<FormattedText
+				htmlText="&lt;pre&gt;position: Right&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiSmallMarginBottom sapUiSmallMarginBegin"
+				text="The grid will be located on the right of the screen."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<FormattedText
+				htmlText="&lt;pre&gt;width: 65%&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="For demo purposes, the grid's width will be only 65%."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					position="Right"
+					width="65%">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+		<FormattedText
+				htmlText="&lt;pre&gt;position: Center&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin sapUiMediumMarginTop">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiSmallMarginBottom sapUiSmallMarginBegin"
+				text="The grid will be in the center of the screen."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<FormattedText
+				htmlText="&lt;pre&gt;width: 65%&lt;/pre&gt;"
+				class="sapUiSmallMarginBegin">
+		</FormattedText>
+		<MessageStrip
+				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
+				text="For demo purposes, the grid's width will be only 65%."
+				type="Information"
+				showIcon="true">
+		</MessageStrip>
+		<Slider value="100" liveChange="onSliderMoved" class="sapUiSmallMarginBottom"/>
+
+		<l:VerticalLayout
+				width="100%"
+				class="gridWrapper">
+			<l:Grid
+					containerQuery="true"
+					position="Center"
+					width="65%">
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+				<html:div class="exampleDiv"></html:div>
+			</l:Grid>
+		</l:VerticalLayout>
+
+	</l:VerticalLayout>
+</mvc:View>

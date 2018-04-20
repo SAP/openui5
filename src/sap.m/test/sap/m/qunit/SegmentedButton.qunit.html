@@ -3127,7 +3127,41 @@
 		oSB.destroy();
 
 		// Assert
-		assert.strictEqual(this.oSBI.oButton.bIsDestroyed, true, "The internal button should be marked for destruction");
+		assert.strictEqual(this.oSBI.oButton, null, "The internal button should be destroyed");
+	});
+
+	QUnit.test("destroyItems should destroy internal buttons created from the SegmentedButtonItem", function (assert) {
+		// Arrange
+		var oSegmentedButtonItem = new sap.m.SegmentedButtonItem(),
+			oButtonDestroySpy = this.spy(oSegmentedButtonItem.oButton, "destroy"),
+			oSB = new sap.m.SegmentedButton({ items: oSegmentedButtonItem }).placeAt("qunit-fixture");
+
+		// Act
+		oSB.destroyItems();
+
+		// Assert
+		assert.equal(oButtonDestroySpy.callCount, 1, "internal button should be destroyed");
+
+		// Cleanup
+		oSB.destroy();
+		oButtonDestroySpy.restore();
+	});
+
+	QUnit.test("destroyItems should destroy internal buttons and adding item with the same ID should not throw an exception", function (assert) {
+		// Arrange
+		var sSegmentedButtonId = "testId",
+			oSegmentedButtonItem = new sap.m.SegmentedButtonItem(sSegmentedButtonId),
+			oSB = new sap.m.SegmentedButton({ items: oSegmentedButtonItem });
+
+		// Act
+		oSB.destroyItems();
+		oSB.addItem(new sap.m.SegmentedButtonItem(sSegmentedButtonId));
+
+		// Assert
+		assert.ok(true, "no dublicate id exception is thrown");
+
+		// Cleanup
+		oSB.destroy();
 	});
 
 	QUnit.module("sap.ui.core.CustomData and 'items' aggregation", {

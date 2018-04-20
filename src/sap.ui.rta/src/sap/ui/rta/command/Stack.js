@@ -2,9 +2,19 @@
  * ${copyright}
  */
 sap.ui.define([
-	'sap/ui/base/ManagedObject'
+	'sap/ui/base/ManagedObject',
+	'sap/ui/fl/ChangePersistenceFactory',
+	'sap/ui/fl/Utils',
+	'sap/ui/rta/command/Settings',
+	'sap/ui/rta/command/CompositeCommand',
+	'sap/ui/rta/ControlTreeModifier'
 ], function(
-	ManagedObject
+	ManagedObject,
+	ChangePersistenceFactory,
+	FlUtils,
+	Settings,
+	CompositeCommand,
+	ControlTreeModifier
 ) {
 	"use strict";
 
@@ -40,10 +50,65 @@ sap.ui.define([
 						undo: {type: "boolean"}
 					}
 				}
-
 			}
 		}
 	});
+
+	/**
+	 * Creates a stack prefilled with Settings commands. Every command contains a change from the given file name list
+	 *
+	 * @param {sap.ui.base.ManagedObject} oControl used to get the component
+	 * @param {string[]} aFileNames array of file names of changes the stack should be initialized with
+	 * @returns {Promise} Returns a promise with a stack as parameter
+	 */
+	Stack.initializeWithChanges = function(oControl, aFileNames) {
+		var oStack = new Stack();
+		var mComposite = {};
+		if (aFileNames && aFileNames.length > 0) {
+			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(oControl);
+			var oComponent = FlUtils.getComponentForControl(oControl);
+			var sAppName = sap.ui.fl.Utils.getAppDescriptor(oComponent)["sap.app"].id;
+			var mPropertyBag = {
+				oComponent : oComponent,
+				appName : sAppName
+			};
+			return oChangePersistence.getChangesForComponent(mPropertyBag)
+			.then(function(aChanges) {
+				var mChanges = {};
+				aChanges.forEach(function(oChange) {
+					mChanges[oChange.getDefinition().fileName] = oChange;
+				});
+				aFileNames.forEach(function(sFileName) {
+					var oChange = mChanges[sFileName];
+					var oSelector = oChange.getSelector();
+					var oCommand = new Settings({
+						selector : oSelector,
+						changeType : oChange.getDefinition().changeType,
+						element : ControlTreeModifier.bySelector(oSelector, oComponent)
+					});
+					oCommand._oPreparedChange = oChange;
+					if (oChange.getUndoOperations()) {
+						oCommand._aRecordedUndo = oChange.getUndoOperations();
+						oChange.resetUndoOperations();
+					}
+					// check if change belongs to a composite command
+					var sCompositeId = oChange.getDefinition().compositeCommand;
+					if (sCompositeId) {
+						if (!mComposite[sCompositeId]) {
+							mComposite[sCompositeId] = new CompositeCommand();
+							oStack.pushExecutedCommand(mComposite[sCompositeId]);
+						}
+						mComposite[sCompositeId].addCommand(oCommand);
+					} else {
+						oStack.pushExecutedCommand(oCommand);
+					}
+				});
+				return oStack;
+			});
+		} else {
+			return Promise.resolve(oStack);
+		}
+	};
 
 	Stack.prototype._toBeExecuted = -1;
 	Stack.prototype._oLastCommand = Promise.resolve();

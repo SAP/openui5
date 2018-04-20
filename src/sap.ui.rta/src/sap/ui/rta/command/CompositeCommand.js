@@ -86,6 +86,42 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 			fnDo.call(this, aCommands[i]);
 		}
 	};
+
+	CompositeCommand.prototype._addCompositeIdToChange = function(oCommand) {
+		if (oCommand.getPreparedChange && oCommand.getPreparedChange()) {
+			var oChangeContent = oCommand.getPreparedChange().getDefinition();
+			if (!oChangeContent.compositeCommand) {
+				if (!this._sCompositeId) {
+					this._sCompositeId = flUtils.createDefaultFileName("composite");
+				}
+				oChangeContent.compositeCommand = this._sCompositeId;
+			}
+		}
+	};
+
+	/**
+	 * @override
+	 * @param {object} oCommand The command to be added to the aggregation of the composite command
+	 * @param {boolean} bSuppressInvalidate if true, this CompositeCommand as well as the added child are not marked as changed
+	 * @returns {object} the composite command
+	 */
+	CompositeCommand.prototype.addCommand = function(oCommand, bSuppressInvalidate) {
+		this._addCompositeIdToChange(oCommand);
+		return this.addAggregation("commands", oCommand, bSuppressInvalidate);
+	};
+
+	/**
+	 * @override
+	 * @param {object} oCommand The command to be added to the aggregation of the composite command
+	 * @param {int} iIndex the index the command should be inserted at
+	 * @param {boolean} bSuppressInvalidate if true, this CompositeCommand as well as the added child are not marked as changed
+	 * @returns {object} the composite command
+	 */
+	CompositeCommand.prototype.insertCommand = function(oCommand, iIndex, bSuppressInvalidate) {
+		this._addCompositeIdToChange(oCommand);
+		return this.insertAggregation("commands", oCommand, iIndex, bSuppressInvalidate);
+	};
+
 	return CompositeCommand;
 
 }, /* bExport= */true);

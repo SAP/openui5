@@ -394,8 +394,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * destroy MessageManager
-	 * @deprecated
+	 * Destroy MessageManager
+	 * @deprecated As of version 1.32, do not call <code>destroy()</code> on a <code>MessageManager</code>.
 	 * @public
 	 */
 	MessageManager.prototype.destroy = function() {

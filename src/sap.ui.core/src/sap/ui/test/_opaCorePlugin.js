@@ -17,7 +17,7 @@ function () {
 
 	/**
 	 * @class A Plugin to access the UI5 Core
-	 * This class is containing the core functionalities of the OpaPlugin to avoid circular dependencies,
+	 * This class is containing the core functionality of the OpaPlugin to avoid circular dependencies,
 	 * since the OpaPlugin uses Interactable to filter
 	 *
 	 * @private

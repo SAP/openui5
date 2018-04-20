@@ -1609,7 +1609,7 @@ sap.ui.define([
 	 */
 	Table.prototype.applyFocusInfo = function(mFocusInfo) {
 		if (mFocusInfo && mFocusInfo.customId) {
-			this.$().find("#" + mFocusInfo.customId).focus();
+			jQuery.sap.byId(mFocusInfo.customId, this.getDomRef()).focus();
 		} else {
 			//TBD: should be applyFocusInfo but changing it breaks the unit tests
 			Element.prototype.getFocusInfo.apply(this, arguments);
@@ -3710,21 +3710,16 @@ sap.ui.define([
 	 * Creates a new {@link sap.ui.core.util.Export} object and fills row/column information from the table if not provided. For the cell content,
 	 * the column's "sortProperty" will be used (experimental!)
 	 *
-	 * <p><b>Please note: The return value was changed from jQuery Promises to standard ES6 Promises.
-	 * jQuery specific Promise methods ('done', 'fail', 'always', 'pipe' and 'state') are still available but should not be used.
-	 * Please use only the standard methods 'then' and 'catch'!
-	 *
-	 * This method uses synchronous requests. Support and functioning ends with the support for synchronous requests in browsers.</b></p>
+	 * <p><b>Please note: This method uses synchronous requests. Support and functioning ends with the support for synchronous requests in browsers.</b></p>
 	 *
 	 * @param {object} [mSettings] settings for the new Export, see {@link sap.ui.core.util.Export} <code>constructor</code>
-	 * @returns {Promise} Promise object
+	 * @returns {sap.ui.core.util.Export} Export object
 	 *
 	 * @experimental Experimental because the property for the column/cell definitions (sortProperty) could change in future.
 	 * @deprecated As of 1.56, replaced by the <code>sap.ui.export</code> library.
 	 * @public
 	 */
 	Table.prototype.exportData = function(mSettings) {
-		//TBD: Use async APIs instead (should be possible because anyhow a Promise is returned)
 		var Export = sap.ui.requireSync("sap/ui/core/util/Export");
 
 		mSettings = mSettings || {};

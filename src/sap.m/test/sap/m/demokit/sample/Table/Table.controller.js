@@ -34,14 +34,19 @@ sap.ui.define([
 			}
 		},
 
-		onToggleStickyColHdr: function(oEvent) {
+		onSelectionFinish: function(oEvent) {
+			var aSelectedItems = oEvent.getParameter("selectedItems");
 			var oTable = this.byId("idProductsTable");
-			if (oEvent.getParameter("pressed")) {
-				// The API used below is experimental.
-				oTable.setSticky(sap.m.Sticky.ColumnHeaders);
-			} else {
-				oTable.setSticky("None");
-			}
+			var aSticky = aSelectedItems.map(function(oItem) {
+				return oItem.getKey();
+			});
+
+			oTable.setSticky(aSticky);
+		},
+
+		onToggleInfoToolbar: function(oEvent) {
+			var oTable = this.byId("idProductsTable");
+			oTable.getInfoToolbar().setVisible(!oEvent.getParameter("pressed"));
 		}
 	});
 

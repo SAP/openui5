@@ -111,7 +111,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.script'],
 				}
 			}
 		}
-
 	};
 
 	/**

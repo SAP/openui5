@@ -81,6 +81,12 @@
         "type": "FIX",
         "text": " uxap.ObjectPageLayout: footer content alingment fixed",
         "references": []
+      },
+      {
+        "id": "16259472a464954db82e00075f95413a318feec2",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Additional reading removed",
+        "references": []
       }
     ]
   }

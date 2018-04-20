@@ -80,7 +80,7 @@ sap.ui.define([
 		var fnAssert = function(sPassedModifyType) {
 			// Only collect operations of the given type
 			if (sPassedModifyType !== sModifyType) {
-				return;
+				throw new Error("Unexpected LREP modification: Expected: " + sModifyType + ", but got " + sPassedModifyType);
 			}
 			iChangeCounter++;
 			if (iChangeCounter === iNumberOfChanges) {

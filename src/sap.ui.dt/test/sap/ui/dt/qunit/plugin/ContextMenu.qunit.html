@@ -1,54 +1,48 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
+
 <head>
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<title>Test Page for sap.ui.dt Context Menu</title>
+	  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	  <title>Test Page for sap.ui.dt.plugin.ContextMenu</title>
 
-<style>
-#content {
-	position: absolute;
-	bottom: 0px;
-	z-index: 1000;
-	width: 700px;
-	height: 300px;
-}
-</style>
+	  <style>
+			#qunit-fixture {
+				  position: absolute;
+				  bottom: 0px;
+				  z-index: 1000;
+				  width: 800px;
+				  height: 500px;
+			}
+	  </style>
 
-<script src="../../shared-config.js"></script>
-<script>
-	window['sap-ui-config'].libs = 'sap.m, sap.ui.dt, sap.ui.layout';
-	window['sap-ui-config'].resourceroots = {
-		'sap.ui.rta.test': 'testdata/designtime/'
-	};
-	document.write('\
-		<script \
-			id="sap-ui-bootstrap" \
-			data-sap-ui-theme="sap_belize" \
-			data-sap-ui-noConflict="true" \
-			data-sap-ui-libs="sap.m, sap.ui.dt, sap.ui.layout" \
-			src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js" \
-		><' + '/script>'
-	);
-</script>
-<script>
-	jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit') + '.css');
-	jQuery.sap.require('sap.ui.thirdparty.qunit');
-	jQuery.sap.require('sap.ui.qunit.qunit-junit');
-	jQuery.sap.require('sap.ui.qunit.QUnitUtils');
-	jQuery.sap.require('sap.ui.qunit.qunit-coverage');
-	if (window.blanket){
-		window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
-	}
-	jQuery.sap.includeScript('./ContextMenu.qunit.js');
-</script>
+	  <script src="../../shared-config.js"></script>
+	  <script>
+			window['sap-ui-config'].libs = 'sap.ui.dt,sap.m,sap.ui.layout';
 
+			document.write('<script src="' + document.location.pathname.match(/(.+)\/test-resources\//)[1] +
+				  '/resources/sap-ui-core.js"><' + '/script>');
+	  </script>
+	  <script>
+			jQuery.sap.includeStyleSheet(jQuery.sap.getModulePath('sap.ui.thirdparty.qunit-2') + '.css');
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.QUnitUtils');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
+			jQuery.sap.require('sap.ui.thirdparty.sinon');
+			jQuery.sap.require('sap.ui.thirdparty.sinon-qunit');
+
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt]');
+
+			jQuery.sap.includeScript('./ContextMenu.qunit.js');
+	  </script>
 </head>
+
 <body>
-	<h1 id="qunit-header">Test Page for sap.ui.dt context menu</h1>
-	<h2 id="qunit-banner"></h2>
-	<h2 id="qunit-userAgent"></h2>
-	<div id="qunit-testrunner-toolbar"></div>
-	<ol id="qunit-tests"></ol>
-	<div id="content"></div>
+	  <h2 id='qunit-banner'></h2>
+	  <div id='qunit-testrunner-toolbar'></div>
+	  <ol id='qunit-tests'></ol>
+	  <div id='qunit-fixture' />
+	  <div id='compact-fixture' class='sapUiSizeCompact' />
 </body>
+
 </html>

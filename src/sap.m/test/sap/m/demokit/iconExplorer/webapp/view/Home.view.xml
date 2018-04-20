@@ -114,7 +114,7 @@
 			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 					backgroundColorSet="ColorSet6"
-					backgroundColorShade="ShadeB"
+					backgroundColorShade="ShadeA"
 					class="BlockLayoutCellHeight">
 					<l:VerticalLayout>
 						<core:Icon
@@ -144,7 +144,7 @@
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
 					backgroundColorSet="ColorSet6"
-					backgroundColorShade="ShadeC"
+					backgroundColorShade="ShadeB"
 					class="BlockLayoutCellHeight">
 					<l:VerticalLayout>
 						<core:Icon
@@ -172,63 +172,6 @@
 							class=" sapUiMediumMarginBottom "/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-				<l:BlockLayoutCell
-					backgroundColorSet="ColorSet6"
-					backgroundColorShade="ShadeD"
-					class="BlockLayoutCellHeight">
-					<l:VerticalLayout>
-						<core:Icon
-							src="sap-icon://course-book"
-							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
-						</core:Icon>
-						<custom:TitleLink
-							text="{i18n>sapIconGuidelines}"
-							class="TitleLink"
-							href="https://experience.sap.com/fiori-design-web/icons/"
-							titleStyle="H2"
-							target="_blank"/>
-						<Text
-							text="{i18n>sapIconGuidelinesDescription}"
-							class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
-						<Link
-							text="{i18n>developmentDocumentation}"
-							target="_blank"
-							href="#/topic/21ea0ea94614480d9a910b2e93431291"
-							class="sapUiSmallMarginTop IconDescriptionLink"/>
-						<Link
-							text="{i18n>SAPFioriDesignGuidelines}"
-							href="https://experience.sap.com/fiori-design-web/icons/"
-							class="IconDescriptionLink sapUiMediumMarginBottom"/>
-					</l:VerticalLayout>
-				</l:BlockLayoutCell>
-				<l:BlockLayoutCell
-					visible="{= !${version>/isOpenUI5} }"
-					backgroundColorSet="ColorSet6"
-					backgroundColorShade="ShadeB">
-					<l:VerticalLayout>
-						<core:Icon
-							src="sap-icon://globe"
-							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
-						</core:Icon>
-						<custom:TitleLink
-							press="onTitleLinkPress"
-							text="{i18n>fontName_S4AndIotAppIcons}"
-							class="TitleLink"
-							titleStyle="H2"
-							target="_blank"/>
-						<Text
-							text="{i18n>s4AndIotAppIconsDescription}"
-							class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
-						<Label
-							text="{i18n>iconNamespace}"
-							class="sapUiSmallMarginTop "/>
-						<Text
-							text="sap-icon://BusinessSuiteInAppSymbols"
-							class=" sapUiMediumMarginBottom "/>
-					</l:VerticalLayout>
-				</l:BlockLayoutCell>
-			</l:BlockLayoutRow>
-			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 					visible="{= !${version>/isOpenUI5} }"
 					backgroundColorSet="ColorSet6"
@@ -259,6 +202,38 @@
 							class=" sapUiMediumMarginBottom "/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+					backgroundColorSet="ColorSet6"
+					backgroundColorShade="ShadeD"
+					class="BlockLayoutCellHeight">
+					<l:VerticalLayout>
+						<core:Icon
+							src="sap-icon://course-book"
+							class="sapUiSmallMarginBottom sapUiSmallMarginTop entryIcon">
+						</core:Icon>
+						<custom:TitleLink
+							text="{i18n>sapIconGuidelines}"
+							class="TitleLink"
+							href="https://experience.sap.com/fiori-design-web/icons/"
+							titleStyle="H2"
+							target="_blank"/>
+						<Text
+							text="{i18n>sapIconGuidelinesDescription}"
+							class="sapUiTinyMarginTop sapUiLargeMarginEnd"/>
+						<Link
+							text="{i18n>developmentDocumentation}"
+							target="_blank"
+							href="https://openui5.hana.ondemand.com/#/topic/21ea0ea94614480d9a910b2e93431291"
+							class="sapUiSmallMarginTop IconDescriptionLink"/>
+						<Link
+							text="{i18n>SAPFioriDesignGuidelines}"
+							href="https://experience.sap.com/fiori-design-web/icons/"
+							class="IconDescriptionLink sapUiMediumMarginBottom"/>
+					</l:VerticalLayout>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<!--
+			<l:BlockLayoutRow>
 				<l:BlockLayoutCell
 					visible="{= !${version>/isOpenUI5} }"
 					backgroundColorSet="ColorSet6"
@@ -325,7 +300,7 @@
 							class="sapUiTinyMarginTop sapUiLargeMarginEnd sapUiMediumMarginBottom"/>
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
-			</l:BlockLayoutRow>
+			</l:BlockLayoutRow>-->
 			<l:BlockLayoutRow class="BlockLayoutFooter IconExplorerBackgroundColor IconExplorerHomeBackground">
 				<l:BlockLayoutCell>
 				</l:BlockLayoutCell>

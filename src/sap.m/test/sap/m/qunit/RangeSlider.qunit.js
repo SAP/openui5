@@ -63,6 +63,9 @@
 	});
 
 	QUnit.test("Handles' Tooltips", function (assert) {
+		this.rangeSlider.setShowAdvancedTooltip(true);
+		sap.ui.getCore().applyChanges();
+
 		this.rangeSlider.getAggregation("_tooltipContainer").show(this.rangeSlider);
 		assert.strictEqual(jQuery(".sapMSliderTooltip").length, 2, "There should be two tooltips.");
 	});
@@ -167,6 +170,7 @@
 
 		this.rangeSlider.setRange(newRange);
 		this.rangeSlider.setWidth("100px");
+		this.rangeSlider.setShowAdvancedTooltip(true);
 		sap.ui.getCore().applyChanges();
 
 		aRange = this.rangeSlider.getRange();
@@ -233,29 +237,34 @@
 
 	QUnit.test("set/getStep()", function (assert) {
 		//arrange
-		var aTooltips = this.rangeSlider.getAggregation("_tooltipContainer").getAssociatedTooltipsAsControls();
-		var fnLogWarning = this.spy(jQuery.sap.log, "warning");
+		var aTooltips, log = sap.ui.require('sap/base/Log'),
+			fnWarningSpy = this.spy(log, "warning");
+
 		assert.strictEqual(this.rangeSlider._iDecimalPrecision, 0, "The decimal precision should be 0 initially");
 
 		//act
 		this.rangeSlider.setStep(0.05);
+		this.rangeSlider.setShowAdvancedTooltip(true);
 		sap.ui.getCore().applyChanges();
 
 		//assert
+		aTooltips = this.rangeSlider.getAggregation("_tooltipContainer").getAssociatedTooltipsAsControls();
+
 		assert.strictEqual(this.rangeSlider.getStep(), 0.05, "The step should be set properly within the range");
 		assert.strictEqual(this.rangeSlider._iDecimalPrecision, 2, "The decimal precision should be 2");
-		assert.strictEqual(fnLogWarning.callCount, 0, "No warnings were logged");
+		assert.strictEqual(fnWarningSpy.callCount, 0, "No warnings were logged");
 
 		assert.strictEqual(aTooltips[0].getStep(), 0.05, "Tooltip 1 step property was updated correctly");
 		assert.strictEqual(aTooltips[1].getStep(), 0.05, "Tooltip 2 step property was updated correctly");
 
 		//act
 		this.rangeSlider.setStep(-0.5);
+		sap.ui.getCore().applyChanges();
 
 		//assert
 		assert.strictEqual(this.rangeSlider.getStep(), -0.5, "The step should be set properly within the range");
 		assert.strictEqual(this.rangeSlider._iDecimalPrecision, 1, "The decimal precision should be 1");
-		assert.ok(fnLogWarning.calledOnce, "One warning was logged");
+		assert.ok(fnWarningSpy.calledOnce, "One warning was logged");
 	});
 
 	QUnit.test("set/getValue() with decimal precision", function (assert) {
@@ -287,35 +296,39 @@
 	});
 
 	QUnit.test("Invalid range starting value of -20 (where min is 0)", function (assert) {
-		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
+		var log = sap.ui.require('sap/base/Log'),
+			fnWarningSpy = this.spy(log, "warning");
+
 		this.rangeSlider.setRange([-20, 50]);
 		sap.ui.getCore().applyChanges();
 
 		var aRange = this.rangeSlider.getRange();
 
 		assert.strictEqual(aRange[0], this.rangeSlider.getMin(), "The starting value of the range should be set to 0");
-		assert.ok(oWarningSpy.callCount === 1, "A warning is logged.");
-		assert.ok(oWarningSpy.calledWith("Warning: Min value (-20) not in the range: [0,100]"), "A correct warning is logged");
+		assert.ok(fnWarningSpy.callCount === 1, "A warning is logged.");
+		assert.ok(fnWarningSpy.calledWith("Warning: Min value (-20) not in the range: [0,100]"), "A correct warning is logged");
 		assert.strictEqual(aRange[1], 50, "The end value of the range should be set to 50");
 
 		// cleanup
-		oWarningSpy.restore();
+		fnWarningSpy.restore();
 	});
 
 	QUnit.test("Invalid range ending value of 150 (where max is 100)", function (assert) {
-		var oWarningSpy = this.spy(jQuery.sap.log, "warning");
+		var log = sap.ui.require('sap/base/Log'),
+			fnWarningSpy = this.spy(log, "warning");
+
 		this.rangeSlider.setRange([20, 150]);
 		sap.ui.getCore().applyChanges();
 
 		var aRange = this.rangeSlider.getRange();
 
 		assert.strictEqual(aRange[0], 20, "The starting value of the range should be set to 20");
-		assert.ok(oWarningSpy.callCount === 1, "A warning is logged.");
-		assert.ok(oWarningSpy.calledWith("Warning: Max value (150) not in the range: [0,100]"), "A correct warning is logged");
+		assert.ok(fnWarningSpy.callCount === 1, "A warning is logged.");
+		assert.ok(fnWarningSpy.calledWith("Warning: Max value (150) not in the range: [0,100]"), "A correct warning is logged");
 		assert.strictEqual(aRange[1], this.rangeSlider.getMax(), "The end value of the range should be set to 100");
 
 		// cleanup
-		oWarningSpy.restore();
+		fnWarningSpy.restore();
 	});
 
 	QUnit.test("getClosestHandleDomRef() with coordinates for left handle", function (assert) {
@@ -493,7 +506,9 @@
 	});
 
 	QUnit.test("_swapTooltips", function (assert) {
-		var oSlider = new sap.m.RangeSlider().placeAt(DOM_RENDER_LOCATION),
+		var oSlider = new sap.m.RangeSlider({
+			showAdvancedTooltip: true
+		}).placeAt(DOM_RENDER_LOCATION),
 			oInitStateStartTooltip, oInitStateEndTooltip;
 		sap.ui.getCore().applyChanges();
 
@@ -1231,5 +1246,154 @@
 		// cleanup
 		clock.restore();
 		oSlider.destroy();
+	});
+
+	QUnit.module("Tooltips", function (hooks) {
+		hooks.before(function () {
+			jQuery.sap.require("sap/m/SliderTooltipBase");
+
+			// dummy class
+			sap.m.SliderTooltipBase.extend("sap.xx.SliderTooltipCustom", {});
+		});
+
+		hooks.beforeEach(function () {
+			this.oRangeSlider = new sap.m.RangeSlider({
+				showAdvancedTooltip: true
+			});
+
+			this.oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		});
+
+		hooks.afterEach(function () {
+			this.oRangeSlider.destroy();
+		});
+
+		QUnit.test("Tooltips: Adding just one custom tooltip should fallback to default", function (assert) {
+			var oTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
+				oAssociatedTooltips;
+
+			this.oRangeSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+			sap.ui.getCore().applyChanges();
+
+			oAssociatedTooltips = oTooltipContainer.getAssociatedTooltipsAsControls();
+
+			assert.strictEqual(oAssociatedTooltips.length, 2, "Two tooltips should be associated with the TooltipContainer");
+			assert.strictEqual(this.oRangeSlider.getCustomTooltips().length, 1, "One custom tooltips is provided");
+			assert.strictEqual(oAssociatedTooltips[0], this.oRangeSlider.getAggregation("_defaultTooltips")[0], "The default tooltips should be associated with TooltipContainer");
+			assert.strictEqual(oAssociatedTooltips[1], this.oRangeSlider.getAggregation("_defaultTooltips")[1], "The default tooltips should be associated with TooltipContainer");
+		});
+
+		QUnit.test("Tooltips: Adding more than two custom tooltip should take the first two to render", function (assert) {
+			var oTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
+				oAssociatedTooltips, aCustomTooltips;
+
+			this.oRangeSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+			this.oRangeSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+			this.oRangeSlider.addCustomTooltip(new sap.xx.SliderTooltipCustom());
+			sap.ui.getCore().applyChanges();
+
+			oAssociatedTooltips = oTooltipContainer.getAssociatedTooltipsAsControls();
+			aCustomTooltips = this.oRangeSlider.getCustomTooltips();
+
+			assert.strictEqual(oAssociatedTooltips.length, 2, "The default tooltips should be associated with TooltipContainer");
+			assert.strictEqual(this.oRangeSlider.getCustomTooltips().length, 3, "Three custom tooltips are provided");
+			assert.strictEqual(oAssociatedTooltips[0], aCustomTooltips[0], "Custom tooltips should be associated with TooltipContainer");
+			assert.strictEqual(oAssociatedTooltips[1], aCustomTooltips[1], "Custom tooltips should be associated with TooltipContainer");
+			assert.notEqual(oAssociatedTooltips[2], aCustomTooltips[2], "Third Custom tooltip should not be associated with the TooltipContainer");
+		});
+
+		QUnit.test("Tooltips: Destroying Custom tooltip when 2 are available", function (assert) {
+			var oFirstCustomTooltip = new sap.xx.SliderTooltipCustom(),
+				oSecondCustomTooltip = new sap.xx.SliderTooltipCustom(),
+				oSliderTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
+				oAssociatedTooltips;
+
+			this.oRangeSlider.addCustomTooltip(oFirstCustomTooltip);
+			this.oRangeSlider.addCustomTooltip(oSecondCustomTooltip);
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oFirstCustomTooltip.destroy();
+			sap.ui.getCore().applyChanges();
+
+			oAssociatedTooltips = oSliderTooltipContainer.getAssociatedTooltipsAsControls();
+
+			// assert
+			assert.ok(true, "No exception have been thrown");
+			assert.strictEqual(oAssociatedTooltips[0], this.oRangeSlider.getAggregation("_defaultTooltips")[0], "The default tooltips should be associated with TooltipContainer");
+			assert.strictEqual(oAssociatedTooltips[1], this.oRangeSlider.getAggregation("_defaultTooltips")[1], "The default tooltips should be associated with TooltipContainer");
+
+		});
+
+		QUnit.test("Tooltips: Destroying Custom tooltip when more than 2 are available", function (assert) {
+			var oFirstCustomTooltip = new sap.xx.SliderTooltipCustom(),
+				oSecondCustomTooltip = new sap.xx.SliderTooltipCustom(),
+				oThirdCustomTooltip = new sap.xx.SliderTooltipCustom(),
+				oSliderTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
+				oAssociatedTooltips;
+
+			this.oRangeSlider.addCustomTooltip(oFirstCustomTooltip);
+			this.oRangeSlider.addCustomTooltip(oSecondCustomTooltip);
+			this.oRangeSlider.addCustomTooltip(oThirdCustomTooltip);
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oThirdCustomTooltip.destroy();
+			sap.ui.getCore().applyChanges();
+
+			oAssociatedTooltips = oSliderTooltipContainer.getAssociatedTooltipsAsControls();
+
+			// assert
+			assert.strictEqual(oAssociatedTooltips[0], oFirstCustomTooltip, "The first custom tooltip should be associated with TooltipContainer");
+			assert.strictEqual(oAssociatedTooltips[1], oSecondCustomTooltip, "The second tooltip should be associated with TooltipContainer");
+		});
+
+		QUnit.test("Tooltips: Destroying Custom tooltip when more than 2 are available", function (assert) {
+			var oFirstCustomTooltip = new sap.xx.SliderTooltipCustom(),
+				oSecondCustomTooltip = new sap.xx.SliderTooltipCustom(),
+				oThirdCustomTooltip = new sap.xx.SliderTooltipCustom(),
+				oSliderTooltipContainer = this.oRangeSlider.getAggregation("_tooltipContainer"),
+				oAssociatedTooltips;
+
+			this.oRangeSlider.addCustomTooltip(oFirstCustomTooltip);
+			this.oRangeSlider.addCustomTooltip(oSecondCustomTooltip);
+			this.oRangeSlider.addCustomTooltip(oThirdCustomTooltip);
+			sap.ui.getCore().applyChanges();
+
+			// act
+			oSecondCustomTooltip.destroy();
+			sap.ui.getCore().applyChanges();
+
+			oAssociatedTooltips = oSliderTooltipContainer.getAssociatedTooltipsAsControls();
+
+			// assert
+			assert.strictEqual(oAssociatedTooltips[0], oFirstCustomTooltip, "The first tooltip should be associated with TooltipContainer");
+			assert.strictEqual(oAssociatedTooltips[1], oThirdCustomTooltip, "The third tooltip should be associated with TooltipContainer");
+		});
+
+		QUnit.test("Tooltips: Rendering when advanced tooltips are not used", function (assert) {
+			// setup
+			var oRangeSlider = new sap.m.RangeSlider({
+				showAdvancedTooltip: false,
+				inputsAsTooltips: true
+			});
+
+			oRangeSlider.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(oRangeSlider.getDomRef(), true, "The rangeslider was successfully rendered.");
+
+			// clean up
+			oRangeSlider.destroy();
+		});
+
+		QUnit.test("Tooltips: Setting a value when TooltipContainer is not visible", function (assert) {
+			this.oRangeSlider.setValue(4);
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(true, "should not throw an error");
+		});
 	});
 }());

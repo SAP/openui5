@@ -19,9 +19,11 @@ sap.ui.define([
 			/* =========================================================== */
 
 			onInit: function () {
-				this.setModel(new JSONModel(), "deprecatedAPIs");
-				this.setModel(new JSONModel(), "experimentalAPIs");
-				this.setModel(new JSONModel(), "sinceAPIs");
+				var oModel = new JSONModel();
+				oModel.setSizeLimit(10000);
+				this.setModel(oModel, "deprecatedAPIs");
+				this.setModel(oModel, "experimentalAPIs");
+				this.setModel(oModel, "sinceAPIs");
 
 				this.getRouter().getRoute("deprecated").attachPatternMatched(this._onTopicDeprecatedMatched, this);
 				this.getRouter().getRoute("experimental").attachPatternMatched(this._onTopicExperimentalMatched, this);
@@ -134,11 +136,7 @@ sap.ui.define([
 				return sTitle ? "As of " + sTitle : "Version N/A";
 			},
 
-			formatDescription: function (sText, sSince) {
-				if (sSince) {
-					sText = "As of version " + sSince + ", " + sText;
-				}
-
+			formatDescription: function (sText) {
 				sText = this.formatLinks(sText);
 				sText = sText.replace("<p>", '');
 				sText = sText.replace("</p>", '');

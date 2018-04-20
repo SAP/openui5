@@ -42,10 +42,10 @@ sap.ui.define([
 		 * <ul>
 		 * <li>{@link topic:d2ef0099542d44dc868719d908e576d0 Object Page Headers}</li>
 		 * <li>{@link topic:0fecbce45e39406aa939bd25e89823f4 Object Page Classic Header}</li>
+		 * <li>{@link https://experience.sap.com/fiori-design-web/object-page/ UX Guidelines: Object Page}</li>
 		 * </ul>
 		 *
-		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/ Object Page Header}
-		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/object-page/ Object Page}
+		 * @see {@link fiori:https://experience.sap.com/fiori-design-web/snapping-header/#header-content Object Page Header Content}
 		 *
 		 * @extends sap.ui.core.Control
 		 * @implements sap.uxap.IHeaderContent

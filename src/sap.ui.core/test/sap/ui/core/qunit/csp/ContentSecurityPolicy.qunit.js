@@ -11,10 +11,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		});
 	} else {
 		QUnit.test("Check for occured CSP Violations", function (assert) {
-			var done = assert.async(),
-				sErrorMsg = "Please make sure to execute the ContentSecurityPolicy.qunit.html\n test with removing the sap-ui-debug " +
-					"URL parameter (if present) and with adding the following URL parameters\n sap-ui-xx-libraryPreloadFiles=none and " + "sap-ui-xx-csp-policy=almost-default:report-only (if not yet present) to\n not load library preload files and to " +
-					"tell the web server to set required CSP headers.";
+			var done = assert.async();
 
 			// Make sure that the CSP headers (CSP or CSP-Report-Only) are set by web server
 			// and that the test fails in case none of them is set.
@@ -28,12 +25,23 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					var sCsp = oReq.getResponseHeader("Content-Security-Policy");
 					var sCspReportOnly = oReq.getResponseHeader("Content-Security-Policy-Report-Only");
 
-					if (sCsp || sCspReportOnly) {
+					// Either the normal header needs to be present or
+					// the "Report-Only" header with a report-uri as otherwise
+					// the browser completely ignores the header and won't report violations
+					if (sCsp || (sCspReportOnly && sCspReportOnly.indexOf("report-uri") !== -1)) {
 						// Check for reported CSP violations
-						assert.ok(sap.ui.getCore(), "UI5 Core has been booted");
-						assert.ok(window["ui5-core-csp-violations"] && window["ui5-core-csp-violations"].length === 0,
-							"CSP compliant - Just in case the test fails: " + sErrorMsg
+						assert.ok(sap.ui.getCore().isInitialized(), "UI5 Core has been initialized");
+						assert.ok(window["ui5-core-csp-violations"].length === 0,
+							"Found " + window["ui5-core-csp-violations"].length + " CSP violation(s)"
 						);
+						window["ui5-core-csp-violations"].forEach(function(oViolation) {
+							assert.ok(
+								false,
+								oViolation.sourceFile + ":" + oViolation.lineNumber + ":" +
+								oViolation.columnNumber + ": " +
+								oViolation.effectiveDirective + " - " + oViolation.blockedURI
+							);
+						});
 
 						done();
 					} else {
@@ -41,8 +49,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 						oReq.abort();
 						assert.ok(
 							false,
-							"CSP headers are not set by web server as required for this test. " +
-							sErrorMsg + "\n There might be also a server-side problem which leeds\n to not setting headers correctly."
+							"CSP headers are not set by web server as required for this test.\n" +
+							"Please make sure to execute the ContentSecurityPolicy.qunit.html test with\n" +
+							"the following URL parameter to tell the web server to send CSP headers:\n\n" +
+							"sap-ui-xx-csp-policy=almost-default:report-only\n\n" +
+							"There might be also a server-side problem which leads to not setting headers correctly."
 						);
 
 						done();

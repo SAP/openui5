@@ -97,7 +97,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 			"sap.m.IBreadcrumbs",
 			"sap.m.IconTab",
 			"sap.m.IScale",
-			"sap.m.ISliderTooltip",
 			"sap.m.semantic.IGroup",
 			"sap.m.semantic.IFilter",
 			"sap.m.semantic.ISort",
@@ -1318,7 +1317,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 */
 	sap.m.TileSizeBehavior = {
 		/**
-		 * Default behavior: tiles adapt to the size of the screen, getting smaller on small screens.
+		 * Default behavior: Tiles adapt to the size of the screen, getting smaller on small screens.
 		 * @public
 		 */
 		Responsive: "Responsive",
@@ -1403,9 +1402,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	/**
 	 *
 	 * Interface for controls which are suitable as a Scale for the Slider/RangeSlider.
-	 * Implementation of this interface should implement <li><code>getTickmarksBetweenLabels</code></li>
-	 * , <li><code>calcNumberOfTickmarks</code></li> <li><code>handleResize</code></li> methods.
-	 * Optionally, <li><code>getLabel</code></li> method, could also be provided.
+	 * Implementation of this interface should implement the following methods:
+	 * <ul>
+	 * <li><code>getTickmarksBetweenLabels</code></li>
+	 * <li><code>calcNumberOfTickmarks</code></li>
+	 * <li><code>handleResize</code></li>
+	 * <li><code>getLabel</code></li>
+	 * </ul>
 	 *
 	 * @since 1.46
 	 * @name sap.m.IScale
@@ -1454,18 +1457,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * @function
 	 * @name sap.ui.core.IScale.getLabel
-	 */
-
-	/**
-	 *
-	 *   Interface for controls which are suitable as a Tooltip for the Slider/RangeSlider.
-	 *
-	 *
-	 * @since 1.54
-	 * @name sap.m.ISliderTooltip
-	 * @interface
-	 * @public
-	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
 
 	/**
@@ -2663,19 +2654,25 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	sap.m.Sticky = {
-
 		/**
-		 * No area remains in a fixed position.
+		 * The column headers remain in a fixed position.
 		 * @public
 		 */
-		None: "None",
+		ColumnHeaders: "ColumnHeaders",
 
 		/**
-		 * Only column headers remain in a fixed position.
-		 * If no column headers are available, this option behaves the same as <code>None</code>.
+		 * The header toolbar remains in a fixed position.
 		 * @public
+		 * @since 1.56
 		 */
-		ColumnHeaders: "ColumnHeaders"
+		HeaderToolbar: "HeaderToolbar",
+
+		/**
+		 * The info toolbar remains in a fixed position.
+		 * @public
+		 * @since 1.56
+		 */
+		InfoToolbar: "InfoToolbar"
 	};
 
 	/**
@@ -3061,7 +3058,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * Types of the Toolbar Design.
 	 *
 	 * To preview the different combinations of <code>sap.m.ToolbarDesign</code> and <code>sap.m.ToolbarStyle</code>,
-	 * see the {@link sap.m.sample.ToolbarDesign sample}.
+	 * see the <b>OverflowToolbar - Design and styling</b> sample of the {@link sap.m.OverflowToolbar} control.
 	 *
 	 * @enum {string}
 	 * @public
@@ -3102,8 +3099,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 *
 	 * <b>Note:</b> Keep in mind that the styles are theme-dependent and can differ based on the currently used theme.
 	 *
-	 * To preview the different combinations of <code>sap.m.ToolbarStyle</code> and <code>sap.m.ToolbarDesign</code>,
-	 * see the {@link sap.m.sample.ToolbarDesign sample}.
+	 * To preview the different combinations of <code>sap.m.ToolbarDesign</code> and <code>sap.m.ToolbarStyle</code>,
+	 * see the <b>OverflowToolbar - Design and styling</b> sample of the {@link sap.m.OverflowToolbar} control.
 	 *
 	 * @enum {string}
 	 * @public

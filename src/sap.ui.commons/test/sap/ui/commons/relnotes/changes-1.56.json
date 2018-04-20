@@ -12,6 +12,18 @@
             "reference": "002075129400000745792018"
           }
         ]
+      },
+      {
+        "id": "cbe6b8b0d555a274fc7fb2d87fd797c7408a4dd1",
+        "type": "FIX",
+        "text": " sap.ui.commons.DatePicker: fix failing unit tests",
+        "references": []
+      },
+      {
+        "id": "12dbbdf36956b8ea3c05f9518178ab0af918d120",
+        "type": "FIX",
+        "text": " sap.ui.commons.Toolbar: fix failing unit test",
+        "references": []
       }
     ]
   }

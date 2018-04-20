@@ -17,7 +17,22 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager"
-], function (jQuery, Persistence, ChangeRegistry, Utils, LrepConnector, Change, Variant, Cache, FlexSettings, ChangePersistenceFactory, View, JsControlTreeModifier, XmlTreeModifier, ContextManager) {
+], function (
+	jQuery,
+	Persistence,
+	ChangeRegistry,
+	Utils,
+	LrepConnector,
+	Change,
+	Variant,
+	Cache,
+	FlexSettings,
+	ChangePersistenceFactory,
+	View,
+	JsControlTreeModifier,
+	XmlTreeModifier,
+	ContextManager
+) {
 	"use strict";
 
 	/**
@@ -570,9 +585,12 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.checkTargetAndApplyChange = function (oChange, oControl, mPropertyBag) {
+		var bXmlModifier = mPropertyBag.modifier.targets === "xmlTree";
 		var oModifier = mPropertyBag.modifier;
 		var sControlType = oModifier.getControlType(oControl);
 		var oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, oModifier);
+		var oSettings;
+		var oRtaControlTreeModifier;
 
 		if (!oChangeHandler) {
 			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
@@ -587,18 +605,40 @@ sap.ui.define([
 		var sChangeId = oChange.getId();
 
 		if (aAppliedChanges.indexOf(sChangeId) === -1) {
-			oChange.PROCESSING = oChange.PROCESSING ? oChange.PROCESSING : true;
-			var vResult;
-			var vError;
-			try {
-				vResult = oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
-			} catch (e) {
-				vError = e;
-			}
+			var bRevertible = this.isChangeHandlerRevertible(oChange, oControl, oChangeHandler);
 
-			return new Utils.FakePromise(vResult, vError)
-
+			return new Utils.FakePromise()
 			.then(function() {
+				// only temporary until a revert function is mandatory for all change handlers
+				oSettings = FlexSettings.getInstanceOrUndef();
+				if (!bRevertible && oSettings && oSettings._oSettings.recordUndo) {
+					// recording of undo is only implemented in JS. By throwing an error in XML we force a JS retry.
+					if (bXmlModifier) {
+						throw new Error();
+					}
+
+					return new Promise(function(resolve) {
+						sap.ui.require(["sap/ui/rta/ControlTreeModifier"], function(RtaControlTreeModifier) {
+							if (!RtaControlTreeModifier) {
+								Utils.log.error("Please load 'sap/ui/rta' library if you want to record undo");
+							} else {
+								mPropertyBag.modifier = RtaControlTreeModifier;
+								RtaControlTreeModifier.startRecordingUndo();
+								oRtaControlTreeModifier = RtaControlTreeModifier;
+							}
+							resolve();
+						});
+					});
+				}
+			})
+			.then(function() {
+				oChange.PROCESSING = oChange.PROCESSING ? oChange.PROCESSING : true;
+				return oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
+			})
+			.then(function() {
+				if (!bRevertible && oSettings && oSettings._oSettings.recordUndo && oRtaControlTreeModifier){
+					oChange.setUndoOperations(oRtaControlTreeModifier.stopRecordingUndo());
+				}
 				var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
 				this._writeAppliedChangesCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
 				if (oChange.aPromiseFn) {
@@ -611,7 +651,6 @@ sap.ui.define([
 			}.bind(this))
 
 			.catch(function(ex) {
-				var bXmlModifier = mPropertyBag.modifier.targets === "xmlTree";
 				var mFailedChangesCustomData;
 				this._setMergeError(true);
 
@@ -1017,15 +1056,19 @@ sap.ui.define([
 
 	/**
 	 * Check if change handler applicable to the passed change and control has revertChange()
+	 * If no change handler is given it will get the change handler from the change and control
 	 *
 	 * @param {object} oChange Change object
 	 * @param {object} oControl Control instance object
+	 * @param {object} [oChangeHandler] change handler of the control and change
 	 * @returns {boolean} Returns true if change handler has revertChange()
 	 * @public
 	 */
-	FlexController.prototype.isChangeHandlerRevertible = function(oChange, oControl) {
-		var sControlType = JsControlTreeModifier.getControlType(oControl);
-		var oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier);
+	FlexController.prototype.isChangeHandlerRevertible = function(oChange, oControl, oChangeHandler) {
+		if (!oChangeHandler) {
+			var sControlType = JsControlTreeModifier.getControlType(oControl);
+			oChangeHandler = this._getChangeHandler(oChange, sControlType, oControl, JsControlTreeModifier);
+		}
 		return !!(oChangeHandler && typeof oChangeHandler.revertChange === "function");
 	};
 

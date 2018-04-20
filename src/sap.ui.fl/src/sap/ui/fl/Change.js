@@ -41,6 +41,7 @@ sap.ui.define([
 			this._sRequest = '';
 			this._bUserDependent = (oFile.layer === "USER");
 			this._vRevertData = null;
+			this._aUndoOperations = null;
 			this.setState(Change.states.NEW);
 		},
 		metadata : {
@@ -759,6 +760,34 @@ sap.ui.define([
 	 */
 	Change.prototype.resetRevertData = function() {
 		this.setRevertData(null);
+	};
+
+	/**
+	 * Returns the undo operations
+	 *
+	 * @returns {Array<*>} Returns array of undo operations
+	 * @public
+	 */
+	Change.prototype.getUndoOperations = function() {
+		return this._aUndoOperations;
+	};
+
+	/**
+	 * Sets the undo operations
+	 *
+	 * @param {Array<*>} aData undo operations
+	 * @public
+	 */
+	Change.prototype.setUndoOperations = function(aData) {
+		this._aUndoOperations = aData;
+	};
+
+	/**
+	 * Reset the undo operations
+	 * @public
+	 */
+	Change.prototype.resetUndoOperations = function() {
+		this.setUndoOperations(null);
 	};
 
 	/**

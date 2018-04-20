@@ -196,7 +196,7 @@ function(
 								name: "dummyActionName"
 							};
 						},
-						getLibraryText: function(sName){
+						getLibraryText: function(oElement, sName){
 							return sName;
 						}
 					};

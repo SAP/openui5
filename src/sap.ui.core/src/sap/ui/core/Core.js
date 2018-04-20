@@ -6,13 +6,13 @@
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 		'sap/ui/base/BindingParser', 'sap/ui/base/DataType', 'sap/ui/base/EventProvider', 'sap/ui/base/Interface', 'sap/ui/base/Object', 'sap/ui/base/ManagedObject',
 		'./Component', './Configuration', './Control', './Element', './ElementMetadata', './FocusHandler',
-		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager',
+		'./RenderManager', './ResizeHandler', './ThemeCheck', './UIArea', './message/MessageManager', 'sap/ui/events/EventSimulation',
 		'jquery.sap.act', 'jquery.sap.dom', 'jquery.sap.events', 'jquery.sap.mobile', 'jquery.sap.properties', 'jquery.sap.resources', 'jquery.sap.script', 'jquery.sap.sjax'],
 	function(jQuery, Device, Global,
 		BindingParser, DataType, EventProvider, Interface, BaseObject, ManagedObject,
 		Component, Configuration, Control, Element, ElementMetadata, FocusHandler,
 		RenderManager, ResizeHandler, ThemeCheck, UIArea, MessageManager
-		/* , jQuerySapAct, jQuerySapDom, jQuerySapEvents, jQuerySapMobile, jQuerySapProperties, jQuerySapResources, jQuerySapScript, jQuerySapSjax */) {
+		/* ,EventSimulation ,jQuerySapAct, jQuerySapDom, jQuerySapEvents, jQuerySapMobile, jQuerySapProperties, jQuerySapResources, jQuerySapScript, jQuerySapSjax */) {
 
 	"use strict";
 
@@ -291,6 +291,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			this.oConfiguration.preload = sPreloadMode;
 
 			var bAsync = sPreloadMode === "async";
+
+			// If UI5 has been booted asynchronously, bAsync can be also set to true.
+			if (sap.ui.loader.config().async) {
+				bAsync = true;
+			}
 
 			// evaluate configuration for library preload file types
 			this.oConfiguration['xx-libraryPreloadFiles'].forEach(function(v){
@@ -1179,8 +1184,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 
 		//Add ARIA role 'application'
 		var $body = jQuery("body");
-		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole() && !$body.attr("role")) {
-			$body.attr("role", "application");
+		if (oConfig.getAccessibility() && oConfig.getAutoAriaBodyRole()) {
+			var sBodyRole = $body.attr("role");
+			if (!sBodyRole && !oConfig.getAvoidAriaApplicationRole()) {
+				$body.attr("role", "application");
+			} else if (sBodyRole === "application" && oConfig.getAvoidAriaApplicationRole()) {
+				$body.removeAttr("role");
+			}
 		}
 	};
 
@@ -2278,7 +2288,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {sap.ui.base.Interface | sap.ui.core.Control}
 	 *            oControl the Control that should be the added to the <code>UIArea</code>.
 	 * @public
-	 * @deprecated Use function <code>oControl.placeAt(oDomRef, "only")</code> of <code>sap.ui.core.Control</code> instead.
+	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt oControl.placeAt(oDomRef, "only")} instead.
 	 */
 	Core.prototype.setRoot = function(oDomRef, oControl) {
 		jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
@@ -2295,7 +2305,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {string|Element} oDomRef a DOM Element or ID string of the UIArea
 	 * @return {sap.ui.core.UIArea} a new UIArea
 	 * @public
-	 * @deprecated Use <code>setRoot()</code> instead!
+	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt Control#placeAt} instead!
 	 */
 	Core.prototype.createUIArea = function(oDomRef) {
 		var that = this;
@@ -2947,7 +2957,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Returns the registered element for the given ID, if any.
 	 * @param {string} sId
 	 * @return {sap.ui.core.Element} the element for the given id
-	 * @deprecated use <code>sap.ui.core.Core.byId</code> instead!
+	 * @deprecated As of version 1.1, use <code>sap.ui.core.Core.byId</code> instead!
 	 * @function
 	 * @public
 	 */
@@ -2957,7 +2967,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * Returns the registered element for the given ID, if any.
 	 * @param {string} sId
 	 * @return {sap.ui.core.Element} the element for the given id
-	 * @deprecated use <code>sap.ui.core.Core.byId</code> instead!
+	 * @deprecated As of version 1.1, use <code>sap.ui.core.Core.byId</code> instead!
 	 * @function
 	 * @public
 	 */
@@ -3017,13 +3027,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 			}
 
 			var oAttributes = {id:STATIC_UIAREA_ID};
+			var oConfig = this.getConfiguration();
 
-			if (jQuery("body").attr("role") != "application") {
+			if (jQuery("body").attr("role") != "application" && !oConfig.getAvoidAriaApplicationRole()) {
 				// Only set ARIA application role if not available on html body (see configuration entry "autoAriaBodyRole")
 				oAttributes.role = "application";
 			}
 
-			var leftRight = this.getConfiguration().getRTL() ? "right" : "left";
+			var leftRight = oConfig.getRTL() ? "right" : "left";
 			oStatic = jQuery("<DIV/>", oAttributes).css({
 				"height"   : "0",
 				"width"    : "0",
@@ -3852,7 +3863,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/Global',
 	 * @param {sap.ui.base.Interface | sap.ui.core.Control}
 	 *            oControl the Control that should be added to the <code>UIArea</code>.
 	 * @public
-	 * @deprecated Use function <code>placeAt</code> of <code>sap.ui.core.Control</code> instead.
+	 * @deprecated As of version 1.1, use {@link sap.ui.core.Control#placeAt Control#placeAt} instead.
 	 */
 	sap.ui.setRoot = function(oDomRef, oControl) {
 		jQuery.sap.assert(typeof oDomRef === "string" || typeof oDomRef === "object", "oDomRef must be a string or object");
