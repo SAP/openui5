@@ -182,7 +182,7 @@ sap.ui.define([
 						value: true
 					}));
 
-					if (oObjectPageLayout.getShowAnchorBarPopover()) {
+					if (oAnchorBar.getShowPopover()) {
 						// Add arrow icon-down in order to indicate that on click will open popover
 						oButtonClone.setIcon(IconPool.getIconURI("slim-arrow-down"));
 						oButtonClone.setIconFirst(false);

@@ -932,6 +932,7 @@
 			});
 			this.appControl.addPage(this.oSampleView);
 			this.appControl.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
 			this.appControl.destroy();
@@ -959,6 +960,19 @@
 		assert.equal(checkObjectExists(".sapUxAPAnchorBar"), true);
 	});
 
+	QUnit.test("test AnchorBar showPopover setting through ObjectPageLayout", function (assert) {
+		var oObjectPage = this.oSampleView.byId("objectPage13"),
+			oAnchorBar =  oObjectPage.getAggregation("_anchorBar"),
+			oSectionButton = oAnchorBar.getContent()[0];
+
+		assert.equal(oSectionButton.getIcon(), "sap-icon://slim-arrow-down", "Drop-down icon in AnchorBar button is shown initially");
+
+		oObjectPage.setShowAnchorBarPopover(false);
+		sap.ui.getCore().applyChanges();
+		oSectionButton = oAnchorBar.getContent()[0];
+
+		assert.equal(oSectionButton.getIcon(), "", "Drop-down icon in AnchorBar button is not shown");
+	});
 
 	QUnit.module("ObjectPage API: ObjectPageHeader", {
 		beforeEach: function () {
