@@ -1444,16 +1444,16 @@
 
 		this.oDynamicPage.setShowFooter(false);
 		this.clock.tick(1000);
-		core.applyChanges();
 
+		assert.equal(this.oDynamicPage._iFooterAnimationTimeout > 0, true, "Footer animation timeout has been set");
 		assert.equal($footerWrapper.hasClass("sapUiHidden"), true, "Footer is not visible");
 		assert.equal($footer.hasClass("sapFDynamicPageActualFooterControlHide"), true, "Footer is not visible");
 
 		this.oDynamicPage.setShowFooter(true);
 		this.clock.tick(1000);
-		core.applyChanges();
 
 		assert.equal($footerWrapper.hasClass("sapUiHidden"), false, "Footer is visible again");
+		assert.equal(this.oDynamicPage._iFooterAnimationTimeout, null, "Footer animation timeout has been cleared");
 	});
 
 	/* --------------------------- DynamicPage Mobile Rendering ---------------------------------- */
