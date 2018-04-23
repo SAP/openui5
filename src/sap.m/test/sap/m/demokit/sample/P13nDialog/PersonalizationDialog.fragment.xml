@@ -1,5 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-    <P13nDialog showReset="true" showResetEnabled="{path: '/ShowResetEnabled'}" ok="onOK" cancel="onCancel" reset="onReset" class="sapUiSizeCompact">
+    <P13nDialog showReset="true" showResetEnabled="{path: '/ShowResetEnabled'}" ok="onOK" cancel="onCancel"
+                reset="onReset" class="sapUiSizeCompact">
         <panels>
             <P13nColumnsPanel changeColumnsItems="onChangeColumnsItems"
                               items="{path: '/ColumnCollection'}"
