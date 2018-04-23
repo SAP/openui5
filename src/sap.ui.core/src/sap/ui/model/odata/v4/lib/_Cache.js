@@ -871,7 +871,7 @@ sap.ui.define([
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the request with; unused in CollectionCache since no
 	 *   request will be created
 	 * @param {string} [sPath]
@@ -896,6 +896,7 @@ sap.ui.define([
 		var aElements,
 			that = this;
 
+		oGroupLock.unlock();
 		if (!this.oSyncPromiseAll) {
 			// wait for all reads to be finished, this is essential for $count and for finding the
 			// index of a key predicate
@@ -1083,7 +1084,7 @@ sap.ui.define([
 	 *   is available left and right of the requested range without a further request. If data is
 	 *   missing on one side, the full prefetch length is added at this side.
 	 *   <code>Infinity</code> is supported
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before a back-end request is sent.
@@ -1384,7 +1385,7 @@ sap.ui.define([
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
@@ -1412,6 +1413,8 @@ sap.ui.define([
 				this.sResourcePath + this.sQueryString, oGroupLock, undefined, undefined,
 				fnDataRequested, undefined, this.sMetaPath));
 			this.bSentReadRequest = true;
+		} else {
+			oGroupLock.unlock();
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1476,7 +1479,7 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for the requested data. Calculates
 	 * the key predicates for all entities in the result before the promise is resolved.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
@@ -1518,6 +1521,8 @@ sap.ui.define([
 				return aResult[0];
 			});
 			this.bSentReadRequest = true;
+		} else {
+			oGroupLock.unlock();
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1532,7 +1537,7 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for a POST request with the given data.
 	 * Calculates the key predicates for all entities in the result before the promise is resolved.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]

@@ -2010,14 +2010,18 @@ sap.ui.require([
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
 			oCacheMock = this.mock(oCache),
+			oGroupLock = new _GroupLock("group"),
 			oListener = {},
-			oReadPromise = this.mockRequest(sResourcePath, 0, 10, undefined, "26");
+			oReadPromise = this.mockRequest(sResourcePath, 0, 10, undefined, "26"),
+			that = this;
+
+		that.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		oReadPromise.then(function () {
 			// This may only happen when the read is finished
+			oCacheMock.expects("checkActive").twice(); // from read and fetchValue
 			oCacheMock.expects("registerChange")
 				.withExactArgs("('c')/key", sinon.match.same(oListener));
-			oCacheMock.expects("checkActive").twice(); // from read and fetchValue
 			oCacheMock.expects("drillDown")
 				.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
 		});
@@ -2026,7 +2030,7 @@ sap.ui.require([
 			oCache.read(0, 10, 0, new _GroupLock("group")),
 
 			// code under test
-			oCache.fetchValue("group", "('c')/key", {}, oListener).then(function (sResult) {
+			oCache.fetchValue(oGroupLock, "('c')/key", {}, oListener).then(function (sResult) {
 				assert.strictEqual(sResult, "c");
 
 				oCacheMock.expects("registerChange").withExactArgs("('c')/key", undefined);
@@ -2035,7 +2039,8 @@ sap.ui.require([
 					.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
 
 				// code under test: now it must be delivered synchronously
-				assert.strictEqual(oCache.fetchValue(undefined, "('c')/key").getResult(), "c");
+				assert.strictEqual(
+					oCache.fetchValue(new _GroupLock("group"), "('c')/key").getResult(), "c");
 			})
 		]);
 	});
@@ -2061,7 +2066,7 @@ sap.ui.require([
 		});
 
 		// code under test
-		oResult = oCache.fetchValue("group", "('c')/key").then(function (sResult) {
+		oResult = oCache.fetchValue(new _GroupLock("group"), "('c')/key").then(function (sResult) {
 			assert.strictEqual(sResult, "c");
 		});
 
@@ -2085,7 +2090,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
 
 		// code under test
-		return oCache.fetchValue("group", "('c')/key").then(function (sResult) {
+		return oCache.fetchValue(new _GroupLock("group"), "('c')/key").then(function (sResult) {
 			assert.strictEqual(sResult, "c");
 		});
 	});
@@ -2100,7 +2105,7 @@ sap.ui.require([
 			.withExactArgs(sinon.match.same(oCache.aElements), "('c')/key").returns("c");
 
 		// code under test
-		return oCache.fetchValue("group", "('c')/key").then(function (sResult) {
+		return oCache.fetchValue(new _GroupLock("group"), "('c')/key").then(function (sResult) {
 			assert.strictEqual(sResult, "c");
 		});
 	});
@@ -2375,7 +2380,8 @@ sap.ui.require([
 			return oCache._delete(new _GroupLock(), "Employees('42')", "0/list/1", function () {})
 				.then(function () {
 					assert.strictEqual(
-						oCache.fetchValue(undefined, "0/list").getResult().$count, 25);
+						oCache.fetchValue(new _GroupLock("group"), "0/list").getResult().$count,
+						25);
 					sinon.assert.calledWithExactly(_Helper.updateCache,
 						sinon.match.same(oCache.mChangeListeners), "0/list",
 						sinon.match.same(aList), {$count : 25});
@@ -2399,12 +2405,13 @@ sap.ui.require([
 			oCache.read(0, 10, 0, new _GroupLock("group")),
 
 			// code under test: wait until request is finished, do not fire to listener
-			oCache.fetchValue("group", "$count", undefined, oListener)
+			oCache.fetchValue(new _GroupLock("group"), "$count", undefined, oListener)
 				.then(function (iCount) {
 					assert.strictEqual(iCount, 26);
 
 					// code under test: now it must be delivered synchronously
-					assert.strictEqual(oCache.fetchValue(undefined, "$count").getResult(), 26);
+					assert.strictEqual(
+						oCache.fetchValue(new _GroupLock("group"), "$count").getResult(), 26);
 				})
 		]);
 	});
@@ -2956,7 +2963,7 @@ sap.ui.require([
 			assert.strictEqual(oResult.value[0].name, "John Doe");
 
 			// code under test
-			oResult = oCache.fetchValue(undefined, "-1/name").getResult();
+			oResult = oCache.fetchValue(new _GroupLock("group"), "-1/name").getResult();
 			assert.strictEqual(oResult, "John Doe");
 		});
 	});
@@ -3055,6 +3062,8 @@ sap.ui.require([
 			fnDataRequested2 = {},
 			oExpectedResult = {},
 			aFetchValuePromises,
+			oGroupLock1 = new _GroupLock("group"),
+			oGroupLock2 = new _GroupLock("group"),
 			oListener1 = {},
 			oListener2 = {},
 			sMetaPath = "~",
@@ -3074,10 +3083,10 @@ sap.ui.require([
 		oCacheMock = this.mock(oCache);
 
 		oCacheMock.expects("registerChange").withExactArgs(undefined, sinon.match.same(oListener1));
-		oCacheMock.expects("registerChange").withExactArgs("foo", sinon.match.same(oListener2));
+		this.mock(oGroupLock1).expects("unlock").never();
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?~", "group", undefined, undefined,
-				sinon.match.same(fnDataRequested1), undefined, sMetaPath)
+			.withExactArgs("GET", sResourcePath + "?~", sinon.match.same(oGroupLock1), undefined,
+				undefined, sinon.match.same(fnDataRequested1), undefined, sMetaPath)
 			.returns(Promise.resolve(oExpectedResult).then(function () {
 					that.mock(oCache).expects("calculateKeyPredicates")
 						.withExactArgs(oExpectedResult, mTypeForMetaPath, undefined);
@@ -3095,7 +3104,7 @@ sap.ui.require([
 
 		// code under test
 		aFetchValuePromises = [
-			oCache.fetchValue("group", undefined, fnDataRequested1, oListener1)
+			oCache.fetchValue(oGroupLock1, undefined, fnDataRequested1, oListener1)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
 			})
@@ -3103,9 +3112,12 @@ sap.ui.require([
 
 		assert.ok(oCache.bSentReadRequest);
 
+		oCacheMock.expects("registerChange").withExactArgs("foo", sinon.match.same(oListener2));
+		this.mock(oGroupLock2).expects("unlock").withExactArgs();
+
 		// code under test
 		aFetchValuePromises.push(
-			oCache.fetchValue("group", "foo", fnDataRequested2, oListener2)
+			oCache.fetchValue(oGroupLock2, "foo", fnDataRequested2, oListener2)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, "bar");
 				})
@@ -3163,7 +3175,8 @@ sap.ui.require([
 		var sResourcePath = "LeaveRequest('1')/Submit",
 			oCache = this.createSingle(sResourcePath),
 			fnDataRequested = this.spy(),
-			sGroupId = "group",
+			oGroupLock1 = new _GroupLock("group"),
+			oGroupLock2 = new _GroupLock("group"),
 			oPostData = {},
 			oPromise,
 			oResult1 = {},
@@ -3177,28 +3190,29 @@ sap.ui.require([
 		oCache = this.createSingle(sResourcePath, undefined, true);
 
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sGroupId, {"If-Match" : "etag"},
-				sinon.match.same(oPostData))
+			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock1),
+				{"If-Match" : "etag"}, sinon.match.same(oPostData))
 			.returns(Promise.resolve(oResult1));
 		this.oRequestorMock.expects("request")
-			.withExactArgs("POST", sResourcePath, sGroupId, {"If-Match" : undefined},
-				sinon.match.same(oPostData))
+			.withExactArgs("POST", sResourcePath, sinon.match.same(oGroupLock2),
+				{"If-Match" : undefined}, sinon.match.same(oPostData))
 			.returns(Promise.resolve(oResult2));
 
 		// code under test
 		assert.throws(function () {
-			oCache.fetchValue();
+			oCache.fetchValue(new _GroupLock());
 		}, new Error("Cannot fetch a value before the POST request"));
 
 		assert.notOk(oCache.bSentReadRequest);
-		oPromise = oCache.post(sGroupId, oPostData, "etag").then(function (oPostResult1) {
+		oPromise = oCache.post(oGroupLock1, oPostData, "etag").then(function (oPostResult1) {
 			assert.strictEqual(oPostResult1, oResult1);
 			return Promise.all([
-				oCache.fetchValue("foo", "", fnDataRequested).then(function (oReadResult) {
-					assert.strictEqual(oReadResult, oResult1);
-					assert.strictEqual(fnDataRequested.callCount, 0);
-				}),
-				oCache.post(sGroupId, oPostData).then(function (oPostResult2) {
+				oCache.fetchValue(new _GroupLock("foo"), "", fnDataRequested)
+					.then(function (oReadResult) {
+						assert.strictEqual(oReadResult, oResult1);
+						assert.strictEqual(fnDataRequested.callCount, 0);
+					}),
+				oCache.post(oGroupLock2, oPostData).then(function (oPostResult2) {
 					assert.strictEqual(oPostResult2, oResult2);
 				})
 			]);
@@ -3206,7 +3220,7 @@ sap.ui.require([
 		assert.ok(!oPromise.isFulfilled());
 		assert.ok(!oPromise.isRejected());
 		assert.throws(function () {
-			oCache.post(sGroupId, oPostData);
+			oCache.post(new _GroupLock("group"), oPostData);
 		}, new Error("Parallel POST requests not allowed"));
 		return oPromise;
 	});
@@ -3508,7 +3522,7 @@ sap.ui.require([
 					sinon.assert.calledOnce(fnCallback);
 					sinon.assert.calledWithExactly(fnCallback);
 
-					oCache.fetchValue().then(function () {
+					oCache.fetchValue(new _GroupLock("group")).then(function () {
 						assert.ok(false);
 					}, function (oError) {
 						assert.strictEqual(oError.message, "Cannot read a deleted entity");
@@ -3525,6 +3539,8 @@ sap.ui.require([
 			fnDataRequested2 = {},
 			oExpectedResult = {},
 			aFetchValuePromises,
+			oGroupLock1 = new _GroupLock("group"),
+			oGroupLock2 = new _GroupLock("group"),
 			oListener1 = {},
 			oListener2 = {},
 			mQueryParams = {},
@@ -3537,13 +3553,13 @@ sap.ui.require([
 		oCache = _Cache.createProperty(this.oRequestor, sResourcePath, mQueryParams);
 		oCacheMock = this.mock(oCache);
 
+		this.mock(oGroupLock1).expects("unlock").never();
 		oCacheMock.expects("registerChange").withExactArgs("", sinon.match.same(oListener1));
-		oCacheMock.expects("registerChange").withExactArgs("", sinon.match.same(oListener2));
 		oCacheMock.expects("registerChange").withExactArgs("", undefined);
 
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", sResourcePath + "?~", "group", undefined, undefined,
-				sinon.match.same(fnDataRequested1), undefined, "/Employees")
+			.withExactArgs("GET", sResourcePath + "?~", sinon.match.same(oGroupLock1), undefined,
+				undefined, sinon.match.same(fnDataRequested1), undefined, "/Employees")
 			.returns(Promise.resolve().then(function () {
 					oCacheMock.expects("checkActive").exactly(3);
 					return {value : oExpectedResult};
@@ -3551,18 +3567,22 @@ sap.ui.require([
 
 		// code under test
 		aFetchValuePromises = [
-			oCache.fetchValue("group", "", fnDataRequested1, oListener1)
+			oCache.fetchValue(oGroupLock1, "", fnDataRequested1, oListener1)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
-					assert.strictEqual(oCache.fetchValue("group", "").getResult(), oExpectedResult);
+					assert.strictEqual(oCache.fetchValue(new _GroupLock("group"), "").getResult(),
+						oExpectedResult);
 				})
 		];
 
 		assert.ok(oCache.bSentReadRequest);
 
+		oCacheMock.expects("registerChange").withExactArgs("", sinon.match.same(oListener2));
+		this.mock(oGroupLock2).expects("unlock").withExactArgs();
+
 		// code under test
 		aFetchValuePromises.push(
-			oCache.fetchValue("group", "", fnDataRequested2, oListener2)
+			oCache.fetchValue(oGroupLock2, "", fnDataRequested2, oListener2)
 				.then(function (oResult) {
 					assert.strictEqual(oResult, oExpectedResult);
 				})

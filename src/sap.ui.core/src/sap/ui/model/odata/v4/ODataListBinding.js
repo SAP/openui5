@@ -16,10 +16,12 @@ sap.ui.define([
 	"./Context",
 	"./lib/_AggregationCache",
 	"./lib/_Cache",
+	"./lib/_GroupLock",
 	"./lib/_Helper",
 	"./ODataParentBinding"
 ], function (jQuery, SyncPromise, Binding, ChangeReason, FilterOperator, FilterType, ListBinding,
-		Sorter, OperationMode, Context, _AggregationCache, _Cache, _Helper, asODataParentBinding) {
+		Sorter, OperationMode, Context, _AggregationCache, _Cache, _GroupLock, _Helper,
+		asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -849,11 +851,18 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					return oCache.fetchValue(oGroupLock, sRelativePath, undefined, oListener);
+					if (oGroupLock) {
+						oGroupLock.unlock();
+					}
+					return oCache.fetchValue(_GroupLock.$cached, sRelativePath, undefined,
+						oListener);
 				}
 			}
 			if (that.oContext) {
 				return that.oContext.fetchValue(sPath, oListener, oGroupLock);
+			}
+			if (oGroupLock) {
+				oGroupLock.unlock();
 			}
 		});
 	};
@@ -904,6 +913,7 @@ sap.ui.define([
 			throw new Error("Cannot filter due to pending changes");
 		}
 
+		this.createRefreshGroupLock(this.getGroupId(), true);
 		if (sFilterType === FilterType.Control) {
 			this.aFilters = aFilters;
 		} else {
@@ -911,7 +921,7 @@ sap.ui.define([
 		}
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
-		this.reset(ChangeReason.Filter, true);
+		this.reset(ChangeReason.Filter);
 
 		return this;
 	};
@@ -1360,7 +1370,7 @@ sap.ui.define([
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
 		var that = this;
 
-		this.oRefreshGroupLock = this.oModel.lockGroup(sGroupId);
+		this.createRefreshGroupLock(sGroupId, this.isRefreshable());
 		this.oCachePromise.then(function (oCache) {
 			if (oCache) {
 				that.mCacheByContext = undefined;
@@ -1490,12 +1500,10 @@ sap.ui.define([
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
 	 *   getContexts() fires a change event with this reason. Change reason "change" is ignored
 	 *   as long as the binding is still empty.
-	 * @param {boolean} [bLock=false]
-	 *   Whether a locked group lock is created for the following getContexts
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.reset = function (sChangeReason, bLock) {
+	ODataListBinding.prototype.reset = function (sChangeReason) {
 		var bEmpty = this.iCurrentEnd === 0,
 			that = this;
 
@@ -1519,16 +1527,6 @@ sap.ui.define([
 		this.bLengthFinal = false;
 		if (sChangeReason && !(bEmpty && sChangeReason === ChangeReason.Change)) {
 			this.sChangeReason = sChangeReason;
-			if (bLock) {
-				this.oRefreshGroupLock = this.oModel.lockGroup(undefined, true);
-				sap.ui.getCore().addPrerenderingTask(function () {
-					if (that.oRefreshGroupLock) {
-						// The lock is still unused, i.e. no getContexts was called
-						that.oRefreshGroupLock.unlock(true);
-						that.oRefreshGroupLock = undefined;
-					}
-				});
-			}
 			this._fireRefresh({reason : sChangeReason});
 		}
 		// Update after the refresh event, otherwise $count is fetched before the request

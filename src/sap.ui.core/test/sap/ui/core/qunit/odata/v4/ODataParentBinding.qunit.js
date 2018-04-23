@@ -2175,6 +2175,73 @@ sap.ui.require([
 			}, new Error("Cannot resume a relative binding: ~"));
 		});
 	});
+
+	//*********************************************************************************************
+	[false, undefined].forEach(function (bLocked) {
+		QUnit.test("createRefreshGroupLock: bLocked=" + bLocked, function (assert) {
+			var oBinding = new ODataParentBinding({
+					oModel : {
+						lockGroup : function () {}
+					}
+				}),
+				oGroupLock = {};
+
+			this.mock(oBinding.oModel).expects("lockGroup").withExactArgs("groupId", bLocked)
+				.returns(oGroupLock);
+			this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
+
+			// code under test
+			oBinding.createRefreshGroupLock("groupId", bLocked);
+
+			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock);
+
+			// code under test
+			oBinding.createRefreshGroupLock("groupId", bLocked);
+
+			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock);
+		});
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bLockIsUsedAndRemoved) {
+		var sTitle = "createRefreshGroupLock: bLocked=true, bLockIsUsedAndRemoved="
+				+ bLockIsUsedAndRemoved;
+
+		QUnit.test(sTitle, function (assert) {
+			var oBinding = new ODataParentBinding({
+					oModel : {
+						lockGroup : function () {}
+					}
+				}),
+				oExpectation,
+				oGroupLock = {
+					unlock : function () {}
+				};
+
+			this.mock(oBinding.oModel).expects("lockGroup").withExactArgs("groupId", true)
+				.returns(oGroupLock);
+			oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+				.withExactArgs(sinon.match.func);
+
+			// code under test
+			oBinding.createRefreshGroupLock("groupId", true);
+
+			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock);
+
+			if (bLockIsUsedAndRemoved) {
+				// simulate functions that use and remove that lock (like getContexts or fetchValue)
+				oBinding.oRefreshGroupLock = undefined;
+			} else {
+				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+			}
+
+			// code under test
+			oExpectation.callArg(0);
+
+			assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
+		});
+	});
+
 	//TODO Fix issue with ODataModel.integration.qunit
 	//  "suspend/resume: list binding with nested context binding, only context binding is adapted"
 	//TODO ODLB#resumeInternal: checkUpdate on dependent bindings of header context after change

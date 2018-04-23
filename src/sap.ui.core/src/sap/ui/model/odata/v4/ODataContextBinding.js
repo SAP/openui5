@@ -572,6 +572,7 @@ sap.ui.define([
 						}
 						return vValue;
 					}, function (oError) {
+						oGroupLock.unlock(true);
 						if (bDataRequested) {
 							that.oModel.reportError("Failed to read path " + that.sPath, sClassName,
 								oError);
@@ -636,7 +637,11 @@ sap.ui.define([
 	ODataContextBinding.prototype.refreshInternal = function (sGroupId, bCheckUpdate) {
 		var that = this;
 
-		this.oRefreshGroupLock = this.oModel.lockGroup(sGroupId);
+		if (this.oOperation && this.oOperation.bAction !== false) {
+			return;
+		}
+
+		this.createRefreshGroupLock(sGroupId, this.isRefreshable());
 		this.oCachePromise.then(function (oCache) {
 			if (!that.oElementContext) { // refresh after delete
 				that.oElementContext = Context.create(that.oModel, that,
@@ -647,15 +652,16 @@ sap.ui.define([
 			}
 			if (!that.oOperation) {
 				if (oCache) {
-					that.fetchCache(that.oContext);
+					// remove all cached Caches before fetching a new one
 					that.mCacheByContext = undefined;
+					that.fetchCache(that.oContext);
 					// Do not fire a change event, or else ManagedObject destroys and recreates the
 					// binding hierarchy causing a flood of events
 				}
 				that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
 					oDependentBinding.refreshInternal(sGroupId, bCheckUpdate);
 				});
-			} else if (that.oOperation.bAction === false) {
+			} else {
 				// ignore returned promise, error handling takes place in _execute
 				that._execute(that.oRefreshGroupLock);
 				that.oRefreshGroupLock = undefined;
