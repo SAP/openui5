@@ -137,6 +137,14 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: $filter not allowed", function (assert) {
+		assert.throws(function() {
+			// code under test
+			_AggregationCache.create(this.oRequestor, "Foo", [], {$filter : "answer eq 42"});
+		}, new Error("Unsupported system query option: $filter"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("calculateKeyPredicate", function (assert) {
 		var aAggregation = [{
 				grouped : true,

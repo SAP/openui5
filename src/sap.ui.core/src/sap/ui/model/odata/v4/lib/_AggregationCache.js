@@ -33,10 +33,12 @@ sap.ui.define([
 	 *   An array with objects holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData Extension
 	 *   for Data Aggregation Version 4.0</a>
-	 * @param {object} [mQueryOptions]
+	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
+	 * @throws {Error}
+	 *   If the system query option "$filter" is used
 	 *
 	 * @private
 	 */
@@ -46,6 +48,9 @@ sap.ui.define([
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
 
+		if (mQueryOptions.$filter) {
+			throw new Error("Unsupported system query option: $filter");
+		}
 		this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
 			jQuery.extend({}, mQueryOptions, {
 				$apply : _Helper.buildApply(aFirstLevelAggregation),
@@ -178,7 +183,7 @@ sap.ui.define([
 	 *   An array with objects holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 	 *   Extension for Data Aggregation Version 4.0</a>
-	 * @param {object} [mQueryOptions]
+	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
 	 *   repeats the key for each array value.
