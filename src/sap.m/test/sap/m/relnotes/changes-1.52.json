@@ -2909,5 +2909,70 @@
         "references": []
       }
     ]
+  },
+  "1.52.11": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "fda14ff364eb74438c6dead30a7933b1d018cb6f",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Now in IE \u0026 touch devices the focus is correct after closing the picker",
+        "references": []
+      },
+      {
+        "id": "195c814e4b39760fe45e4501b27ec42bb42919ee",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: fix failing unit tests",
+        "references": []
+      },
+      {
+        "id": "631b648ba091ff0c5c101e4a848850e94e3e6233",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: sap.m.SegmentedButton is now correctly alligned",
+        "references": []
+      },
+      {
+        "id": "e6b35566cc9c7882115999f28545b48617509744",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Summary text is correct when a list is filtered",
+        "references": []
+      },
+      {
+        "id": "f9af9caa8cbc478e56f9b6976ae9e246aeea3d0a",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Change event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "031212c5a23f6f1925b28bb2397296eea7f268a8",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header icon size",
+        "references": []
+      },
+      {
+        "id": "c4ae5068f0d35e9423fe795e535da87888b393dc",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix failing unit test on combi devices",
+        "references": []
+      },
+      {
+        "id": "40a25d66311b6408d8c3fe4e30e5625bfe091b6f",
+        "type": "FIX",
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
+      },
+      {
+        "id": "a8b20ead587041902ba068d90f66c8b14cb9e7a5",
+        "type": "FIX",
+        "text": " sap.m.TabStrip: do not create global CustomSelectList and CustomSelect",
+        "references": []
+      },
+      {
+        "id": "28aa58649c3ef25ee1502703a25fb412ac78ff30",
+        "type": "FIX",
+        "text": " sap.m.TablePersoController: works now also with \"late attachment\"",
+        "references": []
+      }
+    ]
   }
 }
