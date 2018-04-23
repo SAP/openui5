@@ -269,7 +269,7 @@
 					this.oView.destroy();
 				}
 			});
-			
+
 			QUnit.test("Adding and cloning of sap-ui-custom-settings from xml namespaced attributes", function (assert) {
 				return this.oView.loaded().then(function() {
 					var oButton = this.oView.byId("button"),
@@ -279,7 +279,7 @@
 					assert.ok(mCustomSettings["sap.ui.dt"] !== null,"Custom Settings available for button with namespace sap.ui.dt");
 					assert.ok(mCustomSettings["sap.ui.dt"]["test"] === "testvalue","Custom Settings available for button in namespace sap.ui.dt/test");
 					assert.ok(mCustomSettings["notexisting"] === undefined,"Custom Settings available for button with not existing namespace");
-				
+
 					var oClone = oButton.clone(),
 						mCustomSettingsClone = oClone.data("sap-ui-custom-settings");
 					assert.ok(mCustomSettingsClone !== null,"Custom Settings available for clone with namespace sap.ui.dt");
