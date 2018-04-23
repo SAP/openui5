@@ -24,6 +24,12 @@
         "type": "FIX",
         "text": " sap.ui.commons.Toolbar: fix failing unit test",
         "references": []
+      },
+      {
+        "id": "d6dc402fb8acb64bb8ecfec8cb5b45b1886ec43e",
+        "type": "FIX",
+        "text": " sap.ui.commons.SearchField: Control behaves correctly on combi devices",
+        "references": []
       }
     ]
   }

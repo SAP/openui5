@@ -133,6 +133,18 @@
         "type": "FIX",
         "text": " sap.ui.unified.Menu: tests no longer fail on IE",
         "references": []
+      },
+      {
+        "id": "6c485f3bdcab487467812306845b859e9ca16a9e",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Creating appointments with dragging is now possible",
+        "references": []
+      },
+      {
+        "id": "9406a7cc268aafcbd450416a36c3f88afa6aadd3",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct display of the Week with maxDate",
+        "references": []
       }
     ]
   }

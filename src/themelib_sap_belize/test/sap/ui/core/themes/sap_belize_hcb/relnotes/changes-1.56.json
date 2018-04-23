@@ -97,6 +97,24 @@
         "type": "FEATURE",
         "text": " sap.ui.core.dnd: dragEnd and dragOver events are added",
         "references": []
+      },
+      {
+        "id": "6c485f3bdcab487467812306845b859e9ca16a9e",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Creating appointments with dragging is now possible",
+        "references": []
+      },
+      {
+        "id": "dc78c3bcb29599ac79dbe6c5c36499c7afecb27e",
+        "type": "FEATURE",
+        "text": " sap.m.Table: enable sticky header toolbars",
+        "references": []
+      },
+      {
+        "id": "712029a17e3e3fe9fe66a76e613cbbc9dff6f7ba",
+        "type": "FIX",
+        "text": " sap.ui.layout.BlockLayout: Cell border in belize_hcw and belize_hcb themes added",
+        "references": []
       }
     ]
   }

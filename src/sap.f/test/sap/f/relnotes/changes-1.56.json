@@ -63,6 +63,12 @@
             "reference": "1880210976"
           }
         ]
+      },
+      {
+        "id": "d25d24f649d3e1fe801df2807bacd1c7aa92d992",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: aria-labelledby now properly updated",
+        "references": []
       }
     ]
   }

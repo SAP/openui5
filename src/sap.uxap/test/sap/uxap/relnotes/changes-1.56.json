@@ -87,6 +87,18 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageLayout: Additional reading removed",
         "references": []
+      },
+      {
+        "id": "60f66696eb416ec2e3dbae3aaf544de1f3ba2dde",
+        "type": "FEATURE",
+        "text": " uxap.ObjectPageHeader: titleSelectorTooltip aggregation added",
+        "references": []
+      },
+      {
+        "id": "2c0e974ab9770ea0465fb008ad13f1da3318e48b",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: _updateRootARIALabel call condition added",
+        "references": []
       }
     ]
   }

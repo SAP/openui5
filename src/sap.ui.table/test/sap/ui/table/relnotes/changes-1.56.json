@@ -115,6 +115,18 @@
         "type": "FIX",
         "text": " Table: Layout correction with row actions",
         "references": []
+      },
+      {
+        "id": "6b0b5935a32778d61c9149d38f02282f6f118199",
+        "type": "FIX",
+        "text": " GridTable: applyFocusInfo handling corrected",
+        "references": []
+      },
+      {
+        "id": "b92f72b681410bc177d7ce6362af79c769725543",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": []
       }
     ]
   }
