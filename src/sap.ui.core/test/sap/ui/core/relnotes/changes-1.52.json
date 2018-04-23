@@ -1327,5 +1327,28 @@
         "references": []
       }
     ]
+  },
+  "1.52.11": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "a9ed04aac3b758a9ebca738de580ffe642817bc9",
+        "type": "FIX",
+        "text": " MessageManager: Memory leak",
+        "references": []
+      },
+      {
+        "id": "a1f1b6a5cb3b77b7a43e558cf94bc02eb16adbaa",
+        "type": "FIX",
+        "text": " jQuery.sap.includeStylesheet: Correct comparison with existing href",
+        "references": []
+      },
+      {
+        "id": "40a25d66311b6408d8c3fe4e30e5625bfe091b6f",
+        "type": "FIX",
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
+      }
+    ]
   }
 }

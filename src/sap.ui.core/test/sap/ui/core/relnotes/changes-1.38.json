@@ -272,7 +272,7 @@
       {
         "id": "c1284dae464a6a1e1decc5e4d3130781c2d03cef",
         "type": "FEATURE",
-        "text": "v2.ODataModel: force Entity update by setting ETag to '*'",
+        "text": "v2.ODataModel: force Entity update by setting ETag to \u0027*\u0027",
         "references": [
           {
             "type": "BCP",
@@ -366,7 +366,7 @@
       {
         "id": "df95fded7d758ef7c5eb24e2d9936a9c06fc49ae",
         "type": "FIX",
-        "text": "BusyIndicator: Supress 'touchmove' on Control Level",
+        "text": "BusyIndicator: Supress \u0027touchmove\u0027 on Control Level",
         "references": [
           {
             "type": "GitHub",
@@ -652,7 +652,7 @@
       {
         "id": "649ab1ba924b3e0685cd3c38e3c37459ccd98494",
         "type": "FIX",
-        "text": "MockServer: Add support for Mock expand & select for 1...n entries",
+        "text": "MockServer: Add support for Mock expand \u0026 select for 1...n entries",
         "references": []
       },
       {
@@ -1100,7 +1100,7 @@
       {
         "id": "24803261af822b5329921cc08eba401f5623ee87",
         "type": "FIX",
-        "text": "sap.ui.core.format.DateFormat: don't break formatter if no date",
+        "text": "sap.ui.core.format.DateFormat: don\u0027t break formatter if no date",
         "references": []
       },
       {
@@ -1139,7 +1139,7 @@
       {
         "id": "8496d24fe0a50ab0250dc4801abd5568b6640e89",
         "type": "FIX",
-        "text": "sap.ui.core.routing.Target(s): fix the documentation fo 'display' method",
+        "text": "sap.ui.core.routing.Target(s): fix the documentation fo \u0027display\u0027 method",
         "references": [
           {
             "type": "BCP",
@@ -1183,7 +1183,7 @@
       {
         "id": "fcb06e533961ba6b61efeb7df4f9254f9d8077b7",
         "type": "FIX",
-        "text": "sap.ui.model.TreeBindingAdapter: fix 'toggleIndex' with fixed rows in table",
+        "text": "sap.ui.model.TreeBindingAdapter: fix \u0027toggleIndex\u0027 with fixed rows in table",
         "references": [
           {
             "type": "BCP",
@@ -1307,7 +1307,7 @@
       {
         "id": "a3cfd16f086d70299c19e8b18f024f878da728c7",
         "type": "FIX",
-        "text": "v2.ODataModel: Don't delete function import url parameters",
+        "text": "v2.ODataModel: Don\u0027t delete function import url parameters",
         "references": [
           {
             "type": "BCP",
@@ -1318,7 +1318,7 @@
       {
         "id": "ee774bd24d2d5dc010a7c2580a3889fbd9ce3418",
         "type": "FIX",
-        "text": "v2.ODataModel: Don't refresh element bindings when deleting",
+        "text": "v2.ODataModel: Don\u0027t refresh element bindings when deleting",
         "references": [
           {
             "type": "BCP",
@@ -1333,7 +1333,7 @@
       {
         "id": "3d8660456e821492836be3f9209ed6e3e1f294b3",
         "type": "FIX",
-        "text": "v2.ODataModel: Don't try to recursively loop cyclic structures",
+        "text": "v2.ODataModel: Don\u0027t try to recursively loop cyclic structures",
         "references": [
           {
             "type": "BCP",
@@ -1470,7 +1470,7 @@
       {
         "id": "243ec0b1f0852b8f7f1ecc2bcda8471542d9f4e9",
         "type": "FIX",
-        "text": "don't fail when access to local storage is disallowed",
+        "text": "don\u0027t fail when access to local storage is disallowed",
         "references": [
           {
             "type": "BCP",
@@ -1691,7 +1691,7 @@
       {
         "id": "30ec2f14c066a3168ae9960a65faae46392115be",
         "type": "FIX",
-        "text": "jQuery.sap.act: Fix disabling in case of document.hidden === false",
+        "text": "jQuery.sap.act: Fix disabling in case of document.hidden \u003d\u003d\u003d false",
         "references": [
           {
             "type": "BCP",
@@ -1725,7 +1725,7 @@
       {
         "id": "47a0c5620099de554798e45c3bfc6f02aec37f5d",
         "type": "FIX",
-        "text": "sap.ui.core.IconPool: icon 'multi-select' shouldn't be mirrored in RTL",
+        "text": "sap.ui.core.IconPool: icon \u0027multi-select\u0027 shouldn\u0027t be mirrored in RTL",
         "references": [
           {
             "type": "BCP",
@@ -1747,7 +1747,7 @@
       {
         "id": "b26bf3d2044863b4ccb7e4805d441728977b0c1c",
         "type": "FIX",
-        "text": "sap.ui.core.format.NumberFormat: Formatted Number is wrongly parsed with 'short' style in zh_CN locale",
+        "text": "sap.ui.core.format.NumberFormat: Formatted Number is wrongly parsed with \u0027short\u0027 style in zh_CN locale",
         "references": [
           {
             "type": "BCP",
@@ -1841,7 +1841,7 @@
       {
         "id": "a0c72aa8aad3bb4e61e73f41165628d7102be915",
         "type": "FIX",
-        "text": "ComponentContainer: don't skip onBeforeRendering",
+        "text": "ComponentContainer: don\u0027t skip onBeforeRendering",
         "references": [
           {
             "type": "BCP",
@@ -1973,7 +1973,7 @@
       {
         "id": "078a569e0139ef53f2b3f29fdd95a1f64a35989b",
         "type": "FIX",
-        "text": "ManagedObject: Don't destroy tree aggregation with template",
+        "text": "ManagedObject: Don\u0027t destroy tree aggregation with template",
         "references": [
           {
             "type": "BCP",
@@ -2045,7 +2045,7 @@
       {
         "id": "d42e027e36ad943e4a1ba0b9dc15c619ce08e173",
         "type": "FIX",
-        "text": "core.Popup: Check in 'onAfterRendering' extended",
+        "text": "core.Popup: Check in \u0027onAfterRendering\u0027 extended",
         "references": [
           {
             "type": "BCP",
@@ -2067,7 +2067,7 @@
       {
         "id": "87a9dc3c6bfdd8567c6ff5a8cab4caa1177e30c9",
         "type": "FIX",
-        "text": "jQuery.sap.script: arraySymbolDiff don't fail for undefined values",
+        "text": "jQuery.sap.script: arraySymbolDiff don\u0027t fail for undefined values",
         "references": [
           {
             "type": "BCP",
@@ -2093,7 +2093,7 @@
       {
         "id": "c88d02ae86639dfca646400bd67a57ed0df8b9c6",
         "type": "FIX",
-        "text": "sap.ui.core.Icon: Icon doesn't correctly mark the event on mobile device",
+        "text": "sap.ui.core.Icon: Icon doesn\u0027t correctly mark the event on mobile device",
         "references": [
           {
             "type": "BCP",
@@ -2147,7 +2147,7 @@
       {
         "id": "efff029061e3d46def09e6e77ae8b7d9df8e3e59",
         "type": "FIX",
-        "text": "thirdparty.crossroads: hash \"Page12\" shouldn't match pattern \"Page1/:context:\"",
+        "text": "thirdparty.crossroads: hash \"Page12\" shouldn\u0027t match pattern \"Page1/:context:\"",
         "references": [
           {
             "type": "BCP",
@@ -2214,7 +2214,7 @@
       {
         "id": "ed669083708042e086b59f9bbe7df6dc77c90987",
         "type": "FIX",
-        "text": "tutorial.Navigation: add the missing '[' to Resume.json",
+        "text": "tutorial.Navigation: add the missing \u0027[\u0027 to Resume.json",
         "references": [
           {
             "type": "BCP",
@@ -2253,7 +2253,7 @@
       {
         "id": "7bd9c64e5bf65c0d7c80e78576876e4e69ebe59d",
         "type": "FIX",
-        "text": "sap.ui.core.Icon: output icon text with aria-labelledby when association 'ariaLabelledBy' isn't empty",
+        "text": "sap.ui.core.Icon: output icon text with aria-labelledby when association \u0027ariaLabelledBy\u0027 isn\u0027t empty",
         "references": [
           {
             "type": "BCP",
@@ -2432,7 +2432,7 @@
       {
         "id": "b2a8583a317459b7ab889bb4bf078de376de6255",
         "type": "FIX",
-        "text": "thirdparty/crossroads: shouldn't require the non slash chars after the slash",
+        "text": "thirdparty/crossroads: shouldn\u0027t require the non slash chars after the slash",
         "references": [
           {
             "type": "BCP",
@@ -2498,7 +2498,7 @@
       {
         "id": "d329e9395144fbca9ca38b61180a495b1d2d8b61",
         "type": "FIX",
-        "text": "core.Popup: new position isn't applied in RTL after popup is opened",
+        "text": "core.Popup: new position isn\u0027t applied in RTL after popup is opened",
         "references": [
           {
             "type": "BCP",
@@ -2683,7 +2683,7 @@
       {
         "id": "b885ae0ec5cd9fa346b580706acb7736137991ce",
         "type": "FIX",
-        "text": "sap.ui.core.Popup: keep blocklayer when there's still modal popup open",
+        "text": "sap.ui.core.Popup: keep blocklayer when there\u0027s still modal popup open",
         "references": [
           {
             "type": "BCP",
@@ -2851,7 +2851,7 @@
       {
         "id": "686825b5b99a40a04a88d22db546b476014c5529",
         "type": "FIX",
-        "text": "sap.ui.core.util.ExportTypeCSV: Don't escape number only formulas",
+        "text": "sap.ui.core.util.ExportTypeCSV: Don\u0027t escape number only formulas",
         "references": [
           {
             "type": "BCP",
@@ -3053,7 +3053,7 @@
       {
         "id": "97917d2d3a40885367774ab3694e0462e24ebc04",
         "type": "FIX",
-        "text": "core.NumberFormat: adapt decimals when number of integer isn't sufficient",
+        "text": "core.NumberFormat: adapt decimals when number of integer isn\u0027t sufficient",
         "references": [
           {
             "type": "BCP",
@@ -3064,7 +3064,7 @@
       {
         "id": "0dca667b73fdf6caac2b566fe8b16b7038fe07a4",
         "type": "FIX",
-        "text": "core.NumberFormat: consider 'decimals' for style 'short' format",
+        "text": "core.NumberFormat: consider \u0027decimals\u0027 for style \u0027short\u0027 format",
         "references": [
           {
             "type": "BCP",
@@ -3075,7 +3075,7 @@
       {
         "id": "88939577d5ff4d4748ca49eec35f610f70f59943",
         "type": "FIX",
-        "text": "v2.ODataModel: Don't cache failed metadata object",
+        "text": "v2.ODataModel: Don\u0027t cache failed metadata object",
         "references": [
           {
             "type": "BCP",
@@ -3361,6 +3361,17 @@
             "reference": "0000591746"
           }
         ]
+      }
+    ]
+  },
+  "1.38.34": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "90ead2ffa8a1bdc98a794a07fa451e9141e53d8c",
+        "type": "FIX",
+        "text": " crossroads.js: correctly handle the parse of skipped optional param",
+        "references": []
       }
     ]
   }

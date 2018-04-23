@@ -307,5 +307,16 @@
         "references": []
       }
     ]
+  },
+  "1.52.11": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "974ff7ab7d3a684e87c8bce40e5f7c7c5ddbb895",
+        "type": "FIX",
+        "text": " GridTable: Avoid refocus of cell while scrolling for ACC",
+        "references": []
+      }
+    ]
   }
 }
