@@ -4,8 +4,8 @@ jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 jQuery.sap.require("sap.ui.layout.form.FormElement");
 jQuery.sap.require("sap.ui.layout.form.FormContainer");
 jQuery.sap.require("sap.ui.fl.Change");
-jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
-jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
+jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
+jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 (function() {
 	"use strict";
@@ -60,7 +60,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a legacy change", function (assert) {
-		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
+		this.mPropertyBag.modifier = sap.ui.core.util.reflection.JsControlTreeModifier;
 		//Call CUT
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
 		assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
@@ -88,7 +88,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oXmlSimpleForm, {
 			appComponent: this.oMockedComponent,
-			modifier : sap.ui.fl.changeHandler.XmlTreeModifier,
+			modifier : sap.ui.core.util.reflection.XmlTreeModifier,
 			view : this.oXmlDocument
 		}), "no errors occur");
 		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
@@ -172,21 +172,21 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier", function (assert) {
-		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
+		this.mPropertyBag.modifier = sap.ui.core.util.reflection.JsControlTreeModifier;
 		//Call CUT
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
 		assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing a local Id", function (assert) {
-		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
+		this.mPropertyBag.modifier = sap.ui.core.util.reflection.JsControlTreeModifier;
 		//Call CUT
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithLocalIdWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
 		assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
 	});
 
 	QUnit.test("when calling applyChange with JsControlTreeModifier and a change containing a global Id", function (assert) {
-		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
+		this.mPropertyBag.modifier = sap.ui.core.util.reflection.JsControlTreeModifier;
 		//Call CUT
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oSimpleForm, this.mPropertyBag), "no errors occur");
 		assert.ok(this.oFormElement.getLabel().getVisible(), "the FormElement is visible");
@@ -214,7 +214,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 		assert.ok(this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, this.oXmlSimpleForm, {
 			appComponent: this.oMockedComponent,
-			modifier : sap.ui.fl.changeHandler.XmlTreeModifier,
+			modifier : sap.ui.core.util.reflection.XmlTreeModifier,
 			view : this.oXmlDocument
 		}), "no errors occur");
 		assert.strictEqual(this.oXmlLabel0.getAttribute("visible"), null, "the FormElement is visible");
@@ -223,7 +223,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 	QUnit.test("applyChange shall raise an exception if the control does not have the required methods", function (assert) {
 		var exception, oControl;
 		oControl = {};
-		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
+		this.mPropertyBag.modifier = sap.ui.core.util.reflection.JsControlTreeModifier;
 		//Call CUT
 		try {
 			this.oChangeHandler.applyChange(this.oChangeWithGlobalIdWrapper, oControl, this.mPropertyBag);
@@ -247,7 +247,7 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 		var oSpecificChangeInfo = { revealedElementId: sap.ui.getCore().byId("component---Label0").getParent().getId() };
 
-		this.mPropertyBag.modifier = sap.ui.fl.changeHandler.JsControlTreeModifier;
+		this.mPropertyBag.modifier = sap.ui.core.util.reflection.JsControlTreeModifier;
 
 		this.oChangeHandler.completeChangeContent(oChangeWrapper, oSpecificChangeInfo, this.mPropertyBag);
 

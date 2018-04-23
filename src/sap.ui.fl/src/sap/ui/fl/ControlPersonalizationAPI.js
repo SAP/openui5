@@ -5,7 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/Element",
 	"sap/ui/core/Component"
 ], function(

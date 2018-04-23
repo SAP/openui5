@@ -6,8 +6,8 @@ jQuery.sap.require("sap.m.ObjectAttribute");
 jQuery.sap.require("sap.m.ObjectHeader");
 jQuery.sap.require("sap.ui.layout.VerticalLayout");
 jQuery.sap.require("sap.ui.fl.Change");
-jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
-jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
+jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
+jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 (function(MoveElementsHandler, Change, JsControlTreeModifier, XmlTreeModifier) {
 	"use strict";
@@ -410,4 +410,4 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 		assert.equal(this.oXmlLayout.childNodes[0].childNodes[2].getAttribute("id"), this.oObjectAttribute.getId(), "object attribute is inserted at the 3. position");
 		assert.equal(this.oXmlLayout.childNodes[0].childNodes[3].getAttribute("id"), this.oObjectAttribute2.getId(), "object attribute 2 is inserted at the 4. position");
 	});
-}(sap.ui.fl.changeHandler.MoveElements, sap.ui.fl.Change, sap.ui.fl.changeHandler.JsControlTreeModifier, sap.ui.fl.changeHandler.XmlTreeModifier));
+}(sap.ui.fl.changeHandler.MoveElements, sap.ui.fl.Change, sap.ui.core.util.reflection.JsControlTreeModifier, sap.ui.core.util.reflection.XmlTreeModifier));

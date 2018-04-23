@@ -584,7 +584,7 @@ sap.ui.define([
 	 * or array of SAPUI5 controls, for which the selector shall be determined
 	 * @param {string} sAlias - Dependent object is saved under this alias
 	 * @param {object} mPropertyBag
-	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
 	 * @param {sap.ui.core.Component} [mPropertyBag.appComponent] - Application component; only needed if <code>vControl</code> is a string or an XML node
 	 * @param {object} [mAdditionalSelectorInformation] - Additional mapped data which is added to the selector
 	 *
@@ -632,7 +632,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sAlias - Used to retrieve the selectors that have been saved under this alias
 	 * @param {object} mPropertyBag
-	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier - Modifier for the controls
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Application component, needed to retrieve the control from the selector
 	 * @param {Node} mPropertyBag.view - only for xml processing: the xml node of the view
 	 *

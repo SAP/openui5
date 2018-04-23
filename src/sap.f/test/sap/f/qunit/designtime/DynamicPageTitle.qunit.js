@@ -12,7 +12,7 @@
         "sap/m/Title",
         "sap/m/Button",
 		"sap/f/changeHandler/MoveDynamicPageTitleActions",
-		"sap/ui/fl/changeHandler/JsControlTreeModifier",
+		"sap/ui/core/util/reflection/JsControlTreeModifier",
 		"sap/ui/fl/Change",
 		"sap/ui/core/UIComponent",
 		"sap/ui/core/ComponentContainer"

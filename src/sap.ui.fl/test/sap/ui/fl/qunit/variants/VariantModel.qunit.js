@@ -4,7 +4,7 @@ jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 QUnit.config.autostart = false;
 
 sap.ui.require([
-	"sap/ui/fl/variants/VariantController", "sap/ui/fl/variants/VariantModel", "sap/ui/fl/variants/VariantManagement", "sap/ui/fl/Utils", "sap/ui/fl/FlexControllerFactory", "sap/ui/fl/changeHandler/BaseTreeModifier"
+	"sap/ui/fl/variants/VariantController", "sap/ui/fl/variants/VariantModel", "sap/ui/fl/variants/VariantManagement", "sap/ui/fl/Utils", "sap/ui/fl/FlexControllerFactory", "sap/ui/core/util/reflection/BaseTreeModifier"
 ], function(VariantController, VariantModel, VariantManagement, Utils, FlexControllerFactory, BaseTreeModifier) {
 	"use strict";
 	sinon.config.useFakeTimers = false;

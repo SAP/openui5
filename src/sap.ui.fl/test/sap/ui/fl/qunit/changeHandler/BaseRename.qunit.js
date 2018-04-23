@@ -6,8 +6,8 @@ sap.ui.require([
 	"sap/ui/fl/changeHandler/BaseRename",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/m/Button",
 	"sap/ui/layout/VerticalLayout",
 	"sap/ui/thirdparty/sinon"

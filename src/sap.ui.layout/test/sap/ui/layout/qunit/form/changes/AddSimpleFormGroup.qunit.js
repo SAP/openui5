@@ -4,8 +4,8 @@ jQuery.sap.require("sap.ui.layout.form.SimpleForm");
 jQuery.sap.require("sap.ui.layout.form.FormElement");
 jQuery.sap.require("sap.ui.layout.form.FormContainer");
 jQuery.sap.require("sap.ui.fl.Change");
-jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
-jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
+jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
+jQuery.sap.require("sap.ui.core.util.reflection.XmlTreeModifier");
 
 (function () {
 	"use strict";
@@ -80,11 +80,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.fl.changeHandler.JsControlTreeModifier
+				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
 			};
 
 			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
+			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -210,11 +210,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.fl.changeHandler.JsControlTreeModifier
+				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
 			};
 
 			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
+			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -368,11 +368,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.fl.changeHandler.JsControlTreeModifier
+				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
 			};
 
 			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
+			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -478,11 +478,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.fl.changeHandler.JsControlTreeModifier
+				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
 			};
 
 			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
+			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
 		},
 
 		afterEach: function () {
@@ -595,11 +595,11 @@ jQuery.sap.require("sap.ui.fl.changeHandler.XmlTreeModifier");
 
 			this.mPropertyBag = {
 				appComponent: this.oMockedComponent,
-				modifier: sap.ui.fl.changeHandler.JsControlTreeModifier
+				modifier: sap.ui.core.util.reflection.JsControlTreeModifier
 			};
 
 			this.oChangeHandler = sap.ui.layout.changeHandler.AddSimpleFormGroup;
-			this.oXmlTreeModifier = sap.ui.fl.changeHandler.XmlTreeModifier;
+			this.oXmlTreeModifier = sap.ui.core.util.reflection.XmlTreeModifier;
 		},
 
 		afterEach: function () {

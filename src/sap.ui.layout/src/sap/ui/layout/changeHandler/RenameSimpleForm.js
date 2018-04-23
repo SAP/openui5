@@ -5,7 +5,7 @@
 /*global sap */
 
 sap.ui.define([
-	"sap/ui/fl/changeHandler/Base", "sap/ui/fl/changeHandler/JsControlTreeModifier", "sap/ui/fl/Utils"
+	"sap/ui/fl/changeHandler/Base", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/fl/Utils"
 ], function(BaseChangeHandler, JsControlTreeModifier, Utils) {
 	"use strict";
 
@@ -26,8 +26,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChangeWrapper - change object with instructions to be applied on the control
 	 * @param {object} oControl - the control which has been determined by the selector id
-	 * @param {object} mPropertyBag - map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
-	 *                                sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
+	 * @param {object} mPropertyBag - map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
+	 *                                sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
 	 * @private
 	 */
 	RenameForm.applyChange = function(oChangeWrapper, oControl, mPropertyBag) {

@@ -31,8 +31,8 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.fl.Change} oChangeWrapper Change object with instructions to be applied on the control
 	 * @param {object} oControl The control which has been determined by the selector id
-	 * @param {object} mPropertyBag Map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
-	 *                                sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
+	 * @param {object} mPropertyBag Map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
+	 *                                sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
 	 * @private
 	 */
 	RenameFormContainer.applyChange = function(oChangeWrapper, oControl, mPropertyBag) {

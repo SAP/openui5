@@ -5,8 +5,8 @@ QUnit.config.autostart = false;
 sap.ui.require([
 	"sap/m/changeHandler/MoveTableColumns",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/model/json/JSONModel"

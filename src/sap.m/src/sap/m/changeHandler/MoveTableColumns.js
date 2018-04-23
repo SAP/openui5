@@ -31,7 +31,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oRelevantContainer Control that matches the change selector for applying the change, which is the source of the move
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.view XML node representing a ui5 view
-	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
 	 * @param {function} fnIterator - Iterator function which is called on each movedElement, as an argument it gets CurrentIndex
 	 *  of the element and may return TargetIndex as a result.
@@ -130,7 +130,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oRelevantContainer Control that matches the change selector for applying the change, which is the source of the move
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.view XML node representing a ui5 view
-	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
 	 * @return {boolean} true Indicates whether the change can be applied
 	 * @public
@@ -154,7 +154,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oRelevantContainer Control that matches the change selector for applying the change, which is the source of the move
 	 * @param {object} mPropertyBag Map of properties
 	 * @param {object} mPropertyBag.view XML node representing a ui5 view
-	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} mPropertyBag.modifier Modifier for the controls
 	 * @param {sap.ui.core.UIComponent} mPropertyBag.appComponent AppComponent
 	 * @return {boolean} true Indicates whether the change can be applied
 	 * @public
