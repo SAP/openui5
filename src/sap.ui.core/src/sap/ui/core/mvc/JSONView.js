@@ -5,14 +5,15 @@
 // Provides control sap.ui.core.mvc.JSONView.
 sap.ui.define([
     'jquery.sap.global',
+    './View',
+    './JSONViewRenderer',
+    './EventHandlerResolver',
+	'sap/base/util/extend',
     'sap/ui/base/ManagedObject',
     'sap/ui/core/library',
-    'sap/ui/model/resource/ResourceModel',
-    './View',
-    "./JSONViewRenderer",
-    "./EventHandlerResolver"
+    'sap/ui/model/resource/ResourceModel'
 ],
-	function(jQuery, ManagedObject, library, ResourceModel, View, JSONViewRenderer, EventHandlerResolver) {
+	function(jQuery, View, JSONViewRenderer, EventHandlerResolver, extend, ManagedObject, library, ResourceModel) {
 	"use strict";
 
 	// shortcut for enum(s)
@@ -39,6 +40,33 @@ sap.ui.define([
 		library : "sap.ui.core"
 	}});
 
+	/**
+	 * Creates a JSON view of the given configuration.
+	 *
+	 * @param {map} mOptions A map containing the view configuration options.
+	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
+	 * @param {string} [mOptions.viewName] The view name that corresponds to a JSON module that can be loaded
+	 * via the module system (viewName + suffix ".view.json").
+	 * @param {string|object} [mOptions.definition] view definition as a JSON string or an object literal
+	 * @param {sap.ui.core.mvc.Controller} [vView.controller] Controller instance to be used for this view.
+	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
+	 * between multiple views is not supported.
+	 * @public
+	 * @static
+	 * @return {Promise} a Promise which resolves with the created JSONView instance.
+	 */
+	JSONView.create = function(mOptions) {
+		var mParameters = extend(true, {}, mOptions);
+		//remove unsupported options:
+		for (var sOption in mParameters) {
+			if (sOption === 'preprocessors') {
+				delete mParameters[sOption];
+				jQuery.sap.log.warning("JSView.create does not support the option preprocessors!");
+			}
+		}
+		mParameters.type = ViewType.JSON;
+		return View.create(mParameters);
+	};
 
 	/**
 	 * Creates a JSON view of the given name and id.
@@ -64,6 +92,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.mvc.Controller} [vView.controller] controller to be used for this view instance
 	 * @public
 	 * @static
+	 * @deprecated since 1.56: Use sap.ui.core.mvc.JSONView.create instead.
 	 * @return {sap.ui.core.mvc.JSONView} the created JSONView instance
 	 */
 	sap.ui.jsonview = function(sId, vView) {

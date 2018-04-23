@@ -29,4 +29,20 @@ sap.ui.define([
 	};
 	asyncTestsuite("JSONView Factory", oConfig);
 
+	QUnit.test("Promise - loaded() for async view", function(assert) {
+		assert.expect(3);
+		var done = assert.async();
+		var that = this;
+		this.oLogMock = this.mock(jQuery.sap.log);
+		this.oLogMock.expects("warning").never();
+
+		JSONView.create({
+			viewName : "testdata.mvc.Async"
+		})
+		.then(function(oViewLoaded) {
+			assert.equal(that.oAfterInitSpy.callCount, 1, "AfterInit event fired before resolving");
+			assert.ok(oViewLoaded instanceof JSONView, "Views equal deeply");
+			done();
+		});
+	});
 });
