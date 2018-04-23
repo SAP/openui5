@@ -682,53 +682,7 @@ sap.ui.define([
 			oNewContent.setModel(this._oManagedObjectModel, "$" + this.alias);
 			oNewContent.bindObject("$" + this.alias + ">/");
 		}
-		var that = this;
 		this.setAggregation(sCompositeName, oNewContent);
-		var that = this;
-
-		// in short, the reason we overwrite the _getPropertiesToPropagate is that we wish to filter out controlTree models from parents
-		// from being propagated. This is not strictly needed but it could lead to confusion if in an inner
-		// XMLComposite control you could reference the controlTree model of a "parent" XMLComposite control.
-		oNewContent._getPropertiesToPropagate = function () {
-			// XMLComposite control content should only propagate the contexts that are not contexts of parent XMLComposite controls
-			// this is the case for XMLComposite controls that are nested in other XMLComposite controls
-
-			// notice that the call ManagedObject.prototype._getPropertiesToPropagate.apply(this, arguments) gives us
-			// all the parent properties (model, bindingContexts and listeners) merged with the properties of self
-			// (the latter is merged on top of the parent properties) - in this method it is about what we overtake from
-			// this already merged result
-			var oProperties = ManagedObject.prototype._getPropertiesToPropagate.apply(this, arguments),
-				oBindingContexts = {},
-				oModels = {},
-				oModel;
-			for (var n in oProperties.oBindingContexts) {
-				var oContext = oProperties.oBindingContexts[n];
-				if (oContext) {
-					oModel = oContext.getModel();
-					// if the model to be propageted is a controlTree model of an XMLComposite with a different name that the controlTree model
-					// of our current control, then we do *not* propagate
-					if (oModel instanceof ManagedObjectModel && oModel.getRootObject() instanceof XMLComposite && "$" + that.alias !== n) {
-						continue;
-					}
-					// so in this case we know that either we are dealing with a model which is not a controlTree model of an XMLComposite or
-					// it is so but the name of the model to propagete is identical to the name of our current control and since oProperties
-					// is already a merge we know that in the latter case the controlTree model *is* the controlTree model set on
-					// oNewContent (=this) in _setCompositeAggregation
-					oBindingContexts[n] = oProperties.oBindingContexts[n];
-				}
-			}
-			for (var n in oProperties.oModels) {
-				var oModel = oProperties.oModels[n];
-				if (oModel && oModel instanceof ManagedObjectModel && oModel.getRootObject() instanceof XMLComposite && "$" + that.alias !== n) {
-					continue;
-				}
-				oModels[n] = oProperties.oModels[n];
-			}
-
-			oProperties.oBindingContexts = oBindingContexts;
-			oProperties.oModels = oModels;
-			return oProperties;
-		};
 		this.invalidate();
 	};
 
