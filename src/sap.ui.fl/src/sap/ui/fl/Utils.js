@@ -983,22 +983,22 @@ sap.ui.define([
 			}
 
 			switch (sScenario) {
-				case "APP_VARIANT":
+				case sap.ui.fl.Scenario.AppVariant:
 					if (!sProjectId) {
 						oError.message += "in an app variant scenario you additionaly need a project ID";
 						throw oError;
 					}
 					sRootNamespace += sBaseId + "/appVariants/" + sProjectId + "/";
 					break;
-				case "ADAPTATION_PROJECT":
+				case sap.ui.fl.Scenario.AdaptationProject:
 					if (!sProjectId) {
 						oError.message += "in a adaptation project scenario you additionaly need a project ID";
 						throw oError;
 					}
 					sRootNamespace += sBaseId + "/adapt/" + sProjectId + "/";
 					break;
-				case "FE_FROM_SCRATCH":
-				case "UI_ADAPTATION":
+				case sap.ui.fl.Scenario.FioriElementsFromScratch:
+				case sap.ui.fl.Scenario.UiAdaptation:
 				default:
 					sRootNamespace += sBaseId + "/";
 			}
