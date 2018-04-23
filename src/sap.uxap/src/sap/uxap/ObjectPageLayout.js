@@ -1344,8 +1344,8 @@ sap.ui.define([
 			return;
 		}
 
-		this._oABHelper._buildAnchorBar();
 		this._oABHelper._getAnchorBar().setShowPopover(bValue);
+		this._oABHelper._buildAnchorBar();
 		return this.setProperty("showAnchorBarPopover", bValue, true /* don't re-render the whole objectPageLayout */);
 	};
 

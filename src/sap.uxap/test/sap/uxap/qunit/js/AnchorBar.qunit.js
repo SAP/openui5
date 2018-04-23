@@ -137,11 +137,15 @@
 
 	QUnit.test("When using the objectPageNavigation the 'navigate' event is fired with the appropriate arguments", function (assert) {
 		var oAnchorBar = this.oObjectPage.getAggregation("_anchorBar"),
-			oExpectedSection = this.oObjectPage.getSections()[0],
-			oExpectedSubSection = oExpectedSection.getSubSections()[0],
+			oExpectedSection,
+			oExpectedSubSection,
 			navigateSpy = this.spy(this.oObjectPage, "fireNavigate");
 
 		this.oObjectPage.setShowAnchorBarPopover(false);
+		sap.ui.getCore().applyChanges();
+
+		oExpectedSection = this.oObjectPage.getSections()[0];
+		oExpectedSubSection = oExpectedSection.getSubSections()[0];
 		oAnchorBar.getContent()[0].firePress();
 
 		assert.ok(navigateSpy.calledWithMatch(sinon.match.has("section", oExpectedSection)), "Event fired has the correct section parameter attached");
