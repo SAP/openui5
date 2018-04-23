@@ -160,7 +160,7 @@ sap.ui.define([
 					template : oItem
 				});
 				oComboBox.attachSelectionChange(onSelectionChange);
-			}, function (oError) {
+			}).catch(function (oError) {
 				jQuery.sap.log.error(oError, undefined,
 					"sap.ui.core.sample.common.ValueHelp");
 			});
@@ -230,7 +230,7 @@ sap.ui.define([
 				oPopover.data("openedBy", oInput);
 				oPopover.openBy(oInput);
 
-			}, function (oError) {
+			}).catch(function (oError) {
 				jQuery.sap.log.error(oError, undefined,
 					"sap.ui.core.sample.common.ValueHelp");
 			});
