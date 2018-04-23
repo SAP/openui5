@@ -321,7 +321,7 @@
 			{
 			  "id": "sap.ui.layout.sample.GridData",
 			  "name": "Grid - Using GridData",
-			  "description": "Take advantage of sap.ui.layout.GridData to control individual Grid children."
+			  "description": "Take advantage of sap.ui.layout.GridData to control the appearance of individual Grid children."
 			},
 			{
 				"id": "sap.ui.layout.sample.GridInfo",
