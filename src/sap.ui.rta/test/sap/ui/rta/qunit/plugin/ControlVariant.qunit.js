@@ -30,7 +30,7 @@ sap.ui.require([
 	"sap/m/Page",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
-	"sap/ui/fl/changeHandler/BaseTreeModifier",
+	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/m/delegate/ValueStateMessage",
 	"sap/ui/rta/Utils",
 	// should be last

@@ -5,8 +5,8 @@ sap.ui.require([
 	"sap/ui/layout/changeHandler/HideSimpleForm",
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier"
 ], function(
 	HideSimpleForm,
 	SimpleForm,

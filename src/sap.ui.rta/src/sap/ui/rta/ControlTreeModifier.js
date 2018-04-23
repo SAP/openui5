@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/changeHandler/JsControlTreeModifier"], function (JsControlTreeModifier) {
+sap.ui.define(["sap/ui/core/util/reflection/JsControlTreeModifier"], function (JsControlTreeModifier) {
 
 	"use strict";
 
@@ -10,7 +10,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/JsControlTreeModifier"], function (JsCon
 	 * Implementation of the RTA-specific functionality for the control tree modifier
 	 *
 	 * @namespace sap.ui.rta.ControlTreeModifier
-	 * @extends sap.ui.fl.changeHandler.JsControlTreeModifier
+	 * @extends sap.ui.core.util.reflection.JsControlTreeModifier
 	 *
 	 * @private
 	 * @since 1.44

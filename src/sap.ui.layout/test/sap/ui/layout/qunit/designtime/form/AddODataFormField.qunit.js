@@ -7,8 +7,8 @@ sap.ui.require([
 		"sap/ui/layout/changeHandler/AddFormField",
 		"sap/ui/layout/form/Form",
 		"sap/ui/fl/Change",
-		"sap/ui/fl/changeHandler/JsControlTreeModifier",
-		"sap/ui/fl/changeHandler/XmlTreeModifier"
+		"sap/ui/core/util/reflection/JsControlTreeModifier",
+		"sap/ui/core/util/reflection/XmlTreeModifier"
 	],
 	function (
 		Title,
