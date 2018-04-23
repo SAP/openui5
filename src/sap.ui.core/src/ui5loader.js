@@ -536,6 +536,8 @@
 		assert((p > 0 || sNamePrefix === '') && mUrlPrefixes[sNamePrefix], "there always must be a mapping");
 
 		sPath = mUrlPrefixes[sNamePrefix].url + sResourceName.slice(p + 1); // also skips a leading slash!
+
+		//remove trailing slash
 		if ( sPath.slice(-1) === '/' ) {
 			sPath = sPath.slice(0, -1);
 		}
@@ -1703,11 +1705,44 @@
 			// return undefined;
 		};
 		fnRequire.toUrl = function(sName) {
-			sName = getMappedName(sName, sContextName);
-			var oName = urnToIDAndType( sName );
-			return getResourcePath(oName.id, oName.type);
+			var sMappedName = ensureTrailingSlash(getMappedName(sName, sContextName), sName);
+			return toUrl(sMappedName);
 		};
 		return fnRequire;
+	}
+
+	function ensureTrailingSlash(sName, sInput) {
+		//restore trailing slash
+		if (sInput.slice(-1) === "/" && sName.slice(-1) !== "/") {
+			return sName + "/";
+		}
+		return sName;
+	}
+
+	/**
+	 * Retrieves the url from the provided name.
+	 * Supports relative segments within the path such as <code>./</code> and <code>../</code>
+	 *
+	 * <pre>
+	 *      "sap/ui/test/../mypath/myFile"     -->   "sap/ui/mypath/myFile"
+	 *      "sap/ui/test/./mypath/myFile"      -->   "sap/ui/test/mypath/myFile"
+	 *      "sap/ui/test/mypath/myFile"        -->   "sap/ui/test/mypath/myFile"
+	 *      "sap/ui/test/mypath/.ext"          -->   "sap/ui/test/mypath/.ext"
+	 *      "sap/ui/test/mypath/myFile.ext"    -->   "sap/ui/test/mypath/myFile.ext"
+	 *      "sap/ui/test/mypath/               -->   "sap/ui/test/mypath/"
+	 *      "/sap/ui/test"                     -->   Error because first character is a slash
+	 * </pre>
+	 *
+	 * @param {string} sName name of the resource e.g. sap/ui/test/../mypath/myFile
+	 * @returns {string} the path to the resource, e.g. sap/ui/mypath/myFile
+	 * @see https://github.com/amdjs/amdjs-api/wiki/require#requiretourlstring-
+	 * @throws Error if the input name is absolute (starts with a slash character <code>'/'</code>)
+	 */
+	function toUrl(sName) {
+		if (sName.indexOf("/") === 0) {
+			throw new Error("The provided argument '" + sName + "' may not start with a slash");
+		}
+		return ensureTrailingSlash(getResourcePath(sName), sName);
 	}
 
 	/**
@@ -2056,7 +2091,7 @@
 		getUrlPrefixes: getUrlPrefixes,
 		loadJSResourceAsync: loadJSResourceAsync,
 		resolveURL: resolveURL,
-		toUrl: getResourcePath,
+		toUrl: toUrl,
 		unloadResources: unloadResources
 	};
 	Object.defineProperties(privateAPI, {
