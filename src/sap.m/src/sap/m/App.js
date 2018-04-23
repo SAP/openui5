@@ -101,7 +101,25 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRendere
 			 * This can be used to make the application content better readable by making the background image partly transparent.
 			 * @since 1.11.2
 			 */
-			backgroundOpacity : {type : "float", group : "Appearance", defaultValue : 1}
+			backgroundOpacity : {type : "float", group : "Appearance", defaultValue : 1},
+
+			/**
+			 * Determines whether the <code>App</code> is displayed without address bar when
+			 * opened from an exported home screen icon on a mobile device.
+			 *
+			 * Keep in mind that if enabled, there is no back button provided by the browser and the app
+			 * must provide own navigation on all displayed pages to avoid dead ends.
+			 *
+			 * <b>Note</b>
+			 * The property can be toggled, but it doesn't take effect in real time.
+			 * It takes the set value at the moment when the home screen icon is exported by the user.
+			 * For example, if the icon is exported while the property is set to <code>true</code>,
+			 * the <code>App</code> will have no address bar when opened from that same icon regardless
+			 * of a changed property value to <code>false</code> at a later time.
+			 *
+			 * @since 1.58.0
+			 */
+			mobileWebAppCapable : {type : "boolean", group : "Appearance", defaultValue : true}
 		},
 		events : {
 
@@ -142,7 +160,8 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', './AppRendere
 			NavContainer.prototype.onBeforeRendering.apply(this, arguments);
 		}
 		jQuery.sap.initMobile({
-			homeIcon: this.getHomeIcon()
+			homeIcon: this.getHomeIcon(),
+			mobileWebAppCapable: this.getMobileWebAppCapable()
 		});
 	};
 
