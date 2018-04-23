@@ -17,7 +17,6 @@ sap.ui.define([
 	 */
 	var MoveTableColumns = {};
 
-	var CHANGE_TYPE = "moveTableColumns";
 	var SOURCE_ALIAS = "source";
 	var TARGET_ALIAS = "target";
 	var MOVED_ELEMENTS_ALIAS = "movedElements";
@@ -206,7 +205,6 @@ sap.ui.define([
 			});
 		});
 
-		mChangeData.changeType = CHANGE_TYPE;
 		oChange.addDependentControl(mSpecificChangeInfo.source.id, SOURCE_ALIAS, mPropertyBag, mAdditionalSourceInfo);
 		oChange.addDependentControl(mSpecificChangeInfo.target.id, TARGET_ALIAS, mPropertyBag, mAdditionalTargetInfo);
 		oChange.addDependentControl(mSpecificChangeInfo.movedElements.map(function (element) {
