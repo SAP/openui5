@@ -1442,6 +1442,28 @@
 				oCalendar.destroy();
 				oGetAggregationStub.restore();
 			});
+
+			QUnit.test("weekNumberSelect event", function (assert) {
+				//arrange
+				var oMockEvent = {
+					innerText: 3,
+					parentElement: {
+						"data-sap-day": "2015-01-11"
+					}
+				},
+					oEventSpy = this.spy(sap.ui.base.EventProvider.prototype, "fireEvent");
+
+				//act
+				oCal3._handleWeekSelection(oMockEvent);
+
+				//assert
+				assert.equal(oEventSpy.callCount, 1, "an event was fired");
+				assert.equal(oEventSpy.args[0][0], "weekNumberSelect", "weekNumberSelect is fired");
+
+				//cleanup
+				oEventSpy.reset();
+			});
+
 		</script>
 
 	</head>
