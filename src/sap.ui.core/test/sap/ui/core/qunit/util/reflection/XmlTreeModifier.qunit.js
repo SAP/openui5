@@ -1,13 +1,14 @@
 /* global QUnit */
 jQuery.sap.require("sap.ui.qunit.qunit-coverage");
 
-// Restrict coverage to sap.ui.fl library
+// Restrict coverage to sap/ui/core/util/reflection/
 if (window.blanket){
-	window.blanket.options("sap-ui-cover-only", "[sap/ui/fl]");
+	window.blanket.options("sap-ui-cover-only", "[sap/ui/core/util/reflection/]");
 }
+QUnit.config.autostart = false;
 
 sap.ui.define([
-	'sap/ui/fl/changeHandler/XmlTreeModifier'
+	'sap/ui/core/util/reflection/XmlTreeModifier'
 ],
 function(
 	XmlTreeModifier
@@ -21,15 +22,11 @@ function(
 			this.TEXT_ID = "textId";
 			this.CHANGE_HANDLER_PATH = "path/to/changehandler/definition";
 
-			jQuery.sap.registerModulePath("testComponent", "../testComponent");
-
-						this.oComponent = sap.ui.getCore().createComponent({
-							name: "testComponent",
-							id: "testComponent",
-							"metadata": {
-								"manifest": "json"
-							}
-						});
+			jQuery.sap.registerModulePath("sap.ui.test", "../../component/testdata");
+			this.oComponent = sap.ui.getCore().createComponent({
+				name: "sap.ui.test.other",
+				id: "testComponent"
+			});
 
 			this.oXmlString =
 				'<mvc:View id="testComponent---myView" ' +
@@ -97,7 +94,7 @@ function(
 		}
 	});
 
-	QUnit.test("the createControl processes parameters and working with default namspaces", function (assert) {
+	QUnit.test("the createControl processes parameters and working with default namespaces", function (assert) {
 		var sButtonText = "ButtonText";
 		var oButtonElement = XmlTreeModifier.createControl('sap.m.Button', this.oComponent, this.oXmlView, "testComponent---myView--MyButton", {'text' : sButtonText});
 		assert.equal(oButtonElement.getAttribute("text"), sButtonText);
@@ -290,6 +287,15 @@ function(
 		assert.strictEqual(XmlTreeModifier.getProperty(oInvisibleLabel, "design"), "Bold", "property from xml");
 	});
 
+	QUnit.test("unbindProperty removes the attribute in xml to restore default", function (assert) {
+		var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
+		var aChildNodes = XmlTreeModifier._children(oVBox);
+
+		var oVisibleLabel = aChildNodes[1];
+		XmlTreeModifier.unbindProperty(oVisibleLabel, "visible");
+		assert.strictEqual(oVisibleLabel.getAttribute("visible"), null, "default value, property not in xml");
+	});
+
 	QUnit.test("_byId finds the node specified", function (assert) {
 		var oExpectedHBox = XmlTreeModifier._children(this.oXmlView)[1];
 		oExpectedHBox.setAttributeNS("http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1", "id", true);
@@ -378,4 +384,6 @@ function(
 		var oHBox = XmlTreeModifier._children(this.oXmlView)[1];
 		assert.ok(XmlTreeModifier.getBindingTemplate(oHBox, "items"), "then content inside item is returned");
 	});
+
+	QUnit.start();
 });

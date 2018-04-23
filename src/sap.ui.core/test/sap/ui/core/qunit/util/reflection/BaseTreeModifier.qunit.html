@@ -4,8 +4,8 @@
 		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 		<meta charset="utf-8">
 
-		<title>QUnit Page for sap.ui.fl.changeHandler.BaseTreeModifier</title>
-		<script src="../shared-config.js"></script>
+		<title>QUnit Page for sap/ui/core/util/reflection/BaseTreeModifier</title>
+		<script src="../../../shared-config.js"></script>
 		<script>
 			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
@@ -15,15 +15,12 @@
 			jQuery.sap.require('sap.ui.qunit.qunit-junit');
 			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/fl]');
-
-			sap.ui.getCore().loadLibrary('sap.ui.fl');
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/core/util/reflection]');
 
 			jQuery.sap.includeScript('./BaseTreeModifier.qunit.js');
 		</script>
 	</head>
 	<body>
 		<div id="qunit"></div>
-		<div id='qunit-fixture'>
 	</body>
 </html>

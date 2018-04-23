@@ -2,54 +2,46 @@
 
 QUnit.config.autostart = false;
 sap.ui.require([
-	'sap/ui/fl/changeHandler/BaseTreeModifier',
-	'sap/ui/fl/changeHandler/JsControlTreeModifier',
-	'sap/ui/fl/changeHandler/XmlTreeModifier',
-	'sap/ui/fl/Utils'
+	'sap/ui/core/util/reflection/BaseTreeModifier',
+	'sap/ui/core/util/reflection/JsControlTreeModifier',
+	'sap/ui/core/util/reflection/XmlTreeModifier',
+	'sap/ui/core/Control',
+	'sap/ui/core/UIComponent',
+	// should be last:
+	'sap/ui/thirdparty/sinon'
 ],
 function(
 	BaseTreeModifier,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	Utils
+	Control,
+	UIComponent,
+	sinon
 ) {
 
 	"use strict";
 	QUnit.start();
+	var sandbox = sinon.sandbox.create();
 
-	jQuery.sap.registerModulePath("testComponent", "../testComponent");
+	jQuery.sap.registerModulePath("sap.ui.test", "../../component/testdata");
+
+	var XML_VIEW =	'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
+	'<form:SimpleForm id="testComponent---myView--myForm">' +
+	'<Title id="testComponent---myView--myGroup" />' +
+	'<Input id="testComponent---myView--myGroupElement" />' +
+	'</form:SimpleForm>' +
+	'</mvc:View>';
 
 	QUnit.module("While handling xml views the BaseTreeModifier", {
 		beforeEach: function () {
 
-			var oMockedLrepResponse = {
-				changes: [],
-				contexts: [],
-				settings: []
-			};
-
-			sap.ui.fl.Cache._entries["testComponent.Component"] = {
-				file: oMockedLrepResponse,
-				promise: Promise.resolve(oMockedLrepResponse)
-			};
-
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: "testComponent",
-				id: "testComponent",
-				"metadata": {
-					"manifest": "json"
-				}
+				name: "sap.ui.test.other",
+				id: "testComponent"
 			});
 
 			this.oDOMParser = new DOMParser();
-			this.oXmlString =
-				'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:form="sap.ui.layout.form">' +
-				'<form:SimpleForm id="testComponent---myView--myForm">' +
-				'<Title id="testComponent---myView--myGroup" />' +
-				'<Input id="testComponent---myView--myGroupElement" />' +
-				'</form:SimpleForm>' +
-				'</mvc:View>';
-			this.oXmlView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+			this.oXmlView = this.oDOMParser.parseFromString(XML_VIEW, "application/xml").documentElement;
 			return this.oXmlView;
 		},
 
@@ -90,26 +82,17 @@ function(
 	QUnit.module("While handling js views the BaseTreeModifier", {
 		beforeEach: function () {
 
-			var oMockedLrepResponse = {
-				changes: [],
-				contexts: [],
-				settings: []
-			};
-
-			sap.ui.fl.Cache._entries["testComponent.Component"] = {
-				file: oMockedLrepResponse,
-				promise: Promise.resolve(oMockedLrepResponse)
-			};
-
 			this.oComponent = sap.ui.getCore().createComponent({
-				name: "testComponent",
-				id: "testComponent",
-				"metadata": {
-					"manifest": "json"
-				}
+				name: "sap.ui.test.other",
+				id: "testComponent"
 			});
 
-			this.oJsView = this.oComponent.byId("myView");
+			this.oJsView = sap.ui.view({
+				type: sap.ui.core.mvc.ViewType.XML,
+				async: false, // test timing
+				viewContent : XML_VIEW,
+				id : this.oComponent.createId("myView")
+			});
 			return this.oJsView;
 		},
 
@@ -261,62 +244,116 @@ function(
 			}
 
 			assert.throws(function() {
-				BaseTreeModifier.checkAndPrefixIdsInFragment(oXML1, "foo");
+				BaseTreeModifier._checkAndPrefixIdsInFragment(oXML1, "foo");
 			}, new Error("At least one control does not have a stable ID"), "missing stable ID error cought");
 
 			assert.throws(function() {
-				BaseTreeModifier.checkAndPrefixIdsInFragment(oXML2, "foo");
+				BaseTreeModifier._checkAndPrefixIdsInFragment(oXML2, "foo");
 			}, new Error("At least one control does not have a stable ID"), "missing stable ID error cought");
 
-			var sResult3 = BaseTreeModifier.checkAndPrefixIdsInFragment(oXML3, "foo");
-			var aChildren = Utils.getElementNodeChildren(sResult3);
-			aChildren.push(Utils.getElementNodeChildren(Utils.getElementNodeChildren(aChildren[3])[0])[0]);
+			var sResult3 = BaseTreeModifier._checkAndPrefixIdsInFragment(oXML3, "foo");
+			var aChildren = BaseTreeModifier._getElementNodeChildren(sResult3);
+			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(aChildren[3])[0])[0]);
 			checkIdsOfAllChildren(aChildren, assert);
 
-			var sResult4 = BaseTreeModifier.checkAndPrefixIdsInFragment(oXML4, "foo");
-			aChildren = Utils.getElementNodeChildren(sResult4);
-			aChildren.push(Utils.getElementNodeChildren(aChildren[3])[0]);
+			var sResult4 = BaseTreeModifier._checkAndPrefixIdsInFragment(oXML4, "foo");
+			aChildren = BaseTreeModifier._getElementNodeChildren(sResult4);
+			aChildren.push(BaseTreeModifier._getElementNodeChildren(aChildren[3])[0]);
 			checkIdsOfAllChildren(aChildren, assert);
 
-			var sResult5 = BaseTreeModifier.checkAndPrefixIdsInFragment(oXML5, "foo");
+			var sResult5 = BaseTreeModifier._checkAndPrefixIdsInFragment(oXML5, "foo");
 			// get all controls which should be prefixed
-			aChildren = Utils.getElementNodeChildren(sResult5);
+			aChildren = BaseTreeModifier._getElementNodeChildren(sResult5);
 			var oObjectPageLayout = aChildren[0];
 
 			// headerTitle
-			aChildren.push(Utils.getElementNodeChildren(Utils.getElementNodeChildren(aChildren[0])[0])[0]);
+			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(aChildren[0])[0])[0]);
 
 			// headerContent
-			var oVerticalLayout = Utils.getElementNodeChildren(Utils.getElementNodeChildren(aChildren[0])[1])[0];
+			var oVerticalLayout = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(aChildren[0])[1])[0];
 			aChildren.push(oVerticalLayout);
-			var oFlexBox = Utils.getElementNodeChildren(oVerticalLayout)[0];
+			var oFlexBox = BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[0];
 			aChildren.push(oFlexBox);
-			oVerticalLayout = Utils.getElementNodeChildren(Utils.getElementNodeChildren(oFlexBox)[0])[0];
+			oVerticalLayout = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oFlexBox)[0])[0];
 			aChildren.push(oVerticalLayout);
-			aChildren.push(Utils.getElementNodeChildren(Utils.getElementNodeChildren(oVerticalLayout)[0])[0]);
-			aChildren.push(Utils.getElementNodeChildren(oVerticalLayout)[1]);
-			aChildren.push(Utils.getElementNodeChildren(oVerticalLayout)[2]);
-			aChildren.push(Utils.getElementNodeChildren(oVerticalLayout)[3]);
+			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[0])[0]);
+			aChildren.push(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[1]);
+			aChildren.push(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[2]);
+			aChildren.push(BaseTreeModifier._getElementNodeChildren(oVerticalLayout)[3]);
 
 			// sections
-			var oSectionsAgg = Utils.getElementNodeChildren(oObjectPageLayout)[2];
-			var oSection1 = Utils.getElementNodeChildren(oSectionsAgg)[0];
+			var oSectionsAgg = BaseTreeModifier._getElementNodeChildren(oObjectPageLayout)[2];
+			var oSection1 = BaseTreeModifier._getElementNodeChildren(oSectionsAgg)[0];
 			aChildren.push(oSection1);
-			var oSubSection1 = Utils.getElementNodeChildren(Utils.getElementNodeChildren(oSection1)[0])[0];
+			var oSubSection1 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSection1)[0])[0];
 			aChildren.push(oSubSection1);
-			var oHBox1 = Utils.getElementNodeChildren(Utils.getElementNodeChildren(oSubSection1)[0])[0];
+			var oHBox1 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSubSection1)[0])[0];
 			aChildren.push(oHBox1);
-			aChildren.push(Utils.getElementNodeChildren(Utils.getElementNodeChildren(oHBox1)[0])[0]);
+			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oHBox1)[0])[0]);
 
-			var oSection2 = Utils.getElementNodeChildren(oSectionsAgg)[1];
+			var oSection2 = BaseTreeModifier._getElementNodeChildren(oSectionsAgg)[1];
 			aChildren.push(oSection2);
-			var oSubSection2 = Utils.getElementNodeChildren(Utils.getElementNodeChildren(oSection2)[0])[0];
+			var oSubSection2 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSection2)[0])[0];
 			aChildren.push(oSubSection2);
-			var oHBox2 = Utils.getElementNodeChildren(Utils.getElementNodeChildren(oSubSection2)[0])[0];
+			var oHBox2 = BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oSubSection2)[0])[0];
 			aChildren.push(oHBox2);
-			aChildren.push(Utils.getElementNodeChildren(Utils.getElementNodeChildren(oHBox2)[0])[0]);
+			aChildren.push(BaseTreeModifier._getElementNodeChildren(BaseTreeModifier._getElementNodeChildren(oHBox2)[0])[0]);
 
 			checkIdsOfAllChildren(aChildren, assert);
 		});
+	});
+
+
+	QUnit.module("checkControlId and hasLocalIdSuffix", {
+		beforeEach: function () {
+			this.oComponent = new UIComponent();
+			this.oControlWithGeneratedId = new Control();
+			this.oControlWithPrefix = new Control(this.oComponent.createId("myButton"));
+			this.oControlWithoutPrefix = new Control("myButtonWithoutAppPrefix");
+		},
+
+		afterEach: function () {
+			this.oComponent.destroy();
+			this.oControlWithGeneratedId.destroy();
+			this.oControlWithPrefix.destroy();
+			this.oControlWithoutPrefix.destroy();
+			sandbox.restore();
+		}
+	});
+
+	QUnit.test("checkControlId shall return false if the id was generated", function (assert) {
+		assert.equal(BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent), false);
+	});
+
+	QUnit.test("checkControlId shall throw an error if the id was generated", function (assert) {
+		var spyLog = sandbox.spy(jQuery.sap.log, "warning");
+		BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent);
+		assert.ok(spyLog.calledOnce);
+	});
+
+	QUnit.test("checkControlId does not throw an error if the id was generated but the logging was suppressed", function (assert) {
+		var spyLog = sandbox.spy(jQuery.sap.log, "warning");
+		BaseTreeModifier.checkControlId(this.oControlWithGeneratedId, this.oComponent, true);
+		assert.equal(spyLog.callCount, 0);
+	});
+
+	QUnit.test("checkControlId shall return true if control id was not generated", function (assert) {
+		assert.equal(BaseTreeModifier.checkControlId(this.oControlWithPrefix, this.oComponent), true);
+	});
+
+	QUnit.test("checkControlId shall return true if the id is a stable Id not containing the ComponentId", function (assert) {
+		assert.equal(BaseTreeModifier.checkControlId(this.oControlWithoutPrefix, this.oComponent), true);
+	});
+
+	QUnit.test("hasLocalIdSuffix can determine that a control has a local id", function(assert) {
+		assert.ok(BaseTreeModifier.hasLocalIdSuffix(this.oControlWithPrefix, this.oComponent));
+	});
+
+	QUnit.test("hasLocalIdSuffix can determine that a control has no local id", function(assert) {
+		assert.notOk(BaseTreeModifier.hasLocalIdSuffix(this.oControlWithoutPrefix, this.oComponent));
+	});
+
+	QUnit.test("hasLocalIdSuffix returns false if no app component can be found", function(assert) {
+		assert.notOk(BaseTreeModifier.hasLocalIdSuffix(this.oControlWithoutPrefix, this.oComponent));
 	});
 });
