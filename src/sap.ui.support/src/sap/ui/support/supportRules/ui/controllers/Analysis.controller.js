@@ -265,9 +265,10 @@ sap.ui.define([
 				if (bInitialLoading) {
 					this.model.setProperty("/initialRulesLoading", false);
 					this.model.setProperty("/treeViewModel", oTreeViewModelRules);
-					this.initializeSelection();
+					this.initializeSelection(bInitialLoading);
 				} else {
 					this._syncSelections(oTreeViewModelRules);
+					this.initializeSelection();
 				}
 			}, this);
 
@@ -1025,8 +1026,10 @@ sap.ui.define([
 
 		/**
 		 * Creates the initial selection of the TreeTable rows.
+		 *
+		 * @param {boolean} bInitialLoading Signifies wether this is executed on initial load
 		 */
-		initializeSelection: function () {
+		initializeSelection: function (bInitialLoading) {
 			var bPersistingSettings = this.model.getProperty("/persistingSettings"),
 				oModel = this.getView().getModel(),
 				mIndex = {},
@@ -1058,7 +1061,7 @@ sap.ui.define([
 
 				// Only update the libraries which have selected rules.
 				this.updateLibrariesSelection(mLibrariesToUpdate);
-			} else {
+			} else if (bInitialLoading) {
 				this.treeTable.selectAll();
 			}
 		},
