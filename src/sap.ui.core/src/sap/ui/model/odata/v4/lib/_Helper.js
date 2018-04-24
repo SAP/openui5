@@ -175,12 +175,14 @@ sap.ui.define([
 		/**
 		 * Returns a clone of the given value, according to the rules of
 		 * <code>JSON.stringify</code>.
+		 * <b>Warning: date objects will be turned into strings</b>
 		 *
 		 * @param {*} vValue - Any value, including <code>undefined</code>
 		 * @returns {*} - A clone
 		 */
 		clone : function clone(vValue) {
-			return vValue === undefined
+			return vValue === undefined || vValue === Infinity || vValue === -Infinity
+				|| /*NaN?*/vValue !== vValue // eslint-disable-line no-self-compare
 				? vValue
 				: JSON.parse(JSON.stringify(vValue));
 		},
@@ -295,6 +297,26 @@ sap.ui.define([
 			return function () {
 				return Promise.resolve(this[sFetch].apply(this, arguments));
 			};
+		},
+
+		/**
+		 * Deletes the private client-side instance annotation with the given unqualified name at
+		 * the given object.
+		 *
+		 * @param {object} oObject
+		 *   Any object
+		 * @param {string} sAnnotation
+		 *   The unqualified name of a private client-side instance annotation (hidden inside
+		 *   namespace "@$ui5._")
+		 *
+		 * @private
+		 */
+		deletePrivateAnnotation : function (oObject, sAnnotation) {
+			var oPrivateNamespace = oObject["@$ui5._"];
+
+			if (oPrivateNamespace) {
+				delete oPrivateNamespace[sAnnotation];
+			}
 		},
 
 		/**
@@ -550,6 +572,27 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the value of the private client-side instance annotation with the given
+		 * unqualified name at the given object.
+		 *
+		 * @param {object} oObject
+		 *   Any object
+		 * @param {string} sAnnotation
+		 *   The unqualified name of a private client-side instance annotation (hidden inside
+		 *   namespace "@$ui5._")
+		 * @returns {any}
+		 *   The annotation's value or <code>undefined</code> if no such annotation exists (e.g.
+		 *   because the private namespace object does not exist)
+		 *
+		 * @private
+		 */
+		getPrivateAnnotation : function (oObject, sAnnotation) {
+			var oPrivateNamespace = oObject["@$ui5._"];
+
+			return oPrivateNamespace && oPrivateNamespace[sAnnotation];
+		},
+
+		/**
 		 * Returns the properties that have been selected for the given path.
 		 *
 		 * @param {object} [mQueryOptions]
@@ -572,6 +615,26 @@ sap.ui.define([
 				});
 			}
 			return mQueryOptions && mQueryOptions.$select;
+		},
+
+		/**
+		 * Tells whether the given object has a private client-side instance annotation with the
+		 * given unqualified name (no matter what the value is).
+		 *
+		 * @param {object} oObject
+		 *   Any object
+		 * @param {string} sAnnotation
+		 *   The unqualified name of a private client-side instance annotation (hidden inside
+		 *   namespace "@$ui5._")
+		 * @returns {boolean}
+		 *   Whether such an annotation exists
+		 *
+		 * @private
+		 */
+		hasPrivateAnnotation : function (oObject, sAnnotation) {
+			var oPrivateNamespace = oObject["@$ui5._"];
+
+			return oPrivateNamespace ? sAnnotation in oPrivateNamespace : false;
 		},
 
 		/**
@@ -678,6 +741,29 @@ sap.ui.define([
 			default:
 				throw new Error(sPath + ": Unsupported type: " + sType);
 			}
+		},
+
+		/**
+		 * Sets the new value of the private client-side instance annotation with the given
+		 * unqualified name at the given object.
+		 *
+		 * @param {object} oObject
+		 *   Any object
+		 * @param {string} sAnnotation
+		 *   The unqualified name of a private client-side instance annotation (hidden inside
+		 *   namespace "@$ui5._")
+		 * @param {any} vValue
+		 *   The annotation's new value; <code>undefined</code> is a valid value
+		 *
+		 * @private
+		 */
+		setPrivateAnnotation : function (oObject, sAnnotation, vValue) {
+			var oPrivateNamespace = oObject["@$ui5._"];
+
+			if (!oPrivateNamespace) {
+				oPrivateNamespace = oObject["@$ui5._"] = {};
+			}
+			oPrivateNamespace[sAnnotation] = vValue;
 		},
 
 		/**

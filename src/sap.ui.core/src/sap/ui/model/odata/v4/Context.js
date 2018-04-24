@@ -42,6 +42,21 @@ sap.ui.define([
 		});
 	}
 
+	/*
+	 * Returns a clone of the given value where the private namespace object has been deleted.
+	 *
+	 * @param {any} vValue
+	 * @returns {any}
+	 */
+	function publicClone(vValue) {
+		var vClone = _Helper.clone(vValue);
+
+		if (vClone) {
+			delete vClone["@$ui5._"];
+		}
+		return vClone;
+	}
+
 	/**
 	 * Do <strong>NOT</strong> call this private constructor. In the OData V4 model you cannot
 	 * create contexts at will: retrieve them from a binding or a view element instead.
@@ -350,10 +365,9 @@ sap.ui.define([
 	Context.prototype.getObject = function (sPath) {
 		var oSyncPromise = this.fetchValue(sPath);
 
-		if (!oSyncPromise.isFulfilled()) {
-			return undefined;
+		if (oSyncPromise.isFulfilled()) {
+			return publicClone(oSyncPromise.getResult());
 		}
-		return _Helper.clone(oSyncPromise.getResult());
 	};
 
 	/**
@@ -530,9 +544,7 @@ sap.ui.define([
 	Context.prototype.requestObject = function (sPath) {
 		this.oBinding.checkSuspended();
 
-		return Promise.resolve(this.fetchValue(sPath)).then(function (vResult) {
-			return _Helper.clone(vResult);
-		});
+		return Promise.resolve(this.fetchValue(sPath)).then(publicClone);
 	};
 
 	/**

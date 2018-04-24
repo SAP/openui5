@@ -5410,6 +5410,94 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Application tries to create client-side instance annotations via ODLB#create.
+	QUnit.test("@$ui5.* is write-protected for ODLB#create", function (assert) {
+		var sView = '\
+<Table id="table" items="{path: \'/Equipments\', parameters: {$$updateGroupId: \'never\'}}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Equipments?$skip=0&$top=100", {
+				value : [{
+					"ID" : "2",
+					"Name" : "Foo"
+				}]
+			})
+			.expectChange("name", ["Foo"]);
+
+		return this.createView(assert, sView).then(function () {
+			var oContext,
+				oListBinding = that.oView.byId("table").getBinding("items"),
+				oInitialData = {
+					"ID" : "99",
+					"Name" : "Bar",
+					"@$ui5.foo" : "baz"
+				};
+
+			that.expectChange("name", ["Bar", "Foo"]);
+
+			// code under test
+			oContext = oListBinding.create(oInitialData);
+
+			that.oLogMock.expects("error").withExactArgs(
+				"Failed to drill-down into -1/@$ui5.foo, invalid segment: @$ui5.foo",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Equipments",
+				"sap.ui.model.odata.v4.lib._Cache");
+
+			// code under test
+			oContext.getProperty("@$ui5.foo");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Application tries to read private client-side instance annotations.
+	QUnit.test("@$ui5._ is read-protected", function (assert) {
+		var oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/MANAGERS(\'1\')}" id="form">\
+	<Text id="predicate" text="{= %{@$ui5._/predicate} }" />\
+	<Text id="id" text="{ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("MANAGERS('1')", {
+				"ID" : "1"
+			})
+			.expectChange("predicate", undefined) // binding itself is "code under test"
+			.expectChange("id", "1");
+		this.oLogMock.expects("error").withExactArgs(
+				"Failed to drill-down into @$ui5._/predicate, invalid segment: @$ui5._",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/MANAGERS('1')",
+				"sap.ui.model.odata.v4.lib._Cache")
+			.thrice(); // binding, getProperty, requestProperty
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext();
+
+			// code under test
+			assert.notOk("@$ui5._" in oContext.getObject());
+
+			// code under test
+			assert.strictEqual(oContext.getProperty("@$ui5._/predicate"), undefined);
+
+			// code under test
+			return oContext.requestProperty("@$ui5._/predicate").then(function (vResult) {
+				assert.strictEqual(vResult, undefined);
+
+				// code under test
+				return oContext.requestObject().then(function (oParent) {
+					assert.notOk("@$ui5._" in oParent);
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: bindElement is called twice for the items aggregation of a sap.m.Table.
 	// ManagedObject#bindObject (which is the same as #bindElement) first unbinds and then binds
 	// the element again if an element binding exists. The second bindElement on "unbind" calls

@@ -1208,5 +1208,75 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(_Helper.clone(undefined), undefined);
+
+		// code under test
+		assert.ok(isNaN(_Helper.clone(NaN)));
+
+		// code under test
+		assert.strictEqual(_Helper.clone(Infinity), Infinity);
+
+		// code under test
+		assert.strictEqual(_Helper.clone(-Infinity), -Infinity);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPrivateAnnotation", function (assert) {
+		var oObject = {
+				"@$ui5._" : {
+					"transient" : "foo"
+				}
+			};
+
+		assert.strictEqual(_Helper.getPrivateAnnotation({}, "foo"), undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "foo"), undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPrivateAnnotation", function (assert) {
+		var oObject = {
+				"@$ui5._" : {
+					"transient" : undefined
+				}
+			};
+
+		assert.strictEqual(_Helper.hasPrivateAnnotation({}, "foo"), false);
+		assert.strictEqual(_Helper.hasPrivateAnnotation(oObject, "foo"), false);
+		assert.strictEqual(_Helper.hasPrivateAnnotation(oObject, "transient"), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setPrivateAnnotation", function (assert) {
+		var oObject = {};
+
+		// code under test
+		_Helper.setPrivateAnnotation(oObject, "transient", "foo");
+
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), "foo");
+
+		// code under test
+		_Helper.setPrivateAnnotation(oObject, "transient", "bar");
+
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), "bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deletePrivateAnnotation", function (assert) {
+		var oObject = {};
+
+		// code under test
+		_Helper.deletePrivateAnnotation(oObject, "transient");
+
+		// code under test
+		_Helper.setPrivateAnnotation(oObject, "transient", undefined);
+
+		assert.strictEqual(_Helper.hasPrivateAnnotation(oObject, "transient"), true);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), undefined);
+
+		// code under test
+		_Helper.deletePrivateAnnotation(oObject, "transient");
+
+		assert.strictEqual(_Helper.hasPrivateAnnotation(oObject, "transient"), false);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), undefined);
 	});
 });

@@ -167,8 +167,9 @@ sap.ui.define([
 			sLiteral = _Helper.formatLiteral(oGroupNode[sFirstLevelDimension],
 				mTypeForMetaPath[sMetaPath][sFirstLevelDimension].$Type);
 
-		oGroupNode["@$ui5._.predicate"] = "(" + encodeURIComponent(sFirstLevelDimension) + "="
-			+ encodeURIComponent(sLiteral) + ")";
+		_Helper.setPrivateAnnotation(oGroupNode, "predicate",
+			"(" + encodeURIComponent(sFirstLevelDimension) + "="
+			+ encodeURIComponent(sLiteral) + ")" );
 	};
 
 	/**

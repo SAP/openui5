@@ -7,8 +7,9 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/SyncPromise",
 	"./_GroupLock",
-	"./_Helper"
-], function (jQuery, SyncPromise, _GroupLock, _Helper) {
+	"./_Helper",
+	"./_Requestor"
+], function (jQuery, SyncPromise, _GroupLock, _Helper, _Requestor) {
 	"use strict";
 
 		// Matches two cases:  segment with predicate or simply predicate:
@@ -132,7 +133,7 @@ sap.ui.define([
 					? vCacheData[vDeleteProperty]
 					: vCacheData, // deleting at root level
 				mHeaders,
-				sTransientGroup = oEntity["@$ui5._.transient"];
+				sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 
 			if (sTransientGroup === true) {
 				throw new Error("No 'delete' allowed while waiting for server response");
@@ -156,6 +157,8 @@ sap.ui.define([
 					} // else: map 404 to 200
 				})
 				.then(function () {
+					var sPredicate;
+
 					if (Array.isArray(vCacheData)) {
 						if (vCacheData[vDeleteProperty] !== oEntity) {
 							// oEntity might have moved due to parallel insert/delete
@@ -164,8 +167,9 @@ sap.ui.define([
 						if (vDeleteProperty === "-1") {
 							delete vCacheData[-1];
 						} else {
-							if (oEntity["@$ui5._.predicate"]) {
-								delete vCacheData.$byPredicate[oEntity["@$ui5._.predicate"]];
+							sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
+							if (sPredicate) {
+								delete vCacheData.$byPredicate[sPredicate];
 							}
 							vCacheData.splice(vDeleteProperty, 1);
 						}
@@ -233,7 +237,7 @@ sap.ui.define([
 			for (i = 0; i < aInstances.length; i++) {
 				vInstance = aInstances[i];
 				visitInstance(vInstance, sMetaPath);
-				sPredicate = vInstance["@$ui5._.predicate"];
+				sPredicate = _Helper.getPrivateAnnotation(vInstance, "predicate");
 				if (sPredicate) {
 					aInstances.$byPredicate[sPredicate] = vInstance;
 				}
@@ -254,8 +258,8 @@ sap.ui.define([
 			}
 
 			if (oType && oType.$Key) {
-				vInstance["@$ui5._.predicate"] =
-					_Helper.getKeyPredicate(vInstance, sMetaPath, mTypeForMetaPath);
+				_Helper.setPrivateAnnotation(vInstance, "predicate",
+					_Helper.getKeyPredicate(vInstance, sMetaPath, mTypeForMetaPath));
 			}
 
 			Object.keys(vInstance).forEach(function (sProperty) {
@@ -326,18 +330,19 @@ sap.ui.define([
 
 		// Sets a marker that the create request is pending, so that update and delete fail.
 		function setCreatePending() {
-			oEntityData["@$ui5._.transient"] = true;
+			_Helper.setPrivateAnnotation(oEntityData, "transient", true);
 		}
 
 		function request(sPostPath, oPostGroupLock) {
 			var sPostGroupId = oPostGroupLock.getGroupId();
 
-			oEntityData["@$ui5._.transient"] = sPostGroupId; // mark as transient (again)
+			// mark as transient (again)
+			_Helper.setPrivateAnnotation(oEntityData, "transient", sPostGroupId);
 			that.addByPath(that.mPostRequests, sPath, oEntityData);
 			return that.oRequestor.request("POST", sPostPath, oPostGroupLock, null, oEntityData,
 					setCreatePending, cleanUp)
 				.then(function (oResult) {
-					delete oEntityData["@$ui5._.transient"];
+					_Helper.deletePrivateAnnotation(oEntityData, "transient");
 					// now the server has one more element
 					addToCount(that.mChangeListeners, sPath, aCollection, 1);
 					that.removeByPath(that.mPostRequests, sPath, oEntityData);
@@ -347,10 +352,10 @@ sap.ui.define([
 						_Helper.getSelectForPath(that.mQueryOptions, sPath));
 					// determine and save the key predicate
 					that.fetchTypes().then(function (mTypeForMetaPath) {
-						oEntityData["@$ui5._.predicate"] = _Helper.getKeyPredicate(
-							oEntityData,
-							_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
-							mTypeForMetaPath);
+						_Helper.setPrivateAnnotation(oEntityData, "predicate",
+							_Helper.getKeyPredicate(oEntityData,
+								_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
+								mTypeForMetaPath));
 					});
 				}, function (oError) {
 					if (oError.canceled) {
@@ -368,6 +373,8 @@ sap.ui.define([
 
 		// clone data to avoid modifications outside the cache
 		oEntityData = jQuery.extend(true, {}, oEntityData);
+		// remove any property starting with "@$ui5."
+		oEntityData = _Requestor.cleanPayload(oEntityData);
 
 		aCollection = this.fetchValue(_GroupLock.$cached, sPath).getResult();
 		if (!Array.isArray(aCollection)) {
@@ -460,7 +467,8 @@ sap.ui.define([
 				// a complex type which is null
 				return undefined;
 			}
-			if (typeof vValue !== "object") {
+			if (typeof vValue !== "object" || sSegment === "@$ui5._") {
+				// Note: protect private namespace against read access just like any missing object
 				return invalidSegment(sSegment);
 			}
 			oParentValue = vValue;
@@ -642,7 +650,7 @@ sap.ui.define([
 			if (isSubPath(sRequestPath, sPath)) {
 				aEntities = that.mPostRequests[sRequestPath];
 				for (i = aEntities.length - 1; i >= 0; i--) {
-					sTransientGroup = aEntities[i]["@$ui5._.transient"];
+					sTransientGroup = _Helper.getPrivateAnnotation(aEntities[i], "transient");
 					that.oRequestor.removePost(sTransientGroup, aEntities[i]);
 				}
 				delete that.mPostRequests[sRequestPath];
@@ -774,7 +782,7 @@ sap.ui.define([
 				throw new Error("Cannot update '" + sPropertyPath + "': '" + sEntityPath
 					+ "' does not exist");
 			}
-			sTransientGroup = oEntity["@$ui5._.transient"];
+			sTransientGroup = _Helper.getPrivateAnnotation(oEntity, "transient");
 			if (sTransientGroup) {
 				if (sTransientGroup === true) {
 					throw new Error("No 'update' allowed while waiting for server response");
@@ -810,7 +818,7 @@ sap.ui.define([
 				// When updating a transient entity, _Helper.updateCache has already updated the
 				// POST request, because the request body is a reference into the cache.
 				if (sParkedGroup) {
-					oEntity["@$ui5._.transient"] = sTransientGroup;
+					_Helper.setPrivateAnnotation(oEntity, "transient", sTransientGroup);
 					that.oRequestor.relocate(sParkedGroup, oEntity, sTransientGroup);
 				}
 				oGroupLock.unlock();
@@ -1137,7 +1145,7 @@ sap.ui.define([
 				oElement = oResult.value[i];
 				that.aElements[iStart + i] = oElement;
 				that.calculateKeyPredicates(oElement, aResult[1]);
-				sPredicate = oElement["@$ui5._.predicate"];
+				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 				if (sPredicate) {
 					that.aElements.$byPredicate[sPredicate] = oElement;
 				}
@@ -1181,7 +1189,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CollectionCache.prototype.refreshSingle = function (oGroupLock, iIndex, fnDataRequested) {
-		var sPredicate = this.aElements[iIndex]["@$ui5._.predicate"],
+		var sPredicate = _Helper.getPrivateAnnotation(this.aElements[iIndex], "predicate"),
 			oPromise,
 			sReadUrl = this.sResourcePath + sPredicate,
 			mQueryOptions = jQuery.extend({}, this.mQueryOptions),
@@ -1240,7 +1248,7 @@ sap.ui.define([
 				oEntity = that.aElements[iIndex],
 				mKeyProperties = _Helper.getKeyProperties(oEntity,
 					"/" + that.sResourcePath, mTypeForMetaPath),
-				sPredicate = oEntity["@$ui5._.predicate"],
+				sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate"),
 				mQueryOptions = jQuery.extend({}, that.mQueryOptions),
 				sFilterOptions = mQueryOptions["$filter"],
 				sReadUrl = that.sResourcePath;

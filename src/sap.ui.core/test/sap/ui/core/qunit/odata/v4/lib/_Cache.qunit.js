@@ -240,7 +240,7 @@ sap.ui.require([
 					aCacheData = [{
 						"@odata.etag" : "before"
 					}, {
-						"@$ui5._.predicate" : "('42')",
+						"@$ui5._" : {"predicate" : "('42')"},
 						"@odata.etag" : sEtag
 					}, {
 						"@odata.etag" : "after"
@@ -511,11 +511,11 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#resetChangesForPath: POSTs", function (assert) {
-		var oBody0 = {"@$ui5._.transient" : "update"},
-			oBody1 = {"@$ui5._.transient" : "update2"},
-			oBody2 = {"@$ui5._.transient" : "update"},
-			oBody3 = {"@$ui5._.transient" : "update"},
-			oBody4 = {"@$ui5._.transient" : "update"},
+		var oBody0 = {"@$ui5._" : {"transient" : "update"}},
+			oBody1 = {"@$ui5._" : {"transient" : "update2"}},
+			oBody2 = {"@$ui5._" : {"transient" : "update"}},
+			oBody3 = {"@$ui5._" : {"transient" : "update"}},
+			oBody4 = {"@$ui5._" : {"transient" : "update"}},
 			oCache = new _Cache(this.oRequestor, "TEAMS"),
 			oCall1,
 			oCall2;
@@ -586,6 +586,7 @@ sap.ui.require([
 		var oCache = new _Cache(this.oRequestor, "Products('42')"),
 			oData = [{
 				foo : {
+					"@$ui5._" : {"predicate" : "(42)"},
 					bar : 42,
 					list : [{}, {}],
 					"null" : null
@@ -612,6 +613,12 @@ sap.ui.require([
 		assert.strictEqual(oCache.drillDown(oData, "('a')/foo/list('1')"), oData[0].foo.list[1],
 			"('a')/foo/list('1')");
 		assert.strictEqual(oCache.drillDown(oData, "$count"), undefined, "$count");
+
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into 0/foo/@$ui5._, invalid segment: @$ui5._",
+			oCache.toString(), "sap.ui.model.odata.v4.lib._Cache");
+
+		assert.strictEqual(oCache.drillDown(oData, "0/foo/@$ui5._"), undefined, "@$ui5._");
 
 		this.oLogMock.expects("error").withExactArgs(
 			"Failed to drill-down into 0/foo/bar/invalid, invalid segment: invalid",
@@ -1160,7 +1167,7 @@ sap.ui.require([
 		// code under test
 		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
-		assert.strictEqual(oEntity["@$ui5._.predicate"], sPredicate);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate);
 	});
 
 	//*********************************************************************************************
@@ -1210,12 +1217,13 @@ sap.ui.require([
 		// code under test
 		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
-		assert.strictEqual(oEntity["@$ui5._.predicate"], sPredicate1);
-		assert.strictEqual(oEntity.bar["@$ui5._.predicate"], sPredicate2);
-		assert.strictEqual(oEntity.bar.baz["@$ui5._.predicate"], sPredicate3);
-		assert.strictEqual(oEntity.property["@$ui5._.predicate"], undefined);
-		assert.strictEqual(oEntity.property.navigation["@$ui5._.predicate"], sPredicate4);
-		assert.strictEqual(oEntity.noType["@$ui5._.predicate"], undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate1);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.bar, "predicate"), sPredicate2);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.bar.baz, "predicate"), sPredicate3);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.property, "predicate"), undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.property.navigation, "predicate"),
+			sPredicate4);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.noType, "predicate"), undefined);
 	});
 
 	//*********************************************************************************************
@@ -1247,9 +1255,9 @@ sap.ui.require([
 		// code under test
 		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
 
-		assert.strictEqual(oEntity["@$ui5._.predicate"], sPredicate1);
-		assert.strictEqual(oEntity.bar[0]["@$ui5._.predicate"], sPredicate2);
-		assert.strictEqual(oEntity.bar[1]["@$ui5._.predicate"], undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate1);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.bar[0], "predicate"), sPredicate2);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity.bar[1], "predicate"), undefined);
 		assert.strictEqual(oEntity.bar.$byPredicate[sPredicate2], oEntity.bar[0]);
 		assert.notOk(undefined in oEntity.bar.$byPredicate);
 	});
@@ -1315,7 +1323,7 @@ sap.ui.require([
 
 				if (oFixture.types) {
 					oFixture.result.forEach(function (oItem) {
-						oItem["@$ui5._.predicate"] = "('" + oItem.key + "')";
+						_Helper.setPrivateAnnotation(oItem, "predicate", "('" + oItem.key + "')");
 					});
 				}
 				if (oFixture.count) {
@@ -1328,7 +1336,8 @@ sap.ui.require([
 				if (oFixture.types) {
 					oFixture.result.forEach(function (oItem, i) {
 						assert.strictEqual(
-							oCache.aElements.$byPredicate[oItem["@$ui5._.predicate"]],
+							oCache.aElements.$byPredicate[
+								_Helper.getPrivateAnnotation(oItem, "predicate")],
 							oCache.aElements[oFixture.index + i]);
 					});
 				} else {
@@ -2097,8 +2106,9 @@ sap.ui.require([
 			oCreatePromise,
 			oGroupLock = new _GroupLock("updateGroup"),
 			oIdChangeListener = {onChange : function () {}},
-			oInitialData = {ID : "", Name : "John Doe"},
+			oInitialData = {ID : "", Name : "John Doe", "@$ui5.foo" : "bar"},
 			oEntityData = jQuery.extend({}, oInitialData),
+			oEntityDataCleaned = {ID : "", Name : "John Doe"},
 			sPathInCache = "0/TEAM_2_EMPLOYEES",
 			sPostPath = "TEAMS('0')/TEAM_2_EMPLOYEES",
 			mTypeForMetaPath = {};
@@ -2110,10 +2120,12 @@ sap.ui.require([
 			.returns(SyncPromise.resolve(aCollection));
 		this.mock(jQuery).expects("extend").withExactArgs(true, {}, sinon.match.same(oInitialData))
 			.returns(oEntityData);
+		this.mock(_Requestor).expects("cleanPayload").withExactArgs(sinon.match.same(oEntityData))
+			.returns(oEntityDataCleaned);
 		this.spy(oCache, "addByPath");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "TEAMS('0')/TEAM_2_EMPLOYEES", sinon.match.same(oGroupLock),
-				null, sinon.match.same(oEntityData), /*fnSubmit*/sinon.match.func,
+				null, sinon.match.same(oEntityDataCleaned), /*fnSubmit*/sinon.match.func,
 				/*fnCancel*/sinon.match.func)
 			.returns(SyncPromise.resolve(Promise.resolve({
 				ID : "7",
@@ -2132,12 +2144,12 @@ sap.ui.require([
 		oCreatePromise = oCache.create(oGroupLock, sPostPath, sPathInCache, oInitialData);
 
 		// initial data is synchronously available
-		assert.strictEqual(aCollection[-1], oEntityData);
+		assert.strictEqual(aCollection[-1], oEntityDataCleaned);
 		assert.strictEqual(aCollection.$count, 0);
 
 		// request is added to mPostRequests
 		sinon.assert.calledWithExactly(oCache.addByPath, sinon.match.same(oCache.mPostRequests),
-			sPathInCache, sinon.match.same(oEntityData));
+			sPathInCache, sinon.match.same(oEntityDataCleaned));
 
 		oCache.registerChange(sPathInCache + "/-1/Name", function () {
 			assert.notOk(true, "No change event for Name");
@@ -2147,11 +2159,11 @@ sap.ui.require([
 		this.spy(oCache, "removeByPath");
 		return oCreatePromise.then(function () {
 			assert.strictEqual(aCollection[-1].ID, "7", "from Server");
-			assert.strictEqual(aCollection[-1]["@$ui5._.predicate"], "(~)");
+			assert.strictEqual(_Helper.getPrivateAnnotation(aCollection[-1], "predicate"), "(~)");
 			assert.strictEqual(aCollection.$count, 1);
 			sinon.assert.calledWithExactly(oCache.removeByPath,
 				sinon.match.same(oCache.mPostRequests), sPathInCache,
-				sinon.match.same(oEntityData));
+				sinon.match.same(oEntityDataCleaned));
 		});
 	});
 
@@ -2332,7 +2344,7 @@ sap.ui.require([
 		assert.notStrictEqual(oCache.aElements[-1], oEntityData, "'create' copies initial data");
 		assert.deepEqual(oCache.aElements[-1], {
 			name : "John Doe",
-			"@$ui5._.transient" : "updateGroup"
+			"@$ui5._" : {"transient" : "updateGroup"}
 		});
 
 		// The lock must be unlocked although no request is created
@@ -2353,7 +2365,7 @@ sap.ui.require([
 					+ "'updateGroup'. Cannot patch via group 'anotherGroup'");
 			}),
 			oPostPromise.then(function () {
-				assert.notOk("@$ui5._.transient" in oCache.aElements[-1]);
+				assert.notOk(_Helper.hasPrivateAnnotation(oCache.aElements[-1], "transient"));
 				assert.strictEqual(oCache.hasPendingChangesForPath(""), false,
 					"no more pending changes");
 			}),
@@ -2405,7 +2417,9 @@ sap.ui.require([
 					"Employees", "-1")
 				.then(function () {
 					assert.ok(true, "Update works " + sWhen);
-					assert.strictEqual(oCache.aElements[-1]["@$ui5._.transient"], "updateGroup");
+					assert.strictEqual(
+						_Helper.getPrivateAnnotation(oCache.aElements[-1], "transient"),
+						"updateGroup");
 				});
 		}
 
@@ -2541,7 +2555,7 @@ sap.ui.require([
 		oPromise = oCache.create(new _GroupLock("updateGroup"), "Employees", "");
 
 		assert.deepEqual(oCache.aElements[-1], {
-			"@$ui5._.transient" : "updateGroup"
+			"@$ui5._" : {"transient" : "updateGroup"}
 		});
 		return oPromise;
 	});
@@ -2594,7 +2608,7 @@ sap.ui.require([
 		// code under test
 		return oCache.read(-1, 3, 0).then(function (oResult) {
 			assert.strictEqual(oResult.value.length, 3);
-			assert.ok(oResult.value[0]["@$ui5._.transient"]);
+			assert.ok(_Helper.getPrivateAnnotation(oResult.value[0], "transient"));
 			assert.strictEqual(oResult.value[1], oReadResult.value[0]);
 			assert.strictEqual(oResult.value[2], oReadResult.value[1]);
 
@@ -3236,7 +3250,7 @@ sap.ui.require([
 	QUnit.test("CollectionCache#refreshSingle", function(assert) {
 		var fnDataRequested = this.spy(),
 			sKeyPredicate = "('13')",
-			oElement = {"@$ui5._.predicate" : sKeyPredicate},
+			oElement = {"@$ui5._" : {"predicate" : sKeyPredicate}},
 			aElements = [{}, oElement],
 			sResourcePath = "Employees",
 			mQueryOptionsCopy = {$filter: "foo", $count: true, $orderby: "bar", $select: "Name"},
@@ -3344,7 +3358,7 @@ sap.ui.require([
 				oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
 				oCacheMock = this.mock(oCache),
 				fnDataRequested = this.spy(),
-				oElement = {"@$ui5._.predicate" : oFixture.sKeyPredicate},
+				oElement = {"@$ui5._" : {"predicate" : oFixture.sKeyPredicate}},
 				aElements = [{}, {}, {}],
 				oGroupLock = new _GroupLock(),
 				mTypeForMetaPath = {},
@@ -3427,7 +3441,7 @@ sap.ui.require([
 				sResourcePath = "Employees",
 				oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
 				oCacheMock = this.mock(oCache),
-				oElement = {"@$ui5._.predicate" : "('3')"},
+				oElement = {"@$ui5._" : {"predicate" : "('3')"}},
 				aElements = [{}, {}, {}, oElement],
 				oGroupLock = new _GroupLock(),
 				oResult = {"ID" : "3"},
@@ -3474,7 +3488,7 @@ sap.ui.require([
 			sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath, {$filter: "age gt 40"}),
 			oCacheMock = this.mock(oCache),
-			oElement = {"@$ui5._.predicate" : "('3')"},
+			oElement = {"@$ui5._" : {"predicate" : "('3')"}},
 			aElements = [{}, {}, {}, oElement],
 			oResult = {"ID" : "3"},
 			mTypeForMetaPath = {};
