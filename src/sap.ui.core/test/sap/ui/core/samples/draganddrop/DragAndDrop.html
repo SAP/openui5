@@ -50,6 +50,7 @@ var oIconList = new sap.m.List({
 	headerText: "Icons",
 	noDataText: "Well Done!",
 	width: "25rem",
+	growing: true,
 	inset: true
 }).bindItems({
 	path: "/game",
@@ -115,8 +116,7 @@ var oDescList = new sap.m.List({
 			drop: function(oEvent) {
 				var oDraggedControl = oEvent.getParameter("draggedControl");
 				var oDraggedContext = oDraggedControl.getBindingContext();
-				oModel.setProperty("dropped", true, oDraggedContext);
-				oModel.refresh(true);
+				oModel.setProperty("dropped", true, oDraggedContext, true);
 			}
 		})
 	})

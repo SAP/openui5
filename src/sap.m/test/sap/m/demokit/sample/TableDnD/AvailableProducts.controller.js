@@ -17,7 +17,6 @@ sap.ui.define([
 			var oAvailableProductsTable = Utils.getAvailableProductsTable(this);
 			var oProductsModel = oAvailableProductsTable.getModel();
 			oProductsModel.setProperty("Rank", Utils.ranking.Initial, oDraggedItemContext);
-			oProductsModel.refresh(true);
 		},
 
 		moveToSelectedProductsTable: function() {
@@ -34,7 +33,6 @@ sap.ui.define([
 
 				var oProductsModel = oAvailableProductsTable.getModel();
 				oProductsModel.setProperty("Rank", iNewRank, oAvailableItemContext);
-				oProductsModel.refresh(true);
 
 				// select the inserted and previously selected item
 				oSelectedProductsTable.getItems()[0].setSelected(true);

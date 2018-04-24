@@ -292,97 +292,92 @@ sap.ui.define(["jquery.sap.global", "sap/ui/Device", "../UIArea"],
 			iPageXOffset = window.pageXOffset,
 			$Indicator = getDropIndicator(),
 			sRelativePosition,
-			mDropRect = jQuery.extend({
+			mStyle = {},
+			mDropRect = {
 				top: mClientRect.top + iPageYOffset,
 				bottom: mClientRect.bottom + iPageYOffset,
 				left: mClientRect.left + iPageXOffset,
 				right: mClientRect.right + iPageXOffset,
 				width: mClientRect.width,
 				height: mClientRect.height
-			}, mIndicatorConfig);
+			};
 
 		if (!sDropPosition || sDropPosition == "On") {
 			sRelativePosition = "On";
+			sDropLayout = "";
 		} else if (sDropLayout == "Horizontal") {
 			var iCursorX = oEvent.pageX - mDropRect.left;
-			$Indicator.attr("data-drop-layout", "horizontal").css({
-				height: mDropRect.height,
-				top: mDropRect.top
-			});
+			mStyle.height = mDropRect.height;
+			mStyle.top = mDropRect.top;
 
 			if (sDropPosition == "Between") {
-				$Indicator.attr("data-drop-position", "between").css("width", "");
+				mStyle.width = "";
 				if (iCursorX < mDropRect.width * 0.5) {
 					sRelativePosition = "Before";
-					$Indicator.css("left", mDropRect.left);
+					mStyle.left = mDropRect.left;
 				} else {
 					sRelativePosition = "After";
-					$Indicator.css("left", mDropRect.right);
+					mStyle.left = mDropRect.right;
 				}
 			} else if (sDropPosition == "OnOrBetween") {
 				if (iCursorX < mDropRect.width * 0.25) {
 					sRelativePosition = "Before";
-					$Indicator.attr("data-drop-position", "between").css({
-						left: mDropRect.left,
-						width: ""
-					});
+					mStyle.left = mDropRect.left;
+					mStyle.width = "";
 				} else if (iCursorX > mDropRect.width * 0.75) {
 					sRelativePosition = "After";
-					$Indicator.attr("data-drop-position", "between").css({
-						left: mDropRect.right,
-						width: ""
-					});
+					mStyle.left = mDropRect.right;
+					mStyle.width = "";
 				} else {
 					sRelativePosition = "On";
 				}
 			}
 		} else {
 			var iCursorY = oEvent.pageY - mDropRect.top;
-			$Indicator.attr("data-drop-layout", "vertical").css({
-				width: mDropRect.width,
-				left: mDropRect.left
-			});
+			mStyle.width = mDropRect.width;
+			mStyle.left = mDropRect.left;
 
 			if (sDropPosition == "Between") {
-				$Indicator.attr("data-drop-position", "between").css("height", "");
+				mStyle.height = "";
 				if (iCursorY < mDropRect.height * 0.5) {
 					sRelativePosition = "Before";
-					$Indicator.css("top", mDropRect.top);
+					mStyle.top = mDropRect.top;
 				} else {
 					sRelativePosition = "After";
-					$Indicator.css("top", mDropRect.bottom);
+					mStyle.top = mDropRect.bottom;
 				}
 			} else if (sDropPosition == "OnOrBetween") {
 				if (iCursorY < mDropRect.height * 0.25) {
 					sRelativePosition = "Before";
-					$Indicator.attr("data-drop-position", "between").css({
-						top: mDropRect.top,
-						height: ""
-					});
+					mStyle.top = mDropRect.top;
+					mStyle.height = "";
 				} else if (iCursorY > mDropRect.height * 0.75) {
 					sRelativePosition = "After";
-					$Indicator.attr("data-drop-position", "between").css({
-						top: mDropRect.bottom,
-						height: ""
-					});
+					mStyle.top = mDropRect.bottom;
+					mStyle.height = "";
 				} else {
 					sRelativePosition = "On";
 				}
 			}
 		}
 
-		if (sRelativePosition == "On") {
-			$Indicator.attr("data-drop-position", "on").css({
-				top: mDropRect.top,
-				left: mDropRect.left,
-				width: mDropRect.width,
-				height: mDropRect.height
-			});
+		if (mIndicatorConfig && mIndicatorConfig.display == "none") {
+			return sRelativePosition;
 		}
 
-		if (sRelativePosition) {
-			$Indicator.show();
+		if (sRelativePosition == "On") {
+			mStyle.top = mDropRect.top;
+			mStyle.left = mDropRect.left;
+			mStyle.width = mDropRect.width;
+			mStyle.height = mDropRect.height;
+			sDropPosition = sRelativePosition;
+		} else {
+			sDropPosition = "Between";
 		}
+
+		$Indicator.attr("data-drop-layout", sDropLayout);
+		$Indicator.attr("data-drop-position", sDropPosition);
+		$Indicator.css(jQuery.extend(mStyle, mIndicatorConfig)).show();
 
 		return sRelativePosition;
 	}
