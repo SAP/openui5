@@ -1,14 +1,26 @@
-/* global sinon QUnit */
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+/* global QUnit */
 
 QUnit.config.autostart = false;
 
 sap.ui.require([
-	"sap/ui/fl/variants/VariantController", "sap/ui/fl/variants/VariantModel", "sap/ui/fl/variants/VariantManagement", "sap/ui/fl/Utils", "sap/ui/fl/FlexControllerFactory", "sap/ui/core/util/reflection/BaseTreeModifier"
-], function(VariantController, VariantModel, VariantManagement, Utils, FlexControllerFactory, BaseTreeModifier) {
+	"sap/ui/fl/variants/VariantController",
+	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/FlexControllerFactory",
+	"sap/ui/core/util/reflection/BaseTreeModifier",
+	"sap/ui/thirdparty/sinon-4"
+],
+function(
+	VariantController,
+	VariantModel,
+	VariantManagement,
+	Utils,
+	FlexControllerFactory,
+	BaseTreeModifier,
+	sinon
+) {
 	"use strict";
-	sinon.config.useFakeTimers = false;
-	QUnit.start();
 
 	var sandbox = sinon.sandbox.create();
 	sandbox.stub(Utils, "getCurrentLayer").returns("CUSTOMER");
@@ -113,6 +125,45 @@ sap.ui.require([
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable stays false for bAdaptationMode = true");
 		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 		assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable stays false for bAdaptationMode = false");
+	});
+
+	QUnit.test("when calling '_setModelPropertiesForControl' with updateVariantInURL = true", function(assert) {
+		this.oModel.getData()["variantMgmtId1"]._isEditable = true;
+		this.oModel.getData()["variantMgmtId1"].updateVariantInURL = true;
+
+		this.oModel.getData()["variantMgmtId1"].currentVariant = "variantMgmtId1";
+
+		var mTechnicalParameters = {};
+		var aModifiedUrlTechnicalParameters = ["variantMgmtId1"];
+		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
+
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+		assert.equal(this.oModel._bAdaptationMode, false, "the property _bAdaptationMode is initially false");
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
+		assert.equal(this.oModel._bAdaptationMode, true, "the property _bAdaptationMode is true when adaptation mode is on");
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+		assert.equal(this.oModel._bAdaptationMode, false, "the property _bAdaptationMode is set to false when adaptation mode is turned off");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters),
+			"and the URL technical parameter is set to the current variant");
+	});
+
+	QUnit.test("when calling '_setModelPropertiesForControl' with updateVariantInURL = false", function(assert) {
+		this.oModel.getData()["variantMgmtId1"]._isEditable = true;
+		this.oModel.getData()["variantMgmtId1"].updateVariantInURL = false;
+
+		var mTechnicalParameters = {};
+		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
+
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
+		this.oModel._setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
+		assert.equal(this.oModel._bAdaptationMode, false, "the property _bAdaptationMode is false when adaptation mode is turned off");
+		assert.equal(fnSetTechnicalURLParameterValuesStub.callCount, 0, "but the URL is not modified");
 	});
 
 	QUnit.test("when calling 'getVariantManagementReference'", function(assert) {
@@ -339,40 +390,51 @@ sap.ui.require([
 			"sap-ui-fl-control-variant-id": ["Dummy", "variantMgmtId1"]
 		};
 		var aModifiedUrlTechnicalParameters = ["Dummy", "variant0"];
-		sandbox.stub(Utils, "getUshellContainer").returns(true);
 		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 
 		var fnGetTechnicalParametersForComponentStub = sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
 		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
 		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
 		assert.ok(fnGetTechnicalParametersForComponentStub.calledWithExactly(this.oModel.oComponent), "then technical parameters requested for variant model component");
-		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id',aModifiedUrlTechnicalParameters),
+			"then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
 	});
 
 	QUnit.test("when calling '_updateVariantInURL' with no 'sap-ui-fl-control-variant-id' URL parameter", function(assert) {
 		var mTechnicalParameters = {};
 		var aModifiedUrlTechnicalParameters = ["variant0"];
-		sandbox.stub(Utils, "getUshellContainer").returns(true);
-		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
 
 		var fnGetTechnicalParametersForComponentStub = sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
 		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
 		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
 		assert.ok(fnGetTechnicalParametersForComponentStub.calledWithExactly(this.oModel.oComponent), "then technical parameters requested for variant model component");
-		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters),
+			"then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
 	});
 
-	QUnit.test("when calling '_updateVariantInURL' with no 'sap-ui-fl-control-variant-id' URL parameter", function(assert) {
+	QUnit.test("when calling '_updateVariantInURL' for the default variant with no 'sap-ui-fl-control-variant-id' URL parameter", function(assert) {
 		var mTechnicalParameters = {};
-		var aModifiedUrlTechnicalParameters = ["variant0"];
-		sandbox.stub(Utils, "getUshellContainer").returns(true);
-		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+		var aModifiedUrlTechnicalParameters = [];
+		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
 
-		var fnGetTechnicalParametersForComponentStub = sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
 		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
-		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
-		assert.ok(fnGetTechnicalParametersForComponentStub.calledWithExactly(this.oModel.oComponent), "then technical parameters requested for variant model component");
-		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters), "then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+		this.oModel._updateVariantInURL("variantMgmtId1", "variant1");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters),
+			"then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
+	});
+
+	QUnit.test("when calling '_updateVariantInURL' for the default variant with a valid 'sap-ui-fl-control-variant-id' URL parameter for the same variant management", function(assert) {
+		var mTechnicalParameters = {
+			"sap-ui-fl-control-variant-id": ["variantMgmtId1"]
+		};
+		var aModifiedUrlTechnicalParameters = [];
+		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
+
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		this.oModel._updateVariantInURL("variantMgmtId1", "variant1");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters),
+			"then the correct 'sap-ui-fl-control-variant-id' parameter value update called with the new value");
 	});
 
 	QUnit.test("when calling '_updateVariantInURL' without a ushell container", function(assert) {
@@ -386,6 +448,34 @@ sap.ui.require([
 		assert.ok(fnGetTechnicalParametersForComponentStub.calledOnce, "then 'getTechnicalParametersForComponent' not called second time");
 		assert.equal(fnSetTechnicalURLParameterValuesStub.callCount, 0,  "then 'setTechnicalURLParameterValues' not called as component doesn't have technical parameters");
 		assert.ok(fnGetVariantIndexInURLSpy.returned({parameters: undefined, index: -1}), "then 'getVariantIndexInURL' returned the correct index and parameters");
+	});
+
+	QUnit.test("when calling '_updateVariantInURL' while in adaptation mode and a URL parameter is already present", function(assert) {
+		var mTechnicalParameters = {
+			"sap-ui-fl-control-variant-id": ["variantMgmtId1"]
+		};
+		var aModifiedUrlTechnicalParameters = [];
+		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
+		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+
+		this.oModel._bAdaptationMode = true;
+
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
+		assert.ok(fnSetTechnicalURLParameterValuesStub.calledWithExactly(this.oModel.oComponent, 'sap-ui-fl-control-variant-id', aModifiedUrlTechnicalParameters),
+			"then the URL parameter is cleared");
+	});
+
+	QUnit.test("when calling '_updateVariantInURL' while in adaptation mode and there is no URL parameter present", function(assert) {
+		var mTechnicalParameters = {};
+		sandbox.stub(Utils, "getTechnicalParametersForComponent").returns(mTechnicalParameters);
+		sandbox.stub(this.oModel.oVariantController, "getVariant").withArgs("variantMgmtId1", "variantMgmtId1").returns(true);
+
+		this.oModel._bAdaptationMode = true;
+
+		var fnSetTechnicalURLParameterValuesStub = sandbox.stub(Utils, "setTechnicalURLParameterValues");
+		this.oModel._updateVariantInURL("variantMgmtId1", "variant0");
+		assert.equal(fnSetTechnicalURLParameterValuesStub.callCount, 0, "then the setTechnicalURLParameterValues function is not called");
 	});
 
 	QUnit.test("when calling '_removeDirtyChanges'", function(assert) {
@@ -780,7 +870,7 @@ sap.ui.require([
 		sandbox.stub(this.oModel, "_getLocalId").returns("variantMgmtId1");
 		oVariantManagement.setModel(this.oModel, "$FlexVariants");
 
-		sandbox.stub(oVariantManagement, "openManagementDialog", oVariantManagement.fireManage);
+		sandbox.stub(oVariantManagement, "openManagementDialog").callsFake(oVariantManagement.fireManage);
 		sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "_setVariantData");
 		sandbox.stub(this.oFlexController._oChangePersistence._oVariantController, "_updateChangesForVariantManagementInMap");
 
@@ -954,7 +1044,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling 'getVariant' without a variant management reference", function(assert) {
-		sandbox.stub(this.oModel.oVariantController, "getVariant", function(){
+		sandbox.stub(this.oModel.oVariantController, "getVariant").callsFake(function(){
 			assert.ok(this.oModel.getVariantManagementReference.calledOnce, "then variant management reference calculated");
 			assert.equal(arguments[0], "varMgmtRef", "then correct variant management reference received");
 			assert.equal(arguments[1], "varRef", "then correct variant reference received");
@@ -1015,4 +1105,6 @@ sap.ui.require([
 		assert.ok(fnRegisterToModelSpy.calledOnce, "then registerToModel called once, when VariantManagement control setModel is called");
 		assert.ok(fnRegisterToModelSpy.calledWith(this.oVariantManagement), "then registerToModel called with VariantManagement control");
 	});
+
+	QUnit.start();
 });
