@@ -1,7 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Overview",
+	"./pages/App"
 ], function (opaTest) {
 	"use strict";
 
@@ -49,7 +51,9 @@ sap.ui.define([
 		When.onTheOverviewPage.iPressOnTheTabWithTheKey("favorites");
 
 		// Assertions
-		Then.onTheOverviewPage.theTableShouldNotContainTheIcon("activate").
-			and.iTeardownMyApp();
+		Then.onTheOverviewPage.theTableShouldNotContainTheIcon("activate");
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 });

@@ -1,13 +1,11 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/demo/iconexplorer/test/integration/pages/Common",
 	"sap/ui/core/routing/HashChanger"
-], function(Opa5, Common, HashChanger) {
+], function(Opa5, HashChanger) {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onTheBrowser: {
-			baseClass: Common,
 
 			actions: {
 				iPressOnTheBackwardsButton: function () {
