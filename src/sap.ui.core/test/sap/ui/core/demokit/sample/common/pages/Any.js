@@ -70,7 +70,7 @@ function (Helper, Opa5, TestUtils, Properties) {
 		Opa5.assert.ok(true, "Log checked");
 	}
 
-	Opa5.extendConfig({autoWait : true, timeout : TestUtils.getDefaultOpaTimeout()});
+	Opa5.extendConfig({autoWait : true, timeout : TestUtils.isRealOData() ? 30 : undefined});
 
 	Opa5.createPageObjects({
 		/*
