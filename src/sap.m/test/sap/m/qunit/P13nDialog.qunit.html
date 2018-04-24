@@ -184,9 +184,9 @@
                     done();
                 }.bind(this));
             });
-            QUnit.test("with dummy initialVisiblePanelType", function (assert) {
+            QUnit.test("with not existing initialVisiblePanelType", function (assert) {
                 this.oP13nDialog = new sap.m.P13nDialog({
-                    initialVisiblePanelType: "dummy",
+                    initialVisiblePanelType: "columns",
                     panels: [new sap.m.P13nFilterPanel()]
                 });
 
@@ -194,10 +194,10 @@
                 var done = assert.async();
                 this.oP13nDialog._oNavigationControlsPromise.then(function () {
                     assert.equal(this.oP13nDialog.getPanels().length, 1);
-                    assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), "dummy");
+                    assert.equal(this.oP13nDialog.getInitialVisiblePanelType(), "columns");
                     assert.equal(this.oP13nDialog._isNavigationControlExpected(), false, "segmented button does not exist for only one panel");
-                    assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
-                    assert.equal(this.oP13nDialog.getVisiblePanel(), null);
+                    assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_TITLE_FILTER"));
+                    assert.equal(this.oP13nDialog.getVisiblePanel().getType(), sap.m.P13nPanelType.filter);
                     done();
                 }.bind(this));
             });
@@ -294,9 +294,9 @@
                     done();
                 }.bind(this));
             });
-            QUnit.test("with dummy initialVisiblePanelType", function (assert) {
+            QUnit.test("with not existing initialVisiblePanelType", function (assert) {
                 this.oP13nDialog = new sap.m.P13nDialog({
-                    initialVisiblePanelType: "dummy",
+                    initialVisiblePanelType: "columns",
                     panels: [new sap.m.P13nFilterPanel(), new sap.m.P13nSortPanel()]
                 });
 
@@ -304,13 +304,13 @@
                 var done = assert.async();
                 this.oP13nDialog._oNavigationControlsPromise.then(function () {
                     assert.equal(this.oP13nDialog.getPanels().length, 2);
-                    assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "dummy");
+                    assert.strictEqual(this.oP13nDialog.getInitialVisiblePanelType(), "columns");
                     assert.equal(this.oP13nDialog._isNavigationControlExpected(), true);
                     assert.equal(this.oP13nDialog.getTitle(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("P13NDIALOG_VIEW_SETTINGS"));
-                    assert.equal(this.oP13nDialog.getVisiblePanel(), null);
+                    assert.equal(this.oP13nDialog.getVisiblePanel().getType(), sap.m.P13nPanelType.filter);
 
                     assert.equal(sap.ui.Device.system.phone, false);
-                    assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), null);
+                    assert.strictEqual(this.oP13nDialog._getNavigationControl().getSelectedItem(), this.oP13nDialog._getNavigationItemByPanel(this.oP13nDialog.getVisiblePanel()).getId());
 
                     done();
                 }.bind(this));
@@ -705,6 +705,7 @@
 
             QUnit.module("Desktop: Dialog with initially one panel", {
                 beforeEach: function () {
+                    sap.ui.Device.system.phone = false;
                     this.oP13nDialog = new sap.m.P13nDialog({
                         panels: [
                             new sap.m.P13nColumnsPanel({

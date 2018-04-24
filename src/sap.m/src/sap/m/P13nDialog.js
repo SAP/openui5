@@ -854,7 +854,8 @@ sap.ui.define([
 	};
 
 	P13nDialog.prototype._determineInitialVisiblePanelType = function() {
-		if (this.getInitialVisiblePanelType()) {
+		// If provided 'initialVisiblePanelType' is not contained in 'panels' aggregation then ignore 'initialVisiblePanelType'
+		if (this.getInitialVisiblePanelType() && this._mVisibleNavigationItems[this.getInitialVisiblePanelType()]) {
 			return this.getInitialVisiblePanelType();
 		}
 		// Set 'initialVisiblePanelType' to the first visible navigation item if not defined
