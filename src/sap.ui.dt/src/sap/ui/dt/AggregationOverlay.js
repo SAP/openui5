@@ -142,16 +142,17 @@ function(
 			if (this.isRendered()) {
 				var iPositionInDom = this._getChildIndex(oChild);
 				var $Child = oChild.isRendered() ? oChild.$() : oChild.render(true);
-				var iCurrentPosition = this._$children.find('>').index($Child);
+				var $Children = jQuery(this.getChildrenDomRef());
+				var iCurrentPosition = $Children.find('>').index($Child);
 				var iInsertIndex;
 
 				if (iCurrentPosition !== iPositionInDom) {
 					if (iPositionInDom > 0) {
 						iInsertIndex = iCurrentPosition > -1 && iCurrentPosition < iPositionInDom ? iPositionInDom : iPositionInDom - 1;
-						this._$children.find('>').eq(iInsertIndex).after($Child);
+						$Children.find('>').eq(iInsertIndex).after($Child);
 					} else {
 						iInsertIndex = iPositionInDom; // === 0
-						this._$children.prepend($Child);
+						$Children.prepend($Child);
 					}
 				}
 
