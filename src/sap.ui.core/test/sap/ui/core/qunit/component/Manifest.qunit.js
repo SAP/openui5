@@ -1,6 +1,7 @@
 sap.ui.define([
-	'sap/ui/core/Manifest'
-], function(Manifest) {
+	'sap/ui/core/Manifest',
+	'sap/ui/thirdparty/URI'
+], function(Manifest, URI) {
 
 	"use strict";
 	/*global QUnit */
@@ -98,6 +99,22 @@ sap.ui.define([
 		assert.strictEqual(this.oManifest.getEntry("/unit.test1/null/foo"), undefined, "'getEntry' with new syntax should not return native properties of null values.");
 		assert.deepEqual(this.oManifest.getEntry("/unit.test1/object"), { value: true }, "'getEntry' with new syntax should return objects.");
 		assert.strictEqual(this.oManifest.getEntry("/unit.test1/object/toString"), undefined, "'getEntry' with new syntax should not return native methods of object values.");
+
+	});
+
+	QUnit.test("URL resolving", function(assert) {
+
+		this.oManifest = new Manifest({
+			"sap.app": {}
+		}, {
+			componentName: "sap.ui.test.foo.bar",
+			url: "manifest/uri/manifest.json"
+		});
+
+		var sBaseURI = new URI("./").absoluteTo(new URI(document.baseURI).search(""));
+		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri")).toString(), "testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri"), "component").toString(), "testdata/foo/bar/my/uri", "URL should resolve relative to the Component");
+		assert.strictEqual(this.oManifest.resolveUri(new URI("my/uri"), "manifest").toString(), "manifest/uri/my/uri", "URL should resolve relative to the Manifest");
 
 	});
 

@@ -1549,6 +1549,21 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				oModelConfig.settings.annotationURI = aOriginAnnotations;
 			}
 
+			// resolve the bundleUrl of the enhancing resource bundle relative to
+			// the component (default) or relative to manifest, e.g.:
+			// bundleUrlRelativeTo: 'component|manifest'
+			if (oModelConfig.type === 'sap.ui.model.resource.ResourceModel' &&
+				oModelConfig.settings &&
+				Array.isArray(oModelConfig.settings.enhanceWith)) {
+				/* eslint-disable no-loop-func */
+				oModelConfig.settings.enhanceWith.forEach(function(mBundle) {
+					if (mBundle.bundleUrl) {
+						mBundle.bundleUrl = oManifest.resolveUri(new URI(mBundle.bundleUrl), mBundle.bundleUrlRelativeTo).toString();
+					}
+				});
+				/* eslint-enable no-loop-func */
+			}
+
 			// normalize settings object to array
 			if (oModelConfig.settings && !Array.isArray(oModelConfig.settings)) {
 				oModelConfig.settings = [ oModelConfig.settings ];
