@@ -227,58 +227,49 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, null, {"@$ui5._" : {}}].forEach(function (oClone, i) {
-		QUnit.test("requestObject: " + i, function (assert) {
-			var oBinding = {
-					checkSuspended : function () {}
-				},
-				oContext = Context.create(null, oBinding, "/foo"),
-				oData = {},
-				oPromise,
-				oSyncPromise = SyncPromise.resolve(Promise.resolve(oData));
+	QUnit.test("requestObject", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo"),
+			oClone = {},
+			oData = {},
+			oPromise,
+			oSyncPromise = SyncPromise.resolve(Promise.resolve(oData));
 
-			this.mock(oBinding).expects("checkSuspended").withExactArgs();
-			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
-				.returns(oSyncPromise);
-			this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(oData))
-				.returns(oClone);
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromise);
+		this.mock(_Helper).expects("publicClone").withExactArgs(sinon.match.same(oData))
+			.returns(oClone);
 
-			// code under test
-			oPromise = oContext.requestObject("bar");
+		// code under test
+		oPromise = oContext.requestObject("bar");
 
-			assert.ok(oPromise instanceof Promise);
+		assert.ok(oPromise instanceof Promise);
 
-			return oPromise.then(function (oResult) {
-				assert.strictEqual(oResult, oClone);
-				if (oClone) {
-					assert.notOk("@$ui5._" in oClone,
-						"private namespace object deleted from clone");
-				}
-			});
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, oClone);
 		});
 	});
 
 	//*********************************************************************************************
-	[undefined, null, {"@$ui5._" : {}}].forEach(function (oClone, i) {
-		QUnit.test("getObject: " + i, function (assert) {
-			var oContext = Context.create(null, null, "/foo"),
-				oData = {},
-				oResult,
-				oSyncPromise = SyncPromise.resolve(oData);
+	QUnit.test("getObject", function (assert) {
+		var oContext = Context.create(null, null, "/foo"),
+			oClone = {},
+			oData = {},
+			oResult,
+			oSyncPromise = SyncPromise.resolve(oData);
 
-			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
-				.returns(oSyncPromise);
-			this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(oData))
-				.returns(oClone);
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromise);
+		this.mock(_Helper).expects("publicClone").withExactArgs(sinon.match.same(oData))
+			.returns(oClone);
 
-			// code under test
-			oResult = oContext.getObject("bar");
+		// code under test
+		oResult = oContext.getObject("bar");
 
-			assert.strictEqual(oResult, oClone);
-			if (oClone) {
-				assert.notOk("@$ui5._" in oClone, "private namespace object deleted from clone");
-			}
-		});
+		assert.strictEqual(oResult, oClone);
 	});
 
 	//*********************************************************************************************

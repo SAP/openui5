@@ -150,8 +150,11 @@ sap.ui.require([
 				grouped : true,
 				name : "First=Dimension" // Note: unrealistic example to test encoding
 			}],
-			oGroupNode = {"First=Dimension" : "A/B&C"},
+			mByPredicate = {},
+			oConflictingGroupNode = {"First=Dimension" : "A/B&C", Measure : 0, Unit : "USD"},
+			oGroupNode = {"First=Dimension" : "A/B&C", Measure : 0, Unit : "EUR"},
 			sMetaPath = "/Set",
+			sPredicate = "(First%3DDimension='A%2FB%26C')",
 			mTypeForMetaPath = {
 				"/Set" : {
 					$kind : "EntityType",
@@ -163,15 +166,30 @@ sap.ui.require([
 				}
 			};
 
-		this.mock(_Helper).expects("formatLiteral").withExactArgs("A/B&C", "Edm.String")
+		this.mock(_Helper).expects("formatLiteral").twice().withExactArgs("A/B&C", "Edm.String")
 			.returns("'A/B&C'");
 
 		// code under test
-		_AggregationCache.calculateKeyPredicate(aAggregation, sMetaPath, oGroupNode,
+		_AggregationCache.calculateKeyPredicate(aAggregation, sMetaPath, mByPredicate, oGroupNode,
 			mTypeForMetaPath);
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "predicate"),
 			"(First%3DDimension='A%2FB%26C')");
+
+		mByPredicate[sPredicate] = oGroupNode; // happens inside CollectionCache#requestElements
+
+		assert.throws(function () {
+			// code under test
+			_AggregationCache.calculateKeyPredicate(aAggregation, sMetaPath, mByPredicate,
+				oConflictingGroupNode, mTypeForMetaPath);
+		}, new Error("Multi-unit situation detected: "
+			+ '{"First=Dimension":"A/B&C","Measure":0,"Unit":"USD"} vs. '
+			+ '{"First=Dimension":"A/B&C","Measure":0,"Unit":"EUR"}'));
+
+		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "predicate"), sPredicate,
+			"unchanged");
+		assert.strictEqual(_Helper.getPrivateAnnotation(oConflictingGroupNode, "predicate"),
+			undefined, "not yet set");
 	});
 
 	//*********************************************************************************************
@@ -179,9 +197,11 @@ sap.ui.require([
 		var aAggregation = [],
 			aAggregationForFirstLevel = [],
 			sApply = "A.P.P.L.E.",
+			mByPredicate = {},
 			oCache,
 			fnDataRequested = {}, //TODO
 			oFirstLevelCache = {
+				aElements : [],
 				fetchTypes : function () {},
 				fetchValue : function () {},
 				sMetaPath : {/*placeholder for string*/},
@@ -201,6 +221,7 @@ sap.ui.require([
 			mTypeForMetaPath = {},
 			that = this;
 
+		oFirstLevelCache.aElements.$byPredicate = mByPredicate;
 		this.mock(_AggregationCache).expects("filterAggregationForFirstLevel")
 			.withExactArgs(sinon.match.same(aAggregation))
 			.returns(aAggregationForFirstLevel);
@@ -217,9 +238,10 @@ sap.ui.require([
 			.returns(oFirstLevelCache);
 		this.mock(_AggregationCache).expects("calculateKeyPredicate").on(null)
 			.withExactArgs(sinon.match.same(aAggregationForFirstLevel),
-				sinon.match.same(oFirstLevelCache.sMetaPath), sinon.match.same(oResult.value[0]),
-				sinon.match.same(mTypeForMetaPath))
-			.callsFake(function (aAggregation, sMetaPath, oGroupNode, mTypeForMetaPath) {
+				sinon.match.same(oFirstLevelCache.sMetaPath), sinon.match.same(mByPredicate),
+				sinon.match.same(oResult.value[0]), sinon.match.same(mTypeForMetaPath))
+			.callsFake(function (aAggregation, sMetaPath, mByPredicate, oGroupNode,
+					mTypeForMetaPath) {
 				_Helper.setPrivateAnnotation(oGroupNode, "predicate", "(FirstDimension='A')");
 			});
 

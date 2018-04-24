@@ -1279,4 +1279,21 @@ sap.ui.require([
 		assert.strictEqual(_Helper.hasPrivateAnnotation(oObject, "transient"), false);
 		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), undefined);
 	});
+
+	//*********************************************************************************************
+	[undefined, null, {"@$ui5._" : {}}].forEach(function (vClone, i) {
+		QUnit.test("publicClone: " + i, function (assert) {
+			var vValue = {};
+
+			this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(vValue))
+				.returns(vClone);
+
+			// code under test
+			assert.strictEqual(_Helper.publicClone(vValue), vClone);
+
+			if (vClone) {
+				assert.notOk("@$ui5._" in vClone, "private namespace object deleted from clone");
+			}
+		});
+	});
 });
