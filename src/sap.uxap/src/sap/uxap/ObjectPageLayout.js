@@ -2267,11 +2267,14 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._onUpdateScreenSize = function (oEvent) {
 		var oTitle = this.getHeaderTitle(),
+			oHeaderContent = this._getHeaderContent(),
 			iCurrentWidth = oEvent.size.width,
 			iCurrentHeight = oEvent.size.height,
 			iOldHeight = oEvent.oldSize.height,
 			bHeightChange = (iCurrentHeight !== iOldHeight),
-			sSelectedSectionId;
+			sSelectedSectionId,
+			bIsAlwaysShowContentHeaderEnabled = oHeaderContent && oHeaderContent.supportsAlwaysExpanded()
+				&& this.getAlwaysShowContentHeader();
 
 		if (oEvent.size.height === 0 || oEvent.size.width === 0) {
 			jQuery.sap.log.info("ObjectPageLayout :: not triggering calculations if height or width is 0");
@@ -2289,7 +2292,7 @@ sap.ui.define([
 			this._bMobileScenario = library.Utilities.isPhoneScenario(this._getCurrentMediaContainerRange());
 			this._bTabletScenario = library.Utilities.isTabletScenario(this._getCurrentMediaContainerRange());
 
-			if (this._bHeaderInTitleArea != this._checkAlwaysShowContentHeader()) {
+			if (bIsAlwaysShowContentHeaderEnabled && (this._bHeaderInTitleArea != this._checkAlwaysShowContentHeader())) {
 				this.invalidate();
 			}
 
@@ -2983,15 +2986,6 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._getHeaderContent = function () {
 		return this.getAggregation("_headerContent");
-	};
-
-	ObjectPageLayout.prototype._checkAlwaysShowContentHeader = function () {
-		var oHeaderContent = this._getHeaderContent();
-		return oHeaderContent && oHeaderContent.supportsAlwaysExpanded()
-			&& !this._bMobileScenario
-			&& !this._bTabletScenario
-			&& this.getShowHeaderContent()
-			&& this.getAlwaysShowContentHeader();
 	};
 
 	ObjectPageLayout.prototype._connectModelsForSections = function (aSections) {
