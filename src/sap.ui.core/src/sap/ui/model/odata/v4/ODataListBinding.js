@@ -77,7 +77,7 @@ sap.ui.define([
 				if (sPath.slice(-1) === "/") {
 					throw new Error("Invalid path: " + sPath);
 				}
-				this.aAggregation = null;
+				this.oAggregation = null;
 				this.mAggregatedQueryOptions = {};
 				this.bAggregatedQueryOptionsInitial = true;
 				this.aApplicationFilters = _Helper.toArray(vFilters);
@@ -185,7 +185,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.applyParameters = function (mParameters, sChangeReason) {
-		var oBindingParameters = this.oModel.buildBindingParameters(mParameters,
+		var oAggregation,
+			oBindingParameters = this.oModel.buildBindingParameters(mParameters,
 				["$$aggregation", "$$groupId", "$$operationMode", "$$ownRequest",
 					"$$updateGroupId"]),
 			sOperationMode;
@@ -201,9 +202,15 @@ sap.ui.define([
 		this.sUpdateGroupId = oBindingParameters.$$updateGroupId;
 		this.mQueryOptions = this.oModel.buildQueryOptions(mParameters, true);
 		this.mParameters = mParameters; // store mParameters at binding after validation
-		if ("$$aggregation" in oBindingParameters) { // via c'tor only!
-			this.mQueryOptions.$apply = _Helper.buildApply(oBindingParameters.$$aggregation);
-			this.aAggregation = _Helper.clone(oBindingParameters.$$aggregation);
+		if ("$$aggregation" in oBindingParameters) {
+			// Note: this.mQueryOptions has been recreated from mParameters which does not contain
+			// our "implicit" $apply
+			if ("$apply" in this.mQueryOptions) {
+				throw new Error("Cannot combine $$aggregation and $apply");
+			}
+			oAggregation = _Helper.clone(oBindingParameters.$$aggregation);
+			this.mQueryOptions.$apply = _Helper.buildApply(oAggregation);
+			this.oAggregation = oAggregation;
 		}
 
 		this.mCacheByContext = undefined;
@@ -532,15 +539,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
-		var bAggregate = this.aAggregation && this.aAggregation.some(function (oAggregation) {
-				return oAggregation.grouped || oAggregation.min || oAggregation.max;
-			});
+		var bAggregate = this.oAggregation && (this.oAggregation.groupLevels.length
+				|| _Helper.hasMinOrMax(this.oAggregation.aggregate));
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
 		// w/o grouping or min/max, $apply is sufficient; else _AggregationCache is needed
 		return bAggregate
-			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.aAggregation,
+			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.oAggregation,
 				mQueryOptions, this.oModel.bAutoExpandSelect)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
 				this.oModel.bAutoExpandSelect);
@@ -1522,6 +1528,75 @@ sap.ui.define([
 	};
 
 	/**
+	 * Sets a new data aggregation object and derives the system query option <code>$apply</code>
+	 * implicitly from it.
+	 *
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for data aggregation; see also
+	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+	 *   Extension for Data Aggregation Version 4.0</a>.
+	 * @param {object} [oAggregation.aggregate]
+	 *   A map from aggregatable property names or aliases to objects containing the following
+	 *   details:
+	 *   <ul>
+	 *   <li><code>subtotals</code>: An optional boolean that tells whether subtotals for this
+	 *     aggregatable property are needed
+	 *   <li><code>with</code>: An optional string that provides the name of the method (for
+	 *     example "sum") used for aggregation of this aggregatable property; see
+	 *     "3.1.2 Keyword with"
+	 *   <li><code>name</code>: An optional string that provides the original aggregatable
+	 *     property name in case a different alias is chosen as the name of the dynamic property
+	 *     used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
+	 *   </ul>
+	 * @param {object} [oAggregation.group]
+	 *   A map from groupable property names to empty objects
+	 * @param {string[]} [oAggregation.groupLevels]
+	 *   A list of groupable property names (which may, but don't need to be repeated in
+	 *   <code>oAggregation.group</code>) used to determine group levels; only a single group level
+	 *   is supported
+	 * @throws {Error}
+	 *   If the given data aggregation object is unsupported, if the system query option
+	 *   <code>$apply</code> has been specified explicitly before, if the binding's root binding
+	 *   is suspended, or if there are pending changes
+	 *
+	 * @example <caption>First group level is product category including subtotals for the net
+	 *     amount in display currency. On leaf level, transaction currency is used as an additional
+	 *     dimension and the net amount is averaged.</caption>
+	 *   oListBinding.setAggregation({
+	 *     aggregate : {
+	 *       AverageNetAmountInTransactionCurrency : {
+	 *         name : "NetAmountInTransactionCurrency", // original name
+	 *         with : "avg" // aggregation method
+	 *       },
+	 *       NetAmountInDisplayCurrency : {subtotals : true}
+	 *     },
+	 *     group : {
+	 *       ProductCategory : {}, // optional
+	 *       TransactionCurrency : {}
+	 *     },
+	 *     groupLevels : ['ProductCategory']
+	 *   });
+	 * @public
+	 * @since 1.55.0
+	 */
+	ODataListBinding.prototype.setAggregation = function (oAggregation) {
+		this.checkSuspended();
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot set $$aggregation due to pending changes");
+		}
+		if (!this.oAggregation && "$apply" in this.mQueryOptions) {
+			throw new Error("Cannot override existing $apply : '" + this.mQueryOptions.$apply
+				+ "'");
+		}
+		oAggregation = _Helper.clone(oAggregation);
+		this.mQueryOptions.$apply = _Helper.buildApply(oAggregation);
+		this.oAggregation = oAggregation;
+		this.mCacheByContext = undefined;
+		this.fetchCache(this.oContext);
+		this.reset(ChangeReason.Change);
+	};
+
+	/**
 	 * Sets the context and resets the cached contexts of the list items.
 	 *
 	 * @param {sap.ui.model.Context} oContext
@@ -1612,10 +1687,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Updates the binding's "$apply" parameter based on the given data aggregation information. Its
-	 * value is "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,unit_or_text_K>),
-	 * aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))" where the
-	 * "aggregate" part is only present if measures are given and both "with" and "as" are optional.
+	 * Updates the binding's system query option <code>$apply</code> based on the given data
+	 * aggregation information. Its value is
+	 * "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,unit_or_text_K>),
+	 * aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))" where the "aggregate" part is
+	 * only present if measures are given and both "with" and "as" are optional.
 	 *
 	 * @param {object[]} aAggregation
 	 *   An array with objects holding the information needed for data aggregation; see also
@@ -1634,17 +1710,13 @@ sap.ui.define([
 	 * @param {boolean} [aAggregation[].total]
 	 *   Its presence is used to detect a measure
 	 * @param {boolean} [aAggregation[].max]
-	 *   Measures only: Whether the maximum value for this measure is needed (since 1.55.0);
+	 *   Measures only: Whether the maximum value (ignoring currencies or units of measure) for this
+	 *   measure is needed (since 1.55.0);
 	 *   <b>filtering and sorting is not supported in this case</b>
 	 * @param {boolean} [aAggregation[].min]
-	 *   Measures only: Whether the minimum value for this measure is needed (since 1.55.0);
+	 *   Measures only: Whether the minimum value (ignoring currencies or units of measure) for this
+	 *   measure is needed (since 1.55.0);
 	 *   <b>filtering and sorting is not supported in this case</b>
-	 * @param {string} [aAggregation[].with]
-	 *   Measures only: The name of the method (for example "sum") used for aggregation of this
-	 *   measure; see "3.1.2 Keyword with" (since 1.55.0)
-	 * @param {string} [aAggregation[].as]
-	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
-	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
 	 * @returns {object}
 	 *   The return object contains a property <code>measureRangePromise</code> if and only if at
 	 *   least one measure has requested a minimum or maximum value; its value is a
@@ -1658,26 +1730,39 @@ sap.ui.define([
 	 * @protected
 	 * @see sap.ui.model.analytics.AnalyticalBinding#updateAnalyticalInfo
 	 * @see #changeParameters
+	 * @see #setAggregation
 	 * @since 1.53.0
 	 */
 	ODataListBinding.prototype.updateAnalyticalInfo = function (aAggregation) {
-		var bHasMinMax = false;
+		var oAggregation = {
+				aggregate : {},
+				group : {}
+			},
+			bHasMinMax = false;
 
-		this.aAggregation = _Helper.clone(aAggregation).filter(function (oAggregation) {
-			var bInclude = !("grouped" in oAggregation) || oAggregation.inResult
-					|| oAggregation.visible;
+		aAggregation.forEach(function (oColumn) {
+			var oDetails = {};
 
-			delete oAggregation.inResult;
-			delete oAggregation.visible;
-
-			if (!("grouped" in oAggregation || "total" in oAggregation)) {
-				oAggregation.grouped = false;
-			} else if (oAggregation.min || oAggregation.max) {
-				bHasMinMax = true;
+			if ("total" in oColumn) { // measure
+				if ("grouped" in oColumn) {
+					throw new Error("Both dimension and measure: " + oColumn.name);
+				}
+				oAggregation.aggregate[oColumn.name] = oDetails;
+				if (oColumn.min) {
+					oDetails.min = true;
+					bHasMinMax = true;
+				}
+				if (oColumn.max) {
+					oDetails.max = true;
+					bHasMinMax = true;
+				}
+			} else if (!("grouped" in oColumn) || oColumn.inResult || oColumn.visible) {
+				// dimension or unit/text property
+				oAggregation.group[oColumn.name] = oDetails;
 			}
-			return bInclude;
 		});
-		this.changeParameters({$apply : _Helper.buildApply(this.aAggregation)});
+		this.oAggregation = oAggregation; // Note: needed by #doCreateCache!
+		this.changeParameters({$apply : _Helper.buildApply(oAggregation)});
 		if (bHasMinMax) {
 			return {
 				measureRangePromise : Promise.resolve(this.oCachePromise.then(function (oCache) {

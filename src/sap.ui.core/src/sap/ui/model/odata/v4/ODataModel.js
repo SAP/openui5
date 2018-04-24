@@ -473,8 +473,8 @@ sap.ui.define([
 	 *   Supported since 1.39.0.
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
-	 *   and "$$updateGroupId".
+	 *   "OData Version 4.0 Part 2: URL Conventions" or binding-specific parameters as specified
+	 *   below.
 	 *   Note: The binding creates its own data service request if it is absolute or if it has any
 	 *   parameters or if it is relative and has a context created via {@link #createBindingContext}
 	 *   or if it has sorters or filters.
@@ -491,6 +491,9 @@ sap.ui.define([
 	 *   {@link sap.ui.model.odata.OperationMode.Server} is supported. All other operation modes
 	 *   including <code>undefined</code> lead to an error if 'vSorters' are given or if
 	 *   {@link sap.ui.model.odata.v4.ODataListBinding#sort} is called.
+	 * @param {object} [mParameters.$$aggregation]
+	 *   An object holding the information needed for data aggregation, see
+	 *   {@link sap.ui.model.odata.v4.ODataListBinding#setAggregation} for details.
 	 * @param {string} [mParameters.$$groupId]
 	 *   The group ID to be used for <b>read</b> requests triggered by this binding; if not
 	 *   specified, either the parent binding's group ID (if the binding is relative) or the
