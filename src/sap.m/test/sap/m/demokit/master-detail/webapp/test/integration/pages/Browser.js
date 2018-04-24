@@ -57,7 +57,7 @@ sap.ui.define([
 							var sObjectId = this.getContext().currentItem.id,
 								oHashChanger = Opa5.getHashChanger(),
 								sHash = oHashChanger.getHash();
-							Opa5.assert.strictEqual(sHash, "Objects/" + sObjectId, "The Hash is not correct");
+							Opa5.assert.strictEqual(sHash, "Objects/" + sObjectId, "The Hash is correct");
 						}
 					});
 				},

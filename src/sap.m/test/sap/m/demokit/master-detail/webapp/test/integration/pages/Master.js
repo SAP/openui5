@@ -41,45 +41,29 @@ sap.ui.define([
 					});
 				},
 
-				iSortTheListOnName : function () {
-					return this.iPressItemInSelectInFooter("sort-select", "masterSort1");
-				},
-
 				iSortTheListOnUnitNumber : function () {
-					return this.iPressItemInSelectInFooter("sort-select", "masterSort2");
+					return this.iChooseASorter("sortButton", "Sort By <UnitNumber>");
+				},
+				iSortTheListOnName : function () {
+					return this.iChooseASorter("sortButton", "Sort By <Name>");
 				},
 
-				iRemoveFilterFromTheList : function () {
-					return this.iPressItemInSelectInFooter("filter-select", "masterFilterNone");
-				},
-
-				iFilterTheListLessThan100UoM : function () {
-					return this.iPressItemInSelectInFooter("filter-select", "masterFilter1");
-				},
-
-				iFilterTheListMoreThan100UoM : function () {
-					return this.iPressItemInSelectInFooter("filter-select", "masterFilter2");
+				iFilterTheListOnUnitNumber : function () {
+					return this.iMakeASelection("filterButton", "<UnitNumber>", "<100 <UnitOfMeasure>");
 				},
 
 				iGroupTheList : function () {
-					return this.iPressItemInSelectInFooter("group-select", "masterGroup1");
+					return this.iChooseASorter("groupButton", "<UnitNumber> Group");
 				},
 
 				iRemoveListGrouping : function () {
-					return this.iPressItemInSelectInFooter("group-select", "masterGroupNone");
+					return this.iChooseASorter("groupButton", "None");
 				},
 
 				iOpenViewSettingsDialog : function () {
 					return this.waitFor({
-						id : "filter-button",
+						id : "filterButton",
 						viewName : sViewName,
-						check : function () {
-							var oViewSettingsDialog = Opa5.getWindow().sap.ui.getCore().byId("viewSettingsDialog");
-							// check if the dialog is still open - wait until it is closed
-							// view settings dialog has no is open function and no open close events so checking the domref is the only option here
-							// if there is no view settings dialog yet, there is no need to wait
-							return !oViewSettingsDialog || oViewSettingsDialog.$().length === 0;
-						},
 						actions : new Press(),
 						errorMessage : "Did not find the 'filter' button."
 					});
@@ -115,21 +99,65 @@ sap.ui.define([
 					});
 				},
 
-				iPressItemInSelectInFooter : function (sSelect, sItem) {
+				iMakeASelection : function (sSelect, sItem, sOption) {
 					return this.waitFor({
 						id : sSelect,
 						viewName : sViewName,
-						success : function (oSelect) {
-							oSelect.open();
+						actions : new Press(),
+						success : function () {
 							this.waitFor({
-								id : sItem,
-								viewName : sViewName,
-								success : function(oElem){
-									oElem.$().trigger("tap");
+								controlType: "sap.m.StandardListItem",
+								matchers: new PropertyStrictEquals({name: "title", value: sItem}),
+								searchOpenDialogs: true,
+								actions: new Press(),
+								success: function () {
+									this.waitFor({
+										controlType: "sap.m.StandardListItem",
+										matchers : new PropertyStrictEquals({name: "title", value: sOption}),
+										searchOpenDialogs: true,
+										actions : new Press(),
+										success: function () {
+											this.waitFor({
+												controlType: "sap.m.Button",
+												matchers: new PropertyStrictEquals({name: "text", value: "OK"}),
+												searchOpenDialogs: true,
+												actions: new Press(),
+												errorMessage: "The ok button in the dialog was not found and could not be pressed"
+											});
+										},
+										errorMessage : "Did not find the" +  sOption + "in" + sItem
+									});
 								},
 								errorMessage : "Did not find the " + sItem + " element in select"
 							});
-						}.bind(this),
+						},
+						errorMessage : "Did not find the " + sSelect + " select"
+					});
+				},
+
+				iChooseASorter: function (sSelect, sSort) {
+					return this.waitFor({
+							id : sSelect,
+							viewName : sViewName,
+							actions : new Press(),
+						success : function () {
+							this.waitFor({
+								controlType: "sap.m.StandardListItem",
+								matchers : new PropertyStrictEquals({name: "title", value: sSort}),
+								searchOpenDialogs: true,
+								actions : new Press(),
+								success : function () {
+									this.waitFor({
+										controlType: "sap.m.Button",
+										matchers: new PropertyStrictEquals({name: "text", value: "OK"}),
+										searchOpenDialogs: true,
+										actions: new Press(),
+										errorMessage: "The ok button in the dialog was not found and could not be pressed"
+									});
+								},
+								errorMessage : "Did not find the" +  sSort + " element in select"
+							});
+						},
 						errorMessage : "Did not find the " + sSelect + " select"
 					});
 				},
@@ -311,8 +339,8 @@ sap.ui.define([
 				theListHeaderDisplaysZeroHits : function () {
 					return this.waitFor({
 						viewName : sViewName,
-						id : "page",
-						matchers : new PropertyStrictEquals({name : "title", value : "<Objects> (0)"}),
+						id : "masterPageTitle",
+						matchers : new PropertyStrictEquals({name : "text", value : "<Objects> (0)"}),
 						success : function () {
 							Opa5.assert.ok(true, "The list header displays zero hits");
 						},
@@ -352,6 +380,9 @@ sap.ui.define([
 					});
 				},
 
+				theListShouldBeFilteredOnUnitNumber : function () {
+					return this.theListShouldBeFilteredOnFieldUsingComparator("UnitNumber", 100);
+				},
 				theListShouldBeSortedAscendingOnUnitNumber : function () {
 					return this.theListShouldBeSortedAscendingOnField("UnitNumber");
 				},
@@ -360,29 +391,22 @@ sap.ui.define([
 					return this.theListShouldBeSortedAscendingOnField("Name");
 				},
 
-				theListShouldBeSortedAscendingOnField : function (sField) {
+				theListShouldBeFilteredOnFieldUsingComparator : function (sField, iComparator) {
 					function fnCheckSort (oList){
-						var oLastValue = null,
-							fnIsOrdered = function (oElement) {
+							var fnIsSorted = function (oElement) {
 								if (!oElement.getBindingContext()) {
 									return false;
-								}
-
-								var oCurrentValue = oElement.getBindingContext().getProperty(sField);
-
-								if (oCurrentValue === undefined) {
-									return false;
-								}
-
-								if (!oLastValue || oCurrentValue >= oLastValue){
-									oLastValue = oCurrentValue;
 								} else {
-									return false;
+									var iValue = oElement.getBindingContext().getProperty(sField);
+									if (iValue >= iComparator) {
+										return false;
+									} else {
+										return true;
+									}
 								}
-								return true;
 							};
 
-						return oList.getItems().every(fnIsOrdered);
+						return oList.getItems().every(fnIsSorted);
 					}
 
 					return this.waitFor({
@@ -390,9 +414,9 @@ sap.ui.define([
 						id : "list",
 						matchers : fnCheckSort,
 						success : function() {
-							Opa5.assert.ok(true, "Master list has been sorted correctly for field '" + sField + "'.");
+							Opa5.assert.ok(true, "Master list has been filtered correctly for field '" + sField + "'.");
 						},
-						errorMessage : "Master list has not been sorted correctly for field '" + sField + "'."
+						errorMessage : "Master list has not been filtered correctly for field '" + sField + "'."
 					});
 				},
 
@@ -518,9 +542,9 @@ sap.ui.define([
 						success : function (oList) {
 							var iExpectedLength = oList.getBinding("items").getLength();
 							this.waitFor({
-								id : "page",
+								id : "masterPageTitle",
 								viewName : sViewName,
-								matchers : new PropertyStrictEquals({name : "title", value : "<Objects> (" + iExpectedLength + ")"}),
+								matchers : new PropertyStrictEquals({name : "text", value : "<Objects> (" + iExpectedLength + ")"}),
 								success : function () {
 									Opa5.assert.ok(true, "The master page header displays " + iExpectedLength + " items");
 								},
@@ -569,7 +593,44 @@ sap.ui.define([
 						},
 						errorMessage : "The list has no selection"
 					});
+				},
+
+				theListShouldBeSortedAscendingOnField : function (sField) {
+					function fnCheckSort (oList){
+						var oLastValue = null,
+							fnIsOrdered = function (oElement) {
+								if (!oElement.getBindingContext()) {
+									return false;
+								}
+
+								var oCurrentValue = oElement.getBindingContext().getProperty(sField);
+
+								if (oCurrentValue === undefined) {
+									return false;
+								}
+
+								if (!oLastValue || oCurrentValue >= oLastValue){
+									oLastValue = oCurrentValue;
+								} else {
+									return false;
+								}
+								return true;
+							};
+
+						return oList.getItems().every(fnIsOrdered);
+					}
+
+					return this.waitFor({
+						viewName : sViewName,
+						id : "list",
+						matchers : fnCheckSort,
+						success : function() {
+							Opa5.assert.ok(true, "Master list has been sorted correctly for field '" + sField + "'.");
+						},
+						errorMessage : "Master list has not been sorted correctly for field '" + sField + "'."
+					});
 				}
+
 
 			}
 

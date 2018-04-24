@@ -4,6 +4,11 @@
 	displayBlock="true"
 	busy="{appView>/busy}"
 	busyIndicatorDelay="{appView>/delay}"
-	xmlns="sap.m">
-	<SplitApp id="idAppControl" />
+	xmlns="sap.f"
+	height="100%">
+	<FlexibleColumnLayout
+		id="idAppControl"
+		layout="{appView>/layout}"
+		backgroundDesign="Translucent">
+	</FlexibleColumnLayout>
 </mvc:View>
