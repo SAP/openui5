@@ -5207,7 +5207,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("ODLB: delayed filter", function (assert) {
+	// Scenario: change the filter on a list binding with submit group 'API' and immediately call
+	// submitBatch. The resulting GET request becomes asynchronous because it requires additional
+	// metadata. Check that the request is sent with this batch nevertheless.
+	// In a second step call filter on a list binding w/o control. Verify that the queue does not
+	// remain blocked, although there is no getContexts and no GET request.
+	QUnit.test("ODLB: delayed filter", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}}">\
 	<items>\
@@ -5245,6 +5250,25 @@ sap.ui.require([
 
 			that.oView.byId("table").getBinding("items")
 				.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
+			that.oModel.submitBatch("api");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oListBinding = that.oModel.bindList("/Equipments", undefined, undefined, undefined,
+					{$$groupId : 'api'});
+
+			that.expectRequest("Equipments?$skip=0&$top=100", {
+					value : [{
+						"Name" : "Foo"
+					}]
+				})
+				// The field is reset first, because the filter request is delayed until the next
+				// prerendering task
+				.expectChange("name", null)
+				.expectChange("name", ["Foo"]);
+
+			oListBinding.filter(new Filter("Name", "GT", "M"));
+			that.oView.byId("table").getBinding("items").filter(null);
 			that.oModel.submitBatch("api");
 
 			return that.waitForChanges(assert);
