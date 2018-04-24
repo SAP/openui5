@@ -1,0 +1,94 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>QUnit Page for sap.ui.test._UsageReport</title>
+
+<script src="../../shared-config.js"></script>
+<script src="../../../../../../resources/sap-ui-core.js"
+    data-sap-ui-resourceroots='{
+        "unitTests" : "./"
+    }'>
+</script>
+<script src="../_includeQUnit.js"></script>
+
+
+<script>
+jQuery.sap.require("sap.ui.qunit.qunit-junit");
+jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+jQuery.sap.require("sap.ui.thirdparty.sinon");
+jQuery.sap.require("sap.ui.thirdparty.sinon-qunit");
+
+QUnit.config.autostart = false;
+
+sap.ui.require([
+    "sap/ui/test/_UsageReport",
+    "unitTests/utils/phantomJS"
+], function (_UsageReport, phantomJSUtils) {
+    phantomJSUtils.introduceSinonXHR();
+
+	QUnit.module("_UsageReport", {
+        beforeEach: function () {
+            this.xhr = sinon.useFakeXMLHttpRequest();
+            this.requests = [];
+            this.xhr.onCreate = function (xhr) {
+                this.requests.push(xhr);
+            }.bind(this);
+        },
+        afterEach: function () {
+            this.xhr.restore();
+        }
+    });
+
+    QUnit.test("Should be disabled by default", function (assert) {
+        var oUsageReport = new _UsageReport();
+        oUsageReport.begin();
+        oUsageReport.moduleUpdate();
+        oUsageReport.opaEmpty();
+        oUsageReport.testDone();
+        oUsageReport.done();
+        assert.strictEqual(this.requests.length, 0, "Should send no requests when disabled");
+    });
+
+    QUnit.test("Should be enabled explicitly", function (assert) {
+        var oUsageReport = new _UsageReport({enableUsageReport: "true"});
+        oUsageReport.begin();
+        assert.strictEqual(this.requests.length, 1, "Should send requests when enabled");
+    });
+
+    QUnit.test("Should be enabled explicitly only with parameter value 'true'", function (assert) {
+        var oUsageReport = new _UsageReport({enableUsageReport: undefined});
+        oUsageReport.begin();
+        oUsageReport = new _UsageReport({enableUsageReport: "value"});
+        oUsageReport.begin();
+        assert.strictEqual(this.requests.length, 0, "Should send requests when enabled");
+    });
+
+    QUnit.test("Should change reporter URL", function (assert) {
+        var oUsageReport = new _UsageReport({enableUsageReport: "true", usageReportUrl: "myURL"});
+        oUsageReport.begin();
+        assert.strictEqual(this.requests[0].url, "myURL/api/opa/suites/begin", "Should use configured URL");
+    });
+
+    QUnit.test("Should wait for suite to begin before adding more suite data", function (assert) {
+        var oUsageReport = new _UsageReport({enableUsageReport: "true", usageReportUrl: "myURL"});
+        oUsageReport.begin({uri: "foo"});
+        oUsageReport.moduleUpdate({name: "module"});
+        assert.strictEqual(this.requests.length, 1, "Should only send the first request");
+        assert.strictEqual(this.requests[0].requestBody, "uri=foo", "Should only send the first request");
+        this.requests[0].respond(200, { "Content-Type": "application/json" }, '{ "id": 1}');
+        assert.strictEqual(this.requests.length, 2, "Should send the second request only when suite data is received");
+        assert.strictEqual(this.requests[1].requestBody, "name=module", "Should send the second request only when suite data is received");
+    });
+
+	QUnit.start();
+
+});
+</script>
+</head>
+<body>
+	<div id="qunit"></div>
+	<div id="qunit-fixture"></div>
+</body>
+</html>
