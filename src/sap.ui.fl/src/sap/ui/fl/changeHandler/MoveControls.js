@@ -24,8 +24,6 @@ function(
 	 */
 	var MoveControls = { };
 
-	MoveControls.CHANGE_TYPE = "moveControls";
-
 	// Defines object which contains constants used in the handler
 	MoveControls.SOURCE_ALIAS = "source";
 	MoveControls.TARGET_ALIAS = "target";
@@ -277,7 +275,6 @@ function(
 
 		mSpecificChangeInfo = this._getSpecificChangeInfo(oModifier, mSpecificChangeInfo, oAppComponent);
 
-		mChangeData.changeType = MoveControls.CHANGE_TYPE;
 		mChangeData.content = {
 			movedElements : [],
 			source : {
