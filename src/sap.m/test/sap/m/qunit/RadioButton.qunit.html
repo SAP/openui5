@@ -120,6 +120,17 @@
 			oRadioButton.destroy();
 		});
 
+        QUnit.test("Rendering in Form: getFormDoNotAdjustWidth", function() {
+            var oRBWithoutLabel = new sap.m.RadioButton(),
+                oRBWithLabel = new sap.m.RadioButton({text: "Label value"});
+
+            assert.equal(oRBWithoutLabel.getFormDoNotAdjustWidth(), true, 'The radiobutton width will not be overwritten in form, when it does not have a label');
+            assert.equal(oRBWithLabel.getFormDoNotAdjustWidth(), false, 'The radiobutton width will be set to 100% by forms, when it does have a label');
+
+            oRBWithoutLabel.destroy();
+            oRBWithLabel.destroy();
+        });
+
 
 		/* =========================================================== */
 		/* API module                                                  */
