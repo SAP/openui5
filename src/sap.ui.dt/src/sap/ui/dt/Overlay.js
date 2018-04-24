@@ -231,7 +231,7 @@ function(
 		 * @type {jQuery}
 		 * @private
 		 */
-		_$domRef: null,
+		_$DomRef: null,
 
 		/**
 		 * Stores CSS classes for overlay. Please do not mutate this array manually.
@@ -330,23 +330,23 @@ function(
 			return this.getDomRef();
 		}
 
-		this._$domRef = jQuery('<div/>').attr(this._getAttributes());
+		this._$DomRef = jQuery('<div/>').attr(this._getAttributes());
 
-		this._$children = jQuery('<div/>').attr({
+		this._$Children = jQuery('<div/>').attr({
 			"class": "sapUiDtOverlayChildren"
-		}).appendTo(this._$domRef);
+		}).appendTo(this._$DomRef);
 
-		this._$children.append(this._renderChildren());
+		this._$Children.append(this._renderChildren());
 
 		this._bRendered = true;
 
 		if (!bSuppressEvent) {
 			this.fireAfterRendering({
-				domRef: this._$domRef.get(0)
+				domRef: this._$DomRef.get(0)
 			});
 		}
 
-		return this._$domRef;
+		return this._$DomRef;
 	};
 
 	Overlay.prototype.isInit = function () {
@@ -424,7 +424,7 @@ function(
 		this.$().remove();
 		delete this._bInit;
 		delete this._bShouldBeDestroyed;
-		delete this._$domRef;
+		delete this._$DomRef;
 		delete this._oScrollbarSynchronizers;
 		this.fireDestroyed();
 	};
@@ -447,7 +447,7 @@ function(
 	};
 
 	Overlay.prototype.getChildrenDomRef = function () {
-		return this._$children.get(0);
+		return this._$Children.get(0);
 	};
 
 	/**
@@ -456,7 +456,7 @@ function(
 	 * @public
 	 */
 	Overlay.prototype.$ = function () {
-		return this._$domRef || jQuery();
+		return this._$DomRef || jQuery();
 	};
 
 	/**
