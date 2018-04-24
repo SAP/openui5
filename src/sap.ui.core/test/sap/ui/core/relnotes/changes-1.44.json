@@ -2158,5 +2158,34 @@
         "references": []
       }
     ]
+  },
+  "1.44.31": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "b6420fef666e34a5e2c00e03dcf907cf09e0e927",
+        "type": "FIX",
+        "text": " CalendarType: user date format \u0027C\u0027 implies use of Persian calendar",
+        "references": []
+      },
+      {
+        "id": "b6cf0b80ba507932e0b27efdce0ce64432569393",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": []
+      },
+      {
+        "id": "b838001d6ee09259e39ec7f6902e323c19df0df7",
+        "type": "FIX",
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
+      },
+      {
+        "id": "b2d9853f36a4e3e05cf83ea9471313d345afc1e2",
+        "type": "FIX",
+        "text": " v2.ODataModel: metadata url params missing",
+        "references": []
+      }
+    ]
   }
 }

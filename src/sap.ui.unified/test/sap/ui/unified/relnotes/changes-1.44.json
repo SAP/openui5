@@ -284,5 +284,28 @@
         "references": []
       }
     ]
+  },
+  "1.44.31": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "e9502531924817f8951ef3d1efb9ddcd028465d0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Failing qunit fixed",
+        "references": []
+      },
+      {
+        "id": "f93bf5b6e686796414e6d5581ef66e2d1dc71d58",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "db067c83455d387264b3153c473ca25d643f79d4",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: closes when switch from one submenu to another",
+        "references": []
+      }
+    ]
   }
 }

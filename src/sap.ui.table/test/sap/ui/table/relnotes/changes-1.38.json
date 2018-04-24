@@ -1032,5 +1032,16 @@
         "references": []
       }
     ]
+  },
+  "1.38.34": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "0861d7d97bb2c35d38c21e22d6b18bcff3526151",
+        "type": "FIX",
+        "text": " Table: Vertical scrollbar height",
+        "references": []
+      }
+    ]
   }
 }
