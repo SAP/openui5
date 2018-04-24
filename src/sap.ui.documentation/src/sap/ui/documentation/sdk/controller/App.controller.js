@@ -782,6 +782,10 @@ sap.ui.define([
 				Promise.resolve(jQuery.ajax(sNeoAppJsonPath)).then(
 					// Success
 					function(oNeoAppJson) {
+						var oVersionModel = this.getModel("versionData"),
+							bIsInternal = oVersionModel.getProperty("/isInternal"),
+							bIsSnapshotVersion = oVersionModel.getProperty("/isSnapshotVersion");
+
 						if (!(oNeoAppJson && oNeoAppJson.routes)) {
 							Log.warning("No versions were found");
 							return;
@@ -791,8 +795,16 @@ sap.ui.define([
 						// therefore we should skip it to avoid duplicate items in the dialog.
 						oNeoAppJson.routes.pop();
 
+						this._aNeoAppVersions = oNeoAppJson.routes;
+
 						// Store needed data
-						this._aNeoAppVersions = oNeoAppJson.routes.map(function(oRoute) {
+						if (!bIsInternal && !bIsSnapshotVersion) {
+							this._aNeoAppVersions = this._aNeoAppVersions.filter(function(oRoute) {
+								return oRoute.target.version.indexOf("-beta") === -1;
+							});
+						}
+
+						this._aNeoAppVersions = this._aNeoAppVersions.map(function(oRoute) {
 							var oVersion = jQuery.sap.Version(oRoute.target.version),
 								oVersionSummary = {};
 
