@@ -429,7 +429,7 @@ sap.ui.define([
 				left: null
 			};
 
-			if (oOverlay.top >= oPopover.height && oViewport.width >= oPopover.width) {
+			if (oOverlay.top >= oPopover.height && oViewport.width >= oPopover.width && !oOverlay.isOverlappedAtTop) {
 				oPos = this._placeContextMenuOnTop(oOverlay);
 			} else if (oViewport.height - oOverlay.top >= oPopover.height + 5 && oViewport.height >= oPopover.height + 5 && oViewport.width >= oPopover.width) {
 				oPos = this._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
@@ -473,14 +473,13 @@ sap.ui.define([
 
 			oPos.left = oOverlay.left + oOverlay.width / 2;
 
-			if (oOverlay.height < 60 && oViewport.height - oOverlay.top - oOverlay.height >= oPopover.height) {
+			if ((oOverlay.height < 60 || oOverlay.isOverlappedAtTop) && oViewport.height - oOverlay.top - oOverlay.height >= oPopover.height) {
 				oPos.top = oOverlay.bottom;
 			} else if (oOverlay.top >= oViewport.top) {
 				oPos.top = oOverlay.top + 5;
 			} else {
 				oPos.top = oViewport.top + 5;
 			}
-
 			return oPos;
 		},
 
@@ -672,12 +671,31 @@ sap.ui.define([
 		 */
 		_getOverlayDimensions: function (sOverlayId) {
 
-			var oOverlay = jQuery("#" + sOverlayId).rect();
+			var oOverlayDimensions = jQuery("#" + sOverlayId).rect();
 
-			oOverlay.right = oOverlay.left + oOverlay.width;
-			oOverlay.bottom = oOverlay.top + oOverlay.height;
+			oOverlayDimensions.right = oOverlayDimensions.left + oOverlayDimensions.width;
+			oOverlayDimensions.bottom = oOverlayDimensions.top + oOverlayDimensions.height;
+			oOverlayDimensions.isOverlappedAtTop = this._isOverlayOverlapped(sOverlayId, oOverlayDimensions, "top");
+			oOverlayDimensions.isOverlappedAtBottom = this._isOverlayOverlapped(sOverlayId, oOverlayDimensions, "bottom");
 
-			return oOverlay;
+			return oOverlayDimensions;
+		},
+
+		_isOverlayOverlapped: function(sSelectedOverlayId, oOverlayDimensions, sTop) {
+			var oElement;
+
+			if (sTop === "top") {
+				oElement = document.elementFromPoint(oOverlayDimensions.left + (oOverlayDimensions.width / 2), oOverlayDimensions.top);
+			}
+			if (sTop === "bottom") {
+				oElement = document.elementFromPoint(oOverlayDimensions.left + (oOverlayDimensions.width / 2), oOverlayDimensions.bottom - 5);
+			}
+			if (!oElement) {
+				return true;
+			} else if (oElement.id === sSelectedOverlayId) {
+				return false;
+			}
+			return !jQuery("#" + sSelectedOverlayId)[0].contains(oElement);
 		},
 
 		/**
