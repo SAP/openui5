@@ -68,6 +68,9 @@ function(
 			},
 			tooltip: {
 				ignore : true
+			},
+			dragDropConfig: {
+				ignore: true
 			}
 		};
 

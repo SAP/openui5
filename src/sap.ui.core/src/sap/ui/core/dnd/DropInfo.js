@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["./DragDropBase", "../Element"],
-	function(DragDropBase, Element) {
+sap.ui.define(["jquery.sap.global", "./DragDropBase"],
+	function(jQuery, DragDropBase) {
 	"use strict";
 
 	/**
@@ -25,34 +25,35 @@ sap.ui.define(["./DragDropBase", "../Element"],
 	 * @alias sap.ui.core.dnd.DropInfo
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var DropInfo = DragDropBase.extend("sap.ui.core.dnd.DropInfo", /** @lends sap.ui.core.dnd.DropInfo.prototype */ { metadata : {
+	var DropInfo = DragDropBase.extend("sap.ui.core.dnd.DropInfo", /** @lends sap.ui.core.dnd.DropInfo.prototype */ { metadata: {
 
-		library : "sap.ui.core",
+		library: "sap.ui.core",
 		interfaces: [
 			"sap.ui.core.dnd.IDropInfo"
 		],
-		properties : {
+		properties: {
 			/**
 			 * The aggregation name in the drop target control which is the target of this drag-and-drop action. If undefined, the entire
-			 * control is the target. This can be handy if the target control does not have any aggregations or if the drop
-			 * position within the target does not matter.
+			 * control is the target. This can be handy if the target control does not have any aggregations or if the drop position within the target does not matter.
+			 *
+			 * <b>Note:</b> This property might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 			 */
-			targetAggregation: {type: "string", defaultValue : null, invalidate: false},
+			targetAggregation: {type: "string", defaultValue: null, invalidate: false},
 
 			/**
 			 * Defines the visual drop effect.
 			 */
-			dropEffect: {type: "sap.ui.core.dnd.DropEffect", defaultValue : "Move", invalidate: false},
+			dropEffect: {type: "sap.ui.core.dnd.DropEffect", defaultValue: "Move", invalidate: false},
 
 			/**
 			 * Defines the position for the drop action, visualized by a rectangle.
 			 */
-			dropPosition: {type: "sap.ui.core.dnd.DropPosition", defaultValue : "On", invalidate: false},
+			dropPosition: {type: "sap.ui.core.dnd.DropPosition", defaultValue: "On", invalidate: false},
 
 			/**
 			 * Defines the layout of the droppable controls if <code>dropPosition</code> is set to <code>Between</code> or <code>OnOrBetween</code>.
 			 */
-			dropLayout: {type: "sap.ui.core.dnd.DropLayout", defaultValue : "Vertical", invalidate: false}
+			dropLayout: {type: "sap.ui.core.dnd.DropLayout", defaultValue: "Default", invalidate: false}
 		},
 
 		events: {
@@ -70,7 +71,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * @public
 			 */
 			dragEnter: {
-				allowPreventDefault : true
+				allowPreventDefault: true
 			},
 
 			/**
@@ -106,7 +107,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 			 * @param {Event} oControlEvent.getParameters.browserEvent The underlying browser event
 			 * @public
 			 */
-			drop : {
+			drop: {
 			}
 		}
 	}});
@@ -124,6 +125,14 @@ sap.ui.define(["./DragDropBase", "../Element"],
 
 		var oDropTarget = this.getDropTarget();
 		if (!oDropTarget) {
+			return false;
+		}
+
+		// droppable by default
+		var sTargetAggregation = this.getTargetAggregation();
+		var oMetadata = oDropTarget.getMetadata().getDragDropInfo(sTargetAggregation);
+		if (!oMetadata.droppable) {
+			jQuery.sap.log.warning((sTargetAggregation ? sTargetAggregation + " aggregation of " : "") + oDropTarget + " is not configured to be droppable");
 			return false;
 		}
 
@@ -160,7 +169,16 @@ sap.ui.define(["./DragDropBase", "../Element"],
 		return this.getProperty("dropPosition");
 	};
 
-	DropInfo.prototype.fireDragEnter = function (oEvent) {
+	DropInfo.prototype.getDropLayout = function(bDetectDefault) {
+		var sDropLayout = this.getProperty("dropLayout");
+		if (!bDetectDefault || sDropLayout != "Default") {
+			return sDropLayout;
+		}
+
+		return this.getDropTarget().getMetadata().getDragDropInfo(this.getTargetAggregation()).layout;
+	};
+
+	DropInfo.prototype.fireDragEnter = function(oEvent) {
 		if (!oEvent || !oEvent.dragSession) {
 			return;
 		}
@@ -173,7 +191,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 		}, true);
 	};
 
-	DropInfo.prototype.fireDragOver = function (oEvent) {
+	DropInfo.prototype.fireDragOver = function(oEvent) {
 		if (!oEvent || !oEvent.dragSession) {
 			return;
 		}
@@ -187,7 +205,7 @@ sap.ui.define(["./DragDropBase", "../Element"],
 		});
 	};
 
-	DropInfo.prototype.fireDrop = function (oEvent) {
+	DropInfo.prototype.fireDrop = function(oEvent) {
 		if (!oEvent || !oEvent.dragSession) {
 			return;
 		}

@@ -43,20 +43,16 @@ sap.ui.define([
 					type: "sap.ui.core.dnd.test.DivControl",
 					multiple: true,
 					singularName: "topItem",
-					selector : "#{id}-topItems"
+					selector : "#{id}-topItems",
+					dnd: true
 				},
 				bottomItems: {
 					name: "bottomItems",
 					type: "sap.ui.core.dnd.test.DivControl",
 					multiple: true,
 					singularName: "bottomItem",
-					selector : "#{id}-bottomItems"
-				},
-				dragDropConfig: {
-					name: "dragDropConfig",
-					type: "sap.ui.core.dnd.DragDropBase",
-					multiple: true,
-					singularName: "dragDropConfig"
+					selector : "#{id}-bottomItems",
+					dnd: true
 				}
 			}
 		},

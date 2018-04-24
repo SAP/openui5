@@ -10,8 +10,8 @@ sap.ui.define([
 				showNoData : {type : "boolean", defaultValue : false}
 			},
 			aggregations: {
-				children: { type: "test.TestControl", multiple: true, selector : "#{id}-children"},
-				dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true},
+				children: { type: "test.TestControl", multiple: true, selector : "#{id}-children", dnd : true },
+				test : { type: "test.TestControl", multiple: true, dnd : {draggable: true, droppable: true, layout: "Horizontal"}}
 			}
 		},
 		renderer: function(rm, oControl) {

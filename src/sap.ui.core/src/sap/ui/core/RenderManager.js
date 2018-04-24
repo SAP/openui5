@@ -890,13 +890,10 @@ sap.ui.define([
 			}
 		}
 
-		var bDraggable = false;
-		if (oElement.getDragDropConfig) {
-			// is this element configured to be draggable
-			bDraggable = oElement.getDragDropConfig().some(function(vDragDropInfo){
-				return vDragDropInfo.isDraggable(oElement);
-			});
-		}
+		// whether is this element configured to be draggable
+		var bDraggable = oElement.getDragDropConfig().some(function(vDragDropInfo){
+			return vDragDropInfo.isDraggable(oElement);
+		});
 
 		if (!bDraggable) {
 			// also check parent config

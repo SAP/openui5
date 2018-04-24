@@ -37,15 +37,6 @@ var oModel = new sap.ui.model.json.JSONModel();
 oModel.setData(oData);
 sap.ui.getCore().setModel(oModel);
 
-var DraggableListItem = sap.m.StandardListItem.extend("my.DraggableListItem", {
-	metadata : {
-		aggregations : {
-			dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true}
-		}
-	},
-	renderer: {}
-});
-
 var oIconList = new sap.m.List({
 	headerText: "Icons",
 	noDataText: "Well Done!",
@@ -56,7 +47,7 @@ var oIconList = new sap.m.List({
 	path: "/game",
 	sorter: new sap.ui.model.Sorter("random"),
 	filters : new sap.ui.model.Filter("dropped", "EQ", false),
-	template: new DraggableListItem({
+	template: new sap.m.StandardListItem({
 		icon: "sap-icon://{icon}",
 		highlight: "Information",
 		dragDropConfig: new sap.ui.core.dnd.DragInfo({
@@ -94,7 +85,7 @@ var oDescList = new sap.m.List({
 	]
 }).bindItems({
 	path: "/game",
-	template: new DraggableListItem({
+	template: new sap.m.StandardListItem({
 		title: "{desc}",
 		highlight: {
 			parts: [{path : 'dropped'}],
@@ -218,7 +209,7 @@ var oIconList2 = new sap.m.List({
 	path: "/game",
 	sorter: new sap.ui.model.Sorter("random"),
 	filters : new sap.ui.model.Filter("dropped2", "EQ", false),
-	template: new DraggableListItem({
+	template: new sap.m.StandardListItem({
 		icon: "sap-icon://{icon}",
 		highlight: "Information"
 	})
