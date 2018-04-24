@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'../json/JSONModel', 'sap/ui/base/ManagedObject', './XMLNodeUtils'
-], function(JSONModel, ManagedObject, Utils) {
+	'../json/JSONModel', 'sap/ui/base/ManagedObject', './XMLNodeUtils', 'sap/ui/core/util/reflection/XmlTreeModifier'
+], function(JSONModel, ManagedObject, Utils, XmlTreeModifier) {
 	"use strict";
 
 	/**
@@ -243,7 +243,13 @@ sap.ui.define([
 			} else {
 				oResult = this.oNode.getAttribute(sPath);
 			}
-		} else if (!this.mAggregations.hasOwnProperty(sPath) && !this.mSpecialSettings.hasOwnProperty(sPath) && !this.mEvents.hasOwnProperty(sPath)) {
+		} else if (this.mAggregations.hasOwnProperty(sPath)) {
+			if (this.oNode.hasAttribute(sPath)) {
+				oResult = this.oNode.getAttribute(sPath);
+			} else {
+				oResult =  XmlTreeModifier.getAggregation(this.oNode, sPath);
+			}
+		} else if (!this.mSpecialSettings.hasOwnProperty(sPath) && !this.mEvents.hasOwnProperty(sPath)) {
 			oResult = null;
 		} else {
 			if (this.oNode.hasAttribute(sPath)) {
