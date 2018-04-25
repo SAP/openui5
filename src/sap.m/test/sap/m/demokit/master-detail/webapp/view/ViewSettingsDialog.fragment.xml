@@ -4,8 +4,16 @@
 
 	<ViewSettingsDialog
 		id="viewSettingsDialog"
-		confirm="onConfirmViewSettingsDialog"
-		resetFilters="onViewSettingsDialogResetFilters">
+		confirm="onConfirmViewSettingsDialog">
+		<sortItems>
+			<ViewSettingsItem
+				text="{i18n>masterSort1}"
+				key="Name"
+				selected="true"/>
+			<ViewSettingsItem
+				text="{i18n>masterSort2}"
+				key="UnitNumber"/>
+		</sortItems>
 		<filterItems>
 			<ViewSettingsFilterItem
 				id="filterItems"
@@ -14,16 +22,20 @@
 				multiSelect="false">
 				<items>
 					<ViewSettingsItem
+						id="viewFilter1"
 						text="{i18n>masterFilter1}"
-						key="Filter1"
-						id="viewFilter1"/>
+						key="Filter1"/>
 					<ViewSettingsItem
+						id="viewFilter2"
 						text="{i18n>masterFilter2}"
-						key="Filter2"
-						id="viewFilter2"/>
+						key="Filter2"/>
 				</items>
 			</ViewSettingsFilterItem>
 		</filterItems>
+		<groupItems>
+			<ViewSettingsItem
+				text="{i18n>masterGroup1}"
+				key="UnitNumber"/>
+		</groupItems>
 	</ViewSettingsDialog>
-
 </core:FragmentDefinition>

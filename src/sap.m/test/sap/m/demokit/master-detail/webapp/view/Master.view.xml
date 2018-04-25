@@ -1,43 +1,78 @@
 <mvc:View
 	controllerName="sap.ui.demo.masterdetail.controller.Master"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:core="sap.ui.core"
 	xmlns="sap.m"
-	xmlns:semantic="sap.m.semantic">
+	xmlns:f="sap.f">
 
-	<semantic:MasterPage
-		id="page"
-		title="{masterView>/title}"
-		navButtonPress="onNavBack"
-		showNavButton="true">
-		<semantic:subHeader>
-			<Bar id="headerBar">
-				<contentMiddle>
+	<f:DynamicPage
+		id="masterPage"
+		preserveHeaderStateOnScroll="true"
+		toggleHeaderOnTitleClick="false">
+		<!-- DynamicPage Title -->
+		<f:title>
+			<f:DynamicPageTitle>
+				<f:heading>
+					<Title
+						id="masterPageTitle"
+						text="{masterView>/title}"/>
+				</f:heading>
+			</f:DynamicPageTitle>
+		</f:title>
+		<f:content>
+			<VBox fitContainer="true">
+				<OverflowToolbar class="sapFDynamicPageAlignContent">
+					<ToolbarSpacer/>
 					<SearchField
 						id="searchField"
 						showRefreshButton="{= !${device>/support/touch} }"
 						tooltip="{i18n>masterSearchTooltip}"
-						width="100%"
-						search="onSearch">
+						search="onSearch"
+						width="auto">
+						<layoutData>
+							<OverflowToolbarLayoutData
+								minWidth="150px"
+								maxWidth="300px"
+								shrinkable="true"
+								priority="NeverOverflow"/>
+						</layoutData>
 					</SearchField>
-				</contentMiddle>
-			</Bar>
-		</semantic:subHeader>
+					<Button
+						id="sortButton"
+						press="onOpenViewSettings"
+						icon="sap-icon://sort"
+						type="Transparent">
+						<layoutData>
+							<OverflowToolbarLayoutData priority="NeverOverflow"/>
+						</layoutData>
+					</Button>
+					<Button
+						id="filterButton"
+						press="onOpenViewSettings"
+						icon="sap-icon://filter"
+						type="Transparent"/>
+					<Button
+						id="groupButton"
+						press="onOpenViewSettings"
+						icon="sap-icon://group-2"
+						type="Transparent"/>
+				</OverflowToolbar>
+				<PullToRefresh
+					id="pullToRefresh"
+					visible="{device>/support/touch}"
+					class="sapFDynamicPageAlignContent"
+					refresh="onRefresh" />
 
-		<semantic:content>
-			<PullToRefresh
-				id="pullToRefresh"
-				visible="{device>/support/touch}"
-				refresh="onRefresh" />
 			<!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
 			<List
 				id="list"
+				width="auto"
+				class="sapFDynamicPageAlignContent"
 				items="{
 					path: '/Objects',
 					sorter: {
 						path: 'Name',
 						descending: false
-					},
+						},
 					groupHeaderFactory: '.createGroupHeader'
 				}"
 				busyIndicatorDelay="{masterView>/delay}"
@@ -60,7 +95,7 @@
 				</infoToolbar>
 				<items>
 					<ObjectListItem
-						type="{= ${device>/system/phone} ? 'Active' : 'Inactive'}"
+						type="Navigation"
 						press="onSelectionChange"
 						title="{Name}"
 						number="{
@@ -71,46 +106,7 @@
 					</ObjectListItem>
 				</items>
 			</List>
-		</semantic:content>
-
-		<semantic:sort>
-			<semantic:SortSelect
-				id="sort"
-				selectedKey="{masterView>/sortBy}"
-				change="onSort">
-				<core:Item
-					id="masterSort1"
-					key="Name"
-					text="{i18n>masterSort1}"/>
-				<core:Item
-					id="masterSort2"
-					key="UnitNumber"
-					text="{i18n>masterSort2}"/>
-			</semantic:SortSelect>
-		</semantic:sort>
-
-		<semantic:filter>
-			<semantic:FilterAction
-				id="filter"
-				press="onOpenViewSettings" />
-		</semantic:filter>
-
-		<semantic:group>
-			<semantic:GroupSelect
-				id="group"
-				selectedKey="{masterView>/groupBy}"
-				change="onGroup">
-				<core:Item
-					id="masterGroupNone"
-					key="None"
-					text="{i18n>masterGroupNone}"/>
-				<core:Item
-					id="masterGroup1"
-					key="UnitNumber"
-					text="{i18n>masterGroup1}"/>
-			</semantic:GroupSelect>
-		</semantic:group>
-
-	</semantic:MasterPage>
-
+			</VBox>
+		</f:content>
+	</f:DynamicPage>
 </mvc:View>
