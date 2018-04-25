@@ -6,8 +6,7 @@ sap.ui.define([
 	"sap/ui/test/matchers/AggregationLengthEquals",
 	"sap/ui/test/matchers/AggregationFilled",
 	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/demo/iconexplorer/test/integration/pages/Common"
+	"sap/ui/test/matchers/PropertyStrictEquals"
 ], function(Opa5,
 			Press,
 			EnterText,
@@ -15,8 +14,8 @@ sap.ui.define([
 			AggregationLengthEquals,
 			AggregationFilled,
 			Properties,
-			PropertyStrictEquals,
-			Common) {
+			PropertyStrictEquals
+			) {
 	"use strict";
 
 	var sViewName = "Overview",
@@ -141,7 +140,6 @@ sap.ui.define([
 	Opa5.createPageObjects({
 
 		onTheOverviewPage: {
-			baseClass: Common,
 			actions: {
 				iPressTheNavigationBackButton: function(){
 					return this.waitFor({

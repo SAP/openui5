@@ -31,7 +31,7 @@
 		"test/integration/PreviewJourney.js",
 		"test/integration/pages/App.js",
 		"test/integration/pages/Browser.js",
-		"test/integration/pages/Common.js",
+		"test/integration/arrangements/Arrangement.js",
 		"test/integration/pages/NotFound.js",
 		"test/integration/pages/Overview.js",
 		"test/integration/pages/Preview.js",

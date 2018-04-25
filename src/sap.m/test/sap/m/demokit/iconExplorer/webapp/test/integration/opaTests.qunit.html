@@ -13,13 +13,26 @@
 			data-sap-ui-animation="false"
 			data-sap-ui-compatVersion="edge"
 			data-sap-ui-resourceroots='{
-				"sap.ui.demo.iconexplorer.test": "../",
-				"sap.ui.demo.iconexplorer" : "../../"
+				"sap.ui.demo.iconexplorer": "../../"
 			}'>
 		</script>
 
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-css.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
+		<script src="../../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+
 		<script>
-			jQuery.sap.require("sap.ui.demo.iconexplorer.test.integration.AllJourneys");
+			/* global QUnit */
+
+			QUnit.config.autostart = false;
+
+			sap.ui.getCore().attachInit(function() {
+				sap.ui.require([
+					"sap/ui/demo/iconexplorer/test/integration/AllJourneys"
+				], function() {
+					QUnit.start();
+				});
+			});
 		</script>
 
 	</head>

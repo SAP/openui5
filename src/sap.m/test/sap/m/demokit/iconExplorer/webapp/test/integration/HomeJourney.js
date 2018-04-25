@@ -1,7 +1,9 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Home",
+	"./pages/Overview"
 ], function (opaTest) {
 	"use strict";
 
@@ -11,11 +13,8 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartMyApp({
 			hash: "",
-			delay:0
+			delay:3000
 		});
-
-		//Actions
-		When.onTheHomePage.iLookAtTheScreen();
 
 		// Assertions
 		Then.onTheHomePage.iShouldSeeSomeFontTiles().
@@ -45,7 +44,9 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheHomePage.theSearchFieldShouldBeEmpty().
-			and.iShouldNotSeeTheClearIcon().
-			and.iTeardownMyApp();
+			and.iShouldNotSeeTheClearIcon();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 });

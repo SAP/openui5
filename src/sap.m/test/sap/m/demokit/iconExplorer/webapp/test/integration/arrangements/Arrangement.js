@@ -9,7 +9,7 @@ sap.ui.define([
 	// store a local copy to the original function
 	var _fnIconPoolGetIconNames = IconPool.getIconNames;
 
-	return Opa5.extend("sap.ui.demo.iconexplorer.test.integration.pages.Common", {
+	return Opa5.extend("sap.ui.demo.iconexplorer.test.integration.arrangements.Arrangement", {
 
 		iStartMyApp: function (oOptions) {
 			// reset local storage key to have stable testing environment
@@ -82,10 +82,6 @@ sap.ui.define([
 			oOptions = oOptions || {};
 			oOptions.hash = "overview/SAP-icons?tab=favorite";
 			this.iStartMyApp(oOptions);
-		},
-
-		iLookAtTheScreen: function () {
-			return this;
 		}
 
 	});

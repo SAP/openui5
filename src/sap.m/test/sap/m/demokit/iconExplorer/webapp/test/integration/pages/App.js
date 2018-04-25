@@ -1,14 +1,12 @@
 sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/PropertyStrictEquals",
-	"sap/ui/demo/iconexplorer/test/integration/pages/Common"
-], function($, Opa5, PropertyStrictEquals, Common) {
+	"sap/ui/test/matchers/PropertyStrictEquals"
+], function($, Opa5, PropertyStrictEquals) {
 	"use strict";
 
 	Opa5.createPageObjects({
 		onTheAppPage: {
-			baseClass: Common,
 
 			actions: {
 				iWaitUntilTheAppBusyIndicatorIsGone: function () {
