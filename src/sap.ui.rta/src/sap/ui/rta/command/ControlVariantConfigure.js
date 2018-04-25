@@ -48,7 +48,7 @@ sap.ui.define([
 
 	ControlVariantConfigure.prototype.getPreparedChange = function() {
 		if (!this._aPreparedChanges) {
-			jQuery.sap.log.error("No prepared change available for ControlVariantConfigure");
+			return undefined;
 		}
 		return this._aPreparedChanges;
 	};
