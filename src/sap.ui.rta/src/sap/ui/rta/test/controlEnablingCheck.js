@@ -149,7 +149,7 @@ function(
 			}
 
 			sap.ui.getCore().applyChanges();
-			return this.oView.loaded();
+			return Promise.all([this.oView.loaded(), mOptions.model && mOptions.model.getMetaModel() && mOptions.model.getMetaModel().loaded()]);
 		}
 
 		function buildCommand(assert){
@@ -231,7 +231,8 @@ function(
 					//destroy and recreate component and view to get the changes applied
 					this.oUiComponentContainer.destroy();
 					return createViewInComponent.call(this, ASYNC);
-				}.bind(this)).then(function(oView){
+				}.bind(this)).then(function(args){
+					var oView = args[0];
 					// Verify that UI change has been applied on XML view
 					mOptions.afterAction(this.oUiComponent, oView, assert);
 				}.bind(this));
