@@ -3,7 +3,7 @@ jQuery.sap.require("sap.ui.fl.Change");
 jQuery.sap.require("sap.ui.fl.Utils");
 jQuery.sap.require("sap.ui.base.EventProvider");
 jQuery.sap.require("sap.ui.fl.registry.Settings");
-jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
+jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 
 (function(Change, Utils, EventProvider, Settings, JsControlTreeModifier) {
 	'use strict';
@@ -685,4 +685,4 @@ jQuery.sap.require("sap.ui.fl.changeHandler.JsControlTreeModifier");
 		assert.equal(aDependentIdList.length, 7);
 	});
 
-}(sap.ui.fl.Change, sap.ui.fl.Utils, sap.ui.base.EventProvider, sap.ui.fl.registry.Settings, sap.ui.fl.changeHandler.JsControlTreeModifier));
+}(sap.ui.fl.Change, sap.ui.fl.Utils, sap.ui.base.EventProvider, sap.ui.fl.registry.Settings, sap.ui.core.util.reflection.JsControlTreeModifier));

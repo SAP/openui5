@@ -42,14 +42,7 @@ sap.ui.define([
 					/**
 					 * The items displayed in the list.
 					 */
-					items : {type : "sap.m.IconTabFilter", multiple : true, singularName : "item"},
-
-					/**
-					 * Defines the drag-and-drop configuration via {@link sap.ui.core.dnd.DragDropInfo}
-					 * This configuration is set internally by the control
-					 * FOR INTERNAL USE ONLY
-					 */
-					dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true}
+					items : {type : "sap.m.IconTabFilter", multiple : true, singularName : "item", dnd : true}
 				},
 				events: {
 					/**

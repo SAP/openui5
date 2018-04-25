@@ -1,16 +1,14 @@
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
-	"sap/ui/demo/iconexplorer/test/integration/pages/Common",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/demo/iconexplorer/controls/TitleLink"
-], function(Opa5, Press, Common, EnterText, TitleLink) {
+], function(Opa5, Press, EnterText, TitleLink) {
 	"use strict";
 	var sViewName = "Home";
 
 	Opa5.createPageObjects({
 		onTheHomePage: {
-			baseClass: Common,
 
 			actions: {
 				iClickOnTheTNTTitleLink: function () {

@@ -4,19 +4,40 @@
 /*global QUnit */
 sap.ui.define([
 	'jquery.sap.global',
+	'sap/ui/thirdparty/URI',
 	'./Opa',
 	'./Opa5'
-], function ($, Opa, Opa5) {
+], function ($, URI, Opa, Opa5) {
 	"use strict";
 
-	QUnit.testDone(function( details ) {
-		var bTimedOut = details.assertions.some(function (oAssertion) {
+	QUnit.begin(function (oDetails) {
+		Opa._usageReport.begin({uri: new URI().toString(), totalTests: oDetails.totalTests});
+	});
+
+	QUnit.moduleStart(function (oDetails) {
+		Opa._usageReport.moduleUpdate(oDetails);
+	});
+
+	QUnit.testDone(function (oDetails) {
+		Opa._usageReport.testDone(oDetails);
+
+		var bQUnitTimeout = oDetails.assertions.some(function (oAssertion) {
 			return !oAssertion.result && oAssertion.message === "Test timed out";
 		});
-		if (bTimedOut) {
+
+		if (bQUnitTimeout) {
 			Opa._stopQueue({qunitTimeout: QUnit.config.testTimeout / 1000});
 		}
 	});
+
+	QUnit.moduleDone(function (oDetails) {
+		Opa._usageReport.moduleUpdate(oDetails);
+	});
+
+	QUnit.done(function (oDetails) {
+		Opa._usageReport.done(oDetails);
+	});
+
 	/**
 	 * QUnit test adapter for opa.js has the same signature as a test of QUnit.
 	 * Suggested usage:
@@ -100,23 +121,29 @@ sap.ui.define([
 
 			callback.call(this, config.arrangements, config.actions, config.assertions);
 
-			var promise = Opa.emptyQueue();
-			promise.done(function() {
-				Opa.assert = undefined;
-				Opa5.assert = undefined;
-				fnStart();
-			});
+			Opa.emptyQueue()
+				.done(function() {
+					Opa._usageReport.opaEmpty();
+					Opa.assert = undefined;
+					Opa5.assert = undefined;
+					fnStart();
+				})
+				.fail(function (oOptions) {
+					Opa._usageReport.opaEmpty(oOptions);
 
-			promise.fail(function (oOptions) {
-				assert.ok(false, oOptions.errorMessage);
-				Opa.assert = undefined;
-				Opa5.assert = undefined;
-				// let OPA finish before QUnit starts executing the next test
-				// call fnStart only if QUnit did not timeout
-				if (!oOptions.qunitTimeout) {
-					setTimeout(fnStart, 0);
-				}
-			});
+					// add the error message to QUnit test results
+					// will cause exception in case of QUnit timeout since the last test has already finished
+					// ("Cannot read property 'failedAssertions' of null")
+					assert.ok(false, oOptions.errorMessage);
+
+					Opa.assert = undefined;
+					Opa5.assert = undefined;
+					// let OPA finish before QUnit starts executing the next test
+					// call fnStart only if QUnit did not timeout
+					if (!oOptions.qunitTimeout) {
+						setTimeout(fnStart, 0);
+					}
+				});
 		};
 
 		if ( QUnit.test.length === 2 ) {

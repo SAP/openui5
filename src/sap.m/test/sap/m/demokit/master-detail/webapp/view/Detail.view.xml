@@ -2,92 +2,118 @@
 	controllerName="sap.ui.demo.masterdetail.controller.Detail"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:semantic="sap.m.semantic">
+	xmlns:layout="sap.ui.layout"
+	xmlns:uxap="sap.uxap">
 
-	<semantic:DetailPage
-		id="page"
-		navButtonPress="onNavBack"
-		showNavButton="{device>/system/phone}"
-		title="{i18n>detailTitle}"
+	<uxap:ObjectPageLayout
+		id="detailPage"
 		busy="{detailView>/busy}"
-		busyIndicatorDelay="{detailView>/delay}">
-
-		<semantic:content>
-			<ObjectHeader
-				id="objectHeader"
-				title="{Name}"
-				number="{
-					path: 'UnitNumber',
-					formatter: '.formatter.currencyValue'
-				}"
-				numberUnit="{UnitOfMeasure}">
-			</ObjectHeader>
-			<IconTabBar
-				id="iconTabBar"
-				class="sapUiResponsiveContentPadding">
+		busyIndicatorDelay="{detailView>/delay}"
+		class="sapUiResponsiveContentPadding">
+		<uxap:headerTitle>
+		<uxap:ObjectPageDynamicHeaderTitle>
+			<uxap:expandedHeading>
+				<Title text="{Name}" wrapping="true" class="sapUiSmallMarginEnd"/>
+			</uxap:expandedHeading>
+			<uxap:navigationActions>
+				<OverflowToolbarButton
+					id="closeColumn"
+					type="Transparent"
+					icon="sap-icon://decline"
+					press="onCloseDetailPress"
+					tooltip="{i18n>closeColumn}"/>
+				<OverflowToolbarButton
+					id="fullScreenToggle"
+					type="Transparent"
+					icon="sap-icon://{=${appView>/actionButtonsInfo/midColumn/fullScreenMode} === true ? 'exit-' : ''}full-screen"
+					tooltip="{=${appView>/actionButtonsInfo/midColumn/fullScreenMode} === true ? 'Exit' : 'Enter'} {i18n>fullScreenText}"
+					visible="{=${appView>/actionButtonsInfo/midColumn/enterFullScreen}}"
+					press="toggleFullScreen"/>
+			</uxap:navigationActions>
+			<uxap:actions>
+				<uxap:ObjectPageHeaderActionButton
+					id="shareEmail"
+					press="onSendEmailPress"
+					icon="sap-icon://email"
+					type="Transparent"/>
+			</uxap:actions>
+		</uxap:ObjectPageDynamicHeaderTitle>
+		</uxap:headerTitle>
+		<uxap:headerContent>
+			<FlexBox
+				alignItems="Start"
+				justifyContent="SpaceBetween">
 				<items>
-					<IconTabFilter
-						id="iconTabBarFilter1"
-						icon="sap-icon://hint"
-						tooltip="{i18n>detailIconTabBarInfo}">
-					</IconTabFilter>
-					<IconTabFilter
-						id="iconTabBarFilter2"
-						icon="sap-icon://attachment"
-						tooltip="{i18n>detailIconTabBarAttachments}">
-					</IconTabFilter>
+					<Panel
+						backgroundDesign="Transparent"
+						class="sapUiNoContentPadding sapUiSmallMarginTop">
+						<content>
+							<layout:HorizontalLayout allowWrapping="true">
+								<layout:VerticalLayout class="sapUiMediumMarginEnd">
+								<ObjectAttribute title="Price"/>
+								<ObjectNumber
+									numberUnit="{UnitOfMeasure}"
+									number="{
+										path: 'UnitNumber',
+										formatter: '.formatter.currencyValue'
+									}"/>
+							</layout:VerticalLayout>
+							</layout:HorizontalLayout>
+						</content>
+					</Panel>
 				</items>
-			</IconTabBar>
-			<Table
-				id="lineItemsList"
-				width="auto"
-				items="{LineItems}"
-				updateFinished="onListUpdateFinished"
-				noDataText="{i18n>detailLineItemTableNoDataText}"
-				busyIndicatorDelay="{detailView>/lineItemTableDelay}"
-				class="sapUiResponsiveMargin">
-				<headerToolbar>
-					<Toolbar id="lineItemsToolbar">
-						<Title
-							id="lineItemsHeader"
-							text="{detailView>/lineItemListTitle}"/>
-					</Toolbar>
-				</headerToolbar>
-				<columns>
-					<Column>
-						<Text text="{i18n>detailLineItemTableIDColumn}"/>
-					</Column>
-					<Column
-						minScreenWidth="Tablet"
-						demandPopin="true"
-						hAlign="End">
-						<Text text="{i18n>detailLineItemTableUnitNumberColumn}"/>
-					</Column>
-				</columns>
-				<items>
-					<ColumnListItem>
-						<cells>
-							<ObjectIdentifier
-								title="{Name}"
-								text="{LineItemID}"/>
-							<ObjectNumber
-								number="{
-									path: 'UnitNumber',
-									formatter: '.formatter.currencyValue'
-								}"
-								unit="{UnitOfMeasure}"/>
-						</cells>
-					</ColumnListItem>
-				</items>
-			</Table>
-		</semantic:content>
-
-		<semantic:sendEmailAction>
-			<semantic:SendEmailAction
-				id="shareEmail"
-				press="onShareEmailPress"/>
-		</semantic:sendEmailAction>
-
-	</semantic:DetailPage>
-
+			</FlexBox>
+		</uxap:headerContent>
+		<uxap:sections>
+			<uxap:ObjectPageSection>
+				<uxap:subSections>
+					<uxap:ObjectPageSubSection>
+						<uxap:blocks>
+							<Table
+								id="lineItemsList"
+								width="auto"
+								items="{LineItems}"
+								updateFinished="onListUpdateFinished"
+								noDataText="{i18n>detailLineItemTableNoDataText}"
+								busyIndicatorDelay="{detailView>/lineItemTableDelay}">
+								<headerToolbar>
+									<Toolbar>
+										<Title
+											id="lineItemsTitle"
+											text="{detailView>/lineItemListTitle}"/>
+									</Toolbar>
+								</headerToolbar>
+								<columns>
+									<Column>
+										<Text text="{i18n>detailLineItemTableIDColumn}"/>
+									</Column>
+									<Column
+										minScreenWidth="Tablet"
+										demandPopin="true"
+										hAlign="End">
+										<Text text="{i18n>detailLineItemTableUnitNumberColumn}"/>
+									</Column>
+								</columns>
+								<items>
+									<ColumnListItem>
+										<cells>
+											<ObjectIdentifier
+												title="{Name}"
+												text="{LineItemID}"/>
+											<ObjectNumber
+												number="{
+													path: 'UnitNumber',
+													formatter: '.formatter.currencyValue'
+												}"
+												unit="{UnitOfMeasure}"/>
+										</cells>
+									</ColumnListItem>
+								</items>
+							</Table>
+						</uxap:blocks>
+					</uxap:ObjectPageSubSection>
+				</uxap:subSections>
+			</uxap:ObjectPageSection>
+		</uxap:sections>
+	</uxap:ObjectPageLayout>
 </mvc:View>

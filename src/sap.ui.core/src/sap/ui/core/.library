@@ -27,6 +27,7 @@
         <raw-module name="sap/ui/Device.js" />
         <raw-module name="sap/ui/thirdparty/baseuri.js" />
         <raw-module name="sap/ui/thirdparty/blanket.js" />
+        <raw-module name="sap/ui/thirdparty/bignumber.js" />
         <raw-module name="sap/ui/thirdparty/caja-html-sanitizer.js" />
         <raw-module name="sap/ui/thirdparty/crossroads.js" depends="sap/ui/thirdparty/signals.js" />
         <raw-module name="sap/ui/thirdparty/d3.js" />
@@ -130,6 +131,7 @@
         <exclude name="jquery-ui-position.js" />
         <exclude name="sap/ui/model/odata/datajs.js" />
         <!-- Third party libs which should NOT be part of the all-in-one file -->
+        <exclude name="sap/ui/thirdparty/bignumber.js" />
         <exclude name="sap/ui/thirdparty/blanket.js" />
         <!-- <exclude name="sap/ui/thirdparty/crossroads.js" /> -->
         <!-- <exclude name="sap/ui/thirdparty/caja-htmlsanitizer.js" /> -->
@@ -339,6 +341,9 @@
         </lib>
         <lib name="klayjs" displayName="KLayJS" homepage="https://github.com/OpenKieler/klayjs">
             <license url="https://github.com/OpenKieler/klayjs/blob/master/LICENSE" type="Eclipse Public License" file="../thirdparty/licenses/klayjs-ECLIPSE-LICENSE.txt" />
+        </lib>
+        <lib name="bignumber" displayName="bignumber.js" homepage="https://github.com/MikeMcl/bignumber.js">
+            <license url="https://github.com/MikeMcl/bignumber.js/blob/master/LICENCE" type="MIT License" file="../thirdparty/licenses/bignumber-MIT-LICENSE.txt" />
         </lib>
     </thirdparty>
 

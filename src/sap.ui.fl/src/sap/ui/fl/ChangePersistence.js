@@ -168,14 +168,19 @@ sap.ui.define([
 	ChangePersistence.prototype.getChangesForComponent = function(mPropertyBag) {
 		return Cache.getChangesFillingCache(this._oConnector, this._mComponent, mPropertyBag).then(function(oWrappedChangeFileContent) {
 			var oComponent = mPropertyBag && mPropertyBag.oComponent;
-
 			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
 				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
 			}
 
-			if (!oWrappedChangeFileContent.changes ||
-				((!oWrappedChangeFileContent.changes.changes || oWrappedChangeFileContent.changes.changes.length == 0) &&
-				(!oWrappedChangeFileContent.changes.variantSection || jQuery.isEmptyObject(oWrappedChangeFileContent.changes.variantSection)))) {
+			var bFlexChangesExist = oWrappedChangeFileContent.changes
+				&& Array.isArray(oWrappedChangeFileContent.changes.changes)
+				&& oWrappedChangeFileContent.changes.changes.length !== 0;
+
+			var bVariantChangesExist = oWrappedChangeFileContent.changes
+				&& oWrappedChangeFileContent.changes.variantSection
+				&& !jQuery.isEmptyObject(oWrappedChangeFileContent.changes.variantSection);
+
+			if (!bFlexChangesExist && !bVariantChangesExist) {
 				return [];
 			}
 
@@ -195,41 +200,35 @@ sap.ui.define([
 					}
 				}
 			}
-
-			if ( oWrappedChangeFileContent.changes.variantSection
-					&& Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0
-					&& Object.keys(this._oVariantController._getChangeFileContent()).length === 0 ) {
-				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
-			}
-
-			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants;
-			if (Object.keys(this._oVariantController._getChangeFileContent()).length > 0) {
-				var aVariantChanges = this._oVariantController.loadInitialChanges();
-				aChanges = bIncludeControlVariants ? aChanges : aChanges.concat(aVariantChanges);
-
-			}
-			if (bIncludeControlVariants && oWrappedChangeFileContent.changes.variantSection) {
-				aChanges = aChanges.concat(this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection));
-			}
+			var bIncludeControlVariants = mPropertyBag && mPropertyBag.includeCtrlVariants && bVariantChangesExist;
 
 			var sCurrentLayer = mPropertyBag && mPropertyBag.currentLayer;
 			if (sCurrentLayer) {
-				var aCurrentLayerChanges = [];
-				aChanges.forEach(function (oChange) {
-					if (oChange.layer === sCurrentLayer) {
-						aCurrentLayerChanges.push(oChange);
-					}
-				});
-				aChanges = aCurrentLayerChanges;
+				aChanges = aChanges.filter(this._filterChangeForCurrentLayer.bind(null, sCurrentLayer));
+				if (!bIncludeControlVariants && bVariantChangesExist) {
+					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, false, sCurrentLayer);
+				}
 			} else if (Utils.isLayerFilteringRequired() && !(mPropertyBag && mPropertyBag.ignoreMaxLayerParameter)) {
 				//If layer filtering required, excludes changes in higher layer than the max layer
-				var aFilteredChanges = [];
-				aChanges.forEach(function (oChange) {
-					if (!Utils.isOverMaxLayer(oChange.layer)) {
-						aFilteredChanges.push(oChange);
-					}
-				});
-				aChanges = aFilteredChanges;
+				aChanges = aChanges.filter(this._filterChangeForMaxLayer);
+				if (!bIncludeControlVariants && bVariantChangesExist) {
+					this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection, true);
+				}
+			}
+
+			if (bIncludeControlVariants) {
+				aChanges = aChanges.concat(this._getAllCtrlVariantChanges(oWrappedChangeFileContent.changes.variantSection));
+			}
+
+			if ( oWrappedChangeFileContent.changes.variantSection
+				&& Object.keys(oWrappedChangeFileContent.changes.variantSection).length !== 0
+				&& Object.keys(this._oVariantController._getChangeFileContent()).length === 0 ) {
+				this._oVariantController._setChangeFileContent(oWrappedChangeFileContent, oComponent);
+			}
+
+			if (Object.keys(this._oVariantController._getChangeFileContent()).length > 0) {
+				var aVariantChanges = this._oVariantController.loadInitialChanges();
+				aChanges = bIncludeControlVariants ? aChanges : aChanges.concat(aVariantChanges);
 			}
 
 			var bIncludeVariants = mPropertyBag && mPropertyBag.includeVariants;
@@ -253,38 +252,86 @@ sap.ui.define([
 		}
 	};
 
-	ChangePersistence.prototype._getAllCtrlVariantChanges = function(mVariantManagementReference) {
+	ChangePersistence.prototype._filterChangeForMaxLayer = function(oChangeContent) {
+		return !Utils.isOverMaxLayer(oChangeContent.layer);
+	};
+
+	ChangePersistence.prototype._filterChangeForCurrentLayer = function(sLayer, oChangeContent) {
+		return sLayer === oChangeContent.layer;
+	};
+
+	ChangePersistence.prototype._getAllCtrlVariantChanges = function(mVariantManagementReference, bFilterMaxLayer, sCurrentLayer) {
 		var aCtrlVariantChanges = [];
+
+		var fnFilterFunction = function () { return true; };
+		if (bFilterMaxLayer) {
+			// filter variants for max layer / current layer
+			fnFilterFunction = this._filterChangeForMaxLayer;
+		} else if (typeof sCurrentLayer === "string" && sCurrentLayer !== "") {
+			// filter variants for current layer
+			fnFilterFunction = this._filterChangeForCurrentLayer.bind(this, sCurrentLayer);
+		}
+
 		Object.keys(mVariantManagementReference).forEach(function(sVariantManagementReference) {
 			var oVariantManagementContent = mVariantManagementReference[sVariantManagementReference];
 
+			// Filter variants with filter function
+			oVariantManagementContent.variants = oVariantManagementContent.variants.filter(
+				function (oVariantContent) {
+					return !oVariantContent.content.layer || fnFilterFunction(oVariantContent.content); // Standard variant considered
+				}
+			);
+
 			oVariantManagementContent.variants.forEach( function(oVariant) {
-				if (Array.isArray(oVariant.variantChanges.setVisible) &&
-					oVariant.variantChanges.setVisible.length > 0) {
+
+				// Process setVisible changes first
+				if (Array.isArray(oVariant.variantChanges.setVisible)) {
+					oVariant.variantChanges.setVisible = oVariant.variantChanges.setVisible.filter(fnFilterFunction);
 					var oActiveChangeContent = oVariant.variantChanges.setVisible.slice(-1)[0];
-					if (!oActiveChangeContent.content.visible && oActiveChangeContent.content.createdByReset) {
+					if (
+						oActiveChangeContent
+						&& !oActiveChangeContent.content.visible
+						&& oActiveChangeContent.content.createdByReset
+					) {
 						return;
+					} else {
+						aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.variantChanges.setVisible);
 					}
 				}
 
-				//variant_change
-				Object.keys(oVariant.variantChanges).forEach(function(sVariantChange) {
-					aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.variantChanges[sVariantChange].slice(-1)[0]); /*last change*/
+				// variant_change
+				Object.keys(oVariant.variantChanges).forEach( function(sVariantChange) {
+					// setVisible already processed
+					if (sVariantChange !== "setVisible") {
+						oVariant.variantChanges[sVariantChange] = oVariant.variantChanges[sVariantChange].filter(fnFilterFunction);
+						aCtrlVariantChanges =
+							oVariant.variantChanges[sVariantChange].length > 0
+								? aCtrlVariantChanges.concat(oVariant.variantChanges[sVariantChange].slice(-1)[0]) /*last change*/
+								: aCtrlVariantChanges;
+					}
 				});
 
-				//control_change
-				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.controlChanges);
+				// ctrl_variant - don't copy standard variant
+				aCtrlVariantChanges =
+					(oVariant.content.fileName !== sVariantManagementReference)
+						? aCtrlVariantChanges.concat([oVariant.content])
+						: aCtrlVariantChanges;
 
-				//variant - don't copy standard variant
-				aCtrlVariantChanges = (oVariant.content.fileName !== sVariantManagementReference) ?
-											aCtrlVariantChanges.concat([oVariant.content]) :
-											aCtrlVariantChanges;
+				// control_change
+				oVariant.controlChanges = oVariant.controlChanges.filter(fnFilterFunction);
+				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariant.controlChanges);
 			});
 
 			//variant_management_change
 			Object.keys(oVariantManagementContent.variantManagementChanges).forEach(function(sVariantManagementChange) {
-				aCtrlVariantChanges = aCtrlVariantChanges.concat(oVariantManagementContent.variantManagementChanges[sVariantManagementChange].slice(-1)[0]); /*last change*/
+				oVariantManagementContent.variantManagementChanges[sVariantManagementChange] = oVariantManagementContent.variantManagementChanges[sVariantManagementChange].filter(fnFilterFunction);
+
+				aCtrlVariantChanges =
+					oVariantManagementContent.variantManagementChanges[sVariantManagementChange].length > 0
+						? aCtrlVariantChanges.concat(oVariantManagementContent.variantManagementChanges[sVariantManagementChange].slice(-1)[0]) /*last change*/
+						: aCtrlVariantChanges;
 			});
+
 		});
 		return aCtrlVariantChanges;
 	};

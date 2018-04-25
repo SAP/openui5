@@ -1018,59 +1018,6 @@ function(
 		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
 	});
 
-	QUnit.module("checkControlId and hasLocalIdSuffix", {
-		beforeEach: function () {
-			this.oComponent = new sap.ui.core.UIComponent();
-			this.oControlWithGeneratedId = new sap.m.Button();
-			this.oControlWithPrefix = new sap.m.Button(this.oComponent.createId("myButton"));
-			this.oControlWithoutPrefix = new sap.m.Button("myButtonWithoutAppPrefix");
-		},
-
-		afterEach: function () {
-			this.oComponent.destroy();
-			this.oControlWithGeneratedId.destroy();
-			this.oControlWithPrefix.destroy();
-			this.oControlWithoutPrefix.destroy();
-			sandbox.restore();
-		}
-	});
-
-	QUnit.test("checkControlId shall return false if the id was generated", function (assert) {
-		assert.equal(Utils.checkControlId(this.oControlWithGeneratedId, this.oComponent), false);
-	});
-
-	QUnit.test("checkControlId shall throw an error if the id was generated", function (assert) {
-		var spyLog = sandbox.spy(jQuery.sap.log, "warning");
-		Utils.checkControlId(this.oControlWithGeneratedId, this.oComponent);
-		assert.ok(spyLog.calledOnce);
-	});
-
-	QUnit.test("checkControlId does not throw an error if the id was generated but the logging was suppressed", function (assert) {
-		var spyLog = sandbox.spy(jQuery.sap.log, "warning");
-		Utils.checkControlId(this.oControlWithGeneratedId, this.oComponent, true);
-		assert.equal(spyLog.callCount, 0);
-	});
-
-	QUnit.test("checkControlId shall return true if control id was not generated", function (assert) {
-		assert.equal(Utils.checkControlId(this.oControlWithPrefix, this.oComponent), true);
-	});
-
-	QUnit.test("checkControlId shall return true if the id is a stable Id not containing the ComponentId", function (assert) {
-		assert.equal(Utils.checkControlId(this.oControlWithoutPrefix, this.oComponent), true);
-	});
-
-	QUnit.test("hasLocalIdSuffix can determine that a control has a local id", function(assert) {
-		assert.ok(Utils.hasLocalIdSuffix(this.oControlWithPrefix, this.oComponent));
-	});
-
-	QUnit.test("hasLocalIdSuffix can determine that a control has no local id", function(assert) {
-		assert.notOk(Utils.hasLocalIdSuffix(this.oControlWithoutPrefix, this.oComponent));
-	});
-
-	QUnit.test("hasLocalIdSuffix returns false if no app component can be found", function(assert) {
-		assert.notOk(Utils.hasLocalIdSuffix(this.oControlWithoutPrefix, this.oComponent));
-	});
-
 	QUnit.test("createNamespace returns correct namespace for changes of app descriptor", function(assert) {
 		var oPropertyBag = {
 			reference : "sap.account.appname.Component"

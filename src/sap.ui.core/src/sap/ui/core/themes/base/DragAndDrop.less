@@ -13,7 +13,7 @@
 	pointer-events: none;
 	z-index: 99;
 
-	&[data-drop-position=between] {
+	&[data-drop-position=Between] {
 		background: @sapUiDragAndDropActiveBorderColor;
 
 		&:before {
@@ -27,7 +27,7 @@
 			pointer-events: none;
 		}
 
-		&[data-drop-layout=vertical] {
+		&[data-drop-layout=Vertical] {
 			height: 0.125rem;
 
 			&:before {
@@ -39,7 +39,7 @@
 			}
 		}
 
-		&[data-drop-layout=horizontal] {
+		&[data-drop-layout=Horizontal] {
 			width: 0.125rem;
 
 			&:before {
@@ -52,7 +52,7 @@
 		}
 	}
 
-	&[data-drop-position=on] {
+	&[data-drop-position=On] {
 		background: @sapUiDragAndDropActiveBackground;
 		border: 0.125rem solid @sapUiDragAndDropActiveBorderColor;
 		box-sizing: border-box;

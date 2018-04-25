@@ -920,6 +920,120 @@
         "type": "FIX",
         "text": " sap.m.semantic.SelectConfiguration: Role overriding removed",
         "references": []
+      },
+      {
+        "id": "cc8ea90eab85220ed5e91937427d2686724f4f42",
+        "type": "FEATURE",
+        "text": " sap.m.DateTimePicker: minutesStep and secondsStep for the time sliders are now introduced",
+        "references": []
+      },
+      {
+        "id": "05539f1a46da549e4270fa29b56d2345a3afaead",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Copy appointments by dragging is now enabled",
+        "references": []
+      },
+      {
+        "id": "6c485f3bdcab487467812306845b859e9ca16a9e",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendar: Creating appointments with dragging is now possible",
+        "references": []
+      },
+      {
+        "id": "0ef58127db0cecc4bbea9376c190eb34707932a8",
+        "type": "FEATURE",
+        "text": " sap.m.Slider: ExternalTooltip aggregation introduced",
+        "references": []
+      },
+      {
+        "id": "dc78c3bcb29599ac79dbe6c5c36499c7afecb27e",
+        "type": "FEATURE",
+        "text": " sap.m.Table: enable sticky header toolbars",
+        "references": []
+      },
+      {
+        "id": "e59f6589465e49be77e82e0ea5445fc6bdfac939",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxTextField: Zooming out no longer cuts the border",
+        "references": []
+      },
+      {
+        "id": "4142af10a27139d26ef069ef932b3ef217196d39",
+        "type": "FIX",
+        "text": " sap.m.GroupHeaderListItem: count and title should not be separated",
+        "references": []
+      },
+      {
+        "id": "883cc4594f08d4587b4830f702a8e9ce7749c910",
+        "type": "FIX",
+        "text": " sap.m.IScale: documentation corrected",
+        "references": []
+      },
+      {
+        "id": "2f534c58c2c79623aae4ab41644321846d142e95",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: ObjectAttribute gets no longer truncated in active state",
+        "references": []
+      },
+      {
+        "id": "93a9ac5be10d82f131df81338a898ad67eaacc5e",
+        "type": "FIX",
+        "text": " sap.m.Panel: Tabindex is now added only in FF",
+        "references": []
+      },
+      {
+        "id": "1ff61e0cdbde2efc2f975121fb95fa6b0b18e819",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: wrap title of the row",
+        "references": []
+      },
+      {
+        "id": "3cdfae062a0638e53bd91a484c67b99c38473042",
+        "type": "FIX",
+        "text": " sap.m.Popover: Do not attach resize handler on destroyed popovers",
+        "references": []
+      },
+      {
+        "id": "ace222056fcf1f62a6db964f81f2b5dd2fe7d675",
+        "type": "FIX",
+        "text": " sap.m.Popover: popover position fixed",
+        "references": []
+      },
+      {
+        "id": "44de742991b8d39a853f075867e64dc0d5152ec7",
+        "type": "FIX",
+        "text": " sap.m.Rangeslider: Rendering without tooltips fixed",
+        "references": []
+      },
+      {
+        "id": "ca34e27deb4204018e3fe4e44a1f15447d648542",
+        "type": "FIX",
+        "text": " sap.m.RatingIndicator: Interaction area of star symbols enlarged",
+        "references": []
+      },
+      {
+        "id": "683326792b48215662e733727897e039b44df9d1",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: destroyItems destroys all internal buttons",
+        "references": []
+      },
+      {
+        "id": "c62aabc85f083ce146259a1a07063f4731eecd96",
+        "type": "FIX",
+        "text": " sap.m.Slider: Setting a value should not throw an error",
+        "references": []
+      },
+      {
+        "id": "4f2e16135db79c2692243376c06f321cc82df7f8",
+        "type": "FIX",
+        "text": " sap.m.Switch: Fixed focus outline",
+        "references": []
+      },
+      {
+        "id": "7b718912ebcc4bda060f4686039fdceb3f850df4",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: fixed width",
+        "references": []
       }
     ]
   }

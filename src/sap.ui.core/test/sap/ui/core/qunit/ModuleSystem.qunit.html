@@ -995,6 +995,33 @@
 		QUnit.test("toUrl", function(assert) {
 			var done = assert.async();
 
+			jQuery.sap.registerResourcePath("", "resources/");
+			
+			// toURL special cases
+			assert.throws(
+				function() {
+					sap.ui.require.toUrl('/sap/test');
+				}.bind(this),
+				Error("The provided argument '/sap/test' may not start with a slash"),
+				"absolute path is not supported"
+			);
+			assert.equal(sap.ui.require.toUrl('sap/test'), "resources/sap/test", "toUrl should support standard path");
+			assert.equal(sap.ui.require.toUrl('sap/test/'), "resources/sap/test/", "toUrl leaves trailing slash character intact");
+			assert.equal(sap.ui.require.toUrl('sap/test/.library'), "resources/sap/test/.library", "toUrl supports files which start with a dot character");
+			assert.equal(sap.ui.require.toUrl('sap/test/..library'), "resources/sap/test/..library", "toUrl supports files which start with two dot character");
+			assert.equal(sap.ui.require.toUrl('sap/test/./library'), "resources/sap/test/library", "toUrl supports paths which contain relative segments");
+			assert.equal(sap.ui.require.toUrl('sap/test/./library/'), "resources/sap/test/library/", "toUrl supports paths which contain relative segments and trailing slash character");
+			assert.equal(sap.ui.require.toUrl('sap/test/./.library'), "resources/sap/test/.library", "toUrl supports paths which contain relative segments and filename starting with dot character");
+			assert.equal(sap.ui.require.toUrl('sap/test/../.library'), "resources/sap/.library", "toUrl supports paths which contain relative segments with parent path and filename starting with dot character");
+			assert.equal(sap.ui.require.toUrl('sap/test/../library'), "resources/sap/library", "toUrl supports paths which contain relative segments with parent path");
+			assert.equal(sap.ui.require.toUrl('sap/test/.././test/./library'), "resources/sap/test/library", "toUrl supports paths which contain relative segments");
+			
+			/* relative names are not supported for the root
+			assert.equal(sap.ui.require.toUrl('/../.library'), "resources/sap/.library", "toUrl should leave trailing slash intact");
+			assert.equal(sap.ui.require.toUrl('../.library'), "resources/sap/.library", "toUrl should leave trailing slash intact");
+			assert.equal(sap.ui.require.toUrl('./.library'), "resources/sap/.library", "toUrl should leave trailing slash intact");
+			assert.equal(sap.ui.require.toUrl('/./.library'), "resources/sap/.library", "toUrl should leave trailing slash intact");
+			*/
 			assert.equal(sap.ui.require.toUrl('sap/test/manifest.json'), "resources/sap/test/manifest.json", "toUrl should resolve to the expected URL");
 			jQuery.sap.registerResourcePath("sap/test", "some/");
 			assert.equal(sap.ui.require.toUrl('sap/test/manifest.json'), "some/manifest.json", "toUrl should resolve to the expected URL");
@@ -1007,7 +1034,21 @@
 				assert.equal(module1.parent, './testdata/modules/manifest.json', "toUrl should resolve to the expected URL");
 				assert.equal(module1.grandparent, 'resources/manifest.json', "toUrl should resolve to the expected URL");
 				assert.equal(module1.strange, 'resources/other/manifest.json', "toUrl should resolve to the expected URL");
-				done();
+				sap.ui.define("gg/test",['require'], function(require) {
+					assert.throws(
+						function() {
+							require.toUrl('/library');
+						}.bind(this),
+						Error("The provided argument '/library' may not start with a slash"),
+						"toUrl absolute path"
+					);
+					assert.equal(require.toUrl('./.library/'), "resources/gg/.library/", "toUrl leaves trailing slash intact");
+					assert.equal(require.toUrl('./.library'), "resources/gg/.library", "toUrl with relative call same directory, file starting with dot character");
+					assert.equal(require.toUrl('./library'), "resources/gg/library", "toUrl with relative call same directory");
+					assert.equal(require.toUrl('../library'), "resources/library", "toUrl with relative call directory up");
+					assert.equal(require.toUrl('../.library'), "resources/.library", "toUrl with relative call directory up and same directory");
+					done();
+				});
 			});
 		});
 

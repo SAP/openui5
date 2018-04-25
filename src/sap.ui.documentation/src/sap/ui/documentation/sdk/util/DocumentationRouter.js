@@ -14,8 +14,28 @@ sap.ui.define([
 		constructor : function() {
 			Router.prototype.constructor.apply(this, arguments);
 
+			this.getRoute("entitySamplesLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
+			this.getRoute("entityAboutLegacyRoute").attachPatternMatched(this._onEntityOldRouteMatched, this);
+			this.getRoute("entityPropertiesLegacyRoute").attachPatternMatched({entityType: "controlProperties"}, this._forwardToAPIRef, this);
+			this.getRoute("entityAggregationsLegacyRoute").attachPatternMatched({entityType: "aggregations"}, this._forwardToAPIRef, this);
+			this.getRoute("entityAssociationsLegacyRoute").attachPatternMatched({entityType: "associations"}, this._forwardToAPIRef, this);
+			this.getRoute("entityEventsLegacyRoute").attachPatternMatched({entityType: "events"}, this._forwardToAPIRef, this);
+			this.getRoute("entityMethodsLegacyRoute").attachPatternMatched({entityType: "methods"}, this._forwardToAPIRef, this);
+
 			this.getRoute("topicIdLegacyRoute").attachPatternMatched(this._onTopicOldRouteMatched, this);
 			this.getRoute("apiIdLegacyRoute").attachPatternMatched(this._onApiOldRouteMatched, this);
+		},
+
+		_onEntityOldRouteMatched: function(oEvent) {
+			this.navTo("entity", {
+				id: oEvent.getParameter("arguments").id
+			});
+		},
+
+		_forwardToAPIRef: function(oEvent, oData) {
+			oData || (oData = {});
+			oData['id'] = oEvent.getParameter("arguments").id;
+			this.navTo("apiId", oData);
 		},
 
 		_onTopicOldRouteMatched: function(oEvent) {

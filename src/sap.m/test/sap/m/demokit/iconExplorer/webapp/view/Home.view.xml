@@ -115,6 +115,7 @@
 				<l:BlockLayoutCell
 					backgroundColorSet="ColorSet6"
 					backgroundColorShade="ShadeA"
+					visible="{= ${/AllFontsLoaded/SAP-icons}}"
 					class="BlockLayoutCellHeight">
 					<l:VerticalLayout>
 						<core:Icon
@@ -145,6 +146,7 @@
 				<l:BlockLayoutCell
 					backgroundColorSet="ColorSet6"
 					backgroundColorShade="ShadeB"
+					visible="{= ${/AllFontsLoaded/SAP-icons-TNT}}"
 					class="BlockLayoutCellHeight">
 					<l:VerticalLayout>
 						<core:Icon
@@ -173,7 +175,7 @@
 					</l:VerticalLayout>
 				</l:BlockLayoutCell>
 				<l:BlockLayoutCell
-					visible="{= !${version>/isOpenUI5} }"
+					visible="{= ${/AllFontsLoaded/BusinessSuiteInAppSymbols} &amp;&amp; !${version>/isOpenUI5}}"
 					backgroundColorSet="ColorSet6"
 					backgroundColorShade="ShadeC">
 					<l:VerticalLayout>

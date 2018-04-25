@@ -39,7 +39,6 @@
 		"test/mockServer.html",
 		"test/testsuite.qunit.html",
 		"test/unit/allTests.js",
-		"test/unit/controller/App.controller.js",
 		"test/unit/controller/ListSelector.js",
 		"test/unit/model/formatter.js",
 		"test/unit/model/grouper.js",

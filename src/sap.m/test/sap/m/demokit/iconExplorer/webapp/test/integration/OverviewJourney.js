@@ -1,7 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Overview"
 ], function (opaTest) {
 	"use strict";
 
@@ -10,9 +11,6 @@ sap.ui.define([
 	opaTest("Should see the results table with all entries", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyAppOnTheDetailsTab();
-
-		//Actions
-		When.onTheOverviewPage.iLookAtTheScreen();
 
 		// Assertions
 		Then.onTheOverviewPage.theTableShouldHaveAllEntries().
@@ -63,8 +61,10 @@ sap.ui.define([
 			and.iSelectTheCategoryWithName("Objects");
 
 		// Assertions
-		Then.onTheOverviewPage.theTableShouldShowTheCategory("Objects").
-			and.iTeardownMyApp();
+		Then.onTheOverviewPage.theTableShouldShowTheCategory("Objects");
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 });

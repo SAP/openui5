@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifier"],
+sap.ui.define(["jquery.sap.global", "sap/ui/core/util/reflection/JsControlTreeModifier"],
 		function(jQuery, JsControlTreeModifier) {
 			"use strict";
 
@@ -209,8 +209,8 @@ sap.ui.define(["jquery.sap.global", "sap/ui/fl/changeHandler/JsControlTreeModifi
 			 *          oSourceParent control that matches the change selector for applying the change, which is the source of
 			 *          the move
 			 * @param {object} mPropertyBag
-			 *          map containing the control modifier object (either sap.ui.fl.changeHandler.JsControlTreeModifier or
-			 *          sap.ui.fl.changeHandler.XmlTreeModifier), the view object where the controls are embedded and the application component
+			 *          map containing the control modifier object (either sap.ui.core.util.reflection.JsControlTreeModifier or
+			 *          sap.ui.core.util.reflection.XmlTreeModifier), the view object where the controls are embedded and the application component
 			 * @returns {boolean} true - if change could be applied
 			 * @public
 			 */

@@ -1,7 +1,8 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/Overview"
 ], function (opaTest) {
 	"use strict";
 
@@ -50,7 +51,9 @@ sap.ui.define([
 		When.onTheOverviewPage.iClearTheSearch();
 
 		// Assertions
-		Then.onTheOverviewPage.theTableShouldHaveAllEntries().
-			and.iTeardownMyApp();
+		Then.onTheOverviewPage.theTableShouldHaveAllEntries();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 });

@@ -29,7 +29,7 @@
 				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
 		<MessageStrip
 				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
-				text="The second child will be always 6 columns wide, regardless of the screen size."
+				text="The second child will always be 6 columns wide, regardless of the screen size."
 				type="Information"
 				showIcon="true">
 		</MessageStrip>
@@ -65,7 +65,7 @@
 				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
 		<MessageStrip
 				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
-				text="Set both children to be always 6 columns wide and then reset the second one."
+				text="Set both children to always be 6 columns wide and then reset the second one."
 				type="Information"
 				showIcon="true">
 		</MessageStrip>
@@ -118,7 +118,7 @@
 				class="sapUiLargeMarginTop sapUiMediumMarginBottom sapUiSmallMarginBegin"/>
 		<MessageStrip
 				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
-				text="The second child will be indented by 2 columns on XL screens and by 6 on L screens."
+				text="The second child will be indented by 2 columns on XL screens and by 6 columns on L screens."
 				type="Information"
 				showIcon="true">
 		</MessageStrip>

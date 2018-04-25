@@ -109,6 +109,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 			 *
 			 * We recommend using the <code>ResponsiveGridLayout</code> for rendering a <code>SimpleForm</code>,
 			 * as its responsiveness uses the space available in the best way possible.
+			 *
+			 * <b>Note</b> If possible, set the <code>layout</code> before adding content to prevent calculations for the default layout.
 			 */
 			layout : {type : "sap.ui.layout.form.SimpleFormLayout", group : "Misc", defaultValue : SimpleFormLayout.ResponsiveLayout},
 
@@ -1208,7 +1210,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		ResponsiveFlowLayoutData = fnResponsiveFlowLayoutData;
 		this._bResponsiveLayoutRequested = false;
 
-		_updateLayoutAfterLoaded.call(this);
+		if (this.getLayout() == SimpleFormLayout.ResponsiveLayout) { // as layout might changed
+			_updateLayoutAfterLoaded.call(this);
+		}
 
 	}
 
@@ -1219,7 +1223,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		GridElementData = fnGridElementData;
 		this._bGridLayoutRequested = false;
 
-		_updateLayoutAfterLoaded.call(this);
+		if (this.getLayout() == SimpleFormLayout.GridLayout) { // as layout might changed
+			_updateLayoutAfterLoaded.call(this);
+		}
 
 	}
 
@@ -1228,7 +1234,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		ResponsiveGridLayout = fnResponsiveGridLayout;
 		this._bResponsiveGridLayoutRequested = false;
 
-		_updateLayoutAfterLoaded.call(this);
+		if (this.getLayout() == SimpleFormLayout.ResponsiveGridLayout) { // as layout might changed
+			_updateLayoutAfterLoaded.call(this);
+		}
 
 	}
 
@@ -1237,7 +1245,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control',
 		ColumnLayout = fnColumnLayout;
 		this._bColumnLayoutRequested = false;
 
-		_updateLayoutAfterLoaded.call(this);
+		if (this.getLayout() == SimpleFormLayout.ColumnLayout) { // as layout might changed
+			_updateLayoutAfterLoaded.call(this);
+		}
 
 	}
 

@@ -7,6 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	var oController;
+	var thisContext;
 	var oDummySource;
 
 	var DummyControl = Control.extend("test.DummyControl", {
@@ -28,16 +29,27 @@ sap.ui.define([
 
 
 
+
 	QUnit.module("sap.ui.core.mvc.EventHandlerResolver - handler function", {
 		beforeEach: function() {
+			thisContext = null;
+
 			oController = {
-				fnControllerMethod: function(){}
+				fnControllerMethod: function(){
+					thisContext = this;
+				}
 			};
 
 			window.testEventHandlerResolver = {
 				subobject: {
-					someGlobalMethod: function(){}
+					someGlobalMethod: function(){
+						thisContext = this;
+					}
 				}
+			};
+
+			window.someGlobalMethodOnWindow = function(){
+				thisContext = this;
 			};
 
 			oDummySource = new DummyControl();
@@ -65,11 +77,56 @@ sap.ui.define([
 		fnFromController(oDummyEvent);
 		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method should be called");
 
+		oController.fnControllerMethod.reset();
+		var fnFromController = EventHandlerResolver.resolveEventHandler("fnControllerMethod()", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.equal(oController.fnControllerMethod.callCount, 1, "Controller method without dot should be called");
+
 		sinon.spy(testEventHandlerResolver.subobject, "someGlobalMethod");
 		var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
 		fnFromGlobal(oDummyEvent);
 		assert.equal(testEventHandlerResolver.subobject.someGlobalMethod.callCount, 1, "Global method should be called once");
+
+		sinon.spy(window, "someGlobalMethodOnWindow");
+		fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
+		fnFromGlobal(oDummyEvent);
+		assert.equal(someGlobalMethodOnWindow.callCount, 1, "Global method without dot should be called once");
 	});
+
+	QUnit.test("'this' context when parentheses are present", function(assert) {
+		// controller functions
+		var fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod()", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.equal(thisContext, oController, "Controller method should be called with controller as 'this' context");
+		thisContext = "wrong"; // to make sure non-calls don't accidentally get the correct value
+
+		// controller functions without dot
+		fnFromController = EventHandlerResolver.resolveEventHandler("fnControllerMethod()", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.equal(thisContext, oController, "Controller method without dot should be called with controller as 'this' context");
+		thisContext = "wrong";
+
+		// global functions
+		var fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod()", oController)[0];
+		fnFromGlobal(oDummyEvent);
+		assert.equal(thisContext, testEventHandlerResolver.subobject, "Global method should be called with testEventHandlerResolver.subobject as 'this' context");
+		thisContext = "wrong";
+
+		// global functions without dot
+		fnFromGlobal = EventHandlerResolver.resolveEventHandler("someGlobalMethodOnWindow()", oController)[0];
+		fnFromGlobal(oDummyEvent);
+		assert.equal(thisContext, undefined, "Global method without dot should be called with undefined as 'this' context");
+		thisContext = "wrong";
+
+		// global functions with .call()
+		/* bug in expression parser, already being fixed in v4 branch   TODO
+		fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod.call($controller)", oController)[0];
+		fnFromGlobal(oDummyEvent);
+		assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when set using .call($controller)");
+		thisContext = "wrong";
+		*/
+	});
+
 
 
 
@@ -123,7 +180,7 @@ sap.ui.define([
 			{src: ".fnControllerMethod('test')", expected: "test", message: "Static value with single quotes within double quotes should be correctly given"},
 			{src: '.fnControllerMethod("test")', expected: "test", message: "Static value with double quotes within single quotes should be correctly given"},
 			{src: '.fnControllerMethod(\'test\')', expected: "test", message: "Static value with single quotes within single quotes should be correctly given"},
-	/*		{src: ".fnControllerMethod(true)", expected: true, message: "Boolean static value 'true' should be correctly given"},
+			{src: ".fnControllerMethod(true)", expected: true, message: "Boolean static value 'true' should be correctly given"},
 			{src: ".fnControllerMethod(false)", expected: false, message: "Boolean static value 'false' should be correctly given"},
 			{src: ".fnControllerMethod(49)", expected: 49, message: "Static number value should be correctly given"},
 			{src: ".fnControllerMethod(49.95)", expected: 49.95, message: "Static float value should be correctly given"},
@@ -131,7 +188,7 @@ sap.ui.define([
 			{src: ".fnControllerMethod({x: 'y'})", expected: {'x': 'y'}, message: "Static object value should be correctly given"},
 			{src: ".fnControllerMethod({x: 'y', z: {a: 1}})", expected: {'x': 'y', z: {a: 1}}, message: "Static object value should be correctly given"},
 			{src: ".fnControllerMethod(null)", expected: null, message: "Static null value should be correctly given"},
-	*/	];
+		];
 
 		var fnFromController;
 		for (var i = 0; i < aTests.length; i++) {
@@ -139,6 +196,22 @@ sap.ui.define([
 			fnFromController(oDummyEvent);
 			assert.deepEqual(spy.args[i], [aTests[i].expected], aTests[i].message);
 		}
+	});
+
+
+	QUnit.test("Special value: $controller", function(assert) {
+		var spy = sinon.spy(oController, "fnControllerMethod");
+		var fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod($controller)", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.deepEqual(spy.args[0], [oController], "Parameter $controller should be given as the controller instance");
+	});
+
+
+	QUnit.test("Special value: $event", function(assert) {
+		var spy = sinon.spy(oController, "fnControllerMethod");
+		var fnFromController = EventHandlerResolver.resolveEventHandler(".fnControllerMethod($event)", oController)[0];
+		fnFromController(oDummyEvent);
+		assert.deepEqual(spy.args[0], [oDummyEvent], "Parameter $event should be given as the event object");
 	});
 
 
@@ -152,13 +225,15 @@ sap.ui.define([
 			".fnControllerMethod(${path:'/someModelProperty'})": "someModelValue",  // complex syntax, entry-level
 			".fnControllerMethod(${path:'/someModelProperty', formatter: '.myFormatter'})": "#someModelValue#",   // complex syntax with formatter
 			".fnControllerMethod(${path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'})": "#someModelValue#",   // complex syntax with type
-// does not work, due to expression parser bug, see 1880187556   	".fnControllerMethod(${parts: ['/someModelProperty', {path: '/someModelProperty'}], formatter: '.myFormatter'})": "#someModelValue,someModelValue#",   // complex syntax with mixed parts
+			// does not work, deep nesting of parts is not supported in EventHandlerResolver:
+			//".fnControllerMethod(${parts: ['/someModelProperty'], formatter: '.myFormatter'})": "#someModelValue,someModelValue#",   // complex syntax with mixed parts
 			".fnControllerMethod(${$parameters>/someEventParameter})": "someEventParameterValue",  // another model (event parameters)
 			".fnControllerMethod(${$source>/someControlProperty})": "someControlPropertyValue",   // the event source model
 			".fnControllerMethod('Value is: ' + ${/someModelProperty})": "Value is: someModelValue",   // “calculated fields” (template string)
 			".fnControllerMethod(${/someModelProperty} + ',' + ${/someModelProperty})": "someModelValue,someModelValue",   // attention, also a calculated field!
 			".fnControllerMethod(\"Value is: \" + ${path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'})": "Value is: #someModelValue#",   // calculated field with complex binding syntax
-// disallow?			".fnControllerMethod({= ${/someModelProperty} + ${/someModelProperty}})": "someModelValuesomeModelValue",   // expression binding
+			// not allowed to use binding expressions inside because the entire string is a binding expression:
+			//".fnControllerMethod({= ${/someModelProperty} + ${/someModelProperty}})": "someModelValuesomeModelValue",   // expression binding
 			".fnControllerMethod({x: 'y', z: {a: ${/someModelProperty}}})": {x: 'y', z: {a: "someModelValue"}},   // binding in object
 			'.fnControllerMethod(${path:\'/someModelProperty\',formatter: \'.myFormatter\'})': "#someModelValue#",   // quotes escaped
 			".fnControllerMethod(${formatter: \".myFormatter\",path:\"/someModelProperty\"})": "#someModelValue#"   // quotes escaped, inverted (swap of arguments needed for test to pass in IE because map may not have duplicate keys!)

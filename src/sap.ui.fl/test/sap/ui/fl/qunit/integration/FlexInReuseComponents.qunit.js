@@ -11,8 +11,8 @@ sap.ui.require([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/changeHandler/HideControl",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager",
 	"sap/ui/core/Component"
 ],

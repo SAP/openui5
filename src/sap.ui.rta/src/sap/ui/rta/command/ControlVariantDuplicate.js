@@ -51,7 +51,7 @@ sap.ui.define([
 
 	ControlVariantDuplicate.prototype.getPreparedChange = function() {
 		if (!this._aPreparedChanges) {
-			jQuery.sap.log.error("No prepared change available for ControlVariantDuplicate");
+			return undefined;
 		}
 		return this._aPreparedChanges;
 	};

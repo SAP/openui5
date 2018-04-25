@@ -72,6 +72,9 @@
 	/* use px instead of rem, borders sized in "rem" disappear when the page is zoomed out in Chrome. */
 	border: 1px solid;
 
+	/* 1px margin from left and right, so the outline doesn't get cropped when focuses */
+	margin: 0 1px;
+
 	/* note: some browsers like Samsung Galaxy S4 with Android 4.2 does not support the "border-radius" shorthand property
 	but does support the long-hand properties for each corner like "border-top-left-radius" */
 	border-top-left-radius: 1rem;

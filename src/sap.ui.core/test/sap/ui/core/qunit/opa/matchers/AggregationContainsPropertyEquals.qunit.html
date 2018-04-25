@@ -25,9 +25,12 @@
 			sap.ui.require([
 				"sap/ui/test/matchers/AggregationContainsPropertyEqual",
 				"sap/m/ComboBox",
-				"sap/ui/core/ListItem"
-			], function (AggregationContainsPropertyEqual, ComboBox, ListItem) {
+				"sap/ui/core/ListItem",
+				"sap/m/ObjectHeader",
+				"sap/m/Column"
+			], function (AggregationContainsPropertyEqual, ComboBox, ListItem, ObjectHeader, Column) {
 				function beforeEach () {
+					this.oColumn = new Column({header: new ObjectHeader({title: "foo"})});
 					this.oComboBox = new ComboBox("myCB", {
 						items : [
 							new ListItem(),
@@ -39,6 +42,7 @@
 				}
 
 				function afterEach () {
+					this.oColumn.destroy();
 					this.oComboBox.destroy();
 				}
 
@@ -75,6 +79,18 @@
 
 					// Assert
 					assert.ok(bResult, "Did match because there were two matching items");
+				});
+
+				QUnit.test("Should match aggregation with cardinality 0..1", function (assert) {
+					var oMatcher = new AggregationContainsPropertyEqual({
+						aggregationName: "header",
+						propertyName: "title",
+						propertyValue: "foo"
+					});
+
+					var bResult = oMatcher.isMatching(this.oColumn);
+
+					assert.ok(bResult, "Matched one control");
 				});
 
 				QUnit.module("negative tests", {

@@ -176,6 +176,23 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			this._closeCalendarPicker(true);
 		};
 
+		/**
+		 * Calculates the startDate of the interval, corrected to the minDate and maxDate
+		 *
+		 * @param {sap.ui.unified.calendar.CalendarDate} oMaxDate maxDate of the Interval
+		 * @param {sap.ui.unified.calendar.CalendarDate} oMinDate minDate of the Interval
+		 * @param {sap.ui.unified.calendar.CalendarDate} oStartDate initial startDate
+		 * @private
+		 */
+		CalendarWeekInterval.prototype._calculateStartDate = function (oMaxDate, oMinDate, oStartDate) {
+			var oMaxDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
+
+			oMaxDate = this._getMaxDateAlignedToMinDate(oMaxDate, this._oMinDate);
+			oStartDate = this._getStartDateAlignedToMinAndMaxDate(oMaxDate, this._oMinDate, oStartDate);
+
+			return oStartDate;
+		};
+
 		return CalendarWeekInterval;
 
 	});

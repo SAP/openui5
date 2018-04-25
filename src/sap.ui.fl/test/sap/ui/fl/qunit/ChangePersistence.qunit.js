@@ -1,4 +1,6 @@
 /*global sinon, QUnit*/
+QUnit.dump.maxDepth = 10;
+
 sap.ui.require([
 	"sap/ui/fl/ChangePersistence",
 	"sap/ui/fl/FlexControllerFactory",
@@ -210,15 +212,337 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
+	QUnit.test("when _getAllCtrlVariantChanges is called with max layer parameter, standard variant, variant (layer above) with no setVisible, variant (max layer) with setVisible on the layer above, variant (max layer) with setVisible on max layer", function(assert) {
+		var mVariantSection = {
+			"variantManagementId": {
+				"variants": [
+					{
+						"content": {
+							"fileName": "variantManagementId",
+							"content": {
+								"title": "variant 0"
+							},
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [],
+						"variantChanges": []
+					},
+					{
+						"content": {
+							"fileName": "variant0",
+							"content": {
+								"title": "variant 0"
+							},
+							"layer": "CUSTOMER_BASE",
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [{
+							"variantReference": "variant0",
+							"fileName": "controlChange0",
+							"fileType": "change",
+							"layer": "CUSTOMER_BASE"
+						}],
+						"variantChanges": {
+							"setTitle": [{
+								"fileName": "variantChange0",
+								"fileType": "ctrl_variant_change",
+								"layer": "CUSTOMER_BASE",
+								"selector": {
+									"id": "variant0"
+								}
+							}]
+						}
+					}, {
+						"content": {
+							"content": {
+								"title": "variant 1"
+							},
+							"fileName": "variant1",
+							"fileType": "ctrl_variant",
+							"layer": "VENDOR",
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [
+							{
+								"variantReference": "variant1",
+								"fileName": "controlChange2",
+								"fileType": "change",
+								"layer": "CUSTOMER"
+							},
+							{
+								"variantReference": "variant1",
+								"fileName": "controlChange3",
+								"fileType": "change",
+								"layer": "VENDOR"
+							}
+						],
+						"variantChanges": {
+							"setTitle": [
+								{
+									"fileName": "variantChange1",
+									"fileType": "ctrl_variant_change",
+									"selector": {
+										"id": "variant1"
+									},
+									"layer": "VENDOR"
+								}
+							],
+							"setVisible": [
+								{
+									"fileName": "variantChange2",
+									"fileType": "ctrl_variant_change",
+									"selector": {
+										"id": "variant1"
+									},
+									"content": {
+										"visible": false,
+										"createdByReset": true
+									},
+									"layer": "CUSTOMER"
+								}
+							]
+						}
+					},
+					{
+						"content": {
+							"content": {
+								"title": "variant 2"
+							},
+							"fileName": "variant2",
+							"fileType": "ctrl_variant",
+							"layer": "VENDOR",
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [ ],
+						"variantChanges": {
+							"setVisible": [
+								{
+									"fileName": "variantChange3",
+									"fileType": "ctrl_variant_change",
+									"selector": {
+										"id": "variant2"
+									},
+								"content": {
+									"visible": false,
+									"createdByReset": true
+								},
+									"layer": "VENDOR"
+								}
+							]
+						}
+					}
+				],
+				"variantManagementChanges": {
+					"setDefault" : [
+						{
+							"fileName": "setDefault",
+							"fileType": "ctrl_variant_management_change",
+							"layer": "VENDOR",
+							"content": {
+								"defaultVariant":"variant0"
+							},
+							"selector": {
+								"id": "variantManagementId"
+							}
+						}
+					]
+				}
+			}
+		};
+		Utils.setMaxLayerParameter("VENDOR");
+		var mExpectedParameter = jQuery.extend(true, {}, mVariantSection);
+
+		//Deleting all changes below VENDOR layer
+		mExpectedParameter["variantManagementId"].variants[2].controlChanges.splice(0, 1);
+		mExpectedParameter["variantManagementId"].variants[2].variantChanges.setVisible.splice(0, 1);
+		mExpectedParameter["variantManagementId"].variants.splice(1, 1);
+
+		//File names considering setVisible and max-layer both
+		var aExpectedChangesFileNames = ["variantChange1", "variant1", "controlChange3", "setDefault"];
+
+		assert.equal(mVariantSection["variantManagementId"].variants.length, 4, "then initially 4 variants exist in the passed parameter");
+
+		var aChanges = this.oChangePersistence._getAllCtrlVariantChanges(mVariantSection, true);
+
+		assert.equal(aChanges.length, 4, "then 4 changes are received which comply to max layer parameter, setVisible not considered");
+		assert.deepEqual(
+			aChanges.map(function(oChange) {
+				return oChange.fileName;
+			}),
+			aExpectedChangesFileNames
+		);
+		assert.equal(mVariantSection["variantManagementId"].variants.length, 3, "then the original parameter object has 3 variants left");
+		assert.deepEqual(mVariantSection, mExpectedParameter, "then the original parameter object filtered out all changes from layer(s) above");
+	});
+
+	QUnit.test("when _getAllCtrlVariantChanges is called with current layer (CUSTOMER) parameter, standard variant, VENDOR variant, CUSTOMER variant, CUSTOMER variant with setVisible on CUSTOMER layer", function(assert) {
+		var mVariantSection = {
+			"variantManagementId": {
+				"variants": [
+					{
+						"content": {
+							"fileName": "variantManagementId",
+							"content": {
+								"title": "variant 0"
+							},
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [],
+						"variantChanges": []
+					},
+					{
+						"content": {
+							"fileName": "variant0",
+							"content": {
+								"title": "variant 0"
+							},
+							"layer": "VENDOR",
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [{
+							"variantReference": "variant0",
+							"fileName": "controlChange0",
+							"fileType": "change",
+							"layer": "VENDOR"
+						}],
+						"variantChanges": {
+							"setTitle": [{
+								"fileName": "variantChange0",
+								"fileType": "ctrl_variant_change",
+								"layer": "CUSTOMER",
+								"selector": {
+									"id": "variant0"
+								}
+							}]
+						}
+					}, {
+						"content": {
+							"content": {
+								"title": "variant 1"
+							},
+							"fileName": "variant1",
+							"fileType": "ctrl_variant",
+							"layer": "CUSTOMER",
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [
+							{
+								"variantReference": "variant1",
+								"fileName": "controlChange2",
+								"fileType": "change",
+								"layer": "CUSTOMER"
+							},
+							{
+								"variantReference": "variant1",
+								"fileName": "controlChange3",
+								"fileType": "change",
+								"layer": "USER"
+							}
+						],
+						"variantChanges": {
+							"setTitle": [
+								{
+									"fileName": "variantChange1",
+									"fileType": "ctrl_variant_change",
+									"selector": {
+										"id": "variant1"
+									},
+									"layer": "CUSTOMER"
+								}
+							],
+							"setFavorite": [
+								{
+									"fileName": "variantChange2",
+									"fileType": "ctrl_variant_change",
+									"selector": {
+										"id": "variant1"
+									},
+									"layer": "USER"
+								}
+							]
+						}
+					},
+					{
+						"content": {
+							"content": {
+								"title": "variant 2"
+							},
+							"fileName": "variant2",
+							"fileType": "ctrl_variant",
+							"layer": "CUSTOMER",
+							"variantManagementReference": "variantManagementId"
+						},
+						"controlChanges": [ ],
+						"variantChanges": {
+							"setVisible": [
+								{
+									"fileName": "variantChange3",
+									"fileType": "ctrl_variant_change",
+									"selector": {
+										"id": "variant2"
+									},
+									"content": {
+										"visible": false,
+										"createdByReset": false
+									},
+									"layer": "CUSTOMER"
+								}
+							]
+						}
+					}
+				],
+				"variantManagementChanges": {
+					"setDefault" : [
+						{
+							"fileName": "setDefault",
+							"fileType": "ctrl_variant_management_change",
+							"layer": "CUSTOMER",
+							"content": {
+								"defaultVariant":"variant0"
+							},
+							"selector": {
+								"id": "variantManagementId"
+							}
+						}
+					]
+				}
+			}
+		};
+
+		var mExpectedParameter = jQuery.extend(true, {}, mVariantSection);
+
+		//Deleting all changes not on CUSTOMER layer
+		mExpectedParameter["variantManagementId"].variants[2].controlChanges.splice(1, 1);
+		mExpectedParameter["variantManagementId"].variants[2].variantChanges.setFavorite.splice(0, 1);
+		mExpectedParameter["variantManagementId"].variants.splice(1, 1);
+
+		//File names considering setVisible and current layer both
+		var aExpectedChangesFileNames = ["variantChange1", "variant1", "controlChange2", "variantChange3", "variant2", "setDefault"];
+
+		assert.equal(mVariantSection["variantManagementId"].variants.length, 4, "then initially 4 variants exist in the passed parameter");
+
+		var aChanges = this.oChangePersistence._getAllCtrlVariantChanges(mVariantSection, false, "CUSTOMER");
+
+		assert.equal(aChanges.length, 6, "then 6 changes are received which comply to current layer parameter, only setVisible on same layer considered");
+		assert.deepEqual(
+			aChanges.map(function(oChange) {
+				return oChange.fileName;
+			}),
+			aExpectedChangesFileNames
+		);
+		assert.equal(mVariantSection["variantManagementId"].variants.length, 3, "then the original parameter object has 3 variants left");
+		assert.deepEqual(mVariantSection, mExpectedParameter, "then the original parameter object filtered out all changes not from the current layer");
+	});
+
 	QUnit.test("when getChangesForComponent is called with includeCtrlVariants and includeVariants set to true", function(assert) {
 		var oMockedWrappedContent = {
 			"changes" : {
 				"changes": [
 					{
-						fileName: "change0",
-						fileType: "change",
-						selector: {
-							id: "controlId"
+						"fileName": "change0",
+						"fileType": "change",
+						"selector": {
+							"id": "controlId"
 						}
 					}
 				],
@@ -292,8 +616,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 											}
 										}
 									]
-								},
-								"changes" : []
+								}
 							},
 							{
 								"content" : {
@@ -329,8 +652,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 											}
 										}
 									]
-								},
-								"changes" : []
+								}
 							}
 						],
 						"variantManagementChanges": {
@@ -349,7 +671,8 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				}
 			}
 		};
-
+		var fnGetCtrlVariantChangesSpy = sandbox.spy(this.oChangePersistence, "_getAllCtrlVariantChanges");
+		var fnSetChangeFileContentSpy = sandbox.spy(this.oChangePersistence._oVariantController, "_setChangeFileContent");
 		var oInvisibleVariant = oMockedWrappedContent.changes.variantSection.variantManagementId.variants[2];
 		var aInvisibleChangFileNames = [
 			oInvisibleVariant.content.fileName,
@@ -364,6 +687,31 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			});
 			assert.ok(aFilteredChanges.length === 0, "then no changes belonging to invisible variant returned");
 			assert.equal(aChanges.length, 8, "then all the visible variant related changes are part of the response");
+			assert.ok(fnSetChangeFileContentSpy.calledAfter(fnGetCtrlVariantChangesSpy), "then VariantController.setChangeFileContent called after _getAllCtrlVariantChanges is called (for max-layer/current filtering)");
+		});
+	});
+
+	QUnit.test("when getChangesForComponent is called without includeCtrlVariants, max layer and current layer parameters", function(assert) {
+
+		var fnGetCtrlVariantChangesSpy = sandbox.spy(this.oChangePersistence, "_getAllCtrlVariantChanges");
+
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(
+			{
+				changes: {
+					changes : [
+						{
+							"fileName": "change0",
+							"fileType": "change",
+							"selector": {
+								"id": "controlId"
+							}
+						}
+					]
+				}
+			}
+		));
+		return this.oChangePersistence.getChangesForComponent().then(function(aChanges) {
+			assert.equal(fnGetCtrlVariantChangesSpy.callCount, 0, "then VariantController.setChangeFileContent called after _getAllCtrlVariantChanges is called (for max-layer/current layer filtering)");
 		});
 	});
 
@@ -637,53 +985,64 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
-	QUnit.test("getChangesForComponent shall only return changes in the max layer or below", function(assert) {
+	QUnit.test("getChangesForComponent shall only return flex changes in the max layer or below", function(assert) {
 
-		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({changes: {changes: [
-			{
-				fileName:"change1",
-				fileType: "change",
-				layer: "USER",
-				selector: { id: "controlId" },
-				dependentSelector: []
-			},
-			{
-				fileName:"change2",
-				fileType: "change",
-				layer: "VENDOR",
-				selector: { id: "controlId" },
-				dependentSelector: []
-			},
-			{
-				fileName:"change3",
-				fileType: "change",
-				layer: "USER",
-				selector: { id: "anotherControlId" },
-				dependentSelector: []
-			},
-			{
-				fileName:"change4",
-				fileType: "change",
-				layer: "CUSTOMER",
-				selector: { id: "controlId" },
-				dependentSelector: []
-			},
-			{
-				fileName:"change5",
-				fileType: "change",
-				layer: "PARTNER",
-				selector: { id: "controlId" },
-				dependentSelector: []
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve({
+			changes: {
+				changes: [
+					{
+						fileName:"change1",
+						fileType: "change",
+						layer: "USER",
+						selector: { id: "controlId" },
+						dependentSelector: []
+					},
+					{
+						fileName:"change2",
+						fileType: "change",
+						layer: "VENDOR",
+						selector: { id: "controlId" },
+						dependentSelector: []
+					},
+					{
+						fileName:"change3",
+						fileType: "change",
+						layer: "USER",
+						selector: { id: "anotherControlId" },
+						dependentSelector: []
+					},
+					{
+						fileName:"change4",
+						fileType: "change",
+						layer: "CUSTOMER",
+						selector: { id: "controlId" },
+						dependentSelector: []
+					},
+					{
+						fileName:"change5",
+						fileType: "change",
+						layer: "PARTNER",
+						selector: { id: "controlId" },
+						dependentSelector: []
+					}
+				],
+				variantSection: {
+					variantManagementId : {}
+				}
 			}
-		]}}));
+		}));
 
 		Utils.setMaxLayerParameter("CUSTOMER");
+		var fnGetCtrlVariantChangesStub = sandbox.stub(this.oChangePersistence, "_getAllCtrlVariantChanges");
+		sandbox.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		sandbox.stub(this.oChangePersistence._oVariantController, "loadInitialChanges");
 
 		return this.oChangePersistence.getChangesForComponent().then(function(oChanges) {
 			assert.strictEqual(oChanges.length, 3, "only changes which are under max layer are returned");
 			assert.ok(oChanges[0].getId() === "change2", "with correct id");
 			assert.ok(oChanges[1].getId() === "change4", "with correct id");
 			assert.ok(oChanges[2].getId() === "change5", "with correct id");
+			assert.ok(fnGetCtrlVariantChangesStub.calledOnce, "then _getCtrlVariantChanges called when max layer parameter is set");
 		});
 	});
 

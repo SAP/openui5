@@ -26,8 +26,6 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	 *   <li>Transparency of the drag ghost element and the cursor during drag-and-drop operations depends on the browser implementation.</li>
 	 *   <li>Internet Explorer does only support plain text MIME type for the DataTransfer Object.</li>
 	 *   <li>Constraining a drag position is not possible, therefore there is no snap-to-grid or snap-to-element feature possible.</li>
-	 *   <li>For controls which do not provide an aggregation <code>dragDropConfig</code> drag and drop might not work correctly
-	 *   if they are configured as target via {@link sap.ui.core.dnd.DragDropInfo}.</li>
 	 * </ul>
 	 *
 	 * @extends sap.ui.core.Element
@@ -40,14 +38,14 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var DragDropBase = Element.extend("sap.ui.core.dnd.DragDropBase", /** @lends sap.ui.core.dnd.DragDropBase.prototype */ {
-		metadata : {
-			"abstract" : true,
-			library : "sap.ui.core",
-			properties : {
+		metadata: {
+			"abstract": true,
+			library: "sap.ui.core",
+			properties: {
 				/**
 				 * Defines the name of the group to which this object belongs. If <code>groupName</code> is specified, then this object will only interacts with other drag-and-drop objects within the same group.
 				 */
-				groupName: {type: "string", defaultValue : null, invalidate: false},
+				groupName: {type: "string", defaultValue: null, invalidate: false},
 
 				/**
 				 * Indicates whether this configuration is active or not.
@@ -76,7 +74,15 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	 * Enabled property should only invalidate for DragInfos
 	 */
 	DragDropBase.prototype.setEnabled = function(bEnabled) {
-		return this.setProperty("enabled", bEnabled, !this.getMetadata().isInstanceOf("sap.ui.core.dnd.IDragInfo"));
+		return this.setProperty("enabled", bEnabled, !this.isA("sap.ui.core.dnd.IDragInfo"));
+	};
+
+	/**
+	 * Suppress invalidation when the invalidate attribute of the property metadata is "false"
+	 */
+	DragDropBase.prototype.setProperty = function(sProperty, vValue, bSuppressInvalidate) {
+		bSuppressInvalidate = bSuppressInvalidate || (this.getMetadata().getProperty(sProperty).appData || {}).invalidate === false;
+		return Element.prototype.setProperty.call(this, sProperty, vValue, bSuppressInvalidate);
 	};
 
 	return DragDropBase;

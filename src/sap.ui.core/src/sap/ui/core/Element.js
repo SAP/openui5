@@ -90,7 +90,18 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 				 * Dependents are not rendered, but their databinding context and lifecycle are bound to the aggregating Element.
 				 * @since 1.19
 				 */
-				dependents : {name : "dependents", type : "sap.ui.core.Element", multiple : true}
+				dependents : {name : "dependents", type : "sap.ui.core.Element", multiple : true},
+
+				/**
+				 * Defines the drag-and-drop configuration.
+				 *
+				 * This aggregation is provided exclusively to test drag-and-drop functionality of all controls.
+				 * It might be removed or the functionality might be limited due to control {@link sap.ui.core.Element.extend metadata} restrictions.
+				 *
+				 * @experimental As of 1.56
+				 * @since 1.56
+				 */
+				dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true, singularName : "dragDropConfig"}
 			}
 		},
 
@@ -179,7 +190,7 @@ sap.ui.define(['jquery.sap.global', '../base/Object', '../base/ManagedObject', '
 	 *
 	 * @public
 	 * @static
-	 * @name sap.ui.base.Element.extend
+	 * @name sap.ui.core.Element.extend
 	 * @function
 	 */
 

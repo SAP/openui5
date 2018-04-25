@@ -2,9 +2,8 @@ sap.ui.require([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/actions/Press",
 	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/matchers/Ancestor",
-	"sap/ui/demo/iconexplorer/test/integration/pages/Common"
-], function(Opa5, Press, Properties, Ancestor, Common) {
+	"sap/ui/test/matchers/Ancestor"
+], function(Opa5, Press, Properties, Ancestor) {
 	"use strict";
 
 	var sViewName = "Overview",
@@ -13,7 +12,6 @@ sap.ui.require([
 
 	Opa5.createPageObjects({
 		onThePreviewPage: {
-			baseClass: Common,
 
 			actions: {
 				iPressTheCloseButton: function () {

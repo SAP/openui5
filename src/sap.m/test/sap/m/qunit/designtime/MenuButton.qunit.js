@@ -12,7 +12,7 @@
 		"sap/ui/rta/test/controlEnablingCheck",
 		"sap/m/changeHandler/SplitMenuButton",
 		"sap/f/DynamicPageTitle",
-		"sap/ui/fl/changeHandler/JsControlTreeModifier",
+		"sap/ui/core/util/reflection/JsControlTreeModifier",
 		"sap/ui/fl/Change",
 		"sap/ui/core/UIComponent",
 		"sap/ui/core/ComponentContainer"

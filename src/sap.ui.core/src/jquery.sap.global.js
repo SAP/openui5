@@ -26,7 +26,7 @@ sap.ui.define([
 	"sap/base/util/extend", "sap/base/assert", "sap/base/Log",
 
 	// new sap/ui/* modules
-	"sap/ui/Configuration", "sap/ui/dom/appendHead", "sap/ui/dom/computedStylePolyfill", "sap/ui/dom/includeScript",
+	"sap/ui/Configuration", "sap/ui/dom/appendHead", "sap/ui/dom/computedStylePolyfill", "sap/ui/dom/activeElementFix", "sap/ui/dom/includeScript",
 	"sap/ui/dom/includeStylesheet", "sap/ui/initjQuerySupport", "sap/ui/initSupportHooks", "sap/ui/initjQueryBrowser",
 	"sap/ui/security/FrameOptions", "sap/ui/performance/Measurement", "sap/ui/performance/Interaction", "sap/ui/performance/ResourceTimings",
 	"sap/ui/bootstrap/StoredConfig", "sap/ui/SyncPoint", "sap/ui/XHRProxy",
@@ -40,7 +40,7 @@ sap.ui.define([
 	"jquery.sap.stubs"
 ], function(now, getObject, getter, Version, extend, assert, Log,
 
-     Configuration, appendHead, computedStylePolyfill, includeScript,
+     Configuration, appendHead, computedStylePolyfill, activeElementFix, includeScript,
      includeStylesheet, initjQuerySupport, initSupportHooks, initjQueryBrowser,
      FrameOptions, Measurement, Interaction, ResourceTimings,
      StoredConfig, SyncPoint, XHRProxy,
@@ -117,6 +117,11 @@ sap.ui.define([
 	// getComputedStyle polyfill for firefox
 	if ( Device.browser.firefox ) {
 		computedStylePolyfill();
+	}
+
+	// document.activeElement iframe fix
+	if (Device.browser.msie || Device.browser.edge) {
+		activeElementFix();
 	}
 
 	// XHR proxy for Firefox

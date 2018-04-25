@@ -5,8 +5,7 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/events/PseudoTypes"
-], function(jQuery, PseudoTypes) {
+sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/events/PseudoEvents"], function(jQuery, PseudoEvents) {
 	"use strict";
 
 	/*
@@ -15,7 +14,30 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/events/PseudoTypes"
 	 * @returns {String[]} Array of names identifying {@link sap/ui/events/PseudoEvents} that are fulfilled by this very Event instance.
 	 * @private
 	 */
-	jQuery.Event.prototype.getPseudoTypes = PseudoTypes.getPseudoTypes;
+	jQuery.Event.prototype.getPseudoTypes = function() {
+		var aPseudoTypes = [];
+
+		if (PseudoEvents.getBasicTypes().indexOf(this.type) != -1) {
+			var ilength = PseudoEvents.order.length;
+			var oPseudo = null;
+
+			for (var i = 0; i < ilength; i++) {
+				oPseudo = PseudoEvents.events[PseudoEvents.order[i]];
+				if (oPseudo.aTypes
+					&& oPseudo.aTypes.indexOf(this.type) > -1
+					&& oPseudo.fnCheck
+					&& oPseudo.fnCheck(this)) {
+					aPseudoTypes.push(oPseudo.sName);
+				}
+			}
+		}
+
+		this.getPseudoTypes = function() {
+			return aPseudoTypes.slice();
+		};
+
+		return aPseudoTypes.slice();
+	};
 
 	/*
 	 * Checks whether this instance of {@link jQuery.Event} is of the given <code>sType</code> pseudo type.
@@ -24,7 +46,15 @@ sap.ui.define(["sap/ui/thirdparty/jquery", "sap/base/events/PseudoTypes"
 	 * @returns {boolean} <code>true</code> if this instance of jQuery.Event is of the given sType, <code>false</code> otherwise.
 	 * @private
 	 */
-	jQuery.Event.prototype.isPseudoType = PseudoTypes.isPseudoType;
+	jQuery.Event.prototype.isPseudoType = function(sType) {
+		var aPseudoTypes = this.getPseudoTypes();
+
+		if (sType) {
+			return aPseudoTypes.indexOf(sType) > -1;
+		} else {
+			return aPseudoTypes.length > 0;
+		}
+	};
 
 	/*
 	 * Returns OffsetX of Event. In jQuery there is a bug. In IE the value is in offsetX, in FF in layerX

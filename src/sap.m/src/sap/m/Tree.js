@@ -308,6 +308,45 @@ function(
 		return this;
 	};
 
+	Tree.prototype._sortHelper = function (vParam) {
+		var aIndices = [];
+
+		if ( typeof vParam === "number" ) {
+			aIndices.push(vParam);
+		} else if ( Array.isArray(vParam) ) {
+			//sort
+			aIndices = vParam.sort().reverse();
+		}
+
+		return aIndices;
+
+	};
+
+	Tree.prototype._removeLeaf = function(aSortedIndices) {
+		var oItem = null,
+			iItemIndex,
+			aIndices = [];
+
+		for (var i = 0; i < aSortedIndices.length; i++) {
+			iItemIndex = aSortedIndices[i];
+			oItem = this.getItems()[iItemIndex];
+			if (oItem && !oItem.isLeaf()) {
+				aIndices.push(iItemIndex);
+			}
+		}
+
+		return aIndices;
+
+	};
+
+	Tree.prototype._preExpand = function(vParam) {
+		var aIndices = this._sortHelper(vParam);
+
+		aIndices = this._removeLeaf(aIndices);
+
+		return aIndices;
+	};
+
 	/**
 	 *
 	 * Expands one or multiple items.
@@ -318,22 +357,16 @@ function(
 	 * @since 1.56.0
 	 */
 	Tree.prototype.expand = function(vParam) {
-		var aIndices = [];
-		if (typeof vParam === "number") {
-			aIndices.push(vParam);
-		} else if ( Array.isArray(vParam) ) {
-			//sort
-			aIndices = vParam.sort().reverse();
-		}
+		var oBinding = this.getBinding("items");
 
-		var oBinding = this.getBinding("items"),
-			i = 0;
-
-		for (i = 0; i < aIndices.length - 1; i++) {
-			oBinding.expand(aIndices[i], true);
+		if (oBinding && oBinding.expand) {
+			var aIndices = this._preExpand(vParam);
+			for (var i = 0; i < aIndices.length - 1; i++) {
+				oBinding.expand(aIndices[i], true);
+			}
+			// trigger change
+			oBinding.expand(aIndices[aIndices.length - 1], false);
 		}
-		// trigger change
-		oBinding.expand(aIndices[i], false);
 
 		return this;
 	};
@@ -348,20 +381,16 @@ function(
 	 * @since 1.56.0
 	 */
 	Tree.prototype.collapse = function(vParam) {
-		var aIndices = [];
-		if (typeof vParam === "number") {
-			aIndices.push(vParam);
-		} else if ( Array.isArray(vParam) ) {
-			aIndices = vParam.sort().reverse();
-		}
-		var oBinding = this.getBinding("items"),
-			i = 0;
+		var oBinding = this.getBinding("items");
 
-		for (i = 0; i < aIndices.length - 1; i++) {
-			oBinding.collapse(aIndices[i], true);
+		if (oBinding && oBinding.collapse) {
+			var aIndices = this._preExpand(vParam);
+			for (var i = 0; i < aIndices.length - 1; i++) {
+				oBinding.collapse(aIndices[i], true);
+			}
+			// trigger change
+			oBinding.collapse(aIndices[aIndices.length - 1], false);
 		}
-		// trigger change
-		oBinding.collapse(aIndices[i], false);
 
 		return this;
 	};

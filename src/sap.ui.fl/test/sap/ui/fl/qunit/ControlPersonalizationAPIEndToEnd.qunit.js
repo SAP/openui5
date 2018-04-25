@@ -212,7 +212,7 @@ sap.ui.require([
 	QUnit.test("when calling 'addPersonalizationChanges' with a change whose change handler has no revertChange", function(assert) {
 		var done = assert.async();
 		var oControl = sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout");
-		var oChangeHandler = jQuery.extend(true, {}, ChangeRegistry.getInstance().getChangeHandler("moveControls", oControl.getMetadata().getName(), oControl, sap.ui.fl.changeHandler.JsControlTreeModifier,"CUSTOMER"));
+		var oChangeHandler = jQuery.extend(true, {}, ChangeRegistry.getInstance().getChangeHandler("moveControls", oControl.getMetadata().getName(), oControl, sap.ui.core.util.reflection.JsControlTreeModifier,"CUSTOMER"));
 		oChangeHandler.revertChange = undefined;
 		sandbox.stub(ChangeRegistry.getInstance(), "getChangeHandler").returns(oChangeHandler);
 		ControlPersonalizationAPI.addPersonalizationChanges([this.mMoveChangeData1])

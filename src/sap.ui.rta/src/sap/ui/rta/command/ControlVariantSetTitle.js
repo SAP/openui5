@@ -49,7 +49,7 @@ sap.ui.define([
 	ControlVariantSetTitle.prototype.getPreparedChange = function() {
 		this._oPreparedChange = this.getVariantChange();
 		if (!this._oPreparedChange) {
-			jQuery.sap.log.error("No prepared change available for ControlVariantSetTitle");
+			return undefined;
 		}
 		return this._oPreparedChange;
 	};

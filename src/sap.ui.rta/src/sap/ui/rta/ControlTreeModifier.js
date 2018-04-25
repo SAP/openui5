@@ -2,22 +2,18 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/fl/changeHandler/JsControlTreeModifier"], function (JsControlTreeModifier) {
+sap.ui.define(["sap/ui/core/util/reflection/JsControlTreeModifier"], function (JsControlTreeModifier) {
 
 	"use strict";
 
 	/**
 	 * Implementation of the RTA-specific functionality for the control tree modifier
 	 *
-	 * @class
-	 * @extends sap.ui.fl.changehandler.jsControlTreeModifier
-	 *
-	 * @author SAP SE
-	 * @version ${version}
+	 * @namespace sap.ui.rta.ControlTreeModifier
+	 * @extends sap.ui.core.util.reflection.JsControlTreeModifier
 	 *
 	 * @private
 	 * @since 1.44
-	 * @alias sap.ui.rta.ControlTreeModifier
 	 * @experimental Since 1.44. This class is experimental and provides only limited functionality. Also the API might be
 	 *               changed in future.
 	 */
@@ -27,7 +23,7 @@ sap.ui.define(["sap/ui/fl/changeHandler/JsControlTreeModifier"], function (JsCon
 	 */
 	var _aUndoStack;
 
-	var RtaControlTreeModifier = {
+	var RtaControlTreeModifier = /** @lends sap.ui.rta.ControlTreeModifier */{
 
 		/**
 		 * Start recording operations

@@ -8,7 +8,7 @@
 			"sap/ui/dt/test/report/QUnit",
 			"sap/ui/dt/test/ElementEnablementTest",
 			"sap/m/changeHandler/CombineButtons",
-			"sap/ui/fl/changeHandler/JsControlTreeModifier",
+			"sap/ui/core/util/reflection/JsControlTreeModifier",
 			"sap/ui/fl/Change",
 			"sap/ui/core/UIComponent",
 			"sap/ui/core/ComponentContainer"],

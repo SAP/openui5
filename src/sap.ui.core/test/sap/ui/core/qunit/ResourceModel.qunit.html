@@ -254,7 +254,8 @@
 
 			// Create the model with the existing bundle
 			this.oModel = new sap.ui.model.resource.ResourceModel({
-				bundle: this.oBundle
+				bundle: this.oBundle,
+				enhanceWith: opts && opts.enhanceWith
 			});
 		},
 		afterEach: function() {
@@ -285,6 +286,12 @@
 
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+
+		this.oModel.enhance({ bundleUrl: "./testdata/messages_other.properties" });
+
+		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "An overridden modified text", "text TEST_TEXT_CUSTOM of enhanced model is correctly overridden");
+		assert.equal(this.oModel.getProperty("TEST_TEXT_OTHER"), "Another text", "text TEST_TEXT_OTHER of enhanced model is correct");
 	});
 
 	QUnit.test("Model enhancement (with bundle)", function(assert) {
@@ -298,6 +305,26 @@
 
 		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
 		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "A modified text", "text TEST_TEXT_CUSTOM of enhanced model is correct");
+
+		var oCustomBundle = jQuery.sap.resources({url: "./testdata/messages_other.properties"});
+		this.oModel.enhance(oCustomBundle);
+
+		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "An overridden modified text", "text TEST_TEXT_CUSTOM of enhanced model is correctly overridden");
+		assert.equal(this.oModel.getProperty("TEST_TEXT_OTHER"), "Another text", "text TEST_TEXT_OTHER of enhanced model is correct");
+	});
+
+	QUnit.test("Model enhancement (constructor)", function(assert) {
+
+		// ensure that the order is guaranteed how the texts are enhanced:
+		// the latter bundles override the texts of the first ones
+		this.prepare({
+			enhanceWith: [{ bundleUrl: "./testdata/messages_custom.properties" }, { bundleUrl: "./testdata/messages_other.properties" }]
+		});
+
+		assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+		assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "An overridden modified text", "text TEST_TEXT_CUSTOM of enhanced model is correctly overridden");
+		assert.equal(this.oModel.getProperty("TEST_TEXT_OTHER"), "Another text", "text TEST_TEXT_OTHER of enhanced model is correct");
 	});
 
 	QUnit.test("Binding", function(assert) {
@@ -586,6 +613,7 @@
 				// Create the model with the existing bundle
 				this.oModel = new sap.ui.model.resource.ResourceModel({
 					bundle: this.oBundle,
+					enhanceWith: opts && opts.enhanceWith,
 					async: true
 				});
 
@@ -655,6 +683,22 @@
 			}.bind(this));
 
 		}.bind(this));
+	});
+
+	QUnit.test("Model enhancement (constructor)", function(assert) {
+
+		// ensure that the order is guaranteed how the texts are enhanced:
+		// the latter bundles override the texts of the first ones
+		return this.prepare({
+			enhanceWith: [{ bundleUrl: "./testdata/messages_custom.properties" }, { bundleUrl: "./testdata/messages_other.properties" }]
+		}).then(function() {
+			return this.oModel._pEnhanced;
+		}.bind(this)).then(function() {
+			assert.equal(this.oModel.getProperty("TEST_TEXT"), "A text en", "text TEST_TEXT of enhanced model is correct");
+			assert.equal(this.oModel.getProperty("TEST_TEXT_CUSTOM"), "An overridden modified text", "text TEST_TEXT_CUSTOM of enhanced model is correctly overridden");
+			assert.equal(this.oModel.getProperty("TEST_TEXT_OTHER"), "Another text", "text TEST_TEXT_OTHER of enhanced model is correct");
+		}.bind(this));
+
 	});
 
 	QUnit.test("Binding", function(assert) {

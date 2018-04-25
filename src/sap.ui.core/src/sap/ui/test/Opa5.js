@@ -139,7 +139,7 @@ sap.ui.define([
 			if (oOptions.source && typeof oOptions.source !== "string") {
 				oOptions.source = oOptions.source.toString();
 			}
-			var uri = new URI(oOptions.source);
+			var uri = new URI(oOptions.source ? oOptions.source : '');
 			uri.search($.extend(
 				uri.search(true),Opa.config.appParams));
 
@@ -723,6 +723,8 @@ sap.ui.define([
 				}
 
 				if (oWaitForCounter.get() === 0) {
+					oLogger.timestamp("opa.waitFor.success");
+					oLogger.debug("Execute success handler");
 					// No waitFors added by actions - directly execute the success
 					fnOriginalSuccess.apply(this, aArgs);
 					return;

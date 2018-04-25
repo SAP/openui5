@@ -361,7 +361,7 @@ function(
 			}
 		}
 
-		Select.prototype._handleFocusout = function() {
+		Select.prototype._handleFocusout = function(oEvent) {
 			this._bFocusoutDueRendering = this.bRenderingPhase;
 
 			if (this._bFocusoutDueRendering) {
@@ -370,7 +370,14 @@ function(
 			}
 
 			if (this._bProcessChange) {
-				this._checkSelectionChange();
+
+				// if the focus-out is outside of the picker we should revert the selection
+				if (!this.isOpen() || oEvent.target === this.getAggregation("picker")) {
+					this._checkSelectionChange();
+				} else {
+					this._revertSelection();
+				}
+
 				this._bProcessChange = false;
 			} else {
 				this._bProcessChange = true;
@@ -1409,7 +1416,7 @@ function(
 		 * @private
 		 */
 		Select.prototype.onfocusout = function(oEvent) {
-			this._handleFocusout();
+			this._handleFocusout(oEvent);
 
 			if (this.bRenderingPhase) {
 				return;

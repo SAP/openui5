@@ -3774,7 +3774,7 @@ sap.ui.require([
 	QUnit.test("getOrCreateValueListModel: relative data service URL", function (assert) {
 		var sRelativePath = "../../../DataService/",
 			sAbsolutePath =
-				new URI(sRelativePath).absoluteTo(document.baseURL).pathname().toString(),
+				new URI(sRelativePath).absoluteTo(document.baseURI).pathname().toString(),
 			oModel = new ODataModel({
 				serviceUrl : sRelativePath,
 				synchronizationMode : "None"

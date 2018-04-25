@@ -1,7 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	"./pages/App",
+	"./pages/Overview",
+	"./pages/Home",
+	"./pages/Preview"
 ], function (opaTest) {
 	"use strict";
 
@@ -14,9 +18,6 @@ sap.ui.define([
 			delay: 5000 // to really see the busy indicator
 		});
 
-		//Actions
-		When.onTheOverviewPage.iLookAtTheScreen();
-
 		// Assertions
 		Then.onTheAppPage.iShouldSeeTheBusyIndicatorForTheWholeApp();
 	});
@@ -26,8 +27,10 @@ sap.ui.define([
 		When.onTheAppPage.iWaitUntilTheAppBusyIndicatorIsGone();
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheResultsTableBusyIndicatorOrItemsLoaded().
-			and.iTeardownMyApp();
+		Then.onTheOverviewPage.iShouldSeeTheResultsTableBusyIndicatorOrItemsLoaded();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Search for an Icon should navigate to the Overview page", function (Given, When, Then) {
@@ -53,7 +56,9 @@ sap.ui.define([
 			and.iSelectTheIconFont("SAP-icons-TNT");
 
 		// Assertions
-		Then.onTheOverviewPage.iShouldSeeTheTNTFontPage().
-			and.iTeardownMyApp();
+		Then.onTheOverviewPage.iShouldSeeTheTNTFontPage();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 });

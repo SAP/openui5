@@ -594,7 +594,7 @@
 
 			(function () {
 				function createButton(sText, fnPressCallback) {
-					return new sap.m.Button({
+					return new Button({
 						text: sText,
 						width: "150px",
 						press: function () {
@@ -644,7 +644,7 @@
 						}
 					});
 				});
-                
+
                 opaTest("Should synchronize with resizing overflow toolbar", function (oOpa) {
                     var done = Opa5.assert.async();
                     var oOverflowToolbar = new OverflowToolbar({

@@ -590,6 +590,48 @@
         "type": "FIX",
         "text": " jquery.sap.trace.qunit: adapted to different component name",
         "references": []
+      },
+      {
+        "id": "bcf0fcdcc6f21619c7cf95539a1f0a6778d23424",
+        "type": "FEATURE",
+        "text": " model.Filter: Add new option \"caseSensitive\"",
+        "references": []
+      },
+      {
+        "id": "dba66adc52300dd94af85bd98463aabae5e84008",
+        "type": "FEATURE",
+        "text": " v2.ODataModel: filter \u0027toupper\u0027",
+        "references": []
+      },
+      {
+        "id": "d494e13c602685bcdda9b64d06e00331e797fd1c",
+        "type": "FIX",
+        "text": " Fix synchronous document.activeElement access in iframes",
+        "references": []
+      },
+      {
+        "id": "33df0abfed867beed8d44faea443f6b7d45dbbae",
+        "type": "FIX",
+        "text": " Label in Form: Text \"mark and copy\" also copies \":\"",
+        "references": []
+      },
+      {
+        "id": "b92f72b681410bc177d7ce6362af79c769725543",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": []
+      },
+      {
+        "id": "89e116be122a60d56cf889c159ade9a63d993d79",
+        "type": "FIX",
+        "text": " XMLComposite: Cloning of XMLComposite was not possible",
+        "references": []
+      },
+      {
+        "id": "2d739e4d4951d04f0a0a14ddfc0badbbbb9c7cf6",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.ODataListBinding#getContexts fix diff calculation",
+        "references": []
       }
     ]
   }

@@ -6,10 +6,10 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/changeHandler/BaseTreeModifier",
+	"sap/ui/core/util/reflection/BaseTreeModifier",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/Base",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	jQuery,
 	JSONModel,

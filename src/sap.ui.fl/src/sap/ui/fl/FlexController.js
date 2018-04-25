@@ -14,8 +14,8 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/core/mvc/View",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
-	"sap/ui/fl/changeHandler/XmlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/fl/context/ContextManager"
 ], function (
 	jQuery,
@@ -819,7 +819,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Change} oChange - Change instance
 	 * @param {string} sControlType name of the ui5 control type i.e. sap.m.Button
 	 * @param {sap.ui.core.Control} oControl The control for which to retrieve the change handler
-	 * @param {sap.ui.fl.changeHandler.BaseTreeModifier} oModifier The control tree modifier
+	 * @param {sap.ui.core.util.reflection.BaseTreeModifier} oModifier The control tree modifier
 	 * @returns {sap.ui.fl.changeHandler.Base} the change handler. Undefined if not found.
 	 * @private
 	 */

@@ -4445,6 +4445,173 @@
 			assert.deepEqual(newAppPos.startDate, oAppStartDate, "Start date should not be changed");
 			assert.deepEqual(newAppPos.endDate, new Date(2017, 10, 1), "End date month is correct");
 		});
+
+		QUnit.module("Create Appointments: setEnableAppointmentsCreate");
+
+		QUnit.test("setEnableAppointmentsCreate", function(assert) {
+			//arrange
+			var oPC = new sap.m.PlanningCalendar(),
+				oPCRow1 = new sap.m.PlanningCalendarRow("row1");
+
+			oPC.addRow(oPCRow1);
+
+			//act
+			oPCRow1.setEnableAppointmentsCreate(true);
+
+			var oDragConfig = oPCRow1.getCalendarRow().getDragDropConfig();
+
+			//assert
+			assert.equal(oDragConfig.length, 1, "One DragInfo found");
+			assert.equal(oDragConfig[0].getTargetAggregation(), "_intervalPlaceholders", "Source aggregation is correct");
+			assert.equal(oDragConfig[0].getGroupName(), "CreateConfig", "Group name is correct");
+
+			//act
+			oPCRow1.setEnableAppointmentsCreate(false);
+
+			//assert
+			assert.equal(oPCRow1.getCalendarRow().getDragDropConfig().length, 0, "Zero configs found");
+
+			//clean
+			oPC.destroy();
+		});
+
+		QUnit.module("Create Appointments: _calcCreateNewAppHours", {
+			beforeEach: function () {
+				this.oPCRow = new sap.m.PlanningCalendarRow();
+				this.oRowStartDate = new Date(2017, 10, 13, 0, 0, 0);
+				this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
+					// arrange
+					var oNewAppPos;
+
+					// act
+					oNewAppPos = this.oPCRow._calcCreateNewAppHours(this.oRowStartDate, iStartIndex, iEndIndex);
+
+					// assert
+					assert.deepEqual(oNewAppPos.startDate, oExpectedStartDate, "startDate is ok");
+					assert.deepEqual(oNewAppPos.endDate, oExpectedEndDate, "endDate is ok");
+				};
+			},
+			afterEach: function () {
+				this.oPCRow.destroy();
+				this.oPCRow = null;
+			}
+		});
+
+		QUnit.test("startIndex and endIndex are the same: indexes = 0 - (30 minutes event at the beginning of the row)", function (assert) {
+			this.test(assert, 0, 0, this.oRowStartDate, new Date(2017, 10, 13, 0, 30, 0));
+		});
+
+		QUnit.test("startIndex and endIndex are the same: indexes = 3 - (30 minutes event in 1 hour and 30 mins from the row's startDate)", function (assert) {
+			this.test(assert, 3, 3, new Date(2017, 10, 13, 1, 30, 0), new Date(2017, 10, 13, 2, 0, 0));
+		});
+
+		QUnit.test("startIndex is lower than the endIndex: startIndex = 0, endIndex = 1 - (1h event at the beginning of the row)", function (assert) {
+			this.test(assert, 0, 1, this.oRowStartDate, new Date(2017, 10, 13, 1, 0, 0));
+		});
+
+		QUnit.test("startIndex is lower than the endIndex: startIndex = 3, endIndex = 6 - (2h event in 1h and 30 mins from the row's startDate)", function (assert) {
+			this.test(assert, 3, 6, new Date(2017, 10, 13, 1, 30, 0), new Date(2017, 10, 13, 3, 30, 0));
+		});
+
+		QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (30mins event at the beginning of the row)", function (assert) {
+			this.test(assert, 1, 0, this.oRowStartDate, new Date(2017, 10, 13, 0, 30, 0));
+		});
+
+		QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (1h and 30 mins event in 1h and 30 mins from the row's startDate)", function (assert) {
+			this.test(assert, 6, 3, new Date(2017, 10, 13, 1, 30, 0), new Date(2017, 10, 13, 3, 0, 0));
+		});
+
+		QUnit.module("Create Appointments: _calcCreateNewAppDays", {
+			beforeEach: function () {
+				this.oPCRow = new sap.m.PlanningCalendarRow();
+				this.oRowStartDate = new Date(2017, 10, 13, 0, 0, 0);
+				this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
+					// arrange
+					var oNewAppPos;
+
+					// act
+					oNewAppPos = this.oPCRow._calcCreateNewAppDays(this.oRowStartDate, iStartIndex, iEndIndex);
+
+					// assert
+					assert.deepEqual(oNewAppPos.startDate, oExpectedStartDate, "startDate is ok");
+					assert.deepEqual(oNewAppPos.endDate, oExpectedEndDate, "endDate is ok");
+				};
+			},
+			afterEach: function () {
+				this.oPCRow.destroy();
+				this.oPCRow = null;
+			}
+		});
+
+		QUnit.test("startIndex and endIndex are the same: indexes = 0 - (1 day event at the beginning of the row)", function (assert) {
+			this.test(assert, 0, 0, this.oRowStartDate, new Date(2017, 10, 14));
+		});
+
+		QUnit.test("startIndex and endIndex are the same: indexes = 3 - (1 day event in 3 days from the row's startDate)", function (assert) {
+			this.test(assert, 3, 3, new Date(2017, 10, 16), new Date(2017, 10, 17));
+		});
+
+		QUnit.test("startIndex is lower than the endIndex: startIndex = 0, endIndex = 1 - (2 day event at the beginning of the row)", function (assert) {
+			this.test(assert, 0, 1, this.oRowStartDate, new Date(2017, 10, 15));
+		});
+
+		QUnit.test("startIndex is lower than the endIndex: startIndex = 3, endIndex = 6 - (4 days event in 3 days from the row's startDate)", function (assert) {
+			this.test(assert, 3, 6, new Date(2017, 10, 16), new Date(2017, 10, 20));
+		});
+
+		QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (1 day event at the beginning of the row)", function (assert) {
+			this.test(assert, 1, 0, this.oRowStartDate, new Date(2017, 10, 14));
+		});
+
+		QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (3 days event in 3 days from the row's startDate)", function (assert) {
+			this.test(assert, 6, 3, new Date(2017, 10, 16), new Date(2017, 10, 19));
+		});
+
+		QUnit.module("Create Appointments: _calcCreateNewAppMonths", {
+			beforeEach: function () {
+				this.oPCRow = new sap.m.PlanningCalendarRow();
+				this.oRowStartDate = new Date(2017, 10, 13, 0, 0, 0);
+				this.test = function (assert, iStartIndex, iEndIndex, oExpectedStartDate, oExpectedEndDate) {
+					// arrange
+					var oNewAppPos;
+
+					// act
+					oNewAppPos = this.oPCRow._calcCreateNewAppMonths(this.oRowStartDate, iStartIndex, iEndIndex);
+
+					// assert
+					assert.deepEqual(oNewAppPos.startDate, oExpectedStartDate, "startDate is ok");
+					assert.deepEqual(oNewAppPos.endDate, oExpectedEndDate, "endDate is ok");
+				};
+			},
+			afterEach: function () {
+				this.oPCRow.destroy();
+				this.oPCRow = null;
+			}
+		});
+
+		QUnit.test("startIndex and endIndex are the same: indexes = 0 - (1 month event at the first day of beginning of the row)", function (assert) {
+			this.test(assert, 0, 0, new Date(2017, 10, 1), new Date(2017, 11, 1));
+		});
+
+		QUnit.test("startIndex and endIndex are the same: indexes = 3 - (1 month event in 3 months from the row's startDate)", function (assert) {
+			this.test(assert, 3, 3, new Date(2018, 1, 1), new Date(2018, 2, 1));
+		});
+
+		QUnit.test("startIndex is lower than the endIndex: startIndex = 0, endIndex = 1 - (2 months event at the first day of beginning of the row)", function (assert) {
+			this.test(assert, 0, 1, new Date(2017, 10, 1), new Date(2017, 12, 1));
+		});
+
+		QUnit.test("startIndex is lower than the endIndex: startIndex = 3, endIndex = 6 - (4 months event in 3 months from the row's startDate)", function (assert) {
+			this.test(assert, 3, 6, new Date(2018, 1, 1), new Date(2018, 5, 1));
+		});
+
+		QUnit.test("startIndex is greater than the end Index: startIndex = 1, endIndex = 0 -  (1 month event at the first day of beginning of the row)", function (assert) {
+			this.test(assert, 1, 0, new Date(2017, 10, 1), new Date(2017, 11, 1));
+		});
+
+		QUnit.test("startIndex is greater than the end Index: startIndex = 6, endIndex = 3 - (3 months event in 3 months from the row's startDate)", function (assert) {
+			this.test(assert, 6, 3, new Date(2018, 1, 1), new Date(2018, 4, 1));
+		});
 	</script>
 
 </head>

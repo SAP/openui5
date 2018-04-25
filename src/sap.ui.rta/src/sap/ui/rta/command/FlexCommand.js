@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/rta/ControlTreeModifier",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier"
 ], function(
 	BaseCommand,
 	FlexControllerFactory,

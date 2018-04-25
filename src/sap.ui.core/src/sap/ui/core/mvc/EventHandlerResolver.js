@@ -81,7 +81,7 @@ sap.ui.define([
 							// no dot at all: first check for a controller local, then for a global handler
 							fnHandler = oController && oController[sFunctionName];
 							if ( fnHandler != null ) {
-								// if the name can be resolved, don't try to find a global handler (even if it is not a function)
+								// If the name can be resolved, don't try to find a global handler (even if it is not a function).
 								break;
 							}
 							// falls through
@@ -100,10 +100,11 @@ sap.ui.define([
 							}
 
 							// create a new handler function as wrapper that internally provides the configured values as arguments to the actual handler function
-							fnHandler = (function(sFunctionName, oController) { // fnHandler is not used because the expression parser resolves and calls the original handler function
+							fnHandler = (function(sFunctionName, oController) { // the previous fnHandler is not used because the expression parser resolves and calls the original handler function
 								return function(oEvent) { // the actual event handler function; soon enriched with more context, then calling the configured fnHandler
 
-									var oParametersModel, oSourceModel;
+									var oParametersModel, oSourceModel,
+										sExpression = sName; // the expression to actually pass to the parser;
 
 									// configure the resolver element with additional models
 									if (sName.indexOf("$parameters") > -1) {
@@ -113,27 +114,41 @@ sap.ui.define([
 										oSourceModel = new MOM(oEvent.getSource());
 									}
 
-									var mGlobals = {"oController": oController};
-									if (sFunctionName.trim().indexOf(".") > 0) { // if function has no leading dot (=Controller method), but has a dot, accept the first component as global object
-										var sGlobal = sFunctionName.trim().split(".")[0];
+									var mGlobals = {"$controller": oController, $event: oEvent};
+									if (sFunctionName.indexOf(".") > 0) {
+										// if function has no leading dot (which would mean it is a Controller method), but has a dot later on, accept the first component as global object
+										var sGlobal = sFunctionName.split(".")[0];
 										mGlobals[sGlobal] = window[sGlobal];
-									}
 
-									// TODO: introduce $event or so later, then add it as another global with value oEvent
+									} else if (sFunctionName.indexOf(".") === -1) {
+										if (oController && oController[sFunctionName]) {
+											// if function has no dot at all, and oController has a member with the same name, this member should be used as function
+											// (this tells the expression parser to use the same logic as applied above)
+											sExpression = "$controller." + sExpression;
+
+										} else if (window[sFunctionName]) {
+											mGlobals[sFunctionName] = window[sFunctionName];
+										}
+									}
 
 									// the following line evaluates the expression
 									// in case all parameters are constants, it already calls the event handler along with all its arguments, otherwise it returns a binding info
-									var oExpressionParserResult = BindingParser.parseExpression(sName.trim().replace(/^\./, "oController."), 0, {oContext: oController}, mGlobals);
+									var oExpressionParserResult = BindingParser.parseExpression(sExpression.replace(/^\./, "$controller."), 0, {oContext: oController}, mGlobals);
 
 									if (oExpressionParserResult.result) { // a binding info
 										// we need to trigger evaluation (but we don't need the result, evaluation already calls the event handler)
-										getBindingValue(oExpressionParserResult.result, oEvent.getSource(), oController, oParametersModel, oSourceModel);
+										try {
+											getBindingValue(oExpressionParserResult.result, oEvent.getSource(), oController, oParametersModel, oSourceModel);
+										} catch (e) {
+											e.message = "Error when evaluating event handler '" + sName + "': " + e.message;
+											throw e;
+										}
 									}
 
-									if ( oParametersModel ) {
+									if (oParametersModel) {
 										oParametersModel.destroy();
 									}
-									if ( oSourceModel ) {
+									if (oSourceModel) {
 										oSourceModel.destroy();
 									}
 								};
@@ -185,6 +200,10 @@ sap.ui.define([
 				if (typeof oPart == "string") {
 					oPart = { path: oPart };
 					oBindingInfo.parts[i] = oPart;
+				}
+
+				if (!oPart.path && oPart.parts) {
+					throw new Error("Bindings in event handler parameters cannot use parts. Just use one single path.");
 				}
 
 				// if a model separator is found in the path, extract model name and path

@@ -3,11 +3,6 @@ sap.ui.define(['sap/m/Text'], function(Text) {
 
 	// Control extension
 	var DraggableText = Text.extend("my.DraggableText", {
-		metadata : {
-			aggregations : {
-				dragDropConfig : {name : "dragDropConfig", type : "sap.ui.core.dnd.DragDropBase", multiple : true}
-			}
-		},
 		renderer: {}
 	});
 

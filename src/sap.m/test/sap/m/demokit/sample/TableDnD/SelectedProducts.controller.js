@@ -12,7 +12,6 @@ sap.ui.define([
 				// reset the rank property and update the model to refresh the bindings
 				var oProductsModel = oSelectedProductsTable.getModel();
 				oProductsModel.setProperty("Rank", Utils.ranking.Initial, oSelectedItemContext);
-				oProductsModel.refresh(true);
 
 				// select the previously selected position
 				var aItemsOfSelectedProductsTable = oSelectedProductsTable.getItems();
@@ -59,7 +58,6 @@ sap.ui.define([
 			var oSelectedProductsTable = Utils.getSelectedProductsTable(this);
 			var oProductsModel = oSelectedProductsTable.getModel();
 			oProductsModel.setProperty("Rank", iNewRank, oDraggedItemContext);
-			oProductsModel.refresh(true);
 		},
 
 		moveSelectedItem: function(sDirection) {
@@ -79,7 +77,6 @@ sap.ui.define([
 
 				oProductsModel.setProperty("Rank", iSiblingItemRank, oSelectedItemContext);
 				oProductsModel.setProperty("Rank", iSelectedItemRank, oSiblingItemContext);
-				oProductsModel.refresh(true);
 
 				// after move select the sibling
 				oSelectedProductsTable.getItems()[iSiblingItemIndex].setSelected(true);

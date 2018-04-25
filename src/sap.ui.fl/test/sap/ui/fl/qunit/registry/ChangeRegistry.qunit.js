@@ -3,7 +3,7 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
-	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/registry/ChangeRegistry",
 	"sap/ui/fl/registry/ChangeTypeMetadata",
 	"sap/ui/fl/registry/ChangeRegistryItem",

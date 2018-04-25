@@ -43,20 +43,16 @@ sap.ui.define([
 					type: "sap.ui.core.dnd.test.DivControl",
 					multiple: true,
 					singularName: "topItem",
-					selector : "#{id}-topItems"
+					selector : "#{id}-topItems",
+					dnd: true
 				},
 				bottomItems: {
 					name: "bottomItems",
 					type: "sap.ui.core.dnd.test.DivControl",
 					multiple: true,
 					singularName: "bottomItem",
-					selector : "#{id}-bottomItems"
-				},
-				dragDropConfig: {
-					name: "dragDropConfig",
-					type: "sap.ui.core.dnd.DragDropBase",
-					multiple: true,
-					singularName: "dragDropConfig"
+					selector : "#{id}-bottomItems",
+					dnd: true
 				}
 			}
 		},
@@ -493,8 +489,8 @@ sap.ui.define([
 		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
-		assert.strictEqual($Indicator.attr("data-drop-position"), "between", "Indicator's data-drop-position attribute is set to between");
-		assert.strictEqual($Indicator.attr("data-drop-layout"), "vertical", "Indicator's data-drop-layout attribute is set to vertical.");
+		assert.strictEqual($Indicator.attr("data-drop-position"), "Between", "Indicator's data-drop-position attribute is set to between");
+		assert.strictEqual($Indicator.attr("data-drop-layout"), "Vertical", "Indicator's data-drop-layout attribute is set to vertical.");
 		assert.strictEqual($Indicator.width(), oDiv2.$().width() , "Indicator's width is equal to dropped item's width.");
 		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
 		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left , "Indicator's left position is equal to dropped item's left position.");
@@ -508,7 +504,7 @@ sap.ui.define([
 		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
-		assert.strictEqual($Indicator.attr("data-drop-layout"), "vertical", "Indicator's data-drop-layout attribute is still vertical.");
+		assert.strictEqual($Indicator.attr("data-drop-layout"), "Vertical", "Indicator's data-drop-layout attribute is still vertical.");
 		assert.strictEqual($Indicator.width(), oDiv2.$().width() , "Indicator's width is equal to dropped item's width.");
 		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left , "Indicator's left position is equal to dropped item's left position.");
 		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top + oDiv2.$().height(), "Indicator's bottom position is equal to dropped item's bottom position.");
@@ -525,7 +521,7 @@ sap.ui.define([
 		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
-		assert.strictEqual($Indicator.attr("data-drop-layout"), "horizontal", "Indicator's data-drop-layout attribute is set to horizontal.");
+		assert.strictEqual($Indicator.attr("data-drop-layout"), "Horizontal", "Indicator's data-drop-layout attribute is set to Horizontal.");
 		assert.strictEqual($Indicator.height(), oDiv2.$().height() , "Indicator's height is equal to dropped item's height.");
 		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
 		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left , "Indicator's left position is equal to dropped item's bottom position.");
@@ -539,7 +535,7 @@ sap.ui.define([
 		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
-		assert.strictEqual($Indicator.attr("data-drop-layout"), "horizontal", "Indicator's data-drop-layout attribute is still horizontal.");
+		assert.strictEqual($Indicator.attr("data-drop-layout"), "Horizontal", "Indicator's data-drop-layout attribute is still Horizontal.");
 		assert.strictEqual($Indicator.height(), oDiv2.$().height() , "Indicator's height is equal to dropped item's height.");
 		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
 		assert.strictEqual(mIndicatorOffset.left, mTargetOffset.left + oDiv2.$().width(), "Indicator's left position is equal to dropped item's right position.");
@@ -601,7 +597,7 @@ sap.ui.define([
 		$Indicator = jQuery(oEvent.dragSession.getIndicator());
 		mIndicatorOffset = $Indicator.offset();
 
-		assert.strictEqual($Indicator.attr("data-drop-position"), "on", "Indicator's data-drop-position attribute is set to on");
+		assert.strictEqual($Indicator.attr("data-drop-position"), "On", "Indicator's data-drop-position attribute is set to on");
 		assert.strictEqual($Indicator.outerWidth(), oBottomItemsDomRef.offsetWidth , "Indicator's width is equal to dropped item's width.");
 		assert.strictEqual($Indicator.outerHeight(), oBottomItemsDomRef.offsetHeight , "Indicator's height is equal to dropped item's height.");
 		assert.strictEqual(mIndicatorOffset.top, mTargetOffset.top , "Indicator's top position is equal to dropped item's top position.");
@@ -727,6 +723,32 @@ sap.ui.define([
 		this.oDropInfo.attachDrop(function(oEvent) {
 			assert.strictEqual(oEvent.getParameter("droppedControl"), this.oTargetControl, "Drop control is changed");
 		}, this);
+		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
+	});
+
+	QUnit.test("setIndicatorConfig", function(assert) {
+		this.oSourceDomRef.focus();
+		this.oSourceDomRef.dispatchEvent(createNativeDragEventDummy("dragstart"));
+
+		this.oLastTargetDomRef.focus();
+		this.oLastTargetControl.ondragenter = function(oEvent) {
+			oEvent.dragSession.setIndicatorConfig({
+				borderLeft: 0,
+				paddingTop: 10,
+				left: 100
+			});
+		};
+
+		this.oDropInfo.attachDragOver(function(oEvent) {
+			var oSession = oEvent.getParameter("dragSession");
+			var $Indicator = jQuery(oSession.getIndicator());
+			assert.strictEqual($Indicator.css("border-left-width"), "0px", "Custom borderLeft is set correctly");
+			assert.strictEqual($Indicator.css("padding-top"), "10px", "Custom paddingTop is set correctly");
+			assert.strictEqual($Indicator.css("left"), "100px", "Custom left is set correctly");
+		}, this);
+
+		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragenter"));
+		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragover"));
 		this.oLastTargetDomRef.dispatchEvent(createNativeDragEventDummy("drop"));
 	});
 

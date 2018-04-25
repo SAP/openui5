@@ -32,7 +32,7 @@
 		</FormattedText>
 		<MessageStrip
 				class="sapUiTinyMarginBottom sapUiSmallMarginBegin"
-				text="Each child should take 3 columns on extra large and large screens, 6 on medium and 12 on small ones."
+				text="Each child should take 3 columns on XL and L screens, 6 columns on M screens and 12 columns on S screens."
 				type="Information"
 				showIcon="true">
 		</MessageStrip>
@@ -95,7 +95,7 @@
 		</FormattedText>
 		<MessageStrip
 				class="sapUiSmallMarginBottom sapUiSmallMarginBegin"
-				text="Insert 1 empty column before each child on XL and L screens, 4 on medium and 6 on small ones."
+				text="Insert 1 empty column before each child on XL and L screens, 4 on M screens and 6 on S screens."
 				type="Information"
 				showIcon="true">
 		</MessageStrip>
@@ -129,7 +129,7 @@
 		</FormattedText>
 		<MessageStrip
 				class="sapUiSmallMarginBottom sapUiSmallMarginBegin"
-				text="Insert 1 empty column on larger screens and 3 on medium ones."
+				text="Insert 1 empty column on L and XL screens and 3 on M screens."
 				type="Information"
 				showIcon="true">
 		</MessageStrip>

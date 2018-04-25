@@ -78,6 +78,38 @@ Given.iStartMyAppInAFrame({
     autoWait: true
 });
 ```
+## AutoWait and overflow toolbars
+Under some specific circumstances the autoWaiter is not waiting enoght and the next interaction happens before the awated controls are fully rendered. This problem is particularly visible with overflow toolbars. The problem is that the interaction with buttons in the toolbar happens before the toolbar is completely open and so the included buttons are not ready to interection. So the interactions are effectively lost.
+
+The root cause is a specific behaviour in opa polling when a control is actually found on first check. In this case, the next check() is synchronous e.g. executed immmediately and not on next poll interval. The problem with this implementation is that the synchronous check effectively prevents the detection of subsequent flows started by the previous interaction. As result, the synchrnonization is premature, before the interaction is fully processed and before the UI is completely rendered.
+
+To overcome this problem, as of version 1.54 there is a paramater 'asyncPolling'. It causes a postpone of the check() in the next polling and gives the chance of the execution flows caused by the interaction to complete.
+Unfortunatelly it is not possible to make this behavior default as there are many tests that are coded agaist the old behavior. 
+
+The suggested approach is to set asyncPolling as default for all waitFors:
+
+```javascript
+// in QUnit start page, before all OPA tests
+Opa5.extendConfig({
+    autoWait: true,
+    asyncPolling: true
+});
+```
+
+Setting it on existing tests may cause a failure because of the stricter synchronization. The most common uncovered problems is a test that was dependent on premature synchronization. Like an assertion for table rows that is executed before the table is fully loaded.
+
+Same paramater could be set on individual waitFors:
+
+```javascript
+// in an OPA test
+oOpa.waitFor({
+    id: "controlId",
+    asyncPolling: true,
+    success: function (oControl) {
+        // TODO assert status
+    }
+});
+```
 
 For more information, see
 [Pitfalls and Troubleshooting](https://github.com/SAP/openui5/blob/master/docs/opa/Subchapters/Troubleshooting.md),

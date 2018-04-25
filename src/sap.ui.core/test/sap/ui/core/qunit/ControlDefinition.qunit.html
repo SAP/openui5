@@ -220,7 +220,7 @@
 			assert.equal(keys(aggregations).length, 2, "there should be one public aggregation");
 			assert.ok(aggregations.dots, "there should be a 'dots' aggregation");
 			var aggregations = md.getAllAggregations();
-			assert.equal(keys(aggregations).length, 6, "there should be 6 public aggregations across the hierarchy");
+			assert.equal(keys(aggregations).length, 7, "there should be 7 public aggregations across the hierarchy");
 			assert.ok(aggregations.dots, "there should be a 'dots' aggregation");
 
 			var associations = md.getAllAssociations();
