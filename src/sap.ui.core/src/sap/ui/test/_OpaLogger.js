@@ -26,7 +26,15 @@ sap.ui.define([
 		},
 		getLogger: function (sComponent) {
 			aLoggerComponents.push(sComponent);
-			return $.sap.log.getLogger(sComponent, iLogLevel);
+			var logger = $.sap.log.getLogger(sComponent, iLogLevel);
+			logger.timestamp = function (marker) {
+				/* eslint-disable no-console */
+				if (console.timeStamp && this.getLevel() >= $.sap.log.Level.DEBUG) {
+					console.timeStamp(marker);
+				}
+				/* eslint-enable no-console */
+			};
+			return logger;
 		},
 		getLevel: function () {
 			return iLogLevel;

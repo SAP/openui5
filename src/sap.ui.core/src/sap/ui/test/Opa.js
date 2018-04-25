@@ -41,11 +41,7 @@ sap.ui.define([
 		opaCheck();
 
 		function opaCheck () {
-			/* eslint-disable no-console */
-			if (console.timeStamp){
-                console.timeStamp("opa.check");
-			}
-			/* eslint-enable no-console */
+			oLogger.timestamp("opa.check");
 			oLogCollector.getAndClearLog();
 
 			var oResult = fnCallback();
