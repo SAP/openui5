@@ -3931,34 +3931,44 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doCreateCache: AggregationCache", function (assert) {
-		var aAggregation = [{
-				grouped : true,
-				name : "Dimension"
-			}],
-			bAutoExpandSelect = {/*false, true*/},
-			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null, {
-				$$aggregation : aAggregation
-			}),
-			oCache = {},
-			oContext = {},
-			mMergedQueryOptions = {},
-			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
-			mQueryOptions = {};
+	[[{
+		grouped : true,
+		name : "Dimension"
+	}], [{
+		min : true,
+		name : "Measure",
+		total : false
+	}], [{
+		max : true,
+		name : "Measure",
+		total : false
+	}]].forEach(function (aAggregation, i) {
+		QUnit.test("doCreateCache: AggregationCache: " + i, function (assert) {
+			var bAutoExpandSelect = {/*false, true*/},
+				oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null, {
+					$$aggregation : aAggregation
+				}),
+				oCache = {},
+				oContext = {},
+				mMergedQueryOptions = {},
+				sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
+				mQueryOptions = {};
 
-		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
 
-		this.mock(oBinding).expects("inheritQueryOptions")
-			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
-			.returns(mMergedQueryOptions);
-		this.mock(_AggregationCache).expects("create")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath, aAggregation,
-				sinon.match.same(mMergedQueryOptions), sinon.match.same(bAutoExpandSelect))
-			.returns(oCache);
+			this.mock(oBinding).expects("inheritQueryOptions")
+				.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
+				.returns(mMergedQueryOptions);
+			this.mock(_AggregationCache).expects("create")
+				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
+					aAggregation, sinon.match.same(mMergedQueryOptions),
+					sinon.match.same(bAutoExpandSelect))
+				.returns(oCache);
 
-		// code under test
-		assert.strictEqual(oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext),
-			oCache);
+			// code under test
+			assert.strictEqual(oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext),
+				oCache);
+		});
 	});
 
 	//*********************************************************************************************
@@ -4316,6 +4326,8 @@ sap.ui.require([
 				visible : false
 			}],
 			sAggregation = JSON.stringify(aAggregation),
+			sApply = "A.P.P.L.E.",
+			oBinding = this.oModel.bindList("/EMPLOYEES"),
 			aFilteredAggregation = [{
 				grouped : false,
 				name : "BillToParty"
@@ -4329,9 +4341,7 @@ sap.ui.require([
 			}, {
 				grouped : false,
 				name : "TransactionCurrency"
-			}],
-			sApply = "A.P.P.L.E.",
-			oBinding = this.oModel.bindList("/EMPLOYEES");
+			}];
 
 		this.mock(_Helper).expects("buildApply")
 			.withExactArgs(aFilteredAggregation)
@@ -4340,9 +4350,81 @@ sap.ui.require([
 			.withExactArgs({$apply : sApply});
 
 		// code under test
-		oBinding.updateAnalyticalInfo(aAggregation);
+		assert.strictEqual(oBinding.updateAnalyticalInfo(aAggregation), undefined);
 
 		assert.strictEqual(JSON.stringify(aAggregation), sAggregation, "unchanged");
+		assert.deepEqual(oBinding.aAggregation, aFilteredAggregation);
+	});
+
+	//*********************************************************************************************
+	[{
+		aAggregation : [{
+			min : true,
+			name : "GrossAmount",
+			total : false
+		}, {
+			grouped : false,
+			name : "Currency",
+			visible : true
+		}],
+		aFilteredAggregation : [{
+			min : true,
+			name : "GrossAmount",
+			total : false
+		}, {
+			grouped : false,
+			name : "Currency"
+		}]
+	}, {
+		aAggregation : [{
+			max : true,
+			name : "GrossAmount",
+			total : false
+		}, {
+			grouped : false,
+			name : "Currency",
+			visible : true
+		}],
+		aFilteredAggregation : [{
+			max : true,
+			name : "GrossAmount",
+			total : false
+		}, {
+			grouped : false,
+			name : "Currency"
+		}]
+	}].forEach(function (oFixture, i) {
+		QUnit.test("updateAnalyticalInfo: min/max: " + i, function (assert) {
+			var sAggregation = JSON.stringify(oFixture.aAggregation),
+				sApply = "A.P.P.L.E.",
+				oBinding = this.oModel.bindList("/EMPLOYEES"),
+				oMeasureRangePromise = {/*Promise*/},
+				oNewCache = {getMeasureRangePromise : function () {}},
+				oResult;
+
+			this.mock(_Helper).expects("buildApply")
+				.withExactArgs(oFixture.aFilteredAggregation)
+				.returns(sApply);
+			this.mock(oBinding).expects("changeParameters")
+				.callsFake(function () {
+					oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
+				})
+				.withExactArgs({$apply : sApply});
+			this.mock(oNewCache).expects("getMeasureRangePromise")
+				.withExactArgs()
+				.returns(oMeasureRangePromise);
+
+			// code under test
+			oResult = oBinding.updateAnalyticalInfo(oFixture.aAggregation);
+
+			assert.strictEqual(JSON.stringify(oFixture.aAggregation), sAggregation, "unchanged");
+			assert.deepEqual(oBinding.aAggregation, oFixture.aFilteredAggregation);
+			assert.ok(oResult.measureRangePromise instanceof Promise);
+
+			return oResult.measureRangePromise.then(function (oMeasureRangePromise0) {
+				assert.strictEqual(oMeasureRangePromise0, oMeasureRangePromise);
+			});
+		});
 	});
 
 	//*********************************************************************************************

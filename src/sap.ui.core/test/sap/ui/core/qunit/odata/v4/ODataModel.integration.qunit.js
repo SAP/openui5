@@ -22,7 +22,7 @@ sap.ui.require([
 		FilterOperator, OperationMode, AnnotationHelper, ODataListBinding, ODataModel, Sorter,
 		TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
@@ -5369,8 +5369,6 @@ sap.ui.require([
 					]
 				});
 			for (var i = 0; i < 3; i += 1) {
-				//TODO The below null's are: Text has binding context null and its initial value is
-				// undefined (formatted to null by String type). (How) can we get rid of this?
 				that.expectChange("isExpanded", undefined, null)
 					.expectChange("isTotal", undefined, null)
 					.expectChange("level", undefined, null)
@@ -5518,6 +5516,116 @@ sap.ui.require([
 					assert.notOk("@$ui5._" in oParent);
 				});
 			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Simulate a chart that requests minimum and maximum values for a measure via
+	// #updateAnalyticalInfo
+	QUnit.test("ODLB#updateAnalyticalInfo with min/max", function (assert) {
+		var aAggregation = [{
+				// dimension
+				grouped : false,
+				inResult : true,
+				name : "Name"
+			}, {// measure
+				max : true,
+				min : true,
+				name : "AGE",
+				total : false
+			}],
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<t:Table id="table" rows="{\
+			path : \'/EMPLOYEES\',\
+			parameters : {$count : true}\
+		}" threshold="0" visibleRowCount="3">\
+	<t:Column>\
+		<t:template>\
+			<Text id="text" text="{Name}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="age" text="{AGE}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		// for simulating a chart updateAnalyticalInfo needs to be called before getContexts
+		this.mock(ODataListBinding.prototype)
+			.expects("getContexts")
+			.withExactArgs(0, 3, 0)
+			.callsFake(function () {
+				this.updateAnalyticalInfo(aAggregation)
+					.measureRangePromise.then(function (mMeasureRange) {
+						assert.deepEqual(mMeasureRange, {
+							AGE : {
+								max : 77,
+								min : 42
+							}
+						});
+					});
+				ODataListBinding.prototype.getContexts.restore();
+				return this.getContexts.apply(this, arguments);
+			});
+		this.expectRequest("EMPLOYEES?$count=true&$apply=groupby((Name),aggregate(AGE))"
+				+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
+				+ "AGE%20with%20max%20as%20UI5max__AGE),identity)"
+				+ "&$skip=0&$top=4",
+			{
+				"@odata.count": 5,
+				"value" : [
+					{
+						// the server response may contain additional data for example @odata.id or
+						// type information "UI5min__AGE@odata.type": "#Int16"
+						"@odata.id": null,
+						"UI5min__AGE@odata.type": "#Int16",
+						"UI5min__AGE": 42,
+						"UI5max__AGE": 77
+					},
+					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
+					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
+					{"ID" : "2", "Name" : "Peter Burke", "AGE" : 77}
+				]
+			})
+			.expectChange("count")
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
+			.expectChange("age", ["70", "50", "77"]);
+
+		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
+			that.expectChange("count", "4");
+
+			that.oView.byId("count").setBindingContext(
+				that.oView.byId("table").getBinding("rows").getHeaderContext());
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// no additional request for same aggregation data
+			that.oView.byId("table").getBinding("rows").updateAnalyticalInfo(aAggregation);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES?$count=true"
+					+ "&$apply=groupby((Name),aggregate(AGE))"
+					+ "&$skip=3&$top=1",
+				{
+					"value" : [
+						{"ID" : "3", "Name" : "John Field", "AGE" : 42}
+					]
+				})
+				.expectChange("text", null, null)
+				.expectChange("age", null, null)
+				.expectChange("text", "Jonathan Smith", 1)
+				.expectChange("text", "Peter Burke", 2)
+				.expectChange("text", "John Field", 3)
+				.expectChange("age", "50", 1)
+				.expectChange("age", "77", 2)
+				.expectChange("age", "42", 3);
+
+			that.oView.byId("table").setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
 		});
 	});
 

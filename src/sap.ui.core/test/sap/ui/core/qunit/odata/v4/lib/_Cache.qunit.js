@@ -1601,6 +1601,267 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[{
+		iEnd : Infinity,
+		sQueryString : "",
+		iStart : 42,
+		sResourcePath : "Employees?$skip=42"
+	}, {
+		iEnd : Infinity,
+		sQueryString : "?foo",
+		iStart : 42,
+		sResourcePath : "Employees?foo&$skip=42"
+	}, {
+		iEnd : 55,
+		sQueryString : "?foo",
+		iStart : 42,
+		sResourcePath : "Employees?foo&$skip=42&$top=13"
+	}, {
+		iEnd : 10,
+		sQueryString : "?foo",
+		iStart : 0,
+		sResourcePath : "Employees?foo&$skip=0&$top=10"
+	}, {
+		iEnd : Infinity,
+		sQueryString : "?foo",
+		iStart : 0,
+		sResourcePath : "Employees?foo"
+	}, {
+		iEnd : undefined, // undefined is treated as Infinity
+		sQueryString : "",
+		iStart : 42,
+		sResourcePath : "Employees?$skip=42"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("CollectionCache#getResourcePath: " + i , function(assert) {
+			var oCache = this.createCache("Employees");
+
+			oCache.sQueryString = oFixture.sQueryString;
+
+			// code under test
+			assert.strictEqual(oCache.getResourcePath(oFixture.iStart, oFixture.iEnd),
+				oFixture.sResourcePath);
+		});
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bWithCount) {
+		QUnit.test("CollectionCache#handleResponse: " + bWithCount, function (assert) {
+			var oCache = this.createCache("Employees"),
+				oCacheMock = this.mock(oCache),
+				mChangeListeners = {},
+				iCount = 4,
+				sDataContext = {/*string*/},
+				oElement0 = {},
+				oElement1 = {},
+				aElements = [],
+				oFetchTypesResult = {},
+				iLimit = {/*number*/},
+				oResult = {
+					"@odata.context" : sDataContext,
+					"value" : [oElement0, oElement1]
+				};
+
+			oCache.mChangeListeners = mChangeListeners;
+			aElements.$byPredicate = {};
+			oCache.aElements = aElements;
+			oCache.iLimit = iLimit;
+
+			if (bWithCount) {
+				oResult["@odata.count"] = iCount.toString(10);
+			}
+			this.mock(_Helper).expects("updateCache")
+				.withExactArgs(sinon.match.same(mChangeListeners), "",
+					sinon.match.same(aElements), {$count : iCount})
+				.exactly(bWithCount ? 1 : 0)
+				.callsFake(function () {
+					oCache.aElements.$count = iCount;
+				});
+			this.mock(_Cache).expects("computeCount").withExactArgs(sinon.match.same(oResult));
+			oCacheMock.expects("calculateKeyPredicates")
+				.withExactArgs(sinon.match.same(oElement0), sinon.match.same(oFetchTypesResult))
+				.callsFake(function () {
+					_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
+				});
+			// simulate no key predicate for oElement1
+			oCacheMock.expects("calculateKeyPredicates")
+				.withExactArgs(sinon.match.same(oElement1), sinon.match.same(oFetchTypesResult));
+
+			// code under test
+			oCache.handleResponse(2, 4, oResult, oFetchTypesResult);
+
+			assert.strictEqual(oCache.sContext, sDataContext);
+			assert.strictEqual(oCache.iLimit, bWithCount ? iCount : iLimit);
+			assert.strictEqual(oCache.aElements[2], oElement0);
+			assert.strictEqual(oCache.aElements[3], oElement1);
+			assert.strictEqual(oCache.aElements.$byPredicate["foo"], oElement0);
+			assert.strictEqual(Object.keys(oCache.aElements.$byPredicate).length, 1);
+		});
+	});
+
+	//*********************************************************************************************
+	[{
+		sTitle : "empty read after @odata.count returned from server",
+		sCount : "42",
+		iStart : 100,
+		iExpectedCount : 42,
+		iExpectedLength : 42
+	}, {
+		sTitle : "short read without server length",
+		iStart : 100,
+		vValue : [{}],
+		iExpectedCount : 101,
+		iExpectedLength : 101
+	}, {
+		sTitle : "empty read without knowing length",
+		iStart : 100,
+		iExpectedCount : undefined
+	}, {
+		sTitle : "empty read starting at 0",
+		iStart : 0,
+		iExpectedCount : 0
+	}, {
+		sTitle : "empty read before @odata.count returned from server",
+		sCount : "42",
+		iStart : 30,
+		iExpectedCount : 30,
+		iExpectedLength : 30
+	}].forEach(function (oFixture) {
+		QUnit.test("CollectionCache#handleResponse: " + oFixture.sTitle, function (assert) {
+			var oCache = this.createCache("Employees"),
+				aElements = [],
+				oFetchTypesResult = {},
+				oHelperMock = this.mock(_Helper),
+				iLimit = {},
+				oResult = {
+					"@odata.context" : "foo",
+					"value" : oFixture.vValue || []
+				};
+
+			oCache.mChangeListeners = {};
+			oCache.aElements = aElements;
+			oCache.aElements.$count = undefined;
+			oCache.iLimit = iLimit;
+
+			if ("sCount" in oFixture){
+				oResult["@odata.count"] = oFixture.sCount;
+
+				oHelperMock.expects("updateCache")
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+						sinon.match.same(oCache.aElements), {$count : 42})
+					.callsFake(function () {
+						oCache.aElements.$count = oFixture.iExpectedCount;
+					});
+			}
+			this.mock(_Cache).expects("computeCount").withExactArgs(sinon.match.same(oResult));
+			oHelperMock.expects("updateCache")
+				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
+					sinon.match.same(oCache.aElements), {$count : oFixture.iExpectedCount});
+
+			// code under test
+			oCache.handleResponse(oFixture.iStart, oFixture.iStart + 10, oResult,
+				oFetchTypesResult);
+
+			assert.strictEqual(oCache.aElements.length,
+				oFixture.iExpectedLength || oFixture.iStart);
+			assert.strictEqual(oCache.iLimit, oFixture.iExpectedCount);
+		});
+	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bTail) {
+		QUnit.test("CollectionCache#requestElements: bTail = " + bTail, function (assert) {
+			var oCache = this.createCache("Employees"),
+				oCacheMock = this.mock(oCache),
+				iEnd = 10,
+				oGroupLock = {},
+				fnDataRequested = {},
+				sResourcePath = {},
+				oResult = {},
+				iStart = 0,
+				mTypeForMetaPath = {},
+				oFetchPromise = Promise.resolve(mTypeForMetaPath),
+				oPromise,
+				oRequestPromise = Promise.resolve(oResult);
+
+			oCache.bSentReadRequest = false;
+			oCache.aElements.$tail = undefined;
+
+			oCacheMock.expects("getResourcePath").withExactArgs(iStart, iEnd)
+				.returns(sResourcePath);
+			this.oRequestorMock.expects("request")
+				.withExactArgs("GET", sinon.match.same(sResourcePath), sinon.match.same(oGroupLock),
+					/*mHeaders*/undefined, /*oPayload*/undefined, sinon.match.same(fnDataRequested))
+				.returns(oRequestPromise);
+			oCacheMock.expects("fetchTypes").withExactArgs().returns(oFetchPromise);
+			oCacheMock.expects("handleResponse")
+				.withExactArgs(iStart, iEnd, sinon.match.same(oResult),
+					sinon.match.same(mTypeForMetaPath));
+			oCacheMock.expects("fill")
+				.withExactArgs(sinon.match(function (oSyncPromise) {
+					oPromise = oSyncPromise;
+					if (bTail) {
+						oCache.aElements.$tail = oPromise;
+					}
+					return oPromise instanceof SyncPromise;
+				}),iStart, iEnd);
+
+			// code under test
+			oCache.requestElements(iStart, iEnd, oGroupLock, fnDataRequested);
+
+			assert.strictEqual(oCache.bSentReadRequest, true);
+			assert.strictEqual(oCache.aElements.$tail, bTail ? oPromise : undefined);
+
+			return Promise.all([oFetchPromise, oRequestPromise, oPromise]).then(function () {
+				assert.strictEqual(oCache.aElements.$tail, undefined);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("CollectionCache#requestElements: Error", function (assert) {
+		var oCache = this.createCache("Employees"),
+			oCacheMock = this.mock(oCache),
+			iEnd = 10,
+			oError = new Error(),
+			oExpectation,
+			oGroupLock = {},
+			fnDataRequested = {},
+			sResourcePath = {},
+			iStart = 0,
+			mTypes = {},
+			oFetchPromise = Promise.resolve(mTypes),
+			oRequestPromise = Promise.reject(oError);
+
+		oCache.bSentReadRequest = false;
+
+		oCacheMock.expects("getResourcePath").withExactArgs(iStart, iEnd).returns(sResourcePath);
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", sinon.match.same(sResourcePath), sinon.match.same(oGroupLock),
+				/*mHeaders*/undefined, /*oPayload*/undefined, sinon.match.same(fnDataRequested))
+			.returns(oRequestPromise);
+		oCacheMock.expects("fetchTypes").withExactArgs().returns(oFetchPromise);
+		oCacheMock.expects("handleResponse").never();
+		oExpectation = oCacheMock.expects("fill")
+			.withExactArgs(sinon.match.instanceOf(SyncPromise),iStart, iEnd);
+		oCacheMock.expects("fill").withExactArgs(undefined, iStart, iEnd);
+
+		// code under test
+		oCache.requestElements(iStart, iEnd, oGroupLock, fnDataRequested);
+
+		assert.strictEqual(oCache.bSentReadRequest, true);
+
+		return Promise.all([oFetchPromise, oRequestPromise]).catch(function () {
+			var oPromise = oExpectation.args[0][0];
+
+			return oPromise.then(function () {
+				assert.ok(false, "Promise needs to be rejected");
+			}, function (oRequestError) {
+				assert.strictEqual(oRequestError, oError);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("CollectionCache#read: infinite prefetch, $skip=0", function (assert) {
 		var oCache = this.createCache("Employees");
 
