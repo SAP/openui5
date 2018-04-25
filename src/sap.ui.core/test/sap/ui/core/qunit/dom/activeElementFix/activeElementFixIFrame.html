@@ -1,0 +1,31 @@
+<!--
+	This file is used by sap/ui/core/qunit/dom/activeElementFix.qunit.html
+ -->
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="UTF-8" >
+		<title>activeElementFix iframe</title>
+
+		<!-- minimal bootstrap code starts here -->
+		<script src="../../../../../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_belize"></script>
+		<!-- end of minimal bootstrap code -->
+		<script>
+			try {
+				// Without the activeElementFix, this would throw an "Unspecified error" exception in IE11
+				var activeElement = document.activeElement;
+				window.sapUiDomActiveElementAccessSucceeded = true;
+				// parent.postMessage("ok", "*");
+			} catch (err) {
+				window.sapUiDomActiveElementAccessSucceeded = false;
+				window.sapUiDomActiveElementAccessError = err.message;
+				// parent.postMessage(err.message, "*");
+			}
+		</script>
+	</head>
+	<body>
+	</body>
+</html>
