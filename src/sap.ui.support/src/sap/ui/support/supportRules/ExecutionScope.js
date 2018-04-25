@@ -169,6 +169,8 @@ sap.ui.define(
 				 * not public aggregations
 				 * @param {boolean} oConfig.cloned Option to exclude elements that are
 				 * clones of list bindings
+				 * @public
+				 * @function
 				 * @returns {Array} Array of matched elements
 				 * @alias sap.ui.support.ExecutionScope.getElements
 				 */
