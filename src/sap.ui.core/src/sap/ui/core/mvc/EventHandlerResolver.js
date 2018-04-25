@@ -103,7 +103,8 @@ sap.ui.define([
 							fnHandler = (function(sFunctionName, oController) { // the previous fnHandler is not used because the expression parser resolves and calls the original handler function
 								return function(oEvent) { // the actual event handler function; soon enriched with more context, then calling the configured fnHandler
 
-									var oParametersModel, oSourceModel;
+									var oParametersModel, oSourceModel,
+										sExpression = sName; // the expression to actually pass to the parser;
 
 									// configure the resolver element with additional models
 									if (sName.indexOf("$parameters") > -1) {
@@ -113,23 +114,26 @@ sap.ui.define([
 										oSourceModel = new MOM(oEvent.getSource());
 									}
 
-									var mGlobals = {"oController": oController};
+									var mGlobals = {"$controller": oController, $event: oEvent};
 									if (sFunctionName.indexOf(".") > 0) {
 										// if function has no leading dot (which would mean it is a Controller method), but has a dot later on, accept the first component as global object
 										var sGlobal = sFunctionName.split(".")[0];
 										mGlobals[sGlobal] = window[sGlobal];
 
-									} else if (sFunctionName.indexOf(".") === -1 && oController && oController[sFunctionName]) {
-										// if function has no dot at all, and oController has a member with the same name, this member should be used as function
-										// (this tells the expression parser to use the same logic as applied above)
-										mGlobals[sFunctionName] = oController[sFunctionName];
-									}
+									} else if (sFunctionName.indexOf(".") === -1) {
+										if (oController && oController[sFunctionName]) {
+											// if function has no dot at all, and oController has a member with the same name, this member should be used as function
+											// (this tells the expression parser to use the same logic as applied above)
+											sExpression = "$controller." + sExpression;
 
-									// TODO: introduce $event or so later, then add it as another global with value oEvent
+										} else if (window[sFunctionName]) {
+											mGlobals[sFunctionName] = window[sFunctionName];
+										}
+									}
 
 									// the following line evaluates the expression
 									// in case all parameters are constants, it already calls the event handler along with all its arguments, otherwise it returns a binding info
-									var oExpressionParserResult = BindingParser.parseExpression(sName.replace(/^\./, "oController."), 0, {oContext: oController}, mGlobals);
+									var oExpressionParserResult = BindingParser.parseExpression(sExpression.replace(/^\./, "$controller."), 0, {oContext: oController}, mGlobals);
 
 									if (oExpressionParserResult.result) { // a binding info
 										// we need to trigger evaluation (but we don't need the result, evaluation already calls the event handler)
