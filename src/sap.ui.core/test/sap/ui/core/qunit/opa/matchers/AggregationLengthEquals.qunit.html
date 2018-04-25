@@ -25,15 +25,19 @@
 			sap.ui.require([
 				"sap/ui/test/matchers/AggregationLengthEquals",
 				"sap/m/ComboBox",
-				"sap/ui/core/ListItem"
-			], function (AggregationLengthEquals, ComboBox, ListItem) {
+				"sap/ui/core/ListItem",
+				"sap/m/ObjectHeader",
+				"sap/m/Column"
+			], function (AggregationLengthEquals, ComboBox, ListItem, ObjectHeader, Column) {
 
 				QUnit.module("AggregationLengthEquals", {
 					beforeEach: function () {
 						this.oComboBox = new ComboBox("myCB");
+						this.oColumn = new Column({header: new ObjectHeader({title: "foo"})});
 					},
 					afterEach: function () {
 						this.oComboBox.destroy();
+						this.oColumn.destroy();
 					}
 				});
 
@@ -89,6 +93,14 @@
 					// Assert
 					assert.strictEqual(bResult, false, "Did not match");
 					sinon.assert.calledWith(oErrorSpy, "Control 'Element sap.m.ComboBox#myCB' does not have an aggregation called 'anAggregationThatWillNeverBeAddedToTheCombobox'");
+				});
+
+				QUnit.test("Should match aggregation with cardinality 0..1", function (assert) {
+					var oMatcher = new AggregationLengthEquals({name: "header", length: 1});
+
+					var bResult = oMatcher.isMatching(this.oColumn);
+
+					assert.ok(bResult, "Matched one control");
 				});
 
 				QUnit.start();

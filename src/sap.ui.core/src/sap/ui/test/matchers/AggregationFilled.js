@@ -46,7 +46,9 @@ sap.ui.define(['jquery.sap.global', './Matcher'], function ($, Matcher) {
 				return false;
 			}
 
-			var bFilled = !!fnAggregation.call(oControl).length;
+			var vAggregation = fnAggregation.call(oControl);
+			var aAggregation = $.isArray(vAggregation) ? vAggregation : [vAggregation];
+			var bFilled = !!aAggregation.length;
 			if (!bFilled) {
 				this._oLogger.debug("Control '" + oControl + "' aggregation '" + sAggregationName + "' is empty");
 			}

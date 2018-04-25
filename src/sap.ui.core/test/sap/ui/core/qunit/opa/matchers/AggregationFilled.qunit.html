@@ -25,15 +25,19 @@
 			sap.ui.require([
 				"sap/ui/test/matchers/AggregationFilled",
 				"sap/m/ComboBox",
-				"sap/ui/core/ListItem"
-			], function (AggregationFilled, ComboBox, ListItem) {
+				"sap/ui/core/ListItem",
+				"sap/m/ObjectHeader",
+				"sap/m/Column"
+			], function (AggregationFilled, ComboBox, ListItem, ObjectHeader, Column) {
 
 				QUnit.module("AggregationFilled", {
 					beforeEach: function () {
 						this.oComboBox = new ComboBox("myCB");
+						this.oColumn = new Column({header: new ObjectHeader({title: "foo"})});
 					},
 					afterEach: function () {
 						this.oComboBox.destroy();
+						this.oColumn.destroy();
 					}
 				});
 
@@ -49,6 +53,14 @@
 
 					// Assert
 					assert.ok(bResult, "Matched because there was an item");
+				});
+
+				QUnit.test("Should match aggregation with cardinality 0..1", function (assert) {
+					var oMatcher = new AggregationFilled({name: "header"});
+
+					var bResult = oMatcher.isMatching(this.oColumn);
+
+					assert.ok(bResult, "Matched one control");
 				});
 
 				QUnit.test("Should not match an empty aggregation", function(assert) {
