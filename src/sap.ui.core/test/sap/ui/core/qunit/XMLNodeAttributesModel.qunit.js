@@ -107,4 +107,19 @@ sap.ui.require([
 
 		assert.strictEqual(oPanelModel.getProperty("/metadataContexts/model"), "model", "Accessing via /metadataContexts/model give the model which aids templating");
 	});
+
+	QUnit.test("Child aggregations are evaluated correctly", function(assert) {
+		var oPanelNode = this.xml.querySelector('#panel');
+		assert.ok(oPanelNode, "There is a panel node");
+
+		var oPanelModel = new XMLNodeAttributesModel(oPanelNode, this.oVisitorStub, "panel");
+
+		var vContent = oPanelModel.getProperty("/content"), bArray = jQuery.isArray(vContent);
+
+		assert.strictEqual(bArray, true, "The content of the panel is an array of controls");
+		assert.strictEqual(vContent.length, 2, "The panel has two children");
+
+		var oTableNode = this.xml.querySelector('#table');
+		assert.deepEqual(vContent[0], oTableNode, "The first child is the table");
+	});
 });

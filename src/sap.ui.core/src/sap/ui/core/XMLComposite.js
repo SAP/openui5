@@ -14,8 +14,8 @@
  */
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/core/XMLCompositeMetadata', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/core/util/XMLPreprocessor',
-	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel'
-], function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel) {
+	'sap/ui/model/json/JSONModel', 'sap/ui/core/Fragment', 'sap/ui/base/ManagedObject', 'sap/ui/base/DataType', 'sap/ui/model/base/XMLNodeAttributesModel', 'sap/ui/core/util/reflection/XmlTreeModifier'
+], function (jQuery, Control, XMLCompositeMetadata, ManagedObjectModel, XMLPreprocessor, JSONModel, Fragment, ManagedObject, DataType, XMLNodeAttributesModel, XmlTreeModifier) {
 	"use strict";
 
 	// private functions
@@ -86,8 +86,8 @@ sap.ui.define([
 				return null;
 
 			} else if (mAggregations.hasOwnProperty(aPath[0])) {
-				var oAggregation = mAggregations[aPath[0]], sControlName = oMetadata.getName(), sNamespace = sControlName.slice(0, sControlName.lastIndexOf("."));
-				var oAggregationModel, oContent = oElement.getElementsByTagNameNS(sNamespace, aPath[0])[0];
+				var oAggregation = mAggregations[aPath[0]];
+				var oAggregationModel, oContent = XmlTreeModifier.getAggregation(oElement, aPath[0]);
 				if (!oContent) {
 					return null;
 				}
