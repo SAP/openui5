@@ -42,7 +42,16 @@ var oIconList = new sap.m.List({
 	noDataText: "Well Done!",
 	width: "25rem",
 	growing: true,
-	inset: true
+	inset: true,
+	dragDropConfig: new sap.ui.core.dnd.DragInfo({
+		sourceAggregation: "items",
+		dragStart: function() {
+			oDescList.addStyleClass("highlight");
+		},
+		dragEnd: function() {
+			oDescList.removeStyleClass("highlight");
+		}
+	})
 }).bindItems({
 	path: "/game",
 	sorter: new sap.ui.model.Sorter("random"),
@@ -51,13 +60,7 @@ var oIconList = new sap.m.List({
 		icon: "sap-icon://{icon}",
 		highlight: "Information",
 		dragDropConfig: new sap.ui.core.dnd.DragInfo({
-			groupName: "{icon}",
-			dragStart: function() {
-				oDescList.addStyleClass("highlight");
-			},
-			dragEnd: function() {
-				oDescList.removeStyleClass("highlight");
-			}
+			groupName: "{icon}"
 		})
 	})
 });

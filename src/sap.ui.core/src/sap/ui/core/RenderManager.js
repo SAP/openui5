@@ -890,7 +890,7 @@ sap.ui.define([
 			}
 		}
 
-		// whether is this element configured to be draggable
+		// whether this element is configured to be draggable
 		var bDraggable = oElement.getDragDropConfig().some(function(vDragDropInfo){
 			return vDragDropInfo.isDraggable(oElement);
 		});
