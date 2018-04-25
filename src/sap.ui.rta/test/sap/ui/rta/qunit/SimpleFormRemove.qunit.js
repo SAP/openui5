@@ -1,30 +1,35 @@
-/*global QUnit sinon*/
+/* global QUnit*/
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+QUnit.config.autostart = false;
 
-if (window.blanket) {
-	window.blanket.options("sap-ui-cover-only", "sap/ui/rta");
-}
+sap.ui.require([
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/plugin/TabHandling",
+	"sap/ui/dt/plugin/MouseSelection",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/command/CommandFactory",
+	"sap/ui/fl/Utils",
+	"sap/ui/core/UIComponent",
+	"sap/ui/layout/form/SimpleFormLayout",
+	"sap/ui/thirdparty/sinon-4"
+],
+function(
+	DesignTime,
+	OverlayRegistry,
+	TabHandlingPlugin,
+	MouseSelectionPlugin,
+	RemovePlugin,
+	CommandFactory,
+	Utils,
+	UIComponent,
+	SimpleFormLayout,
+	sinon
+) {
 
-jQuery.sap.require("sap.ui.dt.DesignTime");
-jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-jQuery.sap.require("sap.ui.dt.plugin.TabHandling");
-jQuery.sap.require("sap.ui.dt.plugin.MouseSelection");
-jQuery.sap.require("sap.ui.rta.plugin.Remove");
-jQuery.sap.require("sap.ui.rta.command.CommandFactory");
-jQuery.sap.require("sap.ui.layout.form.SimpleForm");
-jQuery.sap.require("sap.ui.layout.form.ResponsiveLayout");
-jQuery.sap.require("sap.ui.layout.ResponsiveFlowLayoutData");
-jQuery.sap.require("sap.ui.layout.form.ResponsiveGridLayout");
-jQuery.sap.require("sap.ui.layout.form.GridLayout");
-jQuery.sap.require("sap.ui.layout.form.GridContainerData");
-jQuery.sap.require("sap.ui.layout.form.GridElementData");
-
-(function(DesignTime, OverlayRegistry, TabHandlingPlugin, MouseSelectionPlugin, RemovePlugin, CommandFactory) {
 	"use strict";
 
-	var fnParamerizedTest = function(oSimpleFormLayout) {
-
+	function fnParamerizedTest(oSimpleFormLayout) {
 		var oComponent;
 		var oView;
 		var oDesignTime;
@@ -32,20 +37,20 @@ jQuery.sap.require("sap.ui.layout.form.GridElementData");
 		var oRemove;
 
 		var sandbox = sinon.sandbox.create();
-		var CommandFactory = new sap.ui.rta.command.CommandFactory();
+		var oCommandFactory = new CommandFactory();
 
 		QUnit.module("Given the SimpleForm in RTA using " + oSimpleFormLayout, {
 			beforeEach : function(assert) {
 
-				oComponent = new sap.ui.core.UIComponent();
-				sandbox.stub(sap.ui.fl.Utils, "getAppComponentForControl").returns(oComponent);
+				oComponent = new UIComponent();
+				sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
 				var done = assert.async();
 
 				oView = sap.ui.xmlview(oComponent.createId("testView"), "sap.ui.rta.test.TestSimpleForm");
 				oSimpleForm = sap.ui.getCore().byId(oView.createId("SimpleForm0"));
 				oSimpleForm.setLayout(oSimpleFormLayout);
-				oView.placeAt("content");
+				oView.placeAt("qunit-fixture");
 
 				sap.ui.getCore().applyChanges();
 
@@ -53,10 +58,10 @@ jQuery.sap.require("sap.ui.layout.form.GridElementData");
 				var oSelectionPlugin = new MouseSelectionPlugin();
 
 				oRemove = new RemovePlugin({
-					commandFactory : CommandFactory
+					commandFactory : oCommandFactory
 				});
 
-				oDesignTime = new sap.ui.dt.DesignTime({
+				oDesignTime = new DesignTime({
 					plugins : [oTabHandlingPlugin, oSelectionPlugin, oRemove],
 					rootElements : [oView]
 				});
@@ -154,11 +159,11 @@ jQuery.sap.require("sap.ui.layout.form.GridElementData");
 			oRemove.removeElement(aElements);
 		});
 
-	};
+	}
 
-	fnParamerizedTest(sap.ui.layout.form.SimpleFormLayout.ResponsiveLayout);
-	fnParamerizedTest(sap.ui.layout.form.SimpleFormLayout.GridLayout);
-	fnParamerizedTest(sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout);
+	fnParamerizedTest(SimpleFormLayout.ResponsiveLayout);
+	fnParamerizedTest(SimpleFormLayout.GridLayout);
+	fnParamerizedTest(SimpleFormLayout.ResponsiveGridLayout);
 
-}(sap.ui.dt.DesignTime, sap.ui.dt.OverlayRegistry, sap.ui.dt.plugin.TabHandling,
-	sap.ui.dt.plugin.MouseSelection, sap.ui.rta.plugin.Remove, sap.ui.rta.command.CommandFactory));
+	QUnit.start();
+});
