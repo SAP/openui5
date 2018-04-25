@@ -551,19 +551,22 @@ function(
 	 * @param  {string} sTitleKey The text key for the title of the message box
 	 * @param  {string} sMessageKey The text key for the message of the message box
 	 * @param  {any} oError Optional - If an error is passed on, the message box text is derived from it
+	 * @param  {string} [sAction] text key for the confirm button default @see sap.m.MessageBox.show
 	 * @return {Promise} Promise displaying the message box; resolves when it is closed
 	 * @private
 	 */
-	Utils._showMessageBox = function(oMessageType, sTitleKey, sMessageKey, oError) {
+	Utils._showMessageBox = function(oMessageType, sTitleKey, sMessageKey, oError, sAction) {
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sMessage = oResourceBundle.getText(sMessageKey, oError ? [oError.message || oError] : undefined);
 		var sTitle = oResourceBundle.getText(sTitleKey);
+		var vAction = sAction ? oResourceBundle.getText(sAction) : MessageBox.Action.OK;
 
 		return new Promise(function(resolve) {
 			MessageBox.show(sMessage, {
 				icon: oMessageType,
 				title: sTitle,
 				onClose: resolve,
+				actions: vAction,
 				styleClass: Utils.getRtaStyleClassName()
 			});
 		});
