@@ -320,7 +320,7 @@ function(
 		// Apply Overlay position first, then extra logic based on this new position
 		Overlay.prototype._setPosition.apply(this, arguments);
 
-		this._sortAggregationOverlaysInDomOrder();
+		this._sortChildren(this.getChildrenDomRef());
 
 		this.getScrollContainers().forEach(function(mScrollContainer, iIndex) {
 			// TODO: write Unit test for the case when getAssociatedDomRef() returns undefined (domRef func returns undefined)
@@ -332,6 +332,7 @@ function(
 				this._setSize($ScrollContainerOverlayDomRef, DOMUtil.getGeometry(oScrollContainerDomRef));
 				Overlay.prototype._setPosition.call(this, $ScrollContainerOverlayDomRef, DOMUtil.getGeometry(oScrollContainerDomRef), this.$());
 				this._handleOverflowScroll(DOMUtil.getGeometry(oScrollContainerDomRef), $ScrollContainerOverlayDomRef, this);
+				this._sortChildren($ScrollContainerOverlayDomRef.get(0));
 			} else {
 				this._deleteDummyContainer($ScrollContainerOverlayDomRef);
 				$ScrollContainerOverlayDomRef.css("display", "none");
@@ -340,14 +341,14 @@ function(
 	};
 
 	/**
-	 * Sorts aggregation overlays in their visual order
+	 * Sorts children DOM Nodes in their visual order
 	 * @private
 	 */
-	ElementOverlay.prototype._sortAggregationOverlaysInDomOrder = function() {
-		// compares two aggregations domRefs and returns 1, if first aggregation should be bellow in dom order
-		var fnCompareAggregations = function(oAggregationOverlay1, oAggregationOverlay2) {
-			var oGeometry1 = oAggregationOverlay1.getGeometry();
-			var oGeometry2 = oAggregationOverlay2.getGeometry();
+	ElementOverlay.prototype._sortChildren = function(oContainer) {
+		// compares two DOM Nodes and returns 1, if first child should be bellow in dom order
+		var fnCompareChildren = function(oChild1, oChild2) {
+			var oGeometry1 = DOMUtil.getGeometry(oChild1);
+			var oGeometry2 = DOMUtil.getGeometry(oChild2);
 			var oPosition1 = oGeometry1 && oGeometry1.position;
 			var oPosition2 = oGeometry2 && oGeometry2.position;
 
@@ -373,7 +374,20 @@ function(
 					}
 				} else if (oPosition1.top === oPosition2.top) {
 					if (oPosition1.left === oPosition2.left) {
-						return 0;
+						// Give priority to smaller block by height or width
+						if (
+							oGeometry1.size.height < oGeometry2.size.height
+							|| oGeometry1.size.width < oGeometry2.size.width
+						) {
+							return -1;
+						} else if (
+							oGeometry1.size.height > oGeometry2.size.height
+							|| oGeometry1.size.width > oGeometry2.size.width
+						) {
+							return 1;
+						} else {
+							return 0;
+						}
 					} else if (oPosition1.left < oPosition2.left) {
 						return -1; // order is correct
 					} else {
@@ -399,33 +413,23 @@ function(
 			return 0;
 		};
 
-		// Filter out not rendered children, e.g. aggregations without children themselves (see AggregationOverlay@render)
-		var aChildrenRendered = [];
-		var aChildrenRest = [];
+		// Exclude dummy scroll containers, because, e.g. in Safari, scrollbar synchronizations on ObjectPage sometimes
+		// drops into in different event loops (JS execution cycles) which leads to invalid intermediate position
+		// on the screen with following sorting. That said, sorting happens for intermediate state and then for real
+		// state of the elements in viewport once again. Thus, excluding these elements allow us to avoid 2 extra sortings.
+		var aChildren = jQuery(oContainer).find('>:not(.sapUiDtDummyScrollContainer)').toArray();
+		var aSorted = aChildren.slice().sort(fnCompareChildren);
 
-		this.getChildren().forEach(function (oChild) {
-			if (oChild.isReady()) {
-				aChildrenRendered.push(oChild);
-			} else {
-				aChildrenRest.push(oChild);
-			}
+		var bOrderChanged = aChildren.some(function(oChild, iIndex) {
+			return oChild !== aSorted[iIndex];
 		});
 
-		if (aChildrenRendered.length) {
-			var aSorted = aChildrenRendered.slice().sort(fnCompareAggregations);
+		if (bOrderChanged) {
+			var $Children = jQuery(oContainer);
 
-			var bOrderChanged = aChildrenRendered.some(function(oOverlay, iIndex) {
-				return oOverlay.getId() !== aSorted[iIndex].getId();
-			});
-
-			if (bOrderChanged) {
-				this.removeAllAggregation("children");
-				aSorted
-					.concat(aChildrenRest)
-					.forEach(function(oAggregationOverlay) {
-						this.addChild(oAggregationOverlay);
-					}, this);
-			}
+			aSorted.forEach(function(oChild) {
+				$Children.append(oChild);
+			}, this);
 		}
 
 	};
@@ -541,7 +545,7 @@ function(
 	 * @return {jQuery} - returns DOM Node of scroll container by its index
 	 */
 	ElementOverlay.prototype.getScrollContainerById = function (iIndex) {
-		return this._$children.find('>.' + S_SCROLLCONTAINER_CLASSNAME + '[data-sap-ui-dt-scrollcontainerindex="' + iIndex + '"]');
+		return jQuery(this.getChildrenDomRef()).find('>.' + S_SCROLLCONTAINER_CLASSNAME + '[data-sap-ui-dt-scrollcontainerindex="' + iIndex + '"]');
 	};
 
 	/**

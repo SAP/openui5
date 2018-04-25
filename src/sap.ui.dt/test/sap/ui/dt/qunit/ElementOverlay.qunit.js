@@ -793,28 +793,48 @@ function(
 			this.oVBox.destroy();
 		}
 	}, function () {
-		QUnit.test("check position in control tree", function(assert) {
-			var aAggregationOverlays = this.oLayoutOverlay.getChildren();
-			var iIndexHeaderTitleOverlay = aAggregationOverlays.indexOf(this.oHeaderTitleOverlay);
-			var iIndexHeaderContentOverlay = aAggregationOverlays.indexOf(this.oHeaderContentOverlay);
-			var iIndexSectionsOverlay = aAggregationOverlays.indexOf(this.oSectionsOverlay);
-			var iIndexFooterOverlay = aAggregationOverlays.indexOf(this.oFooterOverlay);
-
-			assert.ok(iIndexHeaderTitleOverlay < iIndexHeaderContentOverlay, "then the overlay for headerTitle is above headerContent");
-			assert.ok(iIndexHeaderContentOverlay < iIndexSectionsOverlay, "then the overlay for headerContent is above sections");
-			assert.ok(iIndexSectionsOverlay < iIndexFooterOverlay, "then the overlay for sections is above footer");
-		});
 		QUnit.test("check position in DOM tree", function (assert) {
-			var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find('>.sapUiDtOverlay, >.sapUiDtOverlayScrollContainer>.sapUiDtOverlay');
+			var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find('>');
+			var $ScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
+			var a$ScrollContainerChildren = $ScrollContainer.find('>');
 
 			var iIndexHeaderTitleOverlay = a$Children.index(this.oHeaderTitleOverlay.getDomRef());
-			var iIndexHeaderContentOverlay = a$Children.index(this.oHeaderContentOverlay.getDomRef());
-			var iIndexSectionsOverlay = a$Children.index(this.oSectionsOverlay.getDomRef());
+			var iScrollcontainer = a$Children.index($ScrollContainer);
 			var iIndexFooterOverlay = a$Children.index(this.oFooterOverlay.getDomRef());
+			var iIndexHeaderContentOverlay = a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef());
+			var iIndexSectionsOverlay = a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef());
 
-			assert.ok(iIndexHeaderTitleOverlay < iIndexHeaderContentOverlay, "then the overlay for headerTitle is above headerContent");
-			assert.ok(iIndexHeaderContentOverlay < iIndexSectionsOverlay, "then the overlay for headerContent is above sections");
-			assert.ok(iIndexSectionsOverlay < iIndexFooterOverlay, "then the overlay for sections is above footer");
+			assert.ok(iIndexHeaderTitleOverlay < iScrollcontainer, "then the overlay for headerTitle is above scrollcontainer");
+			assert.ok(iScrollcontainer < iIndexFooterOverlay, "then the scrollcontainer is above the overlay for headerTitle");
+			assert.ok(iIndexHeaderContentOverlay < iIndexSectionsOverlay, "then the overlay for headerContent is above the overlay for sections");
+		});
+		QUnit.test("check whether scrollbar position doesn't affect sorting", function (assert) {
+			var fnDone = assert.async();
+
+			var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find('>');
+			var $ScrollContainer = this.oLayoutOverlay.getScrollContainerById(this.oHeaderContentOverlay.getScrollContainerId());
+			var a$ScrollContainerChildren = $ScrollContainer.find('>');
+
+			var iIndexHeaderTitleOverlay = a$Children.index(this.oHeaderTitleOverlay.getDomRef());
+			var iScrollcontainer = a$Children.index($ScrollContainer);
+			var iIndexFooterOverlay = a$Children.index(this.oFooterOverlay.getDomRef());
+			var iIndexHeaderContentOverlay = a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef());
+			var iIndexSectionsOverlay = a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef());
+
+			// FIXME: remove timeout when #1870203056 is implemented
+			setTimeout(function () {
+				var a$Children = jQuery(this.oLayoutOverlay.getChildrenDomRef()).find('>');
+				var a$ScrollContainerChildren = $ScrollContainer.find('>');
+
+				assert.strictEqual(a$Children.index(this.oHeaderTitleOverlay.getDomRef()), iIndexHeaderTitleOverlay);
+				assert.strictEqual(a$Children.index($ScrollContainer), iScrollcontainer);
+				assert.strictEqual(a$Children.index(this.oFooterOverlay.getDomRef()), iIndexFooterOverlay);
+				assert.strictEqual(a$ScrollContainerChildren.index(this.oHeaderContentOverlay.getDomRef()), iIndexHeaderContentOverlay);
+				assert.strictEqual(a$ScrollContainerChildren.index(this.oSectionsOverlay.getDomRef()), iIndexSectionsOverlay);
+				fnDone();
+			}.bind(this));
+
+			$ScrollContainer.scrollTop(300);
 		});
 	});
 
