@@ -6,7 +6,8 @@
   "scripts": {
     "start": "grunt serve",
     "test": "grunt lint",
-    "link-all": "wsrun link"
+    "link-all": "wsrun link",
+    "unlink-all": "wsrun unlink"
   },
   "keywords": [
     "openui5",
