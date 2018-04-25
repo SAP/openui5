@@ -283,11 +283,12 @@ sap.ui.define([
 
 				if (!oVersionInfoData.isOpenUI5 && !oVersionInfoData.isSnapshotVersion) {
 					jQuery.ajax({
-						url: "versionoverview.json"
+						url: "neo-app.json"
 					}).done(function(data) {
-						if (data.versions && data.versions.length) {
-							oVersionInfoData.isBetaVersion = data.versions.some(function (element) {
-								return element.beta && element.beta.indexOf(oVersionInfoData.openUi5Version + '-beta') > -1;
+						if (data.routes && data.routes.length) {
+							var sOpenUI5BetaVersion = oVersionInfoData.openUi5Version + '-beta'; // Concatenates openUI5 version with '-beta' string
+							oVersionInfoData.isBetaVersion = data.routes.some(function (element) {
+								return element.target && element.target.version && (element.target.version === sOpenUI5BetaVersion);
 							});
 						}
 						this.getModel("versionData").setData(oVersionInfoData, false /* mo merge with previous data */);
