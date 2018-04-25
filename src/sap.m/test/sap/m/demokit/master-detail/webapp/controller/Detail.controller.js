@@ -39,7 +39,7 @@ sap.ui.define([
 			 * Event handler when the share by E-Mail button has been clicked
 			 * @public
 			 */
-			onShareEmailPress : function () {
+			onSendEmailPress : function () {
 				var oViewModel = this.getModel("detailView");
 
 				sap.m.URLHelper.triggerEmail(
@@ -169,6 +169,31 @@ sap.ui.define([
 				oViewModel.setProperty("/busy", true);
 				// Restore original busy indicator delay for the detail view
 				oViewModel.setProperty("/delay", iOriginalViewBusyDelay);
+			},
+
+			/**
+			 * Set the full screen mode to false and navigate to master page
+			 */
+			onCloseDetailPress: function () {
+				this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreenMode", false);
+				this.getRouter().navTo("master");
+			},
+
+			/**
+			 * Toggle between full and non full screen mode.
+			 */
+			toggleFullScreen: function () {
+				var bFullScreen = this.getModel("appView").getProperty("/actionButtonsInfo/midColumn/fullScreenMode");
+				this.getModel("appView").setProperty("/actionButtonsInfo/midColumn/fullScreenMode", !bFullScreen);
+				if (!bFullScreen) {
+					// store current layout and go full screen
+					this.getModel("appView").setProperty("/previousLayout", this.getModel("appView").getProperty("/layout"));
+					this.getModel("appView").setProperty("/layout", "MidColumnFullScreen");
+				} else {
+					// reset to previous layout
+					this.getModel("appView").setProperty("/layout",  this.getModel("appView").getProperty("/previousLayout"));
+				}
+
 			}
 
 		});
