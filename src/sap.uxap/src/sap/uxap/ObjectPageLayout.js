@@ -567,6 +567,11 @@ sap.ui.define([
 		var oDynamicPageTitle = this.getHeaderTitle(),
 			vResult = this.setProperty("toggleHeaderOnTitleClick", bToggleHeaderOnTitleClick, true);
 
+		if (!oDynamicPageTitle || !oDynamicPageTitle.supportsToggleHeaderOnTitleClick()) {
+			jQuery.sap.log.warning("Setting toggleHeaderOnTitleClick will not take effect as it is not supported in the ObjectPageHeader, read the API Doc for more information", this);
+			return vResult;
+		}
+
 		bToggleHeaderOnTitleClick = this.getProperty("toggleHeaderOnTitleClick");
 		this.$().toggleClass("sapUxAPObjectPageLayoutTitleClickEnabled", bToggleHeaderOnTitleClick);
 		this._updateToggleHeaderVisualIndicators();
@@ -598,12 +603,14 @@ sap.ui.define([
 
 	ObjectPageLayout.prototype._snapHeader = function (bAppendHeaderToContent) {
 
-		if (this._bPinned) {
-			jQuery.sap.log.debug("ObjectPage :: aborted snapping, header is pinned", this);
-			return;
-		}
+		var bIsPageTop,
+			oHeaderContent = this._getHeaderContent();
 
-		var bIsPageTop;
+		if (oHeaderContent && oHeaderContent.supportsPinUnpin() && this._bPinned) {
+			this._unPin();
+			oHeaderContent.getAggregation("_pinButton").setPressed(false);
+			bAppendHeaderToContent = true;
+		}
 
 		this._toggleHeaderTitle(false /* not expand */, true /* user interaction */);
 		this._moveAnchorBarToTitleArea();
@@ -650,6 +657,9 @@ sap.ui.define([
 			//recalculate layout of the content area
 			this._adjustHeaderHeights();
 			this._requestAdjustLayout();
+			if (exists(this._$stickyAnchorBar)) {
+				this._$stickyAnchorBar.addClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
+			}
 			return;
 		}
 
@@ -658,6 +668,9 @@ sap.ui.define([
 		this._scrollTo(0, 0, 0);
 		this._bHeaderExpanded = true;
 		this._updateToggleHeaderVisualIndicators();
+		if (exists(this._$stickyAnchorBar)) {
+			this._$stickyAnchorBar.removeClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
+		}
 	};
 
 	ObjectPageLayout.prototype._handleDynamicTitlePress = function () {
@@ -799,6 +812,7 @@ sap.ui.define([
 	 ************************************************************************************/
 
 	ObjectPageLayout.prototype.onAfterRendering = function () {
+		var oHeaderContent = this._getHeaderContent();
 
 		this._ensureCorrectParentHeight();
 
@@ -816,6 +830,10 @@ sap.ui.define([
 				clearTimeout(this._iAfterRenderingDomReadyTimeout);
 			}
 			this._iAfterRenderingDomReadyTimeout = jQuery.sap.delayedCall(ObjectPageLayout.HEADER_CALC_DELAY, this, this._onAfterRenderingDomReady);
+		}
+
+		if (oHeaderContent && oHeaderContent.supportsPinUnpin()) {
+			this.$().toggleClass("sapUxAPObjectPageLayoutHeaderPinnable", oHeaderContent.getPinnable());
 		}
 
 		// Attach expand button event
@@ -2537,6 +2555,9 @@ sap.ui.define([
 			this._bHeaderExpanded = true;
 			this._adjustHeaderHeights();
 			this._updateToggleHeaderVisualIndicators();
+			if (exists(this._$stickyAnchorBar)) {
+				this._$stickyAnchorBar.removeClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
+			}
 		}
 	};
 
@@ -3249,6 +3270,10 @@ sap.ui.define([
 		if (exists($oObjectPage)) {
 			$oObjectPage.addClass("sapUxAPObjectPageLayoutHeaderPinned");
 		}
+
+		if (exists(this._$stickyAnchorBar)) {
+			this._$stickyAnchorBar.addClass("sapUxAPObjectPageStickyAnchorBarPaddingTop");
+		}
 	};
 
 	ObjectPageLayout.prototype._unPin = function () {
@@ -3358,7 +3383,7 @@ sap.ui.define([
 			bCollapseVisualIndicatorVisible,
 			bExpandVisualIndicatorVisible;
 
-		if (!this.getToggleHeaderOnTitleClick() || this._bPinned) {
+		if (!this.getToggleHeaderOnTitleClick()) {
 			bCollapseVisualIndicatorVisible = false;
 			bExpandVisualIndicatorVisible = false;
 		} else {

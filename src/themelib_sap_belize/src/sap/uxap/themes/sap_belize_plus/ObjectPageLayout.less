@@ -7,16 +7,19 @@
 /* ======================================== */
 /* Title                                    */
 /* ======================================== */
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) .sapFDynamicPageTitle:hover {
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled .sapFDynamicPageTitle:hover {
 	background-color: darken(@sapUiObjectHeaderBackground, 3);
 }
 
+.sapUxAPObjectPageLayoutTitleClickEnabled > .sapUxAPObjectPageHeaderStickied > .sapFDynamicPageTitle {
+	box-shadow: @sapUiShadowHeader;
+}
 
 /* ======================================== */
 /* Title and Toggle Header Visual Indicator */
 /* ======================================== */
 .sapUxAPObjectPageLayout {
-  &.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
+  &.sapUxAPObjectPageLayoutTitleClickEnabled {
     .sapFDynamicPageTitle:hover,
     &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
       background-color: darken(@sapUiObjectHeaderBackground, 3);
@@ -55,7 +58,7 @@
 
 .sapUshellShell {
   .sapUxAPObjectPageLayout {
-    &.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
+    &.sapUxAPObjectPageLayoutTitleClickEnabled {
       .sapFDynamicPageTitle:hover,
       &.sapUxAPObjectPageLayoutTitleForceHovered .sapFDynamicPageTitle {
         background-color: fade(@sapUiObjectHeaderBackground, 75%);

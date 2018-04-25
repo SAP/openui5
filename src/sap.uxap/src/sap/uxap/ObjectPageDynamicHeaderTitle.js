@@ -81,6 +81,14 @@ sap.ui.define([
 		};
 
 		/**
+		 * Required by the {@link sap.uxap.IHeaderTitle} interface
+		 * @returns {boolean}
+		 */
+		ObjectPageDynamicHeaderTitle.prototype.supportsToggleHeaderOnTitleClick = function () {
+			return true;
+		};
+
+		/**
 		 * Required by the {@link sap.uxap.IHeaderTitle} interface.
 		 * @returns {boolean}
 		 */
