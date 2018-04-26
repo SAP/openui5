@@ -2108,10 +2108,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device',
 				});
 			}
 			// request contexts from binding
+			var bSuppressUpdate = false;
 			if (sReason === ChangeReason.Filter || sReason === ChangeReason.Sort) {
 				this.setFirstVisibleRow(0);
+				bSuppressUpdate = true;
 			}
-			this._updateBindingContexts(this._calculateRowsToDisplay(), true);
+			this._updateBindingContexts(this._calculateRowsToDisplay(), bSuppressUpdate);
 		}
 	};
 
