@@ -364,14 +364,14 @@
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 
 			// Act: change height without invalidating any control => on the the resize handler will be responsible for re-adjusting the selection
-			sap.ui.getCore().byId("b1").getDomRef().style.height = "200px";
+			sap.ui.getCore().byId("b1").getDomRef().style.height = "250px";
 
 			setTimeout(function() {
 				assert.equal(oObjectPage.getSelectedSection(), oSecondSection.getId(), "selected section is correct");
 				done();
 			}, this.iLoadingDelay);
 
-		});
+		}.bind(this));
 
 		helpers.renderObject(oObjectPage);
 	});
@@ -1503,7 +1503,7 @@
 		assert.strictEqual(oStateChangeListener.callCount, 2, "stateChange event was fired twice");
 	});
 
-	QUnit.test("ObjectPage header is preserved in title on resize", function (assert) {
+	QUnit.test("ObjectPage header is preserved in title on screen resize", function (assert) {
 		// arrange
 		var oObjectPage = this.oObjectPage,
 			oFakeEvent = {
@@ -1545,6 +1545,31 @@
 
 			setTimeout(function() {
 				assert.strictEqual(bInvalidateCalled, false, "page was not invalidated during resize");
+				done();
+			}, iDelay);
+		});
+
+	});
+
+	QUnit.test("ObjectPage header is preserved in title on content resize", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			// this delay is already introduced in the ObjectPage resize listener
+			iDelay = sap.uxap.ObjectPageLayout.HEADER_CALC_DELAY + 100,
+			done = assert.async();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// setup: expand the header in the title
+			oObjectPage._scrollTo(0, 200);
+			oObjectPage._expandHeader(true);
+			assert.ok(oObjectPage._bHeaderInTitleArea);
+
+			// act: resize and check if the page invalidates in the resize listener
+			oObjectPage._onUpdateContentSize();
+
+			setTimeout(function() {
+				assert.strictEqual(oObjectPage._bHeaderInTitleArea, true, "page is not snapped on resize");
 				done();
 			}, iDelay);
 		});

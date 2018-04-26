@@ -2260,7 +2260,7 @@ sap.ui.define([
 		this._requestAdjustLayout() // call adjust layout to calculate the new section sizes
 			.then(function () {
 				iScrollTop = this._$opWrapper.scrollTop();
-				this._onScroll({ target: { scrollTop: iScrollTop }});
+				this._updateSelectionOnScroll(iScrollTop);
 			}.bind(this));
 	};
 
@@ -2375,8 +2375,6 @@ sap.ui.define([
 			oHeader = this.getHeaderTitle(),
 			bShouldStick = this._shouldSnapHeaderOnScroll(iScrollTop),
 			bShouldPreserveHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea(),
-			sClosestId,
-			sClosestSubSectionId,
 			bScrolled = false,
 			oPreviousScrollState = this._oLastScrollState,
 			iScrollOffset = oPreviousScrollState ? (oPreviousScrollState.iScrollTop - iScrollTop) : 0;
@@ -2447,6 +2445,44 @@ sap.ui.define([
 
 		jQuery.sap.log.debug("ObjectPageLayout :: lazy loading : Scrolling at " + iScrollTop, "----------------------------------------");
 
+		this._updateSelectionOnScroll(iScrollTop);
+
+		//lazy load only the visible subSections
+		if (this.getEnableLazyLoading()) {
+			//calculate the progress done between this scroll event and the previous one
+			//to see if we are scrolling fast (more than 5% of the page height)
+			this._oLazyLoading.lazyLoadDuringScroll(iScrollTop, oEvent.timeStamp, iPageHeight);
+		}
+
+		if (oHeader && oHeader.supportsTitleInHeaderContent() &&  this.getShowHeaderContent() && this.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector()) {
+			if (iScrollTop === 0) {
+				// if we have arrow from the title inside the ContentHeader and the ContentHeader isn't scrolled we have to put higher z-index to the ContentHeader
+				// otherwise part of the arrow is cut off
+				jQuery.sap.byId(this.getId() + "-scroll").css("z-index", "1000");
+				bScrolled = false;
+			} else if (!bScrolled) {
+				bScrolled = true;
+				// and we have to "reset" the z-index it when we start scrolling
+				jQuery.sap.byId(this.getId() + "-scroll").css("z-index", "0");
+			}
+		}
+	};
+
+	/**
+	 * Finds the section that corresponds to the new scrollTop and sets it as selected section in the anchorBar
+	 * @param iScrollTop
+	 * @private
+	 */
+	ObjectPageLayout.prototype._updateSelectionOnScroll = function(iScrollTop) {
+
+		var iPageHeight = this.iScreenHeight,
+			sClosestId,
+			sClosestSubSectionId;
+
+		if (iPageHeight === 0) {
+			return; // page is hidden
+		}
+
 		//find the currently scrolled section = where position - iScrollTop is closest to 0
 		sClosestId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
 		sClosestSubSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight, true /* subSections only */);
@@ -2484,26 +2520,6 @@ sap.ui.define([
 					section: this.oCore.byId(sClosestId),
 					subSection: this.oCore.byId(sClosestSubSectionId)
 				});
-			}
-		}
-
-		//lazy load only the visible subSections
-		if (this.getEnableLazyLoading()) {
-			//calculate the progress done between this scroll event and the previous one
-			//to see if we are scrolling fast (more than 5% of the page height)
-			this._oLazyLoading.lazyLoadDuringScroll(iScrollTop, oEvent.timeStamp, iPageHeight);
-		}
-
-		if (oHeader && oHeader.supportsTitleInHeaderContent() &&  this.getShowHeaderContent() && this.getShowTitleInHeaderContent() && oHeader.getShowTitleSelector()) {
-			if (iScrollTop === 0) {
-				// if we have arrow from the title inside the ContentHeader and the ContentHeader isn't scrolled we have to put higher z-index to the ContentHeader
-				// otherwise part of the arrow is cut off
-				jQuery.sap.byId(this.getId() + "-scroll").css("z-index", "1000");
-				bScrolled = false;
-			} else if (!bScrolled) {
-				bScrolled = true;
-				// and we have to "reset" the z-index it when we start scrolling
-				jQuery.sap.byId(this.getId() + "-scroll").css("z-index", "0");
 			}
 		}
 	};
