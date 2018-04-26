@@ -1252,6 +1252,7 @@
 
 			QUnit.module("PopUp Position",{
 				beforeEach: function() {
+					this.scrollY = window.scrollY;
 					this.oDialog = new sap.m.Dialog({
 						title: "Some title"
 					});
@@ -1260,6 +1261,7 @@
 				afterEach: function() {
 					this.oDialog.destroy();
 					this.mockPosition = null;
+					window.scrollY = this.scrollY;
 				}
 			});
 
@@ -1271,7 +1273,8 @@
 
 				this.clock.tick(500);
 
-				this.stub(window, "scrollY", 50);
+				window.scrollY = 50;
+
 				this.oDialog.oPopup._applyPosition(this.mockPosition);
 
 				// assert
@@ -1288,7 +1291,8 @@
 
 				this.clock.tick(500);
 
-				this.stub(window, "scrollY", 50);
+				window.scrollY = 50;
+
 				this.oDialog.oPopup._applyPosition(this.mockPosition);
 
 				// assert
@@ -1304,7 +1308,8 @@
 
 				this.clock.tick(500);
 
-				this.stub(window, "scrollY", -50);
+				window.scrollY = -50;
+
 				this.oDialog.oPopup._applyPosition(this.mockPosition);
 
 				// assert
