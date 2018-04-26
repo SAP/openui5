@@ -1,4 +1,21 @@
 <!DOCTYPE HTML>
+<!--
+  Test page that runs all (QUnit and OPA) tests of the UI services team within the QUnit TestRunner.
+
+  The page has two modes. As a default ("full mode") it runs all tests. For 1Ring.qunit.html the
+  test coverage is measured. A coverage of 100% is expected.
+
+  With "#integrationTestsOnly", only the OPA tests and ODataModel.integration.qunit.html (which is
+  part of 1Ring in full mode) are run. Coverage is measured for all tests, but no specific coverage
+  is expected. This mode can be used to see which code is actually tested via integration tests. It
+  can also be used to verify a POC.
+
+  Many of our tests can (and will) be run with "realOData=true" and perform tests against a
+  back-end server using the SimpleProxy servlet. Before embedding itself into the QUnit TestRunner,
+  this page checks that this server can be accessed and asks for basic authentication, so that the
+  tests themselves later run through without login popups. If this fails, the tests with
+  "realOData=true" can be skipped.
+-->
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -14,22 +31,26 @@
 				sTestRunnerBase = "../../../../",
 				sTestPrefix = "test-resources/sap/ui/core/",
 				// The URLs are relative to sTestPrefix
-				aTests = [
-					'qunit/analytics/testsuite4analytics.qunit.html',
-					'qunit/internal/AnnotationParser.qunit.html',
-					'qunit/internal/1Ring.qunit.html?sap-ui-debug=true&hidepassed&coverage&sap-ui-logLevel=ERROR&realOData=true',
-					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html',
-					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true',
-					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html',
-					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true',
-					'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html',
-					'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html?realOData=true',
-					'demokit/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit.html',
-					'demokit/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit.html',
-					'demokit/sample/ViewTemplate/scenario/Opa.qunit.html',
-					'demokit/sample/ViewTemplate/types/Opa.qunit.html',
-					'demokit/sample/ViewTemplate/types/Opa.qunit.html?realOData=true'
-				];
+				// 'full': full mode only
+				// 'integration': integration test mode only
+				// everything else: full & integration test mode
+				mTests = {
+					'qunit/analytics/testsuite4analytics.qunit.html' : 'full',
+					'qunit/internal/AnnotationParser.qunit.html' : 'full',
+					'qunit/internal/1Ring.qunit.html?sap-ui-debug=true&hidepassed&coverage&sap-ui-logLevel=ERROR&realOData=true' : 'full',
+					'qunit/odata/v4/ODataModel.integration.qunit.html?sap-ui-debug=true&hidepassed&coverage&sap-ui-logLevel=ERROR&realOData=true' : 'integration',
+					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html' : 'both',
+					'demokit/sample/odata/v4/ListBinding/Opa.qunit.html?realOData=true' : 'both',
+					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html' : 'both',
+					'demokit/sample/odata/v4/SalesOrders/Opa.qunit.html?realOData=true' : 'both',
+					'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html' : 'both',
+					'demokit/sample/odata/v4/SalesOrdersTemplate/Opa.qunit.html?realOData=true' : 'both',
+					'demokit/sample/odata/v4/SalesOrderTP100_V2/Opa.qunit.html' : 'both',
+					'demokit/sample/odata/v4/SalesOrderTP100_V4/Opa.qunit.html' : 'both',
+					'demokit/sample/ViewTemplate/scenario/Opa.qunit.html' : 'both',
+					'demokit/sample/ViewTemplate/types/Opa.qunit.html' : 'both',
+					'demokit/sample/ViewTemplate/types/Opa.qunit.html?realOData=true' : 'both'
+				};
 
 			// Adds the script tag that embeds the page into the Testrunner
 			function addScript() {
@@ -39,14 +60,32 @@
 				document.head.appendChild(oScriptElement);
 			}
 
-			// Filters aTests so that only tests w/o realOData=true remain
-			function filterTests() {
-				var mFiltered = {};
+			// returns an array of tests according to the given flags
+			function filterTests(bIntegration, bNoRealOData) {
+				var sUnwanted = bIntegration ? "full" : "integration",
+					aTests,
+					mFilter = {};
 
-				aTests.forEach(function (sTest) {
-					mFiltered[sTest.replace(/[?&]realOData=true/, "")] = true;
+				aTests = Object.keys(mTests).filter(function (sUrl) {
+					return mTests[sUrl] !== sUnwanted;
 				});
-				return Object.keys(mFiltered);
+				if (bIntegration) {
+					// ensure that each URL has the query property "coverage"
+					aTests = aTests.map(function (sUrl) {
+						if (sUrl.indexOf("coverage") < 0) {
+							sUrl = sUrl + (sUrl.indexOf("?") < 0 ? "?" : "&") + "coverage";
+						}
+						return sUrl;
+					});
+				}
+				if (bNoRealOData) {
+					// remove the query property "realOData" at each URL; remove duplicates
+					aTests.forEach(function (sUrl) {
+						mFilter[sUrl.replace(/[?&]realOData=true/, "")] = true;
+					});
+					aTests = Object.keys(mFilter);
+				}
+				return aTests;
 			}
 
 			// For the onload handler and the button "Run"
@@ -81,23 +120,16 @@
 			// Called from the Testrunner
 			window.suite = function () {
 				var oSuite = new parent.jsUnitTestSuite(),
-					aSuiteTests = /#noRealOData/.test(location.href) ? filterTests() : aTests;
+					aTests = filterTests(
+						/integrationTestsOnly/i.test(location.href),
+						/#noRealOData/.test(location.href));
 
-				aSuiteTests.forEach(function (sUrl) {
+				aTests.forEach(function (sUrl) {
 					oSuite.addTestPage(sTestRunnerBase + sTestPrefix + sUrl);
 				});
 				return oSuite;
 			};
 
-			if (/integrationTestsOnly/i.test(location.href)) {
-				aTests[0] =
-					aTests[0].replace("/internal/1Ring.", "/odata/v4/ODataModel.integration.");
-				aTests.forEach(function (sUrl, i) {
-					if (sUrl.indexOf("coverage") < 0) {
-						aTests[i] = sUrl + (sUrl.indexOf("?") < 0 ? "?" : "&") + "coverage";
-					}
-				});
-			}
 			window.addEventListener("load", runTests);
 		}());
 		</script>

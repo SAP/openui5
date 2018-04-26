@@ -52,7 +52,7 @@ sap.ui.require([
 	 * @param {number} [iCount]
 	 *   the  value for "$count", remains unset if undefined
 	 * @param {boolean} [bKeyPredicates]
-	 *   add a property "@$ui5._.predicate" with a key predicate
+	 *   add a property "@$ui5._/predicate" with a key predicate
 	 * @return {object}
 	 *   the data
 	 */
@@ -73,7 +73,8 @@ sap.ui.require([
 				NullValue : null
 			};
 			if (bKeyPredicates) {
-				oData.value[i]["@$ui5._.predicate"] = "('" + (iStart + i) + "')";
+				_Helper.setPrivateAnnotation(oData.value[i], "predicate",
+					"('" + (iStart + i) + "')");
 			}
 		}
 		return bDrillDown ? oData.value : oData;
@@ -476,12 +477,15 @@ sap.ui.require([
 			.returns(createSyncResult(10));
 		oBinding = this.oModel.bindList("/EMPLOYEES");
 		oBinding.getContexts(0, 10);
+		this.mock(this.oModel).expects("lockGroup").never();
+		this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
 		this.mock(oBinding).expects("_fireRefresh").withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
 		oBinding.reset(ChangeReason.Change);
 
 		assert.strictEqual(oBinding.sChangeReason, ChangeReason.Change);
+		assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
 	});
 
 	//*********************************************************************************************
@@ -495,6 +499,38 @@ sap.ui.require([
 
 		// code under test
 		oBinding.reset(ChangeReason.Change);
+	});
+
+	//*********************************************************************************************
+	[false, true].forEach(function (bGetContexts) {
+		QUnit.test("reset with lock, bGetContexts=" + bGetContexts, function (assert) {
+			var oBinding = this.oModel.bindList("/EMPLOYEES"),
+				oExpectation,
+				oGroupLock = new _GroupLock();
+
+			this.mock(this.oModel).expects("lockGroup")
+				.withExactArgs(undefined, true)
+				.returns(oGroupLock);
+			oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
+				.withExactArgs(sinon.match.func);
+
+			// code under test
+			oBinding.reset(ChangeReason.Filter, true);
+
+			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock);
+
+			if (bGetContexts) {
+				// simulate getContexts which uses and removes this lock
+				oBinding.oRefreshGroupLock = undefined;
+			} else {
+				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
+			}
+
+			// code under test
+			oExpectation.callArg(0);
+
+			assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
+		});
 	});
 
 	//*********************************************************************************************
@@ -856,7 +892,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{$count : 10}, {$count : undefined}].forEach(function (oFixture) {
-		QUnit.test("getLength: $count=" + oFixture.$count, function(assert) {
+		QUnit.test("getLength: $count=" + oFixture.$count, function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
 				oCacheMock = this.mock(oBinding.oCachePromise.getResult()),
 				oContext,
@@ -1630,11 +1666,14 @@ sap.ui.require([
 				+ bCanceled, function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES"),
 				oError = new Error("Expected Error"),
-				oReadPromise = SyncPromise.reject(oError);
+				oReadPromise = SyncPromise.reject(oError),
+				oRefreshGroupLock = new _GroupLock();
 
 			if (bCanceled) {
 				oError.canceled = true;
 			}
+			oBinding.oRefreshGroupLock = oRefreshGroupLock;
+			this.mock(oRefreshGroupLock).expects("unlock").withExactArgs(true);
 			this.mock(this.oModel).expects("reportError").withExactArgs(
 				"Failed to get contexts for /service/EMPLOYEES with start index 0 and length 3",
 				sClassName, sinon.match.same(oError));
@@ -1869,13 +1908,38 @@ sap.ui.require([
 	QUnit.test("getContexts uses refresh group lock", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined,
 				{$$groupId : "$direct"}),
-			oGroupLock = new _GroupLock();
+			oCache = {
+				read : function () {}
+			},
+			oCachePromise = SyncPromise.resolve(Promise.resolve(oCache)),
+			oRefreshGroupLock = new _GroupLock();
 
-		this.mock(oBinding.oCachePromise.getResult()).expects("read")
-			.withExactArgs(0, 10, 0, sinon.match.same(oGroupLock), sinon.match.func)
+		oBinding.oCachePromise = oCachePromise;
+		this.mock(oCache).expects("read")
+			.withExactArgs(0, 10, 0, sinon.match.same(oRefreshGroupLock), sinon.match.func)
 			.returns(createResult(0));
-		oBinding.oRefreshGroupLock = oGroupLock;
+		oBinding.oRefreshGroupLock = oRefreshGroupLock;
 
+		oBinding.getContexts(0, 10);
+
+		assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
+		return oCachePromise;
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContexts() relative + uses refresh group lock", function (assert) {
+		var oParentContext = Context.create(this.oModel, {}, "/TEAMS('4711')"),
+			oBinding = this.oModel.bindList("EMPLOYEES", oParentContext),
+			oRefreshGroupLock = new _GroupLock();
+
+		oBinding.oRefreshGroupLock = oRefreshGroupLock;
+
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oParentContext).expects("fetchValue").withExactArgs("EMPLOYEES")
+			.returns(SyncPromise.resolve(createData(10, 0, true, 10)));
+		this.mock(oRefreshGroupLock).expects("unlock").withExactArgs();
+
+		// code under test
 		oBinding.getContexts(0, 10);
 
 		assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
@@ -2065,7 +2129,7 @@ sap.ui.require([
 			oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 			this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
 				.returns(aFilters);
-			oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter);
+			oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter, true);
 
 			// Code under test
 			assert.strictEqual(oBinding.filter(oFilter, sFilterType), oBinding, "chaining");
@@ -2316,7 +2380,7 @@ sap.ui.require([
 
 		assert.strictEqual(aContexts.length, 2);
 		assert.strictEqual(oBinding.getLength(), 10);
-		aContexts.forEach(function(oContext, i) {
+		aContexts.forEach(function (oContext, i) {
 			assert.strictEqual(oContext.getIndex(), i + oRange.start);
 		});
 	});
@@ -2366,7 +2430,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[false, true].forEach(function(bUsePredicates) {
+	[false, true].forEach(function (bUsePredicates) {
 		QUnit.test("createContexts, bUsePredicates = " + bUsePredicates, function (assert) {
 			var oBinding = this.oModel.bindList("/EMPLOYEES", {}/*oContext*/),
 				aContexts = [null, {}, {}, {}],
@@ -2378,15 +2442,16 @@ sap.ui.require([
 
 			if (bUsePredicates) {
 				aResults.forEach(function (vValue, i) {
-					vValue["@$ui5._.predicate"] = "('" + i + "')";
+					_Helper.setPrivateAnnotation(vValue, "predicate", "('" + i + "')");
 				});
 			}
 			this.mock(oBinding.oModel).expects("resolve").twice()
 				.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
 				.returns("~resolved~");
 			for (i = oRange.start; i < oRange.start + aResults.length; i += 1) {
-				sPath = "~resolved~" +
-					(bUsePredicates ? aResults[i - oRange.start]["@$ui5._.predicate"] : "/" + i);
+				sPath = "~resolved~" + (bUsePredicates
+					? _Helper.getPrivateAnnotation(aResults[i - oRange.start], "predicate")
+					: "/" + i);
 				oContextMock.expects("create")
 					.withExactArgs(sinon.match.same(oBinding.oModel), sinon.match.same(oBinding),
 						sPath, i)
@@ -2532,11 +2597,11 @@ sap.ui.require([
 
 		// code under test
 		oBinding.createContexts(0, 3, [{
-			"@$ui5._.predicate" : "('1')"
+			"@$ui5._" : {"predicate" : "('1')"}
 		}, {
-			"@$ui5._.predicate" : "('2')"
+			"@$ui5._" : {"predicate" : "('2')"}
 		}, {
-			"@$ui5._.predicate" : "('3')"
+			"@$ui5._" : {"predicate" : "('3')"}
 		}]);
 
 		assert.strictEqual(oBinding.aContexts[0], oContext1);
@@ -2726,11 +2791,14 @@ sap.ui.require([
 				{$$updateGroupId : "update"}),
 			oContext,
 			oExpectation,
-			oInitialData = {};
+			oInitialData = {},
+			oGroupLock;
 
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("update", true)
+			.returns(oGroupLock);
 		oExpectation = this.mock(oBinding.oCachePromise.getResult()).expects("create")
-			.withExactArgs(new _GroupLock("update"), "EMPLOYEES", "",
-				sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+			.withExactArgs(oGroupLock, "EMPLOYEES", "", sinon.match.same(oInitialData),
+				sinon.match.func, sinon.match.func)
 			// we only want to observe fnCancelCallback, hence we neither resolve, nor reject
 			.returns(new SyncPromise(function () {}));
 
@@ -2776,6 +2844,7 @@ sap.ui.require([
 				bChangeFired,
 				oContext,
 				oCreatePromise = SyncPromise.resolve(Promise.resolve()),
+				oGroupLock = {},
 				oModelMock = this.mock(this.oModel),
 				bRefreshSingleFinished = false,
 				oRefreshSinglePromise = new Promise(function (resolve) {
@@ -2797,8 +2866,10 @@ sap.ui.require([
 				.exactly(oFixture.sGroupId === "$direct" ? 0 : 1)
 				.returns(oFixture.sGroupId === "$auto");
 			oBindingMock.expects("getUpdateGroupId").returns(oFixture.sUpdateGroupId);
+			oModelMock.expects("lockGroup").withExactArgs(oFixture.sUpdateGroupId, true)
+				.returns(oGroupLock);
 			oCacheMock.expects("create")
-				.withExactArgs(new _GroupLock(oFixture.sUpdateGroupId), "EMPLOYEES", "",
+				.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "",
 					sinon.match.same(oFixture.oInitialData), sinon.match.func, sinon.match.func)
 				.returns(oCreatePromise);
 			oBinding.attachEventOnce("change", function (oEvent) {
@@ -2810,9 +2881,11 @@ sap.ui.require([
 
 			oBindingMock.expects("refreshSingle").never();
 			oCreatePromise.then(function () {
+				oModelMock.expects("lockGroup")
+					.withExactArgs(oFixture.sGroupId === "$direct" ? "$direct" : "$auto")
+					.returns(oGroupLock);
 				oBindingMock.expects("refreshSingle")
-					.withExactArgs(sinon.match.same(oContext),
-						new _GroupLock(oFixture.sGroupId === "$direct" ? "$direct" : "$auto"))
+					.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock))
 					.returns(oRefreshSinglePromise);
 			});
 			oRefreshSinglePromise.then(function () {
@@ -2863,13 +2936,14 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("create: relative binding", function (assert) {
-		var aCacheResult = [{}, {}, {"@$ui5._.predicate" : "('foo')"}, {}],
+		var aCacheResult = [{}, {}, {"@$ui5._" : {"predicate" : "('foo')"}}, {}],
 			oContext = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/1", 1),
 			oContext2 = Context.create(this.oModel, /*oBinding*/{}, "/TEAMS/2", 2),
 			aContexts,
 			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
 			oInitialData = {},
 			oExpectation,
+			oGroupLock = {},
 			that = this;
 
 		this.mock(_Helper).expects("buildPath")
@@ -2881,8 +2955,10 @@ sap.ui.require([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs()
 			.thrice(); // from create and twice getContexts
 		this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("updateGroup", true)
+			.returns(oGroupLock);
 		oExpectation = this.mock(oBinding).expects("createInCache")
-			.withExactArgs(new _GroupLock("updateGroup"), /*vPostPath*/sinon.match.object, "",
+			.withExactArgs(sinon.match.same(oGroupLock), /*vPostPath*/sinon.match.object, "",
 				sinon.match.same(oInitialData), sinon.match.func)
 			.returns(Promise.resolve());
 
@@ -2930,6 +3006,7 @@ sap.ui.require([
 			aContexts,
 			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext),
 			aDiffData,
+			oGroupLock = {},
 			oInitialData = {},
 			that = this;
 
@@ -2943,8 +3020,10 @@ sap.ui.require([
 			.withExactArgs()
 			.returns(SyncPromise.resolve("/TEAMS('02')"));
 		this.mock(oBinding).expects("getUpdateGroupId").returns("updateGroup");
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("updateGroup", true)
+			.returns(oGroupLock);
 		this.mock(oBinding).expects("createInCache")
-			.withExactArgs(new _GroupLock("updateGroup"), /*vPostPath*/sinon.match.object, "",
+			.withExactArgs(oGroupLock, /*vPostPath*/sinon.match.object, "",
 				sinon.match.same(oInitialData), sinon.match.func)
 			.returns(SyncPromise.resolve());
 
@@ -2980,6 +3059,39 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: failure", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oBindingMock = this.mock(oBinding),
+			oCacheMock,
+			oContext,
+			oError = new Error(),
+			oCreatePromise = SyncPromise.resolve(Promise.reject(oError)),
+			oGroupLock = new _GroupLock(),
+			oInitialData = {};
+
+		oCacheMock = this.mock(oBinding.oCachePromise.getResult());
+		oBindingMock.expects("getUpdateGroupId").returns("update");
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("update", true)
+			.returns(oGroupLock);
+		oCacheMock.expects("create")
+			.withExactArgs(sinon.match.same(oGroupLock), "EMPLOYEES", "",
+				sinon.match.same(oInitialData), sinon.match.func, sinon.match.func)
+			.returns(oCreatePromise);
+
+		oBindingMock.expects("refreshSingle").never();
+		this.mock(oGroupLock).expects("unlock");
+
+		// code under test
+		oContext = oBinding.create(oInitialData);
+
+		return oContext.created().then(function () {
+			assert.ok(false);
+		},function (oError0) {
+			assert.strictEqual(oError0, oError);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getContexts after create", function (assert) {
 		var oBinding = this.oModel.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 				$$updateGroupId : "update"
@@ -2989,8 +3101,8 @@ sap.ui.require([
 			aContexts;
 
 		this.mock(oBinding.oCachePromise.getResult()).expects("create")
-			.withExactArgs(new _GroupLock("update"), "EMPLOYEES", "", undefined, sinon.match.func,
-				sinon.match.func)
+			.withExactArgs(new _GroupLock("update", true), "EMPLOYEES", "", undefined,
+				sinon.match.func, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 		this.mock(oBinding).expects("refreshSingle").returns(SyncPromise.resolve());
@@ -3047,8 +3159,8 @@ sap.ui.require([
 		oBinding.createContexts(0, 3, 3);
 
 		oCacheMock.expects("create")
-			.withExactArgs(new _GroupLock("update"), "EMPLOYEES", "", undefined, sinon.match.func,
-				sinon.match.func)
+			.withExactArgs(new _GroupLock("update", true), "EMPLOYEES", "", undefined,
+				sinon.match.func, sinon.match.func)
 			.returns(Promise.resolve());
 		oContext = oBinding.create();
 
@@ -3819,34 +3931,44 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doCreateCache: AggregationCache", function (assert) {
-		var aAggregation = [{
-				grouped : true,
-				name : "Dimension"
-			}],
-			bAutoExpandSelect = {/*false, true*/},
-			oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null, {
-				$$aggregation : aAggregation
-			}),
-			oCache = {},
-			oContext = {},
-			mMergedQueryOptions = {},
-			sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
-			mQueryOptions = {};
+	[[{
+		grouped : true,
+		name : "Dimension"
+	}], [{
+		min : true,
+		name : "Measure",
+		total : false
+	}], [{
+		max : true,
+		name : "Measure",
+		total : false
+	}]].forEach(function (aAggregation, i) {
+		QUnit.test("doCreateCache: AggregationCache: " + i, function (assert) {
+			var bAutoExpandSelect = {/*false, true*/},
+				oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", null, null, null, {
+					$$aggregation : aAggregation
+				}),
+				oCache = {},
+				oContext = {},
+				mMergedQueryOptions = {},
+				sResourcePath = "EMPLOYEES('42')/TEAM_2_EMPLOYEES",
+				mQueryOptions = {};
 
-		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
 
-		this.mock(oBinding).expects("inheritQueryOptions")
-			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
-			.returns(mMergedQueryOptions);
-		this.mock(_AggregationCache).expects("create")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath, aAggregation,
-				sinon.match.same(mMergedQueryOptions), sinon.match.same(bAutoExpandSelect))
-			.returns(oCache);
+			this.mock(oBinding).expects("inheritQueryOptions")
+				.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oContext))
+				.returns(mMergedQueryOptions);
+			this.mock(_AggregationCache).expects("create")
+				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
+					aAggregation, sinon.match.same(mMergedQueryOptions),
+					sinon.match.same(bAutoExpandSelect))
+				.returns(oCache);
 
-		// code under test
-		assert.strictEqual(oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext),
-			oCache);
+			// code under test
+			assert.strictEqual(oBinding.doCreateCache(sResourcePath, mQueryOptions, oContext),
+				oCache);
+		});
 	});
 
 	//*********************************************************************************************
@@ -4204,6 +4326,8 @@ sap.ui.require([
 				visible : false
 			}],
 			sAggregation = JSON.stringify(aAggregation),
+			sApply = "A.P.P.L.E.",
+			oBinding = this.oModel.bindList("/EMPLOYEES"),
 			aFilteredAggregation = [{
 				grouped : false,
 				name : "BillToParty"
@@ -4217,9 +4341,7 @@ sap.ui.require([
 			}, {
 				grouped : false,
 				name : "TransactionCurrency"
-			}],
-			sApply = "A.P.P.L.E.",
-			oBinding = this.oModel.bindList("/EMPLOYEES");
+			}];
 
 		this.mock(_Helper).expects("buildApply")
 			.withExactArgs(aFilteredAggregation)
@@ -4228,9 +4350,81 @@ sap.ui.require([
 			.withExactArgs({$apply : sApply});
 
 		// code under test
-		oBinding.updateAnalyticalInfo(aAggregation);
+		assert.strictEqual(oBinding.updateAnalyticalInfo(aAggregation), undefined);
 
 		assert.strictEqual(JSON.stringify(aAggregation), sAggregation, "unchanged");
+		assert.deepEqual(oBinding.aAggregation, aFilteredAggregation);
+	});
+
+	//*********************************************************************************************
+	[{
+		aAggregation : [{
+			min : true,
+			name : "GrossAmount",
+			total : false
+		}, {
+			grouped : false,
+			name : "Currency",
+			visible : true
+		}],
+		aFilteredAggregation : [{
+			min : true,
+			name : "GrossAmount",
+			total : false
+		}, {
+			grouped : false,
+			name : "Currency"
+		}]
+	}, {
+		aAggregation : [{
+			max : true,
+			name : "GrossAmount",
+			total : false
+		}, {
+			grouped : false,
+			name : "Currency",
+			visible : true
+		}],
+		aFilteredAggregation : [{
+			max : true,
+			name : "GrossAmount",
+			total : false
+		}, {
+			grouped : false,
+			name : "Currency"
+		}]
+	}].forEach(function (oFixture, i) {
+		QUnit.test("updateAnalyticalInfo: min/max: " + i, function (assert) {
+			var sAggregation = JSON.stringify(oFixture.aAggregation),
+				sApply = "A.P.P.L.E.",
+				oBinding = this.oModel.bindList("/EMPLOYEES"),
+				oMeasureRangePromise = {/*Promise*/},
+				oNewCache = {getMeasureRangePromise : function () {}},
+				oResult;
+
+			this.mock(_Helper).expects("buildApply")
+				.withExactArgs(oFixture.aFilteredAggregation)
+				.returns(sApply);
+			this.mock(oBinding).expects("changeParameters")
+				.callsFake(function () {
+					oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
+				})
+				.withExactArgs({$apply : sApply});
+			this.mock(oNewCache).expects("getMeasureRangePromise")
+				.withExactArgs()
+				.returns(oMeasureRangePromise);
+
+			// code under test
+			oResult = oBinding.updateAnalyticalInfo(oFixture.aAggregation);
+
+			assert.strictEqual(JSON.stringify(oFixture.aAggregation), sAggregation, "unchanged");
+			assert.deepEqual(oBinding.aAggregation, oFixture.aFilteredAggregation);
+			assert.ok(oResult.measureRangePromise instanceof Promise);
+
+			return oResult.measureRangePromise.then(function (oMeasureRangePromise0) {
+				assert.strictEqual(oMeasureRangePromise0, oMeasureRangePromise);
+			});
+		});
 	});
 
 	//*********************************************************************************************

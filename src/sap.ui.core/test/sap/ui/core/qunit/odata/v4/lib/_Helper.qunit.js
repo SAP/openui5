@@ -1163,10 +1163,69 @@ sap.ui.require([
 		}],
 		sApply : "groupby((TransactionCurrency,BillToParty)"
 			+ ",aggregate(GrossAmountInTransactionCurrency))"
+	}, {
+		aAggregation : [{
+			max : true,
+			name : "Amount",
+			total : false
+		}, {
+			grouped : false,
+			name : "BillToParty"
+		}],
+		sApply : "groupby((BillToParty)"
+			+ ",aggregate(Amount))"
+			+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5max__Amount" : {measure : "Amount", method : "max"}
+		}
+	}, {
+		aAggregation : [{
+			min : true,
+			name : "Amount",
+			total : false
+		}, {
+			max : true,
+			min : true,
+			name : "Amount2",
+			total : false
+		}, {
+			grouped : false,
+			name : "BillToParty"
+		}],
+		sApply : "groupby((BillToParty)"
+			+ ",aggregate(Amount,Amount2))"
+			+ "/concat(aggregate(Amount with min as UI5min__Amount,"
+			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
+		mExpectedAlias2MeasureAndMethod : {
+			"UI5min__Amount" : {measure : "Amount", method : "min"},
+			"UI5min__Amount2" : {measure : "Amount2", method : "min"},
+			"UI5max__Amount2" : {measure : "Amount2", method : "max"}
+		}
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
-			assert.strictEqual(_Helper.buildApply(oFixture.aAggregation), oFixture.sApply);
+			var mAlias2MeasureAndMethod = {};
+
+			assert.strictEqual(_Helper.buildApply(oFixture.aAggregation, mAlias2MeasureAndMethod),
+				oFixture.sApply);
+			if (oFixture.mExpectedAlias2MeasureAndMethod) {
+				assert.deepEqual(mAlias2MeasureAndMethod, oFixture.mExpectedAlias2MeasureAndMethod);
+			}
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("buildApply: optional mAlias2MeasureAndMethod", function (assert) {
+		// mAlias2MeasureAndMethod is optional in _Helper.buildApply
+		assert.strictEqual(_Helper.buildApply([{
+				max : true,
+				name : "Amount",
+				total : false
+			}, {
+				grouped : false,
+				name : "BillToParty"
+			}]),
+			"groupby((BillToParty),aggregate(Amount))/concat(aggregate(Amount with max as"
+				+ " UI5max__Amount),identity)");
 	});
 
 	//*********************************************************************************************
@@ -1208,5 +1267,92 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(_Helper.clone(undefined), undefined);
+
+		// code under test
+		assert.ok(isNaN(_Helper.clone(NaN)));
+
+		// code under test
+		assert.strictEqual(_Helper.clone(Infinity), Infinity);
+
+		// code under test
+		assert.strictEqual(_Helper.clone(-Infinity), -Infinity);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getPrivateAnnotation", function (assert) {
+		var oObject = {
+				"@$ui5._" : {
+					"transient" : "foo"
+				}
+			};
+
+		assert.strictEqual(_Helper.getPrivateAnnotation({}, "foo"), undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "foo"), undefined);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasPrivateAnnotation", function (assert) {
+		var oObject = {
+				"@$ui5._" : {
+					"transient" : undefined
+				}
+			};
+
+		assert.strictEqual(_Helper.hasPrivateAnnotation({}, "foo"), false);
+		assert.strictEqual(_Helper.hasPrivateAnnotation(oObject, "foo"), false);
+		assert.strictEqual(_Helper.hasPrivateAnnotation(oObject, "transient"), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("setPrivateAnnotation", function (assert) {
+		var oObject = {};
+
+		// code under test
+		_Helper.setPrivateAnnotation(oObject, "transient", "foo");
+
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), "foo");
+
+		// code under test
+		_Helper.setPrivateAnnotation(oObject, "transient", "bar");
+
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), "bar");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("deletePrivateAnnotation", function (assert) {
+		var oObject = {};
+
+		// code under test
+		_Helper.deletePrivateAnnotation(oObject, "transient");
+
+		// code under test
+		_Helper.setPrivateAnnotation(oObject, "transient", undefined);
+
+		assert.strictEqual(_Helper.hasPrivateAnnotation(oObject, "transient"), true);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), undefined);
+
+		// code under test
+		_Helper.deletePrivateAnnotation(oObject, "transient");
+
+		assert.strictEqual(_Helper.hasPrivateAnnotation(oObject, "transient"), false);
+		assert.strictEqual(_Helper.getPrivateAnnotation(oObject, "transient"), undefined);
+	});
+
+	//*********************************************************************************************
+	[undefined, null, {"@$ui5._" : {}}].forEach(function (vClone, i) {
+		QUnit.test("publicClone: " + i, function (assert) {
+			var vValue = {};
+
+			this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(vValue))
+				.returns(vClone);
+
+			// code under test
+			assert.strictEqual(_Helper.publicClone(vValue), vClone);
+
+			if (vClone) {
+				assert.notOk("@$ui5._" in vClone, "private namespace object deleted from clone");
+			}
+		});
 	});
 });

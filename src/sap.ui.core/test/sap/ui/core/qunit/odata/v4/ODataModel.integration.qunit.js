@@ -22,7 +22,7 @@ sap.ui.require([
 		FilterOperator, OperationMode, AnnotationHelper, ODataListBinding, ODataModel, Sorter,
 		TestUtils) {
 	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
+	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",
@@ -164,12 +164,20 @@ sap.ui.require([
 			this.aRequests = [];
 		},
 
-		afterEach : function () {
+		afterEach : function (assert) {
+			var iLocks;
+
 			if (this.oView) {
 				// avoid calls to formatters by UI5 localization changes in later tests
 				this.oView.destroy();
 			}
 			if (this.oModel) {
+				if (this.oModel.aLockedGroupLocks) {
+					iLocks = this.oModel.aLockedGroupLocks.filter(function (oGroupLock) {
+						return oGroupLock.isLocked();
+					}).length;
+					assert.strictEqual(iLocks, 0, "No remaining locks");
+				}
 				this.oModel.destroy();
 			}
 			// reset the language
@@ -407,7 +415,8 @@ sap.ui.require([
 		 *   values for controls have been set
 		 */
 		createView : function (assert, sViewXML, oModel, oController) {
-			var that = this;
+			var fnLockGroup,
+				that = this;
 
 			/*
 			 * Stub function for _Requestor#sendBatch. Checks that all requests in the batch are as
@@ -470,10 +479,26 @@ sap.ui.require([
 				return Promise.resolve({body : oResponse});
 			}
 
+			// A wrapper for ODataModel#lockGroup that attaches a stack trace to the lock
+			function lockGroup() {
+				var oError,
+					oLock = fnLockGroup.apply(this, arguments);
+
+				if (!oLock.sStack) {
+					oError = new Error();
+					if (oError.stack) {
+						oLock.sStack = oError.stack.split("\n").slice(2).join("\n");
+					}
+				}
+				return oLock;
+			}
+
 			this.oModel = oModel || createTeaBusiModel();
 			if (this.oModel.submitBatch) {
 				this.oModel.oRequestor.sendBatch = checkBatch;
 				this.oModel.oRequestor.sendRequest = checkRequest;
+				fnLockGroup = this.oModel.lockGroup;
+				this.oModel.lockGroup = lockGroup;
 			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			this.oView = sap.ui.xmlview({
@@ -5058,7 +5083,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("delayed create", function (assert) {
+	QUnit.test("delayed create", function (assert) {
 		var oModel = createSalesOrdersModel(),
 			sView = '<FlexBox id="form" binding="{/SalesOrderList(\'0500000000\')}"/>',
 			that = this;
@@ -5084,7 +5109,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("delayed execute", function (assert) {
+	QUnit.test("delayed execute", function (assert) {
 		var sAction = "SalesOrderList('0500000000')/"
 				+ "com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder_Cancel",
 			oModel = createSalesOrdersModel(),
@@ -5092,7 +5117,6 @@ sap.ui.require([
 			that = this;
 
 		return this.createView(assert, sView, oModel).then(function () {
-
 			that.expectRequest({
 				method : "POST",
 				url : sAction,
@@ -5183,7 +5207,12 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.skip("ODLB: delayed filter", function (assert) {
+	// Scenario: change the filter on a list binding with submit group 'API' and immediately call
+	// submitBatch. The resulting GET request becomes asynchronous because it requires additional
+	// metadata. Check that the request is sent with this batch nevertheless.
+	// In a second step call filter on a list binding w/o control. Verify that the queue does not
+	// remain blocked, although there is no getContexts and no GET request.
+	QUnit.test("ODLB: delayed filter", function (assert) {
 		var sView = '\
 <Table id="table" items="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}}">\
 	<items>\
@@ -5221,6 +5250,25 @@ sap.ui.require([
 
 			that.oView.byId("table").getBinding("items")
 				.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
+			that.oModel.submitBatch("api");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oListBinding = that.oModel.bindList("/Equipments", undefined, undefined, undefined,
+					{$$groupId : 'api'});
+
+			that.expectRequest("Equipments?$skip=0&$top=100", {
+					value : [{
+						"Name" : "Foo"
+					}]
+				})
+				// The field is reset first, because the filter request is delayed until the next
+				// prerendering task
+				.expectChange("name", null)
+				.expectChange("name", ["Foo"]);
+
+			oListBinding.filter(new Filter("Name", "GT", "M"));
+			that.oView.byId("table").getBinding("items").filter(null);
 			that.oModel.submitBatch("api");
 
 			return that.waitForChanges(assert);
@@ -5303,6 +5351,13 @@ sap.ui.require([
 			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding = that.oView.byId("table").getBinding("rows");
+
+			oListBinding.getCurrentContexts().forEach(function (oContext, i) {
+				assert.strictEqual(oContext.getPath(),
+					"/SalesOrderList(LifecycleStatus='" + "ZYX"[i] + "')");
+			});
+
 			that.expectRequest("SalesOrderList?$count=true&$orderby=LifecycleStatus%20desc"
 					+ "&$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount))"
 					+ "&$skip=23&$top=3", {
@@ -5314,8 +5369,6 @@ sap.ui.require([
 					]
 				});
 			for (var i = 0; i < 3; i += 1) {
-				//TODO The below null's are: Text has binding context null and its initial value is
-				// undefined (formatted to null by String type). (How) can we get rid of this?
 				that.expectChange("isExpanded", undefined, null)
 					.expectChange("isTotal", undefined, null)
 					.expectChange("level", undefined, null)
@@ -5375,6 +5428,204 @@ sap.ui.require([
 			oContext.getObject()["@$ui5.foo"] = 1; // just changing a clone
 
 			assert.strictEqual(oContext.getProperty("@$ui5.foo"), 42);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Application tries to create client-side instance annotations via ODLB#create.
+	QUnit.test("@$ui5.* is write-protected for ODLB#create", function (assert) {
+		var sView = '\
+<Table id="table" items="{path: \'/Equipments\', parameters: {$$updateGroupId: \'never\'}}">\
+	<items>\
+		<ColumnListItem>\
+			<Text id="name" text="{Name}"/>\
+		</ColumnListItem>\
+	</items>\
+</Table>',
+			that = this;
+
+		this.expectRequest("Equipments?$skip=0&$top=100", {
+				value : [{
+					"ID" : "2",
+					"Name" : "Foo"
+				}]
+			})
+			.expectChange("name", ["Foo"]);
+
+		return this.createView(assert, sView).then(function () {
+			var oContext,
+				oListBinding = that.oView.byId("table").getBinding("items"),
+				oInitialData = {
+					"ID" : "99",
+					"Name" : "Bar",
+					"@$ui5.foo" : "baz"
+				};
+
+			that.expectChange("name", ["Bar", "Foo"]);
+
+			// code under test
+			oContext = oListBinding.create(oInitialData);
+
+			that.oLogMock.expects("error").withExactArgs(
+				"Failed to drill-down into -1/@$ui5.foo, invalid segment: @$ui5.foo",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/Equipments",
+				"sap.ui.model.odata.v4.lib._Cache");
+
+			// code under test
+			oContext.getProperty("@$ui5.foo");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Application tries to read private client-side instance annotations.
+	QUnit.test("@$ui5._ is read-protected", function (assert) {
+		var oModel = createTeaBusiModel(),
+			sView = '\
+<FlexBox binding="{/MANAGERS(\'1\')}" id="form">\
+	<Text id="predicate" text="{= %{@$ui5._/predicate} }" />\
+	<Text id="id" text="{ID}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("MANAGERS('1')", {
+				"ID" : "1"
+			})
+			.expectChange("predicate", undefined) // binding itself is "code under test"
+			.expectChange("id", "1");
+		this.oLogMock.expects("error").withExactArgs(
+				"Failed to drill-down into @$ui5._/predicate, invalid segment: @$ui5._",
+				"/sap/opu/odata4/IWBEP/TEA/default/IWBEP/TEA_BUSI/0001/MANAGERS('1')",
+				"sap.ui.model.odata.v4.lib._Cache")
+			.thrice(); // binding, getProperty, requestProperty
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oContext = that.oView.byId("form").getBindingContext();
+
+			// code under test
+			assert.notOk("@$ui5._" in oContext.getObject());
+
+			// code under test
+			assert.strictEqual(oContext.getProperty("@$ui5._/predicate"), undefined);
+
+			// code under test
+			return oContext.requestProperty("@$ui5._/predicate").then(function (vResult) {
+				assert.strictEqual(vResult, undefined);
+
+				// code under test
+				return oContext.requestObject().then(function (oParent) {
+					assert.notOk("@$ui5._" in oParent);
+				});
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Simulate a chart that requests minimum and maximum values for a measure via
+	// #updateAnalyticalInfo
+	QUnit.test("ODLB#updateAnalyticalInfo with min/max", function (assert) {
+		var aAggregation = [{
+				// dimension
+				grouped : false,
+				inResult : true,
+				name : "Name"
+			}, {// measure
+				max : true,
+				min : true,
+				name : "AGE",
+				total : false
+			}],
+			sView = '\
+<Text id="count" text="{$count}"/>\
+<t:Table id="table" rows="{\
+			path : \'/EMPLOYEES\',\
+			parameters : {$count : true}\
+		}" threshold="0" visibleRowCount="3">\
+	<t:Column>\
+		<t:template>\
+			<Text id="text" text="{Name}" />\
+		</t:template>\
+	</t:Column>\
+	<t:Column>\
+		<t:template>\
+			<Text id="age" text="{AGE}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		// for simulating a chart updateAnalyticalInfo needs to be called before getContexts
+		this.mock(ODataListBinding.prototype)
+			.expects("getContexts")
+			.withExactArgs(0, 3, 0)
+			.callsFake(function () {
+				this.updateAnalyticalInfo(aAggregation)
+					.measureRangePromise.then(function (mMeasureRange) {
+						assert.deepEqual(mMeasureRange, {
+							AGE : {
+								max : 77,
+								min : 42
+							}
+						});
+					});
+				ODataListBinding.prototype.getContexts.restore();
+				return this.getContexts.apply(this, arguments);
+			});
+		this.expectRequest("EMPLOYEES?$count=true&$apply=groupby((Name),aggregate(AGE))"
+				+ "/concat(aggregate(AGE%20with%20min%20as%20UI5min__AGE,"
+				+ "AGE%20with%20max%20as%20UI5max__AGE),identity)"
+				+ "&$skip=0&$top=4",
+			{
+				"@odata.count": 5,
+				"value" : [
+					{
+						// the server response may contain additional data for example @odata.id or
+						// type information "UI5min__AGE@odata.type": "#Int16"
+						"@odata.id": null,
+						"UI5min__AGE@odata.type": "#Int16",
+						"UI5min__AGE": 42,
+						"UI5max__AGE": 77
+					},
+					{"ID" : "0", "Name" : "Frederic Fall", "AGE" : 70},
+					{"ID" : "1", "Name" : "Jonathan Smith", "AGE" : 50},
+					{"ID" : "2", "Name" : "Peter Burke", "AGE" : 77}
+				]
+			})
+			.expectChange("count")
+			.expectChange("text", ["Frederic Fall", "Jonathan Smith", "Peter Burke"])
+			.expectChange("age", ["70", "50", "77"]);
+
+		return this.createView(assert, sView, createTeaBusiModel()).then(function () {
+			that.expectChange("count", "4");
+
+			that.oView.byId("count").setBindingContext(
+				that.oView.byId("table").getBinding("rows").getHeaderContext());
+			return that.waitForChanges(assert);
+		}).then(function () {
+			// no additional request for same aggregation data
+			that.oView.byId("table").getBinding("rows").updateAnalyticalInfo(aAggregation);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES?$count=true"
+					+ "&$apply=groupby((Name),aggregate(AGE))"
+					+ "&$skip=3&$top=1",
+				{
+					"value" : [
+						{"ID" : "3", "Name" : "John Field", "AGE" : 42}
+					]
+				})
+				.expectChange("text", null, null)
+				.expectChange("age", null, null)
+				.expectChange("text", "Jonathan Smith", 1)
+				.expectChange("text", "Peter Burke", 2)
+				.expectChange("text", "John Field", 3)
+				.expectChange("age", "50", 1)
+				.expectChange("age", "77", 2)
+				.expectChange("age", "42", 3);
+
+			that.oView.byId("table").setFirstVisibleRow(1);
+
+			return that.waitForChanges(assert);
 		});
 	});
 

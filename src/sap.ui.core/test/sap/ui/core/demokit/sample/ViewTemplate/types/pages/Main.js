@@ -12,7 +12,7 @@ function (Helper, EnterText, Press, Opa5, TestUtils) {
 	"use strict";
 	var sViewName = "sap.ui.core.sample.ViewTemplate.types.Types";
 
-	Opa5.extendConfig({autoWait : true, timeout : TestUtils.getDefaultOpaTimeout()});
+	Opa5.extendConfig({autoWait : true, timeout : TestUtils.isRealOData() ? 30 : undefined});
 
 	Opa5.createPageObjects({
 		onTheMainPage : {

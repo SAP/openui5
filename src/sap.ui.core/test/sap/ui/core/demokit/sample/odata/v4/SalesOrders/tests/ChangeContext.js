@@ -8,11 +8,17 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		changeContext : function (Given, When, Then) {
+		changeContext : function (Given, When, Then, sUIComponent) {
 			if (TestUtils.isRealOData()) {
 				Opa5.assert.ok(true, "Test runs only with mock data");
 				return;
 			}
+
+			Given.iStartMyUIComponent({
+				componentConfig : {
+					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
+				}
+			});
 
 			When.onTheMainPage.firstSalesOrderIsVisible();
 
@@ -50,6 +56,7 @@ sap.ui.define([
 			Then.onTheMainPage.checkInputValue("BPPostalCode", "");
 
 			Then.onAnyPage.checkLog();
+			Then.iTeardownMyUIComponent();
 		}
 	};
 });

@@ -12,7 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		typeDeterminationAndDelete : function (Given, When, Then) {
+		typeDeterminationAndDelete : function (Given, When, Then, sUIComponent) {
 			var oExpectedLogChangeSetID = {
 					component : "sap.ui.test.TestUtils",
 					level : jQuery.sap.log.Level.ERROR,
@@ -278,6 +278,13 @@ sap.ui.define([
 				});
 			}
 
+			Given.iStartMyUIComponent({
+				componentConfig : {
+					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
+				}
+			});
+
+
 			//*****************************************************************************
 			// Check type determination
 
@@ -385,6 +392,8 @@ sap.ui.define([
 			}
 			Then.onAnyPage.checkLog(!bRealOData ?
 				[oExpectedLogChangeSetID, oExpectedLogChangeSetID] : undefined);
+
+			Then.iTeardownMyUIComponent();
 		}
 	};
 });

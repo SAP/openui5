@@ -1370,17 +1370,20 @@ sap.ui.define([
 				}
 				// calculate the key predicate asynchronously and append it to the prefix
 				return oContext.fetchValue(vSegment.path).then(function (oEntity) {
+					var sPredicate;
+
 					if (!oEntity) {
 						error("No instance to calculate key predicate at " + vSegment.path);
 					}
-					if ("@$ui5._.transient" in oEntity) {
+					if (_Helper.hasPrivateAnnotation(oEntity, "transient")) {
 						bTransient = true;
 						return undefined;
 					}
-					if (!oEntity["@$ui5._.predicate"]) {
+					sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
+					if (!sPredicate) {
 						error("No key predicate known at " + vSegment.path);
 					}
-					return vSegment.prefix + oEntity["@$ui5._.predicate"];
+					return vSegment.prefix + sPredicate;
 				}, function (oError) { // enrich the error message with the path
 					error(oError.message + " at " + vSegment.path);
 				});

@@ -7,7 +7,7 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		create : function (Given, When, Then) {
+		create : function (Given, When, Then, sUIComponent) {
 			var oExpectedLog = {
 					component : "sap.ui.model.odata.v4.ODataParentBinding",
 					level : jQuery.sap.log.Level.ERROR,
@@ -15,6 +15,12 @@ sap.ui.define([
 				},
 				sModifiedNote = "Modified by OPA",
 				bRealOData = TestUtils.isRealOData();
+
+			Given.iStartMyUIComponent({
+				componentConfig : {
+					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
+				}
+			});
 
 			sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
@@ -250,6 +256,7 @@ sap.ui.define([
 			Then.onAnyPage.checkLog(bRealOData
 				? [oExpectedLog, oExpectedLog, oExpectedLog]
 				: undefined);
+			Then.iTeardownMyUIComponent();
 		}
 	};
 });

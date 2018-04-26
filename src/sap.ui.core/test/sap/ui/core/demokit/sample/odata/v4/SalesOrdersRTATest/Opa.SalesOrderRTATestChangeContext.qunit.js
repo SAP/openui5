@@ -13,15 +13,8 @@ sap.ui.require([
 	//*****************************************************************************
 	opaTest("Change dependent binding, change context and check", function (Given, When, Then) {
 
-		Given.iStartMyUIComponent({
-			autoWait : true,
-			componentConfig : {
-				name : "sap.ui.core.sample.odata.v4.SalesOrdersRTATest"
-			}
-		});
+		ChangeContextTest.changeContext(Given, When, Then,
+			"sap.ui.core.sample.odata.v4.SalesOrdersRTATest");
 
-		ChangeContextTest.changeContext(Given, When, Then);
-
-		Then.iTeardownMyUIComponent();
 	});
 });

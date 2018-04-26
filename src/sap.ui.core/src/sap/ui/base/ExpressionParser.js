@@ -2,7 +2,11 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings'], function(jQuery, URI/* , jQuerySap1 */) {
+sap.ui.define([
+	'jquery.sap.global',
+	'sap/ui/thirdparty/URI',
+	'jquery.sap.strings'
+], function (jQuery, URI/*, jQuerySap1 */) {
 	"use strict";
 
 	//SAP's Independent Implementation of "Top Down Operator Precedence" by Vaughan R. Pratt,
@@ -236,7 +240,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 			"/", "%", "+", "-", "<=", "<", ">=", ">", "[", "]"],
 		rTokens;
 
-	aTokens.forEach(function(sToken, i) {
+	aTokens.forEach(function (sToken, i) {
 		aTokens[i] = jQuery.sap.escapeRegExp(sToken);
 	});
 	rTokens = new RegExp(aTokens.join("|"), "g");
@@ -297,15 +301,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 * Formatter function for an array literal.
 	 * @param {function[]} aElements - array of formatter functions for the array elements
 	 * @param {any[]} aParts - the array of binding values
-	 * @return {any[]} - the resulting array literal
+	 * @return {any[]} - the resulting array value
 	 */
 	function ARRAY(aElements, aParts) {
-		var aResult = [];
-
-		aElements.forEach(function(fnArgument, i) {
-			aResult[i] = fnArgument(aParts);
+		return aElements.map(function (fnElement) {
+			return fnElement(aParts);
 		});
-		return aResult;
 	}
 
 	/**
@@ -347,12 +348,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 * @param {function} fnLeft - formatter function for the left operand
 	 * @param {string} sIdentifier - the identifier on the dot's right side
 	 * @param {any[]} aParts - the array of binding values
+	 * @param {object} [oReference]
+	 *   optional side channel to return the base value (left operand) of the reference
 	 * @return {any} - the left operand's member with the name
 	 */
-	function DOT(fnLeft, sIdentifier, aParts) {
+	function DOT(fnLeft, sIdentifier, aParts, oReference) {
 		var oParent = fnLeft(aParts),
 			vChild = oParent[sIdentifier];
-		return typeof vChild === "function" ? vChild.bind(oParent) : vChild;
+
+		if (oReference) {
+			oReference.base = oParent;
+		}
+		return vChild;
 	}
 
 	/**
@@ -363,13 +370,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 * @return {any} - the return value of the function applied to the arguments
 	 */
 	function FUNCTION_CALL(fnLeft, aArguments, aParts) {
-		var aResult = [];
+		var oReference = {};
 
-		aArguments.forEach(function(fnArgument, i) {
-			aResult[i] = fnArgument(aParts); // evaluate argument
-		});
 		// evaluate function expression and call it
-		return fnLeft(aParts).apply(null, aResult);
+		return fnLeft(aParts, oReference).apply(oReference.base,
+			aArguments.map(function (fnArgument) {
+				return fnArgument(aParts); // evaluate argument
+			}));
 	}
 
 	/**
@@ -409,10 +416,19 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/URI', 'jquery.sap.strings
 	 *   access
 	 * @param {function} fnName - formatter function for the property name
 	 * @param {any[]} aParts - the array of binding values
+	 * @param {object} [oReference]
+	 *   optional side channel to return the base value (left operand) of the reference
 	 * @return {any} - the array element or object property
 	 */
-	function PROPERTY_ACCESS(fnLeft, fnName, aParts) {
-		return fnLeft(aParts)[fnName(aParts)];
+	function PROPERTY_ACCESS(fnLeft, fnName, aParts, oReference) {
+		var oParent = fnLeft(aParts),
+			sIdentifier = fnName(aParts), // BEWARE: evaluate propertyNameValue AFTER baseValue!
+			vChild = oParent[sIdentifier];
+
+		if (oReference) {
+			oReference.base = oParent;
+		}
+		return vChild;
 	}
 
 	/**
