@@ -47,7 +47,8 @@ sap.ui.define([
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters
 	 * @throws {Error}
-	 *   If disallowed binding parameters are provided or an unsupported operation mode is used
+	 *   If incorrect binding parameters are provided, an unsupported operation mode is used, or
+	 *   if any given filter including their embedded filters is marked as case insensitive
 	 *
 	 * @alias sap.ui.model.odata.v4.ODataListBinding
 	 * @author SAP SE
@@ -81,6 +82,8 @@ sap.ui.define([
 				this.mAggregatedQueryOptions = {};
 				this.bAggregatedQueryOptionsInitial = true;
 				this.aApplicationFilters = _Helper.toArray(vFilters);
+				ODataListBinding.checkCaseSensitiveFilters(this.aApplicationFilters);
+
 				this.oCachePromise = SyncPromise.resolve();
 				this.sChangeReason = oModel.bAutoExpandSelect ? "AddVirtualContext" : undefined;
 				// auto-$expand/$select: promises to wait until child bindings have provided
@@ -103,6 +106,34 @@ sap.ui.define([
 		});
 
 	asODataParentBinding(ODataListBinding.prototype);
+
+	/**
+	 * Check whether all given <code>sap.ui.model.Filter</code> and their embedded filters are case
+	 * sensitive.
+	 *
+	 * @param {sap.ui.model.Filter[]} aFilters
+	 *   An array of filter objects
+	 * @throws {Error}
+	 *   If any given filter is marked as case insensitive
+	 *
+	 * @private
+	 */
+	ODataListBinding.checkCaseSensitiveFilters = function (aFilters) {
+		function checkSingleFilter(oFilter) {
+			if (oFilter.bCaseSensitive === false) {
+				throw new Error("Filter for path '" + oFilter.sPath
+					+ "' has unsupported value for 'caseSensitive' : false");
+			}
+			if (oFilter.aFilters) {
+				ODataListBinding.checkCaseSensitiveFilters(oFilter.aFilters);
+			}
+			if (oFilter.oCondition) {
+				checkSingleFilter(oFilter.oCondition);
+			}
+		}
+
+		aFilters.forEach(checkSingleFilter);
+	};
 
 	/**
 	 * Deletes the entity identified by the edit URL.
@@ -852,14 +883,19 @@ sap.ui.define([
 	 * @returns {sap.ui.model.odata.v4.ODataListBinding}
 	 *   <code>this</code> to facilitate method chaining
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, there are pending changes or if an unsupported
-	 *   operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList})
+	 *   If the binding's root binding is suspended, if there are pending changes, if an unsupported
+	 *   operation mode is used (see {@link sap.ui.model.odata.v4.ODataModel#bindList}), or if any
+	 *   given filter including their embedded filters is marked as case
+	 *   insensitive
 	 *
 	 * @public
 	 * @see sap.ui.model.ListBinding#filter
 	 * @since 1.39.0
 	 */
 	ODataListBinding.prototype.filter = function (vFilters, sFilterType) {
+		var aFilters = _Helper.toArray(vFilters);
+
+		ODataListBinding.checkCaseSensitiveFilters(aFilters);
 		this.checkSuspended();
 		if (this.sOperationMode !== OperationMode.Server) {
 			throw new Error("Operation mode has to be sap.ui.model.odata.OperationMode.Server");
@@ -869,9 +905,9 @@ sap.ui.define([
 		}
 
 		if (sFilterType === FilterType.Control) {
-			this.aFilters = _Helper.toArray(vFilters);
+			this.aFilters = aFilters;
 		} else {
-			this.aApplicationFilters = _Helper.toArray(vFilters);
+			this.aApplicationFilters = aFilters;
 		}
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
