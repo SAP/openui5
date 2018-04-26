@@ -3048,9 +3048,18 @@ sap.ui.require([
 	QUnit.test("NoData handling", function(assert) {
 		var sNoDataClassOfTable = "sapUiTableEmpty";
 		var oBinding = oTable.getBinding("rows");
+		var oBindingInfo = oTable.getBindingInfo("rows");
 		var oGetBindingLength = this.stub(oBinding, "getLength");
 		var oIsInstanceOf = this.stub(TableUtils, "isInstanceOf");
 		var oClock = sinon.useFakeTimers();
+
+		function testNoData(bVisible, sTestTitle) {
+			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bVisible,
+				sTestTitle + " - The table has the NoData class assigned: " + bVisible);
+
+			assert.strictEqual(TableUtils.isNoDataVisible(oTable), bVisible,
+				sTestTitle + " - NoData is visible: " + bVisible);
+		}
 
 		function testDataReceivedListener(bNoDataVisible, sTestTitle) {
 			var oEvent = {
@@ -3066,22 +3075,14 @@ sap.ui.require([
 			oClock.tick(1);
 			sap.ui.getCore().applyChanges();
 
-			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
-				sTestTitle + " - The table has the NoData class assigned: " + bNoDataVisible);
-
-			assert.strictEqual(TableUtils.isNoDataVisible(oTable), bNoDataVisible,
-				sTestTitle + " - NoData is visible: " + bNoDataVisible);
+			testNoData(bNoDataVisible, sTestTitle);
 		}
 
 		function testUpdateTotalRowCount(bNoDataVisible, sTestTitle) {
 			oTable._updateTotalRowCount(true);
 			sap.ui.getCore().applyChanges();
 
-			assert.strictEqual(oTable.getDomRef().classList.contains(sNoDataClassOfTable), bNoDataVisible,
-				sTestTitle + " - The table has the NoData class assigned: " + bNoDataVisible);
-
-			assert.strictEqual(TableUtils.isNoDataVisible(oTable), bNoDataVisible,
-				sTestTitle + " - NoData is visible: " + bNoDataVisible);
+			testNoData(bNoDataVisible, sTestTitle);
 		}
 
 		oTable.setShowNoData(true);
@@ -3115,6 +3116,11 @@ sap.ui.require([
 		oIsInstanceOf.restore();
 		oTable.unbindRows();
 		testUpdateTotalRowCount(true, "Binding removed");
+
+		// Calling refreshRows after bindRows: NoData area will be hidden.
+		oTable.bindRows(oBindingInfo);
+		oTable.refreshRows();
+		testUpdateTotalRowCount(false, "Calling refreshRows after bindRows");
 
 		// Cleanup
 		oClock.restore();
