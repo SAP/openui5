@@ -609,13 +609,13 @@ sap.ui.define([
 		}
 
 		if (this.vValue !== vValue) {
-			oGroupLock = that.oModel.lockGroup(sGroupId);
+			oGroupLock = that.oModel.lockGroup(sGroupId, true);
 			this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					reportError(new Error("Cannot set value on this binding"));
 					// do not update that.vValue!
 				} else {
-					that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)
+					return that.oModel.getMetaModel().fetchUpdateData(that.sPath, that.oContext)
 						.then(function (oResult) {
 							return that.withCache(function (oCache, sCachePath, oBinding) {
 								oGroupLock.setGroupId(oBinding.getUpdateGroupId());
@@ -623,13 +623,11 @@ sap.ui.define([
 									oResult.propertyPath, vValue, reportError, oResult.editUrl,
 									sCachePath, that.getUnitOrCurrencyPath());
 							}, oResult.entityPath);
-						})
-						["catch"](function (oError) {
-							if (!oError.canceled) {
-								reportError(oError);
-							}
 						});
 				}
+			}).catch(function (oError) {
+				oGroupLock.unlock(true);
+				reportError(oError);
 			});
 		}
 	};

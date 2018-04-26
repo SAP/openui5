@@ -780,4 +780,36 @@ sap.ui.require([
 
 		assert.strictEqual(oIcon.getColor(), oIcon.validateProperty("color", "'T%201000'"));
 	});
+
+	//*********************************************************************************************
+	QUnit.test("Internal incident 1870185604", function (assert) {
+		var mGlobals = {
+				My : {
+					method : function () {}
+				},
+				that : {}
+			},
+			oMethodExpectation = this.mock(mGlobals.My).expects("method"),
+			oResult;
+
+		oMethodExpectation.twice().withExactArgs("mail").returns(42);
+
+		// code under test
+		oResult = BindingParser.parseExpression("{= My.method.call(that, ${/mail}) }", 2,
+			null, mGlobals);
+
+		// invoke My.method to check "this"
+		assert.strictEqual(oResult.result.formatter("mail"), 42);
+		assert.strictEqual(oMethodExpectation.thisValues[0], mGlobals.that, "that");
+		assert.notStrictEqual(oMethodExpectation.thisValues[0], mGlobals.My, "not My");
+
+		// code under test
+		oResult = BindingParser.parseExpression("{= (My.method)['call'](that, ${/mail}) }", 2,
+			null, mGlobals);
+
+		// invoke My.method to check "this"
+		assert.strictEqual(oResult.result.formatter("mail"), 42);
+		assert.strictEqual(oMethodExpectation.thisValues[1], mGlobals.that, "that");
+		assert.notStrictEqual(oMethodExpectation.thisValues[1], mGlobals.My, "not My");
+	});
 });

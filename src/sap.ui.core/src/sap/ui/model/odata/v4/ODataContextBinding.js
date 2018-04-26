@@ -213,9 +213,10 @@ sap.ui.define([
 				});
 				// do not return anything
 			})["catch"](function (oError) {
-			that.oModel.reportError("Failed to execute " + sResolvedPath, sClassName, oError);
-			throw oError;
-		});
+				oGroupLock.unlock(true);
+				that.oModel.reportError("Failed to execute " + sResolvedPath, sClassName, oError);
+				throw oError;
+			});
 
 		return Promise.resolve(oPromise);
 	};
@@ -493,7 +494,7 @@ sap.ui.define([
 			}
 		}
 
-		return this._execute(this.oModel.lockGroup(sGroupId));
+		return this._execute(this.oModel.lockGroup(sGroupId, true));
 	};
 
 	/**

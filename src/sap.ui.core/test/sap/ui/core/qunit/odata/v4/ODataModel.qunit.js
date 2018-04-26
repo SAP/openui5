@@ -151,6 +151,7 @@ sap.ui.require([
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.OneWay), true);
 		assert.strictEqual(oModel.isBindingModeSupported(BindingMode.TwoWay), true);
 		assert.deepEqual(oModel.aAllBindings, []);
+		assert.deepEqual(oModel.aLockedGroupLocks, []);
 		oMetaModel = oModel.getMetaModel();
 		assert.ok(oMetaModel instanceof ODataMetaModel);
 		assert.strictEqual(oMetaModel.oRequestor, oMetadataRequestor);
@@ -1471,7 +1472,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("lockGroup", function (assert) {
+	QUnit.test("lockGroup: non-blocking", function (assert) {
 		var oGroupLock1,
 			oGroupLock2,
 			oModel = createModel("");
@@ -1481,17 +1482,92 @@ sap.ui.require([
 
 		assert.ok(oGroupLock1 instanceof _GroupLock);
 		assert.strictEqual(oGroupLock1.getGroupId(), "foo");
+		assert.notOk(oGroupLock1.isLocked());
 
 		// code under test
 		oGroupLock1 = oModel.lockGroup();
 
 		assert.strictEqual(oGroupLock1.getGroupId(), undefined);
+		assert.notOk(oGroupLock1.isLocked());
 
 		// code under test
 		oGroupLock2 = oModel.lockGroup("foo", oGroupLock1);
 
 		assert.strictEqual(oGroupLock1, oGroupLock2);
 		assert.strictEqual(oGroupLock1.getGroupId(), "foo");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("lockGroup: blocking", function (assert) {
+		var oGroupLock,
+			oModel = createModel("");
+
+		oGroupLock = oModel.lockGroup("foo", true);
+
+		assert.ok(oGroupLock instanceof _GroupLock);
+		assert.strictEqual(oGroupLock.getGroupId(), "foo");
+		assert.ok(oGroupLock.isLocked());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_submitBatch: group locks", function (assert) {
+		var oBarGroupLock,
+			oBarPromise,
+			oBazPromise,
+			oFooGroupLock,
+			oFooPromise,
+			oModel = createModel(""),
+			oRequestorMock = this.mock(oModel.oRequestor),
+			that = this;
+
+		oRequestorMock.expects("submitBatch").never();
+
+		oFooGroupLock = oModel.lockGroup("foo", true);
+		oBarGroupLock = oModel.lockGroup("bar", true);
+
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('foo') is waiting for locks", null, sClassName);
+
+		// code under test
+		oFooPromise = oModel._submitBatch("foo");
+
+		assert.ok(oFooPromise instanceof Promise);
+
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('bar') is waiting for locks", null, sClassName);
+
+		// code under test
+		oBarPromise = oModel._submitBatch("bar");
+
+		oRequestorMock.expects("submitBatch").withExactArgs("baz").returns(Promise.resolve());
+
+		// code under test
+		oBazPromise = oModel._submitBatch("baz");
+
+		this.oLogMock.expects("info")
+			.withExactArgs("submitBatch('foo') continues", null, sClassName);
+		oRequestorMock.expects("submitBatch").withExactArgs("foo").returns(Promise.resolve());
+
+		// code under test
+		oFooGroupLock.unlock();
+
+		return Promise.all([
+			oFooPromise.then(function () {
+				assert.deepEqual(oModel.aLockedGroupLocks, [oBarGroupLock]);
+
+				that.oLogMock.expects("info")
+					.withExactArgs("submitBatch('bar') continues", null, sClassName);
+				oRequestorMock.expects("submitBatch").withExactArgs("bar")
+					.returns(Promise.resolve());
+
+				// code under test
+				oBarGroupLock.unlock();
+			}),
+			oBarPromise.then(function () {
+				assert.deepEqual(oModel.aLockedGroupLocks, []);
+			}),
+			oBazPromise
+		]);
 	});
 });
 //TODO constructor: test that the service root URL is absolute?

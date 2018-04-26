@@ -6,8 +6,9 @@ sap.ui.require([
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Context",
 	"sap/ui/model/odata/v4/Context",
+	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper"
-], function (jQuery, SyncPromise, BaseContext, Context, _Helper) {
+], function (jQuery, SyncPromise, BaseContext, Context, _GroupLock, _Helper) {
 	/*global QUnit, sinon */
 	/*eslint no-warning-comments: 0 */
 	"use strict";
@@ -226,51 +227,49 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[{value : 42}, undefined].forEach(function (oData) {
-		QUnit.test("requestObject " + JSON.stringify(oData), function (assert) {
-			var oBinding = {
-					checkSuspended : function () {}
-				},
-				oContext = Context.create(null, oBinding, "/foo"),
-				oPromise,
-				oSyncPromise = SyncPromise.resolve(Promise.resolve(oData));
+	QUnit.test("requestObject", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo"),
+			oClone = {},
+			oData = {},
+			oPromise,
+			oSyncPromise = SyncPromise.resolve(Promise.resolve(oData));
 
-			this.mock(oBinding).expects("checkSuspended").withExactArgs();
-			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
-				.returns(oSyncPromise);
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromise);
+		this.mock(_Helper).expects("publicClone").withExactArgs(sinon.match.same(oData))
+			.returns(oClone);
 
-			//code under test
-			oPromise = oContext.requestObject("bar");
+		// code under test
+		oPromise = oContext.requestObject("bar");
 
-			assert.ok(oPromise instanceof Promise);
+		assert.ok(oPromise instanceof Promise);
 
-			return oPromise.then(function (oResult) {
-				assert.deepEqual(oResult, oData);
-				if (oResult) {
-					assert.notStrictEqual(oResult, oData);
-				}
-			});
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, oClone);
 		});
 	});
 
 	//*********************************************************************************************
-	[{value : 42}, undefined].forEach(function (oData) {
-		QUnit.test("getObject: " + JSON.stringify(oData), function (assert) {
-			var oContext = Context.create(null, null, "/foo"),
-				oResult,
-				oSyncPromise = SyncPromise.resolve(oData);
+	QUnit.test("getObject", function (assert) {
+		var oContext = Context.create(null, null, "/foo"),
+			oClone = {},
+			oData = {},
+			oResult,
+			oSyncPromise = SyncPromise.resolve(oData);
 
-			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
-				.returns(oSyncPromise);
+		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
+			.returns(oSyncPromise);
+		this.mock(_Helper).expects("publicClone").withExactArgs(sinon.match.same(oData))
+			.returns(oClone);
 
-			//code under test
-			oResult = oContext.getObject("bar");
+		// code under test
+		oResult = oContext.getObject("bar");
 
-			assert.deepEqual(oResult, oData);
-			if (oResult) {
-				assert.notStrictEqual(oResult, oData);
-			}
-		});
+		assert.strictEqual(oResult, oClone);
 	});
 
 	//*********************************************************************************************
@@ -577,7 +576,7 @@ sap.ui.require([
 			var oBinding = {
 					checkSuspended : function () {}
 				},
-				oGroupLock = {},
+				oGroupLock = new _GroupLock(),
 				oModel = {
 					checkGroupId : function () {},
 					lockGroup : function () {},
@@ -588,10 +587,12 @@ sap.ui.require([
 
 			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
-			this.mock(oModel).expects("lockGroup").withExactArgs("myGroup").returns(oGroupLock);
+			this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true)
+				.returns(oGroupLock);
 			this.mock(oContext).expects("_delete").withExactArgs(sinon.match.same(oGroupLock))
 				.returns(bFailure ? Promise.reject(oError) : Promise.resolve());
 			if (bFailure) {
+				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 				this.mock(oModel).expects("reportError")
 					.withExactArgs("Failed to delete " + oContext, "sap.ui.model.odata.v4.Context",
 						oError);

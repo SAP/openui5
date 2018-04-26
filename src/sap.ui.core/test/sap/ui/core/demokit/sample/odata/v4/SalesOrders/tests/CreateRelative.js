@@ -7,8 +7,14 @@ sap.ui.define([
 	"use strict";
 
 	return {
-		createRelative : function (Given, When, Then) {
+		createRelative : function (Given, When, Then, sUIComponent) {
 			var bRealOData = TestUtils.isRealOData();
+
+			Given.iStartMyUIComponent({
+				componentConfig : {
+					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
+				}
+			});
 
 			sap.ui.test.Opa.getContext().sViewName = "sap.ui.core.sample.odata.v4.SalesOrders.Main";
 
@@ -141,6 +147,7 @@ sap.ui.define([
 				message : "Failed to update path /SalesOrderList/-1/Note"
 				//TODO: enable checkLog to deal with RegExp
 			}] : undefined);
+			Then.iTeardownMyUIComponent();
 		}
 	};
 });

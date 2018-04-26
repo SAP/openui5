@@ -149,7 +149,7 @@ sap.ui.define([
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
 						if (that.aContexts[i]) {
 							// calculate the context path and try to re-use the context for it
-							sPredicate = aEntities[i]["@$ui5._.predicate"];
+							sPredicate = _Helper.getPrivateAnnotation(aEntities[i], "predicate");
 							sContextPath = sResolvedPath + (sPredicate || "/" + i);
 							oContext = that.mPreviousContextsByPath[sContextPath];
 							if (oContext) {
@@ -361,7 +361,7 @@ sap.ui.define([
 			});
 		}
 
-		oGroupLock = this.oModel.lockGroup(this.getUpdateGroupId());
+		oGroupLock = this.oModel.lockGroup(this.getUpdateGroupId(), true); // only for createInCache
 		oCreatePromise = this.createInCache(oGroupLock, vCreatePath, "", oInitialData,
 			function () {
 				// cancel callback
@@ -380,6 +380,9 @@ sap.ui.define([
 				}
 				return that.refreshSingle(oContext, that.oModel.lockGroup(sGroupId));
 			}
+		}, function (oError) {
+			oGroupLock.unlock(true); // createInCache failed, so the lock might still be blocking
+			throw oError;
 		});
 		oContext = Context.create(this.oModel, this, sResolvedPath + "/-1", -1, oCreatePromise);
 
@@ -440,7 +443,7 @@ sap.ui.define([
 		for (i = iStart; i < iStart + aResults.length; i += 1) {
 			if (this.aContexts[i] === undefined) {
 				bChanged = true;
-				sPredicate = aResults[i - iStart]["@$ui5._.predicate"];
+				sPredicate = _Helper.getPrivateAnnotation(aResults[i - iStart], "predicate");
 				sContextPath = sPath + (sPredicate || "/" + i);
 				if (sContextPath in this.mPreviousContextsByPath) {
 					this.aContexts[i] = this.mPreviousContextsByPath[sContextPath];
@@ -529,14 +532,14 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext) {
-		var bGrouped = this.aAggregation && this.aAggregation.some(function (oAggregation) {
-				return oAggregation.grouped;
+		var bAggregate = this.aAggregation && this.aAggregation.some(function (oAggregation) {
+				return oAggregation.grouped || oAggregation.min || oAggregation.max;
 			});
 
 		mQueryOptions = this.inheritQueryOptions(mQueryOptions, oContext);
 
-		// w/o grouping, $apply is sufficient; else _AggregationCache is needed
-		return bGrouped
+		// w/o grouping or min/max, $apply is sufficient; else _AggregationCache is needed
+		return bAggregate
 			? _AggregationCache.create(this.oModel.oRequestor, sResourcePath, this.aAggregation,
 				mQueryOptions, this.oModel.bAutoExpandSelect)
 			: _Cache.create(this.oModel.oRequestor, sResourcePath, mQueryOptions,
@@ -872,7 +875,7 @@ sap.ui.define([
 		}
 		this.mCacheByContext = undefined;
 		this.fetchCache(this.oContext);
-		this.reset(ChangeReason.Filter);
+		this.reset(ChangeReason.Filter, true);
 
 		return this;
 	};
@@ -970,18 +973,22 @@ sap.ui.define([
 		}
 		iStartInModel = this.aContexts[-1] ? iStart - 1 : iStart;
 
+		oGroupLock = this.oRefreshGroupLock;
+		this.oRefreshGroupLock = undefined;
 		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
 			oPromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
 					// getContexts needs no lock, only the group ID (or re-use the refresh lock)
-					oGroupLock = that.oModel.lockGroup(that.getGroupId(), that.oRefreshGroupLock);
-					that.oRefreshGroupLock = undefined;
+					oGroupLock = that.oModel.lockGroup(that.getGroupId(), oGroupLock);
 					return oCache.read(iStartInModel, iLength, iMaximumPrefetchSize, oGroupLock,
 						function () {
 							bDataRequested = true;
 							that.fireDataRequested();
 						});
 				} else {
+					if (oGroupLock) {
+						oGroupLock.unlock();
+					}
 					return oContext.fetchValue(that.sPath).then(function (aResult) {
 						var iCount;
 
@@ -1036,6 +1043,9 @@ sap.ui.define([
 				}
 				throw oError;
 			})["catch"](function (oError) {
+				if (oGroupLock) {
+					oGroupLock.unlock(true);
+				}
 				that.oModel.reportError("Failed to get contexts for "
 						+ that.oModel.sServiceUrl
 						+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
@@ -1443,10 +1453,12 @@ sap.ui.define([
 	 *   A change reason; if given, a refresh event with this reason is fired and the next
 	 *   getContexts() fires a change event with this reason. Change reason "change" is ignored
 	 *   as long as the binding is still empty.
+	 * @param {boolean} [bLock=false]
+	 *   Whether a locked group lock is created for the following getContexts
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.reset = function (sChangeReason) {
+	ODataListBinding.prototype.reset = function (sChangeReason, bLock) {
 		var bEmpty = this.iCurrentEnd === 0,
 			that = this;
 
@@ -1470,6 +1482,16 @@ sap.ui.define([
 		this.bLengthFinal = false;
 		if (sChangeReason && !(bEmpty && sChangeReason === ChangeReason.Change)) {
 			this.sChangeReason = sChangeReason;
+			if (bLock) {
+				this.oRefreshGroupLock = this.oModel.lockGroup(undefined, true);
+				sap.ui.getCore().addPrerenderingTask(function () {
+					if (that.oRefreshGroupLock) {
+						// The lock is still unused, i.e. no getContexts was called
+						that.oRefreshGroupLock.unlock(true);
+						that.oRefreshGroupLock = undefined;
+					}
+				});
+			}
 			this._fireRefresh({reason : sChangeReason});
 		}
 		// Update after the refresh event, otherwise $count is fetched before the request
@@ -1611,12 +1633,25 @@ sap.ui.define([
 	 *   Dimensions only: see above
 	 * @param {boolean} [aAggregation[].total]
 	 *   Its presence is used to detect a measure
+	 * @param {boolean} [aAggregation[].max]
+	 *   Measures only: Whether the maximum value for this measure is needed (since 1.55.0);
+	 *   <b>filtering and sorting is not supported in this case</b>
+	 * @param {boolean} [aAggregation[].min]
+	 *   Measures only: Whether the minimum value for this measure is needed (since 1.55.0);
+	 *   <b>filtering and sorting is not supported in this case</b>
 	 * @param {string} [aAggregation[].with]
 	 *   Measures only: The name of the method (for example "sum") used for aggregation of this
 	 *   measure; see "3.1.2 Keyword with" (since 1.55.0)
 	 * @param {string} [aAggregation[].as]
 	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
 	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
+	 * @returns {object}
+	 *   The return object contains a property <code>measureRangePromise</code> if and only if at
+	 *   least one measure has requested a minimum or maximum value; its value is a
+	 *   promise which resolves with the measure range map as soon as data has been received; the
+	 *   measure range map contains measure names as keys and objects as values which have a
+	 *   <code>min</code> and <code>max</code> property as requested above.
+	 *   <code>undefined</code> is returned instead of an empty object.
 	 * @throws {Error}
 	 *   If the binding's root binding is suspended or a property is both a dimension and a measure
 	 *
@@ -1626,7 +1661,9 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	ODataListBinding.prototype.updateAnalyticalInfo = function (aAggregation) {
-		aAggregation = _Helper.clone(aAggregation).filter(function (oAggregation) {
+		var bHasMinMax = false;
+
+		this.aAggregation = _Helper.clone(aAggregation).filter(function (oAggregation) {
 			var bInclude = !("grouped" in oAggregation) || oAggregation.inResult
 					|| oAggregation.visible;
 
@@ -1635,11 +1672,19 @@ sap.ui.define([
 
 			if (!("grouped" in oAggregation || "total" in oAggregation)) {
 				oAggregation.grouped = false;
+			} else if (oAggregation.min || oAggregation.max) {
+				bHasMinMax = true;
 			}
-
 			return bInclude;
 		});
-		this.changeParameters({$apply : _Helper.buildApply(aAggregation)});
+		this.changeParameters({$apply : _Helper.buildApply(this.aAggregation)});
+		if (bHasMinMax) {
+			return {
+				measureRangePromise : Promise.resolve(this.oCachePromise.then(function (oCache) {
+					return oCache.getMeasureRangePromise();
+				}))
+			};
+		}
 	};
 
 	return ODataListBinding;

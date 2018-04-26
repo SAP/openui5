@@ -23,21 +23,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("TestUtils: getDefaultOpaTimeout", function (assert) {
-		var oTestUtilsMock = this.mock(TestUtils);
-
-		oTestUtilsMock.expects("isRealOData").withExactArgs().returns(true);
-
-		// code under test
-		assert.strictEqual(TestUtils.getDefaultOpaTimeout(), 30);
-
-		oTestUtilsMock.expects("isRealOData").withExactArgs().returns(false);
-
-		// code under test
-		assert.strictEqual(TestUtils.getDefaultOpaTimeout(), 5);
-	});
-
-	//*********************************************************************************************
 	[{
 		requestHeaders : { "oDaTa-VeRsIoN" : "Foo" }, // handle headers case-insensitive
 		responseHeaders : {},

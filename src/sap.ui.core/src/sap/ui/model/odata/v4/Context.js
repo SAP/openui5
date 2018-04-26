@@ -185,11 +185,14 @@ sap.ui.define([
 	 * @since 1.41.0
 	 */
 	Context.prototype["delete"] = function (sGroupId) {
-		var that = this;
+		var oGroupLock,
+			that = this;
 
 		this.oBinding.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
-		return this._delete(this.oModel.lockGroup(sGroupId)).catch(function (oError) {
+		oGroupLock = this.oModel.lockGroup(sGroupId, true);
+		return this._delete(oGroupLock).catch(function (oError) {
+			oGroupLock.unlock(true);
 			that.oModel.reportError("Failed to delete " + that, sClassName, oError);
 			throw oError;
 		});
@@ -347,10 +350,9 @@ sap.ui.define([
 	Context.prototype.getObject = function (sPath) {
 		var oSyncPromise = this.fetchValue(sPath);
 
-		if (!oSyncPromise.isFulfilled()) {
-			return undefined;
+		if (oSyncPromise.isFulfilled()) {
+			return _Helper.publicClone(oSyncPromise.getResult());
 		}
-		return _Helper.clone(oSyncPromise.getResult());
 	};
 
 	/**
@@ -527,9 +529,7 @@ sap.ui.define([
 	Context.prototype.requestObject = function (sPath) {
 		this.oBinding.checkSuspended();
 
-		return Promise.resolve(this.fetchValue(sPath)).then(function (vResult) {
-			return _Helper.clone(vResult);
-		});
+		return Promise.resolve(this.fetchValue(sPath)).then(_Helper.publicClone);
 	};
 
 	/**
