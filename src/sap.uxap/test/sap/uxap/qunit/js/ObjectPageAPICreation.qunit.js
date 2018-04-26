@@ -1503,6 +1503,54 @@
 		assert.strictEqual(oStateChangeListener.callCount, 2, "stateChange event was fired twice");
 	});
 
+	QUnit.test("ObjectPage header is preserved in title on resize", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			oFakeEvent = {
+				size: {
+					width: 100,
+					height: 300
+				},
+				oldSize: {
+					width: 100,
+					height: 400
+				}
+			},
+			// this delay is already introduced in the ObjectPage resize listener
+			iDelay = sap.uxap.ObjectPageLayout.HEADER_CALC_DELAY + 100,
+			bInvalidateCalled = false,
+			done = assert.async();
+
+		// the sinon spy cannot be applied here for some reason,
+		// so i'm using a custom proxy just for this test
+		function proxyInvalidate() {
+			var fnIvalidateOriginal = oObjectPage.invalidate;
+			oObjectPage. invalidate = function() {
+				bInvalidateCalled = true;
+				fnIvalidateOriginal.apply(this, arguments);
+			};
+		}
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// setup: expand the header in the title
+			oObjectPage._scrollTo(0, 200);
+			oObjectPage._expandHeader(true);
+			assert.ok(oObjectPage._bHeaderInTitleArea);
+
+			proxyInvalidate();
+
+			// act: resize and check if the page invalidates in the resize listener
+			oObjectPage._onUpdateScreenSize(oFakeEvent);
+
+			setTimeout(function() {
+				assert.strictEqual(bInvalidateCalled, false, "page was not invalidated during resize");
+				done();
+			}, iDelay);
+		});
+
+	});
+
 	QUnit.module("ObjectPage with alwaysShowContentHeader", {
 
 		beforeEach: function () {
