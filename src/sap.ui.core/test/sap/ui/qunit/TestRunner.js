@@ -32,17 +32,17 @@
 									"{{#results}}" +
 										"<li class=\"{{result.sLiClass}} test\">" +
 											"<p style=\"display: inline\">{{result.TestName}} ({{result.Failed}} ,{{result.Passed}} ,{{result.All}}) </p>" +
-											"<a href=\"{{result.rerunlink}}\"> Rerun</a>"+
-											"<ol>"+
-											"{{#result.testmessages}}"+
+											"<a href=\"{{result.rerunlink}}\"> Rerun</a>" +
+											"<ol>" +
+											"{{#result.testmessages}}" +
 												"<li class=\"{{classname}} check\">{{message}}" +
-												"<br>{{expected}}"+
-												"<br>{{actual}}"+
-												"<br>{{diff}}"+
-												"<br>{{source}}"+
-												"</li>"+
-											"{{/result.testmessages}}"+
-											"</ol>"+
+												"<br>{{expected}}" +
+												"<br>{{actual}}" +
+												"<br>{{diff}}" +
+												"<br>{{source}}" +
+												"</li>" +
+											"{{/result.testmessages}}" +
+											"</ol>" +
 										"</li>" +
 									"{{/results}}" +
 									"</ol>" +
@@ -59,87 +59,113 @@
 	window.sap.ui.qunit = window.sap.ui.qunit || {};
 	window.sap.ui.qunit.TestRunner = {
 
-		checkTestPage: function(sTestPage) {
+		checkTestPage: function(sTestPage, bSequential) {
 
-			var oDeferred = jQuery.Deferred();
+			var oPromise = new Promise(function(resolve, reject) {
 
-			if (typeof sTestPage !== "string") {
-				window.console.log("QUnit: invalid test page specified");
-				return;
-			}
+				if (typeof sTestPage !== "string") {
+					window.console.log("QUnit: invalid test page specified");
+					reject("QUnit: invalid test page specified");
+				}
 
-			if (window.console && typeof window.console.log === "function") {
-				window.console.log("QUnit: checking test page: " + sTestPage);
-			}
+				if (window.console && typeof window.console.log === "function") {
+					window.console.log("QUnit: checking test page: " + sTestPage);
+				}
 
-			// check for an existing test page and check for test suite or page
-			var that = this;
-			jQuery.get(sTestPage).done(function(sData) {
-				if (/(window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/g.test(sData)) {
-					var $frame = jQuery("<iframe>");
-					$frame.css("display", "none");
-					$frame.one("load", function() {
-						that.findTestPages(this).done(function(aTestPages) {
-							oDeferred.resolve(aTestPages);
+				// check for an existing test page and check for test suite or page
+				jQuery.get(sTestPage).done(function(sData) {
+					if (/(window\.suite\s*=|function\s*suite\s*\(\s*\)\s*{)/g.test(sData)) {
+						var $frame = jQuery("<iframe>");
+						var that = this;
+						$frame.css("display", "none");
+						$frame.one("load", function() {
+							that.findTestPages(this, bSequential).then(function(aTestPages) {
+								resolve(aTestPages);
+							});
+							jQuery(this).remove();
 						});
-						jQuery(this).remove();
-					});
-					$frame.attr("src", sTestPage);
-					$frame.appendTo(document.body);
-				} else {
-					oDeferred.resolve([sTestPage]);
-				}
-			}).fail(function(xhr,status,msg) {
-				var text = (xhr ? xhr.status + " " : "") + (msg || status || 'unspecified error');
-				if (window.console && typeof window.console.error === "function") {
-					window.console.error("QUnit: failed to load page '" + sTestPage + "': " + text);
-				}
-				var oContext = that.createFailContext(sTestPage, "Testsite could not be loaded");
-				that.printTestResult(oContext);
-				oDeferred.resolve([]);
-			});
+						$frame.attr("src", sTestPage);
+						$frame.appendTo(document.body);
+					} else {
+						resolve([sTestPage]);
+					}
+				}.bind(this)).fail(function(xhr,status,msg) {
+					var text = (xhr ? xhr.status + " " : "") + (msg || status || 'unspecified error');
+					if (window.console && typeof window.console.error === "function") {
+						window.console.error("QUnit: failed to load page '" + sTestPage + "': " + text);
+					}
+					var oContext = this.createFailContext(sTestPage, "Testsite could not be loaded");
+					this.printTestResult(oContext);
+					resolve([]);
+				}.bind(this));
 
-			return oDeferred.promise();
+			}.bind(this));
+
+			oPromise.done = oPromise.then; // compat for Deferred
+			oPromise.fail = oPromise.catch; // compat for Deferred
+
+			return oPromise;
 
 		},
 
-		findTestPages: function(oIFrame) {
+		findTestPages: function(oIFrame, bSequential) {
 
-			var oDeferred = jQuery.Deferred();
-			try {
+			var oSuite = oIFrame.contentWindow.suite();
+			var aPages = oSuite.getTestPages() || [];
 
-				var oSuite = oIFrame.contentWindow.suite();
-				var aPages = oSuite.getTestPages() || [];
+			return new Promise(function(resolve, reject) {
 
-				var aTestPagePromises = [];
-				for (var i = 0, l = aPages.length; i < l; i++) {
-					var sTestPage = aPages[i];
-					aTestPagePromises.push(this.checkTestPage(sTestPage));
-				}
+				try {
 
-				if (aTestPagePromises.length > 0) {
-					jQuery.when.apply(jQuery, aTestPagePromises).then(function() {
-						var aTestPages = [];
-						var aArgs = Array.prototype.slice.apply(arguments);
-						for (var i = 0, l = aArgs.length; i < l; i++) {
-							aTestPages = aTestPages.concat(aArgs[i]);
+					if (aPages.length > 0) {
+
+						var aTestPagePromises = [];
+
+						if (bSequential) {
+
+							var aTestPages = [];
+							aTestPagePromises.push(aPages.reduce(function(oPromise, sTestPage) {
+								return oPromise.then(this.checkTestPage.bind(this, sTestPage, bSequential)).then(function(aFoundTestPages) {
+									aTestPages = aTestPages.concat(aFoundTestPages);
+								});
+							}.bind(this), Promise.resolve([])).then(function() {
+								return aTestPages;
+							}));
+
+						} else {
+
+							for (var i = 0, l = aPages.length; i < l; i++) {
+								var sTestPage = aPages[i];
+								aTestPagePromises.push(this.checkTestPage(sTestPage, bSequential));
+							}
+
 						}
-						oDeferred.resolve(aTestPages);
-					});
+
+						if (aTestPagePromises.length > 0) {
+							Promise.all(aTestPagePromises).then(function(aFoundTestPages) {
+								var aTestPages = [];
+								for (var i = 0, l = aFoundTestPages.length; i < l; i++) {
+									aTestPages = aTestPages.concat(aFoundTestPages[i]);
+								}
+								resolve(aTestPages);
+							});
+						}
+
 				} else {
-					oDeferred.resolve([]);
+					resolve([]);
 				}
 
-			} catch (ex) {
-				if (window.console && typeof window.console.error === "function") {
-					window.console.error("QUnit: error while analyzing test page '" + oIFrame.src + "':\n" + ex);
-					if ( ex.stack ) {
-						window.console.error(ex.stack);
+				} catch (ex) {
+					if (window.console && typeof window.console.error === "function") {
+						window.console.error("QUnit: error while analyzing test page '" + oIFrame.src + "':\n" + ex);
+						if ( ex.stack ) {
+							window.console.error(ex.stack);
+						}
 					}
+					resolve([]);
 				}
-				oDeferred.resolve([]);
-			}
-			return oDeferred.promise();
+
+			}.bind(this));
 
 		},
 
@@ -155,33 +181,32 @@
 
 			aTestPages = aTestPages.slice(1);
 
-			var oDeferred = jQuery.Deferred();
+			return new Promise(function(resolve, reject) {
 
-			var that = this;
-			if (sTestPage) {
-				this.runTest(sTestPage, true, that).then(function(oResult) {
-					var nBarwidth = parseFloat(jQuery("div#innerBar")[0].style.width, 10);
-					var sNewwidth = nBarwidth + nBarStep + "%";
-					jQuery("div#innerBar").text(Math.round(nBarwidth + nBarStep) + "%");
-					jQuery("div#innerBar").width(sNewwidth);
-					if (parseInt(jQuery("div#reportingHeader span.failed").text()) > 0) {
-						jQuery("div#innerBar")[0].style.backgroundColor = '#ed866f';
-					}
-					jQuery("div#time").text(Math.round((new Date() - window.oStartTime)/1000) + " Seconds");
-					jQuery("#selectedTests").find("option").each(function() {
-						if (jQuery(this).text() === sTestPage) {
-							jQuery(this).remove();
+				if (sTestPage) {
+					this.runTest(sTestPage, true, this).then(function(oResult) {
+						var nBarwidth = parseFloat(jQuery("div#innerBar")[0].style.width, 10);
+						var sNewwidth = nBarwidth + nBarStep + "%";
+						jQuery("div#innerBar").text(Math.round(nBarwidth + nBarStep) + "%");
+						jQuery("div#innerBar").width(sNewwidth);
+						if (parseInt(jQuery("div#reportingHeader span.failed").text()) > 0) {
+							jQuery("div#innerBar")[0].style.backgroundColor = '#ed866f';
 						}
+						jQuery("div#time").text(Math.round((new Date() - window.oStartTime)/1000) + " Seconds");
+						jQuery("#selectedTests").find("option").each(function() {
+							if (jQuery(this).text() === sTestPage) {
+								jQuery(this).remove();
+							}
+						});
+						return this.runTests(aTestPages, nBarStep, true);
+					}.bind(this)).then(function() {
+						resolve();
 					});
-					return that.runTests(aTestPages, nBarStep, true);
-				}).then(function() {
-					oDeferred.resolve();
-				});
-			} else {
-				oDeferred.resolve();
-			}
+				} else {
+					resolve();
+				}
 
-			return oDeferred.promise();
+			}.bind(this));
 
 		},
 
@@ -230,95 +255,96 @@
 		},
 
 		runTest: function(sTestPage, bInternal, oInst) {
+
 			if (!bInternal) {
 				this._bStopped = false;
 			}
 
-			var oDeferred = jQuery.Deferred();
+			return new Promise(function(resolve, reject) {
 
-			if (this._bStopped) {
+				if (this._bStopped) {
 
-				oDeferred.reject();
+					reject();
 
-			} else {
+				} else {
 
-				// we could make this configurable
-				var $frame = jQuery("<iframe>").css({
-					height: "1024px",
-					width: "1280px"
-				});
+					// we could make this configurable
+					var $frame = jQuery("<iframe>").css({
+						height: "1024px",
+						width: "1280px"
+					});
 
-				$frame.attr("src", sTestPage);
-				var $framediv = jQuery("<div>").css({
-					height: "400px",
-					width: "100%",
-					overflow: "scroll"
-				});
-				$frame.appendTo($framediv);
-				$framediv.appendTo("div.test-execution");
+					$frame.attr("src", sTestPage);
+					var $framediv = jQuery("<div>").css({
+						height: "400px",
+						width: "100%",
+						overflow: "scroll"
+					});
+					$frame.appendTo($framediv);
+					$framediv.appendTo("div.test-execution");
 
-				var tBegin = new Date();
-				var oContext;
-				var fnCheckSuccess = function() {
-					var doc = $frame[0].contentWindow.document;
-					var $doc = jQuery(doc);
-					var sTestName = $doc.find("h1#qunit-header").text();
-					var $results = $doc.find("ol#qunit-tests > li");
-					var $qunitBanner = $doc.find("#qunit-banner");
+					var tBegin = new Date();
+					var oContext;
+					var fnCheckSuccess = function() {
+						var doc = $frame[0].contentWindow.document;
+						var $doc = jQuery(doc);
+						var sTestName = $doc.find("h1#qunit-header").text();
+						var $results = $doc.find("ol#qunit-tests > li");
+						var $qunitBanner = $doc.find("#qunit-banner");
 
-					if ($qunitBanner.hasClass("qunit-fail") || $qunitBanner.hasClass("qunit-pass")) {
+						if ($qunitBanner.hasClass("qunit-fail") || $qunitBanner.hasClass("qunit-pass")) {
 
-						//IE workaround for the lack of document.baseURI property
-						baseURI = doc.location.href;
+							//IE workaround for the lack of document.baseURI property
+							var baseURI = doc.location.href;
 
-						if (sTestName == " ") {
-							sTestName = "QUnit page for " + baseURI.substring(baseURI.indexOf("test-resources") +15,baseURI.length);
-						}
-						oContext = oInst.fnGetTestResults(sTestName, $results);
-						this.printTestResultAndRemoveFrame(oInst, $frame, $framediv, oContext);
-
-						oDeferred.resolve();
-						return;
-					}
-
-					if (new Date() - tBegin < 300000) {
-						setTimeout(fnCheckSuccess, 100);
-					} else {
-						var QUnit = $frame[0].contentWindow.QUnit;
-						if (QUnit) {
-							// push a failure and add the results that where run to the report
+							if (sTestName == " ") {
+								sTestName = "QUnit page for " + baseURI.substring(baseURI.indexOf("test-resources") +15,baseURI.length);
+							}
 							oContext = oInst.fnGetTestResults(sTestName, $results);
-							oContext.tests[0].header = "Testsuite was not completed after 5 minutes : " + sTestName;
-							oContext.tests[0].outcome = "fail";
-							oContext.tests[0].results.push(
-								{
-									result : {
-										TestName: "Timeout occured",
-										outcome: "fail",
-										Failed: "1",
-										Passed: "0",
-										All: "1",
-										rerunlink : $frame[0].contentWindow.location.href,
-										sLiClass: "fail",
-										testmessages: "no assertions"
-									}
-								}
-							);
-						} else {
-							// No qunit print error message
-							oContext = this.createFailContext($frame[0].contentWindow.location.href, "Testsite did not load QUnit after 5 minutes");
+							this.printTestResultAndRemoveFrame(oInst, $frame, $framediv, oContext);
+
+							resolve();
+							return;
 						}
-						this.printTestResultAndRemoveFrame(oInst, $frame, $framediv, oContext);
-						// TODO: set Test overview visible
-						oDeferred.resolve();
-					}
-				}.bind(this);
 
-				fnCheckSuccess();
+						if (new Date() - tBegin < 300000) {
+							setTimeout(fnCheckSuccess, 100);
+						} else {
+							var QUnit = $frame[0].contentWindow.QUnit;
+							if (QUnit) {
+								// push a failure and add the results that where run to the report
+								oContext = oInst.fnGetTestResults(sTestName, $results);
+								oContext.tests[0].header = "Testsuite was not completed after 5 minutes : " + sTestName;
+								oContext.tests[0].outcome = "fail";
+								oContext.tests[0].results.push(
+									{
+										result : {
+											TestName: "Timeout occured",
+											outcome: "fail",
+											Failed: "1",
+											Passed: "0",
+											All: "1",
+											rerunlink : $frame[0].contentWindow.location.href,
+											sLiClass: "fail",
+											testmessages: "no assertions"
+										}
+									}
+								);
+							} else {
+								// No qunit print error message
+								oContext = this.createFailContext($frame[0].contentWindow.location.href, "Testsite did not load QUnit after 5 minutes");
+							}
+							this.printTestResultAndRemoveFrame(oInst, $frame, $framediv, oContext);
+							// TODO: set Test overview visible
+							resolve();
+						}
+					}.bind(this);
 
-			}
+					fnCheckSuccess();
 
-			return oDeferred.promise();
+				}
+
+			}.bind(this));
 
 		},
 
@@ -396,12 +422,12 @@
 			jQuery("div#reportingHeader span.failed").text(nFailedTests);
 		},
 
-		fnGetTestResults: function(sTestName, aTestResults) {
+		fnGetTestResults: function(sHeader, aTestResults) {
 
 			// build the context
 			var oContext = {
 				tests: [{
-					header: sTestName,
+					header: sHeader,
 					outcome: "pass",
 					results:[]
 				}]
@@ -416,30 +442,29 @@
 
 					var oTestMessage = {message: "", expected: "", actual: "", diff: "", source: "", classname: $checkItems[y].className};
 
-					if($checkItems[y].className === "pass") {
+					if ($checkItems[y].className === "pass") {
 					oTestMessage.message = jQuery($checkItems[y]).text();
 					} else {
 						var $messageSpan = jQuery($checkItems[y]).find("span.test-message");
 						oTestMessage.message = jQuery($messageSpan[0]).text();
 
 						var $testExpected = jQuery($checkItems[y]).find("tr.test-expected");
-						console.log($testExpected);
-						if( $testExpected.length > 0) {
+						if ($testExpected.length > 0) {
 							oTestMessage.expected = jQuery($testExpected[0]).text();
 						}
 
 						var $testActual = jQuery($checkItems[y]).find("tr.test-actual");
-						if( $testActual.length > 0) {
+						if ($testActual.length > 0) {
 							oTestMessage.actual = jQuery($testActual[0]).text();
 						}
 
 						var $testDiff = jQuery($checkItems[y]).find("tr.test-diff");
-						if( $testDiff.length > 0) {
+						if ($testDiff.length > 0) {
 							oTestMessage.diff = jQuery($testDiff[0]).text();
 						}
 
 						var $testSource = jQuery($checkItems[y]).find("tr.test-source");
-						if( $testSource.length > 0) {
+						if ($testSource.length > 0) {
 							oTestMessage.source = jQuery($testSource[0]).text();
 						}
 					}
@@ -474,7 +499,7 @@
 				var sRerunLink = $test.find("A").attr("href");
 
 				var sLineItemClass = sNumFailed === "0" ? "pass" : "fail";
-				if(sLineItemClass === "fail") {
+				if (sLineItemClass === "fail") {
 					oContext.tests[0].outcome = sLineItemClass;
 				}
 
