@@ -433,7 +433,7 @@ function(
 		Slider.prototype._handleSliderResize = function (oEvent) {
 			var oScale = this._getUsedScale();
 
-			if (this.getEnableTickmarks() && oScale) {
+			if (this.getEnableTickmarks() && oScale && oScale.handleResize) {
 				oScale.handleResize(oEvent);
 			}
 
@@ -956,6 +956,10 @@ function(
 			if (!this._parentResizeHandler) {
 				jQuery.sap.delayedCall(0, this, function () {
 					this._parentResizeHandler = ResizeHandler.register(this, this._handleSliderResize.bind(this));
+				});
+			} else {
+				jQuery.sap.delayedCall(0, this, function () {
+					this._handleSliderResize({control: this});
 				});
 			}
 		};
