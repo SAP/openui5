@@ -983,6 +983,42 @@
 			selected : "{selected}"
 		}));
 
+		oTableSelectDialog11.setModel(new sap.ui.model.json.JSONModel(aData));
+		oTableSelectDialog11.bindItems("/", new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({text : "{text}"})
+			],
+			selected : "{selected}"
+		}));
+
+		var oButton12 = new sap.m.Button("Button12", {
+			text: "Open TableSelectDialog with Reset Button and long title",
+			press: function () {
+				oTableSelectDialog12.open();
+			}
+		});
+
+		var oTableSelectDialog12 = new sap.m.TableSelectDialog("resetButtonTableSelectDialog", {
+			title: "Very very very very very very very very long title",
+			columns : [
+				new sap.m.Column({
+					header : new sap.m.Label({text : "Item"})
+				})
+			],
+			multiSelect : true,
+			rememberSelections: true,
+			contentWidth: "200px",
+			growing: false
+		});
+
+		oTableSelectDialog12.setModel(new sap.ui.model.json.JSONModel(aData));
+		oTableSelectDialog12.bindItems("/", new sap.m.ColumnListItem({
+			cells : [
+				new sap.m.Label({text : "{text}"})
+			],
+			selected : "{selected}"
+		}));
+
 		// create the application page
 		var oPage = new sap.m.Page("page", {
 			title:"Mobile TableSelectDialog Control",
@@ -999,7 +1035,8 @@
 						oButton8,
 						oButton9,
 						oButton10,
-						oButton11
+						oButton11,
+						oButton12
 					]
 				})
 			]

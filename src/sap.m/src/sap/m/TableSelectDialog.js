@@ -20,7 +20,7 @@ sap.ui.define([
 	'./TableSelectDialogRenderer'
 ],
 	function(
-		 Button,
+		Button,
 		Dialog,
 		SearchField,
 		Table,
@@ -334,8 +334,20 @@ sap.ui.define([
 			]
 		});
 
+		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
+			contentMiddle: [
+				new sap.m.Title(this.getId()  + "-dialog-title", {
+					level: "H1"
+				})
+			],
+			contentRight: [
+				this._getResetButton()
+			]
+		});
+
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
+			customHeader: oCustomHeader,
 			stretch: Device.system.phone,
 			contentHeight: "2000px",
 			subHeader: this._oSubHeader,
@@ -591,8 +603,7 @@ sap.ui.define([
 	 */
 	TableSelectDialog.prototype.setTitle = function (sTitle) {
 		this.setProperty("title", sTitle, true);
-		this._oDialog.setTitle(sTitle);
-
+		this._oDialog.getCustomHeader().getAggregation("contentMiddle")[0].setText(sTitle);
 		return this;
 	};
 
@@ -962,6 +973,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Lazy load the Reset button
+	 * @private
+	 * @return {sap.m.Button} The button
+	 */
+	TableSelectDialog.prototype._getResetButton = function () {
+
+		if (!this._oResetButton) {
+			this._oResetButton = new Button(this.getId() + "-reset", {
+				text: this._oRb.getText("TABLESELECTDIALOG_RESETBUTTON"),
+				press: function() {
+					this._removeSelection();
+					this._updateSelectionIndicator();
+				}.bind(this)
+			});
+		}
+		return this._oResetButton;
+	};
+
+	/**
 	 * Internal event handler for the Cancel button and ESC key
 	 * @private
 	 */
@@ -1000,6 +1030,7 @@ sap.ui.define([
 		var iSelectedContexts = this._oTable.getSelectedContextPaths(true).length,
 			oInfoBar = this._oTable.getInfoToolbar();
 
+		this._getResetButton().setEnabled(iSelectedContexts > 0);
 		// update the selection label
 		oInfoBar.setVisible(!!iSelectedContexts);
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
@@ -1033,10 +1064,18 @@ sap.ui.define([
 		// cleanup old selection on Close to allow reuse of dialog
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.getRememberSelections() && !this.bIsDestroyed) {
+			this._removeSelection();
+		}
+	};
+
+	/**
+	 * Removes selection from <code> sap.m.TableSelectDialog</code>
+	 * @private
+	 */
+	TableSelectDialog.prototype._removeSelection = function () {
 			this._oTable.removeSelections(true);
 			delete this._oSelectedItem;
 			delete this._aSelectedItems;
-		}
 	};
 
 	/**
