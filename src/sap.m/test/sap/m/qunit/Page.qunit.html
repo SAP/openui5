@@ -268,6 +268,36 @@
 				oPage.destroy();
 			});
 
+			QUnit.test("Page properly applies classNames to the footer", function (assert) {
+				var oPage = new sap.m.Page({
+					id: "idPage",
+					floatingFooter: true,
+					showFooter: true,
+					footer: [new sap.m.OverflowToolbar({id: "idFooter", content: [new sap.m.Button()]})]
+				}),
+				done = assert.async(2);
+
+				oPage.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				var $footer = oPage.$().find(".sapMPageFooter").last();
+
+				assert.equal($footer.hasClass("sapUiHidden"), false, "Footer is hidden.");
+
+				//Act
+				oPage.setShowFooter(false);
+				sap.ui.getCore().applyChanges();
+
+				setTimeout(function() {
+					//Assert
+					assert.equal($footer.hasClass("sapUiHidden"), true, "Footer is hidden.");
+
+					//Cleanup
+					oPage.destroy();
+					done();
+				}, sap.m.Page.FOOTER_ANIMATION_DURATION + 50);
+			});
+
 			QUnit.test("showFooter toggling with floatingFooter disabled", function (assert) {
 				// Setup
 				var oBar = new sap.m.Bar({
