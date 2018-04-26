@@ -2241,10 +2241,7 @@ sap.ui.define([
 	};
 
 	ObjectPageLayout.prototype._onUpdateContentSize = function (oEvent) {
-		var iScrollTop,
-			iPageHeight,
-			sClosestSectionId,
-			sSelectedSectionId;
+		var iScrollTop;
 
 		if (this._preserveHeaderStateOnScroll()) {
 			this._overridePreserveHeaderStateOnScroll();
@@ -2256,25 +2253,14 @@ sap.ui.define([
 
 		// problem if this happened BEFORE _requestAdjustLayout executed => wrong section may have been selected
 
-		// solution [implemented bellow] is to compare (1) the currently visible section with (2) the currently selected section in the anchorBar
-		// and reselect if the two do not match
+		// solution [implemented bellow] is to ensure that scroll handler is called with the latest scrollTop => we ensure the correct section is selected
 		if (this._hasDynamicTitle()) {
 			this._adjustHeaderHeights();
 		}
 		this._requestAdjustLayout() // call adjust layout to calculate the new section sizes
 			.then(function () {
 				iScrollTop = this._$opWrapper.scrollTop();
-				iPageHeight = this.iScreenHeight;
-				if (iPageHeight === 0) {
-					return; // page is hidden and further computation will produce invalid results
-				}
-				sClosestSectionId = this._getClosestScrolledSectionId(iScrollTop, iPageHeight);
-				sSelectedSectionId = this.getSelectedSection();
-
-				if (sClosestSectionId && sSelectedSectionId !== sClosestSectionId) { // if the currently visible section is not the currently selected section in the anchorBar
-					// then change the selection to match the correct section
-					this.getAggregation("_anchorBar").setSelectedButton(this._oSectionInfo[sClosestSectionId].buttonId);
-				}
+				this._onScroll({ target: { scrollTop: iScrollTop }});
 			}.bind(this));
 	};
 
