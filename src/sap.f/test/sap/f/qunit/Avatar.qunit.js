@@ -298,6 +298,23 @@
 		oDetachPressSpy.restore();
 	});
 
+	QUnit.test("cloning of press event handler", function (assert) {
+		// Arrange
+		var oLightBox = new sap.m.LightBox(),
+			oAvatarClone;
+
+		this.oAvatar.setDetailBox(oLightBox);
+
+		// Act - clone the Avatar
+		oAvatarClone = this.oAvatar.clone();
+
+		// Assert
+		assert.strictEqual(oAvatarClone.hasListeners("press"), true, "Press event listener is cloned");
+		assert.notStrictEqual(this.oAvatar.mEventRegistry.press[0].oListener,
+			oAvatarClone.mEventRegistry.press[0].oListener,
+			"Press listener should not be a reference to the original listener");
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oAvatar = createAvatar({ tooltip: "sampleTooltip" });

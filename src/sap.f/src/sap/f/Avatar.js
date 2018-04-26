@@ -191,6 +191,28 @@ sap.ui.define([
 		return this.setAggregation("detailBox", oLightBox);
 	};
 
+	/**
+	 * @override
+	 */
+	Avatar.prototype.clone = function () {
+		var oClone = Control.prototype.clone.apply(this, arguments),
+			oCloneDetailBox = oClone.getDetailBox();
+
+		// Handle press event if DetailBox is available
+		if (oCloneDetailBox) {
+
+			// Detach the old event
+			oClone.detachPress(this._fnLightBoxOpen, this.getDetailBox());
+
+			// Attach new event with the cloned detail box
+			oClone._fnLightBoxOpen = oCloneDetailBox.open;
+			oClone.attachPress(oClone._fnLightBoxOpen, oCloneDetailBox);
+
+		}
+
+		return oClone;
+	};
+
 	Avatar.prototype.attachPress = function() {
 		Array.prototype.unshift.apply(arguments, ["press"]);
 		Control.prototype.attachEvent.apply(this, arguments);
