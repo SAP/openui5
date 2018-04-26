@@ -633,7 +633,7 @@
 		  ]
 		},
 		{
-		  "id": "sap.m.MessageBox ",
+		  "id": "sap.m.MessageBox",
 		  "name": "Message Box",
 		  "category": "Popup",
 		  "since": "1.10",
