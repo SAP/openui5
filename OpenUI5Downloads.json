@@ -1,14 +1,13 @@
 [
 	{
+		"version": "1.54.4",
+		"date": "2018-04-26",
+		"WhatsNewId":"f29023ebf9dc4a43b98516a5e2c43837"
+	},
+	{
 		"version": "1.52.11",
 		"date": "2018-04-18",
 		"WhatsNewId":"a09dd79a24c041d288402768558a1d1a"
-	},
-	{
-		"version": "1.54.3",
-		"beta": "true",
-		"date": "2018-04-18",
-		"WhatsNewId":"f29023ebf9dc4a43b98516a5e2c43837"
 	},
 	{
 		"version": "1.50.9",
@@ -21,8 +20,8 @@
 		"WhatsNewId":"2818f800e7424c5c91dbd495f8cb757b"
 	},
 	{
-		"version": "1.44.30",
-		"date": "2018-04-04",
+		"version": "1.44.31",
+		"date": "2018-04-26",
 		"WhatsNewId":"05ce1dc72c74475bada39234f6721f21"
 	},
 	{
