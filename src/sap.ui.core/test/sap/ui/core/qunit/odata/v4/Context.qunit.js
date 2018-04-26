@@ -766,7 +766,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh allow removal", function (assert) {
+	QUnit.test("refresh", function (assert) {
 		var bAllowRemoval = {/*false, true, undefined*/},
 			oBinding = {
 				refreshSingle : function () {}
@@ -776,16 +776,20 @@ sap.ui.require([
 				checkGroupId : function () {},
 				lockGroup : function () {}
 			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
+			oPromise = Promise.resolve();
 
 		this.mock(oModel).expects("checkGroupId");
-		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup").returns(oGroupLock);
+		this.mock(oModel).expects("lockGroup").withExactArgs("myGroup", true).returns(oGroupLock);
 		this.mock(oBinding).expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
-				sinon.match.same(bAllowRemoval));
+				sinon.match.same(bAllowRemoval))
+			.returns(oPromise);
 
 		// code under test
 		oContext.refresh("myGroup", bAllowRemoval);
+
+		return oPromise;
 	});
 
 	//*********************************************************************************************
