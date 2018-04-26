@@ -1,5 +1,5 @@
-	{
-		"ui5-inspector": {
+	[
+		{
 			"name": "UI5 Inspector",
 			"description": "The UI5 Inspector is a standard Chrome extension for debugging and getting to know UI5 applications.",
 			"githubLink": "https://github.com/SAP/ui5-inspector",
@@ -8,7 +8,7 @@
 			"license": "Apache 2.0",
 			"type": "Add-on"
 		},
-		"UI5CustomControl": {
+		 {
 			"name": "OpenUI5 Custom Controls for charting",
 			"description": "This project shows how to use C3.js and Chart.js within OpenUI5 projects.",
 			"githubLink": "https://github.com/SAP/openui5-charting-custom-controls",
@@ -17,7 +17,7 @@
 			"license": "Apache 2.0",
 			"type": "Control"
 		},
-		"Meteor-UI5": {
+		 {
 			"name": "Meteor-UI5",
 			"description": "Meteor-UI5 is a collection of packages that brings together two powerful open source JavaScript web frameworks: Meteor and OpenUI5.",
 			"githubLink": "https://github.com/propellerlabsio/meteor-ui5",
@@ -26,7 +26,7 @@
 			"license": "Apache 2.0",
 			"type": "Extension"
 		},
-		"openui5-i18n-util": {
+		{
 			"name": "openui5-i18n-util",
 			"description": "This script will search all your i18n strings and build auto-magically every translations file for you.",
 			"githubLink": "https://github.com/StErMi/openui5-i18n-util",
@@ -35,7 +35,7 @@
 			"license": "Apache 2.0",
 			"type": "Tool"
 		},
-		"Ui5Strap": {
+		 {
 			"name": "Ui5Strap",
 			"description": "App Development Toolkit for Desktop, Cloud and Mobile. Based on OpenUI5 + Bootstrap.",
 			"githubLink": "https://github.com/pks5/ui5strap",
@@ -44,7 +44,7 @@
 			"license": "Apache 2.0",
 			"type": "Extension"
 		},
-		"karma-openui5": {
+		 {
 			"name": "karma-openui5",
 			"description": "A Karma plugin for UI5",
 			"githubLink": "https://github.com/SAP/karma-openui5",
@@ -53,7 +53,7 @@
 			"license": "Apache 2.0",
 			"type": "Tool"
 		},
-		"XMPPJSONPatchSyncModel": {
+		 {
 			"name": "XMPPJSONPatchSyncModel",
 			"description": "This OpenUI5 data model uses a node on an XMPP server to synchronize itself to different connected clients.",
 			"githubLink": "https://github.com/ManuelB/XMPPJSONPatchSyncModel",
@@ -62,7 +62,7 @@
 			"license": "Apache 2.0",
 			"type": "Model"
 		},
-		"ui5-model-inspector": {
+		 {
 			"name": "UI5 Interactive Model Inspector (Custom Control)",
 			"description": "This custom control allows you to view (and modify) state of your client and server models for debugging and development.",
 			"githubLink": "https://github.com/mitch-b/ui5-model-inspector",
@@ -71,7 +71,7 @@
 			"license": "MIT",
 			"type": "Control"
 		},
-		"ui5-schemas": {
+		{
 			"name": "ui5-schemas",
 			"description": "UI5 Schemas allows you to develop SAPUI5/OpenUI5 XML at a maximum convenience. It downloads, upgrades and sets up SAPUI5/OpenUI5 XML schemas for a better development experience in your favorite IDE (if it is WebStorm ;).",
 			"githubLink": "https://github.com/ui5experts/ui5-schemas",
@@ -80,7 +80,7 @@
 			"license": "MIT",
 			"type": "Tool"
 		},
-		"ui5-CRUDModel": {
+		{
 			"name": "UI5 CRUDModel for php data services",
 			"description": "UI5 Model implementation which allows you to use a php Web server as a data service",
 			"githubLink": "https://github.com/BarryDam/OpenUI5-SAPUI5-CRUDModel",
@@ -89,7 +89,7 @@
 			"license": "MIT",
 			"type": "Model"
 		},
-		"ui5-jsx-rm": {
+		 {
 			"name": "JSX to UI5 Babel Plugin",
 			"description": "A Babel plugin for converting JSX to UI5 render manager calls.",
 			"githubLink": "https://github.com/serban-petrescu/ui5-jsx-rm",
@@ -98,7 +98,7 @@
 			"license": "Apache 2.0",
 			"type": "Tool"
 		},
-		"openui5-pwa-sample": {
+		 {
 			"name": "openui5-pwa-sample",
 			"description": "The demo is a simple TODO list application. Add new tasks with the input field at the bottom of the screen. The tasks are stored locally and the application works online as well as offline without any difference.",
 			"githubLink": "https://github.com/SAP/openui5-pwa-sample",
@@ -107,7 +107,7 @@
 			"license": "Apache 2.0",
 			"type": "Tool"
 		},
-		"openui5-generic-app-testing": {
+		 {
 			"name": "OpenUI5 Generic App Testing",
 			"description": "Generic App Testing is a client-side JavaScript library that uses the excellent OPA (One Page Acceptance) and Gherkin support already provided by OpenUI5 to allow UI5 app developers to write entire test scenarios in English language - without coding!",
 			"githubLink": "https://github.com/SAP/openui5-generic-app-testing",
@@ -116,7 +116,7 @@
 			"license": "Apache 2.0",
 			"type": "JS Library"
 		},
-		"openui5-password": {
+		 {
 			"name": "OpenUI5 Password",
 			"description": "An OpenUI5 Control which checks your password strength and validates it.",
 			"githubLink": "https://github.com/mauriciolauffer/openui5-password",
@@ -125,7 +125,7 @@
 			"license": "MIT",
 			"type": "JS Library"
 		},
-		"openui5-validator": {
+		 {
 			"name": "OpenUI5 Validator",
 			"description": "An OpenUI5 library to validate fields.",
 			"githubLink": "https://github.com/mauriciolauffer/openui5-validator",
@@ -134,7 +134,7 @@
 			"license": "MIT",
 			"type": "JS Library"
 		},
-		"openui5-tour": {
+		{
 			"name": "OpenUI5 Tour",
 			"description": "OpenUI5 Tour enables an user-friendly way to showcase products and features in your website.",
 			"githubLink": "https://github.com/mauriciolauffer/openui5-tour",
@@ -143,7 +143,7 @@
 			"license": "MIT",
 			"type": "JS Library"
 		},
-		"grunt-nwabap-ui5uploader": {
+		 {
 			"name": "grunt-nwabap-ui5uploader",
 			"description": "A Grunt plugin to upload UI5 sources to a SAP NetWeaver ABAP system.",
 			"githubLink": "https://github.com/pfefferf/grunt-nwabap-ui5uploader",
@@ -152,7 +152,7 @@
 			"license": "Apache 2.0",
 			"type": "Tool"
 		},
-		"UI5Lab": {
+		 {
 			"name": "ui5lab",
 			"description": "UI5Lab is a community driven project to establish a repository for UI5 Custom Control Libraries. It is meant to enable everyone to use UI5 Custom Controls easily.",
 			"githubLink": "https://github.com/ui5lab/ui5lab-central",
@@ -161,7 +161,7 @@
 			"license": "Apache 2.0",
 			"type": "Tool"
 		},
-		"ui5-codecompletion": {
+		 {
 			"name": "ui5-codecompletion",
 			"description": "node module (CLI) to configure WebStorm with UI5 code completion in *.js files",
 			"githubLink": "https://github.com/vobujs/ui5-codecompletion",
@@ -170,7 +170,7 @@
 			"license": "WTFPL",
 			"type": "Tool"
 		},
-		"yii2-openui5": {
+		 {
 			"name": "yii2-openui5",
 			"description": "Yii2-openui5 is extension for Yii2 Framework to integrate with OpenUI5.",
 			"githubLink": "https://github.com/rockman84/yii2-openui5",
@@ -179,7 +179,7 @@
 			"license": "Apache 2.0",
 			"type": "Yii2 Extension"
 		},
-		"openui5-parallax": {
+		 {
 			"name": "OpenUI5 Parallax",
 			"description": "A library wrapping parallax.js in UI5 controls to create stunning layered effects",
 			"githubLink": "https://github.com/Michadelic/openui5-parallax",
@@ -188,7 +188,7 @@
 			"license": "Apache 2.0",
 			"type": "Control"
 		},
-		"deoplete-sap-icon": { 
+		 {
 			"name": "Deoplete sap-icon",
 			"description": "Neovim deoplete sap-icon plugin", 
 			"githubLink": "https://github.com/Trulsaa/deoplete-sap-icon", 
@@ -197,7 +197,7 @@
 			"license": "MIT License", 
 			"type": "nvim plugin" 
 		},
-		"expressui5": { 
+		 {
 			"name": "Express UI5",
 			"description": "CLI tool to create ui5 projects quickly from developer maintained templates.", 
 			"githubLink": "https://github.com/handy-man/Expressui5", 
@@ -206,7 +206,7 @@
 			"license": "Apache 2.0", 
 			"type": "Tool" 
 		},
-		"oui5lib": {
+		 {
 			"name": "OpenUI5 Library",
 			"description": "Library to speed up development with OpenUI5. Includes UIComponent generator.",
 			"githubLink": "https://github.com/cahein/oui5lib",
@@ -215,4 +215,4 @@
 			"license": "MIT",
 			"type": "JS Library"
 		}
-	}
+	]
