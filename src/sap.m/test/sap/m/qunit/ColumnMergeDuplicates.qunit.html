@@ -178,7 +178,7 @@
 			sut.destroy();
 		});
 
-		QUnit.test("Merge when Rerendering", function(assert) {
+		QUnit.test("Merge when Table Rerendering", function(assert) {
 			var sut = createSUT("MergeDuplicates");
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
@@ -208,6 +208,57 @@
 
 			assert.ok(labelLastValue == labelAfterRender, "last value of label should be cleared if there is only one row");
 			assert.ok(iconLastValue == iconAfterRender, "last value of icon should be cleared if there is only one row")
+
+			//clean up
+			sut.destroy();
+		});
+
+		QUnit.test("Merge when Items Rerendering", function(assert) {
+			var sut = createSUT("MergeDuplicates");
+			sut.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			var data = {
+					teamMembers:[
+						{lastName:"Doe" ,gender:"Male"},
+						{lastName:"Doe" ,gender:"Male"}
+					]};
+
+			sut.setModel(new sap.ui.model.json.JSONModel(data));
+			sap.ui.getCore().applyChanges();
+
+			var oTable = sap.ui.getCore().byId("MergeDuplicates"),
+				oFirstItem = oTable.getItems()[0],
+				oSecondItem = oTable.getItems()[1];
+
+			var mBeforeRendering = {
+				firstItem: {
+					label: oFirstItem.getCells()[2].$().text(),
+					icon: oFirstItem.getCells()[0].getSrc()
+				},
+				secondItem: {
+					label: oSecondItem.getCells()[2].$().text(),
+					icon: oSecondItem.getCells()[0].getSrc()
+				}
+			};
+
+			//rerender the items
+			oFirstItem.rerender();
+			oSecondItem.rerender();
+			sap.ui.getCore().applyChanges();
+
+			var mAfterRendering = {
+				firstItem: {
+					label: oFirstItem.getCells()[2].$().text(),
+					icon: oFirstItem.getCells()[0].getSrc()
+				},
+				secondItem: {
+					label: oSecondItem.getCells()[2].$().text(),
+					icon: oSecondItem.getCells()[0].getSrc()
+				}
+			};
+
+			assert.deepEqual(mBeforeRendering, mAfterRendering, "Items rendering does not change the merging status");
 
 			//clean up
 			sut.destroy();
