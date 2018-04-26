@@ -1828,7 +1828,7 @@
 			sap.ui.getCore().applyChanges();
 
 			//act
-            oPC.addRow(oRow);
+			oPC.addRow(oRow);
 			sap.ui.getCore().applyChanges();
 
 			//assert
@@ -1984,6 +1984,143 @@
 			this.oPC.removeAllSpecialDates();
 			//Assert
 			this._assertEmptyNonWorkingDates();
+		});
+
+		QUnit.module("Special Dates per PlanningCalendarRow", {
+			beforeEach: function() {
+				this.oPC = createPlanningCalendar("PCSpecialDatesInRows", new sap.m.SearchField(), new sap.m.Button());
+				this.oNWDate = new DateTypeRange({
+					startDate: new Date(2015, 0, 1),
+					type: sap.ui.unified.CalendarDayType.NonWorking
+				});
+				this.oSpecialDateRange = new DateTypeRange({
+					startDate: new Date(2015, 0, 7),
+					endDate: new Date (2015, 0, 9),
+					type: sap.ui.unified.CalendarDayType.Type04
+				});
+				this.oPC.placeAt("uiArea2");
+			},
+			afterEach: function() {
+				//Cleanup
+				this.oPC.destroy();
+			},
+
+			_assertSpecialDatesEmpty: function() {
+				// Checks that aggregation "specialDates" is empty for each PlanningCalendarRow
+				this.oPC.getAggregation("rows").forEach(function (oRow) {
+					assert.ok(!oRow.getAggregation("specialDates") ||
+							oRow.getAggregation("specialDates").length === 0,
+							"PlanningCalendarRow should have no items in its aggregation specialDates");
+				});
+			},
+
+			_assertIsSpecialDateAvailable: function(oDate, oSecondDate) {
+				// assuming that in the first PCRow there are no items in the specialDates aggregation set
+				// assuming that in the second PCRow there are 2 specialDates set to the aggregation - one with only startDate set of type NonWorking
+				// and one with startDate and endDate of type 04.
+				var oRowNoWork = this.oPC.getAggregation("rows")[1].getAggregation("specialDates");
+
+				assert.equal(this.oPC.getAggregation("rows")[0].getAggregation("specialDates").length, 0, "first PlanningCalendarRow should have no items in its aggregation specialDates");
+				assert.equal(oRowNoWork.length, 2, " second PlanningCalendarRow should have 2 items in its aggregation specialDates");
+				assert.equal(oRowNoWork[0].getStartDate().toString(), oDate.getStartDate().toString(), "the right start of the special date is set");
+				assert.equal(oRowNoWork[0].getEndDate(), null, "the special date should have no endDate");
+				assert.equal(oRowNoWork[0].getType(), sap.ui.unified.CalendarDayType.NonWorking, "the special date should be of type NonWorking");
+				assert.equal(oRowNoWork[1].getStartDate().toString(), oSecondDate.getStartDate().toString(), "the right start of the special date range is set");
+				assert.equal(oRowNoWork[1].getEndDate().toString(), oSecondDate.getEndDate().toString(), "the right end of the special date range is set");
+				assert.equal(oRowNoWork[1].getType(), sap.ui.unified.CalendarDayType.Type04, "the special date should be of type 04");
+			},
+
+			_assertIsClassNoWorkAvailable: function () {
+				var aIntervals = jQuery("#PCSpecialDatesInRows-Row2-CalRow-Apps").children(".sapUiCalendarRowAppsInt");
+
+				assert.ok(jQuery(aIntervals[0]).hasClass("sapUiCalendarRowAppsNoWork"), "interval0 has class sapUiCalendarRowAppsNoWork because it is a special date");
+				assert.ok(!jQuery(aIntervals[1]).hasClass("sapUiCalendarRowAppsNoWork"), "interval0 has no class sapUiCalendarRowAppsNoWork");
+				assert.ok(!jQuery(aIntervals[2]).hasClass("sapUiCalendarRowAppsNoWork"), "interval02 has no class sapUiCalendarRowAppsNoWork");
+				assert.ok(!jQuery(aIntervals[3]).hasClass("sapUiCalendarRowAppsNoWork"), "interval03 has no class sapUiCalendarRowAppsNoWork");
+				assert.ok(!jQuery(aIntervals[4]).hasClass("sapUiCalendarRowAppsNoWork"), "interval04 has no class sapUiCalendarRowAppsNoWork");
+				assert.ok(jQuery(aIntervals[5]).hasClass("sapUiCalendarRowAppsNoWork"), "interval05 has class sapUiCalendarRowAppsNoWork because it is a non-working day");
+				assert.ok(jQuery(aIntervals[6]).hasClass("sapUiCalendarRowAppsNoWork"), "interval06 has class sapUiCalendarRowAppsNoWork because it is a special date and a non-working day");
+				assert.ok(jQuery(aIntervals[7]).hasClass("sapUiCalendarRowAppsNoWork"), "interval07 has class sapUiCalendarRowAppsNoWork because it is a special date");
+				assert.ok(jQuery(aIntervals[8]).hasClass("sapUiCalendarRowAppsNoWork"), "interval08 has class sapUiCalendarRowAppsNoWork because it is a special date");
+				assert.ok(!jQuery(aIntervals[9]).hasClass("sapUiCalendarRowAppsNoWork"), "interval09 has no class sapUiCalendarRowAppsNoWork");
+				assert.ok(!jQuery(aIntervals[10]).hasClass("sapUiCalendarRowAppsNoWork"), "interval10 has no class sapUiCalendarRowAppsNoWork");
+				assert.ok(!jQuery(aIntervals[11]).hasClass("sapUiCalendarRowAppsNoWork"), "interval11 has no class sapUiCalendarRowAppsNoWork");
+				assert.ok(jQuery(aIntervals[12]).hasClass("sapUiCalendarRowAppsNoWork"), "interval12 has class sapUiCalendarRowAppsNoWork because it is a non-working day");
+				assert.ok(jQuery(aIntervals[13]).hasClass("sapUiCalendarRowAppsNoWork"), "interval13 has class sapUiCalendarRowAppsNoWork because it is a non-working day");
+			},
+
+			_assertIsClassNoWorkNotAvailable: function () {
+				var aIntervals = jQuery("#PCSpecialDatesInRows-Row2-CalRow-Apps").children(".sapUiCalendarRowAppsInt");
+				for (var i = 0; i < aIntervals.length; i++) {
+					if (i === 5 || i === 6 || i === 12 || i === 13) {
+						assert.ok(jQuery(aIntervals[i]).hasClass("sapUiCalendarRowAppsNoWork"), "interval" + i + " has class sapUiCalendarRowAppsNoWork because it is a non-working day");
+					} else {
+						assert.ok(!jQuery(aIntervals[i]).hasClass("sapUiCalendarRowAppsNoWork"), "interval" + i + " has no class sapUiCalendarRowAppsNoWork");
+					}
+				}
+			}
+		});
+
+		QUnit.test("Add a special date to a row", function(assert) {
+			//Act
+			this.oPC.getAggregation("rows")[1].addSpecialDate(this.oNWDate);
+			this.oPC.getAggregation("rows")[1].addSpecialDate(this.oSpecialDateRange);
+			this.oPC.setViewKey("Day");
+			sap.ui.getCore().applyChanges();
+			//Assert
+			this._assertIsSpecialDateAvailable(this.oNWDate, this.oSpecialDateRange);
+			this._assertIsClassNoWorkAvailable();
+		});
+
+		QUnit.test("Insert a special date in a row", function(assert) {
+			//Prepare
+			this.oPC.getAggregation("rows")[1].insertSpecialDate(this.oSpecialDateRange);
+			//Act
+			this.oPC.getAggregation("rows")[1].insertSpecialDate(this.oNWDate, 0);
+			this.oPC.setViewKey("Day");
+			sap.ui.getCore().applyChanges();
+			//Assert
+			assert.equal(this.oPC.getAggregation("rows")[1].indexOfAggregation("specialDates", this.oNWDate), 0, "Insert a special date at index 0");
+			this._assertIsSpecialDateAvailable(this.oNWDate, this.oSpecialDateRange);
+			this._assertIsClassNoWorkAvailable();
+		});
+
+		QUnit.test("Remove a special date from a row", function(assert) {
+			//Prepare
+			this.oPC.getAggregation("rows")[1].addSpecialDate(this.oNWDate);
+			this.oPC.getAggregation("rows")[1].addSpecialDate(this.oSpecialDateRange);
+			//Act
+			this.oPC.getAggregation("rows")[1].removeSpecialDate(this.oNWDate);
+			this.oPC.getAggregation("rows")[1].removeSpecialDate(this.oSpecialDateRange);
+			this.oPC.setViewKey("Day");
+			sap.ui.getCore().applyChanges();
+			//Assert
+			this._assertSpecialDatesEmpty();
+			this._assertIsClassNoWorkNotAvailable();
+		});
+
+		QUnit.test("Remove all special dates in a row", function(assert) {
+			this.oPC.getAggregation("rows")[1].addSpecialDate(this.oNWDate);
+			this.oPC.getAggregation("rows")[1].addSpecialDate(this.oSpecialDateRange);
+			//Act
+			this.oPC.getAggregation("rows")[1].removeAllSpecialDates();
+			this.oPC.setViewKey("Day");
+			sap.ui.getCore().applyChanges();
+			//Assert
+			this._assertSpecialDatesEmpty();
+			this._assertIsClassNoWorkNotAvailable();
+		});
+
+		QUnit.test("Destroy all special dates from a row", function(assert) {
+			this.oPC.getAggregation("rows")[1].addSpecialDate(this.oNWDate);
+			this.oPC.getAggregation("rows")[1].addSpecialDate(this.oSpecialDateRange);
+			//Act
+			this.oPC.getAggregation("rows")[1].destroySpecialDates();
+			this.oPC.setViewKey("Day");
+			sap.ui.getCore().applyChanges();
+			//Assert
+			this._assertSpecialDatesEmpty();
+			this._assertIsClassNoWorkNotAvailable();
 		});
 
 		QUnit.module("events");
