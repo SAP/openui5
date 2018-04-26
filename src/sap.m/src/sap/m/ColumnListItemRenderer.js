@@ -166,19 +166,20 @@ sap.ui.define([
 
 					if (typeof oCell[sFuncName] != "function") {
 						jQuery.sap.log.warning("mergeFunctionName property is defined on " + oColumn + " but this is not function of " + oCell);
-					} else {
+					} else if (oTable._bRendering || !oCell.bOutput) {
 						var lastColumnValue = oColumn.getLastValue(),
 							cellValue = oCell[sFuncName](sFuncParam);
 
 						if (lastColumnValue === cellValue) {
-							// it is not necessary to render cell content but
-							// screen readers need content to announce it
+							// it is not necessary to render the cell content but screen readers need the content to announce it
 							bRenderCell = sap.ui.getCore().getConfiguration().getAccessibility();
 							oCell.addStyleClass("sapMListTblCellDupCnt");
 							rm.addClass("sapMListTblCellDup");
 						} else {
 							oColumn.setLastValue(cellValue);
 						}
+					} else if (oCell.hasStyleClass("sapMListTblCellDupCnt")) {
+						rm.addClass("sapMListTblCellDup");
 					}
 				}
 
