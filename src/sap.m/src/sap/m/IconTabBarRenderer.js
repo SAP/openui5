@@ -42,9 +42,9 @@ sap.ui.define([],
 			oRm.addClass("sapMITBNoContentPadding");
 		}
 		oRm.addClass("sapMITBBackgroundDesign" + oControl.getBackgroundDesign());
+
 		oRm.writeClasses();
 		oRm.write(">");
-
 		// render icon tab header (if not configured to hide by ObjectHeader)
 		if (!oControl._bHideHeader) {
 			oRm.renderControl(oHeader);

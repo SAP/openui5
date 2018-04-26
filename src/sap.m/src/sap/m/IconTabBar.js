@@ -21,6 +21,9 @@ sap.ui.define([
 	// shortcut for sap.m.BackgroundDesign
 	var BackgroundDesign = library.BackgroundDesign;
 
+	// shortcut for sap.m.IconTabDensityMode
+	var IconTabDensityMode = library.IconTabDensityMode;
+
 
 
 	/**
@@ -193,8 +196,20 @@ sap.ui.define([
 			 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
 			 * @since 1.46
 			 */
-			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false}
-		},
+			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Specifies the visual density mode of the tabs.
+			 *
+			 * The values that can be applied are "Cozy", "Compact" and "Default".
+			 * Both "Cozy" and "Compact" force the control to be rendered in one of the particular modes regardless of the global settings.
+			 * The "Default" mode follows the global density settings which are applied.
+			 * The default value is "Cozy".
+			 * @since 1.56
+			 */
+			tabDensityMode : {type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy}
+
+			},
 		aggregations : {
 
 			/**
@@ -335,6 +350,22 @@ sap.ui.define([
 		this.setProperty("headerMode", mode, true);
 
 		this._getIconTabHeader().setMode(mode);
+
+		return this;
+	};
+
+	/**
+	 * Sets the tab density mode.
+	 *
+	 * @public
+	 * @param {sap.m.IconTabHeaderMode} mode New parameter value.
+	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 */
+	IconTabBar.prototype.setTabDensityMode = function (mode) {
+		// set internal property
+		this.setProperty("tabDensityMode", mode);
+
+		this._getIconTabHeader().setTabDensityMode(mode);
 
 		return this;
 	};

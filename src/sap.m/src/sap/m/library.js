@@ -1611,7 +1611,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Inline : "Inline"
 	};
 
+	/**
+	 * Specifies <code>IconTabBar</code> tab density mode.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.IconTabDensityMode = {
+
 		/**
+		 * Default. In this mode the global configuration of the density mode will be applied.
+		 */
+		Default : "Default",
+
+		/**
+		 * Compact. In this mode the tabs will be set explicitly to compact mode independent of what mode is applied globally.
+		 */
+		Compact : "Compact",
+
+		/**
+		 * Cozy. In this mode the tabs will be set explicitly to compact mode independent of what mode is applied globally.
+		 */
+		Cozy : "Cozy"
+	};
+
+	/**
 	 * Available Filter Item Design.
 	 *
 	 * @enum {string}

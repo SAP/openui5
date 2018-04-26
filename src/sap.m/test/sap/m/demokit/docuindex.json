@@ -494,7 +494,8 @@
 			"sap.m.sample.IconTabSeparator",
 			"sap.m.sample.IconTabBarOverflowSelectList",
 			"sap.m.sample.IconTabBarBackgroundDesign",
-			"sap.m.sample.IconTabBarDragDrop"
+			"sap.m.sample.IconTabBarDragDrop",
+            "sap.m.sample.IconTabBarTabDensityMode"
 		  ]
 		},
 		{
@@ -1765,6 +1766,11 @@
 		  "name": "Icon Tab Bar - Tabs drag and drop",
 		  "description": "This example shows how the tab filters can be reordered with drag and drop. Works only on desktop devices."
 		},
+        {
+          "id": "sap.m.sample.IconTabBarTabDensityMode",
+          "name": "Icon Tab Bar - Tab Density Mode",
+          "description": "In this example, the Icon Tab Bar is used in different tab density modes."
+        },
 		{
 		  "id": "sap.m.sample.BusyIndicator",
 		  "name": "Busy Indicator",
