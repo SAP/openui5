@@ -1426,7 +1426,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @returns {integer} The number of tickmarks
 	 *
 	 * @function
-	 * @name sap.ui.core.IScale.getTickmarksBetweenLabels
+	 * @name sap.m.IScale.getTickmarksBetweenLabels
 	 */
 
 	/**
@@ -1435,7 +1435,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @returns {integer} The number of tickmarks
 	 *
 	 * @function
-	 * @name sap.ui.core.IScale.calcNumberOfTickmarks
+	 * @name sap.m.IScale.calcNumberOfTickmarks
 	 */
 
 	/**
@@ -1444,7 +1444,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @param {jQuery.Event} oEvent The event object passed.
 	 *
 	 * @function
-	 * @name sap.ui.core.IScale.handleResize
+	 * @name sap.m.IScale.handleResize
 	 */
 
 	/**
@@ -1456,7 +1456,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @returns {string | number} The label that should be placed in the current position.
 	 *
 	 * @function
-	 * @name sap.ui.core.IScale.getLabel
+	 * @name sap.m.IScale.getLabel
 	 */
 
 	/**
