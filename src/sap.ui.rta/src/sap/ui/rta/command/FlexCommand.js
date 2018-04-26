@@ -217,14 +217,19 @@ sap.ui.define([
 
 		var oAppComponent = this.getAppComponent();
 		var oSelectorElement = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
-		var oFlexController = FlexControllerFactory.createForControl(this.getAppComponent());
+		var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 		var bRevertible = oFlexController.isChangeHandlerRevertible(oChange, oSelectorElement);
+		var mPropertyBag = {
+			modifier: RtaControlTreeModifier,
+			appComponent: oAppComponent,
+			view: Utils.getViewForControl(oSelectorElement)
+		};
 
 		if (!bRevertible) {
 			RtaControlTreeModifier.startRecordingUndo();
 		}
 
-		return Promise.resolve(oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, {modifier: RtaControlTreeModifier, appComponent: oAppComponent}))
+		return Promise.resolve(oFlexController.checkTargetAndApplyChange(oChange, oSelectorElement, mPropertyBag))
 
 		.then(function(bSuccess) {
 			if (bSuccess) {
