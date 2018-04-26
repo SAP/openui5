@@ -14,6 +14,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 	 *
 	 * @class
 	 * Provides the configuration for drop operations.
+	 * <b>Note:</b> This configuration might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 	 *
 	 * @extends sap.ui.core.dnd.DragDropBase
 	 *
@@ -35,8 +36,6 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 			/**
 			 * The aggregation name in the drop target control which is the target of this drag-and-drop action. If undefined, the entire
 			 * control is the target. This can be handy if the target control does not have any aggregations or if the drop position within the target does not matter.
-			 *
-			 * <b>Note:</b> This property might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 			 */
 			targetAggregation: {type: "string", defaultValue: null, invalidate: false},
 

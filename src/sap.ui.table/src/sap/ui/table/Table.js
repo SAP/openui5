@@ -723,7 +723,6 @@ sap.ui.define([
 	 *
 	 * The following restrictions apply:
 	 * <ul>
-	 *   <li>Drag and drop is not supported on mobile devices and there is no accessible alternative.</li>
 	 *   <li>Columns cannot be configured to be draggable.</li>
 	 *   <li>The following rows are not draggable:
 	 *     <ul>
@@ -741,8 +740,6 @@ sap.ui.define([
 	 *       <li>Sum rows</li>
 	 *     </ul>
 	 *   </li>
-	 *   <li>Texts in draggable rows cannot be selected.</li>
-	 *   <li>The text of input fields in draggable rows can be selected, but not dragged.</li>
 	 * </ul>
 	 *
 	 * @name sap.ui.table.Table#getDragDropConfig

@@ -14,6 +14,7 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 	 *
 	 * @class
 	 * Provides the configuration for drag operations.
+	 * <b>Note:</b> This configuration might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 	 *
 	 * @extends sap.ui.core.dnd.DragDropBase
 	 *
@@ -34,8 +35,6 @@ sap.ui.define(["jquery.sap.global", "./DragDropBase"],
 		properties: {
 			/**
 			 * The name of the aggregation from which all children can be dragged. If undefined, the control itself can be dragged.
-			 *
-			 * <b>Note:</b> This property might be ignored due to control {@link sap.ui.core.Element.extend metadata} restrictions.
 			 */
 			sourceAggregation: {type: "string", defaultValue: null}
 		},
