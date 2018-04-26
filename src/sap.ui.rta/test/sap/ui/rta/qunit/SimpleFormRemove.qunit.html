@@ -1,43 +1,29 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Test for RTA functionality "Remove" in the SimpleForm control</title>
-
-		<style>
-			#content {
-				border: 1px solid grey;
-				position: fixed;
-				bottom: 0;
-				right: 0;
-				width : 50%;
-				height: 50%;
-			}
-		</style>
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-theme="sap_belize"
-				type="text/javascript"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"sap.ui.rta.test": "../internal/testdata/rta/"}'
-				data-sap-ui-libs="sap.ui.layout,sap.ui.rta,sap.m,sap.ui.layout,sap.ui.dt"
-				src="../../../../../resources/sap-ui-core.js">
+		<script src="../shared-config.js"></script>
+		<script>
+			window["sap-ui-config"].resourceroots = {
+				"sap.ui.rta.test": "../internal/testdata/rta/"
+			};
+			window["sap-ui-config"].libs = "sap.ui.layout,sap.ui.rta,sap.m,sap.ui.layout,sap.ui.dt";
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script type="text/javascript" src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script type="text/javascript" src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-		<script type="text/javascript"
-				src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-		<script type="text/javascript"
-				src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-		<script type="text/javascript" src="SimpleFormRemove.qunit.js"></script>
+		<script>
+			sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
+			sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
+			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
+
+			window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/rta]");
+
+			jQuery.sap.includeScript("./SimpleFormRemove.qunit.js");
+		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit page for Designtime functionality in the SimpleForm control</h1>
-		<h2 id="qunit-banner"></h2>
-	 	<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
+		<div id="qunit"></div>
+		<div id="qunit-fixture" style="position: fixed; top: auto; right: 0; bottom: 0; left: auto; width: 600px; height: 600px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);"></div>
 	</body>
 </html>
