@@ -16,7 +16,8 @@ sap.ui.require([
 	"sap/ui/rta/command/Settings",
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/rta/command/Stack",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/base/Log"
 ],
 function(
 	Button,
@@ -32,12 +33,14 @@ function(
 	SettingsCommand,
 	SettingsPlugin,
 	Stack,
-	Utils
+	Utils,
+	BaseLog
 ) {
 	"use strict";
 
 	QUnit.start();
 
+	var sDefaultSettingsIcon = "sap-icon://key-user-settings";
 	var oMockedAppComponent = {
 		getLocalId: function () {
 			return undefined;
@@ -185,6 +188,7 @@ function(
 			assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), true, "... then isAvailable is called, then it returns true");
 			assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns correct value");
 			assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
+			assert.strictEqual(this.oSettingsPlugin.getMenuItems(oButtonOverlay)[0].icon, sDefaultSettingsIcon, "then the default icon parameter is set");
 
 			this.oDesignTime.destroy();
 			fnDone();
@@ -220,6 +224,43 @@ function(
 			assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), false, "... then isAvailable is called, then it returns false");
 			assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), false, "... then isEnabled is called, then it returns correct value from function call");
 			assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), false, "then the overlay is not editable because the handler is missing");
+
+			this.oDesignTime.destroy();
+			fnDone();
+		}.bind(this));
+	});
+
+	QUnit.test("when an overlay has settings action designTime metadata, and icon property is string", function(assert) {
+		var fnDone = assert.async();
+		var sIcon = "sap-icon://myIcon";
+
+		this.oDesignTime = new DesignTime({
+			rootElements : [this.oVerticalLayout],
+			plugins : [this.oSettingsPlugin],
+			designTimeMetadata : {
+				"sap.m.Button" : {
+					actions : {
+						settings : function() {
+							return {
+								isEnabled : true,
+								icon : sIcon,
+								handler : function() {}
+							};
+						}
+					}
+				}
+			}
+		});
+
+		this.oDesignTime.attachEventOnce("synced", function() {
+			var oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+			this.oSettingsPlugin.deregisterElementOverlay(oButtonOverlay);
+			this.oSettingsPlugin.registerElementOverlay(oButtonOverlay);
+
+			assert.strictEqual(this.oSettingsPlugin.isAvailable(oButtonOverlay), true, "... then isAvailable is called, then it returns true");
+			assert.strictEqual(this.oSettingsPlugin.isEnabled(oButtonOverlay), true, "... then isEnabled is called, then it returns correct value");
+			assert.strictEqual(this.oSettingsPlugin._isEditable(oButtonOverlay), true, "then the overlay is editable");
+			assert.strictEqual(this.oSettingsPlugin.getMenuItems(oButtonOverlay)[0].icon, sIcon, "then the correct icon parameter is set");
 
 			this.oDesignTime.destroy();
 			fnDone();
@@ -630,10 +671,12 @@ function(
 		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
 		assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
 		assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
+		assert.equal(aMenuItems[0].icon, sDefaultSettingsIcon, "'getMenuItems' returns the default item icon for action 1");
 		aMenuItems[0].handler([oButtonOverlay]);
 		assert.equal(aMenuItems[1].id, "CTX_SETTINGS1", "'getMenuItems' returns the context menu item for action 2");
 		assert.equal(aMenuItems[1].text, "Action 2 Name", "'getMenuItems' returns the correct item text for action 2");
 		assert.equal(aMenuItems[1].rank, 111, "'getMenuItems' returns the correct item rank for action 2");
+		assert.equal(aMenuItems[1].icon, sDefaultSettingsIcon, "'getMenuItems' returns the default item icon for action 2");
 		aMenuItems[1].handler([oButtonOverlay]);
 	});
 
@@ -735,6 +778,74 @@ function(
 		assert.equal(aMenuItems[0].enabled, undefined, "'getMenuItems' item for action 1 is undefined (hence default true will be used)");
 		assert.equal(aMenuItems[1].text, "CTX_ACTION2", "'getMenuItems' returns the context menu item for action 2");
 		assert.equal(aMenuItems[1].enabled(), false, "'getMenuItems' item for action 2 will be disabled");
+	});
+
+	QUnit.test("when retrieving the context menu items and executing two 'settings' actions with diffrent icon settings", function(assert) {
+		var sIconAction1 = "sap-icon://myIconAction1";
+
+		var oButtonOverlay = new ElementOverlay({
+			element : this.oButton,
+			designTimeMetadata : new ElementDesignTimeMetadata({
+				libraryName : "sap.m",
+				data : {
+					actions :
+					{
+						settings : function(){
+							return [{
+								name : "CTX_ACTION1",
+								icon : sIconAction1,
+								handler: function(oElement, mPropertyBag) {
+									return new Promise(function(resolve){
+										resolve([]);
+									});
+								}
+							},
+							{
+								name : function(){
+									return "Action 2 Name";
+								},
+								handler: function(oElement, mPropertyBag) {
+									return new Promise(function(resolve){
+										resolve([]);
+									});
+								}
+							},
+							{
+								name : function(){
+									return "Action 3 Name";
+								},
+								icon : { name: "icon should be a STRING not an Object" },
+								handler: function(oElement, mPropertyBag) {
+									return new Promise(function(resolve){
+										resolve([]);
+									});
+								}
+							}];
+						}
+					}
+				}
+			})
+		});
+
+		var oLogErrorStub = sandbox.stub(BaseLog, "error");
+		sandbox.stub(this.oSettingsPlugin, "isAvailable").returns(true);
+
+		var aMenuItems = this.oSettingsPlugin.getMenuItems(oButtonOverlay);
+		assert.equal(aMenuItems[0].id, "CTX_SETTINGS0", "'getMenuItems' returns the context menu item for action 1");
+		assert.equal(aMenuItems[0].rank, 110, "'getMenuItems' returns the correct item rank for action 1");
+		assert.equal(aMenuItems[0].icon, sIconAction1, "'getMenuItems' returns the correct item icon for action 1");
+		aMenuItems[0].handler([oButtonOverlay]);
+		assert.equal(aMenuItems[1].id, "CTX_SETTINGS1", "'getMenuItems' returns the context menu item for action 2");
+		assert.equal(aMenuItems[1].text, "Action 2 Name", "'getMenuItems' returns the correct item text for action 2");
+		assert.equal(aMenuItems[1].rank, 111, "'getMenuItems' returns the correct item rank for action 2");
+		assert.equal(aMenuItems[1].icon, sDefaultSettingsIcon, "'getMenuItems' returns the default item icon for action 2");
+		aMenuItems[1].handler([oButtonOverlay]);
+		assert.equal(aMenuItems[2].id, "CTX_SETTINGS2", "'getMenuItems' returns the context menu item for action 3");
+		assert.equal(aMenuItems[2].text, "Action 3 Name", "'getMenuItems' returns the correct item text for action 3");
+		assert.equal(aMenuItems[2].rank, 112, "'getMenuItems' returns the correct item rank for action 3");
+		assert.equal(aMenuItems[2].icon, sDefaultSettingsIcon, "'getMenuItems' returns the default item icon for action 3");
+		assert.equal(oLogErrorStub.getCall(0).args[0], "Icon setting for settingsAction should be a string", "'getMenuItems' cause the correct error message for action 3");
+		aMenuItems[2].handler([oButtonOverlay]);
 	});
 
 });
