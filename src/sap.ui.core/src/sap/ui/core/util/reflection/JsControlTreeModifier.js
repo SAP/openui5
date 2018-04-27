@@ -97,6 +97,10 @@ sap.ui.define([
 			}
 		},
 
+		isPropertyInitial: function (oControl, sPropertyName) {
+			return oControl.isPropertyInitial(sPropertyName);
+		},
+
 		setPropertyBinding: function (oControl, sPropertyName, oPropertyBinding) {
 			this.unbindProperty(oControl, sPropertyName);
 			var mSettings = {};
