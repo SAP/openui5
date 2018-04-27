@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test Page for sap.ui.core.postmessage.ConfirmationDialog</title>
+		<script src="../../shared-config.js"></script>
+		<script>
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
+			sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
+			sap.ui.requireSync("sap/ui/qunit/qunit-junit");
+			sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
+
+			window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/core/postmessage/confirmationDialog]");
+
+			jQuery.sap.includeScript("./ConfirmationDialog.qunit.js");
+		</script>
+	</head>
+	<body>
+		<div id="qunit"></div>
+	</body>
+</html>
