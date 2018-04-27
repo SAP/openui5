@@ -1318,7 +1318,7 @@ sap.ui.define([
 						var oValue;
 
 						if (oControl instanceof sap.m.Select) {
-							if (typeof sValue === "string" && oCurrentKeyField.type === "boolean") {
+							if ((typeof sValue === "string" || sValue === null) && oCurrentKeyField.type === "boolean") {
 								sValue = sValue === "true";
 							}
 
