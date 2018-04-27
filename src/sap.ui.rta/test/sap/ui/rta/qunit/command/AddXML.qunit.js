@@ -117,5 +117,35 @@ function (
 				assert.notOk(oCommand._oPreparedChange.getDefinition().content.fragment, "after applying, the fragment content is not in the change anymore");
 			});
 		});
+
+		//Undo is tested in change handler and generic Flex command logic
+
+		QUnit.test("and design time metadata allows change on js only, when getting an AddXML command for the change ...", function(assert) {
+
+			var oCommandFactory = new CommandFactory({
+				flexSettings: {
+					layer: "VENDOR",
+					developerMode: true
+				}
+			});
+			var oCommand = oCommandFactory.getCommandFor(this.oButton, "addXML", {
+				fragmentPath: "pathToFragment",
+				fragment: "fragment",
+				targetAggregation: "targetAggregation",
+				index: 0
+			}, new ElementDesignTimeMetadata({
+				data : {
+					actions : {
+						addXML : {
+							jsOnly : true
+						}
+					}
+				}
+			}));
+
+			var oChange = oCommand.getPreparedChange();
+
+			assert.strictEqual(oChange.getDefinition().jsOnly, true, "then change is marked to be applied on js only");
+		});
 	});
 });

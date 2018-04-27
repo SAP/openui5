@@ -290,7 +290,8 @@ jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 				creation: "1.0.0",
 				from: "1.0.0",
 				to: "1.0.0"
-			}
+			},
+			jsOnly: true
 		};
 
 		var oCreatedFile = Change.createInitialFileContent(oInfo);
@@ -308,6 +309,7 @@ jQuery.sap.require("sap.ui.core.util.reflection.JsControlTreeModifier");
 		assert.deepEqual(oCreatedFile.selector, {"id": "control1"});
 		assert.deepEqual(oCreatedFile.dependentSelector, {source: {id: "controlSource1", idIsLocal: true}, target: {id: "controlTarget1", idIsLocal: true}});
 		assert.deepEqual(oCreatedFile.validAppVersions, {creation: "1.0.0", from: "1.0.0", to: "1.0.0"});
+		assert.ok(oCreatedFile.jsOnly);
 	});
 
 	QUnit.test("createInitialFileContent when generator is pre-set", function(assert) {

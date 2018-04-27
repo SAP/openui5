@@ -593,6 +593,10 @@ sap.ui.define([
 			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
 			return new Utils.FakePromise();
 		}
+		if (bXmlModifier && oChange.getDefinition().jsOnly) {
+			//change is not capable of xml modifier
+			return new Utils.FakePromise();
+		}
 
 		var mAppliedChangesCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
 		var sAppliedChanges = mAppliedChangesCustomData.customDataValue;
@@ -601,6 +605,7 @@ sap.ui.define([
 
 		var sChangeId = oChange.getId();
 
+		// if change was not yet applied
 		if (aAppliedChanges.indexOf(sChangeId) === -1) {
 			var bRevertible = this.isChangeHandlerRevertible(oChange, oControl, oChangeHandler);
 
