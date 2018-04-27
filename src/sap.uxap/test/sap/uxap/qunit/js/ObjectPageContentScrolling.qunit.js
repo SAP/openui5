@@ -9,6 +9,50 @@
 	jQuery.sap.require("sap.uxap.ObjectPageSection");
 	jQuery.sap.require("sap.uxap.ObjectPageSectionBase");
 
+
+	var oFactory = {
+		getSection: function (iNumber, sTitleLevel, aSubSections) {
+			return new sap.uxap.ObjectPageSection({
+				title: "Section" + iNumber,
+				titleLevel: sTitleLevel,
+				subSections: aSubSections || []
+			});
+		},
+		getSubSection: function (iNumber, aBlocks, sTitleLevel) {
+			return new sap.uxap.ObjectPageSubSection({
+				title: "SubSection " + iNumber,
+				titleLevel: sTitleLevel,
+				blocks: aBlocks || []
+			});
+		},
+		getBlocks: function (sText) {
+			return [
+				new sap.m.Text({text: sText || "some text"})
+			];
+		},
+		getObjectPage: function () {
+			return new sap.uxap.ObjectPageLayout();
+		}
+	},
+
+	helpers = {
+		generateObjectPageWithContent: function (oFactory, iNumberOfSection, bUseIconTabBar) {
+			var oObjectPage = bUseIconTabBar ? oFactory.getObjectPageLayoutWithIconTabBar() : oFactory.getObjectPage(),
+				oSection,
+				oSubSection;
+
+			for (var i = 0; i < iNumberOfSection; i++) {
+				oSection = oFactory.getSection(i);
+				oSubSection = oFactory.getSubSection(i, oFactory.getBlocks());
+				oSection.addSubSection(oSubSection);
+				oObjectPage.addSection(oSection);
+			}
+
+			return oObjectPage;
+		}
+	};
+
+
 	QUnit.module("ObjectPage Content scrolling");
 	QUnit.test("Should validate each section's position after scrolling to it, considering UI rules", function (assert) {
 
@@ -282,6 +326,33 @@
 		assert.ok(oObjectPage._oScroller._$Container, "ScrollEnablement private API is OK.");
 
 		oObjectPageContentScrollingView.destroy();
+	});
+
+	QUnit.test("auto-scroll on resize of last section", function (assert) {
+		var oObjectPageLayout = helpers.generateObjectPageWithContent(oFactory, 2 /* two sections */),
+			oLastSection = oObjectPageLayout.getSections()[1],
+			oLastSubSection = oLastSection.getSubSections()[0],
+			oResizableControl = new sap.ui.core.HTML({ content: "<div style='height: 100px'></div>"}),
+			done = assert.async();
+
+		oObjectPageLayout.setSelectedSection(oLastSection);
+		oLastSubSection.addBlock(oResizableControl);
+
+		oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// make the height of the last section smaller
+			oResizableControl.getDomRef().style.height = "10px";
+
+			setTimeout(function() {
+				assert.ok(oObjectPageLayout.getSelectedSection() === oLastSection.getId(), "Selection is preserved");
+				oObjectPageLayout.destroy();
+				done();
+			}, 10);
+		});
+
+		// arrange
+		oObjectPageLayout.placeAt('qunit-fixture');
+		sap.ui.getCore().applyChanges();
 	});
 
 	function isObjectPageHeaderStickied(oObjectPage) {

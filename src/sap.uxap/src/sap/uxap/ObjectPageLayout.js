@@ -2339,6 +2339,29 @@ sap.ui.define([
 		return (iScrollTop > 0) && (iScrollTop >= this._getSnapPosition()) && !this._shouldPreserveHeaderInTitleArea();
 	};
 
+	ObjectPageLayout.prototype._getScrollableContentLength = function () {
+		return this._$contentContainer.length ? this._$contentContainer[0].getBoundingClientRect().height : 0;
+	};
+
+	ObjectPageLayout.prototype._isContentScrolledToBottom = function () {
+		return this._oLastScrollState.iScrollableContentLength <= (this._oLastScrollState.iScrollTop + this._oLastScrollState.iScrollableViewportHeight);
+	};
+
+	ObjectPageLayout.prototype._isContentLengthDecreased = function (oPreviousScrollState) {
+		if (oPreviousScrollState) {
+			return oPreviousScrollState.iScrollableContentLength > this._oLastScrollState.iScrollableContentLength;
+		}
+	};
+
+	ObjectPageLayout.prototype._canReachScrollTop = function (oRequiredScrollTop, iExtraSpaceLength) {
+		var iReachableScrollTop;
+		iExtraSpaceLength = iExtraSpaceLength || 0;
+
+		iReachableScrollTop = this._oLastScrollState.iScrollableContentLength + iExtraSpaceLength - this._oLastScrollState.iScrollableViewportHeight;
+		return iReachableScrollTop >= oRequiredScrollTop;
+	};
+
+
 	/**
 	 * called when the user scrolls on the page
 	 * @param oEvent
@@ -2346,16 +2369,30 @@ sap.ui.define([
 	 */
 	ObjectPageLayout.prototype._onScroll = function (oEvent) {
 		var iScrollTop = Math.max(oEvent.target.scrollTop, 0), // top of the visible page
+			$wrapper = this._$opWrapper.length && this._$opWrapper[0],
+			$spacer = this._$spacer.length && this._$spacer[0],
 			iPageHeight,
 			oHeader = this.getHeaderTitle(),
 			bShouldStick = this._shouldSnapHeaderOnScroll(iScrollTop),
 			bShouldPreserveHeaderInTitleArea = this._shouldPreserveHeaderInTitleArea(),
 			sClosestId,
 			sClosestSubSectionId,
-			bScrolled = false;
+			bScrolled = false,
+			oPreviousScrollState = this._oLastScrollState,
+			iScrollOffset = oPreviousScrollState ? (oPreviousScrollState.iScrollTop - iScrollTop) : 0;
+
+		this._oLastScrollState = {
+			iScrollTop: iScrollTop,
+			iScrollableContentLength: this._getScrollableContentLength(),
+			iScrollableViewportHeight: $wrapper.offsetHeight
+		};
 
 		if (this._bSupressModifyOnScrollOnce) {
 			this._bSupressModifyOnScrollOnce = false;
+			return;
+		}
+
+		if (!$wrapper || !$spacer) {
 			return;
 		}
 
@@ -2367,6 +2404,24 @@ sap.ui.define([
 
 		if (this._getSectionInfoIsDirty()) {
 			return;
+		}
+
+		// check if scroll was a browser AUTO-scroll
+		// caused by decrease in the length of the scrollable content
+		// to an extent that the previous scrollTop cannot be maintained anymore (not enough content to scroll that far)
+		if (oPreviousScrollState
+			&& this._isContentScrolledToBottom()
+			&& this._isContentLengthDecreased(oPreviousScrollState)) {
+
+			var iContentLengthChange = oPreviousScrollState.iScrollableContentLength - this._oLastScrollState.iScrollableContentLength;
+			if (!this._canReachScrollTop(oPreviousScrollState.iScrollTop)
+				&& this._canReachScrollTop(oPreviousScrollState.iScrollTop, iContentLengthChange)) {
+
+				var iNewSpacerHeight = $spacer.offsetHeight + iContentLengthChange;
+				this._$spacer.height(iNewSpacerHeight + "px"); // add extra space to compensate height loss
+				this._scrollTo($wrapper.scrollTop + iScrollOffset); // scroll back to the previous scroll top (to fallback from the visual offset of content)
+				return;
+			}
 		}
 
 		if (bShouldStick && !bShouldPreserveHeaderInTitleArea) {
