@@ -2653,6 +2653,40 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: call submitBatch() synchronously after resume w/ auto-$expand/$select
+	QUnit.test("submitBatch after resume w/ auto-$expand/$select", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table"\
+		items="{path : \'/EMPLOYEES\', parameters : {$$groupId : \'group\'}, suspended : true}">\
+	<ColumnListItem>\
+		<Text id="text" text="{Name}" />\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectChange("text", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					method : "GET",
+					url : "EMPLOYEES?$select=ID,Name&$skip=0&$top=100"
+				}, {
+					"value" : [
+						{"ID" : "2", "Name" : "Frederic Fall"},
+						{"ID" : "3", "Name" : "Jonathan Smith"}
+					]
+				})
+				.expectChange("text", ["Frederic Fall", "Jonathan Smith"]);
+
+			that.oView.byId("table").getBinding("items").resume();
+			oModel.submitBatch("group");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Change a property in a dependent binding below a list binding with an own cache and
 	// change the list binding's row (-> the dependent binding's context)
 	QUnit.test("Pending change in hidden cache", function (assert) {
@@ -5273,6 +5307,69 @@ sap.ui.require([
 
 			oListBinding.filter(new Filter("Name", "GT", "M"));
 			that.oView.byId("table").getBinding("items").filter(null);
+			that.oModel.submitBatch("api");
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: sap.ui.table.Table with VisibleRowCountMode="Auto" and submit group 'API'
+	// In the first step resume and immediately call submitBatch.
+	// In the second step synchronously refresh with another group ID, change the filter and call
+	// submitBatch. Check that the filter request is sent with this batch nevertheless.
+	// Two issues have to be solved: the lock for the filter must win over the one for refresh and
+	// the lock must not be removed again before the table becomes active.
+	QUnit.test("ODLB: resume/refresh/filter w/ submitBatch on a table.Table", function (assert) {
+		var oListBinding,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<t:Table id="table" visibleRowCountMode="Auto"\
+		rows="{path : \'/Equipments\', parameters : {$$groupId : \'api\'}, suspended : true}">\
+	<t:Column>\
+		<t:label>\
+			<Label text="Name"/>\
+		</t:label>\
+		<t:template>\
+			<Text id="name" text="{Name}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			that = this;
+
+		this.expectChange("name", false);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oListBinding = that.oView.byId("table").getBinding("rows");
+
+			that.expectRequest("Equipments?$select=Category,ID,Name&$skip=0&$top=105", {
+					value : [{
+						"Category" : "1",
+						"ID" : "2",
+						"Name" : "Foo"
+					}]
+				})
+				.expectChange("name", ["Foo"]);
+
+			// table.Table must render to call getContexts on its row aggregation's list binding
+			that.oView.placeAt("qunit-fixture");
+			oListBinding.resume();
+			that.oModel.submitBatch("api");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+
+			that.expectRequest("Equipments?$select=Category,ID,Name"
+				+ "&$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=105", {
+					value : [{
+						"Name" : "Bar"
+					}]
+				})
+				.expectChange("name", null)
+				.expectChange("name", ["Bar"]);
+
+			oListBinding.refresh("foo");
+			oListBinding.filter(new Filter("EQUIPMENT_2_PRODUCT/ID", "EQ", 42));
 			that.oModel.submitBatch("api");
 
 			return that.waitForChanges(assert);

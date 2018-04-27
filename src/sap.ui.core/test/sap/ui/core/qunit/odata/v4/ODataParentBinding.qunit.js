@@ -2127,6 +2127,8 @@ sap.ui.require([
 
 			oBindingMock.expects("_fireChange").never();
 			oBindingMock.expects("resumeInternal").never();
+			oBindingMock.expects("getGroupId").withExactArgs().returns("groupId");
+			oBindingMock.expects("createRefreshGroupLock").withExactArgs("groupId", true, 1);
 			this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
 				.withExactArgs(sinon.match.func)
 				.callsFake(function (fnCallback) {
@@ -2184,21 +2186,25 @@ sap.ui.require([
 						lockGroup : function () {}
 					}
 				}),
-				oGroupLock = {};
+				oGroupLock1 = new _GroupLock(),
+				oGroupLock2 = new _GroupLock(),
+				oModelMock = this.mock(oBinding.oModel);
 
-			this.mock(oBinding.oModel).expects("lockGroup").withExactArgs("groupId", bLocked)
-				.returns(oGroupLock);
+			oModelMock.expects("lockGroup").withExactArgs("groupId", bLocked).returns(oGroupLock1);
 			this.mock(sap.ui.getCore()).expects("addPrerenderingTask").never();
 
 			// code under test
 			oBinding.createRefreshGroupLock("groupId", bLocked);
 
-			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock);
+			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock1);
+
+			this.mock(oGroupLock1).expects("unlock").withExactArgs(true);
+			oModelMock.expects("lockGroup").withExactArgs("groupId", bLocked).returns(oGroupLock2);
 
 			// code under test
 			oBinding.createRefreshGroupLock("groupId", bLocked);
 
-			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock);
+			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock2);
 		});
 	});
 
@@ -2213,24 +2219,39 @@ sap.ui.require([
 						lockGroup : function () {}
 					}
 				}),
+				oCoreMock = this.mock(sap.ui.getCore()),
+				iCount = bLockIsUsedAndRemoved ? 1 : undefined,
 				oExpectation,
-				oGroupLock = {
-					unlock : function () {}
-				};
+				oGroupLock = new _GroupLock(),
+				oPromiseMock = this.mock(Promise),
+				oThenable1 = {then : function () {}},
+				oThenable2 = {then : function () {}};
 
 			this.mock(oBinding.oModel).expects("lockGroup").withExactArgs("groupId", true)
 				.returns(oGroupLock);
-			oExpectation = this.mock(sap.ui.getCore()).expects("addPrerenderingTask")
-				.withExactArgs(sinon.match.func);
+			// first prerendering task
+			oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func).callsArg(0);
+			// second prerendering task
+			oPromiseMock.expects("resolve").withExactArgs().returns(oThenable1);
+			this.mock(oThenable1).expects("then").withExactArgs(sinon.match.func).callsArg(0);
+			if (iCount) {
+				oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func)
+					.callsArg(0);
+				// third prerendering task
+				oPromiseMock.expects("resolve").withExactArgs().returns(oThenable2);
+				this.mock(oThenable2).expects("then").withExactArgs(sinon.match.func).callsArg(0);
+			}
+			oExpectation = oCoreMock.expects("addPrerenderingTask").withExactArgs(sinon.match.func);
 
 			// code under test
-			oBinding.createRefreshGroupLock("groupId", true);
+			oBinding.createRefreshGroupLock("groupId", true, iCount);
 
 			assert.strictEqual(oBinding.oRefreshGroupLock, oGroupLock);
 
 			if (bLockIsUsedAndRemoved) {
 				// simulate functions that use and remove that lock (like getContexts or fetchValue)
 				oBinding.oRefreshGroupLock = undefined;
+				this.mock(oGroupLock).expects("unlock").never();
 			} else {
 				this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 			}
