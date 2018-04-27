@@ -43,7 +43,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/view/Post.view.xml",
 							"webapp/view/Worklist.view.xml",
 							"webapp/Component.js",
-							"webapp/manifest.json"
+							"webapp/manifest.json",
+							"ui5.yaml",
+							"package.json"
 						]
 					}
 				}

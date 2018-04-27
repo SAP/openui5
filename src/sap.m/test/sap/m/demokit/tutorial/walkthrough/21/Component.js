@@ -23,7 +23,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 							"webapp/Component.js",
 							"webapp/index.html",
 							"webapp/Invoices.json",
-							"webapp/manifest.json"
+							"webapp/manifest.json",
+							"ui5.yaml",
+							"package.json"
 						]
 					}
 				}
