@@ -98,11 +98,6 @@
 			</sap.ui.layout:VerticalLayout>
 
 			<sap.ui.layout:VerticalLayout width="100%">
-				<smartForm:SmartForm id="MainForm1" title="Personal Data" editable="true" entityType="Header">
-				</smartForm:SmartForm>
-			</sap.ui.layout:VerticalLayout>
-
-			<sap.ui.layout:VerticalLayout width="100%">
 				<form:SimpleForm title="SimpleForm with toolbars" id="SimpleFormWithToolbars"
 								 maxContainerCols="3"
 								 editable="true"
