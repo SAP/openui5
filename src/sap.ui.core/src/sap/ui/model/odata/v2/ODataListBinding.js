@@ -1140,7 +1140,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 				if (bSort) {
 					oEntry.fnCompare = getSortComparator(fnCompare);
 				} else {
-					oEntry.fnCompare = getFilterComparator(fnCompare, sType, oEntry);
+					oEntry.fnCompare = fnCompare;
+					normalizeFilterValues(sType, oEntry);
 				}
 			}
 		}.bind(this));
@@ -1171,20 +1172,45 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/Context', 'sap/ui/model/Filter
 	}
 
 	/**
-	 * Creates a comparator for the according Edm type of the filter value. For compatibility
-	 * reasons it is also possible to pass a number to the comparator.
+	 * Does normalize the filter values according to the given Edm type. This is necessary for comparators
+	 * to work as expected, even if the wrong JavaScript type is passed to the filter (string vs number)
 	 * @private
 	 */
-	function getFilterComparator(fnCompare, sType, oFilter) {
-		if (sType == "Edm.Decimal" &&  (typeof oFilter.oValue1 == "number" || typeof oFilter.oValue2 == "number")) {
-			var fnODataUtilsCompare = fnCompare;
-			// as the ODataUtils comparator expects only Edm types (internally handled as strings) the
-			// second value, which comes from the filter, needs to be converted if it is a number
-			fnCompare = function(vValue1, vValue2) {
-				return fnODataUtilsCompare.call(null, vValue1, vValue2.toString());
-			};
+	function normalizeFilterValues(sType, oFilter) {
+		switch (sType) {
+			case "Edm.Decimal":
+			case "Edm.Int64":
+				if (typeof oFilter.oValue1 == "number") {
+					oFilter.oValue1 = oFilter.oValue1.toString();
+				}
+				if (typeof oFilter.oValue2 == "number") {
+					oFilter.oValue2 = oFilter.oValue2.toString();
+				}
+				break;
+			case "Edm.Byte":
+			case "Edm.Int16":
+			case "Edm.Int32":
+			case "Edm.SByte":
+				if (typeof oFilter.oValue1 == "string") {
+					oFilter.oValue1 = parseInt(oFilter.oValue1, 10);
+				}
+				if (typeof oFilter.oValue2 == "string") {
+					oFilter.oValue2 = parseInt(oFilter.oValue2, 10);
+				}
+				break;
+			case "Edm.Float":
+			case "Edm.Single":
+			case "Edm.Double":
+				if (typeof oFilter.oValue1 == "string") {
+					oFilter.oValue1 = parseFloat(oFilter.oValue1);
+				}
+				if (typeof oFilter.oValue2 == "string") {
+					oFilter.oValue2 = parseFloat(oFilter.oValue2);
+				}
+				break;
+			default:
+				// Nothing to do
 		}
-		return fnCompare;
 	}
 
 	ODataListBinding.prototype.applySort = function() {
