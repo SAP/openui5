@@ -685,10 +685,10 @@ sap.ui.define([
 			var oElement;
 
 			if (sTop === "top") {
-				oElement = document.elementFromPoint(oOverlayDimensions.left + (oOverlayDimensions.width / 2), oOverlayDimensions.top);
+				oElement = document.elementFromPoint(oOverlayDimensions.left + (oOverlayDimensions.width / 2), (oOverlayDimensions.top + 5));
 			}
 			if (sTop === "bottom") {
-				oElement = document.elementFromPoint(oOverlayDimensions.left + (oOverlayDimensions.width / 2), oOverlayDimensions.bottom - 5);
+				oElement = document.elementFromPoint(oOverlayDimensions.left + (oOverlayDimensions.width / 2), (oOverlayDimensions.bottom - 5));
 			}
 			if (!oElement) {
 				return true;
