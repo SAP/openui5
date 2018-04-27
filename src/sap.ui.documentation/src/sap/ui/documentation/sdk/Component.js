@@ -262,7 +262,9 @@ sap.ui.define([
 				}
 
 				sVersion = oVersionInfo.version;
-				if (/internal/i.test(oVersionInfo.name)) {
+
+				// We show restricted members for internal versions and if the documentation is in preview mode
+				if (/internal/i.test(oVersionInfo.name) || !!window['sap-ui-documentation-preview']) {
 					bIsInternal = true;
 					this.aAllowedMembers.push("restricted");
 				}
