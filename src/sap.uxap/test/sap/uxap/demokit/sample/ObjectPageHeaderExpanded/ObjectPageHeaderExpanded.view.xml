@@ -20,11 +20,11 @@
 							  objectImageShape="Circle"
 							  objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png">
 				<actions>
-					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://refresh" text="{buttons>/text}"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" tooltip="action"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" tooltip="action-settings"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit" tooltip="edit"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false" tooltip="save"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://refresh" text="{buttons>/text}" tooltip="refresh"/>
 				</actions>
 			</ObjectPageHeader>
 		</headerTitle>
