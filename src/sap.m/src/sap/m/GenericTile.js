@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool'],
-	function(jQuery, library, Control, Text, HTML, Icon) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/Text', 'sap/ui/core/HTML', 'sap/ui/core/Icon', 'sap/ui/core/IconPool','sap/ui/Device'],
+	function(jQuery, library, Control, Text, HTML, Icon,Device) {
 	"use strict";
 
 	/**
@@ -181,7 +181,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/T
 	GenericTile.prototype.onAfterRendering = function() {
 		// attaches handler this._updateAriaAndTitle to the event mouseenter and removes attributes ARIA-label and title of all content elements
 		this.$().bind("mouseenter", this._updateAriaAndTitle.bind(this));
-	};
+        if (!Device.browser.chrome) {
+            this._oTitle.clampText();
+        }
+
+    };
 
 	GenericTile.prototype.exit = function() {
 		this._oWarningIcon.destroy();
