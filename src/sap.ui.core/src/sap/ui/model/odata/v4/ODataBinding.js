@@ -59,6 +59,7 @@ sap.ui.define([
 			}
 		}
 		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
+		this.mCacheQueryOptions = undefined;
 		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var vCanonicalPath,
 				mQueryOptions = aResult[0];
@@ -69,13 +70,12 @@ sap.ui.define([
 					? oContext.fetchCanonicalPath() : oContext.getPath()));
 				return vCanonicalPath.then(function (sCanonicalPath) {
 					var oCache,
-						mCacheQueryOptions,
 						oError;
 
 					// create cache only for the latest call to fetchCache
 					if (!oCachePromise || that.oFetchCacheCallToken === oCallToken) {
-						mCacheQueryOptions = jQuery.extend(true, {}, that.oModel.mUriParameters,
-							mQueryOptions);
+						that.mCacheQueryOptions = jQuery.extend(true, {},
+							that.oModel.mUriParameters, mQueryOptions);
 						if (sCanonicalPath) { // quasi-absolute or relative binding
 							// mCacheByContext has to be reset if parameters are changing
 							that.mCacheByContext = that.mCacheByContext || {};
@@ -85,13 +85,13 @@ sap.ui.define([
 							} else {
 								oCache = that.doCreateCache(
 									_Helper.buildPath(sCanonicalPath, that.sPath).slice(1),
-									mCacheQueryOptions, oContext);
+										that.mCacheQueryOptions, oContext);
 								that.mCacheByContext[sCanonicalPath] = oCache;
 								oCache.$canonicalPath = sCanonicalPath;
 							}
 						} else { // absolute binding
-							oCache = that.doCreateCache(that.sPath.slice(1), mCacheQueryOptions,
-								oContext);
+							oCache = that.doCreateCache(that.sPath.slice(1),
+								that.mCacheQueryOptions, oContext);
 						}
 						return oCache;
 					} else {

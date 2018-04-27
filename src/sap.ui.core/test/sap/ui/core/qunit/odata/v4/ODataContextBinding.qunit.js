@@ -23,7 +23,8 @@ sap.ui.require([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
-	var aAllowedBindingParameters = ["$$groupId", "$$ownRequest", "$$updateGroupId"],
+	var aAllowedBindingParameters = ["$$groupId", "$$inheritExpandSelect", "$$ownRequest",
+			"$$updateGroupId"],
 		sClassName = "sap.ui.model.odata.v4.ODataContextBinding";
 
 	//*********************************************************************************************
@@ -65,6 +66,7 @@ sap.ui.require([
 		assert.ok(oBinding.hasOwnProperty("oCachePromise"));
 		assert.ok(oBinding.hasOwnProperty("mCacheByContext"));
 		assert.ok(oBinding.hasOwnProperty("sGroupId"));
+		assert.ok(oBinding.hasOwnProperty("bInheritExpandSelect"));
 		assert.ok(oBinding.hasOwnProperty("oOperation"));
 		assert.ok(oBinding.hasOwnProperty("mQueryOptions"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
@@ -72,6 +74,7 @@ sap.ui.require([
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 		assert.strictEqual(oBinding.aChildCanUseCachePromises.length, 0);
+		assert.strictEqual(oBinding.bInheritExpandSelect, undefined);
 		assert.strictEqual(oBinding.oReturnValueContext, null);
 	});
 
@@ -93,45 +96,115 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters (as called by c'tor)", function (assert) {
-		var mBindingParameters = {
-				$$groupId : "foo",
-				$$updateGroupId : "update foo"
-			},
-			sGroupId = "foo",
-			oModelMock = this.mock(this.oModel),
-			oBinding = this.oModel.bindContext("/EMPLOYEES"),
-			mParameters = {
-				$$groupId : "foo",
-				$$updateGroupId : "update foo",
-				$filter : "bar"
-			},
-			mQueryOptions = {
-				$filter : "bar"
-			},
-			sUpdateGroupId = "update foo";
+	[false, undefined].forEach(function (bInheritExpandSelect) {
+		QUnit.test("applyParameters (as called by c'tor), inheritExpandSelect="
+			+ bInheritExpandSelect, function (assert) {
+			var mBindingParameters = {
+					$$groupId : "foo",
+					$$inheritExpandSelect : bInheritExpandSelect,
+					$$updateGroupId : "update foo"
+				},
+				sGroupId = "foo",
+				oModelMock = this.mock(this.oModel),
+				oBinding = this.oModel.bindContext("/EMPLOYEES"),
+				mParameters = {
+					$$groupId : "foo",
+					$$inheritExpandSelect : bInheritExpandSelect,
+					$$updateGroupId : "update foo",
+					$filter : "bar"
+				},
+				mQueryOptions = {
+					$filter : "bar"
+				},
+				sUpdateGroupId = "update foo";
 
-		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
-		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-			.returns(mBindingParameters);
-		this.mock(oBinding).expects("fetchCache").withExactArgs(undefined).callsFake(function () {
-			this.oCachePromise = SyncPromise.resolve({});
+			oModelMock.expects("buildQueryOptions")
+				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
+			oModelMock.expects("buildBindingParameters")
+				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
+				.returns(mBindingParameters);
+			this.mock(oBinding).expects("fetchCache").withExactArgs(undefined).callsFake(function () {
+				this.oCachePromise = SyncPromise.resolve({});
+			});
+			this.mock(oBinding).expects("checkUpdate").withExactArgs();
+
+			// code under test
+			oBinding.applyParameters(mParameters);
+
+			assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
+			assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
+			assert.strictEqual(oBinding.bInheritExpandSelect, bInheritExpandSelect,
+				"bInheritExpandSelect");
+			assert.deepEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
+			assert.strictEqual(oBinding.mParameters, mParameters, "mParameters");
 		});
-		this.mock(oBinding).expects("checkUpdate").withExactArgs();
-
-		// code under test
-		oBinding.applyParameters(mParameters);
-
-		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
-		assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
-		assert.deepEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
-		assert.strictEqual(oBinding.mParameters, mParameters, "mParameters");
 	});
 
 	//*********************************************************************************************
-	[undefined, false, true].forEach(function(bAction) {
+	QUnit.test("applyParameters: $$inheritExpandSelect, no operation binding", function (assert) {
+		var oBinding = this.oModel.bindContext("/NotAnOperation"),
+			oBindingMock = this.mock(oBinding),
+			oModelMock = this.mock(this.oModel),
+			mParameters = {$$inheritExpandSelect : true};
+
+		oModelMock.expects("buildBindingParameters")
+			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
+			.returns({
+				$$groupId : "myGroup",
+				$$inheritExpandSelect : true,
+				$$updateGroupId : "myUpdateGroup"
+			});
+		oModelMock.expects("buildQueryOptions").never();
+		oBindingMock.expects("checkUpdate").never();
+		oBindingMock.expects("execute").never();
+		oBindingMock.expects("fetchCache").never();
+		oBindingMock.expects("refreshInternal").never();
+
+		assert.throws(function () {
+			// code under test
+			oBinding.applyParameters(mParameters);
+		}, new Error("Unsupported binding parameter $$inheritExpandSelect: "
+			+ "binding is not an operation binding"));
+
+		assert.strictEqual(oBinding.sGroupId, undefined, "group id not set");
+		assert.strictEqual(oBinding.sUpdateGroupId, undefined, "update group id not set");
+	});
+
+	//*********************************************************************************************
+	[{$expand : {NavProperty : {}}}, {$select : "p0,p1"}].forEach(function (mExpandOrSelect, i) {
+		QUnit.test("applyParameters: $$inheritExpandSelect with $expand or $select, " + i,
+			function (assert) {
+				var oBinding = this.oModel.bindContext("BoundOperation(...)"),
+					oBindingMock = this.mock(oBinding),
+					oModelMock = this.mock(this.oModel),
+					mParameters = {$$inheritExpandSelect : true};
+
+				oModelMock.expects("buildBindingParameters")
+					.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
+					.returns(jQuery.extend({
+						$$groupId : "myGroup",
+						$$inheritExpandSelect : true,
+						$$updateGroupId : "myUpdateGroup"
+					}, mExpandOrSelect));
+				oModelMock.expects("buildQueryOptions").never();
+				oBindingMock.expects("checkUpdate").never();
+				oBindingMock.expects("execute").never();
+				oBindingMock.expects("fetchCache").never();
+				oBindingMock.expects("refreshInternal").never();
+
+				// code under test
+				assert.throws(function () {
+					oBinding.applyParameters(mParameters);
+				}, new Error("Must not set parameter $$inheritExpandSelect on binding which has "
+						+ "$expand or $select"));
+
+				assert.strictEqual(oBinding.sGroupId, undefined, "group id not set");
+				assert.strictEqual(oBinding.sUpdateGroupId, undefined, "update group id not set");
+		});
+	});
+
+	//*********************************************************************************************
+	[undefined, false, true].forEach(function (bAction) {
 		var sTitle = "applyParameters: operation binding, bAction: " + bAction;
 
 		QUnit.test(sTitle, function (assert) {
@@ -169,37 +242,42 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("applyParameters: action binding", function (assert) {
-		var oBinding = this.oModel.bindContext("/ActionImport(...)"),
-			oBindingMock = this.mock(oBinding),
-			sGroupId = "foo",
-			oModelMock = this.mock(this.oModel),
-			mParameters = {},
-			mQueryOptions = {},
-			sUpdateGroupId = "update foo";
+	[true, false].forEach(function (bInheritExpandSelect, i) {
+		QUnit.test("applyParameters: action binding, " + i, function (assert) {
+			var oBinding = this.oModel.bindContext("/ActionImport(...)"),
+				oBindingMock = this.mock(oBinding),
+				sGroupId = "foo",
+				oModelMock = this.mock(this.oModel),
+				mParameters = {},
+				mQueryOptions = {},
+				sUpdateGroupId = "update foo";
 
-		oBinding.oOperation.bAction = true;
+			oBinding.oOperation.bAction = true;
 
-		oModelMock.expects("buildQueryOptions")
-			.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
-		oModelMock.expects("buildBindingParameters")
-			.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
-			.returns({
-				$$groupId : sGroupId,
-				$$updateGroupId : sUpdateGroupId
-			});
-		oBindingMock.expects("checkUpdate").never();
-		oBindingMock.expects("execute").never();
-		oBindingMock.expects("fetchCache").never();
-		oBindingMock.expects("refreshInternal").never();
+			oModelMock.expects("buildQueryOptions")
+				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
+			oModelMock.expects("buildBindingParameters")
+				.withExactArgs(sinon.match.same(mParameters), aAllowedBindingParameters)
+				.returns({
+					$$groupId : sGroupId,
+					$$inheritExpandSelect : bInheritExpandSelect,
+					$$updateGroupId : sUpdateGroupId
+				});
+			oBindingMock.expects("checkUpdate").never();
+			oBindingMock.expects("execute").never();
+			oBindingMock.expects("fetchCache").never();
+			oBindingMock.expects("refreshInternal").never();
 
-		// code under test (as called by ODataParentBinding#changeParameters)
-		oBinding.applyParameters(mParameters, ChangeReason.Filter);
+			// code under test (as called by ODataParentBinding#changeParameters)
+			oBinding.applyParameters(mParameters, ChangeReason.Filter);
 
-		assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
-		assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
-		assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
-		assert.strictEqual(oBinding.mParameters, mParameters);
+			assert.strictEqual(oBinding.bInheritExpandSelect, bInheritExpandSelect,
+				"bInheritExpandSelect");
+			assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
+			assert.strictEqual(oBinding.sGroupId, sGroupId, "sGroupId");
+			assert.strictEqual(oBinding.sUpdateGroupId, sUpdateGroupId, "sUpdateGroupId");
+			assert.strictEqual(oBinding.mParameters, mParameters);
+		});
 	});
 
 	//*********************************************************************************************
@@ -1435,14 +1513,92 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("createCacheAndRequest: bound function, $$inheritExpandSelect", function (assert) {
+		var bAutoExpandSelect = {/*false, true*/},
+			oContext = Context.create(this.oModel, {
+				mCacheQueryOptions : {$expand : {"NavProperty" : {}}, $select : ["p0"]}
+			}, "/foo"),
+			oBinding = this.oModel.bindContext("bound.Function(...)", oContext,
+				{$$inheritExpandSelect : true}),
+			fnGetEntity = {}, // do not call!
+			oGroupLock = {},
+			oJQueryMock = this.mock(jQuery),
+			oOperationMetadata = {$kind : "Function"},
+			mParameters = {},
+			sPath = "/Entity('1')/navigation/bound.Function(...)",
+			oPromise = {},
+			mQueryOptions = {"functionQueryOption" : "bar"},
+			sResourcePath = "Entity('1')/navigation/bound.Function()",
+			oSingleCache = {
+				fetchValue : function () {}
+			};
+
+		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+		oJQueryMock.expects("extend").withExactArgs({},
+			sinon.match.same(oBinding.oOperation.mParameters))
+			.returns(mParameters);
+		oJQueryMock.expects("extend").withExactArgs({},
+			sinon.match.same(oBinding.oModel.mUriParameters),
+			sinon.match.same(oBinding.mQueryOptions))
+			.returns(mQueryOptions);
+		this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions").withExactArgs(sPath,
+			sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
+			sinon.match.same(mQueryOptions), sinon.match.same(fnGetEntity))
+			.returns(sResourcePath);
+		this.mock(oBinding).expects("hasReturnValueContext")
+			.withExactArgs(sinon.match.same(oOperationMetadata))
+			.returns(true);
+		this.mock(_Cache).expects("createSingle")
+			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
+				{"functionQueryOption" : "bar", $expand : {"NavProperty" : {}}, $select : ["p0"]},
+				sinon.match.same(bAutoExpandSelect), false,
+				"/Entity/navigation/bound.Function/@$ui5.overload/0/$ReturnType", true)
+			.returns(oSingleCache);
+		this.mock(oSingleCache).expects("fetchValue")
+			.withExactArgs(sinon.match.same(oGroupLock)).returns(oPromise);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata, fnGetEntity),
+			oPromise);
+		assert.strictEqual(oBinding.oOperation.bAction, false);
+		assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("createCacheAndRequest: wrong $kind", function (assert) {
 		var oBinding = this.oModel.bindContext("n/a(...)"),
-			oGroupLock = {};
+			oGroupLock = {},
+			oOperationMetadata = {$kind : "n/a"};
+
+		this.mock(oBinding).expects("hasReturnValueContext")
+			.withExactArgs(sinon.match.same(oOperationMetadata))
+			.returns(false);
 
 		assert.throws(function () {
 			// code under test
-			oBinding.createCacheAndRequest(oGroupLock, "/OperationImport(...)", {$kind : "n/a"});
+			oBinding.createCacheAndRequest(oGroupLock, "/OperationImport(...)", oOperationMetadata);
 		}, new Error("Not an operation: /OperationImport(...)"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCacheAndRequest: $$inheritExpandSelect w/o return value context",
+		function (assert) {
+			var oBinding = this.oModel.bindContext("bound.Operation(...)", null,
+					{$$inheritExpandSelect : true}),
+				oGroupLock = {},
+				oOperationMetadata = {$kind : "Function"};
+
+			this.mock(oBinding).expects("hasReturnValueContext")
+				.withExactArgs(sinon.match.same(oOperationMetadata))
+				.returns(false);
+
+			assert.throws(function () {
+				// code under test
+				oBinding.createCacheAndRequest(oGroupLock, "/Entity('0815')/bound.Operation(...)",
+					oOperationMetadata);
+			}, new Error("Must not set parameter $$inheritExpandSelect on binding which has "
+				+ "no return value context"));
 	});
 
 	//*********************************************************************************************
@@ -1919,6 +2075,30 @@ sap.ui.require([
 			assert.strictEqual(!!oBinding.hasReturnValueContext(oOperationMetadata),
 				oFixture.result);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasReturnValueContext for non-V4 context", function (assert) {
+		var oContext = this.oModel.createBindingContext("/TEAMS('42')"),
+			oBinding = this.oModel.bindContext("name.space.Operation(...)", oContext),
+			oOperationMetadata = {
+				$kind : "Action",
+				$IsBound : true,
+				$EntitySetPath : "_it",
+				$Parameter : [{
+					$Type : "special.cases.ArtistsType",
+					$Name : "_it",
+					$Nullable : false
+				}],
+				$ReturnType: {
+					$Type : "special.cases.ArtistsType"
+				}
+			};
+
+		this.mock(this.oModel.oMetaModel).expects("getObject").never();
+
+		// code under test
+		assert.strictEqual(!!oBinding.hasReturnValueContext(oOperationMetadata), false);
 	});
 
 	//*********************************************************************************************
