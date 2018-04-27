@@ -1,8 +1,7 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
-	"sap/ui/demo/cart/controller/Checkout.controller",
-	"sap/ui/thirdparty/sinon"
+	"sap/ui/demo/cart/controller/Checkout.controller"
 ], function (Checkout) {
 	"use strict";
 
