@@ -178,7 +178,25 @@ function(
 			/**
 			 * Event is fired when the user triggers the link control.
 			 */
-			press : {allowPreventDefault : true}
+			press : {
+				allowPreventDefault : true,
+				parameters: {
+					/**
+					 * Indicates whether the CTRL key was pressed when the link was selected.
+					 * @since 1.58
+					 */
+					ctrlKey: { type: "boolean" },
+					/**
+					 * Indicates whether the "meta" key was pressed when the link was selected.
+					 *
+					 * On Macintosh keyboards, this is the command key (⌘).
+					 * On Windows keyboards, this is the windows key (⊞).
+					 *
+					 * @since 1.58
+					 */
+					metaKey: { type: "boolean" }
+				}
+			}
 		}
 	}});
 
@@ -239,7 +257,7 @@ function(
 			// mark the event for components that needs to know if the event was handled by the link
 			oEvent.setMarked();
 
-			if (!this.firePress() || !this.getHref()) { // fire event and check return value whether default action should be prevented
+			if (!this.firePress({ctrlKey: !!oEvent.ctrlKey, metaKey: !!oEvent.metaKey}) || !this.getHref()) { // fire event and check return value whether default action should be prevented
 				oEvent.preventDefault();
 			}
 		} else { // disabled
