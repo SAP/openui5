@@ -179,6 +179,52 @@
 		oObjectIdentifier.destroy();
 	});
 
+	test("ObjectIdentifier title should be escaped upon creation", function(assert) {
+		// Arrange
+		var oEscapeSpy = this.spy(sap.m.ObjectIdentifier, "_escapeSettingsValue"),
+			oObjectIdentifier = new sap.m.ObjectIdentifier ({
+				title: "Evil { string"
+			}).placeAt("qunit-fixture");
+
+		// Assert
+		strictEqual(oEscapeSpy.callCount, 1, "escaped was called once for the setted Title");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+	test("ObjectIdentifier text should be escaped upon creation", function(assert) {
+		// Arrange
+		var oEscapeSpy = this.spy(sap.m.ObjectIdentifier, "_escapeSettingsValue"),
+			oObjectIdentifier = new sap.m.ObjectIdentifier ({
+				text: "Evil { string"
+			}).placeAt("qunit-fixture");
+
+		// Assert
+		strictEqual(oEscapeSpy.callCount, 1, "escaped was called once for the setted Text");
+
+		//Cleanup
+		oObjectIdentifier.destroy();
+	});
+
+	test("ObjectIdentifier _escapeSettingsValue function with value that should be escaped", function(assert) {
+		// Arrange
+		var sEscapedVal = "Evil \\{ string",
+			sReturnedVal = sap.m.ObjectIdentifier._escapeSettingsValue("Evil { string");
+
+		// Assert
+		strictEqual(sReturnedVal, sEscapedVal, "Text is correctly escaped");
+	});
+
+	test("ObjectIdentifier _escapeSettingsValue function with value that shouldn't be escaped", function(assert) {
+		// Arrange
+		var sEscapedVal = "Some string",
+			sReturnedVal = sap.m.ObjectIdentifier._escapeSettingsValue("Some string");
+
+		// Assert
+		strictEqual(sReturnedVal, sEscapedVal, "Text is the same as the givven one");
+	});
+
 	test("Should not rerender the ObjectIdentifier if the new  title is empty", function() {
 		// Arrange
 		var sTextToSet = undefined,

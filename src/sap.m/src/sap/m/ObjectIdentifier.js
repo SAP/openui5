@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.m.ObjectIdentifier.
-sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText'],
-	function(jQuery, library, Control, IconPool, InvisibleText) {
+sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/core/IconPool', 'sap/ui/core/InvisibleText', 'sap/ui/base/ManagedObject'],
+	function(jQuery, library, Control, IconPool, InvisibleText, ManagedObject) {
 	"use strict";
 
 
@@ -241,13 +241,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			// Lazy initialization
 			if (this.getProperty("titleActive")) {
 				oTitleControl = new sap.m.Link({
-					text: this.getProperty("title"),
+					text: ObjectIdentifier._escapeSettingsValue(this.getProperty("title")),
 					//Add a custom hidden role "ObjectIdentifier" with hidden text
 					ariaLabelledBy: this._oAriaCustomRole
 				});
 			} else {
 				oTitleControl = new sap.m.Text({
-					text: this.getProperty("title")
+					text: ObjectIdentifier._escapeSettingsValue(this.getProperty("title"))
 				});
 			}
 			this.setAggregation("_titleControl", oTitleControl, true);
@@ -258,7 +258,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			if (bIsTitleActive && oTitleControl instanceof sap.m.Text) {
 				this.destroyAggregation("_titleControl", true);
 				oTitleControl = new sap.m.Link({
-					text: this.getProperty("title"),
+					text: ObjectIdentifier._escapeSettingsValue(this.getProperty("title")),
 					//Add a custom hidden role "ObjectIdentifier" with hidden text
 					ariaLabelledBy: this._oAriaCustomRole
 				});
@@ -266,7 +266,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 			} else if (!bIsTitleActive && oTitleControl instanceof sap.m.Link) {
 				this.destroyAggregation("_titleControl", true);
 				oTitleControl = new sap.m.Text({
-					text: this.getProperty("title")
+					text: ObjectIdentifier._escapeSettingsValue(this.getProperty("title"))
 				});
 				this.setAggregation("_titleControl", oTitleControl, true);
 			}
@@ -288,7 +288,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		if (!oTextControl) {
 			oTextControl = new sap.m.Text({
-				text: this.getProperty("text")
+				text: ObjectIdentifier._escapeSettingsValue(this.getProperty("text"))
 			});
 			this.setAggregation("_textControl", oTextControl, true);
 		}
@@ -437,6 +437,26 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/ui/
 
 		return this._oAriaCustomRole;
 	};
+
+	/**
+	 * Escapes the given value so it can be used in the constructor's settings object.
+	 * Should be used when property values are initialized with static string values which could contain binding characters (curly braces).
+	 *
+	 * @param {any} vValue Value to escape; only needs to be done for string values, but the call will work for all types
+	 * @return {any} The given value, escaped for usage as static property value in the constructor's settings object (or unchanged, if not of type string)
+	 * @private
+	 */
+	// this function is added only in 1.44 since the public function escapeSettingsValue of ManagedObject
+	// was introduced in 1.52 version
+	ObjectIdentifier._escapeSettingsValue = function(vValue) {
+		/**
+		 * Regular expression to escape potential binding chars
+		 */
+		var rBindingChars = /([\\\{\}])/g;
+
+		return (typeof vValue === "string") ? vValue.replace(rBindingChars, "\\$1") : vValue;
+	};
+
 
 	return ObjectIdentifier;
 
