@@ -140,7 +140,11 @@
 
 .sapUiTableCtrlEmpty {
 	background-color: @sapUiListBackground;
-	font-size: @sapUiFontSize;
+	font-size: @sapMFontMediumSize;
+
+	.sapUiSizeCozy & {
+		font-size: @sapMFontLargeSize;
+	}
 }
 
 .sapUiTableOverlayArea {
