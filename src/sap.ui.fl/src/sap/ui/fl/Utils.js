@@ -864,7 +864,7 @@ sap.ui.define([
 				}
 				if (aValues.length === 0) {
 					delete mParams[sParameterName];
-					mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
+					mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // clearVariantParameterInURL
 				} else {
 					mParams[sParameterName] = aValues;
 					mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash
