@@ -454,7 +454,7 @@ sap.ui.define([
 					oHeaderLayoutUtil = this._getHeaderLayoutUtil(),
 					aSubClasses = oEntityData.extendedBy || oEntityData.implementedBy || [],
 					aHeaderBlocksInfo = [
-						{creator: "_getControlSampleBlock", exists: oControlData.isClass},
+						{creator: "_getControlSampleBlock", exists: oControlData.isClass || oControlData.isNamespace},
 						{creator: "_getDocumentationBlock", exists: oControlData.docuLink !== undefined},
 						{creator: "_getUXGuidelinesBlock", exists: oControlData.uxGuidelinesLink !== undefined},
 						{creator: "_getExtendsBlock", exists: oControlData.isClass},
