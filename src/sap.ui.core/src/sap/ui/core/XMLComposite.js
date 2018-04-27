@@ -94,14 +94,10 @@ sap.ui.define([
 
 				if (oAggregation.multiple) {
 					// return a list of context
-					var oChild, aContexts = [];
-					for (var i = 0; i < oContent.childNodes.length; i++) {
-						oChild = oContent.childNodes[i];
-
-					if (oChild.nodeType == 1 /* Node.ELEMENT_NODE */) {
-							oAggregationModel = new XMLNodeAttributesModel(oChild, oVisitor, "");
-							aContexts.push(oAggregationModel.getContext("/"));
-						}
+					var aContexts = [];
+					for (var i = 0; i < oContent.length; i++) {
+						oAggregationModel = new XMLNodeAttributesModel(oContent[i], oVisitor, "");
+						aContexts.push(oAggregationModel.getContext("/"));
 					}
 
 					oResult = aContexts;
