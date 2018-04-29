@@ -537,15 +537,15 @@ function(
 	 * Calculate and update CSS styles for the Overlay's DOM
 	 * The calculation is based on original associated DOM state and parent overlays
 	 * This method also calls "applyStyles" method for every child Overlay of this Overlay (cascade)
-	 * @param {boolean} bInvalidateGeometry
 	 * @public
 	 */
-	Overlay.prototype.applyStyles = function(bInvalidateGeometry) {
-		if (!(typeof bInvalidateGeometry === 'boolean')) {
-			bInvalidateGeometry = true;
+	Overlay.prototype.applyStyles = function() {
+		if (!this.isRendered()) {
+			return;
 		}
+
 		if (this.isVisible()) {
-			var oGeometry = this.getGeometry(bInvalidateGeometry);
+			var oGeometry = this.getGeometry(true);
 
 			if (oGeometry && oGeometry.visible) {
 				this._setSize(this.$(), oGeometry);

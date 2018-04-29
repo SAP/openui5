@@ -120,7 +120,7 @@ function(
 		afterEach: function() {
 			this.oPage.destroy();
 			this.oAggregationOverlay.destroy();
-			sap.ui.dt.Overlay.removeOverlayContainer();
+			Overlay.removeOverlayContainer();
 		}
 	}, function () {
 		QUnit.test("when AggregationOverlay is initialized", function(assert) {

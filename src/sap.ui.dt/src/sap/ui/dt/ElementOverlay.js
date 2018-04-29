@@ -681,21 +681,13 @@ function(
 	ElementOverlay.prototype._onChildAdded = function (oEvent) {
 		var oAggregationOverlay = oEvent.getSource();
 		if (this.isRendered() && !oAggregationOverlay.isRendered()) {
-			this._getRenderingContainer(oAggregationOverlay).append(oAggregationOverlay.render());
+			var $Target = (
+				Util.isInteger(oAggregationOverlay.getScrollContainerId())
+				? this.getScrollContainerById(oAggregationOverlay.getScrollContainerId())
+				: jQuery(this.getChildrenDomRef())
+			);
+			$Target.append(oAggregationOverlay.render());
 		}
-	};
-
-	/**
-	 * Gets rendering DOM Node for specified child (aggregation overlay)
-	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - aggregation overlay
-	 * @return {jQuery} - jQuery object with rendering DOM Node
-	 */
-	ElementOverlay.prototype._getRenderingContainer = function (oAggregationOverlay) {
-		return (
-			Util.isInteger(oAggregationOverlay.getScrollContainerId())
-			? this.getScrollContainerById(oAggregationOverlay.getScrollContainerId())
-			: jQuery(this.getChildrenDomRef())
-		);
 	};
 
 	/**
@@ -704,18 +696,6 @@ function(
 	 * @param {sap.ui.dt.AggregationOverlay} oAggregationOverlay - The aggregation overlay where the child is being added.
 	 */
 	ElementOverlay.prototype.addChild = function (oAggregationOverlay) {
-		if (this.isRendered()) {
-			var $Target = this._getRenderingContainer(oAggregationOverlay);
-
-			// 1. Move aggregation in rendering container
-			$Target.append(oAggregationOverlay.getDomRef());
-
-			// 2. Move rendering container if it's a scroll container
-			if (Util.isInteger(oAggregationOverlay.getScrollContainerId())) {
-				jQuery(this.getChildrenDomRef()).append($Target);
-			}
-		}
-
 		// Since we can't check whether the listener was attached before or not, we re-attach it to avoid multiple listeners
 		oAggregationOverlay.detachChildAdded(this._onChildAdded, this);
 		oAggregationOverlay.attachChildAdded(this._onChildAdded, this);

@@ -884,9 +884,9 @@ function(
 					parentMetadata: oParentAggregationOverlay.getDesignTimeMetadata().getData()
 				})
 					.then(
-						function (oOverlay) {
-							oParentAggregationOverlay.insertChild(null, oOverlay);
-							oOverlay.applyStyles(); // TODO: remove after Task Manager implementation
+						function (oElementOverlay) {
+							oParentAggregationOverlay.insertChild(null, oElementOverlay);
+							oElementOverlay.applyStyles(); // TODO: remove after Task Manager implementation
 							this._oTaskManager.complete(iTaskId);
 						}.bind(this),
 						function (vError) {
@@ -902,7 +902,7 @@ function(
 							vError,
 							"DesignTime#_onAddAggregation",
 							Util.printf(
-								"Failed to add new ElementOverlay (elementId='{0}') into AggregationOverlay (id='{1}')",
+								"Failed to add new element overlay (elementId='{0}') into aggregation overlay (id='{1}')",
 								sElementId,
 								sAggregationOverlayId
 							)
