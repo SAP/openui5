@@ -2732,6 +2732,12 @@ sap.ui.define([
 		if (this.getUseIconTabBar() && oOrigin && (oOrigin instanceof ObjectPageSection) && !oOrigin.isActive()) {
 			return; // no need to invalidate when an inactive tab is changed
 		}
+
+		if (this._iAfterRenderingDomReadyTimeout) {
+			// cancel the existing onAfterRenderingDOMReady task as its calculation will not be valid (or necessary)
+			clearTimeout(this._iAfterRenderingDomReadyTimeout);
+		}
+
 		Control.prototype.invalidate.apply(this, arguments);
 	};
 
