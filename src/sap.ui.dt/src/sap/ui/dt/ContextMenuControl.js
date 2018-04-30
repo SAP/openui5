@@ -808,11 +808,17 @@ sap.ui.define([
 
 		/**
 		 * Closes the ContextMenu.
+		 * @param {boolean} bExplicitClose true if the popover has to be closed explicitly from the contextMenu. Otherwhise the closing is handled by the popover itself
 		 * @return {sap.m.ContextMenu} Reference to this in order to allow method chaining
 		 * @public
 		 */
-		close: function () {
+		close: function (bExplicitClose) {
 			if (this.getPopover()) {
+
+				if (bExplicitClose) {
+					this.getPopover(true).close();
+					this.getPopover(false).close();
+				}
 
 				// deletes the overflow button if there is one
 				if (this.getProperty("buttons").length > this.getProperty("maxButtonsDisplayed")) {
