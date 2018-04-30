@@ -86,6 +86,16 @@
 				]
 			},
 			{
+				"id" : "sap.ui.core.XMLComposite",
+				"name" : "XMLComposite",
+				"category" : "Display",
+				"since" : "1.56",
+				"samples" : [
+					"sap.ui.core.sample.XMLComposite.01",
+					"sap.ui.core.sample.XMLComposite.02"
+				]
+			},
+			{
 				"id" : "sap.ui.core.mvc.XMLView",
 				"name" : "XMLView",
 				"category" : "Display",
@@ -531,6 +541,16 @@
 				"id": "sap.ui.core.sample.odata.v4.SalesOrderTP100_V2",
 				"name": "Sales Orders TP100 via OData V2 Service",
 				"description": "Example for consuming an OData V2 Service via an OData V4 Model"
+			},
+			{
+				"id": "sap.ui.core.sample.XMLComposite.01",
+				"name": "XMLComposite: basic example",
+				"description": "Basic example to show the anatomy of an XMLComposite"
+			},
+			{
+				"id": "sap.ui.core.sample.XMLComposite.02",
+				"name": "XMLComposite: example showing usage of aggregation",
+				"description": "Example showing how aggregations can be dealt with in an XMLComposite"
 			},
 			{
 				"id": "sap.ui.core.sample.ViewTemplate.scenario",
