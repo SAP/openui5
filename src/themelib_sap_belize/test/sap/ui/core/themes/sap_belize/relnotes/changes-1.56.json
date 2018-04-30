@@ -115,6 +115,24 @@
         "type": "FIX",
         "text": " sap.ui.layout.BlockLayout: Cell border in belize_hcw and belize_hcb themes added",
         "references": []
+      },
+      {
+        "id": "9656793fc72549dd07b3144ed27012ae2e1a79be",
+        "type": "FEATURE",
+        "text": " f.DynamicPage, uxap.ObjectPageLayout: Collapse/Pin changed",
+        "references": []
+      },
+      {
+        "id": "21543b66241833e19f91933716b63504e0de4adf",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: tabDensityMode property implemented",
+        "references": []
+      },
+      {
+        "id": "b5403b1a6ea2598a690e7d955364226ce6dc6bf5",
+        "type": "FIX",
+        "text": " uxap.AnchorBar: HierarchicalSelect icon missalignment fixed",
+        "references": []
       }
     ]
   }

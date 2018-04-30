@@ -145,6 +145,12 @@
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: correct display of the Week with maxDate",
         "references": []
+      },
+      {
+        "id": "2c1c149631e66dd846e3c1b76ce02428cff7f15d",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendarRow: introducing specialDates aggregation",
+        "references": []
       }
     ]
   }

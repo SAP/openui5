@@ -632,6 +632,42 @@
         "type": "FIX",
         "text": " sap.ui.model.odata.v4.ODataListBinding#getContexts fix diff calculation",
         "references": []
+      },
+      {
+        "id": "9408b2e77c62c45222c1f940459ee9b6b182d473",
+        "type": "FEATURE",
+        "text": " Component/ResourceModel: enhanceWith relative to manifest",
+        "references": []
+      },
+      {
+        "id": "ce954987106ae70bdb890b4768e85853a1c4d3a4",
+        "type": "FEATURE",
+        "text": " sap/ui/thirdparty: added bignumber.js for arithmetic ops",
+        "references": []
+      },
+      {
+        "id": "42c204a1b181448cbc45e11111c88402040fa466",
+        "type": "FIX",
+        "text": " XMLComposite: Crash for multiple aggregation children",
+        "references": []
+      },
+      {
+        "id": "455dbc8c94af0255c3634231566dccc8ce0d03c7",
+        "type": "FIX",
+        "text": " XMLComposite: Fetch aggregation children via modifier",
+        "references": []
+      },
+      {
+        "id": "2cb7af156f5f832ee9ca2bd76c649aa4d531f81c",
+        "type": "FIX",
+        "text": " opa: document asyncPolling parameter",
+        "references": []
+      },
+      {
+        "id": "b4a49e845ebfe8e60320d54e48803e798fe50bb0",
+        "type": "FIX",
+        "text": " ui5loader: noConflict works with debug mode",
+        "references": []
       }
     ]
   }

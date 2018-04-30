@@ -55,6 +55,18 @@
         "type": "FIX",
         "text": " sap.ui.dt: include sap.f.DynamicPage title handling in ElementUtil.getLabelForElement()",
         "references": []
+      },
+      {
+        "id": "e3574de9dc79658e425b785107151d8f6e434482",
+        "type": "FIX",
+        "text": " sap.ui.dt - compact contextMenu positioning",
+        "references": []
+      },
+      {
+        "id": "4976dcf99d3036d21471ee13103000365a11eb09",
+        "type": "FIX",
+        "text": " sap.ui.dt - contextMenu issue with overlapped overlay",
+        "references": []
       }
     ]
   }

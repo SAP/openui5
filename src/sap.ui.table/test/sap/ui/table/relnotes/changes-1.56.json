@@ -127,6 +127,12 @@
         "type": "FIX",
         "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
         "references": []
+      },
+      {
+        "id": "2a2a090279fe93d5e363819795f4e8242e9d69e6",
+        "type": "FIX",
+        "text": " Table: Correctly update the visibility of the NoData overlay",
+        "references": []
       }
     ]
   }

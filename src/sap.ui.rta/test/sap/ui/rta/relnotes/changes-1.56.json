@@ -133,6 +133,18 @@
         "type": "FIX",
         "text": "sap.ui.rta - Retrieve control name with inter-library inheritance",
         "references": []
+      },
+      {
+        "id": "c20766a5e5ac0120e17215242e3d95f6a8575731",
+        "type": "FIX",
+        "text": " Update controlEnablingCheck for model",
+        "references": []
+      },
+      {
+        "id": "88999a4e9260faad5a87743352bffde737c9a17e",
+        "type": "FIX",
+        "text": " change getPreparedChange of Ctrl Variant Commands",
+        "references": []
       }
     ]
   }
