@@ -499,6 +499,7 @@ sap.ui.define([
 		assert.equal(type.isValid(" 20px"), false, "a partial match must not be valid");
 		assert.equal(type.isValid("100% 20px"), false, "a partial match must not be valid");
 		assert.equal(type.isValid("100% "), false, "a partial match must not be valid");
+		assert.equal(type.isValid("100vh"), false, "viewport dimension must not be accepted");
 
 		assert.equal(type.isValid("calc(100px - 20rem)"), true, "can substract two arguments");
 		assert.equal(type.isValid("calc(100% - 20rem)"), false, "can not use percentages in calculations");
@@ -570,7 +571,13 @@ sap.ui.define([
 		assert.equal(type.isValid("100% 20px"), false, "a partial match must not be valid");
 		assert.equal(type.isValid("100% "), false, "a partial match must not be valid");
 
+		assert.equal(type.isValid("1vh"), true, "viewport height is valid");
+		assert.equal(type.isValid("-10vw"), true, "viewport width is valid");
+		assert.equal(type.isValid("101vmin"), true, "vmin is valid");
+		assert.equal(type.isValid("100vmax"), true, "vmax is valid");
+
 		assert.equal(type.isValid("calc(100% - 20rem)"), true, "can substract two arguments");
+		assert.equal(type.isValid("calc(100% - 20vw)"), true, "can substract viewport arguments as well");
 		assert.equal(type.isValid("calc(100%- 20rem)"), false, "whitespace is mandatory around '-' operator");
 		assert.equal(type.isValid("calc(100% -20rem)"), false, "whitespace is mandatory around '-' operator");
 		assert.equal(type.isValid("calc(100%-20rem)"), false, "whitespace is mandatory around '-' operator");
@@ -596,6 +603,18 @@ sap.ui.define([
 		assert.equal(type.isValid("calc(10 + 3rem)"), true, "a valid calc() expression must be valid");  // this has a valid syntax but isn't a valid expression
 		assert.equal(type.isValid("calc(100%-"), false, "can't substract undefined");
 		assert.equal(type.isValid("calc(* - 100%)"), false, "arguments need to have digits");
+	});
+
+	QUnit.test("CSSSize Case-Insensitive", function(assert) {
+		var type = DataType.getType("sap.ui.core.CSSSize");
+
+		assert.equal(type.isValid("10pX"), true, "accepted value 10pX");
+		assert.equal(type.isValid("-22Pt"), true, "accepted value -22Pt");
+		assert.equal(type.isValid("13CM"), true, "accepted value 13CM");
+		assert.equal(type.isValid("1Vh"), true, "1Vh viewport height is valid");
+		assert.equal(type.isValid("-10vW"), true, "-10vW viewport width is valid");
+		assert.equal(type.isValid("101vMiN"), true, "101vMiN is valid");
+		assert.equal(type.isValid("100VmAx"), true, "100VmAx is valid");
 	});
 
 	QUnit.test("CSSSize[]", function(assert) {

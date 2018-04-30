@@ -806,7 +806,9 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 * The CSS specifications calls this the <code>'&lt;length&gt; type'</code>.
 	 * Allowed values are CSS sizes like "1px" or "2em" or "50%". The special values <code>auto</code>
 	 * and <code>inherit</code> are also accepted as well as mathematical expressions using the CSS3
-	 * <code>calc(<i>expression</i>)</code> operator.
+	 * <code>calc(<i>expression</i>)</code> operator. Furthermore, length units representing a percentage of the
+	 * current viewport dimensions: width (vw), height (vh), the smaller of the two (vmin), or the larger of the two (vmax)
+	 * can also be defined as a CSS size.
 	 *
 	 * Note that CSS does not allow all these values for every CSS property representing a size.
 	 * E.g. <code>padding-left</code> doesn't allow the value <code>auto</code>. So even if a value is
@@ -816,8 +818,9 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 	 *
 	 * <b>Units</b>
 	 *
-	 * Valid font-relative units are <code>em, ex</code> and <code>rem</code>. Supported absolute units
-	 * are <code>cm, mm, in, pc, pt</code> and <code>px</code>. Other units are not supported yet.
+	 * Valid font-relative units are <code>em, ex</code> and <code>rem</code>. Viewport relative units
+	 * <code>vw, vh, vmin, vmax</code> are also valid. Supported absolute units are <code>cm, mm, in, pc, pt</code>
+	 * and <code>px</code>.Other units are not supported yet.
 	 *
 	 *
 	 * <b>Mathematical Expressions</b>
@@ -849,7 +852,7 @@ sap.ui.define(['sap/ui/base/DataType', './Core'],
 				// Note: the following regexp by intention is a single regexp literal.
 				// It could be made much more readable by constructing it out of (reused) sub-expressions (strings)
 				// but this would not be parseable by the metamodel recovery tooling that is used inside SAP
-				return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%))|calc\(\s*(\(\s*)*[-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)?)(\s*(\)\s*)*(\s[-+]\s|[*\/])\s*(\(\s*)*([-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|%)?)))*\s*(\)\s*)*\))$/.test(vValue);
+				return /^(auto|inherit|[-+]?(0*|([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|[vV][wW]|[vV][hH]|[vV][mM][iI][nN]|[vV][mM][aA][xX]|%))|calc\(\s*(\(\s*)*[-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|[vV][wW]|[vV][hH]|[vV][mM][iI][nN]|[vV][mM][aA][xX]|%)?)(\s*(\)\s*)*(\s[-+]\s|[*\/])\s*(\(\s*)*([-+]?(([0-9]+|[0-9]*\.[0-9]+)([rR][eE][mM]|[eE][mM]|[eE][xX]|[pP][xX]|[cC][mM]|[mM][mM]|[iI][nN]|[pP][tT]|[pP][cC]|[vV][wW]|[vV][hH]|[vV][mM][iI][nN]|[vV][mM][aA][xX]|%)?)))*\s*(\)\s*)*\))$/.test(vValue);
 			}
 		},
 		DataType.getType('string')
