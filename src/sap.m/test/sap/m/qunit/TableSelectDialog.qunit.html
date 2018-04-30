@@ -846,7 +846,7 @@
 					aData.push({text : "Item" + i, selected : i === 3});
 				}
 				 this.oTableSelectDialogResetButton = new sap.m.TableSelectDialog("resetButtonTableSelectDialog", {
-					title: "Very very very very very very very very long title",
+					title: "Title",
 					columns : [
 						new sap.m.Column({
 							header : new sap.m.Label({text : "Item"})
@@ -868,7 +868,7 @@
 				this.oTable = this.oTableSelectDialogResetButton._oTable;
 
 				this.oTableSelectDialogResetButton1 = new sap.m.TableSelectDialog("resetButtonTableSelectDialog1", {
-					title: "Very very very very very very very very long title",
+					title: "Title",
 					columns : [
 						new sap.m.Column({
 							header : new sap.m.Label({text : "Item"})
@@ -963,6 +963,17 @@
 
 			assert.equal(this.oTableSelectDialogResetButton._getResetButton().getEnabled(), false, 'Reset button should be disabled');
 			assert.equal(this.oTable.getSelectedItems().length, 0, 'There should be no selected items');
+		});
+
+		QUnit.test("Title of dialog should be also set", function(assert) {
+			this.oTableSelectDialogResetButton.open();
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.equal(this.oTableSelectDialogResetButton.getTitle(), "Title", 'Title of TableSelectDialog should be "Title"');
+			assert.equal(this.oTableSelectDialogResetButton._oDialog.getTitle(), "Title", 'Title of Dialog  should be "Title"');
+
 		});
 		</script>
 	</head>

@@ -119,7 +119,7 @@ sap.ui.define([
 			 * If set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the bound model (progressive loading).
 			 * <b>Note:</b> This feature only works when an <code>items</code> aggregation is bound. Growing must not be used together with two-way binding.
 			 * <b>Note:</b> If the property is set to true, the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, will work only for the currently loaded items.
-	 		 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
+			 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
 			 * @since 1.56
 			 */
 			growing : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -191,6 +191,7 @@ sap.ui.define([
 					selectedContexts : {type : "string"}
 				}
 			},
+
 
 			/**
 			 * Fires when the search button has been clicked on dialog.
@@ -379,7 +380,15 @@ sap.ui.define([
 		// flags to control the busy indicator behaviour because the growing table will always show the no data text when updating
 		this._bFirstRequest = true; // to only show the busy indicator for the first request when the dialog has been openend
 		this._iTableUpdateRequested = 0; // to only show the busy indicator when we initiated the change
-	};
+
+		this._oDialog.getProperty = function (sName) {
+				if (sName !== "title") {
+					return Control.prototype.getProperty.call(this, sName);
+				}
+
+				return this.getCustomHeader().getAggregation("contentMiddle")[0].getText();
+			}.bind(this._oDialog);
+		};
 
 	/**
 	 * Destroys the control
