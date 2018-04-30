@@ -881,6 +881,34 @@ function(
 		assert.notOk(Utils.getTechnicalParametersForComponent(oComponentMock), "then the function returns undefined");
 	});
 
+	QUnit.test("when calling 'getParsedURLHash' with a ushell container", function(assert){
+		var oParameters = {
+			params: {
+				"sap-ui-fl-max-layer": ["CUSTOMER"]
+			}
+		};
+		sandbox.stub(Utils, "getUshellContainer", function() {
+			return {
+				getService: function () {
+					return {
+						getHash: function () {
+							return "";
+						},
+						parseShellHash: function (sHash) {
+							return oParameters;
+						}
+					};
+				}
+			};
+		});
+
+		assert.deepEqual(Utils.getParsedURLHash(), oParameters, "then the url parameters calculated from the url are received");
+	});
+
+	QUnit.test("when calling 'getParsedURLHash' without a ushell container", function(assert){
+		assert.ok(jQuery.isEmptyObject(Utils.getParsedURLHash()), "then no url parameters are received");
+	});
+
 	QUnit.test("when calling 'setTechnicalURLParameterValues' with a component, parameter name and some values", function(assert){
 		var oMockedURLParser = {
 			getHash : function(){
@@ -923,9 +951,10 @@ function(
 		});
 
 		var oReplaceHashSpy = sandbox.spy(hasher, "replaceHash");
+		var fnGetParsedURLHash = sandbox.spy(Utils, "getParsedURLHash");
 
 		Utils.setTechnicalURLParameterValues(oMockComponent, "testParameter", ["testValue", "testValue2"]);
-
+		assert.ok(fnGetParsedURLHash.calledOnce, "then getParsedURLHash called once");
 		assert.equal(oReplaceHashSpy.calledWith("hashValue"), true, "then the 'replaceHash' function of the hasher is called with the right parameter");
 		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
 		assert.equal(oMockComponent.getComponentData().technicalParameters["testParameter"][0], "testValue", "then the new parameter is properly added to the technical parameter");
@@ -966,7 +995,7 @@ function(
 		sandbox.stub(Utils.log, "error");
 		Utils.setTechnicalURLParameterValues({}, "testParameter", ["testValue", "testValue2"]);
 
-		assert.ok(Utils.log.error.calledWith("Component instance not provided, so technical parameters in component data would remain unchanged"), "then error produced as component is invalid");
+		assert.ok(Utils.log.error.calledWith("Component instance not provided, so technical parameters in component data and browser history remain unchanged"), "then error produced as component is invalid");
 		assert.equal(hasher.changed.active, true, "then the 'active' flag of the hasher is restored to true");
 	});
 
