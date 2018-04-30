@@ -261,6 +261,8 @@ sap.ui.require([
 
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vFilters)).returns(aFilters);
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vSorters)).returns(aSorters);
+		this.mock(ODataListBinding).expects("checkCaseSensitiveFilters")
+			.withExactArgs(sinon.match.same(aFilters));
 		this.mock(jQuery).expects("extend")
 			.withExactArgs(true, {}, sinon.match.same(mParameters))
 			.returns(mParametersClone);
@@ -2129,6 +2131,8 @@ sap.ui.require([
 			oBindingMock.expects("hasPendingChanges").withExactArgs().returns(false);
 			this.mock(_Helper).expects("toArray").withExactArgs(sinon.match.same(oFilter))
 				.returns(aFilters);
+			this.mock(ODataListBinding).expects("checkCaseSensitiveFilters")
+				.withExactArgs(sinon.match.same(aFilters));
 			oBindingMock.expects("reset").on(oBinding).withExactArgs(ChangeReason.Filter, true);
 
 			// Code under test
@@ -4730,6 +4734,75 @@ sap.ui.require([
 	// (b) the "header context" of the list binding must update it's dependent bindings only after
 	//     _fireChange leading to a new request, see ODLB#reset.
 	// We need to have integration tests first for both differences.
+
+	//*********************************************************************************************
+	[[
+		/*no Filter*/
+	], [
+		new Filter({caseSensitive : true, operator : "EQ", path : "Foo", value1 : "bar"})
+	], [
+		new Filter({operator : "EQ", path : "Foo", value1 : "bar"})
+	]].forEach(function (aFilters, i) {
+		QUnit.test("checkCaseSensitiveFilters: ok - " + i, function (assert) {
+			// code under test
+			ODataListBinding.checkCaseSensitiveFilters(aFilters);
+		});
+	});
+
+	//*********************************************************************************************
+	[[
+		new Filter({caseSensitive : false, operator : "EQ", path : "Foo", value1 : "bar"})
+	], [
+		new Filter({caseSensitive : true, operator : "EQ", path : "Foo0", value1 : "bar0"}),
+		new Filter({caseSensitive : false, operator : "EQ", path : "Foo", value1 : "bar"})
+	], [
+		new Filter({
+			condition : new Filter({
+				caseSensitive : false,
+				operator : FilterOperator.GT,
+				path : 'item/Quantity',
+				value1 : 100.0
+			}),
+			operator : FilterOperator.All,
+			path : 'Items',
+			variable : 'item'
+		})
+	], [
+		new Filter({
+			filters : [
+				new Filter({
+					caseSensitive : false,
+					operator : FilterOperator.GT,
+					path : 'item/Quantity',
+					value1 : 100.0
+				})
+			]
+		})
+	], [
+		new Filter({
+			condition : new Filter({
+				filters : [
+					new Filter({
+						caseSensitive : false,
+						operator : FilterOperator.GT,
+						path : 'item/Quantity',
+						value1 : 100.0
+					})
+				]
+			}),
+			operator : FilterOperator.All,
+			path : 'Items',
+			variable : 'item'
+		})
+	]].forEach(function (aFilters, i) {
+		QUnit.test("checkCaseSensitiveFilters: error - " + i, function (assert) {
+			assert.throws(function () {
+				// code under test
+				ODataListBinding.checkCaseSensitiveFilters(aFilters);
+			}, new Error("Filter for path '" + (i < 2 ? "Foo" : "item/Quantity")
+				+ "' has unsupported value for 'caseSensitive' : false"));
+		});
+	});
 });
 
 //TODO integration: 2 entity sets with same $expand, but different $select
