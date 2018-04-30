@@ -2227,11 +2227,10 @@ sap.ui.define([
 				});
 			}
 			// request contexts from binding
-			var bSuppressUpdate = false;
 			if (sReason === ChangeReason.Filter || sReason === ChangeReason.Sort) {
 				this.setFirstVisibleRow(0);
-				bSuppressUpdate = true;
 			}
+			var bSuppressUpdate = sReason != null;
 			this._updateBindingContexts(this._calculateRowsToDisplay(), bSuppressUpdate);
 		}
 	};

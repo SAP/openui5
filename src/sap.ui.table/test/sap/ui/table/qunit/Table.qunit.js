@@ -3144,10 +3144,10 @@ sap.ui.require([
 		oTable.unbindRows();
 		testUpdateTotalRowCount(true, "Binding removed");
 
-		// Calling refreshRows after bindRows: NoData area will be hidden.
+		// Calling refreshRows without reason after bindRows: NoData area will be hidden.
 		oTable.bindRows(oBindingInfo);
 		oTable.refreshRows();
-		testUpdateTotalRowCount(false, "Calling refreshRows after bindRows");
+		testUpdateTotalRowCount(false, "Calling refreshRows without reason after bindRows");
 
 		// Cleanup
 		oClock.restore();
