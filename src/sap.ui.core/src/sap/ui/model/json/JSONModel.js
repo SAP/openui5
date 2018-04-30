@@ -195,10 +195,22 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/model/ClientModel', 'sap/ui/model/Co
 				info : "cache=" + bCache + ";bMerge=" + bMerge, infoObject: {cache : bCache, merge : bMerge}, success: true});
 		}.bind(this);
 
-		var fnError = function(oParams){
-			var oError = { message : oParams.textStatus, statusCode : oParams.status, statusText : oParams.statusText, responseText : oParams.responseText};
-			jQuery.sap.log.fatal("The following problem occurred: " + oParams.textStatus, oParams.responseText + ","
-						+ oParams.status + "," + oParams.statusText);
+		var fnError = function(oParams, sTextStatus){
+			// the textStatus is either passed by jQuery via arguments,
+			// or by us from a promise reject() in the async case
+			var sMessage = sTextStatus || oParams.textStatus;
+			var oParams = bAsync ? oParams.request : oParams;
+			var iStatusCode = oParams.status;
+			var sStatusText = oParams.statusText;
+			var sResponseText = oParams.responseText;
+
+			var oError = {
+				message : sMessage,
+				statusCode : iStatusCode,
+				statusText : sStatusText,
+				responseText : sResponseText
+			};
+			jQuery.sap.log.fatal("The following problem occurred: " + sMessage, sResponseText + ","	+ iStatusCode + "," + sStatusText);
 
 			this.fireRequestCompleted({url : sURL, type : sType, async : bAsync, headers: mHeaders,
 				info : "cache=" + bCache + ";bMerge=" + bMerge, infoObject: {cache : bCache, merge : bMerge}, success: false, errorobject: oError});
