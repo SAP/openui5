@@ -22,6 +22,8 @@ sap.ui.require([
 	/*eslint no-warning-comments: 0 */
 	"use strict";
 	jQuery.sap.registerModulePath("composites", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites");
+	jQuery.sap.registerModulePath("composites2", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/composites2");
+	jQuery.sap.registerModulePath("bundles", location.pathname.substring(0, location.pathname.lastIndexOf("/")) + "/bundles");
 	jQuery.sap.require("composites.SimpleText");
 	jQuery.sap.require("composites.TextButton");
 	jQuery.sap.require("composites.TextList");
@@ -35,6 +37,9 @@ sap.ui.require([
 	jQuery.sap.require("composites.LabelButtonTemplate");
 	jQuery.sap.require("composites.LabelButtonsTemplate");
 	jQuery.sap.require("composites.WrapperLayouter");
+	jQuery.sap.require("composites.TranslatableText");
+	jQuery.sap.require("composites.TranslatableTextLib");
+	jQuery.sap.require("composites.TranslatableTextBundle");
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Simple Text XMLComposite Control", {
@@ -245,9 +250,9 @@ sap.ui.require([
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function () {
-			//	this.oXMLComposite.destroy();  TODO: why do this destroy lead to 
-			// 	
-			// TypeError: Cannot read property 'destroyItems' of undefined at Aggregation.destroy 
+			//	this.oXMLComposite.destroy();  TODO: why do this destroy lead to
+			//
+			// TypeError: Cannot read property 'destroyItems' of undefined at Aggregation.destroy
 		}
 	});
 	//*********************************************************************************************
@@ -717,18 +722,18 @@ sap.ui.require([
 			}).placeAt("content");
 			sap.ui.getCore().applyChanges();
 			this.clock.tick(500);
-	
+
 			var oView = oComponentContainer.getComponentInstance().getRootControl();
-	
+
 			assert.ok(oView);
 			assert.equal(oView.$().find(".IDLabelButtonsTemplate").children().length, 4);
 			assert.ok(oView.$().find(".IDLabelButtonsTemplate").children()[0].firstChild.nodeName === "LABEL" || "SPAN");
 			assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[1].firstChild.nodeName, "BUTTON");
 			assert.ok(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName === "LABEL" || "SPAN");
 			assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[3].firstChild.nodeName, "BUTTON");
-	
+
 			// ER: this 'act' should work in the future
-	
+
 			// // act: change the order to 'label' after 'button'
 			// oView.byId("IDLabelButtonsTemplate").setLabelFirst(false);
 			// this.clock.tick(500);
@@ -738,7 +743,7 @@ sap.ui.require([
 			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[1].firstChild.nodeName, "LABEL");
 			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[2].firstChild.nodeName, "BUTTON");
 			// assert.equal(oView.$().find(".IDLabelButtonsTemplate").children()[3].firstChild.nodeName, "LABEL");
-	
+
 			oComponentContainer.destroy();
 		});
 	*/
@@ -805,7 +810,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Wrapper default properties", {
-		beforeEach: function() {
+		beforeEach: function () {
 			var Wrapper = sap.ui.core.XMLComposite.extend("Wrapper", {
 				constructor: function (sId, mSettings) {
 					sap.ui.core.XMLComposite.apply(this, arguments);
@@ -817,13 +822,13 @@ sap.ui.require([
 			this.oWrapper.placeAt("content");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function() {
+		afterEach: function () {
 			this.oWrapper.destroy();
 		}
 	});
 	//*********************************************************************************************
 
-	QUnit.test("default properties", function(assert) {
+	QUnit.test("default properties", function (assert) {
 		assert.strictEqual(this.oWrapper.getHeight(), "", "Default height is undefined");
 		assert.strictEqual(this.oWrapper.getWidth(), "100%", "Default width is 100%");
 		assert.strictEqual(this.oWrapper.getDisplayBlock(), true, "Default displayBlock is true");
@@ -831,7 +836,7 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.module("sap.ui.core.XMLComposite: Wrapper properties", {
-		beforeEach: function() {
+		beforeEach: function () {
 			var Wrapper = sap.ui.core.XMLComposite.extend("Wrapper", {
 				constructor: function (sId, mSettings) {
 					sap.ui.core.XMLComposite.apply(this, arguments);
@@ -846,13 +851,13 @@ sap.ui.require([
 			this.oWrapper.setDisplayBlock(false);
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach: function() {
+		afterEach: function () {
 			this.oWrapper.destroy();
 		}
 	});
 	//*********************************************************************************************
 
-	QUnit.test("properties", function(assert) {
+	QUnit.test("properties", function (assert) {
 		assert.strictEqual(this.oWrapper.getHeight(), "100%", "Height is 100%");
 		assert.strictEqual(this.oWrapper.getWidth(), "200px", "Width is 200px");
 		assert.strictEqual(this.oWrapper.getDisplayBlock(), false, "DisplayBlock is false");
@@ -863,4 +868,168 @@ sap.ui.require([
 		assert.strictEqual(this.oWrapper.getWidth(), "200px", "Width is 200px");
 		assert.strictEqual(this.oWrapper.getDisplayBlock(), false, "DisplayBlock is false");
 	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: Translatable Texts from default lib", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new composites.TranslatableText();
+		oXMLComposite.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getText(), "Translatable Text", "Text was read from messagemodel via binding (lib)");
+				assert.strictEqual(oBundle.getText("key"), "Translatable Text", "Text was read from messagebundle via API (lib)");
+				var oContent = oXMLComposite.getAggregation(oXMLComposite.getMetadata().getCompositeAggregationName());
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key"), "Translatable Text", "Text was read from messagemodel via getProperty (lib)");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: Translatable Texts from this.lib", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new composites.TranslatableTextLib();
+		oXMLComposite.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getText(), "Translatable Text from composites2", "Text was read from messagemodel via binding (lib)");
+				assert.strictEqual(oBundle.getText("key"), "Translatable Text from composites2", "Text was read from messagebundle via API (lib)");
+				var oContent = oXMLComposite.getAggregation(oXMLComposite.getMetadata().getCompositeAggregationName());
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key"), "Translatable Text from composites2", "Text was read from messagemodel via getProperty (lib)");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: resource model on hidden aggregation and only there", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new composites.TranslatableText();
+		oXMLComposite.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.notEqual(oXMLComposite.getAggregation("_content").getModel("$this.i18n"), undefined, "resource model is available on the hidden aggregation");
+				assert.strictEqual(oXMLComposite.getModel("$this.i18n"), undefined, "resource model is not available on the XMLComposite itself");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+	//*********************************************************************************************
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: Translatable Texts from this.messagebundle", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new composites.TranslatableTextBundle();
+		oXMLComposite.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				assert.strictEqual(oXMLComposite.byId("myTranslatableTextControl").getText(), "Translatable Text 2", "Text was read from messagemodel via binding");
+				assert.strictEqual(oBundle.getText("key2"), "Translatable Text 2", "Text was read from messagebundle via API");
+				var oContent = oXMLComposite.getAggregation(oXMLComposite.getMetadata().getCompositeAggregationName());
+				assert.strictEqual(oContent.getModel("$" + oXMLComposite.alias + ".i18n").getProperty("key2"), "Translatable Text 2", "Text was read from messagemodel via getProperty");
+				oXMLComposite.destroy();
+				done();
+			});
+		}
+	});
+	//*********************************************************************************************
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: destroy test", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite = new composites.TranslatableTextBundle();
+		oXMLComposite.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		if (oXMLComposite.getResourceBundle().then) {
+			//async loading of resource bundle
+			oXMLComposite.getResourceBundle().then(function (oBundle) {
+				var oResourceModel = oXMLComposite._getResourceModel();
+				oXMLComposite.destroy();
+				assert.ok(oResourceModel.bDestroyed, "Resource Model was destroyed");
+				done();
+			});
+		}
+	});
+	//*********************************************************************************************
+
+
+	//*********************************************************************************************
+	QUnit.module("sap.ui.core.XMLComposite: reuse test", {
+		beforeEach: function () {
+		},
+		afterEach: function () {
+		}
+	});
+	//*********************************************************************************************
+
+	QUnit.test("properties", function (assert) {
+		var done = assert.async();
+		var oXMLComposite0 = new composites.TranslatableTextLib();
+		var oXMLComposite1 = new composites.TranslatableTextLib();
+		oXMLComposite0.placeAt("content");
+		oXMLComposite1.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		//async loading of resource bundle
+		var p0 = oXMLComposite0.getResourceBundle();
+		var p1 = oXMLComposite0.getResourceBundle();
+		Promise.all([p0, p1]).then(function (values) {
+			p0 = values[0];
+			p1 = values[1];
+			assert.strictEqual(p0, p1, "Resource Model is reused");
+			done();
+		});
+	});
+	//*********************************************************************************************
 });
