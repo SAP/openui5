@@ -194,6 +194,11 @@
 				<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false" MaxLength="10" />
 				<ReturnType Type="Collection(com.sap.gateway.default.zui5_epm_sample.v0002.Contact)" />
 			</Function>
+<!--TODO: adjust zui5_emp_sample in back-end as soon as gateway allows bound operations with return types others than entity types-->
+			<Function Name="SalesOrderLineItem_CheckAvailability" IsBound="true">
+				<Parameter Name="SalesOrderLineItem" Type="com.sap.gateway.default.zui5_epm_sample.v0002.SOLineItem" Nullable="false" />
+				<ReturnType Type="Edm.Decimal" Nullable="false"/>
+			</Function>
 			<EntityContainer Name="Container">
 				<EntitySet Name="BusinessPartnerList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner">
 					<NavigationPropertyBinding Path="BP_2_SO" Target="SalesOrderList" />

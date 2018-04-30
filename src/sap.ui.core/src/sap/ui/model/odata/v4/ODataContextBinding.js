@@ -204,7 +204,7 @@ sap.ui.define([
 		var oMetaModel = this.oModel.getMetaModel(),
 			oOperationMetadata,
 			oPromise,
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sResolvedPath = this.getResolvedPath(),
 			that = this;
 
 		/*
@@ -558,7 +558,8 @@ sap.ui.define([
 	 *   the binding is not a deferred operation binding (see
 	 *   {@link sap.ui.model.odata.v4.ODataContextBinding}), if the binding is not resolved or
 	 *   relative to a transient context (see {@link sap.ui.model.odata.v4.Context#isTransient}), or
-	 *   if deferred operation bindings are nested.
+	 *   if deferred operation bindings are nested, or if the OData resource path for a deferred
+	 *   operation binding's context cannot be determined.
 	 *
 	 * @public
 	 * @since 1.37.0
@@ -670,6 +671,45 @@ sap.ui.define([
 	 * @since 1.39.0
 	 */
 
+	/**
+	 * Returns the resolved path by calling {@link sap.ui.model.odata.v4.ODataModel#resolve} and
+	 * replacing all occurrences of "-1" with the corresponding key predicates.
+	 *
+	 * @returns {string}
+	 *   The resolved path with replaced "-1" segments
+	 * @throws {Error}
+	 *   If an entity related to a "-1" segment does not have key predicates
+	 *
+	 * @private
+	 */
+	ODataContextBinding.prototype.getResolvedPath = function () {
+		var aSegments,
+			sPath = "",
+			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			that = this;
+
+		if (sResolvedPath && sResolvedPath.includes("/-1")) {
+			aSegments = sResolvedPath.slice(1).split("/");
+			sResolvedPath = "";
+			aSegments.forEach(function (sSegment) {
+				var oEntity,
+					sPredicate;
+
+				sPath += "/" + sSegment;
+				if (sSegment === "-1") {
+					oEntity = that.oContext.fetchValue(sPath).getResult();
+					sPredicate = _Helper.getPrivateAnnotation(oEntity, "predicate");
+					if (!sPredicate) {
+						throw new Error("No key predicate known at " + sPath);
+					}
+					sResolvedPath += sPredicate;
+				} else {
+					sResolvedPath += "/" + sSegment;
+				}
+			});
+		}
+		return sResolvedPath;
+	};
 
 	/**
 	 * Determines whether an operation binding creates a return value context on {@link #execute}.
@@ -679,8 +719,9 @@ sap.ui.define([
 	 *    implies the return value is an entity or a collection thereof;
 	 *    see OData V4 spec part 3, 12.1.3. It thus ensures the "entity" in this condition.
 	 * 3. EntitySetPath of operation is the binding parameter.
-	 * 4. operation binding has a V4 parent context pointing to an entity from an entity set w/o
-	 *    navigation properties.
+	 * 4. operation binding has
+	 *    (a) a V4 parent context which
+	 *    (b) points to an entity from an entity set w/o navigation properties.
 	 *
 	 * @param {object} oMetadata The operation metadata
 	 * @returns {boolean} Whether a return value context is created
@@ -689,16 +730,21 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.hasReturnValueContext = function (oMetadata) {
 		var oMetaModel = this.oModel.getMetaModel(),
-			aMetaSegments = oMetaModel.getMetaPath(this.oModel.resolve(this.sPath, this.oContext))
-				.split("/");
+			aMetaSegments;
+
+		if (!(this.bRelative && this.oContext && this.oContext.getBinding)) { // case 4a
+			return false;
+		}
+
+		aMetaSegments = oMetaModel.getMetaPath(this.oModel.resolve(this.sPath, this.oContext))
+			.split("/");
 
 		return oMetadata.$IsBound // case 1
 			&& oMetadata.$ReturnType && !oMetadata.$ReturnType.$isCollection
 				&& oMetadata.$EntitySetPath // case 2
 			&& oMetadata.$EntitySetPath.indexOf("/") < 0 // case 3
-			&& this.bRelative && this.oContext && this.oContext.getBinding
-				&& aMetaSegments.length === 3
-				&& oMetaModel.getObject("/" + aMetaSegments[1]).$kind === "EntitySet"; // case 4
+			&& aMetaSegments.length === 3
+				&& oMetaModel.getObject("/" + aMetaSegments[1]).$kind === "EntitySet"; // case 4b
 	};
 
 	/**

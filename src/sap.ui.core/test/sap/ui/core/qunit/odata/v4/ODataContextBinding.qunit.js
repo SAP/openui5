@@ -1091,6 +1091,7 @@ sap.ui.require([
 				oGroupLock = new _GroupLock("groupId"),
 				oOperationMetadata = {},
 				sPath = (bRelative ? "" : "/") + "OperationImport(...)",
+				sResolvedPath = "/OperationImport(...)",
 				oPromise,
 				oBinding = this.oModel.bindContext(sPath, oBaseContext),
 				oBindingMock = this.mock(oBinding),
@@ -1113,6 +1114,7 @@ sap.ui.require([
 				that.mock(oChild1).expects("refreshInternal").withExactArgs("groupId", true);
 			}
 
+			oBindingMock.expects("getResolvedPath").withExactArgs().returns(sResolvedPath);
 			oBindingMock.expects("getGroupId").returns("groupId");
 			this.mock(oGroupLock).expects("setGroupId").withExactArgs("groupId");
 			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
@@ -2234,6 +2236,92 @@ sap.ui.require([
 
 		// code under test
 		assert.strictEqual(!!oBinding.hasReturnValueContext(oOperationMetadata), false);
+
+		oBinding = this.oModel.bindContext("name.space.Operation(...)");
+
+		// code under test (without context)
+		assert.strictEqual(!!oBinding.hasReturnValueContext(oOperationMetadata), false);
+	});
+
+	//*********************************************************************************************
+	[{
+		sPath : undefined,
+		sResult : undefined
+	}, {
+		sPath : "/TEAMS('ABC-1')",
+		sResult : "/TEAMS('ABC-1')"
+	}, {
+		sPath : "/TEAMS/-1",
+		aFetchValues : [{
+			oEntity : {},
+			sPath : "/TEAMS/-1",
+			sPredicate : "('13')"
+		}],
+		sResult : "/TEAMS('13')"
+	}, {
+		sPath : "/TEAMS/-1/TEAM_2_EMPLOYEES",
+		aFetchValues : [{
+			oEntity : {},
+			sPath : "/TEAMS/-1",
+			sPredicate : "('13')"
+		}],
+		sResult : "/TEAMS('13')/TEAM_2_EMPLOYEES"
+	}, {
+		sPath : "/TEAMS/-1/TEAM_2_EMPLOYEES/-1",
+		aFetchValues : [{
+			oEntity : {},
+			sPath : "/TEAMS/-1",
+			sPredicate : "('13')"
+		}, {
+			oEntity : {},
+			sPath : "/TEAMS/-1/TEAM_2_EMPLOYEES/-1",
+			sPredicate : "('6')"
+		}],
+		sResult : "/TEAMS('13')/TEAM_2_EMPLOYEES('6')"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("getResolvedPath: " + i, function (assert) {
+			var oContext = Context.create(this.oModel, {}, "/TEAMS"),
+				oContextMock = this.mock(oContext),
+				oBinding = this.oModel.bindContext("foo", oContext),
+				oHelperMock = this.mock(_Helper);
+
+			this.mock(this.oModel).expects("resolve").withExactArgs("foo",
+				sinon.match.same(oBinding.oContext)).returns(oFixture.sPath);
+
+			if (oFixture.aFetchValues) {
+				oFixture.aFetchValues.forEach(function (oFetchValue){
+					oContextMock.expects("fetchValue").withExactArgs(oFetchValue.sPath)
+						.returns(SyncPromise.resolve(oFetchValue.oEntity));
+					oHelperMock.expects("getPrivateAnnotation")
+						.withExactArgs(sinon.match.same(oFetchValue.oEntity), "predicate")
+						.returns(oFetchValue.sPredicate);
+				});
+			}
+
+			//code under test
+			assert.strictEqual(oBinding.getResolvedPath(), oFixture.sResult);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getResolvedPath error: no key predicates", function (assert) {
+		var sPath = "/TEAMS/-1",
+			oContext = Context.create(this.oModel, {}, sPath),
+			oEntity = {},
+			oBinding = this.oModel.bindContext("", oContext);
+
+		this.mock(this.oModel).expects("resolve").withExactArgs(oBinding.sPath,
+			sinon.match.same(oBinding.oContext)).returns(sPath);
+		this.mock(oContext).expects("fetchValue").withExactArgs(sPath)
+			.returns(SyncPromise.resolve(oEntity));
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oEntity), "predicate")
+			.returns(undefined);
+
+		//code under test
+		assert.throws(function () {
+			oBinding.getResolvedPath();
+		}, new Error("No key predicate known at " + sPath));
 	});
 
 	//*********************************************************************************************
