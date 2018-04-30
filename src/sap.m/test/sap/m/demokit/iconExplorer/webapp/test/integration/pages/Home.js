@@ -51,14 +51,10 @@ sap.ui.define([
 						id: "search-popup-table",
 						viewName: sViewName,
 						actions: function(oTable) {
-							var iVisible = 0;
 
 							var oItems = oTable.getItems();
 							for (var i = 0; i < oItems.length; i++){
-								if (oItems[i].getVisible()){
-									iVisible++;
-								}
-								if (iVisible === iWhich){
+								if (oItems[i].getCells()[1].getText() === iWhich){
 									new Press().executeOn(oItems[i]);
 									return;
 								}

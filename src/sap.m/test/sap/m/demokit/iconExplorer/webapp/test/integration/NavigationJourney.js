@@ -41,7 +41,7 @@ sap.ui.define([
 
 		//Actions
 		When.onTheHomePage.iSearchForAnIcon("arrow").
-			and.iSelectASuggestion(1);
+			and.iSelectASuggestion("refresh");
 
 		// Assertions
 		Then.onTheOverviewPage.theTableShouldContainTheIcon("refresh");
