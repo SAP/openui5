@@ -310,15 +310,15 @@ sap.ui.define([
 		 * @param {string} sFragment path to the fragment
 		 * @param {string} sNamespace namespace of the app
 		 * @param {sap.ui.core.mvc.View} oView view for the fragment
-		 * @param {sap.ui.core.mvc.Controller} oController controller for the fragment
 		 * @returns {sap.ui.core.Control[]} Returns an array with the controls of the fragment
 		 */
-		instantiateFragment: function(sFragment, sNamespace, oView, oController) {
+		instantiateFragment: function(sFragment, sNamespace, oView) {
 			var oFragment = jQuery.sap.parseXML(sFragment);
 			oFragment = this._checkAndPrefixIdsInFragment(oFragment, sNamespace);
 
 			var aNewControls;
 			var sId = oView && oView.getId();
+			var oController = oView.getController();
 			aNewControls = sap.ui.xmlfragment({
 				fragmentContent: oFragment,
 				sId:sId

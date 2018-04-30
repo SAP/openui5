@@ -1036,13 +1036,14 @@ sap.ui.define([
 		var aPromiseStack = [];
 		aChanges.forEach(function(oChange) {
 			aPromiseStack.push(function() {
+				var oSelector = this._getSelectorOfChange(oChange);
+				var oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 				var mPropertyBag = {
 					modifier: JsControlTreeModifier,
-					appComponent: oAppComponent
+					appComponent: oAppComponent,
+					view: Utils.getViewForControl(oControl)
 				};
-				var oSelector = this._getSelectorOfChange(oChange);
-				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
-				return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, true)
+				return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, mPropertyBag, true)
 				.then(function() {
 					this._oChangePersistence._deleteChangeInMap(oChange);
 				}.bind(this));
@@ -1089,12 +1090,9 @@ sap.ui.define([
 			this._oChangePersistence._addChangeAndUpdateDependencies(oComponent, oChange, aAllChanges.length, aAllChanges);
 
 			aPromiseStack.push(function() {
-				var mPropertyBag = {
-					modifier: JsControlTreeModifier,
-					appComponent: oAppComponent
-				};
+				var oModifier = JsControlTreeModifier;
 				var oSelector = this._getSelectorOfChange(oChange);
-				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
+				var oControl = oModifier.bySelector(oSelector, oAppComponent);
 				if (!oControl) {
 					Utils.log.error("A flexibility change tries to change a nonexistent control.");
 					return new Utils.FakePromise();
@@ -1118,7 +1116,12 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.removeFromAppliedChangesOnControl = function(oChange, oAppComponent, oControl) {
-		return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, false);
+		var mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent,
+			view: Utils.getViewForControl(oControl)
+		};
+		return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, mPropertyBag, false);
 	};
 
 	FlexController.prototype._updateControlsDependencies = function (mDependencies) {

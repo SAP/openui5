@@ -623,10 +623,11 @@ sap.ui.define([
 		 *
 		 * @param {string} sFragment xml fragment as string
 		 * @param {string} sNamespace namespace of the app
+		 * @param {sap.ui.core.mvc.View} [oView] view for the fragment, only needed in JS case
 		 * @returns {Element[]} Returns an array with the nodes of the controls of the fragment
 		 * @public
 		 */
-		instantiateFragment: function(sFragment, sNamespace) {},
+		instantiateFragment: function(sFragment, sNamespace, oView) {},
 
 		/**
 		 * Returns the module path of an instance specific change handler
