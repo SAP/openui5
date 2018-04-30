@@ -252,6 +252,16 @@ function(
 			var oNewOverlay = oEvent.getParameter("elementOverlay");
 			this._aOverlaysCreatedInLastBatch.push(oNewOverlay);
 		}.bind(this));
+
+		this.attachElementOverlayDestroyed(this._onOverlayDestroyedDuringSyncing, this);
+	};
+
+	DesignTime.prototype._onOverlayDestroyedDuringSyncing = function (oEvent) {
+		var oDestroyedOverlay = oEvent.getParameter("elementOverlay");
+		var iIndex = this._aOverlaysCreatedInLastBatch.indexOf(oDestroyedOverlay);
+		if (iIndex !== -1) {
+			this._aOverlaysCreatedInLastBatch.splice(iIndex, 1);
+		}
 	};
 
 	DesignTime.prototype._registerElementOverlaysInPlugins = function () {
@@ -269,7 +279,7 @@ function(
 	 * @protected
 	 */
 	DesignTime.prototype.exit = function () {
-		delete this._aOverlaysCreatedInLastBatch;
+		this.detachElementOverlayDestroyed(this._onOverlayDestroyedDuringSyncing, this);
 
 		this._oTaskManager.destroy();
 
@@ -280,6 +290,7 @@ function(
 
 		this._destroyAllOverlays();
 		this._oSelectionManager.destroy();
+		delete this._aOverlaysCreatedInLastBatch;
 	};
 
 	/**
@@ -736,7 +747,10 @@ function(
 						}, this)
 				).then(function (aChildrenElementOverlays) {
 					aChildrenElementOverlays.map(function (oChildElementOverlay) {
-						if (oChildElementOverlay instanceof ElementOverlay) {
+						if (
+							oChildElementOverlay instanceof ElementOverlay
+							&& !oChildElementOverlay.bIsDestroyed
+						) {
 							oAggregationOverlay.addChild(oChildElementOverlay, true);
 						}
 					}, this);
@@ -799,7 +813,7 @@ function(
 		}
 
 		this.fireElementOverlayDestroyed({
-			overlay: oElementOverlay
+			elementOverlay: oElementOverlay
 		});
 	};
 

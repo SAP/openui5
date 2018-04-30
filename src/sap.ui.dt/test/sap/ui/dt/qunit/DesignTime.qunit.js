@@ -308,7 +308,7 @@ function(
 			this.oInnerLayout.removeContent(this.oButton1);
 
 			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
-				assert.strictEqual(oEvent.getParameter("overlay").getElement(), this.oButton1, "overlay for button is destroyed");
+				assert.strictEqual(oEvent.getParameter("elementOverlay").getElement(), this.oButton1, "overlay for button is destroyed");
 				fnDone();
 				this.oButton1.destroy();
 			}.bind(this));
@@ -383,7 +383,7 @@ function(
 			var fnDone = assert.async();
 
 			this.oDesignTime.attachEventOnce("elementOverlayDestroyed", function(oEvent) {
-				assert.strictEqual(oEvent.getParameter("overlay").getElement(), this.oButton1, "overlay for button is destroyed");
+				assert.strictEqual(oEvent.getParameter("elementOverlay").getElement(), this.oButton1, "overlay for button is destroyed");
 				fnDone();
 			}, this);
 
@@ -500,7 +500,7 @@ function(
 
 	QUnit.module("Given a layout and a button", {
 		beforeEach : function(assert) {
-			this.oButton1 = new Button();
+			this.oButton1 = new Button("button");
 
 			this.oLayout1 = new VerticalLayout({
 				content : [this.oButton1]
@@ -586,6 +586,37 @@ function(
 					fnDone();
 				}.bind(this));
 			}.bind(this));
+		});
+
+		QUnit.test("when a newly created overlay is destroyed before it was registered in plugins", function(assert){
+			var fnDone = assert.async();
+
+			var oTabHandlingPlugin = new TabHandling();
+
+			var oCallElementOverlayRegistrationMethodsSpy = sandbox.spy(oTabHandlingPlugin, "callElementOverlayRegistrationMethods");
+
+			this.oDesignTime = new DesignTime({
+				rootElements: [this.oLayout1],
+				plugins: [oTabHandlingPlugin]
+			});
+
+			var oElementOverlayCreatedSpy = sandbox.spy(function (oEvent) {
+				var oElement = oEvent.getParameter("elementOverlay").getElement();
+				if (oElement.getId() === "button") {
+					this.oButton1.destroy();
+				}
+			});
+			var oElementOverlayDestroyedSpy = sandbox.spy();
+
+			this.oDesignTime.attachElementOverlayCreated(oElementOverlayCreatedSpy, this);
+			this.oDesignTime.attachElementOverlayDestroyed(oElementOverlayDestroyedSpy);
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				assert.ok(oCallElementOverlayRegistrationMethodsSpy.calledOnce, "then only 1 overlay got registered");
+				assert.ok(oElementOverlayCreatedSpy.calledTwice, "two overlays got created");
+				assert.ok(oElementOverlayDestroyedSpy.calledOnce, "one overlay got destroyed");
+				fnDone();
+			});
 		});
 
 	});
