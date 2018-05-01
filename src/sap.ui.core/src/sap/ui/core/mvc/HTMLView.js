@@ -191,7 +191,7 @@ sap.ui.define([
 	 * @static
 	 */
 	HTMLView._getViewUrl = function(sTemplateName) {
-		return jQuery.sap.getModulePath(sTemplateName, ".view.html");
+		return sap.ui.require.toUrl(sTemplateName.replace(/\./g, "/")) + ".view.html";
 	};
 
 	/**

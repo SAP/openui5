@@ -1712,6 +1712,15 @@ sap.ui.define([
 		return mModelConfigs;
 	}
 
+	/**
+	 * Retrieves the component manifest url.
+	 * @param {string} sComponentName component name
+	 * @returns {string} component manifest url
+	 */
+	function getManifestUrl(sComponentName){
+		return sap.ui.require.toUrl(sComponentName.replace(/\./g, "/") + "/manifest.json");
+	}
+
 	function loadManifests(oRootMetadata, oRootManifest) {
 		var aManifestsToLoad = [];
 		var aMetadataObjects = [];
@@ -1733,7 +1742,7 @@ sap.ui.define([
 				// a potential request a bit earlier. Right now the whole component loading would be delayed by the async request.
 
 				var sName = oMetadata.getComponentName();
-				var sDefaultManifestUrl = jQuery.sap.getModulePath(sName, "/manifest.json");
+				var sDefaultManifestUrl = getManifestUrl(sName);
 
 				var pLoadManifest;
 				if (oManifest) {
@@ -2337,7 +2346,7 @@ sap.ui.define([
 		// the Components' modules namespace
 		if (bManifestFirst && !oManifest) {
 			oManifest = Manifest.load({
-				manifestUrl: jQuery.sap.getModulePath(sName, "/manifest.json"),
+				manifestUrl: getManifestUrl(sName),
 				componentName: sName,
 				async: oConfig.async,
 				failOnError: false
@@ -2758,7 +2767,7 @@ sap.ui.define([
 				}).then(function(oClass) {
 					var oMetadata = oClass.getMetadata();
 					var sName = oMetadata.getComponentName();
-					var sDefaultManifestUrl = jQuery.sap.getModulePath(sName, "/manifest.json");
+					var sDefaultManifestUrl = getManifestUrl(sName);
 					var pLoaded;
 
 					// Check if we loaded the manifest.json from the default location

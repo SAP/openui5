@@ -15,7 +15,7 @@ sap.ui.define([
 			oView.setModel(new JSONModel({
 				async: true
 			}), "mode");
-			oView.setModel(new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/img.json")), "img");
+			oView.setModel(new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/img.json")), "img");
 		}
 	});
 

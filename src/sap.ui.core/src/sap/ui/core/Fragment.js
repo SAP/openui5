@@ -556,7 +556,7 @@ sap.ui.define(['jquery.sap.global', '../base/ManagedObject', './Element', './Dec
 		 * @private
 		 */
 		var _getHTMLTemplate = function(sTemplateName) {
-			var sUrl = jQuery.sap.getModulePath(sTemplateName, ".fragment.html");
+			var sUrl = sap.ui.require.toUrl(sTemplateName.replace(/\./g, "/")) + ".fragment.html";
 			var sHTML = _mHTMLTemplates[sUrl];
 			var sResourceName;
 
