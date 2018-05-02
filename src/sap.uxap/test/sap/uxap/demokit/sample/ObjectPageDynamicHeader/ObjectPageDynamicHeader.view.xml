@@ -33,8 +33,8 @@
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
 							<m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>
 							<m:ObjectMarker type="Flagged"/>
-							<m:Button icon="sap-icon://private" type="Transparent"/>
-							<m:Button icon="sap-icon://arrow-down" type="Transparent"/>
+							<m:Button icon="sap-icon://private" type="Transparent" tooltip="private"/>
+							<m:Button icon="sap-icon://arrow-down" type="Transparent" tooltip="arrow-down"/>
 						</m:FlexBox>
 					</m:FlexBox>
 				</expandedHeading>
@@ -49,8 +49,8 @@
 						<m:FlexBox wrap="NoWrap" fitContainer="true" alignItems="Center" class="sapUiTinyMarginEnd">
 							<m:ObjectMarker type="Favorite" class="sapUiTinyMarginEnd"/>
 							<m:ObjectMarker type="Flagged"/>
-							<m:Button icon="sap-icon://private" type="Transparent"/>
-							<m:Button icon="sap-icon://arrow-down" type="Transparent"/>
+							<m:Button icon="sap-icon://private" type="Transparent" tooltip="private"/>
+							<m:Button icon="sap-icon://arrow-down" type="Transparent" tooltip="arrow-down"/>
 						</m:FlexBox>
 					</m:FlexBox>
 				</snappedHeading>
@@ -64,10 +64,10 @@
 				</snappedContent>
 
 				<actions>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://copy"/>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://delete"/>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://add"/>
-					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://paste"/>
+					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://copy" tooltip="copy"/>
+					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://delete" tooltip="delete"/>
+					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://add" tooltip="add"/>
+					<m:OverflowToolbarButton type="Transparent" icon="sap-icon://paste" tooltip="paste"/>
 				</actions>
 
 				<navigationActions>

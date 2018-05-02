@@ -32,8 +32,8 @@
 							  isActionAreaAlwaysVisible="true"
 							  showPlaceholder="true">
 				<actions>
-					<ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://edit" press="handlePress"/>
-					<ObjectPageHeaderActionButton text="Take Action" iconFirst="true" icon="sap-icon://action"/>
+					<ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://edit" press="handlePress" tooltip="edit"/>
+					<ObjectPageHeaderActionButton text="Take Action" iconFirst="true" icon="sap-icon://action" tooltip="action"/>
 				</actions>
 			</ObjectPageHeader>
 		</headerTitle>

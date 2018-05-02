@@ -31,11 +31,11 @@
 												  isObjectSubtitleAlwaysVisible="false"
 												  isActionAreaAlwaysVisible="true">
 									<sideContentButton>
-										<m:Button icon="sap-icon://detail-view" type="Transparent" press="handleSCBtnPress"></m:Button>
+										<m:Button icon="sap-icon://detail-view" type="Transparent" press="handleSCBtnPress" tooltip="detail-view"></m:Button>
 									</sideContentButton>
 									<actions>
-										<ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://edit"/>
-										<ObjectPageHeaderActionButton text="Take Action" iconFirst="true" icon="sap-icon://action"/>
+										<ObjectPageHeaderActionButton text="Public Profile" iconFirst="true" icon="sap-icon://edit" tooltip="edit"/>
+										<ObjectPageHeaderActionButton text="Take Action" iconFirst="true" icon="sap-icon://action" tooltip="action"/>
 									</actions>
 								</ObjectPageHeader>
 							</headerTitle>
