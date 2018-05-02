@@ -512,7 +512,7 @@ sap.ui.define(['jquery.sap.global',
 	var CalendarRowInPlanningCalendar = CalendarRow.extend("CalendarRowInPlanningCalendar", {
 		metadata: {
 			aggregations : {
-				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden"},
+				_intervalPlaceholders : {type : "IntervalPlaceholder", multiple : true, visibility : "hidden", dnd : {droppable: true}},
 				_nonWorkingDates: {type : "sap.ui.unified.DateRange", multiple : true, visibility : "hidden"}
 			}
 		},
