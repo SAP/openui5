@@ -1621,9 +1621,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	sap.m.IconTabDensityMode = {
 
 		/**
-		 * Default. In this mode the global configuration of the density mode will be applied.
+		 * Inherit. In this mode the global configuration of the density mode will be applied.
 		 */
-		Default : "Default",
+		Inherit : "Inherit",
 
 		/**
 		 * Compact. In this mode the tabs will be set explicitly to compact mode independent of what mode is applied globally.

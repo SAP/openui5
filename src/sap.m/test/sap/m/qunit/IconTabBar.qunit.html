@@ -2782,7 +2782,7 @@
 				sap.ui.getCore().applyChanges();
 				assert.ok(oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header is in Compact mode");
 
-				oIconTabHeader.setTabDensityMode(sap.m.IconTabDensityMode.Default);
+				oIconTabHeader.setTabDensityMode(sap.m.IconTabDensityMode.Inherit);
 				sap.ui.getCore().applyChanges();
 				assert.ok(!oIconTabHeader.$().hasClass("sapUiSizeCompact"), "Header has to take the global mode which is Cozy");
 

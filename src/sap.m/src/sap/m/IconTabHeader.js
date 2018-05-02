@@ -151,10 +151,10 @@ function(
 			/**
 			 * Specifies the visual density mode of the tabs.
 			 *
-			 * The values that can be applied are "Cozy", "Compact" and "Default".
-			 * Both "Cozy" and "Compact" force the control to be rendered in one of the particular modes regardless of the global settings.
-			 * The "Default" mode follows the global density settings which are applied.
-			 * The default value is "Cozy".
+			 * The values that can be applied are <code>Cozy</code>, <code>Compact</code> and <code>Inherit</code>.
+			 * <code>Cozy</code> and <code>Compact</code> render the control in one of these modes independent of the global density settings.
+			 * The <code>Inherit</code> value follows the global density settings which are applied.
+			 * For compatibility reasons, the default value is <code>Cozy</code>.
 			 * @since 1.56
 			 */
 			tabDensityMode :{type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy}
@@ -844,7 +844,7 @@ function(
 			case IconTabDensityMode.Compact:
 				this.$().addClass("sapUiSizeCompact");
 				break;
-			case  IconTabDensityMode.Default:
+			case  IconTabDensityMode.Inherit:
 				if (this.$().closest(".sapUiSizeCompact").length) {
 					this.$().addClass("sapUiSizeCompact");
 				}
