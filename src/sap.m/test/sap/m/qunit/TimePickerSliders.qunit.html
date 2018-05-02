@@ -787,6 +787,35 @@
 			iframe = null;
 		});
 
+		QUnit.test("_convertNumPadToNumKeyCode on TimePickerSlider should convert numpad to nums", function (assert) {
+			// arrange
+			var oKCs = jQuery.sap.KeyCodes,
+				oSlider = this.oTPS._getFirstSlider();
+
+			// assert
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_0), "0".charCodeAt(0), "numpad 0 char code should be converted to 0's char code");
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_1), "1".charCodeAt(0), "numpad 1 char code should be converted to 1's char code");
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_2), "2".charCodeAt(0), "numpad 2 char code should be converted to 2's char code");
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_3), "3".charCodeAt(0), "numpad 3 char code should be converted to 3's char code");
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_4), "4".charCodeAt(0), "numpad 4 char code should be converted to 4's char code");
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_5), "5".charCodeAt(0), "numpad 5 char code should be converted to 5's char code");
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_6), "6".charCodeAt(0), "numpad 6 char code should be converted to 6's char code");
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_7), "7".charCodeAt(0), "numpad 7 char code should be converted to 7's char code");
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_8), "8".charCodeAt(0), "numpad 8 char code should be converted to 8's char code");
+			assert.equal(oSlider._convertNumPadToNumKeyCode(oKCs.NUMPAD_9), "9".charCodeAt(0), "numpad 9 char code should be converted to 9's char code");
+		});
+
+		QUnit.test("_convertNumPadToNumKeyCode on TimePickerSlider should return the keycode of the provided key if it is not numpad", function (assert) {
+			// arrange
+			var oKCs = jQuery.sap.KeyCodes,
+				oSlider = this.oTPS._getFirstSlider();
+
+			// assert
+			for (var i = 0; i < 10; i++) {
+				assert.equal(oSlider._convertNumPadToNumKeyCode(("" + i).charCodeAt(0)), ("" + i).charCodeAt(0), "should be not converted");
+			}
+		});
+
 	</script>
 </head>
 <body class="sapUiBody">
