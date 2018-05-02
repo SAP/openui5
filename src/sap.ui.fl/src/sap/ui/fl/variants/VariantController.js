@@ -410,7 +410,9 @@ sap.ui.define([
 			oActiveChange;
 		if (Object.keys(mVariantManagementChanges).length > 0) {
 			oActiveChange = this._getActiveChange("setDefault", mVariantManagementChanges);
-			oVariantManagement.defaultVariant = oActiveChange.getContent().defaultVariant;
+			if (oActiveChange) {
+				oVariantManagement.defaultVariant = oActiveChange.getContent().defaultVariant;
+			}
 		}
 	};
 
