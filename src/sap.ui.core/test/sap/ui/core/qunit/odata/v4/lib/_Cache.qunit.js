@@ -1143,6 +1143,37 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("Cache#fetchTypes, bound operation needs return value type", function (assert) {
+		var oCache,
+			oPromise,
+			mTypes = {
+				"/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType" : "name.space.Team",
+				"/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType/$Type" :
+					{$Key : ["TeamId"]}
+			},
+			that = this;
+
+		Object.keys(mTypes).forEach(function (sPath) {
+			that.oRequestorMock.expects("fetchTypeForPath").withExactArgs(sPath)
+				.returns(Promise.resolve(mTypes[sPath]));
+		});
+		// create after the mocks have been set up, otherwise they won't be called
+		oCache = _Cache.createSingle(this.oRequestor,
+			"TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
+			{}, true, true,
+			"/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType",
+			true /*bFetchOperationReturnType*/);
+
+		// code under test
+		oPromise = oCache.fetchTypes();
+
+		assert.strictEqual(oCache.fetchTypes(), oPromise, "second call returns same promise");
+		return oPromise.then(function (mTypeForMetaPath) {
+			assert.deepEqual(mTypeForMetaPath, mTypes);
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("Cache#calculateKeyPredicates: ignore simple values", function (assert) {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')/Name");
 
@@ -1168,6 +1199,23 @@ sap.ui.require([
 
 		// code under test
 		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath);
+
+		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("Cache#calculateKeyPredicates: with root entity meta path", function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
+			oEntity = {},
+			sPredicate = "('4711')",
+			mTypeForMetaPath = {"/~/$Type" : {$Key : []}};
+
+		this.mock(_Helper).expects("getKeyPredicate").withExactArgs(sinon.match.same(oEntity),
+			"/~/$Type", sinon.match.same(mTypeForMetaPath))
+			.returns(sPredicate);
+
+		// code under test
+		oCache.calculateKeyPredicates(oEntity, mTypeForMetaPath, "/~/$Type");
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oEntity, "predicate"), sPredicate);
 	});
@@ -3032,7 +3080,7 @@ sap.ui.require([
 				sinon.match.same(fnDataRequested1), undefined, sMetaPath)
 			.returns(Promise.resolve(oExpectedResult).then(function () {
 					that.mock(oCache).expects("calculateKeyPredicates")
-						.withExactArgs(oExpectedResult, mTypeForMetaPath);
+						.withExactArgs(oExpectedResult, mTypeForMetaPath, undefined);
 					that.mock(_Cache).expects("computeCount")
 						.withExactArgs(sinon.match.same(oExpectedResult));
 					oCacheMock.expects("checkActive").twice();
@@ -3064,6 +3112,50 @@ sap.ui.require([
 		);
 
 		return Promise.all(aFetchValuePromises);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("SingleCache#fetchValue, bFetchOperationReturnType=true", function (assert) {
+		var oCache,
+			oCacheMock,
+			fnDataRequested1 = {},
+			oExpectedResult = {},
+			sMetaPath = "~",
+			mQueryParams = {},
+			sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.Func",
+			mTypeForMetaPath = {},
+			that = this;
+
+		this.oRequestorMock.expects("buildQueryString")
+			.withExactArgs("/TEAMS/name.space.Func", sinon.match.same(mQueryParams), false, true)
+			.returns("?~");
+		this.mock(_Cache.prototype).expects("fetchTypes")
+			.returns(SyncPromise.resolve(Promise.resolve(mTypeForMetaPath)));
+
+		oCache = _Cache.createSingle(this.oRequestor, sResourcePath, mQueryParams, true, undefined,
+			sMetaPath, true);
+		oCacheMock = this.mock(oCache);
+
+		this.oRequestorMock.expects("request")
+			.withExactArgs("GET", sResourcePath + "?~", "group", undefined, undefined,
+				sinon.match.same(fnDataRequested1), undefined, sMetaPath)
+			.returns(Promise.resolve(oExpectedResult).then(function () {
+				that.mock(oCache).expects("calculateKeyPredicates")
+					.withExactArgs(oExpectedResult, mTypeForMetaPath, "~/$Type");
+				that.mock(_Cache).expects("computeCount")
+					.withExactArgs(sinon.match.same(oExpectedResult));
+				oCacheMock.expects("checkActive");
+				oCacheMock.expects("drillDown")
+					.withExactArgs(sinon.match.same(oExpectedResult), "foo")
+					.returns("bar");
+				return oExpectedResult;
+			}));
+
+		// code under test
+		return oCache.fetchValue("group", "foo", fnDataRequested1)
+				.then(function (oResult) {
+					assert.strictEqual(oResult, "bar");
+				});
 	});
 
 	//*********************************************************************************************
@@ -3157,6 +3249,39 @@ sap.ui.require([
 		// code under test
 		return oCache.post();
 	});
+
+	//*********************************************************************************************
+	[true, false].forEach(function (bFetchOperationReturnType) {
+		QUnit.test("SingleCache: post for bound operation needs return value type: "
+					+ bFetchOperationReturnType,
+				function (assert) {
+			var sMetaPath = "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType",
+				sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
+				oCache = _Cache.createSingle(this.oRequestor, sResourcePath, {}, true, true,
+					sMetaPath, bFetchOperationReturnType),
+				oReturnValue = {},
+				mTypes = {};
+
+			this.oRequestorMock.expects("isActionBodyOptional").never();
+			this.oRequestorMock.expects("request")
+				.withExactArgs("POST", sResourcePath, undefined, {"If-Match" : undefined},
+					undefined)
+				.resolves(oReturnValue);
+			this.mock(oCache).expects("fetchTypes")
+				.exactly(bFetchOperationReturnType ? 1 : 0)
+				.withExactArgs()
+				.resolves(mTypes);
+			this.mock(oCache).expects("calculateKeyPredicates")
+				.exactly(bFetchOperationReturnType ? 1 : 0)
+				.withExactArgs(sinon.match.same(oReturnValue), sinon.match.same(mTypes),
+					sMetaPath + "/$Type");
+
+			// code under test
+			return oCache.post();
+		});
+	});
+	//TODO with an expand on 1..n navigation properties, compute the count of the nested collection
+	//   --> comes with implementation of $$inheritExpandSelect
 
 	//*********************************************************************************************
 	QUnit.test("SingleCache: post failure", function (assert) {
