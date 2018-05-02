@@ -95,6 +95,12 @@ sap.ui.define([
 
 			var sPopId = this.getId() + "-popover";
 
+			// Returns the duration for the Popover's closing animation.
+			// It particularily concerns the setting of the focus within the contextMenu
+			Popover.prototype._getAnimationDuration = function() {
+				return 0;
+			};
+
 			var oPopover = new Popover(sPopId, {
 				showHeader: false,
 				verticalScrolling: false,
