@@ -44,7 +44,8 @@ sap.ui.define([
 		"sap/ui/rta/util/UrlParser",
 		"sap/ui/rta/appVariant/Feature",
 		"sap/ui/Device",
-		"sap/ui/rta/service/index"
+		"sap/ui/rta/service/index",
+		"sap/ui/rta/util/ServiceEventBus"
 	],
 	function(
 		jQuery,
@@ -87,7 +88,8 @@ sap.ui.define([
 		UrlParser,
 		RtaAppVariantFeature,
 		Device,
-		ServicesIndex
+		ServicesIndex,
+		ServiceEventBus
 	) {
 	"use strict";
 
@@ -474,6 +476,8 @@ sap.ui.define([
 	 * @public
 	 */
 	RuntimeAuthoring.prototype.start = function() {
+		var oDesignTimePromise;
+
 		// Create DesignTime
 		if (!this._oDesignTime) {
 			this._oRootControl = sap.ui.getCore().byId(this.getRootControl());
@@ -517,33 +521,34 @@ sap.ui.define([
 					return this.getPlugins()[sKey];
 				}, this);
 
-				jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
-				this._oDesignTime = new DesignTime({
-					scope: this.getMetadataScope(),
-					plugins: aPlugins
-				});
-				//add root control is triggering overlay creation, so we need to wait for the scope to be set.
-				this._oDesignTime.addRootElement(this._oRootControl);
-
-				jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
-				if (this.getLayer() === "USER") {
-					jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
-				}
-
-				this._oRootControl.addStyleClass("sapUiRtaRoot");
-
-				this._oDesignTime.attachSelectionChange(function(oEvent) {
-					this.fireSelectionChange({selection: oEvent.getParameter("selection")});
-				}, this);
-
-				this._oDesignTime.attachEventOnce("synced", function() {
-					this.fireStart({
-						editablePluginsCount: this.iEditableOverlaysCount
+				oDesignTimePromise = new Promise(function (fnResolve, fnReject) {
+					jQuery.sap.measure.start("rta.dt.startup","Measurement of RTA: DesignTime start up");
+					this._oDesignTime = new DesignTime({
+						scope: this.getMetadataScope(),
+						plugins: aPlugins
 					});
-					jQuery.sap.measure.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
-				}, this);
+					//add root control is triggering overlay creation, so we need to wait for the scope to be set.
+					this._oDesignTime.addRootElement(this._oRootControl);
 
-				this._oDesignTime.attachEventOnce("syncFailed", this.fireFailed);
+					jQuery(Overlay.getOverlayContainer()).addClass("sapUiRta");
+					if (this.getLayer() === "USER") {
+						jQuery(Overlay.getOverlayContainer()).addClass("sapUiRtaPersonalize");
+					}
+
+					this._oRootControl.addStyleClass("sapUiRtaRoot");
+
+					this._oDesignTime.attachSelectionChange(function(oEvent) {
+						this.fireSelectionChange({selection: oEvent.getParameter("selection")});
+					}, this);
+
+					this._oDesignTime.attachEventOnce("synced", function() {
+						fnResolve();
+						jQuery.sap.measure.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
+					}, this);
+
+					this._oDesignTime.attachEventOnce("syncFailed", fnReject);
+				}.bind(this));
+
 
 				// Register function for checking unsaved before leaving RTA
 				this._oldUnloadHandler = window.onbeforeunload;
@@ -582,13 +587,23 @@ sap.ui.define([
 						var sStyles = sData.replace(/%scrollWidth%/g, DOMUtil.getScrollbarWidth() + 'px');
 						DOMUtil.insertStyles(sStyles);
 					});
-				this._oDesignTime.detachEvent("syncFailed", this.fireFailed);
-			}.bind(this))
-			.catch(function(vError) {
-				if (vError) {
-					return Promise.reject(vError);
+			})
+			.then(function () {
+				return oDesignTimePromise;
+			})
+			.then(
+				function () {
+					this.fireStart({
+						editablePluginsCount: this.iEditableOverlaysCount
+					});
+				}.bind(this),
+				function (vError) {
+					this.fireFailed();
+					if (vError) {
+						return Promise.reject(vError);
+					}
 				}
-			});
+			);
 		}
 	};
 
@@ -938,6 +953,10 @@ sap.ui.define([
 		var oUshellContainer = Utils.getUshellContainer();
 		if (oUshellContainer) {
 			oUshellContainer.setDirtyFlag(false);
+		}
+
+		if (this._oServiceEventBus) {
+			this._oServiceEventBus.destroy();
 		}
 
 		window.onbeforeunload = this._oldUnloadHandler;
@@ -1453,7 +1472,14 @@ sap.ui.define([
 							function (fnServiceFactory) {
 								mService.factory = fnServiceFactory;
 
-								DtUtil.wrapIntoPromise(fnServiceFactory)(this)
+								if (!this._oServiceEventBus) {
+									this._oServiceEventBus = new ServiceEventBus();
+								}
+
+								DtUtil.wrapIntoPromise(fnServiceFactory)(
+									this,
+									this._oServiceEventBus.publish.bind(this._oServiceEventBus, sName)
+								)
 									.then(function (oService) {
 											if (this.bIsDestroyed) {
 												throw DtUtil.createError(
@@ -1471,18 +1497,33 @@ sap.ui.define([
 											}
 
 											mService.service = oService;
+											mService.exports = {};
 
-											// Expose public API
+											// Expose events API if there is at least one event
+											if (Array.isArray(oService.events) && oService.events.length > 0) {
+												jQuery.extend(mService.exports, {
+													attachEvent: this._oServiceEventBus.subscribe.bind(this._oServiceEventBus, sName),
+													detachEvent: this._oServiceEventBus.unsubscribe.bind(this._oServiceEventBus, sName),
+													attachEventOnce: this._oServiceEventBus.subscribeOnce.bind(this._oServiceEventBus, sName),
+													getEvents: function () {
+														return oService.events.slice();
+													}
+												});
+											}
+
+											// Expose methods/properties from exports object if any
 											var mExports = oService.exports || {};
-											mService.publicApi = Object.freeze(
+											jQuery.extend(
+												mService.exports,
 												Object.keys(mExports).reduce(function (mResult, sKey) {
-													mResult[sKey] = jQuery.isFunction(mExports[sKey]) ?  DtUtil.wrapIntoPromise(mExports[sKey]) : mExports[sKey];
+													var vValue = mExports[sKey];
+													mResult[sKey] = typeof vValue === "function" ?  DtUtil.wrapIntoPromise(vValue) : vValue;
 													return mResult;
 												}, {})
 											);
 
 											mService.status = SERVICE_STARTED;
-											fnResolve(mService.publicApi);
+											fnResolve(Object.freeze(mService.exports));
 									}.bind(this))
 									.catch(fnReject);
 							}.bind(this),
