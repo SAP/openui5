@@ -433,6 +433,16 @@ sap.ui.define([
 		getProperty: function (vControl, sPropertyName)  {},
 
 		/**
+		 * See {@link sap.ui.base.ManagedObject#isPropertyInitial} method
+		 *
+		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
+		 * @param {string} sPropertyName property name
+		 * @returns {boolean} <code>true</code> if the property is initial
+		 * @public
+		 */
+		isPropertyInitial: function (oControl, sPropertyName) {},
+
+		/**
 		 * Similar as {@link #bindProperty}, but allows to specify binding like in control constructor
 		 *
 		 * @param {sap.ui.base.ManagedObject | Element} vControl Control representation
