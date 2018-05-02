@@ -4668,7 +4668,7 @@ sap.ui.require([
 					getPath : function () { return "/EMPLOYEES('1')"; },
 					toString : function () { return "Foo"; }
 				},
-				oError = {},
+				oError = new Error(),
 				oExpectation,
 				oGroupLock = new _GroupLock("groupId");
 
@@ -4684,16 +4684,17 @@ sap.ui.require([
 				.withExactArgs("/EMPLOYEES('1')").returns(false);
 			oExpectation = this.mock(oCache).expects("refreshSingle")
 				.withExactArgs(sinon.match.same(oGroupLock), 42, sinon.match.func)
-				.returns(SyncPromise.reject(oError));
+				.returns(Promise.reject(oError));
 			if (bDataRequested) {
 				oExpectation.callsArg(2);
 			}
+			this.mock(oGroupLock).expects("unlock").withExactArgs(true);
 			this.mock(this.oModel).expects("reportError")
 				.withExactArgs("Failed to refresh entity: Foo", sClassName,
 					sinon.match.same(oError));
 
 			// code under test
-			oBinding.refreshSingle(oContext, oGroupLock);
+			return oBinding.refreshSingle(oContext, oGroupLock);
 		});
 	});
 

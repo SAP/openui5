@@ -477,7 +477,7 @@ sap.ui.define([
 			throw new Error("Refresh is only supported for contexts of a list binding");
 		}
 		this.oModel.checkGroupId(sGroupId);
-		this.oBinding.refreshSingle(this, this.oModel.lockGroup(sGroupId), bAllowRemoval);
+		this.oBinding.refreshSingle(this, this.oModel.lockGroup(sGroupId, true), bAllowRemoval);
 	};
 
 	/**
