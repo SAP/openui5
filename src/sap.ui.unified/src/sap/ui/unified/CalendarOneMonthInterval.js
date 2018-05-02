@@ -100,6 +100,8 @@ sap.ui.define([
 					this._oFocusDateOneMonth = oCalPickerFocusedDate;
 					// true means do not focus, as we set the this._oFocusDateOneMonth and focus will happen in .focusDateExtend
 					this._focusDate(oCalPickerFocusedDate, true);
+
+					jQuery.sap.focus(this.getAggregation("header").getDomRef("B1"));
 				}, this);
 				this.setAggregation("calendarPicker", oCalPicker);
 			}

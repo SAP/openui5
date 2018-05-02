@@ -729,6 +729,28 @@
 				oCalP.destroy();
 			});
 
+			QUnit.test("Triggering button receives the focus on picker ESC", function(assert) {
+				// arrange
+				var oCalPicker,
+					oCalP = new sap.ui.unified.CalendarDateInterval("CalP",{
+						pickerPopup: true
+					}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+
+				// open calendarPicker
+				qutils.triggerEvent("click", "CalP--Head-B1");
+
+				// close calendarPicker
+				sap.ui.test.qunit.triggerKeydown(document.activeElement, jQuery.sap.KeyCodes.ESCAPE);
+
+				// check if the triggering button receives the focus after picker close
+				assert.strictEqual(document.activeElement.id, oCalP.getAggregation("header").getDomRef("B1").id, "After picker close the triggering button receives the focus");
+
+				// clean
+				oCalP.destroy();
+			});
+
 			// BCP: 1780521519
 			QUnit.test("Closing the picker will remove the overlay", function (assert) {
 				// arrange
