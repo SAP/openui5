@@ -10,9 +10,9 @@ sap.ui.define([
 	'sap/ui/core/IconPool',
 	'sap/ui/core/Icon',
 	'./TreeItemBaseRenderer',
-	'jquery.sap.keycodes'
+	'sap/base/events/KeyCodes'
 ],
-	function(jQuery, ListItemBase, library, IconPool, Icon, TreeItemBaseRenderer) {
+	function(jQuery, ListItemBase, library, IconPool, Icon, TreeItemBaseRenderer, KeyCodes) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -46,7 +46,7 @@ sap.ui.define([
 
 	TreeItemBase.prototype.getTree = function() {
 		var oParent = this.getParent();
-		if (oParent instanceof sap.m.Tree) {
+		if (oParent && oParent.isA("sap.m.Tree")) {
 			return oParent;
 		}
 	};
@@ -319,7 +319,7 @@ sap.ui.define([
 			this.informTree("ExpanderPressed", true);
 		} else {
 			// Change the keyCode so that the item navigation handles the down navigation.
-			oEvent.keyCode = jQuery.sap.KeyCodes.ARROW_DOWN;
+			oEvent.keyCode = KeyCodes.ARROW_DOWN;
 		}
 
 	};

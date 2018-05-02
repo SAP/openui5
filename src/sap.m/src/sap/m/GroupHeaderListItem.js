@@ -79,12 +79,7 @@ sap.ui.define(["sap/ui/core/library", "./library", "./ListItemBase", "./GroupHea
 	// returns responsible table control for the item
 	GroupHeaderListItem.prototype.getTable = function() {
 		var oParent = this.getParent();
-		if (!oParent) {
-			return;
-		}
-
-		var fnTableClass = sap.ui.require("sap/m/Table");
-		if (typeof fnTableClass == "function" && oParent instanceof fnTableClass) {
+		if (oParent && oParent.isA("sap.m.Table")) {
 			return oParent;
 		}
 	};

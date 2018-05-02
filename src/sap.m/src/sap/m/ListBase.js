@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/core/LabelEnablement",
 	"sap/ui/core/delegate/ItemNavigation",
 	"./library",
+	"./InstanceManager",
 	"./GrowingEnablement",
 	"./GroupHeaderListItem",
 	"./ListItemBase",
@@ -26,6 +27,7 @@ function(
 	LabelEnablement,
 	ItemNavigation,
 	library,
+	InstanceManager,
 	GrowingEnablement,
 	GroupHeaderListItem,
 	ListItemBase,
@@ -1067,7 +1069,7 @@ function(
 	};
 
 	/*
-	 * This hook method get called if growing feature is enabled and after new page loaded
+	 * This hook method get called if growing feature is enabled and after page loaded
 	 * @protected
 	 */
 	ListBase.prototype.onAfterPageLoaded = function(oGrowingInfo, sChangeReason) {
@@ -1336,7 +1338,6 @@ function(
 
 	ListBase.prototype._getSwipeContainer = function() {
 		return this._$swipeContainer || (
-			jQuery.sap.require("sap.m.InstanceManager"),
 			this._$swipeContainer = jQuery("<div>", {
 				"id" : this.getId("swp"),
 				"class" : "sapMListSwp"
@@ -1382,7 +1383,7 @@ function(
 		that._renderSwipeContent();
 
 		// add to instance manager
-		sap.m.InstanceManager.addDialogInstance(that);
+		InstanceManager.addDialogInstance(that);
 
 		// maybe keyboard is opened
 		window.document.activeElement.blur();
@@ -1433,7 +1434,7 @@ function(
 		this._isSwipeActive = false;
 
 		// remove from instance manager
-		sap.m.InstanceManager.removeDialogInstance(this);
+		InstanceManager.removeDialogInstance(this);
 	};
 
 

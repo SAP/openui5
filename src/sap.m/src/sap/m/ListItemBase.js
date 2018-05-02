@@ -285,7 +285,7 @@ function(
 	 */
 	ListItemBase.prototype.getList = function() {
 		var oParent = this.getParent();
-		if (oParent instanceof sap.m.ListBase) {
+		if (oParent && oParent.isA("sap.m.ListBase")) {
 			return oParent;
 		}
 	};
