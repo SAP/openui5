@@ -1040,7 +1040,6 @@ sap.ui.define([
 			sPredicate,
 			iResultLength = oResult.value.length;
 
-		Cache.computeCount(oResult);
 		this.sContext = oResult["@odata.context"];
 		sCount = oResult["@odata.count"];
 		if (sCount) {
@@ -1050,6 +1049,7 @@ sap.ui.define([
 		for (i = 0; i < iResultLength; i++) {
 			oElement = oResult.value[i];
 			this.aElements[iStart + i] = oElement;
+			Cache.computeCount(oElement);
 			this.calculateKeyPredicates(oElement, mTypeForMetaPath);
 			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 			if (sPredicate) {

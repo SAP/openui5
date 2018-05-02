@@ -1696,6 +1696,7 @@ sap.ui.require([
 		QUnit.test("CollectionCache#handleResponse: " + bWithCount, function (assert) {
 			var oCache = this.createCache("Employees"),
 				oCacheMock = this.mock(oCache),
+				oCacheClassMock = this.mock(_Cache),
 				mChangeListeners = {},
 				iCount = 4,
 				sDataContext = {/*string*/},
@@ -1724,12 +1725,13 @@ sap.ui.require([
 				.callsFake(function () {
 					oCache.aElements.$count = iCount;
 				});
-			this.mock(_Cache).expects("computeCount").withExactArgs(sinon.match.same(oResult));
+			oCacheClassMock.expects("computeCount").withExactArgs(oElement0);
 			oCacheMock.expects("calculateKeyPredicates")
 				.withExactArgs(sinon.match.same(oElement0), sinon.match.same(oFetchTypesResult))
 				.callsFake(function () {
 					_Helper.setPrivateAnnotation(oElement0, "predicate", "foo");
 				});
+			oCacheClassMock.expects("computeCount").withExactArgs(oElement1);
 			// simulate no key predicate for oElement1
 			oCacheMock.expects("calculateKeyPredicates")
 				.withExactArgs(sinon.match.same(oElement1), sinon.match.same(oFetchTypesResult));
@@ -1776,6 +1778,7 @@ sap.ui.require([
 	}].forEach(function (oFixture) {
 		QUnit.test("CollectionCache#handleResponse: " + oFixture.sTitle, function (assert) {
 			var oCache = this.createCache("Employees"),
+				oCacheClassMock = this.mock(_Cache),
 				aElements = [],
 				oFetchTypesResult = {},
 				oHelperMock = this.mock(_Helper),
@@ -1790,7 +1793,7 @@ sap.ui.require([
 			oCache.aElements.$count = undefined;
 			oCache.iLimit = iLimit;
 
-			if ("sCount" in oFixture){
+			if ("sCount" in oFixture) {
 				oResult["@odata.count"] = oFixture.sCount;
 
 				oHelperMock.expects("updateCache")
@@ -1800,7 +1803,10 @@ sap.ui.require([
 						oCache.aElements.$count = oFixture.iExpectedCount;
 					});
 			}
-			this.mock(_Cache).expects("computeCount").withExactArgs(sinon.match.same(oResult));
+			oCacheClassMock.expects("computeCount").never();
+			oResult.value.forEach(function (oElement) {
+				oCacheClassMock.expects("computeCount").withExactArgs(sinon.match.same(oElement));
+			});
 			oHelperMock.expects("updateCache")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 					sinon.match.same(oCache.aElements), {$count : oFixture.iExpectedCount});
@@ -3642,6 +3648,7 @@ sap.ui.require([
 	QUnit.test("CollectionCache#read uses computeCount", function(assert) {
 		var sResourcePath = "Employees",
 			oCache = this.createCache(sResourcePath),
+			oCacheClassMock = this.mock(_Cache),
 			oValue0 = {},
 			oValue1 = {},
 			oData = {
@@ -3652,7 +3659,8 @@ sap.ui.require([
 			.withExactArgs("GET", sResourcePath + "?$skip=0&$top=3", new _GroupLock("group"),
 				undefined, undefined, undefined)
 			.returns(Promise.resolve(oData));
-		this.mock(_Cache).expects("computeCount").withExactArgs(sinon.match.same(oData));
+		oCacheClassMock.expects("computeCount").withExactArgs(sinon.match.same(oValue0));
+		oCacheClassMock.expects("computeCount").withExactArgs(sinon.match.same(oValue1));
 
 		// code under test
 		return oCache.read(0, 3, 0, new _GroupLock("group")).then(function () {
