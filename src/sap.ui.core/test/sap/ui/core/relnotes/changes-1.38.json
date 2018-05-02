@@ -3374,5 +3374,22 @@
         "references": []
       }
     ]
+  },
+  "1.38.35": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "571b29f3c971949fa256eb678ab168bab2cfcd71",
+        "type": "FIX",
+        "text": " Fix synchronous document.activeElement access in iframes",
+        "references": []
+      },
+      {
+        "id": "5dec4ffb1558b8af0bde6a4d63de43432b72b2d9",
+        "type": "FIX",
+        "text": " ThemeCheck: Fix Cross-Origin issues (MS Edge)",
+        "references": []
+      }
+    ]
   }
 }
