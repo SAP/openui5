@@ -537,6 +537,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 							}
 							// check if editable fields are used (can only check for known fields)
 							if (_isLazyInstance(oField, "sap/m/InputBase") ||
+									_isLazyInstance(oField, "sap/m/Select") ||
 									_isLazyInstance(oField, "sap/m/CheckBox") ||
 									_isLazyInstance(oField, "sap/m/RadioButton") ||
 									_isLazyInstance(oField, "sap/m/RadioButtonGroup") ||
