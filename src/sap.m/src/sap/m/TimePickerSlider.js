@@ -441,12 +441,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', './TimePickerSliderRe
 		TimePickerSlider.prototype.onkeydown = function(oEvent) {
 			var iKC = oEvent.which || oEvent.keyCode,
 				oKCs = jQuery.sap.KeyCodes;
-			
 			//Translate keypad code to number row code
 			if (iKC >= oKCs.NUMPAD_0 && iKC <= oKCs.NUMPAD_9){
 				iKC -= 48;
 			}
-			
 			//we only recieve uppercase codes here, which is nice
 			if ((iKC >= oKCs.A && iKC <= oKCs.Z)
 				|| (iKC >= oKCs.DIGIT_0 && iKC <= oKCs.DIGIT_9)) {
