@@ -831,7 +831,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 
 		/**
 		 * Returns the list of elements that reported the given support data.
-		 * @param {string} Comma seperated list of indices that should be looked up
+		 * @param {string} sSupportData Comma separated list of indices that should be looked up
 		 * @returns {sap.ui.core.Element[]} list of elements
 		 * @experimental
 		 * @private
