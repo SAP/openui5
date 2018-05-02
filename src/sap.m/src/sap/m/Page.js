@@ -347,6 +347,7 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 			}
 			this.setProperty("showFooter", bShowFooter,true);
 
+			$footer.removeClass("sapUiHidden");
 			$footer.toggleClass("sapMPageFooterControlShow", bShowFooter);
 			$footer.toggleClass("sapMPageFooterControlHide", !bShowFooter);
 
@@ -356,11 +357,10 @@ sap.ui.define(["jquery.sap.global", "./library", "sap/ui/core/Control", "sap/ui/
 
 			if (useAnimation) {
 				jQuery.sap.delayedCall(Page.FOOTER_ANIMATION_DURATION, this, function () {
-					$footer.toggleClass("sapUiHidden", bShowFooter);
-			});
-
+					$footer.toggleClass("sapUiHidden", !bShowFooter);
+				});
 			} else {
-				$footer.toggleClass("sapUiHidden", bShowFooter);
+				$footer.toggleClass("sapUiHidden", !bShowFooter);
 			}
 
 			return this;
