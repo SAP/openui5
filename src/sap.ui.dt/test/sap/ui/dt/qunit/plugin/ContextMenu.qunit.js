@@ -1875,6 +1875,14 @@ sap.ui.require([
 		this.oContextMenuControl._onContextMenu(oEvent);
 	});
 
+	QUnit.test("calling close function with expliciteClose option", function(assert) {
+		var oCloseExpandedPopoverStub = oSandbox.stub(this.oContextMenuControl.getPopover(true), "close");
+		var oCloseCompactPopoverStub = oSandbox.stub(this.oContextMenuControl.getPopover(false), "close");
+		this.oContextMenuControl.close(true);
+		assert.equal(oCloseExpandedPopoverStub.callCount, 1, "then the close function on expanded popover is called once");
+		assert.equal(oCloseCompactPopoverStub.callCount, 1, "then the close function on expanded popover is called once");
+	});
+
 	QUnit.module("ContextMenuControl API", {
 		beforeEach: function (assert) {
 		},
