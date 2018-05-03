@@ -3,7 +3,7 @@
 	<edmx:Reference Uri="../../../../default/iwbep/tea_busi_product/0001/$metadata">
 		<edmx:Include Namespace="com.sap.gateway.default.iwbep.tea_busi_product.v0001" Alias="TEA_BUSI_PRODUCT"/>
 	</edmx:Reference>
-	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
+	<edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/448470974/Common.xml?api=v2">
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
 	</edmx:Reference>
 	<edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value">
