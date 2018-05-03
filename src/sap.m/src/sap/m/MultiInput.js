@@ -10,6 +10,7 @@ sap.ui.define([
 	'./Token',
 	'./library',
 	'sap/ui/core/EnabledPropagator',
+	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/Device',
 	'./MultiInputRenderer',
 	'jquery.sap.keycodes'
@@ -21,6 +22,7 @@ function(
 	Token,
 	library,
 	EnabledPropagator,
+	ManagedObjectMetadata,
 	Device,
 	MultiInputRenderer
 	) {
@@ -1410,6 +1412,7 @@ function(
 		if (Array.isArray(aTokens)) {
 			for (i = 0; i < aTokens.length; i++) {
 				oValidatedToken = this.validateAggregation("tokens", aTokens[i], true);
+				ManagedObjectMetadata.addAPIParentInfo(aTokens[i], this, "tokens");
 				aValidatedTokens.push(oValidatedToken);
 			}
 

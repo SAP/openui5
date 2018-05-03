@@ -950,7 +950,7 @@ sap.ui.define([
 	Tokenizer.prototype.removeAllTokens = function(bFireEvent) {
 		var tokens = this.getTokens();
 
-		this.removeAllAggregation("tokens");
+		var aRemoved = this.removeAllAggregation("tokens");
 
 		if (typeof (bFireEvent) === "boolean" && !bFireEvent) {
 			return;
@@ -966,6 +966,8 @@ sap.ui.define([
 			tokens : tokens,
 			type : Tokenizer.TokenChangeType.RemovedAll
 		});
+
+		return aRemoved;
 	};
 
 	Tokenizer.prototype.updateTokens = function () {

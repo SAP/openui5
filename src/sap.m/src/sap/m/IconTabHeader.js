@@ -932,7 +932,7 @@ function(
 
 	IconTabHeader.prototype.removeAllItems = function() {
 		this._aTabKeys = [];
-		this.removeAllAggregation("items");
+		return this.removeAllAggregation("items");
 	};
 
 	IconTabHeader.prototype.removeItem = function(oItem) {

@@ -25,7 +25,8 @@
 
 			QUnit.config.autostart = false;
 
-			sap.ui.require(['sap/ui/base/ManagedObject', 'sap/ui/core/Element', 'sap/ui/model/json/JSONModel'], function(ManagedObject, Element, JSONModel) {
+			sap.ui.require(['sap/ui/base/ManagedObject', 'sap/ui/core/Element', 'sap/ui/core/Control', 'sap/ui/model/json/JSONModel'],
+				function(ManagedObject, Element, Control, JSONModel) {
 
 				Element.extend("SimpleElement", {
 					metadata: {
@@ -165,7 +166,6 @@
 						this.setAggregation("_ultraComposite", new UltraCompositeElement(this.getId() + "_ultraComposite"));
 					}
 				});
-
 
 
 
@@ -1178,6 +1178,13 @@
 						this.item = new SimpleElement("item");
 					},
 					afterEach: function() {
+						this.composite.getMetadata().forwardAggregation( // restore metadata
+							"outerAggregation",
+							{
+								idSuffix: "-innerElement",
+								aggregation: "innerAggregation"
+							}
+						);
 						this.composite.destroy();
 						this.item.destroy();
 					}
@@ -1206,6 +1213,140 @@
 
 
 
+
+				QUnit.module("API Parent Info", {
+					beforeEach: function() {
+						this.item = new SimpleElement("item");
+						this.composite = new CompositeElement();
+						this.composite.addOuterAggregation(this.item);
+						this.innerElement = this.composite.getAggregation("_innerElement");
+					},
+					afterEach: function() {
+						this.item.destroy();
+						this.composite.destroy();
+
+						if (this.item2) {
+							this.item2.destroy();
+						}
+						if (this.ultraComposite) {
+							this.ultraComposite.destroy();
+						}
+					}
+				});
+
+				QUnit.test("simple API Parent Info after single forwarding", function(assert) {
+					assert.ok(this.item.aAPIParentInfos, "item should have API Parent Info after forwarding");
+					assert.equal(this.item.aAPIParentInfos.length, 1, "item should have API Parent Info with length 1 after forwarding");
+					assert.equal(this.item.aAPIParentInfos[0].parent, this.composite, "Initial API parent should be the outer composite");
+					assert.equal(this.item.aAPIParentInfos[0].aggregationName, "outerAggregation", "Initial API parent aggregation name should be 'outerAggregation'");
+				});
+
+				QUnit.test("API Parent Info after removal of item", function(assert) {
+					this.composite.removeOuterAggregation(this.item);
+					assert.ok(this.item.aAPIParentInfos, "item should have API Parent Info after removing");
+					assert.equal(this.item.aAPIParentInfos.length, 0, "item should have API Parent Info with length 0 after removing");
+				});
+
+				QUnit.test("API Parent Info after multiple forwarding", function(assert) {
+					this.item2 = new SimpleElement("item2");
+					this.ultraComposite = new UltraCompositeElement({
+						ultraOuterAggregation: [this.item2]
+					});
+
+					assert.ok(this.item2.aAPIParentInfos, "item should have API Parent Info after forwarding");
+					assert.equal(this.item2.aAPIParentInfos.length, 2, "item should have API Parent Info with length 2 after forwarding");
+					assert.equal(this.item2.aAPIParentInfos[0].parent, this.ultraComposite, "Initial API parent should be the outer composite");
+					assert.equal(this.item2.aAPIParentInfos[0].aggregationName, "ultraOuterAggregation", "Initial API parent aggregation name should be 'ultraOuterAggregation'");
+					assert.equal(this.item2.aAPIParentInfos[1].parent.getMetadata().getName(), "CompositeElement", "Secondary API parent should be the outer composite");
+					assert.equal(this.item2.aAPIParentInfos[1].aggregationName, "outerAggregation", "Secondary API parent aggregation name should be 'outerAggregation'");
+				});
+
+				QUnit.test("API Parent Info after multiple forwarding with insert", function(assert) {
+					this.item2 = new SimpleElement("item2");
+					this.ultraComposite = new UltraCompositeElement();
+					this.ultraComposite.insertAggregation("ultraOuterAggregation", this.item2, 0);
+
+					assert.ok(this.item2.aAPIParentInfos, "item should have API Parent Info after forwarding");
+					assert.equal(this.item2.aAPIParentInfos.length, 2, "item should have API Parent Info with length 2 after forwarding");
+					assert.equal(this.item2.aAPIParentInfos[0].parent, this.ultraComposite, "Initial API parent should be the outer composite");
+					assert.equal(this.item2.aAPIParentInfos[0].aggregationName, "ultraOuterAggregation", "Initial API parent aggregation name should be 'ultraOuterAggregation'");
+					assert.equal(this.item2.aAPIParentInfos[1].parent.getMetadata().getName(), "CompositeElement", "Secondary API parent should be the outer composite");
+					assert.equal(this.item2.aAPIParentInfos[1].aggregationName, "outerAggregation", "Secondary API parent aggregation name should be 'outerAggregation'");
+				});
+
+				QUnit.test("API Parent Info after multiple forwarding and remove", function(assert) {
+					this.item2 = new SimpleElement("item2");
+					this.ultraComposite = new UltraCompositeElement({
+						ultraOuterAggregation: [this.item2]
+					});
+
+					this.ultraComposite.removeAggregation("ultraOuterAggregation", this.item2);
+					assert.equal(this.item2.aAPIParentInfos.length, 0, "item should have API Parent Info with length 0 after removing");
+				});
+
+				QUnit.test("API Parent Info after multiple forwarding and removeAll", function(assert) {
+					this.item2 = new SimpleElement("item2");
+					this.ultraComposite = new UltraCompositeElement({
+						ultraOuterAggregation: [this.item2]
+					});
+
+					this.ultraComposite.removeAllAggregation("ultraOuterAggregation");
+					assert.equal(this.item2.aAPIParentInfos.length, 0, "item should have API Parent Info with length 0 after removing");
+				});
+
+				QUnit.test("API Parent Info after multiple forwarding and destroy", function(assert) {
+					this.item2 = new SimpleElement("item2");
+					this.ultraComposite = new UltraCompositeElement({
+						ultraOuterAggregation: [this.item2]
+					});
+
+					this.ultraComposite.destroyAggregation("ultraOuterAggregation");
+					assert.strictEqual(this.item2.aAPIParentInfos, null, "item should have nulled API Parent Info after destroying");
+					this.item2 = null;
+				});
+
+				// move element to other composite with forwarding
+				QUnit.test("API Parent Info after multiple forwarding and then moving somewhere else", function(assert) {
+					this.item2 = new SimpleElement("item2");
+					this.ultraComposite = new UltraCompositeElement({
+						ultraOuterAggregation: [this.item2]
+					});
+					// this state was already tested
+
+					// now move to different parent that also does forwarding
+					this.ultraComposite2 = new UltraCompositeElement({
+						ultraOuterAggregation: [this.item2]
+					});
+
+					assert.ok(this.item2.aAPIParentInfos, "item should have API Parent Info after forwarding and moving");
+					assert.equal(this.item2.aAPIParentInfos.length, 2, "item should have API Parent Info with length 2 after forwarding and moving");
+					assert.equal(this.item2.aAPIParentInfos[0].parent, this.ultraComposite2, "Initial API parent should be the second outer composite");
+					assert.equal(this.item2.aAPIParentInfos[0].aggregationName, "ultraOuterAggregation", "Initial API parent aggregation name should be 'ultraOuterAggregation'");
+					assert.equal(this.item2.aAPIParentInfos[1].parent.getId(), this.ultraComposite2.getId() + "_innerComposite", "Secondary API parent should be the outer composite");
+					assert.equal(this.item2.aAPIParentInfos[1].aggregationName, "outerAggregation", "Secondary API parent aggregation name should be 'outerAggregation'");
+
+					this.ultraComposite2.destroy();
+					this.item2 = null;
+				});
+
+				// move element to other parent with no forwarding
+				QUnit.test("API Parent Info after multiple forwarding and then moving somewhere else", function(assert) {
+					this.item2 = new SimpleElement("item2");
+					this.ultraComposite = new UltraCompositeElement({
+						ultraOuterAggregation: [this.item2]
+					});
+					// this state was already tested
+
+					// now move to different parent that has no forwarding
+					this.composite2 = new CompositeWithoutForwarding({
+						outerAggregation: [this.item2]
+					});
+
+					assert.equal(this.item2.aAPIParentInfos, undefined, "item has no more API Parent Info after forwarding and then moving to a non-forwarded place");
+
+					this.composite2.destroy();
+					this.item2 = null;
+				});
 
 				QUnit.start();
 			});
