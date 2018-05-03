@@ -66,10 +66,10 @@ sap.ui.define([
 		 * @returns {number} The max number of possible tickmarks
 		 */
 		Scale.prototype.calcNumberOfTickmarks = function (fSize, fStep, iTickmarksThreshold) {
-			var iMaxPossible = Math.floor(fSize / fStep); //How many tickmarks would be there if we show one for each step?
+			var iMaxPossible = Math.floor(fSize / fStep) + 1; //How many tickmarks would be there if we show one for each step?
 
 			iMaxPossible = iTickmarksThreshold && (iMaxPossible > iTickmarksThreshold) ?
-				this._runStepsOptimization(iTickmarksThreshold, iMaxPossible) : iMaxPossible;
+				this._runStepsOptimization(iTickmarksThreshold, iMaxPossible - 1) : iMaxPossible;
 
 			return Math.floor(iMaxPossible);
 		};

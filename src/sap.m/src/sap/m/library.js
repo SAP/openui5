@@ -1431,6 +1431,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 
 	/**
 	 * Returns How many tickmarks would be drawn on the screen.
+	 * * <b>Note:</b> There would always be a tickmark in the begining and in the end of the slider,
+	 * regardless of the value this method returns. The start and the end tickmark are taken into account
+	 * for the later calculations.
+	 *
 	 * @param {object} mOptions The option array
 	 * @returns {integer} The number of tickmarks
 	 *

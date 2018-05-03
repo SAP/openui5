@@ -27,9 +27,9 @@
 				var oScale = new sap.m.ResponsiveScale();
 
 				// Assert
-				assert.strictEqual(oScale.calcNumberOfTickmarks(100, 1, 100), 100, "Should calculate a tickmark for every possible step.");
+				assert.strictEqual(oScale.calcNumberOfTickmarks(100, 1, 100), 100, "Do not allow more than 100 tickmarks per scale. Performance reasons.");
 				assert.strictEqual(oScale.calcNumberOfTickmarks(100, 0.5, 100), 100, "Do not allow more than 100 tickmarks per scale. Performance reasons.");
-				assert.strictEqual(oScale.calcNumberOfTickmarks(100, 5, 100), 20, "Should calculate a tickmark for every possible step.");
+				assert.strictEqual(oScale.calcNumberOfTickmarks(100, 5, 100), 21, "Should calculate a tickmark for every possible step.");
 				assert.strictEqual(oScale.calcNumberOfTickmarks(499 /* prime number */, 1, 100), 1, "For prime numbers calculations are not possible. Can't spread tickmarks evenly in such edge case.");
 
 				// Cleanup
