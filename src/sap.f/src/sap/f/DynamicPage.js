@@ -1207,6 +1207,29 @@ sap.ui.define([
 	};
 
 	/**
+	 * Scrolls to bring the 'collapse' visual-indicator into view. (The collapse button is part of the scrollable content)
+	 * @private
+	 */
+	DynamicPage.prototype._scrollBellowCollapseVisualIndicator = function () {
+		var oHeader = this.getHeader(),
+			$collapseButton,
+			iCollapseButtonHeight,
+			iViewportHeight,
+			iOffset;
+
+		if (exists(oHeader)) {
+			$collapseButton = this.getHeader()._getCollapseButton().getDomRef();
+			iCollapseButtonHeight = $collapseButton.getBoundingClientRect().height;
+			iViewportHeight = this.$wrapper[0].getBoundingClientRect().height; // height of the div that contains all the scrollable content
+
+			// compute the amount we need to scroll in order to show the $collapseButton [in the bottom of the viewport]
+			iOffset = $collapseButton.offsetTop + iCollapseButtonHeight - iViewportHeight;
+
+			this._setScrollPosition(iOffset);
+		}
+	};
+
+	/**
 	 * Returns <code>true</code> if DynamicPage has <code>title</code> and <code>header</code> aggregations set and they are both visible.
 	 * @private
 	 */
@@ -1458,6 +1481,11 @@ sap.ui.define([
 			} else {
 				this._togglePinButtonVisibility(true);
 			}
+
+			if (this._bHeaderInTitleArea && this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+				this._expandHeader(false /* remove header from title area */);
+				this._setScrollPosition(0);
+			}
 		}
 
 		if (exists(oDynamicPageTitle)) {
@@ -1547,6 +1575,12 @@ sap.ui.define([
 
 	DynamicPage.prototype._onExpandHeaderVisualIndicatorPress = function () {
 		this._onTitlePress();
+		if (this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+			// scroll to show the 'collapse' visual-indicator before focusing it
+			// this is needed in order to specify the **exact** position (scrollTop) of the visual-indicator
+			// because the default position (from the browser default auto-scroll to newly-focused item) is not UX-compliant
+			this._scrollBellowCollapseVisualIndicator();
+		}
 		this._focusCollapseVisualIndicator();
 	};
 

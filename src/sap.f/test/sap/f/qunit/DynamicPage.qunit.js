@@ -1832,6 +1832,36 @@
 		}, 0);
 	});
 
+	QUnit.test("expand shows the visual indicator", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oExpandButton = oDynamicPage.getTitle()._getExpandButton(),
+			oCollapseButton = oDynamicPage.getHeader()._getCollapseButton(),
+			oSpy = this.spy(oDynamicPage, "_scrollBellowCollapseVisualIndicator"),
+			iCollapseButtonBottom,
+			iDynamicPageBottom;
+
+		oDynamicPage.setHeaderExpanded(false);
+		oUtil.renderObject(oDynamicPage);
+
+		oDynamicPage.$().outerHeight("800px"); // set page height smaller than header height
+
+		oDynamicPage._setScrollPosition(100);
+
+		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+		//act: expand via the 'expand' visual indicator
+		oExpandButton.firePress();
+
+		// check
+		assert.equal(oSpy.callCount, 1, "scroll to show the 'collapse' visual indicator is called");
+
+		iCollapseButtonBottom = oCollapseButton.getDomRef().getBoundingClientRect().bottom;
+		iDynamicPageBottom = this.oDynamicPage.getDomRef().getBoundingClientRect().bottom;
+
+		// check position
+		assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page");
+	});
+
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
 	QUnit.module("DynamicPage - Private functions", {
