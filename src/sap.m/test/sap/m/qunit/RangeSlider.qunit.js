@@ -1248,6 +1248,101 @@
 		oSlider.destroy();
 	});
 
+	QUnit.test("RangeSlider with scale and tooltip should use the prioritisation of the labelling", function (assert) {
+		var oSlider, oTooltip, oHandleDomRef, oSecondHandleDomRef, oProgressHandle,
+			clock = sinon.useFakeTimers(),
+			oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+
+		oScale.getLabel = function (fCurValue) {
+			var monthList = ["Zero", "One", "2"];
+
+			return monthList[fCurValue];
+		};
+
+		jQuery.sap.require('sap.m.SliderTooltipBase');
+		jQuery.sap.require('sap.m.SliderTooltipBaseRenderer');
+
+		oTooltip = sap.m.SliderTooltipBase.extend("sap.xx.TestTooltip", {
+			renderer: function (oRm, oControl) {
+				sap.m.SliderTooltipBaseRenderer.render.apply({
+					renderTooltipContent: function (oRm, oControl) {
+						oRm.write("zzzz");
+					}
+				}, arguments);
+			}
+		});
+
+		oTooltip.prototype.getLabel = function (fValue) {
+			return "XXXXXXX-" + fValue;
+		};
+
+		oSlider = new sap.m.RangeSlider({
+			step: 1,
+			min: 0,
+			max: 2,
+			enableTickmarks: true,
+			showAdvancedTooltip: true,
+			scale: oScale,
+			customTooltips: [
+				new oTooltip(),
+				new oTooltip()
+			]
+		});
+
+		// arrange
+		oSlider.placeAt(DOM_RENDER_LOCATION);
+		sap.ui.getCore().applyChanges();
+		oHandleDomRef = oSlider.getDomRef("handle1");
+		oSecondHandleDomRef = oSlider.getDomRef("handle2");
+		oProgressHandle = oSlider.getDomRef("progress");
+
+		// assert
+		assert.ok(!oHandleDomRef.getAttribute("title"), "The title should be undefined if there's a tooltip.");
+		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "0", "The aria-valuenow should be 0.");
+		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuetext"), "XXXXXXX-0", "The aria-valuetext should be XXXXXXX-0.");
+
+		assert.ok(!oSecondHandleDomRef.getAttribute("title"), "The title should be undefined if there's a tooltip.");
+		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuenow"), "2", "The aria-valuenow should be 0.");
+		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuetext"), "XXXXXXX-2", "The aria-valuetext should be XXXXXXX-2.");
+
+		assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), "0-2", "The aria-valuenow should be 0-2.");
+		assert.strictEqual(oProgressHandle.getAttribute("aria-valuetext"), "From XXXXXXX-0 to XXXXXXX-2", "The aria-valuetext should be 'From XXXXXXX-0 to XXXXXXX-2'.");
+
+		// Act
+		oSlider.setValue(1);
+		sap.ui.getCore().applyChanges();
+		clock.tick(1000);
+		oHandleDomRef = oSlider.getDomRef("handle1");
+		oSecondHandleDomRef = oSlider.getDomRef("handle2");
+		oProgressHandle = oSlider.getDomRef("progress");
+
+		// Assert
+		assert.ok(!oHandleDomRef.getAttribute("title"), "The title should be undefined if there's a tooltip.");
+		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "1", "The aria-valuenow should be 1.");
+		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuetext"), "XXXXXXX-1", "The aria-valuetext should be XXXXXXX-1.");
+
+		assert.ok(!oSecondHandleDomRef.getAttribute("title"), "The title should be undefined if there's a tooltip.");
+		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuenow"), "2", "The aria-valuenow should be 0.");
+		assert.strictEqual(oSecondHandleDomRef.getAttribute("aria-valuetext"), "XXXXXXX-2", "The aria-valuetext should be XXXXXXX-2.");
+
+		assert.strictEqual(oProgressHandle.getAttribute("aria-valuenow"), "1-2", "The aria-valuenow should be 1-2.");
+		assert.strictEqual(oProgressHandle.getAttribute("aria-valuetext"), "From XXXXXXX-1 to XXXXXXX-2", "The aria-valuetext should be 'From XXXXXXX-1 to XXXXXXX-2'.");
+
+
+		//Act
+		oSlider.setShowAdvancedTooltip(false);
+		sap.ui.getCore().applyChanges();
+		clock.tick(1000);
+		oHandleDomRef = oSlider.getDomRef("handle1");
+
+		assert.strictEqual(oHandleDomRef.getAttribute("title"), "One", "The title should be One.");
+		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuenow"), "1", "The aria-valuenow should be 1.");
+		assert.strictEqual(oHandleDomRef.getAttribute("aria-valuetext"), "One", "The aria-valuetext should be One.");
+
+		// Cleanup
+		oSlider.destroy();
+	});
+
 	QUnit.module("Tooltips", function (hooks) {
 		hooks.before(function () {
 			jQuery.sap.require("sap/m/SliderTooltipBase");

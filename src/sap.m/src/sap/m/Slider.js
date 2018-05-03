@@ -513,7 +513,7 @@ function(
 
 		Slider.prototype.setDomValue = function(sNewValue) {
 			var oDomRef = this.getDomRef(),
-				sScaleLabel = this._formatValueByScale(sNewValue),
+				sScaleLabel = this._formatValueByCustomElement(sNewValue),
 				oTooltipContainer = this.getAggregation("_tooltipContainer");
 
 			if (!oDomRef) {
@@ -561,7 +561,7 @@ function(
 		 */
 		Slider.prototype._updateHandleAriaAttributeValues = function (oHandleDomRef, sValue, sScaleLabel) {
 			// update the ARIA attribute value
-			if (this._isScaleLabelNotNumerical(sValue)) {
+			if (this._isElementsFormatterNotNumerical(sValue)) {
 				oHandleDomRef.setAttribute("aria-valuenow", sValue);
 				oHandleDomRef.setAttribute("aria-valuetext", sScaleLabel);
 			} else {
@@ -571,7 +571,7 @@ function(
 		};
 
 		/**
-		 * Format the value from the scale callback.
+		 * Format the value from the Scale or Tooltip callback.
 		 *
 		 * As the scale might want to display something else, but not numbers, we need to ensure that the format
 		 * would be populated to the relevant parts of the Slider:
@@ -581,15 +581,39 @@ function(
 		 * That way we'd keep components as loose as possible.
 		 *
 		 * @param {float} fValue The value to be formatted
+		 * @param {string} sPriority Default priority is:
+		 *    1) Float value from the Slider,
+		 *    2) Scale formatter,
+		 *    3) Tooltips formatter so #3 always overwrites the rest.
+		 *    Priorities could be changed, so some formatter to prevail the others. Possible values are:
+		 *    - 'slider' (uses default value from the Slider),
+		 *    - 'scale' (use the Scale formatter),
+		 *    - null/undefined (use the Tooltips' formatter)
+		 *
 		 * @returns {string} The formatted value
 		 * @private
 		 */
-		Slider.prototype._formatValueByScale = function (fValue) {
+		Slider.prototype._formatValueByCustomElement = function (fValue, sPriority) {
 			var oScale = this._getUsedScale(),
+				oTooltip = this.getUsedTooltips()[0],
 				sFormattedValue = "" + fValue;
 
+			if (sPriority === 'slider') {
+				return sFormattedValue;
+			}
+
+			// If there's a labelling for the scale, use it
 			if (this.getEnableTickmarks() && oScale && oScale.getLabel) {
 				sFormattedValue = "" + oScale.getLabel(fValue, this);
+			}
+
+			if (sPriority === 'scale') {
+				return sFormattedValue;
+			}
+
+			// If there's a labelling for the tooltips, use it and overwrite previous
+			if (this.getShowAdvancedTooltip() && oTooltip && oTooltip.getLabel) {
+				sFormattedValue = "" + oTooltip.getLabel(fValue, this);
 			}
 
 			return sFormattedValue;
@@ -603,9 +627,9 @@ function(
 		 * @returns {boolean} Returns true, when the scale has a not numerical label defined.
 		 * @private
 		 */
-		Slider.prototype._isScaleLabelNotNumerical = function (fValue) {
-			var oScale = this._getUsedScale();
-			return oScale && oScale.getLabel && isNaN(oScale.getLabel(fValue));
+		Slider.prototype._isElementsFormatterNotNumerical = function (fValue) {
+			var vValue = this._formatValueByCustomElement(fValue);
+			return isNaN(vValue);
 		};
 
 		/**

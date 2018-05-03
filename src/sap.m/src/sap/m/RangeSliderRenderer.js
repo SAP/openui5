@@ -58,7 +58,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
                 oRM.writeAttribute("aria-controls", oHandleTooltip.getId());
             }
         }
-        if (oControl.getShowHandleTooltip()) {
+        if (oControl.getShowHandleTooltip() && !oControl.getShowAdvancedTooltip()) {
             this.writeHandleTooltip(oRM, oControl);
         }
 
@@ -90,8 +90,8 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
      * @param {string} fValue The current value for the accessibility state
      */
     RangeSliderRenderer.writeAccessibilityState = function(oRm, oSlider, fValue) {
-        var bNotNumericalLabel = oSlider._isScaleLabelNotNumerical(fValue),
-            sScaleLabel = oSlider._formatValueByScale(fValue),
+        var bNotNumericalLabel = oSlider._isElementsFormatterNotNumerical(fValue),
+            sScaleLabel = oSlider._formatValueByCustomElement(fValue),
             sValueNow;
 
         if (oSlider._getUsedScale() && !bNotNumericalLabel) {
@@ -189,7 +189,7 @@ sap.ui.define(["sap/ui/core/Renderer", "./SliderRenderer"], function (Renderer, 
             valuemin: oSlider.toFixed(oSlider.getMin()),
             valuemax: oSlider.toFixed(oSlider.getMax()),
             valuenow: aRange.join("-"),
-            valuetext: oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(oSlider._formatValueByScale, oSlider)),
+            valuetext: oSlider._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(oSlider._formatValueByCustomElement, oSlider)),
             labelledby: (sForwardedLabels + " " + oSlider.getAggregation("_handlesLabels")[2].getId()).trim() // range label
         });
 
