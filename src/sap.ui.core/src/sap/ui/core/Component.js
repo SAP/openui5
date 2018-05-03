@@ -2277,15 +2277,35 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', './Manifest', '
 				fnCollect(preload(sExtendedComponent, bAsync));
 			}
 
-			// lookup the components and preload them
+			// lookup the non-lazy components from component dependencies
+			var aComponents = [];
 			var mComponents = oManifest.getEntry("/sap.ui5/dependencies/components");
 			if (mComponents) {
 				for (var sComponentName in mComponents) {
 					// filter the lazy components
 					if (!mComponents[sComponentName].lazy) {
-						fnCollect(preload(sComponentName, bAsync));
+						aComponents.push(sComponentName);
 					}
 				}
+			}
+
+			// lookup the non-lazy components from component usages
+			var mUsages = oManifest.getEntry("/sap.ui5/componentUsages");
+			if (mUsages) {
+				// filter the lazy usages
+				for (var sUsage in mUsages) {
+					// default value is true, so explicit check for false
+					if (mUsages[sUsage].lazy === false && aComponents.indexOf(mUsages[sUsage].name) === -1) {
+						aComponents.push(mUsages[sUsage].name);
+					}
+				}
+			}
+
+			// preload the collected components
+			if (aComponents.length > 0) {
+				aComponents.forEach(function(sComponentName) {
+					fnCollect(preload(sComponentName, bAsync));
+				});
 			}
 
 			return bAsync ? Promise.all(aPromises) : undefined;
