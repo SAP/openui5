@@ -931,7 +931,7 @@ function(
 		sandbox.stub(this.oFlexController._oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
 		var fnCopyVariantStub = sandbox.stub(this.oModel, "_copyVariant").returns(Promise.resolve([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]));
 		var fnRemoveDirtyChangesStub = sandbox.stub(this.oModel, "_removeDirtyChanges").returns(Promise.resolve());
-		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties");
+		var fnSetVariantPropertiesStub = sandbox.stub(this.oModel, "_setVariantProperties").returns({fileName: "changeWithSetDefault"});
 		var fnSaveSequenceOfDirtyChangesStub = sandbox.stub(this.oFlexController._oChangePersistence, "saveSequenceOfDirtyChanges");
 
 		return this.oModel._handleSave(oEvent).then(function() {
@@ -939,6 +939,8 @@ function(
 			assert.ok(fnRemoveDirtyChangesStub.calledOnce, "RemoveDirtyChanges is called");
 			assert.ok(fnSetVariantPropertiesStub.calledOnce, "SetVariantProperties is called");
 			assert.ok(fnSaveSequenceOfDirtyChangesStub.calledOnce, "SaveSequenceOfDirtyChanges is called");
+			assert.equal(fnSaveSequenceOfDirtyChangesStub.args[0][0].length, 5, "five dirty changes are saved (new variant, 3 copied ctrl changes, setDefault change");
+			assert.equal(fnSaveSequenceOfDirtyChangesStub.args[0][0][4].fileName, "changeWithSetDefault", "the last change is 'setDefault'");
 			assert.notOk(this.oModel.getData()["variantMgmtId1"].modified, "finally the model property 'modified' is set to false");
 			oVariantManagement.destroy();
 			done();

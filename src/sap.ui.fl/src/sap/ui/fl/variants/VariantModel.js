@@ -704,7 +704,8 @@ sap.ui.define([
 							layer: Utils.getCurrentLayer(true),
 							variantManagementReference: sVariantManagementReference
 						};
-						this._setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);
+						var oSetDefaultChange = this._setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);
+						aDirtyChanges.push(oSetDefaultChange);
 					}
 					this.oFlexController._oChangePersistence.saveSequenceOfDirtyChanges(aDirtyChanges);
 					this.oData[sVariantManagementReference].modified = false;
