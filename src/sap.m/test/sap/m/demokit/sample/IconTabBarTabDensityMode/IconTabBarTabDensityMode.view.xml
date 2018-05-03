@@ -22,7 +22,7 @@
 									 text="Compact">
 						</RadioButton>
 						<RadioButton id="Mode-Default"
-									 text="Default">
+									 text="Inherit">
 						</RadioButton>
 					</buttons>
 				</RadioButtonGroup>
