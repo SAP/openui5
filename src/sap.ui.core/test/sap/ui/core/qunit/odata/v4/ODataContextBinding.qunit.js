@@ -54,9 +54,38 @@ sap.ui.require([
 			oExpectation = this.mock(this.oModel).expects("bindingCreated")
 				.withExactArgs(sinon.match.object);
 
+		this.mock(ODataContextBinding.prototype).expects("getGroupId").returns("myGroup");
+		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock")
+			.withExactArgs("myGroup", true);
+
 		oBinding = this.oModel.bindContext("/EMPLOYEES('42')");
 
 		sinon.assert.calledWithExactly(oExpectation, sinon.match.same(oBinding));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor: no lock for relative bindings", function (assert) {
+		var oBinding,
+			oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')");
+
+		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
+
+		oBinding = this.oModel.bindContext("EMPLOYEE_2_MANAGER", oContext);
+
+		assert.ok(oBinding.hasOwnProperty("oReadGroupLock"), "be V8-friendly");
+		assert.strictEqual(oBinding.oReadGroupLock, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor: lock when creating with base context", function (assert) {
+		var oContext = this.oModel.createBindingContext("/TEAMS('42')");
+
+		this.mock(ODataContextBinding.prototype).expects("getGroupId").returns("myGroup");
+		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock")
+			.withExactArgs("myGroup", true);
+
+		// code under test
+		this.oModel.bindContext("TEAM_2_EMPLOYEES('Foo')", oContext);
 	});
 
 	//*********************************************************************************************
@@ -69,6 +98,7 @@ sap.ui.require([
 		assert.ok(oBinding.hasOwnProperty("bInheritExpandSelect"));
 		assert.ok(oBinding.hasOwnProperty("oOperation"));
 		assert.ok(oBinding.hasOwnProperty("mQueryOptions"));
+		assert.ok(oBinding.hasOwnProperty("oReadGroupLock"));
 		assert.ok(oBinding.hasOwnProperty("sUpdateGroupId"));
 
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
@@ -328,7 +358,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	[null, {destroy : function () {}}].forEach(function (oReturnValueContext, i) {
 		QUnit.test("setContext, relative path, " + i, function (assert) {
-			var oBinding = this.oModel.bindContext("relative"),
+			var oBinding,
 				oContext = {
 					getBinding : function () {},
 					getPath : function () {}
@@ -336,6 +366,8 @@ sap.ui.require([
 				oModelMock = this.mock(this.oModel),
 				oSetContextSpy = this.spy(Binding.prototype, "setContext");
 
+			this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
+			oBinding = this.oModel.bindContext("relative");
 			oModelMock.expects("resolve").withExactArgs("relative", sinon.match.same(oContext))
 				.returns("/absolute1");
 			this.mock(oBinding).expects("_fireChange").twice()
@@ -558,11 +590,12 @@ sap.ui.require([
 			oModelMock = this.mock(this.oModel),
 			oPromise;
 
+		oModelMock.expects("lockGroup").withExactArgs("$direct", true).returns(oGroupLock1);
 		oBinding = this.oModel.bindContext("/EMPLOYEES(ID='1')", oContext,
 			{$$groupId : "$direct"}); // to prevent that the context is asked for the group ID
-
-		oModelMock.expects("lockGroup").withExactArgs("$direct", undefined)
+		oModelMock.expects("lockGroup").withExactArgs("$direct", sinon.match.same(oGroupLock1))
 			.returns(oGroupLock1);
+
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "EMPLOYEES(ID='1')?sap-client=111", sinon.match.same(oGroupLock1),
 				undefined, undefined, sinon.match.func, undefined, "/EMPLOYEES")
@@ -581,7 +614,7 @@ sap.ui.require([
 			// no Error is logged because error has canceled flag
 		});
 
-		this.mock(oBinding).expects("createRefreshGroupLock").withExactArgs("group", true)
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("group", true)
 			.returns(oGroupLock2);
 
 		// code under test (as called by ODataBinding#refresh)
@@ -598,6 +631,7 @@ sap.ui.require([
 			oListener = {},
 			oPromise;
 
+		oBinding.oReadGroupLock = undefined; // not interested in the initial case
 		this.mock(this.oModel).expects("lockGroup").withExactArgs("$direct", undefined)
 			.returns(oGroupLock);
 		oBindingMock.expects("getRelativePath").withExactArgs("/absolute/bar").returns("bar");
@@ -622,6 +656,7 @@ sap.ui.require([
 			oBindingMock = this.mock(oBinding),
 			oGroupLock = new _GroupLock("group");
 
+		oBinding.oReadGroupLock = undefined; // not interested in the initial case
 		this.mock(this.oModel).expects("lockGroup")
 			.withExactArgs("$auto", undefined)
 			.returns(oGroupLock);
@@ -640,15 +675,19 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: absolute binding (failure)", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
-			oCacheMock = this.mock(oBinding.oCachePromise.getResult()),
+		var oBinding,
+			oCacheMock,
 			oExpectedError = new Error("Expected read failure"),
 			oGroupLock1 = new _GroupLock(),
 			oGroupLock2 = new _GroupLock(),
 			oModelMock = this.mock(this.oModel),
 			oRejectedPromise = SyncPromise.reject(oExpectedError);
 
-		oModelMock.expects("lockGroup").withExactArgs("$direct", undefined).returns(oGroupLock1);
+		oModelMock.expects("lockGroup").withExactArgs("$direct", true).returns(oGroupLock1);
+		oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"});
+		oCacheMock = this.mock(oBinding.oCachePromise.getResult());
+		oModelMock.expects("lockGroup").withExactArgs("$direct", sinon.match.same(oGroupLock1))
+			.returns(oGroupLock1);
 		oModelMock.expects("lockGroup").withExactArgs("$direct", undefined).returns(oGroupLock2);
 		oCacheMock.expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock1), "foo", sinon.match.func, undefined)
@@ -780,7 +819,7 @@ sap.ui.require([
 				$apply: "filter(Amount gt 5)"
 			};
 
-		oModelMock.expects("getGroupId").withExactArgs().returns("baz");
+		oModelMock.expects("getGroupId").twice().withExactArgs().returns("baz");
 		oModelMock.expects("getUpdateGroupId").twice().withExactArgs().returns("fromModel");
 
 		oModelMock.expects("buildBindingParameters").withExactArgs(mParameters,
@@ -821,7 +860,9 @@ sap.ui.require([
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oGroupLock = new _GroupLock();
 
-		this.mock(this.oModel).expects("lockGroup").withExactArgs("$direct", undefined)
+		oBinding.oReadGroupLock = oGroupLock;
+		this.mock(this.oModel).expects("lockGroup")
+			.withExactArgs("$direct", sinon.match.same(oGroupLock))
 			.returns(oGroupLock);
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock), "foo", sinon.match.func, undefined)
@@ -834,10 +875,12 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("execute: absolute", function (assert) {
 		var sPath = "/OperationImport(...)",
-			oBinding = this.oModel.bindContext(sPath),
+			oBinding,
 			oGroupLock = {},
 			oPromise = {};
 
+		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
+		oBinding = this.oModel.bindContext(sPath);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(this.oModel).expects("lockGroup").withExactArgs("groupId", true)
@@ -977,7 +1020,7 @@ sap.ui.require([
 		oBindingMock = this.mock(oBinding);
 		oBindingMock.expects("_fireChange").never();
 		oBindingMock.expects("fetchCache").never();
-		oBindingMock.expects("createRefreshGroupLock").never();
+		oBindingMock.expects("createReadGroupLock").never();
 		this.mock(this.oModel).expects("getDependentBindings").never();
 
 		// code under test (as called by ODataBinding#refresh)
@@ -996,7 +1039,7 @@ sap.ui.require([
 			oBinding = this.oModel.bindContext("FunctionImport(...)", oBaseContext);
 
 		this.mock(oBinding).expects("_fireChange").never();
-		this.mock(oBinding).expects("createRefreshGroupLock").never();
+		this.mock(oBinding).expects("createReadGroupLock").never();
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
 
 		// code under test (as called by ODataBinding#refresh)
@@ -1825,7 +1868,7 @@ sap.ui.require([
 		oBinding = this.oModel.bindContext("EMPLOYEE_2_TEAM", oContext, {"foo" : "bar"});
 		oBinding.mCacheByContext = {};
 
-		this.mock(oBinding).expects("createRefreshGroupLock").withExactArgs("myGroup", false)
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false)
 			.returns(oGroupLock);
 		this.mock(this.oModel).expects("getDependentBindings")
 			.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
@@ -1854,11 +1897,11 @@ sap.ui.require([
 				oCache = {
 					fetchValue : function () {}
 				},
-				oRefreshGroupLock = {};
+				oReadGroupLock = {};
 
-			this.mock(oBinding).expects("createRefreshGroupLock").withExactArgs("myGroup", true)
+			this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", true)
 				.callsFake(function () {
-					oBinding.oRefreshGroupLock = oRefreshGroupLock;
+					oBinding.oReadGroupLock = oReadGroupLock;
 				});
 			this.mock(_Cache).expects("createSingle").returns(oCache);
 
@@ -1866,16 +1909,16 @@ sap.ui.require([
 			oBinding.refreshInternal("myGroup");
 
 			this.mock(this.oModel).expects("lockGroup")
-				.withExactArgs("$auto", sinon.match.same(oRefreshGroupLock))
-				.returns(oRefreshGroupLock);
+				.withExactArgs("$auto", sinon.match.same(oReadGroupLock))
+				.returns(oReadGroupLock);
 			this.mock(oCache).expects("fetchValue")
-				.withExactArgs(sinon.match.same(oRefreshGroupLock), "", sinon.match.func, undefined)
+				.withExactArgs(sinon.match.same(oReadGroupLock), "", sinon.match.func, undefined)
 				.returns(SyncPromise.resolve({}));
 
 			//code under test
 			oBinding.fetchValue("");
 
-			assert.deepEqual(oBinding.oRefreshGroupLock, undefined);
+			assert.deepEqual(oBinding.oReadGroupLock, undefined);
 		});
 	});
 
@@ -1888,10 +1931,10 @@ sap.ui.require([
 			oBinding.oCachePromise = SyncPromise.resolve({});
 			oBinding.oOperation.bAction = bAction;
 
-			this.mock(oBinding).expects("createRefreshGroupLock").exactly(bAction === false ? 1 : 0)
+			this.mock(oBinding).expects("createReadGroupLock").exactly(bAction === false ? 1 : 0)
 				.withExactArgs("myGroup", true)
 				.callsFake(function () {
-					oBinding.oRefreshGroupLock = oGroupLock;
+					oBinding.oReadGroupLock = oGroupLock;
 				});
 			this.mock(this.oModel).expects("getDependentBindings").never();
 			this.mock(oBinding).expects("_execute").exactly(bAction === false ? 1 : 0)
@@ -1900,7 +1943,7 @@ sap.ui.require([
 			//code under test
 			oBinding.refreshInternal("myGroup");
 
-			assert.strictEqual(oBinding.oRefreshGroupLock, undefined);
+			assert.strictEqual(oBinding.oReadGroupLock, undefined);
 		});
 	});
 

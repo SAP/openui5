@@ -95,13 +95,17 @@ sap.ui.define([
 				this.aFilters = [];
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
-				this.oRefreshGroupLock = undefined;
+				// a lock to ensure that submitBatch waits for an expected read
+				this.oReadGroupLock = undefined;
 				this.aSorters = _Helper.toArray(vSorters);
 
 				this.applyParameters(jQuery.extend(true, {}, mParameters));
 				this.oHeaderContext = this.bRelative
 					? null
 					: Context.create(this.oModel, this, sPath);
+				if (!this.bRelative || oContext && !oContext.fetchValue) {
+					this.createReadGroupLock(this.getGroupId(), true);
+				}
 				this.setContext(oContext);
 				oModel.bindingCreated(this);
 			}
@@ -911,7 +915,7 @@ sap.ui.define([
 			throw new Error("Cannot filter due to pending changes");
 		}
 
-		this.createRefreshGroupLock(this.getGroupId(), true);
+		this.createReadGroupLock(this.getGroupId(), true);
 		if (sFilterType === FilterType.Control) {
 			this.aFilters = aFilters;
 		} else {
@@ -1017,8 +1021,8 @@ sap.ui.define([
 		}
 		iStartInModel = this.aContexts[-1] ? iStart - 1 : iStart;
 
-		oGroupLock = this.oRefreshGroupLock;
-		this.oRefreshGroupLock = undefined;
+		oGroupLock = this.oReadGroupLock;
+		this.oReadGroupLock = undefined;
 		if (!this.bUseExtendedChangeDetection || !this.oDiff) {
 			oPromise = this.oCachePromise.then(function (oCache) {
 				if (oCache) {
@@ -1368,7 +1372,7 @@ sap.ui.define([
 	ODataListBinding.prototype.refreshInternal = function (sGroupId) {
 		var that = this;
 
-		this.createRefreshGroupLock(sGroupId, this.isRefreshable());
+		this.createReadGroupLock(sGroupId, this.isRefreshable());
 		this.oCachePromise.then(function (oCache) {
 			if (oCache) {
 				that.mCacheByContext = undefined;
@@ -1709,7 +1713,7 @@ sap.ui.define([
 
 		this.aSorters = _Helper.toArray(vSorters);
 		this.mCacheByContext = undefined;
-		this.createRefreshGroupLock(this.getGroupId(), true);
+		this.createReadGroupLock(this.getGroupId(), true);
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);
 		return this;
