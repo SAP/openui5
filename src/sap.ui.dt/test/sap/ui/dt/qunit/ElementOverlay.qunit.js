@@ -944,7 +944,76 @@ function(
 		});
 	});
 
-	QUnit.done(function( details ) {
+	QUnit.module("Given that an Overlay is created when scrolling is present", {
+		beforeEach : function(assert) {
+			var fnDone = assert.async();
+			this.oButton = new Button({
+				text : "Button"
+			});
+			this.oButton2 = new Button({
+				text : "Button2"
+			});
+			this.oButton3 = new Button({
+				text : "Button3"
+			});
+
+			this.oPanel0 = new Panel({
+				id : "SmallPanel",
+				content : [this.oButton, this.oButton2, this.oButton3],
+				width : "40px",
+				height : "100px"
+			});
+
+			this.oPanel0.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			this.oPanel0.$().find('>.sapMPanelContent').scrollLeft(20);
+			this.oPanel0.$().find('>.sapMPanelContent').scrollTop(20);
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oPanel0]
+			});
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				fnDone();
+			});
+
+		},
+		afterEach : function() {
+			this.oPanel0.destroy();
+			this.oDesignTime.destroy();
+		}
+	}, function(){
+		QUnit.test("then", function(assert) {
+			this.oPanelOverlay = OverlayRegistry.getOverlay(this.oPanel0);
+			this.oButtonOverlay = OverlayRegistry.getOverlay(this.oButton);
+			this.oButton2Overlay = OverlayRegistry.getOverlay(this.oButton2);
+			this.oPanelOverlay.applyStyles();
+			//Math.round is required for IE and Edge
+			assert.equal(
+				Math.round(this.oButtonOverlay.$().offset().left),
+				Math.round(this.oButton.$().offset().left),
+				"overlay has same left position as the control"
+			);
+			assert.equal(
+				Math.round(this.oButtonOverlay.$().offset().top),
+				Math.round(this.oButton.$().offset().top),
+				"overlay has same top position as the control"
+			);
+			assert.equal(
+				Math.round(this.oButton2Overlay.$().offset().left),
+				Math.round(this.oButton2.$().offset().left),
+				"overlay has same left position as the control"
+			);
+			assert.equal(
+				Math.round(this.oButton2Overlay.$().offset().top),
+				Math.round(this.oButton2.$().offset().top),
+				"overlay has same top position as the control"
+			);
+		});
+	});
+
+	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});
 
