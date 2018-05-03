@@ -486,7 +486,7 @@ sap.ui.require([
 		});
 
 		// Switch SubMenu
-		var oItem = {
+		var mPropertyBag = {
 			eventItem: {
 				data: function () {
 					return {
@@ -501,7 +501,7 @@ sap.ui.require([
 		};
 		var aExpectedSubmenu = [
 			{id: "variant1", text: "Variant 1", icon: "sap-icon://accept", enabled: false},
-			{id: "variant2", text: "Variant 2", icon: "", enabled: true}
+			{id: "variant2", text: "Variant 2", icon: "blank", enabled: true}
 		];
 
 		sandbox.stub(this.oControlVariantPlugin, "switchVariant", function(oTargetOverlay, sNewVariantReference, sCurrentVariantReference){
@@ -533,7 +533,7 @@ sap.ui.require([
 		assert.equal(aMenuItems[3].rank, 240, "and the entry has the correct rank");
 		assert.ok(aMenuItems[3].enabled(this.oVariantManagementOverlay), "and the entry is enabled");
 		assert.propEqual(aMenuItems[3].submenu, aExpectedSubmenu, "and the submenu array is correct");
-		aMenuItems[3].handler([this.oVariantManagementOverlay], oItem);
+		aMenuItems[3].handler([this.oVariantManagementOverlay], mPropertyBag);
 	});
 
 	QUnit.module("Given variant management control is renamed/duplicated", {

@@ -734,7 +734,7 @@ sap.ui.require([
 			};
 			this.oContextMenuControl = new ContextMenuControl();
 			for (var key in this.oMenuEntries) {
-				this.oContextMenuControl.addButton(this.oMenuEntries[key]);
+				this.oContextMenuControl.addMenuButton(this.oMenuEntries[key]);
 			}
 			var done = assert.async();
 			this.oDesignTime = new DesignTime({
@@ -787,14 +787,14 @@ sap.ui.require([
 		}, "Should throw an Error.");
 	});
 
-	QUnit.test("adding a button", function (assert) {
+	QUnit.test("adding a menu button", function (assert) {
 		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		var oBtn = {
 			text: "TestText",
 			icon: "",
 			handler: function () {}
 		};
-		assert.strictEqual(this.oContextMenuControl.addButton(oBtn), this.oContextMenuControl, "Should return the ContextMenu");
+		assert.strictEqual(this.oContextMenuControl.addMenuButton(oBtn), this.oContextMenuControl, "Should return the ContextMenu");
 		assert.strictEqual(this.oContextMenuControl.getFlexbox(true).getItems()[this.oContextMenuControl.getFlexbox(true).getItems().length - 1].getText(), oBtn.text, "Button should be added to Flexbox 1");
 		assert.strictEqual(this.oContextMenuControl.getFlexbox(true).getItems()[this.oContextMenuControl.getFlexbox(true).getItems().length - 1].getText(), oBtn.text, "Button should be added to Flexbox 2");
 	});
@@ -1326,7 +1326,7 @@ sap.ui.require([
 			x: 314,
 			y: 42
 		};
-		this.oContextMenuControl.addButton({
+		this.oContextMenuControl.addMenuButton({
 			text: "button",
 			handler: function () {
 				return undefined;
@@ -1717,28 +1717,28 @@ sap.ui.require([
 				enabled: false
 			})
 		];
-		var spyEnabledButtons = sinon.spy(this.oContextMenuControl, "_getNumberOfEnabledButtons");
-		var spyHideDisabled = sinon.spy(this.oContextMenuControl, "_hideDisabledButtons");
-		var spyHideInOverflow = sinon.spy(this.oContextMenuControl, "_hideButtonsInOverflow");
-		var spyReplaceLast = sinon.spy(this.oContextMenuControl, "_replaceLastVisibleButtonWithOverflowButton");
-		var spyCreateOverflow = sinon.spy(this.oContextMenuControl, "_createOverflowButton");
+		var oEnabledButtonsSpy = sinon.spy(this.oContextMenuControl, "_getNumberOfEnabledButtons");
+		var oHideDisabledSpy = sinon.spy(this.oContextMenuControl, "_hideDisabledButtons");
+		var oHideInOverflowSpy = sinon.spy(this.oContextMenuControl, "_hideButtonsInOverflow");
+		var oReplaceLastSpy = sinon.spy(this.oContextMenuControl, "_replaceLastVisibleButtonWithOverflowButton");
+		var oAddOverflowButtonSpy = sinon.spy(this.oContextMenuControl, "addOverflowButton");
 		this.oContextMenuControl._setButtonsForContextMenu(aButtons, new Button({
 			id: "btn0_"
 		}));
 		for (var i = 0; i < aButtons.length; i++) {
 			assert.notEqual(aButtons[i].getTooltip(), "", "ToolTip shouldn't be empty string");
 		}
-		sinon.assert.calledOnce(spyEnabledButtons);
-		sinon.assert.notCalled(spyHideDisabled);
-		sinon.assert.calledOnce(spyHideInOverflow);
-		sinon.assert.notCalled(spyReplaceLast);
-		sinon.assert.notCalled(spyCreateOverflow);
+		sinon.assert.calledOnce(oEnabledButtonsSpy);
+		sinon.assert.notCalled(oHideDisabledSpy);
+		sinon.assert.calledOnce(oHideInOverflowSpy);
+		sinon.assert.notCalled(oReplaceLastSpy);
+		sinon.assert.notCalled(oAddOverflowButtonSpy);
 		aButtons = null;
-		spyEnabledButtons = null;
-		spyHideDisabled = null;
-		spyHideInOverflow = null;
-		spyReplaceLast = null;
-		spyCreateOverflow = null;
+		oEnabledButtonsSpy = null;
+		oHideDisabledSpy = null;
+		oHideInOverflowSpy = null;
+		oReplaceLastSpy = null;
+		oAddOverflowButtonSpy = null;
 	});
 
 	QUnit.test("calling _setButtonsForContextMenu with 2 enabled and 2 disabled buttons", function (assert) {
@@ -1760,25 +1760,25 @@ sap.ui.require([
 				enabled: true
 			})
 		];
-		var spyEnabledButtons = sinon.spy(this.oContextMenuControl, "_getNumberOfEnabledButtons");
-		var spyHideDisabled = sinon.spy(this.oContextMenuControl, "_hideDisabledButtons");
-		var spyHideInOverflow = sinon.spy(this.oContextMenuControl, "_hideButtonsInOverflow");
-		var spyReplaceLast = sinon.spy(this.oContextMenuControl, "_replaceLastVisibleButtonWithOverflowButton");
-		var spyCreateOverflow = sinon.spy(this.oContextMenuControl, "_createOverflowButton");
+		var oEnabledButtonsSpy = sinon.spy(this.oContextMenuControl, "_getNumberOfEnabledButtons");
+		var oHideDisabledSpy = sinon.spy(this.oContextMenuControl, "_hideDisabledButtons");
+		var oHideInOverflowSpy = sinon.spy(this.oContextMenuControl, "_hideButtonsInOverflow");
+		var oReplaceLastSpy = sinon.spy(this.oContextMenuControl, "_replaceLastVisibleButtonWithOverflowButton");
+		var oAddOverflowButtonSpy = sinon.spy(this.oContextMenuControl, "addOverflowButton");
 		this.oContextMenuControl._setButtonsForContextMenu(aButtons, new Button({
 			id: "btn1_"
 		}));
-		sinon.assert.calledOnce(spyEnabledButtons);
-		sinon.assert.calledOnce(spyHideDisabled);
-		sinon.assert.calledOnce(spyHideInOverflow);
-		sinon.assert.notCalled(spyReplaceLast);
-		sinon.assert.calledOnce(spyCreateOverflow);
+		sinon.assert.calledOnce(oEnabledButtonsSpy);
+		sinon.assert.calledOnce(oHideDisabledSpy);
+		sinon.assert.calledOnce(oHideInOverflowSpy);
+		sinon.assert.notCalled(oReplaceLastSpy);
+		sinon.assert.calledOnce(oAddOverflowButtonSpy);
 		aButtons = null;
-		spyEnabledButtons = null;
-		spyHideDisabled = null;
-		spyHideInOverflow = null;
-		spyReplaceLast = null;
-		spyCreateOverflow = null;
+		oEnabledButtonsSpy = null;
+		oHideDisabledSpy = null;
+		oHideInOverflowSpy = null;
+		oReplaceLastSpy = null;
+		oAddOverflowButtonSpy = null;
 	});
 
 	QUnit.test("calling _setButtonsForContextMenu with 3 enabled and 1 disabled buttons", function (assert) {
@@ -1801,25 +1801,25 @@ sap.ui.require([
 				enabled: false
 			})
 		];
-		var spyEnabledButtons = sinon.spy(this.oContextMenuControl, "_getNumberOfEnabledButtons");
-		var spyHideDisabled = sinon.spy(this.oContextMenuControl, "_hideDisabledButtons");
-		var spyHideInOverflow = sinon.spy(this.oContextMenuControl, "_hideButtonsInOverflow");
-		var spyReplaceLast = sinon.spy(this.oContextMenuControl, "_replaceLastVisibleButtonWithOverflowButton");
-		var spyCreateOverflow = sinon.spy(this.oContextMenuControl, "_createOverflowButton");
+		var oEnabledButtonsSpy = sinon.spy(this.oContextMenuControl, "_getNumberOfEnabledButtons");
+		var oHideDisabledSpy = sinon.spy(this.oContextMenuControl, "_hideDisabledButtons");
+		var oHideInOverflowSpy = sinon.spy(this.oContextMenuControl, "_hideButtonsInOverflow");
+		var oReplaceLastSpy = sinon.spy(this.oContextMenuControl, "_replaceLastVisibleButtonWithOverflowButton");
+		var oAddOverflowButtonSpy = sinon.spy(this.oContextMenuControl, "addOverflowButton");
 		this.oContextMenuControl._setButtonsForContextMenu(aButtons, new Button({
 			id: "btn2_"
 		}));
-		sinon.assert.calledOnce(spyEnabledButtons);
-		sinon.assert.calledOnce(spyHideDisabled);
-		sinon.assert.calledOnce(spyHideInOverflow);
-		sinon.assert.calledOnce(spyReplaceLast);
-		sinon.assert.calledOnce(spyCreateOverflow);
+		sinon.assert.calledOnce(oEnabledButtonsSpy);
+		sinon.assert.calledOnce(oHideDisabledSpy);
+		sinon.assert.calledOnce(oHideInOverflowSpy);
+		sinon.assert.calledOnce(oReplaceLastSpy);
+		sinon.assert.calledOnce(oAddOverflowButtonSpy);
 		aButtons = null;
-		spyEnabledButtons = null;
-		spyHideDisabled = null;
-		spyHideInOverflow = null;
-		spyReplaceLast = null;
-		spyCreateOverflow = null;
+		oEnabledButtonsSpy = null;
+		oHideDisabledSpy = null;
+		oHideInOverflowSpy = null;
+		oReplaceLastSpy = null;
+		oAddOverflowButtonSpy = null;
 	});
 
 	QUnit.test("calling show with contextMenu = true and contextMenu = false", function (assert) {
@@ -1881,6 +1881,28 @@ sap.ui.require([
 		this.oContextMenuControl.close(true);
 		assert.equal(oCloseExpandedPopoverStub.callCount, 1, "then the close function on expanded popover is called once");
 		assert.equal(oCloseCompactPopoverStub.callCount, 1, "then the close function on expanded popover is called once");
+	});
+
+	QUnit.test("calling _getIcon with invalid value", function(assert) {
+		var sIncidentIcon = "sap-icon://incident";
+		assert.strictEqual(this.oContextMenuControl._getIcon({ icon: "object is not valid" }), sIncidentIcon,
+			"[object] - then icon for invalid value is returned");
+		assert.strictEqual(this.oContextMenuControl._getIcon(undefined), sIncidentIcon,
+			"undefined - then icon for invalid value is returned");
+		assert.strictEqual(this.oContextMenuControl._getIcon(null), sIncidentIcon,
+			"null - then icon for invalid value is returned");
+	});
+
+	QUnit.test("calling _getIcon with 'blank' value", function(assert) {
+		var sBlankIconInButtonValue = " ";
+		assert.strictEqual(this.oContextMenuControl._getIcon("blank"), sBlankIconInButtonValue,
+			"then icon for blank icon in the button is returned");
+	});
+
+	QUnit.test("calling _getIcon with valid icon", function(assert) {
+		var sValidIcon = "sap-icon://accept";
+		assert.strictEqual(this.oContextMenuControl._getIcon(sValidIcon), sValidIcon,
+			"then icon for blank icon in the button is returned");
 	});
 
 	QUnit.module("ContextMenuControl API", {
