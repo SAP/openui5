@@ -7,10 +7,12 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 
 	var fnConfigureActionCommand = function(oElement, oCommand, vAction){
 		var sChangeType;
+		var bJsOnly = false;
 		if (typeof (vAction) === "string"){
 			sChangeType = vAction;
 		} else {
 			sChangeType = vAction && vAction.changeType;
+			bJsOnly = vAction && vAction.jsOnly;
 		}
 
 		if (!sChangeType){
@@ -18,8 +20,19 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 		}
 
 		oCommand.setChangeType(sChangeType);
+		oCommand.setJsOnly(bJsOnly);
 		return true;
 	};
+
+	function configureAddXmlCommand(oElement, mSettings, oDesignTimeMetadata){
+		var oAction = {
+			changeType : "addXML"
+		};
+		if (oDesignTimeMetadata){
+			jQuery.extend(oAction, oDesignTimeMetadata.getAction("addXML", oElement));
+		}
+		return oAction;
+	}
 
 	var fnConfigureCreateContainerCommand = function(oElement, mSettings, oDesignTimeMetadata){
 		var oNewAddedElement = mSettings.element || sap.ui.getCore().byId(mSettings.element.id);
@@ -91,10 +104,9 @@ sap.ui.define(['sap/ui/base/ManagedObject', 'sap/ui/dt/ElementUtil', 'sap/ui/dt/
 			clazz : 'sap.ui.rta.command.BindProperty'
 		},
 		"addXML" : {
-			clazz : 'sap.ui.rta.command.AddXML'
+			clazz : 'sap.ui.rta.command.AddXML',
+			configure : configureAddXmlCommand
 		},
-
-		/* NEW COMMANDS, ALIGNED WITH A SCALABILITY CONCEPT */
 		"createContainer" : {
 			clazz : 'sap.ui.rta.command.CreateContainer',
 			configure : fnConfigureCreateContainerCommand

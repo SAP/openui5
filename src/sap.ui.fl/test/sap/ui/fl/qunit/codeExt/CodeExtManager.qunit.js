@@ -221,7 +221,8 @@ sap.ui.require([
 					sapui5Version: sap.ui.version
 				},
 				dependentSelector: {},
-				validAppVersions: {}
+				validAppVersions: {},
+				jsOnly: false
 			},
 			{
 				fileName: sGeneratedId,
@@ -250,7 +251,8 @@ sap.ui.require([
 					sapui5Version: sap.ui.version
 				},
 				dependentSelector: {},
-				validAppVersions: {}
+				validAppVersions: {},
+				jsOnly: false
 			}
 		];
 

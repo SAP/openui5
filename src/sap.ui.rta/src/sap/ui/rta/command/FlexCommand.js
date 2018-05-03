@@ -40,6 +40,12 @@ sap.ui.define([
 					type : "string"
 				},
 				/**
+				 * Change can only be applied on js, other modifiers like xml will not work
+				 */
+				jsOnly : {
+					type : "boolean"
+				},
+				/**
 				 * selector object containing id, appComponent and controlType to create a command for an element, which is not instantiated
 				 */
 				selector : {
@@ -52,7 +58,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * Retrives id of element or selector
+	 * Retrieves id of element or selector
 	 *
 	 * @returns {string} id value
 	 * @public
@@ -63,7 +69,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Retrives app component of element or selector
+	 * Retrieves app component of element or selector
 	 *
 	 * @returns {sap.ui.core.UIComponent} component
 	 * @private
@@ -163,6 +169,7 @@ sap.ui.define([
 		if (mFlexSettings) {
 			jQuery.extend(mChangeSpecificData, mFlexSettings);
 		}
+		mChangeSpecificData.jsOnly = this.getJsOnly();
 		var oModel = this.getAppComponent().getModel("$FlexVariants");
 		var sVariantReference;
 		if (oModel && sVariantManagementReference) {
