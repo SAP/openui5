@@ -1,0 +1,75 @@
+{
+	"@odata.context" : "$metadata#BusinessPartners(Region,SalesAmount)",
+	"@odata.count" : "14",
+	"value" : [{
+		"@odata.id" : null,
+		"Region" : "West",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "15874958"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Wales",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "1636710"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Schottland",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "1149062"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Saxony",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "1161590"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Mid-West",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "6769193"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Lower Saxony",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "3160739"
+	}, {
+		"@odata.id" : null,
+		"Region" : "London",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "8163683"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Hessia",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "5913956"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Hamburg",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "2309561"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Greater Manchester",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "5215803"
+	}, {
+		"@odata.id" : null,
+		"Region" : "East",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "12491280"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Berlin",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "1670139"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Bavaria",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "5857115"
+	}, {
+		"@odata.id" : null,
+		"Region" : "Baden-Württemberg",
+		"SalesAmount@odata.type" : "#Decimal",
+		"SalesAmount" : "4416538"
+	}]
+}

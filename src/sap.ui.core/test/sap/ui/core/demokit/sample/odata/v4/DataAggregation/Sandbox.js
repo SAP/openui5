@@ -24,13 +24,13 @@ sap.ui.define([
 	function setupMockServer() {
 		TestUtils.setupODataV4Server(oSandbox, {
 			"$metadata" : {
-				source : "ZGK_C_SalesOrderItem.metadata.xml"
+				source : "metadata.xml"
 			},
-			"ZGK_C_SalesOrderItem_RD_V4(P_DateFunction='PREVIOUSYEAR')/Set?$orderby=ProductCategory%20desc&$apply=groupby((ProductCategory),aggregate(NetAmountInDisplayCurrency))&$count=true&$skip=0&$top=110" : {
-				source : "ZGK_C_SalesOrderItem_L1.json"
+			"BusinessPartners?$orderby=Region%20desc&$apply=groupby((Region),aggregate(SalesAmount))&$count=true&$skip=0&$top=110" : {
+				source : "BusinessPartners_L1.json"
 			}
 		}, "sap/ui/core/sample/odata/v4/DataAggregation/data",
-		"/sap/opu/odata4/sap/zgk_c_salesorderitem_rd_v4_sb/srvd/sap/zgk_c_salesorderitem_rd_v4_sd/0001/");
+		"/serviceroot.svc/");
 	}
 
 	function adaptModelConstructor() {
