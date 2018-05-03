@@ -372,7 +372,7 @@ function(
 
 	AggregationForwarder.prototype._getTargetAggregationInfo = function(oTarget) {
 		var oTargetAggregationInfo = this.targetAggregationInfo;
-		if (!oTargetAggregationInfo) {
+		if (!oTargetAggregationInfo && oTarget) {
 			oTargetAggregationInfo = this.targetAggregationInfo = oTarget.getMetadata().getAggregation(this.targetAggregationName);
 
 			if (!oTargetAggregationInfo) {
@@ -394,9 +394,31 @@ function(
 	/*
 	 * Returns the forwarding target instance and ensures that this.targetAggregationInfo is available
 	 */
-	AggregationForwarder.prototype.getTarget = function(oInstance) {
+	AggregationForwarder.prototype.getTarget = function(oInstance, bConnectTargetInfo) {
 		var oTarget = this._getTarget.call(oInstance);
 		this._getTargetAggregationInfo(oTarget);
+
+		if (oTarget) {
+			oInstance.mForwardedAggregations = oInstance.mForwardedAggregations || {};
+
+			if (oInstance.mForwardedAggregations[this.aggregation.name] === undefined || bConnectTargetInfo) {
+				// once the target is there, connect the aggregations:
+				// Make mForwardedAggregations[name] a pointer to mAggregations[name] of the target, so the former always has the same elements,
+				// without the need to update when elements are added/removed and without increasing memory for pointers per aggregated element
+				// which would be required in a copy of the map
+				var vTargetAggregation = oTarget.mAggregations[this.targetAggregationInfo.name];
+				if (vTargetAggregation // target aggregation may not exist yet ... but an empty array is ok
+						&& !bConnectTargetInfo
+						&& !(Array.isArray(vTargetAggregation) && vTargetAggregation.length === 0)) {
+					// there should not be any content in the target at the time when the target has been found for the first time
+					throw new Error("There is already content in aggregation " + this.targetAggregationInfo.name + " of " + oTarget + " to which forwarding is being set up now.");
+				} else {
+					var vInitial = oTarget.mAggregations[this.targetAggregationInfo.name] || (this.targetAggregationInfo.multiple ? [] : null); // initialize aggregation for the target
+					oInstance.mForwardedAggregations[this.aggregation.name] = oTarget.mAggregations[this.targetAggregationInfo.name] = vInitial;
+				}
+			}
+		}
+
 		return oTarget;
 	};
 
@@ -421,6 +443,8 @@ function(
 	AggregationForwarder.prototype.set = function(oInstance, oAggregatedObject) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
+
+		oInstance.mForwardedAggregations[this.aggregation.name] = oAggregatedObject;
 
 		ManagedObjectMetadata.addAPIParentInfo(oAggregatedObject, oInstance, this.aggregation.name);
 
@@ -522,6 +546,9 @@ function(
 	AggregationForwarder.prototype.removeAll = function(oInstance) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
+
+		delete oInstance.mForwardedAggregations[this.aggregation.name];
+
 		var aRemoved = this.targetAggregationInfo.removeAll(oTarget);
 		// update API parent of removed objects
 		for (var i = 0; i < aRemoved.length; i++) {
@@ -535,7 +562,12 @@ function(
 	AggregationForwarder.prototype.destroy = function(oInstance) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
-		this.targetAggregationInfo.destroy(oTarget);
+
+		delete oInstance.mForwardedAggregations[this.aggregation.name];
+
+		if (oTarget) {
+			this.targetAggregationInfo.destroy(oTarget);
+		}
 		// API parent info of objects being destroyed is removed in ManagedObject.prototype.destroy()
 		return oInstance;
 	};
