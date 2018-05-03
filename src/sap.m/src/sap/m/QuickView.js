@@ -217,6 +217,8 @@ sap.ui.define([
 					openBy: oEvent.getParameter("openBy"),
 					origin: that.getCloseButton()
 				});
+
+				that._bRendered = false;
 			}
 		});
 
