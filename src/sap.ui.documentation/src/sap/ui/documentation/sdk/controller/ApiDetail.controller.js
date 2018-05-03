@@ -52,6 +52,9 @@ sap.ui.define([
 
 				var oComponent = this.getOwnerComponent();
 
+				// Cache allowed members
+				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
+
 				this._sTopicid = oEvent.getParameter("arguments").id;
 				this._sEntityType = oEvent.getParameter("arguments").entityType;
 				this._sEntityId = oEvent.getParameter("arguments").entityId;
@@ -149,8 +152,7 @@ sap.ui.define([
 			 * @private
 			 */
 			_buildBorrowedModel: function (oControlData) {
-				// Cache allowed members and ControlData
-				this._aAllowedMembers = this.getModel("versionData").getProperty("/allowedMembers");
+				// Cache ControlData
 				this._oControlData = oControlData;
 
 				// Collect borrowed data
@@ -164,13 +166,21 @@ sap.ui.define([
 			 * @private
 			 */
 			_findEntityInApiJsonData: function (aLibsData) {
-				var iLen,
+				var oLibItem,
+					iLen,
 					i;
 
 				// Find entity in loaded libs data
 				for (i = 0, iLen = aLibsData.length; i < iLen; i++) {
-					if (aLibsData[i].name === this._sTopicid) {
-						return aLibsData[i];
+					oLibItem = aLibsData[i];
+					if (oLibItem.name === this._sTopicid) {
+						// Check if we are allowed to display the requested symbol
+						if (this._aAllowedMembers.indexOf(oLibItem.visibility) >= 0) {
+							return oLibItem;
+						} else {
+							// We found the requested symbol but we are not allowed to show it.
+							return Promise.reject(this.NOT_FOUND);
+						}
 					}
 				}
 
