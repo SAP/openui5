@@ -8,10 +8,11 @@ sap.ui.define([
     'sap/ui/base/ManagedObject',
     'sap/ui/core/Control',
     'sap/ui/core/mvc/Controller',
+	'sap/base/util/extend',
     'sap/ui/core/library',
     "./ViewRenderer"
 ],
-	function(jQuery, ManagedObject, Control, Controller, library, ViewRenderer) {
+	function(jQuery, ManagedObject, Control, Controller, extend, library, ViewRenderer) {
 	"use strict";
 
 
@@ -147,7 +148,15 @@ sap.ui.define([
 			/**
 			 * A view definition
 			 */
-			viewContent : 'any',
+			definition : 'any',
+
+			/**
+			 * Deprecated as of 1.56: Use <code>definition</code> instead.
+			 */
+			viewContent : {
+				type: 'any',
+				deprecated: true
+			},
 
 			/**
 			 * Additional configuration data that should be given to the view at construction time
@@ -179,7 +188,7 @@ sap.ui.define([
 	 * external view: { preprocessor: ("my.Preprocessor" || function), settings: {everythingElse: ... , ...} }
 	 * internal view: { _settings:{ preprocessor: ("my.Preprocessor" || function), settings: {everythingElse: ... , ...}}, _internalFoo: "bar"}
 	 *
-	 * @param oPreprocessor Preprocessor config object
+	 * @param {sap.ui.core.mvc.View.Preprocessor} oPreprocessor Preprocessor config object
 	 * @private
 	 */
 	function alignPreprocessorStructure(oPreprocessor) {
@@ -197,6 +206,8 @@ sap.ui.define([
 	 * preprocessor config object
 	 *
 	 * @param {object} oPreprocessor Preprocessor config object
+	 * @param {boolean} bAsync Whether processing is async or not
+	 * @return {object} oPreprocessorImpl
 	 * @private
 	 */
 	function initPreprocessor(oPreprocessor, bAsync) {
@@ -234,6 +245,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sViewType Type of the view
 	 * @param {string} sType type of the preprocessor for the specified viewType.
+	 * @returns {object} aPreprocessors The preprocessor queue
 	 * @private
 	 */
 	function getPreprocessorQueue(sViewType, sType) {
@@ -824,6 +836,51 @@ sap.ui.define([
 	 * @function
 	 */
 
+	/**
+	 * Creates a view of the given type, name and with the given id.
+	 *
+	 * @param {object} mOptions A parameter map for the view instantiation. Specialized view types could bring in additional parameter.
+	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
+	 * @param {string} [mOptions.viewName] Name of the view resource in module name notation (without suffix)
+	 * @param {sap.ui.core.mvc.ViewType} [mOptions.type] Specifies what kind of view will be instantiated. All valid
+	 * view types are listed in the enumeration  {@link sap.ui.core.mvc.ViewType}.
+	 * @param {any} [mOptions.viewData] The view data can hold user specific data. This data is available
+	 * during the whole lifecycle of the view and the controller
+	 * @param {object} [mOptions.preprocessors] Can hold a map from the specified preprocessor type (e.g. "xml") to an array of
+	 * preprocessor configurations; each configuration consists of a <code>preprocessor</code> property (optional when
+	 * registered as on-demand preprocessor) and may contain further preprocessor-specific settings. The preprocessor can
+	 * be either a module name as string implementation of {@link sap.ui.core.mvc.View.Preprocessor} or a function according to
+	 * {@link sap.ui.core.mvc.View.Preprocessor.process}. Do not set properties starting with underscore like <code>_sProperty</code>
+	 * property, these are reserved for internal purposes. When several preprocessors are provided for one hook, it has to be made
+	 * sure that they do not conflict when being processed serially.
+	 * <strong>Note</strong>: These preprocessors are only available to this instance. For global or
+	 * on-demand availability use {@link sap.ui.core.mvc.XMLView.registerPreprocessor}.
+	 * <strong>Note</strong>: Please note that preprocessors in general are currently only available
+	 * to XMLViews
+	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view.
+	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
+	 * between multiple views is not supported.
+	 * @public
+	 * @static
+	 * @since 1.56.0
+	 * @return {Promise} a Promise which resolves with the created View instance
+	 */
+	View.create = function(mOptions) {
+		var mParameters = extend(true, {}, mOptions);
+		mParameters.async = true;
+		mParameters.viewContent = mParameters.definition;
+		return new Promise(function(resolve, reject) {
+			 var sViewClass = getViewClassName(mParameters);
+			 sap.ui.require([sViewClass], function(ViewClass){
+				 resolve(ViewClass);
+			 }, function(oError) {
+				 reject(oError);
+			 });
+		})
+		.then(function(ViewClass) {
+			return viewFactory(mParameters.id, mParameters, mParameters.type).loaded();
+		});
+	};
 
 	/**
 	 * Creates a view of the given type, name and with the given id.
@@ -864,12 +921,29 @@ sap.ui.define([
 	 *
 	 * @param {string} sId id of the newly created view, only allowed for instance creation
 	 * @param {string|object} [vView] the view name or view configuration object
+	 * @param {sap.ui.core.mvc.ViewType} sType Specifies what kind of view will be instantiated. All valid
+	 * view types are listed in the enumeration  {@link sap.ui.core.mvc.ViewType}.
 	 * @param {boolean} [vView.async] defines how the view source is loaded and rendered later on
 	 * @public
 	 * @static
+	 * @deprecated since 1.56: Use sap.ui.core.mvc.View.create instead
 	 * @return {sap.ui.core.mvc.View} the created View instance
 	 */
 	sap.ui.view = function(sId, vView, sType /* used by factory functions */) {
+		if (vView && vView.async) {
+			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.view'. Use 'sap.ui.mvc.View.create' instead");
+		} else {
+			jQuery.sap.log.warning("Do not use synchronous view creation! Use the new asynchronous factory 'sap.ui.mvc.View.create' instead");
+		}
+		return viewFactory(sId, vView, sType);
+	};
+
+	/*
+	 * The old sap.ui.view implementation
+	 *
+	 * @private
+	 */
+	function viewFactory(sId, vView, sType) {
 		var view = null, oView = {};
 
 		// if the id is a configuration object or a string
@@ -914,25 +988,33 @@ sap.ui.define([
 			}
 		}
 
+		var sViewClass = getViewClassName(oView);
+		view = createView(sViewClass, oView);
+		return view;
+	}
+
+	function getViewClassName(oViewSettings) {
+		var sViewClass;
+
 		// view creation
-		if (!oView.type) {
+		if (!oViewSettings.type) {
 			throw new Error("No view type specified.");
-		} else if (oView.type === ViewType.JS) {
-			view = createView('sap/ui/core/mvc/JSView', oView);
-		} else if (oView.type === ViewType.JSON) {
-			view = createView('sap/ui/core/mvc/JSONView', oView);
-		} else if (oView.type === ViewType.XML) {
-			view = createView('sap/ui/core/mvc/XMLView', oView);
-		} else if (oView.type === ViewType.HTML) {
-			view = createView('sap/ui/core/mvc/HTMLView', oView);
-		} else if (oView.type === ViewType.Template) {
-			view = createView('sap/ui/core/mvc/TemplateView', oView);
+		} else if (oViewSettings.type === ViewType.JS) {
+			sViewClass = 'sap/ui/core/mvc/JSView';
+		} else if (oViewSettings.type === ViewType.JSON) {
+			sViewClass = 'sap/ui/core/mvc/JSONView';
+		} else if (oViewSettings.type === ViewType.XML) {
+			sViewClass = 'sap/ui/core/mvc/XMLView';
+		} else if (oViewSettings.type === ViewType.HTML) {
+			sViewClass = 'sap/ui/core/mvc/HTMLView';
+		} else if (oViewSettings.type === ViewType.Template) {
+			sViewClass = 'sap/ui/core/mvc/TemplateView';
 		} else { // unknown view type
-			throw new Error("Unknown view type " + oView.type + " specified.");
+			throw new Error("Unknown view type " + oViewSettings.type + " specified.");
 		}
 
-		return view;
-	};
+		return sViewClass;
+	}
 
 	function createView(sViewClass, oViewSettings) {
 		var ViewClass = sap.ui.require(sViewClass);
