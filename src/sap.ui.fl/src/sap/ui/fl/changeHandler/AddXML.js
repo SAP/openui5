@@ -57,13 +57,11 @@ sap.ui.define([
 		var sFragment = Utils.asciiToString(oChangeDefinition.content.fragment);
 		var iIndex = oChangeDefinition.content.index;
 		var oView = mPropertyBag.view;
-		var oViewInstance = Utils.getViewForControl(oControl);
-		var oController = oViewInstance && oViewInstance.getController();
 		var sNamespace = oChange.getProjectId();
 
 		var aNewControls;
 		try {
-			aNewControls = oModifier.instantiateFragment(sFragment, sNamespace, oViewInstance, oController);
+			aNewControls = oModifier.instantiateFragment(sFragment, sNamespace, oView);
 		} catch (oError) {
 			throw new Error("The following XML Fragment could not be instantiated: " + sFragment + " Reason: " + oError.message);
 		}

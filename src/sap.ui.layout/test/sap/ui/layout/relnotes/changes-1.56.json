@@ -49,6 +49,12 @@
         "type": "FIX",
         "text": " sap.ui.layout.VerticalLayout: Unwanted scroll removed in IE",
         "references": []
+      },
+      {
+        "id": "c7845fc31b824bf40f2682fce321703df59c1641",
+        "type": "FIX",
+        "text": " SimpleForm: Error if layout is set after content",
+        "references": []
       }
     ]
   }

@@ -1000,9 +1000,11 @@ QUnit.test("Check if the BlockLayer is displayed", function(assert) {
 		assert.ok(this.oSpyHideBL.calledOnce, "_showBlockLayer called within Popup");
 
 		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
-		assert.ok(!jQuery("html").hasClass("sapUiBLyBack"), "CSS class removed from HTML-tag");
-		assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
-		done();
+		setTimeout(function() {
+			assert.ok(!jQuery("html").hasClass("sapUiBLyBack"), "CSS class removed from HTML-tag");
+			assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
+			done();
+		});
 	};
 
 	this.oPopup.setDurations(0, 0);
@@ -1091,12 +1093,14 @@ QUnit.test("Stacked Modal Popups Should Change Z-Index of BlockLayer", function(
 		var $oDomRefBL = jQuery("#sap-ui-blocklayer-popup");
 		var iZIndexBL = parseInt($oDomRefBL.css("z-index"), 10);
 
-		assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
-		assert.ok(!jQuery("html").hasClass("sapUiBLyBack"), "CSS class should be removed from HTML-tag");
+		setTimeout(function() {
+			assert.equal($oDomRefBL.css("visibility"), "hidden", "BlockLayer should be hidden");
+			assert.ok(!jQuery("html").hasClass("sapUiBLyBack"), "CSS class should be removed from HTML-tag");
 
-		oPopup1.destroy();
-		oPopup2.destroy();
-		done();
+			oPopup1.destroy();
+			oPopup2.destroy();
+			done();
+		});
 	}.bind(this);
 
 	var fnClosed2 = function() {

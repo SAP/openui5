@@ -385,6 +385,7 @@
 			this.oQuickView._oPopover.close();
 			this.clock.tick(500);
 			assert.strictEqual(this.oQuickView._oPopover.$().is(':visible'), false, "QuickView is not visible after it's closed.");
+			assert.strictEqual(this.oQuickView._bRendered, false, "QuickView is marked as not rendered");
 		});
 
 		QUnit.test("Invalidating the button that is used in openBy", function (assert) {

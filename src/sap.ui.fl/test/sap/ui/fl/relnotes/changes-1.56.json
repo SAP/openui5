@@ -55,6 +55,12 @@
         "type": "FIX",
         "text": " Rename and move API for Control Personalization",
         "references": []
+      },
+      {
+        "id": "ce781b4f47380c296ba64c00a6eb0aa25647dfed",
+        "type": "FIX",
+        "text": "sap.ui.fl - Variant URL parameter fixes",
+        "references": []
       }
     ]
   }

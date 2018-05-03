@@ -22,8 +22,8 @@
 							  objectSubtitle="AAUFSA000100003002">
 
 				<actions>
-					<ObjectPageHeaderActionButton icon="sap-icon://action" text="Open in..."/>
-					<ObjectPageHeaderActionButton icon="sap-icon://refresh" press="changeDesign" text="change design"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" text="Open in..." tooltip="action"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://refresh" press="changeDesign" text="change design" tooltip="refresh"/>
 				</actions>
 			</ObjectPageHeader>
 		</headerTitle>

@@ -32,7 +32,7 @@
 		</m:VBox>
 		<m:Label text="Variants" />
 		<VariantManagement id="idVariantManagementCtrl"
-			for="idModelChangeBtn" save="onSave" manage="onManage"
+			for="idModelChangeBtn" save="onSave" manage="onManage" select="onSelect"
 			showExecuteOnSelection="true" />
 	</l:VerticalLayout>
 </mvc:View>

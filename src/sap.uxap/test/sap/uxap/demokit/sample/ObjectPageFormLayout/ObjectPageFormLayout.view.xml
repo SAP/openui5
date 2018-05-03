@@ -20,8 +20,8 @@
 							  isObjectIconAlwaysVisible="true"
 							  objectSubtitle="Senior UI Developer">
 				<actions>
-					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://pull-down" text="show section" type="Emphasized" tooltip="pull-down"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://show" text="show state" type="Emphasized" tooltip="show"/>
 				</actions>
 				<breadCrumbsLinks>
 					<m:Link text="Page 1 a very long link" press="handleLink1Press"/>

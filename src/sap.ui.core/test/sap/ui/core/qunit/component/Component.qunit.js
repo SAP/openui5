@@ -781,7 +781,66 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Component Usage");
+	QUnit.module("Component Usage", {
+		beforeEach : function() {
+
+			// setup fake server
+			var oManifest = this.oManifest = {
+					"sap.app" : {
+						"id" : "my.preloadusage"
+					},
+					"sap.ui5" : {
+						"dependencies": {
+							"components": {
+								"my.used": {}
+							}
+						},
+						"componentUsages": {
+							"defaultUsage": {
+								"name": "defaultUsage"
+							},
+							"lazyUsage": {
+								"name": "lazyUsage",
+								"lazy": true
+							},
+							"nonLazyUsage": {
+								"name": "nonLazyUsage",
+								"lazy": false
+							},
+							"nonLazyUsageNowLazy": {
+								"name": "nonLazyUsage",
+								"lazy": true
+							},
+							"nonLazyUsageAgain": {
+								"name": "nonLazyUsage",
+								"lazy": false
+							}
+						}
+					}
+			};
+
+			// workaround sinon gh #1534
+			this._oSandbox.serverPrototype = null;
+			var oServer = this.oServer = this._oSandbox.useFakeServer();
+
+			oServer.xhr.useFilters = true;
+			oServer.xhr.filters = [];
+			oServer.xhr.addFilter(function(method, url) {
+				return url !== "/anylocation/manifest.json?sap-language=EN";
+			});
+
+			oServer.autoRespond = true;
+			oServer.respondWith("GET", "/anylocation/manifest.json?sap-language=EN", [
+				200,
+				{
+					"Content-Type": "application/json"
+				},
+				JSON.stringify(oManifest)
+			]);
+
+		},
+		afterEach : function() {}
+	});
 
 	sap.ui.define("my/used/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
 		return UIComponent.extend("my.used.Component", {
@@ -821,6 +880,14 @@ sap.ui.define([
 						}
 					}
 				}
+			}
+		});
+	});
+
+	sap.ui.define("my/preloadusage/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
+		return UIComponent.extend("my.preloadusage.Component", {
+			metadata: {
+				manifest: "json"
 			}
 		});
 	});
@@ -930,6 +997,35 @@ sap.ui.define([
 		});
 
 	});
+
+	QUnit.test("Preload non-lazy component usages", function(assert) {
+
+		var oComponent;
+		var oSpy = sinon.spy(jQuery.sap, "_loadJSResourceAsync");
+		var done = (function() {
+			var asyncDone = assert.async();
+			return function cleanup() {
+				oSpy.restore();
+				oComponent.destroy();
+				asyncDone();
+			};
+		})();
+
+		sap.ui.component({
+			name : "my.preloadusage",
+			manifest: "/anylocation/manifest.json"
+		}).then(function(oPreloadComponent) {
+
+			oComponent = oPreloadComponent;
+
+			assert.ok(oSpy.calledOnceWithExactly("nonLazyUsage/Component-preload.js", true), "Only the non-lazy component usage should be preloaded!");
+
+			done();
+
+		});
+
+	});
+
 
 	QUnit.module("Models", {
 		beforeEach : function() {

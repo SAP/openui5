@@ -517,12 +517,17 @@ sap.ui.define([
 	DynamicPage.prototype._snapHeader = function (bAppendHeaderToContent, bUserInteraction) {
 		var oDynamicPageTitle = this.getTitle();
 
-		if (this._bPinned) {
-			jQuery.sap.log.debug("DynamicPage :: aborted snapping, header is pinned", this);
-			return;
+		if (this._bPinned && !bUserInteraction) {
+		   jQuery.sap.log.debug("DynamicPage :: aborted snapping, header is pinned", this);
+		   return;
 		}
 
 		jQuery.sap.log.debug("DynamicPage :: snapped header", this);
+
+		if (this._bPinned && bUserInteraction) {
+			this._unPin();
+			this.getHeader().getAggregation("_pinButton").setPressed(false);
+		}
 
 		if (exists(oDynamicPageTitle)) {
 
@@ -589,12 +594,12 @@ sap.ui.define([
 	 * @param {boolean} bShow
 	 * @private
 	 */
-	DynamicPage.prototype._toggleHeaderVisibility = function (bShow) {
+	DynamicPage.prototype._toggleHeaderVisibility = function (bShow, bUserInteraction) {
 		var bExpanded = this.getHeaderExpanded(),
 			oDynamicPageTitle = this.getTitle(),
 			oDynamicPageHeader = this.getHeader();
 
-		if (this._bPinned) {
+		if (this._bPinned && !bUserInteraction) {
 			jQuery.sap.log.debug("DynamicPage :: header toggle aborted, header is pinned", this);
 			return;
 		}
@@ -1188,7 +1193,7 @@ sap.ui.define([
 			bExpandVisualIndicatorVisible,
 			bHasTitleAndHeader = this._hasVisibleTitleAndHeader();
 
-		if (!this.getToggleHeaderOnTitleClick() || this._bPinned || !bHasTitleAndHeader) {
+		if (!this.getToggleHeaderOnTitleClick() || !bHasTitleAndHeader) {
 			bCollapseVisualIndicatorVisible = false;
 			bExpandVisualIndicatorVisible = false;
 		} else {
@@ -1199,6 +1204,29 @@ sap.ui.define([
 
 		this._toggleCollapseVisualIndicator(bCollapseVisualIndicatorVisible);
 		this._toggleExpandVisualIndicator(bExpandVisualIndicatorVisible);
+	};
+
+	/**
+	 * Scrolls to bring the 'collapse' visual-indicator into view. (The collapse button is part of the scrollable content)
+	 * @private
+	 */
+	DynamicPage.prototype._scrollBellowCollapseVisualIndicator = function () {
+		var oHeader = this.getHeader(),
+			$collapseButton,
+			iCollapseButtonHeight,
+			iViewportHeight,
+			iOffset;
+
+		if (exists(oHeader)) {
+			$collapseButton = this.getHeader()._getCollapseButton().getDomRef();
+			iCollapseButtonHeight = $collapseButton.getBoundingClientRect().height;
+			iViewportHeight = this.$wrapper[0].getBoundingClientRect().height; // height of the div that contains all the scrollable content
+
+			// compute the amount we need to scroll in order to show the $collapseButton [in the bottom of the viewport]
+			iOffset = $collapseButton.offsetTop + iCollapseButtonHeight - iViewportHeight;
+
+			this._setScrollPosition(iOffset);
+		}
 	};
 
 	/**
@@ -1453,6 +1481,11 @@ sap.ui.define([
 			} else {
 				this._togglePinButtonVisibility(true);
 			}
+
+			if (this._bHeaderInTitleArea && this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+				this._expandHeader(false /* remove header from title area */);
+				this._setScrollPosition(0);
+			}
 		}
 
 		if (exists(oDynamicPageTitle)) {
@@ -1542,6 +1575,12 @@ sap.ui.define([
 
 	DynamicPage.prototype._onExpandHeaderVisualIndicatorPress = function () {
 		this._onTitlePress();
+		if (this._headerBiggerThanAllowedToBeExpandedInTitleArea()) {
+			// scroll to show the 'collapse' visual-indicator before focusing it
+			// this is needed in order to specify the **exact** position (scrollTop) of the visual-indicator
+			// because the default position (from the browser default auto-scroll to newly-focused item) is not UX-compliant
+			this._scrollBellowCollapseVisualIndicator();
+		}
 		this._focusCollapseVisualIndicator();
 	};
 
@@ -1575,10 +1614,11 @@ sap.ui.define([
 	 * @private
 	 */
 	DynamicPage.prototype._titleExpandCollapseWhenAllowed = function (bUserInteraction) {
-		if (this._bPinned) { // operation not allowed
+		var bAllowAppendHeaderToTitle;
+
+		if (this._bPinned && !bUserInteraction) { // operation not allowed
 			return this;
 		}
-		var bAllowAppendHeaderToTitle;
 
 		this._bSuppressToggleHeaderOnce = true;
 		// Header scrolling is not allowed or there is no enough content scroll bar to appear
@@ -1586,11 +1626,11 @@ sap.ui.define([
 			if (!this.getHeaderExpanded()) {
 				// Show header, pushing the content down
 				this._expandHeader(false, bUserInteraction);
-				this._toggleHeaderVisibility(true);
+				this._toggleHeaderVisibility(true, bUserInteraction);
 			} else {
 				// Hide header, pulling the content up
 				this._snapHeader(false, bUserInteraction);
-				this._toggleHeaderVisibility(false);
+				this._toggleHeaderVisibility(false, bUserInteraction);
 			}
 
 		} else if (!this.getHeaderExpanded()) {

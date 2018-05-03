@@ -44,6 +44,11 @@ sap.ui.define([], function () {
 		// Collapse button
 		oRm.renderControl(oDynamicPageHeaderState.collapseButton);
 
+		// Pin button
+		if (oDynamicPageHeaderState.headerPinnable) {
+			oRm.renderControl(oDynamicPageHeaderState.pinButton);
+		}
+
 		oRm.write("</header>");
 	};
 
@@ -55,20 +60,7 @@ sap.ui.define([], function () {
 			oRm.write(">");
 			oDynamicPageHeaderState.content.forEach(oRm.renderControl);
 			oRm.write("</div>");
-
-			if (oDynamicPageHeaderState.headerPinnable) {
-				this._renderPinUnpinArea(oRm, oDynamicPageHeaderState);
-			}
 		}
-	};
-
-	DynamicPageHeaderRenderer._renderPinUnpinArea = function (oRm, oDynamicPageHeaderState) {
-		oRm.write("<div");
-		oRm.addClass("sapFDynamicPageHeaderPinButtonArea");
-		oRm.writeClasses();
-		oRm.write(">");
-		oRm.renderControl(oDynamicPageHeaderState.pinButton);
-		oRm.write("</div>");
 	};
 
 	return DynamicPageHeaderRenderer;

@@ -27,6 +27,18 @@ body > .sapUxAPObjectPageLayout,
     -webkit-flex-shrink: 0;
 }
 
+.sapUxAPObjectPageLayoutTitleClickEnabled > .sapUxAPObjectPageHeaderStickied > .sapFDynamicPageTitle {
+	box-shadow: @sapUiShadowHeader;
+}
+
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutTitleClickEnabled) .sapFDynamicPageHeaderPinButton {
+	margin-left: -1.25rem;
+}
+
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayoutTitleClickEnabled):not(.sapUxAPObjectPageLayoutHeaderPinnable) .sapFDynamicPageHeader {
+	box-shadow: none;
+}
+
 .sapUxAPObjectPageSubSectionPromoted:not(:first-of-type) {
 	padding-top: 0.25rem;
 }
@@ -108,45 +120,55 @@ body > .sapUxAPObjectPageLayout,
 	background: @sapUiObjectHeaderBorderColor;
 }
 
-// title hover
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled:not(.sapUxAPObjectPageLayoutHeaderPinned) {
-  .sapFDynamicPageTitle:hover,
-  &.sapUxAPObjectPageTitleForceHovered .sapFDynamicPageTitle {
-    cursor: pointer;
-  }
+.sapUxAPObjectPageNavigation {
+	background: @sapUiObjectHeaderBackground;
 }
 
-/* ============================== */
-/* Toggle Header Visual Indicator */
-/* ============================== */
-.sapFDynamicPageToggleHeaderIndicator.sapMBtn {
-  position: absolute;
-  left: 50%;
-  padding: 0;
-
-  .sapMBtnInner {
-    position: absolute !important;
-    bottom: 0;
-    border-radius: 0 0 0.1875rem 0.1875rem;
-  }
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled {
+	// title hover
+	.sapFDynamicPageTitle:hover,
+	&.sapUxAPObjectPageTitleForceHovered .sapFDynamicPageTitle {
+		cursor: pointer;
+	}
+	.sapUxAPObjectPageNavigation:not(.sapUxAPObjectPageStickyAnchorBar),
+	.sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageStickyAnchorBar,
+	.sapUxAPObjectPageNavigation.sapUxAPObjectPageStickyAnchorBarPaddingTop {
+		padding-top: 0.8125rem;
+	}
+	.sapUxAPObjectPageNavigation.sapUxAPObjectPageNavigationHidden {
+		padding-top: 0;
+	}
 }
 
-.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutWithNavigation .sapFDynamicPageToggleHeaderIndicator {
-  bottom: -4.5rem; // -1.5 by default and -3 the height of the AnchorBar
+.sapUiSizeCompact .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutTitleClickEnabled {
+	.sapUxAPObjectPageNavigation:not(.sapUxAPObjectPageStickyAnchorBar),
+	.sapUxAPObjectPageHeaderTitle.sapUxAPObjectPageHeaderStickied .sapUxAPObjectPageStickyAnchorBar,
+	.sapUxAPObjectPageNavigation.sapUxAPObjectPageStickyAnchorBarPaddingTop {
+		padding-top: 0.5rem;
+	}
+	.sapUxAPObjectPageNavigation.sapUxAPObjectPageNavigationHidden {
+		padding-top: 0;
+	}
 }
 
-/* Phone */
-.sap-phone {
-  .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutWithNavigation .sapFDynamicPageToggleHeaderIndicator {
-    bottom: -4.25rem; // -1.25 by default and -3 the height of the AnchorBar
-  }
+.sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutHeaderPinnable {
+	.sapUxAPObjectPageNavigation:not(.sapUxAPObjectPageStickyAnchorBar),
+	.sapUxAPObjectPageNavigation.sapUxAPObjectPageStickyAnchorBarPaddingTop {
+		padding-top: 0.8125rem;
+	}
+	.sapUxAPObjectPageNavigation.sapUxAPObjectPageNavigationHidden {
+		padding-top: 0;
+	}
 }
 
-/* Compact */
-.sapUiSizeCompact {
-  .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutWithNavigation .sapFDynamicPageToggleHeaderIndicator {
-    bottom: -3rem; // -1 by default and -2 the height of the AnchorBar
-  }
+.sapUiSizeCompact .sapUxAPObjectPageLayout.sapUxAPObjectPageLayoutHeaderPinnable {
+	.sapUxAPObjectPageNavigation:not(.sapUxAPObjectPageStickyAnchorBar),
+	.sapUxAPObjectPageNavigation.sapUxAPObjectPageStickyAnchorBarPaddingTop {
+		padding-top: 0.5rem;
+	}
+	.sapUxAPObjectPageNavigation.sapUxAPObjectPageNavigationHidden {
+		padding-top: 0;
+	}
 }
 
 // footer

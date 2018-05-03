@@ -7,7 +7,6 @@ sap.ui.define([
     "./library",
     "sap/ui/Device",
     "sap/ui/core/Control",
-    "sap/m/library",
     "sap/m/ToggleButton",
     "sap/m/Button",
     "./DynamicPageHeaderRenderer"
@@ -15,15 +14,11 @@ sap.ui.define([
     library,
 	Device,
 	Control,
-	mobileLibrary,
 	ToggleButton,
 	Button,
 	DynamicPageHeaderRenderer
 ) {
 		"use strict";
-
-		// shortcut for sap.m.ButtonType
-		var ButtonType = mobileLibrary.ButtonType;
 
 		/**
 		 * Constructor for a new <code>DynamicPageHeader</code>.
@@ -246,9 +241,8 @@ sap.ui.define([
 					id: this.getId() + "-pinBtn",
 					icon: "sap-icon://pushpin-off",
 					tooltip: DynamicPageHeader.ARIA.LABEL_PINNED,
-					type: ButtonType.Transparent,
 					press: this._pinUnpinFireEvent.bind(this)
-				});
+				}).addStyleClass("sapFDynamicPageHeaderPinButton");
 				this.setAggregation("_pinButton", oPinButton, true);
 			}
 

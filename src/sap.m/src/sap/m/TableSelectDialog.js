@@ -20,7 +20,7 @@ sap.ui.define([
 	'./TableSelectDialogRenderer'
 ],
 	function(
-		 Button,
+		Button,
 		Dialog,
 		SearchField,
 		Table,
@@ -119,7 +119,7 @@ sap.ui.define([
 			 * If set to <code>true</code>, enables the growing feature of the control to load more items by requesting from the bound model (progressive loading).
 			 * <b>Note:</b> This feature only works when an <code>items</code> aggregation is bound. Growing must not be used together with two-way binding.
 			 * <b>Note:</b> If the property is set to true, the features <code>selected count</code> in info bar, <code>search</code> and <code>select/deselect all</code>, if present, will work only for the currently loaded items.
-	 		 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
+			 * To make sure that all items in the table are loaded at once and the above features work properly, we recommend setting the <code>growing</code> property to false.
 			 * @since 1.56
 			 */
 			growing : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -191,6 +191,7 @@ sap.ui.define([
 					selectedContexts : {type : "string"}
 				}
 			},
+
 
 			/**
 			 * Fires when the search button has been clicked on dialog.
@@ -334,8 +335,20 @@ sap.ui.define([
 			]
 		});
 
+		var oCustomHeader = new Bar(this.getId() + "-dialog-header", {
+			contentMiddle: [
+				new sap.m.Title(this.getId()  + "-dialog-title", {
+					level: "H1"
+				})
+			],
+			contentRight: [
+				this._getResetButton()
+			]
+		});
+
 		// store a reference to the internal dialog
 		this._oDialog = new Dialog(this.getId() + "-dialog", {
+			customHeader: oCustomHeader,
 			stretch: Device.system.phone,
 			contentHeight: "2000px",
 			subHeader: this._oSubHeader,
@@ -367,7 +380,15 @@ sap.ui.define([
 		// flags to control the busy indicator behaviour because the growing table will always show the no data text when updating
 		this._bFirstRequest = true; // to only show the busy indicator for the first request when the dialog has been openend
 		this._iTableUpdateRequested = 0; // to only show the busy indicator when we initiated the change
-	};
+
+		this._oDialog.getProperty = function (sName) {
+				if (sName !== "title") {
+					return Control.prototype.getProperty.call(this, sName);
+				}
+
+				return this.getCustomHeader().getAggregation("contentMiddle")[0].getText();
+			}.bind(this._oDialog);
+		};
 
 	/**
 	 * Destroys the control
@@ -591,8 +612,7 @@ sap.ui.define([
 	 */
 	TableSelectDialog.prototype.setTitle = function (sTitle) {
 		this.setProperty("title", sTitle, true);
-		this._oDialog.setTitle(sTitle);
-
+		this._oDialog.getCustomHeader().getAggregation("contentMiddle")[0].setText(sTitle);
 		return this;
 	};
 
@@ -962,6 +982,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * Lazy load the Reset button
+	 * @private
+	 * @return {sap.m.Button} The button
+	 */
+	TableSelectDialog.prototype._getResetButton = function () {
+
+		if (!this._oResetButton) {
+			this._oResetButton = new Button(this.getId() + "-reset", {
+				text: this._oRb.getText("TABLESELECTDIALOG_RESETBUTTON"),
+				press: function() {
+					this._removeSelection();
+					this._updateSelectionIndicator();
+				}.bind(this)
+			});
+		}
+		return this._oResetButton;
+	};
+
+	/**
 	 * Internal event handler for the Cancel button and ESC key
 	 * @private
 	 */
@@ -1000,6 +1039,7 @@ sap.ui.define([
 		var iSelectedContexts = this._oTable.getSelectedContextPaths(true).length,
 			oInfoBar = this._oTable.getInfoToolbar();
 
+		this._getResetButton().setEnabled(iSelectedContexts > 0);
 		// update the selection label
 		oInfoBar.setVisible(!!iSelectedContexts);
 		oInfoBar.getContent()[0].setText(this._oRb.getText("TABLESELECTDIALOG_SELECTEDITEMS", [iSelectedContexts]));
@@ -1033,10 +1073,18 @@ sap.ui.define([
 		// cleanup old selection on Close to allow reuse of dialog
 		// due to the delayed call (dialog onAfterClose) the control could be already destroyed
 		if (!this.getRememberSelections() && !this.bIsDestroyed) {
+			this._removeSelection();
+		}
+	};
+
+	/**
+	 * Removes selection from <code> sap.m.TableSelectDialog</code>
+	 * @private
+	 */
+	TableSelectDialog.prototype._removeSelection = function () {
 			this._oTable.removeSelections(true);
 			delete this._oSelectedItem;
 			delete this._aSelectedItems;
-		}
 	};
 
 	/**

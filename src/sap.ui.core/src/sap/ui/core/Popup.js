@@ -2410,8 +2410,10 @@ sap.ui.define([
 				oBlockLayerDomRef.style.visibility = "hidden";
 				oBlockLayerDomRef.style.display = "none";
 
-				// Allow scrolling again in HTML page only if there is no BlockLayer left
-				jQuery("html").removeClass("sapUiBLyBack");
+				window.requestAnimationFrame(function() {
+					// Allow scrolling again in HTML page only if there is no BlockLayer left
+					jQuery("html").removeClass("sapUiBLyBack");
+				});
 			}
 		}
 	};

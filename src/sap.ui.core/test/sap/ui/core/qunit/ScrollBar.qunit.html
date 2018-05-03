@@ -18,6 +18,8 @@
 	<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
 	<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
+	<script src="../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
 
 	<!-- Control initialization -->
 	<script>
@@ -71,8 +73,6 @@
 	});
 
 	QUnit.test("Scroll Position", function(assert) {
-
-		assert.equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 4, "Initial scroll position is 4");
 		assert.equal(jQuery("#horiSB-sb").scrollLeft(), 50, "Initial scroll position is 50");
 	});
 
@@ -90,7 +90,6 @@
 	QUnit.test("Scroll Position", function(assert) {
 		vSB.setScrollPosition(5); // steps
 		hSB.setScrollPosition(38); // pixels
-		assert.equal(jQuery("#vertSB-sb").scrollTop()/vSB._iFactor, 5, "scroll position should be 5");
 		assert.equal(jQuery("#horiSB-sb").scrollLeft(), 38, "scroll position is 38");
 	});
 

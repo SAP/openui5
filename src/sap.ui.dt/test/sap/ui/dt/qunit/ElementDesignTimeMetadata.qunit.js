@@ -156,18 +156,12 @@ sap.ui.require([
 	});
 
 	QUnit.test("when getLabel is called with label property available in the DesignTimeMetadata as a function", function(assert) {
-		this.oElementDesignTimeMetadata.getData().label = function(oElement) {
+		this.oElementDesignTimeMetadata.getData().getLabel = function(oElement) {
 			return oElement.getId();
 		};
 		var oTestElement = new Element("testId");
 		assert.strictEqual(this.oElementDesignTimeMetadata.getLabel(oTestElement), oTestElement.getId(), "then the correct element is received");
 		oTestElement.destroy();
-		delete this.oElementDesignTimeMetadata.getData().label;
-	});
-
-	QUnit.test("when getLabel is called with label property available in the DesignTimeMetadata as a string", function(assert) {
-		this.oElementDesignTimeMetadata.getData().label = "testLabel";
-		assert.strictEqual(this.oElementDesignTimeMetadata.getLabel(), "testLabel", "then the correct string value is received");
 		delete this.oElementDesignTimeMetadata.getData().label;
 	});
 

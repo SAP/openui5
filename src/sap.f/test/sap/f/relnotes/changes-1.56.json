@@ -69,6 +69,18 @@
         "type": "FIX",
         "text": " sap.f.DynamicPageTitle: aria-labelledby now properly updated",
         "references": []
+      },
+      {
+        "id": "9656793fc72549dd07b3144ed27012ae2e1a79be",
+        "type": "FEATURE",
+        "text": " f.DynamicPage, uxap.ObjectPageLayout: Collapse/Pin changed",
+        "references": []
+      },
+      {
+        "id": "7ef3328e729a4f35b75b36ff6a3bc146cf14f058",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: footer animation corrected",
+        "references": []
       }
     ]
   }

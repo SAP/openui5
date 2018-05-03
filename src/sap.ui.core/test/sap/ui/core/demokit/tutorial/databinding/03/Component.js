@@ -10,7 +10,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 						iframe: "webapp/index.html",
 						stretch: true,
 						files: [
-							"webapp/index.html"
+							"webapp/index.html",
+							"ui5.yaml",
+							"package.json"
 						]
 					}
 				}

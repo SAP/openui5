@@ -40,7 +40,7 @@
 				}
 			});
 		}
-	
+
 		sap.ui.getCore().attachInit(function () {
 
 			sap.ui.require([
@@ -49,7 +49,7 @@
 				"sap/ui/documentation/sdk/controller/util/APIInfo",
 				"sap/ui/documentation/sdk/Component"
 			], function (Page, ComponentContainer, APIInfo, SDKComponent) {
-				
+
 				if ( typeof window['sap-ui-documentation-config'].apiInfoRoot === 'string' ) {
 					APIInfo._setRoot(window['sap-ui-documentation-config'].apiInfoRoot);
 				} else {
@@ -60,6 +60,8 @@
 				} else {
 					window['sap-ui-documentation-hideTopicSection'] = true;
 				}
+
+				window['sap-ui-documentation-preview'] = true;
 
 				// initialize the UI component
 				new Page({

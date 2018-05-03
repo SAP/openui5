@@ -19,42 +19,42 @@ function (
 				/**
 				 * Creates a change that adds an extension to the controller associated with the given view.
 				 * Throws an error if the information is not complete.
+				 * As of now this only creates the change with a reference to a file. The consumer has to take care of creating that file
+				 * and adding it to the backend.
 				 *
-				 * @param {object} oChangeSpecificData Change specific data
-				 * @param {object} oChangeSpecificData.content wrapper for the content specific properties
-				 * @param {object} oChangeSpecificData.content.codeRef name of the file with the extension. Must end with '.js'
-				 * @param {object} oChangeSpecificData.content.extensionName name defined in the 'sap.ui.define' inside the extension
-				 * @param {sap.ui.core.mvc.View} oView view whose controller should be extended
+				 * @param {object} sCodeRef name of the file, without path, with the extension '.js'. Must comply to ui5 module naming convention
+				 * 							has to be unique and must not conflict with other already defined modules
+				 * @param {string} sView id of the view whose controller should be extended
 				 */
-				add: function(oChangeSpecificData, oView) {
+				add: function(sCodeRef, sView) {
 					var oFlexSettings = oRta.getFlexSettings();
 					if (!oFlexSettings.developerMode) {
 						throw DtUtil.createError("service.ControllerExtension#add", "code extensions can only be created in developer mode", "sap.ui.rta");
 					}
 
-					if (
-						!oChangeSpecificData ||
-						oChangeSpecificData && !oChangeSpecificData.content ||
-						oChangeSpecificData && oChangeSpecificData.content && !oChangeSpecificData.content.codeRef
-					) {
+					if (!sCodeRef) {
 						throw DtUtil.createError("service.ControllerExtension#add", "can't create controller extension without codeRef", "sap.ui.rta");
 					}
 
-					if (!oChangeSpecificData.content.codeRef.endsWith(".js")) {
+					if (!sCodeRef.endsWith(".js")) {
 						throw DtUtil.createError("service.ControllerExtension#add", "codeRef has to end with 'js'");
 					}
 
-					if (!oChangeSpecificData.content.extensionName) {
-						throw DtUtil.createError("service.ControllerExtension#add", "can't create controller extension without extensionName", "sap.ui.rta");
-					}
-
 					var oFlexController = oRta._getFlexController();
+					var oView = sap.ui.getCore().byId(sView);
 					var oAppComponent = FlexUtils.getAppComponentForControl(oView);
+					var sControllerName = oView.getControllerName && oView.getControllerName() || oView.getController() && oView.getController().getMetadata().getName();
 
-					oChangeSpecificData.selector = {};
-					oChangeSpecificData.selector.controllerName = oView.getControllerName() || oView.getController() && oView.getController().getMetadata().getName();
-					oChangeSpecificData.changeType = "codeExt";
-					oChangeSpecificData.namespace = oFlexSettings.namespace;
+					var oChangeSpecificData = {
+						content: {
+							codeRef: sCodeRef
+						},
+						selector: {
+							controllerName: sControllerName
+						},
+						changeType: "codeExt",
+						namespace: oFlexSettings.namespace
+					};
 
 					var oPreparedChange = oFlexController.createBaseChange(oChangeSpecificData, oAppComponent);
 					oFlexController.addPreparedChange(oPreparedChange, oAppComponent);

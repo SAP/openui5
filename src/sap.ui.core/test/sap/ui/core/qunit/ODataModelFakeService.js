@@ -94,6 +94,8 @@ xhr.onCreate = function(request) {
 				[200, oCountHeaders, "9"],
 			"Invoices?$skip=0&$top=100":
 				[200, oJSONHeaders, sInvoicesJSON],
+      "Invoices":
+				[200, oJSONHeaders, sInvoicesJSON],
 			"Categories(2)":
 				[200, oXMLHeaders, sCategories2XML],
 			"Categories(7)":

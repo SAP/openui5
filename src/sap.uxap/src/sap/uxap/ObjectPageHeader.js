@@ -1111,6 +1111,14 @@ sap.ui.define([
 	 * Required by the {@link sap.uxap.IHeaderTitle} interface
 	 * @returns {boolean}
 	 */
+	ObjectPageHeader.prototype.supportsToggleHeaderOnTitleClick = function () {
+		return false;
+	};
+
+	/**
+	 * Required by the {@link sap.uxap.IHeaderTitle} interface
+	 * @returns {boolean}
+	 */
 	ObjectPageHeader.prototype.supportsTitleInHeaderContent = function () {
 		return true;
 	};

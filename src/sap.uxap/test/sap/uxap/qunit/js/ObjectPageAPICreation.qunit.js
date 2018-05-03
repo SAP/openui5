@@ -335,6 +335,47 @@
 		}, this.iLoadingDelay);
 	});
 
+	QUnit.module("Content resize", {
+		beforeEach: function () {
+			this.NUMBER_OF_SECTIONS = 3;
+			this.oObjectPage = helpers.generateObjectPageWithContent(oFactory, this.NUMBER_OF_SECTIONS, false);
+			this.iLoadingDelay = 2000;
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+			this.iLoadingDelay = 0;
+		}
+	});
+
+	QUnit.test("adjust selected section", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oHhtmBlock,
+			oFirstSection = oObjectPage.getSections()[0],
+			oSecondSection = oObjectPage.getSections()[1],
+			done = assert.async();
+
+		// setup step1: add content with defined height
+		oHhtmBlock = new sap.ui.core.HTML("b1", { content: '<div class="innerDiv" style="height:300px"></div>'});
+		oFirstSection.getSubSections()[0].addBlock(oHhtmBlock);
+
+		// setup step2
+		oObjectPage.setSelectedSection(oSecondSection.getId());
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
+
+			// Act: change height without invalidating any control => on the the resize handler will be responsible for re-adjusting the selection
+			sap.ui.getCore().byId("b1").getDomRef().style.height = "250px";
+
+			setTimeout(function() {
+				assert.equal(oObjectPage.getSelectedSection(), oSecondSection.getId(), "selected section is correct");
+				done();
+			}, this.iLoadingDelay);
+
+		}.bind(this));
+
+		helpers.renderObject(oObjectPage);
+	});
+
 	QUnit.module("test setSelectedSection functionality");
 
 	QUnit.test("test setSelectedSection with initially empty ObjectPage", function (assert) {
@@ -1011,7 +1052,7 @@
 		assert.strictEqual(checkObjectExists("#objectPageViewSample--newHeader"), true);
 	});
 
-	QUnit.test("Should call ObjectPageHeader _toggleFocusableState", function (assert) {
+	QUnit.test("Should not call ObjectPageHeader _toggleFocusableState in non DynamicPageTitle case", function (assert) {
 		var oObjectPage = this.oSampleView.byId("objectPage13"),
 			oHeader = oObjectPage.getHeaderTitle(),
 			oHeaderSpy = this.spy(oHeader, "_toggleFocusableState");
@@ -1020,7 +1061,7 @@
 		oObjectPage.setToggleHeaderOnTitleClick(false);
 
 		// assert
-		assert.strictEqual(oHeaderSpy.callCount, 1, "ObjectPageHeader _toggleFocusableState is called");
+		assert.strictEqual(oHeaderSpy.callCount, 0, "ObjectPageHeader _toggleFocusableState is not called");
 	});
 
 	QUnit.test("Should copy _headerContent hidden aggregation to the ObjectPage clone", function (assert) {
@@ -1367,6 +1408,64 @@
 		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", fnOnDomReady);
 	});
 
+	QUnit.test("onAfterRenderingDomReady cancelled on invalidate", function (assert) {
+
+		var oObjectPage = new sap.uxap.ObjectPageLayout({
+			useIconTabBar: true,
+			selectedSection: "section1",
+			sections: [
+				new sap.uxap.ObjectPageSection("section1", {
+					subSections: [
+						new sap.uxap.ObjectPageSubSection({
+							blocks: [
+								new sap.m.Text({ text: "content"})
+							]
+						})
+					]
+				})
+			]
+		}),
+		iAfterRenderingDOMReadyDelay = sap.uxap.ObjectPageLayout.HEADER_CALC_DELAY,
+		bAfterRenderingDomReadyCalled = false,
+		done = assert.async();
+
+
+		// proxy the "_onAfterRenderingDomReady" function (problem using a spy)
+		var fnOrig = oObjectPage._onAfterRenderingDomReady;
+		oObjectPage._onAfterRenderingDomReady = function() {
+			bAfterRenderingDomReadyCalled = true;
+			fnOrig.apply(oObjectPage, arguments);
+		};
+
+
+		// hook to onAfterRendering to *make a change that caused invalidation* before _onAfterRenderingDomReady is called
+		var oDelegate = {"onAfterRendering": function() {
+
+				// at this point, the _onAfterRenderingDomReady is scheduled but not executed yet
+				// Act: scheduled a task to execute shortly before _onAfterRenderingDomReady
+				setTimeout(function() {
+
+					// we are just before _onAfterRenderingDomReady will be called
+					// Act: make a change that invalidates the object page => the page will rerender
+					oObjectPage.removeSection(0);
+
+					// clean up to avoid calling the same hook again
+					oObjectPage.removeDelegate(oDelegate);
+
+					// Check : the _onAfterRenderingDomReady that was scheduled before the invalidation is not called
+					setTimeout(function() {
+						assert.equal(bAfterRenderingDomReadyCalled, false, "_onAfterRenderingDomReady is not called");
+						done();
+						oObjectPage.destroy();
+					}, iAfterRenderingDOMReadyDelay - 10);
+
+				}, iAfterRenderingDOMReadyDelay - 10);
+			}};
+
+		oObjectPage.addEventDelegate(oDelegate);
+		oObjectPage.placeAt("qunit-fixture");
+	});
+
 	QUnit.module("ObjectPage with ObjectPageDynamicHeaderTitle", {
 		beforeEach: function () {
 			this.NUMBER_OF_SECTIONS = 1;
@@ -1405,6 +1504,8 @@
 
 		var oObjectPage = this.oObjectPage,
 			oObjectPageTitle = oObjectPage.getHeaderTitle(),
+			oHeaderContent = oObjectPage._getHeaderContent(),
+			oPinButton = oHeaderContent._getPinButton(),
 			oFakeEvent = {
 				srcControl: oObjectPageTitle
 			};
@@ -1427,6 +1528,13 @@
 
 		oObjectPageTitle.ontap(oFakeEvent);
 		assert.equal(oObjectPage._bHeaderExpanded, true, "After restoring toggleHeaderOnTitleClick to true, the header again expands on click");
+
+		oPinButton.firePress();
+		oObjectPageTitle.ontap(oFakeEvent);
+
+		assert.strictEqual(oObjectPage._bHeaderExpanded, false, "After one click, the header is collapsed even it's pinned");
+		assert.strictEqual(oPinButton.getPressed(), false, "Pin button pressed state should be reset.");
+		assert.strictEqual(oObjectPage.$().hasClass("sapUxAPObjectPageLayoutHeaderPinned"), false, "ObjectPage header should be unpinned.");
 	});
 
 	QUnit.test("ObjectPage Header - expanding/collapsing by clicking the title", function (assert) {
@@ -1451,6 +1559,79 @@
 
 		// assert
 		assert.strictEqual(oStateChangeListener.callCount, 2, "stateChange event was fired twice");
+	});
+
+	QUnit.test("ObjectPage header is preserved in title on screen resize", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			oFakeEvent = {
+				size: {
+					width: 100,
+					height: 300
+				},
+				oldSize: {
+					width: 100,
+					height: 400
+				}
+			},
+			// this delay is already introduced in the ObjectPage resize listener
+			iDelay = sap.uxap.ObjectPageLayout.HEADER_CALC_DELAY + 100,
+			bInvalidateCalled = false,
+			done = assert.async();
+
+		// the sinon spy cannot be applied here for some reason,
+		// so i'm using a custom proxy just for this test
+		function proxyInvalidate() {
+			var fnIvalidateOriginal = oObjectPage.invalidate;
+			oObjectPage. invalidate = function() {
+				bInvalidateCalled = true;
+				fnIvalidateOriginal.apply(this, arguments);
+			};
+		}
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// setup: expand the header in the title
+			oObjectPage._scrollTo(0, 200);
+			oObjectPage._expandHeader(true);
+			assert.ok(oObjectPage._bHeaderInTitleArea);
+
+			proxyInvalidate();
+
+			// act: resize and check if the page invalidates in the resize listener
+			oObjectPage._onUpdateScreenSize(oFakeEvent);
+
+			setTimeout(function() {
+				assert.strictEqual(bInvalidateCalled, false, "page was not invalidated during resize");
+				done();
+			}, iDelay);
+		});
+
+	});
+
+	QUnit.test("ObjectPage header is preserved in title on content resize", function (assert) {
+		// arrange
+		var oObjectPage = this.oObjectPage,
+			// this delay is already introduced in the ObjectPage resize listener
+			iDelay = sap.uxap.ObjectPageLayout.HEADER_CALC_DELAY + 100,
+			done = assert.async();
+
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			// setup: expand the header in the title
+			oObjectPage._scrollTo(0, 200);
+			oObjectPage._expandHeader(true);
+			assert.ok(oObjectPage._bHeaderInTitleArea);
+
+			// act: resize and check if the page invalidates in the resize listener
+			oObjectPage._onUpdateContentSize();
+
+			setTimeout(function() {
+				assert.strictEqual(oObjectPage._bHeaderInTitleArea, true, "page is not snapped on resize");
+				done();
+			}, iDelay);
+		});
+
 	});
 
 	QUnit.module("ObjectPage with alwaysShowContentHeader", {

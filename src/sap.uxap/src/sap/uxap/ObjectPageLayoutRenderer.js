@@ -20,7 +20,7 @@ sap.ui.define(["sap/ui/Device"],
 				bIsTitleInHeaderContent = oControl.getShowTitleInHeaderContent() && oControl.getShowHeaderContent(),
 				bRenderHeaderContent = bIsHeaderContentVisible || bIsTitleInHeaderContent,
 				bUseIconTabBar = oControl.getUseIconTabBar(),
-				bTitleClickable = oControl.getToggleHeaderOnTitleClick(),
+				bTitleClickable = oControl.getToggleHeaderOnTitleClick() && oControl.getHeaderTitle() && oControl.getHeaderTitle().supportsToggleHeaderOnTitleClick(),
 				sRootAriaLabelText = oControl._getRootAriaLabelText();
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {

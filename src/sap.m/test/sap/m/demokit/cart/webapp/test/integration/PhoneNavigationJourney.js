@@ -1,7 +1,11 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/test/opaQunit"
+	"sap/ui/test/opaQunit",
+	'./pages/Welcome',
+	'./pages/Product',
+	'./pages/Home',
+	'./pages/Category'
 ], function (opaTest) {
 	"use strict";
 
@@ -11,7 +15,6 @@ sap.ui.define([
 		// Arrangements
 		Given.iStartMyApp();
 		//Actions
-		When.onTheWelcomePage.iLookAtTheScreen();
 		When.onTheWelcomePage.iPressTheProductLink();
 		// Assertions
 		Then.onTheProduct.iShouldSeeTheProductPage();

@@ -29,13 +29,13 @@
 							  objectImageURI="./test-resources/sap/uxap/images/imageID_275314.png"
 							  titleSelectorTooltip="Custom Tooltip">
 				<actions>
-					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" importance="Low"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" importance="Low"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit" importance="Medium"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://refresh" text="{buttons>/text}"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" importance="Low" tooltip="action"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action-settings" text="settings" importance="Low" tooltip="action-settings"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://edit" text="edit" importance="Medium" tooltip="edit"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://save" text="save" visible="false" tooltip="save"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://refresh" text="{buttons>/text}" tooltip="refresh"/>
 					<ObjectPageHeaderActionButton icon="{buttons>/icon}"
-												  text="{path:'/text', model:'buttons', formatter:'.onFormat'}"/>
+					                              text="{path:'/text', model:'buttons', formatter:'.onFormat'}" tooltip="chain-link"/>
 				</actions>
 				<breadCrumbsLinks>
 					<m:Link text="Page 1 a very long link" press="handleLink1Press"/>

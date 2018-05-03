@@ -167,8 +167,13 @@ function(
 				'strong': 1,
 				'u': 1
 			}
-		},
-		_renderingRules = _defaultRenderingRules;
+		};
+
+		/**
+		 * Holds the internal list of allowed and evaluated HTML elements and attributes
+		 * @private
+		 */
+		FormattedText.prototype._renderingRules = _defaultRenderingRules;
 
 		/**
 		 * Initialization hook for the FormattedText, which creates a list of rules with allowed tags and attributes.
@@ -191,7 +196,7 @@ function(
 				value,
 				addTarget = tagName === "a";
 			// add UI5 specific classes when appropriate
-			var cssClass = _renderingRules.ELEMENTS[tagName].cssClass || "";
+			var cssClass = this._renderingRules.ELEMENTS[tagName].cssClass || "";
 
 			for (var i = 0; i < attribs.length; i += 2) {
 				// attribs[i] is the name of the tag's attribute.
@@ -200,7 +205,7 @@ function(
 				attr = attribs[i];
 				value = attribs[i + 1];
 
-				if (!_renderingRules.ATTRIBS[attr] && !_renderingRules.ATTRIBS[tagName + "::" + attr]) {
+				if (!this._renderingRules.ATTRIBS[attr] && !this._renderingRules.ATTRIBS[tagName + "::" + attr]) {
 					sWarning = 'FormattedText: <' + tagName + '> with attribute [' + attr + '="' + value + '"] is not allowed';
 					jQuery.sap.log.warning(sWarning, this);
 					// to remove the attribute by the sanitizer, set the value to null
@@ -242,8 +247,8 @@ function(
 		}
 
 		function fnPolicy (tagName, attribs) {
-			if (_renderingRules.ELEMENTS[tagName]) {
-				return fnSanitizeAttribs(tagName, attribs);
+			if (this._renderingRules.ELEMENTS[tagName]) {
+				return fnSanitizeAttribs.call(this, tagName, attribs);
 			} else {
 				var sWarning = '<' + tagName + '> is not allowed';
 				jQuery.sap.log.warning(sWarning, this);
@@ -259,7 +264,7 @@ function(
 		 */
 		function sanitizeHTML(sText) {
 			return jQuery.sap._sanitizeHTML(sText, {
-				tagPolicy: fnPolicy,
+				tagPolicy: fnPolicy.bind(this),
 				uriRewriter: function (sUrl) {
 					// by default we use the URL whitelist to check the URLs
 					if (jQuery.sap.validateUrl(sUrl)) {
@@ -291,7 +296,7 @@ function(
 
 			sText = FormattedTextAnchorGenerator.generateAnchors(sText, sAutoGenerateLinkTags, this.getConvertedLinksDefaultTarget());
 
-			return sanitizeHTML(sText);
+			return sanitizeHTML.call(this, sText);
 		};
 
 		/**
@@ -301,7 +306,7 @@ function(
 		 * @public
 		 */
 		FormattedText.prototype.setHtmlText = function (sText) {
-			return this.setProperty("htmlText", sanitizeHTML(sText));
+			return this.setProperty("htmlText", sanitizeHTML.call(this, sText));
 		};
 
 		/**
@@ -312,7 +317,7 @@ function(
 		 * @private
 		 */
 		FormattedText.prototype._setUseLimitedRenderingRules = function (bLimit) {
-			_renderingRules = bLimit ? _limitedRenderingRules : _defaultRenderingRules;
+			this._renderingRules = bLimit ? _limitedRenderingRules : _defaultRenderingRules;
 		};
 
 

@@ -209,7 +209,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 			var oInfo;
 			for (var i = 0, iL = aEventListeners.length; i < iL; i++) {
 				oInfo = aEventListeners[i];
-				oInfo.fFunction.call(oInfo.oListener || this, sChannelId, sEventId, oData);
+				this._callListener(oInfo.fFunction, oInfo.oListener || this, sChannelId, sEventId, oData);
 			}
 		} else if (jQuery.sap.log.isLoggable(jQuery.sap.log.Level.DEBUG, "sap.ui.core.EventBus")) {
 			// no listeners
@@ -220,6 +220,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'sap/ui/base/EventProv
 	EventBus.prototype.getInterface = function() {
 		return this;
 	};
+
+	EventBus.prototype._callListener = function (fnCallback, oListener, sChannelId, sEventId, mData) {
+		fnCallback.call(oListener, sChannelId, sEventId, mData);
+	};
+
 
 	/**
 	 * Cleans up the internal structures and removes all event handlers.

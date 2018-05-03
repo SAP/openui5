@@ -84,6 +84,11 @@ sap.ui.define([
 			return vPropertyValue;
 		},
 
+		isPropertyInitial: function (oControl, sPropertyName) {
+			var vPropertyValue = oControl.getAttribute(sPropertyName);
+			return (vPropertyValue == null);
+		},
+
 		setPropertyBinding: function (oControl, sPropertyName, oPropertyBinding) {
 			oControl.setAttribute(sPropertyName, oPropertyBinding);
 		},

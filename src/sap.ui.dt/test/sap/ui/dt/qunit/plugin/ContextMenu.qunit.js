@@ -399,7 +399,7 @@ sap.ui.require([
 		});
 
 		// FIXME: wait for hover PoC from UX colleagues
-		// QUnit.test("Testing onHover function", function (assert) {
+		// QUnit.test("Testing onHover function with mouse events", function (assert) {
 		// 	this.clock = sinon.useFakeTimers();
 		// 	sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
 		// 	var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
@@ -411,7 +411,7 @@ sap.ui.require([
 		// 	this.clock.restore();
 		// });
 
-		// QUnit.test("Testing onHover with onHoverExit function", function (assert) {
+		// QUnit.test("Testing onHover with onHoverExit function with mouse events", function (assert) {
 		// 	this.clock = sinon.useFakeTimers();
 		// 	sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
 		// 	var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
@@ -423,7 +423,7 @@ sap.ui.require([
 		// 	this.clock.restore();
 		// });
 
-		// QUnit.test("Testing onHover with multiple overlays", function (assert) {
+		// QUnit.test("Testing onHover with multiple overlays with mouse events", function (assert) {
 		// 	this.clock = sinon.useFakeTimers();
 		// 	var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 		// 	var oCloseContextMenuSpy = oSandbox.spy(oContextMenuControl, "close");
@@ -440,19 +440,50 @@ sap.ui.require([
 		// 	oContextMenuControl = null;
 		// });
 
-		// QUnit.test("Testing onHover wrong delay exception", function (assert) {
-		// 	oSandbox.stub(this.oContextMenuPlugin, "getOpenOnHover").returns(true);
-		// 	oSandbox.stub(this.oContextMenuPlugin, "_shouldContextMenuOpen").returns(true);
-		// 	var oFakeEvent = {
-		// 		currentTarget: { id: this.oButton1Overlay.getId() },
-		// 		stopPropagation: function() {}
-		// 	};
-		// 	this.oContextMenuPlugin.iMenuHoverClosingDelay = 100;
-		// 	this.oContextMenuPlugin.iMenuHoverOpeningDelay = 50;
-		// 	assert.throws(function() { this.oContextMenuPlugin._onHover(oFakeEvent); }.bind(this),
-		// 		/sap.ui.dt ContextMenu iMenuHoverClosingDelay is bigger or equal to iMenuHoverOpeningDelay!/,
-		// 		"then corresoponding exception is thrown");
-		// });
+		QUnit.test("Testing onHover wrong delay exception", function (assert) {
+			var oFakeEvent = {
+				currentTarget: { id: this.oButton1Overlay.getId() },
+				stopPropagation: function() {}
+			};
+			this.oContextMenuPlugin.iMenuHoverClosingDelay = 100;
+			this.oContextMenuPlugin.iMenuHoverOpeningDelay = 50;
+			assert.throws(function() { this.oContextMenuPlugin._onHover(oFakeEvent); }.bind(this),
+				/sap.ui.dt ContextMenu iMenuHoverClosingDelay is bigger or equal to iMenuHoverOpeningDelay!/,
+				"then corresoponding exception is thrown");
+		});
+
+		QUnit.test("Testing onHover function via direct function call", function (assert) {
+			this.clock = sinon.useFakeTimers();
+			var oStartOpeningStub = oSandbox.stub(this.oContextMenuPlugin, "_startOpening").returns(true);
+			var oFakeEvent = {
+				currentTarget: { id: this.oButton1Overlay.getId() },
+				stopPropagation: function() {}
+			};
+			this.oContextMenuPlugin.iMenuHoverClosingDelay = 0;
+			this.oContextMenuPlugin.iMenuHoverOpeningDelay = 5;
+			this.oContextMenuPlugin._onHover(oFakeEvent);
+			this.clock.tick(this.oContextMenuPlugin.iMenuHoverOpeningDelay);
+			assert.equal(oStartOpeningStub.callCount, 1, "then after onHover _startOpeningFunction is called once");
+			this.clock.restore();
+		});
+
+		QUnit.test("Testing onHover function when popover is already open", function (assert) {
+			this.clock = sinon.useFakeTimers();
+			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			var oContextMenuPopover = this.oContextMenuPlugin.oContextMenuControl.getPopover();
+			var oCloseContextMenuStub = oSandbox.stub(oContextMenuControl, "close");
+			oSandbox.stub(oContextMenuPopover, "isOpen").returns(true);
+			var oFakeEvent = {
+				currentTarget: { id: this.oButton1Overlay.getId() },
+				stopPropagation: function() {}
+			};
+			this.oContextMenuPlugin.iMenuHoverClosingDelay = 0;
+			this.oContextMenuPlugin.iMenuHoverOpeningDelay = 5;
+			this.oContextMenuPlugin._onHover(oFakeEvent);
+			this.clock.tick(this.oContextMenuPlugin.iMenuHoverClosingDelay);
+			assert.equal(oCloseContextMenuStub.callCount, 1, "then after onHover contextMenuControl.close function is called once");
+			this.clock.restore();
+		});
 
 		QUnit.test("Testing onClick function", function (assert) {
 			this.clock = sinon.useFakeTimers();
@@ -495,7 +526,7 @@ sap.ui.require([
 			this.clock.restore();
 		});
 
-		QUnit.test("Testing onKeyDown function", function (assert) {
+		QUnit.test("Testing onKeyDown function opening the expanded contextMenu", function (assert) {
 			var _tempListener = function (oEvent) {
 				oEvent.keyCode = jQuery.sap.KeyCodes.F10;
 				oEvent.shiftKey = true;
@@ -505,6 +536,22 @@ sap.ui.require([
 				this.oContextMenuPlugin._onKeyDown(oEvent);
 				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
+				oContextMenuControl = null;
+			}.bind(this);
+			this.oButton2Overlay.attachBrowserEvent("keydown", _tempListener, this);
+			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keydown");
+		});
+
+		QUnit.test("Testing onKeyDown function opening the compact contextMenu", function (assert) {
+			var _tempListener = function (oEvent) {
+				oEvent.keyCode = jQuery.sap.KeyCodes.ENTER;
+				oEvent.shiftKey = false;
+				oEvent.altKey = false;
+				oEvent.ctrlKey = false;
+				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+				this.oContextMenuPlugin._onKeyDown(oEvent);
+				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
+				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
 				oContextMenuControl = null;
 			}.bind(this);
 			this.oButton2Overlay.attachBrowserEvent("keydown", _tempListener, this);
@@ -832,7 +879,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("calling _getOverlayDimensions", function (assert) {
-		jQuery("#qunit-fixture").append("<div id=\"fakeOverlay\" style=\"width:10px; height:12px; position: absolute; top:3px; left:5px;\" />");
+		jQuery("#qunit-fixture").append("<div id=\"fakeOverlay\" style=\"width:10px; height:12px; position: fixed; top:3px; left:5px;\" />");
 		var oOverlay = this.oContextMenuControl._getOverlayDimensions("fakeOverlay");
 		assert.strictEqual(typeof oOverlay.top, "number", "top should be a number");
 		assert.ok(!isNaN(oOverlay.top), "top shouldn't be NaN");
@@ -844,10 +891,34 @@ sap.ui.require([
 		assert.ok(!isNaN(oOverlay.height), "height shouldn't be NaN");
 		assert.strictEqual(typeof oOverlay.right, "number", "right should be a number");
 		assert.ok(!isNaN(oOverlay.right), "right shouldn't be NaN");
-		assert.strictEqual(oOverlay.right, oOverlay.left + oOverlay.width, "right  should be equal to left + width");
+		assert.strictEqual(oOverlay.right, oOverlay.left + oOverlay.width, "right should be equal to left + width");
 		assert.strictEqual(typeof oOverlay.bottom, "number", "bottom should be a number");
 		assert.ok(!isNaN(oOverlay.bottom), "bottom shouldn't be NaN");
 		assert.strictEqual(oOverlay.bottom, oOverlay.top + oOverlay.height, "bottom should be equal to top + height");
+		assert.strictEqual(typeof oOverlay.isOverlappedAtTop, "boolean", "then isOverlappedAtTop parameter should be a boolean");
+		assert.notOk(oOverlay.isOverlappedAtTop, "then isOverlappedAtTop should be false (not overlapped)");
+		assert.strictEqual(typeof oOverlay.isOverlappedAtBottom, "boolean", "then isOverlappedAtBottom parameter should be a boolean");
+		assert.notOk(oOverlay.isOverlappedAtBottom, "then isOverlappedAtBottom should be false (not overlapped)");
+	});
+
+	QUnit.test("calling _getOverlayDimensions when overlay is overlapped with child overlay", function (assert) {
+		jQuery("#qunit-fixture").append("<div id=\"fakeOverlay\" style=\"width:200px; height:200px; position: fixed; top:3px; left:5px;\" />");
+		jQuery("#fakeOverlay").append("<div id=\"fakeChildOverlay\" style=\"width:200px; height:20px; position: fixed; top:3px; left:5px;\" />");
+		var oOverlay = this.oContextMenuControl._getOverlayDimensions("fakeOverlay");
+		assert.strictEqual(typeof oOverlay.isOverlappedAtTop, "boolean", "then isOverlappedAtTop parameter should be a boolean");
+		assert.notOk(oOverlay.isOverlappedAtTop, "then isOverlappedAtTop should be false (only overlapped with child overlay)");
+		assert.strictEqual(typeof oOverlay.isOverlappedAtBottom, "boolean", "then isOverlappedAtBottom parameter should be a boolean");
+		assert.notOk(oOverlay.isOverlappedAtBottom, "then isOverlappedAtBottom should be false (not overlapped)");
+	});
+
+	QUnit.test("calling _getOverlayDimensions when overlay is overlapped", function (assert) {
+		jQuery("#qunit-fixture").append("<div id=\"fakeOverlay\" style=\"width:200px; height:200px; position: fixed; top:3px; left:5px;\" />");
+		jQuery("#qunit-fixture").append("<div id=\"fakeChildOverlay\" style=\"width:200px; height:20px; position: fixed; top:3px; left:5px;\" />");
+		var oOverlay = this.oContextMenuControl._getOverlayDimensions("fakeOverlay");
+		assert.strictEqual(typeof oOverlay.isOverlappedAtTop, "boolean", "then isOverlappedAtTop parameter should be a boolean");
+		assert.ok(oOverlay.isOverlappedAtTop, "then isOverlappedAtTop should be true (overlapped)");
+		assert.strictEqual(typeof oOverlay.isOverlappedAtBottom, "boolean", "then isOverlappedAtBottom parameter should be a boolean");
+		assert.notOk(oOverlay.isOverlappedAtBottom, "then isOverlappedAtBottom should be false (not overlapped)");
 	});
 
 	QUnit.test("calling _getViewportDimensions", function (assert) {
@@ -990,7 +1061,7 @@ sap.ui.require([
 		spy2 = null;
 	});
 
-	QUnit.test("calling _placeContextMenuAtTheBottom", function (assert) {
+	QUnit.test("calling _placeContextMenuAtTheBottom with overlay height < 60", function (assert) {
 		var oOverlay = {
 			left: 20,
 			width: 30,
@@ -1007,36 +1078,67 @@ sap.ui.require([
 		var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
 		assert.strictEqual(oPos.top, 90, "Should be at the bottom of the overlay");
 		assert.strictEqual(oPos.left, 35, "Should be the middle of the overlay");
-		oOverlay = {
+		oOverlay = null;
+		oPopover = null;
+		oViewport = null;
+		oPos = null;
+	});
+
+	QUnit.test("calling _placeContextMenuAtTheBottom when menu popover does not have enough space above and bellow the overlay", function (assert) {
+		var oOverlay = {
 			top: 60,
 			height: 30
 		};
-		oPopover = {};
-		oViewport = {
+		var oPopover = {};
+		var oViewport = {
 			top: 0
 		};
-		oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
+		var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
 		assert.strictEqual(oPos.top, 65, "Should be 5 bellow the top of the overlay");
-		oOverlay = {
+	});
+
+	QUnit.test("calling _placeContextMenuAtTheBottom when menu popover does not have enoughspace above the overlay", function (assert) {
+		var oOverlay = {
 			top: 60
 		};
-		oPopover = {};
-		oViewport = {
+		var oPopover = {};
+		var oViewport = {
 			top: 0
 		};
-		oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
+		var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
 		assert.strictEqual(oPos.top, 65, "Should be 5 bellow the top of the overlay");
-		oOverlay = {
+	});
+
+	QUnit.test("calling _placeContextMenuAtTheBottom when menu popover does not have enough space around the overlay", function (assert) {
+		var oOverlay = {
 			top: 60
 		};
-		oPopover = {
+		var oPopover = {
 			height: 60
 		};
-		oViewport = {
+		var oViewport = {
 			top: 80
 		};
-		oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
+		var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
 		assert.strictEqual(oPos.top, 85, "Should be 5 bellow the top of the viewport");
+	});
+
+	QUnit.test("calling _placeContextMenuAtTheBottom when overlay is overlapped with another overlay at the top", function (assert) {
+		var oOverlay = {
+			top: 80,
+			height: 80,
+			bottom: 160,
+			isOverlappedAtTop: true
+		};
+		var oPopover = {
+			height: 60
+		};
+		var oViewport = {
+			top: 80,
+			height: 250
+		};
+		var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
+		assert.strictEqual(oPos.top, 160, "Should be at the bottom of the overlay");
 		oOverlay = null;
 		oPopover = null;
 		oViewport = null;
@@ -1057,6 +1159,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("calling _placeAsCompactContextMenu", function (assert) {
+		// menu place at top
 		var oOverlay = {
 			top: 100
 		};
@@ -1075,6 +1178,7 @@ sap.ui.require([
 		sinon.assert.notCalled(spyBottom);
 		sinon.assert.notCalled(spySideways);
 		assert.strictEqual(this.oContextMenuControl.getPopover().getShowArrow(), true, "Arrow should be visible");
+		// menu placed at the bottom
 		oOverlay = {
 			top: 50
 		};
@@ -1093,6 +1197,7 @@ sap.ui.require([
 		sinon.assert.notCalled(spyTop);
 		sinon.assert.calledOnce(spyBottom);
 		sinon.assert.notCalled(spySideways);
+		// menu placed sideways
 		oOverlay = {};
 		oPopover = {
 			height: 50,
@@ -1109,6 +1214,7 @@ sap.ui.require([
 		sinon.assert.notCalled(spyTop);
 		sinon.assert.notCalled(spyBottom);
 		sinon.assert.calledOnce(spySideways);
+		// unsupported screensize test
 		oOverlay = {};
 		oPopover = {
 			height: 270,
@@ -1767,6 +1873,14 @@ sap.ui.require([
 			done();
 		}};
 		this.oContextMenuControl._onContextMenu(oEvent);
+	});
+
+	QUnit.test("calling close function with expliciteClose option", function(assert) {
+		var oCloseExpandedPopoverStub = oSandbox.stub(this.oContextMenuControl.getPopover(true), "close");
+		var oCloseCompactPopoverStub = oSandbox.stub(this.oContextMenuControl.getPopover(false), "close");
+		this.oContextMenuControl.close(true);
+		assert.equal(oCloseExpandedPopoverStub.callCount, 1, "then the close function on expanded popover is called once");
+		assert.equal(oCloseCompactPopoverStub.callCount, 1, "then the close function on expanded popover is called once");
 	});
 
 	QUnit.module("ContextMenuControl API", {

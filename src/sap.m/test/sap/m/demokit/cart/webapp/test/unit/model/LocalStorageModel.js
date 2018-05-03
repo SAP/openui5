@@ -1,9 +1,7 @@
 /*global QUnit,sinon*/
 
 sap.ui.define([
-	"sap/ui/demo/cart/model/LocalStorageModel",
-	"sap/ui/thirdparty/sinon",
-	"sap/ui/thirdparty/sinon-qunit"
+	"sap/ui/demo/cart/model/LocalStorageModel"
 ], function (LocalStorageModel) {
 	"use strict";
 

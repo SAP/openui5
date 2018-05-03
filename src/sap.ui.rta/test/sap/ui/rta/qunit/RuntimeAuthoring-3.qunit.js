@@ -406,6 +406,35 @@ function (
 					}
 				);
 		});
+		QUnit.test("starting a service with available events", function (assert) {
+			assert.expect(4);
+			var sServiceName = Object.keys(mServicesDictionary).shift();
+			var sServiceLocation = mServicesDictionary[sServiceName].replace(/\./g, '/');
+			var fnServicePublish;
+			sandbox.stub(sap.ui, "require")
+				.withArgs([sServiceLocation])
+				.callsArgWithAsync(1, function (oRta, fnPublish) {
+					fnServicePublish = fnPublish;
+					return {
+						events: ['eventName']
+					};
+				});
+
+			return this.oRta
+				.startService(sServiceName)
+				.then(function (oService) {
+					assert.ok(typeof oService.attachEvent === 'function');
+					assert.ok(typeof oService.detachEvent === 'function');
+					assert.ok(typeof oService.attachEventOnce === 'function');
+					var mData = {
+						foo: 'bar'
+					};
+					oService.attachEvent('eventName', function (vData) {
+						assert.deepEqual(vData, mData);
+					});
+					fnServicePublish('eventName', mData);
+				});
+		});
 	});
 
 	QUnit.module("stopService()", {

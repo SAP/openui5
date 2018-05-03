@@ -727,6 +727,7 @@
 			$oDynamicPageHeader = oDynamicPage.getHeader().$(),
 			oDynamicPageTitle = oDynamicPage.getTitle(),
 			$oDynamicPageTitle = oDynamicPageTitle.$(),
+			oPinButton = oDynamicPage.getHeader()._getPinButton(),
 			oFakeEvent = {
 				srcControl: oDynamicPageTitle
 			},
@@ -766,6 +767,16 @@
 		assert.equal($oDynamicPageTitle.attr("tabindex"), 0, "The header title is focusable again");
 		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
 			sExpandedHeaderARIAReferences, "aria-labelledby should be back to it's initial value");
+
+		oPinButton.firePress();
+		oDynamicPageTitle.ontap(oFakeEvent);
+
+		assert.equal(oDynamicPage.getHeaderExpanded(), false, "After one click, the header is collapsed even it's pinned");
+		assert.strictEqual($oDynamicPageHeader.css("visibility"), "hidden", "Header should be excluded from the tab chain");
+		assert.strictEqual(oDynamicPage.getTitle().$().attr("aria-labelledby"),
+			sCollapsedHeaderARIAReferences, "aria-labelledby should indicate that the header is collapsed");
+		assert.strictEqual(oPinButton.getPressed(), false, "Pin button pressed state should be reset.");
+		assert.strictEqual(oDynamicPage.$().hasClass("sapFDynamicPageHeaderPinned"), false, "DynamicPage header should be unpinned.");
 	});
 
 	QUnit.test("DynamicPage toggle header indicators visibility", function (assert) {
@@ -796,9 +807,6 @@
 		this.oDynamicPage.setToggleHeaderOnTitleClick(true);
 		this.oDynamicPage._pin();
 
-		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=true, pinned=true
-		// Expected is both the buttons to be hidden
-
 		// Act: re-render the Title and Header
 		oDynamicPageTitle.rerender();
 		oDynamicPageHeader.rerender();
@@ -806,10 +814,10 @@
 		$oExpandButton = oExpandButton.$();
 
 		// Assert: toggleHeaderOnTitleClick=true, headerExpanded=true, pinned=true
-		// Expected is both the buttons to be hidden, after the Title and Header re-rendering
-		assert.equal(oDynamicPageHeader._getShowCollapseButton(), false, "The Collapse button should not be visible");
+		// Expected is expand button to be hidden and collapse button to be visible after the Title and Header re-rendering
+		assert.equal(oDynamicPageHeader._getShowCollapseButton(), true, "The Collapse button should be visible");
 		assert.equal(oDynamicPageTitle._getShowExpandButton(), false, "The Expand button should not be visible");
-		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is pinned, the Expand button is not visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), false, "Header is pinned, the Expand button is visible");
 		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is pinned, the Collapse button is not visible");
 
 		// Act
@@ -1824,6 +1832,36 @@
 		}, 0);
 	});
 
+	QUnit.test("expand shows the visual indicator", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oExpandButton = oDynamicPage.getTitle()._getExpandButton(),
+			oCollapseButton = oDynamicPage.getHeader()._getCollapseButton(),
+			oSpy = this.spy(oDynamicPage, "_scrollBellowCollapseVisualIndicator"),
+			iCollapseButtonBottom,
+			iDynamicPageBottom;
+
+		oDynamicPage.setHeaderExpanded(false);
+		oUtil.renderObject(oDynamicPage);
+
+		oDynamicPage.$().outerHeight("800px"); // set page height smaller than header height
+
+		oDynamicPage._setScrollPosition(100);
+
+		assert.equal(oDynamicPage._headerBiggerThanAllowedToBeExpandedInTitleArea(), true, "header is bigger than allowed to be expanded in title");
+
+		//act: expand via the 'expand' visual indicator
+		oExpandButton.firePress();
+
+		// check
+		assert.equal(oSpy.callCount, 1, "scroll to show the 'collapse' visual indicator is called");
+
+		iCollapseButtonBottom = oCollapseButton.getDomRef().getBoundingClientRect().bottom;
+		iDynamicPageBottom = this.oDynamicPage.getDomRef().getBoundingClientRect().bottom;
+
+		// check position
+		assert.strictEqual(iCollapseButtonBottom, iDynamicPageBottom, "CollapseButton is at the bottom of the page");
+	});
+
 
 	/* --------------------------- DynamicPage Private functions ---------------------------------- */
 	QUnit.module("DynamicPage - Private functions", {
@@ -1990,7 +2028,7 @@
 		assert.ok(oPinSpy.called, "The ScrollBar is updated");
 		assert.equal($oDynamicPage.hasClass("sapFDynamicPageHeaderPinned"), true, "Header is pinned, Pinned class applied to DynamicPage root element");
 		assert.equal($oExpandButton.hasClass("sapUiHidden"), true, "Header is pinned, the Expand Button is not visible");
-		assert.equal($oCollapseButton.hasClass("sapUiHidden"), true, "Header is pinned, the Collapse button is not visible");
+		assert.equal($oCollapseButton.hasClass("sapUiHidden"), false, "Header is pinned, the Collapse Button is visible");
 
 		// Act
 		this.oDynamicPage._unPin();

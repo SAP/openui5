@@ -137,17 +137,8 @@ sap.ui.define([
 		oChangeSpecificData.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
 		oChangeSpecificData.context = aCurrentDesignTimeContext.length === 1 ? aCurrentDesignTimeContext[0] : "";
 
-		//fallback in case no application descriptor is available (e.g. during unit testing)
-		var sAppVersion = this.getAppVersion();
-		var oValidAppVersions = {
-			creation: sAppVersion,
-			from: sAppVersion
-		};
-		if (sAppVersion && oChangeSpecificData.developerMode) {
-			oValidAppVersions.to = sAppVersion;
-		}
-
-		oChangeSpecificData.validAppVersions = oValidAppVersions;
+		// fallback in case no application descriptor is available (e.g. during unit testing)
+		oChangeSpecificData.validAppVersions = this._getValidAppVersions(oChangeSpecificData);
 
 		oChangeFileContent = Change.createInitialFileContent(oChangeSpecificData);
 		oChange = new Change(oChangeFileContent);
@@ -241,22 +232,28 @@ sap.ui.define([
 		oVariantSpecificData.content.reference = this.getComponentName(); //in this case the component name can also be the value of sap-app-id
 		oVariantSpecificData.content.packageName = "$TMP"; // first a flex change is always local, until all changes of a component are made transportable
 
-		//fallback in case no application descriptor is available (e.g. during unit testing)
-		var sAppVersion = this.getAppVersion();
-		var oValidAppVersions = {
-			creation: sAppVersion,
-			from: sAppVersion
-		};
-		if (sAppVersion && oVariantSpecificData.developerMode) {
-			oValidAppVersions.to = sAppVersion;
-		}
-
-		oVariantSpecificData.content.validAppVersions = oValidAppVersions;
+		// fallback in case no application descriptor is available (e.g. during unit testing)
+		oVariantSpecificData.content.validAppVersions = this._getValidAppVersions(oVariantSpecificData);
 
 		oVariantFileContent = Variant.createInitialFileContent(oVariantSpecificData);
 		oVariant = new Variant(oVariantFileContent);
 
 		return oVariant;
+	};
+
+	FlexController.prototype._getValidAppVersions = function(oChangeSpecificData) {
+		var sAppVersion = this.getAppVersion();
+		var oValidAppVersions = {
+			creation: sAppVersion,
+			from: sAppVersion
+		};
+		if (sAppVersion &&
+			oChangeSpecificData.developerMode &&
+			oChangeSpecificData.scenario !== sap.ui.fl.Scenario.AdaptationProject
+		) {
+			oValidAppVersions.to = sAppVersion;
+		}
+		return oValidAppVersions;
 	};
 
 	/**
@@ -596,6 +593,10 @@ sap.ui.define([
 			Utils.log.warning("Change handler implementation for change not found or change type not enabled for current layer - Change ignored");
 			return new Utils.FakePromise();
 		}
+		if (bXmlModifier && oChange.getDefinition().jsOnly) {
+			//change is not capable of xml modifier
+			return new Utils.FakePromise();
+		}
 
 		var mAppliedChangesCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
 		var sAppliedChanges = mAppliedChangesCustomData.customDataValue;
@@ -604,6 +605,7 @@ sap.ui.define([
 
 		var sChangeId = oChange.getId();
 
+		// if change was not yet applied
 		if (aAppliedChanges.indexOf(sChangeId) === -1) {
 			var bRevertible = this.isChangeHandlerRevertible(oChange, oControl, oChangeHandler);
 
@@ -1039,13 +1041,14 @@ sap.ui.define([
 		var aPromiseStack = [];
 		aChanges.forEach(function(oChange) {
 			aPromiseStack.push(function() {
+				var oSelector = this._getSelectorOfChange(oChange);
+				var oControl = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
 				var mPropertyBag = {
 					modifier: JsControlTreeModifier,
-					appComponent: oAppComponent
+					appComponent: oAppComponent,
+					view: Utils.getViewForControl(oControl)
 				};
-				var oSelector = this._getSelectorOfChange(oChange);
-				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
-				return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, true)
+				return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, mPropertyBag, true)
 				.then(function() {
 					this._oChangePersistence._deleteChangeInMap(oChange);
 				}.bind(this));
@@ -1092,12 +1095,9 @@ sap.ui.define([
 			this._oChangePersistence._addChangeAndUpdateDependencies(oComponent, oChange, aAllChanges.length, aAllChanges);
 
 			aPromiseStack.push(function() {
-				var mPropertyBag = {
-					modifier: JsControlTreeModifier,
-					appComponent: oAppComponent
-				};
+				var oModifier = JsControlTreeModifier;
 				var oSelector = this._getSelectorOfChange(oChange);
-				var oControl = mPropertyBag.modifier.bySelector(oSelector, mPropertyBag.appComponent);
+				var oControl = oModifier.bySelector(oSelector, oAppComponent);
 				if (!oControl) {
 					Utils.log.error("A flexibility change tries to change a nonexistent control.");
 					return new Utils.FakePromise();
@@ -1121,7 +1121,12 @@ sap.ui.define([
 	 * @public
 	 */
 	FlexController.prototype.removeFromAppliedChangesOnControl = function(oChange, oAppComponent, oControl) {
-		return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, {modifier: JsControlTreeModifier, appComponent: oAppComponent}, false);
+		var mPropertyBag = {
+			modifier: JsControlTreeModifier,
+			appComponent: oAppComponent,
+			view: Utils.getViewForControl(oControl)
+		};
+		return this._removeFromAppliedChangesAndMaybeRevert(oChange, oControl, mPropertyBag, false);
 	};
 
 	FlexController.prototype._updateControlsDependencies = function (mDependencies) {

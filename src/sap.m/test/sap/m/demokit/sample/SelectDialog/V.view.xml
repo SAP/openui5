@@ -35,6 +35,41 @@
 						value="true" />
 				</customData>
 			</Button>
+			<Button
+				class="sapUiSmallMarginBottom"
+				text="Show Select Dialog (growing=true and growingThreshold=15)"
+				press="handleSelectDialogPress">
+				<customData>
+					<core:CustomData
+						key="multi"
+						value="true" />
+					<core:CustomData
+						key="remember"
+						value="true" />
+					<core:CustomData
+						key="growing"
+						value="true" />
+					<core:CustomData
+						key="threshold"
+						value="15" />
+				</customData>
+			</Button>
+			<Button
+				class="sapUiSmallMarginBottom"
+				text="Show Select Dialog (growing=false)"
+				press="handleSelectDialogPress">
+				<customData>
+					<core:CustomData
+						key="multi"
+						value="true" />
+					<core:CustomData
+						key="remember"
+						value="true" />
+					<core:CustomData
+						key="growing"
+						value="false" />
+				</customData>
+			</Button>
 		</l:content>
 	</l:VerticalLayout>
 </mvc:View>

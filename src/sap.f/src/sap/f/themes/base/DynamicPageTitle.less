@@ -230,6 +230,10 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 
 /* Tablet Size */
 .sapFDynamicPage-Std-Tablet {
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+		padding: 0.5rem 1rem 1rem 2rem;
+	}
+
 	.sapFDynamicPageTitle {
 		padding: 0.5rem 1rem 0.5rem 2rem;
 
@@ -262,12 +266,12 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 		}
 	}
 
-	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle,
-	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle {
-		padding: 0.5rem 0rem 0.5rem 1rem;
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleSnapped > .sapFDynamicPageTitle {
+		padding: 0.5rem 0rem 1rem 1rem;
 	}
 
-	.sapFDynamicPageTitle {
+	.sapFDynamicPageTitle,
+	.sapFDynamicPageTitleWrapper.sapFDynamicPageTitleOnly > .sapFDynamicPageTitle {
 		padding: 0.5rem 0rem 0.5rem 1rem;
 
 		.sapFDynamicPageTitleTop > .sapFDynamicPageTitleTopLeft {

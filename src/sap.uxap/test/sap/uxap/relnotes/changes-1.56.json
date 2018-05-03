@@ -99,6 +99,30 @@
         "type": "FIX",
         "text": " sap.uxap.ObjectPageHeader: _updateRootARIALabel call condition added",
         "references": []
+      },
+      {
+        "id": "9656793fc72549dd07b3144ed27012ae2e1a79be",
+        "type": "FEATURE",
+        "text": " f.DynamicPage, uxap.ObjectPageLayout: Collapse/Pin changed",
+        "references": []
+      },
+      {
+        "id": "b040653482a7db075b220074c38aa3e3412ecdc4",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPage: showAnchorBarPopover property behavior fixed",
+        "references": []
+      },
+      {
+        "id": "2c1685ffe48bd2fe81f61ed5785a503e480bf8d9",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageHeader: Overflow button visibility fixed",
+        "references": []
+      },
+      {
+        "id": "8cb59d78ef198f02504c45888b4adb951e2143f4",
+        "type": "FIX",
+        "text": " uxap.ObjectPageHeaderContent: belize_deep appearance corrected",
+        "references": []
       }
     ]
   }

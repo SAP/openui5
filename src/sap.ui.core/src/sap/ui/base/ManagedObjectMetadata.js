@@ -399,7 +399,11 @@ function(
 	AggregationForwarder.prototype.get = function(oInstance) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
-		return this.targetAggregationInfo.get(oTarget);
+		if (oTarget) {
+			return this.targetAggregationInfo.get(oTarget);
+		} else { // before target of forwarding exists
+			return this.targetAggregationInfo.multiple ? [] : null;
+		}
 	};
 
 	AggregationForwarder.prototype.indexOf = function(oInstance, oAggregatedObject) {
@@ -413,7 +417,9 @@ function(
 	AggregationForwarder.prototype.set = function(oInstance, oAggregatedObject) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
-		// TODO update API parent of oAggregatedObject (oInstance, this.aggregation.name, oTarget)
+
+		ManagedObjectMetadata.addAPIParentInfo(oAggregatedObject, oInstance, this.aggregation.name);
+
 		this.targetAggregationInfo.set(oTarget, oAggregatedObject);
 		return oInstance;
 	};
@@ -421,7 +427,9 @@ function(
 	AggregationForwarder.prototype.add = function(oInstance, oAggregatedObject) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
-		// TODO update API parent of oAggregatedObject (oInstance, this.aggregation.name, oTarget)
+
+		ManagedObjectMetadata.addAPIParentInfo(oAggregatedObject, oInstance, this.aggregation.name);
+
 		this.targetAggregationInfo.add(oTarget, oAggregatedObject);
 		return oInstance;
 	};
@@ -429,30 +437,90 @@ function(
 	AggregationForwarder.prototype.insert = function(oInstance, oAggregatedObject, iIndex) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
-		// TODO update API parent of oAggregatedObject (oInstance, this.aggregation.name, oTarget)
+
+		ManagedObjectMetadata.addAPIParentInfo(oAggregatedObject, oInstance, this.aggregation.name);
+
 		this.targetAggregationInfo.insert(oTarget, oAggregatedObject, iIndex);
 		return oInstance;
+	};
+
+	/**
+	 * Checks whether object <code>a</code> is an inclusive descendant of object <code>b</code>.
+	 *
+	 * @param {sap.ui.base.ManagedObject} a Object that should be checked for being a descendant
+	 * @param {sap.ui.base.ManagedObject} b Object that should be checked for having a descendant
+	 * @returns {boolean} Whether <code>a</code> is a descendant of (or the same as) <code>b</code>
+	 * @private
+	 */
+	function isInclusiveDescendantOf(a, b) {
+		while ( a && a !== b ) {
+			a = a.oParent;
+		}
+		return !!a;
+	}
+
+	/**
+	 * Adds information to the given oAggregatedObject about its original API parent (or a subsequent API parent in case of multiple forwarding).
+	 *
+	 * @param {sap.ui.base.ManagedObject} oAggregatedObject Object to which the new API parent info should be added
+	 * @param {sap.ui.base.ManagedObject} oParent Object that is a new API parent
+	 * @param {string} sAggregationName the name of the aggregation under which oAggregatedObject is aggregated by the API parent
+	 * @protected
+	 */
+	ManagedObjectMetadata.addAPIParentInfo = function(oAggregatedObject, oParent, sAggregationName) {
+		if (!oAggregatedObject) {
+			return;
+		}
+
+		var oNewAPIParentInfo = {parent: oParent, aggregationName: sAggregationName};
+
+		// update API parent of oAggregatedObject
+		if (!oAggregatedObject.aAPIParentInfos) {
+			oAggregatedObject.aAPIParentInfos = [oNewAPIParentInfo];
+		} else {
+			var oPreviousAPIParentInfo = oAggregatedObject.aAPIParentInfos[oAggregatedObject.aAPIParentInfos.length - 1];
+			// if the previous API parent is not an ancestor of oInstance, oAggregatedObject is being moved to somewhere else
+			// TODO: but even IF the previous parent is an ancestor, this move may be NOT triggered by additional forwarding, but it may be a normal move further down the tree
+			if (oPreviousAPIParentInfo && !isInclusiveDescendantOf(oParent, oPreviousAPIParentInfo.parent)) {
+				oAggregatedObject.aAPIParentInfos = []; // => clear the previous API parent infos (new info will be added just below)
+			}
+			oAggregatedObject.aAPIParentInfos.push(oNewAPIParentInfo);
+		}
 	};
 
 	AggregationForwarder.prototype.remove = function(oInstance, vAggregatedObject) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
-		return this.targetAggregationInfo.remove(oTarget, vAggregatedObject);
-		// TODO update API parent of vAggregatedObject (oInstance, this.aggregation.name, oTarget)
+		var result = this.targetAggregationInfo.remove(oTarget, vAggregatedObject);
+		// remove API parent of removed element (if any)
+		if (result /* && result.aAPIParentInfos */) {
+			// the second part should always be true when added via forwarding, but MultiInput still has a function "setTokens"
+			// that forwards directly. That one now also sets the API parent info.
+			// When aAPIParentInfos is there, then the other conditions are always true:
+			// && result.aAPIParentInfos.length && result.aAPIParentInfos[result.aAPIParentInfos.length-1].parent === oInstance
+			result.aAPIParentInfos.pop();
+		}
+		return result;
 	};
 
 	AggregationForwarder.prototype.removeAll = function(oInstance) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
-		return this.targetAggregationInfo.removeAll(oTarget);
-		// TODO update API parent of removed objects (oInstance, this.aggregation.name, oTarget)
+		var aRemoved = this.targetAggregationInfo.removeAll(oTarget);
+		// update API parent of removed objects
+		for (var i = 0; i < aRemoved.length; i++) {
+			if (aRemoved[i].aAPIParentInfos) {
+				aRemoved[i].aAPIParentInfos.pop();
+			}
+		}
+		return aRemoved;
 	};
 
 	AggregationForwarder.prototype.destroy = function(oInstance) {
 		var oTarget = this.getTarget(oInstance);
 		// TODO oInstance.observer
 		this.targetAggregationInfo.destroy(oTarget);
-		// TODO update API parent of removed objects (oInstance, this.aggregation.name, oTarget)
+		// API parent info of objects being destroyed is removed in ManagedObject.prototype.destroy()
 		return oInstance;
 	};
 
@@ -1019,7 +1087,7 @@ function(
 
 		if (!mOptions || !mOptions.aggregation || !(mOptions.idSuffix || mOptions.getter) || (mOptions.idSuffix && mOptions.getter)) {
 			throw new Error("an 'mOptions' object with 'aggregation' property and either 'idSuffix' or 'getter' property (but not both) must be given"
-				+ sForwardedSourceAggregation + " does not exist");
+				+ " but does not exist");
 		}
 
 		if (oAggregation._oParent === this) {

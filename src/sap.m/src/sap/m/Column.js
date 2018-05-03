@@ -55,7 +55,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			/**
 			 * Defines the horizontal alignment of the column content.
 			 *
-			 * NOTE: Text controls with a <code>textAlign</code> property inherits the horizontal alignment.
+			 * <b>Note:</b> Text controls with a <code>textAlign</code> property inherits the horizontal alignment.
 			 */
 			hAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
 
@@ -76,13 +76,10 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			visible : {type : "boolean", group : "Appearance", defaultValue : true},
 
 			/**
-			 * By default column is always shown. If you set this property, control checks the minimum width of the screen to show or hide this column.
-			 * As you can give specific CSS sizes(e.g: "480px" or "40em"), you can also use sap.m.ScreenSize enumeration(e.g: "Phone", "Tablet", "Desktop", "Small", "Medium", "Large", ....).
-			 *
-			 * sap.m.Column.MediaQuery1->Range1 = 199
-			 *
-			 * This property can be used for responsive design. e.g: "40em"(or "640px" or "Tablet") setting shows this column in iPad(and Desktop) but hides in iPhone.
-			 * Please also see "demandPopin" property
+			 * Defines the minimum screen width to show or hide this column. By default column is always shown.
+			 * The responsive behavior of the <code>sap.m.Table</code> is determined by this property. As an example by setting <code>minScreenWidth</code> property to "40em" (or "640px" or "Tablet") shows this column on tablet (and desktop) but hides on mobile.
+			 * As you can give specific CSS sizes (e.g: "480px" or "40em"), you can also use the {@link sap.m.ScreenSize} enumeration (e.g: "Phone", "Tablet", "Desktop", "Small", "Medium", "Large", ....).
+			 * Please also see <code>demandPopin</code> property for further responsive design options.
 			 */
 			minScreenWidth : {type : "string", group : "Behavior", defaultValue : null},
 
@@ -95,7 +92,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			/**
 			 * Horizontal alignment of the pop-in content. Available alignment settings are "Begin", "Center", "End", "Left", and "Right".
 			 *
-			 * NOTE: Controls with a text align do not inherit the horizontal alignment.
+			 * <b>Note:</b> Controls with a text align do not inherit the horizontal alignment.
 			 * @deprecated Since version 1.14.
 			 * Use popinDisplay property instead.
 			 */
@@ -108,19 +105,17 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Element', 'sap/ui/
 			popinDisplay : {type : "sap.m.PopinDisplay", group : "Appearance", defaultValue : PopinDisplay.Block},
 
 			/**
-			 * Set "true" to merge repeating cells(duplicates) into one cell block.
-			 * Please see "mergeFunctionName" property to customize this property.
-			 * Note: This feature must not be used together with two-way binding. This property is ignored if a column is shown in the pop-in.
+			 * Set <code>true</code> to merge repeating/duplicate cells into one cell block. See <code>mergeFunctionName</code> property to customize.
+			 * <b>Note:</b> Merging only happens at the rendering of the <code>sap.m.Table</code> control, subsequent changes on the cell or item do not have any effect on the merged state of the cells, therefore this feature should not be used together with two-way binding.
+			 * This property is ignored if any column is configured to be shown as a pop-in.
 			 * @since 1.16
 			 */
 			mergeDuplicates : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Defines the value getter(serialization) function if "mergeDuplicates" property is set "true"
-			 * Control itself uses this function to compare values of two repeating cells.
-			 * Default value "getText" is suitable for Label and Text control.
-			 * e.g. For "Icon" control "getSrc" can be used.
-			 * Note: You can pass one string parameter to given function after "#" sign. e.g. "data#myparameter"
+			 * Defines the control serialization function if <code>mergeDuplicates<code> property is set to <code>true</code>. The control itself uses this function to compare values of two repeating cells.
+			 * Default value "getText" is suitable for <code>sap.m.Label</code> and <code>sap.m.Text</code> controls but for the <code>sap.ui.core.Icon</code> control "getSrc" function should be used to merge icons.
+			 * <b>Note:</b> You can pass one string parameter to given function after "#" sign. e.g. "data#myparameter"
 			 * @since 1.16
 			 */
 			mergeFunctionName : {type : "string", group : "Misc", defaultValue : 'getText'}

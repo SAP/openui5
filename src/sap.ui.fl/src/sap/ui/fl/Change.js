@@ -812,6 +812,7 @@ sap.ui.define([
 	 * @param {String}  [oPropertyBag.namespace] The namespace of the change file
 	 * @param {String}  [oPropertyBag.projectId] The project id of the change file
 	 * @param {String}  [oPropertyBag.generator] The tool which is used to generate the change file
+	 * @param {Boolean}  [oPropertyBag.jsOnly] The change can only be applied with the JS modifier
 	 *
 	 * @returns {Object} The content of the change file
 	 *
@@ -856,7 +857,8 @@ sap.ui.define([
 				sapui5Version: sap.ui.version
 			},
 			dependentSelector: oPropertyBag.dependentSelector || {},
-			validAppVersions: oPropertyBag.validAppVersions || {}
+			validAppVersions: oPropertyBag.validAppVersions || {},
+			jsOnly: oPropertyBag.jsOnly || false
 		};
 
 		return oNewFile;

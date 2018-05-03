@@ -766,9 +766,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Converts ASCII coding into a string. Required for restoring stored code extinsions
+		 * Converts ASCII coding into a string. Required for restoring stored code extensions
 		 *
-		 * @param {String} ascii string containing ascii code valid numbers seperated by ','
+		 * @param {String} ascii string containing ascii code valid numbers separated by ','
 		 * @returns {String} parsedString parsed string
 		 */
 		asciiToString: function (ascii) {
@@ -784,10 +784,10 @@ sap.ui.define([
 		},
 
 		/**
-		 * Converts a string into ASCII coding. Required for restoring stored code extinsions
+		 * Converts a string into ASCII coding. Required for restoring stored code extensions
 		 *
 		 * @param {String} string string which has to be encoded
-		 * @returns {String} ascii imput parsed to ascii numbers seperated by ','
+		 * @returns {String} ascii imput parsed to ascii numbers separated by ','
 		 */
 		stringToAscii: function (string) {
 			var ascii = "";
@@ -864,7 +864,7 @@ sap.ui.define([
 				}
 				if (aValues.length === 0) {
 					delete mParams[sParameterName];
-					mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // Case when ControlVariantsAPI.clearVariantParameterInURL is called with a parameter
+					mTechnicalParameters && delete mTechnicalParameters[sParameterName]; // clearVariantParameterInURL
 				} else {
 					mParams[sParameterName] = aValues;
 					mTechnicalParameters && (mTechnicalParameters[sParameterName] = aValues); // Technical parameters need to be in sync with the URL hash

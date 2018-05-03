@@ -1,0 +1,22 @@
+{
+    "config": {
+        "sample": {
+            "stretch": true,
+            "files": [
+                "Component.js",
+                "V.view.xml",
+                "C.controller.js",
+                "comp/SearchField.js",
+                "comp/SearchField.control.xml"
+            ]
+        }
+    },
+    "dependencies": {
+        "libs": [
+            "sap.m"
+        ]
+    },
+    "description": "XMLComposite: basic example",
+    "name": "sap.ui.core.sample.XMLComposite.01",
+    "rootView": "sap.ui.core.sample.XMLComposite.01.V"
+}

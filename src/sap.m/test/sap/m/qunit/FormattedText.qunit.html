@@ -143,6 +143,20 @@
 			oAssert.strictEqual($Result[3].localName, "u", "The element name should be 'u'");
 		});
 
+		QUnit.test("_setUseLimitedRenderingRules should effect only instance", function (oAssert) {
+
+			// Arrange - create a second instance of the control
+			var oSecondFT = new sap.m.FormattedText();
+
+			// Act - set the limited rendering rules to true on the original control
+			this.oFT._setUseLimitedRenderingRules(true);
+
+			// Assert
+			oAssert.notStrictEqual(this.oFT._renderingRules, oSecondFT._renderingRules,
+					"Control instances have different rendering rules");
+
+		});
+
 		QUnit.module("Clean up");
 		QUnit.test("cleanup", function(assert){
 			oFT.destroy();

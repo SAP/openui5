@@ -998,6 +998,36 @@ function (
 		});
 	});
 
+	QUnit.test("creates a change containing valid applicationVersions in developerMode", function (assert) {
+		this.stub(Utils, "getAppComponentForControl").returns(oComponent);
+		var oDummyChangeHandler = {
+			completeChangeContent: function () {}
+		};
+		this.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
+
+		var oChange = this.oFlexController.createChange({ developerMode : true }, new Control());
+		var oValidAppVersions = oChange.getDefinition().validAppVersions;
+
+		assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
+		assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
+		assert.equal(oValidAppVersions.to, this.oFlexController.getAppVersion(), "the valid TO app version is correct");
+	});
+
+	QUnit.test("creates a change containing valid applicationVersions in developerMode and ADAPTATION_PROJECT scenario", function (assert) {
+		this.stub(Utils, "getAppComponentForControl").returns(oComponent);
+		var oDummyChangeHandler = {
+			completeChangeContent: function () {}
+		};
+		this.stub(this.oFlexController, "_getChangeHandler").returns(oDummyChangeHandler);
+
+		var oChange = this.oFlexController.createChange({ developerMode : true, scenario : sap.ui.fl.Scenario.AdaptationProject }, new Control());
+		var oValidAppVersions = oChange.getDefinition().validAppVersions;
+
+		assert.equal(oValidAppVersions.creation, this.oFlexController.getAppVersion(), "the valid CREATION app version is correct");
+		assert.equal(oValidAppVersions.from, this.oFlexController.getAppVersion(), "the valid FROM app version is correct");
+		assert.equal(oValidAppVersions.to, undefined, "the TO app version is not defined");
+	});
+
 	QUnit.test("when processViewByModifier is called with changes", function (assert) {
 		var oGetChangesForViewStub = sandbox.stub(this.oFlexController._oChangePersistence, "getChangesForView").returns(Promise.resolve());
 		var oResolveGetChangesForViewSpy = sandbox.spy(this.oFlexController, "_resolveGetChangesForView");
@@ -1591,9 +1621,10 @@ function (
 
 	QUnit.module("[JS] checkTargetAndApplyChange / removeFromAppliedChanges with one change for a label", {
 		beforeEach: function (assert) {
-			this.sLabelId = labelChangeContent.selector.id;
+			var oLabelChangeContent = jQuery.extend({}, labelChangeContent);
+			this.sLabelId = oLabelChangeContent.selector.id;
 			this.oControl = new sap.m.Label(this.sLabelId);
-			this.oChange = new Change(labelChangeContent);
+			this.oChange = new Change(oLabelChangeContent);
 			this.mChanges = {
 				"mChanges": {},
 				"mDependencies": {},
@@ -1626,6 +1657,24 @@ function (
 		};
 		sandbox.stub(this.oFlexController, "_getChangeHandler").returns({});
 		sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns(mAppliedCustomData);
+
+		return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {
+			modifier: JsControlTreeModifier,
+			appComponent: {}
+		})
+		.then(function (bValue) {
+			assert.ok(bValue, "the promise returns a true value");
+		});
+	});
+
+	QUnit.test("does not directly return with undefined when 'jsOnly' is set to true", function (assert) {
+		sandbox.restore();
+		var mAppliedCustomData = {
+			customDataEntries : [this.oChange.getId()]
+		};
+		sandbox.stub(this.oFlexController, "_getChangeHandler").returns({});
+		sandbox.stub(this.oFlexController, "_getAppliedCustomData").returns(mAppliedCustomData);
+		this.oChange.getDefinition().jsOnly = true;
 
 		return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {
 			modifier: JsControlTreeModifier,
@@ -2262,9 +2311,10 @@ function (
 
 	QUnit.module("[XML] checkTargetAndApplyChange with one change for a label", {
 		beforeEach: function (assert) {
-			this.sLabelId = labelChangeContent.selector.id;
+			var oLabelChangeContent = jQuery.extend({}, labelChangeContent);
+			this.sLabelId = oLabelChangeContent.selector.id;
 			this.oDOMParser = new DOMParser();
-			this.oChange = new Change(labelChangeContent);
+			this.oChange = new Change(oLabelChangeContent);
 			this.oFlexController = new FlexController("testScenarioComponent", "1.2.3");
 
 			this.oChangeHandlerApplyChangeStub = sandbox.stub();
@@ -2277,6 +2327,24 @@ function (
 		afterEach: function (assert) {
 			sandbox.restore();
 		}
+	});
+
+	QUnit.test("does nothing if 'jsOnly' is set on the change", function(assert) {
+		this.oXmlString =
+			'<mvc:View id="testComponent---myView" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+				'<Label id="' + this.sLabelId  + '" />' +
+			'</mvc:View>';
+		this.oView = this.oDOMParser.parseFromString(this.oXmlString, "application/xml").documentElement;
+		this.oControl = this.oView.childNodes[0];
+		this.oChange.getDefinition().jsOnly = true;
+
+		return this.oFlexController.checkTargetAndApplyChange(this.oChange, this.oControl, {modifier: XmlTreeModifier, view: this.oView})
+
+		.then(function(vReturn) {
+			assert.equal(vReturn, undefined, "the function returns undefined as parameter");
+			assert.equal(this.oChangeHandlerApplyChangeStub.callCount, 0, "the changeHandler was not called");
+			assert.notOk(this.oControl.getElementsByTagName("customData")[0], "the custom data is not set");
+		}.bind(this));
 	});
 
 	QUnit.test("throws an error if change is not revertible and undo should be recorded", function(assert) {

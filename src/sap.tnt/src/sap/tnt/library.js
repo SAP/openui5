@@ -5,11 +5,14 @@
 /**
  * Initialization Code and shared classes of library sap.tnt.
  */
-sap.ui.define(['jquery.sap.global',
-	'sap/ui/core/library', 'sap/m/library'], // library dependency
-	function(jQuery) {
-
-	'use strict';
+sap.ui.define([
+		"jquery.sap.global",
+		"sap/ui/base/DataType",
+		"sap/ui/core/library",
+		"sap/m/library"
+	],
+	function (jQuery, DataType) {
+	"use strict";
 
 	/**
 	 * SAPUI5 library with controls specialized for administrative applications.
@@ -23,18 +26,23 @@ sap.ui.define(['jquery.sap.global',
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
-		name : 'sap.tnt',
-		version: '${version}',
-		dependencies : ['sap.ui.core','sap.m'],
-		types: [],
+		name : "sap.tnt",
+		version: "${version}",
+		dependencies : ["sap.ui.core", "sap.m"],
+		types: [
+			"sap.tnt.RenderMode",
+			"sap.tnt.BoxContainerLayoutConfiguration"
+		],
 		interfaces: [],
 		controls: [
-			'sap.tnt.NavigationList',
-			'sap.tnt.ToolHeaderUtilitySeparator',
-			'sap.tnt.ToolHeader',
-			'sap.tnt.SideNavigation',
-			'sap.tnt.ToolPage',
-			'sap.tnt.InfoLabel'
+			"sap.tnt.NavigationList",
+			"sap.tnt.ToolHeaderUtilitySeparator",
+			"sap.tnt.ToolHeader",
+			"sap.tnt.SideNavigation",
+			"sap.tnt.ToolPage",
+			"sap.tnt.InfoLabel",
+			"sap.tnt.BoxContainer",
+			"sap.tnt.Box"
 		],
 		elements: [
 			"sap.tnt.NavigationListItem"
@@ -61,6 +69,14 @@ sap.ui.define(['jquery.sap.global',
 		 */
 		Loose: "Loose"
 	};
+
+	sap.tnt.BoxesPerRowConfig = DataType.createType("sap.tnt.BoxesPerRowConfig", {
+			isValid : function(vValue) {
+				return /^(([Xx][Ll](?:[1-9]|1[0-2]))? ?([Ll](?:[1-9]|1[0-2]))? ?([Mm](?:[1-9]|1[0-2]))? ?([Ss](?:[1-9]|1[0-2]))?)$/.test(vValue);
+			}
+		},
+		DataType.getType("string")
+	);
 
 	return sap.tnt;
 

@@ -144,7 +144,13 @@
 			jQuery.sap.require("sap.m.MessageToast");
 			var aFileNames = [];
 			sap.ui.fl.FakeLrepLocalStorage.getChanges().forEach(function(oChange) {
-				aFileNames.push(oChange.fileName);
+				if (
+					oChange.fileType !== "ctrl_variant_change" &&
+					oChange.fileType !== "ctrl_variant" &&
+					oChange.fileType !== "ctrl_variant_management_change"
+				) {
+					aFileNames.push(oChange.fileName);
+				}
 			});
 
 			sap.ui.rta.command.Stack.initializeWithChanges(sap.ui.getCore().byId("Comp1---idMain1"), aFileNames)
