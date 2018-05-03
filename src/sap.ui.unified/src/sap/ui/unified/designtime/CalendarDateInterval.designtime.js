@@ -13,11 +13,10 @@ sap.ui.define([],
 				plural: "CALENDARDATEINTERVAL_NAME_PLURAL"
 			},
 			palette: {
-				group: "INPUT"
-				// TODO: uncoment icons when it is ready
-				// icons: {
-				// 	svg: "sap/ui/unified/designtime/CalendarDateInterval.icon.svg"
-				// }
+				group: "INPUT",
+				icons: {
+					svg: "sap/ui/unified/designtime/CalendarDateInterval.icon.svg"
+				}
 			},
 			templates: {
 				create: "sap/ui/unified/designtime/CalendarDateInterval.create.fragment.xml"

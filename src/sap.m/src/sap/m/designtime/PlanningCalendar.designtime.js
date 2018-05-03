@@ -13,11 +13,10 @@ sap.ui.define([],
 				plural: "PLANNINGCALENDAR_NAME_PLURAL"
 			},
 			palette: {
-				group: "DISPLAY"
-				// TODO: uncomment this when icon is avaiable
-				// icons: {
-				// 	svg: "sap/m/designtime/PlanningCalendar.icon.svg"
-				// }
+				group: "DISPLAY",
+				icons: {
+					svg: "sap/m/designtime/PlanningCalendar.icon.svg"
+				}
 			},
 			templates: {
 				create: "sap/m/designtime/PlanningCalendar.create.fragment.xml"
