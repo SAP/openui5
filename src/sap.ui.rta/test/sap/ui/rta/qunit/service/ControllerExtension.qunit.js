@@ -28,6 +28,11 @@ function(
 				createBaseChange: function(oChangeSpecificData) {
 					this.iCreateBaseChangeCounter ++;
 					this.oCreateBaseChangeParameter = oChangeSpecificData;
+					return {
+						getDefinition: function() {
+							return {definition: "definition"};
+						}
+					};
 				}.bind(this),
 				addPreparedChange: function() {
 					this.iAddPreparedChangeCounter ++;
@@ -55,8 +60,8 @@ function(
 				}
 			});
 
-			return this.oControllerExtension.add("foo.js", oView.getId()).then(function() {
-				assert.ok(true, "then no error was thrown");
+			return this.oControllerExtension.add("foo.js", oView.getId()).then(function(oDefinition) {
+				assert.deepEqual(oDefinition, {definition: "definition"}, "the function returns the definition of the change");
 				assert.equal(this.iCreateBaseChangeCounter, 1, "and FlexController.createBaseChange was called once");
 				assert.equal(this.iAddPreparedChangeCounter, 1, "and FlexController.addPreparedChange was called once");
 				assert.equal(this.oCreateBaseChangeParameter.changeType, "codeExt", "the changeType was set correctly");
