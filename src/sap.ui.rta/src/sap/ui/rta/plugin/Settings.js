@@ -5,10 +5,12 @@
 // Provides class sap.ui.rta.plugin.Settings.
 sap.ui.define([
 	'sap/ui/rta/plugin/Plugin',
-	'sap/ui/rta/Utils'
+	'sap/ui/rta/Utils',
+	'sap/base/Log'
 ], function(
 	Plugin,
-	Utils) {
+	Utils,
+	BaseLog) {
 	"use strict";
 
 	/**
@@ -201,7 +203,11 @@ sap.ui.define([
 		if (vSettingsActions) {
 			// Only one action: simply return settings entry as usual
 			if (vSettingsActions.handler) {
-				return this._getMenuItems(oOverlay, {pluginId : sPluginId, rank : iRank});
+				return this._getMenuItems(oOverlay, {
+					pluginId : sPluginId,
+					rank : iRank,
+					icon : this._getActionIcon(vSettingsActions)
+				});
 			// Multiple actions: return one menu item for each action
 			} else {
 				var aMenuItems = [];
@@ -214,6 +220,7 @@ sap.ui.define([
 						aMenuItems.push({
 							id : sPluginId + iActionCounter,
 							text : sActionText,
+							icon : this._getActionIcon(oSettingsAction),
 							enabled : oSettingsAction.isEnabled && oSettingsAction.isEnabled.bind(this, oOverlay.getElement()),
 							handler : function(fnHandler, aOverlays, mPropertyBag){
 								mPropertyBag = mPropertyBag || {};
@@ -230,6 +237,19 @@ sap.ui.define([
 				return aMenuItems;
 			}
 		}
+	};
+
+	Settings.prototype._getActionIcon = function(oSettingsAction) {
+		var sDefaultSettingIcon = "sap-icon://key-user-settings",
+			sActionIcon = oSettingsAction.icon;
+		if (!sActionIcon) {
+			return sDefaultSettingIcon;
+		}
+		if (typeof sActionIcon !== "string") {
+			BaseLog.error("Icon setting for settingsAction should be a string");
+			return sDefaultSettingIcon;
+		}
+		return sActionIcon;
 	};
 
 	/**

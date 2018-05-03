@@ -1,0 +1,22 @@
+{
+    "config": {
+        "sample": {
+            "stretch": true,
+            "files": [
+                "Component.js",
+                "V.view.xml",
+                "C.controller.js",
+                "comp/Table.js",
+                "comp/Table.control.xml"
+            ]
+        }
+    },
+    "dependencies": {
+        "libs": [
+            "sap.m"
+        ]
+    },
+    "description": "XMLComposite: example showing usage of aggregation",
+    "name": "sap.ui.core.sample.XMLComposite.02",
+    "rootView": "sap.ui.core.sample.XMLComposite.02.V"
+}

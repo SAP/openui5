@@ -24,7 +24,7 @@ sap.ui.define(function () {
 		TOOLTIP_BORDER: 1,
 		FOLLOW_OF_TOLERANCE: 24,
 		TICKMARKS: {
-			MAX_POSSIBLE: 100,
+			MAX_POSSIBLE: 101,
 			MIN_SIZE: {
 				SMALL: 8,
 				WITH_LABEL: 80

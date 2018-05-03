@@ -36,6 +36,16 @@ sap.ui.define([
 			var bRemember = !!oEvent.getSource().data("remember");
 			this._oDialog.setRememberSelections(bRemember);
 
+			// Set growing property
+			var bGrowing = oEvent.getSource().data("growing");
+			this._oDialog.setGrowing(bGrowing == "true");
+
+			// Set growing threshold
+			var sGrowingThreshold = oEvent.getSource().data("threshold");
+			if (sGrowingThreshold) {
+				this._oDialog.setGrowingThreshold(parseInt(sGrowingThreshold, 10));
+			}
+
 			// clear the old search filter
 			this._oDialog.getBinding("items").filter([]);
 

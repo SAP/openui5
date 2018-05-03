@@ -27,7 +27,7 @@
 				<navigationBar>
 					<m:Bar>
 						<m:contentLeft>
-							<m:Button icon="sap-icon://nav-back"></m:Button>
+							<m:Button icon="sap-icon://nav-back" tooltip="nav-back"></m:Button>
 						</m:contentLeft>
 						<m:contentMiddle>
 							<m:Text text="Employee Profile"/>
@@ -35,8 +35,8 @@
 					</m:Bar>
 				</navigationBar>
 				<actions>
-					<ObjectPageHeaderActionButton icon="sap-icon://tree" text="tree"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://tree" text="tree" tooltip="tree"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" text="action" tooltip="action"/>
 				</actions>
 			</ObjectPageHeader>
 		</headerTitle>

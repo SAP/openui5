@@ -1034,6 +1034,78 @@
         "type": "FIX",
         "text": " sap.m.Tokenizer: fixed width",
         "references": []
+      },
+      {
+        "id": "21543b66241833e19f91933716b63504e0de4adf",
+        "type": "FEATURE",
+        "text": " sap.m.IconTabBar: tabDensityMode property implemented",
+        "references": []
+      },
+      {
+        "id": "2c1c149631e66dd846e3c1b76ce02428cff7f15d",
+        "type": "FEATURE",
+        "text": " sap.m.PlanningCalendarRow: introducing specialDates aggregation",
+        "references": []
+      },
+      {
+        "id": "30e73f54e034682374d3537bfc8424b741e20cf4",
+        "type": "FEATURE",
+        "text": " sap.m.TableSelectDialog: Reset button added",
+        "references": []
+      },
+      {
+        "id": "431d3d76e13554ebca80a01b400c3108712947b8",
+        "type": "FIX",
+        "text": " sap.m.Column: rendering of items should not change the merge state",
+        "references": []
+      },
+      {
+        "id": "1ee8a4159f2fa99a2fee29eb22ebae5f74dca129",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Show API Reference link in documentation",
+        "references": []
+      },
+      {
+        "id": "5e7ec0fc63ba693518adf10bed3a385d3c2cbfda",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Align styles in compact",
+        "references": []
+      },
+      {
+        "id": "58e257341191f6acba3d34238c4cfa4d77b9c477",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Single pasted values are not turned into tokens",
+        "references": []
+      },
+      {
+        "id": "0c36f1ef08162a30c72442a9d7f806cdc771ce03",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: used in active state in a table gets no longer truncated",
+        "references": []
+      },
+      {
+        "id": "e73a36fcd2d8b19dc4341ec52b8385c42adf5439",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: The title control is visible if it\u0027s changed back and forth to active",
+        "references": []
+      },
+      {
+        "id": "9ec869facf04f6256fde68b5b013facb1721bc7d",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Control\u0027s width corrected in Form",
+        "references": []
+      },
+      {
+        "id": "b5cb4c292162108adb935b0c55844518e5578c2e",
+        "type": "FIX",
+        "text": " sap.m.ResponsivePopover: adds default aggregation to be in sync with sap.m.Popover",
+        "references": []
+      },
+      {
+        "id": "2eb3c8b53abb07aa45ad264d877ffa78876a7d5a",
+        "type": "FIX",
+        "text": " sap.m.TableSelectDialog: Title of Dialog is also set",
+        "references": []
       }
     ]
   }

@@ -42,6 +42,7 @@ sap.ui.define([
 				oRm.addClass('sapUxAPObjectPageContentObjectImage-' + oHeader.getObjectImageShape());
 			}
 		}
+		oRm.addClass("sapContrastPlus");
 		oRm.addClass("ui-helper-clearfix");
 		oRm.addClass("sapUxAPObjectPageHeaderContent");
 

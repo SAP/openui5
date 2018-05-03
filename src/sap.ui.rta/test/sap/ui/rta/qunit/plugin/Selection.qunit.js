@@ -393,6 +393,39 @@ sap.ui.require([
 			assert.notOk(document.activeElement === oOverlay.getDomRef(), "then the Overlay is not focused any more");
 		});
 
+		QUnit.test("Invoking Mouse-Over and Mouse-Leave on an Overlay which is selectable", function (assert) {
+			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
+			var oMouseEvent = jQuery.Event('mouseover');
+			oOverlay.$().trigger(oMouseEvent);
+			assert.ok(oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the Overlay has the proper CSS class after mouse-over event");
+			oMouseEvent = jQuery.Event('mouseleave');
+			oOverlay.$().trigger(oMouseEvent);
+			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is removed again after mouse-leave event");
+		});
+
+		QUnit.test("Invoking Mouse-Over on an Overlay which is not selectable", function (assert) {
+			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
+			oOverlay.setSelectable(false);
+			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
+			var oMouseEvent = jQuery.Event('mouseover');
+			oOverlay.$().trigger(oMouseEvent);
+			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not set after Mouse-over event");
+		});
+
+		QUnit.test("When 'Editable' changes to false on an hovered Overlay", function (assert) {
+			var fnDone = assert.async();
+			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
+			var oMouseEvent = jQuery.Event('mouseover');
+			oOverlay.$().trigger(oMouseEvent);
+			assert.ok(oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the Overlay has initaly the proper CSS class");
+			this.oSelectionPlugin.attachEventOnce("elementEditableChange", function() {
+				assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is removed again after editable change");
+				fnDone();
+			});
+			oOverlay.setEditable(false);
+		});
+
 		QUnit.test("When selection Mode changes", function (assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			this.oDesignTime.setSelectionMode(sap.ui.dt.SelectionMode.Single);

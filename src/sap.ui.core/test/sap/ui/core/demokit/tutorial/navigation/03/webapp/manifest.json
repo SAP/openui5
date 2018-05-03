@@ -39,7 +39,8 @@
 		"dependencies": {
 			"minUI5Version": "1.30",
 			"libs": {
-				"sap.m": { }
+				"sap.m": {},
+				"sap.ui.core": {}
 			}
 		},
 		"models": {

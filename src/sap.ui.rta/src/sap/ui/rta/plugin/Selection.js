@@ -92,6 +92,8 @@ function(
 		oOverlay.attachBrowserEvent("click", this._selectOverlay, this);
 		oOverlay.attachBrowserEvent("keydown", this._onKeyDown, this);
 		oOverlay.attachBrowserEvent("mousedown", this._onMouseDown, this);
+		oOverlay.attachBrowserEvent("mouseover", this._onMouseover, this);
+		oOverlay.attachBrowserEvent("mouseleave", this._onMouseleave, this);
 	};
 
 	Selection.prototype._onEditableChange = function(oEvent) {
@@ -103,6 +105,9 @@ function(
 		var bSelectable = oOverlay.getEditable();
 		if (oOverlay.getSelectable() !== bSelectable) {
 			oOverlay.setSelectable(bSelectable);
+			if (!bSelectable){
+				this._removePreviousHover();
+			}
 			this.fireElementEditableChange({
 				editable: bSelectable
 			});
@@ -119,7 +124,8 @@ function(
 		oOverlay.detachBrowserEvent("click", this._selectOverlay, this);
 		oOverlay.detachBrowserEvent("keydown", this._onKeyDown, this);
 		oOverlay.detachBrowserEvent("mousedown", this._onMouseDown, this);
-
+		oOverlay.detachBrowserEvent("mouseover", this._onMouseover, this);
+		oOverlay.detachBrowserEvent("mouseleave", this._onMouseleave, this);
 		oOverlay.detachEditableChange(this._onEditableChange, this);
 	};
 
@@ -211,6 +217,49 @@ function(
 				}
 			}
 		}
+	};
+
+	/**
+	 * Handle mouseover event
+	 * @param  {sap.ui.base.Event} oEvent event object
+	 * @private
+	 */
+	Selection.prototype._onMouseover = function(oEvent) {
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+		if (oOverlay.isSelectable()){
+			if (oOverlay !== this._oHoverTarget) {
+				this._removePreviousHover();
+				this._oHoverTarget = oOverlay;
+				oOverlay.addStyleClass("sapUiRtaOverlayHover");
+			}
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		}
+	};
+
+	/**
+	 * Handle mouseleave event
+	 * @param  {sap.ui.base.Event} oEvent event object
+	 * @private
+	 */
+	Selection.prototype._onMouseleave = function(oEvent) {
+		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
+		if (oOverlay.isSelectable()){
+			this._removePreviousHover();
+			oEvent.preventDefault();
+			oEvent.stopPropagation();
+		}
+	};
+
+	/**
+	 * Remove Previous Hover
+	 * @private
+	 */
+	Selection.prototype._removePreviousHover = function() {
+		if (this._oHoverTarget) {
+			this._oHoverTarget.removeStyleClass("sapUiRtaOverlayHover");
+		}
+		delete this._oHoverTarget;
 	};
 
 	/**

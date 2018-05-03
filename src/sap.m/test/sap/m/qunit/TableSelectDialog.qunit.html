@@ -838,7 +838,144 @@
 			oTableSelectDialog1._fireConfirmAndUpdateSelection();
 		});
 
-	</script>
+		QUnit.module("Reset functionality", {
+			beforeEach : function () {
+				sinon.config.useFakeTimers = true;
+				var aData = [];
+				for (var i = 0; i < 50; i++) {
+					aData.push({text : "Item" + i, selected : i === 3});
+				}
+				 this.oTableSelectDialogResetButton = new sap.m.TableSelectDialog("resetButtonTableSelectDialog", {
+					title: "Title",
+					columns : [
+						new sap.m.Column({
+							header : new sap.m.Label({text : "Item"})
+						})
+					],
+					multiSelect : true,
+					rememberSelections: true,
+					contentWidth: "200px",
+					growing: false
+				});
+
+				this.oTableSelectDialogResetButton.setModel(new sap.ui.model.json.JSONModel(aData));
+				this.oTableSelectDialogResetButton.bindItems("/", new sap.m.ColumnListItem({
+					cells : [
+						new sap.m.Label({text : "{text}"})
+					],
+					selected : "{selected}"
+				}));
+				this.oTable = this.oTableSelectDialogResetButton._oTable;
+
+				this.oTableSelectDialogResetButton1 = new sap.m.TableSelectDialog("resetButtonTableSelectDialog1", {
+					title: "Title",
+					columns : [
+						new sap.m.Column({
+							header : new sap.m.Label({text : "Item"})
+						})
+					],
+					multiSelect : true,
+					rememberSelections: true,
+					contentWidth: "200px",
+					growing: false
+				});
+
+				this.oTable1 = this.oTableSelectDialogResetButton1._oTable;
+				var aData1 = [],
+					sTableId = this.oTable1.getId();
+				for (var i = 0; i < 50; i++) {
+					aData1.push({id: sTableId + i, text : "Item" + i, selected : false});
+				}
+				this.oTableSelectDialogResetButton1.setModel(new sap.ui.model.json.JSONModel(aData1));
+				this.oTableSelectDialogResetButton1.bindItems("/", new sap.m.ColumnListItem({
+					cells : [
+						new sap.m.Label({text : "{text}"})
+					],
+					selected : "{selected}"
+				}));
+
+
+			},
+			afterEach : function () {
+				sinon.config.useFakeTimers = false;
+				this.oTableSelectDialogResetButton.destroy();
+				this.oTableSelectDialogResetButton1.destroy();
+			}
+		});
+
+		QUnit.test("Initial loading with selected items from previous selection", function(assert) {
+			this.oTableSelectDialogResetButton.open();
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.equal(this.oTableSelectDialogResetButton._getResetButton().getEnabled(), true, 'Reset button should be enabled');
+		});
+
+		QUnit.test("Initial loading without selected items from previous selection", function(assert) {
+			this.oTableSelectDialogResetButton1.open();
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.equal(this.oTableSelectDialogResetButton1._getResetButton().getEnabled(), false, 'Reset button should be disabled');
+		});
+
+
+		QUnit.test("Removing selection should disable button", function(assert) {
+			this.oTableSelectDialogResetButton.open();
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.equal(this.oTableSelectDialogResetButton._getResetButton().getEnabled(), true, 'Reset button should be enabled');
+
+			this.oTableSelectDialogResetButton._removeSelection();
+			this.oTableSelectDialogResetButton._updateSelectionIndicator();
+
+			assert.equal(this.oTableSelectDialogResetButton._getResetButton().getEnabled(), false, 'Reset button should be disabled');
+		});
+
+		QUnit.test("Adding selection should enable button", function(assert) {
+			this.oTableSelectDialogResetButton1.open();
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.equal(this.oTableSelectDialogResetButton1._getResetButton().getEnabled(), false, 'Reset button should be disabled');
+
+			this.oTable1.setSelectedItemById(this.oTable1.getAggregation("items")[0].sId);
+			this.oTableSelectDialogResetButton1._updateSelectionIndicator();
+
+			assert.equal(this.oTableSelectDialogResetButton1._getResetButton().getEnabled(), true, 'Reset button should be enabled');
+		});
+
+		QUnit.test("Clicking on enabled 'Reset' button should clear selection", function(assert) {
+			this.oTableSelectDialogResetButton.open();
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.equal(this.oTableSelectDialogResetButton._getResetButton().getEnabled(), true, 'Reset button should be enabled');
+
+			this.oTableSelectDialogResetButton._getResetButton().firePress();
+
+
+			assert.equal(this.oTableSelectDialogResetButton._getResetButton().getEnabled(), false, 'Reset button should be disabled');
+			assert.equal(this.oTable.getSelectedItems().length, 0, 'There should be no selected items');
+		});
+
+		QUnit.test("Title of dialog should be also set", function(assert) {
+			this.oTableSelectDialogResetButton.open();
+
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			assert.equal(this.oTableSelectDialogResetButton.getTitle(), "Title", 'Title of TableSelectDialog should be "Title"');
+			assert.equal(this.oTableSelectDialogResetButton._oDialog.getTitle(), "Title", 'Title of Dialog  should be "Title"');
+
+		});
+		</script>
 	</head>
 	<body id="body" class="sapUiBody">
 		<h1 id="qunit-header">QUnit Page for sap.m.TableSelectDialog</h1>

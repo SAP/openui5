@@ -1,166 +1,24 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<title>Test Page for sap.ui.dt.DesignTime and SimpleForm</title>
-
-		<style>
-			#content {
-				position: absolute;
-				left: 400px;
-				top : 10px;
-			}
-			.sapUiDtElementOverlay {
-				box-sizing: border-box;
-				border: 1px dashed grey;
-			}
-		</style>
-
 		<script src="../shared-config.js"></script>
-		<script id="sap-ui-bootstrap"
-				data-sap-ui-noConflict="true"
-				data-sap-ui-resourceroots='{"dt.view": "testdata/designtime/"}'
-				data-sap-ui-libs="sap.ui.dt,sap.m,sap.ui.layout"
-				src="../../../../../resources/sap-ui-core.js">
-		</script>
-		<link rel="stylesheet" href="../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
-		<script src="../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-		<script src="../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 		<script>
+			document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
+		</script>
+		<script>
+			jQuery.sap.require("sap.ui.qunit.qunit-2-css");
+			jQuery.sap.require('sap.ui.thirdparty.qunit-2');
+			jQuery.sap.require('sap.ui.qunit.qunit-junit');
+			jQuery.sap.require('sap.ui.qunit.qunit-coverage');
 
-			jQuery.sap.require("sap.ui.qunit.qunit-coverage");
+			window.blanket && window.blanket.options('sap-ui-cover-only', '[sap/ui/dt]');
 
-			jQuery.sap.require("sap.ui.dt.DesignTime");
-			jQuery.sap.require("sap.ui.dt.OverlayRegistry");
-			jQuery.sap.require("sap.ui.dt.ElementUtil");
-			var OverlayRegistry = sap.ui.dt.OverlayRegistry;
-
-			QUnit.module("Given that a DesignTime is created for a SimpleForm and designTimeMetadata for SimpleForm hidden form is provided", {
-				beforeEach : function() {
-					this.oLabel = new sap.m.Label({text:"Name"});
-
-					this.oSimpleForm = new sap.ui.layout.form.SimpleForm("Form1", {
-						maxContainerCols: 2,
-						editable: true,
-						content:[
-							new sap.ui.core.Title({text:"Person"}),
-							this.oLabel,
-							new sap.m.Input({value:"Max"}),
-							new sap.m.Input({value:"Mustermann"}),
-							new sap.m.Label({text:"Date of birth"}),
-							new sap.m.DatePicker({valueFormat:"yyyyMMdd", value:"19990909"}),
-							new sap.m.Label({text:"Gender"})
-						]
-					});
-
-					this.oVerticalLayout = new sap.ui.layout.VerticalLayout({content: [this.oSimpleForm, this.oLabel]});
-
-					this.oVerticalLayout.placeAt("content");
-					sap.ui.getCore().applyChanges();
-
-					var done = assert.async();
-
-					this.oDesignTime = new sap.ui.dt.DesignTime({
-						designTimeMetadata : {
-							"sap.ui.layout.form.SimpleForm" : {
-								aggregations: {
-									content : {
-										ignore : true
-									},
-									form: {
-										ignore : false
-									}
-								}
-							}
-						},
-						rootElements : [this.oVerticalLayout]
-					});
-
-					this.oDesignTime.attachEventOnce("synced", function() {
-						sap.ui.getCore().applyChanges();
-						done();
-					});
-				},
-				afterEach : function() {
-					this.oSimpleForm.destroy();
-					this.oDesignTime.destroy();
-				}
-			});
-
-			QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
-				var oSimpleFormOverlay = sap.ui.dt.OverlayRegistry.getOverlay(this.oSimpleForm);
-				var oFormAggregationOverlay = oSimpleFormOverlay.getAggregationOverlay("form");
-				assert.ok(oFormAggregationOverlay, "aggregation overlay for not ignored aggregation is created");
-			});
-
-			QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
-				var fnDone = assert.async();
-				this.oButton = new sap.m.Button("button1", {text : "Button"});
-				this.oSimpleForm.addContent(this.oButton);
-
-				this.oDesignTime.attachEventOnce("synced", function() {
-					var oOverlayForButton = OverlayRegistry.getOverlay(this.oButton);
-					assert.ok(oOverlayForButton, "overlay for button exists");
-					fnDone();
-				}, this);
-
-			});
-
-			// __bSapUiDtSupressOverlayDestroy test
-			QUnit.test("when the label is inserted to a SimpleForm ...", function(assert) {
-				var oLabelOverlay = OverlayRegistry.getOverlay(this.oLabel);
-				this.oSimpleForm.insertContent(this.oLabel, 3);
-				assert.ok(!oLabelOverlay.bIsDestroyed, "overlay for label wasn't destroyed");
-			});
-
-			QUnit.test("when getIndex is called in a simpleForm", function(assert) {
-				var oForm = this.oSimpleForm.getAggregation('form');
-				var oFormOverlay = OverlayRegistry.getOverlay(oForm);
-				var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation('formContainers').getIndex;
-				assert.equal(fnGetIndex(oForm), 1, "then the new index should be 1");
-			});
-
-			QUnit.test("when getIndex is called in a simpleForm with a sibling", function(assert) {
-				var oForm = this.oSimpleForm.getAggregation('form');
-				var oFormOverlay = OverlayRegistry.getOverlay(oForm);
-				var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation('formContainers').getIndex;
-				assert.equal(fnGetIndex(oForm, oForm.getFormContainers()[0]), 1, "then the new index should be 1");
-			});
-
-			QUnit.test("when getIndex is called in a simpleForm without Title", function(assert) {
-				var oForm = this.oSimpleForm.getAggregation('form');
-				var oFormOverlay = OverlayRegistry.getOverlay(oForm);
-				var fnGetIndex = oFormOverlay.getDesignTimeMetadata().getAggregation('formContainers').getIndex;
-				oForm.getFormContainers()[0].removeAllFormElements();
-				this.oSimpleForm.removeContent(oForm.getAggregation("formContainers")[0].getTitle())
-				assert.equal(fnGetIndex(oForm), 0, "then the new index should be 0");
-			});
-
-			QUnit.test("when rename is called in a simpleForm without Title", function(assert) {
-				var oFirstFormContainer = this.oSimpleForm.getAggregation('form').getAggregation('formContainers')[0];
-				var oFormContainerOverlay = OverlayRegistry.getOverlay(oFirstFormContainer);
-				var fnRename = oFormContainerOverlay.getDesignTimeMetadata().getData().actions.rename;
-				this.oSimpleForm.removeContent(oFirstFormContainer.getTitle());
-				assert.equal(fnRename(oFirstFormContainer).isEnabled, false, "then the rename should not be enabled");
-			});
-
-			QUnit.test("when remove is called in a simpleForm without Title", function(assert) {
-				var oFirstFormContainer = this.oSimpleForm.getAggregation('form').getAggregation('formContainers')[0];
-				var oFormContainerOverlay = OverlayRegistry.getOverlay(oFirstFormContainer);
-				var fnRemove = oFormContainerOverlay.getDesignTimeMetadata().getData().actions.remove;
-				this.oSimpleForm.removeContent(oFirstFormContainer.getTitle());
-				assert.equal(fnRemove(oFirstFormContainer).isEnabled, false, "then the remove should not be enabled");
-			});
-
-			</script>
+			jQuery.sap.includeScript('./SimpleFormInDesignTime.qunit.js');
+		</script>
 	</head>
 	<body>
-		<h1 id="qunit-header">QUnit Page for sap.ui.dt.DesignTime and SimpleForm</h1>
-		<h2 id="qunit-banner"></h2>
-		<h2 id="qunit-userAgent"></h2>
-		<div id="qunit-testrunner-toolbar"></div>
-		<ol id="qunit-tests"></ol>
-		<div id="content"></div>
+		<div id="qunit"></div>
+		<div id="qunit-fixture" style="position: fixed; top: auto; right: 0; bottom: 0; left: auto; width: 600px; height: 600px; box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);"></div>
 	</body>
 </html>

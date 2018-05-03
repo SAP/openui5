@@ -2488,6 +2488,16 @@ sap.ui.define([
 			// If needed, callers can first remove the object from the oldParent (specifying a
 			// suitable value for bSuppressInvalidate there) and only then call setParent.
 			oOldParent._removeChild(this, this.sParentAggregationName);
+
+			// if "this" had been forwarded (has API parent infos) and is now moved to a different place, remove the API parent info
+			if (this.aAPIParentInfos && this.aAPIParentInfos.length) {
+				var oPreviousAPIParentInfo = this.aAPIParentInfos[this.aAPIParentInfos.length - 1];
+				// if the previous API parent is not an ancestor of the new oParent, "this" is being moved to somewhere else
+				// TODO: but even IF the previous parent is an ancestor, this move may be NOT triggered by additional forwarding, but it may be a normal move further down the tree
+				if (oPreviousAPIParentInfo && !isInclusiveDescendantOf(oParent, oPreviousAPIParentInfo.parent)) {
+					delete this.aAPIParentInfos; // => clear the previous API parent infos
+				}
+			}
 		}
 		// adopt new parent
 		this.oParent = oParent;
@@ -2711,6 +2721,10 @@ sap.ui.define([
 
 		if ( this._observer ) {
 			this._observer.objectDestroyed(this);
+		}
+
+		if ( this.aAPIParentInfos ) {
+			this.aAPIParentInfos = null;
 		}
 
 		EventProvider.prototype.destroy.apply(this, arguments);

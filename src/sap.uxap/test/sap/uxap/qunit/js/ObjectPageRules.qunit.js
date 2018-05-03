@@ -47,6 +47,12 @@
 	QUnit.test("ObjectPageId 1 created", function (assert) {
 		assert.notStrictEqual(this.referencedObjectPage1, undefined, "ObjectPageLayout 1 created successfuly");
 	});
+	QUnit.test("ObjectPageId 1: DynamicPageTitle titleClickEnabled class not applied", function (assert) {
+		assert.notOk(this.referencedObjectPage1.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "DynamicPageTitle titleClickEnabled class not applied");
+		this.referencedObjectPage1.setToggleHeaderOnTitleClick(true);
+		sap.ui.getCore().applyChanges();
+		assert.notOk(this.referencedObjectPage1.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "DynamicPageTitle titleClickEnabled class is still not applied");
+	});
 	QUnit.test("ObjectPageId 1: AnchorBar ", function (assert) {
 		var objectPageToBar331 = $("#UxAP-331_ObjectPageRules1--objectPage1").find(".sapUxAPAnchorBar").is(":visible");
 		assert.strictEqual(objectPageToBar331, true, "ObjectPageLayout 1 AnchorBar is display");
@@ -134,6 +140,53 @@
 
 		oObjectPage._updateMedia(BREAK_POINTS.DESKTOP);
 		fnCheckMediaClasses(assert, MEDIA.DESKTOP);
+	});
+
+	QUnit.module("ObjectPage with DynamicHeaderTitle", {
+		beforeEach: function () {
+			//aat_UxAP-331_ObjectPageRules3
+			this.objectPageSampleView3 = sap.ui.xmlview("UxAP-331_ObjectPageRules3", {
+				viewName: "view.UxAP-331_ObjectPageRules3"
+			});
+			this.objectPageSampleView3.placeAt('qunit-fixture');
+			sap.ui.getCore().applyChanges();
+
+			this.referencedObjectPage3 = this.objectPageSampleView3.byId("objectPage3");
+		},
+		afterEach: function () {
+			this.objectPageSampleView3.destroy();
+			this.referencedObjectPage3 = null;
+		}
+	});
+
+	QUnit.test("ObjectPageId 3: DynamicPageTitle titleClickEnabled class is applied", function (assert) {
+		assert.ok(this.referencedObjectPage3.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "DynamicPageTitle titleClickEnabled class is applied");
+		this.referencedObjectPage3.setToggleHeaderOnTitleClick(false);
+		sap.ui.getCore().applyChanges();
+		assert.notOk(this.referencedObjectPage3.$().hasClass("sapUxAPObjectPageLayoutTitleClickEnabled"), "DynamicPageTitle titleClickEnabled class is removed");
+	});
+
+	QUnit.test("ObjectPageId 3: DynamicPageTitle  headerContentPinnable class is applied", function (assert) {
+		assert.ok(this.referencedObjectPage3.$().hasClass("sapUxAPObjectPageLayoutHeaderPinnable"), "DynamicPageTitle headerContentPinnable class is applied");
+		this.referencedObjectPage3.setHeaderContentPinnable(false);
+		sap.ui.getCore().applyChanges();
+		assert.notOk(this.referencedObjectPage3.$().hasClass("sapUxAPObjectPageLayoutHeaderPinnable"), "DynamicPageTitle headerContentPinnable class is removed");
+	});
+
+	QUnit.test("ObjectPageId 3: DynamicPageTitle  AnchorBar padding top CSS functionality", function (assert) {
+		var $stickyAnchorBar = this.referencedObjectPage3._$stickyAnchorBar;
+
+		this.referencedObjectPage3._pin();
+		assert.ok($stickyAnchorBar.hasClass("sapUxAPObjectPageStickyAnchorBarPaddingTop"), "DynamicPageTitle AnchorBar padding top class is applied");
+
+		this.referencedObjectPage3._expandHeader(false);
+		assert.notOk($stickyAnchorBar.hasClass("sapUxAPObjectPageStickyAnchorBarPaddingTop"), "DynamicPageTitle AnchorBar padding top class is removed");
+
+		this.referencedObjectPage3._expandHeader(true);
+		assert.ok($stickyAnchorBar.hasClass("sapUxAPObjectPageStickyAnchorBarPaddingTop"), "DynamicPageTitle AnchorBar padding top class is applied");
+
+		this.referencedObjectPage3._toggleHeader(false);
+		assert.notOk($stickyAnchorBar.hasClass("sapUxAPObjectPageStickyAnchorBarPaddingTop"), "DynamicPageTitle AnchorBar padding top class is removed");
 	});
 
 }(jQuery, QUnit));

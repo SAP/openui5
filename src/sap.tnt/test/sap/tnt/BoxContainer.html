@@ -1,0 +1,338 @@
+<!DOCTYPE HTML>
+<html>
+
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="UTF-8">
+
+		<title>Box Container Template</title>
+
+		<script id='sap-ui-bootstrap' type='text/javascript'
+			src='../../../resources/sap-ui-core.js'
+			data-sap-ui-theme='sap_belize'
+			data-sap-ui-libs='sap.m, sap.tnt, sap.ui.layout'
+			data-sap-ui-xx-bindingSyntax='complex'></script>
+
+		<script id="myXml" type="text/xmldata">
+			<mvc:View xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:t="sap.tnt" xmlns:core="sap.ui.core" controllerName="myController" displayBlock="true">
+				<App>
+					<Page title="Box Container Demo">
+
+						<t:BoxContainer boxPress="onPress" headerText="Box Container with boxPress handler" class="sapUiSmallMargin" boxes="{ path: '/' }">
+							<t:Box>
+								<VBox height="100%">
+									<VBox class="sapUiSmallMargin">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" />
+										<Label text="{subtitle}" wrapping="true" />
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<!-- It would be better to _not_ bind this to breakpoints via classes, but have a dedicated parameter. Goal: this control should would work properly in a multi-column layout. -->
+						<t:BoxContainer boxesPerRowConfig="XL6 L4 M2 S1" headerText="Box Container (S1 M2 L4 XL6) with Box press handler" class="sapUiSmallMargin" boxes="{ path: '/' }">
+							<t:Box press="onBoxPress">
+								<VBox height="100%">
+									<VBox class="sapUiSmallMargin">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" />
+										<Label text="{subtitle}" wrapping="true" />
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<t:BoxContainer boxWidth="10rem" headerText="Box (Fixed Width)" class="sapUiSmallMargin" boxes="{ path: '/' }">
+							<t:Box>
+								<VBox height="100%">
+									<VBox class="sapUiSmallMargin">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" />
+										<Label text="{subtitle}" wrapping="true" />
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<t:BoxContainer headerText="Box Container - .familyC (NOT for sap.tnt control)" class="sapUiSmallMargin familyC" boxes="{ path: '/' }">
+							<t:Box>
+								<VBox height="100%">
+									<VBox class="sapUiSmallMargin">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" />
+										<Label text="{subtitle}" wrapping="true" />
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<t:BoxContainer class="sapUiSmallMargin" boxes="{ path: '/' }">
+							<t:headerToolbar>
+								<OverflowToolbar>
+									<Title text="Box Container" />
+									<ToolbarSpacer />
+									<SearchField width="15rem" />
+								</OverflowToolbar>
+							</t:headerToolbar>
+							<t:Box>
+								<VBox height="100%">
+									<VBox class="sapUiSmallMargin">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" />
+										<ObjectStatus text="Enabled" state="Success" />
+										<Text text="Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor." class="sapUiTinyMarginTop"/>
+									</VBox>
+									<VBox class="sapUiSmallMarginBeginEnd sapUiSmallMarginBottom" justifyContent="End" alignItems="End">
+										<layoutData>
+											<FlexItemData growFactor="0" shrinkFactor="0" /><!-- Keep same size. -->
+										</layoutData>
+										<core:Icon src="sap-icon://line-chart-time-axis" size="3rem" color="Default" />
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<t:BoxContainer headerText="Box Container with Group Headers and default width" class="sapUiSmallMargin"
+							boxes="{
+								path: '/',
+								sorter: {
+									path: 'group',
+									descending: false,
+									group: true
+								},
+								groupHeaderFactory: '.getGroupHeader'
+							}">
+							<t:Box>
+								<VBox height="100%">
+									<VBox class="sapUiSmallMargin">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" />
+										<Label text="{subtitle}" wrapping="true" />
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<t:BoxContainer boxWidth="10rem" headerText="Box Container with Group Headers and fixed width" class="sapUiSmallMargin"
+							boxes="{
+								path: '/',
+								sorter: {
+									path: 'group',
+									descending: false,
+									group: true
+								},
+								groupHeaderFactory: '.getGroupHeader'
+							}">
+							<t:Box>
+								<VBox height="100%">
+									<VBox class="sapUiSmallMargin">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" />
+										<Label text="{subtitle}" wrapping="true" />
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<t:BoxContainer headerText="Growing" class="sapUiSmallMargin"
+							boxes="{ path: '/' }" growing="true" growingThreshold="4">
+							<t:Box>
+								<VBox height="100%">
+									<VBox class="sapUiSmallMargin">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" />
+										<Label text="{subtitle}" wrapping="true" />
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<Panel width="600px">
+							<t:BoxContainer headerText="Box Container with Panel wrapper with width 600px" class="sapUiSmallMargin" boxes="{ path: '/' }">
+								<t:Box>
+									<VBox height="100%">
+										<VBox class="sapUiSmallMargin">
+											<layoutData>
+												<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+											</layoutData>
+											<Title text="{title}" wrapping="true" />
+											<Label text="{subtitle}" wrapping="true" />
+										</VBox>
+									</VBox>
+								</t:Box>
+							</t:BoxContainer>
+						</Panel>
+
+						<t:BoxContainer width="50%" headerText="Box Container with width property set to 50%" class="sapUiSmallMargin" boxes="{ path: '/' }">
+							<t:Box>
+								<VBox height="100%">
+									<VBox class="sapUiSmallMargin">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" />
+										<Label text="{subtitle}" wrapping="true" />
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<t:BoxContainer headerText="Box Container with content" class="sapUiSmallMargin" boxes="{ path: '/' }">
+							<t:Box>
+								<VBox height="100%">
+									<VBox justifyContent="SpaceBetween">
+										<layoutData>
+											<FlexItemData growFactor="1" shrinkFactor="0" /><!-- Don't shrink below minimum size. Fill space if available. -->
+										</layoutData>
+										<Title text="{title}" wrapping="true" class="sapUiSmallMargin" />
+										<Label text="{subtitle}" wrapping="true" class="sapUiSmallMargin" />
+										<OverflowToolbar design="Solid" class="sapContrast">
+											<ToolbarSpacer/>
+											<Button text="New" type="Transparent"/>
+											<Button text="Open" type="Transparent"/>
+											<Button text="Save" type="Transparent"/>
+										</OverflowToolbar>
+									</VBox>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>
+
+						<!--<t:BoxContainer headerText="Box Container with heavy resize calculations" class="sapUiSmallMargin" boxes="{ path: 'heavy>/' }">
+							<t:Box>
+								<VBox height="100%" justifyContent="SpaceBetween">
+									<Table
+										boxes="{
+											path: 'heavy>boxes/'
+										}">
+										<headerToolbar>
+											<Toolbar>
+												<Title text="Products" level="H2"/>
+												<ToolbarSpacer/>
+											</Toolbar>
+										</headerToolbar>
+										<columns>
+											<Column>
+												<Text text="Title" />
+											</Column>
+											<Column minScreenWidth="Tablet">
+												<Text text="Subtitle" />
+											</Column>
+											<Column>
+												<Text text="Group" />
+											</Column>
+										</columns>
+										<boxes>
+											<ColumnListItem>
+												<cells>
+													<Text text="{heavy>text}" wrapping="false" />
+													<Text text="{heavy>description}" wrapping="false"/>
+													<Text text="{heavy>group}" />
+												</cells>
+											</ColumnListItem>
+										</boxes>
+									</Table>
+									<OverflowToolbar>
+										<Button text="New" type="Transparent"/>
+										<Button text="Open" type="Transparent"/>
+										<Button text="Save" type="Transparent"/>
+										<Button text="Save as" type="Transparent"/>
+										<Button text="Cut" type="Transparent"/>
+										<Button text="Copy" type="Transparent"/>
+										<Button text="Paste" type="Transparent"/>
+										<Button text="Undo" type="Transparent"/>
+										<Button text="Redo" type="Transparent"/>
+									</OverflowToolbar>
+								</VBox>
+							</t:Box>
+						</t:BoxContainer>-->
+					</Page>
+				</App>
+			</mvc:View>
+		</script>
+
+
+		<script>
+			sap.ui.controller("myController", {
+				onInit: function () {
+					var model = new sap.ui.model.json.JSONModel();
+					model.setData([
+						{ title: "Box title", subtitle: "Subtitle", group: "Group A" },
+						{ title: "Box title", subtitle: "Subtitle", group: "Group A" },
+						{ title: "Box title", subtitle: "Subtitle", group: "Group A" },
+						{ title: "Box title", subtitle: "Subtitle", group: "Group A" },
+						{ title: "Box title", subtitle: "Subtitle", group: "Group A" },
+						{ title: "Box title", subtitle: "Subtitle", group: "Group A" },
+						{ title: "Very long Box title that should wrap", subtitle: "This is a long subtitle" },
+						{ title: "Box title B", subtitle: "Subtitle", group: "Group B" },
+						{ title: "Box title B2", subtitle: "Subtitle", group: "Group B" },
+						{ title: "Box title B2", subtitle: "Subtitle", group: "Group B" },
+						{ title: "Box title B2", subtitle: "Subtitle", group: "Group B" },
+						{ title: "Box title B2", subtitle: "Subtitle", group: "Group B" },
+					]);
+
+					var heavyData = [];
+					for (var i = 0; i < 100; i++) {
+						var aBoxes = [];
+						var random = Math.floor(Math.random() * Math.floor(10));
+
+						for (var k = 0; k < random; k++) {
+							aBoxes.push({
+								text: "Text " + k,
+								description: "Description " + k,
+								group: "Group A",
+							})
+						}
+
+						heavyData.push({
+							title: "Box title " + i,
+							subtitle: "Subtitle " + i,
+							group: "Group A",
+							boxes: aBoxes
+						});
+					}
+					var heavyModel = new sap.ui.model.json.JSONModel(heavyData);
+
+					this.getView().setModel(model);
+					this.getView().setModel(heavyModel, "heavy");
+				},
+				getGroupHeader: function (oGroup) {
+					return new sap.m.GroupHeaderListItem( {
+						title: oGroup.key,
+						upperCase: false
+					});
+				},
+				onPress: function (oEvent) {
+					var box = oEvent.getParameter("box");
+					var sc = oEvent.getParameter("srcControl");
+					alert("Clicked Box: " + box.getId() + "\nSource control: " + sc.getId());
+				},
+				onBoxPress: function (oEvent) {
+					alert("Clicked " + oEvent.getParameter("id"));
+				}
+			});
+			sap.ui.view({ viewContent: jQuery('#myXml').html(), type:sap.ui.core.mvc.ViewType.XML }).placeAt("content");
+		</script>
+
+	</head>
+
+	<body class="sapUiBody sapUiSizeCompact" id="content">
+	</body>
+
+</html>

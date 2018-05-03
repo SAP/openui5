@@ -26,6 +26,8 @@ sap.ui.define(['../Element', '../library', './DragAndDrop'],
 	 *   <li>Transparency of the drag ghost element and the cursor during drag-and-drop operations depends on the browser implementation.</li>
 	 *   <li>Internet Explorer does only support plain text MIME type for the DataTransfer Object.</li>
 	 *   <li>Constraining a drag position is not possible, therefore there is no snap-to-grid or snap-to-element feature possible.</li>
+	 *   <li>Texts in draggable controls cannot be selected.</li>
+	 *   <li>The text of input fields in draggable controls can be selected, but not dragged.</li>
 	 * </ul>
 	 *
 	 * @extends sap.ui.core.Element

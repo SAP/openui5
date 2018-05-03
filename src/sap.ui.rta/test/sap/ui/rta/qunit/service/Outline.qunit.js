@@ -91,7 +91,7 @@ function(
 		before: function(assert) {
 			var done = assert.async();
 
-			var oPage = new Page("mainPage");
+			var oPage;
 
 			var oMockComponent = UIComponent.extend("MockController", {
 				metadata: {
@@ -104,6 +104,7 @@ function(
 					}
 				},
 				createContent : function() {
+					oPage = new Page("mainPage");
 					return oPage;
 				}
 			});
@@ -111,7 +112,6 @@ function(
 
 			// --Root control 1
 			//	page
-			//		verticalLayout
 			//		objectPageLayout
 			//			objectPageSection (sections)
 			//				objectPageSubSection
@@ -155,7 +155,7 @@ function(
 			// check designtime metadata label property
 			sandbox.stub(DesignTime.prototype, "getDesignTimeMetadataFor").withArgs(this.oLayout)
 				.returns({
-					label: function(oLayout) {
+					getLabel: function(oLayout) {
 						if (oLayout === this.oLayout) {
 							return "Vertical Layout Label";
 						}
@@ -164,15 +164,11 @@ function(
 
 			this.oRta.getService("outline").then(function (oService) {
 				this.oOutline = oService;
-			}.bind(this));
-
-			// FIXME: remove attachStart subscription after services are called after RTA is started
-			this.oRta.attachStart(function() {
 				this.oRta._oDesignTime.addRootElement(this.oOuterLayout);
 				var oPageOverlay = OverlayRegistry.getOverlay(oPage);
 				oPageOverlay.setEditable(true);
 				done();
-			}, this);
+			}.bind(this));
 
 			this.oRta.start();
 		},
@@ -205,18 +201,18 @@ function(
 			return this.oOutline.get(3).then(function(aReceivedResponse) {
 				assert.strictEqual(aReceivedResponse[0].id, aRootElements[0].getId(), "then outline for first item created starting from the first root element");
 
-				assert.ok(Array.isArray(aReceivedResponse[0].children), "then first level children are returned");
-				var bDepthLevelsCovered = aReceivedResponse[0].children.some(function(oChild1) {
+				assert.ok(Array.isArray(aReceivedResponse[0].elements), "then first level children are returned");
+				var bDepthLevelsCovered = aReceivedResponse[0].elements.some(function(oChild1) {
 
-					if (oChild1.displayName === "content") { // page content
-						assert.ok(Array.isArray(oChild1.children), "then second level children are returned");
+					if (oChild1.technicalName === "content") { // page content
+						assert.ok(Array.isArray(oChild1.elements), "then second level children are returned");
 
-						var oChild2 = oChild1.children[0]; // object page
-						assert.ok(Array.isArray(oChild2.children), "then third level children are returned");
+						var oChild2 = oChild1.elements[0]; // object page
+						assert.ok(Array.isArray(oChild2.elements), "then third level children are returned");
 
-						return oChild2.children.some(function (oChild3){
-							if (oChild3.displayName === "sections"){ // object page sections
-								assert.notOk(oChild3.children, "then fourth level children are not returned");
+						return oChild2.elements.some(function (oChild3){
+							if (oChild3.technicalName === "sections"){ // object page sections
+								assert.notOk(oChild3.elements, "then fourth level children are not returned");
 								return true;
 							}
 						});
@@ -238,18 +234,32 @@ function(
 			return this.oOutline.get("objPage", 2).then(function(aReceivedResponse) {
 				assert.strictEqual(aReceivedResponse[0].id, "objPage", "then outline for first item created starting from the passed overlay");
 
-				assert.ok(Array.isArray(aReceivedResponse[0].children), "then first level children are returned");
-				var bDepthLevelsCovered = aReceivedResponse[0].children.some(function(oChild1) {
-					if (oChild1.displayName === "sections") { // object page sections
-						assert.ok(Array.isArray(oChild1.children), "then second level children are returned");
+				assert.ok(Array.isArray(aReceivedResponse[0].elements), "then first level children are returned");
+				var bDepthLevelsCovered = aReceivedResponse[0].elements.some(function(oChild1) {
+					if (oChild1.technicalName === "sections") { // object page sections
+						assert.ok(Array.isArray(oChild1.elements), "then second level children are returned");
 
-						var oChild2 = oChild1.children[0]; // object page sub section
-						assert.notOk(oChild2.children, "then third level children are not returned");
+						var oChild2 = oChild1.elements[0]; // object page sub section
+						assert.notOk(oChild2.elements, "then third level children are not returned");
 						return true;
 					}
 				});
 
 				fnDepthErrorCheck(assert, bDepthLevelsCovered);
+			});
+		});
+
+		QUnit.test("when outline response object cannot be stringified", function (assert) {
+			var oOriginalJSONStringify = JSON.stringify;
+			sandbox.stub(JSON, "stringify").callsFake( function(oData) {
+				oData = { };
+				oData.a = oData;
+				return oOriginalJSONStringify.call(oOriginalJSONStringify, oData);
+			});
+			return this.oOutline.get("objPage", 1).then( function() {
+				assert.ok(false, "should not return Promise.resolve() value");
+			}, function(error) {
+				assert.strictEqual(error.name,"Error in sap.ui.rta.services.Outline#get", "then an error with the correct source was returned with Promise.reject()");
 			});
 		});
 	});

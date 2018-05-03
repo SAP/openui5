@@ -2,7 +2,13 @@
 
 sap.ui.define([
 	'sap/ui/test/opaQunit',
-	'sap/ui/test/Opa5'
+	'./pages/Home',
+	'./pages/Category',
+	'./pages/Product',
+	'./pages/Cart',
+	'./pages/Checkout',
+	'./pages/OrderCompleted',
+	'./pages/Welcome'
 ], function (opaTest) {
 	"use strict";
 
@@ -11,9 +17,6 @@ sap.ui.define([
 	opaTest("Should see the category list", function (Given, When, Then) {
 		// Arrangements
 		Given.iStartMyApp();
-
-		//Actions
-		When.iLookAtTheScreen();
 
 		// Assertions
 		Then.onHome.iShouldSeeTheCategoryList().
@@ -48,8 +51,10 @@ sap.ui.define([
 
 		// Assertions
 		Then.onTheCart.iShouldSeeTheProductInMyCart()
-			.and.iShouldSeeTheTotalPriceUpdated()
-			.and.iTeardownMyApp();
+			.and.iShouldSeeTheTotalPriceUpdated();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Should keep the cart when reloading", function (Given, When, Then) {
@@ -62,8 +67,10 @@ sap.ui.define([
 		When.onTheCategory.iGoToTheCartPage();
 
 		// Assertions
-		Then.onTheCart.iShouldSeeTheProductInMyCart()
-			.and.iTeardownMyApp();
+		Then.onTheCart.iShouldSeeTheProductInMyCart();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 
 	opaTest("Should start the app with a bookmarkable cart product", function (Given, When, Then) {
@@ -430,6 +437,9 @@ sap.ui.define([
 		When.onOrderCompleted.iPressOnTheReturnToShopButton();
 
 		// Assertions
-		Then.onTheWelcomePage.iShouldSeeTheWelcomePage().and.iTeardownMyApp();
+		Then.onTheWelcomePage.iShouldSeeTheWelcomePage();
+
+		// Cleanup
+		Then.iTeardownMyApp();
 	});
 });

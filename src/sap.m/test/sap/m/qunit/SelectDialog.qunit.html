@@ -147,6 +147,47 @@
 					assert.strictEqual(this.oSelectDialog.$("busyIndicator").length, 0, "To have busy indicator deactivated inside the real dialog");
 				});
 
+				QUnit.module("Growing Behavior", {
+					beforeEach: function() {
+						this.oSelectDialog = new sap.m.SelectDialog("selectDialog", {
+							title: "my SelectDialog",
+							growingThreshold: 5,
+							multiSelect: true
+						});
+						this.mockupData = generateData();
+					},
+					afterEach: function() {
+						// cleanup
+						this.oSelectDialog.destroy();
+						delete this.mockupData;
+					}
+				});
+
+				QUnit.test("growing: true (default)", function (assert) {
+					// arrange
+					bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
+					sap.ui.getCore().applyChanges();
+
+					// assert
+					assert.strictEqual(this.oSelectDialog._oList.getSelectedContextPaths(true).length, 3,
+						"The selected items, should be equal to the number of loaded selected items in the list");
+					assert.strictEqual(this.oSelectDialog.getItems().length, 5,
+						"The number of items should be equal to the growingThreshold property value");
+				});
+
+				QUnit.test("growing: false", function (assert) {
+					// arrange
+					this.oSelectDialog.setGrowing(false);
+					bindItems(this.oSelectDialog, { oData: this.mockupData, path: "/items", template: createTemplateListItem() });
+					sap.ui.getCore().applyChanges();
+
+					// assert
+					assert.strictEqual(this.oSelectDialog._oList.getSelectedContextPaths(true).length, 4,
+						"The selected items, should be equal to the number of the selected items in the list");
+					assert.strictEqual(this.oSelectDialog.getItems().length, 10,
+						"The number of items, should be equal to the number of items in the list");
+				});
+
 				QUnit.module("Rendering", {
 					beforeEach: function() {
 						this.oSelectDialog = new sap.m.SelectDialog("selectDialog");

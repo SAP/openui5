@@ -41,7 +41,7 @@ function(
 
 	Utils._sFocusableOverlayClass = ".sapUiDtOverlaySelectable";
 
-	Utils._sRtaStyleClassName = null;
+	Utils._sRtaStyleClassName = '';
 
 	/**
 	 * Returns the rta specific Style Class

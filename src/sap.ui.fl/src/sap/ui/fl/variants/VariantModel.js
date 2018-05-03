@@ -116,21 +116,36 @@ sap.ui.define([
 
 	VariantModel.prototype._updateVariantInURL = function (sVariantManagementReference, sNewVariantReference) {
 		var mTechnicalParametersWithIndex = this.getVariantIndexInURL(sVariantManagementReference);
+		var sVariantTechnicalParameterName = this.oVariantController.sVariantTechnicalParameterName;
+		var aParameterValues = [];
 
 		if (!mTechnicalParametersWithIndex.parameters) {
 			// Case when app is in standalone mode
 			return;
 		}
 
-		var aParameterValues = mTechnicalParametersWithIndex.parameters[this.oVariantController.sVariantTechnicalParameterName]
-			? mTechnicalParametersWithIndex.parameters[this.oVariantController.sVariantTechnicalParameterName].slice(0)
-			: [];
+		// In adaptation mode the URL should be reset
+		if (this._bAdaptationMode){
+			if (mTechnicalParametersWithIndex.index === -1){
+				return;
+			}
+			aParameterValues = [];
+		// Default variant should not be added as parameter to the URL (no parameter => default)
+		} else if (sNewVariantReference === this.oData[sVariantManagementReference].defaultVariant){
+			if (mTechnicalParametersWithIndex.index > -1) {
+				mTechnicalParametersWithIndex.parameters[sVariantTechnicalParameterName].splice(mTechnicalParametersWithIndex.index, 1);
+				aParameterValues =  mTechnicalParametersWithIndex.parameters[sVariantTechnicalParameterName].slice(0);
+			}
+		} else {
+			aParameterValues = mTechnicalParametersWithIndex.parameters[sVariantTechnicalParameterName]
+				? mTechnicalParametersWithIndex.parameters[sVariantTechnicalParameterName].slice(0)
+				: [];
+			mTechnicalParametersWithIndex.index  === -1
+				? aParameterValues.push(sNewVariantReference)
+				: (aParameterValues[mTechnicalParametersWithIndex.index] = sNewVariantReference);
+		}
 
-		mTechnicalParametersWithIndex.index  === -1
-			? aParameterValues.push(sNewVariantReference)
-			: (aParameterValues[mTechnicalParametersWithIndex.index] = sNewVariantReference);
-
-		Utils.setTechnicalURLParameterValues(this.oComponent, this.oVariantController.sVariantTechnicalParameterName, aParameterValues);
+		Utils.setTechnicalURLParameterValues(this.oComponent, sVariantTechnicalParameterName, aParameterValues);
 	};
 
 	VariantModel.prototype.getVariantIndexInURL = function (sVariantManagementReference) {
@@ -152,11 +167,11 @@ sap.ui.define([
 
 	/**
 	 * Returns the current variant for a given variant management control
-	 * @param {String} sVariantManagementReference The variant management reference
-	 * @returns {String} The current variant reference
+	 * @param {string} sVariantManagementReference The variant management reference
+	 * @returns {string} The current variant reference
 	 * @public
 	 */
-	VariantModel.prototype.getCurrentVariantReference = function(sVariantManagementReference) {
+	VariantModel.prototype.getCurrentVariantReference = function(sVariantManagementReference){
 		return this.oData[sVariantManagementReference].currentVariant;
 	};
 
@@ -560,6 +575,7 @@ sap.ui.define([
 
 		this.oData[sVariantManagementReference].modified = false;
 		this.oData[sVariantManagementReference].showFavorites = true;
+		this._bAdaptationMode = bAdaptationMode;
 
 		if (!(typeof this.fnManageClick === "function" && typeof this.fnManageClickRta === "function")) {
 			this._initializeManageVariantsEvents();
@@ -570,12 +586,19 @@ sap.ui.define([
 		if (bAdaptationMode) {
 			// Runtime Adaptation Settings
 			this.oData[sVariantManagementReference].variantsEditable = false;
+			// Clear the URL parameter on adaptation mode (set to default variant = clear)
+			if (this.oData[sVariantManagementReference].updateVariantInURL){
+				this._updateVariantInURL(sVariantManagementReference, this.oData[sVariantManagementReference].defaultVariant);
+			}
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
 				oVariant.rename = true;
 				oVariant.change = true;
 				oVariant.remove = fnRemove(oVariant, sVariantManagementReference, bAdaptationMode);
 			});
 		} else {
+			if (this.oData[sVariantManagementReference].updateVariantInURL){
+				this._updateVariantInURL(sVariantManagementReference, this.getCurrentVariantReference(sVariantManagementReference));
+			}
 			// Personalization Settings
 			if (this.oData[sVariantManagementReference]._isEditable) {
 				oControl.attachManage({

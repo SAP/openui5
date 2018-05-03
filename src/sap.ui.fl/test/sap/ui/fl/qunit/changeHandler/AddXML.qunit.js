@@ -148,7 +148,7 @@ sap.ui.require([
 				index: 1
 			};
 
-			this.oPropertyBag = {modifier: JsControlTreeModifier};
+			this.oPropertyBag = {modifier: JsControlTreeModifier, view: {getController: function() {}, getId: function() {}}};
 
 			this.oChange = new Change(oChangeJson);
 		},

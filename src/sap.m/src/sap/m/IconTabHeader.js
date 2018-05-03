@@ -64,6 +64,9 @@ function(
 	// shortcut for sap.m.IconTabHeaderMode
 	var IconTabHeaderMode = library.IconTabHeaderMode;
 
+	// shortcut for sap.m.IconTabDensityMode
+	var IconTabDensityMode = library.IconTabDensityMode;
+
 	/**
 	 * Constructor for a new IconTabHeader.
 	 *
@@ -143,7 +146,18 @@ function(
 			 * Items can be moved around {@link sap.m.IconTabSeparator sap.m.IconTabSeparator}
 			 * @since 1.46
 			 */
-			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false}
+			enableTabReordering : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Specifies the visual density mode of the tabs.
+			 *
+			 * The values that can be applied are <code>Cozy</code>, <code>Compact</code> and <code>Inherit</code>.
+			 * <code>Cozy</code> and <code>Compact</code> render the control in one of these modes independent of the global density settings.
+			 * The <code>Inherit</code> value follows the global density settings which are applied.
+			 * For compatibility reasons, the default value is <code>Cozy</code>.
+			 * @since 1.56
+			 */
+			tabDensityMode :{type : "sap.m.IconTabDensityMode", group : "Appearance", defaultValue : IconTabDensityMode.Cozy}
 		},
 		aggregations : {
 
@@ -246,7 +260,7 @@ function(
 		if (!this._oOverflowButton) {
 			this._oOverflowButton = new Button({
 				id: this.getId() + '-overflow',
-				icon: "sap-icon://overflow",
+				icon: "sap-icon://slim-arrow-down",
 				type: ButtonType.Transparent,
 				press: this._overflowButtonPress.bind(this)
 			});
@@ -818,7 +832,28 @@ function(
 		this._oItemNavigation.setSelectedIndex(iSelectedDomIndex);
 	};
 
+	IconTabHeader.prototype.onThemeChanged = function() {
+		this._applyTabDensityMode();
+	};
+
+	IconTabHeader.prototype._applyTabDensityMode = function() {
+		var sTabDensityMode = this.getTabDensityMode();
+		this.$().removeClass("sapUiSizeCompact");
+
+		switch (sTabDensityMode) {
+			case IconTabDensityMode.Compact:
+				this.$().addClass("sapUiSizeCompact");
+				break;
+			case  IconTabDensityMode.Inherit:
+				if (this.$().closest(".sapUiSizeCompact").length) {
+					this.$().addClass("sapUiSizeCompact");
+				}
+				break;
+		}
+	};
+
 	IconTabHeader.prototype.onAfterRendering = function() {
+		this._applyTabDensityMode();
 		// initialize scrolling
 		if (this._oScroller) {
 			this._oScroller.setIconTabBar(this, jQuery.proxy(this._afterIscroll, this), jQuery.proxy(this._scrollPreparation, this));
@@ -897,7 +932,7 @@ function(
 
 	IconTabHeader.prototype.removeAllItems = function() {
 		this._aTabKeys = [];
-		this.removeAllAggregation("items");
+		return this.removeAllAggregation("items");
 	};
 
 	IconTabHeader.prototype.removeItem = function(oItem) {

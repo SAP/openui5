@@ -169,6 +169,10 @@ sap.ui.define(
 				 * not public aggregations
 				 * @param {boolean} oConfig.cloned Option to exclude elements that are
 				 * clones of list bindings
+				 * @public
+				 * @function
+				 * @returns {Array} Array of matched elements
+				 * @alias sap.ui.support.ExecutionScope.getElements
 				 */
 				getElements: function (oConfig) {
 					var that = this;
@@ -234,6 +238,14 @@ sap.ui.define(
 
 					return elements;
 				},
+				/**
+				 * Returns all public elements, i.e. elements that are part of public API
+				 * aggregations
+				 * @public
+				 * @function
+				 * @returns {Array} Array of matched elements
+				 * @alias sap.ui.support.ExecutionScope.getPublicElements
+				 */
 				getPublicElements: function () {
 					var aPublicElements = [];
 					var mComponents = core.mObjects.component;
@@ -259,6 +271,7 @@ sap.ui.define(
 				 * @function
 				 * @param {string|function} classNameSelector Either string or function
 				 * to be used when selecting a subset of elements
+				 * @returns {Array} Array of matched elements
 				 * @alias sap.ui.support.ExecutionScope.getElementsByClassName
 				 */
 				getElementsByClassName: function (classNameSelector) {
@@ -279,6 +292,7 @@ sap.ui.define(
 				 * @public
 				 * @function
 				 * @param {any} type Type of logged objects
+				 * @returns {Array} Array of logged objects
 				 * @alias sap.ui.support.ExecutionScope.getLoggedObjects
 				 */
 				getLoggedObjects: function (type) {

@@ -48,11 +48,11 @@
 					<ObjectPageHeaderActionButton type="Transparent" text="Delete" hideText="false" hideIcon="true"/>
 					<ObjectPageHeaderActionButton type="Transparent" text="Copy" hideText="false" hideIcon="true"/>
 					<ObjectPageHeaderActionButton type="Transparent" text="Add" hideText="false" hideIcon="true"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://action" type="Transparent" text="Share"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://action" type="Transparent" text="Share" tooltip="action"/>
 				</actions>
 				<navigationActions>
-					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-up" type="Transparent"/>
-					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-down" type="Transparent"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-up" type="Transparent" tooltip="slim-arrow-up"/>
+					<ObjectPageHeaderActionButton icon="sap-icon://slim-arrow-down" type="Transparent" tooltip="slim-arrow-down"/>
 				</navigationActions>
 
 			</ObjectPageDynamicHeaderTitle>

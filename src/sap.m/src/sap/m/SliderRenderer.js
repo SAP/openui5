@@ -217,9 +217,10 @@ sap.ui.define(['./SliderUtilities'],
 
 			oRm.write("<ul class=\"" + SliderRenderer.CSS_CLASS + "Tickmarks\">");
 			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMin());
+			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "Tick\" style=\"width: " + fTickmarksDistance + "%;\"></li>");
 
-			for (i = 0; i < iTickmarksToRender; i++) {
-				if (iLabelsCount && i > 0 && (i % iLabelsCount === 0)) {
+			for (i = 1; i < iTickmarksToRender - 1; i++) {
+				if (iLabelsCount && (i % iLabelsCount === 0)) {
 					fStep = i * fTickmarksDistance;
 					this.renderTickmarksLabel(oRm, oSlider, oSlider._getValueOfPercent(fStep));
 				}
@@ -227,8 +228,8 @@ sap.ui.define(['./SliderUtilities'],
 				oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "Tick\" style=\"width: " + fTickmarksDistance + "%;\"></li>");
 			}
 
-			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "Tick\" style=\"width: 0%;\"></li>");
 			this.renderTickmarksLabel(oRm, oSlider, oSlider.getMax());
+			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "Tick\" style=\"width: 0;\"></li>");
 			oRm.write("</ul>");
 		};
 

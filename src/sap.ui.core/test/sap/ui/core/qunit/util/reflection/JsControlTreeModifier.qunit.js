@@ -150,5 +150,12 @@ function(
 		assert.equal(sChangeHandlerModulePath, undefined, "then 'undefined' is returned");
 	});
 
+	QUnit.test("isPropertyInitial", function(assert){
+		this.oControl= new Button( { text: "Test"  });
+		
+		assert.equal(JsControlTreeModifier.isPropertyInitial(this.oControl, "enabled"), true, "the enabled property of the button is initial");
+		assert.equal(JsControlTreeModifier.isPropertyInitial(this.oControl, "text"), false, "the text property of the button is not initial");
+	});
+
 	QUnit.start();
 });

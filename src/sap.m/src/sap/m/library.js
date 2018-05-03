@@ -1426,16 +1426,20 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @returns {integer} The number of tickmarks
 	 *
 	 * @function
-	 * @name sap.ui.core.IScale.getTickmarksBetweenLabels
+	 * @name sap.m.IScale.getTickmarksBetweenLabels
 	 */
 
 	/**
 	 * Returns How many tickmarks would be drawn on the screen.
+	 * * <b>Note:</b> There would always be a tickmark in the begining and in the end of the slider,
+	 * regardless of the value this method returns. The start and the end tickmark are taken into account
+	 * for the later calculations.
+	 *
 	 * @param {object} mOptions The option array
 	 * @returns {integer} The number of tickmarks
 	 *
 	 * @function
-	 * @name sap.ui.core.IScale.calcNumberOfTickmarks
+	 * @name sap.m.IScale.calcNumberOfTickmarks
 	 */
 
 	/**
@@ -1444,7 +1448,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @param {jQuery.Event} oEvent The event object passed.
 	 *
 	 * @function
-	 * @name sap.ui.core.IScale.handleResize
+	 * @name sap.m.IScale.handleResize
 	 */
 
 	/**
@@ -1456,7 +1460,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	 * @returns {string | number} The label that should be placed in the current position.
 	 *
 	 * @function
-	 * @name sap.ui.core.IScale.getLabel
+	 * @name sap.m.IScale.getLabel
 	 */
 
 	/**
@@ -1611,7 +1615,32 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 		Inline : "Inline"
 	};
 
+	/**
+	 * Specifies <code>IconTabBar</code> tab density mode.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	sap.m.IconTabDensityMode = {
+
 		/**
+		 * Inherit. In this mode the global configuration of the density mode will be applied.
+		 */
+		Inherit : "Inherit",
+
+		/**
+		 * Compact. In this mode the tabs will be set explicitly to compact mode independent of what mode is applied globally.
+		 */
+		Compact : "Compact",
+
+		/**
+		 * Cozy. In this mode the tabs will be set explicitly to compact mode independent of what mode is applied globally.
+		 */
+		Cozy : "Cozy"
+	};
+
+	/**
 	 * Available Filter Item Design.
 	 *
 	 * @enum {string}

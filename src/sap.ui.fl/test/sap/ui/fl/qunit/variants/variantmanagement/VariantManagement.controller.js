@@ -202,10 +202,10 @@ sap.ui.define([
 
 			this.oVM.setModel(this.oModel, this._sModelName);
 
-			var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext(this._sModelName));
-			oCurrentVariantChangeBinding.attachChange(function(oEvent) {
-				MessageToast.show("currentVariant: " + oEvent.oSource.oValue);
-			});
+// var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext(this._sModelName));
+// oCurrentVariantChangeBinding.attachChange(function(oEvent) {
+// MessageToast.show("currentVariant: " + oEvent.oSource.oValue);
+// });
 
 		},
 
@@ -248,6 +248,10 @@ sap.ui.define([
 
 		onMarkAsChanged: function(oEvent) {
 			this.oVM.setModified(true);
+		},
+
+		onSelect: function(oEvent) {
+			MessageToast.show("currentVariant: " + oEvent.getParameter("key"));
 		},
 
 		onSave: function(oEvent) {

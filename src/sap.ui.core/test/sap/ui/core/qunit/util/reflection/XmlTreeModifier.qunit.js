@@ -287,6 +287,17 @@ function(
 		assert.strictEqual(XmlTreeModifier.getProperty(oInvisibleLabel, "design"), "Bold", "property from xml");
 	});
 
+	QUnit.test("isPropertyInitial", function (assert) {
+		var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
+		var aChildNodes = XmlTreeModifier._children(oVBox);
+
+		var oVisibleLabel = aChildNodes[1];
+		var oInvisibleLabel = aChildNodes[2];
+		assert.strictEqual(XmlTreeModifier.isPropertyInitial(oVisibleLabel, "design"), true, "initial as property not in xml");
+		assert.strictEqual(XmlTreeModifier.isPropertyInitial(oVisibleLabel, "text"),true, "initial as property not in xml");
+		assert.strictEqual(XmlTreeModifier.isPropertyInitial(oInvisibleLabel, "design"), false, "not initial as property is from xml");
+	});
+
 	QUnit.test("unbindProperty removes the attribute in xml to restore default", function (assert) {
 		var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 		var aChildNodes = XmlTreeModifier._children(oVBox);

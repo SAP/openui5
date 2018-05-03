@@ -319,7 +319,7 @@
 
 		var handleRowHeaderClick = function(oEvent) {
 			var oRow = oEvent.getParameter("row"),
-					sEmployeeInfo = oRow.getTitle() + " " + oRow.getText();
+				sEmployeeInfo = oRow.getTitle() + " " + oRow.getText();
 			setEventLog("'rowHeaderClick' on employee:\n'" + sEmployeeInfo + "'");
 		};
 
@@ -609,6 +609,11 @@
 						title: "Max Mustermann",
 						text: "Musterteam",
 						tooltip: "Header tooltip",
+						specialDates: [  new sap.ui.unified.DateTypeRange({
+							startDate: new Date(2015, 0, 7),
+							endDate: new Date(2015, 0, 8),
+							type: sap.ui.unified.CalendarDayType.NonWorking
+						})],
 						intervalHeaders: [ new sap.ui.unified.CalendarAppointment("R1H1",{
 											startDate: new Date("2015", "0", "1", "09", "00"),
 											endDate: new Date("2015", "0", "1", "11", "00"),

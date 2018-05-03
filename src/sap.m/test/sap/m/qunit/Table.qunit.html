@@ -850,13 +850,9 @@
 					firstChild: {
 						getBoundingClientRect : function() {
 							return {
-								bottom: 68
+								bottom: 68,
+								height: 48
 							}
-						}
-					},
-					getBoundingClientRect : function() {
-						return {
-							top: 20
 						}
 					}
 				}
@@ -924,21 +920,13 @@
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
 
 			var fnGetDomRef = sut.getDomRef;
-			this.stub(sut, "getDomRef", function() {
-				return {
-					getBoundingClientRect: function() {
-						return {
-							top: 40
-						}
-					}
-				}
-			});
 
 			this.stub(oInfoToolbar, "getDomRef", function() {
 				return {
 					getBoundingClientRect: function() {
 						return {
-							bottom: 72
+							bottom: 72,
+							height: 32
 						}
 					}
 				}
@@ -1012,17 +1000,13 @@
 			var fnGetDomRef = sut.getDomRef;
 			this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
 				return {
-					bottom: 88
+					bottom: 88,
+					height: 48
 				}
 			});
 
 			this.stub(sut, "getDomRef", function() {
 				return {
-					getBoundingClientRect: function() {
-						return {
-							top: 40
-						}
-					},
 					querySelector: function() {
 						return oHeaderDomRef;
 					}
@@ -1112,20 +1096,38 @@
 			aClassList = sut.$()[0].classList;
 			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky7"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
 
+			var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
 			var fnGetDomRef = sut.getDomRef;
+			this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
+				return {
+					bottom: 48,
+					height: 48
+				}
+			});
+
+			this.stub(oInfoToolbar, "getDomRef", function() {
+				return {
+					getBoundingClientRect: function() {
+						return {
+							bottom: 80,
+							height: 32
+						}
+					}
+				}
+			});
+
 			this.stub(sut, "getDomRef", function() {
 				return {
 					firstChild: {
 						getBoundingClientRect : function() {
 							return {
-								bottom: 152
+								bottom: 152,
+								height: 48
 							}
 						}
 					},
-					getBoundingClientRect : function() {
-						return {
-							top: 40
-						}
+					querySelector: function() {
+						return oHeaderDomRef;
 					}
 				}
 			});
@@ -1143,7 +1145,7 @@
 
 			oFocusedItemDomRef.focus();
 			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -112]), "scrollToElement function called");
+			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -128]), "scrollToElement function called");
 
 			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
 			sut.getDomRef = fnGetDomRef;

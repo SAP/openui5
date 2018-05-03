@@ -875,7 +875,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 					return oLogEntry.message === "List Binding is not bound against a list for /Categories(1)";
 				});
 				assert.ok(aFiltered.length > 0, "there should be type errors since it's a single entity within the list")
-				
+
 				done();
 			}
 		};
@@ -897,7 +897,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 				operationMode: sap.ui.model.odata.OperationMode.Client
 			});
 			var handler = function() {
-				
+
 				oAddRes.then(function() {
 					assert.ok(oSpy.calledOnce, "Request sent for entity with expand");
 					oSpy.reset();
@@ -915,9 +915,9 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			var listhandler = function(oEvent) {
 				assert.ok(oModel.oMetadata.mEntitySets, "entity set cache should be filled");
 				assert.equal(Object.keys(oModel.oMetadata.mEntitySets).length, 26, "entity set should contain 5 entries");
-	
+
 				assert.equal(oEvent.sId, "change");
-	
+
 				var aContexts = oListBinding.getContexts();
 				assert.equal(aContexts.length, 12, "12 entries contained");
 				aExpandRefs = jQuery.extend({}, oListBinding.aExpandRefs);
@@ -1369,7 +1369,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 		oBinding.attachChange(handler);
 	});
 
-	QUnit.test("ListBinding clientside filter on Edm.Decimal by decimal number", function(assert){
+	QUnit.test("ListBinding clientside filter on Edm.Decimal with number value", function(assert){
 		var done = assert.async();
 		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("UnitPrice"), [new sap.ui.model.Filter("UnitPrice", "EQ", "10.0000")], {
 			operationMode: sap.ui.model.odata.OperationMode.Client
@@ -1382,8 +1382,17 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "10.0000", "ListBinding after initial filter");
 
 			oBinding.detachChange(handler);
+
+			// EQ
+			var oFilter = new sap.ui.model.Filter("UnitPrice", "EQ", 15.5);
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length,1);
+			assert.equal(oModel.getProperty("UnitPrice", aContexts[0]), "15.5000", "ListBinding after EQ filter");
+
 			// LT
-			var oFilter = new sap.ui.model.Filter("UnitPrice", "LT", 17.4500);
+			var oFilter = new sap.ui.model.Filter("UnitPrice", "LT", 17.45);
 			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
 
 			var aContexts = oBinding.getContexts();
@@ -1394,7 +1403,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding after LT filter");
 
 			// GE
-			oFilter = new sap.ui.model.Filter("UnitPrice", "GE", 39.0000);
+			oFilter = new sap.ui.model.Filter("UnitPrice", "GE", 39);
 			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
 
 			var aContexts = oBinding.getContexts();
@@ -1415,7 +1424,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding unfiltered");
 
 			// GT
-			oFilter = new sap.ui.model.Filter("UnitPrice", "BT", 35.0000, 82.000);
+			oFilter = new sap.ui.model.Filter("UnitPrice", "BT", 35, 82);
 			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
 
 			var aContexts = oBinding.getContexts();
@@ -1434,6 +1443,218 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[2]), "10.0000", "ListBinding unfiltered");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[3]), "15.5000", "ListBinding unfiltered");
 			assert.equal(oModel.getProperty("UnitPrice", aContexts[4]), "17.4500", "ListBinding unfiltered");
+
+			done();
+		};
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding clientside filter on Edm.Int32", function(assert){
+		var done = assert.async();
+		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("ProductID"), [new sap.ui.model.Filter("ProductID", "EQ", 1)], {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 1);
+			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 1, "ListBinding after initial filter");
+
+			oBinding.detachChange(handler);
+
+			// EQ
+			var oFilter = new sap.ui.model.Filter("ProductID", "EQ", 3);
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length,1);
+			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 3, "ListBinding after LT filter");
+
+			// LT
+			var oFilter = new sap.ui.model.Filter("ProductID", "LT", 5);
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length,4);
+			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 1, "ListBinding after LT filter");
+			assert.equal(oModel.getProperty("ProductID", aContexts[1]), 2, "ListBinding after LT filter");
+			assert.equal(oModel.getProperty("ProductID", aContexts[2]), 3, "ListBinding after LT filter");
+			assert.equal(oModel.getProperty("ProductID", aContexts[3]), 4, "ListBinding after LT filter");
+
+			// Reset
+			oBinding.filter([], sap.ui.model.FilterType.Application);
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 1, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("ProductID", aContexts[1]), 2, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("ProductID", aContexts[2]), 3, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("ProductID", aContexts[3]), 4, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("ProductID", aContexts[4]), 5, "ListBinding unfiltered");
+
+			done();
+		};
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding clientside filter on Edm.Int32 with string value", function(assert){
+		var done = assert.async();
+		var oBinding = oModel.bindList("/Products", null, new sap.ui.model.Sorter("ProductID"), [new sap.ui.model.Filter("ProductID", "EQ", 1)], {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 1);
+			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 1, "ListBinding after initial filter");
+
+			oBinding.detachChange(handler);
+
+			// EQ
+			var oFilter = new sap.ui.model.Filter("ProductID", "EQ", "3");
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length,1);
+			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 3, "ListBinding after LT filter");
+
+			// LT
+			var oFilter = new sap.ui.model.Filter("ProductID", "LT", "5");
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length,4);
+			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 1, "ListBinding after LT filter");
+			assert.equal(oModel.getProperty("ProductID", aContexts[1]), 2, "ListBinding after LT filter");
+			assert.equal(oModel.getProperty("ProductID", aContexts[2]), 3, "ListBinding after LT filter");
+			assert.equal(oModel.getProperty("ProductID", aContexts[3]), 4, "ListBinding after LT filter");
+
+			// Reset
+			oBinding.filter([], sap.ui.model.FilterType.Application);
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 20);
+			assert.equal(oModel.getProperty("ProductID", aContexts[0]), 1, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("ProductID", aContexts[1]), 2, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("ProductID", aContexts[2]), 3, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("ProductID", aContexts[3]), 4, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("ProductID", aContexts[4]), 5, "ListBinding unfiltered");
+
+			done();
+		};
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding clientside filter on Edm.Single", function(assert){
+		var done = assert.async();
+		var oBinding = oModel.bindList("/Invoices", null, new sap.ui.model.Sorter("Discount"), [new sap.ui.model.Filter("Discount", "EQ", 0.05)], {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 2);
+			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0.05, "ListBinding after initial filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0.05, "ListBinding after intital filter");
+
+			oBinding.detachChange(handler);
+
+			// EQ
+			var oFilter = new sap.ui.model.Filter("Discount", "EQ", 0);
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 6);
+			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[2]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[3]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[4]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[5]), 0, "ListBinding after EQ filter");
+
+			// GT
+			var oFilter = new sap.ui.model.Filter("Discount", "GT", 0);
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 2);
+			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0.05, "ListBinding after GT filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0.05, "ListBinding after GT filter");
+
+			// Reset
+			oBinding.filter([], sap.ui.model.FilterType.Application);
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("Discount", aContexts[2]), 0, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("Discount", aContexts[3]), 0, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("Discount", aContexts[4]), 0, "ListBinding unfiltered");
+
+			done();
+		};
+		oBinding.attachRefresh(function() {
+			oBinding.getContexts();
+		});
+		oBinding.attachChange(handler);
+	});
+
+	QUnit.test("ListBinding clientside filter on Edm.Single with string value", function(assert){
+		var done = assert.async();
+		var oBinding = oModel.bindList("/Invoices", null, new sap.ui.model.Sorter("Discount"), [new sap.ui.model.Filter("Discount", "EQ", 0.05)], {
+			operationMode: sap.ui.model.odata.OperationMode.Client
+		});
+
+		var handler = function(oEvent){
+			// contexts should be now loaded
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 2);
+			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0.05, "ListBinding after initial filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0.05, "ListBinding after initial filter");
+
+			oBinding.detachChange(handler);
+
+			// EQ
+			var oFilter = new sap.ui.model.Filter("Discount", "EQ", "0");
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 6);
+			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[2]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[3]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[4]), 0, "ListBinding after EQ filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[5]), 0, "ListBinding after EQ filter");
+
+			// GT
+			var oFilter = new sap.ui.model.Filter("Discount", "GT", "0");
+			oBinding.filter([oFilter], sap.ui.model.FilterType.Application);
+
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 2);
+			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0.05, "ListBinding after GT filter");
+			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0.05, "ListBinding after GT filter");
+
+			// Reset
+			oBinding.filter([], sap.ui.model.FilterType.Application);
+			var aContexts = oBinding.getContexts();
+			assert.equal(aContexts.length, 8);
+			assert.equal(oModel.getProperty("Discount", aContexts[0]), 0, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("Discount", aContexts[1]), 0, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("Discount", aContexts[2]), 0, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("Discount", aContexts[3]), 0, "ListBinding unfiltered");
+			assert.equal(oModel.getProperty("Discount", aContexts[4]), 0, "ListBinding unfiltered");
 
 			done();
 		};
@@ -2460,7 +2681,7 @@ data-sap-ui-theme="sap_bluecrystal" data-sap-ui-libs="sap.ui.commons"></script>
 					select: "Products/ProductID",
 					success: function() {
 						oPanel.bindElement({
-							path:"/Categories(7)", 
+							path:"/Categories(7)",
 						});
 
 						oList2.bindElement({

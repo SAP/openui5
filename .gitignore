@@ -42,6 +42,7 @@ web.config
 
 # Ignore yarn files
 yarn.lock
+yarn-error.log
 *yarn
 
 # Ignore documentation artifacts

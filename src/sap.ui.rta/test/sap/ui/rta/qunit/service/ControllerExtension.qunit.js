@@ -44,19 +44,24 @@ function(
 		}
 	}, function() {
 		QUnit.test("with correct parameters and developer mode = true", function(assert) {
-			var oView = {
-				getControllerName: function() {
-					return "controllerName";
+			var oView = new sap.ui.core.mvc.View({});
+			sandbox.stub(oView, "getController").returns({
+				getMetadata: function() {
+					return {
+						getName: function() {
+							return "controllerName";
+						}
+					};
 				}
-			};
-			return this.oControllerExtension.add({content: {codeRef: "foo.js", extensionName: "bar"}}, oView).then(function() {
+			});
+
+			return this.oControllerExtension.add("foo.js", oView.getId()).then(function() {
 				assert.ok(true, "then no error was thrown");
 				assert.equal(this.iCreateBaseChangeCounter, 1, "and FlexController.createBaseChange was called once");
 				assert.equal(this.iAddPreparedChangeCounter, 1, "and FlexController.addPreparedChange was called once");
 				assert.equal(this.oCreateBaseChangeParameter.changeType, "codeExt", "the changeType was set correctly");
 				assert.equal(this.oCreateBaseChangeParameter.selector.controllerName, "controllerName", "the controllerName was set correctly");
 				assert.equal(this.oCreateBaseChangeParameter.content.codeRef, "foo.js", "the codeRef was set correctly");
-				assert.equal(this.oCreateBaseChangeParameter.content.extensionName, "bar", "the extensionName was set correctly");
 			}.bind(this));
 		});
 
@@ -64,7 +69,7 @@ function(
 			this.oRta.setFlexSettings({developerMode: false});
 			assert.expect(3);
 
-			return this.oControllerExtension.add({content: {codeRef: "foo.js", extensionName: "bar"}}).then(function() {
+			return this.oControllerExtension.add("foo.js").then(function() {
 				assert.ok(false, "should never go here");
 			})
 			.catch(function(oError) {
@@ -76,7 +81,7 @@ function(
 
 		QUnit.test("with missing codeRef parameter and developer mode = true", function(assert) {
 			assert.expect(3);
-			return this.oControllerExtension.add({content: {extensionName: "foo"}}).then(function() {
+			return this.oControllerExtension.add().then(function() {
 				assert.ok(false, "should never go here");
 			})
 			.catch(function(oError) {
@@ -86,21 +91,9 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("with missing extensionName parameter and developer mode = true", function(assert) {
-			assert.expect(3);
-			return this.oControllerExtension.add({content: {codeRef: "foo.js"}}).then(function() {
-				assert.ok(false, "should never go here");
-			})
-			.catch(function(oError) {
-				assert.equal(oError.message, "can't create controller extension without extensionName", "then ControllerExtension.add throws an error");
-				assert.equal(this.iCreateBaseChangeCounter, 0, "and FlexController.createBaseChange was not called");
-				assert.equal(this.iAddPreparedChangeCounter, 0, "and FlexController.addPreparedChange was not called");
-			}.bind(this));
-		});
-
 		QUnit.test("with codeRef parameter not ending with '.js' and developer mode = true", function(assert) {
 			assert.expect(3);
-			return this.oControllerExtension.add({content: {codeRef: "foo", extensionName: "bar"}}).then(function() {
+			return this.oControllerExtension.add("foo").then(function() {
 				assert.ok(false, "should never go here");
 			})
 			.catch(function(oError) {

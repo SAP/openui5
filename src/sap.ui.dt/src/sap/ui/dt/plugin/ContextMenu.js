@@ -280,7 +280,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ContextMenu.prototype._onItemSelected = function (oEvent) {
-		this.oContextMenuControl.close();
+		this.oContextMenuControl.close(true);
 		this._ensureSelection(this._oCurrentOverlay);
 		this.setFocusLock(true);
 

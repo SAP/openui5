@@ -222,19 +222,14 @@ function(
 
 	/**
 	 * Returns "label" from designtime metadata
-	 * @return {string|undefined} Returns the label if present, calculated from a function or string
+	 * @return {string|undefined} Returns the label calculated from getLabel() in designtime metadata
 	 * @public
 	 */
 	DesignTimeMetadata.prototype.getLabel = function() {
-		var vLabel = this.getData().label;
-
-		switch (typeof vLabel) {
-			case "function":
-				return vLabel.apply(this, arguments);
-			case "string":
-				return vLabel;
-				//no default case
-		}
+		var vLabel = this.getData().getLabel;
+		return typeof vLabel === "function"
+			? vLabel.apply(this, arguments)
+			: undefined;
 	};
 
 	return DesignTimeMetadata;

@@ -528,6 +528,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/support/library"],
 							}
 							// check if editable fields are used (can only check for known fields)
 							if (oField.isA("sap.m.InputBase") ||
+									oField.isA("sap.m.Select") ||
 									oField.isA("sap.m.CheckBox") ||
 									oField.isA("sap.m.RadioButton") ||
 									oField.isA("sap.m.RadioButtonGroup") ||

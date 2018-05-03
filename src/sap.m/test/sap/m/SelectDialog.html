@@ -722,6 +722,28 @@
 				}
 			});
 
+			/* SelectDialog with multiselect ang growing false */
+
+			var oSelectDialog11 = new sap.m.SelectDialog("SelectDialog11", {
+				title: "Choose several World Domination companions",
+				noDataText: "Sorry, no world domination companions available",
+				contentWidth: "1000px",
+				multiSelect: true,
+				growing: false
+			});
+
+			// set model & bind Aggregation
+			oSelectDialog11.setModel(oModelList);
+			oSelectDialog11.bindAggregation("items", "/superheros", oItemTemplate);
+
+			var oButton11 = new sap.m.Button("Button11", {
+				text: "Open SelectDialog with growing=false",
+				press: function () {
+					// open dialog
+					oSelectDialog8.open();
+				}
+			});
+
 			var oPage = new sap.m.Page("page", {
 				title:"Mobile SelectDialog Control",
 				content:[
@@ -736,7 +758,8 @@
 							oButton7,
 							oButton8,
 							oButton9,
-							oButton10
+							oButton10,
+							oButton11
 						]
 					})
 				],

@@ -293,6 +293,7 @@ sap.ui.define([
 				}
 
 				oControlData.isClass = oControlData.kind === "class";
+				oControlData.isNamespace = oControlData.kind === "namespace";
 				oControlData.isDerived = !!oControlData.extends;
 				oControlData.extendsText = oControlData.extends || this.NOT_AVAILABLE;
 				oControlData.sinceText = oControlData.since || this.NOT_AVAILABLE;

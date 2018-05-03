@@ -16,6 +16,7 @@
 			<VBox>
 				<PlanningCalendar
 						id="PC1"
+						class="sapMPlanCalSuppressAlternatingRowColors"
 						startDate="{path: '/startDate'}"
 						rows="{path: '/people'}"
 						appointmentsVisualization="Filled"
@@ -32,8 +33,15 @@
 								icon="{pic}"
 								title="{name}"
 								text="{role}"
+								specialDates="{path : 'specialDates', templateShareable: 'true'}"
 								appointments="{path : 'appointments', templateShareable: 'true'}"
 								intervalHeaders="{path: 'headers', templateShareable: 'true'}">
+							<specialDates>
+								<unified:DateTypeRange
+									startDate="{start}"
+									endDate="{end}"
+									type="{type}"/>
+							</specialDates>
 							<appointments>
 								<unified:CalendarAppointment
 										startDate="{start}"

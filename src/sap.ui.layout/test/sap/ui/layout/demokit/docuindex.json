@@ -85,8 +85,6 @@
 				  	"sap.ui.layout.sample.GridProperties",
 				  	"sap.ui.layout.sample.GridData",
 					"sap.ui.layout.sample.GridInfo",
-					"sap.ui.layout.sample.GridTasks",
-					"sap.ui.layout.sample.GridTiles",
 					"sap.ui.layout.sample.GridXL"
 				]
 			},
@@ -327,16 +325,6 @@
 				"id": "sap.ui.layout.sample.GridInfo",
 				"name": "Grid - Info Layout",
 				"description": "You can use the Grid control to make responsive table-free layouts; here we are using a default indent and span, and specifying the Small settings such that the image and text will stack on a small display."
-			},
-			{
-				"id": "sap.ui.layout.sample.GridTiles",
-				"name": "Grid - Tile-based Layout",
-				"description": "There is a lot of flexibility with the Grid control's content; here we are using Object List Items to represent products, with some being third/half-width, and others being half/full-width, depending on the available screen size."
-			},
-			{
-				"id": "sap.ui.layout.sample.GridTasks",
-				"name": "Grid - Task Display",
-				"description": "Using the Grid control, with appropriate values for the Large/Medium/Small span settings, you can set some elements to be fixed (like the Active, Inactive and Failed titles here) and some to flow."
 			},
 			{
 				"id": "sap.ui.layout.sample.GridXL",

@@ -123,9 +123,13 @@
 					// debug boot script from it, so fall back to a default debug boot script
 					sDebugUrl = ensureSlash(sBaseUrl) + 'sap-ui-core.js';
 				}
+				// revert changes to global names
+				ui5loader.config({
+					noConflict:true
+				});
 				window["sap-ui-optimized"] = false;
 
-				if (sap.ui.loader.config().async) {
+				if (ui5loader.config().async) {
 					var script = document.createElement("script");
 					script.src = sDebugUrl;
 					document.head.appendChild(script);

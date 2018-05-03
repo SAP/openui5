@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/demo/cart/model/formatter",
-	"test/unit/helper/FakeI18nModel"
+	"../helper/FakeI18nModel"
 ], function (formatter, FakeI18nModel) {
 	"use strict";
 

@@ -35,4 +35,20 @@ describe('sap.m.TableSelectDialog', function() {
 		element(by.id('TableSelectDialog6-cancel')).click();
 
 	});
+
+	it('should open table select dialog in multiselect mode with Reset enabled button and long title', function() {
+		element(by.id('Button12')).click();
+		var tableSelectDialog = element(by.id('resetButtonTableSelectDialog-dialog'));
+		expect(takeScreenshot(tableSelectDialog)).toLookAs('tableSelectD-multiselect-longTitle-resetButoon-enabled');
+		element(by.id('resetButtonTableSelectDialog-cancel')).click();
+
+	});
+
+	it('should open table select dialog in multiselect mode with Reset disabled button and no title', function() {
+		element(by.id('Button3')).click();
+		var tableSelectDialog = element(by.id('TableSelectDialog3-dialog'));
+		expect(takeScreenshot(tableSelectDialog)).toLookAs('tableSelectD-multiselect-longTitle-resetButton-disabled');
+		element(by.id('TableSelectDialog3-cancel')).click();
+
+	});
 });

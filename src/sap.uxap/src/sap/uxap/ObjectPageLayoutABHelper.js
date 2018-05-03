@@ -6,10 +6,11 @@ sap.ui.define([
 	"jquery.sap.global",
 	"sap/ui/base/Metadata",
 	"sap/ui/core/CustomData",
+	"sap/ui/base/ManagedObjectObserver",
 	"./AnchorBar",
 	"sap/m/Button",
 	"sap/ui/core/IconPool"
-], function (jQuery, Metadata, CustomData, AnchorBar, Button, IconPool) {
+], function (jQuery, Metadata, CustomData, ManagedObjectObserver, AnchorBar, Button, IconPool) {
 	"use strict";
 
 	var ABHelper = Metadata.createClass("sap.uxap._helpers.AB", {
@@ -20,11 +21,40 @@ sap.ui.define([
 		constructor: function (oObjectPageLayout) {
 			this._oObjectPageLayout = oObjectPageLayout;
 			this._iScrollDuration = oObjectPageLayout._iScrollToSectionDuration;
+			this._oObserver = new ManagedObjectObserver(this._proxyStateChanges.bind(this));
 		}
 	});
 
 	ABHelper.prototype.getObjectPageLayout = function () {
 		return this._oObjectPageLayout;
+	};
+
+	ABHelper.prototype._proxyStateChanges = function (oChanges) {
+		var oObject = oChanges.object,
+			oObjectClone = this._findExistingClone(oObject),
+			sPropertyName = oChanges.name,
+			vCurrentValue = oChanges.current,
+			sSetter = "set" + fnCapitalize(sPropertyName);
+
+			if (oObjectClone) {
+				oObjectClone[sSetter].call(oObjectClone, vCurrentValue);
+			}
+	};
+
+	ABHelper.prototype._findExistingClone = function (oObject) {
+		var oClone,
+			sCloneIdPrefix = oObject.getId() + "-__clone",
+			oAnchorBar = this._getAnchorBar(),
+			aAnchorBarButtons = oAnchorBar.getContent();
+
+			aAnchorBarButtons.some(function(oButton) {
+				if (oButton.getId().indexOf(sCloneIdPrefix) === 0) {
+					oClone = oButton;
+					return true;
+				}
+			});
+
+			return oClone;
 	};
 
 	/**
@@ -60,6 +90,7 @@ sap.ui.define([
 		if (oAnchorBar && this.getObjectPageLayout().getShowAnchorBar()) {
 
 			oAnchorBar._resetControl();
+			this._oObserver.disconnect(); // unobserve all previousy observed objects
 
 			//first level
 			aSections.forEach(function (oSection) {
@@ -145,6 +176,9 @@ sap.ui.define([
 				oButtonClone.setText(sTitle);
 			} else {
 				oButtonClone = oButton.clone(); //keep original button parent control hierarchy
+				this._oObserver.observe(oButton, {
+					properties: true
+				});
 			}
 
 			//update the section info
@@ -193,6 +227,10 @@ sap.ui.define([
 
 		return oButtonClone;
 	};
+
+	function fnCapitalize(sName) {
+		return sName.substring(0, 1).toUpperCase() + sName.substring(1);
+	}
 
 	return ABHelper;
 
