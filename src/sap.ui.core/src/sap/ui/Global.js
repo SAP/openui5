@@ -373,6 +373,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 *
 	 * @static
 	 * @public
+	 * @deprecated since 1.56.0, use <code>sap.ui.require.toUrl</code> instead.
 	 */
 	sap.ui.resource = function(sLibraryName, sResourcePath) {
 		jQuery.sap.assert(typeof sLibraryName === "string", "sLibraryName must be a string");
@@ -424,6 +425,7 @@ sap.ui.define(['jquery.sap.global', 'jquery.sap.dom'],
 	 * @public
 	 * @static
 	 * @see jQuery.sap.registerModulePath
+	 * @deprecated since 1.56, use <code>sap.ui.loader.config</code> instead.
 	 */
 	sap.ui.localResources = function(sNamespace) {
 		jQuery.sap.assert(sNamespace, "sNamespace must not be empty");
