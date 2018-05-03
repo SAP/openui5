@@ -1641,6 +1641,7 @@ sap.ui.define([
 
 		this.aSorters = _Helper.toArray(vSorters);
 		this.mCacheByContext = undefined;
+		this.createRefreshGroupLock(this.getGroupId(), true);
 		this.fetchCache(this.oContext);
 		this.reset(ChangeReason.Sort);
 		return this;

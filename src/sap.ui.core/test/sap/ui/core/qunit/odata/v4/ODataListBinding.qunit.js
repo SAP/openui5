@@ -2061,13 +2061,15 @@ sap.ui.require([
 				});
 			oBinding = oModel.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined,
 				oFixture.mParameters);
-			this.mock(oBinding).expects("checkSuspended").withExactArgs();
-
 			oBinding.mCacheByContext = {"/TEAMS('1')" : {}, "/TEAMS('42')" : {}};
+			oBinding.setContext(oContext);
+
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oBinding).expects("hasPendingChanges").returns(false);
 			this.spy(_Helper, "toArray");
 			this.spy(oBinding, "reset");
-			oBinding.setContext(oContext);
+			this.mock(oBinding).expects("getGroupId").withExactArgs().returns("group");
+			this.mock(oBinding).expects("createRefreshGroupLock").withExactArgs("group", true);
 
 			// code under test
 			assert.strictEqual(oBinding.sort(oFixture.vSorters), oBinding, "chaining");
@@ -2075,7 +2077,6 @@ sap.ui.require([
 			assert.deepEqual(oBinding.aSorters, _Helper.toArray.returnValues[0]);
 			assert.ok(_Helper.toArray.calledWithExactly(oFixture.vSorters));
 			assert.strictEqual(oBinding.mCacheByContext, undefined);
-			assert.ok(oBinding.reset.calledWithExactly(), "from setContext");
 			assert.ok(oBinding.reset.calledWithExactly(ChangeReason.Sort), "from sort");
 		});
 	});
