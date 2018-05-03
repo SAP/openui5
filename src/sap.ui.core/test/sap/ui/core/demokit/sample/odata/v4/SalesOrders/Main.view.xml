@@ -166,8 +166,8 @@
 						icon="{ui>/sSortGrossAmountIcon}" iconFirst="false"
 						press="onSortByGrossAmount" text="Gross Amount" />
 				</Column>
-				<Column width="3em">
-					<Text text="Curr." tooltip="Currency"/>
+				<Column width="5em">
+					<Text text="Currency"/>
 				</Column>
 				<Column demandPopin="true" minScreenWidth="Medium">
 					<Text text="Note"/>
