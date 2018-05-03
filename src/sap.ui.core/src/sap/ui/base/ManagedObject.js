@@ -3450,6 +3450,7 @@ sap.ui.define([
 	 * This is a generic method which can be used to bind any aggregation to the
 	 * model. A managed object may flag aggregations in the metamodel with
 	 * bindable="bindable" to get typed bind<i>Something</i> methods for those aggregations.
+	 * For more information on the <code>oBindingInfo.key</code> property and its usage, see {@link topic:7cdff73f308b4b10bdf7d83b7aba72e7 Extended Change Detection}
 	 *
 	 * @param {string} sName the aggregation to bind
 	 * @param {object} oBindingInfo the binding info
