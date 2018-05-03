@@ -87,17 +87,36 @@ sap.ui.define([
 		WARNING = jQuery.sap.log.Level.WARNING;
 
 	/**
-	 * Logs an error with the given message and details and throws it.
+	 * Adds the given reference URI to the map of reference URIs for schemas.
 	 *
-	 * @param {string} sMessage
-	 *   Error message
-	 * @param {string} sDetails
-	 *   Error details
+	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel
+	 *   The OData metadata model
+	 * @param {string} sSchema
+	 *   A namespace of a schema, for example "foo.bar."
+	 * @param {string} sReferenceUri
+	 *   A URI to the metadata document for the given schema
+	 * @param {string} [sDocumentUri]
+	 *   The URI to the metadata document containing the given reference to the given schema
 	 * @throws {Error}
+	 *   If the schema has already been loaded from a different URI
 	 */
-	function logAndThrowError(sMessage, sDetails) {
-		jQuery.sap.log.error(sMessage, sDetails, sODataMetaModel);
-		throw new Error(sDetails + ": " + sMessage);
+	function addUrlForSchema(oMetaModel, sSchema, sReferenceUri, sDocumentUri) {
+		var sUrl0,
+			mUrls = oMetaModel.mSchema2MetadataUrl[sSchema];
+
+		if (!mUrls) {
+			mUrls = oMetaModel.mSchema2MetadataUrl[sSchema] = {};
+			mUrls[sReferenceUri] = false;
+		} else if (!(sReferenceUri in mUrls)) {
+			sUrl0 = Object.keys(mUrls)[0];
+			if (mUrls[sUrl0]) {
+				// document already processed, no different URLs allowed
+				logAndThrowError("A schema cannot span more than one document: " + sSchema
+					+ " - expected reference URI " + sUrl0
+					+ " but instead saw " + sReferenceUri, sDocumentUri);
+			}
+			mUrls[sReferenceUri] = false;
+		}
 	}
 
 	/**
@@ -116,10 +135,11 @@ sap.ui.define([
 	 * @returns {object|SyncPromise|undefined}
 	 *   The schema, or a promise which is resolved without details or rejected with an error, or
 	 *   <code>undefined</code>.
+	 * @throws {Error}
+	 *   If the schema has already been loaded and read from a different URI
 	 */
 	function getOrFetchSchema(oMetaModel, mScope, sSchema, fnLog) {
-		var oPromise,
-			sUrl;
+		var oPromise, sUrl, aUrls, mUrls;
 
 		/**
 		 * Include the schema (and all of its children) with namespace <code>sSchema</code> from
@@ -152,8 +172,16 @@ sap.ui.define([
 			return mScope[sSchema];
 		}
 
-		sUrl = oMetaModel.mSchema2MetadataUrl[sSchema];
-		if (sUrl) {
+		mUrls = oMetaModel.mSchema2MetadataUrl[sSchema];
+		if (mUrls) {
+			aUrls = Object.keys(mUrls);
+			if (aUrls.length > 1) {
+				logAndThrowError("A schema cannot span more than one document: schema is referenced"
+					+ " by following URLs: " + aUrls.join(", "), sSchema);
+			}
+
+			sUrl = aUrls[0];
+			mUrls[sUrl] = true;
 			fnLog(DEBUG, "Namespace ", sSchema, " found in $Include of ", sUrl);
 			oPromise = oMetaModel.mMetadataUrl2Promise[sUrl];
 			if (!oPromise) {
@@ -190,6 +218,20 @@ sap.ui.define([
 				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
+	}
+
+	/**
+	 * Logs an error with the given message and details and throws it.
+	 *
+	 * @param {string} sMessage
+	 *   Error message
+	 * @param {string} sDetails
+	 *   Error details
+	 * @throws {Error}
+	 */
+	function logAndThrowError(sMessage, sDetails) {
+		jQuery.sap.log.error(sMessage, sDetails, sODataMetaModel);
+		throw new Error(sDetails + ": " + sMessage);
 	}
 
 	/**
@@ -496,7 +538,16 @@ sap.ui.define([
 			this.oModel = oModel;
 			this.mMetadataUrl2Promise = {};
 			this.oRequestor = oRequestor;
-			// map from schema name to the same URL that _MetadataRequestor#read() takes
+			// maps the schema name to a map containing the URL references for the schema as key
+			// and a boolean value whether the schema has been read already as value; the URL
+			// reference is used by _MetadataRequestor#read()
+			// Example:
+			// mSchema2MetadataUrl = {
+			//   "A." : {"/A/$metadata" : false}, // namespace not yet read
+			//   // multiple references are ok as long as they are not read
+			//   "A.A." : {"/A/$metadata" : false, "/A/V2/$metadata" : false},
+			//   "B." : {"/B/$metadata" : true} // namespace already read
+			// }
 			this.mSchema2MetadataUrl = {};
 			this.mSupportedBindingModes = {"OneTime" : true, "OneWay" : true};
 			this.bSupportReferences = bSupportReferences !== false; // default is true
@@ -513,7 +564,7 @@ sap.ui.define([
 	 * @param {object[]} aAnnotationFiles
 	 *   The metadata "JSON" of the additional annotation files
 	 * @throws {Error}
-	 *   If metadata cannot be merged
+	 *   If metadata cannot be merged or if the schema has already been loaded from a different URI
 	 *
 	 * @private
 	 */
@@ -526,7 +577,7 @@ sap.ui.define([
 		mScope.$Annotations = {};
 		Object.keys(mScope).forEach(function (sElement) {
 			if (mScope[sElement].$kind === "Schema") {
-				that.mSchema2MetadataUrl[sElement] = that.sUrl;
+				addUrlForSchema(that, sElement, that.sUrl);
 				mergeAnnotations(mScope[sElement], mScope.$Annotations);
 			}
 		});
@@ -546,7 +597,7 @@ sap.ui.define([
 					oElement = mAnnotationScope[sQualifiedName];
 					mScope[sQualifiedName] = oElement;
 					if (oElement.$kind === "Schema") {
-						that.mSchema2MetadataUrl[sQualifiedName] = that.aAnnotationUris[i];
+						addUrlForSchema(that, sQualifiedName, that.aAnnotationUris[i]);
 						mergeAnnotations(oElement, mScope.$Annotations);
 					}
 				}
@@ -2132,7 +2183,7 @@ sap.ui.define([
 	 * @returns {object}
 	 *   <code>mScope</code> to allow "chaining"
 	 * @throws {Error}
-	 *   If validation fails
+	 *   If validation fails or if the schema has already been loaded from a different URI
 	 *
 	 * @private
 	 */
@@ -2162,14 +2213,8 @@ sap.ui.define([
 					logAndThrowError("A schema cannot span more than one document: " + sSchema
 						+ " - is both included and defined",
 						sUrl);
-				} else if (sSchema in this.mSchema2MetadataUrl
-					&& this.mSchema2MetadataUrl[sSchema] !== sReferenceUri) {
-					logAndThrowError("A schema cannot span more than one document: " + sSchema
-						+ " - expected reference URI " + this.mSchema2MetadataUrl[sSchema]
-						+ " but instead saw " + sReferenceUri,
-						sUrl);
 				}
-				this.mSchema2MetadataUrl[sSchema] = sReferenceUri;
+				addUrlForSchema(this, sSchema, sReferenceUri, sUrl);
 			}
 		}
 
