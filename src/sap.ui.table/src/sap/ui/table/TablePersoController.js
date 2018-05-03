@@ -120,8 +120,10 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 
 		delete this._oInitialPersoData;
 
-		delete this._oDialog;
-
+		if (this._oDialog) {
+			this._oDialog.destroy();
+			delete this._oDialog;
+		}
 	};
 
 	TablePersoController.prototype.setPersoService = function(oService) {
@@ -408,7 +410,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject'],
 			sap.ui.getCore().loadLibrary("sap.m", {async: true}).then(function() {
 				sap.ui.require(["sap/m/TablePersoDialog"], function(TablePersoDialog) {
 					// create and open the dialog
-					that._oDialog = new TablePersoDialog({
+					that._oDialog = new TablePersoDialog(that._getTable().getId() + "-PersoDialog", {
 						persoService: that.getPersoService(),
 						showSelectAll: true,
 						showResetAll: true,
