@@ -24,6 +24,7 @@ sap.ui.define(function() {
 	 * @param {sap.ui.core.tmpl.TemplateControl}
 	 *            oControl Object representation of the template control
 	 *            that should be rendered
+	 * @deprecated since 1.56
 	 */
 	TemplateControlRenderer.render = function(oRM, oControl) {
 

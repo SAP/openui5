@@ -31,6 +31,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 	 * @version ${version}
 	 * @alias sap.ui.core.tmpl.Template
 	 * @since 1.15
+	 * @deprecated since 1.56, use XMLView or JSView instead
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var Template = ManagedObject.extend("sap.ui.core.tmpl.Template", /** @lends sap.ui.core.tmpl.Template.prototype */
@@ -418,11 +419,12 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/ManagedObject', 'sap/ui/base/Bi
 	 * @param {string} oTemplate.id - the ID of the Template / the ID  of the DOM element containing the source of the Template</li>
 	 * @param {Element} oTemplate.domref - the DOM element containing the source of the Template</li>
 	 * @param {string} [oTemplate.type] - the type of the Template</li>
+	 * @param {object} [oTemplate.context] the context for the renderer/templating
 	 * @param {string} [oTemplate.src] - the URL to lookup the template</li> (<i>experimental!</i>)
 	 * @param {string} oTemplate.control - the fully qualified name of the control to declare</li> (<i>experimental!</i>)
 	 * @return {sap.ui.core.tmpl.Template | sap.ui.core.tmpl.Template[]} the created Template instance
 	 *         or in case of usage without parameters any array of templates is returned
-	 *
+	 * @deprecated since 1.56, use XMLView or JSView instead
 	 * @public
 	 * @static
 	 */
