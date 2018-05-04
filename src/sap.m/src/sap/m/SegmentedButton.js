@@ -788,7 +788,7 @@ function(
 
 		for (; i < aButtons.length; i++) {
 			if (aButtons[i] && aButtons[i].getId() === selectedButtonId) {
-				this._oItemNavigation.setFocusedIndex(i);
+				this._oItemNavigation && this._oItemNavigation.setFocusedIndex(i);
 				break;
 			}
 		}
