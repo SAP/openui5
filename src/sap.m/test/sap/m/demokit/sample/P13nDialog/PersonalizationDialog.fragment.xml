@@ -1,7 +1,8 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
-    <P13nDialog showReset="true" showResetEnabled="{path: '/ShowResetEnabled'}" ok="onOK" cancel="onCancel" reset="onReset" class="sapUiSizeCompact">
+    <P13nDialog showReset="true" showResetEnabled="{path: '/ShowResetEnabled'}" ok="onOK" cancel="onCancel"
+                reset="onReset" class="sapUiSizeCompact">
         <panels>
-            <P13nColumnsPanel changeColumnsItems="onChangeColumnsItems"
+            <P13nColumnsPanel changeColumnsItems="onChangeColumnsItems" visible="true"
                               items="{path: '/ColumnCollection'}"
                               columnsItems="{path: '/ColumnsItems'}">
                 <items>
@@ -12,6 +13,7 @@
                 </columnsItems>
             </P13nColumnsPanel>
             <P13nSortPanel containerQuery="true" addSortItem="onAddSortItem" removeSortItem="onRemoveSortItem"
+                           visible="false"
                            items="{path: '/ColumnCollection'}"
                            sortItems="{path: '/SortItems'}">
                 <P13nItem columnKey="{columnKey}" text="{text}"/>
