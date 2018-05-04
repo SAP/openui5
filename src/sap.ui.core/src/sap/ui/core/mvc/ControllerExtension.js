@@ -3,8 +3,8 @@
  */
 
 // Provides controller extension class (part of MVC concept)
-sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadata'],
-	function(BaseObject, ControllerExtensionMetadata) {
+sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadata', 'sap/ui/core/mvc/OverrideExecution'],
+	function(BaseObject, ControllerExtensionMetadata, OverrideExecution) {
 	"use strict";
 		var ControllerExtension = BaseObject.extend("sap.ui.core.mvc.ControllerExtension", {
 			metadata: {
@@ -12,11 +12,7 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 				methods: {
 					"byId" : 				{"public": true, "final": true},
 					"getView" : 			{"public": true, "final": true},
-					"getInterface" : 		{"public": false, "final": true},
-					"onInit" : 				{"public": false, "final": false},
-					"onExit" : 				{"public": false, "final": false},
-					"onBeforeRendering" : 	{"public": false, "final": false},
-					"onAfterRendering" :	{"public": false, "final": false}
+					"getInterface" : 		{"public": false, "final": true}
 				}
 			},
 
@@ -106,72 +102,77 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 		 * @public
 		 */
 		ControllerExtension.override = function(oExtension) {
-			if (!oExtension) {
-				jQuery.sap.log.error("Error in ControllerExtension.override. No extension definition for override provided!");
-			}
-			var mControllerLifecycleMethods = this.getMetadata().getLifecycleConfiguration();
-			//override the original extension methods for the entries in oExtension
-			for (var sOverrideMember in oExtension) {
-				//extend the lifecycle methods
-				if (sOverrideMember in mControllerLifecycleMethods) {
-					ControllerExtension.extendLifecycleMethod(sOverrideMember, this, oExtension, this);
-				}
-				var fnCustom = oExtension[sOverrideMember];
-				if (sOverrideMember in this.prototype) {
-					jQuery.sap.log.debug("Overriding  member '" + sOverrideMember + "' of extension " + this.getMetadata().getName());
-					//override extension member methods
-					if (!this.getMetadata().isMethodFinal(sOverrideMember)) {
-						this.prototype[sOverrideMember] = fnCustom.bind(oExtension);
-					}  else {
-						jQuery.sap.log.error("Error in ControllerExtension.override: Method '" + sOverrideMember + "' of extension '" + this.getMetadata().getName() + "' is flagged final and cannot be overridden!");
-					}
-				} else {
-					//override method runs in the context of the extension
-					this.prototype[sOverrideMember] = fnCustom.bind(oExtension);
-				}
-			}
+			var oMetadata = this.getMetadata();
+			oMetadata._staticOverride = oExtension;
 			return this;
 		};
 
 
 		/**
-		 * Extends the lifecycle methods of a controller or an extension
+		 * Override a method depending on the overrideExecution strategy
 		 *
-		 * @param {string} sMemberName The name of the function
+		 * @param {string} sMemberName The name of the function/member
 		 * @param {sap.ui.core.mvc.Controller|sap.ui.core.mvc.ControllerExtension} oOrigDef The controller/extension to extend
 		 * @param {sap.ui.core.mvc.ControllerExtension|object} oCustomDef The controller extension
 		 * @param {object} oContext Used as context for the extended function
+		 * @param {sap.ui.core.mvc.OverrideExecution} sOverrideExecution The override strategy
 		 * @private
 		 */
-		ControllerExtension.extendLifecycleMethod = function(sMemberName, oOrigDef, oCustomDef, oContext) {
+		ControllerExtension.overrideMethod = function(sMemberName, oOrigDef, oCustomDef, oContext, sOverrideExecution) {
 			var mControllerLifecycleMethods = this.getMetadata().getLifecycleConfiguration();
-			if (mControllerLifecycleMethods[sMemberName] !== undefined) {
-				// special handling for lifecycle methods
-				var fnOri = oOrigDef[sMemberName];
-				var fnCust = oCustomDef[sMemberName];
-				if (fnOri && typeof fnOri === "function") {
-					// use closure to keep correct values inside overridden function
-					(function(fnCust, fnOri, bOriBefore, oContext){
-						oOrigDef[sMemberName] = function() {
-							// call original function before or after the custom one
-							// depending on the lifecycle method (see mControllerLifecycleMethods object above)
-							if (bOriBefore) {
-								fnOri.apply(oOrigDef, arguments);
-								fnCust.apply(oContext, arguments);
-							} else {
-								fnCust.apply(oContext, arguments);
-								fnOri.apply(oOrigDef, arguments);
-							}
-						};
-					})(fnCust, fnOri, mControllerLifecycleMethods[sMemberName], oContext);
-				} else if (typeof fnCust === "function") {
-					oOrigDef[sMemberName] = fnCust.bind(oContext);
-				} else {
-					jQuery.sap.log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
-				}
-				return true;
+			var fnOri = oOrigDef[sMemberName];
+			var fnCust = oCustomDef[sMemberName];
+			sOverrideExecution = sOverrideExecution || mControllerLifecycleMethods[sMemberName] || OverrideExecution.Instead;
+
+			function wrapMethod(bBefore) {
+				(function(fnCust, fnOri, oContext, bBefore){
+					oOrigDef[sMemberName] = function() {
+						if (bBefore) {
+							fnCust.apply(oContext, arguments);
+							return fnOri.apply(oOrigDef, arguments);
+						} else {
+							fnOri.apply(oOrigDef, arguments);
+							return fnCust.apply(oContext, arguments);
+						}
+					};
+				})(fnCust, fnOri, oContext, bBefore);
 			}
-			return false;
+			if (typeof fnCust === 'function' && oContext) {
+				fnCust = fnCust.bind(oContext);
+			}
+			switch (sOverrideExecution) {
+				case OverrideExecution.Before:
+					if (fnOri && typeof fnOri === "function") {
+						wrapMethod(true);
+					} else if (typeof fnCust === "function") {
+						oOrigDef[sMemberName] = fnCust;
+					} else {
+						jQuery.sap.log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
+					}
+					break;
+				case OverrideExecution.After:
+					if (fnOri && typeof fnOri === "function") {
+						wrapMethod(false);
+					} else if (typeof fnCust === "function") {
+						oOrigDef[sMemberName] = fnCust;
+					} else {
+						jQuery.sap.log.error("Controller extension failed: lifecycleMethod '" + sMemberName + "', is not a function");
+					}
+					break;
+				case OverrideExecution.Instead:
+				default:
+					if (sMemberName in oOrigDef) {
+						jQuery.sap.log.debug("Overriding  member '" + sMemberName + "' of extension " + this.getMetadata().getName());
+						if (!this.getMetadata().isMethodFinal(sMemberName)) {
+							oOrigDef[sMemberName] = fnCust;
+						}  else {
+							jQuery.sap.log.error("Error in ControllerExtension.override: Method '" + sMemberName + "' of extension '" + this.getMetadata().getName() + "' is flagged final and cannot be overridden!");
+						}
+					} else {
+						oOrigDef[sMemberName] = fnCust;
+					}
+					break;
+			}
 		};
 
 		return ControllerExtension;

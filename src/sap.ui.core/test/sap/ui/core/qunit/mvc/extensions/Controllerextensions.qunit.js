@@ -3,8 +3,9 @@
 sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/core/mvc/XMLView',
-	'sap/ui/core/mvc/ControllerExtension'
-], function(Controller, XMLView, ControllerExtension) {
+	'sap/ui/core/mvc/ControllerExtension',
+	'sap/ui/core/mvc/OverrideExecution'
+], function(Controller, XMLView, ControllerExtension, OverrideExecution) {
 	"use-strict";
 
 	var mAllPublicMethods = {
@@ -23,6 +24,8 @@ sap.ui.define([
 		"extension1.getLifecycleCalls":{"public":true,"final":false,"reloadNeeded":true},
 		"extension1.getLifecycleCallsFromArray":{"public":true,"final":false,"reloadNeeded":true},
 		"extension1.getView":{"public":true,"final":true,"reloadNeeded":true},
+		"extension1.myAfter":{"public":true,"final":false,"overrideExecution":"After","reloadNeeded":true},
+		"extension1.myBefore":{"public":true,"final":false,"overrideExecution":"Before","reloadNeeded":true},
 		"extension1.publicMethod":{"public":true,"final":false,"reloadNeeded":true},
 		"extension1.publicMethodToOverride":{"public":true,"final":false,"reloadNeeded":true},
 		"extension2.byId":{"public":true,"final":true,"reloadNeeded":true},
@@ -33,6 +36,8 @@ sap.ui.define([
 		"extension2.getLifecycleCalls":{"public":true,"final":false,"reloadNeeded":true},
 		"extension2.getLifecycleCallsFromArray":{"public":true,"final":false,"reloadNeeded":true},
 		"extension2.getView":{"public":true,"final":true,"reloadNeeded":true},
+		"extension2.myAfter":{"public":true,"final":false,"overrideExecution":"After","reloadNeeded":true},
+		"extension2.myBefore":{"public":true,"final":false,"overrideExecution":"Before","reloadNeeded":true},
 		"extension2.publicMethod":{"public":true,"final":false,"reloadNeeded":true},
 		"extension2.publicMethodToOverride":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt1.byId":{"public":true,"final":true,"reloadNeeded":true},
@@ -43,9 +48,11 @@ sap.ui.define([
 		"extension.example.ProviderExt1.getLifecycleCalls":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt1.getLifecycleCallsFromArray":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt1.getView":{"public":true,"final":true,"reloadNeeded":true},
+		"extension.example.ProviderExt1.myAfter":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt1.myBefore":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt2.byId":{"public":true,"final":true,"reloadNeeded":true},
 		"extension.example.ProviderExt1.publicMethod":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt1.publicMethodToOverride":{"public":true,"final":false,"reloadNeeded":true},
-		"extension.example.ProviderExt2.byId":{"public":true,"final":true,"reloadNeeded":true},
 		"extension.example.ProviderExt2.callingPublicAndPrivateMethod":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt2.finalMethod":{"public":true,"final":true,"reloadNeeded":true},
 		"extension.example.ProviderExt2.checkInterface":{"public":true,"final":false,"reloadNeeded":true},
@@ -53,8 +60,11 @@ sap.ui.define([
 		"extension.example.ProviderExt2.getLifecycleCalls":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt2.getLifecycleCallsFromArray":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt2.getView":{"public":true,"final":true,"reloadNeeded":true},
+		"extension.example.ProviderExt2.myAfter":{"public":true,"final":false,"reloadNeeded":true},
+		"extension.example.ProviderExt2.myBefore":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt2.publicMethod":{"public":true,"final":false,"reloadNeeded":true},
 		"extension.example.ProviderExt2.publicMethodToOverride":{"public":true,"final":false,"reloadNeeded":true}
+
 	};
 
 	//all methods available
@@ -68,14 +78,18 @@ sap.ui.define([
 		"callingPublicAndPrivateMethod",
 		"byId",
 		"getView",
-		"getBase"
+		"getBase",
+		"myBefore",
+		"myAfter"
 	];
 
 	//controller extension
 	var ControllerExt1 = ControllerExtension.extend("example.ControllerExt1", {
 		metadata: {
 			methods: {
-				"finalMethod" : {"public": true, "final" : true}
+				"finalMethod" : {"public": true, "final" : true},
+				"myBefore" : {"public": true, "final" : false, overrideExecution: OverrideExecution.Before},
+				"myAfter" : {"public": true, "final" : false, overrideExecution: OverrideExecution.After}
 			}
 		},
 		mLifecycle: {init:0, exit: 0, beforeRendering: 0, afterRendering: 0},
@@ -122,6 +136,12 @@ sap.ui.define([
 		},
 		checkInterface: function() {
 			return this;
+		},
+		myBefore: function() {
+			return this.base.overrideCalledBefore;
+		},
+		myAfter: function() {
+			this.base.overrideCalledAfter = true;
 		},
 		override: {
 			callbackMethod: function() {
@@ -172,6 +192,12 @@ sap.ui.define([
 		extension2: ControllerExt1.override({
 			finalMethod: function() {
 				return "overridden by myExtension2";
+			},
+			myBefore: function() {
+				this.base.overrideCalledBefore = true;
+			},
+			myAfter: function() {
+				return this.base.overrideCalledAfter;
 			}
 		})
 	});
@@ -229,6 +255,10 @@ sap.ui.define([
 			},
 			checkInterface: function() {
 				return this;
+			},
+			myBefore: function() {
+			},
+			myAfter: function() {
 			},
 			override: {
 				callbackMethod: function() {
@@ -296,6 +326,10 @@ sap.ui.define([
 			},
 			checkInterface: function() {
 				return this;
+			},
+			myBefore: function() {
+			},
+			myAfter: function() {
 			},
 			override: {
 				extension: {
@@ -411,6 +445,13 @@ sap.ui.define([
 			oExtension = oController.extension1;
 		assert.ok(oExtension.byId("btn2"), "button defined by extension returned");
 		assert.ok(!oExtension.byId("btn1"), "button defined by view not returned");
+	});
+
+	QUnit.test("override execution checks", function(assert) {
+		var oController = this.view.getController(),
+			oExtension = oController.extension2;
+		assert.ok(oExtension.myAfter(), "Override called after orig function");
+		assert.ok(oExtension.myBefore(), "Override called before orig function");
 	});
 
 	QUnit.test("Override checks", function(assert) {
