@@ -316,8 +316,8 @@ sap.ui.define([
                 oHandle.style.left = fPercentVal + "%";
             }
 
-            if (this.getShowHandleTooltip()) {
-                oHandle.title = this._formatValueByScale(sValue);
+            if (this.getShowHandleTooltip() && !this.getShowAdvancedTooltip()) {
+                oHandle.title = this._formatValueByCustomElement(sValue);
             }
 
             bMergedRanges = aRange[0] === aRange[1];
@@ -334,7 +334,7 @@ sap.ui.define([
             var aRange = this.getRange(),
                 oProgressHandle = this.getDomRef("progress"),
                 fNormalizedValue = this.toFixed(sValue, this._iDecimalPrecision),
-                sScaleLabel = this._formatValueByScale(fNormalizedValue);
+                sScaleLabel = this._formatValueByCustomElement(fNormalizedValue);
 
             this._updateHandlesAriaLabels();
 
@@ -343,7 +343,7 @@ sap.ui.define([
             if (oProgressHandle) {
                 oProgressHandle.setAttribute("aria-valuenow", aRange.join("-"));
                 oProgressHandle.setAttribute("aria-valuetext",
-                    this._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(this._formatValueByScale, this)));
+                    this._oResourceBundle.getText('RANGE_SLIDER_RANGE_ANNOUNCEMENT', aRange.map(this._formatValueByCustomElement, this)));
             }
         };
 

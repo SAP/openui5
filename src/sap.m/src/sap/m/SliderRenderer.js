@@ -46,7 +46,7 @@ sap.ui.define(['./SliderUtilities'],
 			oRm.writeControlData(oSlider);
 
 			if (sTooltip && oSlider.getShowHandleTooltip()) {
-				oRm.writeAttributeEscaped("title", oSlider._formatValueByScale(sTooltip));
+				oRm.writeAttributeEscaped("title", oSlider._formatValueByCustomElement(sTooltip));
 			}
 
 			oRm.write(">");
@@ -146,7 +146,7 @@ sap.ui.define(['./SliderUtilities'],
 		 * @param {sap.ui.core.Control} oSlider An object representation of the control that should be rendered.
 		 */
 		SliderRenderer.writeHandleTooltip = function(oRm, oSlider) {
-			oRm.writeAttribute("title", oSlider._formatValueByScale(oSlider.toFixed(oSlider.getValue())));
+			oRm.writeAttribute("title", oSlider._formatValueByCustomElement(oSlider.toFixed(oSlider.getValue())));
 		};
 
 		SliderRenderer.renderInput = function(oRm, oSlider) {
@@ -160,7 +160,7 @@ sap.ui.define(['./SliderUtilities'],
 
 			oRm.writeClasses();
 			oRm.writeAttributeEscaped("name", oSlider.getName());
-			oRm.writeAttribute("value", oSlider._formatValueByScale(oSlider.toFixed(oSlider.getValue())));
+			oRm.writeAttribute("value", oSlider._formatValueByCustomElement(oSlider.toFixed(oSlider.getValue())));
 			oRm.write("/>");
 		};
 
@@ -173,8 +173,8 @@ sap.ui.define(['./SliderUtilities'],
 		 */
 		SliderRenderer.writeAccessibilityState = function(oRm, oSlider) {
 			var fSliderValue = oSlider.getValue(),
-				bNotNumericalLabel = oSlider._isScaleLabelNotNumerical(fSliderValue),
-				sScaleLabel = oSlider._formatValueByScale(fSliderValue),
+				bNotNumericalLabel = oSlider._isElementsFormatterNotNumerical(fSliderValue),
+				sScaleLabel = oSlider._formatValueByCustomElement(fSliderValue),
 				sValueNow;
 
 			if (oSlider._getUsedScale() && !bNotNumericalLabel) {
@@ -240,7 +240,7 @@ sap.ui.define(['./SliderUtilities'],
 			fValue = oSlider.toFixed(fValue, oSlider.getDecimalPrecisionOfNumber(oSlider.getStep()));
 
 			// Call Scale's callback or use the plain value. Cast to string
-			sValue = oSlider._formatValueByScale(fValue);
+			sValue = oSlider._formatValueByCustomElement(fValue, 'scale');
 
 			oRm.write("<li class=\"" + SliderRenderer.CSS_CLASS + "TickLabel\"");
 

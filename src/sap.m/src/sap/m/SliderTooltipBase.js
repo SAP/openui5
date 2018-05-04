@@ -76,5 +76,18 @@ function(
 		 */
 		SliderTooltipBase.prototype.sliderValueChanged = function (fValue) {};
 
+		/**
+		 * Formats the Slider value to the Tooltip's specific string.
+		 *
+		 * <b>Note:</b> It's important to set this formatter with the right output in
+		 * order to receive proper accessibility response.
+		 *
+		 * @param {float} fValue The option array
+		 * @returns {string|float} The formatted value
+		 *
+		 * @function
+		 * @name sap.m.SliderTooltipBase.getLabel
+		 */
+
 		return SliderTooltipBase;
 });
