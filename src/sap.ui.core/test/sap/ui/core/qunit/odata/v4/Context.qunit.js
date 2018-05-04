@@ -131,10 +131,10 @@ sap.ui.require([
 
 			this.mock(_Helper).expects("buildPath").withExactArgs("/foo", sPath).returns("/~");
 			this.mock(oBinding).expects("fetchValue")
-				.withExactArgs("/~", sinon.match.same(oListener), "group")
+				.withExactArgs("/~", sinon.match.same(oListener))
 				.returns(oResult);
 
-			assert.strictEqual(oContext.fetchValue(sPath, oListener, "group"), oResult);
+			assert.strictEqual(oContext.fetchValue(sPath, oListener), oResult);
 		});
 	});
 
@@ -149,10 +149,10 @@ sap.ui.require([
 			sPath = "/bar";
 
 		this.mock(oBinding).expects("fetchValue")
-			.withExactArgs(sPath, sinon.match.same(oListener), "group")
+			.withExactArgs(sPath, sinon.match.same(oListener))
 			.returns(oResult);
 
-		assert.strictEqual(oContext.fetchValue(sPath, oListener, "group"), oResult);
+		assert.strictEqual(oContext.fetchValue(sPath, oListener), oResult);
 	});
 
 	//*********************************************************************************************

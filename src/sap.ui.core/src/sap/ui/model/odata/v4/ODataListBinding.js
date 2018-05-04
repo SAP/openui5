@@ -841,14 +841,12 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the request
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.fetchValue = function (sPath, oListener, oGroupLock) {
+	ODataListBinding.prototype.fetchValue = function (sPath, oListener) {
 		var that = this;
 
 		return this.oCachePromise.then(function (oCache) {
@@ -857,18 +855,12 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					if (oGroupLock) {
-						oGroupLock.unlock();
-					}
 					return oCache.fetchValue(_GroupLock.$cached, sRelativePath, undefined,
 						oListener);
 				}
 			}
 			if (that.oContext) {
-				return that.oContext.fetchValue(sPath, oListener, oGroupLock);
-			}
-			if (oGroupLock) {
-				oGroupLock.unlock();
+				return that.oContext.fetchValue(sPath, oListener);
 			}
 		});
 	};
