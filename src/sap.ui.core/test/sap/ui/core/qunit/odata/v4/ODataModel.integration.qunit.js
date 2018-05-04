@@ -5281,23 +5281,18 @@ sap.ui.require([
 		var sView = '\
 <t:Table id="table" rows="{path : \'/SalesOrderList\',\
 		parameters : {\
-			$$aggregation : [{\
-				grouped : true,\
-				name : \'LifecycleStatus\'\
-			}, {\
-				grouped : false,\
-				name : \'CurrencyCode\'\
-			}, {\
-				name : \'GrossAmount\',\
-				total : true,\
-				unit : \'CurrencyCode\'\
-			}, {\
-				name : \'NetAmount\',\
-				total : false,\
-				unit : \'CurrencyCode\'\
-			}],\
-			$count : true,\
-			$orderby : \'LifecycleStatus desc,CurrencyCode\'\
+			$$aggregation : {\
+				aggregate : {\
+					GrossAmount : {subtotals : true},\
+					NetAmount : {}\
+				},\
+				group : {\
+					CurrencyCode : {},\
+					LifecycleStatus : {}\
+				},\
+				groupLevels : [\'LifecycleStatus\']\
+			},\
+			$orderby : \'LifecycleStatus desc\'\
 		}}" threshold="0" visibleRowCount="3">\
 	<t:Column>\
 		<t:template>\
@@ -5324,68 +5319,95 @@ sap.ui.require([
 			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
 		</t:template>\
 	</t:Column>\
-	<t:Column>\
-		<t:template>\
-			<Text id="currencyCode" text="{CurrencyCode}" />\
-		</t:template>\
-	</t:Column>\
 </t:Table>',
 			oModel = createSalesOrdersModel(),
 			that = this;
 
-		this.expectRequest("SalesOrderList?$count=true&$orderby=LifecycleStatus%20desc"
-				+ "&$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount))"
-				+ "&$skip=0&$top=3", {
+		this.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
+				+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+				+ "&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
 				"value" : [
-					{"CurrencyCode" : "EUR", "GrossAmount" : 1, "LifecycleStatus" : "Z"},
-					{"CurrencyCode" : "EUR", "GrossAmount" : 2, "LifecycleStatus" : "Y"},
-					{"CurrencyCode" : "EUR", "GrossAmount" : 3, "LifecycleStatus" : "X"}
+					{"GrossAmount" : 1, "LifecycleStatus" : "Z"},
+					{"GrossAmount" : 2, "LifecycleStatus" : "Y"},
+					{"GrossAmount" : 3, "LifecycleStatus" : "X"}
 				]
 			})
 			.expectChange("isExpanded", [false, false, false])
 			.expectChange("isTotal", [true, true, true])
 			.expectChange("level", [1, 1, 1])
-			.expectChange("currencyCode", ["EUR", "EUR", "EUR"])
 			.expectChange("grossAmount", [1, 2, 3])
 			.expectChange("lifecycleStatus", ["Z", "Y", "X"]);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oListBinding = that.oView.byId("table").getBinding("rows");
+			var oTable = that.oView.byId("table"),
+				oListBinding = oTable.getBinding("rows");
 
 			oListBinding.getCurrentContexts().forEach(function (oContext, i) {
 				assert.strictEqual(oContext.getPath(),
 					"/SalesOrderList(LifecycleStatus='" + "ZYX"[i] + "')");
 			});
 
-			that.expectRequest("SalesOrderList?$count=true&$orderby=LifecycleStatus%20desc"
-					+ "&$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount))"
-					+ "&$skip=23&$top=3", {
+			that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
+					+ "&$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+					+ "&$count=true&$skip=23&$top=3", {
 					"@odata.count" : "26",
 					"value" : [
-						{"CurrencyCode" : "EUR", "GrossAmount" : 24, "LifecycleStatus" : "C"},
-						{"CurrencyCode" : "EUR", "GrossAmount" : 25, "LifecycleStatus" : "B"},
-						{"CurrencyCode" : "EUR", "GrossAmount" : 26, "LifecycleStatus" : "A"}
+						{"GrossAmount" : 24, "LifecycleStatus" : "C"},
+						{"GrossAmount" : 25, "LifecycleStatus" : "B"},
+						{"GrossAmount" : 26, "LifecycleStatus" : "A"}
 					]
 				});
 			for (var i = 0; i < 3; i += 1) {
 				that.expectChange("isExpanded", undefined, null)
 					.expectChange("isTotal", undefined, null)
 					.expectChange("level", undefined, null)
-					.expectChange("currencyCode", null, null)
 					.expectChange("grossAmount", undefined, null)
 					.expectChange("lifecycleStatus", null, null);
 			}
 			that.expectChange("isExpanded", [false, false, false], 23)
 				.expectChange("isTotal", [true, true, true], 23)
 				.expectChange("level", [1, 1, 1], 23)
-				.expectChange("currencyCode", ["EUR", "EUR", "EUR"], 23)
 				.expectChange("grossAmount", [24, 25, 26], 23)
 				.expectChange("lifecycleStatus", ["C", "B", "A"], 23);
 
 			that.oView.byId("table").setFirstVisibleRow(23);
 
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert).then(function () {
+				that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
+						+ "&$apply=groupby((LifecycleStatus))&$count=true&$skip=23&$top=3", {
+						"@odata.count" : "26",
+						"value" : [
+							{"LifecycleStatus" : "C"},
+							{"LifecycleStatus" : "B"},
+							{"LifecycleStatus" : "A"}
+						]
+					});
+				//TODO why does Table use $skip=7 here? why do we have 2 requests?
+				that.expectRequest("SalesOrderList?$orderby=LifecycleStatus%20desc"
+						+ "&$apply=groupby((LifecycleStatus))&$count=true&$skip=7&$top=3", {
+						"@odata.count" : "26",
+						"value" : [
+							{"LifecycleStatus" : "S"},
+							{"LifecycleStatus" : "R"},
+							{"LifecycleStatus" : "Q"}
+						]
+					});
+				that.expectChange("isExpanded", [false, false, false], 7)
+					.expectChange("isTotal", [true, true, true], 7)
+					.expectChange("level", [1, 1, 1], 7)
+					.expectChange("lifecycleStatus", ["S", "R", "Q"], 7);
+
+				oTable.removeColumn(4).destroy(); // GrossAmount
+				oListBinding.setAggregation({groupLevels : ["LifecycleStatus"]});
+
+				return that.waitForChanges(assert).then(function () {
+					assert.throws(function () {
+						oListBinding.changeParameters({$apply : "groupby((LifecycleStatus))"});
+					}, new Error("Cannot combine $$aggregation and $apply"));
+					// Note: oListBinding is now in an undefined state, do not use anymore!
+				});
+			});
 		});
 	});
 
@@ -5523,12 +5545,11 @@ sap.ui.require([
 	// Scenario: Simulate a chart that requests minimum and maximum values for a measure via
 	// #updateAnalyticalInfo
 	QUnit.test("ODLB#updateAnalyticalInfo with min/max", function (assert) {
-		var aAggregation = [{
-				// dimension
+		var aAggregation = [{ // dimension
 				grouped : false,
 				inResult : true,
 				name : "Name"
-			}, {// measure
+			}, { // measure
 				max : true,
 				min : true,
 				name : "AGE",
@@ -5553,7 +5574,7 @@ sap.ui.require([
 </t:Table>',
 			that = this;
 
-		// for simulating a chart updateAnalyticalInfo needs to be called before getContexts
+		// for simulating Chart, #updateAnalyticalInfo needs to be called before #getContexts
 		this.mock(ODataListBinding.prototype)
 			.expects("getContexts")
 			.withExactArgs(0, 3, 0)
@@ -5576,8 +5597,7 @@ sap.ui.require([
 				+ "&$skip=0&$top=4",
 			{
 				"@odata.count": 5,
-				"value" : [
-					{
+				"value" : [{
 						// the server response may contain additional data for example @odata.id or
 						// type information "UI5min__AGE@odata.type": "#Int16"
 						"@odata.id": null,

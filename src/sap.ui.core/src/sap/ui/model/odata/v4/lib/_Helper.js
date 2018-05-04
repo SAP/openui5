@@ -9,7 +9,19 @@ sap.ui.define([
 ], function (jQuery, URI) {
 	"use strict";
 
-	var rAmpersand = /&/g,
+	var mAllowedAggregateDetails2Type =  {
+			"max" : "boolean",
+			"min" : "boolean",
+			"name" : "string",
+			"subtotals" : "boolean",
+			"with" : "string"
+		},
+		mAllowedAggregationKeys2Type = {
+			aggregate : "object",
+			group : "object",
+			groupLevels : "array"
+		},
+		rAmpersand = /&/g,
 		rEquals = /\=/g,
 		rEscapedCloseBracket = /%29/g,
 		rEscapedOpenBracket = /%28/g,
@@ -22,112 +34,186 @@ sap.ui.define([
 		rSingleQuote = /'/g,
 		Helper;
 
+	/*
+	 * Checks that the given details object has only allowed keys.
+	 *
+	 * @param {object} oDetails
+	 *   The details object
+	 * @param {string[]} [mAllowedKeys2Type]
+	 *   Maps keys which are allowed for the details objects to the expected type name
+	 * @param {string} [sName]
+	 *   The name of the property to which the details object belongs
+	 * @throws {Error}
+	 *   In case an unsupported key is found
+	 */
+	function checkKeys(oDetails, mAllowedKeys2Type, sName) {
+		var sKey;
+
+		function error(sMessage) {
+			if (sName) {
+				sMessage += " at property: " + sName;
+			}
+			throw new Error(sMessage);
+		}
+
+		function typeOf(vValue) {
+			return Array.isArray(vValue) ? "array" : typeof vValue;
+		}
+
+		for (sKey in oDetails) {
+			if (!(mAllowedKeys2Type && sKey in mAllowedKeys2Type)) {
+				error("Unsupported '" + sKey + "'");
+			} else if (typeOf(oDetails[sKey]) !== mAllowedKeys2Type[sKey]) {
+				error("Not a " + mAllowedKeys2Type[sKey] + " value for '" + sKey + "'");
+			}
+		}
+	}
+
+	/*
+	 * Checks that all details objects in the given map have only allowed keys.
+	 *
+	 * @param {object} mMap
+	 *   Map from name to details object (for a groupable or aggregatable property)
+	 * @param {string[]} [mAllowedKeys2Type]
+	 *   Maps keys which are allowed for the details objects to the expected type name
+	 * @throws {Error}
+	 *   In case an unsupported key is found
+	 */
+	function checkKeys4AllDetails(mMap, mAllowedKeys2Type) {
+		var sName;
+
+		for (sName in mMap) {
+			checkKeys(mMap[sName], mAllowedKeys2Type, sName);
+		}
+	}
+
 	Helper = {
 		/**
 		 * Builds the value for a "$apply" system query option based on the given data aggregation
-		 * information. The value is "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,...,
-		 * unit_or_text_K>),aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))" where the
-		 * "aggregate" part is only present if measures are given and both "with" and "as" are
-		 * optional. If at least one measure requesting a "min" or "max" value is contained, the
-		 * resulting $apply looks like: "groupby((&lt;dimension_1,...,dimension_N,unit_or_text_1,
-		 * ...,unit_or_text_K>),aggregate(&lt;measure> with &lt;method> as &lt;alias>, ...))
-		 * /concat(aggregate(&lt;measure> with min as UI5min__&lt;measure>,&lt;measure_1> with max
-		 * as UI5max__&lt;measure_1>,),identity)"
+		 * information. The value is "groupby((&lt;groupable_1,...,groupable_N),aggregate(
+		 * &lt;aggregatable> with &lt;method> as &lt;alias>,...))" where the "aggregate" part is
+		 * only present if aggregatable properties are given and both "with" and "as" are optional.
+		 * If at least one aggregatable property requesting minimum or maximum values is contained,
+		 * the resulting $apply is extended: ".../concat(aggregate(&lt;alias> with min as
+		 * UI5min__&lt;alias>,&lt;alias> with max as UI5max__&lt;alias>,...),identity)".
 		 *
-		 * @param {object[]} aAggregation
-		 *   An array with objects holding the information needed for data aggregation; see also
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation; see also
 		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-		 *   Extension for Data Aggregation Version 4.0</a>
-		 * @param {string} aAggregation[].name
-		 *   The name of an OData property. Each property must be either a dimension or a measure,
-		 *   see below.
-		 * @param {boolean} [aAggregation[].grouped]
-		 *   Its presence is used to detect a dimension
-		 * @param {boolean} [aAggregation[].total]
-		 *   Its presence is used to detect a measure
-		 * @param {boolean} [aAggregation[].max]
-		 *   Measures only: Whether the maximum value for this measure is needed
-		 * @param {boolean} [aAggregation[].min]
-		 *   Measures only: Whether the minimum value for this measure is needed
-		 * @param {string} [aAggregation[].unit]
-		 *   Measures only: The name of this measure's unit property
-		 * @param {string} [aAggregation[].with]
-		 *   Measures only: The name of the method (for example "sum") used for aggregation of this
-		 *   measure; see "3.1.2 Keyword with"
-		 * @param {string} [aAggregation[].as]
-		 *   Measures only: The alias, that is the name of the dynamic property used for
-		 *   aggregation of this measure; see "3.1.1 Keyword as"
+		 *   Extension for Data Aggregation Version 4.0</a>; must be a clone which is normalized as
+		 *   a side effect to contain all optional maps/lists
+		 * @param {object} [oAggregation.aggregate]
+		 *   A map from aggregatable property names or aliases to objects containing the following
+		 *   details:
+		 *   <ul>
+		 *   <li><code>min</code>: An optional boolean that tells whether the minimum value
+		 *     (ignoring currencies or units of measure) for this aggregatable property is needed
+		 *   <li><code>max</code>: An optional boolean that tells whether the maximum value
+		 *     (ignoring currencies or units of measure) for this aggregatable property is needed
+		 *   <li><code>subtotals</code>: An optional boolean that tells whether subtotals for this
+		 *     aggregatable property are needed
+		 *   <li><code>with</code>: An optional string that provides the name of the method (for
+		 *     example "sum") used for aggregation of this aggregatable property; see
+		 *     "3.1.2 Keyword with"
+		 *   <li><code>name</code>: An optional string that provides the original aggregatable
+		 *     property name in case a different alias is chosen as the name of the dynamic property
+		 *     used for aggregation of this aggregatable property; see "3.1.1 Keyword as"
+		 *   </ul>
+		 * @param {object} [oAggregation.group]
+		 *   A map from groupable property names to empty objects
+		 * @param {string[]} [oAggregation.groupLevels]
+		 *   A list of groupable property names (which may, but don't need to be repeated in
+		 *   <code>oAggregation.group</code>) used to determine group levels; only a single group
+		 *   level is supported
 		 * @param {object} [mAlias2MeasureAndMethod]
-		 *   An optional map which is filled in case a measure requests minimum or maximum values;
-		 *   the alias for that value becomes the key; an object with "measure" and "method" becomes
-		 *   the corresponding value
+		 *   An optional map which is filled in case an aggregatable property requests minimum or
+		 *   maximum values; the alias (for example "UI5min__&lt;alias>") for that value becomes the
+		 *   key; an object with "measure" and "method" becomes the corresponding value. Note that
+		 *   "measure" holds the aggregatable property's alias in case "3.1.1 Keyword as" is used.
 		 * @returns {string}
 		 *   The value for a "$apply" system query option
 		 * @throws {Error}
-		 *   In case a property is both a dimension and a measure, or neither a dimension nor a
-		 *   measure
+		 *   If the given data aggregation object is unsupported
 		 */
-		buildApply : function (aAggregation, mAlias2MeasureAndMethod) {
-			var aAggregate = [],
-				aGroupBy = [],
-				aGroupByNoDimension = [],
+		buildApply : function (oAggregation, mAlias2MeasureAndMethod) {
+			var aAggregate,
+				aGroupBy,
 				aMinMax = [];
 
-			// adds the min/max expression for /concat term and adds corresponding entry to the
-			// alias map
-			function processMinOrMax(oAggregation, sMinOrMax) {
-				var sAlias;
+			/*
+			 * Returns the corresponding part of the "aggregate" term for an aggregatable property,
+			 * for example "AggregatableProperty with method as Alias". Processes min/max as a side
+			 * effect.
+			 *
+			 * @param {string} sAlias - An aggregatable property name
+			 * @returns {string} - Part of the "aggregate" term
+			 */
+			function aggregate(sAlias) {
+				var oDetails = oAggregation.aggregate[sAlias],
+					sAggregate = oDetails.name || sAlias;
 
-				if (oAggregation[sMinOrMax]) {
-					sAlias = "UI5" + sMinOrMax + "__" + oAggregation.name;
-					aMinMax.push(oAggregation.name + " with " + sMinOrMax + " as " + sAlias);
-					if (mAlias2MeasureAndMethod) {
-						mAlias2MeasureAndMethod[sAlias] = {
-							measure : oAggregation.name,
-							method : sMinOrMax
-						};
-					}
+				if (oDetails.with) {
+					sAggregate += " with " + oDetails.with + " as " + sAlias;
+				} else if (oDetails.name) {
+					sAggregate += " as " + sAlias;
+				}
+				if (oDetails.min) {
+					processMinOrMax(sAlias, "min");
+				}
+				if (oDetails.max) {
+					processMinOrMax(sAlias, "max");
+				}
+				return sAggregate;
+			}
+
+			/*
+			 * Tells whether the given groupable property is not a group level.
+			 *
+			 * @param {string} sGroupable - A groupable property name
+			 * @returns {boolean} - Whether it is not a group level
+			 */
+			function notGroupLevel(sGroupable) {
+				return oAggregation.groupLevels.indexOf(sGroupable) < 0;
+			}
+
+			/*
+			 * Builds the min/max expression for the "concat" term (for example
+			 * "AggregatableProperty with min as UI5min__AggregatableProperty") and adds a
+			 * corresponding entry to the optional alias map.
+			 *
+			 * @param {string} sName - An aggregatable property name
+			 * @param {string} sMinOrMax - Either "min" or "max"
+			 */
+			function processMinOrMax(sName, sMinOrMax) {
+				var sAlias = "UI5" + sMinOrMax + "__" + sName;
+
+				aMinMax.push(sName + " with " + sMinOrMax + " as " + sAlias);
+				if (mAlias2MeasureAndMethod) {
+					mAlias2MeasureAndMethod[sAlias] = {
+						measure : sName,
+						method : sMinOrMax
+					};
 				}
 			}
 
-			aAggregation.forEach(function (oAggregation) {
-				var sAggregate, iIndex;
+			checkKeys(oAggregation, mAllowedAggregationKeys2Type);
+			oAggregation.groupLevels = oAggregation.groupLevels || [];
+			if (oAggregation.groupLevels.length > 1) {
+				throw new Error("More than one group level: " + oAggregation.groupLevels);
+			}
 
-				if ("total" in oAggregation) { // measure
-					if ("grouped" in oAggregation) {
-						throw new Error("Both dimension and measure: " + oAggregation.name);
-					}
-					sAggregate = oAggregation.name;
-					if ("with" in oAggregation) {
-						sAggregate += " with " + oAggregation.with;
-					}
-					if ("as" in oAggregation) {
-						sAggregate += " as " + oAggregation.as;
-					}
-					aAggregate.push(sAggregate);
-					if ("unit" in oAggregation
-							&& aGroupBy.indexOf(oAggregation.unit) < 0
-							&& aGroupByNoDimension.indexOf(oAggregation.unit) < 0) {
-						aGroupByNoDimension.push(oAggregation.unit);
-					}
-					processMinOrMax(oAggregation, "min");
-					processMinOrMax(oAggregation, "max");
-				} else if ("grouped" in oAggregation) { // dimension
-					aGroupBy.push(oAggregation.name);
-					iIndex = aGroupByNoDimension.indexOf(oAggregation.name);
-					if (iIndex >= 0) {
-						aGroupByNoDimension.splice(iIndex, 1);
-					}
-				} else {
-					throw new Error("Neither dimension nor measure: " + oAggregation.name);
-				}
-			});
+			oAggregation.group = oAggregation.group || {};
+			checkKeys4AllDetails(oAggregation.group);
+			aGroupBy = oAggregation.groupLevels.concat(
+				Object.keys(oAggregation.group).sort().filter(notGroupLevel));
 
-			return "groupby((" + aGroupBy.concat(aGroupByNoDimension).join(",")
+			oAggregation.aggregate = oAggregation.aggregate || {};
+			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
+			aAggregate = Object.keys(oAggregation.aggregate).sort().map(aggregate);
+
+			return "groupby((" + aGroupBy.join(",")
 				+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))")
-				+ (aMinMax.length
-					? "/concat(aggregate(" + aMinMax.join(",") + "),identity)"
-					: "");
+				+ (aMinMax.length ? "/concat(aggregate(" + aMinMax.join(",") + "),identity)" : "");
 		},
 
 		/**
@@ -646,6 +732,24 @@ sap.ui.define([
 				});
 			}
 			return mQueryOptions && mQueryOptions.$select;
+		},
+
+		/**
+		 * Tells whether minimum or maximum values are needed for at least one aggregatable
+		 * property.
+		 *
+		 * @param {object} [mAggregate]
+		 *   A map from aggregatable property names or aliases to details objects
+		 * @returns {boolean}
+		 *   Whether minimum or maximum values are needed for at least one aggregatable
+		 *   property.
+		 */
+		hasMinOrMax : function (mAggregate) {
+			return !!mAggregate && Object.keys(mAggregate).some(function (sAlias) {
+				var oDetails = mAggregate[sAlias];
+
+				return oDetails.min || oDetails.max;
+			});
 		},
 
 		/**

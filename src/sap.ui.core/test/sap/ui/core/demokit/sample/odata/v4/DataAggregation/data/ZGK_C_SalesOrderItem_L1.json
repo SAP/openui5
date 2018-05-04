@@ -1,106 +1,66 @@
 {
-	"@odata.context": "../$metadata#ZGK_C_SalesOrderItem_RD_V4('PREVIOUSYEAR')/Set(ProductCategory,DisplayCurrency,TransactionCurrency,NetAmountInDisplayCurrency)",
+	"@odata.context": "../$metadata#ZGK_C_SalesOrderItem_RD_V4('PREVIOUSYEAR')/Set(ProductCategory,NetAmountInDisplayCurrency)",
 	"@odata.metadataEtag": "W/\"20180328135101\"",
 	"@odata.count": 20,
 	"value": [{
 		"ProductCategory": "Telecommunications",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 13390.4
 	}, {
 		"ProductCategory": "Tablets",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 70711.2
 	}, {
 		"ProductCategory": "Speakers",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 3664.8
 	}, {
 		"ProductCategory": "Software",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 64983.6
 	}, {
 		"ProductCategory": "Smartphones",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 218425.6
 	}, {
 		"ProductCategory": "Servers",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 3852000
 	}, {
 		"ProductCategory": "Scanners",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 33446.4
 	}, {
 		"ProductCategory": "Portable Players",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 68717.88
 	}, {
 		"ProductCategory": "PDAs & Organizers",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 187366.4
 	}, {
 		"ProductCategory": "PCs",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 103636.8
 	}, {
 		"ProductCategory": "Notebooks",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 287184
 	}, {
 		"ProductCategory": "Multifunction Printers",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 77330.4
 	}, {
 		"ProductCategory": "Mousepads",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 1091.22
 	}, {
 		"ProductCategory": "Mice",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 2450.4
 	}, {
 		"ProductCategory": "Laser Printers",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 189850.4
 	}, {
 		"ProductCategory": "Keyboards",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 8658.4
 	}, {
 		"ProductCategory": "Ink Jet Printers",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 22692.8
 	}, {
 		"ProductCategory": "Graphic Cards",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 35245.75
 	}, {
 		"ProductCategory": "Flat Screen Monitors",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 350064
 	}, {
 		"ProductCategory": "Computer System Accessories",
-		"TransactionCurrency": "USD",
-		"DisplayCurrency": "EUR",
 		"NetAmountInDisplayCurrency": 11242.32
 	}]
 }

@@ -26,7 +26,7 @@ sap.ui.define([
 			"$metadata" : {
 				source : "ZGK_C_SalesOrderItem.metadata.xml"
 			},
-			"ZGK_C_SalesOrderItem_RD_V4(P_DateFunction='PREVIOUSYEAR')/Set?$count=true&$orderby=ProductCategory%20desc&$apply=groupby((ProductCategory,DisplayCurrency),aggregate(NetAmountInDisplayCurrency))&$skip=0&$top=110" : {
+			"ZGK_C_SalesOrderItem_RD_V4(P_DateFunction='PREVIOUSYEAR')/Set?$orderby=ProductCategory%20desc&$apply=groupby((ProductCategory),aggregate(NetAmountInDisplayCurrency))&$count=true&$skip=0&$top=110" : {
 				source : "ZGK_C_SalesOrderItem_L1.json"
 			}
 		}, "sap/ui/core/sample/odata/v4/DataAggregation/data",
