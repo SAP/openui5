@@ -426,7 +426,7 @@
 
 	try {
 		if (window.localStorage.getItem("sap-ui-reboot-URL")) {
-			var sDebugRebootPath = ensureSlash(sBaseUrl) + 'sap/ui/bootstrap/debug.js';
+			var sDebugRebootPath = ensureSlash(sBaseUrl) + 'sap/ui/bootstrap/Debug.js';
 			if (ui5loader.config().async) {
 				var oScript = document.createElement("script");
 				oScript.src = sDebugRebootPath;
