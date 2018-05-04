@@ -73,7 +73,9 @@
 		.sapUiBlockCellContent {
 			color: contrast(@@color-param, @sapUiBaseText, @sapUiContentContrastTextColor, @sapUiContentContrastTextThreshold);
 
-			.sapMText, .sapMLabel, .sapUiBlockCellTitle {
+			.sapMText,
+			.sapMLabel,
+			.sapUiBlockCellTitle{
 				color: inherit;
 			}
 		}
@@ -122,6 +124,12 @@
 		}
 	}
 }
+
+//Link as title
+.sapUiBlockCellTitle .sapMLnk {color: darken(@sapUiLink, 4);}
+.sapUiBlockCellTitle .sapMLnk:visited {color: darken(@sapUiLinkVisited, 4);}
+.sapUiBlockCellTitle .sapMLnk:hover:not(.sapMLnkDsbl) {color: darken(@sapUiLinkHover, 4);}
+// disabled and emphasized links: we do not support this at all here.
 
 /* ============ Background type: Light ============== */
 .sapUiBlockLayoutBackgroundLight {

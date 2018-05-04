@@ -3,12 +3,12 @@
 /* Base theme                                       */
 /* ================================================ */
 
-@_sap_ui_layout_form_ColumnMaxXL: 4;
-@_sap_ui_layout_form_ColumnMaxL: 3;
-@_sap_ui_layout_form_ColumnMaxM: 2;
-@_sap_ui_layout_form_ColumnMaxS: 1;
-@_sap_ui_layout_form_ColumnElementCols: 12;
-@_sap_ui_layout_form_ColumnElementOneCol: 100% / @_sap_ui_layout_form_ColumnElementCols;
+@_sap_ui_layout_ColumnLayout_formColumnMaxXL: 4;
+@_sap_ui_layout_ColumnLayout_formColumnMaxL: 3;
+@_sap_ui_layout_ColumnLayout_formColumnMaxM: 2;
+@_sap_ui_layout_ColumnLayout_formColumnMaxS: 1;
+@_sap_ui_layout_ColumnLayout_formColumnElementCols: 12;
+@_sap_ui_layout_ColumnLayout_formColumnElementOneCol: 100% / @_sap_ui_layout_ColumnLayout_formColumnElementCols;
 
 /* Title */
 .sapUiFormCL > .sapUiFormTitle{
@@ -127,20 +127,20 @@ html.sap-phone .sapUiFormCL > .sapUiFormCLContent > .sapUiFormCLContainer:not(:l
 	clear: both;
 }
 
-.createContainerRules(@_sap_ui_layout_form_ColumnMaxXL, LargeDesktop, XL);
+.createContainerRules(@_sap_ui_layout_ColumnLayout_formColumnMaxXL, LargeDesktop, XL);
 
 /* L */
 .sapUiFormCLMedia-Std-Desktop > .sapUiFormCLContent > .sapUiFormCLContainerLBreak{
 	clear: both;
 }
 
-.createContainerRules(@_sap_ui_layout_form_ColumnMaxL, Desktop, L);
+.createContainerRules(@_sap_ui_layout_ColumnLayout_formColumnMaxL, Desktop, L);
 
 /* M */
 .sapUiFormCLMedia-Std-Tablet > .sapUiFormCLContent > .sapUiFormCLContainerMBreak{
 	clear: both;
 }
-.createContainerRules(@_sap_ui_layout_form_ColumnMaxM, Tablet, M);
+.createContainerRules(@_sap_ui_layout_ColumnLayout_formColumnMaxM, Tablet, M);
 
 /* S */
 
@@ -172,22 +172,22 @@ html.sap-phone .sapUiFormCL > .sapUiFormCLContent > .sapUiFormCLContainer:not(:l
 .createColumnRules(@counter, @size, @name)  when (@counter > 0) {
 	.createColumnRules((@counter - 1), @size, @name);
 	.sapUiFormCL@{size}Columns .sapUiFormCLElement > .sapUiFormCLCells@{name}@{counter}{
-		width: @_sap_ui_layout_form_ColumnElementOneCol * @counter;
+		width: @_sap_ui_layout_ColumnLayout_formColumnElementOneCol * @counter;
 	}
 	.sapUiFormCL@{size}Columns .sapUiFormCLElement > .sapUiFormCLCell@{name}Space@{counter}{
-		margin-left: @_sap_ui_layout_form_ColumnElementOneCol * @counter;
+		margin-left: @_sap_ui_layout_ColumnLayout_formColumnElementOneCol * @counter;
 	}
 }
 
 /* small columns */
-.createColumnRules(@_sap_ui_layout_form_ColumnElementCols, Small, S);
+.createColumnRules(@_sap_ui_layout_ColumnLayout_formColumnElementCols, Small, S);
 
 .sapUiFormCLSmallColumns .sapUiFormCLElement > .sapUiFormCLCellSBreak{
 	clear: both;
 }
 
 /* wide columns - Labels next to field */
-.createColumnRules(@_sap_ui_layout_form_ColumnElementCols, Wide, L);
+.createColumnRules(@_sap_ui_layout_ColumnLayout_formColumnElementCols, Wide, L);
 
 .sapUiFormCLWideColumns .sapUiFormCLElement > .sapUiFormCLCellLBreak{
 	clear: both;
