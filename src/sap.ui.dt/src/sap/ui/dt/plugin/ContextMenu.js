@@ -199,7 +199,7 @@ sap.ui.define([
 			this.oContextMenuControl._bUseExpPop = !!bContextMenu;
 
 			aMenuItems = this._sortMenuItems(aMenuItems);
-			this.oContextMenuControl.setButtons(aMenuItems, this, oOverlay);
+			this.oContextMenuControl.setButtons(aMenuItems, this._onItemSelected.bind(this), oOverlay);
 
 			this.oContextMenuControl.setStyleClass(this.getStyleClass());
 			if (bIsSubMenu) {
@@ -279,22 +279,22 @@ sap.ui.define([
 	 * @override
 	 * @private
 	 */
-	ContextMenu.prototype._onItemSelected = function (oEvent) {
+	ContextMenu.prototype._onItemSelected = function (oEventItem) {
 		this.oContextMenuControl.close(true);
 		this._ensureSelection(this._oCurrentOverlay);
 		this.setFocusLock(true);
 
 		var aSelection = [],
 			oContextElement = this.getContextElement(),
-			sId = oEvent.data("id");
+			sSelectedButtonId = oEventItem.data("id");
 
 		this._aMenuItems.some(function (mMenuItemEntry) {
-			if (sId === mMenuItemEntry.menuItem.id) {
+			if (sSelectedButtonId === mMenuItemEntry.menuItem.id) {
 				var oItem = mMenuItemEntry.menuItem;
 				aSelection = this.getSelectedOverlays();
 				jQuery.sap.assert(aSelection.length > 0, "sap.ui.rta - Opening context menu, with empty selection - check event order");
 				var mPropertiesBag = {};
-				mPropertiesBag.eventItem = oEvent;
+				mPropertiesBag.eventItem = oEventItem;
 				mPropertiesBag.contextElement = oContextElement;
 				oItem.handler(aSelection, mPropertiesBag);
 				oItem = null;
