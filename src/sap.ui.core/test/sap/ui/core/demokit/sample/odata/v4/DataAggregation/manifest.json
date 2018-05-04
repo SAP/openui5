@@ -7,7 +7,7 @@
 		},
 		"dataSources" : {
 			"default" : {
-				"uri" : "/sap/opu/odata4/sap/zgk_c_salesorderitem_rd_v4_sb/srvd/sap/zgk_c_salesorderitem_rd_v4_sd/0001/",
+				"uri" : "/serviceroot.svc/",
 				"type" : "OData",
 				"settings" : {
 					"odataVersion" : "4.0"
