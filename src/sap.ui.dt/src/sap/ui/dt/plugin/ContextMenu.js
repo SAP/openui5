@@ -356,10 +356,10 @@ sap.ui.define([
 
 	ContextMenu.prototype._startOpeningWithDelay = function(oEvent) {
 		this._bTouched = false;
+		var oCurrentEvent = jQuery.extend({}, oEvent);
 		this.clickTimeout = setTimeout(function () {
-			this._startOpening(oEvent, true);
+			this._startOpening(oCurrentEvent, true);
 		}.bind(this), this.iMenuLeftclickOpeningDelay);
-		oEvent.stopPropagation();
 	};
 
 	/**
