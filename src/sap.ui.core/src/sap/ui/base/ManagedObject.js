@@ -678,7 +678,8 @@ sap.ui.define([
 	 *     All elements added to the source aggregation will be located at the target aggregation (this means the target instance is their parent).
 	 *     Both, source and target element will return the added elements when asked for the content of the respective aggregation.
 	 *     If present, the named (non-generic) aggregation methods will be called for the target aggregation.
-	 *     Aggregations can only be forwarded to non-hidden aggregations of the same multiplicity (single/multiple).
+	 *     Aggregations can only be forwarded to non-hidden aggregations of the same or higher multiplicity (i.e. an aggregation with multiplicity "0..n" cannot be
+	 *     forwarded to an aggregation with multiplicity "0..1").
 	 *     The target aggregation must also be "compatible" to the source aggregation in the sense that any items given to the source aggregation
 	 *     must also be valid in the target aggregation (otherwise the target element will throw a validation error).
 	 *     If the forwarded elements use data binding, the target element must be properly aggregated by the source element to make sure all models are available there

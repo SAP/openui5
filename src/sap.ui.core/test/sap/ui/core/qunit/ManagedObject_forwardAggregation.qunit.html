@@ -49,6 +49,7 @@
 							outerSingleAggregation: {type: "sap.ui.core.Element", multiple: false, forwarding: {idSuffix: "-innerElement", aggregation: "innerSingleAggregation"}},
 							otherOuterAggregation: {type: "sap.ui.core.Element", multiple: true},
 							otherOuterSingleAggregation: {type: "sap.ui.core.Element", multiple: false},
+							thirdOuterSingleAggregation: {type: "sap.ui.core.Element", multiple: false},
 							_innerElement: {type: "sap.ui.core.Element", multiple: false, visibility: "hidden"}
 						}
 					},
@@ -286,6 +287,7 @@
 
 					assert.equal(this.newItem.getParent(), null, "the removed items should have no parent");
 
+					assert.deepEqual(this.composite.getOuterAggregation(), [], "outer control should return an array for the aggregation");
 					assert.equal(this.composite.getOuterAggregation().length, 0, "outer control should have 0 items");
 					assert.equal(this.innerElement.getInnerAggregation().length, 0, "inner control should have 0 items");
 
@@ -409,7 +411,7 @@
 
 				QUnit.test("Defining a single-to-multi forwarding", function(assert) {
 					CompositeElement.getMetadata().forwardAggregation(
-						"otherOuterSingleAggregation",
+						"thirdOuterSingleAggregation",
 						{
 							getter: function() {
 								return this.getAggregation("_innerElement");
@@ -418,15 +420,58 @@
 						}
 					);
 
+					// initial state
+					assert.equal(this.composite.getThirdOuterSingleAggregation(), null, "outer control should return null for the aggregation as long as it is empty");
+
+					// more setup
+					this.composite.setThirdOuterSingleAggregation(this.item);
+					this.innerElement = this.composite.getAggregation("_innerElement");
+
+					// test whether everything is ok initially
+					assert.equal(this.composite.getThirdOuterSingleAggregation(), this.item, "item should be returned by outer aggregation getter");
+					assert.equal(this.innerElement.getInnerAggregation()[0], this.item, "item should be returned by inner aggregation getter");
+					assert.equal(this.item.getParent(), this.innerElement, "inner element should be the item parent");
+					assert.equal(this.composite.mAggregations["thirdOuterSingleAggregation"], undefined, "outer element should not have the item in mAggregations");
+					assert.equal(this.innerElement.mAggregations["innerAggregation"][0], this.item, "inner element should have the item in mAggregations");
+					assert.equal(this.composite.indexOfThirdOuterSingleAggregation, undefined, "indexOf should not exist for single outer aggregation");
+
+					// set new item (checks setAggregation)
+					this.newItem = new SimpleElement("newItem");
+					var result = this.composite.setThirdOuterSingleAggregation(this.newItem);
+					assert.equal(result, this.composite, "setAggregation should return the outer element");
+					assert.equal(this.composite.getThirdOuterSingleAggregation(), this.newItem, "newItem should be returned by outer aggregation getter");
+					assert.equal(this.innerElement.getInnerAggregation()[0], this.newItem, "newItem should be returned by inner aggregation getter");
+
+					// remove item (checks destroyAggregation)
+					var result = this.composite.destroyThirdOuterSingleAggregation();
+					assert.equal(result, this.composite, "destroyAggregation should return the outer element");
+					assert.equal(this.newItem.bIsDestroyed, true, "the new item should be destroyed");
+					assert.equal(this.composite.getThirdOuterSingleAggregation(), undefined, "outer control should have 0 items");
+					assert.equal(this.innerElement.getInnerAggregation().length, 0, "inner control should have 0 items");
+
+					// cannot forward bindings single-to-multi
 					assert.throws(
 						function() {
-							this.composite.setOtherOuterSingleAggregation(this.item);
+							CompositeElement.getMetadata().forwardAggregation(
+								"thirdOuterSingleAggregation",
+									{
+									getter: function() {
+										return this.getAggregation("_innerElement");
+									},
+									aggregation: "innerAggregation",
+									forwardBinding: true
+								}
+							);
+							this.composite.setThirdOuterSingleAggregation(this.item);
 						},
 						function(err) {
-							return err.message.indexOf("cannot be forwarded to aggregation") > -1;
+							return err.message.indexOf("with 'forwardBinding' set to 'true'") > -1;
 						},
-						"Defining a single-to-multi forwarding should throw an error"
+						"Forwarding the binding with single-to-multi forwarding should throw an error"
 					);
+
+					this.item.destroy();
+					this.composite.destroy();
 				});
 
 				QUnit.test("Defining a multi-to-single forwarding", function(assert) {
