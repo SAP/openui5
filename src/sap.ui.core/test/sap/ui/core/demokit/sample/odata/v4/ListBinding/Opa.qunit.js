@@ -14,6 +14,7 @@ sap.ui.require([
 
 	//*****************************************************************************
 	opaTest("Start list binding app and check log", function (Given, When, Then) {
+		When.onAnyPage.applySupportAssistant();
 		Given.iStartMyUIComponent({
 			autoWait : true,
 			componentConfig : {
@@ -30,7 +31,9 @@ sap.ui.require([
 			+ "ProductPicture/Picture");
 		When.onTheMainPage.refreshEmployees();
 		Then.onTheMainPage.checkEmployeeNameInRow(0, "Walter\"s Win's");
+
 		Then.onAnyPage.checkLog();
+		Then.onAnyPage.analyzeSupportAssistant();
 		Then.iTeardownMyUIComponent();
 	});
 });

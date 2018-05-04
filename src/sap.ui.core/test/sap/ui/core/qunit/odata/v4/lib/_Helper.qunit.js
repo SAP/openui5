@@ -1082,122 +1082,113 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	[{
-		aAggregation : [{
-			grouped : false,
-			name : "BillToParty"
-		}],
+		oAggregation : {
+			group : {
+				BillToParty : {}
+			}
+		},
 		sApply : "groupby((BillToParty))"
 	}, {
-		aAggregation : [{
-			grouped : false,
-			name : "BillToParty"
-		}, {
-			grouped : false,
-			name : "TransactionCurrency"
-		}],
+		oAggregation : {
+			group : { // Note: intentionally not sorted
+				TransactionCurrency : {},
+				BillToParty : {}
+			}
+		},
 		sApply : "groupby((BillToParty,TransactionCurrency))"
 	}, {
-		aAggregation : [{
-			grouped : false,
-			name : "BillToParty"
-		}, {
-			as : "GrossAmountSum",
-			name : "GrossAmount",
-			total : false,
-			"with" : "sum"
-		}, {
-			as : "NetAmountAggregate",
-			name : "NetAmount",
-			total : false
-		}, {
-			// spec requires "as", but we don't care
-			name : "Amount",
-			total : false,
-			"with" : "average"
-		}],
-		sApply : "groupby((BillToParty),aggregate(GrossAmount with sum as GrossAmountSum"
-			+ ",NetAmount as NetAmountAggregate,Amount with average))"
+		oAggregation : {
+			// group is optional
+			groupLevels : ["TransactionCurrency"]
+		},
+		sApply : "groupby((TransactionCurrency))"
 	}, {
-		aAggregation : [{
-			name : "GrossAmountInTransactionCurrency",
-			total : false,
-			unit : "TransactionCurrency"
-		}, {
-			grouped : false,
-			name : "BillToParty"
-		}, {
-			grouped : false,
-			name : "TextProperty"
-		}, {
-			name : "NetAmountInTransactionCurrency",
-			total : false,
-			unit : "TransactionCurrency"
-		}],
+		oAggregation : {
+			aggregate : { // Note: intentionally not sorted
+				Amount : {
+					"with" : "average"
+				},
+				NetAmountAggregate : {
+					name : "NetAmount"
+				},
+				GrossAmountSum : {
+					name : "GrossAmount",
+					"with" : "sum"
+				}
+			},
+			group : {
+				BillToParty : {}
+			}
+		},
+		sApply : "groupby((BillToParty),aggregate(Amount with average as Amount"
+			+ ",GrossAmount with sum as GrossAmountSum,NetAmount as NetAmountAggregate))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				GrossAmountInTransactionCurrency : {},
+				NetAmountInTransactionCurrency : {}
+			},
+			group : {
+				BillToParty : {},
+				TextProperty : {},
+				TransactionCurrency : {}
+			}
+		},
 		sApply : "groupby((BillToParty,TextProperty,TransactionCurrency)"
 			+ ",aggregate(GrossAmountInTransactionCurrency,NetAmountInTransactionCurrency))"
 	}, {
-		aAggregation : [{
-			grouped : true, // some use case where unit appears as "standalone" dimension
-			name : "TransactionCurrency"
-		}, {
-			name : "GrossAmountInTransactionCurrency",
-			total : false,
-			unit : "TransactionCurrency"
-		}, {
-			grouped : false,
-			name : "BillToParty"
-		}],
+		oAggregation : {
+			aggregate : {
+				GrossAmountInTransactionCurrency : {subtotals : true}
+			},
+			group : {
+				BillToParty : {}
+				// TransactionCurrency : {} - optional
+			},
+			// some use case where unit appears as "standalone" dimension
+			groupLevels : ["TransactionCurrency"]
+		},
 		sApply : "groupby((TransactionCurrency,BillToParty)"
 			+ ",aggregate(GrossAmountInTransactionCurrency))"
 	}, {
-		aAggregation : [{
-			name : "GrossAmountInTransactionCurrency",
-			total : false,
-			unit : "TransactionCurrency"
-		}, {
-			grouped : true, // some use case where unit appears as "standalone" dimension
-			name : "TransactionCurrency"
-		}, {
-			grouped : false,
-			name : "BillToParty"
-		}],
-		sApply : "groupby((TransactionCurrency,BillToParty)"
-			+ ",aggregate(GrossAmountInTransactionCurrency))"
-	}, {
-		aAggregation : [{
-			max : true,
-			name : "Amount",
-			total : false
-		}, {
-			grouped : false,
-			name : "BillToParty"
-		}],
-		sApply : "groupby((BillToParty)"
-			+ ",aggregate(Amount))"
+		oAggregation : {
+			aggregate : {
+				Amount : {
+					max : true
+				}
+			},
+			group : {
+				BillToParty : {}
+			}
+		},
+		sApply : "groupby((BillToParty),aggregate(Amount))"
 			+ "/concat(aggregate(Amount with max as UI5max__Amount),identity)",
 		mExpectedAlias2MeasureAndMethod : {
 			"UI5max__Amount" : {measure : "Amount", method : "max"}
 		}
 	}, {
-		aAggregation : [{
-			min : true,
-			name : "Amount",
-			total : false
-		}, {
-			max : true,
-			min : true,
-			name : "Amount2",
-			total : false
-		}, {
-			grouped : false,
-			name : "BillToParty"
-		}],
+		oAggregation : {
+			aggregate : { // Note: intentionally not sorted
+				Amount2 : {
+					max : true,
+					min : true
+				},
+				Amount1Avg : {
+					min : true,
+					name : "Amount1",
+					"with" : "avg"
+				}
+			},
+			group : {
+				BillToParty : {}
+			}
+		},
 		sApply : "groupby((BillToParty)"
-			+ ",aggregate(Amount,Amount2))"
-			+ "/concat(aggregate(Amount with min as UI5min__Amount,"
+			+ ",aggregate(Amount1 with avg as Amount1Avg,Amount2))"
+			+ "/concat(aggregate(Amount1Avg with min as UI5min__Amount1Avg,"
 			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
 		mExpectedAlias2MeasureAndMethod : {
-			"UI5min__Amount" : {measure : "Amount", method : "min"},
+			"UI5min__Amount1Avg" : {measure : "Amount1Avg", method : "min"},
 			"UI5min__Amount2" : {measure : "Amount2", method : "min"},
 			"UI5max__Amount2" : {measure : "Amount2", method : "max"}
 		}
@@ -1205,7 +1196,7 @@ sap.ui.require([
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {};
 
-			assert.strictEqual(_Helper.buildApply(oFixture.aAggregation, mAlias2MeasureAndMethod),
+			assert.strictEqual(_Helper.buildApply(oFixture.oAggregation, mAlias2MeasureAndMethod),
 				oFixture.sApply);
 			if (oFixture.mExpectedAlias2MeasureAndMethod) {
 				assert.deepEqual(mAlias2MeasureAndMethod, oFixture.mExpectedAlias2MeasureAndMethod);
@@ -1216,36 +1207,71 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("buildApply: optional mAlias2MeasureAndMethod", function (assert) {
 		// mAlias2MeasureAndMethod is optional in _Helper.buildApply
-		assert.strictEqual(_Helper.buildApply([{
-				max : true,
-				name : "Amount",
-				total : false
-			}, {
-				grouped : false,
-				name : "BillToParty"
-			}]),
+		assert.strictEqual(_Helper.buildApply({
+				aggregate : {
+					Amount : {max : true}
+				},
+				group : {
+					BillToParty : {}
+				}
+			}),
 			"groupby((BillToParty),aggregate(Amount))/concat(aggregate(Amount with max as"
 				+ " UI5max__Amount),identity)");
 	});
 
 	//*********************************************************************************************
-	QUnit.test("buildApply: both dimension and measure", function (assert) {
-		assert.throws(function () {
-			_Helper.buildApply([{
-				grouped : false,
-				name : "BothDimensionAndMeasure",
-				total : false
-			}]);
-		}, new Error("Both dimension and measure: BothDimensionAndMeasure"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("buildApply: neither dimension nor measure", function (assert) {
-		assert.throws(function () {
-			_Helper.buildApply([{
-				name : "NeitherDimensionNorMeasure"
-			}]);
-		}, new Error("Neither dimension nor measure: NeitherDimensionNorMeasure"));
+	[{
+		oAggregation : {
+			aggregate : {},
+			group : {A : {}, B : {}},
+			groupLevels : ["A", "B"]
+		},
+		sError : "More than one group level: A,B"
+	}, {
+		oAggregation : {
+			aggregate : {},
+			group : {A : {foo : "bar"}}
+		},
+		sError : "Unsupported 'foo' at property: A"
+	}, {
+		oAggregation : {
+			aggregate : {A : {foo : "bar"}},
+			group : {}
+		},
+		sError : "Unsupported 'foo' at property: A"
+	}, {
+		oAggregation : {
+			aggregate : {A : {subtotals : "true"}},
+			group : {}
+		},
+		sError : "Not a boolean value for 'subtotals' at property: A"
+	}, {
+		oAggregation : {
+			aggregate : {},
+			foo : {},
+			group : {}
+		},
+		sError : "Unsupported 'foo'"
+	}, {
+		oAggregation : {
+			aggregate : {},
+			group : []
+		},
+		sError : "Not a object value for 'group'"
+	}, {
+		oAggregation : {
+			aggregate : {},
+			group : {},
+			groupLevels : {}
+		},
+		sError : "Not a array value for 'groupLevels'"
+	}].forEach(function (oFixture, i) {
+		QUnit.test("buildApply: " + oFixture.sError, function (assert) {
+			assert.throws(function () {
+				// code under test
+				_Helper.buildApply(oFixture.oAggregation);
+			}, new Error(oFixture.sError));
+		});
 	});
 
 	//*********************************************************************************************
@@ -1354,5 +1380,20 @@ sap.ui.require([
 				assert.notOk("@$ui5._" in vClone, "private namespace object deleted from clone");
 			}
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("hasMinOrMax", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.hasMinOrMax(), false);
+
+		// code under test
+		assert.strictEqual(_Helper.hasMinOrMax({}), false);
+
+		// code under test
+		assert.strictEqual(_Helper.hasMinOrMax({Measure : {min : true}}), true);
+
+		// code under test
+		assert.strictEqual(_Helper.hasMinOrMax({Measure : {max : true}}), true);
 	});
 });

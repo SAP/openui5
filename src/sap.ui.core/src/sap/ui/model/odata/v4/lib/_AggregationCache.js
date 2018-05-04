@@ -29,28 +29,27 @@ sap.ui.define([
 	 *   The requestor
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL
-	 * @param {object[]} aAggregation
-	 *   An array with objects holding the information needed for data aggregation; see also
-	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData Extension
-	 *   for Data Aggregation Version 4.0</a>
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for data aggregation; see also
+	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+	 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
+	 *   <code>aggregate</code>, <code>group</code>, <code>groupLevels</code>
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string
 	 * @param {boolean} [bSortExpandSelect=false]
 	 *   Whether the paths in $expand and $select shall be sorted in the cache's query string
 	 * @throws {Error}
 	 *   If the system query option "$filter" is used; if the system query option "$orderby" is
-	 *   used and minimum or maximum values for a measure are requested
+	 *   used together with minimum or maximum values; if the system query option "$count" is used
+	 *   together with group levels
 	 *
 	 * @private
 	 */
-	function _AggregationCache(oRequestor, sResourcePath, aAggregation, mQueryOptions,
+	function _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
 			bSortExpandSelect) {
 		var mAlias2MeasureAndMethod = {},
 			sApply,
-			aFirstLevelAggregation,
-			bHasMinMax = aAggregation.some(function (oAggregation) {
-				return oAggregation.min || oAggregation.max;
-			}),
+			oFirstLevelAggregation,
 			fnMeasureRangeResolve;
 
 		_Cache.call(this, oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect);
@@ -59,32 +58,38 @@ sap.ui.define([
 			throw new Error("Unsupported system query option: $filter");
 		}
 
-		if (bHasMinMax) {
+		if (_Helper.hasMinOrMax(oAggregation.aggregate)) {
 			if (mQueryOptions.$orderby) {
-				throw new Error("Cannot use $orderby together with min or max on measures");
+				throw new Error("Unsupported system query option: $orderby");
+			}
+			if (oAggregation.groupLevels.length) {
+				throw new Error("Unsupported group levels together with min/max");
 			}
 			this.oMeasureRangePromise = new Promise(function (resolve, reject) {
 				fnMeasureRangeResolve = resolve;
 			});
-			sApply = _Helper.buildApply(aAggregation, mAlias2MeasureAndMethod);
+			sApply = _Helper.buildApply(oAggregation, mAlias2MeasureAndMethod);
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
 				jQuery.extend({}, mQueryOptions, {$apply : sApply}), bSortExpandSelect);
 			this.oFirstLevel.getResourcePath = _AggregationCache.getResourcePath
-				.bind(this.oFirstLevel, aAggregation, this.oFirstLevel.getResourcePath);
+				.bind(this.oFirstLevel, oAggregation, this.oFirstLevel.getResourcePath);
 			this.oFirstLevel.handleResponse = _AggregationCache.handleResponse
 				.bind(this.oFirstLevel, mAlias2MeasureAndMethod, fnMeasureRangeResolve,
 					this.oFirstLevel.handleResponse);
 		} else {
-			aFirstLevelAggregation = _AggregationCache.filterAggregationForFirstLevel(aAggregation);
+			if (mQueryOptions.$count) {
+				throw new Error("Unsupported system query option: $count");
+			}
+			oFirstLevelAggregation = _AggregationCache.filterAggregationForFirstLevel(oAggregation);
 			this.oFirstLevel = _Cache.create(oRequestor, sResourcePath,
 				jQuery.extend({}, mQueryOptions, {
-					$apply : _Helper.buildApply(aFirstLevelAggregation),
+					$apply : _Helper.buildApply(oFirstLevelAggregation),
 					$count : true,
 					$orderby : _AggregationCache.filterOrderby(mQueryOptions.$orderby,
-						aFirstLevelAggregation)
+						oFirstLevelAggregation)
 				}), bSortExpandSelect);
 			this.oFirstLevel.calculateKeyPredicates = _AggregationCache.calculateKeyPredicate
-				.bind(null, aFirstLevelAggregation, this.oFirstLevel.sMetaPath,
+				.bind(null, oFirstLevelAggregation, this.oFirstLevel.sMetaPath,
 					this.oFirstLevel.aElements.$byPredicate);
 		}
 	}
@@ -108,27 +113,32 @@ sap.ui.define([
 	 *   <code>onChange</code> is called with the new value if the property at that path is modified
 	 *   via {@link #update} later.
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise to be resolved with the requested data.
-	 *
-	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
-	 *   arrives.
+	 *   A promise to be resolved with the requested data. The promise is rejected if the cache is
+	 *   inactive (see {@link #setActive}) when the response arrives. Fails to drill-down into
+	 *   "$count" because it does not reflect the leaf count.
 	 *
 	 * @public
 	 * @see sap.ui.model.odata.v4.lib._CollectionCache#fetchValue
 	 */
 	_AggregationCache.prototype.fetchValue = function (sGroupId, sPath, fnDataRequested,
 			oListener) {
+		if (!this.oMeasureRangePromise && sPath === "$count") {
+			jQuery.sap.log.error("Failed to drill-down into $count, invalid segment: $count",
+				this.oFirstLevel.toString(), "sap.ui.model.odata.v4.lib._Cache");
+			return SyncPromise.resolve();
+		}
 		return this.oFirstLevel.fetchValue(sGroupId, sPath, fnDataRequested, oListener);
 	};
 
 	/**
-	 * Gets the Promise which resolves with a map of minimum and maximum values.
+	 * Gets the <code>Promise</code> which resolves with a map of minimum and maximum values.
 	 *
-	 * @returns {Promise} oMeasureRangePromise
-	 *   A Promise which resolves with a map of minimum and maximum values for requested measures
-	 *   or undefined if no minimum or maximum is requested. The key of the map is the measure
-	 *   property name and the value is an object with a <code>min</code> and/or <code>max</code>
-	 *   property containing the corresponding minimum and maximum values.
+	 * @returns {Promise}
+	 *   A <code>Promise</code> which resolves with a map of minimum and maximum values for
+	 *   requested measures, or <code>undefined</code> if no minimum or maximum is requested. The
+	 *   key of the map is the measure property name and the value is an object with a
+	 *   <code>min</code> or <code>max</code> property containing the corresponding minimum or
+	 *   maximum value.
 	 *
 	 * @public
 	 */
@@ -161,7 +171,6 @@ sap.ui.define([
 	 *   <code>$count</code> may be <code>undefined</code>, but not <code>Infinity</code>). If an
 	 *   HTTP request fails, the error from the _Requestor is returned and the requested range is
 	 *   reset to <code>undefined</code>.
-	 *
 	 *   The promise is rejected if the cache is inactive (see {@link #setActive}) when the response
 	 *   arrives.
 	 * @throws {Error} If given index or length is less than 0
@@ -195,12 +204,12 @@ sap.ui.define([
 
 	/**
 	 * Calculates the virtual key predicate for the given group node on level 1, based on the first
-	 * dimension's value.
+	 * group level's value.
 	 *
-	 * @param {object[]} aAggregation
-	 *   An array with objects holding the information needed for data aggregation; see also
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>; the grouped dimensions must come first
+	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>groupLevels</code>
 	 * @param {string} sMetaPath The meta path of the collection in mTypeForMetaPath
 	 * @param {object} mByPredicate A map of group nodes by key predicates, used to detect
 	 *   collisions
@@ -212,12 +221,12 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_AggregationCache.calculateKeyPredicate = function (aAggregation, sMetaPath, mByPredicate,
+	_AggregationCache.calculateKeyPredicate = function (oAggregation, sMetaPath, mByPredicate,
 			oGroupNode, mTypeForMetaPath) {
-		var sFirstLevelDimension = aAggregation[0].name,
-			sLiteral = _Helper.formatLiteral(oGroupNode[sFirstLevelDimension],
-				mTypeForMetaPath[sMetaPath][sFirstLevelDimension].$Type),
-			sPredicate = "(" + encodeURIComponent(sFirstLevelDimension) + "="
+		var sFirstGroupLevel = oAggregation.groupLevels[0],
+			sLiteral = _Helper.formatLiteral(oGroupNode[sFirstGroupLevel],
+				mTypeForMetaPath[sMetaPath][sFirstGroupLevel].$Type),
+			sPredicate = "(" + encodeURIComponent(sFirstGroupLevel) + "="
 				+ encodeURIComponent(sLiteral) + ")";
 
 		/*
@@ -245,10 +254,11 @@ sap.ui.define([
 	 * @param {string} sResourcePath
 	 *   A resource path relative to the service URL; it must not contain a query string<br>
 	 *   Example: Products
-	 * @param {object[]} aAggregation
-	 *   An array with objects holding the information needed for data aggregation; see also
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>
+	 *   Extension for Data Aggregation Version 4.0</a>; must be a clone that contains
+	 *   <code>aggregate</code>
 	 * @param {object} mQueryOptions
 	 *   A map of key-value pairs representing the query string, the value in this pair has to
 	 *   be a string or an array of strings; if it is an array, the resulting query string
@@ -263,60 +273,79 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_AggregationCache.create = function (oRequestor, sResourcePath, aAggregation, mQueryOptions,
+	_AggregationCache.create = function (oRequestor, sResourcePath, oAggregation, mQueryOptions,
 			bSortExpandSelect) {
-		return new _AggregationCache(oRequestor, sResourcePath, aAggregation, mQueryOptions,
+		return new _AggregationCache(oRequestor, sResourcePath, oAggregation, mQueryOptions,
 			bSortExpandSelect);
 	};
 
 	/**
 	 * Returns the aggregation information for the first level.
 	 *
-	 * @param {object[]} aAggregation
-	 *   An array with objects holding the information needed for data aggregation; see also
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>
+	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>,
+	 *   <code>group</code>, <code>groupLevels</code>
 	 * @returns {object[]}
 	 *   The aggregation information for the first level
 	 *
 	 * @private
 	 */
-	_AggregationCache.filterAggregationForFirstLevel = function (aAggregation) {
-		return aAggregation.filter(function (oAggregation) {
-			return oAggregation.grouped === true || oAggregation.total === true;
-		});
+	_AggregationCache.filterAggregationForFirstLevel = function (oAggregation) {
+		// copies the value with the given key from this map to the given target map
+		function copyTo(mTarget, sKey) {
+			mTarget[sKey] = this[sKey];
+			return mTarget;
+		}
+
+		// filters the given map according to the given filter function for keys
+		function filter(mMap, fnFilter) {
+			return Object.keys(mMap).filter(fnFilter).reduce(copyTo.bind(mMap), {});
+		}
+
+		// tells whether the given aggregatable property has subtotals
+		function hasSubtotals(sAlias) {
+			return oAggregation.aggregate[sAlias].subtotals;
+		}
+
+		// tells whether the given groupable property is a group level
+		function isGroupLevel(sGroupable) {
+			return oAggregation.groupLevels.indexOf(sGroupable) >= 0;
+		}
+
+		return {
+			aggregate : filter(oAggregation.aggregate, hasSubtotals),
+			group : filter(oAggregation.group, isGroupLevel),
+			groupLevels : oAggregation.groupLevels
+		};
 	};
 
 	/**
-	 * Returns the "$orderby" system query option filtered in such a way that only dimensions
-	 * contained in the given aggregation information are used.
+	 * Returns the "$orderby" system query option filtered in such a way that only aggregatable or
+	 * groupable properties contained in the given aggregation information are used.
 	 *
 	 * @param {string} [sOrderby]
 	 *   The original "$orderby" system query option
-	 * @param {object[]} aAggregation
-	 *   An array with objects holding the information needed for data aggregation; see also
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for data aggregation; see also
 	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-	 *   Extension for Data Aggregation Version 4.0</a>
+	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>,
+	 *   <code>group</code>, <code>groupLevels</code>
 	 * @returns {string}
 	 *   The filtered "$orderby" system query option
 	 *
 	 * @private
 	 */
-	_AggregationCache.filterOrderby = function (sOrderby, aAggregation) {
-		var mNames; // hash set of all dimension/measure names
-
+	_AggregationCache.filterOrderby = function (sOrderby, oAggregation) {
 		if (sOrderby) {
-			mNames = {};
-			aAggregation.forEach(function (oAggregation) {
-				mNames[oAggregation.name] = true;
-			});
-
 			return sOrderby.split(rComma).filter(function (sOrderbyItem) {
 				var sName;
 
 				if (rODataIdentifier.test(sOrderbyItem)) {
 					sName = sOrderbyItem.split(rRws)[0]; // drop optional asc/desc
-					return mNames[sName];
+					return sName in oAggregation.aggregate || sName in oAggregation.group
+						|| oAggregation.groupLevels.indexOf(sName) >= 0;
 				}
 				return true;
 			}).join(",");
@@ -324,18 +353,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the resource path including the query string with "$skip" and "$top" if needed and
-	 * "$apply" including the aggregation functions for minimum and maximum values of measures.
-	 * The "$top" is increased by one, to compensate for the additional data set for min and max
-	 * properties. This function is used to replace the #getResourcePath from the first level cache.
-	 * Rebuilds the query string so that the next request does not contain the aggregation function
-	 * for the minimum and the maximum values. The original function given in fnGetResourcePath is
-	 * restored when calling this function. This function needs to be called on the first level
-	 * cache.
+	 * Returns the resource path including the query string with "$skip" and "$top", as needed, and
+	 * "$apply" including the aggregation functions for minimum and maximum values. "$top" is
+	 * increased by one to compensate for the additional data row with minimum and maximum values.
 	 *
-	 * @param {object[]} aAggregation
-	 *   An array with objects holding the information needed for data aggregation; see
-	 *   {@link sap.ui.model.odata.v4.lib._Helper#buildApply}
+	 * This function is used to replace <code>getResourcePath</code> of the first level cache and
+	 * needs to be called on the first level cache.
+	 *
+	 * The original function given in <code>fnGetResourcePath</code> is restored when calling this
+	 * function. The query string is rebuilt so that future requests do not aggregate minimum or
+	 * maximum values again.
+	 *
+	 * @param {object} oAggregation
+	 *   An object holding the information needed for data aggregation; see also
+	 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
+	 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>
 	 * @param {function} fnGetResourcePath
 	 *   The original <code>getResourcePath</code> of the first level cache
 	 * @param {number} iStart
@@ -347,8 +379,8 @@ sap.ui.define([
 	 *
 	 * @protected
 	 */
-	_AggregationCache.getResourcePath = function (aAggregation, fnGetResourcePath, iStart, iEnd) {
-		var aAggregationNoMinMax, sResourcePath;
+	_AggregationCache.getResourcePath = function (oAggregation, fnGetResourcePath, iStart, iEnd) {
+		var oAggregationNoMinMax, sResourcePath;
 
 		if (iStart !== 0) {
 			throw new Error("First request needs to start at index 0");
@@ -356,12 +388,14 @@ sap.ui.define([
 
 		sResourcePath = fnGetResourcePath.call(this, iStart, iEnd + 1);
 		// remove min/max from $apply
-		aAggregationNoMinMax = _Helper.clone(aAggregation);
-		aAggregationNoMinMax.forEach(function (oAggregation) {
-			delete oAggregation.min;
-			delete oAggregation.max;
+		oAggregationNoMinMax = _Helper.clone(oAggregation);
+		Object.keys(oAggregationNoMinMax.aggregate).forEach(function (sAlias) {
+			var oDetails = oAggregationNoMinMax.aggregate[sAlias];
+
+			delete oDetails.min;
+			delete oDetails.max;
 		});
-		this.mQueryOptions.$apply = _Helper.buildApply(aAggregationNoMinMax);
+		this.mQueryOptions.$apply = _Helper.buildApply(oAggregationNoMinMax);
 		this.sQueryString = this.oRequestor.buildQueryString(this.sMetaPath,
 			this.mQueryOptions, false, this.bSortExpandSelect);
 

@@ -10,6 +10,10 @@ sap.ui.define([
 		createRelative : function (Given, When, Then, sUIComponent) {
 			var bRealOData = TestUtils.isRealOData();
 
+			// we check supportAssistantIssues only within this test journey because it is the most
+			// deepest one regarding reached UI elements
+			When.onAnyPage.applySupportAssistant();
+
 			Given.iStartMyUIComponent({
 				componentConfig : {
 					name : sUIComponent || "sap.ui.core.sample.odata.v4.SalesOrders"
@@ -147,6 +151,7 @@ sap.ui.define([
 				message : "Failed to update path /SalesOrderList/-1/Note"
 				//TODO: enable checkLog to deal with RegExp
 			}] : undefined);
+			Then.onAnyPage.analyzeSupportAssistant();
 			Then.iTeardownMyUIComponent();
 		}
 	};

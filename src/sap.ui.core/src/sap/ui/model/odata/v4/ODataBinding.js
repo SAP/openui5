@@ -59,6 +59,7 @@ sap.ui.define([
 			}
 		}
 		aPromises = [this.fetchQueryOptionsForOwnCache(oContext), this.oModel.oRequestor.ready()];
+		this.mCacheQueryOptions = undefined;
 		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var vCanonicalPath,
 				mQueryOptions = aResult[0];
@@ -69,13 +70,12 @@ sap.ui.define([
 					? oContext.fetchCanonicalPath() : oContext.getPath()));
 				return vCanonicalPath.then(function (sCanonicalPath) {
 					var oCache,
-						mCacheQueryOptions,
 						oError;
 
 					// create cache only for the latest call to fetchCache
 					if (!oCachePromise || that.oFetchCacheCallToken === oCallToken) {
-						mCacheQueryOptions = jQuery.extend(true, {}, that.oModel.mUriParameters,
-							mQueryOptions);
+						that.mCacheQueryOptions = jQuery.extend(true, {},
+							that.oModel.mUriParameters, mQueryOptions);
 						if (sCanonicalPath) { // quasi-absolute or relative binding
 							// mCacheByContext has to be reset if parameters are changing
 							that.mCacheByContext = that.mCacheByContext || {};
@@ -85,13 +85,13 @@ sap.ui.define([
 							} else {
 								oCache = that.doCreateCache(
 									_Helper.buildPath(sCanonicalPath, that.sPath).slice(1),
-									mCacheQueryOptions, oContext);
+										that.mCacheQueryOptions, oContext);
 								that.mCacheByContext[sCanonicalPath] = oCache;
 								oCache.$canonicalPath = sCanonicalPath;
 							}
 						} else { // absolute binding
-							oCache = that.doCreateCache(that.sPath.slice(1), mCacheQueryOptions,
-								oContext);
+							oCache = that.doCreateCache(that.sPath.slice(1),
+								that.mCacheQueryOptions, oContext);
 						}
 						return oCache;
 					} else {
@@ -210,7 +210,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the relative path for a given absolute path by stripping off the binding's resolved
-	 * path. Returns relative paths unchanged.
+	 * path or the path of the binding's return value context. Returns relative paths unchanged.
 	 * Note that the resulting path may start with a key predicate.
 	 *
 	 * Example: (The binding's resolved path is "/foo/bar"):
@@ -228,23 +228,27 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.getRelativePath = function (sPath) {
-		var sResolvedPath;
+		var sPathPrefix,
+			sResolvedPath;
 
 		if (sPath[0] === "/") {
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
-
 			if (sPath.indexOf(sResolvedPath) === 0) {
-				sPath = sPath.slice(sResolvedPath.length);
-
-				if (sPath[0] === "/") {
-					sPath = sPath.slice(1);
-				}
+				sPathPrefix = sResolvedPath;
+			} else if (this.oReturnValueContext
+					&& sPath.indexOf(this.oReturnValueContext.getPath()) === 0) {
+				sPathPrefix = this.oReturnValueContext.getPath();
 			} else {
 				// A mismatch can only happen when a list binding's context has been parked and is
 				// destroyed later. Such a context does no longer have a subpath of the binding's
 				// path. The only caller in this case is ODataPropertyBinding#deregisterChange
 				// which can safely be ignored.
-				sPath = undefined;
+				return undefined;
+			}
+			sPath = sPath.slice(sPathPrefix.length);
+
+			if (sPath[0] === "/") {
+				sPath = sPath.slice(1);
 			}
 		}
 		return sPath;

@@ -106,7 +106,8 @@ sap.ui.require([
 		{i : null, o : null},
 		{i : "foo", t : "any", o : "foo"},
 		{i : "2014-11-27", t : "string", o : "Nov 27, 2014"},
-		{i : "2014-11-34", t : "string", o : "2014-11-34"}
+		{i : "2014-11-34", t : "string", o : "2014-11-34"},
+		{i : new Date(Date.UTC(2014, 10, 27)), t : "string", o : "Nov 27, 2014"}
 	].forEach(function (oFixture) {
 		QUnit.test("format value", function (assert) {
 			var oType = new DateType();

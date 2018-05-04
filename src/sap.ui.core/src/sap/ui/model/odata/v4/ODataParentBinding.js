@@ -224,6 +224,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates a group lock and keeps it in this.oRefreshGroupLock.
+	 * ODataListBinding#getContexts or ODataContextBinding#fetchValue are expected to use and remove
+	 * it. To ensure that the queue does not remain locked forever the lock is unlocked and taken
+	 * out again if it still resides there on the next rendering.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID
+	 * @param {boolean} [bLocked]
+	 *   Whether the group lock is locked
+	 * @private
+	 */
+	ODataParentBinding.prototype.createRefreshGroupLock = function (sGroupId, bLocked) {
+		var that = this;
+
+		if (!this.oRefreshGroupLock) {
+			this.oRefreshGroupLock = this.oModel.lockGroup(sGroupId, bLocked);
+			if (bLocked) {
+				sap.ui.getCore().addPrerenderingTask(function () {
+					if (that.oRefreshGroupLock) { // The lock is still unused
+						that.oRefreshGroupLock.unlock(true);
+						that.oRefreshGroupLock = undefined;
+					}
+				});
+			}
+		}
+	};
+
+	/**
 	 * Creates the query options for a child binding with the meta path given by its base
 	 * meta path and relative meta path. Adds the key properties to $select of all expanded
 	 * navigation properties. Requires that meta data for the meta path is already loaded so that

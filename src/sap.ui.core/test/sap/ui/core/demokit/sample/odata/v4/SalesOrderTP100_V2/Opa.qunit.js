@@ -32,6 +32,7 @@ sap.ui.require([
 			});
 		}
 
+		When.onAnyPage.applySupportAssistant();
 		Given.iStartMyUIComponent({
 			autoWait : true,
 			componentConfig : {
@@ -44,6 +45,7 @@ sap.ui.require([
 		When.onTheMainPage.pressMoreButton(/SalesOrderItems-trigger/);
 
 		Then.onAnyPage.checkLog(aExpectedLogs);
+		Then.onAnyPage.analyzeSupportAssistant();
 		Then.iTeardownMyUIComponent();
 	});
 });
