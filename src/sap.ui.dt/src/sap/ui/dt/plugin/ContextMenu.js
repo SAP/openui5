@@ -340,13 +340,9 @@ sap.ui.define([
 			if (oOverlay && oOverlay.isSelectable()) {
 
 				if (this.isMenuOpeningLocked() && !this._bTouched) {
-					this.resetFocus();
-					sap.ui.getCore().byId(oEvent.currentTarget.id).setSelected(false);
 					this.unlockMenuOpening();
-					this._onHover(oEvent);
 					this._bTouched = false;
 					this.oContextMenuControl.close();
-					return;
 				}
 
 				this._startOpeningWithDelay(oEvent);

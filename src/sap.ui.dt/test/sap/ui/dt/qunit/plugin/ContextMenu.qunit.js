@@ -499,12 +499,14 @@ sap.ui.require([
 
 		QUnit.test("Testing onClick function unlocking opening of the ContextMenu", function (assert) {
 			this.clock = sinon.useFakeTimers();
+			var oUnlockMenuOpeningSpy = oSandbox.spy(this.oContextMenuPlugin, "unlockMenuOpening");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			this.oContextMenuPlugin.lockMenuOpening();
 			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
-			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should not be opened");
+			assert.ok(!oContextMenuControl.bOpen, "then ContextMenu should not be opened");
+			assert.equal(oUnlockMenuOpeningSpy.callCount, 1, "then 'unlockMenuOpening' should be called once");
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
-			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should not be open");
+			assert.ok(oContextMenuControl.bOpen, "then after opening delay ContextMenu should be open");
 			oContextMenuControl = null;
 			this.clock.restore();
 		});
