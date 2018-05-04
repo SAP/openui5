@@ -13,10 +13,6 @@
 				actions:[
 					new sap.uxap.ObjectPageHeaderActionButton({
 						icon:'sap-icon://refresh'
-					}),
-					new sap.uxap.ObjectPageHeaderActionButton({
-						icon:'sap-icon://sys-help',
-						tooltip:'Show help'
 					})
 				]
 			}),
@@ -67,12 +63,45 @@
 		oApp.attachAfterNavigate(function(oEvent) {
 			assert.ok(oPage1._bStickyAnchorBar === false, "page is still expanded");
 			if (oApp.getCurrentPage().getId() === "page1") {
+				oApp.destroy(); // cleanup
 				done();
 			}
 		});
 
 		oApp.to(oPage2); //hide page1
 		oApp.to(oPage1); //back page1
+	});
+
+	QUnit.test("Show/Hide Page preserves header actions state", function (assert) {
+
+		var oPage1 = createPage("page1"),
+			oPage2 = createPage("page2"),
+			oApp = new sap.m.App({pages: [oPage1, oPage2],
+				initialPage: oPage1}),
+			done = assert.async();
+
+		oApp.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		oPage1.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			assert.equal(oPage1.getHeaderTitle()._oOverflowButton.$().is(":visible"), false, "overflow is hidden");
+			assert.equal(oPage1.getHeaderTitle().getActions()[0].$().is(":visible"), true, "action is visible");
+
+			oApp.attachEventOnce("afterNavigate", function() {
+				//assert setup
+				oApp.back();
+
+				oApp.attachEventOnce("afterNavigate", function() {
+					assert.equal(oPage1.getHeaderTitle()._oOverflowButton.$().is(":visible"), false, "overflow is still hidden");
+					assert.equal(oPage1.getHeaderTitle().getActions()[0].$().is(":visible"), true, "action is still visible");
+					done();
+				});
+			});
+
+			oApp.to(oPage2); //hide page1
+		});
+
 	});
 
 	QUnit.test("CSS white-space rule reset. BCP: 1780382804", function (assert) {
