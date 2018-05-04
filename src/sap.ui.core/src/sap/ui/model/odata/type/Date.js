@@ -90,6 +90,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 * In {@link sap.ui.model.odata.v4.ODataModel} this type is represented as a
 	 * <code>string</code> in the format "yyyy-mm-dd".
 	 *
+	 * <b>Note: For an OData V2 service use {@link sap.ui.model.odata.type.DateTime} with the
+	 * constraint <code>displayFormat: "Date"</code> to display only a date.</b>
+	 *
 	 * @extends sap.ui.model.odata.type.ODataType
 	 *
 	 * @author SAP SE
@@ -129,7 +132,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	/**
 	 * Formats the given value to the given target type.
 	 *
-	 * @param {string} sValue
+	 * @param {string|Date} vValue
 	 *   the value to be formatted
 	 * @param {string} sTargetType
 	 *   the target type; may be "any", "string", or a type with one of these types as its
@@ -142,18 +145,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/format/DateFormat',
 	 *   if <code>sTargetType</code> is unsupported
 	 * @public
 	 */
-	EdmDate.prototype.formatValue = function(sValue, sTargetType) {
+	EdmDate.prototype.formatValue = function(vValue, sTargetType) {
 		var oDate;
 
-		if (sValue === undefined || sValue === null) {
+		if (vValue === undefined || vValue === null) {
 			return null;
 		}
 		switch (this.getPrimitiveType(sTargetType)) {
 		case "any":
-			return sValue;
+			return vValue;
 		case "string":
-			oDate = getModelFormatter().parse(sValue);
-			return oDate ? getFormatter(this).format(oDate) : sValue;
+			oDate = vValue instanceof Date ? vValue : getModelFormatter().parse(vValue);
+			return oDate ? getFormatter(this).format(oDate) : vValue;
 		default:
 			throw new FormatException("Don't know how to format " + this.getName() + " to "
 				+ sTargetType);

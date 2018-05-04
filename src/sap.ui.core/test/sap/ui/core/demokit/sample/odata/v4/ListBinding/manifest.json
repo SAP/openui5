@@ -52,6 +52,7 @@
 		"models" : {
 			"" : {
 				"dataSource" : "default",
+				"preload" : true,
 				"settings" : {
 					"operationMode" : "Server",
 					"synchronizationMode" : "None",

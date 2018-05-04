@@ -68,6 +68,8 @@
 			<Label text="DateTime, displayFormat: &quot;Date&quot;, nullable: false" visible="{ui>/v2}"/>
 			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}" visible="{ui>/v2}"/>
 			<DatePicker value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.DateTime', constraints: {displayFormat: 'Date', nullable: false}}" visible="{ui>/v2}"/>
+			<Label text="DateTime, style: &quot;short&quot;, wrong type: sap.ui.model.odata.type.Date" visible="{ui>/v2}"/>
+			<Input value="{path: 'v2>Date', type: 'sap.ui.model.odata.type.Date', formatOptions: {style: 'short'}}" visible="{ui>/v2}"/>
 
 			<Label text="DateTimeOffset"/>
 			<Input value="{path: 'DateTimeOffset', type: 'sap.ui.model.odata.type.DateTimeOffset'}"/>

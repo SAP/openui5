@@ -8,27 +8,23 @@
 	<!-- TODO: enable sorting in table -->
 	<!-- TODO: enhance auto type detection for @$ui5.node.*? -->
 	<Table id="table"
-		rows="{path : '/ZGK_C_SalesOrderItem_RD_V4(P_DateFunction=\'PREVIOUSYEAR\')/Set',
+		rows="{path : '/BusinessPartners',
 			parameters : {
-				$$aggregation : [{
-					grouped : true,
-					name : 'ProductCategory'
-				}, {
-					grouped : false,
-					name : 'TransactionCurrency'
-				}, {
-					name : 'NetAmountInDisplayCurrency',
-					total : true,
-					unit : 'DisplayCurrency'
-				}, {
-					name : 'NetAmountInTransactionCurrency',
-					total : false,
-					unit : 'TransactionCurrency'
-				}],
-				$count : true,
-				$orderby : 'ProductCategory desc,TransactionCurrency'
+				$$aggregation : {
+					aggregate : {
+						SalesAmount : {subtotals : true},
+						SalesNumber : {}
+					},
+					group : {
+						Region : {},
+						Currency : {}
+					},
+					groupLevels : ['Region']
+				},
+				$count : false,
+				$orderby : 'Region desc,Currency'
 			}}" selectionMode="None"
-			title="Net Sales Volume by Product Category ({headerContext>$count})">
+			title="Sales Amount by Region ({headerContext>$count})">
 		<Column hAlign="End" width="5em">
 			<m:Label text="Level"/>
 			<template>
@@ -46,22 +42,24 @@
 					/>
 			</template>
 		</Column>
-		<Column template="ProductCategory">
-			<m:Label text="Product Category"/>
+		<Column template="Region">
+			<m:Label text="Region"/>
 		</Column>
-		<Column hAlign="End" template="NetAmountInDisplayCurrency">
-			<m:Label text="Net Amount"/>
+		<Column hAlign="End" template="SalesAmount">
+			<m:Label text="Sales Amount"/>
 		</Column>
-		<Column template="DisplayCurrency">
-			<m:Label text="Display Currency"/>
+<!-- TODO
+		<Column template="Currency">
+			<m:Label text="Currency"/>
 		</Column>
+-->
 <!-- TODO how can we influence the cell content PER ROW?
 		<Column hAlign="End"
-			template="{= %{@$ui5.node.isTotal} ? undefined : 'NetAmountInTransactionCurrency'}">
-			<m:Label text="Net Amount"/>
+			template="{= %{@$ui5.node.isTotal} ? undefined : 'SalesNumber'}">
+			<m:Label text="Sales Number"/>
 		</Column>
-		<Column template="{= %{@$ui5.node.isTotal} ? undefined : 'TransactionCurrency'}">
-			<m:Label text="Transaction Currency"/>
+		<Column template="{= %{@$ui5.node.isTotal} ? undefined : 'Currency'}">
+			<m:Label text="Currency"/>
 		</Column>
 -->
 		<Column hAlign="Center" width="5em">

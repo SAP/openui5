@@ -218,10 +218,12 @@ sap.ui.define([
 	 * @param {*} vRootInstance A single top-level instance (or even a simple value)
 	 * @param {object} mTypeForMetaPath A map from meta path to the entity type (as delivered by
 	 *   {@link #fetchTypes})
+	 * @param {string} [sRootMetaPath=this.sMetaPath] The meta path for the cache root entity
 	 *
 	 * @private
 	 */
-	Cache.prototype.calculateKeyPredicates = function (vRootInstance, mTypeForMetaPath) {
+	Cache.prototype.calculateKeyPredicates = function (vRootInstance, mTypeForMetaPath,
+			sRootMetaPath) {
 
 		/*
 		 * Adds predicates to all entities in the given collection and creates the map $byPredicate
@@ -274,7 +276,7 @@ sap.ui.define([
 			});
 		}
 
-		visitInstance(vRootInstance, this.sMetaPath);
+		visitInstance(vRootInstance, sRootMetaPath || this.sMetaPath);
 	};
 
 	/**
@@ -552,6 +554,9 @@ sap.ui.define([
 			aPromises = [];
 			mTypeForMetaPath = {};
 			fetchType(this.sMetaPath);
+			if (this.bFetchOperationReturnType) {
+				fetchType(this.sMetaPath + "/$Type");
+			}
 			fetchExpandedTypes(this.sMetaPath, this.mQueryOptions);
 			this.oTypePromise = SyncPromise.all(aPromises).then(function () {
 				return mTypeForMetaPath;
@@ -866,7 +871,7 @@ sap.ui.define([
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the request with; unused in CollectionCache since no
 	 *   request will be created
 	 * @param {string} [sPath]
@@ -891,6 +896,7 @@ sap.ui.define([
 		var aElements,
 			that = this;
 
+		oGroupLock.unlock();
 		if (!this.oSyncPromiseAll) {
 			// wait for all reads to be finished, this is essential for $count and for finding the
 			// index of a key predicate
@@ -1035,7 +1041,6 @@ sap.ui.define([
 			sPredicate,
 			iResultLength = oResult.value.length;
 
-		Cache.computeCount(oResult);
 		this.sContext = oResult["@odata.context"];
 		sCount = oResult["@odata.count"];
 		if (sCount) {
@@ -1045,6 +1050,7 @@ sap.ui.define([
 		for (i = 0; i < iResultLength; i++) {
 			oElement = oResult.value[i];
 			this.aElements[iStart + i] = oElement;
+			Cache.computeCount(oElement);
 			this.calculateKeyPredicates(oElement, mTypeForMetaPath);
 			sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 			if (sPredicate) {
@@ -1078,7 +1084,7 @@ sap.ui.define([
 	 *   is available left and right of the requested range without a further request. If data is
 	 *   missing on one side, the full prefetch length is added at this side.
 	 *   <code>Infinity</code> is supported
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group to associate the requests with
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before a back-end request is sent.
@@ -1379,7 +1385,7 @@ sap.ui.define([
 	/**
 	 * Returns a promise to be resolved with an OData object for the requested data.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
@@ -1407,6 +1413,8 @@ sap.ui.define([
 				this.sResourcePath + this.sQueryString, oGroupLock, undefined, undefined,
 				fnDataRequested, undefined, this.sMetaPath));
 			this.bSentReadRequest = true;
+		} else {
+			oGroupLock.unlock();
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1447,13 +1455,17 @@ sap.ui.define([
 	 *   error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
+	 * @param {boolean} [bFetchOperationReturnType]
+	 *   Whether the entity type of the operation return value must be fetched in
+	 *   {@link #fetchTypes}
 	 *
 	 * @private
 	 */
 	function SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
-			sMetaPath) {
+			sMetaPath, bFetchOperationReturnType) {
 		Cache.apply(this, arguments);
 
+		this.bFetchOperationReturnType = bFetchOperationReturnType;
 		this.sMetaPath = sMetaPath || this.sMetaPath; // overrides Cache c'tor
 		this.bPost = bPost;
 		this.bPosting = false;
@@ -1467,7 +1479,7 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for the requested data. Calculates
 	 * the key predicates for all entities in the result before the promise is resolved.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
@@ -1503,11 +1515,14 @@ sap.ui.define([
 					fnDataRequested, undefined, this.sMetaPath),
 				this.fetchTypes()
 			]).then(function (aResult) {
-				that.calculateKeyPredicates(aResult[0], aResult[1]);
+				that.calculateKeyPredicates(aResult[0], aResult[1],
+					that.bFetchOperationReturnType ? that.sMetaPath + "/$Type" : undefined);
 				Cache.computeCount(aResult[0]);
 				return aResult[0];
 			});
 			this.bSentReadRequest = true;
+		} else {
+			oGroupLock.unlock();
 		}
 		return this.oPromise.then(function (oResult) {
 			that.checkActive();
@@ -1522,7 +1537,7 @@ sap.ui.define([
 	 * Returns a promise to be resolved with an OData object for a POST request with the given data.
 	 * Calculates the key predicates for all entities in the result before the promise is resolved.
 	 *
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group to associate the request with;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {object} [oData]
@@ -1539,6 +1554,7 @@ sap.ui.define([
 	 */
 	SingleCache.prototype.post = function (oGroupLock, oData, sETag) {
 		var sHttpMethod = "POST",
+			aPromises,
 			that = this;
 
 		if (!this.bPost) {
@@ -1557,18 +1573,23 @@ sap.ui.define([
 				oData = undefined;
 			}
 		}
-		this.oPromise = SyncPromise.resolve(
-			this.oRequestor
-				.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
-					{"If-Match" : sETag}, oData)
-				.then(function (oResult) {
-					that.bPosting = false;
-					return oResult;
-				}, function (oError) {
-					that.bPosting = false;
-					throw oError;
-				})
-		);
+		aPromises = [
+			this.oRequestor.request(sHttpMethod, this.sResourcePath + this.sQueryString, oGroupLock,
+				{"If-Match" : sETag}, oData)
+		];
+		if (this.bFetchOperationReturnType) {
+			aPromises.push(this.fetchTypes());
+		}
+		this.oPromise = SyncPromise.all(aPromises).then(function (aResult) {
+			that.bPosting = false;
+			if (that.bFetchOperationReturnType) {
+				that.calculateKeyPredicates(aResult[0], aResult[1], that.sMetaPath + "/$Type");
+			}
+			return aResult[0];
+		}, function (oError) {
+			that.bPosting = false;
+			throw oError;
+		});
 		this.bPosting = true;
 		return this.oPromise;
 	};
@@ -1651,15 +1672,18 @@ sap.ui.define([
 	 *   throws an error.
 	 * @param {string} [sMetaPath]
 	 *   Optional meta path in case it cannot be derived from the given resource path
+	 * @param {boolean} [bFetchOperationReturnType]
+	 *   Whether the entity type of the operation return value must be fetched in
+	 *   {@link #fetchTypes}
 	 * @returns {sap.ui.model.odata.v4.lib._Cache}
 	 *   The cache
 	 *
 	 * @public
 	 */
 	Cache.createSingle = function (oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect,
-			bPost, sMetaPath) {
+			bPost, sMetaPath, bFetchOperationReturnType) {
 		return new SingleCache(oRequestor, sResourcePath, mQueryOptions, bSortExpandSelect, bPost,
-			sMetaPath);
+			sMetaPath, bFetchOperationReturnType);
 	};
 
 	/**
