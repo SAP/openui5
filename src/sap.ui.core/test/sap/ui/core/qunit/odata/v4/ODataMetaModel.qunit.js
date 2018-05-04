@@ -3096,6 +3096,9 @@ sap.ui.require([
 							"B.", "B.B."
 						]
 					},
+					"/C/$metadata" : {
+						"$Include" : ["C."]
+					},
 					"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
 						"$Include" : [
 							"tea_busi_product."
@@ -3112,6 +3115,8 @@ sap.ui.require([
 		// simulate a previous reference to a schema with the _different_ reference URI
 		// --> allowed as long as the document is not yet read (and will never be read)
 		this.oMetaModel.mSchema2MetadataUrl["B.B."] = {"/B/V2/$metadata" : false};
+		// simulate a previous reference to a schema with the _same_ reference URI, already loaded
+		this.oMetaModel.mSchema2MetadataUrl["C."] = {"/C/$metadata" : true};
 
 		// code under test
 		assert.strictEqual(this.oMetaModel.validate(sUrl, mScope), mScope);
@@ -3124,6 +3129,7 @@ sap.ui.require([
 				"/B/$metadata" : false,
 				"/B/V2/$metadata" : false
 			},
+			"C." : {"/C/$metadata" : true},
 			"tea_busi_product." : {"/a/default/iwbep/tea_busi_product/0001/$metadata" : false}
 		});
 	});
