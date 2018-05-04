@@ -136,7 +136,7 @@ sap.ui.define([
 	};
 
 	XMLCompositeMetadata.prototype._requestFragmentRetemplatingCheck = function (oControl, oMember, bForce) {
-		if (!oControl._bIsInitializing && oMember && oMember.appData && oMember.appData.invalidate === InvalidationMode.Template &&
+		if (oMember && oMember.appData && oMember.appData.invalidate === InvalidationMode.Template &&
 			!oControl._requestFragmentRetemplatingPending) {
 			if (oControl.requestFragmentRetemplating) {
 				oControl._requestFragmentRetemplatingPending = true;
