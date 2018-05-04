@@ -119,12 +119,10 @@ sap.ui.define([
 		thisContext = "wrong";
 
 		// global functions with .call()
-		/* bug in expression parser, already being fixed in v4 branch   TODO
 		fnFromGlobal = EventHandlerResolver.resolveEventHandler("testEventHandlerResolver.subobject.someGlobalMethod.call($controller)", oController)[0];
 		fnFromGlobal(oDummyEvent);
 		assert.equal(thisContext, oController, "Global method should be called with controller as 'this' context when set using .call($controller)");
 		thisContext = "wrong";
-		*/
 	});
 
 
