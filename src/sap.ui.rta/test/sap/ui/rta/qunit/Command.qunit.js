@@ -128,6 +128,28 @@ function(
 				developerMode: false
 			});
 		});
+
+		QUnit.test("when getting a property change command for button with a static call to getCommandFor,", function(assert) {
+			var oFlexSettings = {
+				layer: "VENDOR",
+				developerMode: true,
+				scenario: sap.ui.fl.Scenario.AppVariant,
+				projectId: "projectId",
+				baseId: "baseId"
+			};
+
+			var oPrepareStub = sandbox.stub(FlexCommand.prototype, "prepare");
+
+			CommandFactory.getCommandFor(this.oButton, "property", {
+				propertyName : "visible",
+				oldValue : this.oButton.getVisible(),
+				newValue : false
+			}, null, oFlexSettings);
+
+			assert.equal(oPrepareStub.callCount, 1, "the _getCommandFor method was called");
+			assert.ok(oPrepareStub.lastCall.args[0].namespace, "and the namespace got added to the flexSettings");
+			assert.ok(oPrepareStub.lastCall.args[0].rootNamespace, "and the rootNamespace got added to the flexSettings");
+		});
 	});
 
 	QUnit.module("Given a flex command", {
@@ -286,6 +308,10 @@ function(
 
 	QUnit.module("Given a property command", {
 		beforeEach : function(assert) {
+			var oFlexSettings = {
+				developerMode: true,
+				layer: "VENDOR"
+			};
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.OLD_VALUE = '2px';
 			this.NEW_VALUE = '5px';
@@ -297,12 +323,12 @@ function(
 				newValue : this.NEW_VALUE,
 				oldValue : this.OLD_VALUE,
 				semanticMeaning : "resize"
-			});
+			}, null, oFlexSettings);
 			this.oPropertyCommandWithOutOldValueSet = CommandFactory.getCommandFor(this.oControl, "Property", {
 				propertyName : "width",
 				newValue : this.NEW_VALUE,
 				semanticMeaning : "resize"
-			});
+			}, null, oFlexSettings);
 			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
 		},
 		afterEach : function(assert) {
@@ -336,6 +362,10 @@ function(
 
 	QUnit.module("Given a bind property command", {
 		beforeEach : function(assert) {
+			var oFlexSettings = {
+				developerMode: true,
+				layer: "VENDOR"
+			};
 			sandbox.stub(FlexUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.OLD_BOOLEAN_VALUE = false;
 			this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS = "{= ( ${/field1} === 'critical' ) &&  ( ${/field2} > 100 ) }";
@@ -361,20 +391,20 @@ function(
 			this.oBindShowValueHelpCommand = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
 				propertyName : "showValueHelp",
 				newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
-			});
+			}, null, oFlexSettings);
 			this.oBindShowValueHelpCommandWithoutOldValueSet = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
 				element : this.oInput,
 				propertyName : "showValueHelp",
 				newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
-			});
+			}, null, oFlexSettings);
 			this.oBindValuePropertyCommand = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
 				propertyName : "value",
 				newBinding : this.NEW_VALUE_BINDING
-			});
+			}, null, oFlexSettings);
 			this.oBindValuePropertyCommandWithoutOldBindingSet = CommandFactory.getCommandFor(this.oInput, "BindProperty", {
 				propertyName : "value",
 				newBinding : this.NEW_VALUE_BINDING
-			});
+			}, null, oFlexSettings);
 			this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
 		},
 		afterEach : function(assert) {
