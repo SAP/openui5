@@ -32,7 +32,8 @@ sap.ui.define([
 	 * @param {object} oComponent Component instance that is currently loading
 	 * @param {boolean} bObserve whether to observe the JSON data for property changes (experimental)
 	 * @constructor
-	 * @public
+	 * @private
+	 * @ui5-restricted
 	 * @since 1.50
 	 * @alias sap.ui.fl.variants.VariantModel
 	 * @experimental Since 1.50. This class is experimental and provides only limited functionality. Also the API might be changed in future.
@@ -61,11 +62,6 @@ sap.ui.define([
 						}
 						oVariant.originalTitle = oVariant.title;
 						oVariant.originalFavorite = oVariant.favorite;
-
-						// TODO: decide about execute on selection flag
-						// oVariant.originalExecuteOnSelect = oVariant.executeOnSelect;
-
-						// TODO: decide about lifecycle information (shared variants)
 					});
 					oData[sKey].originalCurrentVariant = oData[sKey].currentVariant;
 					oData[sKey].originalDefaultVariant = oData[sKey].defaultVariant;
