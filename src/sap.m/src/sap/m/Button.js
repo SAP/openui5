@@ -519,7 +519,7 @@ sap.ui.define([
 		}
 
 		if (sValue !== sText) {
-			var oDomRef = this.getDomRef("content");
+			var oDomRef = this.getDomRef("BDI-content") || this.getDomRef("content");
 			var bShouldSupressRendering = !!oDomRef;
 
 			// Render control if element is not available in the DOM
@@ -528,7 +528,7 @@ sap.ui.define([
 			if (bShouldSupressRendering) {
 				// Get text to have the type conversation for non-string values done by the framework
 				sText = this.getText();
-				oDomRef.innerHTML = jQuery.sap.encodeHTML(sText);
+				oDomRef.textContent = sText;
 				this.$("inner").toggleClass("sapMBtnText", !!sText);
 			}
 		}
