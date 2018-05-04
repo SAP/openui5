@@ -227,7 +227,7 @@ sap.ui.define([
 				if (that.oContext.getIndex() === -2) { // virtual parent context: no change event
 					oCallToken.forceUpdate = false;
 				}
-				return that.oContext.fetchValue(that.sPath, that, that.oModel.lockGroup(sGroupId));
+				return that.oContext.fetchValue(that.sPath, that);
 			}).then(function (vValue) {
 				if (!vValue || typeof vValue !== "object"
 					|| (that.sInternalType === "any"

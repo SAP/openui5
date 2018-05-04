@@ -623,7 +623,7 @@ sap.ui.require([
 			oGroupLock = new _GroupLock("group");
 
 		this.mock(this.oModel).expects("lockGroup")
-			.withExactArgs("$auto", sinon.match.same(oGroupLock))
+			.withExactArgs("$auto", undefined)
 			.returns(oGroupLock);
 		oBindingMock.expects("fireDataRequested").never();
 		oBindingMock.expects("fireDataReceived").never();
@@ -633,7 +633,7 @@ sap.ui.require([
 			.returns(SyncPromise.resolve("value"));
 
 		// code under test
-		return oBinding.fetchValue("/absolute/bar", undefined, oGroupLock).then(function (vValue) {
+		return oBinding.fetchValue("/absolute/bar").then(function (vValue) {
 			assert.strictEqual(vValue, "value");
 		});
 	});
@@ -681,7 +681,6 @@ sap.ui.require([
 		var oBinding = this.oModel.bindContext("/absolute"),
 			oContext,
 			oContextMock,
-			oGroupLock = {},
 			oNestedBinding,
 			oListener = {},
 			sPath = "/absolute/navigation/bar",
@@ -694,11 +693,11 @@ sap.ui.require([
 		oNestedBinding = this.oModel.bindContext("navigation", oContext);
 
 		oContextMock.expects("fetchValue")
-			.withExactArgs(sPath, sinon.match.same(oListener), sinon.match.same(oGroupLock))
+			.withExactArgs(sPath, sinon.match.same(oListener))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
-			oNestedBinding.fetchValue(sPath, oListener, oGroupLock).getResult(),
+			oNestedBinding.fetchValue(sPath, oListener).getResult(),
 			oResult);
 
 		assert.strictEqual(this.oModel.bindContext("navigation2").fetchValue("").getResult(),
@@ -713,7 +712,6 @@ sap.ui.require([
 				fetchValue : function () {},
 				getPath : function () {return "/absolute";}
 			},
-			oGroupLock = {},
 			oListener = {},
 			sPath = "/absolute/bar",
 			oResult = {};
@@ -726,11 +724,11 @@ sap.ui.require([
 		this.mock(oBinding).expects("getRelativePath")
 			.withExactArgs(sPath).returns(undefined);
 		this.mock(oContext).expects("fetchValue")
-			.withExactArgs(sPath, sinon.match.same(oListener), sinon.match.same(oGroupLock))
+			.withExactArgs(sPath, sinon.match.same(oListener))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
-			oBinding.fetchValue(sPath, oListener, oGroupLock).getResult(),
+			oBinding.fetchValue(sPath, oListener).getResult(),
 			oResult);
 	});
 
@@ -823,13 +821,14 @@ sap.ui.require([
 		var oBinding = this.oModel.bindContext("/absolute", undefined, {$$groupId : "$direct"}),
 			oGroupLock = new _GroupLock();
 
-		this.mock(oGroupLock).expects("setGroupId").withExactArgs("$direct");
+		this.mock(this.oModel).expects("lockGroup").withExactArgs("$direct", undefined)
+			.returns(oGroupLock);
 		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
 			.withExactArgs(sinon.match.same(oGroupLock), "foo", sinon.match.func, undefined)
 			.returns(SyncPromise.resolve());
 
 		// code under test
-		oBinding.fetchValue("/absolute/foo", undefined, oGroupLock);
+		oBinding.fetchValue("/absolute/foo");
 	});
 
 	//*********************************************************************************************

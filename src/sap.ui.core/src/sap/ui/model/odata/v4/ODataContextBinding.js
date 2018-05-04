@@ -563,17 +563,15 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the request; defaults to this binding's group ID in
-	 *   case this binding's cache is used
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the cache's <code>read</code> call
 	 * @throws {Error} If the binding's root binding is suspended, a "canceled" error is thrown
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.fetchValue = function (sPath, oListener, oGroupLock) {
+	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
 		var oError,
+			oGroupLock,
 			oRootBinding = this.getRootBinding(),
 			that = this;
 
@@ -591,8 +589,7 @@ sap.ui.define([
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
 					// Unless there is a refresh, a lock is not required here, only set the group ID
-					oGroupLock = that.oModel.lockGroup(that.getGroupId(),
-						that.oRefreshGroupLock || oGroupLock);
+					oGroupLock = that.oModel.lockGroup(that.getGroupId(), that.oRefreshGroupLock);
 					that.oRefreshGroupLock = undefined;
 					return oCache.fetchValue(oGroupLock, sRelativePath, function () {
 						bDataRequested = true;
@@ -614,7 +611,7 @@ sap.ui.define([
 				}
 			}
 			if (!that.oOperation && that.oContext && that.oContext.fetchValue) {
-				return that.oContext.fetchValue(sPath, oListener, oGroupLock);
+				return that.oContext.fetchValue(sPath, oListener);
 			}
 		});
 	};

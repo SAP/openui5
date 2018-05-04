@@ -239,15 +239,12 @@ sap.ui.define([
 	 *   A path (absolute or relative to this context)
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
-	 * @param {sap.ui.model.odata.v4.lib._GroupLock} [oGroupLock]
-	 *   A lock for the group ID to be used for the request; if not specified, the group ID depends
-	 *   on the parent binding which owns the cache
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise on the outcome of the binding's <code>fetchValue</code> call
 	 *
 	 * @private
 	 */
-	Context.prototype.fetchValue = function (sPath, oListener, oGroupLock) {
+	Context.prototype.fetchValue = function (sPath, oListener) {
 		if (this.iIndex === -2) {
 			return SyncPromise.resolve(); // no cache access for virtual contexts
 		}
@@ -255,8 +252,7 @@ sap.ui.define([
 		// predicates if the context does. Then the path to register the listener in the cache is
 		// the same that is used for an update and the update notifies the listener.
 		return this.oBinding.fetchValue(
-			sPath && sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath),
-			oListener, oGroupLock);
+			sPath && sPath[0] === "/" ? sPath : _Helper.buildPath(this.sPath, sPath), oListener);
 	};
 
 	/**
