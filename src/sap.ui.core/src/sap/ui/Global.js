@@ -152,6 +152,7 @@ sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global', 'jquery.sap.dom'],
 	 * @param {string} [sModuleName] name of the module to load, defaults to the class name
 	 * @public
 	 * @static
+	 * @deprecated since 1.56
 	 */
 	sap.ui.lazyRequire = function(sClassName, sMethods, sModuleName) {
 
@@ -253,6 +254,7 @@ sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global', 'jquery.sap.dom'],
 	 *    (e.g. might not work for 'sap.ui.core.BusyIndicator').
 	 * Must not be used outside the core, e.g. not by controls, apps, tests etc.
 	 * @private
+	 * @deprecated since 1.56
 	 */
 	sap.ui.lazyRequire._isStub = function(sClassName) {
 		jQuery.sap.assert(typeof sClassName === "string" && sClassName, "lazyRequire._isStub: sClassName must be a non-empty string");
