@@ -285,8 +285,7 @@ sap.ui.define([
 		 * As XMLComposites compose other controls, they are only invalidated and re-rendered if explicitly defined. Additional metadata
 		 * for invalidation can be given for properties and aggregation. The default invalidation is <code>"none"</code>.
 		 * Setting invalidate to <code>true</code> for properties and aggregations sets the complete XMLComposite
-		 * to invalidate and rerender. For templating scenarios the XMLComposite can also be forced to re-template completely. In such case set invalidate
-		 * of the corresponding property to <code>"template"</code>
+		 * to invalidate and rerender.</code>
 		 *
 		 * Example:
 		 * <pre>
@@ -307,11 +306,6 @@ sap.ui.define([
 		 *          type: "string",
 		 *          defaultValue: "",
 		 *          invalidate: true
-		 *       },
-		 *       progress: { //changing this property will re-template the XMLComposite as it defines invalidate: true
-		 *          type: "int",
-		 *          defaultValue: "",
-		 *          invalidate: "template"
 		 *       }
 		 *     },
 		 *     defaultProperty : "text",
