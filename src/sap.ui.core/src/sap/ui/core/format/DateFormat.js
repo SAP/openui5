@@ -985,8 +985,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					var oFound = oParseHelper.findEntry(sValue, aVariants);
 					if (oFound.index !== -1) {
 						return {
-							// gets translated to dayNumberOfWeek as the day of week is relative to the week
-							dayNumberOfWeek: oFormat._adaptDayOfWeek(oFound.index),
+							// gets translated to dayOfWeek where the day of week is relative to the week
+							dayOfWeek: oFound.index,
 							length: oFound.value.length
 						};
 					}
@@ -1579,6 +1579,11 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 			oDateValue.hour += 12;
 		}
 
+		// use dayOfWeek (E) as dayNumberOfWeek (u) if dayNumberOfWeek (u) is not present
+		if (oDateValue.dayNumberOfWeek === undefined && oDateValue.dayOfWeek !== undefined) {
+			oDateValue.dayNumberOfWeek = this._adaptDayOfWeek(oDateValue.dayOfWeek);
+		}
+
 		if (oDateValue.quarter !== undefined && oDateValue.month === undefined && oDateValue.day === undefined) {
 			oDateValue.month = 3 * oDateValue.quarter;
 			oDateValue.day = 1;
@@ -1680,12 +1685,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 						// Set TZDiff after checking for valid day, as it may switch the day as well
 						oDate.setUTCMinutes((oDateValue.minute || 0) + oDateValue.tzDiff);
 					}
-					if (oDateValue.week !== undefined) {
+					if (oDateValue.week !== undefined  && (oDateValue.month === undefined || oDateValue.day === undefined)) {
+						//check that the week is only set if the day/month has not been set, because day/month have higher precedence than week
 						oDate.setUTCWeek({
 							year: oDateValue.weekYear || oDateValue.year,
 							week: oDateValue.week
 						});
 
+						//add the dayNumberOfWeek to the current day
 						if (oDateValue.dayNumberOfWeek !== undefined) {
 							oDate.setUTCDate(oDate.getUTCDate() + oDateValue.dayNumberOfWeek - 1);
 						}
@@ -1705,12 +1712,14 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 					// check if valid date given - if invalid, day is not the same (31.Apr -> 1.May)
 					oDateValue.valid = false;
 					oDate = undefined;
-				} else if (oDateValue.week !== undefined) {
+				} else if (oDateValue.week !== undefined && (oDateValue.month === undefined || oDateValue.day === undefined)) {
+					//check that the week is only set if the day/month has not been set, because day/month have higher precedence than week
 					oDate.setWeek({
 						year: oDateValue.weekYear || oDateValue.year,
 						week: oDateValue.week
 					});
 
+					//add the dayNumberOfWeek to the current day
 					if (oDateValue.dayNumberOfWeek !== undefined) {
 						oDate.setDate(oDate.getDate() + oDateValue.dayNumberOfWeek - 1);
 					}
