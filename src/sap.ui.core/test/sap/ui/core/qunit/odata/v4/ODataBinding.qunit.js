@@ -811,6 +811,7 @@ sap.ui.require([
 		oBinding.fetchCache();
 
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 	});
 
 	//*********************************************************************************************
@@ -848,6 +849,7 @@ sap.ui.require([
 
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 		assert.strictEqual(oCache.$canonicalPath, undefined);
+		assert.strictEqual(oBinding.mCacheQueryOptions, mResultingQueryOptions);
 	});
 
 	//*********************************************************************************************
@@ -900,6 +902,7 @@ sap.ui.require([
 			return oBinding.oCachePromise.then(function (oCache0) {
 				assert.strictEqual(oCache0, oCache);
 				assert.strictEqual(oCache0.$canonicalPath, "/canonicalPath");
+				assert.strictEqual(oBinding.mCacheQueryOptions, mResultingQueryOptions);
 			});
 		});
 	});
@@ -945,6 +948,7 @@ sap.ui.require([
 
 		assert.strictEqual(oBinding.oCachePromise.isFulfilled(), false);
 		return oBinding.oCachePromise.then(function (oResult) {
+			assert.strictEqual(oBinding.mCacheQueryOptions, mResultingQueryOptions);
 			assert.strictEqual(oResult, oCache);
 		});
 	});
@@ -1055,6 +1059,7 @@ sap.ui.require([
 
 		assert.strictEqual(oBinding.oCachePromise.getResult(), oCache);
 		assert.strictEqual(oCache.$canonicalPath, "/contextPath");
+		assert.strictEqual(oBinding.mCacheQueryOptions, mResultingQueryOptions);
 	});
 
 	//*********************************************************************************************
@@ -1082,6 +1087,7 @@ sap.ui.require([
 		oBinding.fetchCache(oContext);
 
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1103,6 +1109,7 @@ sap.ui.require([
 		oBinding.fetchCache({/*oContext: not needed*/});
 
 		assert.strictEqual(oBinding.oCachePromise.getResult(), undefined);
+		assert.strictEqual(oBinding.mCacheQueryOptions, undefined);
 	});
 
 	//*********************************************************************************************
@@ -1277,6 +1284,7 @@ sap.ui.require([
 	QUnit.test("fetchCache: fetchCanonicalPath fails", function (assert) {
 		var oBinding = new ODataBinding({
 				oCachePromise : SyncPromise.resolve(),
+				mCacheQueryOptions : {},
 				oModel : {
 					oRequestor : {
 						ready : function () { return SyncPromise.resolve(); }
@@ -1307,6 +1315,8 @@ sap.ui.require([
 			},
 			function (oError0) {
 				assert.strictEqual(oError0, oError);
+				assert.strictEqual(oBinding.mCacheQueryOptions, undefined,
+					"cache query options stored at binding are reset");
 			}
 		);
 	});

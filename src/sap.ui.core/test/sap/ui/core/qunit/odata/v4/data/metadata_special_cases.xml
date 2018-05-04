@@ -10,6 +10,14 @@
 				<Property Name="ArtistID" Type="Edm.String" Nullable="false"/>
 				<Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false"/>
 				<Property Name="Name" Type="Edm.String" MaxLength="255"/>
+				<NavigationProperty Name="DraftAdministrativeData" Type="special.cases.DraftAdministrativeDataType"/>
+			</EntityType>
+			<EntityType Name="DraftAdministrativeDataType">
+				<Key>
+					<PropertyRef Name="DraftID"/>
+				</Key>
+				<Property Name="DraftID" Type="Edm.String" Nullable="false"/>
+				<Property Name="InProcessByUser" Type="Edm.String" MaxLength="12"/>
 			</EntityType>
 			<EntityType Name="EntityWithComplexKey">
 				<Key>

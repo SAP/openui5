@@ -5822,5 +5822,80 @@ sap.ui.require([
 			});
 		});
 	});
-});
+
+//*********************************************************************************************
+// Scenario: Object page bound to active entity with a navigation property $expand'ed via
+// auto-$expand/$select. The "Edit" bound action on the active entity has the binding parameter
+// $$inheritExpandSelect set so that it triggers the POST request with the same $expand and $select
+// parameters used for loading the active entity. This way, all fields in the object page can be
+// populated from the bound action response.
+	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
+		var oActiveArtistContext,
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="objectPage" binding="{}">\
+	<Text id="id" text="{ArtistID}" />\
+	<Text id="isActive" text="{IsActiveEntity}" />\
+	<Text id="name" text="{Name}" />\
+	<Text id="inProcessByUser" text="{DraftAdministrativeData/InProcessByUser}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("id")
+			.expectChange("isActive")
+			.expectChange("name")
+			.expectChange("inProcessByUser");
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?custom=foo"
+				+ "&$select=ArtistID,IsActiveEntity,Name"
+				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					"ArtistID" : "42",
+					"IsActiveEntity" : true,
+					"Name" : "Hour Frustrated",
+					"DraftAdministrativeData" : null
+				})
+				.expectChange("id", "42")
+				.expectChange("isActive", "Yes")
+				.expectChange("name", "Hour Frustrated");
+
+			oActiveArtistContext = oModel
+				.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)", null,
+					{"custom" : "foo"})
+				.getBoundContext();
+			that.oView.byId("objectPage").setBindingContext(oActiveArtistContext);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oOperation = that.oModel.bindContext("special.cases.EditAction(...)",
+					oActiveArtistContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+				method : "POST",
+				url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction"
+					+ "?$select=ArtistID,IsActiveEntity,Name"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
+				payload : {}
+			}, {
+				"ArtistID" : "42",
+				"IsActiveEntity" : false,
+				"Name" : "Hour Frustrated",
+				"DraftAdministrativeData" : {
+					"DraftID" : "1",
+					"InProcessByUser" : "JOHNDOE"
+				}
+			});
+
+			// code under test
+			return oOperation.execute();
+		}).then(function (oInactiveArtistContext) {
+			that.expectChange("isActive", "No")
+				.expectChange("inProcessByUser", "JOHNDOE");
+
+			that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
 //TODO test delete
+});

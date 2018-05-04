@@ -378,8 +378,8 @@ sap.ui.define([
 	 *   The context which is required as base for a relative path
 	 * @param {object} [mParameters]
 	 *   Map of binding parameters which can be OData query options as specified in
-	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters "$$groupId"
-	 *   and "$$updateGroupId".
+	 *   "OData Version 4.0 Part 2: URL Conventions" or the binding-specific parameters as specified
+	 *   below.
 	 *   Note: The binding creates its own data service request if it is absolute or if it has any
 	 *   parameters or if it is relative and has a context created via
 	 *   {@link #createBindingContext}.
@@ -399,6 +399,12 @@ sap.ui.define([
 	 *   model's group ID is used, see {@link sap.ui.model.odata.v4.ODataModel#constructor}.
 	 *   Valid values are <code>undefined</code>, '$auto', '$direct' or application group IDs as
 	 *   specified in {@link #submitBatch}.
+	 * @param {boolean} [mParameters.$$inheritExpandSelect]
+	 *   For operation bindings only: Whether $expand and $select from the parent binding are used
+	 *   in the request sent on {@link #execute}. If set to <code>true</code>, the binding must not
+	 *   set the $expand or $select parameter itself and its
+	 *   {@link sap.ui.model.odata.v4.ODataContextBinding#execute} must resolve with a return value
+	 *   context.
 	 * @param {boolean} [mParameters.$$ownRequest]
 	 *   Whether the binding always uses an own service request to read its data; only the value
 	 *   <code>true</code> is allowed.
@@ -581,6 +587,7 @@ sap.ui.define([
 	 *      validation here)
 	 * <li> '$$groupId' with allowed values as specified in {@link #checkGroupId}
 	 * <li> '$$updateGroupId' with allowed values as specified in {@link #checkGroupId}
+	 * <li> '$$inheritExpandSelect' with allowed values <code>false</code> and <code>true</code>
 	 * <li> '$$operationMode' with value {@link sap.ui.model.odata.OperationMode.Server}
 	 * <li> '$$ownRequest' with value <code>true</code>
 	 * </ul>
@@ -619,6 +626,12 @@ sap.ui.define([
 					case "$$updateGroupId":
 						that.checkGroupId(vValue, false,
 							"Unsupported value for binding parameter '" + sKey + "': ");
+						break;
+					case "$$inheritExpandSelect":
+						if (vValue !== true && vValue !== false) {
+							throw new Error("Unsupported value for binding parameter "
+								+ "'$$inheritExpandSelect': " + vValue);
+						}
 						break;
 					case "$$operationMode":
 						if (vValue !== OperationMode.Server) {

@@ -1095,6 +1095,26 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("buildBindingParameters, $$inheritExpandSelect", function (assert) {
+		var aAllowedParams = ["$$inheritExpandSelect"],
+			oModel = createModel();
+
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$inheritExpandSelect : undefined}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$inheritExpandSelect': undefined"));
+		assert.throws(function () {
+			oModel.buildBindingParameters({$$inheritExpandSelect : "foo"}, aAllowedParams);
+		}, new Error("Unsupported value for binding parameter '$$inheritExpandSelect': foo"));
+
+		assert.deepEqual(oModel.buildBindingParameters({$$inheritExpandSelect : true},
+				aAllowedParams),
+			{$$inheritExpandSelect : true});
+		assert.deepEqual(oModel.buildBindingParameters({$$inheritExpandSelect : false},
+				aAllowedParams),
+			{$$inheritExpandSelect : false});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("buildBindingParameters, $$operationMode", function (assert) {
 		var aAllowedParams = ["$$operationMode"],
 			oModel = createModel();
