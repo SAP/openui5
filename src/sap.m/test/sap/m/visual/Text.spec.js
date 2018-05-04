@@ -24,39 +24,46 @@ describe("sap.m.Text", function() {
 	// fixed width in em
 	it("should vizualize text with fixed width in em", function () {
 		var txt3 = element(by.id('text3'));
-		expect(takeScreenshot(txt3)).toLookAs("3_fixed_width_in_em");
+		//next line is to move the view in the window
+		browser.executeScript('document.getElementById("text3").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt3)).toLookAs("3_fixed_width_in_em");
+		});
 	});
 
 	// fixed width in %
 	it("should vizualize text with fixed width in %", function () {
 		var txt3a = element(by.id('text3a'));
 		//next line is to move the view in the window
-		txt3a.click();
-		expect(takeScreenshot(txt3a)).toLookAs("3a_fixed_width_in_percentage");
+		browser.executeScript('document.getElementById("text3a").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt3a)).toLookAs("3a_fixed_width_in_percentage");
+		});
 	});
 
 	// fixed width in px
 	it("should vizualize text with fixed width in px", function () {
 		var txt3b = element(by.id('text3b'));
 		//next line is to move the view in the window
-		txt3b.click();
-		expect(takeScreenshot(txt3b)).toLookAs("3b_fixed_width_in_px");
+		browser.executeScript('document.getElementById("text3b").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt3b)).toLookAs("3b_fixed_width_in_px");
+		});
 	});
 
 	// styled
 	it("should vizualize styled text", function () {
 		var txt4 = element(by.id('text4'));
 		//next line is to move the view in the window
-		txt4.click();
-		expect(takeScreenshot(txt4)).toLookAs("4_styled");
+		browser.executeScript('document.getElementById("text4").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt4)).toLookAs("4_styled");
+		});
 	});
 
 	// align right
 	it("should vizualize right aligned text", function () {
 		var txt5 = element(by.id('text5'));
 		//next line is to move the view in the window
-		txt5.click();
-		expect(takeScreenshot(txt5)).toLookAs("5_align_right");
+		browser.executeScript('document.getElementById("text5").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt5)).toLookAs("5_align_right");
+		});
 	});
 
 	// align left
