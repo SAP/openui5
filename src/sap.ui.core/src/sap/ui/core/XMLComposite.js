@@ -378,12 +378,12 @@ sap.ui.define([
 		 *
 		 * @author SAP SE
 		 * @version ${version}
-		 * @since 1.50.0
+		 * @since 1.56.0
 		 * @alias sap.ui.core.XMLComposite
 		 *
 		 * @abstract
 		   * @public
-		 * @experimental
+		 * @experimental Since 1.56.0
 		 */
 		var XMLComposite = Control.extend("sap.ui.core.XMLComposite", {
 			metadata: {
@@ -416,6 +416,13 @@ sap.ui.define([
 					}
 				}
 			},
+			constructor : function(sId, mSettings) {
+				this._bIsCreating = true;
+
+				Control.apply(this,arguments);
+				delete this._bIsCreating;
+
+			},
 			renderer: function (oRm, oControl) {
 				oRm.write("<div");
 				oRm.writeControlData(oControl);
@@ -445,20 +452,6 @@ sap.ui.define([
 				oRm.write("</div>");
 			}
 		}, XMLCompositeMetadata);
-
-		/**
-		 * Applies the settings of the XMLComposite control
-		 *
-		 * @returns {sap.ui.core.XMLComposite} The instance of the control
-		 *
-		 * @private
-		 */
-		XMLComposite.prototype.applySettings = function () {
-			this._bIsInitializing = true;
-			var vResult = Control.prototype.applySettings.apply(this, arguments);
-			this._bIsInitializing = false;
-			return vResult;
-		};
 
 		/**
 		 * Returns an element by its ID in the context of the XMLComposite.
