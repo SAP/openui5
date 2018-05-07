@@ -668,6 +668,102 @@
         "type": "FIX",
         "text": " ui5loader: noConflict works with debug mode",
         "references": []
+      },
+      {
+        "id": "6449fe09ea393eedea54d511f717244968df803f",
+        "type": "FEATURE",
+        "text": " Component: Add async create() / load() API",
+        "references": []
+      },
+      {
+        "id": "02ec080817cf59aa2caec74292bc515321626ca4",
+        "type": "FEATURE",
+        "text": " Component: preload non-lazy component usages",
+        "references": []
+      },
+      {
+        "id": "860805dd329496be983a5534e1330243a742e457",
+        "type": "FEATURE",
+        "text": " DataType: support \u0027function\u0027 properties in XMLViews",
+        "references": []
+      },
+      {
+        "id": "100b0b28984b2e2ac1c28a01c3752da7b9c59915",
+        "type": "FEATURE",
+        "text": " HTMLView: Add new async only create() API",
+        "references": []
+      },
+      {
+        "id": "5a36e73401198c097aa73528982548fa99a377e2",
+        "type": "FEATURE",
+        "text": " IsPropertyInitial for Modifier",
+        "references": []
+      },
+      {
+        "id": "c742927d206b55343063ae06d57dbb340731fe39",
+        "type": "FEATURE",
+        "text": " JSONView: Add new async only create API",
+        "references": []
+      },
+      {
+        "id": "6c6c24cb7191709ed3366f2b29bebfa0c92bc58c",
+        "type": "FEATURE",
+        "text": " JSView: Add new async only create() API",
+        "references": []
+      },
+      {
+        "id": "c22871e6b70953479e6b6f114aef430a457d35c7",
+        "type": "FEATURE",
+        "text": " TemplateView: deprecation",
+        "references": []
+      },
+      {
+        "id": "4eee52c29e5c5ff5ba8cc855a0a37dacc75d7026",
+        "type": "FEATURE",
+        "text": " VersionInfo: New VersionInfo Module for async loading",
+        "references": []
+      },
+      {
+        "id": "4a62490df17c781b19050cf2394dc17c7e773e1a",
+        "type": "FEATURE",
+        "text": " View: Add new async only create() API",
+        "references": []
+      },
+      {
+        "id": "30532753e65a63fd7c88afa9da028a5222301abe",
+        "type": "FEATURE",
+        "text": " XMLView: Add fully async create() function",
+        "references": []
+      },
+      {
+        "id": "29c14564ca3896d8822159a9d1ce208d47e7160c",
+        "type": "FIX",
+        "text": " Diagnostics debugging: Rebooting UI5 from another location",
+        "references": []
+      },
+      {
+        "id": "bf5cbc32f2ab19bc36ef8269124863b69aa02425",
+        "type": "FIX",
+        "text": " JSONModel: Async loadData - Error handling",
+        "references": []
+      },
+      {
+        "id": "40b2bf379d3d4f8e7dcc63632d3ee272e8ea1f5c",
+        "type": "FIX",
+        "text": " Messaging: Fire change event when controlId added",
+        "references": []
+      },
+      {
+        "id": "232f3b0d7811f0c551d9faa0a294a79fe6d51f3c",
+        "type": "FIX",
+        "text": " ui5loader-autoconfig: fixed case",
+        "references": []
+      },
+      {
+        "id": "1e80c23adf14e9c15cb5fdd240647eff092c062d",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Implicit casting for filter values",
+        "references": []
       }
     ]
   }

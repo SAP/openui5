@@ -61,6 +61,18 @@
         "type": "FIX",
         "text": "sap.ui.fl - Variant URL parameter fixes",
         "references": []
+      },
+      {
+        "id": "6449fe09ea393eedea54d511f717244968df803f",
+        "type": "FEATURE",
+        "text": " Component: Add async create() / load() API",
+        "references": []
+      },
+      {
+        "id": "66f4e9a7d5110fe01ac24cdf3632a23a931c9734",
+        "type": "FIX",
+        "text": " Fix errors in variant management handling",
+        "references": []
       }
     ]
   }

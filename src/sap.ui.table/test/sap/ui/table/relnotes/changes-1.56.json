@@ -133,6 +133,12 @@
         "type": "FIX",
         "text": " Table: Correctly update the visibility of the NoData overlay",
         "references": []
+      },
+      {
+        "id": "3378b10ff6db9318caf1a3ce69e562ce5623c501",
+        "type": "FIX",
+        "text": " sap.ui.table.TablePersoController: Add stable IDs for Dialog",
+        "references": []
       }
     ]
   }

@@ -145,6 +145,12 @@
         "type": "FIX",
         "text": " change getPreparedChange of Ctrl Variant Commands",
         "references": []
+      },
+      {
+        "id": "2633a14b0f2095464ac04258fe8158bac650dcf4",
+        "type": "FIX",
+        "text": " sap.ui.dt - contextMenu menuButton handling and icons",
+        "references": []
       }
     ]
   }

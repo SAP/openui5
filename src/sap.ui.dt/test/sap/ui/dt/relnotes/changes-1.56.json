@@ -67,6 +67,36 @@
         "type": "FIX",
         "text": " sap.ui.dt - contextMenu issue with overlapped overlay",
         "references": []
+      },
+      {
+        "id": "2633a14b0f2095464ac04258fe8158bac650dcf4",
+        "type": "FIX",
+        "text": " sap.ui.dt - contextMenu menuButton handling and icons",
+        "references": []
+      },
+      {
+        "id": "d9c6d51ed6c6889316d2c9d18ba2ec554992eca6",
+        "type": "FIX",
+        "text": " sap.ui.dt - contextMenu override popover animationDuration",
+        "references": []
+      },
+      {
+        "id": "bfd445520bfafaf14153ad968a07a867596bb371",
+        "type": "FIX",
+        "text": " sap.ui.dt - open submenu on contextMenu",
+        "references": []
+      },
+      {
+        "id": "2974c1fb6c7275bc2d5543745921705e62ff52a6",
+        "type": "FIX",
+        "text": " sap.ui.dt - removed unused workaround",
+        "references": []
+      },
+      {
+        "id": "e33fe2dc012aef0e7d7c5fc6f1dbf59e43c98ba1",
+        "type": "FIX",
+        "text": "sap.ui.dt - Issue with RTL overlay positioning",
+        "references": []
       }
     ]
   }
