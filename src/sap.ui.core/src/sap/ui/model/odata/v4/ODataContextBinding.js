@@ -152,6 +152,7 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
+	 * @throws {Error} If the binding has pending changes
 	 *
 	 * @private
 	 */
@@ -165,9 +166,14 @@ sap.ui.define([
 		if (this.hasPendingChanges()) {
 			throw new Error("Cannot delete due to pending changes");
 		}
+
 		return this.deleteFromCache(oGroupLock, sEditUrl, "", function () {
 			that.oElementContext.destroy();
 			that.oElementContext = null;
+			if (that.oReturnValueContext) {
+				that.oReturnValueContext.destroy();
+				that.oReturnValueContext = null;
+			}
 			that._fireChange({reason : ChangeReason.Remove});
 		});
 	};
