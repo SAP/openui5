@@ -329,7 +329,7 @@ sap.ui.require([
 					method : "GET"
 				}).returns(createMock(assert, oResponsePayload, "OK"));
 			oRequestorMock.expects("doCheckVersionHeader")
-				.withExactArgs(sinon.match.func, "Employees");
+				.withExactArgs(sinon.match.func, "Employees", false);
 			oRequestorMock.expects("doConvertResponse")
 				.withExactArgs(oResponsePayload, sMetaPath)
 				.returns(oConvertedResponse);
@@ -341,6 +341,23 @@ sap.ui.require([
 					assert.strictEqual(result, oConvertedResponse);
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("request: optional OData-Version header for empty response", function (assert) {
+		var oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
+
+		this.mock(jQuery).expects("ajax")
+			.withExactArgs(sServiceUrl + "SalesOrderList('0500000676')", sinon.match.object)
+			.returns(createMock(assert, undefined, "No Content", {}));
+		this.mock(oRequestor).expects("doCheckVersionHeader")
+			.withExactArgs(sinon.match.func, "SalesOrderList('0500000676')", true);
+
+		// code under test
+		return oRequestor.request("DELETE", "SalesOrderList('0500000676')")
+			.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+			});
 	});
 
 	//*********************************************************************************************
@@ -376,7 +393,7 @@ sap.ui.require([
 			.withArgs("/Employees")
 			.returns(createMock(assert, {}, "OK"));
 		oRequestorMock.expects("doCheckVersionHeader")
-			.withExactArgs(sinon.match.func, "Employees")
+			.withExactArgs(sinon.match.func, "Employees", false)
 			.throws(oError);
 		oRequestorMock.expects("doConvertResponse").never();
 
@@ -399,7 +416,7 @@ sap.ui.require([
 			.withArgs("/$batch")
 			.returns(createMock(assert, {}, "OK"));
 		oRequestorMock.expects("doCheckVersionHeader")
-			.withExactArgs(sinon.match.func, "$batch")
+			.withExactArgs(sinon.match.func, "$batch", false)
 			.throws(oError);
 		this.mock(_Batch).expects("deserializeBatchResponse").never();
 		oRequestorMock.expects("doConvertResponse").never();
@@ -2346,7 +2363,7 @@ sap.ui.require([
 
 			assert.throws(function () {
 				// code under test
-				oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar");
+				oRequestor.doCheckVersionHeader(fnGetHeader, "Foo('42')/Bar", false);
 			}, new Error("Expected 'OData-Version' header with value '4.0' but received "
 				+ oFixture.sError));
 

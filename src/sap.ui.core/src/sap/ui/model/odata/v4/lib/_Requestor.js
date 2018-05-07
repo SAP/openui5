@@ -779,7 +779,8 @@ sap.ui.define([
 					method : sMethod
 				}).then(function (oPayload, sTextStatus, jqXHR) {
 					try {
-						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath);
+						that.doCheckVersionHeader(jqXHR.getResponseHeader, sResourcePath,
+							!oPayload);
 					} catch (oError) {
 						fnReject(oError);
 						return;
