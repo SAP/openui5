@@ -1716,40 +1716,63 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_delete: success", function (assert) {
-		var oBinding = this.oModel.bindContext("/EMPLOYEES('42')"),
-			oElementContext = oBinding.getBoundContext(),
-			fnOnRefresh = this.spy(function (oEvent) {
-				var oElementContext = oBinding.getBoundContext();
+	[null, {destroy : function () {}}].forEach(function (oReturnValueContext, i) {
+		QUnit.test("_delete: success, " + i, function (assert) {
+			var oBinding = this.oModel.bindContext("/EMPLOYEES('42')"),
+				oElementContext = oBinding.getBoundContext(),
+				fnOnRefresh = this.spy(function (oEvent) {
+					var oElementContext = oBinding.getBoundContext();
 
-				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh);
-				assert.strictEqual(oElementContext.getBinding(), oBinding);
-				assert.strictEqual(oElementContext.getIndex(), undefined);
-				assert.strictEqual(oElementContext.getModel(), this.oModel);
-				assert.strictEqual(oElementContext.getPath(), "/EMPLOYEES('42')");
-			}),
-			fnOnRemove = this.spy(function (oEvent) {
-				assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Remove);
-				assert.strictEqual(oBinding.getBoundContext(), null);
-				sinon.assert.called(oElementContext.destroy);
-			}),
-			oPromise = {};
+					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Refresh);
+					assert.strictEqual(oElementContext.getBinding(), oBinding);
+					assert.strictEqual(oElementContext.getIndex(), undefined);
+					assert.strictEqual(oElementContext.getModel(), this.oModel);
+					assert.strictEqual(oElementContext.getPath(), "/EMPLOYEES('42')");
+				}),
+				fnOnRemove = this.spy(function (oEvent) {
+					assert.strictEqual(oEvent.getParameter("reason"), ChangeReason.Remove);
+					sinon.assert.called(oElementContext.destroy);
+					assert.strictEqual(oBinding.getBoundContext(), null);
+					if (oReturnValueContext) {
+						sinon.assert.called(oReturnValueContext.destroy);
+						assert.strictEqual(oBinding.oReturnValueContext, null);
+					}
+				}),
+				oPromise = {};
 
-		this.mock(oBinding).expects("deleteFromCache")
-			.withExactArgs("myGroup", "EMPLOYEES('42')", "", sinon.match.func)
-			.callsArg(3).returns(oPromise);
-		oBinding.attachChange(fnOnRemove);
-		this.spy(oElementContext, "destroy");
+			oBinding.oReturnValueContext = oReturnValueContext;
+			this.mock(oBinding).expects("deleteFromCache")
+				.withExactArgs("myGroup", "EMPLOYEES('42')", "", sinon.match.func)
+				.callsArg(3).returns(oPromise);
+			oBinding.attachChange(fnOnRemove);
+			this.spy(oElementContext, "destroy");
+			if (oReturnValueContext) {
+				this.spy(oReturnValueContext, "destroy");
+			}
 
-		// code under test
-		assert.strictEqual(oBinding._delete("myGroup", "EMPLOYEES('42')"), oPromise);
+			// code under test
+			assert.strictEqual(oBinding._delete("myGroup", "EMPLOYEES('42')"), oPromise);
 
-		sinon.assert.calledOnce(fnOnRemove);
-		oBinding.detachChange(fnOnRemove);
-		oBinding.attachChange(fnOnRefresh);
+			sinon.assert.calledOnce(fnOnRemove);
+			oBinding.detachChange(fnOnRemove);
+			oBinding.attachChange(fnOnRefresh);
 
-		// code under test
-		oBinding.refreshInternal();
+			// code under test
+			oBinding.refreshInternal();
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_delete: pending changes", function (assert) {
+		var oBinding = this.oModel.bindContext("/EMPLOYEES('42')");
+
+		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
+		this.mock(oBinding).expects("deleteFromCache").never();
+		this.mock(oBinding).expects("_fireChange").never();
+
+		assert.throws(function () {
+			oBinding._delete({/*oGroupLock*/}, "EMPLOYEES('42')");
+		}, new Error("Cannot delete due to pending changes"));
 	});
 
 	//*********************************************************************************************
@@ -1901,19 +1924,6 @@ sap.ui.require([
 		oBinding.refreshInternal();
 
 		sinon.assert.calledOnce(fnOnRefresh);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("_delete: pending changes", function (assert) {
-		var oBinding = this.oModel.bindContext("/EMPLOYEES('42')");
-
-		this.mock(oBinding).expects("hasPendingChanges").withExactArgs().returns(true);
-		this.mock(oBinding).expects("deleteFromCache").never();
-		this.mock(oBinding).expects("_fireChange").never();
-
-		assert.throws(function () {
-			oBinding._delete({/*oGroupLock*/}, "EMPLOYEES('42')");
-		}, new Error("Cannot delete due to pending changes"));
 	});
 
 	//*********************************************************************************************
