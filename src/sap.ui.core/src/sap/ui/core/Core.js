@@ -593,26 +593,21 @@ sap.ui.define([
 			if (this.oConfiguration.getSupportMode() !== null) {
 				var iSupportInfoTask = oSyncPoint2.startTask("support info script");
 
-				var fnCallbackBootstrap = function(Bootstrap) {
+				var fnCallbackSupportBootstrapInfo = function(Support, Bootstrap) {
+					Support.initializeSupportMode(that.oConfiguration.getSupportMode(), bAsync);
+
 					Bootstrap.initSupportRules(that.oConfiguration.getSupportMode());
 
 					oSyncPoint2.finishTask(iSupportInfoTask);
 				};
 
-				var fnCallbackSupportInfo = function(Support) {
-					Support.initializeSupportMode(that.oConfiguration.getSupportMode(), bAsync);
-
-					if (bAsync) {
-						sap.ui.require(["sap/ui/support/Bootstrap"], fnCallbackBootstrap);
-					} else {
-						fnCallbackBootstrap(sap.ui.requireSync("sap/ui/support/Bootstrap"));
-					}
-				};
-
 				if (bAsync) {
-					sap.ui.require(["sap/ui/core/support/Support"], fnCallbackSupportInfo);
+					sap.ui.require(["sap/ui/core/support/Support", "sap/ui/support/Bootstrap"], fnCallbackSupportBootstrapInfo);
 				} else {
-					fnCallbackSupportInfo(sap.ui.requireSync("sap/ui/core/support/Support"));
+					fnCallbackSupportBootstrapInfo(
+						sap.ui.requireSync("sap/ui/core/support/Support"),
+						sap.ui.requireSync("sap/ui/support/Bootstrap")
+					);
 				}
 			}
 
