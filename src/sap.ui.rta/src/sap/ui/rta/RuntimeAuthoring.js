@@ -94,6 +94,9 @@ sap.ui.define([
 	"use strict";
 
 	var FL_MAX_LAYER_PARAM = "sap-ui-fl-max-layer";
+	var SERVICE_STARTING = "starting";
+	var SERVICE_STARTED = "started";
+	var SERVICE_FAILED = "failed";
 
 	/**
 	 * Constructor for a new sap.ui.rta.RuntimeAuthoring class.
@@ -231,6 +234,10 @@ sap.ui.define([
 			if (this.getShowToolbars()) {
 				this.getPopupManager().attachOpen(this.onPopupOpen, this);
 				this.getPopupManager().attachClose(this.onPopupClose, this);
+			}
+
+			if (window.parent !== window) {
+				this.startService('receiver');
 			}
 		}
 	});
@@ -1412,10 +1419,6 @@ sap.ui.define([
 		this.setProperty('metadataScope', sScope);
 	};
 
-	var SERVICE_STARTING = 'starting';
-	var SERVICE_STARTED = 'started';
-	var SERVICE_FAILED = 'failed';
-
 	function resolveServiceLocation(sName) {
 		if (ServicesIndex.hasOwnProperty(sName)) {
 			return ServicesIndex[sName].replace(/\./g, '/');
@@ -1444,7 +1447,7 @@ sap.ui.define([
 			if (mService) {
 				switch (mService.status) {
 					case 'started': {
-						return Promise.resolve(mService.publicApi);
+						return Promise.resolve(mService.exports);
 					}
 					case 'starting': {
 						return mService.initPromise;
@@ -1504,10 +1507,7 @@ sap.ui.define([
 												jQuery.extend(mService.exports, {
 													attachEvent: this._oServiceEventBus.subscribe.bind(this._oServiceEventBus, sName),
 													detachEvent: this._oServiceEventBus.unsubscribe.bind(this._oServiceEventBus, sName),
-													attachEventOnce: this._oServiceEventBus.subscribeOnce.bind(this._oServiceEventBus, sName),
-													getEvents: function () {
-														return oService.events.slice();
-													}
+													attachEventOnce: this._oServiceEventBus.subscribeOnce.bind(this._oServiceEventBus, sName)
 												});
 											}
 

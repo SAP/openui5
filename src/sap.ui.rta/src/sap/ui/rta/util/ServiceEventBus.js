@@ -26,8 +26,12 @@ function(
 	});
 
 
-	ServiceEventBus.prototype._callListener = function (fnCallback, oListener, sChannelId, sEventId, mData) {
-		fnCallback.call(oListener, mData);
+	ServiceEventBus.prototype._callListener = function (fnCallback, oListener, sChannelId, sEventId, vData) {
+		fnCallback.call(oListener, vData);
+	};
+
+	ServiceEventBus.prototype.getChannel = function (sChannelId) {
+		return this._mChannels[sChannelId];
 	};
 
 	return ServiceEventBus;
