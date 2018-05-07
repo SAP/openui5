@@ -185,8 +185,14 @@ sap.ui.define([
 				applyExtension(oController, oControllerExtension, sLocalNameSpace);
 			} else {
 				//apply 'legacy' extension
+				var mLifecycleConfig = ControllerExtension.getMetadata().getLifecycleConfiguration();
 				for (var sMemberName in CustomControllerDef) {
-					ControllerExtension.overrideMethod(sMemberName, oController, CustomControllerDef, oController);
+					if (sMemberName in mLifecycleConfig) {
+						ControllerExtension.overrideMethod(sMemberName, oController, CustomControllerDef, oController);
+					} else {
+						//default extension behavior
+						ControllerExtension.overrideMethod(sMemberName, oController, CustomControllerDef);
+					}
 				}
 			}
 		}
