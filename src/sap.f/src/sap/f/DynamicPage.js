@@ -526,7 +526,7 @@ sap.ui.define([
 
 		if (this._bPinned && bUserInteraction) {
 			this._unPin();
-			this.getHeader().getAggregation("_pinButton").setPressed(false);
+			this._togglePinButtonPressedState(false);
 		}
 
 		if (exists(oDynamicPageTitle)) {
@@ -547,6 +547,7 @@ sap.ui.define([
 		if (this._hasVisibleTitleAndHeader()) {
 			this.$titleArea.addClass("sapFDynamicPageTitleSnapped");
 			this._updateToggleHeaderVisualIndicators();
+			this._togglePinButtonVisibility(false);
 		}
 
 		this._toggleHeaderInTabChain(false);
@@ -582,6 +583,7 @@ sap.ui.define([
 		if (this._hasVisibleTitleAndHeader()) {
 			this.$titleArea.removeClass("sapFDynamicPageTitleSnapped");
 			this._updateToggleHeaderVisualIndicators();
+			this._togglePinButtonVisibility(true);
 		}
 
 		this._toggleHeaderInTabChain(true);
