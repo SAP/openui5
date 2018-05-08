@@ -764,6 +764,24 @@
         "type": "FIX",
         "text": " v2.ODataListBinding: Implicit casting for filter values",
         "references": []
+      },
+      {
+        "id": "b3737e547d50722c3816bc67076d3209cff3c054",
+        "type": "FIX",
+        "text": " Controller: Extension by Customizing",
+        "references": []
+      },
+      {
+        "id": "9dac6f7678179c2879c33d3710b8100c8fde3f39",
+        "type": "FIX",
+        "text": " XMLComposite: No retemplating for destroying controls",
+        "references": []
+      },
+      {
+        "id": "607ee9874e5001fca691815644e07950ee1dd62e",
+        "type": "FIX",
+        "text": " XMLComposite: Retemplating issues",
+        "references": []
       }
     ]
   }
