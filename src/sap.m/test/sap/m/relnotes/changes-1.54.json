@@ -2433,5 +2433,58 @@
         "references": []
       }
     ]
+  },
+  "1.54.5": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "475a847858af0c86deec0bd7104d2fdd1720fb06",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxTextField: Zooming out no longer cuts the border",
+        "references": []
+      },
+      {
+        "id": "e4350c76ba2caa7603e86a1f2a9cb4b4eca2a603",
+        "type": "FIX",
+        "text": " sap.m.GroupHeaderListItem: count and title should not be separated",
+        "references": []
+      },
+      {
+        "id": "a6039c36f854440e9d5af6bd4fe15fb1cfa3f8f7",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: ObjectAttribute gets no longer truncated in active state",
+        "references": []
+      },
+      {
+        "id": "43f7b9f58b826801e9b78122790567ba7269ad61",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: used in active state in a table gets no longer truncated",
+        "references": []
+      },
+      {
+        "id": "b575a0980a76b0780dad5190591d05ee567fc153",
+        "type": "FIX",
+        "text": " sap.m.Page: Do not focus on the hidden footer.",
+        "references": []
+      },
+      {
+        "id": "9cd078c5e32865357f0bf43a161eb14638023f35",
+        "type": "FIX",
+        "text": " sap.m.Panel: Tabindex is now added only in FF",
+        "references": []
+      },
+      {
+        "id": "c97dfc8c0f3183870d3ae6ba117f7864bb22e89e",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: wrap title of the row",
+        "references": []
+      },
+      {
+        "id": "3f709b13afcadd49ad4e2009c001d9ecd3e713e6",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: оn exit the internal buttons must be destroyed",
+        "references": []
+      }
+    ]
   }
 }

@@ -252,5 +252,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.5": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "c8aebc3e75c6b1ed79791d8c209b86dd6f121ba9",
+        "type": "FIX",
+        "text": " sap.ui.unified.Menu: tests no longer fail on IE",
+        "references": []
+      }
+    ]
   }
 }

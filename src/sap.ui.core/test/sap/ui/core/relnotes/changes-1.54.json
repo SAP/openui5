@@ -1255,5 +1255,46 @@
         "references": []
       }
     ]
+  },
+  "1.54.5": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "94271a1ab50f2280b888687a5a381f66e034c45d",
+        "type": "FIX",
+        "text": " FESR: correctly set values for initial interaction",
+        "references": []
+      },
+      {
+        "id": "47e4fc930e7e4ee00fdcc6f9f90991994ae7987a",
+        "type": "FIX",
+        "text": " Fix synchronous document.activeElement access in iframes",
+        "references": []
+      },
+      {
+        "id": "cd34e48d9a3f26b2ebaa9cb9a4d441af959ec48c",
+        "type": "FIX",
+        "text": " TreeBindingAdapter: Correct selected row index calculation for collapse operations",
+        "references": []
+      },
+      {
+        "id": "9242f500ba233f8c7c8c8fb656c753f405d4e582",
+        "type": "FIX",
+        "text": " sap.ui.model.odata.v4.lib._Requestor: OData-Version Header is optional for DELETE responses",
+        "references": []
+      },
+      {
+        "id": "c74534a4c43daef0911056ca99d39cdcbd6de004",
+        "type": "FIX",
+        "text": " v2.ODataListBinding: Implicit casting for filter values",
+        "references": []
+      },
+      {
+        "id": "61d78dc71caa64d81a28d1143b32cdc9a6408804",
+        "type": "FIX",
+        "text": " v2.ODataModel: normalizeKey",
+        "references": []
+      }
+    ]
   }
 }

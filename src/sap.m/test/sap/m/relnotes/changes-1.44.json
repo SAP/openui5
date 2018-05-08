@@ -41,7 +41,7 @@
       {
         "id": "e32da9d8ed7028e94158ce49c89675a4bfa59edb",
         "type": "FEATURE",
-        "text": "sap.m.Dialog: New property 'escapeHandler'",
+        "text": "sap.m.Dialog: New property \u0027escapeHandler\u0027",
         "references": []
       },
       {
@@ -184,13 +184,13 @@
       {
         "id": "1ba92a56bad16790976a3a3d97a2f270cd3c421a",
         "type": "FIX",
-        "text": "ManagedObject: the type 'string[]' should cast anything to string",
+        "text": "ManagedObject: the type \u0027string[]\u0027 should cast anything to string",
         "references": []
       },
       {
         "id": "acbef49a1231d46fe27ea8e722bf9d5909440ec4",
         "type": "FIX",
-        "text": "TimePicker: use type 'int' for integer properties, not 'integer'",
+        "text": "TimePicker: use type \u0027int\u0027 for integer properties, not \u0027integer\u0027",
         "references": [
           {
             "type": "GitHub",
@@ -250,7 +250,7 @@
       {
         "id": "4f6d961dd98d7ecd3faa72131b3f823374613b86",
         "type": "FIX",
-        "text": "sap.m.AssociativeOverflowToolbar: 'removeContent' threw an exception incorrectly",
+        "text": "sap.m.AssociativeOverflowToolbar: \u0027removeContent\u0027 threw an exception incorrectly",
         "references": [
           {
             "type": "GitHub",
@@ -287,7 +287,7 @@
       {
         "id": "e4d6b4f04129bfb3976b808369e5872d86534e13",
         "type": "FIX",
-        "text": "sap.m.Button: focus didn't have enough contrast in active toolbar contest",
+        "text": "sap.m.Button: focus didn\u0027t have enough contrast in active toolbar contest",
         "references": [
           {
             "type": "BCP",
@@ -458,7 +458,7 @@
       {
         "id": "3a2b1e54f7a8a1449d2fde1de214208f0b0c8d23",
         "type": "FIX",
-        "text": "sap.m.FlexBoxStylingHelper: Don't treat 0 as false",
+        "text": "sap.m.FlexBoxStylingHelper: Don\u0027t treat 0 as false",
         "references": []
       },
       {
@@ -508,7 +508,7 @@
       {
         "id": "3789d1c377bbeb08c648ef7f42124ba913a8d069",
         "type": "FIX",
-        "text": "sap.m.IconTabBar: Disabled filters doesn't have \"pointer\" cursor any more",
+        "text": "sap.m.IconTabBar: Disabled filters doesn\u0027t have \"pointer\" cursor any more",
         "references": [
           {
             "type": "BCP",
@@ -605,7 +605,7 @@
       {
         "id": "903095a436dbad3361477d3bbdd25a91239bdaad",
         "type": "FIX",
-        "text": "sap.m.InputBase: reset dom update flag when value doesn't change",
+        "text": "sap.m.InputBase: reset dom update flag when value doesn\u0027t change",
         "references": [
           {
             "type": "BCP",
@@ -688,7 +688,7 @@
       {
         "id": "677472f97765904f072aef4e70172fc4f5175f99",
         "type": "FIX",
-        "text": "sap.m.NavContainer: didn't access _mFocusObject safely",
+        "text": "sap.m.NavContainer: didn\u0027t access _mFocusObject safely",
         "references": [
           {
             "type": "GitHub",
@@ -825,7 +825,7 @@
       {
         "id": "6e26d129407a046422ba927739cebcdc4d81f155",
         "type": "FIX",
-        "text": "sap.m.Popover - Popover has incorrect positioning on iPad when it's on the bottom of the page",
+        "text": "sap.m.Popover - Popover has incorrect positioning on iPad when it\u0027s on the bottom of the page",
         "references": []
       },
       {
@@ -853,13 +853,13 @@
       {
         "id": "c1e5972337e3ff7ae95c2c311373947156c25776",
         "type": "FIX",
-        "text": "sap.m.QuickViewPage: Destroying control doesn't lead to memory leak any more",
+        "text": "sap.m.QuickViewPage: Destroying control doesn\u0027t lead to memory leak any more",
         "references": []
       },
       {
         "id": "b8f6b442ae745765bdd1a4cdae932e1c69264d2e",
         "type": "FIX",
-        "text": "sap.m.RadioButton - Radio button is no longer highlighted in blue when editable=false and clicked",
+        "text": "sap.m.RadioButton - Radio button is no longer highlighted in blue when editable\u003dfalse and clicked",
         "references": []
       },
       {
@@ -939,7 +939,7 @@
       {
         "id": "b0a67864f8c1739a62549f7f0f6369eac277dc1f",
         "type": "FIX",
-        "text": "sap.m.SegmentedButton: didn't fire event in select mode",
+        "text": "sap.m.SegmentedButton: didn\u0027t fire event in select mode",
         "references": [
           {
             "type": "BCP",
@@ -989,7 +989,7 @@
       {
         "id": "4dd7cd4e7d9f005bd508412b8f5c065bb3c6f00f",
         "type": "FIX",
-        "text": "sap.m.Switch: don't try to lookup custom texts in sap.m bundle",
+        "text": "sap.m.Switch: don\u0027t try to lookup custom texts in sap.m bundle",
         "references": []
       },
       {
@@ -1171,7 +1171,7 @@
       {
         "id": "fc5f787bf417fcbbd3f47440f1f8277f9dd1820d",
         "type": "FIX",
-        "text": "sap.m.FacetFilter: when the last selected item is deselected list does not remain active; 'All' logic in the filter name is partially restored.",
+        "text": "sap.m.FacetFilter: when the last selected item is deselected list does not remain active; \u0027All\u0027 logic in the filter name is partially restored.",
         "references": [
           {
             "type": "BCP",
@@ -1215,7 +1215,7 @@
       {
         "id": "3ce08e544fc59e46d3e92f01b1633a136d79cb5b",
         "type": "FIX",
-        "text": "sap.m.Input: Role=textbox is no longer set",
+        "text": "sap.m.Input: Role\u003dtextbox is no longer set",
         "references": [
           {
             "type": "BCP",
@@ -1692,7 +1692,7 @@
       {
         "id": "6d444a625496efeb7b179a60aa3e9d248fea3780",
         "type": "FIX",
-        "text": "sap.m.InputBase: Pressing backspace on disabled input doesn't navigate to previous page any more",
+        "text": "sap.m.InputBase: Pressing backspace on disabled input doesn\u0027t navigate to previous page any more",
         "references": [
           {
             "type": "BCP",
@@ -1869,7 +1869,7 @@
       {
         "id": "69aa2a1ff97f52d44b2d79f3431613da02b7ae45",
         "type": "FIX",
-        "text": "sap.m.OverflowToolbar's popover would cause the other popup to close BCP: 1670487663",
+        "text": "sap.m.OverflowToolbar\u0027s popover would cause the other popup to close BCP: 1670487663",
         "references": [
           {
             "type": "BCP",
@@ -1935,7 +1935,7 @@
       {
         "id": "852d13598296aa83c73086c3919ada0621aeefe9",
         "type": "FIX",
-        "text": "sap.m.ProgressIndicator: long texts didn't truncate",
+        "text": "sap.m.ProgressIndicator: long texts didn\u0027t truncate",
         "references": [
           {
             "type": "BCP",
@@ -2067,7 +2067,7 @@
       {
         "id": "7cfd82c84b0088b356d013d35db1b7340e309d3b",
         "type": "FIX",
-        "text": "sap.m.Switch: hidden label's value wasn't updated when moving the switch BCP: 1680046830",
+        "text": "sap.m.Switch: hidden label\u0027s value wasn\u0027t updated when moving the switch BCP: 1680046830",
         "references": [
           {
             "type": "BCP",
@@ -2359,7 +2359,7 @@
       {
         "id": "4bb658fa46e6f44f64de7d0db02987c5fb9f13d5",
         "type": "FIX",
-        "text": "sap.m.ListItemBase: when user taps on list items they are not getting focused on iPhone even though tabindex=-1",
+        "text": "sap.m.ListItemBase: when user taps on list items they are not getting focused on iPhone even though tabindex\u003d-1",
         "references": [
           {
             "type": "BCP",
@@ -2435,7 +2435,7 @@
       {
         "id": "ef2c0d154497cd416588b96023a3b5cffb204632",
         "type": "FIX",
-        "text": "sap.m.RadioButtonGroup: Setters no longer modify RadioButtons' states",
+        "text": "sap.m.RadioButtonGroup: Setters no longer modify RadioButtons\u0027 states",
         "references": [
           {
             "type": "BCP",
@@ -3071,7 +3071,7 @@
       {
         "id": "fe1cc135d6ed25d5fc068e6d64b5f45cc20c5da2",
         "type": "FIX",
-        "text": "sap.m.MessagePopover: Popover's height is now adjusted properly on container resize",
+        "text": "sap.m.MessagePopover: Popover\u0027s height is now adjusted properly on container resize",
         "references": [
           {
             "type": "BCP",
@@ -3115,7 +3115,7 @@
       {
         "id": "f739f6b8a9745f39a18d6318ced584ea10a13cd6",
         "type": "FIX",
-        "text": "sap.m.MultiInput: When MultiInput.enabled=false, tokens can't be removed any more",
+        "text": "sap.m.MultiInput: When MultiInput.enabled\u003dfalse, tokens can\u0027t be removed any more",
         "references": [
           {
             "type": "BCP",
@@ -3402,7 +3402,7 @@
       {
         "id": "0a16d73448816b4dbb9db5b4f01a4bf78e8d3341",
         "type": "FIX",
-        "text": "sap.m.MaskInput - RTL behavior on Chrome ver >=58 when the cursor is at the beginning of the string",
+        "text": "sap.m.MaskInput - RTL behavior on Chrome ver \u003e\u003d58 when the cursor is at the beginning of the string",
         "references": [
           {
             "type": "BCP",
@@ -3510,7 +3510,7 @@
       {
         "id": "d199fc91cd0d546ea8147830ae77ab4040a50243",
         "type": "FIX",
-        "text": "sap.m.RangeSlider: Change & LiveChange events are now fired properly on click.",
+        "text": "sap.m.RangeSlider: Change \u0026 LiveChange events are now fired properly on click.",
         "references": [
           {
             "type": "BCP",
@@ -3521,7 +3521,7 @@
       {
         "id": "4726e283008d697cef6d975525b2730b03f885e3",
         "type": "FIX",
-        "text": "sap.m.SplitContainer: Initial flickering when mode=\"HideMode\" is now removed",
+        "text": "sap.m.SplitContainer: Initial flickering when mode\u003d\"HideMode\" is now removed",
         "references": [
           {
             "type": "BCP",
@@ -3686,7 +3686,7 @@
       {
         "id": "44517a32ef5331db92fff6d2634e4d28b859bc8b",
         "type": "FIX",
-        "text": "sap.m.ComboBox: Properly updating item's selection on model change.",
+        "text": "sap.m.ComboBox: Properly updating item\u0027s selection on model change.",
         "references": [
           {
             "type": "BCP",
@@ -4338,7 +4338,7 @@
       {
         "id": "82f25b9def2f7877a34e0122ec7608c0668c597c",
         "type": "FIX",
-        "text": "sap.m.BarInPageEnabler: Bars no longer care about the context they're used in (i.e. header, footer, etc.)",
+        "text": "sap.m.BarInPageEnabler: Bars no longer care about the context they\u0027re used in (i.e. header, footer, etc.)",
         "references": [
           {
             "type": "BCP",
@@ -4464,7 +4464,7 @@
       {
         "id": "f308b46e1c392e26c884a53ff74f5819314e61e5",
         "type": "FIX",
-        "text": "sap.m.Menu: property 'visible' of items works on phone devices.",
+        "text": "sap.m.Menu: property \u0027visible\u0027 of items works on phone devices.",
         "references": [
           {
             "type": "BCP",
@@ -4614,7 +4614,7 @@
       {
         "id": "d0247c23fa06e50e18ca3f4642009054fab97263",
         "type": "FIX",
-        "text": "sap.m.Button: fire press event on keydown for 'enter' and keyup for 'space'",
+        "text": "sap.m.Button: fire press event on keydown for \u0027enter\u0027 and keyup for \u0027space\u0027",
         "references": [
           {
             "type": "BCP",
@@ -4889,6 +4889,83 @@
             "reference": "1880169725"
           }
         ]
+      }
+    ]
+  },
+  "1.44.31": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "9ee79959115a6bca479286d353960adbb2c4405a",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxTextField: Zooming out no longer cuts the border",
+        "references": []
+      },
+      {
+        "id": "dc67aeeb18ed4a0de99c8ea0b04cf77c8caef322",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: sap.m.SegmentedButton is now correctly alligned",
+        "references": []
+      },
+      {
+        "id": "74a9fc518d61cad76cc17230b239efcef5b9a8f5",
+        "type": "FIX",
+        "text": " sap.m.GroupHeaderListItem: count and title should not be separated",
+        "references": []
+      },
+      {
+        "id": "15f8411fdfea9d3f8ffd4570d70e427c43a1c734",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Details are displayed correctly on mobile devices",
+        "references": []
+      },
+      {
+        "id": "e9502531924817f8951ef3d1efb9ddcd028465d0",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Failing qunit fixed",
+        "references": []
+      },
+      {
+        "id": "f93bf5b6e686796414e6d5581ef66e2d1dc71d58",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Navigation in one month view works propperly",
+        "references": []
+      },
+      {
+        "id": "d9f5289dc32267865a8e6c07e8ba4b60ec325aeb",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header icon size",
+        "references": []
+      },
+      {
+        "id": "2992030e926093d41e03610adaa98052ff40a66c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix failing unit test on combi devices",
+        "references": []
+      },
+      {
+        "id": "ee1606180f34f369578c4f31a7da2780c33f517b",
+        "type": "FIX",
+        "text": " sap.m.Select: Value state information is now read",
+        "references": []
+      },
+      {
+        "id": "b838001d6ee09259e39ec7f6902e323c19df0df7",
+        "type": "FIX",
+        "text": " sap.m.StepInput: do not create global NumericInput",
+        "references": []
+      },
+      {
+        "id": "5fea23fdcd3741148759dfaeb587054495daed6b",
+        "type": "FIX",
+        "text": " sap.m.TablePersoController: works now also with \"late attachment\"",
+        "references": []
+      },
+      {
+        "id": "aa71ce8c74ff9b074e9b85b4f6cb5fcd260dacbc",
+        "type": "FIX",
+        "text": " sap.m.ViewSettingsDialog: correct filter examples",
+        "references": []
       }
     ]
   }

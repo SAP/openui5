@@ -245,5 +245,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.5": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "21cdfe4e2f2708671f60eeab58117cd234e75ba4",
+        "type": "FIX",
+        "text": " uxap.AnchorBar: HierarchicalSelect icon missalignment fixed",
+        "references": []
+      }
+    ]
   }
 }

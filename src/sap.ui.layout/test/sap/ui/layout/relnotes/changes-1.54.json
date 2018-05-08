@@ -103,5 +103,16 @@
         "references": []
       }
     ]
+  },
+  "1.54.5": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "205eb8b175c7e350ae8fba1ac935918db0df6236",
+        "type": "FIX",
+        "text": " SimpleForm: Error if layout is set after content",
+        "references": []
+      }
+    ]
   }
 }
