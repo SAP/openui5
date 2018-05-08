@@ -337,6 +337,8 @@ sap.ui.define([
 	 *   A relative path within the JSON structure
 	 * @returns {any}
 	 *   The requested value
+	 * @throws {Error}
+	 *   If the context's root binding is suspended
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getObject
@@ -344,7 +346,10 @@ sap.ui.define([
 	 */
 	// @override
 	Context.prototype.getObject = function (sPath) {
-		var oSyncPromise = this.fetchValue(sPath);
+		var oSyncPromise;
+
+		this.oBinding.checkSuspended();
+		oSyncPromise = this.fetchValue(sPath);
 
 		if (oSyncPromise.isFulfilled()) {
 			return _Helper.publicClone(oSyncPromise.getResult());
@@ -365,7 +370,7 @@ sap.ui.define([
 	 * @returns {any}
 	 *   The requested property value
 	 * @throws {Error}
-	 *   If the value is not primitive
+	 *   If the context's root binding is suspended or if the value is not primitive
 	 *
 	 * @public
 	 * @see sap.ui.model.Context#getProperty
@@ -374,8 +379,10 @@ sap.ui.define([
 	 */
 	// @override
 	Context.prototype.getProperty = function (sPath, bExternalFormat) {
-		var oError,
-			oSyncPromise = fetchPrimitiveValue(this, sPath, bExternalFormat);
+		var oError, oSyncPromise;
+
+		this.oBinding.checkSuspended();
+		oSyncPromise = fetchPrimitiveValue(this, sPath, bExternalFormat);
 
 		if (oSyncPromise.isRejected()) {
 			oSyncPromise.caught();
