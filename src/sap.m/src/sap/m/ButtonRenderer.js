@@ -193,11 +193,16 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap
 				oRm.writeAttribute("dir", sTextDir.toLowerCase());
 			}
 			oRm.writeClasses();
-			oRm.writeAttribute("id", oButton.getId() + "-content");
+			if (!bRenderBDI) {
+				// without bdi, the span is the content container
+				oRm.writeAttribute("id", oButton.getId() + "-content");
+			}
 			oRm.write(">");
 
 			if (bRenderBDI) {
-				oRm.write("<bdi>");
+				oRm.write("<bdi ");
+				oRm.writeAttribute("id", oButton.getId() + "-content");
+				oRm.write(">");
 			}
 			oRm.writeEscaped(sText);
 			if (bRenderBDI) {

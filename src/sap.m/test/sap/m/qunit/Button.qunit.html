@@ -239,11 +239,11 @@
 
 	QUnit.test("BDI set when no textdirection is given explicitly", function(assert) {
 		var bIE_Edge = sap.ui.Device.browser.internet_explorer || sap.ui.Device.browser.edge;
-		var $btnBDITag = document.getElementById('b1-content').firstChild.nodeName;
+		var $btnBDITag = document.getElementById('b1-content').nodeName;
 		if (!bIE_Edge) {
-			assert.equal($btnBDITag.toLowerCase(), "bdi", "Control has bidi tag set");
+			assert.equal($btnBDITag.toLowerCase(), "bdi", "Control has bdi tag set");
 		} else {
-			assert.ok(!($btnBDITag.toLowerCase() == "bdi"), "Control doesn't have bidi tag set when the browser is IE or Edge, since it's not supported");
+			assert.ok(!($btnBDITag.toLowerCase() == "bdi"), "Control doesn't have bdi tag set when the browser is IE or Edge, since it's not supported");
 		}
 	});
 
