@@ -118,16 +118,6 @@ function(
 		}
 	};
 
-	MetadataPropagationUtil._getPropagation = function(mParentMetadata, oElement, callback) {
-		if (!mParentMetadata ||
-			!mParentMetadata.propagationInfos) {
-			return false;
-		}
-		mParentMetadata.propagationInfos.some(function(oPropagatedInfo){
-			return callback(oPropagatedInfo);
-		});
-	};
-
 	/**
 	 * Method extracts relevant container from given parent metadata if available.
 	 *
@@ -138,7 +128,12 @@ function(
 	MetadataPropagationUtil.getRelevantContainerForPropagation = function(mParentMetadata, oElement) {
 		var vPropagatedRelevantContainer = false;
 
-		MetadataPropagationUtil._getPropagation(mParentMetadata, oElement, function(oPropagatedInfo){
+		if (!mParentMetadata ||
+			!mParentMetadata.propagationInfos) {
+			return false;
+		}
+
+		mParentMetadata.propagationInfos.some(function(oPropagatedInfo){
 			if (oPropagatedInfo.relevantContainerFunction &&
 				oPropagatedInfo.relevantContainerFunction(oElement)) {
 				vPropagatedRelevantContainer = oPropagatedInfo.relevantContainerElement;
@@ -150,22 +145,32 @@ function(
 	};
 
 	/**
-	 * Method extracts propagated metadata map from given parent metadata if available.
+	 * Method extracts propagated metadata map from given parents metadata if available.
 	 *
-	 * @param {object} mParentMetadata - aggregation designtime metadata data from parent
+	 * @param {object} mParentMetadata - aggregation designtime metadata data from parents
 	 * @param {sap.ui.core.Element} oElement - element to check for propagated metadata map
 	 * @return {object|boolean} Returns propagated metadata map if available, otherwise it returns false.
 	 */
 	MetadataPropagationUtil.getMetadataForPropagation = function(mParentMetadata, oElement) {
-		var vReturnMetadata = false;
+		var vReturnMetadata = {};
 
-		MetadataPropagationUtil._getPropagation(mParentMetadata, oElement, function(oPropagatedInfo) {
+		if (!mParentMetadata ||
+			!mParentMetadata.propagationInfos) {
+			return false;
+		}
+
+		//Propagated infos are ordered from highest to lowest parent
+		//The highest parent always "wins", so we need to extend starting from the bottom
+		var aRevertedPropagationInfos = mParentMetadata.propagationInfos.slice().reverse();
+
+		vReturnMetadata = aRevertedPropagationInfos.reduce(function(vReturnMetadata, oPropagatedInfo){
 			if (oPropagatedInfo.metadataFunction) {
-				vReturnMetadata = oPropagatedInfo.metadataFunction(oElement, oPropagatedInfo.relevantContainerElement);
-				return vReturnMetadata ? true : false;
+				var oCurrentMetadata = oPropagatedInfo.metadataFunction(oElement, oPropagatedInfo.relevantContainerElement);
+				return jQuery.extend(true, vReturnMetadata, oCurrentMetadata);
 			}
-		});
-		return vReturnMetadata ? vReturnMetadata : false;
+		}, vReturnMetadata);
+
+		return jQuery.isEmptyObject(vReturnMetadata) ? false : vReturnMetadata;
 	};
 
 	/**
