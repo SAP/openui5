@@ -372,7 +372,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 	 *
 	 * @param {Object[]} aFallbackFormatOptions the options for creating the fallback DateFormat
 	 * @param {sap.ui.core.CalendarType} sCalendarType the type of the current calendarType
-	 * @param {sap.ui.core.LocalData} oLocale Locale to ask for locale specific texts/settings
+	 * @param {sap.ui.core.LocaleData} oLocale Locale to ask for locale specific texts/settings
 	 * @param {Object} oInfo The default info object of the current date type
 	 * @return {sap.ui.core.DateFormat[]} an array of fallback DateFormat instances
 	 */
@@ -2177,8 +2177,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/library', 'sap/ui/core/Locale',
 		var bAll = false;
 		var oPart;
 
-		for (var i = 0; i < this.aFormatArray.length; i++) {
-			oPart = this.aFormatArray[i];
+		for (var i = 0; i < aFormatArray.length; i++) {
+			oPart = aFormatArray[i];
 			switch (oPart.type) {
 			case "text":
 				if (sAllowedCharacters.indexOf(oPart.value) < 0) {
