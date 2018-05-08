@@ -1387,13 +1387,17 @@ sap.ui.define([
 	ObjectPageLayout.prototype.setShowAnchorBarPopover = function (bValue, bSuppressInvalidate) {
 
 		var bOldValue = this.getProperty("showAnchorBarPopover"),
-			bValue = this.validateProperty("showAnchorBarPopover", bValue);
+			bValue = this.validateProperty("showAnchorBarPopover", bValue),
+			sSelectedSectionId = this.getSelectedSection();
+
 		if (bValue === bOldValue) {
 			return;
 		}
 
 		this._oABHelper._getAnchorBar().setShowPopover(bValue);
 		this._oABHelper._buildAnchorBar();
+		this._setSelectedSectionId(sSelectedSectionId);
+
 		return this.setProperty("showAnchorBarPopover", bValue, true /* don't re-render the whole objectPageLayout */);
 	};
 
