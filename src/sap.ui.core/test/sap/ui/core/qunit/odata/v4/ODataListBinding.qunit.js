@@ -1123,7 +1123,7 @@ sap.ui.require([
 		this.mock(ODataListBinding.prototype).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
 		this.mock(oControl.getObjectBinding()).expects("fetchValue").atLeast(1)
-			.withExactArgs("/TEAMS('4711')/TEAM_2_EMPLOYEES", undefined, undefined)
+			.withExactArgs("/TEAMS('4711')/TEAM_2_EMPLOYEES", undefined)
 			.returns(oPromise);
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -1343,7 +1343,7 @@ sap.ui.require([
 					//check delegation of fetchValue from context
 					oPromise = {}; // a fresh new object each turn around
 					oBindingMock.expects("fetchValue").withExactArgs(
-							"/EMPLOYEES/" + (iStart + i) + "/foo/bar/" + i, undefined, undefined)
+							"/EMPLOYEES/" + (iStart + i) + "/foo/bar/" + i, undefined)
 						.returns(oPromise);
 
 					assert.strictEqual(aContexts[i].fetchValue("foo/bar/" + i), oPromise);
@@ -1807,30 +1807,25 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	[undefined, new _GroupLock("groupId")].forEach(function (oGroupLock) {
-		QUnit.test("fetchValue: absolute binding", function (assert) {
-			var oBinding = this.oModel.bindList("/EMPLOYEES"),
-				oListener = {},
-				oPromise,
-				oReadResult = {};
+	QUnit.test("fetchValue: absolute binding", function (assert) {
+		var oBinding = this.oModel.bindList("/EMPLOYEES"),
+			oListener = {},
+			oPromise,
+			oReadResult = {};
 
-			this.mock(oBinding).expects("getRelativePath")
-				.withExactArgs("/EMPLOYEES/42/bar").returns("42/bar");
-			if (oGroupLock) {
-				this.mock(oGroupLock).expects("unlock").withExactArgs();
-			}
-			this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
-				.withExactArgs(sinon.match.same(_GroupLock.$cached), "42/bar", undefined,
-					sinon.match.same(oListener))
-				.returns(SyncPromise.resolve(oReadResult));
+		this.mock(oBinding).expects("getRelativePath")
+			.withExactArgs("/EMPLOYEES/42/bar").returns("42/bar");
+		this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
+			.withExactArgs(sinon.match.same(_GroupLock.$cached), "42/bar", undefined,
+				sinon.match.same(oListener))
+			.returns(SyncPromise.resolve(oReadResult));
 
-			// code under test
-			oPromise = oBinding.fetchValue("/EMPLOYEES/42/bar", oListener, oGroupLock);
+		// code under test
+		oPromise = oBinding.fetchValue("/EMPLOYEES/42/bar", oListener);
 
-			assert.ok(oPromise.isFulfilled());
-			return oPromise.then(function (oResult) {
-				assert.strictEqual(oResult, oReadResult);
-			});
+		assert.ok(oPromise.isFulfilled());
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, oReadResult);
 		});
 	});
 
@@ -1844,27 +1839,16 @@ sap.ui.require([
 
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
 		this.mock(oContext).expects("fetchValue")
-			.withExactArgs(sPath, sinon.match.same(oListener), "group")
+			.withExactArgs(sPath, sinon.match.same(oListener))
 			.returns(SyncPromise.resolve(oResult));
 
-		assert.strictEqual(oBinding.fetchValue(sPath, oListener, "group").getResult(), oResult);
+		assert.strictEqual(oBinding.fetchValue(sPath, oListener).getResult(), oResult);
 	});
 	//TODO provide iStart, iLength parameter to fetchValue to support paging on nested list
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: relative binding, unresolved", function (assert) {
 		this.oModel.bindList("TEAM_2_EMPLOYEES").fetchValue("bar", {}).then(function (oResult) {
-			assert.strictEqual(oResult, undefined);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchValue: relative binding, group lock, unresolved", function (assert) {
-		var oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES"),
-			oGroupLock = new _GroupLock();
-
-		this.mock(oGroupLock).expects("unlock").withExactArgs();
-		oBinding.fetchValue("bar", {}, oGroupLock).then(function (oResult) {
 			assert.strictEqual(oResult, undefined);
 		});
 	});
@@ -1891,14 +1875,10 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
 		this.mock(oGroupLock).expects("unlock").never();
-		this.mock(oContext).expects("fetchValue")
-			.withExactArgs(sPath, undefined, sinon.match.same(oGroupLock))
-			.returns(oResult);
+		this.mock(oContext).expects("fetchValue").withExactArgs(sPath, undefined).returns(oResult);
 
 		// code under test
-		assert.strictEqual(
-			oBinding.fetchValue(sPath, undefined, oGroupLock).getResult(),
-			oResult);
+		assert.strictEqual(oBinding.fetchValue(sPath).getResult(), oResult);
 	});
 
 	//*********************************************************************************************
