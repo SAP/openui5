@@ -2142,7 +2142,7 @@ sap.ui.define([
 	 *     Instead of specifying just the names of components, an object might be given that contains a
 	 *     mandatory <code>name</code> property and, optionally, a <code>url</code> that will be used for a <code>registerModulePath</code>.
 	 * @param {boolean} [mOptions.asyncHints.preloadOnly=false] Whether only the preloads should be done, but not the loading of the Component controller class itself.
-	 * @returna {Promise<function>} A Promise that resolves with the loaded component class or <code>undefined</code> in case
+	 * @returns {Promise<function>} A Promise that resolves with the loaded component class or <code>undefined</code> in case
 	 *      <code>mOptions.asyncHints.preloadOnly</code> is set to <code>true</code>
 	 *
 	 * @since 1.56.0
