@@ -9,6 +9,7 @@ sap.ui.require([
 	// internal
 	'sap/ui/dt/plugin/ContextMenu',
 	'sap/ui/dt/OverlayRegistry',
+	'sap/ui/dt/DesignTime',
 	'sap/ui/fl/registry/Settings',
 	'sap/ui/fl/Change',
 	'sap/ui/fl/Utils',
@@ -32,6 +33,7 @@ sap.ui.require([
 	MessageToast,
 	ContextMenuPlugin,
 	OverlayRegistry,
+	DesignTime,
 	Settings,
 	Change,
 	Utils,
@@ -325,6 +327,18 @@ sap.ui.require([
 			}.bind(this));
 		});
 
+		QUnit.test("when RTA is started and _handlePersonalizationChangesOnStart returns true", function(assert) {
+			assert.expect(3);
+			sandbox.stub(this.oRta, "_handlePersonalizationChangesOnStart").returns(Promise.resolve(true));
+			var oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
+			return this.oRta.start()
+			.catch(function(oError) {
+				assert.ok(true, "then the start promise rejects");
+				assert.equal(oFireFailedStub.callCount, 0, "and fireFailed was not called");
+				assert.equal(oError, "Reload triggered", "and the Error is 'Reload triggered'");
+			});
+		});
+
 		QUnit.test("when RTA toolbar gets closed (exit without appClosed)", function(assert) {
 			var done = assert.async();
 
@@ -350,6 +364,32 @@ sap.ui.require([
 			this.oRta.start().then(function () {
 				this.oRta.getToolbar().getControl('exit').firePress();
 			}.bind(this));
+		});
+
+		QUnit.test("when RTA gets started without root control", function(assert) {
+			assert.expect(2);
+			this.oRta.setRootControl(undefined);
+			return this.oRta.start()
+			.catch(function(oError) {
+				assert.ok(true, "the start function rejects the promise");
+				assert.equal(oError, "Could not start Runtime Adaptation: Root control not found", "with the correct Error");
+			});
+		});
+
+		QUnit.test("when RTA gets started and DesignTime fails to start", function(assert) {
+			assert.expect(3);
+			sandbox.stub(DesignTime.prototype, "addRootElement").callsFake(function() {
+				setTimeout(function() {
+					this.fireSyncFailed({error: "DesignTime failed"});
+				}.bind(this), 0);
+			});
+			var oFireFailedStub = sandbox.stub(this.oRta, "fireFailed");
+			return this.oRta.start()
+			.catch(function(oError) {
+				assert.ok(true, "the start function rejects the promise");
+				assert.equal(oError, "DesignTime failed", "with the correct Error");
+				assert.equal(oFireFailedStub.callCount, 1, "and fireFailed was called");
+			});
 		});
 	});
 
