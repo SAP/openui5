@@ -2974,5 +2974,58 @@
         "references": []
       }
     ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "7527d3b00d4948355fb8f22e9372880583d775d6",
+        "type": "FIX",
+        "text": " sap.m.ComboBoxTextField: Zooming out no longer cuts the border",
+        "references": []
+      },
+      {
+        "id": "aab4251cf6eda3a1a06e357eb837b3499ac73dde",
+        "type": "FIX",
+        "text": " sap.m.GroupHeaderListItem: count and title should not be separated",
+        "references": []
+      },
+      {
+        "id": "3911dc781c6813c24d044b1ae9532bd08a66cc54",
+        "type": "FIX",
+        "text": " sap.m.Image: DetailBox opens when Image is used with list binding",
+        "references": []
+      },
+      {
+        "id": "bfaf0040c32ffbb15400cac26fb7f906e410cf8e",
+        "type": "FIX",
+        "text": " sap.m.MessageBox: Details are displayed correctly on mobile devices",
+        "references": []
+      },
+      {
+        "id": "8b25c95aac3de04ffcc8f169e9029c2b51765a2f",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: ObjectAttribute gets no longer truncated in active state",
+        "references": []
+      },
+      {
+        "id": "b3a8dea5e45c5820f62d66ee583b306569b10da3",
+        "type": "FIX",
+        "text": " sap.m.ObjectAttribute: used in active state in a table gets no longer truncated",
+        "references": []
+      },
+      {
+        "id": "0bae3128db8145893ccde3e83b3862785694bff3",
+        "type": "FIX",
+        "text": " sap.m.Page: Do not focus on the hidden footer.",
+        "references": []
+      },
+      {
+        "id": "ea7835daf1c7b499360b69d96f823ee079850711",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: wrap title of the row",
+        "references": []
+      }
+    ]
   }
 }

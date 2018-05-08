@@ -81,5 +81,16 @@
         ]
       }
     ]
+  },
+  "1.52.12": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "687a1dd744c5877c4220e54d2fb673940dcc9386",
+        "type": "FIX",
+        "text": " sap.f.Avatar: DetailBox opens when avatar used with list binding",
+        "references": []
+      }
+    ]
   }
 }

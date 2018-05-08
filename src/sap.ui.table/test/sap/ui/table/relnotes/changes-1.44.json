@@ -832,5 +832,22 @@
         "references": []
       }
     ]
+  },
+  "1.44.31": {
+    "date": "April 2018",
+    "notes": [
+      {
+        "id": "46fac3ba902aa9a3fd54766fccbc519902d30660",
+        "type": "FIX",
+        "text": " GridTable: applyFocusInfo handling corrected",
+        "references": []
+      },
+      {
+        "id": "f6346197366173188d2f7c92e4e3600e0cbae50c",
+        "type": "FIX",
+        "text": " Table: Prevent scrolling to top on binding refresh",
+        "references": []
+      }
+    ]
   }
 }
