@@ -474,6 +474,12 @@
 
 			//Assert
 			assert.ok(oSpyButtonSetProperty.calledWith("textDirection", sap.ui.core.TextDirection.RTL), "SplitButton's setProperty called for textDirection property");
+
+			//Act
+			this.sut.setProperty("enabled", false);
+
+			//Assert
+			assert.ok(oSpyButtonSetProperty.calledWith("enabled", false), "SplitButton's setProperty called for enabled property");
 		});
 
 		QUnit.test("_getFocusDomRef", function(assert) {
