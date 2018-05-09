@@ -1,10 +1,13 @@
 /*!
  * ${copyright}
  */
-sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
-				'sap/ui/fl/Utils'
-], function(BaseCommand,
-			flUtils) {
+sap.ui.define([
+	'sap/ui/rta/command/BaseCommand',
+	'sap/ui/fl/Utils'
+], function(
+	BaseCommand,
+	FlUtils
+) {
 	"use strict";
 
 	/**
@@ -47,7 +50,7 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 		this._forEachCommand(function(oCommand){
 			aPromises.push(oCommand.execute.bind(oCommand));
 		});
-		return flUtils.execPromiseQueueSequentially(aPromises, true)
+		return FlUtils.execPromiseQueueSequentially(aPromises, true)
 
 		.catch(function(e) {
 			var aCommands = this.getCommands();
@@ -72,7 +75,7 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 		this._forEachCommandInReverseOrder(function(oCommand){
 			aPromises.push(oCommand.undo.bind(oCommand));
 		});
-		return flUtils.execPromiseQueueSequentially(aPromises);
+		return FlUtils.execPromiseQueueSequentially(aPromises);
 	};
 
 	CompositeCommand.prototype._forEachCommand = function(fnDo) {
@@ -89,12 +92,12 @@ sap.ui.define([ 'sap/ui/rta/command/BaseCommand',
 
 	CompositeCommand.prototype._addCompositeIdToChange = function(oCommand) {
 		if (oCommand.getPreparedChange && oCommand.getPreparedChange()) {
-			var oChangeContent = oCommand.getPreparedChange().getDefinition();
-			if (!oChangeContent.compositeCommand) {
+			var oChangeDefinition = oCommand.getPreparedChange().getDefinition();
+			if (!oChangeDefinition.support.compositeCommand) {
 				if (!this._sCompositeId) {
-					this._sCompositeId = flUtils.createDefaultFileName("composite");
+					this._sCompositeId = FlUtils.createDefaultFileName("composite");
 				}
-				oChangeContent.compositeCommand = this._sCompositeId;
+				oChangeDefinition.support.compositeCommand = this._sCompositeId;
 			}
 		}
 	};
