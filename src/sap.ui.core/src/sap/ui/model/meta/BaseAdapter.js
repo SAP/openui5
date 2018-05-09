@@ -11,13 +11,14 @@
  * @param {string} mMetadataContext.modelName the name of the model
  * @param {string} mMetadataContext.contextName the name of the context
  * @param {object} mProperties the properties and redirection function
- * @return {sap.ui.model.meta.BaseAdapter} an instance of a context specific adapter Abstract Model adapter
- * @experimental
+ * @returns {sap.ui.model.meta.BaseAdapter} an instance of a context specific adapter
+ *
+ * @experimental Since 1.58
  * @abstract
  */
 sap.ui.define([
-	"jquery.sap.global", "sap/ui/base/Object"
-], function(jQuery, BaseObject) {
+	"jquery.sap.global", "sap/ui/base/Object", "./AdapterConstants", "sap/ui/model/json/JSONModel", "sap/ui/base/SyncPromise"
+], function(jQuery, BaseObject, AdapterConstants, JSONModel, SyncPromise) {
 	"use strict";
 
 	var BaseAdapter = BaseObject.extend("sap.ui.model.meta.BaseAdapter", {
@@ -33,12 +34,8 @@ sap.ui.define([
 		 * @protected
 		 */
 		sModelName: undefined,
-		/**
-		 * The cached properties
-		 *
-		 * @private
-		 */
 		constructor: function(mMetadataContext, mProperties) {
+			this.constants = AdapterConstants;
 			this.mMetadataContext = mMetadataContext;
 			this.oModel = mMetadataContext.model;
 			this.oMetaModel = this.oModel.getMetaModel();
@@ -49,11 +46,6 @@ sap.ui.define([
 			this._mProperties = {};
 			this._mPropertyBag = {};
 			this._mCustomPropertyBag = {};
-
-			this.oMetaContext = this.oMetaModel.getMetaContext(this.path);
-			if (!this.metaPath) {
-				this.metaPath = this.oMetaContext.getPath();
-			}
 
 			this.init();
 
@@ -78,7 +70,13 @@ sap.ui.define([
 		 *
 		 * @protected
 		 */
-		init: function(sMetaPath, sPath) {
+		init: function() {
+			if (!this.metaPath) {
+				this.oMetaContext = this.oMetaModel.getMetaContext(this.path);
+				this.metaPath = this.oMetaContext.getPath();
+			} else {
+				this.oMetaContext = this.oMetaModel.createBindingContext(this.metaPath);
+			}
 		},
 		/**
 		 * The name of the model
@@ -113,11 +111,14 @@ sap.ui.define([
 					}
 
 					if (!this._mPropertyBag.hasOwnProperty(sProperty)) {
+						this._mPropertyBag[sProperty] = new SyncPromise(function(resolve, reject) {
 						if (typeof vGetter == 'function') {
-							this._mPropertyBag[sProperty] = vGetter.apply(caller, aArgs);
+								resolve(vGetter.apply(caller, aArgs));
 						} else {
-							this._mPropertyBag[sProperty] = vGetter;
+								resolve(vGetter);
 						}
+						});
+
 					}
 
 					return this._mPropertyBag[sProperty];
@@ -139,6 +140,10 @@ sap.ui.define([
 
 			if (this.modelName) {
 				sPath = sPath + "model: '" + this.modelName + "',";
+			}
+
+			if (this.sContextPath && sValuePath.startsWith(this.sContextPath)) {
+				sValuePath = sValuePath.replace(this.sContextPath,"");
 			}
 
 			sPath = sPath + "path: '" + sValuePath + "'";
@@ -170,28 +175,39 @@ sap.ui.define([
 		},
 		parentPromise: function(sParentModulePath, mMetadataContext) {
 			return new Promise(function(resolve, reject) {
-				sap.ui.define([
+				sap.ui.require([
 					sParentModulePath
 				], function(ParentAdapter) {
 					var oParent = new ParentAdapter(mMetadataContext);
 					resolve(oParent);
 				});
 			});
+		},
+		getAdapterModel: function() {
+			if (!this._oAdapterModel) {
+				this._oAdapterModel = new JSONModel(this);
+			}
+			return this._oAdapterModel;
+		},
+		updateContextPath: function(oControl) {
+			var oControlCtx = oControl.getBindingContext(this.model);
+			var sContextPath = oControlCtx ? this.removeKeys(oControlCtx.getPath()) + "/" : null;
+			if (sContextPath && sContextPath != this.sContextPath) {
+				this.sContextPath = sContextPath;
+				this._mPropertyBag = {};
+			}
+		},
+		/**
+		 *
+		 * Removes the keys from the model/meta model path
+		 *
+		 * @param {string} sPath the path, e.g. /PurchaseOrders('300000020')
+		 * @return {string} sKeyLess the key free path /PurchaseOrders
+		 */
+		removeKeys: function(sPath) {
+			return sPath;
 		}
 	});
-
-	BaseAdapter.Relation = {
-		atMostOne: "0..1",
-		one: "1",
-		many: "n"
-	};
-
-	BaseAdapter.SupportedSortDirection = {
-		none: "none",
-		both: "both",
-		asc: "ascending",
-		desc: "descending"
-	};
 
 	return BaseAdapter;
 
