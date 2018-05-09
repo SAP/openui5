@@ -22,6 +22,14 @@
 					footer: this.getFooter()
 				});
 			},
+			getDynamicPageHeaderSnapped: function () {
+				return new DynamicPage({
+					headerExpanded: false,
+					title: this.getDynamicPageTitle(),
+					header: this.getDynamicPageHeader(),
+					content: this.getContent(100)
+				});
+			},
 			getDynamicPageWithBigContent: function () {
 				return new DynamicPage({
 					showFooter: true,
@@ -307,6 +315,29 @@
 
 		// assert
 		assert.ok(!oStateChangeListener.called, "stateChange event was not fired");
+	});
+
+	QUnit.module("DynamicPage - API - header initially snapped", {
+		beforeEach: function () {
+			this.oDynamicPage = oFactory.getDynamicPageHeaderSnapped();
+			oUtil.renderObject(this.oDynamicPage);
+		},
+		afterEach: function () {
+			this.oDynamicPage.destroy();
+			this.oDynamicPage = null;
+		}
+	});
+
+	QUnit.test("DynamicPage headerExpanded=false pin button visibility", function (assert) {
+		var $oPinButton = this.oDynamicPage.getHeader()._getPinButton().$();
+
+		assert.ok($oPinButton.hasClass("sapUiHidden"), "Pin header button should not be visible initially");
+
+		this.oDynamicPage.setHeaderExpanded(true);
+		assert.notOk($oPinButton.hasClass("sapUiHidden"), "Pin header button should be visible again");
+
+		this.oDynamicPage.setHeaderExpanded(false);
+		assert.ok($oPinButton.hasClass("sapUiHidden"), "Pin header button should be hidden again");
 	});
 
 	/* --------------------------- DynamicPage Title API ---------------------------------- */
