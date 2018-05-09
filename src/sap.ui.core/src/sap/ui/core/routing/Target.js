@@ -297,7 +297,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/Control', 'sap/ui/base/EventPro
 		 * @param {object} mSettings configuration object for the TitleProvider
 		 * @param {object} mSettings.target Target for which the TitleProvider is created
 		 * @private
-		 * @extends sap.ui.base.Control
+		 * @extends sap.ui.core.Control
 		 */
 		var TitleProvider = Control.extend("sap.ui.core.routing.Target.TitleProvider", /** @lends sap.ui.core.routing.TitleProvider.prototype */ {
 			metadata: {

@@ -590,7 +590,7 @@ function(
 	/**
 	 * Sets the HTML tag of the root domref
 	 * @param {string} sTag
-	 * @returns {IBar} this for chaining
+	 * @returns {sap.m.IBar} this for chaining
 	 * @protected
 	 * @function
 	 */
@@ -598,7 +598,7 @@ function(
 
 	/**
 	 * Gets the HTML tag of the root domref
-	 * @returns {IBarHTMLTag} the HTML-tag
+	 * @returns {string} the HTML-tag
 	 * @protected
 	 * @function
 	 */
@@ -606,7 +606,7 @@ function(
 
 	/**
 	 * Sets classes and HTML tag according to the context of the page. Possible contexts are header, footer, subheader
-	 * @returns {IBar} <code>this</code> for chaining
+	 * @returns {sap.m.IBar} <code>this</code> for chaining
 	 * @protected
 	 * @function
 	 */
