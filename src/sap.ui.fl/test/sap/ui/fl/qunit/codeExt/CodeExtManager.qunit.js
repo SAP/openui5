@@ -218,7 +218,8 @@ sap.ui.require([
 					generator: "Change.createInitialFileContent",
 					service: "",
 					user: "",
-					sapui5Version: sap.ui.version
+					sapui5Version: sap.ui.version,
+					compositeCommand: ""
 				},
 				dependentSelector: {},
 				validAppVersions: {},
@@ -248,7 +249,8 @@ sap.ui.require([
 					generator: "Change.createInitialFileContent",
 					service: "",
 					user: "",
-					sapui5Version: sap.ui.version
+					sapui5Version: sap.ui.version,
+					compositeCommand: ""
 				},
 				dependentSelector: {},
 				validAppVersions: {},

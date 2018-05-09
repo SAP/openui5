@@ -671,14 +671,16 @@ function(
 				"selector": {
 					"id": "field1",
 					"idIsLocal": true
-				}
+				},
+				support: {}
 			};
 			var oChangeContent2 = {
 					"fileName": "fileName2",
 					"selector": {
 						"id": "field2",
 						"idIsLocal": true
-					}
+					},
+					support: {}
 				};
 			var oChange1 = new Change(oChangeContent1);
 			var oChange2 = new Change(oChangeContent2);
@@ -688,9 +690,9 @@ function(
 			assert.notOk(this.compositeCommand._sCompositeId, "there is no private composite id set initially");
 			this.compositeCommand.insertCommand(this.command4, 0);
 			assert.ok(this.compositeCommand._sCompositeId, "there is a private composite id set after adding the first command");
-			assert.equal(this.command4._oPreparedChange.getDefinition().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
+			assert.equal(this.command4._oPreparedChange.getDefinition().support.compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
 			this.compositeCommand.insertCommand(this.command5, 0);
-			assert.equal(this.command5._oPreparedChange.getDefinition().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
+			assert.equal(this.command5._oPreparedChange.getDefinition().support.compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
 		});
 
 		QUnit.test("when adding a command to a composite command, ", function(assert) {
@@ -699,15 +701,17 @@ function(
 				"selector": {
 					"id": "field1",
 					"idIsLocal": true
-				}
+				},
+				support: {}
 			};
 			var oChangeContent2 = {
-					"fileName": "fileName2",
-					"selector": {
-						"id": "field2",
-						"idIsLocal": true
-					}
-				};
+				"fileName": "fileName2",
+				"selector": {
+					"id": "field2",
+					"idIsLocal": true
+				},
+				support: {}
+			};
 			var oChange1 = new Change(oChangeContent1);
 			var oChange2 = new Change(oChangeContent2);
 			this.command4._oPreparedChange = oChange1;
@@ -716,9 +720,9 @@ function(
 			assert.notOk(this.compositeCommand._sCompositeId, "there is no private composite id set initially");
 			this.compositeCommand.addCommand(this.command4);
 			assert.ok(this.compositeCommand._sCompositeId, "there is a private composite id set after adding the first command");
-			assert.equal(this.command4._oPreparedChange.getDefinition().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
+			assert.equal(this.command4._oPreparedChange.getDefinition().support.compositeCommand, this.compositeCommand._sCompositeId, "the id is written to the prepared change");
 			this.compositeCommand.addCommand(this.command5);
-			assert.equal(this.command5._oPreparedChange.getDefinition().compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
+			assert.equal(this.command5._oPreparedChange.getDefinition().support.compositeCommand, this.compositeCommand._sCompositeId, "the id is written to any further prepared change of an added command");
 		});
 
 		QUnit.test("After adding commands to composite command, when executing the composite and undoing it", function(assert) {
