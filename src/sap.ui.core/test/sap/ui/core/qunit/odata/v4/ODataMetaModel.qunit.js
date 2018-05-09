@@ -1648,38 +1648,41 @@ sap.ui.require([
 			this.allowWarnings(assert, bWarn);
 
 			// code under test
-			return this.oMetaModel.fetchObject("/tea_busi_product.v0001.")
-				.then(function (vResult) {
-					var oSyncPromise;
+			return this.oMetaModel.fetchObject("/tea_busi_product.v0001.").then(function (vResult) {
+				var oSyncPromise;
 
-					assert.strictEqual(vResult, mReferencedScope["tea_busi_product.v0001."]);
+				assert.strictEqual(vResult, mReferencedScope["tea_busi_product.v0001."]);
 
-					that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
-						.withExactArgs("Unknown qualified name must.not.be.included.",
-							"/must.not.be.included.", sODataMetaModel);
-					assert.strictEqual(that.oMetaModel.getObject("/must.not.be.included."),
-						undefined,
-						"must not include schemata which are not mentioned in edmx:Include");
+				assert.ok(that.oMetaModel.mSchema2MetadataUrl["tea_busi_product.v0001."]
+					["/a/default/iwbep/tea_busi_product/0001/$metadata"],
+					"document marked as read");
 
-					assert.strictEqual(that.oMetaModel.getObject("/tea_busi_supplier.v0001."),
-						mReferencedScope["tea_busi_supplier.v0001."]);
+				that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+					.withExactArgs("Unknown qualified name must.not.be.included.",
+						"/must.not.be.included.", sODataMetaModel);
+				assert.strictEqual(that.oMetaModel.getObject("/must.not.be.included."),
+					undefined,
+					"must not include schemata which are not mentioned in edmx:Include");
 
-					// now check that "not.found." does not trigger another read(),
-					// does finish synchronously and logs a warning
-					that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
-						.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata"
-							+ " does not contain not.found.",
-							"/not.found.", sODataMetaModel);
-					that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
-						.withExactArgs("Unknown qualified name not.found.",
-							"/not.found.", sODataMetaModel);
+				assert.strictEqual(that.oMetaModel.getObject("/tea_busi_supplier.v0001."),
+					mReferencedScope["tea_busi_supplier.v0001."]);
 
-					// code under test
-					oSyncPromise = that.oMetaModel.fetchObject("/not.found.");
+				// now check that "not.found." does not trigger another read(),
+				// does finish synchronously and logs a warning
+				that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+					.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata"
+						+ " does not contain not.found.",
+						"/not.found.", sODataMetaModel);
+				that.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
+					.withExactArgs("Unknown qualified name not.found.",
+						"/not.found.", sODataMetaModel);
 
-					assert.strictEqual(oSyncPromise.isFulfilled(), true);
-					assert.strictEqual(oSyncPromise.getResult(), undefined);
-				});
+				// code under test
+				oSyncPromise = that.oMetaModel.fetchObject("/not.found.");
+
+				assert.strictEqual(oSyncPromise.isFulfilled(), true);
+				assert.strictEqual(oSyncPromise.getResult(), undefined);
+			});
 		});
 	});
 
@@ -1700,6 +1703,28 @@ sap.ui.require([
 				assert.ok(false);
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);
+			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchObject: cross-service reference - document loaded from different URI",
+			function (assert) {
+		var sMessage = "A schema cannot span more than one document: schema is referenced by"
+				+ " following URLs: /a/default/iwbep/tea_busi_product/0001/$metadata,"
+				+ " /second/reference",
+			sSchema = "tea_busi_product.v0001.";
+
+		this.expectFetchEntityContainer(mXServiceScope);
+		this.oLogMock.expects("error")
+			.withExactArgs(sMessage, sSchema, sODataMetaModel);
+		// simulate 2 references for a schema
+		this.oMetaModel.mSchema2MetadataUrl["tea_busi_product.v0001."]["/second/reference"] = false;
+
+		// code under test
+		return this.oMetaModel.fetchObject("/tea_busi_product.v0001.Product").then(function () {
+				assert.ok(false);
+			}, function (oError0) {
+				assert.strictEqual(oError0.message, sSchema + ": " + sMessage);
 			});
 	});
 
@@ -3002,6 +3027,9 @@ sap.ui.require([
 							"B.", "B.B."
 						]
 					},
+					"/C/$metadata" : {
+						"$Include" : ["C."]
+					},
 					"../../../../default/iwbep/tea_busi_product/0001/$metadata" : {
 						"$Include" : [
 							"tea_busi_product."
@@ -3014,17 +3042,26 @@ sap.ui.require([
 		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {});
 
 		// simulate a previous reference to a schema with the _same_ reference URI --> allowed!
-		this.oMetaModel.mSchema2MetadataUrl["A."] = "/A/$metadata";
+		this.oMetaModel.mSchema2MetadataUrl["A."] = {"/A/$metadata" : false};
+		// simulate a previous reference to a schema with the _different_ reference URI
+		// --> allowed as long as the document is not yet read (and will never be read)
+		this.oMetaModel.mSchema2MetadataUrl["B.B."] = {"/B/V2/$metadata" : false};
+		// simulate a previous reference to a schema with the _same_ reference URI, already loaded
+		this.oMetaModel.mSchema2MetadataUrl["C."] = {"/C/$metadata" : true};
 
 		// code under test
 		assert.strictEqual(this.oMetaModel.validate(sUrl, mScope), mScope);
 
 		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {
-			"A." : "/A/$metadata",
-			"A.A." : "/A/$metadata",
-			"B." : "/B/$metadata",
-			"B.B." : "/B/$metadata",
-			"tea_busi_product." : "/a/default/iwbep/tea_busi_product/0001/$metadata"
+			"A." : {"/A/$metadata" : false},
+			"A.A." : {"/A/$metadata" : false},
+			"B." : {"/B/$metadata" : false},
+			"B.B." : {
+				"/B/$metadata" : false,
+				"/B/V2/$metadata" : false
+			},
+			"C." : {"/C/$metadata" : true},
+			"tea_busi_product." : {"/a/default/iwbep/tea_busi_product/0001/$metadata" : false}
 		});
 	});
 
@@ -3156,26 +3193,8 @@ sap.ui.require([
 			}
 		}
 	}, {
-		message : "A schema cannot span more than one document: tea_busi."
-			+ " - expected reference URI /A/$metadata but instead saw /B/$metadata",
-		scope : {
-			"$Version" : "4.0",
-			"$Reference" : {
-				"/A/$metadata" : {
-					"$Include" : [
-						"foo.", "tea_busi."
-					]
-				},
-				"/B/$metadata" : {
-					"$Include" : [
-						"bar.", "tea_busi."
-					]
-				}
-			}
-		}
-	}, {
 		message : "A schema cannot span more than one document: existing."
-			+ " - expected reference URI /$metadata but instead saw /B/$metadata",
+			+ " - expected reference URI /B/v1/$metadata but instead saw /B/v2/$metadata",
 		scope : {
 			"$Version" : "4.0",
 			"$Reference" : {
@@ -3184,7 +3203,7 @@ sap.ui.require([
 						"foo.", "bar."
 					]
 				},
-				"/B/$metadata" : {
+				"/B/v2/$metadata" : {
 					"$Include" : [
 						"baz.", "existing."
 					]
@@ -3209,7 +3228,8 @@ sap.ui.require([
 				this.oMetaModel.bSupportReferences = bSupportReferences;
 				// simulate a schema that has been loaded or referenced before
 				this.oMetaModel.mSchema2MetadataUrl = {
-					"existing." : "/$metadata" // simulate schema from root service's $metadata
+					// simulate schema that is already read
+					"existing." : {"/B/v1/$metadata" : true}
 				};
 				if (bSupportReferences) {
 					this.oLogMock.expects("error")
@@ -3281,8 +3301,8 @@ sap.ui.require([
 		assert.notOk("$Annotations" in mScope["A."], "$Annotations removed from schema");
 		assert.notOk("$Annotations" in mScope["B."], "$Annotations removed from schema");
 		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {
-			"A." : this.oMetaModel.sUrl,
-			"B." : this.oMetaModel.sUrl
+			"A." : {"/a/b/c/d/e/$metadata" : false},
+			"B." : {"/a/b/c/d/e/$metadata" : false}
 		});
 	});
 
@@ -3527,9 +3547,9 @@ sap.ui.require([
 		assert.strictEqual(mAnnotationScope1["foo."].$Annotations, undefined);
 		assert.strictEqual(mAnnotationScope2["bar."].$Annotations, undefined);
 		assert.deepEqual(this.oMetaModel.mSchema2MetadataUrl, {
-			"bar." : "/URI/2",
-			"foo." : "/URI/1",
-			"tea_busi." : this.oMetaModel.sUrl
+			"bar." : {"/URI/2" : false},
+			"foo." : {"/URI/1" : false},
+			"tea_busi." : {"/a/b/c/d/e/$metadata" : false}
 		});
 	});
 
