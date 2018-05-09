@@ -690,7 +690,7 @@ function(
 			var aVisibleTiles = this._getVisibleTiles(),
 				iTilesCount = aVisibleTiles.length,
 				iCurrentPageStartTileIndex = this._iCurrentTileStartIndex,
-				iOldMaxTiles = this._iMaxTiles,
+				oOldDim = this._oDim,
 				iNewPage, iNewPageTileStartIndex, iNewPageTileEndIndex;
 
 			this._oPagesInfo.reset();
@@ -698,7 +698,7 @@ function(
 			this._oDim = this._calculateDimension();
 			this._updateTileDimensionInfoAndPageSize(aVisibleTiles);
 
-			if (iOldMaxTiles !== this._iMaxTiles) {
+			if (oOldDim.width !== this._oDim.width || oOldDim.height !== this._oDim.height) {
 				//remove all previously rendered tiles(should be a few pages)
 				// in order to make sure the don't interfere with the new
 				for (var i = 0; i < iTilesCount; i++) {
