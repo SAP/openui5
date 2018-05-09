@@ -379,9 +379,13 @@ function(
 				throw new Error("Target aggregation " + this.targetAggregationName + " not found on " + oTarget);
 			}
 
-			if (this.aggregation.multiple !== oTargetAggregationInfo.multiple) { // only forward single-to-single and multi-to-multi
+			if (this.aggregation.multiple && !oTargetAggregationInfo.multiple) { // cannot forward multi-to-single
 				throw new Error("Aggregation " + this.aggregation + " (multiple: " + this.aggregation.multiple + ") cannot be forwarded to aggregation "
 						+ this.targetAggregationName + " (multiple: " + oTargetAggregationInfo.multiple + ")");
+			}
+			if (!this.aggregation.multiple && oTargetAggregationInfo.multiple && this.aggregation.forwarding.forwardBinding) { // cannot forward bindings for single-to-multi
+				throw new Error("Aggregation " + this.aggregation + " (multiple: " + this.aggregation.multiple + ") cannot be forwarded to aggregation "
+						+ this.targetAggregationName + " (multiple: " + oTargetAggregationInfo.multiple + ") with 'forwardBinding' set to 'true'");
 			}
 		}
 		return oTargetAggregationInfo;
@@ -398,20 +402,20 @@ function(
 
 	AggregationForwarder.prototype.get = function(oInstance) {
 		var oTarget = this.getTarget(oInstance);
-		// TODO oInstance.observer
 		if (oTarget) {
-			return this.targetAggregationInfo.get(oTarget);
+			var result = this.targetAggregationInfo.get(oTarget);
+			if (!this.aggregation.multiple && this.targetAggregationInfo.multiple) { // single-to-multi forwarding
+				result = result[0]; // unwrap the element or return undefined if empty array was returned
+			}
+			return result;
 		} else { // before target of forwarding exists
-			return this.targetAggregationInfo.multiple ? [] : null;
+			return this.aggregation.multiple ? [] : null;
 		}
 	};
 
 	AggregationForwarder.prototype.indexOf = function(oInstance, oAggregatedObject) {
 		var oTarget = this.getTarget(oInstance);
-		// TODO oInstance.observer
-		return this.targetAggregationInfo.multiple ?
-			this.targetAggregationInfo.indexOf(oTarget, oAggregatedObject) :
-			oTarget.indexOfAggregation(this.targetAggregationName, oAggregatedObject);
+		return this.targetAggregationInfo.indexOf(oTarget, oAggregatedObject);
 	};
 
 	AggregationForwarder.prototype.set = function(oInstance, oAggregatedObject) {
@@ -420,7 +424,19 @@ function(
 
 		ManagedObjectMetadata.addAPIParentInfo(oAggregatedObject, oInstance, this.aggregation.name);
 
-		this.targetAggregationInfo.set(oTarget, oAggregatedObject);
+		if (this.targetAggregationInfo.multiple) {
+			// target aggregation is multiple, but should behave like single (because the source aggregation is single)
+			var oPreviousElement = this.targetAggregationInfo.get(oTarget);
+			if (oPreviousElement && oPreviousElement[0]) {
+				if (oPreviousElement[0] === oAggregatedObject) { // no modification if same element is set
+					return oInstance;
+				}
+				this.targetAggregationInfo.removeAll(oTarget);
+			}
+			this.targetAggregationInfo.add(oTarget, oAggregatedObject);
+		} else {
+			this.targetAggregationInfo.set(oTarget, oAggregatedObject);
+		}
 		return oInstance;
 	};
 

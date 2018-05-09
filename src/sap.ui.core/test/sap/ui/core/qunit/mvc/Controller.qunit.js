@@ -93,4 +93,21 @@ sap.ui.define([
 		oView.destroy();
 	});
 
+	QUnit.module("Controller.create API");
+
+	/**
+	 * See @evo-todo in Controller.js
+	 */
+	QUnit.test("Controller Loading", function (asser) {
+		var done = assert.async();
+		sap.ui.require(["sap/ui/core/mvc/Controller"], function (Controller) {
+			Controller.create({
+				name: "testdata.mvc.ControllerCreateTest"
+			})
+			.then(function (oController) {
+				assert.equal(oController.double(8), 16, "Controller implementation was correctly returned");
+				done();
+			});
+		});
+	});
 });

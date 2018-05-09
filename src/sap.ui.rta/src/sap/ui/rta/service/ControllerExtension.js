@@ -25,6 +25,7 @@ function (
 				 * @param {object} sCodeRef name of the file, without path, with the extension '.js'. Must comply to ui5 module naming convention
 				 * 							has to be unique and must not conflict with other already defined modules
 				 * @param {string} sView id of the view whose controller should be extended
+				 * @returns {object} Returns the definition of the newly created change
 				 */
 				add: function(sCodeRef, sView) {
 					var oFlexSettings = oRta.getFlexSettings();
@@ -58,6 +59,7 @@ function (
 
 					var oPreparedChange = oFlexController.createBaseChange(oChangeSpecificData, oAppComponent);
 					oFlexController.addPreparedChange(oPreparedChange, oAppComponent);
+					return oPreparedChange.getDefinition();
 				}
 			}
 		};

@@ -285,8 +285,7 @@ sap.ui.define([
 		 * As XMLComposites compose other controls, they are only invalidated and re-rendered if explicitly defined. Additional metadata
 		 * for invalidation can be given for properties and aggregation. The default invalidation is <code>"none"</code>.
 		 * Setting invalidate to <code>true</code> for properties and aggregations sets the complete XMLComposite
-		 * to invalidate and rerender. For templating scenarios the XMLComposite can also be forced to re-template completely. In such case set invalidate
-		 * of the corresponding property to <code>"template"</code>
+		 * to invalidate and rerender.</code>
 		 *
 		 * Example:
 		 * <pre>
@@ -307,11 +306,6 @@ sap.ui.define([
 		 *          type: "string",
 		 *          defaultValue: "",
 		 *          invalidate: true
-		 *       },
-		 *       progress: { //changing this property will re-template the XMLComposite as it defines invalidate: true
-		 *          type: "int",
-		 *          defaultValue: "",
-		 *          invalidate: "template"
 		 *       }
 		 *     },
 		 *     defaultProperty : "text",
@@ -384,12 +378,12 @@ sap.ui.define([
 		 *
 		 * @author SAP SE
 		 * @version ${version}
-		 * @since 1.50.0
+		 * @since 1.56.0
 		 * @alias sap.ui.core.XMLComposite
 		 *
 		 * @abstract
 		   * @public
-		 * @experimental
+		 * @experimental Since 1.56.0
 		 */
 		var XMLComposite = Control.extend("sap.ui.core.XMLComposite", {
 			metadata: {
@@ -422,6 +416,13 @@ sap.ui.define([
 					}
 				}
 			},
+			constructor : function(sId, mSettings) {
+				this._bIsCreating = true;
+
+				Control.apply(this,arguments);
+				delete this._bIsCreating;
+
+			},
 			renderer: function (oRm, oControl) {
 				oRm.write("<div");
 				oRm.writeControlData(oControl);
@@ -451,20 +452,6 @@ sap.ui.define([
 				oRm.write("</div>");
 			}
 		}, XMLCompositeMetadata);
-
-		/**
-		 * Applies the settings of the XMLComposite control
-		 *
-		 * @returns {sap.ui.core.XMLComposite} The instance of the control
-		 *
-		 * @private
-		 */
-		XMLComposite.prototype.applySettings = function () {
-			this._bIsInitializing = true;
-			var vResult = Control.prototype.applySettings.apply(this, arguments);
-			this._bIsInitializing = false;
-			return vResult;
-		};
 
 		/**
 		 * Returns an element by its ID in the context of the XMLComposite.

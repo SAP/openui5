@@ -67,7 +67,11 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/library'],
 		};
 
 		BlockLayoutCellRenderer.addTitle = function (rm, blockLayoutCell) {
-			if (blockLayoutCell.getTitle()) {
+			var oTitleLink = blockLayoutCell.getTitleLink();
+
+			var sTitleText = blockLayoutCell.getTitle();
+
+			if (sTitleText || oTitleLink) {
 				var alignmentClass = "sapUiBlockCell" + blockLayoutCell.getTitleAlignment(),
 					titleClass = "sapUiBlockCellTitle " + alignmentClass;
 
@@ -81,7 +85,13 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/library'],
 					tag = autoLevel ? "h2" : level;
 
 				rm.write("<" + tag + " id='" + this.getTitleId(blockLayoutCell) + "' class='" + titleClass + "'>");
-				rm.writeEscaped(blockLayoutCell.getTitle());
+
+				if (oTitleLink) {
+					rm.renderControl(oTitleLink);
+				} else {
+					rm.writeEscaped(sTitleText);
+				}
+
 				rm.write("</" + tag + ">");
 			}
 		};

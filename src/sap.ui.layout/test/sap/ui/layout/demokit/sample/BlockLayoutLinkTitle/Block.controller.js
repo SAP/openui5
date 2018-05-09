@@ -5,17 +5,20 @@ sap.ui.define([
 	], function(jQuery, Controller, JSONModel) {
 	"use strict";
 
-	var PageController = Controller.extend("sap.m.sample.PageSpacing.Page", {
+	var BlockController = Controller.extend("sap.ui.layout.sample.BlockLayoutLinkTitle.Block", {
 
-		onInit : function (evt) {
+		onInit: function () {
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
 			this.getView().setModel(oModel);
-			this.byId("idPage").bindElement("/ProductCollection/0");
+		},
+
+		onSliderMoved: function (event) {
+			var value = event.getParameter("value");
+			this.byId("containerLayout").setWidth(value + "%");
 		}
 	});
 
-
-	return PageController;
+	return BlockController;
 
 });

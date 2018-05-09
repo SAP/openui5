@@ -5,12 +5,13 @@
 // Provides control sap.ui.core.mvc.JSView.
 sap.ui.define([
     'jquery.sap.global',
-    'sap/ui/core/library',
     './View',
+    './JSViewRenderer',
+	'sap/base/util/extend',
     'sap/ui/base/ManagedObject',
-    "./JSViewRenderer"
+    'sap/ui/core/library'
 ],
-	function(jQuery, library, View, ManagedObject, JSViewRenderer) {
+	function(jQuery, View, JSViewRenderer, extend, ManagedObject, library) {
 	"use strict";
 
 
@@ -59,6 +60,36 @@ sap.ui.define([
 	 */
 	JSView.asyncSupport = true;
 
+	// shortcut for enum(s)
+	var ViewType = library.mvc.ViewType;
+
+	/**
+	 * Creates an instance of the view with the given name (and id).
+	 *
+	 * @param {map} mOptions A map containing the view configuration options.
+	 * @param {string} [mOptions.id] Specifies an ID for the View instance. If no ID is given, an ID will be generated.
+	 * @param {string} [mOptions.viewName] Name of the view. The view must be defined using <code>sap.ui.core.mvc.JSView.extend</code>.
+	 * @param {sap.ui.core.mvc.Controller} [mOptions.controller] Controller instance to be used for this view.
+	 * The given controller instance overrides the controller defined in the view definition. Sharing a controller instance
+	 * between multiple views is not supported.
+	 * @public
+	 * @static
+	 * @since 1.56.0
+	 * @return {Promise} A Promise that resolves with the view instance
+	 */
+	JSView.create = function(mOptions) {
+		var mParameters = extend(true, {}, mOptions);
+		//remove unsupported options:
+		for (var sOption in mParameters) {
+			if (sOption === 'definition' || sOption === 'preprocessors') {
+				delete mParameters[sOption];
+				jQuery.sap.log.warning("JSView.create does not support the options definition or preprocessor!");
+			}
+		}
+		mParameters.type = ViewType.JS;
+		return View.create(mParameters);
+	};
+
 	/**
 	 * Defines or creates an instance of a JavaScript view.
 	 *
@@ -96,9 +127,27 @@ sap.ui.define([
 	 *   (only relevant for instantiation, ignored for everything else)
 	 * @public
 	 * @static
+	 * @deprecated since 1.56.0,
+	 * <ul>
+	 * <li>For view instance creation use <code>JSView.create</code> instead.</li>
+	 * <li>For defining views use <code>JSView.extend</code> instead.</li>
+	 * </ul>
+	 *
 	 * @return {sap.ui.core.mvc.JSView | undefined} the created JSView instance in the creation case, otherwise undefined
 	 */
 	sap.ui.jsview = function(sId, vView, bAsync) {
+		if (vView && vView.async) {
+			jQuery.sap.log.info("Do not use deprecated factory function 'sap.ui.jsview' for view instance creation. Use 'JSView.create' instead.");
+		} else {
+			jQuery.sap.log.warning("Do not use synchronous view creation! Use the new asynchronous factory 'JSView.create' for view instance creation instead.");
+		}
+		return viewFactory.apply(this, arguments);
+	};
+
+	/*
+	 * The old view factory implementation
+	 */
+	function viewFactory(sId, vView, bAsync) {
 		var mSettings = {}, oView;
 
 		if (vView && typeof (vView) == "string") { // instantiation sap.ui.jsview("id","name", [async])
@@ -116,7 +165,7 @@ sap.ui.define([
 			// sId is not given, but contains the desired value of sViewName
 			mRegistry[sId] = vView;
 			jQuery.sap.declare({modName:sId,type:"view"}, false);
-
+			jQuery.sap.log.info("For defining views use JSView.extend instead.");
 		} else if (arguments.length == 1 && typeof sId == "string" ||
 			arguments.length == 2 && typeof arguments[0] == "string" && typeof arguments[1] == "boolean") { // instantiation sap.ui.jsview("name", [async])
 			mSettings.viewName = arguments[0];
@@ -129,7 +178,7 @@ sap.ui.define([
 		} else {
 			throw new Error("Wrong arguments ('" + sId + "', '" + vView + "')! Either call sap.ui.jsview([sId,] sViewName) to instantiate a View or sap.ui.jsview(sViewName, oViewImpl) to define a View type.");
 		}
-	};
+	}
 
 	JSView.prototype.initViewSettings = function (mSettings) {
 		var oPromise;

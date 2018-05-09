@@ -55,6 +55,12 @@
         "type": "FIX",
         "text": " SimpleForm: Error if layout is set after content",
         "references": []
+      },
+      {
+        "id": "b3d750377b13859bdecd92e7dcd3af960b7a78f4",
+        "type": "FEATURE",
+        "text": " sap.ui.layout.BlockLayout: BlockLayoutCell now supports link as title",
+        "references": []
       }
     ]
   }

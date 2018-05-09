@@ -678,7 +678,8 @@ sap.ui.define([
 	 *     All elements added to the source aggregation will be located at the target aggregation (this means the target instance is their parent).
 	 *     Both, source and target element will return the added elements when asked for the content of the respective aggregation.
 	 *     If present, the named (non-generic) aggregation methods will be called for the target aggregation.
-	 *     Aggregations can only be forwarded to non-hidden aggregations of the same multiplicity (single/multiple).
+	 *     Aggregations can only be forwarded to non-hidden aggregations of the same or higher multiplicity (i.e. an aggregation with multiplicity "0..n" cannot be
+	 *     forwarded to an aggregation with multiplicity "0..1").
 	 *     The target aggregation must also be "compatible" to the source aggregation in the sense that any items given to the source aggregation
 	 *     must also be valid in the target aggregation (otherwise the target element will throw a validation error).
 	 *     If the forwarded elements use data binding, the target element must be properly aggregated by the source element to make sure all models are available there
@@ -3450,6 +3451,7 @@ sap.ui.define([
 	 * This is a generic method which can be used to bind any aggregation to the
 	 * model. A managed object may flag aggregations in the metamodel with
 	 * bindable="bindable" to get typed bind<i>Something</i> methods for those aggregations.
+	 * For more information on the <code>oBindingInfo.key</code> property and its usage, see {@link topic:7cdff73f308b4b10bdf7d83b7aba72e7 Extended Change Detection}
 	 *
 	 * @param {string} sName the aggregation to bind
 	 * @param {object} oBindingInfo the binding info

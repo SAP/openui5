@@ -123,6 +123,18 @@
         "type": "FIX",
         "text": " uxap.ObjectPageHeaderContent: belize_deep appearance corrected",
         "references": []
+      },
+      {
+        "id": "87689aab72a406b73e07fa0500f174e68889eab5",
+        "type": "FEATURE",
+        "text": " sap.uxap.ObjectPageLayout: Preserve expanded header in content on small screens",
+        "references": []
+      },
+      {
+        "id": "658158ad145a97a4b67fa6e4762f9018d8ef3589",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Demo Kit samples updated",
+        "references": []
       }
     ]
   }

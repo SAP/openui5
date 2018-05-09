@@ -31,8 +31,9 @@
 		<script>
 
 			sap.ui.require([
-				"jquery.sap.global"
-			], function(jQuery) {
+				"jquery.sap.global",
+				"sap/ui/VersionInfo",
+			], function(jQuery, VersionInfo) {
 
 				// NOTE:
 				// "sap.ui.versioninfo" will only be cleared AFTER each test which will result into
@@ -433,6 +434,81 @@
 					assert.deepEqual(sap.ui.versioninfo, this.oVersionInfo,
 						"'sap.ui.versioninfo' should now be the same as the return value of 'sap.ui.getVersionInfo()'.");
 
+				});
+
+				QUnit.test("VersionInfo.load - Object Argument", function (assert) {
+					var done = assert.async();
+
+					this.initFakeServer();
+
+					VersionInfo.load({ library: "sap.ui.core" }).then(function(oVersionInfo) {
+
+						assert.deepEqual(oVersionInfo, this.oVersionInfo.libraries[0],
+							"'sap.ui.getVersionInfo{ library: \"sap.ui.core\", async: true }' should asynchronously load and return the 'sap.ui.core' library info.");
+
+						assert.deepEqual(sap.ui.versioninfo.libraries[0], this.oVersionInfo.libraries[0],
+							"First library in 'sap.ui.versioninfo' should now be the same as the return value of 'sap.ui.getVersionInfo({ library: \"sap.ui.core\", async: true })'.");
+
+						assert.strictEqual(this.oServer.requests.length, 1,
+							"Server should have received one request (async).");
+						assert.ok(this.oServer.requests[0].async,
+							"First request should be async.");
+
+					}.bind(this)).then(done);
+				});
+
+				QUnit.test("VersionInfo.load - No Argument", function (assert) {
+					var done = assert.async();
+
+					this.initFakeServer();
+
+					VersionInfo.load().then(function(oVersionInfo) {
+
+						assert.deepEqual(oVersionInfo, this.oVersionInfo,
+							"'sap.ui.getVersionInfo{ library: \"sap.ui.core\", async: true }' should asynchronously load and return the 'sap.ui.core' library info.");
+
+						assert.deepEqual(sap.ui.versioninfo, this.oVersionInfo,
+							"First library in 'sap.ui.versioninfo' should now be the same as the return value of 'sap.ui.getVersionInfo({ library: \"sap.ui.core\", async: true })'.");
+
+						assert.strictEqual(this.oServer.requests.length, 1,
+							"Server should have received one request (async).");
+						assert.ok(this.oServer.requests[0].async,
+							"First request should be async.");
+
+					}.bind(this)).then(done);
+				});
+
+				QUnit.test("VersionInfo.load - Unknown library", function (assert) {
+					var done = assert.async();
+
+					this.initFakeServer();
+
+					VersionInfo.load({library: "sap.invalid.library"}).then(function(oVersionInfo) {
+						assert.equal(oVersionInfo, undefined, "Unknown library leads to undefined return value");
+					}.bind(this)).then(done);
+				});
+
+				QUnit.test("VersionInfo.load - file not found", function(assert) {
+					var done = assert.async();
+					this.initFakeServer(404); // Make sure the request fails as 404 - Not found
+
+					VersionInfo.load().then(function() {
+						assert.ok(false, "Promise should not get resolved.");
+					}, function(err) {
+
+						// Check if exception is correct
+						sinon.assert.match(err.message, sinon.match("resource sap-ui-version.json could not be loaded"),
+							"Should give an error saying the file can not be found.");
+
+						assert.strictEqual(sap.ui.versioninfo, undefined,
+							"'sap.ui.versioninfo' should still be undefined after calling the function.");
+
+						assert.strictEqual(this.oServer.requests.length, 1,
+							"Server should have received one request.");
+						assert.ok(this.oServer.requests[0].async,
+							"Request should be async.");
+
+					}.bind(this)).then(done);
 				});
 
 			});

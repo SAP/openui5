@@ -95,12 +95,6 @@ sap.ui.define([
 
 			var sPopId = this.getId() + "-popover";
 
-			// Returns the duration for the Popover's closing animation.
-			// It particularily concerns the setting of the focus within the contextMenu
-			Popover.prototype._getAnimationDuration = function() {
-				return 0;
-			};
-
 			var oPopover = new Popover(sPopId, {
 				showHeader: false,
 				verticalScrolling: false,
@@ -109,6 +103,12 @@ sap.ui.define([
 					renderType: "Bare"
 				})
 			});
+
+			// Returns the duration for the Popover's closing animation.
+			// It particularily concerns the setting of the focus within the contextMenu
+			oPopover._getAnimationDuration = function() {
+				return 0;
+			};
 
 			oPopover.attachBrowserEvent("keydown", this._changeFocusOnKeyStroke, this);
 			oPopover.oPopup.attachClosed(this._popupClosed, this);
@@ -125,6 +125,12 @@ sap.ui.define([
 					renderType: "Bare"
 				})
 			});
+
+			// Returns the duration for the Popover's closing animation.
+			// It particularily concerns the setting of the focus within the contextMenu
+			oPopoverExpanded._getAnimationDuration = function() {
+				return 0;
+			};
 
 			oPopoverExpanded.attachBrowserEvent("keydown", this._changeFocusOnKeyStroke, this);
 			oPopoverExpanded.oPopup.attachClosed(this._popupClosed, this);
@@ -241,7 +247,7 @@ sap.ui.define([
 
 			} else if (iButtonsEnabled < aButtons.length && iButtonsEnabled != 0) {
 
-				this.addButton(this._createOverflowButton());
+				this.addOverflowButton();
 			}
 
 			iButtonsEnabled = null;
@@ -335,7 +341,7 @@ sap.ui.define([
 				if (aButtons[i].getVisible()) {
 
 					aButtons[i].setVisible(false);
-					this.addButton(this._createOverflowButton());
+					this.addOverflowButton();
 
 					return;
 				}
@@ -709,7 +715,6 @@ sap.ui.define([
 		 * @return {object} the dimensions of the viewport
 		 */
 		_getViewportDimensions: function () {
-
 			var oViewport = {};
 
 			oViewport.width = window.innerWidth;
@@ -720,94 +725,75 @@ sap.ui.define([
 			return oViewport;
 		},
 
+		_getIcon: function(sIcon) {
+			if (sIcon === undefined || sIcon === null || typeof sIcon !== "string") {
+				return "sap-icon://incident";
+			}
+			if (sIcon === "blank") {
+				return " ";
+			}
+			return sIcon;
+		},
+
 		/**
-		 * Adds a button to the ContextMenu.
-		 * @param {Object} oButton the button to add
-		 * @param {sap.ui.dt.plugin.ContextMenu} oSource the source
+		 * Adds a overflowButton to the ContextMenu.
+		 * @return {sap.m.ContextMenu} Reference to this in order to allow method chaining
+		 * @public
+		 */
+		addOverflowButton: function() {
+			var sOverflowButtonId = "OVERFLOW_BUTTON",
+				oButtonOptions = {
+					icon: "sap-icon://overflow",
+					type: "Transparent",
+					enabled: true,
+					press: this._onOverflowPress.bind(this),
+					layoutData: new FlexItemData({})
+				};
+			return this._addButton(sOverflowButtonId, oButtonOptions);
+		},
+
+		/**
+		 * Adds a menu action button to the contextMenu
+		 * @param {Object} oButtonItem the button configuration item
+		 * @param {function} fnContextMenuHandler the handler function for button press event
 		 * @param {object} oOverlay the target overlay
 		 * @return {sap.m.ContextMenu} Reference to this in order to allow method chaining
 		 * @public
 		 */
-		addButton: function (oButton, oSource, oOverlay) {
-
-			function handler() {
+		addMenuButton: function(oButtonItem, fnContextMenuHandler, oOverlay) {
+			var fnHandler = function(oEvent) {
 				this.bOpen = false;
 				this.bOpenNew = false;
-				oSource._onItemSelected(this);
-			}
-
-			if (oButton.icon == null) {
-				oButton.icon = "sap-icon://incident";
-			}
-
-			// if some of the objects properties are functions and can't be shown directly
-			oButton.getText = function (oOverlay) {
-				return typeof oButton.text === "function" ? oButton.text(oOverlay) : oButton.text;
+				fnContextMenuHandler(this);
 			};
 
-			oButton.getEnabled = function (oOverlay) {
-				return typeof oButton.enabled === "function" ? oButton.enabled(oOverlay) : oButton.enabled;
+			var sText = typeof oButtonItem.text === "function" ? oButtonItem.text(oOverlay) : oButtonItem.text;
+			var bEnabled = typeof oButtonItem.enabled === "function" ? oButtonItem.enabled(oOverlay) : oButtonItem.enabled;
+			var oButtonOptions = {
+				icon: this._getIcon(oButtonItem.icon),
+				text: sText,
+				type: "Transparent",
+				enabled: bEnabled,
+				press: fnHandler,
+				layoutData: new FlexItemData({})
 			};
+			return this._addButton(oButtonItem.id, oButtonOptions);
+		},
 
-			var oButton1;
-			var oButton2;
+		_addButton: function (sButtonItemId, oButtonOptions) {
+			this.setProperty("buttons", this.getProperty("buttons").concat(oButtonOptions));
 
-			if (oSource) {
-				oButton1 = new Button({
-					icon: oButton.icon ? oButton.icon : "sap-icon://incident",
-					tooltip: oButton.getText(oOverlay),
-					type: "Transparent",
-					enabled: oButton.getEnabled(oOverlay),
-					press: handler,
-					layoutData: new FlexItemData({})
-				});
+			var oButtonCustomData = { id: sButtonItemId, key: sButtonItemId };
+			var oExpandedMenuButton = new Button(oButtonOptions);
+			oExpandedMenuButton.data(oButtonCustomData);
 
-				oButton1.data({
-					id: oButton.id,
-					key: oButton.id
-				});
+			oButtonOptions.tooltip = oButtonOptions.text;
+			delete oButtonOptions.text;
+			var oCompactMenuButton = new Button(oButtonOptions);
+			oCompactMenuButton.data(oButtonCustomData);
 
-				oButton2 = new Button({
-					icon: oButton.icon ? oButton.icon : "sap-icon://incident",
-					text: oButton.getText(oOverlay),
-					type: "Transparent",
-					enabled: oButton.getEnabled(oOverlay),
-					press: handler,
-					layoutData: new FlexItemData({})
-				});
-
-				oButton2.data({
-					id: oButton.id,
-					key: oButton.id
-				});
-
-			} else {
-				oButton1 = new Button({
-					icon: oButton.icon,
-					tooltip: oButton.getText(oOverlay),
-					type: "Transparent",
-					enabled: oButton.getEnabled(oOverlay),
-					press: oButton.handler,
-					layoutData: new FlexItemData({})
-				});
-
-				oButton2 = new Button({
-					icon: oButton.icon,
-					text: oButton.getText(oOverlay),
-					type: "Transparent",
-					enabled: oButton.getEnabled(oOverlay),
-					press: oButton.handler,
-					layoutData: new FlexItemData({})
-				});
-			}
-
-			this.setProperty("buttons", this.getProperty("buttons").concat(oButton));
-
-			this.getFlexbox(true).addItem(oButton2);
-			this.getFlexbox(false).addItem(oButton1);
-
-			oButton1 = null;
-			oButton2 = null;
+			this.getFlexbox(true).addItem(oExpandedMenuButton);
+			this.getFlexbox(false).addItem(oCompactMenuButton);
 
 			return this;
 		},
@@ -885,15 +871,15 @@ sap.ui.define([
 		/**
 		 * Sets the Buttons of the ContextMenu
 		 * @param {Array} _aButtons the Buttons to insert
-		 * @param {sap.ui.dt.plugin.ContextMenu} oSource - the source
+		 * @param {function} fnContextMenuHandler - the source
 		 * @param {object} oOverlay - the target overlay
 		 * @public
 		 */
-		setButtons: function (_aButtons, oSource, oOverlay) {
+		setButtons: function (_aButtons, fnContextMenuHandler, oOverlay) {
 			this.removeAllButtons();
 
 			_aButtons.forEach(function (oButton) {
-				this.addButton(oButton, oSource, oOverlay);
+				this.addMenuButton(oButton, fnContextMenuHandler, oOverlay);
 			}.bind(this));
 		},
 
@@ -938,20 +924,6 @@ sap.ui.define([
 		 */
 		getFlexbox: function (bExpanded) {
 			return this.getPopover(bExpanded).getContent()[0];
-		},
-
-		/**
-		 * Creates an overflow-button
-		 * @return {sap.m.OverflowToolbarButton} returns the newly created overflow-button
-		 * @private
-		 */
-		_createOverflowButton: function () {
-			return {
-				icon: "sap-icon://overflow",
-				type: "Transparent",
-				handler: this._onOverflowPress.bind(this),
-				enabled: true
-			};
 		},
 
 		/**

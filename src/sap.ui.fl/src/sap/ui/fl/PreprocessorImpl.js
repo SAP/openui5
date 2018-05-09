@@ -50,7 +50,7 @@ function(
 				return Promise.resolve([]);
 			}
 
-			var oComponent = sap.ui.component(sComponentId);
+			var oComponent = Component.get(sComponentId);
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			var sFlexReference = Utils.getComponentClassName(oAppComponent);
 			var sAppVersion = Utils.getAppVersionFromManifest(oAppComponent.getManifest());

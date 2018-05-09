@@ -126,12 +126,13 @@
 				"formFactors" : "-",
 				"samples" : [
 					"sap.ui.layout.sample.BlockLayoutDefault",
-					"sap.ui.layout.sample.BlockLayoutCustomBackground"
+					"sap.ui.layout.sample.BlockLayoutCustomBackground",
+					"sap.ui.layout.sample.BlockLayoutLinkTitle"
 				]
 			},
 			{
 				"id" : "sap.ui.layout.ResponsiveSplitter",
-				"name" : "ResponsiveSplitter ",
+				"name" : "Responsive Splitter ",
 				"category" : "Layout",
 				"since" : "1.38",
 				"formFactors" : "-",
@@ -358,13 +359,18 @@
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutDefault",
-				"name": "Block Layout ",
-				"description": "The Block Layout  is intended to be used with rows and cells. The cells have predefined width, the rows have predefined rendering modes - scrollable/vertical/horizontal."
+				"name": "Block Layout",
+				"description": "The BlockLayout is intended to be used with rows and cells. The cells have predefined width, the rows have predefined rendering modes - scrollable/vertical/horizontal."
 			},
 			{
 				"id": "sap.ui.layout.sample.BlockLayoutCustomBackground",
-				"name": "BlockLayout with custom background for the cells",
+				"name": "Block Layout with custom background for the cells",
 				"description": "The BlockLayout could be used with different backgrounds for its cells."
+			},
+			{
+				"id": "sap.ui.layout.sample.BlockLayoutLinkTitle",
+				"name": "Block Layout with links as titles",
+				"description": "The BlockLayout Cells can have links as titles. The link text overwrites the title text."
 			},
 			{
 				"id": "sap.ui.layout.sample.ResponsiveSplitter",

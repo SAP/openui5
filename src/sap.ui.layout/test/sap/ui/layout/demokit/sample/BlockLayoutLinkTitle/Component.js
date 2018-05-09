@@ -2,11 +2,11 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 	function(UIComponent) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.PageSpacing.Component", {
+	var Component = UIComponent.extend("sap.ui.layout.sample.BlockLayoutLinkTitle.Component", {
 
 		metadata : {
 			rootView : {
-				"viewName": "sap.m.sample.PageSpacing.Page",
+				"viewName": "sap.ui.layout.sample.BlockLayoutLinkTitle.Block",
 				"type": "XML",
 				"async": true
 			},
@@ -18,10 +18,9 @@ sap.ui.define(['sap/ui/core/UIComponent'],
 			},
 			config : {
 				sample : {
-					stretch : true,
 					files : [
-						"Page.view.xml",
-						"Page.controller.js"
+						"Block.view.xml",
+						"Block.controller.js"
 					]
 				}
 			}

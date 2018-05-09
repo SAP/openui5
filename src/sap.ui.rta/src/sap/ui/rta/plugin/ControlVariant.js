@@ -687,7 +687,7 @@ sap.ui.define([
 					var oItem = {
 						id: oVariant.key,
 						text: oVariant.title,
-						icon: bCurrentItem ? "sap-icon://accept" : "",
+						icon: bCurrentItem ? "sap-icon://accept" : "blank",
 						enabled: !bCurrentItem
 					};
 					return aReducedVariants.concat(oItem);
@@ -700,9 +700,9 @@ sap.ui.define([
 				id: "CTX_VARIANT_SWITCH_SUBMENU",
 				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_SWITCH'),
 				handler: function(aOverlays, mPropertyBag){
-					var oData = mPropertyBag.eventItem.data(),
+					var oEventItemCustomData = mPropertyBag.eventItem.data(),
 						oTargetOverlay = aOverlays[0],
-						sNewVariantKey = oData.key,
+						sNewVariantKey = oEventItemCustomData.key,
 						sCurrentVariantKey = oModel.getData()[sManagementReferenceId].currentVariant;
 					return this.switchVariant(oTargetOverlay, sNewVariantKey, sCurrentVariantKey);
 				}.bind(this),

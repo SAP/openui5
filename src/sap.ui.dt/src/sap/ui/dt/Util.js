@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	'jquery.sap.global'
+	'jquery.sap.global',
+	'sap/ui/Device'
 ], function(
-	jQuery
+	jQuery,
+	Device
 ) {
 	"use strict";
 
@@ -244,6 +246,14 @@ sap.ui.define([
 				return fnHandler.apply(null, aArguments);
 			});
 		};
+	};
+
+	/**
+	 * Webkit can be safari or chrome mobile
+	 * @return {Boolean} Returns true if the device browser uses webkit
+	 */
+	Util.isWebkit = function(){
+		return Device.browser.webkit && (Device.browser.safari || Device.browser.chrome && Device.browser.mobile);
 	};
 
 	return Util;

@@ -2232,6 +2232,74 @@
 				// cleanup
 				oSlider.destroy();
 			});
+
+			QUnit.test("Slider with scale and tooltip should use the prioritisation of the labelling", function (assert) {
+				var oSlider, oTooltip, oHandleDomRef,
+						oScale = new sap.m.ResponsiveScale({tickmarksBetweenLabels: 1});
+
+				oScale.getLabel = function (fCurValue) {
+					var monthList = ["Zero", "One", "2"];
+
+					return monthList[fCurValue];
+				};
+
+				oTooltip = sap.m.SliderTooltipBase.extend("sap.xx.TestTooltip", {
+					renderer: function (oRm, oControl) {
+						sap.m.SliderTooltipBaseRenderer.render.apply({
+							renderTooltipContent: function (oRm, oControl) {
+								oRm.write("zzzz");
+							}
+						}, arguments);
+					}
+				});
+
+				oTooltip.prototype.getLabel = function (fValue) {
+					return "XXXXXXX-" + fValue;
+				};
+
+				oSlider = new sap.m.Slider({
+					step: 1,
+					min: 0,
+					max: 2,
+					enableTickmarks: true,
+					showAdvancedTooltip: true,
+					scale: oScale,
+					customTooltips: [
+						new oTooltip()
+					]
+				});
+
+				// arrange
+				oSlider.placeAt("content");
+				sap.ui.getCore().applyChanges();
+				oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
+
+				// assert
+				assert.strictEqual(oHandleDomRef.attr("title"), undefined, "The title should be undefined if there's a tooltip.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuenow"), "0", "The aria-valuenow should be 0.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuetext"), "XXXXXXX-0", "The aria-valuetext should be XXXXXXX-0.");
+
+				// Act
+				oSlider.setValue(1);
+				sap.ui.getCore().applyChanges();
+				oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
+
+				assert.strictEqual(oHandleDomRef.attr("title"), undefined, "The title should be undefined if there's a tooltip.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuenow"), "1", "The aria-valuenow should be 1.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuetext"), "XXXXXXX-1", "The aria-valuetext should be XXXXXXX-1.");
+
+				//Act
+				oSlider.setShowAdvancedTooltip(false);
+				sap.ui.getCore().applyChanges();
+				oHandleDomRef = oSlider.$().find(".sapMSliderHandle");
+
+				assert.strictEqual(oHandleDomRef.attr("title"), "One", "The title should be One.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuenow"), "1", "The aria-valuenow should be 1.");
+				assert.strictEqual(oHandleDomRef.attr("aria-valuetext"), "One", "The aria-valuetext should be One.");
+
+				// cleanup
+				oSlider.destroy();
+			});
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">

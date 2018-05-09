@@ -11,6 +11,7 @@
 		<script>
 			jQuery.sap.initMobile({preventScroll : false});
 
+			var sLabelWidth = "100%";
 			var oLabel = new sap.m.Label("lbl1", {text:'mobile standard label '});
 
 			var oLabelRequired = new sap.m.Label("lbl2", {required: true, text:'required label'});
@@ -23,48 +24,48 @@
 			var oLabelLTR = new sap.m.Label("lbl4", {
 				text: "mobile LTR label",
 				textDirection: "LTR",
-				width: "400px"
+				width: sLabelWidth
 			});
 
 			var oLabelRTL = new sap.m.Label("lbl5", {
 				text: "mobile RTL label",
 				textDirection: "RTL",
-				width: "400px"
+				width: sLabelWidth
 			});
 
 			var oLabelInherit = new sap.m.Label("lbl6", {
 				text: "mobile Inherit label",
 				textDirection: "Inherit",
-				width: "400px"
+				width: sLabelWidth
 			});
 
 			var oLabelBegin = new sap.m.Label("lbl7", {
 				text: "mobile begin label",
-				width: "400px",
+				width: sLabelWidth,
 				textAlign: "Begin"
 			});
 
 			var oLabelCenter = new sap.m.Label("lbl8", {
 				text: "mobile center label",
-				width: "400px",
+				width: sLabelWidth,
 				textAlign: "Center"
 			});
 
 			var oLabelEnd = new sap.m.Label("lbl9", {
 				text: "mobile end label",
-				width: "400px",
+				width: sLabelWidth,
 				textAlign: "End"
 			});
 
 			var oLabelLeft = new sap.m.Label("lbl10", {
 				text: "mobile left label",
-				width: "400px",
+				width: sLabelWidth,
 				textAlign: "Left"
 			});
 
 			var oLabelRight = new sap.m.Label("lbl11", {
 				text: "mobile right label",
-				width: "400px",
+				width: sLabelWidth,
 				textAlign: "Right"
 			});
 
@@ -74,8 +75,8 @@
 
 
 			var oLabelWidth = new sap.m.Label("lbl13", {
-				text: "mobile label with width set to 400px with loooooooooooooooooooooooooooooooong content",
-				width: "400px"
+				text: "mobile label with width set to 250px with loooooooooooooooooooooooooooooooong content",
+				width: "250px",
 			});
 
 			var oLabel1 = new sap.m.Label({
@@ -155,9 +156,9 @@
 				editable: true,
 				title: "Simple Form",
 				content:[
-					new sap.m.Label("requiredTruncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true}),
+					new sap.m.Label("requiredTruncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true}),
 					new sap.m.Input,
-					new sap.m.Label("truncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple LabelSimple Label"}),
+					new sap.m.Label("truncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label"}),
 					new sap.m.Input,
 					new sap.m.Label("requiredOnly",  {text:"Simple Label", required: true}),
 					new sap.m.Input
@@ -178,17 +179,17 @@
                             oLabelLTR,
                             oLabelRTL,
                             oLabelInherit,
+                            oLabel4,
                             oLabelBegin,
                             oLabelCenter,
                             oLabelEnd,
                             oLabelLeft,
                             oLabelRight,
-                            oLabel4,
+                            oLabel6,
                             oLabelWidth,
                             oLabel5,
                             oLabelNoText,
                             oVL,
-                            oLabel6,
                             sf
                         ]
                     })

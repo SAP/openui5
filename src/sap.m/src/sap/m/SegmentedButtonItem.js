@@ -106,8 +106,10 @@ sap.ui.define(['./library', 'sap/ui/core/Item', 'sap/m/Button', 'sap/ui/core/Cus
 		 * @protected
 		 */
 		SegmentedButtonItem.prototype.exit = function () {
-			this.oButton.destroy();
-			this.oButton = null;
+			if (this.oButton) {
+				this.oButton.destroy();
+				this.oButton = null;
+			}
 		};
 
 		SegmentedButtonItem.prototype.setText = function (sValue) {

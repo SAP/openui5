@@ -36,7 +36,6 @@
 			var lorem = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
 			var loremLineBreaks = "Lorem ipsum dolor sit amet,\r consetetur sadipscing elitr,\n sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,\r\n sed diam voluptua.";
 			var form = new sap.ui.layout.form.SimpleForm({
-				minWidth : 1024,
 				maxContainerCols : 2,
 				editable: false,
 				content : [
@@ -83,7 +82,7 @@
 					}),
 					new sap.m.Text("text3", {
 						text: "[3. FIXED WIDTH in em] " + lorem,
-						width: "45em"
+						width: "15em"
 					}),
 					new sap.m.Text("text3a", {
 						text: "[3a. FIXED WIDTH in %] " + lorem,
@@ -91,7 +90,7 @@
 					}),
 					new sap.m.Text("text3b", {
 						text: "[3b. FIXED WIDTH in px] " + lorem,
-						width: "600px"
+						width: "250px"
 					}),
 					new sap.m.Text("text4", {
 						text: "[4. STYLED] " + lorem

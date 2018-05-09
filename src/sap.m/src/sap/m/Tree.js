@@ -6,25 +6,17 @@
 sap.ui.define([
 	'jquery.sap.global',
 	'./ListBase',
-	'./TreeItemBase',
 	'./library',
 	'sap/ui/model/ClientTreeBindingAdapter',
 	'sap/ui/model/TreeBindingCompatibilityAdapter',
-	'sap/ui/model/odata/ODataTreeBinding',
-	'sap/ui/model/odata/v2/ODataTreeBinding',
-	'sap/ui/model/ClientTreeBinding',
 	'./TreeRenderer'
 ],
 function(
 	jQuery,
 	ListBase,
-	TreeItemBase,
 	library,
 	ClientTreeBindingAdapter,
 	TreeBindingCompatibilityAdapter,
-	ODataTreeBinding,
-	V2ODataTreeBinding,
-	ClientTreeBinding,
 	TreeRenderer
 	) {
 	"use strict";
@@ -92,15 +84,15 @@ function(
 
 		if (oBinding && sName === "items" && !oBinding.getLength) {
 			// try to resolve optional dependencies
-			if (ODataTreeBinding && oBinding instanceof ODataTreeBinding) {
+			if (oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding")) {
+				oBinding.applyAdapterInterface();
+			} else if (oBinding.isA("sap.ui.model.ClientTreeBinding")) {
+				ClientTreeBindingAdapter.apply(oBinding);
+			} else if (oBinding.isA("sap.ui.model.odata.ODataTreeBinding")) {
 				// use legacy tree binding adapter
 				TreeBindingCompatibilityAdapter(oBinding, this);
-			} else if (V2ODataTreeBinding && oBinding instanceof V2ODataTreeBinding) {
-				oBinding.applyAdapterInterface();
-			} else if (ClientTreeBinding && oBinding instanceof ClientTreeBinding) {
-				ClientTreeBindingAdapter.apply(oBinding);
 			} else {
-				jQuery.sap.log.error("TreeBinding is not supported for the control " + this);
+				jQuery.sap.log.error("TreeBinding is not supported for the " + this);
 			}
 		}
 
@@ -156,7 +148,7 @@ function(
 
 	Tree.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple) {
 		var oResult = ListBase.prototype.validateAggregation.apply(this, arguments);
-		if (sAggregationName === "items" && !(oObject instanceof TreeItemBase)) {
+		if (sAggregationName === "items" && !oObject.isA("sap.m.TreeItemBase")) {
 			throw new Error(oObject + " is not a valid items aggregation of " + this + ". Items aggregation in Tree control only supports TreeItemBase-based objects, e.g. StandardTreeItem.");
 		}
 		return oResult;

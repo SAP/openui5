@@ -39,7 +39,7 @@
 	}
 
 	function ensureSlash(path) {
-		return path && path[path.length] !== '/' ? path + '/' : path;
+		return path && path[path.length - 1] !== '/' ? path + '/' : path;
 	}
 
 	if (ui5loader == null) {
@@ -422,6 +422,21 @@
 	var sMainModule = oBootstrapScript && oBootstrapScript.getAttribute('data-sap-ui-main');
 	if ( sMainModule ) {
 		sap.ui.require(sMainModule.trim().split(/\s*,\s*/));
+	}
+
+	try {
+		if (window.localStorage.getItem("sap-ui-reboot-URL")) {
+			var sDebugRebootPath = ensureSlash(sBaseUrl) + 'sap/ui/bootstrap/Debug.js';
+			if (ui5loader.config().async) {
+				var oScript = document.createElement("script");
+				oScript.src = sDebugRebootPath;
+				document.head.appendChild(oScript);
+			} else {
+				document.write("<script src=\"" + sDebugRebootPath + "\"></script>");
+			}
+		}
+	} catch (e) {
+		// access to localStorage might be disallowed
 	}
 
 }());

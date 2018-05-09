@@ -285,6 +285,8 @@ sap.ui.define([
 			oCalPicker.attachEvent("select", _handleCalendarDateSelect, this);
 			oCalPicker.attachEvent("cancel", function (oEvent) {
 				this._oPopup.close();
+
+				jQuery.sap.focus(this.getAggregation("header").getDomRef("B2"));
 			}, this);
 			this.setAggregation("calendarPicker", oCalPicker);
 		}

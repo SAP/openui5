@@ -2021,16 +2021,22 @@
 			this.stepInput._inputLiveChangeHandler.call(this.stepInput._getInput(), oEvent);
 
 			//assert
-			equal(oSpy.callCount, 1,
-				"_inputLiveChangeHandler always calls setProperty()");
+			equal(oSpy.callCount, 2,
+					"_inputLiveChangeHandler always calls setProperty(). If the displayValuePrecision is bigger than the characters after the decimal mark - setProperty is called two times");
 			equal(oRestrictSpy.callCount, 1,
 					"_inputLiveChangeHandler always calls _restrictCharsWhenDecimal");
-			strictEqual(oSpy.getCall(0).args[0], "value",
-				"setProperty is called and it's first parameter is 'value'");
-			strictEqual(oSpy.getCall(0).args[1], "1.234",
-				"setProperty is called and it's second parameter is 1.234");
+			strictEqual(oSpy.getCall(0).args[0], "valueState",
+					"setProperty is called and it's first parameter is 'valueState'");
+			strictEqual(oSpy.getCall(0).args[1], "Error",
+					"setProperty is called and it's second parameter is Error");
 			strictEqual(oSpy.getCall(0).args[2], true,
-				"setProperty is called and it's third parameter is 'true'");
+					"setProperty is called and it's third parameter is 'true'");
+			strictEqual(oSpy.getCall(1).args[0], "value",
+					"setProperty is called and it's first parameter is 'value'");
+			strictEqual(oSpy.getCall(1).args[1], "1.234",
+					"setProperty is called and it's second parameter is 1.234");
+			strictEqual(oSpy.getCall(1).args[2], true,
+					"setProperty is called and it's third parameter is 'true'");
 
 			//act
 			this.stepInput._restrictCharsWhenDecimal(oEvent);
@@ -2038,6 +2044,20 @@
 			//assert
 			strictEqual(this.stepInput._getInput().$("inner").val(), "1.234",
 					"the digits's length is correct - equal to the displayValuePrecision");
+		});
+
+		QUnit.test("_showWrongValueVisualEffect() triggers an error state for 1s and set it back to the previous state", function () {
+			//act
+			this.stepInput._showWrongValueVisualEffect();
+
+			//assert
+			strictEqual(this.stepInput.getValueState(), "Error", "setValueState is set to Error");
+
+			//act
+			this.clock.tick(1000);
+
+			//assert
+			strictEqual(this.stepInput.getValueState(), "None", "setValueState is back to None");
 		});
 
 		QUnit.test("_iRealPrecision is updated on each value change", function () {
@@ -2064,7 +2084,7 @@
 			//Act && Assert
 			assert.equal(this.stepInput._sumValues(1.1376, 0.2, 1, 4), 1.3376, "sumValues(1.1376, 0.2, 1, 4)=1.3376");
 			assert.equal(this.stepInput._sumValues(1.1376, 0.2, -1, 4), 0.9376, "sumValues(1.1376, 0.2, -1, 4)= 0.9376");
-			assert / equal(this.stepInput._sumValues(1.1376, 0.2, 1, 3), 1.337, "sumValues(1.137, 0,2, 1, 3)=1.337");
+			assert.equal(this.stepInput._sumValues(1.1376, 0.2, 1, 3), 1.337, "sumValues(1.137, 0,2, 1, 3)=1.337");
 			assert.equal(this.stepInput._sumValues(1.1376, 0.2, -1, 3), 0.937, "sumValues(0.937, 0,2, -1, 3)=1.337");
 		});
 

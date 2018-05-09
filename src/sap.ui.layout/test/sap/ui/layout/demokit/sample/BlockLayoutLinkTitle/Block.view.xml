@@ -1,0 +1,82 @@
+<mvc:View
+	controllerName="sap.ui.layout.sample.BlockLayoutLinkTitle.Block"
+	xmlns:l="sap.ui.layout"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:core="sap.ui.core"
+	xmlns:form="sap.ui.layout.form"
+	xmlns="sap.m">
+	<form:SimpleForm
+			editable="true">
+		<Label text="Parent width" />
+		<Slider id="widthSlider" value="100" liveChange="onSliderMoved" />
+		<Label id="backgroundLabel" text="Background"/>
+		<SegmentedButton
+				selectedKey="{/selectedBackground}"
+				ariaDescribedBy="backgroundLabel"
+				ariaLabelledBy="backgroundLabel">
+			<items>
+				<SegmentedButtonItem key="Default" text="Default" />
+				<SegmentedButtonItem key="Light" text="Light" />
+				<SegmentedButtonItem key="Dashboard" text="Dashboard" />
+			</items>
+		</SegmentedButton>
+	</form:SimpleForm>
+	<MessageStrip
+		class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+		type="Warning"
+		text="Note: Usage of disabled, emphasized or subtle links as titles is not recommended. Dark background designs, for example Accent, are not fully supported with regards to Аccessibility when used with links as titles."/>
+	<l:VerticalLayout id="containerLayout" width="100%" >
+		<l:BlockLayout id="BlockLayout" background="{/selectedBackground}">
+			<l:BlockLayoutRow accentCells="Accent1">
+				<l:BlockLayoutCell
+						id="Accent1"
+						width="2"
+						title="Left aligned heading">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+					<l:titleLink>
+						<Link text="This is a title link" href="https://openui5.hana.ondemand.com/"/>
+					</l:titleLink>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="This is just a title">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						titleAlignment="End"
+						title="End aligned heading">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua."/>
+					<l:titleLink>
+						<Link text="This is a title link - wrapping true" href="https://openui5.hana.ondemand.com/" wrapping="true"/>
+					</l:titleLink>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+			<l:BlockLayoutRow>
+				<l:BlockLayoutCell
+						title="This is just a title">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+					<l:titleLink>
+						<Link text="This is a title link" href="https://openui5.hana.ondemand.com/"/>
+					</l:titleLink>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+					<l:titleLink>
+						<Link text="This is a title link - open in new window" href="https://openui5.hana.ondemand.com/" target="_blank"/>
+					</l:titleLink>
+				</l:BlockLayoutCell>
+				<l:BlockLayoutCell
+						title="25% width cell">
+					<Text text="Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr."/>
+					<l:titleLink>
+						<Link text="This is a title link - wrapping true" href="https://openui5.hana.ondemand.com/" wrapping="true"/>
+					</l:titleLink>
+				</l:BlockLayoutCell>
+			</l:BlockLayoutRow>
+		</l:BlockLayout>
+	</l:VerticalLayout>
+</mvc:View>

@@ -1106,6 +1106,36 @@
         "type": "FIX",
         "text": " sap.m.TableSelectDialog: Title of Dialog is also set",
         "references": []
+      },
+      {
+        "id": "a3cc9a9861a961b325c30b9c4e474559db810ae8",
+        "type": "FEATURE",
+        "text": " sap.m.SelectDialog: New growing property added",
+        "references": []
+      },
+      {
+        "id": "c0df11eb79097a4e383584e814302ea1dbc97530",
+        "type": "FEATURE",
+        "text": " sap.m.StepInput: Typing more characters than displayValuePrecision\u0027s limit causes a temporarily error state",
+        "references": []
+      },
+      {
+        "id": "45d5715c3711b01e4292a9f88b054bf1ba3f824a",
+        "type": "FIX",
+        "text": " Icon Explorer - Fix unstable OPA test",
+        "references": []
+      },
+      {
+        "id": "1a0dd22776281279eb7cbb20ed74f6a0fb3704b2",
+        "type": "FIX",
+        "text": " sap.m.FormattedText: DemoKit sample not shown completely fixed",
+        "references": []
+      },
+      {
+        "id": "ba849100a1fc22ebe58fa0fef74204d18ffeeaa0",
+        "type": "FIX",
+        "text": " sap.m.Page: Do not focus on the hidden footer.",
+        "references": []
       }
     ]
   }

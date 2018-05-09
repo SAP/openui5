@@ -197,7 +197,9 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/core/library', 'sap
 			oRm.write(">");
 
 			if (bRenderBDI) {
-				oRm.write("<bdi>");
+				oRm.write("<bdi");
+				oRm.writeAttribute("id", oButton.getId() + "-BDI-content");
+				oRm.write(">");
 			}
 			oRm.writeEscaped(sText);
 			if (bRenderBDI) {

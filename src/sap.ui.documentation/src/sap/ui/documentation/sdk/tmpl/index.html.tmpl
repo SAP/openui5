@@ -21,19 +21,24 @@
 		<script>
 
 			sap.ui.getCore().attachInit(function() {
+
 				new sap.m.App ({
 					pages : [
 						new sap.m.Page({
 							title : "{{TITLE}}",
 							enableScrolling : {{SCROLLING}},
-							content : [ new sap.ui.core.ComponentContainer({
-								{{HEIGHT}}name : "{{SAMPLE_ID}}",
-								settings : {
-									id : "{{SAMPLE_id}}"
-								}
+							content : [
+								new sap.ui.core.ComponentContainer({
+									{{HEIGHT}}name : "{{SAMPLE_ID}}",
+									settings : {
+										id : "{{SAMPLE_ID}}"
+									}
+								})
+							]
 						})
 					]
 				}).placeAt("content");
+
 			});
 
 		</script>

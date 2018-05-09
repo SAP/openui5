@@ -222,7 +222,7 @@ function(
 					subHeader: {type: "sap.m.IBar", multiple: false},
 
 					/**
-					 * CustomHeader is only supported in some themes. When it's set, the icon, title and showHeader are properties ignored. Only the customHeader is shown as the header of the dialog.
+					 * When it is set, <code>icon</code>, <code>title</code> and <code>showHeader</code> properties are ignored. Only the <code>customHeader</code> is shown as the header of the dialog.
 					 * @since 1.15.1
 					 */
 					customHeader: {type: "sap.m.IBar", multiple: false},
