@@ -848,7 +848,6 @@
 		  "samples": [
 			"sap.m.sample.Page",
 			"sap.m.sample.PageStandardClasses",
-			"sap.m.sample.PageSpacing",
 			"sap.m.sample.PageListReportIconTabBar",
 			"sap.m.sample.PageListReportToolbar",
 			"sap.m.sample.PageFloatingFooter"
@@ -1685,11 +1684,6 @@
 		  "id": "sap.m.sample.Page",
 		  "name": "Page,Toolbar and Bar",
 		  "description": "Each screen of a mobile application is typically represented by a 'Page' consisting of a header, a scrollable content area and optionally a footer. The standard header offers a navigation button and a title. Alternatively you can provide a customer header. Gernerally you should use Toolbars in the Page. If you need a centered title you may use a Bar."
-		},
-		{
-		  "id": "sap.m.sample.PageSpacing",
-		  "name": "Fiori Object Page - sapUiFioriObjectPage",
-		  "description": "This CSS class has been replaced by the margin/padding concept in the sample \"PageStandardClasses\", please do not use it anymore. This page shows a standard setup for showing the details of an object based on: Object Header, Icon Tab Bar, Form, List, Table and Panel. By applying the CSS class 'sapUiFioriObjectPage' you arrange all the controls with a standard spacing. "
 		},
 		{
 		  "id": "sap.m.sample.PageStandardClasses",
