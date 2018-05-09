@@ -212,7 +212,7 @@ sap.ui.define(['jquery.sap.global',
 			/**
 			 * Holds the special dates in the context of a row. A single date or a date range can be set.
 			 *
-			 * <b>Note</> Only date or date ranges of type <code>sap.ui.unified.CalendarDayType.NonWorking</code> will
+			 * <b>Note</b> Only date or date ranges of type <code>sap.ui.unified.CalendarDayType.NonWorking</code> will
 			 * be visualized in the <code>PlanningCalendarRow</code>. If the aggregation is set as another type,
 			 * the date or date range will be ignored and will not be displayed in the control.
 			 * @since 1.56

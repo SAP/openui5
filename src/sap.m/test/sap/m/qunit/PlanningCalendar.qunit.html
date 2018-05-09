@@ -20,6 +20,7 @@
 	<link rel="stylesheet" href="../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen">
 	<script src="../../../../resources/sap/ui/thirdparty/qunit.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
+	<script src="../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
 	<script src="../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon.js"></script>
 	<script src="../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
@@ -2864,6 +2865,74 @@
 					this.oPC2, "Navigating forward once");
 		});
 
+		QUnit.test("Selecting the visible dates from the previous/next month in the calendar picker", function (assert) {
+			// Prepare
+			var oApp30Aug2016 = new CalendarAppointment("app30Aug2016", {
+				startDate: new Date(2016, 7, 30, 6),
+				endDate: new Date(2016, 7, 30, 10)
+			}), oApp2ndSept2016 = new CalendarAppointment("app2ndSept2016", {
+				startDate: new Date(2016, 8, 2, 6),
+				endDate: new Date(2016, 8, 2, 10)
+			}), aDays, $FirstInterval;
+
+			this.oPC2.getRows()[0].addAppointment(oApp30Aug2016);
+			this.oPC2.getRows()[0].addAppointment(oApp2ndSept2016);
+
+			// Act
+			_switchToView(CalendarIntervalType.Hour, this.oPC2);
+			sap.ui.getCore().applyChanges();
+
+			qutils.triggerEvent("click", "startDateAtTheMiddleOfTheWeek-TimeInt--Head-B1");
+			qutils.triggerEvent("mousedown", "startDateAtTheMiddleOfTheWeek-TimeInt--Cal--Month0-20160902");
+			qutils.triggerEvent("mouseup", "startDateAtTheMiddleOfTheWeek-TimeInt--Cal--Month0-20160902");
+			sap.ui.getCore().applyChanges();
+
+			this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+			this.oPC2IntervalRow = this.oPC2Interval.getAggregation('timesRow');
+			aDays = this.oPC2IntervalRow.$("times").children();
+			$FirstInterval = aDays[0];
+
+			// Assert
+			assert.ok(oApp2ndSept2016.getDomRef(), "Once moved to date of previous/next month, the appointment there should be visible");
+			assert.equal($FirstInterval.getAttribute("data-sap-time"), "201609020100", "Once clicked on a date from the visible range of the previous/next month, the PlanningCalendar is displaying the right view.");
+
+			// Act
+			_switchToView(CalendarIntervalType.Day, this.oPC2);
+			sap.ui.getCore().applyChanges();
+
+			qutils.triggerEvent("click", "startDateAtTheMiddleOfTheWeek-DateInt--Head-B1");
+			qutils.triggerEvent("mousedown", "startDateAtTheMiddleOfTheWeek-DateInt--Cal--Month0-20160830");
+			qutils.triggerEvent("mouseup", "startDateAtTheMiddleOfTheWeek-DateInt--Cal--Month0-20160830");
+			sap.ui.getCore().applyChanges();
+
+			this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+			this.oPC2IntervalRow = this.oPC2Interval.getAggregation('month')[0];
+			aDays = this.oPC2IntervalRow.$("days").children();
+			$FirstInterval = aDays[0];
+
+			// Assert
+			assert.ok(oApp30Aug2016.getDomRef(), "Once moved to date of previous/next month, the appointment there should be visible");
+			assert.equal($FirstInterval.getAttribute("data-sap-day"), "20160830", "Once clicked on a date from the visible range of the previous/next month, the PlanningCalendar is displaying the right view.");
+
+			// Act
+			_switchToView(CalendarIntervalType.Week, this.oPC2);
+			sap.ui.getCore().applyChanges();
+
+			qutils.triggerEvent("click", "startDateAtTheMiddleOfTheWeek-WeekInt--Head-next");
+			qutils.triggerEvent("click", "startDateAtTheMiddleOfTheWeek-WeekInt--Head-B1");
+			qutils.triggerEvent("mousedown", "startDateAtTheMiddleOfTheWeek-WeekInt--Cal--Month0-20160830");
+			qutils.triggerEvent("mouseup", "startDateAtTheMiddleOfTheWeek-WeekInt--Cal--Month0-20160830");
+			sap.ui.getCore().applyChanges();
+
+			this.oPC2Interval = this.oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
+			this.oPC2IntervalRow = this.oPC2Interval.getAggregation('month')[0];
+			aDays = this.oPC2IntervalRow.$("days").children();
+			$FirstInterval = aDays[0];
+
+			// Assert
+			assert.ok(oApp30Aug2016.getDomRef(), "Once moved to date of previous month/next, the appointment there should be visible");
+			assert.equal($FirstInterval.getAttribute("data-sap-day"), "20160829", "Once clicked on a date from the visible range of the previous/next month, the PlanningCalendar is displaying the right view.");
+		});
 
 		QUnit.test("'Today' button should be disabled when current day is visible", function(assert) {
 			//assert
