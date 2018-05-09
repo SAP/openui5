@@ -16,6 +16,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/RuleSerializer",
 	"sap/ui/support/supportRules/RuleSet",
 	"sap/ui/support/supportRules/IssueManager",
+	"sap/ui/support/supportRules/History",
 	"sap/ui/support/supportRules/report/DataCollector",
 	"sap/ui/support/supportRules/WCBChannels",
 	"sap/ui/support/supportRules/Constants",
@@ -24,7 +25,7 @@ sap.ui.define([
 ],
 function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 		  ExecutionScope, Highlighter, CommunicationBus, RuleSerializer,
-		  RuleSet, IssueManager, DataCollector, channelNames, constants, RuleSetLoader, AnalysisHistoryFormatter) {
+		  RuleSet, IssueManager, History, DataCollector, channelNames, constants, RuleSetLoader, AnalysisHistoryFormatter) {
 	"use strict";
 
 	var IFrameController = null;
@@ -108,7 +109,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 							return null;
 						}
 
-						return IssueManager.getHistory();
+						return History.getHistory();
 					},
 					/**
 					 * Gets formatted history.
@@ -125,7 +126,7 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 							return "";
 						}
 
-						return AnalysisHistoryFormatter.format(IssueManager.getConvertedHistory());
+						return AnalysisHistoryFormatter.format(History.getHistory());
 					}
 				};
 
@@ -561,16 +562,13 @@ function (jQuery, ManagedObject, JSONModel, Analyzer, CoreFacade,
 	 * @private
 	 */
 	Main.prototype._done = function () {
-		var aIssues = IssueManager.getIssuesModel(),
-			aElementTree = this._createElementTree();
-
 		CommunicationBus.publish(channelNames.ON_ANALYZE_FINISH, {
-			issues: aIssues,
-			elementTree: aElementTree,
+			issues:  IssueManager.getIssuesModel(),
+			elementTree: this._createElementTree(),
 			elapsedTime: this._oAnalyzer.getElapsedTimeString()
 		});
 
-		IssueManager.saveHistory();
+		History.saveAnalysis(this);
 	};
 
 	/**
