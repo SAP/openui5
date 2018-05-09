@@ -21,10 +21,7 @@ sap.ui.require([
 	'sap/ui/fl/variants/VariantManagement',
 	'sap/m/Input',
 	'sap/m/Panel',
-	//should be last:
-	'sap/ui/thirdparty/sinon',
-	'sap/ui/thirdparty/sinon-ie',
-	'sap/ui/thirdparty/sinon-qunit'
+	'sap/ui/thirdparty/sinon'
 ], function(
 	CommandFactory,
 	DesignTimeMetadata,
