@@ -239,6 +239,11 @@ sap.ui.define([
 			if (window.parent !== window) {
 				this.startService('receiver');
 			}
+		},
+		_RESTART : {
+			NOT_NEEDED : "no restart",
+			VIA_HASH : "without max layer",
+			RELOAD_PAGE : "reload"
 		}
 	});
 
@@ -605,11 +610,13 @@ sap.ui.define([
 					});
 				}.bind(this),
 				function (vError) {
-					this.fireFailed();
+					if (vError !== "Reload triggered"){
+						this.fireFailed(vError);
+					}
 					if (vError) {
 						return Promise.reject(vError);
 					}
-				}
+				}.bind(this)
 			);
 		}
 	};
@@ -736,15 +743,23 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {boolean} bDontSaveChanges - stop RTA with or w/o saving changes
-	 * @param {boolean} bSkipCheckPersChanges - stop RTA with or w/o checking for personalized changes
+	 * @param {boolean} bSkipRestart - stop RTA with or w/o checking if a reload is needed to apply e.g. personalization/app descriptor changes
 	 * @returns {Promise} promise with no parameters
 	 */
-	RuntimeAuthoring.prototype.stop = function(bDontSaveChanges, bSkipCheckPersChanges) {
-		return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep())
-			.then(this._closeToolbar.bind(this))
-			.then(bSkipCheckPersChanges ? Promise.resolve() : this._handlePersonalizationChangesOnExit.bind(this))
-			.then(function(){
-				this.fireStop();
+	RuntimeAuthoring.prototype.stop = function(bDontSaveChanges, bSkipRestart) {
+		return ((bSkipRestart) ? Promise.resolve(this._RESTART.NOT_NEEDED) : this._handleReloadOnExit())
+			.then(function(sReload){
+				return ((bDontSaveChanges) ? Promise.resolve() : this._serializeToLrep(this))
+				.then(this._closeToolbar.bind(this))
+				.then(function(){
+					this.fireStop();
+					if (sReload !== this._RESTART.NOT_NEEDED){
+						this._removeMaxLayerParameter();
+						if (sReload === this._RESTART.RELOAD_PAGE){
+							this._reloadPage();
+						}
+					}
+				}.bind(this));
 			}.bind(this))['catch'](fnShowTechnicalError);
 	};
 
@@ -1259,16 +1274,19 @@ sap.ui.define([
 
 	/**
 	 * Reload the app inside FLP removing the parameter to skip personalization changes
-	 * @param  {map} mParsedHash URL parsed hash
-	 * @param  {sap.ushell.services.CrossApplicationNavigation} oCrossAppNav ushell service
-	 * @return {Promise} resolving to true if reload was triggered
+	 * @return {boolean} resolving to true if reload was triggered
 	 */
-	RuntimeAuthoring.prototype._reloadWithPersonalizationChanges = function(mParsedHash, oCrossAppNav){
-		if (this._hasCustomerLayerParameter(mParsedHash)) {
-			delete mParsedHash.params[FL_MAX_LAYER_PARAM];
-			// triggers the navigation without leaving FLP
-			oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
-			return Promise.resolve(true);
+	RuntimeAuthoring.prototype._removeMaxLayerParameter = function(){
+		if (Utils.getUshellContainer() && this.getLayer() !== "USER") {
+			var oCrossAppNav = Utils.getUshellContainer().getService("CrossApplicationNavigation");
+			var mParsedHash = this._getURLParsedHash();
+			if (oCrossAppNav.toExternal && mParsedHash){
+				if (this._hasCustomerLayerParameter(mParsedHash)) {
+					delete mParsedHash.params[FL_MAX_LAYER_PARAM];
+					// triggers the navigation without leaving FLP
+					oCrossAppNav.toExternal(this._buildNavigationArguments(mParsedHash));
+				}
+			}
 		}
 	};
 
@@ -1284,6 +1302,20 @@ sap.ui.define([
 			"MSG_PERSONALIZATION_EXISTS");
 	};
 
+	/**
+	 * Handler for the message box warning the user that personalization changes exist
+	 * and the app will be reloaded
+	 * @return {Promise} Resolving when the user clicks on OK
+	 */
+	RuntimeAuthoring.prototype._handleReloadMessageBox = function(sReason) {
+		return Utils._showMessageBox(
+			MessageBox.Icon.INFORMATION,
+			"HEADER_RELOAD_NEEDED",
+			sReason,
+			undefined,
+			"BUTTON_RELOAD_NEEDED"
+		);
+	};
 	/**
 	 * Check if there are personalization changes and restart the application without them
 	 * Warn the user that the application will be restarted without personalization
@@ -1311,65 +1343,44 @@ sap.ui.define([
 	};
 
 	/**
-	 * Handler for the message box asking the user if the personalization changes
-	 * should be restored after exiting RTA
-	 * @return {Promise} Resolves to true if the user wants to restore personalization
-	 */
-	RuntimeAuthoring.prototype._handlePersonalizationMessageBoxOnExit = function() {
-		return new Promise(function(resolve){
-			var sMessage = this._getTextResources()
-				.getText("MSG_LOAD_PERSONALIZATION_CHANGES");
-			var sTitle = this._getTextResources()
-				.getText("HEADER_LOAD_PERSONALIZATION_CHANGES");
-			var sConfirmButtonText = this._getTextResources()
-				.getText("MSG_PERSONALIZATION_CONFIRM_BUTTON_TEXT");
-			var sCancelButtonText = this._getTextResources()
-				.getText("MSG_PERSONALIZATION_CANCEL_BUTTON_TEXT");
-			var fnCallback = function (sAction) {
-				if (sAction === sConfirmButtonText) {
-					return resolve(true);
-				} else if (sAction === sCancelButtonText) {
-					return resolve(false);
-				}
-			};
-
-			MessageBox.confirm(sMessage, {
-				icon: MessageBox.Icon.QUESTION,
-				title : sTitle,
-				actions : [sConfirmButtonText, sCancelButtonText],
-				onClose : fnCallback,
-				styleClass: Utils.getRtaStyleClassName()
-			});
-		}.bind(this));
-	};
-
-	/**
 	 * When exiting RTA and personalization changes exist, the user can choose to
 	 * reload the app with personalization or stay in the app without the personalization
-	 * @return {Promise} Resolving to false means that the reload is not necessary
+	 * @return {Promise} Resolving to RESTART enum indicating if reload is necessary
 	 */
-	RuntimeAuthoring.prototype._handlePersonalizationChangesOnExit = function() {
-		var oUshellContainer = Utils.getUshellContainer();
-		if (oUshellContainer && this.getLayer() !== "USER") {
+	RuntimeAuthoring.prototype._handleReloadOnExit = function() {
+		return Promise.all([
+			this._oSerializer.needsReload(),
 			// When working with RTA, the MaxLayer parameter will be present in the URL and must
 			// be ignored in the decision to bring up the pop-up (ignoreMaxLayerParameter = true)
-			return this._getFlexController().isPersonalized({ignoreMaxLayerParameter : true})
-				.then(function(bIsPersonalized){
+			this._getFlexController().isPersonalized({ignoreMaxLayerParameter : true})
+		]).then(function(aArgs){
+			var bChangesNeedRestart = aArgs[0],
+				bIsPersonalized = aArgs[1];
+			if (bChangesNeedRestart || bIsPersonalized){
+				var sRestart = this._RESTART.RELOAD_PAGE;
+				var sRestartReason;
 				if (bIsPersonalized) {
-					return this._handlePersonalizationMessageBoxOnExit().then(function(bReloadWithPersonalization){
-						if (bReloadWithPersonalization) {
-							var oCrossAppNav = sap.ushell.Container.getService("CrossApplicationNavigation");
-							var mParsedHash = this._getURLParsedHash();
-							if (oCrossAppNav.toExternal && mParsedHash){
-								return this._reloadWithPersonalizationChanges(mParsedHash, oCrossAppNav);
-							}
-						}
-					}.bind(this));
+					//Loading the app with personalization means the visualization might change,
+					//therefore this message takes precedence
+					sRestartReason = "MSG_RELOAD_WITH_PERSONALIZATION";
+
+					if (!bChangesNeedRestart){
+						//if changes need restart this method has precedence, but in this case
+						//the faster cross app navigation to the same app (restart via hash) is possible
+						sRestart = this._RESTART.VIA_HASH;
+					}
+				} else if (bChangesNeedRestart){
+					sRestartReason = "MSG_RELOAD_NEEDED";
 				}
-			}.bind(this));
-		} else {
-			return Promise.resolve(false);
-		}
+				return this._handleReloadMessageBox(sRestartReason).then(function(){
+					return sRestart;
+				});
+			} else {
+				//no reload needed
+				return this._RESTART.NOT_NEEDED;
+			}
+
+		}.bind(this));
 	};
 
 	RuntimeAuthoring.prototype._onModeChange = function(oEvent) {

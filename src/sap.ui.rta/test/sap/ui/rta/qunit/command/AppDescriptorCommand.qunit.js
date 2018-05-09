@@ -128,6 +128,7 @@ function(
 		}, {}, {"layer" : this.sLayer});
 
 		assert.ok(this.oAppDescriptorCommand, "App Descriptor command exists for element");
+		assert.ok(this.oAppDescriptorCommand.needsReload, "App Descriptor commands need restart to be applied");
 
 		this.oAppDescriptorCommand.createAndStoreChange();
 	});
