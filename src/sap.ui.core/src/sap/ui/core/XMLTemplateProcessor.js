@@ -554,7 +554,11 @@ function(jQuery, DataType, ManagedObject, CustomData, View, EventHandlerResolver
 					// for Views the containing View's name is required to retrieve the according extension configuration,
 					// whereas for Fragments the actual Fragment's name is required - oView can be either View or Fragment
 					var oContainer = oView instanceof View ? oView._oContainingView : oView;
-					return SyncPromise.resolve(ExtensionPoint(oContainer, node.getAttribute("name"), function() {
+
+					// @evo-todo: The factory call needs to be refactored into a proper async/sync switch.
+					// @evo-todo: The ExtensionPoint module is actually the sap.ui.extensionpoint function.
+					//            We still call _factory for skipping the deprecation warning for now.
+					return SyncPromise.resolve(ExtensionPoint._factory(oContainer, node.getAttribute("name"), function() {
 						// create extensionpoint with callback function for defaultContent - will only be executed if there is no customizing configured or if customizing is disabled
 						var pChild = SyncPromise.resolve();
 						var aChildControlPromises = [];
