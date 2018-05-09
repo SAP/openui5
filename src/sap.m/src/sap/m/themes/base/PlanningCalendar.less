@@ -238,14 +238,21 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMPlanCal .sapUiCalRow:not(.sapUi
 		}
 
 		.sapMSLIDiv {
+			.sapMSLITitleOnly,
+			.sapMSLITitle {
+				white-space: normal;
+			}
+		}
+
+		.sapMSLIDescIcon .sapMSLIDiv {
 			box-sizing: border-box;
 			position: absolute;
 			padding-left: calc(3rem + 0.75rem); // Width of the image + right margin
 			width: 100%;
 
-			.sapMSLITitleOnly,
-			.sapMSLITitle {
-				white-space: normal;
+			html[data-sap-ui-browser^="ie"] & {
+				top: .5rem;
+				left: 0;
 			}
 		}
 	}
