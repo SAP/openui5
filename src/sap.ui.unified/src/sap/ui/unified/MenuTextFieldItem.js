@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.unified.MenuTextFieldItem.
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItemBase', './library'],
-	function(jQuery, ValueStateSupport, MenuItemBase, library) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItemBase', './library', "sap/ui/Device"],
+	function(jQuery, ValueStateSupport, MenuItemBase, library, Device) {
 	"use strict";
 
 
@@ -135,7 +135,13 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/ValueStateSupport', './MenuItem
 
 		if (bHovered && oMenu.checkEnabled(this)) {
 			oMenu.closeSubmenu(false, true);
-			this.$("tf").focus();
+			if (Device.browser.msie) {
+				jQuery.sap.delayedCall(0, this, function () {
+					this.$("tf").focus();
+				}.bind(this));
+			} else {
+				this.$("tf").focus();
+			}
 		}
 	};
 
