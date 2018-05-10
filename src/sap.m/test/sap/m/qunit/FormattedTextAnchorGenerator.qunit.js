@@ -157,4 +157,15 @@ jQuery.sap.require("sap.m.FormattedTextAnchorGenerator");
 		assert.strictEqual(AnchorGenerator.generateAnchors(sInputHtml, this.sStrategy, this.sTarget), sExpectedOutput);
 	});
 
+	QUnit.test("It should convert potential links containing allowed URL special characters. BCP: 1870166773", function (assert) {
+		// Arrange
+		var sInputHtml = "https://some.domain.sap.com/sap(bD1lbiZjPTAwMSZkPW1pbg==)/bc/bsp/sap/crm_ui_start/default.htm?sap-language=EN " +
+			"<br> https://some.domain.sap.com/sap/bc/bsp/sap/crm_ui_start/default.htm$sap-language=EN";
+
+		var sExpectedOutput = '<a href="https://some.domain.sap.com/sap(bD1lbiZjPTAwMSZkPW1pbg==)/bc/bsp/sap/crm_ui_start/default.htm?sap-language=EN" target="_self">https://some.domain.sap.com/sap(bD1lbiZjPTAwMSZkPW1pbg==)/bc/bsp/sap/crm_ui_start/default.htm?sap-language=EN</a> <br> <a href="https://some.domain.sap.com/sap/bc/bsp/sap/crm_ui_start/default.htm$sap-language=EN" target="_self">https://some.domain.sap.com/sap/bc/bsp/sap/crm_ui_start/default.htm$sap-language=EN</a>';
+
+		// Assert
+		assert.strictEqual(AnchorGenerator.generateAnchors(sInputHtml, this.sStrategy, this.sTarget), sExpectedOutput);
+	});
+
 }(QUnit, sap.m.FormattedTextAnchorGenerator));
