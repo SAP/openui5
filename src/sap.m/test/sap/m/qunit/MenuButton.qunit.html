@@ -61,6 +61,25 @@
 			assert.notEqual(jQuery.sap.domById(this.sut.getId()), null, "MenuButton HTML Element should be rendered");
 			assert.equal(jQuery.sap.domById(this.oMenu.getId()), null, "Menu HTML Element is not yet rendered");
 		});
+
+		QUnit.test("MenuButton sets a stableID to the internal button", function (assert) {
+			// assert
+			assert.ok(this.sut.getDomRef("internalBtn"), "there is an element with -internalBtn suffix");
+		});
+
+		QUnit.test("MenuButton sets a stableID to the internal split button", function (assert) {
+			// arrange
+			var oMenuButton = new sap.m.MenuButton({ buttonMode: sap.m.MenuButtonMode.Split });
+			oMenuButton.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assert
+			assert.ok(oMenuButton.getDomRef("internalSplitBtn"), "there is an element with -internalSplitBtn suffix");
+
+			// cleanup
+			oMenuButton.destroy();
+		});
+
 		QUnit.test("Property - Default Values", function(assert) {
 			this.sut.destroy();
 			this.sut = null;
