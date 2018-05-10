@@ -395,29 +395,39 @@ function(
 		 * @private
 		 */
 		Slider.prototype._handleTickmarksResponsiveness = function () {
-			var aLabelsInDOM, fOffsetLeftPct, fOffsetLeftPx, aHiddenLabels,
+			var aLabelsInDOM, fOffsetLeftPct, fOffsetLeftPx, aHiddenLabels, oSiblingTickmark,
 				oScale = this.getAggregation("scale"),
-				aTickmarksInDOM = this.$().find(".sapMSliderTick"),
-				iScaleWidth = this.$().find(".sapMSliderTickmarks").width(),
+				$oSlider = this.$(),
+				aTickmarksInDOM = $oSlider.find(".sapMSliderTick"),
+				iScaleWidth = $oSlider.find(".sapMSliderTickmarks").width(),
 				bShowTickmarks = (iScaleWidth / aTickmarksInDOM.size()) >= SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL;
 
 			//Small tickmarks should get hidden if their width is less than _SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.SMALL
-			if (this._bTickmarksLastVisibilityState !== bShowTickmarks) {
-				aTickmarksInDOM.toggle(bShowTickmarks);
-				this._bTickmarksLastVisibilityState = bShowTickmarks;
-			}
+			aTickmarksInDOM.css("visibility", bShowTickmarks ? '' /* visible */ : 'hidden');
 
 			// Tickmarks with labels responsiveness
-			aLabelsInDOM = this.$().find(".sapMSliderTickLabel").toArray();
+			aLabelsInDOM = $oSlider.find(".sapMSliderTickLabel");
 			// The distance between the first and second label in % of Scale's width
 			fOffsetLeftPct = parseFloat(aLabelsInDOM[1].style.left);
 			// Convert to PX
 			fOffsetLeftPx = iScaleWidth * fOffsetLeftPct / 100;
 			// Get which labels should become hidden
-			aHiddenLabels = oScale.getHiddenTickmarksLabels(iScaleWidth, aLabelsInDOM.length, fOffsetLeftPx, SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.WITH_LABEL);
+			aHiddenLabels = oScale.getHiddenTickmarksLabels(iScaleWidth, aLabelsInDOM.size(), fOffsetLeftPx, SliderUtilities.CONSTANTS.TICKMARKS.MIN_SIZE.WITH_LABEL);
 
-			aLabelsInDOM.forEach(function (oElem, iIndex) {
-				oElem.style.display = aHiddenLabels[iIndex] ? "none" : "inline-block";
+			aLabelsInDOM.each(function (iIndex, oElem) {
+				// All the labels are positioned prior the corresponding tickmark, except for the last label.
+				// That's why we're using the  previousSibling property
+				oSiblingTickmark = oElem.nextSibling || oElem.previousSibling || {style: {visibility: null}};
+
+				// As tickmarks are separated from the lables, we should ensure that if a label is visible,
+				// the corresponding tickmark should be visible too and vice versa.
+				if (aHiddenLabels[iIndex]) {
+					oElem.style.display = "none";
+					oSiblingTickmark.style.visibility = 'hidden'; //visible- inherit from CSS
+				} else {
+					oElem.style.display = ""; //inline-block- inherit from CSS
+					oSiblingTickmark.style.visibility = ''; //visible- inherit from CSS
+				}
 			});
 		};
 
@@ -723,6 +733,10 @@ function(
 			if (!this._parentResizeHandler) {
 				jQuery.sap.delayedCall(0, this, function () {
 					this._parentResizeHandler = ResizeHandler.register(this, this._handleSliderResize.bind(this));
+				});
+			} else {
+				jQuery.sap.delayedCall(0, this, function () {
+					this._handleSliderResize({control: this});
 				});
 			}
 		};
