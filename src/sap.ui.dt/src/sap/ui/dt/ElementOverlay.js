@@ -425,11 +425,9 @@ function(
 		});
 
 		if (bOrderChanged) {
-			var $Children = jQuery(oContainer);
-
 			aSorted.forEach(function(oChild) {
-				$Children.append(oChild);
-			}, this);
+				DOMUtil.appendChild(oContainer, oChild);
+			});
 		}
 
 	};
