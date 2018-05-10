@@ -142,6 +142,7 @@ sap.ui.define([
 			this.treeTable.expand(0);
 
 			var bAllSelected = true;
+			var persistedSelectedRules = storage.getSelectedRules() || [];
 
 			for (var ruleIndex in treeTableTempLibrary) {
 
@@ -151,12 +152,15 @@ sap.ui.define([
 					continue;
 				}
 
-				iRuleIndex++;
+				iRuleIndex += 1;
 
 				var rule = treeTableTempLibrary[ruleIndex];
 
 				var bMatchingSelectionInfo = false;
-				var persistedSelectedRules = storage.getSelectedRules();
+
+				if (persistedSelectedRules.length === 0) {
+					bAllSelected = false;
+				}
 
 				for (var i = 0; i < persistedSelectedRules.length; i++) {
 					var selection = persistedSelectedRules[i];
@@ -172,12 +176,18 @@ sap.ui.define([
 					bAllSelected = false;
 					this.treeTable.removeSelectionInterval(iRuleIndex, iRuleIndex);
 				}
+
+				// make sure the model is in sync with the treetable selection as well
+				this.model.setProperty("/treeViewModel/0/" + (iRuleIndex - 1) + "/selected", bMatchingSelectionInfo);
 			}
 
+			// if all temp rules are selected, update model and treetable selection
 			if (bAllSelected) {
-				this.model.setProperty("/treeViewModel/0/selected", true);
 				this.treeTable.addSelectionInterval(0, 0);
+			} else {
+				this.treeTable.removeSelectionInterval(0, 0);
 			}
+			this.model.setProperty("/treeViewModel/0/selected", bAllSelected);
 		},
 
 		/**

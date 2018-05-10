@@ -155,7 +155,7 @@ sap.ui.define([
 					tempLib.rules.push(newRule);
 					treeTableTempLibrary = this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
 
-					this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
+					// this._syncTreeTableVieModelTempRulesLib(tempLib, treeTable);
 					if (this.model.getProperty("/persistingSettings")) {
 						storage.setRules(tempLib.rules);
 
