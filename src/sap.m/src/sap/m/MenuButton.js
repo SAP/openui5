@@ -503,6 +503,7 @@ sap.ui.define([
 				case 'activeIcon':
 				case 'iconDensityAware':
 				case 'textDirection':
+				case 'enabled':
 					this._getButtonControl().setProperty(sPropertyName, vValue);
 					break;
 			}
