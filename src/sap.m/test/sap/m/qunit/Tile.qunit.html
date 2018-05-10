@@ -217,32 +217,31 @@
 			container.destroy();
 		});
 
-        QUnit.module("Keyboard handling");
+		QUnit.module("Keyboard handling");
 
-        QUnit.test("ShouldFirePressOnEnterOrSpace", function(assert) {
-            //Arrange
-            var result = 0,
-            //SUT
-            sut = new sap.m.Tile({ press: handleTilePress });
+		QUnit.test("ShouldFirePressOnEnterOrSpace", function(assert) {
+			//Arrange
+			var result = 0,
+			//SUT
+			sut = new sap.m.Tile({ press: handleTilePress });
 
-            function handleTilePress() {
-                result++;
-            };
+			function handleTilePress() {
+				result++;
+			};
 
-            sut.placeAt("qunit-fixture");
-            core.applyChanges();
+			sut.placeAt("qunit-fixture");
+			core.applyChanges();
 
-            //Act
-            sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.ENTER);
-            //Assert
-            assert.equal(result, 1);
+			//Act
+			sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			//Assert
+			assert.equal(result, 1);
 
-            //Act
-            sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.SPACE);
-            //Assert
-            assert.equal(result, 2);
-        });
-
+			//Act
+			sap.ui.test.qunit.triggerKeyboardEvent(sut.getDomRef(), jQuery.sap.KeyCodes.SPACE);
+			//Assert
+			assert.equal(result, 2);
+		});
 
 		QUnit.test('ShouldHaveAccessibilityAttributes', function (assert) {
 			// SUT
@@ -287,8 +286,7 @@
 					'When tile is editable, aria-describedBy should point to a label with certain text');
 
 			cnt.destroy();
-		})
-
+		});
 
 	</script>
 </head>

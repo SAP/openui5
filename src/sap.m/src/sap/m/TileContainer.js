@@ -819,6 +819,9 @@ function(
 	TileContainer.prototype.insertTile = function(oTile, iIndex) {
 		var that = this,
 			aVisibleTiles;
+
+		oTile.isEditable(this.getEditable());
+
 		// keyboard support for desktop environments
 		if (Device.system.desktop || Device.system.combi) {
 			oTile.addEventDelegate({
