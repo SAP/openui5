@@ -10,6 +10,10 @@ sap.ui.define([
 ], function (constants, storage, SharedModel, File) {
 	"use strict";
 
+	var fnNumericSortAscending = function fnNumericSortAscending(a, b) {
+		return a - b;
+	};
+
 	var SelectionUtils = {
 		model: SharedModel,
 		/**
@@ -331,6 +335,76 @@ sap.ui.define([
 		},
 
 		/**
+		 * Workaround for temp rule issue method
+		 */
+		initializeModelSelection: function () {
+			var oTreeViewModel = this.model.getProperty("/treeViewModel");
+			var aRuleSelections = storage.getSelectedRules();
+			var oTreeTable = this.treeTable;
+
+			oTreeTable.expandToLevel(1);
+
+			var i = -1;
+			Object
+				.keys(oTreeViewModel)
+
+				.map(function (sNum) {
+					return Number.parseInt(sNum, 10);
+				})
+				.sort(fnNumericSortAscending)
+
+				.forEach(function (sLibKey, iLibIndex) {
+					i += 1;
+
+					var iTableLibIndex = i;
+					var bAllSelected = true;
+
+					Object
+						.keys(oTreeViewModel[sLibKey])
+						// we first need to get the numeric keys in the library, i.e. rules
+						.filter(function (sRuleKeyToFilter) {
+							return Number.isInteger(Number.parseInt(sRuleKeyToFilter, 10));
+						})
+
+						.map(function (sNum) {
+							return Number.parseInt(sNum, 10);
+						})
+						.sort(fnNumericSortAscending)
+
+						.forEach(function (sRuleKey, iRuleIndex) {
+							i += 1;
+
+							var oRule = oTreeViewModel[sLibKey][sRuleKey];
+
+							aRuleSelections.forEach(function (oRuleSelection) {
+								if (oRule.id === oRuleSelection.ruleId && oRule.libName === oRuleSelection.libName) {
+									oRule.selected = true;
+								}
+							});
+
+							if (oRule.selected === true) {
+								oTreeTable.addSelectionInterval(i, i);
+							} else {
+								oTreeTable.removeSelectionInterval(i, i);
+								bAllSelected = false;
+							}
+						});
+
+					// if no rules in library number won't be incremented
+					if (i === iTableLibIndex) {
+						bAllSelected = false;
+					}
+
+					oTreeViewModel[sLibKey].selected = bAllSelected;
+					if (bAllSelected) {
+						oTreeTable.addSelectionInterval(iTableLibIndex, iTableLibIndex);
+					} else {
+						oTreeTable.removeSelectionInterval(iTableLibIndex, iTableLibIndex);
+					}
+			 });
+		},
+
+		/**
 		 *
 		 * Create a map which returns all rows of the tree table from the binding.
 		 *
@@ -581,111 +655,6 @@ sap.ui.define([
 			}
 
 			return bIsFileValid;
-		},
-
-		/***************************************************************************
-		 * TREETABLE MANAGER CODE
-		 **************************************************************************/
-
-		/**
-		 * Synchronises the selection of rules between the model and the TreeTable. If the model is updated calling
-		 * syncModelAndTreeTable() will update the TreeTable accordingly
-		 * @param {object} oTreeViewModel The object from the TreeTable model
-		 * @param {sap.ui.table.TreeTable} oTreeTable The TreeTable displaying the support assistant rules
-		 */
-		syncModelAndTreeTable: function () {
-			var oTreeViewModel = this.model.getProperty("/treeViewModel");
-			var oTreeTable = this.treeTable;
-
-			// We need an expanded tree table
-			oTreeTable.expandToLevel(1);
-
-			for (var sLibraryIndex in oTreeViewModel) {
-				if (!window.isNaN(window.parseInt(sLibraryIndex))) {
-					var oLibrary = oTreeViewModel[sLibraryIndex];
-
-					this.selectLibraryInTreeView(oLibrary, sLibraryIndex, oTreeTable, oTreeViewModel);
-				}
-			}
-		},
-
-		/**
-		 * Selects/Deselects all the rules libraries in the TreeTable
-		 * @param {object} oLibrary The library object that holds the rules
-		 * @param {string} sLibraryIndex The library index in the TreeTable model
-		 * @param {sap.ui.table.TreeTable} oTreeTable The TreeTable displaying the support assistant rules
-		 * @param {object} oTreeViewModel The object from the TreeTable model
-		 */
-		selectLibraryInTreeView: function (oLibrary, sLibraryIndex, oTreeTable, oTreeViewModel) {
-			var iRulesCount = Object.keys(oLibrary).length - 4; //excluding "name", "type", "rules" and "selected"
-			var iLibraryRowIndex = this.getLibraryRowIndex(oLibrary.name, oTreeViewModel);
-
-			if (iLibraryRowIndex === -1) {
-				return;
-			}
-
-			if (oLibrary.selected) {
-				oTreeTable.addSelectionInterval(iLibraryRowIndex, iLibraryRowIndex + iRulesCount);
-			} else {
-				oTreeTable.removeSelectionInterval(iLibraryRowIndex, iLibraryRowIndex);
-				this.selectRulesInTreeView(oLibrary, sLibraryIndex, oTreeTable);
-			}
-		},
-
-		/**
-		 * Selects/Deselects each rule of the the passed library according to the settings in the library object
-		 * @param {object} oLibrary The library object that holds the rules
-		 * @param {string} sLibraryIndex The library index in the TreeTable model
-		 * @param {sap.ui.table.TreeTable} oTreeTable The TreeTable displaying the support assistant rules
-		 */
-		selectRulesInTreeView: function (oLibrary, sLibraryIndex, oTreeTable) {
-			for (var sRuleIndex in oLibrary) {
-				var iRuleIndexAsInt = window.parseInt(sRuleIndex);
-
-				if (window.isNaN(iRuleIndexAsInt)) {
-					continue;
-				}
-
-				var oRule = oLibrary[sRuleIndex];
-				var iRuleRowIndex = window.parseInt(sLibraryIndex) + 1 + iRuleIndexAsInt;
-
-				if (oRule.selected) {
-					oTreeTable.addSelectionInterval(iRuleRowIndex, iRuleRowIndex);
-				} else {
-					oTreeTable.removeSelectionInterval(iRuleRowIndex, iRuleRowIndex);
-				}
-			}
-		},
-
-		/**
-		 * Gets the library rox index in the TreeTable
-		 * @param {string} sLibraryName The library name
-		 * @param {object} oTreeViewModel The object from the TreeTable model
-		 * @returns {number} The row number in the TreeTable or -1 if the library is not founds
-		 */
-		getLibraryRowIndex: function (sLibraryName, oTreeViewModel) {
-			var iIndex = 0;
-			var bFound = false;
-
-			for (var sLibraryIndex in oTreeViewModel) {
-				if (!window.isNaN(window.parseInt(sLibraryIndex))) {
-					var oLibrary = oTreeViewModel[sLibraryIndex];
-
-					if (oLibrary.name === sLibraryName) {
-						bFound = true;
-						break;
-					} else {
-						iIndex += Object.keys(oLibrary).length - 4 + 1; //excluding "name", "type", "rules" and "selected" but including library
-					}
-				}
-			}
-
-			if (bFound) {
-				return iIndex;
-			} else {
-				return -1;
-			}
-
 		}
 	};
 

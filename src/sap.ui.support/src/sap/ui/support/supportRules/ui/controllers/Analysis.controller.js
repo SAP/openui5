@@ -570,10 +570,9 @@ sap.ui.define([
 							storage.setSelectedRules(oOptionsToImport.selections);
 
 							// selects rows in model based on persisted selections
-							SelectionUtils.initializeSelection();
-
+							// and
 							// updates table from model selections
-							SelectionUtils.syncModelAndTreeTable();
+							SelectionUtils.initializeModelSelection();
 
 							that.model.setProperty("/persistingSettings", bOriginalPersistingSettingsValue);
 						}
