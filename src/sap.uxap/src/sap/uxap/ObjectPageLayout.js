@@ -1079,9 +1079,10 @@ sap.ui.define([
 		}
 
 		if (sId === null) {
-			// unset the currently selectedSection and allow the page to invalidate
-			// so upon rerendering the first visible section  will be set as selected
-			return this.setAssociation("selectedSection", null);
+			this.setAssociation("selectedSection", null, true);
+			this._expandHeader();
+			this._requestAdjustLayoutAndUxRules(true); // obtains the firstVisible section and scrolls to it if needed
+			return this;
 		}
 
 		this.scrollToSection(sId);
