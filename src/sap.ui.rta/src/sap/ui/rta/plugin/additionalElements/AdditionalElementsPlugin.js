@@ -537,7 +537,7 @@ sap.ui.define([
 		},
 
 		_createRevealCommandForInvisible: function(oSelectedElement, mActions, mParents, oSiblingElement) {
-			var oRevealedElement = oSelectedElement.element;
+			var oRevealedElement = ElementUtil.getElementInstance(oSelectedElement.elementId);
 			var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
 			var sType = oRevealedElement.getMetadata().getName();
 			var mType = mActions.reveal.types[sType];
@@ -567,7 +567,7 @@ sap.ui.define([
 		},
 
 		_createMoveCommandForInvisible: function(oSelectedElement, mActions, mParents, oSiblingElement, iIndex) {
-			var oRevealedElement = oSelectedElement.element;
+			var oRevealedElement = ElementUtil.getElementInstance(oSelectedElement.elementId);
 			var oRevealedElementOverlay = OverlayRegistry.getOverlay(oRevealedElement);
 			var sType = oRevealedElement.getMetadata().getName();
 			var sParentAggregationName;

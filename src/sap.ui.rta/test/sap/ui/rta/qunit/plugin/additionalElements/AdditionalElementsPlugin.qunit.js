@@ -936,8 +936,8 @@ sap.ui.require([
 			});
 			assert.notOk(bUnsupportedElement, "no unsupported invisible controls");
 			return Promise.resolve([
-				{ selected : false, label : "Invisible1", tooltip : "", type : "invisible", element : oInvisible1, bindingPaths: ["Property01"]},
-				{ selected : true, label : "Invisible2", tooltip : "", type : "invisible", element : oInvisible2, bindingPaths: ["Property02"]}
+				{ selected : false, label : "Invisible1", tooltip : "", type : "invisible", elementId : oInvisible1.getId(), bindingPaths: ["Property01"]},
+				{ selected : true, label : "Invisible2", tooltip : "", type : "invisible", elementId : oInvisible2.getId(), bindingPaths: ["Property02"]}
 			]);
 		});
 		fnGetUnboundODataPropertiesStub = sandbox.stub(AdditionalElementsAnalyzer,"getUnboundODataProperties").returns(Promise.resolve([

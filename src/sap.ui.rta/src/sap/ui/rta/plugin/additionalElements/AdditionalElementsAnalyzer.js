@@ -224,7 +224,7 @@
 			originalLabel: oElement.renamedLabel && oElement.fieldLabel !== oElement.labelFromOData ? oElement.labelFromOData : "",
 			//command relevant data
 			type : "invisible",
-			element : oElement
+			elementId : oElement.getId()
 		};
 	}
 
