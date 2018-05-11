@@ -718,7 +718,6 @@ function(
 					aggregationName: sAggregationName,
 					element: oElement,
 					designTimeMetadata: new AggregationDesignTimeMetadata({
-						libraryName: oElement.getMetadata().getLibraryName(),
 						data: mAggregationMetadata
 					}),
 					beforeDestroy: function (oEvent) {
