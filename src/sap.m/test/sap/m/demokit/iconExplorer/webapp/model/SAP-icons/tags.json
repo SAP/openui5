@@ -2701,7 +2701,7 @@
 			"grid",
 			"layout",
 			"boxes",
-			"sqaures",
+			"squares",
 			"modular"
 		]
 	},
@@ -6157,7 +6157,7 @@
 			"modify",
 			"distort",
 			"pixelate",
-			"sqaures",
+			"squares",
 			"dots",
 			"resolution",
 			"noise"
