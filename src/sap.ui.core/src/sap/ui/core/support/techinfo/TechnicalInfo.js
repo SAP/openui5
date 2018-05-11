@@ -571,7 +571,7 @@ sap.ui.define([
 		 * @return {JSONModel} Model with filled data.
 		 */
 		_createViewModel: function () {
-			var sDefaultBootstrapURL = new URI(jQuery.sap.getResourcePath(""), window.location.origin + window.location.pathname) + "/sap/ui/support/",
+			var sDefaultBootstrapURL = new URI(sap.ui.require.toUrl(""), window.location.origin + window.location.pathname) + "/sap/ui/support/",
 				sDefaultSelectedLocation = "standard",
 				sDefaultOpenInNewWindow = false;
 
