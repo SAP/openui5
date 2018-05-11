@@ -341,9 +341,6 @@ function(
 				'width': '100px',
 				'background-color': 'blue'
 			}).appendTo(this.$OuterPanel);
-		},
-		afterEach: function () {
-			this.$OuterPanel.remove();
 		}
 	}, function () {
 		QUnit.test("initial", function (assert) {
@@ -368,6 +365,36 @@ function(
 				height: '200px'
 			});
 			assert.strictEqual(DOMUtil.hasHorizontalScrollBar(this.$OuterPanel.get(0)), true);
+		});
+	});
+
+	QUnit.module("appendChild()", {
+		beforeEach: function() {
+			this.$Container = jQuery('<div/>').css({
+				'width': '500px',
+				'height': '500px',
+				'overflow': 'auto',
+				'background-color': 'red'
+			}).appendTo("#qunit-fixture");
+			this.$Child = jQuery('<div/>').css({
+				'width': '500px',
+				'height': '300px',
+				'overflow': 'auto',
+				'background-color': 'blue'
+			}).appendTo(this.$Container);
+			jQuery('<div/>').css({
+				'width': '1000px',
+				'height': '1000px',
+				'background-color': 'green'
+			}).appendTo(this.$Child);
+		}
+	}, function(){
+		QUnit.test("scrollTop/scrollLeft remain on the same positions", function (assert) {
+			this.$Child.scrollTop(300);
+			this.$Child.scrollLeft(200);
+			DOMUtil.appendChild(this.$Container.get(0), this.$Child.get(0));
+			assert.strictEqual(this.$Child.scrollTop(), 300);
+			assert.strictEqual(this.$Child.scrollLeft(), 200);
 		});
 	});
 
