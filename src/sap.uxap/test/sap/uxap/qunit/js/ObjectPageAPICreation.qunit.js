@@ -1125,6 +1125,16 @@
 		oObjectPage.setShowAnchorBar(true);
 		assert.equal(oObjectPage.getShowAnchorBar(), true);
 	});
+
+	QUnit.test("test showEditHeaderButton API", function (assert) {
+		var oObjectPage = new sap.uxap.ObjectPageLayout(this.oView.createId("myObjectPage6"));
+		assert.strictEqual(oObjectPage.getShowEditHeaderButton(), false, "showEditHeaderButton is false by default");
+		oObjectPage.setShowEditHeaderButton(true);
+		assert.strictEqual(oObjectPage.getShowEditHeaderButton(), true, "showEditHeaderButton is set to true correctly");
+		oObjectPage.setShowEditHeaderButton(false);
+		assert.strictEqual(oObjectPage.getShowEditHeaderButton(), false, "showEditHeaderButton is set to false correctly");
+	});
+
 	QUnit.test("test Section APIs", function (assert) {
 		var oObjectPage = new sap.uxap.ObjectPageLayout(this.oView.createId("myObjectPage7"));
 		var oSection1 = new sap.uxap.ObjectPageSection({title: "Recognition"});

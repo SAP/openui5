@@ -1027,6 +1027,17 @@ sap.ui.define([
 		return this;
 	};
 
+	ObjectPageLayout.prototype.setShowEditHeaderButton = function (bValue) {
+		var bOldValue = this.getShowEditHeaderButton(),
+			oHeaderContent = this.getAggregation("_headerContent");
+
+		if (bOldValue !== bValue) {
+			this.setProperty("showEditHeaderButton", bValue, true);
+			oHeaderContent && oHeaderContent.invalidate();
+		}
+		return this;
+	};
+
 	ObjectPageLayout.prototype._initializeScroller = function () {
 		if (this._oScroller) {
 			return;
