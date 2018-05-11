@@ -64,6 +64,16 @@ sap.ui.define([
 				},
 
 				/**
+				 * data type instance of the column. Can be used instead of the type, precision, scale and formatSettings properties
+				 */
+				oType: {
+					type: "object",
+					group: "Misc",
+					defaultValue: null,
+					since: "1.56"
+				},
+
+				/**
 				 * if type==numeric the precision will be used to format the entered value (maxIntegerDigits of the used Formatter)
 				 */
 				precision: {
@@ -187,14 +197,14 @@ sap.ui.define([
 					type: "object",
 					defaultValue: null
 				},
-                /**
-                 * Defines additional information of the link.
-                 *
-                 * @since 1.56.0
-                 */
-                description: {
-                    type: "string",
-                    defaultValue: null
+				/**
+				 * Defines additional information of the link.
+				 *
+				 * @since 1.56.0
+				 */
+				description: {
+					type: "string",
+					defaultValue: null
 				}
 			}
 		}
