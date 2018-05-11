@@ -829,6 +829,11 @@ sap.ui.define([
 	 */
 	ObjectPageHeader.prototype._adaptLayoutForDomElement = function ($headerDomRef, oEvent) {
 
+		var $domElement = $headerDomRef ? $headerDomRef : this.getDomRef();
+		if (isDomElementHidden($domElement)) {
+			return;
+		}
+
 		var $identifierLine = this._findById($headerDomRef, "identifierLine"),
 			iIdentifierContWidth = $identifierLine.width(),
 			iActionsWidth = this._getActionsWidth(), // the width off all actions without hidden one
@@ -1187,6 +1192,11 @@ sap.ui.define([
 	ObjectPageHeader.prototype._toggleFocusableState = function (bFocusable) {
 
 	};
+
+	// util
+	function isDomElementHidden($domElem) {
+		return $domElem && !$domElem.offsetWidth && !$domElem.offsetHeight;
+	}
 
 	return ObjectPageHeader;
 });
