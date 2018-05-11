@@ -48,25 +48,6 @@
 								<m:Text text="{/shortDescription}"/>
 							</l:VerticalLayout>
 
-							<m:Table
-									class="myTable"
-									visible="{/show/values}"
-									showSeparators="Inner"
-									fixedLayout="false"
-									items="{/values}" >
-								<m:columns>
-									<m:Column><m:Label text="Name" /></m:Column>
-									<m:Column minScreenWidth="Tablet" demandPopin="true" popinDisplay="WithoutHeader"><m:Label text="Description" /></m:Column>
-								</m:columns>
-								<m:items>
-									<m:ColumnListItem>
-										<m:cells>
-											<m:Text text="{name}" class="docuKey" wrapping="false" />
-											<m:Text text="{description}" />
-										</m:cells>
-									</m:ColumnListItem>
-								</m:items>
-							</m:Table>
 						</l:VerticalLayout>
 
 					</ObjectPageSubSection>
