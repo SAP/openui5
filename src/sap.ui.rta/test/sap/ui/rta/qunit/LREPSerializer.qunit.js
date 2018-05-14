@@ -182,8 +182,8 @@ sap.ui.require([
 			return this.oCommandStack.pushAndExecute(oSettingsCommand2);
 		}.bind(this))
 		.then(function(){
-			// destroy element for 2nd command
-			oInput3.destroy();
+			// simulate command having no app component
+			sandbox.stub(oSettingsCommand2, "getAppComponent");
 			assert.equal(oAddPreparedChangeSpy.callCount, 2, "until now 2 changes got added");
 			assert.equal(oDeleteChangeSpy.callCount, 0, "until now no changes got deleted");
 			return this.oCommandStack.undo();
