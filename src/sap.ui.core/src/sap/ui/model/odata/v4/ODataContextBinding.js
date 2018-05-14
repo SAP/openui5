@@ -195,6 +195,16 @@ sap.ui.define([
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			that = this;
 
+		/*
+		 * Fires a "change" event and refreshes dependent bindings.
+		 */
+		function fireChangeAndRefreshDependentBindings() {
+			that._fireChange({reason : ChangeReason.Change});
+			that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
+				oDependentBinding.refreshInternal(oGroupLock.getGroupId(), true);
+			});
+		}
+
 		oGroupLock.setGroupId(this.getGroupId());
 		oPromise = oMetaModel.fetchObject(oMetaModel.getMetaPath(sResolvedPath) + "/@$ui5.overload")
 			.then(function (aOperationMetadata) {
@@ -215,10 +225,7 @@ sap.ui.define([
 				return that.createCacheAndRequest(oGroupLock, sResolvedPath, oOperationMetadata,
 					fnGetEntity);
 			}).then(function (oResponseEntity) {
-				that._fireChange({reason : ChangeReason.Change});
-				that.oModel.getDependentBindings(that).forEach(function (oDependentBinding) {
-					oDependentBinding.refreshInternal(oGroupLock.getGroupId(), true);
-				});
+				fireChangeAndRefreshDependentBindings();
 				if (that.hasReturnValueContext(oOperationMetadata)) {
 					if (that.oReturnValueContext) {
 						that.oReturnValueContext.destroy();
@@ -228,6 +235,9 @@ sap.ui.define([
 							+ _Helper.getPrivateAnnotation(oResponseEntity, "predicate"));
 					return that.oReturnValueContext;
 				}
+			}, function (oError) {
+				fireChangeAndRefreshDependentBindings();
+				throw oError;
 			})["catch"](function (oError) {
 				oGroupLock.unlock(true);
 				if (that.oReturnValueContext) {
