@@ -3,6 +3,8 @@
 /* Belize theme                      */
 /* ================================= */
 
+@_sap_m_IconTabBar_SelectedTextColor: darken(@sapUiSelected, 5);
+
 /* Head Container */
 
 .sapMITH {
@@ -31,7 +33,7 @@
 /* Arrow */
 
 .sapMITBSelected > .sapMITBContentArrow {
-	border-bottom-color: @sapUiSelected;
+	border-bottom-color: @_sap_m_IconTabBar_SelectedTextColor;
 }
 
 .sapMITBSelected.sapMITBFilterNeutral > .sapMITBContentArrow {
@@ -89,7 +91,7 @@
 }
 
 .sapMITBTextOnly .sapMITBFilterDefault.sapMITBSelected > .sapMITBText {
-	color: darken(@sapUiSelected, 5);
+	color: @_sap_m_IconTabBar_SelectedTextColor;
 	text-shadow: @sapUiShadowText;
 }
 
@@ -181,7 +183,7 @@
 }
 
 .sapMITBSelected .sapMITBFilterDefault {
-	background: @sapUiSelected;
+	background: @_sap_m_IconTabBar_SelectedTextColor;
 	color: @sapUiContentContrastIconColor;
 }
 
