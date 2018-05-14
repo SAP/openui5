@@ -59,17 +59,36 @@
 								selectionBehavior="RowSelector"
 								rowActionCount="1"
 								toggleOpenState="onToggleOpenState"
-								rowSelectionChange="onRowSelectionChange">
+								rowSelectionChange="onRowSelectionChange"
+								showColumnVisibilityMenu="true"
+								columnVisibility="onColumnVisibilityChange">
 							<t:columns>
-								<t:Column label="Rules">
+								<t:Column id="rulesColumn"
+										label="Rules ({/selectedRulesCount} selected)">
 									<t:template>
 										<m:Text text="{name}" wrapping="false"/>
 									</t:template>
 								</t:Column>
-								<t:Column label="Categories"
+								<t:Column id="categoriesColumn"
+										label="Categories"
 										  width="10rem">
 									<t:template>
 										<m:Text text="{categories}" wrapping="false"/>
+									</t:template>
+								</t:Column>
+								<t:Column id="audienceColumn"
+										label="Audience"
+										visible="false">
+									<t:template>
+										<m:Text text="{audiences}" wrapping="false"/>
+									</t:template>
+								</t:Column>
+								<t:Column id="idsColumn"
+										label="RuleID"
+										  width="10rem"
+										  visible="false">
+									<t:template>
+										<m:Text text="{id}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 							</t:columns>

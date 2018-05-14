@@ -100,6 +100,7 @@ sap.ui.define([
 			if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
 				this.persistSelection();
 			}
+			this.model.setProperty("/selectedRulesCount", this.getSelectedRulesPlain().length);
 		},
 
 		/**
@@ -403,6 +404,7 @@ sap.ui.define([
 						oTreeTable.removeSelectionInterval(iTableLibIndex, iTableLibIndex);
 					}
 			 });
+			this.model.setProperty("/selectedRulesCount", this.getSelectedRulesPlain().length);
 		},
 
 		/**
@@ -543,6 +545,8 @@ sap.ui.define([
 			if (storage.readPersistenceCookie(constants.COOKIE_NAME)) {
 				this.persistSelection();
 			}
+
+			this.model.setProperty("/selectedRulesCount", this.getSelectedRulesPlain().length);
 		},
 
 		toggleOpenStateHandler: function (oEvent) {

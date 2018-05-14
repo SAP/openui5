@@ -25,6 +25,7 @@ sap.ui.define([
 				});
 
 				this.persistExecutionScope();
+				this.persistVisibleColumns();
 				SelectionUtils.persistSelection();
 
 			} else {
@@ -42,6 +43,22 @@ sap.ui.define([
 
 			storage.setSelectedScopeComponents(scopeComponent);
 			storage.setSelectedContext(setting);
+		},
+
+		/**
+		 * Persist visible columns selection in local storage.
+		 **/
+		persistVisibleColumns: function() {
+			var aVisibleColumnsIds = [],
+			aColumns = SelectionUtils.treeTable.getColumns();
+
+			aColumns.forEach(function (oColumn) {
+				if (oColumn.getVisible()){
+					aVisibleColumnsIds.push(oColumn.sId);
+				}
+			});
+
+			storage.setVisibleColumns(aVisibleColumnsIds);
 		},
 
 		deletePersistedData: function() {
