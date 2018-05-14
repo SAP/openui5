@@ -132,8 +132,8 @@ sap.ui.require([
 		if (Device.browser.msie || Device.browser.edge) {
 			// Microsoft shuffles attribute order; sort multiple attributes alphabetically:
 			// - no escaped quotes in attribute values!
-			// - e.g. <In a="..." b="..."/> or <template:repeat a="..." b="...">
-			sXml = sXml.replace(/<[\w:]+( \w+="[^"]*"){2,}(?=\/?>)/g, function (sMatch) {
+			// - e.g. <In a="..." b="..."/> or <template:repeat a="..." t:b="...">
+			sXml = sXml.replace(/<[\w:]+( [\w:]+="[^"]*"){2,}(?=\/?>)/g, function (sMatch) {
 				var aParts = sMatch.split(" ");
 				// aParts[0] e.g. "<In" or "<template:repeat"
 				// sMatch does not contain "/>" or ">" at end!
