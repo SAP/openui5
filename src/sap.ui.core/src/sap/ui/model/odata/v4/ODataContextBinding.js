@@ -412,8 +412,8 @@ sap.ui.define([
 	 * @param {object} oOperationMetadata
 	 *   The operation's metadata
 	 * @param {function} [fnGetEntity]
-	 *   An optional function which may be called to access the existing entity data in case of a
-	 *   bound operation
+	 *   An optional function which may be called to access the existing entity data (if already
+	 *   loaded) in case of a bound operation
 	 * @returns {SyncPromise}
 	 *   The request promise
 	 * @throws {Error}
@@ -455,7 +455,7 @@ sap.ui.define([
 		this.oOperation.bAction = bAction;
 		if (bAction && fnGetEntity) {
 			vEntity = fnGetEntity();
-			sETag = vEntity["@odata.etag"];
+			sETag = vEntity && vEntity["@odata.etag"];
 		}
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			mQueryOptions, vEntity);
