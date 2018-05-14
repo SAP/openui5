@@ -3203,6 +3203,40 @@
 		this.input.insertAggregation.restore();
 	});
 
+	QUnit.module("Input in a Dialog", {
+		beforeEach: function () {
+			this.dialog = new sap.m.Dialog({
+				content: [
+					new sap.m.Input({
+						showSuggestion: true,
+						suggestions: [
+							new sap.m.SuggestionItem()
+						]
+					})
+				]
+			});
+		},
+		afterEach: function () {
+			this.dialog.destroy();
+			this.dialog = null;
+		}
+	});
+
+	QUnit.test('Dialog scrollbar', function (assert) {
+		var input = this.dialog.getContent()[0];
+		this.dialog.open();
+
+		var scrollDiv = this.dialog.$().find(".sapMDialogScroll")[0];
+		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
+
+		input._$input.focus().val("abc").trigger("input");
+
+		this.dialog.focus();
+		this.clock.tick(300);
+
+		assert.equal(scrollDiv.offsetWidth, scrollDiv.scrollWidth, "Dialog doesn't have a scrollbar");
+	});
+
 </script>
 
 </head>
