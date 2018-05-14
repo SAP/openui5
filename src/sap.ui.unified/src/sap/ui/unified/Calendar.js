@@ -7,6 +7,7 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/LocaleData',
 	'sap/ui/unified/calendar/CalendarUtils',
+	'sap/ui/unified/DateRange',
 	'./calendar/Header',
 	'./calendar/Month',
 	'./calendar/MonthPicker',
@@ -23,6 +24,7 @@ sap.ui.define([
 	Control,
 	LocaleData,
 	CalendarUtils,
+	DateRange,
 	Header,
 	Month,
 	MonthPicker,
@@ -245,7 +247,24 @@ sap.ui.define([
 			 * Use <code>getStartDate</code> function to determine the current start date
 			 * @since 1.34.0
 			 */
-			startDateChange : {}
+			startDateChange : {},
+
+			/**
+			 * Week selection. Works for Gregorian calendars only and when <code>intervalSelection</code> is set to 'true'.
+			 * @since 1.56
+			 */
+			weekNumberSelect : {
+				parameters : {
+					/**
+					 * The selected week number.
+					 */
+					weekNumber : {type: "int"},
+					/**
+					 * The days of the corresponding week.
+					 */
+					weekDays: {type: "sap.ui.unified.DateRange"}
+				}
+			}
 		}
 	}});
 
@@ -425,7 +444,7 @@ sap.ui.define([
 	// overwrite invalidate to recognize changes on selectedDates
 	Calendar.prototype.invalidate = function(oOrigin) {
 
-		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof sap.ui.unified.DateRange))) {
+		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof DateRange))) {
 			Control.prototype.invalidate.apply(this, arguments);
 		} else if (this.getDomRef() && this._iMode == 0 && !this._sInvalidateMonth) {
 			// DateRange changed -> only rerender days
@@ -929,12 +948,19 @@ sap.ui.define([
 	};
 
 	Calendar.prototype.onclick = function(oEvent){
+		var oEventTarget = oEvent.target,
+			sTargetClassValue = oEventTarget.classList.value;
+
+		if (this.getIntervalSelection() && this.getPrimaryCalendarType() === sap.ui.core.CalendarType.Gregorian
+                    && sTargetClassValue && sTargetClassValue.indexOf("sapUiCalWeekNum") > -1) {
+			this._handleWeekSelection(oEventTarget);
+		}
 
 		if (oEvent.isMarked("delayedMouseEvent") ) {
 			return;
 		}
 
-		if (oEvent.target.id == this.getId() + "-cancel") {
+		if (oEventTarget.id == this.getId() + "-cancel") {
 			this.onsapescape(oEvent);
 		}
 
@@ -2262,6 +2288,22 @@ sap.ui.define([
 		oHeader.setAdditionalTextButton2(sYear);
 		oHeader._setAdditionalTextButton4(sYear);
 		oSecondMonthHeader.setAdditionalTextButton2(sYear);
+	};
+
+	/*
+	 * Fires a <code>weekNumberSelect</code> event when a week number is clicked.
+	 * @param {object} oEventTarget The clicked week number.
+	 * @private
+	 */
+	Calendar.prototype._handleWeekSelection = function (oEventTarget) {
+		var oSelectedWeekNumber = parseInt(oEventTarget.innerText, 10),
+			sStartDate = jQuery(oEventTarget.parentElement).attr("data-sap-day"),
+			oFormatter = sap.ui.core.format.DateFormat.getInstance({pattern: "yyyyMMdd"}),
+			oStartDate = oFormatter.parse(sStartDate),
+			oEndDate = new Date(oStartDate.getFullYear(), oStartDate.getMonth(), oStartDate.getDate() + 6),
+			oDateRange = new DateRange({startDate: oStartDate, endDate: oEndDate});
+
+		this.fireEvent("weekNumberSelect", {weekNumber: oSelectedWeekNumber, weekDays: oDateRange});
 	};
 
 	function _handleResize(oEvent){
