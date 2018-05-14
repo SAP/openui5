@@ -116,51 +116,61 @@ sap.ui.require([
 				};
 			this.oChangePersistence = new ChangePersistence(mComponentProperties);
 
-			this.oChangeContent1 = {
+			this.oChangeDefinition1 = {
 				"fileName": "fileName1",
 				"selector": {
 					"id": "field1",
 					"idIsLocal": true
-				}
+				},
+				support: {}
 			};
-			this.oChangeContent2 = {
+			this.oChangeDefinition2 = {
 				"fileName": "fileName2",
 				"selector": {
 					"id": "field2",
 					"idIsLocal": true
-				}
+				},
+				support: {}
 			};
-			this.oChangeContentForComposite11 = {
+			this.oChangeDefinitionForComposite11 = {
 				"fileName": "fileName11",
 				"selector": {
 					"id": "field1",
 					"idIsLocal": true
 				},
-				"compositeCommand": "unique_1"
+				support: {
+					"compositeCommand": "unique_1"
+				}
 			};
-			this.oChangeContentForComposite12 = {
+			this.oChangeDefinitionForComposite12 = {
 				"fileName": "fileName12",
 				"selector": {
 					"id": "field2",
 					"idIsLocal": true
 				},
-				"compositeCommand": "unique_1"
+				support: {
+					"compositeCommand": "unique_1"
+				}
 			};
-			this.oChangeContentForComposite21 = {
+			this.oChangeDefinitionForComposite21 = {
 				"fileName": "fileName21",
 				"selector": {
 					"id": "field1",
 					"idIsLocal": true
 				},
-				"compositeCommand": "unique_2"
+				support: {
+					"compositeCommand": "unique_2"
+				}
 			};
-			this.oChangeContentForComposite22 = {
+			this.oChangeDefinitionForComposite22 = {
 				"fileName": "fileName22",
 				"selector": {
 					"id": "field2",
 					"idIsLocal": true
 				},
-				"compositeCommand": "unique_2"
+				support: {
+					"compositeCommand": "unique_2"
+				}
 			};
 
 			this.oControl = {id : "a Control"};
@@ -175,7 +185,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling function 'initializeWithChanges' with the array...", function(assert) {
-		var aChanges = [new Change(this.oChangeContent1), new Change(this.oChangeContent2)];
+		var aChanges = [new Change(this.oChangeDefinition1), new Change(this.oChangeDefinition2)];
 		aChanges[1].setUndoOperations(["undoStack"]);
 		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aChanges));
 
@@ -191,8 +201,8 @@ sap.ui.require([
 	});
 
 	QUnit.test("when calling function 'initializeWithChanges' with the array containing changes from a composite command...", function(assert) {
-		var aCompositeChanges = [new Change(this.oChangeContentForComposite11), new Change(this.oChangeContentForComposite12),
-		                         new Change(this.oChangeContentForComposite21), new Change(this.oChangeContentForComposite22)];
+		var aCompositeChanges = [new Change(this.oChangeDefinitionForComposite11), new Change(this.oChangeDefinitionForComposite12),
+		                         new Change(this.oChangeDefinitionForComposite21), new Change(this.oChangeDefinitionForComposite22)];
 		sandbox.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve(aCompositeChanges));
 
 		return CommandStack.initializeWithChanges(this.oControl, ["fileName11", "fileName12", "fileName21", "fileName22"]).then(function(oStack){
