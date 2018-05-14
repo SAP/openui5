@@ -505,7 +505,7 @@ sap.ui.require([
 			} // else: it's a meta model
 			//assert.ok(true, sViewXML); // uncomment to see XML in output, in case of parse issues
 			return View.create({
-				type: "XML",
+				type : "XML",
 				controller : oController
 					&& new (Controller.extend(jQuery.sap.uid(), oController))(),
 				definition :
@@ -870,7 +870,7 @@ sap.ui.require([
 			$filter : \'TEAM_ID eq 42\',\
 			$orderby : \'Name desc\'\
 		},\
-		filters : {path: \'AGE\', operator: \'GT\', value1: 21},\
+		filters : {path : \'AGE\', operator : \'GT\', value1 : 21},\
 		sorter : {path : \'AGE\'}\
 	}">\
 	<ColumnListItem>\
@@ -967,7 +967,7 @@ sap.ui.require([
 <Table id="table"\
 		items="{\
 			path : \'/EMPLOYEES\',\
-			filters: {path: \'AGE\', operator: \'GT\', value1: \'42\'},\
+			filters : {path : \'AGE\', operator : \'GT\', value1 : \'42\'},\
 			sorter : {path : \'AGE\'},\
 			parameters : {foo : \'bar\'}\
 		}">\
@@ -2322,7 +2322,7 @@ sap.ui.require([
 <Table id="table"\
 		items="{\
 			path : \'/EMPLOYEES\',\
-			filters: {path: \'AGE\', operator: \'LT\', value1: \'77\'},\
+			filters : {path : \'AGE\', operator : \'LT\', value1 : \'77\'},\
 			parameters : {$orderby : \'Name\', $select : \'AGE\'}\
 		}">\
 	<ColumnListItem>\
@@ -2546,11 +2546,11 @@ sap.ui.require([
 		var that = this,
 			sView = '\
 <Table id="table" items="{\
-		factory: \'.employeesListFactory\',\
+		factory : \'.employeesListFactory\',\
 		parameters : {\
 			$select : \'AGE,ID\'\
 		},\
-		path: \'/EMPLOYEES\'\
+		path : \'/EMPLOYEES\'\
 	}">\
 </Table>',
 			oController = {
@@ -2694,13 +2694,13 @@ sap.ui.require([
 		<Text id="employeeId" text="{ID}" />\
 	</ColumnListItem>\
 </Table>\
-<VBox id="objectPage" binding="{path: \'\', parameters : {$$updateGroupId : \'update\'}}">\
+<VBox id="objectPage" binding="{path : \'\', parameters : {$$updateGroupId : \'update\'}}">\
 	<Text id="employeeName" text="{Name}"/>\
 </VBox>',
 			that = this;
 
 		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100",
-				{value: [{"Team_Id" : "1"}, {"Team_Id" : "2"}]})
+				{value : [{"Team_Id" : "1"}, {"Team_Id" : "2"}]})
 			.expectChange("teamId", ["1", "2"])
 			.expectChange("employeeId", false)
 			.expectChange("employeeName");
@@ -2807,17 +2807,17 @@ sap.ui.require([
 				filters : [
 					new Filter("soitem/GrossAmount", FilterOperator.GT, "1000"),
 					new Filter({
-						condition: new Filter({
-							and: true,
-							filters: [
+						condition : new Filter({
+							and : true,
+							filters : [
 								new Filter("schedule/DeliveryDate", FilterOperator.LT,
 									"2017-01-01T05:50Z"),
 								new Filter("soitem/GrossAmount", FilterOperator.LT, "2000")
 							]
 						}),
-						operator: FilterOperator.All,
-						path: "soitem/SOITEM_2_SCHDL",
-						variable: "schedule"
+						operator : FilterOperator.All,
+						path : "soitem/SOITEM_2_SCHDL",
+						variable : "schedule"
 					})
 				]
 			}),
@@ -2909,7 +2909,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	// Scenario: stream property with @odata.mediaReadLink
 	QUnit.test("stream property with @odata.mediaReadLink", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect: true}),
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox binding="{/Equipments(\'1\')/EQUIPMENT_2_PRODUCT}">\
 	<Text id="url" text="{ProductPicture/Picture}"/>\
@@ -3196,9 +3196,9 @@ sap.ui.require([
 	parameters : {$$groupId : \'group2\'}}"\
 />';
 
-		this.expectRequest({url: "EMPLOYEES('2')/Name", method: "GET"},
+		this.expectRequest({url : "EMPLOYEES('2')/Name", method : "GET"},
 				{value : "Frederic Fall"})
-			.expectRequest({url: "EMPLOYEES('3')/Name", method: "GET"},
+			.expectRequest({url : "EMPLOYEES('3')/Name", method : "GET"},
 				{value : "Jonathan Smith"})
 			.expectChange("text1", "Frederic Fall")
 			.expectChange("text2", "Jonathan Smith");
@@ -4226,6 +4226,46 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: <FunctionImport m:HttpMethod="POST" sap:action-for="..."> in V2 Adapter (w/o
+	// reading binding parameter first!)
+	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
+	QUnit.skip("V2 Adapter: bound action on context w/o read", function (assert) {
+		var oModel = this.createModelForV2SalesOrderService(),
+			oParentContext = oModel.bindContext("/SalesOrderLineItemSet(\'0815\',\'10\')/ToHeader")
+				.getBoundContext(),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			//TODO In the V2 adapter case a function import is used instead of a bound action. So we
+			// need the key predicates which sometimes cannot be parsed from the URL. Trigger this
+			// request and wait for the result before calling the function import.
+			//TODO What about the ETag which might be got from this fresh request? Really use it?
+			that.expectRequest("SalesOrderLineItemSet(\'0815\',\'10\')/ToHeader", {
+					"d" : {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "0815"
+					}
+				})
+				.expectRequest({
+					method : "POST",
+					url : "SalesOrder_Confirm?SalesOrderID='0815'"
+				}, {
+					"d" : {
+						"__metadata" : {
+							"type" : "GWSAMPLE_BASIC.SalesOrder"
+						},
+						"SalesOrderID" : "08/15"
+					}
+				});
+
+			return oModel.bindContext("GWSAMPLE_BASIC.SalesOrder_Confirm(...)", oParentContext)
+				.execute(); // code under test
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: <FunctionImport m:HttpMethod="PUT" sap:action-for="..."> in V2 Adapter
 	// Usage of service: /sap/opu/odata/IWFND/RMTSAMPLEFLIGHT/
 	//TODO $metadata of <FunctionImport> is broken, key properties and parameters do not match!
@@ -5071,7 +5111,7 @@ sap.ui.require([
 		var oModel = createSalesOrdersModel(),
 			sView = '\
 <FlexBox id="form">\
-	<t:Table rows="{path: \'SO_2_SOITEM\', parameters : {$$updateGroupId:\'update\'}}">\
+	<t:Table rows="{path : \'SO_2_SOITEM\', parameters : {$$updateGroupId : \'update\'}}">\
 		<t:Column>\
 			<t:template>\
 				<Text id="position" text="{ItemPosition}" />\
@@ -5542,7 +5582,7 @@ sap.ui.require([
 	// Scenario: Application tries to create client-side instance annotations via ODLB#create.
 	QUnit.test("@$ui5.* is write-protected for ODLB#create", function (assert) {
 		var sView = '\
-<Table id="table" items="{path: \'/Equipments\', parameters: {$$updateGroupId: \'never\'}}">\
+<Table id="table" items="{path : \'/Equipments\', parameters : {$$updateGroupId : \'never\'}}">\
 	<items>\
 		<ColumnListItem>\
 			<Text id="name" text="{Name}"/>\
@@ -6096,5 +6136,29 @@ sap.ui.require([
 		});
 	});
 
-//TODO test delete
+	//*********************************************************************************************
+	// Scenario: Execute bound action with context for which no data has been read yet.
+	QUnit.test("bound operation: execute bound action on context w/o read", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			oParentContext = oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
+				.getBoundContext(),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			//TODO How to avoid this GET request? $cached currently would not *prevent* it
+			// @see fnGetEntity
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)", {/*don't care*/})
+				.expectRequest({
+					method : "POST",
+					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
+					payload : {}
+				}, {"ArtistID": "42", "IsActiveEntity": false});
+
+			return oModel.bindContext("special.cases.EditAction(...)", oParentContext)
+				.execute(); // code under test
+		}).then(function (oInactiveArtistContext) {
+			assert.strictEqual(oInactiveArtistContext.getProperty("IsActiveEntity"), false);
+		});
+	});
 });
+//TODO test delete
