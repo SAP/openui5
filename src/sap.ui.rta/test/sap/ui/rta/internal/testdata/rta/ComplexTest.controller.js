@@ -147,7 +147,8 @@
 				if (
 					oChange.fileType !== "ctrl_variant_change" &&
 					oChange.fileType !== "ctrl_variant" &&
-					oChange.fileType !== "ctrl_variant_management_change"
+					oChange.fileType !== "ctrl_variant_management_change" &&
+					oChange.projectId === "sap.ui.rta.test"
 				) {
 					aFileNames.push(oChange.fileName);
 				}
