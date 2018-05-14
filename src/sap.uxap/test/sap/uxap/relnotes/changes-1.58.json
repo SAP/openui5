@@ -1,0 +1,13 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "49ee00226896e38ddea6eccc03da2d00825cea8b",
+        "type": "FIX",
+        "text": " uxap.ObjectPage: showEditHeaderButton custom setter added",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "b7d357b5b83d6edad7bc030aa0963efa528e9bcf",
+        "type": "FIX",
+        "text": " IconExplorer: Fixed icon tag typo",
+        "references": []
+      },
+      {
+        "id": "2e3a06ee827f1320b404be385abf5ca208150b29",
+        "type": "FIX",
+        "text": " sap.m.Button: Setter of text property does not break the DOM structure",
+        "references": []
+      },
+      {
+        "id": "b7ed2f4a5516d557c0875cc6fb0388d93f4dfb3d",
+        "type": "FIX",
+        "text": " sap.m.IconTabBar: Overflow list is now aligned at bottom right",
+        "references": []
+      },
+      {
+        "id": "3d4d9d497ec91dab7c4724dfad8984550f112da8",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: add stableID to the internal button",
+        "references": []
+      },
+      {
+        "id": "1c0ea2ebb12c1eb2628a6dc5c3711c372b237183",
+        "type": "FIX",
+        "text": " sap.m.MenuButton: enabled property works correctly now",
+        "references": []
+      },
+      {
+        "id": "8bf5b63c3c51a91768b2fca9a456940be3ff6078",
+        "type": "FIX",
+        "text": " sap.m.MessageStrip: Close button now indicates that it closes a message strip",
+        "references": []
+      },
+      {
+        "id": "3bdeb179a7e8a8ea2ce057e9b180146d20e94f4d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Dates from previous/next month in the calendar picker are now interactive",
+        "references": []
+      },
+      {
+        "id": "12323193ce9c6c732b6f51db38f89e9b2967443b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: fix title of the row when there is no image",
+        "references": []
+      },
+      {
+        "id": "cfc7e672e2cd55475363663c6f4435087548331b",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: load not density aware image by default",
+        "references": []
+      },
+      {
+        "id": "5ae37984c3c95e2d31f810a9959117df8c0f40d0",
+        "type": "FIX",
+        "text": " sap.m.Slider: Tickmarks/Labels responsiveness fix",
+        "references": []
+      },
+      {
+        "id": "a1f982dbd1db7e87cfc5f3dd01cb991fcc1788be",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: Sync with sap.m.Tile regarding editable: true",
+        "references": []
+      },
+      {
+        "id": "115f7ad912da5f3bd9cb03545fe138037bf3efd8",
+        "type": "FIX",
+        "text": " sap.m.TileContainer: reposition tiles when resize happens",
+        "references": []
+      },
+      {
+        "id": "7ac62d9bda235d6f638d6ab857a69094701e359a",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: Select time with num keypad",
+        "references": []
+      }
+    ]
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "3bdeb179a7e8a8ea2ce057e9b180146d20e94f4d",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: Dates from previous/next month in the calendar picker are now interactive",
+        "references": []
+      }
+    ]
+  }
+}

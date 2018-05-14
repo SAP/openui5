@@ -1,0 +1,13 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "7f96c2bb1a3312c9a072d65e3add61c9da82005e",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Pin button visibility corrected",
+        "references": []
+      }
+    ]
+  }
+}

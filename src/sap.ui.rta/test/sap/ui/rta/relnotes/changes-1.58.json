@@ -1,0 +1,13 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "60486d670e61e26e1845f4c9c901154cd86fac3c",
+        "type": "FIX",
+        "text": " sap.ui.rta Reload page for app descriptor changes",
+        "references": []
+      }
+    ]
+  }
+}

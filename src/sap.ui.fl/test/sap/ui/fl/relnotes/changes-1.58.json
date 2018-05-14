@@ -1,0 +1,13 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "92dcc676f1188b73a90e03969e4d3c61e983673e",
+        "type": "FIX",
+        "text": " set VariantModel to UI5-internal",
+        "references": []
+      }
+    ]
+  }
+}

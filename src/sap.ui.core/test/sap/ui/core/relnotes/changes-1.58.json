@@ -1,0 +1,25 @@
+{
+  "1.58.0": {
+    "date": "May 2018",
+    "notes": [
+      {
+        "id": "122558c2eab78703f321a308ccc7e859bf5962be",
+        "type": "FEATURE",
+        "text": " ExtensionPoint: Add new fully async load() API",
+        "references": []
+      },
+      {
+        "id": "982432236665d6777abbff723a94f6f2b5124bfc",
+        "type": "FIX",
+        "text": " View.create: Create view with owner component",
+        "references": []
+      },
+      {
+        "id": "b451ba7171c982f46f455149dce189688cea0eb4",
+        "type": "FIX",
+        "text": " ui5loader: fix sync module loading on file protocol",
+        "references": []
+      }
+    ]
+  }
+}
