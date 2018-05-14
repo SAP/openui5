@@ -1231,6 +1231,13 @@ sap.ui.require([
 
 			// code under test
 			return oBinding._execute(oGroupLock).then(function (oReturnValueContext1) {
+				var oChild0 = {
+						refreshInternal : function () {}
+					},
+					oChild1 = {
+						refreshInternal : function () {}
+					};
+
 				assert.strictEqual(oReturnValueContext1, oReturnValueContextSecondExecute);
 
 				oBindingMock.expects("createCacheAndRequest")
@@ -1238,8 +1245,14 @@ sap.ui.require([
 						"/TEAMS('42')/name.space.Operation(...)",
 						sinon.match.same(oOperationMetadata), sinon.match.func)
 					.returns(Promise.reject(oError));
-				oModelMock.expects("reportError");
+				oBindingMock.expects("_fireChange")
+					.withExactArgs({reason : ChangeReason.Change});
+				oModelMock.expects("getDependentBindings")
+					.withExactArgs(sinon.match.same(oBinding)).returns([oChild0, oChild1]);
+				that.mock(oChild0).expects("refreshInternal").withExactArgs("groupId", true);
+				that.mock(oChild1).expects("refreshInternal").withExactArgs("groupId", true);
 				that.mock(oReturnValueContextSecondExecute).expects("destroy").withExactArgs();
+				oModelMock.expects("reportError");
 
 				// code under test
 				return oBinding._execute(oGroupLock).then(function () {
@@ -1268,8 +1281,9 @@ sap.ui.require([
 		oBindingMock.expects("createCacheAndRequest").withExactArgs(sinon.match.same(oGroupLock),
 				"/OperationImport(...)", sinon.match.same(oOperationMetadata), undefined)
 			.returns(SyncPromise.reject(oError));
-		oBindingMock.expects("_fireChange").never();
-		oModelMock.expects("getDependentBindings").never();
+		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Change});
+		oModelMock.expects("getDependentBindings").withExactArgs(sinon.match.same(oBinding))
+			.returns([]);
 		oModelMock.expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, sinon.match.same(oError));
 		this.mock(oGroupLock).expects("unlock").withExactArgs(true);
@@ -1298,6 +1312,7 @@ sap.ui.require([
 		oBindingMock.expects("createCacheAndRequest").withExactArgs(sinon.match.same(oGroupLock),
 				"/OperationImport(...)", sinon.match.same(oOperationMetadata), undefined)
 			.returns(SyncPromise.resolve({/*oResult*/}));
+		// Note: if control's handler fails, we don't care about state of dependent bindings
 		oModelMock.expects("getDependentBindings").never();
 		oModelMock.expects("reportError").withExactArgs(
 			"Failed to execute " + sPath, sClassName, sinon.match.same(oError));
