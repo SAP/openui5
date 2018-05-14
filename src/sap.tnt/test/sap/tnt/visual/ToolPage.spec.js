@@ -17,19 +17,19 @@ describe('sap.tnt.ToolPage', function() {
 	var sideNav = element(by.id('SNav'));
 
 	// collapse NavigationListItem
-	it('should vizualize collapse NavigationListItem', function () {
+	it('should visualize collapse NavigationListItem', function () {
 		element(by.id('__icon1')).click();
 		expect(takeScreenshot(sideNav)).toLookAs('2_collapsedNavigation_List_Item');
 	});
 
 	// long list of items
-	it('should vizualize long list of items', function () {
+	it('should visualize long list of items', function () {
 		element(by.id('__icon3')).click();
 		expect(takeScreenshot(sideNav)).toLookAs('3_long_list_of_items');
 	});
 
 	// collapse Side Content
-	it('should vizualize collapsed side content', function () {
+	it('should visualize collapsed side content', function () {
 		element(by.id('menuToggleButton')).click();
 		expect(takeScreenshot()).toLookAs('4_collapsed_side_content');
 	});
@@ -47,9 +47,13 @@ describe('sap.tnt.ToolPage', function() {
 	});
 
 	// long list of items
-	it('should vizualize long list of items (collapsed)', function () {
+	it('should visualize long list of items (collapsed)', function () {
 		element(by.css('#NList > li:nth-of-type(3)')).click();
 		expect(takeScreenshot()).toLookAs('7_long_list_of_items');
 	});
 
+	var toolHeader = element(by.id('__header0'));
+	it('should display tool header', function () {
+		expect(takeScreenshot(toolHeader)).toLookAs('tool_header');
+	});
 });
