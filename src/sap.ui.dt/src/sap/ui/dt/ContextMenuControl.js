@@ -155,8 +155,6 @@ sap.ui.define([
 		},
 
 		exit: function () {
-			this.getPopover(true).oPopup.detachOpened(this._popupOpened, this);
-			this.getPopover(false).oPopup.detachOpened(this._popupOpened, this);
 			this.getPopover(true).oPopup.detachClosed(this._popupClosed, this);
 			this.getPopover(false).oPopup.detachClosed(this._popupClosed, this);
 			this.getPopover(true).detachBrowserEvent("contextmenu", this._onContextMenu, this);
