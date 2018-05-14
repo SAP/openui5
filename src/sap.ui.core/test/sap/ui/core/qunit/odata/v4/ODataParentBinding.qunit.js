@@ -1978,14 +1978,33 @@ sap.ui.require([
 				mQueryOptions = {},
 				oType = bKeys ? {$Key : ["foo", {"alias" : "path/to/key"}]} : {};
 
-			this.mock(oBinding.oModel.getMetaModel()).expects("getObject")
-				.withExactArgs(sMetaPath + "/").returns(oType);
+			this.mock(oMetaModel).expects("getObject")
+				.withExactArgs(sMetaPath + "/")
+				.returns(oType);
 			this.mock(oBinding).expects("addToSelect").exactly(bKeys ? 1 : 0)
 				.withExactArgs(sinon.match.same(mQueryOptions), aKeyProperties);
 
 			// code under test
 			oBinding.selectKeyProperties(mQueryOptions, sMetaPath);
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("selectKeyProperties: no type metadata available", function (assert) {
+		var oMetaModel = {
+				getObject : function () {}
+			},
+			oBinding = new ODataParentBinding({
+				oModel : {getMetaModel : function () {return oMetaModel;}}
+			});
+
+		this.mock(oMetaModel).expects("getObject")
+			.withExactArgs("~/")
+			.returns(undefined);
+		this.mock(oBinding).expects("addToSelect").never();
+
+		// code under test
+		oBinding.selectKeyProperties({}, "~");
 	});
 
 	//*********************************************************************************************
