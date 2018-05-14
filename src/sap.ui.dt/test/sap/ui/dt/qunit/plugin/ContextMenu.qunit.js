@@ -1147,6 +1147,28 @@ sap.ui.require([
 		oPos = null;
 	});
 
+	QUnit.test("calling _placeContextMenuAtTheBottom when menu popover does not have enough space above and bellow the overlay and RTA toolbar exist", function (assert) {
+		jQuery("#qunit-fixture").append("<div id=\"rtaToolbar\" class=\"sapUiRtaToolbar\" style=\"width:100%; height:40px; position: fixed; top:0px; left:0px;\" />");
+		var oOverlay = {
+			top: 10,
+			height: 150,
+			isOverlappedAtTop: true
+		};
+		var oPopover = {
+			height: 60
+		};
+		var oViewport = {
+			top: 0,
+			height: 150
+		};
+		var oPos = this.oContextMenuControl._placeContextMenuAtTheBottom(oOverlay, oPopover, oViewport);
+		assert.strictEqual(oPos.top, 45, "Should be at the bottom of the RTA Toolbar");
+		oOverlay = null;
+		oPopover = null;
+		oViewport = null;
+		oPos = null;
+	});
+
 	QUnit.test("calling _placeContextMenuOnTop", function (assert) {
 		var oOverlay = {
 			top: 100,
