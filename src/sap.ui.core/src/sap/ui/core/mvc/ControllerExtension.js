@@ -122,6 +122,11 @@ sap.ui.define(['sap/ui/base/Object', 'sap/ui/core/mvc/ControllerExtensionMetadat
 			var mControllerLifecycleMethods = this.getMetadata().getLifecycleConfiguration();
 			var fnOri = oOrigDef[sMemberName];
 			var fnCust = oCustomDef[sMemberName];
+
+			if (!fnCust) {
+				return;
+			}
+
 			sOverrideExecution = sOverrideExecution || mControllerLifecycleMethods[sMemberName] || OverrideExecution.Instead;
 
 			function wrapMethod(bBefore) {
