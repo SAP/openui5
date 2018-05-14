@@ -124,6 +124,10 @@ sap.ui.define([
 			return new ClassObject(sId, mSettings);
 		},
 
+		applySettings: function(oControl, mSettings) {
+			oControl.applySettings(mSettings);
+		},
+
 		/**
 		 * Returns the control for the given id.
 		 * In case of changes favor bySelector
