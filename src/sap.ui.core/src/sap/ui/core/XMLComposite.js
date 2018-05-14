@@ -421,7 +421,11 @@ sap.ui.define([
 
 				Control.apply(this,arguments);
 				delete this._bIsCreating;
-
+				if (this.getMetadata().usesTemplating()) {
+					//for the case the template is written against the ManagedObjectModel a templating before
+					//creating was not possible so we have to retemplate against the ManagedObject Model
+					this.requestFragmentRetemplating();
+				}
 			},
 			renderer: function (oRm, oControl) {
 				oRm.write("<div");
@@ -452,6 +456,27 @@ sap.ui.define([
 				oRm.write("</div>");
 			}
 		}, XMLCompositeMetadata);
+
+		XMLComposite.prototype.clone = function () {
+			var oClone = ManagedObject.prototype.clone.apply(this, arguments);
+			var aEvents, i, oContent = oClone.get_content();
+			if (oContent) {
+				//while cloning the children are also cloned which may yield in case the children
+				//use the composite as event handler that the clones use the template this is fixed here
+				for (var sEvent in oContent.mEventRegistry) {
+					aEvents = oContent.mEventRegistry[sEvent];
+					for (var i = 0; i < aEvents.length; i++) {
+						if (aEvents[i].oListener == this) {
+							aEvents[i].oListener = oClone;
+						}
+					}
+				}
+			}
+			//also if the compisite is clone when already having children the propagated models are so far not set
+			//fix that
+			oClone.oPropagatedProperties = this.oPropagatedProperties;
+			return oClone;
+		};
 
 		/**
 		 * Returns an element by its ID in the context of the XMLComposite.
@@ -628,7 +653,7 @@ sap.ui.define([
 		 * otherwise the managed object tree is not updating the proxy object in the inner managed object tree.
 		 */
 		XMLComposite.prototype.updateBindings = function () {
-			if (this._bIsInitializing) {
+			if (this._bIsCreating) {
 				return;
 			}
 			var oResult = Control.prototype.updateBindings.apply(this, arguments);
@@ -746,6 +771,8 @@ sap.ui.define([
 			if (mSettings && sAggregationName) {
 				var oNode = mSettings[sAggregationName];
 				if (oNode instanceof ManagedObject) {
+					//this happens if we cone the composite and the children are already present
+					//note that we adapted the event handling in the clone method that is enhanced in the composite
 					this._destroyCompositeAggregation();
 					this._setCompositeAggregation(oNode);
 					bInitialized = true;
@@ -764,13 +791,16 @@ sap.ui.define([
 			}
 			if (!bInitialized) {
 				this._destroyCompositeAggregation();
-				this._setCompositeAggregation(sap.ui.xmlfragment({
-					sId: this.getId(),
-					fragmentContent: this.getMetadata()._fragment,
-					oController: this
-				}));
+				if (!this.getMetadata().usesTemplating()) {
+					//in case there is no templating it is possible to insert the fragment as content
+					//Note: The applySettings comes later hence in this case there is no ManagedObject Model
+					this._setCompositeAggregation(sap.ui.xmlfragment({
+						sId: this.getId(),
+						fragmentContent: this.getMetadata()._fragment,
+						oController: this
+					}));
+				}
 			}
-
 		};
 
 		/**
