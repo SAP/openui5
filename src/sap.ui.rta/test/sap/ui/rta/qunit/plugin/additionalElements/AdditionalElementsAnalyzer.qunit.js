@@ -650,7 +650,7 @@ function(
 		assert.equal(mActualAdditionalElement.label, mExpected.label, msg + " -label");
 		assert.equal(mActualAdditionalElement.tooltip, mExpected.tooltip, msg + " -tooltip");
 		assert.equal(mActualAdditionalElement.type, mExpected.type, msg + " -type");
-		assert.equal(mActualAdditionalElement.element.getId(), mExpected.elementId, msg + " -element id");
+		assert.equal(mActualAdditionalElement.elementId, mExpected.elementId, msg + " -element id");
 		assert.deepEqual(mActualAdditionalElement.bindingPaths, mExpected.bindingPaths, msg + " -bindingPaths");
 	}
 
