@@ -240,9 +240,13 @@
 
 		QUnit.test("wrapping and break word with initially empty text", function(assert) {
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
+
 			t6.setText("LongTextWithNoSpaces");
+			sap.ui.getCore().applyChanges();
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), true, "Text has a class for break word");
+
 			t6.setText("LongTextWith Spaces");
+			sap.ui.getCore().applyChanges();
 			assert.strictEqual(t6.$().hasClass("sapMTextBreakWord"), false, "Text does not have a class for break word");
 		});
 
