@@ -558,7 +558,9 @@ sap.ui.define([
 						jQuery.sap.measure.end("rta.dt.startup","Measurement of RTA: DesignTime start up");
 					}, this);
 
-					this._oDesignTime.attachEventOnce("syncFailed", fnReject);
+					this._oDesignTime.attachEventOnce("syncFailed", function(oEvent) {
+						fnReject(oEvent.getParameter("error"));
+					});
 				}.bind(this));
 
 
@@ -610,7 +612,7 @@ sap.ui.define([
 					});
 				}.bind(this),
 				function (vError) {
-					if (vError !== "Reload triggered"){
+					if (vError !== "Reload triggered") {
 						this.fireFailed(vError);
 					}
 					if (vError) {
@@ -1316,6 +1318,7 @@ sap.ui.define([
 			"BUTTON_RELOAD_NEEDED"
 		);
 	};
+
 	/**
 	 * Check if there are personalization changes and restart the application without them
 	 * Warn the user that the application will be restarted without personalization
