@@ -137,6 +137,7 @@ sap.ui.define([
 		 */
 		buildApply : function (oAggregation, mAlias2MeasureAndMethod) {
 			var aAggregate,
+				sApply = "",
 				aGroupBy,
 				aMinMax = [];
 
@@ -211,8 +212,14 @@ sap.ui.define([
 			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
 			aAggregate = Object.keys(oAggregation.aggregate).sort().map(aggregate);
 
-			return "groupby((" + aGroupBy.join(",")
-				+ (aAggregate.length ? "),aggregate(" + aAggregate.join(",") + "))" : "))")
+			if (aAggregate.length) {
+				sApply = "aggregate(" + aAggregate.join(",") + ")";
+			}
+			if (aGroupBy.length) {
+				sApply = "groupby((" + aGroupBy.join(",") + (sApply ? ")," + sApply + ")" : "))");
+			}
+
+			return sApply
 				+ (aMinMax.length ? "/concat(aggregate(" + aMinMax.join(",") + "),identity)" : "");
 		},
 
