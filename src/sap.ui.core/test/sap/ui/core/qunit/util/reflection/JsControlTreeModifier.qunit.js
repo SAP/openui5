@@ -150,6 +150,15 @@ function(
 		assert.equal(sChangeHandlerModulePath, undefined, "then 'undefined' is returned");
 	});
 
+	QUnit.test("applySettings", function(assert){
+		this.oControl= new Button();
+
+		JsControlTreeModifier.applySettings(this.oControl, { text: "Test", enabled: false});		
+		
+		assert.equal(JsControlTreeModifier.getProperty(this.oControl, "enabled"), false, "the button is not enabled from applySettings");
+		assert.equal(JsControlTreeModifier.getProperty(this.oControl, "text"), "Test", "the buttons text is set from applySettings");
+	});
+
 	QUnit.test("isPropertyInitial", function(assert){
 		this.oControl= new Button( { text: "Test"  });
 		
