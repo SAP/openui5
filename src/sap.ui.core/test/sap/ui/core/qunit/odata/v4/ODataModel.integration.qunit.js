@@ -477,7 +477,9 @@ sap.ui.require([
 					setTimeout(that.checkFinish.bind(that), 0);
 				}
 
-				return Promise.resolve({body : oResponse});
+				return oResponse instanceof Error
+					? Promise.reject(oResponse)
+					: Promise.resolve({body : oResponse});
 			}
 
 			// A wrapper for ODataModel#lockGroup that attaches a stack trace to the lock
@@ -2098,7 +2100,7 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	// Scenario: bound action
+	// Scenario: bound action (success and failure)
 	QUnit.test("Bound action", function (assert) {
 		var sView = '\
 <VBox binding="{/EMPLOYEES(\'1\')}">\
@@ -2108,6 +2110,8 @@ sap.ui.require([
 		<Text id="teamId" text="{TEAM_ID}" />\
 	</VBox>\
 </VBox>',
+			sUrl = "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
+				+ ".AcChangeTeamOfEmployee",
 			that = this;
 
 		this.expectRequest("EMPLOYEES('1')", {
@@ -2116,12 +2120,12 @@ sap.ui.require([
 			})
 			.expectChange("name", "Jonathan Smith")
 			.expectChange("teamId", null);
+
 		return this.createView(assert, sView).then(function () {
 			that.expectRequest({
 					method : "POST",
 					headers : {"If-Match" : "eTag"},
-					url : "EMPLOYEES('1')/com.sap.gateway.default.iwbep.tea_busi.v0001"
-						+ ".AcChangeTeamOfEmployee",
+					url : sUrl,
 					payload : {
 						"TeamID" : "42"
 					}
@@ -2131,6 +2135,28 @@ sap.ui.require([
 				.expectChange("teamId", "42");
 
 			that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oError = new Error("Missing team ID");
+
+			that.oLogMock.expects("error").withExactArgs("Failed to execute /" + sUrl + "(...)",
+				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataContextBinding");
+			that.oLogMock.expects("error").withExactArgs(
+				"Failed to read path /" + sUrl + "(...)/TEAM_ID", sinon.match(oError.message),
+				"sap.ui.model.odata.v4.ODataPropertyBinding");
+			that.expectRequest({
+					method : "POST",
+					headers : {"If-Match" : "eTag"},
+					url : sUrl,
+					payload : {
+						"TeamID" : ""
+					}
+				}, oError) // simulates failure
+				.expectChange("teamId", null); // reset to initial state
+
+			that.oView.byId("action").getObjectBinding().setParameter("TeamID", "").execute();
+
 			return that.waitForChanges(assert);
 		});
 	});
