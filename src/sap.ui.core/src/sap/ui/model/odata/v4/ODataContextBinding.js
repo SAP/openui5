@@ -444,8 +444,12 @@ sap.ui.define([
 			if (bHasReturnValueContext) {
 				// has return value context => the parent binding has cache query options
 				oParentQueryOptions = this.oContext.getBinding().mCacheQueryOptions;
-				mQueryOptions.$select = oParentQueryOptions.$select;
-				mQueryOptions.$expand = oParentQueryOptions.$expand;
+				if ("$select" in oParentQueryOptions) {
+					mQueryOptions.$select = oParentQueryOptions.$select;
+				}
+				if ("$expand" in oParentQueryOptions) {
+					mQueryOptions.$expand = oParentQueryOptions.$expand;
+				}
 			} else {
 				throw new Error("Must not set parameter $$inheritExpandSelect on binding which has "
 					+ "no return value context");
@@ -459,6 +463,7 @@ sap.ui.define([
 		}
 		sPath = oRequestor.getPathAndAddQueryOptions(sPath, oOperationMetadata, mParameters,
 			mQueryOptions, vEntity);
+		this.mCacheQueryOptions = mQueryOptions;
 		oCache = _Cache.createSingle(oRequestor, sPath, mQueryOptions, oModel.bAutoExpandSelect,
 			bAction, sMetaPath, bHasReturnValueContext);
 		this.oCachePromise = SyncPromise.resolve(oCache);
