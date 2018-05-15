@@ -360,9 +360,8 @@ sap.ui.define([
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure
 	 * @throws {Error}
-	 *   If this binding is a deferred operation binding, if the group ID has
-	 *   {@link sap.ui.model.odata.v4.SubmitMode.Auto} or if the cache promise for this binding is
-	 *   not yet fulfilled
+	 *   If the group ID has {@link sap.ui.model.odata.v4.SubmitMode.Auto} or if the cache promise
+	 *   for this binding is not yet fulfilled
 	 *
 	 * @private
 	 */
@@ -370,10 +369,6 @@ sap.ui.define([
 			fnCallback) {
 		var oCache = this.oCachePromise.getResult(),
 			sGroupId;
-
-		if (this.oOperation) {
-			throw new Error("Cannot delete a deferred operation");
-		}
 
 		if (!this.oCachePromise.isFulfilled()) {
 			throw new Error("DELETE request not allowed");
