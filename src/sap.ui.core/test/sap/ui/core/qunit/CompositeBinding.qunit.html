@@ -180,6 +180,7 @@ QUnit.module("With inner types/formatters", {
 		this.binding2 = this.model.bindProperty("/b");
 		this.binding2.setType(new sap.ui.model.type.Float({decimals: 2}), "string");
 		this.binding3 = this.model.bindProperty("/c");
+		this.binding3.setType(new sap.ui.model.type.Integer(null, {maximum: 5}), "string"); 
 		this.composite = new sap.ui.model.CompositeBinding([this.binding1, this.binding2, this.binding3]);
 		this.compositeraw = new sap.ui.model.CompositeBinding([this.binding1, this.binding2, this.binding3], true);
 	},
@@ -209,6 +210,12 @@ QUnit.test("with bUseRawValues", function(assert) {
 	assert.equal(this.compositeraw.getExternalValue(), "1 2 3", "getExternalValue() returns space separated list of values");
 	this.compositeraw.setExternalValue("3 2 1");
 	assert.equal(this.model.getProperty("/a"), 3, "setExternalValue() does change model values for contained bindings");
+});
+
+QUnit.test("with bUseRawValues and nested validation", function(assert) {
+	assert.equal(this.compositeraw.getExternalValue(), "1 2 3", "getExternalValue() returns space separated list of values");
+	raises(function(){this.compositeraw.setExternalValue("3 2 6")}.bind(this),
+			sap.ui.model.ValidationException, "throws ValidationException for invalid inner value")
 });
 
 QUnit.test("with composite type", function(assert) {
