@@ -2,66 +2,18 @@
 	controllerName="sap.ui.demo.masterdetail.controller.Master"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
-	xmlns:f="sap.f">
+	xmlns:semantic="sap.f.semantic">
 
-	<f:DynamicPage
+	<semantic:SemanticPage
 		id="masterPage"
 		preserveHeaderStateOnScroll="true"
 		toggleHeaderOnTitleClick="false">
-		<!-- DynamicPage Title -->
-		<f:title>
-			<f:DynamicPageTitle>
-				<f:heading>
-					<Title
-						id="masterPageTitle"
-						text="{masterView>/title}"/>
-				</f:heading>
-			</f:DynamicPageTitle>
-		</f:title>
-		<f:content>
-			<VBox fitContainer="true">
-				<OverflowToolbar class="sapFDynamicPageAlignContent">
-					<ToolbarSpacer/>
-					<SearchField
-						id="searchField"
-						showRefreshButton="{= !${device>/support/touch} }"
-						tooltip="{i18n>masterSearchTooltip}"
-						search="onSearch"
-						width="auto">
-						<layoutData>
-							<OverflowToolbarLayoutData
-								minWidth="150px"
-								maxWidth="300px"
-								shrinkable="true"
-								priority="NeverOverflow"/>
-						</layoutData>
-					</SearchField>
-					<Button
-						id="sortButton"
-						press="onOpenViewSettings"
-						icon="sap-icon://sort"
-						type="Transparent">
-						<layoutData>
-							<OverflowToolbarLayoutData priority="NeverOverflow"/>
-						</layoutData>
-					</Button>
-					<Button
-						id="filterButton"
-						press="onOpenViewSettings"
-						icon="sap-icon://filter"
-						type="Transparent"/>
-					<Button
-						id="groupButton"
-						press="onOpenViewSettings"
-						icon="sap-icon://group-2"
-						type="Transparent"/>
-				</OverflowToolbar>
-				<PullToRefresh
-					id="pullToRefresh"
-					visible="{device>/support/touch}"
-					class="sapFDynamicPageAlignContent"
-					refresh="onRefresh" />
-
+		<semantic:titleHeading>
+			<Title
+				id="masterPageTitle"
+				text="{masterView>/title}"/>
+		</semantic:titleHeading>
+		<semantic:content>
 			<!-- For client side filtering add this to the items attribute: parameters: {operationMode: 'Client'}}" -->
 			<List
 				id="list"
@@ -93,6 +45,40 @@
 							text="{masterView>/filterBarLabel}" />
 					</Toolbar>
 				</infoToolbar>
+				<headerToolbar>
+					<OverflowToolbar>
+						<SearchField
+							id="searchField"
+							showRefreshButton="true"
+							tooltip="{i18n>masterSearchTooltip}"
+							search="onSearch"
+							width="auto">
+							<layoutData>
+								<OverflowToolbarLayoutData
+									minWidth="150px"
+									maxWidth="240px"
+									shrinkable="true"
+									priority="NeverOverflow"/>
+							</layoutData>
+						</SearchField>
+						<ToolbarSpacer/>
+						<Button
+							id="sortButton"
+							press="onOpenViewSettings"
+							icon="sap-icon://sort"
+							type="Transparent"/>
+						<Button
+							id="filterButton"
+							press="onOpenViewSettings"
+							icon="sap-icon://filter"
+							type="Transparent"/>
+						<Button
+							id="groupButton"
+							press="onOpenViewSettings"
+							icon="sap-icon://group-2"
+							type="Transparent"/>
+					</OverflowToolbar>
+				</headerToolbar>
 				<items>
 					<ObjectListItem
 						type="Navigation"
@@ -106,7 +92,6 @@
 					</ObjectListItem>
 				</items>
 			</List>
-			</VBox>
-		</f:content>
-	</f:DynamicPage>
+	</semantic:content>
+	</semantic:SemanticPage>
 </mvc:View>

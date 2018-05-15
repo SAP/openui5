@@ -19,8 +19,7 @@ sap.ui.define([
 					previousLayout : "",
 					actionButtonsInfo : {
 						midColumn : {
-							enterFullScreen : !Device.system.phone,
-							fullScreenMode : false
+							fullScreen : false
 						}
 					}
 				});
