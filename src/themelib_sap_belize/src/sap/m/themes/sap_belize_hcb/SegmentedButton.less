@@ -10,7 +10,7 @@
 		border-top-left-radius: 0.375rem;
 		border-bottom-left-radius: 0.375rem;
 	}
-	&:last-child {
+	&.sapMSegBtnLastVisibleButton {
 		border-top-right-radius: 0.375rem;
 		border-bottom-right-radius: 0.375rem;
 	}
@@ -22,7 +22,7 @@
 			background-color: @sapUiHcReducedBackground;
 			color: @sapUiHcReducedAltForeground;
 		}
-		&:last-child {
+		&.sapMSegBtnLastVisibleButton {
 			border-color: @sapUiHcReducedForeground;
 		}
 	}
@@ -33,16 +33,16 @@
 
 .sapMSegB {
 	.sapMSegBBtn {
-		&:not(:last-child) {
+		&:not(.sapMSegBtnLastVisibleButton) {
 			border-right: 1px solid transparent;
 		}
 		+ .sapMSegBBtn.sapMSegBBtnFocusable:focus {
 			border-right: 1px solid transparent;
 		}
-		&:last-child:not(.sapMSegBBtnDis) {
+		&.sapMSegBtnLastVisibleButton:not(.sapMSegBBtnDis) {
 			border-right: 1px solid @sapUiSegmentedButtonBorderColor;
 		}
-		&.sapMSegBBtnDis:last-child {
+		&.sapMSegBBtnDis.sapMSegBtnLastVisibleButton {
 			border-right: 1px solid @sapUiHcReducedForeground;
 		}
 	}
@@ -74,10 +74,10 @@
 	&:active + .sapMSegBBtn,
 	&:focus + .sapMSegBBtn {
 		border-left: 1px solid transparent;
-		&:not(:last-child) {
+		&:not(.sapMSegBtnLastVisibleButton) {
 			border-left: 1px solid transparent;
 		}
-		&:last-child {
+		&.sapMSegBtnLastVisibleButton {
 			border-left: 1px solid transparent;
 		}
 	}
@@ -104,7 +104,7 @@ html[data-sap-ui-browser^="ie"].sap-desktop .sapMSegB {
 		border: 2px dashed @sapUiContentFocusColor;
 		pointer-events: none;
 	}
-	.sapMSegBBtn:last-child:focus {
+	.sapMSegBBtn.sapMSegBtnLastVisibleButton:focus {
 		margin-right: 0;
 	}
 }
@@ -140,7 +140,7 @@ html[data-sap-ui-os^="Android4.3"][data-sap-ui-browser^="an"] {
 		border-bottom-left-radius: 0.375rem;
 	}
 
-	.sapMSegBBtn:last-child {
+	.sapMSegBBtn.sapMSegBtnLastVisibleButton {
 		border-top-right-radius: 0.375rem;
 		border-bottom-right-radius: 0.375rem;
 	}

@@ -41,10 +41,6 @@ html.sap-desktop .sapMSegBBtnFocusable:hover {
 	background: @sapUiSegmentedButtonHoverBackground;
 }
 
-.sapMSegBBtn:last-child {
-	border-right: 1px solid @sapUiSegmentedButtonBorderColor;
-}
-
 /* Custom focus outline: */
 html.sap-desktop {
 	.sapMSegBBtnFocusable:focus {
@@ -186,4 +182,10 @@ html[data-sap-ui-os^="Android4.1"][data-sap-ui-browser^="an"] {
 	.sapUiSizeCompact .sapMSegBBtn img {
 		margin-bottom: 0.128rem;
 	}
+}
+
+.sapMSegBBtn.sapMSegBtnLastVisibleButton {
+	border-right: 1px solid @sapUiSegmentedButtonBorderColor;
+	border-top-right-radius: 0.2rem;
+	border-bottom-right-radius: 0.2rem;
 }
