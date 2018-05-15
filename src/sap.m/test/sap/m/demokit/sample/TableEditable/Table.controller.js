@@ -6,7 +6,7 @@ sap.ui.define([
 	var TableController = Controller.extend("sap.m.sample.TableEditable.Table", {
 
 		onInit: function(evt) {
-			this.oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			this.oTable = this.byId("idProductsTable");
 			this.getView().setModel(this.oModel);
 			this.oReadOnlyTemplate = this.byId("idProductsTable").removeItem(0);

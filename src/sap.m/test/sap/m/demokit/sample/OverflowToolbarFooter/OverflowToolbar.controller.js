@@ -11,7 +11,7 @@ sap.ui.define([
 	var OverflowToolbarController = Controller.extend("sap.m.sample.OverflowToolbarFooter.OverflowToolbar", {
 
 		onInit : function (evt) {
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			this.getView().setModel(oModel);
 
 			this.bGrouped = false;

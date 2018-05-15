@@ -17,8 +17,8 @@ sap.ui.define([
 
 		init : function () {
 			var oUriParameters = jQuery.sap.getUriParameters(),
-				sJsonFilesUrl = jQuery.sap.getModulePath(_sJsonFilesModulePath),
-				sMetadataUrl = jQuery.sap.getModulePath(_sMetadataPath, ".xml");
+				sJsonFilesUrl = sap.ui.require.toUrl(_sJsonFilesModulePath),
+				sMetadataUrl = sap.ui.require.toUrl(_sMetadataPath + ".xml");
 
 			oMockServer = new MockServer({
 				rootUri : "/sap/opu/odata/IWBEP/EPM_DEVELOPER_SCENARIO_SRV/",
@@ -43,4 +43,3 @@ sap.ui.define([
 	};
 
 });
-

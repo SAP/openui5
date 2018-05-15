@@ -29,7 +29,7 @@ sap.ui.define([
 		onInit: function (oEvent) {
 
 			// set demo model on this sample
-			var sPath = jQuery.sap.getModulePath("sap.m.sample.TableBreadcrumb", "/productHierarchy.json");
+			var sPath = sap.ui.require.toUrl("sap/m/sample/TableBreadcrumb") + "/productHierarchy.json";
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 			this.getView().setModel(new JSONModel(this.mInitialOrderState), "Order");

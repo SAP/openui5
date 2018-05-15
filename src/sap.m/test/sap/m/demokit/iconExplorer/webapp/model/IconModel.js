@@ -196,7 +196,7 @@ sap.ui.define([
 				aPromises.push(new Promise(function (fnResolve, fnReject) {
 					// load font metadata asynchronously
 					jQuery.ajax({
-						url: jQuery.sap.getModulePath("sap.ui.demo.iconexplorer", "/model/" + sFontName + "/" + sName),
+						url: sap.ui.require.toUrl("sap/ui/demo/iconexplorer") + "/model/" + sFontName + "/" + sName,
 						dataType: "json",
 						success: function (oData) {
 							fnResolve(oData);

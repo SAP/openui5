@@ -11,7 +11,7 @@ sap.ui.define([
 
 		onInit: function() {
 			// set mock model
-			var sPath = jQuery.sap.getModulePath("sap.m.sample.Feed", "/feed.json");
+			var sPath = sap.ui.require.toUrl("sap/m/sample/Feed") + "/feed.json";
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		},

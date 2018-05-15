@@ -17,7 +17,7 @@ sap.ui.define([
 
 		onInit: function() {
 			// set mock data
-			var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollectionSortingFiltering", "/uploadCollection.json");
+			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadCollectionSortingFiltering") + "/uploadCollection.json";
 			this.getView().setModel(new JSONModel(sPath));
 
 			// Sets the text to the label
