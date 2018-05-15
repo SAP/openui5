@@ -264,7 +264,7 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/Obj
 		 */
 		ObjectListItem.prototype._hasBottomContent = function() {
 
-			return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers() || this.getMarkLocked() || this._getVisibleMarkers().length > 0);
+			return (this._hasAttributes() || this._hasStatus() || this.getShowMarkers() || this.getMarkLocked() || this.getMarkers().length > 0);
 		};
 
 		/**
@@ -283,24 +283,6 @@ sap.ui.define(['./ListItemBase', './library', 'sap/ui/core/IconPool', 'sap/m/Obj
 			}
 
 			return aVisibleAttributes;
-		};
-
-		/**
-		 * @private
-		 * @returns {Array} The visible markers of the control
-		 */
-		ObjectListItem.prototype._getVisibleMarkers = function() {
-
-			var aAllMarkers = this.getMarkers();
-			var aVisibleMarkers = [];
-
-			for (var i = 0; i < aAllMarkers.length; i++) {
-				if (aAllMarkers[i].getVisible()) {
-					aVisibleMarkers.push(aAllMarkers[i]);
-				}
-			}
-
-			return aVisibleMarkers;
 		};
 
 		/**
