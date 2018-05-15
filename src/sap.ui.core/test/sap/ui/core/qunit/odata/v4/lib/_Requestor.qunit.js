@@ -1917,10 +1917,14 @@ sap.ui.require([
 	QUnit.test("request: $cached as groupId", function (assert) {
 		var oRequestor = _Requestor.create("/");
 
-		assert.throws(function(){
+		assert.throws(function () {
 			//code under test
 			oRequestor.request("GET", "/FOO", new _GroupLock("$cached"));
-		},  new Error("Unexpected request: GET /FOO"));
+		},  function (oError) {
+			assert.strictEqual(oError.message, "Unexpected request: GET /FOO");
+			assert.strictEqual(oError.$cached, true);
+			return oError instanceof Error;
+		});
 	});
 
 	//*********************************************************************************************

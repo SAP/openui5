@@ -108,11 +108,11 @@ sap.ui.require([
 				oContextBindingMock = that.mock(oControl.getObjectBinding());
 				fnFetchValue = oContextBindingMock.expects("fetchValue");
 				fnFetchValue.exactly(iNoOfRequests || 1)
-					.withExactArgs("/EntitySet('foo')/property", sinon.match.object)
+					.withExactArgs("/EntitySet('foo')/property", sinon.match.object, undefined)
 					.returns(Promise.resolve("value"));
 				if (oError) {
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs("/EntitySet('foo')/property", sinon.match.object)
+						.withExactArgs("/EntitySet('foo')/property", sinon.match.object, undefined)
 						.returns(Promise.reject(oError));
 				}
 				oControl.bindProperty("text", {
@@ -670,7 +670,7 @@ sap.ui.require([
 				} else {
 					sResolvedPath = sContextPath + "/" + sPath;
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs(sContextPath + "/" + sPath, sinon.match.object)
+						.withExactArgs(sContextPath + "/" + sPath, sinon.match.object, undefined)
 						.returns(Promise.resolve(oValue));
 				}
 				that.mock(that.oModel.getMetaModel()).expects("fetchUI5Type")

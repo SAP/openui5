@@ -749,19 +749,22 @@ sap.ui.define([
 	 * @returns {Promise}
 	 *   A promise on the outcome of the HTTP request
 	 * @throws {Error}
-	 *   If group ID is '$cached'
+	 *   If group ID is '$cached'. The error has a property <code>$cached = true</code>
 	 *
 	 * @private
 	 */
 	Requestor.prototype.request = function (sMethod, sResourcePath, oGroupLock, mHeaders, oPayload,
 			fnSubmit, fnCancel, sMetaPath) {
-		var sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
+		var oError,
+			sGroupId = oGroupLock && oGroupLock.getGroupId() || "$direct",
 			oPromise,
 			oRequest,
 			that = this;
 
 		if (sGroupId === "$cached") {
-			throw new Error("Unexpected request: " + sMethod + " " + sResourcePath);
+			oError = new Error("Unexpected request: " + sMethod + " " + sResourcePath);
+			oError.$cached = true;
+			throw oError;
 		}
 
 		if (oGroupLock) {

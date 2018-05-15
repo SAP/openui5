@@ -674,6 +674,36 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	[true, false].forEach(function (bSuccess, i) {
+		QUnit.test("fetchValue: absolute binding (access cached value)" + i, function (assert) {
+			var oBinding = this.oModel.bindContext("/absolute"),
+				oBindingMock = this.mock(oBinding),
+				oError = {},
+				oRefreshGroupLock = {};
+
+			oBinding.oRefreshGroupLock = oRefreshGroupLock;
+			this.mock(this.oModel).expects("lockGroup").never();
+			this.mock(this.oModel).expects("reportError").never();
+			oBindingMock.expects("fireDataRequested").never();
+			oBindingMock.expects("fireDataReceived").never();
+			this.mock(oBinding.oCachePromise.getResult()).expects("fetchValue")
+				.withExactArgs(sinon.match.same(_GroupLock.$cached), "bar", sinon.match.func, null)
+				// no read required! .callsArg(2)
+				.returns(bSuccess ? SyncPromise.resolve("value") : SyncPromise.reject(oError));
+
+			// code under test
+			return oBinding.fetchValue("/absolute/bar", null, true).then(function (vValue) {
+				assert.ok(bSuccess);
+				assert.strictEqual(vValue, "value");
+				assert.strictEqual(oBinding.oRefreshGroupLock, oRefreshGroupLock);
+			}, function (oError0) {
+				assert.ok(!bSuccess);
+				assert.strictEqual(oError0, oError);
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("fetchValue: absolute binding (failure)", function (assert) {
 		var oBinding,
 			oCacheMock,
@@ -716,37 +746,39 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("fetchValue: relative binding", function (assert) {
-		var oBinding = this.oModel.bindContext("/absolute"),
-			oContext,
-			oContextMock,
-			oNestedBinding,
+	QUnit.test("fetchValue : Unresolved binding: resolve with undefined", function (assert) {
+		assert.strictEqual(
+			// code under test
+			this.oModel.bindContext("navigation2").fetchValue("").getResult(),
+			undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("fetchValue: relative binding w/o cache", function (assert) {
+		var bCached = {/*false,true*/},
+			oContext = {
+				fetchValue : function () {},
+				getPath : function () {return "/absolute";}
+			},
 			oListener = {},
 			sPath = "/absolute/navigation/bar",
-			oResult = {};
+			oResult = {},
+			oBinding = this.oModel.bindContext("navigation", oContext);
 
-		this.mock(oBinding).expects("getGroupId").never();
-		oBinding.initialize();
-		oContext = oBinding.getBoundContext();
-		oContextMock = this.mock(oContext);
-		oNestedBinding = this.oModel.bindContext("navigation", oContext);
-
-		oContextMock.expects("fetchValue")
-			.withExactArgs(sPath, sinon.match.same(oListener))
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oListener), sinon.match.same(bCached))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
-			oNestedBinding.fetchValue(sPath, oListener).getResult(),
+			// code under test
+			oBinding.fetchValue(sPath, oListener, bCached).getResult(),
 			oResult);
-
-		assert.strictEqual(this.oModel.bindContext("navigation2").fetchValue("").getResult(),
-			undefined,
-			"Unresolved binding: fetchValue returns SyncPromise resolved with result undefined");
 	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: relative binding w/ cache, mismatch", function (assert) {
-		var oBinding,
+		var bCached = {/*false,true*/},
+			oBinding,
 			oContext = {
 				fetchValue : function () {},
 				getPath : function () {return "/absolute";}
@@ -763,11 +795,11 @@ sap.ui.require([
 		this.mock(oBinding).expects("getRelativePath")
 			.withExactArgs(sPath).returns(undefined);
 		this.mock(oContext).expects("fetchValue")
-			.withExactArgs(sPath, sinon.match.same(oListener))
+			.withExactArgs(sPath, sinon.match.same(oListener), sinon.match.same(bCached))
 			.returns(SyncPromise.resolve(oResult));
 
 		assert.strictEqual(
-			oBinding.fetchValue(sPath, oListener).getResult(),
+			oBinding.fetchValue(sPath, oListener, bCached).getResult(),
 			oResult);
 	});
 

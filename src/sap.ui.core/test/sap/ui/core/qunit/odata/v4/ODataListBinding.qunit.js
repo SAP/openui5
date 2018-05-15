@@ -1140,7 +1140,7 @@ sap.ui.require([
 		this.mock(ODataListBinding.prototype).expects("getGroupId").never();
 		oControl.bindObject("/TEAMS('4711')");
 		this.mock(oControl.getObjectBinding()).expects("fetchValue").atLeast(1)
-			.withExactArgs("/TEAMS('4711')/TEAM_2_EMPLOYEES", undefined)
+			.withExactArgs("/TEAMS('4711')/TEAM_2_EMPLOYEES", undefined, undefined)
 			.returns(oPromise);
 		this.spy(ODataListBinding.prototype, "reset");
 
@@ -1364,7 +1364,7 @@ sap.ui.require([
 					//check delegation of fetchValue from context
 					oPromise = {}; // a fresh new object each turn around
 					oBindingMock.expects("fetchValue").withExactArgs(
-							"/EMPLOYEES/" + (iStart + i) + "/foo/bar/" + i, undefined)
+							"/EMPLOYEES/" + (iStart + i) + "/foo/bar/" + i, undefined, undefined)
 						.returns(oPromise);
 
 					assert.strictEqual(aContexts[i].fetchValue("foo/bar/" + i), oPromise);
@@ -1854,6 +1854,7 @@ sap.ui.require([
 	//*********************************************************************************************
 	QUnit.test("fetchValue: relative binding", function (assert) {
 		var oBinding,
+			bCached = {/*false,true*/},
 			oContext = Context.create(this.oModel, {}, "/foo"),
 			oListener = {},
 			sPath = "/foo/42/bar",
@@ -1861,10 +1862,11 @@ sap.ui.require([
 
 		oBinding = this.oModel.bindList("TEAM_2_EMPLOYEES", oContext);
 		this.mock(oContext).expects("fetchValue")
-			.withExactArgs(sPath, sinon.match.same(oListener))
+			.withExactArgs(sPath, sinon.match.same(oListener), sinon.match.same(bCached))
 			.returns(SyncPromise.resolve(oResult));
 
-		assert.strictEqual(oBinding.fetchValue(sPath, oListener).getResult(), oResult);
+		// code under test
+		assert.strictEqual(oBinding.fetchValue(sPath, oListener, bCached).getResult(), oResult);
 	});
 	//TODO provide iStart, iLength parameter to fetchValue to support paging on nested list
 
@@ -1879,8 +1881,10 @@ sap.ui.require([
 	QUnit.test("fetchValue: relative binding w/ cache, absolute path, mismatch", function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataListBinding.prototype),
+			bCached = {/*false,true*/},
 			oContext = Context.create(this.oModel, undefined, "/SalesOrderList('1')"),
 			oGroupLock = new _GroupLock(),
+			oListener = {},
 			sPath = "/SalesOrderList('1')/ID",
 			oResult = {};
 
@@ -1897,10 +1901,12 @@ sap.ui.require([
 
 		this.mock(oBinding).expects("getRelativePath").withExactArgs(sPath).returns(undefined);
 		this.mock(oGroupLock).expects("unlock").never();
-		this.mock(oContext).expects("fetchValue").withExactArgs(sPath, undefined).returns(oResult);
+		this.mock(oContext).expects("fetchValue")
+			.withExactArgs(sPath, sinon.match.same(oListener), sinon.match.same(bCached))
+			.returns(oResult);
 
 		// code under test
-		assert.strictEqual(oBinding.fetchValue(sPath).getResult(), oResult);
+		assert.strictEqual(oBinding.fetchValue(sPath, oListener, bCached).getResult(), oResult);
 	});
 
 	//*********************************************************************************************

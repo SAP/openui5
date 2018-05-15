@@ -11,10 +11,11 @@ sap.ui.define([
 	"sap/ui/model/ContextBinding",
 	"./Context",
 	"./lib/_Cache",
+	"./lib/_GroupLock",
 	"./lib/_Helper",
 	"./ODataParentBinding"
-], function (jQuery, SyncPromise, Binding, ChangeReason, ContextBinding, Context, _Cache, _Helper,
-		asODataParentBinding) {
+], function (jQuery, SyncPromise, Binding, ChangeReason, ContextBinding, Context, _Cache,
+		_GroupLock, _Helper, asODataParentBinding) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataContextBinding",
@@ -595,13 +596,16 @@ sap.ui.define([
 	 *   Some absolute path
 	 * @param {sap.ui.model.odata.v4.ODataPropertyBinding} [oListener]
 	 *   A property binding which registers itself as listener at the cache
+	 * @param {boolean} [bCached=false]
+	 *   Whether to return cached values only and not trigger a request
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise on the outcome of the cache's <code>read</code> call
+	 *   A promise on the outcome of the cache's <code>fetchValue</code> call; it is rejected in
+	 *   case cached values are asked for, but not found
 	 * @throws {Error} If the binding's root binding is suspended, a "canceled" error is thrown
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.fetchValue = function (sPath, oListener) {
+	ODataContextBinding.prototype.fetchValue = function (sPath, oListener, bCached) {
 		var oError,
 			oGroupLock,
 			oRootBinding = this.getRootBinding(),
@@ -620,9 +624,15 @@ sap.ui.define([
 			if (oCache) {
 				sRelativePath = that.getRelativePath(sPath);
 				if (sRelativePath !== undefined) {
-					// Unless there is a refresh, a lock is not required here, only set the group ID
-					oGroupLock = that.oModel.lockGroup(that.getGroupId(), that.oReadGroupLock);
-					that.oReadGroupLock = undefined;
+					if (bCached) {
+						oGroupLock = _GroupLock.$cached;
+					} else {
+						// Unless there is an expected read, a lock is not required here,
+						// only set the group ID
+						oGroupLock
+							= that.oModel.lockGroup(that.getGroupId(), that.oReadGroupLock);
+						that.oReadGroupLock = undefined;
+					}
 					return oCache.fetchValue(oGroupLock, sRelativePath, function () {
 						bDataRequested = true;
 						that.fireDataRequested();
@@ -643,7 +653,7 @@ sap.ui.define([
 				}
 			}
 			if (!that.oOperation && that.oContext && that.oContext.fetchValue) {
-				return that.oContext.fetchValue(sPath, oListener);
+				return that.oContext.fetchValue(sPath, oListener, bCached);
 			}
 		});
 	};

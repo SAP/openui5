@@ -6248,14 +6248,11 @@ sap.ui.require([
 			that = this;
 
 		return this.createView(assert, "", oModel).then(function () {
-			//TODO How to avoid this GET request? $cached currently would not *prevent* it
-			// @see fnGetEntity
-			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)", {/*don't care*/})
-				.expectRequest({
-					method : "POST",
-					url : "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
-					payload : {}
-				}, {"ArtistID": "42", "IsActiveEntity": false});
+			that.expectRequest({
+				method: "POST",
+				url: "Artists(ArtistID='42',IsActiveEntity=true)/special.cases.EditAction",
+				payload: {}
+			}, {"ArtistID": "42", "IsActiveEntity": false});
 
 			return oModel.bindContext("special.cases.EditAction(...)", oParentContext)
 				.execute(); // code under test
