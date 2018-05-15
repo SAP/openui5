@@ -529,5 +529,82 @@ sap.ui.require([
 		});
 	});
 
+	QUnit.module("Given a page with a vertical layout with toolbar, all containing propagateMetadata for button...", {
+		beforeEach : function(assert) {
+
+			// page				--> propagate metadata for buttons
+			//	verticalLayout 	--> propagate metadata for buttons
+			//		toolbar     --> propagate metadata for buttons
+			//			button1
+
+			this.oMetadataForButtonInPage = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
+			jQuery.extend(this.oMetadataForButtonInPage,
+				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForPage", undefined, "propertyFromPage"));
+			this.oMetadataForButtonInLayout = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
+			jQuery.extend(this.oMetadataForButtonInLayout,
+				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForLayout", undefined, "propertyFromLayout"));
+			this.oMetadataForButtonInToolbar = MetadataTestUtil.createPropagateRelevantContainerObject("sap.m.Button");
+			jQuery.extend(this.oMetadataForButtonInToolbar,
+				MetadataTestUtil.createPropagateMetadataObject("sap.m.Button", "valueForToolbar", undefined, "propertyFromToolbar"));
+
+			var oPageMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForButtonInPage);
+			var oVerticalLayoutMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForButtonInLayout);
+			var oToolbarMetadata = MetadataTestUtil.buildMetadataObject(this.oMetadataForButtonInToolbar);
+
+			this.oButton1 = new Button("button1");
+			this.oToolbar = new Toolbar("toolbar1", {
+				content: [this.oButton1]
+			});
+			this.oVerticalLayout = new VerticalLayout("layout", {
+				content: [this.oToolbar]
+			});
+			this.oPage = new Page({
+				content: [this.oVerticalLayout]
+			}).placeAt("content");
+
+			sap.ui.getCore().applyChanges();
+
+			this.oDesignTime = new DesignTime({
+				rootElements : [this.oPage],
+				designTimeMetadata : {	"sap.m.Page": oPageMetadata.data,
+										"sap.ui.layout.VerticalLayout": oVerticalLayoutMetadata.data,
+										"sap.m.Toolbar": oToolbarMetadata.data }
+			});
+
+			var done = assert.async();
+
+			this.oDesignTime.attachEventOnce("synced", function() {
+				this.oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
+				this.oVerticalLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
+				this.oToolbarOverlay = OverlayRegistry.getOverlay(this.oToolbar);
+				this.oButton1Overlay = OverlayRegistry.getOverlay(this.oButton1);
+				done();
+			}.bind(this));
+		},
+		afterEach : function() {
+			this.oButton1Overlay.destroy();
+			this.oToolbarOverlay.destroy();
+			this.oVerticalLayoutOverlay.destroy();
+			this.oPage.destroy();
+			this.oDesignTime.destroy();
+		}
+	}, function() {
+
+		QUnit.test("when button overlay is created", function(assert) {
+			assert.deepEqual(this.oButton1Overlay.getDesignTimeMetadata().getAggregation("content").testProp,
+				"valueForPage",
+				"then common property in all propagation levels is taken from the page (highest parent)");
+			assert.deepEqual(this.oButton1Overlay.getDesignTimeMetadata().getAggregation("content").propertyFromPage,
+				"propertyFromPage",
+				"then the property set only on the page is propagated to the button");
+			assert.deepEqual(this.oButton1Overlay.getDesignTimeMetadata().getAggregation("content").propertyFromLayout,
+				"propertyFromLayout",
+				"then the property set only on the layout is propagated to the button");
+			assert.deepEqual(this.oButton1Overlay.getDesignTimeMetadata().getAggregation("content").propertyFromToolbar,
+				"propertyFromToolbar",
+				"then the property set only on the toolbar is propagated to the button");
+		});
+	});
+
 	QUnit.start();
 });
