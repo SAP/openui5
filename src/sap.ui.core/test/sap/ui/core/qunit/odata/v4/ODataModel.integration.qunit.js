@@ -5539,6 +5539,61 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Binding-specific parameter $$aggregation is used without group or groupLevels
+	QUnit.test("Analytics by V4: $$aggregation, aggregate but no group", function (assert) {
+		var sView = '\
+<t:Table id="table" rows="{path : \'/SalesOrderList\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					GrossAmount : {\
+						min : true,\
+						max : true\
+					}\
+				}\
+			}\
+		}}" threshold="0" visibleRowCount="1">\
+	<t:Column>\
+		<t:template>\
+			<Text id="grossAmount" text="{= %{GrossAmount}}" />\
+		</t:template>\
+	</t:Column>\
+</t:Table>',
+			oModel = createSalesOrdersModel(),
+			that = this;
+
+		this.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)"
+				+ "/concat(aggregate(GrossAmount%20with%20min%20as%20UI5min__GrossAmount,"
+				+ "GrossAmount%20with%20max%20as%20UI5max__GrossAmount),identity)"
+				+ "&$skip=0&$top=2", {
+				"@odata.count" : "2",
+				"value" : [
+					{
+						"UI5min__AGE": 42,
+						"UI5max__AGE": 77
+					},
+					{"GrossAmount" : 1}
+				]
+			})
+			.expectChange("grossAmount", 1);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table"),
+				oListBinding = oTable.getBinding("rows");
+
+			that.expectRequest("SalesOrderList?$apply=aggregate(GrossAmount)&$skip=0&$top=1", {
+					"@odata.count" : "1",
+					"value" : [{"GrossAmount" : 2}]
+				})
+				.expectChange("grossAmount", 2);
+
+			oListBinding.setAggregation({
+				aggregate : {GrossAmount : {}}
+			});
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Application tries to overwrite client-side instance annotations.
 	QUnit.test("@$ui5.* is write-protected", function (assert) {
 		var oModel = createTeaBusiModel(),
