@@ -185,7 +185,7 @@ html.sap-desktop .sapUiCalItemSel:focus{
 }
 
 /* define after weekend and selection focus to overrule it*/
-html.sap-desktop .sapUiCalItem:hover{
+html.sap-desktop .sapUiCalItem:not(.sapUiCalItemSel) :not(.sapUiCalWeekNum):hover{
 	background-color: @sapUiHighlight;
 }
 
