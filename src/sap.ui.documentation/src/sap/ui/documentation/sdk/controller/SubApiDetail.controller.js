@@ -186,7 +186,11 @@ sap.ui.define([
 				var sSection = oSection.getTitle().toLowerCase(),
 					sSubSection = (oSubSection && oSubSection.getTitle() !== 'Overview') ? oSubSection.getTitle() : '';
 
-				sSection = this.SECTION_MAP[sSection] || sSection;
+				// BCP: 1870269220 - We have a section with a name "constructor" which matches the native javascript
+				// object constructor as a key and returns it's method instead of matched key->value pair.
+				if (Object.keys(this.SECTION_MAP).indexOf(sSection) >= 0) {
+					sSection = this.SECTION_MAP[sSection];
+				}
 
 				this._navigateRouter(sSection, sSubSection, bShouldStoreToHistory);
 			},
