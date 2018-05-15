@@ -8,7 +8,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			this._showSideContentButton = this.byId("showSideContentButton");
 
 			// set explored app's demo model on this sample
-			var oImgModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/img.json"));
+			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/img.json");
 			this.getView().setModel(oImgModel, "img");
 
 			// set media model
@@ -16,7 +16,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/mvc/Controller', 'sap/ui/model/
 			this.getView().setModel(oMediaModel, "media");
 
 			// set mock feed model
-			var sPath = jQuery.sap.getModulePath("sap.ui.layout.sample.DynamicSideContentProduct", "/feed.json");
+			var sPath = sap.ui.require.toUrl("sap/ui/layout/sample/DynamicSideContentProduct") + "/feed.json";
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		},

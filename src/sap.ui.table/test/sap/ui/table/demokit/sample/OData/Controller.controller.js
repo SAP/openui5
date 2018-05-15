@@ -19,7 +19,7 @@ sap.ui.define([
 
 			MockServer.config({autoRespondAfter: 2000});
 
-			var sMockDataPath = jQuery.sap.getModulePath("sap.ui.table.sample.OData");
+			var sMockDataPath = sap.ui.require.toUrl("sap/ui/table/sample/") + "OData";
 			this.oMockServer.simulate(sMockDataPath + "/metadata.xml", {
 				sMockdataBaseUrl : sMockDataPath,
 				bGenerateMissingMockData : true
@@ -90,7 +90,7 @@ sap.ui.define([
 		},
 
 		showInfo : function(oEvent) {
-			TableExampleUtils.showInfo(jQuery.sap.getModulePath("sap.ui.table.sample.OData", "/info.json"), oEvent.getSource());
+			TableExampleUtils.showInfo(sap.ui.require.toUrl("sap/ui/table/sample/OData") + "/info.json", oEvent.getSource());
 		}
 
 	});
