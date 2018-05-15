@@ -33,11 +33,30 @@ sap.ui.define([
 		return new Connector(mParameters);
 	};
 
+	Connector._bServiceAvailability = undefined;
 	Connector.prototype.DEFAULT_CONTENT_TYPE = "application/json; charset=utf-8";
 	Connector.prototype._sClient = undefined;
 	Connector.prototype._sLanguage = undefined;
 	Connector.prototype._aSentRequestListeners = [];
 	Connector.prototype._sRequestUrlPrefix = "";
+
+	/**
+	 * Gets the availability status of the flexibility service.
+	 *
+	 * @Returns {Promise} A Boolean value of the availability status
+	 * @public
+	 * @function
+	 * @name sap.ui.fl.Connector.isFlexServiceAvailable
+	 */
+	Connector.isFlexServiceAvailable =  function() {
+		if (Connector._bServiceAvailability !== undefined) {
+			return Promise.resolve(Connector._bServiceAvailability);
+		}
+		//probe service availability by sending settings request
+		return Connector.createConnector().loadSettings().then(function (){
+			return Promise.resolve(Connector._bServiceAvailability);
+		});
+	};
 
 	/**
 	 * Registers a callback for a sent request to the back end. The callback is only called once for each change. Each call is done with an object
@@ -426,6 +445,7 @@ sap.ui.define([
 
 		return this.send(sUrl, undefined, undefined, mOptions)
 			.then(function(oResponse) {
+				Connector._bServiceAvailability = true;
 				return {
 					changes: oResponse.response,
 					messagebundle: oResponse.response.messagebundle,
@@ -433,6 +453,9 @@ sap.ui.define([
 					etag: oResponse.etag
 				};
 			}, function(oError) {
+				if (oError.code === 404) {
+					Connector._bServiceAvailability = false;
+				}
 				throw (oError);
 			});
 	};
@@ -452,7 +475,14 @@ sap.ui.define([
 
 		return this.send(sUri, undefined, undefined, {})
 			.then(function(oResponse) {
+				Connector._bServiceAvailability = true;
 				return oResponse.response;
+			}, function(oError) {
+				if (oError.code === 404) {
+					Connector._bServiceAvailability = false;
+				}
+				//In case of failure, resolve promise without value. Error handle is done in Settings class
+				return Promise.resolve();
 			});
 	};
 

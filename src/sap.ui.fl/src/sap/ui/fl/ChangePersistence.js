@@ -324,8 +324,16 @@ sap.ui.define([
 		return this.getChangesForComponent(mPropertyBag).then(function(aChanges) {
 			return aChanges.filter(isChangeValidForVariant);
 		}).then(function(aChanges) {
-			var sId;
 			this._mVariantsChanges[sStableId] = {};
+			if (aChanges && aChanges.length === 0) {
+				return LRepConnector.isFlexServiceAvailable().then(function (bStatus) {
+					if (bStatus === false) {
+						return Promise.reject();
+					}
+					return Promise.resolve(this._mVariantsChanges[sStableId]);
+				}.bind(this));
+			}
+			var sId;
 			aChanges.forEach(function (oChange){
 				sId = oChange.getId();
 				if (oChange.isValid()) {

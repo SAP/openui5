@@ -821,6 +821,34 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 		});
 	});
 
+	QUnit.test("getChangesForVariant return promise reject when flexibility service is not available", function() {
+		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+		var oStubGetServiceAvailabilityStatus = this.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(false));
+		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).catch(function() {
+			sinon.assert.calledOnce(oStubGetChangesForComponent);
+			sinon.assert.calledOnce(oStubGetServiceAvailabilityStatus);
+		});
+	});
+
+	QUnit.test("getChangesForVariant return promise reject when flexibility service availability is not definied", function() {
+		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+		var oStubGetServiceAvailabilityStatus = this.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(undefined));
+		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function() {
+			sinon.assert.calledOnce(oStubGetChangesForComponent);
+			sinon.assert.calledOnce(oStubGetServiceAvailabilityStatus);
+		});
+	});
+
+	QUnit.test("getChangesForVariant return promise resolve with empty object when flexibility service is available", function(assert) {
+		var oStubGetChangesForComponent = this.stub(this.oChangePersistence, "getChangesForComponent").returns(Promise.resolve([]));
+		var oStubGetServiceAvailabilityStatus = this.stub(LrepConnector, "isFlexServiceAvailable").returns(Promise.resolve(true));
+		return this.oChangePersistence.getChangesForVariant("someProperty", "SmartFilterBar", {}).then(function(aChanges) {
+			assert.deepEqual(aChanges, {});
+			sinon.assert.calledOnce(oStubGetChangesForComponent);
+			sinon.assert.calledOnce(oStubGetServiceAvailabilityStatus);
+		});
+	});
+
 	QUnit.test("getChangesForVariant call getChangesForComponent and filter results after that if entry in variant changes map is not available", function(assert) {
 		var oPromise = new Promise(function(resolve, reject){
 			setTimeout(function(){
