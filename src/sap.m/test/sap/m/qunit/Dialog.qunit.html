@@ -1167,20 +1167,20 @@
 			});
 
 			QUnit.test("Check if header toolbar role is set correctly", function(assert) {
-			    // arrange
-                var oDialog = new sap.m.Dialog({
-                	title: "Some title",
+				// arrange
+				var oDialog = new sap.m.Dialog({
+					title: "Some title",
 					beginButton: new sap.m.Button({text: 'button'})
-                });
+				});
 
-			    // act
+				// act
 				oDialog.open();
 				this.clock.tick(500);
 
-			    // assert
-			    assert.strictEqual(oDialog.$('header').attr('role'), "heading", "The role of the header should be set to 'heading'");
+				// assert
+				assert.strictEqual(oDialog.$('header').attr('role'), "heading", "The role of the header should be set to 'heading'");
 
-			    // cleanup
+				// cleanup
 				oDialog.destroy();
 			});
 
@@ -1315,6 +1315,47 @@
 				// assert
 				assert.strictEqual(this.mockPosition.at.top, "calc(50% + 0px)", "The top position should not add additional pixels in scrollPosY ");
 				assert.strictEqual(this.mockPosition.at.left, "calc(50% + 0px)", "The left position should not add additional pixels in scrollPosX");
+			});
+
+			QUnit.module("Resizable Dialog",{
+				beforeEach: function() {
+					var aListItems = [];
+					for(var i = 0; i < 10; i++) {
+						aListItems.push(new sap.m.StandardListItem({
+							title : "Title" + i,
+						}));
+					}
+					this.oDialog = new sap.m.Dialog({
+						title: 'Available Products',
+						resizable: true,
+						contentWidth: "550px",
+						contentHeight: "400px",
+						content: new sap.m.List({
+							items: aListItems
+						})
+					});
+
+				},
+				afterEach: function() {
+					this.oDialog.destroy();
+				}
+			});
+
+			QUnit.test("Check if after double click on header dialog has the right height", function(assert) {
+				// act
+				this.oDialog.open();
+				this.clock.tick(500);
+				var $dialogContent = this.oDialog.$('cont'),
+					$dialogHeader = this.oDialog._header.$(),
+					oCssStyles = {"height": 150,"width":540};
+				$dialogContent.css(oCssStyles);
+
+				assert.strictEqual($dialogContent.height(), 150, "Dialog height should be 150px");
+
+				$dialogHeader.dblclick();
+
+				// assert
+				assert.strictEqual($dialogContent.height(), 400, "Dialog height should be 400px");
 			});
 
 		</script>
