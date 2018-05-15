@@ -270,10 +270,13 @@ sap.ui.define([
 				this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
 			}
 
+			this.bUseCache = this._cacheSupported(sMetadataUrl);
+
 			if (!this.oServiceData.oMetadata || this.oServiceData.oMetadata.bFailed) {
 				//create Metadata object
 				this.oMetadata = new ODataMetadata(sMetadataUrl,{
 					async: true,
+					cacheKey: this.bUseCache ? sMetadataUrl : undefined,
 					user: this.sUser,
 					password: this.sPassword,
 					headers: this.mCustomHeaders,
@@ -289,7 +292,9 @@ sap.ui.define([
 				source: this.sAnnotationURI,
 				skipMetadata: this.bSkipMetadataAnnotationParsing,
 				headers: this.mCustomHeaders,
-				combineEvents: true
+				combineEvents: true,
+				cacheKey: this._getAnnotationCacheKey(sMetadataUrl),
+				useCache: this.bUseCache
 			});
 			if (!this.bDisableSoftStateHeader) {
 				delete this.mCustomHeaders["sap-contextid-accept"];
@@ -1683,7 +1688,7 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.createBindingContext = function(sPath, oContext, mParameters, fnCallBack, bReload) {
-		var sResolvedPath = this.resolve(sPath, oContext),
+		var sResolvedPath,
 			sCanonicalPath,
 			oNewContext,
 			sGroupId,
@@ -1724,6 +1729,7 @@ sap.ui.define([
 		}
 
 		// if path cannot be resolved, call the callback function and return null
+		sResolvedPath = this.resolve(sPath, oContext);
 		if (!sResolvedPath) {
 			if (fnCallBack) {
 				fnCallBack(null);
@@ -1961,9 +1967,14 @@ sap.ui.define([
 
 		var that = this,
 			oMetadata = this.oMetadata,
-			oEntityType = this.oMetadata._getEntityTypeByPath(sPath),
+			oEntityType,
 			oEntity = this._getObject(sPath),
 			aExpand = [], aSelect = [];
+
+		if (!this.oMetadata.isLoaded()) {
+			return true;
+		}
+		oEntityType = this.oMetadata._getEntityTypeByPath(sPath);
 
 		// Created entities should never be reloaded, as they do not exist on
 		// the server yet
@@ -5981,6 +5992,60 @@ sap.ui.define([
 			return aMessages;
 		}
 		return null;
+	};
+
+	/**
+	 * Check if Caching is supported. All urls must at least provide a 'sap-cache-toke' query parameter
+	 * or a valid cache buster token segment.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._cacheSupported = function(sMetadataUrl) {
+		var cacheBusterToken = /\/~[\w\-]+~[A-Z0-9]?/;
+		var aUrls = [sMetadataUrl];
+		//check urls for sap-context-token and cachebuster token
+		if (this.sAnnotationURI) {
+			if (!Array.isArray(this.sAnnotationURI)) {
+				this.sAnnotationURI = [this.sAnnotationURI];
+			}
+			aUrls = aUrls.concat(this.sAnnotationURI);
+		}
+
+		// check for context-token
+		aUrls = aUrls.filter(function(sUrl) {
+			return sUrl.indexOf("sap-context-token") === -1;
+		});
+		// check for cache buster token
+		aUrls = aUrls.filter(function(sUrl) {
+			return !cacheBusterToken.test(sUrl);
+		});
+		return aUrls.length === 0 ? true : false;
+	};
+
+	/**
+	 * create cache key for annotations
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._getAnnotationCacheKey = function(sMetadataUrl) {
+		var sCacheKey;
+
+		if (this.bUseCache) {
+			if (!this.bSkipMetadataAnnotationParsing) {
+				sCacheKey = sMetadataUrl + "#annotations";
+			}
+
+			if (this.sAnnotationURI) {
+				if (!Array.isArray(this.sAnnotationURI)) {
+					this.sAnnotationURI = [this.sAnnotationURI];
+				}
+				this.sAnnotationURI = this.sAnnotationURI.map(function(sUrl) {
+					return sUrl + "#annotations";
+				});
+				sCacheKey = this.bSkipMetadataAnnotationParsing ? this.sAnnotationURI.join("_") : sCacheKey + "_" + this.sAnnotationURI.join("_");
+			}
+		}
+		return sCacheKey;
 	};
 
 	return ODataModel;

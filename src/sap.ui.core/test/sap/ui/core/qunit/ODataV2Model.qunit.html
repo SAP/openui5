@@ -116,7 +116,7 @@
 		bRemoveMetadata = bRemoveMetadata !== false;
 
 		if (bRemoveMetadata) {
-			removeSharedServicedata(sURI);
+			cleanServiceDataCache();
 		}
 		var oModel = new sap.ui.model.odata.v2.ODataModel(sURI, mParameters);
 		return oModel;
@@ -1530,13 +1530,19 @@
 	QUnit.test("test create binding context with broken service", function(assert){
 		var done = assert.async();
 		oLabel.setText("testText");
-		var oModel = initModel(sURI, {json:true});
+		var oModel = initModel(sURI, {metadataUrlParams: {"broken":true}, json:true});
 		sap.ui.getCore().setModel(oModel);
-		oModel.createBindingContext("/Categories(5)", null, function(oContext){
-			assert.equal(oContext.getPath(), "/Categories(5)", "new Context");
-			assert.equal(oContext.getProperty("CategoryName"), "Grains/Cereals", "Data can be accessed");
-			done();
-		});
+		oModel
+			.attachMetadataLoaded(function() {
+				assert.ok(false, "As service is broken, this should not happen!");
+			})
+			.attachMetadataFailed(function() {
+				oModel.createBindingContext("/Categories(5)", null, function(oContext){
+					assert.ok(false, "As service is broken, this should not happen!");
+				});
+				assert.ok(true, "Metadata loading failed - no binding creation should happen");
+				done();
+			});
 	});
 
 	QUnit.test("test bindElement: relative with path '' ", function(assert){
@@ -1629,18 +1635,20 @@
 		var done = assert.async();
 		var oModel = initModel(sURI, {json:false});
 		sap.ui.getCore().setModel(oModel);
-		oLabel.bindElement("Category");
-		var oTestContext = oModel.getContext("/Products(2)");
-		oLabel.setBindingContext(oTestContext);
-		assert.ok(oLabel.getBindingContext() == null, "Context should be null until the data from bindElement is loaded");
-		var fnHandler = function() {
-			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
-			oLabel.getElementBinding().detachChange(fnHandler);
-			oLabel.setBindingContext();
-			oLabel.unbindElement();
-			done();
-		}
-		oLabel.getElementBinding().attachChange(fnHandler);
+		oModel.metadataLoaded().then(function() {
+			oLabel.bindElement("Category");
+			var oTestContext = oModel.getContext("/Products(2)");
+			oLabel.setBindingContext(oTestContext);
+			assert.ok(oLabel.getBindingContext() == null, "Context should be null until the data from bindElement is loaded");
+			var fnHandler = function() {
+				assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
+				oLabel.getElementBinding().detachChange(fnHandler);
+				oLabel.setBindingContext();
+				oLabel.unbindElement();
+				done();
+			}
+			oLabel.getElementBinding().attachChange(fnHandler);
+		});
 	});
 
 	QUnit.test("test bindElement 4", function(assert){
@@ -1654,8 +1662,8 @@
 		assert.ok(oLabel.getBindingContext() == oTestContext, "bindElement must not reset context");
 		var fnHandler = function() {
 			assert.equal(oLabel.getBindingContext().getPath(), "/Categories(2)", "context must be set in change handler");
-			oLabel.setBindingContext();
 			oLabel.getElementBinding().detachChange(fnHandler);
+			oLabel.setBindingContext();
 			oLabel.unbindElement();
 			done();
 		}
@@ -6126,6 +6134,97 @@
 			this.getErrorWithMessage(FilterOperator.All),
 			"Invalid operators in multi-filter are unsupported"
 		);
+	});
+
+	QUnit.module("ODataModel metadata/annotation caching", {
+		beforeEach: function() {
+			this.oModel = initModel(sURI);
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			delete this.oModel;
+		}
+	});
+
+	QUnit.test("Check default: caching disabled", function(assert) {
+		var done = assert.async();
+		this.oModel.metadataLoaded()
+			.then(function(oMetadata) {
+				assert.ok(!this.oModel.oMetadata.bUseCache, "caching disabled");
+				done();
+			}.bind(this));
+		this.oModel.annotationsLoaded()
+			.then(function(oAnnotations) {
+				assert.ok(!this.oModel.oAnnotations.bUseCache, "caching disabled");
+			}.bind(this));
+	});
+
+	QUnit.test("Check default: caching enabled context-token", function(assert) {
+		var done = assert.async();
+		this.oModel = initModel(sURI, {metadataUrlParams:{"sap-context-token": "test-token"}});
+		this.oModel.metadataLoaded()
+			.then(function(oMetadata) {
+				assert.ok(this.oModel.oMetadata.sCacheKey, "caching enabled");
+				assert.equal(this.oModel.oMetadata.sCacheKey, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token", "cacheKey set");
+				done();
+			}.bind(this));
+		this.oModel.annotationsLoaded()
+			.then(function(oAnnotations) {
+				assert.ok(this.oModel.oAnnotations.sCacheKey, "caching not enabled");
+				assert.equal(this.oModel.oAnnotations.sCacheKey, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token#annotations", "cacheKey set");
+			}.bind(this));
+	});
+
+	QUnit.test("Check default: caching disabled context-token + non cachable url", function(assert) {
+		var done = assert.async();
+		this.oModel = initModel(sURI, {
+			metadataUrlParams:{"sap-context-token": "test-token"},
+			annotationURI: "someAnnotation.xml"
+		});
+		this.oModel.metadataLoaded()
+			.then(function(oMetadata) {
+				assert.ok(!this.oModel.oMetadata.sCacheKey, "caching disabled");
+				done();
+			}.bind(this));
+		this.oModel.annotationsLoaded()
+			.then(function(oAnnotations) {
+				assert.ok(!this.oModel.oAnnotations.sCacheKey, "caching disabled");
+			}.bind(this));
+	});
+
+	QUnit.test("Check default: caching enabled context-token + cachable url", function(assert) {
+		var done = assert.async();
+		this.oModel = initModel(sURI, {
+			metadataUrlParams:{"sap-context-token": "test-token"},
+			annotationURI: "/test/~201801171629~/someAnnotation.xml"
+		});
+		this.oModel.metadataLoaded()
+			.then(function(oMetadata) {
+				assert.ok(this.oModel.oMetadata.sCacheKey, "caching enabled");
+				assert.equal(this.oModel.oMetadata.sCacheKey, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token", "cacheKey set");
+				done();
+			}.bind(this));
+		this.oModel.annotationsLoaded()
+			.then(function(oAnnotations) {
+				assert.ok(this.oModel.oAnnotations.sCacheKey, "caching enabled");
+				assert.equal(this.oModel.oAnnotations.sCacheKey, "../../../../../proxy/http/services.odata.org/V3/Northwind/Northwind.svc/$metadata?sap-context-token=test-token#annotations_/test/~201801171629~/someAnnotation.xml#annotations", "cacheKey set");
+			}.bind(this));
+	});
+
+	QUnit.test("Check default: caching disabled context-token + cachable url", function(assert) {
+		var done = assert.async();
+		this.oModel = initModel(sURI, {
+			annotationURI: "/test/~201801171629~/someAnnotation.xml"
+		});
+		this.oModel.metadataLoaded()
+			.then(function(oMetadata) {
+				assert.ok(!this.oModel.oMetadata.sCacheKey, "caching disabled");
+				done();
+			}.bind(this));
+		this.oModel.annotationsLoaded()
+			.then(function(oAnnotations) {
+				assert.ok(!this.oModel.oAnnotations.sCacheKey, "caching disabled");
+			}.bind(this));
 	});
 
 </script>

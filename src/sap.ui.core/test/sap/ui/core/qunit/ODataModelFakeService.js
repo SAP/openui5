@@ -42,6 +42,8 @@ xhr.onCreate = function(request) {
 		"GET": {
 			"$metadata":
 				[200, oMetaDataHeaders, sMetaData],
+      "$metadata?sap-context-token=test-token":
+				[200, oMetaDataHeaders, sMetaData],
 			"$metadata?sap-value-list=none":
 				[200, oMetaDataHeaders, sMetaData1],
 			"$metadata?sap-value-list=all":

@@ -5,8 +5,8 @@
 
 
 // Provides class sap.ui.model.odata.ODataMetadata
-sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs'],
-	function(jQuery, EventProvider, OData) {
+sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdparty/datajs', 'sap/ui/core/cache/CacheManager'],
+	function(jQuery, EventProvider, OData, CacheManager) {
 	"use strict";
 
 	/**
@@ -18,6 +18,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	 * @param {string} [mParams.user] user for the service,
 	 * @param {string} [mParams.password] password for service
 	 * @param {object} [mParams.headers] (optional) map of custom headers which should be set with the request.
+	 * @param {string} [mParams.cacheKey] (optional) A valid cache key
 	 *
 	 * @class
 	 * Implementation to access oData metadata
@@ -44,6 +45,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 			this.bWithCredentials = mParams.withCredentials;
 			this.sPassword = mParams.password;
 			this.mHeaders = mParams.headers;
+			this.sCacheKey = mParams.cacheKey;
 			this.oLoadEvent = null;
 			this.oFailedEvent = null;
 			this.oMetadata = null;
@@ -59,11 +61,36 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 					that.fnResolve = resolve;
 			});
 
-			this._loadMetadata()
-				.catch(function() {
-					// Ignored for initial metadata loading. Error handling is done inside _loadMetadata
-					jQuery.sap.log.error("[ODataMetadata] initial loading of metadata failed");
-				});
+			function writeCache(mParams) {
+				CacheManager.set(that.sCacheKey, JSON.stringify({
+					metadata: that.oMetadata,
+					params: mParams
+				}));
+			}
+
+			function logError() {
+				jQuery.sap.log.error("[ODataMetadata] initial loading of metadata failed");
+			}
+
+			//check cache
+			if (this.sCacheKey) {
+				CacheManager.get(this.sCacheKey)
+					.then(function(sMetadata) {
+						if (sMetadata) {
+							var oCacheMetadata = JSON.parse(sMetadata);
+							this.oMetadata = oCacheMetadata.metadata;
+							this._handleLoaded(this.oMetadata, oCacheMetadata.params, false);
+						} else {
+							this._loadMetadata()
+								.then(writeCache)
+								.catch(logError);
+						}
+					}.bind(this))
+					.catch(logError);
+			} else {
+				this._loadMetadata()
+					.catch(logError);
+			}
 		},
 
 		metadata : {
@@ -75,6 +102,33 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 	ODataMetadata.prototype._setNamespaces = function(mNamespaces) {
 		this.mNamespaces = mNamespaces;
 	};
+
+	/*
+	 * Handle Promise resolving/eventing when metadata is loaded
+	 *
+	 */
+	ODataMetadata.prototype._handleLoaded = function(oMetadata, mParams, bSuppressEvents) {
+		var aEntitySets = [];
+
+		this.oMetadata = this.oMetadata ? this.merge(this.oMetadata, oMetadata, aEntitySets) : oMetadata;
+		this.oRequestHandle = null;
+
+		mParams.entitySets = aEntitySets;
+
+		// resolve global promise
+		this.fnResolve(mParams);
+
+		if (this.bAsync && !bSuppressEvents) {
+			this.fireLoaded(this);
+		} else if (!this.bAsync && !bSuppressEvents){
+			//delay the event so anyone can attach to this _before_ it is fired, but make
+			//sure that bLoaded is already set properly
+			this.bLoaded = true;
+			this.bFailed = false;
+			this.oLoadEvent = jQuery.sap.delayedCall(0, this, this.fireLoaded, [ mParams ]);
+		}
+	};
+
 	/**
 	 * Loads the metadata for the service
 	 *
@@ -91,7 +145,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 		var oRequest = this._createRequest(sUrl);
 
 		return new Promise(function(resolve, reject) {
-			var oRequestHandle, aEntitySets = [];
+			var oRequestHandle;
+
 			function _handleSuccess(oMetadata, oResponse) {
 				if (!oMetadata || !oMetadata.dataServices) {
 					var mParameters = {
@@ -104,33 +159,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', 'sap/ui/thirdpa
 				}
 
 				that.sMetadataBody = oResponse.body;
-				that.oMetadata = that.oMetadata ? that.merge(that.oMetadata, oMetadata, aEntitySets) : oMetadata;
 				that.oRequestHandle = null;
 
 				var mParams = {
-					metadataString: that.sMetadataBody,
-					entitySets: aEntitySets
+					metadataString: that.sMetadataBody
 				};
 
 				var sLastModified = oResponse.headers["Last-Modified"];
 				if (sLastModified) {
 					mParams.lastModified = sLastModified;
 				}
-
-				// resolve global promise
-				that.fnResolve(mParams);
-				// resolve this promise
+				that._handleLoaded(oMetadata, mParams, bSuppressEvents);
 				resolve(mParams);
-
-				if (that.bAsync && !bSuppressEvents) {
-					that.fireLoaded(that);
-				} else if (!that.bAsync && !bSuppressEvents){
-					//delay the event so anyone can attach to this _before_ it is fired, but make
-					//sure that bLoaded is already set properly
-					that.bLoaded = true;
-					that.bFailed = false;
-					that.oLoadEvent = jQuery.sap.delayedCall(0, that, that.fireLoaded, [ mParams ]);
-				}
 			}
 
 			function _handleError(oError) {
