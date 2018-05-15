@@ -980,7 +980,7 @@
 			oDefinition1.setMaskFormatSymbol("+");
 
 			this.clock.tick(1000);
-			assert.ok(oWarningSpy.calledOnce, "Warning issued.")
+			assert.ok(oWarningSpy.calledOnce, "Warning issued.");
 			assert.equal(oWarningSpy.getCall(0).args[0],
 					"Invalid mask input: Empty mask. Duplicated rule's maskFormatSymbol [+]", "Message");
 		});
@@ -1040,6 +1040,148 @@
 			assert.equal(this.oMaskInput.getRules()[0].getId(), oRule2.getId() , "The rules aggregation should contain the last added rule");
 			assert.equal(oSpyDestroyOldRule.callCount, 1, "The old rule is destroyed");
 		});
+
+		QUnit.module("Android", {
+			beforeEach: function() {
+				this.oMaskInput = new sap.m.MaskInput();
+				this.oMaskInput.placeAt("content");
+				sap.ui.getCore().applyChanges();
+
+				this.fnIsChromeOnAndroidStub = sinon.stub(this.oMaskInput, "_isChromeOnAndroid", function () {
+					return true;
+				});
+			},
+			afterEach: function() {
+				if (!bSkipDestroy) {
+					this.fnIsChromeOnAndroidStub.restore();
+					this.oMaskInput.destroy();
+				}
+			}
+		});
+
+		QUnit.test("Private: _buildKeyboardEventInfo(old, new) when both strings are empty", function(assert) {
+			// Act && Assert
+			assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("", "")), "{}", "..should return empty object");
+		});
+
+		QUnit.test("Private: _buildKeyboardEventInfo(old, new) when both strings are empty", function(assert) {
+			// Act && Assert
+			assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("", "")), "{}", "..should return empty object");
+		});
+
+		QUnit.test("Private, Android specific:: _buildKeyboardEventInfo(old, new) when second string contains new chars", function(assert) {
+
+			// Act && Assert
+			assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("SAP-__", "SAP-98")), JSON.stringify({ sChar: "9"}),
+				"..should return info about the pressed key");
+		});
+
+		QUnit.test("Private, Android specific: _buildKeyboardEventInfo(old, new) when second string is with fewer chars", function(assert) {
+			// Act && Assert
+			assert.equal(JSON.stringify(this.oMaskInput._buildKeyboardEventInfo("SAP-9_", "SAP-_")), JSON.stringify({ bBackspace: true}),
+				"..should return info about the backspace key");
+		});
+
+		QUnit.test("Private, Android specific: onkeydown, current state is stored", function(assert) {
+			// Prepare
+			this.oMaskInput.setMask("99999");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			this.oMaskInput.focus();
+			setCursorPosition(2, this.oMaskInput);
+			qutils.triggerKeydown(this.oMaskInput.getDomRef(), 229); // this is what Chrome for Android sends
+
+			// Assert
+			assert.equal(JSON.stringify(this.oMaskInput._oKeyDownStateAndroid), JSON.stringify({sValue: "_____", iCursorPosition: 2}), "State");
+		});
+
+		QUnit.test("Private, Android specific: When input event fires _onInputForAndroidHandler is called", function(assert) {
+			// Prepare
+			var	fnOnInputForAndroidHandlerStub = this.spy(this.oMaskInput, "_onInputForAndroidHandler");
+
+			this.oMaskInput.setMask("99999");
+			sap.ui.getCore().applyChanges();
+
+			// Act
+			this.oMaskInput.oninput(new jQuery.Event());
+
+			//Assert
+			assert.equal(fnOnInputForAndroidHandlerStub.callCount, 1, "call check");
+
+			// Cleanup
+			fnOnInputForAndroidHandlerStub.restore();
+		});
+
+		QUnit.test("Private, Android specific: _onInputForAndroidHandler when a char is added",
+			function (assert) {
+				// Prepare
+				var done = assert.async(),
+					oOnInputEvent = new jQuery.Event(),
+					fnSpyPreventDefaultSpy = this.spy(oOnInputEvent, "preventDefault"),
+					fnKeyPressHandlerStub = this.stub(this.oMaskInput, "_keyPressHandler", function() {}),
+					oBuildKeyboardEventInfoResponse = {"sChar": "9"},
+					fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo", function() { return oBuildKeyboardEventInfoResponse});
+
+				this.oMaskInput.setMask("99999");
+				sap.ui.getCore().applyChanges();
+				this.oMaskInput._oKeyDownStateAndroid = {};
+
+				// Act
+				this.oMaskInput._onInputForAndroidHandler(oOnInputEvent);
+
+				//Assert
+				assert.equal(this.oMaskInput._oKeyDownStateAndroid, undefined, "..should delete previous keydown state for Android");
+				assert.equal(fnSpyPreventDefaultSpy.callCount, 1, "..on input event should be prevented");
+
+				setTimeout(function() {
+					assert.equal(fnKeyPressHandlerStub.callCount, 1, "..should call keypress handler");
+					assert.deepEqual(fnKeyPressHandlerStub.getCall(0).args, [oOnInputEvent, oBuildKeyboardEventInfoResponse],
+						"..should call keypress handler with certain parameters");
+
+					// Cleanup
+					fnSpyPreventDefaultSpy.restore();
+					fnKeyPressHandlerStub.restore();
+					fnBuildKeyboardEventInfoStub.restore();
+					done();
+				}, 0);
+				this.clock.tick(100); // _onInputForAndroidHandler has timeout, the test as well.
+		});
+
+		QUnit.test("Private, Android specific: _onInputForAndroidHandler when a char is deleted",
+			function (assert) {
+				// Prepare
+				var done = assert.async(),
+					oOnInputEvent = new jQuery.Event(),
+					fnSpyPreventDefaultSpy = this.spy(oOnInputEvent, "preventDefault"),
+					fnRevertKeyStub = this.stub(this.oMaskInput, "_revertKey", function() {}),
+					oBuildKeyboardEventInfoResponse = {"bBackspace": true},
+					fnBuildKeyboardEventInfoStub = this.stub(this.oMaskInput, "_buildKeyboardEventInfo", function() { return oBuildKeyboardEventInfoResponse});
+
+				this.oMaskInput.setMask("99999");
+				sap.ui.getCore().applyChanges();
+				this.oMaskInput._oKeyDownStateAndroid = {};
+
+				// Act
+				this.oMaskInput._onInputForAndroidHandler(oOnInputEvent);
+
+				//Assert
+				assert.equal(this.oMaskInput._oKeyDownStateAndroid, undefined, "..should delete previous keydown state for Android");
+				assert.equal(fnSpyPreventDefaultSpy.callCount, 1, "..on input event should be prevented");
+
+				setTimeout(function() {
+					assert.equal(fnRevertKeyStub.callCount, 1, "..should call _revertKey");
+					assert.deepEqual(fnRevertKeyStub.getCall(0).args, [oBuildKeyboardEventInfoResponse],
+						"..should call _revertKey handler with certain parameters");
+
+					// Cleanup
+					fnSpyPreventDefaultSpy.restore();
+					fnRevertKeyStub.restore();
+					fnBuildKeyboardEventInfoStub.restore();
+					done();
+				}, 0);
+				this.clock.tick(100); // _onInputForAndroidHandler has timeout, the test as well.
+			});
 
 		QUnit.module("ARIA", {
 			beforeEach: function () {
@@ -1120,6 +1262,10 @@
 		}
 		function getMaskInputDomValue(oControl) {
 			return jQuery(oControl.getDomRef("inner")).val()
+		}
+
+		function getCursorPosition(oControl) {
+			return jQuery(oControl.getFocusDomRef()).cursorPos();
 		}
 
 		function checkForEmptyValue(oControl) {
