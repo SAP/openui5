@@ -1,29 +1,23 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-
-	<title>QUnit - sap/ui/core/util/reflection/JsControlTreeModifier</title>
-
-	<script src="../../../shared-config.js"></script>
-	<script id="sap-ui-bootstrap"
-			src="../../../../../../../resources/sap-ui-core.js"
-			data-sap-ui-noconflict="true">
+	<title>QUnit - sap.ui.core.util.reflection.JsControlTreeModifier</title>
+	<script src="../shared-config.js"></script>
+	<script>
+		document.write('<script src="' + document.location.pathname.match(/(.*)\/test-resources\//)[1] + '/resources/sap-ui-core.js"><' + '/script>');
 	</script>
+	<script>
+		sap.ui.requireSync("sap/ui/qunit/qunit-2-css");
+		sap.ui.requireSync("sap/ui/thirdparty/qunit-2");
+		sap.ui.requireSync("sap/ui/qunit/qunit-junit");
+		sap.ui.requireSync("sap/ui/qunit/qunit-coverage");
 
+		window.blanket && window.blanket.options("sap-ui-cover-only", "[sap/ui/core/util/reflection]");
 
-	<link rel="stylesheet" href="../../../../../../../resources/sap/ui/thirdparty/qunit.css" type="text/css" media="screen"/>
-	<script src="../../../../../../../resources/sap/ui/thirdparty/qunit.js"></script>
-	<script src="../../../../../../../resources/sap/ui/qunit/qunit-junit.js"></script>
-	<script src="../../../../../../../resources/sap/ui/qunit/qunit-coverage.js"></script>
-	<script src="../../../../../../../resources/sap/ui/qunit/QUnitUtils.js"></script>
-	<script src="../../../../../../../resources/sap/ui/thirdparty/sinon.js"></script>
-	<script src="../../../../../../../resources/sap/ui/thirdparty/sinon-qunit.js"></script>
-
-<script src="JsControlTreeModifier.qunit.js"></script>
+		jQuery.sap.includeScript("./JsControlTreeModifier.qunit.js");
+	</script>
 </head>
-<body id="body" class="sapUiBody">
-	<div id="qunit"></div>
+<body>
+<div id="qunit"></div>
 </body>
 </html>
