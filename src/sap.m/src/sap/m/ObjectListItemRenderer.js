@@ -191,7 +191,7 @@ sap.ui.define(['./ListItemBaseRenderer', 'sap/ui/core/Renderer', 'sap/ui/core/li
 
 				var aAttribs = oLI._getVisibleAttributes();
 				var statuses = [];
-				var markers = oLI._getVisibleMarkers();
+				var markers = oLI.getMarkers();
 
 				markers._isEmpty = function() {
 					return !(markers.length);
