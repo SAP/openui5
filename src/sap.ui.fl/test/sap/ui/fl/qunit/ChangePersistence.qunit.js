@@ -178,6 +178,7 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 			assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement called once as file content is not set");
 			assert.ok(fnLoadInitialChangesStub.calledOnce, "then loadDefaultChanges of VariantManagement called for the first time");
 			assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement called once for one variant management reference, as file content is not set");
+			assert.notOk(fnSetChangeFileContentSpy.getCall(0).args[1], "then technical parameters were not passed, since not available");
 		}).then(function () {
 			this.oChangePersistence.getChangesForComponent().then(function () {
 				assert.ok(fnSetChangeFileContentSpy.calledOnce, "then _setChangeFileContent of VariantManagement not called again as file content is set");
@@ -185,6 +186,62 @@ function (ChangePersistence, FlexControllerFactory, Utils, Change, LrepConnector
 				assert.ok(fnApplyChangesOnVariantManagementStub.calledOnce, "then applyChangesOnVariantManagement not called again as file content is set\"");
 			});
 		}.bind(this));
+	});
+
+	QUnit.test("when getChangesForComponent is called with a variantSection and component data", function (assert) {
+		var oMockedWrappedContent = {
+			"changes" : {
+				"changes": [],
+				"variantSection" : {
+					"variantManagementId" : {}
+				}
+			}
+		};
+
+		var fnSetChangeFileContentStub = this.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		var mPropertyBag = {
+			componentData : {
+				technicalParameters : {
+					"sap-ui-fl-control-variant-id" : ["variantID"]
+				}
+			}
+		};
+
+		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function () {
+			assert.strictEqual(fnSetChangeFileContentStub.getCall(0).args[1], mPropertyBag.componentData.technicalParameters, "then technical parameters were passed if present");
+		});
+	});
+
+	QUnit.test("when getChangesForComponent is called with a variantSection and a component containing technical parameters", function (assert) {
+		var oMockedWrappedContent = {
+			"changes" : {
+				"changes": [],
+				"variantSection" : {
+					"variantManagementId" : {}
+				}
+			}
+		};
+
+		var fnSetChangeFileContentStub = this.stub(this.oChangePersistence._oVariantController, "_setChangeFileContent");
+		this.stub(this.oChangePersistence._oVariantController, "loadInitialChanges").returns([]);
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oMockedWrappedContent));
+		var mPropertyBag = {
+			oComponent : {
+				getComponentData : function() {
+					return {
+						technicalParameters: {
+							"sap-ui-fl-control-variant-id": ["variantID"]
+						}
+					};
+				}
+			}
+		};
+
+		return this.oChangePersistence.getChangesForComponent(mPropertyBag).then(function () {
+			assert.deepEqual(fnSetChangeFileContentStub.getCall(0).args[1], mPropertyBag.oComponent.getComponentData().technicalParameters, "then technical parameters were passed if present");
+		});
 	});
 
 	QUnit.test("when getChangesForComponent is called with 'ctrl_variant' and 'ctrl_variant_change' fileTypes", function (assert) {
