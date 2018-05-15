@@ -302,6 +302,17 @@
 		assert.strictEqual(this.NotificationListGroup._maxNumberReached,  false, 'Max number of shown notifications should not be reached.');
 	});
 
+	QUnit.test('Insert notification', function(assert) {
+		// arrange
+		var oNotificationItem = new sap.m.NotificationListItem();
+
+		// act
+		this.NotificationListGroup.insertItem(oNotificationItem, 0);
+
+		// assert
+		assert.strictEqual(this.NotificationListGroup.getItems().length, 1, 'Should have inserted one item.');
+	});
+
 	//================================================================================
 	// Notification List Group rendering methods
 	//================================================================================

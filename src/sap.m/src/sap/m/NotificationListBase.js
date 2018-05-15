@@ -379,7 +379,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', './ListItemBase', './Text',
                 this.getAggregation('_overflowToolbar').insertAggregation('content', object, index, suppressInvalidate);
                 return this;
             } else {
-                return Control.prototype.insertAggregation.call(this, object, index, suppressInvalidate);
+                return Control.prototype.insertAggregation.call(this, aggregationName, object, index, suppressInvalidate);
             }
         };
 
