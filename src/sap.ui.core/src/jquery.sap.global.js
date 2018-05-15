@@ -1502,6 +1502,7 @@ sap.ui.define([
 		 * @return {boolean} whether the module has been declared already
 		 * @public
 		 * @static
+		 * @deprecated since 1.58 use <code>sap.ui.require(sModuleName)</code> instead
 		 */
 		jQuery.sap.isDeclared = function isDeclared(sModuleName, bIncludePreloaded) {
 			var state = _ui5loader.getModuleState( ui5ToRJS(sModuleName) + ".js" );

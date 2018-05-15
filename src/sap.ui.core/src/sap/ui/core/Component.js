@@ -1699,7 +1699,7 @@ sap.ui.define([
 				// Only create models:
 				//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
 				//   - in case the model class is already loaded (otherwise log a warning)
-				if (jQuery.sap.isDeclared(mModelConfig.type, true)) {
+				if (sap.ui.loader._.getModuleState(mModelConfig.type.replace(/\./g, "/") + ".js")) {
 					mModelConfigs.afterManifest[sModelName] = mModelConfig;
 				} else {
 					jQuery.sap.log.warning("Can not preload model \"" + sModelName + "\" as required class has not been loaded: \"" + mModelConfig.type + "\"",
@@ -2433,7 +2433,7 @@ sap.ui.define([
 				sPreloadName;
 
 			// only load the Component-preload file if the Component module is not yet available
-			if ( bComponentPreload && sComponentName != null && !jQuery.sap.isDeclared(sController, /* bIncludePreloaded=*/ true) ) {
+			if ( bComponentPreload && sComponentName != null && !sap.ui.loader._.getModuleState(sController.replace(/\./g, "/") + ".js") ) {
 
 				if ( bAsync ) {
 					sPreloadName = jQuery.sap.getResourceName(sController, http2 ? '-h2-preload.js' : '-preload.js'); // URN
