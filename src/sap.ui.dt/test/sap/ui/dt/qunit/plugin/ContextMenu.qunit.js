@@ -7,6 +7,7 @@ sap.ui.require([
 	"sap/ui/rta/plugin/Rename",
 	'sap/ui/rta/command/CommandFactory',
 	"sap/ui/Device",
+	"sap/ui/qunit/QUnitUtils",
 	// controls
 	"sap/m/Button",
 	"sap/m/Popover",
@@ -21,6 +22,7 @@ sap.ui.require([
 	RenamePlugin,
 	CommandFactory,
 	Device,
+	QUnitUtils,
 	Button,
 	Popover,
 	OverflowToolbarButton,
@@ -145,15 +147,14 @@ sap.ui.require([
 
 		QUnit.test("Showing the ContextMenu", function (assert) {
 			this.clock = sinon.useFakeTimers();
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
-			sap.ui.test.qunit.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
+			QUnitUtils.triggerKeydown(oContextMenuControl.getPopover().getDomRef(), jQuery.sap.KeyCodes.ESCAPE);
 			this.clock.tick(400); //animation of the closing of the Popover
 			assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should be closed");
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
-			oContextMenuControl = null;
 			this.clock.restore();
 		});
 
@@ -161,16 +162,15 @@ sap.ui.require([
 			var done = assert.async();
 			Device.browser.edge = true;
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton1Overlay.getDomRef(), "contextmenu");
+			QUnitUtils.triggerMouseEvent(this.oButton1Overlay.getDomRef(), "contextmenu");
 			oContextMenuControl.attachEventOnce("Opened", function() {
 				assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
-				sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+				QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			}.bind(this));
 			oContextMenuControl.attachEventOnce("Closed", function() {
 				assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should be closed");
 				oContextMenuControl.attachEventOnce("Opened", function() {
 					assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be reopened again");
-					oContextMenuControl = null;
 					Device.browser.edge = false;
 					done();
 				});
@@ -178,21 +178,19 @@ sap.ui.require([
 		});
 
 		QUnit.test("Calling the _popupClosed function", function (assert) {
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			oContextMenuControl.bOpenNew = false;
 			oContextMenuControl._popupClosed();
 			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should be closed");
-			oContextMenuControl = null;
 		});
 
 		QUnit.test("Calling the _popupClosed function in expanded mode", function (assert) {
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "ContextMenu should be opened");
 			oContextMenuControl._popupClosed();
 			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should be closed");
-			oContextMenuControl = null;
 		});
 
 		QUnit.test("Calling _checkForPluginLock", function (assert) {
@@ -377,7 +375,7 @@ sap.ui.require([
 				this.oTestEvent = oEvent;
 				oEvent.stopPropagation();
 			}, this);
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			this.oContextMenuPlugin._addItemGroupsToMenu(this.oTestEvent, this.oButton2Overlay);
 			assert.strictEqual(this.oContextMenuPlugin._aMenuItems.length, 9, "Should have added 2 Buttons");
 			this.oContextMenuPlugin._aMenuItems[this.oContextMenuPlugin._aMenuItems.length - 1].menuItem.handler();
@@ -389,37 +387,35 @@ sap.ui.require([
 
 		QUnit.test("Pressing the Overflow Button on a ContextMenu", function (assert) {
 			this.clock = sinon.useFakeTimers();
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			this.oButton2Overlay.setSelected(true);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
 			oContextMenuControl._onOverflowPress.bind(oContextMenuControl)();
 			assert.ok(true, "Should throw no error");
-			oContextMenuControl = null;
 			this.clock.restore();
 		});
 
 		// FIXME: wait for hover PoC from UX colleagues
 		// QUnit.test("Testing onHover function with mouse events", function (assert) {
 		// 	this.clock = sinon.useFakeTimers();
-		// 	sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
+		// 	QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
 		// 	var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 		// 	assert.ok(!oContextMenuControl.bOpen, "ContextMenu should not be opened");
 		// 	this.clock.tick(this.oContextMenuPlugin.iMenuHoverOpeningDelay);
 		// 	assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 		// 	assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
-		// 	oContextMenuControl = null;
 		// 	this.clock.restore();
 		// });
 
 		// QUnit.test("Testing onHover with onHoverExit function with mouse events", function (assert) {
 		// 	this.clock = sinon.useFakeTimers();
-		// 	sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
+		// 	QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
 		// 	var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 		// 	assert.ok(!oContextMenuControl.bOpen, "ContextMenu should not be opened");
-		// 	sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseout");
+		// 	QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseout");
 		// 	this.clock.tick(this.oContextMenuPlugin.iMenuHoverOpeningDelay);
 		// 	assert.ok(!oContextMenuControl.bOpen, "ContextMenu should not be open");
-		// 	oContextMenuControl = null;
 		// 	this.clock.restore();
 		// });
 
@@ -427,17 +423,16 @@ sap.ui.require([
 		// 	this.clock = sinon.useFakeTimers();
 		// 	var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 		// 	var oCloseContextMenuSpy = oSandbox.spy(oContextMenuControl, "close");
-		// 	sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
+		// 	QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseover");
 		// 	this.clock.tick(this.oContextMenuPlugin.iMenuHoverOpeningDelay);
 		// 	assert.ok(oContextMenuControl.bOpen, "then after onHover ContextMenu should be open on the first overlay");
-		// 	sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseout");
-		// 	sap.ui.test.qunit.triggerMouseEvent(this.oButton1Overlay.getDomRef(), "mouseover");
+		// 	QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "mouseout");
+		// 	QUnitUtils.triggerMouseEvent(this.oButton1Overlay.getDomRef(), "mouseover");
 		// 	this.clock.tick(this.oContextMenuPlugin.iMenuHoverClosingDelay);
 		// 	assert.equal(oCloseContextMenuSpy.callCount, 1, "then after onHover at the second overlay the open contextmenu is closed");
 		// 	this.clock.tick(this.oContextMenuPlugin.iMenuHoverOpeningDelay);
 		// 	assert.ok(oContextMenuControl.bOpen, "then ContextMenu should be open at the second overlay");
 		// 	this.clock.restore();
-		// 	oContextMenuControl = null;
 		// });
 
 		QUnit.test("Testing onHover wrong delay exception", function (assert) {
@@ -487,13 +482,14 @@ sap.ui.require([
 
 		QUnit.test("Testing onClick function", function (assert) {
 			this.clock = sinon.useFakeTimers();
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			this.oButton2Overlay.setSelected(true);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should not be opened");
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
 			assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 			assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
-			oContextMenuControl = null;
+
 			this.clock.restore();
 		});
 
@@ -502,12 +498,24 @@ sap.ui.require([
 			var oUnlockMenuOpeningSpy = oSandbox.spy(this.oContextMenuPlugin, "unlockMenuOpening");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			this.oContextMenuPlugin.lockMenuOpening();
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			this.oButton2Overlay.setSelected(true);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			assert.ok(!oContextMenuControl.bOpen, "then ContextMenu should not be opened");
 			assert.equal(oUnlockMenuOpeningSpy.callCount, 1, "then 'unlockMenuOpening' should be called once");
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
 			assert.ok(oContextMenuControl.bOpen, "then after opening delay ContextMenu should be open");
-			oContextMenuControl = null;
+			this.clock.restore();
+		});
+
+		QUnit.test("Testing onClick function when overlay is not selected", function (assert) {
+			// regarding the rta directives the second click on an overlay deselects it,
+			// if it is not "rename"-able. In this case ContextMenu shouldn't be opened
+			this.clock = sinon.useFakeTimers();
+			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			this.oButton2Overlay.setSelected(false);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
+			assert.notOk(oContextMenuControl.bOpen, "then after click the ContextMenu should not be opened");
 			this.clock.restore();
 		});
 
@@ -518,13 +526,12 @@ sap.ui.require([
 			this.oContextMenuPlugin.touchTimeout = setTimeout(function() {
 				assert.notOk(true, "timeout should not be executed, it should be cleared onTouch!");
 			}, 100);
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "touchstart");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "touchstart");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should not be opened");
 			this.clock.tick(this.oContextMenuPlugin.iMenuTouchOpeningDelay);
 			assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
 			assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
-			oContextMenuControl = null;
 			this.clock.restore();
 		});
 
@@ -538,10 +545,9 @@ sap.ui.require([
 				this.oContextMenuPlugin._onKeyDown(oEvent);
 				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
-				oContextMenuControl = null;
 			}.bind(this);
 			this.oButton2Overlay.attachBrowserEvent("keydown", _tempListener, this);
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keydown");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keydown");
 		});
 
 		QUnit.test("Testing onKeyDown function opening the compact contextMenu", function (assert) {
@@ -554,30 +560,27 @@ sap.ui.require([
 				this.oContextMenuPlugin._onKeyDown(oEvent);
 				assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 				assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
-				oContextMenuControl = null;
 			}.bind(this);
 			this.oButton2Overlay.attachBrowserEvent("keydown", _tempListener, this);
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keydown");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "keydown");
 		});
 
 		QUnit.test("Performing a right click when a Timeout from left-click/hover is active", function (assert) {
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should not be opened");
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 			assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
-			oContextMenuControl = null;
 		});
 
 		QUnit.test("Clicking on a button in the ContextMenu", function (assert) {
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
 			assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Column", "Flexbox should be set to Column");
 			this.oContextMenuPlugin._oCurrentOverlay = this.oButton2Overlay;
 			oContextMenuControl.getFlexbox().getItems()[0].firePress();
-			oContextMenuControl = null;
 		});
 
 		QUnit.test("Deregistering an Overlay", function (assert) {
@@ -587,7 +590,8 @@ sap.ui.require([
 
 		QUnit.test("calling _getPopoverDimensions for different kinds of menus", function (assert) {
 			this.clock = sinon.useFakeTimers();
-			sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
+			this.oButton2Overlay.setSelected(true);
+			QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "click");
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
 			var oPopoverContext = oContextMenuControl._getPopoverDimensions(true, false);
@@ -772,25 +776,25 @@ sap.ui.require([
 	});
 
 	QUnit.test("default value of maxButtonsDisplayed", function (assert) {
-		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		assert.strictEqual(this.oContextMenuControl.getMaxButtonsDisplayed(), 4, "Should return 4.");
 	});
 
 	QUnit.test("setting value of maxButtonsDisplayed", function (assert) {
-		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		this.oContextMenuControl.setMaxButtonsDisplayed(19);
 		assert.strictEqual(this.oContextMenuControl.getMaxButtonsDisplayed(), 19, "Should return 19.");
 	});
 
 	QUnit.test("setting value of maxButtonsDisplayed to an illegal value", function (assert) {
-		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		assert.throws(function () {
 			this.oContextMenuControl.setMaxButtonsDisplayed(1);
 		}, "Should throw an Error.");
 	});
 
 	QUnit.test("adding a menu button", function (assert) {
-		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		var oBtn = {
 			text: "TestText",
 			icon: "",
@@ -802,7 +806,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("removing a button", function (assert) {
-		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		var oRemovedButton = this.oContextMenuControl.removeButton(0);
 		var aItems = this.oContextMenuControl.getFlexbox(true).getItems();
 		var aItems2 = this.oContextMenuControl.getFlexbox(false).getItems();
@@ -821,7 +825,7 @@ sap.ui.require([
 	});
 
 	QUnit.test("removing all buttons", function (assert) {
-		sap.ui.test.qunit.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
+		QUnitUtils.triggerMouseEvent(this.oButton2Overlay.getDomRef(), "contextmenu");
 		this.oContextMenuControl.removeAllButtons();
 		assert.strictEqual(this.oContextMenuControl.getDependents()[0].getContent()[0].getItems().length, 0, "should remove all buttons");
 	});
