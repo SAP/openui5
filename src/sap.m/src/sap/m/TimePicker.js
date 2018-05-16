@@ -80,7 +80,10 @@ function(
 		 * <li>Use the <code>value</code> property if the date is provided as a string from
 		 * the backend or inside the app (for example, as ABAP type DATS field)</li>
 		 * <li>Use the <code>dateValue</code> property if the date is already provided as a
-		 * JavaScript Date object or you want to work with a JavaScript Date object</li></ul>
+		 * JavaScript Date object or you want to work with a JavaScript Date object.
+		 * Use <code>dateValue</code> as a helper property to easily obtain the hours, minutes and seconds
+		 * of the chosen time. Although possible to bind it, the recommendation is to not to do it.
+		 * When binding is needed, use <code>value</code> property instead</li></ul>
 		 *
 		 * <h3>Formatting</h3>
 		 *
