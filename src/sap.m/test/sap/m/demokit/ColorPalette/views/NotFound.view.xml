@@ -1,0 +1,16 @@
+<mvc:View
+	controllerName="cp.opa.test.app.controllers.NotFound"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m">
+
+	<MessagePage
+		title="{i18n>notFoundTitle}"
+		text="{i18n>notFoundText}"
+		icon="sap-icon://document"
+		id="notFoundPage">
+		<customDescription>
+			<Link id="backToMainPage" text="{i18n>backToMainPage}" press="onLinkPressed" />
+		</customDescription>
+	</MessagePage>
+
+</mvc:View>
