@@ -40,14 +40,29 @@
 
 /* Layout settings for starting in a frame */
 .opaFrame {
+	position: absolute;
+	top: 20%;
+	right: 0;
 	width: 100%;
 	height: 100%;
-	position: absolute;
+	box-sizing: border-box;
 	opacity: 0.7;
-	bottom: -20%;
+}
+
+.opaFrame.default-scale-x {
 	right: -20%;
+	transform: scaleX(0.6);
+}
+
+.opaFrame.default-scale-y {
 	top: 0;
-	transform: scale(0.6) ;
+	transform: scaleY(0.6);
+}
+
+.opaFrame.default-scale-both {
+	top: 0;
+	right: -20%;
+	transform: scale(0.6);
 }
 
 /* The :hover selector is used to select elements (in our case the OPA-Frame) when you mouse over them */

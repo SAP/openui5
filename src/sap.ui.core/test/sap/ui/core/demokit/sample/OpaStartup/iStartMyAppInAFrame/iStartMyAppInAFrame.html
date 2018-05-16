@@ -25,8 +25,9 @@
 			sap.ui.require([
 				"sap/ui/test/opaQunit",
 				"sap/ui/test/Opa5",
-				"sap/ui/test/matchers/AggregationFilled"
-			], function (opaTest, Opa5, AggregationFilled) {
+				"sap/ui/test/matchers/AggregationFilled",
+				"sap/ui/test/matchers/Ancestor"
+			], function (opaTest, Opa5, AggregationFilled, Ancestor) {
 
 				QUnit.module("iStartMyAppInAFrame");
 
@@ -88,6 +89,39 @@
 
 					Then.iTeardownMyApp();
 
+				});
+
+				opaTest("Should start an application in an iFrame with a fixed size", function (Given, When, Then) {
+					Opa5.extendConfig({
+						viewNamespace: "view.",
+						autoWait: true
+					});
+
+					// change the frame size to see the application's visual response
+					// the header toolbar overflows when the viewport width is less than 560px
+					Given.iStartMyAppInAFrame({
+						source: "applicationUnderTest/index.html",
+						width: 550,
+						height: 500
+					});
+
+					Then.waitFor({
+						viewName: "Main",
+						controlType: "sap.m.OverflowToolbar",
+						success: function (aToolbar) {
+							return this.waitFor({
+								controlType: "sap.m.ToggleButton",
+								matchers: new Ancestor(aToolbar[0]),
+								success: function () {
+									Opa5.assert.ok(true, "The application was loaded in a small frame and an overflow button appeared");
+								},
+								errorMessage: "The application was loaded in a frame big enough to not render an overflow button"
+							});
+						},
+						errorMessage: "The application did not have an overflow toolbar"
+					});
+
+					Then.iTeardownMyApp();
 				});
 
 				QUnit.start();

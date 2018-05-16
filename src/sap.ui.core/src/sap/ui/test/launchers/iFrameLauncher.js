@@ -34,6 +34,24 @@ sap.ui.define([
 		checkForUI5ScriptLoaded();
 	}
 
+	function setFrameSize(sWidth, sHeight) {
+		// by default the frame is scaled down from 100% of the page in both dimensions
+		// user-defined dimensions should not be scaled
+		if (sWidth) {
+			$Frame.css("width", sWidth);
+		} else {
+			$Frame.addClass("default-scale-x");
+		}
+		if (sHeight) {
+			$Frame.css("height", sHeight);
+		} else {
+			$Frame.addClass("default-scale-y");
+		}
+		if (!sWidth && !sHeight) {
+			$Frame.addClass("default-scale-both");
+		}
+	}
+
 	function registerOnError () {
 		var fnFrameOnError = oFrameWindow.onerror;
 
@@ -312,6 +330,7 @@ sap.ui.define([
 				//invalidate other caches
 				$Frame = $('<IFrame id="' + options.frameId + '" class="opaFrame" src="' + options.source + '"></IFrame>');
 				$("body").append($Frame);
+				setFrameSize(options.width, options.height);
 			}
 
 			if ($Frame[0].contentDocument && $Frame[0].contentDocument.readyState === "complete") {

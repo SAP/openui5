@@ -14,6 +14,9 @@ After turning on the debug mode, you can have a look at the log and also filter 
 
 Frequent errors are typos in ViewName or control ids. These are easily discovered in the logs.
 
+### A control is not found when running the test on a different machine or in a suite
+The size of the iFrame in which the application is loaded is as big as the browser window. It is scaled down to leave space for the QUnit info but the contents are preserved the same as when run in full size. This means that regardless of the small iFrame, you shouldn't see any responsive change in the application's appearance. If the test runs fine locally but a control is not found on another machine, there is a chance that the other machine's screen is too small and triggers the responsive behaviour of some controls. (example: CI executors with screens smaller than the regular big developer screens, or when the test is part of a suite and the iFrame is placed inside a suite wrapper much smaller than the screen). One way is to actually test for the responsive behavior and add conditional `waitFor`-s and test cases. Tests for very different screens (eg. phone and desktop) are better separated in different test files. If you want to workaround the sizing issue and don't want to test responsive behavior, you can set a fixed size for the iFrame. The idea is to write the test for the small size which will most probably result in the central environment. You can use the `width` and `height` parameters of `iStartMyAppInAFrame` or the `opaFrameWidth` and `opaFrameHeight` URL parameters. If either width or height is not defined, the default 100% of the window's body will be set, and later scaled down by 40%.
+
 ## My test is sometimes failing - sometimes it's not
 
 ### Is it the startup that fails?
