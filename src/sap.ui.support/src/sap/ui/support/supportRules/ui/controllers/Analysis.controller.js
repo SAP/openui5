@@ -328,11 +328,16 @@ sap.ui.define([
 		 * @param {Event} oEvent TreeTable event
 		 */
 		onSelectedRuleSets: function (oEvent) {
+			var bShowRuleProperties = true;
+
 			if (oEvent.getParameter("selectedKey") === "additionalRulesets") {
+				bShowRuleProperties = false;
 				this.rulesViewContainer.setBusyIndicatorDelay(0);
 				this.rulesViewContainer.setBusy(true);
 				CommunicationBus.publish(channelNames.GET_NON_LOADED_RULE_SETS);
 			}
+
+			this.getView().getModel().setProperty("/showRuleProperties", bShowRuleProperties);
 		},
 
 		_getSelectedRules: function () {

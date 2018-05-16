@@ -6,7 +6,7 @@
 		xmlns:t="sap.ui.table"
 		xmlns:core="sap.ui.core"
 		xmlns:tools="sap.ui.codeeditor">
-	<m:Page showHeader="false">
+	<m:Page showHeader="false" visible="{/showRuleProperties}">
 		<m:Bar>
 			<m:contentLeft >
 				<m:Title text="{= ${/selectedRule/libName} + ' > ' + ${/selectedRule/title}}" visible="{= ${/selectedRule} !== undefined &amp;&amp; ${/selectedSetPreviewKey} !== 'additionalRulesets'}" titleStyle="H6" class="customMarginLeft" />
