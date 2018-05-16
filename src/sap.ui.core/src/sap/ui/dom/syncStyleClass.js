@@ -29,7 +29,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', 'sap/base/asser
 		}
 
 
-		if (BaseObject.isA(vSource, 'sap/ui/core/Control')) {
+		if (BaseObject.isA(vSource, 'sap.ui.core.Control')) {
 			vSource = vSource.$();
 		} else if (typeof vSource === "string") {
 			vSource = byId(vSource);
@@ -42,7 +42,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/ui/base/Object', 'sap/base/asser
 
 		if (vDestination instanceof jQuery) {
 			vDestination.toggleClass(sStyleClass, bClassFound);
-		} else if (BaseObject.isA(vDestination, 'sap/ui/core/Control')) {
+		} else if (BaseObject.isA(vDestination, 'sap.ui.core.Control')) {
 			vDestination.toggleStyleClass(sStyleClass, bClassFound);
 		} else {
 			assert(false, 'sap/ui/dom/syncStyleClass(): vDestination must be a jQuery object or a Control');
