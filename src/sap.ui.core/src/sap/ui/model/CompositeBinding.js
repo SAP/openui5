@@ -209,6 +209,18 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/DataType', './BindingMode', './
 		}
 
 		if (this.bRawValues) {
+			// When using raw values, also call validators of nested bindings
+			try {
+				this.aBindings.forEach(function(oBinding, i) {
+					if (oBinding.oType) {
+						oBinding.oType.validateValue(aValues[i]);
+					}
+				});
+			} catch (oException) {
+				oDataState.setInvalidValue(oValue);
+				this.checkDataState(); //data ui state is dirty inform the control
+				throw oException;
+			}
 			this.setValue(aValues);
 		} else {
 			jQuery.each(this.aBindings, function(i, oBinding) {
