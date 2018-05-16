@@ -208,6 +208,27 @@ sap.ui.define(["sap/ui/fl/changeHandler/ChangeHandlerMediator"], function(Change
 				changeOnRelevantContainer : true,
 				domRef : function (oControl){
 					return oControl.getLabel().getDomRef();
+				},
+				getState : function(oSimpleForm) {
+					var aContent = oSimpleForm.getContent();
+					return {
+						content : aContent.map(function(oElement) {
+							return {
+								element : oElement,
+								text : oElement.getText ? oElement.getText() : undefined,
+								index : aContent.indexOf(oElement)
+							};
+						})
+					};
+				},
+				restoreState : function(oSimpleForm, oState) {
+					oSimpleForm.removeAllContent();
+					oState.content.forEach(function(oElementState) {
+						oSimpleForm.insertContent(oElementState.element, oElementState.index);
+						if (oElementState.element.setText){
+							oElementState.element.setText(oElementState.text);
+						}
+					});
 				}
 			},
 			remove : {
