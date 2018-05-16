@@ -83,7 +83,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/Object', 'sap/
 				bInnerHtml = false;
 
 			// Check if <link> element is missing (e.g. misconfigured library)
-			bNoLinkElement = !oStyle;
+			bNoLinkElement = !!oStyle;
 
 			// Check if <link> element has finished loading (see jQuery.sap.includeStyleSheet)
 			bLinkElementFinishedLoading = !!(oStyle && (oStyle.getAttribute("data-sap-ui-ready") === "true" || oStyle.getAttribute("data-sap-ui-ready") === "false"));
