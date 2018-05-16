@@ -29,6 +29,15 @@
 					new sap.m.Text({text: sText || "some text"})
 				];
 			},
+			getHeaderTitle: function() {
+				return new sap.uxap.ObjectPageHeader({
+					objectTitle: "Long title that wraps and goes over more lines",
+					objectSubtitle: "Long subtitle that wraps and goes over more lines"
+				});
+			},
+			getHeaderContent: function() {
+				return new sap.ui.core.HTML({content: "<div style='height:100px'>some content</div>"});
+			},
 			getObjectPage: function () {
 				return new sap.uxap.ObjectPageLayout();
 			},
@@ -213,7 +222,6 @@
 			this.oThirdSection = this.oObjectPage.getSections()[2];
 			this.oObjectPage.setSelectedSection(this.oSecondSection.getId());
 			this.iLoadingDelay = 500;
-			helpers.renderObject(this.oObjectPage);
 
 		},
 		afterEach: function () {
@@ -237,6 +245,8 @@
 			sectionIsSelected(oObjectPage, assert, oExpected);
 			done();
 		}, this.iLoadingDelay);
+
+		helpers.renderObject(this.oObjectPage);
 	});
 
 	QUnit.test("test selected section when hiding another one", function (assert) {
@@ -260,6 +270,7 @@
 			done();
 		}, this.iLoadingDelay);
 
+		helpers.renderObject(this.oObjectPage);
 	});
 
 	QUnit.test("unset selected section", function (assert) {
@@ -282,17 +293,16 @@
 			// Act: unset the currently selected section
 			oObjectPage.setSelectedSection(null);
 
-			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-
-				// Check: the selection moved to the first visible section
-				oExpected = {
-					oSelectedSection: oFirstSection,
-					sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
-				};
-				sectionIsSelected(oObjectPage, assert, oExpected);
+			// Check: the selection moved to the first visible section
+			oExpected = {
+				oSelectedSection: oFirstSection,
+				sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
+			};
+			sectionIsSelected(oObjectPage, assert, oExpected);
 			done();
-		});
 		}, this.iLoadingDelay);
+
+		helpers.renderObject(this.oObjectPage);
 	});
 
 	QUnit.test("unset selected section resets expanded state", function (assert) {
@@ -304,11 +314,8 @@
 
 		// add header content
 		oObjectPage.setUseIconTabBar(false);
-		oObjectPage.setHeaderTitle(new sap.uxap.ObjectPageHeader({
-			objectTitle: "Long title that wraps and goes over more lines",
-			objectSubtitle: "Long subtitle that wraps and goes over more lines"
-		}));
-		oObjectPage.addHeaderContent(new sap.ui.core.HTML({content: "<div style='height:100px'>some content</div>"}));
+		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
+		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
 
 		setTimeout(function () {
 
@@ -324,18 +331,118 @@
 			// Act: unset the currently selected section
 			oObjectPage.setSelectedSection(null);
 
-			oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
-
-				// Check: the selection moved to the first visible section
-				oExpected = {
-					oSelectedSection: oFirstSection,
-					sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
-				};
-				sectionIsSelected(oObjectPage, assert, oExpected);
+			// Check: the selection moved to the first visible section
+			oExpected = {
+				oSelectedSection: oFirstSection,
+				sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
+			};
+			sectionIsSelected(oObjectPage, assert, oExpected);
+			setTimeout(function() {
 				assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
 				done();
-			});
+			}, 0);
 		}, this.iLoadingDelay);
+
+		helpers.renderObject(this.oObjectPage);
+	});
+
+	QUnit.test("unset selected section of hidden page", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oFirstSection = this.oObjectPage.getSections()[0],
+			oSecondSection = this.oSecondSection,
+			oSecondPage = new sap.m.Page("page2"),
+			oNavCont = new sap.m.NavContainer({ pages: [oObjectPage, oSecondPage]}),
+			oExpected,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		// add header content
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
+		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+
+		setTimeout(function () {
+
+			// initially, the second section is selected (from the module setup)
+			oExpected = {
+				oSelectedSection: oSecondSection,
+				sSelectedTitle: oSecondSection.getSubSections()[0].getTitle()
+			};
+			sectionIsSelected(oObjectPage, assert, oExpected);
+			assert.equal(oObjectPage._bHeaderExpanded, false, "Header is snapped");
+
+
+			// hide the objectPage (navigate to another page)
+			oNavCont.to("page2");
+			oNavCont.attachEventOnce("afterNavigate", function() {
+
+				setTimeout(function() { // allow the ResizeHandler to detect the change
+					// Act: unset the currently selected section (while the page is hidden)
+					oObjectPage.setSelectedSection(null);
+
+					// return to show the objectpage again (to check if selectedSection was reset to the first visible section)
+					oNavCont.back();
+					oNavCont.attachEventOnce("afterNavigate", function() {
+						setTimeout(function() { // allow the ResizeHandler to detect the change
+							// Check: the selection moved to the first visible section
+							oExpected = {
+								oSelectedSection: oFirstSection,
+								sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
+							};
+							sectionIsSelected(oObjectPage, assert, oExpected);
+							assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
+							assert.equal(oObjectPage._$opWrapper.scrollTop(), 0, "page is scrolled to top");
+
+							// cleanup
+							oNavCont.destroy();
+							done();
+						}, 500);
+					});
+				}, 500);
+			});
+
+		}, this.iLoadingDelay);
+
+		helpers.renderObject(oNavCont);
+	});
+
+	QUnit.test("unset selected section before layout adjusted", function (assert) {
+		var oObjectPage = this.oObjectPage,
+			oFirstSection = this.oObjectPage.getSections()[0],
+			oExpected,
+			done = assert.async(); //async test needed because tab initialization is done onAfterRenderingDomReady (after HEADER_CALC_DELAY)
+
+		// add header content
+		oObjectPage.setUseIconTabBar(false);
+		oObjectPage.setHeaderTitle(oFactory.getHeaderTitle());
+		oObjectPage.addHeaderContent(oFactory.getHeaderContent());
+
+		oFirstSection.setVisible(false);
+
+		var oDelegate = {
+			onAfterRendering: function () {
+				oObjectPage.removeEventDelegate(oDelegate);
+
+				// Act: change first section to *make it the first visible* AND unset selectedSection
+				oFirstSection.setVisible(true);
+				oObjectPage.setSelectedSection(null);
+
+				setTimeout(function() {
+					// Check: the selection moved to the first visible section
+					oExpected = {
+						oSelectedSection: oFirstSection,
+						sSelectedTitle: oFirstSection.getSubSections()[0].getTitle() //subsection is promoted
+					};
+					sectionIsSelected(oObjectPage, assert, oExpected);
+					assert.equal(oObjectPage._bHeaderExpanded, true, "Header is expnded");
+					assert.equal(oObjectPage._$opWrapper.scrollTop(), 0, "page is scrolled to top");
+					done();
+				}, 500);
+			}
+		};
+
+		oObjectPage.addEventDelegate(oDelegate);
+
+		helpers.renderObject(oObjectPage);
 	});
 
 	QUnit.module("Content resize", {
