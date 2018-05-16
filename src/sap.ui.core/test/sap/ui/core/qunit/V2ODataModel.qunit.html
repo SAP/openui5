@@ -82,8 +82,8 @@
 	/**
 	 * Removes all shared Metadata
 	 */
-	function cleanServiceDataCache() {
-		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+	function cleanSharedData() {
+		sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 	}
 
 	QUnit.module("ODataModelV2 XML", {
@@ -94,7 +94,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -123,7 +123,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -267,7 +267,7 @@
 			assert.ok(false, "oNewP Promise resolved");
 		}, function(){
 			assert.ok(true, "oNewP Promise rejected");
-			cleanServiceDataCache();
+			cleanSharedData();
 			sServiceUri = sTempService;
 			done();
 		});
@@ -276,7 +276,7 @@
 
 	QUnit.test("test metadata promise rejected refresh and resolve", function(assert) {
 		var done = assert.async();
-		cleanServiceDataCache();
+		cleanSharedData();
 
 		var sTempService = sServiceUri;
 		sServiceUri = "/doesnotWork/";
@@ -305,7 +305,7 @@
 		})
 		.then(function(result){
 			assert.ok(true, "oNewP2 Promise resolved");
-			cleanServiceDataCache();
+			cleanSharedData();
 			sServiceUri = sTempService;
 		}, function(){
 			assert.ok(false, "oNewP2 Promise rejected");
@@ -335,7 +335,7 @@
 			assert.ok(false, "oNewP Promise resolved");
 		}, function(){
 			assert.ok(true, "oNewP Promise rejected");
-			cleanServiceDataCache();
+			cleanSharedData();
 			sServiceUri = sTempService;
 			done();
 		});
@@ -371,7 +371,7 @@
 		})
 		.then(function(result){
 			assert.ok(true, "oNewP2 Promise resolved");
-			cleanServiceDataCache();
+			cleanSharedData();
 			sServiceUri = sTempService;
 			done();
 		}, function(){
@@ -410,7 +410,7 @@
 		})
 		.then(function(result){
 			assert.ok(!oModel.isMetadataLoadingFailed(), "check metadata loaded");
-			cleanServiceDataCache();
+			cleanSharedData();
 			sServiceUri = sTempService;
 			done();
 		}, function(){
@@ -1079,7 +1079,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -3384,7 +3384,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -3953,7 +3953,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -5283,7 +5283,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -6566,7 +6566,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
