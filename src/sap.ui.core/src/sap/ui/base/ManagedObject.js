@@ -3412,26 +3412,20 @@ sap.ui.define([
 					}
 				} catch (oException) {
 					oBindingInfo.skipPropertyUpdate = false;
+					var mErrorParameters = {
+						element: this,
+						property: sName,
+						type: oBinding.getType(),
+						newValue: oValue,
+						oldValue: oOldValue,
+						exception: oException,
+						message: oException.message
+					};
+
 					if (oException instanceof ParseException) {
-						this.fireParseError({
-							element: this,
-							property: sName,
-							type: oBinding.getType(),
-							newValue: oValue,
-							oldValue: oOldValue,
-							exception: oException,
-							message: oException.message
-						}, false, true); // bAllowPreventDefault, bEnableEventBubbling
+						this.fireParseError(mErrorParameters, false, true); // mParameters, bAllowPreventDefault, bEnableEventBubbling
 					} else if (oException instanceof ValidateException) {
-						this.fireValidationError({
-							element: this,
-							property: sName,
-							type: oBinding.getType(),
-							newValue: oValue,
-							oldValue: oOldValue,
-							exception: oException,
-							message: oException.message
-						}, false, true); // bAllowPreventDefault, bEnableEventBubbling
+						this.fireValidationError(mErrorParameters, false, true); // mParameters, bAllowPreventDefault, bEnableEventBubbling
 					} else {
 						throw oException;
 					}
