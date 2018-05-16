@@ -284,7 +284,7 @@ sap.ui.require([
 		});
 
 		// different lengths
-		[6, 10, 100, 1000, 1000000, 10000000].forEach(function (iLength) {
+		[6, 10, 83, 84, 85, 1000].forEach(function (iLength) {
 			oType = new StringType({}, {isDigitSequence : true, maxLength : iLength});
 			sParsedValue = oType.parseValue(sValue, "string");
 			assert.strictEqual(sParsedValue.length, iLength, "Length ok: " + iLength);
