@@ -146,7 +146,7 @@ sap.ui.define([
 				sValuePath = sValuePath.replace(this.sContextPath,"");
 			}
 
-			sPath = sPath + "path: '" + sValuePath + "'";
+			sPath = sPath + "path: '" + escape(sValuePath) + "'";
 
 			if (sType) {
 				sPath = sPath + ", type: '" + sType + "'";
