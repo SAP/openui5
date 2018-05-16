@@ -16,7 +16,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
-	"sap/ui/fl/context/ContextManager"
+	"sap/ui/fl/context/ContextManager",
+	"sap/ui/core/Element"
 ], function (
 	jQuery,
 	Persistence,
@@ -31,7 +32,8 @@ sap.ui.define([
 	View,
 	JsControlTreeModifier,
 	XmlTreeModifier,
-	ContextManager
+	ContextManager,
+	Element
 ) {
 	"use strict";
 
@@ -637,7 +639,11 @@ sap.ui.define([
 				oChange.PROCESSING = oChange.PROCESSING ? oChange.PROCESSING : true;
 				return oChangeHandler.applyChange(oChange, oControl, mPropertyBag);
 			})
-			.then(function() {
+			.then(function(oInitializedControl) {
+				// changeHandler can return a different control, e.g. case where a visible UI control replaces the stashed control
+				if (oInitializedControl instanceof Element) {
+					oControl = oInitializedControl;
+				}
 				if (!bRevertible && oSettings && oSettings._oSettings.recordUndo && oRtaControlTreeModifier){
 					oChange.setUndoOperations(oRtaControlTreeModifier.stopRecordingUndo());
 				}

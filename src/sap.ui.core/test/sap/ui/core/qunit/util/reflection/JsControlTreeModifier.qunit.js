@@ -1,18 +1,14 @@
 /* global QUnit */
 
-jQuery.sap.require("sap.ui.qunit.qunit-coverage");
-
-// Restrict coverage to sap/ui/core/util/reflection/
-if (window.blanket){
-	window.blanket.options("sap-ui-cover-only", "[sap/ui/core/util/reflection/]");
-}
 QUnit.config.autostart = false;
 
 sap.ui.define([
 	'sap/m/Button',
 	'sap/m/Page',
 	'sap/f/DynamicPageTitle',
-	'sap/ui/core/util/reflection/JsControlTreeModifier'
+	'sap/ui/core/util/reflection/JsControlTreeModifier',
+	'sap/ui/thirdparty/sinon',
+	'sap/ui/thirdparty/sinon-qunit'
 ],
 function(
 	Button,
@@ -21,6 +17,8 @@ function(
 	JsControlTreeModifier
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Using the JsControlTreeModifier...", {
 		beforeEach: function () {
@@ -35,6 +33,7 @@ function(
 
 		afterEach: function () {
 			this.oComponent.destroy();
+			sandbox.restore();
 		}
 	});
 
@@ -153,17 +152,55 @@ function(
 	QUnit.test("applySettings", function(assert){
 		this.oControl= new Button();
 
-		JsControlTreeModifier.applySettings(this.oControl, { text: "Test", enabled: false});		
-		
+		JsControlTreeModifier.applySettings(this.oControl, { text: "Test", enabled: false});
+
 		assert.equal(JsControlTreeModifier.getProperty(this.oControl, "enabled"), false, "the button is not enabled from applySettings");
 		assert.equal(JsControlTreeModifier.getProperty(this.oControl, "text"), "Test", "the buttons text is set from applySettings");
 	});
 
 	QUnit.test("isPropertyInitial", function(assert){
 		this.oControl= new Button( { text: "Test"  });
-		
 		assert.equal(JsControlTreeModifier.isPropertyInitial(this.oControl, "enabled"), true, "the enabled property of the button is initial");
 		assert.equal(JsControlTreeModifier.isPropertyInitial(this.oControl, "text"), false, "the text property of the button is not initial");
+	});
+
+	QUnit.test("when getStashed is called for non-stash control with visible property true", function(assert){
+		this.oControl= new Button({ text: "Test"  });
+		this.oControl.getStashed = function () { };
+		var fnGetVisibleSpy = sandbox.spy(this.oControl, "getVisible");
+		assert.strictEqual(JsControlTreeModifier.getStashed(this.oControl), false, "then false is returned");
+		assert.ok(fnGetVisibleSpy.calledOnce, "then getVisible is called once");
+	});
+
+	QUnit.test("when getStashed is called for a stashed control", function(assert){
+		this.oControl= new Button({ text: "Test"  });
+		this.oControl.getStashed = function () {
+			return true;
+		};
+		var fnGetVisibleSpy = sandbox.spy(this.oControl, "getVisible");
+		assert.strictEqual(JsControlTreeModifier.getStashed(this.oControl), true, "then true is returned");
+		assert.strictEqual(fnGetVisibleSpy.callCount, 0, "then getVisible is not called");
+	});
+
+	QUnit.test("when setStashed is called for non-stash control", function(assert){
+		this.oControl= new Button({ text: "Test"  });
+		this.oControl.getStashed = function () { };
+		this.oControl.setStashed = function () { };
+		var fnSetVisibleSpy = sandbox.spy(this.oControl, "setVisible");
+		JsControlTreeModifier.setStashed(this.oControl, true);
+		assert.strictEqual(this.oControl.getVisible(), false, "then visible property is set to false");
+		assert.ok(fnSetVisibleSpy.calledOnce, "then setVisible is called once");
+	});
+
+	QUnit.test("when setStashed is called for stash control", function(assert){
+		this.oControl= new Button({ text: "Test"  });
+		this.oControl.getStashed = function () {
+			return true;
+		};
+		this.oControl.setStashed = function () { };
+		var fnSetVisibleSpy = sandbox.spy(this.oControl, "setVisible");
+		JsControlTreeModifier.setStashed(this.oControl, false);
+		assert.ok(fnSetVisibleSpy.callCount, 0, "then setVisible is not called");
 	});
 
 	QUnit.start();
