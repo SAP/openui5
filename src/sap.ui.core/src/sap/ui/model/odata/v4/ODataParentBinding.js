@@ -718,7 +718,7 @@ sap.ui.define([
 	ODataParentBinding.prototype.selectKeyProperties = function (mQueryOptions, sMetaPath) {
 		var oType = this.oModel.getMetaModel().getObject(sMetaPath + "/");
 
-		if (oType.$Key) {
+		if (oType && oType.$Key) {
 			this.addToSelect(mQueryOptions, oType.$Key.map(function (vKey) {
 				if (typeof vKey === "object") {
 					return vKey[Object.keys(vKey)[0]];
