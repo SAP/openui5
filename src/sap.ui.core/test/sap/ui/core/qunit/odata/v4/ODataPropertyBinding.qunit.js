@@ -108,13 +108,11 @@ sap.ui.require([
 				oContextBindingMock = that.mock(oControl.getObjectBinding());
 				fnFetchValue = oContextBindingMock.expects("fetchValue");
 				fnFetchValue.exactly(iNoOfRequests || 1)
-					.withExactArgs("/EntitySet('foo')/property", sinon.match.object,
-						new _GroupLock())
+					.withExactArgs("/EntitySet('foo')/property", sinon.match.object)
 					.returns(Promise.resolve("value"));
 				if (oError) {
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs("/EntitySet('foo')/property", sinon.match.object,
-							new _GroupLock())
+						.withExactArgs("/EntitySet('foo')/property", sinon.match.object)
 						.returns(Promise.reject(oError));
 				}
 				oControl.bindProperty("text", {
@@ -549,7 +547,7 @@ sap.ui.require([
 
 		oBinding.setType(null, "any"); // avoid fetchUI5Type()
 		this.mock(oContext).expects("fetchValue")
-			.withExactArgs("property", oBinding, new _GroupLock("group"))
+			.withExactArgs("property", oBinding)
 			.returns(SyncPromise.resolve());
 
 		// code under test
@@ -672,8 +670,7 @@ sap.ui.require([
 				} else {
 					sResolvedPath = sContextPath + "/" + sPath;
 					oContextBindingMock.expects("fetchValue")
-						.withExactArgs(sContextPath + "/" + sPath, sinon.match.object,
-							new _GroupLock())
+						.withExactArgs(sContextPath + "/" + sPath, sinon.match.object)
 						.returns(Promise.resolve(oValue));
 				}
 				that.mock(that.oModel.getMetaModel()).expects("fetchUI5Type")
