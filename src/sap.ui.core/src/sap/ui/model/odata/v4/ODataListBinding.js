@@ -1746,6 +1746,12 @@ sap.ui.define([
 	 *   Measures only: Whether the minimum value (ignoring currencies or units of measure) for this
 	 *   measure is needed (since 1.55.0);
 	 *   <b>filtering and sorting is not supported in this case</b>
+	 * @param {string} [aAggregation[].with]
+	 *   Measures only: The name of the method (for example "sum") used for aggregation of this
+	 *   measure; see "3.1.2 Keyword with" (since 1.55.0)
+	 * @param {string} [aAggregation[].as]
+	 *   Measures only: The alias, that is the name of the dynamic property used for aggregation of
+	 *   this measure; see "3.1.1 Keyword as" (since 1.55.0)
 	 * @returns {object}
 	 *   The return object contains a property <code>measureRangePromise</code> if and only if at
 	 *   least one measure has requested a minimum or maximum value; its value is a
@@ -1776,7 +1782,12 @@ sap.ui.define([
 				if ("grouped" in oColumn) {
 					throw new Error("Both dimension and measure: " + oColumn.name);
 				}
-				oAggregation.aggregate[oColumn.name] = oDetails;
+				if (oColumn.as) {
+					oDetails.name = oColumn.name;
+					oAggregation.aggregate[oColumn.as] = oDetails;
+				} else {
+					oAggregation.aggregate[oColumn.name] = oDetails;
+				}
 				if (oColumn.min) {
 					oDetails.min = true;
 					bHasMinMax = true;
@@ -1784,6 +1795,9 @@ sap.ui.define([
 				if (oColumn.max) {
 					oDetails.max = true;
 					bHasMinMax = true;
+				}
+				if (oColumn.with) {
+					oDetails.with = oColumn.with;
 				}
 			} else if (!("grouped" in oColumn) || oColumn.inResult || oColumn.visible) {
 				// dimension or unit/text property
