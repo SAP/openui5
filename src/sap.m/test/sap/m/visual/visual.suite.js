@@ -32,6 +32,7 @@ module.exports = [
 	"ObjectAttribute.spec.js",
 	"ObjectHeaderVisualTest.spec.js",
 	"ObjectNumberVisualTest.spec.js",
+	"ObjectListItem.spec.js",
 	"OverflowToolbar.spec.js",
 	"OverflowToolbarInRTE.spec.js",
 	"Page.spec.js",
