@@ -780,7 +780,7 @@ sap.ui.define(['jquery.sap.global',
 		var sCountType = "";
 		if (this.sCountMode == CountMode.Request || this.sCountMode == CountMode.Both) {
 			sCountType = "/$count";
-		} else if (this.sCountMode == CountMode.Inline) {
+		} else if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat) {
 			aParams.push("$top=0");
 			aParams.push("$inlinecount=allpages");
 		}
@@ -897,9 +897,9 @@ sap.ui.define(['jquery.sap.global',
 		}
 
 		//check if we already have a count
-		if (!this.oFinalLengths[sNodeId]) {
+		if (!this.oFinalLengths[sNodeId] || this.sCountMode == CountMode.InlineRepeat) {
 			// issue $inlinecount
-			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.Both) {
+			if (this.sCountMode == CountMode.Inline || this.sCountMode == CountMode.InlineRepeat || this.sCountMode == CountMode.Both) {
 				aParams.push("$inlinecount=allpages");
 				bInlineCountRequested = true;
 			} else if (this.sCountMode == CountMode.Request) {
