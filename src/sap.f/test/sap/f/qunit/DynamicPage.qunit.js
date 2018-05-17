@@ -408,6 +408,7 @@
 		var oAction = oFactory.getAction(),
 			oAction1 = oFactory.getAction(),
 			oAction2 = oFactory.getAction(),
+			oAction3 = oFactory.getAction(),
 			iExpectedActionsNumber = 0,
 			iActualActionsNumber = this.oDynamicPageTitle.getActions().length,
 			vResult = null;
@@ -426,34 +427,42 @@
 		assert.equal(oAction.getParent().getId(), this.oDynamicPageTitle.getId(), "The action returns the correct parent.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
-		// Act: insert action at the end
+		// Act: insert an existing action at the end
 		iExpectedActionsNumber++;
 		vResult = this.oDynamicPageTitle.insertAction(oAction, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
 		// Assert
+		assert.ok(iActualActionsNumber !== iExpectedActionsNumber, "The action is not inserted.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: insert action at the end
+		vResult = this.oDynamicPageTitle.insertAction(oAction1, 1);
+		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
+
+		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation");
+		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction1.getId(), "The action is correctly positioned in the aggregation");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: insert action at the beginning
 		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertAction(oAction, 0);
+		vResult = this.oDynamicPageTitle.insertAction(oAction2, 0);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
 		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getActions()[0].getId(), oAction2.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: insert action in the middle
 		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertAction(oAction, 1);
+		vResult = this.oDynamicPageTitle.insertAction(oAction3, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getActions().length;
 
 		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getActions()[1].getId(), oAction3.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: remove Action
@@ -497,6 +506,7 @@
 		var oAction = oFactory.getAction(),
 			oAction1 = oFactory.getAction(),
 			oAction2 = oFactory.getAction(),
+			oAction3 = oFactory.getAction(),
 			iExpectedActionsNumber = 0,
 			iExpectedIndex = 0,
 			iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length,
@@ -516,34 +526,42 @@
 		assert.equal(oAction.getParent().getId(), this.oDynamicPageTitle.getId(), "The action returns the correct parent");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
-		// Act: insert action at the end
+		// Act: insert an existing action at the end
 		iExpectedActionsNumber++;
 		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
 
 		// Assert
+		assert.ok(iActualActionsNumber !== iExpectedActionsNumber, "The action is not inserted.");
+		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
+
+		// Act: insert action at the end
+		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction1, 1);
+		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
+
+		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction1.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: insert action at the beginning
 		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 0);
+		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction2, 0);
 		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
 
 		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action is inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getNavigationActions()[0].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions()[0].getId(), oAction2.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: insert action in the middle
 		iExpectedActionsNumber++;
-		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction, 1);
+		vResult = this.oDynamicPageTitle.insertNavigationAction(oAction3, 1);
 		iActualActionsNumber = this.oDynamicPageTitle.getNavigationActions().length;
 
 		// Assert
 		assert.equal(iActualActionsNumber, iExpectedActionsNumber, "The action inserted successfully.");
-		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction.getId(), "The action is correctly positioned in the aggregation.");
+		assert.equal(this.oDynamicPageTitle.getNavigationActions()[1].getId(), oAction3.getId(), "The action is correctly positioned in the aggregation.");
 		assert.equal(vResult, this.oDynamicPageTitle, "DynamicPageTitle is returned correctly.");
 
 		// Act: remove Action
