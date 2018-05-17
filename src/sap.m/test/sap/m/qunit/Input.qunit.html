@@ -405,6 +405,40 @@
 		oInput.destroy();
 	});
 
+	QUnit.test("Suggestion output", function (assert) {
+
+		var sValue = "";
+		var sSuggestion = "<img  src=''></img>";
+		var oInput = new sap.m.Input("hello", {
+			type: 'Text',
+			showSuggestion: true,
+			submit: function (oEvent) {
+				sValue = oEvent.getParameter("value");
+			}
+		});
+		oInput.placeAt("content");
+
+		// Enter on Suggestions
+		if (sap.ui.Device.system.desktop) {
+			oInput.setShowSuggestion(true);
+			oInput.attachSuggest(function () {
+				oInput.addSuggestionItem(new sap.ui.core.ListItem({text: sSuggestion}));
+			});
+			sap.ui.getCore().applyChanges();
+
+			oInput.onfocusin();
+			oInput._$input.focus().val(" ").trigger("input");
+			this.clock.tick(300);
+
+			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ARROW_DOWN);
+			sap.ui.getCore().applyChanges();
+			sap.ui.test.qunit.triggerKeydown(oInput.getDomRef("inner"), jQuery.sap.KeyCodes.ENTER);
+			assert.equal(sValue, sSuggestion, ": Correct parameter 'value' in enter event");
+		}
+
+		oInput.destroy();
+	});
+
 	QUnit.test("Value Help Only CSS Classes and event", function(assert) {
 		var spy = this.spy(),
 			oInputVHO = new sap.m.Input( {
