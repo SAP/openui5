@@ -1188,7 +1188,7 @@ sap.ui.require([
 				Amount1Avg : {
 					min : true,
 					name : "Amount1",
-					"with" : "avg"
+					"with" : "average"
 				}
 			},
 			group : {
@@ -1196,7 +1196,7 @@ sap.ui.require([
 			}
 		},
 		sApply : "groupby((BillToParty)"
-			+ ",aggregate(Amount1 with avg as Amount1Avg,Amount2))"
+			+ ",aggregate(Amount1 with average as Amount1Avg,Amount2))"
 			+ "/concat(aggregate(Amount1Avg with min as UI5min__Amount1Avg,"
 			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
 		mExpectedAlias2MeasureAndMethod : {
@@ -1210,7 +1210,7 @@ sap.ui.require([
 				Amount1Avg : {
 					min : true,
 					name : "Amount1",
-					"with" : "avg"
+					"with" : "average"
 				},
 				Amount2 : {
 					max : true,
@@ -1218,7 +1218,7 @@ sap.ui.require([
 				}
 			}
 		},
-		sApply : "aggregate(Amount1 with avg as Amount1Avg,Amount2)"
+		sApply : "aggregate(Amount1 with average as Amount1Avg,Amount2)"
 			+ "/concat(aggregate(Amount1Avg with min as UI5min__Amount1Avg,"
 			+ "Amount2 with min as UI5min__Amount2,Amount2 with max as UI5max__Amount2),identity)",
 		mExpectedAlias2MeasureAndMethod : {
