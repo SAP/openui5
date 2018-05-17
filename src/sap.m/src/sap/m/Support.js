@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.mobile'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/Device'],
 	function (jQuery, Device) {
 		"use strict";
 
@@ -248,7 +248,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'jquery.sap.mobile'],
 					title: "Technical Information",
 					horizontalScrolling: true,
 					verticalScrolling: true,
-					stretch: jQuery.device.is.phone,
+					stretch: Device.system.phone,
 					buttons: [
 						new sap.m.Button({
 							text: "Close",
