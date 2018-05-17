@@ -1651,6 +1651,7 @@ sap.ui.define([
 		 * If the provided <code>sKey</code> is an empty string <code>""</code> or <code>undefined</code>,
 		 * the selection is cleared.
 		 * If duplicate keys exist, the first item matching the key is selected.
+		 * If a key is set and no item exists with that key, the visual selection remains the same.
 		 *
 		 * @returns {sap.m.ComboBox} <code>this</code> to allow method chaining.
 		 * @public
