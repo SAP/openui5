@@ -854,7 +854,8 @@ sap.ui.define([
 				generator: oPropertyBag.generator || "Change.createInitialFileContent",
 				service: oPropertyBag.service || "",
 				user: "",
-				sapui5Version: sap.ui.version
+				sapui5Version: sap.ui.version,
+				compositeCommand: ""
 			},
 			dependentSelector: oPropertyBag.dependentSelector || {},
 			validAppVersions: oPropertyBag.validAppVersions || {},
