@@ -6,8 +6,9 @@ jQuery.sap.require('sap.ui.fl.DefaultVariant');
 jQuery.sap.require('sap.ui.fl.LrepConnector');
 jQuery.sap.require('sap.ui.core.Control');
 jQuery.sap.require("sap.ui.fl.Cache");
+jQuery.sap.require("sap.ui.fl.registry.Settings");
 
-(function(utils, Persistence, Control, defaultVariant, Change, LrepConnector, Cache) {
+(function(utils, Persistence, Control, defaultVariant, Change, LrepConnector, Cache, Settings) {
 	'use strict';
 
 	var oGetLayerStub;
@@ -117,7 +118,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 					return undefined;
 				}
 			};
-			
+
 			sandbox.stub(utils,"getAppDescriptor").returns({
 				"sap.app":{
 					id: "myapp"
@@ -228,7 +229,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		});
 
 	});
-	
+
 	QUnit.test("getExecuteOnSelect shall return null if there are no changes", function(assert) {
 
 		sandbox.stub(this.oPersistence, 'getChanges').returns(Promise.resolve({}));
@@ -238,7 +239,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 			assert.equal(bFlag, null);
 		});
 	});
-	
+
 	QUnit.test("getExecuteOnSelectSync shall return the execute on select flag synchronously", function(assert) {
 
 		var sampleChanges = {
@@ -277,7 +278,7 @@ jQuery.sap.require("sap.ui.fl.Cache");
 
 			assert.strictEqual(defaultExecuteOnSelectAfterChangesHaveBeenFetched, bExecuteOnDefault);
 		});
-	});		
+	});
 
 	QUnit.test("getDefaultVariantId shall return an empty string if there are no changes", function(assert) {
 
@@ -696,6 +697,21 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		assert.ok(checkForMessagebundleBindingStub.calledOnce);
 	});
 
+	QUnit.test("_resolveFillingCacheWithChanges stores flex settings if setting part was returned", function (assert) {
+		var oMockedFile = {
+			"changes": {
+				messagebundle: {"i_123": "Hallo Welt!"},
+				settings: {
+					isKeyUser: true
+				}
+			}};
+		var settingsStoreInstanceStub = sandbox.stub(Settings, "_storeInstance");
+
+		this.oPersistence._resolveFillingCacheWithChanges(oMockedFile);
+
+		assert.ok(settingsStoreInstanceStub.calledOnce);
+	});
+
 	QUnit.test("getChanges does not check for message bundles if no message bundle is cached", function (assert) {
 		this.oPersistence._bHasLoadedChangesFromBackend = true;
 		this.oPersistence._oMessagebundle = undefined;
@@ -748,4 +764,4 @@ jQuery.sap.require("sap.ui.fl.Cache");
 		assert.ok(oDummyOwnerSpy.calledOnce);
 	});
 
-}(sap.ui.fl.Utils, sap.ui.fl.Persistence, sap.ui.core.Control, sap.ui.fl.DefaultVariant, sap.ui.fl.Change, sap.ui.fl.LrepConnector, sap.ui.fl.Cache));
+}(sap.ui.fl.Utils, sap.ui.fl.Persistence, sap.ui.core.Control, sap.ui.fl.DefaultVariant, sap.ui.fl.Change, sap.ui.fl.LrepConnector, sap.ui.fl.Cache, sap.ui.fl.registry.Settings));

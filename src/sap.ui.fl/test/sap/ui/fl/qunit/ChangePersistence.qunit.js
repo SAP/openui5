@@ -5,11 +5,9 @@ jQuery.sap.require("sap.ui.fl.Change");
 jQuery.sap.require("sap.ui.fl.LrepConnector");
 jQuery.sap.require("sap.ui.core.Control");
 jQuery.sap.require("sap.ui.fl.Cache");
-jQuery.sap.require("sap.ui.layout.VerticalLayout");
-jQuery.sap.require("sap.ui.layout.HorizontalLayout");
-jQuery.sap.require("sap.m.Button");
+jQuery.sap.require("sap.ui.fl.registry.Settings");
 
-(function (utils, ChangePersistence, Control, Change, LrepConnector, Cache, VerticalLayout, Button, HorizontalLayout) {
+(function (utils, ChangePersistence, Control, Change, LrepConnector, Cache, Settings) {
 	"use strict";
 	sinon.config.useFakeTimers = false;
 
@@ -48,6 +46,14 @@ jQuery.sap.require("sap.m.Button");
 		return this.oChangePersistence.getCacheKey().then(function (oCacheKeyResponse) {
 			assert.equal(oCacheKeyResponse, sChacheKey);
 		});
+	});
+
+	QUnit.test("when getChangesForComponent is called with no change cacheKey", function (assert) {
+		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+		return this.oChangePersistence.getChangesForComponent({cacheKey : "<NO CHANGES>"}).then(function (aChanges) {
+			assert.equal(aChanges.length, 0, "then empty array is returned");
+			assert.equal(oSettingsStoreInstanceStub.callCount, 0 , "the _storeInstance function of the fl.Settings was not called.");
+			});
 	});
 
 	QUnit.test("getChangesForComponent shall return the changes for the component", function(assert) {
@@ -94,6 +100,28 @@ jQuery.sap.require("sap.m.Button");
 		return this.oChangePersistence.getChangesForComponent().then(function(changes) {
 			assert.strictEqual(changes.length, 0, "No changes shall be returned");
 		});
+	});
+	QUnit.test("getChangesForComponent shall also pass the settings data to the fl.Settings", function(assert) {
+		var oFileContent = {
+			changes: {
+				settings: { isKeyUser: true }
+			}};
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
+		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+		return this.oChangePersistence.getChangesForComponent().then(function() {
+			assert.ok(oSettingsStoreInstanceStub.calledOnce, "the _storeInstance function of the fl.Settings was called.");
+			var aPassedArguments = oSettingsStoreInstanceStub.getCall(0).args;
+			assert.deepEqual(aPassedArguments[0], oFileContent.changes.settings, "the settings content was passed to the function");
+			});
+	});
+
+	QUnit.test("getChangesForComponent shall also pass the returned data to the fl.Settings, but only if the data comes from the back end", function(assert) {
+		var oFileContent = {};
+		this.stub(Cache, "getChangesFillingCache").returns(Promise.resolve(oFileContent));
+		var oSettingsStoreInstanceStub = this.stub(Settings, "_storeInstance");
+		return this.oChangePersistence.getChangesForComponent().then(function() {
+			assert.ok(oSettingsStoreInstanceStub.notCalled, "the _storeInstance function of the fl.Settings was not called.");
+			});
 	});
 
 	QUnit.test("loadChangesMapForComponent shall return a map of changes for the component", function(assert) {
@@ -787,7 +815,7 @@ jQuery.sap.require("sap.m.Button");
 		var oChange = this.oChangePersistence.addChange(oChangeContent);
 
 		//Call CUT
-	    this.oChangePersistence.deleteChange(oChange);
+		this.oChangePersistence.deleteChange(oChange);
 
 		var aDirtyChanges = this.oChangePersistence.getDirtyChanges();
 		assert.strictEqual(aDirtyChanges.length, 0);
@@ -838,4 +866,4 @@ jQuery.sap.require("sap.m.Button");
 		}.bind(this));
 	});
 
-}(sap.ui.fl.Utils, sap.ui.fl.ChangePersistence, sap.ui.core.Control, sap.ui.fl.Change, sap.ui.fl.LrepConnector, sap.ui.fl.Cache, sap.ui.layout.VerticalLayout, sap.m.Button, sap.ui.layout.HorizontalLayout));
+}(sap.ui.fl.Utils, sap.ui.fl.ChangePersistence, sap.ui.core.Control, sap.ui.fl.Change, sap.ui.fl.LrepConnector, sap.ui.fl.Cache, sap.ui.fl.registry.Settings));
