@@ -414,28 +414,29 @@
 			oColumn.setFooter(new sap.m.Label({text: "Greetings"}));
 			sut.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 			// accessibility role
-			assert.equal(sut.getAccessibilityType(), "Table", "Accessilitiy role correctly set");
+			assert.equal(sut.getAccessibilityType(), oResourceBundle.getText("ACC_CTR_TYPE_TABLE"), "Accessilitiy role correctly set");
 
 			// _setHeaderAnnouncement() test
 			var $tblHeader = sut.$("tblHeader").focus();
 			sap.ui.getCore().applyChanges();
 			var $invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
-			assert.equal($invisibleText.innerHTML, "Header Row Name Color Number", "Text correctly assigned for screen reader announcement");
+			assert.equal($invisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_HEADER_ROW") + " Name Color Number", "Text correctly assigned for screen reader announcement");
 
 			// _setFooterAnnouncment() test
 			var $tblFooter = sut.$("tblFooter").focus();
 			sap.ui.getCore().applyChanges();
 			$invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
-			assert.equal($invisibleText.innerHTML, "Footer Row Name Greetings", "Text correctly assigned for screen reader announcement");
+			assert.equal($invisibleText.innerHTML, oResourceBundle.getText("ACC_CTR_TYPE_FOOTER_ROW") + " Name Greetings", "Text correctly assigned for screen reader announcement");
 
 			// noDataText test
 			oBinding.filter([new sap.ui.model.Filter("name", "Contains", "xxx")]);
 			sap.ui.getCore().applyChanges();
 			var $noData = sut.$("nodata").focus();
 			$invisibleText = document.getElementById($tblHeader.attr("aria-labelledBy"));
-			assert.equal($invisibleText.innerHTML, "No data", "Text correctly assinged for screen reader announcement");
+			assert.equal($invisibleText.innerHTML, oResourceBundle.getText("LIST_NO_DATA"), "Text correctly assinged for screen reader announcement");
 
 			sut.destroy();
 		});
@@ -704,9 +705,9 @@
 			sut.destroy();
 		});
 
-		QUnit.test("Sticky browser support test", function(assert) {
+		QUnit.test("Sticky chrome browser support", function(assert) {
 			// stub for Chrome
-			this.stub(sap.ui.Device, "browser", {"chrome": true});
+			var oChromeStub = this.stub(sap.ui.Device, "browser", {"chrome": true});
 			var sut = createSUT("idSticky", true);
 			sut.placeAt("qunit-fixture");
 			sut.setSticky(["ColumnHeaders"]);
@@ -718,10 +719,12 @@
 
 			sut.destroy();
 			// reset stub
-			this.stub().reset();
+			oChromeStub.restore();
+		});
 
+		QUnit.test("Sticky edge browser support", function(assert) {
 			// stub for Edge version 16
-			this.stub(sap.ui.Device, "browser", {"edge": true, "version": 16});
+			var oEdgeStub = this.stub(sap.ui.Device, "browser", {"edge": true, "version": 16});
 			var sut1 = createSUT("idSticky1", true);
 			sut1.placeAt("qunit-fixture");
 			sut1.setSticky(["ColumnHeaders"]);
@@ -733,10 +736,12 @@
 
 			sut1.destroy();
 			// reset stub
-			this.stub().reset();
+			oEdgeStub.restore();
+		});
 
+		QUnit.test("Sticky safari browser support", function() {
 			// stub for Safari
-			this.stub(sap.ui.Device, "browser", {"safari": true});
+			var oSafariStub = this.stub(sap.ui.Device, "browser", {"safari": true});
 			var sut2 = createSUT("idSticky2", true);
 			sut2.placeAt("qunit-fixture");
 			sut2.setSticky(["ColumnHeaders"]);
@@ -748,10 +753,12 @@
 
 			sut2.destroy();
 			// reset stub
-			this.stub().reset();
+			oSafariStub.restore();
+		});
 
+		QUnit.test("Sticky firefox browser support", function(assert) {
 			// stub for Firefox version 59
-			this.stub(sap.ui.Device, "browser", {"firefox": true, "version": 59});
+			var oFirefoxStub = this.stub(sap.ui.Device, "browser", {"firefox": true, "version": 59});
 			var sut3 = createSUT("idSticky3", true);
 			sut3.placeAt("qunit-fixture");
 			sut3.setSticky(["ColumnHeaders"]);
@@ -763,10 +770,12 @@
 
 			sut3.destroy();
 			// reset stub
-			this.stub().reset();
+			oFirefoxStub.restore();
+		});
 
+		QUnit.test("Sticky IE browser support", function(assert) {
 			// stub for Internet Explorer
-			this.stub(sap.ui.Device, "browser", {"msie": true});
+			var oIEStub = this.stub(sap.ui.Device, "browser", {"msie": true});
 			var sut4 = createSUT("idSticky4", true);
 			sut4.placeAt("qunit-fixture");
 			sut4.setSticky(["ColumnHeaders"]);
@@ -778,381 +787,400 @@
 
 			sut4.destroy();
 			// reset stub
-			this.stub().reset();
+			oIEStub.restore();
 		});
 
 		QUnit.test("Sticky class based on element visibility", function(assert) {
-			var sut = createSUT("idStickyVisibility");
-			sut.placeAt("qunit-fixture");
-			sut.setSticky(["ColumnHeaders"]);
-			sap.ui.getCore().applyChanges();
+			if (sap.ui.Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+			} else {
+				var sut = createSUT("idStickyVisibility");
+				sut.placeAt("qunit-fixture");
+				sut.setSticky(["ColumnHeaders"]);
+				sap.ui.getCore().applyChanges();
 
-			assert.ok(!sut.getDomRef().classList.contains("sapMSticky4"), "Sticky column header class not added as columns are not available");
+				assert.ok(!sut.getDomRef().classList.contains("sapMSticky4"), "Sticky column header class not added as columns are not available");
 
-			var oInfoToolbar = new sap.m.Toolbar({
-				active: true,
-				content: [
-					new sap.m.Text({
-						text : "The quick brown fox jumps over the lazy dog.",
-						wrapping : false
-					})
-				]
-			});
+				var oInfoToolbar = new sap.m.Toolbar({
+					active: true,
+					content: [
+						new sap.m.Text({
+							text : "The quick brown fox jumps over the lazy dog.",
+							wrapping : false
+						})
+					]
+				});
 
-			sut.setInfoToolbar(oInfoToolbar);
+				sut.setInfoToolbar(oInfoToolbar);
 
-			var oHeaderToolbar = new sap.m.Toolbar({
-				content: [
-					new sap.m.Title({
-						text : "Keyboard Handling Test Page"
-					}),
-					new sap.m.ToolbarSpacer(),
-					new sap.m.Button({
-						tooltip: "View Settings",
-						icon: "sap-icon://drop-down-list"
-					})
-				]
-			});
+				var oHeaderToolbar = new sap.m.Toolbar({
+					content: [
+						new sap.m.Title({
+							text : "Keyboard Handling Test Page"
+						}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Button({
+							tooltip: "View Settings",
+							icon: "sap-icon://drop-down-list"
+						})
+					]
+				});
 
-			sut.setHeaderToolbar(oHeaderToolbar);
+				sut.setHeaderToolbar(oHeaderToolbar);
 
-			sut.setSticky(["ColumnHeaders", "InfoToolbar", "HeaderToolbar"]);
-			sap.ui.getCore().applyChanges();
+				sut.setSticky(["ColumnHeaders", "InfoToolbar", "HeaderToolbar"]);
+				sap.ui.getCore().applyChanges();
 
-			assert.ok(sut.getDomRef().classList.contains("sapMSticky3"), "Only sticky infoToolbar style class added");
-			sut.getInfoToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
-			assert.ok(sut.getDomRef().classList.contains("sapMSticky1"), "sticky infoToolbar style class removed as infoToolbar is not visible");
+				assert.ok(sut.getDomRef().classList.contains("sapMSticky3"), "Only sticky infoToolbar style class added");
+				sut.getInfoToolbar().setVisible(false);
+				sap.ui.getCore().applyChanges();
+				assert.ok(sut.getDomRef().classList.contains("sapMSticky1"), "sticky infoToolbar style class removed as infoToolbar is not visible");
 
-			sut.destroy();
+				sut.destroy();
+			}
 		});
 
 		QUnit.test("Focus and scroll handling with sticky column headers", function(assert) {
-			this.stub(sap.ui.Device.system, "desktop", false);
-			this.stub(sap.ui.Device, "browser", {"chrome": true});
-			this.clock = sinon.useFakeTimers();
+			if (sap.ui.Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+			} else {
+				this.stub(sap.ui.Device.system, "desktop", false);
+				this.clock = sinon.useFakeTimers();
 
-			var sut = createSUT("idSut", true);
-			var oScrollContainer = new sap.m.ScrollContainer({
-				vertical: true,
-				content: sut
-			});
-			sut.setSticky(["ColumnHeaders"]);
-			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+				var sut = createSUT("idSut", true);
+				var oScrollContainer = new sap.m.ScrollContainer({
+					vertical: true,
+					content: sut
+				});
+				sut.setSticky(["ColumnHeaders"]);
+				oScrollContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			var aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky4"), "Sticky class added for sticky column headers only");
+				var aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky4"), "Sticky class added for sticky column headers only");
 
-			var fnGetDomRef = sut.getDomRef;
-			this.stub(sut, "getDomRef", function() {
-				return {
-					firstChild: {
-						getBoundingClientRect : function() {
-							return {
-								bottom: 68,
-								height: 48
+				var fnGetDomRef = sut.getDomRef;
+				this.stub(sut, "getDomRef", function() {
+					return {
+						firstChild: {
+							getBoundingClientRect : function() {
+								return {
+									bottom: 68,
+									height: 48
+								}
 							}
 						}
 					}
-				}
-			});
+				});
 
-			var oFocusedItem = sut.getItems()[2];
-			var oFocusedItemDomRef = oFocusedItem.getDomRef();
-			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
+				var oFocusedItem = sut.getItems()[2];
+				var oFocusedItemDomRef = oFocusedItem.getDomRef();
+				var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
 
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
-				return {
-					top: 50
-				}
-			});
+				this.stub(window, "requestAnimationFrame", window.setTimeout);
+				this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+					return {
+						top: 50
+					}
+				});
 
-			oFocusedItemDomRef.focus();
-			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
+				oFocusedItemDomRef.focus();
+				this.clock.tick(0);
+				assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
 
-			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-			sut.getDomRef = fnGetDomRef;
+				// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
+				sut.getDomRef = fnGetDomRef;
 
-			oScrollContainer.destroy();
-			// reset stub
-			this.stub().reset();
+				oScrollContainer.destroy();
+				// reset stub
+				this.stub().reset();
+			}
 		});
 
 		QUnit.test("Focus and scroll handling with sticky infoToolbar", function(assert) {
-			this.stub(sap.ui.Device.system, "desktop", false);
-			this.clock = sinon.useFakeTimers();
+			if (sap.ui.Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+			} else {
+				this.stub(sap.ui.Device.system, "desktop", false);
+				this.clock = sinon.useFakeTimers();
 
-			var sut = createSUT("idStickyInfoToolbar", true);
+				var sut = createSUT("idStickyInfoToolbar", true);
 
-			var oInfoToolbar = new sap.m.Toolbar({
-				active: true,
-				content: [
-					new sap.m.Text({
-						text : "The quick brown fox jumps over the lazy dog.",
-						wrapping : false
-					})
-				]
-			});
+				var oInfoToolbar = new sap.m.Toolbar({
+					active: true,
+					content: [
+						new sap.m.Text({
+							text : "The quick brown fox jumps over the lazy dog.",
+							wrapping : false
+						})
+					]
+				});
 
-			sut.setInfoToolbar(oInfoToolbar);
-			var oScrollContainer = new sap.m.ScrollContainer({
-				vertical: true,
-				content: sut
-			});
-			sut.setSticky(["InfoToolbar"]);
-			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+				sut.setInfoToolbar(oInfoToolbar);
+				var oScrollContainer = new sap.m.ScrollContainer({
+					vertical: true,
+					content: sut
+				});
+				sut.setSticky(["InfoToolbar"]);
+				oScrollContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			var aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class added for sticky infoToolbar only");
+				var aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky class added for sticky infoToolbar only");
 
-			sut.getInfoToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky2"), "Sticky classes removed");
+				sut.getInfoToolbar().setVisible(false);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky2"), "Sticky classes removed");
 
-			sut.getInfoToolbar().setVisible(true);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
+				sut.getInfoToolbar().setVisible(true);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky2"), "Sticky classes added");
 
-			var fnGetDomRef = sut.getDomRef;
+				var fnGetDomRef = sut.getDomRef;
 
-			this.stub(oInfoToolbar, "getDomRef", function() {
-				return {
-					getBoundingClientRect: function() {
-						return {
-							bottom: 72,
-							height: 32
+				this.stub(oInfoToolbar, "getDomRef", function() {
+					return {
+						getBoundingClientRect: function() {
+							return {
+								bottom: 72,
+								height: 32
+							}
 						}
 					}
-				}
-			});
+				});
 
-			var oFocusedItem = sut.getItems()[2];
-			var oFocusedItemDomRef = oFocusedItem.getDomRef();
-			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
+				var oFocusedItem = sut.getItems()[2];
+				var oFocusedItemDomRef = oFocusedItem.getDomRef();
+				var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
 
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
-				return {
-					top: 70
-				}
-			});
+				this.stub(window, "requestAnimationFrame", window.setTimeout);
+				this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+					return {
+						top: 70
+					}
+				});
 
-			oFocusedItemDomRef.focus();
-			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
+				oFocusedItemDomRef.focus();
+				this.clock.tick(0);
+				assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -32]), "scrollToElement function called");
 
-			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-			sut.getDomRef = fnGetDomRef;
+				// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
+				sut.getDomRef = fnGetDomRef;
 
-			oScrollContainer.destroy();
-			// reset stub
-			this.stub().reset();
+				oScrollContainer.destroy();
+				// reset stub
+				this.stub().reset();
+			}
 		});
 
 		QUnit.test("Focus and scroll handling with sticky headerToolbar", function(assert) {
-			this.stub(sap.ui.Device.system, "desktop", false);
-			this.clock = sinon.useFakeTimers();
+			if (sap.ui.Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+			} else {
+				this.stub(sap.ui.Device.system, "desktop", false);
+				this.clock = sinon.useFakeTimers();
 
-			var sut = createSUT("idStickyHdrToolbar", true);
+				var sut = createSUT("idStickyHdrToolbar", true);
 
-			var oHeaderToolbar = new sap.m.Toolbar({
-				content: [
-					new sap.m.Title({
-						text : "Keyboard Handling Test Page"
-					}),
-					new sap.m.ToolbarSpacer(),
-					new sap.m.Button({
-						tooltip: "View Settings",
-						icon: "sap-icon://drop-down-list"
-					})
-				]
-			});
+				var oHeaderToolbar = new sap.m.Toolbar({
+					content: [
+						new sap.m.Title({
+							text : "Keyboard Handling Test Page"
+						}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Button({
+							tooltip: "View Settings",
+							icon: "sap-icon://drop-down-list"
+						})
+					]
+				});
 
-			sut.setHeaderToolbar(oHeaderToolbar);
-			var oScrollContainer = new sap.m.ScrollContainer({
-				vertical: true,
-				content: sut
-			});
-			sut.setSticky(["HeaderToolbar"]);
-			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+				sut.setHeaderToolbar(oHeaderToolbar);
+				var oScrollContainer = new sap.m.ScrollContainer({
+					vertical: true,
+					content: sut
+				});
+				sut.setSticky(["HeaderToolbar"]);
+				oScrollContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			var aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky class added for sticky headerToolbar only");
+				var aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky class added for sticky headerToolbar only");
 
-			sut.getHeaderToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1"), "Sticky classes removed as no element is sticky");
+				sut.getHeaderToolbar().setVisible(false);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(!aClassList.contains("sapMSticky") && !aClassList.contains("sapMSticky1"), "Sticky classes removed as no element is sticky");
 
-			sut.getHeaderToolbar().setVisible(true);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky classes added");
+				sut.getHeaderToolbar().setVisible(true);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky1"), "Sticky classes added");
 
-			var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
-			var fnGetDomRef = sut.getDomRef;
-			this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
-				return {
-					bottom: 88,
-					height: 48
-				}
-			});
-
-			this.stub(sut, "getDomRef", function() {
-				return {
-					querySelector: function() {
-						return oHeaderDomRef;
+				var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
+				var fnGetDomRef = sut.getDomRef;
+				this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
+					return {
+						bottom: 88,
+						height: 48
 					}
-				}
-			});
+				});
 
-			var oFocusedItem = sut.getItems()[2];
-			var oFocusedItemDomRef = oFocusedItem.getDomRef();
-			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
+				this.stub(sut, "getDomRef", function() {
+					return {
+						querySelector: function() {
+							return oHeaderDomRef;
+						}
+					}
+				});
 
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
-				return {
-					top: 80
-				}
-			});
+				var oFocusedItem = sut.getItems()[2];
+				var oFocusedItemDomRef = oFocusedItem.getDomRef();
+				var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
 
-			oFocusedItemDomRef.focus();
-			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
+				this.stub(window, "requestAnimationFrame", window.setTimeout);
+				this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+					return {
+						top: 80
+					}
+				});
 
-			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-			sut.getDomRef = fnGetDomRef;
+				oFocusedItemDomRef.focus();
+				this.clock.tick(0);
+				assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -48]), "scrollToElement function called");
 
-			oScrollContainer.destroy();
-			// reset stub
-			this.stub().reset();
+				// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
+				sut.getDomRef = fnGetDomRef;
+
+				oScrollContainer.destroy();
+				// reset stub
+				this.stub().reset();
+			}
 		});
 
 		QUnit.test("Focus and scroll handling with sticky headerToolbar, infoToolbar, Column headers", function(assert) {
-			this.stub(sap.ui.Device.system, "desktop", false);
-			this.clock = sinon.useFakeTimers();
+			if (sap.ui.Device.browser.msie) {
+				assert.ok(true, "Feature is not supported in IE");
+			} else {
+				this.stub(sap.ui.Device.system, "desktop", false);
+				this.clock = sinon.useFakeTimers();
 
-			var sut = createSUT("idStickyToolbars", true);
+				var sut = createSUT("idStickyToolbars", true);
 
-			var oHeaderToolbar = new sap.m.Toolbar({
-				content: [
-					new sap.m.Title({
-						text : "Keyboard Handling Test Page"
-					}),
-					new sap.m.ToolbarSpacer(),
-					new sap.m.Button({
-						tooltip: "View Settings",
-						icon: "sap-icon://drop-down-list"
-					})
-				]
-			});
+				var oHeaderToolbar = new sap.m.Toolbar({
+					content: [
+						new sap.m.Title({
+							text : "Keyboard Handling Test Page"
+						}),
+						new sap.m.ToolbarSpacer(),
+						new sap.m.Button({
+							tooltip: "View Settings",
+							icon: "sap-icon://drop-down-list"
+						})
+					]
+				});
 
-			sut.setHeaderToolbar(oHeaderToolbar);
+				sut.setHeaderToolbar(oHeaderToolbar);
 
-			var oInfoToolbar = new sap.m.Toolbar({
-				active: true,
-				content: [
-					new sap.m.Text({
-						text : "The quick brown fox jumps over the lazy dog.",
-						wrapping : false
-					})
-				]
-			});
+				var oInfoToolbar = new sap.m.Toolbar({
+					active: true,
+					content: [
+						new sap.m.Text({
+							text : "The quick brown fox jumps over the lazy dog.",
+							wrapping : false
+						})
+					]
+				});
 
-			sut.setInfoToolbar(oInfoToolbar);
+				sut.setInfoToolbar(oInfoToolbar);
 
-			var oScrollContainer = new sap.m.ScrollContainer({
-				vertical: true,
-				content: sut
-			});
-			sut.setSticky(["HeaderToolbar", "InfoToolbar", "ColumnHeaders"]);
-			oScrollContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
+				var oScrollContainer = new sap.m.ScrollContainer({
+					vertical: true,
+					content: sut
+				});
+				sut.setSticky(["HeaderToolbar", "InfoToolbar", "ColumnHeaders"]);
+				oScrollContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			var aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky7"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
+				var aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky7"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
 
-			sut.getHeaderToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky6"), "Sticky class updated for sticky infoToolbar and column headers");
+				sut.getHeaderToolbar().setVisible(false);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky6"), "Sticky class updated for sticky infoToolbar and column headers");
 
-			sut.getInfoToolbar().setVisible(false);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky4"), "Sticky class updated for column headers");
+				sut.getInfoToolbar().setVisible(false);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky4"), "Sticky class updated for column headers");
 
-			sut.getHeaderToolbar().setVisible(true);
-			sut.getInfoToolbar().setVisible(true);
-			sap.ui.getCore().applyChanges();
-			aClassList = sut.$()[0].classList;
-			assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky7"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
+				sut.getHeaderToolbar().setVisible(true);
+				sut.getInfoToolbar().setVisible(true);
+				sap.ui.getCore().applyChanges();
+				aClassList = sut.$()[0].classList;
+				assert.ok(aClassList.contains("sapMSticky") && aClassList.contains("sapMSticky7"), "Sticky class added for sticky headerToolbar, infoToolbar and column headers");
 
-			var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
-			var fnGetDomRef = sut.getDomRef;
-			this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
-				return {
-					bottom: 48,
-					height: 48
-				}
-			});
-
-			this.stub(oInfoToolbar, "getDomRef", function() {
-				return {
-					getBoundingClientRect: function() {
-						return {
-							bottom: 80,
-							height: 32
-						}
+				var oHeaderDomRef = sut.getDomRef().querySelector(".sapMListHdr");
+				var fnGetDomRef = sut.getDomRef;
+				this.stub(oHeaderDomRef, "getBoundingClientRect", function() {
+					return {
+						bottom: 48,
+						height: 48
 					}
-				}
-			});
+				});
 
-			this.stub(sut, "getDomRef", function() {
-				return {
-					firstChild: {
-						getBoundingClientRect : function() {
+				this.stub(oInfoToolbar, "getDomRef", function() {
+					return {
+						getBoundingClientRect: function() {
 							return {
-								bottom: 152,
-								height: 48
+								bottom: 80,
+								height: 32
 							}
 						}
-					},
-					querySelector: function() {
-						return oHeaderDomRef;
 					}
-				}
-			});
+				});
 
-			var oFocusedItem = sut.getItems()[2];
-			var oFocusedItemDomRef = oFocusedItem.getDomRef();
-			var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
+				this.stub(sut, "getDomRef", function() {
+					return {
+						firstChild: {
+							getBoundingClientRect : function() {
+								return {
+									bottom: 152,
+									height: 48
+								}
+							}
+						},
+						querySelector: function() {
+							return oHeaderDomRef;
+						}
+					}
+				});
 
-			this.stub(window, "requestAnimationFrame", window.setTimeout);
-			this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
-				return {
-					top: 140
-				}
-			});
+				var oFocusedItem = sut.getItems()[2];
+				var oFocusedItemDomRef = oFocusedItem.getDomRef();
+				var fnScrollToElementSpy = sinon.spy(oScrollContainer.getScrollDelegate(), "scrollToElement");
 
-			oFocusedItemDomRef.focus();
-			this.clock.tick(0);
-			assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -128]), "scrollToElement function called");
+				this.stub(window, "requestAnimationFrame", window.setTimeout);
+				this.stub(oFocusedItemDomRef, "getBoundingClientRect", function() {
+					return {
+						top: 140
+					}
+				});
 
-			// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
-			sut.getDomRef = fnGetDomRef;
+				oFocusedItemDomRef.focus();
+				this.clock.tick(0);
+				assert.ok(fnScrollToElementSpy.calledWith(oFocusedItemDomRef, 0, [0, -128]), "scrollToElement function called");
 
-			oScrollContainer.destroy();
-			// reset stub
-			this.stub().reset();
+				// restore getDomRef() to avoid error caused when oScrollContainer is destroyed
+				sut.getDomRef = fnGetDomRef;
+
+				oScrollContainer.destroy();
+				// reset stub
+				this.stub().reset();
+			}
 		});
 		</script>
 	</head>
