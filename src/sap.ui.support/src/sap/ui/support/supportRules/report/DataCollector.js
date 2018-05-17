@@ -5,8 +5,8 @@
 /**
  * Provides methods for information retrieval from the core.
  */
-sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI"],
-	function (jQuery, ToolsAPI, URI) {
+sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thirdparty/URI", "sap/base/util/LoaderExtensions"],
+	function (jQuery, ToolsAPI, URI, LoaderExtensions) {
 	"use strict";
 
 	/**
@@ -111,7 +111,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/core/support/ToolsAPI", "sap/ui/thir
 		};
 
 		//add absolute paths for resources
-		var aModules = jQuery.sap.getAllDeclaredModules();
+		var aModules = LoaderExtensions.getAllRequiredModules();
 		var aResults = [];
 		for (var i = 0; i < aModules.length; i++) {
 			aResults.push({
