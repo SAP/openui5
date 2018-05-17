@@ -11016,6 +11016,67 @@
 			oComboBox.destroy();
 		});
 
+		QUnit.module("Input Text Selecting", {
+			beforeEach: function () {
+				this.comboBox = new sap.m.ComboBox({
+					items: [
+						new sap.ui.core.Item({
+							key: 'a',
+							text: 'a'
+						}),
+						new sap.ui.core.Item({
+							key: 'aa',
+							text: 'aa'
+						}),
+						new sap.ui.core.Item({
+							key: 'aaa',
+							text: 'aaa'
+						}),
+						new sap.ui.core.Item({
+							key: 'b',
+							text: 'b'
+						}),
+						new sap.ui.core.Item({
+							key: 'c',
+							text: 'c'
+						})
+					],
+					selectionChange: function() {
+						this.invalidate();
+					}
+				}).placeAt("content");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function () {
+				this.comboBox.destroy();
+				this.comboBox = null;
+			}
+		});
+
+		QUnit.test('Selection when typing and focus in', function (assert) {
+			this.comboBox._$input.focus().val("a").trigger("input");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			this.comboBox._$input.focus().val("aa").trigger("input");
+			sap.ui.getCore().applyChanges();
+			this.clock.tick(500);
+
+			var selectedText = this.comboBox._$input.getSelectedText();
+			assert.equal(selectedText, "", "There is no selected text while typing");
+
+			this.comboBox._$input.blur();
+			this.clock.tick(500);
+			this.comboBox._$input.focus();
+			this.comboBox.onfocusin({});
+
+			this.clock.tick(500);
+
+			selectedText = this.comboBox._$input.getSelectedText();
+			assert.equal(selectedText, "aa", "The text inside the combo box is selected on focus in");
+		});
+
 
 		</script>
 	</head>
