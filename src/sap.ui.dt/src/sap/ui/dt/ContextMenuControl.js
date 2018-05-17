@@ -624,7 +624,7 @@ sap.ui.define([
 			this._iFirstVisibleButtonIndex = null;
 
 			if (bExpanded) {
-				oPopover.height *= this.getButtons().length - 1;
+				oPopover.height *= this.getButtons().length;
 				oPopover.width = parseInt(jQuery("#" + this.getPopover().getId()).css("width"), 10) || 80;
 			} else {
 				oPopover.width = iBaseFontsize * fButtonWidth * this._iButtonsVisible;
