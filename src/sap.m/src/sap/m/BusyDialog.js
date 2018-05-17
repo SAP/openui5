@@ -158,6 +158,7 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 				content: this._busyIndicator,
 				showHeader: false,
 				afterOpen: onOpen,
+				afterClose: this._fnCloseHandler.bind(this),
 				initialFocus: this._busyIndicator
 			}).addStyleClass('sapMBusyDialog');
 
@@ -262,14 +263,23 @@ sap.ui.define(['jquery.sap.global', './library', 'sap/ui/core/Control', 'sap/m/D
 		 * @returns {sap.m.BusyDialog} The modified BusyDialog.
 		 */
 		BusyDialog.prototype.close = function (isClosedFromUserInteraction) {
-			//fire the close event with 'cancelPressed' = true/false depending on how the busyDialog is closed
-			this.fireClose({cancelPressed: isClosedFromUserInteraction || false});
+			this._isClosedFromUserInteraction = isClosedFromUserInteraction;
 
 			// the instance "close" method is overridden,
 			// so call the prototype close method
 			Dialog.prototype.close.call(this._oDialog);
 
 			return this;
+		};
+
+		/**
+		 * Fire close of the BusyDialog only after the Dialog close is fired.
+		 *
+		 * @private
+		 */
+		BusyDialog.prototype._fnCloseHandler = function () {
+			//fire the close event with 'cancelPressed' = true/false depending on how the busyDialog is closed
+			this.fireClose({cancelPressed: this._isClosedFromUserInteraction || false});
 		};
 
 		/**
