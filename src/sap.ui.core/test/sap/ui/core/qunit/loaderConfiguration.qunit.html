@@ -13,12 +13,15 @@
 	<script src="../../../../../resources/sap/ui/thirdparty/es6-string-methods.js"></script>
 	<script src="../../../../../resources/sap/ui/thirdparty/require.js"></script>
 	<script>
+		var otherDefine = window.define;
+		var otherRequire = window.require;
+		requirejs.config({baseUrl: './'});
+	
 		var aScripts = [];
-
+	
 		function appendScript(sSrc, fnOnload, sId, mTagAttributes) {
-			oScript = document.createElement("script");
+			var oScript = document.createElement("script");
 			oScript.src = sSrc;
-			oScript.type = "text/javascript"
 			oScript.id = sId;
 			Object.keys(mTagAttributes || {}).forEach(function(sAttribute) {
 				oScript.setAttribute(sAttribute, mTagAttributes[sAttribute]);
@@ -27,117 +30,168 @@
 			document.head.appendChild(oScript);
 			aScripts.push(oScript);
 		};
-
-		function removeUi5Loader() {
-			sap.ui.loader.config({
-				noConflict: true
+	
+		function startUi5Loader(callback, mTagAttributes) {
+			appendScript("../../../../../resources/ui5loader.js", function() {
+				appendScript("../../../../../resources/ui5loader-autoconfig.js", function() {
+					sap.ui.loader.config({
+						baseUrl: "./"
+					});
+					callback();
+				}, "sap-ui-bootstrap", mTagAttributes);
 			});
+		}
+	
+		function removeUi5Loader() {
+			// first restore original loader
+			sap.ui.loader.config({
+				amd: false
+			});
+			// then remove previously appended scripts
 			aScripts.forEach(function(oScript) {
 				document.head.removeChild(oScript);
 			});
+			// finally remove the whole sap namespace
 			delete window.sap;
 			aScripts = [];
 		};
-
-		QUnit.module("Configuration API");
-
-		QUnit.test("config ui5loader", function(assert){
-			var done = assert.async();
-			appendScript("../../../../../resources/ui5loader.js", function() {
-					appendScript("../../../../../resources/ui5loader-autoconfig.js", function(){
-
-						assert.deepEqual(sap.ui.loader.config(), {"async": false, "noConflict": false}, "Async and noConflict flags are returned. Both flags should be false.");
-
-						sap.ui.loader.config({
-							noConflict: true,
-							async : true,
-							map: {
-								"*": {
-								'prop1': 'should not be exposed'
-								}
-							},
-							baseUrl: "baseUrl"
-						});
-
-						assert.deepEqual(sap.ui.loader.config(), {"async": true, "noConflict": true}, "Async and noConflict flags are returned. Both flags should be true.");
-						removeUi5Loader();
-						done();
-					});
-				}, "sap-ui-bootstrap");
-			});
-
-
-		QUnit.module("Multiple AMD loader scenario", {
+	
+	
+	
+		QUnit.module("config() API", {
 			afterEach: function() {
 				removeUi5Loader();
 			}
 		});
-
-		QUnit.test("setting noConflict via API", function(assert) {
+	
+		QUnit.test("read", function(assert){
 			var done = assert.async();
-			var requirejsLoadedModule, requirejsLoadedModuleAgain;
-
-			assert.expect(5);
-
-			function useUi5Loader() {
+			startUi5Loader(function() {
+	
+				assert.deepEqual(sap.ui.loader.config(), {async: false, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+	
 				sap.ui.loader.config({
-					baseUrl: "./"
+					amd: true,
+					async : true,
+					map: {
+						"*": {
+						'prop1': 'should not be exposed'
+						}
+					}
 				});
-				require(['testdata/modules/basic/ui5Module'], function(ui5LoadedModule) {
-
-					// Activate compatibility mode
-					sap.ui.loader.config({
-						noConflict: true
-					});
-
-					// Use requiresjs again (module should be returned from requirejs cache)
-					requirejsLoadedModuleAgain = require("testdata/modules/basic/amdModule");
-
-					assert.ok(requirejsLoadedModule, "AMD module has been loaded via requirejs.");
-					assert.ok(ui5LoadedModule, "UI5 module has been loaded via UI5 Loader.");
-					assert.strictEqual(requirejsLoadedModule, requirejsLoadedModuleAgain, "Loaded modules are same.");
-
-					// Deactivate compatibility mode
-					sap.ui.loader.config({
-						noConflict: false
-					});
-
-					var ui5LoadedModuleAgain = require('testdata/modules/basic/ui5Module');
-					assert.ok(ui5LoadedModuleAgain, "UI5 module has been loaded again via UI5 Loader.");
-					assert.strictEqual(ui5LoadedModule, ui5LoadedModuleAgain, "Loaded modules are same.");
-					done();
-				});
-			}
-
-			require(["testdata/modules/basic/amdModule"], function(amdModule) {
-
-				requirejsLoadedModule = amdModule;
-
-				appendScript("../../../../../resources/ui5loader.js", function() {
-					appendScript("../../../../../resources/ui5loader-autoconfig.js", useUi5Loader);
-				}, "sap-ui-bootstrap");
-
+	
+				assert.deepEqual(sap.ui.loader.config(), {async: true, amd: true, noConflict: false}, "Async, amdMode and noConflict flags should be returned with the expected values");
+				done();
+	
 			});
 		});
-
-		QUnit.test("setting noConflict via bootstrap attribute", function(assert) {
+	
+		QUnit.test("read (after setting noConflict)", function(assert){
+			var done = assert.async();
+			startUi5Loader(function() {
+	
+				assert.deepEqual(sap.ui.loader.config(), {async: false, amd: false, noConflict: true}, "Async, amdMode and noConflict flags should be returned with the expected values");
+	
+				sap.ui.loader.config({
+					noConflict: false
+				});
+	
+				assert.deepEqual(sap.ui.loader.config(), {async: false, amd: true, noConflict: false}, "Async, amdMode and noConflict flags should be returned with the expected values");
+				done();
+	
+			});
+		});
+	
+	
+	
+		QUnit.module("Coexistence with AMD loaders", {
+			afterEach: function() {
+				removeUi5Loader();
+			}
+		});
+	
+		QUnit.test("Default behavior", function(assert) {
+			var done = assert.async();
+	
+			assert.equal(typeof otherRequire, 'function', "[precondition] global require should be a function (other than UI5)");
+			assert.equal(typeof otherDefine, 'function', "[precondition] global define should be a function (other than UI5)");
+			startUi5Loader(function() {
+				assert.strictEqual(window.require, otherRequire, "global require still should be the same function after starting the ui5loader");
+				assert.strictEqual(window.define, otherDefine, "global define still should be the same function after starting the ui5loader");
+				done();
+			});
+		});
+	
+		QUnit.test("Expose loader via config() API", function(assert) {
 			var done = assert.async();
 			var requirejsLoadedModule, requirejsLoadedModuleAgain;
-
-			assert.expect(1);
-
+	
 			require(["testdata/modules/basic/amdModule"], function(amdModule) {
-
+	
 				requirejsLoadedModule = amdModule;
-
-				appendScript("../../../../../resources/ui5loader.js", function() {
-					appendScript("../../../../../resources/ui5loader-autoconfig.js", function() {
+	
+				startUi5Loader(function useUi5Loader() {
+	
+					// make ui5loader act as an AMD loader
+					sap.ui.loader.config({
+						amd: true
+					});
+	
+					assert.notStrictEqual(window.require, otherRequire, "global require should have changed");
+					assert.notStrictEqual(window.define, otherDefine, "global define should have changed");
+					assert.strictEqual(window.require, sap.ui.loader._.amdRequire, "global require should be the UI5 implementation");
+					assert.strictEqual(window.define, sap.ui.loader._.amdDefine, "global define should be the UI5 implementation");
+	
+					require(['testdata/modules/basic/ui5Module'], function(ui5LoadedModule) {
+	
+						assert.throws(function() {
+							otherRequire('testdata/modules/basic/ui5Module');
+						}, "other loader shouldn't know the UI5 module");
+	
+						// hide UI5 implementation again
+						sap.ui.loader.config({
+							amd: false
+						});
+	
+						assert.strictEqual(window.require, otherRequire, "global require should be the 'other' loader's implementation again");
+						assert.strictEqual(window.define, otherDefine, "global define should be the 'other' loader's implementation again");
+	
+						// Use requiresjs again (module should be returned from requirejs cache)
 						requirejsLoadedModuleAgain = require("testdata/modules/basic/amdModule");
-						assert.strictEqual(requirejsLoadedModule, requirejsLoadedModuleAgain, "Loaded modules are still same.");
+	
+						assert.ok(requirejsLoadedModule, "AMD module has been loaded via requirejs");
+						assert.ok(ui5LoadedModule, "UI5 module has been loaded via UI5 Loader");
+						assert.strictEqual(requirejsLoadedModule, requirejsLoadedModuleAgain, "Modules loaded by the 'other' loader should be the same");
+	
 						done();
 					});
-				}, "sap-ui-bootstrap", {"data-sap-ui-noLoaderConflict": "true"}); // Note: use camel case for readability, browser will convert it to lower case!
+				});
 			});
+		});
+	
+		QUnit.test("Expose loader via bootstrap attribute", function(assert) {
+			var done = assert.async();
+			var requirejsLoadedModule, requirejsLoadedModuleAgain;
+	
+			assert.strictEqual(window.require, otherRequire, "global require should be the 'other' loader's implementation again");
+			assert.strictEqual(window.define, otherDefine, "global define should be the 'other' loader's implementation again");
+	
+			startUi5Loader(function() {
+				assert.notStrictEqual(window.require, otherRequire, "global require should have changed");
+				assert.notStrictEqual(window.define, otherDefine, "global define should have changed");
+				assert.strictEqual(window.require, sap.ui.loader._.amdRequire, "global require should be the UI5 implementation");
+				assert.strictEqual(window.define, sap.ui.loader._.amdDefine, "global define should be the UI5 implementation");
+	
+				// hide UI5 implementation again
+				sap.ui.loader.config({
+					amd: false
+				});
+	
+				assert.strictEqual(window.require, otherRequire, "global require should be the 'other' loader's implementation again");
+				assert.strictEqual(window.define, otherDefine, "global define should be the 'other' loader's implementation again");
+	
+				done();
+			}, {"data-sap-ui-amd": "true"}); // Note: use camel case for readability, browser will convert it to lower case!
 		});
 
 	</script>

@@ -24,7 +24,7 @@
 		oCfg = window['sap-ui-config'] || {},
 		sBaseUrl, bNojQuery,
 		aScripts, rBootScripts, i,
-		oBootstrapScript, sBootstrapUrl, bNoConflict = false;
+		oBootstrapScript, sBootstrapUrl, bExposeAsAMDLoader = false;
 
 	function findBaseUrl(oScript, rUrlPattern) {
 		var sUrl = oScript && oScript.getAttribute("src"),
@@ -157,7 +157,7 @@
 				}
 				// revert changes to global names
 				ui5loader.config({
-					noConflict:true
+					exposeAsAMDLoader:false
 				});
 				window["sap-ui-optimized"] = false;
 
@@ -217,25 +217,42 @@
 
 	})();
 
-	if ( oCfg['xx-async'] === true || /(?:^|\?|&)sap-ui-xx-async=(?:x|X|true)(?:&|$)/.test(window.location.search) ) {
+	function _getOption(name, defaultValue, pattern) {
+		// check for an URL parameter ...
+		var match = window.location.search.match(new RegExp("(?:^\\??|&)sap-ui-" + name + "=([^&]*)(?:&|$)"));
+		if ( match && (pattern == null || pattern.test(match[1])) ) {
+			return match[1];
+		}
+		// ... or an attribute of the bootstrap tag
+		var attrValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-" + name.toLowerCase());
+		if ( attrValue != null && (pattern == null || pattern.test(attrValue)) ) {
+			return attrValue;
+		}
+		// ... or an entry in the global config object
+		if ( Object.prototype.hasOwnProperty.call(oCfg, name) && (pattern == null || pattern.test(oCfg[name])) ) {
+			return oCfg[name];
+		}
+		// if no valid config value is found, fall back to a system default value
+		return defaultValue;
+	}
+
+	function _getBooleanOption(name, defaultValue) {
+		return /^(?:true|x|X)$/.test( _getOption(name, defaultValue, /^(?:true|x|X|false)$/) );
+	}
+
+	if ( _getBooleanOption("xx-async", false) ) {
 		ui5loader.config({
 			async: true
 		});
 	}
 
-	var sNoConflictBootstrapValue = oBootstrapScript && oBootstrapScript.getAttribute("data-sap-ui-noloaderconflict");
-	if (sNoConflictBootstrapValue) {
-		bNoConflict = /^(?:true|x|X)$/.test(sNoConflictBootstrapValue);
-	}
-	var aNoConflictURLMatches = window.location.search.match(/(?:^\?|&)sap-ui-noLoaderConflict=(true|x|X|false)(?:&|$)/);
-	if (aNoConflictURLMatches) {
-		bNoConflict = aNoConflictURLMatches[1] != "false";
-	}
+	// support legacy switch 'noLoaderConflict', but 'amdLoader' has higher precedence
+	var bExposeAsAMDLoader = _getBooleanOption("amd", !_getBooleanOption("noLoaderConflict", true));
 
 	ui5loader.config({
 		baseUrl: sBaseUrl,
 
-		noConflict: bNoConflict,
+		amd: bExposeAsAMDLoader,
 
 		map: {
 			"*": {
