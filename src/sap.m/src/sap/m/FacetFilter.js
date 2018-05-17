@@ -1836,8 +1836,7 @@ sap.ui.define(['jquery.sap.global', './NavContainer', './library', 'sap/ui/core/
 				//clear search value when 'reset' button clicked
 				var aLists = that.getLists();
 				for (var i = 0; i < aLists.length; i++) {
-					aLists[i]._searchValue = "";
-					aLists[i]._applySearch();
+					aLists[i]._resetSearch();
 					jQuery.sap.focus(aLists[i].getItems()[0]);
 				}
 				// Make sure we update selection texts

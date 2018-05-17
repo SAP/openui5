@@ -187,10 +187,21 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 
 	FacetFilterList.prototype._applySearch = function() {
 		var searchVal = this._getSearchValue();
-		if (searchVal != null) {
+		if (searchVal != null && searchVal != "" ) {
 			this._search(searchVal, true);
 			this._updateSelectAllCheckBox();
 		}
+	};
+
+	/*
+	 * Reseting user searches.
+	 *
+	 * @private
+	 */
+	FacetFilterList.prototype._resetSearch = function() {
+		this._searchValue = "";
+		this._search("", true);
+		this._updateSelectAllCheckBox();
 	};
 
 	/**
@@ -560,16 +571,19 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 			this._searchValue = sSearchVal;
 			var oBinding = this.getBinding("items");
 			var oBindingInfo = this.getBindingInfo("items");
+
 			if (oBindingInfo && oBindingInfo.binding) {
 				bindingInfoaFilters = oBindingInfo.binding.aFilters;
 				if (bindingInfoaFilters.length > 0) {
 					numberOfsPath = bindingInfoaFilters[0].aFilters.length;
 					if (this._firstTime) {
-						this._saveBindInfo = bindingInfoaFilters[0].aFilters[0];
+						this._saveBindInfo = bindingInfoaFilters[0];
+
 						this._firstTime = false;
 					}
 				}
 			}
+
 			if (oBinding) { // There will be no binding if the items aggregation has not been bound to a model, so search is not
 				// possible
 				if (sSearchVal || numberOfsPath > 0) {
@@ -582,10 +596,11 @@ sap.ui.define(['jquery.sap.global', './List', './library', 'sap/ui/model/ChangeR
 							sEncodedString = sEncodedString.toLowerCase();
 							oUserFilter = new Filter("tolower(" + path + ")", sap.ui.model.FilterOperator.Contains, sEncodedString);
 						}
+
 						if (numberOfsPath > 1) {
 							var oFinalFilter = new Filter([oUserFilter, this._saveBindInfo], true);
 						} else {
-							if (this._saveBindInfo > "" && oUserFilter.sPath != this._saveBindInfo.sPath) {
+							if (numberOfsPath === 1 && oUserFilter.sPath != this._saveBindInfo.aFilters[0].sPath) {
 								var oFinalFilter = new Filter([oUserFilter, this._saveBindInfo], true);
 							} else {
 								if (sSearchVal == "") {
