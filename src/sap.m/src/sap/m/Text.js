@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @class
 	 * The <code>Text</code> control can be used for embedding longer text paragraphs, that need text wrapping, into your app.
 	 * If the configured text value contains HTML code or script tags, those will be escaped.<br>
-	 * <b>Note: </b>Line breaks (\r\n, \n\r, \r, \n) will always be visualized except when the <code>wrapping</code> property is set to <code>false</code>. In addition, tabs (\t) and whitespace (" ") can be preserved by setting the <code>renderWhitespace</code> property to <code>true</code>
+	 * <b>Note: </b>Line breaks will always be visualized except when the <code>wrapping</code> property is set to <code>false</code>. In addition, tabs and whitespace can be preserved by setting the <code>renderWhitespace</code> property to <code>true</code>
 	 * @extends sap.ui.core.Control
 	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent
 	 *
@@ -86,7 +86,6 @@ sap.ui.define([
 			 * Specifies how whitespace and tabs inside the control are handled. If true, whitespace will be preserved by the browser.
 			 * Depending on wrapping property text will either only wrap on line breaks or wrap when necessary, and on line breaks.
 			 *
-			 * <b>Note:</b> Special characters that can be used are : \t , \n and " " respectively Tab, New line and Space.
 			 * @since 1.51
 			 */
 			renderWhitespace : {type : "boolean", group : "Appearance", defaultValue : false}
@@ -213,7 +212,7 @@ sap.ui.define([
 
 		// handle line ending characters for renderer
 		if (bNormalize) {
-			return sText.replace(/\\r\\n|\\n/g, "\n");
+			return sText.replace(/\r\n|\n\r|\r/g, "\n");
 		}
 
 		return sText;
