@@ -1182,6 +1182,64 @@
 				this.stub().reset();
 			}
 		});
+
+		QUnit.test("Active Headers", function(assert) {
+			var oHeader1 = new sap.m.Text({ text: "Header1" });
+			var oHeader2 = new sap.m.Button({ text: "Header2" });
+			var oColumn1 = new sap.m.Column({ header: oHeader1 });
+			var oColumn2 = new sap.m.Column({ header: oHeader2 });
+			var oTable = new sap.m.Table({ columns: [oColumn1, oColumn2] });
+			var fnFireEventSpy = sinon.spy(oTable, "fireEvent");
+
+			oTable.bActiveHeaders = true;
+			oTable.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(oColumn1.$().hasClass("sapMListTblCellCH"), "ColumnHeader class is set for the 1st column");
+			assert.ok(oColumn2.$().hasClass("sapMListTblCellCH"), "ColumnHeader class is set for the 2nd column");
+
+			assert.ok(oHeader1.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 1st header");
+			assert.ok(oHeader2.$().hasClass("sapMColumnHeaderContent"), "Content class is set for the 2nd header");
+
+			assert.ok(oHeader1.$().parent().hasClass("sapMColumnHeader sapMColumnHeaderActive"), "1st Header wrapper has the correct classes");
+			assert.equal(oHeader1.$().parent().attr("aria-haspopup"), "true", "1st Header wrapper has the correct aria settings");
+			assert.equal(oHeader1.$().parent().attr("tabindex"), "0", "1st Header wrapper has the correct tabindex");
+			assert.equal(oHeader1.$().parent().attr("role"), "button", "1st Header wrapper has the correct role");
+
+			assert.ok(oHeader2.$().parent().hasClass("sapMColumnHeader sapMColumnHeaderActive"), "2nd Header wrapper has the correct classes");
+			assert.equal(oHeader2.$().parent().attr("aria-haspopup"), "true", "2nd Header wrapper has the correct aria settings");
+			assert.equal(oHeader2.$().parent().attr("tabindex"), "0", "2nd Header wrapper has the correct tabindex");
+			assert.equal(oHeader2.$().parent().attr("role"), "button", "2nd Header wrapper has the correct role");
+
+			oHeader1.$().trigger("tap");
+			assert.ok(fnFireEventSpy.lastCall.calledWith("columnPress", sinon.match.has("column", oColumn1)), "Clicking on non-interactive header fires the columnPress event");
+
+			oHeader1.$().parent().trigger("tap");
+			assert.ok(fnFireEventSpy.lastCall.calledWith("columnPress", sinon.match.has("column", oColumn1)), "Clicking on 1st header wrapper fires the columnPress event");
+
+			qutils.triggerKeydown(oHeader1.$().parent(), jQuery.sap.KeyCodes.SPACE);
+			assert.ok(fnFireEventSpy.lastCall.calledWith("columnPress", sinon.match.has("column", oColumn1)), "Pressing space on the 1st header wrapper fires the columnPress event");
+
+			qutils.triggerKeydown(oHeader1.$().parent(), jQuery.sap.KeyCodes.ENTER);
+			assert.ok(fnFireEventSpy.lastCall.calledWith("columnPress", sinon.match.has("column", oColumn1)), "Pressing enter on the 1st header wrapper fires the columnPress event");
+
+			fnFireEventSpy.reset();
+
+			oHeader2.$().trigger("tap");
+			assert.ok(fnFireEventSpy.notCalled, "Clicking on interactive header does not fire the columnPress event");
+
+			oHeader2.$().parent().trigger("tap");
+			assert.ok(fnFireEventSpy.lastCall.calledWith("columnPress", sinon.match.has("column", oColumn2)), "Clicking on 2nd header wrapper fires the columnPress event");
+
+			qutils.triggerKeydown(oHeader2.$().parent(), jQuery.sap.KeyCodes.SPACE);
+			assert.ok(fnFireEventSpy.lastCall.calledWith("columnPress", sinon.match.has("column", oColumn2)), "Pressing space on the 2nd header wrapper fires the columnPress event");
+
+			qutils.triggerKeydown(oHeader2.$().parent(), jQuery.sap.KeyCodes.ENTER);
+			assert.ok(fnFireEventSpy.lastCall.calledWith("columnPress", sinon.match.has("column", oColumn2)), "Pressing enter on the 2nd header wrapper fires the columnPress event");
+
+			oTable.destroy();
+		});
+
 		</script>
 	</head>
 	<body id="body" class="sapUiBody">
