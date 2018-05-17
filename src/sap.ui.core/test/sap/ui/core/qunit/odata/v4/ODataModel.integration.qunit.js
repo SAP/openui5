@@ -5428,10 +5428,11 @@ sap.ui.require([
 			that.expectRequest("Equipments?$select=Category,ID,Name"
 				+ "&$filter=EQUIPMENT_2_PRODUCT/ID%20eq%2042&$skip=0&$top=105", {
 					value : [{
+						"Category" : "1",
+						"ID" : "2",
 						"Name" : "Bar"
 					}]
 				})
-				.expectChange("name", null)
 				.expectChange("name", ["Bar"]);
 
 			oListBinding.refresh("foo");
