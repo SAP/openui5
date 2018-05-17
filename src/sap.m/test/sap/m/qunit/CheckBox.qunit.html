@@ -268,6 +268,32 @@ jQuery.sap.require("sap.ui.core.ValueState");
 	});
 
 	/* ----------------------------------------------- */
+	/* Test: 'partiallySelected'				   */
+	/* ----------------------------------------------- */
+
+	QUnit.test("partiallySelected=true", function(assert) {
+
+		// system under test
+		var oCheckBox = new sap.m.CheckBox({partiallySelected: true});
+
+		// arrange
+		oCheckBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// assertions
+		assert.ok(oCheckBox.$("CbBg").hasClass("sapMCbMarkPartiallyChecked"), "Should have sapMCbMarkPartiallyChecked class");
+		assert.equal(oCheckBox.getPartiallySelected(), true, "Should have partiallySelected property = true");
+
+		//act
+		oCheckBox.setPartiallySelected(false);
+		assert.notOk(oCheckBox.$("CbBg").hasClass("sapMCbMarkPartiallyChecked"), "Should not have sapMCbMarkPartiallyChecked class");
+		assert.equal(oCheckBox.getPartiallySelected(), false, "Should have partiallySelected property = false")
+
+		// cleanup
+		oCheckBox.destroy();
+	});
+
+	/* ----------------------------------------------- */
 	/* Test: wrapping property                         */
 	/* ----------------------------------------------- */
 
@@ -648,7 +674,6 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		oCheckBox.destroy();
 	});
 
-
 	/* ----------------------------------------------- */
 	/* function: sapMCbHoverable                       */
 	/* ----------------------------------------------- */
@@ -734,6 +759,56 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		oCheckBox.destroy();
 	});
 
+	/* ------------------------------------------------------------------------------- */
+	/* Test: Tap with different values of selected and partiallySelected properties    */
+	/* ------------------------------------------------------------------------------- */
+
+	function testTap(sTestName, oTestObject, oAssertion) {
+		QUnit.test(sTestName, function(assert) {
+
+			// system under test
+			var oCheckBox = new sap.m.CheckBox({selected: oTestObject.selected, partiallySelected: oTestObject.partiallySelected});
+
+			// arrange
+			oCheckBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			qutils.triggerEvent("tap", oCheckBox.getId());
+
+			// assertions
+			assert.equal(oCheckBox.getSelected(), oAssertion.isSelected, "Selected should be: " + oAssertion.isSelected);
+			assert.equal(oCheckBox.getPartiallySelected(), oAssertion.isPartiallySelected, "PartiallySelected should be: " + oAssertion.isPartiallySelected);
+			assert.equal(oCheckBox.$("CbBg").hasClass("sapMCbMarkChecked"), oAssertion.hasClass, "CheckBox should have class sapMCbMarkChecked: " + oAssertion.hasClass);
+			assert.equal(oCheckBox.$("CB").is(":checked"), oAssertion.isChecked, "CheckBox should have attribute 'checked': " + oAssertion.isChecked);
+			assert.strictEqual(oCheckBox.$().attr("aria-checked"), oAssertion.ariaChecked, "Property 'aria-checked' should be: " + oAssertion.ariaChecked);
+
+			// cleanup
+			oCheckBox.destroy();
+		});
+	}
+
+	testTap(
+		"Tap when selected=true and partiallySelected=true",
+		{selected: true, partiallySelected: true},
+		{isSelected: true, isPartiallySelected: false, hasClass: true, isChecked: true, ariaChecked: "true"}
+	);
+
+	testTap(
+		"Tap when selected=false and partiallySelected=true",
+		{selected: false, partiallySelected: true},
+		{isSelected: true, isPartiallySelected: false, hasClass: true, isChecked: true, ariaChecked: "true"}
+	);
+
+	testTap(
+		"Tap when selected=true and partiallySelected=false",
+		{selected: true, partiallySelected: false},
+		{isSelected: false, isPartiallySelected: false, hasClass: false, isChecked: false, ariaChecked: "false"}
+	);
+
+	testTap(
+		"Tap when selected=false and partiallySelected=false",
+		{selected: false, partiallySelected: false},
+		{isSelected: true, isPartiallySelected: false, hasClass: true, isChecked: true, ariaChecked: "true"}
+	);
 
 	/* ----------------------------------------------- */
 	/* Test: SPACE key                                 */
@@ -816,6 +891,82 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		expectedMessageAria: "Property 'aria-checked' should be 'false'"
 	});
 
+	QUnit.module("Private API");
+
+	QUnit.test("_getSelectedState with different combinations of selected and partiallySelected properties", function(assert) {
+
+		// system under test
+		var oCheckBox = new sap.m.CheckBox(),
+			bSelected = this.stub(oCheckBox, "getSelected", function () { return true; }),
+			bPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return true; });
+
+		// assertions
+		assert.equal(oCheckBox._getSelectedState(), true, "Should return true when selected = true and partiallySelected = true");
+
+		// act
+		bPartiallySelected.restore();
+		getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return false; });
+
+		// assertions
+		assert.equal(oCheckBox._getSelectedState(), false, "Should return false when selected = true and partiallySelected = false");
+
+		// act
+		bSelected.restore();
+		bSelected = this.stub(oCheckBox, "getSelected", function () { return false; });
+
+		// assertions
+		assert.equal(oCheckBox._getSelectedState(), true, "Should return true when selected = false and partiallySelected = false");
+
+		// act
+		bPartiallySelected.restore();
+		getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return true; });
+
+		// assertions
+		assert.equal(oCheckBox._getSelectedState(), true, "Should return true when selected = false and partiallySelected = true");
+
+		// cleanup
+		bSelected.restore();
+		bPartiallySelected.restore();
+		oCheckBox.destroy();
+	});
+
+	QUnit.test("_getAriaChecked with different combinations of selected and partiallySelected properties", function(assert) {
+
+		// system under test
+		var oCheckBox = new sap.m.CheckBox(),
+			bSelected = this.stub(oCheckBox, "getSelected", function () { return true; }),
+			bPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return true; });
+
+		// assertions
+		assert.strictEqual(oCheckBox._getAriaChecked(), "mixed", "Should return 'mixed' when selected = true and partiallySelected = true");
+
+		// act
+		bPartiallySelected.restore();
+		getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return false; });
+
+		// assertions
+		assert.equal(oCheckBox._getAriaChecked(), true, "Should return true when selected = true and partiallySelected = false");
+
+		// act
+		bSelected.restore();
+		bSelected = this.stub(oCheckBox, "getSelected", function () { return false; });
+
+		// assertions
+		assert.equal(oCheckBox._getAriaChecked(), false, "Should return false when selected = false and partiallySelected = false");
+
+		// act
+		bPartiallySelected.restore();
+		getPartiallySelected = this.stub(oCheckBox, "getPartiallySelected", function () { return true; });
+
+		// assertions
+		assert.equal(oCheckBox._getAriaChecked(), false, "Should return false when selected = false and partiallySelected = true");
+
+		// cleanup
+		bSelected.restore();
+		bPartiallySelected.restore();
+		oCheckBox.destroy();
+	});
+
 	QUnit.module("Accessibility");
 
 	QUnit.test("getAccessibilityInfo", function(assert) {
@@ -839,6 +990,50 @@ jQuery.sap.require("sap.ui.core.ValueState");
 		assert.strictEqual(oInfo.editable, false, "Editable");
 		oControl.destroy();
 	});
+
+	/* ---------------------------------------------------------------------------------------- */
+	/* Test: 'aria-checked with different values of selected and partiallySelected properties   */
+	/* ---------------------------------------------------------------------------------------- */
+	function testAriaChecked(sTestName, oTestObject, sAssertion) {
+		QUnit.test(sTestName, function(assert) {
+			var oCheckBox = new sap.m.CheckBox({selected: oTestObject.selected, partiallySelected: oTestObject.partiallySelected});
+
+			// arrange
+			oCheckBox.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			assert.strictEqual(oCheckBox.$().attr("aria-checked"), sAssertion);
+
+			// cleanup
+			oCheckBox.destroy();
+		});
+	}
+
+	testAriaChecked(
+		"Property 'aria-checked': Should be 'mixed'",
+		{selected: true, partiallySelected: true},
+		"mixed"
+	);
+
+	testAriaChecked(
+		"Property 'aria-checked': Should be 'false'",
+		{selected: false, partiallySelected: true },
+		"false"
+	);
+
+	testAriaChecked(
+		"Property 'aria-checked': Should be 'true'",
+		{selected: true, partiallySelected: false},
+		"true"
+	);
+
+	testAriaChecked(
+		"Property 'aria-checked': Should be 'false'",
+		{selected: false, partiallySelected: false},
+		"false"
+	);
+
 </script>
 
 
