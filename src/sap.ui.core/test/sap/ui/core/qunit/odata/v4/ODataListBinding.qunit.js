@@ -4484,6 +4484,26 @@ sap.ui.require([
 				Currency : {}
 			}
 		}
+	}, {
+		aAggregation : [{
+			as : "AvgSalesAmount",
+			max : true,
+			min : true,
+			name : "SalesAmount",
+			total : false,
+			"with" : "average"
+		}],
+		oTransformedAggregation : {
+			aggregate : {
+				AvgSalesAmount : {
+					max : true,
+					min : true,
+					name : "SalesAmount",
+					"with" : "average"
+				}
+			},
+			group : {}
+		}
 	}].forEach(function (oFixture, i) {
 		QUnit.test("updateAnalyticalInfo: min/max: " + i, function (assert) {
 			var sAggregation = JSON.stringify(oFixture.aAggregation),
