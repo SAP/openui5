@@ -5912,6 +5912,7 @@ sap.ui.require([
 	// page can be populated from the bound action response.
 	QUnit.test("bound operation: $$inheritExpandSelect", function (assert) {
 		var oActiveArtistContext,
+			oInactiveArtistContext,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="objectPage" binding="{}">\
@@ -5969,13 +5970,35 @@ sap.ui.require([
 
 			// code under test
 			return oOperation.execute();
-		}).then(function (oInactiveArtistContext) {
+		}).then(function (oInactiveArtistContext0) {
 			that.expectChange("isActive", "No")
 				.expectChange("inProcessByUser", "JOHNDOE");
 
+			oInactiveArtistContext = oInactiveArtistContext0;
 			that.oView.byId("objectPage").setBindingContext(oInactiveArtistContext);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			var oOperation = that.oModel.bindContext("special.cases.ActivationAction(...)",
+					oInactiveArtistContext, {$$inheritExpandSelect : true});
+
+			that.expectRequest({
+				method : "POST",
+				url : "Artists(ArtistID='42',IsActiveEntity=false)/special.cases.ActivationAction"
+				+ "?$select=ArtistID,IsActiveEntity,Name"
+				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)",
+				payload : {}
+			}, {
+				"ArtistID" : "42",
+				"IsActiveEntity" : true,
+				"Name" : "Hour Frustrated",
+				"DraftAdministrativeData" : {
+					"DraftID" : "1",
+					"InProcessByUser" : ""
+				}
+			});
+
+			return oOperation.execute();
 		});
 	});
 

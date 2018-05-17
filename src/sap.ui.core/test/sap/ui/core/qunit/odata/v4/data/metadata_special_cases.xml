@@ -31,6 +31,10 @@
 				<Property Name="P1" Type="Edm.String"/>
 				<Property Name="P2" Type="Edm.Int32"/>
 			</ComplexType>
+			<Action Name="ActivationAction" EntitySetPath="_it" IsBound="true">
+				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
+				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
+			</Action>
 			<Action Name="EditAction" EntitySetPath="_it" IsBound="true">
 				<Parameter Name="_it" Type="special.cases.ArtistsType" Nullable="false"/>
 				<ReturnType Type="special.cases.ArtistsType" Nullable="false"/>
