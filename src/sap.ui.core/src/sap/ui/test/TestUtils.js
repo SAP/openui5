@@ -465,7 +465,7 @@ sap.ui.define([
 			}
 
 			// ensure to always search the fake data in test-resources, remove cache buster token
-			sBase = jQuery.sap.getResourcePath(sBase)
+			sBase = sap.ui.require.toUrl(sBase)
 				.replace(/(^|\/)resources\/(~[-a-zA-Z0-9_.]*~\/)?/, "$1test-resources/") + "/";
 			setupServer();
 
@@ -593,7 +593,7 @@ sap.ui.define([
 			if (!bProxy) {
 				return sAbsolutePath;
 			}
-			sProxyUrl = jQuery.sap.getResourcePath("sap/ui").replace("resources/sap/ui", "proxy");
+			sProxyUrl = sap.ui.require.toUrl("sap/ui").replace("resources/sap/ui", "proxy");
 			return new URI(sProxyUrl + sAbsolutePath, TestUtils.getBaseUri()).pathname().toString();
 		},
 

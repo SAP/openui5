@@ -27,7 +27,7 @@ sap.ui.define([
     init: function() {
 
       this.register(/^I have started the app$/i, function() {
-        oOpa5.iStartMyAppInAFrame(jQuery.sap.getResourcePath("GherkinWithOPA5/Website", ".html"));
+        oOpa5.iStartMyAppInAFrame(sap.ui.require.toUrl("GherkinWithOPA5/Website.html"));
       });
 
       this.register(/^I can see the life saving button$/i, function() {

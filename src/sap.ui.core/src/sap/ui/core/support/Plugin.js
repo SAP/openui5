@@ -193,7 +193,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/Object', 'jquery.sap.dom', 'jqu
 		if (!sCssResourcePath) {
 			return;
 		}
-		var sPath = jQuery.sap.getResourcePath(sCssResourcePath + ".css"),
+		var sPath = sap.ui.require.toUrl(sCssResourcePath + ".css"),
 			oCssDomLink = document.createElement("link");
 		oCssDomLink.setAttribute("rel", "stylesheet");
 		oCssDomLink.setAttribute("type", "text/css");
