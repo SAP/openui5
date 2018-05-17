@@ -170,11 +170,12 @@
 
 
 	/**
-	 * Whether another AMD loader can make use of global define/require.
+	 * Whether ui5loader currently exposes its AMD implementation as global properties
+	 * <code>define</code> and <code>require</code>. Defaults to <code>false</code>.
 	 * @type {boolean}
 	 * @private
 	 */
-	var bNoConflict = false;
+	var bExposeAsAMDLoader = false;
 
 	/**
 	 * How the loader should react to calls of sync APIs or when global names are accessed:
@@ -1987,6 +1988,21 @@
 			}
 			mShims[module + '.js'] = shim;
 		},
+		amd: function(bValue) {
+			bValue = !!bValue;
+			if ( bExposeAsAMDLoader !== bValue ) {
+				bExposeAsAMDLoader = bValue;
+				if (bValue) {
+					vOriginalDefine = __global.define;
+					vOriginalRequire = __global.require;
+					__global.define = amdDefine;
+					__global.require = amdRequire;
+				} else {
+					__global.define = vOriginalDefine;
+					__global.require = vOriginalRequire;
+				}
+			}
+		},
 		async: function(async) {
 			if (bGlobalAsyncMode && !async) {
 				throw new Error("Changing the ui5loader config from async to sync is not supported. Only a change from sync to async is allowed.");
@@ -2027,14 +2043,8 @@
 			}
 		},
 		noConflict: function(bValue) {
-			bNoConflict = bValue;
-			if (bValue) {
-				__global.define = vOriginalDefine;
-				__global.require = vOriginalRequire;
-			} else {
-				__global.define = amdDefine;
-				__global.require = amdRequire;
-			}
+			log.warning("Config option 'noConflict' has been deprecated, use option 'amd' instead, if still needed.");
+			mConfigHandlers.amd(!bValue);
 		}
 	};
 
@@ -2050,8 +2060,9 @@
 	function config(cfg) {
 		if ( cfg === undefined ) {
 			return {
-				noConflict: bNoConflict,
-				async: bGlobalAsyncMode
+				amd: bExposeAsAMDLoader,
+				async: bGlobalAsyncMode,
+				noConflict: !bExposeAsAMDLoader // TODO needed?
 			};
 		}
 
@@ -2154,13 +2165,6 @@
 		Module.get('sap/ui/thirdparty/es6-promise.js').ready(ES6Promise);
 	}
 	Module.get('sap/ui/thirdparty/es6-string-methods.js').ready(null); // no module value
-
-	// Store current global define and require values
-	vOriginalDefine = __global.define;
-	vOriginalRequire = __global.require;
-
-	__global.define = amdDefine;
-	__global.require = amdRequire;
 
 	__global.sap = __global.sap || {};
 	sap.ui = sap.ui || {};
