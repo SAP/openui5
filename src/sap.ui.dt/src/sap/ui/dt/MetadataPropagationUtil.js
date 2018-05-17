@@ -167,6 +167,8 @@ function(
 			if (oPropagatedInfo.metadataFunction) {
 				var oCurrentMetadata = oPropagatedInfo.metadataFunction(oElement, oPropagatedInfo.relevantContainerElement);
 				return jQuery.extend(true, vReturnMetadata, oCurrentMetadata);
+			} else {
+				return vReturnMetadata;
 			}
 		}, vReturnMetadata);
 
