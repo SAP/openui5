@@ -1586,18 +1586,6 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deleteFromCache: no delete on deferred operation", function (assert) {
-		var oBinding = new ODataParentBinding({
-				oCachePromise : SyncPromise.resolve(Promise.resolve({ /* cache */})),
-				oOperation : {}
-			});
-
-		assert.throws(function () {
-			oBinding.deleteFromCache("$auto");
-		}, new Error("Cannot delete a deferred operation"));
-	});
-
-	//*********************************************************************************************
 	[
 		{sPath : "/Employees"}, // absolute binding
 		{sPath : "TEAM_2_MANAGER"}, // relative binding without context
