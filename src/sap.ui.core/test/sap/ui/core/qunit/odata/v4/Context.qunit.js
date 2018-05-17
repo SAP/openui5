@@ -255,12 +255,16 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getObject", function (assert) {
-		var oContext = Context.create(null, null, "/foo"),
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo"),
 			oClone = {},
 			oData = {},
 			oResult,
 			oSyncPromise = SyncPromise.resolve(oData);
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 		this.mock(_Helper).expects("publicClone").withExactArgs(sinon.match.same(oData))
@@ -274,9 +278,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getObject: unresolved", function (assert) {
-		var oContext = Context.create(null, null, "/foo"),
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo"),
 			oSyncPromise = SyncPromise.resolve(Promise.resolve(42));
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 
@@ -287,9 +295,13 @@ sap.ui.require([
 	//*********************************************************************************************
 	[42, null].forEach(function (vResult) {
 		QUnit.test("getProperty: primitive result " + vResult, function (assert) {
-			var oContext = Context.create(null, null, "/foo"),
+			var oBinding = {
+					checkSuspended : function () {}
+				},
+				oContext = Context.create(null, oBinding, "/foo"),
 				oSyncPromise = SyncPromise.resolve(vResult);
 
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromise);
 
@@ -300,9 +312,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getProperty: structured result", function (assert) {
-		var oContext = Context.create(null, null, "/foo", 1),
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo", 1),
 			oSyncPromise = SyncPromise.resolve({});
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
@@ -315,9 +331,13 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getProperty: unresolved", function (assert) {
-		var oContext = Context.create(null, null, "/foo"),
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo"),
 			oSyncPromise = SyncPromise.resolve(Promise.resolve(42));
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 
@@ -327,11 +347,15 @@ sap.ui.require([
 
 	//*********************************************************************************************
 	QUnit.test("getProperty: rejected", function (assert) {
-		var oContext = Context.create(null, null, "/foo"),
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oContext = Context.create(null, oBinding, "/foo"),
 			sMessage = "read error",
 			oPromise = Promise.reject(new Error(sMessage)),
 			oSyncPromise = SyncPromise.resolve(oPromise);
 
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 			.returns(oSyncPromise);
 		this.oLogMock.expects("warning")
@@ -346,7 +370,10 @@ sap.ui.require([
 	//*********************************************************************************************
 	[true, false].forEach(function (bTypeIsResolved) {
 		QUnit.test("getProperty: external, bTypeIsResolved=" + bTypeIsResolved, function (assert) {
-			var oMetaModel = {
+			var oBinding = {
+					checkSuspended : function () {}
+				},
+				oMetaModel = {
 					fetchUI5Type : function () {}
 				},
 				oModel = {
@@ -354,14 +381,15 @@ sap.ui.require([
 						return oMetaModel;
 					}
 				},
+				oContext = Context.create(oModel, oBinding, "/foo", 42),
 				oType = {
 					formatValue : function () {}
 				},
-				oContext = Context.create(oModel, null, "/foo", 42),
 				oResolvedType = bTypeIsResolved ? oType : Promise.resolve(oType),
 				oSyncPromiseType = SyncPromise.resolve(oResolvedType),
 				oSyncPromiseValue = SyncPromise.resolve(1234);
 
+			this.mock(oBinding).expects("checkSuspended").withExactArgs();
 			this.mock(oContext).expects("getPath").withExactArgs("bar").returns("~");
 			this.mock(oContext).expects("fetchValue").withExactArgs("bar")
 				.returns(oSyncPromiseValue);
