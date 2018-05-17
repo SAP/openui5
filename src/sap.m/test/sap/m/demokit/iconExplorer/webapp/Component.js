@@ -51,7 +51,7 @@ sap.ui.define([
 			// register TNT icon font
 			IconPool.registerFont({
 				fontFamily: "SAP-icons-TNT",
-				fontURI: jQuery.sap.getModulePath("sap.tnt.themes.base.fonts")
+				fontURI: sap.ui.require.toUrl("sap/tnt/themes/base/") + "fonts"
 			});
 			aFontLoaded.push(IconPool.fontLoaded("SAP-icons-TNT"));
 			aFontNames.push("SAP-icons-TNT");
@@ -61,7 +61,7 @@ sap.ui.define([
 				// register BusinessSuiteInAppSymbols icon font
 				IconPool.registerFont({
 					fontFamily: "BusinessSuiteInAppSymbols",
-					fontURI: jQuery.sap.getModulePath("sap.ushell.themes.base.fonts")
+					fontURI: sap.ui.require.toUrl("sap/ushell/themes/base/") + "fonts"
 				});
 				aFontLoaded.push(IconPool.fontLoaded("BusinessSuiteInAppSymbols"));
 				aFontNames.push("BusinessSuiteInAppSymbols");

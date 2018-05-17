@@ -10,7 +10,7 @@ sap.ui.define([
 
 		onInit: function () {
 			// set explored app's demo model on this sample
-			this.oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			this.oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json");
 			var oView = this.getView();
 			oView.setModel(this.oModel);
 			this.oSF = oView.byId("searchField");

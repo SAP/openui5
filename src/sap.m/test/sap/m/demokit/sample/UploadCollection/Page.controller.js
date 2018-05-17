@@ -14,7 +14,7 @@ sap.ui.define([
 	return Controller.extend("sap.m.sample.UploadCollection.Page", {
 		onInit: function() {
 			// set mock data
-			var sPath = jQuery.sap.getModulePath("sap.m.sample.UploadCollection", "/uploadCollection.json");
+			var sPath = sap.ui.require.toUrl("sap/m/sample/UploadCollection") + "/uploadCollection.json";
 			this.getView().setModel(new JSONModel(sPath));
 
 			this.getView().setModel(new JSONModel(Device), "device");

@@ -5,7 +5,7 @@ sap.ui.define(['jquery.sap.global','sap/ui/core/mvc/Controller','sap/ui/model/js
 	var CarouselController = Controller.extend("sap.m.sample.CarouselWithDisplayOptions.Carousel", {
 		onInit: function (evt) {
 			// set explored app's demo model on this sample
-			var oImgModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/img.json"));
+			var oImgModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock") + "/img.json");
 			this.getView().setModel(oImgModel, "img");
 
 			// set the possible screen sizes
