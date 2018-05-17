@@ -9,7 +9,7 @@ sap.ui.define([
 
 		onInit: function () {
 			// set mock model
-			var sPath = jQuery.sap.getModulePath("sap.ui.layout.sample.GridInfo", "/persons.json");
+			var sPath = sap.ui.require.toUrl("sap/ui/layout/sample/GridInfo") + "/persons.json";
 			var oModel = new JSONModel(sPath);
 			this.getView().setModel(oModel);
 		}

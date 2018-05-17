@@ -9,7 +9,7 @@ sap.ui.define([
 
 	var ControllerController = Controller.extend("sap.ui.unified.sample.ShellBasic.Controller", {
 		onInit: function() {
-			var oData = {logo: jQuery.sap.getModulePath("sap.ui.core", '/') + "mimes/logo/sap_50x26.png"};
+			var oData = {logo: sap.ui.require.toUrl("sap/ui/core") + "/" + "mimes/logo/sap_50x26.png"};
 			var oModel = new JSONModel();
 			oModel.setData(oData);
 			this.getView().setModel(oModel);

@@ -19,7 +19,7 @@ sap.ui.define([
 
 			var oDateFormat = DateFormat.getDateInstance({source: {pattern: "timestamp"}, pattern: "dd/MM/yyyy"});
 
-			jQuery.ajax(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"), {
+			jQuery.ajax(sap.ui.require.toUrl("sap/ui/demo/mock") + "/products.json", {
 				dataType: "json",
 				success: function (oData) {
 					var aTemp1 = [];
