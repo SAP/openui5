@@ -5,8 +5,9 @@
 sap.ui.define([
 	"sap/ui/support/supportRules/Constants",
 	"sap/ui/support/supportRules/Storage",
-	"sap/ui/support/supportRules/ui/models/SharedModel"
-], function (constants, storage, SharedModel) {
+	"sap/ui/support/supportRules/ui/models/SharedModel",
+	"sap/ui/core/util/File"
+], function (constants, storage, SharedModel, File) {
 	"use strict";
 
 	var SelectionUtils = {
@@ -39,7 +40,7 @@ sap.ui.define([
 		 *
 		 * @param {Object} oRow from which the rules will be taken
 		 * @param {int} iRowIndex the index of the library row
-		 * @returns {Object} a range to be used for selection
+		 * @returns {Object | null} a range to be used for selection
 		 */
 		getChildIndicesRange: function (oRow, iRowIndex) {
 			var oRowModel = oRow.getModel(),
@@ -57,7 +58,7 @@ sap.ui.define([
 			}
 
 			if (iFrom > iTo) {
-				return;
+				return null;
 			}
 
 			return {
@@ -69,7 +70,7 @@ sap.ui.define([
 		/**
 		 * Selects/Deselects all rules and libraries in the model and stores the selection.
 		 *
-		 * @param {boolean} bSelectAll
+		 * @param {boolean} bSelectAll Wether to select or deselect all rows
 		 */
 		selectAllRows: function (bSelectAll) {
 			var oModel = this.model,
@@ -183,7 +184,7 @@ sap.ui.define([
 		/**
 		 * Finds the index of the row, which matches a specific path.
 		 *
-		 * @param {Object} oRowContext the rowContext to check
+		 * @param {String} sPath model path
 		 * @returns {int} the index of the row, which matches the path
 		 */
 		getRowContextIndexByPath: function (sPath) {
@@ -204,7 +205,6 @@ sap.ui.define([
 		 * Apply "selected" flags to the libraries and rules of the new tree table view model by using the old one.
 		 *
 		 * @param {Object} oNewTreeModel The new tree table view model which needs to be updated with the "selected" flags
-		 * @returns {Object} The new model with "selected" flags
 		 */
 		_syncSelections: function (oNewTreeModel) {
 			// Build an index based on the old TreeViewModel
@@ -496,10 +496,11 @@ sap.ui.define([
 		},
 
 		/**
-		 * Traverses the model and creates a rule descriptor for every selected rule.
-		 * After that saves it to the local storage.
+		 * Traverses the model and creates a rule descriptor for every selected rule
+		 *
+		 * @returns {Array} Rule selections array
 		 */
-		persistSelection: function () {
+		getSelectedRulesPlain: function () {
 			var oModel = this.model,
 				aSelectedRules = [],
 				oRule;
@@ -519,7 +520,57 @@ sap.ui.define([
 				}
 			}
 
+			return aSelectedRules;
+		},
+
+		/**
+		 * Saves rule selections to the local storage
+		 */
+		persistSelection: function () {
+			var aSelectedRules = this.getSelectedRulesPlain();
+
 			storage.setSelectedRules(aSelectedRules);
+		},
+
+		exportSelectedRules: function (title, description) {
+			var aSelectedRules = this.getSelectedRulesPlain();
+			var oRulesToExport = {
+				title: title,
+				description: description,
+				selections: aSelectedRules
+			};
+
+			var oExportObject = JSON.stringify(oRulesToExport);
+
+			File.save(oExportObject, constants.RULE_SELECTION_EXPORT_FILE_NAME, 'json', 'text/plain');
+		},
+
+		isValidSelectionImport: function (oImport) {
+			var bIsFileValid = true;
+
+			if (!oImport.hasOwnProperty("title")) {
+				bIsFileValid = false;
+			}
+
+			if (!oImport.hasOwnProperty("description")) {
+				bIsFileValid = false;
+			}
+
+			if (!oImport.hasOwnProperty("selections")) {
+				bIsFileValid = false;
+			} else if (!Array.isArray(oImport.selections)) {
+				bIsFileValid = false;
+			} else {
+				for (var i = 0; i < oImport.selections.length; i++) {
+					var oRuleSelection = oImport.selections[i];
+					if (!oRuleSelection.hasOwnProperty("ruleId") || !oRuleSelection.hasOwnProperty("libName")) {
+						bIsFileValid = false;
+						break;
+					}
+				}
+			}
+
+			return bIsFileValid;
 		},
 
 		/***************************************************************************
@@ -532,7 +583,13 @@ sap.ui.define([
 		 * @param {object} oTreeViewModel The object from the TreeTable model
 		 * @param {sap.ui.table.TreeTable} oTreeTable The TreeTable displaying the support assistant rules
 		 */
-		syncModelAndTreeTable: function (oTreeViewModel, oTreeTable) {
+		syncModelAndTreeTable: function () {
+			var oTreeViewModel = this.model.getProperty("/treeViewModel");
+			var oTreeTable = this.treeTable;
+
+			// We need an expanded tree table
+			oTreeTable.expandToLevel(1);
+
 			for (var sLibraryIndex in oTreeViewModel) {
 				if (!window.isNaN(window.parseInt(sLibraryIndex))) {
 					var oLibrary = oTreeViewModel[sLibraryIndex];
