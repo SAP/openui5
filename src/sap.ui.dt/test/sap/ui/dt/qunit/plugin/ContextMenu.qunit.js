@@ -493,6 +493,20 @@ sap.ui.require([
 			this.clock.restore();
 		});
 
+		QUnit.test("Testing onClick function with ctrl key pressed", function (assert) {
+			this.clock = sinon.useFakeTimers();
+			var oEvent = jQuery.Event("click");
+			oEvent.ctrlKey = true;
+			jQuery(this.oButton2Overlay.getDomRef()).trigger(oEvent);
+			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
+			assert.ok(!oContextMenuControl.bOpen, "ContextMenu should not be opened");
+			this.clock.tick(this.oContextMenuPlugin.iMenuLeftclickOpeningDelay);
+			assert.ok(oContextMenuControl.bOpen, "ContextMenu should be open");
+			assert.strictEqual(oContextMenuControl.getFlexbox().getDirection(), "Row", "Flexbox should be set to Row");
+			oContextMenuControl = null;
+			this.clock.restore();
+		});
+
 		QUnit.test("Testing onClick function unlocking opening of the ContextMenu", function (assert) {
 			this.clock = sinon.useFakeTimers();
 			var oUnlockMenuOpeningSpy = oSandbox.spy(this.oContextMenuPlugin, "unlockMenuOpening");
