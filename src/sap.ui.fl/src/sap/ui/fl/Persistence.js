@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/DefaultVariant",  "sap/ui/fl/StandardVariant", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache"
-], function(Change, defaultVariant, standardVariant, Utils, $, LRepConnector, Cache) {
+	"sap/ui/fl/Change", "sap/ui/fl/DefaultVariant",  "sap/ui/fl/StandardVariant", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/registry/Settings"
+], function(Change, defaultVariant, standardVariant, Utils, $, LRepConnector, Cache, Settings) {
 
 	"use strict";
 	/**
@@ -192,6 +192,9 @@ sap.ui.define([
 	 */
 	Persistence.prototype._resolveFillingCacheWithChanges = function(oFile) {
 		this._fillRelevantChanges(oFile);
+        if (oFile.changes && oFile.changes.settings){
+            Settings._storeInstance(oFile.changes.settings);
+        }
 		if (oFile && oFile.changes && oFile.changes.messagebundle) {
 			this._oMessagebundle = oFile.changes.messagebundle;
 			this._checkForMessagebundleBinding();
