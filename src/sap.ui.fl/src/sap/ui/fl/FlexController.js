@@ -602,13 +602,9 @@ sap.ui.define([
 
 		var mAppliedChangesCustomData = this._getAppliedCustomData(oChange, oControl, oModifier);
 		var sAppliedChanges = mAppliedChangesCustomData.customDataValue;
-		var aAppliedChanges = mAppliedChangesCustomData.customDataEntries;
 		var oAppliedChangeCustomData = mAppliedChangesCustomData.customData;
 
-		var sChangeId = oChange.getId();
-
-		// if change was not yet applied
-		if (aAppliedChanges.indexOf(sChangeId) === -1) {
+		if (!this._isChangeCurrentlyApplied(oControl, oChange, mAppliedChangesCustomData)) {
 			var bRevertible = this.isChangeHandlerRevertible(oChange, oControl, oChangeHandler);
 
 			return new Utils.FakePromise()
@@ -647,6 +643,7 @@ sap.ui.define([
 				if (!bRevertible && oSettings && oSettings._oSettings.recordUndo && oRtaControlTreeModifier){
 					oChange.setUndoOperations(oRtaControlTreeModifier.stopRecordingUndo());
 				}
+				var sChangeId = oChange.getId();
 				var sValue = sAppliedChanges ? sAppliedChanges + "," + sChangeId : sChangeId;
 				this._writeAppliedChangesCustomData(oAppliedChangeCustomData, sValue, mPropertyBag, oControl);
 				if (oChange.aPromiseFn) {
@@ -655,6 +652,7 @@ sap.ui.define([
 					});
 				}
 				delete oChange.PROCESSING;
+				oChange.APPLIED = true;
 				return true;
 			}.bind(this))
 
@@ -970,6 +968,15 @@ sap.ui.define([
 		});
 	};
 
+	FlexController.prototype._isChangeCurrentlyApplied = function(oControl, oChange, mCustomData) {
+		if (!mCustomData) {
+			mCustomData = this._getAppliedCustomData(oChange, oControl, JsControlTreeModifier);
+		}
+		var aAppliedChanges = mCustomData.customDataEntries;
+		var sChangeId = oChange.getId();
+		return aAppliedChanges.indexOf(sChangeId) > -1;
+	};
+
 	/**
 	 * Apply the changes in the control; this function is called just before the end of the
 	 * creation process, changes are applied synchronously.
@@ -993,6 +1000,19 @@ sap.ui.define([
 			view: Utils.getViewForControl(oControl)
 		};
 		aChangesForControl.forEach(function (oChange) {
+
+			// if a change was already processed and is not applied anymore,
+			// then the control was destroyed and recreated. In this case we need to recreate/copy the dependencies.
+			if (oChange.APPLIED) {
+				var bCurrentlyNotApplied = !this._isChangeCurrentlyApplied(oControl, oChange);
+				if (bCurrentlyNotApplied) {
+					mChangesMap = this._oChangePersistence._copyDependenciesFromInitialChangesMap(oChange);
+					mDependencies = mChangesMap.mDependencies;
+					mDependentChangesOnMe = mChangesMap.mDependentChangesOnMe;
+					delete oChange.APPLIED;
+				}
+			}
+
 			if (!mDependencies[oChange.getId()]) {
 				oChange.QUEUED = true;
 				aPromiseStack.push(function() {
@@ -1180,9 +1200,11 @@ sap.ui.define([
 		this._updateControlsDependencies(mDependencies);
 		Object.keys(mDependencies).forEach(function(sDependencyKey) {
 			var oDependency = mDependencies[sDependencyKey];
-			if (oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0  &&
+			if (
+				oDependency[FlexController.PENDING] && oDependency.dependencies.length === 0  &&
 				!(oDependency.controlsDependencies && oDependency.controlsDependencies.length > 0) &&
-				!oDependency[FlexController.PROCESSING]) {
+				!oDependency[FlexController.PROCESSING]
+			) {
 				oDependency[FlexController.PROCESSING] = true;
 				aPromises.push(
 					function() {

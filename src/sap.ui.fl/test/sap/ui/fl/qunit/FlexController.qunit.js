@@ -1085,7 +1085,7 @@ function (
 		}
 	});
 
-	QUnit.test("_applyChangesOnControl does not call anything of there is no change for the control", function (assert) {
+	QUnit.test("_applyChangesOnControl does not call anything if there is no change for the control", function (assert) {
 		var oSomeOtherChange = {};
 
 		var mChanges = {
@@ -1102,6 +1102,44 @@ function (
 
 		this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl);
 		assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 0, "no change was processed");
+	});
+
+	QUnit.test("updates the dependencies if the change was already applied", function(assert) {
+		var oChange0 = {
+			getId: function () {
+				return "";
+			},
+			APPLIED: true
+		};
+		var oChange1 = {
+			getId: function () {
+				return "";
+			},
+			APPLIED: true
+		};
+		var mChanges = {
+			"someId": [oChange0, oChange1]
+		};
+		var fnGetChangesMap = function () {
+			return {
+				"mChanges": mChanges,
+				"mDependencies": {},
+				"mDependentChangesOnMe": {}
+			};
+		};
+		var oAppComponent = {};
+		var oCopyDependenciesFromInitialChangesMap = sandbox.spy(this.oFlexController._oChangePersistence, "_copyDependenciesFromInitialChangesMap");
+
+		return this.oFlexController._applyChangesOnControl(fnGetChangesMap, oAppComponent, this.oControl)
+
+		.then(function() {
+			assert.equal(this.oCheckTargetAndApplyChangeStub.callCount, 2, "all four changes for the control were applied");
+			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0], oChange0, "the first change was applied first");
+			assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(0).args[0].APPLIED, "the APPLIED flag got deleted");
+			assert.equal(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0], oChange1, "the second change was applied second");
+			assert.notOk(this.oCheckTargetAndApplyChangeStub.getCall(1).args[0].APPLIED, "the APPLIED flag got deleted");
+			assert.equal(oCopyDependenciesFromInitialChangesMap.callCount, 2, "and update dependencies was called twice");
+		}.bind(this));
 	});
 
 	QUnit.test("_applyChangesOnControl processes only those changes that belong to the control", function (assert) {
@@ -1270,7 +1308,7 @@ function (
 		oControlGroup1.destroy();
 	});
 
-	var fnDependencyTest3Setup = function() {
+	function fnDependencyTest3Setup() {
 		var oChange1 = {
 			getId: function () {
 				return "fileNameChange1";
@@ -1329,7 +1367,7 @@ function (
 			"mDependencies": mDependencies,
 			"mDependentChangesOnMe": mDependentChangesOnMe
 		};
-	};
+	}
 
 	QUnit.test("_applyChangesOnControl dependency test 3", function (assert) {
 		var oControlForm1 = new Control("mainform");

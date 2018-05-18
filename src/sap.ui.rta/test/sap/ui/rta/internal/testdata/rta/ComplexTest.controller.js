@@ -194,6 +194,54 @@
 			}.bind(this));
 		},
 
+		createOrDeleteContent : function(oEvent) {
+			if (this.byId("newForm")) {
+				this.byId("newForm").destroy();
+			} else {
+				var oLayout = oEvent.getSource().getParent();
+				var oSmartForm = new sap.ui.comp.smartform.SmartForm(this.getView().createId("newForm"), {
+					groups: [
+						new sap.ui.comp.smartform.Group("newGroup", {
+							groupElements: [
+								new sap.ui.comp.smartform.GroupElement("newGroupElement0", {
+									elements: [
+										new sap.ui.comp.smartfield.SmartField("smartField0", {
+											value: "{CreatedByUserName}"
+										})
+									]
+								}),
+								new sap.ui.comp.smartform.GroupElement("newGroupElement1", {
+									elements: [
+										new sap.ui.comp.smartfield.SmartField("smartField1", {
+											value: "{CompanyAdress}"
+										})
+									],
+									visible: false
+								}),
+								new sap.ui.comp.smartform.GroupElement("newGroupElement2", {
+									elements: [
+										new sap.ui.comp.smartfield.SmartField("smartField2", {
+											value: "{ExpirationDate}"
+										})
+									],
+									visible: false
+								}),
+								new sap.ui.comp.smartform.GroupElement("newGroupElement3", {
+									elements: [
+										new sap.ui.comp.smartfield.SmartField("smartField3", {
+											value: "{ValidityFrom}"
+										})
+									],
+									visible: false
+								})
+							]
+						})
+					]
+				});
+				oLayout.insertContent(oSmartForm, 3);
+			}
+		},
+
 		openSmartFormPopover : function(oEvent) {
 			var oComponent = this.getOwnerComponent();
 			oComponent.runAsOwner(function() {

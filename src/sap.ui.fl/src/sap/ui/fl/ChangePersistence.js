@@ -68,6 +68,7 @@ sap.ui.define([
 			mDependentChangesOnMe: {}
 		};
 
+		//_mChangesInitial contains a clone of _mChanges to recreated dependencies if changes need to be reapplied
 		this._mChangesInitial = {};
 
 		this._mVariantsChanges = {};
@@ -666,12 +667,27 @@ sap.ui.define([
 			};
 			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oComponent));
 
-			if (Utils.isDebugEnabled()) {
-				this._mChangesInitial = jQuery.extend(true, {}, this._mChanges);
-			}
+			this._mChangesInitial = jQuery.extend(true, {}, this._mChanges);
 
 			return this.getChangesMapForComponent.bind(this);
 		}
+	};
+
+	ChangePersistence.prototype._copyDependenciesFromInitialChangesMap = function(oChange) {
+		var mInitialDependencies = jQuery.extend(true, {}, this._mChangesInitial.mDependencies);
+		var oInitialDependency = mInitialDependencies[oChange.getId()];
+
+		if (oInitialDependency) {
+			this._mChanges.mDependencies[oChange.getId()] = oInitialDependency;
+
+			oInitialDependency.dependencies.forEach(function(oChangeId) {
+				if (!this._mChanges.mDependentChangesOnMe[oChangeId]) {
+					this._mChanges.mDependentChangesOnMe[oChangeId] = [];
+				}
+				this._mChanges.mDependentChangesOnMe[oChangeId].push(oChange.getId());
+			}.bind(this));
+		}
+		return this._mChanges;
 	};
 
 	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oComponent, oChange, iIndex, aChangesCopy) {
