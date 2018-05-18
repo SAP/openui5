@@ -1,5 +1,6 @@
 <mvc:View
 		height="100%"
+		viewName="sap.ui.support.supportRules.ui.views.Main"
 		controllerName="sap.ui.support.supportRules.ui.controllers.Main"
 		xmlns="sap.m"
 		xmlns:mvc="sap.ui.core.mvc"
@@ -16,7 +17,7 @@
 					</contentMiddle>
 				</Bar>
 
-				<Bar class="sapContrast" design="SubHeader">
+				<Bar id="supportAssistantHeader" class="sapContrast" design="SubHeader">
 					<contentLeft>
 						<!--<c:Icon src="sap-icon://sap-ui5" />-->
 						<Image src="../ui/images/Logo_O_22x22.png" densityAware="false"></Image>

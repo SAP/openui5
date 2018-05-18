@@ -44,7 +44,7 @@
 
 		// act
 		this.communicationBus.subscribe(channelName, testFunction, scope);
-		this.communicationBus.destroyChanels();
+		this.communicationBus.destroyChannels();
 
 		// assert
 		assert.strictEqual(jQuery.isEmptyObject(this.communicationBus.channels), true,
@@ -76,7 +76,7 @@
 	QUnit.module('Publish method functionality', {
 		setup: function () {
 			this.communicationBus = sap.ui.support.supportRules.WindowCommunicationBus;
-			this.communicationBus.destroyChanels();
+			this.communicationBus.destroyChannels();
 
 			this.channelName = 'testChannel';
 		},
