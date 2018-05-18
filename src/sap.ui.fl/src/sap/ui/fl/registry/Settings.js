@@ -157,6 +157,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Writes the data received from the back end or cache into an internal instance and then returns the settings object within a Promise.
+	 *
+	 * @param oSettings - Data received from the back end or cache
+	 * @returns {Promise} with parameter <code>oInstance</code> of type {sap.ui.fl.registry.Settings}
+	 * @protected
+	 *
+	 */
+	Settings._storeInstance = function(oSettings) {
+		if (!Settings._instance) {
+			Settings._instance = new Settings(oSettings);
+		}
+		return Settings._instance;
+	};
+
+	/**
 	 * Returns a settings instance from the local instance cache. There is only one instance of settings during a session. If no instance has been
 	 * created before, undefined will be returned.
 	 *

@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/changeHandler/JsControlTreeModifier"
-], function(Change, Utils, $, LRepConnector, Cache, ContextManager, JsControlTreeModifier) {
+	"sap/ui/fl/Change", "sap/ui/fl/Utils", "jquery.sap.global", "sap/ui/fl/LrepConnector", "sap/ui/fl/Cache", "sap/ui/fl/context/ContextManager", "sap/ui/fl/registry/Settings"
+], function(Change, Utils, $, LRepConnector, Cache, ContextManager, Settings) {
 	"use strict";
 
 	/**
@@ -115,6 +115,10 @@ sap.ui.define([
 
 		return Cache.getChangesFillingCache(this._oConnector, this._sComponentName, mPropertyBag).then(function(oWrappedChangeFileContent) {
 			that._bHasLoadedChangesFromBackend = true;
+
+			if (oWrappedChangeFileContent.changes && oWrappedChangeFileContent.changes.settings){
+				Settings._storeInstance(oWrappedChangeFileContent.changes.settings);
+			}
 
 			if (!oWrappedChangeFileContent.changes || !oWrappedChangeFileContent.changes.changes) {
 				return [];
