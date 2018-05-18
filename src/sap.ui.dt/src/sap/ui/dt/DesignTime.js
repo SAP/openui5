@@ -328,7 +328,6 @@ function(
 	 */
 	DesignTime.prototype.setSelectionMode = function (oMode) {
 		this.setProperty("selectionMode", oMode);
-		this.getSelectionManager().setMode(oMode);
 
 		return this;
 	};
@@ -808,7 +807,7 @@ function(
 		}
 
 		if (oElementOverlay.getSelected()) {
-			this.getSelectionManager()._remove(oElementOverlay);
+			this.getSelectionManager().remove(oElementOverlay);
 		}
 
 		this.fireElementOverlayDestroyed({
@@ -841,7 +840,15 @@ function(
 		var oElementOverlay = oEvent.getSource();
 		var bSelected = oEvent.getParameter("selected");
 
-		this.getSelectionManager()[bSelected ? "_add" : "_remove"](oElementOverlay);
+		if (bSelected){
+			if (this.getSelectionMode() === sap.ui.dt.SelectionMode.Multi){
+				this.getSelectionManager().add(oElementOverlay);
+			} else {
+				this.getSelectionManager().set(oElementOverlay);
+			}
+		} else {
+			this.getSelectionManager().remove(oElementOverlay);
+		}
 	};
 
 	/**
