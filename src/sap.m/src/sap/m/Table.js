@@ -353,6 +353,12 @@ sap.ui.define([
 		});
 	};
 
+	Table.prototype.onColumnPress = function(oColumn) {
+		this.bActiveHeaders && this.fireEvent("columnPress", {
+			column: oColumn
+		});
+	};
+
 	/*
 	 * This method is called asynchronously if resize event comes from column
 	 * @protected
