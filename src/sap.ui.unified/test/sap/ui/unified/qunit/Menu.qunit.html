@@ -798,18 +798,10 @@
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu, assert);
 
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -1");
-				}
-
 				qutils.triggerKeyboardEvent(sTfId, "ARROW_DOWN");
 				checkHoveredItem("item13", oSpecialMenu, assert);
 				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
 				checkHoveredItem("item12", oSpecialMenu, assert);
-
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -2");
-				}
 
 				qutils.triggerCharacterInput(sTfId, "A");
 				qutils.triggerKeyEvent("keyup", sTfId, "A");
@@ -838,18 +830,10 @@
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu, assert);
 
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -1");
-				}
-
 				qutils.triggerKeyboardEvent(sTfId, "PAGE_DOWN");
 				checkHoveredItem("item13", oSpecialMenu, assert);
 				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
 				checkHoveredItem("item12", oSpecialMenu, assert);
-
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -2");
-				}
 
 				qutils.triggerKeyboardEvent(sTfId, "PAGE_UP");
 				checkHoveredItem("item11", oSpecialMenu, assert);
@@ -891,9 +875,6 @@
 				checkHoveredItem("item11", oSpecialMenu, assert);
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu, assert);
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -1");
-				}
 
 				jQuery.sap.byId(sTfId).cursorPos(1);
 				qutils.triggerKeyboardEvent(sTfId, "HOME");
@@ -904,9 +885,6 @@
 
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu, assert);
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -2");
-				}
 
 				jQuery.sap.byId(sTfId).cursorPos(0);
 				qutils.triggerKeyboardEvent(sTfId, "END");
@@ -917,9 +895,6 @@
 
 				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
 				checkHoveredItem("item12", oSpecialMenu, assert);
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					assert.ok(document.activeElement.id == sTfId, "Focus on textfield -3");
-				}
 
 				qutils.triggerCharacterInput(sTfId, "A");
 				qutils.triggerKeyEvent("keyup", sTfId, "A");
@@ -946,6 +921,30 @@
 			qutils.triggerKeyboardEvent(sTfId, "ESCAPE");
 			checkMenusClosed("after Escape");
 			assert.ok(!lastSelectedItemId, "No Event triggered on Escape");
+		});
+
+		QUnit.test("mouseover will set the focus to MenuTextFieldItem domRef in IE", function (assert) {
+			// Arrange
+			var oMenuItem = new sap.ui.unified.MenuTextFieldItem(),
+				oTfStub = { focus: this.spy(), toggleClass: function () {} },
+				oMenu$Stub = this.stub(oMenuItem, "$", function () { return oTfStub }),
+				oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true }),
+				oDelayedCallStub = this.stub(jQuery.sap, "delayedCall", function delayedCall(iDelay, oThis, fn) {
+					fn.call(oMenuItem);
+
+					// Assert
+					assert.ok(true, "delayedCall function is called, so that the MenuTextFieldItem could accept the focus");
+					assert.equal(iDelay, 0, "the timeout passed to the delayedCall is 0");
+					assert.equal(oTfStub.focus.callCount, 1, "the MenuTextFieldItem is focused");
+				});
+
+			// Act
+			oMenuItem.hover(true, { checkEnabled: function () { return true }, closeSubmenu: function () {} });
+
+			// Cleanup
+			oMenu$Stub.restore();
+			oBrowserStub.restore();
+			oDelayedCallStub.restore();
 		});
 
 		QUnit.module("Aria");
