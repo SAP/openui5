@@ -412,7 +412,6 @@ function(
 			this.oDesignTime.setSelectionMode(oSelectionMode);
 
 			assert.equal(this.oDesignTime.getSelectionMode(), oSelectionMode, "then 'SelectionMode' property is properly set");
-			assert.equal(this.oDesignTime.getSelectionManager().getMode(), oSelectionMode, "then 'Mode' property of Selection Plugin is properly set");
 		});
 
 		QUnit.test("when the DesignTime is disabled and then enabled again", function(assert) {
