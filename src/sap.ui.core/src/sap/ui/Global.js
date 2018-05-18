@@ -288,14 +288,7 @@ sap.ui.define(['sap/ui/VersionInfo', 'jquery.sap.global', 'jquery.sap.dom'],
 		jQuery.sap.assert(typeof sLibraryName === "string", "sLibraryName must be a string");
 		jQuery.sap.assert(typeof sResourcePath === "string", "sResourcePath must be a string");
 
-		// special handling for theme-dependent resources: move theme folder into module name
-		var match = sResourcePath.match(/^themes\/([^\/]+)\//);
-		if (match) {
-			sLibraryName += ".themes." + match[1];
-			sResourcePath = sResourcePath.substr(match[0].length);
-		}
-
-		return jQuery.sap.getModulePath(sLibraryName, '/') + sResourcePath;
+		return sap.ui.require.toUrl((String(sLibraryName).replace(/\./g, "/") + '/' + sResourcePath).replace(/^\/*/, ""));
 	};
 
 	/**

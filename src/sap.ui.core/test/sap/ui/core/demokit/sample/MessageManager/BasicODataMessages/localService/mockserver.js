@@ -20,7 +20,7 @@ sap.ui.define([
 				autoRespondAfter: 1000
 			});
 
-			sLocalServicePath = jQuery.sap.getModulePath("sap.ui.core.sample.MessageManager.BasicODataMessages.localService");
+			sLocalServicePath = sap.ui.require.toUrl("sap/ui/core/sample/MessageManager/BasicODataMessages/localService");
 
 			// simulate
 			oMockServer.simulate(sLocalServicePath + "/metadata.xml", {

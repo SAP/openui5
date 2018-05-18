@@ -311,7 +311,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 	 * @private
 	 */
 	Support.prototype.openSupportTool = function() {
-		var sToolUrl = jQuery.sap.getModulePath("sap.ui.core.support", "/support.html");
+		var sToolUrl = sap.ui.require.toUrl("sap/ui/core/support/support.html");
 		var sParams = "?sap-ui-xx-noless=true&sap-ui-xx-support-origin=" + jQuery.sap.encodeURL(this._sLocalOrigin);
 
 		var sBootstrapScript;
@@ -319,7 +319,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 			// get bootstrap script name from script tag
 			var oBootstrap = jQuery.sap.domById("sap-ui-bootstrap");
 			if (oBootstrap) {
-				var sRootPath = jQuery.sap.getModulePath('./');
+				var sRootPath = sap.ui.require.toUrl("");
 				var sBootstrapSrc = oBootstrap.getAttribute('src');
 				if (typeof sBootstrapSrc === 'string' && sBootstrapSrc.indexOf(sRootPath) === 0) {
 					sBootstrapScript = sBootstrapSrc.substr(sRootPath.length);
@@ -344,7 +344,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/base/EventProvider', './Plugin', 'sa
 		if (this._sType === mTypes.APPLICATION) {
 			if (!this._isOpen) {
 				if ( Device.browser.msie ) {
-					var sIFrameUrl = jQuery.sap.getModulePath("sap.ui.core.support", "/msiebridge.html");
+					var sIFrameUrl = sap.ui.require.toUrl("sap/ui/core/support/msiebridge.html");
 					getSupportArea().html("").append("<iframe id=\"" + ID_SUPPORT_AREA + "-frame\" src=\"" + sIFrameUrl + sParams + "\" onload=\"sap.ui.core.support.Support._onSupportIFrameLoaded();\"></iframe>");
 					this._sRemoteOrigin = checkLocalUrl(sIFrameUrl) ? this._sLocalOrigin : sIFrameUrl;
 				} else {

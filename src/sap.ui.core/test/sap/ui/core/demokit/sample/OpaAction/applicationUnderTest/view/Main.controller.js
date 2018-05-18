@@ -9,7 +9,7 @@ function(Controller, Press, JSONModel) {
 	return Controller.extend("appUnderTest.view.Main", {
 
 		onInit: function () {
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.ui.demo.mock", "/products.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
 			var oButton = this.byId("navigationButton");
 			setTimeout(function () {

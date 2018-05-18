@@ -13,7 +13,7 @@ sap.ui.define([
 				rootUri: sODataServiceUrl
 			});
 
-			var sLocalServicePath = jQuery.sap.getModulePath("sap.ui.core.sample.MessageManager.ODataBackendMessagesComp.localService");
+			var sLocalServicePath = sap.ui.require.toUrl("sap/ui/core/sample/MessageManager/ODataBackendMessagesComp/localService");
 
 			// configure mock server with a delay
 			MockServer.config({
