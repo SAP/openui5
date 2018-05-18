@@ -1530,7 +1530,7 @@ sap.ui.define([
 			oModel.checkUpdate();
 		}
 
-		// this.oManagementCancel.focus();
+		this.oManagementCancel.focus();
 	};
 
 	VariantManagement.prototype._handleManageExecuteOnSelectionChanged = function(oItem) {
