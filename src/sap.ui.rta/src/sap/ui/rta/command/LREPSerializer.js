@@ -86,7 +86,7 @@ sap.ui.define([
 						}
 						var oChange = oCommand.getPreparedChange();
 						var oAppComponent = oCommand.getAppComponent();
-						if (oAppComponent && oCommand.getElement()) {
+						if (oAppComponent) {
 							if (oCommand instanceof FlexCommand){
 								oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 								var oControl = RtaControlTreeModifier.bySelector(oChange.getSelector(), oAppComponent);
@@ -107,7 +107,7 @@ sap.ui.define([
 						}
 						if (oCommand instanceof FlexCommand){
 							var oAppComponent = oCommand.getAppComponent();
-							if (oAppComponent && oCommand.getElement()) {
+							if (oAppComponent) {
 								var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 								var oPreparedChange = oCommand.getPreparedChange();
 								if (oPreparedChange.getState() === Change.states.DELETED) {
