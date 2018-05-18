@@ -1479,58 +1479,61 @@ sap.ui.require([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCacheAndRequest: bound action", function (assert) {
-		var bAutoExpandSelect = {/*false, true*/},
-			oBinding = this.oModel.bindContext("n/a(...)"),
-			oEntity = {"@odata.etag" : "ETag"},
-			fnGetEntity = this.spy(function () {
-				return oEntity;
-			}),
-			oGroupLock = {},
-			bHasReturnValueContext = {},
-			oJQueryMock = this.mock(jQuery),
-			oOperationMetadata = {$kind : "Action"},
-			mParameters = {},
-			sPath = "/Entity('1')/navigation/bound.Action(...)",
-			oPromise = {},
-			mQueryOptions = {},
-			sResourcePath = "Entity('1')/navigation/bound.Action",
-			oSingleCache = {
-				post : function () {}
-			};
+	[{"@odata.etag" : "ETag"}, undefined].forEach(function (oEntity, i) {
+		QUnit.test("createCacheAndRequest: bound action " + i, function (assert) {
+			var bAutoExpandSelect = {/*false, true*/},
+				oBinding = this.oModel.bindContext("n/a(...)"),
+				fnGetEntity = this.spy(function () {
+					return oEntity;
+				}),
+				oGroupLock = {},
+				bHasReturnValueContext = {},
+				oJQueryMock = this.mock(jQuery),
+				oOperationMetadata = {$kind : "Action"},
+				mParameters = {},
+				sPath = "/Entity('1')/navigation/bound.Action(...)",
+				oPromise = {},
+				mQueryOptions = {},
+				sResourcePath = "Entity('1')/navigation/bound.Action",
+				oSingleCache = {
+					post : function () {}
+				};
 
-		this.oModel.bAutoExpandSelect = bAutoExpandSelect;
-		oJQueryMock.expects("extend").withExactArgs({},
-				sinon.match.same(oBinding.oOperation.mParameters))
-			.returns(mParameters);
-		oJQueryMock.expects("extend").withExactArgs({},
-				sinon.match.same(oBinding.oModel.mUriParameters),
-				sinon.match.same(oBinding.mQueryOptions))
-			.returns(mQueryOptions);
-		this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions").withExactArgs(sPath,
-				sinon.match.same(oOperationMetadata), sinon.match.same(mParameters),
-				sinon.match.same(mQueryOptions), sinon.match.same(oEntity))
-			.returns(sResourcePath);
-		this.mock(oBinding).expects("hasReturnValueContext")
-			.withExactArgs(sinon.match.same(oOperationMetadata))
-			.returns(bHasReturnValueContext);
-		this.mock(_Cache).expects("createSingle")
-			.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
-				"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType",
-				sinon.match.same(bHasReturnValueContext))
-			.returns(oSingleCache);
-		this.mock(oSingleCache).expects("post")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters), "ETag")
-			.returns(oPromise);
+			this.oModel.bAutoExpandSelect = bAutoExpandSelect;
+			oJQueryMock.expects("extend").withExactArgs({},
+					sinon.match.same(oBinding.oOperation.mParameters))
+				.returns(mParameters);
+			oJQueryMock.expects("extend").withExactArgs({},
+					sinon.match.same(oBinding.oModel.mUriParameters),
+					sinon.match.same(oBinding.mQueryOptions))
+				.returns(mQueryOptions);
+			this.mock(this.oModel.oRequestor).expects("getPathAndAddQueryOptions")
+				.withExactArgs(sPath, sinon.match.same(oOperationMetadata),
+					sinon.match.same(mParameters), sinon.match.same(mQueryOptions),
+					sinon.match.same(oEntity))
+				.returns(sResourcePath);
+			this.mock(oBinding).expects("hasReturnValueContext")
+				.withExactArgs(sinon.match.same(oOperationMetadata))
+				.returns(bHasReturnValueContext);
+			this.mock(_Cache).expects("createSingle")
+				.withExactArgs(sinon.match.same(this.oModel.oRequestor), sResourcePath,
+					sinon.match.same(mQueryOptions), sinon.match.same(bAutoExpandSelect), true,
+					"/Entity/navigation/bound.Action/@$ui5.overload/0/$ReturnType",
+					sinon.match.same(bHasReturnValueContext))
+				.returns(oSingleCache);
+			this.mock(oSingleCache).expects("post")
+				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters),
+					oEntity && "ETag")
+				.returns(oPromise);
 
-		assert.strictEqual(
-			// code under test
-			oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata, fnGetEntity),
-			oPromise);
-		assert.strictEqual(oBinding.oOperation.bAction, true);
-		assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
-		assert.strictEqual(fnGetEntity.callCount, 1);
+			assert.strictEqual(
+				// code under test
+				oBinding.createCacheAndRequest(oGroupLock, sPath, oOperationMetadata, fnGetEntity),
+				oPromise);
+			assert.strictEqual(oBinding.oOperation.bAction, true);
+			assert.strictEqual(oBinding.oCachePromise.getResult(), oSingleCache);
+			assert.strictEqual(fnGetEntity.callCount, 1);
+		});
 	});
 
 	//*********************************************************************************************
