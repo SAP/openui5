@@ -1594,7 +1594,7 @@ sap.ui.define([
 	 *     aggregate : {
 	 *       AverageNetAmountInTransactionCurrency : {
 	 *         name : "NetAmountInTransactionCurrency", // original name
-	 *         with : "avg" // aggregation method
+	 *         with : "average" // aggregation method
 	 *       },
 	 *       NetAmountInDisplayCurrency : {subtotals : true}
 	 *     },
