@@ -495,6 +495,7 @@ sap.ui.require([
 
 		QUnit.test("Testing onClick function with ctrl key pressed", function (assert) {
 			this.clock = sinon.useFakeTimers();
+			this.oButton2Overlay.setSelected(true);
 			var oEvent = jQuery.Event("click");
 			oEvent.ctrlKey = true;
 			jQuery(this.oButton2Overlay.getDomRef()).trigger(oEvent);
