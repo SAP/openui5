@@ -42,6 +42,10 @@ sap.ui.define([
 				 */
 				deprecated: {type : "boolean", defaultValue: false},
 				/**
+				 * Defines if the parameter is experimental
+				 */
+				experimental: {type : "boolean", defaultValue: false},
+				/**
 				 * Defines if the parameter is a hyperlink
 				 */
 				href: {type : "sap.ui.core.URI"}
@@ -108,6 +112,24 @@ sap.ui.define([
 				oRm.writeClasses();
 				oRm.write(">");
 				oRm.write("Deprecated");
+				oRm.write("</span>");
+
+				oRm.write("</div>");
+			}
+			if (oControl.getExperimental()) {
+
+				oRm.write("<div");
+				oRm.addClass("experimental");
+				oRm.writeClasses();
+				oRm.write(">");
+
+				oRm.writeIcon('sap-icon://message-warning');
+
+				oRm.write("<span");
+				oRm.addClass("experimentalText");
+				oRm.writeClasses();
+				oRm.write(">");
+				oRm.write("Experimental");
 				oRm.write("</span>");
 
 				oRm.write("</div>");
