@@ -12,12 +12,12 @@
 
 //Provides class sap.ui.model.odata.v2.ODataModel
 sap.ui.define([
-		'jquery.sap.global',
+		'jquery.sap.global', 'sap/ui/thirdparty/URI',
 		'sap/ui/model/BindingMode', 'sap/ui/model/Context', 'sap/ui/model/Model',
 		'sap/ui/model/odata/v2/ODataAnnotations', 'sap/ui/model/odata/ODataUtils', 'sap/ui/model/odata/CountMode', 'sap/ui/model/odata/UpdateMethod', 'sap/ui/model/odata/OperationMode',
 		'./ODataContextBinding', './ODataListBinding', 'sap/ui/model/odata/ODataMetadata', 'sap/ui/model/odata/ODataPropertyBinding', './ODataTreeBinding', 'sap/ui/model/odata/ODataMetaModel', 'sap/ui/core/message/MessageParser', 'sap/ui/model/odata/ODataMessageParser', 'sap/ui/thirdparty/datajs', 'jquery.sap.script'
 	], function(
-		jQuery,
+		jQuery, URI,
 		BindingMode, Context, Model,
 		ODataAnnotations, ODataUtils, CountMode, UpdateMethod, OperationMode,
 		ODataContextBinding, ODataListBinding, ODataMetadata, ODataPropertyBinding, ODataTreeBinding, ODataMetaModel, MessageParser, ODataMessageParser, OData /*,jquery*/) {
@@ -263,17 +263,16 @@ sap.ui.define([
 				this.oHeaders["sap-contextid-accept"] = "header";
 				this.mCustomHeaders["sap-contextid-accept"] = "header";
 			}
-			// Get/create service specific data container
+			// Get/create shared data containers
+			var sServerUrl = this._getServerUrl();
 			var sMetadataUrl = this._createMetadataUrl("/$metadata");
-			this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
-			if (!this.oServiceData) {
-				ODataModel.mServiceData[sMetadataUrl] = {};
-				this.oServiceData = ODataModel.mServiceData[sMetadataUrl];
-			}
+			this.oSharedServerData = ODataModel._getSharedData("server", sServerUrl);
+			this.oSharedServiceData = ODataModel._getSharedData("service", this.sServiceUrl);
+			this.oSharedMetaData = ODataModel._getSharedData("meta", sMetadataUrl);
 
 			this.bUseCache = this._cacheSupported(sMetadataUrl);
 
-			if (!this.oServiceData.oMetadata || this.oServiceData.oMetadata.bFailed) {
+			if (!this.oSharedMetaData.oMetadata || this.oSharedMetaData.oMetadata.bFailed) {
 				//create Metadata object
 				this.oMetadata = new ODataMetadata(sMetadataUrl,{
 					async: true,
@@ -284,9 +283,9 @@ sap.ui.define([
 					namespaces: mMetadataNamespaces,
 					withCredentials: this.bWithCredentials
 				});
-				this.oServiceData.oMetadata = this.oMetadata;
+				this.oSharedMetaData.oMetadata = this.oMetadata;
 			} else {
-				this.oMetadata = this.oServiceData.oMetadata;
+				this.oMetadata = this.oSharedMetaData.oMetadata;
 			}
 
 			this.oAnnotations = new ODataAnnotations(this.oMetadata, {
@@ -333,9 +332,17 @@ sap.ui.define([
 				this.oHeaders["Accept"] = "application/atom+xml,application/atomsvc+xml,application/xml";
 			}
 
-			// Get CSRF token, if already available
-			if (this.bTokenHandling && this.oServiceData.securityToken) {
-				this.oHeaders["x-csrf-token"] = this.oServiceData.securityToken;
+			// If a cached token for the service is already available, use it. If no service token
+			// is known yet, but a token for the same server, set the service token and use it.
+			// This prevents services having different tokens to override each other token with every
+			// request to the server.
+			if (this.bTokenHandling) {
+				if (this.oSharedServiceData.securityToken) {
+					this.oHeaders["x-csrf-token"] = this.oSharedServiceData.securityToken;
+				} else if (this.oSharedServerData.securityToken) {
+					this.oSharedServiceData.securityToken = this.oSharedServerData.securityToken;
+					this.oHeaders["x-csrf-token"] = this.oSharedServiceData.securityToken;
+				}
 			}
 			this.oHeaders["Accept-Language"] = sap.ui.getCore().getConfiguration().getLanguageTag();
 
@@ -770,9 +777,24 @@ sap.ui.define([
 		return this;
 	};
 
-	// Keep a map of service specific data, which can be shared across different model instances
-	// on the same OData service
-	ODataModel.mServiceData = {
+	// Keep a map of shared data, which is shared across different model instances on the same server,
+	// OData service or metadata URL
+	ODataModel.mSharedData = {
+		server: {},
+		service: {},
+		meta: {}
+	};
+
+	/**
+	 * @private
+	 */
+	ODataModel._getSharedData = function(sSection, sKey) {
+		var oSharedData = this.mSharedData[sSection][sKey];
+		if (!oSharedData) {
+			oSharedData = {};
+			this.mSharedData[sSection][sKey] = oSharedData;
+		}
+		return oSharedData;
 	};
 
 	/**
@@ -1145,6 +1167,18 @@ sap.ui.define([
 
 		sRequestID = jQuery.sap.uid();
 		return sRequestID;
+	};
+
+	/**
+	 * Extracts the server base URL from the service URL
+	 * @returns {string} The server base URL
+	 * @private
+	 */
+	ODataModel.prototype._getServerUrl = function() {
+		var oServiceURI, sURI;
+		oServiceURI = new URI(this.sServiceUrl).absoluteTo(document.baseURI);
+		sURI = new URI("/").absoluteTo(oServiceURI).toString();
+		return sURI;
 	};
 
 	/**
@@ -2536,13 +2570,13 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.updateSecurityToken = function() {
 		if (this.bTokenHandling) {
-			if (!this.oServiceData.securityToken) {
+			if (!this.oSharedServiceData.securityToken) {
 				this.refreshSecurityToken();
 			}
 			// Update header every time, in case security token was changed by other model
-			// Check bTokenHandling again, as updateSecurityToken() might disable token handling
+			// Check bTokenHandling again, as refreshSecurityToken() might disable token handling
 			if (this.bTokenHandling) {
-				this.oHeaders["x-csrf-token"] = this.oServiceData.securityToken;
+				this.oHeaders["x-csrf-token"] = this.oSharedServiceData.securityToken;
 			}
 		}
 	};
@@ -2552,7 +2586,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.resetSecurityToken = function() {
-		delete this.oServiceData.securityToken;
+		delete this.oSharedServiceData.securityToken;
 		delete this.oHeaders["x-csrf-token"];
 		delete this.pSecurityToken;
 	};
@@ -2567,10 +2601,10 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.getSecurityToken = function() {
-		var sToken = this.oServiceData.securityToken;
+		var sToken = this.oSharedServiceData.securityToken;
 		if (!sToken) {
 			this.refreshSecurityToken();
-			sToken = this.oServiceData.securityToken;
+			sToken = this.oSharedServiceData.securityToken;
 		}
 		return sToken;
 	};
@@ -2584,12 +2618,12 @@ sap.ui.define([
 	 */
 	ODataModel.prototype.securityTokenAvailable = function() {
 		if (!this.pSecurityToken) {
-			if (this.oServiceData.securityToken) {
-				this.pSecurityToken = Promise.resolve(this.oServiceData.securityToken);
+			if (this.oSharedServiceData.securityToken) {
+				this.pSecurityToken = Promise.resolve(this.oSharedServiceData.securityToken);
 			} else {
 				this.pSecurityToken = new Promise(function(resolve, reject) {
 					this.refreshSecurityToken(function() {
-						resolve(this.oServiceData.securityToken);
+						resolve(this.oSharedServiceData.securityToken);
 					}.bind(this),function(){
 						reject();
 					}, true);
@@ -2628,7 +2662,8 @@ sap.ui.define([
 				sToken = that._getHeader("x-csrf-token", oResponse.headers);
 				that._setSessionContextIdHeader(that._getHeader("sap-contextid", oResponse.headers));
 				if (sToken) {
-					that.oServiceData.securityToken = sToken;
+					that.oSharedServerData.securityToken = sToken;
+					that.oSharedServiceData.securityToken = sToken;
 					that.pSecurityToken = Promise.resolve(sToken);
 					// For compatibility with applications, that are using getHeaders() to retrieve the current
 					// CSRF token additionally keep it in the oHeaders object
@@ -5555,7 +5590,7 @@ sap.ui.define([
 			// are registered to it
 			if (!this.oMetadata.isLoaded() && !this.oMetadata.hasListeners("loaded")) {
 				this.oMetadata.destroy();
-				delete this.oServiceData.oMetadata;
+				delete this.oSharedMetaData.oMetadata;
 			}
 			delete this.oMetadata;
 		}

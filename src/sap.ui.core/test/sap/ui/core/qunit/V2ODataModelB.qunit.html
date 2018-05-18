@@ -53,8 +53,8 @@
 		return new sap.ui.model.odata.v2.ODataModel(sServiceUri, {json: bJSON, defaultUpdateMethod : sUpdateMethod});
 	}
 
-	function cleanServiceDataCache() {
-		sap.ui.model.odata.v2.ODataModel.mServiceData = {};
+	function cleanSharedData() {
+		sap.ui.model.odata.v2.ODataModel.mSharedData = {server: {}, service: {}, meta: {}};
 	}
 
 	/*QUnit.module("ODataModelV2 XML", {
@@ -63,7 +63,7 @@
 			oModel = initModel(false);
 		},
 		afterEach : function() {
-			cleanServiceDataCache();
+			cleanSharedData();
 			oModel.destroy();
 			oModel = undefined;
 			stopServer();
@@ -96,7 +96,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -237,7 +237,7 @@
 				assert.ok(false, "oNewP Promise resolved");
 			}, function(){
 				assert.ok(true, "oNewP Promise rejected");
-				cleanServiceDataCache();
+				cleanSharedData();
 				sServiceUri = sTempService;
 				done();
 			});
@@ -274,7 +274,7 @@
 			})
 			.then(function(result){
 				assert.ok(true, "oNewP2 Promise resolved");
-				cleanServiceDataCache();
+				cleanSharedData();
 				sServiceUri = sTempService;
 				done();
 			}, function(){
@@ -1006,7 +1006,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -2893,7 +2893,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -3519,7 +3519,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
@@ -4146,7 +4146,7 @@
 		afterEach : function() {
 			oModel.destroy();
 			oModel = undefined;
-			cleanServiceDataCache();
+			cleanSharedData();
 			stopServer();
 		}
 	});
