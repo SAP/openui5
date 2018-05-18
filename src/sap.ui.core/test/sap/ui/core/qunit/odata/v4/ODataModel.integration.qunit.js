@@ -2134,9 +2134,10 @@ sap.ui.require([
 				})
 				.expectChange("teamId", "42");
 
-			that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oView.byId("action").getObjectBinding().setParameter("TeamID", "42").execute(),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			var oError = new Error("Missing team ID");
 
@@ -2155,9 +2156,15 @@ sap.ui.require([
 				}, oError) // simulates failure
 				.expectChange("teamId", null); // reset to initial state
 
-			that.oView.byId("action").getObjectBinding().setParameter("TeamID", "").execute();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				that.oView.byId("action").getObjectBinding().setParameter("TeamID", "").execute()
+					.then(function () {
+						assert.ok(false, "Unexpected success");
+					}, function (oError0) {
+						assert.strictEqual(oError0, oError);
+					}),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
