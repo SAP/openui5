@@ -12,7 +12,7 @@
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 		src="../../../../../resources/sap-ui-core.js"
-		data-sap-ui-theme="sap_bluecrystal"	
+		data-sap-ui-theme="sap_bluecrystal"
 		data-sap-ui-noConflict="true"
 		data-sap-ui-libs="sap.ui.unified">
 	</script>
@@ -581,17 +581,9 @@
 					checkHoveredItem("item7");
 					ok(oRootMenu.bOpen, "Rootmenu open");
 					ok(oSubMenu.bOpen, "Submenu open");
-					checkMenuFocusing();
 					closeAllMenusAndCheck();
 					start();
 				}, DELAY_SUBMENU_TIMER);
-				function checkMenuFocusing() {
-					var iExpectedFocusFnCall = 1;
-					if (sap.ui.Device.browser.msie || sap.ui.Device.browser.edge) {
-						iExpectedFocusFnCall = 0;
-					}
-					equal(oSpyMenuFocusFn.callCount, iExpectedFocusFnCall, "Menu should not be directly focused for IE and Edge, but so it should for the rest");
-				}
 			});
 		}
 
@@ -794,18 +786,10 @@
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu);
 
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -1");
-				}
-
 				qutils.triggerKeyboardEvent(sTfId, "ARROW_DOWN");
 				checkHoveredItem("item13", oSpecialMenu);
 				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
 				checkHoveredItem("item12", oSpecialMenu);
-
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -2");
-				}
 
 				qutils.triggerCharacterInput(sTfId, "A");
 				qutils.triggerKeyEvent("keyup", sTfId, "A");
@@ -833,18 +817,10 @@
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu);
 
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -1");
-				}
-
 				qutils.triggerKeyboardEvent(sTfId, "PAGE_DOWN");
 				checkHoveredItem("item13", oSpecialMenu);
 				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
 				checkHoveredItem("item12", oSpecialMenu);
-
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -2");
-				}
 
 				qutils.triggerKeyboardEvent(sTfId, "PAGE_UP");
 				checkHoveredItem("item11", oSpecialMenu);
@@ -860,9 +836,6 @@
 				checkHoveredItem("item11", oSpecialMenu);
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu);
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -1");
-				}
 
 				jQuery.sap.byId(sTfId).cursorPos(1);
 				qutils.triggerKeyboardEvent(sTfId, "HOME");
@@ -873,9 +846,6 @@
 
 				qutils.triggerKeyboardEvent("menu5", "ARROW_DOWN");
 				checkHoveredItem("item12", oSpecialMenu);
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -2");
-				}
 
 				jQuery.sap.byId(sTfId).cursorPos(0);
 				qutils.triggerKeyboardEvent(sTfId, "END");
@@ -886,9 +856,6 @@
 
 				qutils.triggerKeyboardEvent("menu5", "ARROW_UP");
 				checkHoveredItem("item12", oSpecialMenu);
-				if(jQuery("html").attr("data-sap-ui-browser") != "ie8"){
-					ok(document.activeElement.id == sTfId, "Focus on textfield -3");
-				}
 
 				qutils.triggerCharacterInput(sTfId, "A");
 				qutils.triggerKeyEvent("keyup", sTfId, "A");
@@ -914,6 +881,30 @@
 			qutils.triggerKeyboardEvent(sTfId, "ESCAPE");
 			checkMenusClosed("after Escape");
 			ok(!lastSelectedItemId, "No Event triggered on Escape");
+		});
+
+		test("mouseover will set the focus to MenuTextFieldItem domRef in IE", function () {
+			// Arrange
+			var oMenuItem = new sap.ui.unified.MenuTextFieldItem(),
+				oTfStub = { focus: this.spy(), toggleClass: function () {} },
+				oMenu$Stub = this.stub(oMenuItem, "$", function () { return oTfStub }),
+				oBrowserStub = this.stub(sap.ui.Device, "browser", { msie: true }),
+				oDelayedCallStub = this.stub(jQuery.sap, "delayedCall", function delayedCall(iDelay, oThis, fn) {
+					fn.call(oMenuItem);
+
+					// Assert
+					ok(true, "delayedCall function is called, so that the MenuTextFieldItem could accept the focus");
+					equal(iDelay, 0, "the timeout passed to the delayedCall is 0");
+					equal(oTfStub.focus.callCount, 1, "the MenuTextFieldItem is focused");
+				});
+
+			// Act
+			oMenuItem.hover(true, { checkEnabled: function () { return true }, closeSubmenu: function () {} });
+
+			// Cleanup
+			oMenu$Stub.restore();
+			oBrowserStub.restore();
+			oDelayedCallStub.restore();
 		});
 
 		module("Aria");
