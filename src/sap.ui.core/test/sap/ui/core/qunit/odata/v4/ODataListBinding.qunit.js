@@ -3305,7 +3305,7 @@ sap.ui.require([
 		this.mock(oContext).expects("destroy").withExactArgs();
 
 		// code under test
-		return oContext["delete"]("$direct").then(function () {
+		return oContext.delete("$direct").then(function () {
 			assert.notOk(-1 in oBinding.aContexts, "No transient context");
 			assert.strictEqual(oBinding.getLength(), 3);
 		});

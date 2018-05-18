@@ -167,7 +167,7 @@ sap.ui.define([
 					} else {
 						updateDependents();
 					}
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					that.oModel.reportError("Failed to update " + that, sClassName, oError);
 				});
 			} else {
@@ -512,7 +512,7 @@ sap.ui.define([
 						that.mAggregatedQueryOptions));
 				}
 				return oCache;
-			})["catch"](function (oError) {
+			}).catch(function (oError) {
 				that.oModel.reportError("Failed to update cache for binding " + that, sClassName,
 					oError);
 			});

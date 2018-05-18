@@ -102,7 +102,7 @@ sap.ui.define([
 				});
 			}
 		});
-		oCachePromise["catch"](function (oError) {
+		oCachePromise.catch(function (oError) {
 			//Note: this may also happen if the promise to read data for the canonical path's
 			// key predicate is rejected with a canceled error
 			that.oModel.reportError("Failed to create cache for binding " + that, sClassName,

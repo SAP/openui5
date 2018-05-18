@@ -361,7 +361,7 @@ sap.ui.require([
 		this.oLogMock.expects("warning")
 			.withExactArgs(sMessage, "bar", "sap.ui.model.odata.v4.Context");
 
-		return oPromise["catch"](function () {
+		return oPromise.catch(function () {
 			//code under test
 			assert.strictEqual(oContext.getProperty("bar"), undefined);
 		});
@@ -627,7 +627,7 @@ sap.ui.require([
 			}
 
 			// code under test
-			return oContext["delete"]("myGroup").then(function () {
+			return oContext.delete("myGroup").then(function () {
 				assert.notOk(bFailure);
 			}, function (oError0) {
 				assert.ok(bFailure);

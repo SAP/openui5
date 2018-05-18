@@ -1086,7 +1086,7 @@ sap.ui.define([
 					that.fireDataReceived(oError.canceled ? {data : {}} : {error : oError});
 				}
 				throw oError;
-			})["catch"](function (oError) {
+			}).catch(function (oError) {
 				if (oGroupLock) {
 					oGroupLock.unlock(true);
 				}
@@ -1474,7 +1474,7 @@ sap.ui.define([
 				}, function (oError) {
 					fireDataReceived({error : oError});
 					throw oError;
-				})["catch"](function (oError) {
+				}).catch(function (oError) {
 					oGroupLock.unlock(true);
 					that.oModel.reportError("Failed to refresh entity: " + oContext, sClassName,
 						oError);

@@ -160,7 +160,7 @@ sap.ui.define([
 		var that = this;
 
 		// a context binding without path can simply delegate to its parent context.
-		if (this.sPath === "" && this.oContext["delete"]) {
+		if (this.sPath === "" && this.oContext.delete) {
 			return this.oContext._delete(oGroupLock);
 		}
 		if (this.hasPendingChanges()) {
@@ -244,7 +244,7 @@ sap.ui.define([
 			}, function (oError) {
 				fireChangeAndRefreshDependentBindings();
 				throw oError;
-			})["catch"](function (oError) {
+			}).catch(function (oError) {
 				oGroupLock.unlock(true);
 				if (that.oReturnValueContext) {
 					that.oReturnValueContext.destroy();

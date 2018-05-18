@@ -125,7 +125,7 @@ sap.ui.define([
 		onDeleteEmployee : function (oEvent) {
 			var oEmployeeContext = oEvent.getSource().getBindingContext();
 
-			oEmployeeContext["delete"](oEmployeeContext.getModel().getGroupId()).then(function () {
+			oEmployeeContext.delete(oEmployeeContext.getModel().getGroupId()).then(function () {
 				MessageBox.alert(oEmployeeContext.getPath(), {
 					icon : MessageBox.Icon.SUCCESS,
 					title : "Success"

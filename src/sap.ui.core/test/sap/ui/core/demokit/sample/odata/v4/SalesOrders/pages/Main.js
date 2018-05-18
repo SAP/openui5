@@ -268,7 +268,7 @@ function (MessageBox, Filter, FilterOperator, ODataUtils, Opa5, EnterText, Press
 							var oSalesOrderContext = oSalesOrderTable.getSelectedItem()
 									.getBindingContext(),
 								sOrderID = oSalesOrderContext.getProperty("SalesOrderID", true);
-							oSalesOrderContext["delete"](sGroupId).then(function () {
+							oSalesOrderContext.delete(sGroupId).then(function () {
 									Opa5.assert.ok(true, "Deleted Sales Order: " + sOrderID);
 								}, function (oError) {
 									Opa5.assert.ok(false, "Error deleting Sales Order: " + sOrderID
