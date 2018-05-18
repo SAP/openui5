@@ -26,7 +26,7 @@ sap.ui.define([
 	"sap/ui/support/supportRules/ui/models/SelectionUtils",
 	"sap/m/Dialog",
 	"sap/ui/unified/FileUploader"
-], function ($, BaseController, JSONModel, Panel, List, ListItemBase, StandardListItem, InputListItem, Button, Toolbar, ToolbarSpacer,
+], function (jQuery, BaseController, JSONModel, Panel, List, ListItemBase, StandardListItem, InputListItem, Button, Toolbar, ToolbarSpacer,
              Label, MessageToast, CommunicationBus, channelNames, SharedModel, RuleSerializer, constants, Ruleset, storage,
 						 SelectionUtils, Dialog, FileUploader) {
 	"use strict";
@@ -348,11 +348,11 @@ sap.ui.define([
 				aSelectedRules = [];
 
 			for (sLibraryIndex in mRuleSets) {
-				if (Number.isInteger(Number.parseInt(sLibraryIndex, 10))) {
+				if (jQuery.isNumeric(parseInt(sLibraryIndex, 10))) {
 					for (sRuleIndex in mRuleSets[sLibraryIndex]) {
 						oRule = mRuleSets[sLibraryIndex][sRuleIndex];
 
-						if (Number.isInteger(Number.parseInt(sRuleIndex, 10)) && oRule.selected) {
+						if (jQuery.isNumeric(parseInt(sRuleIndex, 10)) && oRule.selected) {
 							aSelectedRules.push({
 								libName: oRule.libName,
 								ruleId: oRule.id
