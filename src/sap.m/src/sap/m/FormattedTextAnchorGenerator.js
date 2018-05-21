@@ -15,7 +15,7 @@ sap.ui.define(["jquery.sap.global", "sap/ui/base/Metadata", "sap/m/library"], fu
 
 	var AnchorGenerator = Metadata.createClass("sap.m.FormattedTextAnchorGenerator", {});
 
-	var LINK_SEARCH_PATTERN = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+	var LINK_SEARCH_PATTERN = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;()$]*[-A-Z0-9+&@#\/%=~_|])/gim;
 	var WWW_DETECTION_PATTERN = /(www\.[^\s><]+(\b|$))/gim;
 	var WWW_DETECTED_LINKS_PREFIX = "//";
 	var DETECT_HTML_TAGS = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+(?!\/\s\*)>/gim;
