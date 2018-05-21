@@ -220,7 +220,7 @@
 		}));
 		oTestPage.addContent(oFF);
 
-		var oToolbar = new sap.m.Toolbar({
+		var oToolbar = new sap.m.OverflowToolbar({
 			content: [new sap.m.Button({
 				    	text: "Save Selections",
 				    	press: function(oEvent) {
@@ -445,7 +445,7 @@
 	    	}
 		  });
 
-		var oToolbar1 = new sap.m.Toolbar({
+		var oToolbar1 = new sap.m.OverflowToolbar({
 			content: [
 			          oListLabel,
 			          oListSelect,
@@ -459,7 +459,7 @@
 			          oApplyButton
 			          ]
 		});
-		var oToolbar2 = new sap.m.Toolbar({
+		var oToolbar2 = new sap.m.OverflowToolbar({
 			content: [
 			          oRadioSingleSelect,
 			          oRadioMultiSelect,
@@ -608,7 +608,7 @@
 			}
 		});
 
-		var oToolbar = new sap.m.Toolbar({
+		var oToolbar = new sap.m.OverflowToolbar({
 			content: [oVisibleCheckbox,
 			          oRadioSimpleType,
 			          oRadioLightType,
@@ -969,7 +969,7 @@
 			}),
 
 		}));
-		var oToolbar = new sap.m.Toolbar({content: [oFFWithModelOfArbitrarySizeLimit]});
+		var oToolbar = new sap.m.OverflowToolbar({content: [oFFWithModelOfArbitrarySizeLimit]});
 
 		oTestPage.addContent(oToolbar);
 	}
