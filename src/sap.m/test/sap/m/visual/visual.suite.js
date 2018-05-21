@@ -46,6 +46,7 @@ module.exports = [
 	"RadioButtonGroup.spec.js",
 	"RatingIndicator.spec.js",
 	"ResponsivePopover.spec.js",
+	"SegmentedButton.spec.js",
 	"Select.spec.js",
 	"SelectDialog.spec.js",
 	"SemanticPage.spec.js",
