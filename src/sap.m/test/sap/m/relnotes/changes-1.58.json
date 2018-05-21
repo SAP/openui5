@@ -79,6 +79,90 @@
         "type": "FIX",
         "text": " sap.m.TimePicker: Select time with num keypad",
         "references": []
+      },
+      {
+        "id": "7138a8eabff47c6cfa718daf4f7b1c9b37e1f58c",
+        "type": "FEATURE",
+        "text": " sap.m.Link: Added ctrlKey \u0026 metaKey parameters to press event",
+        "references": []
+      },
+      {
+        "id": "e70d73693331e1f6be7fb73776a644b0650fbc1c",
+        "type": "FIX",
+        "text": " SliderTooltipContainer: Positioning available for subclasses",
+        "references": []
+      },
+      {
+        "id": "21f746e4c7cc29cb5219dc434fe5f6f9e577f1ff",
+        "type": "FIX",
+        "text": " m.Select: selectedKey API documentation updated",
+        "references": []
+      },
+      {
+        "id": "fe17b2833468eff056f60fc706b8d159b816fca7",
+        "type": "FIX",
+        "text": " sap.m.BusyDialog: Close event is now fired correctly",
+        "references": []
+      },
+      {
+        "id": "4d7f65eb08ed25c21368c342e97c66ea103704b6",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Selecting items is now working in IE",
+        "references": []
+      },
+      {
+        "id": "a8223fea7b402e9b10f6c1c4c56c1000fd81028f",
+        "type": "FIX",
+        "text": " sap.m.Dialog: After double click on header dialog content is visualized correctly",
+        "references": []
+      },
+      {
+        "id": "0ff7ffb5a7d0d67ac5de20b565c7e48030c05e07",
+        "type": "FIX",
+        "text": " sap.m.FacetFilter: Now the control handles filters correctly",
+        "references": []
+      },
+      {
+        "id": "834d5a2bdb6769bd9c020c99f8ccd6aae34db59b",
+        "type": "FIX",
+        "text": " sap.m.FeedListItem : List Count was not readout on accessing FeedListItems so added logic to calculate the count and readout.",
+        "references": []
+      },
+      {
+        "id": "bec97e8d7bc52debe733b0540ef26e8e302fade2",
+        "type": "FIX",
+        "text": " sap.m.FormattedTextAnchorGenerator: Anchor tag conversion improved",
+        "references": []
+      },
+      {
+        "id": "1cfa4c649d6fc559b9bf4679092db071dc62997d",
+        "type": "FIX",
+        "text": " sap.m.Input: Input width is now correct",
+        "references": []
+      },
+      {
+        "id": "eda6a89fe8b3b429b7351cb1175914e365460a63",
+        "type": "FIX",
+        "text": " sap.m.ObjectListeItem: render properly hidden marker",
+        "references": []
+      },
+      {
+        "id": "f5963d95fd6884daccef6b5ae79128d686f79062",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: correct header aligment when icon is used",
+        "references": []
+      },
+      {
+        "id": "11c596df09e94695f28bb5e7d98e17be55370f4e",
+        "type": "FIX",
+        "text": " sap.m.SegmentedButton: right border of the last visible sub item is now displayed",
+        "references": []
+      },
+      {
+        "id": "eae21db82ee6b31d9dc3982cc0cfe033a058f03a",
+        "type": "FIX",
+        "text": " sap.m.Text: Normalisation and visualisation of line endings and whitespace characters is now fixed",
+        "references": []
       }
     ]
   }

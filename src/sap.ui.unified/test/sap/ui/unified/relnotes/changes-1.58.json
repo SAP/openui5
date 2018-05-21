@@ -7,6 +7,18 @@
         "type": "FIX",
         "text": " sap.m.PlanningCalendar: Dates from previous/next month in the calendar picker are now interactive",
         "references": []
+      },
+      {
+        "id": "20c515e87921b50870fb379138f5afa22f9e59a2",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Calendar: Event \"weekNumberSelect\" introduced",
+        "references": []
+      },
+      {
+        "id": "cb893912fdfeb5e266192e629bc5e1b3d94cd341",
+        "type": "FIX",
+        "text": " sap.ui.commons.Menu: MenuTextFieldItem can now be focused on hover opened from IE",
+        "references": []
       }
     ]
   }

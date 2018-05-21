@@ -7,6 +7,12 @@
         "type": "FIX",
         "text": " sap.f.DynamicPage: Pin button visibility corrected",
         "references": []
+      },
+      {
+        "id": "b95aebfadbc05e587b6a19c18a2aa96cbf121831",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Fixed actions dragging in RTA",
+        "references": []
       }
     ]
   }
