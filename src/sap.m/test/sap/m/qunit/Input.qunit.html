@@ -572,6 +572,11 @@
 		assert.strictEqual(spy.callCount, 1, "The value help was requested by pressing Enter or Space");
 	});
 
+	QUnit.test("Check step attribute", function(assert) {
+		assert.strictEqual(document.getElementById("i1-inner").getAttribute("step"), null, "Input of type \"Text\" have no step attribute set");
+		assert.strictEqual(document.getElementById("i2-inner").getAttribute("step"), "any", "Input of type \"Number\" have step attribute set to \"any\"");
+	});
+
 	QUnit.module("Destroy");
 
 	QUnit.test("Destroy DOM", function(assert) {
